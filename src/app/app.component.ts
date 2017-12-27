@@ -28,7 +28,7 @@ export class Teacher {
 export class AppComponent implements OnInit {
   teacherCtrl: FormControl;
   filteredTeachers: Observable<any[]>;
-  durs: string[] = ["5","10","15","30"]
+  durs: string[] = ["5","10","15","30","≥45"];
 
   teachers: Teacher[] = [
     new Teacher('Kyle Cook','A149'),
