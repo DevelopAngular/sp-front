@@ -1,0 +1,28 @@
+.form{
+
+}
+
+.from-field{
+  float: left;
+}
+
+.to-field{
+  float: right;
+}
+
+.date-field{
+  float: left;
+}
+
+.time-field{
+  float: right;
+}
+
+.duration-field{
+
+}
+
+.room-option {
+  position: relative;
+  top: -32px;
+}
