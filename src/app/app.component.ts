@@ -29,7 +29,8 @@ export class AppComponent implements OnInit {
         var nowish = new Date();
         this.dateNow = nowish.getMonth() + "/" +nowish.getDay() +"/" +nowish.getFullYear();
         var mins = nowish.getMinutes();
-        this.timeNow = nowish.getHours() +":" +((mins<10)?"0":"") +mins;
+        var hours = nowish.getHours();
+        this.timeNow = ((hours>12)?hours-12:hours) +":" +((mins<10)?"0":"") +mins;
       }, 100);
       
   }
