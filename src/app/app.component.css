@@ -1,28 +1,3 @@
-/*.form{
-
-}
-
-.from-field{
-  float: left;
-}
-
-.to-field{
-  float: right;
-}
-
-.date-field{
-  float: left;
-}
-
-.time-field{
-  float: right;
-}
-
-.duration-field{
-
-}
-*/
-
 h1{
   font-family: Roboto, sans-serif;
   
@@ -57,9 +32,4 @@ table, th, td {
 
   top: 50vh;
   transform: translateY(-50%);
-}
-
-.room-option {
-  position: relative;
-  top: -32px;
 }

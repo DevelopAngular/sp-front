@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 
 
 import {AppComponent} from './app.component';
-import {TestComponent} from './test/test.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -12,11 +11,12 @@ import {MatInputModule} from '@angular/material/input';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpClientModule} from '@angular/common/http';
 import {MatButtonModule} from '@angular/material/button';
+import { TeacherSearchComponent } from './teacher-search/teacher-search.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    TestComponent
+    TeacherSearchComponent,
   ],
   imports: [
     BrowserModule,

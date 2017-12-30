@@ -1,69 +1,46 @@
 <div class="all">
   <form class="form">
     <table class="table">
-      <tr><td colspan="2"><h1>HALLPASS</h1></td></tr>
       <tr>
-        <td>
-      <h1>From:</h1>
-        <mat-form-field class="from-field">
-        <input matInput placeholder="Teacher or Room" aria-label="Teacher or Room" [matAutocomplete]="auto" [formControl]="teacherCtrl">
-        <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngFor="let teacher of filteredTeachers | async" [value]="teacher.nameRoom">
-          <span class="teacher-option">
-            {{ teacher.name }} <br>
-            <small class="room-option">
-              Room #: {{ teacher.room }}
-            </small>
-          </span>
-        </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
+        <td><h1>HALLPASS FOR:</h1></td>
+        <td><div class="g-signin2" data-onsuccess="onSignIn"></div></td>
+      </tr>
+      <tr>
+      <td>
+        <h1>From:</h1>
+        <app-teacher-search></app-teacher-search>
       </td>
       <td>
-      <h1>To:</h1>
-        <mat-form-field class="to-field">
-          <input matInput placeholder="Teacher or Room" aria-label="Teacher or Room" [matAutocomplete]="auto" [formControl]="teacherCtrl">
-          <mat-autocomplete #auto="matAutocomplete">
-            <mat-option *ngFor="let teacher of filteredTeachers | async" [value]="teacher.nameRoom">
-            <span class="teacher-option">
-              {{ teacher.name }} <br>
-              <small class="room-option">
-                Room #: {{ teacher.room }}
-              </small>
-            </span>
-          </mat-option>
-          </mat-autocomplete>
-        </mat-form-field>
+        <h1>To:</h1>
+        <app-teacher-search></app-teacher-search>
       </td>
       </tr>
       <tr>
         <td>
-        <h1>Date:</h1>
-        <mat-form-field class="date-field" enabled="false">
+          <h1>Date:</h1>
+          <mat-form-field class="date-field" enabled="false">
             <input matInput placeholder="" aria-label="" value="{{ dateNow }}" disabled>
-        </mat-form-field>
+          </mat-form-field>
         </td>
         <td>
-        <h1>Time:</h1>
-        <mat-form-field class="time-field" enabled="false">
+          <h1>Time:</h1>
+          <mat-form-field class="time-field" enabled="false">
             <input matInput placeholder="" aria-label="" value="{{ timeNow }}" disabled>
-        </mat-form-field>
-      </td>
+          </mat-form-field>
+        </td>
       </tr>
       <tr>
         <td>
         <h1>Duration:</h1>
         <mat-select class="duration-field" placeholder="Duration" width="50">
           <mat-option *ngFor="let dur of durs" [value]="dur">
-            <span>
-              {{ dur }}
-            </span>
+            <span>{{ dur }}</span>
           </mat-option>
         </mat-select>
-      </td>
-      <td>
-        <button mat-raised-button><h1>SUBMIT</h1></button>
-      </td>
+        </td>
+        <td>
+          <button mat-raised-button><h1>SUBMIT</h1></button>
+        </td>
       </tr>
     </table>
   </form>
