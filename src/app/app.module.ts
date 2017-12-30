@@ -11,12 +11,14 @@ import {MatInputModule} from '@angular/material/input';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpClientModule} from '@angular/common/http';
 import {MatButtonModule} from '@angular/material/button';
-import { TeacherSearchComponent } from './teacher-search/teacher-search.component';
+import {TeacherSearchComponent} from './teacher-search/teacher-search.component';
+import {GoogleSigninComponent} from './google-signin/google-signin.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     TeacherSearchComponent,
+    GoogleSigninComponent,
   ],
   imports: [
     BrowserModule,

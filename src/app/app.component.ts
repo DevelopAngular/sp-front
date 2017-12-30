@@ -6,7 +6,7 @@ import {startWith} from 'rxjs/operators/startWith';
 import {map} from 'rxjs/operators/map';
 
 import {HttpClient} from '@angular/common/http';
- 
+
 /**
  * @title Autocomplete overview
  */
@@ -15,13 +15,16 @@ import {HttpClient} from '@angular/common/http';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
+
 export class AppComponent implements OnInit {
-  
+
   durs: string[] = ["5","10","15","30","≥45"];
 
   public now: Date = new Date();
   public dateNow: any;
   public timeNow: any;
+
+  public isLoggedIn: Boolean = false;
 
   constructor(private http: HttpClient) {
 
