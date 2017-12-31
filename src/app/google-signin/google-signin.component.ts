@@ -11,6 +11,8 @@ declare const gapi: any;
 
 export class GoogleSigninComponent implements AfterViewInit {
 
+  public name = "Not Logged in!";
+
   private clientId:string = '625620388494-6buq49df4o5r1slgah33kgm3a7gbin23.apps.googleusercontent.com';
   
   private scope = [
@@ -32,7 +34,8 @@ export class GoogleSigninComponent implements AfterViewInit {
         cookiepolicy: 'single_host_origin',
         scope: that.scope
       });
-      that.attachSignin(that.element.nativeElement.firstChild);
+      that.attachSignin(that.element.nativeElement.children[0]);
+      that.attachSignout(that.element.nativeElement.children[1]);
     });
   }
   public attachSignin(element) {
@@ -47,6 +50,21 @@ export class GoogleSigninComponent implements AfterViewInit {
         console.log('Image URL: ' + profile.getImageUrl());
         console.log('Email: ' + profile.getEmail());
 
+        that.name = profile.getName()
+
+      }, function (error) {
+        console.log(JSON.stringify(error, undefined, 2));
+      });
+  }
+
+  public attachSignout(element){
+    let that = this;
+    this.auth2.attachClickHandler(element, {},
+      function (googleUser) {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+          that.name = "Not Logged in!";
+        });
       }, function (error) {
         console.log(JSON.stringify(error, undefined, 2));
       });
