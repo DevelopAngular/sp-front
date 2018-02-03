@@ -6,6 +6,7 @@ import {startWith} from 'rxjs/operators/startWith';
 import {map} from 'rxjs/operators/map';
 
 import {HttpClient} from '@angular/common/http';
+import {RouterOutlet} from '@angular/router';
 
 /**
  * @title Autocomplete overview

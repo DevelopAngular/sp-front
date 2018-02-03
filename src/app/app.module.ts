@@ -13,10 +13,10 @@ import {HttpClientModule} from '@angular/common/http';
 import {MatButtonModule} from '@angular/material/button';
 import {TeacherSearchComponent} from './teacher-search/teacher-search.component';
 import {GoogleSigninComponent} from './google-signin/google-signin.component';
-import { HallpassFormComponent } from './hallpass-form/hallpass-form.component';
-import { PassListComponent } from './pass-list/pass-list.component';
-import { MenuChooseComponent } from './menu-choose/menu-choose.component';
-
+import {HallpassFormComponent} from './hallpass-form/hallpass-form.component';
+import {PassListComponent} from './pass-list/pass-list.component';
+import {MenuChooseComponent} from './menu-choose/menu-choose.component';
+//import {RouterOutlet} from '@angular/router';
 @NgModule({
   declarations: [
     AppComponent,
@@ -37,6 +37,7 @@ import { MenuChooseComponent } from './menu-choose/menu-choose.component';
     BrowserAnimationsModule,
     HttpClientModule,
     MatButtonModule
+   // RouterOutlet
   ],
   providers: [],
   bootstrap: [AppComponent]
