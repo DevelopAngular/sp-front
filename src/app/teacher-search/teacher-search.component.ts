@@ -8,7 +8,7 @@ import {map} from 'rxjs/operators/map';
 import {HttpClient} from '@angular/common/http';
 
 export class Teacher {
-  constructor(public name: string, public room: string) {
+  constructor(public id:string, public name: string, public campus:string, public room: string) {
 
    }
 
@@ -26,20 +26,7 @@ export class TeacherSearchComponent implements OnInit {
   teacherCtrl: FormControl;
   filteredTeachers: Observable<any[]>;
 
-  teachers: Teacher[] = [
-    new Teacher('Kyle Cook','A149'),
-    new Teacher('Ananth Dandibhotla','A238'),
-    new Teacher('Will Gulian','A327'),
-    new Teacher('Dhruv Sringari','A416'),
-    new Teacher('Sand Man','B145'),
-    new Teacher('Crummy Wizard','B236'),
-    new Teacher('Dan Bontempo','B327'),
-    new Teacher('Donald Sawyer','B418'),
-    new Teacher('Kevin Metz','C149'),
-    new Teacher('Jill Palmer','C230'),
-    new Teacher('Nat Ryan','C126'),
-    new Teacher('Matt Ryan','C417')
-  ];
+  teachers: Teacher[] = [];
 
   constructor(private http: HttpClient) {
     this.teacherCtrl = new FormControl();
@@ -51,16 +38,17 @@ export class TeacherSearchComponent implements OnInit {
     }
 
   ngOnInit() {
-    // Make the HTTP request:
-    //this.http.get('https://notify.letterday.info/api/methacton/v1/locations?campus=""').subscribe(data => {
-      // Read the result field from the JSON response.
-    //this.teachers = data['results'];
-    //});
+    console.log("Attempting GET.");
+    var config = {headers:{'Authorization' : 'Bearer A1tu57eiK6dH0AsXtZrn8NC9bBH9lE'}}
+    this.http.get('https://notify.letterday.info/api/methacton/v1/locations', config).subscribe((data:any[]) => {
+      console.log(data);
+      for(var i = 0; i < data.length; i++){
+        this.teachers.push(new Teacher(data[i]["id"], data[i]["name"],data[i]["campus"], data[i]["room"]));
+      }
+    });
   }
-
   filterTeachers(name: string) {
     return this.teachers.filter(teacher => teacher.name.toLowerCase().indexOf(name.toLowerCase()) != -1 || teacher.room.toLowerCase().indexOf(name.toLowerCase()) != -1);
-    //return this.states.filter(state => state.name.toLowerCase().indexOf(name.toLowerCase()) === 0);
   }
 
 }

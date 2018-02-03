@@ -13,12 +13,14 @@ import {HttpClientModule} from '@angular/common/http';
 import {MatButtonModule} from '@angular/material/button';
 import {TeacherSearchComponent} from './teacher-search/teacher-search.component';
 import {GoogleSigninComponent} from './google-signin/google-signin.component';
+import { HallpassFormComponent } from './hallpass-form/hallpass-form.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     TeacherSearchComponent,
     GoogleSigninComponent,
+    HallpassFormComponent,
   ],
   imports: [
     BrowserModule,
