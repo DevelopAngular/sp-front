@@ -38,10 +38,8 @@ export class TeacherSearchComponent implements OnInit {
     }
 
   ngOnInit() {
-    console.log("Attempting GET.");
-    var config = {headers:{'Authorization' : 'Bearer A1tu57eiK6dH0AsXtZrn8NC9bBH9lE'}}
+    var config = {headers:{'Authorization' : 'Bearer SGFg1c4sLRqSIJFn3mJJWf2Tvz6ykP'}}
     this.http.get('https://notify.letterday.info/api/methacton/v1/locations', config).subscribe((data:any[]) => {
-      console.log(data);
       for(var i = 0; i < data.length; i++){
         this.teachers.push(new Teacher(data[i]["id"], data[i]["name"],data[i]["campus"], data[i]["room"]));
       }

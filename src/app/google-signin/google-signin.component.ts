@@ -1,5 +1,7 @@
-import {Component, ElementRef, AfterViewInit} from '@angular/core';
+import {Component, ElementRef, AfterViewInit, OnInit} from '@angular/core';
 import gapi from 'gapi-client';
+
+import {HttpClient} from '@angular/common/http';
 
 declare const gapi: any;
 
@@ -9,7 +11,7 @@ declare const gapi: any;
   styleUrls: ['./google-signin.component.css']
 })
 
-export class GoogleSigninComponent implements AfterViewInit {
+export class GoogleSigninComponent implements AfterViewInit, OnInit {
 
   public name = "Not Logged in!";
 
@@ -24,8 +26,11 @@ export class GoogleSigninComponent implements AfterViewInit {
   ].join(' ');
 
   public content: any = "";
-
+  public barer: string = "";
   public auth2: any;
+  public user: any = "";
+  public profile: any = "";
+
   public googleInit() {
     let that = this;
     gapi.load('auth2', function () {
@@ -40,17 +45,36 @@ export class GoogleSigninComponent implements AfterViewInit {
   }
   public attachSignin(element) {
     let that = this;
-    this.auth2.attachClickHandler(element, {},
+    that.auth2.attachClickHandler(element, {},
       function (googleUser) {
+        that.user = googleUser;
+        that.profile = googleUser.getBasicProfile();
 
-        let profile = googleUser.getBasicProfile();
         console.log('Token || ' + googleUser.getAuthResponse().id_token);
-        console.log('ID: ' + profile.getId());
-        console.log('Name: ' + profile.getName());
-        console.log('Image URL: ' + profile.getImageUrl());
-        console.log('Email: ' + profile.getEmail());
+        console.log('ID: ' + that.profile.getId());
+        console.log('Name: ' + that.profile.getName());
+        console.log('Image URL: ' + that.profile.getImageUrl());
+        console.log('Email: ' + that.profile.getEmail());
 
-        that.name = profile.getName()
+        if(that.profile.getEmail().endsWith("@student.methacton.org") || that.profile.getEmail().endsWith("@methacton.org")){
+          that.name = that.profile.getName()
+
+          var config = new FormData();
+
+          config.set("client_id", "OBHAOsPqcRsHd6fxd5TlVj9AtDnbg9hdDDOpbHl5");
+          config.set("provider", "google-auth-token");
+          config.set("token", that.user.getAuthResponse().id_token);
+
+          that.http.post('https://notify.letterday.info/auth/by-token/', config).subscribe((data:any[]) => {
+            that.barer = data["access_token"];
+          }, (data:any[]) => {
+            console.log(data);
+          });
+          gapi.auth2.getAuthInstance().disconnect();
+        } else{
+          gapi.auth2.getAuthInstance().disconnect();
+          
+        }
 
       }, function (error) {
         console.log(JSON.stringify(error, undefined, 2));
@@ -59,19 +83,25 @@ export class GoogleSigninComponent implements AfterViewInit {
 
   public attachSignout(element){
     let that = this;
-    this.auth2.attachClickHandler(element, {},
+    that.auth2.attachClickHandler(element, {},
       function (googleUser) {
         var auth2 = gapi.auth2.getAuthInstance();
         auth2.signOut().then(function () {
           that.name = "Not Logged in!";
+          that.user = "";
+          that.profile = "";
         });
       }, function (error) {
         console.log(JSON.stringify(error, undefined, 2));
       });
   }
 
-  constructor(private element: ElementRef) {
+  constructor(private element: ElementRef, private http: HttpClient) {
     console.log('ElementRef: ', this.element);
+  }
+
+  ngOnInit() {
+    
   }
 
   ngAfterViewInit() {

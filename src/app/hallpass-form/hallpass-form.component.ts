@@ -9,7 +9,7 @@ export class HallpassFormComponent implements OnInit {
 
   
   durs: string[] = ["5","10","15","30","≥45"];
-
+  public studentName: string = "John Tsting";
   public now: Date = new Date();
   public dateNow: any;
   public timeNow: any;
