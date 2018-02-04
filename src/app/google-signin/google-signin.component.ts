@@ -1,5 +1,6 @@
 import {Component, ElementRef, AfterViewInit, OnInit} from '@angular/core';
 import gapi from 'gapi-client';
+import {Router} from '@angular/router';
 
 import {HttpClient} from '@angular/common/http';
 
@@ -12,7 +13,8 @@ declare const gapi: any;
 })
 
 export class GoogleSigninComponent implements AfterViewInit, OnInit {
-
+  public router:Router;
+  
   public name = "Not Logged in!";
 
   private clientId:string = '625620388494-6buq49df4o5r1slgah33kgm3a7gbin23.apps.googleusercontent.com';
@@ -70,10 +72,12 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
           }, (data:any[]) => {
             console.log(data);
           });
-          gapi.auth2.getAuthInstance().disconnect();
+          //gapi.auth2.getAuthInstance().disconnect();
+
+          that.router.navigate(['../choose']);
+
         } else{
-          gapi.auth2.getAuthInstance().disconnect();
-          
+          gapi.auth2.getAuthInstance().disconnect(); 
         }
 
       }, function (error) {
@@ -90,13 +94,15 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
           that.name = "Not Logged in!";
           that.user = "";
           that.profile = "";
+          gapi.auth2.getAuthInstance().disconnect(); 
         });
       }, function (error) {
         console.log(JSON.stringify(error, undefined, 2));
       });
   }
 
-  constructor(private element: ElementRef, private http: HttpClient) {
+  constructor(private element: ElementRef, private http: HttpClient, private _router: Router) {
+    this.router = _router;
     console.log('ElementRef: ', this.element);
   }
 

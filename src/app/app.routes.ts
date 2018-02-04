@@ -1,5 +1,3 @@
-
-
 import { Routes } from '@angular/router';
 
 import {GoogleSigninComponent} from './google-signin/google-signin.component';
