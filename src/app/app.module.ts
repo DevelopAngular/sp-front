@@ -8,6 +8,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
 import {MatInputModule} from '@angular/material/input';
 //import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpClientModule} from '@angular/common/http';
 import {MatButtonModule} from '@angular/material/button';
 import {TeacherSearchComponent} from './teacher-search/teacher-search.component';
@@ -16,6 +17,7 @@ import {HallpassFormComponent} from './hallpass-form/hallpass-form.component';
 import {PassListComponent} from './pass-list/pass-list.component';
 import {MenuChooseComponent} from './menu-choose/menu-choose.component';
 import {RouterModule, Routes} from '@angular/router';
+import {DataService} from './data.service';
 
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
@@ -42,7 +44,8 @@ const appRoutes: Routes = [
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
-    //BrowserAnimationsModule,
+    NoopAnimationsModule,
+   // BrowserAnimationsModule,
     HttpClientModule,
     MatButtonModule,
     RouterModule.forRoot(
@@ -50,7 +53,7 @@ const appRoutes: Routes = [
       //{ enableTracing: true } // <-- debugging purposes only
     )
   ],
-  providers: [],
+  providers: [DataService],
   bootstrap: [AppComponent]
 })
 

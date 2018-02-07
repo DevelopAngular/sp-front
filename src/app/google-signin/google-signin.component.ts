@@ -3,6 +3,7 @@ import gapi from 'gapi-client';
 import {Router} from '@angular/router';
 
 import {HttpClient} from '@angular/common/http';
+import { DataService } from '../data.service';
 
 declare const gapi: any;
 
@@ -68,7 +69,8 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
           config.set("token", that.user.getAuthResponse().id_token);
 
           that.http.post('https://notify.letterday.info/auth/by-token/', config).subscribe((data:any[]) => {
-            that.barer = data["access_token"];
+            that.barer = '';
+            that.newBarer(data["access_token"]);
           }, (data:any[]) => {
             console.log(data);
           });
@@ -96,18 +98,25 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
           that.profile = "";
           gapi.auth2.getAuthInstance().disconnect(); 
         });
+        that.newBarer('');
       }, function (error) {
         console.log(JSON.stringify(error, undefined, 2));
       });
   }
 
-  constructor(private element: ElementRef, private http: HttpClient, private _router: Router) {
+
+  newBarer(newBarer:string){
+    console.log(newBarer);
+    this.data.updateBarer(newBarer);
+  }
+
+  constructor(private element: ElementRef, private http: HttpClient, private _router: Router, private data: DataService) {
     this.router = _router;
     console.log('ElementRef: ', this.element);
   }
 
   ngOnInit() {
-    
+
   }
 
   ngAfterViewInit() {
