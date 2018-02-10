@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data-service';
 import { Router } from '@angular/router';
-
+import { HallPass } from '../hallpass';
 @Component({
   selector: 'app-hallpass-form',
   templateUrl: './hallpass-form.component.html',
@@ -10,14 +10,15 @@ import { Router } from '@angular/router';
 export class HallpassFormComponent implements OnInit {
 
   
-  durs: string[] = ["5","10","15","30","≥45"];
+  durs: string[] = ["3", "5", "10", "15", "30","≥45"];
   public studentName: string = "John Tsting";
   public now: Date = new Date();
   public dateNow: any;
   public timeNow: any;
   public barer: string;
   public isLoggedIn: Boolean = false;
-
+  model = new HallPass('', '', '', '', '');
+  
   constructor(private dataService: DataService, private router: Router) {
 
       setInterval(() => {
@@ -34,6 +35,10 @@ export class HallpassFormComponent implements OnInit {
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
     if(this.barer == "")
       this.router.navigate(['../']);
+  }
+
+  newPass(){
+
   }
 
 }

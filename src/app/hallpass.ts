@@ -1,9 +1,10 @@
-export class Hallpass {
+export class HallPass {
     constructor(
         public to: string,
         public from: string,
-        public duration: number,
-        public auth: string
+        public duration: string,
+        public auth: string,
+        public description?: string
         ){
             
         }

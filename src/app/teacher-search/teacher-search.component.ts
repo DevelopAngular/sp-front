@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, Input } from '@angular/core';
 import {FormControl} from '@angular/forms';
 
 import {Observable} from 'rxjs/Observable';
@@ -18,6 +18,7 @@ export class Teacher {
    }
 }
 
+
 @Component({
   selector: 'app-teacher-search',
   templateUrl: './teacher-search.component.html',
@@ -28,7 +29,11 @@ export class TeacherSearchComponent implements AfterViewInit {
   filteredTeachers: Observable<any[]>;
   teachers: Teacher[] = [];
   barer: string;
-  
+  value: string;
+
+  @Input()
+  type:string;
+
   constructor(private http: HttpClient, private dataService:DataService) {
     this.teacherCtrl = new FormControl();
     this.filteredTeachers = this.teacherCtrl.valueChanges
@@ -49,8 +54,16 @@ export class TeacherSearchComponent implements AfterViewInit {
       console.log(this.teachers);
     });
   }
+
+  ngOnChanges(changes) {
+    this.updateRoomValue();
+  }
+
   filterTeachers(name: string) {
     return this.teachers.filter(teacher => teacher.name.toLowerCase().indexOf(name.toLowerCase()) != -1 || teacher.room.toLowerCase().indexOf(name.toLowerCase()) != -1);
   }
 
+  updateRoomValue(){
+    console.log(this.value);
+  }
 }

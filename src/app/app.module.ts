@@ -18,6 +18,7 @@ import {MenuChooseComponent} from './menu-choose/menu-choose.component';
 import {RouterModule, Routes} from '@angular/router';
 import { DataService } from './data-service';
 import { HallPassComponent } from './hall-pass/hall-pass.component';
+//import { HallPass } from './hallpass';
 
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
@@ -52,6 +53,7 @@ const appRoutes: Routes = [
       appRoutes
       //,{ enableTracing: true } // <-- debugging purposes only
     ),
+    //HallPass,
   ],
   providers: [DataService],
   bootstrap: [AppComponent]

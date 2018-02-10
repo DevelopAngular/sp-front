@@ -57,11 +57,11 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
           that.user = googleUser;
           that.profile = googleUser.getBasicProfile();
 
-          console.log('Token || ' + googleUser.getAuthResponse().id_token);
-          console.log('ID: ' + that.profile.getId());
-          console.log('Name: ' + that.profile.getName());
-          console.log('Image URL: ' + that.profile.getImageUrl());
-          console.log('Email: ' + that.profile.getEmail());
+          // console.log('Token || ' + googleUser.getAuthResponse().id_token);
+          // console.log('ID: ' + that.profile.getId());
+          // console.log('Name: ' + that.profile.getName());
+          // console.log('Image URL: ' + that.profile.getImageUrl());
+          // console.log('Email: ' + that.profile.getEmail());
 
           var gUser = {};
 
