@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, NgZone } from '@angular/core';
 
 import {AppComponent} from './app.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -16,6 +16,7 @@ import {HallpassFormComponent} from './hallpass-form/hallpass-form.component';
 import {PassListComponent} from './pass-list/pass-list.component';
 import {MenuChooseComponent} from './menu-choose/menu-choose.component';
 import {RouterModule, Routes} from '@angular/router';
+import { DataService } from './data-service';
 
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
@@ -42,15 +43,15 @@ const appRoutes: Routes = [
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
-    //BrowserAnimationsModule,
+    BrowserAnimationsModule,
     HttpClientModule,
     MatButtonModule,
     RouterModule.forRoot(
-      appRoutes//,
-      { enableTracing: true } // <-- debugging purposes only
-    )
+      appRoutes
+      //,{ enableTracing: true } // <-- debugging purposes only
+    ),
   ],
-  providers: [],
+  providers: [DataService],
   bootstrap: [AppComponent]
 })
 

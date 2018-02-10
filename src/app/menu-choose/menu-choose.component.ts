@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {Router} from '@angular/router';
+import { DataService } from '../data-service';
 
 @Component({
   selector: 'app-menu-choose',
@@ -7,15 +8,15 @@ import {Router} from '@angular/router';
   styleUrls: ['./menu-choose.component.css']
 })
 export class MenuChooseComponent implements OnInit {
-
-  public router: Router;
-
-  constructor(private _router: Router) {
-    this.router = _router;
+  private barer:string;
+  constructor(private dataService: DataService, private router: Router) {
+    
   }
 
   ngOnInit() {
-
+    this.dataService.currentBarer.subscribe(barer => this.barer = barer);
+    if(this.barer == "")
+      this.router.navigate(['../']);
   }
 
   goToList(){

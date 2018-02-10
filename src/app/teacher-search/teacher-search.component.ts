@@ -6,6 +6,7 @@ import {startWith} from 'rxjs/operators/startWith';
 import {map} from 'rxjs/operators/map';
 
 import {HttpClient} from '@angular/common/http';
+import { DataService } from '../data-service';
 
 export class Teacher {
   constructor(public id:string, public name: string, public campus:string, public room: string) {
@@ -26,7 +27,9 @@ export class TeacherSearchComponent implements AfterViewInit {
   teacherCtrl: FormControl;
   filteredTeachers: Observable<any[]>;
   teachers: Teacher[] = [];
-  constructor(private http: HttpClient) {
+  barer: string;
+  
+  constructor(private http: HttpClient, private dataService:DataService) {
     this.teacherCtrl = new FormControl();
     this.filteredTeachers = this.teacherCtrl.valueChanges
       .pipe(
@@ -36,7 +39,9 @@ export class TeacherSearchComponent implements AfterViewInit {
     }
 
   ngAfterViewInit() {
-    var config = {headers:{'Authorization' : 'Bearer ' +"SnzGRtuwsT19hFisz55fcYNkWte7ky"}}
+    this.dataService.currentBarer.subscribe(barer => this.barer = barer);
+    //console.log('Barer: ' +this.barer);
+    var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
     this.http.get('https://notify.letterday.info/api/methacton/v1/locations', config).subscribe((data:any[]) => {
       for(var i = 0; i < data.length; i++){
         this.teachers.push(new Teacher(data[i]["id"], data[i]["name"],data[i]["campus"], data[i]["room"]));

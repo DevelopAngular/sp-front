@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { DataService } from '../data-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-hallpass-form',
@@ -13,10 +15,10 @@ export class HallpassFormComponent implements OnInit {
   public now: Date = new Date();
   public dateNow: any;
   public timeNow: any;
-
+  public barer: string;
   public isLoggedIn: Boolean = false;
 
-  constructor() {
+  constructor(private dataService: DataService, private router: Router) {
 
       setInterval(() => {
         var nowish = new Date();
@@ -29,6 +31,9 @@ export class HallpassFormComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.dataService.currentBarer.subscribe(barer => this.barer = barer);
+    if(this.barer == "")
+      this.router.navigate(['../']);
   }
 
 }
