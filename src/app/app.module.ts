@@ -17,6 +17,7 @@ import {PassListComponent} from './pass-list/pass-list.component';
 import {MenuChooseComponent} from './menu-choose/menu-choose.component';
 import {RouterModule, Routes} from '@angular/router';
 import { DataService } from './data-service';
+import { HallPassComponent } from './hall-pass/hall-pass.component';
 
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
@@ -34,6 +35,7 @@ const appRoutes: Routes = [
     HallpassFormComponent,
     PassListComponent,
     MenuChooseComponent,
+    HallPassComponent,
   ],
   imports: [
     BrowserModule,

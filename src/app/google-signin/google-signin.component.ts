@@ -63,6 +63,16 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
           console.log('Image URL: ' + that.profile.getImageUrl());
           console.log('Email: ' + that.profile.getEmail());
 
+          var gUser = {};
+
+          gUser['token'] = googleUser.getAuthResponse().id_token;
+          gUser['id'] = that.profile.getId();
+          gUser['name'] = that.profile.getName();
+          gUser['imgUrl'] = that.profile.getImageUrl();
+          gUser['email'] = that.profile.getEmail();
+
+          that.dataService.updateGUser(gUser);
+
           if(that.profile.getEmail().endsWith("@student.methacton.org") || that.profile.getEmail().endsWith("@methacton.org")){
             that.name = that.profile.getName()
 
@@ -79,10 +89,7 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
             }, (data:any[]) => {
               console.log(data);
             });
-            //gapi.auth2.getAuthInstance().disconnect();            
-
-                  
-  
+            //gapi.auth2.getAuthInstance().disconnect();
           } else{
             gapi.auth2.getAuthInstance().disconnect(); 
           }
