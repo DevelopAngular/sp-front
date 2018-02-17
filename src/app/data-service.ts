@@ -9,6 +9,12 @@ export class DataService{
     gUserService = new BehaviorSubject<any>({});
     currentGUser = this.gUserService.asObservable();
 
+    toService = new BehaviorSubject<string>('');
+    currentTo = this.toService.asObservable();
+
+    fromService = new BehaviorSubject<string>('');
+    currentFrom = this.fromService.asObservable();
+
     constructor(){}
 
     updateBarer(barer: string){
@@ -17,5 +23,13 @@ export class DataService{
 
     updateGUser(gUser: any){
         this.gUserService.next(gUser);
+    }
+
+    updateTo(to: string){
+        this.toService.next(to);
+    }
+
+    updateFrom(from: string){
+        this.fromService.next(from);
     }
 }

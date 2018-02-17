@@ -5,3 +5,10 @@ app-hallpass-form{
 app-google-signin{
     visibility: visible;
 }
+
+.header{
+    color: white;
+    background-color:#252525;
+    text-align: center;
+
+}

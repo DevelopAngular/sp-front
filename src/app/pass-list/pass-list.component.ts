@@ -28,18 +28,18 @@ export class PassListComponent implements OnInit {
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
     if(this.barer == "")
       this.router.navigate(['../']);  
-  
-    this.dataService.currentGUser.subscribe(gUser => this.gUser = gUser);
+    else{
+      this.dataService.currentGUser.subscribe(gUser => this.gUser = gUser);
 
-    var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
-    this.http.get('https://notify.letterday.info/api/methacton/v1/hall_passes', config).subscribe((data:any[]) => {
-      for(var i = 0; i < data.length; i++){
-        console.log(data);
-        this.passes.push(new HallPass(data[i]["to_location"]["name"], data[i]["to_location"]["room"], data[i]["from_location"]["name"], data[i]["from_location"]["room"], data[i]["created"], data[i]["expiry_time"], data[i]["description"], data[i]["student"]["display_name"] ,data[i]["issuer"]["display_name"]));
-        console.log(this.passes);
-      }
-    });
-
+      var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
+      this.http.get('https://notify.letterday.info/api/methacton/v1/hall_passes', config).subscribe((data:any[]) => {
+        for(var i = 0; i < data.length; i++){
+          console.log(data);
+          this.passes.push(new HallPass(data[i]["to_location"]["name"], data[i]["to_location"]["room"], data[i]["from_location"]["name"], data[i]["from_location"]["room"], data[i]["created"], data[i]["expiry_time"], data[i]["description"], data[i]["student"]["display_name"] ,data[i]["issuer"]["display_name"]));
+          //console.log(this.passes);
+        }
+      });
+    }
   }
 
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, Input, SimpleChange } from '@angular/core';
 import {FormControl} from '@angular/forms';
 
 import {Observable} from 'rxjs/Observable';
@@ -29,8 +29,8 @@ export class TeacherSearchComponent implements AfterViewInit {
   filteredTeachers: Observable<any[]>;
   teachers: Teacher[] = [];
   barer: string;
-  value: string;
-
+  _value: string = "";
+  
   @Input()
   type:string;
 
@@ -51,19 +51,44 @@ export class TeacherSearchComponent implements AfterViewInit {
       for(var i = 0; i < data.length; i++){
         this.teachers.push(new Teacher(data[i]["id"], data[i]["name"],data[i]["campus"], data[i]["room"]));
       }
-      console.log(this.teachers);
+      //console.log(this.teachers);
     });
   }
 
-  ngOnChanges(changes) {
-    this.updateRoomValue();
+  get value(): string {
+    return this._value;
   }
+
+  set value(v: string) {
+    this._value = v;
+    console.log("Type: " +this.type +" Value: " +v)
+    if(v.indexOf("|") != -1){
+      let teacher: Teacher = this.filterTeachers(this.value.slice(0, this.value.indexOf(" |")))[0]
+      console.log("Type: " +this.type +" ID: " +teacher.id)
+      if(this.type == "'to'")
+        this.dataService.updateTo(teacher.id);
+      else
+        this.dataService.updateFrom(teacher.id);
+      }
+  }
+
+  // ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
+  //   let log: string[] = [];
+  //   for (let propName in changes) {
+  //     let changedProp = changes[propName];
+  //     let to = JSON.stringify(changedProp.currentValue);
+  //     if (changedProp.isFirstChange()) {
+  //       log.push(`Initial value of ${propName} set to ${to}`);
+  //     } else {
+  //       let from = JSON.stringify(changedProp.previousValue);
+  //       log.push(`${propName} changed from ${from} to ${to}`);
+  //     }
+  //   }
+  //   console.log(log);
+  // }
 
   filterTeachers(name: string) {
     return this.teachers.filter(teacher => teacher.name.toLowerCase().indexOf(name.toLowerCase()) != -1 || teacher.room.toLowerCase().indexOf(name.toLowerCase()) != -1);
   }
 
-  updateRoomValue(){
-    console.log(this.value);
-  }
 }

@@ -1,5 +1,6 @@
 <mat-form-field class="teacher-search">
-  <input matInput placeholder="Teacher or Room" aria-label="Teacher or Room" [matAutocomplete]="auto" [formControl]="teacherCtrl" [id]="type" [(ngModel)]="value"> <mat-autocomplete #auto="matAutocomplete">
+  <input matInput [(ngModel)]="value" placeholder="Teacher or Room" aria-label="Teacher or Room" [matAutocomplete]="auto" [formControl]="teacherCtrl" [id]="type" [(ngModel)]="value">
+  <mat-autocomplete #auto="matAutocomplete">
     <mat-option *ngFor="let teacher of filteredTeachers | async" [value]="teacher.nameRoom">
       <span class="teacher-option">
       {{ teacher.name }} <br> <small class="room-option">Room #: {{ teacher.room }}</small>

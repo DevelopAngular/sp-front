@@ -17,6 +17,9 @@ export class MenuChooseComponent implements OnInit {
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
     if(this.barer == "")
       this.router.navigate(['../']);
+    else{
+      
+    }
   }
 
   goToList(){

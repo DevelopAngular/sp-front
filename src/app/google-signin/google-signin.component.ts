@@ -3,7 +3,6 @@ import gapi from 'gapi-client';
 import {Router} from '@angular/router';
 
 import {HttpClient} from '@angular/common/http';
-import { setTimeout } from 'timers';
 import { NgZone } from '@angular/core';
 import { DataService } from '../data-service';
 
