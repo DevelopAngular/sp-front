@@ -61,7 +61,7 @@ export class TeacherSearchComponent implements AfterViewInit {
 
   set value(v: string) {
     this._value = v;
-    console.log("Type: " +this.type +" Value: " +v)
+    //console.log("Type: " +this.type +" Value: " +v)
     if(v.indexOf("|") != -1){
       let teacher: Teacher = this.filterTeachers(this.value.slice(0, this.value.indexOf(" |")))[0]
       console.log("Type: " +this.type +" ID: " +teacher.id)

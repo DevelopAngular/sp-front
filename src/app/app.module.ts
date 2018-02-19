@@ -7,6 +7,8 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
 import {MatInputModule} from '@angular/material/input';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatIconModule} from '@angular/material/icon';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpClientModule} from '@angular/common/http';
 import {MatButtonModule} from '@angular/material/button';
@@ -22,9 +24,7 @@ import { HallPassComponent } from './hall-pass/hall-pass.component';
 
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
-  { path: 'choose', component: MenuChooseComponent },
-  { path: 'form', component: HallpassFormComponent },
-  { path: 'list', component: PassListComponent }
+  { path: 'main', component: PassListComponent }
 ];
 
 
@@ -46,6 +46,8 @@ const appRoutes: Routes = [
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
+    MatTabsModule,
+    MatIconModule,
     BrowserAnimationsModule,
     HttpClientModule,
     MatButtonModule,

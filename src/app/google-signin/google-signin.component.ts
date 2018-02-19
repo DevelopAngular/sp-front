@@ -3,7 +3,7 @@ import gapi from 'gapi-client';
 import {Router} from '@angular/router';
 
 import {HttpClient} from '@angular/common/http';
-import { NgZone } from '@angular/core';
+import { NgZone, ViewChild } from '@angular/core';
 import { DataService } from '../data-service';
 
 declare const gapi: any;
@@ -35,7 +35,9 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
   public profile: any = "";
   public signedIn: boolean = false;
 
-  public googleInit() {
+  @ViewChild('signInButton') signInButton;
+
+  public googleInit(callback) {
     let that = this;
     gapi.load('auth2', function () {
       that.auth2 = gapi.auth2.init({
@@ -43,8 +45,14 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
         cookiepolicy: 'single_host_origin',
         scope: that.scope
       });
-      that.attachSignin(that.element.nativeElement.children[0]);
-      that.attachSignout(that.element.nativeElement.children[1]);
+      
+      that.attachSignin(that.signInButton.nativeElement);
+      
+      if(callback){
+        callback();
+      }
+
+      //that.attachSignout(that.element.nativeElement.children[1]);
     });
   }
   public attachSignin(element) {
@@ -53,8 +61,8 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
       function (googleUser) {
         that._ngZone.run(() => { 
           //console.log('Outside Done!');
-          that.user = googleUser;
-          that.profile = googleUser.getBasicProfile();
+          
+          
 
           // console.log('Token || ' + googleUser.getAuthResponse().id_token);
           // console.log('ID: ' + that.profile.getId());
@@ -62,33 +70,10 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
           // console.log('Image URL: ' + that.profile.getImageUrl());
           // console.log('Email: ' + that.profile.getEmail());
 
-          var gUser = {};
-
-          gUser['token'] = googleUser.getAuthResponse().id_token;
-          gUser['id'] = that.profile.getId();
-          gUser['name'] = that.profile.getName();
-          gUser['imgUrl'] = that.profile.getImageUrl();
-          gUser['email'] = that.profile.getEmail();
-
-          that.dataService.updateGUser(gUser);
+          
 
           if(that.profile.getEmail().endsWith("@student.methacton.org") || that.profile.getEmail().endsWith("@methacton.org")){
-            that.name = that.profile.getName()
-
-            var config = new FormData();
-
-            config.set("client_id", "OBHAOsPqcRsHd6fxd5TlVj9AtDnbg9hdDDOpbHl5");
-            config.set("provider", "google-auth-token");
-            config.set("token", that.user.getAuthResponse().id_token);
-
-            that.http.post('https://notify.letterday.info/auth/by-token/', config).subscribe((data:any[]) => {
-              that.barer = data["access_token"];
-              that.dataService.updateBarer(that.barer);
-              that.router.navigate(['/choose']);     
-            }, (data:any[]) => {
-              console.log(data);
-            });
-            //gapi.auth2.getAuthInstance().disconnect();
+            that.setUpUser(googleUser);
           } else{
             gapi.auth2.getAuthInstance().disconnect(); 
           }
@@ -124,7 +109,46 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
   }
 
   ngAfterViewInit() {
-    this.googleInit();
+    let that = this;
+    this.googleInit(() => {
+      this.auth2.currentUser.listen(function(googleUser){
+        that.setUpUser(googleUser);
+      });
+    });
+
+  }
+  
+  setUpUser(googleUser){
+
+    this.user = googleUser;
+    this.profile = googleUser.getBasicProfile();
+
+    var gUser = {};
+    
+    gUser['token'] = googleUser.getAuthResponse().id_token;
+    gUser['id'] = this.profile.getId();
+    gUser['name'] = this.profile.getName();
+    gUser['imgUrl'] = this.profile.getImageUrl();
+    gUser['email'] = this.profile.getEmail();
+
+    this.dataService.updateGUser(gUser);
+
+    this.name = this.profile.getName()
+
+    var config = new FormData();
+
+    config.set("client_id", "OBHAOsPqcRsHd6fxd5TlVj9AtDnbg9hdDDOpbHl5");
+    config.set("provider", "google-auth-token");
+    config.set("token", this.user.getAuthResponse().id_token);
+
+    this.http.post('https://notify.letterday.info/auth/by-token/', config).subscribe((data:any[]) => {
+      this.barer = data["access_token"];
+      this.dataService.updateBarer(this.barer);
+      this.router.navigate(['/main']);     
+    }, (data:any[]) => {
+      console.log(data);
+    });
+    //gapi.auth2.getAuthInstance().disconnect();
   }
 
 }

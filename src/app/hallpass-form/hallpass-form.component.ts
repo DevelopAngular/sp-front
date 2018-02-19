@@ -55,12 +55,12 @@ export class HallpassFormComponent implements OnInit {
     this.dataService.currentFrom.subscribe(from => this.from = from);
     console.log("From: " +this.from);
 
-    let data: object = {'student': this.userId, 'description': '', 'from_location': this.from, 'to_location': this.to, 'valid_time': this.duration};
+    let data: object = {'student': this.userId, 'description': '', 'from_location': this.from, 'to_location': this.to, 'valid_time': (parseInt(this.duration) * 60) +""};
 
     var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
     this.http.post('https://notify.letterday.info/api/methacton/v1/hall_passes',data, config).subscribe((data:any) => {
         console.log(data);
-        this.router.navigate(['../list']);
+        this.router.navigate(['../main']);
     });
   }
  

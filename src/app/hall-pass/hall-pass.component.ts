@@ -9,10 +9,17 @@ import { HallPass } from '../pass-list/pass-list.component';
 export class HallPassComponent implements OnInit {
   @Input()
   hallPass: HallPass;
-  
-  constructor() { }
+  startS: string;
+  endE: string;
+  constructor() { 
+  }
 
   ngOnInit() {
+    let s = new Date(this.hallPass.start);
+    this.startS = s.getMonth() + "/" +s.getDay() +"/" +s.getFullYear() +" - " +((s.getHours()>12)?s.getHours()-12:s.getHours()) +":" +((s.getMinutes()<10)?"0":"") +s.getMinutes() +"." +((s.getSeconds()<10)?"0":"") +s.getSeconds();
+    
+    s = new Date(this.hallPass.end);
+    this.endE = s.getMonth() + "/" +s.getDay() +"/" +s.getFullYear() +" - " +((s.getHours()>12)?s.getHours()-12:s.getHours()) +":" +((s.getMinutes()<10)?"0":"") +s.getMinutes() +"." +((s.getSeconds()<10)?"0":"") +s.getSeconds();
   }
 
 }
