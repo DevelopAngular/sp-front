@@ -115,7 +115,6 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
         that.setUpUser(googleUser);
       });
     });
-
   }
   
   setUpUser(googleUser){
