@@ -9,6 +9,12 @@ export class HallPass{
   }
 }
 
+export class Template{
+  constructor(public toTeacher:string, public toRoom: string, public fromTeacher:string, public fromRoom, public start:string, public end:string, public description:string, public student:string, public creator:string, public id:string) {
+
+  }
+}
+
 declare var document: any;
 
 @Component({
@@ -27,6 +33,7 @@ export class PassListComponent implements OnInit {
   private gUser:any;
   activePasses: HallPass[] = [];
   expiredPasses: HallPass[] = [];
+  templates: Template[] = [];
   public baseURL = "https://notify-messenger-notify-server-staging.lavanote.com/api/methacton/v1/";
   @ViewChild('scrollMe') private myScrollContainer: ElementRef;
   
@@ -57,18 +64,26 @@ export class PassListComponent implements OnInit {
           //console.log(this.passes);
         }
       });
-    }
-    setInterval(() => {
-      for(let pass of this.activePasses.slice()){
-        if(!this.isInFuture(new Date(pass.end))){
-          //console.log(new Date(pass.end));
-          this.activePasses.splice(this.activePasses.indexOf(pass), 1);
-          this.expiredPasses.push(pass);
-        }
-      }
-    }, 1000);
 
-    
+      var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
+      this.http.get(this.baseURL +'template_passes', config).subscribe((data:any[]) => {
+        for(var i = 0; i < data.length; i++){
+            console.log(data[i]);
+            this.templates.push(new Template(data[i]["to_location"]["name"], data[i]["to_location"]["room"], data[i]["from_location"]["name"], data[i]["from_location"]["room"], data[i]["start_time"], data[i]["end_time"], data[i]["description"], data[i]["students"][0]["display_name"], data[i]["issuer"]["display_name"], data[i]['id']));
+          //console.log(this.passes);
+        }
+      });
+
+      setInterval(() => {
+        for(let pass of this.activePasses.slice()){
+          if(!this.isInFuture(new Date(pass.end))){
+            //console.log(new Date(pass.end));
+            this.activePasses.splice(this.activePasses.indexOf(pass), 1);
+            this.expiredPasses.push(pass);
+          }
+        }
+      }, 1000);
+    }
   }
 
   isInFuture(date: Date){

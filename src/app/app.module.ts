@@ -20,6 +20,7 @@ import {MenuChooseComponent} from './menu-choose/menu-choose.component';
 import {RouterModule, Routes} from '@angular/router';
 import { DataService } from './data-service';
 import { HallPassComponent } from './hall-pass/hall-pass.component';
+import { TemplatePassComponent } from './template-pass/template-pass.component';
 //import { HallPass } from './hallpass';
 
 const appRoutes: Routes = [
@@ -37,6 +38,7 @@ const appRoutes: Routes = [
     PassListComponent,
     MenuChooseComponent,
     HallPassComponent,
+    TemplatePassComponent,
   ],
   imports: [
     BrowserModule,

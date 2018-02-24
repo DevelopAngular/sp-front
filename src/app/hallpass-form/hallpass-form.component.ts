@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data-service';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { HallPass } from '../hallpass';
-import { HttpClient } from '@angular/common/http';
+
 @Component({
   selector: 'app-hallpass-form',
   templateUrl: './hallpass-form.component.html',
@@ -68,7 +69,7 @@ export class HallpassFormComponent implements OnInit {
     console.log("Config: " +config);
     this.http.post(this.baseURL +'hall_passes', data, config).subscribe((data:any) => {
         console.log("Got data.");
-        this.router.navigate(['../main']);
+        //this.router.navigate(['../main']);
     });
     this.dataService.updateTab(1);
   }

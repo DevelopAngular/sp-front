@@ -3,6 +3,6 @@
         <mat-tab label="Make New Passes"><app-hallpass-form></app-hallpass-form></mat-tab>
         <mat-tab label="Active Passes"><button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button><app-hall-pass #scrollMe *ngFor="let pass of activePasses" [hallPass]="pass"></app-hall-pass></mat-tab>
         <mat-tab label="Expired Passes"><button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button><app-hall-pass #scrollMe *ngFor="let pass of expiredPasses" [hallPass]="pass"></app-hall-pass></mat-tab>
-        <mat-tab label="Passes For Approval"><app-hall-pass *ngFor="let pass of approvalPasses" [hallPass]="pass"></app-hall-pass></mat-tab>
+        <mat-tab label="Pending Passes"><button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button><app-template-pass *ngFor="let template of templates" [template]="template"></app-template-pass></mat-tab>
     </mat-tab-group>
 </div>
