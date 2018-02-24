@@ -30,7 +30,7 @@ export class TeacherSearchComponent implements AfterViewInit {
   teachers: Teacher[] = [];
   barer: string;
   _value: string = "";
-  baseURL = "https://notify-messenger-notify-server-staging.lavanote.com/";
+  baseURL = "https://notify-messenger-notify-server-staging.lavanote.com/api/methacton/v1/";
   @Input()
   type:string;
 
@@ -44,13 +44,16 @@ export class TeacherSearchComponent implements AfterViewInit {
     }
 
   ngAfterViewInit() {
+    //-= TODO =- disable and re-enable when locations are beign gotten and received.
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
     //console.log('Barer: ' +this.barer);
+    console.log("Getting locations");
     var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
     this.http.get(this.baseURL +'locations', config).subscribe((data:any[]) => {
       for(var i = 0; i < data.length; i++){
         this.teachers.push(new Teacher(data[i]["id"], data[i]["name"],data[i]["campus"], data[i]["room"]));
       }
+      console.log("Done getting teachers.");
       //console.log(this.teachers);
     });
   }

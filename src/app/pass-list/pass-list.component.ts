@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input, Output} from '@angular/core';
 import { DataService } from '../data-service';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -9,32 +9,44 @@ export class HallPass{
   }
 }
 
+declare var document: any;
+
 @Component({
   selector: 'app-pass-list',
   templateUrl: './pass-list.component.html',
   styleUrls: ['./pass-list.component.css']
 })
+
+
+
 export class PassListComponent implements OnInit {
+  @Input()
+  selectedIndex: any;
 
   private barer:string;
   private gUser:any;
   activePasses: HallPass[] = [];
   expiredPasses: HallPass[] = [];
+  public baseURL = "https://notify-messenger-notify-server-staging.lavanote.com/api/methacton/v1/";
+  @ViewChild('scrollMe') private myScrollContainer: ElementRef;
+  
   //approvalPasses: TemplatePass[] = [];
 
   constructor(private http: HttpClient, private dataService: DataService, private router: Router) {
     
   }
-
+  
   ngOnInit() {
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
+    this.dataService.currentTab.subscribe(selectedIndex => this.selectedIndex = selectedIndex);
+
     if(this.barer == "")
       this.router.navigate(['../']);  
     else{
       this.dataService.currentGUser.subscribe(gUser => this.gUser = gUser);
 
       var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
-      this.http.get('https://notify.letterday.info/api/methacton/v1/hall_passes', config).subscribe((data:any[]) => {
+      this.http.get(this.baseURL +'hall_passes', config).subscribe((data:any[]) => {
         for(var i = 0; i < data.length; i++){
           //console.log(data);
           let date: Date = new Date(data[i]["expiry_time"]);
@@ -55,6 +67,8 @@ export class PassListComponent implements OnInit {
         }
       }
     }, 1000);
+
+    
   }
 
   isInFuture(date: Date){
@@ -62,5 +76,32 @@ export class PassListComponent implements OnInit {
     //console.log("Now: " +now.valueOf());
     //console.log("Expiery: " +date.valueOf());
     return date.valueOf() >= now.valueOf();
+  }
+
+  toTop(){
+    //console.log("Going to top.");
+    try {
+      var interval = setInterval(() => {
+        if(!(document.scrollingElement.scrollTop < 1))
+          document.scrollingElement.scrollTop = document.scrollingElement.scrollTop - document.scrollingElement.scrollTop/10;
+        else
+          clearInterval(interval);
+      }, 15);
+    } catch(err) {
+      console.log("Error: " +err);
+    }    
+  }
+
+  tabChange(){
+    if(this.selectedIndex){
+      var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
+      this.http.get(this.baseURL +'hall_passes?active=true', config).subscribe((data:any[]) => {
+        let tempPasses:HallPass[] = [];
+        for(var i = 0; i < data.length; i++){
+          tempPasses.push(new HallPass(data[i]["to_location"]["name"], data[i]["to_location"]["room"], data[i]["from_location"]["name"], data[i]["from_location"]["room"], data[i]["created"], data[i]["expiry_time"], data[i]["description"], data[i]["student"]["display_name"], data[i]["issuer"]["display_name"]));
+        }
+        this.activePasses = tempPasses;
+      });
+    }
   }
 }

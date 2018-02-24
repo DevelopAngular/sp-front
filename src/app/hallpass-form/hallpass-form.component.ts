@@ -23,7 +23,7 @@ export class HallpassFormComponent implements OnInit {
   public from;
   public duration; //<- this is duration
   public gUser;
-  public baseURL = "https://notify-messenger-notify-server-staging.lavanote.com/";
+  public baseURL = "https://notify-messenger-notify-server-staging.lavanote.com/api/methacton/v1/";
   model = new HallPass('', '', '', '', '');
   
   constructor(private http: HttpClient, private dataService: DataService, private router: Router) {
@@ -56,13 +56,21 @@ export class HallpassFormComponent implements OnInit {
     this.dataService.currentFrom.subscribe(from => this.from = from);
     console.log("From: " +this.from);
 
-    let data: object = {'student': this.userId, 'description': '', 'from_location': this.from, 'to_location': this.to, 'valid_time': (parseInt(this.duration) * 60) +""};
-
+    let data: object = {
+                        'student': this.userId,
+                        'description': '',
+                        'from_location': this.from,
+                        'to_location': this.to,
+                        'valid_time': (parseInt(this.duration) * 60) +""
+                      };
+    console.log("Data: " +data['student']);
     var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
-    this.http.post(this.baseURL +'/hall_passes',data, config).subscribe((data:any) => {
-        console.log(data);
+    console.log("Config: " +config);
+    this.http.post(this.baseURL +'hall_passes', data, config).subscribe((data:any) => {
+        console.log("Got data.");
         this.router.navigate(['../main']);
     });
+    this.dataService.updateTab(1);
   }
  
   

@@ -34,6 +34,7 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
   public user: any = "";
   public profile: any = "";
   public signedIn: boolean = false;
+  public baseURL = "https://notify-messenger-notify-server-staging.lavanote.com/";
 
   @ViewChild('signInButton') signInButton;
 
@@ -118,7 +119,7 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
   }
   
   setUpUser(googleUser){
-
+    console.log("Setting up gUser");
     this.user = googleUser;
     this.profile = googleUser.getBasicProfile();
 
@@ -140,7 +141,7 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
     config.set("provider", "google-auth-token");
     config.set("token", this.user.getAuthResponse().id_token);
 
-    this.http.post('https://notify.letterday.info/auth/by-token/', config).subscribe((data:any[]) => {
+    this.http.post(this.baseURL +'auth/by-token', config).subscribe((data:any[]) => {
       this.barer = data["access_token"];
       this.dataService.updateBarer(this.barer);
       this.router.navigate(['/main']);     
@@ -148,6 +149,7 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
       console.log(data);
     });
     //gapi.auth2.getAuthInstance().disconnect();
+    console.log("Done setting up gUser.");
   }
 
 }

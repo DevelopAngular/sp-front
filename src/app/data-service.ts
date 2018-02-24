@@ -15,6 +15,9 @@ export class DataService{
     fromService = new BehaviorSubject<string>('');
     currentFrom = this.fromService.asObservable();
 
+    selectedTabService = new BehaviorSubject<any>('');
+    currentTab = this.selectedTabService.asObservable();
+
     constructor(){}
 
     updateBarer(barer: string){
@@ -31,5 +34,9 @@ export class DataService{
 
     updateFrom(from: string){
         this.fromService.next(from);
+    }
+
+    updateTab(tab: any){
+        this.selectedTabService.next(tab);
     }
 }
