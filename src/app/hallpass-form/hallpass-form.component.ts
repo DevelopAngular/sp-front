@@ -23,6 +23,7 @@ export class HallpassFormComponent implements OnInit {
   public from;
   public duration; //<- this is duration
   public gUser;
+  public baseURL = "https://notify-messenger-notify-server-staging.lavanote.com/";
   model = new HallPass('', '', '', '', '');
   
   constructor(private http: HttpClient, private dataService: DataService, private router: Router) {
@@ -58,7 +59,7 @@ export class HallpassFormComponent implements OnInit {
     let data: object = {'student': this.userId, 'description': '', 'from_location': this.from, 'to_location': this.to, 'valid_time': (parseInt(this.duration) * 60) +""};
 
     var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
-    this.http.post('https://notify.letterday.info/api/methacton/v1/hall_passes',data, config).subscribe((data:any) => {
+    this.http.post(this.baseURL +'/hall_passes',data, config).subscribe((data:any) => {
         console.log(data);
         this.router.navigate(['../main']);
     });
@@ -67,7 +68,7 @@ export class HallpassFormComponent implements OnInit {
   
   getUserId(){
     var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
-    this.http.get('https://notify.letterday.info/api/methacton/v1/users/@me', config).subscribe((data:any) => {
+    this.http.get(this.baseURL +'users/@me', config).subscribe((data:any) => {
         this.userId = data.id;
     });
   }

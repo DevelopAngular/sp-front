@@ -30,7 +30,7 @@ export class TeacherSearchComponent implements AfterViewInit {
   teachers: Teacher[] = [];
   barer: string;
   _value: string = "";
-  
+  baseURL = "https://notify-messenger-notify-server-staging.lavanote.com/";
   @Input()
   type:string;
 
@@ -47,7 +47,7 @@ export class TeacherSearchComponent implements AfterViewInit {
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
     //console.log('Barer: ' +this.barer);
     var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
-    this.http.get('https://notify.letterday.info/api/methacton/v1/locations', config).subscribe((data:any[]) => {
+    this.http.get(this.baseURL +'locations', config).subscribe((data:any[]) => {
       for(var i = 0; i < data.length; i++){
         this.teachers.push(new Teacher(data[i]["id"], data[i]["name"],data[i]["campus"], data[i]["room"]));
       }
