@@ -34,6 +34,7 @@ export class PassListComponent implements OnInit {
   activePasses: HallPass[] = [];
   expiredPasses: HallPass[] = [];
   templates: Template[] = [];
+  show:boolean = false;
   public baseURL = "https://notify-messenger-notify-server-staging.lavanote.com/api/methacton/v1/";
   @ViewChild('scrollMe') private myScrollContainer: ElementRef;
   
@@ -44,6 +45,7 @@ export class PassListComponent implements OnInit {
   }
   
   ngOnInit() {
+    this.show = false;
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
     this.dataService.currentTab.subscribe(selectedIndex => this.selectedIndex = selectedIndex);
 
@@ -53,7 +55,11 @@ export class PassListComponent implements OnInit {
       this.dataService.currentGUser.subscribe(gUser => this.gUser = gUser);
 
       var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
-      this.http.get(this.baseURL +'hall_passes', config).subscribe((data:any[]) => {
+      console.log("Getting from server.");
+      this.http.get(this.baseURL +'hall_passes?limit=50', config).subscribe((dataA:any[]) => {
+        let data = dataA['results'];
+        console.log("Server responded.");
+        console.log("Adding and displaying.");
         for(var i = 0; i < data.length; i++){
           //console.log(data);
           let date: Date = new Date(data[i]["expiry_time"]);
@@ -63,8 +69,9 @@ export class PassListComponent implements OnInit {
             this.expiredPasses.push(new HallPass(data[i]["to_location"]["name"], data[i]["to_location"]["room"], data[i]["from_location"]["name"], data[i]["from_location"]["room"], data[i]["created"], data[i]["expiry_time"], data[i]["description"], data[i]["student"]["display_name"], data[i]["issuer"]["display_name"]));
           //console.log(this.passes);
         }
+        console.log("Done adding and displaying.");
+        this.show = true;
       });
-
       var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
       this.http.get(this.baseURL +'template_passes', config).subscribe((data:any[]) => {
         for(var i = 0; i < data.length; i++){

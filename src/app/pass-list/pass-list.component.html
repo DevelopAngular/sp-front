@@ -1,8 +1,24 @@
 <div>
     <mat-tab-group [(selectedIndex)]="selectedIndex" (selectedTabChange)="tabChange()">
-        <mat-tab label="Make New Passes"><app-hallpass-form></app-hallpass-form></mat-tab>
-        <mat-tab label="Active Passes"><button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button><app-hall-pass #scrollMe *ngFor="let pass of activePasses" [hallPass]="pass"></app-hall-pass></mat-tab>
-        <mat-tab label="Expired Passes"><button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button><app-hall-pass #scrollMe *ngFor="let pass of expiredPasses" [hallPass]="pass"></app-hall-pass></mat-tab>
-        <mat-tab label="Pending Passes"><button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button><app-template-pass *ngFor="let template of templates" [template]="template"></app-template-pass></mat-tab>
+        <mat-tab label="Make New Passes">
+            <app-hallpass-form></app-hallpass-form>
+        </mat-tab>
+        <mat-tab label="Active Passes">
+            <app-hall-pass #scrollMe *ngFor="let pass of activePasses" [hallPass]="pass"></app-hall-pass>
+            <button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button>
+        </mat-tab>
+        <mat-tab label="Expired Passes">
+            <div *ngIf="show; else Loading;">
+                <app-hall-pass #scrollMe *ngFor="let pass of expiredPasses" [hallPass]="pass"></app-hall-pass>
+            </div>
+            <ng-template #Loading class="center">
+                <img src="../../assets/loading.gif" alt="Loading">
+            </ng-template>
+            <button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button>
+        </mat-tab>
+        <mat-tab label="Pending Passes">
+            <button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button>
+            <app-template-pass *ngFor="let template of templates" [template]="template"></app-template-pass>
+        </mat-tab>
     </mat-tab-group>
 </div>
