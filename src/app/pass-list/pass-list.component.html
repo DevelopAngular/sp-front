@@ -7,8 +7,8 @@
             <app-hall-pass #scrollMe *ngFor="let pass of activePasses" [hallPass]="pass"></app-hall-pass>
             <button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button>
         </mat-tab>
-        <mat-tab label="Expired Passes">
-            <div *ngIf="show; else Loading;">
+        <mat-tab label="Expired Passes" infiniteScroll (scrolled)="onScroll()">
+            <div *ngIf="show; else Loading;" >
                 <app-hall-pass #scrollMe *ngFor="let pass of expiredPasses" [hallPass]="pass"></app-hall-pass>
             </div>
             <ng-template #Loading class="center">

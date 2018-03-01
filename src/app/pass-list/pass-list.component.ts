@@ -35,6 +35,7 @@ export class PassListComponent implements OnInit {
   expiredPasses: HallPass[] = [];
   templates: Template[] = [];
   show:boolean = false;
+  currentOffset = 0;
   public baseURL = "https://notify-messenger-notify-server-staging.lavanote.com/api/methacton/v1/";
   @ViewChild('scrollMe') private myScrollContainer: ElementRef;
   
@@ -56,7 +57,7 @@ export class PassListComponent implements OnInit {
 
       var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
       console.log("Getting from server.");
-      this.http.get(this.baseURL +'hall_passes?limit=50', config).subscribe((dataA:any[]) => {
+      this.http.get(this.baseURL +'hall_passes?limit=10', config).subscribe((dataA:any[]) => {
         let data = dataA['results'];
         console.log("Server responded.");
         console.log("Adding and displaying.");
@@ -71,6 +72,7 @@ export class PassListComponent implements OnInit {
         }
         console.log("Done adding and displaying.");
         this.show = true;
+        this.currentOffset = 10;
       });
       var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
       this.http.get(this.baseURL +'template_passes', config).subscribe((data:any[]) => {
@@ -115,7 +117,8 @@ export class PassListComponent implements OnInit {
   }
 
   tabChange(){
-    if(this.selectedIndex){
+    if(this.selectedIndex == 1){
+      console.log(this.selectedIndex);
       var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
       this.http.get(this.baseURL +'hall_passes?active=true', config).subscribe((data:any[]) => {
         let tempPasses:HallPass[] = [];
@@ -123,6 +126,21 @@ export class PassListComponent implements OnInit {
           tempPasses.push(new HallPass(data[i]["to_location"]["name"], data[i]["to_location"]["room"], data[i]["from_location"]["name"], data[i]["from_location"]["room"], data[i]["created"], data[i]["expiry_time"], data[i]["description"], data[i]["student"]["display_name"], data[i]["issuer"]["display_name"]));
         }
         this.activePasses = tempPasses;
+      });
+    }
+  }
+
+  onScroll(){
+    console.log(document.scrollingElement.scrollTopMax - document.scrollingElement.scrollTop);
+    if((document.scrollingElement.scrollTopMax - document.scrollingElement.scrollTop) < 10){
+      console.log("Getting new passes.");
+      var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
+      this.http.get(this.baseURL +'hall_passes?active=false&limit=10&offset=' +this.currentOffset, config).subscribe((dataA:any[]) => {  
+        let data = dataA['results'];
+        for(var i = 0; i < data.length; i++){
+          this.expiredPasses.push(new HallPass(data[i]["to_location"]["name"], data[i]["to_location"]["room"], data[i]["from_location"]["name"], data[i]["from_location"]["room"], data[i]["created"], data[i]["expiry_time"], data[i]["description"], data[i]["student"]["display_name"], data[i]["issuer"]["display_name"]));
+        }
+        this.currentOffset = this.currentOffset + 10;
       });
     }
   }

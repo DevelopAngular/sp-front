@@ -21,6 +21,7 @@ import {RouterModule, Routes} from '@angular/router';
 import { DataService } from './data-service';
 import { HallPassComponent } from './hall-pass/hall-pass.component';
 import { TemplatePassComponent } from './template-pass/template-pass.component';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll'; 
 //import { HallPass } from './hallpass';
 
 const appRoutes: Routes = [
@@ -53,6 +54,7 @@ const appRoutes: Routes = [
     BrowserAnimationsModule,
     HttpClientModule,
     MatButtonModule,
+    InfiniteScrollModule,
     RouterModule.forRoot(
       appRoutes
       //,{ enableTracing: true } // <-- debugging purposes only
