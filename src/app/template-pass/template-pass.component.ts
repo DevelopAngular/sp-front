@@ -41,7 +41,7 @@ export class TemplatePassComponent implements OnInit {
       'template': this.template.id,
     };
     const data = await this.http.post(this.baseURL +'hall_passes', body, config).toPromise();
-    console.log("Data: " +data);
+    console.log("Data: " +JSON.stringify(data));
     this.dataService.updateTab(1);
   }
 

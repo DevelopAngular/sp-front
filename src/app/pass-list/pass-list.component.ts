@@ -131,7 +131,7 @@ export class PassListComponent implements OnInit {
   }
 
   onScroll(){
-    console.log(document.scrollingElement.scrollTopMax - document.scrollingElement.scrollTop);
+    //console.log(document.scrollingElement.scrollTopMax - document.scrollingElement.scrollTop);
     if((document.scrollingElement.scrollTopMax - document.scrollingElement.scrollTop) < 10){
       console.log("Getting new passes.");
       var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}

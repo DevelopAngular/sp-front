@@ -21,7 +21,8 @@ import {RouterModule, Routes} from '@angular/router';
 import { DataService } from './data-service';
 import { HallPassComponent } from './hall-pass/hall-pass.component';
 import { TemplatePassComponent } from './template-pass/template-pass.component';
-import { InfiniteScrollModule } from 'ngx-infinite-scroll'; 
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { StudentSearchComponent } from './student-search/student-search.component'; 
 //import { HallPass } from './hallpass';
 
 const appRoutes: Routes = [
@@ -40,6 +41,7 @@ const appRoutes: Routes = [
     MenuChooseComponent,
     HallPassComponent,
     TemplatePassComponent,
+    StudentSearchComponent,
   ],
   imports: [
     BrowserModule,

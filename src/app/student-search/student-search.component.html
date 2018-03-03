@@ -1,0 +1,10 @@
+<mat-form-field class="student-search">
+  <input matInput [(ngModel)]="value" placeholder="Student or ID" aria-label="Student or ID" [matAutocomplete]="auto" [formControl]="studentCtrl" [id]="type" [(ngModel)]="value">
+  <mat-autocomplete #auto="matAutocomplete">
+    <mat-option *ngFor="let student of filteredStudent | async" [value]="student.namesId">
+      <span class="id-option">
+      {{ student.name }} <br> <small class="id-option">Room #: {{ student.sId }}</small>
+      </span>
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>
