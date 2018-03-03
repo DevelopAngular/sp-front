@@ -1,32 +1,31 @@
 h1{
-    font-family: Roboto, sans-serif;
-    
-    text-align: center;
+  font-family: Roboto, sans-serif;
   
+  text-align: center;
 }
   
-  button{
-    margin-left: auto;
-    margin-right: auto;
-  
-    display: block;
-  
-    background-color: #E9E9E9;
-  }
-  
-  td{
-    padding: 10px;
-  }
-  
-  table, th, td {
-    border: 1px solid black;
-  }
-  
-  .table{
-    position: relative;
-  
-    background-color: #09ABD3;
-  
-    margin-left: auto;
-    margin-right: auto;
-  }
+button{
+  margin-left: auto;
+  margin-right: auto;
+
+  display: block;
+
+  background-color: #E9E9E9;
+}
+
+td{
+  padding: 10px;
+}
+
+table, th, td {
+  border: 1px solid black;
+}
+
+.table{
+  position: relative;
+
+  background-color: #09ABD3;
+
+  margin-left: auto;
+  margin-right: auto;
+}

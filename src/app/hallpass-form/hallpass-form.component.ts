@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data-service';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { HallPass } from '../hallpass';
 
 @Component({
   selector: 'app-hallpass-form',
@@ -25,7 +24,6 @@ export class HallpassFormComponent implements OnInit {
   public duration; //<- this is duration
   public gUser;
   public baseURL = "https://notify-messenger-notify-server-staging.lavanote.com/api/methacton/v1/";
-  model = new HallPass('', '', '', '', '');
   
   constructor(private http: HttpClient, private dataService: DataService, private router: Router) {
 

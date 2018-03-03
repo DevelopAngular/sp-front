@@ -11,11 +11,11 @@ import { DataService } from '../data-service';
 export class Teacher {
   constructor(public id:string, public name: string, public campus:string, public room: string) {
 
-   }
+  }
 
-   get nameRoom(){
-     return this.name +" | " +this.room;
-   }
+  get nameRoom(){
+    return this.name +" | " +this.room;
+  }
 }
 
 
@@ -74,22 +74,7 @@ export class TeacherSearchComponent implements AfterViewInit {
         this.dataService.updateFrom(teacher.id);
       }
   }
-
-  // ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
-  //   let log: string[] = [];
-  //   for (let propName in changes) {
-  //     let changedProp = changes[propName];
-  //     let to = JSON.stringify(changedProp.currentValue);
-  //     if (changedProp.isFirstChange()) {
-  //       log.push(`Initial value of ${propName} set to ${to}`);
-  //     } else {
-  //       let from = JSON.stringify(changedProp.previousValue);
-  //       log.push(`${propName} changed from ${from} to ${to}`);
-  //     }
-  //   }
-  //   console.log(log);
-  // }
-
+  
   filterTeachers(name: string) {
     return this.teachers.filter(teacher => teacher.name.toLowerCase().indexOf(name.toLowerCase()) != -1 || teacher.room.toLowerCase().indexOf(name.toLowerCase()) != -1);
   }

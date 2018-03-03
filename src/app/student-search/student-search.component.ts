@@ -11,11 +11,11 @@ import { DataService } from '../data-service';
 export class Student {
   constructor(public id:string, public name: string, public sId:string) {
 
-   }
+  }
 
-   get namesId(){
-     return this.name +" | " +this.sId;
-   }
+  get namesId(){
+    return this.name +" | " +this.sId;
+  }
 }
 
 @Component({
@@ -23,6 +23,7 @@ export class Student {
   templateUrl: './student-search.component.html',
   styleUrls: ['./student-search.component.css']
 })
+
 export class StudentSearchComponent implements AfterViewInit {
 
   studentCtrl: FormControl;

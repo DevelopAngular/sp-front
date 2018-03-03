@@ -11,6 +11,7 @@ export class HallPassComponent implements OnInit {
   hallPass: HallPass;
   startS: string;
   endE: string;
+  
   constructor() { 
   }
 

@@ -1,8 +1,8 @@
 import {Component, ElementRef, AfterViewInit, OnInit} from '@angular/core';
 import gapi from 'gapi-client';
-import {Router} from '@angular/router';
+import { Router } from '@angular/router';
 
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { NgZone, ViewChild } from '@angular/core';
 import { DataService } from '../data-service';
 
@@ -38,6 +38,23 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
 
   @ViewChild('signInButton') signInButton;
 
+  constructor(private element: ElementRef, private http: HttpClient, private router: Router, private _ngZone: NgZone, private dataService: DataService) {
+    //console.log('ElementRef: ', this.element);
+  }
+
+  ngOnInit() {
+
+  }
+
+  ngAfterViewInit() {
+    let that = this;
+    this.googleInit(() => {
+      this.auth2.currentUser.listen(function(googleUser){
+        that.setUpUser(googleUser);
+      });
+    });
+  }
+
   public googleInit(callback) {
     let that = this;
     gapi.load('auth2', function () {
@@ -56,22 +73,18 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
       //that.attachSignout(that.element.nativeElement.children[1]);
     });
   }
+
   public attachSignin(element) {
     let that = this;
     that.auth2.attachClickHandler(element, {},
       function (googleUser) {
         that._ngZone.run(() => { 
           //console.log('Outside Done!');
-          
-          
-
           // console.log('Token || ' + googleUser.getAuthResponse().id_token);
           // console.log('ID: ' + that.profile.getId());
           // console.log('Name: ' + that.profile.getName());
           // console.log('Image URL: ' + that.profile.getImageUrl());
           // console.log('Email: ' + that.profile.getEmail());
-
-          
 
           if(that.profile.getEmail().endsWith("@student.methacton.org") || that.profile.getEmail().endsWith("@methacton.org")){
             that.setUpUser(googleUser);
@@ -99,23 +112,6 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
       }, function (error) {
         console.log(JSON.stringify(error, undefined, 2));
       });
-  }
-
-  constructor(private element: ElementRef, private http: HttpClient, private router: Router, private _ngZone: NgZone, private dataService: DataService) {
-    //console.log('ElementRef: ', this.element);
-  }
-
-  ngOnInit() {
-
-  }
-
-  ngAfterViewInit() {
-    let that = this;
-    this.googleInit(() => {
-      this.auth2.currentUser.listen(function(googleUser){
-        that.setUpUser(googleUser);
-      });
-    });
   }
   
   setUpUser(googleUser){

@@ -3,7 +3,7 @@
   <mat-autocomplete #auto="matAutocomplete">
     <mat-option *ngFor="let student of filteredStudent | async" [value]="student.namesId">
       <span class="id-option">
-      {{ student.name }} <br> <small class="id-option">Room #: {{ student.sId }}</small>
+        {{ student.name }} <br> <small class="id-option">Room #: {{ student.sId }}</small>
       </span>
     </mat-option>
   </mat-autocomplete>

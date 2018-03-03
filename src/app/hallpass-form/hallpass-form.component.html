@@ -5,14 +5,14 @@
       <td><app-student-search></app-student-search></td>
     </tr>
     <tr>
-    <td>
-      <h1>From:</h1>
-      <app-teacher-search type="'from'"></app-teacher-search>
-    </td>
-    <td>
-      <h1>To:</h1>
-      <app-teacher-search type="'to'"></app-teacher-search>
-    </td>
+      <td>
+        <h1>From:</h1>
+        <app-teacher-search type="'from'"></app-teacher-search>
+      </td>
+      <td>
+        <h1>To:</h1>
+        <app-teacher-search type="'to'"></app-teacher-search>
+      </td>
     </tr>
     <tr>
       <td>
@@ -30,12 +30,12 @@
     </tr>
     <tr>
       <td>
-      <h1>Duration:</h1>
-      <mat-select [(ngModel)]="duration" name="duration"class="duration-field" placeholder="Duration" width="50">
-        <mat-option *ngFor="let dur of durs" [value]="dur">
-          <span>{{ dur }}</span>
-        </mat-option>
-      </mat-select>
+        <h1>Duration:</h1>
+        <mat-select [(ngModel)]="duration" name="duration"class="duration-field" placeholder="Duration" width="50">
+          <mat-option *ngFor="let dur of durs" [value]="dur">
+            <span>{{ dur }}</span>
+          </mat-option>
+        </mat-select>
       </td>
       <td>
         <button mat-raised-button (click)="newPass()"><h1>Submit</h1></button>

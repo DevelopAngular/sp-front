@@ -3,7 +3,7 @@
   <mat-autocomplete #auto="matAutocomplete">
     <mat-option *ngFor="let teacher of filteredTeachers | async" [value]="teacher.nameRoom">
       <span class="teacher-option">
-      {{ teacher.name }} <br> <small class="room-option">Room #: {{ teacher.room }}</small>
+        {{ teacher.name }} <br> <small class="room-option">Room #: {{ teacher.room }}</small>
       </span>
     </mat-option>
   </mat-autocomplete>

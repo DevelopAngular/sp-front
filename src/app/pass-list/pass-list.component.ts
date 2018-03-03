@@ -23,8 +23,6 @@ declare var document: any;
   styleUrls: ['./pass-list.component.css']
 })
 
-
-
 export class PassListComponent implements OnInit {
   @Input()
   selectedIndex: any;

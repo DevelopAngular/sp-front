@@ -9,6 +9,7 @@ import { DataService } from '../data-service';
 })
 export class MenuChooseComponent implements OnInit {
   private barer:string;
+  
   constructor(private dataService: DataService, private router: Router) {
     
   }
