@@ -23,7 +23,7 @@ export class TemplatePassComponent implements OnInit {
 
   ngOnInit() {
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
-    console.log(this.template.start);
+    //console.log(this.template.start);
     let s = new Date(this.template.start);
     this.startS = s.getMonth()+1 + "/" +s.getDate() +"/" +s.getFullYear() +" - " +((s.getHours()>12)?s.getHours()-12:s.getHours()) +":" +((s.getMinutes()<10)?"0":"") +s.getMinutes() +"." +((s.getSeconds()<10)?"0":"") +s.getSeconds();
     
@@ -33,11 +33,13 @@ export class TemplatePassComponent implements OnInit {
 
   async activate(){
     console.log("Activating");
-    const userId = await this.getUserId();
+    this.dataService.currentUserId.subscribe(userId => this.userId = userId);
+    console.log("UserId: " +this.userId);
+    //const userId = await this.getUserId();
     var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
     console.log("Config: " +config);
     let body: object = {
-      'student': userId,
+      'student': this.userId,
       'template': this.template.id,
     };
     const data = await this.http.post(this.baseURL +'hall_passes', body, config).toPromise();

@@ -53,7 +53,7 @@ export class TeacherSearchComponent implements AfterViewInit {
       for(var i = 0; i < data.length; i++){
         this.teachers.push(new Teacher(data[i]["id"], data[i]["name"],data[i]["campus"], data[i]["room"]));
       }
-      console.log("Done getting teachers.");
+      console.log("Done getting locations.");
       //console.log(this.teachers);
     });
   }
@@ -67,7 +67,7 @@ export class TeacherSearchComponent implements AfterViewInit {
     //console.log("Type: " +this.type +" Value: " +v)
     if(v.indexOf("|") != -1){
       let teacher: Teacher = this.filterTeachers(this.value.slice(0, this.value.indexOf(" |")))[0]
-      console.log("Type: " +this.type +" ID: " +teacher.id)
+      //console.log("Type: " +this.type +" ID: " +teacher.id)
       if(this.type == "'to'")
         this.dataService.updateTo(teacher.id);
       else

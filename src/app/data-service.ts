@@ -19,6 +19,9 @@ export class DataService{
     selectedTabService = new BehaviorSubject<any>('');
     currentTab = this.selectedTabService.asObservable();
 
+    userIdService = new BehaviorSubject<any>('');
+    currentUserId = this.userIdService.asObservable();
+
     constructor(){}
 
     updateBarer(barer: string){
@@ -39,5 +42,9 @@ export class DataService{
 
     updateTab(tab: any){
         this.selectedTabService.next(tab);
+    }
+
+    updateUserId(userId: any){
+        this.userIdService.next(userId);
     }
 }

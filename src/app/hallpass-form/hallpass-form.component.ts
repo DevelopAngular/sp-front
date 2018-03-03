@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data-service';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { HttpService } from '../http-service';
 
 @Component({
   selector: 'app-hallpass-form',
@@ -25,7 +26,7 @@ export class HallpassFormComponent implements OnInit {
   public gUser;
   public baseURL = "https://notify-messenger-notify-server-staging.lavanote.com/api/methacton/v1/";
   
-  constructor(private http: HttpClient, private dataService: DataService, private router: Router) {
+  constructor(private http: HttpClient, private newHttp: HttpService, private dataService: DataService, private router: Router) {
 
       setInterval(() => {
         var nowish = new Date();
@@ -42,7 +43,7 @@ export class HallpassFormComponent implements OnInit {
     if(this.barer == "")
       this.router.navigate(['../']);
     else{
-      this.getUserId();
+      this.setupUserId();
       this.dataService.currentGUser.subscribe(gUser => this.gUser = gUser);
       this.studentName = this.gUser['name'];
     }
@@ -51,10 +52,11 @@ export class HallpassFormComponent implements OnInit {
   newPass(){
     console.log("Making new pass");
     this.dataService.currentTo.subscribe(to => this.to = to);
-    console.log("To: " +this.to);
+    //console.log("To: " +this.to);
     this.dataService.currentFrom.subscribe(from => this.from = from);
-    console.log("From: " +this.from);
-
+    //console.log("From: " +this.from);
+    this.dataService.currentUserId.subscribe(userId => this.userId = userId);
+    console.log("UserId: " +this.userId);
     let data: object = {
                         'student': this.userId,
                         'description': '',
@@ -62,9 +64,9 @@ export class HallpassFormComponent implements OnInit {
                         'to_location': this.to,
                         'valid_time': (parseInt(this.duration) * 60) +""
                       };
-    console.log("Data: " +data['student']);
+    //console.log("Data: " +data['student']);
     var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
-    console.log("Config: " +config);
+    //console.log("Config: " +config);
     this.http.post(this.baseURL +'hall_passes', data, config).subscribe((data:any) => {
         console.log("Got data.");
         //this.router.navigate(['../main']);
@@ -73,10 +75,34 @@ export class HallpassFormComponent implements OnInit {
   }
  
   
+  async setupUserId(){
+    const tempId = await this.getUserId();
+    this.dataService.updateUserId(tempId);
+  }
+
+  
   getUserId(){
-    var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
-    this.http.get(this.baseURL +'users/@me', config).subscribe((data:any) => {
-        this.userId = data.id;
+    return new Promise((resolve, reject) => {
+      var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
+      this.http.get(this.baseURL +'users/@me', config).subscribe((data:any) => {
+          this.userId = data.id;
+          resolve(data.id);
+      }, reject);
     });
   }
+  
+  
+  // getUserId(){
+  //   console.log("Setting UserId.");
+  //   var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
+    
+  //   var newData = this.newHttp.get("api/methacton/v1/users/@me", config);
+
+  //   this.dataService.updateUserId(newData.id);
+  //   console.log("Dong setting UserId");
+  //   // this.http.get(this.baseURL +'users/@me', config).subscribe((data:any) => {
+  //   //   this.dataService.updateUserId(data.id);
+  //   // });
+    
+  // }
 }

@@ -54,11 +54,11 @@ export class PassListComponent implements OnInit {
       this.dataService.currentGUser.subscribe(gUser => this.gUser = gUser);
 
       var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
-      console.log("Getting from server.");
+      console.log("Getting passes from server.");
       this.http.get(this.baseURL +'hall_passes?limit=10', config).subscribe((dataA:any[]) => {
         let data = dataA['results'];
-        console.log("Server responded.");
-        console.log("Adding and displaying.");
+        console.log("Server responded with passes.");
+        console.log("Adding and displaying passes.");
         for(var i = 0; i < data.length; i++){
           //console.log(data);
           let date: Date = new Date(data[i]["expiry_time"]);
@@ -68,14 +68,14 @@ export class PassListComponent implements OnInit {
             this.expiredPasses.push(new HallPass(data[i]["to_location"]["name"], data[i]["to_location"]["room"], data[i]["from_location"]["name"], data[i]["from_location"]["room"], data[i]["created"], data[i]["expiry_time"], data[i]["description"], data[i]["student"]["display_name"], data[i]["issuer"]["display_name"]));
           //console.log(this.passes);
         }
-        console.log("Done adding and displaying.");
+        console.log("Done adding and displaying passes.");
         this.show = true;
         this.currentOffset = 10;
       });
       var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
       this.http.get(this.baseURL +'template_passes', config).subscribe((data:any[]) => {
         for(var i = 0; i < data.length; i++){
-            console.log(data[i]);
+            //console.log(data[i]);
             this.templates.push(new Template(data[i]["to_location"]["name"], data[i]["to_location"]["room"], data[i]["from_location"]["name"], data[i]["from_location"]["room"], data[i]["start_time"], data[i]["end_time"], data[i]["description"], data[i]["students"][0]["display_name"], data[i]["issuer"]["display_name"], data[i]['id']));
           //console.log(this.passes);
         }

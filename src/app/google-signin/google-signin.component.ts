@@ -142,9 +142,10 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
       this.dataService.updateBarer(this.barer);
       this.router.navigate(['/main']);     
     }, (data:any[]) => {
-      console.log(data);
+      //console.log(data);
     });
     //gapi.auth2.getAuthInstance().disconnect();
+    //console.log("Done setting up gUser.");
     console.log("Done setting up gUser.");
   }
 

@@ -8,8 +8,12 @@ export class HttpService{
 
     }
     
-    get(url:string, body, config){
-
+    get(url, config){
+        let out;
+        this.http.get(baseURL + url, config).subscribe((data) => {  
+            out = data;
+        });
+        return out;
     }
 
     post(url:string, body, config){
