@@ -35,7 +35,6 @@ export class TemplatePassComponent implements OnInit {
     console.log("Activating");
     this.dataService.currentUserId.subscribe(userId => this.userId = userId);
     console.log("UserId: " +this.userId);
-    //const userId = await this.getUserId();
     var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
     console.log("Config: " +config);
     let body: object = {
@@ -46,15 +45,4 @@ export class TemplatePassComponent implements OnInit {
     console.log("Data: " +JSON.stringify(data));
     this.dataService.updateTab(1);
   }
-
-  getUserId(){
-    return new Promise((resolve, reject) => {
-      var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
-      this.http.get(this.baseURL +'users/@me', config).subscribe((data:any) => {
-          this.userId = data.id;
-          resolve(data.id);
-      }, reject);
-    });
-  }
-
 }
