@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data-service';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { HttpService } from '../http-service';
 
@@ -24,9 +23,8 @@ export class HallpassFormComponent implements OnInit {
   public from;
   public duration; //<- this is duration
   public gUser;
-  public baseURL = "https://notify-messenger-notify-server-staging.lavanote.com/api/methacton/v1/";
   
-  constructor(private http: HttpClient, private newHttp: HttpService, private dataService: DataService, private router: Router) {
+  constructor(private http: HttpService, private newHttp: HttpService, private dataService: DataService, private router: Router) {
 
       setInterval(() => {
         var nowish = new Date();
@@ -67,7 +65,7 @@ export class HallpassFormComponent implements OnInit {
     //console.log("Data: " +data['student']);
     var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
     //console.log("Config: " +config);
-    this.http.post(this.baseURL +'hall_passes', data, config).subscribe((data:any) => {
+    this.http.post('api/methacton/v1/hall_passes', data, config).subscribe((data:any) => {
         console.log("Got data.");
         //this.router.navigate(['../main']);
     });
@@ -84,7 +82,7 @@ export class HallpassFormComponent implements OnInit {
   getUserId(){
     return new Promise((resolve, reject) => {
       var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
-      this.http.get(this.baseURL +'users/@me', config).subscribe((data:any) => {
+      this.http.get('api/methacton/v1/users/@me', config).subscribe((data:any) => {
           this.userId = data.id;
           resolve(data.id);
       }, reject);

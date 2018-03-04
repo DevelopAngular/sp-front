@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
 
 const baseURL:string = "https://notify-messenger-notify-server-staging.lavanote.com/";
 @Injectable()
@@ -8,15 +9,15 @@ export class HttpService{
 
     }
     
-    get(url, config){
-        let out;
-        this.http.get(baseURL + url, config).subscribe((data) => {  
-            out = data;
-        });
-        return out;
+    get<T>(url, config): Observable<T> {
+        const response: Observable<any> = this.http.get(baseURL + url, config);
+        return response;
     }
 
     post(url:string, body, config){
-
+        if(body == "")
+            return this.http.post(baseURL + url, config);
+        else
+            return this.http.post(baseURL + url, body, config);
     }
 }

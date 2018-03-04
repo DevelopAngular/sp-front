@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, Input, Output} from '@angular/core';
 import { DataService } from '../data-service';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { HttpService } from '../http-service';
 
 export class HallPass{
   constructor(public toTeacher:string, public toRoom: string, public fromTeacher:string, public fromRoom, public start:string, public end:string, public description:string, public student:string, public creator:string) {
@@ -34,12 +34,12 @@ export class PassListComponent implements OnInit {
   templates: Template[] = [];
   show:boolean = false;
   currentOffset = 0;
-  public baseURL = "https://notify-messenger-notify-server-staging.lavanote.com/api/methacton/v1/";
+
   @ViewChild('scrollMe') private myScrollContainer: ElementRef;
   
   //approvalPasses: TemplatePass[] = [];
 
-  constructor(private http: HttpClient, private dataService: DataService, private router: Router) {
+  constructor(private http: HttpService, private dataService: DataService, private router: Router) {
     
   }
   
@@ -55,7 +55,7 @@ export class PassListComponent implements OnInit {
 
       var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
       console.log("Getting passes from server.");
-      this.http.get(this.baseURL +'hall_passes?limit=10', config).subscribe((dataA:any[]) => {
+      this.http.get('api/methacton/v1/hall_passes?limit=10', config).subscribe((dataA:any) => {
         let data = dataA['results'];
         console.log("Server responded with passes.");
         console.log("Adding and displaying passes.");
@@ -73,7 +73,7 @@ export class PassListComponent implements OnInit {
         this.currentOffset = 10;
       });
       var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
-      this.http.get(this.baseURL +'template_passes', config).subscribe((data:any[]) => {
+      this.http.get('api/methacton/v1/template_passes', config).subscribe((data:any) => {
         for(var i = 0; i < data.length; i++){
             //console.log(data[i]);
             this.templates.push(new Template(data[i]["to_location"]["name"], data[i]["to_location"]["room"], data[i]["from_location"]["name"], data[i]["from_location"]["room"], data[i]["start_time"], data[i]["end_time"], data[i]["description"], data[i]["students"][0]["display_name"], data[i]["issuer"]["display_name"], data[i]['id']));
@@ -118,11 +118,12 @@ export class PassListComponent implements OnInit {
     if(this.selectedIndex == 1){
       console.log(this.selectedIndex);
       var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
-      this.http.get(this.baseURL +'hall_passes?active=true', config).subscribe((data:any[]) => {
+      this.http.get('api/methacton/v1/hall_passes?active=true', config).subscribe((data:any) => {
         let tempPasses:HallPass[] = [];
         for(var i = 0; i < data.length; i++){
           tempPasses.push(new HallPass(data[i]["to_location"]["name"], data[i]["to_location"]["room"], data[i]["from_location"]["name"], data[i]["from_location"]["room"], data[i]["created"], data[i]["expiry_time"], data[i]["description"], data[i]["student"]["display_name"], data[i]["issuer"]["display_name"]));
         }
+        console.log("TempPases: " +tempPasses);
         this.activePasses = tempPasses;
       });
     }
@@ -133,7 +134,7 @@ export class PassListComponent implements OnInit {
     if((document.scrollingElement.scrollTopMax - document.scrollingElement.scrollTop) < 10){
       console.log("Getting new passes.");
       var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
-      this.http.get(this.baseURL +'hall_passes?active=false&limit=10&offset=' +this.currentOffset, config).subscribe((dataA:any[]) => {  
+      this.http.get('api/methacton/v1/hall_passes?active=false&limit=10&offset=' +this.currentOffset, config).subscribe((dataA:any) => {  
         let data = dataA['results'];
         for(var i = 0; i < data.length; i++){
           this.expiredPasses.push(new HallPass(data[i]["to_location"]["name"], data[i]["to_location"]["room"], data[i]["from_location"]["name"], data[i]["from_location"]["room"], data[i]["created"], data[i]["expiry_time"], data[i]["description"], data[i]["student"]["display_name"], data[i]["issuer"]["display_name"]));

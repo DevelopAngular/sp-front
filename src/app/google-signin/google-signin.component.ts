@@ -1,10 +1,10 @@
 import {Component, ElementRef, AfterViewInit, OnInit} from '@angular/core';
 import gapi from 'gapi-client';
 import { Router } from '@angular/router';
-
-import { HttpClient } from '@angular/common/http';
 import { NgZone, ViewChild } from '@angular/core';
+
 import { DataService } from '../data-service';
+import { HttpService } from '../http-service';
 
 declare const gapi: any;
 
@@ -34,11 +34,10 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
   public user: any = "";
   public profile: any = "";
   public signedIn: boolean = false;
-  public baseURL = "https://notify-messenger-notify-server-staging.lavanote.com/";
 
   @ViewChild('signInButton') signInButton;
 
-  constructor(private element: ElementRef, private http: HttpClient, private router: Router, private _ngZone: NgZone, private dataService: DataService) {
+  constructor(private element: ElementRef, private http: HttpService, private router: Router, private _ngZone: NgZone, private dataService: DataService) {
     //console.log('ElementRef: ', this.element);
   }
 
@@ -137,16 +136,18 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
     config.set("provider", "google-auth-token");
     config.set("token", this.user.getAuthResponse().id_token);
 
-    this.http.post(this.baseURL +'auth/by-token', config).subscribe((data:any[]) => {
+    this.http.post('auth/by-token', "", config).subscribe((data:any) => {
       this.barer = data["access_token"];
+      //console.log(this.barer);
       this.dataService.updateBarer(this.barer);
-      this.router.navigate(['/main']);     
+      this.router.navigate(['/main']);
+      console.log("Done setting up gUser.");  
     }, (data:any[]) => {
-      //console.log(data);
+      console.log(data);
     });
     //gapi.auth2.getAuthInstance().disconnect();
     //console.log("Done setting up gUser.");
-    console.log("Done setting up gUser.");
+    
   }
 
 }
