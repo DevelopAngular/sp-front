@@ -23,7 +23,8 @@ import { HttpService } from './http-service';
 import { HallPassComponent } from './hall-pass/hall-pass.component';
 import { TemplatePassComponent } from './template-pass/template-pass.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
-import { StudentSearchComponent } from './student-search/student-search.component'; 
+import { StudentSearchComponent } from './student-search/student-search.component';
+import { AccountComponent } from './account/account.component'; 
 //import { HallPass } from './hallpass';
 
 const appRoutes: Routes = [
@@ -43,6 +44,7 @@ const appRoutes: Routes = [
     HallPassComponent,
     TemplatePassComponent,
     StudentSearchComponent,
+    AccountComponent,
   ],
   imports: [
     BrowserModule,

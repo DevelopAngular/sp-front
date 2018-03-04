@@ -18,7 +18,6 @@ export class Teacher {
   }
 }
 
-
 @Component({
   selector: 'app-teacher-search',
   templateUrl: './teacher-search.component.html',
