@@ -87,7 +87,16 @@ export class StudentSearchComponent implements AfterViewInit {
   }
 
   convertToStudents(json:any[]): Student[] {
-    return json.map(item => new Student(item["id"], item["display_name"]));
+    let out:Student[] = [];
+    for(var i = 0; i < json.length; i++){
+      if(json[i]['rank'] > 0){
+        out.push(new Student(json[i]['id'], json[i]['display_name']))
+      } else{
+        return out;
+      }
+      return out;
+    }
+    //return json.map(item => new Student(item["id"], item["display_name"]));
   }
 
 }
