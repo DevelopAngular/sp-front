@@ -3,19 +3,24 @@ import {FormControl} from '@angular/forms';
 
 import {Observable} from 'rxjs/Observable';
 import {startWith} from 'rxjs/operators/startWith';
+import 'rxjs/add/observable/fromPromise';
+import 'rxjs/add/observable/of';
 import {map} from 'rxjs/operators/map';
+import {mergeMap} from 'rxjs/operators/mergeMap';
 
-import {HttpClient} from '@angular/common/http';
 import { DataService } from '../data-service';
+import { HttpService } from '../http-service';
 
 export class Student {
-  constructor(public id:string, public name: string, public sId:string) {
+  constructor(public id:string, public name: string) {
 
   }
+}
 
-  get namesId(){
-    return this.name +" | " +this.sId;
-  }
+function wrapper<T>(thing: Observable<T>): Promise<T> {
+  return new Promise((resolve, reject) => {
+    thing.subscribe(resolve, reject);
+  });
 }
 
 @Component({
@@ -31,26 +36,32 @@ export class StudentSearchComponent implements AfterViewInit {
   students: Student[] = [];
   barer: string;
   _value: string = "";
-  baseURL = "https://notify-messenger-notify-server-staging.lavanote.com/api/methacton/v1/";
 
-  constructor(private http: HttpClient, private dataService:DataService) {
+  constructor(private http: HttpService, private dataService:DataService) {
     this.studentCtrl = new FormControl();
     this.filteredStudents = this.studentCtrl.valueChanges
       .pipe(
         startWith(''),
-        map(student => student ? this.filterStudents(student) : this.students.slice())
+        mergeMap(student => student ? Observable.fromPromise((async () => {
+          
+          const students = await this.filterStudents(student)
+
+          const convStudents = this.convertToStudents(students);
+          
+          return convStudents;
+        })()) : Observable.of(this.students.slice()))
       );
-    }
+  }
 
   ngAfterViewInit() {
     //-= TODO =- disable and re-enable when locations are beign gotten and received.
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
     //console.log('Barer: ' +this.barer);
     console.log("Getting locations");
-    var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
-    this.http.get(this.baseURL +'locations', config).subscribe((data:any[]) => {
+    var config = {headers:{'Authorization' : 'Bearer ' +this.barer}};
+    this.http.get('api/methacton/v1/users?is_staff=false', config).subscribe((data:any) => {
       for(var i = 0; i < data.length; i++){
-        this.students.push(new Student(data[i]["id"], data[i]["name"], data[i]["campus"]));
+        this.students.push(new Student(data[i]["id"], data[i]["display_name"]));
       }
       console.log("Done getting Students.");
       //console.log(this.teachers);
@@ -63,15 +74,20 @@ export class StudentSearchComponent implements AfterViewInit {
 
   set value(v: string) {
     this._value = v;
-    //console.log("Type: " +this.type +" Value: " +v)
-    if(v.indexOf("|") != -1){
-      let student: Student = this.filterStudents(this.value.slice(0, this.value.indexOf(" |")))[0]
-    }
-      //Use DataService to update list of selected students.
+    //console.log("Value: " +v)
+    //Use DataService to update list of selected students.
   }
 
-  filterStudents(name: string) {
-    return this.students.filter(student => student.name.toLowerCase().indexOf(name.toLowerCase()) != -1 || student.sId.toLowerCase().indexOf(name.toLowerCase()) != -1);
+  async filterStudents(name: string): Promise<any[]> {
+      let out:any[] = [];
+      var config = {headers:{'Authorization' : 'Bearer ' +this.barer}};
+      const data = await this.http.get<any[]>('api/methacton/v1/users?is_staff=false&search=' +encodeURI(name), config).toPromise();
+      return data;
+     
+  }
+
+  convertToStudents(json:any[]): Student[] {
+    return json.map(item => new Student(item["id"], item["display_name"]));
   }
 
 }

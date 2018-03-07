@@ -83,7 +83,9 @@ export class HallpassFormComponent implements OnInit {
   
   getUserId(){
     return new Promise((resolve, reject) => {
+
       var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
+      
       this.http.get(this.baseURL +'users/@me', config).subscribe((data:any) => {
           this.userId = data.id;
           resolve(data.id);

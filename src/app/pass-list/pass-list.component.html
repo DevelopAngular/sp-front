@@ -20,5 +20,8 @@
             <button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button>
             <app-template-pass *ngFor="let template of templates" [template]="template"></app-template-pass>
         </mat-tab>
+        <mat-tab label="Manage Account">
+            <app-account></app-account>
+        </mat-tab>
     </mat-tab-group>
 </div>

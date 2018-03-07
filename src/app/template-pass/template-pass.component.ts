@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Template } from '../pass-list/pass-list.component';
 import { DataService } from '../data-service';
-import { HttpClient } from '@angular/common/http';
+import { HttpService } from '../http-service';
 
 @Component({
   selector: 'app-template-pass',
@@ -17,9 +17,7 @@ export class TemplatePassComponent implements OnInit {
   barer:string;
   userId:string;
 
-  public baseURL = "https://notify-messenger-notify-server-staging.lavanote.com/api/methacton/v1/";
-
-  constructor(private http: HttpClient, private dataService: DataService) { }
+  constructor(private http: HttpService, private dataService: DataService) { }
 
   ngOnInit() {
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
@@ -41,7 +39,7 @@ export class TemplatePassComponent implements OnInit {
       'student': this.userId,
       'template': this.template.id,
     };
-    const data = await this.http.post(this.baseURL +'hall_passes', body, config).toPromise();
+    const data = await this.http.post('api/methacton/v1/hall_passes', body, config).toPromise();
     console.log("Data: " +JSON.stringify(data));
     this.dataService.updateTab(1);
   }

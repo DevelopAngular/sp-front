@@ -1,9 +1,9 @@
 <mat-form-field class="student-search">
-  <input matInput [(ngModel)]="value" placeholder="Student or ID" aria-label="Student or ID" [matAutocomplete]="auto" [formControl]="studentCtrl" [id]="type" [(ngModel)]="value">
+  <input matInput [(ngModel)]="value" placeholder="Student Name" aria-label="Student Name" [matAutocomplete]="auto" [formControl]="studentCtrl" [id]="type" [(ngModel)]="value">
   <mat-autocomplete #auto="matAutocomplete">
-    <mat-option *ngFor="let student of filteredStudent | async" [value]="student.namesId">
-      <span class="id-option">
-        {{ student.name }} <br> <small class="id-option">Room #: {{ student.sId }}</small>
+    <mat-option *ngFor="let student of filteredStudents | async" [value]="student.name">
+      <span>
+        {{ student.name }}
       </span>
     </mat-option>
   </mat-autocomplete>

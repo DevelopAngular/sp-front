@@ -5,8 +5,8 @@ import {Observable} from 'rxjs/Observable';
 import {startWith} from 'rxjs/operators/startWith';
 import {map} from 'rxjs/operators/map';
 
-import {HttpClient} from '@angular/common/http';
 import { DataService } from '../data-service';
+import { HttpService } from '../http-service';
 
 export class Teacher {
   constructor(public id:string, public name: string, public campus:string, public room: string) {
@@ -17,7 +17,6 @@ export class Teacher {
     return this.name +" | " +this.room;
   }
 }
-
 
 @Component({
   selector: 'app-teacher-search',
@@ -30,11 +29,10 @@ export class TeacherSearchComponent implements AfterViewInit {
   teachers: Teacher[] = [];
   barer: string;
   _value: string = "";
-  baseURL = "https://notify-messenger-notify-server-staging.lavanote.com/api/methacton/v1/";
   @Input()
   type:string;
 
-  constructor(private http: HttpClient, private dataService:DataService) {
+  constructor(private http: HttpService, private dataService:DataService) {
     this.teacherCtrl = new FormControl();
     this.filteredTeachers = this.teacherCtrl.valueChanges
       .pipe(
@@ -49,7 +47,7 @@ export class TeacherSearchComponent implements AfterViewInit {
     //console.log('Barer: ' +this.barer);
     console.log("Getting locations");
     var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
-    this.http.get(this.baseURL +'locations', config).subscribe((data:any[]) => {
+    this.http.get('api/methacton/v1/locations', config).subscribe((data:any) => {
       for(var i = 0; i < data.length; i++){
         this.teachers.push(new Teacher(data[i]["id"], data[i]["name"],data[i]["campus"], data[i]["room"]));
       }
