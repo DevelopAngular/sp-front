@@ -5,9 +5,11 @@ import {Observable} from 'rxjs/Observable';
 import {startWith} from 'rxjs/operators/startWith';
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/observable/of';
-import {map} from 'rxjs/operators/map';
+import {map, filter} from 'rxjs/operators';
 import {mergeMap} from 'rxjs/operators/mergeMap';
-
+import { of } from 'rxjs/observable/of';
+import { Response } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { DataService } from '../data-service';
 import { HttpService } from '../http-service';
 
@@ -36,8 +38,12 @@ export class StudentSearchComponent implements AfterViewInit {
   students: Student[] = [];
   barer: string;
   _value: string = "";
+  selectedStudents: Student[] = [];
 
-  constructor(private http: HttpService, private dataService:DataService) {
+  @Input()
+  selectedId;
+
+  constructor(private ahttp: HttpClient, private http: HttpService, private dataService:DataService) {
     this.studentCtrl = new FormControl();
     this.filteredStudents = this.studentCtrl.valueChanges
       .pipe(
@@ -61,7 +67,9 @@ export class StudentSearchComponent implements AfterViewInit {
     var config = {headers:{'Authorization' : 'Bearer ' +this.barer}};
     this.http.get('api/methacton/v1/users?is_staff=false', config).subscribe((data:any) => {
       for(var i = 0; i < data.length; i++){
-        this.students.push(new Student(data[i]["id"], data[i]["display_name"]));
+        for(var j = 0; j < 300; j++){
+          this.students.push(new Student(data[i]["id"], data[i]["display_name"] +j));
+        }
       }
       console.log("Done getting Students.");
       //console.log(this.teachers);
@@ -86,6 +94,18 @@ export class StudentSearchComponent implements AfterViewInit {
      
   }
 
+  asyncOnAdding(tag): Observable<any> {
+    console.log(tag);
+    //this.selectedStudents.push(new Student(tag['id'], tag['name']));
+    console.log(this.barer);
+    return of(tag).pipe(filter(() => true));
+  }
+
+  onRemoving(tag): Observable<any> {
+    console.log(tag);
+    return of(tag).pipe(filter(() => true));
+  }
+
   convertToStudents(json:any[]): Student[] {
     let out:Student[] = [];
     for(var i = 0; i < json.length; i++){
@@ -94,9 +114,9 @@ export class StudentSearchComponent implements AfterViewInit {
       } else{
         return out;
       }
-      return out;
     }
+    return out;
     //return json.map(item => new Student(item["id"], item["display_name"]));
   }
-
+  
 }

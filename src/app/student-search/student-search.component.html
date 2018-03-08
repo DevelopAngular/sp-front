@@ -1,4 +1,37 @@
-<mat-form-field class="student-search">
+<div class="wrapper">
+  <h3>Enter a student's name</h3>
+  <tag-input [(ngModel)]="items" [onlyFromAutocomplete]="true" [onAdding]="asyncOnAdding">
+    <tag-input-dropdown
+      [autocompleteItems]="students"
+      [displayBy]="'name'"
+      [identifyBy]="'id'"
+      [showDropdownIfEmpty]="false"
+      [focusFirstElement]="true">
+      <ng-template let-item="item" let-index="index">
+        ({{ index }}) {{ item.name }}: {{ item.id }}
+      </ng-template>
+    </tag-input-dropdown>
+  </tag-input>
+</div>
+
+
+<!-- <div>
+  <h3>Tags accepting only items from an autocomplete using a remote endpoint</h3>
+  <tag-input [ngModel]="[]"
+             [placeholder]="'Student Name'"
+             [onTextChangeDebounce]="500"
+             [secondaryPlaceholder]="'Search Students'"
+             [onlyFromAutocomplete]="true">
+      <tag-input-dropdown
+              [autocompleteObservable]="requestAutocompleteItems">
+          <ng-template let-item="item" let-index="index">
+              {{ item.display }}
+          </ng-template>
+      </tag-input-dropdown>
+  </tag-input>
+</div> -->
+
+<!-- <mat-form-field class="student-search">
   <input matInput [(ngModel)]="value" placeholder="Student Name" aria-label="Student Name" [matAutocomplete]="auto" [formControl]="studentCtrl" [id]="type" [(ngModel)]="value">
   <mat-autocomplete #auto="matAutocomplete">
     <mat-option *ngFor="let student of filteredStudents | async" [value]="student.name">
@@ -7,4 +40,4 @@
       </span>
     </mat-option>
   </mat-autocomplete>
-</mat-form-field>
+</mat-form-field> -->
