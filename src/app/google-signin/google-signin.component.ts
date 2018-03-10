@@ -142,11 +142,30 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
       this.barer = data["access_token"];
       //console.log(this.barer);
       this.dataService.updateBarer(this.barer);
+
+      var newConfig = {headers:{'Authorization' : 'Bearer ' +this.barer}}
+      //console.log(newConfig);
+      this.http.get('api/methacton/v1/users/@me', newConfig).subscribe((data:any[]) => {
+        //console.log(data);
+        var user = {};
+        user['id'] = data['id'];
+        user['first_name'] = data['first_name'];
+        user['last_name'] = data['last_name'];
+        user['display_name'] = data['display_name'];
+        user['email'] = data['primary_email'];
+        user['is_staff'] = data['is_staff'];
+        this.dataService.updateUser(user);
+        console.log("Done setting up user.");
+      });
+
       this.router.navigate(['/main']);
       console.log("Done setting up gUser.");  
     }, (data:any[]) => {
       console.log(data);
     });
+    //console.log("Setting up user.");
+
+    
     //gapi.auth2.getAuthInstance().disconnect();
     //console.log("Done setting up gUser.");
     

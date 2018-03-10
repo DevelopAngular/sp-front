@@ -89,7 +89,7 @@ export class PassListComponent implements OnInit {
             this.expiredPasses.push(pass);
           }
         }
-      }, 1000);
+      }, 15000);
     }
   }
 

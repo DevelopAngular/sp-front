@@ -67,9 +67,9 @@ export class StudentSearchComponent implements AfterViewInit {
     var config = {headers:{'Authorization' : 'Bearer ' +this.barer}};
     this.http.get('api/methacton/v1/users?is_staff=false', config).subscribe((data:any) => {
       for(var i = 0; i < data.length; i++){
-        for(var j = 0; j < 300; j++){
-          this.students.push(new Student(data[i]["id"], data[i]["display_name"] +j));
-        }
+        //for(var j = 0; j < 300; j++){
+          this.students.push(new Student(data[i]["id"], data[i]["display_name"]));
+        //}
       }
       console.log("Done getting Students.");
       //console.log(this.teachers);
@@ -82,8 +82,13 @@ export class StudentSearchComponent implements AfterViewInit {
 
   set value(v: string) {
     this._value = v;
+    //this.updateStudents(v);
     //console.log("Value: " +v)
-    //Use DataService to update list of selected students.
+    
+  }
+
+  async updateStudents(v:string){
+    this.students = this.convertToStudents(await this.filterStudents(v));
   }
 
   async filterStudents(name: string): Promise<any[]> {
@@ -94,15 +99,25 @@ export class StudentSearchComponent implements AfterViewInit {
      
   }
 
-  asyncOnAdding(tag): Observable<any> {
+  asyncOnAdding = (tag) =>{
+    console.log("Adding: ");
     console.log(tag);
-    //this.selectedStudents.push(new Student(tag['id'], tag['name']));
-    console.log(this.barer);
+    this.selectedStudents.push(new Student(tag['id'], tag['name']));
+    console.log("Students after adding: ");
+    console.log(this.selectedStudents);
     return of(tag).pipe(filter(() => true));
   }
 
-  onRemoving(tag): Observable<any> {
+  asyncOnRemoving = (tag) =>{
+    console.log("Removing: ");
     console.log(tag);
+    for(var i = 0; i<this.selectedStudents.length; i++){
+      if(tag['id'] == this.selectedStudents[i]['id']){
+        this.selectedStudents.splice(i, 1);
+      }
+    }
+    console.log("Students after removing: ");
+    console.log(this.selectedStudents);
     return of(tag).pipe(filter(() => true));
   }
 

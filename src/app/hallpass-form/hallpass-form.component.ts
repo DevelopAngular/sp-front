@@ -19,7 +19,7 @@ export class HallpassFormComponent implements OnInit {
   public barer: string;
   public isLoggedIn: Boolean = false;
   public studentName: string;
-  public userId;
+  public user:string[];
   public to;
   public from;
   public duration; //<- this is duration
@@ -34,7 +34,7 @@ export class HallpassFormComponent implements OnInit {
         var mins = nowish.getMinutes();
         var hours = nowish.getHours();
         this.timeNow = ((hours>12)?hours-12:hours) +":" +((mins<10)?"0":"") +mins;
-      }, 100);
+      }, 60000);
       
   }
 
@@ -43,7 +43,8 @@ export class HallpassFormComponent implements OnInit {
     if(this.barer == "")
       this.router.navigate(['../']);
     else{
-      this.setupUserId();
+      //this.setupUserId();
+      this.dataService.currentUser.subscribe(user => this.user = user);
       this.dataService.currentGUser.subscribe(gUser => this.gUser = gUser);
       this.studentName = this.gUser['name'];
     }
@@ -55,10 +56,10 @@ export class HallpassFormComponent implements OnInit {
     //console.log("To: " +this.to);
     this.dataService.currentFrom.subscribe(from => this.from = from);
     //console.log("From: " +this.from);
-    this.dataService.currentUserId.subscribe(userId => this.userId = userId);
-    console.log("UserId: " +this.userId);
+    this.dataService.currentUser.subscribe(user => this.user = user);
+    console.log("UserId: " +this.user['id']);
     let data: object = {
-                        'student': this.userId,
+                        'student': this.user['id'],
                         'description': '',
                         'from_location': this.from,
                         'to_location': this.to,
@@ -76,18 +77,18 @@ export class HallpassFormComponent implements OnInit {
  
   
   async setupUserId(){
-    const tempId = await this.getUserId();
-    this.dataService.updateUserId(tempId);
+    const tempUser = await this.getUser();
+    this.dataService.updateUser(tempUser);
   }
 
   
-  getUserId(){
+  getUser(){
     return new Promise((resolve, reject) => {
 
       var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
       
       this.http.get(this.baseURL +'users/@me', config).subscribe((data:any) => {
-          this.userId = data.id;
+          this.user = data;
           resolve(data.id);
       }, reject);
     });

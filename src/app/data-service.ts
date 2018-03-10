@@ -19,8 +19,8 @@ export class DataService{
     selectedTabService = new BehaviorSubject<any>('');
     currentTab = this.selectedTabService.asObservable();
 
-    userIdService = new BehaviorSubject<any>('');
-    currentUserId = this.userIdService.asObservable();
+    userService = new BehaviorSubject<any>({});
+    currentUser = this.userService.asObservable();
 
     constructor(){}
 
@@ -44,7 +44,7 @@ export class DataService{
         this.selectedTabService.next(tab);
     }
 
-    updateUserId(userId: any){
-        this.userIdService.next(userId);
+    updateUser(user: any){
+        this.userService.next(user);
     }
 }

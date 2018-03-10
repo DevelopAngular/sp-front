@@ -1,6 +1,6 @@
 <div class="wrapper">
   <h3>Enter a student's name</h3>
-  <tag-input [(ngModel)]="items" [onlyFromAutocomplete]="true" [onAdding]="asyncOnAdding">
+  <tag-input [(ngModel)]="items" [onlyFromAutocomplete]="true" [onAdding]="asyncOnAdding" [onRemoving]="asyncOnRemoving">
     <tag-input-dropdown
       [autocompleteItems]="students"
       [displayBy]="'name'"

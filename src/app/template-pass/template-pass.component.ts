@@ -15,7 +15,7 @@ export class TemplatePassComponent implements OnInit {
   startS: string;
   endE: string;
   barer:string;
-  userId:string;
+  user:string[];
 
   constructor(private http: HttpService, private dataService: DataService) { }
 
@@ -31,12 +31,12 @@ export class TemplatePassComponent implements OnInit {
 
   async activate(){
     console.log("Activating");
-    this.dataService.currentUserId.subscribe(userId => this.userId = userId);
-    console.log("UserId: " +this.userId);
+    this.dataService.currentUser['id'].subscribe(user => this.user = user);
+    console.log("UserId: " +this.user['id']);
     var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
     console.log("Config: " +config);
     let body: object = {
-      'student': this.userId,
+      'student': this.user['id'],
       'template': this.template.id,
     };
     const data = await this.http.post('api/methacton/v1/hall_passes', body, config).toPromise();
