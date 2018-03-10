@@ -73,6 +73,7 @@ export class PassListComponent implements OnInit {
         this.currentOffset = 10;
       });
       var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
+      //TODO &active=true
       this.http.get('api/methacton/v1/template_passes', config).subscribe((data:any) => {
         for(var i = 0; i < data.length; i++){
             //console.log(data[i]);

@@ -25,16 +25,32 @@ export class HallpassFormComponent implements OnInit {
   public duration; //<- this is duration
   public gUser;
   public baseURL = "https://notify-messenger-notify-server-staging.lavanote.com/api/methacton/v1/";
-  
+  public isStaff = false;
+  date: Date = new Date();
+  endDate: Date = new Date();
+  settings = {
+      bigBanner: true,
+      timePicker: false,
+      format: 'dd-MM-yyyy',
+      defaultOpen: true
+  }
   constructor(private http: HttpClient, private newHttp: HttpService, private dataService: DataService, private router: Router) {
 
-      setInterval(() => {
-        var nowish = new Date();
-        this.dateNow = nowish.getMonth() + "/" +nowish.getDay() +"/" +nowish.getFullYear();
-        var mins = nowish.getMinutes();
-        var hours = nowish.getHours();
-        this.timeNow = ((hours>12)?hours-12:hours) +":" +((mins<10)?"0":"") +mins;
-      }, 60000);
+    var nowish = new Date();
+    this.dateNow = nowish.getMonth()+1 + "/" +nowish.getDay() +"/" +nowish.getFullYear();
+    var mins = nowish.getMinutes();
+    var hours = nowish.getHours();
+    this.timeNow = ((hours>12)?hours-12:hours) +":" +((mins<10)?"0":"") +mins;
+
+      //if(!this.isStaff){
+          setInterval(() => {
+          var nowish = new Date();
+          this.dateNow = nowish.getMonth()+1 + "/" +nowish.getDay() +"/" +nowish.getFullYear();
+          var mins = nowish.getMinutes();
+          var hours = nowish.getHours();
+          this.timeNow = ((hours>12)?hours-12:hours) +":" +((mins<10)?"0":"") +mins;
+        }, 60000);
+      //}
       
   }
 
@@ -45,6 +61,8 @@ export class HallpassFormComponent implements OnInit {
     else{
       //this.setupUserId();
       this.dataService.currentUser.subscribe(user => this.user = user);
+      this.isStaff = this.user['is_staff'];
+      console.log(this.isStaff);
       this.dataService.currentGUser.subscribe(gUser => this.gUser = gUser);
       this.studentName = this.gUser['name'];
     }

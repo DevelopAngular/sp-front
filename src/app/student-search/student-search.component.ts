@@ -102,7 +102,8 @@ export class StudentSearchComponent implements AfterViewInit {
   asyncOnAdding = (tag) =>{
     console.log("Adding: ");
     console.log(tag);
-    this.selectedStudents.push(new Student(tag['id'], tag['name']));
+    if(tag['id'])
+      this.selectedStudents.push(new Student(tag['id'], tag['name']));
     console.log("Students after adding: ");
     console.log(this.selectedStudents);
     return of(tag).pipe(filter(() => true));

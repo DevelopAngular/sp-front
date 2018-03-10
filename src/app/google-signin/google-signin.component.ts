@@ -155,6 +155,7 @@ export class GoogleSigninComponent implements AfterViewInit, OnInit {
         user['email'] = data['primary_email'];
         user['is_staff'] = data['is_staff'];
         this.dataService.updateUser(user);
+        console.log(user);
         console.log("Done setting up user.");
       });
 

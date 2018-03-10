@@ -2,12 +2,25 @@
   <table class="table">
     <tr>
       <td><h1>Hallpass For:</h1></td>
-      <td><app-student-search></app-student-search></td>
+      <td>
+        <div *ngIf="isStaff; else student;">
+          <app-student-search></app-student-search>
+        </div>
+        <ng-template #student>
+          <h3> Ur Not a Teacher</h3>
+        </ng-template>
+      </td>
     </tr>
     <tr>
       <td>
         <h1>From:</h1>
-        <app-teacher-search type="'from'"></app-teacher-search>
+        <div *ngIf="!isStaff; else noFrom;">
+          
+          <app-teacher-search type="'from'"></app-teacher-search>
+        </div>
+        <ng-template #noFrom>
+          <h3> Ur a Teacher</h3>
+        </ng-template>
       </td>
       <td>
         <h1>To:</h1>
@@ -15,18 +28,34 @@
       </td>
     </tr>
     <tr>
-      <td>
-        <h1>Date:</h1>
-        <mat-form-field class="date-field" enabled="false">
-          <input matInput placeholder="" aria-label="" value="{{ dateNow }}" disabled>
-        </mat-form-field>
-      </td>
-      <td>
-        <h1>Time:</h1>
-        <mat-form-field class="time-field" enabled="false">
-          <input matInput placeholder="" aria-label="" value="{{ timeNow }}" disabled>
-        </mat-form-field>
-      </td>
+      <div *ngIf="!isStaff; else teacherDate;">
+        <td>
+          <h1>Date:</h1>
+          <mat-form-field class="date-field" enabled="false">
+            <input matInput placeholder="" aria-label="" value="{{ dateNow }}" disabled>
+          </mat-form-field>
+        </td>
+        <td>
+          <h1>Time:</h1>
+          <mat-form-field class="time-field" enabled="false">
+            <input matInput placeholder="" aria-label="" value="{{ timeNow }}" disabled>
+          </mat-form-field>
+        </td>
+      </div>
+      <ng-template #teacherDate>
+        <td>
+            Date
+            <input matInput [owlDateTimeTrigger]="dt3" [owlDateTime]="dt3">
+            <owl-date-time [pickerType]="'calendar'" #dt3></owl-date-time>
+        </td>
+
+        <td>
+            Time
+            <input matInput [owlDateTimeTrigger]="dt4" [owlDateTime]="dt4">
+            <owl-date-time [pickerType]="'timer'" #dt4></owl-date-time>
+        </td>
+          <!-- <td><angular2-date-picker [(ngModel)]="date" [settings]="settings"></angular2-date-picker></td> -->
+      </ng-template>
     </tr>
     <tr>
       <td>

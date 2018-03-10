@@ -26,6 +26,8 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { StudentSearchComponent } from './student-search/student-search.component';
 import { AccountComponent } from './account/account.component'; 
 import { TagInputModule } from 'ngx-chips';
+import { AngularDateTimePickerModule } from 'angular2-datetimepicker';
+import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 //import { HallPass } from './hallpass';
 
 const appRoutes: Routes = [
@@ -62,6 +64,9 @@ const appRoutes: Routes = [
     MatButtonModule,
     InfiniteScrollModule,
     TagInputModule,
+    AngularDateTimePickerModule,
+    OwlDateTimeModule,
+    OwlNativeDateTimeModule,
     RouterModule.forRoot(
       appRoutes
       //,{ enableTracing: true } // <-- debugging purposes only
