@@ -26,14 +26,14 @@ export class HallpassFormComponent implements OnInit {
   public gUser;
   public baseURL = "https://notify-messenger-notify-server-staging.lavanote.com/api/methacton/v1/";
   public isStaff = false;
-  date: Date = new Date();
-  endDate: Date = new Date();
-  settings = {
-      bigBanner: true,
-      timePicker: false,
-      format: 'dd-MM-yyyy',
-      defaultOpen: true
-  }
+  date: any;
+  time: any;
+  // settings = {
+  //     bigBanner: true,
+  //     timePicker: false,
+  //     format: 'dd-MM-yyyy',
+  //     defaultOpen: true
+  // }
   constructor(private http: HttpClient, private newHttp: HttpService, private dataService: DataService, private router: Router) {
 
     var nowish = new Date();
@@ -49,7 +49,9 @@ export class HallpassFormComponent implements OnInit {
           var mins = nowish.getMinutes();
           var hours = nowish.getHours();
           this.timeNow = ((hours>12)?hours-12:hours) +":" +((mins<10)?"0":"") +mins;
-        }, 60000);
+          console.log(this.date);
+          console.log(this.time);
+        }, 1000);
       //}
       
   }
