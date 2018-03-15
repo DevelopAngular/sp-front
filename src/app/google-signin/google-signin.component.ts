@@ -18,6 +18,10 @@ export class GoogleSigninComponent {
 
   public name = 'Not Logged in!';
 
+  public isLoaded = false;
+  public progressValue = 0;
+  public progressType = 'indeterminate';
+
   public content: any = '';
   public user: any = '';
   public profile: any = '';
@@ -30,14 +34,37 @@ export class GoogleSigninComponent {
               private dataService: DataService,
               private userService: UserService) {
 
-    this.userService.userData.filter(e => !!e).subscribe(user => {
+    let intervalId: any;
+
+    this.userService.isAuthLoaded().subscribe(isLoaded => {
+      this._ngZone.run(() => {
+        console.log('isLoaded:', isLoaded);
+        this.isLoaded = isLoaded;
+
+        if (isLoaded && intervalId !== undefined) {
+          clearInterval(intervalId);
+          intervalId = undefined;
+        } else if (!this.isLoaded && intervalId === undefined) {
+          let counter = 0;
+          intervalId = setInterval(() => {
+
+            this.progressValue = 98 * (1 - Math.pow(1.2, -counter));
+            counter += 0.5;
+          }, 50);
+        }
+
+      });
+    });
+
+    this.userService.userData.subscribe(user => {
       console.log(user);
       this.router.navigate(['/main']);
     });
   }
 
   initLogin() {
-    this.userService.signIn();
+    this.userService.signIn()
+      .catch(e => console.error(e));
   }
 
 }

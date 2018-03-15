@@ -31,6 +31,7 @@ import {OwlDateTimeModule, OwlNativeDateTimeModule} from 'ng-pick-datetime';
 import {GoogleApiModule, NG_GAPI_CONFIG} from 'ng-gapi';
 import {UserService} from './user.service';
 import {GAPI_CONFIG} from './config';
+import {MatProgressSpinnerModule} from '@angular/material';
 
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
@@ -60,6 +61,7 @@ const appRoutes: Routes = [
     MatInputModule,
     MatTabsModule,
     MatIconModule,
+    MatProgressSpinnerModule,
     BrowserAnimationsModule,
     HttpClientModule,
     MatButtonModule,

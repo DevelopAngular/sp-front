@@ -1,9 +1,23 @@
 <div class="all">
-    <div class="wrapper">
-        <h1>Please sign-in to continue</h1>
-    </div>
+  <div class="wrapper">
+    <div class="grow"></div>
+    <h1>Please sign-in to continue</h1>
+    <div class="grow"></div>
+  </div>
 
-    <div class="wrapper">
-        <button (click)="initLogin()">Google Sign-In</button>
-    </div>
+  <div class="wrapper">
+    <div class="grow"></div>
+    <button mat-raised-button (click)="initLogin()" [disabled]="!isLoaded">
+      <mat-progress-spinner
+        *ngIf="!isLoaded"
+        class="inline"
+        color="accent"
+        [mode]="progressType"
+        [diameter]="20"
+        [strokeWidth]="2"
+        [value]="progressValue"></mat-progress-spinner>
+      Google Sign-In
+    </button>
+    <div class="grow"></div>
+  </div>
 </div>

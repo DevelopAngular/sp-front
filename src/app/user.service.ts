@@ -5,13 +5,13 @@ import {HttpService} from './http-service';
 import {environment} from '../environments/environment';
 import {DataService} from './data-service';
 import {Observable} from 'rxjs/Observable';
-import GoogleUser = gapi.auth2.GoogleUser;
-import GoogleAuth = gapi.auth2.GoogleAuth;
 
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/publishReplay';
+import GoogleUser = gapi.auth2.GoogleUser;
+import GoogleAuth = gapi.auth2.GoogleAuth;
 
 interface ServerAuth {
   access_token: string;
@@ -56,7 +56,7 @@ export class UserService {
   public userData: Observable<User>;
 
   constructor(private googleAuth: GoogleAuthService, private http: HttpService, private dataService: DataService) {
-    this.googleTokenSubject = new BehaviorSubject<string>(sessionStorage.getItem(UserService.SESSION_STORAGE_KEY));
+    this.googleTokenSubject = new BehaviorSubject<string>(null/*sessionStorage.getItem(UserService.SESSION_STORAGE_KEY)*/);
     this.googleToken = this.googleTokenSubject
       .filter(truthy)
       .do(token => console.log('[UserService]', 'New Google Token:', token))
@@ -105,6 +105,10 @@ export class UserService {
   public setToken(token: string) {
     sessionStorage.setItem(UserService.SESSION_STORAGE_KEY, token);
     this.googleTokenSubject.next(token);
+  }
+
+  public isAuthLoaded(): Observable<boolean> {
+    return this.googleAuthTool.map(tool => tool !== null);
   }
 
   private fetchServerAuth(googleToken: string): Observable<ServerAuth> {
