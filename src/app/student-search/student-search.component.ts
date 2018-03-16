@@ -40,6 +40,8 @@ export class StudentSearchComponent implements AfterViewInit {
   _value: string = "";
   selectedStudents: Student[] = [];
 
+  items = [];
+
   @Input()
   selectedId;
 
@@ -49,11 +51,11 @@ export class StudentSearchComponent implements AfterViewInit {
       .pipe(
         startWith(''),
         mergeMap(student => student ? Observable.fromPromise((async () => {
-          
+
           const students = await this.filterStudents(student)
 
           const convStudents = this.convertToStudents(students);
-          
+
           return convStudents;
         })()) : Observable.of(this.students.slice()))
       );
@@ -84,7 +86,7 @@ export class StudentSearchComponent implements AfterViewInit {
     this._value = v;
     //this.updateStudents(v);
     //console.log("Value: " +v)
-    
+
   }
 
   async updateStudents(v:string){
@@ -96,7 +98,7 @@ export class StudentSearchComponent implements AfterViewInit {
       var config = {headers:{'Authorization' : 'Bearer ' +this.barer}};
       const data = await this.http.get<any[]>('api/methacton/v1/users?is_staff=false&search=' +encodeURI(name), config).toPromise();
       return data;
-     
+
   }
 
   asyncOnAdding = (tag) =>{
@@ -134,5 +136,5 @@ export class StudentSearchComponent implements AfterViewInit {
     return out;
     //return json.map(item => new Student(item["id"], item["display_name"]));
   }
-  
+
 }

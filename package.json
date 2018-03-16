@@ -12,6 +12,7 @@
   },
   "private": true,
   "dependencies": {
+    "@angular-devkit/core": "^0.4.5",
     "@angular/animations": "^5.0.0",
     "@angular/cdk": "^5.1.1",
     "@angular/common": "^5.0.0",
@@ -25,7 +26,8 @@
     "@angular/router": "^5.2.3",
     "angular2-datetimepicker": "^1.1.1",
     "core-js": "^2.4.1",
-    "gapi-client": "0.0.3",
+    "gapi-client": "^0.0.3",
+    "ng-gapi": "^0.0.45",
     "ng-pick-datetime": "^5.1.9",
     "ng4-material-dropdown": "^1.0.0",
     "ngx-chips": "^1.6.7",

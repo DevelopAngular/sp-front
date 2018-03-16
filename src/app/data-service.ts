@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 @Injectable()
-export class DataService{
-    
+export class DataService {
+
     barerService = new BehaviorSubject<string>('');
     currentBarer = this.barerService.asObservable();
 

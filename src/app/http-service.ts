@@ -1,23 +1,32 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
+import { environment } from '../environments/environment';
 
-const baseURL:string = "https://notify-messenger-notify-server-staging.lavanote.com/";
+const baseURL = environment.serverConfig.host;
+
+export interface Config {
+  [key: string]: any;
+}
+
+type ConfigJSON = Config & {responseType: 'json'};
+
 @Injectable()
-export class HttpService{
-    constructor(private http: HttpClient){
-
-    }
-    
-    get<T>(url, config): Observable<T> {
-        const response: Observable<any> = this.http.get(baseURL + url, config);
-        return response;
+export class HttpService {
+    constructor(private http: HttpClient) {
     }
 
-    post(url:string, body, config){
-        if(body == "")
-            return this.http.post(baseURL + url, config);
-        else
-            return this.http.post(baseURL + url, body, config);
+    get<T>(url, config: Config): Observable<T> {
+        config['responseType'] = 'json';
+        return this.http.get<T>(baseURL + url, config as ConfigJSON);
+    }
+
+    post(url: string, body, config?: Config) {
+      if (config) {
+        config['responseType'] = 'json';
+        return this.http.post(baseURL + url, body, config as ConfigJSON);
+      } else {
+        return this.http.post(baseURL + url, body);
+      }
     }
 }
