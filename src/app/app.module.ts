@@ -1,6 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
-
 import {AppComponent} from './app.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
@@ -34,6 +33,7 @@ import {GAPI_CONFIG} from './config';
 import {MatProgressSpinnerModule} from '@angular/material';
 import {PassTableComponent} from './pass-table/pass-table.component';
 import {MatTableModule} from '@angular/material/table';
+import {MatPaginatorModule} from '@angular/material/paginator';
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
   { path: 'main', component: PassListComponent },
@@ -73,6 +73,7 @@ const appRoutes: Routes = [
     OwlDateTimeModule,
     OwlNativeDateTimeModule,
     MatTableModule,
+    MatPaginatorModule,
     RouterModule.forRoot(
       appRoutes
       // ,{ enableTracing: true } // <-- debugging purposes only

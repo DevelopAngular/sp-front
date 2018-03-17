@@ -94,18 +94,16 @@ export class StudentSearchComponent implements AfterViewInit {
   }
 
   async filterStudents(name: string): Promise<any[]> {
-      let out:any[] = [];
       var config = {headers:{'Authorization' : 'Bearer ' +this.barer}};
       const data = await this.http.get<any[]>('api/methacton/v1/users?is_staff=false&search=' +encodeURI(name), config).toPromise();
       return data;
-
   }
 
   asyncOnAdding = (tag) =>{
     console.log("Adding: ");
     console.log(tag);
-    if(tag['id'])
-      this.selectedStudents.push(new Student(tag['id'], tag['name']));
+    // if(tag['id'])
+    //   this.selectedStudents.push(new Student(tag['id'], tag['name']));
     console.log("Students after adding: ");
     console.log(this.selectedStudents);
     return of(tag).pipe(filter(() => true));
@@ -114,13 +112,13 @@ export class StudentSearchComponent implements AfterViewInit {
   asyncOnRemoving = (tag) =>{
     console.log("Trying to remove: ");
     console.log(tag);
-    for(var i = 0; i<this.selectedStudents.length; i++){
-      if(tag['id'] == this.selectedStudents[i]['id']){
-        console.log("Removing: ");
-        console.log(this.selectedStudents[i]);
-        this.selectedStudents.splice(i, 1);
-      }
-    }
+    // for(var i = 0; i<this.selectedStudents.length; i++){
+    //   if(tag['id'] == this.selectedStudents[i]['id']){
+    //     console.log("Removing: ");
+    //     console.log(this.selectedStudents[i]);
+    //     this.selectedStudents.splice(i, 1);
+    //   }
+    // }
     console.log("Students after removing: ");
     console.log(this.selectedStudents);
     return of(tag).pipe(filter(() => true));
