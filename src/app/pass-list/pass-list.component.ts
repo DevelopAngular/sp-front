@@ -29,6 +29,8 @@ export class PassListComponent implements OnInit {
 
   private barer:string;
   private gUser:any;
+  private user:any;
+  public isStaff:boolean = false;
   activePasses: HallPass[] = [];
   expiredPasses: HallPass[] = [];
   templates: Template[] = [];
@@ -40,19 +42,20 @@ export class PassListComponent implements OnInit {
   //approvalPasses: TemplatePass[] = [];
 
   constructor(private http: HttpService, private dataService: DataService, private router: Router) {
-    
+
   }
   
   ngOnInit() {
     this.show = false;
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
-    this.dataService.currentTab.subscribe(selectedIndex => this.selectedIndex = selectedIndex);
-
+    this.dataService.currentTab.subscribe(selectedIndex => this.selectedIndex = selectedIndex)
     if(this.barer == "")
       this.router.navigate(['../']);  
     else{
       this.dataService.currentGUser.subscribe(gUser => this.gUser = gUser);
-
+      this.dataService.currentUser.subscribe(user => {this.user = user; this.isStaff = this.user.isStaff;});
+      this.isStaff = this.user['is_staff'];
+      console.log("Tabs is staff: " +this.isStaff);
       var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
       console.log("Getting passes from server.");
       this.http.get('api/methacton/v1/hall_passes?limit=10', config).subscribe((dataA:any) => {

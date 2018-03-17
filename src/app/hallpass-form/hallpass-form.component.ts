@@ -3,7 +3,7 @@ import { DataService } from '../data-service';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { HttpService } from '../http-service';
-
+import { FormControl } from '@angular/forms';
 @Component({
   selector: 'app-hallpass-form',
   templateUrl: './hallpass-form.component.html',
@@ -26,8 +26,7 @@ export class HallpassFormComponent implements OnInit {
   public gUser;
   public baseURL = "https://notify-messenger-notify-server-staging.lavanote.com/api/methacton/v1/";
   public isStaff = false;
-  date: any;
-  time: any;
+  public selectedMoment = new FormControl(new Date());
   // settings = {
   //     bigBanner: true,
   //     timePicker: false,
@@ -49,9 +48,8 @@ export class HallpassFormComponent implements OnInit {
           var mins = nowish.getMinutes();
           var hours = nowish.getHours();
           this.timeNow = ((hours>12)?hours-12:hours) +":" +((mins<10)?"0":"") +mins;
-          console.log(this.date);
-          console.log(this.time);
-        }, 1000);
+          //console.log(this.selectedMoment);;
+        }, 10000);
       //}
       
   }
@@ -64,7 +62,7 @@ export class HallpassFormComponent implements OnInit {
       //this.setupUserId();
       this.dataService.currentUser.subscribe(user => this.user = user);
       this.isStaff = this.user['is_staff'];
-      console.log(this.isStaff);
+      console.log("Hallpass form is staff:" +this.isStaff);
       this.dataService.currentGUser.subscribe(gUser => this.gUser = gUser);
       this.studentName = this.gUser['name'];
     }

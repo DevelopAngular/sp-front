@@ -44,15 +44,10 @@
       </div>
       <ng-template #teacherDate>
         <td>
-            Date
-            <input matInput [owlDateTimeTrigger]="dt3" [owlDateTime]="dt3">
-            <owl-date-time [pickerType]="'calendar'" #dt3></owl-date-time>
-        </td>
-
-        <td>
-            Time
-            <input matInput [owlDateTimeTrigger]="dt4" [owlDateTime]="dt4">
-            <owl-date-time [pickerType]="'timer'" #dt4></owl-date-time>
+          <label>Date Time(via reactive form):</label>
+          <input matInput [formControl]="selectedMoment"
+                 [owlDateTimeTrigger]="dtPicker" [owlDateTime]="dtPicker">
+          <owl-date-time #dtPicker></owl-date-time>
         </td>
           <!-- <td><angular2-date-picker [(ngModel)]="date" [settings]="settings"></angular2-date-picker></td> -->
       </ng-template>

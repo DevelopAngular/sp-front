@@ -16,5 +16,5 @@ const serverConfigs = {
 
 export const environment = {
   production: false,
-  serverConfig: serverConfigs.local,
+  serverConfig: serverConfigs.staging,
 };

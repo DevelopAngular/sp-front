@@ -1,25 +1,37 @@
 <div>
     <mat-tab-group [(selectedIndex)]="selectedIndex" (selectedTabChange)="tabChange()">
-        <mat-tab label="Make New Passes">
-            <app-hallpass-form></app-hallpass-form>
-        </mat-tab>
-        <mat-tab label="Active Passes">
-            <app-hall-pass #scrollMe *ngFor="let pass of activePasses" [hallPass]="pass"></app-hall-pass>
-            <button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button>
-        </mat-tab>
-        <mat-tab label="Expired Passes" infiniteScroll (scrolled)="onScroll()">
-            <div *ngIf="show; else Loading;" >
-                <app-hall-pass #scrollMe *ngFor="let pass of expiredPasses" [hallPass]="pass"></app-hall-pass>
-            </div>
-            <ng-template #Loading class="center">
-                <img src="../../assets/loading.gif" alt="Loading">
-            </ng-template>
-            <button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button>
-        </mat-tab>
-        <mat-tab label="Pending Passes">
-            <button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button>
-            <app-template-pass *ngFor="let template of templates" [template]="template"></app-template-pass>
-        </mat-tab>
+    <div *ngIf="!isStaff; else teacherTabs;">
+            <mat-tab label="Make New Passes">
+                <app-hallpass-form></app-hallpass-form>
+            </mat-tab>
+            <mat-tab label="Active Passes">
+                <app-hall-pass #scrollMe *ngFor="let pass of activePasses" [hallPass]="pass"></app-hall-pass>
+                <button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button>
+            </mat-tab>
+            <mat-tab label="Expired Passes" infiniteScroll (scrolled)="onScroll()">
+                <div *ngIf="show; else Loading;" >
+                    <app-hall-pass #scrollMe *ngFor="let pass of expiredPasses" [hallPass]="pass"></app-hall-pass>
+                </div>
+                <ng-template #Loading class="center">
+                    <img src="../../assets/loading.gif" alt="Loading">
+                </ng-template>
+                <button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button>
+            </mat-tab>
+            <mat-tab label="Pending Passes">
+                <button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button>
+                <app-template-pass *ngFor="let template of templates" [template]="template"></app-template-pass>
+            </mat-tab>
+        </div>
+        <ng-template #teacherTabs>
+            <mat-tab label="Issue a Pass">
+                <app-hallpass-form></app-hallpass-form>
+            </mat-tab>
+            <mat-tab label="Search Passes">
+                <app-pass-table></app-pass-table>
+                <button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button>
+            </mat-tab>
+        </ng-template>
+
         <mat-tab label="Manage Account">
             <app-account></app-account>
         </mat-tab>

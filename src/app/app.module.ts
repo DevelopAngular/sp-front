@@ -32,7 +32,8 @@ import {GoogleApiModule, NG_GAPI_CONFIG} from 'ng-gapi';
 import {UserService} from './user.service';
 import {GAPI_CONFIG} from './config';
 import {MatProgressSpinnerModule} from '@angular/material';
-
+import {PassTableComponent} from './pass-table/pass-table.component';
+import {MatTableModule} from '@angular/material/table';
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
   { path: 'main', component: PassListComponent },
@@ -50,6 +51,7 @@ const appRoutes: Routes = [
     TemplatePassComponent,
     StudentSearchComponent,
     AccountComponent,
+    PassTableComponent,
   ],
   imports: [
     BrowserModule,
@@ -70,6 +72,7 @@ const appRoutes: Routes = [
     AngularDateTimePickerModule,
     OwlDateTimeModule,
     OwlNativeDateTimeModule,
+    MatTableModule,
     RouterModule.forRoot(
       appRoutes
       // ,{ enableTracing: true } // <-- debugging purposes only

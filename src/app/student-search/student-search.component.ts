@@ -112,10 +112,12 @@ export class StudentSearchComponent implements AfterViewInit {
   }
 
   asyncOnRemoving = (tag) =>{
-    console.log("Removing: ");
+    console.log("Trying to remove: ");
     console.log(tag);
     for(var i = 0; i<this.selectedStudents.length; i++){
       if(tag['id'] == this.selectedStudents[i]['id']){
+        console.log("Removing: ");
+        console.log(this.selectedStudents[i]);
         this.selectedStudents.splice(i, 1);
       }
     }

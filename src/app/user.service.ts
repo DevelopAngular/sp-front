@@ -56,13 +56,13 @@ export class UserService {
   public userData: Observable<User>;
 
   constructor(private googleAuth: GoogleAuthService, private http: HttpService, private dataService: DataService) {
-    this.googleTokenSubject = new BehaviorSubject<string>(null/*sessionStorage.getItem(UserService.SESSION_STORAGE_KEY)*/);
+    this.googleTokenSubject = new BehaviorSubject<string>(sessionStorage.getItem(UserService.SESSION_STORAGE_KEY));
     this.googleToken = this.googleTokenSubject
       .filter(truthy)
       .do(token => console.log('[UserService]', 'New Google Token:', token))
       .publishReplay(1).refCount();
 
-    this.serverAuth = this.googleTokenSubject
+    this.serverAuth = this.googleToken
       .mergeMap(token => this.fetchServerAuth(token))
       .do(auth => console.log('[UserService]', 'New Server Auth:', auth))
       .publishReplay(1).refCount();
@@ -142,6 +142,4 @@ export class UserService {
         return user as User;
       });
   }
-
-
 }
