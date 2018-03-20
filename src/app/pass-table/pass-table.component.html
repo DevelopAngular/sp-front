@@ -64,7 +64,12 @@
 
     <ng-container matColumnDef="info">
       <mat-header-cell *matHeaderCellDef>More Info</mat-header-cell>
-      <mat-cell *matCellDef="let row">More Info Button</mat-cell>
+      <mat-cell *matCellDef="let row">
+        <button (click)="info(row.id)" mat-button>
+            <mat-icon class="info" svgIcon="info"></mat-icon>
+            More Info
+        </button>
+    </mat-cell>
     </ng-container>
     
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

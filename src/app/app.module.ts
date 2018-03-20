@@ -34,6 +34,10 @@ import {PassTableComponent} from './pass-table/pass-table.component';
 import {MatTableModule} from '@angular/material/table';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
+import {PassFilterComponent} from './pass-filter/pass-filter.component';
+import {PassInfoComponent} from './pass-info/pass-info.component';
+import {MatDialogModule} from '@angular/material/dialog';
+
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
   { path: 'main', component: PassListComponent },
@@ -51,6 +55,11 @@ const appRoutes: Routes = [
     StudentSearchComponent,
     AccountComponent,
     PassTableComponent,
+    PassFilterComponent,
+    PassInfoComponent,
+  ],
+  entryComponents: [
+    PassInfoComponent
   ],
   imports: [
     BrowserModule,
@@ -74,6 +83,7 @@ const appRoutes: Routes = [
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
+    MatDialogModule,
     RouterModule.forRoot(
       appRoutes
       // ,{ enableTracing: true } // <-- debugging purposes only

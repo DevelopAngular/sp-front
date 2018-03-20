@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import {MatPaginator, MatSort, MatTableDataSource, MatIconRegistry, MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
 import {merge} from 'rxjs/observable/merge';
 import {of as observableOf} from 'rxjs/observable/of';
@@ -9,6 +9,9 @@ import {startWith} from 'rxjs/operators/startWith';
 import {switchMap} from 'rxjs/operators/switchMap';
 import {DataService} from '../data-service';
 import {HttpService} from '../http-service';
+import {DomSanitizer} from '@angular/platform-browser';
+import { PassFilterComponent } from '../pass-filter/pass-filter.component';
+import { PassInfoComponent } from '../pass-info/pass-info.component';
 
 @Component({
   selector: 'app-pass-table',
@@ -19,22 +22,32 @@ export class PassTableComponent{
   displayedColumns = ['student', 'to', 'from', 'timeOut', 'duration', 'info'];
   dataSource: MatTableDataSource<PassData> = new MatTableDataSource();;
   exampleDatabase: ExampleHttpDao;
-  length = 10;
+  length = 50;
   pageSize = 10;
   pageIndex = 0;
   pageSizeOptions = [5, 10, 25, 100];
   barer;
-  batchSize = 20;
+  batchSize = 50;
   isLoadingResults = true;
   isRateLimitReached = false;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
  
-  constructor(private http: HttpService, private dataService: DataService) {
-    
+  constructor(private http: HttpService, private dataService: DataService, public dialog: MatDialog, iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
+    iconRegistry.addSvgIcon('info', sanitizer.bypassSecurityTrustResourceUrl('assets/info.svg'));
   }
 
+  openDialog(id): void {
+    let dialogRef = this.dialog.open(PassInfoComponent, {
+      width: '250px', height: '300px', data: {'id':id}
+      
+    });
+    console.log("The dialog was opened with id: " +id);
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+  }
   // getPasses(){
   //   var out:PassData[] = [];
   //   console.log(this.barer);
@@ -60,6 +73,11 @@ export class PassTableComponent{
     this.updateTable();
   }
 
+  info(id){
+    console.log("Displaying information for pass: " +id);
+    this.openDialog(id);
+  }
+
   updateTable(){
     merge(this.sort.sortChange, this.paginator.page)
     .pipe(
@@ -73,23 +91,31 @@ export class PassTableComponent{
         let results = data['results'];
         let out:PassData[] = [];
         for(var i = 0; i<results.length;i++){
+          let id = results[i]['id'];
           let name = results[i]['student']['display_name'];
-          let toLocation = results[i]['to_location']['name'] +"(" +results[i]['to_location']['room'] +")";
-          let fromLocation = results[i]['from_location']['name'] +"(" +results[i]['from_location']['room'] +")";
+          let toLocation = results[i]['to_location']['name'] +" (" +results[i]['to_location']['room'] +")";
+          let fromLocation = results[i]['from_location']['name'] +" (" +results[i]['from_location']['room'] +")";
           
           let end = +new Date(results[i]['expiry_time']);
           let start = +new Date(results[i]['created']);
           let duration:any = Math.abs(end-start)/1000/60;
 
           let s = new Date(results[i]['created']);
-          let startTimeString = s.getMonth()+1 + "/" +s.getDate() +"/" +s.getFullYear() +" - " +((s.getHours()>12)?s.getHours()-12:s.getHours()) +":" +((s.getMinutes()<10)?"0":"") +s.getMinutes() +"." +((s.getSeconds()<10)?"0":"") +s.getSeconds();
+          let startTimeString = ((s.getHours()>12)?s.getHours()-12:s.getHours()) +":" +((s.getMinutes()<10)?"0":"") +s.getMinutes() +" - " +s.getMonth()+1 + "/" +s.getDate() +"/" +s.getFullYear() ;
           let description = results[i]['description'];
           let authorities = results[i]['authorities'];
-          out.push(new PassData(name, toLocation, fromLocation, duration, startTimeString, description, authorities));
+          out.push(new PassData(id,
+                                name,
+                                toLocation,
+                                fromLocation,
+                                duration,
+                                startTimeString,
+                                description, 
+                                authorities));
         }
-        for(var i = 0; i<out.length;i++){
-          console.log(out[i]);
-        }
+        // for(var i = 0; i<out.length;i++){
+        //   console.log(out[i]);
+        // }
         
         this.isLoadingResults = false;
         this.isRateLimitReached = false;
@@ -105,11 +131,13 @@ export class PassTableComponent{
       })
     ).subscribe(data => {
       this.dataSource.data = data;
-      console.log(this.dataSource.data);
+      //console.log(this.dataSource.data);
       console.log("Page Index: " +this.pageIndex +" Length: " +this.length +" Page Size: " +this.pageSize);
-      if(this.length/(1+this.pageIndex) == this.pageSize){
+      console.log(this.pageSize +" * " +(this.pageIndex+1) +" >= " +this.length);
+      if(this.pageSize * (this.pageIndex+1) >= this.length){
+        console.log("Getting more passes.\n----------------------");
         this.batchSize += this.pageSize;
-        this.updateTable;
+        this.updateTable();
       }
     });
   }
@@ -142,7 +170,8 @@ export interface PassResponse{
 }
 
 export class PassData {
-  constructor(private name: string,
+  constructor(private id: string,
+              private name: string,
               private to: string,
               private from: string,
               private duration: string,
@@ -161,8 +190,8 @@ export class ExampleHttpDao {
   getPasses(batchSize): Observable<PassResponse> {
     let config = {headers:{'Authorization' : 'Bearer ' +this.barer}};
     let data = this.http.get<PassResponse>('api/methacton/v1/hall_passes?limit=' +batchSize, config);
-    console.log("Data:");
-    console.log(data);
+    //console.log("Data:");
+    //console.log(data);
     return data;
   }
 }
