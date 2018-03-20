@@ -40,7 +40,7 @@ export class PassTableComponent{
 
   openDialog(id): void {
     let dialogRef = this.dialog.open(PassInfoComponent, {
-      width: '250px', height: '300px', data: {'id':id}
+      width: '500px', height: '600px', data: {'id':id, 'barer': this.barer}
       
     });
     console.log("The dialog was opened with id: " +id);
