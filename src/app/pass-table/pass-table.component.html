@@ -3,44 +3,70 @@
        *ngIf="isLoadingResults || isRateLimitReached">
     <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
     <div class="example-rate-limit-reached" *ngIf="isRateLimitReached">
-      GitHub's API rate limit has been reached. It will be reset in one minute.
+      There has been an error reaching the server. Please wait and try again.
     </div>
   </div>
 
-  <mat-table #table [dataSource]="passes" class="example-table"
+  <mat-table #table [dataSource]="dataSource" class="example-table"
              matSort matSortActive="created" matSortDisableClear matSortDirection="asc">
 
     <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
 
     <!-- Number Column -->
-    <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{ row.number }}</mat-cell>
+    <ng-container matColumnDef="student">
+      <mat-header-cell *matHeaderCellDef
+                        mat-sort-header
+                        disableClear="true">
+      Student
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ row.name }}</mat-cell>
     </ng-container>
 
     <!-- Title Column -->
     <ng-container matColumnDef="to">
-      <mat-header-cell *matHeaderCellDef>Title</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{ row.title }}</mat-cell>
+      <mat-header-cell *matHeaderCellDef
+                        mat-sort-header
+                        disableClear="true">
+      Destination
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ row.to }}</mat-cell>
     </ng-container>
 
     <!-- State Column -->
     <ng-container matColumnDef="from">
-      <mat-header-cell *matHeaderCellDef>State</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{ row.state }}</mat-cell>
+      <mat-header-cell *matHeaderCellDef
+                        mat-sort-header
+                        disableClear="true">
+      Origin
+    </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ row.from }}</mat-cell>
     </ng-container>
 
     <!-- Created Column -->
-    <ng-container matColumnDef="timeIn">
+    <ng-container matColumnDef="timeOut">
       <mat-header-cell *matHeaderCellDef
                        mat-sort-header
                        disableClear="true">
-        Created
+        Time-Out
       </mat-header-cell>
-      <mat-cell *matCellDef="let row">{{ row.created_at | date }}</mat-cell>
+      <mat-cell *matCellDef="let row">{{ row.timeOut }}</mat-cell>
     </ng-container>
 
+    <ng-container matColumnDef="duration">
+      <mat-header-cell *matHeaderCellDef
+                       mat-sort-header
+                       disableClear="true">
+        Duration
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ row.duration }} minutes</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="info">
+      <mat-header-cell *matHeaderCellDef>More Info</mat-header-cell>
+      <mat-cell *matCellDef="let row">More Info Button</mat-cell>
+    </ng-container>
+    
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
   </mat-table>
@@ -48,6 +74,8 @@
   <mat-paginator  [length]="length"
                   [pageSize]="pageSize"
                   [pageSizeOptions]="pageSizeOptions"
-                  (page)="pageEvent = $event">
+                  [pageSize]="pageSize"
+                  [pageIndex]="pageIndex"
+                  (page)="onPaginateChange($event)">
   </mat-paginator>
 </div>

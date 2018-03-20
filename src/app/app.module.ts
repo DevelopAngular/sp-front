@@ -15,7 +15,6 @@ import {TeacherSearchComponent} from './teacher-search/teacher-search.component'
 import {GoogleSigninComponent} from './google-signin/google-signin.component';
 import {HallpassFormComponent} from './hallpass-form/hallpass-form.component';
 import {PassListComponent} from './pass-list/pass-list.component';
-import {MenuChooseComponent} from './menu-choose/menu-choose.component';
 import {RouterModule, Routes} from '@angular/router';
 import {DataService} from './data-service';
 import {HttpService} from './http-service';
@@ -34,6 +33,7 @@ import {MatProgressSpinnerModule} from '@angular/material';
 import {PassTableComponent} from './pass-table/pass-table.component';
 import {MatTableModule} from '@angular/material/table';
 import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatSortModule} from '@angular/material/sort';
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
   { path: 'main', component: PassListComponent },
@@ -46,7 +46,6 @@ const appRoutes: Routes = [
     GoogleSigninComponent,
     HallpassFormComponent,
     PassListComponent,
-    MenuChooseComponent,
     HallPassComponent,
     TemplatePassComponent,
     StudentSearchComponent,
@@ -74,6 +73,7 @@ const appRoutes: Routes = [
     OwlNativeDateTimeModule,
     MatTableModule,
     MatPaginatorModule,
+    MatSortModule,
     RouterModule.forRoot(
       appRoutes
       // ,{ enableTracing: true } // <-- debugging purposes only

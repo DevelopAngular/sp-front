@@ -16,22 +16,21 @@ import {HttpService} from '../http-service';
   styleUrls: ['./pass-table.component.css']
 })
 export class PassTableComponent{
-  displayedColumns = ['name', 'to', 'from', 'timeIn'];
-  dataSource: MatTableDataSource<PassData>;
-  exampleDatabase: ExampleHttpDao | null;
-  length = 100;
+  displayedColumns = ['student', 'to', 'from', 'timeOut', 'duration', 'info'];
+  dataSource: MatTableDataSource<PassData> = new MatTableDataSource();;
+  exampleDatabase: ExampleHttpDao;
+  length = 10;
   pageSize = 10;
+  pageIndex = 0;
   pageSizeOptions = [5, 10, 25, 100];
   barer;
-  nextBatch;
-  prevBatch;
-  resultsLength = 0;
+  batchSize = 20;
   isLoadingResults = true;
   isRateLimitReached = false;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-
+ 
   constructor(private http: HttpService, private dataService: DataService) {
     
   }
@@ -57,28 +56,62 @@ export class PassTableComponent{
   ngOnInit(){
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+    this.exampleDatabase = new ExampleHttpDao(this.http, this.dataService);
+    this.updateTable();
+  }
+
+  updateTable(){
     merge(this.sort.sortChange, this.paginator.page)
     .pipe(
       startWith({}),
       switchMap(() => {
         this.isLoadingResults = true;
-        return this.exampleDatabase!.getPasses(this.pageSize);
+        return this.exampleDatabase!.getPasses(this.batchSize);
       }),
       map(data => {
         // Flip flag to show that loading has finished.
+        let results = data['results'];
+        let out:PassData[] = [];
+        for(var i = 0; i<results.length;i++){
+          let name = results[i]['student']['display_name'];
+          let toLocation = results[i]['to_location']['name'] +"(" +results[i]['to_location']['room'] +")";
+          let fromLocation = results[i]['from_location']['name'] +"(" +results[i]['from_location']['room'] +")";
+          
+          let end = +new Date(results[i]['expiry_time']);
+          let start = +new Date(results[i]['created']);
+          let duration:any = Math.abs(end-start)/1000/60;
+
+          let s = new Date(results[i]['created']);
+          let startTimeString = s.getMonth()+1 + "/" +s.getDate() +"/" +s.getFullYear() +" - " +((s.getHours()>12)?s.getHours()-12:s.getHours()) +":" +((s.getMinutes()<10)?"0":"") +s.getMinutes() +"." +((s.getSeconds()<10)?"0":"") +s.getSeconds();
+          let description = results[i]['description'];
+          let authorities = results[i]['authorities'];
+          out.push(new PassData(name, toLocation, fromLocation, duration, startTimeString, description, authorities));
+        }
+        for(var i = 0; i<out.length;i++){
+          console.log(out[i]);
+        }
+        
         this.isLoadingResults = false;
         this.isRateLimitReached = false;
-        this.resultsLength = data.results.length;
-
-        return data.results;
+        this.length = out.length;
+        
+        return out;
       }),
-      catchError(() => {
+      catchError(error => {
+        console.log(error);
         this.isLoadingResults = false;
-        // Catch if the GitHub API has reached its rate limit. Return empty data.
         this.isRateLimitReached = true;
         return observableOf([]);
       })
-    ).subscribe(data => this.dataSource.data = data);
+    ).subscribe(data => {
+      this.dataSource.data = data;
+      console.log(this.dataSource.data);
+      console.log("Page Index: " +this.pageIndex +" Length: " +this.length +" Page Size: " +this.pageSize);
+      if(this.length/(1+this.pageIndex) == this.pageSize){
+        this.batchSize += this.pageSize;
+        this.updateTable;
+      }
+    });
   }
   /**
    * Set the paginator and sort after the view init since this component will
@@ -86,6 +119,8 @@ export class PassTableComponent{
    */
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+    console.log("Sort: " +this.sort);
+    console.log("Paginator: " +this.paginator);
     this.dataSource.sort = this.sort;
   }
 
@@ -94,16 +129,26 @@ export class PassTableComponent{
     filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
     this.dataSource.filter = filterValue;
   }
-}
 
+  onPaginateChange(event){
+    this.pageIndex = event.pageIndex;
+  }
+}
 
 export interface PassResponse{
   results: any[];
   next: any;
   prev: any[];
 }
+
 export class PassData {
-  constructor(name: string, to: string, from: string, timeIn: string, timeOut: string, description: string, email: string[]){
+  constructor(private name: string,
+              private to: string,
+              private from: string,
+              private duration: string,
+              private timeOut: string,
+              private description: string,
+              private email: string[]){
 
   }
 }
@@ -113,8 +158,11 @@ export class ExampleHttpDao {
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
   }
   barer;
-  getPasses(pageSize): Observable<PassResponse> {
-    var config = {headers:{'Authorization' : 'Bearer ' +this.barer}};
-    return this.http.get<PassResponse>('api/methacton/v1/hall_passes?limit=' +pageSize, config);
+  getPasses(batchSize): Observable<PassResponse> {
+    let config = {headers:{'Authorization' : 'Bearer ' +this.barer}};
+    let data = this.http.get<PassResponse>('api/methacton/v1/hall_passes?limit=' +batchSize, config);
+    console.log("Data:");
+    console.log(data);
+    return data;
   }
 }

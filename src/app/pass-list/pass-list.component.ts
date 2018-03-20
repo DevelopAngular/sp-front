@@ -77,7 +77,7 @@ export class PassListComponent implements OnInit {
       });
       var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
       //TODO &active=true
-      this.http.get('api/methacton/v1/template_passes', config).subscribe((data:any) => {
+      this.http.get('api/methacton/v1/pending_passes', config).subscribe((data:any) => {
         for(var i = 0; i < data.length; i++){
             //console.log(data[i]);
             this.templates.push(new Template(data[i]["to_location"]["name"], data[i]["to_location"]["room"], data[i]["from_location"]["name"], data[i]["from_location"]["room"], data[i]["start_time"], data[i]["end_time"], data[i]["description"], data[i]["students"][0]["display_name"], data[i]["issuer"]["display_name"], data[i]['id']));
