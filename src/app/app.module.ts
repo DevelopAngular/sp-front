@@ -37,6 +37,7 @@ import {MatSortModule} from '@angular/material/sort';
 import {PassFilterComponent} from './pass-filter/pass-filter.component';
 import {PassInfoComponent} from './pass-info/pass-info.component';
 import {MatDialogModule} from '@angular/material/dialog';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
@@ -84,6 +85,7 @@ const appRoutes: Routes = [
     MatPaginatorModule,
     MatSortModule,
     MatDialogModule,
+    MatTooltipModule,
     RouterModule.forRoot(
       appRoutes
       // ,{ enableTracing: true } // <-- debugging purposes only

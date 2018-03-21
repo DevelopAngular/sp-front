@@ -51,4 +51,9 @@ export class PassInfoComponent implements OnInit {
     })
   }
 
+  verify(id){
+    let config = {headers:{'Authorization' : 'Bearer ' +this.barer}};
+    this.http.post("/hall_passes/" +this.id +"/request_verification", config);
+  }
+
 }

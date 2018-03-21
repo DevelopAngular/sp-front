@@ -21,7 +21,7 @@ export class HttpService {
         return this.http.get<T>(baseURL + url, config as ConfigJSON);
     }
 
-    post(url: string, body, config?: Config) {
+    post(url: string, body?, config?: Config) {
       if (config) {
         config['responseType'] = 'json';
         return this.http.post(baseURL + url, body, config as ConfigJSON);
