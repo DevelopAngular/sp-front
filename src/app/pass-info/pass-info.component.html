@@ -1,3 +1,7 @@
+<!-- <header>
+  <link href="../../../node_modules/ng2-toastr/bundles/ng2-toastr.min.css" rel="stylesheet" />
+</header> -->
+
 <h2>Name</h2>
   <pre>   {{ name }}</pre>
 <h2>Destination</h2>
@@ -8,7 +12,16 @@
   <pre>   {{ timeOut }}</pre>
 <h2>Duration</h2>
   <pre>   {{ duration }} minutes</pre>
+<h2>Issuer</h2>
+  <pre>   {{ issuer }}</pre>
 <h2>Description</h2>
   <pre>   {{ description }}</pre>
 <h2>Email Staff</h2>
-    <pre>   <a matTooltip="Click to send an email verification." matTooltipPosition="right" (click)='verify(id)'>kc349@student.methacton.org</a></pre>
+  <button
+    mat-raised-button
+    matTooltip="This will send an email to all relevant staff."
+    matTooltipPosition="above"
+    (click)='verify()'>
+    Verify with Staff
+  </button>
+  <br>

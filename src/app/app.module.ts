@@ -38,6 +38,7 @@ import {PassFilterComponent} from './pass-filter/pass-filter.component';
 import {PassInfoComponent} from './pass-info/pass-info.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import {ToastModule} from 'ng2-toastr/ng2-toastr';
 
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
@@ -86,6 +87,7 @@ const appRoutes: Routes = [
     MatSortModule,
     MatDialogModule,
     MatTooltipModule,
+    ToastModule.forRoot(),
     RouterModule.forRoot(
       appRoutes
       // ,{ enableTracing: true } // <-- debugging purposes only

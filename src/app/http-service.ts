@@ -23,9 +23,11 @@ export class HttpService {
 
     post(url: string, body?, config?: Config) {
       if (config) {
+        console.log("Sent post with config.");
         config['responseType'] = 'json';
         return this.http.post(baseURL + url, body, config as ConfigJSON);
       } else {
+        console.log("Sent post without config.");
         return this.http.post(baseURL + url, body);
       }
     }

@@ -1,6 +1,9 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import {HttpService} from '../http-service';
+import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+import { ViewContainerRef } from '@angular/core';
+
 @Component({
   selector: 'app-pass-info',
   templateUrl: './pass-info.component.html',
@@ -14,12 +17,18 @@ export class PassInfoComponent implements OnInit {
   origin;
   timeOut;
   duration;
+  issuer;
   description;
   emails;
 
   constructor(
-    public dialogRef: MatDialogRef<PassInfoComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any, private http:HttpService) { }
+              public dialogRef: MatDialogRef<PassInfoComponent>,
+              @Inject(MAT_DIALOG_DATA) public data: any,
+              private http:HttpService,
+              public toastr: ToastsManager,
+              vcr: ViewContainerRef){
+    this.toastr.setRootViewContainerRef(vcr);
+  }
 
   onNoClick(): void {
     this.dialogRef.close();
@@ -46,14 +55,18 @@ export class PassInfoComponent implements OnInit {
       let duration:any = Math.abs(end-start)/1000/60;
       this.duration = duration;
 
+      this.issuer = data['issuer']['display_name']
+
       this.description = data['description'];
-      this.emails = data['authorities'];
-    })
+      this.emails = ['kc349@student.methacton.org', 'ds111@student.methacton.org', 'dbontempo@methacton.org'];//data['authorities'];
+    });
   }
 
-  verify(id){
+  verify(){
+    console.log("Verifying pass: " +this.id);
     let config = {headers:{'Authorization' : 'Bearer ' +this.barer}};
-    this.http.post("/hall_passes/" +this.id +"/request_verification", config);
+    this.http.post("api/methacton/v1/hall_passes/" +this.id +"/request_verification", "", config).subscribe();
+    this.toastr.success("Emails have been sent to relevant staff.", "Success!", {positionClass: 'toast-bottom-center', animate: 'fade', showCloseButton: true, toastLife: 3000});
   }
 
 }

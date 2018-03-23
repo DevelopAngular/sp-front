@@ -29,6 +29,7 @@
     "gapi-client": "^0.0.3",
     "ng-gapi": "^0.0.45",
     "ng-pick-datetime": "^5.1.9",
+    "ng2-toastr": "^4.1.2",
     "ng4-material-dropdown": "^1.0.0",
     "ngx-chips": "^1.6.7",
     "ngx-infinite-scroll": "^0.8.3",
