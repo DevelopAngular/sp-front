@@ -1,69 +1,65 @@
-<form #passForm="ngForm" class="form">
-  <table class="table">
-    <tr>
-      <td><h1>Hallpass For:</h1></td>
-      <td>
-        <div *ngIf="isStaff; else student;">
-          <app-student-search></app-student-search>
-        </div>
-        <ng-template #student>
-          <h3> Ur Not a Teacher</h3>
-        </ng-template>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <h1>From:</h1>
-        <div *ngIf="!isStaff; else noFrom;">
+<!--
+
+STUDENT NAME OR STUDENT SEARCH
+
+<div *ngIf="isStaff; else student;">
+  <app-student-search></app-student-search>
+</div>
+<ng-template #student>
+  <h3> Ur Not a Teacher</h3>
+</ng-template>
+
+
+From location
+
+<div *ngIf="!isStaff; else noFrom;">
           
           <app-teacher-search type="'from'"></app-teacher-search>
         </div>
         <ng-template #noFrom>
           <h3> Ur a Teacher</h3>
         </ng-template>
-      </td>
-      <td>
-        <h1>To:</h1>
-        <app-teacher-search type="'to'"></app-teacher-search>
-      </td>
-    </tr>
-    <tr>
-      <div *ngIf="!isStaff; else teacherDate;">
-        <td>
-          <h1>Date:</h1>
-          <mat-form-field class="date-field" enabled="false">
-            <input matInput placeholder="" aria-label="" value="{{ dateNow }}" disabled>
-          </mat-form-field>
-        </td>
-        <td>
-          <h1>Time:</h1>
-          <mat-form-field class="time-field" enabled="false">
-            <input matInput placeholder="" aria-label="" value="{{ timeNow }}" disabled>
-          </mat-form-field>
-        </td>
-      </div>
-      <ng-template #teacherDate>
-        <td>
-          <label>Date Time(via reactive form):</label>
-          <input matInput [formControl]="selectedMoment"
-                 [owlDateTimeTrigger]="dtPicker" [owlDateTime]="dtPicker">
-          <owl-date-time #dtPicker></owl-date-time>
-        </td>
-          <!-- <td><angular2-date-picker [(ngModel)]="date" [settings]="settings"></angular2-date-picker></td> -->
-      </ng-template>
-    </tr>
-    <tr>
-      <td>
-        <h1>Duration:</h1>
-        <mat-select [(ngModel)]="duration" name="duration"class="duration-field" placeholder="Duration" width="50">
-          <mat-option *ngFor="let dur of durs" [value]="dur">
-            <span>{{ dur }}</span>
-          </mat-option>
-        </mat-select>
-      </td>
-      <td>
-        <button mat-raised-button (click)="newPass()"><h1>Submit</h1></button>
-      </td>
-    </tr>
-  </table>
-</form>
+
+
+Student Date-Time display
+
+<mat-form-field class="date-field" enabled="false">
+  <input matInput placeholder="" aria-label="" value="{{ dateNow }}" disabled>
+</mat-form-field>
+<mat-form-field class="time-field" enabled="false">
+  <input matInput placeholder="" aria-label="" value="{{ timeNow }}" disabled>
+</mat-form-field>
+
+
+Teacher Date-Time picker
+
+<label>Date Time(via reactive form):</label>
+<input matInput [formControl]="selectedMoment" [owlDateTimeTrigger]="dtPicker" [owlDateTime]="dtPicker">
+<owl-date-time #dtPicker></owl-date-time>
+
+
+Duration picker
+
+<mat-select [(ngModel)]="duration" name="duration"class="duration-field" placeholder="Duration" width="50">
+  <mat-option *ngFor="let dur of durs" [value]="dur">
+    <span>{{ dur }}</span>
+  </mat-option>
+</mat-select>
+
+
+Submit Button
+<button mat-raised-button (click)="newPass()"><h1>Submit</h1></button>
+-->
+
+
+<div class="pass">
+  <h1 class="title">Hallpass</h1>
+  <form class="form" #passForm="ngForm" class="form">
+    <div *ngIf="isStaff; else studentForm;">
+      This is that teacher form.
+    </div>
+    <ng-template #studentForm>
+      This is the student form.
+    </ng-template>
+  </form>
+</div>

@@ -13,6 +13,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/publishReplay';
 import GoogleUser = gapi.auth2.GoogleUser;
 import GoogleAuth = gapi.auth2.GoogleAuth;
+import { setTimeout } from 'timers';
 
 interface ServerAuth {
   access_token: string;
@@ -86,12 +87,10 @@ export class UserService {
 
     this.serverAuth.subscribe(auth => {
       this.dataService.updateBarer(auth.access_token);
-      tokenTimout = auth.expires_in*1000*.6;
+      tokenTimout = auth.expires_in*1000*.25;
       setTimeout(()=>{
         console.log("Re-verifying access token.");
         this.fetchServerAuth(auth.access_token);
-        this.dataService.updateBarer("");
-        this.router.navigate(['']);
       }, tokenTimout);
     });
 

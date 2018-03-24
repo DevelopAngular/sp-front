@@ -20,7 +20,7 @@ export class GoogleSigninComponent {
 
   public isLoaded = false;
   public progressValue = 0;
-  public progressType = 'indeterminate';
+  public progressType = 'determinate';
 
   public content: any = '';
   public user: any = '';
