@@ -36,6 +36,7 @@ export class StudentSearchComponent implements AfterViewInit {
   studentCtrl: FormControl;
   filteredStudents: Observable<any[]>;
   students: Student[] = [];
+  studentsAsStrings: string[] = ['Ananth', 'Dhruv', 'Kyle', 'Will'];
   barer: string;
   _value: string = "";
   selectedStudents: Student[] = [];
@@ -44,6 +45,17 @@ export class StudentSearchComponent implements AfterViewInit {
 
   @Input()
   selectedId;
+
+  texts: string[];
+
+  search(event) {
+    console.log("Auto-complete query:");
+    console.log(event.query);
+    this.updateStudents(event.query);
+    // this.mylookupservice.getResults(event.query).then(data => {
+    //     this.results = data;
+    // });
+  }
 
   constructor(private ahttp: HttpClient, private http: HttpService, private dataService:DataService) {
     this.studentCtrl = new FormControl();
@@ -129,6 +141,7 @@ export class StudentSearchComponent implements AfterViewInit {
     for(var i = 0; i < json.length; i++){
       if(json[i]['rank'] > 0){
         out.push(new Student(json[i]['id'], json[i]['display_name']))
+        this.studentsAsStrings.push(json[i]['display_name']);
       } else{
         return out;
       }

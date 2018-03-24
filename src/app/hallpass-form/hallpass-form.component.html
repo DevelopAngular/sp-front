@@ -54,12 +54,10 @@ Submit Button
 
 <div class="pass">
   <h1 class="title">Hallpass</h1>
-  <form class="form" #passForm="ngForm" class="form">
     <div *ngIf="isStaff; else studentForm;">
-      This is that teacher form.
+      <app-student-search></app-student-search>
     </div>
     <ng-template #studentForm>
       This is the student form.
     </ng-template>
-  </form>
 </div>

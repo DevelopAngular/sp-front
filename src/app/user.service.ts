@@ -13,7 +13,6 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/publishReplay';
 import GoogleUser = gapi.auth2.GoogleUser;
 import GoogleAuth = gapi.auth2.GoogleAuth;
-import { setTimeout } from 'timers';
 
 interface ServerAuth {
   access_token: string;

@@ -32,6 +32,7 @@ export class HallpassFormComponent implements OnInit {
   //     format: 'dd-MM-yyyy',
   //     defaultOpen: true
   // }
+
   constructor(private http: HttpService, private dataService: DataService, private router: Router) {
 
     var nowish = new Date();

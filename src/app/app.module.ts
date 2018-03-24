@@ -39,7 +39,7 @@ import {PassInfoComponent} from './pass-info/pass-info.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {ToastModule} from 'ng2-toastr/ng2-toastr';
-
+import {AutoCompleteModule} from 'primeng/autocomplete';
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
   { path: 'main', component: PassListComponent },
@@ -87,6 +87,7 @@ const appRoutes: Routes = [
     MatSortModule,
     MatDialogModule,
     MatTooltipModule,
+    AutoCompleteModule,
     ToastModule.forRoot(),
     RouterModule.forRoot(
       appRoutes

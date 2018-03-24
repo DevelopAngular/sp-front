@@ -1,4 +1,28 @@
-<div class="wrapper">
+<p-autoComplete [(ngModel)]="texts" [suggestions]="studentsAsStrings" (completeMethod)="search($event)" [multiple]="true"></p-autoComplete>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <div class="wrapper">
   <label for="names">Enter Student's Names</label>
   <tag-input id="names" [(ngModel)]="selectedStudents" [onlyFromAutocomplete]="true" [onAdding]="asyncOnAdding" [onRemoving]="asyncOnRemoving">
     <tag-input-dropdown
@@ -12,4 +36,4 @@
       </ng-template>
     </tag-input-dropdown>
   </tag-input>
-</div>
+</div> -->
