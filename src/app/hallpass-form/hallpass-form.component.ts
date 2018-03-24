@@ -38,7 +38,7 @@ export class HallpassFormComponent implements OnInit {
     this.dateNow = nowish.getMonth()+1 + "/" +nowish.getDay() +"/" +nowish.getFullYear();
     var mins = nowish.getMinutes();
     var hours = nowish.getHours();
-    this.timeNow = ((hours>12)?hours-12:hours) +":" +((mins<10)?"0":"") +mins;
+    this.timeNow = ((hours>12)?(hours-12==0?0:hours-12):hours) +":" +((mins<10)?"0":"") +mins +(hours>12)?" pm":" am";
 
       //if(!this.isStaff){
           setInterval(() => {

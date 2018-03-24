@@ -101,7 +101,13 @@ export class PassTableComponent{
           let duration:any = Math.abs(end-start)/1000/60;
 
           let s = new Date(results[i]['created']);
-          let startTimeString = ((s.getHours()>12)?s.getHours()-12:s.getHours()) +":" +((s.getMinutes()<10)?"0":"") +s.getMinutes() +" - " +s.getMonth()+1 + "/" +s.getDate() +"/" +s.getFullYear() ;
+          let hours = s.getHours();
+          let mins = s.getMinutes();
+          let day = s.getDate();
+          let month = s.getMonth();
+          let year = s.getFullYear();
+          let time = s.toLocaleTimeString();
+          let startTimeString = time.substring(0, time.indexOf(":", time.indexOf(":")+1)) +time.substring(time.length-3) +" - " +s.toLocaleDateString();
           let description = results[i]['description'];
           let authorities = results[i]['authorities'];
           out.push(new PassData(id,

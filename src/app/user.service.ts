@@ -5,6 +5,7 @@ import {HttpService} from './http-service';
 import {environment} from '../environments/environment';
 import {DataService} from './data-service';
 import {Observable} from 'rxjs/Observable';
+import {Router} from '@angular/router';
 
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/filter';
@@ -55,7 +56,7 @@ export class UserService {
   public serverAuth: Observable<ServerAuth>;
   public userData: Observable<User>;
 
-  constructor(private googleAuth: GoogleAuthService, private http: HttpService, private dataService: DataService) {
+  constructor(private googleAuth: GoogleAuthService, private http: HttpService, private dataService: DataService, private router: Router) {
     this.googleTokenSubject = new BehaviorSubject<string>(sessionStorage.getItem(UserService.SESSION_STORAGE_KEY));
     this.googleToken = this.googleTokenSubject
       .filter(truthy)
@@ -79,7 +80,21 @@ export class UserService {
 
     // wire this service to update DataService when no values are retrieved.
 
-    this.serverAuth.subscribe(auth => this.dataService.updateBarer(auth.access_token));
+
+    let sessionTimeout = 0;
+    let tokenTimout = 0;
+
+    this.serverAuth.subscribe(auth => {
+      this.dataService.updateBarer(auth.access_token);
+      tokenTimout = auth.expires_in*1000*.6;
+      setTimeout(()=>{
+        console.log("Re-verifying access token.");
+        this.fetchServerAuth(auth.access_token);
+        this.dataService.updateBarer("");
+        this.router.navigate(['']);
+      }, tokenTimout);
+    });
+
     this.userData.subscribe(user => this.dataService.updateUser(user));
   }
 

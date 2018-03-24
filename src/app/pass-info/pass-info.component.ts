@@ -47,7 +47,10 @@ export class PassInfoComponent implements OnInit {
       this.origin = data['from_location']['name'] +" (" +data['from_location']['room'] +")";
 
       let s = new Date(data['created']);
-      let startTimeString = ((s.getHours()>12)?s.getHours()-12:s.getHours()) +":" +((s.getMinutes()<10)?"0":"") +s.getMinutes() +" - " +s.getMonth()+1 + "/" +s.getDate() +"/" +s.getFullYear() ;
+      let hours = s.getHours();
+      let mins = s.getMinutes();
+      let time = s.toLocaleTimeString();
+      let startTimeString = time.substring(0, time.indexOf(":", time.indexOf(":")+1)) +time.substring(time.length-3) +" - " +s.toLocaleDateString();
       this.timeOut = startTimeString;
 
       let end = +new Date(data['expiry_time']);
