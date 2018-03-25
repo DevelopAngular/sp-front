@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, Input, SimpleChange } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, Input, SimpleChange, Injectable } from '@angular/core';
 import {FormControl} from '@angular/forms';
 
 import {Observable} from 'rxjs/Observable';
@@ -33,31 +33,40 @@ function wrapper<T>(thing: Observable<T>): Promise<T> {
 
 export class StudentSearchComponent implements AfterViewInit {
 
+  country: any;
+  countries: any[];
+  filteredCountriesMultiple: any[];
+
+  filterCountryMultiple(event) {
+    let query = event.query;
+    this.filteredCountriesMultiple =  this.countryService.getCountries();
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   studentCtrl: FormControl;
   filteredStudents: Observable<any[]>;
   students: Student[] = [];
-  studentsAsStrings: string[] = ['Ananth', 'Dhruv', 'Kyle', 'Will'];
   barer: string;
   _value: string = "";
   selectedStudents: Student[] = [];
-
   items = [];
-
   @Input()
   selectedId;
 
-  texts: string[];
-
-  search(event) {
-    console.log("Auto-complete query:");
-    console.log(event.query);
-    this.updateStudents(event.query);
-    // this.mylookupservice.getResults(event.query).then(data => {
-    //     this.results = data;
-    // });
-  }
-
-  constructor(private ahttp: HttpClient, private http: HttpService, private dataService:DataService) {
+  constructor(private ahttp: HttpClient, private http: HttpService, private dataService:DataService, private countryService: CountryService) {
     this.studentCtrl = new FormControl();
     this.filteredStudents = this.studentCtrl.valueChanges
       .pipe(
@@ -141,13 +150,22 @@ export class StudentSearchComponent implements AfterViewInit {
     for(var i = 0; i < json.length; i++){
       if(json[i]['rank'] > 0){
         out.push(new Student(json[i]['id'], json[i]['display_name']))
-        this.studentsAsStrings.push(json[i]['display_name']);
+        //this.studentsAsStrings.push(json[i]['display_name']);
       } else{
         return out;
       }
     }
     return out;
     //return json.map(item => new Student(item["id"], item["display_name"]));
-  }
+  }  
+}
 
+@Injectable()
+export class CountryService {
+
+    constructor() {}
+
+    getCountries() {
+        return ['These', 'Are', 'Test', 'Strings', 'Ananth Dandibhotla', 'Will Gulian', 'Kyle Cook', 'Dhruv Sringari'];
+    }
 }

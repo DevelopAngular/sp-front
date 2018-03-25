@@ -1,4 +1,13 @@
-<p-autoComplete [(ngModel)]="texts" [suggestions]="studentsAsStrings" (completeMethod)="search($event)" [multiple]="true"></p-autoComplete>
+<h3>Multiple</h3>
+<span class="ui-fluid">
+    <p-autoComplete [(ngModel)]="countries" [suggestions]="filteredCountriesMultiple"
+                    (completeMethod)="filterCountryMultiple($event)" styleClass="wid100"
+                    [minLength]="1" placeholder="Countries" field="name" [multiple]="true">
+    </p-autoComplete>
+</span>
+<ul>
+    <li *ngFor="let c of countries">{{c.name}}</li>
+</ul>
 
 
 
