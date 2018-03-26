@@ -25,7 +25,7 @@ export class Location {
 })
 export class TeacherSearchComponent implements AfterViewInit {
   locations: Location[] = [];
-  selectedLocations: Location;
+  selectedLocation: Location;
   barer: string;
 
   @Input()
@@ -54,5 +54,5 @@ export class TeacherSearchComponent implements AfterViewInit {
       out.push(new Location(json[i]['id'], json[i]['name'], json[i]['campus'], json[i]['room']))
     }
     return out;
-  }  
+  }
 }
