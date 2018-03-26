@@ -1,63 +1,37 @@
-<!--
-
-STUDENT NAME OR STUDENT SEARCH
-
-<div *ngIf="isStaff; else student;">
-  <app-student-search></app-student-search>
-</div>
-<ng-template #student>
-  <h3> Ur Not a Teacher</h3>
-</ng-template>
-
-
-From location
-
-<div *ngIf="!isStaff; else noFrom;">
-          
-          <app-teacher-search type="'from'"></app-teacher-search>
-        </div>
-        <ng-template #noFrom>
-          <h3> Ur a Teacher</h3>
-        </ng-template>
-
-
-Student Date-Time display
-
-<mat-form-field class="date-field" enabled="false">
-  <input matInput placeholder="" aria-label="" value="{{ dateNow }}" disabled>
-</mat-form-field>
-<mat-form-field class="time-field" enabled="false">
-  <input matInput placeholder="" aria-label="" value="{{ timeNow }}" disabled>
-</mat-form-field>
-
-
-Teacher Date-Time picker
-
-<label>Date Time(via reactive form):</label>
-<input matInput [formControl]="selectedMoment" [owlDateTimeTrigger]="dtPicker" [owlDateTime]="dtPicker">
-<owl-date-time #dtPicker></owl-date-time>
-
-
-Duration picker
-
-<mat-select [(ngModel)]="duration" name="duration"class="duration-field" placeholder="Duration" width="50">
-  <mat-option *ngFor="let dur of durs" [value]="dur">
-    <span>{{ dur }}</span>
-  </mat-option>
-</mat-select>
-
-
-Submit Button
-<button mat-raised-button (click)="newPass()"><h1>Submit</h1></button>
--->
-
-
 <div class="pass">
   <h1 class="title">Hallpass</h1>
-    <div *ngIf="isStaff; else studentForm;">
+
+  <div *ngIf="isStaff; else studentForm;">
+    <div class="formElement">
       <app-student-search></app-student-search>
     </div>
-    <ng-template #studentForm>
-      This is the student form.
-    </ng-template>
+
+    <div class="formElement halfForm">
+      <app-teacher-search type="'to'"></app-teacher-search>
+    </div>
+
+    <div class="formElement">
+      <div class="date">
+        <app-date-time type="'date'"></app-date-time>
+      </div>
+
+      <div class="time">
+        <app-date-time type="'time'"></app-date-time>
+      </div>
+    </div>
+
+    <div class="formElement">
+      <div class="duration">
+        <app-duration-picker></app-duration-picker>
+        </div>
+
+        <div class="submit">
+          <p-button (onClick)="newPass()" icon="fa fa-fw fa-check" label="Issue Pass"></p-button>
+        </div>
+      </div>
+  </div>
+
+  <ng-template #studentForm>
+    This is the student form.
+  </ng-template>
 </div>

@@ -40,6 +40,11 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {ToastModule} from 'ng2-toastr/ng2-toastr';
 import {AutoCompleteModule} from 'primeng/autocomplete';
+import {CalendarModule} from 'primeng/calendar';
+import {DropdownModule} from 'primeng/dropdown';
+import {ButtonModule} from 'primeng/button';
+import { DateTimeComponent } from './date-time/date-time.component';
+import { DurationPickerComponent } from './duration-picker/duration-picker.component';
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
   { path: 'main', component: PassListComponent },
@@ -59,6 +64,8 @@ const appRoutes: Routes = [
     PassTableComponent,
     PassFilterComponent,
     PassInfoComponent,
+    DateTimeComponent,
+    DurationPickerComponent,
   ],
   entryComponents: [
     PassInfoComponent
@@ -88,6 +95,9 @@ const appRoutes: Routes = [
     MatDialogModule,
     MatTooltipModule,
     AutoCompleteModule,
+    CalendarModule,
+    DropdownModule,
+    ButtonModule,
     ToastModule.forRoot(),
     RouterModule.forRoot(
       appRoutes

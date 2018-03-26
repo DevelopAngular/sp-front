@@ -1,48 +1,9 @@
-<h3>Multiple</h3>
-<span class="ui-fluid">
-    <p-autoComplete [(ngModel)]="countries" [suggestions]="filteredCountriesMultiple"
-                    (completeMethod)="filterCountryMultiple($event)" styleClass="wid100"
-                    [minLength]="1" placeholder="Countries" field="name" [multiple]="true">
-    </p-autoComplete>
+<span class="ui-fluid wrapper">
+        <span class="ui-float-label">
+        <p-autoComplete id="float-input" pInputText [(ngModel)]="selectedStudents"
+                        [suggestions]="students" (completeMethod)="updateStudents($event)"
+                        placeholder="" field="name" [multiple]="true" >
+        </p-autoComplete>
+        <label for="float-input">Student(s)</label>
+    </span>
 </span>
-<ul>
-    <li *ngFor="let c of countries">{{c.name}}</li>
-</ul>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- <div class="wrapper">
-  <label for="names">Enter Student's Names</label>
-  <tag-input id="names" [(ngModel)]="selectedStudents" [onlyFromAutocomplete]="true" [onAdding]="asyncOnAdding" [onRemoving]="asyncOnRemoving">
-    <tag-input-dropdown
-      [autocompleteItems]="students"
-      [displayBy]="'name'"
-      [identifyBy]="'id'"
-      [showDropdownIfEmpty]="false"
-      [focusFirstElement]="true">
-      <ng-template let-item="item" let-index="index">
-        ({{ index }}) {{ item.name }}: {{ item.id }}
-      </ng-template>
-    </tag-input-dropdown>
-  </tag-input>
-</div> -->

@@ -1,10 +1,9 @@
-<mat-form-field class="teacher-search">
-  <input matInput [(ngModel)]="value" placeholder="Teacher or Room" aria-label="Teacher or Room" [matAutocomplete]="auto" [formControl]="teacherCtrl" [id]="type" [(ngModel)]="value">
-  <mat-autocomplete #auto="matAutocomplete">
-    <mat-option *ngFor="let teacher of filteredTeachers | async" [value]="teacher.nameRoom">
-      <span class="teacher-option">
-        {{ teacher.name }} <br> <small class="room-option">Room #: {{ teacher.room }}</small>
-      </span>
-    </mat-option>
-  </mat-autocomplete>
-</mat-form-field>
+<span class="ui-fluid wrapper">
+    <span class="ui-float-label">
+    <p-autoComplete id="float-input" pInputText [(ngModel)]="selectedLocation"
+                    [suggestions]="locations" (completeMethod)="updateLocations($event)"
+                    placeholder="" field="nameRoom" [multiple]="false">
+    </p-autoComplete>
+    <label for="float-input">Destination</label>
+</span>
+</span>

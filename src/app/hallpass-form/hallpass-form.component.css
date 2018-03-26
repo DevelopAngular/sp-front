@@ -23,18 +23,22 @@ button{
 
 .formElement{
   margin-left: 15px;
+  padding-right: 15px;
+  padding-bottom: 20px;
 }
 
-#durationId{
-  width: 100px;
+.halfForm{
+  width: 50%;
 }
 
-.example-form {
-  min-width: 150px;
-  max-width: 500px;
-  width: 100%;
+.date, .time, .duration, .submit{
+  display: table-cell;
 }
 
-.example-full-width {
-  width: 100%;
+.duration{
+  min-width: 100px;
+}
+
+.time, .submit{
+  padding-left: 10px;
 }

@@ -23,15 +23,9 @@ export class HallpassFormComponent implements OnInit {
   public from;
   public duration; //<- this is duration
   public gUser;
-  //public baseURL = "https://notify-messenger-notify-server-staging.lavanote.com/api/methacton/v1/";
   public isStaff = false;
   public selectedMoment = new FormControl(new Date());
-  // settings = {
-  //     bigBanner: true,
-  //     timePicker: false,
-  //     format: 'dd-MM-yyyy',
-  //     defaultOpen: true
-  // }
+
 
   constructor(private http: HttpService, private dataService: DataService, private router: Router) {
 
