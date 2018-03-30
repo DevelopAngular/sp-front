@@ -55,7 +55,6 @@ export class TeacherSearchComponent implements AfterViewInit {
     }
     return out;
   }
-  
   validate(){
     return this.selectedLocation instanceof Location;
   }
