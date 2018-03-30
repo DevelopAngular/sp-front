@@ -1,59 +1,39 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewChildren, QueryList} from '@angular/core';
 import { DataService } from '../data-service';
 import { Router } from '@angular/router';
 import { HttpService } from '../http-service';
 import { FormControl } from '@angular/forms';
+import { StudentSearchComponent } from '../student-search/student-search.component';
+import { DurationPickerComponent } from '../duration-picker/duration-picker.component';
+import { DateTimeComponent } from '../date-time/date-time.component';
+import { TeacherSearchComponent } from '../teacher-search/teacher-search.component';
+
 @Component({
   selector: 'app-hallpass-form',
   templateUrl: './hallpass-form.component.html',
   styleUrls: ['./hallpass-form.component.css']
 })
 export class HallpassFormComponent implements OnInit {
+  @ViewChild(StudentSearchComponent) studentComponent: StudentSearchComponent;
+  @ViewChild(TeacherSearchComponent) teacherComponent: TeacherSearchComponent;
+  @ViewChild(DurationPickerComponent) durationComponent: DurationPickerComponent;
+  @ViewChildren(DateTimeComponent) dateTimeComponent: QueryList<DateTimeComponent>;
 
-  
-  durs: string[] = ["3", "5", "10", "15", "30"];
-  public now: Date = new Date();
-  public dateNow: any;
-  public timeNow: any;
+  //General Set-Up
   public barer: string;
-  public isLoggedIn: Boolean = false;
+  public isLoggedIn: Boolean = false; 
   public studentName: string;
   public user:string[];
-  public to;
-  public from;
-  public duration; //<- this is duration
   public gUser;
   public isStaff = false;
-  public selectedMoment = new FormControl(new Date());
 
-
-  constructor(private http: HttpService, private dataService: DataService, private router: Router) {
-
-    var nowish = new Date();
-    this.dateNow = nowish.getMonth()+1 + "/" +nowish.getDay() +"/" +nowish.getFullYear();
-    var mins = nowish.getMinutes();
-    var hours = nowish.getHours();
-    this.timeNow = ((hours>12)?(hours-12==0?0:hours-12):hours) +":" +((mins<10)?"0":"") +mins +(hours>12)?" pm":" am";
-
-      //if(!this.isStaff){
-          setInterval(() => {
-          var nowish = new Date();
-          this.dateNow = nowish.getMonth()+1 + "/" +nowish.getDay() +"/" +nowish.getFullYear();
-          var mins = nowish.getMinutes();
-          var hours = nowish.getHours();
-          this.timeNow = ((hours>12)?hours-12:hours) +":" +((mins<10)?"0":"") +mins;
-          //console.log(this.selectedMoment);;
-        }, 10000);
-      //}
-      
-  }
+  constructor(private http: HttpService, private dataService: DataService, private router: Router) {}
 
   ngOnInit() {
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
     if(this.barer == "")
       this.router.navigate(['../']);
     else{
-      //this.setupUserId();
       this.dataService.currentUser.subscribe(user => this.user = user);
       this.isStaff = this.user['is_staff'];
       console.log("Hallpass form is staff:" +this.isStaff);
@@ -64,26 +44,46 @@ export class HallpassFormComponent implements OnInit {
 
   newPass(){
     console.log("Making new pass");
-    this.dataService.currentTo.subscribe(to => this.to = to);
-    //console.log("To: " +this.to);
-    this.dataService.currentFrom.subscribe(from => this.from = from);
-    //console.log("From: " +this.from);
-    this.dataService.currentUser.subscribe(user => this.user = user);
-    console.log("UserId: " +this.user['id']);
-    let data: object = {
-                        'student': this.user['id'],
-                        'description': '',
-                        'from_location': this.from,
-                        'to_location': this.to,
-                        'valid_time': (parseInt(this.duration) * 60) +""
-                      };
-    //console.log("Data: " +data['student']);
-    var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
-    //console.log("Config: " +config);
-    this.http.post('api/methacton/v1/hall_passes', data, config).subscribe((data:any) => {
-        console.log("Got data.");
-        //this.router.navigate(['../main']);
+
+    // let studentsValid = this.studentComponent.validate();
+    // let destinationValid = this.teacherComponent.validate();
+    // let dateValid = this.dateTimeComponent.toArray()[0].validate();
+    // let timeValid = this.dateTimeComponent.toArray()[1].validate();
+    // let durationValid = this.durationComponent.validate();
+
+
+    let studentIds:string[] = [];
+    this.studentComponent.selectedStudents.forEach(student => {
+      studentIds.push(student.id);
     });
+    let destination:string = this.teacherComponent.selectedLocation.id;
+    let date:Date = this.dateTimeComponent.toArray()[0].selectedDate;
+    let time:Date = this.dateTimeComponent.toArray()[1].selectedTime;
+    let finalDate = new Date();
+    finalDate.setDate(date.getDate());
+    finalDate.setTime(time.getTime());
+    let duration = this.durationComponent.selectedDuration.value;
+    let data: object;
+    if(this.isStaff){
+      data = {
+              'students': studentIds,
+              'description': '',
+              'to_location': destination,
+              'valid_time': duration,
+              'start_time': finalDate.toISOString(),
+              'from_location': null,
+              'end_time': null
+              };
+      }
+    var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
+    this.http.post('api/methacton/v1/pending_passes', data, config).subscribe((data:any) => {
+        console.log("Got data.");
+    });
+    this.studentComponent.selectedStudents = [];
+    this.teacherComponent.selectedLocation = null;
+    this.dateTimeComponent.toArray()[0].selectedDate = null;
+    this.dateTimeComponent.toArray()[1].selectedTime = null;
+    this.durationComponent.selectedDuration = null;
     this.dataService.updateTab(1);
   }
  
@@ -92,7 +92,6 @@ export class HallpassFormComponent implements OnInit {
     const tempUser = await this.getUser();
     this.dataService.updateUser(tempUser);
   }
-
   
   getUser(){
     return new Promise((resolve, reject) => {
@@ -105,19 +104,4 @@ export class HallpassFormComponent implements OnInit {
       }, reject);
     });
   }
-  
-  
-  // getUserId(){
-  //   console.log("Setting UserId.");
-  //   var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
-    
-  //   var newData = this.newHttp.get("api/methacton/v1/users/@me", config);
-
-  //   this.dataService.updateUserId(newData.id);
-  //   console.log("Dong setting UserId");
-  //   // this.http.get(this.baseURL +'users/@me', config).subscribe((data:any) => {
-  //   //   this.dataService.updateUserId(data.id);
-  //   // });
-    
-  // }
 }

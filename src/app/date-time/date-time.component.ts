@@ -18,5 +18,4 @@ export class DateTimeComponent implements OnInit {
     this.isDate = this.type=="'date'";
     this.minDate = new Date();
   }
-
 }

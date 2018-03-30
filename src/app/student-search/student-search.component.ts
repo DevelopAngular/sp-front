@@ -62,5 +62,5 @@ export class StudentSearchComponent implements AfterViewInit {
       }
     }
     return out;
-  }  
+  }
 }

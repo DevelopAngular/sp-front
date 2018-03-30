@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 
 export class Duration{
-  constructor(private display:string, private value:number){}
+  constructor(public display:string, public value:number){}
 }
 
 @Component({
@@ -18,8 +18,7 @@ export class DurationPickerComponent implements OnInit {
                           new Duration("15 minutes", 15000),
                           new Duration("30 minutes", 30000)
                         ];
-  selectedDuration: string;
-
+  public selectedDuration: Duration;
   constructor() { }
 
   ngOnInit() {

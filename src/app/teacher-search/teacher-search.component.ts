@@ -25,7 +25,7 @@ export class Location {
 })
 export class TeacherSearchComponent implements AfterViewInit {
   locations: Location[] = [];
-  selectedLocations: Location;
+  selectedLocation: Location;
   barer: string;
 
   @Input()
