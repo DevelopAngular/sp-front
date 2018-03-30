@@ -1,16 +1,22 @@
 <div *ngIf="isDate; else time;">
   <span class="ui-fluid wrapper">
-    <span class="ui-float-label">
-      <p-calendar id="date-float-input" [(ngModel)]="selectedDate" [minDate]="minDate" readonlyInput="true"></p-calendar>
-      <label for="date-float-input">Start Date</label>
-    </span>
+    <div class="ui-inputgroup">
+      <span class="ui-float-label">
+        <p-calendar id="date-float-input" [(ngModel)]="selectedDate" [minDate]="minDate" readonlyInput="true"></p-calendar>
+        <label for="date-float-input">Start Date</label>
+      </span>
+      <button pButton type="button" [icon]="getIcon()" [ngClass]="{'ui-button-success': validate(), 'ui-button-danger': !validate()}" class="validationIcon"></button>
+    </div>
   </span>
 </div>
 <ng-template #time>
   <span class="ui-fluid wrapper">
+    <div class="ui-inputgroup">
       <span class="ui-float-label">
         <p-calendar id="time-float-input" [(ngModel)]="selectedTime" [timeOnly]="true" readonlyInput="true" hourFormat="12"></p-calendar>
         <label for="time-float-input">Start Time</label>
-    </span>
+      </span>
+      <button pButton type="button" [icon]="getIcon()" [ngClass]="{'ui-button-success': validate(), 'ui-button-danger': !validate()}" class="validationIcon"></button>
+    </div>
   </span>
 </ng-template>

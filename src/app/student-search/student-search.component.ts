@@ -31,6 +31,9 @@ function wrapper<T>(thing: Observable<T>): Promise<T> {
 })
 
 export class StudentSearchComponent implements AfterViewInit {
+  @Input()
+  icon:string;
+
   students: Student[] = [];
   selectedStudents: Student[] = [];
   barer: string;
@@ -62,5 +65,13 @@ export class StudentSearchComponent implements AfterViewInit {
       }
     }
     return out;
+  }
+
+  validate(){
+    return this.selectedStudents.length > 0;
+  }
+
+  getIcon(){
+    return this.validate()?"fa-check":"fa-close";
   }
 }

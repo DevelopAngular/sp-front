@@ -24,4 +24,12 @@ export class DurationPickerComponent implements OnInit {
   ngOnInit() {
   }
 
+  validate(){
+    return this.selectedDuration instanceof Duration;
+  }
+
+  getIcon(){
+    return this.validate()?"fa-check":"fa-close";
+  }
+
 }

@@ -1,9 +1,12 @@
 <span class="ui-fluid wrapper">
-    <span class="ui-float-label">
-    <p-autoComplete id="float-input" pInputText [(ngModel)]="selectedLocation"
-                    [suggestions]="locations" (completeMethod)="updateLocations($event)"
-                    placeholder="" field="nameRoom" [multiple]="false">
-    </p-autoComplete>
-    <label for="float-input">Destination</label>
-</span>
+    <div class="ui-inputgroup">
+        <span class="ui-float-label">
+            <p-autoComplete id="float-input" pInputText [(ngModel)]="selectedLocation"
+                            [suggestions]="locations" (completeMethod)="updateLocations($event)"
+                            placeholder="" field="nameRoom" [multiple]="false">
+            </p-autoComplete>
+            <label for="float-input">Destination</label>
+        </span>
+        <button pButton type="button" [icon]="getIcon()" [ngClass]="{'ui-button-success': validate(), 'ui-button-danger': !validate()}" class="validationIcon"></button>
+    </div>
 </span>

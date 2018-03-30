@@ -45,10 +45,10 @@ export class HallpassFormComponent implements OnInit {
   newPass(){
     console.log("Making new pass");
 
-    // let studentsValid = this.studentComponent.validate();
-    // let destinationValid = this.teacherComponent.validate();
-    // let dateValid = this.dateTimeComponent.toArray()[0].validate();
-    // let timeValid = this.dateTimeComponent.toArray()[1].validate();
+    let studentsValid = this.studentComponent.validate();
+    let destinationValid = this.teacherComponent.validate();
+    let dateValid = this.dateTimeComponent.toArray()[0].validate();
+    let timeValid = this.dateTimeComponent.toArray()[1].validate();
     // let durationValid = this.durationComponent.validate();
 
 

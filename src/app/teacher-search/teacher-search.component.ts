@@ -54,5 +54,13 @@ export class TeacherSearchComponent implements AfterViewInit {
       out.push(new Location(json[i]['id'], json[i]['name'], json[i]['campus'], json[i]['room']))
     }
     return out;
-  }  
+  }
+  
+  validate(){
+    return this.selectedLocation instanceof Location;
+  }
+
+  getIcon(){
+    return this.validate()?"fa-check":"fa-close";
+  }
 }

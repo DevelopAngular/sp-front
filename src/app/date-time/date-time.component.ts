@@ -18,4 +18,21 @@ export class DateTimeComponent implements OnInit {
     this.isDate = this.type=="'date'";
     this.minDate = new Date();
   }
+
+  validate(){
+    if(this.isDate){
+      if(this.selectedDate >= this.minDate && !!this.selectedDate){
+        return true;
+      }
+    } else{
+      if(this.selectedTime >= this.minDate && !!this.selectedTime){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  getIcon(){
+    return this.validate()?"fa-check":"fa-close";
+  }
 }

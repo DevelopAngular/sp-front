@@ -23,3 +23,8 @@ body{
     background-color:#252525;
     text-align: left;
 }
+
+
+.validationIcon{
+    min-width:20px;
+}
