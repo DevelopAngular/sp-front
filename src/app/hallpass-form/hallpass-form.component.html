@@ -1,4 +1,5 @@
 <div class="pass">
+  <p-growl [(value)]="msgs" life="9000"></p-growl>
   <h1 class="title">Hallpass</h1>
 
   <div *ngIf="isStaff; else studentForm;">

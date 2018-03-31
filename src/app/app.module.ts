@@ -43,6 +43,8 @@ import {AutoCompleteModule} from 'primeng/autocomplete';
 import {CalendarModule} from 'primeng/calendar';
 import {DropdownModule} from 'primeng/dropdown';
 import {ButtonModule} from 'primeng/button';
+import {GrowlModule} from 'primeng/growl';
+import {MessageService} from 'primeng/components/common/messageservice';
 import { DateTimeComponent } from './date-time/date-time.component';
 import { DurationPickerComponent } from './duration-picker/duration-picker.component';
 const appRoutes: Routes = [
@@ -98,6 +100,7 @@ const appRoutes: Routes = [
     CalendarModule,
     DropdownModule,
     ButtonModule,
+    GrowlModule,
     ToastModule.forRoot(),
     RouterModule.forRoot(
       appRoutes
@@ -108,7 +111,7 @@ const appRoutes: Routes = [
       useValue: GAPI_CONFIG,
     })
   ],
-  providers: [DataService, HttpService, UserService],
+  providers: [DataService, HttpService, UserService, MessageService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

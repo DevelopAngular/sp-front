@@ -7,7 +7,8 @@ import { StudentSearchComponent } from '../student-search/student-search.compone
 import { DurationPickerComponent } from '../duration-picker/duration-picker.component';
 import { DateTimeComponent } from '../date-time/date-time.component';
 import { TeacherSearchComponent } from '../teacher-search/teacher-search.component';
-
+import {MessageService} from 'primeng/components/common/messageservice';
+import {Message} from 'primeng/components/common/api';
 @Component({
   selector: 'app-hallpass-form',
   templateUrl: './hallpass-form.component.html',
@@ -26,8 +27,8 @@ export class HallpassFormComponent implements OnInit {
   public user:string[];
   public gUser;
   public isStaff = false;
-
-  constructor(private http: HttpService, private dataService: DataService, private router: Router) {}
+  public msgs: Message[] = [];
+  constructor(private messageService: MessageService, private http: HttpService, private dataService: DataService, private router: Router) {}
 
   ngOnInit() {
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
@@ -49,8 +50,20 @@ export class HallpassFormComponent implements OnInit {
     let destinationValid = this.teacherComponent.validate();
     let dateValid = this.dateTimeComponent.toArray()[0].validate();
     let timeValid = this.dateTimeComponent.toArray()[1].validate();
-    // let durationValid = this.durationComponent.validate();
+    let durationValid = this.durationComponent.validate();
 
+    this.msgs = [];
+    if(!studentsValid)
+      this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected student(s) are not valid.'});
+    if(!destinationValid)
+      this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected destination is not valid.'});
+    if(!dateValid)
+      this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected start date is not valid.'});
+    if(!timeValid)
+      this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected start time is not valid.'});
+    if(!durationValid)
+      this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected duration is not valid.'});
+    
 
     let studentIds:string[] = [];
     this.studentComponent.selectedStudents.forEach(student => {
