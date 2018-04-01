@@ -1,5 +1,5 @@
  <p-dataView [value]="pendingPasses" [paginator]="true"
-            [rows]="6" paginatorPosition="both" filterBy="id"
+            [rows]="20" paginatorPosition="both" filterBy="id"
             [sortField]="sortField" [sortOrder]="sortOrder"
             layout="grid">
 
@@ -20,12 +20,14 @@
 
     <ng-template let-pendingPass pTemplate="gridItem">
         <div style="padding:.5em" class="ui-g-12 ui-md-3">
-            <p-panel [header]="pendingPass.students" [style]="{'text-align':'center'}">
-                <img src="assets/showcase/images/demo/pendingPass/{{pendingPass.brand}}.png" width="60">
-                <div class="pendingPass-detail">{{pendingPass.to_location.nameRoom}}</div>
-                <hr class="ui-widget-content" style="border-top:0">
-                <button pButton type="button" icon="fa-search" (click)="selectCar($event, pendingPass)" style="margin-top:0"></button>
-            </p-panel>
+            <p-card title="Pending Pass" styleClass="ui-card-shadow" [subtitle]="'Issued: ' +pendingPass.created.toDateString()">
+                This is a pending pass.
+                Here is: The Information.
+                For the: pending pass.
+                <p-footer>
+                    <button pButton type="button" label="More Info" icon="fa-info"></button>
+                </p-footer>
+            </p-card>
         </div>
     </ng-template>
 

@@ -111,6 +111,7 @@ const appRoutes: Routes = [
     DataViewModule,
     PanelModule,
     DialogModule,
+    CardModule,
     ToastModule.forRoot(),
     RouterModule.forRoot(
       appRoutes
