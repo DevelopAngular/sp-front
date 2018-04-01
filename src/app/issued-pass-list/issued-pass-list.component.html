@@ -1,3 +1,24 @@
-<p>
-  issued-pass-list works!
-</p>
+ <p-dataView [value]="pendingPasses" [paginator]="true"
+            [rows]="20" paginatorPosition="both" filterBy="id"
+            [sortField]="sortField" [sortOrder]="sortOrder">
+  
+</p-dataView>
+
+<!-- <p-dialog header="Car Details" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true" width="225" (onAfterHide)="onDialogHide()">
+    <div class="ui-g" *ngIf="selectedCar">
+        <div class="ui-g-12" style="text-align:center">
+            <img src="assets/showcase/images/demo/car/{{selectedCar.brand}}.png">
+        </div>
+        <div class="ui-g-4">Vin: </div>
+        <div class="ui-g-8">{{selectedCar.vin}}</div>
+
+        <div class="ui-g-4">Brand: </div>
+        <div class="ui-g-8">{{selectedCar.brand}}</div>
+
+        <div class="ui-g-4">Year: </div>
+        <div class="ui-g-8">{{selectedCar.year}}</div>
+
+        <div class="ui-g-4">Color: </div>
+        <div class="ui-g-8">{{selectedCar.color}}</div>
+    </div>
+</p-dialog> -->

@@ -44,11 +44,14 @@ import {CalendarModule} from 'primeng/calendar';
 import {DropdownModule} from 'primeng/dropdown';
 import {ButtonModule} from 'primeng/button';
 import {GrowlModule} from 'primeng/growl'
-import {DataViewModule} from 'primeng/dataview';;
+import {DataViewModule} from 'primeng/dataview';
+import {PanelModule} from 'primeng/panel';
+import {DialogModule} from 'primeng/dialog';
 import {MessageService} from 'primeng/components/common/messageservice';
 import { DateTimeComponent } from './date-time/date-time.component';
 import { DurationPickerComponent } from './duration-picker/duration-picker.component';
 import { IssuedPassListComponent } from './issued-pass-list/issued-pass-list.component';
+
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
   { path: 'main', component: PassListComponent },
@@ -105,6 +108,8 @@ const appRoutes: Routes = [
     ButtonModule,
     GrowlModule,
     DataViewModule,
+    PanelModule,
+    DialogModule,
     ToastModule.forRoot(),
     RouterModule.forRoot(
       appRoutes
