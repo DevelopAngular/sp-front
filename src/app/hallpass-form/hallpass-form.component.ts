@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild, ViewChildren, QueryList} from '@angular/c
 import { DataService } from '../data-service';
 import { Router } from '@angular/router';
 import { HttpService } from '../http-service';
-import { FormControl } from '@angular/forms';
 import { StudentSearchComponent } from '../student-search/student-search.component';
 import { DurationPickerComponent } from '../duration-picker/duration-picker.component';
 import { DateTimeComponent } from '../date-time/date-time.component';
@@ -55,20 +54,22 @@ export class HallpassFormComponent implements OnInit {
     this.msgs = [];
     if(!studentsValid)
       this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected student(s) are not valid.'});
+
     if(!destinationValid)
       this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected destination is not valid.'});
+
     if(!dateValid)
       this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected start date is not valid.'});
+
     if(!timeValid)
       this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected start time is not valid.'});
+
     if(!durationValid)
       this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected duration is not valid.'});
     
-
-    let studentIds:string[] = [];
-    this.studentComponent.selectedStudents.forEach(student => {
-      studentIds.push(student.id);
-    });
+    if(!(studentsValid && destinationValid && dateValid && timeValid && durationValid))
+      return;
+    
     let destination:string = this.teacherComponent.selectedLocation.id;
     let date:Date = this.dateTimeComponent.toArray()[0].selectedDate;
     let time:Date = this.dateTimeComponent.toArray()[1].selectedTime;
@@ -76,8 +77,13 @@ export class HallpassFormComponent implements OnInit {
     finalDate.setDate(date.getDate());
     finalDate.setTime(time.getTime());
     let duration = this.durationComponent.selectedDuration.value;
+
     let data: object;
     if(this.isStaff){
+      let studentIds:string[] = [];
+      this.studentComponent.selectedStudents.forEach(student => {
+        studentIds.push(student.id);
+      });
       data = {
               'students': studentIds,
               'description': '',

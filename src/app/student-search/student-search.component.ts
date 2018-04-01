@@ -11,12 +11,7 @@ import { of } from 'rxjs/observable/of';
 import { Response } from '@angular/http';
 import { DataService } from '../data-service';
 import { HttpService } from '../http-service';
-
-export class Student {
-  constructor(public id:string, public name: string) {
-
-  }
-}
+import {User} from '../models';
 
 function wrapper<T>(thing: Observable<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -34,8 +29,8 @@ export class StudentSearchComponent implements AfterViewInit {
   @Input()
   icon:string;
 
-  students: Student[] = [];
-  selectedStudents: Student[] = [];
+  students: User[] = [];
+  selectedStudents: User[] = [];
   barer: string;
 
   constructor(private http: HttpService, private dataService:DataService) {}
@@ -55,11 +50,11 @@ export class StudentSearchComponent implements AfterViewInit {
       return data;
   }
 
-  convertToStudents(json:any[]): Student[] {
-    let out:Student[] = [];
+  convertToStudents(json:any[]): User[] {
+    let out:User[] = [];
     for(var i = 0; i < json.length; i++){
       if(json[i]['rank'] > 0){
-        out.push(new Student(json[i]['id'], json[i]['display_name']))
+        out.push(new User(json[i]['id'], json[i]['display_name']))
       } else{
         return out;
       }

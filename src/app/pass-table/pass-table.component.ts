@@ -10,8 +10,9 @@ import {switchMap} from 'rxjs/operators/switchMap';
 import {DataService} from '../data-service';
 import {HttpService} from '../http-service';
 import {DomSanitizer} from '@angular/platform-browser';
-import { PassFilterComponent } from '../pass-filter/pass-filter.component';
-import { PassInfoComponent } from '../pass-info/pass-info.component';
+import {PassFilterComponent} from '../pass-filter/pass-filter.component';
+import {PassInfoComponent} from '../pass-info/pass-info.component';
+import {Pass} from '../models';
 
 @Component({
   selector: 'app-pass-table',
@@ -20,7 +21,7 @@ import { PassInfoComponent } from '../pass-info/pass-info.component';
 })
 export class PassTableComponent{
   displayedColumns = ['student', 'to', 'from', 'timeOut', 'duration', 'info'];
-  dataSource: MatTableDataSource<PassData> = new MatTableDataSource();;
+  dataSource: MatTableDataSource<Pass> = new MatTableDataSource();;
   exampleDatabase: ExampleHttpDao;
   length = 50;
   pageSize = 10;
@@ -89,7 +90,7 @@ export class PassTableComponent{
       map(data => {
         // Flip flag to show that loading has finished.
         let results = data['results'];
-        let out:PassData[] = [];
+        let out:Pass[] = [];
         for(var i = 0; i<results.length;i++){
           let id = results[i]['id'];
           let name = results[i]['student']['display_name'];
@@ -110,7 +111,7 @@ export class PassTableComponent{
           let startTimeString = time.substring(0, time.indexOf(":", time.indexOf(":")+1)) +time.substring(time.length-3) +" - " +s.toLocaleDateString();
           let description = results[i]['description'];
           let authorities = results[i]['authorities'];
-          out.push(new PassData(id,
+          out.push(new Pass(id,
                                 name,
                                 toLocation,
                                 fromLocation,
@@ -175,18 +176,18 @@ export interface PassResponse{
   prev: any[];
 }
 
-export class PassData {
-  constructor(private id: string,
-              private name: string,
-              private to: string,
-              private from: string,
-              private duration: string,
-              private timeOut: string,
-              private description: string,
-              private email: string[]){
+// export class PassData {
+//   constructor(private id: string,
+//               private name: string,
+//               private to: string,
+//               private from: string,
+//               private duration: string,
+//               private timeOut: string,
+//               private description: string,
+//               private email: string[]){
 
-  }
-}
+//   }
+// }
 
 export class ExampleHttpDao {
   constructor(private http: HttpService, private dataService: DataService) {

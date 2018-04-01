@@ -21,7 +21,7 @@ export class DateTimeComponent implements OnInit {
 
   validate(){
     if(this.isDate){
-      if(this.selectedDate >= new Date() && !!this.selectedDate){
+      if(!!this.selectedDate){
         return true;
       }
     } else{

@@ -8,15 +8,7 @@ import {map} from 'rxjs/operators/map';
 import { DataService } from '../data-service';
 import { HttpService } from '../http-service';
 
-export class Location {
-  constructor(public id:string, public name: string, public campus:string, public room: string) {
-
-  }
-
-  get nameRoom(){
-    return this.name +" (" +this.room +")";
-  }
-}
+import {Location} from '../models';
 
 @Component({
   selector: 'app-teacher-search',
