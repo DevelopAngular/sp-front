@@ -49,23 +49,7 @@ export class PassTableComponent{
       console.log('The dialog was closed');
     });
   }
-  // getPasses(){
-  //   var out:PassData[] = [];
-  //   console.log(this.barer);
-  //   var config = {headers:{'Authorization' : 'Bearer ' +this.barer}};
-  //   this.http.get('api/methacton/v1/hall_passes?limit=' +this.pageSize, config).subscribe((data:any) => {
-  //     console.log("All Passes Data: ");
-  //     console.log(data['results']);
-  //     var results = data['results'];
-  //     this.nextBatch = data['next'];
-  //     this.prevBatch = data['prev'];
 
-  //     for(var i = 0; i< results.length;i++){
-  //       //out.push(new PassData(/*ADD PARAMETERS*/));
-  //     }
-  //   });
-  //   return out;
-  // }
 
   ngOnInit(){
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
@@ -113,8 +97,8 @@ export class PassTableComponent{
           let authorities = results[i]['authorities'];
           out.push(new Pass(id,
                                 name,
-                                toLocation,
-                                fromLocation,
+                                null,
+                                null,
                                 duration,
                                 startTimeString,
                                 description, 
@@ -175,20 +159,6 @@ export interface PassResponse{
   next: any;
   prev: any[];
 }
-
-// export class PassData {
-//   constructor(private id: string,
-//               private name: string,
-//               private to: string,
-//               private from: string,
-//               private duration: string,
-//               private timeOut: string,
-//               private description: string,
-//               private email: string[]){
-
-//   }
-// }
-
 export class ExampleHttpDao {
   constructor(private http: HttpService, private dataService: DataService) {
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);

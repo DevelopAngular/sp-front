@@ -71,33 +71,7 @@ export class IssuedPassListComponent implements OnInit {
   getPendingPasses(){
     let config = {headers:{'Authorization' : 'Bearer ' +this.barer}};
     this.http.get("api/methacton/v1/pending_passes", config).subscribe((data:any[])=>{
-      for(let i = 0; i<data.length;i++){
-        let students:User[];
-        let studentsJSON = data[i]['students'];
-        for(let j = 0; j<studentsJSON.length;j++){
-            let id = studentsJSON[i]['id'];
-            let display_name = studentsJSON[i]['display_name'];
-            students.push(new User(id, display_name));
-        }
 
-        let description = data[i]['description'];
-
-        let id = data[i]['to_location']['id'];
-        let toName = data[i]['to_location']['name'];
-        let campus = data[i]['to_location']['campus'];
-        let room = data[i]['to_location']['room'];
-        let teachers:User[];
-        let teachersJSON = data[i]['to_location']['']
-        let toLocation:Location = new Location(id, toName, campus, room, teachers);
-
-        let duration;
-        let startTime;
-        let fromLocation:Location;
-        let endTime;
-        let issuer:User;
-        let authorities:User[];
-        this.pendingPasses.push(new PendingPass(students, description, toLocation, duration, startTime, fromLocation, endTime, issuer, authorities));
-      }
     });
   }
 
