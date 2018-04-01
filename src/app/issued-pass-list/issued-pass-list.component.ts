@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {PendingPass, User, Location} from '../models';
 import { HttpService } from '../http-service';
 import { DataService } from '../data-service';
-
+import {JSONSerializer} from '../models'
 export interface SelectItem{
   label;
   value;
@@ -16,7 +16,7 @@ export interface SelectItem{
 
 export class IssuedPassListComponent implements OnInit {
 
-  pendingPasses: PendingPass[];
+  pendingPasses: PendingPass[] = [];
 
   selectedPendingPass: PendingPass;
 
@@ -32,7 +32,7 @@ export class IssuedPassListComponent implements OnInit {
 
   barer;
 
-  constructor(private http: HttpService, private dataService: DataService) { }
+  constructor(private http: HttpService, private dataService: DataService, private serializer: JSONSerializer) { }
 
   ngOnInit() {
       this.dataService.currentBarer.subscribe(barer => this.barer = barer);
@@ -71,7 +71,9 @@ export class IssuedPassListComponent implements OnInit {
   getPendingPasses(){
     let config = {headers:{'Authorization' : 'Bearer ' +this.barer}};
     this.http.get("api/methacton/v1/pending_passes", config).subscribe((data:any[])=>{
-
+        for(let i = 0; i<data.length;i++){
+            this.pendingPasses.push(this.serializer.getPendingPassFromJSON(data[i]));
+        }
     });
   }
 

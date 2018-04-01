@@ -54,10 +54,10 @@ export class PassListComponent implements OnInit {
         for(var i = 0; i < data.length; i++){
           //console.log(data);
           let date: Date = new Date(data[i]["expiry_time"]);
-          if(this.isInFuture(date))
-            this.activePasses.push(new Pass(data[i]["to_location"]["name"], data[i]["to_location"]["room"], data[i]["from_location"]["name"], data[i]["from_location"]["room"], data[i]["created"], data[i]["expiry_time"], data[i]["description"], data[i]["student"]["display_name"], data[i]["issuer"]["display_name"]));
-          else
-            this.expiredPasses.push(new Pass(data[i]["to_location"]["name"], data[i]["to_location"]["room"], data[i]["from_location"]["name"], data[i]["from_location"]["room"], data[i]["created"], data[i]["expiry_time"], data[i]["description"], data[i]["student"]["display_name"], data[i]["issuer"]["display_name"]));
+          //if(this.isInFuture(date))
+            //this.activePasses.push(new Pass(data[i]["to_location"]["name"], data[i]["to_location"]["room"], data[i]["from_location"]["name"], data[i]["from_location"]["room"], data[i]["created"], data[i]["expiry_time"], data[i]["description"], data[i]["student"]["display_name"], data[i]["issuer"]["display_name"]));
+          //else
+            //this.expiredPasses.push(new Pass(data[i]["to_location"]["name"], data[i]["to_location"]["room"], data[i]["from_location"]["name"], data[i]["from_location"]["room"], data[i]["created"], data[i]["expiry_time"], data[i]["description"], data[i]["student"]["display_name"], data[i]["issuer"]["display_name"]));
           //console.log(this.passes);
         }
         console.log("Done adding and displaying passes.");
@@ -114,7 +114,7 @@ export class PassListComponent implements OnInit {
       this.http.get('api/methacton/v1/hall_passes?active=true', config).subscribe((data:any) => {
         let tempPasses:Pass[] = [];
         for(var i = 0; i < data.length; i++){
-          tempPasses.push(new Pass(data[i]["to_location"]["name"], data[i]["to_location"]["room"], data[i]["from_location"]["name"], data[i]["from_location"]["room"], data[i]["created"], data[i]["expiry_time"], data[i]["description"], data[i]["student"]["display_name"], data[i]["issuer"]["display_name"]));
+          //tempPasses.push(new Pass(data[i]["to_location"]["name"], data[i]["to_location"]["room"], data[i]["from_location"]["name"], data[i]["from_location"]["room"], data[i]["created"], data[i]["expiry_time"], data[i]["description"], data[i]["student"]["display_name"], data[i]["issuer"]["display_name"]));
         }
         console.log("TempPases: " +tempPasses);
         this.activePasses = tempPasses;
@@ -130,7 +130,7 @@ export class PassListComponent implements OnInit {
       this.http.get('api/methacton/v1/hall_passes?active=false&limit=10&offset=' +this.currentOffset, config).subscribe((dataA:any) => {  
         let data = dataA['results'];
         for(var i = 0; i < data.length; i++){
-          this.expiredPasses.push(new Pass(data[i]["to_location"]["name"], data[i]["to_location"]["room"], data[i]["from_location"]["name"], data[i]["from_location"]["room"], data[i]["created"], data[i]["expiry_time"], data[i]["description"], data[i]["student"]["display_name"], data[i]["issuer"]["display_name"]));
+          //this.expiredPasses.push(new Pass(data[i]["to_location"]["name"], data[i]["to_location"]["room"], data[i]["from_location"]["name"], data[i]["from_location"]["room"], data[i]["created"], data[i]["expiry_time"], data[i]["description"], data[i]["student"]["display_name"], data[i]["issuer"]["display_name"]));
         }
         this.currentOffset = this.currentOffset + 10;
       });

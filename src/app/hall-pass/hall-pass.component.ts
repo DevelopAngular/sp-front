@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { HallPass } from '../pass-list/pass-list.component';
+import { Pass } from '../models';
 
 @Component({
   selector: 'app-hall-pass',
@@ -8,7 +8,7 @@ import { HallPass } from '../pass-list/pass-list.component';
 })
 export class HallPassComponent implements OnInit {
   @Input()
-  hallPass: HallPass;
+  hallPass: Pass;
   startS: string;
   endE: string;
   
@@ -17,10 +17,10 @@ export class HallPassComponent implements OnInit {
 
   ngOnInit() {
     //console.log(this.hallPass.start);
-    let s = new Date(this.hallPass.start);
+    let s = new Date(this.hallPass.created);
     this.startS = s.getMonth()+1 + "/" +s.getDate() +"/" +s.getFullYear() +" - " +((s.getHours()>12)?s.getHours()-12:s.getHours()) +":" +((s.getMinutes()<10)?"0":"") +s.getMinutes() +"." +((s.getSeconds()<10)?"0":"") +s.getSeconds();
     
-    s = new Date(this.hallPass.end);
+    s = new Date(this.hallPass.expiry_time);
     this.endE = s.getMonth()+1 + "/" +s.getDate() +"/" +s.getFullYear() +" - " +((s.getHours()>12)?s.getHours()-12:s.getHours()) +":" +((s.getMinutes()<10)?"0":"") +s.getMinutes() +"." +((s.getSeconds()<10)?"0":"") +s.getSeconds();
   }
 

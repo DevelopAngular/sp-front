@@ -1,3 +1,5 @@
+import { Injectable } from '@angular/core';
+
 export class User{
     constructor(public id:string,
                 public display_name:string,
@@ -46,8 +48,9 @@ export class PendingPass {
                 public issuer?: User,
                 public authorities?: User[]){}
 }
-
+@Injectable()
 export class JSONSerializer {
+    constructor(){}
     getUserFromJSON(JSON):User{
         let id = JSON['id'],
         display_name = JSON['display_name'],
@@ -67,17 +70,21 @@ export class JSONSerializer {
     }
 
     getLocationFromJSON(JSON):Location{
-        let id = JSON['id'], 
-        name = JSON['name'], 
-        campus = JSON['campus'], 
-        room = JSON['room'], 
-        teachers:User[] = [];
+        if(!!JSON){
+            let id = JSON['id'], 
+            name = JSON['name'], 
+            campus = JSON['campus'], 
+            room = JSON['room'], 
+            teachers:User[] = [];
 
-        for(let i = 0; i<JSON['teachers'].legnth;i++){
-            teachers.push(this.getUserFromJSON(JSON['teachers'][i]));
+            for(let i = 0; i<JSON['teachers'].legnth;i++){
+                teachers.push(this.getUserFromJSON(JSON['teachers'][i]));
+            }
+
+            return new Location(id, name, campus, room, teachers);
+        } else{
+            return null;
         }
-
-        return new Location(id, name, campus, room, teachers);
     }
 
     getPassFromJSON(JSON):Pass{

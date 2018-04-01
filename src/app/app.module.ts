@@ -47,11 +47,12 @@ import {GrowlModule} from 'primeng/growl'
 import {DataViewModule} from 'primeng/dataview';
 import {PanelModule} from 'primeng/panel';
 import {DialogModule} from 'primeng/dialog';
+import {CardModule} from 'primeng/card';
 import {MessageService} from 'primeng/components/common/messageservice';
 import { DateTimeComponent } from './date-time/date-time.component';
 import { DurationPickerComponent } from './duration-picker/duration-picker.component';
 import { IssuedPassListComponent } from './issued-pass-list/issued-pass-list.component';
-
+import {JSONSerializer} from './models';
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
   { path: 'main', component: PassListComponent },
@@ -120,7 +121,7 @@ const appRoutes: Routes = [
       useValue: GAPI_CONFIG,
     })
   ],
-  providers: [DataService, HttpService, UserService, MessageService],
+  providers: [DataService, HttpService, UserService, MessageService, JSONSerializer],
   bootstrap: [AppComponent]
 })
 export class AppModule {

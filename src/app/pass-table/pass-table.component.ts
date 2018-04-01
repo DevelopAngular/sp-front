@@ -102,7 +102,10 @@ export class PassTableComponent{
                                 duration,
                                 startTimeString,
                                 description, 
-                                authorities));
+                                authorities,
+                                null,
+                                null,
+                                null));
         }
         // for(var i = 0; i<out.length;i++){
         //   console.log(out[i]);

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Template } from '../pass-list/pass-list.component';
+import { PendingPass } from '../models';
 import { DataService } from '../data-service';
 import { HttpService } from '../http-service';
 
@@ -11,7 +11,7 @@ import { HttpService } from '../http-service';
 export class TemplatePassComponent implements OnInit {
 
   @Input()
-  template: Template;
+  template: PendingPass;
   startS: string;
   endE: string;
   barer:string;
@@ -22,10 +22,10 @@ export class TemplatePassComponent implements OnInit {
   ngOnInit() {
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
     //console.log(this.template.start);
-    let s = new Date(this.template.start);
+    let s = new Date(this.template.start_time);
     this.startS = s.getMonth()+1 + "/" +s.getDate() +"/" +s.getFullYear() +" - " +((s.getHours()>12)?s.getHours()-12:s.getHours()) +":" +((s.getMinutes()<10)?"0":"") +s.getMinutes() +"." +((s.getSeconds()<10)?"0":"") +s.getSeconds();
     
-    s = new Date(this.template.end);
+    s = new Date(this.template.end_time);
     this.endE = s.getMonth()+1 + "/" +s.getDate() +"/" +s.getFullYear() +" - " +((s.getHours()>12)?s.getHours()-12:s.getHours()) +":" +((s.getMinutes()<10)?"0":"") +s.getMinutes() +"." +((s.getSeconds()<10)?"0":"") +s.getSeconds();
   }
 
@@ -37,7 +37,7 @@ export class TemplatePassComponent implements OnInit {
     console.log("Config: " +config);
     let body: object = {
       'student': this.user['id'],
-      'template': this.template.id,
+      //'template': this.template.,
     };
     const data = await this.http.post('api/methacton/v1/hall_passes', body, config).toPromise();
     console.log("Data: " +JSON.stringify(data));
