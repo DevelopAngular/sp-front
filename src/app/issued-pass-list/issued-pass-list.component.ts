@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {PendingPass, User, Location} from '../models';
 import { HttpService } from '../http-service';
 import { DataService } from '../data-service';
-import {JSONSerializer} from '../models'
+import {JSONSerializer} from '../models';
 export interface SelectItem{
   label;
   value;
@@ -52,7 +52,7 @@ export class IssuedPassListComponent implements OnInit {
   }
 
   onSortChange(event) {
-      let value = event.value;
+      const value = event.value;
 
       if (value.indexOf('!') === 0) {
           this.sortOrder = -1;
@@ -69,9 +69,9 @@ export class IssuedPassListComponent implements OnInit {
   }
 
   getPendingPasses(){
-    let config = {headers:{'Authorization' : 'Bearer ' +this.barer}};
-    this.http.get("api/methacton/v1/pending_passes", config).subscribe((data:any[])=>{
-        for(let i = 0; i<data.length;i++){
+    const config = {headers: {'Authorization' : 'Bearer ' + this.barer}};
+    this.http.get('api/methacton/v1/pending_passes', config).subscribe((data: any[]) => {
+        for (let i = 0; i < data.length; i++){
             this.pendingPasses.push(this.serializer.getPendingPassFromJSON(data[i]));
         }
     });

@@ -14,8 +14,8 @@ export class TemplatePassComponent implements OnInit {
   template: PendingPass;
   startS: string;
   endE: string;
-  barer:string;
-  user:string[];
+  barer: string;
+  user: string[];
 
   constructor(private http: HttpService, private dataService: DataService) { }
 
@@ -23,24 +23,24 @@ export class TemplatePassComponent implements OnInit {
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
     //console.log(this.template.start);
     let s = new Date(this.template.start_time);
-    this.startS = s.getMonth()+1 + "/" +s.getDate() +"/" +s.getFullYear() +" - " +((s.getHours()>12)?s.getHours()-12:s.getHours()) +":" +((s.getMinutes()<10)?"0":"") +s.getMinutes() +"." +((s.getSeconds()<10)?"0":"") +s.getSeconds();
-    
+    this.startS = s.getMonth() + 1 + '/' + s.getDate() + '/' + s.getFullYear() + ' - ' + ((s.getHours() > 12) ? s.getHours() - 12 : s.getHours()) + ':' + ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + '.' + ((s.getSeconds() < 10) ? '0' : '') + s.getSeconds();
+
     s = new Date(this.template.end_time);
-    this.endE = s.getMonth()+1 + "/" +s.getDate() +"/" +s.getFullYear() +" - " +((s.getHours()>12)?s.getHours()-12:s.getHours()) +":" +((s.getMinutes()<10)?"0":"") +s.getMinutes() +"." +((s.getSeconds()<10)?"0":"") +s.getSeconds();
+    this.endE = s.getMonth() + 1 + '/' + s.getDate() + '/' + s.getFullYear() + ' - ' + ((s.getHours() > 12) ? s.getHours() - 12 : s.getHours()) + ':' + ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + '.' + ((s.getSeconds() < 10) ? '0' : '') + s.getSeconds();
   }
 
   async activate(){
-    console.log("Activating");
+    console.log('Activating');
     this.dataService.currentUser['id'].subscribe(user => this.user = user);
-    console.log("UserId: " +this.user['id']);
-    var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
-    console.log("Config: " +config);
-    let body: object = {
+    console.log('UserId: ' + this.user['id']);
+    const config = {headers: {'Authorization' : 'Bearer ' + this.barer}};
+    console.log('Config: ' + config);
+    const body: object = {
       'student': this.user['id'],
       //'template': this.template.,
     };
     const data = await this.http.post('api/methacton/v1/hall_passes', body, config).toPromise();
-    console.log("Data: " +JSON.stringify(data));
+    console.log('Data: ' + JSON.stringify(data));
     this.dataService.updateTab(1);
   }
 }

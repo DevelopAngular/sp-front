@@ -21,29 +21,29 @@ export class TeacherSearchComponent implements AfterViewInit {
   barer: string;
 
   @Input()
-  type:string;
+  type: string;
 
-  constructor(private http: HttpService, private dataService:DataService) {}
+  constructor(private http: HttpService, private dataService: DataService) {}
 
   ngAfterViewInit() {
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
   }
 
   async updateLocations(event){
-    let query = event.query;
+    const query = event.query;
     this.locations = this.convertToLocations(await this.filterLocations(query));
   }
 
   async filterLocations(name: string): Promise<any[]> {
-      var config = {headers:{'Authorization' : 'Bearer ' +this.barer}};
-      const data = await this.http.get<any[]>('api/methacton/v1/locations?search=' +encodeURI(name), config).toPromise();
+      const config = {headers: {'Authorization' : 'Bearer ' + this.barer}};
+      const data = await this.http.get<any[]>('api/methacton/v1/locations?search=' + encodeURI(name), config).toPromise();
       return data;
   }
 
-  convertToLocations(json:any[]): Location[] {
-    let out:Location[] = [];
-    for(var i = 0; i < json.length; i++){
-      out.push(new Location(json[i]['id'], json[i]['name'], json[i]['campus'], json[i]['room']))
+  convertToLocations(json: any[]): Location[] {
+    const out: Location[] = [];
+    for (let i = 0; i < json.length; i++){
+      out.push(new Location(json[i]['id'], json[i]['name'], json[i]['campus'], json[i]['room']));
     }
     return out;
   }
@@ -52,6 +52,6 @@ export class TeacherSearchComponent implements AfterViewInit {
   }
 
   getIcon(){
-    return this.validate()?"fa-check":"fa-close";
+    return this.validate() ? 'fa-check' : 'fa-close';
   }
 }

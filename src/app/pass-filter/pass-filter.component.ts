@@ -7,7 +7,7 @@ import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
   styleUrls: ['./pass-filter.component.css']
 })
 export class PassFilterComponent implements OnInit {
-  
+
   constructor(
     public dialogRef: MatDialogRef<PassFilterComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any) { }
@@ -17,7 +17,7 @@ export class PassFilterComponent implements OnInit {
   }
 
   ngOnInit(){
-    console.log("Dialog open and received data: " +this.data);
+    console.log('Dialog open and received data: ' + this.data);
     console.log(this.data);
   }
 

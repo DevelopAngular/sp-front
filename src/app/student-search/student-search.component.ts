@@ -27,34 +27,34 @@ function wrapper<T>(thing: Observable<T>): Promise<T> {
 
 export class StudentSearchComponent implements AfterViewInit {
   @Input()
-  icon:string;
+  icon: string;
 
   students: User[] = [];
   selectedStudents: User[] = [];
   barer: string;
 
-  constructor(private http: HttpService, private dataService:DataService) {}
+  constructor(private http: HttpService, private dataService: DataService) {}
 
   ngAfterViewInit() {
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
   }
 
   async updateStudents(event){
-    let query = event.query;
+    const query = event.query;
     this.students = this.convertToStudents(await this.filterStudents(query));
   }
 
   async filterStudents(name: string): Promise<any[]> {
-      var config = {headers:{'Authorization' : 'Bearer ' +this.barer}};
-      const data = await this.http.get<any[]>('api/methacton/v1/users?is_staff=false&search=' +encodeURI(name), config).toPromise();
+      const config = {headers: {'Authorization' : 'Bearer ' + this.barer}};
+      const data = await this.http.get<any[]>('api/methacton/v1/users?is_staff=false&search=' + encodeURI(name), config).toPromise();
       return data;
   }
 
-  convertToStudents(json:any[]): User[] {
-    let out:User[] = [];
-    for(var i = 0; i < json.length; i++){
-      if(json[i]['rank'] > 0){
-        out.push(new User(json[i]['id'], json[i]['display_name']))
+  convertToStudents(json: any[]): User[] {
+    const out: User[] = [];
+    for (let i = 0; i < json.length; i++){
+      if (json[i]['rank'] > 0){
+        out.push(new User(json[i]['id'], json[i]['display_name']));
       } else{
         return out;
       }
@@ -67,6 +67,6 @@ export class StudentSearchComponent implements AfterViewInit {
   }
 
   getIcon(){
-    return this.validate()?"fa-check":"fa-close";
+    return this.validate() ? 'fa-check' : 'fa-close';
   }
 }

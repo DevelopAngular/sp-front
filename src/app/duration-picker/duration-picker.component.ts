@@ -1,7 +1,7 @@
 import { Component, OnInit} from '@angular/core';
 
 export class Duration{
-  constructor(public display:string, public value:number){}
+  constructor(public display: string, public value: number){}
 }
 
 @Component({
@@ -12,11 +12,11 @@ export class Duration{
 
 export class DurationPickerComponent implements OnInit {
   durations: Duration[] = [
-                          new Duration("3 minutes", 3000),
-                          new Duration("5 minutes", 5000),
-                          new Duration("10 minutes", 10000),
-                          new Duration("15 minutes", 15000),
-                          new Duration("30 minutes", 30000)
+                          new Duration('3 minutes', 3000),
+                          new Duration('5 minutes', 5000),
+                          new Duration('10 minutes', 10000),
+                          new Duration('15 minutes', 15000),
+                          new Duration('30 minutes', 30000)
                         ];
   public selectedDuration: Duration;
   constructor() { }
@@ -29,7 +29,7 @@ export class DurationPickerComponent implements OnInit {
   }
 
   getIcon(){
-    return this.validate()?"fa-check":"fa-close";
+    return this.validate() ? 'fa-check' : 'fa-close';
   }
 
 }
