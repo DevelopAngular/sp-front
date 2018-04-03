@@ -1,10 +1,10 @@
 <div class="template">
   <h1>
-    <pre>From: <br>   Teacher: {{ template.fromTeacher }} | Room: {{ template.fromRoom }}</pre>
+    <pre>From: <br>   Teacher: {{ template.from_location.teacher_description }} | Room: {{ template.from_location.room }}</pre>
   </h1>
 
   <h1>
-    <pre>To: <br>   Teacher: {{ template.toTeacher }} | Room: {{ template.toRoom }}</pre>
+    <pre>To: <br>   Teacher: {{ template.to_location.teacher_description }} | Room: {{ template.to_location.room }}</pre>
   </h1>
 
   <h1>
@@ -12,7 +12,7 @@
   </h1>
 
   <h1>
-    <pre>Student: {{ template.student }} | Creator: {{ template.creator }}</pre>
+    <pre>Student: {{ template.student_description }} | Creator: {{ template.issuer.display_name }}</pre>
   </h1>
 
   <h1>

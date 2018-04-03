@@ -18,12 +18,17 @@ export class Location {
               public name: string,
               public campus: string,
               public room: string,
-              public teachers?: User[]) {
+              public teachers: User[] = []) {
   }
 
   get nameRoom() {
     return this.name + ' (' + this.room + ')';
   }
+
+  get teacher_description() {
+    return this.teachers.map(t => t.display_name).join(', ');
+  }
+
 }
 
 export class Pass {
@@ -38,6 +43,10 @@ export class Pass {
               public from_location: Location,
               public to_location: Location,
               public authorities: User[]) {
+  }
+
+  get student_description() {
+    return this.students.map(t => t.display_name).join(', ');
   }
 }
 
@@ -55,6 +64,10 @@ export class PendingPass {
               public last_updated?: Date,
               public id?: string,
               public activated?: string[]) {
+  }
+
+  get student_description() {
+    return this.students.map(t => t.display_name).join(', ');
   }
 }
 

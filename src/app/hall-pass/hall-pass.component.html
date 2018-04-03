@@ -1,10 +1,10 @@
 <div class="pass">
     <h1>
-        <pre>From: <br>   Teacher: {{ hallPass.fromTeacher }} | Room: {{ hallPass.fromRoom }}</pre>
+        <pre>From: <br>   Teacher: {{ hallPass.from_location.teacher_description }} | Room: {{ hallPass.from_location.room }}</pre>
     </h1>
 
     <h1>
-        <pre>To: <br>   Teacher: {{ hallPass.toTeacher }} | Room: {{ hallPass.toRoom }}</pre>
+        <pre>To: <br>   Teacher: {{ hallPass.to_location.teacher_description }} | Room: {{ hallPass.to_location.room }}</pre>
     </h1>
 
     <h1>
@@ -12,7 +12,7 @@
     </h1>
 
     <h1>
-        <pre>Student: {{ hallPass.student }} | Creator: {{ hallPass.creator }}</pre>
+        <pre>Student: {{ hallPass.student_description }} | Creator: {{ hallPass.issuer.display_name }}</pre>
     </h1>
 
     <h1>

@@ -45,7 +45,7 @@ export class PassListComponent implements OnInit {
       this.dataService.currentUser.subscribe(user => {this.user = user; this.isStaff = this.user.isStaff; });
       this.isStaff = this.user['is_staff'];
       console.log('Tabs is staff: ' + this.isStaff);
-      let config = {headers: {'Authorization' : 'Bearer ' + this.barer}};
+      const config = {headers: {'Authorization' : 'Bearer ' + this.barer}};
       console.log('Getting passes from server.');
       this.http.get('api/methacton/v1/hall_passes?limit=10', config).subscribe((dataA: any) => {
         const data = dataA['results'];
@@ -64,7 +64,6 @@ export class PassListComponent implements OnInit {
         this.show = true;
         this.currentOffset = 10;
       });
-      const config = {headers: {'Authorization' : 'Bearer ' + this.barer}};
       //TODO &active=true
       this.http.get('api/methacton/v1/pending_passes', config).subscribe((data: any) => {
         for (let i = 0; i < data.length; i++){

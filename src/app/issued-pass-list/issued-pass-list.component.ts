@@ -57,8 +57,7 @@ export class IssuedPassListComponent implements OnInit {
       if (value.indexOf('!') === 0) {
           this.sortOrder = -1;
           this.sortField = value.substring(1, value.length);
-      }
-      else {
+      } else {
           this.sortOrder = 1;
           this.sortField = value;
       }
