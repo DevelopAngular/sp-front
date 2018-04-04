@@ -81,14 +81,14 @@ export class UserService {
     // wire this service to update DataService when no values are retrieved.
 
 
-    let sessionTimeout = 0;
+    const sessionTimeout = 0;
     let tokenTimout = 0;
 
     this.serverAuth.subscribe(auth => {
       this.dataService.updateBarer(auth.access_token);
-      tokenTimout = auth.expires_in*1000*.25;
-      setTimeout(()=>{
-        console.log("Re-verifying access token.");
+      tokenTimout = auth.expires_in * 1000 * .25;
+      setTimeout(() => {
+        console.log('Re-verifying access token.');
         this.fetchServerAuth(auth.access_token);
       }, tokenTimout);
     });

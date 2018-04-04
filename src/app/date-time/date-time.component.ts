@@ -7,7 +7,7 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class DateTimeComponent implements OnInit {
   @Input()
-  type:string;
+  type: string;
   selectedDate: Date;
   minDate: Date;
   isDate: boolean;
@@ -15,17 +15,17 @@ export class DateTimeComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    this.isDate = this.type=="'date'";
+    this.isDate = this.type == '\'date\'';
     this.minDate = new Date();
   }
 
   validate(){
-    if(this.isDate){
-      if(!!this.selectedDate){
+    if (this.isDate){
+      if (!!this.selectedDate){
         return true;
       }
     } else{
-      if(this.selectedTime >= new Date() && !!this.selectedTime){
+      if (this.selectedTime >= new Date() && !!this.selectedTime){
         return true;
       }
     }
@@ -33,6 +33,6 @@ export class DateTimeComponent implements OnInit {
   }
 
   getIcon(){
-    return this.validate()?"fa-check":"fa-close";
+    return this.validate() ? 'fa-check' : 'fa-close';
   }
 }

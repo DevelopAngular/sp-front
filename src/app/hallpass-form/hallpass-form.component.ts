@@ -21,9 +21,9 @@ export class HallpassFormComponent implements OnInit {
 
   //General Set-Up
   public barer: string;
-  public isLoggedIn: Boolean = false; 
+  public isLoggedIn: Boolean = false;
   public studentName: string;
-  public user:string[];
+  public user: string[];
   public gUser;
   public isStaff = false;
   public msgs: Message[] = [];
@@ -33,12 +33,12 @@ export class HallpassFormComponent implements OnInit {
 
   ngOnInit() {
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
-    if(this.barer == "")
+    if (this.barer == '')
       this.router.navigate(['../']);
     else{
       this.dataService.currentUser.subscribe(user => this.user = user);
       this.isStaff = this.user['is_staff'];
-      console.log("Hallpass form is staff:" +this.isStaff);
+      console.log('Hallpass form is staff:' + this.isStaff);
       this.dataService.currentGUser.subscribe(gUser => this.gUser = gUser);
       this.studentName = this.gUser['name'];
     }
@@ -69,17 +69,17 @@ export class HallpassFormComponent implements OnInit {
     let durationValid = this.durationComponent.validate();
 
     this.msgs = [];
-    if(!studentsValid)
-      this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected student(s) are not valid.'});
+    if (!studentsValid)
+      this.msgs.push({severity: 'error', summary: 'Field Invalid', detail: 'The selected student(s) are not valid.'});
 
-    if(!destinationValid)
-      this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected destination is not valid.'});
+    if (!destinationValid)
+      this.msgs.push({severity: 'error', summary: 'Field Invalid', detail: 'The selected destination is not valid.'});
 
-    if(!dateValid)
-      this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected start date is not valid.'});
+    if (!dateValid)
+      this.msgs.push({severity: 'error', summary: 'Field Invalid', detail: 'The selected start date is not valid.'});
 
-    if(!timeValid)
-      this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected start time is not valid.'});
+    if (!timeValid)
+      this.msgs.push({severity: 'error', summary: 'Field Invalid', detail: 'The selected start time is not valid.'});
 
     if(!durationValid)
       this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected duration is not valid.'});
@@ -93,11 +93,11 @@ export class HallpassFormComponent implements OnInit {
     let finalDate = new Date();
     finalDate.setDate(date.getDate());
     finalDate.setTime(time.getTime());
-    let duration = this.durationComponent.selectedDuration.value;
+    const duration = this.durationComponent.selectedDuration.value;
 
     let data: object;
-    if(this.isStaff){
-      let studentIds:string[] = [];
+    if (this.isStaff){
+      const studentIds: string[] = [];
       this.studentComponent.selectedStudents.forEach(student => {
         studentIds.push(student.id);
       });
@@ -187,13 +187,13 @@ export class HallpassFormComponent implements OnInit {
     const tempUser = await this.getUser();
     this.dataService.updateUser(tempUser);
   }
-  
+
   getUser(){
     return new Promise((resolve, reject) => {
 
-      var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
-      
-      this.http.get('api/methacton/v1/users/@me', config).subscribe((data:any) => {
+      const config = {headers: {'Authorization' : 'Bearer ' + this.barer}};
+
+      this.http.get('api/methacton/v1/users/@me', config).subscribe((data: any) => {
           this.user = data;
           resolve(data.id);
       }, reject);
