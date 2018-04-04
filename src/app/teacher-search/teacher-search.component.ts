@@ -22,11 +22,12 @@ export class TeacherSearchComponent implements AfterViewInit {
 
   @Input()
   type:string;
-
+  public typeString:string = "";
   constructor(private http: HttpService, private dataService:DataService) {}
 
   ngAfterViewInit() {
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
+    this.typeString = this.type=="'to'"?"Destination":"Origin";
   }
 
   async updateLocations(event){
@@ -48,7 +49,7 @@ export class TeacherSearchComponent implements AfterViewInit {
     return out;
   }
   validate(){
-    return this.selectedLocation instanceof Location;
+    return this.selectedLocation instanceof Location; //TODO && not the same as other
   }
 
   getIcon(){

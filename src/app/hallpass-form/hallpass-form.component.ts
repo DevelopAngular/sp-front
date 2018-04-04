@@ -15,7 +15,7 @@ import {Message} from 'primeng/components/common/api';
 })
 export class HallpassFormComponent implements OnInit {
   @ViewChild(StudentSearchComponent) studentComponent: StudentSearchComponent;
-  @ViewChild(TeacherSearchComponent) teacherComponent: TeacherSearchComponent;
+  @ViewChildren(TeacherSearchComponent) teacherComponent: QueryList<TeacherSearchComponent>;
   @ViewChild(DurationPickerComponent) durationComponent: DurationPickerComponent;
   @ViewChildren(DateTimeComponent) dateTimeComponent: QueryList<DateTimeComponent>;
 
@@ -27,6 +27,8 @@ export class HallpassFormComponent implements OnInit {
   public gUser;
   public isStaff = false;
   public msgs: Message[] = [];
+  public isPending:boolean = true;
+
   constructor(private messageService: MessageService, private http: HttpService, private dataService: DataService, private router: Router) {}
 
   ngOnInit() {
@@ -44,9 +46,24 @@ export class HallpassFormComponent implements OnInit {
 
   newPass(){
     console.log("Making new pass");
-
+    let issued:boolean;
+    if(this.isPending){
+      console.log("Issueing new pending pass");
+      issued = this.newPendingPass();
+    }
+    else{
+      console.log("Issueing new hallpass");
+      issued = this.newHallPass();
+    }
+    if(issued){
+      
+    }
+  }
+ 
+  
+  newPendingPass():boolean{
     let studentsValid = this.studentComponent.validate();
-    let destinationValid = this.teacherComponent.validate();
+    let destinationValid = this.teacherComponent.toArray()[0].validate();
     let dateValid = this.dateTimeComponent.toArray()[0].validate();
     let timeValid = this.dateTimeComponent.toArray()[1].validate();
     let durationValid = this.durationComponent.validate();
@@ -68,9 +85,9 @@ export class HallpassFormComponent implements OnInit {
       this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected duration is not valid.'});
     
     if(!(studentsValid && destinationValid && dateValid && timeValid && durationValid))
-      return;
+      return false;
     
-    let destination:string = this.teacherComponent.selectedLocation.id;
+    let destination:string = this.teacherComponent.toArray()[0].selectedLocation.id;
     let date:Date = this.dateTimeComponent.toArray()[0].selectedDate;
     let time:Date = this.dateTimeComponent.toArray()[1].selectedTime;
     let finalDate = new Date();
@@ -96,17 +113,76 @@ export class HallpassFormComponent implements OnInit {
       }
     var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
     this.http.post('api/methacton/v1/pending_passes', data, config).subscribe((data:any) => {
-        console.log("Got data.");
+        console.log("Got pending pass data:");
+        console.log(data);
     });
+
     this.studentComponent.selectedStudents = [];
-    this.teacherComponent.selectedLocation = null;
+    this.teacherComponent.toArray()[0].selectedLocation = null;
     this.dateTimeComponent.toArray()[0].selectedDate = null;
     this.dateTimeComponent.toArray()[1].selectedTime = null;
     this.durationComponent.selectedDuration = null;
     this.dataService.updateTab(1);
+
+    return true;
   }
- 
-  
+
+  newHallPass():boolean{
+    let studentsValid = this.studentComponent.validate();
+    let destinationValid = this.teacherComponent.toArray()[0].validate();
+    let originValid = this.teacherComponent.toArray()[1].validate();
+    let durationValid = this.durationComponent.validate();
+
+    this.msgs = [];
+    if(!studentsValid)
+      this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected student(s) are not valid.'});
+
+    if(!destinationValid)
+      this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected destination is not valid.'});
+
+    if(!originValid)
+      this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected origin is not valid.'});
+
+    if(!durationValid)
+      this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected duration is not valid.'});
+    
+    if(!(studentsValid && destinationValid && originValid && durationValid))
+      return false;
+    
+    let destination:string = this.teacherComponent.toArray()[0].selectedLocation.id;
+    let origin:string = this.teacherComponent.toArray()[1].selectedLocation.id;
+    let duration = this.durationComponent.selectedDuration.value;
+
+    let data: object;
+    if(this.isStaff){
+      let studentIds:string[] = [];
+      this.studentComponent.selectedStudents.forEach(student => {
+        studentIds.push(student.id);
+      });
+      data = {
+              'students': studentIds,
+              'description': '',
+              'to_location': destination,
+              'from_location': origin,
+              'valid_time': duration,
+              'end_time': null
+              };
+      }
+    var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
+    this.http.post('api/methacton/v1/hall_passes', data, config).subscribe((data:any) => {
+        console.log("Got hallpass data:");
+        console.log(data);
+    });
+
+    this.studentComponent.selectedStudents = [];
+    this.teacherComponent.toArray()[0].selectedLocation = null;
+    this.teacherComponent.toArray()[1].selectedLocation = null;
+    this.durationComponent.selectedDuration = null;
+    this.dataService.updateTab(1);
+
+    return true;
+  }
+
   async setupUserId(){
     const tempUser = await this.getUser();
     this.dataService.updateUser(tempUser);

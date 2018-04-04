@@ -137,11 +137,13 @@ export class JSONSerializer {
         for(let i = 0; i < JSON['authorities'].length; i++){
             authorities.push(this.getUserFromJSON(JSON['authorities'][i]));
         }
-        
-        for(let i = 0; i < JSON['activated'].length; i++){
-            activated.push(JSON['activated'][i]);
-        }
 
+        if(!!JSON['activated']){
+            for(let i = 0; i < JSON['activated'].length; i++){
+                activated.push(JSON['activated'][i]);
+            }
+        }
+        
         return new PendingPass(students, description, to_location, valid_time, start_time, from_location, end_time, issuer, authorities, created, last_updated, id, activated);
     }
 }

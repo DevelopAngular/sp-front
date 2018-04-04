@@ -5,7 +5,7 @@
                             [suggestions]="locations" (completeMethod)="updateLocations($event)"
                             placeholder="" field="nameRoom" [multiple]="false">
             </p-autoComplete>
-            <label for="float-input">Destination</label>
+            <label for="float-input">{{ typeString }}</label>
         </span>
         <button pButton type="button" [icon]="getIcon()" [ngClass]="{'ui-button-success': validate(), 'ui-button-danger': !validate()}" class="validationIcon"></button>
     </div>

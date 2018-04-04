@@ -7,20 +7,35 @@
       <app-student-search></app-student-search>
     </div>
 
-    <div class="formElement halfForm">
-      <app-teacher-search type="'to'"></app-teacher-search>
-    </div>
-
     <div class="formElement">
-      <div class="date">
-        <app-date-time type="'date'"></app-date-time>
-      </div>
-
-      <div class="time">
-        <app-date-time type="'time'"></app-date-time>
-      </div>
+      When is this pass for?<br>
+      <p-inputSwitch onLabel="Later" offLabel="Now" [(ngModel)]="isPending"></p-inputSwitch>
     </div>
 
+    <div *ngIf="isPending; else notPendingLocations;">
+      <div class="formElement halfForm">
+        <app-teacher-search type="'to'"></app-teacher-search>
+      </div>
+    </div>
+    <ng-template #notPendingLocations>
+      <div class="formElement">
+        <app-teacher-search class="to" type="'to'"></app-teacher-search>
+        <app-teacher-search class="from" type="'from'"></app-teacher-search>
+      </div>
+    </ng-template>
+
+    <div *ngIf="isPending; else notPendingDateTime;">
+      <div class="formElement">
+        <div class="date">
+          <app-date-time type="'date'"></app-date-time>
+        </div>
+
+        <div class="time">
+          <app-date-time type="'time'"></app-date-time>
+        </div>
+      </div>
+    </div>
+    <ng-template #notPendingDateTime></ng-template>
     <div class="formElement">
       <div class="duration">
         <app-duration-picker></app-duration-picker>

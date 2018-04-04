@@ -100,7 +100,7 @@ export class PassTableComponent{
                                 null,
                                 null,
                                 duration,
-                                startTimeString,
+                                s,
                                 description, 
                                 authorities,
                                 null,
