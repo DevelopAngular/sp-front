@@ -2,6 +2,9 @@
   font-family: Roboto, sans-serif;
   text-decoration: underline;
   text-align: center;
+  margin: auto;
+  padding-bottom: 20px;
+  padding-top: 10px;
 }
   
 button{
@@ -13,9 +16,17 @@ button{
   background-color: #E9E9E9;
 }
 
-.pass{
+.teacherPass{
   margin: auto;
   width: 600px;
+  margin-top: 25px;
+  border: 2px solid black;
+  border-radius: 12px;
+}
+
+.studentPass{
+  margin: auto;
+  width: 750px;
   margin-top: 25px;
   border: 2px solid black;
   border-radius: 12px;
@@ -27,11 +38,19 @@ button{
   padding-bottom: 20px;
 }
 
+.qpFormElement{
+  padding-bottom: 20px;
+}
+
 .halfForm{
   width: 50%;
 }
 
-.date, .time, .duration, .submit, .to, .from{
+.thirdForm{
+  width: 35%;
+}
+
+.date, .time, .duration, .submit, .to, .from, .hallPassColumn, .dividerColumn, .quickPassColumn, .dash, .or{
   display: table-cell;
 }
 
@@ -39,6 +58,21 @@ button{
   min-width: 100px;
 }
 
-.time, .submit, .from{
+.time, .submit, .from, .dividerColumn, .quickPassColumn{
   padding-left: 10px;
+}
+
+.dividerColumn{
+  width: 150px;
+  height: 25px;
+  margin: auto;
+}
+
+.dash{
+  width: 50px;
+}
+
+.or{
+  padding-left: 10px;
+  padding-right: 10px;
 }

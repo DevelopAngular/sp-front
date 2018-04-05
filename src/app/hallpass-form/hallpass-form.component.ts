@@ -47,7 +47,7 @@ export class HallpassFormComponent implements OnInit {
   newPass(){
     console.log("Making new pass");
     let issued:boolean;
-    if(this.isPending){
+    if(this.isStaff && this.isPending){
       console.log("Issueing new pending pass");
       issued = this.newPendingPass();
     }
@@ -128,13 +128,14 @@ export class HallpassFormComponent implements OnInit {
   }
 
   newHallPass():boolean{
-    let studentsValid = this.studentComponent.validate();
+    if(this.isStaff)
+      var studentsValid = this.studentComponent.validate();
     let destinationValid = this.teacherComponent.toArray()[0].validate();
     let originValid = this.teacherComponent.toArray()[1].validate();
     let durationValid = this.durationComponent.validate();
 
     this.msgs = [];
-    if(!studentsValid)
+    if(!studentsValid && this.isStaff)
       this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected student(s) are not valid.'});
 
     if(!destinationValid)
@@ -146,35 +147,42 @@ export class HallpassFormComponent implements OnInit {
     if(!durationValid)
       this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected duration is not valid.'});
     
-    if(!(studentsValid && destinationValid && originValid && durationValid))
-      return false;
+    if(this.isStaff)
+      if(!(studentsValid && destinationValid && originValid && durationValid))
+        return false;
+      else if(!(destinationValid && originValid && durationValid)){
+        return false;
+      }
     
     let destination:string = this.teacherComponent.toArray()[0].selectedLocation.id;
     let origin:string = this.teacherComponent.toArray()[1].selectedLocation.id;
     let duration = this.durationComponent.selectedDuration.value;
 
     let data: object;
+    let studentIds:string[] = [];
     if(this.isStaff){
-      let studentIds:string[] = [];
       this.studentComponent.selectedStudents.forEach(student => {
         studentIds.push(student.id);
       });
-      data = {
-              'students': studentIds,
-              'description': '',
-              'to_location': destination,
-              'from_location': origin,
-              'valid_time': duration,
-              'end_time': null
-              };
-      }
+    } else{
+      studentIds.push(this.user['id']); //TODO Make proper id from proper object
+    }
+    data = {
+            'students': studentIds,
+            'description': '',
+            'to_location': destination,
+            'from_location': origin,
+            'valid_time': duration,
+            'end_time': null
+            };
     var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
     this.http.post('api/methacton/v1/hall_passes', data, config).subscribe((data:any) => {
         console.log("Got hallpass data:");
         console.log(data);
     });
 
-    this.studentComponent.selectedStudents = [];
+    if(this.isStaff)
+      this.studentComponent.selectedStudents = [];
     this.teacherComponent.toArray()[0].selectedLocation = null;
     this.teacherComponent.toArray()[1].selectedLocation = null;
     this.durationComponent.selectedDuration = null;

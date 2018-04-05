@@ -71,27 +71,44 @@ export class PendingPass {
   }
 }
 
+export class QuickPass{
+  constructor(public created: Date,
+              public last_updated: Date,
+              public id: string,
+              public name: string,
+              public description: string,
+              public enabled: string,
+              public to_locations: Location,
+              public valid_time: string,
+              ){
+}
+}
+
 @Injectable()
 export class JSONSerializer {
   constructor() {
   }
 
   getUserFromJSON(JSON): User {
-    const id = JSON['id'],
-      display_name = JSON['display_name'],
-      created = new Date(JSON['created']),
-      last_updated = JSON['last_updated'],
-      first_name = JSON['first_name'],
-      last_name = JSON['last_name'],
-      primary_email = JSON['primary_email'],
-      roles: any[] = [],
-      is_staff = JSON['is_staff'];
+    if(!!JSON){
+      const id = JSON['id'],
+        display_name = JSON['display_name'],
+        created = new Date(JSON['created']),
+        last_updated = JSON['last_updated'],
+        first_name = JSON['first_name'],
+        last_name = JSON['last_name'],
+        primary_email = JSON['primary_email'],
+        roles: any[] = [],
+        is_staff = JSON['is_staff'];
 
-    for (let i = 0; i < JSON['roles'].length; i++) {
-      roles.push(JSON['roles'][i]);
+      for (let i = 0; i < JSON['roles'].length; i++) {
+        roles.push(JSON['roles'][i]);
+      }
+
+      return new User(id, display_name, created, last_updated, first_name, last_name, primary_email, roles, is_staff); 
+    } else{
+      return null;
     }
-
-    return new User(id, display_name, created, last_updated, first_name, last_name, primary_email, roles, is_staff);
   }
 
   getLocationFromJSON(JSON): Location {
@@ -138,7 +155,7 @@ export class JSONSerializer {
   }
 
   getPendingPassFromJSON(JSON):PendingPass{
-      let students:User[] = [],
+      const students:User[] = [],
       description = JSON['description'],
       to_location:Location = this.getLocationFromJSON(JSON['to_location']),
       valid_time = JSON['valid_time'],
@@ -168,5 +185,17 @@ export class JSONSerializer {
 
     return new PendingPass(students, description, to_location, valid_time, start_time, from_location, end_time,
       issuer, authorities, created, last_updated, id, activated);
+  }
+
+  getQuickPassFromJSON(JSON){
+    const created = new Date(JSON['created']),
+    last_updated = new Date(JSON['last_updated']),
+    id = JSON['id'],
+    name = JSON['name'],
+    description = JSON['description'],
+    enabled = JSON['enabled'],
+    to_location = this.getLocationFromJSON(JSON['to_location']),
+    valid_time = JSON['valid_time'];
+    return new QuickPass(created, last_updated, id, name, description, enabled, to_location, valid_time);
   }
 }

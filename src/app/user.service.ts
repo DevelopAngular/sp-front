@@ -22,7 +22,7 @@ interface ServerAuth {
   scope: string;
 }
 
-interface User {
+interface User { //TODO Remove this an make it a proper user object.
   id: number;
   first_name: string;
   last_name: string;
