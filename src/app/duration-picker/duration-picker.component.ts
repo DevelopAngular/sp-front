@@ -1,8 +1,5 @@
 import { Component, OnInit} from '@angular/core';
-
-export class Duration{
-  constructor(public display: string, public value: number){}
-}
+import {Duration} from '../models';
 
 @Component({
   selector: 'app-duration-picker',

@@ -1,9 +1,12 @@
 <span class="ui-fluid wrapper">
   <div class="ui-inputgroup">
-    <p-dropdown [(ngModel)]="selectedQuickpass" [autoWidth]="false"
-                [options]="quickpasses" [showClear]="true"
-                placeholder="Destination" optionLabel="name">
-    </p-dropdown>
-    <button pButton type="button" [icon]="getIcon()" [ngClass]="{'ui-button-success': validate(), 'ui-button-danger': !validate()}" class="validationIcon"></button>
+    <p-listbox [options]="quickpasses | async" [(ngModel)]="selectedQuickpass"
+                optionLabel="name" [style]="{'width':'200px'}"
+                [listStyle]="{'max-height':'250px'}" (onChange)="updateQuickPass()"
+                (onDblClick)="clearSelection()">
+      
+      <p-header class="list-header">QuickPasses</p-header>
+    </p-listbox>
+    <!-- <button pButton type="button" [icon]="getIcon()" [ngClass]="{'ui-button-success': validate(), 'ui-button-danger': !validate()}" class="validationIcon"></button> -->
   </div>
 </span>

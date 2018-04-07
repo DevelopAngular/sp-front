@@ -1,8 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
 import {QuickPass} from '../models';
 import {DataService} from '../data-service';
 import {HttpService} from '../http-service';
 import {JSONSerializer} from '../models';
+import {Observable} from 'rxjs/Observable'
+import {merge} from 'rxjs/observable/merge';
+import {of as observableOf} from 'rxjs/observable/of';
+import {catchError} from 'rxjs/operators/catchError';
+import {map} from 'rxjs/operators/map';
+import {startWith} from 'rxjs/operators/startWith';
+import {switchMap} from 'rxjs/operators/switchMap';
 @Component({
   selector: 'app-quickpass-picker',
   templateUrl: './quickpass-picker.component.html',
@@ -10,16 +18,23 @@ import {JSONSerializer} from '../models';
 })
 
 export class QuickpassPickerComponent implements OnInit {
+
+  @Output() quickPassEvent: EventEmitter<QuickPass> = new EventEmitter();
+
   public selectedQuickpass:QuickPass;
-  public quickpasses:QuickPass[] = [];
+
+  public quickpasses:Promise<QuickPass[]>;
+  public dataSource;
   public barer;
-  constructor(private dataService:DataService, private http:HttpService, private serializer:JSONSerializer) {
-    dataService.barerService.subscribe(barer => this.barer = barer);
-    this.setUpQuickPasses();
-  }
+
+  constructor(private dataService:DataService, private http:HttpService, private serializer:JSONSerializer) {}
 
   ngOnInit() {
-    
+    this.dataService.barerService.subscribe(barer => this.barer = barer);
+    const config = {headers: {'Authorization': 'Bearer ' + this.barer}};
+    this.quickpasses = this.http.get<QuickPass[]>('api/methacton/v1/template_passes', config).toPromise();
+    // this.exampleDatabase = new ExampleHttpDao(this.http, this.dataService);
+    // this.updateDestinations();
   }
 
   validate(){
@@ -30,17 +45,17 @@ export class QuickpassPickerComponent implements OnInit {
     return this.validate() ? 'fa-check' : 'fa-close';
   }
 
-  async setUpQuickPasses(){
-    this.quickpasses.push(new QuickPass(null, null, null, "Testing", null, null, null, null));
-    console.log("Added test QP");
-    const data = await this.getQuickPasses();
-    console.log(data);
+  updateQuickPass(event){
+    this.quickPassEvent.emit(this.selectedQuickpass);
   }
 
-  async getQuickPasses(){
-    const config = {headers: {'Authorization': 'Bearer ' + this.barer}};
-    const data = await this.http.get('api/methacton/v1/template_passes', config).toPromise();
-    return data;
+  clearSelection(){
+    console.log("boye");
+    if(!!!this.selectedQuickpass){
+      return;
+    } else{
+      this.selectedQuickpass = null;
+    }
+    this.updateQuickPass(null);
   }
-
 }

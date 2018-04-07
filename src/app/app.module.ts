@@ -50,6 +50,7 @@ import {DialogModule} from 'primeng/dialog';
 import {CardModule} from 'primeng/card';
 import {InputSwitchModule} from 'primeng/inputswitch';
 import {ScrollPanelModule} from 'primeng/scrollpanel';
+import {ListboxModule} from 'primeng/listbox';
 import {MessageService} from 'primeng/components/common/messageservice';
 import { DateTimeComponent } from './date-time/date-time.component';
 import { DurationPickerComponent } from './duration-picker/duration-picker.component';
@@ -118,6 +119,7 @@ const appRoutes: Routes = [
     CardModule,
     ScrollPanelModule,
     InputSwitchModule,
+    ListboxModule,
     ToastModule.forRoot(),
     RouterModule.forRoot(
       appRoutes

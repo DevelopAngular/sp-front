@@ -53,49 +53,33 @@
 
 <ng-template #studentForm>
   <div class="studentPass">
+    <h1 class="title">Hallpass</h1>
     <div class="hallPassColumn">
-      <h1 class="title">Hallpass</h1>
+
       <div class="formElement">
         <app-teacher-search class="" type="'to'"></app-teacher-search>
       </div>
+
       <div class="formElement">
           <app-teacher-search class="" type="'from'"></app-teacher-search>
       </div>
+
       <div class="formElement">
         <div class="duration">
           <app-duration-picker></app-duration-picker>
         </div>
-
         <div class="submit">
           <p-button (onClick)="newPass()" icon="fa fa-fw fa-check" label="Create Pass"></p-button>
         </div>
       </div>
     </div>
 
-    <div class="dividerColumn">
-      <div>
-        <div class="dash"><hr></div>
-        <div class="or">
-          OR
-        </div>
-        <div class="dash"><hr></div>
-      </div>
-    </div>
-
     <div class="quickPassColumn">
-      <h1 class="title">Quick Pass</h1>
       <div class="qpFormElement">
-        <app-teacher-search type="'from'"></app-teacher-search>
-      </div>
-
-      <div class="qpFormElement">
-        <app-quickpass-picker></app-quickpass-picker>
-      </div>
-      
-      <div class="qpFormElement">
-        <p-button (onClick)="newQuickPass()" icon="fa fa-fw fa-check" label="Create Pass"></p-button>
+        <app-quickpass-picker (quickPassEvent)="quickPassUpdate($event)"></app-quickpass-picker>
       </div>
     </div>
+    
   </div>
 </ng-template>
 <br><br><br><br><br><br><br><br><br><br><br><br>

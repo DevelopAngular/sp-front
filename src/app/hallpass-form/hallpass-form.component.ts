@@ -8,6 +8,8 @@ import { DateTimeComponent } from '../date-time/date-time.component';
 import { TeacherSearchComponent } from '../teacher-search/teacher-search.component';
 import {MessageService} from 'primeng/components/common/messageservice';
 import {Message} from 'primeng/components/common/api';
+import { JSONSerializer } from '../models';
+
 @Component({
   selector: 'app-hallpass-form',
   templateUrl: './hallpass-form.component.html',
@@ -29,7 +31,7 @@ export class HallpassFormComponent implements OnInit {
   public msgs: Message[] = [];
   public isPending:boolean = true;
 
-  constructor(private messageService: MessageService, private http: HttpService, private dataService: DataService, private router: Router) {}
+  constructor(private messageService: MessageService, private http: HttpService, private dataService: DataService, private router: Router, private serializer:JSONSerializer) {}
 
   ngOnInit() {
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
@@ -206,5 +208,15 @@ export class HallpassFormComponent implements OnInit {
           resolve(data.id);
       }, reject);
     });
+  }
+
+  quickPassUpdate(event){
+    if(!!event){
+      this.teacherComponent.toArray()[0].selectedLocation = this.serializer.getLocationFromJSON(event.to_location);
+      this.durationComponent.selectedDuration = this.serializer.getDurationFromJSON(event.valid_time);
+    }else{
+      this.teacherComponent.toArray()[0].selectedLocation = null;
+      this.durationComponent.selectedDuration = null;
+    }
   }
 }

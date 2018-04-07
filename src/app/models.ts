@@ -84,6 +84,10 @@ export class QuickPass{
 }
 }
 
+export class Duration{
+  constructor(public display: string,
+              public value: number){}
+}
 @Injectable()
 export class JSONSerializer {
   constructor() {
@@ -197,5 +201,11 @@ export class JSONSerializer {
     to_location = this.getLocationFromJSON(JSON['to_location']),
     valid_time = JSON['valid_time'];
     return new QuickPass(created, last_updated, id, name, description, enabled, to_location, valid_time);
+  }
+
+  getDurationFromJSON(JSON){
+    const display:string = JSON/600+" minutes",
+    value:number = JSON;
+    return new Duration(display, value);
   }
 }
