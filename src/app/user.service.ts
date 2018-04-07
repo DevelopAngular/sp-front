@@ -6,6 +6,7 @@ import {environment} from '../environments/environment';
 import {DataService} from './data-service';
 import {Observable} from 'rxjs/Observable';
 import {Router} from '@angular/router';
+import {User} from './models';
 
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/filter';
@@ -13,6 +14,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/publishReplay';
 import GoogleUser = gapi.auth2.GoogleUser;
 import GoogleAuth = gapi.auth2.GoogleAuth;
+import { JSONSerializer } from './models';
 
 interface ServerAuth {
   access_token: string;
@@ -20,15 +22,6 @@ interface ServerAuth {
   expires_in: number;
   expires: Date;
   scope: string;
-}
-
-interface User { //TODO Remove this an make it a proper user object.
-  id: number;
-  first_name: string;
-  last_name: string;
-  display_name: string;
-  email: string;
-  is_staff: boolean;
 }
 
 function ensureFields<T, K extends keyof T>(obj: T, keys: K[]) {
@@ -56,7 +49,7 @@ export class UserService {
   public serverAuth: Observable<ServerAuth>;
   public userData: Observable<User>;
 
-  constructor(private googleAuth: GoogleAuthService, private http: HttpService, private dataService: DataService, private router: Router) {
+  constructor(private googleAuth: GoogleAuthService, private http: HttpService, private dataService: DataService, private router: Router, private serializer:JSONSerializer) {
     this.googleTokenSubject = new BehaviorSubject<string>(sessionStorage.getItem(UserService.SESSION_STORAGE_KEY));
     this.googleToken = this.googleTokenSubject
       .filter(truthy)
@@ -143,16 +136,8 @@ export class UserService {
 
   private fetchUser(auth: ServerAuth): Observable<User> {
     const newConfig = {headers: {'Authorization': 'Bearer ' + auth.access_token}};
-
-    return this.http.get('api/methacton/v1/users/@me', newConfig)
-      .map(user => {
-        user = Object.assign({}, user); // copy user
-
-        // fix inconsistency with server
-        user['email'] = user['primary_email'];
-        delete user['primary_email'];
-
-        return user as User;
-      });
+    let user:Observable<User>;
+    user = this.http.get<User>('api/methacton/v1/users/@me', newConfig);
+    return user;
   }
 }

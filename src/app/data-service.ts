@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-
+import {User} from './models';
 @Injectable()
 export class DataService {
 
@@ -19,7 +19,7 @@ export class DataService {
     selectedTabService = new BehaviorSubject<any>('');
     currentTab = this.selectedTabService.asObservable();
 
-    userService = new BehaviorSubject<any>({});
+    userService = new BehaviorSubject<User>(null);
     currentUser = this.userService.asObservable();
 
     constructor(){}
@@ -44,7 +44,7 @@ export class DataService {
         this.selectedTabService.next(tab);
     }
 
-    updateUser(user: any){
+    updateUser(user: User){
         this.userService.next(user);
     }
 }

@@ -14,12 +14,10 @@ import {MatButtonModule} from '@angular/material/button';
 import {TeacherSearchComponent} from './teacher-search/teacher-search.component';
 import {GoogleSigninComponent} from './google-signin/google-signin.component';
 import {HallpassFormComponent} from './hallpass-form/hallpass-form.component';
-import {PassListComponent} from './pass-list/pass-list.component';
+import {MainPageComponent} from './main-page/main-page.component';
 import {RouterModule, Routes} from '@angular/router';
 import {DataService} from './data-service';
 import {HttpService} from './http-service';
-import {HallPassComponent} from './hall-pass/hall-pass.component';
-import {TemplatePassComponent} from './template-pass/template-pass.component';
 import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 import {StudentSearchComponent} from './student-search/student-search.component';
 import {AccountComponent} from './account/account.component';
@@ -30,12 +28,9 @@ import {GoogleApiModule, NG_GAPI_CONFIG} from 'ng-gapi';
 import {UserService} from './user.service';
 import {GAPI_CONFIG} from './config';
 import {MatProgressSpinnerModule} from '@angular/material';
-import {PassTableComponent} from './pass-table/pass-table.component';
 import {MatTableModule} from '@angular/material/table';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
-import {PassFilterComponent} from './pass-filter/pass-filter.component';
-import {PassInfoComponent} from './pass-info/pass-info.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {ToastModule} from 'ng2-toastr/ng2-toastr';
@@ -53,13 +48,13 @@ import {ScrollPanelModule} from 'primeng/scrollpanel';
 import {ListboxModule} from 'primeng/listbox';
 import {MessageService} from 'primeng/components/common/messageservice';
 import { DateTimeComponent } from './date-time/date-time.component';
-import { DurationPickerComponent } from './duration-picker/duration-picker.component';
-import { IssuedPassListComponent } from './issued-pass-list/issued-pass-list.component';
+import {DurationPickerComponent} from './duration-picker/duration-picker.component';
+import {IssuedPassListComponent} from './issued-pass-list/issued-pass-list.component';
 import {JSONSerializer} from './models';
-import { QuickpassPickerComponent } from './quickpass-picker/quickpass-picker.component';
+import {QuickpassPickerComponent} from './quickpass-picker/quickpass-picker.component';
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
-  { path: 'main', component: PassListComponent },
+  { path: 'main', component: MainPageComponent },
 ];
 
 @NgModule({
@@ -68,22 +63,15 @@ const appRoutes: Routes = [
     TeacherSearchComponent,
     GoogleSigninComponent,
     HallpassFormComponent,
-    PassListComponent,
-    HallPassComponent,
-    TemplatePassComponent,
+    MainPageComponent,
     StudentSearchComponent,
     AccountComponent,
-    PassTableComponent,
-    PassFilterComponent,
-    PassInfoComponent,
     DateTimeComponent,
     DurationPickerComponent,
     IssuedPassListComponent,
     QuickpassPickerComponent,
   ],
-  entryComponents: [
-    PassInfoComponent
-  ],
+  entryComponents: [],
   imports: [
     BrowserModule,
     FormsModule,

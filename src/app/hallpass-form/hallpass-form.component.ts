@@ -9,6 +9,8 @@ import { TeacherSearchComponent } from '../teacher-search/teacher-search.compone
 import {MessageService} from 'primeng/components/common/messageservice';
 import {Message} from 'primeng/components/common/api';
 import { JSONSerializer } from '../models';
+import { QuickpassPickerComponent } from '../quickpass-picker/quickpass-picker.component';
+import {User} from '../models';
 
 @Component({
   selector: 'app-hallpass-form',
@@ -20,12 +22,12 @@ export class HallpassFormComponent implements OnInit {
   @ViewChildren(TeacherSearchComponent) teacherComponent: QueryList<TeacherSearchComponent>;
   @ViewChild(DurationPickerComponent) durationComponent: DurationPickerComponent;
   @ViewChildren(DateTimeComponent) dateTimeComponent: QueryList<DateTimeComponent>;
-
+  @ViewChild(QuickpassPickerComponent) quickPassComponent: QuickpassPickerComponent;
   //General Set-Up
   public barer: string;
   public isLoggedIn: Boolean = false;
   public studentName: string;
-  public user: string[];
+  public user: User;
   public gUser;
   public isStaff = false;
   public msgs: Message[] = [];
@@ -39,7 +41,8 @@ export class HallpassFormComponent implements OnInit {
       this.router.navigate(['../']);
     else{
       this.dataService.currentUser.subscribe(user => this.user = user);
-      this.isStaff = this.user['is_staff'];
+      console.log(this.user.roles);
+      this.isStaff = this.user.roles.includes('edit_all_hallpass');
       console.log('Hallpass form is staff:' + this.isStaff);
       this.dataService.currentGUser.subscribe(gUser => this.gUser = gUser);
       this.studentName = this.gUser['name'];
@@ -167,7 +170,7 @@ export class HallpassFormComponent implements OnInit {
         studentIds.push(student.id);
       });
     } else{
-      studentIds.push(this.user['id']); //TODO Make proper id from proper object
+      studentIds.push(this.user.id); //TODO Make proper id from proper object
     }
     data = {
             'students': studentIds,
@@ -188,14 +191,16 @@ export class HallpassFormComponent implements OnInit {
     this.teacherComponent.toArray()[0].selectedLocation = null;
     this.teacherComponent.toArray()[1].selectedLocation = null;
     this.durationComponent.selectedDuration = null;
+    if(!this.isStaff)
+      this.quickPassComponent.selectedQuickpass = null;
     this.dataService.updateTab(1);
 
     return true;
   }
 
   async setupUserId(){
-    const tempUser = await this.getUser();
-    this.dataService.updateUser(tempUser);
+    await this.getUser();
+    this.dataService.updateUser(this.user);
   }
 
   getUser(){
@@ -204,8 +209,8 @@ export class HallpassFormComponent implements OnInit {
       const config = {headers: {'Authorization' : 'Bearer ' + this.barer}};
 
       this.http.get('api/methacton/v1/users/@me', config).subscribe((data: any) => {
-          this.user = data;
-          resolve(data.id);
+          this.user = this.serializer.getUserFromJSON(data);
+          resolve(this.user);
       }, reject);
     });
   }

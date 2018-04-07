@@ -7,12 +7,12 @@ import {PendingPass} from '../models';
 declare var document: any;
 
 @Component({
-  selector: 'app-pass-list',
-  templateUrl: './pass-list.component.html',
-  styleUrls: ['./pass-list.component.css']
+  selector: 'app-main-page',
+  templateUrl: './main-page.component.html',
+  styleUrls: ['./main-page.component.css']
 })
 
-export class PassListComponent implements OnInit {
+export class MainPageComponent implements OnInit {
   @Input()
   selectedIndex: any;
 

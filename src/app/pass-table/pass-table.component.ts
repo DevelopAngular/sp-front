@@ -10,7 +10,6 @@ import {switchMap} from 'rxjs/operators/switchMap';
 import {DataService} from '../data-service';
 import {HttpService} from '../http-service';
 import {DomSanitizer} from '@angular/platform-browser';
-import {PassInfoComponent} from '../pass-info/pass-info.component';
 import {JSONSerializer, Pass} from '../models';
 
 @Component({
@@ -41,14 +40,7 @@ export class PassTableComponent implements OnInit, AfterViewInit {
   }
 
   openDialog(id): void {
-    const dialogRef = this.dialog.open(PassInfoComponent, {
-      width: '500px', height: '600px', data: {'id': id, 'barer': this.barer}
 
-    });
-    console.log('The dialog was opened with id: ' + id);
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-    });
   }
 
 
