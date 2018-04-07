@@ -53,6 +53,8 @@ import {IssuedPassListComponent} from './issued-pass-list/issued-pass-list.compo
 import {JSONSerializer} from './models';
 import {QuickpassPickerComponent} from './quickpass-picker/quickpass-picker.component';
 import { PassCardComponent } from './pass-card/pass-card.component';
+import { PassInfoComponent } from './pass-info/pass-info.component';
+import { ActivatePassComponent } from './activate-pass/activate-pass.component';
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
   { path: 'main', component: MainPageComponent },
@@ -72,6 +74,8 @@ const appRoutes: Routes = [
     IssuedPassListComponent,
     QuickpassPickerComponent,
     PassCardComponent,
+    PassInfoComponent,
+    ActivatePassComponent,
   ],
   entryComponents: [],
   imports: [

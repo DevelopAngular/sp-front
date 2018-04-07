@@ -23,6 +23,10 @@ export class PassCardComponent implements OnInit {
 
   studentsAsString:string = "";
 
+  activateVisible:boolean = false;
+
+  infoVisible:boolean = false;
+  
   constructor(private serializer:JSONSerializer) {}
 
   ngOnInit() {
@@ -36,9 +40,15 @@ export class PassCardComponent implements OnInit {
       if(this.studentsAsString.length > 14)
         this.studentsAsString = this.studentsAsString.substring(1,14) +"...";
     }
-    
-    
 
+    
   }
+    activate(){
+      this.activateVisible = !this.activateVisible;
+    }
 
+    getInfo(){
+      this.infoVisible = !this.infoVisible;
+      console.log(this.infoVisible);
+    }
 }

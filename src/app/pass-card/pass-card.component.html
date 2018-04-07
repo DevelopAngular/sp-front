@@ -10,6 +10,20 @@
   </ng-template>
   Issued by: {{pass.issuer.display_name}}<br>
   <p-footer>
-      <button pButton type="button" label="More Info" icon="fa-info"></button>
+    <div *ngIf="showActivate; else infoButton;">
+      <button pButton type="button" label="Activate" icon="fa-check"
+              [ngClass]="{'ui-button-success': true}" (click)="activate()">
+      </button>
+      <p-dialog header="Activate Pass" [(visible)]="activateVisible">
+          <app-activate-pass [pass]="pass"></app-activate-pass>
+      </p-dialog>
+    </div>
+    <ng-template #infoButton>
+      <button pButton type="button" label="More Info"
+              icon="fa-info" (click)="getInfo()"></button>
+      <p-dialog header="Pass Info" [(visible)]="infoVisible">
+          <app-pass-info [pass]="pass"></app-pass-info>
+      </p-dialog>
+    </ng-template>
   </p-footer>
 </p-card>
