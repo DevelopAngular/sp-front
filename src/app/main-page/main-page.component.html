@@ -5,9 +5,11 @@
                 <app-hallpass-form></app-hallpass-form>
             </mat-tab>
             <mat-tab label="My Passes">
+                <app-hall-pass-list></app-hall-pass-list>
                 <button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button>
             </mat-tab>
             <mat-tab label="Pending Passes">
+                <app-pending-pass-list></app-pending-pass-list>
                 <button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button>
             </mat-tab>
         </div>

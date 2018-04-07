@@ -1,4 +1,4 @@
- <p-dataView [value]="pendingPasses" [paginator]="true"
+<p-dataView [value]="passes | async" [paginator]="true"
             [rows]="20" paginatorPosition="both" filterBy="id"
             [sortField]="sortField" [sortOrder]="sortOrder"
             layout="grid">
@@ -20,7 +20,7 @@
 
     <ng-template let-currentPass pTemplate="gridItem">
         <div style="padding:.5em" class="ui-g-12 ui-md-3">
-            <app-pass-card [pass]="currentPass" [title]="'Pending Pass'" [showActivate]="false"></app-pass-card>
+            <app-pass-card [pass]="currentPass" [title]="'Hall Pass'" [showActivate]="false"></app-pass-card>
         </div>
     </ng-template>
 
