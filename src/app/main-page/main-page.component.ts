@@ -43,7 +43,7 @@ export class MainPageComponent implements OnInit {
     else{
       this.dataService.currentGUser.subscribe(gUser => this.gUser = gUser);
       this.dataService.currentUser.subscribe(user => {this.user = user; this.isStaff = this.user.isStaff; });
-      this.isStaff = this.user['is_staff'];
+      this.isStaff = this.user.roles.includes('edit_all_hallpass');
       console.log('Tabs is staff: ' + this.isStaff);
       const config = {headers: {'Authorization' : 'Bearer ' + this.barer}};
       console.log('Getting passes from server.');

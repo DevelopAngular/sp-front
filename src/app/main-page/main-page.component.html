@@ -4,22 +4,11 @@
             <mat-tab label="Make New Passes">
                 <app-hallpass-form></app-hallpass-form>
             </mat-tab>
-            <mat-tab label="Active Passes">
-                
-                <button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button>
-            </mat-tab>
-            <mat-tab label="Expired Passes" infiniteScroll (scrolled)="onScroll()">
-                <div *ngIf="show; else Loading;" >
-                    
-                </div>
-                <ng-template #Loading class="center">
-                    <img src="../../assets/loading.gif" alt="Loading">
-                </ng-template>
+            <mat-tab label="My Passes">
                 <button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button>
             </mat-tab>
             <mat-tab label="Pending Passes">
                 <button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button>
-                
             </mat-tab>
         </div>
         <ng-template #teacherTabs>

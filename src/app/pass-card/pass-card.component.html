@@ -1,0 +1,15 @@
+<p-card [(title)]="title" styleClass="ui-card-shadow" [subtitle]="'Issued: ' +pass.created.toDateString()" class = "card">
+  <div>
+    {{studentsAsString}}
+  </div>
+  <div *ngIf="isPending; else notPending">
+  →  {{pass.to_location.nameRoom}}<br> 
+  </div>
+  <ng-template #notPending>
+    <div>{{pass.from_location.nameRoom}} → {{pass.to_location.nameRoom}}</div>
+  </ng-template>
+  Issued by: {{pass.issuer.display_name}}<br>
+  <p-footer>
+      <button pButton type="button" label="More Info" icon="fa-info"></button>
+  </p-footer>
+</p-card>

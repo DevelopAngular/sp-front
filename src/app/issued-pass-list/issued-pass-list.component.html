@@ -18,16 +18,9 @@
         </div>
     </p-header>
 
-    <ng-template let-pendingPass pTemplate="gridItem">
+    <ng-template let-currentPass pTemplate="gridItem">
         <div style="padding:.5em" class="ui-g-12 ui-md-3">
-            <p-card title="Pending Pass" styleClass="ui-card-shadow" [subtitle]="'Issued: ' +pendingPass.created.toDateString()">
-                This is a pending pass.
-                Here is: The Information.
-                For the: pending pass.
-                <p-footer>
-                    <button pButton type="button" label="More Info" icon="fa-info"></button>
-                </p-footer>
-            </p-card>
+            <app-pass-card [pass]="currentPass" [title]="'Pending Pass'" [showActivate]="false"></app-pass-card>
         </div>
     </ng-template>
 
