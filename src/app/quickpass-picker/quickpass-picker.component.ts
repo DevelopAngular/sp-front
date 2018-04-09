@@ -45,7 +45,7 @@ export class QuickpassPickerComponent implements OnInit {
     return this.validate() ? 'fa-check' : 'fa-close';
   }
 
-  updateQuickPass(event){
+  updateQuickPass(){
     this.quickPassEvent.emit(this.selectedQuickpass);
   }
 
@@ -56,6 +56,6 @@ export class QuickpassPickerComponent implements OnInit {
     } else{
       this.selectedQuickpass = null;
     }
-    this.updateQuickPass(null);
+    this.updateQuickPass();
   }
 }

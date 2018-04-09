@@ -14,6 +14,13 @@ export class HallPassListComponent implements OnInit {
   public activePasses:Promise<Pass[]>;
   public expiredPasses:Promise<Pass[]>;
   barer;
+  
+  sortKey: string;
+
+  sortField: string;
+
+  sortOrder: number;
+
   constructor(private serializer:JSONSerializer, private http:HttpService, private dataService:DataService) { }
 
   ngOnInit() {
