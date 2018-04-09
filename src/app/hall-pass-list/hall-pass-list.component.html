@@ -1,27 +1,7 @@
-<h1>Pending Passes</h1>
-<hr>
-<p-dataView [value]="pendingPasses | async" [paginator]="true"
-            [rows]="8" paginatorPosition="top" filterBy="id"
-            [sortField]="sortField" [sortOrder]="sortOrder"
-            layout="grid">
-
-    <ng-template let-currentPass pTemplate="gridItem">
-        <div style="padding:.5em" class="ui-g-12 ui-md-3">
-            <app-pass-card [pass]="currentPass" [title]="'Pending Pass'"
-                            [showActivate]="true" [isPending]="true"
-                            [forTeacher]="false">
-            </app-pass-card>
-        </div>
-    </ng-template>
-
-</p-dataView>
-<br><br>
-
-
 <h1>Active Passes</h1>
 <hr>
 <p-dataView [value]="activePasses | async" [paginator]="true"
-            [rows]="8" paginatorPosition="top" filterBy="id"
+            [rows]="4" paginatorPosition="top" filterBy="id"
             [sortField]="sortField" [sortOrder]="sortOrder"
             layout="grid">
 
@@ -33,7 +13,6 @@
             </app-pass-card>
         </div>
     </ng-template>
-
 </p-dataView>
 <br><br>
 
@@ -44,21 +23,6 @@
             [rows]="8" paginatorPosition="top" filterBy="id"
             [sortField]="sortField" [sortOrder]="sortOrder"
             layout="grid">
-
-    <p-header>
-        <div class="ui-helper-clearfix">
-            <div class="ui-g">
-                <div class="ui-g-12 ui-md-4">
-                    <p-dropdown [options]="sortOptions" [(ngModel)]="sortKey" placeholder="Sort By" (onChange)="onSortChange($event)" [autoWidth]="false" [style]="{'min-width':'15em'}"></p-dropdown>
-                </div>
-                <div class="ui-g-6 ui-md-4 filter-container">
-                    <div style="position:relative">
-                        <input type="search" pInputText placeholder="Search by brand" (keyup)="onSortChange($event)">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </p-header>
 
     <ng-template let-currentPass pTemplate="gridItem">
         <div style="padding:.5em" class="ui-g-12 ui-md-3">

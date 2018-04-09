@@ -3,7 +3,7 @@
     {{studentsAsString}}
   </div>
   <div *ngIf="isPending; else notPending">
-  →  {{pass.to_location.nameRoom}}<br> 
+  →  {{pass.to_location.name}}({{pass.to_location.room}})<br> 
   </div>
   <ng-template #notPending>
     <div>{{pass.from_location.name}}({{pass.from_location.room}}) → {{pass.to_location.name}}({{pass.to_location.room}})</div>
@@ -15,7 +15,7 @@
               [ngClass]="{'ui-button-success': true}" (click)="activate()">
       </button>
       <p-dialog header="Activate Pass" [(visible)]="activateVisible">
-          <app-activate-pass [pass]="pass"></app-activate-pass>
+          <app-activate-pass [pass]="pass" (activatePassEvent)="activatePassUpdate($event)"></app-activate-pass>
       </p-dialog>
     </div>
     <ng-template #infoButton>

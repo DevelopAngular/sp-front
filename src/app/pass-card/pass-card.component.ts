@@ -46,7 +46,7 @@ export class PassCardComponent implements OnInit {
     let s = new Date(this.pass.created);
     this.passDate = s.getMonth() + 1 + '/' + s.getDate() + '/' + s.getFullYear() + ' - ' + ((s.getHours() > 12) ? s.getHours() - 12 : s.getHours()) + ':' + ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + ((s.getHours() > 12) ? "pm" : "am");
   
-    console.log("From: ", this.pass.from_location, "To: ", this.pass.to_location);
+    //console.log("From: ", this.pass.from_location, "To: ", this.pass.to_location);
   
   }
     activate(){
@@ -56,5 +56,9 @@ export class PassCardComponent implements OnInit {
     getInfo(){
       this.infoVisible = !this.infoVisible;
       console.log(this.infoVisible);
+    }
+
+    activatePassUpdate(event){
+      this.activateVisible = !event;
     }
 }

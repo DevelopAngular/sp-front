@@ -1,3 +1,16 @@
-<p>
-  pending-pass-list works!
-</p>
+<p-dataView [value]="pendingPasses | async" [paginator]="true"
+            [rows]="4" paginatorPosition="top" filterBy="id"
+            [sortField]="sortField" [sortOrder]="sortOrder"
+            layout="grid">
+
+    <ng-template let-currentPass pTemplate="gridItem">
+        <div style="padding:.5em" class="ui-g-12 ui-md-3">
+            <app-pass-card [pass]="currentPass" [title]="'Pending Pass'"
+                            [showActivate]="true" [isPending]="true"
+                            [forTeacher]="false">
+            </app-pass-card>
+        </div>
+    </ng-template>
+
+</p-dataView>
+<br><br>

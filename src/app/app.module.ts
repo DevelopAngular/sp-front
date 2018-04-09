@@ -55,8 +55,8 @@ import {QuickpassPickerComponent} from './quickpass-picker/quickpass-picker.comp
 import { PassCardComponent } from './pass-card/pass-card.component';
 import { PassInfoComponent } from './pass-info/pass-info.component';
 import { ActivatePassComponent } from './activate-pass/activate-pass.component';
-import { PendingPassListComponent } from './pending-pass-list/pending-pass-list.component';
 import { HallPassListComponent } from './hall-pass-list/hall-pass-list.component';
+import { PendingPassListComponent } from './pending-pass-list/pending-pass-list.component';
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
   { path: 'main', component: MainPageComponent },
@@ -78,8 +78,8 @@ const appRoutes: Routes = [
     PassCardComponent,
     PassInfoComponent,
     ActivatePassComponent,
-    PendingPassListComponent,
     HallPassListComponent,
+    PendingPassListComponent,
   ],
   entryComponents: [],
   imports: [
