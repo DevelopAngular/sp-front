@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {Pass, JSONSerializer} from '../models';
+import {Pass, PendingPass, JSONSerializer} from '../models';
 import { HttpService } from '../http-service';
 import { DataService } from '../data-service';
 
@@ -10,14 +10,18 @@ import { DataService } from '../data-service';
 })
 export class HallPassListComponent implements OnInit {
 
-  public passes:Promise<Pass[]>;
+  public pendingPasses:Promise<PendingPass[]>;
+  public activePasses:Promise<Pass[]>;
+  public expiredPasses:Promise<Pass[]>;
   barer;
   constructor(private serializer:JSONSerializer, private http:HttpService, private dataService:DataService) { }
 
   ngOnInit() {
     this.dataService.barerService.subscribe(barer => this.barer = barer);
     const config = {headers: {'Authorization': 'Bearer ' + this.barer}};
-    this.passes = this.http.get<Pass[]>('api/methacton/v1/hall_passes', config).toPromise();
+    this.pendingPasses = this.http.get<PendingPass[]>('api/methacton/v1/pending_passes', config).toPromise();
+    this.activePasses = this.http.get<Pass[]>('api/methacton/v1/hall_passes?active=true', config).toPromise();
+    this.expiredPasses = this.http.get<Pass[]>('api/methacton/v1/hall_passes?active=false', config).toPromise();
   }
 
 }

@@ -20,7 +20,10 @@
 
     <ng-template let-currentPass pTemplate="gridItem">
         <div style="padding:.5em" class="ui-g-12 ui-md-3">
-            <app-pass-card [pass]="currentPass" [title]="'Pending Pass'" [showActivate]="false"></app-pass-card>
+            <app-pass-card [pass]="currentPass" [title]="'Pending Pass'"
+                            [showActivate]="false" [isPending]="true"
+                            [forTeacher]="true">
+            </app-pass-card>
         </div>
     </ng-template>
 

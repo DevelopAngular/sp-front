@@ -1,5 +1,47 @@
-<p-dataView [value]="passes | async" [paginator]="true"
-            [rows]="20" paginatorPosition="both" filterBy="id"
+<h1>Pending Passes</h1>
+<hr>
+<p-dataView [value]="pendingPasses | async" [paginator]="true"
+            [rows]="8" paginatorPosition="top" filterBy="id"
+            [sortField]="sortField" [sortOrder]="sortOrder"
+            layout="grid">
+
+    <ng-template let-currentPass pTemplate="gridItem">
+        <div style="padding:.5em" class="ui-g-12 ui-md-3">
+            <app-pass-card [pass]="currentPass" [title]="'Pending Pass'"
+                            [showActivate]="true" [isPending]="true"
+                            [forTeacher]="false">
+            </app-pass-card>
+        </div>
+    </ng-template>
+
+</p-dataView>
+<br><br>
+
+
+<h1>Active Passes</h1>
+<hr>
+<p-dataView [value]="activePasses | async" [paginator]="true"
+            [rows]="8" paginatorPosition="top" filterBy="id"
+            [sortField]="sortField" [sortOrder]="sortOrder"
+            layout="grid">
+
+    <ng-template let-currentPass pTemplate="gridItem">
+        <div style="padding:.5em" class="ui-g-12 ui-md-3">
+            <app-pass-card [pass]="currentPass" [title]="'Active Pass'"
+                            [showActivate]="false" [isPending]="false"
+                            [forTeacher]="false">
+            </app-pass-card>
+        </div>
+    </ng-template>
+
+</p-dataView>
+<br><br>
+
+
+<h1>Expired Passes</h1>
+<hr>
+<p-dataView [value]="expiredPasses | async" [paginator]="true"
+            [rows]="8" paginatorPosition="top" filterBy="id"
             [sortField]="sortField" [sortOrder]="sortOrder"
             layout="grid">
 
@@ -20,7 +62,10 @@
 
     <ng-template let-currentPass pTemplate="gridItem">
         <div style="padding:.5em" class="ui-g-12 ui-md-3">
-            <app-pass-card [pass]="currentPass" [title]="'Hall Pass'" [showActivate]="false"></app-pass-card>
+            <app-pass-card [pass]="currentPass" [title]="'Expired Pass'"
+                            [showActivate]="false" [isPending]="false"
+                            [forTeacher]="false">
+            </app-pass-card>
         </div>
     </ng-template>
 

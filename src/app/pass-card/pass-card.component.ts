@@ -19,6 +19,7 @@ export class PassCardComponent implements OnInit {
   @Input()
   forTeacher:boolean;
 
+  @Input()
   isPending:boolean;
 
   studentsAsString:string = "";
@@ -27,10 +28,12 @@ export class PassCardComponent implements OnInit {
 
   infoVisible:boolean = false;
   
+  passDate:string;
+
   constructor(private serializer:JSONSerializer) {}
 
   ngOnInit() {
-    this.isPending = this.pass instanceof PendingPass;
+    //console.log(this.isPending);
     if(this.pass.students.length == 1){
       this.studentsAsString = this.pass.students[0].display_name;
     } else {
@@ -40,8 +43,11 @@ export class PassCardComponent implements OnInit {
       if(this.studentsAsString.length > 14)
         this.studentsAsString = this.studentsAsString.substring(1,14) +"...";
     }
-
-    
+    let s = new Date(this.pass.created);
+    this.passDate = s.getMonth() + 1 + '/' + s.getDate() + '/' + s.getFullYear() + ' - ' + ((s.getHours() > 12) ? s.getHours() - 12 : s.getHours()) + ':' + ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + ((s.getHours() > 12) ? "pm" : "am");
+  
+    console.log("From: ", this.pass.from_location, "To: ", this.pass.to_location);
+  
   }
     activate(){
       this.activateVisible = !this.activateVisible;
