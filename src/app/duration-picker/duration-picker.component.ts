@@ -9,11 +9,11 @@ import {Duration} from '../models';
 
 export class DurationPickerComponent implements OnInit {
   durations: Duration[] = [
-                          new Duration('3 minutes', 3000),
-                          new Duration('5 minutes', 5000),
-                          new Duration('10 minutes', 10000),
-                          new Duration('15 minutes', 15000),
-                          new Duration('30 minutes', 30000)
+                          new Duration('3 minutes', 180000),
+                          new Duration('5 minutes', 300000),
+                          new Duration('10 minutes', 600000),
+                          new Duration('15 minutes', 900000),
+                          new Duration('30 minutes', 1800000)
                         ];
   public selectedDuration: Duration;
   constructor() { }

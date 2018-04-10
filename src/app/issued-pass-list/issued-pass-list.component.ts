@@ -16,7 +16,7 @@ export interface SelectItem{
 
 export class IssuedPassListComponent implements OnInit {
 
-  pendingPasses: PendingPass[] = [];
+  pendingPasses:Promise<PendingPass[]>;
 
   selectedPendingPass: PendingPass;
 
@@ -31,11 +31,12 @@ export class IssuedPassListComponent implements OnInit {
   sortOrder: number;
 
   barer;
-
+    user: User;
   constructor(private http: HttpService, private dataService: DataService, private serializer: JSONSerializer) { }
 
   ngOnInit() {
       this.dataService.currentBarer.subscribe(barer => this.barer = barer);
+      this.dataService.currentUser.subscribe(user => this.user = user);
       this.getPendingPasses();
 
       this.sortOptions = [
@@ -68,12 +69,13 @@ export class IssuedPassListComponent implements OnInit {
   }
 
   getPendingPasses(){
-    const config = {headers: {'Authorization' : 'Bearer ' + this.barer}};
-    this.http.get('api/methacton/v1/pending_passes', config).subscribe((data: any[]) => {
-        for (let i = 0; i < data.length; i++){
-            this.pendingPasses.push(this.serializer.getPendingPassFromJSON(data[i]));
-        }
-    });
+    const config = {headers: {'Authorization': 'Bearer ' + this.barer}};
+    this.pendingPasses = this.http.get<PendingPass[]>('api/methacton/v1/pending_passes?issuer=' +this.user.id, config).toPromise();
+  }
+
+  updatePasses(){
+    console.log("Updating Passes");
+    this.getPendingPasses();
   }
 
 }

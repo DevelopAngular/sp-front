@@ -1,0 +1,19 @@
+<p>
+    Issued: {{passDate}}
+</p>
+<div *ngIf="isPending; else notPending">
+→  {{pass.to_location.name}}({{pass.to_location.room}})<br> 
+</div>
+<ng-template #notPending>
+    <div>
+        {{pass.from_location.name}}({{pass.from_location.room}}) → {{pass.to_location.name}}({{pass.to_location.room}})
+    </div>
+</ng-template>
+<p>Issued by: {{pass.issuer.display_name}}</p>
+<p>Duration: {{duration}}</p>
+<div *ngIf="forTeacher && isPending; else noStudents">
+    <p>
+        List of students who activated/didn't
+    </p>
+</div>
+<ng-template #noStudents></ng-template>
