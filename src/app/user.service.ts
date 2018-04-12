@@ -80,7 +80,8 @@ export class UserService {
     this.serverAuth.subscribe(auth => {
       this.dataService.updateBarer(auth.access_token);
       tokenTimout = auth.expires_in * 1000 * .25;
-      setTimeout(() => {
+      console.log("Token Timeout: " +auth.expires_in);
+      setInterval(() => {
         console.log('Re-verifying access token.');
         this.fetchServerAuth(auth.access_token);
       }, tokenTimout);
