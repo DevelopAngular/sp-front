@@ -50,7 +50,7 @@ export class UserService {
   public userData: Observable<User>;
 
   constructor(private googleAuth: GoogleAuthService, private http: HttpService, private dataService: DataService, private router: Router, private serializer:JSONSerializer) {
-    this.googleTokenSubject = new BehaviorSubject<string>(sessionStorage.getItem(UserService.SESSION_STORAGE_KEY));
+    this.googleTokenSubject = new BehaviorSubject<string>(localStorage.getItem(UserService.SESSION_STORAGE_KEY));
     this.googleToken = this.googleTokenSubject
       .filter(truthy)
       .do(token => console.log('[UserService]', 'New Google Token:', token))
@@ -109,7 +109,7 @@ export class UserService {
   }
 
   public setToken(token: string) {
-    sessionStorage.setItem(UserService.SESSION_STORAGE_KEY, token);
+    localStorage.setItem(UserService.SESSION_STORAGE_KEY, token);
     this.googleTokenSubject.next(token);
   }
 
