@@ -12,8 +12,17 @@
 <p>Issued by: {{pass.issuer.display_name}}</p>
 <p>Duration: {{duration}}</p>
 <div *ngIf="forTeacher && isPending; else noStudents">
-    <p>
-        List of students who activated/didn't
-    </p>
+    <div *ngFor="let student of pass.students">
+        <div>
+            <button pButton type="button" [label]="student.display_name" icon="fa-check"
+                [ngClass]="{'ui-button-success': true}" (click)="remind(false)">
+            </button>
+        </div>
+        <!-- <ng-template>
+            <button pButton type="button" [label]="student.display_name" icon="fa-check"
+                [ngClass]="{'ui-button-success': true}" (click)="remind(false)">
+            </button>
+        </ng-template> -->
+    </div>
 </div>
 <ng-template #noStudents></ng-template>

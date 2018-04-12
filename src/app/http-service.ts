@@ -17,10 +17,10 @@ export class HttpService {
     constructor(private http: HttpClient, private dataService:DataService) {
     }
 
-    get<T>(url, config: Config): Observable<T> {
+    get<T>(url, config?: Config): Observable<T> {
         this.dataService.currentBarer.subscribe(barer => this.barer = barer);
         const newConfig: Config = {headers: {'Authorization' : 'Bearer ' + this.barer}};
-        config['responseType'] = 'json';
+        newConfig['responseType'] = 'json';
         return this.http.get<T>(baseURL + url, newConfig as ConfigJSON);
     }
 
@@ -29,7 +29,7 @@ export class HttpService {
         this.dataService.currentBarer.subscribe(barer => this.barer = barer);
         const newConfig: Config = {headers: {'Authorization' : 'Bearer ' + this.barer}};
         console.log('Sent post with config.');
-        config['responseType'] = 'json';
+        newConfig['responseType'] = 'json';
         return this.http.post(baseURL + url, body, newConfig as ConfigJSON);
       } else {
         console.log('Sent post without config.');
