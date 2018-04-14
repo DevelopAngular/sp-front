@@ -17,6 +17,8 @@ export class DateTimeComponent implements OnInit {
   ngOnInit() {
     this.isDate = this.type == '\'date\'';
     this.minDate = new Date();
+    this.selectedTime = this.minDate;
+    this.selectedDate = this.minDate;
   }
 
   validate(){
@@ -25,7 +27,7 @@ export class DateTimeComponent implements OnInit {
         return true;
       }
     } else{
-      if (this.selectedTime >= new Date() && !!this.selectedTime){
+      if (!!this.selectedTime){
         return true;
       }
     }
