@@ -15,7 +15,7 @@ export class DurationPickerComponent implements OnInit {
                           new Duration('15 minutes', 900000),
                           new Duration('30 minutes', 1800000)
                         ];
-  public selectedDuration: Promise<Duration>;
+  public selectedDuration: Duration;
   constructor() { }
 
   ngOnInit() {
