@@ -30,7 +30,7 @@ export class PassInfoComponent implements OnInit {
     });
     let s = new Date(this.pass.created);
     this.passDate = s.getMonth() + 1 + '/' + s.getDate() + '/' + s.getFullYear() + ' - ' + ((s.getHours() > 12) ? s.getHours() - 12 : s.getHours()) + ':' + ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + ((s.getHours() > 12) ? "pm" : "am");
-    this.duration = this.pass.valid_time/600;
+    this.duration = this.pass.valid_time/60000;
   }
 
   remind(shouldRemind){
