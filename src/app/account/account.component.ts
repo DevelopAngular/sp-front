@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-account',
@@ -9,9 +10,13 @@ export class AccountComponent implements OnInit {
 
   @ViewChild('signOutButton') signInButton;
 
-  constructor() { }
+  constructor(private userService:UserService) { }
 
   ngOnInit() {
   }
 
+  signOut(){
+    console.log("Signing out");
+    this.userService.signOut();
+  }
 }

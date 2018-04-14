@@ -66,5 +66,4 @@ export class GoogleSigninComponent {
     this.userService.signIn()
       .catch(e => console.error(e));
   }
-
 }

@@ -15,6 +15,7 @@ import 'rxjs/add/operator/publishReplay';
 import GoogleUser = gapi.auth2.GoogleUser;
 import GoogleAuth = gapi.auth2.GoogleAuth;
 import { JSONSerializer } from './models';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 interface ServerAuth {
   access_token: string;
@@ -48,6 +49,7 @@ export class UserService {
   public googleToken: Observable<string>;
   public serverAuth: Observable<ServerAuth>;
   public userData: Observable<User>;
+  public signedIn:Boolean;
 
   constructor(private googleAuth: GoogleAuthService, private http: HttpService, private dataService: DataService, private router: Router, private serializer:JSONSerializer) {
     this.googleTokenSubject = new BehaviorSubject<string>(localStorage.getItem(UserService.SESSION_STORAGE_KEY));
@@ -78,18 +80,22 @@ export class UserService {
     let tokenTimout = 0;
 
     this.serverAuth.subscribe(auth => {
+      this.signedIn = true;
       this.dataService.updateBarer(auth.access_token);
       tokenTimout = auth.expires_in * 1000 * .25;
       console.log("Token Timeout: " +auth.expires_in);
       setInterval(() => {
-        this.serverAuth = this.googleToken
-        .mergeMap(token => this.fetchServerAuth(token))
-        .do(auth => console.log('[UserService]', 'New Server Auth:', auth))
-        .publishReplay(1).refCount();
-        this.serverAuth.subscribe(auth => {
-          this.dataService.updateBarer(auth.access_token);
-        });
+        if(this.signedIn){
+          this.serverAuth = this.googleToken
+          .mergeMap(token => this.fetchServerAuth(token))
+          .do(auth => console.log('[UserService]', 'New Server Auth:', auth))
+          .publishReplay(1).refCount();
+          this.serverAuth.subscribe(auth => {
+            this.dataService.updateBarer(auth.access_token);
+          });
+        }
       }, tokenTimout);
+      this.signedIn = true;
     });
 
     this.userData.subscribe(user => this.dataService.updateUser(user));
@@ -145,5 +151,14 @@ export class UserService {
     let user:Observable<User>;
     user = this.http.get<User>('api/methacton/v1/users/@me', newConfig);
     return user;
+  }
+
+  public signOut(){
+    this.signedIn = false;
+    this.dataService.updateBarer("");
+    this.dataService.updateGUser(null);
+    this.dataService.updateUser(null);
+    this.router.navigate(['']);
+    //TODO Logout
   }
 }

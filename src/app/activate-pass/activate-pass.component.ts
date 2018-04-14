@@ -34,11 +34,9 @@ export class ActivatePassComponent implements OnInit {
     console.log(this.pass);
     let originValid = this.teacherComponent.validate();
     if(originValid){
-      let students:any[] = [];
-      students.push(this.user.id);
       let data = {
-          'students': students,
-          'pending': this.pass.id,
+          'student': this.user.id,
+          'pending_pass': this.pass.id,
           'from_location': this.teacherComponent.selectedLocation.id
         };
 
