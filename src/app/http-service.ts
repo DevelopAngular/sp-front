@@ -18,10 +18,14 @@ export class HttpService {
     }
 
     get<T>(url, config?: Config): Observable<T> {
-        this.dataService.currentBarer.subscribe(barer => this.barer = barer);
-        const newConfig: Config = {headers: {'Authorization' : 'Bearer ' + this.barer}};
-        newConfig['responseType'] = 'json';
-        return this.http.get<T>(baseURL + url, newConfig as ConfigJSON);
+      this.dataService.currentBarer.subscribe(barer => this.barer = barer);
+      const newConfig = {headers: {'Authorization' : 'Bearer ' + this.barer}};
+      return this.newGet(url, newConfig);
+    }
+
+    newGet<T>(url, config: Config): Observable<T>{
+      config['responseType'] = 'json';
+      return this.http.get<T>(baseURL + url, config as ConfigJSON);
     }
 
     post(url: string, body?, config?: Config) {

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { DataService } from '../data-service';
-import { JSONSerializer } from '../models';
+import { JSONSerializer, PendingPass } from '../models';
 import { HttpService } from '../http-service';
 
 @Component({
@@ -25,8 +25,9 @@ export class PassInfoComponent implements OnInit {
   constructor(private dataService:DataService, private serializer:JSONSerializer, private http:HttpService) { }
 
   ngOnInit() {
-    //this.pass = );
-    //this.serializer.getPendingPassFromJSON(this.http.get("api/methacton/v1/pending_passes?id=" +this.pass.id));
+    this.http.get("api/methacton/v1/pending_passes/"+this.pass.id).subscribe((data:any) => {
+      this.pass = this.serializer.getPendingPassFromJSON(data);
+    });
     let s = new Date(this.pass.created);
     this.passDate = s.getMonth() + 1 + '/' + s.getDate() + '/' + s.getFullYear() + ' - ' + ((s.getHours() > 12) ? s.getHours() - 12 : s.getHours()) + ':' + ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + ((s.getHours() > 12) ? "pm" : "am");
     this.duration = this.pass.valid_time/600;

@@ -82,8 +82,13 @@ export class UserService {
       tokenTimout = auth.expires_in * 1000 * .25;
       console.log("Token Timeout: " +auth.expires_in);
       setInterval(() => {
-        console.log('Re-verifying access token.');
-        this.fetchServerAuth(auth.access_token);
+        this.serverAuth = this.googleToken
+        .mergeMap(token => this.fetchServerAuth(token))
+        .do(auth => console.log('[UserService]', 'New Server Auth:', auth))
+        .publishReplay(1).refCount();
+        this.serverAuth.subscribe(auth => {
+          this.dataService.updateBarer(auth.access_token);
+        });
       }, tokenTimout);
     });
 

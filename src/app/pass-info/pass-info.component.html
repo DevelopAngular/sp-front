@@ -14,15 +14,17 @@
 <div *ngIf="forTeacher && isPending; else noStudents">
     <div *ngFor="let student of pass.students">
         <div>
-            <button pButton type="button" [label]="student.display_name" icon="fa-check"
-                [ngClass]="{'ui-button-success': true}" (click)="remind(false)">
-            </button>
+            <!-- <div *ngIf="else notAccepted"> -->
+                <button pButton type="button" [label]="student.display_name" icon="fa-check"
+                    [ngClass]="{'ui-button-success': true}" (click)="remind(false)">
+                </button>
+            <!-- </div> -->
+            <ng-template #notAccepted>
+                <button pButton type="button" [label]="student.display_name" icon="fa-check"
+                    [ngClass]="{'ui-button-success': true}" (click)="remind(false)">
+                </button>
+            </ng-template>
         </div>
-        <!-- <ng-template>
-            <button pButton type="button" [label]="student.display_name" icon="fa-check"
-                [ngClass]="{'ui-button-success': true}" (click)="remind(false)">
-            </button>
-        </ng-template> -->
     </div>
 </div>
 <ng-template #noStudents></ng-template>
