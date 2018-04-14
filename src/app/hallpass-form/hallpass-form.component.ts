@@ -124,8 +124,8 @@ export class HallpassFormComponent implements OnInit {
 
     this.studentComponent.selectedStudents = [];
     this.teacherComponent.toArray()[0].selectedLocation = null;
-    this.dateTimeComponent.toArray()[0].selectedDate = null;
-    this.dateTimeComponent.toArray()[1].selectedTime = null;
+    this.dateTimeComponent.toArray()[0].selectedDate = new Date();
+    this.dateTimeComponent.toArray()[1].selectedTime = new Date();
     this.durationComponent.selectedDuration = null;
     this.dataService.updateTab(1);
 

@@ -42,6 +42,8 @@ export class PassCardComponent implements OnInit {
       }
       if(this.studentsAsString.length > 14)
         this.studentsAsString = this.studentsAsString.substring(1,14) +"...";
+      else
+        this.studentsAsString = this.studentsAsString.substring(1, this.studentsAsString.length);
     }
     let s = new Date(this.pass.created);
     this.passDate = s.getMonth() + 1 + '/' + s.getDate() + '/' + s.getFullYear() + ' - ' + ((s.getHours() > 12) ? s.getHours() - 12 : s.getHours()) + ':' + ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + ((s.getHours() > 12) ? "pm" : "am");
