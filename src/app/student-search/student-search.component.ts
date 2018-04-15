@@ -46,7 +46,7 @@ export class StudentSearchComponent implements AfterViewInit {
 
   async filterStudents(name: string): Promise<any[]> {
       const config = {headers: {'Authorization' : 'Bearer ' + this.barer}};
-      const data = await this.http.get<any[]>('api/methacton/v1/users?is_staff=false&search=' + encodeURI(name), config).toPromise();
+      const data = await this.http.get<any[]>('api/methacton/v1/users?role=hallpass_student&search=' + encodeURI(name), config).toPromise();
       return data;
   }
 

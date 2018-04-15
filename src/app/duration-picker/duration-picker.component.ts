@@ -13,7 +13,7 @@ export class DurationPickerComponent implements OnInit {
                           new Duration('5 minutes', 300),
                           new Duration('10 minutes', 600),
                           new Duration('15 minutes', 900),
-                          new Duration('30 minutes', 1800)
+                          new Duration('30 minutes', 1800000)
                         ];
   public selectedDuration: Duration;
   constructor() { }

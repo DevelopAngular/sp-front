@@ -40,9 +40,8 @@ export class IssuedPassListComponent implements OnInit {
       this.getPendingPasses();
 
       this.sortOptions = [
-          {label: 'Newest First', value: '!year'},
-          {label: 'Oldest First', value: 'year'},
-          {label: 'Brand', value: 'brand'}
+          {label: 'Pending Passes', value: 'pending'},
+          {label: 'Hall Passes', value: 'year'},
       ];
   }
 

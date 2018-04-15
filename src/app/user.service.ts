@@ -83,12 +83,12 @@ export class UserService {
       this.signedIn = true;
       this.dataService.updateBarer(auth.access_token);
       tokenTimout = auth.expires_in * 1000 * .25;
-      console.log("Token Timeout: " +auth.expires_in);
+      //console.log("Token Timeout: " +auth.expires_in);
       setInterval(() => {
         if(this.signedIn){
           this.serverAuth = this.googleToken
           .mergeMap(token => this.fetchServerAuth(token))
-          .do(auth => console.log('[UserService]', 'New Server Auth:', auth))
+          .do(auth => console.log('[UserService]', 'New Server Auth:', 'auth'))
           .publishReplay(1).refCount();
           this.serverAuth.subscribe(auth => {
             this.dataService.updateBarer(auth.access_token);
