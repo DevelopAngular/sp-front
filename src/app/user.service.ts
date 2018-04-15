@@ -155,10 +155,13 @@ export class UserService {
 
   public signOut(){
     this.signedIn = false;
+    // gapi.auth.signOut();
+    // gapi.auth.setToken(null);
     this.dataService.updateBarer("");
     this.dataService.updateGUser(null);
     this.dataService.updateUser(null);
+    localStorage.removeItem(UserService.SESSION_STORAGE_KEY);
+
     this.router.navigate(['']);
-    //TODO Logout
   }
 }

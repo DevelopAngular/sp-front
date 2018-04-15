@@ -14,14 +14,14 @@
 <div *ngIf="forTeacher && isPending; else noStudents">
     <div *ngFor="let student of pass.students">
         <div>
-            <!-- <div *ngIf="else notAccepted"> -->
+           <div *ngIf="accepted.includes(student.id); else notAccepted">
                 <button pButton type="button" [label]="student.display_name" icon="fa-check"
-                    [ngClass]="{'ui-button-success': true}" (click)="remind(false)">
+                    [ngClass]="{'ui-button-success': true}" (click)="remind(false)" class="studentStatus">
                 </button>
-            <!-- </div> -->
+            </div>
             <ng-template #notAccepted>
-                <button pButton type="button" [label]="student.display_name" icon="fa-check"
-                    [ngClass]="{'ui-button-success': true}" (click)="remind(false)">
+                <button pButton type="button" [label]="student.display_name" icon="fa-close"
+                    [ngClass]="{'ui-button-danger': true}" (click)="remind(false)" class="studentStatus">
                 </button>
             </ng-template>
         </div>
