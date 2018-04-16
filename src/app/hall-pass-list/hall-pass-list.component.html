@@ -9,7 +9,7 @@
         <div style="padding:.5em" class="ui-g-12 ui-md-3">
             <app-pass-card [pass]="currentPass" [title]="'Active Pass'"
                             [showActivate]="false" [isPending]="false"
-                            [forTeacher]="false">
+                            [forTeacher]="false" [isExpired]="false">
             </app-pass-card>
         </div>
     </ng-template>
@@ -28,7 +28,7 @@
         <div style="padding:.5em" class="ui-g-12 ui-md-3">
             <app-pass-card [pass]="currentPass" [title]="'Expired Pass'"
                             [showActivate]="false" [isPending]="false"
-                            [forTeacher]="false">
+                            [forTeacher]="false" [isExpired]="true">
             </app-pass-card>
         </div>
     </ng-template>

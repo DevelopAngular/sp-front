@@ -22,7 +22,7 @@
       <button pButton type="button" label="More Info"
               icon="fa-info" (click)="getInfo()"></button>
       <p-dialog header="Pass Info" [(visible)]="infoVisible">
-          <app-pass-info [pass]="pass" [forTeacher]="forTeacher" [isPending]="isPending"></app-pass-info>
+          <app-pass-info [pass]="pass" [forTeacher]="forTeacher" [isPending]="isPending" [isExpired]="isExpired"></app-pass-info>
       </p-dialog>
     </ng-template>
   </p-footer>

@@ -7,3 +7,14 @@
     margin-bottom: 5px;
     margin-left: 20px;
 }
+
+.actionButton{
+    display: table-cell;
+    padding-left: 10px;
+    margin-bottom: 5px;
+    margin-left: 20px;
+}
+
+.yesNoButtons{
+    margin: auto;
+}

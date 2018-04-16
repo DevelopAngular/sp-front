@@ -22,6 +22,9 @@ export class PassCardComponent implements OnInit {
   @Input()
   isPending:boolean;
 
+  @Input()
+  isExpired:boolean;
+
   studentsAsString:string = "";
 
   activateVisible:boolean = false;

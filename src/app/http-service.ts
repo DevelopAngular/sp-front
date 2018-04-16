@@ -32,12 +32,19 @@ export class HttpService {
       if (config) {
         this.dataService.currentBarer.subscribe(barer => this.barer = barer);
         const newConfig: Config = {headers: {'Authorization' : 'Bearer ' + this.barer}};
-        console.log('Sent post with config.');
+        //console.log('Sent post with config.');
         newConfig['responseType'] = 'json';
         return this.http.post(baseURL + url, body, newConfig as ConfigJSON);
       } else {
-        console.log('Sent post without config.');
+        //console.log('Sent post without config.');
         return this.http.post(baseURL + url, body);
       }
+    }
+
+    delete(url: string){
+      this.dataService.currentBarer.subscribe(barer => this.barer = barer);
+      const config: Config = {headers: {'Authorization' : 'Bearer ' + this.barer}};
+      config['responseType'] = 'json';
+      return this.http.delete(url, config);
     }
 }

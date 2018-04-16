@@ -19,13 +19,20 @@ export class PassInfoComponent implements OnInit {
   @Input()
   forTeacher;
 
+  @Input()
+  isExpired;
+
   passDate;
   duration;
   accepted:any[] = [];
+  user;
+  verifyVisible;
+  cancelVisible;
 
   constructor(private dataService:DataService, private serializer:JSONSerializer, private http:HttpService) { }
 
   ngOnInit() {
+    this.dataService.currentUser.subscribe(user => this.user = user);
     if(this.isPending && this.forTeacher){
       this.http.get("api/methacton/v1/pending_passes/"+this.pass.id).subscribe((data:any) => {
         this.pass = this.serializer.getPendingPassFromJSON(data);
@@ -54,5 +61,32 @@ export class PassInfoComponent implements OnInit {
     }else{
       console.log("A reminder to the user will NOT be sent");
     }
+  }
+
+  showCancel(){
+    this.cancelVisible = true;
+  }
+
+  cancel(shouldCancel){
+    if(shouldCancel)
+      console.log("Deleting pass: " +this.pass.id);
+    else
+      console.log("Not deleting pass: " +this.pass.id);
+
+    this.cancelVisible = false;
+    //this.http.delete("api/methacton/v1/hall_passes/"+this.pass.id);
+  }
+
+  showVerify(){
+    this.verifyVisible = true;
+  }
+
+  verify(shouldVerify){
+    if(shouldVerify)
+      console.log("Veryfying pass: " +this.pass.id);
+    else
+      console.log("Not veryfying pass: " +this.pass.id);
+
+    this.verifyVisible = false;
   }
 }

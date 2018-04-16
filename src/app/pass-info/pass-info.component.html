@@ -29,3 +29,35 @@
     </div>
 </div>
 <ng-template #noStudents></ng-template>
+<p>Actions:</p>
+<button pButton type="button" label="Verify" icon="fa-envelope"
+        (click)="showVerify()" class="actionButton">
+</button>
+<p-dialog header="Verify Pass" [(visible)]="verifyVisible">
+    <p>Are you sure you want to send an email to {{pass.issuer.primary_email}}?</p>
+    <div class="yesNoButtons">
+        <button pButton type="button" label="Yes" icon="fa-check"
+                (click)="verify(true)" [ngClass]="{'ui-button-success': true}">
+        </button>
+        <button pButton type="button" label="No" icon="fa-close"
+                [ngClass]="{'ui-button-danger': true}" (click)="verify(false)">
+        </button>
+    </div>   
+</p-dialog>
+<div *ngIf="pass.issuer.id == user.id && !isExpired">
+    <button pButton type="button" label="Cancel" icon="fa-ban"
+            [ngClass]="{'ui-button-danger': true}" (click)="showCancel()"
+            class="actionButton">
+    </button>
+    <p-dialog header="Cancel Pass" [(visible)]="cancelVisible">
+        <p>Are you sure you want to cancel this pass?</p>
+        <div class="yesNoButtons">
+            <button pButton type="button" label="Yes" icon="fa-check"
+                    (click)="cancel(true)" [ngClass]="{'ui-button-success': true}">
+            </button>
+            <button pButton type="button" label="No" icon="fa-close"
+                    [ngClass]="{'ui-button-danger': true}" (click)="cancel(false)">
+            </button>
+        </div>   
+    </p-dialog>
+</div>
