@@ -38,7 +38,7 @@ export class GoogleSigninComponent {
 
     this.userService.isAuthLoaded().subscribe(isLoaded => {
       this._ngZone.run(() => {
-        console.log('isLoaded:', isLoaded);
+        //console.log('isLoaded:', isLoaded);
         this.isLoaded = isLoaded;
 
         if (isLoaded && intervalId !== undefined) {
@@ -57,7 +57,7 @@ export class GoogleSigninComponent {
     });
 
     this.userService.userData.subscribe(user => {
-      console.log(user);
+      //console.log(user);
       this.router.navigate(['/main']);
     });
   }

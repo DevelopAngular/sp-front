@@ -11,8 +11,8 @@
 </ng-template>
 <p>Issued by: {{pass.issuer.display_name}}</p>
 <p>Duration: {{duration}} minutes</p>
-<p>Students:</p>
 <div *ngIf="forTeacher && isPending; else noStudents">
+    <p>Students:</p>
     <div *ngFor="let student of pass.students">
         <div>
            <div *ngIf="accepted.includes(student.id); else notAccepted">

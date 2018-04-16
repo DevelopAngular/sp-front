@@ -41,23 +41,23 @@ export class HallpassFormComponent implements OnInit {
       this.router.navigate(['../']);
     else{
       this.dataService.currentUser.subscribe(user => this.user = user);
-      console.log(this.user.roles);
+      //console.log(this.user.roles);
       this.isStaff = this.user.roles.includes('edit_all_hallpass');
-      console.log('Hallpass form is staff:' + this.isStaff);
+      //console.log('Hallpass form is staff:' + this.isStaff);
       this.dataService.currentGUser.subscribe(gUser => this.gUser = gUser);
       this.studentName = this.gUser['name'];
     }
   }
 
   newPass(){
-    console.log("Making new pass");
+    //console.log("Making new pass");
     let issued:boolean;
     if(this.isStaff && this.isPending){
-      console.log("Issueing new pending pass");
+      //console.log("Issueing new pending pass");
       issued = this.newPendingPass();
     }
     else{
-      console.log("Issueing new hallpass");
+      //console.log("Issueing new hallpass");
       issued = this.newHallPass();
     }
     if(issued){
@@ -118,8 +118,8 @@ export class HallpassFormComponent implements OnInit {
       }
     var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
     this.http.post('api/methacton/v1/pending_passes', data, config).subscribe((data:any) => {
-        console.log("Got pending pass data:");
-        console.log(data);
+        //console.log("Got pending pass data:");
+        //console.log(data);
     });
 
     this.studentComponent.selectedStudents = [];

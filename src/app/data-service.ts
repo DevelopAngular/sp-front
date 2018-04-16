@@ -25,7 +25,6 @@ export class DataService {
     constructor(){}
 
     updateBarer(barer: string){
-        console.log("Updating Barer");
         this.barerService.next(barer);
     }
 

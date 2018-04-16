@@ -55,17 +55,17 @@ export class UserService {
     this.googleTokenSubject = new BehaviorSubject<string>(localStorage.getItem(UserService.SESSION_STORAGE_KEY));
     this.googleToken = this.googleTokenSubject
       .filter(truthy)
-      .do(token => console.log('[UserService]', 'New Google Token:', token))
+      // .do(token => console.log('[UserService]', 'New Google Token:', token))
       .publishReplay(1).refCount();
 
     this.serverAuth = this.googleToken
       .mergeMap(token => this.fetchServerAuth(token))
-      .do(auth => console.log('[UserService]', 'New Server Auth:', auth))
+      // .do(auth => console.log('[UserService]', 'New Server Auth:', auth))
       .publishReplay(1).refCount();
 
     this.userData = this.serverAuth
       .mergeMap(auth => this.fetchUser(auth))
-      .do(user => console.log('[UserService]', 'New User Data:', user))
+      // .do(user => console.log('[UserService]', 'New User Data:', user))
       .publishReplay(1).refCount();
 
     // load Google auth and save to subject so users can wait if necessary for it
@@ -88,7 +88,7 @@ export class UserService {
         if(this.signedIn){
           this.serverAuth = this.googleToken
           .mergeMap(token => this.fetchServerAuth(token))
-          .do(auth => console.log('[UserService]', 'New Server Auth:', 'auth'))
+          // .do(auth => console.log('[UserService]', 'New Server Auth:', auth))
           .publishReplay(1).refCount();
           this.serverAuth.subscribe(auth => {
             this.dataService.updateBarer(auth.access_token);
