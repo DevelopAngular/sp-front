@@ -30,20 +30,22 @@
 </div>
 <ng-template #noStudents></ng-template>
 <p>Actions:</p>
-<button pButton type="button" label="Verify" icon="fa-envelope"
-        (click)="showVerify()" class="actionButton">
-</button>
-<p-dialog header="Verify Pass" [(visible)]="verifyVisible">
-    <p>Are you sure you want to send an email to {{pass.issuer.primary_email}}?</p>
-    <div class="yesNoButtons">
-        <button pButton type="button" label="Yes" icon="fa-check"
-                (click)="verify(true)" [ngClass]="{'ui-button-success': true}">
+    <div *ngIf="pass.issuer.primary_email != user.primary_email">
+        <button pButton type="button" label="Verify" icon="fa-envelope"
+                (click)="showVerify()" class="actionButton">
         </button>
-        <button pButton type="button" label="No" icon="fa-close"
-                [ngClass]="{'ui-button-danger': true}" (click)="verify(false)">
-        </button>
-    </div>   
-</p-dialog>
+        <p-dialog header="Verify Pass" [(visible)]="verifyVisible">
+            <p>Are you sure you want to send an email to {{pass.issuer.primary_email}}?</p>
+            <div class="yesNoButtons">
+                <button pButton type="button" label="Yes" icon="fa-check"
+                        (click)="verify(true)" [ngClass]="{'ui-button-success': true}">
+                </button>
+                <button pButton type="button" label="No" icon="fa-close"
+                        [ngClass]="{'ui-button-danger': true}" (click)="verify(false)">
+                </button>
+            </div>   
+        </p-dialog>
+    </div>
 <div *ngIf="pass.issuer.id == user.id && !isExpired">
     <button pButton type="button" label="Cancel" icon="fa-ban"
             [ngClass]="{'ui-button-danger': true}" (click)="showCancel()"

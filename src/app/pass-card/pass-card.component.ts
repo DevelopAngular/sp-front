@@ -66,4 +66,8 @@ export class PassCardComponent implements OnInit {
     activatePassUpdate(event){
       this.activateVisible = !event;
     }
+
+    updatePassUpdate(event){
+      console.log("Passes being updated");
+    }
 }

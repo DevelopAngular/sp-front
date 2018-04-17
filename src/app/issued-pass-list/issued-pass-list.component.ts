@@ -69,7 +69,7 @@ export class IssuedPassListComponent implements OnInit {
 
   getPendingPasses(){
     const config = {headers: {'Authorization': 'Bearer ' + this.barer}};
-    this.pendingPasses = this.http.get<PendingPass[]>('api/methacton/v1/pending_passes?issuer=' +this.user.id, config).toPromise();
+    this.pendingPasses = this.http.get<PendingPass[]>('api/methacton/v1/pending_passes?revoked=false&issuer=' +this.user.id, config).toPromise();
   }
 
   updatePasses(){

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import { DataService } from '../data-service';
 import { JSONSerializer, PendingPass } from '../models';
 import { HttpService } from '../http-service';
@@ -21,6 +21,8 @@ export class PassInfoComponent implements OnInit {
 
   @Input()
   isExpired;
+
+  @Output() updatePassEvent: EventEmitter<null> = new EventEmitter();
 
   passDate;
   duration;
@@ -68,13 +70,17 @@ export class PassInfoComponent implements OnInit {
   }
 
   cancel(shouldCancel){
-    if(shouldCancel)
+    if(shouldCancel){
       console.log("Deleting pass: " +this.pass.id);
+      this.http.delete("api/methacton/v1/" +(this.isPending?"pending_passes":"hall_passes") +"/"+this.pass.id).subscribe(()=>{
+        this.updatePassEvent.emit(null);
+      });
+    }
     else
       console.log("Not deleting pass: " +this.pass.id);
 
     this.cancelVisible = false;
-    //this.http.delete("api/methacton/v1/hall_passes/"+this.pass.id);
+    
   }
 
   showVerify(){

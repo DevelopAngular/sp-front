@@ -45,6 +45,6 @@ export class HttpService {
       this.dataService.currentBarer.subscribe(barer => this.barer = barer);
       const config: Config = {headers: {'Authorization' : 'Bearer ' + this.barer}};
       config['responseType'] = 'json';
-      return this.http.delete(url, config);
+      return this.http.delete(baseURL + url, config);
     }
 }
