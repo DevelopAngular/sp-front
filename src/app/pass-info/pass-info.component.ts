@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import { DataService } from '../data-service';
 import { JSONSerializer, PendingPass } from '../models';
 import { HttpService } from '../http-service';
+import {Message} from 'primeng/components/common/api';
 
 @Component({
   selector: 'app-pass-info',
@@ -27,6 +28,7 @@ export class PassInfoComponent implements OnInit {
   passDate;
   duration;
   accepted:any[] = [];
+  public msgs: Message[] = [];
   user;
   verifyVisible;
   cancelVisible;
@@ -90,7 +92,9 @@ export class PassInfoComponent implements OnInit {
 
   verify(shouldVerify){
     if(shouldVerify)
-      console.log("Veryfying pass: " +this.pass.id);
+      this.http.post("api/methacton/v1/hall_passes/" +this.pass.id +"/request_verification", "", {}).subscribe(()=>{
+        this.msgs.push({severity:'success', summary:'Email Sent', detail:'An email has been sent to the teacher(s).'});
+      });
     else
       console.log("Not veryfying pass: " +this.pass.id);
 
