@@ -1,19 +1,24 @@
-<p-card [(title)]="title" styleClass="ui-card-shadow" [subtitle]="'Issued: ' +passDate" class = "card">
+<p-card [(title)]="title" styleClass="ui-card-shadow" [subtitle]="subtitle" class = "card">
   <div>
     {{studentsAsString}}
   </div>
-  <div *ngIf="isPending; else notPending">
-  →  {{pass.to_location.name}}({{pass.to_location.room}})<br> 
+  <div *ngIf="!!pass.from_location; else noFrom">
+      {{pass.from_location.name}}({{pass.from_location.room}}) → {{pass.to_location.name}}({{pass.to_location.room}})<br>
   </div>
-  <ng-template #notPending>
-    <div>{{pass.from_location.name}}({{pass.from_location.room}}) → {{pass.to_location.name}}({{pass.to_location.room}})</div>
+  <ng-template #noFrom>
+     <div> →  {{pass.to_location.name}}({{pass.to_location.room}})</div> 
   </ng-template>
+  <div *ngIf="isPending;">
+      Duration: {{duration}} minutes<br>
+  </div>
   Issued by: {{pass.issuer.display_name}}<br>
   <p-footer>
     <div *ngIf="showActivate; else infoButton;">
       <button pButton type="button" label="Activate" icon="fa-check"
-              [ngClass]="{'ui-button-success': true}" (click)="activate()">
+              [ngClass]="{'ui-button-success': true}" [disabled]="available"
+              (click)="activate()">
       </button>
+      <p-confirmDialog appendTo="body"></p-confirmDialog>
       <p-dialog header="Activate Pass" [(visible)]="activateVisible">
           <app-activate-pass [pass]="pass" (activatePassEvent)="activatePassUpdate($event)"></app-activate-pass>
       </p-dialog>

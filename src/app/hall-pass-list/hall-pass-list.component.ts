@@ -36,4 +36,8 @@ export class HallPassListComponent implements OnInit {
     this.activePasses = this.http.get<Pass[]>('api/methacton/v1/hall_passes?active=true', config).toPromise();
     this.expiredPasses = this.http.get<Pass[]>('api/methacton/v1/hall_passes?active=false', config).toPromise();
   }
+
+  updatePassUpdate(event){
+    console.log("Passes being updated at list level");
+  }
 }

@@ -73,6 +73,7 @@ export class PassInfoComponent implements OnInit {
     if(shouldCancel){
       console.log("Deleting pass: " +this.pass.id);
       this.http.delete("api/methacton/v1/" +(this.isPending?"pending_passes":"hall_passes") +"/"+this.pass.id).subscribe(()=>{
+        console.log("Passes being updated at info level");
         this.updatePassEvent.emit(null);
       });
     }

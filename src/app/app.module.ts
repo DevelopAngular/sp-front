@@ -47,6 +47,8 @@ import {InputSwitchModule} from 'primeng/inputswitch';
 import {ScrollPanelModule} from 'primeng/scrollpanel';
 import {ListboxModule} from 'primeng/listbox';
 import {MessageService} from 'primeng/components/common/messageservice';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {ConfirmationService} from 'primeng/api';
 import { DateTimeComponent } from './date-time/date-time.component';
 import {DurationPickerComponent} from './duration-picker/duration-picker.component';
 import {IssuedPassListComponent} from './issued-pass-list/issued-pass-list.component';
@@ -118,6 +120,7 @@ const appRoutes: Routes = [
     ScrollPanelModule,
     InputSwitchModule,
     ListboxModule,
+    ConfirmDialogModule,
     ToastModule.forRoot(),
     RouterModule.forRoot(
       appRoutes
@@ -128,7 +131,13 @@ const appRoutes: Routes = [
       useValue: GAPI_CONFIG,
     })
   ],
-  providers: [DataService, HttpService, UserService, MessageService, JSONSerializer],
+  providers: [DataService,
+              HttpService,
+              UserService,
+              MessageService,
+              JSONSerializer,
+              ConfirmationService
+            ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

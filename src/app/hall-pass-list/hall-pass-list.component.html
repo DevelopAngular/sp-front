@@ -26,7 +26,8 @@
 
     <ng-template let-currentPass pTemplate="gridItem">
         <div style="padding:.5em" class="ui-g-12 ui-md-3">
-            <app-pass-card [pass]="currentPass" [title]="'Expired Pass'"
+            <app-pass-card (onHide)="updatePassUpdate()"
+                            [pass]="currentPass" [title]="'Expired Pass'"
                             [showActivate]="false" [isPending]="false"
                             [forTeacher]="false" [isExpired]="true">
             </app-pass-card>

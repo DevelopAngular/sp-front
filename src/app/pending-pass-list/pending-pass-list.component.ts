@@ -16,7 +16,7 @@ export class PendingPassListComponent implements OnInit {
   ngOnInit() {
     this.dataService.barerService.subscribe(barer => this.barer = barer);
     const config = {headers: {'Authorization': 'Bearer ' + this.barer}};
-    this.pendingPasses = this.http.get<PendingPass[]>('api/methacton/v1/pending_passes', config).toPromise();
+    this.pendingPasses = this.http.get<PendingPass[]>('api/methacton/v1/pending_passes?active=now_and_future', config).toPromise();
   }
 
 }
