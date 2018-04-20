@@ -78,7 +78,10 @@ export class PassCardComponent implements OnInit {
     this.passDate = s.getMonth() + 1 + '/' + s.getDate() + '/' + s.getFullYear() + ' - ' + ((s.getHours() > 12) ? s.getHours() - 12 : s.getHours()) + ':' + ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + ((s.getHours() > 12) ? "pm" : "am");
     s = new Date(this.pass.start_time);
     this.startDate = s.getMonth() + 1 + '/' + s.getDate() + '/' + s.getFullYear() + ' - ' + ((s.getHours() > 12) ? s.getHours() - 12 : s.getHours()) + ':' + ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + ((s.getHours() > 12) ? "pm" : "am");
-    this.subtitle = "Issued: " +this.passDate +(this.isPending?"\nStarts: " +this.startDate:"");
+    this.subtitle = "Issued: " +this.passDate;
+    if(this.isPending){
+      this.subtitle = "Starts: " +this.startDate;
+    }
     //console.log("From: ", this.pass.from_location, "To: ", this.pass.to_location);
   
   }
@@ -119,7 +122,9 @@ export class PassCardComponent implements OnInit {
     }
 
     updatePassUpdate(event){
-      this.updateCardPassEvent.emit(null);
-      console.log("Passes being updated at card level");
+      this.dataService.updateTab(0);
+      setTimeout(()=>{
+        this.dataService.updateTab(1);
+      }, 50)
     }
 }

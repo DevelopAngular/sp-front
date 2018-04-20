@@ -6,6 +6,7 @@ import {Pass} from '../models';
 import {PendingPass} from '../models';
 import { HallPassListComponent } from '../hall-pass-list/hall-pass-list.component';
 import { IssuedPassListComponent } from '../issued-pass-list/issued-pass-list.component';
+import { PendingPassListComponent } from '../pending-pass-list/pending-pass-list.component';
 declare var document: any;
 
 @Component({
@@ -31,6 +32,7 @@ export class MainPageComponent implements OnInit {
   @ViewChild('scrollMe') private myScrollContainer: ElementRef;
   @ViewChild(HallPassListComponent) hallPassListComponent: HallPassListComponent;
   @ViewChild(IssuedPassListComponent) issuedPassListComponent: IssuedPassListComponent;
+  @ViewChild(PendingPassListComponent) pendingPassListComponent: PendingPassListComponent;
 
   constructor(private http: HttpService, private dataService: DataService, private router: Router) {
 
@@ -68,6 +70,10 @@ export class MainPageComponent implements OnInit {
         this.hallPassListComponent.updatePasses();
       else
         this.issuedPassListComponent.updatePasses();
+    } else if(this.selectedIndex == 2){
+      if(!this.isStaff){
+        this.pendingPassListComponent.updatePasses();
+      }
     }
   }
 }

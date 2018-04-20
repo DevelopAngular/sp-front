@@ -29,7 +29,10 @@
     </div>
 </div>
 <ng-template #noStudents></ng-template>
-<p>Actions:</p>
+<div *ngIf="(pass.issuer.id == user.id && !isExpired) || forTeacher">
+    <p>Actions:</p>
+</div>
+<div *ngIf="forTeacher">
     <div *ngIf="pass.issuer.primary_email != user.primary_email">
         <button pButton type="button" label="Verify" icon="fa-envelope"
                 (click)="showVerify()" class="actionButton">
@@ -46,6 +49,7 @@
             </div>   
         </p-dialog>
     </div>
+</div>
 <div *ngIf="pass.issuer.id == user.id && !isExpired">
     <button pButton type="button" label="Cancel" icon="fa-ban"
             [ngClass]="{'ui-button-danger': true}" (click)="showCancel()"
@@ -60,6 +64,15 @@
             <button pButton type="button" label="No" icon="fa-close"
                     [ngClass]="{'ui-button-danger': true}" (click)="cancel(false)">
             </button>
+            <!--
+            Will's layout
+            <button pButton type="button" label="Cancel this pass" icon="fa-ban"
+                    (click)="cancel(true)" [ngClass]="{'ui-button-danger': true}">
+            </button>
+            <button pButton type="button" label="Back" icon="fa-arrow-left"
+                    (click)="cancel(false)">
+            </button>
+            -->
         </div>   
     </p-dialog>
 </div>

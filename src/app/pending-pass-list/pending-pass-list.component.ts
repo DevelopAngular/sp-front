@@ -18,5 +18,9 @@ export class PendingPassListComponent implements OnInit {
     const config = {headers: {'Authorization': 'Bearer ' + this.barer}};
     this.pendingPasses = this.http.get<PendingPass[]>('api/methacton/v1/pending_passes?active=now_and_future', config).toPromise();
   }
-
+  updatePasses(){
+    console.log("Updating Pending Passes");
+    const config = {headers: {'Authorization': 'Bearer ' + this.barer}};
+    this.pendingPasses = this.http.get<PendingPass[]>('api/methacton/v1/pending_passes?active=now_and_future', config).toPromise();
+  }
 }

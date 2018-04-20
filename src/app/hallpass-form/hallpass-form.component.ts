@@ -118,16 +118,13 @@ export class HallpassFormComponent implements OnInit {
       }
     var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
     this.http.post('api/methacton/v1/pending_passes', data, config).subscribe((data:any) => {
-        //console.log("Got pending pass data:");
-        //console.log(data);
+      this.studentComponent.selectedStudents = [];
+      this.teacherComponent.toArray()[0].selectedLocation = null;
+      this.dateTimeComponent.toArray()[0].selectedDate = new Date();
+      this.dateTimeComponent.toArray()[1].selectedTime = new Date();
+      this.durationComponent.selectedDuration = null;
+      this.dataService.updateTab(1);
     });
-
-    this.studentComponent.selectedStudents = [];
-    this.teacherComponent.toArray()[0].selectedLocation = null;
-    this.dateTimeComponent.toArray()[0].selectedDate = new Date();
-    this.dateTimeComponent.toArray()[1].selectedTime = new Date();
-    this.durationComponent.selectedDuration = null;
-    this.dataService.updateTab(1);
 
     return true;
   }
@@ -182,18 +179,20 @@ export class HallpassFormComponent implements OnInit {
             };
     var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
     this.http.post('api/methacton/v1/hall_passes', data, config).subscribe((data:any) => {
-        console.log("Got hallpass data:");
-        console.log(data);
-    });
+      console.log("Got hallpass data:");
+      console.log(data);
+      if(this.isStaff)
+        this.studentComponent.selectedStudents = [];
 
-    if(this.isStaff)
-      this.studentComponent.selectedStudents = [];
-    this.teacherComponent.toArray()[0].selectedLocation = null;
-    this.teacherComponent.toArray()[1].selectedLocation = null;
-    this.durationComponent.selectedDuration = null;
-    if(!this.isStaff)
-      this.quickPassComponent.selectedQuickpass = null;
-    this.dataService.updateTab(1);
+      this.teacherComponent.toArray()[0].selectedLocation = null;
+      this.teacherComponent.toArray()[1].selectedLocation = null;
+      this.durationComponent.selectedDuration = null;
+
+      if(!this.isStaff)
+        this.quickPassComponent.selectedQuickpass = null;
+        
+      this.dataService.updateTab(1);
+    });
 
     return true;
   }
