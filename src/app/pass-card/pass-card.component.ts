@@ -88,7 +88,7 @@ export class PassCardComponent implements OnInit {
       let end:any = new Date(this.pass.expiry_time);
       let diff = (end - now)/60000;
       this.timeLeft = diff;
-      console.log("[Diff]", diff);
+      //console.log("[Diff]", diff);
       var mins = Math.floor(diff);
       var secs = diff - mins;
       secs = Math.round(secs*60);

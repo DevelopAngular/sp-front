@@ -1,7 +1,4 @@
 <p-card [(title)]="title" styleClass="ui-card-shadow" [subtitle]="subtitle" class = "card">
-  <div *ngIf="timeLeft > 0 && !pass.revoked;">
-    Time Left: {{timeLeftStr}}
-  </div>
   <div *ngIf="fotTeacher;">
     For: {{studentsAsString}}
   </div>
@@ -11,7 +8,10 @@
   <ng-template #noFrom>
      <div> →  {{pass.to_location.name}}({{pass.to_location.room}})</div> 
   </ng-template>
-  <div *ngIf="isPending;">
+  <div *ngIf="timeLeft > 0 && !pass.revoked;">
+    Time Left: {{timeLeftStr}}
+  </div>
+  <div>
       Duration: {{duration}} minutes<br>
   </div>
   <div *ngIf="forTeacher;">
