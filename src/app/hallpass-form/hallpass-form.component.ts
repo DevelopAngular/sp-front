@@ -215,9 +215,11 @@ export class HallpassFormComponent implements OnInit {
   }
 
   quickPassUpdate(event){
+    //console.log("[Event]", event);
     if(!!event){
       this.teacherComponent.toArray()[0].selectedLocation = this.serializer.getLocationFromJSON(event.to_location);
       this.durationComponent.selectedDuration = this.serializer.getDurationFromJSON(event.valid_time);
+      //console.log("[Selected Time]", this.durationComponent.selectedDuration);
     }else{
       this.teacherComponent.toArray()[0].selectedLocation = null;
       this.durationComponent.selectedDuration = null;

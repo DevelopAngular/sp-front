@@ -28,6 +28,22 @@ export class HallPassListComponent implements OnInit {
     const config = {headers: {'Authorization': 'Bearer ' + this.barer}};
     this.activePasses = this.http.get<Pass[]>('api/methacton/v1/hall_passes?active=true', config).toPromise();
     this.expiredPasses = this.http.get<Pass[]>('api/methacton/v1/hall_passes?active=false', config).toPromise();
+
+    setInterval(()=>{
+      this.activePasses.then((passes)=>{
+        //console.log("[Passes]", passes);
+        for(let i = 0; i < passes.length; i++){
+          let now:any = new Date();
+          let end:any = new Date(passes[i].expiry_time);
+          let diff = end - now;
+          //console.log("[Diff]", diff);
+          if(diff <= 0){
+            this.updatePasses();
+          }
+        }
+      });
+    }, 1000);
+  
   }
 
   updatePasses(){

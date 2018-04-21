@@ -204,7 +204,8 @@ export class JSONSerializer {
   }
 
   getDurationFromJSON(JSON){
-    const display:string = JSON/600+" minutes",
+    //console.log("[JSON]", JSON);
+    const display:string = JSON/60+" minutes",
     value:number = JSON;
     return new Duration(display, value);
   }

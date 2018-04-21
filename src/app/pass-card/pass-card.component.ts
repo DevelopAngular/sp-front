@@ -42,7 +42,8 @@ export class PassCardComponent implements OnInit {
   passDate:string;
   startDate:string;
   subtitle:string;
-
+  timeLeftStr:string;
+  timeLeft:number;
   duration:number;
   
   available:boolean;
@@ -61,7 +62,6 @@ export class PassCardComponent implements OnInit {
       let start:any = new Date(this.pass.created);
       let end:any = new Date(this.pass.expiry_time);
       this.duration = Math.abs(end - start)/60000;
-      //console.log(typeof this.pass.created, typeof this.pass.expiry_time);
     }
     if(this.pass.students.length == 1){
       this.studentsAsString = this.pass.students[0].display_name;
@@ -83,7 +83,17 @@ export class PassCardComponent implements OnInit {
       this.subtitle = "Starts: " +this.startDate;
     }
     //console.log("From: ", this.pass.from_location, "To: ", this.pass.to_location);
-  
+    setInterval(()=>{
+      let now:any = new Date();
+      let end:any = new Date(this.pass.expiry_time);
+      let diff = (end - now)/60000;
+      this.timeLeft = diff;
+      console.log("[Diff]", diff);
+      var mins = Math.floor(diff);
+      var secs = diff - mins;
+      secs = Math.round(secs*60);
+      this.timeLeftStr = mins +"m " +secs +"s";
+    }, 1000);
   }
     activate(){
       if(!!this.pass.from_location){
