@@ -57,8 +57,11 @@ export class GoogleSigninComponent {
     });
 
     this.userService.userData.subscribe(user => {
-      //console.log(user);
-      this.router.navigate(['/main']);
+      this.dataService.currentBarer.subscribe((barer)=>{
+        if(!!barer){
+          this.router.navigate(['/main']);
+        }
+      });
     });
   }
 
