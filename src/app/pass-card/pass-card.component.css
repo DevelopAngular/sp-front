@@ -2,6 +2,14 @@
     min-width: 300px;
 }
 
-div{
+.element{
     padding-bottom: 5px;
+}
+
+.revoked{
+    color: crimson;
+}
+
+.active{
+    color: rgb(65, 129, 0);
 }

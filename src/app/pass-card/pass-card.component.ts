@@ -45,7 +45,7 @@ export class PassCardComponent implements OnInit {
   timeLeftStr:string;
   timeLeft:number;
   duration:number;
-  
+  status:string;
   available:boolean;
 
   msgs:Message[] = [];
@@ -53,6 +53,7 @@ export class PassCardComponent implements OnInit {
 
   ngOnInit() {
     this.dataService.currentUser.subscribe(user => this.user = user);
+    this.status = (this.pass.revoked?"Revoked":"Active");
     let now = new Date();
     this.available = this.pass.start_time >= now;
     if(this.isPending)
