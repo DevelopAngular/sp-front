@@ -97,29 +97,33 @@ export class PassCardComponent implements OnInit {
     }, 1000);
   }
     activate(){
-      if(!!this.pass.from_location){
-        this.confirmationService.confirm({
-          message: 'Are you sure you want to activate this pass?',
-          header: 'Activate Pass',
-          accept: () => {
-            let data = {
-              'student': this.user.id,
-              'pending_pass': this.pass.id,
-            };
-  
-            var config = {headers:{'Authorization' : 'Bearer '}}
-            this.http.post('api/methacton/v1/hall_passes', data, config).subscribe((data:any) => {
-              console.log(data);
-              this.dataService.updateTab(1);
-            });
-            this.msgs.push({severity:'success', summary:'Activated', detail:'The pass was activated!'});
-          },
-          reject: () => {
-            this.msgs.push({severity:'error', summary:'Not Activated', detail:'The pass was not activated.'});
-          }
-      });
+      if(this.passAvailable()){
+        if(!!this.pass.from_location){
+          this.confirmationService.confirm({
+            message: 'Are you sure you want to activate this pass?',
+            header: 'Activate Pass',
+            accept: () => {
+              let data = {
+                'student': this.user.id,
+                'pending_pass': this.pass.id,
+              };
+    
+              var config = {headers:{'Authorization' : 'Bearer '}}
+              this.http.post('api/methacton/v1/hall_passes', data, config).subscribe((data:any) => {
+                console.log(data);
+                this.dataService.updateTab(1);
+              });
+              this.msgs.push({severity:'success', summary:'Activated', detail:'The pass was activated!'});
+            },
+            reject: () => {
+              this.msgs.push({severity:'error', summary:'Not Activated', detail:'The pass was not activated.'});
+            }
+        });
+        } else{
+          this.activateVisible = !this.activateVisible;
+        }
       } else{
-        this.activateVisible = !this.activateVisible;
+        this.msgs.push({severity:'error', summary:'Not Available', detail:'This pass will not be available until ' +this.startDate +"."});
       }
     }
 
@@ -137,5 +141,15 @@ export class PassCardComponent implements OnInit {
       setTimeout(()=>{
         this.dataService.updateTab(1);
       }, 50)
+    }
+
+    passAvailable(){
+      let now:Date = new Date();
+      let available:Date = new Date(this.pass.start_time);
+      return now >= available;
+    }
+
+    getIcon(){
+      return this.passAvailable() ? 'fa-check' : 'fa-close';
     }
 }

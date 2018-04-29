@@ -1,3 +1,5 @@
+<p-growl [(value)]="msgs" life="6000"></p-growl>
+
 <p-card [(title)]="title" styleClass="ui-card-shadow" [subtitle]="subtitle" class = "card">
   <div *ngIf="forTeacher && !isPending;" class="element">
     Status: <div [ngClass]="{'revoked': pass.revoked, 'active': !pass.revoked}">{{status}}</div>
@@ -22,8 +24,8 @@
   </div>
   <p-footer>
     <div *ngIf="showActivate; else infoButton;">
-      <button pButton type="button" label="Activate" icon="fa-check"
-              [ngClass]="{'ui-button-success': true}" [disabled]="available"
+      <button pButton type="button" label="Activate" [icon]="getIcon()"
+      [ngClass]="{'ui-button-success': passAvailable(), 'ui-button-danger': !passAvailable()}" [disabled]="available"
               (click)="activate()">
       </button>
       <p-confirmDialog appendTo="body"></p-confirmDialog>
