@@ -37,7 +37,10 @@
         <button pButton type="button" label="Verify" icon="fa-envelope"
                 (click)="showVerify()" class="actionButton">
         </button>
-        <p-dialog header="Verify Pass" [(visible)]="verifyVisible">
+        <app-consent-menu header="Verify Pass" [content]="'Are you sure you want to send an email to' +pass.issuer.primary_email +'?'"
+                        [(visible)]="verifyVisible" (onAccept)="verify(true)" (onDecline)="verify(false)">
+        </app-consent-menu>
+        <!-- <p-dialog header="Verify Pass" [(visible)]="verifyVisible">
             <p>Are you sure you want to send an email to {{pass.issuer.primary_email}}?</p>
             <div class="yesNoButtons">
                 <button pButton type="button" label="Yes" icon="fa-check"
@@ -47,7 +50,7 @@
                         [ngClass]="{'ui-button-danger': true}" (click)="verify(false)">
                 </button>
             </div>   
-        </p-dialog>
+        </p-dialog> -->
     </div>
 </div>
 <div *ngIf="pass.issuer.id == user.id && !isExpired">
@@ -55,24 +58,8 @@
             [ngClass]="{'ui-button-danger': true}" (click)="showCancel()"
             class="actionButton">
     </button>
-    <p-dialog header="Cancel Pass" [(visible)]="cancelVisible">
-        <p>Are you sure you want to cancel this pass?</p>
-        <div class="yesNoButtons">
-            <button pButton type="button" label="Yes" icon="fa-check"
-                    (click)="cancel(true)" [ngClass]="{'ui-button-success': true}">
-            </button>
-            <button pButton type="button" label="No" icon="fa-close"
-                    [ngClass]="{'ui-button-danger': true}" (click)="cancel(false)">
-            </button>
-            <!--
-            Will's layout
-            <button pButton type="button" label="Cancel this pass" icon="fa-ban"
-                    (click)="cancel(true)" [ngClass]="{'ui-button-danger': true}">
-            </button>
-            <button pButton type="button" label="Back" icon="fa-arrow-left"
-                    (click)="cancel(false)">
-            </button>
-            -->
-        </div>   
-    </p-dialog>
+
+    <app-consent-menu header="Cancel Pass" content="Are you sure you want to cancel this pass?"
+                        [(visible)]="cancelVisible" (onAccept)="cancel(true)" (onDecline)="cancel(false)">
+    </app-consent-menu>
 </div>

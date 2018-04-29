@@ -63,6 +63,7 @@ import { PendingPassListComponent } from './pending-pass-list/pending-pass-list.
 import { DemoMainComponent } from './demo-main/demo-main.component';
 import { DemoNavComponent } from './demo-nav/demo-nav.component';
 import { DemoTilesComponent } from './demo-tiles/demo-tiles.component';
+import { ConsentMenuComponent } from './consent-menu/consent-menu.component';
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
   { path: 'main', component: MainPageComponent },
@@ -90,6 +91,7 @@ const appRoutes: Routes = [
     DemoMainComponent,
     DemoNavComponent,
     DemoTilesComponent,
+    ConsentMenuComponent,
   ],
   entryComponents: [],
   imports: [

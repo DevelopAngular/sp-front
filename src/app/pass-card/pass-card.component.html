@@ -28,9 +28,11 @@
       [ngClass]="{'ui-button-success': passAvailable(), 'ui-button-danger': !passAvailable()}" [disabled]="available"
               (click)="activate()">
       </button>
-      <p-confirmDialog appendTo="body"></p-confirmDialog>
+      <app-consent-menu (onAccept)="activatePass(true)" (onDecline)="activatePass(false)" [(visible)]="activateConsentVisible" content="Are you sure you want to activate this pass?" header="Acivate Pass" 
+      >
+      </app-consent-menu>
       <p-dialog header="Activate Pass" [(visible)]="activateVisible">
-          <app-activate-pass [pass]="pass" (activatePassEvent)="activatePassUpdate($event)"></app-activate-pass>
+        <app-activate-pass [pass]="pass" (activatePassEvent)="activatePassUpdate($event)"></app-activate-pass>
       </p-dialog>
     </div>
     <ng-template #infoButton>
