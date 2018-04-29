@@ -49,6 +49,7 @@ import {ListboxModule} from 'primeng/listbox';
 import {MessageService} from 'primeng/components/common/messageservice';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ConfirmationService} from 'primeng/api';
+import {SidebarModule} from 'primeng/sidebar';
 import { DateTimeComponent } from './date-time/date-time.component';
 import {DurationPickerComponent} from './duration-picker/duration-picker.component';
 import {IssuedPassListComponent} from './issued-pass-list/issued-pass-list.component';
@@ -59,9 +60,13 @@ import { PassInfoComponent } from './pass-info/pass-info.component';
 import { ActivatePassComponent } from './activate-pass/activate-pass.component';
 import { HallPassListComponent } from './hall-pass-list/hall-pass-list.component';
 import { PendingPassListComponent } from './pending-pass-list/pending-pass-list.component';
+import { DemoMainComponent } from './demo-main/demo-main.component';
+import { DemoNavComponent } from './demo-nav/demo-nav.component';
+import { DemoTilesComponent } from './demo-tiles/demo-tiles.component';
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
   { path: 'main', component: MainPageComponent },
+  { path: 'demo', component: DemoMainComponent }, 
 ];
 
 @NgModule({
@@ -82,6 +87,9 @@ const appRoutes: Routes = [
     ActivatePassComponent,
     HallPassListComponent,
     PendingPassListComponent,
+    DemoMainComponent,
+    DemoNavComponent,
+    DemoTilesComponent,
   ],
   entryComponents: [],
   imports: [
@@ -121,6 +129,7 @@ const appRoutes: Routes = [
     InputSwitchModule,
     ListboxModule,
     ConfirmDialogModule,
+    SidebarModule,
     ToastModule.forRoot(),
     RouterModule.forRoot(
       appRoutes

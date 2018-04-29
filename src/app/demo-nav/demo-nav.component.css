@@ -1,0 +1,40 @@
+.navToggleButton{
+    left: 200px;
+}
+
+.ui-sidebar {
+    position: fixed;
+    padding: .5em 1em;
+    -webkit-transition: transform .3s;
+    transition: transform .3s;
+}
+
+.ui-sidebar-left {
+    top: 0;
+    left: 0;
+    width: 20em;
+    height: 100%;
+}
+
+.ui-sidebar-left.ui-sidebar-active{
+
+}
+
+.ui-sidebar-left.ui-sidebar-sm{
+    width: 20em;
+}
+
+.ui-sidebar-left.ui-sidebar-md{
+    width: 40em;
+}
+
+.ui-sidebar-left.ui-sidebar-lg{
+    width: 60em;
+}
+
+@media screen and (max-width: 64em) {
+    .ui-sidebar-left.ui-sidebar-lg,
+    .ui-sidebar-left.ui-sidebar-md {
+        width: 20em;
+    }
+}
