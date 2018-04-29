@@ -95,9 +95,11 @@ export class HallpassFormComponent implements OnInit {
     let destination:string = this.teacherComponent.toArray()[0].selectedLocation.id;
     let date:Date = this.dateTimeComponent.toArray()[0].selectedDate;
     let time:Date = this.dateTimeComponent.toArray()[1].selectedTime;
-    let finalDate = new Date();
-    finalDate.setDate(date.getDate());
-    finalDate.setTime(time.getTime());
+    let dateAsString = date.toISOString().split("T")[0];
+    let timeAsString = time.toISOString().split("T")[1];
+    console.log("[DUBUG]", "Date: ", dateAsString, "Time: ", timeAsString);
+    let finalDate = new Date(dateAsString +"T" +timeAsString);
+    console.log("[DUBUG]", "Final Date: ", this.dateToString(finalDate));
     const duration = this.durationComponent.selectedDuration.value;
 
     let data: object;
@@ -167,7 +169,7 @@ export class HallpassFormComponent implements OnInit {
         studentIds.push(student.id);
       });
     } else{
-      studentIds.push(this.user.id); //TODO Make proper id from proper object
+      studentIds.push(this.user.id);
     }
     data = {
             'students': studentIds,
@@ -224,5 +226,10 @@ export class HallpassFormComponent implements OnInit {
       this.teacherComponent.toArray()[0].selectedLocation = null;
       this.durationComponent.selectedDuration = null;
     }
+  }
+
+  dateToString(s:Date):string{
+    //return s.toISOString();
+    return s.getMonth() + 1 + '/' + s.getDate() + '/' + s.getFullYear() + ' - ' + ((s.getHours() > 12) ? s.getHours() - 12 : s.getHours()) + ':' + ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + ((s.getHours() > 12) ? "pm" : "am");
   }
 }
