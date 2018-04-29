@@ -73,6 +73,14 @@ export class HallpassFormComponent implements OnInit {
     let timeValid = this.dateTimeComponent.toArray()[1].validate();
     let durationValid = this.durationComponent.validate();
 
+    let date:Date = this.dateTimeComponent.toArray()[0].selectedDate;
+    let time:Date = this.dateTimeComponent.toArray()[1].selectedTime;
+    let dateAsString = date.toISOString().split("T")[0];
+    let timeAsString = time.toISOString().split("T")[1];
+    let finalDate = new Date(dateAsString +"T" +timeAsString);
+
+    let startValid = finalDate > new Date();
+
     this.msgs = [];
     if (!studentsValid)
       this.msgs.push({severity: 'error', summary: 'Field Invalid', detail: 'The selected student(s) are not valid.'});
@@ -89,17 +97,16 @@ export class HallpassFormComponent implements OnInit {
     if(!durationValid)
       this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected duration is not valid.'});
     
-    if(!(studentsValid && destinationValid && dateValid && timeValid && durationValid))
+    if(!startValid){
+      this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The start time cannot be in the past.'});
+    }
+
+    if(!(studentsValid && destinationValid && dateValid && timeValid && durationValid && startValid))
       return false;
     
+
+    
     let destination:string = this.teacherComponent.toArray()[0].selectedLocation.id;
-    let date:Date = this.dateTimeComponent.toArray()[0].selectedDate;
-    let time:Date = this.dateTimeComponent.toArray()[1].selectedTime;
-    let dateAsString = date.toISOString().split("T")[0];
-    let timeAsString = time.toISOString().split("T")[1];
-    console.log("[DUBUG]", "Date: ", dateAsString, "Time: ", timeAsString);
-    let finalDate = new Date(dateAsString +"T" +timeAsString);
-    console.log("[DUBUG]", "Final Date: ", this.dateToString(finalDate));
     const duration = this.durationComponent.selectedDuration.value;
 
     let data: object;

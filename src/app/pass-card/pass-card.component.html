@@ -1,8 +1,8 @@
 <p-growl [(value)]="msgs" life="6000"></p-growl>
 
 <p-card [(title)]="title" styleClass="ui-card-shadow" [subtitle]="subtitle" class = "card">
-  <div *ngIf="forTeacher && !isPending;" class="element">
-    Status: <div [ngClass]="{'revoked': pass.revoked, 'active': !pass.revoked}">{{status}}</div>
+  <div *ngIf="forTeacher;" class="element">
+    Status: <span [ngClass]="{'revoked': pass.revoked, 'active': !pass.revoked}">{{status}}</span>
   </div>
   <div *ngIf="forTeacher;" class="element">
     For: {{studentsAsString}}
@@ -19,7 +19,7 @@
   <div class="element">
       Duration: {{duration}} minutes<br>
   </div>
-  <div *ngIf="forTeacher;" class="element">
+  <div *ngIf="forTeacher && pass.issuer.id != user.id;" class="element">
     Issued by: {{pass.issuer.display_name}}<br>
   </div>
   <p-footer>
