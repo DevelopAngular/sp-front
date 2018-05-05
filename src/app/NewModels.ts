@@ -202,7 +202,6 @@ export class Request {
                 public travel_type: string,
                 public status: string,
                 public hallpass: HallPass){
-
     }
 
     static fromJSON(JSON:any):Request{

@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DemoMainComponent } from './demo-main.component';
+import { PinnableComponent } from './pinnable.component';
 
-describe('DemoMainComponent', () => {
-  let component: DemoMainComponent;
-  let fixture: ComponentFixture<DemoMainComponent>;
+describe('PinnableComponent', () => {
+  let component: PinnableComponent;
+  let fixture: ComponentFixture<PinnableComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DemoMainComponent ]
+      declarations: [ PinnableComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DemoMainComponent);
+    fixture = TestBed.createComponent(PinnableComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

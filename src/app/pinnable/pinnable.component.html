@@ -1,0 +1,12 @@
+<mat-card class="card">
+  <div>
+    <img class="icon" [src]="iconURL" alt="ICON">
+    <div class="title">
+      {{title}}
+    </div>
+    <div *ngIf="restricted;">
+      <div class="overlay"></div>
+      <img class="lock" src="" alt="">
+    </div>
+  </div>
+</mat-card>

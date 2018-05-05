@@ -1,0 +1,23 @@
+.card{
+ width: 250px;
+ height: 100px;
+ border-radius: 15px;
+ background: radial-gradient(at bottom right, #F52B4F, #F37426);
+ color: white;
+}
+
+.icon{
+
+}
+
+.title{
+
+}
+
+.overlay{
+
+}
+
+.lock{
+
+}

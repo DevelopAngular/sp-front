@@ -60,14 +60,12 @@ import { PassInfoComponent } from './pass-info/pass-info.component';
 import { ActivatePassComponent } from './activate-pass/activate-pass.component';
 import { HallPassListComponent } from './hall-pass-list/hall-pass-list.component';
 import { PendingPassListComponent } from './pending-pass-list/pending-pass-list.component';
-import { DemoMainComponent } from './demo-main/demo-main.component';
-import { DemoNavComponent } from './demo-nav/demo-nav.component';
-import { DemoTilesComponent } from './demo-tiles/demo-tiles.component';
 import { ConsentMenuComponent } from './consent-menu/consent-menu.component';
+import { PinnableComponent } from './pinnable/pinnable.component';
+import {MatCardModule} from '@angular/material/card';
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
   { path: 'main', component: MainPageComponent },
-  { path: 'demo', component: DemoMainComponent }, 
 ];
 
 @NgModule({
@@ -88,10 +86,8 @@ const appRoutes: Routes = [
     ActivatePassComponent,
     HallPassListComponent,
     PendingPassListComponent,
-    DemoMainComponent,
-    DemoNavComponent,
-    DemoTilesComponent,
     ConsentMenuComponent,
+    PinnableComponent,
   ],
   entryComponents: [],
   imports: [
@@ -132,6 +128,7 @@ const appRoutes: Routes = [
     ListboxModule,
     ConfirmDialogModule,
     SidebarModule,
+    MatCardModule,
     ToastModule.forRoot(),
     RouterModule.forRoot(
       appRoutes
