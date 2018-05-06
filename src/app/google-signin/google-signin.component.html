@@ -1,4 +1,4 @@
-<div class="all">
+<!-- <div class="all">
   <div class="wrapper">
     <div class="grow"></div>
     <h1>Please sign-in to continue</h1>
@@ -20,8 +20,10 @@
     </button>
     <div class="grow"></div>
   </div>
-</div>
+</div> -->
 
 <div class="pinnable-test">
-  <app-pinnable></app-pinnable>
+  <app-pinnable (onSelectEvent)="pinnableSelected($event)" [pinnable]="testPinnable1"></app-pinnable>
+  <br><br>
+  <!-- <app-pinnable (onSelectEvent)="pinnableSelected($event)" [pinnable]="testPinnable2"></app-pinnable> -->
 </div>

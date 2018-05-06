@@ -1,23 +1,36 @@
 .card{
- width: 250px;
- height: 100px;
- border-radius: 15px;
- background: radial-gradient(at bottom right, #F52B4F, #F37426);
- color: white;
+    width: 114px;
+    height: 58px;
+    padding-top: 8.9px;
+    border-radius: 7px;
+    background: radial-gradient(at bottom right, white, white);
+    color: white;
+    text-align: center;
+    box-shadow: 0 7.5px 13px 0 rgba(0, 0, 0, 0.1);
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif
 }
 
 .icon{
-
+    width: 25.5px;
+    height: 25.5px;
 }
 
 .title{
-
+    font-size: 13px;
+    font-weight: bold;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.08;
+    letter-spacing: 0.2px;
 }
 
 .overlay{
-
 }
 
 .lock{
-
+    position: relative;
+    width: 11px;
+    height: 10px;
+    top: -53px;
+    right: -48px;
 }

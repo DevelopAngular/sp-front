@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, Output } from '@angular/core';
-
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {Pinnable} from '../NewModels';
 @Component({
   selector: 'app-pinnable',
   templateUrl: './pinnable.component.html',
@@ -8,23 +8,31 @@ import { Component, OnInit, Input, Output } from '@angular/core';
 export class PinnableComponent implements OnInit {
 
   @Input()
-  iconURL: string = "";
+  pinnable: Pinnable;
 
-  @Input()
-  gradient: string = "";
-
-  @Input()
-  title: string = "";
-
-  @Input()
-  type: string = "";
-
-  @Input()
   restricted: boolean = false;
 
-  constructor() { }
+  @Output() onSelectEvent: EventEmitter<Pinnable> = new EventEmitter();
+
+  constructor() {
+    
+  }
 
   ngOnInit() {
+    if(!!this.pinnable.location){
+      this.restricted = this.pinnable.location.restricted;
+    }
+  }
+
+  onSelect(){
+    console.log("Pinnable Selected");
+    this.onSelectEvent.emit(this.pinnable);
+  }
+
+  getGradient(special){
+    let gradient: string[] = this.pinnable.gradient_color.split(",");;
+
+    return "radial-gradient(circle at 73% 71%, " +gradient[0] +", " +gradient[1] +")";
   }
 
 }

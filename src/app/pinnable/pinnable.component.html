@@ -1,12 +1,12 @@
-<mat-card class="card">
+<div class="card" [style.background]="getGradient()" (click)="onSelect()">
   <div>
-    <img class="icon" [src]="iconURL" alt="ICON">
+    <img class="icon" [src]="pinnable.icon" alt="ICON">
     <div class="title">
-      {{title}}
+      {{pinnable.title}}
     </div>
     <div *ngIf="restricted;">
       <div class="overlay"></div>
-      <img class="lock" src="" alt="">
+      <img class="lock" src="../../assets/icons8-lock_filled.png" alt="LOCK">
     </div>
   </div>
-</mat-card>
+</div>
