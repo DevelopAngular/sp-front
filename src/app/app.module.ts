@@ -65,6 +65,7 @@ import { PinnableComponent } from './pinnable/pinnable.component';
 import {MatCardModule} from '@angular/material/card';
 import { PinnableSelectorComponent } from './pinnable-selector/pinnable-selector.component';
 import {MatGridListModule} from '@angular/material/grid-list';
+import { LocationChooseComponent } from './location-choose/location-choose.component';
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
   { path: 'main', component: MainPageComponent },
@@ -91,8 +92,12 @@ const appRoutes: Routes = [
     ConsentMenuComponent,
     PinnableComponent,
     PinnableSelectorComponent,
+    LocationChooseComponent,
   ],
-  entryComponents: [HallpassFormComponent],
+  entryComponents: [
+    HallpassFormComponent,
+    LocationChooseComponent,
+  ],
   imports: [
     BrowserModule,
     FormsModule,

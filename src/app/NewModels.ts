@@ -169,6 +169,9 @@ export class Location {
 
         return new Location(id, title, campus, room, catagory, gradient_color, icon, restricted, required_attachments, travel_types, teachers, max_allowed_time, invite_allowed);
     }
+    get nameRoom():string{
+        return this.title +" (" +this.room +")";
+    }
 }
 
 export class Pinnable {

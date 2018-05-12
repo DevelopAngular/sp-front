@@ -54,11 +54,11 @@
     <div class="divider"></div>
     <div class="center">
       <button mat-button class="clickRipple from" (click)="chooseLoc('from')">
-        <div class="card">
+        <div class="card" [style.background]="getGradient('from')">
           <div>
-            <img class="icon" src="../../assets/icons8-lock_filled.png" alt="ICON">
+            <img *ngIf="!!fromIcon" class="icon" [src]="fromIcon">
             <div class="title">
-              From
+              {{from_title}}
             </div>
           </div>
         </div>
@@ -68,20 +68,20 @@
       <img class="midIcon" src="../../assets/icons8-lock_filled.png" alt="ICON">
 
       <button mat-button class="clickRipple to" (click)="chooseLoc('to')">
-        <div class="card">
+        <div class="card" [style.background]="getGradient('to')">
           <div>
-            <img class="icon" src="../../assets/icons8-lock_filled.png" alt="ICON">
+            <img *ngIf="!!toIcon" class="icon" [src]="toIcon">
             <div class="title">
-              To
+              {{to_title}}
             </div>
           </div>
         </div>
       </button>
     </div>
     <div class="divider"></div>
-    <mat-grid-list class="grid" cols="4" rowHeight="100px">
-      <mat-grid-tile *ngFor="let pinnable of pinnables">
-        <app-pinnable [pinnable]="pinnable" (onSelect)="pinnableSelected($event)"></app-pinnable>
+    <mat-grid-list class="grid" cols="4" rowHeight="75px" gutterSize="15px">
+      <mat-grid-tile *ngFor="let pinnable of pinnables | async">
+        <app-pinnable [pinnable]="pinnable" (onSelectEvent)="pinnableSelected($event)"></app-pinnable>
       </mat-grid-tile>
     </mat-grid-list>
       

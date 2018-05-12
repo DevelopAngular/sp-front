@@ -65,7 +65,7 @@ export class MainPageComponent implements OnInit {
       console.log('The dialog was closed');
       //this.animal = result;
     });
-  }
+  } 
 
 
   toTop(){

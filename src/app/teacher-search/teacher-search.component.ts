@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, Input, SimpleChange } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, Input, SimpleChange, Output, EventEmitter } from '@angular/core';
 import {FormControl} from '@angular/forms';
 
 import {Observable} from 'rxjs/Observable';
@@ -8,7 +8,7 @@ import {map} from 'rxjs/operators/map';
 import { DataService } from '../data-service';
 import { HttpService } from '../http-service';
 
-import {Location} from '../models';
+import {Location} from '../NewModels';
 
 @Component({
   selector: 'app-teacher-search',
@@ -17,17 +17,26 @@ import {Location} from '../models';
 })
 export class TeacherSearchComponent implements AfterViewInit {
   locations: Location[] = [];
-  selectedLocation: Location;
+  _selectedLocation: Location;
   barer: string;
 
   @Input()
   type:string;
   public typeString:string = "";
+
+  @Output()
+  locationSelectedEvent: EventEmitter<Location> = new EventEmitter();
+
   constructor(private http: HttpService, private dataService:DataService) {}
 
   ngAfterViewInit() {
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
     this.typeString = this.type=="'to'"?"Destination":"Origin";
+  }
+
+  set selectedLocation(loc:Location){
+    this._selectedLocation = loc;
+    this.locationSelectedEvent.emit(loc);
   }
 
   async updateLocations(event){
@@ -44,7 +53,7 @@ export class TeacherSearchComponent implements AfterViewInit {
   convertToLocations(json: any[]): Location[] {
     const out: Location[] = [];
     for (let i = 0; i < json.length; i++){
-      out.push(new Location(json[i]['id'], json[i]['name'], json[i]['campus'], json[i]['room']));
+      out.push(Location.fromJSON(json[i]));
     }
     return out;
   }

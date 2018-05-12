@@ -12,6 +12,9 @@ import { JSONSerializer } from '../models';
 import { QuickpassPickerComponent } from '../quickpass-picker/quickpass-picker.component';
 import {User} from '../models';
 import {Pinnable, Location} from '../NewModels';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import { ActivatePassComponent } from '../activate-pass/activate-pass.component';
+import { LocationChooseComponent } from '../location-choose/location-choose.component';
 
 @Component({
   selector: 'app-hallpass-form',
@@ -37,8 +40,18 @@ export class HallpassFormComponent implements OnInit {
 //------------------------NEW STUFF----------------------//
   show:boolean = false;
   passType:string = "rt";
-  pinnables:Pinnable[] = [];
-  constructor(private messageService: MessageService, private http: HttpService, private dataService: DataService, private router: Router, private serializer:JSONSerializer) {}
+  fromIcon:string = "../../assets/icons8-lock_filled.png";
+  toIcon:string = "../../assets/icons8-lock_filled.png";
+  from_title:string = "From";
+  to_title:string = "To";
+  toGradient:string = "radial-gradient(circle at 73% 71%, " +"#979797" +", " +"#505050" +")";
+  fromGradient:string = "radial-gradient(circle at 73% 71%, " +"#979797" +", " +"#505050" +")";
+  locationType:string = "";
+  fromLocation:Location;
+  toLocation:Location;
+  public pinnables:Promise<Pinnable[]>;
+
+  constructor(private messageService: MessageService, private http: HttpService, private dataService: DataService, private router: Router, private serializer:JSONSerializer, public dialog: MatDialog) {}
 
   ngOnInit() {
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
@@ -51,30 +64,63 @@ export class HallpassFormComponent implements OnInit {
       //console.log('Hallpass form is staff:' + this.isStaff);
       this.dataService.currentGUser.subscribe(gUser => this.gUser = gUser);
       this.studentName = this.gUser['name'];
-    
-    let lockerRoom: Location = new Location("1", "Locker Room", "MHS", "IDK", "IDK", "", "", true, [], [], [], 10, true);
-
-    this.pinnables.push(new Pinnable("1", "Classrooms", "#F52B4F,#F37426", "../../assets/icons8-mortarboard_filled.png", "catagory", lockerRoom, "rooms"));
-    this.pinnables.push(new Pinnable("2", "Locker", "#54ff00,#39ad00", "../../assets/icons8-lock_filled.png", "location", null, null));
-    this.pinnables.push(new Pinnable("1", "Classrooms", "#F52B4F,#F37426", "../../assets/icons8-mortarboard_filled.png", "catagory", lockerRoom, "rooms"));
-    this.pinnables.push(new Pinnable("2", "Locker", "#54ff00,#39ad00", "../../assets/icons8-lock_filled.png", "location", null, null));
-    this.pinnables.push(new Pinnable("2", "Locker", "#54ff00,#39ad00", "../../assets/icons8-lock_filled.png", "location", null, null));
-    this.pinnables.push(new Pinnable("1", "Classrooms", "#F52B4F,#F37426", "../../assets/icons8-mortarboard_filled.png", "catagory", lockerRoom, "rooms"));
-    this.pinnables.push(new Pinnable("2", "Locker", "#54ff00,#39ad00", "../../assets/icons8-lock_filled.png", "location", null, null));
-    this.pinnables.push(new Pinnable("1", "Classrooms", "#F52B4F,#F37426", "../../assets/icons8-mortarboard_filled.png", "catagory", lockerRoom, "rooms"));
-  }
-  }
-
-  chooseLoc(loc){
-    if(loc == "to"){
-
-    } else if(loc == "from"){
-
     }
   }
 
-  pinnableSelected(event){
+  chooseLoc(loc){
+    this.locationType = loc;
+    if(loc == "to"){
+      if(!!this.fromLocation)
+        this.pinnables = this.http.get<Pinnable[]>('api/methacton/v1/pinnables').toPromise();
+      else
+      this.msgs.push({severity: 'error', summary: 'Attention!', detail: 'You must select a from location first.'});
+    } else if(loc == "from"){
+      let dialogRef = this.dialog.open(LocationChooseComponent, {
+        width: '250px',
+        hasBackdrop: true,
+        //data: { name: "Test1", animal: "Test2" }
+      });
+  
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('The dialog was closed');
+        console.log(result);
+        if(!!result)
+          this.pinnables = this.http.get<Pinnable[]>('api/methacton/v1/pinnables').toPromise();                           
+      });
+    }
+  }
+
+  pinnableSelected(event:Pinnable){
     console.log("[Pinnable Selected]: ", event);
+    if(event.type=="location"){
+      if(this.locationType == 'to'){
+        this.to_title = event.title;
+        this.toIcon = event.icon;
+        this.setGradient("to", event);
+      } else if(this.locationType == 'from'){
+        this.from_title = event.title;
+        this.fromIcon = event.icon;
+        this.setGradient("from", event);
+      }
+    }
+  }
+
+  setGradient(type:string, pinnable:Pinnable){
+    let gradient: string[] = pinnable.gradient_color.split(",");;
+
+    if(type == 'to'){
+      this.toGradient = "radial-gradient(circle at 73% 71%, " +gradient[0] +", " +gradient[1] +")";
+    } else if(type == 'from'){
+      this.fromGradient = "radial-gradient(circle at 73% 71%, " +gradient[0] +", " +gradient[1] +")";
+    }
+  }
+
+  getGradient(type:string){
+    if(type == 'to'){
+      return this.toGradient;
+    } else if(type == 'from'){
+      return this.fromGradient;
+    }
   }
 
   newPass(){
@@ -253,7 +299,7 @@ export class HallpassFormComponent implements OnInit {
   quickPassUpdate(event){
     //console.log("[Event]", event);
     if(!!event){
-      this.teacherComponent.toArray()[0].selectedLocation = this.serializer.getLocationFromJSON(event.to_location);
+      //this.teacherComponent.toArray()[0].selectedLocation = this.serializer.getLocationFromJSON(event.to_location);
       this.durationComponent.selectedDuration = this.serializer.getDurationFromJSON(event.valid_time);
       //console.log("[Selected Time]", this.durationComponent.selectedDuration);
     }else{
