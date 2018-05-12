@@ -11,6 +11,7 @@ import {Message} from 'primeng/components/common/api';
 import { JSONSerializer } from '../models';
 import { QuickpassPickerComponent } from '../quickpass-picker/quickpass-picker.component';
 import {User} from '../models';
+import {Pinnable, Location} from '../NewModels';
 
 @Component({
   selector: 'app-hallpass-form',
@@ -33,6 +34,10 @@ export class HallpassFormComponent implements OnInit {
   public msgs: Message[] = [];
   public isPending:boolean = true;
 
+//------------------------NEW STUFF----------------------//
+  show:boolean = false;
+  passType:string = "rt";
+  pinnables:Pinnable[] = [];
   constructor(private messageService: MessageService, private http: HttpService, private dataService: DataService, private router: Router, private serializer:JSONSerializer) {}
 
   ngOnInit() {
@@ -46,7 +51,30 @@ export class HallpassFormComponent implements OnInit {
       //console.log('Hallpass form is staff:' + this.isStaff);
       this.dataService.currentGUser.subscribe(gUser => this.gUser = gUser);
       this.studentName = this.gUser['name'];
+    
+    let lockerRoom: Location = new Location("1", "Locker Room", "MHS", "IDK", "IDK", "", "", true, [], [], [], 10, true);
+
+    this.pinnables.push(new Pinnable("1", "Classrooms", "#F52B4F,#F37426", "../../assets/icons8-mortarboard_filled.png", "catagory", lockerRoom, "rooms"));
+    this.pinnables.push(new Pinnable("2", "Locker", "#54ff00,#39ad00", "../../assets/icons8-lock_filled.png", "location", null, null));
+    this.pinnables.push(new Pinnable("1", "Classrooms", "#F52B4F,#F37426", "../../assets/icons8-mortarboard_filled.png", "catagory", lockerRoom, "rooms"));
+    this.pinnables.push(new Pinnable("2", "Locker", "#54ff00,#39ad00", "../../assets/icons8-lock_filled.png", "location", null, null));
+    this.pinnables.push(new Pinnable("2", "Locker", "#54ff00,#39ad00", "../../assets/icons8-lock_filled.png", "location", null, null));
+    this.pinnables.push(new Pinnable("1", "Classrooms", "#F52B4F,#F37426", "../../assets/icons8-mortarboard_filled.png", "catagory", lockerRoom, "rooms"));
+    this.pinnables.push(new Pinnable("2", "Locker", "#54ff00,#39ad00", "../../assets/icons8-lock_filled.png", "location", null, null));
+    this.pinnables.push(new Pinnable("1", "Classrooms", "#F52B4F,#F37426", "../../assets/icons8-mortarboard_filled.png", "catagory", lockerRoom, "rooms"));
+  }
+  }
+
+  chooseLoc(loc){
+    if(loc == "to"){
+
+    } else if(loc == "from"){
+
     }
+  }
+
+  pinnableSelected(event){
+    console.log("[Pinnable Selected]: ", event);
   }
 
   newPass(){
@@ -64,7 +92,6 @@ export class HallpassFormComponent implements OnInit {
       
     }
   }
- 
   
   newPendingPass():boolean{
     let studentsValid = this.studentComponent.validate();

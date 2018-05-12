@@ -1,12 +1,14 @@
-import { Component, OnInit, ViewChild, ElementRef, Input, Output} from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input, Output, Inject} from '@angular/core';
 import { DataService } from '../data-service';
 import { Router } from '@angular/router';
 import { HttpService } from '../http-service';
-import {Pass} from '../models';
-import {PendingPass} from '../models';
+import { Pass } from '../models';
+import { PendingPass } from '../models';
 import { HallPassListComponent } from '../hall-pass-list/hall-pass-list.component';
 import { IssuedPassListComponent } from '../issued-pass-list/issued-pass-list.component';
 import { PendingPassListComponent } from '../pending-pass-list/pending-pass-list.component';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
 declare var document: any;
 
 @Component({
@@ -34,7 +36,11 @@ export class MainPageComponent implements OnInit {
   @ViewChild(IssuedPassListComponent) issuedPassListComponent: IssuedPassListComponent;
   @ViewChild(PendingPassListComponent) pendingPassListComponent: PendingPassListComponent;
 
-  constructor(private http: HttpService, private dataService: DataService, private router: Router) {
+//------------------------NEW STUFF----------------------//
+
+  formVisible: boolean
+
+  constructor(private http: HttpService, private dataService: DataService, private router: Router, public dialog: MatDialog) {
 
   }
 
@@ -48,6 +54,19 @@ export class MainPageComponent implements OnInit {
       this.isStaff = this.user.roles.includes('edit_all_hallpass');
     }
   }
+
+  showForm(): void {
+    let dialogRef = this.dialog.open(HallpassFormComponent, {
+      width: '750px',
+      //data: { name: "Test1", animal: "Test2" }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      //this.animal = result;
+    });
+  }
+
 
   toTop(){
     //console.log("Going to top.");
@@ -77,3 +96,18 @@ export class MainPageComponent implements OnInit {
     }
   }
 }
+// @Component({
+//   selector: 'dialog-overview-example-dialog',
+//   templateUrl: 'dialog-overview-example-dialog.html',
+// })
+// export class DialogOverviewExampleDialog {
+
+//   constructor(
+//     public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
+//     @Inject(MAT_DIALOG_DATA) public data: any) { }
+
+//   onNoClick(): void {
+//     this.dialogRef.close();
+//   }
+
+// }

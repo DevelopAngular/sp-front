@@ -10,3 +10,46 @@
     bottom: 2%;
     right: 2%;
 }
+
+.card{
+    width: inherit;
+    height: 57px;
+    padding-top: 8.9px;
+    border-radius: 7px;
+    background-image: radial-gradient(circle at 77% 61%, #03cf31, rgba(2, 169, 67, 0.86) 67%, rgba(1, 129, 85, 0.7));
+    color: white;   
+    box-shadow: 0 7.5px 13px 0 rgba(0, 0, 0, 0.1);
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif
+}
+
+.icon{
+    float:left;
+    padding: 8px 0px 0px 10px;
+    width: 25px;
+    height: 25px;
+}
+
+.title{
+    font-size: 20px;
+    font-weight: bold;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.08;
+    letter-spacing: 0.3px;
+    padding: 13px 200px 0px 0px;
+}
+
+.clickRipple{
+    width: 352px;
+    border-radius: 7px;
+}
+
+.mat-button{
+    line-height: inherit;
+    padding: 0px;
+    font-family: inherit;
+}
+
+.mat-dialog-container{
+    border-radius: 10px;
+}

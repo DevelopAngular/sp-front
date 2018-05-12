@@ -63,6 +63,8 @@ import { PendingPassListComponent } from './pending-pass-list/pending-pass-list.
 import { ConsentMenuComponent } from './consent-menu/consent-menu.component';
 import { PinnableComponent } from './pinnable/pinnable.component';
 import {MatCardModule} from '@angular/material/card';
+import { PinnableSelectorComponent } from './pinnable-selector/pinnable-selector.component';
+import {MatGridListModule} from '@angular/material/grid-list';
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
   { path: 'main', component: MainPageComponent },
@@ -88,8 +90,9 @@ const appRoutes: Routes = [
     PendingPassListComponent,
     ConsentMenuComponent,
     PinnableComponent,
+    PinnableSelectorComponent,
   ],
-  entryComponents: [],
+  entryComponents: [HallpassFormComponent],
   imports: [
     BrowserModule,
     FormsModule,
@@ -129,6 +132,7 @@ const appRoutes: Routes = [
     ConfirmDialogModule,
     SidebarModule,
     MatCardModule,
+    MatGridListModule,
     ToastModule.forRoot(),
     RouterModule.forRoot(
       appRoutes
