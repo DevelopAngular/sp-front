@@ -63,7 +63,6 @@ import { PendingPassListComponent } from './pending-pass-list/pending-pass-list.
 import { ConsentMenuComponent } from './consent-menu/consent-menu.component';
 import { PinnableComponent } from './pinnable/pinnable.component';
 import {MatCardModule} from '@angular/material/card';
-import { PinnableSelectorComponent } from './pinnable-selector/pinnable-selector.component';
 import {MatGridListModule} from '@angular/material/grid-list';
 import { LocationChooseComponent } from './location-choose/location-choose.component';
 const appRoutes: Routes = [
@@ -91,7 +90,6 @@ const appRoutes: Routes = [
     PendingPassListComponent,
     ConsentMenuComponent,
     PinnableComponent,
-    PinnableSelectorComponent,
     LocationChooseComponent,
   ],
   entryComponents: [
