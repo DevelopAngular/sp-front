@@ -51,6 +51,7 @@ export class HallpassFormComponent implements OnInit {
   fromLocation:Location;
   toLocation:Location;
   formState: string = "from"
+  travelType: string = "one_way"
   public pinnables:Promise<Pinnable[]>;
 
   constructor(private messageService: MessageService, private http: HttpService, private dataService: DataService, private router: Router, private serializer:JSONSerializer, public dialog: MatDialog, private sanitization:DomSanitizer) {}
@@ -127,6 +128,19 @@ export class HallpassFormComponent implements OnInit {
     } else if(type == 'from'){
       return this.fromGradient;
     }
+  }
+
+  newRequest(message:string){
+    let body = {
+      'destination': this.toLocation.id,
+      'attachment_message': message,
+      'travel_type': this.travelType
+      };
+
+    this.http.post("api/methacton/v1/pass_requests", body, {headers:{'':''}}).subscribe((data) =>{
+      console.log("Request POST Data: ", data);
+      this.show = false;
+    });
   }
 
   newPass(){

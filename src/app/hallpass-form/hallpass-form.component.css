@@ -21,6 +21,10 @@
   font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif
 }
 
+.requestCard{
+  background-image: radial-gradient(circle at 98% 97%, #4a4de3, #336de4);
+}
+
 .icon{
   float:left;
   padding: 11px 0px 0px 10px;
@@ -49,7 +53,7 @@
   font-family: inherit;
 }
 
-.from, .to, .midIcon{
+.from, .to, .midIcon, .message{
   display: table-cell;
 }
 
@@ -78,6 +82,14 @@
   margin: 0px, 85px, 0px, 85px;
 }
 
+.message{
+  width: 300px;
+  border-radius: 7px;
+}
+
+textarea {
+  resize: none;
+}
 /* .title{
   font-family: Roboto, sans-serif;
   text-decoration: underline;

@@ -89,7 +89,19 @@
         Non-Restricted Fields
       </div>
       <ng-template #restrictedFields>
-        Restricted Fields
+        <div class="center">
+          <textarea #messageInput class="message" matInput placeholder="Leave a message for the teacher such as when and why you want the pass. "></textarea>
+          <button mat-button class="clickRipple request" (click)="newRequest(messageInput.value)">
+            <div class="card requestCard">
+              <div>
+                <div class="title">
+                  Request Pass
+                </div>
+                <!-- <img class="icon" [src]="toIcon"> -->
+              </div>
+            </div>
+          </button>
+        </div>
       </ng-template>
       
     </div>
