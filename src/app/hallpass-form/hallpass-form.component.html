@@ -1,4 +1,4 @@
-<p-growl [(value)]="msgs" life="9000"></p-growl>
+<p-growl [(value)]="msgs" life="3000"></p-growl>
 
 <div *ngIf="isStaff; else studentForm;" [style.display]="getDisplay()">
   <div class="teacherPass">
@@ -79,12 +79,20 @@
       </button>
     </div>
     <div class="divider"></div>
-    <mat-grid-list class="grid" cols="4" rowHeight="75px" gutterSize="15px">
+    <mat-grid-list *ngIf="formState == 'to'" class="grid" cols="4" rowHeight="75px" gutterSize="15px">
       <mat-grid-tile *ngFor="let pinnable of pinnables | async">
         <app-pinnable [pinnable]="pinnable" (onSelectEvent)="pinnableSelected($event)"></app-pinnable>
       </mat-grid-tile>
     </mat-grid-list>
+    <div *ngIf="formState == 'fields'">
+      <div *ngIf="!toLocation.restricted; else restrictedFields;">
+        Non-Restricted Fields
+      </div>
+      <ng-template #restrictedFields>
+        Restricted Fields
+      </ng-template>
       
+    </div>
   </div>
   <!-- <div class="studentPass">
     <h1 class="title">Hall Pass</h1>

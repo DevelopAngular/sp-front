@@ -7,6 +7,5 @@
 <app-teacher-search [type]="'from'" (locationSelectedEvent)="selectedLocation = $event"></app-teacher-search>
 <br>
 <button pButton type="button" label="Activate" icon="fa-check"
-        [ngClass]="{'ui-button-success': true}" [mat-dialog-close]="selectedLocation"
-        (click)="select()">
+        [ngClass]="{'ui-button-success': true}" [mat-dialog-close]="selectedLocation">
 </button>

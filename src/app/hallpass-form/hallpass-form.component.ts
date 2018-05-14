@@ -15,7 +15,7 @@ import {Pinnable, Location} from '../NewModels';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import { ActivatePassComponent } from '../activate-pass/activate-pass.component';
 import { LocationChooseComponent } from '../location-choose/location-choose.component';
-
+import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 @Component({
   selector: 'app-hallpass-form',
   templateUrl: './hallpass-form.component.html',
@@ -46,12 +46,14 @@ export class HallpassFormComponent implements OnInit {
   to_title:string = "To";
   toGradient:string = "radial-gradient(circle at 73% 71%, " +"#979797" +", " +"#505050" +")";
   fromGradient:string = "radial-gradient(circle at 73% 71%, " +"#979797" +", " +"#505050" +")";
+  greenGradient = "#03cf31,#018155"
   locationType:string = "";
   fromLocation:Location;
   toLocation:Location;
+  formState: string = "from"
   public pinnables:Promise<Pinnable[]>;
 
-  constructor(private messageService: MessageService, private http: HttpService, private dataService: DataService, private router: Router, private serializer:JSONSerializer, public dialog: MatDialog) {}
+  constructor(private messageService: MessageService, private http: HttpService, private dataService: DataService, private router: Router, private serializer:JSONSerializer, public dialog: MatDialog, private sanitization:DomSanitizer) {}
 
   ngOnInit() {
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
@@ -70,21 +72,27 @@ export class HallpassFormComponent implements OnInit {
   chooseLoc(loc){
     this.locationType = loc;
     if(loc == "to"){
-      if(!!this.fromLocation)
+      if(!!this.fromLocation){
         this.pinnables = this.http.get<Pinnable[]>('api/methacton/v1/pinnables').toPromise();
+        this.formState = "to";
+      }
       else
-      this.msgs.push({severity: 'error', summary: 'Attention!', detail: 'You must select a from location first.'});
+        this.msgs.push({severity: 'error', summary: 'Attention!', detail: 'You must select a from location first.'});
     } else if(loc == "from"){
       let dialogRef = this.dialog.open(LocationChooseComponent, {
         width: '250px',
-        hasBackdrop: true,
-        //data: { name: "Test1", animal: "Test2" }
+        hasBackdrop: true
       });
   
       dialogRef.afterClosed().subscribe(result => {
         console.log('The dialog was closed');
-        console.log(result);
+        this.fromLocation = result;
+        this.from_title = this.fromLocation.title;
+        this.fromIcon = "";
+        this.setGradient("from", this.greenGradient);
+        this.locationType = "to";
         if(!!result)
+          this.formState = (this.formState == "fields")?"fields":"to";
           this.pinnables = this.http.get<Pinnable[]>('api/methacton/v1/pinnables').toPromise();                           
       });
     }
@@ -95,18 +103,16 @@ export class HallpassFormComponent implements OnInit {
     if(event.type=="location"){
       if(this.locationType == 'to'){
         this.to_title = event.title;
-        this.toIcon = event.icon;
-        this.setGradient("to", event);
-      } else if(this.locationType == 'from'){
-        this.from_title = event.title;
-        this.fromIcon = event.icon;
-        this.setGradient("from", event);
+        this.toIcon = "";
+        this.setGradient("to", this.greenGradient);
+        this.formState = "fields";
+        this.toLocation = event.location;
       }
     }
   }
 
-  setGradient(type:string, pinnable:Pinnable){
-    let gradient: string[] = pinnable.gradient_color.split(",");;
+  setGradient(type:string, gradient_color:string){
+    let gradient: string[] = gradient_color.split(",");;
 
     if(type == 'to'){
       this.toGradient = "radial-gradient(circle at 73% 71%, " +gradient[0] +", " +gradient[1] +")";

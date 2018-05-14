@@ -58,7 +58,7 @@ export class TeacherSearchComponent implements AfterViewInit {
     return out;
   }
   validate(){
-    return this.selectedLocation instanceof Location; //TODO && not the same as other
+    return this._selectedLocation instanceof Location;
   }
 
   getIcon(){
