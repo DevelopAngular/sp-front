@@ -65,6 +65,7 @@ import { PinnableComponent } from './pinnable/pinnable.component';
 import {MatCardModule} from '@angular/material/card';
 import {MatGridListModule} from '@angular/material/grid-list';
 import { LocationChooseComponent } from './location-choose/location-choose.component';
+import {MatSliderModule} from '@angular/material/slider';
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
   { path: 'main', component: MainPageComponent },
@@ -136,6 +137,7 @@ const appRoutes: Routes = [
     SidebarModule,
     MatCardModule,
     MatGridListModule,
+    MatSliderModule,
     ToastModule.forRoot(),
     RouterModule.forRoot(
       appRoutes

@@ -86,7 +86,33 @@
     </mat-grid-list>
     <div *ngIf="formState == 'fields'">
       <div *ngIf="!toLocation.restricted; else restrictedFields;">
-        Non-Restricted Fields
+        <mat-grid-list class="grid" cols="3">
+          <mat-grid-tile rowspan="1" colspan="1">
+            <mat-slider [vertical]="true" [max]="15" [min]="5" [step]="5"
+                        [(ngModel)]="duration">
+            </mat-slider>
+          </mat-grid-tile>
+          <mat-grid-tile rowspan="1" colspan="1">
+            <div class="question">How much time do you need?
+              <br><br>
+              <div class="amount">
+                {{ duration }} minutes
+              </div>
+            </div>
+          </mat-grid-tile>
+           <mat-grid-tile rowspan="1" colspan="1">
+            <button mat-button class="clickRipple request" (click)="newPass()">
+              <div class="card requestCard">
+                <div>
+                  <div class="title">
+                    Make Pass
+                  </div>
+                  <!-- <img class="icon" [src]="toIcon"> -->
+                </div>
+              </div>
+            </button>
+          </mat-grid-tile>
+        </mat-grid-list>
       </div>
       <ng-template #restrictedFields>
         <div class="center">

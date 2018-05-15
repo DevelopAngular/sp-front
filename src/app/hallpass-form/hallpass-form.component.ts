@@ -50,8 +50,11 @@ export class HallpassFormComponent implements OnInit {
   locationType:string = "";
   fromLocation:Location;
   toLocation:Location;
-  formState: string = "from"
-  travelType: string = "one_way"
+  formState:string = "from"
+  travelType:string = "one_way"
+  duration:number = 5;
+  sliderDuration:number = 5;
+
   public pinnables:Promise<Pinnable[]>;
 
   constructor(private messageService: MessageService, private http: HttpService, private dataService: DataService, private router: Router, private serializer:JSONSerializer, public dialog: MatDialog, private sanitization:DomSanitizer) {}
@@ -129,7 +132,7 @@ export class HallpassFormComponent implements OnInit {
       return this.fromGradient;
     }
   }
-
+  
   newRequest(message:string){
     let body = {
       'destination': this.toLocation.id,
@@ -144,160 +147,175 @@ export class HallpassFormComponent implements OnInit {
   }
 
   newPass(){
-    //console.log("Making new pass");
-    let issued:boolean;
-    if(this.isStaff && this.isPending){
-      //console.log("Issueing new pending pass");
-      issued = this.newPendingPass();
-    }
-    else{
-      //console.log("Issueing new hallpass");
-      issued = this.newHallPass();
-    }
-    if(issued){
+    let body = {
+      'student': this.user.id,
+      'duration': this.duration,
+      'origin': this.fromLocation.id,
+      'destination': this.toLocation.id,
+      'travel_type': this.travelType
+      };
+
+    this.http.post("api/methacton/v1/hall_passes", body, {headers:{'':''}}).subscribe((data) =>{
+      console.log("Request POST Data: ", data);
+      this.show = false;
+    });
+  }
+
+  // newPass(){
+  //   //console.log("Making new pass");
+  //   let issued:boolean;
+  //   if(this.isStaff && this.isPending){
+  //     //console.log("Issueing new pending pass");
+  //     issued = this.newPendingPass();
+  //   }
+  //   else{
+  //     //console.log("Issueing new hallpass");
+  //     issued = this.newHallPass();
+  //   }
+  //   if(issued){
       
-    }
-  }
+  //   }
+  // }
   
-  newPendingPass():boolean{
-    let studentsValid = this.studentComponent.validate();
-    let destinationValid = this.teacherComponent.toArray()[0].validate();
-    let dateValid = this.dateTimeComponent.toArray()[0].validate();
-    let timeValid = this.dateTimeComponent.toArray()[1].validate();
-    let durationValid = this.durationComponent.validate();
+  // newPendingPass():boolean{
+  //   let studentsValid = this.studentComponent.validate();
+  //   let destinationValid = this.teacherComponent.toArray()[0].validate();
+  //   let dateValid = this.dateTimeComponent.toArray()[0].validate();
+  //   let timeValid = this.dateTimeComponent.toArray()[1].validate();
+  //   let durationValid = this.durationComponent.validate();
 
-    let date:Date = this.dateTimeComponent.toArray()[0].selectedDate;
-    let time:Date = this.dateTimeComponent.toArray()[1].selectedTime;
-    let dateAsString = date.toISOString().split("T")[0];
-    let timeAsString = time.toISOString().split("T")[1];
-    let finalDate = new Date(dateAsString +"T" +timeAsString);
+  //   let date:Date = this.dateTimeComponent.toArray()[0].selectedDate;
+  //   let time:Date = this.dateTimeComponent.toArray()[1].selectedTime;
+  //   let dateAsString = date.toISOString().split("T")[0];
+  //   let timeAsString = time.toISOString().split("T")[1];
+  //   let finalDate = new Date(dateAsString +"T" +timeAsString);
 
-    let startValid = finalDate > new Date();
+  //   let startValid = finalDate > new Date();
 
-    this.msgs = [];
-    if (!studentsValid)
-      this.msgs.push({severity: 'error', summary: 'Field Invalid', detail: 'The selected student(s) are not valid.'});
+  //   this.msgs = [];
+  //   if (!studentsValid)
+  //     this.msgs.push({severity: 'error', summary: 'Field Invalid', detail: 'The selected student(s) are not valid.'});
 
-    if (!destinationValid)
-      this.msgs.push({severity: 'error', summary: 'Field Invalid', detail: 'The selected destination is not valid.'});
+  //   if (!destinationValid)
+  //     this.msgs.push({severity: 'error', summary: 'Field Invalid', detail: 'The selected destination is not valid.'});
 
-    if (!dateValid)
-      this.msgs.push({severity: 'error', summary: 'Field Invalid', detail: 'The selected start date is not valid.'});
+  //   if (!dateValid)
+  //     this.msgs.push({severity: 'error', summary: 'Field Invalid', detail: 'The selected start date is not valid.'});
 
-    if (!timeValid)
-      this.msgs.push({severity: 'error', summary: 'Field Invalid', detail: 'The selected start time is not valid.'});
+  //   if (!timeValid)
+  //     this.msgs.push({severity: 'error', summary: 'Field Invalid', detail: 'The selected start time is not valid.'});
 
-    if(!durationValid)
-      this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected duration is not valid.'});
+  //   if(!durationValid)
+  //     this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected duration is not valid.'});
     
-    if(!startValid){
-      this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The start time cannot be in the past.'});
-    }
+  //   if(!startValid){
+  //     this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The start time cannot be in the past.'});
+  //   }
 
-    if(!(studentsValid && destinationValid && dateValid && timeValid && durationValid && startValid))
-      return false;
+  //   if(!(studentsValid && destinationValid && dateValid && timeValid && durationValid && startValid))
+  //     return false;
     
 
     
-    let destination:string = this.teacherComponent.toArray()[0].selectedLocation.id;
-    const duration = this.durationComponent.selectedDuration.value;
+  //   let destination:string = this.teacherComponent.toArray()[0].selectedLocation.id;
+  //   const duration = this.durationComponent.selectedDuration.value;
 
-    let data: object;
-    if (this.isStaff){
-      const studentIds: string[] = [];
-      this.studentComponent.selectedStudents.forEach(student => {
-        studentIds.push(student.id);
-      });
-      data = {
-              'students': studentIds,
-              'description': '',
-              'to_location': destination,
-              'valid_time': duration,
-              'start_time': finalDate.toISOString(),
-              'from_location': null,
-              'end_time': null
-              };
-      }
-    var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
-    this.http.post('api/methacton/v1/pending_passes', data, config).subscribe((data:any) => {
-      this.studentComponent.selectedStudents = [];
-      this.teacherComponent.toArray()[0].selectedLocation = null;
-      this.dateTimeComponent.toArray()[0].selectedDate = new Date();
-      this.dateTimeComponent.toArray()[1].selectedTime = new Date();
-      this.durationComponent.selectedDuration = null;
-      this.dataService.updateTab(1);
-    });
+  //   let data: object;
+  //   if (this.isStaff){
+  //     const studentIds: string[] = [];
+  //     this.studentComponent.selectedStudents.forEach(student => {
+  //       studentIds.push(student.id);
+  //     });
+  //     data = {
+  //             'students': studentIds,
+  //             'description': '',
+  //             'to_location': destination,
+  //             'valid_time': duration,
+  //             'start_time': finalDate.toISOString(),
+  //             'from_location': null,
+  //             'end_time': null
+  //             };
+  //     }
+  //   var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
+  //   this.http.post('api/methacton/v1/pending_passes', data, config).subscribe((data:any) => {
+  //     this.studentComponent.selectedStudents = [];
+  //     this.teacherComponent.toArray()[0].selectedLocation = null;
+  //     this.dateTimeComponent.toArray()[0].selectedDate = new Date();
+  //     this.dateTimeComponent.toArray()[1].selectedTime = new Date();
+  //     this.durationComponent.selectedDuration = null;
+  //     this.dataService.updateTab(1);
+  //   });
 
-    return true;
-  }
+  //   return true;
+  // }
 
-  newHallPass():boolean{
-    if(this.isStaff)
-      var studentsValid = this.studentComponent.validate();
-    let destinationValid = this.teacherComponent.toArray()[0].validate();
-    let originValid = this.teacherComponent.toArray()[1].validate();
-    let durationValid = this.durationComponent.validate();
+  // newHallPass():boolean{
+  //   if(this.isStaff)
+  //     var studentsValid = this.studentComponent.validate();
+  //   let destinationValid = this.teacherComponent.toArray()[0].validate();
+  //   let originValid = this.teacherComponent.toArray()[1].validate();
+  //   let durationValid = this.durationComponent.validate();
 
-    this.msgs = [];
-    if(!studentsValid && this.isStaff)
-      this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected student(s) are not valid.'});
+  //   this.msgs = [];
+  //   if(!studentsValid && this.isStaff)
+  //     this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected student(s) are not valid.'});
 
-    if(!destinationValid)
-      this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected destination is not valid.'});
+  //   if(!destinationValid)
+  //     this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected destination is not valid.'});
 
-    if(!originValid)
-      this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected origin is not valid.'});
+  //   if(!originValid)
+  //     this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected origin is not valid.'});
 
-    if(!durationValid)
-      this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected duration is not valid.'});
+  //   if(!durationValid)
+  //     this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected duration is not valid.'});
     
-    if(this.isStaff)
-      if(!(studentsValid && destinationValid && originValid && durationValid))
-        return false;
-      else if(!(destinationValid && originValid && durationValid)){
-        return false;
-      }
+  //   if(this.isStaff)
+  //     if(!(studentsValid && destinationValid && originValid && durationValid))
+  //       return false;
+  //     else if(!(destinationValid && originValid && durationValid)){
+  //       return false;
+  //     }
     
-    let destination:string = this.teacherComponent.toArray()[0].selectedLocation.id;
-    let origin:string = this.teacherComponent.toArray()[1].selectedLocation.id;
-    let duration = this.durationComponent.selectedDuration.value;
+  //   let destination:string = this.teacherComponent.toArray()[0].selectedLocation.id;
+  //   let origin:string = this.teacherComponent.toArray()[1].selectedLocation.id;
+  //   let duration = this.durationComponent.selectedDuration.value;
 
-    let data: object;
-    let studentIds:string[] = [];
-    if(this.isStaff){
-      this.studentComponent.selectedStudents.forEach(student => {
-        studentIds.push(student.id);
-      });
-    } else{
-      studentIds.push(this.user.id);
-    }
-    data = {
-            'students': studentIds,
-            'description': '',
-            'to_location': destination,
-            'from_location': origin,
-            'valid_time': duration,
-            'end_time': null
-            };
-    var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
-    this.http.post('api/methacton/v1/hall_passes', data, config).subscribe((data:any) => {
-      console.log("Got hallpass data:");
-      console.log(data);
-      if(this.isStaff)
-        this.studentComponent.selectedStudents = [];
+  //   let data: object;
+  //   let studentIds:string[] = [];
+  //   if(this.isStaff){
+  //     this.studentComponent.selectedStudents.forEach(student => {
+  //       studentIds.push(student.id);
+  //     });
+  //   } else{
+  //     studentIds.push(this.user.id);
+  //   }
+  //   data = {
+  //           'students': studentIds,
+  //           'description': '',
+  //           'to_location': destination,
+  //           'from_location': origin,
+  //           'valid_time': duration,
+  //           'end_time': null
+  //           };
+  //   var config = {headers:{'Authorization' : 'Bearer ' +this.barer}}
+  //   this.http.post('api/methacton/v1/hall_passes', data, config).subscribe((data:any) => {
+  //     console.log("Got hallpass data:");
+  //     console.log(data);
+  //     if(this.isStaff)
+  //       this.studentComponent.selectedStudents = [];
 
-      this.teacherComponent.toArray()[0].selectedLocation = null;
-      this.teacherComponent.toArray()[1].selectedLocation = null;
-      this.durationComponent.selectedDuration = null;
+  //     this.teacherComponent.toArray()[0].selectedLocation = null;
+  //     this.teacherComponent.toArray()[1].selectedLocation = null;
+  //     this.durationComponent.selectedDuration = null;
 
-      if(!this.isStaff)
-        this.quickPassComponent.selectedQuickpass = null;
+  //     if(!this.isStaff)
+  //       this.quickPassComponent.selectedQuickpass = null;
         
-      this.dataService.updateTab(1);
-    });
+  //     this.dataService.updateTab(1);
+  //   });
 
-    return true;
-  }
+  //   return true;
+  // }
 
   async setupUserId(){
     await this.getUser();
@@ -316,17 +334,17 @@ export class HallpassFormComponent implements OnInit {
     });
   }
 
-  quickPassUpdate(event){
-    //console.log("[Event]", event);
-    if(!!event){
-      //this.teacherComponent.toArray()[0].selectedLocation = this.serializer.getLocationFromJSON(event.to_location);
-      this.durationComponent.selectedDuration = this.serializer.getDurationFromJSON(event.valid_time);
-      //console.log("[Selected Time]", this.durationComponent.selectedDuration);
-    }else{
-      this.teacherComponent.toArray()[0].selectedLocation = null;
-      this.durationComponent.selectedDuration = null;
-    }
-  }
+  // quickPassUpdate(event){
+  //   //console.log("[Event]", event);
+  //   if(!!event){
+  //     //this.teacherComponent.toArray()[0].selectedLocation = this.serializer.getLocationFromJSON(event.to_location);
+  //     this.durationComponent.selectedDuration = this.serializer.getDurationFromJSON(event.valid_time);
+  //     //console.log("[Selected Time]", this.durationComponent.selectedDuration);
+  //   }else{
+  //     this.teacherComponent.toArray()[0].selectedLocation = null;
+  //     this.durationComponent.selectedDuration = null;
+  //   }
+  // }
 
   dateToString(s:Date):string{
     //return s.toISOString();
