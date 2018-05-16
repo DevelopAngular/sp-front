@@ -1,0 +1,73 @@
+.text{
+    /* width: 72px;
+    height: 14px; */
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1;
+    letter-spacing: 0.2px;
+    text-align: center;
+    color: #646464;
+}
+.text-selected{
+    /* width: 72px;
+    height: 14px; */
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1;
+    letter-spacing: 0.2px;
+    text-align: center;
+    color: #04cd33;
+}
+
+.ow, .rt{
+    cursor: pointer;
+    display: table-cell;
+}
+
+.rt{
+    position: relative;
+    left: 0px;
+}
+
+.ow{
+    position: relative;
+    right: -100px;
+}
+
+.center{
+    width: 35%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    display: block;
+}
+
+.line-selected{
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    display: block;
+    width: 66px;
+    height: 2.5px;
+    border-radius: 0.8px;
+    background-color: #04cd33;
+    margin-top: 5px;
+}
+
+.line{
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    display: block;
+    width: 66px;
+    height: 2.5px;
+    border-radius: 0.8px;
+    background-color: #FFFFFF;
+    margin-top: 5px;
+}

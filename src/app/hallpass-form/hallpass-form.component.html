@@ -1,7 +1,7 @@
 <p-growl [(value)]="msgs" life="3000"></p-growl>
 
 <div *ngIf="isStaff; else studentForm;" [style.display]="getDisplay()">
-  <div class="teacherPass">
+  <!-- <div class="teacherPass">
     <h1 class="title">Hall Pass</h1>
 
     <div class="formElement">
@@ -46,11 +46,12 @@
         <p-button (onClick)="newPass()" icon="fa fa-fw fa-check" label="Issue Pass"></p-button>
       </div>
     </div>
-  </div>
+  </div> -->
 </div>
 
 <ng-template #studentForm>
   <div class="form">
+    <app-type-selector class="center" (onChange)="updateType($event)"></app-type-selector>
     <div class="divider"></div>
     <div class="center">
       <button mat-button class="clickRipple from" (click)="chooseLoc('from')">
@@ -86,17 +87,12 @@
     </mat-grid-list>
     <div *ngIf="formState == 'fields'">
       <div *ngIf="!toLocation.restricted; else restrictedFields;">
-        <mat-grid-list class="grid" cols="3">
-          <mat-grid-tile rowspan="1" colspan="1">
-            <mat-slider [vertical]="true" [max]="15" [min]="5" [step]="5"
-                        [(ngModel)]="duration">
-            </mat-slider>
-          </mat-grid-tile>
-          <mat-grid-tile rowspan="1" colspan="1">
+        <mat-grid-list class="grid" [cols]="2" [rowHeight]="100" [gutterSize]="10">
+          <mat-grid-tile [rowspan]="1" [colspan]="1">
             <div class="question">How much time do you need?
               <br><br>
               <div class="amount">
-                {{ duration }} minutes
+                  <app-duration-picker (onChange)="updateDuration($event)"></app-duration-picker>
               </div>
             </div>
           </mat-grid-tile>

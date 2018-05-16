@@ -6,16 +6,17 @@ import { StudentSearchComponent } from '../student-search/student-search.compone
 import { DurationPickerComponent } from '../duration-picker/duration-picker.component';
 import { DateTimeComponent } from '../date-time/date-time.component';
 import { TeacherSearchComponent } from '../teacher-search/teacher-search.component';
-import {MessageService} from 'primeng/components/common/messageservice';
-import {Message} from 'primeng/components/common/api';
+import { MessageService} from 'primeng/components/common/messageservice';
+import { Message} from 'primeng/components/common/api';
 import { JSONSerializer } from '../models';
 import { QuickpassPickerComponent } from '../quickpass-picker/quickpass-picker.component';
-import {User} from '../models';
-import {Pinnable, Location} from '../NewModels';
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import { User } from '../models';
+import { Pinnable, Location, Duration } from '../NewModels';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ActivatePassComponent } from '../activate-pass/activate-pass.component';
 import { LocationChooseComponent } from '../location-choose/location-choose.component';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
+
 @Component({
   selector: 'app-hallpass-form',
   templateUrl: './hallpass-form.component.html',
@@ -31,13 +32,13 @@ export class HallpassFormComponent implements OnInit {
   public barer: string;
   public isLoggedIn: Boolean = false;
   public studentName: string;
-  public user: User;
   public gUser;
   public isStaff = false;
   public msgs: Message[] = [];
   public isPending:boolean = true;
 
 //------------------------NEW STUFF----------------------//
+  user: User;
   show:boolean = false;
   passType:string = "rt";
   fromIcon:string = "../../assets/icons8-lock_filled.png";
@@ -133,6 +134,15 @@ export class HallpassFormComponent implements OnInit {
     }
   }
   
+  updateDuration(event:Duration){
+    this.duration = event.value;
+  }
+
+  updateType(event:string){
+    this.travelType = event;
+    console.log(this.travelType);
+  }
+
   newRequest(message:string){
     let body = {
       'destination': this.toLocation.id,

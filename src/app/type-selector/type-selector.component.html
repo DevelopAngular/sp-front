@@ -1,0 +1,11 @@
+<div class="center">
+  <div class="rt" (click)="update('rt')">
+    <div [ngClass]="{'text-selected': selectedType=='round_trip', 'text': selectedType!='round_trip'}">Round-Trip</div>
+    <div [ngClass]="{'line-selected': selectedType=='round_trip', 'line': selectedType!='round_trip'}"></div>
+  </div>
+
+  <div class="ow" (click)="update('ow')">
+    <div [ngClass]="{'text-selected': selectedType=='one_way', 'text': selectedType!='one_way'}">One-Way</div>
+    <div [ngClass]="{'line-selected': selectedType=='one_way', 'line': selectedType!='one_way'}"></div>
+  </div>
+</div>
