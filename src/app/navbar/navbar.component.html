@@ -2,12 +2,12 @@
   <div class="heading center">
     <div class="title">SmartPass</div>
     <div class="logo">
-      <img class="logo" src="../../assets/One Arrow.png">
+      <img class="logo" [src]="'./assets/One Arrow.png' | resolveAsset">
     </div>
   </div>
   <div class="user-info">
     <div class="profile-pic"></div>
     <div class="profile-name">John Doe</div>
-    <div class="profile-options"><img class="profile-options" src="../../assets/Settings.png"></div>
+    <div class="profile-options"><img class="profile-options" [src]="'./assets/Settings.png' | resolveAsset"></div>
   </div>
 </div>

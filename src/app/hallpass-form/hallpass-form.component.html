@@ -57,7 +57,7 @@
       <button mat-button class="clickRipple from" (click)="chooseLoc('from')">
         <div class="card" [style.background]="getGradient('from')">
           <div class="vcenter">
-            <img *ngIf="fromIcon != ''" class="icon vcenter" [src]="fromIcon">
+            <img *ngIf="fromIcon != ''" class="icon vcenter" [src]="fromIcon | resolveAsset">
             <div class="title vcenter">
               {{from_title}}
             </div>
@@ -66,8 +66,8 @@
       </button>
 
       <!-- <div class="type-arrows"> -->
-        <img *ngIf="travelType == 'round_trip'" class="round-trip" src="../../assets/RT_Arrow.png">
-        <img *ngIf="travelType == 'one_way'" class="one-way"src="../../assets/OW_Arrow.png">
+        <img *ngIf="travelType == 'round_trip'" class="round-trip" [src]="'./assets/RT_Arrow.png' | resolveAsset">
+        <img *ngIf="travelType == 'one_way'" class="one-way" [src]="'./assets/OW_Arrow.png' | resolveAsset">
       <!-- </div> -->
 
       <button mat-button class="clickRipple to" (click)="chooseLoc('to')">
@@ -156,6 +156,6 @@
         <app-quickpass-picker (quickPassEvent)="quickPassUpdate($event)"></app-quickpass-picker>
       </div>
     </div>
-    
+
   </div> -->
 </ng-template>

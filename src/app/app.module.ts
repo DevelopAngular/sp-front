@@ -68,6 +68,7 @@ import { LocationChooseComponent } from './location-choose/location-choose.compo
 import {MatSliderModule} from '@angular/material/slider';
 import { TypeSelectorComponent } from './type-selector/type-selector.component';
 import { NavbarComponent } from './navbar/navbar.component';
+import { ResolveAssetPipe } from './resolve-asset.pipe';
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
   { path: 'main', component: MainPageComponent },
@@ -96,6 +97,7 @@ const appRoutes: Routes = [
     LocationChooseComponent,
     TypeSelectorComponent,
     NavbarComponent,
+    ResolveAssetPipe,
   ],
   entryComponents: [
     HallpassFormComponent,

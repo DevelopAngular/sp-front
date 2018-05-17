@@ -37,12 +37,12 @@ export class HallpassFormComponent implements OnInit {
   public msgs: Message[] = [];
   public isPending:boolean = true;
 
-//------------------------NEW STUFF----------------------//
+  // ------------------------NEW STUFF-------------------- //
   user: User;
   show:boolean = false;
   passType:string = "rt";
-  fromIcon:string = "../../assets/Search.png";
-  toIcon:string = "../../assets/Search.png";
+  fromIcon:string = "./assets/Search.png";
+  toIcon:string = "./assets/Search.png";
   from_title:string = "From";
   to_title:string = "To";
   toGradient:string = "radial-gradient(circle at 73% 71%, " +"#979797" +", " +"#505050" +")";
@@ -88,7 +88,7 @@ export class HallpassFormComponent implements OnInit {
         width: '250px',
         hasBackdrop: true
       });
-  
+
       dialogRef.afterClosed().subscribe(result => {
         console.log('The dialog was closed');
         this.fromLocation = result;
@@ -98,7 +98,7 @@ export class HallpassFormComponent implements OnInit {
         this.locationType = "to";
         if(!!result)
           this.formState = (this.formState == "fields")?"fields":"to";
-          this.pinnables = this.http.get<Pinnable[]>('api/methacton/v1/pinnables').toPromise();                           
+          this.pinnables = this.http.get<Pinnable[]>('api/methacton/v1/pinnables').toPromise();
       });
     }
   }
@@ -135,7 +135,7 @@ export class HallpassFormComponent implements OnInit {
       return this.fromGradient;
     }
   }
-  
+
   updateDuration(event:Duration){
     this.duration = event.value;
   }
@@ -185,10 +185,10 @@ export class HallpassFormComponent implements OnInit {
   //     issued = this.newHallPass();
   //   }
   //   if(issued){
-      
+
   //   }
   // }
-  
+
   // newPendingPass():boolean{
   //   let studentsValid = this.studentComponent.validate();
   //   let destinationValid = this.teacherComponent.toArray()[0].validate();
@@ -219,16 +219,16 @@ export class HallpassFormComponent implements OnInit {
 
   //   if(!durationValid)
   //     this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected duration is not valid.'});
-    
+
   //   if(!startValid){
   //     this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The start time cannot be in the past.'});
   //   }
 
   //   if(!(studentsValid && destinationValid && dateValid && timeValid && durationValid && startValid))
   //     return false;
-    
 
-    
+
+
   //   let destination:string = this.teacherComponent.toArray()[0].selectedLocation.id;
   //   const duration = this.durationComponent.selectedDuration.value;
 
@@ -280,14 +280,14 @@ export class HallpassFormComponent implements OnInit {
 
   //   if(!durationValid)
   //     this.msgs.push({severity:'error', summary:'Field Invalid', detail:'The selected duration is not valid.'});
-    
+
   //   if(this.isStaff)
   //     if(!(studentsValid && destinationValid && originValid && durationValid))
   //       return false;
   //     else if(!(destinationValid && originValid && durationValid)){
   //       return false;
   //     }
-    
+
   //   let destination:string = this.teacherComponent.toArray()[0].selectedLocation.id;
   //   let origin:string = this.teacherComponent.toArray()[1].selectedLocation.id;
   //   let duration = this.durationComponent.selectedDuration.value;
@@ -322,7 +322,7 @@ export class HallpassFormComponent implements OnInit {
 
   //     if(!this.isStaff)
   //       this.quickPassComponent.selectedQuickpass = null;
-        
+
   //     this.dataService.updateTab(1);
   //   });
 
