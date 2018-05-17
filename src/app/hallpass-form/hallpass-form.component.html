@@ -56,23 +56,25 @@
     <div class="center">
       <button mat-button class="clickRipple from" (click)="chooseLoc('from')">
         <div class="card" [style.background]="getGradient('from')">
-          <div>
-            <img *ngIf="!!fromIcon" class="icon" [src]="fromIcon">
-            <div class="title">
+          <div class="vcenter">
+            <img *ngIf="fromIcon != ''" class="icon vcenter" [src]="fromIcon">
+            <div class="title vcenter">
               {{from_title}}
             </div>
           </div>
         </div>
       </button>
 
-      <img class="midIcon" src="../../assets/icons8-lock_filled.png" alt="ICON">
-      <img class="midIcon" src="../../assets/icons8-lock_filled.png" alt="ICON">
+      <!-- <div class="type-arrows"> -->
+        <img *ngIf="travelType == 'round_trip'" class="round-trip" src="../../assets/RT_Arrow.png">
+        <img *ngIf="travelType == 'one_way'" class="one-way"src="../../assets/OW_Arrow.png">
+      <!-- </div> -->
 
       <button mat-button class="clickRipple to" (click)="chooseLoc('to')">
         <div class="card" [style.background]="getGradient('to')">
-          <div>
-            <img *ngIf="!!toIcon" class="icon" [src]="toIcon">
-            <div class="title">
+          <div class="vcenter">
+            <img *ngIf="toIcon != ''" class="icon vcenter" [src]="toIcon">
+            <div class="title vcenter">
               {{to_title}}
             </div>
           </div>
@@ -93,7 +95,7 @@
               <br><br>
               <div class="amount">
                   <app-duration-picker (onChange)="updateDuration($event)"></app-duration-picker>
-              </div>
+                </div>
             </div>
           </mat-grid-tile>
            <mat-grid-tile rowspan="1" colspan="1">
@@ -125,7 +127,6 @@
           </button>
         </div>
       </ng-template>
-      
     </div>
   </div>
   <!-- <div class="studentPass">

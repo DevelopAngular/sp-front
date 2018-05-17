@@ -27,7 +27,8 @@
 
 .icon{
   float:left;
-  padding: 11px 0px 0px 10px;
+  /* padding: 11px 0px 0px 10px; */
+  margin-left: 10px;
   width: 25px;
   height: 25px;
 }
@@ -39,7 +40,8 @@
   font-stretch: normal;
   line-height: 1.08;
   letter-spacing: 0.3px;
-  padding: 15px 200px 0px 43px;
+  margin-left: 45px;
+  /* padding: 15px 200px 0px 43px; */
 }
 
 .clickRipple{
@@ -53,21 +55,25 @@
   font-family: inherit;
 }
 
-.from, .to, .midIcon, .message{
+.from, .to, .one-way, .round-trip, .message{
   display: table-cell;
 }
 
+.one-way, .round-trip{
+  height: 75px;
+  margin: 0px 10px 0px 10px;
+}
+
+.type-arrows{
+  height: 75px;
+}
+
 .from{
-  margin-left:0px;
+  margin-left: 0px;
 }
 
 .to{
-  margin-left: 100px;
-}
-
-.midIcon{
-  width: 25px;
-  height: 25px;
+  margin-left: 0px;
 }
 
 .divider{
@@ -89,6 +95,18 @@
 
 textarea {
   resize: none;
+}
+
+.vcenter{
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+}
+
+.hcenter{
+  position: absolute;
+  left: 50%;
+  transform: translate(50%, 0%);
 }
 /* .title{
   font-family: Roboto, sans-serif;

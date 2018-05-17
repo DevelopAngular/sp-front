@@ -67,6 +67,7 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import { LocationChooseComponent } from './location-choose/location-choose.component';
 import {MatSliderModule} from '@angular/material/slider';
 import { TypeSelectorComponent } from './type-selector/type-selector.component';
+import { NavbarComponent } from './navbar/navbar.component';
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
   { path: 'main', component: MainPageComponent },
@@ -94,6 +95,7 @@ const appRoutes: Routes = [
     PinnableComponent,
     LocationChooseComponent,
     TypeSelectorComponent,
+    NavbarComponent,
   ],
   entryComponents: [
     HallpassFormComponent,

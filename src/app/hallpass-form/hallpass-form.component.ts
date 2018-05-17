@@ -41,8 +41,8 @@ export class HallpassFormComponent implements OnInit {
   user: User;
   show:boolean = false;
   passType:string = "rt";
-  fromIcon:string = "../../assets/icons8-lock_filled.png";
-  toIcon:string = "../../assets/icons8-lock_filled.png";
+  fromIcon:string = "../../assets/Search.png";
+  toIcon:string = "../../assets/Search.png";
   from_title:string = "From";
   to_title:string = "To";
   toGradient:string = "radial-gradient(circle at 73% 71%, " +"#979797" +", " +"#505050" +")";
@@ -52,7 +52,7 @@ export class HallpassFormComponent implements OnInit {
   fromLocation:Location;
   toLocation:Location;
   formState:string = "from"
-  travelType:string = "one_way"
+  travelType:string = "round_trip"
   duration:number = 5;
   sliderDuration:number = 5;
 
@@ -105,7 +105,7 @@ export class HallpassFormComponent implements OnInit {
 
   pinnableSelected(event:Pinnable){
     console.log("[Pinnable Selected]: ", event);
-    if(event.type=="location"){
+    if(event.type == "location"){
       if(this.locationType == 'to'){
         this.to_title = event.title;
         this.toIcon = "";
@@ -113,6 +113,8 @@ export class HallpassFormComponent implements OnInit {
         this.formState = "fields";
         this.toLocation = event.location;
       }
+    } else if(event.type == "catagory"){
+      this.pinnables = this.http.get<Pinnable[]>('api/methacton/v1/pinnables?catagory=' +event.catagory).toPromise();
     }
   }
 

@@ -1,0 +1,81 @@
+.bar{
+    height: 67px;
+    background-image: radial-gradient(circle at 43% 66%, #03cf31, rgba(1, 129, 85, 0.7));
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.24);
+    position: relative;
+}
+
+.center{ 
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.title{
+    width: 112.3px;
+    height: 26.5px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-size: 22px;
+    font-weight: bold;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 0px;
+    text-align: center;
+    color: #ffffff;
+}
+
+.logo{
+    width: 20px;
+    height: 20.6px;
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+    padding-left: 5px;
+}
+
+.title, .logo, .profile-pic, .profile-name, .profile-options{
+    display: inline-block;
+}
+
+.user-info{
+    position: absolute;
+    width: 150px;
+    right: 28px;
+    top: 50%;
+    transform: translate(0, -50%);
+}
+
+.profile-pic{
+    width: 37px;
+    height: 37px;
+    background-color: #d8d8d8;
+    border-radius: 37px;
+}
+
+.profile-name{
+    width: 68.5px;
+    height: 17px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: #ffffff;
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+    padding-left: 10px;
+}
+
+.profile-options{
+    width: 26.5px;
+    height: 26.5px;
+    padding-left: 50px;
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+}
