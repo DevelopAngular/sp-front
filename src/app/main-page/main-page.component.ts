@@ -62,7 +62,7 @@ export class MainPageComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+      console.log();
       //this.animal = result;
     });
   } 

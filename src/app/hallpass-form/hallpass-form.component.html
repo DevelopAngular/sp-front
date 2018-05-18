@@ -82,11 +82,18 @@
       </button>
     </div>
     <div class="divider"></div>
-    <mat-grid-list *ngIf="formState == 'to'" class="grid" cols="4" rowHeight="75px" gutterSize="15px">
-      <mat-grid-tile *ngFor="let pinnable of pinnables | async">
-        <app-pinnable [pinnable]="pinnable" (onSelectEvent)="pinnableSelected($event)"></app-pinnable>
-      </mat-grid-tile>
-    </mat-grid-list>
+    <div *ngIf="formState == 'to'">
+      <div *ngIf="toState == 'pinnables'">
+        <mat-grid-list class="grid" cols="4" rowHeight="75px" gutterSize="15px">
+          <mat-grid-tile *ngFor="let pinnable of pinnables | async">
+            <app-pinnable [pinnable]="pinnable" (onSelectEvent)="pinnableSelected($event)"></app-pinnable>
+          </mat-grid-tile>
+        </mat-grid-list>
+      </div>
+      <div *ngIf="toState == 'category'">
+        <app-location-table (onSelect)="locationChosen($event)" [setCategory]="toCategory"></app-location-table>
+      </div>
+    </div>
     <div *ngIf="formState == 'fields'">
       <div *ngIf="!toLocation.restricted; else restrictedFields;">
         <mat-grid-list class="grid" [cols]="2" [rowHeight]="100" [gutterSize]="10">

@@ -11,11 +11,12 @@ import { Message} from 'primeng/components/common/api';
 import { JSONSerializer } from '../models';
 import { QuickpassPickerComponent } from '../quickpass-picker/quickpass-picker.component';
 import { User } from '../models';
-import { Pinnable, Location, Duration } from '../NewModels';
+import { Pinnable, Location, Duration, HallPass, Request } from '../NewModels';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ActivatePassComponent } from '../activate-pass/activate-pass.component';
 import { LocationChooseComponent } from '../location-choose/location-choose.component';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
+import { LocationTableComponent } from '../location-table/location-table.component';
 
 @Component({
   selector: 'app-hallpass-form',
@@ -23,12 +24,12 @@ import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
   styleUrls: ['./hallpass-form.component.css']
 })
 export class HallpassFormComponent implements OnInit {
-  @ViewChild(StudentSearchComponent) studentComponent: StudentSearchComponent;
-  @ViewChildren(TeacherSearchComponent) teacherComponent: QueryList<TeacherSearchComponent>;
-  @ViewChild(DurationPickerComponent) durationComponent: DurationPickerComponent;
-  @ViewChildren(DateTimeComponent) dateTimeComponent: QueryList<DateTimeComponent>;
-  @ViewChild(QuickpassPickerComponent) quickPassComponent: QuickpassPickerComponent;
-  //General Set-Up
+  // @ViewChild(StudentSearchComponent) studentComponent: StudentSearchComponent;
+  // @ViewChildren(TeacherSearchComponent) teacherComponent: QueryList<TeacherSearchComponent>;
+  // @ViewChild(DurationPickerComponent) durationComponent: DurationPickerComponent;
+  // @ViewChildren(DateTimeComponent) dateTimeComponent: QueryList<DateTimeComponent>;
+  // @ViewChild(QuickpassPickerComponent) quickPassComponent: QuickpassPickerComponent;
+  // General Set-Up
   public barer: string;
   public isLoggedIn: Boolean = false;
   public studentName: string;
@@ -55,10 +56,12 @@ export class HallpassFormComponent implements OnInit {
   travelType:string = "round_trip"
   duration:number = 5;
   sliderDuration:number = 5;
+  toState:string = "pinnables";
+  toCategory:string = "";
 
   public pinnables:Promise<Pinnable[]>;
 
-  constructor(private messageService: MessageService, private http: HttpService, private dataService: DataService, private router: Router, private serializer:JSONSerializer, public dialog: MatDialog, private sanitization:DomSanitizer) {}
+  constructor(private messageService: MessageService, private http: HttpService, private dataService: DataService, private router: Router, private serializer:JSONSerializer, public dialog: MatDialog, public dialogRef:MatDialogRef<HallpassFormComponent>, private sanitization:DomSanitizer) {}
 
   ngOnInit() {
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
@@ -80,6 +83,7 @@ export class HallpassFormComponent implements OnInit {
       if(!!this.fromLocation){
         this.pinnables = this.http.get<Pinnable[]>('api/methacton/v1/pinnables').toPromise();
         this.formState = "to";
+        this.toState = "pinnables";
       }
       else
         this.msgs.push({severity: 'error', summary: 'Attention!', detail: 'You must select a from location first.'});
@@ -113,8 +117,17 @@ export class HallpassFormComponent implements OnInit {
         this.formState = "fields";
         this.toLocation = event.location;
       }
-    } else if(event.type == "catagory"){
-      this.pinnables = this.http.get<Pinnable[]>('api/methacton/v1/pinnables?catagory=' +event.catagory).toPromise();
+    } else if(event.type == "category"){
+      this.toCategory = event.category;
+      this.toState = "category";
+    }
+  }
+
+  getCategoryListVisibility() {
+    if(this.toState == "category") {
+      return "block";
+    } else {
+      return "none";
     }
   }
 
@@ -145,6 +158,12 @@ export class HallpassFormComponent implements OnInit {
     console.log(this.travelType);
   }
 
+  locationChosen(event:Location){
+    this.toState = "pinnables";
+    this.formState = "fields";
+    this.toLocation = event;
+  }
+
   newRequest(message:string){
     let body = {
       'destination': this.toLocation.id,
@@ -154,7 +173,7 @@ export class HallpassFormComponent implements OnInit {
 
     this.http.post("api/methacton/v1/pass_requests", body, {headers:{'':''}}).subscribe((data) =>{
       console.log("Request POST Data: ", data);
-      this.show = false;
+      this.dialogRef.close(Request.fromJSON(data));
     });
   }
 
@@ -169,7 +188,7 @@ export class HallpassFormComponent implements OnInit {
 
     this.http.post("api/methacton/v1/hall_passes", body, {headers:{'':''}}).subscribe((data) =>{
       console.log("Request POST Data: ", data);
-      this.show = false;
+      this.dialogRef.close(HallPass.fromJSON(data));
     });
   }
 

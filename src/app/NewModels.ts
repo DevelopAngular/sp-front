@@ -65,58 +65,57 @@ export class HallPass {
     constructor(public id: string,
                 public student: User,
                 public issuer: User,
-                public created_time: Date,
-                public start_date: Date,
-                public end_date: Date,
+                public created: Date,
+                public last_updated: Date,
+                public start_time: Date,
+                public expiration_time: Date,
+                public end_time: Date,
                 public origin: Location,
                 public destination: Location,
-                public canceled: boolean){}
+                public travel_type: string){}
 
     static fromJSON(JSON:any):HallPass{
         const id: string = JSON['id'],
         student: User = User.fromJSON(JSON['student']),
         issuer: User = User.fromJSON(JSON['issuer']),
         created: Date = new Date(JSON['created']),
-        start_date: Date = new Date(JSON['start_date']),
-        end_date: Date = new Date(JSON['end_date']),
+        last_updated: Date = new Date(JSON['last_updated']),
+        start_time: Date = new Date(JSON['start_time']),
+        expiration_time: Date = new Date(JSON['expiration_time']),
+        end_time: Date = new Date(JSON['end_date']),
         origin: Location = Location.fromJSON(JSON['origin']),
         destination: Location = Location.fromJSON(JSON['destination']),
-        canceled: boolean = JSON['canceled'] === "true";
+        travel_type: string = JSON['travel_type'];
 
-        return new HallPass(id, student, issuer, created, start_date, end_date, origin, destination, canceled);
+        return new HallPass(id, student, issuer, created, last_updated, start_time, expiration_time, end_time, origin, destination, travel_type);
     }
 }
 
 export class Invitation {
     constructor(public id: string,
-                public students: User[],
+                public students: User,
                 public destiation: Location,
-                public title: string,
                 public date_choices: Date[],
                 public issuer: User,
-                public status: string){
+                public status: string,
+                public duration: number){
     }
 
     static fromJSON(JSON:any){
         const id: string = JSON['id'],
-        students: User[] = [],
+        student: User = User.fromJSON(JSON['student']),
         destination: Location = Location.fromJSON(JSON['destination']),
-        title: string = JSON['title'],
         date_choices: Date[] = [],
         issuer: User = User.fromJSON(JSON['issuer']),
-        status: string = JSON['status'];
-
-        let studentsJSON = JSON['users'];
-        for(let i = 0; i < studentsJSON.length; i++){
-            students.push(studentsJSON[i]);
-        }
+        status: string = JSON['status'],
+        duration: number = JSON['duration'];
 
         let datesJSON = JSON['date_choices'];
         for(let i = 0; i < datesJSON.length; i++){
             date_choices.push(new Date(datesJSON[i]));
         }
 
-        return new Invitation(id, students, destination, title, date_choices, issuer, status);
+        return new Invitation(id, student, destination, date_choices, issuer, status, duration);
     }
 }
 
@@ -126,14 +125,11 @@ export class Location {
                 public campus: string,
                 public room: string,
                 public catagory: string,
-                public gradient_color: string,
-                public icon: string,
                 public restricted: boolean,
                 public required_attatchments: string[],
                 public travel_types: string[],
                 public teachers: User[],
-                public max_allowed_time: number,
-                public invite_allowed: boolean){
+                public max_allowed_time: number){
 
     }
 
@@ -143,14 +139,11 @@ export class Location {
         campus: string = JSON['campus'], 
         room: string = JSON['room'],
         catagory: string = JSON['catagory'],
-        gradient_color: string = JSON['gradient_color'],
-        icon: string = JSON['icon'],
         restricted: boolean = JSON['restricted']==="true",
         required_attachments: string[] = [],
         travel_types: string[] = [],
         teachers: User[] = [],
-        max_allowed_time: number = parseInt(JSON['max_allowed_time']),
-        invite_allowed: boolean = JSON['invite_allowed']==="true";
+        max_allowed_time: number = parseInt(JSON['max_allowed_time']);
 
         let attachmentsJSON = JSON['required_attachments'];
         for(let i = 0; i < attachmentsJSON.length; i++){
@@ -167,7 +160,7 @@ export class Location {
             teachers.push(User.fromJSON(teachersJSON[i]));
         }
 
-        return new Location(id, title, campus, room, catagory, gradient_color, icon, restricted, required_attachments, travel_types, teachers, max_allowed_time, invite_allowed);
+        return new Location(id, title, campus, room, catagory, restricted, required_attachments, travel_types, teachers, max_allowed_time);
     }
     get nameRoom():string{
         return this.title +" (" +this.room +")";
@@ -181,7 +174,7 @@ export class Pinnable {
                 public icon: string,
                 public type: string,
                 public location: Location,
-                public catagory: string){
+                public category: string){
     }
 
     static fromJSON(JSON:any):Pinnable{
@@ -191,9 +184,9 @@ export class Pinnable {
         icon: string = JSON['icon'],
         type: string = JSON['type'],
         location: Location = JSON['location'],
-        catagory: string = JSON['catagory'];
+        category: string = JSON['category'];
         
-        return new Pinnable(id, title, gradient_color, icon, type, location, catagory);
+        return new Pinnable(id, title, gradient_color, icon, type, location, category);
     }
 }
 
