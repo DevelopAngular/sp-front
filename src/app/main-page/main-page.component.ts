@@ -9,6 +9,7 @@ import { IssuedPassListComponent } from '../issued-pass-list/issued-pass-list.co
 import { PendingPassListComponent } from '../pending-pass-list/pending-pass-list.component';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
+import { HallPass } from '../NewModels';
 declare var document: any;
 
 @Component({
@@ -62,7 +63,7 @@ export class MainPageComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log();
+      console.log((result instanceof HallPass)?"HallPass":"Request");
       //this.animal = result;
     });
   } 

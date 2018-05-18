@@ -207,7 +207,7 @@ export class Request {
         attachment_message: string = JSON['attachment_message'],
         travel_type: string = JSON['travel_type'],
         status: string = JSON['status'],
-        hallpass: HallPass = HallPass.fromJSON(JSON['hallpass']);
+        hallpass: HallPass = (!!JSON['hallpass'])?HallPass.fromJSON(JSON['hallpass']):null;
 
         return new Request(id, student, destination, attachment_message, travel_type, status, hallpass);
     }

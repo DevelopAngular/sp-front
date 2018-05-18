@@ -73,7 +73,7 @@
       <button mat-button class="clickRipple to" (click)="chooseLoc('to')">
         <div class="card" [style.background]="getGradient('to')">
           <div class="vcenter">
-            <img *ngIf="toIcon != ''" class="icon vcenter" [src]="toIcon">
+            <img *ngIf="toIcon != ''" class="icon vcenter" [src]="toIcon | resolveAsset">
             <div class="title vcenter">
               {{to_title}}
             </div>
@@ -84,14 +84,14 @@
     <div class="divider"></div>
     <div *ngIf="formState == 'to'">
       <div *ngIf="toState == 'pinnables'">
-        <mat-grid-list class="grid" cols="4" rowHeight="75px" gutterSize="15px">
+        <mat-grid-list class="grid center" cols="4" rowHeight="75px" gutterSize="15px">
           <mat-grid-tile *ngFor="let pinnable of pinnables | async">
             <app-pinnable [pinnable]="pinnable" (onSelectEvent)="pinnableSelected($event)"></app-pinnable>
           </mat-grid-tile>
         </mat-grid-list>
       </div>
       <div *ngIf="toState == 'category'">
-        <app-location-table (onSelect)="locationChosen($event)" [setCategory]="toCategory"></app-location-table>
+        <app-location-table calss="center" (onSelect)="locationChosen($event)" [setCategory]="toCategory"></app-location-table>
       </div>
     </div>
     <div *ngIf="formState == 'fields'">
@@ -109,10 +109,10 @@
             <button mat-button class="clickRipple request" (click)="newPass()">
               <div class="card requestCard">
                 <div>
-                  <div class="title">
+                  <div class="mtitle">
                     Make Pass
                   </div>
-                  <!-- <img class="icon" [src]="toIcon"> -->
+                  <img class="micon" [src]="'./assets/One_Arrow.png' | resolveAsset">
                 </div>
               </div>
             </button>
@@ -125,10 +125,10 @@
           <button mat-button class="clickRipple request" (click)="newRequest(messageInput.value)">
             <div class="card requestCard">
               <div>
-                <div class="title">
+                <div class="mtitle">
                   Request Pass
                 </div>
-                <!-- <img class="icon" [src]="toIcon"> -->
+                <img class="micon" [src]="'./assets/One_Arrow.png' | resolveAsset">
               </div>
             </div>
           </button>

@@ -2,11 +2,18 @@ import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
 import { HttpService } from '../http-service';
 import { Location } from '../NewModels';
 
+export interface Paged<T> {
+  results: T[];
+  next: string;
+  previous: string;
+}
+
 @Component({
   selector: 'app-location-table',
   templateUrl: './location-table.component.html',
   styleUrls: ['./location-table.component.css']
 })
+
 export class LocationTableComponent implements OnInit {
 
   category:string;
@@ -19,17 +26,21 @@ export class LocationTableComponent implements OnInit {
     console.log(c);
   }
 
-  public locations:Promise<Location[]>;
+  public locations:Location[];
 
   constructor(private http:HttpService) { }
 
   ngOnInit() {
-    this.locations = this.http.get<Location[]>('api/methacton/v1/locations?category=' +this.category).toPromise();
+    this.http.get<Paged<Location>>('api/methacton/v1/locations?limit=5&category=' +this.category).toPromise().then(p => {this.locations = p.results});
   }
 
-  updateCategory(category:string){
-    this.category = category;
-    this.locations = this.http.get<Location[]>('api/methacton/v1/locations?category=' +this.category).toPromise();
+  onSearch(search:string){
+    this.http.get<Paged<Location>>('api/methacton/v1/locations?limit=5&category=' +this.category +"&search=" +search).toPromise().then(p => {this.locations = p.results});
+  }
+
+  locationSelected(lcoation:Location){
+    console.log("[Location]: ", location);
+    this.onSelect.emit(location);
   }
 
 }

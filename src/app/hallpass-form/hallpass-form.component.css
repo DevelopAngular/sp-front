@@ -44,6 +44,27 @@
   /* padding: 15px 200px 0px 43px; */
 }
 
+.micon{
+  /* padding: 11px 0px 0px 10px; */
+  /* margin-left: 10px; */
+  width: 25px;
+  height: 25px;
+  margin-top: 14px; 
+}
+
+.mtitle{
+  float:left;
+  font-size: 18px;
+  font-weight: bold;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1.08;
+  letter-spacing: 0.3px;
+  margin-left: 5px;
+  margin-top: 14px;
+  /* padding: 15px 200px 0px 43px; */
+}
+
 .clickRipple{
   width: 150px;
   border-radius: 7px;
@@ -53,6 +74,7 @@
   line-height: inherit;
   padding: 0px;
   font-family: inherit;
+  vertical-align: top;
 }
 
 .from, .to, .one-way, .round-trip, .message{
@@ -84,13 +106,14 @@
   margin: 10px 0px 10px 0px;
 }
 
-.gird{
+.grid{
   margin: 0px, 85px, 0px, 85px;
 }
 
 .message{
   width: 300px;
   border-radius: 7px;
+  height: 62px;
 }
 
 textarea {

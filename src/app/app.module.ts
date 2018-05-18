@@ -70,6 +70,7 @@ import { TypeSelectorComponent } from './type-selector/type-selector.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { LocationTableComponent } from './location-table/location-table.component';
 import { ResolveAssetPipe } from './resolve-asset.pipe';
+import { LocationCellComponent } from './location-cell/location-cell.component';
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
   { path: 'main', component: MainPageComponent },
@@ -100,6 +101,7 @@ const appRoutes: Routes = [
     NavbarComponent,
     LocationTableComponent,
     ResolveAssetPipe,
+    LocationCellComponent,
   ],
   entryComponents: [
     HallpassFormComponent,

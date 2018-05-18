@@ -1,0 +1,37 @@
+.wrapper{
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    display: block;
+    box-shadow: 0 7.5px 13px 0 rgba(0, 0, 0, 0.1);
+}
+
+.title{
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    margin-bottom: 5px;
+    font-size: 16px;
+}
+
+.input{
+    border-color: black;
+    border: 2px;
+    border-radius: 5px;
+}
+
+.locations{
+    height: 200px;
+}
+
+.location{
+    margin-top: 5px;
+    cursor: pointer;
+}
+
+.location:hover{
+    margin-top: 5px;
+    cursor: pointer;
+    color: white;
+    background-color: dodgerblue;
+    border-radius: 15px;
+}
