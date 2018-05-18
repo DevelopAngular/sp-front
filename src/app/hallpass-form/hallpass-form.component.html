@@ -91,7 +91,7 @@
         </mat-grid-list>
       </div>
       <div *ngIf="toState == 'category'">
-        <app-location-table calss="center" (onSelect)="locationChosen($event)" [setCategory]="toCategory"></app-location-table>
+        <app-location-table class="center" (onSelect)="locationChosen($event)" [setCategory]="toCategory"></app-location-table>
       </div>
     </div>
     <div *ngIf="formState == 'fields'">

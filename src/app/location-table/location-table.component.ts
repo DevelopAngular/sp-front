@@ -38,8 +38,7 @@ export class LocationTableComponent implements OnInit {
     this.http.get<Paged<Location>>('api/methacton/v1/locations?limit=5&category=' +this.category +"&search=" +search).toPromise().then(p => {this.locations = p.results});
   }
 
-  locationSelected(lcoation:Location){
-    console.log("[Location]: ", location);
+  locationSelected(location:Location){
     this.onSelect.emit(location);
   }
 

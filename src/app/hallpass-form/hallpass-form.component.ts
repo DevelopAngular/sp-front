@@ -160,6 +160,9 @@ export class HallpassFormComponent implements OnInit {
 
   locationChosen(event:Location){
     this.toState = "pinnables";
+    this.to_title = event.title;
+    this.toIcon = "";
+    this.setGradient("to", this.greenGradient);
     this.formState = "fields";
     this.toLocation = event;
   }
