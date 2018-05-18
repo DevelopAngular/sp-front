@@ -1,0 +1,34 @@
+<div class="wrapper" [style.background]="getGradient()">
+  <div class="header">
+    <img class="icon" [src]="hallpass.icon">
+    <div class="passTitle">
+      {{hallpass.destination.title}}
+    </div>
+  </div>
+  <div class="divider center"></div>
+  <div class="body">
+    <div class="left">
+      <div class="origin center">
+        {{hallpass.origin.title}}
+      </div>
+        <img *ngIf="hallpass.travel_type == 'round_trip'" class="round-trip center" [src]="'./assets/Two_Arrow.png' | resolveAsset">
+        <img *ngIf="hallpass.travel_type == 'one_way'" class="one-way center" [src]="'./assets/One_Arrow.png' | resolveAsset">
+      <div class="destination center">
+        {{hallpass.destination.title}}
+      </div>
+    </div>
+    <div class="right">
+      <div class="end-pass">
+        <button mat-button class="clickRipple end-pass" (click)="endPass()">
+          <div class="card">
+              <div class="content">
+                  <div class="title">
+                      {{timeLeft}} - End Pass
+                  </div>
+              </div>
+          </div>
+      </button>
+      </div>
+    </div>
+  </div>
+</div>

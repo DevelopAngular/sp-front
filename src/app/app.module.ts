@@ -71,6 +71,7 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { LocationTableComponent } from './location-table/location-table.component';
 import { ResolveAssetPipe } from './resolve-asset.pipe';
 import { LocationCellComponent } from './location-cell/location-cell.component';
+import { HallpassCardComponent } from './hallpass-card/hallpass-card.component';
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
   { path: 'main', component: MainPageComponent },
@@ -102,6 +103,7 @@ const appRoutes: Routes = [
     LocationTableComponent,
     ResolveAssetPipe,
     LocationCellComponent,
+    HallpassCardComponent,
   ],
   entryComponents: [
     HallpassFormComponent,

@@ -9,7 +9,7 @@ import { IssuedPassListComponent } from '../issued-pass-list/issued-pass-list.co
 import { PendingPassListComponent } from '../pending-pass-list/pending-pass-list.component';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
-import { HallPass } from '../NewModels';
+import { HallPass, Location } from '../NewModels';
 declare var document: any;
 
 @Component({
@@ -39,7 +39,8 @@ export class MainPageComponent implements OnInit {
 
 //------------------------NEW STUFF----------------------//
 
-  formVisible: boolean
+  currentPass: HallPass;
+  timeLeft: string;
 
   constructor(private http: HttpService, private dataService: DataService, private router: Router, public dialog: MatDialog) {
 
@@ -58,45 +59,53 @@ export class MainPageComponent implements OnInit {
 
   showForm(): void {
     let dialogRef = this.dialog.open(HallpassFormComponent, {
-      width: '750px',
-      //data: { name: "Test1", animal: "Test2" }
+      width: '750px'
     });
 
     dialogRef.afterClosed().subscribe(result => {
       console.log((result instanceof HallPass)?"HallPass":"Request");
+      if(result instanceof HallPass){
+        this.currentPass = result;
+      }
       //this.animal = result;
     });
   } 
 
 
-  toTop(){
-    //console.log("Going to top.");
-    try {
-      const interval = setInterval(() => {
-        if (!(document.scrollingElement.scrollTop < 1))
-          document.scrollingElement.scrollTop = document.scrollingElement.scrollTop - document.scrollingElement.scrollTop / 10;
-        else
-          clearInterval(interval);
-      }, 15);
-    } catch (err) {
-      console.log('Error: ' + err);
-    }
+  endPass(hallpass:HallPass){
+    this.http.post('api/methacton/v1/hall_passes/' +this.currentPass.id +'/ended', null, {'':''});
+    this.currentPass = null;
   }
 
-  tabChange(){
-    if (this.selectedIndex == 1){
-      console.log("Updating Passes.");
-      if(!this.isStaff)
-        this.hallPassListComponent.updatePasses();
-      else
-        this.issuedPassListComponent.updatePasses();
-    } else if(this.selectedIndex == 2){
-      if(!this.isStaff){
-        this.pendingPassListComponent.updatePasses();
-      }
-    }
-  }
 }
+  // toTop(){
+  //   //console.log("Going to top.");
+  //   try {
+  //     const interval = setInterval(() => {
+  //       if (!(document.scrollingElement.scrollTop < 1))
+  //         document.scrollingElement.scrollTop = document.scrollingElement.scrollTop - document.scrollingElement.scrollTop / 10;
+  //       else
+  //         clearInterval(interval);
+  //     }, 15);
+  //   } catch (err) {
+  //     console.log('Error: ' + err);
+  //   }
+  // }
+
+//   tabChange(){
+//     if (this.selectedIndex == 1){
+//       console.log("Updating Passes.");
+//       if(!this.isStaff)
+//         this.hallPassListComponent.updatePasses();
+//       else
+//         this.issuedPassListComponent.updatePasses();
+//     } else if(this.selectedIndex == 2){
+//       if(!this.isStaff){
+//         this.pendingPassListComponent.updatePasses();
+//       }
+//     }
+//   }
+// }
 // @Component({
 //   selector: 'dialog-overview-example-dialog',
 //   templateUrl: 'dialog-overview-example-dialog.html',

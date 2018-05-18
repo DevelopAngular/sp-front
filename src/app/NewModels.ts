@@ -72,7 +72,9 @@ export class HallPass {
                 public end_time: Date,
                 public origin: Location,
                 public destination: Location,
-                public travel_type: string){}
+                public travel_type: string,
+                public gradient_color: string,
+                public icon: string){}
 
     static fromJSON(JSON:any):HallPass{
         const id: string = JSON['id'],
@@ -85,9 +87,11 @@ export class HallPass {
         end_time: Date = new Date(JSON['end_date']),
         origin: Location = Location.fromJSON(JSON['origin']),
         destination: Location = Location.fromJSON(JSON['destination']),
-        travel_type: string = JSON['travel_type'];
+        travel_type: string = JSON['travel_type'],
+        gradient_color: string = JSON['gradient_color'],
+        icon: string = JSON['icon'];
 
-        return new HallPass(id, student, issuer, created, last_updated, start_time, expiration_time, end_time, origin, destination, travel_type);
+        return new HallPass(id, student, issuer, created, last_updated, start_time, expiration_time, end_time, origin, destination, travel_type, gradient_color, icon);
     }
 }
 
