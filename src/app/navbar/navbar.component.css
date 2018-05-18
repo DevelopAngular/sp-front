@@ -5,6 +5,11 @@
     position: relative;
 }
 
+.heading{
+    display: flex;
+    flex-direction: row;
+}
+
 .center{ 
     position: absolute;
     top: 50%;
@@ -29,13 +34,14 @@
 .logo{
     width: 20px;
     height: 20.6px;
-    position: absolute;
+    /* position: absolute;
     top: 50%;
-    transform: translate(0, -50%);
+    transform: translate(0, -50%); */
     padding-left: 5px;
+    margin: 3px 0px 0px 3px;
 }
 
-.title, .logo, .profile-pic, .profile-name, .profile-options{
+.profile-pic, .profile-name, .profile-options{
     display: inline-block;
 }
 
