@@ -2,7 +2,7 @@
 <button mat-button class="clickRipple center new-pass" (click)="showForm()">
     <div class="card">
       <div class="content">
-        <img class="icon" src="../../assets/Plus.png" alt="ICON">
+        <img class="icon" [src]="'./assets/Plus.png' | resolveAsset" alt="ICON">
         <div class="title">
           New Pass
         </div>
