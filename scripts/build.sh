@@ -11,8 +11,6 @@ if ! scripts/compile_frontend.sh ; then
     exit 1
 fi
 
-scripts/compile_frontend.sh cleanup || echo 'compile_frontend.sh encountered an error'
-
 tree ./dist
 echo "Static Assets: $(du -sh ./dist | awk '{print $1}')"
 
