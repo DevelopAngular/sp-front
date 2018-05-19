@@ -170,6 +170,7 @@ export class HallpassFormComponent implements OnInit {
   newRequest(message:string){
     let body = {
       'destination': this.toLocation.id,
+      'origin': this.fromLocation.id,
       'attachment_message': message,
       'travel_type': this.travelType
       };

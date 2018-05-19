@@ -27,38 +27,3 @@
         </div>
     </div>
 </div>
-
-<!-- <div>
-    <mat-tab-group [(selectedIndex)]="selectedIndex" (selectedTabChange)="tabChange()">
-    <div *ngIf="!isStaff; else teacherTabs;">
-            <mat-tab label="Make New Passes">
-                <app-hallpass-form></app-hallpass-form>
-            </mat-tab>
-            <mat-tab label="My Passes">
-                <app-hall-pass-list></app-hall-pass-list>
-                <button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button>
-            </mat-tab>
-            <mat-tab label="Pending Passes">
-                <app-pending-pass-list></app-pending-pass-list>
-                <button mat-raised-button class="sticky" (click)="toTop()">↑ Back to top ↑</button>
-            </mat-tab>
-        </div>
-        <ng-template #teacherTabs>
-            <mat-tab label="Issue a Pass">
-                <br>
-                <app-hallpass-form></app-hallpass-form>
-            </mat-tab>
-            <mat-tab label="Issued Passes">
-                <app-issued-pass-list></app-issued-pass-list>
-            </mat-tab>
-            <mat-tab label="Search Passes">
-                <!-- TODO Add pass list
-                <h1>COMING SOON</h1>
-            </mat-tab>
-        </ng-template>
-
-        <mat-tab label="Manage Account">
-            <app-account></app-account>
-        </mat-tab>
-    </mat-tab-group>
-</div> -->

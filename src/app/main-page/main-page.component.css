@@ -19,6 +19,7 @@
 
 .divider{
     width: 1px;
+    padding-left: 1px;
     height: 600px;
     background: black;
     margin: 40px 65px 0px 65px

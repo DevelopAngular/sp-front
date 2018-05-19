@@ -1,4 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, Inject } from '@angular/core';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 
 @Component({
   selector: 'app-consent-menu',
@@ -6,31 +7,21 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./consent-menu.component.css']
 })
 export class ConsentMenuComponent implements OnInit {
-  @Input()
-  content: string = "Are you sure?";
 
-  @Input()
-  header: string = "Header";
+  content: string;
 
-  @Input()
-  visible: boolean = false;
-
-  @Output()
-  onAccept: EventEmitter<null> = new EventEmitter<null>();
-
-  @Output()
-  onDecline: EventEmitter<null> = new EventEmitter<null>();
-
-  constructor() { }
+  constructor(public dialogRef: MatDialogRef<ConsentMenuComponent>, @Inject(MAT_DIALOG_DATA) public data: any[]) {
+    this.content = data['content'];
+  }
 
   ngOnInit() {
 
   }
 
   click(val){
-    if(val)
-      this.onAccept.emit();
-    else
-      this.onDecline.emit();
+    // if(val)
+    //   this.onAccept.emit(true);
+    // else
+    //   this.onDecline.emit(false);
   }
 }

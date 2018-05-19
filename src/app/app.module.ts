@@ -114,6 +114,7 @@ const appRoutes: Routes = [
   entryComponents: [
     HallpassFormComponent,
     LocationChooseComponent,
+    ConsentMenuComponent,
   ],
   imports: [
     BrowserModule,

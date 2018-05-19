@@ -60,9 +60,9 @@ export class MainPageComponent implements OnInit {
     else{
       this.dataService.currentUser.subscribe(user => this.user = user);
       this.isStaff = this.user.roles.includes('edit_all_hallpass');
-      let destination: Location = new Location("1", "Library", "", "", "", true, [""], [""], null, 4);
+      let destination: Location = new Location("1", "Library", "", "Lib", "", true, [""], [""], null, 4);
       let issuer: User = new User("1", null, null, "", "", "Dr. Bruh", "", [""]);
-      let invitation: Invitation = new Invitation("1", null, destination, [new Date(), new Date], issuer, "", 5);
+      let invitation: Invitation = new Invitation("1", null, destination, destination, [new Date(), new Date], issuer, "", 5, "#808975,#567123" , "./assets/One_Arrow.png");
       this.invitations.push(invitation);
       // let request:Request = new Request("1", null, destination, "", "one_way", "pending", null);
       //this.requests.push(request);

@@ -1,6 +1,6 @@
 <div class="wrapper" [style.background]="getGradient()">
   <div class="header">
-    <img class="icon" [src]="'./assets/Plus.png' | resolveAsset">
+    <img class="icon" [src]="invitation.icon | resolveAsset">
     <div class="passTitle">
       Invitation from {{invitation.issuer.display_name}}
     </div>

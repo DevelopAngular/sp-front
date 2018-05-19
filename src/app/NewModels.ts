@@ -97,12 +97,15 @@ export class HallPass {
 
 export class Invitation {
     constructor(public id: string,
-                public students: User,
+                public student: User,
+                public default_origin: Location,
                 public destination: Location,
                 public date_choices: Date[],
                 public issuer: User,
                 public status: string,
-                public duration: number){
+                public duration: number,
+                public gradient_color: string,
+                public icon: string){
     }
 
     static fromJSON(JSON:any){
@@ -112,14 +115,17 @@ export class Invitation {
         date_choices: Date[] = [],
         issuer: User = User.fromJSON(JSON['issuer']),
         status: string = JSON['status'],
-        duration: number = JSON['duration'];
+        duration: number = JSON['duration'],
+        gradient_color: string = JSON['gradient_color'],
+        icon: string = JSON['icon'],
+        default_origin: Location = (!!JSON['default_orgin'])?Location.fromJSON(JSON['default_orgin']):null;
 
         let datesJSON = JSON['date_choices'];
         for(let i = 0; i < datesJSON.length; i++){
             date_choices.push(new Date(datesJSON[i]));
         }
 
-        return new Invitation(id, student, destination, date_choices, issuer, status, duration);
+        return new Invitation(id, student, default_origin, destination, date_choices, issuer, status, duration, gradient_color, icon);
     }
 }
 

@@ -1,52 +1,7 @@
 <p-growl [(value)]="msgs" life="3000"></p-growl>
 
 <div *ngIf="isStaff; else studentForm;" [style.display]="getDisplay()">
-  <!-- <div class="teacherPass">
-    <h1 class="title">Hall Pass</h1>
 
-    <div class="formElement">
-      <app-student-search></app-student-search>
-    </div>
-
-    <div class="formElement">
-      When is this pass for?<br>
-      <p-inputSwitch onLabel="Later" offLabel="Now" [(ngModel)]="isPending"></p-inputSwitch>
-    </div>
-
-    <div *ngIf="isPending; else notPendingLocations;">
-      <div class="formElement halfForm">
-        <app-teacher-search type="'to'"></app-teacher-search>
-      </div>
-    </div>
-    <ng-template #notPendingLocations>
-      <div class="formElement">
-        <app-teacher-search class="to" type="'to'"></app-teacher-search>
-        <app-teacher-search class="from" type="'from'"></app-teacher-search>
-      </div>
-    </ng-template>
-
-    <div *ngIf="isPending; else notPendingDateTime;">
-      <div class="formElement">
-        <div class="date">
-          <app-date-time type="'date'"></app-date-time>
-        </div>
-
-        <div class="time">
-          <app-date-time type="'time'"></app-date-time>
-        </div>
-      </div>
-    </div>
-    <ng-template #notPendingDateTime></ng-template>
-    <div class="formElement">
-      <div class="duration">
-        <app-duration-picker></app-duration-picker>
-      </div>
-
-      <div class="submit">
-        <p-button (onClick)="newPass()" icon="fa fa-fw fa-check" label="Issue Pass"></p-button>
-      </div>
-    </div>
-  </div> -->
 </div>
 
 <ng-template #studentForm>
@@ -136,33 +91,4 @@
       </ng-template>
     </div>
   </div>
-  <!-- <div class="studentPass">
-    <h1 class="title">Hall Pass</h1>
-    <div class="hallPassColumn">
-
-      <div class="formElement">
-        <app-teacher-search class="" type="'to'"></app-teacher-search>
-      </div>
-
-      <div class="formElement">
-          <app-teacher-search class="" type="'from'"></app-teacher-search>
-      </div>
-
-      <div class="formElement">
-        <div class="duration">
-          <app-duration-picker></app-duration-picker>
-        </div>
-        <div class="submit">
-          <p-button (onClick)="newPass()" icon="fa fa-fw fa-check" label="Create Pass"></p-button>
-        </div>
-      </div>
-    </div>
-
-    <div class="quickPassColumn">
-      <div class="qpFormElement">
-        <app-quickpass-picker (quickPassEvent)="quickPassUpdate($event)"></app-quickpass-picker>
-      </div>
-    </div>
-
-  </div> -->
 </ng-template>

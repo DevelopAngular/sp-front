@@ -1,6 +1,9 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Invitation } from '../NewModels';
-
+import { Invitation, Location } from '../NewModels';
+import { HttpService } from '../http-service';
+import { LocationChooseComponent } from '../location-choose/location-choose.component';
+import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
+import { MatDialog, MatDialogConfig } from '@angular/material';
 @Component({
   selector: 'app-invitation-card',
   templateUrl: './invitation-card.component.html',
@@ -14,14 +17,17 @@ export class InvitationCardComponent implements OnInit {
   @Output()
   onSelect:EventEmitter<any> = new EventEmitter();
 
-  weekday = [];
+  weekday = ["Sundy"];
   month = [];
 
+  selectedDate: Date;
 
-  constructor() { }
+  origin: Location;
+
+  constructor(private http:HttpService, public dialog: MatDialog) { }
 
   ngOnInit() {
-    this.weekday[0] =  "Sunday";
+    this.weekday[0] = "Sunday";
     this.weekday[1] = "Monday";
     this.weekday[2] = "Tuesday";
     this.weekday[3] = "Wednesday";
@@ -41,13 +47,15 @@ export class InvitationCardComponent implements OnInit {
     this.month[9] = "October";
     this.month[10] = "November";
     this.month[11] = "December";
+
+    this.origin = this.invitation.default_origin;
   }
 
   getGradient(){
-    // let gradient: string[] = this.invitation.gradient_color.split(",");;
+    let gradient: string[] = this.invitation.gradient_color.split(",");;
 
-    // return "radial-gradient(circle at 73% 71%, " +gradient[0] +", " +gradient[1] +")";
-    return "radial-gradient(circle at 73% 71%, #567890, #235678)";
+    return "radial-gradient(circle at 73% 71%, " +gradient[0] +", " +gradient[1] +")";
+    // return "radial-gradient(circle at 73% 71%, #567890, #235678)";
   }
 
   getDate(s:Date){
@@ -59,7 +67,40 @@ export class InvitationCardComponent implements OnInit {
   }
 
   activateInvitation(){
+    this.selectedDate = this.invitation.date_choices[0];
+    let dialogRef = this.dialog.open(ConsentMenuComponent, {
+      width: '250px',
+      hasBackdrop: true,
+      data: { content: 'Are you in ' +this.invitation.destination.title +'(' +this.invitation.destination.room +')'}
+    });
     
+    dialogRef.afterClosed().subscribe(result => {
+      this.atDefault(result);
+    });
+  }
+
+  atDefault(isAtDefault: boolean){
+    if(isAtDefault){
+      this.acceptInvitation();
+    } else{
+      let dialogRef = this.dialog.open(LocationChooseComponent, {
+        width: '250px',
+        hasBackdrop: true
+      });
+      
+      dialogRef.afterClosed().subscribe(result => {
+        
+      });
+    }
+  }
+
+  selectOrigin(loc:Location){
+    this.origin = loc;
+  }
+
+  acceptInvitation(){
+    this.http.post('api/methacton/v1/invitations/' +this.invitation.id +'/accept', "", {"":""});
+    this.onSelect.emit();
   }
 
 }

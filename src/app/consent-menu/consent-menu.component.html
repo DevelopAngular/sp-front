@@ -1,9 +1,9 @@
-<p-dialog [header]="header" [(visible)]="visible">
-  <p>{{ content }}</p>
-  <button pButton type="button" label="Yes" icon="fa-check"
-          (click)="click(true)" [ngClass]="{'ui-button-success': true}">
-  </button>
-  <button pButton type="button" label="No" icon="fa-close"
-          [ngClass]="{'ui-button-danger': true}" (click)="click(false)">
-  </button>
-</p-dialog>
+<p> {{content}} </p>
+<button pButton type="button" label="Yes" icon="fa-check"
+        (click)="click(true)" [ngClass]="{'ui-button-success': true}"
+        [mat-dialog-close]="true">
+</button>
+<button pButton type="button" label="No" icon="fa-close"
+        (click)="click(false)" [ngClass]="{'ui-button-danger': true}"
+        [mat-dialog-close]="false">
+</button>
