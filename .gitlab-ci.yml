@@ -8,4 +8,5 @@ build:
   script:
     - scripts/build.sh
   only:
-    - branches
+    refs:
+      - master
