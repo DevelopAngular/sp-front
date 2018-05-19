@@ -26,7 +26,7 @@ if [ -n "$GCE_SERVICE_ACCOUNT_KEY" ]; then
     gcloud config configurations create default
     gcloud auth activate-service-account --key-file=gce-credential-key.json
     gcloud config set project notify-messenger
-    gsutil rsync -r ./dist gs://courier-static/${GCS_TAG_NAME}
+    gsutil rsync -r ./dist gs://courier-static/${GCS_TAG_NAME}/frontend
 else
     echo '$GCE_SERVICE_ACCOUNT_KEY not set, skipping asset upload'
 fi
