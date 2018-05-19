@@ -1,0 +1,11 @@
+image: alpine:latest
+
+stages:
+  - build
+
+build:
+  stage: build
+  script:
+    - scripts/build.sh
+  only:
+    - branches
