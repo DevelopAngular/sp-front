@@ -9,7 +9,6 @@ import {Duration} from '../NewModels';
 
 export class DurationPickerComponent implements OnInit {
   durations: Duration[] = [
-                          new Duration('3 minutes', 180),
                           new Duration('5 minutes', 300),
                           new Duration('10 minutes', 600),
                           new Duration('15 minutes', 900),

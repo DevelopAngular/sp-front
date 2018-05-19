@@ -20,7 +20,6 @@ import {DataService} from './data-service';
 import {HttpService} from './http-service';
 import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 import {StudentSearchComponent} from './student-search/student-search.component';
-import {AccountComponent} from './account/account.component';
 import {TagInputModule} from 'ngx-chips';
 import {AngularDateTimePickerModule} from 'angular2-datetimepicker';
 import {OwlDateTimeModule, OwlNativeDateTimeModule} from 'ng-pick-datetime';
@@ -50,16 +49,8 @@ import {MessageService} from 'primeng/components/common/messageservice';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ConfirmationService} from 'primeng/api';
 import {SidebarModule} from 'primeng/sidebar';
-import { DateTimeComponent } from './date-time/date-time.component';
 import {DurationPickerComponent} from './duration-picker/duration-picker.component';
-import {IssuedPassListComponent} from './issued-pass-list/issued-pass-list.component';
 import {JSONSerializer} from './models';
-import {QuickpassPickerComponent} from './quickpass-picker/quickpass-picker.component';
-import { PassCardComponent } from './pass-card/pass-card.component';
-import { PassInfoComponent } from './pass-info/pass-info.component';
-import { ActivatePassComponent } from './activate-pass/activate-pass.component';
-import { HallPassListComponent } from './hall-pass-list/hall-pass-list.component';
-import { PendingPassListComponent } from './pending-pass-list/pending-pass-list.component';
 import { ConsentMenuComponent } from './consent-menu/consent-menu.component';
 import { PinnableComponent } from './pinnable/pinnable.component';
 import {MatCardModule} from '@angular/material/card';
@@ -88,16 +79,7 @@ const appRoutes: Routes = [
     HallpassFormComponent,
     MainPageComponent,
     StudentSearchComponent,
-    AccountComponent,
-    DateTimeComponent,
     DurationPickerComponent,
-    IssuedPassListComponent,
-    QuickpassPickerComponent,
-    PassCardComponent,
-    PassInfoComponent,
-    ActivatePassComponent,
-    HallPassListComponent,
-    PendingPassListComponent,
     ConsentMenuComponent,
     PinnableComponent,
     LocationChooseComponent,

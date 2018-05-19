@@ -20,7 +20,7 @@
     <div class="divider"></div>
     <div class="side">
         <div class="center top-margin">
-            <app-invitation-card class="request-card" *ngFor="let invitation of invitations" [invitation]="invitation" (onSelect)="inviteSelected($event)"></app-invitation-card>
+            <app-invitation-card class="request-card" *ngFor="let invitation of invitations | async" [invitation]="invitation"></app-invitation-card>
         </div>
         <div class="center top-margin">
             <app-request-card class="request-card" *ngFor="let request of requests | async" [request]="request"></app-request-card>

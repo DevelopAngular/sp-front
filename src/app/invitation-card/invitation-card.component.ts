@@ -89,7 +89,8 @@ export class InvitationCardComponent implements OnInit {
       });
       
       dialogRef.afterClosed().subscribe(result => {
-        
+        this.origin = result;
+        this.acceptInvitation();
       });
     }
   }
