@@ -72,6 +72,9 @@ import { LocationTableComponent } from './location-table/location-table.componen
 import { ResolveAssetPipe } from './resolve-asset.pipe';
 import { LocationCellComponent } from './location-cell/location-cell.component';
 import { HallpassCardComponent } from './hallpass-card/hallpass-card.component';
+import { RequestCardComponent } from './request-card/request-card.component';
+import { InvitationCardComponent } from './invitation-card/invitation-card.component';
+import { FuturePassCardComponent } from './future-pass-card/future-pass-card.component';
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
   { path: 'main', component: MainPageComponent },
@@ -104,6 +107,9 @@ const appRoutes: Routes = [
     ResolveAssetPipe,
     LocationCellComponent,
     HallpassCardComponent,
+    RequestCardComponent,
+    InvitationCardComponent,
+    FuturePassCardComponent,
   ],
   entryComponents: [
     HallpassFormComponent,

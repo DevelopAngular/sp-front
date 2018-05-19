@@ -35,7 +35,7 @@
     margin: 0px 0px 20px 40px;   
 }
 
-.left{
+.left, .right{
     display: flex;
     flex-direction: column;
 }
@@ -46,8 +46,8 @@
 }
 
 .one-way{
-    width: 71px;
-    height: 71px;
+    width: 60px;
+    height: 60px;
 }
 
 .one-way, .round-trip{

@@ -1,0 +1,25 @@
+<div class="wrapper" [style.background]="getGradient()">
+  <div class="header">
+    <img class="icon" [src]="'./assets/Plus.png' | resolveAsset">
+    <div class="passTitle">
+      {{request.destination.title}}
+    </div>
+  </div>
+  <div class="divider center"></div>
+  <div class="body">
+    <div class="top">
+      <div class="origin center">
+        Placeholder
+      </div>
+        <img *ngIf="request.travel_type == 'round_trip'" class="round-trip center" [src]="'./assets/Two_Arrow.png' | resolveAsset">
+        <img *ngIf="request.travel_type == 'one_way'" class="one-way center" [src]="'./assets/One_Arrow.png' | resolveAsset">
+      <div class="destination center">
+        {{request.destination.title}}
+      </div>
+    </div>
+    <div class="bottom">
+      <br><br>
+      Pass Requested
+    </div>
+  </div>
+</div>

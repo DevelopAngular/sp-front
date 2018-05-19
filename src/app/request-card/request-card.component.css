@@ -2,6 +2,7 @@
     border-radius: 7px;
     display: flex;
     flex-direction: column;
+    margin-bottom: 30px;
 }
 
 .header{
@@ -23,7 +24,7 @@
 .divider{
     margin: 15px 0px 20px 0px;
     width: 318px;
-    height: 0.5px;
+    height: 1px;
     object-fit: contain;
     opacity: 0.39;
     background-color: #ffffff;
@@ -31,11 +32,11 @@
 
 .body{
     display: flex;
-    flex-direction: row;
-    margin: 0px 0px 20px 40px;   
+    flex-direction: column;
+    margin: 0px 0px 20px 0px;   
 }
 
-.left{
+.top{
     display: flex;
     flex-direction: column;
 }

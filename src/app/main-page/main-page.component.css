@@ -1,8 +1,27 @@
+.main-page{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    padding-left: 25%;
+    padding-right: 25%;
+}
+
+.top-margin{
+    margin-top: 40px;
+}
+
 .center{
     margin-left: auto;
     margin-right: auto;
     text-align: center;
     display: block;
+}
+
+.divider{
+    width: 1px;
+    height: 600px;
+    background: black;
+    margin: 40px 65px 0px 65px
 }
 
 .sticky {
@@ -25,6 +44,16 @@
 .pass-card{
     width: 350px;
     height: 200px;
+    margin-top: 40px;
+    border-radius: 7px;
+    color: white;   
+    box-shadow: 0 7.5px 13px 0 rgba(0, 0, 0, 0.1);
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+}
+
+.request-card{
+    /* width: 350px;
+    height: 200px; */
     margin-top: 40px;
     border-radius: 7px;
     color: white;   

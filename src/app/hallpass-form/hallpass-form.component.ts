@@ -351,10 +351,10 @@ export class HallpassFormComponent implements OnInit {
   //   return true;
   // }
 
-  async setupUserId(){
-    await this.getUser();
-    this.dataService.updateUser(this.user);
-  }
+  // async setupUserId(){
+  //   await this.getUser();
+  //   this.dataService.updateUser(this.user);
+  // }
 
   getUser(){
     return new Promise((resolve, reject) => {

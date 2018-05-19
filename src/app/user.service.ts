@@ -6,7 +6,7 @@ import {environment} from '../environments/environment';
 import {DataService} from './data-service';
 import {Observable} from 'rxjs/Observable';
 import {Router} from '@angular/router';
-import {User} from './models';
+import {User} from './NewModels';
 
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/filter';

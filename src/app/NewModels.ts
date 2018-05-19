@@ -98,7 +98,7 @@ export class HallPass {
 export class Invitation {
     constructor(public id: string,
                 public students: User,
-                public destiation: Location,
+                public destination: Location,
                 public date_choices: Date[],
                 public issuer: User,
                 public status: string,

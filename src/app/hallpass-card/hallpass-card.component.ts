@@ -32,6 +32,7 @@ export class HallpassCardComponent implements OnInit {
   }
 
   endPass(){
+    console.log("Ending Pass");
     this.onEnd.emit(this.hallpass);
   }
 

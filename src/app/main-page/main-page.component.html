@@ -1,19 +1,33 @@
 <app-navbar></app-navbar>
-<div *ngIf="!!currentPass; else newPass;" class="pass-card center">
-    <app-hallpass-card class="pass-card" [hallpass]="currentPass" (onEnd)="endPass($event)"></app-hallpass-card>
-</div>
-<ng-template #newPass>
-    <button mat-button class="clickRipple center new-pass" (click)="showForm()">
-        <div class="card">
-            <div class="content">
-                <img class="icon" [src]="'./assets/Plus.png' | resolveAsset" alt="ICON">
-                <div class="title">
-                    New Pass
-                </div>
-            </div>
+<div class="main-page">
+    <div *ngIf="checkedPasses" class="middle">
+        <div *ngIf="!!currentPass; else newPass;" class="pass-card center">
+            <app-hallpass-card class="pass-card" [hallpass]="currentPass" (onEnd)="endPass($event)"></app-hallpass-card>
         </div>
-    </button>
-</ng-template>
+        <ng-template #newPass>
+            <button mat-button class="clickRipple center new-pass" (click)="showForm()">
+                <div class="card">
+                    <div class="content">
+                        <img class="icon" [src]="'./assets/Plus.png' | resolveAsset" alt="ICON">
+                        <div class="title">
+                            New Pass
+                        </div>
+                    </div>
+                </div>
+            </button>
+        </ng-template>
+    </div>
+    <div class="divider"></div>
+    <div class="side">
+        <div class="center top-margin">
+            <app-invitation-card class="request-card" *ngFor="let invitation of invitations" [invitation]="invitation" (onSelect)="inviteSelected($event)"></app-invitation-card>
+        </div>
+        <div class="center top-margin">
+            <app-request-card class="request-card" *ngFor="let request of requests | async" [request]="request"></app-request-card>
+        </div>
+    </div>
+</div>
+
 <!-- <div>
     <mat-tab-group [(selectedIndex)]="selectedIndex" (selectedTabChange)="tabChange()">
     <div *ngIf="!isStaff; else teacherTabs;">
