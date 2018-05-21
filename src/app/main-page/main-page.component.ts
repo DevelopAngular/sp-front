@@ -99,7 +99,7 @@ export class MainPageComponent implements OnInit {
 
 
   endPass(hallpass:HallPass){
-    console.log("Ending pass");
+    // console.log("Ending pass");
     this.http.post('api/methacton/v1/hall_passes/' +this.currentPass.id +'/ended', null, {'':''}).subscribe((results) => {
     });
     this.currentPass = null;

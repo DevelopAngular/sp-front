@@ -71,6 +71,6 @@ export class GoogleSigninComponent {
   }
 
   pinnableSelected(event){
-    console.log(event);
+    // console.log(event);
   }
 }

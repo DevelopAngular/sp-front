@@ -17,7 +17,7 @@ export class NavbarComponent implements AfterViewInit  {
 
   ngAfterViewInit(){
     this.dataService.currentUser.subscribe(user => {this.user = user});
-    console.log("[User]: ", this.user);
+    // console.log("[User]: ", this.user);
   }
 
 }

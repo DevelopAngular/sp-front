@@ -77,7 +77,7 @@ export class HallPass {
                 public icon: string){}
 
     static fromJSON(JSON:any):HallPass{
-        console.log(JSON);
+        // console.log(JSON);
         const id: string = JSON['id'],
         student: User = User.fromJSON(JSON['student']),
         issuer: User = User.fromJSON(JSON['issuer']),

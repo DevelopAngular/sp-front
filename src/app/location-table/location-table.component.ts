@@ -23,7 +23,7 @@ export class LocationTableComponent implements OnInit {
   @Input()
   set setCategory(c:string){
     this.category = c;
-    console.log(c);
+    // console.log(c);
   }
 
   public locations:Location[];

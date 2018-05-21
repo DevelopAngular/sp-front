@@ -89,7 +89,7 @@ export class HallpassFormComponent implements OnInit {
       });
 
       dialogRef.afterClosed().subscribe(result => {
-        console.log('The dialog was closed');
+        // console.log('The dialog was closed');
         this.fromLocation = result;
         this.from_title = this.fromLocation.title;
         this.fromIcon = "";
@@ -103,7 +103,7 @@ export class HallpassFormComponent implements OnInit {
   }
 
   pinnableSelected(event:Pinnable){
-    console.log("[Pinnable Selected]: ", event);
+    // console.log("[Pinnable Selected]: ", event);
     if(event.type == "location"){
       if(this.locationType == 'to'){
         this.to_title = event.title;
@@ -150,12 +150,12 @@ export class HallpassFormComponent implements OnInit {
 
   updateType(event:string){
     this.travelType = event;
-    console.log(this.travelType);
+    // console.log(this.travelType);
   }
 
   updatePassType(event:MatSlideToggleChange){
     this.isMandatory = event.checked;
-    console.log("[Is Mandatory]: ", this.isMandatory);
+    // console.log("[Is Mandatory]: ", this.isMandatory);
   }
 
   locationChosen(event:Location){
@@ -196,7 +196,7 @@ export class HallpassFormComponent implements OnInit {
       };
 
     this.http.post("api/methacton/v1/pass_requests", body, {headers:{'':''}}).subscribe((data) =>{
-      console.log("Request POST Data: ", data);
+      // console.log("Request POST Data: ", data);
       this.dialogRef.close(Request.fromJSON(data));
     });
   }
@@ -212,7 +212,7 @@ export class HallpassFormComponent implements OnInit {
       };
 
       this.http.post("api/methacton/v1/hall_passes", body, {headers:{'':''}}).subscribe((data) =>{
-        console.log("Request POST Data: ", data);
+        // console.log("Request POST Data: ", data);
         this.dialogRef.close(HallPass.fromJSON(data));
       });
     } else{
@@ -231,7 +231,7 @@ export class HallpassFormComponent implements OnInit {
           };
     
           this.http.post("api/methacton/v1/hall_passes/bulk_create", body, {headers:{'':''}}).subscribe((data) =>{
-            console.log("Request POST Data: ", data);
+            // console.log("Request POST Data: ", data);
             this.dialogRef.close("");
           });
       } else{
@@ -244,7 +244,7 @@ export class HallpassFormComponent implements OnInit {
           };
     
           this.http.post("api/methacton/v1/hall_passes", body, {headers:{'':''}}).subscribe((data) =>{
-            console.log("Request POST Data: ", data);
+            // console.log("Request POST Data: ", data);
             this.dialogRef.close(HallPass.fromJSON(data));
           });
       }
@@ -266,7 +266,7 @@ export class HallpassFormComponent implements OnInit {
         };
   
         this.http.post("api/methacton/v1/invitations/bulk_create", body, {headers:{'':''}}).subscribe((data) =>{
-          console.log("Request POST Data: ", data);
+          // console.log("Request POST Data: ", data);
           this.dialogRef.close("");
         });
     } else{
@@ -279,7 +279,7 @@ export class HallpassFormComponent implements OnInit {
         };
   
         this.http.post("api/methacton/v1/invitations", body, {headers:{'':''}}).subscribe((data) =>{
-          console.log("Request POST Data: ", data);
+          // console.log("Request POST Data: ", data);
           this.dialogRef.close(HallPass.fromJSON(data));
         });
     }
@@ -287,7 +287,7 @@ export class HallpassFormComponent implements OnInit {
 
   studentsUpdated(students){
     this.selectedStudents = students;
-    console.log(this.selectedStudents);
+    // console.log(this.selectedStudents);
   }
 
   getUser(){

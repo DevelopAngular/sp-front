@@ -25,7 +25,7 @@ export class PinnableComponent implements OnInit {
   }
 
   onSelect(){
-    console.log("Pinnable Selected");
+    // console.log("Pinnable Selected");
     this.onSelectEvent.emit(this.pinnable);
   }
 
