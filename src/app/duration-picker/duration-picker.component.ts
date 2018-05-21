@@ -21,6 +21,7 @@ export class DurationPickerComponent implements OnInit {
 
   ngOnInit() {
     this.selectedDuration = new Duration('5 minutes', 300);
+    this.onChange.emit(this.selectedDuration);
   }
 
   validate(){
