@@ -16,6 +16,9 @@
                 </div>
             </button>
         </ng-template>
+        <div *ngIf="!!futurePasses">
+            <app-hallpass-card class="pass-card" *ngFor="let hallpass of futurePasses" [hallpass]="hallpass" [future]="true"></app-hallpass-card>
+        </div>
     </div>
     <div class="divider"></div>
     <div class="side">

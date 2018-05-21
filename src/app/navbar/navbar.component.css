@@ -1,6 +1,7 @@
 .bar{
     height: 67px;
-    background-image: radial-gradient(circle at 43% 66%, #03cf31, rgba(1, 129, 85, 0.7));
+    background-image: radial-gradient(circle at 43% 66%, #535353, #707070);
+    /* background-image: radial-gradient(circle at 43% 66%, #03cf31, rgba(1, 129, 85, 0.7)); */
     box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.24);
     position: relative;
 }
@@ -29,6 +30,19 @@
     letter-spacing: 0px;
     text-align: center;
     color: #ffffff;
+}
+
+.small{
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 0px;
+    text-align: center;
+    color: #ffffff;
+    margin-left: 7px;
 }
 
 .logo{

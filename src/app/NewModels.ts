@@ -203,23 +203,29 @@ export class Pinnable {
 export class Request {
     constructor(public id: string,
                 public student: User,
+                public origin: Location,
                 public destination: Location,
                 public attachment_message: string,
                 public travel_type: string,
                 public status: string,
-                public hallpass: HallPass){
+                public hallpass: HallPass,
+                public gradient_color: string,
+                public icon: string){
     }
 
     static fromJSON(JSON:any):Request{
         const id: string = JSON['id'],
         student: User = User.fromJSON(JSON['student']),
+        origin: Location = Location.fromJSON(JSON['origin']),
         destination: Location = Location.fromJSON(JSON['destination']),
         attachment_message: string = JSON['attachment_message'],
         travel_type: string = JSON['travel_type'],
         status: string = JSON['status'],
-        hallpass: HallPass = (!!JSON['hallpass'])?HallPass.fromJSON(JSON['hallpass']):null;
+        hallpass: HallPass = (!!JSON['hallpass'])?HallPass.fromJSON(JSON['hallpass']):null,
+        gradient_color: string = JSON['gradient_color'], 
+        icon: string = JSON['icon'];
 
-        return new Request(id, student, destination, attachment_message, travel_type, status, hallpass);
+        return new Request(id, student, origin, destination, attachment_message, travel_type, status, hallpass, gradient_color, icon);
     }
 
 }

@@ -8,6 +8,12 @@ import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
 import { HallPass, Location, Invitation, Request, User } from '../NewModels';
 
+export interface Paged<T> {
+  active_pass: T;
+  pass_history: T[];
+  future_passes: T[];
+}
+
 declare var document: any;
 
 @Component({
@@ -35,9 +41,8 @@ export class MainPageComponent implements OnInit {
 //------------------------NEW STUFF----------------------//
 
   currentPass: HallPass;
+  futurePasses: HallPass[];
   timeLeft: string;
-  // invitations:Invitation[] = [];
-  // requests:Request[] = [];
   checkedPasses: boolean = false;
   invitations:Promise<Invitation[]>;
   requests:Promise<Request[]>;
@@ -54,17 +59,22 @@ export class MainPageComponent implements OnInit {
     else{
       this.dataService.currentUser.subscribe(user => this.user = user);
       this.isStaff = this.user.roles.includes('edit_all_hallpass');
-      // let destination: Location = new Location("1", "Library", "", "Lib", "", true, [""], [""], null, 4);
-      // let issuer: User = new User("1", null, null, "", "", "Dr. Bruh", "", [""]);
-      // let invitation: Invitation = new Invitation("1", null, destination, destination, [new Date(), new Date], issuer, "", 5, "#808975,#567123" , "./assets/One_Arrow.png");
-      // this.invitations.push(invitation);
-      // let request:Request = new Request("1", null, destination, "", "one_way", "pending", null);
-      // this.requests.push(request);
-      this.invitations = this.http.get<Invitation[]>('api/methacton/v1/invitations').toPromise();
-      this.requests = this.http.get<Request[]>('api/methacton/v1/pass_requests').toPromise();
-      this.http.get<any[]>('api/methacton/v1/hall_passes/summary').subscribe((data:any[])=>{
+      this.invitations = this.http.get<Invitation[]>('api/methacton/v1/invitations?status=pending').toPromise();
+      this.requests = this.http.get<Request[]>('api/methacton/v1/pass_requests?status=pending').toPromise();
+      
+      this.http.get<Paged<HallPass>>('api/methacton/v1/hall_passes/summary').toPromise().then(data => {
         this.currentPass = (!!data['active_pass'])?HallPass.fromJSON(data['active_pass']):null;
         this.checkedPasses = true;
+        if(!!data['future_passes']){
+          for(let i = 0; i<data['future_passes'].length;i++){
+            this.futurePasses.push(HallPass.fromJSON(data['future_passes'][i]));
+          }
+        } else{
+          this.futurePasses = null;
+        }
+      });
+      this.http.get<any[]>('api/methacton/v1/hall_passes/summary').subscribe((data:any[])=>{
+        
       });
     }
   }
@@ -79,7 +89,7 @@ export class MainPageComponent implements OnInit {
       if(result instanceof HallPass){
         this.currentPass = result;
       } else{
-        this.requests = this.http.get<Request[]>('api/methacton/v1/pass_requests').toPromise();
+        this.requests = this.http.get<Request[]>('api/methacton/v1/pass_requests?status=pending').toPromise();
       }
       //this.animal = result;
     });
@@ -89,7 +99,6 @@ export class MainPageComponent implements OnInit {
   endPass(hallpass:HallPass){
     console.log("Ending pass");
     this.http.post('api/methacton/v1/hall_passes/' +this.currentPass.id +'/ended', null, {'':''}).subscribe((results) => {
-
     });
     this.currentPass = null;
   }

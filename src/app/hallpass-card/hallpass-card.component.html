@@ -18,7 +18,7 @@
       </div>
     </div>
     <div class="right">
-      <div class="end-pass">
+      <div *ngIf="!future; else inFuture" class="end-pass">
         <button mat-button class="clickRipple end-pass" (click)="endPass()">
           <div class="card">
               <div class="content">
@@ -27,8 +27,15 @@
                   </div>
               </div>
           </div>
-      </button>
+        </button>
       </div>
+      <ng-template #inFuture>
+        <div>
+          {{getDate(hallapss.start_time)}}
+          <br>
+          at {{getTime(hallapss.start_time)}}
+        </div>
+      </ng-template>
     </div>
   </div>
 </div>

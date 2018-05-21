@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, Input, SimpleChange, Injectable } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, Input, SimpleChange, Injectable, Output, EventEmitter } from '@angular/core';
 import {FormControl} from '@angular/forms';
 
 import {Observable} from 'rxjs/Observable';
@@ -28,6 +28,8 @@ function wrapper<T>(thing: Observable<T>): Promise<T> {
 export class StudentSearchComponent implements AfterViewInit {
   @Input()
   icon: string;
+
+  @Output() onUpdate: EventEmitter<any> = new EventEmitter();
 
   students: User[] = [];
   selectedStudents: User[] = [];
@@ -68,5 +70,9 @@ export class StudentSearchComponent implements AfterViewInit {
 
   getIcon(){
     return this.validate() ? 'fa-check' : 'fa-close';
+  }
+
+  update(){
+    this.onUpdate.emit(this.selectedStudents);
   }
 }

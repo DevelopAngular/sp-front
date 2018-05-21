@@ -59,24 +59,30 @@ export class InvitationCardComponent implements OnInit {
   }
 
   getDate(s:Date){
+    s = new Date(s);
     return this.weekday[s.getDay()] +' ' + this.month[s.getMonth()] + ' ' + (s.getDate());
   }
 
   getTime(s:Date){
+    s = new Date(s);
     return ((s.getHours() > 12) ? s.getHours() - 12 : s.getHours()) + ':' + ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + ((s.getHours() > 12) ? "pm" : "am");
   }
 
   activateInvitation(){
     this.selectedDate = this.invitation.date_choices[0];
-    let dialogRef = this.dialog.open(ConsentMenuComponent, {
-      width: '250px',
-      hasBackdrop: true,
-      data: { content: 'Are you in ' +this.invitation.destination.title +'(' +this.invitation.destination.room +')'}
-    });
-    
-    dialogRef.afterClosed().subscribe(result => {
-      this.atDefault(result);
-    });
+    if(!!this.invitation.default_origin){
+      let dialogRef = this.dialog.open(ConsentMenuComponent, {
+        width: '250px',
+        hasBackdrop: true,
+        data: { content: 'Are you in ' +this.invitation.default_origin.title +'(' +this.invitation.default_origin.room +')'}
+      });
+      
+      dialogRef.afterClosed().subscribe(result => {
+        this.atDefault(result);
+      });
+    } else{
+      this.atDefault(false);
+    }
   }
 
   atDefault(isAtDefault: boolean){

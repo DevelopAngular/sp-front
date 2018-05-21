@@ -9,7 +9,7 @@
   <div class="body">
     <div class="left">
       <div class="origin center">
-        Your Location
+       <div *ngIf="!!invitation.default_origin; else noOrigin">invitation.default_origin.title</div><ng-template #noOrigin>Your Location</ng-template>
       </div>
         <!-- <img *ngIf="hallpass.travel_type == 'round_trip'" class="round-trip center" [src]="'./assets/Two_Arrow.png' | resolveAsset"> -->
         <!-- *ngIf="hallpass.travel_type == 'one_way'"  -->

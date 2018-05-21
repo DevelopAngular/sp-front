@@ -3,7 +3,7 @@
         <span class="ui-float-label">
             <p-autoComplete id="float-input" pInputText [(ngModel)]="selectedStudents"
                             [suggestions]="students" (completeMethod)="updateStudents($event)"
-                            placeholder="" field="display_name" [multiple]="true" >
+                            placeholder="" field="display_name" [multiple]="true" (onSelect)="update()" (onUnselect)="update()">
             </p-autoComplete>
             <label for="float-input">Student(s)</label>
         </span>

@@ -18,10 +18,9 @@ export class RequestCardComponent implements OnInit {
 
 
   getGradient(){
-    // let gradient: string[] = this.request.destination.gradient_color.split(",");
-
-    // return "radial-gradient(circle at 73% 71%, " +gradient[0] +", " +gradient[1] +")";
-    return "radial-gradient(circle at 73% 71%, #AA11FF, #FF11AA)";
+    let gradient: string[] = this.request.gradient_color.split(",");
+    return "radial-gradient(circle at 73% 71%, " +gradient[0] +", " +gradient[1] +")";
+    // return "radial-gradient(circle at 73% 71%, #AA11FF, #FF11AA)";
   }
 
 }

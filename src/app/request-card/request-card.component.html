@@ -1,6 +1,6 @@
 <div class="wrapper" [style.background]="getGradient()">
   <div class="header">
-    <img class="icon" [src]="'./assets/Plus.png' | resolveAsset">
+    <img class="icon" [src]="request.icon | resolveAsset">
     <div class="passTitle">
       {{request.destination.title}}
     </div>
@@ -9,7 +9,7 @@
   <div class="body">
     <div class="top">
       <div class="origin center">
-        Placeholder
+        {{request.origin.title}}
       </div>
         <img *ngIf="request.travel_type == 'round_trip'" class="round-trip center" [src]="'./assets/Two_Arrow.png' | resolveAsset">
         <img *ngIf="request.travel_type == 'one_way'" class="one-way center" [src]="'./assets/One_Arrow.png' | resolveAsset">
