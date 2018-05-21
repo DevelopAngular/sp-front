@@ -19,34 +19,13 @@ export class HallpassCardComponent implements OnInit {
 
   timeLeft: string;
   
-  weekday:string[];
-  month:string[];
+  weekday:string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  month:string[] = ["January", "February", "March", "April", "May", "June", "July",
+                    "August", "September","October", "November", "December"];
 
   constructor() { }
 
   ngOnInit() {
-
-    this.weekday[0] = "Sunday";
-    this.weekday[1] = "Monday";
-    this.weekday[2] = "Tuesday";
-    this.weekday[3] = "Wednesday";
-    this.weekday[4] = "Thursday";
-    this.weekday[5] = "Friday";
-    this.weekday[6] = "Saturday";
-
-    this.month[0] = "January";
-    this.month[1] = "February";
-    this.month[2] = "March";
-    this.month[3] = "April";
-    this.month[4] = "May";
-    this.month[5] = "June";
-    this.month[6] = "July";
-    this.month[7] = "August";
-    this.month[8] = "September";
-    this.month[9] = "October";
-    this.month[10] = "November";
-    this.month[11] = "December";
-
     setInterval(()=>{
       if(!!this.hallpass && !this.future){
         let end = this.hallpass.expiration_time;

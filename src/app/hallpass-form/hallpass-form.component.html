@@ -1,13 +1,11 @@
 <p-growl [(value)]="msgs" life="3000"></p-growl>
 
-<div *ngIf="isStaff; else studentForm;" [style.display]="getDisplay()">
-
-</div>
-
-<ng-template #studentForm>
+<div #studentForm>
   <div class="form">
     <app-type-selector class="center" (onChange)="updateType($event)"></app-type-selector>
     <div class="divider"></div>
+      <app-student-search *ngIf="isStaff" class="studentSearch center" (onUpdate)="studentsUpdated($event)"></app-student-search>
+      <div *ngIf="isStaff" class="divider"></div>
     <div class="center locs">
       <button mat-button class="clickRipple from" (click)="chooseLoc('from')">
         <div class="card" [style.background]="getGradient('from')">
@@ -50,29 +48,39 @@
       </div>
     </div>
     <div *ngIf="formState == 'fields'">
-      <div *ngIf="!toLocation.restricted; else restrictedFields;">
-        <mat-grid-list class="grid" [cols]="2" [rowHeight]="100" [gutterSize]="10">
-          <mat-grid-tile [rowspan]="1" [colspan]="1">
-            <div class="question">How much time do you need?
-              <br><br>
-              <div class="amount">
-                  <app-duration-picker (onChange)="updateDuration($event)"></app-duration-picker>
-                </div>
+      <div *ngIf="!toLocation.restricted || isStaff; else restrictedFields;" class="fields center">
+        <div class="question">How much time do you need?
+          <br><br>
+          <div class="amount">
+              <app-duration-picker (onChange)="updateDuration($event)"></app-duration-picker>
             </div>
-          </mat-grid-tile>
-           <mat-grid-tile rowspan="1" colspan="1">
-            <button mat-button class="clickRipple request" (click)="newPass()">
-              <div class="card requestCard">
-                <div>
-                  <div class="mtitle">
-                    Make Pass
+        </div>
+
+        <div *ngIf="isStaff" class="passType">
+          <div>Is this pass mandatory?</div>
+          <mat-slide-toggle (change)="updatePassType($event)"></mat-slide-toggle>
+        </div>
+
+        <button mat-button class="clickRipple request" (click)="determinePass()">
+          <div class="card requestCard">
+            <div class="cardElements c">
+              <div class="mtitle">
+                <div *ngIf="isStaff; else notStaffButton">
+                  <div *ngIf="isMandatory; else notMandatoryButton">
+                    Issue
                   </div>
-                  <img class="micon" [src]="'./assets/One_Arrow.png' | resolveAsset">
+                  <ng-template #notMandatoryButton>
+                    Invite
+                  </ng-template>
                 </div>
+                <ng-template #notStaffButton>
+                  Make Pass
+                </ng-template>
               </div>
-            </button>
-          </mat-grid-tile>
-        </mat-grid-list>
+              <img class="micon" [src]="'./assets/One_Arrow.png' | resolveAsset">
+            </div>
+          </div>
+        </button>
       </div>
       <ng-template #restrictedFields>
         <div class="center">
@@ -91,4 +99,4 @@
       </ng-template>
     </div>
   </div>
-</ng-template>
+</div>

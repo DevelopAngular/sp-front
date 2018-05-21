@@ -1,9 +1,14 @@
 <div class="wrapper" [style.background]="getGradient()">
   <div class="header">
     <img class="icon" [src]="request.icon | resolveAsset">
-    <div class="passTitle">
-      {{request.destination.title}}
+    <div *ngIf="forTeacher; else studentTitle" class="passTitle">
+      Request from {{request.student.display_name}}
     </div>
+    <ng-template #studentTitle>
+      <div class="passTitle">
+        {{request.destination.title}}
+      </div>
+    </ng-template>
   </div>
   <div class="divider center"></div>
   <div class="body">
@@ -18,8 +23,21 @@
       </div>
     </div>
     <div class="bottom">
-      <br><br>
-      Pass Requested
+      <div *ngIf="forTeacher; else notForTeacher;">
+        <button mat-button class="clickRipple end-pass" (click)="endPass()">
+          <div class="bcard">
+              <div class="content">
+                  <div class="title">
+                     Accept
+                  </div>
+              </div>
+          </div>
+        </button>
+      </div>
+      <ng-template #notForTeacher>
+        <br><br>
+        Pass Requested
+      </ng-template>
     </div>
   </div>
 </div>

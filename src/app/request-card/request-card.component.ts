@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Request } from '../NewModels';
 
 @Component({
@@ -10,6 +10,11 @@ export class RequestCardComponent implements OnInit {
 
   @Input()
   request:Request;
+
+  @Input()
+  forTeacher:boolean = false;
+
+  @Output() onAccept: EventEmitter<any> = new EventEmitter();
 
   constructor() { }
 

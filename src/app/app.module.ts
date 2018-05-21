@@ -66,6 +66,7 @@ import { HallpassCardComponent } from './hallpass-card/hallpass-card.component';
 import { RequestCardComponent } from './request-card/request-card.component';
 import { InvitationCardComponent } from './invitation-card/invitation-card.component';
 import { FuturePassCardComponent } from './future-pass-card/future-pass-card.component';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
   { path: 'main', component: MainPageComponent },
@@ -139,6 +140,7 @@ const appRoutes: Routes = [
     MatCardModule,
     MatGridListModule,
     MatSliderModule,
+    MatSlideToggleModule,
     ToastModule.forRoot(),
     RouterModule.forRoot(
       appRoutes

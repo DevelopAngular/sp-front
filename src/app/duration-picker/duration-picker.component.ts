@@ -20,7 +20,7 @@ export class DurationPickerComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.selectedDuration = new Duration('3 minutes', 180);
+    this.selectedDuration = new Duration('5 minutes', 300);
   }
 
   validate(){

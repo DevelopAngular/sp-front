@@ -10,7 +10,7 @@ import { Message} from 'primeng/components/common/api';
 import { JSONSerializer } from '../models';
 import { User } from '../models';
 import { Pinnable, Location, Duration, HallPass, Request } from '../NewModels';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSlideToggleChange } from '@angular/material';
 import { LocationChooseComponent } from '../location-choose/location-choose.component';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 import { LocationTableComponent } from '../location-table/location-table.component';
@@ -51,6 +51,8 @@ export class HallpassFormComponent implements OnInit {
   sliderDuration:number = 5;
   toState:string = "pinnables";
   toCategory:string = "";
+  selectedStudents: User[] = [];
+  isMandatory: boolean = false;
 
   public pinnables:Promise<Pinnable[]>;
 
@@ -151,6 +153,11 @@ export class HallpassFormComponent implements OnInit {
     console.log(this.travelType);
   }
 
+  updatePassType(event:MatSlideToggleChange){
+    this.isMandatory = event.checked;
+    console.log("[Is Mandatory]: ", this.isMandatory);
+  }
+
   locationChosen(event:Location){
     this.toState = "pinnables";
     this.to_title = event.title;
@@ -158,6 +165,25 @@ export class HallpassFormComponent implements OnInit {
     this.setGradient("to", this.greenGradient);
     this.formState = "fields";
     this.toLocation = event;
+  }
+
+  determinePass(){
+    if(this.isStaff)
+      this.teacherPass();
+    else
+      this.newPass();
+  }
+
+  teacherPass(){
+    if(this.selectedStudents.length < 1){
+      this.msgs.push({severity:'error', summary:'Attention!', detail:'Make sure you you select student(s).'}); 
+    } else{
+      if(this.isMandatory){
+        this.newPass();
+      } else{
+        this.newInvitation();
+      }
+    }
   }
 
   newRequest(message:string){
@@ -176,7 +202,8 @@ export class HallpassFormComponent implements OnInit {
   }
 
   newPass(){
-    let body = {
+    if(!this.isStaff){
+      let body = {
       'student': this.user.id,
       'duration': this.duration,
       'origin': this.fromLocation.id,
@@ -184,13 +211,84 @@ export class HallpassFormComponent implements OnInit {
       'travel_type': this.travelType
       };
 
-    this.http.post("api/methacton/v1/hall_passes", body, {headers:{'':''}}).subscribe((data) =>{
-      console.log("Request POST Data: ", data);
-      this.dialogRef.close(HallPass.fromJSON(data));
-    });
+      this.http.post("api/methacton/v1/hall_passes", body, {headers:{'':''}}).subscribe((data) =>{
+        console.log("Request POST Data: ", data);
+        this.dialogRef.close(HallPass.fromJSON(data));
+      });
+    } else{
+      // console.log("[Staff Pass]: ", this.selectedStudents.length);
+      if(this.selectedStudents.length > 1){
+        let students: string[] = [];
+        for(let i = 0; i < this.selectedStudents.length; i++){
+          students.push(this.selectedStudents[i].id);
+        }
+        let body = {
+          'students': students,
+          'duration': this.duration,
+          'origin': this.fromLocation.id,
+          'destination': this.toLocation.id,
+          'travel_type': this.travelType
+          };
+    
+          this.http.post("api/methacton/v1/hall_passes/bulk_create", body, {headers:{'':''}}).subscribe((data) =>{
+            console.log("Request POST Data: ", data);
+            this.dialogRef.close("");
+          });
+      } else{
+        let body = {
+          'student': this.selectedStudents[0].id,
+          'duration': this.duration,
+          'origin': this.fromLocation.id,
+          'destination': this.toLocation.id,
+          'travel_type': this.travelType
+          };
+    
+          this.http.post("api/methacton/v1/hall_passes", body, {headers:{'':''}}).subscribe((data) =>{
+            console.log("Request POST Data: ", data);
+            this.dialogRef.close(HallPass.fromJSON(data));
+          });
+      }
+    }
   }
 
+  newInvitation(){
+    if(this.selectedStudents.length > 1){
+      let students: string[] = [];
+      for(let i = 0; i < this.selectedStudents.length; i++){
+        students.push(this.selectedStudents[i].id);
+      }
+      let body = {
+        'students': students,
+        'default_origin': null,
+        'destination': this.toLocation.id,
+        'date_choices': [new Date()],
+        'duration': this.duration,
+        };
   
+        this.http.post("api/methacton/v1/invitations/bulk_create", body, {headers:{'':''}}).subscribe((data) =>{
+          console.log("Request POST Data: ", data);
+          this.dialogRef.close("");
+        });
+    } else{
+      let body = {
+        'student': this.selectedStudents[0].id,
+        'default_origin': null,
+        'destination': this.toLocation.id,
+        'date_choices': [new Date()],
+        'duration': this.duration,
+        };
+  
+        this.http.post("api/methacton/v1/invitations", body, {headers:{'':''}}).subscribe((data) =>{
+          console.log("Request POST Data: ", data);
+          this.dialogRef.close(HallPass.fromJSON(data));
+        });
+    }
+  }
+
+  studentsUpdated(students){
+    this.selectedStudents = students;
+    console.log(this.selectedStudents);
+  }
 
   getUser(){
     return new Promise((resolve, reject) => {

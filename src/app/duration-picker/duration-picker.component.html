@@ -1,7 +1,7 @@
 <span class="ui-fluid wrapper">
   <div class="ui-inputgroup">
     <p-dropdown [(ngModel)]="selectedDuration" [autoWidth]="false"
-                [options]="durations" [showClear]="true"
+                [options]="durations" [showClear]="false"
                 placeholder="Duration" optionLabel="display"
                 appendTo="body" (onChange)="updateDuration()">
     </p-dropdown>

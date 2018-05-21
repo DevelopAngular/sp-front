@@ -25,6 +25,10 @@
     margin: 40px 65px 0px 65px
 }
 
+
+.side{
+    min-width: 150px;
+}
 .sticky {
     position: fixed;
     bottom: 2%;

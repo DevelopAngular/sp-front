@@ -15,10 +15,11 @@ export class InvitationCardComponent implements OnInit {
   invitation:Invitation;
 
   @Output()
-  onSelect:EventEmitter<any> = new EventEmitter();
+  onAccept:EventEmitter<any> = new EventEmitter();
 
-  weekday = ["Sundy"];
-  month = [];
+  weekday:string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  month:string[] = ["January", "February", "March", "April", "May", "June", "July",
+                    "August", "September","October", "November", "December"];
 
   selectedDate: Date;
 
@@ -27,27 +28,6 @@ export class InvitationCardComponent implements OnInit {
   constructor(private http:HttpService, public dialog: MatDialog) { }
 
   ngOnInit() {
-    this.weekday[0] = "Sunday";
-    this.weekday[1] = "Monday";
-    this.weekday[2] = "Tuesday";
-    this.weekday[3] = "Wednesday";
-    this.weekday[4] = "Thursday";
-    this.weekday[5] = "Friday";
-    this.weekday[6] = "Saturday";
-
-    this.month[0] = "January";
-    this.month[1] = "February";
-    this.month[2] = "March";
-    this.month[3] = "April";
-    this.month[4] = "May";
-    this.month[5] = "June";
-    this.month[6] = "July";
-    this.month[7] = "August";
-    this.month[8] = "September";
-    this.month[9] = "October";
-    this.month[10] = "November";
-    this.month[11] = "December";
-
     this.origin = this.invitation.default_origin;
   }
 
@@ -106,8 +86,12 @@ export class InvitationCardComponent implements OnInit {
   }
 
   acceptInvitation(){
-    this.http.post('api/methacton/v1/invitations/' +this.invitation.id +'/accept', "", {"":""});
-    this.onSelect.emit();
+    let body = {
+      'start_time': this.selectedDate,
+      'origin': this.origin.id
+    };
+    this.http.post('api/methacton/v1/invitations/' +this.invitation.id +'/accept', body, {"":""}).subscribe();
+    this.onAccept.emit();
   }
 
 }

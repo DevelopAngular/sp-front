@@ -61,21 +61,21 @@ export class MainPageComponent implements OnInit {
       this.isStaff = this.user.roles.includes('edit_all_hallpass');
       this.invitations = this.http.get<Invitation[]>('api/methacton/v1/invitations?status=pending').toPromise();
       this.requests = this.http.get<Request[]>('api/methacton/v1/pass_requests?status=pending').toPromise();
-      
-      this.http.get<Paged<HallPass>>('api/methacton/v1/hall_passes/summary').toPromise().then(data => {
-        this.currentPass = (!!data['active_pass'])?HallPass.fromJSON(data['active_pass']):null;
-        this.checkedPasses = true;
-        if(!!data['future_passes']){
-          for(let i = 0; i<data['future_passes'].length;i++){
-            this.futurePasses.push(HallPass.fromJSON(data['future_passes'][i]));
+      if(!this.isStaff){
+        this.http.get<Paged<HallPass>>('api/methacton/v1/hall_passes/summary').toPromise().then(data => {
+          this.currentPass = (!!data['active_pass'])?HallPass.fromJSON(data['active_pass']):null;
+          this.checkedPasses = true;
+          if(!!data['future_passes']){
+            for(let i = 0; i<data['future_passes'].length;i++){
+              this.futurePasses.push(HallPass.fromJSON(data['future_passes'][i]));
+            }
+          } else{
+            this.futurePasses = null;
           }
-        } else{
-          this.futurePasses = null;
-        }
-      });
-      this.http.get<any[]>('api/methacton/v1/hall_passes/summary').subscribe((data:any[])=>{
-        
-      });
+        });
+      } else{
+        this.checkedPasses = true;
+      }
     }
   }
 
@@ -85,11 +85,13 @@ export class MainPageComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log((result instanceof HallPass)?"HallPass":"Request");
-      if(result instanceof HallPass){
+      if(result instanceof HallPass && !this.isStaff){
         this.currentPass = result;
       } else{
-        this.requests = this.http.get<Request[]>('api/methacton/v1/pass_requests?status=pending').toPromise();
+        if(this.isStaff)
+          this.invitations = this.http.get<Invitation[]>('api/methacton/v1/invitations?status=pending').toPromise();
+        else
+          this.requests = this.http.get<Request[]>('api/methacton/v1/pass_requests?status=pending').toPromise();
       }
       //this.animal = result;
     });
@@ -101,6 +103,10 @@ export class MainPageComponent implements OnInit {
     this.http.post('api/methacton/v1/hall_passes/' +this.currentPass.id +'/ended', null, {'':''}).subscribe((results) => {
     });
     this.currentPass = null;
+  }
+
+  updateInvites(){
+    this.invitations = this.http.get<Invitation[]>('api/methacton/v1/invitations?status=pending').toPromise();
   }
 
 }
