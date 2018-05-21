@@ -85,15 +85,14 @@ export class MainPageComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if(result instanceof HallPass && !this.isStaff){
-        this.currentPass = result;
-      } else{
-        if(this.isStaff)
-          this.invitations = this.http.get<Invitation[]>('api/methacton/v1/invitations?status=pending').toPromise();
-        else
-          this.requests = this.http.get<Request[]>('api/methacton/v1/pass_requests?status=pending').toPromise();
+      if(result instanceof HallPass){
+        if(!this.isStaff)
+          this.currentPass = result;
+      } else if(result instanceof Request){
+        this.updateRequests();
+      } else if(result instanceof Invitation){
+        this.updateInvites();
       }
-      //this.animal = result;
     });
   } 
 
@@ -107,6 +106,10 @@ export class MainPageComponent implements OnInit {
 
   updateInvites(){
     this.invitations = this.http.get<Invitation[]>('api/methacton/v1/invitations?status=pending').toPromise();
+  }
+
+  updateRequests(){
+    this.requests = this.http.get<Request[]>('api/methacton/v1/pass_requests?status=pending').toPromise();
   }
 
 }

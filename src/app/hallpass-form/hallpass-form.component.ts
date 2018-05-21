@@ -9,7 +9,7 @@ import { MessageService} from 'primeng/components/common/messageservice';
 import { Message} from 'primeng/components/common/api';
 import { JSONSerializer } from '../models';
 import { User } from '../models';
-import { Pinnable, Location, Duration, HallPass, Request } from '../NewModels';
+import { Pinnable, Location, Duration, HallPass, Request, Invitation } from '../NewModels';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSlideToggleChange } from '@angular/material';
 import { LocationChooseComponent } from '../location-choose/location-choose.component';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
@@ -232,7 +232,7 @@ export class HallpassFormComponent implements OnInit {
     
           this.http.post("api/methacton/v1/hall_passes/bulk_create", body, {headers:{'':''}}).subscribe((data) =>{
             // console.log("Request POST Data: ", data);
-            this.dialogRef.close("");
+            this.dialogRef.close(HallPass.fromJSON(data[0]));
           });
       } else{
         let body = {
@@ -267,7 +267,7 @@ export class HallpassFormComponent implements OnInit {
   
         this.http.post("api/methacton/v1/invitations/bulk_create", body, {headers:{'':''}}).subscribe((data) =>{
           // console.log("Request POST Data: ", data);
-          this.dialogRef.close("");
+          this.dialogRef.close(Invitation.fromJSON(data[0]));
         });
     } else{
       let body = {
@@ -280,7 +280,7 @@ export class HallpassFormComponent implements OnInit {
   
         this.http.post("api/methacton/v1/invitations", body, {headers:{'':''}}).subscribe((data) =>{
           // console.log("Request POST Data: ", data);
-          this.dialogRef.close(HallPass.fromJSON(data));
+          this.dialogRef.close(Invitation.fromJSON(data));
         });
     }
   }
