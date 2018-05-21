@@ -17,6 +17,10 @@ function joinPaths(paths: string[]): string {
 export class ResolveAssetPipe implements PipeTransform {
 
   transform(value: string, args?: any): any {
+    if (value.indexOf('http://') === 0 || value.indexOf('https://') === 0) {
+      return value;
+    }
+
     return joinPaths([__webpack_public_path__, value]);
   }
 
