@@ -67,6 +67,7 @@ import { RequestCardComponent } from './request-card/request-card.component';
 import { InvitationCardComponent } from './invitation-card/invitation-card.component';
 import { FuturePassCardComponent } from './future-pass-card/future-pass-card.component';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { GradientButtonComponent } from './gradient-button/gradient-button.component';
 const appRoutes: Routes = [
   { path: '', component: GoogleSigninComponent },
   { path: 'main', component: MainPageComponent },
@@ -93,6 +94,7 @@ const appRoutes: Routes = [
     RequestCardComponent,
     InvitationCardComponent,
     FuturePassCardComponent,
+    GradientButtonComponent,
   ],
   entryComponents: [
     HallpassFormComponent,

@@ -80,6 +80,8 @@ export class MainPageComponent implements OnInit {
   }
 
   showForm(): void {
+    console.log('showForm()');
+
     let dialogRef = this.dialog.open(HallpassFormComponent, {
       width: '750px'
     });
@@ -95,7 +97,7 @@ export class MainPageComponent implements OnInit {
       }
       //this.animal = result;
     });
-  } 
+  }
 
 
   endPass(hallpass:HallPass){

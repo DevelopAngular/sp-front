@@ -5,20 +5,16 @@
             <app-hallpass-card class="pass-card" [hallpass]="currentPass" (onEnd)="endPass($event)"></app-hallpass-card>
         </div>
         <ng-template #newPass>
-            <button mat-button class="clickRipple center new-pass" (click)="showForm()">
-                <div class="card">
-                    <div class="content">
-                        <img class="icon" [src]="'./assets/Plus.png' | resolveAsset" alt="ICON">
-                        <div class="title">
-                            New Pass
-                        </div>
-                    </div>
-                </div>
-            </button>
+          <div style="height: 40px;"></div>
+          <app-gradient-button style="width: 352px; margin-top: 40px;"
+            [leftIcon]="'./assets/Plus.png'"
+            (click)="showForm()">New Pass</app-gradient-button>
+
         </ng-template>
         <div *ngIf="!!futurePasses">
             <app-hallpass-card class="pass-card" *ngFor="let hallpass of futurePasses" [hallpass]="hallpass" [future]="true"></app-hallpass-card>
         </div>
+
     </div>
     <div class="divider"></div>
     <div class="side">
