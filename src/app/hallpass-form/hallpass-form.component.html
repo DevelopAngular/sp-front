@@ -12,8 +12,8 @@
         class="location-button"
         [gradient]="fromGradient"
         [minWidth]="'150px'"
-      [leftIcon]="fromIcon"
-      (click)="chooseLoc('from')"
+        [leftIcon]="fromIcon"
+        (click)="chooseLoc('from')"
       >{{ from_title }}</app-gradient-button>
 
       <!-- <div class="type-arrows"> -->
@@ -62,7 +62,7 @@
           [minWidth]="'150px'"
           [gradient]="'#7b7df1, #5e3fb6'"
           [rightIcon]="'./assets/One_Arrow.png'"
-        (click)="determinePass()"
+          (click)="determinePass()"
         >{{ isStaff ? (isMandatory ? 'Issue' : 'Invite') : 'Make Pass' }}</app-gradient-button>
 
       </div>
@@ -74,7 +74,7 @@
 
           <app-gradient-button class="request-button"
                                [gradient]="'#7b7df1, #5e3fb6'"
-                               [leftIcon]="'./assets/One_Arrow.png'"
+                               [rightIcon]="'./assets/One_Arrow.png'"
                                (click)="newRequest(messageInput.value)">Request Pass</app-gradient-button>
           <div class="grow"></div>
         </div>
