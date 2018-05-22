@@ -76,9 +76,11 @@ export class MainPageComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: Object) => {
       if (result instanceof HallPass) {
-        if (!this.isStaff) {
-          this.currentPass = result;
-        }
+        this.isStaff.subscribe(isStaff => {
+          this._zone.run(() => {
+            this.currentPass = !isStaff ? result : null;
+          });
+        });
       } else if (result instanceof Request) {
         this.updateRequests();
       } else if (result instanceof Invitation) {
