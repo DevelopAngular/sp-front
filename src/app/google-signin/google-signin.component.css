@@ -19,8 +19,7 @@ mat-progress-spinner.inline {
 
 .wrapper {
   padding: 0 0;
-  display: flex;
-  flex-direction: row;
+  text-align: center;
 }
 
 .wrapper > .grow {

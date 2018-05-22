@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import {User} from './NewModels';
+import { UserService } from './user.service';
 @Injectable()
 export class DataService {
 
@@ -19,10 +20,11 @@ export class DataService {
     selectedTabService = new BehaviorSubject<any>('');
     currentTab = this.selectedTabService.asObservable();
 
-    userService = new BehaviorSubject<User>(null);
-    currentUser = this.userService.asObservable();
+    // userService = new BehaviorSubject<User>(null);
+    currentUser = this.userService.userData.asObservable();
 
-    constructor(){}
+    constructor(private userService: UserService) {
+    }
 
     updateBarer(barer: string){
         this.barerService.next(barer);
@@ -45,6 +47,5 @@ export class DataService {
     }
 
     updateUser(user: User){
-        this.userService.next(user);
     }
 }
