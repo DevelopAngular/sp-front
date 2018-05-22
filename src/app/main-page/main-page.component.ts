@@ -20,8 +20,7 @@ function isUserStaff(user: User): boolean {
   styleUrls: ['./main-page.component.css']
 })
 export class MainPageComponent implements OnInit {
-  @Input()
-  selectedIndex: any;
+
   activePasses: Pass[] = [];
   expiredPasses: Pass[] = [];
   templates: PendingPass[] = [];
@@ -36,7 +35,7 @@ export class MainPageComponent implements OnInit {
   invitations: Promise<Invitation[]>;
   requests: Promise<Request[]>;
 
-  constructor(private http: HttpService, private dataService: DataService, private router: Router,
+  constructor(private http: HttpService, public dataService: DataService, private router: Router,
               public dialog: MatDialog, private _zone: NgZone) {
   }
 
@@ -45,8 +44,6 @@ export class MainPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.dataService.currentTab.subscribe(selectedIndex => this.selectedIndex = selectedIndex);
-
     this.invitations = this.http.get<Invitation[]>('api/methacton/v1/invitations?status=pending').toPromise();
     this.requests = this.http.get<Request[]>('api/methacton/v1/pass_requests?status=pending').toPromise();
 

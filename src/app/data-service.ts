@@ -8,44 +8,10 @@ export class DataService {
     barerService = new BehaviorSubject<string>('');
     currentBarer = this.barerService.asObservable();
 
-    gUserService = new BehaviorSubject<any>({});
-    currentGUser = this.gUserService.asObservable();
-
-    toService = new BehaviorSubject<string>('');
-    currentTo = this.toService.asObservable();
-
-    fromService = new BehaviorSubject<string>('');
-    currentFrom = this.fromService.asObservable();
-
-    selectedTabService = new BehaviorSubject<any>('');
-    currentTab = this.selectedTabService.asObservable();
-
     // userService = new BehaviorSubject<User>(null);
     currentUser = this.userService.userData.asObservable();
 
     constructor(private userService: UserService) {
     }
 
-    updateBarer(barer: string){
-        this.barerService.next(barer);
-    }
-
-    updateGUser(gUser: any){
-        this.gUserService.next(gUser);
-    }
-
-    updateTo(to: string){
-        this.toService.next(to);
-    }
-
-    updateFrom(from: string){
-        this.fromService.next(from);
-    }
-
-    updateTab(tab: any){
-        this.selectedTabService.next(tab);
-    }
-
-    updateUser(user: User){
-    }
 }

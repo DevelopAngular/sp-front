@@ -18,7 +18,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 export class HallpassFormComponent implements OnInit {
 
   // General Set-Up
-  public barer: string;
   public isLoggedIn: Boolean = false;
   public isStaff = false;
   public msgs: Message[] = [];
@@ -53,8 +52,6 @@ export class HallpassFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.dataService.currentBarer.subscribe(barer => this.barer = barer);
-
     this.dataService.currentUser.subscribe(user => this.user = user);
     //console.log(this.user.roles);
     this.isStaff = this.user.roles.includes('edit_all_hallpass');
@@ -282,10 +279,7 @@ export class HallpassFormComponent implements OnInit {
 
   getUser() {
     return new Promise((resolve, reject) => {
-
-      const config = {headers: {'Authorization': 'Bearer ' + this.barer}};
-
-      this.http.get('api/methacton/v1/users/@me', config).subscribe((data: any) => {
+      this.http.get('api/methacton/v1/users/@me').subscribe((data: any) => {
         this.user = this.serializer.getUserFromJSON(data);
         resolve(this.user);
       }, reject);
