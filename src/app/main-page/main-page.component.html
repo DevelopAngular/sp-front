@@ -22,7 +22,7 @@
             <app-invitation-card class="request-card" *ngFor="let invitation of invitations | async" [invitation]="invitation" (onAccept)="updateInvites()"></app-invitation-card>
         </div>
         <div class="center top-margin">
-            <app-request-card class="request-card" *ngFor="let request of requests | async" [request]="request" [forTeacher]="isStaff | async"></app-request-card>
+            <app-request-card class="request-card" *ngFor="let request of requests | async" [request]="request" [forTeacher]="isStaff | async" (onAccept)="updateRequests()"></app-request-card>
         </div>
     </div>
 </div>

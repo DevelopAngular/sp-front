@@ -13,18 +13,25 @@
   <div class="divider center"></div>
   <div class="body">
     <div class="top">
-      <div class="origin center">
-        {{request.origin.title}}
+      <div class="left">
+        <div class="origin center">
+          {{request.origin.title}}
+        </div>
+          <img *ngIf="request.travel_type == 'round_trip'" class="round-trip center" [src]="'./assets/Two_Arrow.png' | resolveAsset">
+          <img *ngIf="request.travel_type == 'one_way'" class="one-way center" [src]="'./assets/One_Arrow.png' | resolveAsset">
+        <div class="destination center">
+          {{request.destination.title}}
+        </div>
       </div>
-        <img *ngIf="request.travel_type == 'round_trip'" class="round-trip center" [src]="'./assets/Two_Arrow.png' | resolveAsset">
-        <img *ngIf="request.travel_type == 'one_way'" class="one-way center" [src]="'./assets/One_Arrow.png' | resolveAsset">
-      <div class="destination center">
-        {{request.destination.title}}
+      <div class="message" *ngIf="request.attachment_message != 'null'">
+        Message:<br>
+        {{request.attachment_message}}
       </div>
+
     </div>
     <div class="bottom">
       <div *ngIf="forTeacher; else notForTeacher;">
-        <button mat-button class="clickRipple end-pass" (click)="endPass()">
+        <button mat-button class="clickRipple end-pass" (click)="acceptRequest()">
           <div class="bcard">
               <div class="content">
                   <div class="title">

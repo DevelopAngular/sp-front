@@ -65,7 +65,6 @@ import { LocationCellComponent } from './location-cell/location-cell.component';
 import { HallpassCardComponent } from './hallpass-card/hallpass-card.component';
 import { RequestCardComponent } from './request-card/request-card.component';
 import { InvitationCardComponent } from './invitation-card/invitation-card.component';
-import { FuturePassCardComponent } from './future-pass-card/future-pass-card.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { GoogleLoginService } from './google-login.service';
 import { GradientButtonComponent } from './gradient-button/gradient-button.component';
@@ -98,7 +97,6 @@ const appRoutes: Routes = [
     HallpassCardComponent,
     RequestCardComponent,
     InvitationCardComponent,
-    FuturePassCardComponent,
     GradientButtonComponent,
     SignOutComponent,
     OptionsComponent,
