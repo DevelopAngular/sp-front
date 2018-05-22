@@ -1,9 +1,5 @@
-import {Component, ElementRef, Input, NgZone, ViewChild} from '@angular/core';
-import {Router} from '@angular/router';
-
-import {DataService} from '../data-service';
-import {HttpService} from '../http-service';
-import {UserService} from '../user.service';
+import { Component, NgZone } from '@angular/core';
+import { GoogleLoginService } from '../google-login.service';
 
 @Component({
   selector: 'google-signin',
@@ -13,32 +9,18 @@ import {UserService} from '../user.service';
 
 export class GoogleSigninComponent {
 
-  @Input()
-  page: string;
-
   public name = 'Not Logged in!';
 
   public isLoaded = false;
   public progressValue = 0;
   public progressType = 'determinate';
 
-  public content: any = '';
-  public user: any = '';
-  public profile: any = '';
-
-  @ViewChild('signInButton') signInButton;
-  @ViewChild('signOutButton') signOutButton;
-
-  constructor(private element: ElementRef, private http: HttpService,
-              private router: Router, private _ngZone: NgZone,
-              private dataService: DataService,
-              private userService: UserService) {
+  constructor(private _ngZone: NgZone, private loginService: GoogleLoginService) {
 
     let intervalId: any;
 
-    this.userService.isAuthLoaded().subscribe(isLoaded => {
+    this.loginService.isAuthLoaded().subscribe(isLoaded => {
       this._ngZone.run(() => {
-        //console.log('isLoaded:', isLoaded);
         this.isLoaded = isLoaded;
 
         if (isLoaded && intervalId !== undefined) {
@@ -55,22 +37,9 @@ export class GoogleSigninComponent {
 
       });
     });
-
-    this.userService.userData.subscribe(user => {
-      this.dataService.currentBarer.subscribe((barer)=>{
-        if(!!barer){
-          this.router.navigate(['/main']);
-        }
-      });
-    });
   }
 
   initLogin() {
-    this.userService.signIn()
-      .catch(e => console.error(e));
-  }
-
-  pinnableSelected(event){
-    // console.log(event);
+    this.loginService.signIn();
   }
 }

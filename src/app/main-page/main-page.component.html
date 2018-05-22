@@ -1,5 +1,5 @@
 <app-navbar></app-navbar>
-<div class="main-page">
+<div class="main-page" *ngIf="dataService.currentUser | async">
     <div *ngIf="checkedPasses" class="middle">
         <div *ngIf="!!currentPass; else newPass;" class="pass-card center">
             <app-hallpass-card class="pass-card" [hallpass]="currentPass" (onEnd)="endPass($event)"></app-hallpass-card>
@@ -22,7 +22,7 @@
             <app-invitation-card class="request-card" *ngFor="let invitation of invitations | async" [invitation]="invitation" (onAccept)="updateInvites()"></app-invitation-card>
         </div>
         <div class="center top-margin">
-            <app-request-card class="request-card" *ngFor="let request of requests | async" [request]="request" [forTeacher]="isStaff"></app-request-card>
+            <app-request-card class="request-card" *ngFor="let request of requests | async" [request]="request" [forTeacher]="isStaff | async"></app-request-card>
         </div>
     </div>
 </div>
