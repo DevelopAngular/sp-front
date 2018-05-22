@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, NgZone, OnInit } from '@angular/core';
 import { DataService } from '../data-service';
 import { Router } from '@angular/router';
 import { HttpService } from '../http-service';
@@ -9,7 +9,6 @@ import { HallPass, HallPassSummary, Invitation, Request, User } from '../NewMode
 import { Observable } from 'rxjs/Observable';
 
 import 'rxjs/add/operator/map';
-import { GoogleLoginService } from '../google-login.service';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('edit_all_hallpass');
@@ -38,7 +37,7 @@ export class MainPageComponent implements OnInit {
   requests: Promise<Request[]>;
 
   constructor(private http: HttpService, private dataService: DataService, private router: Router,
-              public dialog: MatDialog, private loginService: GoogleLoginService) {
+              public dialog: MatDialog, private _zone: NgZone) {
   }
 
   get isStaff(): Observable<boolean> {
@@ -54,15 +53,17 @@ export class MainPageComponent implements OnInit {
     this.isStaff.subscribe(isStaff => {
       if (!isStaff) {
         this.http.get<HallPassSummary>('api/methacton/v1/hall_passes/summary').toPromise().then(data => {
-          this.currentPass = (!!data['active_pass']) ? HallPass.fromJSON(data['active_pass']) : null;
-          this.checkedPasses = true;
-          if (!!data['future_passes']) {
-            for (let i = 0; i < data['future_passes'].length; i++) {
-              this.futurePasses.push(HallPass.fromJSON(data['future_passes'][i]));
+          this._zone.run(() => {
+            this.currentPass = (!!data['active_pass']) ? HallPass.fromJSON(data['active_pass']) : null;
+            this.checkedPasses = true;
+            if (!!data['future_passes']) {
+              for (let i = 0; i < data['future_passes'].length; i++) {
+                this.futurePasses.push(HallPass.fromJSON(data['future_passes'][i]));
+              }
+            } else {
+              this.futurePasses = null;
             }
-          } else {
-            this.futurePasses = null;
-          }
+          });
         });
       } else {
         this.checkedPasses = true;
