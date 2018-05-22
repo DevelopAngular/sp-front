@@ -70,6 +70,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { GoogleLoginService } from './google-login.service';
 import { GradientButtonComponent } from './gradient-button/gradient-button.component';
 import { SignOutComponent } from './sign-out/sign-out.component';
+import { OptionsComponent } from './options/options.component';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: '/main', pathMatch: 'full'},
@@ -100,11 +101,13 @@ const appRoutes: Routes = [
     FuturePassCardComponent,
     GradientButtonComponent,
     SignOutComponent,
+    OptionsComponent,
   ],
   entryComponents: [
     HallpassFormComponent,
     LocationChooseComponent,
     ConsentMenuComponent,
+    OptionsComponent,
   ],
   imports: [
     BrowserModule,

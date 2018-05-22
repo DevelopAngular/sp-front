@@ -87,11 +87,6 @@ export class MainPageComponent implements OnInit {
     });
   }
 
-  signOut() {
-    this.router.navigate(['/sign-out']);
-  }
-
-
   endPass(hallpass: HallPass) {
     // console.log("Ending pass");
     this.http.post('api/methacton/v1/hall_passes/' + this.currentPass.id + '/ended', null, {'': ''}).subscribe((results) => {

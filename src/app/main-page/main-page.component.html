@@ -1,4 +1,4 @@
-<app-navbar (gearClick)="signOut()"></app-navbar>
+<app-navbar></app-navbar>
 <div class="main-page" *ngIf="dataService.currentUser | async">
     <div *ngIf="checkedPasses" class="middle">
         <div *ngIf="!!currentPass; else newPass;" class="pass-card center">
