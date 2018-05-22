@@ -4,11 +4,16 @@
     /* background-image: radial-gradient(circle at 43% 66%, #03cf31, rgba(1, 129, 85, 0.7)); */
     box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.24);
     position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .heading{
     display: flex;
     flex-direction: row;
+    justify-content: right;
+    width: 55%;
 }
 
 .center{ 
@@ -55,16 +60,18 @@
     margin: 3px 0px 0px 3px;
 }
 
-.profile-pic, .profile-name, .profile-options{
+/* .profile-pic, .profile-name, .profile-options{
     display: inline-block;
-}
+} */
 
 .user-info{
-    position: absolute;
-    width: 150px;
-    right: 28px;
-    top: 50%;
-    transform: translate(0, -50%);
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    align-items: center;
+    width: 45%;
+    /* top: -50%;
+    transform: translate(0, 50%); */
 }
 
 .profile-pic{
@@ -75,8 +82,6 @@
 }
 
 .profile-name{
-    width: 500px;
-    height: 17px;
     font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
     font-size: 14px;
     font-weight: 600;
@@ -85,17 +90,18 @@
     line-height: normal;
     letter-spacing: normal;
     color: #ffffff;
-    position: absolute;
-    top: 50%;
-    transform: translate(0, -50%);
-    padding-left: 10px;
+    padding-right: 10px;
+    /* top: 50%;
+    transform: translate(0, -50%); */
+    /* align-items: center; */
 }
 
 .profile-options{
     width: 26.5px;
     height: 26.5px;
-    padding-left: 50px;
-    position: absolute;
-    top: 50%;
-    transform: translate(0, -50%);
+    margin-right: 30px;
+    /* top: 50%;
+    transform: translate(0, -50%); */
+    cursor: pointer;
+    /* margin: 8px 0px 0px 10px; */
 }
