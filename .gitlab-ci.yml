@@ -1,4 +1,12 @@
-image: alpine:latest
+image: docker:latest
+
+variables:
+  # AUTO_DEVOPS_DOMAIN is the application deployment domain and should be set as a variable at the group or project level.
+  # AUTO_DEVOPS_DOMAIN: notify-messenger-notify-server-staging.lavanote.com
+  AUTO_DEVOPS_DOMAIN: smartpass.app
+
+  KUBERNETES_VERSION: 1.9.6
+  HELM_VERSION: 2.9.1
 
 stages:
   - build
@@ -6,7 +14,22 @@ stages:
 build:
   stage: build
   script:
+    - apk add --no-cache bash tree nodejs-npm
+    - source scripts/auto_devops.sh
     - scripts/build.sh
+    - check_kube_domain
+    - install_dependencies
+    - download_chart
+    - ensure_namespace
+    - install_tiller
+    - create_secret
+    - deploy
+  environment:
+      name: staging
+      url: $AUTO_DEVOPS_DOMAIN
   only:
     refs:
       - master
+    kubernetes: active
+  tags:
+      - "docker-passthrough"

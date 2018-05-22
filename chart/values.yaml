@@ -1,0 +1,32 @@
+# Default values for chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+web:
+  repository: # gitlab.example.com/group/project
+  tag: stable
+  pullPolicy: Always
+  replicaCount: 1
+application:
+  track: stable
+  tier: web
+service:
+  enabled: true
+  name: web
+  type: ClusterIP
+  url: http://my.host.com/
+  domain: example.com
+  externalPort: 80
+  internalPort: 80
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+postgresql:
+  resources:
+    requests:
+      memory: 1024Mi
+      cpu: 200m

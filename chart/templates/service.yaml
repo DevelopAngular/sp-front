@@ -1,0 +1,19 @@
+{{- if .Values.service.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.application.name }}
+  labels:
+    app: {{ .Values.application.name }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+  - port: {{ .Values.service.externalPort }}
+    targetPort: {{ .Values.service.internalPort }}
+    protocol: TCP
+    name: {{ .Values.service.name }}
+  selector:
+    app: {{ .Values.application.name }}
+    tier: "{{ .Values.application.tier }}"
+{{- end -}}
