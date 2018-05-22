@@ -15,23 +15,20 @@ import {Location} from '../NewModels';
   templateUrl: './teacher-search.component.html',
   styleUrls: ['./teacher-search.component.css']
 })
-export class TeacherSearchComponent implements AfterViewInit {
+export class TeacherSearchComponent {
   locations: Location[] = [];
   _selectedLocation: Location;
-  barer: string;
 
   @Input()
   type:string;
-  public typeString:string = "";
 
   @Output()
   locationSelectedEvent: EventEmitter<Location> = new EventEmitter();
 
   constructor(private http: HttpService, private dataService:DataService) {}
 
-  ngAfterViewInit() {
-    this.dataService.currentBarer.subscribe(barer => this.barer = barer);
-    this.typeString = this.type=="'to'"?"Destination":"Origin";
+  get typeString(): string {
+    return this.type === "'to'" ? "Destination" : "Origin";
   }
 
   set selectedLocation(loc:Location){
@@ -44,10 +41,8 @@ export class TeacherSearchComponent implements AfterViewInit {
     this.locations = this.convertToLocations(await this.filterLocations(query));
   }
 
-  async filterLocations(name: string): Promise<any[]> {
-      const config = {headers: {'Authorization' : 'Bearer ' + this.barer}};
-      const data = await this.http.get<any[]>('api/methacton/v1/locations?search=' + encodeURI(name), config).toPromise();
-      return data;
+  filterLocations(name: string): Promise<any[]> {
+    return this.http.get<any[]>('api/methacton/v1/locations?search=' + encodeURI(name)).toPromise();
   }
 
   convertToLocations(json: any[]): Location[] {
