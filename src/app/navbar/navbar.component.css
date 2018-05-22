@@ -1,107 +1,89 @@
-.bar{
-    height: 67px;
-    background-image: radial-gradient(circle at 43% 66%, #535353, #707070);
-    /* background-image: radial-gradient(circle at 43% 66%, #03cf31, rgba(1, 129, 85, 0.7)); */
-    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.24);
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+.bar {
+  height: 67px;
+  background-image: radial-gradient(circle at 43% 66%, #535353, #707070);
+  /* background-image: radial-gradient(circle at 43% 66%, #03cf31, rgba(1, 129, 85, 0.7)); */
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.24);
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
-.heading{
-    display: flex;
-    flex-direction: row;
-    justify-content: right;
-    width: 55%;
+.grow {
+  flex-grow: 1;
 }
 
-.center{ 
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+.heading {
+   display: flex;
+   flex-direction: row;
+   justify-content: right;
+ }
+
+.heading .title {
+  width: 112.3px;
+  height: 26.5px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-size: 22px;
+  font-weight: bold;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: 0px;
+  text-align: center;
+  color: #ffffff;
 }
 
-.title{
-    width: 112.3px;
-    height: 26.5px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-    font-size: 22px;
-    font-weight: bold;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: normal;
-    letter-spacing: 0px;
-    text-align: center;
-    color: #ffffff;
+.heading .small {
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: 0px;
+  text-align: center;
+  color: #ffffff;
+  margin-left: 7px;
 }
 
-.small{
-    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-    font-size: 14px;
-    font-weight: bold;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: normal;
-    letter-spacing: 0px;
-    text-align: center;
-    color: #ffffff;
-    margin-left: 7px;
+.heading .logo {
+  width: 20px;
+  height: 20.6px;
+  /* position: absolute;
+  top: 50%;
+  transform: translate(0, -50%); */
+  padding-left: 5px;
+  margin: 3px 0px 0px 3px;
 }
 
-.logo{
-    width: 20px;
-    height: 20.6px;
-    /* position: absolute;
-    top: 50%;
-    transform: translate(0, -50%); */
-    padding-left: 5px;
-    margin: 3px 0px 0px 3px;
+.user-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  align-items: center;
+
+  width: 0;
+  min-width: 200px;
+
+  flex-grow: 1;
 }
 
-/* .profile-pic, .profile-name, .profile-options{
-    display: inline-block;
-} */
-
-.user-info{
-    display: flex;
-    flex-direction: row;
-    justify-content: right;
-    align-items: center;
-    width: 45%;
-    /* top: -50%;
-    transform: translate(0, 50%); */
+.user-info .name {
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: #ffffff;
+  padding-right: 10px;
 }
 
-.profile-pic{
-    width: 37px;
-    height: 37px;
-    background-color: #d8d8d8;
-    border-radius: 37px;
-}
+.user-info .options {
+  width: 26.5px;
+  height: 26.5px;
+  margin-right: 30px;
 
-.profile-name{
-    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: normal;
-    letter-spacing: normal;
-    color: #ffffff;
-    padding-right: 10px;
-    /* top: 50%;
-    transform: translate(0, -50%); */
-    /* align-items: center; */
-}
-
-.profile-options{
-    width: 26.5px;
-    height: 26.5px;
-    margin-right: 30px;
-    /* top: 50%;
-    transform: translate(0, -50%); */
-    cursor: pointer;
-    /* margin: 8px 0px 0px 10px; */
+  cursor: pointer;
 }
