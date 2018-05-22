@@ -1,11 +1,14 @@
 <div class="bar">
-  <div class="heading center">
+  <div class="grow"></div>
+  <div class="heading">
     <div class="title">SmartPass</div>
     <img class="logo" [src]="'./assets/One_Arrow.png' | resolveAsset">
     <div class="small">Alpha</div>
   </div>
-  <div class="user-info">
-    <div class="profile-name">John Doe</div>
-    <div class="profile-options"><img class="profile-options" [src]="'./assets/Settings.png' | resolveAsset"></div>
+  <div class="user-info grow">
+    <div class="name" style="margin-left: auto">{{ user.display_name }}</div>
+    <div class="options" >
+      <img (click)="showOptions()" class="options" [src]="'./assets/Settings.png' | resolveAsset">
+    </div>
   </div>
 </div>

@@ -1,0 +1,9 @@
+<button mat-button [style.background]="styleGradient" [style.min-width]="minWidth">
+  <div class="wrapper">
+    <img *ngIf="leftIcon" class="icon left-icon" [src]="leftIcon | resolveAsset">
+    <div class="text-content">
+      <ng-content></ng-content>
+    </div>
+    <img *ngIf="rightIcon" class="icon right-icon" [src]="rightIcon | resolveAsset">
+  </div>
+</button>

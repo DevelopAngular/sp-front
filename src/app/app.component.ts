@@ -1,12 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {FormControl} from '@angular/forms';
-
-import {Observable} from 'rxjs/Observable';
-import {startWith} from 'rxjs/operators/startWith';
-import {map} from 'rxjs/operators/map';
-
-import {HttpClient} from '@angular/common/http';
-import {RouterOutlet} from '@angular/router';
+import { Component, NgZone, OnInit } from '@angular/core';
+import { GoogleLoginService } from './google-login.service';
 
 /**
  * @title Autocomplete overview
@@ -19,12 +12,18 @@ import {RouterOutlet} from '@angular/router';
 
 export class AppComponent implements OnInit {
 
-  constructor() {
+  isAuthenticated = false;
 
+  constructor(public loginService: GoogleLoginService, private _zone: NgZone) {
   }
 
-  ngOnInit(){
-
+  ngOnInit() {
+    this.loginService.isAuthenticated$.subscribe(t => {
+      this._zone.run(() => {
+        this.isAuthenticated = t;
+      });
+    });
   }
+
 
 }

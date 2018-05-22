@@ -1,5 +1,17 @@
 import {Injectable} from '@angular/core';
 
+export interface Paged<T> {
+  results: T[];
+  prev: string;
+  next: string;
+}
+
+export interface HallPassSummary {
+  active_pass: HallPass;
+  pass_history: HallPass[];
+  future_passes: HallPass[];
+}
+
 export class User {
     constructor(public id: string,
                 public created: Date,
@@ -11,6 +23,10 @@ export class User {
                 public roles: string[]){}
 
     static fromJSON(JSON:any):User{
+      if (!JSON) {
+        return null;
+      }
+
         const
         id: string = JSON['id'],
         created: Date = new Date(JSON['created']),
@@ -42,6 +58,10 @@ export class Alert {
                 public status_sent: boolean){}
 
     static fromJSON(JSON:any):Alert{
+      if (!JSON) {
+        return null;
+      }
+
         const id: string  = JSON['id'],
         created: Date = new Date(JSON['created']),
         last_created: Date = new Date(JSON['last_updated']),
@@ -77,6 +97,10 @@ export class HallPass {
                 public icon: string){}
 
     static fromJSON(JSON:any):HallPass{
+      if (!JSON) {
+        return null;
+      }
+
         // console.log(JSON);
         const id: string = JSON['id'],
         student: User = User.fromJSON(JSON['student']),
@@ -110,6 +134,10 @@ export class Invitation {
     }
 
     static fromJSON(JSON:any){
+      if (!JSON) {
+        return null;
+      }
+
         const id: string = JSON['id'],
         student: User = User.fromJSON(JSON['student']),
         destination: Location = Location.fromJSON(JSON['destination']),
@@ -145,9 +173,13 @@ export class Location {
     }
 
     static fromJSON(JSON:any):Location{
+      if (!JSON) {
+        return null;
+      }
+
         const id: string = JSON['id'],
         title: string = JSON['title'],
-        campus: string = JSON['campus'], 
+        campus: string = JSON['campus'],
         room: string = JSON['room'],
         catagory: string = JSON['catagory'],
         restricted: boolean = JSON['restricted']==="true",
@@ -189,6 +221,10 @@ export class Pinnable {
     }
 
     static fromJSON(JSON:any):Pinnable{
+      if (!JSON) {
+        return null;
+      }
+
         const id: string = JSON['id'],
         title: string = JSON['title'],
         gradient_color: string = JSON['gradient_color'],
@@ -196,7 +232,7 @@ export class Pinnable {
         type: string = JSON['type'],
         location: Location = JSON['location'],
         category: string = JSON['category'];
-        
+
         return new Pinnable(id, title, gradient_color, icon, type, location, category);
     }
 }
@@ -215,6 +251,10 @@ export class Request {
     }
 
     static fromJSON(JSON:any):Request{
+      if (!JSON) {
+        return null;
+      }
+
         const id: string = JSON['id'],
         student: User = User.fromJSON(JSON['student']),
         origin: Location = Location.fromJSON(JSON['origin']),
@@ -223,7 +263,7 @@ export class Request {
         travel_type: string = JSON['travel_type'],
         status: string = JSON['status'],
         hallpass: HallPass = (!!JSON['hallpass'])?HallPass.fromJSON(JSON['hallpass']):null,
-        gradient_color: string = JSON['gradient_color'], 
+        gradient_color: string = JSON['gradient_color'],
         icon: string = JSON['icon'];
 
         return new Request(id, student, origin, destination, attachment_message, travel_type, status, hallpass, gradient_color, icon);
