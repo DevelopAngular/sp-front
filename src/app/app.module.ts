@@ -68,9 +68,8 @@ import { InvitationCardComponent } from './invitation-card/invitation-card.compo
 import { FuturePassCardComponent } from './future-pass-card/future-pass-card.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { GoogleLoginService } from './google-login.service';
-
-import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { GradientButtonComponent } from './gradient-button/gradient-button.component';
+
 const appRoutes: Routes = [
   {path: '', redirectTo: '/main', pathMatch: 'full'},
   {path: 'main', component: MainPageComponent},
