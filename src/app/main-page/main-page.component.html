@@ -1,5 +1,5 @@
 <app-navbar></app-navbar>
-<div class="main-page" *ngIf="dataService.currentUser | async">
+<div class="main-page container" *ngIf="dataService.currentUser | async">
     <div *ngIf="checkedPasses" class="middle">
         <div *ngIf="!!currentPass; else newPass;" class="pass-card center">
             <app-hallpass-card class="pass-card" [hallpass]="currentPass" (onEnd)="endPass($event)"></app-hallpass-card>
