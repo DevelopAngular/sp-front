@@ -261,8 +261,9 @@ export class HallpassFormComponent implements OnInit {
         'students': students,
         'default_origin': null,
         'destination': this.toLocation.id,
-        'date_choices': [new Date()],
+        'date_choices': [new Date().toISOString()],
         'duration': this.duration,
+        'travel_type': this.travelType
         };
   
         this.http.post("api/methacton/v1/invitations/bulk_create", body, {headers:{'':''}}).subscribe((data) =>{
@@ -274,8 +275,9 @@ export class HallpassFormComponent implements OnInit {
         'student': this.selectedStudents[0].id,
         'default_origin': null,
         'destination': this.toLocation.id,
-        'date_choices': [new Date()],
+        'date_choices': [new Date().toISOString()],
         'duration': this.duration,
+        'travel_type': this.travelType
         };
   
         this.http.post("api/methacton/v1/invitations", body, {headers:{'':''}}).subscribe((data) =>{

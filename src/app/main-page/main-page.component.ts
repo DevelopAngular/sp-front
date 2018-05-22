@@ -59,7 +59,8 @@ export class MainPageComponent implements OnInit {
     else{
       this.dataService.currentUser.subscribe(user => this.user = user);
       this.isStaff = this.user.roles.includes('edit_all_hallpass');
-      this.invitations = this.http.get<Invitation[]>('api/methacton/v1/invitations?status=pending').toPromise();
+      if(this.isStaff)
+        this.invitations = this.http.get<Invitation[]>('api/methacton/v1/invitations?status=pending').toPromise();
       this.requests = this.http.get<Request[]>('api/methacton/v1/pass_requests?status=pending').toPromise();
       if(!this.isStaff){
         this.http.get<Paged<HallPass>>('api/methacton/v1/hall_passes/summary').toPromise().then(data => {
@@ -91,7 +92,8 @@ export class MainPageComponent implements OnInit {
       } else if(result instanceof Request){
         this.updateRequests();
       } else if(result instanceof Invitation){
-        this.updateInvites();
+        if(!this.isStaff)
+          this.updateInvites();
       }
     });
   } 

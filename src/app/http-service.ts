@@ -29,6 +29,13 @@ export class HttpService {
     }
 
     post(url: string, body?, config?: Config) {
+      if(!!body && !(body instanceof FormData)){
+        let formData: FormData = new FormData();
+        for(let prop in body){
+          formData.append(prop, body[prop]);
+        }
+        body = formData;
+      }
       if (config) {
         this.dataService.currentBarer.subscribe(barer => this.barer = barer);
         const newConfig: Config = {headers: {'Authorization' : 'Bearer ' + this.barer}};
