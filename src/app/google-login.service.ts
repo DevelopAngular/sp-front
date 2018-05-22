@@ -73,9 +73,14 @@ export class GoogleLoginService {
     this.isAuthenticated$.next(true);
   }
 
-  clearInternal() {
+  clearInternal(permanent: boolean = false) {
     this.authToken$.next(null);
-    this.isAuthenticated$.next(false);
+
+    if (!permanent) {
+      this.isAuthenticated$.next(false);
+    }
+
+    localStorage.removeItem(STORAGE_KEY);
   }
 
   /**

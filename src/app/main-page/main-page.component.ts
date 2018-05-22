@@ -9,6 +9,7 @@ import { HallPass, HallPassSummary, Invitation, Request, User } from '../NewMode
 import { Observable } from 'rxjs/Observable';
 
 import 'rxjs/add/operator/map';
+import { GoogleLoginService } from '../google-login.service';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('edit_all_hallpass');
@@ -36,7 +37,8 @@ export class MainPageComponent implements OnInit {
   invitations: Promise<Invitation[]>;
   requests: Promise<Request[]>;
 
-  constructor(private http: HttpService, private dataService: DataService, private router: Router, public dialog: MatDialog) {
+  constructor(private http: HttpService, private dataService: DataService, private router: Router,
+              public dialog: MatDialog, private loginService: GoogleLoginService) {
   }
 
   get isStaff(): Observable<boolean> {
@@ -85,6 +87,10 @@ export class MainPageComponent implements OnInit {
         this.updateInvites();
       }
     });
+  }
+
+  signOut() {
+    this.router.navigate(['/sign-out']);
   }
 
 
