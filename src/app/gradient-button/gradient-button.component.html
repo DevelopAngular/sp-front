@@ -1,4 +1,4 @@
-<button mat-button [style.background]="styleGradient">
+<button mat-button [style.background]="styleGradient" [style.min-width]="minWidth">
   <div class="wrapper">
     <img *ngIf="leftIcon" class="icon left-icon" [src]="leftIcon | resolveAsset">
     <div class="text-content">

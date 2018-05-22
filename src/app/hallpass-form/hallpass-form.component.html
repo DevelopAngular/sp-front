@@ -4,35 +4,31 @@
   <div class="form">
     <app-type-selector class="center" (onChange)="updateType($event)"></app-type-selector>
     <div class="divider"></div>
-      <app-student-search *ngIf="isStaff" class="studentSearch center" (onUpdate)="studentsUpdated($event)"></app-student-search>
-      <div *ngIf="isStaff" class="divider"></div>
+    <app-student-search *ngIf="isStaff" class="studentSearch center"
+                        (onUpdate)="studentsUpdated($event)"></app-student-search>
+    <div *ngIf="isStaff" class="divider"></div>
     <div class="center locs">
-      <button mat-button class="clickRipple from" (click)="chooseLoc('from')">
-        <div class="card" [style.background]="getGradient('from')">
-          <div class="vcenter">
-            <img *ngIf="fromIcon != ''" class="icon vcenter" [src]="fromIcon | resolveAsset">
-            <div class="title vcenter">
-              {{from_title}}
-            </div>
-          </div>
-        </div>
-      </button>
+      <app-gradient-button
+        class="location-button"
+        [gradient]="fromGradient"
+        [minWidth]="'150px'"
+      [leftIcon]="fromIcon"
+      (click)="chooseLoc('from')"
+      >{{ from_title }}</app-gradient-button>
 
       <!-- <div class="type-arrows"> -->
-        <img *ngIf="travelType == 'round_trip'" class="round-trip" [src]="'./assets/RT_Arrow.png' | resolveAsset">
-        <img *ngIf="travelType == 'one_way'" class="one-way" [src]="'./assets/OW_Arrow.png' | resolveAsset">
+      <img [class.hidden]="travelType != 'round_trip'" class="round-trip" [src]="'./assets/RT_Arrow.png' | resolveAsset">
+      <img [class.hidden]="travelType != 'one_way'" class="one-way" [src]="'./assets/OW_Arrow.png' | resolveAsset">
       <!-- </div> -->
 
-      <button mat-button class="clickRipple to" (click)="chooseLoc('to')">
-        <div class="card" [style.background]="getGradient('to')">
-          <div class="vcenter">
-            <img *ngIf="toIcon != ''" class="icon vcenter" [src]="toIcon | resolveAsset">
-            <div class="title vcenter">
-              {{to_title}}
-            </div>
-          </div>
-        </div>
-      </button>
+      <app-gradient-button
+        class="location-button"
+        [gradient]="toGradient"
+        [minWidth]="'150px'"
+        [leftIcon]="toIcon"
+        (click)="chooseLoc('to')"
+      >{{ to_title }}</app-gradient-button>
+
     </div>
     <div class="divider"></div>
     <div *ngIf="formState == 'to'">
@@ -44,7 +40,8 @@
         </mat-grid-list>
       </div>
       <div *ngIf="toState == 'category'">
-        <app-location-table class="center" (onSelect)="locationChosen($event)" [setCategory]="toCategory"></app-location-table>
+        <app-location-table class="center" (onSelect)="locationChosen($event)"
+                            [setCategory]="toCategory"></app-location-table>
       </div>
     </div>
     <div *ngIf="formState == 'fields'">
@@ -52,8 +49,8 @@
         <div class="question">How much time do you need?
           <br><br>
           <div class="amount">
-              <app-duration-picker (onChange)="updateDuration($event)"></app-duration-picker>
-            </div>
+            <app-duration-picker (onChange)="updateDuration($event)"></app-duration-picker>
+          </div>
         </div>
 
         <div *ngIf="isStaff" class="passType">
@@ -61,40 +58,25 @@
           <mat-slide-toggle (change)="updatePassType($event)"></mat-slide-toggle>
         </div>
 
-        <button mat-button class="clickRipple request" (click)="determinePass()">
-          <div class="card requestCard">
-            <div class="cardElements c">
-              <div class="mtitle">
-                <div *ngIf="isStaff; else notStaffButton">
-                  <div *ngIf="isMandatory; else notMandatoryButton">
-                    Issue
-                  </div>
-                  <ng-template #notMandatoryButton>
-                    Invite
-                  </ng-template>
-                </div>
-                <ng-template #notStaffButton>
-                  Make Pass
-                </ng-template>
-              </div>
-              <img class="micon" [src]="'./assets/One_Arrow.png' | resolveAsset">
-            </div>
-          </div>
-        </button>
+        <app-gradient-button
+          [minWidth]="'150px'"
+          [gradient]="'#7b7df1, #5e3fb6'"
+          [rightIcon]="'./assets/One_Arrow.png'"
+        (click)="determinePass()"
+        >{{ isStaff ? (isMandatory ? 'Issue' : 'Invite') : 'Make Pass' }}</app-gradient-button>
+
       </div>
       <ng-template #restrictedFields>
-        <div class="center">
-          <textarea #messageInput class="message" matInput placeholder="Leave a message for the teacher such as when and why you want the pass. "></textarea>
-          <button mat-button class="clickRipple request" (click)="newRequest(messageInput.value)">
-            <div class="card requestCard">
-              <div>
-                <div class="mtitle">
-                  Request Pass
-                </div>
-                <img class="micon" [src]="'./assets/One_Arrow.png' | resolveAsset">
-              </div>
-            </div>
-          </button>
+        <div class="flex">
+          <div class="grow"></div>
+          <textarea #messageInput class="message" matInput
+                    placeholder="Leave a message for the teacher such as when and why you want the pass. "></textarea>
+
+          <app-gradient-button class="request-button"
+                               [gradient]="'#7b7df1, #5e3fb6'"
+                               [leftIcon]="'./assets/One_Arrow.png'"
+                               (click)="newRequest(messageInput.value)">Request Pass</app-gradient-button>
+          <div class="grow"></div>
         </div>
       </ng-template>
     </div>
