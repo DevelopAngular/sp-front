@@ -50,7 +50,7 @@ export class MainPageComponent implements OnInit {
     this.requests = this.http.get<Request[]>('api/methacton/v1/pass_requests?status=pending').toPromise();
 
     this.isStaff.subscribe(isStaff => {
-      if (isStaff) {
+      if (!isStaff) {
         this.http.get<HallPassSummary>('api/methacton/v1/hall_passes/summary').toPromise().then(data => {
           this.currentPass = (!!data['active_pass']) ? HallPass.fromJSON(data['active_pass']) : null;
           this.checkedPasses = true;
