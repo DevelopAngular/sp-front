@@ -163,7 +163,7 @@ export class Location {
                 public title: string,
                 public campus: string,
                 public room: string,
-                public catagory: string,
+                public category: string,
                 public restricted: boolean,
                 public required_attatchments: string[],
                 public travel_types: string[],
@@ -181,7 +181,7 @@ export class Location {
         title: string = JSON['title'],
         campus: string = JSON['campus'],
         room: string = JSON['room'],
-        catagory: string = JSON['catagory'],
+        category: string = JSON['category'],
         restricted: boolean = JSON['restricted']==="true",
         required_attachments: string[] = [],
         travel_types: string[] = [],
@@ -203,7 +203,7 @@ export class Location {
             teachers.push(User.fromJSON(teachersJSON[i]));
         }
 
-        return new Location(id, title, campus, room, catagory, restricted, required_attachments, travel_types, teachers, max_allowed_time);
+        return new Location(id, title, campus, room, category, restricted, required_attachments, travel_types, teachers, max_allowed_time);
     }
     get nameRoom():string{
         return this.title +" (" +this.room +")";
