@@ -28,7 +28,7 @@ export class User {
       }
 
         const
-        id: string = JSON['id'],
+        id: string = '' + JSON['id'],
         created: Date = new Date(JSON['created']),
         last_updated: Date = new Date(JSON['last_updated']),
         first_name: string = JSON['first_name'],
@@ -62,7 +62,7 @@ export class Alert {
         return null;
       }
 
-        const id: string  = JSON['id'],
+        const id: string  = '' + JSON['id'],
         created: Date = new Date(JSON['created']),
         last_created: Date = new Date(JSON['last_updated']),
         creator: User = User.fromJSON(JSON['creator']),
@@ -102,7 +102,7 @@ export class HallPass {
       }
 
         // console.log(JSON);
-        const id: string = JSON['id'],
+        const id: string = '' + JSON['id'],
         student: User = User.fromJSON(JSON['student']),
         issuer: User = User.fromJSON(JSON['issuer']),
         created: Date = new Date(JSON['created']),
@@ -138,7 +138,7 @@ export class Invitation {
         return null;
       }
 
-        const id: string = JSON['id'],
+        const id: string = '' + JSON['id'],
         student: User = User.fromJSON(JSON['student']),
         destination: Location = Location.fromJSON(JSON['destination']),
         date_choices: Date[] = [],
@@ -177,7 +177,7 @@ export class Location {
         return null;
       }
 
-        const id: string = JSON['id'],
+        const id: string = '' + JSON['id'],
         title: string = JSON['title'],
         campus: string = JSON['campus'],
         room: string = JSON['room'],
@@ -225,7 +225,7 @@ export class Pinnable {
         return null;
       }
 
-        const id: string = JSON['id'],
+        const id: string = '' + JSON['id'],
         title: string = JSON['title'],
         gradient_color: string = JSON['gradient_color'],
         icon: string = JSON['icon'],
@@ -255,7 +255,7 @@ export class Request {
         return null;
       }
 
-        const id: string = JSON['id'],
+        const id: string = '' + JSON['id'],
         student: User = User.fromJSON(JSON['student']),
         origin: Location = Location.fromJSON(JSON['origin']),
         destination: Location = Location.fromJSON(JSON['destination']),

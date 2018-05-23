@@ -1,6 +1,96 @@
 <p-growl [(value)]="msgs" life="3000"></p-growl>
 
-<div #studentForm>
+
+<ng-container *ngIf="isStaff">
+  <mat-horizontal-stepper #stepper [linear]="true" style="margin-bottom: -20px;">
+    <!-- Choose students and origin -->
+    <mat-step [stepControl]="firstFormGroup">
+      <form [formGroup]="firstFormGroup">
+        <ng-template matStepLabel>Origin&nbsp;/&nbsp;Students</ng-template>
+
+        <mat-radio-group [formControl]="firstFormGroup.controls['travelTypeCtrl']">
+          <mat-radio-button value="one_way">One way</mat-radio-button>
+          <mat-radio-button value="round_trip">Round Trip</mat-radio-button>
+        </mat-radio-group>
+
+        <app-student-picker [formCtrl]="firstFormGroup.controls['studentsCtrl']" [multiple]="true"></app-student-picker>
+
+        <app-location-picker [placeholder]="'Origin'"
+                             [formCtrl]="firstFormGroup.controls['originCtrl']"
+                             [required]="originRequired"></app-location-picker>
+
+        <br>
+        <mat-form-field>
+          <mat-select placeholder="Pass Time" [formControl]="firstFormGroup.controls['durationCtrl']" required>
+            <mat-option *ngFor="let duration of durations" [value]="duration">
+              {{ duration.display }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div *ngIf="isStaff" class="passType">
+          <mat-slide-toggle [formControl]="firstFormGroup.controls['mandatoryCtrl']">Create without student confirmation?
+          </mat-slide-toggle>
+        </div>
+
+        <div class="stepper-buttons">
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Choose destination -->
+    <mat-step [stepControl]="secondFormGroup">
+      <form [formGroup]="secondFormGroup">
+        <ng-template matStepLabel>Destination</ng-template>
+        <mat-grid-list class="grid center" cols="4" gutterSize="15px" rowHeight="70px">
+          <mat-grid-tile *ngFor="let pinnable of pinnables | async">
+            <app-pinnable [pinnable]="pinnable" (onSelectEvent)="pinnableSelected($event, picker)"></app-pinnable>
+            <div class="location-wrapper">
+              <div class="inner">
+                <app-location-picker #picker [placeholder]="'Destination'"
+                                     [formCtrl]="secondFormGroup.controls['destinationCtrl']"
+                                     [category]="pinnable.category"></app-location-picker>
+              </div>
+            </div>
+          </mat-grid-tile>
+        </mat-grid-list>
+        <div class="stepper-buttons">
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Confirm -->
+    <mat-step>
+      <ng-template matStepLabel>Confirm</ng-template>
+      <div class="fields center">
+        <div class="grow"></div>
+        <div style="display: flex;flex-direction: column;align-items: flex-end;">
+          <app-hallpass-card *ngIf="syntheticPass" [hallpass]="syntheticPass" [future]="true"></app-hallpass-card>
+        </div>
+        <div class="grow"></div>
+
+      </div>
+      <div class="stepper-buttons">
+        <button mat-button matStepperPrevious>Back</button>
+
+        <app-gradient-button
+          [minWidth]="'150px'"
+          [gradient]="'#7b7df1, #5e3fb6'"
+          [rightIcon]="'./assets/One_Arrow.png'"
+          (click)="determinePass()"
+        >{{ isStaff ? (isMandatory ? 'Issue' : 'Invite') : 'Make Pass' }}
+        </app-gradient-button>
+      </div>
+    </mat-step>
+
+
+  </mat-horizontal-stepper>
+</ng-container>
+
+<ng-container *ngIf="!isStaff">
   <div class="form">
     <app-type-selector class="center" (onChange)="updateType($event)"></app-type-selector>
     <div class="divider"></div>
@@ -13,12 +103,13 @@
         [gradient]="fromGradient"
         [minWidth]="'150px'"
         [leftIcon]="fromIcon"
-        [disabled]="true"
-        (buttonClick)="chooseLoc('from')"
-      >{{ from_title }}</app-gradient-button>
+        (click)="chooseLoc('from')"
+      >{{ from_title }}
+      </app-gradient-button>
 
       <!-- <div class="type-arrows"> -->
-      <img [class.hidden]="travelType != 'round_trip'" class="round-trip" [src]="'./assets/RT_Arrow.png' | resolveAsset">
+      <img [class.hidden]="travelType != 'round_trip'" class="round-trip"
+           [src]="'./assets/RT_Arrow.png' | resolveAsset">
       <img [class.hidden]="travelType != 'one_way'" class="one-way" [src]="'./assets/OW_Arrow.png' | resolveAsset">
       <!-- </div> -->
 
@@ -27,9 +118,9 @@
         [gradient]="toGradient"
         [minWidth]="'150px'"
         [leftIcon]="toIcon"
-        [disabled]="true"
-        (buttonClick)="chooseLoc('to')"
-      >{{ to_title }}</app-gradient-button>
+        (click)="chooseLoc('to')"
+      >{{ to_title }}
+      </app-gradient-button>
 
     </div>
     <div class="divider"></div>
@@ -65,7 +156,8 @@
           [gradient]="'#7b7df1, #5e3fb6'"
           [rightIcon]="'./assets/One_Arrow.png'"
           (click)="determinePass()"
-        >{{ isStaff ? (isMandatory ? 'Issue' : 'Invite') : 'Make Pass' }}</app-gradient-button>
+        >{{ isStaff ? (isMandatory ? 'Issue' : 'Invite') : 'Make Pass' }}
+        </app-gradient-button>
 
       </div>
       <ng-template #restrictedFields>
@@ -77,10 +169,12 @@
           <app-gradient-button class="request-button"
                                [gradient]="'#7b7df1, #5e3fb6'"
                                [rightIcon]="'./assets/One_Arrow.png'"
-                               (click)="newRequest(messageInput.value)">Request Pass</app-gradient-button>
+                               (click)="newRequest(messageInput.value)">Request Pass
+          </app-gradient-button>
           <div class="grow"></div>
         </div>
       </ng-template>
     </div>
   </div>
-</div>
+</ng-container>
+

@@ -1,0 +1,13 @@
+<mat-form-field>
+  <mat-select #select [formControl]="formCtrl" [placeholder]="placeholder" [required]="required">
+    <ngx-mat-select-search [formControl]="locationFilterCtrl"
+                           [placeholderLabel]="'Search'"
+                           [noEntriesFoundLabel]="'No Results'"></ngx-mat-select-search>
+    <mat-option *ngFor="let location of filteredLocations | async" [value]="location">
+      {{ location.title }}
+    </mat-option>
+    <mat-option *ngIf="(filteredLocations | async).length === 0" disabled="true">No place</mat-option>
+  </mat-select>
+</mat-form-field>
+
+

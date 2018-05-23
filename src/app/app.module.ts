@@ -26,7 +26,7 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { GoogleApiModule, NG_GAPI_CONFIG } from 'ng-gapi';
 import { UserService } from './user.service';
 import { GAPI_CONFIG } from './config';
-import { MatProgressSpinnerModule } from '@angular/material';
+import { MatHorizontalStepper, MatProgressSpinnerModule, MatRadioModule, MatStepperModule } from '@angular/material';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
@@ -73,6 +73,7 @@ import { OptionsComponent } from './options/options.component';
 import { RequestAcceptComponent } from './request-accept/request-accept.component';
 import { StudentPickerComponent } from './student-picker/student-picker.component';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { LocationPickerComponent } from './location-picker/location-picker.component';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: '/main', pathMatch: 'full'},
@@ -105,6 +106,7 @@ const appRoutes: Routes = [
     OptionsComponent,
     RequestAcceptComponent,
     StudentPickerComponent,
+    LocationPickerComponent,
   ],
   entryComponents: [
     HallpassFormComponent,
@@ -153,6 +155,8 @@ const appRoutes: Routes = [
     SidebarModule,
     MatCardModule,
     NgxMatSelectSearchModule,
+    MatStepperModule,
+    MatRadioModule,
     MatGridListModule,
     MatSliderModule,
     MatSlideToggleModule,

@@ -9,7 +9,7 @@
       <mat-option *ngFor="let student of filteredStudents | async" [value]="student">
         {{ student.display_name }}
       </mat-option>
-      <mat-option *ngIf="(filteredStudents | async).length === 0">No user</mat-option>
+      <mat-option *ngIf="(filteredStudents | async).length === 0" disabled="true">No user</mat-option>
     </mat-select>
   </mat-form-field>
 </div>
