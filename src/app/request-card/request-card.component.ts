@@ -1,5 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Request } from '../NewModels';
+import { MatDialog, MatDialogConfig } from '@angular/material';
+import { RequestAcceptComponent } from '../request-accept/request-accept.component';
 
 @Component({
   selector: 'app-request-card',
@@ -20,7 +22,7 @@ export class RequestCardComponent implements OnInit {
   month:string[] = ["January", "February", "March", "April", "May", "June", "July",
                     "August", "September","October", "November", "December"];
 
-  constructor() { }
+  constructor(public dialog: MatDialog) { }
 
   ngOnInit() {
     
@@ -44,7 +46,15 @@ export class RequestCardComponent implements OnInit {
   }
 
   acceptRequest(){
-
+    let dialogRef = this.dialog.open(RequestAcceptComponent, {
+      width: '750px',
+      hasBackdrop: true,
+      data: { message: this.request.attachment_message }
+    });
+    
+    dialogRef.afterClosed().subscribe(result => {
+      
+    });
   }
 
 }

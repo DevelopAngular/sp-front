@@ -108,6 +108,7 @@ const appRoutes: Routes = [
     LocationChooseComponent,
     ConsentMenuComponent,
     OptionsComponent,
+    RequestAcceptComponent
   ],
   imports: [
     BrowserModule,
