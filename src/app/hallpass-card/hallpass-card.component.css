@@ -17,7 +17,7 @@
 }
 
 .passTitle{
-    margin: 19px 0px 0px 15px; 
+    margin: 19px 0px 0px 15px;
 }
 
 .divider{
@@ -32,12 +32,16 @@
 .body{
     display: flex;
     flex-direction: row;
-    margin: 0px 0px 20px 40px;   
+    margin-bottom: 20px;
 }
 
-.left{
+.left, .right{
     display: flex;
     flex-direction: column;
+}
+
+.grow {
+  flex-grow: 1;
 }
 
 .round-trip{
@@ -64,7 +68,7 @@
     padding-top: 8.9px;
     border-radius: 7px;
     background-image: radial-gradient(circle at 77% 61%, rgba(255, 255, 255, .4), rgba(220, 220, 220, 0.4) 67%, rgba(200, 200, 200, 0.4));
-    color: white;   
+    color: white;
     box-shadow: 0 7.5px 13px 0 rgba(0, 0, 0, 0.1);
     font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
 }

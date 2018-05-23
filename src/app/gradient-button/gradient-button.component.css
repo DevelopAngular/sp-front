@@ -24,6 +24,7 @@ button {
   font-stretch: normal;
   /*line-height: 1.08;*/
   letter-spacing: 0.3px;
+  flex-grow: 1;
 }
 
 .card{

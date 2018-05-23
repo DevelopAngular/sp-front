@@ -24,6 +24,9 @@ export class GradientButtonComponent {
   @Input() rightIcon: string;
   @Input() text: string;
   @Input() minWidth: number;
+  @Input() disabled = false;
+
+  @Output() buttonClick = new EventEmitter<any>();
 
   constructor(private sanitizer: DomSanitizer) {
   }
@@ -37,6 +40,18 @@ export class GradientButtonComponent {
     } else {
       return this.sanitizer.bypassSecurityTrustStyle(DEFAULT_GRADIENT);
     }
+  }
+
+  get contentAlign(): string {
+    if (this.leftIcon && !this.rightIcon) {
+      return 'left';
+    }
+
+    if (this.rightIcon && !this.leftIcon) {
+      return 'right';
+    }
+
+    return 'center';
   }
 
 }

@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FuturePassCardComponent } from './future-pass-card.component';
+import { LocationPickerComponent } from './location-picker.component';
 
-describe('FuturePassCardComponent', () => {
-  let component: FuturePassCardComponent;
-  let fixture: ComponentFixture<FuturePassCardComponent>;
+describe('LocationPickerComponent', () => {
+  let component: LocationPickerComponent;
+  let fixture: ComponentFixture<LocationPickerComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FuturePassCardComponent ]
+      declarations: [ LocationPickerComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FuturePassCardComponent);
+    fixture = TestBed.createComponent(LocationPickerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

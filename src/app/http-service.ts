@@ -153,6 +153,15 @@ export class HttpService {
   }
 
   post<T>(url: string, body?: any, config?: Config): Observable<T> {
+    if(body && !(body instanceof FormData)){
+      const formData: FormData = new FormData();
+      for(let prop in body){
+        if(body.hasOwnProperty(prop)){
+          formData.append(prop, body[prop]);
+        }
+      }
+      body = formData;
+    }
     return this.performRequest(token => this.http.post<T>(makeUrl(url), body, makeConfig(config, token)));
   }
 

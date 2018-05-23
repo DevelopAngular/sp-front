@@ -38,7 +38,21 @@
 
 .top{
     display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.left{
+    display: flex;
     flex-direction: column;
+}
+
+.message{
+    min-width: 118px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
 }
 
 .round-trip{
@@ -81,7 +95,7 @@
     position: absolute;
     top: 50%;
     transform: translate(0, -50%);
-  }
+}
 
 .clickRipple{
     width: 144px;

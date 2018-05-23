@@ -1,5 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Request } from '../NewModels';
+import { MatDialog, MatDialogConfig } from '@angular/material';
+import { RequestAcceptComponent } from '../request-accept/request-accept.component';
 
 @Component({
   selector: 'app-request-card',
@@ -16,9 +18,14 @@ export class RequestCardComponent implements OnInit {
 
   @Output() onAccept: EventEmitter<any> = new EventEmitter();
 
-  constructor() { }
+  weekday:string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  month:string[] = ["January", "February", "March", "April", "May", "June", "July",
+                    "August", "September","October", "November", "December"];
+
+  constructor(public dialog: MatDialog) { }
 
   ngOnInit() {
+    
   }
 
 
@@ -26,6 +33,28 @@ export class RequestCardComponent implements OnInit {
     let gradient: string[] = this.request.gradient_color.split(",");
     return "radial-gradient(circle at 73% 71%, " +gradient[0] +", " +gradient[1] +")";
     // return "radial-gradient(circle at 73% 71%, #AA11FF, #FF11AA)";
+  }
+
+  getDate(s:Date){
+    s = new Date(s);
+    return this.weekday[s.getDay()] +' ' + this.month[s.getMonth()] + ' ' + (s.getDate());
+  }
+
+  getTime(s:Date){
+    s = new Date(s);
+    return ((s.getHours() > 12) ? s.getHours() - 12 : s.getHours()) + ':' + ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + ((s.getHours() > 12) ? "pm" : "am");
+  }
+
+  acceptRequest(){
+    let dialogRef = this.dialog.open(RequestAcceptComponent, {
+      width: '750px',
+      hasBackdrop: true,
+      data: { message: this.request.attachment_message }
+    });
+    
+    dialogRef.afterClosed().subscribe(result => {
+      
+    });
   }
 
 }

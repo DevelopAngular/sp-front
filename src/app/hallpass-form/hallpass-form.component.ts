@@ -1,14 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { DataService } from '../data-service';
 import { Router } from '@angular/router';
 import { HttpService } from '../http-service';
 import { MessageService } from 'primeng/components/common/messageservice';
 import { Message } from 'primeng/components/common/api';
-import { JSONSerializer, User } from '../models';
-import { Duration, HallPass, Invitation, Location, Pinnable, Request } from '../NewModels';
-import { MatDialog, MatDialogRef, MatSlideToggleChange } from '@angular/material';
+import { Duration, HallPass, Invitation, Location, Pinnable, Request, User } from '../NewModels';
+import { MatDialog, MatDialogRef, MatSlideToggleChange, MatStepper } from '@angular/material';
 import { LocationChooseComponent } from '../location-choose/location-choose.component';
-import { DomSanitizer } from '@angular/platform-browser';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { LocationPickerComponent } from '../location-picker/location-picker.component';
 
 @Component({
   selector: 'app-hallpass-form',
@@ -46,15 +46,118 @@ export class HallpassFormComponent implements OnInit {
   selectedStudents: User[] = [];
   isMandatory: boolean = false;
 
+  firstFormGroup: FormGroup;
+  secondFormGroup: FormGroup;
+
+  originCtrl = new FormControl();
+  originRequired = true;
+
+  durations: Duration[] = [
+    new Duration('5 minutes', 300),
+    new Duration('10 minutes', 600),
+    new Duration('15 minutes', 900),
+    new Duration('30 minutes', 1800)
+  ];
+
+  @ViewChild('stepper') stepper: MatStepper;
+
   public pinnables: Promise<Pinnable[]>;
 
-  constructor(private messageService: MessageService, private http: HttpService, private dataService: DataService, private router: Router, private serializer: JSONSerializer, public dialog: MatDialog, public dialogRef: MatDialogRef<HallpassFormComponent>, private sanitization: DomSanitizer) {
+  constructor(private messageService: MessageService, private http: HttpService, private dataService: DataService,
+              private router: Router, public dialog: MatDialog,
+              public dialogRef: MatDialogRef<HallpassFormComponent>, private _formBuilder: FormBuilder) {
+
+    this.pinnables = this.http.get<any[]>('api/methacton/v1/pinnables').toPromise().then(json => json.map(raw => Pinnable.fromJSON(raw)));
+
+    this.firstFormGroup = this._formBuilder.group({
+      travelTypeCtrl: ['round_trip', Validators.required],
+      studentsCtrl: ['', Validators.required],
+      originCtrl: [''],
+      durationCtrl: ['', Validators.required],
+      mandatoryCtrl: [],
+    });
+
+    this.secondFormGroup = this._formBuilder.group({
+      destinationCtrl: ['', Validators.required],
+    });
+
+    this.firstFormGroup.controls['originCtrl'].valueChanges.subscribe(result => {
+      if (!result) {
+        return;
+      }
+      // console.log('The dialog was closed');
+      this.fromLocation = result;
+      this.from_title = this.fromLocation.title;
+      this.fromIcon = '';
+      this.fromGradient = this.greenGradient;
+      this.locationType = 'to';
+
+      this.formState = (this.formState === 'fields') ? 'fields' : 'to';
+    });
+
+    this.secondFormGroup.controls['destinationCtrl'].valueChanges.subscribe(result => {
+      this.toState = 'pinnables';
+      this.to_title = result.title;
+      // this.toIcon = "";
+      // this.toGradient = this.greenGradient;
+      // this.formState = 'fields';
+      this.toLocation = result;
+
+      if (this.stepper) {
+        setTimeout(() => {
+          this.stepper.next();
+        }, 5);
+      }
+    });
+
+    this.firstFormGroup.controls['mandatoryCtrl'].valueChanges.subscribe(result => {
+      this.isMandatory = result;
+      if (this.isMandatory) {
+        this.firstFormGroup.controls['originCtrl'].setValidators(Validators.required);
+      }else {
+        this.firstFormGroup.controls['originCtrl'].clearValidators();
+      }
+      this.firstFormGroup.controls['originCtrl'].updateValueAndValidity({onlySelf: true, emitEvent: false});
+      this.originRequired = this.isMandatory;
+    });
+
+  }
+
+  get syntheticPass(): HallPass {
+    if (!this.firstFormGroup.valid || !this.secondFormGroup.valid) {
+      return null;
+    }
+
+    const start = new Date();
+
+    const endTime = new Date(+start + (this.firstFormGroup.controls['durationCtrl'].value.value * 1000));
+
+    return new HallPass(
+      '1',
+      this.firstFormGroup.controls['studentsCtrl'].value[0],
+      this.user,
+      new Date(),
+      new Date(),
+      start,
+      endTime,
+      endTime,
+      this.firstFormGroup.controls['originCtrl'].value,
+      this.secondFormGroup.controls['destinationCtrl'].value,
+      this.firstFormGroup.controls['travelTypeCtrl'].value,
+      this.toGradient,
+      this.toIcon,
+    );
   }
 
   ngOnInit() {
-    this.dataService.currentUser.subscribe(user => this.user = user);
+    this.dataService.currentUser.subscribe(user => {
+      this.user = user;
+      this.isStaff = this.user.roles.includes('edit_all_hallpass');
+
+      this.originRequired = !this.isStaff;
+    });
     //console.log(this.user.roles);
-    this.isStaff = this.user.roles.includes('edit_all_hallpass');
+
     //console.log('Hallpass form is staff:' + this.isStaff);
 
   }
@@ -97,21 +200,38 @@ export class HallpassFormComponent implements OnInit {
     }
   }
 
-  pinnableSelected(event: Pinnable) {
-    // console.log("[Pinnable Selected]: ", event);
-    if (event.type == 'location') {
-      if (this.locationType == 'to') {
-        this.to_title = event.title;
+  pinnableSelected(event: Pinnable, picker?: LocationPickerComponent) {
+    if (this.isStaff) {
+
+      if (event.type === 'category') {
+        picker.open();
         this.toIcon = event.icon || '';
         this.toGradient = event.gradient_color;
-        this.formState = 'fields';
-        this.toLocation = event.location;
+        return;
+      } else {
+        this.toIcon = event.icon || '';
+        this.toGradient = event.gradient_color;
+
+        this.secondFormGroup.controls['destinationCtrl'].setValue(event.location);
       }
-    } else if (event.type == 'category') {
-      this.toCategory = event.category;
-      this.toState = 'category';
-      this.toIcon = event.icon || '';
-      this.toGradient = event.gradient_color;
+
+    } else {
+
+      // console.log("[Pinnable Selected]: ", event);
+      if (event.type == 'location') {
+        if (this.locationType == 'to') {
+          this.to_title = event.title;
+          this.toIcon = event.icon || '';
+          this.toGradient = event.gradient_color;
+          this.formState = 'fields';
+          this.toLocation = event.location;
+        }
+      } else if (event.type == 'category') {
+        this.toCategory = event.category;
+        this.toState = 'category';
+        this.toIcon = event.icon || '';
+        this.toGradient = event.gradient_color;
+      }
     }
   }
 
@@ -155,21 +275,18 @@ export class HallpassFormComponent implements OnInit {
   }
 
   determinePass() {
-    if (this.isStaff)
+    if (this.isStaff) {
       this.teacherPass();
-    else
+    } else {
       this.newPass();
+    }
   }
 
   teacherPass() {
-    if (this.selectedStudents.length < 1) {
-      this.msgs.push({severity: 'error', summary: 'Attention!', detail: 'Make sure you you select student(s).'});
+    if (this.isMandatory) {
+      this.newStaffPass();
     } else {
-      if (this.isMandatory) {
-        this.newPass();
-      } else {
-        this.newInvitation();
-      }
+      this.newInvitation();
     }
   }
 
@@ -182,108 +299,82 @@ export class HallpassFormComponent implements OnInit {
       'teacher': this.toLocation.teachers[0].id
     };
 
-    this.http.post('api/methacton/v1/pass_requests', body, {headers: {'': ''}}).subscribe((data) => {
+    this.http.post('api/methacton/v1/pass_requests', body, ).subscribe((data) => {
       // console.log("Request POST Data: ", data);
       this.dialogRef.close(Request.fromJSON(data));
     });
   }
 
-  newPass() {
-    if (!this.isStaff) {
-      let body = {
-        'student': this.user.id,
-        'duration': this.duration,
-        'origin': this.fromLocation.id,
-        'destination': this.toLocation.id,
-        'travel_type': this.travelType
-      };
-
-      this.http.post('api/methacton/v1/hall_passes', body, {headers: {'': ''}}).subscribe((data) => {
-        // console.log("Request POST Data: ", data);
-        this.dialogRef.close(HallPass.fromJSON(data));
-      });
-    } else {
-      // console.log("[Staff Pass]: ", this.selectedStudents.length);
-      if (this.selectedStudents.length > 1) {
-        let students: string[] = [];
-        for (let i = 0; i < this.selectedStudents.length; i++) {
-          students.push(this.selectedStudents[i].id);
-        }
-        let body = {
-          'students': students,
-          'duration': this.duration,
-          'origin': this.fromLocation.id,
-          'destination': this.toLocation.id,
-          'travel_type': this.travelType
-        };
-
-        this.http.post('api/methacton/v1/hall_passes/bulk_create', body, {headers: {'': ''}}).subscribe((data) => {
-          // console.log("Request POST Data: ", data);
-          this.dialogRef.close(HallPass.fromJSON(data[0]));
-        });
-      } else {
-        let body = {
-          'student': this.selectedStudents[0].id,
-          'duration': this.duration,
-          'origin': this.fromLocation.id,
-          'destination': this.toLocation.id,
-          'travel_type': this.travelType
-        };
-
-        this.http.post('api/methacton/v1/hall_passes', body, {headers: {'': ''}}).subscribe((data) => {
-          // console.log("Request POST Data: ", data);
-          this.dialogRef.close(HallPass.fromJSON(data));
-        });
-      }
+  newStaffPass() {
+    if (!this.firstFormGroup.valid || !this.secondFormGroup.valid) {
+      return;
     }
+
+    const students: User[] = this.firstFormGroup.controls['studentsCtrl'].value;
+    const duration: number = this.firstFormGroup.controls['durationCtrl'].value.value;
+    const origin: Location = this.firstFormGroup.controls['originCtrl'].value;
+    const destination: Location = this.secondFormGroup.controls['destinationCtrl'].value;
+    const travelType: string = this.firstFormGroup.controls['travelTypeCtrl'].value;
+
+    const body = {
+      'students': students.map(user => user.id),
+      'duration': duration,
+      'origin': origin.id,
+      'destination': destination.id,
+      'travel_type': travelType,
+    };
+
+    this.http.post('api/methacton/v1/hall_passes/bulk_create', body, ).subscribe((data) => {
+      // console.log("Request POST Data: ", data);
+      this.dialogRef.close(HallPass.fromJSON(data[0]));
+    });
+  }
+
+  newPass() {
+    const body = {
+      'student': this.user.id,
+      'duration': this.duration,
+      'origin': this.fromLocation.id,
+      'destination': this.toLocation.id,
+      'travel_type': this.travelType
+    };
+
+    this.http.post('api/methacton/v1/hall_passes', body, ).subscribe((data) => {
+      // console.log("Request POST Data: ", data);
+      this.dialogRef.close(HallPass.fromJSON(data));
+    });
+
   }
 
   newInvitation() {
-    if (this.selectedStudents.length > 1) {
-      let students: string[] = [];
-      for (let i = 0; i < this.selectedStudents.length; i++) {
-        students.push(this.selectedStudents[i].id);
-      }
-      let body = {
-        'students': students,
-        'default_origin': null,
-        'destination': this.toLocation.id,
-        'date_choices': [new Date()],
-        'duration': this.duration,
-      };
-
-      this.http.post('api/methacton/v1/invitations/bulk_create', body, {headers: {'': ''}}).subscribe((data) => {
-        // console.log("Request POST Data: ", data);
-        this.dialogRef.close(Invitation.fromJSON(data[0]));
-      });
-    } else {
-      let body = {
-        'student': this.selectedStudents[0].id,
-        'default_origin': null,
-        'destination': this.toLocation.id,
-        'date_choices': [new Date()],
-        'duration': this.duration,
-      };
-
-      this.http.post('api/methacton/v1/invitations', body, {headers: {'': ''}}).subscribe((data) => {
-        // console.log("Request POST Data: ", data);
-        this.dialogRef.close(Invitation.fromJSON(data));
-      });
+    if (!this.firstFormGroup.valid || !this.secondFormGroup.valid) {
+      return;
     }
+
+    const students: User[] = this.firstFormGroup.controls['studentsCtrl'].value;
+    const duration: number = this.firstFormGroup.controls['durationCtrl'].value.value;
+    const destination: Location = this.secondFormGroup.controls['destinationCtrl'].value;
+    const travelType: string = this.firstFormGroup.controls['travelTypeCtrl'].value;
+
+    const body = {
+      'students': students.map(user => user.id),
+      'default_origin': null,
+      'destination': destination.id,
+      'date_choices': [new Date().toISOString()],
+      'duration': duration,
+      'travel_type': travelType
+    };
+
+    this.http.post('api/methacton/v1/invitations/bulk_create', body).subscribe((data) => {
+      // console.log("Request POST Data: ", data);
+      this.dialogRef.close(Invitation.fromJSON(data[0]));
+    });
+
   }
 
   studentsUpdated(students) {
     this.selectedStudents = students;
     // console.log(this.selectedStudents);
-  }
-
-  getUser() {
-    return new Promise((resolve, reject) => {
-      this.http.get('api/methacton/v1/users/@me').subscribe((data: any) => {
-        this.user = this.serializer.getUserFromJSON(data);
-        resolve(this.user);
-      }, reject);
-    });
   }
 
   dateToString(s: Date): string {

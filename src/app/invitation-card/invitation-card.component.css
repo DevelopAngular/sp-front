@@ -18,7 +18,7 @@
 }
 
 .passTitle{
-    margin: 19px 0px 0px 15px; 
+    margin: 19px 0px 0px 15px;
 }
 
 .divider{
@@ -33,7 +33,7 @@
 .body{
     display: flex;
     flex-direction: row;
-    margin: 0px 0px 20px 40px;   
+    margin: 0px 0px 20px 40px;
 }
 
 .left, .right{
@@ -62,10 +62,10 @@
 .card{
     width: inherit;
     height: 40px;
-    padding-top: 8.9px;
+    /* padding-top: 8.9px; */
     border-radius: 7px;
     background-image: radial-gradient(circle at 77% 61%, rgba(255, 255, 255, .4), rgba(220, 220, 220, 0.4) 67%, rgba(200, 200, 200, 0.4));
-    color: white;   
+    color: white;
     box-shadow: 0 7.5px 13px 0 rgba(0, 0, 0, 0.1);
     font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
 }
@@ -96,9 +96,12 @@
 }
 
 .content{
-    position: absolute;
-    top: 50%;
-    transform: translate(0, -50%);
+    /* position: absolute; */
+    /* top: 50%;
+    transform: translate(0, -50%); */
+    display: flex;
+    /* align-items: center; */
+    justify-content: center;
 }
 
 .title{
@@ -107,10 +110,9 @@
     font-stretch: normal;
     line-height: 1.08;
     letter-spacing: 0.3px;
-    position: absolute;
-    top: 50%;
+    /* position: absolute; */
+    /* top: 50%; */
     /* transform: translate(0, -50%); */
-    margin-top: -7px;
-    margin-left: 17px;
+    margin-top: 12px;
     /* padding: 13px 200px 0px 0px; */
 }

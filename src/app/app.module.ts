@@ -26,7 +26,7 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { GoogleApiModule, NG_GAPI_CONFIG } from 'ng-gapi';
 import { UserService } from './user.service';
 import { GAPI_CONFIG } from './config';
-import { MatProgressSpinnerModule } from '@angular/material';
+import { MatHorizontalStepper, MatProgressSpinnerModule, MatRadioModule, MatStepperModule } from '@angular/material';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
@@ -65,12 +65,15 @@ import { LocationCellComponent } from './location-cell/location-cell.component';
 import { HallpassCardComponent } from './hallpass-card/hallpass-card.component';
 import { RequestCardComponent } from './request-card/request-card.component';
 import { InvitationCardComponent } from './invitation-card/invitation-card.component';
-import { FuturePassCardComponent } from './future-pass-card/future-pass-card.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { GoogleLoginService } from './google-login.service';
 import { GradientButtonComponent } from './gradient-button/gradient-button.component';
 import { SignOutComponent } from './sign-out/sign-out.component';
 import { OptionsComponent } from './options/options.component';
+import { RequestAcceptComponent } from './request-accept/request-accept.component';
+import { StudentPickerComponent } from './student-picker/student-picker.component';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { LocationPickerComponent } from './location-picker/location-picker.component';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: '/main', pathMatch: 'full'},
@@ -98,16 +101,19 @@ const appRoutes: Routes = [
     HallpassCardComponent,
     RequestCardComponent,
     InvitationCardComponent,
-    FuturePassCardComponent,
     GradientButtonComponent,
     SignOutComponent,
     OptionsComponent,
+    RequestAcceptComponent,
+    StudentPickerComponent,
+    LocationPickerComponent,
   ],
   entryComponents: [
     HallpassFormComponent,
     LocationChooseComponent,
     ConsentMenuComponent,
     OptionsComponent,
+    RequestAcceptComponent
   ],
   imports: [
     BrowserModule,
@@ -148,6 +154,9 @@ const appRoutes: Routes = [
     ConfirmDialogModule,
     SidebarModule,
     MatCardModule,
+    NgxMatSelectSearchModule,
+    MatStepperModule,
+    MatRadioModule,
     MatGridListModule,
     MatSliderModule,
     MatSlideToggleModule,

@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 })
 export class NavbarComponent implements AfterViewInit {
 
-  user: User = new User('', null, null, '', '', 'John Doe', '', ['']);
+  user: User = new User('', null, null, '', '', '', '', ['']);
 
   constructor(private dataService: DataService, public dialog: MatDialog, private router: Router) {
   }
