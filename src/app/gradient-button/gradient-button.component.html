@@ -1,8 +1,10 @@
-<button mat-button [style.background]="styleGradient" [style.min-width]="minWidth">
+<button mat-button [style.background]="styleGradient" [style.min-width]="minWidth" (click)="buttonClick.emit($event)" [disabled]="disabled">
   <div class="wrapper">
     <img *ngIf="leftIcon" class="icon left-icon" [src]="leftIcon | resolveAsset">
-    <div class="text-content">
-      <ng-content></ng-content>
+    <div class="text-content" [style.text-align]="contentAlign">
+      <div class="content-wrapper" style="display: inline-block;">
+        <ng-content></ng-content>
+      </div>
     </div>
     <img *ngIf="rightIcon" class="icon right-icon" [src]="rightIcon | resolveAsset">
   </div>
