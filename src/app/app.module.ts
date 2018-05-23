@@ -71,6 +71,8 @@ import { GradientButtonComponent } from './gradient-button/gradient-button.compo
 import { SignOutComponent } from './sign-out/sign-out.component';
 import { OptionsComponent } from './options/options.component';
 import { RequestAcceptComponent } from './request-accept/request-accept.component';
+import { StudentPickerComponent } from './student-picker/student-picker.component';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: '/main', pathMatch: 'full'},
@@ -102,6 +104,7 @@ const appRoutes: Routes = [
     SignOutComponent,
     OptionsComponent,
     RequestAcceptComponent,
+    StudentPickerComponent,
   ],
   entryComponents: [
     HallpassFormComponent,
@@ -149,6 +152,7 @@ const appRoutes: Routes = [
     ConfirmDialogModule,
     SidebarModule,
     MatCardModule,
+    NgxMatSelectSearchModule,
     MatGridListModule,
     MatSliderModule,
     MatSlideToggleModule,

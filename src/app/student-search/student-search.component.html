@@ -1,12 +1,15 @@
 <span class="ui-fluid wrapper">
-    <div class="ui-inputgroup">
-        <span class="ui-float-label">
-            <p-autoComplete id="float-input" pInputText [(ngModel)]="selectedStudents"
-                            [suggestions]="students" (completeMethod)="updateStudents($event)"
-                            placeholder="" field="display_name" [multiple]="true" (onSelect)="update()" (onUnselect)="update()">
-            </p-autoComplete>
-            <label for="float-input">Student(s)</label>
-        </span>
-        <button pButton type="button" [icon]="getIcon()" [ngClass]="{'ui-button-success': validate(), 'ui-button-danger': !validate()}" class="validationIcon"></button>
-    </div>
+    <!--<div class="ui-inputgroup">-->
+        <!--<span class="ui-float-label">-->
+            <!--<p-autoComplete id="float-input" pInputText [(ngModel)]="selectedStudents"-->
+                            <!--[suggestions]="students" (completeMethod)="updateStudents($event)"-->
+                            <!--placeholder="" field="display_name" [multiple]="true" (onSelect)="update()" (onUnselect)="update()">-->
+            <!--</p-autoComplete>-->
+            <!--<label for="float-input">Student(s)</label>-->
+        <!--</span>-->
+        <!--<button pButton type="button" [icon]="getIcon()" [ngClass]="{'ui-button-success': validate(), 'ui-button-danger': !validate()}" class="validationIcon"></button>-->
+    <!--</div>-->
+
+    <app-student-picker [formCtrl]="formCtrl" [multiple]="true"></app-student-picker>
+
 </span>

@@ -1,0 +1,16 @@
+<div class="form-element form-wide">
+  <mat-form-field style="width: 100%;">
+
+    <mat-select [formControl]="formCtrl" placeholder="Students"
+                [multiple]="multiple" required>
+      <ngx-mat-select-search [formControl]="studentsFilterCtrl"
+                             [placeholderLabel]="'Search'"
+                             [noEntriesFoundLabel]="'No Results'"></ngx-mat-select-search>
+      <mat-option *ngFor="let student of filteredStudents | async" [value]="student">
+        {{ student.display_name }}
+      </mat-option>
+      <mat-option *ngIf="(filteredStudents | async).length === 0">No user</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+

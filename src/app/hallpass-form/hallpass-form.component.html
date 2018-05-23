@@ -13,7 +13,8 @@
         [gradient]="fromGradient"
         [minWidth]="'150px'"
         [leftIcon]="fromIcon"
-        (click)="chooseLoc('from')"
+        [disabled]="true"
+        (buttonClick)="chooseLoc('from')"
       >{{ from_title }}</app-gradient-button>
 
       <!-- <div class="type-arrows"> -->
@@ -26,7 +27,8 @@
         [gradient]="toGradient"
         [minWidth]="'150px'"
         [leftIcon]="toIcon"
-        (click)="chooseLoc('to')"
+        [disabled]="true"
+        (buttonClick)="chooseLoc('to')"
       >{{ to_title }}</app-gradient-button>
 
     </div>

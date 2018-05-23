@@ -31,11 +31,20 @@ export class StudentSearchComponent implements AfterViewInit {
 
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
 
+  formCtrl = new FormControl();
+
   students: User[] = [];
   selectedStudents: User[] = [];
   barer: string;
 
-  constructor(private http: HttpService, private dataService: DataService) {}
+  constructor(private http: HttpService, private dataService: DataService) {
+
+    this.formCtrl.valueChanges.subscribe((students: User[]) => {
+      this.selectedStudents = students;
+      this.onUpdate.emit(this.selectedStudents);
+    });
+
+  }
 
   ngAfterViewInit() {
     this.dataService.currentBarer.subscribe(barer => this.barer = barer);
