@@ -182,7 +182,7 @@ export class Location {
         campus: string = JSON['campus'],
         room: string = JSON['room'],
         category: string = JSON['category'],
-        restricted: boolean = JSON['restricted']==="true",
+        restricted: boolean = !!JSON['restricted'],
         required_attachments: string[] = [],
         travel_types: string[] = [],
         teachers: User[] = [],
