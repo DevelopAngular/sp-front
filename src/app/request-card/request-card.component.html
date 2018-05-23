@@ -17,8 +17,10 @@
         <div class="origin center">
           {{request.origin.title}}
         </div>
+        <div class="img-wrapper">
           <img *ngIf="request.travel_type == 'round_trip'" class="round-trip center" [src]="'./assets/Two_Arrow.png' | resolveAsset">
           <img *ngIf="request.travel_type == 'one_way'" class="one-way center" [src]="'./assets/One_Arrow.png' | resolveAsset">
+        </div>
         <div class="destination center">
           {{request.destination.title}}
         </div>
