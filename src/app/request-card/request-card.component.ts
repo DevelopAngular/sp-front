@@ -2,6 +2,8 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Request } from '../NewModels';
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { RequestAcceptComponent } from '../request-accept/request-accept.component';
+import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
+import { HttpService } from '../http-service';
 
 @Component({
   selector: 'app-request-card',
@@ -22,10 +24,10 @@ export class RequestCardComponent implements OnInit {
   month:string[] = ["January", "February", "March", "April", "May", "June", "July",
                     "August", "September","October", "November", "December"];
 
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog, private http: HttpService) { }
 
   ngOnInit() {
-    
+    this.request.teacher.display_name
   }
 
 
@@ -54,6 +56,22 @@ export class RequestCardComponent implements OnInit {
     
     dialogRef.afterClosed().subscribe(result => {
       
+    });
+  }
+
+  cancelRequest(){
+    let dialogRef = this.dialog.open(ConsentMenuComponent, {
+      width: '250px',
+      hasBackdrop: true,
+      data: { content: 'Are you sure you want to cancel this request?'}
+    });
+    
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this.http.post('api/methacton/v1/pass_requests/' +this.request.id +'/deny', '', {"":""}).subscribe(()=>{
+          this.onAccept.emit();
+        });
+      }
     });
   }
 

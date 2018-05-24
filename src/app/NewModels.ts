@@ -247,7 +247,8 @@ export class Request {
                 public status: string,
                 public hallpass: HallPass,
                 public gradient_color: string,
-                public icon: string){
+                public icon: string,
+                public teacher: User){
     }
 
     static fromJSON(JSON:any):Request{
@@ -264,9 +265,10 @@ export class Request {
         status: string = JSON['status'],
         hallpass: HallPass = (!!JSON['hallpass'])?HallPass.fromJSON(JSON['hallpass']):null,
         gradient_color: string = JSON['gradient_color'],
-        icon: string = JSON['icon'];
+        icon: string = JSON['icon'],
+        teacher: User = User.fromJSON(JSON['teacher']);
 
-        return new Request(id, student, origin, destination, attachment_message, travel_type, status, hallpass, gradient_color, icon);
+        return new Request(id, student, origin, destination, attachment_message, travel_type, status, hallpass, gradient_color, icon, teacher);
     }
 
 }

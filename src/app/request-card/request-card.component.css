@@ -2,11 +2,18 @@
     border-radius: 7px;
     display: flex;
     flex-direction: column;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-weight: bold;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.08;
+    letter-spacing: 0.3px;
 }
 
 .header{
-    background-color: inherit;
+    background-color: rgba(0, 0, 0, 0);
     display: flex;
     flex-direction: row;
 }
@@ -14,17 +21,37 @@
 .icon{
     width: 25px;
     height: 25px;
-    margin: 15px 0px 0px 15px;
+}
+
+.mat-expansion-panel-header-description{
+    margin-right: 0px;
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.mat-expansion-panel-header{
+    padding-left: 15px;
+    border-radius: 7px;
 }
 
 .passTitle{
-    margin: 19px 0px 0px 15px; 
+    margin: 3px 0 0 15px;
+}
+
+.cancel{
+    cursor: pointer;
+    border-radius: 17px;
+    padding: 3px;
+}
+
+.cancel:hover{
+    background-color: rgb(255, 255, 255, 0.2);
 }
 
 .divider{
-    margin: 15px 0px 20px 0px;
-    width: 318px;
-    height: 1px;
+    margin: 0 0 20px 0;
+    width: 100%;
+    height: 0.5px;
     object-fit: contain;
     opacity: 0.39;
     background-color: #ffffff;

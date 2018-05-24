@@ -1,50 +1,54 @@
-<div class="wrapper" [style.background]="getGradient()">
-  <div class="header">
-    <img class="icon" [src]="request.icon | resolveAsset">
-    <div *ngIf="forTeacher; else studentTitle" class="passTitle">
-      Request from {{request.student.display_name}}
-    </div>
-    <ng-template #studentTitle>
-      <div class="passTitle">
-        {{request.destination.title}}
-      </div>
-    </ng-template>
-  </div>
-  <div class="divider center"></div>
-  <div class="body">
-    <div class="top">
-      <div class="left">
-        <div class="origin center">
-          {{request.origin.title}}
-        </div>
-        <div class="img-wrapper">
-          <img *ngIf="request.travel_type == 'round_trip'" class="round-trip center" [src]="'./assets/Two_Arrow.png' | resolveAsset">
-          <img *ngIf="request.travel_type == 'one_way'" class="one-way center" [src]="'./assets/One_Arrow.png' | resolveAsset">
-        </div>
-        <div class="destination center">
-          {{request.destination.title}}
-        </div>
-      </div>
-      <div class="message">
-        {{request.attachment_message != 'null'? request.attachment_message: 'No Message'}}
-      </div>
-    </div>
-    <div class="bottom">
-      <div *ngIf="forTeacher; else notForTeacher;">
-        <button mat-button class="clickRipple end-pass" (click)="acceptRequest()">
-          <div class="bcard">
-              <div class="content">
-                  <div class="title">
-                     Accept
-                  </div>
-              </div>
+<mat-expansion-panel hideToggle="true" class="wrapper" [style.background]="getGradient()">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <div class="header">
+          <img class="icon" [src]="request.icon | resolveAsset">
+          <div class="passTitle">
+              Request {{(forTeacher?('from ' +request.student.display_name):('to ' +request.teacher.display_name))}}
           </div>
-        </button>
+        </div>
+      </mat-panel-title>
+      <mat-panel-description class="close">
+        <mat-icon class="cancel" (click)="cancelRequest()">cancel</mat-icon>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <div class="divider center"></div>
+    <div class="body">
+      <div class="top">
+        <div class="left">
+          <div class="origin center">
+            {{request.origin.title}}
+          </div>
+          <div class="img-wrapper">
+            <img *ngIf="request.travel_type == 'round_trip'" class="round-trip center" [src]="'./assets/Two_Arrow.png' | resolveAsset">
+            <img *ngIf="request.travel_type == 'one_way'" class="one-way center" [src]="'./assets/One_Arrow.png' | resolveAsset">
+          </div>
+          <div class="destination center">
+            {{request.destination.title}}
+          </div>
+        </div>
+        <div class="message">
+          {{request.attachment_message != 'null'? request.attachment_message: 'No Message'}}
+        </div>
       </div>
-      <ng-template #notForTeacher>
-        <br><br>
-        Pass Requested
-      </ng-template>
+      <div class="bottom">
+        <div *ngIf="forTeacher; else notForTeacher;">
+          <button mat-button class="clickRipple end-pass" (click)="acceptRequest()">
+            <div class="bcard">
+                <div class="content">
+                    <div class="title">
+                       Accept
+                    </div>
+                </div>
+            </div>
+          </button>
+        </div>
+        <ng-template #notForTeacher>
+          <br><br>
+          Pass Requested
+        </ng-template>
+      </div>
     </div>
-  </div>
-</div>
+    
+  </mat-expansion-panel>
