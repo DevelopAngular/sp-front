@@ -21,17 +21,11 @@ function isUserStaff(user: User): boolean {
 })
 export class MainPageComponent implements OnInit {
 
-  activePasses: Pass[] = [];
-  expiredPasses: Pass[] = [];
-  templates: PendingPass[] = [];
-  show = false;
-  currentOffset = 0;
   currentPass: HallPass;
   futurePasses: HallPass[];
-  timeLeft: string;
 
   // -----------------------NEW STUFF--------------------- //
-  checkedPasses: boolean = false;
+  checkedPasses = false;
   invitations: Promise<Invitation[]>;
   requests: Promise<Request[]>;
 
@@ -39,7 +33,7 @@ export class MainPageComponent implements OnInit {
               public dialog: MatDialog, private _zone: NgZone) {
   }
 
-  get isStaff(): Observable<boolean> {
+  get isStaff$(): Observable<boolean> {
     return this.dataService.currentUser.map(isUserStaff);
   }
 
@@ -55,10 +49,8 @@ export class MainPageComponent implements OnInit {
             this._zone.run(() => {
               this.currentPass = (!!data['active_pass']) ? HallPass.fromJSON(data['active_pass']) : null;
               this.checkedPasses = true;
-              if (!!data['future_passes']) {
-                for (let i = 0; i < data['future_passes'].length; i++) {
-                  this.futurePasses.push(HallPass.fromJSON(data['future_passes'][i]));
-                }
+              if (data['future_passes']) {
+                this.futurePasses = data['future_passes'].map(raw => HallPass.fromJSON(raw));
               } else {
                 this.futurePasses = null;
               }
@@ -81,18 +73,19 @@ export class MainPageComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result: Object) => {
-      if (result instanceof HallPass) {
-        this.isStaff.subscribe(isStaff => {
-          this._zone.run(() => {
+      this.isStaff$.subscribe(isStaff => {
+        this._zone.run(() => {
+          if (result instanceof HallPass) {
             this.currentPass = !isStaff ? result : null;
-          });
+          } else if (result instanceof Request) {
+            this.updateRequests();
+          } else if (result instanceof Invitation) {
+            if (isStaff) {
+              this.updateInvites();
+            }
+          }
         });
-      } else if (result instanceof Request) {
-        this.updateRequests();
-      } else if(result instanceof Invitation){
-        if(!this.isStaff)
-          this.updateInvites();
-      }
+      });
     });
   }
 
