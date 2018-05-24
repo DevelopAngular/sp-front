@@ -1,9 +1,9 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Request } from '../NewModels';
-import { MatDialog, MatDialogConfig } from '@angular/material';
-import { RequestAcceptComponent } from '../request-accept/request-accept.component';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatDialog } from '@angular/material';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { HttpService } from '../http-service';
+import { Request } from '../NewModels';
+import { RequestAcceptComponent } from '../request-accept/request-accept.component';
 
 @Component({
   selector: 'app-request-card',
@@ -13,62 +13,62 @@ import { HttpService } from '../http-service';
 export class RequestCardComponent implements OnInit {
 
   @Input()
-  request:Request;
+  request: Request;
 
   @Input()
-  forTeacher:boolean = false;
+  forTeacher = false;
 
   @Output() onAccept: EventEmitter<any> = new EventEmitter();
 
-  weekday:string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  month:string[] = ["January", "February", "March", "April", "May", "June", "July",
-                    "August", "September","October", "November", "December"];
+  weekday: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  month: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+    'August', 'September', 'October', 'November', 'December'];
 
-  constructor(public dialog: MatDialog, private http: HttpService) { }
-
-  ngOnInit() {
-    this.request.teacher.display_name
+  constructor(public dialog: MatDialog, private http: HttpService) {
   }
 
+  ngOnInit() {
+  }
 
-  getGradient(){
-    let gradient: string[] = this.request.gradient_color.split(",");
-    return "radial-gradient(circle at 73% 71%, " +gradient[0] +", " +gradient[1] +")";
+  getGradient() {
+    const gradient: string[] = this.request.gradient_color.split(',');
+    return 'radial-gradient(circle at 73% 71%, ' + gradient[0] + ', ' + gradient[1] + ')';
     // return "radial-gradient(circle at 73% 71%, #AA11FF, #FF11AA)";
   }
 
-  getDate(s:Date){
+  getDate(s: Date) {
     s = new Date(s);
-    return this.weekday[s.getDay()] +' ' + this.month[s.getMonth()] + ' ' + (s.getDate());
+    return this.weekday[s.getDay()] + ' ' + this.month[s.getMonth()] + ' ' + (s.getDate());
   }
 
-  getTime(s:Date){
+  getTime(s: Date) {
     s = new Date(s);
-    return ((s.getHours() > 12) ? s.getHours() - 12 : s.getHours()) + ':' + ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + ((s.getHours() > 12) ? "pm" : "am");
+    return ((s.getHours() > 12) ? s.getHours() - 12 : s.getHours()) + ':' +
+      ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + ((s.getHours() > 12) ? 'pm' : 'am');
   }
 
-  acceptRequest(){
-    let dialogRef = this.dialog.open(RequestAcceptComponent, {
+  acceptRequest() {
+    const dialogRef = this.dialog.open(RequestAcceptComponent, {
       width: '750px',
       hasBackdrop: true,
-      data: { message: this.request.attachment_message }
+      data: {message: this.request.attachment_message}
     });
-    
-    dialogRef.afterClosed().subscribe(result => {
-      
-    });
+
+    dialogRef.afterClosed().subscribe();
   }
 
-  cancelRequest(){
-    let dialogRef = this.dialog.open(ConsentMenuComponent, {
+  cancelRequest(event) {
+    event.stopPropagation();
+
+    const dialogRef = this.dialog.open(ConsentMenuComponent, {
       width: '250px',
       hasBackdrop: true,
-      data: { content: 'Are you sure you want to cancel this request?'}
+      data: {content: 'Are you sure you want to cancel this request?'}
     });
-    
+
     dialogRef.afterClosed().subscribe(result => {
-      if(result){
-        this.http.post('api/methacton/v1/pass_requests/' +this.request.id +'/deny', '', {"":""}).subscribe(()=>{
+      if (result) {
+        this.http.post('api/methacton/v1/pass_requests/' + this.request.id + '/deny', '').subscribe(() => {
           this.onAccept.emit();
         });
       }
