@@ -1,10 +1,14 @@
- <div class="wrapper" [style.background]="getGradient()">
-  <div class="header">
-    <img class="icon" [src]="hallpass.icon">
-    <div class="passTitle">
-      {{hallpass.destination.title}}
-    </div>
-  </div>
+<mat-expansion-panel hideToggle="true" class="wrapper" [style.background]="getGradient()" [expanded]='expanded'>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <div class="header">
+        <img class="icon" [src]="hallpass.icon | resolveAsset">
+        <div class="passTitle">
+            Pass to {{hallpass.destination.title}}
+        </div>
+      </div>
+    </mat-panel-title>
+  </mat-expansion-panel-header>
   <div class="divider center"></div>
   <div class="body">
     <div class="grow"></div>
@@ -43,4 +47,4 @@
     </div>
     <div class="grow"></div>
   </div>
-</div>
+</mat-expansion-panel>
