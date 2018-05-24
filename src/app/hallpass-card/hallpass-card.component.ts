@@ -15,6 +15,9 @@ export class HallpassCardComponent implements OnInit {
   @Input()
   future: boolean = false;
 
+  @Input()
+  expanded: boolean = false;
+
   @Output() onEnd: EventEmitter<any> = new EventEmitter();
 
   timeLeft: string;

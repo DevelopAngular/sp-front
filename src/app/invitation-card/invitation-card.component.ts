@@ -90,8 +90,25 @@ export class InvitationCardComponent implements OnInit {
       'start_time': this.selectedDate,
       'origin': this.origin.id
     };
-    this.http.post('api/methacton/v1/invitations/' +this.invitation.id +'/accept', body, {"":""}).subscribe();
-    this.onAccept.emit();
+    this.http.post('api/methacton/v1/invitations/' +this.invitation.id +'/accept', body, {"":""}).subscribe(()=>{
+      this.onAccept.emit();  
+    });
+  }
+
+  cancelInvitation(){
+    let dialogRef = this.dialog.open(ConsentMenuComponent, {
+      width: '250px',
+      hasBackdrop: true,
+      data: { content: 'Are you sure you want to cancel this invitation?'}
+    });
+    
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this.http.post('api/methacton/v1/invitations/' +this.invitation.id +'/deny', '', {"":""}).subscribe(()=>{
+          this.onAccept.emit();
+        });
+      }
+    });
   }
 
 }

@@ -74,6 +74,7 @@ import { RequestAcceptComponent } from './request-accept/request-accept.componen
 import { StudentPickerComponent } from './student-picker/student-picker.component';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { LocationPickerComponent } from './location-picker/location-picker.component';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: '/main', pathMatch: 'full'},
@@ -160,6 +161,7 @@ const appRoutes: Routes = [
     MatGridListModule,
     MatSliderModule,
     MatSlideToggleModule,
+    MatExpansionModule,
     ToastModule.forRoot(),
     RouterModule.forRoot(
       appRoutes
