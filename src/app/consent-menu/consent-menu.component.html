@@ -1,9 +1,6 @@
-<p> {{content}} </p>
-<button pButton type="button" label="Yes" icon="fa-check"
-        (click)="click(true)" [ngClass]="{'ui-button-success': true}"
-        [mat-dialog-close]="true">
-</button>
-<button pButton type="button" label="No" icon="fa-close"
-        (click)="click(false)" [ngClass]="{'ui-button-danger': true}"
-        [mat-dialog-close]="false">
-</button>
+<mat-dialog-content>{{ content }}</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>No</button>
+  <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
+  <button mat-button [mat-dialog-close]="true">Yes</button>
+</mat-dialog-actions>
