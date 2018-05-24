@@ -1,49 +1,58 @@
 <mat-expansion-panel hideToggle="true" class="wrapper" [style.background]="getGradient()">
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        <div class="header">
-          <img class="icon" [src]="invitation.icon | resolveAsset">
-          <div class="passTitle">
-            Invitation from {{invitation.issuer.display_name}}
-          </div>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <div class="header">
+        <img class="icon" [src]="invitation.icon | resolveAsset">
+        <div class="passTitle" *ngIf="invitation.student.id === user.id">
+          Invitation from {{invitation.issuer.display_name}}
         </div>
-      </mat-panel-title>
-      <mat-panel-description class="close">
-        <mat-icon class="cancel" (click)="cancelInvitation($event)">cancel</mat-icon>
-      </mat-panel-description>
-    </mat-expansion-panel-header>
-
-
-    <div class="divider center"></div>
-    <div class="body">
-      <div class="left">
-        <div class="origin center">
-         <div *ngIf="!!invitation.default_origin; else noOrigin">invitation.default_origin.title</div><ng-template #noOrigin>Your Location</ng-template>
+        <div class="passTitle" *ngIf="invitation.issuer.id === user.id">
+          Invitation for {{invitation.student.display_name}}
         </div>
-          <!-- <img *ngIf="hallpass.travel_type == 'round_trip'" class="round-trip center" [src]="'./assets/Two_Arrow.png' | resolveAsset"> -->
-          <!-- *ngIf="hallpass.travel_type == 'one_way'"  -->
-          <img class="one-way center" [src]="'./assets/One_Arrow.png' | resolveAsset">
-        <div class="destination center">
-          {{invitation.destination.title}}
+        <div class="passTitle" *ngIf="invitation.issuer.id !== user.id && invitation.student.id !== user.id">
+          Invitation for {{invitation.student.display_name}}<br>
+          from {{invitation.issuer.display_name}}
         </div>
       </div>
-      <div class="right">
-        <div class="end-pass">
-          <div>
-            {{getDate(invitation.date_choices[0])}}
-            <br>
-            at {{getTime(invitation.date_choices[0])}}
-          </div>
-          <button mat-button class="clickRipple end-pass" (click)="activateInvitation()">
-            <div class="card">
-                <div class="content">
-                    <div class="title">
-                        Accept Invitation
-                    </div>
-                </div>
-            </div>
-        </button>
-        </div>
+    </mat-panel-title>
+    <mat-panel-description class="close">
+      <mat-icon class="cancel" (click)="cancelInvitation($event)">cancel</mat-icon>
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+
+
+  <div class="divider center"></div>
+  <div class="body">
+    <div class="left">
+      <div class="origin center">
+        <div *ngIf="!!invitation.default_origin; else noOrigin">invitation.default_origin.title</div>
+        <ng-template #noOrigin>Your Location</ng-template>
+      </div>
+      <!-- <img *ngIf="hallpass.travel_type == 'round_trip'" class="round-trip center" [src]="'./assets/Two_Arrow.png' | resolveAsset"> -->
+      <!-- *ngIf="hallpass.travel_type == 'one_way'"  -->
+      <img class="one-way center" [src]="'./assets/One_Arrow.png' | resolveAsset">
+      <div class="destination center">
+        {{invitation.destination.title}}
       </div>
     </div>
-  </mat-expansion-panel>
+    <div class="right">
+      <div class="end-pass">
+        <div>
+          {{getDate(invitation.date_choices[0])}}
+          <br>
+          at {{getTime(invitation.date_choices[0])}}
+        </div>
+        <button mat-button *ngIf="invitation.student.id === user.id" class="clickRipple end-pass"
+                (click)="activateInvitation()">
+          <div class="card">
+            <div class="content">
+              <div class="title">
+                Accept Invitation
+              </div>
+            </div>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+</mat-expansion-panel>

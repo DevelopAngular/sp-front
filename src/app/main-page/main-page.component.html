@@ -19,7 +19,9 @@
     <div class="divider"></div>
     <div class="side">
         <div class="center top-margin">
-            <app-invitation-card class="request-card" *ngFor="let invitation of invitations | async" [invitation]="invitation" (onAccept)="updateInvites()"></app-invitation-card>
+            <app-invitation-card class="request-card" *ngFor="let invitation of invitations | async"
+                                 [invitation]="invitation" [user]="dataService.currentUser | async"
+                                 (onAccept)="updateInvites()"></app-invitation-card>
         </div>
         <div class="center top-margin">
             <app-request-card class="request-card" *ngFor="let request of requests | async" [request]="request" [forTeacher]="isStaff | async" (onAccept)="updateRequests()"></app-request-card>

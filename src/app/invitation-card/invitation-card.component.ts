@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { HttpService } from '../http-service';
 import { LocationChooseComponent } from '../location-choose/location-choose.component';
-import { Invitation, Location } from '../NewModels';
+import { Invitation, Location, User } from '../NewModels';
 
 @Component({
   selector: 'app-invitation-card',
@@ -14,6 +14,9 @@ export class InvitationCardComponent implements OnInit {
 
   @Input()
   invitation: Invitation;
+
+  @Input()
+  user: User;
 
   @Output()
   onAccept: EventEmitter<any> = new EventEmitter();
