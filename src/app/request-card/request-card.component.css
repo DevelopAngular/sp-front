@@ -76,6 +76,7 @@
 
 .message{
     min-width: 118px;
+    max-width: 150px;
     display: flex;
     justify-content: center;
     flex-direction: column;

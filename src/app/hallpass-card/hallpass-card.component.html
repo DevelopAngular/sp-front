@@ -10,7 +10,7 @@
     <div class="grow"></div>
     <div class="left">
       <div class="origin center">
-        {{hallpass.origin.title}}
+          {{!!hallpass.origin?hallpass.origin.title:'Their Location'}}
       </div>
         <img *ngIf="hallpass.travel_type == 'round_trip'" class="round-trip center" [src]="'./assets/Two_Arrow.png' | resolveAsset">
         <img *ngIf="hallpass.travel_type == 'one_way'" class="one-way center" [src]="'./assets/One_Arrow.png' | resolveAsset">

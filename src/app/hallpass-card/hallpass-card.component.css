@@ -2,6 +2,13 @@
     border-radius: 7px;
     display: flex;
     flex-direction: column;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-weight: bold;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.08;
+    letter-spacing: 0.3px;
 }
 
 .header{
