@@ -26,13 +26,12 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { GoogleApiModule, NG_GAPI_CONFIG } from 'ng-gapi';
 import { UserService } from './user.service';
 import { GAPI_CONFIG } from './config';
-import { MatHorizontalStepper, MatProgressSpinnerModule, MatRadioModule, MatStepperModule } from '@angular/material';
+import { MatProgressSpinnerModule, MatRadioModule, MatStepperModule } from '@angular/material';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ToastModule } from 'ng2-toastr/ng2-toastr';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { CalendarModule } from 'primeng/calendar';
 import { DropdownModule } from 'primeng/dropdown';
@@ -162,7 +161,7 @@ const appRoutes: Routes = [
     MatSliderModule,
     MatSlideToggleModule,
     MatExpansionModule,
-    ToastModule.forRoot(),
+    // ToastModule.forRoot(),
     RouterModule.forRoot(
       appRoutes
       // ,{ enableTracing: true } // <-- debugging purposes only
