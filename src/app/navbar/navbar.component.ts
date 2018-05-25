@@ -4,6 +4,7 @@ import { User } from '../NewModels';
 import { MatDialog } from '@angular/material';
 import { OptionsComponent } from '../options/options.component';
 import { Router } from '@angular/router';
+import { LoadingService } from '../loading.service';
 
 @Component({
   selector: 'app-navbar',
@@ -23,7 +24,7 @@ export class NavbarComponent implements AfterViewInit {
   tabIndex: number = 1;
   // user: User = new User('', null, null, '', '', '', '', ['']);
 
-  constructor(private dataService: DataService, public dialog: MatDialog, private router: Router) {
+  constructor(private dataService: DataService, public dialog: MatDialog, private router: Router, public loadingService: LoadingService) {
   }
 
   ngAfterViewInit() {
