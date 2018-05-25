@@ -26,13 +26,12 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { GoogleApiModule, NG_GAPI_CONFIG } from 'ng-gapi';
 import { UserService } from './user.service';
 import { GAPI_CONFIG } from './config';
-import { MatHorizontalStepper, MatProgressSpinnerModule, MatRadioModule, MatStepperModule } from '@angular/material';
+import { MatProgressBarModule, MatProgressSpinnerModule, MatRadioModule, MatStepperModule } from '@angular/material';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ToastModule } from 'ng2-toastr/ng2-toastr';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { CalendarModule } from 'primeng/calendar';
 import { DropdownModule } from 'primeng/dropdown';
@@ -75,6 +74,7 @@ import { StudentPickerComponent } from './student-picker/student-picker.componen
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { LocationPickerComponent } from './location-picker/location-picker.component';
 import {MatExpansionModule} from '@angular/material/expansion';
+import { LoadingService } from './loading.service';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: '/main', pathMatch: 'full'},
@@ -149,6 +149,7 @@ const appRoutes: Routes = [
     PanelModule,
     DialogModule,
     CardModule,
+    MatProgressBarModule,
     ScrollPanelModule,
     InputSwitchModule,
     ListboxModule,
@@ -162,7 +163,7 @@ const appRoutes: Routes = [
     MatSliderModule,
     MatSlideToggleModule,
     MatExpansionModule,
-    ToastModule.forRoot(),
+    // ToastModule.forRoot(),
     RouterModule.forRoot(
       appRoutes
       // ,{ enableTracing: true } // <-- debugging purposes only
@@ -172,13 +173,15 @@ const appRoutes: Routes = [
       useValue: GAPI_CONFIG,
     })
   ],
-  providers: [DataService,
+  providers: [
+    DataService,
     HttpService,
     UserService,
     MessageService,
     GoogleLoginService,
     JSONSerializer,
-    ConfirmationService
+    ConfirmationService,
+    LoadingService,
   ],
   bootstrap: [AppComponent]
 })

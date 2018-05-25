@@ -25,7 +25,7 @@ function wrapper<T>(thing: Observable<T>): Promise<T> {
   styleUrls: ['./student-search.component.css']
 })
 
-export class StudentSearchComponent implements AfterViewInit {
+export class StudentSearchComponent {
   @Input()
   icon: string;
 
@@ -35,7 +35,6 @@ export class StudentSearchComponent implements AfterViewInit {
 
   students: User[] = [];
   selectedStudents: User[] = [];
-  barer: string;
 
   constructor(private http: HttpService, private dataService: DataService) {
 
@@ -46,19 +45,13 @@ export class StudentSearchComponent implements AfterViewInit {
 
   }
 
-  ngAfterViewInit() {
-    this.dataService.currentBarer.subscribe(barer => this.barer = barer);
-  }
-
   async updateStudents(event){
     const query = event.query;
     this.students = this.convertToStudents(await this.filterStudents(query));
   }
 
-  async filterStudents(name: string): Promise<any[]> {
-      const config = {headers: {'Authorization' : 'Bearer ' + this.barer}};
-      const data = await this.http.get<any[]>('api/methacton/v1/users?role=hallpass_student&search=' + encodeURI(name), config).toPromise();
-      return data;
+  filterStudents(name: string): Promise<any[]> {
+      return this.http.get<any[]>('api/methacton/v1/users?role=hallpass_student&search=' + encodeURI(name)).toPromise();
   }
 
   convertToStudents(json: any[]): User[] {
