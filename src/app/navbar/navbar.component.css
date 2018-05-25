@@ -33,7 +33,7 @@
   color: #ffffff;
 }
 
-.heading .small {
+.heading .small, .navButton {
   font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
   font-size: 14px;
   font-weight: bold;
@@ -54,6 +54,30 @@
   transform: translate(0, -50%); */
   padding-left: 5px;
   margin: 3px 0px 0px 3px;
+}
+
+.teacherNav, .navButton{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: inherit;
+}
+
+.teacherNav{
+  flex-direction: row;
+}
+
+.navButton{
+  cursor: pointer;
+  flex-direction: column;
+  padding: 0 5px 0 5px;
+}
+
+.selectorBar{
+  margin-top: 2px;
+  height: 2px;
+  width: 100%;
+  background-color: #0F0;
 }
 
 .user-info {

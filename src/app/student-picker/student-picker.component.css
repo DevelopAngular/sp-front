@@ -1,9 +1,13 @@
 .form-element {
-  /*margin-left: 15px;*/
+  border-top: 1.844em;
 }
 
 .form-wide {
   /*width: calc(100% - 30px); !* margin-left + margin-right = 30px *!*/
 
   width: 100%;
+}
+
+.mat-form-field-infix{
+  
 }

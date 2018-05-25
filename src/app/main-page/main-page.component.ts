@@ -34,6 +34,8 @@ export class MainPageComponent implements OnInit {
   checkedPasses: boolean = false;
   invitations: Promise<Invitation[]>;
   requests: Promise<Request[]>;
+  user:User;
+  tabIndex:number = 1;
 
   constructor(private http: HttpService, public dataService: DataService, private router: Router,
               public dialog: MatDialog, private _zone: NgZone) {
@@ -47,6 +49,7 @@ export class MainPageComponent implements OnInit {
     this.dataService.currentUser.subscribe(user => {
       this._zone.run(() => {
         const isStaff = isUserStaff(user);
+        this.user = user;
         if (!isStaff) {
           this.invitations = this.http.get<Invitation[]>(`api/methacton/v1/invitations?status=pending&student=${user.id}`).toPromise();
           this.requests = this.http.get<Request[]>(`api/methacton/v1/pass_requests?status=pending&student=${user.id}`).toPromise();
@@ -111,4 +114,7 @@ export class MainPageComponent implements OnInit {
     this.requests = this.http.get<Request[]>('api/methacton/v1/pass_requests?status=pending').toPromise();
   }
 
+  updateTab(tabIndex){
+    this.tabIndex = tabIndex;
+  }
 }

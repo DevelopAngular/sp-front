@@ -265,6 +265,21 @@ export class HallpassFormComponent implements OnInit {
     // console.log("[Is Mandatory]: ", this.isMandatory);
   }
 
+  getStepperBorderStyle(type:string, step:number){
+    let color = '';
+    if(type == 'back'){
+      return 'solid 2px #0F0';
+    } else{
+      if(step == 1){
+        return 'solid 2px #' +(this.firstFormGroup.valid?'0F0':'F00');
+      } else if(step == 2){
+        return 'solid 2px #' +(this.secondFormGroup.valid?'0F0':'F00');
+      }
+    }
+    
+  }
+
+
   locationChosen(event: Location) {
     this.toState = 'pinnables';
     this.to_title = event.title;

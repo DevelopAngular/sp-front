@@ -1,5 +1,5 @@
-<app-navbar></app-navbar>
-<div class="main-page container" *ngIf="dataService.currentUser | async">
+<app-navbar [user]="user" [forTeacher]="isStaff | async" (onTabChange)="updateTab($event)"></app-navbar>
+<div class="pg1-wrapper container" *ngIf="tabIndex==1 && dataService.currentUser | async">
     <div *ngIf="checkedPasses" class="middle">
         <div *ngIf="!!currentPass; else newPass;" class="pass-card center">
             <app-hallpass-card [expanded]="true" class="pass-card" [hallpass]="currentPass" (onEnd)="endPass($event)"></app-hallpass-card>
@@ -27,4 +27,12 @@
             <app-request-card class="request-card" *ngFor="let request of requests | async" [request]="request" [forTeacher]="isStaff | async" (onAccept)="updateRequests()"></app-request-card>
         </div>
     </div>
+</div>
+
+<div class="pg2-wrapper container" *ngIf="tabIndex==2 && dataService.currentUser | async">
+    My Room Details
+</div>
+
+<div class="pg3-wrapper container" *ngIf="tabIndex==3 && dataService.currentUser | async">
+    Hall Monitoring Details
 </div>

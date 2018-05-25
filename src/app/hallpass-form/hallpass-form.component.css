@@ -83,12 +83,18 @@
 }
 
 .stepper-buttons {
-  width: 554px;
-  margin: 24px auto 0;
+  width: 650px;
+  margin: 10px auto auto 0;
 }
 
 .stepper-buttons > *:last-child {
   float: right;
+}
+
+.stepper-button{
+  border: 2px solid #AAA;
+  border-radius: 5px;
+  max-height: 40px;
 }
 
 .passType{
