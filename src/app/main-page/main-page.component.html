@@ -1,4 +1,4 @@
-<app-navbar [user]="user" [forTeacher]="isStaff$ | async" (onTabChange)="updateTab($event)"></app-navbar>
+<app-navbar [user]="dataService.currentUser | async" [forTeacher]="isStaff$ | async" (onTabChange)="updateTab($event)"></app-navbar>
 <div class="pg1-wrapper container" *ngIf="tabIndex==1 && dataService.currentUser | async">
     <div *ngIf="checkedPasses" class="middle">
         <div *ngIf="!!currentPass; else newPass;" class="pass-card center">

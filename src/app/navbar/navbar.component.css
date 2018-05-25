@@ -14,9 +14,11 @@
 }
 
 .heading {
-   display: flex;
-   flex-direction: row;
-   justify-content: right;
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  width: 0px;
+  padding-left: 30px;
  }
 
 .heading .title {

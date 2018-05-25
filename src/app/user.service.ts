@@ -17,7 +17,9 @@ export class UserService {
 
   constructor(private googleAuth: GoogleAuthService, private http: HttpService) {
 
-    this.http.get<User>('api/methacton/v1/users/@me').subscribe(this.userData);
+    this.http.get<any>('api/methacton/v1/users/@me')
+      .map(raw => User.fromJSON(raw))
+      .subscribe(this.userData);
   }
 
 }

@@ -54,8 +54,8 @@ export class MainPageComponent implements OnInit {
     this.dataService.currentUser
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {
+        this.user = user;
         this._zone.run(() => {
-
           const isStaff = isUserStaff(user);
           if (!isStaff) {
             // this.invitations = this.http.get<Invitation[]>(`api/methacton/v1/invitations?status=pending&student=${user.id}`).toPromise();

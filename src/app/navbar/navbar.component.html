@@ -1,11 +1,10 @@
 <div class="bar">
-  <div *ngIf="!forTeacher" class="grow"></div>
-  <div class="heading" [style.padding-left]="forTeacher?'30px':'0px'">
+  <div class="heading grow">
     <div class="title">SmartPass</div>
     <img class="logo" [src]="'./assets/One_Arrow.png' | resolveAsset">
     <div class="small">Alpha</div>
   </div>
-  <div *ngIf="forTeacher" class="teacherNav grow">
+  <div [style.display]="forTeacher?'':'none'" class="teacherNav">
     <div class="navButton" [style.background-color]="getNavElementBg(1, 'btn')" (click)="updateTab(1)">
       Passes
       <div class="selectorBar" [style.background-color]="getNavElementBg(1, 'sel')"></div>
@@ -20,7 +19,7 @@
     </div>
   </div>
   <div class="user-info">
-    <div class="name" style="margin-left: auto">{{ user.display_name }}</div>
+    <div class="name" style="margin-left: auto" *ngIf="user">{{ user.display_name }}</div>
     <div class="options" >
       <img (click)="showOptions()" class="options" [src]="'./assets/Settings.png' | resolveAsset">
     </div>
