@@ -45,6 +45,7 @@ export class RequestAcceptComponent implements OnInit {
 
   updateDate(date:string){
     this.date = date;
+    console.log("[Date]: ", this.date);
   }
 
   updateDuration(duration:number){
@@ -62,5 +63,4 @@ export class RequestAcceptComponent implements OnInit {
       this.dialogRef.close(params);
     }
   }
-
 }

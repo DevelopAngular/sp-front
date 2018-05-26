@@ -110,8 +110,7 @@ export class MainPageComponent implements OnInit {
 
   endPass(hallpass: HallPass) {
     // console.log("Ending pass");
-    this.http.post('api/methacton/v1/hall_passes/' + this.currentPass.id + '/ended', null, {'': ''}).subscribe((results) => {
-    });
+    this.http.post('api/methacton/v1/hall_passes/' + this.currentPass.id + '/ended', null, {'': ''}).subscribe((results) => {});
     this.currentPass = null;
   }
 
@@ -127,5 +126,9 @@ export class MainPageComponent implements OnInit {
 
   updateTab(tabIndex){
     this.tabIndex = tabIndex;
+  }
+
+  cardEvent(event){
+    console.log("[Card Event]", event.type +" responded with " +event.value);
   }
 }

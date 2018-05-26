@@ -50,8 +50,13 @@ export class InvitationCardComponent implements OnInit {
 
   getTime(s: Date) {
     s = new Date(s);
-    return ((s.getHours() > 12) ? s.getHours() - 12 : s.getHours()) + ':' +
-      ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + ((s.getHours() > 12) ? 'pm' : 'am');
+    
+    let hrs = ((s.getHours() > 12) ? s.getHours() - 12 : s.getHours());
+    hrs = (hrs==0)?12:hrs;
+
+    let mins = ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + ((s.getHours() > 12) ? 'pm' : 'am');
+    return hrs + ':' +mins
+      
   }
 
   activateInvitation() {
@@ -93,7 +98,7 @@ export class InvitationCardComponent implements OnInit {
 
   acceptInvitation() {
     const body = {
-      'start_time': this.selectedDate,
+      'start_time': this.selectedDate.toISOString(),
       'origin': this.origin.id
     };
     this.http.post('api/methacton/v1/invitations/' + this.invitation.id + '/accept', body).subscribe(() => {

@@ -78,6 +78,7 @@ import { LoadingService } from './loading.service';
 import { DateTimePickerComponent } from './date-time-picker/date-time-picker.component';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { AmazingTimePickerModule } from 'amazing-time-picker';
+import { PassCardComponent } from './pass-card/pass-card.component';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: '/main', pathMatch: 'full'},
@@ -112,6 +113,7 @@ const appRoutes: Routes = [
     StudentPickerComponent,
     LocationPickerComponent,
     DateTimePickerComponent,
+    PassCardComponent,
   ],
   entryComponents: [
     HallpassFormComponent,

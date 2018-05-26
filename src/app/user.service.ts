@@ -22,10 +22,10 @@ export class UserService {
       .map(raw => User.fromJSON(raw))
       .subscribe(this.userData);
 
-    this.userData.subscribe(() => {
-      this.pollingService.doStuff();
+    // this.userData.subscribe(() => {
+    //   this.pollingService.doStuff();
 
-    });
+    // });
 
   }
 

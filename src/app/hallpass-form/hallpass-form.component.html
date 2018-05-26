@@ -33,6 +33,9 @@
           </mat-slide-toggle>
         </div>
 
+        <app-date-time-picker (onUpdate)="setStartTime($event)"></app-date-time-picker>
+
+        <p>*Leave these fields blank for an immediate pass*</p>
         <div class="stepper-buttons">
           <button class="stepper-button" [style.border]="getStepperBorderStyle('next', 1)" mat-button matStepperNext>Next</button>
         </div>

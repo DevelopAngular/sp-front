@@ -1,6 +1,7 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { MatDatepickerInputEvent } from '@angular/material';
-
+import { AmazingTimePickerService } from 'amazing-time-picker';
+import { FormControl } from '@angular/forms';
 @Component({
   selector: 'app-date-time-picker',
   templateUrl: './date-time-picker.component.html',
@@ -8,14 +9,22 @@ import { MatDatepickerInputEvent } from '@angular/material';
 })
 export class DateTimePickerComponent implements OnInit {
 
+  @Input()
+  dateCtrl:FormControl;
+
+  @Input()
+  timeCtrl:FormControl;
+
   @Output() onUpdate:EventEmitter<any> = new EventEmitter();
+
+  timeS:string = "--:--"
 
   now:Date = new Date();
 
   selectedDate:Date;
   selectedTime:Date;
 
-  constructor() { }
+  constructor(private atp: AmazingTimePickerService) { }
 
   ngOnInit() {
 
@@ -23,10 +32,12 @@ export class DateTimePickerComponent implements OnInit {
 
   updateDate(date:MatDatepickerInputEvent<Date>){
     this.selectedDate = date.value;
+    this.updateDateTime();
   }
 
   updateTime(time:Date){
     this.selectedTime = time;
+    this.updateDateTime();
   }
 
   updateDateTime(){
@@ -36,6 +47,27 @@ export class DateTimePickerComponent implements OnInit {
 
   dateTime(dateD:Date, timeD:Date){
     return dateD.toISOString().split('T')[0] +'T' +timeD.toISOString().split('T')[1];
+  }
+
+  openTime(){
+    const amazingTimePicker = this.atp.open({
+      theme: 'light',
+      locale: 'en-us',
+      arrowStyle: {
+          background: 'green',
+          color: 'white'
+      }
+  });
+  amazingTimePicker.afterClose().subscribe(time => {
+      this.timeS = time;
+      let split = time.split(":");
+      let hrs = split[0];
+      let mins = split[1]
+      let timeD:Date = new Date;
+      timeD.setHours(parseInt(hrs));
+      timeD.setMinutes(parseInt(mins));
+      this.updateTime(timeD);
+  });
   }
 
 }
