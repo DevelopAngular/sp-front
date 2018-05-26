@@ -26,7 +26,7 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { GoogleApiModule, NG_GAPI_CONFIG } from 'ng-gapi';
 import { UserService } from './user.service';
 import { GAPI_CONFIG } from './config';
-import { MatProgressBarModule, MatProgressSpinnerModule, MatRadioModule, MatStepperModule } from '@angular/material';
+import { MatProgressBarModule, MatProgressSpinnerModule, MatRadioModule, MatStepperModule, MatNativeDateModule } from '@angular/material';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
@@ -75,6 +75,9 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { LocationPickerComponent } from './location-picker/location-picker.component';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { LoadingService } from './loading.service';
+import { DateTimePickerComponent } from './date-time-picker/date-time-picker.component';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { AmazingTimePickerModule } from 'amazing-time-picker';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: '/main', pathMatch: 'full'},
@@ -108,6 +111,7 @@ const appRoutes: Routes = [
     RequestAcceptComponent,
     StudentPickerComponent,
     LocationPickerComponent,
+    DateTimePickerComponent,
   ],
   entryComponents: [
     HallpassFormComponent,
@@ -163,6 +167,9 @@ const appRoutes: Routes = [
     MatSliderModule,
     MatSlideToggleModule,
     MatExpansionModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    AmazingTimePickerModule,
     // ToastModule.forRoot(),
     RouterModule.forRoot(
       appRoutes
