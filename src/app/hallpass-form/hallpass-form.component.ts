@@ -33,7 +33,7 @@ export class HallpassFormComponent implements OnInit {
   to_title: string = 'To';
   toGradient: string = 'rgb(151, 151, 151), rgb(80, 80, 80)';
   fromGradient: string = 'rgb(151, 151, 151), rgb(80, 80, 80)';
-  greenGradient = '#03cf31,#018155';
+  greenGradient = '#03cf31, #018155';
   locationType: string = '';
   fromLocation: Location;
   toLocation: Location;
@@ -278,7 +278,6 @@ export class HallpassFormComponent implements OnInit {
     }
     
   }
-
 
   locationChosen(event: Location) {
     this.toState = 'pinnables';

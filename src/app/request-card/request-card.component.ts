@@ -54,7 +54,26 @@ export class RequestCardComponent implements OnInit {
       data: {message: this.request.attachment_message}
     });
 
-    dialogRef.afterClosed().subscribe();
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+
+        let body = {};
+        if(result['date'] == ""){
+          body = {
+            'duration' : result['duration'].value
+          };
+        } else{
+          body = {
+            'start_time' : result['date'],
+            'duration' : result['duration'].value
+          };
+        }
+
+        this.http.post('api/methacton/v1/pass_requests/' + this.request.id + '/accept', body).subscribe(() => {
+          this.onAccept.emit(result['date'] == "");
+        });
+      }
+    });
   }
 
   cancelRequest(event) {

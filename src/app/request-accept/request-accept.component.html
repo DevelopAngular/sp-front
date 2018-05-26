@@ -1,15 +1,40 @@
-<div *ngIf="formState == 1" class="nowLater">
-  When is this pass form?
-</div>
+<div class="wrapper">
+  <h1>Accept Request</h1>
+  <div class="moment spaced">
+    <app-gradient-button
+          [minWidth]="'150px'"
+          [gradient]="nowGradient"
+          [leftIcon]="'./assets/Now.png'"
+          (click)="setMoment('now')"
+          [style.margin-right]="'20px'"
+      >Now
+    </app-gradient-button>
+    <app-gradient-button
+        [minWidth]="'150px'"
+        [gradient]="laterGradient"
+        [leftIcon]="'./assets/Later.png'"
+        (click)="setMoment('later')"
+      >Later
+    </app-gradient-button>
+  </div>
 
-<div *ngIf="formState == 2" class="dateChoose">
-  When is this pass scheduled for?
-</div>
+  <div *ngIf="showDate" class="dateTime spaced">
+    <app-date-time-picker (onUpdate)="updateDate($event)"></app-date-time-picker>
+  </div>
 
-<div *ngIf="formState == 3" class="durationChoose">
-  How long should the pass be for?
-</div>
+  <div class="duration spaced">
+    How long should the pass be for?
+    <app-duration-picker (onChange)="updateDuration($event)"></app-duration-picker>
+  </div>
 
-<div class="nav">
-  
+  <div class="accept">
+      <app-gradient-button
+      [minWidth]="'150px'"
+      [gradient]="'#7b7df1, #5e3fb6'"
+      [rightIcon]="'./assets/One_Arrow.png'"
+      (click)="acceptRequest()"
+    >
+    Accept Request
+    </app-gradient-button>
+  </div> 
 </div>

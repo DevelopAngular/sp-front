@@ -97,7 +97,7 @@ export class MainPageComponent implements OnInit {
           if (result instanceof HallPass) {
             this.currentPass = !isStaff ? result : null;
           } else if (result instanceof Request) {
-            this.updateRequests();
+            this.updateRequests(false);
           } else if (result instanceof Invitation) {
             if (isStaff) {
               this.updateInvites();
@@ -119,8 +119,10 @@ export class MainPageComponent implements OnInit {
     this.dataService.reloadInvitations();
   }
 
-  updateRequests() {
+  updateRequests(isInvite) {
     this.requests = this.http.get<Request[]>('api/methacton/v1/pass_requests?status=pending').toPromise();
+    if(isInvite)
+      this.updateInvites;
   }
 
   updateTab(tabIndex){
