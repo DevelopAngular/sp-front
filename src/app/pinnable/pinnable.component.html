@@ -1,14 +1,12 @@
 <button mat-button class="clickRipple" (click)="onSelect()">
   <div class="card" [style.background]="getGradient()">
-    <div>
       <img class="icon" [src]="pinnable.icon" alt="ICON">
       <div class="title">
         {{pinnable.title}}
       </div>
-      <div *ngIf="restricted;">
+      <div *ngIf="restricted;" class="overlay-container">
         <div class="overlay"></div>
         <img class="lock" [src]="'./assets/Lock.png' | resolveAsset" alt="LOCK">
       </div>
-    </div>
   </div>
 </button>

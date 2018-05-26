@@ -7,7 +7,10 @@
     color: white;
     text-align: center;
     box-shadow: 0 7.5px 13px 0 rgba(0, 0, 0, 0.1);
-    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+
+  position: relative;
+  overflow: hidden;
 }
 
 .icon{
@@ -24,16 +27,28 @@
     letter-spacing: 0.3px;
 }
 
-/* .overlay{
+.overlay-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
 
-} */
+.overlay-container .overlay{
+  width: 50px;
+  height: 45px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(50%, -50%) rotate(45deg);
+  background: rgba(255, 255, 255, 0.3);
+}
 
-.lock{
+.overlay-container .lock{
     position: relative;
     width: 12px;
     height: 11px;
-    top: -53px;
-    right: -48px;
+    top: 3px;
+    right: 3px;
 }
 
 .clickRipple{
