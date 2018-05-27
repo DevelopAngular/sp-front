@@ -496,6 +496,12 @@ angular2-datetimepicker@^1.1.1:
   dependencies:
     font-awesome "*"
 
+angular2-websocket@^0.9.6:
+  version "0.9.6"
+  resolved "https://registry.yarnpkg.com/angular2-websocket/-/angular2-websocket-0.9.6.tgz#55c78ab43809e1831fab43e4c9a68b15e3c7ae54"
+  dependencies:
+    bluebird "^3.4.6"
+
 ansi-escapes@^1.1.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/ansi-escapes/-/ansi-escapes-1.4.0.tgz#d3a8a83b319aa67793662b13e761c7911422306e"

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
+import { $WebSocket } from 'angular2-websocket/angular2-websocket';
+import { environment } from '../environments/environment';
 import { HttpService } from './http-service';
-
-import * as oboe from 'oboe';
 
 @Injectable({
   providedIn: 'root'
@@ -16,22 +16,16 @@ export class PollingService {
 
       console.log(new Date());
 
-      const r = oboe({
-        method: 'GET',
-        url: 'https://notify-messenger-notify-server-staging.lavanote.com/api/v1/long_polling',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      // use wss://
+      const url = environment.serverConfig.host_ws + 'api/v1/long_polling';
 
-      r.node('!.*', obj => {
+      const ws = new $WebSocket(url);
 
-        // This callback will be called everytime a new object is
-        // found in the foods array.
+      ws.send4Direct(JSON.stringify({'action': 'authenticate', 'token': token}));
 
-        console.log(new Date());
-        console.log('Go eat some', obj);
-      });
+      ws.onMessage(console.log);
+
+      ws.onClose(() => console.log('Closed!'));
 
     });
 
