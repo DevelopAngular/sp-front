@@ -313,7 +313,7 @@ export class HallpassFormComponent implements OnInit {
       'origin': this.fromLocation.id,
       'attachment_message': message,
       'travel_type': this.travelType,
-      'teacher': this.toLocation.teachers[1].id
+      'teacher': this.toLocation.teachers[0].id
     };
 
     this.http.post('api/methacton/v1/pass_requests', body, ).subscribe((data) => {

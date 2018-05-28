@@ -33,17 +33,32 @@ export class PassCardComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log("[Pass]: ", this.pass);
     this.type = (this.pass instanceof HallPass)?"hallpass":
-    (this.pass instanceof Request)?"request":
-    "invitation";
+    (this.pass instanceof Invitation)?"invitation":
+    "request";
     
     console.log("[Card Type]", this.type);
+
+    if(this.type == 'hallpass'){
+      setInterval(()=>{
+        if(!!this.pass && !this.future){
+          let end = this.pass.expiration_time;
+          let start = new Date();
+          let diff:number = Math.floor((end.getTime() - start.getTime()) / 1000);
+          let mins: number = Math.floor(diff/60);
+          let secs: number = Math.abs(diff%60);
+          this.timeLeft = mins +":" +(secs<10?"0"+secs:secs);
+        }
+      }, 1000);
+    }
   }
 
   _cardEvent(value:boolean){
     let event = {
       'type' : this.type,
-      'value' : value
+      'value' : value,
+      'id' : this.pass.id
     };
 
     this.cardEvent.emit(event);

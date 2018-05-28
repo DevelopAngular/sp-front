@@ -53,7 +53,7 @@
         {{pass.attachment_message != 'null'? pass.attachment_message: 'No Message'}}
       </div>
       <div class="card-right" *ngIf="type=='invitation'">
-        <div>
+        <div class="padding-bottom">
           {{getDate(pass.date_choices[0])}}
           <br>
           at {{getTime(pass.date_choices[0])}}
