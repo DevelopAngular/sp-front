@@ -16,7 +16,6 @@ import { LocationPickerComponent } from '../location-picker/location-picker.comp
   styleUrls: ['./hallpass-form.component.css']
 })
 export class HallpassFormComponent implements OnInit {
-
   // General Set-Up
   public isLoggedIn: Boolean = false;
   public isStaff = false;
@@ -45,6 +44,7 @@ export class HallpassFormComponent implements OnInit {
   toCategory: string = '';
   selectedStudents: User[] = [];
   isMandatory: boolean = false;
+  startTime:Date = new Date();
 
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
@@ -128,7 +128,7 @@ export class HallpassFormComponent implements OnInit {
       return null;
     }
 
-    const start = new Date();
+    const start = this.startTime;
 
     const endTime = new Date(+start + (this.firstFormGroup.controls['durationCtrl'].value.value * 1000));
 
@@ -162,11 +162,14 @@ export class HallpassFormComponent implements OnInit {
 
   }
 
+  setStartTime(event){
+    this.startTime = new Date(event);
+  }
+
   chooseLoc(loc) {
     this.locationType = loc;
     if (loc === 'to') {
       if (!!this.fromLocation) {
-
         this.toGradient = 'rgb(151, 151, 151), rgb(80, 80, 80)';
         this.toIcon = './assets/Search.png';
         this.to_title = 'To';
@@ -310,7 +313,7 @@ export class HallpassFormComponent implements OnInit {
       'origin': this.fromLocation.id,
       'attachment_message': message,
       'travel_type': this.travelType,
-      'teacher': this.toLocation.teachers[1].id
+      'teacher': this.toLocation.teachers[0].id
     };
 
     this.http.post('api/methacton/v1/pass_requests', body, ).subscribe((data) => {

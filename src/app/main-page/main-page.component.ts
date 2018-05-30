@@ -97,7 +97,7 @@ export class MainPageComponent implements OnInit {
           if (result instanceof HallPass) {
             this.currentPass = !isStaff ? result : null;
           } else if (result instanceof Request) {
-            this.updateRequests(false);
+            this.updateRequests();
           } else if (result instanceof Invitation) {
             if (isStaff) {
               this.updateInvites();
@@ -110,8 +110,7 @@ export class MainPageComponent implements OnInit {
 
   endPass(hallpass: HallPass) {
     // console.log("Ending pass");
-    this.http.post('api/methacton/v1/hall_passes/' + this.currentPass.id + '/ended', null, {'': ''}).subscribe((results) => {
-    });
+    this.http.post('api/methacton/v1/hall_passes/' + this.currentPass.id + '/ended', null, {'': ''}).subscribe((results) => {});
     this.currentPass = null;
   }
 
@@ -119,13 +118,23 @@ export class MainPageComponent implements OnInit {
     this.dataService.reloadInvitations();
   }
 
-  updateRequests(isInvite) {
+  updateRequests() {
     this.requests = this.http.get<Request[]>('api/methacton/v1/pass_requests?status=pending').toPromise();
-    if(isInvite)
-      this.updateInvites;
   }
 
   updateTab(tabIndex){
     this.tabIndex = tabIndex;
+  }
+
+  cardEvent(event){
+    if(event.type == 'hallpass'){
+      if(!event.value){
+        this.endPass(event.id);
+      }
+    } else if(event.type == 'request'){
+
+    } else if(event.type == 'invitation'){
+
+    }
   }
 }

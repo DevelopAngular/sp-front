@@ -2,7 +2,7 @@
 <div class="pg1-wrapper container" *ngIf="tabIndex==1 && dataService.currentUser | async">
     <div *ngIf="checkedPasses" class="middle">
         <div *ngIf="!!currentPass; else newPass;" class="pass-card center">
-            <app-hallpass-card [expanded]="true" class="pass-card" [hallpass]="currentPass" (onEnd)="endPass($event)"></app-hallpass-card>
+            <app-pass-card [pass]="currentPass" [user]="dataService.currentUser | async" (cardEvent)="cardEvent($event)"></app-pass-card>
         </div>
         <ng-template #newPass>
           <div style="height: 40px;"></div>
@@ -11,7 +11,8 @@
             (click)="showForm()">New Pass</app-gradient-button>
 
         </ng-template>
-        <div *ngIf="!!futurePasses">
+        <div class="futurePasses" *ngIf="!!futurePasses">
+            Future Passes
             <app-hallpass-card class="pass-card" *ngFor="let hallpass of futurePasses" [hallpass]="hallpass" [future]="true"></app-hallpass-card>
         </div>
 
@@ -19,12 +20,14 @@
     <div class="divider"></div>
     <div class="side">
         <div class="center top-margin">
-            <app-invitation-card class="request-card" *ngFor="let invitation of invitations | async"
-                                 [invitation]="invitation" [user]="dataService.currentUser | async"
-                                 (onAccept)="updateInvites()"></app-invitation-card>
+            <app-pass-card *ngFor="let invitation of invitations | async"
+                            [pass]="invitation" [user]="dataService.currentUser | async"
+                            (cardEvent)="cardEvent($event)"></app-pass-card>
         </div>
         <div class="center" style="margin-top: 20px;">
-            <app-request-card class="request-card" *ngFor="let request of requests | async" [request]="request" [forTeacher]="isStaff$ | async" (onAccept)="updateRequests($event)"></app-request-card>
+            <app-pass-card *ngFor="let request of requests | async"
+                            [pass]="request" [forTeacher]="isStaff$ | async"
+                            (onAccept)="cardEvent($event)"></app-pass-card>
         </div>
     </div>
 </div>

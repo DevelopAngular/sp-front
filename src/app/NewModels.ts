@@ -130,7 +130,8 @@ export class Invitation {
                 public status: string,
                 public duration: number,
                 public gradient_color: string,
-                public icon: string){
+                public icon: string,
+                public travel_type: string){
     }
 
     static fromJSON(JSON:any){
@@ -147,14 +148,15 @@ export class Invitation {
         duration: number = JSON['duration'],
         gradient_color: string = JSON['gradient_color'],
         icon: string = JSON['icon'],
-        default_origin: Location = (!!JSON['default_orgin'])?Location.fromJSON(JSON['default_orgin']):null;
+        default_origin: Location = (!!JSON['default_origin'])?Location.fromJSON(JSON['default_orgin']):null,
+        travel_type: string = JSON['travel_type'];
 
         let datesJSON = JSON['date_choices'];
         for(let i = 0; i < datesJSON.length; i++){
             date_choices.push(new Date(datesJSON[i]));
         }
 
-        return new Invitation(id, student, default_origin, destination, date_choices, issuer, status, duration, gradient_color, icon);
+        return new Invitation(id, student, default_origin, destination, date_choices, issuer, status, duration, gradient_color, icon, travel_type);
     }
 }
 
