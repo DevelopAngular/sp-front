@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Invitation } from './NewModels';
-import { UserService } from './user.service';
-import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Observable } from 'rxjs/Observable';
 import { map, switchMap } from 'rxjs/operators';
 import { HttpService } from './http-service';
+import { Invitation } from './NewModels';
+import { PollingService } from './polling-service';
+import { UserService } from './user.service';
 
 export type Partial<T> = {
   [P in keyof T]?: T[P];
@@ -44,7 +45,11 @@ export class DataService {
   currentUser = this.userService.userData.asObservable();
   private updateInvitations = new BehaviorSubject<void>(null);
 
-  constructor(private userService: UserService, private http: HttpService) {
+  constructor(private userService: UserService, private http: HttpService, private polling: PollingService) {
+
+    this.polling.listen('invitation')
+      .subscribe(() => this.updateInvitations.next(null));
+
   }
 
   watchInvitations(options: Partial<InvitationOptions>): Observable<Invitation[]> {
