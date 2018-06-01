@@ -1,27 +1,38 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import {Pinnable} from '../NewModels';
+import {trigger, state, style, animate, transition} from '@angular/animations';
+import { bumpIn } from '../animations';
+
 @Component({
   selector: 'app-pinnable',
   templateUrl: './pinnable.component.html',
-  styleUrls: ['./pinnable.component.css']
+  styleUrls: ['./pinnable.component.css'],
+  animations: [
+    bumpIn
+  ]
 })
 export class PinnableComponent implements OnInit {
 
   @Input()
   pinnable: Pinnable;
 
-  restricted: boolean = false;
-
   @Output() onSelectEvent: EventEmitter<Pinnable> = new EventEmitter();
+  
+  restricted: boolean = false;
+  buttonDown = false;
 
   constructor() {
     
   }
-
+  
   ngOnInit() {
     if(!!this.pinnable.location){
       this.restricted = this.pinnable.location.restricted;
     }
+  }
+
+  get buttonState(){
+    return this.buttonDown ? 'down' : 'up';
   }
 
   onSelect(){
@@ -33,6 +44,11 @@ export class PinnableComponent implements OnInit {
     let gradient: string[] = this.pinnable.gradient_color.split(",");;
 
     return "radial-gradient(circle at 73% 71%, " +gradient[0] +", " +gradient[1] +")";
+  }
+
+  onPress(press:boolean){
+    this.buttonDown = press;
+    //console.log("[Button State]: ", "The button is " +this.buttonState);
   }
 
 }

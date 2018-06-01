@@ -6,10 +6,13 @@
         </div>
         <ng-template #newPass>
           <div style="height: 40px;"></div>
-          <app-gradient-button style="width: 352px; margin-top: 40px;"
+          <app-gradient-button
+            [minWidth] = "'352px'"
+            [minHeight] = "'56px'"
             [leftIcon]="'./assets/Plus.png'"
-            (click)="showForm()" class="new-pass">New Pass</app-gradient-button>
-
+            [hoverColor]="'#04CD33'"
+            (click)="showForm()" class="new-pass">New Pass</app-gradient-button> 
+            <!--  -->
         </ng-template>
         <!-- <div class="futurePasses" *ngIf="!!futurePasses">
             Future Passes

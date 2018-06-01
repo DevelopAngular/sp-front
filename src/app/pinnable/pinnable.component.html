@@ -1,4 +1,6 @@
-<button mat-button class="clickRipple" (click)="onSelect()">
+<div mat-raised-button class="clickRipple" (click)="onSelect()"
+    [@pressState]="buttonState"
+    (mousedown)="onPress(true)" (mouseup)="onPress(false)">
   <div class="card" [style.background]="getGradient()">
       <img class="icon" [src]="pinnable.icon" alt="ICON">
       <div class="title">
@@ -9,4 +11,4 @@
         <img class="lock" [src]="'./assets/Lock.png' | resolveAsset" alt="LOCK">
       </div>
   </div>
-</button>
+</div>

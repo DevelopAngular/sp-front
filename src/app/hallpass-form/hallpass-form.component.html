@@ -101,11 +101,13 @@
     <app-student-search *ngIf="isStaff" class="studentSearch center"
                         (onUpdate)="studentsUpdated($event)"></app-student-search>
     <div *ngIf="isStaff" class="divider"></div>
-    <div class="center locs">
+    <div class="locs">
       <app-gradient-button
         class="location-button"
         [gradient]="fromGradient"
-        [minWidth]="'150px'"
+        [hoverColor]="'#7E879D'"
+        [minWidth]="'134px'"
+        [minHeight]="'60px'"
         [leftIcon]="fromIcon"
         (click)="chooseLoc('from')"
       >{{ from_title }}
@@ -120,7 +122,9 @@
       <app-gradient-button
         class="location-button"
         [gradient]="toGradient"
-        [minWidth]="'150px'"
+        [hoverColor]="'#7E879D'"
+        [minWidth]="'134px'"
+        [minHeight]="'60px'"
         [leftIcon]="toIcon"
         (click)="chooseLoc('to')"
       >{{ to_title }}

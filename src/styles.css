@@ -46,6 +46,10 @@ body{
     padding-top: 0;
 }
 
+/* :host /deep/ .mat-button-focus-overlay {
+    background-color: rgba(0, 0, 0, 0);
+} */
+
 .custom-backdrop{
     /* z-index: 0; */
     background-color: rgba(0,0,0,0.39);
