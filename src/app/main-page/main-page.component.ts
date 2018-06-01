@@ -88,7 +88,9 @@ export class MainPageComponent implements OnInit {
 
   showForm(): void {
     const dialogRef = this.dialog.open(HallpassFormComponent, {
-      width: '750px'
+      width: '750px',
+      panelClass: 'form-dialog-container',
+      backdropClass: 'custom-backdrop'
     });
 
     dialogRef.afterClosed().subscribe((result: Object) => {

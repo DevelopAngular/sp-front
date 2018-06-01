@@ -37,6 +37,20 @@ body{
     padding: 0px;
 }
 
+
+.form-dialog-container .mat-dialog-container{
+    border-radius: 7px;
+    overflow: visible;
+    box-shadow: 0 4px 6.5px 0 rgba(0, 0, 0, 0.15);
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.custom-backdrop{
+    /* z-index: 0; */
+    background-color: rgba(0,0,0,0.39);
+}
+
 html, body {
     max-width: 100%;
     overflow-x: hidden;

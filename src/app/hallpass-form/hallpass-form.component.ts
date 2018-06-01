@@ -156,6 +156,9 @@ export class HallpassFormComponent implements OnInit {
 
       this.originRequired = !this.isStaff;
     });
+
+    this.dialogRef.updatePosition({top: '225px' });
+
     //console.log(this.user.roles);
 
     //console.log('Hallpass form is staff:' + this.isStaff);

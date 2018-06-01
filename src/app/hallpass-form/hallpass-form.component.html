@@ -1,5 +1,6 @@
 <p-growl [(value)]="msgs" life="3000"></p-growl>
 
+<div class="pointer"></div>
 
 <ng-container *ngIf="isStaff">
   <mat-horizontal-stepper #stepper [linear]="true" style="margin-bottom: -20px;">
@@ -95,8 +96,8 @@
 
 <ng-container *ngIf="!isStaff">
   <div class="form">
-    <app-type-selector class="center" (onChange)="updateType($event)"></app-type-selector>
-    <div class="divider"></div>
+    <!-- <app-type-selector class="center" (onChange)="updateType($event)"></app-type-selector> -->
+    <!-- <div class="divider"></div> -->
     <app-student-search *ngIf="isStaff" class="studentSearch center"
                         (onUpdate)="studentsUpdated($event)"></app-student-search>
     <div *ngIf="isStaff" class="divider"></div>
@@ -111,9 +112,9 @@
       </app-gradient-button>
 
       <!-- <div class="type-arrows"> -->
-      <img [class.hidden]="travelType != 'round_trip'" class="round-trip"
-           [src]="'./assets/RT_Arrow.png' | resolveAsset">
-      <img [class.hidden]="travelType != 'one_way'" class="one-way" [src]="'./assets/OW_Arrow.png' | resolveAsset">
+      <!-- <img [class.hidden]="travelType != 'round_trip'" class="round-trip"
+           [src]="'./assets/RT_Arrow.png' | resolveAsset"> -->
+      <img class="one-way" [src]="'./assets/OW_Arrow.png' | resolveAsset">
       <!-- </div> -->
 
       <app-gradient-button
