@@ -3,13 +3,18 @@
   padding-top: 1px;
   width: inherit;
   height: inherit;
+  display: flex;
+  align-items: center;
+}
+
+.center{
+  display: flex;
+  justify-content: center;
 }
 
 .wrapper {
   display: flex;
   flex-direction: row;
-
-  margin: 13px 0;
 
   color: white;
 
