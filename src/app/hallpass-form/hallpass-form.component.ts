@@ -33,7 +33,7 @@ export class HallpassFormComponent implements OnInit {
   toGradient: string = 'rgb(151, 151, 151), rgb(80, 80, 80)';
   fromGradient: string = 'rgb(151, 151, 151), rgb(80, 80, 80)';
   greenGradient = '#03cf31, #018155';
-  locationType: string = '';
+  // locationType: string = '';
   fromLocation: Location;
   toLocation: Location;
   formState: string = 'from';
@@ -90,7 +90,7 @@ export class HallpassFormComponent implements OnInit {
       this.from_title = this.fromLocation.title;
       this.fromIcon = '';
       this.fromGradient = this.greenGradient;
-      this.locationType = 'to';
+      // this.locationType = 'to';
 
       this.formState = (this.formState === 'fields') ? 'fields' : 'to';
     });
@@ -169,9 +169,9 @@ export class HallpassFormComponent implements OnInit {
     this.startTime = new Date(event);
   }
 
-  chooseLoc(loc) {
-    this.locationType = loc;
-    if (loc === 'to') {
+  setFormState(state) {
+    this.formState = state;
+    if (state === 'to') {
       if (!!this.fromLocation) {
         this.toGradient = 'rgb(151, 151, 151), rgb(80, 80, 80)';
         this.toIcon = './assets/Search.png';
@@ -180,29 +180,9 @@ export class HallpassFormComponent implements OnInit {
         this.pinnables = this.http.get<Pinnable[]>('api/methacton/v1/pinnables').toPromise();
         this.formState = 'to';
         this.toState = 'pinnables';
-      } else {
-        this.msgs.push({severity: 'error', summary: 'Attention!', detail: 'You must select a from location first.'});
       }
-    } else if (loc === 'from') {
-      let dialogRef = this.dialog.open(LocationChooseComponent, {
-        width: '250px',
-        hasBackdrop: true
-      });
+    } else if (state === 'from') {
 
-      dialogRef.afterClosed().subscribe(result => {
-        if (!result) {
-          return;
-        }
-        // console.log('The dialog was closed');
-        this.fromLocation = result;
-        this.from_title = this.fromLocation.title;
-        this.fromIcon = '';
-        this.fromGradient = this.greenGradient;
-        this.locationType = 'to';
-
-        this.formState = (this.formState == 'fields') ? 'fields' : 'to';
-        this.pinnables = this.http.get<Pinnable[]>('api/methacton/v1/pinnables').toPromise();
-      });
     }
   }
 
@@ -225,13 +205,11 @@ export class HallpassFormComponent implements OnInit {
 
       // console.log("[Pinnable Selected]: ", event);
       if (event.type == 'location') {
-        if (this.locationType == 'to') {
-          this.to_title = event.title;
-          this.toIcon = event.icon || '';
-          this.toGradient = event.gradient_color;
-          this.formState = 'fields';
-          this.toLocation = event.location;
-        }
+        this.to_title = event.title;
+        this.toIcon = event.icon || '';
+        this.toGradient = event.gradient_color;
+        this.formState = 'fields';
+        this.toLocation = event.location;
       } else if (event.type == 'category') {
         this.toCategory = event.category;
         this.toState = 'category';
@@ -246,6 +224,14 @@ export class HallpassFormComponent implements OnInit {
       return 'block';
     } else {
       return 'none';
+    }
+  }
+
+  getDividerText(){
+    if(this.formState === 'from'){
+      return 'From where?';
+    } else if(this.formState === 'to'){
+      return 'To where?';
     }
   }
 

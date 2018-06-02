@@ -2,6 +2,7 @@
 
 <div class="pointer"></div>
 
+<!-- Show the form designated for teachers -->
 <ng-container *ngIf="isStaff">
   <mat-horizontal-stepper #stepper [linear]="true" style="margin-bottom: -20px;">
     <!-- Choose students and origin -->
@@ -94,13 +95,11 @@
   </mat-horizontal-stepper>
 </ng-container>
 
+<!-- Show the form designated for students -->
 <ng-container *ngIf="!isStaff">
   <div class="form">
-    <!-- <app-type-selector class="center" (onChange)="updateType($event)"></app-type-selector> -->
-    <!-- <div class="divider"></div> -->
-    <app-student-search *ngIf="isStaff" class="studentSearch center"
-                        (onUpdate)="studentsUpdated($event)"></app-student-search>
-    <div *ngIf="isStaff" class="divider"></div>
+
+    <!-- Buttons responsible for choosing formStart -->
     <div class="locs">
       <app-gradient-button
         class="location-button"
@@ -108,7 +107,7 @@
         [hoverColor]="'#7E879D'"
         [minWidth]="'134px'"
         [minHeight]="'60px'"
-        (click)="chooseLoc('from')"
+        (click)="setFormState('from')"
       >{{ from_title }}
       </app-gradient-button>
 
@@ -124,12 +123,23 @@
         [hoverColor]="'#7E879D'"
         [minWidth]="'134px'"
         [minHeight]="'60px'"
-        (click)="chooseLoc('to')"
+        (click)="setFormState('to')"
       >{{ to_title }}
       </app-gradient-button>
 
     </div>
-    <div class="divider"></div>
+
+    <div class="divider">
+      <img class="divider-icon" [src]="'../../assets/Search.png' | resolveAsset">
+      <div class="divider-text">{{getDividerText()}}</div>
+    </div>
+
+    <!-- Used to select the from_location -->
+    <div *ngIf="formState == 'from'">
+      
+    </div>
+
+    <!-- Used to select the to_location -->
     <div *ngIf="formState == 'to'">
       <div *ngIf="toState == 'pinnables'">
         <mat-grid-list class="grid center" cols="4" rowHeight="75px" gutterSize="15px">
@@ -143,7 +153,8 @@
                             [setCategory]="toCategory"></app-location-table>
       </div>
     </div>
-    <div *ngIf="formState == 'fields'">
+    
+    <!-- <div *ngIf="formState == 'fields'">
       <div *ngIf="!toLocation.restricted || isStaff; else restrictedFields;" class="fields center">
         <div class="question">How much time do you need?
           <br><br>
@@ -180,7 +191,8 @@
           <div class="grow"></div>
         </div>
       </ng-template>
-    </div>
+    </div> -->
+  
   </div>
 </ng-container>
 
