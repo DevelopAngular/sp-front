@@ -271,13 +271,19 @@ export class HallpassFormComponent implements OnInit {
     
   }
 
-  locationChosen(event: Location) {
-    this.toState = 'pinnables';
-    this.to_title = event.title;
-    // this.toIcon = "";
-    // this.toGradient = this.greenGradient;
-    this.formState = 'fields';
-    this.toLocation = event;
+  locationChosen(event: Location, type: string) {
+    if(type === 'from'){
+      this.formState = 'from';
+      this.from_title = event.title;
+      this.fromLocation = event;
+    } else{
+      this.toState = 'pinnables';
+      this.to_title = event.title;
+      // this.toIcon = "";
+      // this.toGradient = this.greenGradient;
+      this.formState = 'fields';
+      this.toLocation = event;
+    }
   }
 
   determinePass() {

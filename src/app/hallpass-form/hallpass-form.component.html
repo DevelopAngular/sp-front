@@ -136,7 +136,7 @@
 
     <!-- Used to select the from_location -->
     <div *ngIf="formState == 'from'">
-      
+      <app-location-table class="locations" (onSelect)="locationChosen($event, 'from')"></app-location-table>
     </div>
 
     <!-- Used to select the to_location -->
@@ -150,7 +150,7 @@
       </div>
       <div *ngIf="toState == 'category'">
         <app-location-table class="center" (onSelect)="locationChosen($event)"
-                            [setCategory]="toCategory"></app-location-table>
+                            [category]="toCategory"></app-location-table>
       </div>
     </div>
     

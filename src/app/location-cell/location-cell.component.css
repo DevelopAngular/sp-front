@@ -1,3 +1,22 @@
+.wrapper{
+    padding-top: 5px;
+    cursor: pointer;
+}
+
+.wrapper:hover{
+    cursor: pointer;
+    background-color: #CBD5E5;
+}
+
 .info{
-    width: inherit;
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.08;
+    letter-spacing: 0.3px;
+}
+
+hr{
+    margin-bottom: 0;
 }
