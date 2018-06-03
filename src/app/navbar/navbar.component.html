@@ -19,7 +19,7 @@
     </div>
   </div>
   <div class="user-info">
-    <div class="name" style="margin-left: auto">{{ user ? user.display_name : '' }}</div>
+    <div class="name">{{ user ? user.display_name : '' }}</div>
     <div class="options" >
       <img (click)="showOptions()" class="options" [src]="'./assets/Settings.png' | resolveAsset">
     </div>
