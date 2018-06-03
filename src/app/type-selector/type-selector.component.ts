@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-type-selector',
@@ -9,19 +9,20 @@ export class TypeSelectorComponent implements OnInit {
 
   @Output() onChange: EventEmitter<any> = new EventEmitter();
 
-  selectedType = "round_trip";
+  selectedType = 'round_trip';
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit() {
 
   }
 
-  update(type:String){
-    if(type == 'rt'){
-      this.selectedType = "round_trip";
-    } else{
-      this.selectedType = "one_way";
+  update(type: String) {
+    if (type == 'rt') {
+      this.selectedType = 'round_trip';
+    } else {
+      this.selectedType = 'one_way';
     }
     this.onChange.emit(this.selectedType);
   }

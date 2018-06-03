@@ -8,9 +8,9 @@ describe('RequestAcceptComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RequestAcceptComponent ]
+      declarations: [RequestAcceptComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

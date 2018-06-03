@@ -4,7 +4,7 @@
       <div class="header">
         <img class="icon" [src]="hallpass.icon | resolveAsset">
         <div class="passTitle">
-            Pass to {{hallpass.destination.title}}
+          Pass to {{hallpass.destination.title}}
         </div>
       </div>
     </mat-panel-title>
@@ -14,10 +14,12 @@
     <div class="grow"></div>
     <div class="left">
       <div class="origin center">
-          {{!!hallpass.origin?hallpass.origin.title:'Their Location'}}
+        {{!!hallpass.origin?hallpass.origin.title:'Their Location'}}
       </div>
-        <img *ngIf="hallpass.travel_type == 'round_trip'" class="round-trip center" [src]="'./assets/Two_Arrow.png' | resolveAsset">
-        <img *ngIf="hallpass.travel_type == 'one_way'" class="one-way center" [src]="'./assets/One_Arrow.png' | resolveAsset">
+      <img *ngIf="hallpass.travel_type == 'round_trip'" class="round-trip center"
+           [src]="'./assets/Two_Arrow.png' | resolveAsset">
+      <img *ngIf="hallpass.travel_type == 'one_way'" class="one-way center"
+           [src]="'./assets/One_Arrow.png' | resolveAsset">
       <div class="destination center">
         {{hallpass.destination.title}}
       </div>
@@ -28,11 +30,11 @@
       <div *ngIf="!future; else inFuture" class="end-pass">
         <button mat-button class="clickRipple end-pass" (click)="endPass()">
           <div class="card">
-              <div class="content">
-                  <div class="title">
-                      {{timeLeft}} - End Pass
-                  </div>
+            <div class="content">
+              <div class="title">
+                {{timeLeft}} - End Pass
               </div>
+            </div>
           </div>
         </button>
       </div>

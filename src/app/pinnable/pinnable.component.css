@@ -1,30 +1,30 @@
-.card{
-    width: inherit;
-    height: 62px;
-    padding-top: 8.9px;
-    border-radius: 7px;
-    background: radial-gradient(at bottom right, white, white);
-    color: white;
-    text-align: center;
-    box-shadow: 0 7.5px 13px 0 rgba(0, 0, 0, 0.1);
-    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+.card {
+  width: inherit;
+  height: 62px;
+  padding-top: 8.9px;
+  border-radius: 7px;
+  background: radial-gradient(at bottom right, white, white);
+  color: white;
+  text-align: center;
+  box-shadow: 0 7.5px 13px 0 rgba(0, 0, 0, 0.1);
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
 
   position: relative;
   overflow: hidden;
 }
 
-.icon{
-    width: 28.5px;
-    height: 29.5px;
+.icon {
+  width: 28.5px;
+  height: 29.5px;
 }
 
-.title{
-    font-size: 14px;
-    font-weight: bold;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: 1.08;
-    letter-spacing: 0.3px;
+.title {
+  font-size: 14px;
+  font-weight: bold;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1.08;
+  letter-spacing: 0.3px;
 }
 
 .overlay-container {
@@ -33,7 +33,7 @@
   right: 0;
 }
 
-.overlay-container .overlay{
+.overlay-container .overlay {
   width: 50px;
   height: 45px;
   position: absolute;
@@ -43,21 +43,21 @@
   background: rgba(255, 255, 255, 0.3);
 }
 
-.overlay-container .lock{
-    position: relative;
-    width: 12px;
-    height: 11px;
-    top: 3px;
-    right: 3px;
+.overlay-container .lock {
+  position: relative;
+  width: 12px;
+  height: 11px;
+  top: 3px;
+  right: 3px;
 }
 
-.clickRipple{
-    width: 120px;
-    border-radius: 7px;
+.clickRipple {
+  width: 120px;
+  border-radius: 7px;
 }
 
-.mat-button{
-    line-height: inherit;
-    padding: 0px;
-    font-family: inherit;
+.mat-button {
+  line-height: inherit;
+  padding: 0px;
+  font-family: inherit;
 }

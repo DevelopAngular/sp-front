@@ -8,9 +8,9 @@ describe('LocationCellComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LocationCellComponent ]
+      declarations: [LocationCellComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

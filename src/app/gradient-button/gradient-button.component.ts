@@ -1,6 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import {trigger, state, style, animate, transition} from '@angular/animations';
 import { bumpIn } from '../animations';
 
 export interface ClickEvent {
@@ -43,23 +42,23 @@ export class GradientButtonComponent {
   constructor(private sanitizer: DomSanitizer) {
   }
 
-  get buttonState(){
+  get buttonState() {
     return this.buttonDown ? 'down' : 'up';
   }
 
   get styleGradient() {
     // We're fine using arbitrary styles here because they must match a very strict regex.
-    if(this.hover){
+    if (this.hover) {
       // console.log("[Hover State]: ", "Using hover styles");
       const color = this.hoverColor;
       if (cssColorRegexp.test(color)) {
         // console.log("[Color Sanitizer]: ", "Color passed");
         return this.sanitizer.bypassSecurityTrustStyle(color);
-      } else{
+      } else {
         // console.log("[Color Sanitizer]: ", "Color did not pass");
         return this.sanitizer.bypassSecurityTrustStyle(DEFAULT_GRADIENT);
       }
-    } else{
+    } else {
       // console.log("[Hover State]: ", "Using gradient styles");
       const gradient = this.gradient ? this.gradient.trim() : '';
 
@@ -85,11 +84,11 @@ export class GradientButtonComponent {
     return 'center';
   }
 
-  onHover(hover:boolean){
+  onHover(hover: boolean) {
     this.hover = hover;
   }
 
-  onPress(press:boolean){
+  onPress(press: boolean) {
     this.buttonDown = press;
     //console.log("[Button State]: ", "The button is " +this.buttonState);
   }

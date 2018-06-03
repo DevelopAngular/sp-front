@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { HttpService } from '../http-service';
 import { Location } from '../NewModels';
 
@@ -19,31 +19,32 @@ export class LocationTableComponent implements OnInit {
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
 
   @Input()
-  category:string;
+  category: string;
 
-  public locations:Location[];
+  public locations: Location[];
 
-  constructor(private http:HttpService) { }
+  constructor(private http: HttpService) {
+  }
 
   ngOnInit() {
     // TODO Get favorites
     this.http.get<Paged<Location>>('api/methacton/v1/locations'
-                                  +(!!this.category ? ('?limit=4&category=' +this.category) : ''))
-                                  .toPromise().then(p => {
-                                    this.locations = p.results;
-                                  });
+      + (!!this.category ? ('?limit=4&category=' + this.category) : ''))
+      .toPromise().then(p => {
+      this.locations = p.results;
+    });
   }
 
-  onSearch(search:string){
-    this.http.get<Paged<Location>>('api/methacton/v1/locations?limit=4&'+
-                                  +(!!this.category ? ('limit=5&category=' +this.category) : '') 
-                                  +"&search=" +search)
-                                  .toPromise().then(p => {
-                                    this.locations = p.results;
-                                  });
+  onSearch(search: string) {
+    this.http.get<Paged<Location>>('api/methacton/v1/locations?limit=4&' +
+      +(!!this.category ? ('limit=5&category=' + this.category) : '')
+      + '&search=' + search)
+      .toPromise().then(p => {
+      this.locations = p.results;
+    });
   }
 
-  locationSelected(location:Location){
+  locationSelected(location: Location) {
     this.onSelect.emit(location);
   }
 

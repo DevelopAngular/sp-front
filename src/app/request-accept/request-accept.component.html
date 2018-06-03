@@ -2,19 +2,19 @@
   <h1>Accept Request</h1>
   <div class="moment spaced">
     <app-gradient-button
-          [minWidth]="'150px'"
-          [gradient]="nowGradient"
-          [leftIcon]="'./assets/Now.png'"
-          (click)="setMoment('now')"
-          [style.margin-right]="'20px'"
-      >Now
+      [minWidth]="'150px'"
+      [gradient]="nowGradient"
+      [leftIcon]="'./assets/Now.png'"
+      (click)="setMoment('now')"
+      [style.margin-right]="'20px'"
+    >Now
     </app-gradient-button>
     <app-gradient-button
-        [minWidth]="'150px'"
-        [gradient]="laterGradient"
-        [leftIcon]="'./assets/Later.png'"
-        (click)="setMoment('later')"
-      >Later
+      [minWidth]="'150px'"
+      [gradient]="laterGradient"
+      [leftIcon]="'./assets/Later.png'"
+      (click)="setMoment('later')"
+    >Later
     </app-gradient-button>
   </div>
 
@@ -28,13 +28,13 @@
   </div>
 
   <div class="accept">
-      <app-gradient-button
+    <app-gradient-button
       [minWidth]="'150px'"
       [gradient]="'#7b7df1, #5e3fb6'"
       [rightIcon]="'./assets/One_Arrow.png'"
       (click)="acceptRequest()"
     >
-    Accept Request
+      Accept Request
     </app-gradient-button>
-  </div> 
+  </div>
 </div>

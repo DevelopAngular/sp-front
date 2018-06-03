@@ -1,73 +1,74 @@
-.text{
-    /* width: 72px;
-    height: 14px; */
-    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-    font-size: 14px;
-    font-weight: bold;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: 1;
-    letter-spacing: 0.2px;
-    text-align: center;
-    color: #646464;
-}
-.text-selected{
-    /* width: 72px;
-    height: 14px; */
-    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-    font-size: 14px;
-    font-weight: bold;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: 1;
-    letter-spacing: 0.2px;
-    text-align: center;
-    color: #04cd33;
+.text {
+  /* width: 72px;
+  height: 14px; */
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1;
+  letter-spacing: 0.2px;
+  text-align: center;
+  color: #646464;
 }
 
-.ow, .rt{
-    cursor: pointer;
-    display: table-cell;
+.text-selected {
+  /* width: 72px;
+  height: 14px; */
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1;
+  letter-spacing: 0.2px;
+  text-align: center;
+  color: #04cd33;
 }
 
-.rt{
-    position: relative;
-    left: 0px;
+.ow, .rt {
+  cursor: pointer;
+  display: table-cell;
 }
 
-.ow{
-    position: relative;
-    right: -100px;
+.rt {
+  position: relative;
+  left: 0px;
 }
 
-.center{
-    width: 35%;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    display: block;
+.ow {
+  position: relative;
+  right: -100px;
 }
 
-.line-selected{
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    display: block;
-    width: 66px;
-    height: 2.5px;
-    border-radius: 0.8px;
-    background-color: #04cd33;
-    margin-top: 5px;
+.center {
+  width: 35%;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  display: block;
 }
 
-.line{
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    display: block;
-    width: 66px;
-    height: 2.5px;
-    border-radius: 0.8px;
-    background-color: #FFFFFF;
-    margin-top: 5px;
+.line-selected {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  display: block;
+  width: 66px;
+  height: 2.5px;
+  border-radius: 0.8px;
+  background-color: #04cd33;
+  margin-top: 5px;
+}
+
+.line {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  display: block;
+  width: 66px;
+  height: 2.5px;
+  border-radius: 0.8px;
+  background-color: #FFFFFF;
+  margin-top: 5px;
 }

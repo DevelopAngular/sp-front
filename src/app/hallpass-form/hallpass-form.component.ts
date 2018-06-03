@@ -1,14 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { DataService } from '../data-service';
-import { Router } from '@angular/router';
-import { HttpService } from '../http-service';
-import { MessageService } from 'primeng/components/common/messageservice';
-import { Message } from 'primeng/components/common/api';
-import { Duration, HallPass, Invitation, Location, Pinnable, Request, User } from '../NewModels';
-import { MatDialog, MatDialogRef, MatSlideToggleChange, MatStepper } from '@angular/material';
-import { LocationChooseComponent } from '../location-choose/location-choose.component';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialog, MatDialogRef, MatSlideToggleChange, MatStepper } from '@angular/material';
+import { Router } from '@angular/router';
+import { Message } from 'primeng/components/common/api';
+import { MessageService } from 'primeng/components/common/messageservice';
+import { DataService } from '../data-service';
+import { HttpService } from '../http-service';
 import { LocationPickerComponent } from '../location-picker/location-picker.component';
+import { Duration, HallPass, Invitation, Location, Pinnable, Request, User } from '../NewModels';
 
 @Component({
   selector: 'app-hallpass-form',
@@ -44,7 +43,7 @@ export class HallpassFormComponent implements OnInit {
   toCategory: string = '';
   selectedStudents: User[] = [];
   isMandatory: boolean = false;
-  startTime:Date = new Date();
+  startTime: Date = new Date();
 
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
@@ -114,7 +113,7 @@ export class HallpassFormComponent implements OnInit {
       this.isMandatory = result;
       if (this.isMandatory) {
         this.firstFormGroup.controls['originCtrl'].setValidators(Validators.required);
-      }else {
+      } else {
         this.firstFormGroup.controls['originCtrl'].clearValidators();
       }
       this.firstFormGroup.controls['originCtrl'].updateValueAndValidity({onlySelf: true, emitEvent: false});
@@ -157,7 +156,7 @@ export class HallpassFormComponent implements OnInit {
       this.originRequired = !this.isStaff;
     });
 
-    this.dialogRef.updatePosition({top: '225px' });
+    this.dialogRef.updatePosition({top: '225px'});
 
     //console.log(this.user.roles);
 
@@ -165,7 +164,7 @@ export class HallpassFormComponent implements OnInit {
 
   }
 
-  setStartTime(event){
+  setStartTime(event) {
     this.startTime = new Date(event);
   }
 
@@ -227,10 +226,10 @@ export class HallpassFormComponent implements OnInit {
     }
   }
 
-  getDividerText(){
-    if(this.formState === 'from'){
+  getDividerText() {
+    if (this.formState === 'from') {
       return 'From where?';
-    } else if(this.formState === 'to'){
+    } else if (this.formState === 'to') {
       return 'To where?';
     }
   }
@@ -257,26 +256,26 @@ export class HallpassFormComponent implements OnInit {
     // console.log("[Is Mandatory]: ", this.isMandatory);
   }
 
-  getStepperBorderStyle(type:string, step:number){
+  getStepperBorderStyle(type: string, step: number) {
     let color = '';
-    if(type == 'back'){
+    if (type == 'back') {
       return 'solid 2px #0F0';
-    } else{
-      if(step == 1){
-        return 'solid 2px #' +(this.firstFormGroup.valid?'0F0':'F00');
-      } else if(step == 2){
-        return 'solid 2px #' +(this.secondFormGroup.valid?'0F0':'F00');
+    } else {
+      if (step == 1) {
+        return 'solid 2px #' + (this.firstFormGroup.valid ? '0F0' : 'F00');
+      } else if (step == 2) {
+        return 'solid 2px #' + (this.secondFormGroup.valid ? '0F0' : 'F00');
       }
     }
-    
+
   }
 
   locationChosen(event: Location, type: string) {
-    if(type === 'from'){
+    if (type === 'from') {
       this.formState = 'from';
       this.from_title = event.title;
       this.fromLocation = event;
-    } else{
+    } else {
       this.toState = 'pinnables';
       this.to_title = event.title;
       // this.toIcon = "";
@@ -311,7 +310,7 @@ export class HallpassFormComponent implements OnInit {
       'teacher': this.toLocation.teachers[0].id
     };
 
-    this.http.post('api/methacton/v1/pass_requests', body, ).subscribe((data) => {
+    this.http.post('api/methacton/v1/pass_requests', body,).subscribe((data) => {
       // console.log("Request POST Data: ", data);
       this.dialogRef.close(Request.fromJSON(data));
     });
@@ -336,7 +335,7 @@ export class HallpassFormComponent implements OnInit {
       'travel_type': travelType,
     };
 
-    this.http.post('api/methacton/v1/hall_passes/bulk_create', body, ).subscribe((data) => {
+    this.http.post('api/methacton/v1/hall_passes/bulk_create', body,).subscribe((data) => {
       // console.log("Request POST Data: ", data);
       this.dialogRef.close(HallPass.fromJSON(data[0]));
     });
@@ -351,7 +350,7 @@ export class HallpassFormComponent implements OnInit {
       'travel_type': this.travelType
     };
 
-    this.http.post('api/methacton/v1/hall_passes', body, ).subscribe((data) => {
+    this.http.post('api/methacton/v1/hall_passes', body,).subscribe((data) => {
       // console.log("Request POST Data: ", data);
       this.dialogRef.close(HallPass.fromJSON(data));
     });

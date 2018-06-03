@@ -8,9 +8,9 @@ describe('GoogleSigninComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ GoogleSigninComponent ]
+      declarations: [GoogleSigninComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

@@ -8,12 +8,13 @@ import { MatDialogRef } from '@angular/material';
 })
 export class OptionsComponent implements OnInit {
 
-  constructor(private dialogRef:MatDialogRef<OptionsComponent>) { }
+  constructor(private dialogRef: MatDialogRef<OptionsComponent>) {
+  }
 
   ngOnInit() {
   }
 
-  close(action){
+  close(action) {
     this.dialogRef.close(action);
   }
 }

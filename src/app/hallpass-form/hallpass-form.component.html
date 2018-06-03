@@ -31,7 +31,8 @@
         </mat-form-field>
 
         <div *ngIf="isStaff" class="passType">
-          <mat-slide-toggle [formControl]="firstFormGroup.controls['mandatoryCtrl']">Create without student confirmation?
+          <mat-slide-toggle [formControl]="firstFormGroup.controls['mandatoryCtrl']">Create without student
+            confirmation?
           </mat-slide-toggle>
         </div>
 
@@ -39,7 +40,9 @@
 
         <p>*Leave these fields blank for an immediate pass*</p>
         <div class="stepper-buttons">
-          <button class="stepper-button" [style.border]="getStepperBorderStyle('next', 1)" mat-button matStepperNext>Next</button>
+          <button class="stepper-button" [style.border]="getStepperBorderStyle('next', 1)" mat-button matStepperNext>
+            Next
+          </button>
         </div>
       </form>
     </mat-step>
@@ -61,8 +64,12 @@
           </mat-grid-tile>
         </mat-grid-list>
         <div class="stepper-buttons">
-          <button class="stepper-button" [style.border]="getStepperBorderStyle('back', 2)" mat-button matStepperPrevious>Back</button>
-          <button class="stepper-button" [style.border]="getStepperBorderStyle('next', 2)" mat-button matStepperNext>Next</button>
+          <button class="stepper-button" [style.border]="getStepperBorderStyle('back', 2)" mat-button
+                  matStepperPrevious>Back
+          </button>
+          <button class="stepper-button" [style.border]="getStepperBorderStyle('next', 2)" mat-button matStepperNext>
+            Next
+          </button>
         </div>
       </form>
     </mat-step>
@@ -73,13 +80,16 @@
       <div class="fields center">
         <div class="grow"></div>
         <div style="display: flex;flex-direction: column;align-items: flex-end;">
-          <app-hallpass-card *ngIf="syntheticPass" [hallpass]="syntheticPass" [future]="true" [expanded]="true"></app-hallpass-card>
+          <app-hallpass-card *ngIf="syntheticPass" [hallpass]="syntheticPass" [future]="true"
+                             [expanded]="true"></app-hallpass-card>
         </div>
         <div class="grow"></div>
 
       </div>
       <div class="stepper-buttons">
-        <button class="stepper-button" [style.border]="getStepperBorderStyle('back', 3)" mat-button matStepperPrevious>Back</button>
+        <button class="stepper-button" [style.border]="getStepperBorderStyle('back', 3)" mat-button matStepperPrevious>
+          Back
+        </button>
 
         <app-gradient-button
           [minWidth]="'150px'"
@@ -153,7 +163,7 @@
                             [category]="toCategory"></app-location-table>
       </div>
     </div>
-    
+
     <!-- <div *ngIf="formState == 'fields'">
       <div *ngIf="!toLocation.restricted || isStaff; else restrictedFields;" class="fields center">
         <div class="question">How much time do you need?
@@ -192,7 +202,7 @@
         </div>
       </ng-template>
     </div> -->
-  
+
   </div>
 </ng-container>
 

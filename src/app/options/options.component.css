@@ -1,13 +1,13 @@
-.option-cell{
-    text-align: center;
-    cursor: pointer;
+.option-cell {
+  text-align: center;
+  cursor: pointer;
 }
 
-.option-cell:hover{
-    color: white;
-    background-color: dodgerblue;
+.option-cell:hover {
+  color: white;
+  background-color: dodgerblue;
 }
 
-.divider{
-    margin: 0px;
+.divider {
+  margin: 0px;
 }

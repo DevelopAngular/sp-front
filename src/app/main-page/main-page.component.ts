@@ -1,15 +1,15 @@
 import { Component, NgZone, OnInit } from '@angular/core';
-import { DataService } from '../data-service';
-import { Router } from '@angular/router';
-import { HttpService } from '../http-service';
 import { MatDialog } from '@angular/material';
-import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
-import { HallPass, HallPassSummary, Invitation, Request, User } from '../NewModels';
-import { Observable } from 'rxjs/Observable';
+import { Router } from '@angular/router';
 
 import 'rxjs/add/operator/map';
-import { LoadingService } from '../loading.service';
+import { Observable } from 'rxjs/Observable';
 import { switchMap } from 'rxjs/operators';
+import { DataService } from '../data-service';
+import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
+import { HttpService } from '../http-service';
+import { LoadingService } from '../loading.service';
+import { HallPass, HallPassSummary, Invitation, Request, User } from '../NewModels';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('edit_all_hallpass');
@@ -29,8 +29,8 @@ export class MainPageComponent implements OnInit {
   checkedPasses = false;
   // invitations: Promise<Invitation[]>;
   requests: Promise<Request[]>;
-  user:User;
-  tabIndex:number = 1;
+  user: User;
+  tabIndex: number = 1;
 
   invitations = this.dataService.currentUser.pipe(
     switchMap(user => {
@@ -112,7 +112,8 @@ export class MainPageComponent implements OnInit {
 
   endPass(hallpass: HallPass) {
     // console.log("Ending pass");
-    this.http.post('api/methacton/v1/hall_passes/' + this.currentPass.id + '/ended', null, {'': ''}).subscribe((results) => {});
+    this.http.post('api/methacton/v1/hall_passes/' + this.currentPass.id + '/ended', null, {'': ''}).subscribe((results) => {
+    });
     this.currentPass = null;
   }
 
@@ -124,18 +125,18 @@ export class MainPageComponent implements OnInit {
     this.requests = this.http.get<Request[]>('api/methacton/v1/pass_requests?status=pending').toPromise();
   }
 
-  updateTab(tabIndex){
+  updateTab(tabIndex) {
     this.tabIndex = tabIndex;
   }
 
-  cardEvent(event){
-    if(event.type == 'hallpass'){
-      if(!event.value){
+  cardEvent(event) {
+    if (event.type == 'hallpass') {
+      if (!event.value) {
         this.endPass(event.id);
       }
-    } else if(event.type == 'request'){
+    } else if (event.type == 'request') {
 
-    } else if(event.type == 'invitation'){
+    } else if (event.type == 'invitation') {
 
     }
   }

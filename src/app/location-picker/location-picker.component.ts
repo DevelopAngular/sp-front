@@ -1,9 +1,9 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { Location, Paged } from '../NewModels';
 import { Subject } from 'rxjs/Subject';
 import { HttpService } from '../http-service';
+import { Location, Paged } from '../NewModels';
 
 @Component({
   selector: 'app-location-picker',

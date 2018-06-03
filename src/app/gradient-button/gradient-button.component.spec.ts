@@ -8,9 +8,9 @@ describe('GradientButtonComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ GradientButtonComponent ]
+      declarations: [GradientButtonComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

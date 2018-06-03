@@ -4,7 +4,7 @@
       <div class="card-header">
         <img class="card-icon" [src]="pass.icon | resolveAsset">
         <div class="card-title" *ngIf="type=='request'">
-            Request {{(forTeacher?('from ' +pass.student.display_name):('to ' +pass.teacher.display_name))}}
+          Request {{(forTeacher?('from ' +pass.student.display_name):('to ' +pass.teacher.display_name))}}
         </div>
         <div *ngIf="type=='invitation'">
           <div class="card-title" *ngIf="pass.student.id === user.id">
@@ -19,7 +19,7 @@
           </div>
         </div>
         <div class="card-title" *ngIf="type=='hallpass'">
-            Pass to {{pass.destination.title}}
+          Pass to {{pass.destination.title}}
         </div>
       </div>
     </mat-panel-title>
@@ -36,14 +36,16 @@
           {{pass.origin.title}}
         </div>
         <div class="origin center" *ngIf="type=='invitation'">
-            {{!!pass.default_origin?pass.default_origin.title:'Your Location'}}
+          {{!!pass.default_origin?pass.default_origin.title:'Your Location'}}
         </div>
         <div class="origin center" *ngIf="type=='hallpass'">
           {{!!pass.origin?pass.origin.title:'Their Location'}}
         </div>
         <div class="img-wrapper">
-          <img *ngIf="pass.travel_type == 'round_trip'" class="round-trip center" [src]="'./assets/Two_Arrow.png' | resolveAsset">
-          <img *ngIf="pass.travel_type == 'one_way'" class="one-way center" [src]="'./assets/One_Arrow.png' | resolveAsset">
+          <img *ngIf="pass.travel_type == 'round_trip'" class="round-trip center"
+               [src]="'./assets/Two_Arrow.png' | resolveAsset">
+          <img *ngIf="pass.travel_type == 'one_way'" class="one-way center"
+               [src]="'./assets/One_Arrow.png' | resolveAsset">
         </div>
         <div class="destination center">
           {{pass.destination.title}}
@@ -74,11 +76,11 @@
         <div *ngIf="!future; else inFuture">
           <button mat-button class="clickRipple" (click)="_cardEvent(false)">
             <div class="button-card">
-                <div class="button-content">
-                    <div class="button-title">
-                        {{timeLeft}} - End Pass
-                    </div>
+              <div class="button-content">
+                <div class="button-title">
+                  {{timeLeft}} - End Pass
                 </div>
+              </div>
             </div>
           </button>
         </div>
@@ -96,11 +98,11 @@
       <div *ngIf="forTeacher; else notForTeacher;">
         <button mat-button class="clickRipple end-pass" (click)="carEvent(true)">
           <div class="button-card">
-              <div class="button-content">
-                  <div class="button-title">
-                      Accept
-                  </div>
+            <div class="button-content">
+              <div class="button-title">
+                Accept
               </div>
+            </div>
           </div>
         </button>
       </div>

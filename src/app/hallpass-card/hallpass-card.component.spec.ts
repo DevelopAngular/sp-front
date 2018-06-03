@@ -8,9 +8,9 @@ describe('HallpassCardComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ HallpassCardComponent ]
+      declarations: [HallpassCardComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

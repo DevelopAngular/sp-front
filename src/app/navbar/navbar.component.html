@@ -13,14 +13,14 @@
       My Room
       <div class="selectorBar" [style.background-color]="getNavElementBg(2, 'sel')"></div>
     </div>
-    <div class="navButton" [style.background-color]="getNavElementBg(3, 'btn')"  (click)="updateTab(3)">
+    <div class="navButton" [style.background-color]="getNavElementBg(3, 'btn')" (click)="updateTab(3)">
       Hall Monitoring
       <div class="selectorBar" [style.background-color]="getNavElementBg(3, 'sel')"></div>
     </div>
   </div>
   <div class="user-info">
     <div class="name">{{ user ? user.display_name : '' }}</div>
-    <div class="options" >
+    <div class="options">
       <img (click)="showOptions()" class="options" [src]="'./assets/Settings.png' | resolveAsset">
     </div>
   </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Location } from '../NewModels';
 
 @Component({
@@ -9,17 +9,18 @@ import { Location } from '../NewModels';
 export class LocationCellComponent implements OnInit {
 
   @Input()
-  location:Location;
+  location: Location;
 
-  @Output() onSubSelect:EventEmitter<any> = new EventEmitter();
+  @Output() onSubSelect: EventEmitter<any> = new EventEmitter();
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit() {
 
   }
 
-  locationSelected(){
+  locationSelected() {
     this.onSubSelect.emit(this.location);
   }
 

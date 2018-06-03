@@ -1,14 +1,14 @@
 <div mat-raised-button class="clickRipple" (click)="onSelect()"
-    [@pressState]="buttonState"
-    (mousedown)="onPress(true)" (mouseup)="onPress(false)">
+     [@pressState]="buttonState"
+     (mousedown)="onPress(true)" (mouseup)="onPress(false)">
   <div class="card" [style.background]="getGradient()">
-      <img class="icon" [src]="pinnable.icon" alt="ICON">
-      <div class="title">
-        {{pinnable.title}}
-      </div>
-      <div *ngIf="restricted;" class="overlay-container">
-        <div class="overlay"></div>
-        <img class="lock" [src]="'./assets/Lock.png' | resolveAsset" alt="LOCK">
-      </div>
+    <img class="icon" [src]="pinnable.icon" alt="ICON">
+    <div class="title">
+      {{pinnable.title}}
+    </div>
+    <div *ngIf="restricted;" class="overlay-container">
+      <div class="overlay"></div>
+      <img class="lock" [src]="'./assets/Lock.png' | resolveAsset" alt="LOCK">
+    </div>
   </div>
 </div>

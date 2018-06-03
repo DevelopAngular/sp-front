@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 
 export class User {
   constructor(public id: string,
@@ -71,7 +71,7 @@ export class PendingPass {
   }
 }
 
-export class QuickPass{
+export class QuickPass {
   constructor(public created: Date,
               public last_updated: Date,
               public id: string,
@@ -80,21 +80,23 @@ export class QuickPass{
               public enabled: string,
               public to_locations: Location,
               public valid_time: string,
-              ){
-}
+  ) {
+  }
 }
 
-export class Duration{
+export class Duration {
   constructor(public display: string,
-              public value: number){}
+              public value: number) {
+  }
 }
+
 @Injectable()
 export class JSONSerializer {
   constructor() {
   }
 
   getUserFromJSON(JSON): User {
-    if(!!JSON){
+    if (!!JSON) {
       const id = JSON['id'],
         display_name = JSON['display_name'],
         created = new Date(JSON['created']),
@@ -109,8 +111,8 @@ export class JSONSerializer {
         roles.push(JSON['roles'][i]);
       }
 
-      return new User(id, display_name, created, last_updated, first_name, last_name, primary_email, roles, is_staff); 
-    } else{
+      return new User(id, display_name, created, last_updated, first_name, last_name, primary_email, roles, is_staff);
+    } else {
       return null;
     }
   }
@@ -158,55 +160,55 @@ export class JSONSerializer {
       description, from_location, to_location, authorities);
   }
 
-  getPendingPassFromJSON(JSON):PendingPass{
-      const students:User[] = [],
+  getPendingPassFromJSON(JSON): PendingPass {
+    const students: User[] = [],
       description = JSON['description'],
-      to_location:Location = this.getLocationFromJSON(JSON['to_location']),
+      to_location: Location = this.getLocationFromJSON(JSON['to_location']),
       valid_time = JSON['valid_time'],
       start_time = new Date(JSON['start_time']),
-      from_location:Location = this.getLocationFromJSON(JSON['from_location']),
+      from_location: Location = this.getLocationFromJSON(JSON['from_location']),
       end_time = new Date(JSON['end_time']),
-      issuer:User = this.getUserFromJSON(JSON['issuer']),
-      authorities:User[] = [],
+      issuer: User = this.getUserFromJSON(JSON['issuer']),
+      authorities: User[] = [],
       created: Date = new Date(JSON['created']),
       last_updated: Date = new Date(JSON['last_updated']),
       id: string = JSON['id'],
-      activated:string[] = [];
+      activated: string[] = [];
 
-      for(let i = 0; i < JSON['students'].length; i++){
-          students.push(this.getUserFromJSON(JSON['students'][i]));
-      }
+    for (let i = 0; i < JSON['students'].length; i++) {
+      students.push(this.getUserFromJSON(JSON['students'][i]));
+    }
 
-      for(let i = 0; i < JSON['authorities'].length; i++){
-          authorities.push(this.getUserFromJSON(JSON['authorities'][i]));
-      }
+    for (let i = 0; i < JSON['authorities'].length; i++) {
+      authorities.push(this.getUserFromJSON(JSON['authorities'][i]));
+    }
 
-      if(!!JSON['activated']){
-          for(let i = 0; i < JSON['activated'].length; i++){
-              activated.push(JSON['activated'][i]);
-          }
+    if (!!JSON['activated']) {
+      for (let i = 0; i < JSON['activated'].length; i++) {
+        activated.push(JSON['activated'][i]);
       }
+    }
 
     return new PendingPass(students, description, to_location, valid_time, start_time, from_location, end_time,
       issuer, authorities, created, last_updated, id, activated);
   }
 
-  getQuickPassFromJSON(JSON){
+  getQuickPassFromJSON(JSON) {
     const created = new Date(JSON['created']),
-    last_updated = new Date(JSON['last_updated']),
-    id = JSON['id'],
-    name = JSON['name'],
-    description = JSON['description'],
-    enabled = JSON['enabled'],
-    to_location = this.getLocationFromJSON(JSON['to_location']),
-    valid_time = JSON['valid_time'];
+      last_updated = new Date(JSON['last_updated']),
+      id = JSON['id'],
+      name = JSON['name'],
+      description = JSON['description'],
+      enabled = JSON['enabled'],
+      to_location = this.getLocationFromJSON(JSON['to_location']),
+      valid_time = JSON['valid_time'];
     return new QuickPass(created, last_updated, id, name, description, enabled, to_location, valid_time);
   }
 
-  getDurationFromJSON(JSON){
+  getDurationFromJSON(JSON) {
     //console.log("[JSON]", JSON);
-    const display:string = JSON/60+" minutes",
-    value:number = JSON;
+    const display: string = JSON / 60 + ' minutes',
+      value: number = JSON;
     return new Duration(display, value);
   }
 }

@@ -50,13 +50,13 @@ export class InvitationCardComponent implements OnInit {
 
   getTime(s: Date) {
     s = new Date(s);
-    
+
     let hrs = ((s.getHours() > 12) ? s.getHours() - 12 : s.getHours());
-    hrs = (hrs==0)?12:hrs;
+    hrs = (hrs == 0) ? 12 : hrs;
 
     let mins = ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + ((s.getHours() > 12) ? 'pm' : 'am');
-    return hrs + ':' +mins
-      
+    return hrs + ':' + mins;
+
   }
 
   activateInvitation() {
