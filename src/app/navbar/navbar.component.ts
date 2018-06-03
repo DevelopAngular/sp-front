@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, Input, Output, EventEmitter } from '@angular/core';
 import { DataService } from '../data-service';
+import { GoogleLoginService } from '../google-login.service';
 import { User } from '../NewModels';
 import { MatDialog } from '@angular/material';
 import { OptionsComponent } from '../options/options.component';
@@ -24,7 +25,8 @@ export class NavbarComponent implements AfterViewInit {
   tabIndex: number = 1;
   // user: User = new User('', null, null, '', '', '', '', ['']);
 
-  constructor(private dataService: DataService, public dialog: MatDialog, private router: Router, public loadingService: LoadingService) {
+  constructor(private dataService: DataService, public dialog: MatDialog, private router: Router,
+              public loadingService: LoadingService, public loginService: GoogleLoginService) {
   }
 
   ngAfterViewInit() {
