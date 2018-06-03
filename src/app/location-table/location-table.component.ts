@@ -16,26 +16,31 @@ export interface Paged<T> {
 
 export class LocationTableComponent implements OnInit {
 
-  category:string;
-
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
 
   @Input()
-  set setCategory(c:string){
-    this.category = c;
-    // console.log(c);
-  }
+  category:string;
 
   public locations:Location[];
 
   constructor(private http:HttpService) { }
 
   ngOnInit() {
-    this.http.get<Paged<Location>>('api/methacton/v1/locations?limit=5&category=' +this.category).toPromise().then(p => {this.locations = p.results});
+    // TODO Get favorites
+    this.http.get<Paged<Location>>('api/methacton/v1/locations'
+                                  +(!!this.category ? ('?limit=4&category=' +this.category) : ''))
+                                  .toPromise().then(p => {
+                                    this.locations = p.results;
+                                  });
   }
 
   onSearch(search:string){
-    this.http.get<Paged<Location>>('api/methacton/v1/locations?limit=5&category=' +this.category +"&search=" +search).toPromise().then(p => {this.locations = p.results});
+    this.http.get<Paged<Location>>('api/methacton/v1/locations?limit=4&'+
+                                  +(!!this.category ? ('limit=5&category=' +this.category) : '') 
+                                  +"&search=" +search)
+                                  .toPromise().then(p => {
+                                    this.locations = p.results;
+                                  });
   }
 
   locationSelected(location:Location){

@@ -6,18 +6,21 @@
         </div>
         <ng-template #newPass>
           <div style="height: 40px;"></div>
-          <app-gradient-button style="width: 352px; margin-top: 40px;"
+          <app-gradient-button
+            [minWidth] = "'352px'"
+            [minHeight] = "'56px'"
             [leftIcon]="'./assets/Plus.png'"
-            (click)="showForm()">New Pass</app-gradient-button>
-
+            [hoverColor]="'#04CD33'"
+            (click)="showForm()" class="new-pass">New Pass</app-gradient-button> 
+            <!--  -->
         </ng-template>
-        <div class="futurePasses" *ngIf="!!futurePasses">
+        <!-- <div class="futurePasses" *ngIf="!!futurePasses">
             Future Passes
             <app-hallpass-card class="pass-card" *ngFor="let hallpass of futurePasses" [hallpass]="hallpass" [future]="true"></app-hallpass-card>
-        </div>
+        </div> -->
 
     </div>
-    <div class="divider"></div>
+    <!-- <div class="divider"></div>
     <div class="side">
         <div class="center top-margin">
             <app-pass-card *ngFor="let invitation of invitations | async"
@@ -29,7 +32,7 @@
                             [pass]="request" [forTeacher]="isStaff$ | async"
                             (onAccept)="cardEvent($event)"></app-pass-card>
         </div>
-    </div>
+    </div> -->
 </div>
 
 <div class="pg2-wrapper container" *ngIf="tabIndex==2 && dataService.currentUser | async">

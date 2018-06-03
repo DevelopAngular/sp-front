@@ -1,10 +1,5 @@
 <div class="wrapper">
-  <div class="title">
-    Search Locations
-  </div>
-  <div class="input">
-      <input #box placeholder="Search Here" (keyup)="onSearch(box.value)">
-  </div>
+  <input class="input" #box placeholder="Search rooms" (keyup)="onSearch(box.value)">
   <div class="locations">
     <app-location-cell class="location" *ngFor="let location of locations" (onSubSelect)="locationSelected($event)" [location]="location"></app-location-cell>
   </div>
