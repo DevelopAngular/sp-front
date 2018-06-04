@@ -17,6 +17,8 @@
 }
 
 .locs {
+  margin-top: 35px;
+  margin-bottom: 20px;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -129,13 +131,10 @@
   height: 70px;
 }
 
-/* .from, .to, .one-way, .round-trip, .message{
-  display: table-cell;
-} */
-
-.one-way, .round-trip {
-  height: 75px;
-  margin: 0 10px 0 10px;
+.arrow {
+  height: 50px;
+  width: 50px;
+  margin: auto 40px auto 40px;
 }
 
 .from {
@@ -156,6 +155,7 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 7.5px 13px 0 rgba(0, 0, 0, 0.1);
 }
 
 .divider-icon {
@@ -252,82 +252,3 @@ textarea {
 .hidden {
   display: none;
 }
-
-/* .title{
-  font-family: Roboto, sans-serif;
-  text-decoration: underline;
-  text-align: center;
-  margin: auto;
-  padding-bottom: 20px;
-  padding-top: 10px;
-}
-
-button{
-  margin-left: auto;
-  margin-right: auto;
-
-  display: block;
-
-  background-color: #E9E9E9;
-}
-
-.teacherPass{
-  margin: auto;
-  width: 600px;
-  margin-top: 25px;
-  border: 2px solid black;
-  border-radius: 12px;
-}
-
-.studentPass{
-  margin: auto;
-  width: 600px;
-  margin-top: 25px;
-  border: 2px solid black;
-  border-radius: 12px;
-}
-
-.formElement{
-  margin-left: 15px;
-  padding-right: 15px;
-  padding-bottom: 20px;
-}
-
-.qpFormElement{
-  padding-bottom: 20px;
-}
-
-.halfForm{
-  width: 50%;
-}
-
-.thirdForm{
-  width: 35%;
-}
-
-.date, .time, .duration, .submit, .to, .from, .hallPassColumn, .dividerColumn, .quickPassColumn, .dash, .or{
-  display: table-cell;
-}
-
-.duration{
-  min-width: 100px;
-}
-
-.time, .submit, .from, .dividerColumn, .quickPassColumn{
-  padding-left: 10px;
-}
-
-.dividerColumn{
-  width: 150px;
-  height: 25px;
-  margin: auto;
-}
-
-.dash{
-  width: 50px;
-}
-
-.or{
-  padding-left: 10px;
-  padding-right: 10px;
-} */

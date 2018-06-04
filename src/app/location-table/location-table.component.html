@@ -1,5 +1,5 @@
 <div class="wrapper">
-  <input class="input" #box placeholder="Search rooms" (keyup)="onSearch(box.value)">
+  <input class="input" #box [placeholder]="'Search ' +(category?(category.toLowerCase() +'s'):'rooms')" (keyup)="onSearch(box.value)">
   <div class="locations">
     <app-location-cell class="location" *ngFor="let location of locations" (onSubSelect)="locationSelected($event)"
                        [location]="location"></app-location-cell>

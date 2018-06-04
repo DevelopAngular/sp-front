@@ -117,23 +117,26 @@
         [hoverColor]="'#7E879D'"
         [minWidth]="'134px'"
         [minHeight]="'60px'"
-        (click)="setFormState('from')"
+        [fontSize]="'16px'"
+        (buttonClick)="setFormState('from')"
       >{{ from_title }}
       </app-gradient-button>
 
       <!-- <div class="type-arrows"> -->
       <!-- <img [class.hidden]="travelType != 'round_trip'" class="round-trip"
            [src]="'./assets/RT_Arrow.png' | resolveAsset"> -->
-      <img class="one-way" [src]="'./assets/OW_Arrow.png' | resolveAsset">
+      <img class="arrow" [src]="'./assets/OW_Arrow.png' | resolveAsset">
       <!-- </div> -->
 
       <app-gradient-button
         class="location-button"
         [gradient]="toGradient"
-        [hoverColor]="'#7E879D'"
+        [hoverColor]="'#CBD5E5'"
         [minWidth]="'134px'"
         [minHeight]="'60px'"
-        (click)="setFormState('to')"
+        [fontSize]="'16px'"
+        [disabled]="!toEnabled"
+        (buttonClick)="setFormState('to')"
       >{{ to_title }}
       </app-gradient-button>
 
@@ -152,7 +155,7 @@
     <!-- Used to select the to_location -->
     <div *ngIf="formState == 'to'">
       <div *ngIf="toState == 'pinnables'">
-        <mat-grid-list class="grid center" cols="4" rowHeight="75px" gutterSize="15px">
+        <mat-grid-list class="grid center" cols="4" rowHeight="75px" gutterSize="10px" [style.width]="'550px'">
           <mat-grid-tile *ngFor="let pinnable of pinnables | async">
             <app-pinnable [pinnable]="pinnable" (onSelectEvent)="pinnableSelected($event)"></app-pinnable>
           </mat-grid-tile>

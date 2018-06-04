@@ -32,7 +32,8 @@ export class GradientButtonComponent {
   @Input() text: string;
   @Input() minWidth: number;
   @Input() minHeight: number;
-  @Input() disabled = false;
+  @Input() disabled: boolean = false;
+  @Input() fontSize: string = "20px";
 
   @Output() buttonClick = new EventEmitter<any>();
 
@@ -91,6 +92,11 @@ export class GradientButtonComponent {
   onPress(press: boolean) {
     this.buttonDown = press;
     //console.log("[Button State]: ", "The button is " +this.buttonState);
+  }
+
+  onClick(event){
+    if(!this.disabled)
+      this.buttonClick.emit(event)
   }
 
 }

@@ -1,4 +1,11 @@
-<div class="wrapper">
-  <span class="info" (click)="locationSelected()">{{location.title}} ({{location.room}})</span>
-  <hr>
+<div class="wrapper" (click)="locationSelected()">
+  <div class="info">
+    <div class="title">
+      {{location.title}}
+    </div>
+    <div class="room">
+      {{location.room}}
+    </div>
+  </div>
+  <div class="divider"></div>
 </div>
