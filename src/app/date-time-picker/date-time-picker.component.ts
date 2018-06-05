@@ -11,14 +11,14 @@ import { AmazingTimePickerService } from 'amazing-time-picker';
 export class DateTimePickerComponent implements OnInit {
 
   @Input()
-  dateCtrl: FormControl;
+  dateCtrl: FormControl = new FormControl();
 
   @Input()
-  timeCtrl: FormControl;
+  timeCtrl: FormControl = new FormControl();
 
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
 
-  timeS: string = '--:--';
+  timeS = '--:--';
 
   now: Date = new Date();
 
@@ -43,8 +43,9 @@ export class DateTimePickerComponent implements OnInit {
   }
 
   updateDateTime() {
-    if (this.selectedDate && this.selectedTime)
+    if (this.selectedDate && this.selectedTime) {
       this.onUpdate.emit(this.dateTime(this.selectedDate, this.selectedTime));
+    }
   }
 
   dateTime(dateD: Date, timeD: Date) {
@@ -62,12 +63,12 @@ export class DateTimePickerComponent implements OnInit {
     });
     amazingTimePicker.afterClose().subscribe(time => {
       this.timeS = time;
-      let split = time.split(':');
-      let hrs = split[0];
-      let mins = split[1];
-      let timeD: Date = new Date;
-      timeD.setHours(parseInt(hrs));
-      timeD.setMinutes(parseInt(mins));
+      const split = time.split(':');
+      const hrs = split[0];
+      const mins = split[1];
+      const timeD: Date = new Date;
+      timeD.setHours(parseInt(hrs, 10));
+      timeD.setMinutes(parseInt(mins, 10));
       this.updateTime(timeD);
     });
   }
