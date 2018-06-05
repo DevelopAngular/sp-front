@@ -11,7 +11,7 @@ variables:
 stages:
   - build
 
-build:
+staging:
   stage: build
   script:
     - apk add --no-cache bash tree nodejs-npm
@@ -29,7 +29,7 @@ build:
       url: $AUTO_DEVOPS_DOMAIN
   only:
     refs:
-      - master
+      - dev
     kubernetes: active
   tags:
       - "docker-passthrough"
