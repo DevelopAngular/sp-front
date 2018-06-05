@@ -36,6 +36,7 @@ export class HallpassFormComponent implements OnInit {
   fromLocation: Location;
   toLocation: Location;
   formState: string = 'from';
+  requestTarget:User;
   travelType: string = 'round_trip';
   duration: number = 5;
   sliderDuration: number = 5;
@@ -208,8 +209,6 @@ export class HallpassFormComponent implements OnInit {
         this.formState = 'to';
         this.toState = 'pinnables';
       }
-    } else if (state === 'from') {
-
     }
   }
 
@@ -235,8 +234,10 @@ export class HallpassFormComponent implements OnInit {
         this.to_title = event.title;
         this.toIcon = event.icon || '';
         this._toGradient = event.gradient_color;
-        this.formState = 'fields';
         this.toLocation = event.location;
+
+        this.determinePass();
+
       } else if (event.type == 'category') {
         this.toCategory = event.category;
         this.toState = 'category';
@@ -259,6 +260,10 @@ export class HallpassFormComponent implements OnInit {
       return 'From where?';
     } else if (this.formState === 'to') {
       return 'To where?';
+    } else if(this.formState === 'restrictedPermission'){
+      return 'Send Pass Request To?';
+    } else if(this.formState === 'restrictedMessage'){
+      return 'Message';
     }
   }
 
@@ -304,21 +309,32 @@ export class HallpassFormComponent implements OnInit {
       this.from_title = event.title;
       this.fromLocation = event;
       this.setFormState('to');
+    // } else if(type === 'request'){
+    //   this.requestTarget = event.teachers[0]; //TODO Update so that it picks from teachers and not locations
+    //   this.formState = "restrictedMessage";
+    } else if(type === 'to'){
+      this.to_title = event.title;
+      this.toLocation = event;
+      this.determinePass();
     } else {
       this.toState = 'pinnables';
       this.to_title = event.title;
       // this.toIcon = "";
       // this.toGradient = this.greenGradient;
-      this.formState = 'fields';
       this.toLocation = event;
     }
   }
 
   determinePass() {
-    if (this.isStaff) {
-      this.teacherPass();
-    } else {
-      this.newPass();
+    if(!this.toLocation.restricted){
+      this.dialogRef.close({
+                            'fromLocation': this.fromLocation,
+                            'toLocation': this.toLocation,
+                            'restricted': this.toLocation.restricted
+                            });
+    } else{
+      this.requestTarget = this.fromLocation.teachers[0];
+      this.formState = 'restrictedMessage';
     }
   }
 

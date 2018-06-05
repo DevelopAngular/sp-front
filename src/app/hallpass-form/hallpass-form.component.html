@@ -109,7 +109,7 @@
 <ng-container *ngIf="!isStaff">
   <div class="form">
 
-    <!-- Buttons responsible for choosing formStart -->
+    <!-- Buttons responsible for choosing formState -->
     <div class="locs">
       <app-gradient-button
         class="location-button"
@@ -162,49 +162,17 @@
         </mat-grid-list>
       </div>
       <div *ngIf="toState == 'category'">
-        <app-location-table class="center" (onSelect)="locationChosen($event)"
+        <app-location-table class="center" (onSelect)="locationChosen($event, 'to')"
                             [category]="toCategory"></app-location-table>
       </div>
     </div>
-
-    <!-- <div *ngIf="formState == 'fields'">
-      <div *ngIf="!toLocation.restricted || isStaff; else restrictedFields;" class="fields center">
-        <div class="question">How much time do you need?
-          <br><br>
-          <div class="amount">
-            <app-duration-picker (onChange)="updateDuration($event)"></app-duration-picker>
-          </div>
-        </div>
-
-        <div *ngIf="isStaff" class="passType">
-          <div>Is this pass mandatory?</div>
-          <mat-slide-toggle (change)="updatePassType($event)"></mat-slide-toggle>
-        </div>
-
-        <app-gradient-button
-          [minWidth]="'150px'"
-          [gradient]="'#7b7df1, #5e3fb6'"
-          [rightIcon]="'./assets/One_Arrow.png'"
-          (click)="determinePass()"
-        >{{ isStaff ? (isMandatory ? 'Issue' : 'Invite') : 'Make Pass' }}
-        </app-gradient-button>
-
-      </div>
-      <ng-template #restrictedFields>
-        <div class="flex">
-          <div class="grow"></div>
-          <textarea #messageInput class="message" matInput
-                    placeholder="Leave a message for the teacher such as when and why you want the pass. "></textarea>
-
-          <app-gradient-button class="request-button"
-                               [gradient]="'#7b7df1, #5e3fb6'"
-                               [rightIcon]="'./assets/One_Arrow.png'"
-                               (click)="newRequest(messageInput.value)">Request Pass
-          </app-gradient-button>
-          <div class="grow"></div>
-        </div>
-      </ng-template>
-    </div> -->
+    <div *ngIf="formState == 'restrictedTarget'">
+        <app-location-table class="center" (onSelect)="locationChosen($event, 'request')"
+        [category]="toCategory"></app-location-table>
+    </div>
+    <div *ngIf="formState == 'restrictedMessage'">
+      Message Box
+    </div>
 
   </div>
 </ng-container>

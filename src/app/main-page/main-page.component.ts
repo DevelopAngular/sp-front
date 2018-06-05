@@ -94,6 +94,7 @@ export class MainPageComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result: Object) => {
+      console.log('[Form Return]: ', result);
       this.isStaff$.subscribe(isStaff => {
         this._zone.run(() => {
           if (result instanceof HallPass) {
