@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-npm install
+yarn install
 
 export PATH="$PATH:$(pwd)/node_modules/.bin"
 

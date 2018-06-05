@@ -14,7 +14,7 @@ stages:
 staging:
   stage: build
   script:
-    - apk add --no-cache bash tree nodejs-npm
+    - apk add --no-cache bash tree nodejs yarn
     - source scripts/auto_devops.sh
     - scripts/build.sh
     - check_kube_domain
