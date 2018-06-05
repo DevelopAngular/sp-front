@@ -43,6 +43,7 @@ body {
   box-shadow: 0 4px 6.5px 0 rgba(0, 0, 0, 0.15);
   margin: 0;
   padding: 0 0 20px 0;
+  height: 382px;
 }
 
 /* :host /deep/ .mat-button-focus-overlay {

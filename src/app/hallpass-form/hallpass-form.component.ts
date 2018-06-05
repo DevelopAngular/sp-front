@@ -45,7 +45,7 @@ export class HallpassFormComponent implements OnInit {
   selectedStudents: User[] = [];
   isMandatory: boolean = false;
   startTime: Date = new Date();
-
+  requestMessage: string = "";
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
 
@@ -300,7 +300,6 @@ export class HallpassFormComponent implements OnInit {
         return 'solid 2px #' + (this.secondFormGroup.valid ? '0F0' : 'F00');
       }
     }
-
   }
 
   locationChosen(event: Location, type: string) {
@@ -325,6 +324,11 @@ export class HallpassFormComponent implements OnInit {
     }
   }
 
+  sendRequest(message:string){
+    this.requestMessage = message;
+    this.determinePass();
+  }
+
   determinePass() {
     if(!this.toLocation.restricted){
       this.dialogRef.close({
@@ -333,8 +337,19 @@ export class HallpassFormComponent implements OnInit {
                             'restricted': this.toLocation.restricted
                             });
     } else{
-      this.requestTarget = this.fromLocation.teachers[0];
-      this.formState = 'restrictedMessage';
+      if(this.requestMessage === ''){
+        this.requestTarget = this.fromLocation.teachers[0];
+        this.formState = 'restrictedMessage';
+      } else{
+        this.dialogRef.close({
+          'fromLocation': this.fromLocation,
+          'toLocation': this.toLocation,
+          'restricted': this.toLocation.restricted,
+          'requestTarget' : this.requestTarget,
+          'message' : this.requestMessage
+          });
+      }
+
     }
   }
 

@@ -154,7 +154,7 @@
 
     <!-- Used to select the to_location -->
     <div *ngIf="formState == 'to'">
-      <div *ngIf="toState == 'pinnables'">
+      <div *ngIf="toState == 'pinnables'" class="pinnable-wrapper">
         <mat-grid-list class="grid center" cols="4" rowHeight="75px" gutterSize="10px" [style.width]="'550px'">
           <mat-grid-tile *ngFor="let pinnable of pinnables | async">
             <app-pinnable [pinnable]="pinnable" (onSelectEvent)="pinnableSelected($event)"></app-pinnable>
@@ -170,10 +170,19 @@
         <app-location-table class="center" (onSelect)="locationChosen($event, 'request')"
         [category]="toCategory"></app-location-table>
     </div>
-    <div *ngIf="formState == 'restrictedMessage'">
-      Message Box
+    <div *ngIf="formState == 'restrictedMessage'" class="message center">
+      <textarea class="message-box" #messageBox placeholder="Could we meet to go over my math test during second period?"></textarea>
+        <app-gradient-button
+          [gradient]="'#00B476, #03CF31'"
+          [hoverColor]="'#04CD33'"
+          [minWidth]="'50px'"
+          [minHeight]="'20px'"
+          [fontSize]="'12px'"
+          (buttonClick)="sendRequest(messageBox.value)"
+          class="message-button">
+        Send Request
+        </app-gradient-button>
     </div>
-
   </div>
 </ng-container>
 
