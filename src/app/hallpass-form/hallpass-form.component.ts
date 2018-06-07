@@ -45,7 +45,7 @@ export class HallpassFormComponent implements OnInit {
   selectedStudents: User[] = [];
   isMandatory: boolean = false;
   startTime: Date = new Date();
-
+  requestMessage: string = "";
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
 
@@ -201,9 +201,9 @@ export class HallpassFormComponent implements OnInit {
     this.formState = state;
     if (state === 'to') {
       if (!!this.fromLocation) {
-        this._toGradient = 'rgb(151, 151, 151), rgb(80, 80, 80)';
-        this.toIcon = './assets/Search.png';
-        this.to_title = 'To';
+        // this._toGradient = '"#7E879D, #7E879D"';
+        // this.toIcon = './assets/Search.png';
+        // this.to_title = 'To';
 
         this.pinnables = this.http.get<Pinnable[]>('api/methacton/v1/pinnables').toPromise();
         this.formState = 'to';
@@ -255,7 +255,7 @@ export class HallpassFormComponent implements OnInit {
     }
   }
 
-  getDividerText() {
+  get dividerText() {
     if (this.formState === 'from') {
       return 'From where?';
     } else if (this.formState === 'to') {
@@ -264,6 +264,14 @@ export class HallpassFormComponent implements OnInit {
       return 'Send Pass Request To?';
     } else if(this.formState === 'restrictedMessage'){
       return 'Message';
+    }
+  }
+
+  get dividerIcon(){
+    if(this.formState === 'from' || this.formState === 'to'){
+      return './assets/Search.png';
+    } else if(this.formState === 'restrictedMessage'){
+      return './assets/Message.png';
     }
   }
 
@@ -300,7 +308,6 @@ export class HallpassFormComponent implements OnInit {
         return 'solid 2px #' + (this.secondFormGroup.valid ? '0F0' : 'F00');
       }
     }
-
   }
 
   locationChosen(event: Location, type: string) {
@@ -325,6 +332,11 @@ export class HallpassFormComponent implements OnInit {
     }
   }
 
+  sendRequest(message:string){
+    this.requestMessage = message;
+    this.determinePass();
+  }
+
   determinePass() {
     if(!this.toLocation.restricted){
       this.dialogRef.close({
@@ -333,8 +345,19 @@ export class HallpassFormComponent implements OnInit {
                             'restricted': this.toLocation.restricted
                             });
     } else{
-      this.requestTarget = this.fromLocation.teachers[0];
-      this.formState = 'restrictedMessage';
+      if(this.requestMessage === ''){
+        this.requestTarget = this.fromLocation.teachers[0];
+        this.formState = 'restrictedMessage';
+      } else{
+        this.dialogRef.close({
+          'fromLocation': this.fromLocation,
+          'toLocation': this.toLocation,
+          'restricted': this.toLocation.restricted,
+          'requestTarget' : this.requestTarget,
+          'message' : this.requestMessage
+          });
+      }
+
     }
   }
 
