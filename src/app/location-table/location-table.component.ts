@@ -28,16 +28,16 @@ export class LocationTableComponent implements OnInit {
 
   ngOnInit() {
     // TODO Get favorites
-    this.http.get<Paged<Location>>('api/methacton/v1/locations'
-      + (!!this.category ? ('?limit=4&category=' + this.category) : ''))
+    this.http.get<Paged<Location>>('api/methacton/v1/locations?limit=4'
+      + (!!this.category ? ('&category=' + this.category) : ''))
       .toPromise().then(p => {
       this.locations = p.results;
     });
   }
 
   onSearch(search: string) {
-    this.http.get<Paged<Location>>('api/methacton/v1/locations?limit=4&' +
-      +(!!this.category ? ('limit=5&category=' + this.category) : '')
+    this.http.get<Paged<Location>>('api/methacton/v1/locations?limit=4'
+      +(!!this.category ? ('&category=' + this.category) : '')
       + '&search=' + search)
       .toPromise().then(p => {
       this.locations = p.results;
