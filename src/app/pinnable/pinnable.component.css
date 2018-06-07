@@ -47,13 +47,15 @@
   position: relative;
   width: 12px;
   height: 11px;
-  top: 3px;
+  top: -1px;
   right: 3px;
 }
 
 .clickRipple {
   width: 120px;
   border-radius: 7px;
+  cursor: pointer;
+  user-select: none;
 }
 
 .mat-button {

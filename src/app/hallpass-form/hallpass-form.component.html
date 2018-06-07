@@ -131,7 +131,7 @@
       <app-gradient-button
         class="location-button"
         [gradient]="toGradient"
-        [hoverColor]="'#CBD5E5'"
+        [hoverColor]="toEnabled?'#7E879D':'#CBD5E5'"
         [minWidth]="'134px'"
         [minHeight]="'60px'"
         [fontSize]="'16px'"
@@ -143,8 +143,8 @@
     </div>
 
     <div class="divider">
-      <img class="divider-icon" [src]="'./assets/Search.png' | resolveAsset">
-      <div class="divider-text">{{getDividerText()}}</div>
+      <img class="divider-icon" [src]="dividerIcon | resolveAsset">
+      <div class="divider-text">{{dividerText}}</div>
     </div>
 
     <!-- Used to select the from_location -->
@@ -180,7 +180,7 @@
           [fontSize]="'12px'"
           (buttonClick)="sendRequest(messageBox.value)"
           class="message-button">
-        Send Request
+        Add Message
         </app-gradient-button>
     </div>
   </div>

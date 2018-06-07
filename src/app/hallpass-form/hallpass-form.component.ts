@@ -201,9 +201,9 @@ export class HallpassFormComponent implements OnInit {
     this.formState = state;
     if (state === 'to') {
       if (!!this.fromLocation) {
-        this._toGradient = 'rgb(151, 151, 151), rgb(80, 80, 80)';
-        this.toIcon = './assets/Search.png';
-        this.to_title = 'To';
+        // this._toGradient = '"#7E879D, #7E879D"';
+        // this.toIcon = './assets/Search.png';
+        // this.to_title = 'To';
 
         this.pinnables = this.http.get<Pinnable[]>('api/methacton/v1/pinnables').toPromise();
         this.formState = 'to';
@@ -255,7 +255,7 @@ export class HallpassFormComponent implements OnInit {
     }
   }
 
-  getDividerText() {
+  get dividerText() {
     if (this.formState === 'from') {
       return 'From where?';
     } else if (this.formState === 'to') {
@@ -264,6 +264,14 @@ export class HallpassFormComponent implements OnInit {
       return 'Send Pass Request To?';
     } else if(this.formState === 'restrictedMessage'){
       return 'Message';
+    }
+  }
+
+  get dividerIcon(){
+    if(this.formState === 'from' || this.formState === 'to'){
+      return './assets/Search.png';
+    } else if(this.formState === 'restrictedMessage'){
+      return './assets/Message.png';
     }
   }
 
