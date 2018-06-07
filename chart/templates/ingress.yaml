@@ -23,4 +23,11 @@ spec:
         backend:
           serviceName: {{ .Values.application.name }}
           servicePort: {{ .Values.service.externalPort }}
+  - host: notify-messenger-notify-server-staging.lavanote.com
+    http:
+      paths:
+      - path: /app
+        backend:
+          serviceName: {{ .Values.application.name }}
+          servicePort: {{ .Values.service.externalPort }}
 {{- end -}}
