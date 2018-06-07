@@ -3,10 +3,8 @@
   height: 62px;
   padding-top: 8.9px;
   border-radius: 7px;
-  background: radial-gradient(at bottom right, white, white);
   color: white;
   text-align: center;
-  box-shadow: 0 7.5px 13px 0 rgba(0, 0, 0, 0.1);
   font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
 
   position: relative;
@@ -18,6 +16,13 @@
   height: 29.5px;
 }
 
+.title-bar{
+  margin-top: 5px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
 .title {
   font-size: 14px;
   font-weight: bold;
@@ -25,6 +30,12 @@
   font-stretch: normal;
   line-height: 1.08;
   letter-spacing: 0.3px;
+}
+
+.category-icon{
+  margin-left: 5px;
+  width: 15px;
+  height: 15px;
 }
 
 .overlay-container {
@@ -56,6 +67,7 @@
   border-radius: 7px;
   cursor: pointer;
   user-select: none;
+  box-shadow: 0 7.5px 13px 5px rgba(0, 0, 0, 0.1);
 }
 
 .mat-button {

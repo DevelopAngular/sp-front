@@ -3,8 +3,11 @@
      (mousedown)="onPress(true)" (mouseup)="onPress(false)">
   <div class="card" [style.background]="getGradient()">
     <img class="icon" [src]="pinnable.icon" alt="ICON">
-    <div class="title">
-      {{pinnable.title}}
+    <div class="title-bar">
+      <div class="title">
+        {{pinnable.title}}
+      </div>
+      <img *ngIf="pinnable.type === 'category'" class="category-icon" [src]="'./assets/One Arrow.png' | resolveAsset" alt="ARROW">
     </div>
     <div *ngIf="restricted;" class="overlay-container">
       <div class="overlay"></div>
