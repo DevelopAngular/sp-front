@@ -46,6 +46,10 @@ body {
   height: 382px;
 }
 
+input:focus{
+  outline-offset: 0;
+}
+
 /* :host /deep/ .mat-button-focus-overlay {
     background-color: rgba(0, 0, 0, 0);
 } */

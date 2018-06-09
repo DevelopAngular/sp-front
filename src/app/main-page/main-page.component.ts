@@ -41,6 +41,11 @@ export class MainPageComponent implements OnInit {
     }),
   );
 
+
+  testDuration: number;
+
+
+
   constructor(private http: HttpService, public dataService: DataService, private router: Router,
               public dialog: MatDialog, private _zone: NgZone, private loadingService: LoadingService) {
   }
@@ -49,6 +54,10 @@ export class MainPageComponent implements OnInit {
     return this.dataService.currentUser.map(isUserStaff);
   }
 
+  durationTest(event:any){
+    this.testDuration = event;
+    console.log('[Test Duration]: ', event);
+  }
 
   ngOnInit() {
     this.dataService.currentUser

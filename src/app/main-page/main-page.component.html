@@ -7,6 +7,8 @@
                      (cardEvent)="cardEvent($event)"></app-pass-card>
     </div>
     <ng-template #newPass>
+      <app-duration-picker [maxDuration]="15" [minDuration]="3" (onChange)="durationTest($event)"></app-duration-picker>
+      {{ testDuration }}
       <div style="height: 40px;"></div>
       <app-gradient-button
         [minWidth]="'352px'"

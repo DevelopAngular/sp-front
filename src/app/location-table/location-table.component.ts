@@ -16,36 +16,49 @@ export interface Paged<T> {
 
 export class LocationTableComponent implements OnInit {
 
-  @Output() onSelect: EventEmitter<any> = new EventEmitter();
-
   @Input()
   category: string;
 
-  public locations: Location[];
+  @Input()
+  placeholder: string;
+
+  @Input()
+  type: string;
+
+  @Output() onSelect: EventEmitter<any> = new EventEmitter();
+
+  public choices: any[];
 
   constructor(private http: HttpService) {
   }
 
   ngOnInit() {
+    console.log('[Table Type]: ', this.type);
     // TODO Get favorites
-    this.http.get<Paged<Location>>('api/methacton/v1/locations?limit=4'
-      + (!!this.category ? ('&category=' + this.category) : ''))
+    this.http.get<Paged<Location>>('api/methacton/v1/'
+      +(this.type==='teachers'?'users':('locations'
+        +(!!this.category ? ('?category=' + this.category +'&') : '?')
+      ))
+      +'limit=4')
       .toPromise().then(p => {
-      this.locations = p.results;
+      this.choices = p.results;
     });
   }
 
   onSearch(search: string) {
-    this.http.get<Paged<Location>>('api/methacton/v1/locations?limit=4'
-      +(!!this.category ? ('&category=' + this.category) : '')
-      + '&search=' + search)
-      .toPromise().then(p => {
-      this.locations = p.results;
-    });
+      this.http.get<Paged<Location>>('api/methacton/v1/'
+        +(this.type==='teachers'?'users':('locations'
+          +(!!this.category ? ('?category=' +this.category +'&') : '?')
+        ))
+        +'limit=4'
+        +'&search=' +search)
+        .toPromise().then(p => {
+          this.choices = p.results;
+        });
   }
 
-  locationSelected(location: Location) {
-    this.onSelect.emit(location);
+  choiceSelected(choice: any) {
+    this.onSelect.emit(choice);
   }
 
 }

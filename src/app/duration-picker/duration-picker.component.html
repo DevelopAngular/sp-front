@@ -1,9 +1,9 @@
-<span class="ui-fluid wrapper">
-  <div class="ui-inputgroup">
-    <p-dropdown [(ngModel)]="selectedDuration" [autoWidth]="false"
-                [options]="durations" [showClear]="false"
-                placeholder="Duration" optionLabel="display"
-                appendTo="body" (onChange)="updateDuration()">
-    </p-dropdown>
-  </div>
-</span>
+<div class="wrapper">
+    <mat-slider class="slider"
+                [max]="maxDuration"
+                [min]="minDuration"
+                [vertical]="true"
+                [(ngModel)]="selectedDuration"
+                (input)="updateDuration()">
+    </mat-slider>
+</div>

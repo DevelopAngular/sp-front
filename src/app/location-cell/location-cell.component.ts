@@ -9,9 +9,12 @@ import { Location } from '../NewModels';
 export class LocationCellComponent implements OnInit {
 
   @Input()
-  location: Location;
+  value: any;
 
-  @Output() onSubSelect: EventEmitter<any> = new EventEmitter();
+  @Input()
+  type: string;
+
+  @Output() onSelect: EventEmitter<any> = new EventEmitter();
 
   constructor() {
   }
@@ -20,8 +23,8 @@ export class LocationCellComponent implements OnInit {
 
   }
 
-  locationSelected() {
-    this.onSubSelect.emit(this.location);
+  cellSelected() {
+    this.onSelect.emit(this.value);
   }
 
 }
