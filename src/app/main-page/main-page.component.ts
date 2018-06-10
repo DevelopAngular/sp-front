@@ -22,7 +22,7 @@ function isUserStaff(user: User): boolean {
 })
 export class MainPageComponent implements OnInit {
 
-  currentPass: HallPass;
+  currentPass: HallPass | Request;
   futurePasses: HallPass[];
 
   // -----------------------NEW STUFF--------------------- //
@@ -41,22 +41,12 @@ export class MainPageComponent implements OnInit {
     }),
   );
 
-
-  testDuration: number;
-
-
-
   constructor(private http: HttpService, public dataService: DataService, private router: Router,
               public dialog: MatDialog, private _zone: NgZone, private loadingService: LoadingService) {
   }
 
   get isStaff$(): Observable<boolean> {
     return this.dataService.currentUser.map(isUserStaff);
-  }
-
-  durationTest(event:any){
-    this.testDuration = event;
-    console.log('[Test Duration]: ', event);
   }
 
   ngOnInit() {

@@ -36,7 +36,7 @@ export class LocationTableComponent implements OnInit {
     console.log('[Table Type]: ', this.type);
     // TODO Get favorites
     this.http.get<Paged<Location>>('api/methacton/v1/'
-      +(this.type==='teachers'?'users':('locations'
+      +(this.type==='teachers'?'users?role=edit_all_hallpass&':('locations'
         +(!!this.category ? ('?category=' + this.category +'&') : '?')
       ))
       +'limit=4')
@@ -47,7 +47,7 @@ export class LocationTableComponent implements OnInit {
 
   onSearch(search: string) {
       this.http.get<Paged<Location>>('api/methacton/v1/'
-        +(this.type==='teachers'?'users':('locations'
+        +(this.type==='teachers'?'users?role=edit_all_hallpass&':('locations'
           +(!!this.category ? ('?category=' +this.category +'&') : '?')
         ))
         +'limit=4'

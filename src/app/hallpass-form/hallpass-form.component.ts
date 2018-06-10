@@ -337,6 +337,11 @@ export class HallpassFormComponent implements OnInit {
     this.determinePass();
   }
 
+  updateTarget(event:any){
+    this.requestTarget = event;
+    this.formState = 'restrictedMessage';
+  }
+
   determinePass() {
     if(!this.toLocation.restricted){
       this.dialogRef.close({
@@ -346,8 +351,7 @@ export class HallpassFormComponent implements OnInit {
                             });
     } else{
       if(this.requestMessage === ''){
-        this.requestTarget = this.fromLocation.teachers[0];
-        this.formState = 'restrictedMessage';
+        this.formState = 'restrictedTarget';
       } else{
         this.dialogRef.close({
           'fromLocation': this.fromLocation,

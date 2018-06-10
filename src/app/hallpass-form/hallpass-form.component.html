@@ -167,8 +167,7 @@
       </div>
     </div>
     <div *ngIf="formState == 'restrictedTarget'">
-        <app-location-table class="center" (onSelect)="locationChosen($event, 'request')"
-        [category]="toCategory"></app-location-table>
+        <app-location-table class="center" (onSelect)="updateTarget($event)" [type]="'teachers'" [placeholder]="'Search teachers'"></app-location-table>
     </div>
     <div *ngIf="formState == 'restrictedMessage'" class="message center">
       <textarea class="message-box" #messageBox placeholder="Could we meet to go over my math test during second period?"></textarea>

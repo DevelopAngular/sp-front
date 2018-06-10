@@ -23,13 +23,13 @@
         </div>
       </div>
     </mat-panel-title>
-    <mat-panel-description class="close" *ngIf="type=='invitation' || type=='request'">
+    <mat-panel-description class="close" *ngIf="type=='invitation' || type=='request' || isDetails">
       <mat-icon class="cancel" (click)="_cardEvent(false)">cancel</mat-icon>
     </mat-panel-description>
   </mat-expansion-panel-header>
 
   <div class="divider center"></div>
-  <div class="card-body">
+  <div class="card-body" *ngIf="!isDetails; else details">
     <div class="card-top">
       <div class="card-left">
         <div class="origin center" *ngIf="type=='request'">
@@ -112,4 +112,14 @@
       </ng-template>
     </div>
   </div>
+  <ng-template class="card-body" #details>
+    <div class="card-top">
+      <div class="card-left">
+        <app-duration-picker [maxDuration]="pass.to_location.max_allowed_time" (onChange)="updateDuration($event)"></app-duration-picker>
+      </div>
+      <div class="card-right">
+
+      </div>
+    </div>
+  </ng-template>
 </mat-expansion-panel>

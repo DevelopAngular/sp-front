@@ -18,11 +18,15 @@ export class PassCardComponent implements OnInit {
 
   @Input() user: User;
 
+  @Input() isDetails: boolean = false;
+
   @Output() cardEvent: EventEmitter<any> = new EventEmitter();
 
   type: string = '';
 
   timeLeft: string = '00:00';
+
+  chosenDuration: number;
 
   weekday: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   month: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
@@ -79,6 +83,10 @@ export class PassCardComponent implements OnInit {
   getTime(s: Date) {
     s = new Date(s);
     return ((s.getHours() > 12) ? s.getHours() - 12 : s.getHours()) + ':' + ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + ((s.getHours() > 12) ? 'pm' : 'am');
+  }
+
+  updateDuration(dur:number){
+    this.chosenDuration = dur;
   }
 
 }

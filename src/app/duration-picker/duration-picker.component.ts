@@ -10,25 +10,25 @@ import { Duration } from '../NewModels';
 export class DurationPickerComponent implements OnInit {
 
   @Input()
-  minDuration:number;
+  minDuration:number = 3;
    
   @Input()
   maxDuration:number;
 
   @Output() onChange: EventEmitter<any> = new EventEmitter();
 
-  public selectedDuration: number;
+  public selectedDuration: number = 5;
 
   constructor() {}
 
   ngOnInit() {
     this.selectedDuration = 5;
-    this.onChange.emit(this.selectedDuration*60);
+    this.onChange.emit(this.selectedDuration);
   }
 
-  updateDuration() {
-    this.onChange.emit(this.selectedDuration*60);
-    console.log('[Duration Update]: ', this.selectedDuration);
+  updateDuration(event:any) {
+    this.selectedDuration = event.value;
+    this.onChange.emit(event.value);
   }
 
 }
