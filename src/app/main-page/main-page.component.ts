@@ -1,5 +1,5 @@
 import { Component, NgZone, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MAT_PROGRESS_SPINNER_DEFAULT_OPTIONS } from '@angular/material';
 import { Router } from '@angular/router';
 
 import 'rxjs/add/operator/map';
@@ -31,6 +31,7 @@ export class MainPageComponent implements OnInit {
   requests: Promise<Request[]>;
   user: User;
   tabIndex: number = 1;
+  showDetails: boolean = false;
 
   invitations = this.dataService.currentUser.pipe(
     switchMap(user => {
@@ -94,6 +95,19 @@ export class MainPageComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: Object) => {
       console.log('[Form Return]: ', result);
+      this.showDetails = true;
+      if(result['restricted']){
+        this.currentPass = new Request("", this.user, result['fromLocation'],
+                                      result['tolocation'], result['message'],
+                                      '', '', null, result['gradient'],
+                                      result['icon'], result['requestTarget']);
+      } else{
+        this.currentPass = new HallPass("", this.user, this.user,
+                                        new Date(), new Date(), new Date(),
+                                        new Date(), new Date(), result['fromLocation'],
+                                        result['toLocation'], "", result['gradient'],
+                                        result['icon']);
+      }
       this.isStaff$.subscribe(isStaff => {
         this._zone.run(() => {
           if (result instanceof HallPass) {

@@ -79,6 +79,7 @@ import { StudentSearchComponent } from './student-search/student-search.componen
 import { TeacherSearchComponent } from './teacher-search/teacher-search.component';
 import { TypeSelectorComponent } from './type-selector/type-selector.component';
 import { UserService } from './user.service';
+import { TraveltypePickerComponent } from './traveltype-picker/traveltype-picker.component';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: '/main', pathMatch: 'full'},
@@ -114,6 +115,7 @@ const appRoutes: Routes = [
     LocationPickerComponent,
     DateTimePickerComponent,
     PassCardComponent,
+    TraveltypePickerComponent,
   ],
   entryComponents: [
     HallpassFormComponent,

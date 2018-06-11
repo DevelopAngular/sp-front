@@ -70,7 +70,6 @@ export class PassCardComponent implements OnInit {
 
   getGradient() {
     let gradient: string[] = this.pass.gradient_color.split(',');
-    ;
 
     return 'radial-gradient(circle at 73% 71%, ' + gradient[0] + ', ' + gradient[1] + ')';
   }
@@ -87,6 +86,10 @@ export class PassCardComponent implements OnInit {
 
   updateDuration(dur:number){
     this.chosenDuration = dur;
+  }
+
+  updateTravelType(travelType:string){
+    this.pass.travel_type = travelType;
   }
 
 }

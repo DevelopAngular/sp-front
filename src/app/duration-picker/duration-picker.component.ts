@@ -13,7 +13,7 @@ export class DurationPickerComponent implements OnInit {
   minDuration:number = 3;
    
   @Input()
-  maxDuration:number;
+  maxDuration:number = 15;
 
   @Output() onChange: EventEmitter<any> = new EventEmitter();
 

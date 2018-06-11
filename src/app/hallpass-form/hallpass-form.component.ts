@@ -345,10 +345,12 @@ export class HallpassFormComponent implements OnInit {
   determinePass() {
     if(!this.toLocation.restricted){
       this.dialogRef.close({
-                            'fromLocation': this.fromLocation,
-                            'toLocation': this.toLocation,
-                            'restricted': this.toLocation.restricted
-                            });
+          'fromLocation': this.fromLocation,
+          'toLocation': this.toLocation,
+          'restricted': this.toLocation.restricted,
+          'icon': this.toIcon,
+          'gradient': this.toGradient
+          });
     } else{
       if(this.requestMessage === ''){
         this.formState = 'restrictedTarget';
@@ -358,7 +360,9 @@ export class HallpassFormComponent implements OnInit {
           'toLocation': this.toLocation,
           'restricted': this.toLocation.restricted,
           'requestTarget' : this.requestTarget,
-          'message' : this.requestMessage
+          'message' : this.requestMessage,
+          'icon': this.toIcon,
+          'gradient': this.toGradient
           });
       }
 
