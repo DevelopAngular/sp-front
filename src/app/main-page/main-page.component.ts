@@ -98,7 +98,7 @@ export class MainPageComponent implements OnInit {
       this.showDetails = true;
       if(result['restricted']){
         this.currentPass = new Request('template', this.user, result['fromLocation'],
-                                      result['tolocation'], result['message'],
+                                      result['toLocation'], result['message'],
                                       '', '', null, result['gradient'],
                                       result['icon'], result['requestTarget']);
       } else{
@@ -147,11 +147,30 @@ export class MainPageComponent implements OnInit {
     if(event.pass.id === 'template'){
       if (event.type == 'hallpass') {
         const body = {
-
+          'student' : event.pass.student.id,
+          'duration' : event.data.duration * 60,
+          'origin' : event.pass.origin.id,
+          'destination' : event.pass.destination.id,
+          'travel_type' : event.pass.travel_type
         };
-        this.http.post('', body).subscribe();
+        this.http.post<HallPass>('api/methacton/v1/hall_passes', body).subscribe((data)=>{
+          console.log('[New Pass]: ', data);
+          this.currentPass = HallPass.fromJSON(data);
+          this.showDetails = false;
+        });
       } else if (event.type == 'request') {
-  
+        const body = {
+          'origin' : event.pass.origin.id,
+          'destination' : event.pass.destination.id,
+          'attachment_message' : event.pass.attachment_message,
+          'travel_type' : event.pass.travel_type,
+          'teacher' : event.pass.teacher.id
+        };
+        this.http.post<HallPass>('api/methacton/v1/pass_requests', body).subscribe((data)=>{
+          console.log('[New Pass]: ', data);
+          this.currentPass = Request.fromJSON(data);
+          this.showDetails = false;
+        });
       }
     } else{
       if (event.type == 'hallpass') {

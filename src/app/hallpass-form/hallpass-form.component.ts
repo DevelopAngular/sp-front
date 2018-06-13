@@ -260,7 +260,7 @@ export class HallpassFormComponent implements OnInit {
       return 'From where?';
     } else if (this.formState === 'to') {
       return 'To where?';
-    } else if(this.formState === 'restrictedPermission'){
+    } else if(this.formState === 'restrictedTarget'){
       return 'Send Pass Request To?';
     } else if(this.formState === 'restrictedMessage'){
       return 'Message';

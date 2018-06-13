@@ -19,7 +19,7 @@
           </div>
         </div>
         <div class="card-title" *ngIf="type=='hallpass'">
-          Pass to {{pass.destination.title}}
+          {{pass.destination.title}}
         </div>
       </div>
     </mat-panel-title>
@@ -71,7 +71,7 @@
           </div>
         </button>
       </div>
-      <div class="card-right grow" *ngIf="type=='hallpass'">
+      <div class="card-right" *ngIf="type=='hallpass'">
         <div class="grow"></div>
         <div *ngIf="!future; else inFuture">
           <button mat-button class="clickRipple" (click)="_cardEvent(false)">
@@ -117,20 +117,20 @@
       <div class="card-left" *ngIf="type==='hallpass'">
         <app-duration-picker [maxDuration]="pass.destination.max_allowed_time?pass.destination.max_allowed_time:15" (onChange)="updateDuration($event)"></app-duration-picker>
       </div>
-      <div class="card-left" *ngIf="type==='request'">
-        {{ pass.attatchment_message }}
+      <div class="card-left" [style.min-width]="'140px'" *ngIf="type==='request'">
+        {{ pass.attachment_message }}
       </div>
       <div class="card-right">
         <app-traveltype-picker [choices]="pass.destination.travel_types" (onSelect)="updateTravelType($event)"></app-traveltype-picker>
         <button mat-button class="clickRipple end-pass" (click)="_cardEvent(true)">
-            <div class="button-card">
-              <div class="button-content">
-                <div class="button-title">
-                  Start Pass
-                </div>
+          <div class="button-card">
+            <div class="button-content">
+              <div class="button-title">
+                {{type==='hallpass'?'Start Pass':'Request Pass'}}
               </div>
             </div>
-          </button>
+          </div>
+        </button>
       </div>
     </div>
   </ng-template>

@@ -21,6 +21,7 @@ export class TraveltypePickerComponent implements OnInit {
     this.choice1 = this.choices.length==2?'Round-trip':(this.choices[0]==='round_trip'?'Round-trip':'One-way')
     this.choice2 = this.choices.length==2?'One-way':null;
     this.selectedChoice = this.choice1;
+    this.onSelect.emit(this.selectedChoice==='Round-trip'?'round_trip':'one_way');
   }
 
   updateTravelType(travelType:string){
