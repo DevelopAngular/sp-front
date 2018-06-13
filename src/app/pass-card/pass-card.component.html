@@ -24,7 +24,7 @@
       </div>
     </mat-panel-title>
     <mat-panel-description class="close" *ngIf="type=='invitation' || type=='request' || isDetails">
-      <mat-icon class="cancel" (click)="_cardEvent(false)">cancel</mat-icon>
+      <img [src]="'./assets/Delete.png' | resolveAsset" class="cancel" (click)="_cardEvent(false)">
     </mat-panel-description>
   </mat-expansion-panel-header>
 

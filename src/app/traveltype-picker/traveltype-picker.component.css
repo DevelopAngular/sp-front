@@ -1,16 +1,19 @@
 .wrapper{
     border: solid white 1px;
     border-radius: 5px;
-    width: 100px;
-    height: 15px;
+    width: 120px;
+    height: 20px;
     margin-bottom: 20px;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    background-color: white; 
 }
 
 .option{
-    margin: 5px;
+    /* margin: 5px; */
     height: inherit;
+    font-size: 11px;
+    border-radius: 5px;
 }

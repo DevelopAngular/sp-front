@@ -26,7 +26,7 @@ export class PassCardComponent implements OnInit {
 
   timeLeft: string = '00:00';
 
-  chosenDuration: number;
+  returnData:any = {};
 
   weekday: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   month: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
@@ -62,9 +62,10 @@ export class PassCardComponent implements OnInit {
     let event = {
       'type': this.type,
       'value': value,
-      'id': this.pass.id
+      'pass': this.pass,
+      'data': this.returnData
     };
-
+    console.log('[Pass Card Event]: ', event);
     this.cardEvent.emit(event);
   }
 
@@ -85,7 +86,7 @@ export class PassCardComponent implements OnInit {
   }
 
   updateDuration(dur:number){
-    this.chosenDuration = dur;
+    this.returnData['duration'] = dur;
   }
 
   updateTravelType(travelType:string){

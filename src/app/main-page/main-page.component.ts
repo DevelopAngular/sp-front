@@ -97,15 +97,15 @@ export class MainPageComponent implements OnInit {
       console.log('[Form Return]: ', result);
       this.showDetails = true;
       if(result['restricted']){
-        this.currentPass = new Request("", this.user, result['fromLocation'],
+        this.currentPass = new Request('template', this.user, result['fromLocation'],
                                       result['tolocation'], result['message'],
                                       '', '', null, result['gradient'],
                                       result['icon'], result['requestTarget']);
       } else{
-        this.currentPass = new HallPass("", this.user, this.user,
+        this.currentPass = new HallPass('template', this.user, this.user,
                                         new Date(), new Date(), new Date(),
                                         new Date(), new Date(), result['fromLocation'],
-                                        result['toLocation'], "", result['gradient'],
+                                        result['toLocation'], '', result['gradient'],
                                         result['icon']);
       }
       this.isStaff$.subscribe(isStaff => {
@@ -144,14 +144,25 @@ export class MainPageComponent implements OnInit {
   }
 
   cardEvent(event) {
-    if (event.type == 'hallpass') {
-      if (!event.value) {
-        this.endPass(event.id);
+    if(event.pass.id === 'template'){
+      if (event.type == 'hallpass') {
+        const body = {
+
+        };
+        this.http.post('', body).subscribe();
+      } else if (event.type == 'request') {
+  
       }
-    } else if (event.type == 'request') {
-
-    } else if (event.type == 'invitation') {
-
+    } else{
+      if (event.type == 'hallpass') {
+        if (!event.value) {
+          this.endPass(event.id);
+        }
+      } else if (event.type == 'request') {
+  
+      } else if (event.type == 'invitation') {
+  
+      }
     }
   }
 }

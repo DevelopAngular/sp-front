@@ -52,7 +52,8 @@
 }
 
 .cancel {
-
+  width: 25px;
+  height: 25px;
 }
 
 .divider {
@@ -109,6 +110,7 @@ destination {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
 }
 
 .card-bottom {
