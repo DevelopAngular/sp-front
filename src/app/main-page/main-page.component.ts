@@ -9,7 +9,7 @@ import { DataService } from '../data-service';
 import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
 import { HttpService } from '../http-service';
 import { LoadingService } from '../loading.service';
-import { HallPass, HallPassSummary, Invitation, Request, User } from '../NewModels';
+import { HallPass, HallPassSummary, Invitation, Request, User, Location } from '../NewModels';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('edit_all_hallpass');
@@ -21,6 +21,27 @@ function isUserStaff(user: User): boolean {
   styleUrls: ['./main-page.component.css']
 })
 export class MainPageComponent implements OnInit {
+
+  testStudent = new User('testStudent', new Date(), new Date(), 'Kyle', 'Cook', 'Kyle Cook', 'mail@mail.com', []);
+  testIssuer = new User('testIssuer', new Date(), new Date(), 'Donald', 'Sawyer', 'Don Sawyer', 'mail@mail.com', []);
+  testOrigin = new Location('testOrigin', 'Ladson', 'MHS', 'C123', 'classroom', false, [], [], [], 15);
+  testDestination = new Location('testDestination', 'Water Fountain', 'MHS', 'WF', '', false, [], [], [], 15);
+
+  testPass = new HallPass('testPass', this.testStudent, this.testIssuer,
+                          new Date(), new Date(), new Date(),
+                          new Date(), new Date(), this.testOrigin, 
+                          this.testDestination, 'one_way', '#1893E9,#05B5DE',
+                          'https://storage.googleapis.com/courier-static/icons/water-fountain.png');
+
+  testRequest = new Request('testRequest', this.testStudent, this.testOrigin, this.testDestination,
+                            'Gimme dem books yo', 'round_trip', 'status', null, '#00C0C7,#0B9FC1',
+                            'https://storage.googleapis.com/courier-static/icons/library.png', this.testIssuer);
+
+  testInvitation = new Invitation('testInvitation', this.testStudent, null,
+                                  this.testDestination, [new Date()], this.testIssuer,
+                                  'status', 10, '#F37426,#F52B4F',
+                                  'https://storage.googleapis.com/courier-static/icons/classroom.png', 'one_way');
+
 
   currentPass: HallPass | Request;
   futurePasses: HallPass[];

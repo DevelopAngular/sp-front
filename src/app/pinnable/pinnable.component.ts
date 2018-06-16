@@ -41,7 +41,6 @@ export class PinnableComponent implements OnInit {
 
   getGradient() {
     let gradient: string[] = this.pinnable.gradient_color.split(',');
-    ;
 
     return 'radial-gradient(circle at 73% 71%, ' + gradient[0] + ', ' + gradient[1] + ')';
   }

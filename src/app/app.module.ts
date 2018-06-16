@@ -76,6 +76,10 @@ import { StudentSearchComponent } from './student-search/student-search.componen
 import { TeacherSearchComponent } from './teacher-search/teacher-search.component';
 import { UserService } from './user.service';
 import { TraveltypePickerComponent } from './traveltype-picker/traveltype-picker.component';
+import { PassTileComponent } from './pass-tile/pass-tile.component';
+import { PassCellComponent } from './pass-cell/pass-cell.component';
+import { ContainerCardComponent } from './container-card/container-card.component';
+import { PassCollectionComponent } from './pass-collection/pass-collection.component';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: '/main', pathMatch: 'full'},
@@ -108,6 +112,10 @@ const appRoutes: Routes = [
     DateTimePickerComponent,
     PassCardComponent,
     TraveltypePickerComponent,
+    PassTileComponent,
+    PassCellComponent,
+    ContainerCardComponent,
+    PassCollectionComponent,
   ],
   entryComponents: [
     HallpassFormComponent,

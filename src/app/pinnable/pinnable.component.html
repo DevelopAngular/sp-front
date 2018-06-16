@@ -2,7 +2,7 @@
      [@pressState]="buttonState"
      (mousedown)="onPress(true)" (mouseup)="onPress(false)">
   <div class="card" [style.background]="getGradient()">
-    <img class="icon" [src]="pinnable.icon" alt="ICON">
+    <img class="icon" [src]="pinnable.icon | resolveAsset" alt="ICON">
     <div class="title-bar">
       <div class="title">
         {{pinnable.title}}

@@ -4,7 +4,7 @@
   flex-direction: column;
   margin-bottom: 40px;
   color: white;
-  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-family: 'Helvetica Neue', sans-serif;
   font-weight: bold;
   font-style: normal;
   font-stretch: normal;
@@ -39,7 +39,7 @@
 
 .card-title {
   color: white;
-  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-family: 'Helvetica Neue', sans-serif;
   font-weight: bold;
   font-style: normal;
   font-stretch: normal;
@@ -140,7 +140,7 @@ destination {
   background-image: radial-gradient(circle at 77% 61%, rgba(255, 255, 255, .4), rgba(220, 220, 220, 0.4) 67%, rgba(200, 200, 200, 0.4));
   color: white;
   box-shadow: 0 7.5px 13px 0 rgba(0, 0, 0, 0.1);
-  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-family: 'Helvetica Neue', sans-serif;
 }
 
 .button-content {

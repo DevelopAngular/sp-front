@@ -47,7 +47,7 @@
   background-image: radial-gradient(circle at 77% 61%, #03cf31, rgba(2, 169, 67, 0.86) 67%, rgba(1, 129, 85, 0.7));
   color: white;
   box-shadow: 0 7.5px 13px 0 rgba(0, 0, 0, 0.1);
-  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-family: 'Helvetica Neue', sans-serif;
 }
 
 .requestCard {
@@ -170,7 +170,7 @@
 
 .divider-text {
   color: white;
-  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-family: 'Helvetica Neue', sans-serif;
   font-size: 18px;
   font-weight: bold;
   font-style: normal;
@@ -216,7 +216,7 @@ mat-grid-tile .location-wrapper > .inner > app-location-picker {
   margin-bottom: 15px;
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-family: 'Helvetica Neue', sans-serif;
   font-size: 16px;
   font-style: normal;
   font-stretch: normal;
