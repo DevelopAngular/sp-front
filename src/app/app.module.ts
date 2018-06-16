@@ -55,10 +55,8 @@ import { DurationPickerComponent } from './duration-picker/duration-picker.compo
 import { GoogleLoginService } from './google-login.service';
 import { GoogleSigninComponent } from './google-signin/google-signin.component';
 import { GradientButtonComponent } from './gradient-button/gradient-button.component';
-import { HallpassCardComponent } from './hallpass-card/hallpass-card.component';
 import { HallpassFormComponent } from './hallpass-form/hallpass-form.component';
 import { HttpService } from './http-service';
-import { InvitationCardComponent } from './invitation-card/invitation-card.component';
 import { LoadingService } from './loading.service';
 import { LocationCellComponent } from './location-cell/location-cell.component';
 import { LocationChooseComponent } from './location-choose/location-choose.component';
@@ -71,13 +69,11 @@ import { OptionsComponent } from './options/options.component';
 import { PassCardComponent } from './pass-card/pass-card.component';
 import { PinnableComponent } from './pinnable/pinnable.component';
 import { RequestAcceptComponent } from './request-accept/request-accept.component';
-import { RequestCardComponent } from './request-card/request-card.component';
 import { ResolveAssetPipe } from './resolve-asset.pipe';
 import { SignOutComponent } from './sign-out/sign-out.component';
 import { StudentPickerComponent } from './student-picker/student-picker.component';
 import { StudentSearchComponent } from './student-search/student-search.component';
 import { TeacherSearchComponent } from './teacher-search/teacher-search.component';
-import { TypeSelectorComponent } from './type-selector/type-selector.component';
 import { UserService } from './user.service';
 import { TraveltypePickerComponent } from './traveltype-picker/traveltype-picker.component';
 
@@ -99,14 +95,10 @@ const appRoutes: Routes = [
     ConsentMenuComponent,
     PinnableComponent,
     LocationChooseComponent,
-    TypeSelectorComponent,
     NavbarComponent,
     LocationTableComponent,
     ResolveAssetPipe,
     LocationCellComponent,
-    HallpassCardComponent,
-    RequestCardComponent,
-    InvitationCardComponent,
     GradientButtonComponent,
     SignOutComponent,
     OptionsComponent,
@@ -174,10 +166,8 @@ const appRoutes: Routes = [
     MatDatepickerModule,
     MatNativeDateModule,
     AmazingTimePickerModule,
-    // ToastModule.forRoot(),
     RouterModule.forRoot(
       appRoutes
-      // ,{ enableTracing: true } // <-- debugging purposes only
     ),
     GoogleApiModule.forRoot({
       provide: NG_GAPI_CONFIG,

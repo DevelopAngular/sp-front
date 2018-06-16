@@ -40,8 +40,6 @@ function constructUrl(base: string, obj: Partial<QueryParams>): string {
 
 @Injectable()
 export class DataService {
-
-  // userService = new BehaviorSubject<User>(null);
   currentUser = this.userService.userData.asObservable();
   private updateInvitations = new BehaviorSubject<void>(null);
 

@@ -37,12 +37,12 @@ export class PassCardComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('[Pass]: ', this.pass);
+    // console.log('[Pass]: ', this.pass);
     this.type = (this.pass instanceof HallPass) ? 'hallpass' :
       (this.pass instanceof Invitation) ? 'invitation' :
         'request';
 
-    console.log('[Card Type]', this.type);
+    // console.log('[Card Type]', this.type);
 
     if (this.type == 'hallpass') {
       setInterval(() => {
@@ -65,7 +65,7 @@ export class PassCardComponent implements OnInit {
       'pass': this.pass,
       'data': this.returnData
     };
-    console.log('[Pass Card Event]: ', event);
+    // console.log('[Pass Card Event]: ', event);
     this.cardEvent.emit(event);
   }
 

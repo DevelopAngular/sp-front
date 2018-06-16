@@ -94,7 +94,7 @@ export class MainPageComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result: Object) => {
-      console.log('[Form Return]: ', result);
+      // console.log('[Form Return]: ', result);
       this.showDetails = true;
       if(result['restricted']){
         this.currentPass = new Request('template', this.user, result['fromLocation'],
@@ -154,7 +154,7 @@ export class MainPageComponent implements OnInit {
           'travel_type' : event.pass.travel_type
         };
         this.http.post<HallPass>('api/methacton/v1/hall_passes', body).subscribe((data)=>{
-          console.log('[New Pass]: ', data);
+          // console.log('[New Pass]: ', data);
           this.currentPass = HallPass.fromJSON(data);
           this.showDetails = false;
         });
@@ -167,7 +167,7 @@ export class MainPageComponent implements OnInit {
           'teacher' : event.pass.teacher.id
         };
         this.http.post<HallPass>('api/methacton/v1/pass_requests', body).subscribe((data)=>{
-          console.log('[New Pass]: ', data);
+          // console.log('[New Pass]: ', data);
           this.currentPass = Request.fromJSON(data);
           this.showDetails = false;
         });

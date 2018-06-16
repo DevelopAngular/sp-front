@@ -24,16 +24,12 @@ export class NavbarComponent implements AfterViewInit {
 
   tabIndex: number = 1;
 
-  // user: User = new User('', null, null, '', '', '', '', ['']);
-
   constructor(private dataService: DataService, public dialog: MatDialog, private router: Router,
               public loadingService: LoadingService, public loginService: GoogleLoginService) {
   }
 
   ngAfterViewInit() {
-    // this.dataService.currentUser.subscribe(user => {
-    //   this.user = user;
-    // });
+
   }
 
   showOptions() {
@@ -44,7 +40,7 @@ export class NavbarComponent implements AfterViewInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
+      // console.log(result);
       if (result === 'settings') {
 
       } else if (result === 'logout') {

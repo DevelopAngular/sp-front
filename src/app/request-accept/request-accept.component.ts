@@ -46,7 +46,7 @@ export class RequestAcceptComponent implements OnInit {
 
   updateDate(date: string) {
     this.date = date;
-    console.log('[Date]: ', this.date);
+    // console.log('[Date]: ', this.date);
   }
 
   updateDuration(duration: number) {

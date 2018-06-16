@@ -33,7 +33,7 @@ export class LocationTableComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('[Table Type]: ', this.type);
+    // console.log('[Table Type]: ', this.type);
     // TODO Get favorites
     this.http.get<Paged<Location>>('api/methacton/v1/'
       +(this.type==='teachers'?'users?role=edit_all_hallpass&':('locations'
