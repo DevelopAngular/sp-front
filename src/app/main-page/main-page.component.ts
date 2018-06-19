@@ -26,22 +26,11 @@ export class MainPageComponent implements OnInit {
   testIssuer = new User('testIssuer', new Date(), new Date(), 'Donald', 'Sawyer', 'Don Sawyer', 'mail@mail.com', []);
   testOrigin = new Location('testOrigin', 'Ladson', 'MHS', 'C123', 'classroom', false, [], [], [], 15);
   testDestination = new Location('testDestination', 'Water Fountain', 'MHS', 'WF', '', false, [], [], [], 15);
+  testDate:Date = new Date();
 
-  testPass = new HallPass('testPass', this.testStudent, this.testIssuer,
-                          new Date(), new Date(), new Date(),
-                          new Date(), new Date(), this.testOrigin, 
-                          this.testDestination, 'one_way', '#1893E9,#05B5DE',
-                          'https://storage.googleapis.com/courier-static/icons/water-fountain.png');
-
-  testRequest = new Request('testRequest', this.testStudent, this.testOrigin, this.testDestination,
-                            'Gimme dem books yo', 'round_trip', 'status', null, '#00C0C7,#0B9FC1',
-                            'https://storage.googleapis.com/courier-static/icons/library.png', this.testIssuer);
-
-  testInvitation = new Invitation('testInvitation', this.testStudent, null,
-                                  this.testDestination, [new Date()], this.testIssuer,
-                                  'status', 10, '#F37426,#F52B4F',
-                                  'https://storage.googleapis.com/courier-static/icons/classroom.png', 'one_way');
-
+  testPass: HallPass;
+  testRequest: Request;
+  testInvitation: Invitation;
 
   currentPass: HallPass | Request;
   futurePasses: HallPass[];
@@ -65,6 +54,24 @@ export class MainPageComponent implements OnInit {
 
   constructor(private http: HttpService, public dataService: DataService, private router: Router,
               public dialog: MatDialog, private _zone: NgZone, private loadingService: LoadingService) {
+  
+    this.testDate.setDate(this.testDate.getDate()+4)
+
+    this.testPass = new HallPass('testPass', this.testStudent, this.testIssuer,
+                                  new Date(), new Date(), this.testDate,
+                                  new Date(), new Date(), this.testOrigin, 
+                                  this.testDestination, 'one_way', '#1893E9,#05B5DE',
+                                  'https://storage.googleapis.com/courier-static/icons/water-fountain.png');
+
+    this.testRequest = new Request('testRequest', this.testStudent, this.testOrigin, this.testDestination,
+                                    'Gimme dem books yo', 'round_trip', 'status', null, '#00C0C7,#0B9FC1',
+                                    'https://storage.googleapis.com/courier-static/icons/library.png', this.testIssuer, this.testDate);
+
+    this.testInvitation = new Invitation('testInvitation', this.testStudent, null,
+                                          this.testDestination, [this.testDate], this.testIssuer,
+                                          'status', 10, '#F37426,#F52B4F',
+                                          'https://storage.googleapis.com/courier-static/icons/classroom.png', 'one_way');
+      
   }
 
   get isStaff$(): Observable<boolean> {
@@ -121,7 +128,7 @@ export class MainPageComponent implements OnInit {
         this.currentPass = new Request('template', this.user, result['fromLocation'],
                                       result['toLocation'], result['message'],
                                       '', '', null, result['gradient'],
-                                      result['icon'], result['requestTarget']);
+                                      result['icon'], result['requestTarget'], null);
       } else{
         this.currentPass = new HallPass('template', this.user, this.user,
                                         new Date(), new Date(), new Date(),

@@ -252,7 +252,8 @@ export class Request {
               public hallpass: HallPass,
               public gradient_color: string,
               public icon: string,
-              public teacher: User) {
+              public teacher: User,
+              public request_time: Date) {
   }
 
   static fromJSON(JSON: any): Request {
@@ -270,9 +271,10 @@ export class Request {
       hallpass: HallPass = (!!JSON['hallpass']) ? HallPass.fromJSON(JSON['hallpass']) : null,
       gradient_color: string = JSON['gradient_color'],
       icon: string = JSON['icon'],
-      teacher: User = User.fromJSON(JSON['teacher']);
+      teacher: User = User.fromJSON(JSON['teacher']),
+      request_time: Date = (!!JSON['request_time']) ? new Date(JSON['request_time']) : null;
 
-    return new Request(id, student, origin, destination, attachment_message, travel_type, status, hallpass, gradient_color, icon, teacher);
+    return new Request(id, student, origin, destination, attachment_message, travel_type, status, hallpass, gradient_color, icon, teacher, request_time);
   }
 
 }
