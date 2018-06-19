@@ -1,0 +1,32 @@
+.cell-wrapper{
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 20);
+    margin: 0 10px 0 10px;
+    color: #767676;
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 16pt;
+    width: 500px;
+}
+
+.cell-content-wrapper{
+    display: flex;
+    flex-direction: row;
+    padding: 10px 0 10px 0;
+}
+
+.cell-datetime{
+    margin-left: auto;
+}
+
+.cell-arrow{
+    width: 15px;
+    height: 25px;
+    margin: auto 0 auto 15px;
+}
+
+.cell-divider{
+    width: inherit;
+    height: 2px;
+    background-color: #B5B7BA;
+}

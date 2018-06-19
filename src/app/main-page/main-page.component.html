@@ -2,16 +2,20 @@
             (onTabChange)="updateTab($event)"></app-navbar>
 <div class="pg1-wrapper container" *ngIf="tabIndex==1 && dataService.currentUser | async">
 
-  HallPass
-  <app-pass-tile [pass]="testPass"></app-pass-tile>
-  <hr>
+  <!-- HallPass <br><br><br> -->
+  <!-- <app-pass-tile [pass]="testPass"></app-pass-tile> -->
+  <!-- <app-pass-cell [pass]="testPass"></app-pass-cell> -->
+  <!-- <hr> -->
 
-  Request
-  <app-pass-tile [pass]="testRequest"></app-pass-tile>
-  <hr>
+  <!-- Request <br><br><br> -->
+  <!-- <app-pass-tile [pass]="testRequest"></app-pass-tile> -->
+  <!-- <app-pass-cell [pass]="testRequest"></app-pass-cell> -->
+  <!-- <hr> -->
 
-  Invitiation
-  <app-pass-tile [pass]="testInvitation"></app-pass-tile>
+  <!-- Invitiation <br><br><br> -->
+  <!-- <app-pass-tile [pass]="testInvitation"></app-pass-tile> -->
+  <!-- <app-pass-cell [pass]="testInvitation"></app-pass-cell> -->
+  <!-- <hr> -->
 
   <div *ngIf="checkedPasses" class="middle">
     <div *ngIf="!!currentPass; else newPass;" class="pass-card center">
