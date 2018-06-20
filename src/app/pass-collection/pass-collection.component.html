@@ -4,17 +4,17 @@
       <div class="collection-title">
         {{title}}
       </div>
-      <img class="collection-display-toggle" [src]="'./assets/' +(displayState==='list'?'List':'Grid') +'.png'| resolveAsset" (click)="displayState=(displayState==='list'?'grid':'list')">
+      <img class="collection-display-toggle" [src]="'./assets/' +(displayState==='grid'?'List':'Grid') +' (Colored).png'| resolveAsset" (click)="displayState=(displayState==='list'?'grid':'list')">
   </div>
-  <div class="collection-divider" *ngIf="displayState==='grid'"></div>
-  <div class="collection-grid-wrapper">
+  <div class="collection-divider"></div>
+  <div class="collection-grid-wrapper" *ngIf="displayState==='grid'; else list">
     <mat-grid-list [cols]="columns" rowHeight="100px">
       <mat-grid-tile *ngFor="let pass of passes">
         <app-pass-tile [pass]="pass"></app-pass-tile>
       </mat-grid-tile>
     </mat-grid-list>
   </div>
-  <div class="collection-list-wrapper" *ngIf="displayState==='list'">
-    <app-pass-tile *ngFor="let pass of passes" [pass]="pass"></app-pass-tile>
-  </div>
+  <ng-template class="collection-list-wrapper" #list>
+    <app-pass-cell *ngFor="let pass of passes" [pass]="pass"></app-pass-cell>
+  </ng-template>
 </div>

@@ -28,9 +28,23 @@ export class MainPageComponent implements OnInit {
   testDestination = new Location('testDestination', 'Water Fountain', 'MHS', 'WF', '', false, [], [], [], 15);
   testDate:Date = new Date();
 
-  testPass: HallPass;
-  testRequest: Request;
-  testInvitation: Invitation;
+  testPass1: HallPass;
+  testPass2: HallPass;
+  testPass3: HallPass;
+  testPass4: HallPass;
+  testPasses: HallPass[] = [];
+
+  testRequest1: Request;
+  testRequest2: Request;
+  testRequest3: Request;
+  testRequest4: Request;
+  testRequests: Request[] = [];
+
+  testInvitation1: Invitation;
+  testInvitation2: Invitation;
+  testInvitation3: Invitation;
+  testInvitation4: Invitation;
+  testInvitations: Invitation[];
 
   currentPass: HallPass | Request;
   futurePasses: HallPass[];
@@ -55,22 +69,47 @@ export class MainPageComponent implements OnInit {
   constructor(private http: HttpService, public dataService: DataService, private router: Router,
               public dialog: MatDialog, private _zone: NgZone, private loadingService: LoadingService) {
   
-    this.testDate.setDate(this.testDate.getDate()+4)
+    this.testDate.setDate(this.testDate.getDate());
 
-    this.testPass = new HallPass('testPass', this.testStudent, this.testIssuer,
+    this.testPass1 = new HallPass('testPass1', this.testStudent, this.testIssuer,
+                                  new Date(), new Date(), this.testDate,
+                                  new Date(), new Date(), this.testOrigin, 
+                                  this.testDestination, 'one_way', '#1893E9,#05B5DE',
+                                  'https://storage.googleapis.com/courier-static/icons/water-fountain.png');
+                                  
+    this.testDate = new Date();
+    this.testDate.setDate(this.testDate.getDate()+4);
+    this.testPass2 = new HallPass('testPass2', this.testStudent, this.testIssuer,
+                                  new Date(), new Date(), this.testDate,
+                                  new Date(), new Date(), this.testOrigin, 
+                                  this.testDestination, 'one_way', '#1893E9,#05B5DE',
+                                  'https://storage.googleapis.com/courier-static/icons/water-fountain.png');
+                                  
+    this.testDate = new Date();
+    this.testDate.setDate(this.testDate.getDate()-1);
+    this.testPass3 = new HallPass('testPass3', this.testStudent, this.testIssuer,
+                                  new Date(), new Date(), this.testDate,
+                                  new Date(), new Date(), this.testOrigin, 
+                                  this.testDestination, 'one_way', '#1893E9,#05B5DE',
+                                  'https://storage.googleapis.com/courier-static/icons/water-fountain.png');
+    this.testDate = new Date();                              
+    this.testDate.setDate(this.testDate.getDate()+1);
+    this.testPass4 = new HallPass('testPass4', this.testStudent, this.testIssuer,
                                   new Date(), new Date(), this.testDate,
                                   new Date(), new Date(), this.testOrigin, 
                                   this.testDestination, 'one_way', '#1893E9,#05B5DE',
                                   'https://storage.googleapis.com/courier-static/icons/water-fountain.png');
 
-    this.testRequest = new Request('testRequest', this.testStudent, this.testOrigin, this.testDestination,
-                                    'Gimme dem books yo', 'round_trip', 'status', null, '#00C0C7,#0B9FC1',
-                                    'https://storage.googleapis.com/courier-static/icons/library.png', this.testIssuer, this.testDate);
+    this.testPasses = [this.testPass1, this.testPass2, this.testPass3, this.testPass4];
 
-    this.testInvitation = new Invitation('testInvitation', this.testStudent, null,
-                                          this.testDestination, [this.testDate], this.testIssuer,
-                                          'status', 10, '#F37426,#F52B4F',
-                                          'https://storage.googleapis.com/courier-static/icons/classroom.png', 'one_way');
+    // this.testRequest1 = new Request('testRequest', this.testStudent, this.testOrigin, this.testDestination,
+    //                                 'Gimme dem books yo', 'round_trip', 'status', null, '#00C0C7,#0B9FC1',
+    //                                 'https://storage.googleapis.com/courier-static/icons/library.png', this.testIssuer, this.testDate);
+
+    // this.testInvitation1 = new Invitation('testInvitation', this.testStudent, null,
+    //                                       this.testDestination, [this.testDate], this.testIssuer,
+    //                                       'status', 10, '#F37426,#F52B4F',
+    //                                       'https://storage.googleapis.com/courier-static/icons/classroom.png', 'one_way');
       
   }
 

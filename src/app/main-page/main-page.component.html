@@ -17,6 +17,8 @@
   <!-- <app-pass-cell [pass]="testInvitation"></app-pass-cell> -->
   <!-- <hr> -->
 
+  <app-pass-collection [style.width]="'500px'" [passes]="testPasses" [title]="'Passes for later'" [icon]="'./assets/Later (Colored).png'"></app-pass-collection>
+
   <div *ngIf="checkedPasses" class="middle">
     <div *ngIf="!!currentPass; else newPass;" class="pass-card center">
       <app-pass-card [pass]="currentPass" [user]="dataService.currentUser | async"
@@ -24,14 +26,14 @@
     </div>
     <ng-template #newPass>
       <div style="height: 40px;"></div>
-      <app-gradient-button
+      <!-- <app-gradient-button
         [minWidth]="'352px'"
         [minHeight]="'56px'"
         [leftIcon]="'./assets/Plus.png'"
         [hoverColor]="'#04CD33'"
         (click)="showForm()" class="new-pass">New Pass
-      </app-gradient-button>
-      <!--  -->
+      </app-gradient-button> -->
+      <!-- ADD THIS BACK -->
     </ng-template>
     <!-- <div class="futurePasses" *ngIf="!!futurePasses">
         Future Passes
