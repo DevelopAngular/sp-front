@@ -1,3 +1,20 @@
-<p>
-  pass-collection works!
-</p>
+<div class="collection-wrapper">
+  <div class="collection-header">
+      <img class="collection-icon" [src]="icon | resolveAsset">
+      <div class="collection-title">
+        {{title}}
+      </div>
+      <img class="collection-display-toggle" [src]="'./assets/' +(displayState==='list'?'List':'Grid') +'.png'| resolveAsset" (click)="displayState=(displayState==='list'?'grid':'list')">
+  </div>
+  <div class="collection-divider" *ngIf="displayState==='grid'"></div>
+  <div class="collection-grid-wrapper">
+    <mat-grid-list [cols]="columns" rowHeight="100px">
+      <mat-grid-tile *ngFor="let pass of passes">
+        <app-pass-tile [pass]="pass"></app-pass-tile>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+  <div class="collection-list-wrapper" *ngIf="displayState==='list'">
+    <app-pass-tile *ngFor="let pass of passes" [pass]="pass"></app-pass-tile>
+  </div>
+</div>
