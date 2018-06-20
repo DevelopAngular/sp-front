@@ -1,8 +1,6 @@
 .bar {
   height: 68px;
-  background-image: radial-gradient(circle at 43% 66%, #535353, #707070);
   /* background-image: radial-gradient(circle at 43% 66%, #03cf31, rgba(1, 129, 85, 0.7)); */
-  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.24);
   position: relative;
   display: flex;
   flex-direction: row;
@@ -18,7 +16,7 @@
   flex-direction: row;
   justify-content: left;
   width: 0;
-  padding-left: 30px;
+  padding-left: 10%;
 }
 
 .heading .title {
@@ -32,7 +30,7 @@
   line-height: normal;
   letter-spacing: 0;
   text-align: center;
-  color: #ffffff;
+  color: #04CD33;
 }
 
 .heading .small, .navButton {
@@ -96,22 +94,42 @@
 
 .user-info .name {
   margin: auto 0 auto auto;
-  padding-right: 10px;
 
   font-family: 'Helvetica Neue', sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   font-style: normal;
   font-stretch: normal;
   line-height: normal;
   letter-spacing: normal;
-  color: #ffffff;
+  color: #3D396B;
 }
 
-.user-info .options {
-  width: 28px;
-  height: 28px;
-  margin-right: calc((68px - 28px) / 2);
+.name{
+  padding-right: 20px;
+}
+
+.static-loading{
+  width: 100%;
+  height: 5px;
+  background-color: #04CD33;
+}
+
+.user-info{
+  padding-right: 10%;
+}
+
+.options{
+  width: 25px;
+  height: 25px;
+
+  cursor: pointer;
+}
+
+.options, .inbox-icon{
+  width: 25px;
+  height: 25px;
+  margin-right: 10px;
 
   cursor: pointer;
 }
