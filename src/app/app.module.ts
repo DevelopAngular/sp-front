@@ -80,6 +80,7 @@ import { PassTileComponent } from './pass-tile/pass-tile.component';
 import { PassCellComponent } from './pass-cell/pass-cell.component';
 import { ContainerCardComponent } from './container-card/container-card.component';
 import { PassCollectionComponent } from './pass-collection/pass-collection.component';
+import { DisplayCardComponent } from './display-card/display-card.component';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: '/main', pathMatch: 'full'},
@@ -116,6 +117,7 @@ const appRoutes: Routes = [
     PassCellComponent,
     ContainerCardComponent,
     PassCollectionComponent,
+    DisplayCardComponent,
   ],
   entryComponents: [
     HallpassFormComponent,

@@ -16,8 +16,9 @@
   <!-- <app-pass-tile [pass]="testInvitation"></app-pass-tile> -->
   <!-- <app-pass-cell [pass]="testInvitation"></app-pass-cell> -->
   <!-- <hr> -->
-
-  <app-pass-collection [style.width]="'500px'" [passes]="testPasses" [title]="'Passes for later'" [icon]="'./assets/Later (Colored).png'"></app-pass-collection>
+  <app-display-card [style.width]="'500px'" [title]="'Inbox'" [hasDivider]="true" [fontSize]="'22pt'" [icon]="'./assets/Plus (Colored).png'">
+    <app-pass-collection [style.width]="'350px'" [passes]="testPasses" [title]="'Passes for later'" [icon]="'./assets/Later (Colored).png'" [columns]="2"></app-pass-collection>
+  </app-display-card>
 
   <div *ngIf="checkedPasses" class="middle">
     <div *ngIf="!!currentPass; else newPass;" class="pass-card center">

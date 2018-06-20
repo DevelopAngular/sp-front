@@ -1,0 +1,10 @@
+<div class="display-card-wrapper">
+  <div class="display-card-header">
+    <img *ngIf="!!icon" class="display-card-header-icon" [src]="icon | resolveAsset">
+    <div class="display-card-header-title" [style.font-size]="fontSize">
+      {{title}}
+    </div>
+  </div>
+  <div *ngIf="hasDivider" class="display-card-divider"></div>
+    <ng-content class="display-card-content"></ng-content>
+</div>
