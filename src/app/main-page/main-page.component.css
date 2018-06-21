@@ -37,6 +37,21 @@
   margin-top: 40px;
 }
 
+.main-page-left{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.current-pass{
+  margin-bottom: 40px;
+}
+
+.future-passes, .past-passes{
+  width: 570px;
+}
+
 .top-margin {
   margin-top: 40px;
 }
@@ -133,7 +148,20 @@
 }
 
 .new-pass {
-  margin-top: 40px;
+  width: 170px;
+  margin-left: 35px;
+}
+
+.inbox-content{
+  margin-left: 35px;
+}
+
+.pass-buttons{
+  display: flex;
+  flex-direction: row;
+  margin-left: 35px;
+  margin-right: 35px;
+  justify-content: space-around;
 }
 
 .content {

@@ -1,7 +1,10 @@
 .display-card-wrapper{
-    padding: 20px 10px;
+    max-width: 440px;
+    min-width: 440px;
+    width: 440px;
+    padding: 40px 0;
     background-color: white;
-    border-radius: 7px;
+    border-radius: 15px;
     display: flex;
     flex-direction: column;
     box-shadow: 0 7.5px 13px 5px rgba(0, 0, 0, 0.1);
@@ -12,6 +15,8 @@
     flex-direction: row;
     align-items: center;
     margin-bottom: 8px;
+    left: 35px;
+    position: relative;
 }
 
 .display-card-header-icon{
@@ -27,8 +32,14 @@
 }
 
 .display-card-divider{
-    width: inherit;
+    width: 360px;
     height: 2px;
-    background-color: #B5B7BA;
     margin-bottom: 20px;
+    left: 35px;
+    position: relative;
+}
+
+.display-card-content{
+    left: 35px;
+    position: relative;
 }

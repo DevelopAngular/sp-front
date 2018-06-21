@@ -11,7 +11,6 @@ export class DisplayCardComponent implements OnInit {
   @Input() title: string;
   @Input() icon: string;
   @Input() fontSize: string;
-
   constructor() { }
 
   ngOnInit() {

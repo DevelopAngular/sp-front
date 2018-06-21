@@ -5,6 +5,6 @@
       {{title}}
     </div>
   </div>
-  <div *ngIf="hasDivider" class="display-card-divider"></div>
-    <ng-content class="display-card-content"></ng-content>
+  <div [style.background-color]="(hasDivider?'#B5B7BA':'#FFF')" class="display-card-divider"></div>
+    <ng-content [style.left]="'35px'" [style.position]="'relative'"></ng-content>
 </div>

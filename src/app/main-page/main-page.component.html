@@ -1,60 +1,48 @@
 <app-navbar [user]="dataService.currentUser | async" [forTeacher]="isStaff$ | async"
             (onTabChange)="updateTab($event)"></app-navbar>
 <div class="pg1-wrapper container" *ngIf="tabIndex==1 && dataService.currentUser | async">
-
-  <!-- HallPass <br><br><br> -->
-  <!-- <app-pass-tile [pass]="testPass"></app-pass-tile> -->
-  <!-- <app-pass-cell [pass]="testPass"></app-pass-cell> -->
-  <!-- <hr> -->
-
-  <!-- Request <br><br><br> -->
-  <!-- <app-pass-tile [pass]="testRequest"></app-pass-tile> -->
-  <!-- <app-pass-cell [pass]="testRequest"></app-pass-cell> -->
-  <!-- <hr> -->
-
-  <!-- Invitiation <br><br><br> -->
-  <!-- <app-pass-tile [pass]="testInvitation"></app-pass-tile> -->
-  <!-- <app-pass-cell [pass]="testInvitation"></app-pass-cell> -->
-  <!-- <hr> -->
-  <app-display-card [style.width]="'500px'" [title]="'Inbox'" [hasDivider]="true" [fontSize]="'22pt'" [icon]="'./assets/Plus (Colored).png'">
-    <app-pass-collection [style.width]="'350px'" [passes]="testPasses" [title]="'Passes for later'" [icon]="'./assets/Later (Colored).png'" [columns]="2"></app-pass-collection>
-  </app-display-card>
-
-  <div *ngIf="checkedPasses" class="middle">
-    <div *ngIf="!!currentPass; else newPass;" class="pass-card center">
-      <app-pass-card [pass]="currentPass" [user]="dataService.currentUser | async"
-                     (cardEvent)="cardEvent($event)" [isDetails]="showDetails"></app-pass-card>
+  <div class="main-page-left">
+    <div *ngIf="checkedPasses" class="current-pass">
+      <div *ngIf="!!currentPass; else newPass;" class="pass-card center">
+        <app-pass-card [pass]="currentPass" [user]="dataService.currentUser | async"
+                       (cardEvent)="cardEvent($event)" [isDetails]="showDetails">
+        </app-pass-card>
+      </div>
+      <ng-template #newPass>
+        <app-display-card [title]="'New Pass'" [hasDivider]="true" [fontSize]="'18pt'" [icon]="'./assets/Plus (Colored).png'">
+          <div class="pass-buttons">
+            <app-gradient-button
+              [minWidth]="'170px'"
+              [minHeight]="'100px'"
+              [hoverColor]="'#04CD33'"
+              (click)="showForm()">Now
+            </app-gradient-button>
+            <app-gradient-button
+              [minWidth]="'170px'"
+              [minHeight]="'100px'"
+              [hoverColor]="'#04CD33'"
+              (click)="showForm()">Later
+            </app-gradient-button>
+          </div>
+        </app-display-card>
+      </ng-template>
     </div>
-    <ng-template #newPass>
-      <div style="height: 40px;"></div>
-      <!-- <app-gradient-button
-        [minWidth]="'352px'"
-        [minHeight]="'56px'"
-        [leftIcon]="'./assets/Plus.png'"
-        [hoverColor]="'#04CD33'"
-        (click)="showForm()" class="new-pass">New Pass
-      </app-gradient-button> -->
-      <!-- ADD THIS BACK -->
-    </ng-template>
-    <!-- <div class="futurePasses" *ngIf="!!futurePasses">
-        Future Passes
-        <app-hallpass-card class="pass-card" *ngFor="let hallpass of futurePasses" [hallpass]="hallpass" [future]="true"></app-hallpass-card>
-    </div> -->
-
+    <div class="future-passes">
+      <app-pass-collection [style.width]="'570px'" [passes]="testPasses" [title]="'Passes for Later'" [icon]="'./assets/Later (Colored).png'" [columns]="3"></app-pass-collection>
+    </div>
+    <div class="past-passes">
+      <app-pass-collection [style.width]="'570px'" [passes]="testPasses" [title]="'Places I\'ve Been'" [icon]="'./assets/Places Ive Been (Colored).png'" [columns]="3"></app-pass-collection>
+    </div>
   </div>
-  <!-- <div class="divider"></div>
-  <div class="side">
-      <div class="center top-margin">
-          <app-pass-card *ngFor="let invitation of invitations | async"
-                          [pass]="invitation" [user]="dataService.currentUser | async"
-                          (cardEvent)="cardEvent($event)"></app-pass-card>
+
+  <div class="main-page-right">
+    <app-display-card [title]="'Inbox'" [hasDivider]="false" [fontSize]="'22pt'">
+      <div class="inbox-content">
+          <app-pass-collection [style.width]="'370px'" [passes]="testPasses" [title]="'Pass Requests'" [icon]="'./assets/Later (Colored).png'" [columns]="2"></app-pass-collection>
+          <app-pass-collection [style.width]="'370px'" [passes]="testPasses" [title]="'Invitations'" [icon]="'./assets/Gear (Colored).png'" [columns]="2"></app-pass-collection>    
       </div>
-      <div class="center" style="margin-top: 20px;">
-          <app-pass-card *ngFor="let request of requests | async"
-                          [pass]="request" [forTeacher]="isStaff$ | async"
-                          (onAccept)="cardEvent($event)"></app-pass-card>
-      </div>
-  </div> -->
+    </app-display-card>
+  </div>
 </div>
 
 <div class="pg2-wrapper container" *ngIf="tabIndex==2 && dataService.currentUser | async">

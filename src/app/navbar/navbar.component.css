@@ -23,7 +23,7 @@
   width: 112px;
   height: 27px;
   font-family: 'Helvetica Neue', sans-serif;
-  font-size: 22px;
+  font-size: 28px;
   font-weight: bold;
   font-style: normal;
   font-stretch: normal;
@@ -47,13 +47,10 @@
 }
 
 .heading .logo {
-  width: 20px;
-  height: 21px;
-  /* position: absolute;
-  top: 50%;
-  transform: translate(0, -50%); */
-  padding-left: 5px;
-  margin: 3px 0 0 3px;
+  width: 27px;
+  height: 27px;
+  padding-left: 34px;
+  margin: 5px 0 0 3px;
 }
 
 .teacherNav, .navButton {
