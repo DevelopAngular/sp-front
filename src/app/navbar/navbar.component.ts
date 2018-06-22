@@ -21,8 +21,10 @@ export class NavbarComponent implements AfterViewInit {
   forTeacher: boolean;
 
   @Output() onTabChange: EventEmitter<number> = new EventEmitter();
+  @Output() inboxEvent: EventEmitter<boolean> = new EventEmitter();
 
   tabIndex: number = 1;
+  inboxVisibility: boolean = false;
 
   constructor(private dataService: DataService, public dialog: MatDialog, private router: Router,
               public loadingService: LoadingService, public loginService: GoogleLoginService) {
@@ -56,5 +58,11 @@ export class NavbarComponent implements AfterViewInit {
   updateTab(index: number) {
     this.tabIndex = index;
     this.onTabChange.emit(this.tabIndex);
+  }
+
+  inboxClick(){
+    console.log('[Nav Inbox Toggle]', this.inboxVisibility);
+    this.inboxVisibility = !this.inboxVisibility;
+    this.inboxEvent.emit(this.inboxVisibility);
   }
 }

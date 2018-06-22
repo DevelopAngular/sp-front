@@ -8,8 +8,8 @@
   </div>
   <div class="collection-divider"></div>
   <div class="collection-grid-wrapper" *ngIf="displayState==='grid'; else list">
-    <mat-grid-list [cols]="columns" rowHeight="100px">
-      <mat-grid-tile *ngFor="let pass of passes">
+    <mat-grid-list [cols]="columns" rowHeight="120px">
+      <mat-grid-tile  class="custom-mat-tile" *ngFor="let pass of passes">
         <app-pass-tile [pass]="pass"></app-pass-tile>
       </mat-grid-tile>
     </mat-grid-list>

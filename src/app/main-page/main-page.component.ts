@@ -50,6 +50,7 @@ export class MainPageComponent implements OnInit {
   futurePasses: HallPass[];
 
   // -----------------------NEW STUFF--------------------- //
+  inboxVisible: boolean = false;
   checkedPasses = false;
   // invitations: Promise<Invitation[]>;
   requests: Promise<Request[]>;
@@ -82,7 +83,7 @@ export class MainPageComponent implements OnInit {
     this.testPass2 = new HallPass('testPass2', this.testStudent, this.testIssuer,
                                   new Date(), new Date(), this.testDate,
                                   new Date(), new Date(), this.testOrigin, 
-                                  this.testDestination, 'one_way', '#1893E9,#05B5DE',
+                                  this.testDestination, 'round_trip', '#1893E9,#05B5DE',
                                   'https://storage.googleapis.com/courier-static/icons/water-fountain.png');
                                   
     this.testDate = new Date();

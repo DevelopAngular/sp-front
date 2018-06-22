@@ -1,11 +1,13 @@
 .tile-wrapper{
-    height: 80px;
-    width: 140px;
-    border-radius: 7px;
+    width: 170px;
+    height: 100px;
+    border-radius: 15px;
     display: flex;
     flex-direction: column;
     color: white;
     font-family: 'Helvetica Neue', sans-serif;
+    box-shadow: 0 7.5px 13px 0 rgba(0, 0, 0, 0.1);
+    overflow: visible;
     font-style: normal;
     font-stretch: normal;
     /* line-height: 1.08;
@@ -19,9 +21,10 @@
 .tile-title{
     font-weight: bold;
     margin-bottom: 2px;
+    font-size: 14pt;
 }
 
 .tile-content{
-    font-size: 13px;
+    font-size: 16px;
     margin-bottom: 10px;
 }

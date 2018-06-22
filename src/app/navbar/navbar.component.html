@@ -22,7 +22,7 @@
   </div>
   <div class="user-info">
     <div class="name">{{ user ? user.display_name : '' }}</div>
-    <img class="inbox-icon" [src]="'./assets/Inbox (Full) (Colored).png' | resolveAsset">
+    <img class="inbox-icon" (click)="inboxClick()" [src]="'./assets/Inbox (Full) (Colored).png' | resolveAsset">
     <div class="options">
       <img (click)="showOptions()" class="options" [src]="'./assets/Gear (Colored).png' | resolveAsset">
     </div>

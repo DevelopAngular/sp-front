@@ -1,5 +1,5 @@
 <app-navbar [user]="dataService.currentUser | async" [forTeacher]="isStaff$ | async"
-            (onTabChange)="updateTab($event)"></app-navbar>
+            (onTabChange)="updateTab($event)" (inboxEvent)="inboxVisibility = $event"></app-navbar>
 <div class="pg1-wrapper container" *ngIf="tabIndex==1 && dataService.currentUser | async">
   <div class="main-page-left">
     <div *ngIf="checkedPasses" class="current-pass">
@@ -31,15 +31,15 @@
       <app-pass-collection [style.width]="'570px'" [passes]="testPasses" [title]="'Passes for Later'" [icon]="'./assets/Later (Colored).png'" [columns]="3"></app-pass-collection>
     </div>
     <div class="past-passes">
-      <app-pass-collection [style.width]="'570px'" [passes]="testPasses" [title]="'Places I\'ve Been'" [icon]="'./assets/Places Ive Been (Colored).png'" [columns]="3"></app-pass-collection>
+      <app-pass-collection [style.width]="'570px'" [passes]="testPasses" [title]="'Places I\'ve Been'" [icon]="'./assets/Places I\'ve Been (Colored).png'" [columns]="3"></app-pass-collection>
     </div>
   </div>
 
-  <div class="main-page-right">
+  <div class="main-page-right" *ngIf="inboxVisibility">
     <app-display-card [title]="'Inbox'" [hasDivider]="false" [fontSize]="'22pt'">
       <div class="inbox-content">
-          <app-pass-collection [style.width]="'370px'" [passes]="testPasses" [title]="'Pass Requests'" [icon]="'./assets/Later (Colored).png'" [columns]="2"></app-pass-collection>
-          <app-pass-collection [style.width]="'370px'" [passes]="testPasses" [title]="'Invitations'" [icon]="'./assets/Gear (Colored).png'" [columns]="2"></app-pass-collection>    
+          <app-pass-collection [style.width]="'370px'" [passes]="testPasses" [title]="'Pass Requests'" [icon]="'./assets/Lock (Colored).png'" [columns]="2"></app-pass-collection>
+          <app-pass-collection [style.width]="'370px'" [passes]="testPasses" [title]="'Invitations'" [icon]="'./assets/Invitation (Colored).png'" [columns]="2"></app-pass-collection>    
       </div>
     </app-display-card>
   </div>

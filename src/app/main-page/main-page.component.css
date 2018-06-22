@@ -44,6 +44,10 @@
   align-items: center;
 }
 
+.main-page-right{
+  margin-left: 80px;
+}
+
 .current-pass{
   margin-bottom: 40px;
 }
@@ -153,7 +157,7 @@
 }
 
 .inbox-content{
-  margin-left: 35px;
+  margin: 0 35px;
 }
 
 .pass-buttons{
