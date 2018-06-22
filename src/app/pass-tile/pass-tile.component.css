@@ -18,6 +18,10 @@
     cursor: pointer;
 }
 
+.tile-wrapper:hover{
+    box-shadow: 0 8.5px 14px 0 rgba(0, 0, 0, 0.3);
+}
+
 .tile-title{
     font-weight: bold;
     margin-bottom: 2px;

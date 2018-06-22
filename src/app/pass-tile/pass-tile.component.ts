@@ -1,14 +1,21 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output } from '@angular/core';
 import { HallPass, Request, Invitation } from '../NewModels';
+import { bumpIn } from '../animations';
+import { EventEmitter } from 'events';
 
 @Component({
   selector: 'app-pass-tile',
   templateUrl: './pass-tile.component.html',
-  styleUrls: ['./pass-tile.component.css']
+  styleUrls: ['./pass-tile.component.css'],
+  animations: [
+    bumpIn
+  ]
 })
 export class PassTileComponent implements OnInit {
 
   @Input() pass: HallPass | Request | Invitation;
+
+  @Output() tileSelected = new EventEmitter();
 
   type:string;
 
@@ -20,6 +27,11 @@ export class PassTileComponent implements OnInit {
                     'Apr.', 'May', 'June',
                     'July', 'Aug.', 'Sept.',
                     'Oct.', 'Nov.', 'Dec.'];
+  buttonDown = false;
+  
+  get buttonState() {
+    return this.buttonDown ? 'down' : 'up';
+  }
 
   constructor() { }
 
@@ -33,8 +45,7 @@ export class PassTileComponent implements OnInit {
 
   backgroundGradient(){
     let gradient: string[] = this.pass.gradient_color.split(',');
-
-    return 'radial-gradient(circle at 73% 71%, ' + gradient[0] + ', ' + gradient[1] + ')';
+    return 'radial-gradient(circle at 73% 71%, ' + (this.buttonDown?gradient[1]:gradient[0]) + ', ' + gradient[1] + ')';
   }
 
   formattedDate(){
@@ -65,6 +76,15 @@ export class PassTileComponent implements OnInit {
       return this.month[s.getMonth()] +" " +s.getDate() +", " +s.getFullYear(); 
     }
     return formattedDate +", " +formattedTime;
+  }
+
+  onPress(press: boolean) {
+    this.buttonDown = press;
+    //console.log("[Button State]: ", "The button is " +this.buttonState);
+  }
+
+  onClick(event){
+    this.tileSelected.emit(event)
   }
 
 }

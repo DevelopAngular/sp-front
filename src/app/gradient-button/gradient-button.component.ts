@@ -37,7 +37,6 @@ export class GradientButtonComponent {
 
   @Output() buttonClick = new EventEmitter<any>();
 
-  hover = false;
   buttonDown = false;
 
   constructor(private sanitizer: DomSanitizer) {
@@ -49,7 +48,7 @@ export class GradientButtonComponent {
 
   get styleGradient() {
     // We're fine using arbitrary styles here because they must match a very strict regex.
-    if (this.hover) {
+    if (this.buttonDown) {
       // console.log("[Hover State]: ", "Using hover styles");
       const color = this.hoverColor;
       if (cssColorRegexp.test(color)) {
@@ -83,10 +82,6 @@ export class GradientButtonComponent {
     }
 
     return 'center';
-  }
-
-  onHover(hover: boolean) {
-    this.hover = hover;
   }
 
   onPress(press: boolean) {

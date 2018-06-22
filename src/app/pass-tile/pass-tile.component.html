@@ -1,4 +1,7 @@
-<div class="tile-wrapper" [style.background]="backgroundGradient()">
+<div class="tile-wrapper" [style.background]="backgroundGradient()"
+      [@pressState]="buttonState" (click)="onClick($event)"
+      (mouseleave)="buttonDown = false"
+      (mousedown)="onPress(true)" (mouseup)="onPress(false)">
   <div class="tile-title">{{ pass.destination.title }}</div>
   <div class="tile-content">{{ formattedDate() }}</div>
   <img [style.width]="'20px'" [style.height]="'20px'" *ngIf="pass.travel_type == 'one_way'" [src]="'./assets/One Arrow.png' | resolveAsset" class="tile-round-trip">
