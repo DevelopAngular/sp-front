@@ -57,7 +57,8 @@ export class MainPageComponent implements OnInit {
   user: User;
   tabIndex: number = 1;
   showDetails: boolean = false;
-
+  inboxVisibility;
+  
   invitations = this.dataService.currentUser.pipe(
     switchMap(user => {
       const options = isUserStaff(user) ? {status: 'pending'} : {status: 'pending', student: user.id};
