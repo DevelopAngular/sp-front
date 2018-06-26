@@ -1,0 +1,8 @@
+<div class="pager-wrapper">
+  <ng-content *ngIf="page==1" select=".page-1" class="page-1-content"></ng-content>
+  <ng-content *ngIf="page==2" select=".page-2" class="page-2-content"></ng-content>
+  <div class="paginator-wrapper">
+    <div class="pager-page-selector" (click)="page=1" [style.background-color]="page===1?'#FFF':'rgba(255,255,255,0.3)'"></div>
+    <div class="pager-page-selector" (click)="page=2" [style.background-color]="page===2?'#FFF':'rgba(255,255,255,0.3)'"></div>
+  </div>
+</div>

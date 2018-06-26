@@ -1,0 +1,33 @@
+.pager-wrapper{
+    width: inherit;
+    height: inherit;
+    display: flex;
+    flex-direction: column;
+    color: #FFF;
+    align-items: center;
+    text-align: center;
+}
+
+.page-1-content, .page-2-content{
+    width: inherit;
+    height: calc(100% - 15px);
+}
+
+.paginator-wrapper{
+    width: 23px;
+    height: 15px;
+    display: flex;
+    flex-direction: row;
+    margin-top: 100%;
+    justify-content: space-between;
+}
+
+.pager-page-selector{
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+}
+
+.pager-page-selector:hover{
+    cursor: pointer;
+}

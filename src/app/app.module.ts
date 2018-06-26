@@ -81,6 +81,7 @@ import { PassCellComponent } from './pass-cell/pass-cell.component';
 import { ContainerCardComponent } from './container-card/container-card.component';
 import { PassCollectionComponent } from './pass-collection/pass-collection.component';
 import { DisplayCardComponent } from './display-card/display-card.component';
+import { PagerComponent } from './pager/pager.component';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: '/main', pathMatch: 'full'},
@@ -118,6 +119,7 @@ const appRoutes: Routes = [
     ContainerCardComponent,
     PassCollectionComponent,
     DisplayCardComponent,
+    PagerComponent,
   ],
   entryComponents: [
     HallpassFormComponent,
