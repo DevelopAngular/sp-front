@@ -44,16 +44,16 @@ export class DataService {
   private updateInvitations = new BehaviorSubject<void>(null);
 
   constructor(private userService: UserService, private http: HttpService, private polling: PollingService) {
-
-    this.polling.listen('invitation')
-      .subscribe(() => this.updateInvitations.next(null));
-
+    this.polling.listen('pass_invitation')
+      .subscribe((pollingEvent) => {
+        // this.updateInvitations.next(null);
+        console.log('[Invitation Poll]', pollingEvent);
+      });
   }
 
   watchInvitations(options: Partial<InvitationOptions>): Observable<Invitation[]> {
     return this.updateInvitations.pipe(
       switchMap(() => {
-
         return this.http.get<any[]>(constructUrl('api/methacton/v1/invitations', options))
           .pipe(map(json => json.map(raw => Invitation.fromJSON(raw))));
       })
