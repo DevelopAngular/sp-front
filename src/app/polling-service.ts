@@ -61,10 +61,12 @@ export class PollingService {
             data: JSON.parse(event.data),
           }));
 
-          ws.onError(event => s.next({
-            type: 'error',
-            data: event,
-          }));
+          ws.onError(event => {
+            s.next({
+              type: 'error',
+              data: event,
+            })
+          });
 
           ws.onClose(() => s.complete());
 
