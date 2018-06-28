@@ -2,12 +2,7 @@
             (onTabChange)="updateTab($event)" (inboxEvent)="inboxVisibility = $event"></app-navbar>
 <div class="pg1-wrapper container" *ngIf="tabIndex==1 && dataService.currentUser | async">
   <div class="main-page-left">
-    <div [style.width]="'110px'" [style.height]="'170px'" [style.padding]="'30px 60px'" [style.background-color]="'#000'">
-      <app-pager>
-        <div class="page-1">This is the first page to test.</div>
-        <div class="page-2">The page is now the second page.</div>
-      </app-pager>
-    </div>
+    <app-pass-card [pass]="testPass1"></app-pass-card>
     <div *ngIf="checkedPasses" class="current-pass">
       <div *ngIf="!!currentPass; else newPass;" class="pass-card center">
         <app-pass-card [pass]="currentPass" [user]="dataService.currentUser | async"
