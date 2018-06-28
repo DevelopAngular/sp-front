@@ -2,7 +2,7 @@
             (onTabChange)="updateTab($event)" (inboxEvent)="inboxVisibility = $event"></app-navbar>
 <div class="pg1-wrapper container" *ngIf="tabIndex==1 && dataService.currentUser | async">
   <div class="main-page-left">
-    <app-pass-card [pass]="testPass1"></app-pass-card>
+    <!-- <app-pass-card [pass]="testPass1"></app-pass-card> -->
     <div *ngIf="checkedPasses" class="current-pass">
       <div *ngIf="!!currentPass; else newPass;" class="pass-card center">
         <app-pass-card [pass]="currentPass" [user]="dataService.currentUser | async"
@@ -17,14 +17,14 @@
               [minHeight]="'100px'"
               [hoverColor]="'#00b476'"
               [fontSize]="'16px'"
-              >Now
+              (click)="showForm()">Now
             </app-gradient-button>
             <app-gradient-button
               [minWidth]="'170px'"
               [minHeight]="'100px'"
               [hoverColor]="'#00b476'"
               [fontSize]="'16px'"
-              (click)="showForm()">Later
+              >Later
             </app-gradient-button>
           </div>
         </app-display-card>

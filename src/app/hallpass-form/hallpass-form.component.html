@@ -1,6 +1,6 @@
 <p-growl [(value)]="msgs" life="3000"></p-growl>
 
-<div class="pointer"></div>
+<!-- <div class="pointer"></div> -->
 
 <!-- Show the form designated for teachers -->
 <ng-container *ngIf="isStaff">
@@ -114,9 +114,9 @@
       <app-gradient-button
         class="location-button"
         [gradient]="fromGradient"
-        [hoverColor]="'#7E879D'"
-        [minWidth]="'134px'"
-        [minHeight]="'60px'"
+        [hoverColor]="fromSolid"
+        [minWidth]="'175px'"
+        [minHeight]="'80px'"
         [fontSize]="'16px'"
         (buttonClick)="setFormState('from')"
       >{{ from_title }}
@@ -132,8 +132,8 @@
         class="location-button"
         [gradient]="toGradient"
         [hoverColor]="toEnabled?'#7E879D':'#CBD5E5'"
-        [minWidth]="'134px'"
-        [minHeight]="'60px'"
+        [minWidth]="'175px'"
+        [minHeight]="'80px'"
         [fontSize]="'16px'"
         [disabled]="!toEnabled"
         (buttonClick)="setFormState('to')"

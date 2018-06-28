@@ -122,8 +122,15 @@ export class HallpassFormComponent implements OnInit {
     if(this.fromLocation){
       return this._fromGradient;
     } else{
-      return "#7E879D, #7E879D";
+      return "#606981, #ACB4C1";
     }
+  }
+
+  get fromSolid(){
+    if(this.fromLocation)
+      return '#00b476';
+    else
+      return '#6E7689';
   }
 
   get toGradient(){
