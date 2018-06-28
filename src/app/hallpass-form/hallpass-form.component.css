@@ -187,6 +187,10 @@
   flex-grow: 1;
 }
 
+mat-grid-tile {
+  overflow: initial;
+}
+
 mat-grid-tile .location-wrapper {
   width: 0px;
   height: 0px;
