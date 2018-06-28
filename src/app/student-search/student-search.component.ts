@@ -1,17 +1,12 @@
-import { Component, OnInit, AfterViewInit, ViewChild, Input, SimpleChange, Injectable, Output, EventEmitter } from '@angular/core';
-import {FormControl} from '@angular/forms';
-
-import {Observable} from 'rxjs/Observable';
-import {startWith} from 'rxjs/operators/startWith';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/observable/of';
-import {map, filter} from 'rxjs/operators';
-import {mergeMap} from 'rxjs/operators/mergeMap';
-import { of } from 'rxjs/observable/of';
-import { Response } from '@angular/http';
+
+import { Observable } from 'rxjs/Observable';
 import { DataService } from '../data-service';
 import { HttpService } from '../http-service';
-import {User} from '../models';
+import { User } from '../models';
 
 function wrapper<T>(thing: Observable<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -45,36 +40,36 @@ export class StudentSearchComponent {
 
   }
 
-  async updateStudents(event){
+  async updateStudents(event) {
     const query = event.query;
     this.students = this.convertToStudents(await this.filterStudents(query));
   }
 
   filterStudents(name: string): Promise<any[]> {
-      return this.http.get<any[]>('api/methacton/v1/users?role=hallpass_student&search=' + encodeURI(name)).toPromise();
+    return this.http.get<any[]>('api/methacton/v1/users?role=hallpass_student&search=' + encodeURI(name)).toPromise();
   }
 
   convertToStudents(json: any[]): User[] {
     const out: User[] = [];
-    for (let i = 0; i < json.length; i++){
-      if (json[i]['rank'] > 0){
+    for (let i = 0; i < json.length; i++) {
+      if (json[i]['rank'] > 0) {
         out.push(new User(json[i]['id'], json[i]['display_name']));
-      } else{
+      } else {
         return out;
       }
     }
     return out;
   }
 
-  validate(){
+  validate() {
     return this.selectedStudents.length > 0;
   }
 
-  getIcon(){
+  getIcon() {
     return this.validate() ? 'fa-check' : 'fa-close';
   }
 
-  update(){
+  update() {
     this.onUpdate.emit(this.selectedStudents);
   }
 }

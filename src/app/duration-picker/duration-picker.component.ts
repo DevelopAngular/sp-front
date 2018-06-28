@@ -1,5 +1,5 @@
-import { Component, OnInit, Output, EventEmitter} from '@angular/core';
-import {Duration} from '../NewModels';
+import { Component, EventEmitter, OnInit, Output , Input} from '@angular/core';
+import { Duration } from '../NewModels';
 
 @Component({
   selector: 'app-duration-picker',
@@ -8,32 +8,27 @@ import {Duration} from '../NewModels';
 })
 
 export class DurationPickerComponent implements OnInit {
-  durations: Duration[] = [
-                          new Duration('5 minutes', 300),
-                          new Duration('10 minutes', 600),
-                          new Duration('15 minutes', 900),
-                          new Duration('30 minutes', 1800)
-                        ];
-  public selectedDuration: Duration;
+
+  @Input()
+  minDuration:number = 3;
+   
+  @Input()
+  maxDuration:number = 15;
+
   @Output() onChange: EventEmitter<any> = new EventEmitter();
 
-  constructor() { }
+  public selectedDuration: number = 5;
+
+  constructor() {}
 
   ngOnInit() {
-    this.selectedDuration = new Duration('5 minutes', 300);
+    this.selectedDuration = 5;
     this.onChange.emit(this.selectedDuration);
   }
 
-  validate(){
-    return this.selectedDuration instanceof Duration;
-  }
-
-  getIcon(){
-    return this.validate() ? 'fa-check' : 'fa-close';
-  }
-
-  updateDuration(){
-    this.onChange.emit(this.selectedDuration);
+  updateDuration(event:any) {
+    this.selectedDuration = event.value;
+    this.onChange.emit(event.value);
   }
 
 }

@@ -1,0 +1,10 @@
+<div class="wrapper">
+  <div class="option" [style.width]="choice2?'50%':'inherit'" (click)="updateTravelType(choice1)"
+      [style.color]="getFontColor(choice1)"
+      [style.background-color]="getBackgroundColor(choice1)">
+      {{choice1}}</div>
+  <div *ngIf="choice2" [style.width]="'50%'" class="option" (click)="updateTravelType(choice2)"
+      [style.color]="getFontColor(choice2)"
+      [style.background-color]="getBackgroundColor(choice2)">
+      {{choice2}}</div>
+</div>

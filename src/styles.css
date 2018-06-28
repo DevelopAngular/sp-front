@@ -2,42 +2,64 @@
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 @import "~ng-pick-datetime/assets/style/picker.min.css";
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons&style=outline");
-
 @import "~font-awesome/css/font-awesome.min.css";
 @import "~primeng/resources/themes/omega/theme.css";
 @import "~primeng/resources/primeng.min.css";
-html{
-    background-color: white;
-    padding: 0 0;
+
+html {
+  background-color: #F8FAFF;
+  padding: 0 0;
 }
 
-body{
-    padding: 0 0;
-    margin: 0 0;
+body {
+  padding: 0 0;
+  margin: 0 0;
 }
 
-.header h1{
-    padding: 0 0;
-    margin: 0 0;
+.header h1 {
+  padding: 0 0;
+  margin: 0 0;
 }
 
-.header{
-    margin: 0 0;
-    font-family: Roboto, sans-serif;
-    color: white;
-    background-color:#252525;
-    text-align: left;
+.header {
+  margin: 0 0;
+  font-family: Roboto, sans-serif;
+  color: white;
+  background-color: #252525;
+  text-align: left;
 }
 
-.validationIcon{
-    min-width:20px;
+.validationIcon {
+  min-width: 20px;
 }
 
 .custom-dialog-container .mat-dialog-container {
-    padding: 0px;
+  padding: 0px;
+}
+
+.form-dialog-container .mat-dialog-container {
+  border-radius: 7px;
+  overflow: visible;
+  box-shadow: 0 4px 6.5px 0 rgba(0, 0, 0, 0.15);
+  margin: 0;
+  padding: 0 0 20px 0;
+  height: 382px;
+}
+
+input:focus{
+  outline-offset: 0;
+}
+
+/* :host /deep/ .mat-button-focus-overlay {
+    background-color: rgba(0, 0, 0, 0);
+} */
+
+.custom-backdrop {
+  /* z-index: 0; */
+  background-color: rgba(0, 0, 0, 0.39);
 }
 
 html, body {
-    max-width: 100%;
-    overflow-x: hidden;
+  max-width: 100%;
+  overflow-x: hidden;
 }

@@ -1,4 +1,9 @@
-<button mat-button [style.background]="styleGradient" [style.min-width]="minWidth" (click)="buttonClick.emit($event)" [disabled]="disabled">
+<div mat-raised-button class="button"
+     [style.background]="styleGradient" [style.min-width]="minWidth" [style.min-height]="minHeight" [style.font-size]="fontSize"
+     [@pressState]="buttonState" (click)="onClick($event)"
+     (mouseleave)="buttonDown = false"
+     (mousedown)="onPress(true)" (mouseup)="onPress(false)"
+     [ngClass]="{'center': !(leftIcon || rightIcon)}">
   <div class="wrapper">
     <img *ngIf="leftIcon" class="icon left-icon" [src]="leftIcon | resolveAsset">
     <div class="text-content" [style.text-align]="contentAlign">
@@ -8,4 +13,4 @@
     </div>
     <img *ngIf="rightIcon" class="icon right-icon" [src]="rightIcon | resolveAsset">
   </div>
-</button>
+</div>

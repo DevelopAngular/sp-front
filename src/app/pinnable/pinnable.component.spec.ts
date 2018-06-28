@@ -8,9 +8,9 @@ describe('PinnableComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PinnableComponent ]
+      declarations: [PinnableComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

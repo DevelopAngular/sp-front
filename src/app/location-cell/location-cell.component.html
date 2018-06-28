@@ -1,2 +1,17 @@
-<span class="info" (click)="locationSelected()">{{location.title}} ({{location.room}})</span>
-<hr>
+<div class="wrapper" (click)="cellSelected()">
+  <div *ngIf="type==='location'" class="info">
+    <div class="title">
+      {{value.title}}
+    </div>
+    <div class="room">
+      {{value.room}}
+    </div>
+  </div>
+
+  <div *ngIf="type==='teachers'" class="info">
+    <div class="title">
+      {{value.display_name}}
+    </div>
+  </div>
+  <div class="divider"></div>
+</div>

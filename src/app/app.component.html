@@ -2,9 +2,8 @@
   <div>
     <router-outlet></router-outlet>
   </div>
-  <div *ngIf="!isAuthenticated" style="position: absolute;top: 0;width: 100%;height: 100%;background: rgba(0,0,0,.288);text-align: center;
-    vertical-align: middle;">
+  <div class="login-container" *ngIf="!isAuthenticated">
 
-    <google-signin style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);"></google-signin>
+    <google-signin class="login-dialog"></google-signin>
   </div>
 </div>

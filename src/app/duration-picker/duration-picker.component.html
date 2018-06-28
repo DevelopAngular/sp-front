@@ -1,9 +1,19 @@
-<span class="ui-fluid wrapper">
-  <div class="ui-inputgroup">
-    <p-dropdown [(ngModel)]="selectedDuration" [autoWidth]="false"
-                [options]="durations" [showClear]="false"
-                placeholder="Duration" optionLabel="display"
-                appendTo="body" (onChange)="updateDuration()">
-    </p-dropdown>
-  </div>
-</span>
+<div class="wrapper">
+    <div class="left">
+        <mat-slider class="slider"
+                    [max]="maxDuration"
+                    [min]="minDuration"
+                    [vertical]="true"
+                    [(ngModel)]="selectedDuration"
+                    (input)="updateDuration($event)">
+        </mat-slider>
+    </div>
+    <div class="right">
+        <div class="right-top">
+            How much time do you need?
+        </div>
+        <div class="right-bottom">
+            <div class="large">{{ selectedDuration }} mins</div>
+        </div>
+    </div>
+</div>

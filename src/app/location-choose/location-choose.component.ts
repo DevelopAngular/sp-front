@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import {Location} from '../NewModels';
+import { Location } from '../NewModels';
+
 @Component({
   selector: 'app-location-choose',
   templateUrl: './location-choose.component.html',
   styleUrls: ['./location-choose.component.css']
 })
 export class LocationChooseComponent implements OnInit {
-  selectedLocation:Location;
-  constructor() { }
+  selectedLocation: Location;
+
+  constructor() {
+  }
 
   ngOnInit() {
   }

@@ -1,8 +1,10 @@
+<mat-progress-bar *ngIf="(loadingService.isLoading$ | async) && (loginService.isAuthenticated$ | async); else staticLoading;"
+                  mode="indeterminate"></mat-progress-bar>
+<ng-template class="static-loading" #staticLoading><div class="static-loading"></div></ng-template>
 <div class="bar">
   <div class="heading grow">
     <div class="title">SmartPass</div>
-    <img class="logo" [src]="'./assets/One_Arrow.png' | resolveAsset">
-    <div class="small">Alpha</div>
+    <img class="logo" [src]="'./assets/One Arrow (Colored).png' | resolveAsset">
   </div>
   <div [style.display]="forTeacher?'':'none'" class="teacherNav">
     <div class="navButton" [style.background-color]="getNavElementBg(1, 'btn')" (click)="updateTab(1)">
@@ -13,16 +15,16 @@
       My Room
       <div class="selectorBar" [style.background-color]="getNavElementBg(2, 'sel')"></div>
     </div>
-    <div class="navButton" [style.background-color]="getNavElementBg(3, 'btn')"  (click)="updateTab(3)">
+    <div class="navButton" [style.background-color]="getNavElementBg(3, 'btn')" (click)="updateTab(3)">
       Hall Monitoring
       <div class="selectorBar" [style.background-color]="getNavElementBg(3, 'sel')"></div>
     </div>
   </div>
   <div class="user-info">
-    <div class="name" style="margin-left: auto" *ngIf="user">{{ user.display_name }}</div>
-    <div class="options" >
-      <img (click)="showOptions()" class="options" [src]="'./assets/Settings.png' | resolveAsset">
+    <div class="name">{{ user ? user.display_name : '' }}</div>
+    <img class="inbox-icon" (click)="inboxClick()" [src]="'./assets/Inbox (Full) (Colored).png' | resolveAsset">
+    <div class="options">
+      <img (click)="showOptions()" class="options" [src]="'./assets/Gear (Colored).png' | resolveAsset">
     </div>
   </div>
 </div>
-<mat-progress-bar *ngIf="loadingService.isLoading$ | async" mode="indeterminate"></mat-progress-bar>

@@ -1,25 +1,19 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { PassListComponent } from './pass-list.component';
+import { async, TestBed } from '@angular/core/testing';
 
 describe('PassListComponent', () => {
-  let component: PassListComponent;
-  let fixture: ComponentFixture<PassListComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PassListComponent ]
+      declarations: []
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PassListComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+
   });
 });

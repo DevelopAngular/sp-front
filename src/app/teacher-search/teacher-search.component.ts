@@ -1,14 +1,9 @@
-import { Component, OnInit, AfterViewInit, ViewChild, Input, SimpleChange, Output, EventEmitter } from '@angular/core';
-import {FormControl} from '@angular/forms';
-
-import {Observable} from 'rxjs/Observable';
-import {startWith} from 'rxjs/operators/startWith';
-import {map} from 'rxjs/operators/map';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { DataService } from '../data-service';
 import { HttpService } from '../http-service';
 
-import {Location} from '../NewModels';
+import { Location } from '../NewModels';
 
 @Component({
   selector: 'app-teacher-search',
@@ -20,23 +15,24 @@ export class TeacherSearchComponent {
   _selectedLocation: Location;
 
   @Input()
-  type:string;
+  type: string;
 
   @Output()
   locationSelectedEvent: EventEmitter<Location> = new EventEmitter();
 
-  constructor(private http: HttpService, private dataService:DataService) {}
-
-  get typeString(): string {
-    return this.type === "'to'" ? "Destination" : "Origin";
+  constructor(private http: HttpService, private dataService: DataService) {
   }
 
-  set selectedLocation(loc:Location){
+  get typeString(): string {
+    return this.type === '\'to\'' ? 'Destination' : 'Origin';
+  }
+
+  set selectedLocation(loc: Location) {
     this._selectedLocation = loc;
     this.locationSelectedEvent.emit(loc);
   }
 
-  async updateLocations(event){
+  async updateLocations(event) {
     const query = event.query;
     this.locations = this.convertToLocations(await this.filterLocations(query));
   }
@@ -47,16 +43,17 @@ export class TeacherSearchComponent {
 
   convertToLocations(json: any[]): Location[] {
     const out: Location[] = [];
-    for (let i = 0; i < json.length; i++){
+    for (let i = 0; i < json.length; i++) {
       out.push(Location.fromJSON(json[i]));
     }
     return out;
   }
-  validate(){
+
+  validate() {
     return this._selectedLocation instanceof Location;
   }
 
-  getIcon(){
+  getIcon() {
     return this.validate() ? 'fa-check' : 'fa-close';
   }
 }

@@ -8,9 +8,9 @@ describe('ConsentMenuComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ConsentMenuComponent ]
+      declarations: [ConsentMenuComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

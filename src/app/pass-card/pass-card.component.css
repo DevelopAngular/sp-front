@@ -1,161 +1,77 @@
-.card-wrapper{
-    border-radius: 7px;
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 40px;
-    color: white;
-    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-    font-weight: bold;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: 1.08;
-    letter-spacing: 0.3px;
+.pass-card-wrapper{
+  width: 450px;
+  height: 235px;
+  padding: 25px;
+  border-radius: 15px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 7.5px 13px 0 rgba(0, 0, 0, 0.1);
+  font-family: 'Helvetica Neue', sans-serif;
 }
 
-.card-header{
-    background-color: rgba(0, 0, 0, 0);
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+.pass-card-header{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
-.card-icon{
-    width: 25px;
-    height: 25px;
-    padding-right: 4px;
+.pass-card-header-icon{
+  width: 35px;
+  height: 35px;
 }
 
-.mat-expansion-panel-header-description{
-    margin-right: 0px;
-    display: flex;
-    flex-direction: row-reverse;
+.pass-card-header-info{
+  display: flex;
+  flex-direction: column;
 }
 
-.mat-expansion-panel-header{
-    padding-left: 15px;
-    border-radius: 7px;
-    max-height: 50px;
+.pass-card-header-info-title{
+  font-size: 18pt;
 }
 
-.card-title{
-    color: white;
-    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-    font-weight: bold;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: 1.08;
-    letter-spacing: 0.3px;
+.pass-card-header-info-subtitle{
+  font-size: 12pt;
 }
 
-.close{
-
+.pass-card-header-info-title, .pass-card-header-info-subtitle{
+  margin-left: 10px;
 }
 
-.cancel{
-
+.pass-card-header-close{
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+  margin-left: auto;
 }
 
-.divider{
-    margin: 0 0 20px 0;
-    width: 100%;
-    height: 0.5px;
-    object-fit: contain;
-    opacity: 0.39;
-    background-color: #ffffff;
+.pass-card-hdivider{
+  width: 100%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, .3);
+  margin: 10px 0 20px 0;
 }
 
-.card-body{
-    display: flex;
-    flex-direction: column;
+.pass-card-body{
+  display: flex;
+  flex-direction: row;
+  height: 162px;
 }
 
-.card-top{
-    display: flex;
-    flex-direction: row;
+.pass-card-body-left{
+  width: 210px;
+  height: inherit;
+  justify-content: space-around;
+  align-items: center;
 }
 
-.card-left{
-    display: flex;
-    flex-direction: column;
+.pass-card-body-vdivider{
+  width: 2px;
+  height: 162px;
+  background-color: rgba(255, 255, 255, .3);
 }
 
-.origin{
-
-}
-
-.round-trip{
-    width: 118px;
-    height: 71px;
-}
-
-.one-way{
-    width: 71px;
-    height: 71px;
-}
-
-.img-wrapper{
-    width: 118px;
-}
-.one-way, .round-trip{
-    margin: 10px 0px 10px 0px;
-}
-
-destination{
-
-}
-
-.card-right{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.card-bottom{
-    
-}
-
-.clickRipple{
-    width: 144px;
-    border-radius: 7px;
-}
-
-.mat-button{
-    line-height: inherit;
-    padding: 0px;
-    font-family: inherit;
-    vertical-align: top;
-}
-
-.button-card{
-    width: inherit;
-    height: 40px;
-    padding-top: 8.9px;
-    border-radius: 7px;
-    background-image: radial-gradient(circle at 77% 61%, rgba(255, 255, 255, .4), rgba(220, 220, 220, 0.4) 67%, rgba(200, 200, 200, 0.4));
-    color: white;
-    box-shadow: 0 7.5px 13px 0 rgba(0, 0, 0, 0.1);
-    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-}
-
-.button-content{
-    position: absolute;
-    top: 50%;
-    transform: translate(0, -50%);
-    width: 100%;
-}
-
-.button-title{
-
-}
-
-.center{
-
-}
-
-.grow{
-    flex-grow: 1;
-}
-
-.padding-bottom{
-    padding-bottom: 15px;
+.pass-card-body-right{
+  flex-grow: 1;
 }

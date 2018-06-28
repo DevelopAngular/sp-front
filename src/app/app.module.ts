@@ -1,84 +1,87 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { AppComponent } from './app.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatIconModule } from '@angular/material/icon';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatNativeDateModule, MatProgressBarModule, MatProgressSpinnerModule, MatRadioModule, MatStepperModule } from '@angular/material';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
-import { TeacherSearchComponent } from './teacher-search/teacher-search.component';
-import { GoogleSigninComponent } from './google-signin/google-signin.component';
-import { HallpassFormComponent } from './hallpass-form/hallpass-form.component';
-import { MainPageComponent } from './main-page/main-page.component';
-import { RouterModule, Routes } from '@angular/router';
-import { DataService } from './data-service';
-import { HttpService } from './http-service';
-import { InfiniteScrollModule } from 'ngx-infinite-scroll';
-import { StudentSearchComponent } from './student-search/student-search.component';
-import { TagInputModule } from 'ngx-chips';
-import { AngularDateTimePickerModule } from 'angular2-datetimepicker';
-import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
-import { GoogleApiModule, NG_GAPI_CONFIG } from 'ng-gapi';
-import { UserService } from './user.service';
-import { GAPI_CONFIG } from './config';
-import { MatProgressBarModule, MatProgressSpinnerModule, MatRadioModule, MatStepperModule, MatNativeDateModule } from '@angular/material';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
+import { MatCardModule } from '@angular/material/card';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterModule, Routes } from '@angular/router';
+import { AmazingTimePickerModule } from 'amazing-time-picker';
+import { AngularDateTimePickerModule } from 'angular2-datetimepicker';
+import { GoogleApiModule, NG_GAPI_CONFIG } from 'ng-gapi';
+import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
+import { TagInputModule } from 'ngx-chips';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { ConfirmationService } from 'primeng/api';
 import { AutoCompleteModule } from 'primeng/autocomplete';
-import { CalendarModule } from 'primeng/calendar';
-import { DropdownModule } from 'primeng/dropdown';
 import { ButtonModule } from 'primeng/button';
-import { GrowlModule } from 'primeng/growl';
-import { DataViewModule } from 'primeng/dataview';
-import { PanelModule } from 'primeng/panel';
-import { DialogModule } from 'primeng/dialog';
+import { CalendarModule } from 'primeng/calendar';
 import { CardModule } from 'primeng/card';
-import { InputSwitchModule } from 'primeng/inputswitch';
-import { ScrollPanelModule } from 'primeng/scrollpanel';
-import { ListboxModule } from 'primeng/listbox';
 import { MessageService } from 'primeng/components/common/messageservice';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService } from 'primeng/api';
+import { DataViewModule } from 'primeng/dataview';
+import { DialogModule } from 'primeng/dialog';
+import { DropdownModule } from 'primeng/dropdown';
+import { GrowlModule } from 'primeng/growl';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { ListboxModule } from 'primeng/listbox';
+import { PanelModule } from 'primeng/panel';
+import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { SidebarModule } from 'primeng/sidebar';
-import { DurationPickerComponent } from './duration-picker/duration-picker.component';
-import { JSONSerializer } from './models';
+import { AppComponent } from './app.component';
+import { GAPI_CONFIG } from './config';
 import { ConsentMenuComponent } from './consent-menu/consent-menu.component';
-import { PinnableComponent } from './pinnable/pinnable.component';
-import { MatCardModule } from '@angular/material/card';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { LocationChooseComponent } from './location-choose/location-choose.component';
-import { MatSliderModule } from '@angular/material/slider';
-import { TypeSelectorComponent } from './type-selector/type-selector.component';
-import { NavbarComponent } from './navbar/navbar.component';
-import { LocationTableComponent } from './location-table/location-table.component';
-import { ResolveAssetPipe } from './resolve-asset.pipe';
-import { LocationCellComponent } from './location-cell/location-cell.component';
-import { HallpassCardComponent } from './hallpass-card/hallpass-card.component';
-import { RequestCardComponent } from './request-card/request-card.component';
-import { InvitationCardComponent } from './invitation-card/invitation-card.component';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { GoogleLoginService } from './google-login.service';
-import { GradientButtonComponent } from './gradient-button/gradient-button.component';
-import { SignOutComponent } from './sign-out/sign-out.component';
-import { OptionsComponent } from './options/options.component';
-import { RequestAcceptComponent } from './request-accept/request-accept.component';
-import { StudentPickerComponent } from './student-picker/student-picker.component';
-import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
-import { LocationPickerComponent } from './location-picker/location-picker.component';
-import {MatExpansionModule} from '@angular/material/expansion';
-import { LoadingService } from './loading.service';
+import { DataService } from './data-service';
 import { DateTimePickerComponent } from './date-time-picker/date-time-picker.component';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-import { AmazingTimePickerModule } from 'amazing-time-picker';
+import { DurationPickerComponent } from './duration-picker/duration-picker.component';
+import { GoogleLoginService } from './google-login.service';
+import { GoogleSigninComponent } from './google-signin/google-signin.component';
+import { GradientButtonComponent } from './gradient-button/gradient-button.component';
+import { HallpassFormComponent } from './hallpass-form/hallpass-form.component';
+import { HttpService } from './http-service';
+import { LoadingService } from './loading.service';
+import { LocationCellComponent } from './location-cell/location-cell.component';
+import { LocationChooseComponent } from './location-choose/location-choose.component';
+import { LocationPickerComponent } from './location-picker/location-picker.component';
+import { LocationTableComponent } from './location-table/location-table.component';
+import { MainPageComponent } from './main-page/main-page.component';
+import { JSONSerializer } from './models';
+import { NavbarComponent } from './navbar/navbar.component';
+import { OptionsComponent } from './options/options.component';
 import { PassCardComponent } from './pass-card/pass-card.component';
+import { PinnableComponent } from './pinnable/pinnable.component';
+import { RequestAcceptComponent } from './request-accept/request-accept.component';
+import { ResolveAssetPipe } from './resolve-asset.pipe';
+import { SignOutComponent } from './sign-out/sign-out.component';
+import { StudentPickerComponent } from './student-picker/student-picker.component';
+import { StudentSearchComponent } from './student-search/student-search.component';
+import { TeacherSearchComponent } from './teacher-search/teacher-search.component';
+import { UserService } from './user.service';
+import { TraveltypePickerComponent } from './traveltype-picker/traveltype-picker.component';
+import { PassTileComponent } from './pass-tile/pass-tile.component';
+import { PassCellComponent } from './pass-cell/pass-cell.component';
+import { ContainerCardComponent } from './container-card/container-card.component';
+import { PassCollectionComponent } from './pass-collection/pass-collection.component';
+import { DisplayCardComponent } from './display-card/display-card.component';
+import { PagerComponent } from './pager/pager.component';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: '/main', pathMatch: 'full'},
@@ -98,14 +101,10 @@ const appRoutes: Routes = [
     ConsentMenuComponent,
     PinnableComponent,
     LocationChooseComponent,
-    TypeSelectorComponent,
     NavbarComponent,
     LocationTableComponent,
     ResolveAssetPipe,
     LocationCellComponent,
-    HallpassCardComponent,
-    RequestCardComponent,
-    InvitationCardComponent,
     GradientButtonComponent,
     SignOutComponent,
     OptionsComponent,
@@ -114,6 +113,13 @@ const appRoutes: Routes = [
     LocationPickerComponent,
     DateTimePickerComponent,
     PassCardComponent,
+    TraveltypePickerComponent,
+    PassTileComponent,
+    PassCellComponent,
+    ContainerCardComponent,
+    PassCollectionComponent,
+    DisplayCardComponent,
+    PagerComponent,
   ],
   entryComponents: [
     HallpassFormComponent,
@@ -172,10 +178,8 @@ const appRoutes: Routes = [
     MatDatepickerModule,
     MatNativeDateModule,
     AmazingTimePickerModule,
-    // ToastModule.forRoot(),
     RouterModule.forRoot(
       appRoutes
-      // ,{ enableTracing: true } // <-- debugging purposes only
     ),
     GoogleApiModule.forRoot({
       provide: NG_GAPI_CONFIG,

@@ -1,0 +1,19 @@
+.wrapper{
+    display: flex;
+    flex-direction: row;
+}
+
+.right{
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+}
+
+.right-bottom{
+    margin-top: 20px
+}
+
+.large{
+    font-size: 24px;
+}

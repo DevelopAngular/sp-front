@@ -1,11 +1,9 @@
 <div class="wrapper">
-  <div class="title">
-    Search Locations
-  </div>
-  <div class="input">
-      <input #box placeholder="Search Here" (keyup)="onSearch(box.value)">
-  </div>
-  <div class="locations">
-    <app-location-cell class="location" *ngFor="let location of locations" (onSubSelect)="locationSelected($event)" [location]="location"></app-location-cell>
+  <input class="input" #searchBox [placeholder]="placeholder" (keyup)="onSearch(searchBox.value)">
+  <div class="choices">
+    <app-location-cell class="choice" *ngFor="let choice of choices"
+                       (onSelect)="choiceSelected($event)"
+                       [value]="choice" [type]="type">
+    </app-location-cell>
   </div>
 </div>

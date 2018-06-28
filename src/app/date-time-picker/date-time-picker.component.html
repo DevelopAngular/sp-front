@@ -1,9 +1,11 @@
 <mat-form-field [style.margin-right]="'20px'">
-    <input matInput [formControl]="dateCtrl" [matDatepicker]="picker" [readonly]="true" (dateChange)="updateDate($event)" placeholder="Choose a start date" [min]="now">
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker #picker></mat-datepicker>
+  <input matInput [formControl]="dateCtrl" [matDatepicker]="picker" [readonly]="true" (dateChange)="updateDate($event)"
+         placeholder="Choose a start date" [min]="now">
+  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+  <mat-datepicker #picker></mat-datepicker>
 </mat-form-field>
 
 <mat-form-field>
-    <input matInput [formControl]="timeCtrl" (click)="openTime()" type="time" placeholder="Choose a start time" [value]="timeS" [readonly]="true">
+  <input matInput [formControl]="timeCtrl" (click)="openTime()" type="time" placeholder="Choose a start time"
+         [value]="timeS" [readonly]="true">
 </mat-form-field>

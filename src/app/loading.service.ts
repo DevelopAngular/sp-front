@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { concat, EMPTY } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { Observable } from 'rxjs/Observable';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
 
 import 'rxjs/add/operator/scan';
+import { Observable } from 'rxjs/Observable';
+import { tap } from 'rxjs/operators';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
 
 @Injectable({
   providedIn: 'root'

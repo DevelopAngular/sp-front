@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { HttpService } from '../http-service';
 import { Location } from '../NewModels';
 
@@ -16,30 +16,49 @@ export interface Paged<T> {
 
 export class LocationTableComponent implements OnInit {
 
-  category:string;
+  @Input()
+  category: string;
+
+  @Input()
+  placeholder: string;
+
+  @Input()
+  type: string;
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
 
-  @Input()
-  set setCategory(c:string){
-    this.category = c;
-    // console.log(c);
+  public choices: any[];
+
+  constructor(private http: HttpService) {
   }
-
-  public locations:Location[];
-
-  constructor(private http:HttpService) { }
 
   ngOnInit() {
-    this.http.get<Paged<Location>>('api/methacton/v1/locations?limit=5&category=' +this.category).toPromise().then(p => {this.locations = p.results});
+    // console.log('[Table Type]: ', this.type);
+    // TODO Get favorites
+    this.http.get<Paged<Location>>('api/methacton/v1/'
+      +(this.type==='teachers'?'users?role=edit_all_hallpass&':('locations'
+        +(!!this.category ? ('?category=' + this.category +'&') : '?')
+      ))
+      +'limit=4')
+      .toPromise().then(p => {
+      this.choices = p.results;
+    });
   }
 
-  onSearch(search:string){
-    this.http.get<Paged<Location>>('api/methacton/v1/locations?limit=5&category=' +this.category +"&search=" +search).toPromise().then(p => {this.locations = p.results});
+  onSearch(search: string) {
+      this.http.get<Paged<Location>>('api/methacton/v1/'
+        +(this.type==='teachers'?'users?role=edit_all_hallpass&':('locations'
+          +(!!this.category ? ('?category=' +this.category +'&') : '?')
+        ))
+        +'limit=4'
+        +'&search=' +search)
+        .toPromise().then(p => {
+          this.choices = p.results;
+        });
   }
 
-  locationSelected(location:Location){
-    this.onSelect.emit(location);
+  choiceSelected(choice: any) {
+    this.onSelect.emit(choice);
   }
 
 }

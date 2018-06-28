@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import {User, HallPass, Request, Invitation} from '../NewModels';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { HallPass, Invitation, User } from '../NewModels';
 
 @Component({
   selector: 'app-pass-card',
@@ -10,74 +10,87 @@ export class PassCardComponent implements OnInit {
 
   @Input() pass;
 
-  @Input() future:boolean;
+  @Input() future: boolean;
 
-  @Input() forTeacher:boolean;
+  @Input() forTeacher: boolean;
 
-  @Input() expanded:boolean = true;
+  @Input() expanded: boolean = true;
 
   @Input() user: User;
 
-  @Output() cardEvent:EventEmitter<any> = new EventEmitter();
+  @Input() isDetails: boolean = false;
 
-  type:string = "";
+  @Output() cardEvent: EventEmitter<any> = new EventEmitter();
 
-  timeLeft:string = "00:00";
+  type: string = '';
 
-  weekday:string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  month:string[] = ["January", "February", "March", "April", "May", "June", "July",
-                    "August", "September","October", "November", "December"];
+  timeLeft: string = '00:00';
+
+  returnData:any = {};
+
+  weekday: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  month: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+    'August', 'September', 'October', 'November', 'December'];
 
   constructor() {
-    
+
   }
 
   ngOnInit() {
-    console.log("[Pass]: ", this.pass);
-    this.type = (this.pass instanceof HallPass)?"hallpass":
-    (this.pass instanceof Invitation)?"invitation":
-    "request";
-    
-    console.log("[Card Type]", this.type);
+    // console.log('[Pass]: ', this.pass);
+    this.type = (this.pass instanceof HallPass) ? 'hallpass' :
+      (this.pass instanceof Invitation) ? 'invitation' :
+        'request';
 
-    if(this.type == 'hallpass'){
-      setInterval(()=>{
-        if(!!this.pass && !this.future){
+    // console.log('[Card Type]', this.type);
+
+    if (this.type == 'hallpass') {
+      setInterval(() => {
+        if (!!this.pass && !this.future) {
           let end = this.pass.expiration_time;
           let start = new Date();
-          let diff:number = Math.floor((end.getTime() - start.getTime()) / 1000);
-          let mins: number = Math.floor(diff/60);
-          let secs: number = Math.abs(diff%60);
-          this.timeLeft = mins +":" +(secs<10?"0"+secs:secs);
+          let diff: number = Math.floor((end.getTime() - start.getTime()) / 1000);
+          let mins: number = Math.floor(diff / 60);
+          let secs: number = Math.abs(diff % 60);
+          this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
         }
       }, 1000);
     }
   }
 
-  _cardEvent(value:boolean){
+  _cardEvent(value: boolean) {
     let event = {
-      'type' : this.type,
-      'value' : value,
-      'id' : this.pass.id
+      'type': this.type,
+      'value': value,
+      'pass': this.pass,
+      'data': this.returnData
     };
-
+    // console.log('[Pass Card Event]: ', event);
     this.cardEvent.emit(event);
   }
 
-  getGradient(){
-    let gradient: string[] = this.pass.gradient_color.split(",");;
+  getGradient() {
+    let gradient: string[] = this.pass.gradient_color.split(',');
 
-    return "radial-gradient(circle at 73% 71%, " +gradient[0] +", " +gradient[1] +")";
+    return 'radial-gradient(circle at 73% 71%, ' + gradient[0] + ', ' + gradient[1] + ')';
   }
 
-  getDate(s:Date){
+  getDate(s: Date) {
     s = new Date(s);
-    return this.weekday[s.getDay()] +' ' + this.month[s.getMonth()] + ' ' + (s.getDate());
+    return this.weekday[s.getDay()] + ' ' + this.month[s.getMonth()] + ' ' + (s.getDate());
   }
 
-  getTime(s:Date){
+  getTime(s: Date) {
     s = new Date(s);
-    return ((s.getHours() > 12) ? s.getHours() - 12 : s.getHours()) + ':' + ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + ((s.getHours() > 12) ? "pm" : "am");
+    return ((s.getHours() > 12) ? s.getHours() - 12 : s.getHours()) + ':' + ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + ((s.getHours() > 12) ? 'pm' : 'am');
+  }
+
+  updateDuration(dur:number){
+    this.returnData['duration'] = dur;
+  }
+
+  updateTravelType(travelType:string){
+    this.pass.travel_type = travelType;
   }
 
 }

@@ -1,16 +1,16 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { Paged, User } from '../NewModels';
-import { Subject } from 'rxjs/Subject';
-import { HttpService } from '../http-service';
-import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/of';
 
 import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/takeUntil';
-import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/map';
-import 'rxjs/add/observable/of';
+import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/takeUntil';
+import { Observable } from 'rxjs/Observable';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
+import { Subject } from 'rxjs/Subject';
+import { HttpService } from '../http-service';
+import { Paged, User } from '../NewModels';
 
 @Component({
   selector: 'app-student-picker',

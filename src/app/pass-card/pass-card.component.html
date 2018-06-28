@@ -1,113 +1,33 @@
-<mat-expansion-panel hideToggle="true" class="card-wrapper" [style.background]="getGradient()" [expanded]='expanded'>
-  <mat-expansion-panel-header>
-    <mat-panel-title>
-      <div class="card-header">
-        <img class="card-icon" [src]="pass.icon | resolveAsset">
-        <div class="card-title" *ngIf="type=='request'">
-            Request {{(forTeacher?('from ' +pass.student.display_name):('to ' +pass.teacher.display_name))}}
-        </div>
-        <div *ngIf="type=='invitation'">
-          <div class="card-title" *ngIf="pass.student.id === user.id">
-            Invitation from {{pass.issuer.display_name}}
-          </div>
-          <div class="card-title" *ngIf="pass.issuer.id === user.id">
-            Invitation for {{pass.student.display_name}}
-          </div>
-          <div class="card-title" *ngIf="pass.issuer.id !== user.id && pass.student.id !== user.id">
-            Invitation for {{invitation.student.display_name}}<br>
-            from {{pass.issuer.display_name}}
-          </div>
-        </div>
-        <div class="card-title" *ngIf="type=='hallpass'">
-            Pass to {{pass.destination.title}}
-        </div>
+<div class="pass-card-wrapper" [style.background-image]="getGradient()">
+  <div class="pass-card-header">
+    <img  class="pass-card-header-icon" [src]="pass.icon | resolveAsset">
+    <div class="pass-card-header-info">
+      <div class="pass-card-header-info-title">
+        {{ pass.destination.title }}
       </div>
-    </mat-panel-title>
-    <mat-panel-description class="close" *ngIf="type=='invitation' || type=='request'">
-      <mat-icon class="cancel" (click)="_cardEvent(false)">cancel</mat-icon>
-    </mat-panel-description>
-  </mat-expansion-panel-header>
+      <div class="pass-card-header-info-subtitle">
 
-  <div class="divider center"></div>
-  <div class="card-body">
-    <div class="card-top">
-      <div class="card-left">
-        <div class="origin center" *ngIf="type=='request'">
-          {{pass.origin.title}}
-        </div>
-        <div class="origin center" *ngIf="type=='invitation'">
-            {{!!pass.default_origin?pass.default_origin.title:'Your Location'}}
-        </div>
-        <div class="origin center" *ngIf="type=='hallpass'">
-          {{!!pass.origin?pass.origin.title:'Their Location'}}
-        </div>
-        <div class="img-wrapper">
-          <img *ngIf="pass.travel_type == 'round_trip'" class="round-trip center" [src]="'./assets/Two_Arrow.png' | resolveAsset">
-          <img *ngIf="pass.travel_type == 'one_way'" class="one-way center" [src]="'./assets/One_Arrow.png' | resolveAsset">
-        </div>
-        <div class="destination center">
-          {{pass.destination.title}}
-        </div>
-      </div>
-      <div class="card-right" *ngIf="type=='request'">
-        {{pass.attachment_message != 'null'? pass.attachment_message: 'No Message'}}
-      </div>
-      <div class="card-right" *ngIf="type=='invitation'">
-        <div class="padding-bottom">
-          {{getDate(pass.date_choices[0])}}
-          <br>
-          at {{getTime(pass.date_choices[0])}}
-        </div>
-        <button mat-button *ngIf="pass.student.id === user.id" class="clickRipple"
-                (click)="_cardEvent(true)">
-          <div class="button-card">
-            <div class="button-content">
-              <div class="button-title">
-                Accept Invitation
-              </div>
-            </div>
-          </div>
-        </button>
-      </div>
-      <div class="card-right grow" *ngIf="type=='hallpass'">
-        <div class="grow"></div>
-        <div *ngIf="!future; else inFuture">
-          <button mat-button class="clickRipple" (click)="_cardEvent(false)">
-            <div class="button-card">
-                <div class="button-content">
-                    <div class="button-title">
-                        {{timeLeft}} - End Pass
-                    </div>
-                </div>
-            </div>
-          </button>
-        </div>
-        <ng-template #inFuture>
-          <div>
-            {{getDate(pass.start_time)}}
-            <br>
-            at {{getTime(pass.start_time)}}
-          </div>
-        </ng-template>
-        <div class="grow"></div>
       </div>
     </div>
-    <div class="card-bottom" *ngIf="type=='request'">
-      <div *ngIf="forTeacher; else notForTeacher;">
-        <button mat-button class="clickRipple end-pass" (click)="carEvent(true)">
-          <div class="button-card">
-              <div class="button-content">
-                  <div class="button-title">
-                      Accept
-                  </div>
-              </div>
-          </div>
-        </button>
-      </div>
-      <ng-template #notForTeacher>
-        <br><br>
-        Pass Requested
-      </ng-template>
+    <img class="pass-card-header-close" [src]="'./assets/Cancel.png' | resolveAsset">
+  </div>
+  <div class="pass-card-hdivider"></div>
+  <div class="pass-card-body">
+    <div *ngIf="type==='hallpass'" class="pass-card-body-left" [style.display]="'flex'" [style.flex-direction]="'column'">
+      {{ pass.origin.title }}
+      <img [src]="'./assets/' +(pass.travel_type==='one_way'?'One Arrow':'Round-trip Arrows') +'.png' | resolveAsset"
+          [style.height]="'50px'" [style.width]="(pass.travel_type==='one_way'?'50px':'120px')">
+      {{ pass.destination.title }}
+    </div>
+    <div *ngIf="type==='request'" class="pass-card-body-left">
+
+    </div>
+    <div *ngIf="type==='invitation'"class="pass-card-body-left">
+
+    </div>
+    <div *ngIf="!(type==='hallpass')" class="pass-card-body-vdivider"></div>
+    <div class="pass-card-body-right">
+
     </div>
   </div>
-</mat-expansion-panel>
+</div>

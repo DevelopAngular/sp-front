@@ -1,7 +1,8 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MatDatepickerInputEvent } from '@angular/material';
 import { AmazingTimePickerService } from 'amazing-time-picker';
-import { FormControl } from '@angular/forms';
+
 @Component({
   selector: 'app-date-time-picker',
   templateUrl: './date-time-picker.component.html',
@@ -10,64 +11,66 @@ import { FormControl } from '@angular/forms';
 export class DateTimePickerComponent implements OnInit {
 
   @Input()
-  dateCtrl:FormControl;
+  dateCtrl: FormControl = new FormControl();
 
   @Input()
-  timeCtrl:FormControl;
+  timeCtrl: FormControl = new FormControl();
 
-  @Output() onUpdate:EventEmitter<any> = new EventEmitter();
+  @Output() onUpdate: EventEmitter<any> = new EventEmitter();
 
-  timeS:string = "--:--"
+  timeS = '--:--';
 
-  now:Date = new Date();
+  now: Date = new Date();
 
-  selectedDate:Date;
-  selectedTime:Date;
+  selectedDate: Date;
+  selectedTime: Date;
 
-  constructor(private atp: AmazingTimePickerService) { }
+  constructor(private atp: AmazingTimePickerService) {
+  }
 
   ngOnInit() {
 
   }
 
-  updateDate(date:MatDatepickerInputEvent<Date>){
+  updateDate(date: MatDatepickerInputEvent<Date>) {
     this.selectedDate = date.value;
     this.updateDateTime();
   }
 
-  updateTime(time:Date){
+  updateTime(time: Date) {
     this.selectedTime = time;
     this.updateDateTime();
   }
 
-  updateDateTime(){
-    if(this.selectedDate && this.selectedTime)
+  updateDateTime() {
+    if (this.selectedDate && this.selectedTime) {
       this.onUpdate.emit(this.dateTime(this.selectedDate, this.selectedTime));
+    }
   }
 
-  dateTime(dateD:Date, timeD:Date){
-    return dateD.toISOString().split('T')[0] +'T' +timeD.toISOString().split('T')[1];
+  dateTime(dateD: Date, timeD: Date) {
+    return dateD.toISOString().split('T')[0] + 'T' + timeD.toISOString().split('T')[1];
   }
 
-  openTime(){
+  openTime() {
     const amazingTimePicker = this.atp.open({
       theme: 'light',
       locale: 'en-us',
       arrowStyle: {
-          background: 'green',
-          color: 'white'
+        background: 'green',
+        color: 'white'
       }
-  });
-  amazingTimePicker.afterClose().subscribe(time => {
+    });
+    amazingTimePicker.afterClose().subscribe(time => {
       this.timeS = time;
-      let split = time.split(":");
-      let hrs = split[0];
-      let mins = split[1]
-      let timeD:Date = new Date;
-      timeD.setHours(parseInt(hrs));
-      timeD.setMinutes(parseInt(mins));
+      const split = time.split(':');
+      const hrs = split[0];
+      const mins = split[1];
+      const timeD: Date = new Date;
+      timeD.setHours(parseInt(hrs, 10));
+      timeD.setMinutes(parseInt(mins, 10));
       this.updateTime(timeD);
-  });
+    });
   }
 
 }

@@ -3,9 +3,9 @@ import { Injectable } from '@angular/core';
 
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/first';
+import 'rxjs/add/operator/switchMap';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { environment } from '../environments/environment';
@@ -153,10 +153,10 @@ export class HttpService {
   }
 
   post<T>(url: string, body?: any, config?: Config): Observable<T> {
-    if(body && !(body instanceof FormData)){
+    if (body && !(body instanceof FormData)) {
       const formData: FormData = new FormData();
-      for(let prop in body){
-        if(body.hasOwnProperty(prop)){
+      for (let prop in body) {
+        if (body.hasOwnProperty(prop)) {
           formData.append(prop, body[prop]);
         }
       }

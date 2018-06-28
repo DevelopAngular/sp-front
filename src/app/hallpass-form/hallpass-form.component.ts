@@ -1,14 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { DataService } from '../data-service';
-import { Router } from '@angular/router';
-import { HttpService } from '../http-service';
-import { MessageService } from 'primeng/components/common/messageservice';
-import { Message } from 'primeng/components/common/api';
-import { Duration, HallPass, Invitation, Location, Pinnable, Request, User } from '../NewModels';
-import { MatDialog, MatDialogRef, MatSlideToggleChange, MatStepper } from '@angular/material';
-import { LocationChooseComponent } from '../location-choose/location-choose.component';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialog, MatDialogRef, MatSlideToggleChange, MatStepper } from '@angular/material';
+import { Router } from '@angular/router';
+import { Message } from 'primeng/components/common/api';
+import { MessageService } from 'primeng/components/common/messageservice';
+import { DataService } from '../data-service';
+import { HttpService } from '../http-service';
 import { LocationPickerComponent } from '../location-picker/location-picker.component';
+import { Duration, HallPass, Invitation, Location, Pinnable, Request, User } from '../NewModels';
 
 @Component({
   selector: 'app-hallpass-form',
@@ -30,13 +29,13 @@ export class HallpassFormComponent implements OnInit {
   toIcon: string = './assets/Search.png';
   from_title: string = 'From';
   to_title: string = 'To';
-  toGradient: string = 'rgb(151, 151, 151), rgb(80, 80, 80)';
-  fromGradient: string = 'rgb(151, 151, 151), rgb(80, 80, 80)';
-  greenGradient = '#03cf31, #018155';
-  locationType: string = '';
+  _toGradient: string = '';
+  _fromGradient: string = '';
+  greenGradient = '#00B476, #03CF31';
   fromLocation: Location;
   toLocation: Location;
   formState: string = 'from';
+  requestTarget:User;
   travelType: string = 'round_trip';
   duration: number = 5;
   sliderDuration: number = 5;
@@ -44,8 +43,8 @@ export class HallpassFormComponent implements OnInit {
   toCategory: string = '';
   selectedStudents: User[] = [];
   isMandatory: boolean = false;
-  startTime:Date = new Date();
-
+  startTime: Date = new Date();
+  requestMessage: string = "";
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
 
@@ -89,8 +88,7 @@ export class HallpassFormComponent implements OnInit {
       this.fromLocation = result;
       this.from_title = this.fromLocation.title;
       this.fromIcon = '';
-      this.fromGradient = this.greenGradient;
-      this.locationType = 'to';
+      this._fromGradient = this.greenGradient;
 
       this.formState = (this.formState === 'fields') ? 'fields' : 'to';
     });
@@ -98,9 +96,6 @@ export class HallpassFormComponent implements OnInit {
     this.secondFormGroup.controls['destinationCtrl'].valueChanges.subscribe(result => {
       this.toState = 'pinnables';
       this.to_title = result.title;
-      // this.toIcon = "";
-      // this.toGradient = this.greenGradient;
-      // this.formState = 'fields';
       this.toLocation = result;
 
       if (this.stepper) {
@@ -114,13 +109,48 @@ export class HallpassFormComponent implements OnInit {
       this.isMandatory = result;
       if (this.isMandatory) {
         this.firstFormGroup.controls['originCtrl'].setValidators(Validators.required);
-      }else {
+      } else {
         this.firstFormGroup.controls['originCtrl'].clearValidators();
       }
       this.firstFormGroup.controls['originCtrl'].updateValueAndValidity({onlySelf: true, emitEvent: false});
       this.originRequired = this.isMandatory;
     });
 
+  }
+
+  get fromGradient(){
+    if(this.fromLocation){
+      return this._fromGradient;
+    } else{
+      return "#606981, #ACB4C1";
+    }
+  }
+
+  get fromSolid(){
+    if(this.fromLocation)
+      return '#00b476';
+    else
+      return '#6E7689';
+  }
+
+  get toGradient(){
+    if(this.toEnabled){
+      if(this.toLocation){
+        return this._toGradient;
+      } else{
+        return "#7E879D, #7E879D";
+      }
+    } else{
+      return "#CBD5E5, #CBD5E5";
+    }
+  }
+
+  get toEnabled(){
+    if(this.fromLocation){
+      return true;
+    } else{
+      return false;
+    }
   }
 
   get syntheticPass(): HallPass {
@@ -156,50 +186,27 @@ export class HallpassFormComponent implements OnInit {
 
       this.originRequired = !this.isStaff;
     });
+
+    this.dialogRef.updatePosition({top: '225px'});
+
     //console.log(this.user.roles);
 
     //console.log('Hallpass form is staff:' + this.isStaff);
 
   }
 
-  setStartTime(event){
+  setStartTime(event) {
     this.startTime = new Date(event);
   }
 
-  chooseLoc(loc) {
-    this.locationType = loc;
-    if (loc === 'to') {
+  setFormState(state) {
+    this.formState = state;
+    if (state === 'to') {
       if (!!this.fromLocation) {
-        this.toGradient = 'rgb(151, 151, 151), rgb(80, 80, 80)';
-        this.toIcon = './assets/Search.png';
-        this.to_title = 'To';
-
         this.pinnables = this.http.get<Pinnable[]>('api/methacton/v1/pinnables').toPromise();
         this.formState = 'to';
         this.toState = 'pinnables';
-      } else {
-        this.msgs.push({severity: 'error', summary: 'Attention!', detail: 'You must select a from location first.'});
       }
-    } else if (loc === 'from') {
-      let dialogRef = this.dialog.open(LocationChooseComponent, {
-        width: '250px',
-        hasBackdrop: true
-      });
-
-      dialogRef.afterClosed().subscribe(result => {
-        if (!result) {
-          return;
-        }
-        // console.log('The dialog was closed');
-        this.fromLocation = result;
-        this.from_title = this.fromLocation.title;
-        this.fromIcon = '';
-        this.fromGradient = this.greenGradient;
-        this.locationType = 'to';
-
-        this.formState = (this.formState == 'fields') ? 'fields' : 'to';
-        this.pinnables = this.http.get<Pinnable[]>('api/methacton/v1/pinnables').toPromise();
-      });
     }
   }
 
@@ -209,31 +216,30 @@ export class HallpassFormComponent implements OnInit {
       if (event.type === 'category') {
         picker.open();
         this.toIcon = event.icon || '';
-        this.toGradient = event.gradient_color;
+        this._toGradient = event.gradient_color;
         return;
       } else {
         this.toIcon = event.icon || '';
-        this.toGradient = event.gradient_color;
+        this._toGradient = event.gradient_color;
 
         this.secondFormGroup.controls['destinationCtrl'].setValue(event.location);
       }
 
     } else {
-
       // console.log("[Pinnable Selected]: ", event);
       if (event.type == 'location') {
-        if (this.locationType == 'to') {
-          this.to_title = event.title;
-          this.toIcon = event.icon || '';
-          this.toGradient = event.gradient_color;
-          this.formState = 'fields';
-          this.toLocation = event.location;
-        }
+        this.to_title = event.title;
+        this.toIcon = event.icon || '';
+        this._toGradient = event.gradient_color;
+        this.toLocation = event.location;
+
+        this.determinePass();
+
       } else if (event.type == 'category') {
         this.toCategory = event.category;
         this.toState = 'category';
         this.toIcon = event.icon || '';
-        this.toGradient = event.gradient_color;
+        this._toGradient = event.gradient_color;
       }
     }
   }
@@ -246,11 +252,31 @@ export class HallpassFormComponent implements OnInit {
     }
   }
 
+  get dividerText() {
+    if (this.formState === 'from') {
+      return 'From where?';
+    } else if (this.formState === 'to') {
+      return 'To where?';
+    } else if(this.formState === 'restrictedTarget'){
+      return 'Send Pass Request To?';
+    } else if(this.formState === 'restrictedMessage'){
+      return 'Message';
+    }
+  }
+
+  get dividerIcon(){
+    if(this.formState === 'from' || this.formState === 'to'){
+      return './assets/Search.png';
+    } else if(this.formState === 'restrictedMessage'){
+      return './assets/Message.png';
+    }
+  }
+
   setGradient(type: string, gradient_color: string) {
     if (type == 'to') {
-      this.toGradient = gradient_color;
+      this._toGradient = gradient_color;
     } else if (type == 'from') {
-      this.fromGradient = gradient_color;
+      this._fromGradient = gradient_color;
     }
   }
 
@@ -268,34 +294,70 @@ export class HallpassFormComponent implements OnInit {
     // console.log("[Is Mandatory]: ", this.isMandatory);
   }
 
-  getStepperBorderStyle(type:string, step:number){
+  getStepperBorderStyle(type: string, step: number) {
     let color = '';
-    if(type == 'back'){
+    if (type == 'back') {
       return 'solid 2px #0F0';
-    } else{
-      if(step == 1){
-        return 'solid 2px #' +(this.firstFormGroup.valid?'0F0':'F00');
-      } else if(step == 2){
-        return 'solid 2px #' +(this.secondFormGroup.valid?'0F0':'F00');
+    } else {
+      if (step == 1) {
+        return 'solid 2px #' + (this.firstFormGroup.valid ? '0F0' : 'F00');
+      } else if (step == 2) {
+        return 'solid 2px #' + (this.secondFormGroup.valid ? '0F0' : 'F00');
       }
     }
-    
   }
 
-  locationChosen(event: Location) {
-    this.toState = 'pinnables';
-    this.to_title = event.title;
-    // this.toIcon = "";
-    // this.toGradient = this.greenGradient;
-    this.formState = 'fields';
-    this.toLocation = event;
+  locationChosen(event: Location, type: string) {
+    if (type === 'from') {
+      this.formState = 'from';
+      this.from_title = event.title;
+      this.fromLocation = event;
+      this.setFormState('to');
+    } else if(type === 'to'){
+      this.to_title = event.title;
+      this.toLocation = event;
+      this.determinePass();
+    } else {
+      this.toState = 'pinnables';
+      this.to_title = event.title;
+      this.toLocation = event;
+    }
+  }
+
+  sendRequest(message:string){
+    this.requestMessage = message;
+    this.determinePass();
+  }
+
+  updateTarget(event:any){
+    this.requestTarget = event;
+    this.formState = 'restrictedMessage';
   }
 
   determinePass() {
-    if (this.isStaff) {
-      this.teacherPass();
-    } else {
-      this.newPass();
+    if(!this.toLocation.restricted){
+      this.dialogRef.close({
+          'fromLocation': this.fromLocation,
+          'toLocation': this.toLocation,
+          'restricted': this.toLocation.restricted,
+          'icon': this.toIcon,
+          'gradient': this.toGradient
+          });
+    } else{
+      if(this.requestMessage === ''){
+        this.formState = 'restrictedTarget';
+      } else{
+        this.dialogRef.close({
+          'fromLocation': this.fromLocation,
+          'toLocation': this.toLocation,
+          'restricted': this.toLocation.restricted,
+          'requestTarget' : this.requestTarget,
+          'message' : this.requestMessage,
+          'icon': this.toIcon,
+          'gradient': this.toGradient
+          });
+      }
+
     }
   }
 
@@ -316,7 +378,7 @@ export class HallpassFormComponent implements OnInit {
       'teacher': this.toLocation.teachers[0].id
     };
 
-    this.http.post('api/methacton/v1/pass_requests', body, ).subscribe((data) => {
+    this.http.post('api/methacton/v1/pass_requests', body,).subscribe((data) => {
       // console.log("Request POST Data: ", data);
       this.dialogRef.close(Request.fromJSON(data));
     });
@@ -341,7 +403,7 @@ export class HallpassFormComponent implements OnInit {
       'travel_type': travelType,
     };
 
-    this.http.post('api/methacton/v1/hall_passes/bulk_create', body, ).subscribe((data) => {
+    this.http.post('api/methacton/v1/hall_passes/bulk_create', body,).subscribe((data) => {
       // console.log("Request POST Data: ", data);
       this.dialogRef.close(HallPass.fromJSON(data[0]));
     });
@@ -356,7 +418,7 @@ export class HallpassFormComponent implements OnInit {
       'travel_type': this.travelType
     };
 
-    this.http.post('api/methacton/v1/hall_passes', body, ).subscribe((data) => {
+    this.http.post('api/methacton/v1/hall_passes', body,).subscribe((data) => {
       // console.log("Request POST Data: ", data);
       this.dialogRef.close(HallPass.fromJSON(data));
     });
@@ -395,7 +457,6 @@ export class HallpassFormComponent implements OnInit {
   }
 
   dateToString(s: Date): string {
-    //return s.toISOString();
     return s.getMonth() + 1 + '/' + s.getDate() + '/' + s.getFullYear() + ' - ' + ((s.getHours() > 12) ? s.getHours() - 12 : s.getHours()) + ':' + ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + ((s.getHours() > 12) ? 'pm' : 'am');
   }
 }

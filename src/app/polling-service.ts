@@ -1,42 +1,101 @@
 import { Injectable } from '@angular/core';
+import { $WebSocket } from 'angular2-websocket/angular2-websocket';
+import { Observable } from 'rxjs/index';
+import { filter, map, publish, refCount, switchMap, tap } from 'rxjs/operators';
+import { environment } from '../environments/environment';
 import { HttpService } from './http-service';
+import { Logger } from './logger.service';
 
-import * as oboe from 'oboe';
+interface RawMessage {
+  type: string;
+  data: any;
+}
+
+export interface PollingEvent {
+  action: string;
+  data: any;
+}
+
+function doesFilterMatch(prefix: string, path: string): boolean {
+  const prefixParts = prefix.split('.');
+  const pathParts = path.split('.');
+
+  if (prefixParts.length > pathParts.length) {
+    return false;
+  }
+
+  for (let i = 0; i < prefixParts.length; i++) {
+    if (prefixParts[i] !== pathParts[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class PollingService {
 
-  constructor(private http: HttpService) {
+  private readonly eventStream: Observable<PollingEvent>;
+
+  constructor(private http: HttpService, private _logger: Logger) {
+
+    this.eventStream = this.getEventListener().pipe(publish(), refCount());
   }
 
-  doStuff() {
-    this.http.accessToken.subscribe(token => {
+  private getRawListener(): Observable<RawMessage> {
+    return this.http.accessToken.pipe(
+      switchMap(token => {
+        const url = environment.serverConfig.host_ws + 'api/v1/long_polling';
 
-      console.log(new Date());
+        const ws = new $WebSocket(url);
 
-      const r = oboe({
-        method: 'GET',
-        url: 'https://notify-messenger-notify-server-staging.lavanote.com/api/v1/long_polling',
-        headers: {
-          'Authorization': `Bearer ${token}`
+        ws.send4Direct(JSON.stringify({'action': 'authenticate', 'token': token}));
+
+        return Observable.create(s => {
+
+          ws.onMessage(event => s.next({
+            type: 'message',
+            data: JSON.parse(event.data),
+          }));
+
+          ws.onError(event => {
+            s.next({
+              type: 'error',
+              data: event,
+            })
+          });
+
+          ws.onClose(() => s.complete());
+
+          return () => {
+            ws.close();
+          };
+        });
+      })
+    );
+  }
+
+  private getEventListener(): Observable<PollingEvent> {
+    return this.getRawListener().pipe(
+      tap(event => {
+        if (event.type !== 'message') {
+          this._logger.error(event);
         }
-      });
-
-      r.node('!.*', obj => {
-
-        // This callback will be called everytime a new object is
-        // found in the foods array.
-
-        console.log(new Date());
-        console.log('Go eat some', obj);
-      });
-
-    });
-
-
+      }),
+      filter(event => event.type === 'message'),
+      map(event => event.data),
+    );
   }
 
+  listen(filterString?: string): Observable<PollingEvent> {
+    if (filterString) {
+      return this.eventStream.pipe(filter(e => doesFilterMatch(filterString, e.action)));
+    } else {
+      return this.eventStream;
+    }
+  }
 
 }
