@@ -13,6 +13,7 @@
   </div>
   <div class="pass-card-hdivider"></div>
   <div class="pass-card-body">
+    <app-duration-picker></app-duration-picker>
     <div *ngIf="type==='hallpass'" class="pass-card-body-left" [style.display]="'flex'" [style.flex-direction]="'column'">
       {{ pass.origin.title }}
       <img [src]="'./assets/' +(pass.travel_type==='one_way'?'One Arrow':'Round-trip Arrows') +'.png' | resolveAsset"

@@ -2,14 +2,64 @@
 
 @include mat-core();
 
-$slider-theme-primary: mat-palette($mat-indigo);
-$slider-theme-accent: mat-palette($mat-pink, A200, A100, A400);
+$mat-white: (
+  100: #FFFFFF,
+  500: #FFFFFF,
+  700: #FFFFFF,
+  A100: #FFFFFF,
+  A200: #FFFFFF,
+  A400: #FFFFFF,
+  A700: #FFFFFF,
+  contrast: (
+    100: $dark-primary-text,
+    500: $dark-primary-text,
+    700: $dark-primary-text,
+  )
+);
+
+$slider-theme-primary: mat-palette($mat-white);
+$slider-theme-accent: mat-palette($mat-white);
 $slider-theme: mat-light-theme($slider-theme-primary, $slider-theme-accent);
 
 @include angular-material-theme($slider-theme);
 
-// $loading-theme-primary: mat-palette('#FFFFFF');
-// $loading-theme-accent: mat-palette('#FFFFFF');
-// $loading-theme-warn: mat-palette('#FFFFFF');
 
-// @include angular-material-theme($loading-theme);
+
+$mat-dark-green: (
+  100: #06FF7A,
+  500: #04CD33,
+  700: #04CD33,
+  A100: #04CD33,
+  A200: #04CD33,
+  A400: #04CD33,
+  A700: #04CD33,
+  contrast: (
+    100: $dark-primary-text,
+    500: $dark-primary-text,
+    700: $dark-primary-text,
+  )
+);
+
+$mat-light-green: (
+  100: #06FF7A,
+  500: #06FF7A,
+  700: #06FF7A,
+  A100: #06FF7A,
+  A200: #06FF7A,
+  A400: #06FF7A,
+  A700: #06FF7A,
+  contrast: (
+    100: $dark-primary-text,
+    500: $dark-primary-text,
+    700: $dark-primary-text,
+  )
+);
+
+
+$loading-theme-primary: mat-palette($mat-dark-green);
+$loading-theme-accent: mat-palette($mat-light-green);
+$loading-theme: mat-light-theme($loading-theme-primary, $loading-theme-accent);
+
+.loading-theme {
+    @include angular-material-theme($loading-theme);
+}
