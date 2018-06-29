@@ -1,10 +1,9 @@
 import { Component, EventEmitter, OnInit, Output , Input} from '@angular/core';
-import { Duration } from '../NewModels';
 
 @Component({
   selector: 'app-duration-picker',
   templateUrl: './duration-picker.component.html',
-  styleUrls: ['./duration-picker.component.css']
+  styleUrls: ['./duration-picker.component.scss']
 })
 
 export class DurationPickerComponent implements OnInit {

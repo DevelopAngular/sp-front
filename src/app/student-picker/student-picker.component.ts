@@ -15,7 +15,7 @@ import { Paged, User } from '../NewModels';
 @Component({
   selector: 'app-student-picker',
   templateUrl: './student-picker.component.html',
-  styleUrls: ['./student-picker.component.css']
+  styleUrls: ['./student-picker.component.scss']
 })
 export class StudentPickerComponent implements OnDestroy {
 

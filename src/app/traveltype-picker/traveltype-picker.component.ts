@@ -3,7 +3,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 @Component({
   selector: 'app-traveltype-picker',
   templateUrl: './traveltype-picker.component.html',
-  styleUrls: ['./traveltype-picker.component.css']
+  styleUrls: ['./traveltype-picker.component.scss']
 })
 export class TraveltypePickerComponent implements OnInit {
 

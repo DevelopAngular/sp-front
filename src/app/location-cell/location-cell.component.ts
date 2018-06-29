@@ -4,7 +4,7 @@ import { Location } from '../NewModels';
 @Component({
   selector: 'app-location-cell',
   templateUrl: './location-cell.component.html',
-  styleUrls: ['./location-cell.component.css']
+  styleUrls: ['./location-cell.component.scss']
 })
 export class LocationCellComponent implements OnInit {
 

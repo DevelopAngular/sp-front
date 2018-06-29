@@ -4,7 +4,7 @@ import { GoogleLoginService } from '../google-login.service';
 @Component({
   selector: 'google-signin',
   templateUrl: './google-signin.component.html',
-  styleUrls: ['./google-signin.component.css']
+  styleUrls: ['./google-signin.component.scss']
 })
 
 export class GoogleSigninComponent {

@@ -2,6 +2,7 @@
             (onTabChange)="updateTab($event)" (inboxEvent)="inboxVisibility = $event"></app-navbar>
 <div class="pg1-wrapper container" *ngIf="tabIndex==1 && dataService.currentUser | async">
   <div class="main-page-left">
+    <app-duration-picker></app-duration-picker>
     <!-- <app-pass-card [pass]="testPass1"></app-pass-card> -->
     <div *ngIf="checkedPasses" class="current-pass">
       <div *ngIf="!!currentPass; else newPass;" class="pass-card center">

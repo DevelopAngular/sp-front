@@ -4,7 +4,7 @@ import { MatDialogRef } from '@angular/material';
 @Component({
   selector: 'app-request-accept',
   templateUrl: './request-accept.component.html',
-  styleUrls: ['./request-accept.component.css']
+  styleUrls: ['./request-accept.component.scss']
 })
 
 export class RequestAcceptComponent implements OnInit {

@@ -12,7 +12,7 @@ import { Duration, HallPass, Invitation, Location, Pinnable, Request, User } fro
 @Component({
   selector: 'app-hallpass-form',
   templateUrl: './hallpass-form.component.html',
-  styleUrls: ['./hallpass-form.component.css']
+  styleUrls: ['./hallpass-form.component.scss']
 })
 export class HallpassFormComponent implements OnInit {
   // General Set-Up

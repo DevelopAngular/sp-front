@@ -4,7 +4,7 @@ import { Invitation, HallPass, Request } from '../NewModels';
 @Component({
   selector: 'app-pass-collection',
   templateUrl: './pass-collection.component.html',
-  styleUrls: ['./pass-collection.component.css']
+  styleUrls: ['./pass-collection.component.scss']
 })
 export class PassCollectionComponent implements OnInit {
 

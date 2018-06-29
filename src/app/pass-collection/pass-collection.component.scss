@@ -47,14 +47,6 @@
     margin-top: 10px;
 }
 
-:host /deep/ .custom-mat-tile{
-    overflow: visible !important;
-}
-
-:host /deep/ mat-grid-tile{
-    overflow: visible !important;
-}
-
-:host /deep/ .mat-grid-tile{
-    overflow: visible !important;
+.custom-mat-tile{
+    overflow: visible;
 }

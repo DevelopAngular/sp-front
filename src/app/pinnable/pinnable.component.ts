@@ -5,7 +5,7 @@ import { Pinnable } from '../NewModels';
 @Component({
   selector: 'app-pinnable',
   templateUrl: './pinnable.component.html',
-  styleUrls: ['./pinnable.component.css'],
+  styleUrls: ['./pinnable.component.scss'],
   animations: [
     bumpIn
   ]

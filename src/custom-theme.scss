@@ -1,0 +1,15 @@
+@import '~@angular/material/_theming';
+
+@include mat-core();
+
+$slider-theme-primary: mat-palette($mat-indigo);
+$slider-theme-accent: mat-palette($mat-pink, A200, A100, A400);
+$slider-theme: mat-light-theme($slider-theme-primary, $slider-theme-accent);
+
+@include angular-material-theme($slider-theme);
+
+// $loading-theme-primary: mat-palette('#FFFFFF');
+// $loading-theme-accent: mat-palette('#FFFFFF');
+// $loading-theme-warn: mat-palette('#FFFFFF');
+
+// @include angular-material-theme($loading-theme);

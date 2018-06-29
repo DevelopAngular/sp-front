@@ -6,7 +6,7 @@ import { EventEmitter } from 'events';
 @Component({
   selector: 'app-pass-tile',
   templateUrl: './pass-tile.component.html',
-  styleUrls: ['./pass-tile.component.css'],
+  styleUrls: ['./pass-tile.component.scss'],
   animations: [
     bumpIn
   ]

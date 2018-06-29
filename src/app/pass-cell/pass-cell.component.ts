@@ -3,7 +3,7 @@ import {HallPass, Invitation, Request} from '../NewModels';
 @Component({
   selector: 'app-pass-cell',
   templateUrl: './pass-cell.component.html',
-  styleUrls: ['./pass-cell.component.css']
+  styleUrls: ['./pass-cell.component.scss']
 })
 export class PassCellComponent implements OnInit {
 

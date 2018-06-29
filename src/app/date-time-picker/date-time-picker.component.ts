@@ -6,7 +6,7 @@ import { AmazingTimePickerService } from 'amazing-time-picker';
 @Component({
   selector: 'app-date-time-picker',
   templateUrl: './date-time-picker.component.html',
-  styleUrls: ['./date-time-picker.component.css']
+  styleUrls: ['./date-time-picker.component.scss']
 })
 export class DateTimePickerComponent implements OnInit {
 

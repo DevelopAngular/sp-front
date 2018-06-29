@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA } from '@angular/material';
 @Component({
   selector: 'app-consent-menu',
   templateUrl: './consent-menu.component.html',
-  styleUrls: ['./consent-menu.component.css']
+  styleUrls: ['./consent-menu.component.scss']
 })
 export class ConsentMenuComponent {
 

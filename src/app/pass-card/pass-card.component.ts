@@ -4,7 +4,7 @@ import { HallPass, Invitation, User } from '../NewModels';
 @Component({
   selector: 'app-pass-card',
   templateUrl: './pass-card.component.html',
-  styleUrls: ['./pass-card.component.css']
+  styleUrls: ['./pass-card.component.scss']
 })
 export class PassCardComponent implements OnInit {
 

@@ -18,7 +18,7 @@ const cssColorRegexp = new RegExp(`^(${CSS_COLOR_REGEXP})$`, 'i');
 @Component({
   selector: 'app-gradient-button',
   templateUrl: './gradient-button.component.html',
-  styleUrls: ['./gradient-button.component.css'],
+  styleUrls: ['./gradient-button.component.scss'],
   animations: [
     bumpIn
   ]

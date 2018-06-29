@@ -8,7 +8,7 @@ import { Location } from '../NewModels';
 @Component({
   selector: 'app-teacher-search',
   templateUrl: './teacher-search.component.html',
-  styleUrls: ['./teacher-search.component.css']
+  styleUrls: ['./teacher-search.component.scss']
 })
 export class TeacherSearchComponent {
   locations: Location[] = [];
