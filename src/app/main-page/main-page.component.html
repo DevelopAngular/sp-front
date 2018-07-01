@@ -2,8 +2,8 @@
             (onTabChange)="updateTab($event)" (inboxEvent)="inboxVisibility = $event"></app-navbar>
 <div class="pg1-wrapper container" *ngIf="tabIndex==1 && dataService.currentUser | async">
   <div class="main-page-left">
-    <app-duration-picker></app-duration-picker>
-    <app-pass-card [pass]="testPass1"></app-pass-card>
+    <!-- <app-duration-picker></app-duration-picker>
+    <app-pass-card [pass]="testPass1"></app-pass-card> -->
     <div *ngIf="checkedPasses" class="current-pass">
       <div *ngIf="!!currentPass; else newPass;" class="pass-card center">
         <app-pass-card [pass]="currentPass" [user]="dataService.currentUser | async"
@@ -11,20 +11,20 @@
         </app-pass-card>
       </div>
       <ng-template #newPass>
-        <app-display-card [title]="'New Pass'" [hasDivider]="true" [fontSize]="'18pt'" [icon]="'./assets/Plus (Colored).png'">
+        <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Plus (Colored).png'">
           <div class="pass-buttons">
             <app-gradient-button
-              [minWidth]="'170px'"
-              [minHeight]="'100px'"
+              [minWidth]="'121px'"
+              [minHeight]="'74px'"
               [hoverColor]="'#00b476'"
-              [fontSize]="'16px'"
+              [fontSize]="'15px'"
               (click)="showForm()">Now
             </app-gradient-button>
             <app-gradient-button
-              [minWidth]="'170px'"
-              [minHeight]="'100px'"
+              [minWidth]="'121px'"
+              [minHeight]="'74px'"
               [hoverColor]="'#00b476'"
-              [fontSize]="'16px'"
+              [fontSize]="'15px'"
               >Later
             </app-gradient-button>
           </div>
@@ -32,18 +32,18 @@
       </ng-template>
     </div>
     <div class="future-passes">
-      <app-pass-collection [style.width]="'570px'" [passes]="testPasses" [title]="'Passes for Later'" [icon]="'./assets/Later (Colored).png'" [columns]="3"></app-pass-collection>
+      <app-pass-collection [style.width]="'400px'" [passes]="testPasses" [title]="'Scheduled Passes'" [icon]="'./assets/Later (Colored).png'" [columns]="3"></app-pass-collection>
     </div>
     <div class="past-passes">
-      <app-pass-collection [style.width]="'570px'" [passes]="testPasses" [title]="'Places I\'ve Been'" [icon]="'./assets/Places I\'ve Been (Colored).png'" [columns]="3"></app-pass-collection>
+      <app-pass-collection [style.width]="'400px'" [passes]="testPasses" [title]="'Expired Passes'" [icon]="'./assets/Places I\'ve Been (Colored).png'" [columns]="3"></app-pass-collection>
     </div>
   </div>
 
   <div class="main-page-right" *ngIf="inboxVisibility">
-    <app-display-card [title]="'Inbox'" [hasDivider]="false" [fontSize]="'22pt'">
+    <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'22pt'">
       <div class="inbox-content">
-          <app-pass-collection [style.width]="'370px'" [passes]="testPasses" [title]="'Pass Requests'" [icon]="'./assets/Lock (Colored).png'" [columns]="2"></app-pass-collection>
-          <app-pass-collection [style.width]="'370px'" [passes]="testPasses" [title]="'Invitations'" [icon]="'./assets/Invitation (Colored).png'" [columns]="2"></app-pass-collection>    
+          <app-pass-collection [style.width]="'258px'" [passes]="testPasses" [title]="'Sent'" [icon]="'./assets/Lock (Colored).png'" [columns]="2"></app-pass-collection>
+          <app-pass-collection [style.width]="'258px'" [passes]="testPasses" [title]="'Received'" [icon]="'./assets/Invitation (Colored).png'" [columns]="2"></app-pass-collection>    
       </div>
     </app-display-card>
   </div>
