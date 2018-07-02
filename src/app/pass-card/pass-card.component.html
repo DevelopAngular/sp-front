@@ -1,34 +1,11 @@
-<div class="pass-card-wrapper" [style.background-image]="getGradient()">
-  <div class="pass-card-header">
-    <img  class="pass-card-header-icon" [src]="pass.icon | resolveAsset">
-    <div class="pass-card-header-info">
-      <div class="pass-card-header-info-title">
-        {{ pass.destination.title }}
-      </div>
-      <div class="pass-card-header-info-subtitle">
+<app-pass-card-template [hasDivider]="hasDivider" [pass]="pass">
+  <div class="card-subtitle">
 
-      </div>
-    </div>
-    <img class="pass-card-header-close" [src]="'./assets/Cancel.png' | resolveAsset">
   </div>
-  <div class="pass-card-hdivider"></div>
-  <div class="pass-card-body">
-    <app-duration-picker></app-duration-picker>
-    <div *ngIf="type==='hallpass'" class="pass-card-body-left" [style.display]="'flex'" [style.flex-direction]="'column'">
-      {{ pass.origin.title }}
-      <img [src]="'./assets/' +(pass.travel_type==='one_way'?'One Arrow':'Round-trip Arrows') +'.png' | resolveAsset"
-          [style.height]="'50px'" [style.width]="(pass.travel_type==='one_way'?'50px':'120px')">
-      {{ pass.destination.title }}
-    </div>
-    <div *ngIf="type==='request'" class="pass-card-body-left">
+  <div class="card-body-left">
 
-    </div>
-    <div *ngIf="type==='invitation'"class="pass-card-body-left">
-
-    </div>
-    <div *ngIf="!(type==='hallpass')" class="pass-card-body-vdivider"></div>
-    <div class="pass-card-body-right">
-
-    </div>
   </div>
-</div>
+  <div class="card-body-right">
+
+  </div>
+</app-pass-card-template>
