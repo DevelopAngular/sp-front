@@ -10,10 +10,14 @@ import { HallPass, Invitation, Request } from '../NewModels';
 export class TravelViewComponent implements OnInit {
 
   @Input() pass: HallPass | Invitation | Request;
-
+  type: string;
+  
   constructor() { }
 
   ngOnInit() {
+    this.type = (this.pass instanceof HallPass) ? 'hallpass' :
+    (this.pass instanceof Invitation) ? 'invitation' :
+      'request';
   }
 
 }
