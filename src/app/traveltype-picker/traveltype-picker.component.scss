@@ -3,7 +3,6 @@
     border-radius: 5px;
     width: 120px;
     height: 20px;
-    margin-bottom: 20px;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -16,6 +15,9 @@
 .option{
     /* margin: 5px; */
     height: inherit;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     font-size: 11px;
     border-radius: 5px;
 }

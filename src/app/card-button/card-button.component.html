@@ -1,4 +1,5 @@
-<div class="card-button-wrapper" (click)="buttonClicked" [style.width]="width" [style.height]="height">
-  <div class="card-button-overlay-base" (click)="buttonClicked" [style.width]="overlayWidth" [style.height]="height"></div>
+<div class="card-button-wrapper" (click)="buttonClicked" [style.width]="width" [style.height]="height"
+    [@pressState]="buttonState" (mousedown)="onPress(true)" (mouseup)="onPress(false)">
+  <!-- <div class="card-button-overlay-base" (click)="buttonClicked" [style.width]="overlayWidth" [style.height]="height"></div> -->
   <ng-content></ng-content>
 </div>

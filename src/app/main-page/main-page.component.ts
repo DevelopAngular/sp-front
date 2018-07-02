@@ -25,7 +25,7 @@ export class MainPageComponent implements OnInit {
   testStudent = new User('testStudent', new Date(), new Date(), 'Kyle', 'Cook', 'Kyle Cook', 'mail@mail.com', []);
   testIssuer = new User('testIssuer', new Date(), new Date(), 'Donald', 'Sawyer', 'Don Sawyer', 'mail@mail.com', []);
   testOrigin = new Location('testOrigin', 'Ladson', 'MHS', 'C123', 'classroom', false, [], [], [], 15);
-  testDestination = new Location('testDestination', 'Water Fountain', 'MHS', 'WF', '', false, [], [], [], 15);
+  testDestination = new Location('testDestination', 'Water Fountain', 'MHS', 'WF', '', false, [], ['round_trip', 'one_way'], [], 15);
   testDate:Date = new Date();
 
   testPass1: HallPass;

@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { HallPass, Invitation, User } from '../NewModels';
+import { HallPass} from '../NewModels';
+import { Util } from '../../Util';
 
 @Component({
   selector: 'app-pass-card',
@@ -8,19 +9,17 @@ import { HallPass, Invitation, User } from '../NewModels';
 })
 export class PassCardComponent implements OnInit {
 
-  @Input() pass;
-
-  @Input() active: boolean;
-
-  @Input() hasDivider: boolean = false;
-  
-  @Input() isDetails: boolean = false;
+  @Input() pass: HallPass;
+  @Input() isActive: boolean = false;
+  @Input() forInput: boolean = false;
+  @Input() fromPast: boolean = false;
+  @Input() forFuture: boolean = false;
 
   @Output() cardEvent: EventEmitter<any> = new EventEmitter();
 
   timeLeft: string = '00:00';
 
-  returnData:any = {};
+  returnData: any = {};
 
   constructor() {
 
@@ -28,7 +27,7 @@ export class PassCardComponent implements OnInit {
 
   ngOnInit() {
     setInterval(() => {
-      if (!!this.pass && this.active) {
+      if (!!this.pass && this.isActive) {
         let end = this.pass.expiration_time;
         let start = new Date();
         let diff: number = Math.floor((end.getTime() - start.getTime()) / 1000);
@@ -55,6 +54,18 @@ export class PassCardComponent implements OnInit {
 
   updateTravelType(travelType:string){
     this.pass.travel_type = travelType;
+  }
+
+  formatDatedTime(){
+    return Util.formatDateTime(this.pass.start_time);
+  }
+
+  getDuration(){
+    let start: Date = this.pass.start_time;
+    let end: Date = this.pass.end_time;
+    let timeDiff = Math.abs(start.getTime() - end.getTime());
+    let diffSecs = Math.ceil(timeDiff / 1000);
+    return Math.floor(diffSecs/60) +':' +diffSecs%60;
   }
 
 }

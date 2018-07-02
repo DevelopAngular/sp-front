@@ -1,10 +1,13 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { AUTOCOMPLETE_OPTION_HEIGHT } from '@angular/material';
+import { bumpIn } from '../animations';
 
 @Component({
   selector: 'app-card-button',
   templateUrl: './card-button.component.html',
-  styleUrls: ['./card-button.component.scss']
+  styleUrls: ['./card-button.component.scss'],
+  animations: [
+    bumpIn
+  ]
 })
 export class CardButtonComponent implements OnInit {
 
@@ -16,12 +19,23 @@ export class CardButtonComponent implements OnInit {
 
   @Output() onClick: EventEmitter<any> = new EventEmitter(); 
 
+  buttonDown = false;
+
   constructor() { }
 
   ngOnInit() {
   }
 
+  get buttonState() {
+    return this.buttonDown ? 'down' : 'up';
+  }
+  
   buttonClicked(){
     this.onClick.emit();
+  }
+
+  onPress(press: boolean) {
+    this.buttonDown = press;
+    console.log('asd');
   }
 }

@@ -2,9 +2,13 @@
             (onTabChange)="updateTab($event)" (inboxEvent)="inboxVisibility = $event"></app-navbar>
 <div class="pg1-wrapper container" *ngIf="tabIndex==1 && dataService.currentUser | async">
   <div class="main-page-left">
+
+    <app-pass-card [pass]="testPass1" [forInput]="true"></app-pass-card>
+
+
     <div *ngIf="checkedPasses" class="current-pass">
       <div *ngIf="!!currentPass; else newPass;" class="pass-card center">
-        <app-pass-card [pass]="currentPass" (cardEvent)="cardEvent($event)" [isDetails]="showDetails">
+        <app-pass-card [pass]="currentPass" (cardEvent)="cardEvent($event)" [forInput]="showDetails">
         </app-pass-card>
       </div>
       <ng-template #newPass>
