@@ -17,7 +17,7 @@
       <ng-content select=".card-body-left"></ng-content>
     </div>
     <div *ngIf="hasDivider" class="pass-card-body-vdivider"></div>
-    <div class="pass-card-body-right">
+    <div class="pass-card-body-right" [style.justify-content]="rightJustify">
       <ng-content select=".card-body-right"></ng-content>
     </div>
   </div>

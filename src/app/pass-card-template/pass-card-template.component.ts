@@ -9,6 +9,7 @@ export class PassCardTemplateComponent implements OnInit {
 
   @Input() pass: HallPass | Invitation | Request;
   @Input() hasDivider: boolean = false;
+  @Input() rightJustify: string = 'flex-end';
 
   constructor() {}
 

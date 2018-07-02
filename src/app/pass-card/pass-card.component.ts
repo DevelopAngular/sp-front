@@ -56,7 +56,7 @@ export class PassCardComponent implements OnInit {
     this.pass.travel_type = travelType;
   }
 
-  formatDatedTime(){
+  formatDateTime(){
     return Util.formatDateTime(this.pass.start_time);
   }
 
@@ -65,7 +65,7 @@ export class PassCardComponent implements OnInit {
     let end: Date = this.pass.end_time;
     let timeDiff = Math.abs(start.getTime() - end.getTime());
     let diffSecs = Math.ceil(timeDiff / 1000);
-    return Math.floor(diffSecs/60) +':' +diffSecs%60;
+    return Math.floor(diffSecs/60) +':' +(diffSecs%60<10?'0':'') +diffSecs%60;
   }
 
 }

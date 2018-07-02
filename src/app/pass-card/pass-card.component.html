@@ -1,4 +1,4 @@
-<app-pass-card-template [pass]="pass">
+<app-pass-card-template [pass]="pass" [rightJustify]="(fromPast || forFuture)?'center':'flex-end'">
   <div class="card-subtitle" *ngIf="fromPast || forFuture">
     {{ formatDateTime() }}
   </div>
