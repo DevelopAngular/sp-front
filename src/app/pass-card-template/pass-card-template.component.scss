@@ -1,0 +1,77 @@
+.pass-card-wrapper{
+    width: 450px;
+    height: 235px;
+    padding: 25px;
+    border-radius: 15px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 7.5px 13px 0 rgba(0, 0, 0, 0.1);
+    font-family: 'Helvetica Neue', sans-serif;
+  }
+  
+  .pass-card-header{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .pass-card-header-icon{
+    width: 35px;
+    height: 35px;
+  }
+  
+  .pass-card-header-info{
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .pass-card-header-info-title{
+    font-size: 18pt;
+  }
+  
+  .pass-card-header-info-subtitle{
+    font-size: 12pt;
+  }
+  
+  .pass-card-header-info-title, .pass-card-header-info-subtitle{
+    margin-left: 10px;
+  }
+  
+  .pass-card-header-close{
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    margin-left: auto;
+  }
+  
+  .pass-card-hdivider{
+    width: 100%;
+    height: 1px;
+    background-color: rgba(255, 255, 255, .3);
+    margin: 10px 0 20px 0;
+  }
+  
+  .pass-card-body{
+    display: flex;
+    flex-direction: row;
+    height: 162px;
+  }
+  
+  .pass-card-body-left{
+    width: 210px;
+    height: inherit;
+    justify-content: space-around;
+    align-items: center;
+  }
+  
+  .pass-card-body-vdivider{
+    width: 2px;
+    height: 162px;
+    background-color: rgba(255, 255, 255, .3);
+  }
+  
+  .pass-card-body-right{
+    flex-grow: 1;
+  }

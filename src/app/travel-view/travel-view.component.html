@@ -1,0 +1,6 @@
+<div class="travel-view-container">
+  {{ pass.origin.title }}
+  <img [src]="'./assets/' +(pass.travel_type==='one_way'?'One Arrow':'Round-trip Arrows') +'.png' | resolveAsset"
+      [style.height]="'50px'" [style.width]="(pass.travel_type==='one_way'?'50px':'120px')">
+  {{ pass.destination.title }}
+</div>

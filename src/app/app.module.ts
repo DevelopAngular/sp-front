@@ -82,6 +82,11 @@ import { ContainerCardComponent } from './container-card/container-card.componen
 import { PassCollectionComponent } from './pass-collection/pass-collection.component';
 import { DisplayCardComponent } from './display-card/display-card.component';
 import { PagerComponent } from './pager/pager.component';
+import { PassCardTemplateComponent } from './pass-card-template/pass-card-template.component';
+import { TravelViewComponent } from './travel-view/travel-view.component';
+import { CardButtonComponent } from './card-button/card-button.component';
+import { RequestCardComponent } from './request-card/request-card.component';
+import { InvitationCardComponent } from './invitation-card/invitation-card.component';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: '/main', pathMatch: 'full'},
@@ -120,6 +125,11 @@ const appRoutes: Routes = [
     PassCollectionComponent,
     DisplayCardComponent,
     PagerComponent,
+    PassCardTemplateComponent,
+    TravelViewComponent,
+    CardButtonComponent,
+    RequestCardComponent,
+    InvitationCardComponent,
   ],
   entryComponents: [
     HallpassFormComponent,

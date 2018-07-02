@@ -1,0 +1,24 @@
+<div class="pass-card-wrapper" [style.background-image]="getGradient()">
+  <div class="pass-card-header">
+    <img  class="pass-card-header-icon" [src]="pass.icon | resolveAsset">
+    <div class="pass-card-header-info">
+      <div class="pass-card-header-info-title">
+        {{ pass.destination.title }}
+      </div>
+      <div class="pass-card-header-info-subtitle">
+        <ng-content select=".card-subtitle"></ng-content>
+      </div>
+    </div>
+    <img class="pass-card-header-close" [src]="'./assets/Cancel.png' | resolveAsset">
+  </div>
+  <div class="pass-card-hdivider"></div>
+  <div class="pass-card-body">
+    <div class="pass-card-body-left">
+      <ng-content select=".card-body-left"></ng-content>
+    </div>
+    <div *ngIf="hasDivider" class="pass-card-body-vdivider"></div>
+    <div class="pass-card-body-right">
+      <ng-content select=".cad-body-right"></ng-content>
+    </div>
+  </div>
+</div>
