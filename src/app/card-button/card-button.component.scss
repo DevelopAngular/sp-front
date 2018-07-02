@@ -1,0 +1,39 @@
+.card-button-wrapper, .card-button-overlay{
+    border-radius: 10px;
+}
+
+.card-button-wrapper{
+    position: relative;
+    z-index: 5;
+    box-shadow: 0 7.5px 13px 5px rgba(0, 0, 0, 0.1);
+    // background-image: radial-gradient(circle at 73% 71%, #03CF31, #00B476);
+    background-color: white;
+    mix-blend-mode: soft-light;
+}
+
+.card-button-wrapper:hover{
+    box-shadow: 0 8.5px 14px 0 rgba(0, 0, 0, 0.3);
+}
+
+.card-button-overlay-base{
+    position: absolute;
+    top: inherit;
+    left: inherit;
+    z-index: 6;
+    background-color: #D8D8D8;
+    mix-blend-mode: soft-light;
+}
+
+.card-button-overlay-valid{
+
+}
+
+.card-button-overlay-invalid{
+  background: radial-gradient(circle at 73% 71%, #DA2370 , #FB434A	); 
+}
+
+// .card-button-content{
+//     position: relative;
+//     z-index: 7;
+//     color: white;
+// }
