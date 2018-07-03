@@ -81,6 +81,33 @@ export class Alert {
   }
 }
 
+export class ColorProfile {
+  constructor(public id: string,
+              public title: string,
+              public gradient_color: string,
+              public solid_color: string,
+              public overlay_color: string,
+              public pressed_color: string,
+              public time_color: string) {
+  }
+
+  static fromJSON(JSON: any): ColorProfile {
+    if (!JSON) {
+      return null;
+    }
+
+    const id: string = '' + JSON['id'],
+          title: string = JSON['title'],
+          gradient_color: string = JSON['gradient_color'],
+          solid_color: string = JSON['solid_color'],
+          overlay_color: string = JSON['overlay_color'],
+          pressed_color: string = JSON['pressed_color'],
+          time_color: string = JSON['time_color'];
+
+    return new ColorProfile(id, title, gradient_color, solid_color, overlay_color, pressed_color, time_color);
+  }
+}
+
 export class HallPass {
   constructor(public id: string,
               public student: User,
@@ -94,7 +121,8 @@ export class HallPass {
               public destination: Location,
               public travel_type: string,
               public gradient_color: string,
-              public icon: string) {
+              public icon: string,
+              public color_profile: ColorProfile) {
   }
 
   static fromJSON(JSON: any): HallPass {
@@ -115,9 +143,10 @@ export class HallPass {
       destination: Location = Location.fromJSON(JSON['destination']),
       travel_type: string = JSON['travel_type'],
       gradient_color: string = JSON['gradient_color'],
-      icon: string = JSON['icon'];
+      icon: string = JSON['icon'],
+      color_profile: ColorProfile = ColorProfile.fromJSON(JSON['color_profile']);
 
-    return new HallPass(id, student, issuer, created, last_updated, start_time, expiration_time, end_time, origin, destination, travel_type, gradient_color, icon);
+    return new HallPass(id, student, issuer, created, last_updated, start_time, expiration_time, end_time, origin, destination, travel_type, gradient_color, icon, color_profile);
   }
 }
 
@@ -132,7 +161,8 @@ export class Invitation {
               public duration: number,
               public gradient_color: string,
               public icon: string,
-              public travel_type: string) {
+              public travel_type: string,
+              public color_profile: ColorProfile) {
   }
 
   static fromJSON(JSON: any) {
@@ -150,14 +180,15 @@ export class Invitation {
       gradient_color: string = JSON['gradient_color'],
       icon: string = JSON['icon'],
       default_origin: Location = (!!JSON['default_origin']) ? Location.fromJSON(JSON['default_orgin']) : null,
-      travel_type: string = JSON['travel_type'];
+      travel_type: string = JSON['travel_type'],
+      color_profile: ColorProfile = ColorProfile.fromJSON(JSON['color_profile']);
 
     let datesJSON = JSON['date_choices'];
     for (let i = 0; i < datesJSON.length; i++) {
       date_choices.push(new Date(datesJSON[i]));
     }
 
-    return new Invitation(id, student, default_origin, destination, date_choices, issuer, status, duration, gradient_color, icon, travel_type);
+    return new Invitation(id, student, default_origin, destination, date_choices, issuer, status, duration, gradient_color, icon, travel_type, color_profile);
   }
 }
 
@@ -171,7 +202,8 @@ export class Location {
               public required_attatchments: string[],
               public travel_types: string[],
               public teachers: User[],
-              public max_allowed_time: number) {
+              public max_allowed_time: number,
+              public starred: boolean) {
 
   }
 
@@ -189,7 +221,8 @@ export class Location {
       required_attachments: string[] = [],
       travel_types: string[] = [],
       teachers: User[] = [],
-      max_allowed_time: number = parseInt(JSON['max_allowed_time']);
+      max_allowed_time: number = parseInt(JSON['max_allowed_time']),
+      starred: boolean = JSON['starred'];
 
     let attachmentsJSON = JSON['required_attachments'];
     for (let i = 0; i < attachmentsJSON.length; i++) {
@@ -206,7 +239,7 @@ export class Location {
       teachers.push(User.fromJSON(teachersJSON[i]));
     }
 
-    return new Location(id, title, campus, room, category, restricted, required_attachments, travel_types, teachers, max_allowed_time);
+    return new Location(id, title, campus, room, category, restricted, required_attachments, travel_types, teachers, max_allowed_time, starred);
   }
 
   get nameRoom(): string {
@@ -221,7 +254,8 @@ export class Pinnable {
               public icon: string,
               public type: string,
               public location: Location,
-              public category: string) {
+              public category: string,
+              public color_profile: ColorProfile) {
   }
 
   static fromJSON(JSON: any): Pinnable {
@@ -235,9 +269,10 @@ export class Pinnable {
       icon: string = JSON['icon'],
       type: string = JSON['type'],
       location: Location = JSON['location'],
-      category: string = JSON['category'];
+      category: string = JSON['category'],
+      color_profile: ColorProfile = ColorProfile.fromJSON(JSON['color_profile']);
 
-    return new Pinnable(id, title, gradient_color, icon, type, location, category);
+    return new Pinnable(id, title, gradient_color, icon, type, location, category, color_profile);
   }
 }
 
@@ -253,7 +288,11 @@ export class Request {
               public gradient_color: string,
               public icon: string,
               public teacher: User,
-              public request_time: Date) {
+              public request_time: Date,
+              public declined_message: string,
+              public student_has_dismissed: boolean,
+              public cancelled: Date,
+              public color_profile: ColorProfile) {
   }
 
   static fromJSON(JSON: any): Request {
@@ -272,9 +311,13 @@ export class Request {
       gradient_color: string = JSON['gradient_color'],
       icon: string = JSON['icon'],
       teacher: User = User.fromJSON(JSON['teacher']),
-      request_time: Date = (!!JSON['request_time']) ? new Date(JSON['request_time']) : null;
+      request_time: Date = (!!JSON['request_time']) ? new Date(JSON['request_time']) : null,
+      declined_message: string = JSON['declined_message'],
+      student_has_dismissed: boolean = JSON['student_has_dismissed'],
+      cancelled: Date = (!!JSON['cancelled']) ? new Date(JSON['cancelled']) : null,
+      color_profile: ColorProfile = ColorProfile.fromJSON(JSON['color_profile']);
 
-    return new Request(id, student, origin, destination, attachment_message, travel_type, status, hallpass, gradient_color, icon, teacher, request_time);
+    return new Request(id, student, origin, destination, attachment_message, travel_type, status, hallpass, gradient_color, icon, teacher, request_time, declined_message, student_has_dismissed, cancelled, color_profile);
   }
 
 }

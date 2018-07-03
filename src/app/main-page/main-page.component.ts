@@ -9,7 +9,8 @@ import { DataService } from '../data-service';
 import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
 import { HttpService } from '../http-service';
 import { LoadingService } from '../loading.service';
-import { HallPass, HallPassSummary, Invitation, Request, User, Location } from '../NewModels';
+import { HallPass, HallPassSummary, Invitation, Request, User, Location, ColorProfile } from '../NewModels';
+import { flattenStyles } from '@angular/platform-browser/src/dom/dom_renderer';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('edit_all_hallpass');
@@ -24,8 +25,9 @@ export class MainPageComponent implements OnInit {
 
   testStudent = new User('testStudent', new Date(), new Date(), 'Kyle', 'Cook', 'Kyle Cook', 'mail@mail.com', []);
   testIssuer = new User('testIssuer', new Date(), new Date(), 'Donald', 'Sawyer', 'Don Sawyer', 'mail@mail.com', []);
-  testOrigin = new Location('testOrigin', 'Ladson', 'MHS', 'C123', 'classroom', false, [], [], [], 15);
-  testDestination = new Location('testDestination', 'Water Fountain', 'MHS', 'WF', '', false, [], ['round_trip', 'one_way'], [], 15);
+  testOrigin = new Location('testOrigin', 'Ladson', 'MHS', 'C123', 'classroom', false, [], [], [], 15, false);
+  testDestination = new Location('testDestination', 'Water Fountain', 'MHS', 'WF', '', false, [], ['round_trip', 'one_way'], [], 15, false);
+  testColorProfile = new ColorProfile('testColorProfile', 'Light-blue', '#0B9FC1,#00C0C7', '#07ABC3', '#11CFE5', '#0B9FC1', '#18EEF7')
   testDate:Date = new Date();
 
   testPass1: HallPass;
@@ -77,7 +79,7 @@ export class MainPageComponent implements OnInit {
                                   new Date(), new Date(), this.testDate,
                                   new Date(), new Date(), this.testOrigin, 
                                   this.testDestination, 'one_way', '#1893E9,#05B5DE',
-                                  'https://storage.googleapis.com/courier-static/icons/water-fountain.png');
+                                  'https://storage.googleapis.com/courier-static/icons/water-fountain.png', this.testColorProfile);
                                   
     this.testDate = new Date();
     this.testDate.setDate(this.testDate.getDate()+4);
@@ -85,7 +87,7 @@ export class MainPageComponent implements OnInit {
                                   new Date(), new Date(), this.testDate,
                                   new Date(), new Date(), this.testOrigin, 
                                   this.testDestination, 'round_trip', '#1893E9,#05B5DE',
-                                  'https://storage.googleapis.com/courier-static/icons/water-fountain.png');
+                                  'https://storage.googleapis.com/courier-static/icons/water-fountain.png', this.testColorProfile);
                                   
     this.testDate = new Date();
     this.testDate.setDate(this.testDate.getDate()-1);
@@ -93,14 +95,14 @@ export class MainPageComponent implements OnInit {
                                   new Date(), new Date(), this.testDate,
                                   new Date(), new Date(), this.testOrigin, 
                                   this.testDestination, 'one_way', '#1893E9,#05B5DE',
-                                  'https://storage.googleapis.com/courier-static/icons/water-fountain.png');
+                                  'https://storage.googleapis.com/courier-static/icons/water-fountain.png', this.testColorProfile);
     this.testDate = new Date();                              
     this.testDate.setDate(this.testDate.getDate()+1);
     this.testPass4 = new HallPass('testPass4', this.testStudent, this.testIssuer,
                                   new Date(), new Date(), this.testDate,
                                   new Date(), new Date(), this.testOrigin, 
                                   this.testDestination, 'one_way', '#1893E9,#05B5DE',
-                                  'https://storage.googleapis.com/courier-static/icons/water-fountain.png');
+                                  'https://storage.googleapis.com/courier-static/icons/water-fountain.png', this.testColorProfile);
 
     this.testPasses = [this.testPass1, this.testPass2, this.testPass3, this.testPass4];
 
@@ -165,18 +167,18 @@ export class MainPageComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result: Object) => {
       // console.log('[Form Return]: ', result);
       this.showDetails = true;
-      if(result['restricted']){
-        this.currentPass = new Request('template', this.user, result['fromLocation'],
-                                      result['toLocation'], result['message'],
-                                      '', '', null, result['gradient'],
-                                      result['icon'], result['requestTarget'], null);
-      } else{
-        this.currentPass = new HallPass('template', this.user, this.user,
-                                        new Date(), new Date(), new Date(),
-                                        new Date(), new Date(), result['fromLocation'],
-                                        result['toLocation'], '', result['gradient'],
-                                        result['icon']);
-      }
+      // if(result['restricted']){
+      //   this.currentPass = new Request('template', this.user, result['fromLocation'],
+      //                                 result['toLocation'], result['message'],
+      //                                 '', '', null, result['gradient'],
+      //                                 result['icon'], result['requestTarget'], null);
+      // } else{
+      //   this.currentPass = new HallPass('template', this.user, this.user,
+      //                                   new Date(), new Date(), new Date(),
+      //                                   new Date(), new Date(), result['fromLocation'],
+      //                                   result['toLocation'], '', result['gradient'],
+      //                                   result['icon']);
+      // }
       this.isStaff$.subscribe(isStaff => {
         this._zone.run(() => {
           if (result instanceof HallPass) {

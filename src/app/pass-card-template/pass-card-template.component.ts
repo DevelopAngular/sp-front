@@ -17,7 +17,7 @@ export class PassCardTemplateComponent implements OnInit {
   }
 
   getGradient() {
-    let gradient: string[] = this.pass.gradient_color.split(',');
+    let gradient: string[] = this.pass.color_profile.gradient_color.split(',');
 
     return 'radial-gradient(circle at 73% 71%, ' + gradient[0] + ', ' + gradient[1] + ')';
   }
