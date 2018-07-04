@@ -9,8 +9,6 @@
 html {
   background-color: #F8FAFF;
   padding: 0 0;
-  width: 1280px; //TEMPORARY
-  max-height: 650px; //TEMPORARY
 }
 
 body {
@@ -63,5 +61,7 @@ input:focus{
 
 html, body {
   max-width: 100%;
-  overflow-x: hidden;
+  overflow-x: hidden;  
+  width: 1280px; //TEMPORARY
+  max-height: 650px; //TEMPORARY
 }
