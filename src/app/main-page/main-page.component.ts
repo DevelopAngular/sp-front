@@ -73,11 +73,11 @@ export class MainPageComponent implements OnInit {
   constructor(private http: HttpService, public dataService: DataService, private router: Router,
               public dialog: MatDialog, private _zone: NgZone, private loadingService: LoadingService) {
   
-    this.testDate.setDate(this.testDate.getDate());
+    this.testDate.setMinutes(this.testDate.getMinutes()+1);
 
     this.testPass1 = new HallPass('testPass1', this.testStudent, this.testIssuer,
-                                  new Date(), new Date(), this.testDate,
-                                  new Date(), new Date(), this.testOrigin, 
+                                  new Date(), new Date(), new Date(),
+                                  this.testDate, this.testDate, this.testOrigin, 
                                   this.testDestination, 'one_way', '#1893E9,#05B5DE',
                                   'https://storage.googleapis.com/courier-static/icons/water-fountain.png', this.testColorProfile);
                                   

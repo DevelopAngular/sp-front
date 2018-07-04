@@ -16,6 +16,8 @@ export class CardButtonComponent implements OnInit {
   @Input() overlayWidth: string = '0px';
   @Input() valid: boolean = true;
   @Input() content: string;
+  @Input() gradientColor: string;
+
 
   @Output() onClick: EventEmitter<any> = new EventEmitter(); 
 
@@ -36,6 +38,11 @@ export class CardButtonComponent implements OnInit {
 
   onPress(press: boolean) {
     this.buttonDown = press;
-    console.log('asd');
+  }
+
+  getGradient() {
+    let gradient: string[] = this.gradientColor.split(',');
+
+    return 'radial-gradient(circle at 73% 71%, ' + gradient[0] + ', ' + gradient[1] + ')';
   }
 }

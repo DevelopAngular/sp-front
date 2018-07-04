@@ -17,9 +17,11 @@ export class PassCardComponent implements OnInit {
 
   @Output() cardEvent: EventEmitter<any> = new EventEmitter();
 
-  timeLeft: string = '00:00';
-
+  timeLeft: string = '';
+  valid: boolean = true;
   returnData: any = {};
+  overlayWidth: number = 0;
+  buttonWidth: number = 181;
 
   constructor() {
 
@@ -28,14 +30,20 @@ export class PassCardComponent implements OnInit {
   ngOnInit() {
     setInterval(() => {
       if (!!this.pass && this.isActive) {
-        let end = this.pass.expiration_time;
-        let start = new Date();
-        let diff: number = Math.floor((end.getTime() - start.getTime()) / 1000);
-        let mins: number = Math.floor(diff / 60);
-        let secs: number = Math.abs(diff % 60);
+        let end: Date = this.pass.expiration_time;
+        let now: Date = new Date();
+        let diff: number = (end.getTime() - now.getTime()) / 1000;
+        let mins: number = Math.floor(Math.abs(Math.floor(diff) / 60));
+        let secs: number = Math.abs(Math.floor(diff) % 60);
         this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
+        this.valid = end >= now;
+
+        let start: Date = this.pass.start_time;
+        let dur: number = Math.floor((end.getTime() - start.getTime()) / 1000);
+        this.overlayWidth = this.buttonWidth - (this.buttonWidth * (diff/dur));
+        console.log(this.overlayWidth);
       }
-    }, 1000);
+    }, 10);
   }
 
   _cardEvent(value: boolean) {

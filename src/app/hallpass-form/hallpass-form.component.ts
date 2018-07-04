@@ -176,6 +176,7 @@ export class HallpassFormComponent implements OnInit {
       this.firstFormGroup.controls['travelTypeCtrl'].value,
       this.toGradient,
       this.toIcon,
+      null
     );
   }
 

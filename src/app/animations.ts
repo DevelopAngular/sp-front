@@ -5,7 +5,7 @@ export const bumpIn = trigger('pressState', [
     transform: 'scale(0.97)'
   })),
   state('up', style({
-    transform: 'scale(1.0)'
+    transform: 'scale(1)'
   })),
   transition('up => down', animate('100ms ease-out')),
   transition('down => up', animate('100ms ease-in'))

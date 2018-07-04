@@ -9,7 +9,7 @@
         <ng-content select=".card-subtitle"></ng-content>
       </div>
     </div>
-    <img class="pass-card-header-close" [src]="'./assets/Cancel.png' | resolveAsset">
+    <img *ngIf="hasClose" class="pass-card-header-close" [src]="'./assets/Cancel.png' | resolveAsset">
   </div>
   <div class="pass-card-hdivider"></div>
   <div class="pass-card-body">

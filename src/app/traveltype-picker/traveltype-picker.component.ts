@@ -8,7 +8,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 export class TraveltypePickerComponent implements OnInit {
 
   @Input() choices: string[];
-  @Input() textColor: string = '#000000';
+  @Input() altColor: string = '#FFFFFF';
 
   @Output() onSelect:EventEmitter<any> = new EventEmitter();
 
@@ -30,10 +30,10 @@ export class TraveltypePickerComponent implements OnInit {
   }
 
   getFontColor(choice:string){
-    return this.selectedChoice===choice?this.textColor:'#FFFFFF';
+    return this.selectedChoice===choice?this.altColor:'#FFFFFF';
   }
 
   getBackgroundColor(choice:string){
-    return this.selectedChoice===choice?'#FFFFFF':this.textColor;
+    return this.selectedChoice===choice?'#FFFFFF':this.altColor;
   }
 }
