@@ -78,7 +78,7 @@ export class MainPageComponent implements OnInit {
     this.testPass1 = new HallPass('testPass1', this.testStudent, this.testIssuer,
                                   new Date(), new Date(), new Date(),
                                   this.testDate, this.testDate, this.testOrigin, 
-                                  this.testDestination, 'one_way', '#1893E9,#05B5DE',
+                                  this.testDestination, 'round_trip', '#1893E9,#05B5DE',
                                   'https://storage.googleapis.com/courier-static/icons/water-fountain.png', this.testColorProfile);
                                   
     this.testDate = new Date();

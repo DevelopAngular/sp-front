@@ -3,7 +3,7 @@
 <div class="pg1-wrapper container" *ngIf="tabIndex==1 && dataService.currentUser | async">
   <div class="main-page-left">
 
-    <app-pass-card [pass]="testPass1" [isActive]="true"></app-pass-card>
+    <app-pass-card [pass]="testPass1" [forInput]="true" [forFuture]="false"></app-pass-card>
 
 
     <div *ngIf="checkedPasses" class="current-pass">

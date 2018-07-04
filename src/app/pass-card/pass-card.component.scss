@@ -27,3 +27,10 @@
 .end-pass-content{
     @extend .button-content;
 }
+
+.button-icon-right{
+    width: 17px;
+    height: 17px;
+    position: absolute;
+    right: 10px;
+}

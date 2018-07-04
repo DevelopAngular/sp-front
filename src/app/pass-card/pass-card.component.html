@@ -15,7 +15,8 @@
     <app-traveltype-picker [choices]="pass.destination.travel_types" [altColor]="pass.color_profile.solid_color"></app-traveltype-picker>
     <app-card-button [width]="buttonWidth +'px'" [height]="'50px'" [gradientColor]="pass.color_profile.gradient_color">
       <div class="start-pass-content">
-        Start Pass
+        <div class="start-pass-content-text">{{((forFuture && forInput)?'Schedule Pass':'Start Pass')}}</div>
+        <img class="button-icon-right" [src]="'./assets/One Arrow.png' | resolveAsset">
       </div>
     </app-card-button>
   </div>
@@ -26,7 +27,7 @@
       </div>
     </app-card-button>
   </div>
-  <div *ngIf="fromPast || forFuture" class="card-body-right">
+  <div *ngIf="fromPast || forFuture && !forInput" class="card-body-right">
     {{ forFuture?'Pass Auto Starts': getDuration() +' - Total Time' }}
   </div>
 

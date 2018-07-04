@@ -41,7 +41,6 @@ export class PassCardComponent implements OnInit {
         let start: Date = this.pass.start_time;
         let dur: number = Math.floor((end.getTime() - start.getTime()) / 1000);
         this.overlayWidth = (this.buttonWidth * (diff/dur));
-        console.log(this.overlayWidth);
       }
     }, 10);
   }
