@@ -106,9 +106,10 @@ export class MainPageComponent implements OnInit {
 
     this.testPasses = [this.testPass1, this.testPass2, this.testPass3, this.testPass4];
 
-    // this.testRequest1 = new Request('testRequest', this.testStudent, this.testOrigin, this.testDestination,
-    //                                 'Gimme dem books yo', 'round_trip', 'status', null, '#00C0C7,#0B9FC1',
-    //                                 'https://storage.googleapis.com/courier-static/icons/library.png', this.testIssuer, this.testDate);
+    this.testRequest1 = new Request('testRequest', this.testStudent, this.testOrigin, this.testDestination,
+                                    'Gimme dem books yo', 'round_trip', 'status', null, '#00C0C7,#0B9FC1',
+                                    'https://storage.googleapis.com/courier-static/icons/library.png',
+                                    this.testIssuer, this.testDate, "No pass for you", true, null, this.testColorProfile);
 
     // this.testInvitation1 = new Invitation('testInvitation', this.testStudent, null,
     //                                       this.testDestination, [this.testDate], this.testIssuer,

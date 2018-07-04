@@ -8,7 +8,7 @@ import { Request } from '../NewModels';
 })
 export class RequestCardComponent implements OnInit {
 
-  @Input() pass: Request;
+  @Input() request: Request;
   @Input() hasDivider: boolean = false;
 
   constructor() { }
