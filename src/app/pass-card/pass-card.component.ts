@@ -36,7 +36,7 @@ export class PassCardComponent implements OnInit {
         let mins: number = Math.floor(Math.abs(Math.floor(diff) / 60));
         let secs: number = Math.abs(Math.floor(diff) % 60);
         this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
-        this.valid = end >= now;
+        this.valid = end > now;
 
         let start: Date = this.pass.start_time;
         let dur: number = Math.floor((end.getTime() - start.getTime()) / 1000);
