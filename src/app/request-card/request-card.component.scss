@@ -24,6 +24,84 @@
     font-size: 10pt;
 }
 
+.card-body-right{
+    height: inherit;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.request-description{
+    height: inherit;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+    left: 15px;
+}
+
+.request-description-icon{
+    width: 17px;
+    height: 17px;
+    margin-right: 7px;
+}
+
+.request-description{
+    font-weight: bold;
+}
+
+.request-button-content{
+    width: 181px;
+    height: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    cursor: pointer;
+    position: relative;
+    margin: -50px 0 0 0%;
+    font-weight: bold;
+}
+
+.button-icon-right{
+    width: 17px;
+    height: 17px;
+    position: absolute;
+    right: 10px;
+}
+
+.button-icon-left{
+    width: 17px;
+    height: 17px;
+    position: absolute;
+    left: 10px;
+}
+
+.resend-button-content{
+    width: 181px;
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    cursor: pointer;
+    position: relative;
+    margin: -50px 0 0 0%;
+}
+
+.resend-button-content-title{
+    font-size: 11pt;
+    font-weight: bold;
+}
+
+.resend-button-content-subtitle{
+    font-size: 10pt;
+    font-weight: 400;
+}
+
 .message{
     font-size: 12px;
     height: 110px;
