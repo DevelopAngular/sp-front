@@ -13,6 +13,7 @@ export class RequestCardComponent implements OnInit {
   @Input() forFuture: boolean = false;
   @Input() fromPast: boolean = false;
   @Input() forInput: boolean = false;
+  
   constructor() { }
 
   ngOnInit() {

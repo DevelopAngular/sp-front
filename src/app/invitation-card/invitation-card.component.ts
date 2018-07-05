@@ -8,8 +8,10 @@ import { Invitation } from '../NewModels';
 })
 export class InvitationCardComponent implements OnInit {
 
-  @Input() pass: Invitation;
-  @Input() hasDivider: boolean = false;
+  @Input() invitation: Invitation;
+  @Input() forFuture: boolean = false;
+  @Input() fromPast: boolean = false;
+  @Input() forInput: boolean = false;
 
   constructor() { }
 
