@@ -40,10 +40,10 @@
   </div>
   <div *ngIf="request.status==='pending' && !forInput" class="card-body-right">
     <div class="request-description">
-        <img class="request-description-icon" [src]="'./assets/Lock.png' | resolveAsset">
-        <div class="request-description-text">
-          Pass Request Sent to {{ request.teacher.last_name }}
-        </div>
+      <img class="request-description-icon" [src]="'./assets/Lock.png' | resolveAsset">
+      <div class="request-description-text">
+        Pass Request Sent to {{ request.teacher.last_name }}
+      </div>
     </div>
   </div>
   <div *ngIf="request.status==='denied'" class="card-body-right">

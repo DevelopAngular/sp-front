@@ -118,11 +118,20 @@ export class MainPageComponent implements OnInit {
                                     'Could we meet to go over my math test 6th period? And a whole bunch of stuff to test overflow. I wonder if it will work.', 'round_trip', 'pending', null, '#00C0C7,#0B9FC1',
                                     'https://storage.googleapis.com/courier-static/icons/library.png',
                                     this.testIssuer, this.testDate, "I'm busy 6th period. Let's try 4th. And a whole bunch of stuff to test overflow. I wonder if it will work. And just a little bit more.", true, null, this.testColorProfile);
-    // this.testInvitation1 = new Invitation('testInvitation', this.testStudent, null,
-    //                                       this.testDestination, [this.testDate], this.testIssuer,
-    //                                       'status', 10, '#F37426,#F52B4F',
-    //                                       'https://storage.googleapis.com/courier-static/icons/classroom.png', 'one_way');
+    
+    this.testRequests = [this.testRequest1, this.testRequest2, this.testRequest3];
+
+    this.testInvitation1 = new Invitation('testInvitation1', this.testStudent, null,
+                                          this.testDestination, [this.testDate], this.testIssuer,
+                                          'status', 10, '#F37426,#F52B4F',
+                                          'https://storage.googleapis.com/courier-static/icons/classroom.png', 'one_way', this.testColorProfile);
+    this.testInvitation2 = new Invitation('testInvitation2', this.testStudent, this.testOrigin,
+                                          this.testDestination, [this.testDate], this.testIssuer,
+                                          'status', 10, '#F37426,#F52B4F',
+                                          'https://storage.googleapis.com/courier-static/icons/classroom.png', 'one_way', this.testColorProfile);
       
+    this.testInvitations = [this.testInvitation1, this.testInvitation2];
+  
   }
 
   get isStaff$(): Observable<boolean> {

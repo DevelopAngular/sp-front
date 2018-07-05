@@ -1,11 +1,24 @@
-<app-pass-card-template [hasDivider]="hasDivider" [pass]="invitation">
-  <div class="card-subtitle">
-
+<app-pass-card-template [hasDivider]="!selectedOrigin" [pass]="invitation">
+  <div class="card-subtitle" *ngIf="fromPast || forFuture">
+    {{ formatDateTime() }}
   </div>
   <div class="card-body-left">
-
+    <app-travel-view [pass]='invitation' (locationSelected)="selectedOrigin = $event"></app-travel-view>
   </div>
-  <div class="card-body-right">
-
+  <div class="card-body-right" *ngIf="!!selectedOrigin; else noLocation;">
+    <app-card-button [width]="'181px'" [height]="'50px'" [gradientColor]="invitation.color_profile.gradient_color">
+      <div class="button-content">
+        <div class="get-pass-content-text">Get Pass</div>
+        <img class="button-icon-right" [src]="'./assets/One Arrow.png' | resolveAsset">
+      </div>
+    </app-card-button>
   </div>
+  <ng-template #noLocation class="card-body-right">
+    <div class="invitation-description">
+      <img class="invitation-description-icon" [src]="'./assets/Invitation.png' | resolveAsset">
+      <div class="invitation-description-text">
+        Pass Invite from from {{ invitation.issuer.last_name }}
+      </div>
+    </div>
+  </ng-template>
 </app-pass-card-template>

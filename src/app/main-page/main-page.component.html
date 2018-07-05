@@ -11,6 +11,8 @@
     <br>
     <app-request-card [request]="testRequest3" [forFuture]="false" [fromPast]="false" [forInput]="true"></app-request-card> -->
 
+    <!-- <app-invitation-card [invitation]="testInvitation1" [forFuture]="true"></app-invitation-card>
+    <app-invitation-card [invitation]="testInvitation2" [forFuture]="true"></app-invitation-card> -->
 
     <div *ngIf="checkedPasses" class="current-pass">
       <div *ngIf="!!currentPass; else newPass;" class="pass-card center">
@@ -49,8 +51,8 @@
   <div class="main-page-right" *ngIf="inboxVisibility">
     <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'22pt'">
       <div class="inbox-content">
-          <app-pass-collection [style.width]="'258px'" [passes]="testPasses" [title]="'Sent'" [icon]="'./assets/Lock (Colored).png'" [columns]="2"></app-pass-collection>
-          <app-pass-collection [style.width]="'258px'" [passes]="testPasses" [title]="'Received'" [icon]="'./assets/Invitation (Colored).png'" [columns]="2"></app-pass-collection>    
+          <app-pass-collection [style.width]="'258px'" [passes]="testRequests" [title]="'Sent'" [icon]="'./assets/Lock (Colored).png'" [columns]="2"></app-pass-collection>
+          <app-pass-collection [style.width]="'258px'" [passes]="testInvitations" [title]="'Received'" [icon]="'./assets/Invitation (Colored).png'" [columns]="2"></app-pass-collection>    
       </div>
     </app-display-card>
   </div>

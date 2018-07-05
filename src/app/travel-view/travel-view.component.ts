@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { HallPass, Invitation, Request } from '../NewModels';
 
 @Component({
@@ -12,6 +12,8 @@ export class TravelViewComponent implements OnInit {
   @Input() pass: HallPass | Invitation | Request;
   @Input() shrink: boolean = false;
   
+  @Output() locationSelected: EventEmitter<any> = new EventEmitter();
+
   type: string;
   
   constructor() { }

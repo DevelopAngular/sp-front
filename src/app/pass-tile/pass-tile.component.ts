@@ -35,8 +35,12 @@ export class PassTileComponent implements OnInit {
   }
 
   backgroundGradient(){
-    let gradient: string[] = this.pass.gradient_color.split(',');
-    return 'radial-gradient(circle at 73% 71%, ' + (this.buttonDown?gradient[1]:gradient[0]) + ', ' + gradient[1] + ')';
+    if(this.buttonDown){
+      return this.pass.color_profile.pressed_color;
+    } else{
+      let gradient: string[] = this.pass.color_profile.gradient_color.split(',');
+      return 'radial-gradient(circle at 73% 71%, ' + (gradient[0]) + ', ' + gradient[1] + ')';
+    }
   }
 
   formattedDate(){

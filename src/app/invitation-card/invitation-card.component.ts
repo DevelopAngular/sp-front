@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Invitation } from '../NewModels';
+import { Invitation, Location } from '../NewModels';
+import { Util } from '../../Util';
 
 @Component({
   selector: 'app-invitation-card',
@@ -11,11 +12,17 @@ export class InvitationCardComponent implements OnInit {
   @Input() invitation: Invitation;
   @Input() forFuture: boolean = false;
   @Input() fromPast: boolean = false;
-  @Input() forInput: boolean = false;
+
+  selectedOrigin: Location;
 
   constructor() { }
 
   ngOnInit() {
+    this.selectedOrigin = this.invitation.default_origin;
+  }
+
+  formatDateTime(){
+    return Util.formatDateTime(this.invitation.date_choices[0]);
   }
 
 }

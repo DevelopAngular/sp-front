@@ -1,0 +1,44 @@
+.button-content{
+    width: 181px;
+    height: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    cursor: pointer;
+    position: relative;
+    margin: -50px 0 0 0%;
+    font-weight: bold;
+}
+
+.button-icon-right{
+    width: 17px;
+    height: 17px;
+    position: absolute;
+    right: 10px;
+}
+
+.card-body-right{
+    height: inherit;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.invitation-description{
+    height: inherit;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+    left: 15px;
+    font-weight: bold;
+}
+
+.invitation-description-icon{
+    width: 17px;
+    // height: 20px;
+    margin-right: 7px;
+}
