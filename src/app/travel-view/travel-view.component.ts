@@ -10,6 +10,8 @@ import { HallPass, Invitation, Request } from '../NewModels';
 export class TravelViewComponent implements OnInit {
 
   @Input() pass: HallPass | Invitation | Request;
+  @Input() shrink: boolean = false;
+  
   type: string;
   
   constructor() { }

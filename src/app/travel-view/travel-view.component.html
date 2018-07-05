@@ -1,6 +1,7 @@
-<div class="travel-view-wrapper">
+<div class="travel-view-wrapper" [style.justify-content]="(shrink?'unset':'space-between')">
   <div *ngIf="!(type==='invitation')">{{ pass.origin.title }}</div>
   <img [src]="'./assets/' +(pass.travel_type==='one_way'?'One Arrow':'Round-trip Arrows') +'.png' | resolveAsset"
-      [style.height]="(pass.travel_type==='one_way'?'50px':'40px')" [style.width]="(pass.travel_type==='one_way'?'50px':'95px')">
+      [style.height]="'40px'" [style.width]="(pass.travel_type==='one_way'?'40px':'95px')"
+      [style.margin]="(shrink?'15px 0':'0')">
   <div>{{ pass.destination.title }}</div>
 </div>
