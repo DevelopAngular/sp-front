@@ -12,13 +12,14 @@
       </div>
       <div class="page-2">
         <div class="page-2-wrapper">
-          <div class="message" [ngClass]="{'student-without-edit': (request.status==='denied'), 'student-pending': ((request.status==='pending') && !forInput), 'student-with-edit': forInput}">
+          <div class="message" [style.height]="(forInput?'70px':'110px')" [style.margin-bottom]="(forInput?'4px':'0px')">
             <span [style.font-weight]="'bold'">Your message:</span><br>
             {{ request.attachment_message }}
-          </div>
-          <div *ngIf="request.status==='denied'" class="message">
-              <span [style.font-weight]="'bold'">Message from {{request.teacher.last_name}}:</span><br>
-            {{ request.declined_message }} <!-- deny_message -->
+            <div *ngIf="request.status==='denied'">
+                <br>
+                <span [style.font-weight]="'bold'">Message from {{request.teacher.last_name}}:</span><br>
+                {{ request.declined_message }} <!-- deny_message -->
+            </div>
           </div>
           <app-card-button *ngIf="forInput" class="edit-button" [width]="'110px'" [height]="'35px'" [gradientColor]="request.color_profile.gradient_color">
             <div class="button-content">Edit Message</div>

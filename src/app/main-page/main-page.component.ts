@@ -111,13 +111,13 @@ export class MainPageComponent implements OnInit {
                                     'https://storage.googleapis.com/courier-static/icons/library.png',
                                     this.testIssuer, this.testDate, "I'm busy 6th period. Let's try 4th. And a whole bunch of stuff to test overflow. I wonder if it will work. And just a little bit more.", true, null, this.testColorProfile);
     this.testRequest2 = new Request('testRequest2', this.testStudent, this.testOrigin, this.testDestination,
-                                    'Could we meet to go over my math test 6th period?', 'one_way', 'pending', null, '#00C0C7,#0B9FC1',
+                                    'Could we meet to go over my math test 6th period? And a whole bunch of stuff to test overflow. I wonder if it will work.', 'one_way', 'pending', null, '#00C0C7,#0B9FC1',
                                     'https://storage.googleapis.com/courier-static/icons/library.png',
-                                    this.testIssuer, this.testDate, "I'm busy 6th period. Let's try 4th.", true, null, this.testColorProfile);
+                                    this.testIssuer, this.testDate, "I'm busy 6th period. Let's try 4th. And a whole bunch of stuff to test overflow. I wonder if it will work. And just a little bit more.", true, null, this.testColorProfile);
     this.testRequest3 = new Request('testRequest3', this.testStudent, this.testOrigin, this.testDestination,
-                                    'Could we meet to go over my math test 6th period?', 'round_trip', 'pending', null, '#00C0C7,#0B9FC1',
+                                    'Could we meet to go over my math test 6th period? And a whole bunch of stuff to test overflow. I wonder if it will work.', 'round_trip', 'pending', null, '#00C0C7,#0B9FC1',
                                     'https://storage.googleapis.com/courier-static/icons/library.png',
-                                    this.testIssuer, this.testDate, "I'm busy 6th period. Let's try 4th.", true, null, this.testColorProfile);
+                                    this.testIssuer, this.testDate, "I'm busy 6th period. Let's try 4th. And a whole bunch of stuff to test overflow. I wonder if it will work. And just a little bit more.", true, null, this.testColorProfile);
     // this.testInvitation1 = new Invitation('testInvitation', this.testStudent, null,
     //                                       this.testDestination, [this.testDate], this.testIssuer,
     //                                       'status', 10, '#F37426,#F52B4F',

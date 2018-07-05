@@ -6,6 +6,7 @@
     text-align: left;
     scrollbar-face-color: #D6D6D6;
     scrollbar-track-color: white;
+    overflow: auto;
 }
 
 .button-content{
@@ -25,8 +26,8 @@
 
 .message{
     font-size: 12px;
-    height: 50px;
-    max-height: 50px;
+    height: 110px;
+    max-height: 110px;
     overflow-y: auto;
 }
 
