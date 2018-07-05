@@ -136,7 +136,10 @@ const appRoutes: Routes = [
     LocationChooseComponent,
     ConsentMenuComponent,
     OptionsComponent,
-    RequestAcceptComponent
+    RequestAcceptComponent,
+    PassCardComponent,
+    RequestCardComponent,
+    InvitationCardComponent
   ],
   imports: [
     BrowserModule,

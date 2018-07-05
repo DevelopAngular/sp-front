@@ -61,7 +61,7 @@ export class NavbarComponent implements AfterViewInit {
   }
 
   inboxClick(){
-    console.log('[Nav Inbox Toggle]', this.inboxVisibility);
+    // console.log('[Nav Inbox Toggle]', this.inboxVisibility);
     this.inboxVisibility = !this.inboxVisibility;
     this.inboxEvent.emit(this.inboxVisibility);
   }

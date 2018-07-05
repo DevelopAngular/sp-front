@@ -15,10 +15,11 @@ import { Util } from '../../Util';
 export class PassTileComponent implements OnInit {
 
   @Input() pass: HallPass | Request | Invitation;
+  @Input() fromPast: boolean = false;
+  @Input() forFuture: boolean = false;
+  @Input() type:string;
 
   @Output() tileSelected = new EventEmitter();
-
-  type:string;
 
   buttonDown = false;
   
@@ -29,9 +30,7 @@ export class PassTileComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.type = (this.pass instanceof HallPass) ? 'hallpass' :
-    (this.pass instanceof Invitation) ? 'invitation' :
-      'request';
+
   }
 
   backgroundGradient(){

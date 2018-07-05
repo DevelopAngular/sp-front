@@ -10,11 +10,11 @@
   <div class="collection-grid-wrapper" *ngIf="displayState==='grid'; else list">
     <mat-grid-list [cols]="columns" rowHeight="85px">
       <mat-grid-tile  [style.overflow]="'visible'" class="custom-mat-tile" *ngFor="let pass of passes">
-        <app-pass-tile [pass]="pass"></app-pass-tile>
+        <app-pass-tile (click)="showPass(pass)" [type]="type" [fromPast]="fromPast" [forFuture]="forFuture" [pass]="pass"></app-pass-tile>
       </mat-grid-tile>
     </mat-grid-list>
   </div>
   <ng-template class="collection-list-wrapper" #list>
-    <app-pass-cell *ngFor="let pass of passes" [pass]="pass"></app-pass-cell>
+    <app-pass-cell (click)="showPass(pass)" [type]="type" [fromPast]="fromPast" [forFuture]="forFuture" *ngFor="let pass of passes" [pass]="pass"></app-pass-cell>
   </ng-template>
 </div>

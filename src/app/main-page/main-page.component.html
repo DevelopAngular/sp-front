@@ -41,18 +41,18 @@
       </ng-template>
     </div>
     <div class="future-passes">
-      <app-pass-collection [style.width]="'400px'" [passes]="testPasses" [title]="'Scheduled Passes'" [icon]="'./assets/Later (Colored).png'" [columns]="3"></app-pass-collection>
+      <app-pass-collection [forFuture]="true" [style.width]="'400px'" [passes]="testPasses" [title]="'Scheduled Passes'" [icon]="'./assets/Later (Colored).png'" [columns]="3"></app-pass-collection>
     </div>
     <div class="past-passes">
-      <app-pass-collection [style.width]="'400px'" [passes]="testPasses" [title]="'Expired Passes'" [icon]="'./assets/Places I\'ve Been (Colored).png'" [columns]="3"></app-pass-collection>
+      <app-pass-collection [fromPast]="true" [style.width]="'400px'" [passes]="testPasses" [title]="'Expired Passes'" [icon]="'./assets/Places I\'ve Been (Colored).png'" [columns]="3"></app-pass-collection>
     </div>
   </div>
 
   <div class="main-page-right" *ngIf="inboxVisibility">
     <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'22pt'">
       <div class="inbox-content">
-          <app-pass-collection [style.width]="'258px'" [passes]="testRequests" [title]="'Sent'" [icon]="'./assets/Lock (Colored).png'" [columns]="2"></app-pass-collection>
-          <app-pass-collection [style.width]="'258px'" [passes]="testInvitations" [title]="'Received'" [icon]="'./assets/Invitation (Colored).png'" [columns]="2"></app-pass-collection>    
+          <app-pass-collection [forFuture]="true" [style.width]="'258px'" [passes]="testRequests" [title]="'Sent'" [icon]="'./assets/Lock (Colored).png'" [columns]="2"></app-pass-collection>
+          <app-pass-collection [forFuture]="true" [style.width]="'258px'" [passes]="testInvitations" [title]="'Received'" [icon]="'./assets/Invitation (Colored).png'" [columns]="2"></app-pass-collection>    
       </div>
     </app-display-card>
   </div>

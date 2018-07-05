@@ -1,6 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Request } from '../NewModels';
 import { Util } from '../../Util';
+import { MAT_DIALOG_DATA } from '@angular/material';
+import { Inject } from '@angular/core';
 
 @Component({
   selector: 'app-request-card',
@@ -14,10 +16,12 @@ export class RequestCardComponent implements OnInit {
   @Input() fromPast: boolean = false;
   @Input() forInput: boolean = false;
   
-  constructor() { }
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngOnInit() {
-    
+    this.request = this.data['pass'];
+    this.forFuture = this.data['forFuture'];
+    this.fromPast = this.data['fromPast'];
   }
 
   formatDateTime(){

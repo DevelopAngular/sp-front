@@ -10,15 +10,14 @@ import { Util } from '../../Util';
 export class PassCellComponent implements OnInit {
 
   @Input() pass: HallPass | Invitation | Request;
-
-  type:string;
+  @Input() fromPast: boolean = false;
+  @Input() forFuture: boolean = false;
+  @Input() type:string;
 
   constructor() { }
 
   ngOnInit() {
-    this.type = (this.pass instanceof HallPass) ? 'hallpass' :
-    (this.pass instanceof Invitation) ? 'invitation' :
-      'request';
+
   }
 
   formattedDate(){

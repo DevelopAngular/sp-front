@@ -1,6 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { HallPass} from '../NewModels';
 import { Util } from '../../Util';
+import { MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA } from '@angular/material';
+import { Inject } from '@angular/core';
 
 @Component({
   selector: 'app-pass-card',
@@ -23,11 +26,14 @@ export class PassCardComponent implements OnInit {
   overlayWidth: number = 0;
   buttonWidth: number = 181;
 
-  constructor() {
+  constructor(public dialogRef: MatDialogRef<PassCardComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
 
   }
 
   ngOnInit() {
+    this.pass = this.data['pass'];
+    this.forFuture = this.data['forFuture'];
+    this.fromPast = this.data['fromPast'];
     setInterval(() => {
       if (!!this.pass && this.isActive) {
         let end: Date = this.pass.expiration_time;
