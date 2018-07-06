@@ -3,7 +3,7 @@
       (mouseleave)="buttonDown = false"
       (mousedown)="onPress(true)" (mouseup)="onPress(false)">
   <div class="tile-title">{{ pass.destination.title }}</div>
-  <div class="tile-content">{{ (!(type==='hallpass') && pass.status==='denied'?'Denied':formattedDate()) }}</div>
+  <div class="tile-content">{{ tileContent }}</div>
   <img [style.width]="'15px'" [style.height]="'15px'" *ngIf="pass.travel_type == 'one_way'" [src]="'./assets/One Arrow.png' | resolveAsset" class="tile-round-trip">
   <img [style.width]="'35px'" [style.height]="'15px'" *ngIf="pass.travel_type == 'round_trip'" [src]="'./assets/Round-trip Arrows.png' | resolveAsset" class="tile-one-way">
   <div *ngIf="!pass.isRead && !(type==='hallpass')" class="badge"></div>

@@ -27,6 +27,15 @@ export class PassTileComponent implements OnInit {
     return this.buttonDown ? 'down' : 'up';
   }
 
+  get tileContent(){
+    if(!(this.type==='hallpass')){
+      if(this.pass['status']==='denied'){
+        return 'Denied';
+      }
+    }
+    return this.formattedDate();
+  }
+
   constructor() { }
 
   ngOnInit() {

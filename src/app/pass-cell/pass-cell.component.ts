@@ -20,6 +20,15 @@ export class PassCellComponent implements OnInit {
 
   }
 
+  get cellContent(){
+    if(!(this.type==='hallpass')){
+      if(this.pass['status']==='denied'){
+        return 'Denied';
+      }
+    }
+    return this.formattedDate();
+  }
+
   formattedDate(){
     let s:Date = (this.type==='invitation'?this.pass['date_choices'][0]:(this.type==='request')?this.pass['request_time']:this.pass['start_time'])
     return Util.formatDateTime(s);
