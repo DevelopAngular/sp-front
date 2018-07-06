@@ -31,3 +31,14 @@
     font-size: 9pt;
     margin-bottom: 7px;
 }
+
+.badge{
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    background-color: #E32C66;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    box-shadow: 0 7.5px 13px 0 rgba(0, 0, 0, 0.1);
+}

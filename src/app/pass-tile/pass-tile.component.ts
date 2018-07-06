@@ -30,7 +30,7 @@ export class PassTileComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-
+    
   }
 
   backgroundGradient(){

@@ -1,8 +1,9 @@
 <div class="cell-wrapper">
   <div class="cell-content-wrapper">
     <div class="cell-title">{{pass.destination.title}}</div>
-    <div class="cell-datetime">{{formattedDate()}}</div>
-    <img class="cell-arrow" [src]="'./assets/Disclosure Indicator (Colored).png' | resolveAsset">
+    <div class="cell-datetime">{{ (!(type==='hallpass') && pass.status==='denied'?'Denied':formattedDate()) }}</div>
+    <img *ngIf="pass.isRead || type==='hallpass'" class="cell-arrow" [src]="'./assets/Disclosure Indicator (Colored).png' | resolveAsset">
+    <div *ngIf="!pass.isRead && !(type==='hallpass')" class="badge"></div>
   </div>
   <div class="cell-divider"></div>
 </div>

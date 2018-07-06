@@ -125,6 +125,10 @@ export class HallPass {
               public color_profile: ColorProfile) {
   }
 
+  get isRead(){
+    return true;
+  }
+
   static fromJSON(JSON: any): HallPass {
     if (!JSON) {
       return null;
@@ -162,9 +166,16 @@ export class Invitation {
               public gradient_color: string,
               public icon: string,
               public travel_type: string,
-              public color_profile: ColorProfile) {
+              public color_profile: ColorProfile,
+              public cancelled: Date,
+              public last_read: Date,
+              public last_updated: Date) {
   }
 
+  get isRead(){
+    return this.last_read != null && this.last_read >= this.last_updated;
+  }
+  
   static fromJSON(JSON: any) {
     if (!JSON) {
       return null;
@@ -181,14 +192,17 @@ export class Invitation {
       icon: string = JSON['icon'],
       default_origin: Location = (!!JSON['default_origin']) ? Location.fromJSON(JSON['default_orgin']) : null,
       travel_type: string = JSON['travel_type'],
-      color_profile: ColorProfile = ColorProfile.fromJSON(JSON['color_profile']);
+      color_profile: ColorProfile = ColorProfile.fromJSON(JSON['color_profile']),
+      cancelled: Date = (!!JSON['cancelled']?new Date(JSON['cancelled']):null),
+      last_read: Date = (!!JSON['last_read']?new Date(JSON['last_read']):null),
+      last_updated: Date = new Date(JSON['last_updated']);
 
     let datesJSON = JSON['date_choices'];
     for (let i = 0; i < datesJSON.length; i++) {
       date_choices.push(new Date(datesJSON[i]));
     }
 
-    return new Invitation(id, student, default_origin, destination, date_choices, issuer, status, duration, gradient_color, icon, travel_type, color_profile);
+    return new Invitation(id, student, default_origin, destination, date_choices, issuer, status, duration, gradient_color, icon, travel_type, color_profile, cancelled, last_read, last_updated);
   }
 }
 
@@ -292,7 +306,13 @@ export class Request {
               public declined_message: string,
               public student_has_dismissed: boolean,
               public cancelled: Date,
-              public color_profile: ColorProfile) {
+              public color_profile: ColorProfile,
+              public last_read: Date,
+              public last_updated: Date) {
+  }
+
+  get isRead(){
+    return this.last_read != null && this.last_read >= this.last_updated;
   }
 
   static fromJSON(JSON: any): Request {
@@ -315,9 +335,11 @@ export class Request {
       declined_message: string = JSON['declined_message'],
       student_has_dismissed: boolean = JSON['student_has_dismissed'],
       cancelled: Date = (!!JSON['cancelled']) ? new Date(JSON['cancelled']) : null,
-      color_profile: ColorProfile = ColorProfile.fromJSON(JSON['color_profile']);
+      color_profile: ColorProfile = ColorProfile.fromJSON(JSON['color_profile']),
+      last_read: Date = (!!JSON['last_read']?new Date(JSON['last_read']):null),
+      last_updated: Date = new Date(JSON['last_updated']);
 
-    return new Request(id, student, origin, destination, attachment_message, travel_type, status, hallpass, gradient_color, icon, teacher, request_time, declined_message, student_has_dismissed, cancelled, color_profile);
+    return new Request(id, student, origin, destination, attachment_message, travel_type, status, hallpass, gradient_color, icon, teacher, request_time, declined_message, student_has_dismissed, cancelled, color_profile, last_read, last_updated);
   }
 
 }

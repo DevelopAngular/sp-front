@@ -36,6 +36,15 @@
 
 .cell-divider{
     width: inherit;
-    height: 2px;
+    height: 1px;
     background-color: #B5B7BA;
+}
+
+.badge{
+    background-color: #E32C66;
+    width: 15px;
+    height: 15px;
+    border-radius: 8px;
+    margin-left: 10px;
+    box-shadow: 0 7.5px 13px 0 rgba(0, 0, 0, 0.1);
 }
