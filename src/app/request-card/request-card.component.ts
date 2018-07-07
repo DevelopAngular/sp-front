@@ -20,6 +20,7 @@ export class RequestCardComponent implements OnInit {
 
   ngOnInit() {
     this.request = this.data['pass'];
+    this.forInput = this.data['forInput'];
     this.forFuture = this.data['forFuture'];
     this.fromPast = this.data['fromPast'];
   }

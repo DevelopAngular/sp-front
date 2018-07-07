@@ -32,6 +32,7 @@ export class PassCardComponent implements OnInit {
 
   ngOnInit() {
     this.pass = this.data['pass'];
+    this.forInput = this.data['forInput'];
     this.forFuture = this.data['forFuture'];
     this.fromPast = this.data['fromPast'];
     setInterval(() => {

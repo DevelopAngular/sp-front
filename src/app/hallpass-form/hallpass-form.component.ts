@@ -7,7 +7,9 @@ import { MessageService } from 'primeng/components/common/messageservice';
 import { DataService } from '../data-service';
 import { HttpService } from '../http-service';
 import { LocationPickerComponent } from '../location-picker/location-picker.component';
-import { Duration, HallPass, Invitation, Location, Pinnable, Request, User } from '../NewModels';
+import { Duration, HallPass, Invitation, Location, Pinnable, Request, User, ColorProfile } from '../NewModels';
+import { MAT_DIALOG_DATA } from '@angular/material';
+import { Inject } from '@angular/core';
 
 @Component({
   selector: 'app-hallpass-form',
@@ -22,6 +24,7 @@ export class HallpassFormComponent implements OnInit {
   public isPending: boolean = true;
 
   // ------------------------NEW STUFF-------------------- //
+  forLater: boolean;
   user: User;
   show: boolean = false;
   passType: string = 'rt';
@@ -29,9 +32,9 @@ export class HallpassFormComponent implements OnInit {
   toIcon: string = './assets/Search.png';
   from_title: string = 'From';
   to_title: string = 'To';
-  _toGradient: string = '';
-  _fromGradient: string = '';
-  greenGradient = '#00B476, #03CF31';
+  _toProfile: ColorProfile;
+  _fromProfile: ColorProfile;
+  greenProfile: ColorProfile = new ColorProfile('green', 'green', '#00B476, #03CF31', '', '', '', '');
   fromLocation: Location;
   toLocation: Location;
   formState: string = 'from';
@@ -63,7 +66,7 @@ export class HallpassFormComponent implements OnInit {
   public pinnables: Promise<Pinnable[]>;
 
   constructor(private messageService: MessageService, private http: HttpService, private dataService: DataService,
-              private router: Router, public dialog: MatDialog,
+              private router: Router, public dialog: MatDialog, @Inject(MAT_DIALOG_DATA) public dialogData: any,
               public dialogRef: MatDialogRef<HallpassFormComponent>, private _formBuilder: FormBuilder) {
 
     this.pinnables = this.http.get<any[]>('api/methacton/v1/pinnables').toPromise().then(json => json.map(raw => Pinnable.fromJSON(raw)));
@@ -88,7 +91,7 @@ export class HallpassFormComponent implements OnInit {
       this.fromLocation = result;
       this.from_title = this.fromLocation.title;
       this.fromIcon = '';
-      this._fromGradient = this.greenGradient;
+      this._fromProfile = this.greenProfile;
 
       this.formState = (this.formState === 'fields') ? 'fields' : 'to';
     });
@@ -120,7 +123,7 @@ export class HallpassFormComponent implements OnInit {
 
   get fromGradient(){
     if(this.fromLocation){
-      return this._fromGradient;
+      return this.greenProfile.gradient_color;
     } else{
       return "#606981, #ACB4C1";
     }
@@ -136,12 +139,24 @@ export class HallpassFormComponent implements OnInit {
   get toGradient(){
     if(this.toEnabled){
       if(this.toLocation){
-        return this._toGradient;
+        return this._toProfile.gradient_color;
       } else{
         return "#7E879D, #7E879D";
       }
     } else{
       return "#CBD5E5, #CBD5E5";
+    }
+  }
+
+  get toSolid(){
+    if(this.toEnabled){
+      if(this.toLocation){
+        return this._toProfile.solid_color;
+      } else{
+        return '#7E879D';
+      }
+    } else{
+          return '#CBD5E5';
     }
   }
 
@@ -174,17 +189,18 @@ export class HallpassFormComponent implements OnInit {
       this.firstFormGroup.controls['originCtrl'].value,
       this.secondFormGroup.controls['destinationCtrl'].value,
       this.firstFormGroup.controls['travelTypeCtrl'].value,
-      this.toGradient,
+      null, //this.toGradient,
       this.toIcon,
       null
     );
   }
 
   ngOnInit() {
+    this.forLater = this.dialogData['forLater'];
+    console.log('[Form for later]: ', this.forLater);
     this.dataService.currentUser.subscribe(user => {
       this.user = user;
       this.isStaff = this.user.roles.includes('edit_all_hallpass');
-
       this.originRequired = !this.isStaff;
     });
 
@@ -217,11 +233,11 @@ export class HallpassFormComponent implements OnInit {
       if (event.type === 'category') {
         picker.open();
         this.toIcon = event.icon || '';
-        this._toGradient = event.gradient_color;
+        this._toProfile = event.color_profile;
         return;
       } else {
         this.toIcon = event.icon || '';
-        this._toGradient = event.gradient_color;
+        this._toProfile = event.color_profile;
 
         this.secondFormGroup.controls['destinationCtrl'].setValue(event.location);
       }
@@ -231,7 +247,7 @@ export class HallpassFormComponent implements OnInit {
       if (event.type == 'location') {
         this.to_title = event.title;
         this.toIcon = event.icon || '';
-        this._toGradient = event.gradient_color;
+        this._toProfile = event.color_profile;
         this.toLocation = event.location;
 
         this.determinePass();
@@ -240,7 +256,7 @@ export class HallpassFormComponent implements OnInit {
         this.toCategory = event.category;
         this.toState = 'category';
         this.toIcon = event.icon || '';
-        this._toGradient = event.gradient_color;
+        this._toProfile = event.color_profile;
       }
     }
   }
@@ -273,11 +289,11 @@ export class HallpassFormComponent implements OnInit {
     }
   }
 
-  setGradient(type: string, gradient_color: string) {
+  setColorProfile(type: string, color_profile: ColorProfile) {
     if (type == 'to') {
-      this._toGradient = gradient_color;
+      this._toProfile = color_profile;
     } else if (type == 'from') {
-      this._fromGradient = gradient_color;
+      this._fromProfile = color_profile;
     }
   }
 
@@ -337,25 +353,21 @@ export class HallpassFormComponent implements OnInit {
 
   determinePass() {
     if(!this.toLocation.restricted){
+      let templatePass:HallPass = new HallPass('template', null, null, null, null, null, null, null, this.fromLocation, this.toLocation, '', '', this.toIcon, this._toProfile)
       this.dialogRef.close({
-          'fromLocation': this.fromLocation,
-          'toLocation': this.toLocation,
-          'restricted': this.toLocation.restricted,
-          'icon': this.toIcon,
-          'gradient': this.toGradient
+          'templatePass': templatePass,
+          'forLater': this.forLater,
+          'restricted': false
           });
     } else{
       if(this.requestMessage === ''){
         this.formState = 'restrictedTarget';
       } else{
+        let templateRequest:Request = new Request('template', null, this.fromLocation, this.toLocation, this.requestMessage, '', 'pending', null, '', this.toIcon, null, null, '', null, null, this._toProfile, null, null)
         this.dialogRef.close({
-          'fromLocation': this.fromLocation,
-          'toLocation': this.toLocation,
-          'restricted': this.toLocation.restricted,
-          'requestTarget' : this.requestTarget,
-          'message' : this.requestMessage,
-          'icon': this.toIcon,
-          'gradient': this.toGradient
+          'templatePass': templateRequest,
+          'forLater': this.forLater,
+          'restricted': true
           });
       }
 

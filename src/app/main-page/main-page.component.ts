@@ -11,6 +11,8 @@ import { HttpService } from '../http-service';
 import { LoadingService } from '../loading.service';
 import { HallPass, HallPassSummary, Invitation, Request, User, Location, ColorProfile } from '../NewModels';
 import { flattenStyles } from '@angular/platform-browser/src/dom/dom_renderer';
+import { PassCardComponent } from '../pass-card/pass-card.component';
+import { RequestCardComponent } from '../request-card/request-card.component';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('edit_all_hallpass');
@@ -179,28 +181,18 @@ export class MainPageComponent implements OnInit {
 
   }
 
-  showForm(): void {
+  showForm(forLater:boolean): void {
     const dialogRef = this.dialog.open(HallpassFormComponent, {
       width: '750px',
       panelClass: 'form-dialog-container',
-      backdropClass: 'custom-backdrop'
+      backdropClass: 'custom-backdrop',
+      data: {'forLater': forLater}
     });
 
     dialogRef.afterClosed().subscribe((result: Object) => {
-      // console.log('[Form Return]: ', result);
-      this.showDetails = true;
-      // if(result['restricted']){
-      //   this.currentPass = new Request('template', this.user, result['fromLocation'],
-      //                                 result['toLocation'], result['message'],
-      //                                 '', '', null, result['gradient'],
-      //                                 result['icon'], result['requestTarget'], null);
-      // } else{
-      //   this.currentPass = new HallPass('template', this.user, this.user,
-      //                                   new Date(), new Date(), new Date(),
-      //                                   new Date(), new Date(), result['fromLocation'],
-      //                                   result['toLocation'], '', result['gradient'],
-      //                                   result['icon']);
-      // }
+      
+      this.openInputCard(result['templatePass'], result['forLater'], result['restricted']?RequestCardComponent:PassCardComponent)
+
       this.isStaff$.subscribe(isStaff => {
         this._zone.run(() => {
           if (result instanceof HallPass) {
@@ -215,6 +207,15 @@ export class MainPageComponent implements OnInit {
         });
       });
     });
+  }
+
+  openInputCard(templatePass, forLater, component){
+    this.dialog.open(component, {
+      width: '353px',
+      panelClass: 'pass-card-dialog-container',
+      backdropClass: 'custom-backdrop',
+      data: {'pass': templatePass, 'fromPast': false, 'forFuture': forLater, 'forInput': true}
+    })
   }
 
   endPass(hallpass: HallPass) {

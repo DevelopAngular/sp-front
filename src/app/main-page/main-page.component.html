@@ -27,14 +27,14 @@
               [minHeight]="'74px'"
               [hoverColor]="'#00b476'"
               [fontSize]="'15px'"
-              (click)="showForm()">Now
+              (click)="showForm(false)">Now
             </app-gradient-button>
             <app-gradient-button
               [minWidth]="'121px'"
               [minHeight]="'74px'"
               [hoverColor]="'#00b476'"
               [fontSize]="'15px'"
-              >Later
+              (click)="showForm(true)">Later
             </app-gradient-button>
           </div>
         </app-display-card>
