@@ -197,7 +197,8 @@ export class HallpassFormComponent implements OnInit {
 
   ngOnInit() {
     this.forLater = this.dialogData['forLater'];
-    console.log('[Form for later]: ', this.forLater);
+    this.formState = this.forLater?'datetime':'from';
+
     this.dataService.currentUser.subscribe(user => {
       this.user = user;
       this.isStaff = this.user.roles.includes('edit_all_hallpass');
@@ -278,6 +279,8 @@ export class HallpassFormComponent implements OnInit {
       return 'Send Pass Request To?';
     } else if(this.formState === 'restrictedMessage'){
       return 'Message';
+    } else if(this.formState === 'datetime'){
+      return 'Select Date & Time';
     }
   }
 
@@ -286,6 +289,8 @@ export class HallpassFormComponent implements OnInit {
       return './assets/Search.png';
     } else if(this.formState === 'restrictedMessage'){
       return './assets/Message.png';
+    } else if(this.formState === 'datetime'){
+      return './assets/Later.png'
     }
   }
 

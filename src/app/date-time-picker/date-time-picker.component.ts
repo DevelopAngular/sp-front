@@ -20,32 +20,45 @@ export class DateTimePickerComponent implements OnInit {
 
   timeS = '--:--';
 
-  now: Date = new Date();
+  min: Date = new Date();
 
-  selectedDate: Date;
-  selectedTime: Date;
+  public _selectedMoment: Date = new Date();
+  // selectedTime: Date;
 
   constructor(private atp: AmazingTimePickerService) {
   }
 
-  ngOnInit() {
+  set selectedMoment(newMoment: Date){
+    this._selectedMoment = newMoment;
+    this.onUpdate.emit(this._selectedMoment);
+    console.log('[Date-Time Moment]: ', this._selectedMoment);
+  }
 
+  get selectedMoment(){
+    return this._selectedMoment;
+  }
+
+  ngOnInit() {
+    console.log('[Date-Time Debug]: ', 'Date-Time where at');
+    this._selectedMoment.setMinutes(this._selectedMoment.getMinutes()+1)
+    this.min.setMinutes(this.min.getMinutes()+1)
+    this.onUpdate.emit(this._selectedMoment);
   }
 
   updateDate(date: MatDatepickerInputEvent<Date>) {
-    this.selectedDate = date.value;
+    // this.selectedDate = date.value;
     this.updateDateTime();
   }
 
   updateTime(time: Date) {
-    this.selectedTime = time;
+    // this.selectedTime = time;
     this.updateDateTime();
   }
 
   updateDateTime() {
-    if (this.selectedDate && this.selectedTime) {
-      this.onUpdate.emit(this.dateTime(this.selectedDate, this.selectedTime));
-    }
+    // if (this.selectedDate && this.selectedTime) {
+      // this.onUpdate.emit(this.dateTime(this.selectedDate, this.selectedTime));
+    // }
   }
 
   dateTime(dateD: Date, timeD: Date) {

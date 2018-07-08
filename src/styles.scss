@@ -39,11 +39,35 @@ body {
 
 .form-dialog-container .mat-dialog-container {
   border-radius: 10px;
-  overflow: visible;
+  overflow: auto;
   box-shadow: 0 4px 6.5px 0 rgba(0, 0, 0, 0.15);
   margin: 0;
   padding: 0;
   height: 382px;
+  scrollbar-face-color: #D6D6D6;
+  scrollbar-track-color: white;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: white;
+  border-radius: 4px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #D6D6D6; 
+  border-radius: 4px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #B6B6B6; 
 }
 
 .pass-card-dialog-container .mat-dialog-container {

@@ -108,9 +108,8 @@
 <!-- Show the form designated for students -->
 <ng-container *ngIf="!isStaff">
   <div class="form">
-
     <!-- Buttons responsible for choosing formState -->
-    <div class="locs">
+    <div class="locs" *ngIf="formState!=='datetime'">
       <app-gradient-button
         class="location-button"
         [gradient]="fromGradient"
@@ -145,6 +144,11 @@
     <div class="divider">
       <img class="divider-icon" [src]="dividerIcon | resolveAsset">
       <div class="divider-text">{{dividerText}}</div>
+    </div>
+
+    <!-- Used to select the start time of a pass for later -->
+    <div *ngIf="formState == 'datetime'">
+      <app-date-time-picker></app-date-time-picker>
     </div>
 
     <!-- Used to select the from_location -->
