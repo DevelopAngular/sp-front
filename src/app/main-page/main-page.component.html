@@ -15,11 +15,11 @@
     <app-invitation-card [invitation]="testInvitation2" [forFuture]="true"></app-invitation-card> -->
 
     <div *ngIf="checkedPasses" class="current-pass">
-      <div *ngIf="!!currentPass; else newPass;" class="pass-card center">
+      <!-- <div *ngIf="!!currentPass; else newPass;" class="pass-card center">
         <app-pass-card [pass]="currentPass" (cardEvent)="cardEvent($event)" [forInput]="showDetails">
         </app-pass-card>
       </div>
-      <ng-template #newPass>
+      <ng-template #newPass> -->
         <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Plus (Colored).png'">
           <div class="pass-buttons">
             <app-gradient-button
@@ -38,7 +38,7 @@
             </app-gradient-button>
           </div>
         </app-display-card>
-      </ng-template>
+      <!-- </ng-template> -->
     </div>
     <div class="future-passes">
       <app-pass-collection [forFuture]="true" [style.width]="'400px'" [passes]="testPasses" [title]="'Scheduled Passes'" [icon]="'./assets/Later (Colored).png'" [columns]="3"></app-pass-collection>

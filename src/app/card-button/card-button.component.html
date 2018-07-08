@@ -1,4 +1,4 @@
-<div class="card-button-container" [@pressState]="buttonState" (click)="buttonClicked"
+<div class="card-button-container" [@pressState]="buttonState" (click)="buttonClicked()"
     (mousedown)="onPress(true)" (mouseup)="onPress(false)" [style.background]="valid?getGradient():'radial-gradient(circle at 73% 71%,#DA2370 ,#FB434A)'">
     <div class="card-button-base" [style.width]="width" [style.height]="height"
         [style.mix-blend-mode]="(valid?'soft-light':'normal')" [style.background-color]="(valid?'white':'initial')"></div>

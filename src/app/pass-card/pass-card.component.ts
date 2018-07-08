@@ -4,6 +4,7 @@ import { Util } from '../../Util';
 import { MatDialogRef } from '@angular/material';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { Inject } from '@angular/core';
+import { HttpService } from '../http-service';
 
 @Component({
   selector: 'app-pass-card',
@@ -26,7 +27,10 @@ export class PassCardComponent implements OnInit {
   overlayWidth: number = 0;
   buttonWidth: number = 181;
 
-  constructor(public dialogRef: MatDialogRef<PassCardComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
+  selectedDuration: number;
+  selectedTravelType: string;
+
+  constructor(public dialogRef: MatDialogRef<PassCardComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private http: HttpService) {
 
   }
 
@@ -52,16 +56,6 @@ export class PassCardComponent implements OnInit {
     }, 10);
   }
 
-  _cardEvent(value: boolean) {
-    let event = {
-      'value': value,
-      'pass': this.pass,
-      'data': this.returnData
-    };
-    // console.log('[Pass Card Event]: ', event);
-    this.cardEvent.emit(event);
-  }
-
   updateDuration(dur:number){
     this.returnData['duration'] = dur;
   }
@@ -82,4 +76,21 @@ export class PassCardComponent implements OnInit {
     return Math.floor(diffSecs/60) +':' +(diffSecs%60<10?'0':'') +diffSecs%60;
   }
 
+  newPass(){
+    const endPoint:string = 'api/methacton/v1/hall_passes'
+
+    const body = {
+      'student' : this.pass.student.id,
+      'duration' : this.selectedDuration*60,
+      'origin' : this.pass.origin.id,
+      'destination' : this.pass.destination.id,
+      'travel_type' : this.selectedTravelType,
+      'start_time' : this.forFuture?this.pass.start_time.toISOString():null
+    };
+
+    this.http.post(endPoint, body).subscribe((data)=>{
+      this.dialogRef.close();
+    });
+  }
+  
 }

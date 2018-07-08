@@ -40,6 +40,7 @@ export class HallpassFormComponent implements OnInit {
   formState: string = 'from';
   requestTarget:User;
   travelType: string = 'round_trip';
+  requestTime: Date = new Date();
   duration: number = 5;
   sliderDuration: number = 5;
   toState: string = 'pinnables';
@@ -47,7 +48,7 @@ export class HallpassFormComponent implements OnInit {
   selectedStudents: User[] = [];
   isMandatory: boolean = false;
   startTime: Date = new Date();
-  requestMessage: string = "";
+  requestMessage: string = '';
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
 
@@ -358,24 +359,23 @@ export class HallpassFormComponent implements OnInit {
 
   determinePass() {
     if(!this.toLocation.restricted){
-      let templatePass:HallPass = new HallPass('template', null, null, null, null, null, null, null, this.fromLocation, this.toLocation, '', '', this.toIcon, this._toProfile)
+      let templatePass:HallPass = new HallPass('template', this.user, null, null, null, this.requestTime, null, null, this.fromLocation, this.toLocation, '', '', this.toIcon, this._toProfile)
       this.dialogRef.close({
           'templatePass': templatePass,
           'forLater': this.forLater,
           'restricted': false
           });
     } else{
-      if(this.requestMessage === ''){
-        this.formState = 'restrictedTarget';
-      } else{
-        let templateRequest:Request = new Request('template', null, this.fromLocation, this.toLocation, this.requestMessage, '', 'pending', null, '', this.toIcon, null, null, '', null, null, this._toProfile, null, null)
+      if(this.requestTarget){
+        let templateRequest:Request = new Request('template', null, this.fromLocation, this.toLocation, this.requestMessage, '', 'pending', null, '', this.toIcon, this.requestTarget, this.requestTime, '', null, null, this._toProfile, null, null)
         this.dialogRef.close({
           'templatePass': templateRequest,
           'forLater': this.forLater,
           'restricted': true
           });
+      } else{
+        this.formState = 'restrictedTarget';
       }
-
     }
   }
 

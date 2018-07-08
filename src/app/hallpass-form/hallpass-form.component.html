@@ -147,8 +147,18 @@
     </div>
 
     <!-- Used to select the start time of a pass for later -->
-    <div *ngIf="formState == 'datetime'">
-      <app-date-time-picker></app-date-time-picker>
+    <div *ngIf="formState == 'datetime'" class="datetime-area">
+      <app-date-time-picker (onUpdate)="requestTime=$event"></app-date-time-picker>
+      <app-gradient-button
+      [gradient]="'#03CF31,#00B476'"
+      [hoverColor]="'#00B476'"
+      [minWidth]="'90px'"
+      [minHeight]="'30px'"
+      [fontSize]="'14px'"
+      (buttonClick)="setFormState('from')"
+      [style.width]="'90px'"
+      [style.margin-top]="'10px'">
+      Done</app-gradient-button>
     </div>
 
     <!-- Used to select the from_location -->
