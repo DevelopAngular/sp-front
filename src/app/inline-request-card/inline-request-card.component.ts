@@ -27,4 +27,9 @@ export class InlineRequestCardComponent implements OnInit {
     return Util.formatDateTime(this.request.request_time);
   }
 
+  cancel(){
+    const endPoint:string = 'api/methacton/v1/pass_requests/' +this.request.id +'/cancel';
+    this.http.post(endPoint).subscribe();
+  }
+
 }

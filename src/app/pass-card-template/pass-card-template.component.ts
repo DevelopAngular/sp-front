@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { HallPass, Invitation, Request} from '../NewModels';
 @Component({
   selector: 'app-pass-card-template',
@@ -12,6 +12,8 @@ export class PassCardTemplateComponent implements OnInit {
   @Input() rightJustify: string = 'flex-end';
   @Input() hasClose: boolean = true;
   
+  @Output() onCancel: EventEmitter<any>  =new EventEmitter();
+
   constructor() {}
 
   ngOnInit() {
