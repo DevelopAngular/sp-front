@@ -116,17 +116,49 @@
   padding-right: 10%;
 }
 
-.options{
-  width: 25px;
-  height: 25px;
+.options, .inbox-icon{
+  width: 20px;
+  height: 20px;
+}
 
+.inbox-wrapper{
+  width: 45px;
+  height: 45px;
+  border-radius: 23px;
+  margin-right: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
 }
 
-.options, .inbox-icon{
-  width: 25px;
-  height: 25px;
-  margin-right: 10px;
+.inbox-modifiers{
+  width: 45px;
+  height: 45px;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-  cursor: pointer;
+.inbox-badge{
+  width: 10px;
+  height: 20px;
+  position: absolute;
+  top: 11px;
+}
+
+.inbox-number{
+  color: white;
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 8pt;
+  position: absolute;
+  top: 11px;
+}
+
+.inbox-front{
+  width: 20px;
+  height: 10px;
+  position: absolute;
+  top: 22px;
 }

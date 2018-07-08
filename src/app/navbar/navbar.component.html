@@ -22,7 +22,14 @@
   </div>
   <div class="user-info">
     <div class="name">{{ user ? user.display_name : '' }}</div>
-    <img class="inbox-icon" (click)="inboxClick()" [src]="'./assets/Inbox (Full) (Colored).png' | resolveAsset">
+    <div class="inbox-wrapper" (click)="inboxClick()" [style.background-color]="(inboxVisibility?'#E4EBFF':'transparent')">
+      <img class="inbox-icon" [src]="'./assets/Inbox (Full) (Colored).png' | resolveAsset">
+      <div class="inbox-modifiers" *ngIf="notifications > 0">
+        <img class="inbox-badge" [src]="'./assets/Inbox (Number).png' | resolveAsset">
+        <div class="inbox-number">{{ notifications }}</div>
+        <img class="inbox-front" [src]="'./assets/Inbox (Front) (Colored).png' | resolveAsset">
+      </div>
+    </div>
     <div class="options">
       <img (click)="showOptions()" class="options" [src]="'./assets/Gear (Colored).png' | resolveAsset">
     </div>

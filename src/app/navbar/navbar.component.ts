@@ -34,6 +34,10 @@ export class NavbarComponent implements AfterViewInit {
 
   }
 
+  get notifications(){
+    return 1;
+  }
+
   showOptions() {
     const dialogRef = this.dialog.open(OptionsComponent, {
       width: '100px',
@@ -61,7 +65,7 @@ export class NavbarComponent implements AfterViewInit {
   }
 
   inboxClick(){
-    // console.log('[Nav Inbox Toggle]', this.inboxVisibility);
+    console.log('[Nav Inbox Toggle]', this.inboxVisibility);
     this.inboxVisibility = !this.inboxVisibility;
     this.inboxEvent.emit(this.inboxVisibility);
   }
