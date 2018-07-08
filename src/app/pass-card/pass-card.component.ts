@@ -79,13 +79,19 @@ export class PassCardComponent implements OnInit {
   newPass(){
     const endPoint:string = 'api/methacton/v1/hall_passes'
 
-    const body = {
+    const body = this.forFuture?{
       'student' : this.pass.student.id,
       'duration' : this.selectedDuration*60,
       'origin' : this.pass.origin.id,
       'destination' : this.pass.destination.id,
       'travel_type' : this.selectedTravelType,
-      'start_time' : this.forFuture?this.pass.start_time.toISOString():null
+      'start_time' : this.pass.start_time.toISOString()
+    }:{ //This is probably stupid
+      'student' : this.pass.student.id,
+      'duration' : this.selectedDuration*60,
+      'origin' : this.pass.origin.id,
+      'destination' : this.pass.destination.id,
+      'travel_type' : this.selectedTravelType
     };
 
     this.http.post(endPoint, body).subscribe((data)=>{

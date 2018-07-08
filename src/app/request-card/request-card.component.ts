@@ -35,13 +35,20 @@ export class RequestCardComponent implements OnInit {
 
   newRequest(){
     const endPoint: string = 'api/methacton/v1/pass_requests';
-    const body = {
+    const body = this.forFuture?{
           'origin' : this.request.origin.id,
           'destination' : this.request.destination.id,
           'attachment_message' : this.request.attachment_message,
           'travel_type' : this.selectedTravelType,
           'teacher' : this.request.teacher.id,
           'request_time' :this.request.request_time.toISOString(),
+          'duration' : this.selectedDuration*60,
+        }:{
+          'origin' : this.request.origin.id,
+          'destination' : this.request.destination.id,
+          'attachment_message' : this.request.attachment_message,
+          'travel_type' : this.selectedTravelType,
+          'teacher' : this.request.teacher.id,
           'duration' : this.selectedDuration*60,
         }
     this.http.post(endPoint, body).subscribe((data)=>{

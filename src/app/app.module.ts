@@ -87,6 +87,8 @@ import { TravelViewComponent } from './travel-view/travel-view.component';
 import { CardButtonComponent } from './card-button/card-button.component';
 import { RequestCardComponent } from './request-card/request-card.component';
 import { InvitationCardComponent } from './invitation-card/invitation-card.component';
+import { InlinePassCardComponent } from './inline-pass-card/inline-pass-card.component';
+import { InlineRequestCardComponent } from './inline-request-card/inline-request-card.component';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: '/main', pathMatch: 'full'},
@@ -130,6 +132,8 @@ const appRoutes: Routes = [
     CardButtonComponent,
     RequestCardComponent,
     InvitationCardComponent,
+    InlinePassCardComponent,
+    InlineRequestCardComponent,
   ],
   entryComponents: [
     HallpassFormComponent,

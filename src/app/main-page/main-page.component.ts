@@ -50,7 +50,8 @@ export class MainPageComponent implements OnInit {
   testInvitation4: Invitation;
   testInvitations: Invitation[];
 
-  currentPass: HallPass | Request;
+  currentPass: HallPass;
+  currentRequest: Request;
   futurePasses: HallPass[];
 
   // -----------------------NEW STUFF--------------------- //
@@ -162,6 +163,7 @@ export class MainPageComponent implements OnInit {
               .toPromise().then(data => {
               this._zone.run(() => {
                 this.currentPass = (!!data['active_pass']) ? HallPass.fromJSON(data['active_pass']) : null;
+                this.currentRequest = (!!data['active_request']) ? Request.fromJSON(data['active_request']) : null;
                 this.checkedPasses = true;
                 if (data['future_passes']) {
                   this.futurePasses = data['future_passes'].map(raw => HallPass.fromJSON(raw));
@@ -262,7 +264,7 @@ export class MainPageComponent implements OnInit {
         };
         this.http.post<HallPass>('api/methacton/v1/pass_requests', body).subscribe((data)=>{
           // console.log('[New Pass]: ', data);
-          this.currentPass = Request.fromJSON(data);
+          // this.currentPass = Request.fromJSON(data);
           this.showDetails = false;
         });
       }

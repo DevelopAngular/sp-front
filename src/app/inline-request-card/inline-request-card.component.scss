@@ -1,0 +1,145 @@
+.page-2-wrapper{
+    height: 122px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: left;
+    scrollbar-face-color: #D6D6D6;
+    scrollbar-track-color: white;
+    overflow: auto;
+}
+
+.button-content{
+    width: 110px;
+    height: 35px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    cursor: pointer;
+    position: relative;
+    margin: -35px 0 0 0%;
+    font-weight: bold;
+    font-size: 10pt;
+}
+
+.card-body-right{
+    height: inherit;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.request-description{
+    height: inherit;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+    left: 15px;
+    font-weight: bold;
+    text-align: left;
+}
+
+.request-description-icon{
+    width: 17px;
+    height: 17px;
+    margin-right: 7px;
+}
+
+.request-button-content{
+    width: 181px;
+    height: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    cursor: pointer;
+    position: relative;
+    margin: -50px 0 0 0%;
+    font-weight: bold;
+}
+
+.button-icon-right{
+    width: 17px;
+    height: 17px;
+    position: absolute;
+    right: 10px;
+}
+
+.button-icon-left{
+    width: 17px;
+    height: 17px;
+    position: absolute;
+    left: 10px;
+}
+
+.resend-button-content{
+    width: 181px;
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    cursor: pointer;
+    position: relative;
+    margin: -50px 0 0 0%;
+}
+
+.resend-button-content-title{
+    font-size: 11pt;
+    font-weight: bold;
+}
+
+.resend-button-content-subtitle{
+    font-size: 10pt;
+    font-weight: 400;
+}
+
+.message{
+    font-size: 12px;
+    height: 110px;
+    max-height: 110px;
+    width: 130px;
+    overflow-y: auto;
+}
+
+.student-with-edit{
+    height: 70px;
+    max-height: 70px;
+}
+
+.student-without-edit{
+    margin-bottom: 10px;
+}
+
+.student-pending{
+    height: 110px;
+    max-height: 110px;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: white;
+    border-radius: 2px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #D6D6D6; 
+    border-radius: 2px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #B6B6B6; 
+}
