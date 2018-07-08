@@ -15,7 +15,7 @@
     <app-invitation-card [invitation]="testInvitation2" [forFuture]="true"></app-invitation-card> -->
 
     <div *ngIf="checkedPasses" class="current-pass">
-      <div *ngIf="!!currentPass || !!currentRequest; else newPass;" class="pass-card center">
+      <div *ngIf="!!currentPass || !!currentRequest; else newPass;" class="center">
         <app-inline-request-card *ngIf="!!currentRequest && !currentPass" [request]="currentRequest"></app-inline-request-card>
         <app-inline-pass-card *ngIf="!!currentPass" [pass]="currentPass" [isActive]="true"></app-inline-pass-card>
       </div>
