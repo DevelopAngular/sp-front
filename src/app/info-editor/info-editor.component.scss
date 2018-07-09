@@ -3,13 +3,13 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: white;
 }
 
 .info-editor-wrapper-location{
   @extend .info-editor-wrapper;
   min-height: 189px;
   justify-content: normal;
+  background: white;
 }
 
 .message-box{
