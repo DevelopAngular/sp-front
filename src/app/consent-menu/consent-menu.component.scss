@@ -1,0 +1,62 @@
+.pointer-wrapper{
+    width: 100px;
+    height: 20px;
+    overflow: hidden;
+    position: relative;
+    right: -35px;
+    top: -29px;
+}
+
+.pointer{
+    width: 100px;
+    height: 100px;
+    transform: rotate(45deg);
+    position: relative;
+    top: 20px;
+    background-color: rgba(100, 100, 100, 0.6);
+}
+
+.consent-wrapper{
+    font-family: 'Helvetica Neue', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    top: -17px;
+}
+
+.consent-header{
+    color: white;
+    margin-bottom: 10px;
+}
+
+.option-wrapper{
+    width: 65%;
+    height: 25px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.consent-button{
+    border-radius: 10px;
+    width: 50px;
+    height: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    cursor: pointer;
+    background-color: rgba(100, 100, 100, 1);
+}
+
+.consent-confirm{
+    @extend .consent-button;
+    color: lightgreen;
+}
+
+.consent-deny{
+    @extend .consent-button;
+    color: #FF7070;
+}

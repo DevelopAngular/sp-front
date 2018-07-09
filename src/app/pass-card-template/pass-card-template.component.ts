@@ -12,7 +12,7 @@ export class PassCardTemplateComponent implements OnInit {
   @Input() rightJustify: string = 'flex-end';
   @Input() hasClose: boolean = true;
   
-  @Output() onCancel: EventEmitter<any>  =new EventEmitter();
+  @Output() onCancel: EventEmitter<any> = new EventEmitter();
 
   constructor() {}
 

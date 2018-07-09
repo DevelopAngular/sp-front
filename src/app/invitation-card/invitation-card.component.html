@@ -1,4 +1,4 @@
-<app-pass-card-template [hasDivider]="!selectedOrigin" [pass]="invitation">
+<app-pass-card-template [hasDivider]="!selectedOrigin" [pass]="invitation" (onCancel)="denyInvitation($event)">
   <div class="card-subtitle" *ngIf="fromPast || forFuture">
     {{ formatDateTime() }}
   </div>

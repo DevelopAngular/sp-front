@@ -1,10 +1,11 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ElementRef } from '@angular/core';
 import { Request } from '../NewModels';
 import { Util } from '../../Util';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material';
 import { Inject } from '@angular/core';
 import { HttpService } from '../http-service';
 import { InfoEditorComponent } from '../info-editor/info-editor.component';
+import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 
 @Component({
   selector: 'app-request-card',
@@ -22,7 +23,8 @@ export class RequestCardComponent implements OnInit {
   selectedTravelType: string;
   messageEditOpen: boolean = false;
   dateEditOpen: boolean = false;
-    
+  cancelOpen: boolean = false;
+
   constructor(public dialogRef: MatDialogRef<RequestCardComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private http: HttpService, public dialog: MatDialog) { }
 
   ngOnInit() {
@@ -109,6 +111,33 @@ export class RequestCardComponent implements OnInit {
       infoDialog.afterClosed().subscribe(data =>{
         this.request.attachment_message = data===''?this.request.attachment_message:data;
         this.messageEditOpen = false;
+      });
+    }
+  }
+
+  cancelRequest(evt: MouseEvent){
+    if(!this.cancelOpen){
+      const target = new ElementRef(evt.currentTarget);
+      const cancelDialog = this.dialog.open(ConsentMenuComponent, {
+        panelClass: 'consent-dialog-container',
+        backdropClass: 'invis-backdrop',
+        data: {'header': 'Are you sure you want to cancel this request?', 'confirm': 'Yes', 'deny': 'No', 'trigger': target}
+      });
+  
+      cancelDialog.afterOpen().subscribe( () =>{
+        this.cancelOpen = true;
+      });
+  
+      cancelDialog.afterClosed().subscribe(data =>{
+        this.cancelOpen = false;
+        let shouldDeny = data==null?false:data;
+        if(shouldDeny){
+          let endpoint: string = 'api/methacton/v1/' +this.request.id +'/cancel';
+          this.http.post(endpoint).subscribe((data)=>{
+            console.log('[Request Canceled]: ', data);
+            this.dialogRef.close();
+          });
+        }
       });
     }
   }
