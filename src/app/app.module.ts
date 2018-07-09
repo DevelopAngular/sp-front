@@ -89,6 +89,7 @@ import { RequestCardComponent } from './request-card/request-card.component';
 import { InvitationCardComponent } from './invitation-card/invitation-card.component';
 import { InlinePassCardComponent } from './inline-pass-card/inline-pass-card.component';
 import { InlineRequestCardComponent } from './inline-request-card/inline-request-card.component';
+import { InfoEditorComponent } from './info-editor/info-editor.component';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: '/main', pathMatch: 'full'},
@@ -134,6 +135,7 @@ const appRoutes: Routes = [
     InvitationCardComponent,
     InlinePassCardComponent,
     InlineRequestCardComponent,
+    InfoEditorComponent,
   ],
   entryComponents: [
     HallpassFormComponent,
@@ -143,7 +145,8 @@ const appRoutes: Routes = [
     RequestAcceptComponent,
     PassCardComponent,
     RequestCardComponent,
-    InvitationCardComponent
+    InvitationCardComponent,
+    InfoEditorComponent
   ],
   imports: [
     BrowserModule,

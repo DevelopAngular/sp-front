@@ -308,7 +308,8 @@ export class Request {
               public cancelled: Date,
               public color_profile: ColorProfile,
               public last_read: Date,
-              public last_updated: Date) {
+              public last_updated: Date,
+              public duration: number) {
   }
 
   get isRead(){
@@ -337,9 +338,10 @@ export class Request {
       cancelled: Date = (!!JSON['cancelled']) ? new Date(JSON['cancelled']) : null,
       color_profile: ColorProfile = ColorProfile.fromJSON(JSON['color_profile']),
       last_read: Date = (!!JSON['last_read']?new Date(JSON['last_read']):null),
-      last_updated: Date = new Date(JSON['last_updated']);
+      last_updated: Date = new Date(JSON['last_updated']),
+      duration: number = JSON['duration'];
 
-    return new Request(id, student, origin, destination, attachment_message, travel_type, status, hallpass, gradient_color, icon, teacher, request_time, declined_message, student_has_dismissed, cancelled, color_profile, last_read, last_updated);
+    return new Request(id, student, origin, destination, attachment_message, travel_type, status, hallpass, gradient_color, icon, teacher, request_time, declined_message, student_has_dismissed, cancelled, color_profile, last_read, last_updated, duration);
   }
 
 }

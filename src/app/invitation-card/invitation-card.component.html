@@ -3,10 +3,10 @@
     {{ formatDateTime() }}
   </div>
   <div class="card-body-left">
-    <app-travel-view [pass]='invitation' (locationSelected)="selectedOrigin = $event"></app-travel-view>
+    <app-travel-view [pass]='invitation' (locationSelected)="setLocation($event)"></app-travel-view>
   </div>
   <div class="card-body-right" *ngIf="!!selectedOrigin; else noLocation;">
-    <app-card-button [width]="'181px'" [height]="'50px'" [gradientColor]="invitation.color_profile.gradient_color">
+    <app-card-button (onClick)="acceptInvitation()" [width]="'181px'" [height]="'50px'" [gradientColor]="invitation.color_profile.gradient_color">
       <div class="button-content">
         <div class="get-pass-content-text">Get Pass</div>
         <img class="button-icon-right" [src]="'./assets/One Arrow.png' | resolveAsset">

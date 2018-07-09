@@ -1,9 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Request } from '../NewModels';
 import { Util } from '../../Util';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material';
 import { Inject } from '@angular/core';
 import { HttpService } from '../http-service';
+import { InfoEditorComponent } from '../info-editor/info-editor.component';
 
 @Component({
   selector: 'app-request-card',
@@ -19,8 +20,10 @@ export class RequestCardComponent implements OnInit {
   
   selectedDuration: number;
   selectedTravelType: string;
-
-  constructor(public dialogRef: MatDialogRef<RequestCardComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private http: HttpService) { }
+  messageEditOpen: boolean = false;
+  dateEditOpen: boolean = false;
+    
+  constructor(public dialogRef: MatDialogRef<RequestCardComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private http: HttpService, public dialog: MatDialog) { }
 
   ngOnInit() {
     this.request = this.data['pass'];
@@ -55,5 +58,58 @@ export class RequestCardComponent implements OnInit {
       console.log('[New Request]: ', data);
       this.dialogRef.close();
     });
+  }
+
+  changeDate(){
+    if(!this.dateEditOpen){
+      const dateDialog = this.dialog.open(InfoEditorComponent, {
+        panelClass: 'date-dialog-container',
+        backdropClass: 'invis-backdrop',
+        data: {'type': 'datetime', 'originalDate' : this.request.request_time}
+      });
+  
+      dateDialog.afterOpen().subscribe( () =>{
+        this.dateEditOpen = true;
+      });
+  
+      dateDialog.afterClosed().subscribe(data =>{
+        this.request.request_time = data?data:this.request.request_time;
+        this.dateEditOpen = false;
+
+        let endpoint: string = "api/methacton/v1/pass_requests";
+        let body: any = {
+          'origin' : this.request.origin.id,
+          'destination' : this.request.destination.id,
+          'attachment_message' : this.request.attachment_message,
+          'travel_type' : this.request.travel_type,
+          'teacher' : this.request.teacher.id,
+          'request_time' :this.request.request_time.toISOString(),
+          'duration' : this.request.duration,
+        };
+
+        this.http.post(endpoint, body).subscribe(() => {
+          this.dialogRef.close();
+        });
+      });
+    }
+  }
+
+  editMessage(){
+    if(!this.messageEditOpen){
+      const infoDialog = this.dialog.open(InfoEditorComponent, {
+        panelClass: 'message-dialog-container',
+        backdropClass: 'invis-backdrop',
+        data: {'type': 'message', 'originalMessage': this.request.attachment_message}
+      });
+  
+      infoDialog.afterOpen().subscribe( () =>{
+        this.messageEditOpen = true;
+      });
+  
+      infoDialog.afterClosed().subscribe(data =>{
+        this.request.attachment_message = data===''?this.request.attachment_message:data;
+        this.messageEditOpen = false;
+      });
+    }
   }
 }

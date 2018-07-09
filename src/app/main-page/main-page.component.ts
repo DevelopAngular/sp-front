@@ -113,17 +113,17 @@ export class MainPageComponent implements OnInit {
                                     'Could we meet to go over my math test 6th period? And a whole bunch of stuff to test overflow. I wonder if it will work.', 'round_trip', 'denied', null, '#00C0C7,#0B9FC1',
                                     'https://storage.googleapis.com/courier-static/icons/library.png',
                                     this.testIssuer, this.testDate, "I'm busy 6th period. Let's try 4th. And a whole bunch of stuff to test overflow. I wonder if it will work. And just a little bit more.",
-                                    true, null, this.testColorProfile, new Date(), new Date());
+                                    true, null, this.testColorProfile, new Date(), new Date(), 600);
     this.testRequest2 = new Request('testRequest2', this.testStudent, this.testOrigin, this.testDestination,
                                     'Could we meet to go over my math test 6th period? And a whole bunch of stuff to test overflow. I wonder if it will work.', 'one_way', 'pending', null, '#00C0C7,#0B9FC1',
                                     'https://storage.googleapis.com/courier-static/icons/library.png',
                                     this.testIssuer, this.testDate, "I'm busy 6th period. Let's try 4th. And a whole bunch of stuff to test overflow. I wonder if it will work. And just a little bit more.",
-                                    true, null, this.testColorProfile, new Date(), new Date());
+                                    true, null, this.testColorProfile, new Date(), new Date(), 600);
     this.testRequest3 = new Request('testRequest3', this.testStudent, this.testOrigin, this.testDestination,
                                     'Could we meet to go over my math test 6th period? And a whole bunch of stuff to test overflow. I wonder if it will work.', 'round_trip', 'pending', null, '#00C0C7,#0B9FC1',
                                     'https://storage.googleapis.com/courier-static/icons/library.png',
                                     this.testIssuer, this.testDate, "I'm busy 6th period. Let's try 4th. And a whole bunch of stuff to test overflow. I wonder if it will work. And just a little bit more.",
-                                    true, null, this.testColorProfile, new Date(), new Date());
+                                    true, null, this.testColorProfile, new Date(), new Date(), 600);
     
     this.testRequests = [this.testRequest1, this.testRequest2, this.testRequest3];
 
@@ -217,7 +217,7 @@ export class MainPageComponent implements OnInit {
       panelClass: 'pass-card-dialog-container',
       backdropClass: 'custom-backdrop',
       data: {'pass': templatePass, 'fromPast': false, 'forFuture': forLater, 'forInput': true}
-    })
+    });
   }
 
   endPass(hallpass: HallPass) {
