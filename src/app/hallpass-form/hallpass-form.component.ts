@@ -367,7 +367,7 @@ export class HallpassFormComponent implements OnInit {
           });
     } else{
       if(this.requestTarget){
-        let templateRequest:Request = new Request('template', null, this.fromLocation, this.toLocation, this.requestMessage, '', 'pending', null, '', this.toIcon, this.requestTarget, this.requestTime, '', null, null, this._toProfile, null, null)
+        let templateRequest:Request = new Request('template', null, this.fromLocation, this.toLocation, this.requestMessage, '', 'pending', null, '', this.toIcon, this.requestTarget, this.requestTime, '', null, null, this._toProfile, null, null, 60)
         this.dialogRef.close({
           'templatePass': templateRequest,
           'forLater': this.forLater,
