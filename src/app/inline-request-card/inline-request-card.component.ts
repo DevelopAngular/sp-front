@@ -1,7 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ElementRef } from '@angular/core';
 import { HttpService } from '../http-service';
 import { Util } from '../../Util';
 import { Request } from '../NewModels'
+import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
+import { MatDialog } from '@angular/material';
 
 @Component({
   selector: 'app-inline-request-card',
@@ -16,8 +18,9 @@ export class InlineRequestCardComponent implements OnInit {
   
   selectedDuration: number;
   selectedTravelType: string;
+  cancelOpen: boolean = false;
 
-  constructor(private http: HttpService) { }
+  constructor(private http: HttpService, public dialog: MatDialog) { }
 
   ngOnInit() {
 
@@ -27,9 +30,29 @@ export class InlineRequestCardComponent implements OnInit {
     return Util.formatDateTime(this.request.request_time);
   }
 
-  cancel(){
-    const endPoint:string = 'api/methacton/v1/pass_requests/' +this.request.id +'/cancel';
-    this.http.post(endPoint).subscribe();
+  cancelRequest(evt: MouseEvent){
+    if(!this.cancelOpen){
+      const target = new ElementRef(evt.currentTarget);
+      const cancelDialog = this.dialog.open(ConsentMenuComponent, {
+        panelClass: 'consent-dialog-container',
+        backdropClass: 'invis-backdrop',
+        data: {'header': 'Are you sure you want to cancel this request?', 'confirm': 'Yes', 'deny': 'No', 'trigger': target}
+      });
+  
+      cancelDialog.afterOpen().subscribe( () =>{
+        this.cancelOpen = true;
+      });
+  
+      cancelDialog.afterClosed().subscribe(data =>{
+        this.cancelOpen = false;
+        let shouldDeny = data==null?false:data;
+        if(shouldDeny){
+          let endpoint: string = 'api/methacton/v1/pass_requests/' +this.request.id +'/cancel';
+          this.http.post(endpoint).subscribe((data)=>{
+            console.log('[Request Canceled]: ', data);
+          });
+        }
+      });
+    }
   }
-
 }

@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ElementRef } from '@angular/core';
 import { HallPass} from '../NewModels';
 import { Util } from '../../Util';
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef, MatDialog } from '@angular/material';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { Inject } from '@angular/core';
 import { HttpService } from '../http-service';
+import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 
 @Component({
   selector: 'app-pass-card',
@@ -29,8 +30,9 @@ export class PassCardComponent implements OnInit {
 
   selectedDuration: number;
   selectedTravelType: string;
+  cancelOpen: boolean = false;
 
-  constructor(public dialogRef: MatDialogRef<PassCardComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private http: HttpService) {
+  constructor(public dialogRef: MatDialogRef<PassCardComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private http: HttpService, public dialog: MatDialog) {
 
   }
 
@@ -99,4 +101,25 @@ export class PassCardComponent implements OnInit {
     });
   }
   
+  cancelEdit(evt: MouseEvent){
+    if(!this.cancelOpen && this.forInput){
+      const target = new ElementRef(evt.currentTarget);
+      const cancelDialog = this.dialog.open(ConsentMenuComponent, {
+        panelClass: 'consent-dialog-container',
+        backdropClass: 'invis-backdrop',
+        data: {'header': 'Are you sure you want to cancel pass creation?', 'confirm': 'Yes', 'deny': 'No', 'trigger': target}
+      });
+  
+      cancelDialog.afterOpen().subscribe( () =>{
+        this.cancelOpen = true;
+      });
+  
+      cancelDialog.afterClosed().subscribe(data =>{
+        this.cancelOpen = false;
+        if(data==null?false:data)
+          this.dialogRef.close();
+      });
+    }
+  }
+
 }

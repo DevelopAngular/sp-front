@@ -132,11 +132,15 @@ export class RequestCardComponent implements OnInit {
         this.cancelOpen = false;
         let shouldDeny = data==null?false:data;
         if(shouldDeny){
-          let endpoint: string = 'api/methacton/v1/' +this.request.id +'/cancel';
-          this.http.post(endpoint).subscribe((data)=>{
-            console.log('[Request Canceled]: ', data);
+          if(this.forInput){
             this.dialogRef.close();
-          });
+          } else{
+            let endpoint: string = 'api/methacton/v1/pass_requests/' +this.request.id +'/cancel';
+            this.http.post(endpoint).subscribe((data)=>{
+              console.log('[Request Canceled]: ', data);
+              this.dialogRef.close();
+            });
+          }
         }
       });
     }

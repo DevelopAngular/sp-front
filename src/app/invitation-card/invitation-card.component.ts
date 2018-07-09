@@ -71,7 +71,7 @@ export class InvitationCardComponent implements OnInit {
         this.denyOpen = false;
         let shouldDeny = data==null?false:data;
         if(shouldDeny){
-          let endpoint: string = 'api/methacton/v1/' +this.invitation.id +'/deny';
+          let endpoint: string = 'api/methacton/v1/invitations/' +this.invitation.id +'/deny';
           let body = {
             'message' : ''
           }
