@@ -295,6 +295,17 @@ export class HallpassFormComponent implements OnInit {
     }
   }
 
+  get dividerGradient(){
+    let colors = '#606981, #CBD5E5'
+    if(this.formState==='datetime'){
+      colors = '#03CF31,#00B476';
+    } else if(this._toProfile){
+      colors = this._toProfile.gradient_color;
+    }
+    console.log('[Divier Color]: ', colors);
+    return 'radial-gradient(circle at 98% 97%,' +colors +')';
+  }
+
   setColorProfile(type: string, color_profile: ColorProfile) {
     if (type == 'to') {
       this._toProfile = color_profile;
