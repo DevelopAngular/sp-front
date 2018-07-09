@@ -213,7 +213,6 @@ export class MainPageComponent implements OnInit {
 
   openInputCard(templatePass, forLater, component){
     this.dialog.open(component, {
-      width: '353px',
       panelClass: 'pass-card-dialog-container',
       backdropClass: 'custom-backdrop',
       data: {'pass': templatePass, 'fromPast': false, 'forFuture': forLater, 'forInput': true}

@@ -36,7 +36,6 @@ export class PassCollectionComponent implements OnInit {
 
   initializeDialog(component: any, pass: any){
     const dialogRef = this.dialog.open(component, {
-      width: '353px',
       panelClass: 'pass-card-dialog-container',
       backdropClass: 'custom-backdrop',
       data: {'pass': pass, 'fromPast': this.fromPast, 'forFuture': this.forFuture}
