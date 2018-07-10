@@ -6,6 +6,7 @@ import { Inject } from '@angular/core';
 import { HttpService } from '../http-service';
 import { InfoEditorComponent } from '../info-editor/info-editor.component';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
+import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
 
 @Component({
   selector: 'app-request-card',
@@ -64,10 +65,14 @@ export class RequestCardComponent implements OnInit {
 
   changeDate(){
     if(!this.dateEditOpen){
-      const dateDialog = this.dialog.open(InfoEditorComponent, {
-        panelClass: 'date-dialog-container',
+      const dateDialog = this.dialog.open(HallpassFormComponent, {
+        width: '750px',
+        panelClass: 'form-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: {'type': 'datetime', 'originalDate' : this.request.request_time}
+        data: {'entryState': 'datetime',
+              'originalToLocation': this.request.destination,
+              'colorProfile': this.request.color_profile,
+              'originalFromLocation': this.request.origin}
       });
   
       dateDialog.afterOpen().subscribe( () =>{
@@ -75,7 +80,7 @@ export class RequestCardComponent implements OnInit {
       });
   
       dateDialog.afterClosed().subscribe(data =>{
-        this.request.request_time = data?data:this.request.request_time;
+        this.request.request_time = data['startTime']?data['startTime']:this.request.request_time;
         this.dateEditOpen = false;
 
         let endpoint: string = "api/methacton/v1/pass_requests";
@@ -98,10 +103,15 @@ export class RequestCardComponent implements OnInit {
 
   editMessage(){
     if(!this.messageEditOpen){
-      const infoDialog = this.dialog.open(InfoEditorComponent, {
-        panelClass: 'message-dialog-container',
+      const infoDialog = this.dialog.open(HallpassFormComponent, {
+        width: '750px',
+        panelClass: 'form-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: {'type': 'message', 'originalMessage': this.request.attachment_message}
+        data: {'entryState': 'restrictedMessage',
+              'originalMessage': this.request.attachment_message,
+              'originalToLocation': this.request.destination,
+              'colorProfile': this.request.color_profile,
+              'originalFromLocation': this.request.origin}
       });
   
       infoDialog.afterOpen().subscribe( () =>{
@@ -109,7 +119,7 @@ export class RequestCardComponent implements OnInit {
       });
   
       infoDialog.afterClosed().subscribe(data =>{
-        this.request.attachment_message = data===''?this.request.attachment_message:data;
+        this.request.attachment_message = data['message']===''?this.request.attachment_message:data['message'];
         this.messageEditOpen = false;
       });
     }

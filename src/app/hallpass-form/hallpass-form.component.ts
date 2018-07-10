@@ -43,6 +43,7 @@ export class HallpassFormComponent implements OnInit {
   requestTime: Date = new Date();
   duration: number = 5;
   sliderDuration: number = 5;
+  entryState: string;
   toState: string = 'pinnables';
   toCategory: string = '';
   selectedStudents: User[] = [];
@@ -138,6 +139,9 @@ export class HallpassFormComponent implements OnInit {
   }
 
   get toGradient(){
+    if(this.entryState){
+      return this._toProfile.gradient_color;
+    }
     if(this.toEnabled){
       if(this.toLocation){
         return this._toProfile.gradient_color;
@@ -197,8 +201,25 @@ export class HallpassFormComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log('[Form Data]: ', this.dialogData);
     this.forLater = this.dialogData['forLater'];
-    this.formState = this.forLater?'datetime':'from';
+
+    this.entryState = this.dialogData['entryState'];
+    if(this.entryState){
+      this.requestMessage = this.dialogData['originalMessage'];
+      if(this.dialogData['originalToLocation']){
+        this.toLocation = this.dialogData['originalToLocation'];
+        this._toProfile = this.dialogData['colorProfile'];
+        this.to_title = this.toLocation.title;
+      }
+      if(this.dialogData['originalFromLocation']){
+        this.fromLocation = this.dialogData['originalFromLocation'];
+        this._fromProfile = this.greenProfile;
+        this.from_title = this.fromLocation.title;
+      }
+    }
+
+    this.formState = (this.entryState?this.entryState:(this.forLater?'datetime':'from'));
 
     this.dataService.currentUser.subscribe(user => {
       this.user = user;
@@ -219,10 +240,17 @@ export class HallpassFormComponent implements OnInit {
   }
 
   setFormState(state) {
+    if(this.entryState){
+      this.dialogRef.close({
+          'fromLocation': this.fromLocation,
+          'startTime': this.requestTime,
+          'message': this.requestMessage
+        });
+    }
     this.formState = state;
     if (state === 'to') {
       if (!!this.fromLocation) {
-        this.pinnables = this.http.get<Pinnable[]>('api/methacton/v1/pinnables').toPromise();
+        //this.pinnables = this.http.get<Pinnable[]>('api/methacton/v1/pinnables').toPromise();
         this.formState = 'to';
         this.toState = 'pinnables';
       }
@@ -302,7 +330,6 @@ export class HallpassFormComponent implements OnInit {
     } else if(this._toProfile){
       colors = this._toProfile.gradient_color;
     }
-    console.log('[Divier Color]: ', colors);
     return 'radial-gradient(circle at 98% 97%,' +colors +')';
   }
 
@@ -360,6 +387,7 @@ export class HallpassFormComponent implements OnInit {
 
   sendRequest(message:string){
     this.requestMessage = message;
+    this.setFormState('');
     this.determinePass();
   }
 

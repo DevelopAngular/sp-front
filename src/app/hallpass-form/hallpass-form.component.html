@@ -117,6 +117,7 @@
         [minWidth]="'175px'"
         [minHeight]="'80px'"
         [fontSize]="'16px'"
+        [disabled]="!entryState"
         (buttonClick)="setFormState('from')"
       >{{ from_title }}
       </app-gradient-button>
@@ -134,7 +135,7 @@
         [minWidth]="'175px'"
         [minHeight]="'80px'"
         [fontSize]="'16px'"
-        [disabled]="!toEnabled"
+        [disabled]="!toEnabled && !entryState"
         (buttonClick)="setFormState('to')"
       >{{ to_title }}
       </app-gradient-button>
@@ -184,7 +185,7 @@
         <app-location-table class="center" (onSelect)="updateTarget($event)" [type]="'teachers'" [placeholder]="'Search teachers'"></app-location-table>
     </div>
     <div *ngIf="formState == 'restrictedMessage'" class="message center">
-      <textarea class="message-box" #messageBox placeholder="Could we meet to go over my math test during second period?"></textarea>
+      <textarea class="message-box" #messageBox placeholder="Could we meet to go over my math test during second period?" [(ngModel)]="requestMessage">{{ requestMessage }}</textarea>
         <app-gradient-button
           [gradient]="'#00B476, #03CF31'"
           [hoverColor]="'#04CD33'"

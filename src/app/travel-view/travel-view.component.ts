@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { HallPass, Invitation, Request } from '../NewModels';
 import { MatDialog } from '@angular/material';
 import { InfoEditorComponent } from '../info-editor/info-editor.component';
+import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
 
 @Component({
   selector: 'app-travel-view',
@@ -29,10 +30,14 @@ export class TravelViewComponent implements OnInit {
 
   changeLocation(){
     if(!this.locationChangeOpen){
-      const locationDialog = this.dialog.open(InfoEditorComponent, {
-        panelClass: 'location-dialog-container',
+      const locationDialog = this.dialog.open(HallpassFormComponent, {
+        width: '750px',
+        panelClass: 'form-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: {'type': 'location'}
+        data: {'entryState': 'from',
+              'originalToLocation': this.pass.destination,
+              'colorProfile': this.pass.color_profile,
+              'originalFromLocation': this.pass['default_origin']}
       });
   
       locationDialog.afterOpen().subscribe(() =>{
@@ -41,7 +46,7 @@ export class TravelViewComponent implements OnInit {
   
       locationDialog.afterClosed().subscribe(data =>{
         console.log('Emiting with: ', data);
-        this.locationSelected.emit(data?data:this.pass['default_origin']);
+        this.locationSelected.emit(data['fromLocation']?data['fromLocation']:this.pass['default_origin']);
         this.locationChangeOpen = false;
       });
     }
