@@ -107,7 +107,7 @@ export class PassCardComponent implements OnInit {
       const cancelDialog = this.dialog.open(ConsentMenuComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: {'header': 'Are you sure you want to cancel pass creation?', 'confirm': 'Yes', 'deny': 'No', 'trigger': target}
+        data: {'header': 'Are you sure you want to cancel this pass?', 'confirm': 'Cancel', 'deny': 'Close', 'trigger': target}
       });
   
       cancelDialog.afterOpen().subscribe( () =>{

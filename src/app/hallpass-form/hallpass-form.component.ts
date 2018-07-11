@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef, MatSlideToggleChange, MatStepper } from '@angular/material';
+import { MatDialog, MatDialogRef, MatSlideToggleChange, MatStepper, MatDialogConfig } from '@angular/material';
 import { Router } from '@angular/router';
 import { Message } from 'primeng/components/common/api';
 import { MessageService } from 'primeng/components/common/messageservice';
@@ -221,6 +221,8 @@ export class HallpassFormComponent implements OnInit {
 
     this.formState = (this.entryState?this.entryState:(this.forLater?'datetime':'from'));
 
+    this.updateFormHeight();
+
     this.dataService.currentUser.subscribe(user => {
       this.user = user;
       this.isStaff = this.user.roles.includes('edit_all_hallpass');
@@ -235,6 +237,13 @@ export class HallpassFormComponent implements OnInit {
 
   }
 
+  updateFormHeight(){
+    const matDialogConfig: MatDialogConfig = new MatDialogConfig();
+    matDialogConfig.height = this.formState==='datetime'?'562px':'385px';
+    matDialogConfig.width = '750px';
+    this.dialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);
+  }
+
   setStartTime(event) {
     this.startTime = new Date(event);
   }
@@ -246,8 +255,12 @@ export class HallpassFormComponent implements OnInit {
           'startTime': this.requestTime,
           'message': this.requestMessage
         });
+        return;
     }
     this.formState = state;
+
+    this.updateFormHeight();
+
     if (state === 'to') {
       if (!!this.fromLocation) {
         //this.pinnables = this.http.get<Pinnable[]>('api/methacton/v1/pinnables').toPromise();

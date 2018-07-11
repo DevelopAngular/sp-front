@@ -13,7 +13,7 @@
     transform: rotate(45deg);
     position: relative;
     top: 21px;
-    background-color: rgba(100, 100, 100, 0.8);
+    background-color: rgba(1, 25, 52, 0.7);;
 }
 
 .consent-wrapper{
@@ -31,7 +31,7 @@
 }
 
 .option-wrapper{
-    width: 65%;
+    width: 75%;
     height: 25px;
     display: flex;
     flex-direction: row;
@@ -40,7 +40,7 @@
 
 .consent-button{
     border-radius: 10px;
-    width: 50px;
+    width: 61px;
     height: 25px;
     display: flex;
     flex-direction: column;
@@ -48,15 +48,15 @@
     text-align: center;
     justify-content: center;
     cursor: pointer;
-    background-color: rgba(100, 100, 100, 1);
+    background-color: rgba(1, 25, 52, 1);
 }
 
 .consent-confirm{
     @extend .consent-button;
-    color: lightgreen;
+    color: #FF7070;
 }
 
 .consent-deny{
     @extend .consent-button;
-    color: #FF7070;
+    color: lightblue;
 }

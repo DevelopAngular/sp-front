@@ -60,7 +60,7 @@ export class InvitationCardComponent implements OnInit {
       const denyDialog = this.dialog.open(ConsentMenuComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: {'header': 'Are you sure you want to decline this invite?', 'confirm': 'Yes', 'deny': 'No', 'trigger': target}
+        data: {'header': 'Are you sure you want to decline this invite?', 'confirm': 'Decline', 'deny': 'Close', 'trigger': target}
       });
   
       denyDialog.afterOpen().subscribe( () =>{

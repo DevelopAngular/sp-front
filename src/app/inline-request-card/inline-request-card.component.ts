@@ -36,7 +36,7 @@ export class InlineRequestCardComponent implements OnInit {
       const cancelDialog = this.dialog.open(ConsentMenuComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: {'header': 'Are you sure you want to cancel this request?', 'confirm': 'Yes', 'deny': 'No', 'trigger': target}
+        data: {'header': 'Are you sure you want to cancel this request?', 'confirm': 'Cancel', 'deny': 'Close', 'trigger': target}
       });
   
       cancelDialog.afterOpen().subscribe( () =>{
