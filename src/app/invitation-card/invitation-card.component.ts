@@ -6,6 +6,7 @@ import { Inject } from '@angular/core';
 import { InfoEditorComponent } from '../info-editor/info-editor.component';
 import { HttpService } from '../http-service';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
+import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
 
 @Component({
   selector: 'app-invitation-card',
@@ -57,28 +58,42 @@ export class InvitationCardComponent implements OnInit {
   denyInvitation(evt: MouseEvent){
     if(!this.denyOpen){
       const target = new ElementRef(evt.currentTarget);
-      const denyDialog = this.dialog.open(ConsentMenuComponent, {
+      const consentDialog = this.dialog.open(ConsentMenuComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {'header': 'Are you sure you want to decline this invite?', 'confirm': 'Decline', 'deny': 'Close', 'trigger': target}
       });
   
-      denyDialog.afterOpen().subscribe( () =>{
+      consentDialog.afterOpen().subscribe( () =>{
         this.denyOpen = true;
       });
   
-      denyDialog.afterClosed().subscribe(data =>{
+      consentDialog.afterClosed().subscribe(consentData =>{
         this.denyOpen = false;
-        let shouldDeny = data==null?false:data;
+        let shouldDeny = consentData==null?false:consentData;
         if(shouldDeny){
           let endpoint: string = 'api/methacton/v1/invitations/' +this.invitation.id +'/deny';
           let body = {
             'message' : ''
           }
-
-          this.http.post(endpoint, body).subscribe((data)=>{
-            console.log('[Invitation Denied]: ', data);
-            this.dialogRef.close();
+          const denyMessageDialog = this.dialog.open(HallpassFormComponent, {
+            width: '750px',
+            panelClass: 'form-dialog-container',
+            backdropClass: 'invis-backdrop',
+            data: {'entryState': 'restrictedMessage',
+                  'originalMessage': '',
+                  'originalToLocation': this.invitation.destination,
+                  'colorProfile': this.invitation.color_profile,
+                  'originalFromLocation': this.invitation.default_origin}
+          });
+      
+          denyMessageDialog.afterClosed().subscribe(messageData =>{
+            console.log('[Dialog Data]: ', messageData)
+            body.message = messageData['message'];
+            this.http.post(endpoint, body).subscribe((httpData)=>{
+              console.log('[Invitation Denied]: ', httpData);
+              this.dialogRef.close();
+            });
           });
         }
       });

@@ -410,7 +410,7 @@ export class HallpassFormComponent implements OnInit {
   }
 
   determinePass() {
-    if(!this.toLocation.restricted){
+    if(!this.toLocation.restricted && !this.entryState){
       let templatePass:HallPass = new HallPass('template', this.user, null, null, null, this.requestTime, null, null, this.fromLocation, this.toLocation, '', '', this.toIcon, this._toProfile)
       this.dialogRef.close({
           'templatePass': templatePass,
