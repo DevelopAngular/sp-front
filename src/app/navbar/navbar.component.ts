@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
+import { OnInit, Component, EventEmitter, Input, Output, NgZone } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import { DataService } from '../data-service';
@@ -6,32 +6,35 @@ import { GoogleLoginService } from '../google-login.service';
 import { LoadingService } from '../loading.service';
 import { User } from '../NewModels';
 import { OptionsComponent } from '../options/options.component';
+import { Observable } from '../../../node_modules/rxjs';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent implements AfterViewInit {
 
-  @Input()
+export class NavbarComponent implements OnInit {
+
+  isStaff: boolean;
   user: User;
 
-  @Input()
-  forTeacher: boolean;
-
-  @Output() onTabChange: EventEmitter<number> = new EventEmitter();
-  @Output() inboxEvent: EventEmitter<boolean> = new EventEmitter();
-
-  tabIndex: number = 1;
+  tab: string = 'passes';
   inboxVisibility: boolean = false;
 
   constructor(private dataService: DataService, public dialog: MatDialog, private router: Router,
-              public loadingService: LoadingService, public loginService: GoogleLoginService) {
+              public loadingService: LoadingService, public loginService: GoogleLoginService, private _zone: NgZone) {
   }
 
-  ngAfterViewInit() {
-
+  ngOnInit() {
+    this.dataService.currentUser
+    .pipe(this.loadingService.watchFirst)
+    .subscribe(user => {
+      this._zone.run(() => {
+        this.user = user;
+        this.isStaff = user.roles.includes('edit_all_hallpass');;
+      })
+    });
   }
 
   get notifications(){
@@ -56,17 +59,17 @@ export class NavbarComponent implements AfterViewInit {
   }
 
   getNavElementBg(index: number, type: string) {
-    return type == 'btn' ? (index == this.tabIndex ? 'rgba(165, 165, 165, 0.3)' : '') : (index == this.tabIndex ? 'rgba(0, 255, 0, 1)' : 'rgba(255, 255, 255, 0)');
+    //return type == 'btn' ? (index == this.tabIndex ? 'rgba(165, 165, 165, 0.3)' : '') : (index == this.tabIndex ? 'rgba(0, 255, 0, 1)' : 'rgba(255, 255, 255, 0)');
   }
 
-  updateTab(index: number) {
-    this.tabIndex = index;
-    this.onTabChange.emit(this.tabIndex);
+  updateTab(route: string) {
+    this.tab = route;
+    this.router.navigateByUrl('/' +this.tab);
   }
 
   inboxClick(){
     console.log('[Nav Inbox Toggle]', this.inboxVisibility);
     this.inboxVisibility = !this.inboxVisibility;
-    this.inboxEvent.emit(this.inboxVisibility);
+    this.dataService.updateInbox(this.inboxVisibility);
   }
 }

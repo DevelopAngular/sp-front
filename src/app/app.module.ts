@@ -90,10 +90,16 @@ import { InvitationCardComponent } from './invitation-card/invitation-card.compo
 import { InlinePassCardComponent } from './inline-pass-card/inline-pass-card.component';
 import { InlineRequestCardComponent } from './inline-request-card/inline-request-card.component';
 import { InfoEditorComponent } from './info-editor/info-editor.component';
+import { NavButtonComponent } from './nav-button/nav-button.component';
+import { HallMonitorComponent } from './hall-monitor/hall-monitor.component';
+import { MyRoomComponent } from './my-room/my-room.component';
+import { PassesComponent } from './passes/passes.component';
 
 const appRoutes: Routes = [
-  {path: '', redirectTo: '/main', pathMatch: 'full'},
-  {path: 'main', component: MainPageComponent},
+  {path: '', redirectTo: '/passes', pathMatch: 'full'},
+  {path: 'passes', component: PassesComponent},
+  {path: 'hallmonitor', component: HallMonitorComponent},
+  {path: 'myroom', component: MyRoomComponent},
   {path: 'sign-out', component: SignOutComponent},
 ];
 
@@ -136,6 +142,10 @@ const appRoutes: Routes = [
     InlinePassCardComponent,
     InlineRequestCardComponent,
     InfoEditorComponent,
+    NavButtonComponent,
+    HallMonitorComponent,
+    MyRoomComponent,
+    PassesComponent,
   ],
   entryComponents: [
     HallpassFormComponent,

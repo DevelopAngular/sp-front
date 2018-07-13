@@ -61,7 +61,9 @@
 }
 
 .teacherNav {
+  width: 34%;
   flex-direction: row;
+  justify-content: space-between;
 }
 
 .navButton {
@@ -103,7 +105,7 @@
 }
 
 .name{
-  padding-right: 20px;
+  padding-right: 5px;
 }
 
 .static-loading{
@@ -119,6 +121,7 @@
 .options, .inbox-icon{
   width: 20px;
   height: 20px;
+  cursor: pointer;
 }
 
 .inbox-wrapper{
@@ -161,4 +164,11 @@
   height: 10px;
   position: absolute;
   top: 22px;
+}
+
+.divider{
+  width: 90%;
+  margin: 5px auto 0 auto;
+  height: 1px;
+  background-color: #B5B7BA;
 }

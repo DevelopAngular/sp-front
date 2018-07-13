@@ -40,6 +40,13 @@ function constructUrl(base: string, obj: Partial<QueryParams>): string {
 
 @Injectable()
 export class DataService {
+  private inboxSource = new BehaviorSubject<boolean>(false);
+  inboxState = this.inboxSource.asObservable();
+
+  updateInbox(state: boolean){
+    this.inboxSource.next(state);
+  }
+
   currentUser = this.userService.userData.asObservable();
   private updateInvitations = new BehaviorSubject<void>(null);
 

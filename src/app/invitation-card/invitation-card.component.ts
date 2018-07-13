@@ -76,24 +76,9 @@ export class InvitationCardComponent implements OnInit {
           let body = {
             'message' : ''
           }
-          const denyMessageDialog = this.dialog.open(HallpassFormComponent, {
-            width: '750px',
-            panelClass: 'form-dialog-container',
-            backdropClass: 'invis-backdrop',
-            data: {'entryState': 'restrictedMessage',
-                  'originalMessage': '',
-                  'originalToLocation': this.invitation.destination,
-                  'colorProfile': this.invitation.color_profile,
-                  'originalFromLocation': this.invitation.default_origin}
-          });
-      
-          denyMessageDialog.afterClosed().subscribe(messageData =>{
-            console.log('[Dialog Data]: ', messageData)
-            body.message = messageData['message'];
-            this.http.post(endpoint, body).subscribe((httpData)=>{
-              console.log('[Invitation Denied]: ', httpData);
-              this.dialogRef.close();
-            });
+          this.http.post(endpoint, body).subscribe((httpData)=>{
+            console.log('[Invitation Denied]: ', httpData);
+            this.dialogRef.close();
           });
         }
       });

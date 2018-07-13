@@ -1,0 +1,45 @@
+<div class="passes-wrapper">
+  <div class="main-page-left">
+    <div class="current-pass">
+      <div *ngIf="!!currentPass || !!currentRequest; else newPass;" class="center">
+        <app-inline-request-card *ngIf="!!currentRequest && !currentPass" [request]="currentRequest"></app-inline-request-card>
+        <app-inline-pass-card *ngIf="!!currentPass" [pass]="currentPass" [isActive]="true"></app-inline-pass-card>
+      </div>
+      <ng-template #newPass>
+        <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Plus (Colored).png'">
+          <div class="pass-buttons">
+            <app-gradient-button
+              [minWidth]="'121px'"
+              [minHeight]="'74px'"
+              [hoverColor]="'#00b476'"
+              [fontSize]="'15px'"
+              (click)="showForm(false)">Now
+            </app-gradient-button>
+            <app-gradient-button
+              [minWidth]="'121px'"
+              [minHeight]="'74px'"
+              [hoverColor]="'#00b476'"
+              [fontSize]="'15px'"
+              (click)="showForm(true)">Later
+            </app-gradient-button>
+          </div>
+        </app-display-card>
+      </ng-template>
+    </div>
+    <div class="future-passes">
+      <app-pass-collection [forFuture]="true" [style.width]="'400px'" [passes]="testPasses" [title]="'Scheduled Passes'" [icon]="'./assets/Later (Colored).png'" [columns]="3"></app-pass-collection>
+    </div>
+    <div class="past-passes">
+      <app-pass-collection [fromPast]="true" [style.width]="'400px'" [passes]="testPasses" [title]="'Expired Passes'" [icon]="'./assets/Places I\'ve Been (Colored).png'" [columns]="3"></app-pass-collection>
+    </div>
+  </div>
+
+  <div class="main-page-right" *ngIf="dataService.inboxState | async">
+    <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'22pt'">
+      <div class="inbox-content">
+          <app-pass-collection [forFuture]="true" [style.width]="'258px'" [passes]="testRequests" [title]="'Sent'" [icon]="'./assets/Lock (Colored).png'" [columns]="2"></app-pass-collection>
+          <app-pass-collection [forFuture]="true" [style.width]="'258px'" [passes]="testInvitations" [title]="'Received'" [icon]="'./assets/Invitation (Colored).png'" [columns]="2"></app-pass-collection>    
+      </div>
+    </app-display-card>
+  </div>
+</div>
