@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import 'rxjs/add/operator/map';
-import { LoadingService } from '../loading.service';
+import { GoogleLoginService } from '../google-login.service';
 
 @Component({
   selector: 'app-main-page',
@@ -10,9 +10,9 @@ import { LoadingService } from '../loading.service';
 })
 export class MainPageComponent implements OnInit {
 
-  constructor(loadingService: LoadingService) {
-  
+  constructor(public loginService: GoogleLoginService) {
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+  }
 }
