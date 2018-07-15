@@ -1,12 +1,14 @@
-import { OnInit, Component, EventEmitter, Input, Output, NgZone } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
+
+import 'rxjs/add/observable/combineLatest';
+import { Observable } from 'rxjs/Observable';
 import { DataService } from '../data-service';
 import { GoogleLoginService } from '../google-login.service';
 import { LoadingService } from '../loading.service';
 import { User } from '../NewModels';
 import { OptionsComponent } from '../options/options.component';
-import { Observable } from '../../../node_modules/rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -22,22 +24,36 @@ export class NavbarComponent implements OnInit {
   tab: string = 'passes';
   inboxVisibility: boolean = false;
 
+  navbarEnabled = false;
+
   constructor(private dataService: DataService, public dialog: MatDialog, private router: Router,
               public loadingService: LoadingService, public loginService: GoogleLoginService, private _zone: NgZone) {
+
+    const navbarEnabled$ = Observable.combineLatest(
+      this.loadingService.isLoading$,
+      this.loginService.isAuthenticated$,
+      (a, b) => a && b);
+
+    navbarEnabled$.subscribe(s => {
+      this._zone.run(() => {
+        this.navbarEnabled = s;
+      });
+    });
   }
 
   ngOnInit() {
     this.dataService.currentUser
-    .pipe(this.loadingService.watchFirst)
-    .subscribe(user => {
-      this._zone.run(() => {
-        this.user = user;
-        this.isStaff = user.roles.includes('edit_all_hallpass');;
-      })
-    });
+      .pipe(this.loadingService.watchFirst)
+      .subscribe(user => {
+        this._zone.run(() => {
+          this.user = user;
+          this.isStaff = user.roles.includes('edit_all_hallpass');
+          ;
+        });
+      });
   }
 
-  get notifications(){
+  get notifications() {
     return 1;
   }
 
@@ -64,10 +80,10 @@ export class NavbarComponent implements OnInit {
 
   updateTab(route: string) {
     this.tab = route;
-    this.router.navigateByUrl('/' +this.tab);
+    this.router.navigateByUrl('/' + this.tab);
   }
 
-  inboxClick(){
+  inboxClick() {
     console.log('[Nav Inbox Toggle]', this.inboxVisibility);
     this.inboxVisibility = !this.inboxVisibility;
     this.dataService.updateInbox(this.inboxVisibility);

@@ -1,4 +1,4 @@
-<mat-progress-bar class="loading-theme" *ngIf="(loadingService.isLoading$ | async) && (loginService.isAuthenticated$ | async); else staticLoading;"
+<mat-progress-bar class="loading-theme" *ngIf="navbarEnabled; else staticLoading;"
                   mode="indeterminate"></mat-progress-bar>
 <ng-template class="static-loading" #staticLoading><div class="static-loading"></div></ng-template>
 <div class="bar">
