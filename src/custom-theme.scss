@@ -58,7 +58,7 @@ $mat-light-green: (
 
 $loading-theme-primary: mat-palette($mat-dark-green);
 $loading-theme-accent: mat-palette($mat-light-green);
-$loading-theme: mat-light-theme($loading-theme-primary, $loading-theme-accent);
+$loading-theme: mat-light-theme($loading-theme-accent, $loading-theme-primary);
 
 .loading-theme {
     @include angular-material-theme($loading-theme);

@@ -140,7 +140,7 @@ export class PassesComponent implements OnInit {
       width: '750px',
       panelClass: 'form-dialog-container',
       backdropClass: 'custom-backdrop',
-      data: {'forLater': forLater}
+      data: {'forLater': forLater, 'forStaff': this.isStaff}
     });
 
     dialogRef.afterClosed().subscribe((result: Object) => {
