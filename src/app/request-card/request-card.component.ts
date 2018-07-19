@@ -19,6 +19,7 @@ export class RequestCardComponent implements OnInit {
   @Input() forFuture: boolean = false;
   @Input() fromPast: boolean = false;
   @Input() forInput: boolean = false;
+  @Input() forStaff: boolean = false;
   
   selectedDuration: number;
   selectedTravelType: string;

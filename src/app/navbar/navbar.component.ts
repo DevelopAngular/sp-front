@@ -48,7 +48,6 @@ export class NavbarComponent implements OnInit {
         this._zone.run(() => {
           this.user = user;
           this.isStaff = user.roles.includes('edit_all_hallpass');
-          ;
         });
       });
   }

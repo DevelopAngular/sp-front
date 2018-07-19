@@ -42,3 +42,24 @@
     border-radius: 10px;
     box-shadow: 0 7.5px 13px 0 rgba(0, 0, 0, 0.1);
 }
+
+.names-overlay{
+    position: absolute;
+    bottom: 5px;
+    background: white;
+    mix-blend-mode: soft-light;
+    width: 121px;
+    height: 20px;
+    border-radius: 0 0 10px 10px;
+}
+
+.names{
+    color: #fff;
+    font-family: 'Helvetica Neue',sans-serif;
+    font-size: 0.8em;
+    position: absolute;
+    bottom: 7px;
+    width: 121px;
+    display: flex;
+    justify-content: center;
+}

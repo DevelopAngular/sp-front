@@ -20,25 +20,28 @@
               [minHeight]="'74px'"
               [hoverColor]="'#00b476'"
               [fontSize]="'15px'"
-              (click)="showForm(true)">Later
+              (click)="showForm(true)">Future
             </app-gradient-button>
           </div>
         </app-display-card>
       </ng-template>
     </div>
+    <div class="active-passes">
+      <app-pass-collection *ngIf="isStaff" [isActive]="true" [forStaff]="isStaff" [style.width]="'400px'" [passes]="testPasses" [title]="'Active Passes'" [icon]="'./assets/Hallway (Colored).png'" [columns]="3"></app-pass-collection>
+    </div>
     <div class="future-passes">
-      <app-pass-collection [forFuture]="true" [style.width]="'400px'" [passes]="testPasses" [title]="'Scheduled Passes'" [icon]="'./assets/Later (Colored).png'" [columns]="3"></app-pass-collection>
+      <app-pass-collection [forFuture]="true" [forStaff]="isStaff" [style.width]="'400px'" [passes]="testPasses" [title]="'Scheduled Passes'" [icon]="'./assets/Later (Colored).png'" [columns]="3"></app-pass-collection>
     </div>
     <div class="past-passes">
-      <app-pass-collection [fromPast]="true" [style.width]="'400px'" [passes]="testPasses" [title]="'Expired Passes'" [icon]="'./assets/Places I\'ve Been (Colored).png'" [columns]="3"></app-pass-collection>
+      <app-pass-collection [fromPast]="true" [forStaff]="isStaff" [style.width]="'400px'" [passes]="testPasses" [title]="'Expired Passes'" [icon]="'./assets/Places I\'ve Been (Colored).png'" [columns]="3"></app-pass-collection>
     </div>
   </div>
 
   <div class="main-page-right" *ngIf="dataService.inboxState | async">
     <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'22pt'">
       <div class="inbox-content">
-          <app-pass-collection [forFuture]="true" [style.width]="'258px'" [passes]="testRequests" [title]="'Sent'" [icon]="'./assets/Lock (Colored).png'" [columns]="2"></app-pass-collection>
-          <app-pass-collection [forFuture]="true" [style.width]="'258px'" [passes]="testInvitations" [title]="'Received'" [icon]="'./assets/Invitation (Colored).png'" [columns]="2"></app-pass-collection>    
+          <app-pass-collection [forStaff]="isStaff" [forFuture]="true" [style.width]="'258px'" [passes]="(isStaff?testInvitations:testRequests)" [title]="'Sent'" [icon]="'./assets/Lock (Colored).png'" [columns]="2"></app-pass-collection>
+          <app-pass-collection [forStaff]="isStaff" [forFuture]="true" [style.width]="'258px'" [passes]="(isStaff?testRequests:testInvitations)" [title]="'Received'" [icon]="'./assets/Invitation (Colored).png'" [columns]="2"></app-pass-collection>    
       </div>
     </app-display-card>
   </div>

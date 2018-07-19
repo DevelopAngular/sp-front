@@ -18,6 +18,7 @@ export class InvitationCardComponent implements OnInit {
   @Input() invitation: Invitation;
   @Input() forFuture: boolean = false;
   @Input() fromPast: boolean = false;
+  @Input() forStaff: boolean = false;
 
   selectedOrigin: Location;
   denyOpen: boolean = false;

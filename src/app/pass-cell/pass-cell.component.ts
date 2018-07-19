@@ -12,6 +12,8 @@ export class PassCellComponent implements OnInit {
   @Input() pass: HallPass | Invitation | Request;
   @Input() fromPast: boolean = false;
   @Input() forFuture: boolean = false;
+  @Input() isActive: boolean = false;
+  @Input() forStaff: boolean = false;
   @Input() type:string;
 
   constructor() { }

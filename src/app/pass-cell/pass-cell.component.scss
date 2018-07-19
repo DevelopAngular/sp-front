@@ -22,16 +22,24 @@
 
 .cell-title{
     font-weight: bold;
+    margin-right: 10px;
 }
 
 .cell-datetime{
-    margin-left: auto;
+    margin: 0 7px 0 auto;
 }
 
 .cell-arrow{
     width: 10px;
     height: 15px;
-    margin: auto 0 auto 15px;
+    margin: auto 0 auto 7px;
+}
+
+.location-icon{
+    width: 17px;
+    height: 17px;
+    margin: auto 5px;
+    filter: brightness(.3);
 }
 
 .cell-divider{
@@ -45,6 +53,6 @@
     width: 15px;
     height: 15px;
     border-radius: 8px;
-    margin-left: 10px;
     box-shadow: 0 7.5px 13px 0 rgba(0, 0, 0, 0.1);
+    margin-left: 2px;
 }

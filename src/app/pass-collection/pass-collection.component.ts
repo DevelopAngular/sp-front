@@ -19,6 +19,8 @@ export class PassCollectionComponent implements OnInit {
   @Input() columns: number = 3;
   @Input() fromPast: boolean = false;
   @Input() forFuture: boolean = false;
+  @Input() isActive: boolean = false;
+  @Input() forStaff: boolean = false;
 
   type:string;
 

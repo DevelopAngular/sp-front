@@ -15,10 +15,11 @@ import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 export class PassCardComponent implements OnInit {
 
   @Input() pass: HallPass;
-  @Input() isActive: boolean = false;
   @Input() forInput: boolean = false;
   @Input() fromPast: boolean = false;
   @Input() forFuture: boolean = false;
+  @Input() isActive: boolean = false;
+  @Input() forStaff: boolean = false;
 
   @Output() cardEvent: EventEmitter<any> = new EventEmitter();
 

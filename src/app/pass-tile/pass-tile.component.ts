@@ -17,6 +17,9 @@ export class PassTileComponent implements OnInit {
   @Input() pass: HallPass | Request | Invitation;
   @Input() fromPast: boolean = false;
   @Input() forFuture: boolean = false;
+  @Input() isActive: boolean = false;
+  @Input() forStaff: boolean = false;
+   
   @Input() type:string;
 
   @Output() tileSelected = new EventEmitter();
@@ -34,6 +37,10 @@ export class PassTileComponent implements OnInit {
       }
     }
     return this.formattedDate();
+  }
+
+  get tileName(){
+    return this.pass.student.first_name.substr(0, 1) +'. ' +this.pass.student.last_name;
   }
 
   constructor() { }

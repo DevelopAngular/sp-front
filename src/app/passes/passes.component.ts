@@ -51,7 +51,8 @@ export class PassesComponent implements OnInit {
   futurePasses: HallPass[];
 
   user: User;
-
+  isStaff: boolean= false;
+  
   constructor(private http: HttpService, public dataService: DataService, private router: Router,
               public dialog: MatDialog, private _zone: NgZone, private loadingService: LoadingService) {
     this.testDate.setMinutes(this.testDate.getMinutes()+1);
@@ -127,7 +128,10 @@ export class PassesComponent implements OnInit {
     this.dataService.currentUser
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {
-        this.user = user;
+        this._zone.run(() => {
+          this.user = user;
+          this.isStaff = user.roles.includes('edit_all_hallpass');
+        });
       });
   }
 
