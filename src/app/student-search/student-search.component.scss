@@ -1,0 +1,63 @@
+.student-search-wrapper{
+    width: 100%;
+}
+
+.input {
+    margin-top: 20px;
+    margin-bottom: 5px;
+    width: 100%;
+    min-height: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 16px;
+    padding-left: 3px;
+}
+
+input {
+    border: 0px;
+    padding: 0 0 0 10px;
+    height: 40px;
+}
+
+mat-input-container.md-input-focused label {
+    display: none
+}
+
+.options-wrapper{
+    margin: 10px auto 10px auto;
+    width: 180px;
+}
+
+.option-wrapper {
+    margin-top: 5px;
+    padding-top: 5px;
+    cursor: pointer;
+}
+
+.option-wrapper:hover {
+    cursor: pointer;
+    background-color: #F1F1F1;
+}
+
+.option-content {
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.08;
+    letter-spacing: 0.3px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0 5px 0 5px;
+    color: #767676
+}
+
+.option-divider{
+    width: 100%;
+    height: 1px;
+    transform: scale(1, 0.5);
+    background-color: #767676;
+    margin-top: 10px;
+}

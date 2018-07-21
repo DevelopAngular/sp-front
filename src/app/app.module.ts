@@ -94,6 +94,7 @@ import { NavButtonComponent } from './nav-button/nav-button.component';
 import { HallMonitorComponent } from './hall-monitor/hall-monitor.component';
 import { MyRoomComponent } from './my-room/my-room.component';
 import { PassesComponent } from './passes/passes.component';
+import {MatChipsModule} from '@angular/material/chips';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: '/passes', pathMatch: 'full'},
@@ -208,6 +209,7 @@ const appRoutes: Routes = [
     MatDatepickerModule,
     MatNativeDateModule,
     AmazingTimePickerModule,
+    MatChipsModule,
     RouterModule.forRoot(
       appRoutes
     ),

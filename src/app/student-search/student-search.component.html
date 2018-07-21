@@ -1,15 +1,29 @@
-<span class="ui-fluid wrapper">
-    <!--<div class="ui-inputgroup">-->
-  <!--<span class="ui-float-label">-->
-  <!--<p-autoComplete id="float-input" pInputText [(ngModel)]="selectedStudents"-->
-  <!--[suggestions]="students" (completeMethod)="updateStudents($event)"-->
-  <!--placeholder="" field="display_name" [multiple]="true" (onSelect)="update()" (onUnselect)="update()">-->
-  <!--</p-autoComplete>-->
-  <!--<label for="float-input">Student(s)</label>-->
-  <!--</span>-->
-  <!--<button pButton type="button" [icon]="getIcon()" [ngClass]="{'ui-button-success': validate(), 'ui-button-danger': !validate()}" class="validationIcon"></button>-->
-  <!--</div>-->
-
-    <app-student-picker [formCtrl]="formCtrl" [multiple]="true"></app-student-picker>
-
-</span>
+<div class="student-search-wrapper">
+<div class="input">
+  <mat-chip-list #chipList>
+      <mat-chip
+        *ngFor="let student of selectedStudents"
+        [removable]="true"
+        (removed)="removeStudent(student)">
+        {{student.display_name}}
+        <mat-icon matChipRemove>cancel</mat-icon>
+      </mat-chip>
+      <input
+        placeholder="Search for student(s)..."
+        #studentInput
+        [matChipInputFor]="chipList"
+        [matChipInputAddOnBlur]="true"
+        [value]="inputValue"
+        (input)="onSearch(studentInput.value)"
+      >
+  </mat-chip-list>
+</div>
+  <div class="options-wrapper">
+    <div *ngFor="let student of students | async" (click)="studentInput.value = ''; addStudent(student)"  class="option-wrapper">
+      <div class="option-content">
+        {{ student.display_name }}
+      </div>
+      <div class="option-divider"></div>
+    </div>
+  </div>
+</div>

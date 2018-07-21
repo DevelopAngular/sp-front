@@ -324,3 +324,12 @@ textarea {
 .toggle-description{
   color: #767676;
 }
+
+.student-select{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 300px;
+  justify-content: space-between;
+  align-items: center;
+}

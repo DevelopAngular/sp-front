@@ -107,6 +107,42 @@ export class HallpassFormComponent implements OnInit {
     }
   }
 
+  get dividerText() {
+    if (this.formState === 'from') {
+      return 'From where?';
+    } else if (this.formState === 'to') {
+      return 'To where?';
+    } else if(this.formState === 'restrictedTarget'){
+      return 'Send Pass Request To?';
+    } else if(this.formState === 'restrictedMessage'){
+      return 'Message';
+    } else if(this.formState === 'datetime'){
+      return 'Select Date & Time';
+    } else if(this.formState === 'students'){
+      return 'Select student(s)';
+    }
+  }
+
+  get dividerIcon(){
+    if(this.formState === 'from' || this.formState === 'to' || this.formState === 'students'){
+      return './assets/Search.png';
+    } else if(this.formState === 'restrictedMessage'){
+      return './assets/Message.png';
+    } else if(this.formState === 'datetime'){
+      return './assets/Later.png'
+    }
+  }
+
+  get dividerGradient(){
+    let colors = '#606981, #CBD5E5'
+    if(this.formState==='datetime'){
+      colors = '#03CF31,#00B476';
+    } else if(this._toProfile){
+      colors = this._toProfile.gradient_color;
+    }
+    return 'radial-gradient(circle at 98% 97%,' +colors +')';
+  }
+
   ngOnInit() {
     console.log('[Form Data]: ', this.dialogData);
     this.forLater = this.dialogData['forLater'];
@@ -127,7 +163,7 @@ export class HallpassFormComponent implements OnInit {
       }
     }
 
-    this.formState = (this.entryState?this.entryState:(this.forLater?'datetime':'from'));
+    this.formState = (this.entryState?this.entryState:(this.forLater?'datetime':(this.forStaff?'students':'from')));
 
     this.updateFormHeight();
 
@@ -192,40 +228,6 @@ export class HallpassFormComponent implements OnInit {
     } else {
       return 'none';
     }
-  }
-
-  get dividerText() {
-    if (this.formState === 'from') {
-      return 'From where?';
-    } else if (this.formState === 'to') {
-      return 'To where?';
-    } else if(this.formState === 'restrictedTarget'){
-      return 'Send Pass Request To?';
-    } else if(this.formState === 'restrictedMessage'){
-      return 'Message';
-    } else if(this.formState === 'datetime'){
-      return 'Select Date & Time';
-    }
-  }
-
-  get dividerIcon(){
-    if(this.formState === 'from' || this.formState === 'to'){
-      return './assets/Search.png';
-    } else if(this.formState === 'restrictedMessage'){
-      return './assets/Message.png';
-    } else if(this.formState === 'datetime'){
-      return './assets/Later.png'
-    }
-  }
-
-  get dividerGradient(){
-    let colors = '#606981, #CBD5E5'
-    if(this.formState==='datetime'){
-      colors = '#03CF31,#00B476';
-    } else if(this._toProfile){
-      colors = this._toProfile.gradient_color;
-    }
-    return 'radial-gradient(circle at 98% 97%,' +colors +')';
   }
 
   setColorProfile(type: string, color_profile: ColorProfile) {

@@ -1,7 +1,7 @@
 <!-- Show the form designated for students -->
 <div class="form">
   <!-- Buttons responsible for choosing formState -->
-  <div class="locs" *ngIf="formState!=='datetime'">
+  <div class="locs" *ngIf="formState!=='datetime' && formState!=='students'">
     <app-gradient-button
       class="location-button"
       [gradient]="fromGradient"
@@ -52,7 +52,7 @@
         [fontSize]="'14px'"
         (buttonClick)="setFormState('from')"
         [style.width]="'90px'"
-        [style.margin]="'15px'"
+        [style.margin]="'15px auto'"
       >
       Done</app-gradient-button>
     </div>
@@ -71,12 +71,27 @@
         [minWidth]="'90px'"
         [minHeight]="'30px'"
         [fontSize]="'14px'"
-        (buttonClick)="setFormState('from')"
+        (buttonClick)="setFormState('students')"
         [style.width]="'90px'"
         [style.margin]="'15px auto'"
       >
       Done</app-gradient-button>
     </div>
+  </div>
+
+  <div *ngIf="formState==='students'" class="student-select">
+    <app-student-search [style.width]="'75%'" (onUpdate)="selectedStudents=$event"></app-student-search>
+      <app-gradient-button
+      [gradient]="'#03CF31,#00B476'"
+      [hoverColor]="'#00B476'"
+      [minWidth]="'90px'"
+      [minHeight]="'30px'"
+      [fontSize]="'14px'"
+      [disabled]="selectedStudents.length<1"
+      (buttonClick)="setFormState('from')"
+      [style.width]="'90px'"
+    >
+    Done ({{ selectedStudents.length }})</app-gradient-button>
   </div>
 
   <!-- Used to select the from_location -->

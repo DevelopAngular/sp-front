@@ -1,18 +1,10 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/observable/of';
 
-import { Observable } from 'rxjs/Observable';
-import { DataService } from '../data-service';
 import { HttpService } from '../http-service';
-import { User } from '../models';
-
-function wrapper<T>(thing: Observable<T>): Promise<T> {
-  return new Promise((resolve, reject) => {
-    thing.subscribe(resolve, reject);
-  });
-}
+import { User, Paged } from '../NewModels';
+import { element } from '../../../node_modules/protractor';
 
 @Component({
   selector: 'app-student-search',
@@ -21,55 +13,59 @@ function wrapper<T>(thing: Observable<T>): Promise<T> {
 })
 
 export class StudentSearchComponent {
-  @Input()
-  icon: string;
-
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
 
-  formCtrl = new FormControl();
-
-  students: User[] = [];
+  students: Promise<any[]>;
   selectedStudents: User[] = [];
+  inputValue: string = '';
 
-  constructor(private http: HttpService, private dataService: DataService) {
+  constructor(private http: HttpService) {
+    this.onSearch('');
+  }
 
-    this.formCtrl.valueChanges.subscribe((students: User[]) => {
-      this.selectedStudents = students;
+  onSearch(search: string) {
+    console.log('Searching');
+    this.students = this.http.get<Paged<any>>('api/methacton/v1/users?role=hallpass_student&limit=5' +(search===''?'':'&search=' + encodeURI(search))).toPromise().then(paged => this.removeDuplicateStudents(paged.results));
+    console.log(this.students);
+  }
+
+  removeStudent(student: User){
+    var index = this.selectedStudents.indexOf(student, 0);
+    if (index > -1) {
+      this.selectedStudents.splice(index, 1);
+    }
+    this.onUpdate.emit(this.selectedStudents);
+  }
+
+  addStudent(student: User){
+    console.log(student);
+    this.inputValue = '';
+    this.onSearch('');
+    if(!this.selectedStudents.includes(student)){
+      this.selectedStudents.push(student);
       this.onUpdate.emit(this.selectedStudents);
-    });
-
+    }
   }
 
-  async updateStudents(event) {
-    const query = event.query;
-    this.students = this.convertToStudents(await this.filterStudents(query));
-  }
-
-  filterStudents(name: string): Promise<any[]> {
-    return this.http.get<any[]>('api/methacton/v1/users?role=hallpass_student&search=' + encodeURI(name)).toPromise();
-  }
-
-  convertToStudents(json: any[]): User[] {
-    const out: User[] = [];
-    for (let i = 0; i < json.length; i++) {
-      if (json[i]['rank'] > 0) {
-        out.push(new User(json[i]['id'], json[i]['display_name']));
-      } else {
-        return out;
+  removeDuplicateStudents(students): User[]{
+    let fixedStudents: User[] = students;
+    let studentsToRemove: User[] = [];
+    for(let selectedStudent of this.selectedStudents){
+      for(let student of fixedStudents){
+        console.log(selectedStudent.id +' =?= ' +student.id)
+        if(selectedStudent.id === student.id){
+          studentsToRemove.push(student);
+        }
       }
     }
-    return out;
-  }
 
-  validate() {
-    return this.selectedStudents.length > 0;
-  }
+    for(let studentToRemove of studentsToRemove){
+      var index = fixedStudents.indexOf(studentToRemove, 0);
+      if (index > -1) {
+        fixedStudents.splice(index, 1);
+      }
+    }
 
-  getIcon() {
-    return this.validate() ? 'fa-check' : 'fa-close';
-  }
-
-  update() {
-    this.onUpdate.emit(this.selectedStudents);
+    return fixedStudents;
   }
 }
