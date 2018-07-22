@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ElementRef } from '@angular/core';
-import { Invitation, Location } from '../NewModels';
+import { Invitation, Location, User } from '../NewModels';
 import { Util } from '../../Util';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { Inject } from '@angular/core';
@@ -19,10 +19,12 @@ export class InvitationCardComponent implements OnInit {
   @Input() forFuture: boolean = false;
   @Input() fromPast: boolean = false;
   @Input() forStaff: boolean = false;
+  @Input() selectedStudents: User[] = [];
 
   selectedOrigin: Location;
   denyOpen: boolean = false;
-
+  selectedDuration: number;
+  selectedTravelType: string;
   constructor(public dialogRef: MatDialogRef<InvitationCardComponent>, @Inject(MAT_DIALOG_DATA) public data: any, public dialog: MatDialog, private http: HttpService) {
     
   }
@@ -31,6 +33,9 @@ export class InvitationCardComponent implements OnInit {
     this.invitation = this.data['pass'];
     this.forFuture = this.data['forFuture'];
     this.fromPast = this.data['fromPast'];
+    this.forStaff = this.data['forStaff'];
+    this.selectedStudents = this.data['selectedStudents'];
+
     this.selectedOrigin = this.invitation.default_origin;
   }
 
@@ -41,6 +46,23 @@ export class InvitationCardComponent implements OnInit {
   setLocation(location: Location){
     this.invitation.default_origin = location;
     this.selectedOrigin = location;
+  }
+
+  newInvitation(){
+    const endPoint:string = 'api/methacton/v1/invitations/bulk_create';
+
+    const body = {
+      'students' : this.selectedStudents.map(user => user.id),
+      'default_origin' : this.invitation.default_origin?this.invitation.default_origin.id:null,
+      'destination' : this.invitation.destination.id,
+      'date_choices' : this.invitation.date_choices.map(date => date.toISOString()),
+      'duration' : this.selectedDuration*60,
+      'travel_type' : this.selectedTravelType
+    }
+
+    this.http.post(endPoint, body).subscribe((data)=>{
+      this.dialogRef.close();
+    });
   }
 
   acceptInvitation(){

@@ -9,6 +9,7 @@ import { Observable } from '../../../node_modules/rxjs';
 import { RequestCardComponent } from '../request-card/request-card.component';
 import { PassCardComponent } from '../pass-card/pass-card.component';
 import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
+import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('edit_all_hallpass');
@@ -144,16 +145,26 @@ export class PassesComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result: Object) => {
-      
-      this.openInputCard(result['templatePass'], result['forLater'], result['restricted']?RequestCardComponent:PassCardComponent)
-    });
+      this.openInputCard(result['templatePass'], 
+                        result['forLater'],
+                        result['forStaff'],
+                        result['selectedStudents'],
+                        (result['type']==='hallpass'?PassCardComponent:(result['type']==='request'?RequestCardComponent:InvitationCardComponent))
+                      )
+                    });
   }
 
-  openInputCard(templatePass, forLater, component){
+  openInputCard(templatePass, forLater, forStaff, selectedStudents, component){
     this.dialog.open(component, {
       panelClass: 'pass-card-dialog-container',
       backdropClass: 'custom-backdrop',
-      data: {'pass': templatePass, 'fromPast': false, 'forFuture': forLater, 'forInput': true}
+      data: {'pass': templatePass, 
+            'fromPast': false,
+            'forFuture': forLater,
+            'forInput': true,
+            'forStaff': forStaff,
+            'selectedStudents': selectedStudents
+          }
     });
   }
 }

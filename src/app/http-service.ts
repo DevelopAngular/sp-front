@@ -157,7 +157,12 @@ export class HttpService {
       const formData: FormData = new FormData();
       for (let prop in body) {
         if (body.hasOwnProperty(prop)) {
-          formData.append(prop, body[prop]);
+          if(body[prop] instanceof Array){
+            for(let sprop of body[prop])
+              formData.append(prop, sprop);
+          } else{
+            formData.append(prop, body[prop]);
+          }
         }
       }
       body = formData;

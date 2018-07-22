@@ -59,11 +59,11 @@
     <div class="datetime-right" *ngIf="forStaff">
       <div class="toggle-wrapper loading-theme">
         <div class="toggle-title">Declinable</div>
-        <mat-slide-toggle (change)="isDeclinable = $event.checked"></mat-slide-toggle>
+        <mat-slide-toggle [checked]="isDeclinable" (change)="isDeclinable = $event.checked"></mat-slide-toggle>
       </div>
       <div class="toggle-divider"></div>
       <div class="toggle-description">
-        If a student is able to decline a pass sent to them. <br><br> You have to know the location of the student(s).
+        If a student is able to decline a pass sent to them. <br><br> You have to know the location of the student(s) if non-declinable.
       </div>
       <app-gradient-button
         [gradient]="'#03CF31,#00B476'"
@@ -88,7 +88,7 @@
       [minHeight]="'30px'"
       [fontSize]="'14px'"
       [disabled]="selectedStudents.length<1"
-      (buttonClick)="setFormState('from')"
+      (buttonClick)="setFormState(((forLater&&isDeclinable)?'to':'from'))"
       [style.width]="'90px'"
     >
     Done ({{ selectedStudents.length }})</app-gradient-button>

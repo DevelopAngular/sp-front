@@ -1,4 +1,4 @@
-<app-pass-card-template [pass]="pass" [rightJustify]="(fromPast || forFuture)?'center':'flex-end'" [hasClose]="!isActive || fromPast" (onCancel)="cancelEdit($event)">
+<app-pass-card-template [selectedStudents]="selectedStudents" [forStaff]="forStaff" [pass]="pass" [rightJustify]="(fromPast || forFuture)?'center':'flex-end'" [hasClose]="!isActive || fromPast" (onCancel)="cancelEdit($event)">
   
   <div class="card-subtitle" *ngIf="fromPast || forFuture">
     {{ formatDateTime() }}
@@ -15,7 +15,7 @@
     <app-traveltype-picker (onSelect)="selectedTravelType=$event" [choices]="pass.destination.travel_types" [altColor]="pass.color_profile.solid_color"></app-traveltype-picker>
     <app-card-button (onClick)="newPass()" [width]="buttonWidth +'px'" [height]="'50px'" [gradientColor]="pass.color_profile.gradient_color">
       <div class="start-pass-content">
-        <div class="start-pass-content-text">{{((forFuture && forInput)?'Schedule Pass':'Start Pass')}}</div>
+        <div class="start-pass-content-text">{{((forFuture && forInput)?'Schedule Pass':(forStaff?'Send Pass':'Start Pass'))}}</div>
         <img class="button-icon-right" [src]="'./assets/One Arrow.png' | resolveAsset">
       </div>
     </app-card-button>

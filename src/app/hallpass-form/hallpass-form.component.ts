@@ -47,7 +47,7 @@ export class HallpassFormComponent implements OnInit {
   selectedStudents: User[] = [];
   startTime: Date = new Date();
   requestMessage: string = '';
-  isDeclinable: boolean = false;
+  isDeclinable: boolean = true;
 
   public pinnables: Promise<Pinnable[]>;
 
@@ -58,7 +58,7 @@ export class HallpassFormComponent implements OnInit {
   }
 
   get fromGradient(){
-    if(this.fromLocation){
+    if(this.fromLocation || (this.forLater && this.isDeclinable)){
       return this.greenProfile.gradient_color;
     } else{
       return "#606981, #ACB4C1";
@@ -80,7 +80,7 @@ export class HallpassFormComponent implements OnInit {
       if(this.toLocation){
         return this._toProfile.gradient_color;
       } else{
-        return "#7E879D, #7E879D";
+        return "#606981, #ACB4C1";
       }
     } else{
       return "#CBD5E5, #CBD5E5";
@@ -95,12 +95,12 @@ export class HallpassFormComponent implements OnInit {
         return '#7E879D';
       }
     } else{
-          return '#CBD5E5';
+        return '#CBD5E5';
     }
   }
 
   get toEnabled(){
-    if(this.fromLocation){
+    if(this.fromLocation || (this.isDeclinable && this.forLater)){
       return true;
     } else{
       return false;
@@ -207,7 +207,7 @@ export class HallpassFormComponent implements OnInit {
     }
   }
 
-  pinnableSelected(event: Pinnable, picker?: LocationPickerComponent) {
+  pinnableSelected(event: Pinnable) {
     if (event.type == 'location') {
       this.to_title = event.title;
       this.toIcon = event.icon || '';
@@ -276,23 +276,49 @@ export class HallpassFormComponent implements OnInit {
   }
 
   determinePass() {
-    if(!this.toLocation.restricted){
-      let templatePass:HallPass = new HallPass('template', this.user, null, null, null, this.requestTime, null, null, this.fromLocation, this.toLocation, '', '', this.toIcon, this._toProfile)
-      this.dialogRef.close({
-          'templatePass': templatePass,
-          'forLater': this.forLater,
-          'restricted': false
-          });
-    } else{
+    if(this.toLocation.restricted && !this.forStaff){
       if(this.requestTarget){
         let templateRequest:Request = new Request('template', null, this.fromLocation, this.toLocation, this.requestMessage, '', 'pending', null, '', this.toIcon, this.requestTarget, this.requestTime, '', null, null, this._toProfile, null, null, 60)
         this.dialogRef.close({
           'templatePass': templateRequest,
           'forLater': this.forLater,
-          'restricted': true
+          'restricted': true,
+          'type': 'request'
           });
       } else{
         this.formState = 'restrictedTarget';
+      }
+    } else if(!this.toLocation.restricted && !this.forStaff){
+      let templatePass:HallPass = new HallPass('template', this.user, null, null, null, this.requestTime, null, null, this.fromLocation, this.toLocation, '', '', this.toIcon, this._toProfile)
+        this.dialogRef.close({
+            'templatePass': templatePass,
+            'forLater': this.forLater,
+            'restricted': false,
+            'forStaff': this.forStaff,
+            'selectedStudents': this.selectedStudents,
+            'type': 'hallpass'
+        });
+    }else{
+      if(this.isDeclinable && this.forLater){
+        let templateInvitation: Invitation = new Invitation('template', null, null, this.toLocation, [this.requestTime], this.user, 'pending', this.duration, this._toProfile.gradient_color, this.toIcon, this.travelType, this._toProfile, null, null, null);
+        this.dialogRef.close({
+          'templatePass': templateInvitation,
+          'forLater': this.forLater,
+          'restricted': false,
+          'forStaff': this.forStaff,
+          'selectedStudents': this.selectedStudents,
+          'type': 'invitation'
+        });
+      } else{
+        let templatePass:HallPass = new HallPass('template', this.user, null, null, null, this.requestTime, null, null, this.fromLocation, this.toLocation, '', '', this.toIcon, this._toProfile)
+        this.dialogRef.close({
+            'templatePass': templatePass,
+            'forLater': this.forLater,
+            'restricted': false,
+            'forStaff': this.forStaff,
+            'selectedStudents': this.selectedStudents,
+            'type': 'hallpass'
+        });
       }
     }
   }

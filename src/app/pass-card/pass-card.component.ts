@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, ElementRef } from '@angular/core';
-import { HallPass} from '../NewModels';
+import { HallPass, User } from '../NewModels';
 import { Util } from '../../Util';
 import { MatDialogRef, MatDialog } from '@angular/material';
 import { MAT_DIALOG_DATA } from '@angular/material';
@@ -32,6 +32,7 @@ export class PassCardComponent implements OnInit {
   selectedDuration: number;
   selectedTravelType: string;
   cancelOpen: boolean = false;
+  selectedStudents: User[];
 
   constructor(public dialogRef: MatDialogRef<PassCardComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private http: HttpService, public dialog: MatDialog) {
 
@@ -42,6 +43,9 @@ export class PassCardComponent implements OnInit {
     this.forInput = this.data['forInput'];
     this.forFuture = this.data['forFuture'];
     this.fromPast = this.data['fromPast'];
+    this.forStaff = this.data['forStaff'];
+    this.selectedStudents = this.data['selectedStudents'];
+
     setInterval(() => {
       if (!!this.pass && this.isActive) {
         let end: Date = this.pass.expiration_time;
@@ -80,22 +84,23 @@ export class PassCardComponent implements OnInit {
   }
 
   newPass(){
-    const endPoint:string = 'api/methacton/v1/hall_passes'
+    const endPoint:string = 'api/methacton/v1/hall_passes' +(this.forStaff?'/bulk_create':'')
 
-    const body = this.forFuture?{
-      'student' : this.pass.student.id,
-      'duration' : this.selectedDuration*60,
-      'origin' : this.pass.origin.id,
-      'destination' : this.pass.destination.id,
-      'travel_type' : this.selectedTravelType,
-      'start_time' : this.pass.start_time.toISOString()
-    }:{ //This is probably stupid
-      'student' : this.pass.student.id,
+    const body = {
       'duration' : this.selectedDuration*60,
       'origin' : this.pass.origin.id,
       'destination' : this.pass.destination.id,
       'travel_type' : this.selectedTravelType
-    };
+    }
+    
+    if(this.forStaff){
+      body['students'] = this.selectedStudents.map(user => user.id);
+    } else {
+      body['student'] = this.pass.student.id;
+    }
+
+    if(this.forFuture)
+      body['start_time'] = this.pass.start_time.toISOString();
 
     this.http.post(endPoint, body).subscribe((data)=>{
       this.dialogRef.close();
