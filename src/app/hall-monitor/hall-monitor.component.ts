@@ -1,5 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { User, Location, ColorProfile, HallPass } from '../NewModels';
+import { Observable } from '../../../node_modules/rxjs';
+import { DataService } from '../data-service';
+import { LoadingService } from '../loading.service';
+
+function isUserStaff(user: User): boolean {
+  return user.roles.includes('edit_all_hallpass');
+}
+
 @Component({
   selector: 'app-hall-monitor',
   templateUrl: './hall-monitor.component.html',
@@ -22,7 +30,10 @@ export class HallMonitorComponent implements OnInit {
 
   inputValue: string = '';
 
-  constructor() {
+  user: User;
+  isStaff: boolean= false;
+
+  constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService) {
     this.testDate.setMinutes(this.testDate.getMinutes()+1);
 
     this.testPass1 = new HallPass('testPass1', this.testStudent, this.testIssuer,
@@ -57,12 +68,27 @@ export class HallMonitorComponent implements OnInit {
     this.testPasses = [this.testPass1, this.testPass2, this.testPass3, this.testPass4];
   }
 
-  ngOnInit() {
+  get isStaff$(): Observable<boolean> {
+    return this.dataService.currentUser.map(isUserStaff);
+  }
 
+  ngOnInit() {
+    this.dataService.currentUser
+    .pipe(this.loadingService.watchFirst)
+    .subscribe(user => {
+      this._zone.run(() => {
+        this.user = user;
+        this.isStaff = user.roles.includes('edit_all_hallpass');
+      });
+    });
   }
 
   openReportForm(){
     console.log('Opening report form');
+  }
+
+  onSearch(search: string){
+
   }
 
 }
