@@ -11,7 +11,7 @@
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     font-family: 'Helvetica Neue', sans-serif;
     font-size: 16px;
-    padding-left: 3px;
+    padding-left: 10px;
 }
 
 input {
@@ -20,6 +20,9 @@ input {
     height: 40px;
 }
 
+input.mat-chip-input{
+    flex: .97;
+}
 mat-input-container.md-input-focused label {
     display: none
 }

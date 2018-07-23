@@ -14,7 +14,8 @@ import { element } from '../../../node_modules/protractor';
 
 export class StudentSearchComponent {
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
-
+  @Input() showOptions: boolean = true;
+  
   students: Promise<any[]>;
   selectedStudents: User[] = [];
   inputValue: string = '';
@@ -24,7 +25,6 @@ export class StudentSearchComponent {
   }
 
   onSearch(search: string) {
-    console.log('Searching');
     this.students = this.http.get<Paged<any>>('api/methacton/v1/users?role=hallpass_student&limit=5' +(search===''?'':'&search=' + encodeURI(search))).toPromise().then(paged => this.removeDuplicateStudents(paged.results));
     console.log(this.students);
   }
@@ -35,6 +35,7 @@ export class StudentSearchComponent {
       this.selectedStudents.splice(index, 1);
     }
     this.onUpdate.emit(this.selectedStudents);
+    this.onSearch('');
   }
 
   addStudent(student: User){
@@ -52,7 +53,6 @@ export class StudentSearchComponent {
     let studentsToRemove: User[] = [];
     for(let selectedStudent of this.selectedStudents){
       for(let student of fixedStudents){
-        console.log(selectedStudent.id +' =?= ' +student.id)
         if(selectedStudent.id === student.id){
           studentsToRemove.push(student);
         }

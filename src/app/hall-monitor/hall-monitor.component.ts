@@ -3,6 +3,8 @@ import { User, Location, ColorProfile, HallPass } from '../NewModels';
 import { Observable } from '../../../node_modules/rxjs';
 import { DataService } from '../data-service';
 import { LoadingService } from '../loading.service';
+import { ReportFormComponent } from '../report-form/report-form.component';
+import { MatDialog } from '../../../node_modules/@angular/material';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('edit_all_hallpass');
@@ -33,7 +35,7 @@ export class HallMonitorComponent implements OnInit {
   user: User;
   isStaff: boolean= false;
 
-  constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService) {
+  constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService, public dialog: MatDialog) {
     this.testDate.setMinutes(this.testDate.getMinutes()+1);
 
     this.testPass1 = new HallPass('testPass1', this.testStudent, this.testIssuer,
@@ -84,7 +86,11 @@ export class HallMonitorComponent implements OnInit {
   }
 
   openReportForm(){
-    console.log('Opening report form');
+    const dialogRef = this.dialog.open(ReportFormComponent, {
+      width: '750px',
+      panelClass: 'form-dialog-container',
+      backdropClass: 'custom-backdrop',
+    });
   }
 
   onSearch(search: string){

@@ -95,6 +95,7 @@ import { HallMonitorComponent } from './hall-monitor/hall-monitor.component';
 import { MyRoomComponent } from './my-room/my-room.component';
 import { PassesComponent } from './passes/passes.component';
 import {MatChipsModule} from '@angular/material/chips';
+import { ReportFormComponent } from './report-form/report-form.component';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: '/passes', pathMatch: 'full'},
@@ -147,6 +148,7 @@ const appRoutes: Routes = [
     HallMonitorComponent,
     MyRoomComponent,
     PassesComponent,
+    ReportFormComponent,
   ],
   entryComponents: [
     HallpassFormComponent,
@@ -157,7 +159,8 @@ const appRoutes: Routes = [
     PassCardComponent,
     RequestCardComponent,
     InvitationCardComponent,
-    InfoEditorComponent
+    InfoEditorComponent,
+    ReportFormComponent
   ],
   imports: [
     BrowserModule,
