@@ -1,0 +1,63 @@
+@media (min-width: 576px) {
+    .container {
+        max-width: 540px;
+    }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+    .container {
+        max-width: 720px;
+    }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+    .container {
+        max-width: 960px;
+    }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1140px;
+    }
+}
+
+.hall-monitor-wrapper{
+    margin: 40px auto 0;
+    max-width: 600px;
+}
+
+.hall-monitor-top{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 60px;
+}
+
+.hall-monitor-bottom{
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+}
+
+.input {
+    margin-right: 40px;
+    width: 300px;
+    min-height: 40px;
+    border-radius: 20px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 16px;
+    padding-left: 15px;
+}
+
+input {
+    border: 0px;
+    padding: 0 0 0 10px;
+    height: 40px;
+}

@@ -1,3 +1,23 @@
-<p>
-  hall-monitor works!
-</p>
+<div class="hall-monitor-wrapper">
+  <div class="hall-monitor-top">
+    <input
+      class="input"
+      [placeholder]="'Search'"
+      #searchInput
+      [value]="inputValue"
+      (input)="onSearch(searchInput.value)"
+    >
+    <app-gradient-button
+      [gradient]="'#DA2370,#FB434A'"
+      [hoverColor]="'#DA2370'"
+      [minWidth]="'185px'"
+      [minHeight]="'50px'"
+      [fontSize]="'14px'"
+      [leftIcon]="'./assets/Report.png'"
+      (buttonClick)="openReportForm()"
+    >Report Student(s)</app-gradient-button>
+  </div>
+  <div class="hall-monitor-bottom">
+    <app-pass-collection [isActive]="true" [forStaff]="isStaff" [style.width]="'600px'" [passes]="testPasses" [title]="'Active Passes'" [icon]="'./assets/Hallway (Colored).png'" [columns]="4"></app-pass-collection>
+  </div>
+</div>

@@ -1,4 +1,5 @@
 import { Component, NgZone, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 
@@ -26,7 +27,7 @@ export class NavbarComponent implements OnInit {
 
   navbarEnabled = false;
 
-  constructor(private dataService: DataService, public dialog: MatDialog, private router: Router,
+  constructor(private dataService: DataService, public dialog: MatDialog, private router: Router, private location: Location,
               public loadingService: LoadingService, public loginService: GoogleLoginService, private _zone: NgZone) {
 
     const navbarEnabled$ = Observable.combineLatest(
@@ -42,6 +43,13 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.tab = location.pathname.substring(1);
+    this.location.subscribe(value => {
+      this.tab = location.pathname.substring(1);
+    });
+
+    this.tab = (this.tab===''?'passes':this.tab);
+
     this.dataService.currentUser
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {
