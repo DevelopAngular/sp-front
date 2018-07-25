@@ -16,7 +16,7 @@
     <div class="pass-card-body-left">
       <ng-content select=".card-body-left"></ng-content>
     </div>
-    <div *ngIf="hasDivider" class="pass-card-body-vdivider"></div>
+    <div *ngIf="hasDivider" class="pass-card-body-vdivider" [style.height]="(forStaff?'110px':'122px')"></div>
     <div class="pass-card-body-right" [style.justify-content]="rightJustify">
       <ng-content select=".card-body-right"></ng-content>
     </div>

@@ -38,14 +38,26 @@ export class PassCardComponent implements OnInit {
 
   }
 
+  get issuerName(){
+    return this.pass.student.first_name.substr(0, 1) +'. ' +this.pass.student.last_name;
+  }
+
+  get startTime(){
+    let s:Date = this.pass['start_time'];
+    return Util.formatDateTime(s);
+  }
+
   ngOnInit() {
     this.pass = this.data['pass'];
     this.forInput = this.data['forInput'];
+    this.isActive = this.data['isActive'];
     this.forFuture = this.data['forFuture'];
     this.fromPast = this.data['fromPast'];
     this.forStaff = this.data['forStaff'];
     this.selectedStudents = this.data['selectedStudents'];
     this.forMonitor = this.data['forMonitor'];
+
+    console.log(this.forStaff);
 
     setInterval(() => {
       if (!!this.pass && this.isActive) {
