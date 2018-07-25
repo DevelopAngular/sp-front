@@ -11,13 +11,8 @@
 .info {
   font-family: 'Helvetica Neue', sans-serif;
   font-size: 14px;
-  font-style: normal;
-  font-stretch: normal;
-  line-height: 1.08;
-  letter-spacing: 0.3px;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   padding: 0 5px 0 5px;
   color: #767676
 }
@@ -28,4 +23,14 @@
   transform: scale(1, 0.5);
   background-color: #767676;
   margin-top: 10px;
+}
+
+.star{
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+}
+
+.room{
+  margin-left: auto;
 }

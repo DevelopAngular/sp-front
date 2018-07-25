@@ -27,7 +27,9 @@ export class LocationTableComponent implements OnInit {
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
 
-  public choices: any[];
+  choices: any[] = [];
+  starredChoices: Promise<Location>;
+  search: string = '';
 
   constructor(private http: HttpService) {
   }
@@ -39,19 +41,26 @@ export class LocationTableComponent implements OnInit {
       +(this.type==='teachers'?'users?role=edit_all_hallpass&':('locations'
         +(!!this.category ? ('?category=' + this.category +'&') : '?')
       ))
-      +'limit=4')
+      +'limit=4'
+      +(this.type==='location'?'&starred=false':''))
       .toPromise().then(p => {
       this.choices = p.results;
     });
+
+    if(this.type==='location'){
+      this.updateFavorites();
+    }
   }
 
   onSearch(search: string) {
+    this.search = search;
       this.http.get<Paged<Location>>('api/methacton/v1/'
         +(this.type==='teachers'?'users?role=edit_all_hallpass&':('locations'
           +(!!this.category ? ('?category=' +this.category +'&') : '?')
         ))
         +'limit=4'
-        +'&search=' +search)
+        +'&search=' +search
+        +(this.type==='location'?'&starred=false':''))
         .toPromise().then(p => {
           this.choices = p.results;
         });
@@ -59,6 +68,11 @@ export class LocationTableComponent implements OnInit {
 
   choiceSelected(choice: any) {
     this.onSelect.emit(choice);
+  }
+
+  updateFavorites(){
+    this.starredChoices = this.http.get<Location>('api/methacton/v1/locations?starred=true').toPromise();
+    this.onSearch(this.search);
   }
 
 }

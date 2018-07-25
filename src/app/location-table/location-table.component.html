@@ -1,9 +1,22 @@
-<div class="wrapper">
-  <input class="input" #searchBox [placeholder]="placeholder" (keyup)="onSearch(searchBox.value)">
-  <div class="choices">
-    <app-location-cell class="choice" *ngFor="let choice of choices"
-                       (onSelect)="choiceSelected($event)"
-                       [value]="choice" [type]="type">
-    </app-location-cell>
+<div class="wrapper" [style.width]="type==='location'?'430px':'200px'">
+  <div *ngIf="type==='location'" class="table-left">
+    <div class="fav-header">
+      Favorites
+    </div>
+    <div class="choices">
+      <app-location-cell class="choice" *ngFor="let choice of starredChoices | async"
+        (onSelect)="choiceSelected($event)" (onStar)="updateFavorites()"
+        [value]="choice" [type]="type">
+      </app-location-cell>
+    </div>
+  </div>
+  <div class="table-right">
+    <input class="input" #searchBox [placeholder]="placeholder" (keyup)="onSearch(searchBox.value)">
+    <div class="choices">
+      <app-location-cell class="choice" *ngFor="let choice of choices"
+                        (onSelect)="choiceSelected($event)" (onStar)="updateFavorites()"
+                        [value]="choice" [type]="type">
+      </app-location-cell>
+    </div>
   </div>
 </div>

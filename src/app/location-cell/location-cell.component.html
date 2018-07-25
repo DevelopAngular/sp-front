@@ -1,5 +1,6 @@
 <div class="wrapper" (click)="cellSelected()">
   <div *ngIf="type==='location'" class="info">
+    <img (mouseenter)="overStar=true" (mouseleave)="overStar=false" (click)="favorite()" class="star" [src]="'./assets/Star' +(value.starred?' (Colored)':'') +'.png' | resolveAsset">
     <div class="title">
       {{value.title}}
     </div>

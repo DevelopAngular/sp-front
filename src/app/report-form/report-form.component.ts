@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from '../NewModels';
+import { HttpService } from '../http-service';
+import { MatDialogRef } from '../../../node_modules/@angular/material';
 
 @Component({
   selector: 'app-report-form',
@@ -13,7 +15,7 @@ export class ReportFormComponent implements OnInit {
   showOptions: boolean = true;
   reportMessage: string = "I caught them in the hallway without a pass."
 
-  constructor() { }
+  constructor(private http: HttpService, private dialogRef: MatDialogRef<ReportFormComponent>) { }
 
   ngOnInit() {
 
@@ -25,6 +27,15 @@ export class ReportFormComponent implements OnInit {
   }
 
   sendReport(){
-    console.log('Sending report');
+    let endpoint = 'api/methacton/v1/event_reports/bulk_create';
+    let body = {
+      'students' : this.selectedStudents.map(user => user.id),
+      'message' : this.reportMessage
+    }
+
+    this.http.post(endpoint, body).subscribe(data => {
+      console.log(data);
+      this.dialogRef.close();
+    });
   }
 }

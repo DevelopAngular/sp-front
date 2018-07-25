@@ -174,4 +174,9 @@ export class HttpService {
     return this.performRequest(token => this.http.delete<T>(makeUrl(url), makeConfig(config, token)));
   }
 
+  put<T>(url, config?: Config): Observable<T> {
+    console.log('PUTTING');
+    return this.performRequest(token => this.http.put<T>(makeUrl(url), null, makeConfig(config, token)));
+  }
+
 }
