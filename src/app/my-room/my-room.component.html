@@ -1,3 +1,10 @@
-<p>
-  my-room works!
-</p>
+<div class="my-room-wrapper">
+  <div class="my-room-header">
+
+  </div>
+  <div class="my-room-body">
+    <app-pass-collection [isActive]="true" [forStaff]="isStaff" [style.width]="'600px'" [passes]="testPasses" [title]="'Active Passes'" [icon]="'./assets/Hallway (Colored).png'" [columns]="4"></app-pass-collection>
+    <app-pass-collection [forStaff]="isStaff" [style.width]="'600px'" [passes]="testPasses" [title]="'Passes from'" [icon]="'./assets/One Arrow (Colored).png'" [columns]="4"></app-pass-collection>
+    <app-pass-collection [forStaff]="isStaff" [style.width]="'600px'" [passes]="testPasses" [title]="'Passes to'" [icon]="'./assets/One Arrow Backwards (Colored).png'" [columns]="4"></app-pass-collection>
+  </div>
+</div>
