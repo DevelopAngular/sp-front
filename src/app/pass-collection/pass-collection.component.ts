@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material';
 import { PassCardComponent } from '../pass-card/pass-card.component';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
+import { ReportFormComponent } from '../report-form/report-form.component';
 
 @Component({
   selector: 'app-pass-collection',
@@ -21,6 +22,7 @@ export class PassCollectionComponent implements OnInit {
   @Input() forFuture: boolean = false;
   @Input() isActive: boolean = false;
   @Input() forStaff: boolean = false;
+  @Input() forMonitor: boolean = false;
 
   type:string;
 
@@ -40,11 +42,18 @@ export class PassCollectionComponent implements OnInit {
     const dialogRef = this.dialog.open(component, {
       panelClass: 'pass-card-dialog-container',
       backdropClass: 'custom-backdrop',
-      data: {'pass': pass, 'fromPast': this.fromPast, 'forFuture': this.forFuture}
+      data: {'pass': pass, 'fromPast': this.fromPast, 'forFuture': this.forFuture, 'forMonitor': this.forMonitor}
     });
 
     dialogRef.afterClosed().subscribe(dialogData => {
-
+      if(dialogData['report']){
+        const reportRef = this.dialog.open(ReportFormComponent, {
+          width: '750px',
+          panelClass: 'form-dialog-container',
+          backdropClass: 'custom-backdrop',
+          data: {'report' : dialogData['report']}
+        });
+      }
     });
   }
 

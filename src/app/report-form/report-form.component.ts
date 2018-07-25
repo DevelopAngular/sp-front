@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { User } from '../NewModels';
 import { HttpService } from '../http-service';
-import { MatDialogRef } from '../../../node_modules/@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '../../../node_modules/@angular/material';
 
 @Component({
   selector: 'app-report-form',
@@ -15,10 +15,11 @@ export class ReportFormComponent implements OnInit {
   showOptions: boolean = true;
   reportMessage: string = "I caught them in the hallway without a pass."
 
-  constructor(private http: HttpService, private dialogRef: MatDialogRef<ReportFormComponent>) { }
+  constructor(private http: HttpService, private dialogRef: MatDialogRef<ReportFormComponent>, @Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngOnInit() {
-
+    this.selectedStudents.push(this.data['report']);
+    this.showOptions = !this.data['report'];
   }
 
   setFormState(state: string){

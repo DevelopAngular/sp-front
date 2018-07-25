@@ -6,7 +6,7 @@
   </div>
 
   <div class="student-select" [style.height]="showOptions?'300px':'125px'">
-    <app-student-search [showOptions]="showOptions" [style.width]="'75%'" (onUpdate)="selectedStudents=$event" (click)="showOptions=true"></app-student-search>
+    <app-student-search [selectedStudents]="selectedStudents" [showOptions]="showOptions" [style.width]="'75%'" (onUpdate)="selectedStudents=$event" (click)="showOptions=true"></app-student-search>
     <app-gradient-button
       *ngIf="showOptions"
       [gradient]="'#03CF31,#00B476'"
@@ -17,7 +17,7 @@
       [disabled]="selectedStudents.length<1"
       (buttonClick)="showOptions=false"
       [style.width]="'90px'"
-      [style.margin-bottom]="'15px'"
+      [style.margin-bottom]="'14px'"
     >Done ({{ selectedStudents.length }})</app-gradient-button>
   </div>
   <div *ngIf="!showOptions" class="message-entry">

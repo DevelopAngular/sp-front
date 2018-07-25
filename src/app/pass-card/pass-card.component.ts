@@ -20,7 +20,7 @@ export class PassCardComponent implements OnInit {
   @Input() forFuture: boolean = false;
   @Input() isActive: boolean = false;
   @Input() forStaff: boolean = false;
-
+  @Input() forMonitor: boolean = false;
   @Output() cardEvent: EventEmitter<any> = new EventEmitter();
 
   timeLeft: string = '';
@@ -45,6 +45,7 @@ export class PassCardComponent implements OnInit {
     this.fromPast = this.data['fromPast'];
     this.forStaff = this.data['forStaff'];
     this.selectedStudents = this.data['selectedStudents'];
+    this.forMonitor = this.data['forMonitor'];
 
     setInterval(() => {
       if (!!this.pass && this.isActive) {
@@ -108,23 +109,27 @@ export class PassCardComponent implements OnInit {
   }
   
   cancelEdit(evt: MouseEvent){
-    if(!this.cancelOpen && this.forInput){
-      const target = new ElementRef(evt.currentTarget);
-      const cancelDialog = this.dialog.open(ConsentMenuComponent, {
-        panelClass: 'consent-dialog-container',
-        backdropClass: 'invis-backdrop',
-        data: {'header': 'Are you sure you want to cancel this pass?', 'confirm': 'Cancel', 'deny': 'Close', 'trigger': target}
-      });
-  
-      cancelDialog.afterOpen().subscribe( () =>{
-        this.cancelOpen = true;
-      });
-  
-      cancelDialog.afterClosed().subscribe(data =>{
-        this.cancelOpen = false;
-        if(data==null?false:data)
-          this.dialogRef.close();
-      });
+    if(this.forMonitor){
+      this.dialogRef.close({'report':this.pass.student});
+    } else{
+      if(!this.cancelOpen && this.forInput){
+        const target = new ElementRef(evt.currentTarget);
+        const cancelDialog = this.dialog.open(ConsentMenuComponent, {
+          panelClass: 'consent-dialog-container',
+          backdropClass: 'invis-backdrop',
+          data: {'header': 'Are you sure you want to cancel this pass?', 'confirm': 'Cancel', 'deny': 'Close', 'trigger': target}
+        });
+    
+        cancelDialog.afterOpen().subscribe( () =>{
+          this.cancelOpen = true;
+        });
+    
+        cancelDialog.afterClosed().subscribe(data =>{
+          this.cancelOpen = false;
+          if(data==null?false:data)
+            this.dialogRef.close();
+        });
+      }
     }
   }
 

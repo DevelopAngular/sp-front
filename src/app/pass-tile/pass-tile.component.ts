@@ -19,7 +19,6 @@ export class PassTileComponent implements OnInit {
   @Input() forFuture: boolean = false;
   @Input() isActive: boolean = false;
   @Input() forStaff: boolean = false;
-   
   @Input() type:string;
 
   @Output() tileSelected = new EventEmitter();

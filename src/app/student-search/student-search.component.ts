@@ -4,7 +4,6 @@ import 'rxjs/add/observable/of';
 
 import { HttpService } from '../http-service';
 import { User, Paged } from '../NewModels';
-import { element } from '../../../node_modules/protractor';
 
 @Component({
   selector: 'app-student-search',
@@ -15,9 +14,9 @@ import { element } from '../../../node_modules/protractor';
 export class StudentSearchComponent {
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
   @Input() showOptions: boolean = true;
-  
+  @Input() selectedStudents: User[] = [];
+
   students: Promise<any[]>;
-  selectedStudents: User[] = [];
   inputValue: string = '';
 
   constructor(private http: HttpService) {
