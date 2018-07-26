@@ -33,7 +33,7 @@ export class HallMonitorComponent implements OnInit {
   inputValue: string = '';
 
   user: User;
-  isStaff: boolean= false;
+  isStaff: boolean= false;;
 
   constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService, public dialog: MatDialog) {
     this.testDate.setMinutes(this.testDate.getMinutes()+1);
@@ -94,7 +94,7 @@ export class HallMonitorComponent implements OnInit {
   }
 
   onSearch(search: string){
-
+    this.dataService.updateHMSearch(search);
   }
 
 }

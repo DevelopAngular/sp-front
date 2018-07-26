@@ -47,6 +47,41 @@ export class DataService {
     this.inboxSource.next(state);
   }
 
+  private hmSearchSource = new BehaviorSubject<string>('');
+  hmSearch = this.hmSearchSource.asObservable();
+
+  updateHMSearch(hmSearch: string){
+    this.hmSearchSource.next(hmSearch);
+  }
+
+  private hmSortSource = new BehaviorSubject<string>('');
+  hmSort = this.hmSortSource.asObservable();
+
+  updateHMSort(hmSort: string){
+    this.hmSortSource.next(hmSort);
+  }
+
+  private mrRoomSource = new BehaviorSubject<Location>(null);
+  mrRoom = this.mrRoomSource.asObservable();
+
+  updateMRRoom(mrRoom: Location){
+    this.mrRoomSource.next(mrRoom);
+  }
+
+  private mrSearchSource = new BehaviorSubject<string>('');
+  mrSearch = this.mrSearchSource.asObservable();
+
+  updateMRSearch(mrSearch: string){
+    this.mrSearchSource.next(mrSearch);
+  }
+
+  private mrDateSource = new BehaviorSubject<Date>(new Date());
+  mrDate = this.mrDateSource.asObservable();
+
+  updateMRDate(mrDate: Date){
+    this.mrDateSource.next(mrDate);
+  }
+
   currentUser = this.userService.userData.asObservable();
   private updateInvitations = new BehaviorSubject<void>(null);
 
