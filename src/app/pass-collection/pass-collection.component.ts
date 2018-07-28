@@ -5,12 +5,19 @@ import { PassCardComponent } from '../pass-card/pass-card.component';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
 import { ReportFormComponent } from '../report-form/report-form.component';
+import { DataService } from '../data-service';
+
+export class SortOption{
+  constructor(private name: string, private value: string){}
+  toString(){return this.name;}
+}
 
 @Component({
   selector: 'app-pass-collection',
   templateUrl: './pass-collection.component.html',
   styleUrls: ['./pass-collection.component.scss']
 })
+
 export class PassCollectionComponent implements OnInit {
 
   @Input() passes: HallPass[] | Invitation[] | Request[];
@@ -23,10 +30,18 @@ export class PassCollectionComponent implements OnInit {
   @Input() isActive: boolean = false;
   @Input() forStaff: boolean = false;
   @Input() forMonitor: boolean = false;
+  @Input() hasSort: boolean = false;
 
-  type:string;
-
-  constructor(public dialog: MatDialog) { }
+  type: string;
+  sortOptions: SortOption[] = [
+                              new SortOption('Created', 'created'),
+                              new SortOption('Student','student_name'),
+                              new SortOption('Expiration','expiration_time'),
+                              new SortOption('Destination','destination_name')
+                            ];
+  constructor(public dialog: MatDialog, private dataService: DataService) {
+    
+   }
 
   ngOnInit() {
     this.type = (this.passes[0] instanceof HallPass) ? 'hallpass' :

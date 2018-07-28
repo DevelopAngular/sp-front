@@ -1,14 +1,63 @@
 .my-room-wrapper{
     margin: 40px auto 0;
-    max-width: 600px;
+    display: flex;
+    flex-direction: row;
 }
 
 .my-room-header{
     display: flex;
     flex-direction: row;
+    margin-bottom: 50px;
+    align-items: center;
 }
 
 .my-room-body{
     display: flex;
     flex-direction: column; 
+}
+
+.my-room-right{
+    margin-left: 50px;
+}
+
+.input {
+    margin-right: 10px;
+    margin-left: auto;
+    width: 200px;
+    min-height: 40px;
+    border-radius: 20px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 16px;
+    padding-left: 15px;
+}
+
+input {
+    border: 0px;
+    padding: 0 0 0 10px;
+    height: 40px;
+}
+
+.calendar-wrapper{
+    width: 45px;
+    height: 45px;
+    border-radius: 23px;
+    margin-right: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.calendar-icon{
+    width: 28px;
+    height: 28px;
+}
+
+.date-display{
+    font-family: 'Helvetica Neue', sans-serif;
+    color: #3D396B;
+    font-size: 14pt;
+    font-weight: bold;
+    text-align: center;
 }

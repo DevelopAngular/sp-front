@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { User, Location, ColorProfile, HallPass } from '../NewModels';
+import { DataService } from '../data-service';
+import { LoadingService } from '../loading.service';
+import { Util } from '../../Util';
 @Component({
   selector: 'app-my-room',
   templateUrl: './my-room.component.html',
@@ -21,11 +24,13 @@ export class MyRoomComponent implements OnInit {
   testPasses: HallPass[] = [];
 
   inputValue: string = '';
-
+  calendarToggled: boolean = false;
   user: User;
   isStaff: boolean= false;
+  min: Date = new Date('December 17, 1995 03:24:00');
+  _searchDate: Date = new Date();
 
-  constructor() {
+  constructor(private dataService: DataService, private _zone: NgZone, private loadingService: LoadingService) {
     this.testDate.setMinutes(this.testDate.getMinutes()+1);
 
     this.testPass1 = new HallPass('testPass1', this.testStudent, this.testIssuer,
@@ -60,7 +65,29 @@ export class MyRoomComponent implements OnInit {
     this.testPasses = [this.testPass1, this.testPass2, this.testPass3, this.testPass4];
   }
 
-  ngOnInit() {
+  set searchDate(date: Date){
+    this._searchDate = date;
+    date.setHours(0);
+    date.setMinutes(0);
+    this.dataService.updateMRDate(date);
   }
 
+  get dateDisplay(){
+    return Util.formatDateTime(this._searchDate).split(',')[0];
+  }
+
+  ngOnInit() {
+    this.dataService.currentUser
+    .pipe(this.loadingService.watchFirst)
+    .subscribe(user => {
+      this._zone.run(() => {    
+        this.user = user;
+        this.isStaff = user.roles.includes('edit_all_hallpass');
+      });
+    });
+  }
+
+  onSearch(search: string){
+    this.dataService.updateMRSearch(search);
+  }
 }

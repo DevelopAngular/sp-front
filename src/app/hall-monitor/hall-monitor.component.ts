@@ -33,9 +33,10 @@ export class HallMonitorComponent implements OnInit {
   inputValue: string = '';
 
   user: User;
-  isStaff: boolean= false;;
+  isStaff: boolean= false;
 
   constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService, public dialog: MatDialog) {
+    
     this.testDate.setMinutes(this.testDate.getMinutes()+1);
 
     this.testPass1 = new HallPass('testPass1', this.testStudent, this.testIssuer,
@@ -78,7 +79,7 @@ export class HallMonitorComponent implements OnInit {
     this.dataService.currentUser
     .pipe(this.loadingService.watchFirst)
     .subscribe(user => {
-      this._zone.run(() => {
+      this._zone.run(() => {    
         this.user = user;
         this.isStaff = user.roles.includes('edit_all_hallpass');
       });

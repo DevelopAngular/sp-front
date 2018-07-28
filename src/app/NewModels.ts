@@ -43,6 +43,10 @@ export class User {
 
     return new User(id, created, last_updated, first_name, last_name, display_name, primary_email, roles);
   }
+
+  toString(){
+    return this.last_name;
+  }
 }
 
 export class Alert {

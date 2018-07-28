@@ -1,0 +1,5 @@
+<div class="dropdown-wrapper">
+  <select class="dropdown">
+    <option class="option" *ngFor="let option of options" (click)="optionSelected(option)" [value]="option">{{ option.toString() }}</option>
+  </select>
+</div>

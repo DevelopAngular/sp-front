@@ -96,6 +96,7 @@ import { MyRoomComponent } from './my-room/my-room.component';
 import { PassesComponent } from './passes/passes.component';
 import {MatChipsModule} from '@angular/material/chips';
 import { ReportFormComponent } from './report-form/report-form.component';
+import { DropdownComponent } from './dropdown/dropdown.component';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: '/passes', pathMatch: 'full'},
@@ -149,6 +150,7 @@ const appRoutes: Routes = [
     MyRoomComponent,
     PassesComponent,
     ReportFormComponent,
+    DropdownComponent,
   ],
   entryComponents: [
     HallpassFormComponent,

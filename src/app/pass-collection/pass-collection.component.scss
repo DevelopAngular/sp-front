@@ -19,7 +19,7 @@
 }
 
 .collection-display-toggle{
-    margin-left: auto;
+    margin-left: 10px;
     width: 20px;
     height: 20px;
     cursor: pointer;
@@ -49,4 +49,14 @@
 
 .custom-mat-tile{
     overflow: visible;
+}
+
+.sort-label{
+    margin-left: auto;
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 12pt;
+}
+
+.sort-selector{
+    margin: 0 5px;  
 }
