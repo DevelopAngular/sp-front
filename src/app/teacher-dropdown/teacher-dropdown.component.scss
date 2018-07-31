@@ -1,0 +1,45 @@
+.teacher-drowdown-wrapper{
+    width: 100%;
+    display: flex;
+    cursor: pointer;
+}
+
+.selected-teacher{
+    color: #3D396B;
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 18pt;
+    font-weight: bold;
+    display: flex;
+    flex-direction: row;
+}
+
+.drop-arrow{
+    margin-left: 10px;
+    width: 10px;
+    height: 10px;
+}
+
+.options{
+    display: flex;
+    flex-direction: column;
+}
+
+.option{
+    display: flex;
+    flex-direction: column
+}
+
+.option:hover{
+    background-color: #F1F1F1;
+}
+
+.option-data{
+    color: #767676;
+    font-size: 12px;
+}
+
+.option-divider{
+    width: inherit;
+    height: 1px;
+    background-color: #B5B7BA;
+}

@@ -1,6 +1,7 @@
 <div class="my-room-wrapper" [style.width]="calendarToggled?'900px':'550px'">
   <div class="my-room-left">
     <div class="my-room-header">
+      <app-teacher-dropdown [options]="teacherRooms" (onSelect)="this.dataService.updateMRRoom($event)"></app-teacher-dropdown>
       <input
         class="input"
         [placeholder]="'Search passes'"

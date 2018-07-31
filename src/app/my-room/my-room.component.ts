@@ -3,6 +3,7 @@ import { User, Location, ColorProfile, HallPass } from '../NewModels';
 import { DataService } from '../data-service';
 import { LoadingService } from '../loading.service';
 import { Util } from '../../Util';
+import { HttpService } from '../http-service';
 @Component({
   selector: 'app-my-room',
   templateUrl: './my-room.component.html',
@@ -29,8 +30,10 @@ export class MyRoomComponent implements OnInit {
   isStaff: boolean= false;
   min: Date = new Date('December 17, 1995 03:24:00');
   _searchDate: Date = new Date();
+  teacherRooms: Location[] = [];
 
-  constructor(private dataService: DataService, private _zone: NgZone, private loadingService: LoadingService) {
+
+  constructor(private dataService: DataService, private _zone: NgZone, private loadingService: LoadingService, private http: HttpService) {
     this.testDate.setMinutes(this.testDate.getMinutes()+1);
 
     this.testPass1 = new HallPass('testPass1', this.testStudent, this.testIssuer,
@@ -82,6 +85,10 @@ export class MyRoomComponent implements OnInit {
     .subscribe(user => {
       this._zone.run(() => {    
         this.user = user;
+        this.http.get('api/methacton/v1/locations?teacher_id=' +this.user.id).subscribe((data:any[]) => {
+          this.teacherRooms = data.map(loc => Location.fromJSON(loc));
+          console.log(this.teacherRooms);
+        });
         this.isStaff = user.roles.includes('edit_all_hallpass');
       });
     });
