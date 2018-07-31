@@ -5,7 +5,7 @@
   <ng-template #originButton>
     <app-card-button (onClick)="changeLocation()" [width]="'100px'" [height]="'40px'" [gradientColor]="pass.color_profile.gradient_color">
       <div class="origin-button-content" *ngIf="!pass.default_origin; else hasOrigin;">
-        <img class="origin-button-content-icon" [src]="'./assets/Search.png' | resolveAsset">
+        <img class="origin-button-content-icon" [src]="'./assets/Search (White).png' | resolveAsset">
         <div class="origin-button-content-text">
           From
         </div>
@@ -19,7 +19,7 @@
       </ng-template>
     </app-card-button>
   </ng-template>
-  <img [src]="'./assets/' +(pass.travel_type==='one_way'?'One Arrow':'Round-trip Arrows') +'.png' | resolveAsset"
+  <img [src]="'./assets/' +(pass.travel_type==='one_way'?'Arrow':'Arrows Round Trip') +' (White).png' | resolveAsset"
       [style.height]="'40px'" [style.width]="(pass.travel_type==='one_way'?'40px':'95px')"
       [style.margin]="(shrink?'15px 0':'0')">
   <div>

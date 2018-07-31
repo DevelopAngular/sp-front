@@ -24,7 +24,7 @@ export class NavButtonComponent implements OnInit {
   }
 
   get _icon(){
-    return this.icon +(this.selected?' (Colored)':' (Deselected)') +'.png';
+    return this.icon +(this.selected?' (Blue)':' (Grey)') +'.png';
   }
 
   constructor() { }

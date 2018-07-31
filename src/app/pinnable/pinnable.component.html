@@ -7,11 +7,11 @@
       <div class="title">
         {{pinnable.title}}
       </div>
-      <img *ngIf="pinnable.type === 'category'" class="category-icon" [src]="'./assets/One Arrow.png' | resolveAsset" alt="ARROW">
+      <img *ngIf="pinnable.type === 'category'" class="category-icon" [src]="'./assets/Arrow (White).png' | resolveAsset" alt="ARROW">
     </div>
     <div *ngIf="restricted;" class="overlay-container">
       <div class="overlay"></div>
-      <img class="lock" [src]="'./assets/Lock.png' | resolveAsset" alt="LOCK">
+      <img class="lock" [src]="'./assets/Lock (White).png' | resolveAsset" alt="LOCK">
     </div>
   </div>
 </div>

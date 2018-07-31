@@ -89,6 +89,7 @@ export class HallMonitorComponent implements OnInit {
   openReportForm(){
     const dialogRef = this.dialog.open(ReportFormComponent, {
       width: '750px',
+      height: '365px',
       panelClass: 'form-dialog-container',
       backdropClass: 'custom-backdrop',
     });

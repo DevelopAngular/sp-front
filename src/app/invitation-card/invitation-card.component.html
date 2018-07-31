@@ -1,4 +1,4 @@
-<app-pass-card-template [selectedStudents]="selectedStudents" [forStaff]="forStaff" [hasDivider]="!selectedOrigin && !forStaff" [pass]="invitation" (onCancel)="denyInvitation($event)" [rightJustify]="forStaff?'space-around':'flex-end'">
+<app-pass-card-template [selectedStudents]="selectedStudents" [forStaff]="forStaff" [hasDivider]="!selectedOrigin && !forStaff" [pass]="invitation" (onCancel)="denyInvitation($event)" [rightJustify]="forStaff?'space-around':'flex-end'" [closeIcon]="'./assets/Trash (Transparent).png'">
   <div class="card-subtitle" *ngIf="fromPast || forFuture">
     {{ formatDateTime() }}
   </div>
@@ -10,7 +10,7 @@
     <app-card-button (onClick)="acceptInvitation()" [width]="'181px'" [height]="'50px'" [gradientColor]="invitation.color_profile.gradient_color">
       <div class="button-content">
         <div class="get-pass-content-text">Get Pass</div>
-        <img class="button-icon-right" [src]="'./assets/One Arrow.png' | resolveAsset">
+        <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
       </div>
     </app-card-button>
   </div>
@@ -19,7 +19,7 @@
     <app-card-button *ngIf="forStaff" (onClick)="newInvitation()" [width]="'181px'" [height]="'50px'" [gradientColor]="invitation.color_profile.gradient_color">
       <div class="button-content">
         <div class="button-content-text">Send Request</div>
-        <img class="button-icon-right" [src]="'./assets/One Arrow.png' | resolveAsset">
+        <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
       </div>
     </app-card-button>
     

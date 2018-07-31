@@ -1,4 +1,4 @@
-<app-pass-card-template (onCancel)="cancelRequest($event)" [hasDivider]="request.status==='pending' && !forInput" [pass]="request">
+<app-pass-card-template (onCancel)="cancelRequest($event)" [hasDivider]="request.status==='pending' && !forInput" [pass]="request" [closeIcon]="'./assets/Trash (Transparent).png'">
   <div class="card-subtitle" *ngIf="fromPast || forFuture">
     {{ formatDateTime() }}
   </div>
@@ -32,15 +32,15 @@
     <app-traveltype-picker (onSelect)="selectedTravelType=$event" [choices]="request.destination.travel_types" [altColor]="request.color_profile.solid_color"></app-traveltype-picker>
     <app-card-button (onClick)="newRequest()" [width]="'181px'" [height]="'50px'" [gradientColor]="request.color_profile.gradient_color">
       <div class="request-button-content">
-        <img class="button-icon-left" [src]="'./assets/Lock.png' | resolveAsset">
+        <img class="button-icon-left" [src]="'./assets/Lock (White).png' | resolveAsset">
         <div class="request-pass-content-text">Request Pass</div>
-        <img class="button-icon-right" [src]="'./assets/One Arrow.png' | resolveAsset">
+        <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
       </div>
     </app-card-button>
   </div>
   <div *ngIf="request.status==='pending' && !forInput" class="card-body-right">
     <div class="request-description">
-      <img class="request-description-icon" [src]="'./assets/Lock.png' | resolveAsset">
+      <img class="request-description-icon" [src]="'./assets/Lock (White).png' | resolveAsset">
       <div class="request-description-text">
         Pass Request Sent to {{ request.teacher.last_name }}
       </div>

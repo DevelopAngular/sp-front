@@ -4,25 +4,25 @@
 <div class="bar">
   <div class="heading grow">
     <div class="title">SmartPass</div>
-    <img class="logo" [src]="'./assets/One Arrow (Green).png' | resolveAsset">
+    <img class="logo" [src]="'./assets/Arrow (Green).png' | resolveAsset">
   </div>
   <div [style.display]="isStaff?'':'none'" class="teacherNav">
-    <app-nav-button [selected]="tab==='passes'" [content]="'Passes'" [icon]="'./assets/One Arrow'" (onClick)="updateTab('passes')"></app-nav-button>
+    <app-nav-button [selected]="tab==='passes'" [content]="'Passes'" [icon]="'./assets/Arrow'" (onClick)="updateTab('passes')"></app-nav-button>
     <app-nav-button [selected]="tab==='hallmonitor'" [content]="'Hall Monitor'" [icon]="'./assets/Hallway'" (onClick)="updateTab('hallmonitor')"></app-nav-button>
     <app-nav-button [selected]="tab==='myroom'" [content]="'My Room'" [icon]="'./assets/My Room'" (onClick)="updateTab('myroom')"></app-nav-button>
   </div>
   <div class="user-info">
     <div class="name">{{ user?user.display_name:'' }}</div>
     <div *ngIf="tab==='passes'" class="inbox-wrapper" (click)="inboxClick()" [style.background-color]="(inboxVisibility?'#E4EBFF':'transparent')">
-      <img class="inbox-icon" [src]="'./assets/Inbox (Full) (Colored).png' | resolveAsset">
+      <img class="inbox-icon" [src]="'./assets/Inbox Full (Blue).png' | resolveAsset">
       <div class="inbox-modifiers" *ngIf="notifications > 0">
-        <img class="inbox-badge" [src]="'./assets/Inbox (Number).png' | resolveAsset">
+        <img class="inbox-badge" [src]="'./assets/Inbox Number.png' | resolveAsset">
         <div class="inbox-number">{{ notifications }}</div>
-        <img class="inbox-front" [src]="'./assets/Inbox (Front) (Colored).png' | resolveAsset">
+        <img class="inbox-front" [src]="'./assets/Inbox Front (Blue).png' | resolveAsset">
       </div>
     </div>
     <div class="options">
-      <img (click)="showOptions()" class="options" [src]="'./assets/Gear (Colored).png' | resolveAsset">
+      <img (click)="showOptions()" class="options" [src]="'./assets/Gear (Blue).png' | resolveAsset">
     </div>
   </div>
 </div>

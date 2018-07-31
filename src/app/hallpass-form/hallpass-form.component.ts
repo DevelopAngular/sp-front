@@ -125,11 +125,11 @@ export class HallpassFormComponent implements OnInit {
 
   get dividerIcon(){
     if(this.formState === 'from' || this.formState === 'to' || this.formState === 'students'){
-      return './assets/Search.png';
+      return './assets/Search (White).png';
     } else if(this.formState === 'restrictedMessage'){
-      return './assets/Message.png';
+      return './assets/Message (White).png';
     } else if(this.formState === 'datetime'){
-      return './assets/Later.png'
+      return './assets/Scheduled Pass (White).png'
     }
   }
 
