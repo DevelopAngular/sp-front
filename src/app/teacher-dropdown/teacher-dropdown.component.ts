@@ -9,7 +9,7 @@ import { Location } from '../NewModels';
 export class TeacherDropdownComponent implements OnInit {
 
   @Input() options: Location[];
-  selected: Location;
+  selectedIndex: number = 0;
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
 
@@ -20,11 +20,21 @@ export class TeacherDropdownComponent implements OnInit {
   }
 
   get choices(){
-    return this.options.filter(function(value){return value !== this.selected}.bind(this));
+    return this.options.filter(function(value, index, array){return array[index].id != array[this.selectedIndex].id}.bind(this));
   }
 
+   get showArrow(){
+     if(this.options){
+       if(this.options.length>1){
+         return true;
+       }
+     } else {
+       return false;
+     }
+   }
+
   ngOnInit() {
-    this.selected = this.options[0];
+
   }
 
 }

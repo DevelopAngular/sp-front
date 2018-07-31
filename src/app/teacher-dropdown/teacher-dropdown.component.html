@@ -1,8 +1,8 @@
 <div class="teacher-drowdown-wrapper">
-  <div class="selected-teacher" (click)="showOptions = !showOptions">
-    {{ selected?selected.title:'' }}
-    <mat-icon *ngIf="!showOptions" class="drop-arrow">arrow_drop_down</mat-icon>
-    <mat-icon *ngIf="showOptions" class="drop-arrow">arrow_drop_up</mat-icon>
+  <div class="selected-teacher" (click)="showOptions = !showOptions && showArrow">
+    {{ options?options[selectedIndex].title:"" }}
+    <mat-icon *ngIf="!showOptions && showArrow" class="drop-arrow">arrow_drop_down</mat-icon>
+    <mat-icon *ngIf="showOptions && showArrow" class="drop-arrow">arrow_drop_up</mat-icon>
   </div>
   <div class="options" *ngIf="showOptions">
     <div class="option" *ngFor="let choice of choices" (click)="onSelect.emit(choice)">

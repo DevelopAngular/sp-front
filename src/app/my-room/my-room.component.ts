@@ -30,7 +30,7 @@ export class MyRoomComponent implements OnInit {
   isStaff: boolean= false;
   min: Date = new Date('December 17, 1995 03:24:00');
   _searchDate: Date = new Date();
-  teacherRooms: Location[] = [];
+  teacherRooms: Promise<any>;
 
 
   constructor(private dataService: DataService, private _zone: NgZone, private loadingService: LoadingService, private http: HttpService) {
@@ -85,10 +85,7 @@ export class MyRoomComponent implements OnInit {
     .subscribe(user => {
       this._zone.run(() => {    
         this.user = user;
-        this.http.get('api/methacton/v1/locations?teacher_id=' +this.user.id).subscribe((data:any[]) => {
-          this.teacherRooms = data.map(loc => Location.fromJSON(loc));
-          console.log(this.teacherRooms);
-        });
+        this.teacherRooms = this.http.get<any[]>('api/methacton/v1/locations?teacher_id=' +this.user.id).toPromise().then(json => json.map(raw => Location.fromJSON(raw)));
         this.isStaff = user.roles.includes('edit_all_hallpass');
       });
     });
