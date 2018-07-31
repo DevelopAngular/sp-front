@@ -33,7 +33,7 @@ export class MyRoomComponent implements OnInit {
   teacherRooms: Promise<any>;
 
 
-  constructor(private dataService: DataService, private _zone: NgZone, private loadingService: LoadingService, private http: HttpService) {
+  constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService, private http: HttpService) {
     this.testDate.setMinutes(this.testDate.getMinutes()+1);
 
     this.testPass1 = new HallPass('testPass1', this.testStudent, this.testIssuer,
