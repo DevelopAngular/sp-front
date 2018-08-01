@@ -1,7 +1,22 @@
 .teacher-drowdown-wrapper{
-    width: 100%;
+    width: 125%;
+    height: 100%;
+    padding: 6px 10px;
     display: flex;
+    flex-direction: column;
     cursor: pointer;
+    user-select: none;
+}
+
+.wrapper-options{
+    @extend .teacher-drowdown-wrapper;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+.wrapper-no-options{
+    @extend .teacher-drowdown-wrapper;
 }
 
 .selected-teacher{
@@ -13,8 +28,16 @@
     flex-direction: row;
 }
 
+.header-divider{
+    margin: 0 auto;
+    width: 95%;
+    height: 1px;
+    background-color: #B5B7BA;
+}
+
 .drop-arrow{
-    margin-left: 10px;
+    margin-left: 3px;
+    margin-top: 4px;
     width: 10px;
     height: 10px;
 }
@@ -22,9 +45,11 @@
 .options{
     display: flex;
     flex-direction: column;
+    margin-top: 10px;
 }
 
 .option{
+    width: inherit;
     display: flex;
     flex-direction: column
 }
