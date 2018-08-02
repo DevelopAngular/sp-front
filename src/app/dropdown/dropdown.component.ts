@@ -18,6 +18,8 @@ export class DropdownComponent implements OnInit {
   }
 
   optionSelected(option: any){
+    console.log(option);
+
     this.onSelect.emit(option);
   }
 
