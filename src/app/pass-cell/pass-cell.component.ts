@@ -22,6 +22,10 @@ export class PassCellComponent implements OnInit {
 
   }
 
+  get cellName(){
+    return this.pass.student.first_name.substr(0, 1) +'. ' +this.pass.student.last_name;
+  }
+
   get cellContent(){
     if(!(this.type==='hallpass')){
       if(this.pass['status']==='denied'){

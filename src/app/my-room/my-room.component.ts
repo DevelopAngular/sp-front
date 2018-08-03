@@ -1,9 +1,11 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ElementRef } from '@angular/core';
 import { User, Location, ColorProfile, HallPass } from '../NewModels';
 import { DataService } from '../data-service';
 import { LoadingService } from '../loading.service';
 import { Util } from '../../Util';
 import { HttpService } from '../http-service';
+import { TeacherDropdownComponent } from '../teacher-dropdown/teacher-dropdown.component';
+import { MatDialog } from '../../../node_modules/@angular/material';
 @Component({
   selector: 'app-my-room',
   templateUrl: './my-room.component.html',
@@ -30,10 +32,11 @@ export class MyRoomComponent implements OnInit {
   isStaff: boolean= false;
   min: Date = new Date('December 17, 1995 03:24:00');
   _searchDate: Date = new Date();
-  teacherRooms: Promise<any>;
+  roomOptions: Location[];
+  selectedLocation: Location;
+  optionsOpen: boolean = false;
 
-
-  constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService, private http: HttpService) {
+  constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService, private http: HttpService, public dialog: MatDialog) {
     this.testDate.setMinutes(this.testDate.getMinutes()+1);
 
     this.testPass1 = new HallPass('testPass1', this.testStudent, this.testIssuer,
@@ -79,13 +82,27 @@ export class MyRoomComponent implements OnInit {
     return Util.formatDateTime(this._searchDate).split(',')[0];
   }
 
+  get choices(){
+    return this.roomOptions.filter(function(value){return value.id != this.selectedLocation.id}.bind(this));
+  }
+
+  get showArrow(){
+    if(this.roomOptions){
+      if(this.roomOptions.length>1){
+        return true;
+      }
+    } else {
+      return false;
+    }
+  }
+
   ngOnInit() {
     this.dataService.currentUser
     .pipe(this.loadingService.watchFirst)
     .subscribe(user => {
       this._zone.run(() => {    
         this.user = user;
-        this.teacherRooms = this.http.get<any[]>('api/methacton/v1/locations?teacher_id=' +this.user.id).toPromise().then(json => json.map(raw => Location.fromJSON(raw)));
+        this.http.get<any[]>('api/methacton/v1/locations?teacher_id=' +this.user.id).toPromise().then(json => {this.roomOptions = json.map(raw => Location.fromJSON(raw)); this.selectedLocation = this.roomOptions[0]});
         this.isStaff = user.roles.includes('edit_all_hallpass');
       });
     });
@@ -93,5 +110,26 @@ export class MyRoomComponent implements OnInit {
 
   onSearch(search: string){
     this.dataService.updateMRSearch(search);
+  }
+
+  showOptions(evt: MouseEvent){
+    if(!this.optionsOpen && this.roomOptions){
+      const target = new ElementRef(evt.currentTarget);
+      const optionDialog = this.dialog.open(TeacherDropdownComponent, {
+        panelClass: 'consent-dialog-container',
+        backdropClass: 'invis-backdrop',
+        data: {'choices': this.choices, 'trigger': target}
+      });
+  
+      optionDialog.afterOpen().subscribe(() =>{
+        this.optionsOpen = true;
+      });
+  
+      optionDialog.afterClosed().subscribe(data =>{
+        this.optionsOpen = false;
+        this.selectedLocation = data==null?this.selectedLocation:data;
+        this.dataService.updateMRRoom(this.selectedLocation);
+      });
+    }
   }
 }

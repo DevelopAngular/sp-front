@@ -6,7 +6,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { map, switchMap } from 'rxjs/operators';
 import { HttpService } from './http-service';
-import { HallPass, Invitation } from './NewModels';
+import { HallPass, Invitation, Location } from './NewModels';
 import { PollingEvent, PollingService } from './polling-service';
 import { UserService } from './user.service';
 

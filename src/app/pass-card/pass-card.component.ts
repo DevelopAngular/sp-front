@@ -57,7 +57,7 @@ export class PassCardComponent implements OnInit {
     this.selectedStudents = this.data['selectedStudents'];
     this.forMonitor = this.data['forMonitor'];
 
-    console.log(this.forStaff);
+    //console.log(this.forStaff);
 
     setInterval(() => {
       if (!!this.pass && this.isActive) {

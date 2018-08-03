@@ -1,11 +1,9 @@
-<div class="teacher-drowdown-wrapper" [ngClass]="{'wrapper-no-options': !showOptions, 'wrapper-options': showOptions}">
-  <div class="selected-teacher" (click)="showOptions = !showOptions && showArrow">
-    {{ options?options[selectedIndex].title:"" }}
-    <mat-icon *ngIf="!showOptions && showArrow" class="drop-arrow">arrow_drop_down</mat-icon>
-    <mat-icon *ngIf="showOptions && showArrow" class="drop-arrow">arrow_drop_up</mat-icon>
-  </div>
-  <div class="options" *ngIf="showOptions">
-    <div class="option" *ngFor="let choice of choices" (click)="onSelect.emit(choice)">
+<div class="pointer-wrapper"><div class="pointer"></div></div>
+<div class="consent-wrapper">
+  <div class="consent-header">CHANGE ROOM</div>
+  <div class="divider"></div>
+  <div class="options-wrapper">
+    <div class="option" *ngFor="let choice of choices" (click)="_matDialogRef.close(choice)">
       <div class="option-data">
         {{ choice.title }}
       </div>
@@ -13,3 +11,19 @@
     </div>
   </div>
 </div>
+
+<!-- <div [style.width]="elementWidth" [ngClass]="{'wrapper-no-options': !showOptions, 'wrapper-options': showOptions}">
+  <div class="selected-teacher" (click)="showOptions = !showOptions && showArrow">
+    {{ options?options[selectedIndex].title:"" }}
+    <mat-icon *ngIf="!showOptions && showArrow" class="drop-arrow">arrow_drop_down</mat-icon>
+    <mat-icon *ngIf="showOptions && showArrow" class="drop-arrow">arrow_drop_up</mat-icon>
+  </div>
+  <div class="options" [style.width]="elementWidth" *ngIf="showOptions">
+    <div class="option" *ngFor="let choice of choices" (click)="select(choice)">
+      <div class="option-data">
+        {{ choice.title }}
+      </div> -->
+      <!-- <div class="option-divider"></div>      -->
+    <!-- </div>
+  </div>
+</div> -->

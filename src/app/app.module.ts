@@ -164,7 +164,8 @@ const appRoutes: Routes = [
     RequestCardComponent,
     InvitationCardComponent,
     InfoEditorComponent,
-    ReportFormComponent
+    ReportFormComponent,
+    TeacherDropdownComponent
   ],
   imports: [
     BrowserModule,

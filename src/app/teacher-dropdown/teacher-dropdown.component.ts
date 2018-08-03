@@ -1,5 +1,6 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ElementRef, Inject } from '@angular/core';
 import { Location } from '../NewModels';
+import { MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '../../../node_modules/@angular/material';
 
 @Component({
   selector: 'app-teacher-dropdown',
@@ -8,32 +9,28 @@ import { Location } from '../NewModels';
 })
 export class TeacherDropdownComponent implements OnInit {
 
-  @Input() options: Location[];
-  selectedIndex: number = 0;
+  choices: Location[];
 
-  @Output() onSelect: EventEmitter<any> = new EventEmitter();
+  _matDialogRef: MatDialogRef<TeacherDropdownComponent>;
+  triggerElementRef: ElementRef;
 
-  showOptions: boolean = false;
-
-  constructor() {
-    
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any[], _matDialogRef: MatDialogRef<TeacherDropdownComponent>) {
+    this._matDialogRef = _matDialogRef;
+    this.triggerElementRef = data['trigger'];
+    this.choices = data['choices'];
   }
-
-  get choices(){
-    return this.options.filter(function(value, index, array){return array[index].id != array[this.selectedIndex].id}.bind(this));
-  }
-
-   get showArrow(){
-     if(this.options){
-       if(this.options.length>1){
-         return true;
-       }
-     } else {
-       return false;
-     }
-   }
 
   ngOnInit() {
+    const matDialogConfig: MatDialogConfig = new MatDialogConfig();
+    const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
+    matDialogConfig.position = { left: `${rect.left - 50}px`, top: `${rect.bottom + 15}px` };
+    matDialogConfig.width = '350px';
+    matDialogConfig.height = '200px';
+    this._matDialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);
+    this._matDialogRef.updatePosition(matDialogConfig.position);
+  }
+
+  getTextWidth(text: string, fontSize: number){
 
   }
 

@@ -51,11 +51,7 @@ export class PassCollectionComponent implements OnInit {
   passes$: Observable<HallPass[]>;
 
   constructor(public dialog: MatDialog, private dataService: DataService) {
-
-
     this.passes$ = this.dataService.watchActiveHallPasses(this.sort$.asObservable());
-
-
   }
 
   ngOnInit() {
@@ -73,21 +69,28 @@ export class PassCollectionComponent implements OnInit {
   }
 
   initializeDialog(component: any, pass: any) {
+    let fromPast = this.type==='hallpass'?!pass['end_time']:this.fromPast;
+    let now = new Date();
+    now.setSeconds(now.getSeconds()+10);
+    let forFuture = this.type==='hallpass'?(pass['start_time'] > now):this.forFuture;
+    let isActive = this.type==='hallpass'?(!forFuture && !fromPast):this.isActive
+    console.log('Past: ', fromPast, 'Future: ', forFuture, 'Active: ', isActive);
+
     const dialogRef = this.dialog.open(component, {
       panelClass: 'pass-card-dialog-container',
       backdropClass: 'custom-backdrop',
       data: {
         'pass': pass,
-        'fromPast': this.fromPast,
-        'forFuture': this.forFuture,
+        'fromPast': fromPast,
+        'forFuture': forFuture,
         'forMonitor': this.forMonitor,
-        'isActive': this.isActive,
+        'isActive': isActive,
         'forStaff': this.forStaff
       }
     });
 
     dialogRef.afterClosed().subscribe(dialogData => {
-      if (dialogData['report']) {
+      if (dialogData && dialogData['report']) {
         const reportRef = this.dialog.open(ReportFormComponent, {
           width: '750px',
           panelClass: 'form-dialog-container',

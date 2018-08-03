@@ -1,4 +1,4 @@
-<app-pass-card-template [hasDivider]="(forStaff || forMonitor) && !forInput" [selectedStudents]="selectedStudents" [forStaff]="forStaff" [pass]="pass" [rightJustify]="(fromPast || forFuture)?'center':'flex-end'" [closeIcon]="(forMonitor?'./assets/Report.png':'./assets/Trash (Transparent).png')" [hasClose]="(!isActive || forMonitor) || fromPast" (onCancel)="cancelEdit($event)">
+<app-pass-card-template [hasDivider]="(forStaff || forMonitor) && !forInput" [selectedStudents]="selectedStudents" [forStaff]="forStaff" [pass]="pass" [rightJustify]="(fromPast || forFuture)?'center':'flex-end'" [closeIcon]="(forMonitor?'./assets/Report (White).png':'./assets/Trash (Transparent).png')" [hasClose]="(!isActive || forMonitor) || fromPast" (onCancel)="cancelEdit($event)">
   
   <div class="card-subtitle" *ngIf="fromPast || forFuture">
     {{ formatDateTime() }}
@@ -16,7 +16,7 @@
     <app-card-button (onClick)="newPass()" [width]="buttonWidth +'px'" [height]="'50px'" [gradientColor]="pass.color_profile.gradient_color">
       <div class="start-pass-content">
         <div class="start-pass-content-text">{{((forFuture && forInput)?'Schedule Pass':(forStaff?'Send Pass':'Start Pass'))}}</div>
-        <img class="button-icon-right" [src]="'./assets/Arrow (Whit).png' | resolveAsset">
+        <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
       </div>
     </app-card-button>
   </div>
