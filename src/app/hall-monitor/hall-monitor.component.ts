@@ -34,6 +34,7 @@ export class HallMonitorComponent implements OnInit {
 
   user: User;
   isStaff: boolean= false;
+  canView: boolean= false;
 
   constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService, public dialog: MatDialog) {
     
@@ -82,6 +83,7 @@ export class HallMonitorComponent implements OnInit {
       this._zone.run(() => {    
         this.user = user;
         this.isStaff = user.roles.includes('edit_all_hallpass');
+        this.canView = user.roles.includes('create_report');
       });
     });
   }

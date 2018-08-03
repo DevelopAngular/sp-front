@@ -35,6 +35,7 @@ export class MyRoomComponent implements OnInit {
   roomOptions: Location[];
   selectedLocation: Location;
   optionsOpen: boolean = false;
+  canView: boolean= false;
 
   constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService, private http: HttpService, public dialog: MatDialog) {
     this.testDate.setMinutes(this.testDate.getMinutes()+1);

@@ -8,6 +8,7 @@ import { HallPass, Invitation, Request } from '../NewModels';
 import { PassCardComponent } from '../pass-card/pass-card.component';
 import { ReportFormComponent } from '../report-form/report-form.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
+import { HttpService } from '../http-service';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -50,7 +51,7 @@ export class PassCollectionComponent implements OnInit {
 
   passes$: Observable<HallPass[]>;
 
-  constructor(public dialog: MatDialog, private dataService: DataService) {
+  constructor(public dialog: MatDialog, private dataService: DataService, private http: HttpService) {
     this.passes$ = this.dataService.watchActiveHallPasses(this.sort$.asObservable());
   }
 
@@ -61,6 +62,8 @@ export class PassCollectionComponent implements OnInit {
   }
 
   showPass(pass: HallPass | Invitation | Request) {
+    let endpoint: string = 'api/methacton/v1/' +(this.type==='hallpass'?'hall_passes':(this.type==='invitation'?'invitations':'pass_requests')) +'/' +pass.id +'/read'
+    this.http.post(endpoint).subscribe();
     this.initializeDialog(this.type === 'hallpass' ? PassCardComponent : (this.type === 'invitation' ? InvitationCardComponent : RequestCardComponent), pass);
   }
 

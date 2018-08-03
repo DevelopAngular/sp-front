@@ -1,4 +1,4 @@
-<div class="my-room-wrapper" [style.width]="calendarToggled?'900px':'550px'">
+<div *ngIf="isStaff" class="my-room-wrapper" [style.width]="calendarToggled?'900px':'550px'">
   <div class="my-room-left">
     <div class="my-room-header">
       <div class="selected-teacher" (click)="showOptions($event)">
