@@ -43,9 +43,12 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.tab = location.pathname.substring(1);
+    let urlSplit: string[] = location.pathname.split('/');
+    this.tab = urlSplit[urlSplit.length-1];
+
     this.location.subscribe(value => {
-      this.tab = location.pathname.substring(1);
+      let urlSplit: string[] = location.pathname.split('/');
+      this.tab = urlSplit[urlSplit.length-1];
     });
 
     this.tab = (this.tab===''?'passes':this.tab);
@@ -56,6 +59,7 @@ export class NavbarComponent implements OnInit {
         this._zone.run(() => {
           this.user = user;
           this.isStaff = user.roles.includes('edit_all_hallpass');
+          this.dataService.updateInbox(this.isStaff);
         });
       });
   }

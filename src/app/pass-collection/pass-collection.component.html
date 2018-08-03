@@ -11,12 +11,14 @@
   <div class="collection-divider"></div>
   <div class="collection-grid-wrapper" *ngIf="displayState==='grid'; else list">
     <mat-grid-list [cols]="columns" rowHeight="85px">
-      <mat-grid-tile  [style.overflow]="'visible'" class="custom-mat-tile" *ngFor="let pass of (passes$ | async)">
+        <!-- *ngFor="let pass of (passes$ | async)" -->
+      <mat-grid-tile  [style.overflow]="'visible'" class="custom-mat-tile" *ngFor="let pass of passes">
         <app-pass-tile (click)="showPass(pass)" [type]="type" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-tile>
       </mat-grid-tile>
     </mat-grid-list>
   </div>
   <ng-template class="collection-list-wrapper" #list>
-    <app-pass-cell *ngFor="let pass of (passes$ | async)" (click)="showPass(pass)" [type]="type" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-cell>
+    <!-- *ngFor="let pass of (passes$ | async)" -->
+    <app-pass-cell *ngFor="let pass of passes" (click)="showPass(pass)" [type]="type" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-cell>
   </ng-template>
 </div>

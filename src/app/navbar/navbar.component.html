@@ -14,8 +14,8 @@
   <div class="user-info">
     <div class="name">{{ user?user.display_name:'' }}</div>
     <div *ngIf="tab==='passes'" class="inbox-wrapper" (click)="inboxClick()" [style.background-color]="(inboxVisibility?'#E4EBFF':'transparent')">
-      <img class="inbox-icon" [src]="'./assets/Inbox Full (Blue).png' | resolveAsset">
-      <div class="inbox-modifiers" *ngIf="notifications > 0">
+      <img [style.display]="isStaff?'none':''" class="inbox-icon" [src]="'./assets/Inbox Full (Blue).png' | resolveAsset">
+      <div [style.display]="isStaff?'none':''" class="inbox-modifiers" *ngIf="notifications > 0">
         <img class="inbox-badge" [src]="'./assets/Inbox Number.png' | resolveAsset">
         <div class="inbox-number">{{ notifications }}</div>
         <img class="inbox-front" [src]="'./assets/Inbox Front (Blue).png' | resolveAsset">
