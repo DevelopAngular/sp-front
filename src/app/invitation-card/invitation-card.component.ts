@@ -9,6 +9,7 @@ import { InfoEditorComponent } from '../info-editor/info-editor.component';
 import { HttpService } from '../http-service';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
+import { getInnerPassName } from '../pass-tile/pass-display-util';
 
 @Component({
   selector: 'app-invitation-card',
@@ -21,6 +22,7 @@ export class InvitationCardComponent implements OnInit {
   @Input() forFuture: boolean = false;
   @Input() fromPast: boolean = false;
   @Input() forStaff: boolean = false;
+  @Input() forInput: boolean = false;
   @Input() selectedStudents: User[] = [];
 
   selectedOrigin: Location;
@@ -31,18 +33,23 @@ export class InvitationCardComponent implements OnInit {
     
   }
 
+  get studentName(){
+    return getInnerPassName(this.invitation);
+  }
+
   ngOnInit() {
     this.invitation = this.data['pass'];
     this.forFuture = this.data['forFuture'];
     this.fromPast = this.data['fromPast'];
     this.forStaff = this.data['forStaff'];
+    this.forInput = this.data['forInput'];
     this.selectedStudents = this.data['selectedStudents'];
 
     this.selectedOrigin = this.invitation.default_origin;
   }
 
-  formatDateTime(){
-    return Util.formatDateTime(this.invitation.date_choices[0]);
+  formatDateTime(date: Date){
+    return Util.formatDateTime(date);
   }
 
   setLocation(location: Location){

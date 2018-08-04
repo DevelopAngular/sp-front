@@ -28,13 +28,17 @@
 }
 
 .invitation-description{
+    width: 190px;
     height: inherit;
+    margin-right: 30px;
     display: flex;
     flex-direction: row;
     align-items: center;
     position: relative;
     left: 15px;
     font-weight: bold;
+    margin-bottom: 25px;
+    padding-top: 25px;
 }
 
 .invitation-description-icon{
@@ -43,6 +47,9 @@
     margin-right: 7px;
 }
 
+.invitation-description-text{
+    text-align: left;
+}
 
 .button-content{
     width: 181px;

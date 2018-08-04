@@ -9,6 +9,7 @@ export function getFormattedPassDate(pass: PassLike) {
   let date: Date;
 
   if (pass instanceof Invitation) {
+    date = pass.date_choices[0];
   } else if (pass instanceof Request) {
     date = pass.request_time;
   } else if (pass instanceof HallPass) {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'app-pager',
@@ -7,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PagerComponent implements OnInit {
   
-  page = 1;
+  @Input() page = 1;
 
   constructor() { }
 

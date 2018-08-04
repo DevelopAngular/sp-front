@@ -1,33 +1,71 @@
-<app-pass-card-template [selectedStudents]="selectedStudents" [forStaff]="forStaff" [hasDivider]="!selectedOrigin && !forStaff" [pass]="invitation" (onCancel)="denyInvitation($event)" [rightJustify]="forStaff?'space-around':'flex-end'" [closeIcon]="'./assets/Trash (Transparent).png'">
+<app-pass-card-template [selectedStudents]="selectedStudents" [forStaff]="forStaff" [hasDivider]="(!selectedOrigin && !forStaff) || (!forInput && forStaff)" [pass]="invitation" (onCancel)="denyInvitation($event)" [rightJustify]="forStaff?'space-around':'flex-end'" [closeIcon]="'./assets/Trash (Transparent).png'">
   <div class="card-subtitle" *ngIf="fromPast || forFuture">
-    {{ formatDateTime() }}
+    {{ formatDateTime(invitation.date_choices[0]) }}
   </div>
   <div class="card-body-left">
-    <app-duration-picker *ngIf="!forStaff" (onChange)="selectedDuration = $event" [maxDuration]="invitation.destination.max_allowed_time?invitation.destination.max_allowed_time:15"></app-duration-picker>
-    <app-travel-view *ngIf="forStaff" [forStaff]="forStaff" [pass]='invitation' (locationSelected)="setLocation($event)"></app-travel-view>
+    <app-duration-picker *ngIf="forStaff && forInput" (onChange)="selectedDuration = $event" [maxDuration]="invitation.destination.max_allowed_time?invitation.destination.max_allowed_time:15"></app-duration-picker>
+    <app-travel-view *ngIf="!forInput" [forStaff]="forStaff" [pass]='invitation' (locationSelected)="setLocation($event)"></app-travel-view>
   </div>
-  <div class="card-body-right" *ngIf="!!selectedOrigin; else noLocation;">
-    <app-card-button (onClick)="acceptInvitation()" [width]="'181px'" [height]="'50px'" [gradientColor]="invitation.color_profile.gradient_color">
-      <div class="button-content">
-        <div class="get-pass-content-text">Get Pass</div>
-        <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
-      </div>
-    </app-card-button>
-  </div>
-  <ng-template #noLocation class="card-body-right">
-    <app-traveltype-picker *ngIf="forStaff" (onSelect)="selectedTravelType=$event" [choices]="invitation.destination.travel_types" [altColor]="invitation.color_profile.solid_color"></app-traveltype-picker>
-    <app-card-button *ngIf="forStaff" (onClick)="newInvitation()" [width]="'181px'" [height]="'50px'" [gradientColor]="invitation.color_profile.gradient_color">
-      <div class="button-content">
-        <div class="button-content-text">Send Request</div>
-        <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
-      </div>
-    </app-card-button>
-    
-    <div *ngIf="!forStaff" class="invitation-description">
-      <img class="invitation-description-icon" [src]="'./assets/Request (White).png' | resolveAsset">
-      <div class="invitation-description-text">
-        Pass Invite from from {{ invitation.issuer.last_name }}
-      </div>
+  <div class="card-body-right" *ngIf="!forStaff; else staffPanel">
+    <div *ngIf="!!selectedOrigin && !invitation.cancelled; else noLocation;">
+      <app-card-button (onClick)="acceptInvitation()" [width]="'181px'" [height]="'50px'" [gradientColor]="invitation.color_profile.gradient_color">
+        <div class="button-content">
+          <div class="get-pass-content-text">Get Pass</div>
+          <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
+        </div>
+      </app-card-button>
     </div>
+    <ng-template #noLocation>      
+      <div *ngIf="!invitation.cancelled; else cancelled" class="invitation-description">
+        <img class="invitation-description-icon" [src]="'./assets/Request (White).png' | resolveAsset">
+        <div class="invitation-description-text">
+          Pass Request from {{ invitation.issuer.last_name }}
+        </div>
+      </div>
+      <ng-template #cancelled>
+        <div class="invitation-description">
+          <img class="invitation-description-icon" [src]="'./assets/Report (White).png' | resolveAsset">
+          <div class="invitation-description-text">
+            Pass Request has been cancelled
+          </div>
+        </div>
+      </ng-template>
+    </ng-template>
+  </div>
+  <ng-template #staffPanel class="card-body-right">
+    <div *ngIf="forInput; else staffNoInput" class="card-body-right">
+      <app-traveltype-picker (onSelect)="selectedTravelType=$event" [choices]="invitation.destination.travel_types" [altColor]="invitation.color_profile.solid_color"></app-traveltype-picker>
+      <app-card-button (onClick)="newInvitation()" [width]="'181px'" [height]="'50px'" [gradientColor]="invitation.color_profile.gradient_color">
+        <div class="button-content">
+          <div class="button-content-text">Send Request</div>
+          <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
+        </div>
+      </app-card-button>
+    </div>
+    <ng-template #staffNoInput class="card-body-right">
+      <app-pager *ngIf="invitation.status!=='pending'; else pending" [page]="2">
+        <div class="page-1 invitation-description">
+          <img class="invitation-description-icon" [src]="'./assets/Arrow (White).png' | resolveAsset">
+          <div class="invitation-description-text">
+            Pass Request sent to {{ studentName }}
+          </div>
+        </div>
+        <div class="page-2 invitation-description">
+          <img class="invitation-description-icon" [src]="'./assets/' +(invitation.status==='accepted'?'Arrow':'Report') +' (White).png' | resolveAsset">
+          <div class="invitation-description-text">
+            Pass Request {{ invitation.status }} by <br>
+            {{ studentName }}
+          </div>
+        </div>
+      </app-pager>
+      <ng-template #pending>
+        <div class="invitation-description">
+          <img class="invitation-description-icon" [src]="'./assets/Arrow (White).png' | resolveAsset">
+          <div class="invitation-description-text">
+            Pass Request sent to {{ studentName }}
+          </div>
+        </div>
+      </ng-template>
+    </ng-template>
   </ng-template>
 </app-pass-card-template>

@@ -71,14 +71,14 @@ function constructTestInvitations(student: User, issuer: User, origin: Location,
   const testDate = new Date();
 
 
-  const testInvitation1 = new Invitation('testInvitation1', student, null,
+  const testInvitation1 = new Invitation('testInvitation1', student, origin,
     destination, [testDate], issuer,
-    'status', 10, '#F37426,#F52B4F',
+    'pending', 10, '#F37426,#F52B4F',
     'https://storage.googleapis.com/courier-static/icons/classroom.png', 'one_way',
     colorProfile, new Date(), new Date(), new Date());
-  const testInvitation2 = new Invitation('testInvitation2', student, origin,
+  const testInvitation2 = new Invitation('testInvitation2', student, null,
     destination, [testDate], issuer,
-    'status', 10, '#F37426,#F52B4F',
+    'declined', 10, '#F37426,#F52B4F',
     'https://storage.googleapis.com/courier-static/icons/classroom.png', 'one_way',
     colorProfile, new Date(), null, new Date());
 
