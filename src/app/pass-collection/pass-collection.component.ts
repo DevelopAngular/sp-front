@@ -29,7 +29,6 @@ export class SortOption {
 
 export class PassCollectionComponent implements OnInit {
 
-  @Input() passes: PassLike[] = null;
   @Input() displayState = 'list';
   @Input() title: string;
   @Input() icon: string;
@@ -41,7 +40,7 @@ export class PassCollectionComponent implements OnInit {
   @Input() forMonitor = false;
   @Input() hasSort = false;
 
-  @Input() passProvider: PassLikeProvider = null;
+  @Input() passProvider: PassLikeProvider;
 
   @Output() sortMode = new EventEmitter<string>();
 
@@ -77,12 +76,7 @@ export class PassCollectionComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.passes) {
-      this.currentPasses$.next(this.passes);
-    }
-    if (this.passProvider) {
-      this.passProvider.watch(this.sort$.asObservable()).subscribe(e => this.currentPasses$.next(e));
-    }
+    this.passProvider.watch(this.sort$.asObservable()).subscribe(e => this.currentPasses$.next(e));
   }
 
   showPass(pass: PassLike) {

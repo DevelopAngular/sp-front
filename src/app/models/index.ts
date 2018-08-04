@@ -20,5 +20,14 @@ export type PassLike = HallPass | Invitation | Request;
 export interface PassLikeProvider {
 
   watch(sort: Observable<string>): Observable<PassLike[]>;
+}
 
+export class BasicPassLikeProvider {
+
+  constructor(private passes: PassLike[]) {
+  }
+
+  watch(sort: Observable<string>) {
+    return Observable.of(Array.from(this.passes));
+  }
 }

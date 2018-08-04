@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material';
 import { Util } from '../../Util';
 import { DataService } from '../data-service';
 import { LoadingService } from '../loading.service';
+import { BasicPassLikeProvider, PassLikeProvider } from '../models';
 import { HallPass } from '../models/HallPass';
 import { Location } from '../models/Location';
 import { testPasses } from '../models/mock_data';
@@ -16,7 +17,7 @@ import { TeacherDropdownComponent } from '../teacher-dropdown/teacher-dropdown.c
 })
 export class MyRoomComponent implements OnInit {
 
-  testPasses: HallPass[] = [];
+  testPasses: PassLikeProvider;
 
   inputValue = '';
   calendarToggled = false;
@@ -31,7 +32,7 @@ export class MyRoomComponent implements OnInit {
 
   constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService, public dialog: MatDialog) {
 
-    this.testPasses = testPasses;
+    this.testPasses = new BasicPassLikeProvider(testPasses);
   }
 
   set searchDate(date: Date) {

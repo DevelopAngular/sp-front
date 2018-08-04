@@ -19,9 +19,9 @@
       <div class="date-display">{{ dateDisplay }}</div>
     </div>
     <div class="my-room-body">
-      <app-pass-collection [isActive]="true" [forStaff]="isStaff" [style.width]="'550px'" [passes]="testPasses" [title]="'Active Passes'" [icon]="'./assets/Hallway (Blue).png'" [columns]="4"></app-pass-collection>
-      <app-pass-collection [forStaff]="isStaff" [style.width]="'550px'" [passes]="testPasses" [title]="'Passes from'" [icon]="'./assets/Arrow (Blue).png'" [columns]="4"></app-pass-collection>
-      <app-pass-collection [forStaff]="isStaff" [style.width]="'550px'" [passes]="testPasses" [title]="'Passes to'" [icon]="'./assets/Arrow Reverse (Blue).png'" [columns]="4"></app-pass-collection>
+      <app-pass-collection [isActive]="true" [forStaff]="isStaff" [style.width]="'550px'" [passProvider]="testPasses" [title]="'Active Passes'" [icon]="'./assets/Hallway (Blue).png'" [columns]="4"></app-pass-collection>
+      <app-pass-collection [forStaff]="isStaff" [style.width]="'550px'" [passProvider]="testPasses" [title]="'Passes from'" [icon]="'./assets/Arrow (Blue).png'" [columns]="4"></app-pass-collection>
+      <app-pass-collection [forStaff]="isStaff" [style.width]="'550px'" [passProvider]="testPasses" [title]="'Passes to'" [icon]="'./assets/Arrow Reverse (Blue).png'" [columns]="4"></app-pass-collection>
     </div>
   </div>
   <div *ngIf="calendarToggled" class="my-room-right">

@@ -7,6 +7,7 @@ import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component'
 import { HttpService } from '../http-service';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
 import { LoadingService } from '../loading.service';
+import { BasicPassLikeProvider, PassLikeProvider } from '../models';
 import { ColorProfile } from '../models/ColorProfile';
 import { HallPass } from '../models/HallPass';
 import { Invitation } from '../models/Invitation';
@@ -28,9 +29,9 @@ function isUserStaff(user: User): boolean {
 })
 export class PassesComponent implements OnInit {
 
-  testPasses: HallPass[];
-  testRequests: Request[];
-  testInvitations: Invitation[];
+  testPasses: PassLikeProvider;
+  testRequests: PassLikeProvider;
+  testInvitations: PassLikeProvider;
 
   currentPass: HallPass;
   currentRequest: Request;
@@ -42,9 +43,9 @@ export class PassesComponent implements OnInit {
   constructor(private http: HttpService, public dataService: DataService, private router: Router,
               public dialog: MatDialog, private _zone: NgZone, private loadingService: LoadingService) {
 
-    this.testPasses = testPasses;
-    this.testRequests = testRequests;
-    this.testInvitations = testInvitations;
+    this.testPasses = new BasicPassLikeProvider(testPasses);
+    this.testRequests = new BasicPassLikeProvider(testRequests);
+    this.testInvitations = new BasicPassLikeProvider(testInvitations);
 
   }
 
