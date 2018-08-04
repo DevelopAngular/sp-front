@@ -1,8 +1,9 @@
+import { BaseModel } from './base';
 import { ColorProfile } from './ColorProfile';
 import { Location } from './Location';
 import { User } from './User';
 
-export class HallPass {
+export class HallPass extends BaseModel {
   constructor(public id: string,
               public student: User,
               public issuer: User,
@@ -17,6 +18,7 @@ export class HallPass {
               public gradient_color: string,
               public icon: string,
               public color_profile: ColorProfile) {
+    super();
   }
 
   get isRead() {

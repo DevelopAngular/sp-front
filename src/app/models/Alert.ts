@@ -1,6 +1,7 @@
+import { BaseModel } from './base';
 import { User } from './User';
 
-export class Alert {
+export class Alert extends BaseModel {
   constructor(public id: string,
               public created: Date,
               public last_updated: Date,
@@ -10,6 +11,7 @@ export class Alert {
               public users: User[],
               public high_priority: boolean,
               public status_sent: boolean) {
+    super();
   }
 
   static fromJSON(JSON: any): Alert {

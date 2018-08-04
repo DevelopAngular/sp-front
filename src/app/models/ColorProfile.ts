@@ -1,4 +1,6 @@
-export class ColorProfile {
+import { BaseModel } from './base';
+
+export class ColorProfile extends BaseModel {
   constructor(public id: string,
               public title: string,
               public gradient_color: string,
@@ -6,6 +8,7 @@ export class ColorProfile {
               public overlay_color: string,
               public pressed_color: string,
               public time_color: string) {
+    super();
   }
 
   static fromJSON(JSON: any): ColorProfile {

@@ -1,7 +1,8 @@
+import { BaseModel } from './base';
 import { ColorProfile } from './ColorProfile';
 import { Location } from './Location';
 
-export class Pinnable {
+export class Pinnable extends BaseModel {
   constructor(public id: string,
               public title: string,
               public gradient_color: string,
@@ -10,6 +11,7 @@ export class Pinnable {
               public location: Location,
               public category: string,
               public color_profile: ColorProfile) {
+    super();
   }
 
   static fromJSON(JSON: any): Pinnable {

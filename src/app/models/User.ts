@@ -1,4 +1,6 @@
-export class User {
+import { BaseModel } from './base';
+
+export class User extends BaseModel {
   constructor(public id: string,
               public created: Date,
               public last_updated: Date,
@@ -7,6 +9,7 @@ export class User {
               public display_name: string,
               public primary_email: string,
               public roles: string[]) {
+    super();
   }
 
   static fromJSON(JSON: any): User {

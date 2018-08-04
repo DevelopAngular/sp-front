@@ -1,8 +1,9 @@
-import { Location } from './Location';
+import { BaseModel } from './base';
 import { ColorProfile } from './ColorProfile';
+import { Location } from './Location';
 import { User } from './User';
 
-export class Invitation {
+export class Invitation extends BaseModel {
   constructor(public id: string,
               public student: User,
               public default_origin: Location,
@@ -18,6 +19,7 @@ export class Invitation {
               public cancelled: Date,
               public last_read: Date,
               public last_updated: Date) {
+    super();
   }
 
   get isRead() {

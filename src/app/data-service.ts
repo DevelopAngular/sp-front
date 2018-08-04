@@ -10,6 +10,7 @@ import { HallPass } from './models/HallPass';
 import { Invitation } from './models/Invitation';
 import { Location } from './models/Location';
 import { PassLike } from './models';
+import { User } from './models/User';
 import { PollingEvent, PollingService } from './polling-service';
 import { UserService } from './user.service';
 
@@ -200,6 +201,11 @@ export class DataService {
         switchMap(passes => events.scan(accumulator, {passes: passes, filtered_passes: passes, pass_lookup: {}})),
         map(state => state.filtered_passes)
       );
+  }
+
+  getLocationsWithTeacher(teacher: User) {
+    return this.http.get<any[]>(`api/methacton/v1/locations?teacher_id=${teacher.id}`)
+      .map(json => json.map(raw => Location.fromJSON(raw)));
   }
 
   markRead(pass: PassLike): Observable<any> {

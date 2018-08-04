@@ -1,6 +1,7 @@
+import { BaseModel } from './base';
 import { User } from './User';
 
-export class Location {
+export class Location extends BaseModel {
   constructor(public id: string,
               public title: string,
               public campus: string,
@@ -12,7 +13,7 @@ export class Location {
               public teachers: User[],
               public max_allowed_time: number,
               public starred: boolean) {
-
+    super();
   }
 
   static fromJSON(JSON: any): Location {

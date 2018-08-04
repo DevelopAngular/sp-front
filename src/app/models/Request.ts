@@ -1,9 +1,10 @@
+import { BaseModel } from './base';
 import { ColorProfile } from './ColorProfile';
 import { HallPass } from './HallPass';
 import { Location } from './Location';
 import { User } from './User';
 
-export class Request {
+export class Request extends BaseModel {
   constructor(public id: string,
               public student: User,
               public origin: Location,
@@ -23,6 +24,7 @@ export class Request {
               public last_read: Date,
               public last_updated: Date,
               public duration: number) {
+    super();
   }
 
   get isRead() {
@@ -54,7 +56,8 @@ export class Request {
       last_updated: Date = new Date(JSON['last_updated']),
       duration: number = JSON['duration'];
 
-    return new Request(id, student, origin, destination, attachment_message, travel_type, status, hallpass, gradient_color, icon, teacher, request_time, declined_message, student_has_dismissed, cancelled, color_profile, last_read, last_updated, duration);
+    return new Request(id, student, origin, destination, attachment_message, travel_type, status, hallpass, gradient_color,
+      icon, teacher, request_time, declined_message, student_has_dismissed, cancelled, color_profile, last_read, last_updated, duration);
   }
 
 }
