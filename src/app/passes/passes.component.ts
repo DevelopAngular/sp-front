@@ -107,7 +107,7 @@ export class PassesComponent implements OnInit {
     
     this.testRequests = [this.testRequest1, this.testRequest2, this.testRequest3];
 
-    this.testInvitation1 = new Invitation('testInvitation1', this.testStudent, null,
+    this.testInvitation1 = new Invitation('testInvitation1', this.testStudent, this.testOrigin,
                                           this.testDestination, [this.testDate], this.testIssuer,
                                           'status', 10, '#F37426,#F52B4F',
                                           'https://storage.googleapis.com/courier-static/icons/classroom.png', 'one_way',

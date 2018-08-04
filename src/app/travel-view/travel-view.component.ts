@@ -14,6 +14,7 @@ export class TravelViewComponent implements OnInit {
 
   @Input() pass: HallPass | Invitation | Request;
   @Input() shrink: boolean = false;
+  @Input() forStaff: boolean = false;
   
   @Output() locationSelected: EventEmitter<any> = new EventEmitter();
 

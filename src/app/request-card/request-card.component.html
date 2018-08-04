@@ -1,4 +1,4 @@
-<app-pass-card-template (onCancel)="cancelRequest($event)" [hasDivider]="request.status==='pending' && !forInput" [pass]="request" [closeIcon]="'./assets/Trash (Transparent).png'">
+<app-pass-card-template (onCancel)="cancelRequest($event)" [hasDivider]="(request.status==='pending' && !forInput) || (request.status==='denied' && forStaff)" [pass]="request" [closeIcon]="'./assets/Trash (Transparent).png'">
   <div class="card-subtitle" *ngIf="fromPast || forFuture">
     {{ formatDateTime() }}
   </div>
@@ -47,11 +47,17 @@
     </div>
   </div>
   <div *ngIf="request.status==='denied'" class="card-body-right">
-    <app-card-button (onClick)="changeDate()"[width]="'181px'" [height]="'50px'" [gradientColor]="request.color_profile.gradient_color">
+    <app-card-button *ngIf="!forStaff" (onClick)="changeDate()"[width]="'181px'" [height]="'50px'" [gradientColor]="request.color_profile.gradient_color">
       <div class="resend-button-content">
         <div class="resend-button-content-title">{{ (forFuture?'Change Date & Time':'Resend Request') }}</div>
         <div class="resend-button-content-subtitle">Pass Request Denied</div>
       </div>
     </app-card-button>
+    <div *ngIf="forStaff" class="request-description">
+      <img class="request-description-icon" [src]="'./assets/Report (White).png' | resolveAsset">
+      <div class="request-description-text">
+        Pass Request denied by {{ request.student.display_name }}
+      </div>
+    </div>
   </div>
 </app-pass-card-template>

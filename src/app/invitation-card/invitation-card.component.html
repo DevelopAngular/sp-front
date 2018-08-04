@@ -3,8 +3,8 @@
     {{ formatDateTime() }}
   </div>
   <div class="card-body-left">
-    <app-duration-picker *ngIf="forStaff" (onChange)="selectedDuration = $event" [maxDuration]="invitation.destination.max_allowed_time?invitation.destination.max_allowed_time:15"></app-duration-picker>
-    <app-travel-view *ngIf="!forStaff" [pass]='invitation' (locationSelected)="setLocation($event)"></app-travel-view>
+    <app-duration-picker *ngIf="!forStaff" (onChange)="selectedDuration = $event" [maxDuration]="invitation.destination.max_allowed_time?invitation.destination.max_allowed_time:15"></app-duration-picker>
+    <app-travel-view *ngIf="forStaff" [forStaff]="forStaff" [pass]='invitation' (locationSelected)="setLocation($event)"></app-travel-view>
   </div>
   <div class="card-body-right" *ngIf="!!selectedOrigin; else noLocation;">
     <app-card-button (onClick)="acceptInvitation()" [width]="'181px'" [height]="'50px'" [gradientColor]="invitation.color_profile.gradient_color">

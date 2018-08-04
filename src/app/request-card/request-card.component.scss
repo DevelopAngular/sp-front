@@ -33,6 +33,7 @@
 }
 
 .request-description{
+    width: 215px;
     height: inherit;
     display: flex;
     flex-direction: row;
@@ -43,8 +44,8 @@
 }
 
 .request-description-icon{
-    width: 17px;
-    height: 17px;
+    width: 25px;
+    height: auto;
     margin-right: 7px;
 }
 

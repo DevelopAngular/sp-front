@@ -34,6 +34,7 @@ export class RequestCardComponent implements OnInit {
     this.forInput = this.data['forInput'];
     this.forFuture = this.data['forFuture'];
     this.fromPast = this.data['fromPast'];
+    this.forStaff = this.data['forStaff'];
   }
 
   formatDateTime(){
