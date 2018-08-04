@@ -3,7 +3,8 @@ import { FormControl } from '@angular/forms';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Subject } from 'rxjs/Subject';
 import { HttpService } from '../http-service';
-import { Location, Paged } from '../NewModels';
+import { Location } from '../models/Location';
+import { Paged } from '../models';
 
 @Component({
   selector: 'app-location-picker',

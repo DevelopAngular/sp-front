@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { DataService } from '../data-service';
 import { HttpService } from '../http-service';
 
-import { Location } from '../NewModels';
+import { Location } from '../models/Location';
 
 @Component({
   selector: 'app-teacher-search',

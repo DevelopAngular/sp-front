@@ -8,7 +8,7 @@ import { Observable } from 'rxjs/Observable';
 import { DataService } from '../data-service';
 import { GoogleLoginService } from '../google-login.service';
 import { LoadingService } from '../loading.service';
-import { User } from '../NewModels';
+import { User } from '../models/User';
 import { OptionsComponent } from '../options/options.component';
 
 @Component({

@@ -11,14 +11,12 @@
   <div class="collection-divider"></div>
   <div class="collection-grid-wrapper" *ngIf="displayState==='grid'; else list">
     <mat-grid-list [cols]="columns" rowHeight="85px">
-        <!-- *ngFor="let pass of (passes$ | async)" -->
-      <mat-grid-tile  [style.overflow]="'visible'" class="custom-mat-tile" *ngFor="let pass of passes">
-        <app-pass-tile (click)="showPass(pass)" [type]="type" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-tile>
+      <mat-grid-tile  [style.overflow]="'visible'" class="custom-mat-tile" *ngFor="let pass of (currentPasses$ | async)">
+        <app-pass-tile (click)="showPass(pass)" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-tile>
       </mat-grid-tile>
     </mat-grid-list>
   </div>
   <ng-template class="collection-list-wrapper" #list>
-    <!-- *ngFor="let pass of (passes$ | async)" -->
-    <app-pass-cell *ngFor="let pass of passes" (click)="showPass(pass)" [type]="type" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-cell>
+    <app-pass-cell *ngFor="let pass of (currentPasses$ | async)" (click)="showPass(pass)" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-cell>
   </ng-template>
 </div>

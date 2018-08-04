@@ -1,5 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { HallPass, Invitation, Request } from '../NewModels';
+import { HallPass } from '../models/HallPass';
+import { Invitation } from '../models/Invitation';
+import { Request } from '../models/Request';
 import { MatDialog } from '@angular/material';
 import { InfoEditorComponent } from '../info-editor/info-editor.component';
 import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';

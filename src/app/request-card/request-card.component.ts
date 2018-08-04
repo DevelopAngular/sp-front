@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ElementRef } from '@angular/core';
-import { Request } from '../NewModels';
+import { Request } from '../models/Request';
 import { Util } from '../../Util';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material';
 import { Inject } from '@angular/core';

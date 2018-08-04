@@ -1,8 +1,8 @@
-import { Component, OnInit, Input, Output } from '@angular/core';
-import { HallPass, Request, Invitation } from '../NewModels';
-import { bumpIn } from '../animations';
+import { Component, Input, OnInit, Output } from '@angular/core';
 import { EventEmitter } from 'events';
-import { Util } from '../../Util';
+import { bumpIn } from '../animations';
+import { PassLike } from '../models';
+import { getInnerPassContent, getInnerPassName, isBadgeVisible } from './pass-display-util';
 
 @Component({
   selector: 'app-pass-tile',
@@ -14,61 +14,55 @@ import { Util } from '../../Util';
 })
 export class PassTileComponent implements OnInit {
 
-  @Input() pass: HallPass | Request | Invitation;
-  @Input() fromPast: boolean = false;
-  @Input() forFuture: boolean = false;
-  @Input() isActive: boolean = false;
-  @Input() forStaff: boolean = false;
-  @Input() type:string;
+  @Input() pass: PassLike;
+  @Input() fromPast = false;
+  @Input() forFuture = false;
+  @Input() isActive = false;
+  @Input() forStaff = false;
 
   @Output() tileSelected = new EventEmitter();
 
   buttonDown = false;
-  
+
   get buttonState() {
     return this.buttonDown ? 'down' : 'up';
   }
 
-  get tileContent(){
-    if(!(this.type==='hallpass')){
-      if(this.pass['status']==='denied'){
-        return 'Denied';
-      }
-    }
-    return this.formattedDate();
+  get tileContent() {
+    return getInnerPassContent(this.pass);
   }
 
-  get tileName(){
-    return this.pass.student.first_name.substr(0, 1) +'. ' +this.pass.student.last_name;
+  get tileName() {
+    return getInnerPassName(this.pass);
   }
 
-  constructor() { }
+  get isBadgeVisible() {
+    return isBadgeVisible(this.pass);
+  }
+
+  constructor() {
+  }
 
   ngOnInit() {
-    
+
   }
 
-  backgroundGradient(){
-    if(this.buttonDown){
+  backgroundGradient() {
+    if (this.buttonDown) {
       return this.pass.color_profile.pressed_color;
-    } else{
-      let gradient: string[] = this.pass.color_profile.gradient_color.split(',');
+    } else {
+      const gradient: string[] = this.pass.color_profile.gradient_color.split(',');
       return 'radial-gradient(circle at 73% 71%, ' + (gradient[0]) + ', ' + gradient[1] + ')';
     }
   }
 
-  formattedDate(){
-    let s:Date = (this.type==='invitation'?this.pass['date_choices'][0]:(this.type==='request')?this.pass['request_time']:this.pass['start_time'])
-    return Util.formatDateTime(s)
-  }
-
   onPress(press: boolean) {
     this.buttonDown = press;
-    //console.log("[Button State]: ", "The button is " +this.buttonState);
+    // console.log("[Button State]: ", "The button is " +this.buttonState);
   }
 
-  onClick(event){
-    this.tileSelected.emit(event)
+  onClick(event) {
+    this.tileSelected.emit(event);
   }
 
 }

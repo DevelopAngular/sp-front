@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { bumpIn } from '../animations';
-import { Pinnable } from '../NewModels';
+import { Pinnable } from '../models/Pinnable';
 
 @Component({
   selector: 'app-pinnable',

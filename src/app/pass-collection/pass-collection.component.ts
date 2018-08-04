@@ -1,14 +1,16 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { Observable } from 'rxjs/Observable';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Subject } from 'rxjs/Subject';
 import { DataService } from '../data-service';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
-import { HallPass, Invitation, Request } from '../NewModels';
+import { HallPass } from '../models/HallPass';
+import { Invitation } from '../models/Invitation';
+import { Request } from '../models/Request';
+import { PassLike, PassLikeProvider } from '../models';
 import { PassCardComponent } from '../pass-card/pass-card.component';
 import { ReportFormComponent } from '../report-form/report-form.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
-import { HttpService } from '../http-service';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -27,19 +29,24 @@ export class SortOption {
 
 export class PassCollectionComponent implements OnInit {
 
-  @Input() passes: HallPass[] | Invitation[] | Request[];
-  @Input() displayState: string = 'list';
+  @Input() passes: PassLike[] = null;
+  @Input() displayState = 'list';
   @Input() title: string;
   @Input() icon: string;
-  @Input() columns: number = 3;
-  @Input() fromPast: boolean = false;
-  @Input() forFuture: boolean = false;
-  @Input() isActive: boolean = false;
-  @Input() forStaff: boolean = false;
-  @Input() forMonitor: boolean = false;
-  @Input() hasSort: boolean = false;
+  @Input() columns = 3;
+  @Input() fromPast = false;
+  @Input() forFuture = false;
+  @Input() isActive = false;
+  @Input() forStaff = false;
+  @Input() forMonitor = false;
+  @Input() hasSort = false;
 
-  type: string;
+  @Input() passProvider: PassLikeProvider = null;
+
+  @Output() sortMode = new EventEmitter<string>();
+
+  currentPasses$ = new ReplaySubject<PassLike[]>(1);
+
   sortOptions: SortOption[] = [
     new SortOption('Created', 'created'),
     new SortOption('Student', 'student_name'),
@@ -49,47 +56,75 @@ export class PassCollectionComponent implements OnInit {
 
   sort$ = new Subject<string>();
 
-  passes$: Observable<HallPass[]>;
+  private static getDetailDialog(pass: PassLike): any {
+    if (pass instanceof HallPass) {
+      return PassCardComponent;
+    }
 
-  constructor(public dialog: MatDialog, private dataService: DataService, private http: HttpService) {
-    this.passes$ = this.dataService.watchActiveHallPasses(this.sort$.asObservable());
+    if (pass instanceof Invitation) {
+      return InvitationCardComponent;
+    }
+
+    // noinspection SuspiciousInstanceOfGuard
+    if (pass instanceof Request) {
+      return RequestCardComponent;
+    }
+
+    return null;
+  }
+
+  constructor(public dialog: MatDialog, private dataService: DataService) {
   }
 
   ngOnInit() {
-    this.type = (this.passes[0] instanceof HallPass) ? 'hallpass' :
-      (this.passes[0] instanceof Invitation) ? 'invitation' :
-        'request';
+    if (this.passes) {
+      this.currentPasses$.next(this.passes);
+    }
+    if (this.passProvider) {
+      this.passProvider.watch(this.sort$.asObservable()).subscribe(e => this.currentPasses$.next(e));
+    }
   }
 
-  showPass(pass: HallPass | Invitation | Request) {
-    let endpoint: string = 'api/methacton/v1/' +(this.type==='hallpass'?'hall_passes':(this.type==='invitation'?'invitations':'pass_requests')) +'/' +pass.id +'/read'
-    this.http.post(endpoint).subscribe();
-    this.initializeDialog(this.type === 'hallpass' ? PassCardComponent : (this.type === 'invitation' ? InvitationCardComponent : RequestCardComponent), pass);
+  showPass(pass: PassLike) {
+    this.dataService.markRead(pass).subscribe();
+    this.initializeDialog(pass);
   }
 
   onSortSelected(sort: string) {
     this.sort$.next(sort);
+    this.sortMode.emit(sort);
   }
 
-  initializeDialog(component: any, pass: any) {
-    let fromPast = this.type==='hallpass'?!pass['end_time']:this.fromPast;
-    let now = new Date();
-    now.setSeconds(now.getSeconds()+10);
-    let forFuture = this.type==='hallpass'?(pass['start_time'] > now):this.forFuture;
-    let isActive = this.type==='hallpass'?(!forFuture && !fromPast):this.isActive
-    console.log('Past: ', fromPast, 'Future: ', forFuture, 'Active: ', isActive);
+  initializeDialog(pass: PassLike) {
+    const now = new Date();
+    now.setSeconds(now.getSeconds() + 10);
 
-    const dialogRef = this.dialog.open(component, {
+    let data: any;
+
+    if (pass instanceof HallPass) {
+      data = {
+        pass: pass,
+        fromPast: !pass['end_time'],
+        forFuture: pass['start_time'] > now,
+        forMonitor: this.forMonitor,
+        forStaff: this.forStaff,
+      };
+      data.isActive = !data.fromPast && !data.forFuture;
+    } else {
+      data = {
+        pass: pass,
+        fromPast: this.fromPast,
+        forFuture: this.forFuture,
+        forMonitor: this.forMonitor,
+        isActive: this.isActive,
+        forStaff: this.forStaff,
+      };
+    }
+
+    const dialogRef = this.dialog.open(PassCollectionComponent.getDetailDialog(pass), {
       panelClass: 'pass-card-dialog-container',
       backdropClass: 'custom-backdrop',
-      data: {
-        'pass': pass,
-        'fromPast': fromPast,
-        'forFuture': forFuture,
-        'forMonitor': this.forMonitor,
-        'isActive': isActive,
-        'forStaff': this.forStaff
-      }
+      data: data,
     });
 
     dialogRef.afterClosed().subscribe(dialogData => {

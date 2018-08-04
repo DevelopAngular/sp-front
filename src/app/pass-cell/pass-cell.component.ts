@@ -1,6 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
-import {HallPass, Invitation, Request} from '../NewModels';
-import { Util } from '../../Util';
+import { Component, Input, OnInit } from '@angular/core';
+import { HallPass } from '../models/HallPass';
+import { Invitation } from '../models/Invitation';
+import { Request } from '../models/Request';
+import { getInnerPassContent, getInnerPassName, isBadgeVisible } from '../pass-tile/pass-display-util';
 
 @Component({
   selector: 'app-pass-cell',
@@ -10,35 +12,28 @@ import { Util } from '../../Util';
 export class PassCellComponent implements OnInit {
 
   @Input() pass: HallPass | Invitation | Request;
-  @Input() fromPast: boolean = false;
-  @Input() forFuture: boolean = false;
-  @Input() isActive: boolean = false;
-  @Input() forStaff: boolean = false;
-  @Input() type:string;
+  @Input() fromPast = false;
+  @Input() forFuture = false;
+  @Input() isActive = false;
+  @Input() forStaff = false;
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit() {
 
   }
 
-  get cellName(){
-    return this.pass.student.first_name.substr(0, 1) +'. ' +this.pass.student.last_name;
+  get cellName() {
+    return getInnerPassName(this.pass);
   }
 
-  get cellContent(){
-    if(!(this.type==='hallpass')){
-      if(this.pass['status']==='denied'){
-        return 'Denied';
-      }
-    }
-    return this.formattedDate();
+  get cellContent() {
+    return getInnerPassContent(this.pass);
   }
 
-  formattedDate(){
-    let s:Date = (this.type==='invitation'?this.pass['date_choices'][0]:(this.type==='request')?this.pass['request_time']:this.pass['start_time'])
-    return Util.formatDateTime(s);
+  get isBadgeVisible() {
+    return isBadgeVisible(this.pass);
   }
-
 
 }

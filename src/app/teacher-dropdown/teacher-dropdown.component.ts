@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, ElementRef, Inject } from '@angular/core';
-import { Location } from '../NewModels';
+import { Location } from '../models/Location';
 import { MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '../../../node_modules/@angular/material';
 
 @Component({

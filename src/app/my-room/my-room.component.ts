@@ -1,5 +1,8 @@
 import { Component, OnInit, NgZone, ElementRef } from '@angular/core';
-import { User, Location, ColorProfile, HallPass } from '../NewModels';
+import { ColorProfile } from '../models/ColorProfile';
+import { HallPass } from '../models/HallPass';
+import { User } from '../models/User';
+import { Location} from '../models/Location';
 import { DataService } from '../data-service';
 import { LoadingService } from '../loading.service';
 import { Util } from '../../Util';
