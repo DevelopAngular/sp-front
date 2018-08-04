@@ -87,7 +87,7 @@ export class MyRoomComponent implements OnInit {
   }
 
   showOptions(evt: MouseEvent) {
-    if (!this.optionsOpen && this.roomOptions) {
+    if (!this.optionsOpen && this.roomOptions && this.roomOptions.length > 1) {
       const target = new ElementRef(evt.currentTarget);
       const optionDialog = this.dialog.open(TeacherDropdownComponent, {
         panelClass: 'consent-dialog-container',
