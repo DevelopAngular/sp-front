@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Location } from '../NewModels';
+import { Location } from '../models/Location';
 import { HttpService } from '../http-service';
 
 @Component({

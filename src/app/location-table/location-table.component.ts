@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { HttpService } from '../http-service';
-import { Location } from '../NewModels';
+import { Location } from '../models/Location';
 
 export interface Paged<T> {
   results: T[];

@@ -1,4 +1,4 @@
-<div *ngIf="isStaff" class="my-room-wrapper" [style.width]="calendarToggled?'900px':'550px'">
+<div *ngIf="isStaff && selectedLocation" class="my-room-wrapper" [style.width]="calendarToggled?'900px':'550px'">
   <div class="my-room-left">
     <div class="my-room-header">
       <div class="selected-teacher" (click)="showOptions($event)">
@@ -19,12 +19,14 @@
       <div class="date-display">{{ dateDisplay }}</div>
     </div>
     <div class="my-room-body">
-      <app-pass-collection [isActive]="true" [forStaff]="isStaff" [style.width]="'550px'" [passes]="testPasses" [title]="'Active Passes'" [icon]="'./assets/Hallway (Blue).png'" [columns]="4"></app-pass-collection>
-      <app-pass-collection [forStaff]="isStaff" [style.width]="'550px'" [passes]="testPasses" [title]="'Passes from'" [icon]="'./assets/Arrow (Blue).png'" [columns]="4"></app-pass-collection>
-      <app-pass-collection [forStaff]="isStaff" [style.width]="'550px'" [passes]="testPasses" [title]="'Passes to'" [icon]="'./assets/Arrow Reverse (Blue).png'" [columns]="4"></app-pass-collection>
+      <app-pass-collection [isActive]="true" [forStaff]="isStaff" [style.width]="'550px'" [passProvider]="testPasses" [title]="'Active Passes'" [icon]="'./assets/Hallway (Blue).png'" [columns]="4"></app-pass-collection>
+      <app-pass-collection [forStaff]="isStaff" [style.width]="'550px'" [passProvider]="testPasses" [title]="'Passes from'" [icon]="'./assets/Arrow (Blue).png'" [columns]="4"></app-pass-collection>
+      <app-pass-collection [forStaff]="isStaff" [style.width]="'550px'" [passProvider]="testPasses" [title]="'Passes to'" [icon]="'./assets/Arrow Reverse (Blue).png'" [columns]="4"></app-pass-collection>
     </div>
   </div>
   <div *ngIf="calendarToggled" class="my-room-right">
     <app-date-time-picker [_selectedMoment]="_searchDate" [min]="min" [showTime]="false" (onUpdate)="searchDate = $event"></app-date-time-picker>
   </div>
 </div>
+<h3 *ngIf="isStaff && !selectedLocation">You don't have any rooms</h3>
+<h3 *ngIf="!isStaff">You don't have access to this page</h3>

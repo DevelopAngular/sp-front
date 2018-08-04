@@ -6,7 +6,11 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { map, switchMap } from 'rxjs/operators';
 import { HttpService } from './http-service';
-import { HallPass, Invitation, Location } from './NewModels';
+import { HallPass } from './models/HallPass';
+import { Invitation } from './models/Invitation';
+import { Location } from './models/Location';
+import { PassLike } from './models';
+import { User } from './models/User';
 import { PollingEvent, PollingService } from './polling-service';
 import { UserService } from './user.service';
 
@@ -140,11 +144,13 @@ export class DataService {
       } else if (isPollingEvent(action)) {
 
         const actors = {
-          'hall_pass.create': (s: State, data) => {
-            const pass = HallPass.fromJSON(data);
+          'hall_pass.create': (s: State, data: any[]) => {
+            const passes = data.map(row => HallPass.fromJSON(row));
 
-            s.passes.push(pass);
-            s.pass_lookup[pass.id] = pass;
+            for (const pass of passes) {
+              s.passes.push(pass);
+              s.pass_lookup[pass.id] = pass;
+            }
 
             return s;
           }
@@ -195,6 +201,27 @@ export class DataService {
         switchMap(passes => events.scan(accumulator, {passes: passes, filtered_passes: passes, pass_lookup: {}})),
         map(state => state.filtered_passes)
       );
+  }
+
+  getLocationsWithTeacher(teacher: User) {
+    return this.http.get<any[]>(`api/methacton/v1/locations?teacher_id=${teacher.id}`)
+      .map(json => json.map(raw => Location.fromJSON(raw)));
+  }
+
+  markRead(pass: PassLike): Observable<any> {
+    let endpoint = 'api/methacton/v1/';
+
+    if (pass instanceof HallPass) {
+      endpoint += 'hall_passes/';
+    } else if (pass instanceof Invitation) {
+      endpoint += 'invitations/';
+    } else if (pass instanceof Request) {
+      endpoint += 'pass_requests/';
+    }
+
+    endpoint += `${pass.id}/read`;
+
+    return this.http.post(endpoint);
   }
 
   reloadInvitations() {

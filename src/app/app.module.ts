@@ -63,7 +63,6 @@ import { LocationChooseComponent } from './location-choose/location-choose.compo
 import { LocationPickerComponent } from './location-picker/location-picker.component';
 import { LocationTableComponent } from './location-table/location-table.component';
 import { MainPageComponent } from './main-page/main-page.component';
-import { JSONSerializer } from './models';
 import { NavbarComponent } from './navbar/navbar.component';
 import { OptionsComponent } from './options/options.component';
 import { PassCardComponent } from './pass-card/pass-card.component';
@@ -232,7 +231,6 @@ const appRoutes: Routes = [
     UserService,
     MessageService,
     GoogleLoginService,
-    JSONSerializer,
     ConfirmationService,
     LoadingService,
   ],

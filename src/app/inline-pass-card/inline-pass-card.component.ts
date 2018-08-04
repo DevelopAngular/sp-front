@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { HallPass} from '../NewModels';
+import { HallPass} from '../models/HallPass';
 import { Util } from '../../Util';
 import { HttpService } from '../http-service';
 

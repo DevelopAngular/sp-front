@@ -7,7 +7,14 @@ import { MessageService } from 'primeng/components/common/messageservice';
 import { DataService } from '../data-service';
 import { HttpService } from '../http-service';
 import { LocationPickerComponent } from '../location-picker/location-picker.component';
-import { Duration, HallPass, Invitation, Location, Pinnable, Request, User, ColorProfile } from '../NewModels';
+import { ColorProfile } from '../models/ColorProfile';
+import { HallPass } from '../models/HallPass';
+import { Invitation } from '../models/Invitation';
+import { Location } from '../models/Location';
+import { Pinnable } from '../models/Pinnable';
+import { Request } from '../models/Request';
+import { User } from '../models/User';
+import { Duration} from '../models/Duration';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { Inject } from '@angular/core';
 

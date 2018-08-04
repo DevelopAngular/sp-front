@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, ElementRef } from '@angular/core';
-import { HallPass, User } from '../NewModels';
+import { User } from '../models/User';
+import { HallPass} from '../models/HallPass';
 import { Util } from '../../Util';
 import { MatDialogRef, MatDialog } from '@angular/material';
 import { MAT_DIALOG_DATA } from '@angular/material';

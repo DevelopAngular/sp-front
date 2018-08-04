@@ -8,7 +8,7 @@ import 'rxjs/add/operator/publishReplay';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { HttpService } from './http-service';
 import { Logger } from './logger.service';
-import { User } from './NewModels';
+import { User } from './models/User';
 import { PollingService } from './polling-service';
 
 

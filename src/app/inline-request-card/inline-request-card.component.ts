@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ElementRef } from '@angular/core';
 import { HttpService } from '../http-service';
 import { Util } from '../../Util';
-import { Request } from '../NewModels'
+import { Request } from '../models/Request'
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { MatDialog } from '@angular/material';
 

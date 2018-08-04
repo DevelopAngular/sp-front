@@ -10,7 +10,8 @@ import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Subject } from 'rxjs/Subject';
 import { HttpService } from '../http-service';
-import { Paged, User } from '../NewModels';
+import { User } from '../models/User';
+import { Paged} from '../models';
 
 @Component({
   selector: 'app-student-picker',

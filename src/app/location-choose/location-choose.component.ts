@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '../NewModels';
+import { Location } from '../models/Location';
 
 @Component({
   selector: 'app-location-choose',

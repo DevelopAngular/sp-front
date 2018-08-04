@@ -1,5 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { HallPass, Invitation, Request, User} from '../NewModels';
+import { HallPass } from '../models/HallPass';
+import { Invitation } from '../models/Invitation';
+import { User } from '../models/User';
+import { Request} from '../models/Request';
 
 @Component({
   selector: 'app-pass-card-template',
