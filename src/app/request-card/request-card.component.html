@@ -1,4 +1,4 @@
-<app-pass-card-template (onCancel)="cancelRequest($event)" [hasDivider]="(request.status==='pending' && !forInput) || (request.status==='denied' && forStaff)" [pass]="request" [closeIcon]="'./assets/Trash (Transparent).png'">
+<app-pass-card-template (onCancel)="cancelRequest($event)" [hasDivider]="((request.status==='pending' || request.status==='accepted') && !forInput && !forStaff) || (request.status!=='pending' && forStaff)" [pass]="request" [closeIcon]="'./assets/Trash (Transparent).png'">
   <div class="card-subtitle" *ngIf="fromPast || forFuture">
     {{ formatDateTime() }}
   </div>
@@ -28,36 +28,81 @@
       </div>
     </app-pager>
   </div>
-  <div *ngIf="forInput" class="card-body-right">
-    <app-traveltype-picker (onSelect)="selectedTravelType=$event" [choices]="request.destination.travel_types" [altColor]="request.color_profile.solid_color"></app-traveltype-picker>
-    <app-card-button (onClick)="newRequest()" [width]="'181px'" [height]="'50px'" [gradientColor]="request.color_profile.gradient_color">
-      <div class="request-button-content">
-        <img class="button-icon-left" [src]="'./assets/Lock (White).png' | resolveAsset">
-        <div class="request-pass-content-text">Request Pass</div>
-        <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
-      </div>
-    </app-card-button>
-  </div>
-  <div *ngIf="request.status==='pending' && !forInput" class="card-body-right">
-    <div class="request-description">
-      <img class="request-description-icon" [src]="'./assets/Lock (White).png' | resolveAsset">
-      <div class="request-description-text">
-        Pass Request Sent to {{ request.teacher.last_name }}
-      </div>
+  <div *ngIf="!forStaff; else staffPanel" class="card-body-right">
+    <div *ngIf="forInput; else studentNoInput">
+      <app-traveltype-picker (onSelect)="selectedTravelType=$event" [choices]="request.destination.travel_types" [altColor]="request.color_profile.solid_color"></app-traveltype-picker>
+      <app-card-button (onClick)="newRequest()" [width]="'181px'" [height]="'50px'" [gradientColor]="request.color_profile.gradient_color">
+        <div class="request-button-content">
+          <img class="button-icon-left" [src]="'./assets/Lock (White).png' | resolveAsset">
+          <div class="request-pass-content-text">Request Pass</div>
+          <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
+        </div>
+      </app-card-button>
     </div>
+    <ng-template #studentNoInput>
+      <div *ngIf="request.status==='pending';" class="card-body-right">
+        <div class="request-description">
+          <img class="request-description-icon" [src]="'./assets/Lock (White).png' | resolveAsset">
+          <div class="request-description-text">
+            Pass Request sent to {{ request.teacher.last_name }}
+          </div>
+        </div>
+      </div>
+      <div *ngIf="request.status==='accepted';" class="card-body-right">
+        <div class="request-description">
+          <img class="request-description-icon" [src]="'./assets/Arrow (White).png' | resolveAsset">
+          <div class="request-description-text">
+            Pass Request accepted by {{ request.teacher.last_name }}
+          </div>
+        </div>
+      </div>
+      <div *ngIf="request.status==='declined'" class="card-body-right">
+        <app-card-button *ngIf="!forStaff" (onClick)="changeDate()"[width]="'181px'" [height]="'50px'" [gradientColor]="request.color_profile.gradient_color">
+          <div class="resend-button-content">
+            <div class="resend-button-content-title">{{ (forFuture?'Change Date & Time':'Resend Request') }}</div>
+            <div class="resend-button-content-subtitle">Pass Request Denied</div>
+          </div>
+        </app-card-button>
+      </div>
+    </ng-template>
   </div>
-  <div *ngIf="request.status==='denied'" class="card-body-right">
-    <app-card-button *ngIf="!forStaff" (onClick)="changeDate()"[width]="'181px'" [height]="'50px'" [gradientColor]="request.color_profile.gradient_color">
-      <div class="resend-button-content">
-        <div class="resend-button-content-title">{{ (forFuture?'Change Date & Time':'Resend Request') }}</div>
-        <div class="resend-button-content-subtitle">Pass Request Denied</div>
+  <ng-template #staffPanel>
+    <div class="card-body-right">
+      <div *ngIf="forInput; else staffNoInput" class="card-body-right">
+        Something went wrong
       </div>
-    </app-card-button>
-    <div *ngIf="forStaff" class="request-description">
-      <img class="request-description-icon" [src]="'./assets/Report (White).png' | resolveAsset">
-      <div class="request-description-text">
-        Pass Request denied by {{ request.student.display_name }}
-      </div>
+      <ng-template #staffNoInput>
+        <div *ngIf="request.status=='pending'; else staffNotPending" class="card-body-right">
+          <app-card-button (onClick)="approveRequest()"[width]="'181px'" [height]="'50px'" [gradientColor]="request.color_profile.gradient_color">
+            <div class="resend-button-content">
+              <div class="resend-button-content-title">Approve Pass Request</div>
+              <div class="resend-button-content-subtitle">{{'Pass for ' +(request.duration/60) +'min' }}</div>
+            </div>
+          </app-card-button>
+        </div>
+        <ng-template #staffNotPending>
+          <div class="card-body-right">
+            <app-pager [page]="2">
+              <div class="page-1">
+                <div class="request-description">
+                  <img class="request-description-icon" [src]="'./assets/Lock (White).png' | resolveAsset">
+                  <div class="request-description-text">
+                    Pass Request sent to {{ request.teacher.last_name }}
+                  </div>
+                </div>
+              </div>
+              <div class="page-2">
+                <div class="request-description">
+                  <img class="request-description-icon" [src]="'./assets/' +((request.cancelled || request.status==='declined')?'Report':'Arrow') +' (White).png' | resolveAsset">
+                  <div class="request-description-text">
+                    Pass Request {{(request.cancelled?'cancelled':request.status)}} to {{ (request.cancelled?issuer:request.teacher.last_name) }}
+                  </div>
+                </div>
+              </div>
+            </app-pager>
+          </div>
+        </ng-template>
+      </ng-template>
     </div>
-  </div>
+  </ng-template>
 </app-pass-card-template>

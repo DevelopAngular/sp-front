@@ -47,20 +47,17 @@ function constructTestRequests(student: User, issuer: User, origin: Location, de
 
   const declinedMessage = 'I\'m busy 6th period. Let\'s try 4th. And a whole bunch of stuff to test ' +
     'overflow. I wonder if it will work. And just a little bit more.';
-
-  const testRequest1 = new Request('testRequest1', student, origin, destination,
-    'Could we meet to go over my math test 6th period? And a whole bunch of stuff to test overflow. I wonder if it will work.',
-    'round_trip', 'denied', null, '#00C0C7,#0B9FC1', 'https://storage.googleapis.com/courier-static/icons/library.png',
+  const attachmentMessage = 'Could we meet to go over my math test 6th period? And a whole bunch of stuff to test overflow. I wonder if it will work.';
+  const testRequest1 = new Request('testRequest1', student, origin, destination, attachmentMessage,
+    'round_trip', 'declined', null, '#00C0C7,#0B9FC1', 'https://storage.googleapis.com/courier-static/icons/library.png',
     issuer, testDate, declinedMessage,
     true, null, colorProfile, new Date(), new Date(), 600);
-  const testRequest2 = new Request('testRequest2', student, origin, destination,
-    'Could we meet to go over my math test 6th period? And a whole bunch of stuff to test overflow. I wonder if it will work.',
-    'one_way', 'pending', null, '#00C0C7,#0B9FC1', 'https://storage.googleapis.com/courier-static/icons/library.png',
+  const testRequest2 = new Request('testRequest2', student, origin, destination, attachmentMessage,
+    'one_way', 'accepted', null, '#00C0C7,#0B9FC1', 'https://storage.googleapis.com/courier-static/icons/library.png',
     issuer, testDate, declinedMessage,
     true, null, colorProfile, new Date(), new Date(), 600);
-  const testRequest3 = new Request('testRequest3', student, origin, destination,
-    'Could we meet to go over my math test 6th period? And a whole bunch of stuff to test overflow. I wonder if it will work.',
-    'round_trip', 'pending', null, '#00C0C7,#0B9FC1', 'https://storage.googleapis.com/courier-static/icons/library.png',
+  const testRequest3 = new Request('testRequest3', student, origin, destination, attachmentMessage,
+  'round_trip', 'pending', null, '#00C0C7,#0B9FC1', 'https://storage.googleapis.com/courier-static/icons/library.png',
     issuer, testDate, declinedMessage,
     true, null, colorProfile, new Date(), new Date(), 600);
 
@@ -80,7 +77,7 @@ function constructTestInvitations(student: User, issuer: User, origin: Location,
     destination, [testDate], issuer,
     'declined', 10, '#F37426,#F52B4F',
     'https://storage.googleapis.com/courier-static/icons/classroom.png', 'one_way',
-    colorProfile, new Date(), null, new Date());
+    colorProfile, null, null, new Date());
 
   return [testInvitation1, testInvitation2];
 }

@@ -7,6 +7,7 @@ import { HttpService } from '../http-service';
 import { InfoEditorComponent } from '../info-editor/info-editor.component';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
+import { getInnerPassName } from '../pass-tile/pass-display-util';
 
 @Component({
   selector: 'app-request-card',
@@ -35,6 +36,10 @@ export class RequestCardComponent implements OnInit {
     this.forFuture = this.data['forFuture'];
     this.fromPast = this.data['fromPast'];
     this.forStaff = this.data['forStaff'];
+  }
+
+  get issuer(){
+    return getInnerPassName(this.request);
   }
 
   formatDateTime(){
@@ -156,5 +161,13 @@ export class RequestCardComponent implements OnInit {
         }
       });
     }
+  }
+
+  approveRequest(){
+    let endpoint: string = 'api/methacton/v1/pass_requests/' +this.request.id +'/accept';
+    let body = [];
+    this.http.post(endpoint, body).subscribe(() =>{
+      this.dialogRef.close();
+    });
   }
 }
