@@ -36,4 +36,8 @@ export class PassCellComponent implements OnInit {
     return isBadgeVisible(this.pass);
   }
 
+  get isEnded() {
+    return (this.pass instanceof HallPass) && this.pass.end_time < new Date();
+  }
+
 }

@@ -1,6 +1,12 @@
 <div class="cell-wrapper">
   <div class="cell-content-wrapper">
-    <div class="cell-title">{{forStaff?cellName:pass.destination.title}}</div>
+    <ng-container *ngIf="forStaff">
+      <div class="cell-title">{{ cellName }}<span *ngIf="isEnded"> (pass ended)</span></div>
+    </ng-container>
+    <ng-container *ngIf="!forStaff">
+      <div class="cell-title">{{ pass.destination.title }}</div>
+    </ng-container>
+
     <div class="cell-datetime">{{ cellContent }}</div>
     <img *ngIf="forStaff" class="location-icon" [src]="pass.icon | resolveAsset">
     <img *ngIf="!isBadgeVisible" class="cell-arrow" [src]="'./assets/Disclosure Indicator (Grey).png' | resolveAsset">

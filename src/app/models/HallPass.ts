@@ -38,7 +38,7 @@ export class HallPass extends BaseModel {
       last_updated: Date = new Date(JSON['last_updated']),
       start_time: Date = new Date(JSON['start_time']),
       expiration_time: Date = new Date(JSON['expiration_time']),
-      end_time: Date = new Date(JSON['end_date']),
+      end_time: Date = new Date(JSON['end_time']),
       origin: Location = Location.fromJSON(JSON['origin']),
       destination: Location = Location.fromJSON(JSON['destination']),
       travel_type: string = JSON['travel_type'],
