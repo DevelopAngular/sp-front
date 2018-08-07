@@ -1,15 +1,15 @@
-import { Component, OnInit, Input, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, NgZone } from '@angular/core';
 import { Invitation } from '../models/Invitation';
 import { User } from '../models/User';
 import { Location} from '../models/Location';
 import { Util } from '../../Util';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { Inject } from '@angular/core';
-import { InfoEditorComponent } from '../info-editor/info-editor.component';
 import { HttpService } from '../http-service';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
-import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
 import { getInnerPassName } from '../pass-tile/pass-display-util';
+import { DataService } from '../data-service';
+import { LoadingService } from '../loading.service';
 
 @Component({
   selector: 'app-invitation-card',
@@ -29,12 +29,22 @@ export class InvitationCardComponent implements OnInit {
   denyOpen: boolean = false;
   selectedDuration: number;
   selectedTravelType: string;
-  constructor(public dialogRef: MatDialogRef<InvitationCardComponent>, @Inject(MAT_DIALOG_DATA) public data: any, public dialog: MatDialog, private http: HttpService) {
+  user: User;
+  
+  constructor(public dialogRef: MatDialogRef<InvitationCardComponent>, @Inject(MAT_DIALOG_DATA) public data: any, public dialog: MatDialog, private http: HttpService, public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService) {
     
   }
 
   get studentName(){
     return getInnerPassName(this.invitation);
+  }
+
+  get issuerName(){
+    return this.invitation.issuer.isSameObject(this.user)?'Me':this.invitation.issuer.first_name.substr(0, 1) +'. ' +this.invitation.issuer.last_name;
+  }
+
+  get status(){
+    return this.invitation.status.charAt(0).toUpperCase() + this.invitation.status.slice(1);
   }
 
   ngOnInit() {
@@ -46,6 +56,14 @@ export class InvitationCardComponent implements OnInit {
     this.selectedStudents = this.data['selectedStudents'];
 
     this.selectedOrigin = this.invitation.default_origin;
+
+    this.dataService.currentUser
+    .pipe(this.loadingService.watchFirst)
+    .subscribe(user => {
+      this._zone.run(() => {
+        this.user = user;
+      });
+    });
   }
 
   formatDateTime(date: Date){

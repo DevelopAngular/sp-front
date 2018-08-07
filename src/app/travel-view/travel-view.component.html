@@ -1,4 +1,4 @@
-<div class="travel-view-wrapper" [style.justify-content]="(shrink?'unset':'space-between')">
+<div class="travel-view-wrapper" [style.justify-content]="(shrink?'unset':'space-around')">
   <div *ngIf="(!(type==='invitation') || forStaff); else originButton;">
     {{ ((type==='invitation')?(pass.default_origin?pass.default_origin.title:"Their Location"):pass.origin.title) }}
   </div>

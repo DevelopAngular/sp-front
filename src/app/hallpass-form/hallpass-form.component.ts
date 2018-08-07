@@ -285,7 +285,7 @@ export class HallpassFormComponent implements OnInit {
   determinePass() {
     if(this.toLocation.restricted && !this.forStaff){
       if(this.requestTarget){
-        let templateRequest:Request = new Request('template', null, this.fromLocation, this.toLocation, this.requestMessage, '', 'pending', null, '', this.toIcon, this.requestTarget, this.requestTime, '', null, null, this._toProfile, null, null, 60)
+        let templateRequest:Request = new Request('template', null, this.fromLocation, this.toLocation, this.requestMessage, '', 'pending', null, '', this.toIcon, this.requestTarget, this.requestTime, '', null, null, this._toProfile, null, null, 60, null)
         this.dialogRef.close({
           'templatePass': templateRequest,
           'forLater': this.forLater,
@@ -307,7 +307,7 @@ export class HallpassFormComponent implements OnInit {
         });
     }else{
       if(this.isDeclinable && this.forLater){
-        let templateInvitation: Invitation = new Invitation('template', null, null, this.toLocation, [this.requestTime], this.user, 'pending', this.duration, this._toProfile.gradient_color, this.toIcon, this.travelType, this._toProfile, null, null, null);
+        let templateInvitation: Invitation = new Invitation('template', null, null, this.toLocation, [this.requestTime], this.user, 'pending', this.duration, this._toProfile.gradient_color, this.toIcon, this.travelType, this._toProfile, null, null, null, null);
         this.dialogRef.close({
           'templatePass': templateInvitation,
           'forLater': this.forLater,

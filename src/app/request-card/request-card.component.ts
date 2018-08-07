@@ -1,13 +1,15 @@
-import { Component, OnInit, Input, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, NgZone } from '@angular/core';
 import { Request } from '../models/Request';
+import { User } from '../models/User';
 import { Util } from '../../Util';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material';
 import { Inject } from '@angular/core';
 import { HttpService } from '../http-service';
-import { InfoEditorComponent } from '../info-editor/info-editor.component';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
 import { getInnerPassName } from '../pass-tile/pass-display-util';
+import { DataService } from '../data-service';
+import { LoadingService } from '../loading.service';
 
 @Component({
   selector: 'app-request-card',
@@ -27,8 +29,9 @@ export class RequestCardComponent implements OnInit {
   messageEditOpen: boolean = false;
   dateEditOpen: boolean = false;
   cancelOpen: boolean = false;
+  user: User;
 
-  constructor(public dialogRef: MatDialogRef<RequestCardComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private http: HttpService, public dialog: MatDialog) { }
+  constructor(public dialogRef: MatDialogRef<RequestCardComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private http: HttpService, public dialog: MatDialog, public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService) { }
 
   ngOnInit() {
     this.request = this.data['pass'];
@@ -36,14 +39,30 @@ export class RequestCardComponent implements OnInit {
     this.forFuture = this.data['forFuture'];
     this.fromPast = this.data['fromPast'];
     this.forStaff = this.data['forStaff'];
+
+    this.dataService.currentUser
+    .pipe(this.loadingService.watchFirst)
+    .subscribe(user => {
+      this._zone.run(() => {
+        this.user = user;
+      });
+    });
   }
 
-  get issuer(){
+  get studentName(){
     return getInnerPassName(this.request);
   }
 
-  formatDateTime(){
-    return Util.formatDateTime(this.request.request_time);
+  get teacherName(){
+    return this.request.teacher.isSameObject(this.user)?'Me':this.request.teacher.first_name.substr(0, 1) +'. ' +this.request.teacher.last_name;
+  }
+
+  get status(){
+    return this.request.status.charAt(0).toUpperCase() + this.request.status.slice(1);
+  }
+
+  formatDateTime(date: Date){
+    return Util.formatDateTime(date);
   }
 
   newRequest(){

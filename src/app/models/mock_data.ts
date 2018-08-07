@@ -4,6 +4,7 @@ import { Invitation } from './Invitation';
 import { Location } from './Location';
 import { Request } from './Request';
 import { User } from './User';
+import { LoadingService } from '../loading.service';
 
 function constructTestPasses(student: User, issuer: User, origin: Location, destination: Location, colorProfile: ColorProfile) {
   let testDate = new Date();
@@ -51,15 +52,15 @@ function constructTestRequests(student: User, issuer: User, origin: Location, de
   const testRequest1 = new Request('testRequest1', student, origin, destination, attachmentMessage,
     'round_trip', 'declined', null, '#00C0C7,#0B9FC1', 'https://storage.googleapis.com/courier-static/icons/library.png',
     issuer, testDate, declinedMessage,
-    true, null, colorProfile, new Date(), new Date(), 600);
+    true, null, colorProfile, new Date(), new Date(), 600, new Date());
   const testRequest2 = new Request('testRequest2', student, origin, destination, attachmentMessage,
     'one_way', 'accepted', null, '#00C0C7,#0B9FC1', 'https://storage.googleapis.com/courier-static/icons/library.png',
     issuer, testDate, declinedMessage,
-    true, null, colorProfile, new Date(), new Date(), 600);
+    true, null, colorProfile, new Date(), new Date(), 600, new Date());
   const testRequest3 = new Request('testRequest3', student, origin, destination, attachmentMessage,
   'round_trip', 'pending', null, '#00C0C7,#0B9FC1', 'https://storage.googleapis.com/courier-static/icons/library.png',
     issuer, testDate, declinedMessage,
-    true, null, colorProfile, new Date(), new Date(), 600);
+    true, null, colorProfile, new Date(), new Date(), 600, new Date());
 
   return [testRequest1, testRequest2, testRequest3];
 }
@@ -72,18 +73,18 @@ function constructTestInvitations(student: User, issuer: User, origin: Location,
     destination, [testDate], issuer,
     'pending', 10, '#F37426,#F52B4F',
     'https://storage.googleapis.com/courier-static/icons/classroom.png', 'one_way',
-    colorProfile, new Date(), new Date(), new Date());
+    colorProfile, new Date(), new Date(), new Date(), new Date());
   const testInvitation2 = new Invitation('testInvitation2', student, null,
     destination, [testDate], issuer,
     'declined', 10, '#F37426,#F52B4F',
     'https://storage.googleapis.com/courier-static/icons/classroom.png', 'one_way',
-    colorProfile, null, null, new Date());
+    colorProfile, null, null, new Date(), new Date());
 
   return [testInvitation1, testInvitation2];
 }
 
 export const testStudent = new User('testStudent', new Date(), new Date(), 'Kyle', 'Cook', 'Kyle Cook', 'mail@mail.com', []);
-export const testIssuer = new User('testIssuer', new Date(), new Date(), 'Donald', 'Sawyer', 'Don Sawyer', 'mail@mail.com', []);
+export const testIssuer = new User('141', new Date(), new Date(), 'Donald', 'Sawyer', 'Don Sawyer', 'mail@mail.com', []);
 export const testOrigin = new Location('testOrigin', 'Ladson', 'MHS', 'C123', 'classroom', false, [], [], [], 15, false);
 export const testDestination = new Location('testDestination', 'Water Fountain', 'MHS', 'WF', '', false, [],
   ['round_trip', 'one_way'], [], 15, false);

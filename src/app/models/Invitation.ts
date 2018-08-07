@@ -18,7 +18,8 @@ export class Invitation extends BaseModel {
               public color_profile: ColorProfile,
               public cancelled: Date,
               public last_read: Date,
-              public last_updated: Date) {
+              public last_updated: Date,
+              public created: Date) {
     super();
   }
 
@@ -45,13 +46,14 @@ export class Invitation extends BaseModel {
       color_profile: ColorProfile = ColorProfile.fromJSON(JSON['color_profile']),
       cancelled: Date = (!!JSON['cancelled'] ? new Date(JSON['cancelled']) : null),
       last_read: Date = (!!JSON['last_read'] ? new Date(JSON['last_read']) : null),
-      last_updated: Date = new Date(JSON['last_updated']);
+      last_updated: Date = new Date(JSON['last_updated']),
+      created: Date = new Date(JSON['created']);
 
     let datesJSON = JSON['date_choices'];
     for (let i = 0; i < datesJSON.length; i++) {
       date_choices.push(new Date(datesJSON[i]));
     }
 
-    return new Invitation(id, student, default_origin, destination, date_choices, issuer, status, duration, gradient_color, icon, travel_type, color_profile, cancelled, last_read, last_updated);
+    return new Invitation(id, student, default_origin, destination, date_choices, issuer, status, duration, gradient_color, icon, travel_type, color_profile, cancelled, last_read, last_updated, created);
   }
 }

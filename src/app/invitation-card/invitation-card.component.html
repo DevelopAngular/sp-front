@@ -44,26 +44,16 @@
     </div>
     <ng-template #staffNoInput class="card-body-right">
       <app-pager *ngIf="invitation.status!=='pending'; else pending" [page]="2">
-        <div class="page-1 invitation-description">
-          <img class="invitation-description-icon" [src]="'./assets/Arrow (White).png' | resolveAsset">
-          <div class="invitation-description-text">
-            Pass Request sent to {{ studentName }}
-          </div>
+        <div class="page-1 teacher-details">
+          <span class="bold">Pass Request Sent</span><span class="smaller"><br>by {{issuerName}}<br><br>{{formatDateTime(invitation.created)}}</span>
         </div>
-        <div class="page-2 invitation-description">
-          <img class="invitation-description-icon" [src]="'./assets/' +(invitation.status==='accepted'?'Arrow':'Report') +' (White).png' | resolveAsset">
-          <div class="invitation-description-text">
-            Pass Request {{ invitation.status }} by <br>
-            {{ studentName }}
-          </div>
+        <div class="page-2 teacher-details">
+          <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{studentName}}<br><br>{{formatDateTime(invitation.last_updated)}}</span>
         </div>
       </app-pager>
       <ng-template #pending>
-        <div class="invitation-description">
-          <img class="invitation-description-icon" [src]="'./assets/Arrow (White).png' | resolveAsset">
-          <div class="invitation-description-text">
-            Pass Request sent to {{ studentName }}
-          </div>
+        <div class="teacher-details">
+          <span class="bold">Pass Request Sent</span><span class="smaller"><br>by {{issuerName}}<br><br>{{formatDateTime(invitation.created)}}</span>
         </div>
       </ng-template>
     </ng-template>

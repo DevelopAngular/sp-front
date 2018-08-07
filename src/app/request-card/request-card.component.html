@@ -1,6 +1,6 @@
 <app-pass-card-template (onCancel)="cancelRequest($event)" [hasDivider]="((request.status==='pending' || request.status==='accepted') && !forInput && !forStaff) || (request.status!=='pending' && forStaff)" [pass]="request" [closeIcon]="'./assets/Trash (Transparent).png'">
   <div class="card-subtitle" *ngIf="fromPast || forFuture">
-    {{ formatDateTime() }}
+    {{ formatDateTime(request.request_time) }}
   </div>
   <div class="card-body-left">
     <app-pager>
@@ -83,21 +83,11 @@
         <ng-template #staffNotPending>
           <div class="card-body-right">
             <app-pager [page]="2">
-              <div class="page-1">
-                <div class="request-description">
-                  <img class="request-description-icon" [src]="'./assets/Lock (White).png' | resolveAsset">
-                  <div class="request-description-text">
-                    Pass Request sent to {{ request.teacher.last_name }}
-                  </div>
-                </div>
+              <div class="page-1 teacher-details">
+                <span class="bold">Pass Request Sent</span><span class="smaller"><br>to {{studentName}}<br><br>{{formatDateTime(request.created)}}</span>
               </div>
-              <div class="page-2">
-                <div class="request-description">
-                  <img class="request-description-icon" [src]="'./assets/' +((request.cancelled || request.status==='declined')?'Report':'Arrow') +' (White).png' | resolveAsset">
-                  <div class="request-description-text">
-                    Pass Request {{(request.cancelled?'cancelled':request.status)}} to {{ (request.cancelled?issuer:request.teacher.last_name) }}
-                  </div>
-                </div>
+              <div class="page-2 teacher-details">
+                <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{teacherName}}<br><br>{{formatDateTime(request.last_updated)}}</span>
               </div>
             </app-pager>
           </div>

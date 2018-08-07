@@ -1,17 +1,12 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '../../../node_modules/@angular/material';
-import { Router } from '../../../node_modules/@angular/router';
 import { Observable } from '../../../node_modules/rxjs';
 import { DataService } from '../data-service';
 import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
-import { HttpService } from '../http-service';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
 import { LoadingService } from '../loading.service';
 import { BasicPassLikeProvider, PassLikeProvider } from '../models';
-import { ColorProfile } from '../models/ColorProfile';
 import { HallPass } from '../models/HallPass';
-import { Invitation } from '../models/Invitation';
-import { Location } from '../models/Location';
 import { testInvitations, testPasses, testRequests } from '../models/mock_data';
 import { Request } from '../models/Request';
 import { User } from '../models/User';
@@ -40,8 +35,7 @@ export class PassesComponent implements OnInit {
   user: User;
   isStaff = false;
 
-  constructor(private http: HttpService, public dataService: DataService, private router: Router,
-              public dialog: MatDialog, private _zone: NgZone, private loadingService: LoadingService) {
+  constructor(public dataService: DataService, public dialog: MatDialog, private _zone: NgZone, private loadingService: LoadingService) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
     this.testRequests = new BasicPassLikeProvider(testRequests);
