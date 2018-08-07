@@ -8,8 +8,13 @@ import { Component, OnInit, Input } from '@angular/core';
 export class PagerComponent implements OnInit {
   
   @Input() page = 1;
+  @Input() pages = 2;
 
   constructor() { }
+
+  get $pages(){
+    return Array(this.pages).fill(1).map((x,i)=>(i+1));
+  }
 
   ngOnInit() {
   }
