@@ -9,7 +9,7 @@
             [gradient]="setting.color_profile.gradient_color"
             [hoverColor]="setting.color_profile.solid_color"
             [fontSize]="'15px'"
-            (click)="setting.action">{{setting.title}}
+            (click)="settingsAction(setting.action)">{{setting.title}}
           </app-gradient-button>
       </mat-grid-tile>
     </mat-grid-list>

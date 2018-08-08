@@ -1,7 +1,7 @@
 <div class="cell-wrapper">
   <div class="cell-content-wrapper">
     <ng-container *ngIf="forStaff">
-      <div class="cell-title">{{ cellName }}<span *ngIf="isEnded"> (pass ended)</span></div>
+      <div class="cell-title">{{ cellName }}<span *ngIf="isEnded"> (Ended)</span></div>
     </ng-container>
     <ng-container *ngIf="!forStaff">
       <div class="cell-title">{{ pass.destination.title }}</div>

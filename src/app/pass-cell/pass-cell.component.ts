@@ -17,11 +17,10 @@ export class PassCellComponent implements OnInit {
   @Input() isActive = false;
   @Input() forStaff = false;
 
+  timeLeft;
+  valid: boolean = true;
+
   constructor() {
-  }
-
-  ngOnInit() {
-
   }
 
   get cellName() {
@@ -29,7 +28,7 @@ export class PassCellComponent implements OnInit {
   }
 
   get cellContent() {
-    return getInnerPassContent(this.pass);
+    return this.valid?(this.timeLeft +' Remaining'):getInnerPassContent(this.pass);
   }
 
   get isBadgeVisible() {
@@ -38,6 +37,21 @@ export class PassCellComponent implements OnInit {
 
   get isEnded() {
     return (this.pass instanceof HallPass) && this.pass.end_time < new Date();
+  }
+
+  ngOnInit() {
+    this.valid = this.isActive;
+    setInterval(() => {
+      if (!!this.pass && this.valid) {
+        let end: Date = this.pass['expiration_time'];
+        let now: Date = new Date();
+        let diff: number = (end.getTime() - now.getTime()) / 1000;
+        let mins: number = Math.floor(Math.abs(Math.floor(diff) / 60));
+        let secs: number = Math.abs(Math.floor(diff) % 60);
+        this.valid = end > now;
+        this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
+      }
+    }, 10);
   }
 
 }
