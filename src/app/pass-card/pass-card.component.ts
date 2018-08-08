@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ElementRef } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ElementRef, NgZone } from '@angular/core';
 import { User } from '../models/User';
 import { HallPass} from '../models/HallPass';
 import { Util } from '../../Util';
@@ -7,6 +7,8 @@ import { MAT_DIALOG_DATA } from '@angular/material';
 import { Inject } from '@angular/core';
 import { HttpService } from '../http-service';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
+import { DataService } from '../data-service';
+import { LoadingService } from '../loading.service';
 
 @Component({
   selector: 'app-pass-card',
@@ -35,12 +37,22 @@ export class PassCardComponent implements OnInit {
   cancelOpen: boolean = false;
   selectedStudents: User[];
 
-  constructor(public dialogRef: MatDialogRef<PassCardComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private http: HttpService, public dialog: MatDialog) {
+  pagerPages = 0;
+
+  p1Title; p1Subtitle; p1Stamp;
+  p2Title; p2Subtitle; p2Stamp;
+  p3Title; p3Subtitle; p3Stamp;
+  p4Title; p4Subtitle; p4Stamp;
+
+  user: User;
+  activePage;
+
+  constructor(public dialogRef: MatDialogRef<PassCardComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private http: HttpService, public dialog: MatDialog, public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService) {
 
   }
 
-  get issuerName(){
-    return this.pass.student.first_name.substr(0, 1) +'. ' +this.pass.student.last_name;
+  getUserName(user: User){
+    return user.isSameObject(this.user)?'Me':user.first_name.substr(0, 1) +'. ' +user.last_name;
   }
 
   get startTime(){
@@ -58,7 +70,14 @@ export class PassCardComponent implements OnInit {
     this.selectedStudents = this.data['selectedStudents'];
     this.forMonitor = this.data['forMonitor'];
 
-    //console.log(this.forStaff);
+    this.dataService.currentUser
+        .pipe(this.loadingService.watchFirst)
+        .subscribe(user => {
+          this._zone.run(() => {
+            this.user = user;
+            this.buildPages();
+          });
+        });
 
     setInterval(() => {
       if (!!this.pass && this.isActive) {
@@ -85,8 +104,8 @@ export class PassCardComponent implements OnInit {
     this.pass.travel_type = travelType;
   }
 
-  formatDateTime(){
-    return Util.formatDateTime(this.pass.start_time);
+  formatDateTime(date: Date){
+    return Util.formatDateTime(date);
   }
 
   getDuration(){
@@ -95,6 +114,53 @@ export class PassCardComponent implements OnInit {
     let timeDiff = Math.abs(start.getTime() - end.getTime());
     let diffSecs = Math.ceil(timeDiff / 1000);
     return Math.floor(diffSecs/60) +':' +(diffSecs%60<10?'0':'') +diffSecs%60;
+  }
+
+  buildPages(){
+    if(this.pass.parent_invitation){
+      this.buildPage('Pass Request Sent', 'by ' +this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.flow_start), 1);
+      this.buildPage('Pass Request Accepted', 'by ' +this.getUserName(this.pass.student), this.formatDateTime(this.pass.created), 2);
+    } else if(this.pass.parent_request){
+      this.buildPage('Pass Request Sent', 'by ' +this.getUserName(this.pass.student), this.formatDateTime(this.pass.flow_start), 1);
+      this.buildPage('Pass Request Accepted', 'by ' +this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), 2);
+    } else if(this.forFuture){
+      this.buildPage('Pass Sent', 'by ' +this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), 1);
+    }
+
+    if(this.isActive){
+      this.buildPage('Pass Started', 'by ' +this.getUserName(this.pass.student), this.formatDateTime(this.pass.created), (this.pagerPages+1));
+      this.activePage = (this.pagerPages);
+    } else if(this.fromPast){
+      this.buildPage('Pass Started', 'by ' +this.getUserName(this.pass.student), this.formatDateTime(this.pass.created), (this.pagerPages+1));
+      let start: Date = this.pass.start_time;
+      let end: Date = this.pass.end_time;
+      let diff: number = (end.getTime() - start.getTime()) / 1000;
+      let mins: number = Math.floor(Math.floor(diff) / 60);
+      let secs: number = Math.abs(Math.floor(diff) % 60);
+      let totalTime = mins + ':' + (secs < 10 ? '0' + secs : secs);
+      this.buildPage('Pass Ended', '', totalTime +" - Total Time", (this.pagerPages+1));
+    }
+  }
+
+  buildPage(title: string, subtitle: string, stamp: string, page: number){
+    if(page === 1){
+      this.p1Title = title;
+      this.p1Subtitle = subtitle;
+      this.p1Stamp = stamp;
+    } else if(page === 2){
+      this.p2Title = title;
+      this.p2Subtitle = subtitle;
+      this.p2Stamp = stamp;
+    } else if(page === 3){
+      this.p3Title = title;
+      this.p3Subtitle = subtitle;
+      this.p3Stamp = stamp;
+    } else if(page === 4){
+      this.p4Title = title;
+      this.p4Subtitle = subtitle;
+      this.p4Stamp = stamp;
+    }
+    this.pagerPages++;
   }
 
   newPass(){

@@ -17,7 +17,10 @@ export class HallPass extends BaseModel {
               public travel_type: string,
               public gradient_color: string,
               public icon: string,
-              public color_profile: ColorProfile) {
+              public color_profile: ColorProfile,
+              public flow_start: Date,
+              public parent_invitation: string,
+              public parent_request: string) {
     super();
   }
 
@@ -44,8 +47,11 @@ export class HallPass extends BaseModel {
       travel_type: string = JSON['travel_type'],
       gradient_color: string = JSON['gradient_color'],
       icon: string = JSON['icon'],
-      color_profile: ColorProfile = ColorProfile.fromJSON(JSON['color_profile']);
+      color_profile: ColorProfile = ColorProfile.fromJSON(JSON['color_profile']),
+      flow_start: Date = new Date(JSON['flow_start']),
+      parent_invitation: string = JSON['parent_invitation'],
+      parent_request: string = JSON['parent_request'];
 
-    return new HallPass(id, student, issuer, created, last_updated, start_time, expiration_time, end_time, origin, destination, travel_type, gradient_color, icon, color_profile);
+    return new HallPass(id, student, issuer, created, last_updated, start_time, expiration_time, end_time, origin, destination, travel_type, gradient_color, icon, color_profile, flow_start, parent_invitation, parent_request);
   }
 }

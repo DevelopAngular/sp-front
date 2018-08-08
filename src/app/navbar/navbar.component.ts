@@ -9,7 +9,6 @@ import { DataService } from '../data-service';
 import { GoogleLoginService } from '../google-login.service';
 import { LoadingService } from '../loading.service';
 import { User } from '../models/User';
-import { OptionsComponent } from '../options/options.component';
 
 @Component({
   selector: 'app-navbar',
@@ -42,13 +41,21 @@ export class NavbarComponent implements OnInit {
     });
   }
 
+  get optionsOpen(){
+    return this.tab==='settings';
+  }
+
   ngOnInit() {
     let urlSplit: string[] = location.pathname.split('/');
+    console.log('[URL Split]: ', urlSplit);
     this.tab = urlSplit[urlSplit.length-1];
+    console.log('[Tab]: ', this.tab);
 
     this.location.subscribe(value => {
       let urlSplit: string[] = location.pathname.split('/');
+      console.log('[URL Split]: ', urlSplit);
       this.tab = urlSplit[urlSplit.length-1];
+      console.log('[Tab]: ', this.tab);
     });
 
     this.tab = (this.tab===''?'passes':this.tab);
@@ -69,20 +76,7 @@ export class NavbarComponent implements OnInit {
   }
 
   showOptions() {
-    const dialogRef = this.dialog.open(OptionsComponent, {
-      width: '100px',
-      position: {top: '67px', right: '10px'},
-      panelClass: 'custom-dialog-container'
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      // console.log(result);
-      if (result === 'settings') {
-
-      } else if (result === 'logout') {
-        this.router.navigate(['/sign-out']);
-      }
-    });
+    this.router.navigate(['/settings']);
   }
 
   getNavElementBg(index: number, type: string) {

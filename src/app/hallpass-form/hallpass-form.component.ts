@@ -296,7 +296,7 @@ export class HallpassFormComponent implements OnInit {
         this.formState = 'restrictedTarget';
       }
     } else if(!this.toLocation.restricted && !this.forStaff){
-      let templatePass:HallPass = new HallPass('template', this.user, null, null, null, this.requestTime, null, null, this.fromLocation, this.toLocation, '', '', this.toIcon, this._toProfile)
+      let templatePass:HallPass = new HallPass('template', this.user, null, null, null, this.requestTime, null, null, this.fromLocation, this.toLocation, '', '', this.toIcon, this._toProfile, null, '', '')
         this.dialogRef.close({
             'templatePass': templatePass,
             'forLater': this.forLater,
@@ -317,7 +317,7 @@ export class HallpassFormComponent implements OnInit {
           'type': 'invitation'
         });
       } else{
-        let templatePass:HallPass = new HallPass('template', this.user, null, null, null, this.requestTime, null, null, this.fromLocation, this.toLocation, '', '', this.toIcon, this._toProfile)
+        let templatePass:HallPass = new HallPass('template', this.user, null, null, null, this.requestTime, null, null, this.fromLocation, this.toLocation, '', '', this.toIcon, this._toProfile, null, '', '')
         this.dialogRef.close({
             'templatePass': templatePass,
             'forLater': this.forLater,

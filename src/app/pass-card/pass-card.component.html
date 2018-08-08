@@ -1,7 +1,7 @@
-<app-pass-card-template [hasDivider]="(forStaff || forMonitor) && !forInput" [selectedStudents]="selectedStudents" [forStaff]="forStaff" [pass]="pass" [rightJustify]="(fromPast || forFuture)?'center':'flex-end'" [closeIcon]="(forMonitor?'./assets/Report (White).png':'./assets/Trash (Transparent).png')" [hasClose]="(!isActive || forMonitor) || fromPast" (onCancel)="cancelEdit($event)">
+<app-pass-card-template [hasDivider]="(forStaff || forMonitor || (!forStaff && !isActive)) && !forInput" [selectedStudents]="selectedStudents" [forStaff]="forStaff" [pass]="pass" [rightJustify]="(fromPast || forFuture)?'center':'flex-end'" [closeIcon]="(forMonitor?'./assets/Report (White).png':'./assets/Trash (Transparent).png')" [hasClose]="(!isActive || forMonitor) || fromPast" (onCancel)="cancelEdit($event)">
   
   <div class="card-subtitle" *ngIf="fromPast || forFuture">
-    {{ formatDateTime() }}
+    {{ formatDateTime(pass.start_time) }}
   </div>
 
   <div *ngIf="forInput; else noInput" class="card-body-left">
@@ -11,28 +11,56 @@
     <app-travel-view [pass]="pass"></app-travel-view>
   </ng-template>
 
-  <div *ngIf="forInput" class="card-body-right">
-    <app-traveltype-picker (onSelect)="selectedTravelType=$event" [choices]="pass.destination.travel_types" [altColor]="pass.color_profile.solid_color"></app-traveltype-picker>
-    <app-card-button (onClick)="newPass()" [width]="buttonWidth +'px'" [height]="'50px'" [gradientColor]="pass.color_profile.gradient_color">
-      <div class="start-pass-content">
-        <div class="start-pass-content-text">{{((forFuture && forInput)?'Schedule Pass':(forStaff?'Send Pass':'Start Pass'))}}</div>
-        <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
-      </div>
-    </app-card-button>
-  </div>
-  <div *ngIf="isActive" class="card-body-right">
-    <app-card-button *ngIf="!(forStaff || forMonitor)" [width]="buttonWidth +'px'" [height]="'50px'"  [gradientColor]="pass.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">
-      <div class="end-pass-content">
-         {{ timeLeft +(timeLeft===''?'':' -')}} End Pass
-      </div>
-    </app-card-button>
-    <div *ngIf="forMonitor" class="monitor-details">
-        <span class="bold">{{ timeLeft +(timeLeft===''?'':' -') }} Pass Started</span><span class="smaller"><br>by {{issuerName}}<br><br>{{startTime}}</span>
-        <!-- For future use Issued {{ (timeLeft?(valid?'Time Left':'Time Over'):'') }} -->
+  <div class="card-body-right" *ngIf="!forStaff; else staffPanel">
+    <div *ngIf="forInput; else studentNoInput" class="card-body-right">
+      <app-traveltype-picker (onSelect)="selectedTravelType=$event" [choices]="pass.destination.travel_types" [altColor]="pass.color_profile.solid_color"></app-traveltype-picker>
+      <app-card-button (onClick)="newPass()" [width]="buttonWidth +'px'" [height]="'50px'" [gradientColor]="pass.color_profile.gradient_color">
+        <div class="start-pass-content">
+          <div class="start-pass-content-text">{{((forFuture && forInput)?'Schedule Pass':(forStaff?'Send Pass':'Start Pass'))}}</div>
+          <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
+        </div>
+      </app-card-button>
     </div>
+    <ng-template #studentNoInput class="card-body-right">
+      <div *ngIf="isActive" class="card-body-right">
+        <app-card-button *ngIf="!(forStaff || forMonitor)" [width]="buttonWidth +'px'" [height]="'50px'"  [gradientColor]="pass.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">
+          <div class="end-pass-content">
+            {{ timeLeft +(timeLeft===''?'':' -')}} End Pass
+          </div>
+        </app-card-button>
+      </div>
+      <div *ngIf="fromPast || forFuture && !forInput" class="card-body-right">
+        {{ forFuture?'Pass Auto Starts': getDuration() +' - Total Time' }}
+      </div>
+    </ng-template>
   </div>
-  <div *ngIf="fromPast || forFuture && !forInput" class="card-body-right">
-    {{ forFuture?'Pass Auto Starts': getDuration() +' - Total Time' }}
-  </div>
-
+  <ng-template #staffPanel class="card-body-right">
+    <div *ngIf="forInput; else staffNoInput" class="card-body-right">
+      <app-traveltype-picker (onSelect)="selectedTravelType=$event" [choices]="pass.destination.travel_types" [altColor]="pass.color_profile.solid_color"></app-traveltype-picker>
+      <app-card-button (onClick)="newPass()" [width]="buttonWidth +'px'" [height]="'50px'" [gradientColor]="pass.color_profile.gradient_color">
+        <div class="start-pass-content">
+          <div class="start-pass-content-text">{{((forFuture && forInput)?'Schedule Pass':(forStaff?'Send Pass':'Start Pass'))}}</div>
+          <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
+        </div>
+      </app-card-button>
+    </div>
+    <ng-template #staffNoInput class="card-body-right">
+      <div class="card-body-right">
+        <app-pager [pages]="pagerPages" [page]="pagerPages">
+          <div class="page-1 teacher-details">
+            <span class="bold">{{ (activePage==1?(timeLeft +(timeLeft===''?'':' - ')):'') +p1Title }}</span><span class="smaller"><br>{{ p1Subtitle }}<br><br>{{ p1Stamp }}</span>
+          </div>
+          <div class="page-2 teacher-details">
+            <span class="bold">{{ (activePage==2?(timeLeft +(timeLeft===''?'':' - ')):'') +p2Title }}</span><span class="smaller"><br>{{ p2Subtitle }}<br><br>{{ p2Stamp }}</span>
+          </div>
+          <div class="page-3 teacher-details">
+            <span class="bold">{{ (activePage==3?(timeLeft +(timeLeft===''?'':' - ')):'') +p3Title }}</span><span class="smaller"><br>{{ p3Subtitle }}<br><br>{{ p3Stamp }}</span>
+          </div>
+          <div class="page-4 teacher-details">
+            <span class="bold">{{ (activePage==4?(timeLeft +(timeLeft===''?'':' - ')):'') +p4Title }}</span><span class="smaller"><br>{{ p4Subtitle }}<br><br>{{ p4Stamp }}</span>
+          </div>
+        </app-pager>
+      </div>
+    </ng-template>
+  </ng-template>
 </app-pass-card-template>

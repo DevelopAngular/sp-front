@@ -21,8 +21,8 @@
         <img class="inbox-front" [src]="'./assets/Inbox Front (Blue).png' | resolveAsset">
       </div>
     </div>
-    <div class="options">
-      <img (click)="showOptions()" class="options" [src]="'./assets/Gear (Blue).png' | resolveAsset">
+    <div (click)="showOptions()" class="options-wrapper" [style.background-color]="(optionsOpen?'#E4EBFF':'transparent')">
+      <img class="options" [src]="'./assets/Gear (Blue).png' | resolveAsset">
     </div>
   </div>
 </div>

@@ -98,7 +98,7 @@ export class PassCollectionComponent implements OnInit {
     if (pass instanceof HallPass) {
       data = {
         pass: pass,
-        fromPast: !pass['end_time'],
+        fromPast: pass['end_time'] < now,
         forFuture: pass['start_time'] > now,
         forMonitor: this.forMonitor,
         forStaff: this.forStaff,

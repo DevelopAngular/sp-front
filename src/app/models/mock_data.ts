@@ -15,7 +15,7 @@ function constructTestPasses(student: User, issuer: User, origin: Location, dest
     new Date(), new Date(), new Date(),
     testDate, testDate, origin,
     destination, 'round_trip', '#1893E9,#05B5DE',
-    'https://storage.googleapis.com/courier-static/icons/water-fountain.png', colorProfile);
+    'https://storage.googleapis.com/courier-static/icons/water-fountain.png', colorProfile, null, '', '');
 
   testDate = new Date();
   testDate.setDate(testDate.getDate() + 4);
@@ -23,7 +23,7 @@ function constructTestPasses(student: User, issuer: User, origin: Location, dest
     new Date(), new Date(), testDate,
     new Date(), new Date(), origin,
     destination, 'round_trip', '#1893E9,#05B5DE',
-    'https://storage.googleapis.com/courier-static/icons/water-fountain.png', colorProfile);
+    'https://storage.googleapis.com/courier-static/icons/water-fountain.png', colorProfile, new Date(), 'testInvitation1', '');
 
   testDate = new Date();
   testDate.setDate(testDate.getDate() - 1);
@@ -31,14 +31,15 @@ function constructTestPasses(student: User, issuer: User, origin: Location, dest
     new Date(), new Date(), testDate,
     new Date(), new Date(), origin,
     destination, 'one_way', '#1893E9,#05B5DE',
-    'https://storage.googleapis.com/courier-static/icons/water-fountain.png', colorProfile);
+    'https://storage.googleapis.com/courier-static/icons/water-fountain.png', colorProfile, new Date(), '', 'testIRequest2');
+  
   testDate = new Date();
   testDate.setDate(testDate.getDate() + 1);
   const testPass4 = new HallPass('testPass4', student, issuer,
     new Date(), new Date(), testDate,
     new Date(), new Date(), origin,
     destination, 'one_way', '#1893E9,#05B5DE',
-    'https://storage.googleapis.com/courier-static/icons/water-fountain.png', colorProfile);
+    'https://storage.googleapis.com/courier-static/icons/water-fountain.png', colorProfile, null, '', '');
 
   return [testPass1, testPass2, testPass3, testPass4];
 }

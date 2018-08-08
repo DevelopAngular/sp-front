@@ -8,24 +8,23 @@
     text-align: center;
 }
 
-.page-1-content, .page-2-content{
+.page-content{
     width: inherit;
     height: calc(100% - 15px);
 }
 
 .paginator-wrapper{
-    width: 25px;
     height: 15px;
     display: flex;
     flex-direction: row;
     margin-top: -7px;
-    justify-content: space-between;
 }
 
 .pager-page-selector{
     width: 10px;
     height: 10px;
     border-radius: 10px;
+    margin: 0 3px;
 }
 
 .pager-page-selector:hover{
