@@ -58,7 +58,7 @@ export class NavbarComponent implements OnInit {
       console.log('[Tab]: ', this.tab);
     });
 
-    this.tab = (this.tab===''?'passes':this.tab);
+    this.tab = ((this.tab==='' || this.tab==='app')?'passes':this.tab);
 
     this.dataService.currentUser
       .pipe(this.loadingService.watchFirst)
