@@ -128,11 +128,11 @@
   width: 45px;
   height: 45px;
   border-radius: 23px;
-  margin-right: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  user-select: none;
 }
 
 .inbox-modifiers{

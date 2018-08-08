@@ -1,0 +1,17 @@
+<div class="settings-wrapper">
+  <div class="settings-header">Settings</div>
+  <div class="settings-button-wrapper">
+    <mat-grid-list [cols]="3" rowHeight="85px">
+      <mat-grid-tile [style.overflow]="'visible'" class="custom-mat-tile" *ngFor="let setting of settings">
+          <app-gradient-button
+            [minWidth]="'121px'"
+            [minHeight]="'74px'"
+            [gradient]="setting.color_profile.gradient_color"
+            [hoverColor]="setting.color_profile.solid_color"
+            [fontSize]="'15px'"
+            (click)="setting.action">{{setting.title}}
+          </app-gradient-button>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+</div>

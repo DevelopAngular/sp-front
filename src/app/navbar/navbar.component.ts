@@ -47,15 +47,11 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit() {
     let urlSplit: string[] = location.pathname.split('/');
-    console.log('[URL Split]: ', urlSplit);
     this.tab = urlSplit[urlSplit.length-1];
-    console.log('[Tab]: ', this.tab);
 
     this.location.subscribe(value => {
       let urlSplit: string[] = location.pathname.split('/');
-      console.log('[URL Split]: ', urlSplit);
       this.tab = urlSplit[urlSplit.length-1];
-      console.log('[Tab]: ', this.tab);
     });
 
     this.tab = ((this.tab==='' || this.tab==='app')?'passes':this.tab);
@@ -76,7 +72,13 @@ export class NavbarComponent implements OnInit {
   }
 
   showOptions() {
-    this.router.navigate(['/settings']);
+    if(this.optionsOpen){
+      this.router.navigate(['/passes']);
+      this.tab = 'passes';
+    } else{
+      this.router.navigate(['/settings']);
+      this.tab = 'settings';
+    }
   }
 
   getNavElementBg(index: number, type: string) {

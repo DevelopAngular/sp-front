@@ -97,6 +97,7 @@ import {MatChipsModule} from '@angular/material/chips';
 import { ReportFormComponent } from './report-form/report-form.component';
 import { DropdownComponent } from './dropdown/dropdown.component';
 import { TeacherDropdownComponent } from './teacher-dropdown/teacher-dropdown.component';
+import { SettingsComponent } from './settings/settings.component';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: '/passes', pathMatch: 'full'},
@@ -104,6 +105,7 @@ const appRoutes: Routes = [
   {path: 'hallmonitor', component: HallMonitorComponent},
   {path: 'myroom', component: MyRoomComponent},
   {path: 'sign-out', component: SignOutComponent},
+  {path: 'settings', component: SettingsComponent}
 ];
 
 @NgModule({
@@ -152,6 +154,7 @@ const appRoutes: Routes = [
     ReportFormComponent,
     DropdownComponent,
     TeacherDropdownComponent,
+    SettingsComponent,
   ],
   entryComponents: [
     HallpassFormComponent,
