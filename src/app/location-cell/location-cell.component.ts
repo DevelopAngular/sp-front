@@ -15,6 +15,9 @@ export class LocationCellComponent implements OnInit {
   @Input()
   type: string;
 
+  @Input()
+  starred: boolean;
+
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<any> = new EventEmitter();
 
@@ -30,14 +33,8 @@ export class LocationCellComponent implements OnInit {
   }
 
   favorite(){
-    this.value.starred = !this.value.starred;
-    let endpoint = 'api/methacton/v1/locations/' +this.value.id +'/starred';
-    if(this.value.starred){
-      console.log('STARRING');
-      this.http.put(endpoint).subscribe(data=>this.onStar.emit());
-    } else{
-      this.http.delete(endpoint).subscribe(data=>this.onStar.emit());
-    }
+    this.starred = !this.starred;
+    this.onStar.emit({'id': this.value.id, 'starred': this.starred});
   }
 
 }

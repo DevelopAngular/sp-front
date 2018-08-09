@@ -99,6 +99,7 @@ import { DropdownComponent } from './dropdown/dropdown.component';
 import { TeacherDropdownComponent } from './teacher-dropdown/teacher-dropdown.component';
 import { SettingsComponent } from './settings/settings.component';
 import { IntroComponent } from './intro/intro.component';
+import { FavoriteFormComponent } from './favorite-form/favorite-form.component';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: '/passes', pathMatch: 'full'},
@@ -158,6 +159,7 @@ const appRoutes: Routes = [
     TeacherDropdownComponent,
     SettingsComponent,
     IntroComponent,
+    FavoriteFormComponent,
   ],
   entryComponents: [
     HallpassFormComponent,
@@ -170,7 +172,8 @@ const appRoutes: Routes = [
     InvitationCardComponent,
     InfoEditorComponent,
     ReportFormComponent,
-    TeacherDropdownComponent
+    TeacherDropdownComponent,
+    FavoriteFormComponent
   ],
   imports: [
     BrowserModule,

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ColorProfile } from '../models/ColorProfile';
 import { Router } from '../../../node_modules/@angular/router';
+import { FavoriteFormComponent } from '../favorite-form/favorite-form.component';
+import { MatDialog } from '../../../node_modules/@angular/material';
 
 export interface Setting{
   color_profile: ColorProfile;
@@ -19,7 +21,7 @@ export class SettingsComponent implements OnInit {
 
   settings: Setting[] = [];
 
-  constructor(public router: Router) {
+  constructor(public router: Router, public dialog: MatDialog) {
     this.settings.push({'color_profile': new ColorProfile('', '', '#606981,#ACB4C1', '#6E7689', '', '', ''), 'action': 'signout' , 'title': 'Sign-Out'});
     this.settings.push({'color_profile': new ColorProfile('', '', '#E7A700,#EFCE00', '#E7A700', '', '', ''), 'action': 'favorite' , 'title': 'Favorites'});
     this.settings.push({'color_profile': new ColorProfile('', '', '#03CF31,#00B476', '#00B476', '', '', ''), 'action': 'intro' , 'title': 'View Intro'});
@@ -34,7 +36,12 @@ export class SettingsComponent implements OnInit {
     if(action==='signout'){
       this.router.navigate(['/sign-out']);
     } else if(action==='favorite'){
-
+      const dialogRef = this.dialog.open(FavoriteFormComponent, {
+        width: '750px',
+        height: '365px',
+        panelClass: 'form-dialog-container',
+        backdropClass: 'custom-backdrop',
+      });
     } else if(action==='intro'){
       this.router.navigate(['/intro']);
     } else if(action==='team'){

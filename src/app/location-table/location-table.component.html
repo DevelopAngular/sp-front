@@ -5,16 +5,16 @@
     </div>
     <div class="choices">
       <app-location-cell class="choice" *ngFor="let choice of starredChoices | async"
-        (onSelect)="choiceSelected($event)" (onStar)="updateFavorites()"
-        [value]="choice" [type]="type">
+        (onSelect)="choiceSelected($event)" (onStar)="updateFavorites($event)"
+        [value]="choice" [type]="type" [starred]="true">
       </app-location-cell>
     </div>
   </div>
   <div class="table-right">
     <input class="input" #searchBox [placeholder]="placeholder" (keyup)="onSearch(searchBox.value)">
     <div class="choices">
-      <app-location-cell class="choice" *ngFor="let choice of choices"
-                        (onSelect)="choiceSelected($event)" (onStar)="updateFavorites()"
+      <app-location-cell class="choice" *ngFor="let choice of choices" [starred]="false"
+                        (onSelect)="choiceSelected($event)" (onStar)="updateFavorites($event)"
                         [value]="choice" [type]="type">
       </app-location-cell>
     </div>

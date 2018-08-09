@@ -1,0 +1,21 @@
+<div class="favortie-form-wrapper">
+
+  <div class="divider" [style.background-image]="'radial-gradient(circle at 73% 71%, #E7A700,#EFCE00)'">
+    <img class="divider-icon" [src]="'./assets/Star (White).png' | resolveAsset">
+    <div class="divider-text">Favorties</div>
+  </div>
+  <div class="content">
+    <app-location-table class="locations" [type]="'location'" [placeholder]="'Search rooms'"></app-location-table>
+  
+    <app-gradient-button
+      [gradient]="'#E7A700,#EFCE00'"
+      [hoverColor]="'#E7A700'"
+      [minWidth]="'90px'"
+      [minHeight]="'30px'"
+      [fontSize]="'14px'"
+      (buttonClick)="closeDialog()"
+      [style.width]="'90px'"
+      [style.margin-bottom]="'14px'"
+    >Save</app-gradient-button>
+  </div>
+</div>

@@ -28,7 +28,7 @@ export class LocationTableComponent implements OnInit {
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
 
   choices: any[] = [];
-  starredChoices: Promise<Location>;
+  starredChoices: Promise<Location[]>;
   search: string = '';
 
   constructor(private http: HttpService) {
@@ -48,7 +48,7 @@ export class LocationTableComponent implements OnInit {
     });
 
     if(this.type==='location'){
-      this.updateFavorites();
+      this.updateFavorites(null);
     }
   }
 
@@ -70,9 +70,27 @@ export class LocationTableComponent implements OnInit {
     this.onSelect.emit(choice);
   }
 
-  updateFavorites(){
-    this.starredChoices = this.http.get<Location>('api/methacton/v1/locations?starred=true').toPromise();
-    this.onSearch(this.search);
+  updateFavorites(event){
+    let endpoint = 'api/methacton/v1/users/@me/starred';
+    if(event){
+      let locations: string[] = [];
+      this.starredChoices.then(locs => {
+        locs.map(loc => locations.push(loc.id));
+        console.log('[Current Stars]: ', locations);
+        var index = locations.indexOf(event.id, 0);
+        if (index > -1) {
+          locations.splice(index, 1);
+        } else{
+          locations.push(event.id);
+        }
+        console.log('[Starring]: ', locations);
+        let body = {'locations': locations};
+        this.http.put(endpoint, body).subscribe();
+      });
+    } else{
+      this.starredChoices = this.http.get<Location[]>('api/methacton/v1/users/@me/starred').toPromise();
+      this.onSearch(this.search);
+    }
   }
 
 }
