@@ -1,7 +1,7 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 
 import 'rxjs/add/observable/combineLatest';
 import { Observable } from 'rxjs/Observable';
@@ -49,9 +49,10 @@ export class NavbarComponent implements OnInit {
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit[urlSplit.length-1];
 
-    this.location.subscribe(value => {
-      let urlSplit: string[] = location.pathname.split('/');
-      this.tab = urlSplit[urlSplit.length-1];
+    this.router.events.subscribe(value => {
+      if(value instanceof NavigationEnd){
+        this.tab = value.url.substr(1);
+      }
     });
 
     this.tab = ((this.tab==='' || this.tab==='app')?'passes':this.tab);
@@ -74,10 +75,8 @@ export class NavbarComponent implements OnInit {
   showOptions() {
     if(this.optionsOpen){
       this.router.navigate(['/passes']);
-      this.tab = 'passes';
     } else{
       this.router.navigate(['/settings']);
-      this.tab = 'settings';
     }
   }
 

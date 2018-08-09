@@ -36,7 +36,7 @@ export class SettingsComponent implements OnInit {
     } else if(action==='favorite'){
 
     } else if(action==='intro'){
-      
+      this.router.navigate(['/intro']);
     } else if(action==='team'){
       window.open('https://smartpass.app/team.html');
     } else if(action==='support'){
