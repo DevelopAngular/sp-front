@@ -1,6 +1,6 @@
 <div *ngIf="user" class="intro-wrapper">
   <div *ngIf="slideIndex!==1" class="button-left" (click)="slideIndex=slideIndex-1">
-    <img class="button-icon" [src]="'./assets/Arrow (Green).png' | resolveAsset">
+    <img class="button-icon" [src]="'./assets/Arrow Reversed (Green).png' | resolveAsset">
   </div>
   <img class="slide" [src]="'./assets/intro/' +(isStaff?'Teacher':'Student') +'/Intro ' +slideIndex +'.png' | resolveAsset">
   <app-gradient-button

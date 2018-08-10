@@ -6,7 +6,7 @@
     flex-direction: column;
     color: white;
     font-family: 'Helvetica Neue', sans-serif;
-    box-shadow: 0 7.5px 13px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
     overflow: visible;
     font-style: normal;
     font-stretch: normal;
@@ -19,7 +19,7 @@
 }
 
 .tile-wrapper:hover{
-    box-shadow: 0 8.5px 14px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.3);
 }
 
 .tile-title{
@@ -41,7 +41,7 @@
     width: 20px;
     height: 20px;
     border-radius: 10px;
-    box-shadow: 0 7.5px 13px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
 }
 
 .names-overlay{
