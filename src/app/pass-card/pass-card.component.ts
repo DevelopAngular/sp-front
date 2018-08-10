@@ -128,10 +128,10 @@ export class PassCardComponent implements OnInit {
     }
 
     if(this.isActive){
-      this.buildPage('Pass Started', 'by ' +this.getUserName(this.pass.student), this.formatDateTime(this.pass.created), (this.pagerPages+1));
+      this.buildPage('Pass Started', '', this.formatDateTime(this.pass.created), (this.pagerPages+1));
       this.activePage = (this.pagerPages);
     } else if(this.fromPast){
-      this.buildPage('Pass Started', 'by ' +this.getUserName(this.pass.student), this.formatDateTime(this.pass.created), (this.pagerPages+1));
+      this.buildPage('Pass Started', '', this.formatDateTime(this.pass.created), (this.pagerPages+1));
       let start: Date = this.pass.start_time;
       let end: Date = this.pass.end_time;
       let diff: number = (end.getTime() - start.getTime()) / 1000;

@@ -1,7 +1,7 @@
 <mat-progress-bar class="loading-theme" *ngIf="navbarEnabled; else staticLoading;"
                   mode="indeterminate"></mat-progress-bar>
 <ng-template class="static-loading" #staticLoading><div class="static-loading"></div></ng-template>
-<div class="bar">
+<div *ngIf="tab!=='intro'" class="bar">
   <div class="heading grow">
     <div class="title">SmartPass</div>
     <img class="logo" [src]="'./assets/Arrow (Green).png' | resolveAsset">
@@ -26,4 +26,4 @@
     </div>
   </div>
 </div>
-<div [style.display]="isStaff?'':'none'" class="divider"></div>
+<div [style.display]="(isStaff && tab!=='intro')?'':'none'" class="divider"></div>

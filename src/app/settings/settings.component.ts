@@ -47,7 +47,7 @@ export class SettingsComponent implements OnInit {
     } else if(action==='team'){
       window.open('https://smartpass.app/team.html');
     } else if(action==='support'){
-      window.open('https://smartpass.app/app');
+      window.open('https://smartpass.app/');
     }
   }
 

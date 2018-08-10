@@ -1,3 +1,21 @@
-<p>
-  intro works!
-</p>
+<div *ngIf="user" class="intro-wrapper">
+  <div *ngIf="slideIndex!==1" class="button-left" (click)="slideIndex=slideIndex-1">
+    <img class="button-icon" [src]="'./assets/Arrow (Green).png' | resolveAsset">
+  </div>
+  <img class="slide" [src]="'./assets/intro/' +(isStaff?'Teacher':'Student') +'/Intro ' +slideIndex +'.png' | resolveAsset">
+  <app-gradient-button
+  class="end-button"
+  *ngIf="slideIndex===(6+(isStaff?1:0))"
+  [gradient]="'#03CF31,#00B476'"
+  [hoverColor]="'#00B476'"
+  [minWidth]="'150px'"
+  [minHeight]="'50px'"
+  [fontSize]="'18px'"
+  (buttonClick)="endIntro()"
+  [style.width]="'90px'"
+  [style.margin-bottom]="'14px'"
+  >Get Started</app-gradient-button>
+  <div *ngIf="slideIndex!==(6+(isStaff?1:0))" class="button-right" (click)="slideIndex=slideIndex+1">
+    <img class="button-icon" [src]="'./assets/Arrow (Green).png' | resolveAsset">
+  </div>
+</div>

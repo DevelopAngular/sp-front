@@ -52,6 +52,7 @@ export class NavbarComponent implements OnInit {
     this.router.events.subscribe(value => {
       if(value instanceof NavigationEnd){
         this.tab = value.url.substr(1);
+        this.tab = ((this.tab==='' || this.tab==='app')?'passes':this.tab);
       }
     });
 
