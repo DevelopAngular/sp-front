@@ -1,14 +1,58 @@
 import { Component, ElementRef, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
+import { Observable } from 'rxjs/Observable';
+
+import 'rxjs/operator/switchMap';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Util } from '../../Util';
 import { DataService } from '../data-service';
+import { LiveDataService } from '../live-data.service';
 import { LoadingService } from '../loading.service';
 import { BasicPassLikeProvider, PassLikeProvider } from '../models';
-import { HallPass } from '../models/HallPass';
 import { Location } from '../models/Location';
 import { testPasses } from '../models/mock_data';
 import { User } from '../models/User';
 import { TeacherDropdownComponent } from '../teacher-dropdown/teacher-dropdown.component';
+
+class ActivePassProvider implements PassLikeProvider {
+  constructor(private liveDataService: LiveDataService, private location$: Observable<Location>) {
+  }
+
+  watch(sort: Observable<string>) {
+    const sortReplay = new ReplaySubject<string>(1);
+    sort.subscribe(sortReplay);
+
+    return this.location$.switchMap(location => this.liveDataService.watchActiveHallPasses(sortReplay, {
+      type: 'location',
+      value: location
+    }));
+  }
+}
+
+class OriginPassProvider implements PassLikeProvider {
+  constructor(private liveDataService: LiveDataService, private location$: Observable<Location>) {
+  }
+
+  watch(sort: Observable<string>) {
+    const sortReplay = new ReplaySubject<string>(1);
+    sort.subscribe(sortReplay);
+
+    return this.location$.switchMap(location => this.liveDataService.watchHallPassesFromLocation(sortReplay, location));
+  }
+}
+
+class DestinationPassProvider implements PassLikeProvider {
+  constructor(private liveDataService: LiveDataService, private location$: Observable<Location>) {
+  }
+
+  watch(sort: Observable<string>) {
+    const sortReplay = new ReplaySubject<string>(1);
+    sort.subscribe(sortReplay);
+
+    return this.location$.switchMap(location => this.liveDataService.watchHallPassesToLocation(sortReplay, location));
+  }
+}
+
 
 @Component({
   selector: 'app-my-room',
@@ -18,6 +62,10 @@ import { TeacherDropdownComponent } from '../teacher-dropdown/teacher-dropdown.c
 export class MyRoomComponent implements OnInit {
 
   testPasses: PassLikeProvider;
+
+  activePasses: PassLikeProvider;
+  originPasses: PassLikeProvider;
+  destinationPasses: PassLikeProvider;
 
   inputValue = '';
   calendarToggled = false;
@@ -30,9 +78,17 @@ export class MyRoomComponent implements OnInit {
   optionsOpen = false;
   canView = false;
 
-  constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService, public dialog: MatDialog) {
+  selectedLocation$ = new ReplaySubject<Location>(1);
+
+  constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService,
+              public dialog: MatDialog, private liveDataService: LiveDataService) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
+
+    this.activePasses = new ActivePassProvider(liveDataService, this.selectedLocation$);
+    this.originPasses = new OriginPassProvider(liveDataService, this.selectedLocation$);
+    this.destinationPasses = new DestinationPassProvider(liveDataService, this.selectedLocation$);
+
   }
 
   set searchDate(date: Date) {
@@ -77,6 +133,7 @@ export class MyRoomComponent implements OnInit {
           this._zone.run(() => {
             this.roomOptions = locations;
             this.selectedLocation = (this.roomOptions.length > 0) ? this.roomOptions[0] : null;
+            this.selectedLocation$.next(this.selectedLocation);
           });
         });
       });
@@ -102,7 +159,7 @@ export class MyRoomComponent implements OnInit {
       optionDialog.afterClosed().subscribe(data => {
         this.optionsOpen = false;
         this.selectedLocation = data == null ? this.selectedLocation : data;
-        this.dataService.updateMRRoom(this.selectedLocation);
+        this.selectedLocation$.next(this.selectedLocation);
       });
     }
   }

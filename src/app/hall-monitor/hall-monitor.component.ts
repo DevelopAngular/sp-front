@@ -2,6 +2,7 @@ import { Component, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import { DataService } from '../data-service';
+import { LiveDataService } from '../live-data.service';
 import { LoadingService } from '../loading.service';
 import { BasicPassLikeProvider, PassLikeProvider } from '../models';
 import { testPasses } from '../models/mock_data';
@@ -14,11 +15,11 @@ function isUserStaff(user: User): boolean {
 
 class ActivePassProvider implements PassLikeProvider {
 
-  constructor(private dataService: DataService) {
+  constructor(private liveDataService: LiveDataService) {
   }
 
   watch(sort: Observable<string>) {
-    return this.dataService.watchActiveHallPasses(sort);
+    return this.liveDataService.watchActiveHallPasses(sort);
   }
 }
 
@@ -37,8 +38,9 @@ export class HallMonitorComponent implements OnInit {
   isStaff = false;
   canView = false;
 
-  constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService, public dialog: MatDialog) {
-    this.activePassProvider = new ActivePassProvider(this.dataService);
+  constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService,
+              public dialog: MatDialog, private liveDataService: LiveDataService) {
+    this.activePassProvider = new ActivePassProvider(this.liveDataService);
     // this.activePassProvider = new BasicPassLikeProvider(testPasses);
   }
 

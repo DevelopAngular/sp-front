@@ -17,6 +17,9 @@ function joinPaths(paths: string[]): string {
 export class ResolveAssetPipe implements PipeTransform {
 
   transform(value: string, args?: any): any {
+    if (typeof value !== 'string') {
+      return value;
+    }
 
     if (value.indexOf('../') === 0) {
       throw new Error(`Asset path must not use parent directory path segments: ${value}`);
