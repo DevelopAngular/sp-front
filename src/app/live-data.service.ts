@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { map, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
 import { HttpService } from './http-service';
-import { Paged } from './models';
+import { Paged, PassLike } from './models';
 import { BaseModel } from './models/base';
 import { HallPass } from './models/HallPass';
 import { Invitation } from './models/Invitation';
@@ -13,6 +13,8 @@ import { Location } from './models/Location';
 import { Request } from './models/Request';
 import { User } from './models/User';
 import { PollingEvent, PollingService } from './polling-service';
+
+import 'rxjs/add/operator/startWith';
 
 export type Partial<T> = {
   [P in keyof T]?: T[P];
@@ -271,6 +273,21 @@ class AddRequest extends BaseEventHandler<Request> {
         state.addOrUpdateItem(pass);
       }
     }
+    return state;
+  }
+}
+
+
+class RemoveRequestWithDelay extends BaseEventHandler<Request> {
+  handle(state: State<Request>, context: PollingEventContext<Request>, data: any): State<Request> | 'skip' {
+    const pass = Request.fromJSON(data);
+    state.updateItem(pass);
+
+    context.postDelayed(5 * 1000, (s1: State<Request>) => {
+      s1.removeItem(pass);
+      return s1;
+    });
+
     return state;
   }
 }
@@ -574,11 +591,11 @@ export class LiveDataService {
     let filterFunc = (pass: Request) => true;
 
     if (filter instanceof User) {
-      queryFilter = `?student=${filter.id}`;
+      queryFilter = `&student=${filter.id}`;
       filterFunc = (pass: Request) => pass.student.id === filter.id;
 
     } else if (filter instanceof Location) {
-      queryFilter = `?destination=${filter.id}`;
+      queryFilter = `&destination=${filter.id}`;
       filterFunc = (pass: Request) => pass.destination.id === filter.id;
 
     } else if (filter !== null) {
@@ -595,6 +612,57 @@ export class LiveDataService {
         new AddRequest(['pass_request.create'], filterFunc)
       ]),
       handlePost: identityFilter
+    });
+  }
+
+  watchActiveRequests(filter: User | Location = null): Observable<Request[]> {
+    let queryFilter = '';
+    let filterFunc = (pass: Request) => true;
+
+    if (filter instanceof User) {
+      queryFilter = `&student=${filter.id}`;
+      filterFunc = (pass: Request) => pass.student.id === filter.id;
+
+    } else if (filter instanceof Location) {
+      queryFilter = `&destination=${filter.id}`;
+      filterFunc = (pass: Request) => pass.destination.id === filter.id;
+
+    } else if (filter !== null) {
+      throw Error(`Unknown filter arg: ${filter}`);
+    }
+
+    return this.watch<Request, string>({
+      externalEvents: Observable.empty(),
+      eventNamespace: 'pass_request',
+      initialUrl: `api/methacton/v1/pass_requests?limit=20&active=true${queryFilter}`,
+      decoder: data => Request.fromJSON(data),
+      handleExternalEvent: (s: State<Request>, e: string) => s,
+      handlePollingEvent: makePollingEventHandler([
+        new AddRequest(['pass_request.create'], filterFunc),
+        new RemoveRequestWithDelay(['pass_request.cancel'])
+      ]),
+      handlePost: identityFilter
+    });
+  }
+
+  watchActivePassLike(student: User): Observable<PassLike> {
+
+    const passes$ = this.watchActiveHallPasses(Observable.empty(), {type: 'student', value: student});
+    const requests$ = this.watchActiveRequests(student);
+
+    const merged$ = Observable.combineLatest(
+      passes$.map(passes => passes.length ? passes[0] : null).startWith(null),
+      requests$.map(requests => requests.length ? requests[0] : null).startWith(null),
+      (pass, request) => ({pass: pass, request: request}));
+
+    return merged$.map(m => {
+      if (m.pass) {
+        return m.pass;
+      }
+      if (m.request) {
+        return m.request;
+      }
+      return null;
     });
   }
 

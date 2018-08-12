@@ -1,7 +1,7 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { MatDialog } from '../../../node_modules/@angular/material';
-import { BehaviorSubject, Observable } from '../../../node_modules/rxjs';
+import { MatDialog } from '@angular/material';
+import { Observable } from 'rxjs/Observable';
 import { DataService } from '../data-service';
 import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
@@ -100,6 +100,16 @@ export class PassesComponent implements OnInit {
     this.futurePasses = new FuturePassProvider(this.liveDataService, this.dataService.currentUser);
     this.activePasses = new ActivePassProvider(this.liveDataService, this.dataService.currentUser);
     this.pastPasses = new PastPassProvider(this.liveDataService, this.dataService.currentUser);
+
+    this.dataService.currentUser.switchMap(user =>
+      this.liveDataService.watchActivePassLike(user))
+      .subscribe(passLike => {
+        this._zone.run(() => {
+          console.log('Active watch:', passLike);
+          this.currentPass = (passLike instanceof HallPass) ? passLike : null;
+          this.currentRequest = (passLike instanceof Request) ? passLike : null;
+        });
+      });
 
   }
 
