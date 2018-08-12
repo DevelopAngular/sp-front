@@ -21,12 +21,15 @@ export class StudentSearchComponent {
   inputValue: string = '';
 
   constructor(private http: HttpService) {
-    this.onSearch('');
+    // this.onSearch('');
   }
 
   onSearch(search: string) {
-    this.students = this.http.get<Paged<any>>('api/methacton/v1/users?role=hallpass_student&limit=5' + (search === '' ? '' : '&search=' + encodeURI(search))).toPromise().then(paged => this.removeDuplicateStudents(paged.results));
-    console.log(this.students);
+    if(search!=='')
+      this.students = this.http.get<Paged<any>>('api/methacton/v1/users?role=hallpass_student&limit=5' + (search === '' ? '' : '&search=' + encodeURI(search))).toPromise().then(paged => this.removeDuplicateStudents(paged.results));
+    else
+      this.students = null;
+      this.inputValue = '';
   }
 
   removeStudent(student: User) {

@@ -4,17 +4,17 @@
       Favorites
     </div>
     <div class="choices">
-      <app-location-cell class="choice" *ngFor="let choice of starredChoices | async"
-        (onSelect)="choiceSelected($event)" (onStar)="updateFavorites($event)"
-        [value]="choice" [type]="type" [starred]="true">
+      <app-location-cell class="choice" *ngFor="let choice of starredChoices"
+        (onSelect)="choiceSelected($event)" (onStar)="star($event)"
+        [value]="choice" [type]="type" [starred]="true" [showStar]="showStars">
       </app-location-cell>
     </div>
   </div>
   <div class="table-right">
-    <input class="input" #searchBox [placeholder]="placeholder" (keyup)="onSearch(searchBox.value)">
+    <input class="input" #searchBox [value]="search" [placeholder]="placeholder" (keyup)="onSearch(searchBox.value)">
     <div class="choices">
-      <app-location-cell class="choice" *ngFor="let choice of choices" [starred]="false"
-                        (onSelect)="choiceSelected($event)" (onStar)="updateFavorites($event)"
+      <app-location-cell class="choice" *ngFor="let choice of choices" [showStar]="showStars" [starred]="false"
+                        (onSelect)="choiceSelected($event)" (onStar)="star($event)"
                         [value]="choice" [type]="type">
       </app-location-cell>
     </div>

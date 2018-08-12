@@ -18,6 +18,9 @@ export class LocationCellComponent implements OnInit {
   @Input()
   starred: boolean;
 
+  @Input()
+  showStar: boolean;
+
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<any> = new EventEmitter();
 
@@ -25,16 +28,18 @@ export class LocationCellComponent implements OnInit {
 
   constructor(private http: HttpService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.value.starred = this.starred;
+  }
 
   cellSelected() {
     if(!this.overStar)
       this.onSelect.emit(this.value);
   }
 
-  favorite(){
-    this.starred = !this.starred;
-    this.onStar.emit({'id': this.value.id, 'starred': this.starred});
+  star(){
+    this.value.starred = !this.value.starred;
+    this.onStar.emit(this.value);
   }
 
 }

@@ -38,6 +38,7 @@ export class GradientButtonComponent {
   @Output() buttonClick = new EventEmitter<any>();
 
   buttonDown = false;
+  hovered: boolean = false;
 
   constructor(private sanitizer: DomSanitizer) {
   }
@@ -84,14 +85,25 @@ export class GradientButtonComponent {
     return 'center';
   }
 
+  get shadow(){
+    return this.sanitizer.bypassSecurityTrustStyle(((this.hovered&&!this.disabled)?'0 2px 4px 1px rgba(0, 0, 0, 0.3)':'0 2px 4px 0px rgba(0, 0, 0, 0.1)'));
+  }
+
   onPress(press: boolean) {
-    this.buttonDown = press;
+    if(!this.disabled)
+      this.buttonDown = press;
     //console.log("[Button State]: ", "The button is " +this.buttonState);
   }
 
   onClick(event){
     if(!this.disabled)
       this.buttonClick.emit(event)
+  }
+
+  onHover(hover: boolean){
+    this.hovered = hover;
+    if(!hover)
+      this.buttonDown = false;
   }
 
 }

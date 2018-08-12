@@ -65,7 +65,7 @@ export class HallpassFormComponent implements OnInit {
   }
 
   get fromGradient(){
-    if(this.fromLocation || (this.forLater && this.isDeclinable)){
+    if(this.fromLocation || (this.forLater && this.isDeclinable && this.isStaff)){
       return this.greenProfile.gradient_color;
     } else{
       return "#606981, #ACB4C1";
@@ -107,7 +107,7 @@ export class HallpassFormComponent implements OnInit {
   }
 
   get toEnabled(){
-    if(this.fromLocation || (this.isDeclinable && this.forLater)){
+    if(this.fromLocation || (this.isDeclinable && this.forLater && this.isStaff)){
       return true;
     } else{
       return false;

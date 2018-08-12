@@ -5,13 +5,12 @@
   height: inherit;
   display: flex;
   align-items: center;
-  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   user-select: none;
 }
 
-.button:hover{
-  box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.3);
+.disabled-button{
+  @extend .button;
 }
 
 .center {

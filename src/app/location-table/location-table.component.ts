@@ -25,71 +25,73 @@ export class LocationTableComponent implements OnInit {
   @Input()
   type: string;
 
+  @Input()
+  showStars: string;
+
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
+  @Output() onStar: EventEmitter<string> = new EventEmitter();
 
   choices: any[] = [];
-  starredChoices: Promise<Location[]>;
+  starredChoices: any[] = [];
   search: string = '';
 
   constructor(private http: HttpService) {
   }
 
   ngOnInit() {
-    // console.log('[Table Type]: ', this.type);
-    // TODO Get favorites
-    this.http.get<Paged<Location>>('api/methacton/v1/'
-      +(this.type==='teachers'?'users?role=edit_all_hallpass&':('locations'
-        +(!!this.category ? ('?category=' + this.category +'&') : '?')
-      ))
-      +'limit=4'
-      +(this.type==='location'?'&starred=false':''))
-      .toPromise().then(p => {
-      this.choices = p.results;
-    });
-
     if(this.type==='location'){
-      this.updateFavorites(null);
+      let endpoint = 'api/methacton/v1/users/@me/starred';
+      this.http.get(endpoint).toPromise().then((stars:any[]) => {
+        this.starredChoices = stars.map(val => Location.fromJSON(val));
+      });
     }
   }
 
   onSearch(search: string) {
     this.search = search;
+    if(search!==''){
       this.http.get<Paged<Location>>('api/methacton/v1/'
-        +(this.type==='teachers'?'users?role=edit_all_hallpass&':('locations'
-          +(!!this.category ? ('?category=' +this.category +'&') : '?')
-        ))
-        +'limit=4'
-        +'&search=' +search
-        +(this.type==='location'?'&starred=false':''))
-        .toPromise().then(p => {
-          this.choices = p.results;
-        });
+      +(this.type==='teachers'?'users?role=edit_all_hallpass&':('locations'
+        +(!!this.category ? ('?category=' +this.category +'&') : '?')
+      ))
+      +'limit=4'
+      +'&search=' +search
+      +(this.type==='location'?'&starred=false':''))
+      .toPromise().then(p => {
+        this.choices = p.results;
+      });
+    } else{
+      this.choices = [];
+      this.search = '';
+    }
   }
 
   choiceSelected(choice: any) {
     this.onSelect.emit(choice);
   }
 
-  updateFavorites(event){
-    let endpoint = 'api/methacton/v1/users/@me/starred';
-    if(event){
-      let locations: string[] = [];
-      this.starredChoices.then(locs => {
-        locs.map(loc => locations.push(loc.id));
-        console.log('[Current Stars]: ', locations);
-        var index = locations.indexOf(event.id, 0);
-        if (index > -1) {
-          locations.splice(index, 1);
-        } else{
-          locations.push(event.id);
-        }
-        console.log('[Starring]: ', locations);
-        let body = {'locations': locations};
-        this.http.put(endpoint, body).subscribe();
-      });
+  star(event){
+    if(event.starred){
+      this.addLoc(event, this.starredChoices);
     } else{
-      this.starredChoices = this.http.get<Location[]>('api/methacton/v1/users/@me/starred').toPromise();
-      this.onSearch(this.search);
+      //this.removeLoc(event, this.starredChoices);
+    }
+    this.onSearch('');
+    this.onStar.emit(event);
+    this.search = '';
+  }
+
+  addLoc(loc: any, array: any[]){
+    if(!array.includes(loc))
+      array.push(loc)
+  }
+
+  removeLoc(loc: any, array: any[]){
+    var index = array.findIndex((element) => element.id === loc.id);
+    console.log(index)
+    if (index > -1) {
+      console.log(index)
+      array.splice(index, 1);
     }
   }
 

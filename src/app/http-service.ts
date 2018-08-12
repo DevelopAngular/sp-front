@@ -174,9 +174,19 @@ export class HttpService {
     return this.performRequest(token => this.http.delete<T>(makeUrl(url), makeConfig(config, token)));
   }
 
-  put<T>(url, config?: Config): Observable<T> {
-    console.log('PUTTING');
-    return this.performRequest(token => this.http.put<T>(makeUrl(url), null, makeConfig(config, token)));
+  put<T>(url, body?: any, config?: Config): Observable<T> {
+    const formData: FormData = new FormData();
+    for (let prop in body) {
+      if (body.hasOwnProperty(prop)) {
+        if(body[prop] instanceof Array){
+          for(let sprop of body[prop])
+            formData.append(prop, sprop);
+        } else{
+          formData.append(prop, body[prop]);
+        }
+      }
+    }
+    return this.performRequest(token => this.http.put<T>(makeUrl(url), body, makeConfig(config, token)));
   }
 
 }
