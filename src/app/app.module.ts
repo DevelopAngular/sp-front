@@ -5,6 +5,7 @@ import { MatNativeDateModule, MatProgressBarModule, MatProgressSpinnerModule, Ma
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -30,76 +31,57 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { TagInputModule } from 'ngx-chips';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
-import { ConfirmationService } from 'primeng/api';
-import { AutoCompleteModule } from 'primeng/autocomplete';
-import { ButtonModule } from 'primeng/button';
-import { CalendarModule } from 'primeng/calendar';
-import { CardModule } from 'primeng/card';
-import { MessageService } from 'primeng/components/common/messageservice';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { DataViewModule } from 'primeng/dataview';
-import { DialogModule } from 'primeng/dialog';
-import { DropdownModule } from 'primeng/dropdown';
-import { GrowlModule } from 'primeng/growl';
-import { InputSwitchModule } from 'primeng/inputswitch';
-import { ListboxModule } from 'primeng/listbox';
-import { PanelModule } from 'primeng/panel';
-import { ScrollPanelModule } from 'primeng/scrollpanel';
-import { SidebarModule } from 'primeng/sidebar';
 import { AppComponent } from './app.component';
+import { CardButtonComponent } from './card-button/card-button.component';
 import { GAPI_CONFIG } from './config';
 import { ConsentMenuComponent } from './consent-menu/consent-menu.component';
+import { ContainerCardComponent } from './container-card/container-card.component';
 import { DataService } from './data-service';
 import { DateTimePickerComponent } from './date-time-picker/date-time-picker.component';
+import { DisplayCardComponent } from './display-card/display-card.component';
+import { DropdownComponent } from './dropdown/dropdown.component';
 import { DurationPickerComponent } from './duration-picker/duration-picker.component';
+import { FavoriteFormComponent } from './favorite-form/favorite-form.component';
 import { GoogleLoginService } from './google-login.service';
 import { GoogleSigninComponent } from './google-signin/google-signin.component';
 import { GradientButtonComponent } from './gradient-button/gradient-button.component';
+import { HallMonitorComponent } from './hall-monitor/hall-monitor.component';
 import { HallpassFormComponent } from './hallpass-form/hallpass-form.component';
 import { HttpService } from './http-service';
+import { InfoEditorComponent } from './info-editor/info-editor.component';
+import { InlinePassCardComponent } from './inline-pass-card/inline-pass-card.component';
+import { InlineRequestCardComponent } from './inline-request-card/inline-request-card.component';
+import { IntroComponent } from './intro/intro.component';
+import { InvitationCardComponent } from './invitation-card/invitation-card.component';
 import { LoadingService } from './loading.service';
 import { LocationCellComponent } from './location-cell/location-cell.component';
-import { LocationChooseComponent } from './location-choose/location-choose.component';
 import { LocationPickerComponent } from './location-picker/location-picker.component';
 import { LocationTableComponent } from './location-table/location-table.component';
 import { MainPageComponent } from './main-page/main-page.component';
+import { MyRoomComponent } from './my-room/my-room.component';
+import { NavButtonComponent } from './nav-button/nav-button.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { OptionsComponent } from './options/options.component';
+import { PagerComponent } from './pager/pager.component';
+import { PassCardTemplateComponent } from './pass-card-template/pass-card-template.component';
 import { PassCardComponent } from './pass-card/pass-card.component';
+import { PassCellComponent } from './pass-cell/pass-cell.component';
+import { PassCollectionComponent } from './pass-collection/pass-collection.component';
+import { PassTileComponent } from './pass-tile/pass-tile.component';
+import { PassesComponent } from './passes/passes.component';
 import { PinnableComponent } from './pinnable/pinnable.component';
+import { ReportFormComponent } from './report-form/report-form.component';
 import { RequestAcceptComponent } from './request-accept/request-accept.component';
+import { RequestCardComponent } from './request-card/request-card.component';
 import { ResolveAssetPipe } from './resolve-asset.pipe';
+import { SettingsComponent } from './settings/settings.component';
 import { SignOutComponent } from './sign-out/sign-out.component';
 import { StudentPickerComponent } from './student-picker/student-picker.component';
 import { StudentSearchComponent } from './student-search/student-search.component';
-import { TeacherSearchComponent } from './teacher-search/teacher-search.component';
-import { UserService } from './user.service';
-import { TraveltypePickerComponent } from './traveltype-picker/traveltype-picker.component';
-import { PassTileComponent } from './pass-tile/pass-tile.component';
-import { PassCellComponent } from './pass-cell/pass-cell.component';
-import { ContainerCardComponent } from './container-card/container-card.component';
-import { PassCollectionComponent } from './pass-collection/pass-collection.component';
-import { DisplayCardComponent } from './display-card/display-card.component';
-import { PagerComponent } from './pager/pager.component';
-import { PassCardTemplateComponent } from './pass-card-template/pass-card-template.component';
-import { TravelViewComponent } from './travel-view/travel-view.component';
-import { CardButtonComponent } from './card-button/card-button.component';
-import { RequestCardComponent } from './request-card/request-card.component';
-import { InvitationCardComponent } from './invitation-card/invitation-card.component';
-import { InlinePassCardComponent } from './inline-pass-card/inline-pass-card.component';
-import { InlineRequestCardComponent } from './inline-request-card/inline-request-card.component';
-import { InfoEditorComponent } from './info-editor/info-editor.component';
-import { NavButtonComponent } from './nav-button/nav-button.component';
-import { HallMonitorComponent } from './hall-monitor/hall-monitor.component';
-import { MyRoomComponent } from './my-room/my-room.component';
-import { PassesComponent } from './passes/passes.component';
-import {MatChipsModule} from '@angular/material/chips';
-import { ReportFormComponent } from './report-form/report-form.component';
-import { DropdownComponent } from './dropdown/dropdown.component';
 import { TeacherDropdownComponent } from './teacher-dropdown/teacher-dropdown.component';
-import { SettingsComponent } from './settings/settings.component';
-import { IntroComponent } from './intro/intro.component';
-import { FavoriteFormComponent } from './favorite-form/favorite-form.component';
+import { TravelViewComponent } from './travel-view/travel-view.component';
+import { TraveltypePickerComponent } from './traveltype-picker/traveltype-picker.component';
+import { UserService } from './user.service';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: '/passes', pathMatch: 'full'},
@@ -114,7 +96,6 @@ const appRoutes: Routes = [
 @NgModule({
   declarations: [
     AppComponent,
-    TeacherSearchComponent,
     GoogleSigninComponent,
     HallpassFormComponent,
     MainPageComponent,
@@ -122,7 +103,6 @@ const appRoutes: Routes = [
     DurationPickerComponent,
     ConsentMenuComponent,
     PinnableComponent,
-    LocationChooseComponent,
     NavbarComponent,
     LocationTableComponent,
     ResolveAssetPipe,
@@ -163,7 +143,6 @@ const appRoutes: Routes = [
   ],
   entryComponents: [
     HallpassFormComponent,
-    LocationChooseComponent,
     ConsentMenuComponent,
     OptionsComponent,
     RequestAcceptComponent,
@@ -199,21 +178,7 @@ const appRoutes: Routes = [
     MatSortModule,
     MatDialogModule,
     MatTooltipModule,
-    AutoCompleteModule,
-    CalendarModule,
-    DropdownModule,
-    ButtonModule,
-    GrowlModule,
-    DataViewModule,
-    PanelModule,
-    DialogModule,
-    CardModule,
     MatProgressBarModule,
-    ScrollPanelModule,
-    InputSwitchModule,
-    ListboxModule,
-    ConfirmDialogModule,
-    SidebarModule,
     MatCardModule,
     NgxMatSelectSearchModule,
     MatStepperModule,
@@ -238,9 +203,7 @@ const appRoutes: Routes = [
     DataService,
     HttpService,
     UserService,
-    MessageService,
     GoogleLoginService,
-    ConfirmationService,
     LoadingService,
   ],
   bootstrap: [AppComponent]

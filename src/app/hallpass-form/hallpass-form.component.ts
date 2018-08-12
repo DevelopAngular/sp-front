@@ -1,22 +1,15 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef, MatSlideToggleChange, MatStepper, MatDialogConfig } from '@angular/material';
-import { Router } from '@angular/router';
-import { Message } from 'primeng/components/common/api';
-import { MessageService } from 'primeng/components/common/messageservice';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material';
 import { DataService } from '../data-service';
 import { HttpService } from '../http-service';
-import { LocationPickerComponent } from '../location-picker/location-picker.component';
 import { ColorProfile } from '../models/ColorProfile';
+import { Duration } from '../models/Duration';
 import { HallPass } from '../models/HallPass';
 import { Invitation } from '../models/Invitation';
 import { Location } from '../models/Location';
 import { Pinnable } from '../models/Pinnable';
 import { Request } from '../models/Request';
 import { User } from '../models/User';
-import { Duration} from '../models/Duration';
-import { MAT_DIALOG_DATA } from '@angular/material';
-import { Inject } from '@angular/core';
 
 @Component({
   selector: 'app-hallpass-form',
@@ -27,7 +20,6 @@ export class HallpassFormComponent implements OnInit {
   // General Set-Up
   public isLoggedIn: Boolean = false;
   public isStaff = false;
-  public msgs: Message[] = [];
   public isPending: boolean = true;
 
   // ------------------------NEW STUFF-------------------- //
@@ -44,7 +36,7 @@ export class HallpassFormComponent implements OnInit {
   fromLocation: Location;
   toLocation: Location;
   formState: string = 'from';
-  requestTarget:User;
+  requestTarget: User;
   travelType: string = 'round_trip';
   requestTime: Date = new Date();
   duration: number = 5;
@@ -64,52 +56,52 @@ export class HallpassFormComponent implements OnInit {
     this.pinnables = this.http.get<any[]>('api/methacton/v1/pinnables').toPromise().then(json => json.map(raw => Pinnable.fromJSON(raw)));
   }
 
-  get fromGradient(){
-    if(this.fromLocation || (this.forLater && this.isDeclinable && this.isStaff)){
+  get fromGradient() {
+    if (this.fromLocation || (this.forLater && this.isDeclinable && this.isStaff)) {
       return this.greenProfile.gradient_color;
-    } else{
-      return "#606981, #ACB4C1";
+    } else {
+      return '#606981, #ACB4C1';
     }
   }
 
-  get fromSolid(){
-    if(this.fromLocation)
+  get fromSolid() {
+    if (this.fromLocation)
       return '#00b476';
     else
       return '#6E7689';
   }
 
-  get toGradient(){
-    if(this.entryState){
+  get toGradient() {
+    if (this.entryState) {
       return this._toProfile.gradient_color;
     }
-    if(this.toEnabled){
-      if(this.toLocation){
+    if (this.toEnabled) {
+      if (this.toLocation) {
         return this._toProfile.gradient_color;
-      } else{
-        return "#606981, #ACB4C1";
+      } else {
+        return '#606981, #ACB4C1';
       }
-    } else{
-      return "#CBD5E5, #CBD5E5";
+    } else {
+      return '#CBD5E5, #CBD5E5';
     }
   }
 
-  get toSolid(){
-    if(this.toEnabled){
-      if(this.toLocation){
+  get toSolid() {
+    if (this.toEnabled) {
+      if (this.toLocation) {
         return this._toProfile.solid_color;
-      } else{
+      } else {
         return '#7E879D';
       }
-    } else{
-        return '#CBD5E5';
+    } else {
+      return '#CBD5E5';
     }
   }
 
-  get toEnabled(){
-    if(this.fromLocation || (this.isDeclinable && this.forLater && this.isStaff)){
+  get toEnabled() {
+    if (this.fromLocation || (this.isDeclinable && this.forLater && this.isStaff)) {
       return true;
-    } else{
+    } else {
       return false;
     }
   }
@@ -119,35 +111,35 @@ export class HallpassFormComponent implements OnInit {
       return 'From where?';
     } else if (this.formState === 'to') {
       return 'To where?';
-    } else if(this.formState === 'restrictedTarget'){
+    } else if (this.formState === 'restrictedTarget') {
       return 'Send Pass Request To?';
-    } else if(this.formState === 'restrictedMessage'){
+    } else if (this.formState === 'restrictedMessage') {
       return 'Message';
-    } else if(this.formState === 'datetime'){
+    } else if (this.formState === 'datetime') {
       return 'Select Date & Time';
-    } else if(this.formState === 'students'){
+    } else if (this.formState === 'students') {
       return 'Select student(s)';
     }
   }
 
-  get dividerIcon(){
-    if(this.formState === 'from' || this.formState === 'to' || this.formState === 'students'){
+  get dividerIcon() {
+    if (this.formState === 'from' || this.formState === 'to' || this.formState === 'students') {
       return './assets/Search (White).png';
-    } else if(this.formState === 'restrictedMessage'){
+    } else if (this.formState === 'restrictedMessage') {
       return './assets/Message (White).png';
-    } else if(this.formState === 'datetime'){
-      return './assets/Scheduled Pass (White).png'
+    } else if (this.formState === 'datetime') {
+      return './assets/Scheduled Pass (White).png';
     }
   }
 
-  get dividerGradient(){
-    let colors = '#606981, #CBD5E5'
-    if(this.formState==='datetime'){
+  get dividerGradient() {
+    let colors = '#606981, #CBD5E5';
+    if (this.formState === 'datetime') {
       colors = '#03CF31,#00B476';
-    } else if(this._toProfile){
+    } else if (this._toProfile) {
       colors = this._toProfile.gradient_color;
     }
-    return 'radial-gradient(circle at 98% 97%,' +colors +')';
+    return 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
 
   ngOnInit() {
@@ -156,21 +148,21 @@ export class HallpassFormComponent implements OnInit {
     this.forStaff = this.dialogData['forStaff'];
 
     this.entryState = this.dialogData['entryState'];
-    if(this.entryState){
+    if (this.entryState) {
       this.requestMessage = this.dialogData['originalMessage'];
-      if(this.dialogData['originalToLocation']){
+      if (this.dialogData['originalToLocation']) {
         this.toLocation = this.dialogData['originalToLocation'];
         this._toProfile = this.dialogData['colorProfile'];
         this.to_title = this.toLocation.title;
       }
-      if(this.dialogData['originalFromLocation']){
+      if (this.dialogData['originalFromLocation']) {
         this.fromLocation = this.dialogData['originalFromLocation'];
         this._fromProfile = this.greenProfile;
         this.from_title = this.fromLocation.title;
       }
     }
 
-    this.formState = (this.entryState?this.entryState:(this.forLater?'datetime':(this.forStaff?'students':'from')));
+    this.formState = (this.entryState ? this.entryState : (this.forLater ? 'datetime' : (this.forStaff ? 'students' : 'from')));
 
     this.updateFormHeight();
 
@@ -181,9 +173,9 @@ export class HallpassFormComponent implements OnInit {
     this.dialogRef.updatePosition({top: '225px'});
   }
 
-  updateFormHeight(){
+  updateFormHeight() {
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
-    matDialogConfig.height = this.formState==='datetime'?(this.forStaff?'516px':'562px'):'385px';
+    matDialogConfig.height = this.formState === 'datetime' ? (this.forStaff ? '516px' : '562px') : '385px';
     matDialogConfig.width = '750px';
     this.dialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);
   }
@@ -193,13 +185,13 @@ export class HallpassFormComponent implements OnInit {
   }
 
   setFormState(state) {
-    if(this.entryState){
+    if (this.entryState) {
       this.dialogRef.close({
-          'fromLocation': this.fromLocation,
-          'startTime': this.requestTime,
-          'message': this.requestMessage
-        });
-        return;
+        'fromLocation': this.fromLocation,
+        'startTime': this.requestTime,
+        'message': this.requestMessage
+      });
+      return;
     }
     this.formState = state;
 
@@ -260,7 +252,7 @@ export class HallpassFormComponent implements OnInit {
       this.from_title = event.title;
       this.fromLocation = event;
       this.setFormState('to');
-    } else if(type === 'to'){
+    } else if (type === 'to') {
       this.to_title = event.title;
       this.toLocation = event;
       this.determinePass();
@@ -271,42 +263,42 @@ export class HallpassFormComponent implements OnInit {
     }
   }
 
-  sendRequest(message:string){
+  sendRequest(message: string) {
     this.requestMessage = message;
     this.setFormState('');
     this.determinePass();
   }
 
-  updateTarget(event:any){
+  updateTarget(event: any) {
     this.requestTarget = event;
     this.formState = 'restrictedMessage';
   }
 
   determinePass() {
-    if(this.toLocation.restricted && !this.forStaff){
-      if(this.requestTarget){
-        let templateRequest:Request = new Request('template', null, this.fromLocation, this.toLocation, this.requestMessage, '', 'pending', null, '', this.toIcon, this.requestTarget, this.requestTime, '', null, null, this._toProfile, null, null, 60, null)
+    if (this.toLocation.restricted && !this.forStaff) {
+      if (this.requestTarget) {
+        let templateRequest: Request = new Request('template', null, this.fromLocation, this.toLocation, this.requestMessage, '', 'pending', null, '', this.toIcon, this.requestTarget, this.requestTime, '', null, null, this._toProfile, null, null, 60, null);
         this.dialogRef.close({
           'templatePass': templateRequest,
           'forLater': this.forLater,
           'restricted': true,
           'type': 'request'
-          });
-      } else{
+        });
+      } else {
         this.formState = 'restrictedTarget';
       }
-    } else if(!this.toLocation.restricted && !this.forStaff){
-      let templatePass:HallPass = new HallPass('template', this.user, null, null, null, this.requestTime, null, null, this.fromLocation, this.toLocation, '', '', this.toIcon, this._toProfile, null, '', '')
-        this.dialogRef.close({
-            'templatePass': templatePass,
-            'forLater': this.forLater,
-            'restricted': false,
-            'forStaff': this.forStaff,
-            'selectedStudents': this.selectedStudents,
-            'type': 'hallpass'
-        });
-    }else{
-      if(this.isDeclinable && this.forLater){
+    } else if (!this.toLocation.restricted && !this.forStaff) {
+      let templatePass: HallPass = new HallPass('template', this.user, null, null, null, this.requestTime, null, null, this.fromLocation, this.toLocation, '', '', this.toIcon, this._toProfile, null, '', '');
+      this.dialogRef.close({
+        'templatePass': templatePass,
+        'forLater': this.forLater,
+        'restricted': false,
+        'forStaff': this.forStaff,
+        'selectedStudents': this.selectedStudents,
+        'type': 'hallpass'
+      });
+    } else {
+      if (this.isDeclinable && this.forLater) {
         let templateInvitation: Invitation = new Invitation('template', null, null, this.toLocation, [this.requestTime], this.user, 'pending', this.duration, this._toProfile.gradient_color, this.toIcon, this.travelType, this._toProfile, null, null, null, null);
         this.dialogRef.close({
           'templatePass': templateInvitation,
@@ -316,15 +308,15 @@ export class HallpassFormComponent implements OnInit {
           'selectedStudents': this.selectedStudents,
           'type': 'invitation'
         });
-      } else{
-        let templatePass:HallPass = new HallPass('template', this.user, null, null, null, this.requestTime, null, null, this.fromLocation, this.toLocation, '', '', this.toIcon, this._toProfile, null, '', '')
+      } else {
+        let templatePass: HallPass = new HallPass('template', this.user, null, null, null, this.requestTime, null, null, this.fromLocation, this.toLocation, '', '', this.toIcon, this._toProfile, null, '', '');
         this.dialogRef.close({
-            'templatePass': templatePass,
-            'forLater': this.forLater,
-            'restricted': false,
-            'forStaff': this.forStaff,
-            'selectedStudents': this.selectedStudents,
-            'type': 'hallpass'
+          'templatePass': templatePass,
+          'forLater': this.forLater,
+          'restricted': false,
+          'forStaff': this.forStaff,
+          'selectedStudents': this.selectedStudents,
+          'type': 'hallpass'
         });
       }
     }
