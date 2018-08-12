@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import * as Fuse from 'fuse.js';
 import 'rxjs/add/observable/empty';
 import { Observable } from 'rxjs/Observable';
 import { map, switchMap } from 'rxjs/operators';
@@ -40,6 +41,7 @@ class State<ModelType extends BaseModel> {
   filtered_passes: ModelType[];
   pass_lookup: { [id: number]: ModelType };
   sort = '-created';
+  filter_query = '';
 
   constructor(passes: ModelType[]) {
     this.passes = Array.from(passes);
@@ -60,6 +62,14 @@ class State<ModelType extends BaseModel> {
     }
 
     this.pass_lookup[item.id] = item;
+  }
+
+  addOrUpdateItem(item: ModelType) {
+    if (this.pass_lookup[item.id]) {
+      this.updateItem(item);
+    } else {
+      this.addItem(item);
+    }
   }
 
   removeItem(item: ModelType) {
@@ -140,7 +150,30 @@ function filterHallPasses(state: State<HallPass>): State<HallPass> {
     }
   }
 
-  state.filtered_passes = state.passes;
+  if (state.filter_query && state.filter_query !== '') {
+
+    const options = {
+      shouldSort: true,
+      threshold: 0.6,
+      location: 0,
+      distance: 100,
+      maxPatternLength: 32,
+      minMatchCharLength: 1,
+      keys: [
+        'student.display_name',
+        'student.first_name',
+        'student.last_name',
+        'destination.title',
+      ]
+    };
+
+    const fuse = new Fuse(state.passes, options);
+    state.filtered_passes = fuse.search(state.filter_query);
+
+  } else {
+    state.filtered_passes = state.passes;
+  }
+
 
   return state;
 }
@@ -184,7 +217,7 @@ class AddHallPass extends BaseEventHandler<HallPass> {
     for (const rawItem of dataArray) {
       const pass = HallPass.fromJSON(rawItem);
       if (!this.filter || this.filter(pass)) {
-        state.addItem(pass);
+        state.addOrUpdateItem(pass);
       }
     }
     return state;
@@ -217,7 +250,7 @@ class AddInvitation extends BaseEventHandler<Invitation> {
     for (const rawItem of dataArray) {
       const pass = Invitation.fromJSON(rawItem);
       if (!this.filter || this.filter(pass)) {
-        state.addItem(pass);
+        state.addOrUpdateItem(pass);
       }
     }
     return state;
@@ -235,7 +268,7 @@ class AddRequest extends BaseEventHandler<Request> {
     for (const rawItem of dataArray) {
       const pass = Request.fromJSON(rawItem);
       if (!this.filter || this.filter(pass)) {
-        state.addItem(pass);
+        state.addOrUpdateItem(pass);
       }
     }
     return state;
@@ -260,6 +293,12 @@ function makePollingEventHandler<ModelType extends BaseModel>(handlers: EventHan
 }
 
 
+export function mergeObject<T>(initial: T, updates: Observable<Partial<T>>): Observable<T> {
+  // @ts-ignore
+  return updates.scan((current, update) => Object.assign({}, current, update), initial);
+}
+
+
 /*
 ~Active, ~Future, ~Expired based on User
 ~Active based on optional sort and search
@@ -271,6 +310,17 @@ and for student, the active pass/requests works a tad different bc it replaces t
 */
 
 export type PassFilterType = { type: 'issuer', value: User } | { type: 'student', value: User } | { type: 'location', value: Location };
+
+export type RequestFilterType =
+  { type: 'issuer', value: User }
+  | { type: 'student', value: User }
+  | { type: 'destination', value: Location };
+
+export interface HallPassFilter {
+  sort: string;
+  search_query: string;
+}
+
 
 @Injectable({
   providedIn: 'root'
@@ -334,15 +384,16 @@ export class LiveDataService {
       );
   }
 
-  watchHallPassesFromLocation(sortingEvents: Observable<string>, filter: Location): Observable<HallPass[]> {
+  watchHallPassesFromLocation(sortingEvents: Observable<HallPassFilter>, filter: Location): Observable<HallPass[]> {
 
-    return this.watch<HallPass, string>({
+    return this.watch<HallPass, HallPassFilter>({
       externalEvents: sortingEvents,
       eventNamespace: 'hall_pass',
       initialUrl: `api/methacton/v1/hall_passes?limit=20&origin=${filter.id}`,
       decoder: data => HallPass.fromJSON(data),
-      handleExternalEvent: (s: State<HallPass>, e: string) => {
-        s.sort = e;
+      handleExternalEvent: (s: State<HallPass>, e: HallPassFilter) => {
+        s.sort = e.sort;
+        s.filter_query = e.search_query;
         return s;
       },
       handlePollingEvent: makePollingEventHandler([
@@ -352,15 +403,16 @@ export class LiveDataService {
     });
   }
 
-  watchHallPassesToLocation(sortingEvents: Observable<string>, filter: Location): Observable<HallPass[]> {
+  watchHallPassesToLocation(sortingEvents: Observable<HallPassFilter>, filter: Location): Observable<HallPass[]> {
 
-    return this.watch<HallPass, string>({
+    return this.watch<HallPass, HallPassFilter>({
       externalEvents: sortingEvents,
       eventNamespace: 'hall_pass',
       initialUrl: `api/methacton/v1/hall_passes?limit=20&destination=${filter.id}`,
       decoder: data => HallPass.fromJSON(data),
-      handleExternalEvent: (s: State<HallPass>, e: string) => {
-        s.sort = e;
+      handleExternalEvent: (s: State<HallPass>, e: HallPassFilter) => {
+        s.sort = e.sort;
+        s.filter_query = e.search_query;
         return s;
       },
       handlePollingEvent: makePollingEventHandler([
@@ -370,7 +422,7 @@ export class LiveDataService {
     });
   }
 
-  watchActiveHallPasses(sortingEvents: Observable<string>, filter?: PassFilterType): Observable<HallPass[]> {
+  watchActiveHallPasses(sortingEvents: Observable<HallPassFilter>, filter?: PassFilterType): Observable<HallPass[]> {
     let queryFilter = '';
     let filterFunc = (pass: HallPass) => true;
 
@@ -392,13 +444,14 @@ export class LiveDataService {
       }
     }
 
-    return this.watch<HallPass, string>({
+    return this.watch<HallPass, HallPassFilter>({
       externalEvents: sortingEvents,
       eventNamespace: 'hall_pass',
       initialUrl: `api/methacton/v1/hall_passes?limit=20&active=true${queryFilter}`,
       decoder: data => HallPass.fromJSON(data),
-      handleExternalEvent: (s: State<HallPass>, e: string) => {
-        s.sort = e;
+      handleExternalEvent: (s: State<HallPass>, e: HallPassFilter) => {
+        s.sort = e.sort;
+        s.filter_query = e.search_query;
         return s;
       },
       handlePollingEvent: makePollingEventHandler([
@@ -481,20 +534,26 @@ export class LiveDataService {
   }
 
 
-  watchInvitations(filter: User | Location = null): Observable<Invitation[]> {
+  watchInvitations(filter: RequestFilterType): Observable<Invitation[]> {
     let queryFilter = '';
     let filterFunc = (pass: Invitation) => true;
 
-    if (filter instanceof User) {
-      queryFilter = `?student=${filter.id}`;
-      filterFunc = (pass: Invitation) => pass.student.id === filter.id;
+    if (filter) {
+      if (filter.type === 'issuer') {
+        queryFilter = `&issuer=${filter.value.id}`;
+        filterFunc = (pass: Invitation) => pass.issuer.id === filter.value.id;
+      }
 
-    } else if (filter instanceof Location) {
-      queryFilter = `?destination=${filter.id}`;
-      filterFunc = (pass: Invitation) => pass.destination.id === filter.id;
+      if (filter.type === 'student') {
+        queryFilter = `&student=${filter.value.id}`;
+        filterFunc = (pass: Invitation) => pass.student.id === filter.value.id;
 
-    } else if (filter !== null) {
-      throw Error(`Unknown filter arg: ${filter}`);
+      }
+      if (filter.type === 'destination') {
+        queryFilter = `&destination=${filter.value.id}`;
+        filterFunc = (pass: Invitation) => pass.destination.id === filter.value.id;
+
+      }
     }
 
     return this.watch<Invitation, string>({

@@ -1,12 +1,11 @@
 import { Component, ElementRef, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
-
-import 'rxjs/operator/switchMap';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Util } from '../../Util';
 import { DataService } from '../data-service';
-import { LiveDataService } from '../live-data.service';
+import { HallPassFilter, LiveDataService, mergeObject } from '../live-data.service';
 import { LoadingService } from '../loading.service';
 import { BasicPassLikeProvider, PassLikeProvider } from '../models';
 import { Location } from '../models/Location';
@@ -15,14 +14,18 @@ import { User } from '../models/User';
 import { TeacherDropdownComponent } from '../teacher-dropdown/teacher-dropdown.component';
 
 class ActivePassProvider implements PassLikeProvider {
-  constructor(private liveDataService: LiveDataService, private location$: Observable<Location>) {
+  constructor(private liveDataService: LiveDataService, private location$: Observable<Location>, private search$: Observable<string>) {
   }
 
   watch(sort: Observable<string>) {
-    const sortReplay = new ReplaySubject<string>(1);
-    sort.subscribe(sortReplay);
+    const sort$ = sort.map(s => ({sort: s}));
+    const search$ = this.search$.map(s => ({search_query: s}));
+    const merged$ = mergeObject({sort: '-created', search_query: ''}, Observable.merge(sort$, search$));
 
-    return this.location$.switchMap(location => this.liveDataService.watchActiveHallPasses(sortReplay, {
+    const mergedReplay = new ReplaySubject<HallPassFilter>(1);
+    merged$.subscribe(mergedReplay);
+
+    return this.location$.switchMap(location => this.liveDataService.watchActiveHallPasses(mergedReplay, {
       type: 'location',
       value: location
     }));
@@ -30,26 +33,34 @@ class ActivePassProvider implements PassLikeProvider {
 }
 
 class OriginPassProvider implements PassLikeProvider {
-  constructor(private liveDataService: LiveDataService, private location$: Observable<Location>) {
+  constructor(private liveDataService: LiveDataService, private location$: Observable<Location>, private search$: Observable<string>) {
   }
 
   watch(sort: Observable<string>) {
-    const sortReplay = new ReplaySubject<string>(1);
-    sort.subscribe(sortReplay);
+    const sort$ = sort.map(s => ({sort: s}));
+    const search$ = this.search$.map(s => ({search_query: s}));
+    const merged$ = mergeObject({sort: '-created', search_query: ''}, Observable.merge(sort$, search$));
 
-    return this.location$.switchMap(location => this.liveDataService.watchHallPassesFromLocation(sortReplay, location));
+    const mergedReplay = new ReplaySubject<HallPassFilter>(1);
+    merged$.subscribe(mergedReplay);
+
+    return this.location$.switchMap(location => this.liveDataService.watchHallPassesFromLocation(mergedReplay, location));
   }
 }
 
 class DestinationPassProvider implements PassLikeProvider {
-  constructor(private liveDataService: LiveDataService, private location$: Observable<Location>) {
+  constructor(private liveDataService: LiveDataService, private location$: Observable<Location>, private search$: Observable<string>) {
   }
 
   watch(sort: Observable<string>) {
-    const sortReplay = new ReplaySubject<string>(1);
-    sort.subscribe(sortReplay);
+    const sort$ = sort.map(s => ({sort: s}));
+    const search$ = this.search$.map(s => ({search_query: s}));
+    const merged$ = mergeObject({sort: '-created', search_query: ''}, Observable.merge(sort$, search$));
 
-    return this.location$.switchMap(location => this.liveDataService.watchHallPassesToLocation(sortReplay, location));
+    const mergedReplay = new ReplaySubject<HallPassFilter>(1);
+    merged$.subscribe(mergedReplay);
+
+    return this.location$.switchMap(location => this.liveDataService.watchHallPassesToLocation(mergedReplay, location));
   }
 }
 
@@ -78,6 +89,9 @@ export class MyRoomComponent implements OnInit {
   optionsOpen = false;
   canView = false;
   userLoaded: boolean = false;
+
+  searchQuery$ = new BehaviorSubject('');
+
   selectedLocation$ = new ReplaySubject<Location>(1);
 
   constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService,
@@ -85,9 +99,9 @@ export class MyRoomComponent implements OnInit {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
 
-    this.activePasses = new ActivePassProvider(liveDataService, this.selectedLocation$);
-    this.originPasses = new OriginPassProvider(liveDataService, this.selectedLocation$);
-    this.destinationPasses = new DestinationPassProvider(liveDataService, this.selectedLocation$);
+    this.activePasses = new ActivePassProvider(liveDataService, this.selectedLocation$, this.searchQuery$);
+    this.originPasses = new OriginPassProvider(liveDataService, this.selectedLocation$, this.searchQuery$);
+    this.destinationPasses = new DestinationPassProvider(liveDataService, this.selectedLocation$, this.searchQuery$);
 
   }
 
@@ -141,7 +155,7 @@ export class MyRoomComponent implements OnInit {
   }
 
   onSearch(search: string) {
-    this.dataService.updateMRSearch(search);
+    this.searchQuery$.next(search);
   }
 
   showOptions(evt: MouseEvent) {

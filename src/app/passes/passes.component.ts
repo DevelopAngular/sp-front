@@ -1,11 +1,11 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { MatDialog } from '../../../node_modules/@angular/material';
-import { Observable } from '../../../node_modules/rxjs';
+import { BehaviorSubject, Observable } from '../../../node_modules/rxjs';
 import { DataService } from '../data-service';
 import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
-import { LiveDataService } from '../live-data.service';
+import { HallPassFilter, LiveDataService, mergeObject } from '../live-data.service';
 import { LoadingService } from '../loading.service';
 import { BasicPassLikeProvider, PassLikeProvider } from '../models';
 import { HallPass } from '../models/HallPass';
@@ -39,10 +39,14 @@ class ActivePassProvider implements PassLikeProvider {
   }
 
   watch(sort: Observable<string>) {
-    const sortReplay = new ReplaySubject<string>(1);
-    sort.subscribe(sortReplay);
 
-    return this.user$.switchMap(user => this.liveDataService.watchActiveHallPasses(sortReplay,
+    const sort$ = sort.map(s => ({sort: s}));
+    const merged$ = mergeObject({sort: '-created', search_query: ''}, Observable.merge(sort$));
+
+    const mergedReplay = new ReplaySubject<HallPassFilter>(1);
+    merged$.subscribe(mergedReplay);
+
+    return this.user$.switchMap(user => this.liveDataService.watchActiveHallPasses(mergedReplay,
       user.roles.includes('hallpass_student')
         ? {type: 'student', value: user}
         : {type: 'issuer', value: user}));
