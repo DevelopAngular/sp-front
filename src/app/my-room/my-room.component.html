@@ -1,32 +1,34 @@
-<div *ngIf="isStaff && selectedLocation" class="my-room-wrapper" [style.width]="calendarToggled?'900px':'550px'">
-  <div class="my-room-left">
-    <div class="my-room-header">
-      <div class="selected-teacher" (click)="showOptions($event)">
-        {{ roomOptions?selectedLocation.title:"" }}
-        <mat-icon *ngIf="!optionsOpen && showArrow" class="drop-arrow">arrow_drop_down</mat-icon>
-        <mat-icon *ngIf="optionsOpen && showArrow" class="drop-arrow">arrow_drop_up</mat-icon>
+<div *ngIf="userLoaded">
+  <div *ngIf="isStaff && selectedLocation && userLoaded" class="my-room-wrapper" [style.width]="calendarToggled?'900px':'550px'">
+    <div class="my-room-left">
+      <div class="my-room-header">
+        <div class="selected-teacher" (click)="showOptions($event)">
+          {{ roomOptions?selectedLocation.title:"" }}
+          <mat-icon *ngIf="!optionsOpen && showArrow" class="drop-arrow">arrow_drop_down</mat-icon>
+          <mat-icon *ngIf="optionsOpen && showArrow" class="drop-arrow">arrow_drop_up</mat-icon>
+        </div>
+        <input
+          class="input"
+          [placeholder]="'Search passes'"
+          #searchInput
+          [value]="inputValue"
+          (input)="onSearch(searchInput.value)"
+        >
+        <div class="calendar-wrapper" (click)="calendarToggled=!calendarToggled" [style.background-color]="(calendarToggled?'#E4EBFF':'transparent')">
+          <img class="calendar-icon" [src]="'./assets/Calendar (Blue).png' | resolveAsset">
+        </div>
+        <div class="date-display">{{ dateDisplay }}</div>
       </div>
-      <input
-        class="input"
-        [placeholder]="'Search passes'"
-        #searchInput
-        [value]="inputValue"
-        (input)="onSearch(searchInput.value)"
-      >
-      <div class="calendar-wrapper" (click)="calendarToggled=!calendarToggled" [style.background-color]="(calendarToggled?'#E4EBFF':'transparent')">
-        <img class="calendar-icon" [src]="'./assets/Calendar (Blue).png' | resolveAsset">
+      <div class="my-room-body">
+        <app-pass-collection [isActive]="true" [forStaff]="isStaff" [style.width]="'550px'" [passProvider]="activePasses" [title]="'Active Passes'" [icon]="'./assets/Hallway (Blue).png'" [columns]="4"></app-pass-collection>
+        <app-pass-collection [forStaff]="isStaff" [style.width]="'550px'" [passProvider]="originPasses" [title]="'Passes from ' +selectedLocation.title" [icon]="'./assets/Arrow Reverse (Blue).png'" [columns]="4"></app-pass-collection>
+        <app-pass-collection [forStaff]="isStaff" [style.width]="'550px'" [passProvider]="destinationPasses" [title]="'Passes to ' +selectedLocation.title" [icon]="'./assets/Arrow (Blue).png'" [columns]="4"></app-pass-collection>
       </div>
-      <div class="date-display">{{ dateDisplay }}</div>
     </div>
-    <div class="my-room-body">
-      <app-pass-collection [isActive]="true" [forStaff]="isStaff" [style.width]="'550px'" [passProvider]="activePasses" [title]="'Active Passes'" [icon]="'./assets/Hallway (Blue).png'" [columns]="4"></app-pass-collection>
-      <app-pass-collection [forStaff]="isStaff" [style.width]="'550px'" [passProvider]="originPasses" [title]="'Passes from'" [icon]="'./assets/Arrow (Blue).png'" [columns]="4"></app-pass-collection>
-      <app-pass-collection [forStaff]="isStaff" [style.width]="'550px'" [passProvider]="destinationPasses" [title]="'Passes to'" [icon]="'./assets/Arrow Reverse (Blue).png'" [columns]="4"></app-pass-collection>
+    <div *ngIf="calendarToggled" class="my-room-right">
+      <app-date-time-picker [_selectedMoment]="_searchDate" [min]="min" [showTime]="false" (onUpdate)="searchDate = $event"></app-date-time-picker>
     </div>
   </div>
-  <div *ngIf="calendarToggled" class="my-room-right">
-    <app-date-time-picker [_selectedMoment]="_searchDate" [min]="min" [showTime]="false" (onUpdate)="searchDate = $event"></app-date-time-picker>
-  </div>
+  <h3 *ngIf="isStaff && !selectedLocation && userLoaded">You don't have any rooms</h3>
+  <h3 *ngIf="!isStaff && userLoaded">You don't have access to this page</h3>
 </div>
-<h3 *ngIf="isStaff && !selectedLocation">You don't have any rooms</h3>
-<h3 *ngIf="!isStaff">You don't have access to this page</h3>

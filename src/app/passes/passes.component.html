@@ -1,4 +1,4 @@
-<div class="passes-wrapper">
+<div class="passes-wrapper" *ngIf="user">
   <div class="main-page-left">
     <div class="current-pass">
       <div *ngIf="!!currentPass || !!currentRequest; else newPass;" class="center">
@@ -36,7 +36,6 @@
       <app-pass-collection [fromPast]="true" [forStaff]="isStaff" [style.width]="'400px'" [passProvider]="pastPasses" [title]="'Expired Passes'" [icon]="'./assets/Expired Passes (Blue).png'" [columns]="3"></app-pass-collection>
     </div>
   </div>
-
   <div class="main-page-right" *ngIf="dataService.inboxState | async">
     <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'22pt'">
       <div class="inbox-content">

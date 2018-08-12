@@ -1,4 +1,4 @@
-<app-pass-card-template [hasDivider]="(forStaff || forMonitor || (!forStaff && !isActive)) && !forInput" [selectedStudents]="selectedStudents" [forStaff]="forStaff" [pass]="pass" [rightJustify]="(fromPast || forFuture)?'center':'flex-end'" [closeIcon]="(forMonitor?'./assets/Report (White).png':'./assets/Trash (Transparent).png')" [hasClose]="(!isActive || forMonitor) || fromPast" (onCancel)="cancelEdit($event)">
+<app-pass-card-template [hasDivider]="(forStaff || forMonitor || (!forStaff && !isActive)) && !forInput" [selectedStudents]="selectedStudents" [forStaff]="forStaff" [pass]="pass" [rightJustify]="(fromPast || forFuture)?'center':'flex-end'" [closeIcon]="(forMonitor?'./assets/Report (White).png':'./assets/Decline (Transparent).png')" [hasClose]="(!isActive || forMonitor) || fromPast" (onCancel)="cancelEdit($event)">
   
   <div class="card-subtitle" *ngIf="fromPast || forFuture">
     {{ formatDateTime(pass.start_time) }}
@@ -30,7 +30,7 @@
         </app-card-button>
       </div>
       <div *ngIf="fromPast || forFuture && !forInput" class="card-body-right">
-        {{ forFuture?'Pass Auto Starts': getDuration() +' - Total Time' }}
+        <span style="font-weight: bold">{{ forFuture?'Pass Auto Starts': getDuration() +' - Total Time' }}</span>
       </div>
     </ng-template>
   </div>

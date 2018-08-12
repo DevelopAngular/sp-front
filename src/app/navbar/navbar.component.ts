@@ -22,7 +22,7 @@ export class NavbarComponent implements OnInit {
   user: User;
 
   tab: string = 'passes';
-  inboxVisibility: boolean = false;
+  inboxVisibility: boolean = true;
 
   navbarEnabled = false;
 
@@ -64,7 +64,7 @@ export class NavbarComponent implements OnInit {
         this._zone.run(() => {
           this.user = user;
           this.isStaff = user.roles.includes('edit_all_hallpass');
-          this.dataService.updateInbox(this.isStaff);
+          this.dataService.updateInbox(true);
         });
       });
   }

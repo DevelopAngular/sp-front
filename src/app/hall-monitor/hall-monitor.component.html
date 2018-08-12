@@ -1,24 +1,26 @@
-<div *ngIf="canView" class="hall-monitor-wrapper">
-  <div class="hall-monitor-top">
-    <input
-      class="input"
-      [placeholder]="'Search passes'"
-      #searchInput
-      [value]="inputValue"
-      (input)="onSearch(searchInput.value)"
-    >
-    <app-gradient-button
-      [gradient]="'#DA2370,#FB434A'"
-      [hoverColor]="'#DA2370'"
-      [minWidth]="'185px'"
-      [minHeight]="'50px'"
-      [fontSize]="'14px'"
-      [leftIcon]="'./assets/Report (White).png'"
-      (buttonClick)="openReportForm()"
-    >Report Student(s)</app-gradient-button>
+<div *ngIf="user">
+  <div *ngIf="canView" class="hall-monitor-wrapper">
+    <div class="hall-monitor-top">
+      <input
+        class="input"
+        [placeholder]="'Search passes'"
+        #searchInput
+        [value]="inputValue"
+        (input)="onSearch(searchInput.value)"
+      >
+      <app-gradient-button
+        [gradient]="'#DA2370,#FB434A'"
+        [hoverColor]="'#DA2370'"
+        [minWidth]="'185px'"
+        [minHeight]="'50px'"
+        [fontSize]="'14px'"
+        [leftIcon]="'./assets/Report (White).png'"
+        (buttonClick)="openReportForm()"
+      >Report Student(s)</app-gradient-button>
+    </div>
+    <div class="hall-monitor-bottom">
+      <app-pass-collection [hasSort]="true" [isActive]="true" [forStaff]="isStaff" [forMonitor]="true" [style.width]="'600px'" [passProvider]="activePassProvider" [title]="'Active Passes'" [icon]="'./assets/Hallway (Blue).png'" [columns]="4"></app-pass-collection>
+    </div>
   </div>
-  <div class="hall-monitor-bottom">
-    <app-pass-collection [hasSort]="true" [isActive]="true" [forStaff]="isStaff" [forMonitor]="true" [style.width]="'600px'" [passProvider]="activePassProvider" [title]="'Active Passes'" [icon]="'./assets/Hallway (Blue).png'" [columns]="4"></app-pass-collection>
-  </div>
+  <h3 *ngIf="!canView">You don't have access to this page.</h3>
 </div>
-<h3 *ngIf="!canView">You don't have access to this page.</h3>

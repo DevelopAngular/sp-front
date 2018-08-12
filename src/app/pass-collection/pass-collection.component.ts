@@ -29,7 +29,7 @@ export class SortOption {
 
 export class PassCollectionComponent implements OnInit {
 
-  @Input() displayState = 'list';
+  @Input() displayState = 'grid';
   @Input() title: string;
   @Input() icon: string;
   @Input() columns = 3;

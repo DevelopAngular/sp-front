@@ -77,7 +77,7 @@ export class MyRoomComponent implements OnInit {
   selectedLocation: Location;
   optionsOpen = false;
   canView = false;
-
+  userLoaded: boolean = false;
   selectedLocation$ = new ReplaySubject<Location>(1);
 
   constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService,
@@ -134,6 +134,7 @@ export class MyRoomComponent implements OnInit {
             this.roomOptions = locations;
             this.selectedLocation = (this.roomOptions.length > 0) ? this.roomOptions[0] : null;
             this.selectedLocation$.next(this.selectedLocation);
+            this.userLoaded = true;
           });
         });
       });
