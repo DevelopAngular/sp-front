@@ -231,7 +231,7 @@ class RemoveHallPassWithDelay extends BaseEventHandler<HallPass> {
     const pass = HallPass.fromJSON(data);
     state.updateItem(pass);
 
-    context.postDelayed(60 * 1000, (s1: State<HallPass>) => {
+    context.postDelayed(5 * 1000, (s1: State<HallPass>) => {
       s1.removeItem(pass);
       return s1;
     });
