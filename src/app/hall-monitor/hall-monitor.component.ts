@@ -1,8 +1,9 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { DataService } from '../data-service';
-import { LiveDataService } from '../live-data.service';
+import { LiveDataService, mergeObject } from '../live-data.service';
 import { LoadingService } from '../loading.service';
 import { BasicPassLikeProvider, PassLikeProvider } from '../models';
 import { testPasses } from '../models/mock_data';
@@ -15,11 +16,17 @@ function isUserStaff(user: User): boolean {
 
 class ActivePassProvider implements PassLikeProvider {
 
-  constructor(private liveDataService: LiveDataService) {
+  constructor(private liveDataService: LiveDataService, private searchQueries: Observable<string>) {
   }
 
   watch(sort: Observable<string>) {
-    return this.liveDataService.watchActiveHallPasses(sort);
+
+    const sort$ = sort.map(s => ({sort: s}));
+    const search$ = this.searchQueries.map(s => ({search_query: s}));
+
+    const merged$ = mergeObject({sort: '-created', search_query: ''}, Observable.merge(sort$, search$));
+
+    return this.liveDataService.watchActiveHallPasses(merged$);
   }
 }
 
@@ -38,9 +45,11 @@ export class HallMonitorComponent implements OnInit {
   isStaff = false;
   canView = false;
 
+  searchQuery$ = new BehaviorSubject('');
+
   constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService,
               public dialog: MatDialog, private liveDataService: LiveDataService) {
-    this.activePassProvider = new ActivePassProvider(this.liveDataService);
+    this.activePassProvider = new ActivePassProvider(this.liveDataService, this.searchQuery$);
     // this.activePassProvider = new BasicPassLikeProvider(testPasses);
   }
 
@@ -70,7 +79,7 @@ export class HallMonitorComponent implements OnInit {
   }
 
   onSearch(search: string) {
-    this.dataService.updateHMSearch(search);
+    this.searchQuery$.next(search);
   }
 
 }
