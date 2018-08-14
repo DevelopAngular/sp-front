@@ -9,7 +9,7 @@ import { Component, EventEmitter, OnInit, Output , Input} from '@angular/core';
 export class DurationPickerComponent implements OnInit {
 
   @Input()
-  minDuration:number = 3;
+  minDuration:number = 1;
    
   @Input()
   maxDuration:number = 15;
