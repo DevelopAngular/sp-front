@@ -136,6 +136,7 @@ function filterHallPasses(state: State<HallPass>): State<HallPass> {
     const sortFns = {
       'created': (a: HallPass, b: HallPass) => (+a.created) - (+b.created),
       'expiration_time': (a: HallPass, b: HallPass) => (+a.expiration_time) - (+b.expiration_time),
+      'start_time': (a: HallPass, b: HallPass) => (+a.start_time) - (+b.start_time),
       'destination_name': (a: HallPass, b: HallPass) => compareString(a.destination.title, b.destination.title),
       'student_name': (a: HallPass, b: HallPass) => compareString(a.student.display_name, b.student.display_name),
     };
@@ -469,7 +470,10 @@ export class LiveDataService {
         new AddItem(['hall_pass.create'], HallPass.fromJSON, (pass) => filterFunc(pass) && pass.start_time > new Date()),
         new RemoveItem(['hall_pass.start'], HallPass.fromJSON)
       ]),
-      handlePost: filterHallPasses
+      handlePost: (s: State<HallPass>) => {
+        s.sort = 'start_time';
+        return filterHallPasses(s);
+      }
     });
   }
 
@@ -504,7 +508,10 @@ export class LiveDataService {
       handlePollingEvent: makePollingEventHandler([
         new AddItem(['hall_pass.end'], HallPass.fromJSON, filterFunc)
       ]),
-      handlePost: filterHallPasses
+      handlePost: (s: State<HallPass>) => {
+        s.sort = 'start_time';
+        return filterHallPasses(s);
+      }
     });
   }
 
