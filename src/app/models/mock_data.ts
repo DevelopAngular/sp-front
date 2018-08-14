@@ -4,7 +4,6 @@ import { Invitation } from './Invitation';
 import { Location } from './Location';
 import { Request } from './Request';
 import { User } from './User';
-import { LoadingService } from '../loading.service';
 
 function constructTestPasses(student: User, issuer: User, origin: Location, destination: Location, colorProfile: ColorProfile) {
   let testDate = new Date();
@@ -32,7 +31,7 @@ function constructTestPasses(student: User, issuer: User, origin: Location, dest
     new Date(), new Date(), origin,
     destination, 'one_way', '#1893E9,#05B5DE',
     'https://storage.googleapis.com/courier-static/icons/water-fountain.png', colorProfile, new Date(), '', 'testIRequest2');
-  
+
   testDate = new Date();
   testDate.setDate(testDate.getDate() + 1);
   const testPass4 = new HallPass('testPass4', student, issuer,
@@ -59,7 +58,7 @@ function constructTestRequests(student: User, issuer: User, origin: Location, de
     issuer, testDate, declinedMessage,
     true, null, colorProfile, new Date(), new Date(), 600, new Date());
   const testRequest3 = new Request('testRequest3', student, origin, destination, attachmentMessage,
-  'round_trip', 'pending', null, '#00C0C7,#0B9FC1', 'https://storage.googleapis.com/courier-static/icons/library.png',
+    'round_trip', 'pending', null, '#00C0C7,#0B9FC1', 'https://storage.googleapis.com/courier-static/icons/library.png',
     issuer, testDate, declinedMessage,
     true, null, colorProfile, new Date(), new Date(), 600, new Date());
 
@@ -86,8 +85,8 @@ function constructTestInvitations(student: User, issuer: User, origin: Location,
 
 export const testStudent = new User('testStudent', new Date(), new Date(), 'Kyle', 'Cook', 'Kyle Cook', 'mail@mail.com', []);
 export const testIssuer = new User('141', new Date(), new Date(), 'Donald', 'Sawyer', 'Don Sawyer', 'mail@mail.com', []);
-export const testOrigin = new Location('testOrigin', 'Ladson', 'MHS', 'C123', 'classroom', false, [], [], [], 15, false);
-export const testDestination = new Location('testDestination', 'Water Fountain', 'MHS', 'WF', '', false, [],
+export const testOrigin = new Location('testOrigin', 'Ladson', 'MHS', 'C123', 'classroom', false, false, [], [], [], 15, false);
+export const testDestination = new Location('testDestination', 'Water Fountain', 'MHS', 'WF', '', false, false, [],
   ['round_trip', 'one_way'], [], 15, false);
 export const testColorProfile = new ColorProfile('testColorProfile', 'Light-blue', '#0B9FC1,#00C0C7', '#07ABC3',
   '#11CFE5', '#0B9FC1', '#18EEF7');
