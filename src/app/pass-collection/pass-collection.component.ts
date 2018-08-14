@@ -32,7 +32,7 @@ export class PassCollectionComponent implements OnInit {
   @Input() displayState = 'grid';
   @Input() title: string;
   @Input() icon: string;
-  @Input() emptyMessage: string = 'There are no passes';
+  @Input() emptyMessage = 'There are no passes';
   @Input() columns = 3;
   @Input() fromPast = false;
   @Input() forFuture = false;
@@ -78,6 +78,12 @@ export class PassCollectionComponent implements OnInit {
 
   ngOnInit() {
     this.passProvider.watch(this.sort$.asObservable()).subscribe(e => this.currentPasses$.next(e));
+
+    console.log(this.emptyMessage);
+  }
+
+  getEmptyMessage() {
+    return this.emptyMessage;
   }
 
   showPass(pass: PassLike) {
