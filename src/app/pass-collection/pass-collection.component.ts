@@ -78,8 +78,6 @@ export class PassCollectionComponent implements OnInit {
 
   ngOnInit() {
     this.passProvider.watch(this.sort$.asObservable()).subscribe(e => this.currentPasses$.next(e));
-
-    console.log(this.emptyMessage);
   }
 
   getEmptyMessage() {

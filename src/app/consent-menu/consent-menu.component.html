@@ -1,9 +1,6 @@
 <div class="pointer-wrapper"><div class="pointer"></div></div>
 <div class="consent-wrapper">
   <div class="consent-header">{{ header }}</div>
-  <div class="divider"></div>
-  <div class="option-wrapper">
-    <div class="consent-confirm" (click)="_matDialogRef.close(true)">{{ confirm }}</div>
-    <div class="consent-deny" (click)="_matDialogRef.close(false)">{{ deny }}</div>
-  </div>
+  <div *ngFor="let option of options" [style.color]="getColor(option)" class="option-wrapper" (click)="_matDialogRef.close(option.action)">{{ option.display }}</div>
+  <div [style.margin]="'10px 0 0 0'" [style.color]="'#00F'" class="option-wrapper" (click)="_matDialogRef.close('cancel')">Cancel</div>
 </div>

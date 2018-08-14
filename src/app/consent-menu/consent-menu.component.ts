@@ -1,5 +1,6 @@
 import { Component, Inject, ElementRef, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef  } from '@angular/material';
+import { DomSanitizer } from '../../../node_modules/@angular/platform-browser';
 
 @Component({
   selector: 'app-consent-menu',
@@ -12,13 +13,11 @@ export class ConsentMenuComponent {
   triggerElementRef: ElementRef;
 
   header: string;
-  confirm: string;
-  deny: string;
+  options: any[];
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any[], _matDialogRef: MatDialogRef<ConsentMenuComponent>) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any[], _matDialogRef: MatDialogRef<ConsentMenuComponent>, private sanitizer: DomSanitizer) {
     this.header = data['header'];
-    this.confirm = data['confirm'];
-    this.deny = data['deny'];
+    this.options = data['options'];
     this._matDialogRef = _matDialogRef;
     this.triggerElementRef = data['trigger'];
   }
@@ -26,10 +25,13 @@ export class ConsentMenuComponent {
   ngOnInit(){
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
-    matDialogConfig.position = { left: `${rect.left - 86}px`, top: `${rect.bottom + 15}px` };
-    matDialogConfig.width = '194px';
-    matDialogConfig.height = '100px';
+    matDialogConfig.position = { left: `${rect.left - 122}px`, top: `${rect.bottom + 15}px` };
+    matDialogConfig.width = '275px';
     this._matDialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);
     this._matDialogRef.updatePosition(matDialogConfig.position);
+  }
+
+  getColor(option){
+    return this.sanitizer.bypassSecurityTrustStyle(option.color);
   }
 }

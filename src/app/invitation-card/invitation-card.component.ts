@@ -108,30 +108,40 @@ export class InvitationCardComponent implements OnInit {
   denyInvitation(evt: MouseEvent){
     if(!this.denyOpen){
       const target = new ElementRef(evt.currentTarget);
+      let options = [];
+      if(!this.forStaff){
+        options.push(this.genOption('Decline Pass Request','#F00','decline'));
+      } else{
+        options.push(this.genOption('Delete Pass Request','#F00','delete'));
+      }
       const consentDialog = this.dialog.open(ConsentMenuComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: {'header': 'Are you sure you want to decline this invite?', 'confirm': 'Decline', 'deny': 'Close', 'trigger': target}
+        data: {'header': 'Are you sure you want to deny this pass request you ' +(!this.forStaff?'received':'sent') +'?', 'options': options, 'trigger': target}
       });
   
       consentDialog.afterOpen().subscribe( () =>{
         this.denyOpen = true;
       });
   
-      consentDialog.afterClosed().subscribe(consentData =>{
+      consentDialog.afterClosed().subscribe(action =>{
         this.denyOpen = false;
-        let shouldDeny = consentData==null?false:consentData;
-        if(shouldDeny){
-          let endpoint: string = 'api/methacton/v1/invitations/' +this.invitation.id +'/deny';
-          let body = {
-            'message' : ''
-          }
-          this.http.post(endpoint, body).subscribe((httpData)=>{
-            console.log('[Invitation Denied]: ', httpData);
-            this.dialogRef.close();
-          });
-        }
+        // let shouldDeny = consentData==null?false:consentData;
+        // if(shouldDeny){
+        //   let endpoint: string = 'api/methacton/v1/invitations/' +this.invitation.id +'/deny';
+        //   let body = {
+        //     'message' : ''
+        //   }
+        //   this.http.post(endpoint, body).subscribe((httpData)=>{
+        //     console.log('[Invitation Denied]: ', httpData);
+        //     this.dialogRef.close();
+        //   });
+        // }
       });
     }
+  }
+
+  genOption(display, color, action){
+    return {display: display, color: color, action: action}
   }
 }
