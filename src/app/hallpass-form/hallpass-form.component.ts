@@ -319,7 +319,8 @@ export class HallpassFormComponent implements OnInit {
           'restricted': false,
           'forStaff': this.forStaff,
           'selectedStudents': this.selectedStudents,
-          'type': 'hallpass'
+          'type': 'hallpass',
+          
         });
       }
     }

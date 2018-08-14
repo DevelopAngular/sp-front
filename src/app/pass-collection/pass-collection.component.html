@@ -1,4 +1,4 @@
-<div class="collection-wrapper" *ngIf="emptyMessage || (currentPasses$ | async)">
+<div class="collection-wrapper" *ngIf="(currentPasses$ | async) && (currentPasses$ | async).length>0 || emptyMessage">
   <div class="collection-header">
       <img class="collection-icon" [src]="icon | resolveAsset">
       <div class="collection-title">
