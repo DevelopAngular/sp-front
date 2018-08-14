@@ -260,6 +260,20 @@ class AddInvitation extends BaseEventHandler<Invitation> {
   }
 }
 
+class RemoveInvitationWithDelay extends BaseEventHandler<Invitation> {
+  handle(state: State<Invitation>, context: PollingEventContext<Invitation>, data: any): State<Invitation> | 'skip' {
+    const pass = Invitation.fromJSON(data);
+    state.updateItem(pass);
+
+    context.postDelayed(5 * 1000, (s1: State<Invitation>) => {
+      s1.removeItem(pass);
+      return s1;
+    });
+
+    return state;
+  }
+}
+
 class AddRequest extends BaseEventHandler<Request> {
   constructor(actions: string[], private filter?: (pass: Request) => boolean) {
     super(actions);
@@ -590,7 +604,8 @@ export class LiveDataService {
       decoder: data => Request.fromJSON(data),
       handleExternalEvent: (s: State<Request>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([
-        new AddRequest(['pass_request.create'])
+        new AddRequest(['pass_request.create']),
+        new RemoveRequestWithDelay(['pass_request.accept', 'pass_request.deny', 'pass_request.cancel'])
       ]),
       handlePost: identityFilter
     });
@@ -607,7 +622,8 @@ export class LiveDataService {
       decoder: data => Invitation.fromJSON(data),
       handleExternalEvent: (s: State<Invitation>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([
-        new AddInvitation(['pass_invitation.create'])
+        new AddInvitation(['pass_invitation.create']),
+        new RemoveInvitationWithDelay(['pass_invitation.accept', 'pass_invitation.deny', 'pass_invitation.cancel'])
       ]),
       handlePost: identityFilter
     });
