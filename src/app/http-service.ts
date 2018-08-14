@@ -77,10 +77,10 @@ export class HttpService {
   private loginManual(username: string, password: string) {
     const config = new FormData();
 
-    config.set('client_id', environment.serverConfig.client_id);
-    config.set('grant_type', 'password');
-    config.set('username', username);
-    config.set('password', password);
+    config.append('client_id', environment.serverConfig.client_id);
+    config.append('grant_type', 'password');
+    config.append('username', username);
+    config.append('password', password);
 
     console.log('loginManual()');
 
@@ -97,9 +97,9 @@ export class HttpService {
   private loginGoogleAuth(googleToken: string) {
     const config = new FormData();
 
-    config.set('client_id', environment.serverConfig.client_id);
-    config.set('provider', 'google-auth-token');
-    config.set('token', googleToken);
+    config.append('client_id', environment.serverConfig.client_id);
+    config.append('provider', 'google-auth-token');
+    config.append('token', googleToken);
 
     return this.http.post(makeUrl('auth/by-token'), config)
       .map((data: any) => {
