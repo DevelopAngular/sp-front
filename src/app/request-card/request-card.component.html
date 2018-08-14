@@ -1,5 +1,5 @@
 <app-pass-card-template (onCancel)="cancelRequest($event)" [hasDivider]="((request.status==='pending' || request.status==='accepted') && !forInput && !forStaff) || (request.status!=='pending' && forStaff)" [pass]="request" [closeIcon]="'./assets/Three dots (Transparent).png'">
-  <div class="card-subtitle" *ngIf="fromPast || forFuture">
+  <div class="card-subtitle" *ngIf="request.request_time">
     {{ formatDateTime(request.request_time) }}
   </div>
   <div class="card-body-left">

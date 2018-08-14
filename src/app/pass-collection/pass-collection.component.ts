@@ -29,10 +29,10 @@ export class SortOption {
 
 export class PassCollectionComponent implements OnInit {
 
-  @Input() displayState = 'list';
+  @Input() displayState = 'grid';
   @Input() title: string;
   @Input() icon: string;
-  @Input() emptyMessage = 'There are no passes';
+  @Input() emptyMessage;
   @Input() columns = 3;
   @Input() fromPast = false;
   @Input() forFuture = false;

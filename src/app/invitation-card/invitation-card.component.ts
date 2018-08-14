@@ -93,7 +93,7 @@ export class InvitationCardComponent implements OnInit {
   }
 
   acceptInvitation(){
-    let endpoint: string = 'api/methacton/v1/' +this.invitation.id +'/accept';
+    let endpoint: string = 'api/methacton/v1/invitations/' +this.invitation.id +'/accept';
     let body = {
       'date' : this.invitation.date_choices[0],
       'origin' : this.selectedOrigin
@@ -112,7 +112,7 @@ export class InvitationCardComponent implements OnInit {
       if(!this.forStaff){
         options.push(this.genOption('Decline Pass Request','#F00','decline'));
       } else{
-        options.push(this.genOption('Delete Pass Request','#F00','delete'));
+        options.push(this.genOption('Delete Pass Request','#E32C6','delete'));
       }
       const consentDialog = this.dialog.open(ConsentMenuComponent, {
         panelClass: 'consent-dialog-container',

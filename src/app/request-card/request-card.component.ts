@@ -158,9 +158,9 @@ export class RequestCardComponent implements OnInit {
       if(this.forStaff){
         options.push(this.genOption('Change Pass Duration & Approve', '#3D396B', 'duration'));
         options.push(this.genOption('Add Message & Deny','#3D396B','denyMessage'));
-        options.push(this.genOption('Deny Pass Request','#F00','deny'));
+        options.push(this.genOption('Deny Pass Request','#E32C66','deny'));
       } else{
-        options.push(this.genOption('Delete Pass Request','#F00','delete'));
+        options.push(this.genOption('Delete Pass Request','#E32C66','delete'));
       }
       const cancelDialog = this.dialog.open(ConsentMenuComponent, {
         panelClass: 'consent-dialog-container',
@@ -174,18 +174,29 @@ export class RequestCardComponent implements OnInit {
   
       cancelDialog.afterClosed().subscribe(action =>{
         this.cancelOpen = false;
-        // let shouldDeny = data==null?false:data;
-        // if(shouldDeny){
-        //   if(this.forInput){
-        //     this.dialogRef.close();
-        //   } else{
-        //     let endpoint: string = 'api/methacton/v1/pass_requests/' +this.request.id +'/cancel';
-        //     this.http.post(endpoint).subscribe((data)=>{
-        //       console.log('[Request Canceled]: ', data);
-        //       this.dialogRef.close();
-        //     });
-        //   }
-        // }
+        if(action === 'cancel'){
+          this.dialogRef.close();
+        } else if(action === 'decline'){
+          let endpoint: string = 'api/methacton/v1/pass_requests/' +this.request.id +'/deny';
+          let body = {
+            'message' : ''
+          }
+          this.http.post(endpoint, body).subscribe((httpData)=>{
+            console.log('[Invitation Denied]: ', httpData);
+            this.dialogRef.close();
+          });
+        } else if(action === 'delete'){
+          let endpoint: string = 'api/methacton/v1/pass_requests/' +this.request.id +'/cancel';
+          let body = {
+            'message' : ''
+          }
+          this.http.post(endpoint, body).subscribe((httpData)=>{
+            console.log('[Invitation Cancelled]: ', httpData);
+            this.dialogRef.close();
+          });
+        }else{
+          this.dialogRef.close();
+        }
       });
     }
   }
