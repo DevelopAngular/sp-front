@@ -108,7 +108,10 @@ export class HallpassFormComponent implements OnInit {
 
   get dividerText() {
     if (this.formState === 'from') {
-      return 'From where?';
+      if(this.toCategory)
+        return 'Search for ' + this.toCategory;
+      else
+        return 'From where?';
     } else if (this.formState === 'to') {
       return 'To where?';
     } else if (this.formState === 'restrictedTarget') {
