@@ -13,12 +13,25 @@ import GoogleAuth = gapi.auth2.GoogleAuth;
 
 const STORAGE_KEY = 'google_auth';
 
+export interface DemoLogin {
+  username: string;
+  password: string;
+  invalid?: boolean;
+  type: 'demo-login';
+}
+
+export function isDemoLogin(d: any): d is DemoLogin {
+  return (<DemoLogin>d).type === 'demo-login';
+}
+
+type AuthObject = AuthResponse | DemoLogin;
+
 @Injectable()
 export class GoogleLoginService {
 
   private googleAuthTool = new BehaviorSubject<GoogleAuth>(null);
 
-  private authToken$ = new BehaviorSubject<AuthResponse>(null);
+  private authToken$ = new BehaviorSubject<AuthObject>(null);
 
   public isAuthenticated$ = new ReplaySubject<boolean>(1);
 
@@ -51,11 +64,15 @@ export class GoogleLoginService {
       return true;
     }
 
+    if (isDemoLogin(this.authToken$.value)) {
+      return !!this.authToken$.value.invalid;
+    }
+
     const threshold = 5 * 60 * 1000; // 5 minutes
     return this.authToken$.value.expires_at <= Date.now() + threshold;
   }
 
-  getIdToken(): Observable<string> {
+  getIdToken(): Observable<DemoLogin | string> {
 
     if (this.needNewToken()) {
       this.authToken$.next(null);
@@ -65,7 +82,7 @@ export class GoogleLoginService {
     return this.authToken$
       .filter(t => !!t)
       .take(1)
-      .map(a => a.id_token);
+      .map(a => isDemoLogin(a) ? a : a.id_token);
   }
 
   private updateAuth(auth: AuthResponse) {
@@ -105,6 +122,11 @@ export class GoogleLoginService {
       this.updateAuth(user.getAuthResponse());
     });
 
+  }
+
+  signInDemoMode(username: string, password: string) {
+    this.authToken$.next({username: username, password: password, type: 'demo-login'});
+    this.isAuthenticated$.next(true);
   }
 
 }

@@ -185,9 +185,15 @@
   optionalDependencies:
     parse5 "^5.0.0"
 
-"@angular/platform-browser-dynamic@>=2.4.5", "@angular/platform-browser-dynamic@^6.0.3":
+"@angular/platform-browser-dynamic@>=2.4.5":
   version "6.1.1"
   resolved "https://registry.yarnpkg.com/@angular/platform-browser-dynamic/-/platform-browser-dynamic-6.1.1.tgz#2505f463d29827256944c1d134cd8519e7f954cd"
+  dependencies:
+    tslib "^1.9.0"
+
+"@angular/platform-browser-dynamic@^6.1.2":
+  version "6.1.2"
+  resolved "https://registry.yarnpkg.com/@angular/platform-browser-dynamic/-/platform-browser-dynamic-6.1.2.tgz#76d813e6ab577ce1ffdb31e88d37df9a5177f55c"
   dependencies:
     tslib "^1.9.0"
 

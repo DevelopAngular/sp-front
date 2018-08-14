@@ -9,7 +9,7 @@ import 'rxjs/add/operator/switchMap';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { environment } from '../environments/environment';
-import { GoogleLoginService } from './google-login.service';
+import { GoogleLoginService, isDemoLogin } from './google-login.service';
 
 export const SESSION_STORAGE_KEY = 'accessToken';
 
@@ -74,44 +74,66 @@ export class HttpService {
     return this.accessTokenSubject.filter(e => !!e);
   }
 
+  private loginManual(username: string, password: string) {
+    const config = new FormData();
+
+    config.set('client_id', environment.serverConfig.client_id);
+    config.set('grant_type', 'password');
+    config.set('username', username);
+    config.set('password', password);
+
+    console.log('loginManual()');
+
+    return this.http.post(makeUrl('o/token/'), config)
+      .map((data: any) => {
+        data['expires'] = new Date(new Date() + data['expires_in']);
+
+        ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
+
+        return data as ServerAuth;
+      });
+  }
+
+  private loginGoogleAuth(googleToken: string) {
+    const config = new FormData();
+
+    config.set('client_id', environment.serverConfig.client_id);
+    config.set('provider', 'google-auth-token');
+    config.set('token', googleToken);
+
+    return this.http.post(makeUrl('auth/by-token'), config)
+      .map((data: any) => {
+        data['expires'] = new Date(new Date() + data['expires_in']);
+
+        ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
+
+        return data as ServerAuth;
+      });
+  }
+
   private fetchServerAuth(): Observable<ServerAuth> {
     if (environment.serverConfig.auth_method === 'password') {
       if (environment.production) {
         throw Error('auth_method \'password\' must not be used in production.');
       }
 
-      const config = new FormData();
-
-      config.set('client_id', environment.serverConfig.client_id);
-      config.set('grant_type', 'password');
-      config.set('username', (environment.serverConfig as any).auth_username);
-      config.set('password', (environment.serverConfig as any).auth_password);
-
-      return this.http.post(makeUrl('o/token/'), config)
-        .map((data: any) => {
-          data['expires'] = new Date(new Date() + data['expires_in']);
-
-          ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
-
-          return data as ServerAuth;
-        });
+      return this.loginManual((environment.serverConfig as any).auth_username, (environment.serverConfig as any).auth_password);
     } else {
       return this.loginService.getIdToken()
         .switchMap(googleToken => {
-          const config = new FormData();
+          if (isDemoLogin(googleToken)) {
+            return this.loginManual(googleToken.username, googleToken.password)
+              .catch(err => {
+                if (err.status !== 401) {
+                  throw err;
+                }
 
-          config.set('client_id', environment.serverConfig.client_id);
-          config.set('provider', 'google-auth-token');
-          config.set('token', googleToken);
-
-          return this.http.post(makeUrl('auth/by-token'), config)
-            .map((data: any) => {
-              data['expires'] = new Date(new Date() + data['expires_in']);
-
-              ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
-
-              return data as ServerAuth;
-            });
+                googleToken.invalid = true;
+                return this.fetchServerAuth();
+              });
+          } else {
+            return this.loginGoogleAuth(googleToken);
+          }
         });
     }
   }
@@ -132,6 +154,7 @@ export class HttpService {
         // const google_token = localStorage.getItem(SESSION_STORAGE_KEY); // TODO something more robust
         return this.fetchServerAuth()
           .switchMap((auth: ServerAuth) => {
+            console.log('auth:', auth);
             this.accessTokenSubject.next(auth.access_token);
             return predicate(auth.access_token);
           });
@@ -157,10 +180,10 @@ export class HttpService {
       const formData: FormData = new FormData();
       for (let prop in body) {
         if (body.hasOwnProperty(prop)) {
-          if(body[prop] instanceof Array){
-            for(let sprop of body[prop])
+          if (body[prop] instanceof Array) {
+            for (let sprop of body[prop])
               formData.append(prop, sprop);
-          } else{
+          } else {
             formData.append(prop, body[prop]);
           }
         }
@@ -178,10 +201,10 @@ export class HttpService {
     const formData: FormData = new FormData();
     for (let prop in body) {
       if (body.hasOwnProperty(prop)) {
-        if(body[prop] instanceof Array){
-          for(let sprop of body[prop])
+        if (body[prop] instanceof Array) {
+          for (let sprop of body[prop])
             formData.append(prop, sprop);
-        } else{
+        } else {
           formData.append(prop, body[prop]);
         }
       }
