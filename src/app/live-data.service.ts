@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import * as Fuse from 'fuse.js';
 import 'rxjs/add/observable/empty';
+
+import 'rxjs/add/operator/startWith';
 import { Observable } from 'rxjs/Observable';
 import { map, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
@@ -13,8 +15,6 @@ import { Location } from './models/Location';
 import { Request } from './models/Request';
 import { User } from './models/User';
 import { PollingEvent, PollingService } from './polling-service';
-
-import 'rxjs/add/operator/startWith';
 
 export type Partial<T> = {
   [P in keyof T]?: T[P];
@@ -120,6 +120,7 @@ interface WatchData<ModelType extends BaseModel, ExternalEventType> {
   externalEvents: Observable<ExternalEventType>;
   eventNamespace: string;
   initialUrl: string;
+  rawDecoder?: (any) => ModelType;
   decoder: (any) => ModelType;
   handleExternalEvent: (state: State<ModelType>, e: ExternalEventType) => State<ModelType>;
   handlePollingEvent: PollingEventHandler<ModelType>;
@@ -315,17 +316,6 @@ export function mergeObject<T>(initial: T, updates: Observable<Partial<T>>): Obs
   return updates.scan((current, update) => Object.assign({}, current, update), initial);
 }
 
-
-/*
-~Active, ~Future, ~Expired based on User
-~Active based on optional sort and search
-~Active, ~Past and ~Future based on room
-
-Then Invitations and Requests based on room
-
-and for student, the active pass/requests works a tad different bc it replaces the create
-*/
-
 export type PassFilterType = { type: 'issuer', value: User } | { type: 'student', value: User } | { type: 'location', value: Location };
 
 export type RequestFilterType =
@@ -393,9 +383,12 @@ export class LiveDataService {
       return state;
     };
 
+    const rawDecoder = config.rawDecoder !== undefined ? config.rawDecoder
+      : (json) => json.results.map(raw => config.decoder(raw));
+
     return this.http.get<Paged<any>>(config.initialUrl)
       .pipe(
-        map(json => json.results.map(raw => config.decoder(raw))),
+        map(rawDecoder),
         switchMap(passes => events.scan<Action<ModelType, ExternalEventType>, State<ModelType>>(accumulator, new State(passes))),
         map(state => state.filtered_passes)
       );
@@ -581,6 +574,40 @@ export class LiveDataService {
       handleExternalEvent: (s: State<Invitation>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([
         new AddInvitation(['pass_invitation.create'], filterFunc)
+      ]),
+      handlePost: identityFilter
+    });
+  }
+
+  watchInboxRequests(filter: User): Observable<Request[]> {
+    const isStudent = filter.roles.includes('hallpass_student');
+
+    return this.watch<Request, string>({
+      externalEvents: Observable.empty(),
+      eventNamespace: 'pass_request',
+      initialUrl: `api/methacton/v1/inbox/${isStudent ? 'student' : 'teacher'}`,
+      rawDecoder: (json) => json.pass_requests.map(d => Request.fromJSON(d)),
+      decoder: data => Request.fromJSON(data),
+      handleExternalEvent: (s: State<Request>, e: string) => s,
+      handlePollingEvent: makePollingEventHandler([
+        new AddRequest(['pass_request.create'])
+      ]),
+      handlePost: identityFilter
+    });
+  }
+
+  watchInboxInvitations(filter: User): Observable<Invitation[]> {
+    const isStudent = filter.roles.includes('hallpass_student');
+
+    return this.watch<Invitation, string>({
+      externalEvents: Observable.empty(),
+      eventNamespace: 'pass_invitation',
+      initialUrl: `api/methacton/v1/inbox/${isStudent ? 'student' : 'teacher'}`,
+      rawDecoder: (json) => json.invitations.map(d => Invitation.fromJSON(d)),
+      decoder: data => Invitation.fromJSON(data),
+      handleExternalEvent: (s: State<Invitation>, e: string) => s,
+      handlePollingEvent: makePollingEventHandler([
+        new AddInvitation(['pass_invitation.create'])
       ]),
       handlePost: identityFilter
     });

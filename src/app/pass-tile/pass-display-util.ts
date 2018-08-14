@@ -1,8 +1,8 @@
 import { Util } from '../../Util';
+import { PassLike } from '../models';
 import { HallPass } from '../models/HallPass';
 import { Invitation } from '../models/Invitation';
 import { Request } from '../models/Request';
-import { PassLike } from '../models';
 
 
 export function getFormattedPassDate(pass: PassLike) {
@@ -12,6 +12,10 @@ export function getFormattedPassDate(pass: PassLike) {
     date = pass.date_choices[0];
   } else if (pass instanceof Request) {
     date = pass.request_time;
+    if (!date) {
+      date = pass.created;
+    }
+
   } else if (pass instanceof HallPass) {
     date = pass.start_time;
   } else {

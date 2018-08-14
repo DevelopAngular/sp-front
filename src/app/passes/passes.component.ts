@@ -1,7 +1,7 @@
 import { Component, NgZone, OnInit } from '@angular/core';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { MatDialog } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { DataService } from '../data-service';
 import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
@@ -68,6 +68,30 @@ class PastPassProvider implements PassLikeProvider {
   }
 }
 
+class InboxRequestProvider implements PassLikeProvider {
+  constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
+  }
+
+  watch(sort: Observable<string>) {
+    const sortReplay = new ReplaySubject<string>(1);
+    sort.subscribe(sortReplay);
+
+    return this.user$.switchMap(user => this.liveDataService.watchInboxRequests(user));
+  }
+}
+
+class InboxInvitationProvider implements PassLikeProvider {
+  constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
+  }
+
+  watch(sort: Observable<string>) {
+    const sortReplay = new ReplaySubject<string>(1);
+    sort.subscribe(sortReplay);
+
+    return this.user$.switchMap(user => this.liveDataService.watchInboxInvitations(user));
+  }
+}
+
 
 @Component({
   selector: 'app-passes',
@@ -83,6 +107,9 @@ export class PassesComponent implements OnInit {
   futurePasses: PassLikeProvider;
   activePasses: PassLikeProvider;
   pastPasses: PassLikeProvider;
+
+  sentRequests: PassLikeProvider;
+  receivedRequests: PassLikeProvider;
 
   currentPass: HallPass;
   currentRequest: Request;
@@ -100,6 +127,19 @@ export class PassesComponent implements OnInit {
     this.futurePasses = new FuturePassProvider(this.liveDataService, this.dataService.currentUser);
     this.activePasses = new ActivePassProvider(this.liveDataService, this.dataService.currentUser);
     this.pastPasses = new PastPassProvider(this.liveDataService, this.dataService.currentUser);
+
+    this.dataService.currentUser
+      .map(user => user.roles.includes('hallpass_student')) // TODO filter events to only changes.
+      .subscribe(isStudent => {
+        if (isStudent) {
+          this.receivedRequests = new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser);
+          this.sentRequests = new InboxRequestProvider(this.liveDataService, this.dataService.currentUser);
+        } else {
+          this.receivedRequests = new InboxRequestProvider(this.liveDataService, this.dataService.currentUser);
+          this.sentRequests = new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser);
+        }
+
+      });
 
     this.dataService.currentUser.switchMap(user =>
       this.liveDataService.watchActivePassLike(user))
