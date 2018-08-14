@@ -466,7 +466,7 @@ export class LiveDataService {
       decoder: data => HallPass.fromJSON(data),
       handleExternalEvent: (s: State<HallPass>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([
-        new AddItem(['hall_pass.create'], HallPass.fromJSON, filterFunc),
+        new AddItem(['hall_pass.create'], HallPass.fromJSON, (pass) => filterFunc(pass) && pass.start_time > new Date()),
         new RemoveItem(['hall_pass.start'], HallPass.fromJSON)
       ]),
       handlePost: filterHallPasses
