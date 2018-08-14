@@ -104,7 +104,7 @@
     <div *ngIf="toState == 'pinnables'" class="pinnable-wrapper">
       <mat-grid-list class="grid center" cols="4" rowHeight="75px" gutterSize="10px" [style.width]="'550px'">
         <mat-grid-tile *ngFor="let pinnable of pinnables | async">
-          <app-pinnable [pinnable]="pinnable" (onSelectEvent)="pinnableSelected($event)"></app-pinnable>
+          <app-pinnable [forLater]="forLater" [pinnable]="pinnable" (onSelectEvent)="pinnableSelected($event)"></app-pinnable>
         </mat-grid-tile>
       </mat-grid-list>
     </div>

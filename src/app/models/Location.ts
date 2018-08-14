@@ -8,6 +8,7 @@ export class Location extends BaseModel {
               public room: string,
               public category: string,
               public restricted: boolean,
+              public scheduling_restricted: boolean,
               public required_attatchments: string[],
               public travel_types: string[],
               public teachers: User[],
@@ -31,7 +32,8 @@ export class Location extends BaseModel {
       travel_types: string[] = [],
       teachers: User[] = [],
       max_allowed_time: number = parseInt(JSON['max_allowed_time']),
-      starred: boolean = JSON['starred'];
+      starred: boolean = JSON['starred'],
+      scheduling_restricted: boolean = JSON['scheduling_restricted'];
 
     let attachmentsJSON = JSON['required_attachments'];
     for (let i = 0; i < attachmentsJSON.length; i++) {
@@ -48,7 +50,7 @@ export class Location extends BaseModel {
       teachers.push(User.fromJSON(teachersJSON[i]));
     }
 
-    return new Location(id, title, campus, room, category, restricted, required_attachments, travel_types, teachers, max_allowed_time, starred);
+    return new Location(id, title, campus, room, category, restricted, scheduling_restricted, required_attachments, travel_types, teachers, max_allowed_time, starred, );
   }
 
   get nameRoom(): string {

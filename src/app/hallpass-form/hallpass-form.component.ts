@@ -278,7 +278,7 @@ export class HallpassFormComponent implements OnInit {
   }
 
   determinePass() {
-    if (this.toLocation.restricted && !this.forStaff) {
+    if (((this.toLocation.restricted && !this.forLater) || (this.toLocation.scheduling_restricted && this.forLater)) && !this.forStaff) {
       if (this.requestTarget) {
         let templateRequest: Request = new Request('template', null, this.fromLocation, this.toLocation, this.requestMessage, '', 'pending', null, '', this.toIcon, this.requestTarget, this.requestTime, '', null, null, this._toProfile, null, null, 60, null);
         this.dialogRef.close({
@@ -290,7 +290,7 @@ export class HallpassFormComponent implements OnInit {
       } else {
         this.formState = 'restrictedTarget';
       }
-    } else if (!this.toLocation.restricted && !this.forStaff) {
+    } else if (!((this.toLocation.restricted && !this.forLater) || (this.toLocation.scheduling_restricted && this.forLater)) && !this.forStaff) {
       let templatePass: HallPass = new HallPass('template', this.user, null, null, null, this.requestTime, null, null, this.fromLocation, this.toLocation, '', '', this.toIcon, this._toProfile, null, '', '');
       this.dialogRef.close({
         'templatePass': templatePass,

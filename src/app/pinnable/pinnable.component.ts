@@ -15,6 +15,9 @@ export class PinnableComponent implements OnInit {
   @Input()
   pinnable: Pinnable;
 
+  @Input()
+  forLater: boolean = false;
+
   @Output() onSelectEvent: EventEmitter<Pinnable> = new EventEmitter();
 
   restricted: boolean = false;
@@ -26,7 +29,7 @@ export class PinnableComponent implements OnInit {
 
   ngOnInit() {
     if (!!this.pinnable.location) {
-      this.restricted = this.pinnable.location.restricted;
+      this.restricted = ((this.pinnable.location.restricted && !this.forLater) || (this.pinnable.location.scheduling_restricted && this.forLater));
     }
   }
 

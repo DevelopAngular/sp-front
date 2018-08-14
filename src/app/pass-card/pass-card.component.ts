@@ -78,9 +78,8 @@ export class PassCardComponent implements OnInit {
             this.buildPages();
           });
         });
-
-    setInterval(() => {
-      if (!!this.pass && this.isActive) {
+    if (!!this.pass && this.isActive) {
+      setInterval(() => {
         let end: Date = this.pass.expiration_time;
         let now: Date = new Date();
         let diff: number = (end.getTime() - now.getTime()) / 1000;
@@ -92,8 +91,9 @@ export class PassCardComponent implements OnInit {
         let start: Date = this.pass.start_time;
         let dur: number = Math.floor((end.getTime() - start.getTime()) / 1000);
         this.overlayWidth = (this.buttonWidth * (diff/dur));
-      }
-    }, 10);
+      
+      }, 10);
+    }
   }
 
   updateDuration(dur:number){
