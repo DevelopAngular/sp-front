@@ -154,32 +154,44 @@ export class RequestCardComponent implements OnInit {
   cancelRequest(evt: MouseEvent){
     if(!this.cancelOpen){
       const target = new ElementRef(evt.currentTarget);
+      let options = [];
+      if(this.forStaff){
+        options.push(this.genOption('Change Pass Duration & Approve', '#3D396B', 'duration'));
+        options.push(this.genOption('Add Message & Deny','#3D396B','denyMessage'));
+        options.push(this.genOption('Deny Pass Request','#F00','deny'));
+      } else{
+        options.push(this.genOption('Delete Pass Request','#F00','delete'));
+      }
       const cancelDialog = this.dialog.open(ConsentMenuComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: {'header': 'Are you sure you want to cancel this request?', 'confirm': 'Cancel', 'deny': 'Close', 'trigger': target}
+        data: {'header': 'Are you sure you want to' +(this.forStaff?'deny':'delete') +' this pass request you ' +(this.forStaff?'received':'sent') +'?', 'options': options, 'trigger': target}
       });
   
       cancelDialog.afterOpen().subscribe( () =>{
         this.cancelOpen = true;
       });
   
-      cancelDialog.afterClosed().subscribe(data =>{
+      cancelDialog.afterClosed().subscribe(action =>{
         this.cancelOpen = false;
-        let shouldDeny = data==null?false:data;
-        if(shouldDeny){
-          if(this.forInput){
-            this.dialogRef.close();
-          } else{
-            let endpoint: string = 'api/methacton/v1/pass_requests/' +this.request.id +'/cancel';
-            this.http.post(endpoint).subscribe((data)=>{
-              console.log('[Request Canceled]: ', data);
-              this.dialogRef.close();
-            });
-          }
-        }
+        // let shouldDeny = data==null?false:data;
+        // if(shouldDeny){
+        //   if(this.forInput){
+        //     this.dialogRef.close();
+        //   } else{
+        //     let endpoint: string = 'api/methacton/v1/pass_requests/' +this.request.id +'/cancel';
+        //     this.http.post(endpoint).subscribe((data)=>{
+        //       console.log('[Request Canceled]: ', data);
+        //       this.dialogRef.close();
+        //     });
+        //   }
+        // }
       });
     }
+  }
+
+  genOption(display, color, action){
+    return {display: display, color: color, action: action}
   }
 
   approveRequest(){

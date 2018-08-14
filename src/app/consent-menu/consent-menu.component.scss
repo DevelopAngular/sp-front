@@ -3,7 +3,7 @@
     height: 19px;
     overflow: hidden;
     position: relative;
-    right: -35px;
+    left: 73px;
     top: -29px;
 }
 
@@ -13,7 +13,7 @@
     transform: rotate(45deg);
     position: relative;
     top: 21px;
-    background-color: rgba(1, 25, 52, 0.7);;
+    background-color: rgba(255, 255, 255, 1);
 }
 
 .consent-wrapper{
@@ -26,37 +26,25 @@
 }
 
 .consent-header{
-    color: white;
+    color: rgb(126, 135, 157);
+    font-size: 13px;
     margin-bottom: 10px;
 }
 
 .option-wrapper{
-    width: 75%;
     height: 25px;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-}
-
-.consent-button{
-    border-radius: 10px;
-    width: 61px;
-    height: 25px;
-    display: flex;
-    flex-direction: column;
     align-items: center;
-    text-align: center;
-    justify-content: center;
+    border-radius: 25px;
     cursor: pointer;
-    background-color: rgba(1, 25, 52, 1);
+    user-select: none;
+    font-weight: bold;
+    font-size: 15px;
+    text-align: center;
+    padding: 2px 5px;
 }
 
-.consent-confirm{
-    @extend .consent-button;
-    color: #FF7070;
-}
-
-.consent-deny{
-    @extend .consent-button;
-    color: lightblue;
+.option-wrapper:hover{
+    background-color: rgba(210, 210, 210, 0.3);
 }
