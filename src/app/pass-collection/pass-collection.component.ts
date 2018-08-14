@@ -32,6 +32,7 @@ export class PassCollectionComponent implements OnInit {
   @Input() displayState = 'grid';
   @Input() title: string;
   @Input() icon: string;
+  @Input() emptyMessage: string = 'There are no passes';
   @Input() columns = 3;
   @Input() fromPast = false;
   @Input() forFuture = false;

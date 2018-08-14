@@ -9,14 +9,21 @@
       <img class="collection-display-toggle" [src]="'./assets/' +(displayState==='grid'?'List':'Grid') +' (Blue).png'| resolveAsset" (click)="displayState=(displayState==='list'?'grid':'list')" [style.margin-left]="hasSort?'10px':'auto'">
   </div>
   <div class="collection-divider"></div>
-  <div class="collection-grid-wrapper" *ngIf="displayState==='grid'; else list">
-    <mat-grid-list [cols]="columns" rowHeight="85px">
-      <mat-grid-tile  [style.overflow]="'visible'" class="custom-mat-tile" *ngFor="let pass of (currentPasses$ | async)">
-        <app-pass-tile (click)="showPass(pass)" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-tile>
-      </mat-grid-tile>
-    </mat-grid-list>
+  <div *ngIf="passes.length>0; else emptyMessage">
+    <div class="collection-grid-wrapper" *ngIf="displayState==='grid'; else list">
+      <mat-grid-list [cols]="columns" rowHeight="85px">
+        <mat-grid-tile  [style.overflow]="'visible'" class="custom-mat-tile" *ngFor="let pass of (currentPasses$ | async)">
+          <app-pass-tile (click)="showPass(pass)" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-tile>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </div>
+    <ng-template class="collection-list-wrapper" #list>
+      <app-pass-cell *ngFor="let pass of (currentPasses$ | async)" (click)="showPass(pass)" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-cell>
+    </ng-template>
   </div>
-  <ng-template class="collection-list-wrapper" #list>
-    <app-pass-cell *ngFor="let pass of (currentPasses$ | async)" (click)="showPass(pass)" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-cell>
+  <ng-template #emptyMessage>
+    <div class="empty-message">
+      {{emptyMessage}}
+    </div>
   </ng-template>
 </div>
