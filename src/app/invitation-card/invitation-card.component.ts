@@ -126,17 +126,29 @@ export class InvitationCardComponent implements OnInit {
   
       consentDialog.afterClosed().subscribe(action =>{
         this.denyOpen = false;
-        // let shouldDeny = consentData==null?false:consentData;
-        // if(shouldDeny){
-        //   let endpoint: string = 'api/methacton/v1/invitations/' +this.invitation.id +'/deny';
-        //   let body = {
-        //     'message' : ''
-        //   }
-        //   this.http.post(endpoint, body).subscribe((httpData)=>{
-        //     console.log('[Invitation Denied]: ', httpData);
-        //     this.dialogRef.close();
-        //   });
-        // }
+        if(action === 'cancel'){
+          this.dialogRef.close();
+        } else if(action === 'decline'){
+          let endpoint: string = 'api/methacton/v1/invitations/' +this.invitation.id +'/deny';
+          let body = {
+            'message' : ''
+          }
+          this.http.post(endpoint, body).subscribe((httpData)=>{
+            console.log('[Invitation Denied]: ', httpData);
+            this.dialogRef.close();
+          });
+        } else if(action === 'delete'){
+          let endpoint: string = 'api/methacton/v1/invitations/' +this.invitation.id +'/cancel';
+          let body = {
+            'message' : ''
+          }
+          this.http.post(endpoint, body).subscribe((httpData)=>{
+            console.log('[Invitation Cancelled]: ', httpData);
+            this.dialogRef.close();
+          });
+        }else{
+          this.dialogRef.close();
+        }
       });
     }
   }

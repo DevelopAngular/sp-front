@@ -20,7 +20,7 @@
     </button>
   </div>
 
-  <form *ngIf="demoLoginEnabled" onsubmit="return false;" style="margin-top: 30px;">
+  <form *ngIf="true" onsubmit="return false;" style="margin-top: 30px;">
     <input name="username" placeholder="Username" type="text" [(ngModel)]="demoUsername"><br>
     <input name="password" placeholder="Password" type="password" [(ngModel)]="demoPassword"><br>
     <button (click)="demoLogin()">Login</button>

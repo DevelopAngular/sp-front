@@ -1,4 +1,4 @@
-<app-pass-card-template [hasDivider]="(forStaff || forMonitor || (!forStaff && !isActive)) && !forInput" [selectedStudents]="selectedStudents" [forStaff]="forStaff" [pass]="pass" [rightJustify]="(fromPast || forFuture)?'center':'flex-end'" [closeIcon]="(forMonitor?'./assets/Report (Transparent).png':'./assets/Trash (Transparent).png')" [hasClose]="(!isActive || forMonitor) || fromPast" (onCancel)="cancelEdit($event)">
+<app-pass-card-template [hasDivider]="(forStaff || forMonitor || (!forStaff && !isActive)) && !forInput" [selectedStudents]="selectedStudents" [forStaff]="forStaff" [pass]="pass" [rightJustify]="(fromPast || forFuture)?'center':'flex-end'" [closeIcon]="(forMonitor?'./assets/Report (Transparent).png':'./assets/Trash (Transparent).png')" [hasClose]="!isActive || forMonitor" (onCancel)="cancelEdit($event)">
   
   <div class="card-subtitle" *ngIf="fromPast || forFuture">
     {{ formatDateTime(pass.start_time) }}
