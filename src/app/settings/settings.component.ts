@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ColorProfile } from '../models/ColorProfile';
+import { MatDialog } from '../../../node_modules/@angular/material';
 import { Router } from '../../../node_modules/@angular/router';
 import { FavoriteFormComponent } from '../favorite-form/favorite-form.component';
-import { MatDialog } from '../../../node_modules/@angular/material';
+import { ColorProfile } from '../models/ColorProfile';
 
-export interface Setting{
+export interface Setting {
   color_profile: ColorProfile;
   action: string;
   title: string;
@@ -33,19 +33,19 @@ export class SettingsComponent implements OnInit {
   ngOnInit() {
   }
 
-  settingsAction(action: string){
-    if(action==='signout'){
-      this.router.navigate(['/sign-out']);
-    } else if(action==='favorite'){
+  settingsAction(action: string) {
+    if (action === 'signout') {
+      this.router.navigate(['main/sign-out']);
+    } else if (action === 'favorite') {
       const dialogRef = this.dialog.open(FavoriteFormComponent, {
         width: '750px',
         height: '365px',
         panelClass: 'form-dialog-container',
         backdropClass: 'custom-backdrop',
       });
-    } else if(action==='intro'){
+    } else if (action === 'intro') {
       this.router.navigate(['/intro']);
-    } else if(action==='team'){
+    } else if (action === 'team') {
       window.open('https://smartpass.app/team.html');
     } else if(action==='support'){
       window.open('https://smartpass.app/support');

@@ -1,0 +1,23 @@
+<div class="container">
+
+  <div style="flex-grow: 0.5;"></div>
+
+  <div class="brand">
+    <app-smartpass-logo [scale]="1.5"></app-smartpass-logo>
+  </div>
+
+  <div class="grow"></div>
+
+  <google-signin></google-signin>
+
+  <div class="grow"></div>
+
+  <div class="passes">
+    <img [src]="'./assets/intro/Pass Tile 1.png' | resolveAsset">
+    <img [src]="'./assets/intro/Pass Tile 2.png' | resolveAsset">
+    <img [src]="'./assets/intro/Pass Tile 3.png' | resolveAsset">
+  </div>
+
+  <div style="flex-grow: 0.5;"></div>
+
+</div>

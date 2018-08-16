@@ -79,7 +79,12 @@ class State<ModelType extends BaseModel> {
     delete this.pass_lookup[item.id];
   }
 
-
+  removeItemById(id: number|string) {
+    const pass = this.pass_lookup[id];
+    if (pass !== undefined) {
+      this.removeItem(pass);
+    }
+  }
 }
 
 interface ExternalEvent<E> {
@@ -236,6 +241,32 @@ class RemoveItem<ModelType extends PassLike> extends BaseEventHandler<ModelType>
   handle(state: State<ModelType>, context: PollingEventContext<ModelType>, data: any): State<ModelType> | 'skip' {
     const pass = this.decoder(data);
     state.removeItem(pass);
+
+    return state;
+  }
+}
+
+class RemoveRequestOnApprove extends BaseEventHandler<Request> {
+  constructor(actions: string[]) {
+    super(actions);
+  }
+
+  handle(state: State<Request>, context: PollingEventContext<Request>, data: any): State<Request> | 'skip' {
+    const pass = HallPass.fromJSON(data);
+    state.removeItemById(pass.parent_request);
+
+    return state;
+  }
+}
+
+class RemoveInvitationOnApprove extends BaseEventHandler<Invitation> {
+  constructor(actions: string[]) {
+    super(actions);
+  }
+
+  handle(state: State<Invitation>, context: PollingEventContext<Invitation>, data: any): State<Invitation> | 'skip' {
+    const pass = HallPass.fromJSON(data);
+    state.removeItemById(pass.parent_invitation);
 
     return state;
   }
@@ -515,42 +546,6 @@ export class LiveDataService {
     });
   }
 
-
-  watchInvitations(filter: RequestFilterType): Observable<Invitation[]> {
-    let queryFilter = '';
-    let filterFunc = (pass: Invitation) => true;
-
-    if (filter) {
-      if (filter.type === 'issuer') {
-        queryFilter = `&issuer=${filter.value.id}`;
-        filterFunc = (pass: Invitation) => pass.issuer.id === filter.value.id;
-      }
-
-      if (filter.type === 'student') {
-        queryFilter = `&student=${filter.value.id}`;
-        filterFunc = (pass: Invitation) => pass.student.id === filter.value.id;
-
-      }
-      if (filter.type === 'destination') {
-        queryFilter = `&destination=${filter.value.id}`;
-        filterFunc = (pass: Invitation) => pass.destination.id === filter.value.id;
-
-      }
-    }
-
-    return this.watch<Invitation, string>({
-      externalEvents: Observable.empty(),
-      eventNamespace: 'pass_invitation',
-      initialUrl: `api/methacton/v1/pass_invitations?limit=20${queryFilter}`,
-      decoder: data => Invitation.fromJSON(data),
-      handleExternalEvent: (s: State<Invitation>, e: string) => s,
-      handlePollingEvent: makePollingEventHandler([
-        new AddItem(['pass_invitation.create'], Invitation.fromJSON, filterFunc)
-      ]),
-      handlePost: identityFilter
-    });
-  }
-
   watchInboxRequests(filter: User): Observable<Request[]> {
     const isStudent = filter.roles.includes('hallpass_student');
 
@@ -563,7 +558,8 @@ export class LiveDataService {
       handleExternalEvent: (s: State<Request>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([
         new AddItem(['pass_request.create'], Request.fromJSON),
-        new RemoveItem(['pass_request.accept', 'pass_request.deny', 'pass_request.cancel'], Request.fromJSON)
+        new RemoveItem(['pass_request.deny', 'pass_request.cancel'], Request.fromJSON),
+        new RemoveRequestOnApprove(['pass_request.accept'])
       ]),
       handlePost: identityFilter
     });
@@ -581,36 +577,8 @@ export class LiveDataService {
       handleExternalEvent: (s: State<Invitation>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([
         new AddItem(['pass_invitation.create'], Invitation.fromJSON),
-        new RemoveItem(['pass_invitation.accept', 'pass_invitation.deny', 'pass_invitation.cancel'], Invitation.fromJSON)
-      ]),
-      handlePost: identityFilter
-    });
-  }
-
-  watchRequests(filter: User | Location = null): Observable<Request[]> {
-    let queryFilter = '';
-    let filterFunc = (pass: Request) => true;
-
-    if (filter instanceof User) {
-      queryFilter = `&student=${filter.id}`;
-      filterFunc = (pass: Request) => pass.student.id === filter.id;
-
-    } else if (filter instanceof Location) {
-      queryFilter = `&destination=${filter.id}`;
-      filterFunc = (pass: Request) => pass.destination.id === filter.id;
-
-    } else if (filter !== null) {
-      throw Error(`Unknown filter arg: ${filter}`);
-    }
-
-    return this.watch<Request, string>({
-      externalEvents: Observable.empty(),
-      eventNamespace: 'pass_request',
-      initialUrl: `api/methacton/v1/pass_requests?limit=20${queryFilter}`,
-      decoder: data => Request.fromJSON(data),
-      handleExternalEvent: (s: State<Request>, e: string) => s,
-      handlePollingEvent: makePollingEventHandler([
-        new AddItem(['pass_request.create'], Request.fromJSON, filterFunc)
+        new RemoveItem(['pass_invitation.deny', 'pass_invitation.cancel'], Invitation.fromJSON),
+        new RemoveInvitationOnApprove(['pass_invitation.accept'])
       ]),
       handlePost: identityFilter
     });

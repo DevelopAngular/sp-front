@@ -1,8 +1,4 @@
-<div style="height: 100%;overflow-y: scroll;">
-  <div>
-    <app-main-page></app-main-page>
-  </div>
-  <div class="login-container" *ngIf="!isAuthenticated">
-    <google-signin class="login-dialog"></google-signin>
-  </div>
+<div style="height: 100%;overflow-y: scroll;" [style.display]="isAuthenticated ? 'block' : 'none'">
+  <router-outlet></router-outlet>
 </div>
+<app-login *ngIf="!isAuthenticated"></app-login>
