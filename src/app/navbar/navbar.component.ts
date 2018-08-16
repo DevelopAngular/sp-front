@@ -75,9 +75,9 @@ export class NavbarComponent implements OnInit {
 
   showOptions() {
     if(this.optionsOpen){
-      this.router.navigate(['/passes']);
+      this.router.navigate(['main/passes']);
     } else{
-      this.router.navigate(['/settings']);
+      this.router.navigate(['main/settings']);
     }
   }
 
@@ -87,7 +87,7 @@ export class NavbarComponent implements OnInit {
 
   updateTab(route: string) {
     this.tab = route;
-    this.router.navigateByUrl('/' + this.tab);
+    this.router.navigateByUrl('/main/' + this.tab);
   }
 
   inboxClick() {
