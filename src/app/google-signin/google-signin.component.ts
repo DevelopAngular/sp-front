@@ -29,7 +29,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       this._ngZone.run(() => {
         this.isLoaded = isLoaded;
 
-        if (isLoaded && intervalId !== undefined) {
+        if (this.isLoaded && intervalId !== undefined) {
           clearInterval(intervalId);
           intervalId = undefined;
         } else if (!this.isLoaded && intervalId === undefined) {

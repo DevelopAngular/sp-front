@@ -13,7 +13,7 @@ h3 {
 mat-progress-spinner.inline {
   display: inline-block;
   margin-right: 8px;
-  margin-left: -4px;
+  margin-left: 8px;
   margin-top: -4px;
 }
 
@@ -24,4 +24,9 @@ mat-progress-spinner.inline {
 
 .wrapper > .grow {
   flex-grow: 1;
+}
+
+.login-button {
+  padding-left: 0px;
+  padding-right: 12px;
 }

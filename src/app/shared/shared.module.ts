@@ -6,6 +6,7 @@ import { PassCellComponent } from '../pass-cell/pass-cell.component';
 import { PassCollectionComponent } from '../pass-collection/pass-collection.component';
 import { PassTileComponent } from '../pass-tile/pass-tile.component';
 import { ResolveAssetPipe } from '../resolve-asset.pipe';
+import { SmartpassLogoComponent } from '../smartpass-logo/smartpass-logo.component';
 
 @NgModule({
   imports: [
@@ -14,11 +15,13 @@ import { ResolveAssetPipe } from '../resolve-asset.pipe';
   declarations: [
     GradientButtonComponent,
     ResolveAssetPipe,
+    SmartpassLogoComponent,
 
   ],
   exports: [
     GradientButtonComponent,
     ResolveAssetPipe,
+    SmartpassLogoComponent,
   ],
 })
 export class SharedModule { }

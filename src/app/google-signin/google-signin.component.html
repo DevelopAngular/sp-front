@@ -1,13 +1,13 @@
-<mat-card style="display: inline-block;">
+<!--<mat-card style="display: inline-block;">-->
+
+  <!--<div class="wrapper">-->
+    <!--<div class="grow"></div>-->
+    <!--<h1>Please sign-in to continue</h1>-->
+    <!--<div class="grow"></div>-->
+  <!--</div>-->
 
   <div class="wrapper">
-    <div class="grow"></div>
-    <h1>Please sign-in to continue</h1>
-    <div class="grow"></div>
-  </div>
-
-  <div class="wrapper">
-    <button mat-raised-button (click)="initLogin()" [disabled]="!isLoaded">
+    <button mat-raised-button class="login-button" (click)="initLogin()" [disabled]="!isLoaded">
       <mat-progress-spinner
         *ngIf="!isLoaded"
         class="inline"
@@ -16,7 +16,8 @@
         [diameter]="20"
         [strokeWidth]="2"
         [value]="progressValue"></mat-progress-spinner>
-      Google Sign-In
+      <img *ngIf="isLoaded" [src]="'./assets/google/google_logo.svg' | resolveAsset" style="transform: scale(0.65);">
+      Sign in with Google
     </button>
   </div>
 
@@ -25,5 +26,5 @@
     <input name="password" placeholder="Password" type="password" [(ngModel)]="demoPassword"><br>
     <button (click)="demoLogin()">Login</button>
   </form>
-</mat-card>
+<!--</mat-card>-->
 

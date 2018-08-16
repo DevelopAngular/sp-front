@@ -10,6 +10,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
 import { GoogleApiModule, NG_GAPI_CONFIG } from 'ng-gapi';
 import { AppComponent } from './app.component';
+import { AuthenticatedGuard } from './authenticated.guard';
 import { GAPI_CONFIG } from './config';
 import { ConsentMenuComponent } from './consent-menu/consent-menu.component';
 import { DataService } from './data-service';
@@ -21,11 +22,13 @@ import { LoadingService } from './loading.service';
 import { OptionsComponent } from './options/options.component';
 import { SharedModule } from './shared/shared.module';
 import { UserService } from './user.service';
+import { LoginComponent } from './login/login.component';
 
 const appRoutes: Routes = [
   {path: '', component: IntroComponent},
   {
     path: 'main',
+    canActivate: [AuthenticatedGuard],
     loadChildren: 'app/main/main.module#MainModule'
   },
 
@@ -46,6 +49,7 @@ const appRoutes: Routes = [
     ConsentMenuComponent,
     OptionsComponent,
     IntroComponent,
+    LoginComponent,
   ],
   entryComponents: [
     ConsentMenuComponent,

@@ -3,8 +3,7 @@
 <ng-template class="static-loading" #staticLoading><div class="static-loading"></div></ng-template>
 <div *ngIf="tab!=='intro'" class="bar">
   <div class="heading grow">
-    <div class="title">SmartPass</div>
-    <img class="logo" [src]="'./assets/Arrow (Green).png' | resolveAsset">
+    <app-smartpass-logo></app-smartpass-logo>
   </div>
   <div [style.display]="isStaff?'':'none'" class="teacherNav">
     <app-nav-button [selected]="tab==='passes'" [content]="'Passes'" [icon]="'./assets/Arrow'" (onClick)="updateTab('passes')"></app-nav-button>
