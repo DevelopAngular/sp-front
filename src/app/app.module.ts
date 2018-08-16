@@ -25,20 +25,13 @@ import { UserService } from './user.service';
 import { LoginComponent } from './login/login.component';
 
 const appRoutes: Routes = [
-  {path: '', component: IntroComponent},
+  {path: '', redirectTo: 'main/passes', pathMatch: 'full'},
+  {path: 'intro', component: IntroComponent},
   {
     path: 'main',
     canActivate: [AuthenticatedGuard],
     loadChildren: 'app/main/main.module#MainModule'
   },
-
-  // {path: '', redirectTo: '/passes', pathMatch: 'full'},
-  // {path: 'passes', component: PassesComponent},
-  // {path: 'hallmonitor', component: HallMonitorComponent},
-  // {path: 'myroom', component: MyRoomComponent},
-  // {path: 'sign-out', component: SignOutComponent},
-  // {path: 'settings', component: SettingsComponent},
-  // {path: 'intro', component: IntroComponent}
 ];
 
 @NgModule({
