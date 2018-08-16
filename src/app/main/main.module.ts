@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
+  MatDialogModule,
   MatGridListModule,
   MatIconModule,
   MatProgressBarModule,
@@ -71,6 +72,7 @@ import { MainRoutingModule } from './main-routing.module';
     MatChipsModule,
     MatSliderModule,
     MatProgressBarModule,
+    MatDialogModule,
   ],
   declarations: [
     HallMonitorComponent,
