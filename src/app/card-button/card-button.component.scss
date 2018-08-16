@@ -4,7 +4,7 @@
 
 .card-button-base{
     border-radius: 10px;
-    background-color: white;
+    background-color: rgba(200, 200, 200, .7);
     mix-blend-mode: soft-light;
     cursor: pointer;
 }
@@ -24,7 +24,7 @@
     position: absolute;
     top: inherit;
     left: inherit;
-    background-color: white;
+    background-color: rgba(200, 200, 200, .7);
 }
 
 .card-button-overlay-wrapper{

@@ -13,7 +13,7 @@
   </div>
   <div class="user-info">
     <div class="name">{{ user?user.display_name:'' }}</div>
-    <div *ngIf="tab==='passes' && !isStaff" class="inbox-wrapper" (click)="inboxClick()" [style.background-color]="(inboxVisibility?'#E4EBFF':'transparent')">
+    <div *ngIf="user && !isStaff" class="inbox-wrapper" (click)="inboxClick()" [style.background-color]="(inboxVisibility?'#E4EBFF':'transparent')">
       <img class="inbox-icon" [src]="'./assets/Inbox Full (Blue).png' | resolveAsset">
       <div class="inbox-modifiers" *ngIf="notifications > 0">
         <img class="inbox-badge" [src]="'./assets/Inbox Number.png' | resolveAsset">

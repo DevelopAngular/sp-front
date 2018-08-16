@@ -94,5 +94,8 @@ export class NavbarComponent implements OnInit {
     console.log('[Nav Inbox Toggle]', this.inboxVisibility);
     this.inboxVisibility = !this.inboxVisibility;
     this.dataService.updateInbox(this.inboxVisibility);
+    if(this.tab!=='passes'){
+      this.updateTab('passes');
+    }
   }
 }

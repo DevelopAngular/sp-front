@@ -26,6 +26,7 @@ export class SettingsComponent implements OnInit {
     this.settings.push({'color_profile': new ColorProfile('', '', '#03CF31,#00B476', '#00B476', '', '', ''), 'action': 'intro' , 'title': 'View Intro'});
     this.settings.push({'color_profile': new ColorProfile('', '', '#0B9FC1,#00C0C7', '#0B9FC1', '', '', ''), 'action': 'team' , 'title': 'Our Team'});
     this.settings.push({'color_profile': new ColorProfile('', '', '#F52B4F,#F37426', '#F52B4F', '', '', ''), 'action': 'support' , 'title': 'Support'});
+    this.settings.push({'color_profile': new ColorProfile('', '', '#5E4FED,#7D57FF', '#5E4FED', '', '', ''), 'action': 'feedback' , 'title': 'Feedback'});
     this.settings.push({'color_profile': new ColorProfile('', '', '#606981,#ACB4C1', '#6E7689', '', '', ''), 'action': 'signout' , 'title': 'Sign out'});
   }
 
@@ -47,7 +48,9 @@ export class SettingsComponent implements OnInit {
     } else if(action==='team'){
       window.open('https://smartpass.app/team.html');
     } else if(action==='support'){
-      window.open('https://smartpass.app/');
+      window.open('https://smartpass.app/support');
+    } else if(action==='feedback'){
+      window.open('https://www.smartpass.app/feedback');
     }
   }
 

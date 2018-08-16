@@ -48,9 +48,9 @@ export class PassCollectionComponent implements OnInit {
   currentPasses$ = new ReplaySubject<PassLike[]>(1);
 
   sortOptions: SortOption[] = [
-    new SortOption('Created', 'created'),
-    new SortOption('Student', 'student_name'),
+    ///new SortOption('Created', 'created'),
     new SortOption('Expiration', 'expiration_time'),
+    new SortOption('Name', 'student_name'),
     new SortOption('Destination', 'destination_name')
   ];
 
