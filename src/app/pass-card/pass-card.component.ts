@@ -191,25 +191,47 @@ export class PassCardComponent implements OnInit {
     if(this.forMonitor){
       this.dialogRef.close({'report':this.pass.student});
     } else{
-      if(!this.cancelOpen && this.forInput){
+      if(!this.cancelOpen){
         const target = new ElementRef(evt.currentTarget);
+        let options = [];
+        let header = '';
+
+        if(this.forInput){
+          options.push(this.genOption('Stop making pass','#E32C66','stop'));
+          header = 'Are you sure you want to stop making this pass?';
+        } else if(this.forFuture){
+          options.push(this.genOption('Delete Scheduled Pass','#E32C66','delete'));
+          header = 'Are you sure you want to delete this scheduled pass?';
+        }
+
         const cancelDialog = this.dialog.open(ConsentMenuComponent, {
           panelClass: 'consent-dialog-container',
           backdropClass: 'invis-backdrop',
-          data: {'header': 'Are you sure you want to cancel this pass?', 'confirm': 'Cancel', 'deny': 'Close', 'trigger': target}
+          data: {'header': header, 'options': options, 'trigger': target}
         });
     
         cancelDialog.afterOpen().subscribe( () =>{
           this.cancelOpen = true;
         });
     
-        cancelDialog.afterClosed().subscribe(data =>{
+        cancelDialog.afterClosed().subscribe(action =>{
           this.cancelOpen = false;
-          if(data==null?false:data)
+          if(action === 'stop'){
             this.dialogRef.close();
+          } else if(action === 'delete'){
+            let endpoint: string = 'api/methacton/v1/hall_passes/' +this.pass.id +'/cancel';
+            let body = {};
+            this.http.post(endpoint, body).subscribe((httpData)=>{
+              console.log('[Future Pass Cancelled]: ', httpData);
+              this.dialogRef.close();
+            });
+          }
         });
       }
     }
   }
 
+  genOption(display, color, action){
+    return {display: display, color: color, action: action}
+  }
 }

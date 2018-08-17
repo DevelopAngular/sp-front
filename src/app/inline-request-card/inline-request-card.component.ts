@@ -33,20 +33,25 @@ export class InlineRequestCardComponent implements OnInit {
   cancelRequest(evt: MouseEvent){
     if(!this.cancelOpen){
       const target = new ElementRef(evt.currentTarget);
+
+      let options = [];
+      let header = '';
+
+      options.push(this.genOption('Delete Pass Request','#E32C66','delete'));
+      header = 'Are you sure you want to delete this pass request you sent?';
+
       const cancelDialog = this.dialog.open(ConsentMenuComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: {'header': 'Are you sure you want to cancel this request?', 'confirm': 'Cancel', 'deny': 'Close', 'trigger': target}
+        data: {'header': header, 'options': options, 'trigger': target}
       });
   
       cancelDialog.afterOpen().subscribe( () =>{
         this.cancelOpen = true;
       });
   
-      cancelDialog.afterClosed().subscribe(data =>{
-        this.cancelOpen = false;
-        let shouldDeny = data==null?false:data;
-        if(shouldDeny){
+      cancelDialog.afterClosed().subscribe(action =>{
+        if(action === 'delete'){
           let endpoint: string = 'api/methacton/v1/pass_requests/' +this.request.id +'/cancel';
           this.http.post(endpoint).subscribe((data)=>{
             console.log('[Request Canceled]: ', data);
@@ -54,5 +59,9 @@ export class InlineRequestCardComponent implements OnInit {
         }
       });
     }
+  }
+
+  genOption(display, color, action){
+    return {display: display, color: color, action: action}
   }
 }

@@ -28,6 +28,9 @@ export class LocationTableComponent implements OnInit {
   @Input()
   showStars: string;
 
+  @Input()
+  showFavorites: boolean;
+
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<string> = new EventEmitter();
 

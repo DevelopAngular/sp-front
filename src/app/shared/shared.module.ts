@@ -7,16 +7,16 @@ import { PassCollectionComponent } from '../pass-collection/pass-collection.comp
 import { PassTileComponent } from '../pass-tile/pass-tile.component';
 import { ResolveAssetPipe } from '../resolve-asset.pipe';
 import { SmartpassLogoComponent } from '../smartpass-logo/smartpass-logo.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   imports: [
-    CommonModule
+    CommonModule,
   ],
   declarations: [
     GradientButtonComponent,
     ResolveAssetPipe,
     SmartpassLogoComponent,
-
   ],
   exports: [
     GradientButtonComponent,

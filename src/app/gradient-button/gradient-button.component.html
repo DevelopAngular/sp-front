@@ -6,9 +6,9 @@
      (mousedown)="onPress(true)" (mouseup)="onPress(false)"
      [ngClass]="{'center': !(leftIcon || rightIcon)}">
   <div class="wrapper">
-    <img *ngIf="leftIcon" class="icon left-icon" [src]="leftIcon | resolveAsset">
+    <img *ngIf="leftIcon" [style.width]="leftImageWidth" [style.height]="leftImageHeight" class="icon left-icon" [src]="leftIcon | resolveAsset">
     <div class="text-content" [style.text-align]="contentAlign">
-      <div class="content-wrapper" style="display: inline-block;">
+      <div class="content-wrapper" style="display: inline-block;" [style.color]="textColor">
         <ng-content></ng-content>
       </div>
     </div>

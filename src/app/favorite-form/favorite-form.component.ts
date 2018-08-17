@@ -19,6 +19,8 @@ export class FavoriteFormComponent implements OnInit {
       this.http.get(endpoint).toPromise().then((stars:any[]) => {
         this.starChanges = stars.map(val => Location.fromJSON(val));
       });
+
+    this.dialogRef.updatePosition({top: '120px'});
   }
 
   closeDialog(){

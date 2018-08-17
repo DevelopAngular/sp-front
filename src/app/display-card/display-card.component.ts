@@ -8,9 +8,13 @@ import { Component, OnInit, Input } from '@angular/core';
 export class DisplayCardComponent implements OnInit {
 
   @Input() hasDivider: boolean = true;
+  @Input() inbox: boolean = false;
   @Input() title: string;
   @Input() icon: string;
   @Input() fontSize: string;
+
+  notifications: number = 1;
+
   constructor() { }
 
   ngOnInit() {

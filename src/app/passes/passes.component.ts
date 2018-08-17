@@ -190,13 +190,14 @@ export class PassesComponent implements OnInit {
     this.dialog.open(component, {
       panelClass: 'pass-card-dialog-container',
       backdropClass: 'custom-backdrop',
+      disableClose: true,
       data: {
         'pass': templatePass,
         'fromPast': false,
         'forFuture': forLater,
         'forInput': true,
         'forStaff': forStaff,
-        'selectedStudents': selectedStudents
+        'selectedStudents': selectedStudents,
       }
     });
   }

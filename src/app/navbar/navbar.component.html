@@ -12,13 +12,16 @@
   </div>
   <div class="user-info">
     <div class="name">{{ user?user.display_name:'' }}</div>
-    <div *ngIf="tab==='passes' && !isStaff" class="inbox-wrapper" (click)="inboxClick()" [style.background-color]="(inboxVisibility?'#E4EBFF':'transparent')">
+    <div *ngIf="user && !isStaff" class="inbox-wrapper" (click)="inboxClick()" [style.background-color]="(inboxVisibility?'#E4EBFF':'transparent')">
       <img class="inbox-icon" [src]="'./assets/Inbox Full (Blue).png' | resolveAsset">
       <div class="inbox-modifiers" *ngIf="notifications > 0">
         <img class="inbox-badge" [src]="'./assets/Inbox Number.png' | resolveAsset">
         <div class="inbox-number">{{ notifications }}</div>
         <img class="inbox-front" [src]="'./assets/Inbox Front (Blue).png' | resolveAsset">
       </div>
+    </div>
+    <div *ngIf="isStaff" class="support-wrapper" (click)="openSupport()">
+      <img class="support" [src]="'./assets/Support (Blue).png' | resolveAsset">
     </div>
     <div (click)="showOptions()" class="options-wrapper" [style.background-color]="(optionsOpen?'#E4EBFF':'transparent')">
       <img class="options" [src]="'./assets/Gear (Blue).png' | resolveAsset">

@@ -51,12 +51,13 @@ export class NavbarComponent implements OnInit {
 
     this.router.events.subscribe(value => {
       if(value instanceof NavigationEnd){
-        this.tab = value.url.substr(1);
-        this.tab = ((this.tab==='' || this.tab==='app')?'passes':this.tab);
+        let urlSplit: string[] = value.url.split('/');
+        this.tab = urlSplit[urlSplit.length-1];
+        this.tab = ((this.tab==='' || this.tab==='main')?'passes':this.tab);
+        this.inboxVisibility = this.tab!=='settings';
+        this.dataService.updateInbox(this.inboxVisibility);
       }
     });
-
-    this.tab = ((this.tab==='' || this.tab==='app')?'passes':this.tab);
 
     this.dataService.currentUser
       .pipe(this.loadingService.watchFirst)
@@ -64,7 +65,7 @@ export class NavbarComponent implements OnInit {
         this._zone.run(() => {
           this.user = user;
           this.isStaff = user.roles.includes('edit_all_hallpass');
-          this.dataService.updateInbox(true);
+          this.dataService.updateInbox(this.tab!=='settings');
         });
       });
   }
@@ -75,10 +76,14 @@ export class NavbarComponent implements OnInit {
 
   showOptions() {
     if(this.optionsOpen){
-      this.router.navigate(['main/passes']);
+      this.updateTab('passes');
     } else{
-      this.router.navigate(['main/settings']);
+      this.updateTab('settings');
     }
+  }
+
+  openSupport(){
+    window.open('https://smartpass.app/support');
   }
 
   getNavElementBg(index: number, type: string) {
@@ -87,6 +92,7 @@ export class NavbarComponent implements OnInit {
 
   updateTab(route: string) {
     this.tab = route;
+    console.log('[updateTab()]: ', this.tab);
     this.router.navigateByUrl('/main/' + this.tab);
   }
 
@@ -94,5 +100,8 @@ export class NavbarComponent implements OnInit {
     console.log('[Nav Inbox Toggle]', this.inboxVisibility);
     this.inboxVisibility = !this.inboxVisibility;
     this.dataService.updateInbox(this.inboxVisibility);
+    if(this.tab!=='passes'){
+      this.updateTab('passes');
+    }
   }
 }

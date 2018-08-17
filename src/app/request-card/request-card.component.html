@@ -1,4 +1,4 @@
-<app-pass-card-template (onCancel)="cancelRequest($event)" [hasDivider]="((request.status==='pending' || request.status==='accepted') && !forInput && !forStaff) || (request.status!=='pending' && forStaff)" [pass]="request" [closeIcon]="'./assets/Three dots (Transparent).png'">
+<app-pass-card-template (onCancel)="cancelRequest($event)" [hasDivider]="((request.status==='pending' || request.status==='accepted') && !forInput && !forStaff) || (request.status!=='pending' && forStaff)" [pass]="request" [closeIcon]="'./assets/' +(forInput?'Trash':'Three dots') +' (Transparent).png'">
   <div class="card-subtitle" *ngIf="request.request_time">
     {{ formatDateTime(request.request_time) }}
   </div>
@@ -14,11 +14,11 @@
         <div class="page-2-wrapper">
           <div class="message" [style.height]="(forInput?'70px':'110px')" [style.margin-bottom]="(forInput?'4px':'0px')">
             <span [style.font-weight]="'bold'">Your message:</span><br>
-            {{ request.attachment_message }}
+            {{ (request.attachment_message===''?'No message':request.attachment_message) }}
             <div *ngIf="request.status==='denied'">
                 <br>
                 <span [style.font-weight]="'bold'">Message from {{request.teacher.last_name}}:</span><br>
-                {{ request.declined_message }} <!-- deny_message -->
+                {{ (request.declined_message===''?'No message':request.declined_message) }} <!-- deny_message -->
             </div>
           </div>
           <app-card-button *ngIf="forInput" (onClick)="editMessage()" class="edit-button" [width]="'110px'" [height]="'35px'" [gradientColor]="request.color_profile.gradient_color">
@@ -29,7 +29,7 @@
     </app-pager>
   </div>
   <div *ngIf="!forStaff; else staffPanel" class="card-body-right">
-    <div *ngIf="forInput; else studentNoInput">
+    <div *ngIf="forInput; else studentNoInput" class="card-body-right">
       <app-traveltype-picker (onSelect)="selectedTravelType=$event" [choices]="request.destination.travel_types" [altColor]="request.color_profile.solid_color"></app-traveltype-picker>
       <app-card-button (onClick)="newRequest()" [width]="'181px'" [height]="'50px'" [gradientColor]="request.color_profile.gradient_color">
         <div class="request-button-content">

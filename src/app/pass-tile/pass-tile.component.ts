@@ -31,7 +31,7 @@ export class PassTileComponent implements OnInit {
   }
 
   get tileContent() {
-    return this.valid?(this.timeLeft +' Remaining'):getInnerPassContent(this.pass);
+    return this.isActive?(this.timeLeft +(this.valid?' Remaining':' Expiring')):getInnerPassContent(this.pass);
   }
 
   get tileName() {
@@ -48,7 +48,7 @@ export class PassTileComponent implements OnInit {
   ngOnInit() {
     this.valid = this.isActive;
     setInterval(() => {
-      if (!!this.pass && this.valid) {
+      if (!!this.pass && this.isActive) {
         let end: Date = this.pass['expiration_time'];
         let now: Date = new Date();
         let diff: number = (end.getTime() - now.getTime()) / 1000;

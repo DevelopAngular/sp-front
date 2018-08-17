@@ -1,6 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { MatDatepickerInputEvent } from '@angular/material';
-import { AmazingTimePickerService } from 'amazing-time-picker';
 
 @Component({
   selector: 'app-date-time-picker',
@@ -17,7 +15,7 @@ export class DateTimePickerComponent implements OnInit {
 
   @Input() _selectedMoment: Date = new Date();
 
-  constructor(private atp: AmazingTimePickerService) {
+  constructor() {
   }
 
   set selectedMoment(newMoment: Date){

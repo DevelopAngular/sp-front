@@ -1,30 +1,41 @@
-<!--<mat-card style="display: inline-block;">-->
+<div class="wrapper"*ngIf="!demoLoginEnabled">
 
-  <!--<div class="wrapper">-->
-    <!--<div class="grow"></div>-->
-    <!--<h1>Please sign-in to continue</h1>-->
-    <!--<div class="grow"></div>-->
-  <!--</div>-->
+  <app-gradient-button
+    class="login-button"
+    [gradient]="'#FFFFFF,#FFFFFF'"
+    [hoverColor]="'#F1F1F1'"
+    [minWidth]="'300px'"
+    [minHeight]="'100px'"
+    [fontSize]="'22px'"
+    (buttonClick)="initLogin()"
+    [style.width]="'90px'"
+    [style.margin]="'0 auto'"
+    [disabled]="!isLoaded"
+    [leftIcon]="'./assets/google/google_logo.svg'"
+    [textColor]="'#666666'"
+    [leftImageWidth]="'40px'"
+    [leftImageHeight]="'40px'"
+    >Sign in with Google</app-gradient-button> 
+    <!-- <img *ngIf="isLoaded" [src]=" | resolveAsset" style="transform: scale(0.65);"> -->
+</div>
 
-  <div class="wrapper">
-    <button mat-raised-button class="login-button" (click)="initLogin()" [disabled]="!isLoaded">
-      <mat-progress-spinner
-        *ngIf="!isLoaded"
-        class="inline"
-        color="accent"
-        [mode]="progressType"
-        [diameter]="20"
-        [strokeWidth]="2"
-        [value]="progressValue"></mat-progress-spinner>
-      <img *ngIf="isLoaded" [src]="'./assets/google/google_logo.svg' | resolveAsset" style="transform: scale(0.65);">
-      Sign in with Google
-    </button>
-  </div>
 
-  <form *ngIf="true" onsubmit="return false;" style="margin-top: 30px;">
-    <input name="username" placeholder="Username" type="text" [(ngModel)]="demoUsername"><br>
-    <input name="password" placeholder="Password" type="password" [(ngModel)]="demoPassword"><br>
-    <button (click)="demoLogin()">Login</button>
-  </form>
+<form class="login-form" *ngIf="demoLoginEnabled" onsubmit="return false;" style="margin-top: 30px;">
+  <input class="input" name="username" placeholder="Username" type="text" [(ngModel)]="demoUsername"><br>
+  <input class="input" name="password" placeholder="Password" type="password" [(ngModel)]="demoPassword"><br>
+  <app-gradient-button
+  [gradient]="'#04CD33,#04CD33'"
+  [hoverColor]="'#00C92F'"
+  [minWidth]="'90px'"
+  [minHeight]="'30px'"
+  [fontSize]="'14px'"
+  (buttonClick)="demoLogin()"
+  [style.width]="'90px'"
+  [style.margin]="'0 auto'"
+  >Login</app-gradient-button>
+</form>
+
+<div class="demo-text-wrapper" (click)="toggleDemoLogin()"><div class="demo-text">{{demoLoginEnabled?'Standard Sign In':'Demo Sign In'}}</div></div>
+
 <!--</mat-card>-->
 
