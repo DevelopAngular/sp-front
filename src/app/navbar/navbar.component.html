@@ -20,6 +20,9 @@
         <img class="inbox-front" [src]="'./assets/Inbox Front (Blue).png' | resolveAsset">
       </div>
     </div>
+    <div *ngIf="isStaff" class="support-wrapper" (click)="openSupport()">
+      <img class="support" [src]="'./assets/Support (Blue).png' | resolveAsset">
+    </div>
     <div (click)="showOptions()" class="options-wrapper" [style.background-color]="(optionsOpen?'#E4EBFF':'transparent')">
       <img class="options" [src]="'./assets/Gear (Blue).png' | resolveAsset">
     </div>

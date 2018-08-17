@@ -19,7 +19,7 @@
       >Report Student(s)</app-gradient-button>
     </div>
     <div class="hall-monitor-bottom">
-      <app-pass-collection [emptyMessage]="'There are no active passes'" [hasSort]="true" [isActive]="true" [forStaff]="isStaff" [forMonitor]="true" [style.width]="'600px'" [passProvider]="activePassProvider" [title]="'Active Passes'" [icon]="'./assets/Hallway (Blue).png'" [columns]="4"></app-pass-collection>
+      <app-pass-collection [emptyMessage]="'No active passes'" [hasSort]="true" [isActive]="true" [forStaff]="isStaff" [forMonitor]="true" [style.width]="'600px'" [passProvider]="activePassProvider" [title]="'Active Passes'" [icon]="'./assets/Hallway (Blue).png'" [columns]="4"></app-pass-collection>
     </div>
   </div>
   <h3 *ngIf="!canView">You don't have access to this page.</h3>

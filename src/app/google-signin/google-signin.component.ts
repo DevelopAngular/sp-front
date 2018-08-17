@@ -65,8 +65,10 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   }
 
   demoLogin() {
-    console.log(this.demoUsername, this.demoPassword);
-    this.loginService.signInDemoMode(this.demoUsername, this.demoPassword);
+    if(this.demoUsername && this.demoPassword){
+      console.log(this.demoUsername, this.demoPassword);
+      this.loginService.signInDemoMode(this.demoUsername, this.demoPassword);
+    }
   }
 
   initLogin() {

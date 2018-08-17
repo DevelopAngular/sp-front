@@ -108,12 +108,12 @@ export class HallpassFormComponent implements OnInit {
 
   get dividerText() {
     if (this.formState === 'from') {
-      if(this.toCategory)
-        return 'Search for ' + this.toCategory;
-      else
         return 'From where?';
     } else if (this.formState === 'to') {
-      return 'To where?';
+      if(this.toCategory)
+        return this.toCategory;
+      else
+        return 'To where?';
     } else if (this.formState === 'restrictedTarget') {
       return 'Send Pass Request To?';
     } else if (this.formState === 'restrictedMessage') {
@@ -127,11 +127,16 @@ export class HallpassFormComponent implements OnInit {
 
   get dividerIcon() {
     if (this.formState === 'from' || this.formState === 'to' || this.formState === 'students') {
-      return './assets/Search (White).png';
+      if(this.toCategory && this.formState === 'to')
+        return this.toIcon;
+      else
+        return './assets/Search (White).png';
     } else if (this.formState === 'restrictedMessage') {
       return './assets/Message (White).png';
     } else if (this.formState === 'datetime') {
       return './assets/Scheduled Pass (White).png';
+    } else if(this.formState === 'restrictedTarget'){
+      return './assets/Lock (White).png';
     }
   }
 
@@ -173,7 +178,7 @@ export class HallpassFormComponent implements OnInit {
       this.user = user;
     });
 
-    this.dialogRef.updatePosition({top: '225px'});
+    this.dialogRef.updatePosition({top: '120px'});
   }
 
   updateFormHeight() {

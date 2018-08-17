@@ -5,7 +5,7 @@
     <div class="divider-text">Favorties</div>
   </div>
   <div class="content">
-    <app-location-table class="locations" (onStar)="onStar($event)" [type]="'location'" [placeholder]="'Search rooms'" [showStars]="true"></app-location-table>
+    <app-location-table class="locations" (onStar)="onStar($event)" [showFavorites]="true" [type]="'location'" [placeholder]="'Search rooms'" [showStars]="true"></app-location-table>
   
     <app-gradient-button
       [gradient]="'#E7A700,#EFCE00'"

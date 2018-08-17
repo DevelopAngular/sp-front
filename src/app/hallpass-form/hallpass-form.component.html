@@ -96,7 +96,7 @@
 
   <!-- Used to select the from_location -->
   <div *ngIf="formState == 'from'">
-    <app-location-table class="locations" [type]="'location'" [placeholder]="'Search rooms'" (onSelect)="locationChosen($event, 'from')"></app-location-table>
+    <app-location-table [showFavorites]="true" class="locations" [type]="'location'" [placeholder]="'Search rooms'" (onSelect)="locationChosen($event, 'from')"></app-location-table>
   </div>
 
   <!-- Used to select the to_location -->
@@ -117,7 +117,7 @@
       <app-location-table class="center" (onSelect)="updateTarget($event)" [type]="'teachers'" [placeholder]="'Search teachers'"></app-location-table>
   </div>
   <div *ngIf="formState == 'restrictedMessage'" class="message center">
-    <textarea class="message-box" #messageBox placeholder="Could we meet to go over my math test during second period?" [(ngModel)]="requestMessage">{{ requestMessage }}</textarea>
+    <textarea class="message-box" #messageBox [placeholder]="'Attach a message for ' +(requestTarget.last_name)" [(ngModel)]="requestMessage">{{ requestMessage }}</textarea>
       <app-gradient-button
         [gradient]="'#00B476, #03CF31'"
         [hoverColor]="'#04CD33'"
@@ -126,7 +126,7 @@
         [fontSize]="'12px'"
         (buttonClick)="sendRequest(messageBox.value)"
         class="message-button">
-      Add Message
+      {{(requestMessage===''?'Skip':'Add Message')}}
       </app-gradient-button>
   </div>
 </div>

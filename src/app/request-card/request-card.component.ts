@@ -155,17 +155,24 @@ export class RequestCardComponent implements OnInit {
     if(!this.cancelOpen){
       const target = new ElementRef(evt.currentTarget);
       let options = [];
-      if(this.forStaff){
-        options.push(this.genOption('Change Pass Duration & Approve', '#3D396B', 'duration'));
-        options.push(this.genOption('Add Message & Deny','#3D396B','denyMessage'));
-        options.push(this.genOption('Deny Pass Request','#E32C66','deny'));
+      let header = '';
+      if(!this.forInput){
+        if(this.forStaff){
+          options.push(this.genOption('Change Pass Duration & Approve', '#3D396B', 'duration'));
+          options.push(this.genOption('Add Message & Deny','#3D396B','denyMessage'));
+          options.push(this.genOption('Deny Pass Request','#E32C66','deny'));
+        } else{
+          options.push(this.genOption('Delete Pass Request','#E32C66','delete'));
+        }
+        header = 'Are you sure you want to' +(this.forStaff?'deny':'delete') +' this pass request you ' +(this.forStaff?'received':'sent') +'?';
       } else{
-        options.push(this.genOption('Delete Pass Request','#E32C66','delete'));
+        options.push(this.genOption('Stop making pass','#E32C66','stop'));
+        header = 'Are you sure you want to stop making this pass?';
       }
       const cancelDialog = this.dialog.open(ConsentMenuComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: {'header': 'Are you sure you want to' +(this.forStaff?'deny':'delete') +' this pass request you ' +(this.forStaff?'received':'sent') +'?', 'options': options, 'trigger': target}
+        data: {'header': header, 'options': options, 'trigger': target}
       });
   
       cancelDialog.afterOpen().subscribe( () =>{
@@ -174,7 +181,7 @@ export class RequestCardComponent implements OnInit {
   
       cancelDialog.afterClosed().subscribe(action =>{
         this.cancelOpen = false;
-        if(action === 'cancel'){
+        if(action === 'cancel' || action === 'stop'){
           this.dialogRef.close();
         } else if(action === 'decline'){
           let endpoint: string = 'api/methacton/v1/pass_requests/' +this.request.id +'/deny';
@@ -191,11 +198,9 @@ export class RequestCardComponent implements OnInit {
             'message' : ''
           }
           this.http.post(endpoint, body).subscribe((httpData)=>{
-            console.log('[Invitation Cancelled]: ', httpData);
+            console.log('[Request Cancelled]: ', httpData);
             this.dialogRef.close();
           });
-        }else{
-          this.dialogRef.close();
         }
       });
     }

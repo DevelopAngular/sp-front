@@ -82,6 +82,10 @@ export class NavbarComponent implements OnInit {
     }
   }
 
+  openSupport(){
+    window.open('https://smartpass.app/support');
+  }
+
   getNavElementBg(index: number, type: string) {
     //return type == 'btn' ? (index == this.tabIndex ? 'rgba(165, 165, 165, 0.3)' : '') : (index == this.tabIndex ? 'rgba(0, 255, 0, 1)' : 'rgba(255, 255, 255, 0)');
   }

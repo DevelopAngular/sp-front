@@ -1,5 +1,5 @@
 <div class="wrapper" [style.width]="type==='location'?'430px':'200px'">
-  <div *ngIf="type==='location'" class="table-left">
+  <div *ngIf="type==='location' && showFavorites" class="table-left">
     <div class="fav-header">
       Favorites
     </div>
@@ -10,7 +10,7 @@
       </app-location-cell>
     </div>
   </div>
-  <div class="table-right">
+  <div class="table-right" [style.margin]="'0 ' +(showFavorites?'0':'auto')">
     <input class="input" #searchBox [value]="search" [placeholder]="placeholder" (keyup)="onSearch(searchBox.value)">
     <div class="choices">
       <app-location-cell class="choice" *ngFor="let choice of choices" [showStar]="showStars" [starred]="false"

@@ -1,6 +1,17 @@
-<div class="display-card-wrapper">
+<div class="display-card-wrapper" [style.min-height]="(inbox?'500px':'')">
   <div class="display-card-header">
-    <img *ngIf="!!icon" class="display-card-header-icon" [src]="icon | resolveAsset">
+
+    <img *ngIf="!!icon && !inbox" class="display-card-header-icon" [src]="icon | resolveAsset">
+
+    <div *ngIf="!!icon && inbox" class="inbox-wrapper">
+      <img class="inbox-icon" [src]="'./assets/Inbox Full (Blue).png' | resolveAsset">
+      <div class="inbox-modifiers" *ngIf="notifications > 0">
+        <img class="inbox-badge" [src]="'./assets/Inbox Number.png' | resolveAsset">
+        <div class="inbox-number">{{ notifications }}</div>
+        <img class="inbox-front" [src]="'./assets/Inbox Front (Blue).png' | resolveAsset">
+      </div>
+    </div>
+
     <div class="display-card-header-title" [style.font-size]="fontSize">
       {{title}}
     </div>
