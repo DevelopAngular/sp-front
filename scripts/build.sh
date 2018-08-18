@@ -18,7 +18,7 @@ fi
 tree ./dist
 echo "Static Assets: $(du -sh ./dist | awk '{print $1}')"
 
-PROJ_BASE=$CI_REGISTRY_IMAGE-$CI_ENVIRONMENT_SLUG
+PROJ_BASE=$CI_REGISTRY_IMAGE/web-$CI_ENVIRONMENT_SLUG
 echo "ref tag: $PROJ_BASE:$CI_COMMIT_REF_NAME"
 echo "sha tag: $PROJ_BASE:$CI_COMMIT_SHA"
 
