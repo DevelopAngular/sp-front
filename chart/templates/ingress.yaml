@@ -13,17 +13,9 @@ spec:
   tls:
   - hosts:
     - {{ .Values.service.domain }}
-    - notify-messenger-notify-server-staging.lavanote.com
     secretName: {{ .Values.application.name }}-tls
   rules:
   - host: {{ template "hostname" .Values.service.url }}
-    http:
-      paths:
-      - path: /app
-        backend:
-          serviceName: {{ .Values.application.name }}
-          servicePort: {{ .Values.service.externalPort }}
-  - host: notify-messenger-notify-server-staging.lavanote.com
     http:
       paths:
       - path: /app
