@@ -60,6 +60,23 @@ export class PassCardComponent implements OnInit {
     return Util.formatDateTime(s);
   }
 
+  get hasClose(){
+    if(this.forInput){
+      return true;
+    } else if(this.forMonitor){
+      return !this.fromPast;
+    } else if(this.forStaff){
+      return this.forFuture || this.isActive;
+    } else{
+      if(this.forFuture && this.pass.issuer.isSameObject(this.user)){
+        return true;
+      } else{
+        return this.isActive;
+      }
+    }
+    
+  }
+
   ngOnInit() {
     this.pass = this.data['pass'];
     this.forInput = this.data['forInput'];
@@ -91,7 +108,6 @@ export class PassCardComponent implements OnInit {
         let start: Date = this.pass.start_time;
         let dur: number = Math.floor((end.getTime() - start.getTime()) / 1000);
         this.overlayWidth = (this.buttonWidth * (diff/dur));
-      
       }, 10);
     }
   }

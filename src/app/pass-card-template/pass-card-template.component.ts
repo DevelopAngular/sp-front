@@ -14,7 +14,7 @@ export class PassCardTemplateComponent implements OnInit {
   @Input() pass: HallPass | Invitation | Request;
   @Input() hasDivider: boolean = false;
   @Input() rightJustify: string = 'flex-end';
-  @Input() hasClose: boolean = true;
+  @Input() hasClose: boolean = false;
   @Input() forStaff: boolean = false;
   @Input() selectedStudents: User[] = []
   @Input() closeIcon: string;

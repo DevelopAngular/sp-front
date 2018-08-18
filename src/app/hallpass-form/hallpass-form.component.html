@@ -114,7 +114,7 @@
     </div>
   </div>
   <div *ngIf="formState == 'restrictedTarget'">
-      <app-location-table class="center" (onSelect)="updateTarget($event)" [type]="'teachers'" [placeholder]="'Search teachers'"></app-location-table>
+      <app-location-table class="center" (onSelect)="updateTarget($event)" [type]="'teachers'" [placeholder]="'Search teachers'" [staticChoices]="toLocation.teachers"></app-location-table>
   </div>
   <div *ngIf="formState == 'restrictedMessage'" class="message center">
     <textarea class="message-box" #messageBox [placeholder]="'Attach a message for ' +(requestTarget.last_name)" [(ngModel)]="requestMessage">{{ requestMessage }}</textarea>
