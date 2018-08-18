@@ -98,7 +98,7 @@ export class InvitationCardComponent implements OnInit {
     this.performingAction = true;
     let endpoint: string = 'api/methacton/v1/invitations/' +this.invitation.id +'/accept';
     let body = {
-      'start_time' : this.invitation.date_choices[0],
+      'start_time' : this.invitation.date_choices[0].toISOString(),
       'origin' : this.selectedOrigin.id
     }
 
