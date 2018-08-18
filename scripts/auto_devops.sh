@@ -85,7 +85,7 @@ function deploy() {
       --set web.tag="$CI_APPLICATION_TAG" \
       --set web.pullPolicy=IfNotPresent \
       --set web.secrets[0].name="$secret_name" \
-      --set application.name="$CI_PROJECT_NAME-$CI_COMMIT_REF_NAME" \
+      --set application.name="$CI_PROJECT_NAME-$CI_ENVIRONMENT_SLUG" \
       --set application.track="$track" \
       --set service.url="$AUTO_DEVOPS_DOMAIN" \
       --set service.domain="$AUTO_DEVOPS_DOMAIN" \
