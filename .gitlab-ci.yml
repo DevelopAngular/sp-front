@@ -18,7 +18,6 @@ staging:
     - apk add --no-cache bash tree nodejs yarn
     - source scripts/auto_devops.sh
     - scripts/build.sh
-    - check_kube_domain
     - install_dependencies
     - download_chart
     - ensure_namespace
@@ -41,7 +40,6 @@ production:
   - apk add --no-cache bash tree nodejs yarn
   - source scripts/auto_devops.sh
   - scripts/build.sh
-  - check_kube_domain
   - install_dependencies
   - download_chart
   - ensure_namespace
