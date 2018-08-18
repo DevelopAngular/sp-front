@@ -26,7 +26,7 @@ import { LoginComponent } from './login/login.component';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: 'main/passes', pathMatch: 'full'},
-  {path: 'intro', component: IntroComponent},
+  {path: 'main/intro', component: IntroComponent},
   {
     path: 'main',
     canActivate: [AuthenticatedGuard],

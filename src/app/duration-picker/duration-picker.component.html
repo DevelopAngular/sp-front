@@ -10,10 +10,10 @@
     </div>
     <div class="right">
         <div class="right-top">
-            How much time do you need?
+            {{forStaff?'How much time do'+(plural?' the students need?':'es the student need?'):'How much time do you need?'}}
         </div>
         <div class="right-bottom">
-            <div class="large">{{ selectedDuration }} mins</div>
+            <div class="large">{{ selectedDuration }} min</div>
         </div>
     </div>
 </div>

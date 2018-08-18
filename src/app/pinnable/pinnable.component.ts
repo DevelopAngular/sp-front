@@ -18,6 +18,9 @@ export class PinnableComponent implements OnInit {
   @Input()
   forLater: boolean = false;
 
+  @Input()
+  forStaff: boolean = false;
+
   @Output() onSelectEvent: EventEmitter<Pinnable> = new EventEmitter();
 
   restricted: boolean = false;

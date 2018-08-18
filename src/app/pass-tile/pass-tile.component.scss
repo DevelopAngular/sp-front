@@ -6,7 +6,6 @@
     flex-direction: column;
     color: white;
     font-family: 'Helvetica Neue', sans-serif;
-    box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
     overflow: visible;
     font-style: normal;
     font-stretch: normal;
@@ -16,10 +15,6 @@
     align-items: center;
     text-align: center;
     cursor: pointer;
-}
-
-.tile-wrapper:hover{
-    box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.3);
 }
 
 .tile-title{
@@ -52,6 +47,8 @@
     width: 121px;
     height: 20px;
     border-radius: 0 0 10px 10px;
+    cursor: pointer;
+    user-select: none;
 }
 
 .names{
@@ -63,4 +60,6 @@
     width: 121px;
     display: flex;
     justify-content: center;
+    cursor: pointer;
+    user-select: none;
 }

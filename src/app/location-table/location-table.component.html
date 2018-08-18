@@ -12,8 +12,8 @@
   </div>
   <div class="table-right" [style.margin]="'0 ' +(showFavorites?'0':'auto')">
     <input class="input" #searchBox [value]="search" [placeholder]="placeholder" (keyup)="onSearch(searchBox.value)">
-    <div class="choices">
-      <app-location-cell class="choice" *ngFor="let choice of choices" [showStar]="showStars" [starred]="false"
+    <div class="choices" (scroll)="onScroll($event)">
+      <app-location-cell [hasLocks]="hasLocks" [forLater]="forLater" [forStaff]="forStaff" class="choice" *ngFor="let choice of choices" [showStar]="showStars" [starred]="false"
                         (onSelect)="choiceSelected($event)" (onStar)="star($event)"
                         [value]="choice" [type]="type">
       </app-location-cell>

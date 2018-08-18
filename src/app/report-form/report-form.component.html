@@ -8,7 +8,7 @@
   <div class="student-select" [style.height]="showOptions?'300px':'125px'">
     <app-student-search [selectedStudents]="selectedStudents" [showOptions]="showOptions" [style.width]="'75%'" (onUpdate)="selectedStudents=$event" (click)="showOptions=true"></app-student-search>
     <app-gradient-button
-      *ngIf="showOptions"
+      *ngIf="showOptions && selectedStudents && selectedStudents.length > 0"
       [gradient]="'#03CF31,#00B476'"
       [hoverColor]="'#00B476'"
       [minWidth]="'90px'"
@@ -21,7 +21,7 @@
     >Done ({{ selectedStudents.length }})</app-gradient-button>
   </div>
   <div *ngIf="!showOptions" class="message-entry">
-    <textarea class="message-box" #messageBox placeholder="I caught them in the hallway without a pass." [(ngModel)]="reportMessage">{{ reportMessage }}</textarea>
+    <textarea class="message-box" #messageBox placeholder="Attach a message" [(ngModel)]="reportMessage">{{ reportMessage }}</textarea>
     <app-gradient-button
       [gradient]="'#DA2370,#FB434A'"
       [hoverColor]="'#DA2370'"

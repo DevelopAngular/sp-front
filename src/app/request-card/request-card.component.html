@@ -1,6 +1,6 @@
-<app-pass-card-template (onCancel)="cancelRequest($event)" [hasDivider]="((request.status==='pending' || request.status==='accepted') && !forInput && !forStaff) || (request.status!=='pending' && forStaff)" [pass]="request" [closeIcon]="'./assets/' +(forInput?'Trash':'Three dots') +' (Transparent).png'">
-  <div class="card-subtitle" *ngIf="request.request_time">
-    {{ formatDateTime(request.request_time) }}
+<app-pass-card-template (onCancel)="cancelRequest($event)" [hasDivider]="((request.status==='pending' || request.status==='accepted') && !forInput && !forStaff) || (request.status!=='pending' && forStaff)" [pass]="request" [closeIcon]="'./assets/' +((forInput || !forStaff)?'Trash':'Three dots') +' (Transparent).png'">
+  <div class="card-subtitle" *ngIf="">
+    {{ (request.request_time?formatDateTime(request.request_time):'Pass for Now') }}
   </div>
   <div class="card-body-left">
     <app-pager>
@@ -13,7 +13,7 @@
       <div class="page-2">
         <div class="page-2-wrapper">
           <div class="message" [style.height]="(forInput?'70px':'110px')" [style.margin-bottom]="(forInput?'4px':'0px')">
-            <span [style.font-weight]="'bold'">Your message:</span><br>
+            <span [style.font-weight]="'bold'">{{(forStaff?'Message from ' +studentName +':':'Your message:')}}</span><br>
             {{ (request.attachment_message===''?'No message':request.attachment_message) }}
             <div *ngIf="request.status==='denied'">
                 <br>
@@ -31,7 +31,7 @@
   <div *ngIf="!forStaff; else staffPanel" class="card-body-right">
     <div *ngIf="forInput; else studentNoInput" class="card-body-right">
       <app-traveltype-picker (onSelect)="selectedTravelType=$event" [choices]="request.destination.travel_types" [altColor]="request.color_profile.solid_color"></app-traveltype-picker>
-      <app-card-button (onClick)="newRequest()" [width]="'181px'" [height]="'50px'" [gradientColor]="request.color_profile.gradient_color">
+      <app-card-button (onClick)="newRequest()" [disabled]="performingAction" [width]="'181px'" [height]="'50px'" [gradientColor]="request.color_profile.gradient_color">
         <div class="request-button-content">
           <img class="button-icon-left" [src]="'./assets/Lock (White).png' | resolveAsset">
           <div class="request-pass-content-text">Request Pass</div>
@@ -57,7 +57,7 @@
         </div>
       </div>
       <div *ngIf="request.status==='declined'" class="card-body-right">
-        <app-card-button *ngIf="!forStaff" (onClick)="changeDate()"[width]="'181px'" [height]="'50px'" [gradientColor]="request.color_profile.gradient_color">
+        <app-card-button *ngIf="!forStaff" [disabled]="performingAction" (onClick)="changeDate()"[width]="'181px'" [height]="'50px'" [gradientColor]="request.color_profile.gradient_color">
           <div class="resend-button-content">
             <div class="resend-button-content-title">{{ (forFuture?'Change Date & Time':'Resend Request') }}</div>
             <div class="resend-button-content-subtitle">Pass Request Denied</div>
@@ -73,10 +73,10 @@
       </div>
       <ng-template #staffNoInput>
         <div *ngIf="request.status=='pending'; else staffNotPending" class="card-body-right">
-          <app-card-button (onClick)="approveRequest()"[width]="'181px'" [height]="'50px'" [gradientColor]="request.color_profile.gradient_color">
+          <app-card-button (onClick)="approveRequest()" [disabled]="performingAction" [width]="'190px'" [height]="'55px'" [gradientColor]="request.color_profile.gradient_color">
             <div class="resend-button-content">
               <div class="resend-button-content-title">Approve Pass Request</div>
-              <div class="resend-button-content-subtitle">{{'Pass for ' +(request.duration/60) +'min' }}</div>
+              <div class="resend-button-content-subtitle">{{(request.duration/60) +' min - Received ' +formatDateTime(request.created, true)}}</div>
             </div>
           </app-card-button>
         </div>

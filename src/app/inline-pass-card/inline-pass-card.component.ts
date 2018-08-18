@@ -26,6 +26,8 @@ export class InlinePassCardComponent implements OnInit {
   selectedDuration: number;
   selectedTravelType: string;
 
+  performingAction: boolean;
+
   constructor(private http: HttpService) { }
 
   ngOnInit() {
@@ -47,6 +49,7 @@ export class InlinePassCardComponent implements OnInit {
   }
 
   endPass(){
+    this.performingAction = true;
     const endPoint:string = 'api/methacton/v1/hall_passes/' +this.pass.id +'/ended';
     this.http.post(endPoint).subscribe();
   }

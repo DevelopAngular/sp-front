@@ -30,7 +30,8 @@ export class InvitationCardComponent implements OnInit {
   selectedDuration: number;
   selectedTravelType: string;
   user: User;
-  
+  performingAction: boolean;
+
   constructor(public dialogRef: MatDialogRef<InvitationCardComponent>, @Inject(MAT_DIALOG_DATA) public data: any, public dialog: MatDialog, private http: HttpService, public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService) {
     
   }
@@ -76,6 +77,7 @@ export class InvitationCardComponent implements OnInit {
   }
 
   newInvitation(){
+    this.performingAction = true;
     const endPoint:string = 'api/methacton/v1/invitations/bulk_create';
 
     const body = {
@@ -93,6 +95,7 @@ export class InvitationCardComponent implements OnInit {
   }
 
   acceptInvitation(){
+    this.performingAction = true;
     let endpoint: string = 'api/methacton/v1/invitations/' +this.invitation.id +'/accept';
     let body = {
       'date' : this.invitation.date_choices[0],
@@ -109,15 +112,18 @@ export class InvitationCardComponent implements OnInit {
     if(!this.denyOpen){
       const target = new ElementRef(evt.currentTarget);
       let options = [];
+      let header = '';
       if(!this.forStaff){
         options.push(this.genOption('Decline Pass Request','#F00','decline'));
+        header = 'Are you sure you want to decline this pass request you received?'
       } else{
         options.push(this.genOption('Delete Pass Request','#E32C6','delete'));
+        header = "Are you sure you want to delete this pass request you sent?";
       }
       const consentDialog = this.dialog.open(ConsentMenuComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: {'header': 'Are you sure you want to deny this pass request you ' +(!this.forStaff?'received':'sent') +'?', 'options': options, 'trigger': target}
+        data: {'header': header, 'options': options, 'trigger': target}
       });
   
       consentDialog.afterOpen().subscribe( () =>{

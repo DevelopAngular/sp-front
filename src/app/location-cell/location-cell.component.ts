@@ -21,12 +21,25 @@ export class LocationCellComponent implements OnInit {
   @Input()
   showStar: boolean;
 
+  @Input()
+  forStaff: boolean;
+
+  @Input()
+  forLater: boolean;
+
+  @Input()
+  hasLocks: boolean = false;
+
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<any> = new EventEmitter();
 
   overStar: boolean = false;
 
   constructor(private http: HttpService) {}
+
+  get showLock(){
+    return !this.forStaff && ((this.value.restricted && !this.forLater) || (this.value.scheduling_restricted && this.forLater));
+  }
 
   ngOnInit() {
     this.value.starred = this.starred;

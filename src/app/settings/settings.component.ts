@@ -57,7 +57,7 @@ export class SettingsComponent implements OnInit {
         backdropClass: 'custom-backdrop',
       });
     } else if (action === 'intro') {
-      this.router.navigate(['/intro']);
+      this.router.navigate(['main/intro']);
     } else if (action === 'team') {
       window.open('https://smartpass.app/team.html');
     } else if(action==='support'){

@@ -31,6 +31,8 @@ export class RequestCardComponent implements OnInit {
   cancelOpen: boolean = false;
   user: User;
 
+  performingAction: boolean;
+
   constructor(public dialogRef: MatDialogRef<RequestCardComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private http: HttpService, public dialog: MatDialog, public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService) { }
 
   ngOnInit() {
@@ -61,11 +63,12 @@ export class RequestCardComponent implements OnInit {
     return this.request.status.charAt(0).toUpperCase() + this.request.status.slice(1);
   }
 
-  formatDateTime(date: Date){
-    return Util.formatDateTime(date);
+  formatDateTime(date: Date, timeOnly?: boolean){
+    return Util.formatDateTime(date, timeOnly);
   }
 
   newRequest(){
+    this.performingAction = true;
     const endPoint: string = 'api/methacton/v1/pass_requests';
     const body = this.forFuture?{
           'origin' : this.request.origin.id,
@@ -211,6 +214,7 @@ export class RequestCardComponent implements OnInit {
   }
 
   approveRequest(){
+    this.performingAction = true;
     let endpoint: string = 'api/methacton/v1/pass_requests/' +this.request.id +'/accept';
     let body = [];
     this.http.post(endpoint, body).subscribe(() =>{

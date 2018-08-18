@@ -9,8 +9,11 @@ export class Util{
                         'July', 'Aug.', 'Sept.',
                         'Oct.', 'Nov.', 'Dec.'];
 
-    static formatDateTime(s: Date){
+    static formatDateTime(s: Date, timeOnly?: boolean){
         let formattedTime:string = ((s.getHours() > 12) ? s.getHours() - 12 : s.getHours()) + ':' + ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + ((s.getHours() > 12) ? ' PM' : ' AM');
+        if(timeOnly)
+          return formattedTime;
+          
         let formattedDate:string = "";
         let now: Date = new Date();
     

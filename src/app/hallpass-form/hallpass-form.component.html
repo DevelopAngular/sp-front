@@ -43,27 +43,15 @@
   <div *ngIf="formState == 'datetime'" class="datetime-area">
     <div class="datetime-left">
       <app-date-time-picker (onUpdate)="requestTime=$event"></app-date-time-picker>
-      <app-gradient-button
-        *ngIf="!forStaff"
-        [gradient]="'#03CF31,#00B476'"
-        [hoverColor]="'#00B476'"
-        [minWidth]="'90px'"
-        [minHeight]="'30px'"
-        [fontSize]="'14px'"
-        (buttonClick)="setFormState('from')"
-        [style.width]="'90px'"
-        [style.margin]="'15px auto'"
-      >
-      Done</app-gradient-button>
     </div>
-    <div class="datetime-right" *ngIf="forStaff">
-      <div class="toggle-wrapper loading-theme">
+    <div class="datetime-right">
+      <div *ngIf="forStaff" class="toggle-wrapper loading-theme">
         <div class="toggle-title">Declinable</div>
         <mat-slide-toggle [checked]="isDeclinable" (change)="isDeclinable = $event.checked"></mat-slide-toggle>
       </div>
-      <div class="toggle-divider"></div>
-      <div class="toggle-description">
-        If a student is able to decline a pass sent to them. <br><br> You have to know the location of the student(s) if non-declinable.
+      <div *ngIf="forStaff" class="toggle-divider"></div>
+      <div *ngIf="forStaff" class="toggle-description">
+        If a student is able to decline a pass sent to them. <br><br> You {{isDeclinable?'don\'t':''}} have to know the location of the student(s) if non-declinable.
       </div>
       <app-gradient-button
         [gradient]="'#03CF31,#00B476'"
@@ -82,6 +70,7 @@
   <div *ngIf="formState==='students'" class="student-select">
     <app-student-search [style.width]="'75%'" (onUpdate)="selectedStudents=$event"></app-student-search>
       <app-gradient-button
+      *ngIf="selectedStudents && selectedStudents.length > 0"
       [gradient]="'#03CF31,#00B476'"
       [hoverColor]="'#00B476'"
       [minWidth]="'90px'"
@@ -96,7 +85,7 @@
 
   <!-- Used to select the from_location -->
   <div *ngIf="formState == 'from'">
-    <app-location-table [showFavorites]="true" class="locations" [type]="'location'" [placeholder]="'Search rooms'" (onSelect)="locationChosen($event, 'from')"></app-location-table>
+    <app-location-table [forStaff]="forStaff" [forLater]="forLater" [showFavorites]="true" class="locations" [type]="'location'" [placeholder]="'Search rooms'" (onSelect)="locationChosen($event, 'from')"></app-location-table>
   </div>
 
   <!-- Used to select the to_location -->
@@ -104,13 +93,13 @@
     <div *ngIf="toState == 'pinnables'" class="pinnable-wrapper">
       <mat-grid-list class="grid center" cols="4" rowHeight="75px" gutterSize="10px" [style.width]="'550px'">
         <mat-grid-tile *ngFor="let pinnable of pinnables | async">
-          <app-pinnable [forLater]="forLater" [pinnable]="pinnable" (onSelectEvent)="pinnableSelected($event)"></app-pinnable>
+          <app-pinnable [forStaff]="forStaff" [forLater]="forLater" [pinnable]="pinnable" (onSelectEvent)="pinnableSelected($event)"></app-pinnable>
         </mat-grid-tile>
       </mat-grid-list>
     </div>
     <div *ngIf="toState == 'category'">
       <app-location-table class="center" (onSelect)="locationChosen($event, 'to')"
-                          [category]="toCategory" [type]="'location'" [placeholder]="'Search ' +toCategory.toLowerCase()" > </app-location-table>
+                          [hasLocks]="true" [category]="toCategory" [type]="'location'" [placeholder]="'Search ' +toCategory.toLowerCase()" > </app-location-table>
     </div>
   </div>
   <div *ngIf="formState == 'restrictedTarget'">

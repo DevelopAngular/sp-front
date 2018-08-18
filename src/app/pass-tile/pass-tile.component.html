@@ -1,7 +1,9 @@
 <div class="tile-wrapper" [style.background]="backgroundGradient()"
       [style.justify-content]="forStaff?'unset':'center'"
+      [style.box-shadow]="boxShadow"
       [@pressState]="buttonState" (click)="onClick($event)"
-      (mouseleave)="buttonDown = false"
+      (mouseenter)="hovered = true"
+      (mouseleave)="buttonDown = false; hovered = false"
       (mousedown)="onPress(true)" (mouseup)="onPress(false)">
     <div class="tile-title" [style.margin-top]="forStaff?'13px':'0px'" >{{ pass.destination.title }}</div>
     <div class="tile-content">{{ tileContent }}</div>
@@ -9,5 +11,5 @@
   <img [style.width]="'35px'" [style.height]="'15px'" *ngIf="pass.travel_type == 'round_trip' && !forStaff" [src]="'./assets/Arrows Round Trip (White).png' | resolveAsset" class="tile-one-way">
   <div *ngIf="isBadgeVisible" class="badge"></div>
 </div>
-<div *ngIf="forStaff" class="names-overlay"></div>
-<div *ngIf="forStaff" class="names">{{ tileName }}</div>
+<div *ngIf="forStaff" class="names-overlay" (mouseenter)="hovered = true" (mouseleave)="buttonDown = false; hovered = false"></div>
+<div *ngIf="forStaff" class="names" (mouseenter)="hovered = true" (mouseleave)="buttonDown = false; hovered = false">{{ tileName }}</div>

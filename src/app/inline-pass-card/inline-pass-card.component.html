@@ -13,7 +13,7 @@
   
     <div *ngIf="forInput" class="card-body-right">
       <app-traveltype-picker (onSelect)="selectedTravelType=$event" [choices]="pass.destination.travel_types" [altColor]="pass.color_profile.solid_color"></app-traveltype-picker>
-      <app-card-button (onClick)="newPass()" [width]="buttonWidth +'px'" [height]="'50px'" [gradientColor]="pass.color_profile.gradient_color">
+      <app-card-button (onClick)="newPass()" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'50px'" [gradientColor]="pass.color_profile.gradient_color">
         <div class="start-pass-content">
           <div class="start-pass-content-text">{{((forFuture && forInput)?'Schedule Pass':'Start Pass')}}</div>
           <img class="button-icon-right" [src]="'./assets/One Arrow.png' | resolveAsset">
@@ -21,7 +21,7 @@
       </app-card-button>
     </div>
     <div *ngIf="isActive" class="card-body-right">
-      <app-card-button (onClick)="endPass()" [width]="buttonWidth +'px'" [height]="'50px'"  [gradientColor]="pass.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">
+      <app-card-button (onClick)="endPass()" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'50px'"  [gradientColor]="pass.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">
         <div class="end-pass-content">
            {{ timeLeft +(timeLeft===''?'':' -')}} End Pass
         </div>
