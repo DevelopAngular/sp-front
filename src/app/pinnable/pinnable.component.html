@@ -9,7 +9,7 @@
       </div>
       <img *ngIf="pinnable.type === 'category'" class="category-icon" [src]="'./assets/Arrow (White).png' | resolveAsset" alt="ARROW">
     </div>
-    <div *ngIf="restricted;" class="overlay-container">
+    <div *ngIf="restricted && !forStaff" class="overlay-container">
       <div class="overlay"></div>
       <img class="lock" [src]="'./assets/Lock (White).png' | resolveAsset" alt="LOCK">
     </div>

@@ -1,9 +1,17 @@
+.settings-menu-wrapper{
+    display: flex;
+    flex-direction: row;
+    margin: 40px auto 0;
+    max-width: 490px;
+    width: 490px;
+    padding-right:90px;
+}
+
 .settings-wrapper{
     display: flex;
     flex-direction: column;
     max-width: 400px;
     width: 400px;
-    margin: 40px auto 0;
 }
 
 .settings-header{
@@ -13,4 +21,33 @@
     font-weight: bold;
     padding-left: 10px;
     margin-bottom: 15px;
+}
+
+.back-wrapper{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    max-height: 30px;
+    width: 75px;
+    padding: 5px 10px;
+    border-radius: 15px;
+    margin-top: -5px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.back-wrapper:hover{
+    background-color: #F1F1F1;
+}
+
+.back-image{
+    height: 25px;
+    width: auto;
+    margin-right: 5px;
+}
+
+.back-text{
+    font-family: 'Helvetica Neue', sans-serif;
+    color: #3D396B;
+    font-size: 18px;
 }

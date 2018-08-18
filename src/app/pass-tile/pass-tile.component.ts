@@ -3,6 +3,7 @@ import { EventEmitter } from 'events';
 import { bumpIn } from '../animations';
 import { PassLike } from '../models';
 import { getInnerPassContent, getInnerPassName, isBadgeVisible } from './pass-display-util';
+import { DomSanitizer } from '../../../node_modules/@angular/platform-browser';
 
 @Component({
   selector: 'app-pass-tile',
@@ -25,6 +26,7 @@ export class PassTileComponent implements OnInit {
   buttonDown = false;
   timeLeft;
   valid: boolean = true;
+  hovered: boolean;
 
   get buttonState() {
     return this.buttonDown ? 'down' : 'up';
@@ -42,7 +44,11 @@ export class PassTileComponent implements OnInit {
     return isBadgeVisible(this.pass);
   }
 
-  constructor() {
+  get boxShadow(){
+    return this.sanitizer.bypassSecurityTrustStyle(this.hovered?'0 2px 4px 1px rgba(0, 0, 0, 0.3)':'0 2px 4px 0px rgba(0, 0, 0, 0.1)');
+  }
+
+  constructor(private sanitizer: DomSanitizer) {
   }
 
   ngOnInit() {

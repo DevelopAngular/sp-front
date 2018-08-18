@@ -15,6 +15,7 @@ export class CardButtonComponent implements OnInit {
   @Input() height: string;
   @Input() overlayWidth: string = '0px';
   @Input() valid: boolean = true;
+  @Input() disabled: boolean;
   @Input() content: string;
   @Input() gradientColor: string;
 
@@ -29,11 +30,12 @@ export class CardButtonComponent implements OnInit {
   }
 
   get buttonState() {
-    return this.buttonDown ? 'down' : 'up';
+    return (this.disabled?'up':(this.buttonDown ? 'down' : 'up'));
   }
   
   buttonClicked(){
-    this.onClick.emit();
+    if(!this.disabled)
+      this.onClick.emit();
   }
 
   onPress(press: boolean) {

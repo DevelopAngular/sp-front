@@ -183,7 +183,7 @@ export class HallpassFormComponent implements OnInit {
 
   updateFormHeight() {
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
-    matDialogConfig.height = this.formState === 'datetime' ? (this.forStaff ? '516px' : '562px') : '385px';
+    matDialogConfig.height = this.formState === 'datetime' ? '516px' : '385px';
     matDialogConfig.width = '750px';
     this.dialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);
   }

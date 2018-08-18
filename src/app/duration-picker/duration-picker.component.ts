@@ -14,6 +14,12 @@ export class DurationPickerComponent implements OnInit {
   @Input()
   maxDuration:number = 15;
 
+  @Input()
+  forStaff: boolean;
+
+  @Input()
+  plural: boolean;
+
   @Output() onChange: EventEmitter<any> = new EventEmitter();
 
   public selectedDuration: number = 5;
