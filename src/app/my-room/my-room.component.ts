@@ -5,7 +5,8 @@ import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Util } from '../../Util';
 import { DataService } from '../data-service';
-import { HallPassFilter, LiveDataService, mergeObject } from '../live-data.service';
+import { mergeObject } from '../live-data/helpers';
+import { HallPassFilter, LiveDataService } from '../live-data/live-data.service';
 import { LoadingService } from '../loading.service';
 import { BasicPassLikeProvider, PassLikeProvider } from '../models';
 import { Location } from '../models/Location';
@@ -88,7 +89,7 @@ export class MyRoomComponent implements OnInit {
   selectedLocation: Location;
   optionsOpen = false;
   canView = false;
-  userLoaded: boolean = false;
+  userLoaded = false;
 
   searchQuery$ = new BehaviorSubject('');
 

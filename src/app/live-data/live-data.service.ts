@@ -1,125 +1,33 @@
 import { Injectable } from '@angular/core';
-import * as Fuse from 'fuse.js';
 import 'rxjs/add/observable/empty';
 
 import 'rxjs/add/operator/startWith';
 import { Observable } from 'rxjs/Observable';
 import { map, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
-import { HttpService } from './http-service';
-import { Paged, PassLike } from './models';
-import { BaseModel } from './models/base';
-import { HallPass } from './models/HallPass';
-import { Invitation } from './models/Invitation';
-import { Location } from './models/Location';
-import { Request } from './models/Request';
-import { User } from './models/User';
-import { PollingEvent, PollingService } from './polling-service';
+import { HttpService } from '../http-service';
+import { Paged, PassLike } from '../models';
+import { BaseModel } from '../models/base';
+import { HallPass } from '../models/HallPass';
+import { Invitation } from '../models/Invitation';
+import { Location } from '../models/Location';
+import { Request } from '../models/Request';
+import { User } from '../models/User';
+import { PollingEvent, PollingService } from '../polling-service';
+import { AddItem, makePollingEventHandler, RemoveInvitationOnApprove, RemoveItem, RemoveRequestOnApprove } from './polling-event-handlers';
+import {
+  Action,
+  ExternalEvent,
+  isExternalEvent,
+  isPollingEvent,
+  isTransformFunc,
+  PollingEventContext,
+  PollingEventHandler,
+  TransformFunc
+} from './events';
+import { filterHallPasses, identityFilter } from './filters';
+import { State } from './state';
 
-export type Partial<T> = {
-  [P in keyof T]?: T[P];
-};
-
-interface QueryParams {
-  [key: string]: number | string;
-}
-
-function encode(obj: Partial<QueryParams>): string {
-  return Object.keys(obj).map(key => `${encodeURIComponent(key)}=${encodeURIComponent(obj[key].toString())}`).join('&');
-
-}
-
-function constructUrl(base: string, obj: Partial<QueryParams>): string {
-  const query = encode(obj);
-  if (query) {
-    return `${base}?${query}`;
-  } else {
-    return base;
-  }
-}
-
-class State<ModelType extends BaseModel> {
-  passes: ModelType[];
-  filtered_passes: ModelType[];
-  pass_lookup: { [id: number]: ModelType };
-  sort = '-created';
-  filter_query = '';
-
-  constructor(passes: ModelType[]) {
-    this.passes = Array.from(passes);
-    this.filtered_passes = Array.from(passes);
-    this.pass_lookup = {};
-  }
-
-  addItem(item: ModelType) {
-    this.passes.push(item);
-    this.pass_lookup[item.id] = item;
-  }
-
-  updateItem(item: ModelType) {
-    for (let i = 0; i < this.passes.length; i++) {
-      if (this.passes[i].id === item.id) {
-        this.passes[i] = item;
-      }
-    }
-
-    this.pass_lookup[item.id] = item;
-  }
-
-  addOrUpdateItem(item: ModelType) {
-    if (this.pass_lookup[item.id]) {
-      this.updateItem(item);
-    } else {
-      this.addItem(item);
-    }
-  }
-
-  removeItem(item: ModelType) {
-    this.passes = this.passes.filter(p => p.id !== item.id);
-    delete this.pass_lookup[item.id];
-  }
-
-  removeItemById(id: number|string) {
-    const pass = this.pass_lookup[id];
-    if (pass !== undefined) {
-      this.removeItem(pass);
-    }
-  }
-}
-
-interface ExternalEvent<E> {
-  type: 'external-event';
-  event: E;
-}
-
-interface TransformFunc<ModelType extends BaseModel> {
-  type: 'transform-func';
-  func: (s: State<ModelType>) => State<ModelType>;
-}
-
-interface PollingEventContext<ModelType extends BaseModel> {
-  type: 'polling-event';
-  event: PollingEvent;
-
-  postDelayed(ms: number, func: (s: State<ModelType>) => State<ModelType>);
-}
-
-type Action<ModelType extends BaseModel, E> = PollingEventContext<ModelType> | ExternalEvent<E> | TransformFunc<ModelType> | 'reload';
-
-function isPollingEvent(x: Action<any, any>): x is PollingEventContext<any> {
-  return (<PollingEventContext<any>>x).type === 'polling-event';
-}
-
-function isExternalEvent(x: Action<any, any>): x is ExternalEvent<any> {
-  return (<ExternalEvent<any>>x).type === 'external-event';
-}
-
-function isTransformFunc(x: Action<any, any>): x is TransformFunc<any> {
-  return (<TransformFunc<any>>x).type === 'transform-func';
-}
-
-
-type PollingEventHandler<ModelType extends BaseModel> = (state: State<ModelType>, e: PollingEventContext<ModelType>) => State<ModelType>;
 
 interface WatchData<ModelType extends BaseModel, ExternalEventType> {
   externalEvents: Observable<ExternalEventType>;
@@ -132,186 +40,6 @@ interface WatchData<ModelType extends BaseModel, ExternalEventType> {
   handlePost: (state: State<ModelType>) => State<ModelType>;
 }
 
-
-function filterHallPasses(state: State<HallPass>): State<HallPass> {
-  if (state.sort) {
-
-    const compareString = (a, b) => a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase());
-
-    const sortFns = {
-      'created': (a: HallPass, b: HallPass) => (+a.created) - (+b.created),
-      'expiration_time': (a: HallPass, b: HallPass) => (+a.expiration_time) - (+b.expiration_time),
-      'start_time': (a: HallPass, b: HallPass) => (+a.start_time) - (+b.start_time),
-      'destination_name': (a: HallPass, b: HallPass) => compareString(a.destination.title, b.destination.title),
-      'student_name': (a: HallPass, b: HallPass) => compareString(a.student.display_name, b.student.display_name),
-    };
-
-    for (const key of Object.keys(sortFns)) {
-      const sorter = sortFns[key];
-      sortFns['-' + key] = (a, b) => -sorter(a, b);
-    }
-
-    if (sortFns[state.sort]) {
-      state.passes = state.passes.sort(sortFns[state.sort]);
-    } else {
-      console.error(`Unknown sort type: ${state.sort}`);
-      delete state.sort;
-    }
-  }
-
-  if (state.filter_query && state.filter_query !== '') {
-
-    const options = {
-      shouldSort: true,
-      threshold: 0.6,
-      location: 0,
-      distance: 100,
-      maxPatternLength: 32,
-      minMatchCharLength: 1,
-      keys: [
-        'student.display_name',
-        'student.first_name',
-        'student.last_name',
-        'destination.title',
-      ]
-    };
-
-    const fuse = new Fuse(state.passes, options);
-    state.filtered_passes = fuse.search(state.filter_query);
-
-  } else {
-    state.filtered_passes = state.passes;
-  }
-
-
-  return state;
-}
-
-function identityFilter<ModelType extends BaseModel>(state: State<ModelType>): State<ModelType> {
-  state.filtered_passes = state.passes;
-
-  return state;
-}
-
-interface EventHandler<ModelType extends BaseModel> {
-  matches(event: PollingEvent): boolean;
-
-  handle(state: State<ModelType>, context: PollingEventContext<ModelType>, data: any): State<ModelType> | 'skip';
-}
-
-
-abstract class BaseEventHandler<ModelType extends BaseModel> implements EventHandler<ModelType> {
-
-  // noinspection TypeScriptAbstractClassConstructorCanBeMadeProtected
-  constructor(private actions: string[]) {
-  }
-
-  matches(event: PollingEvent): boolean {
-    return this.actions.includes(event.action);
-  }
-
-  abstract handle(state: State<ModelType>, context: PollingEventContext<ModelType>, data: any): State<ModelType> | 'skip';
-
-}
-
-
-class AddItem<ModelType extends PassLike> extends BaseEventHandler<ModelType> {
-  constructor(actions: string[], private decoder: (raw: any) => ModelType, private filter?: (pass: ModelType) => boolean) {
-    super(actions);
-  }
-
-  handle(state: State<ModelType>, context: PollingEventContext<ModelType>, data: any): State<ModelType> | 'skip' {
-    const dataArray = Array.isArray(data) ? data : [data];
-
-    for (const rawItem of dataArray) {
-      const pass = this.decoder(rawItem);
-      if (!this.filter || this.filter(pass)) {
-        state.addOrUpdateItem(pass);
-      }
-    }
-    return state;
-  }
-}
-
-class RemoveItem<ModelType extends PassLike> extends BaseEventHandler<ModelType> {
-  constructor(actions: string[], private decoder: (raw: any) => ModelType) {
-    super(actions);
-  }
-
-  handle(state: State<ModelType>, context: PollingEventContext<ModelType>, data: any): State<ModelType> | 'skip' {
-    const pass = this.decoder(data);
-    state.removeItem(pass);
-
-    return state;
-  }
-}
-
-class RemoveRequestOnApprove extends BaseEventHandler<Request> {
-  constructor(actions: string[]) {
-    super(actions);
-  }
-
-  handle(state: State<Request>, context: PollingEventContext<Request>, data: any): State<Request> | 'skip' {
-    const pass = HallPass.fromJSON(data);
-    state.removeItemById(pass.parent_request);
-
-    return state;
-  }
-}
-
-class RemoveInvitationOnApprove extends BaseEventHandler<Invitation> {
-  constructor(actions: string[]) {
-    super(actions);
-  }
-
-  handle(state: State<Invitation>, context: PollingEventContext<Invitation>, data: any): State<Invitation> | 'skip' {
-    const pass = HallPass.fromJSON(data);
-    state.removeItemById(pass.parent_invitation);
-
-    return state;
-  }
-}
-
-class RemoveItemWithDelay<ModelType extends PassLike> extends BaseEventHandler<ModelType> {
-  constructor(actions: string[], private decoder: (raw: any) => ModelType) {
-    super(actions);
-  }
-
-  handle(state: State<ModelType>, context: PollingEventContext<ModelType>, data: any): State<ModelType> | 'skip' {
-    const pass = this.decoder(data);
-    state.updateItem(pass);
-
-    context.postDelayed(5 * 1000, (s1: State<ModelType>) => {
-      s1.removeItem(pass);
-      return s1;
-    });
-
-    return state;
-  }
-}
-
-
-function makePollingEventHandler<ModelType extends BaseModel>(handlers: EventHandler<ModelType>[]): PollingEventHandler<ModelType> {
-  return (state: State<ModelType>, action: PollingEventContext<ModelType>) => {
-
-    for (const handler of handlers) {
-      if (handler.matches(action.event)) {
-        const result = handler.handle(state, action, action.event.data);
-        if (result !== 'skip') {
-          return result;
-        }
-      }
-    }
-
-    return state;
-  };
-}
-
-
-export function mergeObject<T>(initial: T, updates: Observable<Partial<T>>): Observable<T> {
-  // @ts-ignore
-  return updates.scan((current, update) => Object.assign({}, current, update), initial);
-}
 
 export type PassFilterType = { type: 'issuer', value: User } | { type: 'student', value: User } | { type: 'location', value: Location };
 

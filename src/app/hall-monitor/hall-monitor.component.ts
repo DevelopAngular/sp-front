@@ -3,10 +3,10 @@ import { MatDialog } from '@angular/material';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { DataService } from '../data-service';
-import { LiveDataService, mergeObject } from '../live-data.service';
+import { mergeObject } from '../live-data/helpers';
+import { LiveDataService } from '../live-data/live-data.service';
 import { LoadingService } from '../loading.service';
-import { BasicPassLikeProvider, PassLikeProvider } from '../models';
-import { testPasses } from '../models/mock_data';
+import { PassLikeProvider } from '../models';
 import { User } from '../models/User';
 import { ReportFormComponent } from '../report-form/report-form.component';
 
