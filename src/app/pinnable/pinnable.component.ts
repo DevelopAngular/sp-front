@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { bumpIn } from '../animations';
 import { Pinnable } from '../models/Pinnable';
+import { DomSanitizer } from '../../../node_modules/@angular/platform-browser';
 
 @Component({
   selector: 'app-pinnable',
@@ -21,13 +22,24 @@ export class PinnableComponent implements OnInit {
   @Input()
   forStaff: boolean = false;
 
+  @Input()
+  valid: boolean = true;
+
   @Output() onSelectEvent: EventEmitter<Pinnable> = new EventEmitter();
 
   restricted: boolean = false;
   buttonDown = false;
+  hovered: boolean;
 
-  constructor() {
+  constructor(private sanitizer: DomSanitizer) {
 
+  }
+
+  get shadow(){
+    if(this.hovered && this.valid)
+      return this.sanitizer.bypassSecurityTrustStyle('0 2px 4px 1px rgba(0, 0, 0, 0.3)');
+    else
+      return this.sanitizer.bypassSecurityTrustStyle('0 2px 4px 0px rgba(0, 0, 0, 0.1)');
   }
 
   ngOnInit() {
@@ -37,18 +49,22 @@ export class PinnableComponent implements OnInit {
   }
 
   get buttonState() {
-    return this.buttonDown ? 'down' : 'up';
+    return this.valid?this.buttonDown ? 'down' : 'up':'up';
   }
 
   onSelect() {
     // console.log("Pinnable Selected");
-    this.onSelectEvent.emit(this.pinnable);
+    if(this.valid)
+      this.onSelectEvent.emit(this.pinnable);
   }
 
   getGradient() {
-    let gradient: string[] = this.pinnable.color_profile.gradient_color.split(',');
-
-    return 'radial-gradient(circle at 73% 71%, ' + gradient[0] + ', ' + gradient[1] + ')';
+    if(this.valid){
+      let gradient: string[] = this.pinnable.color_profile.gradient_color.split(',');
+      return this.sanitizer.bypassSecurityTrustStyle('radial-gradient(circle at 73% 71%, ' + gradient[0] + ', ' + gradient[1] + ')');
+    } else{
+      return this.sanitizer.bypassSecurityTrustStyle('radial-gradient(circle at 73% 71%, rgb(203, 213, 229), rgb(203, 213, 229))');
+    }
   }
 
   onPress(press: boolean) {

@@ -113,11 +113,14 @@ export class InvitationCardComponent implements OnInit {
       const target = new ElementRef(evt.currentTarget);
       let options = [];
       let header = '';
-      if(!this.forStaff){
+      if(this.forInput){
+        options.push(this.genOption('Stop making pass','#E32C66','stop'));
+        header = 'Are you sure you want to stop making this pass?';
+      } else if(!this.forStaff){
         options.push(this.genOption('Decline Pass Request','#F00','decline'));
         header = 'Are you sure you want to decline this pass request you received?'
       } else{
-        options.push(this.genOption('Delete Pass Request','#E32C6','delete'));
+        options.push(this.genOption('Delete Pass Request','#E32C66','delete'));
         header = "Are you sure you want to delete this pass request you sent?";
       }
       const consentDialog = this.dialog.open(ConsentMenuComponent, {
@@ -152,7 +155,7 @@ export class InvitationCardComponent implements OnInit {
             console.log('[Invitation Cancelled]: ', httpData);
             this.dialogRef.close();
           });
-        }else{
+        }else if(action === 'stop'){
           this.dialogRef.close();
         }
       });

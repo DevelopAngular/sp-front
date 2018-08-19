@@ -3,19 +3,21 @@
     <div class="fav-header">
       Favorites
     </div>
-    <div class="choices">
+    <div *ngIf="favoritesLoaded" class="choices">
       <app-location-cell class="choice" *ngFor="let choice of starredChoices"
         (onSelect)="choiceSelected($event)" (onStar)="star($event)"
         [value]="choice" [type]="type" [starred]="true" [showStar]="showStars">
       </app-location-cell>
+      <div *ngIf="starredChoices.length<1" class="no-favs">No Favorites. <div *ngIf="!showStars">Add Favorites in Settings.</div></div>
     </div>
   </div>
   <div class="table-right" [style.margin]="'0 ' +(showFavorites?'0':'auto')">
     <input class="input" #searchBox [value]="search" [placeholder]="placeholder" (keyup)="onSearch(searchBox.value)">
+    <div class="quick-label" *ngIf="staticChoices">Quick Select</div>
     <div class="choices" (scroll)="onScroll($event)">
       <app-location-cell [hasLocks]="hasLocks" [forLater]="forLater" [forStaff]="forStaff" class="choice" *ngFor="let choice of choices" [showStar]="showStars" [starred]="false"
                         (onSelect)="choiceSelected($event)" (onStar)="star($event)"
-                        [value]="choice" [type]="type">
+                        [value]="choice" [type]="type" [valid]="!invalidLocation || choice.id !== invalidLocation">
       </app-location-cell>
     </div>
   </div>

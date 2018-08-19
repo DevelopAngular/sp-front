@@ -35,8 +35,8 @@
 .input {
   margin-top: 20px;
   margin-bottom: 5px;
-  width: 200px;
-  height: 40px;
+  min-width: 200px;
+  min-height: 40px;
   border-radius: 20px;
   box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.3);
   font-family: 'Helvetica Neue', sans-serif;
@@ -56,4 +56,14 @@ input {
   width: 180px;
   height: 140px;
   overflow: auto;
+}
+
+.quick-label{
+  margin: 10px 0;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.no-favs{
+  color: #767676;
 }

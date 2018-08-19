@@ -1,6 +1,7 @@
 <div mat-raised-button class="clickRipple" (click)="onSelect()"
-     [@pressState]="buttonState"
-     (mousedown)="onPress(true)" (mouseup)="onPress(false)">
+     [@pressState]="buttonState" [style.box-shadow]="shadow"
+     (mousedown)="onPress(true)" (mouseup)="onPress(false)"
+     (mouseenter)="hovered = true" (mouseleave)="onPress(false); hovered = false">
   <div class="card" [style.background]="getGradient()">
     <img class="icon" [src]="pinnable.icon | resolveAsset" alt="ICON">
     <div class="title-bar">

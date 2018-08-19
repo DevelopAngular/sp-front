@@ -3,7 +3,7 @@
     {{ formatDateTime(invitation.date_choices[0]) }}
   </div>
   <div class="card-body-left">
-    <app-duration-picker *ngIf="forStaff && forInput" (onChange)="selectedDuration = $event" [maxDuration]="invitation.destination.max_allowed_time?invitation.destination.max_allowed_time:15"></app-duration-picker>
+    <app-duration-picker *ngIf="forStaff && forInput" [forStaff]="forStaff" [plural]="durationPlural" (onChange)="selectedDuration = $event" [maxDuration]="invitation.destination.max_allowed_time?invitation.destination.max_allowed_time:15"></app-duration-picker>
     <app-travel-view *ngIf="!forInput" [forStaff]="forStaff" [pass]='invitation' (locationSelected)="setLocation($event)"></app-travel-view>
   </div>
   <div class="card-body-right" *ngIf="!forStaff; else staffPanel">

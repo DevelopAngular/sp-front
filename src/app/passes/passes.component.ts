@@ -187,18 +187,20 @@ export class PassesComponent implements OnInit {
   }
 
   openInputCard(templatePass, forLater, forStaff, selectedStudents, component) {
+    let data = {
+      'pass': templatePass,
+      'fromPast': false,
+      'forFuture': forLater,
+      'forInput': true,
+      'forStaff': forStaff,
+      'selectedStudents': selectedStudents,
+    }
     this.dialog.open(component, {
       panelClass: 'pass-card-dialog-container',
       backdropClass: 'custom-backdrop',
       disableClose: true,
-      data: {
-        'pass': templatePass,
-        'fromPast': false,
-        'forFuture': forLater,
-        'forInput': true,
-        'forStaff': forStaff,
-        'selectedStudents': selectedStudents,
-      }
+      data: data
     });
+    console.log(data);
   }
 }
