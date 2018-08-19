@@ -1,4 +1,5 @@
 import * as Fuse from 'fuse.js';
+import { PassLike } from '../models';
 import { BaseModel } from '../models/base';
 import { HallPass } from '../models/HallPass';
 import { State } from './state';
@@ -53,6 +54,14 @@ export function filterHallPasses(state: State<HallPass>): State<HallPass> {
     state.filtered_passes = state.passes;
   }
 
+
+  return state;
+}
+
+export function filterNewestFirst<ModelType extends PassLike>(state: State<ModelType>): State<ModelType> {
+
+  state.passes = state.passes.sort((a: ModelType, b: ModelType) => -((+a.created) - (+b.created)));
+  state.filtered_passes = state.passes;
 
   return state;
 }

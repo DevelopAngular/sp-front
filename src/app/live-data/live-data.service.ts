@@ -25,7 +25,7 @@ import {
   PollingEventHandler,
   TransformFunc
 } from './events';
-import { filterHallPasses, identityFilter } from './filters';
+import { filterHallPasses, filterNewestFirst, identityFilter } from './filters';
 import { State } from './state';
 
 
@@ -289,7 +289,7 @@ export class LiveDataService {
         new RemoveItem(['pass_request.deny', 'pass_request.cancel'], Request.fromJSON),
         new RemoveRequestOnApprove(['pass_request.accept'])
       ]),
-      handlePost: identityFilter
+      handlePost: filterNewestFirst
     });
   }
 
@@ -308,7 +308,7 @@ export class LiveDataService {
         new RemoveItem(['pass_invitation.deny', 'pass_invitation.cancel'], Invitation.fromJSON),
         new RemoveInvitationOnApprove(['pass_invitation.accept'])
       ]),
-      handlePost: identityFilter
+      handlePost: filterNewestFirst
     });
   }
 

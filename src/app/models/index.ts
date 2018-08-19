@@ -31,3 +31,11 @@ export class BasicPassLikeProvider {
     return Observable.of(Array.from(this.passes));
   }
 }
+
+export function includesPassLike<T extends PassLike>(array: T[], item: T) {
+  return array.find(p => p.id === item.id);
+}
+
+export function exceptPasses<T extends PassLike>(array: T[], excluded: T[]) {
+  return array.filter(item => !includesPassLike(excluded, item));
+}
