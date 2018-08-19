@@ -104,6 +104,19 @@ class InboxInvitationProvider implements PassLikeProvider {
   }
 }
 
+class WrappedProvider implements PassLikeProvider {
+
+  length$ = new BehaviorSubject(0);
+
+  constructor(private parent: PassLikeProvider) {
+  }
+
+  watch(sort: Observable<string>) {
+    return this.parent.watch(sort).do(passes => this.length$.next(passes.length));
+  }
+
+}
+
 
 @Component({
   selector: 'app-passes',
@@ -120,11 +133,13 @@ export class PassesComponent implements OnInit {
   activePasses: PassLikeProvider;
   pastPasses: PassLikeProvider;
 
-  sentRequests: PassLikeProvider;
-  receivedRequests: PassLikeProvider;
+  sentRequests: WrappedProvider;
+  receivedRequests: WrappedProvider;
 
   private currentPass$ = new BehaviorSubject<HallPass>(null);
   private currentRequest$ = new BehaviorSubject<Request>(null);
+
+  inboxHasItems: Observable<boolean> = Observable.of(false);
 
   user: User;
   isStaff = false;
@@ -148,12 +163,20 @@ export class PassesComponent implements OnInit {
         const excludedRequests = this.currentRequest$.map(r => r !== null ? [r] : []);
 
         if (isStudent) {
-          this.receivedRequests = new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser);
-          this.sentRequests = new InboxRequestProvider(this.liveDataService, this.dataService.currentUser, excludedRequests);
+          this.receivedRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser));
+          this.sentRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, this.dataService.currentUser,
+            excludedRequests));
         } else {
-          this.receivedRequests = new InboxRequestProvider(this.liveDataService, this.dataService.currentUser, excludedRequests);
-          this.sentRequests = new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser);
+          this.receivedRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, this.dataService.currentUser,
+            excludedRequests));
+          this.sentRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser));
         }
+
+        this.inboxHasItems = Observable.combineLatest(
+          this.receivedRequests.length$.startWith(0),
+          this.sentRequests.length$.startWith(0),
+          (l1, l2) => l1 > 0 || l2 > 0
+        );
 
       });
 

@@ -42,6 +42,8 @@
         <app-pass-collection [forStaff]="isStaff" [forFuture]="true" [isActive]="false" [style.width]="'258px'" [passProvider]="isStaff?receivedRequests:sentRequests" [title]="isStaff?'Received':'Sent'" [icon]="'./assets/' +(isStaff?'Request':'Lock') +' (Blue).png'" [columns]="2"></app-pass-collection>
         <app-pass-collection [forStaff]="isStaff" [forFuture]="true" [isActive]="false" [style.width]="'258px'" [passProvider]="isStaff?sentRequests:receivedRequests" [title]="isStaff?'Sent':'Received'" [icon]="'./assets/' +(isStaff?'Lock':'Request') +' (Blue).png'" [columns]="2"></app-pass-collection>
         <!-- No pass requests -->
+
+        <div *ngIf="!(inboxHasItems | async)" class="text">No requests sent or received</div>
       </div>
     </app-display-card>
   </div>
