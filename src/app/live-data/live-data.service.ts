@@ -169,7 +169,8 @@ export class LiveDataService {
         return s;
       },
       handlePollingEvent: makePollingEventHandler([
-        new AddItem(['hall_pass.create', 'hall_pass.update'], HallPass.fromJSON, mergeFilters(filters)),
+        new AddItem(['hall_pass.create', 'hall_pass.update', 'pass_request.accept', 'pass_invitation.accept'],
+          HallPass.fromJSON, mergeFilters(filters)),
       ]),
       handlePost: filterHallPasses
     });
@@ -200,7 +201,8 @@ export class LiveDataService {
         return s;
       },
       handlePollingEvent: makePollingEventHandler([
-        new AddItem(['hall_pass.create', 'hall_pass.update'], HallPass.fromJSON, mergeFilters(filters)),
+        new AddItem(['hall_pass.create', 'hall_pass.update', 'pass_request.accept', 'pass_invitation.accept'],
+          HallPass.fromJSON, mergeFilters(filters)),
       ]),
       handlePost: filterHallPasses
     });
@@ -247,7 +249,8 @@ export class LiveDataService {
         return s;
       },
       handlePollingEvent: makePollingEventHandler([
-        new AddItem(['hall_pass.start'], HallPass.fromJSON, mergeFilters(filters)),
+        new AddItem(['hall_pass.start', 'pass_request.accept', 'pass_invitation.accept'],
+          HallPass.fromJSON, mergeFilters(filters)),
         new RemoveItem(['hall_pass.end'], HallPass.fromJSON)
       ]),
       handlePost: filterHallPasses
@@ -283,7 +286,7 @@ export class LiveDataService {
       decoder: data => HallPass.fromJSON(data),
       handleExternalEvent: (s: State<HallPass>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([
-        new AddItem(['hall_pass.create', 'hall_pass.update'], HallPass.fromJSON,
+        new AddItem(['hall_pass.create', 'hall_pass.update', 'pass_request.accept', 'pass_invitation.accept'], HallPass.fromJSON,
           (pass) => filterFunc(pass) && pass.start_time > new Date()),
         new RemoveItem(['hall_pass.start'], HallPass.fromJSON)
       ]),
@@ -323,7 +326,7 @@ export class LiveDataService {
       decoder: data => HallPass.fromJSON(data),
       handleExternalEvent: (s: State<HallPass>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([
-        new AddItem(['hall_pass.end'], HallPass.fromJSON, filterFunc)
+        new AddItem(['hall_pass.end', 'pass_request.accept', 'pass_invitation.accept'], HallPass.fromJSON, filterFunc)
       ]),
       handlePost: (s: State<HallPass>) => {
         s.sort = '-start_time';
