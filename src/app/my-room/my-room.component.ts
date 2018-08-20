@@ -8,9 +8,10 @@ import { DataService } from '../data-service';
 import { mergeObject } from '../live-data/helpers';
 import { HallPassFilter, LiveDataService } from '../live-data/live-data.service';
 import { LoadingService } from '../loading.service';
-import { BasicPassLikeProvider, PassLike, PassLikeProvider } from '../models';
+import { PassLike } from '../models';
 import { Location } from '../models/Location';
 import { testPasses } from '../models/mock_data';
+import { BasicPassLikeProvider, PassLikeProvider, WrappedProvider } from '../models/providers';
 import { User } from '../models/User';
 import { TeacherDropdownComponent } from '../teacher-dropdown/teacher-dropdown.component';
 
@@ -18,7 +19,7 @@ abstract class RoomPassProvider implements PassLikeProvider {
 
   // noinspection TypeScriptAbstractClassConstructorCanBeMadeProtected
   constructor(protected liveDataService: LiveDataService, protected location$: Observable<Location>,
-                        protected date$: Observable<Date>, protected search$: Observable<string>) {
+              protected date$: Observable<Date>, protected search$: Observable<string>) {
   }
 
   protected abstract fetchPasses(sortingEvents: Observable<HallPassFilter>, location: Location, date: Date): Observable<PassLike[]>;
@@ -64,9 +65,9 @@ export class MyRoomComponent implements OnInit {
 
   testPasses: PassLikeProvider;
 
-  activePasses: PassLikeProvider;
-  originPasses: PassLikeProvider;
-  destinationPasses: PassLikeProvider;
+  activePasses: WrappedProvider;
+  originPasses: WrappedProvider;
+  destinationPasses: WrappedProvider;
 
   inputValue = '';
   calendarToggled = false;
@@ -83,16 +84,27 @@ export class MyRoomComponent implements OnInit {
   searchDate$ = new BehaviorSubject<Date>(null);
   selectedLocation$ = new ReplaySubject<Location>(1);
 
+  hasPasses = new BehaviorSubject(false);
+
   constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService,
               public dialog: MatDialog, private liveDataService: LiveDataService) {
     this.setSearchDate(new Date());
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
 
-    this.activePasses = new ActivePassProvider(liveDataService, this.selectedLocation$, this.searchDate$, this.searchQuery$);
-    this.originPasses = new OriginPassProvider(liveDataService, this.selectedLocation$, this.searchDate$, this.searchQuery$);
-    this.destinationPasses = new DestinationPassProvider(liveDataService, this.selectedLocation$, this.searchDate$, this.searchQuery$);
+    this.activePasses = new WrappedProvider(new ActivePassProvider(liveDataService, this.selectedLocation$,
+      this.searchDate$, this.searchQuery$));
+    this.originPasses = new WrappedProvider(new OriginPassProvider(liveDataService, this.selectedLocation$,
+      this.searchDate$, this.searchQuery$));
+    this.destinationPasses = new WrappedProvider(new DestinationPassProvider(liveDataService, this.selectedLocation$,
+      this.searchDate$, this.searchQuery$));
 
+    Observable.combineLatest(
+      this.activePasses.length$,
+      this.originPasses.length$,
+      this.destinationPasses.length$,
+      (l1, l2, l3) => l1 > 0 || l2 > 0 || l3 > 0
+    ).subscribe(this.hasPasses);
   }
 
   setSearchDate(date: Date) {

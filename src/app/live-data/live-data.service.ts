@@ -326,7 +326,7 @@ export class LiveDataService {
         new AddItem(['hall_pass.end'], HallPass.fromJSON, filterFunc)
       ]),
       handlePost: (s: State<HallPass>) => {
-        s.sort = 'start_time';
+        s.sort = '-start_time';
         return filterHallPasses(s);
       }
     });

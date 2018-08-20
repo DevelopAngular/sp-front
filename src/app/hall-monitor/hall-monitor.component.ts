@@ -6,7 +6,7 @@ import { DataService } from '../data-service';
 import { mergeObject } from '../live-data/helpers';
 import { LiveDataService } from '../live-data/live-data.service';
 import { LoadingService } from '../loading.service';
-import { PassLikeProvider } from '../models';
+import { PassLikeProvider } from '../models/providers';
 import { User } from '../models/User';
 import { ReportFormComponent } from '../report-form/report-form.component';
 

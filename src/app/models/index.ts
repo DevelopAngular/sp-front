@@ -1,4 +1,3 @@
-import { Observable } from 'rxjs/Observable';
 import { HallPass } from './HallPass';
 import { Invitation } from './Invitation';
 import { Request } from './Request';
@@ -16,21 +15,6 @@ export interface HallPassSummary {
 }
 
 export type PassLike = HallPass | Invitation | Request;
-
-export interface PassLikeProvider {
-
-  watch(sort: Observable<string>): Observable<PassLike[]>;
-}
-
-export class BasicPassLikeProvider {
-
-  constructor(private passes: PassLike[]) {
-  }
-
-  watch(sort: Observable<string>) {
-    return Observable.of(Array.from(this.passes));
-  }
-}
 
 export function includesPassLike<T extends PassLike>(array: T[], item: T) {
   return array.find(p => p.id === item.id);

@@ -9,9 +9,10 @@ import { InvitationCardComponent } from '../invitation-card/invitation-card.comp
 import { mergeObject } from '../live-data/helpers';
 import { HallPassFilter, LiveDataService } from '../live-data/live-data.service';
 import { LoadingService } from '../loading.service';
-import { BasicPassLikeProvider, exceptPasses, PassLike, PassLikeProvider } from '../models';
+import { exceptPasses, PassLike } from '../models';
 import { HallPass } from '../models/HallPass';
 import { testInvitations, testPasses, testRequests } from '../models/mock_data';
+import { BasicPassLikeProvider, PassLikeProvider, WrappedProvider } from '../models/providers';
 import { Request } from '../models/Request';
 import { User } from '../models/User';
 import { PassCardComponent } from '../pass-card/pass-card.component';
@@ -102,19 +103,6 @@ class InboxInvitationProvider implements PassLikeProvider {
 
     return this.user$.switchMap(user => this.liveDataService.watchInboxInvitations(user));
   }
-}
-
-class WrappedProvider implements PassLikeProvider {
-
-  length$ = new BehaviorSubject(0);
-
-  constructor(private parent: PassLikeProvider) {
-  }
-
-  watch(sort: Observable<string>) {
-    return this.parent.watch(sort).do(passes => this.length$.next(passes.length));
-  }
-
 }
 
 
