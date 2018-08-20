@@ -24,10 +24,6 @@ export class HallPass extends BaseModel {
     super();
   }
 
-  get isRead() {
-    return true;
-  }
-
   static fromJSON(JSON: any): HallPass {
     if (!JSON) {
       return null;

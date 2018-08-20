@@ -1,9 +1,9 @@
-import { BaseModel } from './base';
+import { BaseModel, ReadableModel } from './base';
 import { ColorProfile } from './ColorProfile';
 import { Location } from './Location';
 import { User } from './User';
 
-export class Invitation extends BaseModel {
+export class Invitation extends BaseModel implements ReadableModel {
   constructor(public id: string,
               public student: User,
               public default_origin: Location,

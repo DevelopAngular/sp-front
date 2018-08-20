@@ -5,9 +5,9 @@
 
     <div *ngIf="!!icon && inbox" class="inbox-wrapper">
       <img class="inbox-icon" [src]="'./assets/Inbox Full (Blue).png' | resolveAsset">
-      <div class="inbox-modifiers" *ngIf="notifications > 0">
+      <div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0">
         <img class="inbox-badge" [src]="'./assets/Inbox Number.png' | resolveAsset">
-        <div class="inbox-number">{{ notifications }}</div>
+        <div class="inbox-number">{{ notificationBadge$ | async }}</div>
         <img class="inbox-front" [src]="'./assets/Inbox Front (Blue).png' | resolveAsset">
       </div>
     </div>

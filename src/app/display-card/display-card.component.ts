@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { NavbarDataService } from '../main/navbar-data.service';
 
 @Component({
   selector: 'app-display-card',
@@ -13,9 +14,11 @@ export class DisplayCardComponent implements OnInit {
   @Input() icon: string;
   @Input() fontSize: string;
 
-  notifications: number = 1;
+  constructor(private navbarData: NavbarDataService) { }
 
-  constructor() { }
+  get notificationBadge$() {
+    return this.navbarData.notificationBadge$;
+  }
 
   ngOnInit() {
   }

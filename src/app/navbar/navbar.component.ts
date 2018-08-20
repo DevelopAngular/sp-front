@@ -8,6 +8,7 @@ import { Observable } from 'rxjs/Observable';
 import { DataService } from '../data-service';
 import { GoogleLoginService } from '../google-login.service';
 import { LoadingService } from '../loading.service';
+import { NavbarDataService } from '../main/navbar-data.service';
 import { User } from '../models/User';
 
 @Component({
@@ -27,7 +28,8 @@ export class NavbarComponent implements OnInit {
   navbarEnabled = false;
 
   constructor(private dataService: DataService, public dialog: MatDialog, private router: Router, private location: Location,
-              public loadingService: LoadingService, public loginService: GoogleLoginService, private _zone: NgZone) {
+              public loadingService: LoadingService, public loginService: GoogleLoginService, private _zone: NgZone,
+              private navbarData: NavbarDataService) {
 
     const navbarEnabled$ = Observable.combineLatest(
       this.loadingService.isLoading$,
@@ -70,8 +72,8 @@ export class NavbarComponent implements OnInit {
       });
   }
 
-  get notifications() {
-    return 1;
+  get notificationBadge$() {
+    return this.navbarData.notificationBadge$;
   }
 
   showOptions() {

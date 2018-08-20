@@ -1,10 +1,10 @@
-import { BaseModel } from './base';
+import { BaseModel, ReadableModel } from './base';
 import { ColorProfile } from './ColorProfile';
 import { HallPass } from './HallPass';
 import { Location } from './Location';
 import { User } from './User';
 
-export class Request extends BaseModel {
+export class Request extends BaseModel implements ReadableModel {
   constructor(public id: string,
               public student: User,
               public origin: Location,

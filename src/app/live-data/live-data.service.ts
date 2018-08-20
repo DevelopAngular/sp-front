@@ -14,7 +14,6 @@ import { Location } from '../models/Location';
 import { Request } from '../models/Request';
 import { User } from '../models/User';
 import { PollingEvent, PollingService } from '../polling-service';
-import { AddItem, makePollingEventHandler, RemoveInvitationOnApprove, RemoveItem, RemoveRequestOnApprove } from './polling-event-handlers';
 import {
   Action,
   ExternalEvent,
@@ -26,6 +25,7 @@ import {
   TransformFunc
 } from './events';
 import { filterHallPasses, filterNewestFirst, identityFilter } from './filters';
+import { AddItem, makePollingEventHandler, RemoveInvitationOnApprove, RemoveItem, RemoveRequestOnApprove } from './polling-event-handlers';
 import { State } from './state';
 
 
@@ -132,7 +132,7 @@ export class LiveDataService {
         return s;
       },
       handlePollingEvent: makePollingEventHandler([
-        new AddItem(['hall_pass.create'], HallPass.fromJSON, (pass) => pass.origin.id === filter.id),
+        new AddItem(['hall_pass.create', 'hall_pass.update'], HallPass.fromJSON, (pass) => pass.origin.id === filter.id),
       ]),
       handlePost: filterHallPasses
     });
@@ -151,7 +151,7 @@ export class LiveDataService {
         return s;
       },
       handlePollingEvent: makePollingEventHandler([
-        new AddItem(['hall_pass.create'], HallPass.fromJSON, (pass) => pass.destination.id === filter.id),
+        new AddItem(['hall_pass.create', 'hall_pass.update'], HallPass.fromJSON, (pass) => pass.destination.id === filter.id),
       ]),
       handlePost: filterHallPasses
     });
@@ -226,7 +226,8 @@ export class LiveDataService {
       decoder: data => HallPass.fromJSON(data),
       handleExternalEvent: (s: State<HallPass>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([
-        new AddItem(['hall_pass.create'], HallPass.fromJSON, (pass) => filterFunc(pass) && pass.start_time > new Date()),
+        new AddItem(['hall_pass.create', 'hall_pass.update'], HallPass.fromJSON,
+          (pass) => filterFunc(pass) && pass.start_time > new Date()),
         new RemoveItem(['hall_pass.start'], HallPass.fromJSON)
       ]),
       handlePost: (s: State<HallPass>) => {
@@ -285,7 +286,7 @@ export class LiveDataService {
       decoder: data => Request.fromJSON(data),
       handleExternalEvent: (s: State<Request>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([
-        new AddItem(['pass_request.create'], Request.fromJSON),
+        new AddItem(['pass_request.create', 'pass_request.update'], Request.fromJSON),
         new RemoveItem(['pass_request.deny', 'pass_request.cancel'], Request.fromJSON),
         new RemoveRequestOnApprove(['pass_request.accept'])
       ]),
@@ -304,7 +305,7 @@ export class LiveDataService {
       decoder: data => Invitation.fromJSON(data),
       handleExternalEvent: (s: State<Invitation>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([
-        new AddItem(['pass_invitation.create'], Invitation.fromJSON),
+        new AddItem(['pass_invitation.create', 'pass_invitation.update'], Invitation.fromJSON),
         new RemoveItem(['pass_invitation.deny', 'pass_invitation.cancel'], Invitation.fromJSON),
         new RemoveInvitationOnApprove(['pass_invitation.accept'])
       ]),
