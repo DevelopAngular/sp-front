@@ -41,8 +41,8 @@ export class PassCellComponent implements OnInit {
 
   ngOnInit() {
     this.valid = this.isActive;
-    setInterval(() => {
-      if (!!this.pass && this.isActive) {
+    if (!!this.pass && this.isActive) {
+      setInterval(() => {
         let end: Date = this.pass['expiration_time'];
         let now: Date = new Date();
         let diff: number = (end.getTime() - now.getTime()) / 1000;
@@ -50,8 +50,8 @@ export class PassCellComponent implements OnInit {
         let secs: number = Math.abs(Math.floor(diff) % 60);
         this.valid = end > now;
         this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
-      }
-    }, 10);
+      }, 750);
+    }
   }
 
 }
