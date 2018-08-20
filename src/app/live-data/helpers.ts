@@ -4,8 +4,8 @@ export type Partial<T> = {
   [P in keyof T]?: T[P];
 };
 
-interface QueryParams {
-  [key: string]: number | string;
+export interface QueryParams {
+  [key: string]: boolean | number | string;
 }
 
 function encode(obj: Partial<QueryParams>): string {
@@ -13,7 +13,7 @@ function encode(obj: Partial<QueryParams>): string {
 
 }
 
-function constructUrl(base: string, obj: Partial<QueryParams>): string {
+export function constructUrl(base: string, obj: Partial<QueryParams>): string {
   const query = encode(obj);
   if (query) {
     return `${base}?${query}`;

@@ -26,7 +26,7 @@
       </div>
     </div>
     <div *ngIf="calendarToggled" class="my-room-right">
-      <app-date-time-picker [_selectedMoment]="_searchDate" [min]="min" [showTime]="false" (onUpdate)="searchDate = $event"></app-date-time-picker>
+      <app-date-time-picker [_selectedMoment]="searchDate" [min]="min" [showTime]="false" (onUpdate)="setSearchDate($event)"></app-date-time-picker>
     </div>
   </div>
   <h3 *ngIf="isStaff && !selectedLocation && userLoaded">You don't have any rooms</h3>

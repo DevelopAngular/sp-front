@@ -8,15 +8,20 @@ import { DataService } from '../data-service';
 import { mergeObject } from '../live-data/helpers';
 import { HallPassFilter, LiveDataService } from '../live-data/live-data.service';
 import { LoadingService } from '../loading.service';
-import { BasicPassLikeProvider, PassLikeProvider } from '../models';
+import { BasicPassLikeProvider, PassLike, PassLikeProvider } from '../models';
 import { Location } from '../models/Location';
 import { testPasses } from '../models/mock_data';
 import { User } from '../models/User';
 import { TeacherDropdownComponent } from '../teacher-dropdown/teacher-dropdown.component';
 
-class ActivePassProvider implements PassLikeProvider {
-  constructor(private liveDataService: LiveDataService, private location$: Observable<Location>, private search$: Observable<string>) {
+abstract class RoomPassProvider implements PassLikeProvider {
+
+  // noinspection TypeScriptAbstractClassConstructorCanBeMadeProtected
+  constructor(protected liveDataService: LiveDataService, protected location$: Observable<Location>,
+                        protected date$: Observable<Date>, protected search$: Observable<string>) {
   }
+
+  protected abstract fetchPasses(sortingEvents: Observable<HallPassFilter>, location: Location, date: Date): Observable<PassLike[]>;
 
   watch(sort: Observable<string>) {
     const sort$ = sort.map(s => ({sort: s}));
@@ -26,42 +31,26 @@ class ActivePassProvider implements PassLikeProvider {
     const mergedReplay = new ReplaySubject<HallPassFilter>(1);
     merged$.subscribe(mergedReplay);
 
-    return this.location$.switchMap(location => this.liveDataService.watchActiveHallPasses(mergedReplay, {
-      type: 'location',
-      value: location
-    }));
+    return Observable.combineLatest(this.location$, this.date$, (location, date) => ({location, date}))
+      .switchMap(({location, date}) => this.fetchPasses(mergedReplay, location, date));
   }
 }
 
-class OriginPassProvider implements PassLikeProvider {
-  constructor(private liveDataService: LiveDataService, private location$: Observable<Location>, private search$: Observable<string>) {
-  }
-
-  watch(sort: Observable<string>) {
-    const sort$ = sort.map(s => ({sort: s}));
-    const search$ = this.search$.map(s => ({search_query: s}));
-    const merged$ = mergeObject({sort: '-created', search_query: ''}, Observable.merge(sort$, search$));
-
-    const mergedReplay = new ReplaySubject<HallPassFilter>(1);
-    merged$.subscribe(mergedReplay);
-
-    return this.location$.switchMap(location => this.liveDataService.watchHallPassesFromLocation(mergedReplay, location));
+class ActivePassProvider extends RoomPassProvider {
+  protected fetchPasses(sortingEvents: Observable<HallPassFilter>, location: Location, date: Date) {
+    return this.liveDataService.watchActiveHallPasses(sortingEvents, {type: 'location', value: location}, date);
   }
 }
 
-class DestinationPassProvider implements PassLikeProvider {
-  constructor(private liveDataService: LiveDataService, private location$: Observable<Location>, private search$: Observable<string>) {
+class OriginPassProvider extends RoomPassProvider {
+  protected fetchPasses(sortingEvents: Observable<HallPassFilter>, location: Location, date: Date) {
+    return this.liveDataService.watchHallPassesFromLocation(sortingEvents, location, date);
   }
+}
 
-  watch(sort: Observable<string>) {
-    const sort$ = sort.map(s => ({sort: s}));
-    const search$ = this.search$.map(s => ({search_query: s}));
-    const merged$ = mergeObject({sort: '-created', search_query: ''}, Observable.merge(sort$, search$));
-
-    const mergedReplay = new ReplaySubject<HallPassFilter>(1);
-    merged$.subscribe(mergedReplay);
-
-    return this.location$.switchMap(location => this.liveDataService.watchHallPassesToLocation(mergedReplay, location));
+class DestinationPassProvider extends RoomPassProvider {
+  protected fetchPasses(sortingEvents: Observable<HallPassFilter>, location: Location, date: Date) {
+    return this.liveDataService.watchHallPassesToLocation(sortingEvents, location, date);
   }
 }
 
@@ -84,7 +73,6 @@ export class MyRoomComponent implements OnInit {
   user: User;
   isStaff = false;
   min: Date = new Date('December 17, 1995 03:24:00');
-  _searchDate: Date = new Date();
   roomOptions: Location[];
   selectedLocation: Location;
   optionsOpen = false;
@@ -92,29 +80,33 @@ export class MyRoomComponent implements OnInit {
   userLoaded = false;
 
   searchQuery$ = new BehaviorSubject('');
-
+  searchDate$ = new BehaviorSubject<Date>(null);
   selectedLocation$ = new ReplaySubject<Location>(1);
 
   constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService,
               public dialog: MatDialog, private liveDataService: LiveDataService) {
+    this.setSearchDate(new Date());
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
 
-    this.activePasses = new ActivePassProvider(liveDataService, this.selectedLocation$, this.searchQuery$);
-    this.originPasses = new OriginPassProvider(liveDataService, this.selectedLocation$, this.searchQuery$);
-    this.destinationPasses = new DestinationPassProvider(liveDataService, this.selectedLocation$, this.searchQuery$);
+    this.activePasses = new ActivePassProvider(liveDataService, this.selectedLocation$, this.searchDate$, this.searchQuery$);
+    this.originPasses = new OriginPassProvider(liveDataService, this.selectedLocation$, this.searchDate$, this.searchQuery$);
+    this.destinationPasses = new DestinationPassProvider(liveDataService, this.selectedLocation$, this.searchDate$, this.searchQuery$);
 
   }
 
-  set searchDate(date: Date) {
-    this._searchDate = date;
+  setSearchDate(date: Date) {
     date.setHours(0);
     date.setMinutes(0);
-    this.dataService.updateMRDate(date);
+    this.searchDate$.next(date);
+  }
+
+  get searchDate() {
+    return this.searchDate$.value;
   }
 
   get dateDisplay() {
-    return Util.formatDateTime(this._searchDate).split(',')[0];
+    return Util.formatDateTime(this.searchDate).split(',')[0];
   }
 
   get choices() {

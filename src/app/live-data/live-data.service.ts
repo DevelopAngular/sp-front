@@ -25,6 +25,7 @@ import {
   TransformFunc
 } from './events';
 import { filterHallPasses, filterNewestFirst, identityFilter } from './filters';
+import { constructUrl, QueryParams } from './helpers';
 import { AddItem, makePollingEventHandler, RemoveInvitationOnApprove, RemoveItem, RemoveRequestOnApprove } from './polling-event-handlers';
 import { State } from './state';
 
@@ -40,6 +41,30 @@ interface WatchData<ModelType extends BaseModel, ExternalEventType> {
   handlePost: (state: State<ModelType>) => State<ModelType>;
 }
 
+function getDateLimits(date: Date) {
+  const start = new Date(+date);
+
+  start.setHours(0, 0, 0, 0);
+
+  const end = new Date((+date) + 24 * 60 * 60 * 1000);
+
+  return {start, end};
+}
+
+
+type FilterFunc<T> = (item: T) => boolean;
+
+function mergeFilters<T>(filters: FilterFunc<T>[]) {
+  return (item: T) => {
+    for (const filter of filters) {
+      if (!filter(item)) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+}
 
 export type PassFilterType = { type: 'issuer', value: User } | { type: 'student', value: User } | { type: 'location', value: Location };
 
@@ -119,70 +144,24 @@ export class LiveDataService {
       );
   }
 
-  watchHallPassesFromLocation(sortingEvents: Observable<HallPassFilter>, filter: Location): Observable<HallPass[]> {
+  watchHallPassesFromLocation(sortingEvents: Observable<HallPassFilter>, filter: Location, date: Date = null): Observable<HallPass[]> {
+    const queryFilter: QueryParams = {
+      limit: 20,
+      origin: filter.id
+    };
+    const filters: FilterFunc<HallPass>[] = [pass => pass.origin.id === filter.id];
 
-    return this.watch<HallPass, HallPassFilter>({
-      externalEvents: sortingEvents,
-      eventNamespace: 'hall_pass',
-      initialUrl: `api/methacton/v1/hall_passes?limit=20&origin=${filter.id}`,
-      decoder: data => HallPass.fromJSON(data),
-      handleExternalEvent: (s: State<HallPass>, e: HallPassFilter) => {
-        s.sort = e.sort;
-        s.filter_query = e.search_query;
-        return s;
-      },
-      handlePollingEvent: makePollingEventHandler([
-        new AddItem(['hall_pass.create', 'hall_pass.update'], HallPass.fromJSON, (pass) => pass.origin.id === filter.id),
-      ]),
-      handlePost: filterHallPasses
-    });
-  }
-
-  watchHallPassesToLocation(sortingEvents: Observable<HallPassFilter>, filter: Location): Observable<HallPass[]> {
-
-    return this.watch<HallPass, HallPassFilter>({
-      externalEvents: sortingEvents,
-      eventNamespace: 'hall_pass',
-      initialUrl: `api/methacton/v1/hall_passes?limit=20&destination=${filter.id}`,
-      decoder: data => HallPass.fromJSON(data),
-      handleExternalEvent: (s: State<HallPass>, e: HallPassFilter) => {
-        s.sort = e.sort;
-        s.filter_query = e.search_query;
-        return s;
-      },
-      handlePollingEvent: makePollingEventHandler([
-        new AddItem(['hall_pass.create', 'hall_pass.update'], HallPass.fromJSON, (pass) => pass.destination.id === filter.id),
-      ]),
-      handlePost: filterHallPasses
-    });
-  }
-
-  watchActiveHallPasses(sortingEvents: Observable<HallPassFilter>, filter?: PassFilterType): Observable<HallPass[]> {
-    let queryFilter = '';
-    let filterFunc = (pass: HallPass) => true;
-
-    if (filter) {
-      if (filter.type === 'issuer') {
-        queryFilter = `&issuer=${filter.value.id}`;
-        filterFunc = (pass: HallPass) => pass.issuer.id === filter.value.id;
-      }
-
-      if (filter.type === 'student') {
-        queryFilter = `&student=${filter.value.id}`;
-        filterFunc = (pass: HallPass) => pass.student.id === filter.value.id;
-
-      }
-      if (filter.type === 'location') {
-        queryFilter = `&location=${filter.value.id}`;
-        filterFunc = (pass: HallPass) => pass.origin.id === filter.value.id || pass.destination.id === filter.value.id;
-
-      }
+    if (date !== null) {
+      const limits = getDateLimits(date);
+      queryFilter.start_time_after = limits.start.toISOString();
+      queryFilter.start_time_before = limits.end.toISOString();
+      filters.push(pass => limits.start <= pass.start_time && pass.start_time <= limits.end);
     }
 
     return this.watch<HallPass, HallPassFilter>({
       externalEvents: sortingEvents,
       eventNamespace: 'hall_pass',
-      initialUrl: `api/methacton/v1/hall_passes?limit=20&active=true${queryFilter}`,
+      initialUrl: constructUrl('api/methacton/v1/hall_passes', queryFilter),
       decoder: data => HallPass.fromJSON(data),
       handleExternalEvent: (s: State<HallPass>, e: HallPassFilter) => {
         s.sort = e.sort;
@@ -190,7 +169,85 @@ export class LiveDataService {
         return s;
       },
       handlePollingEvent: makePollingEventHandler([
-        new AddItem(['hall_pass.start'], HallPass.fromJSON, filterFunc),
+        new AddItem(['hall_pass.create', 'hall_pass.update'], HallPass.fromJSON, mergeFilters(filters)),
+      ]),
+      handlePost: filterHallPasses
+    });
+  }
+
+  watchHallPassesToLocation(sortingEvents: Observable<HallPassFilter>, filter: Location, date: Date = null): Observable<HallPass[]> {
+    const queryFilter: QueryParams = {
+      limit: 20,
+      destination: filter.id
+    };
+    const filters: FilterFunc<HallPass>[] = [pass => pass.destination.id === filter.id];
+
+    if (date !== null) {
+      const limits = getDateLimits(date);
+      queryFilter.start_time_after = limits.start.toISOString();
+      queryFilter.start_time_before = limits.end.toISOString();
+      filters.push(pass => limits.start <= pass.start_time && pass.start_time <= limits.end);
+    }
+
+    return this.watch<HallPass, HallPassFilter>({
+      externalEvents: sortingEvents,
+      eventNamespace: 'hall_pass',
+      initialUrl: constructUrl('api/methacton/v1/hall_passes', queryFilter),
+      decoder: data => HallPass.fromJSON(data),
+      handleExternalEvent: (s: State<HallPass>, e: HallPassFilter) => {
+        s.sort = e.sort;
+        s.filter_query = e.search_query;
+        return s;
+      },
+      handlePollingEvent: makePollingEventHandler([
+        new AddItem(['hall_pass.create', 'hall_pass.update'], HallPass.fromJSON, mergeFilters(filters)),
+      ]),
+      handlePost: filterHallPasses
+    });
+  }
+
+  watchActiveHallPasses(sortingEvents: Observable<HallPassFilter>, filter?: PassFilterType, date: Date = null): Observable<HallPass[]> {
+    const queryFilter: QueryParams = {
+      limit: 20,
+      active: true
+    };
+    const filters: FilterFunc<HallPass>[] = [];
+
+    if (filter) {
+      if (filter.type === 'issuer') {
+        queryFilter.issuer = filter.value.id;
+        filters.push(pass => pass.issuer.id === filter.value.id);
+      }
+      if (filter.type === 'student') {
+        queryFilter.student = filter.value.id;
+        filters.push(pass => pass.student.id === filter.value.id);
+
+      }
+      if (filter.type === 'location') {
+        queryFilter.location = filter.value.id;
+        filters.push(pass => pass.origin.id === filter.value.id || pass.destination.id === filter.value.id);
+      }
+    }
+
+    if (date !== null) {
+      const limits = getDateLimits(date);
+      queryFilter.start_time_after = limits.start.toISOString();
+      queryFilter.start_time_before = limits.end.toISOString();
+      filters.push(pass => limits.start <= pass.start_time && pass.start_time <= limits.end);
+    }
+
+    return this.watch<HallPass, HallPassFilter>({
+      externalEvents: sortingEvents,
+      eventNamespace: 'hall_pass',
+      initialUrl: constructUrl('api/methacton/v1/hall_passes', queryFilter),
+      decoder: data => HallPass.fromJSON(data),
+      handleExternalEvent: (s: State<HallPass>, e: HallPassFilter) => {
+        s.sort = e.sort;
+        s.filter_query = e.search_query;
+        return s;
+      },
+      handlePollingEvent: makePollingEventHandler([
+        new AddItem(['hall_pass.start'], HallPass.fromJSON, mergeFilters(filters)),
         new RemoveItem(['hall_pass.end'], HallPass.fromJSON)
       ]),
       handlePost: filterHallPasses
