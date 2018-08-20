@@ -307,6 +307,7 @@ export class HallpassFormComponent implements OnInit {
       });
     } else {
       if (this.isDeclinable && this.forLater) {
+        console.log('New Invitations');
         let templateInvitation: Invitation = new Invitation('template', null, null, this.toLocation, [this.requestTime], this.user, 'pending', this.duration, this._toProfile.gradient_color, this.toIcon, this.travelType, this._toProfile, null, null, null, null);
         this.dialogRef.close({
           'templatePass': templateInvitation,

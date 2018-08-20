@@ -1,4 +1,4 @@
-<div class="wrapper" (click)="cellSelected()">
+<div class="wrapper" (click)="cellSelected()" (mouseenter)="hovered = true" (mouseleave)="hovered = false" [style.background-color]="bgColor" [style.color]="textColor">
   <div *ngIf="type==='location'" class="info">
     <img *ngIf="showStar" (mouseenter)="overStar=true" (mouseleave)="overStar=false" (click)="star()" class="star" [src]="'./assets/Star' +(this.value.starred?' (Yellow)':' (Grey)') +'.png' | resolveAsset">
     <img *ngIf="showLock && !showStar && hasLocks" (click)="star()" class="star" [src]="'./assets/Lock (Blue).png' | resolveAsset">

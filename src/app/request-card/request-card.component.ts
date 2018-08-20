@@ -161,13 +161,12 @@ export class RequestCardComponent implements OnInit {
       let header = '';
       if(!this.forInput){
         if(this.forStaff){
-          options.push(this.genOption('Change Pass Duration & Approve', '#3D396B', 'duration'));
           options.push(this.genOption('Add Message & Deny','#3D396B','denyMessage'));
           options.push(this.genOption('Deny Pass Request','#E32C66','deny'));
         } else{
           options.push(this.genOption('Delete Pass Request','#E32C66','delete'));
         }
-        header = 'Are you sure you want to' +(this.forStaff?'deny':'delete') +' this pass request you ' +(this.forStaff?'received':'sent') +'?';
+        header = 'Are you sure you want to ' +(this.forStaff?'deny':'delete') +' this pass request' +(this.forStaff?'':' you sent') +'?';
       } else{
         options.push(this.genOption('Stop making pass','#E32C66','stop'));
         header = 'Are you sure you want to stop making this pass?';

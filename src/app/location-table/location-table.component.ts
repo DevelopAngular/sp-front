@@ -44,6 +44,9 @@ export class LocationTableComponent implements OnInit {
   @Input()
   hasLocks: boolean;
 
+  @Input()
+  invalidLocation: string;
+
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<string> = new EventEmitter();
 
@@ -65,7 +68,7 @@ export class LocationTableComponent implements OnInit {
   starredChoices: any[] = [];
   search: string = '';
   nextChoices: string = '';
-
+  favoritesLoaded: boolean;
   constructor(private http: HttpService) {
   }
 
@@ -82,13 +85,13 @@ export class LocationTableComponent implements OnInit {
         .toPromise().then(p => {
           this.choices = p.results;
           this.nextChoices = p.next;
-          console.log('WHERE AM I',this.nextChoices);
         });
     }
     if(this.type==='location'){
       let endpoint = 'api/methacton/v1/users/@me/starred';
       this.http.get(endpoint).toPromise().then((stars:any[]) => {
         this.starredChoices = stars.map(val => Location.fromJSON(val));
+        this.favoritesLoaded = true;
       });
     }
   }
@@ -107,13 +110,30 @@ export class LocationTableComponent implements OnInit {
         +'&search=' +search
         +(this.type==='location'?'&starred=false':''))
         .toPromise().then(p => {
-          this.choices = p.results;
+          this.choices = this.filterResults(p.results);
         });
       } else{
-        this.choices = [];
-        this.search = '';
+        this.http.get<Paged<Location>>('api/methacton/v1/'
+        +(this.type==='teachers'?'users?role=edit_all_hallpass&':('locations'
+          +(!!this.category ? ('?category=' +this.category +'&') : '?')
+        ))
+        +'limit=10'
+        +(this.type==='location'?'&starred=false':''))
+        .toPromise().then(p => {
+          this.choices = this.filterResults(p.results);
+          this.nextChoices = p.next;
+          this.search = '';
+        });
       }
     // }
+  }
+
+  filterResults(results: any[]){
+    return results.filter(felement => {
+      return this.starredChoices.findIndex((ielement) => {
+        return ielement.id === felement.id;
+      }) < 0;
+    });
   }
 
   choiceSelected(choice: any) {
