@@ -11,6 +11,10 @@ export class State<ModelType extends BaseModel> {
     this.passes = Array.from(passes);
     this.filtered_passes = Array.from(passes);
     this.pass_lookup = {};
+
+    for (const pass of this.passes) {
+      this.pass_lookup[pass.id] = pass;
+    }
   }
 
   addItem(item: ModelType) {
