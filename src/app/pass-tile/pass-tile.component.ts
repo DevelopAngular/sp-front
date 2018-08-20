@@ -53,17 +53,17 @@ export class PassTileComponent implements OnInit {
 
   ngOnInit() {
     this.valid = this.isActive;
-    setInterval(() => {
-      if (!!this.pass && this.isActive) {
-        let end: Date = this.pass['expiration_time'];
-        let now: Date = new Date();
-        let diff: number = (end.getTime() - now.getTime()) / 1000;
-        let mins: number = Math.floor(Math.abs(Math.floor(diff) / 60));
-        let secs: number = Math.abs(Math.floor(diff) % 60);
-        this.valid = end > now;
-        this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
-      }
-    }, 10);
+    if (!!this.pass && this.isActive) {
+      setInterval(() => {
+          let end: Date = this.pass['expiration_time'];
+          let now: Date = new Date();
+          let diff: number = (end.getTime() - now.getTime()) / 1000;
+          let mins: number = Math.floor(Math.abs(Math.floor(diff) / 60));
+          let secs: number = Math.abs(Math.floor(diff) % 60);
+          this.valid = end > now;
+          this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
+      }, 750);
+    }
   }
 
   backgroundGradient() {

@@ -93,20 +93,20 @@
     <div *ngIf="toState == 'pinnables'" class="pinnable-wrapper">
       <mat-grid-list class="grid center" cols="4" rowHeight="75px" gutterSize="10px" [style.width]="'550px'">
         <mat-grid-tile *ngFor="let pinnable of pinnables | async">
-          <app-pinnable [valid]="!pinnable.location || pinnable.location.id !== fromLocation.id" [forStaff]="forStaff" [forLater]="forLater" [pinnable]="pinnable" (onSelectEvent)="pinnableSelected($event)"></app-pinnable>
+          <app-pinnable [valid]="(fromLocation?(!pinnable.location || pinnable.location.id !== fromLocation.id):true)" [forStaff]="forStaff" [forLater]="forLater" [pinnable]="pinnable" (onSelectEvent)="pinnableSelected($event)"></app-pinnable>
         </mat-grid-tile>
       </mat-grid-list>
     </div>
     <div *ngIf="toState == 'category'">
       <app-location-table class="center" (onSelect)="locationChosen($event, 'to')"
-                          [invalidLocation]='fromLocation.id' [forStaff]="forStaff" [hasLocks]="true" [category]="toCategory" [type]="'location'" [placeholder]="'Search ' +toCategory.toLowerCase()" > </app-location-table>
+                          [invalidLocation]="(fromLocation?fromLocation.id:'')" [forStaff]="forStaff" [hasLocks]="true" [category]="toCategory" [type]="'location'" [placeholder]="'Search ' +toCategory.toLowerCase()" > </app-location-table>
     </div>
   </div>
   <div *ngIf="formState == 'restrictedTarget'">
       <app-location-table class="center" (onSelect)="updateTarget($event)" [type]="'teachers'" [placeholder]="'Search teachers'" [staticChoices]="toLocation.teachers"></app-location-table>
   </div>
   <div *ngIf="formState == 'restrictedMessage'" class="message center">
-    <textarea class="message-box" #messageBox [placeholder]="'Attach a message for ' +(requestTarget.last_name)" [(ngModel)]="requestMessage">{{ requestMessage }}</textarea>
+    <textarea class="message-box" #messageBox [placeholder]="'Attach a message' +(requestTarget?(' for ' +requestTarget.last_name):'')" [(ngModel)]="requestMessage">{{ requestMessage }}</textarea>
       <app-gradient-button
         [gradient]="'#00B476, #03CF31'"
         [hoverColor]="'#04CD33'"

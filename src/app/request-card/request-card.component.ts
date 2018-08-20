@@ -168,6 +168,7 @@ export class RequestCardComponent implements OnInit {
         }
         header = 'Are you sure you want to ' +(this.forStaff?'deny':'delete') +' this pass request' +(this.forStaff?'':' you sent') +'?';
       } else{
+        options.push(this.genOption('Change Message','#3D396B','editMessage'));
         options.push(this.genOption('Stop making pass','#E32C66','stop'));
         header = 'Are you sure you want to stop making this pass?';
       }
@@ -185,15 +186,36 @@ export class RequestCardComponent implements OnInit {
         this.cancelOpen = false;
         if(action === 'cancel' || action === 'stop'){
           this.dialogRef.close();
-        } else if(action === 'decline'){
-          let endpoint: string = 'api/methacton/v1/pass_requests/' +this.request.id +'/deny';
-          let body = {
-            'message' : ''
+        } else if(action === 'editMessage'){
+          this.editMessage();
+        }else if(action.indexOf('deny') === 0){
+          let denyMessage: string = '';
+          if(action.indexOf('Message') > -1){
+            if(!this.messageEditOpen){
+              const infoDialog = this.dialog.open(HallpassFormComponent, {
+                width: '750px',
+                panelClass: 'form-dialog-container',
+                backdropClass: 'invis-backdrop',
+                data: {'entryState': 'restrictedMessage',
+                      'originalMessage': '',
+                      'originalToLocation': this.request.destination,
+                      'colorProfile': this.request.color_profile,
+                      'originalFromLocation': this.request.origin}
+              });
+          
+              infoDialog.afterOpen().subscribe( () =>{
+                this.messageEditOpen = true;
+              });
+          
+              infoDialog.afterClosed().subscribe(data =>{
+                denyMessage = data['message'];
+                this.messageEditOpen = false;
+                this.denyRequest(denyMessage);
+              });
+            }
+          } else{
+            this.denyRequest(denyMessage);
           }
-          this.http.post(endpoint, body).subscribe((httpData)=>{
-            console.log('[Invitation Denied]: ', httpData);
-            this.dialogRef.close();
-          });
         } else if(action === 'delete'){
           let endpoint: string = 'api/methacton/v1/pass_requests/' +this.request.id +'/cancel';
           let body = {
@@ -206,6 +228,17 @@ export class RequestCardComponent implements OnInit {
         }
       });
     }
+  }
+
+  denyRequest(denyMessage: string){
+    let endpoint: string = 'api/methacton/v1/pass_requests/' +this.request.id +'/deny';
+    let body = {
+      'message' : denyMessage
+    }
+    this.http.post(endpoint, body).subscribe((httpData)=>{
+      console.log('[Invitation Denied]: ', httpData);
+      this.dialogRef.close();
+    });
   }
 
   genOption(display, color, action){

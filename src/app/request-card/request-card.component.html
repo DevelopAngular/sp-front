@@ -1,13 +1,19 @@
-<app-pass-card-template (onCancel)="cancelRequest($event)" [hasDivider]="((request.status==='pending' || request.status==='accepted') && !forInput && !forStaff) || (request.status!=='pending' && forStaff)" [pass]="request" [closeIcon]="'./assets/' +((forInput || !forStaff)?'Trash':'Three dots') +' (Transparent).png'">
+<app-pass-card-template (onCancel)="cancelRequest($event)" [hasDivider]="((request.status==='pending' || request.status==='accepted') && !forInput && !forStaff) || (request.status!=='pending' && forStaff)" [pass]="request" [closeIcon]="'./assets/' +((!forStaff && !forInput)?'Trash':'Three dots') +' (Transparent).png'">
   <div class="card-subtitle">
-    {{ (request.request_time?formatDateTime(request.request_time):'Pass for Now') }}
+    {{ ((request.request_time && forFuture)?formatDateTime(request.request_time):'Pass for Now') }}
   </div>
   <div class="card-body-left">
-    <app-pager>
+    <div class="page-1" [style.max-height]="'122px'" *ngIf="forInput">
+      <app-duration-picker *ngIf="forInput; else noInput;" (onChange)="selectedDuration=$event"  [maxDuration]="(request.destination.max_allowed_time?request.destination.max_allowed_time:15)"></app-duration-picker>
+      <ng-template #noInput>
+        <app-travel-view [pass]="request" [shrink]="true"></app-travel-view>
+      </ng-template>
+    </div>
+    <app-pager *ngIf="!forInput">
       <div class="page-1" [style.max-height]="'122px'">
         <app-duration-picker *ngIf="forInput; else noInput;" (onChange)="selectedDuration=$event"  [maxDuration]="(request.destination.max_allowed_time?request.destination.max_allowed_time:15)"></app-duration-picker>
         <ng-template #noInput>
-            <app-travel-view [pass]="request" [shrink]="true"></app-travel-view>
+          <app-travel-view [pass]="request" [shrink]="true"></app-travel-view>
         </ng-template>
       </div>
       <div class="page-2">
@@ -33,8 +39,7 @@
       <app-traveltype-picker (onSelect)="selectedTravelType=$event" [choices]="request.destination.travel_types" [altColor]="request.color_profile.solid_color"></app-traveltype-picker>
       <app-card-button (onClick)="newRequest()" [disabled]="performingAction" [width]="'181px'" [height]="'50px'" [gradientColor]="request.color_profile.gradient_color">
         <div class="request-button-content">
-          <img class="button-icon-left" [src]="'./assets/Lock (White).png' | resolveAsset">
-          <div class="request-pass-content-text">Request Pass</div>
+          <div class="request-pass-content-text">Send Request</div>
           <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
         </div>
       </app-card-button>

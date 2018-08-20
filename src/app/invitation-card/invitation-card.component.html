@@ -1,4 +1,4 @@
-<app-pass-card-template [selectedStudents]="selectedStudents" [forStaff]="forStaff" [hasDivider]="(!selectedOrigin && !forStaff) || (!forInput && forStaff)" [pass]="invitation" (onCancel)="denyInvitation($event)" [rightJustify]="forStaff?'space-around':'flex-end'" [closeIcon]="'./assets/Trash (Transparent).png'">
+<app-pass-card-template [selectedStudents]="selectedStudents" [forStaff]="forStaff" [hasDivider]="(!selectedOrigin && !forStaff) || (!forInput && forStaff)" [pass]="invitation" (onCancel)="denyInvitation($event)" [rightJustify]="forStaff?'space-around':'flex-end'" [closeIcon]="'./assets/' +(forStaff?'Trash':'Three dots') +' (Transparent).png'">
   <div class="card-subtitle" *ngIf="fromPast || forFuture">
     {{ formatDateTime(invitation.date_choices[0]) }}
   </div>

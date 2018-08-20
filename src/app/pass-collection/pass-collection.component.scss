@@ -41,6 +41,8 @@
 .collection-list-wrapper{
     display: flex;
     flex-direction: column;
+    max-height: 350px;
+    overflow: auto;
 }
 
 .collection-grid-wrapper{
@@ -67,4 +69,9 @@
     text-align: center;
     color: rgb(126, 135, 157);
     margin-top: 25px;
+}
+
+mat-grid-list{
+    max-height: 275px;
+    overflow: auto;
 }

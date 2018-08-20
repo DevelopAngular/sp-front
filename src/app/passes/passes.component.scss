@@ -40,7 +40,6 @@
 .main-page-left{
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
 }
 
@@ -68,3 +67,6 @@
     margin: 0 25px;
 }
 
+.text {
+  color: #767676;
+}
