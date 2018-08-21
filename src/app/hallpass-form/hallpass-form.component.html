@@ -35,8 +35,11 @@
   </div>
 
   <div class="divider" [style.background-image]="dividerGradient">
-    <img class="divider-icon" [src]="dividerIcon | resolveAsset">
-    <div class="divider-text">{{dividerText}}</div>
+    <img class="back-button" [src]="'./assets/Back Button (Transparent).png' | resolveAsset" (click)="back()">
+    <div class="divider-header">
+      <img class="divider-icon" [src]="dividerIcon | resolveAsset">
+      <div class="divider-text">{{dividerText}}</div>
+    </div>
   </div>
 
   <!-- Used to select the start time of a pass for later -->
@@ -59,7 +62,7 @@
         [minWidth]="'90px'"
         [minHeight]="'30px'"
         [fontSize]="'14px'"
-        (buttonClick)="setFormState((forStaff?'students':'to'))"
+        (buttonClick)="setFormState((forStaff?'students':'from'))"
         [style.width]="'90px'"
         [style.margin]="'15px auto'"
       >

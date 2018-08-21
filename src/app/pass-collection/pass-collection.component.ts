@@ -41,6 +41,7 @@ export class PassCollectionComponent implements OnInit {
   @Input() forStaff = false;
   @Input() forMonitor = false;
   @Input() hasSort = false;
+  @Input() maxHeight;
 
   @Input() passProvider: PassLikeProvider;
 

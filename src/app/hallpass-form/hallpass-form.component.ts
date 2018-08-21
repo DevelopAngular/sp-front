@@ -47,6 +47,8 @@ export class HallpassFormComponent implements OnInit {
   startTime: Date = new Date();
   requestMessage: string = '';
   isDeclinable: boolean = true;
+  formStateHistory: string[] = [];
+  formHistoryIndex: number = 0;
 
   public pinnables: Promise<Pinnable[]>;
 
@@ -170,7 +172,7 @@ export class HallpassFormComponent implements OnInit {
       }
     }
 
-    this.formState = (this.entryState ? this.entryState : (this.forLater ? 'datetime' : (this.forStaff ? 'students' : 'from')));
+    this.setFormState(this.entryState ? this.entryState : (this.forLater ? 'datetime' : (this.forStaff ? 'students' : 'from')));
 
     this.updateFormHeight();
 
@@ -192,7 +194,16 @@ export class HallpassFormComponent implements OnInit {
     this.startTime = new Date(event);
   }
 
-  setFormState(state) {
+  back(){
+    let newIndex = this.formHistoryIndex - 1;
+    if(newIndex < 0){
+      this.dialogRef.close();
+    } else{
+      this.setFormState(this.formStateHistory[newIndex], true)
+    }
+  }
+
+  setFormState(state, back?:boolean) {
     if (this.entryState) {
       this.dialogRef.close({
         'fromLocation': this.fromLocation,
@@ -201,7 +212,21 @@ export class HallpassFormComponent implements OnInit {
       });
       return;
     }
-    this.formState = state;
+
+    if(!back){
+      this.formState = state;
+      this.formStateHistory.push(this.formState);
+      this.formHistoryIndex = this.formStateHistory.length - 1;
+      console.log('[Form History]: ', this.formStateHistory, this.formHistoryIndex);
+    } else{
+      let index = this.formStateHistory.indexOf(this.formState);
+      if(index > -1){
+        this.formStateHistory.splice(index, 1);
+      }
+
+      this.formState = state;
+      this.formHistoryIndex = this.formStateHistory.length - 1;
+    }
 
     this.updateFormHeight();
 

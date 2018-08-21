@@ -48,6 +48,10 @@ export class InvitationCardComponent implements OnInit {
     return this.invitation.status.charAt(0).toUpperCase() + this.invitation.status.slice(1);
   }
 
+  get durationPlural(){
+    return this.selectedStudents && this.selectedStudents.length > 1;
+  }
+
   ngOnInit() {
     this.invitation = this.data['pass'];
     this.forFuture = this.data['forFuture'];

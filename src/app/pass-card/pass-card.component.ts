@@ -101,7 +101,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
         });
     if (!!this.pass && this.isActive) {
       console.log('Starting interval');
-      this.timers.push(setInterval(() => {
+      this.timers.push(window.setInterval(() => {
         let end: Date = this.pass.expiration_time;
         let now: Date = new Date();
         let diff: number = (end.getTime() - now.getTime()) / 1000;
@@ -113,7 +113,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
         let start: Date = this.pass.start_time;
         let dur: number = Math.floor((end.getTime() - start.getTime()) / 1000);
         this.overlayWidth = (this.buttonWidth * (diff/dur));
-      }, 500));
+      }, 750));
     }
   }
 
@@ -225,9 +225,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
       let options = [];
       let header = '';
 
-      if(this.forMonitor){
-        options.push(this.genOption('Report student','#3D396B','report'));
-        options.push(this.genOption('End pass','#E32C66','end'));
+      if((this.isActive && this.forStaff) || this.forMonitor){
+        options.push(this.genOption('Report Student','#3D396B','report'));
+        options.push(this.genOption('End Pass','#E32C66','end'));
         header = 'What would you like to do with this pass?';
       } else{
         if(this.forInput){

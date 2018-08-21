@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { HallPass } from '../models/HallPass';
 import { Invitation } from '../models/Invitation';
 import { Request } from '../models/Request';
@@ -9,7 +9,7 @@ import { getInnerPassContent, getInnerPassName, isBadgeVisible } from '../pass-t
   templateUrl: './pass-cell.component.html',
   styleUrls: ['./pass-cell.component.scss']
 })
-export class PassCellComponent implements OnInit {
+export class PassCellComponent implements OnInit, OnDestroy {
 
   @Input() pass: HallPass | Invitation | Request;
   @Input() fromPast = false;
@@ -19,6 +19,7 @@ export class PassCellComponent implements OnInit {
 
   timeLeft;
   valid: boolean = true;
+  timers: number[] = [];
 
   constructor() {
   }
@@ -42,7 +43,7 @@ export class PassCellComponent implements OnInit {
   ngOnInit() {
     this.valid = this.isActive;
     if (!!this.pass && this.isActive) {
-      setInterval(() => {
+      this.timers.push(window.setInterval(() => {
         let end: Date = this.pass['expiration_time'];
         let now: Date = new Date();
         let diff: number = (end.getTime() - now.getTime()) / 1000;
@@ -50,8 +51,16 @@ export class PassCellComponent implements OnInit {
         let secs: number = Math.abs(Math.floor(diff) % 60);
         this.valid = end > now;
         this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
-      }, 750);
+      }, 750));
     }
+  }
+
+  ngOnDestroy() {
+    this.timers.forEach(id => {
+      console.log('Clearing interval');
+      clearInterval(id);
+    });
+    this.timers = [];
   }
 
 }

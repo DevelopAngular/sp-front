@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit, Output, OnDestroy } from '@angular/core';
 import { EventEmitter } from 'events';
 import { bumpIn } from '../animations';
 import { PassLike } from '../models';
@@ -13,7 +13,7 @@ import { DomSanitizer } from '../../../node_modules/@angular/platform-browser';
     bumpIn
   ]
 })
-export class PassTileComponent implements OnInit {
+export class PassTileComponent implements OnInit, OnDestroy {
 
   @Input() pass: PassLike;
   @Input() fromPast = false;
@@ -27,6 +27,7 @@ export class PassTileComponent implements OnInit {
   timeLeft;
   valid: boolean = true;
   hovered: boolean;
+  timers: number[] = [];
 
   get buttonState() {
     return this.buttonDown ? 'down' : 'up';
@@ -54,7 +55,7 @@ export class PassTileComponent implements OnInit {
   ngOnInit() {
     this.valid = this.isActive;
     if (!!this.pass && this.isActive) {
-      setInterval(() => {
+      this.timers.push(window.setInterval(() => {
           let end: Date = this.pass['expiration_time'];
           let now: Date = new Date();
           let diff: number = (end.getTime() - now.getTime()) / 1000;
@@ -62,8 +63,16 @@ export class PassTileComponent implements OnInit {
           let secs: number = Math.abs(Math.floor(diff) % 60);
           this.valid = end > now;
           this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
-      }, 750);
+      }, 750));
     }
+  }
+
+  ngOnDestroy() {
+    this.timers.forEach(id => {
+      console.log('Clearing interval');
+      clearInterval(id);
+    });
+    this.timers = [];
   }
 
   backgroundGradient() {

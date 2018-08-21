@@ -41,7 +41,6 @@
 .collection-list-wrapper{
     display: flex;
     flex-direction: column;
-    max-height: 350px;
     overflow: auto;
 }
 
@@ -72,6 +71,5 @@
 }
 
 mat-grid-list{
-    max-height: 275px;
     overflow: auto;
 }

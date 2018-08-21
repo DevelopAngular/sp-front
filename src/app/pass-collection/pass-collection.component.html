@@ -12,14 +12,14 @@
   <div *ngIf="(currentPasses$ | async)">
     <div *ngIf="(currentPasses$ | async).length>0; else emptyMessage">
       <div class="collection-grid-wrapper" *ngIf="displayState==='grid'; else list">
-        <mat-grid-list [cols]="columns" rowHeight="85px">
+        <mat-grid-list [cols]="columns" rowHeight="85px" [style.max-height]="maxHeight?maxHeight:''">
           <mat-grid-tile  [style.overflow]="'visible'" class="custom-mat-tile" *ngFor="let pass of (currentPasses$ | async)">
             <app-pass-tile (click)="showPass(pass)" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-tile>
           </mat-grid-tile>
         </mat-grid-list>
       </div>
       <ng-template #list>
-        <div class="collection-list-wrapper">
+        <div class="collection-list-wrapper" [style.max-height]="maxHeight?maxHeight:''">
           <app-pass-cell *ngFor="let pass of (currentPasses$ | async)" (click)="showPass(pass)" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-cell>
         </div>
       </ng-template>
