@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ElementRef, NgZone } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ElementRef, NgZone, OnDestroy } from '@angular/core';
 import { User } from '../models/User';
 import { HallPass} from '../models/HallPass';
 import { Util } from '../../Util';
@@ -15,7 +15,7 @@ import { LoadingService } from '../loading.service';
   templateUrl: './pass-card.component.html',
   styleUrls: ['./pass-card.component.scss']
 })
-export class PassCardComponent implements OnInit {
+export class PassCardComponent implements OnInit, OnDestroy {
 
   @Input() pass: HallPass;
   @Input() forInput: boolean = false;
@@ -38,6 +38,8 @@ export class PassCardComponent implements OnInit {
   selectedStudents: User[];
 
   pagerPages = 0;
+
+  timers: number[] = [];
 
   p1Title; p1Subtitle; p1Stamp;
   p2Title; p2Subtitle; p2Stamp;
@@ -76,7 +78,7 @@ export class PassCardComponent implements OnInit {
         return this.isActive;
       }
     }
-    
+
   }
 
   ngOnInit() {
@@ -98,8 +100,8 @@ export class PassCardComponent implements OnInit {
           });
         });
     if (!!this.pass && this.isActive) {
-      setInterval(() => {
-        console.log('Starting interval');
+      console.log('Starting interval');
+      this.timers.push(setInterval(() => {
         let end: Date = this.pass.expiration_time;
         let now: Date = new Date();
         let diff: number = (end.getTime() - now.getTime()) / 1000;
@@ -111,8 +113,16 @@ export class PassCardComponent implements OnInit {
         let start: Date = this.pass.start_time;
         let dur: number = Math.floor((end.getTime() - start.getTime()) / 1000);
         this.overlayWidth = (this.buttonWidth * (diff/dur));
-      }, 10);
+      }, 500));
     }
+  }
+
+  ngOnDestroy() {
+    this.timers.forEach(id => {
+      console.log('Clearing interval');
+      clearInterval(id);
+    });
+    this.timers = [];
   }
 
   updateDuration(dur:number){
@@ -194,7 +204,7 @@ export class PassCardComponent implements OnInit {
       'destination' : this.pass.destination.id,
       'travel_type' : this.selectedTravelType
     }
-    
+
     if(this.forStaff){
       body['students'] = this.selectedStudents.map(user => user.id);
     } else {
@@ -208,7 +218,7 @@ export class PassCardComponent implements OnInit {
       this.dialogRef.close();
     });
   }
-  
+
   cancelEdit(evt: MouseEvent){
     if(!this.cancelOpen){
       const target = new ElementRef(evt.currentTarget);
@@ -234,11 +244,11 @@ export class PassCardComponent implements OnInit {
         backdropClass: 'invis-backdrop',
         data: {'header': header, 'options': options, 'trigger': target}
       });
-  
+
       cancelDialog.afterOpen().subscribe( () =>{
         this.cancelOpen = true;
       });
-  
+
       cancelDialog.afterClosed().subscribe(action =>{
         this.cancelOpen = false;
         if(action === 'stop'){
