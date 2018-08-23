@@ -24,7 +24,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   @Output() tileSelected = new EventEmitter();
 
   buttonDown = false;
-  timeLeft;
+  timeLeft = '--:--';
   valid: boolean = true;
   hovered: boolean;
   timers: number[] = [];
@@ -34,7 +34,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   }
 
   get tileContent() {
-    return this.isActive?(this.timeLeft +(this.valid?' Remaining':' Expiring')):getInnerPassContent(this.pass);
+    return this.isActive?(this.timeLeft +(this.valid?' Remaining':' Expiring')):getInnerPassContent(this.pass, (!(this.pass['request_time'] && this.forFuture) && this.forStaff));
   }
 
   get tileName() {

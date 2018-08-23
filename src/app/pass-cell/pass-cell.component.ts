@@ -29,7 +29,7 @@ export class PassCellComponent implements OnInit, OnDestroy {
   }
 
   get cellContent() {
-    return this.isActive?(this.timeLeft +(this.valid?' Remaining':' Expiring')):getInnerPassContent(this.pass);
+    return this.isActive?(this.timeLeft +(this.valid?' Remaining':' Expiring')):getInnerPassContent(this.pass, (!(this.pass['request_time'] && this.forFuture) && this.forStaff));
   }
 
   get isBadgeVisible() {

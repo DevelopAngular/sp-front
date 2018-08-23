@@ -25,7 +25,9 @@ export function getFormattedPassDate(pass: PassLike) {
   return date ? Util.formatDateTime(date) : '[null date]';
 }
 
-export function getInnerPassContent(pass: PassLike) {
+export function getInnerPassContent(pass: PassLike, now?: boolean) {
+  if(now && !(pass instanceof HallPass))
+    return 'Request for Now';
   if (!(pass instanceof HallPass)) {
     if (pass.status === 'denied') {
       return 'Denied';

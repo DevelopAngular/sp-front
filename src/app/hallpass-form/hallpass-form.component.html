@@ -9,7 +9,7 @@
       [minWidth]="'175px'"
       [minHeight]="'80px'"
       [fontSize]="'16px'"
-      [disabled]="!!entryState"
+      [disabled]="true"
       (buttonClick)="setFormState('from')"
     >{{ from_title }}
     </app-gradient-button>
@@ -27,9 +27,9 @@
       [minWidth]="'175px'"
       [minHeight]="'80px'"
       [fontSize]="'16px'"
-      [disabled]="!toEnabled && !entryState"
+      [disabled]="true"
       (buttonClick)="setFormState('to')"
-    >{{ to_title }}
+    > {{ to_title }}
     </app-gradient-button>
 
   </div>
@@ -71,7 +71,7 @@
   </div>
 
   <div *ngIf="formState==='students'" class="student-select">
-    <app-student-search [style.width]="'75%'" (onUpdate)="selectedStudents=$event"></app-student-search>
+    <app-student-search [style.width]="'75%'" (onUpdate)="selectedStudents=$event" [selectedStudents]="selectedStudents"></app-student-search>
       <app-gradient-button
       *ngIf="selectedStudents && selectedStudents.length > 0"
       [gradient]="'#03CF31,#00B476'"

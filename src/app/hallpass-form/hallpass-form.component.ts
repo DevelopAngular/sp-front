@@ -35,7 +35,7 @@ export class HallpassFormComponent implements OnInit {
   greenProfile: ColorProfile = new ColorProfile('green', 'green', '#00B476, #03CF31', '', '', '', '');
   fromLocation: Location;
   toLocation: Location;
-  formState: string = 'from';
+  formState: string = '';
   requestTarget: User;
   travelType: string = 'round_trip';
   requestTime: Date = new Date();
@@ -59,18 +59,26 @@ export class HallpassFormComponent implements OnInit {
   }
 
   get fromGradient() {
-    if (this.fromLocation || (this.forLater && this.isDeclinable && this.isStaff)) {
-      return this.greenProfile.gradient_color;
+    if (this.fromEnabled) {
+      if (this.fromLocation || (this.forLater && this.isDeclinable && this.isStaff)) {
+        return this.greenProfile.gradient_color;
+      } else {
+        return '#606981, #ACB4C1';
+      }
     } else {
-      return '#606981, #ACB4C1';
+      return '#CBD5E5, #CBD5E5';
     }
   }
 
   get fromSolid() {
-    if (this.fromLocation)
-      return '#00b476';
-    else
-      return '#6E7689';
+    if (this.fromEnabled) {
+      if (this.fromLocation)
+        return '#00b476';
+      else
+        return '#6E7689';
+    } else {
+      return '#CBD5E5';
+    }
   }
 
   get toGradient() {
@@ -101,11 +109,15 @@ export class HallpassFormComponent implements OnInit {
   }
 
   get toEnabled() {
-    if (this.fromLocation || (this.isDeclinable && this.forLater && this.isStaff)) {
+    if (this.fromLocation || (this.isDeclinable && this.forLater && this.forStaff)) {
       return true;
     } else {
       return false;
     }
+  }
+
+  get fromEnabled(){
+    return !(this.forLater && this.forStaff && this.isDeclinable)
   }
 
   get dividerText() {
@@ -204,7 +216,8 @@ export class HallpassFormComponent implements OnInit {
   }
 
   setFormState(state, back?:boolean) {
-    if (this.entryState) {
+    if (this.entryState && this.formState) {
+      console.log(this.entryState +' && ' +this.formState);
       this.dialogRef.close({
         'fromLocation': this.fromLocation,
         'startTime': this.requestTime,

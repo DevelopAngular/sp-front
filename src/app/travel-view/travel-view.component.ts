@@ -33,6 +33,7 @@ export class TravelViewComponent implements OnInit {
 
   changeLocation(){
     if(!this.locationChangeOpen){
+      console.log('Opening from location in travel view');
       const locationDialog = this.dialog.open(HallpassFormComponent, {
         width: '750px',
         panelClass: 'form-dialog-container',
