@@ -7,7 +7,7 @@ export const environment = {
   production: false,
   serverConfig: {
     host: 'https://notify-messenger-notify-server-staging.lavanote.com/',
-    client_id: 'aC9QkvU8R5lNxGqjAGxJIWn0B3spLupkvR6vukT3',
+    client_id: 'Wmr9cRCU97i8Clp2oaN7Pek8I3C7U7uXLGsJTqPN',
     host_ws: 'wss://notify-messenger-notify-server-staging.lavanote.com/',
     auth_method: null,
   },
