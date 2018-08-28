@@ -3,8 +3,7 @@ export const environment = {
   serverConfig: {
     host: 'https://smartpass.app/',
     client_id: 'jJBpPq4UJFeUMn5WcmuMx5Fekp3Jp5ogWICt2Y1c',
-    client_secret: 'Zp4MUH0Jb5yEPQoeBbFBJCKxLwIRaTUqMDaAv2nhRkh0CpcpcBDhO2Zqi6MUSwUlf4RqAe5' +
-      'AECZ1sEfhQA9fJm1jDoqaeDkcTT2SokXo0PMyk9adqzs7LkiDvC3PqkEX',
+    client_secret: 'kbbJmqWnUxbX3NkBlucHIhHd5Wt9XpcDFuUi9fLVN7ggLjGHknZLz8jVqfwfY3Zxe0o5gNGXRqPPCGBMrjZCn8aQFabNid2MxYYmANxXV2KKg09EvgoNuJA5kDiF2i36',
     host_ws: 'wss://smartpass.app/',
     auth_method: null,
   },
