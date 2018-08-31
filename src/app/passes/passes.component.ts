@@ -169,10 +169,9 @@ export class PassesComponent implements OnInit {
       });
 
     this.dataService.currentUser.switchMap(user =>
-      this.liveDataService.watchActivePassLike(user))
+      user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : Observable.of(null))
       .subscribe(passLike => {
         this._zone.run(() => {
-          console.log('Active watch:', passLike);
           this.currentPass$.next((passLike instanceof HallPass) ? passLike : null);
           this.currentRequest$.next((passLike instanceof Request) ? passLike : null);
         });
@@ -229,7 +228,7 @@ export class PassesComponent implements OnInit {
       'forInput': true,
       'forStaff': forStaff,
       'selectedStudents': selectedStudents,
-    }
+    };
     this.dialog.open(component, {
       panelClass: 'pass-card-dialog-container',
       backdropClass: 'custom-backdrop',

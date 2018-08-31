@@ -109,7 +109,7 @@ export class LiveDataService {
       };
     }
 
-    const passEvents: Observable<PollingEventContext<ModelType>> = this.polling.listen(config.eventNamespace).map(wrapPollingEvent);
+    const passEvents: Observable<PollingEventContext<ModelType>> = this.polling.listen().map(wrapPollingEvent);
 
     const events: Observable<Action<ModelType, ExternalEventType>> = Observable.merge(wrappedExternalEvents, passEvents,
       loopbackEvents, Observable.of<'reload'>('reload'));
