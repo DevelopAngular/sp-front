@@ -115,7 +115,7 @@ export class LiveDataService {
       loopbackEvents, Observable.of<'reload'>('reload'));
 
     const accumulator = (state: State<ModelType>, action: Action<ModelType, ExternalEventType>) => {
-      console.log('acc()', state, action);
+      //console.log('acc()', state, action);
       if (action === 'reload') {
         // do nothing
       } else if (isExternalEvent(action)) {

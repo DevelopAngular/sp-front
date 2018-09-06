@@ -28,7 +28,7 @@
       [minHeight]="'80px'"
       [fontSize]="'16px'"
       [disabled]="true"
-      (buttonClick)="setFormState('to')"
+      (buttonClick)="setFormState('to-pinnables')"
     > {{ to_title }}
     </app-gradient-button>
 
@@ -80,7 +80,7 @@
       [minHeight]="'30px'"
       [fontSize]="'14px'"
       [disabled]="selectedStudents.length<1"
-      (buttonClick)="setFormState(((forLater&&isDeclinable)?'to':'from'))"
+      (buttonClick)="setFormState(((forLater&&isDeclinable)?'to-pinnables':'from'))"
       [style.width]="'90px'"
     >
     Done ({{ selectedStudents.length }})</app-gradient-button>
@@ -92,15 +92,15 @@
   </div>
 
   <!-- Used to select the to_location -->
-  <div *ngIf="formState == 'to'">
-    <div *ngIf="toState == 'pinnables'" class="pinnable-wrapper">
+  <div *ngIf="formState.substring(0, 2) == 'to'">
+    <div *ngIf="formState == 'to-pinnables'" class="pinnable-wrapper">
       <mat-grid-list class="grid center" cols="4" rowHeight="75px" gutterSize="10px" [style.width]="'550px'">
         <mat-grid-tile *ngFor="let pinnable of pinnables | async">
           <app-pinnable [valid]="(fromLocation?(!pinnable.location || pinnable.location.id !== fromLocation.id):true)" [forStaff]="forStaff" [forLater]="forLater" [pinnable]="pinnable" (onSelectEvent)="pinnableSelected($event)"></app-pinnable>
         </mat-grid-tile>
       </mat-grid-list>
     </div>
-    <div *ngIf="toState == 'category'">
+    <div *ngIf="formState == 'to-category'">
       <app-location-table class="center" (onSelect)="locationChosen($event, 'to')"
                           [invalidLocation]="(fromLocation?fromLocation.id:'')" [forStaff]="forStaff" [hasLocks]="true" [category]="toCategory" [type]="'location'" [placeholder]="'Search ' +toCategory.toLowerCase()" > </app-location-table>
     </div>

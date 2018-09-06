@@ -123,7 +123,7 @@ export class HallpassFormComponent implements OnInit {
   get dividerText() {
     if (this.formState === 'from') {
         return 'From where?';
-    } else if (this.formState === 'to') {
+    } else if (this.formState.substring(0, 2) === 'to') {
       if(this.toCategory)
         return this.toCategory;
       else
@@ -140,8 +140,8 @@ export class HallpassFormComponent implements OnInit {
   }
 
   get dividerIcon() {
-    if (this.formState === 'from' || this.formState === 'to' || this.formState === 'students') {
-      if(this.toCategory && this.formState === 'to')
+    if (this.formState === 'from' || this.formState.substring(0, 2) === 'to' || this.formState === 'students') {
+      if(this.toCategory && this.formState.substring(0, 2) === 'to')
         return this.toIcon;
       else
         return './assets/Search (White).png';
@@ -158,7 +158,7 @@ export class HallpassFormComponent implements OnInit {
     let colors = '#606981, #CBD5E5';
     if (this.formState === 'datetime') {
       colors = '#03CF31,#00B476';
-    } else if (this._toProfile) {
+    } else if (this._toProfile && this.entryState !== 'from') {
       colors = this._toProfile.gradient_color;
     }
     return 'radial-gradient(circle at 98% 97%,' + colors + ')';
@@ -207,15 +207,22 @@ export class HallpassFormComponent implements OnInit {
   }
 
   back(){
+    this.toCategory = '';
+    this._toProfile = null;
     let newIndex = this.formHistoryIndex - 1;
     if(newIndex < 0){
-      this.dialogRef.close();
+      this.dialogRef.close({
+        'fromLocation': this.fromLocation,
+        'startTime': this.requestTime,
+        'message': this.requestMessage
+      });
     } else{
       this.setFormState(this.formStateHistory[newIndex], true)
     }
   }
 
   setFormState(state, back?:boolean) {
+    this.pinnables.then(val => console.log(val));
     if (this.entryState && this.formState) {
       console.log(this.entryState +' && ' +this.formState);
       this.dialogRef.close({
@@ -232,6 +239,10 @@ export class HallpassFormComponent implements OnInit {
       this.formHistoryIndex = this.formStateHistory.length - 1;
       console.log('[Form History]: ', this.formStateHistory, this.formHistoryIndex);
     } else{
+      if(state === 'from'){
+        this.fromLocation = null;
+        this.from_title = 'From';
+      }
       let index = this.formStateHistory.indexOf(this.formState);
       if(index > -1){
         this.formStateHistory.splice(index, 1);
@@ -246,8 +257,7 @@ export class HallpassFormComponent implements OnInit {
     if (state === 'to') {
       if (!!this.fromLocation) {
         //this.pinnables = this.http.get<Pinnable[]>('api/methacton/v1/pinnables').toPromise();
-        this.formState = 'to';
-        this.toState = 'pinnables';
+        this.setFormState('to-pinnables');
       }
     }
   }
@@ -261,14 +271,14 @@ export class HallpassFormComponent implements OnInit {
       this.determinePass();
     } else if (event.type == 'category') {
       this.toCategory = event.category;
-      this.toState = 'category';
+      this.setFormState('to-category');
       this.toIcon = event.icon || '';
       this._toProfile = event.color_profile;
     }
   }
 
   getCategoryListVisibility() {
-    if (this.toState == 'category') {
+    if (this.formState == 'to-category') {
       return 'block';
     } else {
       return 'none';
@@ -297,13 +307,13 @@ export class HallpassFormComponent implements OnInit {
       this.formState = 'from';
       this.from_title = event.title;
       this.fromLocation = event;
-      this.setFormState('to');
+      this.setFormState('to-pinnables');
     } else if (type === 'to') {
       this.to_title = event.title;
       this.toLocation = event;
       this.determinePass();
     } else {
-      this.toState = 'pinnables';
+      this.setFormState('to-pinnables');
       this.to_title = event.title;
       this.toLocation = event;
     }
@@ -341,7 +351,7 @@ export class HallpassFormComponent implements OnInit {
         'restricted': false,
         'forStaff': this.forStaff,
         'selectedStudents': this.selectedStudents,
-        'type': 'hallpass'
+        'type': 'hallpass',
       });
     } else {
       if (this.isDeclinable && this.forLater) {

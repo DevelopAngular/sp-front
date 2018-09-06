@@ -50,7 +50,7 @@ export class TravelViewComponent implements OnInit {
   
       locationDialog.afterClosed().subscribe(data =>{
         console.log('Emiting with: ', data);
-        this.locationSelected.emit(data['fromLocation']?data['fromLocation']:this.pass['default_origin']);
+        this.locationSelected.emit((data && data['fromLocation'])?data['fromLocation']:this.pass['default_origin']);
         this.locationChangeOpen = false;
       });
     }
