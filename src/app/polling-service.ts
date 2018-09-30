@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { $WebSocket } from 'angular2-websocket/angular2-websocket';
 import { Observable } from 'rxjs/index';
 import { filter, map, publish, refCount, switchMap, tap } from 'rxjs/operators';
-import { environment } from '../environments/environment';
-import { HttpService } from './http-service';
+import { AuthContext, HttpService } from './http-service';
 import { Logger } from './logger.service';
 
 interface RawMessage {
@@ -47,12 +46,12 @@ export class PollingService {
 
   private getRawListener(): Observable<RawMessage> {
     return this.http.accessToken.pipe(
-      switchMap(token => {
-        const url = environment.serverConfig.host_ws + 'api/v1/long_polling';
+      switchMap((ctx: AuthContext) => {
+        const url = ctx.server.ws_url;
 
         const ws = new $WebSocket(url);
 
-        ws.send4Direct(JSON.stringify({'action': 'authenticate', 'token': token}));
+        ws.send4Direct(JSON.stringify({'action': 'authenticate', 'token': ctx.auth.access_token}));
 
         return Observable.create(s => {
 
@@ -65,7 +64,7 @@ export class PollingService {
             s.next({
               type: 'error',
               data: event,
-            })
+            });
           });
 
           ws.onClose(() => s.complete());

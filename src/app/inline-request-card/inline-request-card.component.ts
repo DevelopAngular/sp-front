@@ -53,7 +53,7 @@ export class InlineRequestCardComponent implements OnInit {
       cancelDialog.afterClosed().subscribe(action =>{
         this.cancelOpen = false;
         if(action === 'delete'){
-          let endpoint: string = 'api/methacton/v1/pass_requests/' +this.request.id +'/cancel';
+          let endpoint: string = 'v1/pass_requests/' +this.request.id +'/cancel';
           this.http.post(endpoint).subscribe((data)=>{
             console.log('[Request Canceled]: ', data);
           });

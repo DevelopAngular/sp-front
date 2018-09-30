@@ -8,7 +8,6 @@ import 'rxjs/add/operator/first';
 import 'rxjs/add/operator/switchMap';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
-import { environment } from '../environments/environment';
 import { GoogleLoginService, isDemoLogin } from './google-login.service';
 
 export const SESSION_STORAGE_KEY = 'accessToken';
@@ -40,18 +39,33 @@ function makeConfig(config: Config, access_token: string): Config & { responseTy
   }) as any;
 }
 
-function makeUrl(endpoint: string) {
+function makeUrl(server: LoginServer, endpoint: string) {
   if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) {
     return endpoint;
   } else {
-    return environment.serverConfig.host + endpoint;
+    return server.api_root + endpoint;
   }
+}
+
+export interface LoginServer {
+  api_root: string;
+  client_id: string;
+  client_secret: string;
+  domain: string;
+  icon_url: string;
+  name: string;
+  ws_url: string;
+}
+
+export interface AuthContext {
+  server: LoginServer;
+  auth: ServerAuth;
 }
 
 @Injectable()
 export class HttpService {
 
-  private accessTokenSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+  private accessTokenSubject: BehaviorSubject<AuthContext> = new BehaviorSubject<AuthContext>(null);
 
   private hasRequestedToken = false;
 
@@ -60,12 +74,12 @@ export class HttpService {
 
   }
 
-  get accessToken(): Observable<string> {
+  get accessToken(): Observable<AuthContext> {
 
     if (!this.hasRequestedToken) {
       this.fetchServerAuth()
-        .subscribe((auth: ServerAuth) => {
-          this.accessTokenSubject.next(auth.access_token);
+        .subscribe((auth: AuthContext) => {
+          this.accessTokenSubject.next(auth);
         });
 
       this.hasRequestedToken = true;
@@ -74,73 +88,106 @@ export class HttpService {
     return this.accessTokenSubject.filter(e => !!e);
   }
 
-  private loginManual(username: string, password: string) {
-    const config = new FormData();
-
-    config.append('client_id', environment.serverConfig.client_id);
-    config.append('grant_type', 'password');
-    config.append('username', username);
-    config.append('password', password);
-
-    console.log('loginManual()');
-
-    return this.http.post(makeUrl('o/token/'), config)
-      .map((data: any) => {
-        data['expires'] = new Date(new Date() + data['expires_in']);
-
-        ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
-
-        return data as ServerAuth;
+  private getLoginServers(data: FormData): Observable<LoginServer> {
+    return this.http.post('https://smartpass.app/api/discovery/find', data)
+      .map((servers: LoginServer[]) => {
+        console.log(servers);
+        if (servers.length > 0) {
+          return servers[0];
+        } else {
+          return null;
+        }
       });
   }
 
-  private loginGoogleAuth(googleToken: string) {
-    const config = new FormData();
+  private loginManual(username: string, password: string): Observable<AuthContext> {
 
-    config.append('client_id', environment.serverConfig.client_id);
-    config.append('provider', 'google-auth-token');
-    config.append('token', googleToken);
+    const c = new FormData();
+    c.append('email', username);
+    c.append('platform_type', 'web');
 
-    return this.http.post(makeUrl('auth/by-token'), config)
-      .map((data: any) => {
-        data['expires'] = new Date(new Date() + data['expires_in']);
-
-        ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
-
-        return data as ServerAuth;
-      });
-  }
-
-  private fetchServerAuth(): Observable<ServerAuth> {
-    if (environment.serverConfig.auth_method === 'password') {
-      if (environment.production) {
-        throw Error('auth_method \'password\' must not be used in production.');
+    return this.getLoginServers(c).flatMap(server => {
+      if (server === null) {
+        return Observable.empty();
       }
 
-      return this.loginManual((environment.serverConfig as any).auth_username, (environment.serverConfig as any).auth_password);
-    } else {
-      return this.loginService.getIdToken()
-        .switchMap(googleToken => {
-          if (isDemoLogin(googleToken)) {
-            return this.loginManual(googleToken.username, googleToken.password)
-              .catch(err => {
-                if (err.status !== 401) {
-                  throw err;
-                }
+      const config = new FormData();
 
-                googleToken.invalid = true;
-                return this.fetchServerAuth();
-              });
-          } else {
-            return this.loginGoogleAuth(googleToken);
-          }
+      config.append('client_id', server.client_id);
+      config.append('grant_type', 'password');
+      config.append('username', username);
+      config.append('password', password);
+
+      console.log('loginManual()');
+
+      return this.http.post(makeUrl(server, 'o/token/'), config)
+        .map((data: any) => {
+          data['expires'] = new Date(new Date() + data['expires_in']);
+
+          ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
+
+          const auth = data as ServerAuth;
+
+          return {auth: auth, server: server} as AuthContext;
         });
-    }
+
+    });
   }
 
-  private performRequest<T>(predicate: (string) => Observable<T>): Observable<T> {
+  private loginGoogleAuth(googleToken: string): Observable<AuthContext> {
+
+    const c = new FormData();
+    c.append('token', googleToken);
+    c.append('provider', 'google-auth-token');
+    c.append('platform_type', 'web');
+
+    return this.getLoginServers(c).flatMap(server => {
+      if (server === null) {
+        return Observable.empty();
+      }
+
+      const config = new FormData();
+
+      config.append('client_id', server.client_id);
+      config.append('provider', 'google-auth-token');
+      config.append('token', googleToken);
+
+      return this.http.post(makeUrl(server, 'auth/by-token'), config)
+        .map((data: any) => {
+          data['expires'] = new Date(new Date() + data['expires_in']);
+
+          ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
+
+          const auth = data as ServerAuth;
+
+          return {auth: auth, server: server} as AuthContext;
+        });
+
+    });
+  }
+
+  private fetchServerAuth(): Observable<AuthContext> {
+    return this.loginService.getIdToken()
+      .switchMap(googleToken => {
+        if (isDemoLogin(googleToken)) {
+          return this.loginManual(googleToken.username, googleToken.password)
+            .catch(err => {
+              if (err.status !== 401) {
+                throw err;
+              }
+
+              googleToken.invalid = true;
+              return this.fetchServerAuth();
+            });
+        } else {
+          return this.loginGoogleAuth(googleToken);
+        }
+      });
+  }
+
+  private performRequest<T>(predicate: (ctx: AuthContext) => Observable<T>): Observable<T> {
     return this.accessToken
-      .switchMap(token => predicate(token))
+      .switchMap(ctx => predicate(ctx))
       .catch(err => {
         if (err.status !== 401) {
           throw err;
@@ -153,10 +200,10 @@ export class HttpService {
 
         // const google_token = localStorage.getItem(SESSION_STORAGE_KEY); // TODO something more robust
         return this.fetchServerAuth()
-          .switchMap((auth: ServerAuth) => {
-            console.log('auth:', auth);
-            this.accessTokenSubject.next(auth.access_token);
-            return predicate(auth.access_token);
+          .switchMap((ctx: AuthContext) => {
+            console.log('auth:', ctx);
+            this.accessTokenSubject.next(ctx);
+            return predicate(ctx);
           });
       })
       .first();
@@ -169,7 +216,7 @@ export class HttpService {
 
   get<T>(url, config?: Config): Observable<T> {
     console.log('Making request: ' + url);
-    return this.performRequest(token => this.http.get<T>(makeUrl(url), makeConfig(config, token)))
+    return this.performRequest(ctx => this.http.get<T>(makeUrl(ctx.server, url), makeConfig(config, ctx.auth.access_token)))
       .do(x => {
         console.log('Finished request: ' + url, x);
       });
@@ -178,11 +225,12 @@ export class HttpService {
   post<T>(url: string, body?: any, config?: Config): Observable<T> {
     if (body && !(body instanceof FormData)) {
       const formData: FormData = new FormData();
-      for (let prop in body) {
+      for (const prop in body) {
         if (body.hasOwnProperty(prop)) {
           if (body[prop] instanceof Array) {
-            for (let sprop of body[prop])
+            for (const sprop of body[prop]) {
               formData.append(prop, sprop);
+            }
           } else {
             formData.append(prop, body[prop]);
           }
@@ -190,26 +238,27 @@ export class HttpService {
       }
       body = formData;
     }
-    return this.performRequest(token => this.http.post<T>(makeUrl(url), body, makeConfig(config, token)));
+    return this.performRequest(ctx => this.http.post<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token)));
   }
 
   delete<T>(url, config?: Config): Observable<T> {
-    return this.performRequest(token => this.http.delete<T>(makeUrl(url), makeConfig(config, token)));
+    return this.performRequest(ctx => this.http.delete<T>(makeUrl(ctx.server, url), makeConfig(config, ctx.auth.access_token)));
   }
 
   put<T>(url, body?: any, config?: Config): Observable<T> {
     const formData: FormData = new FormData();
-    for (let prop in body) {
+    for (const prop in body) {
       if (body.hasOwnProperty(prop)) {
         if (body[prop] instanceof Array) {
-          for (let sprop of body[prop])
+          for (const sprop of body[prop]) {
             formData.append(prop, sprop);
+          }
         } else {
           formData.append(prop, body[prop]);
         }
       }
     }
-    return this.performRequest(token => this.http.put<T>(makeUrl(url), body, makeConfig(config, token)));
+    return this.performRequest(ctx => this.http.put<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token)));
   }
 
 }
