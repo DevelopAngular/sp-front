@@ -15,7 +15,7 @@ export class FavoriteFormComponent implements OnInit {
   constructor(private dialogRef: MatDialogRef<FavoriteFormComponent>, private http: HttpService) { }
 
   ngOnInit() {
-    let endpoint = 'api/methacton/v1/users/@me/starred';
+    let endpoint = 'v1/users/@me/starred';
       this.http.get(endpoint).toPromise().then((stars:any[]) => {
         this.starChanges = stars.map(val => Location.fromJSON(val));
       });
@@ -24,7 +24,7 @@ export class FavoriteFormComponent implements OnInit {
   }
 
   closeDialog(){
-    let endpoint = 'api/methacton/v1/users/@me/starred';
+    let endpoint = 'v1/users/@me/starred';
     let body = {'locations': this.starChanges.map(loc => loc.id)};
     console.log(body.locations)
     this.http.put(endpoint, body).subscribe();

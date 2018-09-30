@@ -69,7 +69,7 @@ export class RequestCardComponent implements OnInit {
 
   newRequest(){
     this.performingAction = true;
-    const endPoint: string = 'api/methacton/v1/pass_requests';
+    const endPoint: string = 'v1/pass_requests';
     const body = this.forFuture?{
           'origin' : this.request.origin.id,
           'destination' : this.request.destination.id,
@@ -112,7 +112,7 @@ export class RequestCardComponent implements OnInit {
         this.request.request_time = data['startTime']?data['startTime']:this.request.request_time;
         this.dateEditOpen = false;
 
-        let endpoint: string = "api/methacton/v1/pass_requests";
+        let endpoint: string = "v1/pass_requests";
         let body: any = {
           'origin' : this.request.origin.id,
           'destination' : this.request.destination.id,
@@ -217,7 +217,7 @@ export class RequestCardComponent implements OnInit {
             this.denyRequest(denyMessage);
           }
         } else if(action === 'delete'){
-          let endpoint: string = 'api/methacton/v1/pass_requests/' +this.request.id +'/cancel';
+          let endpoint: string = 'v1/pass_requests/' +this.request.id +'/cancel';
           let body = {
             'message' : ''
           }
@@ -231,7 +231,7 @@ export class RequestCardComponent implements OnInit {
   }
 
   denyRequest(denyMessage: string){
-    let endpoint: string = 'api/methacton/v1/pass_requests/' +this.request.id +'/deny';
+    let endpoint: string = 'v1/pass_requests/' +this.request.id +'/deny';
     let body = {
       'message' : denyMessage
     }
@@ -247,7 +247,7 @@ export class RequestCardComponent implements OnInit {
 
   approveRequest(){
     this.performingAction = true;
-    let endpoint: string = 'api/methacton/v1/pass_requests/' +this.request.id +'/accept';
+    let endpoint: string = 'v1/pass_requests/' +this.request.id +'/accept';
     let body = [];
     this.http.post(endpoint, body).subscribe(() =>{
       this.dialogRef.close();

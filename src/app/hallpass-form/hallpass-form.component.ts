@@ -55,7 +55,7 @@ export class HallpassFormComponent implements OnInit {
   constructor(private http: HttpService, private dataService: DataService, public dialog: MatDialog,
               @Inject(MAT_DIALOG_DATA) public dialogData: any, public dialogRef: MatDialogRef<HallpassFormComponent>) {
 
-    this.pinnables = this.http.get<any[]>('api/methacton/v1/pinnables').toPromise().then(json => json.map(raw => Pinnable.fromJSON(raw)));
+    this.pinnables = this.http.get<any[]>('v1/pinnables').toPromise().then(json => json.map(raw => Pinnable.fromJSON(raw)));
   }
 
   get fromGradient() {
@@ -256,7 +256,7 @@ export class HallpassFormComponent implements OnInit {
 
     if (state === 'to') {
       if (!!this.fromLocation) {
-        //this.pinnables = this.http.get<Pinnable[]>('api/methacton/v1/pinnables').toPromise();
+        //this.pinnables = this.http.get<Pinnable[]>('v1/pinnables').toPromise();
         this.setFormState('to-pinnables');
       }
     }
@@ -389,7 +389,7 @@ export class HallpassFormComponent implements OnInit {
       'teacher': this.toLocation.teachers[0].id
     };
 
-    this.http.post('api/methacton/v1/pass_requests', body,).subscribe((data) => {
+    this.http.post('v1/pass_requests', body,).subscribe((data) => {
       // console.log("Request POST Data: ", data);
       this.dialogRef.close(Request.fromJSON(data));
     });
@@ -404,7 +404,7 @@ export class HallpassFormComponent implements OnInit {
       'travel_type': this.travelType
     };
 
-    this.http.post('api/methacton/v1/hall_passes', body,).subscribe((data) => {
+    this.http.post('v1/hall_passes', body,).subscribe((data) => {
       // console.log("Request POST Data: ", data);
       this.dialogRef.close(HallPass.fromJSON(data));
     });

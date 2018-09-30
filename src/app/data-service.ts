@@ -84,19 +84,19 @@ export class DataService {
   watchInvitationsSlow(options: Partial<InvitationOptions>): Observable<Invitation[]> {
     return this.updateInvitations.pipe(
       switchMap(() => {
-        return this.http.get<any[]>(constructUrl('api/methacton/v1/invitations', options))
+        return this.http.get<any[]>(constructUrl('v1/invitations', options))
           .pipe(map(json => json.map(raw => Invitation.fromJSON(raw))));
       })
     );
   }
 
   getLocationsWithTeacher(teacher: User) {
-    return this.http.get<any[]>(`api/methacton/v1/locations?teacher_id=${teacher.id}`)
+    return this.http.get<any[]>(`v1/locations?teacher_id=${teacher.id}`)
       .map(json => json.map(raw => Location.fromJSON(raw)));
   }
 
   markRead(pass: PassLike): Observable<any> {
-    let endpoint = 'api/methacton/v1/';
+    let endpoint = 'v1/';
 
     if (pass instanceof HallPass) {
       endpoint += 'hall_passes/';
