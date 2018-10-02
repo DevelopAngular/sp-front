@@ -196,7 +196,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   newPass(){
     this.performingAction = true;
-    const endPoint:string = 'v1/hall_passes' +(this.forStaff?'/bulk_create':'')
+    const endPoint:string = 'api/methacton/v1/hall_passes' +(this.forStaff?'/bulk_create':'')
 
     const body = {
       'duration' : this.selectedDuration*60,
@@ -254,7 +254,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
         if(action === 'stop'){
           this.dialogRef.close();
         } else if(action === 'delete'){
-          let endpoint: string = 'v1/hall_passes/' +this.pass.id +'/cancel';
+          let endpoint: string = 'api/methacton/v1/hall_passes/' +this.pass.id +'/cancel';
           let body = {};
           this.http.post(endpoint, body).subscribe((httpData)=>{
             console.log('[Future Pass Cancelled]: ', httpData);
@@ -263,7 +263,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
         } else if(action === 'report'){
           this.dialogRef.close({'report':this.pass.student});
         } else if(action === 'end'){
-          const endPoint:string = 'v1/hall_passes/' +this.pass.id +'/ended';
+          const endPoint:string = 'api/methacton/v1/hall_passes/' +this.pass.id +'/ended';
           this.http.post(endPoint).subscribe(()=>{this.dialogRef.close();});
         }
       });

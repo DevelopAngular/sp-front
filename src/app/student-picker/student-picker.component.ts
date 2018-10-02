@@ -39,7 +39,7 @@ export class StudentPickerComponent implements OnDestroy {
       .takeUntil(this._onDestroy)
       .switchMap(query => {
         if (query !== '') {
-          return this.http.get<Paged<any>>('v1/users?role=hallpass_student&limit=10&search=' + encodeURI(query))
+          return this.http.get<Paged<any>>('api/methacton/v1/users?role=hallpass_student&limit=10&search=' + encodeURI(query))
             .map(json => json.results);
         } else {
           return Observable.of([]);

@@ -26,7 +26,7 @@ export class StudentSearchComponent {
 
   onSearch(search: string) {
     if(search!=='')
-      this.students = this.http.get<Paged<any>>('v1/users?role=hallpass_student&limit=5' + (search === '' ? '' : '&search=' + encodeURI(search))).toPromise().then(paged => this.removeDuplicateStudents(paged.results));
+      this.students = this.http.get<Paged<any>>('api/methacton/v1/users?role=hallpass_student&limit=5' + (search === '' ? '' : '&search=' + encodeURI(search))).toPromise().then(paged => this.removeDuplicateStudents(paged.results));
     else
       this.students = null;
       this.inputValue = '';

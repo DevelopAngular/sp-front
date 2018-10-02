@@ -37,7 +37,7 @@ export class LocationPickerComponent implements OnInit, OnDestroy {
       .filter(query => query !== '')
       .takeUntil(this._onDestroy)
       .switchMap(query => {
-        let url = 'v1/locations?limit=10';
+        let url = 'api/methacton/v1/locations?limit=10';
         if (this.category) {
           url += '&category=' + encodeURIComponent(this.category);
         }

@@ -75,7 +75,7 @@ export class LocationTableComponent implements OnInit {
     if(this.staticChoices){
       this.choices = this.staticChoices;
     } else{
-      this.http.get<Paged<Location>>('v1/'
+      this.http.get<Paged<Location>>('api/methacton/v1/'
         +(this.type==='teachers'?'users?role=edit_all_hallpass&':('locations'
           +(!!this.category ? ('?category=' +this.category +'&') : '?')
         ))
@@ -87,7 +87,7 @@ export class LocationTableComponent implements OnInit {
         });
     }
     if(this.type==='location'){
-      let endpoint = 'v1/users/@me/starred';
+      let endpoint = 'api/methacton/v1/users/@me/starred';
       this.http.get(endpoint).toPromise().then((stars:any[]) => {
         this.starredChoices = stars.map(val => Location.fromJSON(val));
         this.favoritesLoaded = true;
@@ -101,7 +101,7 @@ export class LocationTableComponent implements OnInit {
     //   this.choices = this.staticChoices.filter(element => {return (element.display_name.toLowerCase().includes(search) || element.first_name.toLowerCase().includes(search) || element.last_name.toLowerCase().includes(search))})
     // } else{
       if(search!==''){
-        this.http.get<Paged<Location>>('v1/'
+        this.http.get<Paged<Location>>('api/methacton/v1/'
         +(this.type==='teachers'?'users?role=edit_all_hallpass&':('locations'
           +(!!this.category ? ('?category=' +this.category +'&') : '?')
         ))
@@ -112,7 +112,7 @@ export class LocationTableComponent implements OnInit {
           this.choices = this.filterResults(p.results);
         });
       } else{
-        this.http.get<Paged<Location>>('v1/'
+        this.http.get<Paged<Location>>('api/methacton/v1/'
         +(this.type==='teachers'?'users?role=edit_all_hallpass&':('locations'
           +(!!this.category ? ('?category=' +this.category +'&') : '?')
         ))

@@ -23,17 +23,17 @@ export class ReportFormComponent implements OnInit {
     this.showOptions = !this.data['report'];
   }
 
-  setFormState(state: string) {
+  setFormState(state: string){
     this.formState = state;
-    this.showOptions = this.formState === 'studentSelect';
+    this.showOptions = this.formState==='studentSelect'
   }
 
-  sendReport() {
-    const endpoint = 'v1/event_reports/bulk_create';
-    const body = {
+  sendReport(){
+    let endpoint = 'api/methacton/v1/event_reports/bulk_create';
+    let body = {
       'students' : this.selectedStudents.map(user => user.id),
       'message' : this.reportMessage
-    };
+    }
 
     this.http.post(endpoint, body).subscribe(data => {
       console.log(data);
