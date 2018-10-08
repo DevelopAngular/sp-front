@@ -82,7 +82,7 @@ export class InvitationCardComponent implements OnInit {
 
   newInvitation(){
     this.performingAction = true;
-    const endPoint:string = 'api/methacton/v1/invitations/bulk_create';
+    const endPoint:string = 'v1/invitations/bulk_create';
 
     const body = {
       'students' : this.selectedStudents.map(user => user.id),
@@ -100,7 +100,7 @@ export class InvitationCardComponent implements OnInit {
 
   acceptInvitation(){
     this.performingAction = true;
-    let endpoint: string = 'api/methacton/v1/invitations/' +this.invitation.id +'/accept';
+    let endpoint: string = 'v1/invitations/' +this.invitation.id +'/accept';
     let body = {
       'start_time' : this.invitation.date_choices[0].toISOString(),
       'origin' : this.selectedOrigin.id
@@ -142,7 +142,7 @@ export class InvitationCardComponent implements OnInit {
         if(action === 'cancel'){
           this.dialogRef.close();
         } else if(action === 'decline'){
-          let endpoint: string = 'api/methacton/v1/invitations/' +this.invitation.id +'/deny';
+          let endpoint: string = 'v1/invitations/' +this.invitation.id +'/deny';
           let body = {
             'message' : ''
           }
@@ -151,7 +151,7 @@ export class InvitationCardComponent implements OnInit {
             this.dialogRef.close();
           });
         } else if(action === 'delete'){
-          let endpoint: string = 'api/methacton/v1/invitations/' +this.invitation.id +'/cancel';
+          let endpoint: string = 'v1/invitations/' +this.invitation.id +'/cancel';
           let body = {
             'message' : ''
           }

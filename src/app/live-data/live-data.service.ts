@@ -161,7 +161,7 @@ export class LiveDataService {
     return this.watch<HallPass, HallPassFilter>({
       externalEvents: sortingEvents,
       eventNamespace: 'hall_pass',
-      initialUrl: constructUrl('api/methacton/v1/hall_passes', queryFilter),
+      initialUrl: constructUrl('v1/hall_passes', queryFilter),
       decoder: data => HallPass.fromJSON(data),
       handleExternalEvent: (s: State<HallPass>, e: HallPassFilter) => {
         s.sort = e.sort;
@@ -193,7 +193,7 @@ export class LiveDataService {
     return this.watch<HallPass, HallPassFilter>({
       externalEvents: sortingEvents,
       eventNamespace: 'hall_pass',
-      initialUrl: constructUrl('api/methacton/v1/hall_passes', queryFilter),
+      initialUrl: constructUrl('v1/hall_passes', queryFilter),
       decoder: data => HallPass.fromJSON(data),
       handleExternalEvent: (s: State<HallPass>, e: HallPassFilter) => {
         s.sort = e.sort;
@@ -241,7 +241,7 @@ export class LiveDataService {
     return this.watch<HallPass, HallPassFilter>({
       externalEvents: sortingEvents,
       eventNamespace: 'hall_pass',
-      initialUrl: constructUrl('api/methacton/v1/hall_passes', queryFilter),
+      initialUrl: constructUrl('v1/hall_passes', queryFilter),
       decoder: data => HallPass.fromJSON(data),
       handleExternalEvent: (s: State<HallPass>, e: HallPassFilter) => {
         s.sort = e.sort;
@@ -282,7 +282,7 @@ export class LiveDataService {
     return this.watch<HallPass, string>({
       externalEvents: Observable.empty(),
       eventNamespace: 'hall_pass',
-      initialUrl: `api/methacton/v1/hall_passes?limit=20&active=future${queryFilter}`,
+      initialUrl: `v1/hall_passes?limit=20&active=future${queryFilter}`,
       decoder: data => HallPass.fromJSON(data),
       handleExternalEvent: (s: State<HallPass>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([
@@ -322,7 +322,7 @@ export class LiveDataService {
     return this.watch<HallPass, string>({
       externalEvents: Observable.empty(),
       eventNamespace: 'hall_pass',
-      initialUrl: `api/methacton/v1/hall_passes?limit=20&active=past${queryFilter}`,
+      initialUrl: `v1/hall_passes?limit=20&active=past${queryFilter}`,
       decoder: data => HallPass.fromJSON(data),
       handleExternalEvent: (s: State<HallPass>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([
@@ -341,7 +341,7 @@ export class LiveDataService {
     return this.watch<Request, string>({
       externalEvents: Observable.empty(),
       eventNamespace: 'pass_request',
-      initialUrl: `api/methacton/v1/inbox/${isStudent ? 'student' : 'teacher'}`,
+      initialUrl: `v1/inbox/${isStudent ? 'student' : 'teacher'}`,
       rawDecoder: (json) => json.pass_requests.map(d => Request.fromJSON(d)),
       decoder: data => Request.fromJSON(data),
       handleExternalEvent: (s: State<Request>, e: string) => s,
@@ -360,7 +360,7 @@ export class LiveDataService {
     return this.watch<Invitation, string>({
       externalEvents: Observable.empty(),
       eventNamespace: 'pass_invitation',
-      initialUrl: `api/methacton/v1/inbox/${isStudent ? 'student' : 'teacher'}`,
+      initialUrl: `v1/inbox/${isStudent ? 'student' : 'teacher'}`,
       rawDecoder: (json) => json.invitations.map(d => Invitation.fromJSON(d)),
       decoder: data => Invitation.fromJSON(data),
       handleExternalEvent: (s: State<Invitation>, e: string) => s,
@@ -392,7 +392,7 @@ export class LiveDataService {
     return this.watch<Request, string>({
       externalEvents: Observable.empty(),
       eventNamespace: 'pass_request',
-      initialUrl: `api/methacton/v1/pass_requests?limit=20&active=true${queryFilter}`,
+      initialUrl: `v1/pass_requests?limit=20&active=true${queryFilter}`,
       decoder: data => Request.fromJSON(data),
       handleExternalEvent: (s: State<Request>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([

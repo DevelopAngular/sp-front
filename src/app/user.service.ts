@@ -20,7 +20,7 @@ export class UserService {
   constructor(private googleAuth: GoogleAuthService, private http: HttpService,
               private pollingService: PollingService, private _logging: Logger) {
 
-    this.http.get<any>('api/methacton/v1/users/@me')
+    this.http.get<any>('v1/users/@me')
       .map(raw => User.fromJSON(raw))
       .subscribe(this.userData);
 
