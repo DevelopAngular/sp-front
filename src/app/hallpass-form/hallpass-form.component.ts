@@ -208,8 +208,11 @@ export class HallpassFormComponent implements OnInit {
 
   back(){
     this.toCategory = '';
-    this._toProfile = null;
     let newIndex = this.formHistoryIndex - 1;
+    if(this.formStateHistory[newIndex] !== 'restrictedTarget'){
+      this._toProfile = null;
+      this.requestTarget = null;
+    }
     if(newIndex < 0){
       this.dialogRef.close({
         'fromLocation': this.fromLocation,
@@ -217,8 +220,18 @@ export class HallpassFormComponent implements OnInit {
         'message': this.requestMessage
       });
     } else{
-      this.setFormState(this.formStateHistory[newIndex], true)
+      if(this.formStateHistory[newIndex] === 'to-category')
+        this.setFormState('to-pinnables', true)
+      else
+        this.setFormState(this.formStateHistory[newIndex], true)
     }
+
+    if(this.formState === 'to-pinnables' || this.formState === 'to-category'){
+      this.toLocation = null;
+      this.to_title = "To";
+    }
+
+    console.log('[Form History]: \n-----==========-----', this.formStateHistory, this.formHistoryIndex);
   }
 
   setFormState(state, back?:boolean) {
@@ -235,9 +248,10 @@ export class HallpassFormComponent implements OnInit {
 
     if(!back){
       this.formState = state;
-      this.formStateHistory.push(this.formState);
+      if(this.formState !== 'to-category')
+        this.formStateHistory.push(this.formState);
       this.formHistoryIndex = this.formStateHistory.length - 1;
-      console.log('[Form History]: ', this.formStateHistory, this.formHistoryIndex);
+      console.log('[Form History]: \n-----==========-----', this.formStateHistory, this.formHistoryIndex);
     } else{
       if(state === 'from'){
         this.fromLocation = null;
@@ -327,7 +341,7 @@ export class HallpassFormComponent implements OnInit {
 
   updateTarget(event: any) {
     this.requestTarget = event;
-    this.formState = 'restrictedMessage';
+    this.setFormState('restrictedMessage');
   }
 
   determinePass() {
@@ -341,7 +355,7 @@ export class HallpassFormComponent implements OnInit {
           'type': 'request'
         });
       } else {
-        this.formState = 'restrictedTarget';
+        this.setFormState('restrictedTarget');
       }
     } else if (!((this.toLocation.restricted && !this.forLater) || (this.toLocation.scheduling_restricted && this.forLater)) && !this.forStaff) {
       let templatePass: HallPass = new HallPass('template', this.user, null, null, null, this.requestTime, null, null, this.fromLocation, this.toLocation, '', '', this.toIcon, this._toProfile, null, '', '');
@@ -374,7 +388,6 @@ export class HallpassFormComponent implements OnInit {
           'forStaff': this.forStaff,
           'selectedStudents': this.selectedStudents,
           'type': 'hallpass',
-          
         });
       }
     }

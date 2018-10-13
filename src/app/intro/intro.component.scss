@@ -23,6 +23,10 @@
     cursor: pointer;
 }
 
+.button:hover{
+    box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.3);
+}
+
 .button-left{
     @extend .button;
     left: 20px;
@@ -31,10 +35,6 @@
 .button-right{
     @extend .button;
     right: 20px;
-}
-
-.button:hover{
-    box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.3);
 }
 
 .button-icon{
