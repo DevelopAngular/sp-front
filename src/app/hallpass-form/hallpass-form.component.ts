@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import {Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material';
 import { DataService } from '../data-service';
 import { HttpService } from '../http-service';
@@ -52,8 +52,13 @@ export class HallpassFormComponent implements OnInit {
 
   public pinnables: Promise<Pinnable[]>;
 
-  constructor(private http: HttpService, private dataService: DataService, public dialog: MatDialog,
-              @Inject(MAT_DIALOG_DATA) public dialogData: any, public dialogRef: MatDialogRef<HallpassFormComponent>) {
+  constructor(
+      private http: HttpService,
+      private dataService: DataService,
+      public dialog: MatDialog,
+      @Inject(MAT_DIALOG_DATA) public dialogData: any,
+      public dialogRef: MatDialogRef<HallpassFormComponent>,
+  ) {
 
     this.pinnables = this.http.get<any[]>('v1/pinnables').toPromise().then(json => json.map(raw => Pinnable.fromJSON(raw)));
   }
