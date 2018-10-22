@@ -49,6 +49,7 @@ function constructUrl(base: string, obj: Partial<QueryParams>): string {
 @Injectable()
 export class DataService {
   private inboxSource = new BehaviorSubject<boolean>(false);
+  public isActivePass$ = new BehaviorSubject<boolean>(false);
   inboxState = this.inboxSource.asObservable();
 
   updateInbox(state: boolean) {

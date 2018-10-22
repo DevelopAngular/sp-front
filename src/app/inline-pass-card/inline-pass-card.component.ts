@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { HallPass} from '../models/HallPass';
 import { Util } from '../../Util';
 import { HttpService } from '../http-service';
+import {DataService} from '../data-service';
 
 @Component({
   selector: 'app-inline-pass-card',
@@ -25,10 +26,10 @@ export class InlinePassCardComponent implements OnInit {
 
   selectedDuration: number;
   selectedTravelType: string;
-
+  isActivePass$ = this.dataService.isActivePass$.value;
   performingAction: boolean;
 
-  constructor(private http: HttpService) { }
+  constructor(private http: HttpService, private dataService: DataService) { }
 
   ngOnInit() {
     setInterval(() => {
@@ -51,7 +52,7 @@ export class InlinePassCardComponent implements OnInit {
   endPass(){
     this.performingAction = true;
     const endPoint:string = 'v1/hall_passes/' +this.pass.id +'/ended';
-    this.http.post(endPoint).subscribe();
+    this.http.post(endPoint).subscribe(res => this.dataService.isActivePass$.next(false));
   }
 
 }

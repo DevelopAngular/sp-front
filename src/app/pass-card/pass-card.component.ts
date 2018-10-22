@@ -203,7 +203,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
       'origin' : this.pass.origin.id,
       'destination' : this.pass.destination.id,
       'travel_type' : this.selectedTravelType
-    }
+    };
 
     if(this.forStaff){
       body['students'] = this.selectedStudents.map(user => user.id);

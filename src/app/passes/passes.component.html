@@ -1,9 +1,9 @@
 <div class="passes-wrapper" *ngIf="user">
   <div class="main-page-left">
     <div class="current-pass">
-      <div *ngIf="!!currentPass || !!currentRequest; else newPass;" class="center">
-        <app-inline-request-card *ngIf="!!currentRequest && !currentPass" [request]="currentRequest"></app-inline-request-card>
-        <app-inline-pass-card *ngIf="!!currentPass" [pass]="currentPass" [isActive]="true"></app-inline-pass-card>
+      <div *ngIf="isActivePass || !!currentRequest; else newPass;" class="center">
+        <app-inline-request-card *ngIf="!!currentRequest && !isActivePass" [request]="currentRequest"></app-inline-request-card>
+        <app-inline-pass-card *ngIf="isActivePass" [pass]="currentPass" [isActive]="true"></app-inline-pass-card>
       </div>
       <ng-template #newPass>
         <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Create (Blue).png'">
