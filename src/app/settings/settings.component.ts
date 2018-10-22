@@ -29,7 +29,7 @@ export class SettingsComponent implements OnInit {
   constructor(public router: Router, public dialog: MatDialog, private dataService: DataService,  private _zone: NgZone, public loadingService: LoadingService) {
     this.settings.push({'color_profile': new ColorProfile('', '', '#E7A700,#EFCE00', '#E7A700', '', '', ''), 'action': 'favorite' , 'title': 'Favorites'});
     this.settings.push({'color_profile': new ColorProfile('', '', '#03CF31,#00B476', '#00B476', '', '', ''), 'action': 'intro' , 'title': 'View Intro'});
-    this.settings.push({'color_profile': new ColorProfile('', '', '#0B9FC1,#00C0C7', '#0B9FC1', '', '', ''), 'action': 'team' , 'title': 'Our Team'});
+    this.settings.push({'color_profile': new ColorProfile('', '', '#0B9FC1,#00C0C7', '#0B9FC1', '', '', ''), 'action': 'team' , 'title': 'About'});
     this.settings.push({'color_profile': new ColorProfile('', '', '#F52B4F,#F37426', '#F52B4F', '', '', ''), 'action': 'support' , 'title': 'Support'});
     this.settings.push({'color_profile': new ColorProfile('', '', '#5E4FED,#7D57FF', '#5E4FED', '', '', ''), 'action': 'feedback' , 'title': 'Feedback'});
     this.settings.push({'color_profile': new ColorProfile('', '', '#606981,#ACB4C1', '#6E7689', '', '', ''), 'action': 'signout' , 'title': 'Sign out'});
