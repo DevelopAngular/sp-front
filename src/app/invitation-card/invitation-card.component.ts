@@ -32,9 +32,13 @@ export class InvitationCardComponent implements OnInit {
   user: User;
   performingAction: boolean;
 
-  constructor(public dialogRef: MatDialogRef<InvitationCardComponent>, @Inject(MAT_DIALOG_DATA) public data: any, public dialog: MatDialog, private http: HttpService, public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService) {
-    
-  }
+  constructor(
+      public dialogRef: MatDialogRef<InvitationCardComponent>,
+      @Inject(MAT_DIALOG_DATA) public data: any,
+      public dialog: MatDialog, private http: HttpService,
+      public dataService: DataService, private _zone: NgZone,
+      private loadingService: LoadingService
+  ) {}
 
   get studentName(){
     return getInnerPassName(this.invitation);
@@ -59,9 +63,9 @@ export class InvitationCardComponent implements OnInit {
     this.forStaff = this.data['forStaff'];
     this.forInput = this.data['forInput'];
     this.selectedStudents = this.data['selectedStudents'];
-
+  if (this.invitation) {
     this.selectedOrigin = this.invitation.default_origin;
-
+  }
     this.dataService.currentUser
     .pipe(this.loadingService.watchFirst)
     .subscribe(user => {

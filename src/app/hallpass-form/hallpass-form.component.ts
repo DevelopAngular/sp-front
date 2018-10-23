@@ -211,14 +211,19 @@ export class HallpassFormComponent implements OnInit {
     this.startTime = new Date(event);
   }
 
-  back(){
+  back() {
     this.toCategory = '';
     let newIndex = this.formHistoryIndex - 1;
     if(this.formStateHistory[newIndex] !== 'restrictedTarget'){
       this._toProfile = null;
       this.requestTarget = null;
     }
-    if(newIndex < 0){
+
+    if (newIndex === -1) {
+      this.dialogRef.close();
+      return false;
+    }
+    if (newIndex < 0) {
       this.dialogRef.close({
         'fromLocation': this.fromLocation,
         'startTime': this.requestTime,
