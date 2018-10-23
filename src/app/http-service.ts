@@ -8,6 +8,7 @@ import 'rxjs/add/operator/first';
 import 'rxjs/add/operator/switchMap';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
+import { environment } from '../environments/environment';
 import { GoogleLoginService, isDemoLogin } from './google-login.service';
 
 export const SESSION_STORAGE_KEY = 'accessToken';
@@ -89,11 +90,17 @@ export class HttpService {
   }
 
   private getLoginServers(data: FormData): Observable<LoginServer> {
+    const preferredEnvironment = environment.preferEnvironment;
+
+    if (typeof preferredEnvironment === 'object') {
+      return Observable.of(preferredEnvironment as LoginServer);
+    }
+
     return this.http.post('https://smartpass.app/api/discovery/find', data)
       .map((servers: LoginServer[]) => {
         console.log(servers);
         if (servers.length > 0) {
-          return servers[0];
+          return servers.find(s => s.name === preferredEnvironment) || servers[0];
         } else {
           return null;
         }
@@ -110,6 +117,8 @@ export class HttpService {
       if (server === null) {
         return Observable.empty();
       }
+
+      console.log(`Chosen server: ${server.name}`);
 
       const config = new FormData();
 
