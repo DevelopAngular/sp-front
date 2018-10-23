@@ -45,10 +45,8 @@ export class CardButtonComponent implements OnInit {
   }
 
   getGradient() {
-    if (this.dataService.isActivePass$.value) {
         let gradient: string[] = this.gradientColor.split(',');
 
         return 'radial-gradient(circle at 73% 71%, ' + gradient[0] + ', ' + gradient[1] + ')';
-    }
   }
 }
