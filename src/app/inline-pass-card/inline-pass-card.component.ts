@@ -26,7 +26,6 @@ export class InlinePassCardComponent implements OnInit {
 
   selectedDuration: number;
   selectedTravelType: string;
-  isActivePass$ = this.dataService.isActivePass$.value;
   performingAction: boolean;
 
   constructor(private http: HttpService, private dataService: DataService) { }
