@@ -31,8 +31,6 @@ import { LocationPickerComponent } from '../location-picker/location-picker.comp
 import { LocationTableComponent } from '../location-table/location-table.component';
 import { MainPageComponent } from '../main-page/main-page.component';
 import { MyRoomComponent } from '../my-room/my-room.component';
-import { NavButtonComponent } from '../nav-button/nav-button.component';
-import { NavbarComponent } from '../navbar/navbar.component';
 import { PagerComponent } from '../pager/pager.component';
 import { PassCardTemplateComponent } from '../pass-card-template/pass-card-template.component';
 import { PassCardComponent } from '../pass-card/pass-card.component';
@@ -112,8 +110,6 @@ import { NavbarDataService } from './navbar-data.service';
     ContainerCardComponent,
     TeacherDropdownComponent,
     MainPageComponent,
-    NavbarComponent,
-    NavButtonComponent,
   ],
   entryComponents: [
     HallpassFormComponent,

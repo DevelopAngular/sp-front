@@ -1,27 +1,30 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DropdownComponent } from '../dropdown/dropdown.component';
+import { NgModule } from '@angular/core';
+import { MatProgressBarModule } from '@angular/material';
 import { GradientButtonComponent } from '../gradient-button/gradient-button.component';
-import { PassCellComponent } from '../pass-cell/pass-cell.component';
-import { PassCollectionComponent } from '../pass-collection/pass-collection.component';
-import { PassTileComponent } from '../pass-tile/pass-tile.component';
+import { NavButtonComponent } from '../nav-button/nav-button.component';
+import { NavbarComponent } from '../navbar/navbar.component';
 import { ResolveAssetPipe } from '../resolve-asset.pipe';
 import { SmartpassLogoComponent } from '../smartpass-logo/smartpass-logo.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   imports: [
     CommonModule,
+    MatProgressBarModule,
   ],
   declarations: [
     GradientButtonComponent,
     ResolveAssetPipe,
     SmartpassLogoComponent,
+    NavbarComponent,
+    NavButtonComponent,
   ],
   exports: [
     GradientButtonComponent,
     ResolveAssetPipe,
     SmartpassLogoComponent,
+    NavbarComponent,
   ],
 })
-export class SharedModule { }
+export class SharedModule {
+}

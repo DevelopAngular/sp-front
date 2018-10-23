@@ -1,0 +1,5 @@
+<app-navbar></app-navbar>
+<p><a routerLink="/admin/dashboard">Dashboard</a> <a routerLink="/admin/reports">Reports</a></p>
+<ng-container *ngIf="loginService.isAuthenticated$ | async">
+  <router-outlet></router-outlet>
+</ng-container>
