@@ -30,7 +30,7 @@
     </div>
     <div *ngIf="forInput" class="card-body-right">
       <app-traveltype-picker (onSelect)="selectedTravelType=$event" [choices]="request.destination.travel_types" [altColor]="request.color_profile.solid_color"></app-traveltype-picker>
-      <app-card-button (onClick)="newRequest()" [width]="'181px'" [height]="'50px'" [gradientColor]="request.color_profile.gradient_color">
+      <app-card-button (onClick)="newRequest()" [width]="'250px'" [height]="'50px'" [gradientColor]="request.color_profile.gradient_color">
         <div class="request-button-content">
           <img class="button-icon-left" [src]="'./assets/Lock (White).png' | resolveAsset">
           <div class="request-pass-content-text">Request Pass</div>
@@ -47,7 +47,7 @@
       </div>
     </div>
     <div *ngIf="request.status==='denied'" class="card-body-right">
-      <app-card-button [width]="'181px'" [height]="'50px'" [gradientColor]="request.color_profile.gradient_color">
+      <app-card-button [width]="'250px'" [height]="'50px'" [gradientColor]="request.color_profile.gradient_color">
         <div class="resend-button-content">
           <div class="resend-button-content-title">{{ (forFuture?'Change Date & Time':'Resend Request') }}</div>
           <div class="resend-button-content-subtitle">Pass Request Denied</div>

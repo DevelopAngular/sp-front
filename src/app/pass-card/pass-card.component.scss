@@ -1,13 +1,13 @@
 .card-body-right{
-    height: inherit;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
+    height: 110px;
 }
 
 .button-content{
-    width: 181px;
+    width: 250px;
     height: 50px;
     display: flex;
     flex-direction: row;

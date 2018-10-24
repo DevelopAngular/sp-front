@@ -1,9 +1,10 @@
 .pager-wrapper{
-    width: inherit;
+    width: 283px;
     height: inherit;
     display: flex;
     flex-direction: column;
     color: #FFF;
+    margin-bottom: 66px;
     align-items: center;
     text-align: center;
 }
@@ -15,7 +16,9 @@
 
 .paginator-wrapper{
     height: 15px;
+    width: 100%;
     display: flex;
+    justify-content: center;
     flex-direction: row;
     margin-top: -7px;
 }
@@ -29,4 +32,14 @@
 
 .pager-page-selector:hover{
     cursor: pointer;
+}
+
+.button-image {
+  width: 25px;
+}
+
+.paginator-button {
+  position: absolute;
+  margin-left: 10%;
+  margin-top: 3%;
 }
