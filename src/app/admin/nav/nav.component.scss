@@ -1,0 +1,33 @@
+.nav-wrapper{
+    display: flex;
+    flex-direction: column;
+    padding: 0 30px;
+    background: white;
+    height: 100%;
+}
+
+.nav-header{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.nav-buttons{
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-footer{
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    bottom: 20px;
+}
+
+.divider{
+    height: 1px;
+    margin: 0 0 20px 0;
+    width: 100%;
+    background-color: #B5B7BA;
+}

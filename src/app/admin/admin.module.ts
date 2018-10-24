@@ -5,7 +5,12 @@ import { AdminPageComponent } from './admin-page/admin-page.component';
 
 import { AdminRoutingModule } from './admin-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { ReportsComponent } from './reports/reports.component';
+import { NavComponent } from './nav/nav.component';
+import { NavButtonComponent } from './nav-button/nav-button.component';
+import { HallmonitorComponent } from './hallmonitor/hallmonitor.component';
+import { SearchComponent } from './search/search.component';
+import { AccountsComponent } from './accounts/accounts.component';
+import { PassCongifComponent } from './pass-congif/pass-congif.component';
 
 @NgModule({
   imports: [
@@ -13,7 +18,15 @@ import { ReportsComponent } from './reports/reports.component';
     SharedModule,
     AdminRoutingModule,
   ],
-  declarations: [AdminPageComponent, DashboardComponent, ReportsComponent]
+  declarations: [
+    AdminPageComponent,
+    DashboardComponent,
+    NavComponent,
+    NavButtonComponent,
+    HallmonitorComponent,
+    SearchComponent,
+    AccountsComponent,
+    PassCongifComponent]
 })
 export class AdminModule {
 }

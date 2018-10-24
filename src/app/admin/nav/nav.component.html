@@ -1,0 +1,12 @@
+<div class="nav-wrapper">
+  <div class="nav-header">
+    <app-smartpass-logo></app-smartpass-logo>
+  </div>
+  <div class="divider"></div>
+  <div class="nav-buttons">
+    <app-nav-button [style.margin-bottom]="'15px'" *ngFor="let button of buttons" (onClick)="route($event)" [selected]="tab===button.route" [content]="button.title" [icon]="button.imgUrl" (onClick)="route(button.route)"></app-nav-button>
+  </div>
+  <div class="nav-footer">
+    [Place holder]
+  </div>
+</div>
