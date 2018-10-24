@@ -1,10 +1,10 @@
 <div class="travel-view-wrapper" [style.justify-content]="(shrink?'unset':'space-around')">
   <div *ngIf="(!(type==='invitation') || forStaff); else originButton;">
-    {{ ((type==='invitation')?(pass.default_origin?pass.default_origin.title:"Their Location"):pass.origin.title) }}
+    {{ ((type==='invitation')?(pass?.default_origin?pass?.default_origin.title:"Their Location"):pass?.origin.title) }}
   </div>
   <ng-template #originButton>
-    <app-card-button (onClick)="changeLocation()" [width]="'100px'" [height]="'40px'" [gradientColor]="pass.color_profile.gradient_color">
-      <div class="origin-button-content" *ngIf="!pass.default_origin; else hasOrigin;">
+    <app-card-button (onClick)="changeLocation()" [width]="'100px'" [height]="'40px'" [gradientColor]="pass?.color_profile.gradient_color">
+      <div class="origin-button-content" *ngIf="!pass?.default_origin; else hasOrigin;">
         <img class="origin-button-content-icon" [src]="'./assets/Search (White).png' | resolveAsset">
         <div class="origin-button-content-text">
           From
@@ -13,16 +13,16 @@
       <ng-template #hasOrigin>
         <div class="origin-button-content">
           <div class="origin-button-content-text">
-            {{ pass.default_origin.title }}
+            {{ pass?.default_origin.title }}
           </div>
         </div>
       </ng-template>
     </app-card-button>
   </ng-template>
-  <img [src]="'./assets/' +(pass.travel_type==='one_way'?'Arrow':'Arrows Round Trip') +' (White).png' | resolveAsset"
-      [style.height]="'40px'" [style.width]="(pass.travel_type==='one_way'?'40px':'95px')"
+  <img [src]="'./assets/' +(pass?.travel_type==='one_way'?'Arrow':'Arrows Round Trip') +' (White).png' | resolveAsset"
+      [style.height]="'40px'" [style.width]="(pass?.travel_type==='one_way'?'40px':'95px')"
       [style.margin]="(shrink?'15px 0':'0')">
   <div>
-    {{ pass.destination.title }}
+    {{ pass?.destination.title }}
   </div>
 </div>

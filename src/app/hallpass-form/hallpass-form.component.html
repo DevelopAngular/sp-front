@@ -109,7 +109,14 @@
       <app-location-table class="center" (onSelect)="updateTarget($event)" [type]="'teachers'" [placeholder]="'Search teachers'" [staticChoices]="toLocation.teachers"></app-location-table>
   </div>
   <div *ngIf="formState == 'restrictedMessage'" class="message center">
-    <textarea class="message-box" #messageBox [placeholder]="'Attach a message' +(requestTarget?(' for ' +requestTarget.last_name):'')" [(ngModel)]="requestMessage">{{ requestMessage }}</textarea>
+    <textarea
+       class="message-box"
+       #messageBox [placeholder]="'Attach a message' +(requestTarget?(' for ' +requestTarget.last_name):'')"
+       [(ngModel)]="requestMessage"
+       autofocus
+    >
+      {{ requestMessage }}
+    </textarea>
       <app-gradient-button
         [gradient]="'#00B476, #03CF31'"
         [hoverColor]="'#04CD33'"

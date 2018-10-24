@@ -37,6 +37,7 @@ export class GradientButtonComponent {
   @Input() fontSize: string = '20px';
   @Input() leftImageWidth: string;
   @Input() leftImageHeight: string;
+  @Input() cursor: string;
   @Output() buttonClick = new EventEmitter<any>();
 
   buttonDown = false;

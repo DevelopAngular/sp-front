@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import {Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material';
 import { DataService } from '../data-service';
 import { HttpService } from '../http-service';
@@ -52,8 +52,13 @@ export class HallpassFormComponent implements OnInit {
 
   public pinnables: Promise<Pinnable[]>;
 
-  constructor(private http: HttpService, private dataService: DataService, public dialog: MatDialog,
-              @Inject(MAT_DIALOG_DATA) public dialogData: any, public dialogRef: MatDialogRef<HallpassFormComponent>) {
+  constructor(
+      private http: HttpService,
+      private dataService: DataService,
+      public dialog: MatDialog,
+      @Inject(MAT_DIALOG_DATA) public dialogData: any,
+      public dialogRef: MatDialogRef<HallpassFormComponent>,
+  ) {
 
     this.pinnables = this.http.get<any[]>('v1/pinnables').toPromise().then(json => json.map(raw => Pinnable.fromJSON(raw)));
   }
@@ -206,14 +211,19 @@ export class HallpassFormComponent implements OnInit {
     this.startTime = new Date(event);
   }
 
-  back(){
+  back() {
     this.toCategory = '';
     let newIndex = this.formHistoryIndex - 1;
     if(this.formStateHistory[newIndex] !== 'restrictedTarget'){
       this._toProfile = null;
       this.requestTarget = null;
     }
-    if(newIndex < 0){
+
+    if (newIndex === -1) {
+      this.dialogRef.close();
+      return false;
+    }
+    if (newIndex < 0) {
       this.dialogRef.close({
         'fromLocation': this.fromLocation,
         'startTime': this.requestTime,

@@ -5,7 +5,7 @@
 @import "~font-awesome/css/font-awesome.min.css";
 
 html {
-  background-color: #F8FAFF;
+  background-color: #FCFDFF;
   padding: 0 0;
 }
 
@@ -114,6 +114,13 @@ body {
 
 input:focus{
   outline-offset: 0;
+  outline: none;
+  border: 1px solid #595487 !important;
+}
+textarea:focus {
+  outline-offset: 0;
+  outline: none;
+  border: 1px solid #595487 !important;
 }
 
 /* :host /deep/ .mat-button-focus-overlay {

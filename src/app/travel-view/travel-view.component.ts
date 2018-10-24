@@ -3,8 +3,8 @@ import { HallPass } from '../models/HallPass';
 import { Invitation } from '../models/Invitation';
 import { Request } from '../models/Request';
 import { MatDialog } from '@angular/material';
-import { InfoEditorComponent } from '../info-editor/info-editor.component';
 import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
+import {DataService} from '../data-service';
 
 @Component({
   selector: 'app-travel-view',
@@ -19,11 +19,11 @@ export class TravelViewComponent implements OnInit {
   @Input() forStaff: boolean = false;
   
   @Output() locationSelected: EventEmitter<any> = new EventEmitter();
-
+  isActivePass$ = this.dataService.isActivePass$.value;
   type: string;
   locationChangeOpen: boolean = false;
 
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog, private dataService: DataService) { }
 
   ngOnInit() {
     this.type = (this.pass instanceof HallPass) ? 'hallpass' :

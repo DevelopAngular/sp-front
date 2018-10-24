@@ -1,9 +1,9 @@
 <div class="passes-wrapper" *ngIf="user">
   <div class="main-page-left">
     <div class="current-pass">
-      <div *ngIf="!!currentPass || !!currentRequest; else newPass;" class="center">
-        <app-inline-request-card *ngIf="!!currentRequest && !currentPass" [request]="currentRequest"></app-inline-request-card>
-        <app-inline-pass-card *ngIf="!!currentPass" [pass]="currentPass" [isActive]="true"></app-inline-pass-card>
+      <div *ngIf="isActivePass || !!currentRequest; else newPass;" class="center">
+        <app-inline-request-card *ngIf="!!currentRequest && !isActivePass" [request]="currentRequest"></app-inline-request-card>
+        <app-inline-pass-card *ngIf="isActivePass" [pass]="currentPass" [isActive]="true"></app-inline-pass-card>
       </div>
       <ng-template #newPass>
         <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Create (Blue).png'">
@@ -13,6 +13,7 @@
               [minHeight]="'74px'"
               [hoverColor]="'#00b476'"
               [fontSize]="'15px'"
+              [cursor]="'pointer'"
               (click)="showForm(false)">Now
             </app-gradient-button>
             <app-gradient-button
@@ -20,6 +21,7 @@
               [minHeight]="'74px'"
               [hoverColor]="'#00b476'"
               [fontSize]="'15px'"
+              [cursor]="'pointer'"
               (click)="showForm(true)">Future
             </app-gradient-button>
           </div>
@@ -33,7 +35,7 @@
       <app-pass-collection [forFuture]="true" [forStaff]="isStaff" [style.width]="'400px'" [passProvider]="futurePasses" [title]="'Scheduled Passes'" [icon]="'./assets/Scheduled Pass (Blue).png'" [columns]="3"></app-pass-collection>
     </div>
     <div class="past-passes">
-      <app-pass-collection [maxHeight]="'275px'" [emptyMessage]="'No Passes'" [fromPast]="true" [forStaff]="isStaff" [style.width]="'400px'" [passProvider]="pastPasses" [title]="'Expired Passes'" [icon]="'./assets/Expired Passes (Blue).png'" [columns]="3"></app-pass-collection>
+      <app-pass-collection [maxHeight]="'100%'" [emptyMessage]="'No Passes'" [fromPast]="true" [forStaff]="isStaff" [style.width]="'400px'" [passProvider]="pastPasses" [title]="'Expired Passes'" [icon]="'./assets/Expired Passes (Blue).png'" [columns]="3"></app-pass-collection>
     </div>
   </div>
   <div class="main-page-right" *ngIf="dataService.inboxState | async">

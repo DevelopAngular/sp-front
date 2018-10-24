@@ -1,8 +1,11 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
+
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
+import { filter } from 'rxjs/operators';
+
 import { DataService } from '../data-service';
 import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
@@ -126,6 +129,7 @@ export class PassesComponent implements OnInit {
 
   private currentPass$ = new BehaviorSubject<HallPass>(null);
   private currentRequest$ = new BehaviorSubject<Request>(null);
+  private isActivePass$ = this.dataService.isActivePass$;
 
   inboxHasItems: Observable<boolean> = Observable.of(false);
 
@@ -171,6 +175,14 @@ export class PassesComponent implements OnInit {
     this.dataService.currentUser.switchMap(user =>
       user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : Observable.of(null))
       .subscribe(passLike => {
+        if (passLike) {
+            const nowDate = new Date();
+            const startDate = new Date(passLike.start_time);
+            const endDate = new Date(passLike.end_time);
+            if (nowDate.getTime() >= startDate.getTime() && nowDate.getTime() !== endDate.getTime()) {
+                this.dataService.isActivePass$.next(true);
+            }
+        }
         this._zone.run(() => {
           this.currentPass$.next((passLike instanceof HallPass) ? passLike : null);
           this.currentRequest$.next((passLike instanceof Request) ? passLike : null);
@@ -185,6 +197,10 @@ export class PassesComponent implements OnInit {
 
   get currentPass() {
     return this.currentPass$.value;
+  }
+
+  get isActivePass() {
+    return this.isActivePass$.value;
   }
 
   get currentRequest() {
@@ -210,7 +226,8 @@ export class PassesComponent implements OnInit {
       data: {'forLater': forLater, 'forStaff': this.isStaff}
     });
 
-    dialogRef.afterClosed().subscribe((result: Object) => {
+    dialogRef.afterClosed()
+        .pipe(filter(res => !!res)).subscribe((result: Object) => {
       this.openInputCard(result['templatePass'],
         result['forLater'],
         result['forStaff'],
