@@ -3,12 +3,14 @@
     {{ formatDateTime(invitation.date_choices[0]) }}
   </div>
   <div class="card-body-left">
+    <app-traveltype-picker *ngIf="forStaff && forInput" (onSelect)="selectedTravelType=$event" [choices]="invitation.destination.travel_types" [altColor]="invitation.color_profile.solid_color"></app-traveltype-picker>
+
     <app-duration-picker *ngIf="forStaff && forInput" [forStaff]="forStaff" [plural]="durationPlural" (onChange)="selectedDuration = $event" [maxDuration]="invitation.destination.max_allowed_time?invitation.destination.max_allowed_time:15"></app-duration-picker>
     <app-travel-view *ngIf="!forInput" [forStaff]="forStaff" [pass]='invitation' (locationSelected)="setLocation($event)"></app-travel-view>
   </div>
   <div class="card-body-right" *ngIf="!forStaff; else staffPanel">
     <div *ngIf="!!selectedOrigin && !invitation.cancelled; else noLocation;">
-      <app-card-button (onClick)="acceptInvitation()" [disabled]="performingAction" [width]="'250px'" [height]="'50px'" [gradientColor]="invitation.color_profile.gradient_color">
+      <app-card-button (onClick)="acceptInvitation()" [disabled]="performingAction" [width]="'297px'" [height]="'81px'" [gradientColor]="invitation.color_profile.gradient_color">
         <div class="button-content">
           <div class="get-pass-content-text">Get Pass</div>
           <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
@@ -34,8 +36,7 @@
   </div>
   <ng-template #staffPanel class="card-body-right">
     <div *ngIf="forInput; else staffNoInput" class="card-body-right">
-      <app-traveltype-picker (onSelect)="selectedTravelType=$event" [choices]="invitation.destination.travel_types" [altColor]="invitation.color_profile.solid_color"></app-traveltype-picker>
-      <app-card-button (onClick)="newInvitation()" [disabled]="performingAction" [width]="'250px'" [height]="'50px'" [gradientColor]="invitation.color_profile.gradient_color">
+      <app-card-button (onClick)="newInvitation()" [disabled]="performingAction" [width]="'297px'" [height]="'81px'" [gradientColor]="invitation.color_profile.gradient_color">
         <div class="button-content">
           <div class="button-content-text">Send Request</div>
           <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">

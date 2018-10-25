@@ -1,6 +1,6 @@
 .button-content{
-    width: 250px;
-    height: 50px;
+    width: 297px;
+    height: 81px;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -20,7 +20,7 @@
 }
 
 .card-body-right{
-    height: 110px;
+    height: 95px;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -29,12 +29,11 @@
 
 .invitation-description{
     width: 190px;
-    margin-top: 5px;
     display: flex;
     align-items: center;
     position: relative;
     font-weight: bold;
-    margin-bottom: 25px;
+    //margin-bottom: 70px;
 }
 
 .invitation-description-icon{
@@ -48,8 +47,8 @@
 }
 
 .button-content{
-    width: 250px;
-    height: 50px;
+    width: 297px;
+    height: 81px;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -57,7 +56,7 @@
     user-select: none;
     cursor: pointer;
     position: relative;
-    margin: -50px 0 0 0%;
+    margin: -79px 0 0 0%;
     font-weight: bold;
 }
 
@@ -67,6 +66,7 @@
     justify-content: center;
     text-align: center;  
     padding-bottom: 20px;
+    //margin-top: 22px;
 }
 
 .bold{

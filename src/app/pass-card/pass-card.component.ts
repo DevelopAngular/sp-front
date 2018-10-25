@@ -30,7 +30,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   valid: boolean = true;
   returnData: any = {};
   overlayWidth: number = 0;
-  buttonWidth: number = 250;
+  buttonWidth: number = 297;
 
   selectedDuration: number;
   selectedTravelType: string;
