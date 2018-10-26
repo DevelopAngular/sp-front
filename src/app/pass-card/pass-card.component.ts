@@ -30,7 +30,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   valid: boolean = true;
   returnData: any = {};
   overlayWidth: number = 0;
-  buttonWidth: number = 181;
+  buttonWidth: number = 297;
 
   selectedDuration: number;
   selectedTravelType: string;
@@ -51,9 +51,15 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   performingAction: boolean;
 
-  constructor(public dialogRef: MatDialogRef<PassCardComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private http: HttpService, public dialog: MatDialog, public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService) {
-
-  }
+  constructor(
+      public dialogRef: MatDialogRef<PassCardComponent>,
+      @Inject(MAT_DIALOG_DATA) public data: any,
+      private http: HttpService,
+      public dialog: MatDialog,
+      public dataService: DataService,
+      private _zone: NgZone,
+      private loadingService: LoadingService
+  ) {}
 
   getUserName(user: User){
     return user.isSameObject(this.user)?'Me':user.first_name.substr(0, 1) +'. ' +user.last_name;
@@ -152,7 +158,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
     } else if(this.pass.parent_request){
       this.buildPage('Pass Request Sent', 'by ' +this.getUserName(this.pass.student), this.formatDateTime(this.pass.flow_start), (this.pagerPages+1));
       this.buildPage('Pass Request Accepted', 'by ' +this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), (this.pagerPages+1));
-    } else if(this.forFuture){
+    } else if(this.forFuture && this.pass.issuer ) {
       this.buildPage('Pass Sent', 'by ' +this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), (this.pagerPages+1));
     } else if(this.pass.issuer) {
       if(!this.pass.issuer.roles.includes('hallpass_student')){

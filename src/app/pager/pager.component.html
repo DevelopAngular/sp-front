@@ -3,7 +3,10 @@
   <ng-content *ngIf="page==2" select=".page-2" class="page-content"></ng-content>
   <ng-content *ngIf="page==3" select=".page-3" class="page-content"></ng-content>
   <ng-content *ngIf="page==4" select=".page-4" class="page-content"></ng-content>
-  <div *ngIf="pages > 1" class="paginator-wrapper">
-    <div *ngFor="let $page of $pages" class="pager-page-selector" (click)="page=$page" [style.background-color]="page===$page?'#FFF':'rgba(255,255,255,0.3)'"></div>
+  <div class="paginator-container">
+    <div *ngIf="pages > 1" class="paginator-wrapper">
+        <div *ngFor="let $page of $pages" class="pager-page-selector" (click)="page=$page" [style.background-color]="page===$page?'#FFF':'rgba(255,255,255,0.3)'"></div>
+    </div>
+    <div class="paginator-button" (click)="paginator()"><img class="button-image" src="../../assets/Disclosure Right (Grey).png"></div>
   </div>
 </div>

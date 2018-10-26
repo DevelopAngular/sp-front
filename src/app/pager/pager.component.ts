@@ -19,4 +19,11 @@ export class PagerComponent implements OnInit {
   ngOnInit() {
   }
 
+  paginator() {
+    if (this.page === this.pages) {
+      this.page = 0;
+    }
+    this.page += 1;
+  }
+
 }

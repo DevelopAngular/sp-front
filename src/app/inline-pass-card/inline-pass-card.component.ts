@@ -22,7 +22,7 @@ export class InlinePassCardComponent implements OnInit {
   valid: boolean = true;
   returnData: any = {};
   overlayWidth: number = 0;
-  buttonWidth: number = 181;
+  buttonWidth: number = 297;
 
   selectedDuration: number;
   selectedTravelType: string;
