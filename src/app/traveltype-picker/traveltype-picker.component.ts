@@ -15,6 +15,7 @@ export class TraveltypePickerComponent implements OnInit {
   choice1:string;
   choice2:string;
   selectedChoice:string;
+  bottomRadius: boolean = true;
   constructor() { }
 
   ngOnInit() {
@@ -25,6 +26,7 @@ export class TraveltypePickerComponent implements OnInit {
   }
 
   updateTravelType(travelType:string){
+    this.bottomRadius = travelType === 'Round-trip';
     this.selectedChoice = travelType;
     this.onSelect.emit(travelType==='Round-trip'?'round_trip':'one_way');
   }

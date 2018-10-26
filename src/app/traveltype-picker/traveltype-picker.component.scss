@@ -26,5 +26,14 @@
     justify-content: center;
     align-items: center;
     font-size: 11px;
-    border-radius: 5px;
+}
+
+.left-radius {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.right-radius {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
