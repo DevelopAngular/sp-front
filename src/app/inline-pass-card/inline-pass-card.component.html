@@ -7,7 +7,7 @@
     <div *ngIf="forInput; else noInput" class="card-body-left">
         <app-traveltype-picker (onSelect)="selectedTravelType=$event" [choices]="pass.destination.travel_types" [altColor]="pass.color_profile.solid_color"></app-traveltype-picker>
 
-        <app-duration-picker onChange)="selectedDuration=$event" [maxDuration]="pass.destination.max_allowed_time?pass.destination.max_allowed_time:15"></app-duration-picker>
+        <app-duration-picker onChange)="selectedDuration=$event" [maxDuration]="pass.destination.max_allowed_time?pass.destination.max_allowed_time:5"></app-duration-picker>
     </div>
     <ng-template class="card-body-left" #noInput>
         <app-travel-view [pass]="pass"></app-travel-view>

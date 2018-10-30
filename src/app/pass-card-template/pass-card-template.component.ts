@@ -16,7 +16,7 @@ export class PassCardTemplateComponent implements OnInit {
   @Input() rightJustify: string = 'flex-end';
   @Input() hasClose: boolean = true;
   @Input() forStaff: boolean = false;
-  @Input() selectedStudents: User[] = []
+  @Input() selectedStudents: User[] = [];
   @Input() closeIcon: string;
 
   @Output() onCancel: EventEmitter<any> = new EventEmitter();

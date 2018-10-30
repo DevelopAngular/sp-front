@@ -232,15 +232,19 @@ export class PassesComponent implements OnInit {
         result['forLater'],
         result['forStaff'],
         result['selectedStudents'],
-        (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent))
+        (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent)),
+        result['fromHistory'],
+        result['fromHistoryIndex']
       );
     });
   }
 
-  openInputCard(templatePass, forLater, forStaff, selectedStudents, component) {
+  openInputCard(templatePass, forLater, forStaff, selectedStudents, component, fromHistory, fromHistoryIndex) {
     let data = {
       'pass': templatePass,
       'fromPast': false,
+      'fromHistory': fromHistory,
+      'fromHistoryIndex': fromHistoryIndex,
       'forFuture': forLater,
       'forInput': true,
       'forStaff': forStaff,
