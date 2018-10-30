@@ -87,7 +87,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
       if(this.forFuture && this.pass.issuer.isSameObject(this.user)){
         return true;
       } else{
-        return this.isActive;
+        return this.forFuture;
       }
     }
 
