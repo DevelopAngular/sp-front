@@ -6,15 +6,14 @@
 
   <div *ngIf="forInput; else noInput" class="card-body-left">
     <app-duration-picker [forStaff]="forStaff" [plural]="selectedStudents.length>1" (onChange)="selectedDuration=$event" [maxDuration]="pass.destination.max_allowed_time?pass.destination.max_allowed_time:15"></app-duration-picker>
+    <app-traveltype-picker (onSelect)="selectedTravelType=$event" [choices]="pass.destination.travel_types" [altColor]="pass.color_profile.solid_color"></app-traveltype-picker>
   </div>
-  <ng-template class="card-body-left" #noInput>
-    <app-travel-view [pass]="pass"></app-travel-view>
-  </ng-template>
-
+    <ng-template class="card-body-left" #noInput>
+      <app-travel-view [pass]="pass"></app-travel-view>
+    </ng-template>
   <div class="card-body-right" *ngIf="!forStaff; else staffPanel">
     <div *ngIf="forInput; else studentNoInput" class="card-body-right">
-      <app-traveltype-picker (onSelect)="selectedTravelType=$event" [choices]="pass.destination.travel_types" [altColor]="pass.color_profile.solid_color"></app-traveltype-picker>
-      <app-card-button (onClick)="newPass()" [disabled]="performingAction" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'50px'" [gradientColor]="pass.color_profile.gradient_color">
+      <app-card-button (onClick)="newPass()" [disabled]="performingAction" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'81px'" [gradientColor]="pass.color_profile.gradient_color">
         <div class="start-pass-content">
           <div class="start-pass-content-text">{{((forFuture && forInput)?'Schedule Pass':(forStaff?'Send Pass':'Start Pass'))}}</div>
           <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
@@ -23,7 +22,7 @@
     </div>
     <ng-template #studentNoInput class="card-body-right">
       <div *ngIf="isActive" class="card-body-right">
-        <app-card-button *ngIf="!(forStaff || forMonitor)" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'50px'"  [gradientColor]="pass.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">
+        <app-card-button *ngIf="!(forStaff || forMonitor)" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'81px'"  [gradientColor]="pass.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">
           <div class="end-pass-content">
             {{ timeLeft +(timeLeft===''?'':' -')}} End Pass
           </div>
@@ -36,8 +35,7 @@
   </div>
   <ng-template #staffPanel class="card-body-right">
     <div *ngIf="forInput; else staffNoInput" class="card-body-right">
-      <app-traveltype-picker (onSelect)="selectedTravelType=$event" [choices]="pass.destination.travel_types" [altColor]="pass.color_profile.solid_color"></app-traveltype-picker>
-      <app-card-button (onClick)="newPass()" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'50px'" [gradientColor]="pass.color_profile.gradient_color">
+      <app-card-button (onClick)="newPass()" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'81px'" [gradientColor]="pass.color_profile.gradient_color">
         <div class="start-pass-content">
           <div class="start-pass-content-text">{{((forFuture && forInput)?'Schedule Pass' +(selectedStudents.length>1?'es':''):(forStaff?'Send Pass' +(selectedStudents.length>1?'es':''):'Start Pass' +(selectedStudents.length>1?'es':'')))}}</div>
           <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
@@ -48,16 +46,16 @@
       <div class="card-body-right">
         <app-pager [pages]="pagerPages" [page]="pagerPages">
           <div class="page-1 teacher-details">
-            <span class="bold">{{ (activePage==1?(timeLeft +(timeLeft===''?'':' - ')):'') +p1Title }}</span><span class="smaller"><br>{{ p1Subtitle }}<br><br>{{ p1Stamp }}</span>
+            <span class="bold">{{ (activePage==1?(timeLeft +(timeLeft===''?'':' - ')):'') +p1Title }}</span><span class="smaller"><br>{{ p1Subtitle }} - {{ p1Stamp }}</span>
           </div>
           <div class="page-2 teacher-details">
-            <span class="bold">{{ (activePage==2?(timeLeft +(timeLeft===''?'':' - ')):'') +p2Title }}</span><span class="smaller"><br>{{ p2Subtitle }}<br><br>{{ p2Stamp }}</span>
+            <span class="bold">{{ (activePage==2?(timeLeft +(timeLeft===''?'':' - ')):'') +p2Title }}</span><span class="smaller"><br>{{ p2Subtitle }} - {{ p2Stamp }}</span>
           </div>
           <div class="page-3 teacher-details">
-            <span class="bold">{{ (activePage==3?(timeLeft +(timeLeft===''?'':' - ')):'') +p3Title }}</span><span class="smaller"><br>{{ p3Subtitle }}<br><br>{{ p3Stamp }}</span>
+            <span class="bold">{{ (activePage==3?(timeLeft +(timeLeft===''?'':' - ')):'') +p3Title }}</span><span class="smaller"><br>{{ p3Subtitle }} - {{ p3Stamp }}</span>
           </div>
           <div class="page-4 teacher-details">
-            <span class="bold">{{ (activePage==4?(timeLeft +(timeLeft===''?'':' - ')):'') +p4Title }}</span><span class="smaller"><br>{{ p4Subtitle }}<br><br>{{ p4Stamp }}</span>
+            <span class="bold">{{ (activePage==4?(timeLeft +(timeLeft===''?'':' - ')):'') +p4Title }}</span><span class="smaller"><br>{{ p4Subtitle }} - {{ p4Stamp }}</span>
           </div>
         </app-pager>
       </div>
