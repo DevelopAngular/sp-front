@@ -1,4 +1,4 @@
-.display-card-wrapper{
+﻿.display-card-wrapper{
     min-width: 308px;
     padding: 25px 0;
     background-color: white;
@@ -86,4 +86,21 @@
     height: 10px;
     position: absolute;
     top: 22px;
+}
+.justify-content {
+  justify-content: space-between;
+  left:0;
+  padding:1 rem;
+}
+
+.flexCls {
+  display: flex;
+  padding:0 0 0 16px;
+}
+.righticon {
+  padding:0 16px 20px 0;
+  margin-right:0;
+}
+.subtitlecls {
+  padding-left:16px;
 }

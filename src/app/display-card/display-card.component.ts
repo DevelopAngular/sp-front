@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+﻿import { Component, OnInit, Input } from '@angular/core';
 import { NavbarDataService } from '../main/navbar-data.service';
 
 @Component({
@@ -13,6 +13,11 @@ export class DisplayCardComponent implements OnInit {
   @Input() title: string;
   @Input() icon: string;
   @Input() fontSize: string;
+  @Input() righticon: string;
+  @Input() subtitle: string
+  @Input() subtitle_fontSize: string;
+  @Input() righttext:string
+  
 
   constructor(private navbarData: NavbarDataService) { }
 

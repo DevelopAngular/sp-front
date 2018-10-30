@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { SharedModule } from '../shared/shared.module';
 import { AdminPageComponent } from './admin-page/admin-page.component';
@@ -11,6 +11,8 @@ import { HallmonitorComponent } from './hallmonitor/hallmonitor.component';
 import { SearchComponent } from './search/search.component';
 import { AccountsComponent } from './accounts/accounts.component';
 import { PassCongifComponent } from './pass-congif/pass-congif.component';
+import { DisplayCardComponent } from '../display-card/display-card.component';
+
 
 @NgModule({
   imports: [
@@ -26,7 +28,13 @@ import { PassCongifComponent } from './pass-congif/pass-congif.component';
     HallmonitorComponent,
     SearchComponent,
     AccountsComponent,
-    PassCongifComponent]
+      PassCongifComponent,
+DisplayCardComponent
+      
+  ],
+  providers: [
+      //NavbarDataService
+  ]
 })
 export class AdminModule {
 }
