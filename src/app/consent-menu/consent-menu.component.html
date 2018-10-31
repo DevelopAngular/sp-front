@@ -1,5 +1,15 @@
-<div class="pointer-wrapper"><div class="pointer"></div></div>
+﻿<div class="pointer-wrapper"><div class="pointer"></div></div>
 <div class="consent-wrapper">
   <div class="consent-header">{{ header }}</div>
-  <div *ngFor="let option of options" [style.color]="getColor(option)" class="option-wrapper" (click)="_matDialogRef.close(option.action)">{{ option.display }}</div>
+
+    <div *ngIf="!!ConsentText">
+      {{ConsentText}}
+
+      <div mat-dialog-actions class="center">
+        <div [style.color]="getConcentButtonColor(ConsentButtonColor)" class="option-wrapper marRight" (click)="_matDialogRef.close('doProcess')">{{ConsentYesText}}</div>
+        <div [style.color]="getConcentButtonColor(ConsentButtonColor)" class="option-wrapper" (click)="onNoClick()">{{ConsentNoText}}</div>
+      </div>
+    </div>
+
+   <div *ngFor="let option of options" [style.color]="getColor(option)" class="option-wrapper" (click)="_matDialogRef.close(option.action)">{{ option.display }}</div>
 </div>

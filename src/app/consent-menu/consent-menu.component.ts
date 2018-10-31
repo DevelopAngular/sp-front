@@ -1,4 +1,4 @@
-import { Component, Inject, ElementRef, OnInit } from '@angular/core';
+﻿import { Component, Inject, ElementRef, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef  } from '@angular/material';
 import { DomSanitizer } from '../../../node_modules/@angular/platform-browser';
 
@@ -14,12 +14,20 @@ export class ConsentMenuComponent {
 
   header: string;
   options: any[];
+  ConsentText: string;
+  ConsentYesText: string;
+  ConsentNoText: string;
+  ConsentButtonColor: string;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any[], _matDialogRef: MatDialogRef<ConsentMenuComponent>, private sanitizer: DomSanitizer) {
     this.header = data['header'];
     this.options = data['options'];
     this._matDialogRef = _matDialogRef;
     this.triggerElementRef = data['trigger'];
+    this.ConsentText = data['ConsentText'];
+    this.ConsentYesText = data['ConsentYesText'];
+    this.ConsentNoText = data['ConsentNoText'];
+    this.ConsentButtonColor = data['ConsentButtonColor'];
   }
 
   ngOnInit(){
@@ -34,4 +42,13 @@ export class ConsentMenuComponent {
   getColor(option){
     return this.sanitizer.bypassSecurityTrustStyle(option.color);
   }
+
+  getConcentButtonColor(color) {
+      return this.sanitizer.bypassSecurityTrustStyle(color);
+  }
+
+  onNoClick(): void {
+      this._matDialogRef.close();
+  }
+
 }

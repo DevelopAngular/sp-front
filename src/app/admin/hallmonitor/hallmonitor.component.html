@@ -1,14 +1,45 @@
 ﻿<div class="passes-wrapper">
   <div class="main-page-left">
     <div class="current-pass">
-      Left Content
+      <app-gradient-button [minWidth]="'300px'"
+                           [minHeight]="'40px'"
+                           [hoverColor]="'#00b476'"
+                           [fontSize]="'15px'"
+                           [cursor]="'pointer'"
+                           (click)="TooltipPlainText($event)">
+        ToolTip - Support With Plain Text
+      </app-gradient-button>
       </div>
+    <div class="current-pass">
+      <app-gradient-button [minWidth]="'300px'"
+                           [minHeight]="'40px'"
+                           [hoverColor]="'#00b476'"
+                           [fontSize]="'15px'"
+                           [cursor]="'pointer'"
+                           (click)="TooltipConfirmation($event)">
+        ToolTip - Supports Consent
+      </app-gradient-button>
     </div>
+    <div class="current-pass">
+      <app-gradient-button [minWidth]="'300px'"
+                           [minHeight]="'40px'"
+                           [hoverColor]="'#00b476'"
+                           [fontSize]="'15px'"
+                           [cursor]="'pointer'"
+                           (click)="TooltipOptions($event)">
+        ToolTip - Support list of options
+      </app-gradient-button>
+    </div>
+  </div>
   <div class="main-page-right">
     <app-display-card [title]="'Reported Students'" [hasDivider]="false" [fontSize]="'15pt'" [icon]="'./assets/Report (Red).png'" [subtitle_fontSize]="'10pt'" [subtitle]="'5 Reported Student Today'" [righttext]="'ab'" [righticon]="'./assets/Hallway (Blue).png'">
         <div style="padding-left:16px;padding-top:16px;">
           Data Comes here later on...
         </div>
     </app-display-card>
+    
+    <!--<button (click)="TooltipPlainText($event)">ToolTip - Support With Plain Text</button>-->
+
+ 
 </div>
 </div>
