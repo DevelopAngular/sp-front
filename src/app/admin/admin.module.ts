@@ -12,7 +12,7 @@ import { SearchComponent } from './search/search.component';
 import { AccountsComponent } from './accounts/accounts.component';
 import { PassCongifComponent } from './pass-congif/pass-congif.component';
 import { DisplayCardComponent } from '../display-card/display-card.component';
-
+import { AppInputComponent } from './../app-input/app-input.component';
 
 @NgModule({
   imports: [
@@ -29,8 +29,8 @@ import { DisplayCardComponent } from '../display-card/display-card.component';
     SearchComponent,
     AccountsComponent,
       PassCongifComponent,
-DisplayCardComponent
-      
+DisplayCardComponent,
+      AppInputComponent
   ],
   providers: [
       //NavbarDataService
