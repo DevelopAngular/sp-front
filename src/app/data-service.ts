@@ -14,6 +14,7 @@ import { Request } from './models/Request';
 import { User } from './models/User';
 import { PollingService } from './polling-service';
 import { UserService } from './user.service';
+import {ReplaySubject, Subject} from 'rxjs';
 
 export type Partial<T> = {
   [P in keyof T]?: T[P];
@@ -50,6 +51,7 @@ function constructUrl(base: string, obj: Partial<QueryParams>): string {
 export class DataService {
   private inboxSource = new BehaviorSubject<boolean>(false);
   public isActivePass$ = new BehaviorSubject<boolean>(false);
+  public isActiveRequest$ = new BehaviorSubject<boolean>(false);
   inboxState = this.inboxSource.asObservable();
 
   updateInbox(state: boolean) {

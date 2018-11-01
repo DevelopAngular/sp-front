@@ -79,7 +79,7 @@
       </div>
       <ng-template #staffNoInput>
         <div *ngIf="request.status=='pending'; else staffNotPending" class="card-body-right">
-          <app-card-button (onClick)="approveRequest()" [disabled]="performingAction" [width]="'190px'" [height]="'55px'" [gradientColor]="request.color_profile.gradient_color">
+          <app-card-button (onClick)="approveRequest()" [disabled]="performingAction" [width]="'295px'" [height]="'81px'" [gradientColor]="request.color_profile.gradient_color">
             <div class="resend-button-content">
               <div class="resend-button-content-title">Approve Pass Request</div>
               <div class="resend-button-content-subtitle">{{(request.duration/60) +' min - Received ' +formatDateTime(request.created, true)}}</div>

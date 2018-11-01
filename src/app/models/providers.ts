@@ -21,8 +21,7 @@ export class WrappedProvider implements PassLikeProvider {
 
   length$ = new BehaviorSubject(0);
 
-  constructor(private parent: PassLikeProvider) {
-  }
+  constructor(private parent: PassLikeProvider) {}
 
   watch(sort: Observable<string>) {
     return this.parent.watch(sort).do(passes => this.length$.next(passes.length));

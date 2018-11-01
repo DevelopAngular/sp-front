@@ -10,6 +10,10 @@ import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component'
 import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../data-service';
 import { LoadingService } from '../loading.service';
+import {map, switchMap} from 'rxjs/operators';
+import {of} from 'rxjs';
+import {LiveDataService} from '../live-data/live-data.service';
+import {State} from '../live-data/state';
 
 @Component({
   selector: 'app-request-card',
@@ -23,7 +27,7 @@ export class RequestCardComponent implements OnInit {
   @Input() fromPast: boolean = false;
   @Input() forInput: boolean = false;
   @Input() forStaff: boolean = false;
-  
+
   selectedDuration: number;
   selectedTravelType: string;
   messageEditOpen: boolean = false;
@@ -33,7 +37,16 @@ export class RequestCardComponent implements OnInit {
 
   performingAction: boolean;
 
-  constructor(public dialogRef: MatDialogRef<RequestCardComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private http: HttpService, public dialog: MatDialog, public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService) { }
+  constructor(
+      public dialogRef: MatDialogRef<RequestCardComponent>,
+      @Inject(MAT_DIALOG_DATA) public data: any,
+      private http: HttpService,
+      public dialog: MatDialog,
+      public dataService: DataService,
+      private _zone: NgZone,
+      private loadingService: LoadingService,
+      private liveDataService: LiveDataService,
+  ) {}
 
   ngOnInit() {
     this.request = this.data['pass'];
@@ -78,22 +91,21 @@ export class RequestCardComponent implements OnInit {
           'teacher' : this.request.teacher.id,
           'request_time' :this.request.request_time.toISOString(),
           'duration' : this.selectedDuration*60,
-        }:{
+        } : {
           'origin' : this.request.origin.id,
           'destination' : this.request.destination.id,
           'attachment_message' : this.request.attachment_message,
           'travel_type' : this.selectedTravelType,
           'teacher' : this.request.teacher.id,
           'duration' : this.selectedDuration*60,
-        }
-    this.http.post(endPoint, body).subscribe((data)=>{
-      console.log('[New Request]: ', data);
-      this.dialogRef.close();
-    });
+        };
+      this.http.post(endPoint, body).subscribe((res: Request) => {
+          this.dialogRef.close();
+      });
   }
 
-  changeDate(){
-    if(!this.dateEditOpen){
+  changeDate() {
+    if (!this.dateEditOpen) {
       const dateDialog = this.dialog.open(HallpassFormComponent, {
         width: '750px',
         panelClass: 'form-dialog-container',
