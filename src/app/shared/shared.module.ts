@@ -6,6 +6,7 @@ import { NavButtonComponent } from '../nav-button/nav-button.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { ResolveAssetPipe } from '../resolve-asset.pipe';
 import { SmartpassLogoComponent } from '../smartpass-logo/smartpass-logo.component';
+import { DisplayCardComponent } from '../display-card/display-card.component'
 
 @NgModule({
   imports: [
@@ -18,12 +19,14 @@ import { SmartpassLogoComponent } from '../smartpass-logo/smartpass-logo.compone
     SmartpassLogoComponent,
     NavbarComponent,
     NavButtonComponent,
+    DisplayCardComponent
   ],
   exports: [
     GradientButtonComponent,
     ResolveAssetPipe,
     SmartpassLogoComponent,
     NavbarComponent,
+    DisplayCardComponent
   ],
 })
 export class SharedModule {

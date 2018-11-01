@@ -16,7 +16,6 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { CardButtonComponent } from '../card-button/card-button.component';
 import { ContainerCardComponent } from '../container-card/container-card.component';
 import { DateTimePickerComponent } from '../date-time-picker/date-time-picker.component';
-import { DisplayCardComponent } from '../display-card/display-card.component';
 import { DropdownComponent } from '../dropdown/dropdown.component';
 import { DurationPickerComponent } from '../duration-picker/duration-picker.component';
 import { FavoriteFormComponent } from '../favorite-form/favorite-form.component';
@@ -87,7 +86,6 @@ import { NavbarDataService } from './navbar-data.service';
     DateTimePickerComponent,
     InfoEditorComponent,
     RequestAcceptComponent,
-    DisplayCardComponent,
     InlineRequestCardComponent,
     InlinePassCardComponent,
     LocationTableComponent,

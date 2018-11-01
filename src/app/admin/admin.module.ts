@@ -11,7 +11,6 @@ import { HallmonitorComponent } from './hallmonitor/hallmonitor.component';
 import { SearchComponent } from './search/search.component';
 import { AccountsComponent } from './accounts/accounts.component';
 import { PassCongifComponent } from './pass-congif/pass-congif.component';
-import { DisplayCardComponent } from '../display-card/display-card.component';
 import { AppInputComponent } from './../app-input/app-input.component';
 
 @NgModule({
@@ -28,9 +27,8 @@ import { AppInputComponent } from './../app-input/app-input.component';
     HallmonitorComponent,
     SearchComponent,
     AccountsComponent,
-      PassCongifComponent,
-DisplayCardComponent,
-      AppInputComponent
+    PassCongifComponent,
+    AppInputComponent
   ],
   providers: [
       //NavbarDataService
