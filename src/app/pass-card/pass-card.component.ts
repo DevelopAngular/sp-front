@@ -10,9 +10,10 @@ import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { DataService } from '../data-service';
 import { LoadingService } from '../loading.service';
 import {HallpassFormComponent} from '../hallpass-form/hallpass-form.component';
-import {filter} from 'rxjs/operators';
+import {filter, map} from 'rxjs/operators';
 import {RequestCardComponent} from '../request-card/request-card.component';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
+import {interval, Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-pass-card',
@@ -56,6 +57,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
   activePage;
 
   performingAction: boolean;
+
+  subscribers$: Subscription;
 
   constructor(
       public dialogRef: MatDialogRef<PassCardComponent>,
@@ -115,7 +118,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
         });
     if (!!this.pass && this.isActive) {
       console.log('Starting interval');
-      this.timers.push(window.setInterval(() => {
+      interval(1000).pipe(map(x => {
         let end: Date = this.pass.expiration_time;
         let now: Date = new Date();
         let diff: number = (end.getTime() - now.getTime()) / 1000;
@@ -127,16 +130,13 @@ export class PassCardComponent implements OnInit, OnDestroy {
         let start: Date = this.pass.start_time;
         let dur: number = Math.floor((end.getTime() - start.getTime()) / 1000);
         this.overlayWidth = (this.buttonWidth * (diff/dur));
-      }, 750));
+        return x;
+      })).subscribe();
     }
   }
 
   ngOnDestroy() {
-    this.timers.forEach(id => {
-      console.log('Clearing interval');
-      clearInterval(id);
-    });
-    this.timers = [];
+
   }
 
   updateDuration(dur:number){
@@ -229,10 +229,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
         body['start_time'] = this.pass.start_time.toISOString();
     }
     console.log(body);
-    this.http.post(endPoint, body).subscribe((data) => {
-      console.log(data);
-        this.dialogRef.close();
-    });
+      this.http.post(endPoint, body).subscribe((data) => {
+          this.dialogRef.close();
+      });
   }
 
   cancelEdit(evt: MouseEvent){
