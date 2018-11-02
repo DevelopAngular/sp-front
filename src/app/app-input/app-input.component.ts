@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, Input, Output, EventEmitter  } from '@angular/core';
+﻿import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 
 @Component({
   selector: 'app-input',
@@ -9,25 +9,30 @@ export class AppInputComponent implements OnInit {
 
     @Input() input_type: string = "text";
     @Input() input_class: string;
-    @Input() input_value: string;
+    @Input() input_value: string = "";
     @Input() Success: boolean;
     @Input() input_label: string;
-    @Output() getInputValueEvent = new EventEmitter<string>();
+    @Output() onUpdate = new EventEmitter<string>();
+
+    @ViewChild('appInput') input: ElementRef; 
 
     constructor() { }
 
   ngOnInit() {
   }
 
-  ChangeStatus(status)
-  {
-    debugger;  
-    this.Success = status;
+  ChangeStatus(status) {
+      this.Success = status;
   }
 
-  getInputValue()
+  UpdateInputValue()
   {
-      this.getInputValueEvent.emit(this.input_value);
+      this.input_value = this.input.nativeElement.value;
+      this.onUpdate.emit(this.input_value);
   }
 
+ 
+
+
+ 
 }

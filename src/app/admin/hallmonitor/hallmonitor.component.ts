@@ -10,6 +10,8 @@ import { MatDialogRef, MatDialog } from '@angular/material';
   styleUrls: ['./hallmonitor.component.scss']
 })
 export class HallmonitorComponent implements OnInit {
+    input_value1: string;
+    input_value2: string;
 
     constructor(
         public dialog: MatDialog
@@ -104,5 +106,30 @@ export class HallmonitorComponent implements OnInit {
       });
   }
 
+  Input1Validataion()
+  {
+      //Set your own logic as per requriement and return true or false vaule
+      if (this.input_value1 == null || this.input_value1 == undefined)
+      {
+          return null;
+      }
+      else if (this.input_value1 == 'Bathroom' || this.input_value1 == 'Staffroom' || this.input_value1 == 'bathroom' || this.input_value1 == 'staffroom')
+      {
+          return true;
+      }
+      
+      return false;
+  }
 
+
+  Input2Validataion() {
+      //Set your own logic as per requriement and return true or false vaule
+      if (this.input_value2 == null || this.input_value2 == undefined) {
+          return null;
+      }
+      else if (this.input_value2 == 'BR' || this.input_value2 == 'AR' || this.input_value2 == 'br' || this.input_value2 == 'ar') {
+          return true;
+      }
+      return false;
+  }
 }

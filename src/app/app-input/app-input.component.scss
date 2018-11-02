@@ -37,3 +37,9 @@
 .InputWrapper input:focus {
   border: none !important;
 }
+.clserrorLabel {
+  color: red !important;
+}
+.clserrorInput {
+  border: 1px solid red !important
+}

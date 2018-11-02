@@ -32,7 +32,13 @@
       </div>
 
 
-      <app-input [input_type]="'text'" [input_label]="'Room Name'" ></app-input>
+      <app-input  [input_label]="'Room Name'" (onUpdate)="input_value1=$event" [Success]="Input1Validataion()"></app-input>
+      
+      <br />
+      Input 1 Text : {{input_value1}} <br/>
+      Input 1 Sucess Status : {{Input1Validataion()}}  <br />
+      Valid Inputs: 'Bathroom,Staffroom'
+
     
     </div>
     <div class="main-page-right">
@@ -43,7 +49,13 @@
       </app-display-card>
 
       <div style="margin-top:20px;">
-        <app-input [input_type]="'text'" [input_label]="'Room Number'"></app-input>
+        <app-input  [input_label]="'Room Number'" (onUpdate)="input_value2=$event" [Success]="Input2Validataion()" [input_type]="'text'"></app-input>
+        
+        <br />
+        Input 2 Text : {{input_value2}} <br />
+        Input 2 Sucess Status : {{Input2Validataion()}}<br />
+      Valid Inputs: 'AR,BR'
+        
       </div>
 
 

@@ -1,6 +1,6 @@
 ﻿  <div class="InputWrapper">
-    <label>{{input_label}}</label>
-    <input type={{input_type}} class="{{input_class}}" value="{{input_value}}" (blur)="ChangeStatus(true)" (focus)="ChangeStatus(false)" placeholder="Please enter {{input_label}}"/>
-    <img *ngIf='Success' src="./assets/Check (Blue).png"/>
-    <!--<img *ngIf='!!Success' src="./assets/Report (Red).png"/>-->
+    <label [ngClass]="{clserrorLabel: Success===false}">{{input_label}}</label>
+    <input #appInput type={{input_type}} class="{{input_class}}" value="{{input_value}}" (blur)="UpdateInputValue();"  placeholder="Please enter {{input_label}}" [ngClass]="{clserrorInput: Success===false}"/>
+    <img *ngIf='Success===true' src="./assets/Check (Blue).png"/>
+    <img *ngIf='Success===false' src="./assets/Report (Red).png"/>
   </div>
