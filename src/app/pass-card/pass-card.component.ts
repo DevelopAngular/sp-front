@@ -214,22 +214,24 @@ export class PassCardComponent implements OnInit, OnDestroy {
     const endPoint:string = 'v1/hall_passes' +(this.forStaff?'/bulk_create':'');
 
     const body = {
-      'duration' : this.selectedDuration*60,
+      'duration' : this.selectedDuration * 60,
       'origin' : this.pass.origin.id,
       'destination' : this.pass.destination.id,
       'travel_type' : this.selectedTravelType
     };
-    if(this.forStaff){
+    if (this.forStaff) {
       body['students'] = this.selectedStudents.map(user => user.id);
     } else {
       body['student'] = this.pass.student.id;
     }
 
-    if(this.forFuture)
-      body['start_time'] = this.pass.start_time.toISOString();
-
-    this.http.post(endPoint, body).subscribe((data)=>{
-      this.dialogRef.close();
+    if (this.forFuture) {
+        body['start_time'] = this.pass.start_time.toISOString();
+    }
+    console.log(body);
+    this.http.post(endPoint, body).subscribe((data) => {
+      console.log(data);
+        this.dialogRef.close();
     });
   }
 

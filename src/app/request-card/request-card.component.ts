@@ -214,11 +214,11 @@ export class RequestCardComponent implements OnInit {
                       'colorProfile': this.request.color_profile,
                       'originalFromLocation': this.request.origin}
               });
-          
-              infoDialog.afterOpen().subscribe( () =>{
+
+              infoDialog.afterOpen().subscribe( () => {
                 this.messageEditOpen = true;
               });
-          
+
               infoDialog.afterClosed().subscribe(data =>{
                 denyMessage = data['message'];
                 this.messageEditOpen = false;

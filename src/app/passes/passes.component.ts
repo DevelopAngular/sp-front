@@ -179,6 +179,7 @@ export class PassesComponent implements OnInit {
 
     this.dataService.currentUser.switchMap(user =>
       user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : Observable.of(null))
+        .pipe(filter(res => !!res))
       .subscribe(passLike => {
         if (passLike) {
             const nowDate = new Date();
