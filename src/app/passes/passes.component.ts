@@ -56,7 +56,11 @@ class ActivePassProvider implements PassLikeProvider {
     const passes$ = this.user$.switchMap(user => this.liveDataService.watchActiveHallPasses(mergedReplay,
       user.roles.includes('hallpass_student')
         ? {type: 'student', value: user}
-        : {type: 'issuer', value: user}));
+        : {type: 'issuer', value: user}))
+        .pipe(map(passes => {
+              const now = new Date();
+              return passes.filter(pass => pass.start_time.getTime() <= now.getTime());
+    }));
 
     const excluded$ = this.excluded$.startWith([]);
 

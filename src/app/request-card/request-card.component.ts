@@ -232,8 +232,8 @@ export class RequestCardComponent implements OnInit {
           let endpoint: string = 'v1/pass_requests/' +this.request.id +'/cancel';
           let body = {
             'message' : ''
-          }
-          this.http.post(endpoint, body).subscribe((httpData)=>{
+          };
+          this.http.post(endpoint, body).subscribe((httpData) => {
             console.log('[Request Cancelled]: ', httpData);
             this.dialogRef.close();
           });
@@ -246,22 +246,22 @@ export class RequestCardComponent implements OnInit {
     let endpoint: string = 'v1/pass_requests/' +this.request.id +'/deny';
     let body = {
       'message' : denyMessage
-    }
-    this.http.post(endpoint, body).subscribe((httpData)=>{
+    };
+    this.http.post(endpoint, body).subscribe((httpData) => {
       console.log('[Invitation Denied]: ', httpData);
       this.dialogRef.close();
     });
   }
 
-  genOption(display, color, action){
-    return {display: display, color: color, action: action}
+  genOption(display, color, action) {
+    return {display: display, color: color, action: action};
   }
 
-  approveRequest(){
+  approveRequest() {
     this.performingAction = true;
     let endpoint: string = 'v1/pass_requests/' +this.request.id +'/accept';
     let body = [];
-    this.http.post(endpoint, body).subscribe(() =>{
+    this.http.post(endpoint, body).subscribe(() => {
       this.dialogRef.close();
     });
   }
