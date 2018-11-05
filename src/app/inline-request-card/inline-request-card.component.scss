@@ -24,6 +24,12 @@
     font-size: 10pt;
 }
 
+.inline-request-container {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
 .card-body-right{
     display: flex;
     flex-direction: column;

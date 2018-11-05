@@ -129,7 +129,6 @@ export class InvitationCardComponent implements OnInit {
       let options = [];
       let header = '';
       if (this.forInput) {
-        debugger;
           this.dialogRef.close();
           const dialogRef = this.dialog.open(HallpassFormComponent, {
               width: '750px',

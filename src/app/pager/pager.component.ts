@@ -21,6 +21,9 @@ export class PagerComponent implements OnInit {
   }
 
   ngOnInit() {
+      if (this.page === 1 && this.pages === 1) {
+          this.hideLeftButton.next(false);
+      }
       if (this.page === 1 && this.pages === 2) {
         this.hideLeftButton.next(false);
         this.hideRightButton.next(true);
