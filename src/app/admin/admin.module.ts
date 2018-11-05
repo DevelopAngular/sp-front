@@ -13,11 +13,19 @@ import { AccountsComponent } from './accounts/accounts.component';
 import { PassCongifComponent } from './pass-congif/pass-congif.component';
 import { AppInputComponent } from './../app-input/app-input.component';
 
+import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
+import { DateTimePickerComponent } from './../date-time-picker/date-time-picker.component';
+import { FormsModule } from '@angular/forms';
+
+
 @NgModule({
   imports: [
     CommonModule,
     SharedModule,
-    AdminRoutingModule,
+      AdminRoutingModule,
+      OwlDateTimeModule,
+      OwlNativeDateTimeModule,
+      FormsModule
   ],
   declarations: [
     AdminPageComponent,
@@ -28,7 +36,8 @@ import { AppInputComponent } from './../app-input/app-input.component';
     SearchComponent,
     AccountsComponent,
     PassCongifComponent,
-    AppInputComponent
+      AppInputComponent,
+      DateTimePickerComponent
   ],
   providers: [
       //NavbarDataService

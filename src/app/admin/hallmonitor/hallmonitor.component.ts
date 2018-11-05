@@ -1,7 +1,8 @@
 ﻿import { Component, OnInit, ElementRef} from '@angular/core';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
 import { MatDialogRef, MatDialog } from '@angular/material';
-
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Util } from '../../../Util';
 
 
 @Component({
@@ -13,10 +14,22 @@ export class HallmonitorComponent implements OnInit {
     input_value1: string;
     input_value2: string;
 
+    min: Date = new Date('December 17, 1995 03:24:00');
+    calendarToggled = false;
+    searchDate$ = new BehaviorSubject<Date>(null);
+
+    calendarToggled_2nd = false;
+    searchDate_1st$ = new BehaviorSubject<Date>(null);
+    searchDate_2nd$ = new BehaviorSubject<Date>(null);
+
     constructor(
         public dialog: MatDialog
         
-    ) { }
+    ) { 
+        this.setSearchDate(new Date());
+        this.setSearchDate_1st(new Date());
+        this.setSearchDate_2nd(new Date());
+    }
 
   ngOnInit() {
     }
@@ -131,5 +144,58 @@ export class HallmonitorComponent implements OnInit {
           return true;
       }
       return false;
+  }
+
+  setSearchDate(date: Date) {
+      if (date != null || date != undefined) {
+          date.setHours(0);
+          date.setMinutes(0);
+          this.searchDate$.next(date);
+      }
+  }
+  get searchDate() {
+      return this.searchDate$.value;
+  }
+
+  get dateDisplay() {
+
+      var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      return this.searchDate.toLocaleDateString("en-US", options)
+      //return Util.formatDateTime(this.searchDate);
+  }
+
+  setSearchDate_1st(date: Date) {
+      if (date != null || date != undefined) {
+          //date.setHours(0);
+          //date.setMinutes(0);
+          this.searchDate_1st$.next(date);
+      }
+  }
+  get searchDate_1st() {
+      return this.searchDate_1st$.value;
+  }
+
+  get getDisplayRange() {
+
+      return Util.formatDateTimeForDateRange(this.searchDate_1st, this.searchDate_2nd);
+      //return this.searchDate_1st;
+  }
+
+
+
+
+setSearchDate_2nd(date: Date) {
+      if (date != null || date != undefined) {
+          //date.setHours(0);
+          //date.setMinutes(0);
+          this.searchDate_2nd$.next(date);
+      }
+  }
+  get searchDate_2nd() {
+      return this.searchDate_2nd$.value;
+  }
+
+  get dateDisplay_2nd() {
+      return this.searchDate_2nd;
   }
 }

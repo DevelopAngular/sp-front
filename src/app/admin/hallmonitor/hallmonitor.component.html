@@ -38,8 +38,46 @@
       Input 1 Text : {{input_value1}} <br/>
       Input 1 Sucess Status : {{Input1Validataion()}}  <br />
       Valid Inputs: 'Bathroom,Staffroom'
+      <br />
+      <br /> <br />
+      <div class="current-pass" style="cursor:pointer">
+      
+        <div class="calendar-wrapper" (click)="calendarToggled=!calendarToggled" [style.background-color]="(calendarToggled?'#E4EBFF':'transparent')">
+          
 
-    
+          <h2> <img class="calendar-icon" [src]="'./assets/Calendar (Blue).png' | resolveAsset" height="50" width="50"> <span> Click to show/hide Single Selection of Date </span></h2>
+        </div>
+      
+
+        <div *ngIf="calendarToggled" class="my-room-right">
+          <app-date-time-picker [_selectedMoment]="searchDate" [min]="min" [showTime]="false" (onUpdate)="setSearchDate($event)" ></app-date-time-picker>
+        </div>
+
+        <div class="date-display">{{ dateDisplay }}</div>
+      </div>
+
+
+
+      <div class="current-pass" style="cursor:pointer">
+
+        <div class="calendar-wrapper" (click)="calendarToggled_2nd=!calendarToggled_2nd" [style.background-color]="(calendarToggled_2nd?'#E4EBFF':'transparent')">
+          
+           
+          
+          <h2 > <img class="calendar-icon" [src]="'./assets/Calendar (Blue).png' | resolveAsset" height="50" width="50"> <span> Click to show/hide Multi Selection of Date</span></h2>
+
+        </div>
+      
+
+        <div *ngIf="calendarToggled_2nd" class="my-room-right">
+          <app-date-time-picker [_selectedMoment]="searchDate_1st" [min]="min" [showTime]="true" (onUpdate)="setSearchDate_1st($event)" [showTwoCalender]="true" (onUpdate_2ndCal)="setSearchDate_2nd($event)"></app-date-time-picker>
+        </div>
+        <br/>
+        <div class="date-display">{{ getDisplayRange }}</div>
+        
+
+      </div>
+      
     </div>
     <div class="main-page-right">
       <app-display-card [title]="'Reported Students'" [hasDivider]="false" [fontSize]="'15pt'" [icon]="'./assets/Report (Red).png'" [subtitle_fontSize]="'10pt'" [subtitle]="'5 Reported Student Today'" [righttext]="'ab'" [righticon]="'./assets/Hallway (Blue).png'">
