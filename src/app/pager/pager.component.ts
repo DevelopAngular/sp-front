@@ -9,7 +9,7 @@ import {BehaviorSubject} from 'rxjs';
 export class PagerComponent implements OnInit {
 
   @Input() page = 1;
-  @Input() pages = 1;
+  @Input() pages = 2;
 
   hideRightButton = new BehaviorSubject(false);
   hideLeftButton = new BehaviorSubject(true);
@@ -21,6 +21,10 @@ export class PagerComponent implements OnInit {
   }
 
   ngOnInit() {
+      if (this.page === 1 && this.pages === 2) {
+        this.hideLeftButton.next(false);
+        this.hideRightButton.next(true);
+      }
   }
 
   leftPaginator() {
@@ -28,12 +32,16 @@ export class PagerComponent implements OnInit {
     if (this.page === 2) {
       this.hideLeftButton.next(false);
     }
-    this.page -= 1;
+    if (this.page >= 1) {
+        this.page -= 1;
+    }
   }
 
   RightPaginator() {
     this.hideLeftButton.next(true);
-    if (this.page === 1 && this.pages === 2 || this.page === 2 && this.pages === 3 || this.page === 3 && this.pages === 4) {
+    if (this.page === 1 && this.pages === 2
+        || this.page === 2 && this.pages === 3
+        || this.page === 3 && this.pages === 4) {
       this.hideRightButton.next(false);
     }
     this.page += 1;
