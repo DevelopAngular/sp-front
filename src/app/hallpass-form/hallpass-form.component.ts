@@ -51,6 +51,8 @@ export class HallpassFormComponent implements OnInit {
   formStateHistory: string[] = [];
   formHistoryIndex: number = 0;
   isRedirected: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+  isNotDeny: boolean = true;
+  studentMessage: string;
 
   public pinnables: Promise<Pinnable[]>;
 
@@ -198,6 +200,11 @@ export class HallpassFormComponent implements OnInit {
         this.fromLocation = this.dialogData['originalFromLocation'];
         this._fromProfile = this.greenProfile;
         this.from_title = this.fromLocation.title;
+      }
+
+      if (this.dialogData['isDeny']) {
+        this.isNotDeny = false;
+        this.studentMessage = this.dialogData['studentMessage'];
       }
     }
     if (this.isRedirected.value) {

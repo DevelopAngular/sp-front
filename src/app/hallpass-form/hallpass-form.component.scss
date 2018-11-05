@@ -254,6 +254,14 @@ mat-grid-tile .location-wrapper > .inner > app-location-picker {
   padding: 0;
 }
 
+.message-deny-button {
+  width: 185px;
+  height: 30px;
+  float: right;
+  margin: 0 -20px 0 0;
+  padding: 0;
+}
+
 textarea {
   resize: none;
   border: 0px;

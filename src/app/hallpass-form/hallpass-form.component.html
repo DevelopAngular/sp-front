@@ -1,7 +1,7 @@
 <!-- Show the form designated for students -->
 <div class="form">
   <!-- Buttons responsible for choosing formState -->
-  <div class="locs" *ngIf="formState!=='datetime' && formState!=='students'">
+  <div class="locs" *ngIf="formState!=='datetime' && formState!=='students' && isNotDeny">
     <app-gradient-button
       class="location-button"
       [gradient]="fromGradient"
@@ -111,13 +111,13 @@
   <div *ngIf="formState == 'restrictedMessage'" class="message center">
     <textarea
        class="message-box"
-       #messageBox [placeholder]="'Attach a message' +(requestTarget?(' for ' +requestTarget.last_name):'')"
+       #messageBox [placeholder]="(!isNotDeny ? studentMessage : 'Attach a message' +(requestTarget?(' for ' +requestTarget.last_name):''))"
        [(ngModel)]="requestMessage"
        autofocus
     >
       {{ requestMessage }}
     </textarea>
-      <app-gradient-button
+      <app-gradient-button *ngIf="isNotDeny"
         [gradient]="'#00B476, #03CF31'"
         [hoverColor]="'#04CD33'"
         [minWidth]="'50px'"
@@ -127,5 +127,14 @@
         class="message-button">
       {{(requestMessage===''?'Skip':'Add Message')}}
       </app-gradient-button>
+    <app-gradient-button *ngIf="!isNotDeny"
+            [gradient]="'#DA2370,#FB434A'"
+            [hoverColor]="'#DA2370'"
+            [minWidth]="'185px'"
+            [minHeight]="'35px'"
+            [fontSize]="'14px'"
+            (buttonClick)="sendRequest(messageBox.value)"
+            class="message-deny-button"
+    >Deny Pass Request</app-gradient-button>
   </div>
 </div>
