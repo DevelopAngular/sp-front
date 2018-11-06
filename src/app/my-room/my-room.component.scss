@@ -68,9 +68,16 @@ input {
     font-size: 22pt;
     font-weight: bold;
     display: flex;
+    align-items: center;
     flex-direction: row;
     cursor: pointer;
     user-select: none;
+}
+
+.disclosure-icon {
+    width: 20px;
+    height: 20px;
+    margin-left: 13px
 }
 
 .drop-arrow{

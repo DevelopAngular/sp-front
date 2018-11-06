@@ -4,8 +4,7 @@
       <div class="my-room-header">
         <div class="selected-teacher" (click)="showOptions($event)">
           {{ roomOptions?selectedLocation.title:"" }}
-          <mat-icon *ngIf="!optionsOpen && showArrow" class="drop-arrow">arrow_drop_down</mat-icon>
-          <mat-icon *ngIf="optionsOpen && showArrow" class="drop-arrow">arrow_drop_up</mat-icon>
+          <img *ngIf="!optionsOpen && showArrow" class="disclosure-icon" src="../../assets/Disclosure Indicator (Blue).png">
         </div>
         <input
           class="input"
