@@ -12,6 +12,9 @@ import { PassLike} from '../models';
 import { PassCardComponent } from '../pass-card/pass-card.component';
 import { ReportFormComponent } from '../report-form/report-form.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
+import {combineLatest, merge, Observable} from 'rxjs';
+import {filter, map, publish, publishReplay, share, shareReplay, switchMap} from 'rxjs/operators';
+import {LiveDataService} from '../live-data/live-data.service';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -47,7 +50,7 @@ export class PassCollectionComponent implements OnInit {
 
   @Output() sortMode = new EventEmitter<string>();
 
-  currentPasses$ = new ReplaySubject<PassLike[]>(1);
+  currentPasses$;
 
   sortOptions: SortOption[] = [
     ///new SortOption('Created', 'created'),
@@ -75,11 +78,13 @@ export class PassCollectionComponent implements OnInit {
     return null;
   }
 
-  constructor(public dialog: MatDialog, private dataService: DataService) {
-  }
+  constructor(
+      public dialog: MatDialog,
+      private dataService: DataService,
+  ) {}
 
   ngOnInit() {
-    this.passProvider.watch(this.sort$.asObservable()).subscribe(e => this.currentPasses$.next(e));
+      this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
   }
 
   getEmptyMessage() {

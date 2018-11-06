@@ -20,6 +20,12 @@
     font-weight: bold;
 }
 
+.inline-card-container {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
 .start-pass-content{
     @extend .button-content;
 }

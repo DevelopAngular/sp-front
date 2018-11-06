@@ -4,6 +4,8 @@ import { Util } from '../../Util';
 import { Request } from '../models/Request'
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { MatDialog } from '@angular/material';
+import {DataService} from '../data-service';
+import {finalize} from 'rxjs/operators';
 
 @Component({
   selector: 'app-inline-request-card',
@@ -15,15 +17,24 @@ export class InlineRequestCardComponent implements OnInit {
   @Input() forFuture: boolean = false;
   @Input() fromPast: boolean = false;
   @Input() forInput: boolean = false;
-  
+
   selectedDuration: number;
   selectedTravelType: string;
   cancelOpen: boolean = false;
 
-  constructor(private http: HttpService, public dialog: MatDialog) { }
+  constructor(
+      private http: HttpService,
+      public dialog: MatDialog,
+      private dataService: DataService,
+  ) { }
+
+  get hasDivider() {
+    if (!!this.request) {
+      return this.request.status === 'pending' && !this.forInput;
+    }
+  }
 
   ngOnInit() {
-
   }
 
   formatDateTime(){
@@ -50,13 +61,14 @@ export class InlineRequestCardComponent implements OnInit {
         this.cancelOpen = true;
       });
   
-      cancelDialog.afterClosed().subscribe(action =>{
+      cancelDialog.afterClosed().subscribe(action => {
         this.cancelOpen = false;
-        if(action === 'delete'){
-          let endpoint: string = 'v1/pass_requests/' +this.request.id +'/cancel';
-          this.http.post(endpoint).subscribe((data)=>{
-            console.log('[Request Canceled]: ', data);
-          });
+        if (action === 'delete') {
+            let endpoint: string = 'v1/pass_requests/' +this.request.id +'/cancel';
+            this.http.post(endpoint).subscribe((data) => {
+                this.dataService.isActiveRequest$.next(false);
+                console.log('[Request Canceled]: ', data);
+            });
         }
       });
     }

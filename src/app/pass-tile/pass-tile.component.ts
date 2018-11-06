@@ -63,7 +63,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
           let secs: number = Math.abs(Math.floor(diff) % 60);
           this.valid = end > now;
           this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
-      }, 750));
+      }, 1000));
     }
   }
 

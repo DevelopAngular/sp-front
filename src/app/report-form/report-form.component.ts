@@ -13,14 +13,19 @@ export class ReportFormComponent implements OnInit {
   formState: string = 'studentSelect';
   selectedStudents: User[] = [];
   showOptions: boolean = true;
-  reportMessage: string = ""
+  reportMessage: string = '';
 
-  constructor(private http: HttpService, private dialogRef: MatDialogRef<ReportFormComponent>, @Inject(MAT_DIALOG_DATA) public data: any) { }
+  constructor(private http: HttpService,
+              private dialogRef: MatDialogRef<ReportFormComponent>,
+              @Inject(MAT_DIALOG_DATA) public data: any
+  ) {}
 
   ngOnInit() {
     this.dialogRef.updatePosition({top: '120px'});
-    this.selectedStudents.push(this.data['report']);
-    this.showOptions = !this.data['report'];
+     if (this.data) {
+       this.selectedStudents.push(this.data['report']);
+         this.showOptions = !this.data['report'];
+     }
   }
 
   setFormState(state: string) {

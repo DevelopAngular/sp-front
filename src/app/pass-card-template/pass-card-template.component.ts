@@ -16,14 +16,14 @@ export class PassCardTemplateComponent implements OnInit {
   @Input() rightJustify: string = 'flex-end';
   @Input() hasClose: boolean = true;
   @Input() forStaff: boolean = false;
-  @Input() selectedStudents: User[] = []
+  @Input() selectedStudents: User[] = [];
   @Input() closeIcon: string;
 
   @Output() onCancel: EventEmitter<any> = new EventEmitter();
 
   constructor() {}
 
-  get studentText(){
+  get studentText() {
     return (this.selectedStudents?(this.selectedStudents.length > 2?this.selectedStudents[0].display_name + ' and ' +(this.selectedStudents.length-1) +' more':this.selectedStudents[0].display_name +(this.selectedStudents.length>1?' and ' +this.selectedStudents[1].display_name:'')):this.pass.student.display_name);
   }
 

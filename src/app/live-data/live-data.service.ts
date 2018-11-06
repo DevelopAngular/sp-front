@@ -223,7 +223,6 @@ export class LiveDataService {
       if (filter.type === 'student') {
         queryFilter.student = filter.value.id;
         filters.push(pass => pass.student.id === filter.value.id);
-
       }
       if (filter.type === 'location') {
         queryFilter.location = filter.value.id;

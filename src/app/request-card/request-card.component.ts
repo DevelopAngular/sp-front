@@ -10,6 +10,8 @@ import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component'
 import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../data-service';
 import { LoadingService } from '../loading.service';
+import { filter } from 'rxjs/operators';
+import {LiveDataService} from '../live-data/live-data.service';
 
 @Component({
   selector: 'app-request-card',
@@ -23,7 +25,7 @@ export class RequestCardComponent implements OnInit {
   @Input() fromPast: boolean = false;
   @Input() forInput: boolean = false;
   @Input() forStaff: boolean = false;
-  
+
   selectedDuration: number;
   selectedTravelType: string;
   messageEditOpen: boolean = false;
@@ -33,7 +35,16 @@ export class RequestCardComponent implements OnInit {
 
   performingAction: boolean;
 
-  constructor(public dialogRef: MatDialogRef<RequestCardComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private http: HttpService, public dialog: MatDialog, public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService) { }
+  constructor(
+      public dialogRef: MatDialogRef<RequestCardComponent>,
+      @Inject(MAT_DIALOG_DATA) public data: any,
+      private http: HttpService,
+      public dialog: MatDialog,
+      public dataService: DataService,
+      private _zone: NgZone,
+      private loadingService: LoadingService,
+      private liveDataService: LiveDataService,
+  ) {}
 
   ngOnInit() {
     this.request = this.data['pass'];
@@ -78,22 +89,21 @@ export class RequestCardComponent implements OnInit {
           'teacher' : this.request.teacher.id,
           'request_time' :this.request.request_time.toISOString(),
           'duration' : this.selectedDuration*60,
-        }:{
+        } : {
           'origin' : this.request.origin.id,
           'destination' : this.request.destination.id,
           'attachment_message' : this.request.attachment_message,
           'travel_type' : this.selectedTravelType,
           'teacher' : this.request.teacher.id,
           'duration' : this.selectedDuration*60,
-        }
-    this.http.post(endPoint, body).subscribe((data)=>{
-      console.log('[New Request]: ', data);
-      this.dialogRef.close();
-    });
+        };
+      this.http.post(endPoint, body).subscribe((res: Request) => {
+          this.dialogRef.close();
+      });
   }
 
-  changeDate(){
-    if(!this.dateEditOpen){
+  changeDate() {
+    if (!this.dateEditOpen) {
       const dateDialog = this.dialog.open(HallpassFormComponent, {
         width: '750px',
         panelClass: 'form-dialog-container',
@@ -108,7 +118,7 @@ export class RequestCardComponent implements OnInit {
         this.dateEditOpen = true;
       });
   
-      dateDialog.afterClosed().subscribe(data =>{
+      dateDialog.afterClosed().subscribe(data => {
         this.request.request_time = data['startTime']?data['startTime']:this.request.request_time;
         this.dateEditOpen = false;
 
@@ -131,7 +141,7 @@ export class RequestCardComponent implements OnInit {
   }
 
   editMessage(){
-    if(!this.messageEditOpen){
+    if(!this.messageEditOpen) {
       const infoDialog = this.dialog.open(HallpassFormComponent, {
         width: '750px',
         panelClass: 'form-dialog-container',
@@ -143,7 +153,7 @@ export class RequestCardComponent implements OnInit {
               'originalFromLocation': this.request.origin}
       });
   
-      infoDialog.afterOpen().subscribe( () =>{
+      infoDialog.afterOpen().subscribe( () => {
         this.messageEditOpen = true;
       });
   
@@ -161,7 +171,7 @@ export class RequestCardComponent implements OnInit {
       let header = '';
       if(!this.forInput){
         if(this.forStaff){
-          options.push(this.genOption('Add Message & Deny','#3D396B','denyMessage'));
+          // options.push(this.genOption('Add Message & Deny','#3D396B','denyMessage'));
           options.push(this.genOption('Deny Pass Request','#E32C66','deny'));
         } else{
           options.push(this.genOption('Delete Pass Request','#E32C66','delete'));
@@ -188,40 +198,63 @@ export class RequestCardComponent implements OnInit {
           this.dialogRef.close();
         } else if(action === 'editMessage'){
           this.editMessage();
-        }else if(action.indexOf('deny') === 0){
+        }else if(action.indexOf('deny') === 0) {
           let denyMessage: string = '';
-          if(action.indexOf('Message') > -1){
-            if(!this.messageEditOpen){
-              const infoDialog = this.dialog.open(HallpassFormComponent, {
-                width: '750px',
-                panelClass: 'form-dialog-container',
-                backdropClass: 'invis-backdrop',
-                data: {'entryState': 'restrictedMessage',
+          if(action.indexOf('Message') > -1) {
+            // if(!this.messageEditOpen) {
+            //   const infoDialog = this.dialog.open(HallpassFormComponent, {
+            //     width: '750px',
+            //     panelClass: 'form-dialog-container',
+            //     backdropClass: 'invis-backdrop',
+            //     data: {'entryState': 'restrictedMessage',
+            //           'originalMessage': '',
+            //           'originalToLocation': this.request.destination,
+            //           'colorProfile': this.request.color_profile,
+            //           'originalFromLocation': this.request.origin,
+            //     }
+            //   });
+            //
+            //   infoDialog.afterOpen().subscribe( () => {
+            //     this.messageEditOpen = true;
+            //   });
+            //
+            //   infoDialog.afterClosed().pipe(filter(res => !!res)).subscribe(data => {
+            //     denyMessage = data['message'];
+            //     this.messageEditOpen = false;
+            //     this.denyRequest(denyMessage);
+            //   });
+            // }
+          } else {
+              const messageDialog = this.dialog.open(HallpassFormComponent, {
+                  width: '750px',
+                  panelClass: 'form-dialog-container',
+                  backdropClass: 'invis-backdrop',
+                  data: {'entryState': 'restrictedMessage',
                       'originalMessage': '',
                       'originalToLocation': this.request.destination,
                       'colorProfile': this.request.color_profile,
-                      'originalFromLocation': this.request.origin}
+                      'originalFromLocation': this.request.origin,
+                      'isDeny': true,
+                      'studentMessage': this.request.attachment_message
+                  }
               });
-          
-              infoDialog.afterOpen().subscribe( () =>{
-                this.messageEditOpen = true;
+
+              messageDialog.afterOpen().subscribe( () => {
+                  this.messageEditOpen = true;
               });
-          
-              infoDialog.afterClosed().subscribe(data =>{
-                denyMessage = data['message'];
-                this.messageEditOpen = false;
-                this.denyRequest(denyMessage);
+
+              messageDialog.afterClosed().pipe(filter(res => !!res)).subscribe(data => {
+                  denyMessage = data['message'];
+                  this.messageEditOpen = false;
+                  this.denyRequest(denyMessage);
               });
-            }
-          } else{
-            this.denyRequest(denyMessage);
           }
         } else if(action === 'delete'){
           let endpoint: string = 'v1/pass_requests/' +this.request.id +'/cancel';
           let body = {
             'message' : ''
-          }
-          this.http.post(endpoint, body).subscribe((httpData)=>{
+          };
+          this.http.post(endpoint, body).subscribe((httpData) => {
             console.log('[Request Cancelled]: ', httpData);
             this.dialogRef.close();
           });
@@ -234,22 +267,22 @@ export class RequestCardComponent implements OnInit {
     let endpoint: string = 'v1/pass_requests/' +this.request.id +'/deny';
     let body = {
       'message' : denyMessage
-    }
-    this.http.post(endpoint, body).subscribe((httpData)=>{
+    };
+    this.http.post(endpoint, body).subscribe((httpData) => {
       console.log('[Invitation Denied]: ', httpData);
       this.dialogRef.close();
     });
   }
 
-  genOption(display, color, action){
-    return {display: display, color: color, action: action}
+  genOption(display, color, action) {
+    return {display: display, color: color, action: action};
   }
 
-  approveRequest(){
+  approveRequest() {
     this.performingAction = true;
     let endpoint: string = 'v1/pass_requests/' +this.request.id +'/accept';
     let body = [];
-    this.http.post(endpoint, body).subscribe(() =>{
+    this.http.post(endpoint, body).subscribe(() => {
       this.dialogRef.close();
     });
   }

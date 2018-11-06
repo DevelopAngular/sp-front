@@ -12,6 +12,12 @@
     flex-flow: column-reverse;
 }
 
+.card-container {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
 .button-content{
     width: 288px;
     height: 79px;

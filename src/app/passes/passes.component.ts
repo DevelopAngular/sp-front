@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { filter } from 'rxjs/operators';
+import {filter, map, switchMap, withLatestFrom} from 'rxjs/operators';
 
 import { DataService } from '../data-service';
 import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
@@ -56,7 +56,11 @@ class ActivePassProvider implements PassLikeProvider {
     const passes$ = this.user$.switchMap(user => this.liveDataService.watchActiveHallPasses(mergedReplay,
       user.roles.includes('hallpass_student')
         ? {type: 'student', value: user}
-        : {type: 'issuer', value: user}));
+        : {type: 'issuer', value: user}))
+        .pipe(map(passes => {
+              const now = new Date();
+              return passes.filter(pass => pass.start_time.getTime() <= now.getTime());
+    }));
 
     const excluded$ = this.excluded$.startWith([]);
 
@@ -80,25 +84,25 @@ class PastPassProvider implements PassLikeProvider {
 }
 
 class InboxRequestProvider implements PassLikeProvider {
-  constructor(private liveDataService: LiveDataService, private user$: Observable<User>,
-              private excluded$: Observable<PassLike[]> = Observable.empty()) {
+
+  constructor(
+      private liveDataService: LiveDataService,
+      private user$: Observable<User>,
+      private excluded$: Observable<PassLike[]> = Observable.empty(),
+      private dataService: DataService) {
   }
 
   watch(sort: Observable<string>) {
-    const sortReplay = new ReplaySubject<string>(1);
-    sort.subscribe(sortReplay);
+      const sortReplay = new ReplaySubject<string>(1);
+      sort.subscribe(sortReplay);
 
-    const requests$ = this.user$.switchMap(user => this.liveDataService.watchInboxRequests(user));
-
-    const excluded$ = this.excluded$.startWith([]);
-
-    return Observable.combineLatest(requests$, excluded$, (requests, excluded) => exceptPasses(requests, excluded));
+     return this.user$.pipe(switchMap(user => this.liveDataService.watchInboxRequests(user)));
   }
+
 }
 
 class InboxInvitationProvider implements PassLikeProvider {
-  constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
-  }
+  constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {}
 
   watch(sort: Observable<string>) {
     const sortReplay = new ReplaySubject<string>(1);
@@ -130,6 +134,7 @@ export class PassesComponent implements OnInit {
   private currentPass$ = new BehaviorSubject<HallPass>(null);
   private currentRequest$ = new BehaviorSubject<Request>(null);
   private isActivePass$ = this.dataService.isActivePass$;
+  private isActiveRequest$ = this.dataService.isActiveRequest$;
 
   inboxHasItems: Observable<boolean> = Observable.of(false);
 
@@ -157,10 +162,10 @@ export class PassesComponent implements OnInit {
         if (isStudent) {
           this.receivedRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser));
           this.sentRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, this.dataService.currentUser,
-            excludedRequests));
+            excludedRequests, this.dataService));
         } else {
           this.receivedRequests = new WrappedProvider(new InboxRequestProvider(this.liveDataService, this.dataService.currentUser,
-            excludedRequests));
+            excludedRequests, this.dataService));
           this.sentRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser));
         }
 
@@ -174,6 +179,7 @@ export class PassesComponent implements OnInit {
 
     this.dataService.currentUser.switchMap(user =>
       user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : Observable.of(null))
+        .pipe(filter(res => !!res))
       .subscribe(passLike => {
         if (passLike) {
             const nowDate = new Date();
@@ -181,6 +187,9 @@ export class PassesComponent implements OnInit {
             const endDate = new Date(passLike.end_time);
             if (nowDate.getTime() >= startDate.getTime() && nowDate.getTime() !== endDate.getTime()) {
                 this.dataService.isActivePass$.next(true);
+            }
+            if (!(!!passLike.request_time) && passLike.status) {
+              this.dataService.isActiveRequest$.next(true);
             }
         }
         this._zone.run(() => {
@@ -205,6 +214,10 @@ export class PassesComponent implements OnInit {
 
   get currentRequest() {
     return this.currentRequest$.value;
+  }
+
+  get isActiveRequest() {
+    return this.isActiveRequest$.value;
   }
 
   ngOnInit() {
@@ -232,15 +245,19 @@ export class PassesComponent implements OnInit {
         result['forLater'],
         result['forStaff'],
         result['selectedStudents'],
-        (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent))
+        (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent)),
+        result['fromHistory'],
+        result['fromHistoryIndex']
       );
     });
   }
 
-  openInputCard(templatePass, forLater, forStaff, selectedStudents, component) {
+  openInputCard(templatePass, forLater, forStaff, selectedStudents, component, fromHistory, fromHistoryIndex) {
     let data = {
       'pass': templatePass,
       'fromPast': false,
+      'fromHistory': fromHistory,
+      'fromHistoryIndex': fromHistoryIndex,
       'forFuture': forLater,
       'forInput': true,
       'forStaff': forStaff,

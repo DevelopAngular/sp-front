@@ -12,7 +12,7 @@ export class DurationPickerComponent implements OnInit {
   minDuration:number = 1;
    
   @Input()
-  maxDuration:number = 15;
+  maxDuration:number = 5;
 
   @Input()
   forStaff: boolean;

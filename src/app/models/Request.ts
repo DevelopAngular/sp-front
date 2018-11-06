@@ -24,7 +24,8 @@ export class Request extends BaseModel implements ReadableModel {
               public last_read: Date,
               public last_updated: Date,
               public duration: number,
-              public created: Date) {
+              public created: Date,
+  ) {
     super();
   }
 
@@ -56,7 +57,8 @@ export class Request extends BaseModel implements ReadableModel {
       last_read: Date = (!!JSON['last_read'] ? new Date(JSON['last_read']) : null),
       last_updated: Date = new Date(JSON['last_updated']),
       duration: number = JSON['duration'],
-      created: Date = new Date(JSON['created']);
+      created: Date = new Date(JSON['created']
+      );
 
     return new Request(id, student, origin, destination, attachment_message, travel_type, status, hallpass, gradient_color,
       icon, teacher, request_time, declined_message, student_has_dismissed, cancelled, color_profile, last_read, last_updated, duration, created);

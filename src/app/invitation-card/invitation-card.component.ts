@@ -10,6 +10,9 @@ import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../data-service';
 import { LoadingService } from '../loading.service';
+import {HallpassFormComponent} from '../hallpass-form/hallpass-form.component';
+import {RequestCardComponent} from '../request-card/request-card.component';
+import {PassCardComponent} from '../pass-card/pass-card.component';
 
 @Component({
   selector: 'app-invitation-card',
@@ -31,6 +34,8 @@ export class InvitationCardComponent implements OnInit {
   selectedTravelType: string;
   user: User;
   performingAction: boolean;
+  fromHistory;
+  fromHistoryIndex;
 
   constructor(
       public dialogRef: MatDialogRef<InvitationCardComponent>,
@@ -62,6 +67,8 @@ export class InvitationCardComponent implements OnInit {
     this.fromPast = this.data['fromPast'];
     this.forStaff = this.data['forStaff'];
     this.forInput = this.data['forInput'];
+    this.fromHistory = this.data['fromHistory'];
+    this.fromHistoryIndex = this.data['fromHistoryIndex'];
     this.selectedStudents = this.data['selectedStudents'];
   if (this.invitation) {
     this.selectedOrigin = this.invitation.default_origin;
@@ -121,13 +128,39 @@ export class InvitationCardComponent implements OnInit {
       const target = new ElementRef(evt.currentTarget);
       let options = [];
       let header = '';
-      if(this.forInput){
-        options.push(this.genOption('Stop making pass','#E32C66','stop'));
-        header = 'Are you sure you want to stop making this pass?';
-      } else if(!this.forStaff){
+      if (this.forInput) {
+          this.dialogRef.close();
+          const dialogRef = this.dialog.open(HallpassFormComponent, {
+              width: '750px',
+              panelClass: 'form-dialog-container',
+              backdropClass: 'custom-backdrop',
+              data: {
+
+                  'fromLocation': this.selectedOrigin,
+                  'fromHistory': this.fromHistory,
+                  'fromHistoryIndex': this.fromHistoryIndex,
+                  'colorProfile': this.invitation.color_profile,
+                  'forLater': this.forFuture,
+                  'forStaff': this.forStaff,
+                  'selectedStudents': this.selectedStudents || true
+              }
+          });
+          dialogRef.afterClosed()
+              .subscribe((result: Object) => {
+                  this.openInputCard(result['templatePass'],
+                      result['forLater'],
+                      result['forStaff'],
+                      result['selectedStudents'],
+                      (result['type'] === 'invitation' ? InvitationCardComponent : RequestCardComponent),
+                      result['fromHistory'],
+                      result['fromHistoryIndex']
+                  );
+              });
+          return false;
+      } else if (!this.forStaff) {
         options.push(this.genOption('Decline Pass Request','#F00','decline'));
         header = 'Are you sure you want to decline this pass request you received?'
-      } else{
+      } else {
         options.push(this.genOption('Delete Pass Request','#E32C66','delete'));
         header = "Are you sure you want to delete this pass request you sent?";
       }
@@ -163,14 +196,30 @@ export class InvitationCardComponent implements OnInit {
             console.log('[Invitation Cancelled]: ', httpData);
             this.dialogRef.close();
           });
-        }else if(action === 'stop'){
-          this.dialogRef.close();
-        }
-      });
+        }});
     }
   }
 
   genOption(display, color, action){
     return {display: display, color: color, action: action}
   }
+
+    openInputCard(templatePass, forLater, forStaff, selectedStudents, component, fromHistory, fromHistoryIndex) {
+        let data = {
+            'pass': templatePass,
+            'fromPast': false,
+            'fromHistory': fromHistory,
+            'fromHistoryIndex': fromHistoryIndex,
+            'forFuture': forLater,
+            'forInput': true,
+            'forStaff': forStaff,
+            'selectedStudents': selectedStudents,
+        };
+        this.dialog.open(component, {
+            panelClass: 'pass-card-dialog-container',
+            backdropClass: 'custom-backdrop',
+            disableClose: true,
+            data: data
+        });
+    }
 }

@@ -9,6 +9,11 @@ import { HttpService } from '../http-service';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { DataService } from '../data-service';
 import { LoadingService } from '../loading.service';
+import {HallpassFormComponent} from '../hallpass-form/hallpass-form.component';
+import {filter, map} from 'rxjs/operators';
+import {RequestCardComponent} from '../request-card/request-card.component';
+import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
+import {interval, Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-pass-card',
@@ -36,6 +41,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
   selectedTravelType: string;
   cancelOpen: boolean = false;
   selectedStudents: User[];
+  fromHistory;
+  fromHistoryIndex;
 
   pagerPages = 0;
 
@@ -50,6 +57,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
   activePage;
 
   performingAction: boolean;
+
+  subscribers$: Subscription;
 
   constructor(
       public dialogRef: MatDialogRef<PassCardComponent>,
@@ -81,7 +90,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
       if(this.forFuture && this.pass.issuer.isSameObject(this.user)){
         return true;
       } else{
-        return this.isActive;
+        return this.forFuture;
       }
     }
 
@@ -96,6 +105,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
     this.forStaff = this.data['forStaff'];
     this.selectedStudents = this.data['selectedStudents'];
     this.forMonitor = this.data['forMonitor'];
+    this.fromHistory = this.data['fromHistory'];
+    this.fromHistoryIndex = this.data['fromHistoryIndex'];
 
     this.dataService.currentUser
         .pipe(this.loadingService.watchFirst)
@@ -107,7 +118,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
         });
     if (!!this.pass && this.isActive) {
       console.log('Starting interval');
-      this.timers.push(window.setInterval(() => {
+      interval(1000).pipe(map(x => {
         let end: Date = this.pass.expiration_time;
         let now: Date = new Date();
         let diff: number = (end.getTime() - now.getTime()) / 1000;
@@ -119,16 +130,13 @@ export class PassCardComponent implements OnInit, OnDestroy {
         let start: Date = this.pass.start_time;
         let dur: number = Math.floor((end.getTime() - start.getTime()) / 1000);
         this.overlayWidth = (this.buttonWidth * (diff/dur));
-      }, 750));
+        return x;
+      })).subscribe();
     }
   }
 
   ngOnDestroy() {
-    this.timers.forEach(id => {
-      console.log('Clearing interval');
-      clearInterval(id);
-    });
-    this.timers = [];
+
   }
 
   updateDuration(dur:number){
@@ -203,27 +211,27 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   newPass(){
     this.performingAction = true;
-    const endPoint:string = 'v1/hall_passes' +(this.forStaff?'/bulk_create':'')
+    const endPoint:string = 'v1/hall_passes' +(this.forStaff?'/bulk_create':'');
 
     const body = {
-      'duration' : this.selectedDuration*60,
+      'duration' : this.selectedDuration * 60,
       'origin' : this.pass.origin.id,
       'destination' : this.pass.destination.id,
       'travel_type' : this.selectedTravelType
     };
-
-    if(this.forStaff){
+    if (this.forStaff) {
       body['students'] = this.selectedStudents.map(user => user.id);
     } else {
       body['student'] = this.pass.student.id;
     }
 
-    if(this.forFuture)
-      body['start_time'] = this.pass.start_time.toISOString();
-
-    this.http.post(endPoint, body).subscribe((data)=>{
-      this.dialogRef.close();
-    });
+    if (this.forFuture) {
+        body['start_time'] = this.pass.start_time.toISOString();
+    }
+    console.log(body);
+      this.http.post(endPoint, body).subscribe((data) => {
+          this.dialogRef.close();
+      });
   }
 
   cancelEdit(evt: MouseEvent){
@@ -237,9 +245,33 @@ export class PassCardComponent implements OnInit, OnDestroy {
         options.push(this.genOption('End Pass','#E32C66','end'));
         header = 'What would you like to do with this pass?';
       } else{
-        if(this.forInput){
-          options.push(this.genOption('Stop making pass','#E32C66','stop'));
-          header = 'Are you sure you want to stop making this pass?';
+        if (this.forInput) {
+            this.dialogRef.close();
+            const dialogRef = this.dialog.open(HallpassFormComponent, {
+                width: '750px',
+                panelClass: 'form-dialog-container',
+                backdropClass: 'custom-backdrop',
+                data: {
+                    'fromLocation': this.pass.origin,
+                    'fromHistory': this.fromHistory,
+                    'fromHistoryIndex': this.fromHistoryIndex,
+                    'colorProfile': this.pass.color_profile,
+                    'forLater': this.forFuture,
+                    'forStaff': this.forStaff,
+                    'selectedStudents': this.selectedStudents
+                }
+            });
+            dialogRef.afterClosed().pipe(filter(res => !!res)).subscribe((result: Object) => {
+                    this.openInputCard(result['templatePass'],
+                        result['forLater'],
+                        result['forStaff'],
+                        result['selectedStudents'],
+                        (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent)),
+                        result['fromHistory'],
+                        result['fromHistoryIndex']
+                    );
+                });
+            return false;
         } else if(this.forFuture){
           options.push(this.genOption('Delete Scheduled Pass','#E32C66','delete'));
           header = 'Are you sure you want to delete this scheduled pass?';
@@ -256,11 +288,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
         this.cancelOpen = true;
       });
 
-      cancelDialog.afterClosed().subscribe(action =>{
-        this.cancelOpen = false;
-        if(action === 'stop'){
-          this.dialogRef.close();
-        } else if(action === 'delete'){
+      cancelDialog.afterClosed().subscribe(action => {
+          this.cancelOpen = false;
+      if(action === 'delete'){
           let endpoint: string = 'v1/hall_passes/' +this.pass.id +'/cancel';
           let body = {};
           this.http.post(endpoint, body).subscribe((httpData)=>{
@@ -280,4 +310,24 @@ export class PassCardComponent implements OnInit, OnDestroy {
   genOption(display, color, action){
     return {display: display, color: color, action: action}
   }
+
+
+    openInputCard(templatePass, forLater, forStaff, selectedStudents, component, fromHistory, fromHistoryIndex) {
+        let data = {
+            'pass': templatePass,
+            'fromPast': false,
+            'fromHistory': fromHistory,
+            'fromHistoryIndex': fromHistoryIndex,
+            'forFuture': forLater,
+            'forInput': true,
+            'forStaff': forStaff,
+            'selectedStudents': selectedStudents,
+        };
+        this.dialog.open(component, {
+            panelClass: 'pass-card-dialog-container',
+            backdropClass: 'custom-backdrop',
+            disableClose: true,
+            data: data
+        });
+    }
 }
