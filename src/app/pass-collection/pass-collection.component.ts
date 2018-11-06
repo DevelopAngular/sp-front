@@ -1,6 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Subject } from 'rxjs/Subject';
 import { DataService } from '../data-service';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
@@ -12,9 +11,8 @@ import { PassLike} from '../models';
 import { PassCardComponent } from '../pass-card/pass-card.component';
 import { ReportFormComponent } from '../report-form/report-form.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
-import {combineLatest, merge, Observable} from 'rxjs';
-import {filter, map, publish, publishReplay, share, shareReplay, switchMap} from 'rxjs/operators';
-import {LiveDataService} from '../live-data/live-data.service';
+import { shareReplay } from 'rxjs/operators';
+import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -52,14 +50,13 @@ export class PassCollectionComponent implements OnInit {
 
   currentPasses$;
 
-  sortOptions: SortOption[] = [
-    ///new SortOption('Created', 'created'),
-    new SortOption('Expiration', 'expiration_time'),
-    new SortOption('Name', 'student_name'),
-    new SortOption('Destination', 'destination_name')
+  sortOptions = [
+      { display: 'Pass Expiration Time', color: 'darkBlue', action: 'expiration_time', toggle: false },
+      { display: 'Student Name', color: 'darkBlue', action: 'student_name', toggle: false },
+      { display: 'To Location', color: 'darkBlue', action: 'destination_name', toggle: false }
   ];
 
-  sort$ = new Subject<string>();
+  sort$ = this.dataService.sort$;
 
   private static getDetailDialog(pass: PassLike): any {
     if (pass instanceof HallPass) {
@@ -142,6 +139,19 @@ export class PassCollectionComponent implements OnInit {
           data: {'report': dialogData['report']}
         });
       }
+    });
+  }
+
+  openSortDialog(event) {
+    const sortDialog = this.dialog.open(ConsentMenuComponent, {
+        panelClass: 'consent-dialog-container',
+        backdropClass: 'invis-backdrop',
+        data: {
+          'header': 'SORT BY',
+          'options': this.sortOptions,
+          'trigger': new ElementRef(event.currentTarget),
+          'isSort': true,
+        }
     });
   }
 

@@ -1,5 +1,25 @@
-<div class="pointer-wrapper"><div class="pointer"></div></div>
-<div class="consent-wrapper">
+﻿<div class="pointer-wrapper"><div class="pointer"></div></div>
+<div class="consent-wrapper" *ngIf="!isSort">
   <div class="consent-header">{{ header }}</div>
-  <div *ngFor="let option of options" [style.color]="getColor(option)" class="option-wrapper" (click)="_matDialogRef.close(option.action)">{{ option.display }}</div>
+    <div *ngFor="let option of options" [style.color]="getColor(option)" class="option-wrapper" (click)="_matDialogRef.close(option.action)">{{ option.display }}</div>
+</div>
+<div class="consent-sort-wrapper" *ngIf="isSort">
+  <div *ngFor="let option of options" [style.color]="getColor(option)" (click)="checkOption(option)">
+    <div class="option-wrapper">
+      <span>{{ option.display }}</span>
+      <span *ngIf="option.toggle"><img src="../../assets/Check (Blue).png" class="check-option"></span>
+    </div>
+    <div class="option-divider"></div>
+  </div>
+  <div class="gradient-button">
+    <app-gradient-button
+            [gradient]="'#03CF31,#00B476'"
+            [hoverColor]="'#00B476'"
+            [minWidth]="'90px'"
+            [minHeight]="'30px'"
+            [fontSize]="'14px'"
+            (buttonClick)="_matDialogRef.close()"
+            [style.width]="'90px'"
+    >Done</app-gradient-button>
+  </div>
 </div>

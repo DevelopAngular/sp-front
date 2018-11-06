@@ -52,6 +52,7 @@ export class DataService {
   private inboxSource = new BehaviorSubject<boolean>(false);
   public isActivePass$ = new BehaviorSubject<boolean>(false);
   public isActiveRequest$ = new BehaviorSubject<boolean>(false);
+  public sort$ = new Subject<string>();
   inboxState = this.inboxSource.asObservable();
 
   updateInbox(state: boolean) {
