@@ -40,43 +40,14 @@
       Valid Inputs: 'Bathroom,Staffroom'
       <br />
       <br /> <br />
-      <div class="current-pass" style="cursor:pointer">
-      
-        <div class="calendar-wrapper" (click)="calendarToggled=!calendarToggled" [style.background-color]="(calendarToggled?'#E4EBFF':'transparent')">
-          
 
-          <h2> <img class="calendar-icon" [src]="'./assets/Calendar (Blue).png' | resolveAsset" height="50" width="50"> <span> Click to show/hide Single Selection of Date </span></h2>
-        </div>
-      
+      <app-input [input_label]="'Search By Date & Time'" [IsDate]="true" (onUpdateDateRange)="input_DateRange=$event"></app-input>
 
-        <div *ngIf="calendarToggled" class="my-room-right">
-          <app-date-time-picker [_selectedMoment]="searchDate" [min]="min" [showTime]="false" (onUpdate)="setSearchDate($event)" ></app-date-time-picker>
-        </div>
+      <br/>
+      <br/>
+      Searching by Date & Time : {{input_DateRange}}
 
-        <div class="date-display">{{ dateDisplay }}</div>
-      </div>
-
-
-
-      <div class="current-pass" style="cursor:pointer">
-
-        <div class="calendar-wrapper" (click)="calendarToggled_2nd=!calendarToggled_2nd" [style.background-color]="(calendarToggled_2nd?'#E4EBFF':'transparent')">
-          
-           
-          
-          <h2 > <img class="calendar-icon" [src]="'./assets/Calendar (Blue).png' | resolveAsset" height="50" width="50"> <span> Click to show/hide Multi Selection of Date</span></h2>
-
-        </div>
-      
-
-        <div *ngIf="calendarToggled_2nd" class="my-room-right">
-          <app-date-time-picker [_selectedMoment]="searchDate_1st" [min]="min" [showTime]="true" (onUpdate)="setSearchDate_1st($event)" [showTwoCalender]="true" (onUpdate_2ndCal)="setSearchDate_2nd($event)"></app-date-time-picker>
-        </div>
-        <br/>
-        <div class="date-display">{{ getDisplayRange }}</div>
-        
-
-      </div>
+     
       
     </div>
     <div class="main-page-right">
@@ -87,7 +58,7 @@
       </app-display-card>
 
       <div style="margin-top:20px;">
-        <app-input  [input_label]="'Room Number'" (onUpdate)="input_value2=$event" [Success]="Input2Validataion()" [input_type]="'text'"></app-input>
+        <app-input  [input_label]="'Room Number (Required)'" (onUpdate)="input_value2=$event" [Success]="Input2Validataion()" [input_type]="'text'" [IsRequired]="true"></app-input>
         
         <br />
         Input 2 Text : {{input_value2}} <br />
