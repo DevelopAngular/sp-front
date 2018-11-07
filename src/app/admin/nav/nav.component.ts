@@ -1,5 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
+import { LoadingService } from '../../loading.service';
+import { DataService } from '../../data-service';
+import { User } from '../../models/User';
+
 
 @Component({
   selector: 'app-nav',
@@ -13,13 +17,15 @@ export class NavComponent implements OnInit {
             {title: 'Search', route:'search', imgUrl:'./assets/Search'},
             {title: 'Accounts & Profiles', route:'accounts', imgUrl:'./assets/Accounts'},
             {title: 'Pass Configuration', route:'passconfig', imgUrl:'./assets/Arrow'},
-            {title: 'Feedback', route:'feedback', imgUrl:'./assets/Arrow'},
+            {title: 'Feedback', route:'feedback', imgUrl:'./assets/Feedback'},
             {title: 'Support', route:'support', imgUrl:'./assets/Support'},
             ]
 
   tab:string = "dashboard"
 
-  constructor(private router:Router) { }
+  user:User;
+
+  constructor(private router:Router, private dataService: DataService, public loadingService: LoadingService, private _zone: NgZone) { }
 
   ngOnInit() {
     let urlSplit: string[] = location.pathname.split('/');
@@ -32,15 +38,24 @@ export class NavComponent implements OnInit {
         this.tab = ((this.tab==='' || this.tab==='admin')?'dashboard':this.tab);
       }
     });
+
+    this.dataService.currentUser
+      .pipe(this.loadingService.watchFirst)
+      .subscribe(user => {
+        this._zone.run(() => {
+          this.user = user;
+          this.dataService.updateInbox(this.tab!=='settings');
+        });
+      });
   }
 
   route(route:string){
+    this.tab = route;
     if(route === 'feedback'){
       window.open('https://smartpass.app/feedback');
     } else if(route === 'support'){
       window.open('https://smartpass.app/support');
     } else{
-      this.tab = route;
       this.router.navigateByUrl('/admin/' + this.tab);
     }
     this.tab = this.tab;
