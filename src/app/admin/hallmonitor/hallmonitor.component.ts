@@ -3,7 +3,7 @@ import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component'
 import { MatDialogRef, MatDialog } from '@angular/material';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Util } from '../../../Util';
-
+import { DateTimePickerComponent } from '../../date-time-picker/date-time-picker.component';
 
 @Component({
   selector: 'app-hallmonitor',
@@ -13,6 +13,7 @@ import { Util } from '../../../Util';
 export class HallmonitorComponent implements OnInit {
     input_value1: string;
     input_value2: string;
+    input_DateRange: string;
 
     min: Date = new Date('December 17, 1995 03:24:00');
     calendarToggled = false;
@@ -26,9 +27,7 @@ export class HallmonitorComponent implements OnInit {
         public dialog: MatDialog
         
     ) { 
-        this.setSearchDate(new Date());
-        this.setSearchDate_1st(new Date());
-        this.setSearchDate_2nd(new Date());
+      
     }
 
   ngOnInit() {
@@ -122,9 +121,9 @@ export class HallmonitorComponent implements OnInit {
   Input1Validataion()
   {
       //Set your own logic as per requriement and return true or false vaule
-      if (this.input_value1 == null || this.input_value1 == undefined)
+      if (this.input_value1 == null || this.input_value1 == undefined || this.input_value1.length == 0)
       {
-          return null;
+          return true;
       }
       else if (this.input_value1 == 'Bathroom' || this.input_value1 == 'Staffroom' || this.input_value1 == 'bathroom' || this.input_value1 == 'staffroom')
       {
@@ -145,57 +144,5 @@ export class HallmonitorComponent implements OnInit {
       }
       return false;
   }
-
-  setSearchDate(date: Date) {
-      if (date != null || date != undefined) {
-          date.setHours(0);
-          date.setMinutes(0);
-          this.searchDate$.next(date);
-      }
-  }
-  get searchDate() {
-      return this.searchDate$.value;
-  }
-
-  get dateDisplay() {
-
-      var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      return this.searchDate.toLocaleDateString("en-US", options)
-      //return Util.formatDateTime(this.searchDate);
-  }
-
-  setSearchDate_1st(date: Date) {
-      if (date != null || date != undefined) {
-          //date.setHours(0);
-          //date.setMinutes(0);
-          this.searchDate_1st$.next(date);
-      }
-  }
-  get searchDate_1st() {
-      return this.searchDate_1st$.value;
-  }
-
-  get getDisplayRange() {
-
-      return Util.formatDateTimeForDateRange(this.searchDate_1st, this.searchDate_2nd);
-      //return this.searchDate_1st;
-  }
-
-
-
-
-setSearchDate_2nd(date: Date) {
-      if (date != null || date != undefined) {
-          //date.setHours(0);
-          //date.setMinutes(0);
-          this.searchDate_2nd$.next(date);
-      }
-  }
-  get searchDate_2nd() {
-      return this.searchDate_2nd$.value;
-  }
-
-  get dateDisplay_2nd() {
-      return this.searchDate_2nd;
-  }
+   
 }
