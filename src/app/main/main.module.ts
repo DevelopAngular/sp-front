@@ -11,12 +11,9 @@ import {
   MatSlideToggleModule
 } from '@angular/material';
 import { MatChipsModule } from '@angular/material/chips';
-import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { CardButtonComponent } from '../card-button/card-button.component';
 import { ContainerCardComponent } from '../container-card/container-card.component';
-import { DateTimePickerComponent } from '../date-time-picker/date-time-picker.component';
-import { DisplayCardComponent } from '../display-card/display-card.component';
 import { DropdownComponent } from '../dropdown/dropdown.component';
 import { DurationPickerComponent } from '../duration-picker/duration-picker.component';
 import { FavoriteFormComponent } from '../favorite-form/favorite-form.component';
@@ -31,8 +28,6 @@ import { LocationPickerComponent } from '../location-picker/location-picker.comp
 import { LocationTableComponent } from '../location-table/location-table.component';
 import { MainPageComponent } from '../main-page/main-page.component';
 import { MyRoomComponent } from '../my-room/my-room.component';
-import { NavButtonComponent } from '../nav-button/nav-button.component';
-import { NavbarComponent } from '../navbar/navbar.component';
 import { PagerComponent } from '../pager/pager.component';
 import { PassCardTemplateComponent } from '../pass-card-template/pass-card-template.component';
 import { PassCardComponent } from '../pass-card/pass-card.component';
@@ -52,7 +47,6 @@ import { StudentSearchComponent } from '../student-search/student-search.compone
 import { TeacherDropdownComponent } from '../teacher-dropdown/teacher-dropdown.component';
 import { TravelViewComponent } from '../travel-view/travel-view.component';
 import { TraveltypePickerComponent } from '../traveltype-picker/traveltype-picker.component';
-
 import { MainRoutingModule } from './main-routing.module';
 import { NavbarDataService } from './navbar-data.service';
 
@@ -68,8 +62,6 @@ import { NavbarDataService } from './navbar-data.service';
     ReactiveFormsModule,
     MatSelectModule,
     NgxMatSelectSearchModule,
-    OwlDateTimeModule,
-    OwlNativeDateTimeModule,
     MatChipsModule,
     MatSliderModule,
     MatProgressBarModule,
@@ -86,10 +78,8 @@ import { NavbarDataService } from './navbar-data.service';
     PassTileComponent,
     PassCellComponent,
     HallpassFormComponent,
-    DateTimePickerComponent,
     InfoEditorComponent,
     RequestAcceptComponent,
-    DisplayCardComponent,
     InlineRequestCardComponent,
     InlinePassCardComponent,
     LocationTableComponent,
@@ -112,17 +102,14 @@ import { NavbarDataService } from './navbar-data.service';
     ContainerCardComponent,
     TeacherDropdownComponent,
     MainPageComponent,
-    NavbarComponent,
-    NavButtonComponent,
+    
   ],
   entryComponents: [
     HallpassFormComponent,
-
     RequestAcceptComponent,
     InfoEditorComponent,
     FavoriteFormComponent,
     ReportFormComponent,
-
     PassCardComponent,
     RequestCardComponent,
     InvitationCardComponent,

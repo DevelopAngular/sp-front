@@ -1,0 +1,13 @@
+<div class="nav-wrapper">
+  <div class="nav-header">
+    <app-smartpass-logo></app-smartpass-logo>
+  </div>
+  <div class="divider"></div>
+  <div class="nav-buttons">
+    <app-nav-button [style.margin-bottom]="'15px'" *ngFor="let button of buttons" (onClick)="route($event)" [selected]="tab===button.route" [content]="button.title" [icon]="button.imgUrl" (onClick)="route(button.route)"></app-nav-button>
+  </div>
+  <div class="nav-footer">
+    <div class="footer-text">{{(user?user.display_name:'')}}</div>
+    <img (click)="router.navigateByUrl('/main/settings')" class="footer-settings" [src]="'./assets/Gear (Blue).png' | resolveAsset" alt="">
+  </div>
+</div>

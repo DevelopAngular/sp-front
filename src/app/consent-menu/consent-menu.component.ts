@@ -15,6 +15,10 @@ export class ConsentMenuComponent implements OnInit {
 
   header: string;
   options: any[];
+  ConsentText: string;
+  ConsentYesText: string;
+  ConsentNoText: string;
+  ConsentButtonColor: string;
 
   isSort = false;
 
@@ -32,9 +36,10 @@ export class ConsentMenuComponent implements OnInit {
     console.log(this._matDialogRef);
 
     this.triggerElementRef = data['trigger'];
-    if (this.data['isSort']) {
-      this.isSort = true;
-    }
+    this.ConsentText = data['ConsentText'];
+    this.ConsentYesText = data['ConsentYesText'];
+    this.ConsentNoText = data['ConsentNoText'];
+    this.ConsentButtonColor = data['ConsentButtonColor'];
   }
 
   ngOnInit() {
@@ -50,11 +55,12 @@ export class ConsentMenuComponent implements OnInit {
     return this.sanitizer.bypassSecurityTrustStyle(option.color);
   }
 
-  checkOption(opt) {
-    this.options.forEach(option => {
-      option.toggle = false;
-    });
-    opt.toggle = !opt.toggle;
-    this.dataService.sort$.next(opt.action);
+  getConcentButtonColor(color) {
+      return this.sanitizer.bypassSecurityTrustStyle(color);
   }
+
+  onNoClick(): void {
+      this._matDialogRef.close();
+  }
+
 }

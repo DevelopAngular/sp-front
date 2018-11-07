@@ -1,0 +1,22 @@
+.nav-button-wrapper{
+    display: flex;
+    flex-direction: row;
+    border-radius: 10px;
+    height: 45px;
+    padding: 5px 15px;
+    cursor: pointer;
+    user-select: none;
+    align-items: center;
+}
+
+.nav-button-icon{
+    width: 25px;
+    height: 25px;
+    margin-right: 5px;
+}
+
+.nav-button-text{
+    font-size: 13pt;
+    font-weight: bold;
+    font-family: 'Helvetica Neue', sans-serif;
+}

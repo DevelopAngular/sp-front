@@ -1,21 +1,30 @@
-<div class="display-card-wrapper" [style.min-height]="(inbox?'500px':'')">
-  <div class="display-card-header">
+﻿<div class="display-card-wrapper" [style.min-height]="(inbox?'500px':'')">
+  <div class="display-card-header justify-content" >
+    <div class="flexCls">
+      <img *ngIf="!!icon && !inbox" class="display-card-header-icon" [src]="icon | resolveAsset">
 
-    <img *ngIf="!!icon && !inbox" class="display-card-header-icon" [src]="icon | resolveAsset">
+      <div *ngIf="!!icon && inbox" class="inbox-wrapper">
+        <img class="inbox-icon" [src]="'./assets/Inbox Full (Blue).png' | resolveAsset">
+        <div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0">
+          <img class="inbox-badge" [src]="'./assets/Inbox Number.png' | resolveAsset">
+          <div class="inbox-number">{{ notificationBadge$ | async }}</div>
+          <img class="inbox-front" [src]="'./assets/Inbox Front (Blue).png' | resolveAsset">
+        </div>
+      </div>
 
-    <div *ngIf="!!icon && inbox" class="inbox-wrapper">
-      <img class="inbox-icon" [src]="'./assets/Inbox Full (Blue).png' | resolveAsset">
-      <div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0">
-        <img class="inbox-badge" [src]="'./assets/Inbox Number.png' | resolveAsset">
-        <div class="inbox-number">{{ notificationBadge$ | async }}</div>
-        <img class="inbox-front" [src]="'./assets/Inbox Front (Blue).png' | resolveAsset">
+      <div class="display-card-header-title" [style.font-size]="fontSize">
+        {{title}}
       </div>
     </div>
 
-    <div class="display-card-header-title" [style.font-size]="fontSize">
-      {{title}}
-    </div>
+      <img *ngIf="!!righticon" class="display-card-header-icon righticon" [src]="righticon | resolveAsset">
+    <div *ngIf="!!righttext && !righticon" class="display-card-header-icon righticon" >{{righttext}}</div>
+
+    
   </div>
   <div [style.background-color]="(hasDivider?'#B5B7BA':'#FFF')" class="display-card-divider"></div>
+  <div *ngIf="subtitle!=null" [style.font-size]="subtitle_fontSize" class="subtitlecls">
+      {{subtitle}}
+  </div>
     <ng-content [style.left]="'35px'" [style.position]="'relative'"></ng-content>
 </div>

@@ -1,4 +1,4 @@
-import { Component, NgZone, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit, Input } from '@angular/core';
 import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material';
 import { Router, NavigationEnd } from '@angular/router';
@@ -18,6 +18,8 @@ import { User } from '../models/User';
 })
 
 export class NavbarComponent implements OnInit {
+
+  @Input() hasNav = true;
 
   isStaff: boolean;
   user: User;
@@ -45,6 +47,10 @@ export class NavbarComponent implements OnInit {
 
   get optionsOpen(){
     return this.tab==='settings';
+  }
+
+  get showNav(){
+    return this.tab!=='intro' && this.hasNav;
   }
 
   ngOnInit() {

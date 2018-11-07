@@ -10,6 +10,8 @@ if (environment.production) {
   enableProdMode();
 }
 
+console.log(`Frontend build type: ${environment.buildType}`);
+
 platformBrowserDynamic().bootstrapModule(AppModule)
   .then(module => {
     console.log('Module loaded');

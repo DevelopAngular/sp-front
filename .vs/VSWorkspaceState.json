@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\node_modules\\@angular",
+    "\\node_modules\\@angular\\core",
+    "\\src",
+    "\\src\\app",
+    "\\src\\app\\admin",
+    "\\src\\app\\admin\\hallmonitor",
+    "\\src\\app\\admin\\nav",
+    "\\src\\app\\app-input",
+    "\\src\\app\\student-search"
+  ],
+  "SelectedNode": "\\src\\app\\app-input\\app-input.component.scss",
+  "PreviewInSolutionExplorer": false
+}

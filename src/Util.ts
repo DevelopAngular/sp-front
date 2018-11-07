@@ -1,4 +1,4 @@
-export class Util{
+﻿export class Util{
 
     static weekday: string[] = ['Sunday', 'Monday', 'Tuesday',
                       'Wednesday', 'Thursday', 'Friday',
@@ -39,5 +39,11 @@ export class Util{
           return this.month[s.getMonth()] +" " +s.getDate() +", " +s.getFullYear(); 
         }
         return formattedDate +", " +formattedTime;
+    }
+
+    static formatDateTimeForDateRange(sFromDate: Date, sToDate: Date) {
+        let formattedTime_sFromDate: string = ((sFromDate.getHours() > 12) ? sFromDate.getHours() - 12 : sFromDate.getHours()) + ':' + ((sFromDate.getMinutes() < 10) ? '0' : '') + sFromDate.getMinutes() + ((sFromDate.getHours() > 12) ? ' PM' : ' AM');
+        let formattedTime_sToDate: string = ((sToDate.getHours() > 12) ? sToDate.getHours() - 12 : sToDate.getHours()) + ':' + ((sToDate.getMinutes() < 10) ? '0' : '') + sToDate.getMinutes() + ((sToDate.getHours() > 12) ? ' PM' : ' AM');
+        return sFromDate.getMonth()+1 + "/" + sFromDate.getDate() + "," + formattedTime_sFromDate + " to " + (sToDate.getMonth()+1) + "/" + sToDate.getDate() + "," + formattedTime_sToDate
     }
 }

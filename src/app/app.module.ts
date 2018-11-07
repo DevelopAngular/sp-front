@@ -32,6 +32,11 @@ const appRoutes: Routes = [
     canActivate: [AuthenticatedGuard],
     loadChildren: 'app/main/main.module#MainModule'
   },
+  {
+    path: 'admin',
+    canActivate: [AuthenticatedGuard],
+    loadChildren: 'app/admin/admin.module#AdminModule'
+  },
 ];
 
 @NgModule({

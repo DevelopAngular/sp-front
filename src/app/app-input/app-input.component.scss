@@ -1,0 +1,45 @@
+﻿.InputWrapper {
+  border-radius: 0.5rem;
+  position: relative;
+  min-width:300px;
+}
+
+.InputWrapper label{
+  color: #1D1A5E;
+  font-weight:bold;
+}
+
+.InputWrapper img.ng-star-inserted {
+  width: 26px;
+  height: 26px;
+  margin-left: 1rem;
+  position: absolute;
+  top: 33px;
+  right: 16px;
+}
+
+.InputWrapper input {
+  border: none;
+  background-color: #F8F8F8;
+  display: block;
+  width: 95%;
+  padding: .5rem 0;
+  padding-left: 16px;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #1D1A5E;
+  background-clip: padding-box;
+  border-radius: .5rem;
+  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+  margin-top: 0.5rem;
+}
+
+.InputWrapper input:focus {
+ 
+}
+.clserrorLabel {
+  color: red !important;
+}
+.clserrorInput {
+  border: 1px solid red !important
+}
