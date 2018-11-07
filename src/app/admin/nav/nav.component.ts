@@ -25,7 +25,7 @@ export class NavComponent implements OnInit {
 
   user:User;
 
-  constructor(private router:Router, private dataService: DataService, public loadingService: LoadingService, private _zone: NgZone) { }
+  constructor(public router:Router, private dataService: DataService, public loadingService: LoadingService, private _zone: NgZone) { }
 
   ngOnInit() {
     let urlSplit: string[] = location.pathname.split('/');
