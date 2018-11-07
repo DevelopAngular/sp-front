@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PassCongifComponent } from './pass-congif.component';
+import { PassConfigComponent } from './pass-config.component';
 
 describe('PassCongifComponent', () => {
-  let component: PassCongifComponent;
-  let fixture: ComponentFixture<PassCongifComponent>;
+  let component: PassConfigComponent;
+  let fixture: ComponentFixture<PassConfigComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PassCongifComponent ]
+      declarations: [ PassConfigComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PassCongifComponent);
+    fixture = TestBed.createComponent(PassConfigComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

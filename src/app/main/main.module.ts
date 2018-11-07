@@ -11,11 +11,9 @@ import {
   MatSlideToggleModule
 } from '@angular/material';
 import { MatChipsModule } from '@angular/material/chips';
-import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { CardButtonComponent } from '../card-button/card-button.component';
 import { ContainerCardComponent } from '../container-card/container-card.component';
-import { DateTimePickerComponent } from '../date-time-picker/date-time-picker.component';
 import { DropdownComponent } from '../dropdown/dropdown.component';
 import { DurationPickerComponent } from '../duration-picker/duration-picker.component';
 import { FavoriteFormComponent } from '../favorite-form/favorite-form.component';
@@ -49,7 +47,6 @@ import { StudentSearchComponent } from '../student-search/student-search.compone
 import { TeacherDropdownComponent } from '../teacher-dropdown/teacher-dropdown.component';
 import { TravelViewComponent } from '../travel-view/travel-view.component';
 import { TraveltypePickerComponent } from '../traveltype-picker/traveltype-picker.component';
-
 import { MainRoutingModule } from './main-routing.module';
 import { NavbarDataService } from './navbar-data.service';
 
@@ -65,8 +62,6 @@ import { NavbarDataService } from './navbar-data.service';
     ReactiveFormsModule,
     MatSelectModule,
     NgxMatSelectSearchModule,
-    OwlDateTimeModule,
-    OwlNativeDateTimeModule,
     MatChipsModule,
     MatSliderModule,
     MatProgressBarModule,
@@ -83,7 +78,6 @@ import { NavbarDataService } from './navbar-data.service';
     PassTileComponent,
     PassCellComponent,
     HallpassFormComponent,
-    DateTimePickerComponent,
     InfoEditorComponent,
     RequestAcceptComponent,
     InlineRequestCardComponent,
@@ -108,15 +102,14 @@ import { NavbarDataService } from './navbar-data.service';
     ContainerCardComponent,
     TeacherDropdownComponent,
     MainPageComponent,
+    
   ],
   entryComponents: [
     HallpassFormComponent,
-
     RequestAcceptComponent,
     InfoEditorComponent,
     FavoriteFormComponent,
     ReportFormComponent,
-
     PassCardComponent,
     RequestCardComponent,
     InvitationCardComponent,

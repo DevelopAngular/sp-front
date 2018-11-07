@@ -5,7 +5,7 @@ import { AdminPageComponent } from './admin-page/admin-page.component';
 import { HallmonitorComponent } from './hallmonitor/hallmonitor.component';
 import { SearchComponent } from './search/search.component';
 import { AccountsComponent } from './accounts/accounts.component';
-import { PassCongifComponent } from './pass-congif/pass-congif.component';
+import { PassConfigComponent } from './pass-config/pass-config.component';
 
 const routes: Routes = [
   {
@@ -15,7 +15,7 @@ const routes: Routes = [
       {path: 'hallmonitor', component: HallmonitorComponent},
       {path: 'search', component: SearchComponent},
       {path: 'accounts', component: AccountsComponent},
-      {path: 'passconfig', component: PassCongifComponent}
+      {path: 'passconfig', component: PassConfigComponent}
     ]
   },
 ];
