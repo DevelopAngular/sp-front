@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule, MatProgressSpinnerModule, MatSliderModule } from '@angular/material';
@@ -23,6 +23,7 @@ import { OptionsComponent } from './options/options.component';
 import { SharedModule } from './shared/shared.module';
 import { UserService } from './user.service';
 import { LoginComponent } from './login/login.component';
+import {ProgressInterceptor} from './progress-interceptor';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: 'main/passes', pathMatch: 'full'},
@@ -82,6 +83,7 @@ const appRoutes: Routes = [
     UserService,
     GoogleLoginService,
     LoadingService,
+    { provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true },
   ],
   bootstrap: [AppComponent]
 })
