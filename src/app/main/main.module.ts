@@ -49,7 +49,6 @@ import { TravelViewComponent } from '../travel-view/travel-view.component';
 import { TraveltypePickerComponent } from '../traveltype-picker/traveltype-picker.component';
 import { MainRoutingModule } from './main-routing.module';
 import { NavbarDataService } from './navbar-data.service';
-import { NgProgressModule } from '@ngx-progressbar/core';
 
 @NgModule({
   imports: [
@@ -67,7 +66,6 @@ import { NgProgressModule } from '@ngx-progressbar/core';
     MatSliderModule,
     MatProgressBarModule,
     MatDialogModule,
-    NgProgressModule.forRoot()
   ],
   declarations: [
     HallMonitorComponent,
