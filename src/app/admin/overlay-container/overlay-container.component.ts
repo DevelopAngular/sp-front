@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {HallPass} from '../../models/HallPass';
 import {Invitation} from '../../models/Invitation';
 import {Request} from '../../models/Request';
+import {MatDialog, MatDialogRef} from '@angular/material';
 
 @Component({
   selector: 'app-overlay-container',
@@ -13,7 +14,7 @@ export class OverlayContainerComponent implements OnInit {
   pass: HallPass | Invitation | Request;
   title: string = 'Bathroom';
 
-  constructor() { }
+  constructor(private dialogRef: MatDialogRef<OverlayContainerComponent>) { }
 
   get getHeaderGradient() {
     return `radial-gradient(circle at 73% 71%, rgb(92, 74, 227), rgb(51, 109, 228))`;
@@ -27,7 +28,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   onCancel() {
-    console.log('concel');
+    this.dialogRef.close();
   }
 
 }
