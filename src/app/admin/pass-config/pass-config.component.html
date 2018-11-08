@@ -1,3 +1,18 @@
-<div class="passconfig-wrapper">
+<div class="pass-config-wrapper">
   Pass Config Works
+</div>
+
+<!--<app-overlay-container></app-overlay-container>-->
+<div class="new-room-button">
+  <app-gradient-button [minWidth]="'170px'"
+                       [minHeight]="'60px'"
+                       [hoverColor]="'#00b476'"
+                       [fontSize]="'20px'"
+                       [cursor]="'pointer'"
+                       [leftIcon]="'./assets/Create (White).png'"
+                       [leftImageWidth]="'25px'"
+                       [leftImageHeight]="'25px'"
+                       (click)="newRoom($event)">
+    New Room
+  </app-gradient-button>
 </div>

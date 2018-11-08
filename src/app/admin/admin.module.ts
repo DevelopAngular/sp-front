@@ -12,6 +12,8 @@ import { AccountsComponent } from './accounts/accounts.component';
 import { AppInputComponent } from './../app-input/app-input.component';
 import { PassConfigComponent } from './pass-config/pass-config.component';
 import { FormsModule } from '@angular/forms';
+import { OverlayContainerComponent } from './overlay-container/overlay-container.component'
+import {CardButtonComponent} from '../card-button/card-button.component';
 
 
 @NgModule({
@@ -19,7 +21,8 @@ import { FormsModule } from '@angular/forms';
     CommonModule,
     SharedModule,
     AdminRoutingModule,
-    FormsModule
+    FormsModule,
+
   ],
   declarations: [
     AdminPageComponent,
@@ -31,10 +34,11 @@ import { FormsModule } from '@angular/forms';
     AccountsComponent,
     PassConfigComponent,
     AppInputComponent,
+    CardButtonComponent
   ],
   providers: [
       //NavbarDataService
-  ]
+  ],
 })
 export class AdminModule {
 }

@@ -16,7 +16,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     CommonModule,
     MatProgressBarModule,
     OwlDateTimeModule,
-    OwlNativeDateTimeModule,  
+    OwlNativeDateTimeModule,
     FormsModule,
     ReactiveFormsModule,
   ],
