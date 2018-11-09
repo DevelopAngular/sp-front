@@ -51,13 +51,7 @@ export class NavComponent implements OnInit {
 
   route(route:string){
     this.tab = route;
-    if(route === 'feedback'){
-      window.open('https://smartpass.app/feedback');
-    } else if(route === 'support'){
-      window.open('https://smartpass.app/support');
-    } else{
-      this.router.navigateByUrl('/admin/' + this.tab);
-    }
-    this.tab = this.tab;
+    this.router.navigateByUrl('/admin/' + this.tab);
+    this.tab = this.tab;    
   }
 }

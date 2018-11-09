@@ -18,7 +18,9 @@ import { SearchComponent } from './search/search.component';
 import { AccountsComponent } from './accounts/accounts.component';
 import { AppInputComponent } from './../app-input/app-input.component';
 import { PassConfigComponent } from './pass-config/pass-config.component';
-import { DataTableComponent } from './data-table/data-table.component';
+import { DataTableComponent } from './data-table/data-table.component';;
+import { FeedbackComponent } from './feedback/feedback.component';
+import { SupportComponent } from './support/support.component'
 
 
 @NgModule({
@@ -43,7 +45,11 @@ import { DataTableComponent } from './data-table/data-table.component';
     PassConfigComponent,
     AppInputComponent,
 
-    DataTableComponent  ],
+    DataTableComponent ,
+
+    FeedbackComponent ,
+
+    SupportComponent],
   providers: [
       //NavbarDataService
   ],
