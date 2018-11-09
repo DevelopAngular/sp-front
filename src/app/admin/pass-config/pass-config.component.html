@@ -2,7 +2,6 @@
   Pass Config Works
 </div>
 
-<!--<app-overlay-container></app-overlay-container>-->
 <div class="new-room-button">
   <app-gradient-button [minWidth]="'170px'"
                        [minHeight]="'60px'"
@@ -15,4 +14,7 @@
                        (click)="newRoom($event)">
     New Room
   </app-gradient-button>
+</div>
+<div class="data-table">
+  <app-data-table [width]="'100%'" [isCheckbox]="true" [data]="data" [height]="'400px'"></app-data-table>
 </div>
