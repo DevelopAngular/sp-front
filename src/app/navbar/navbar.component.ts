@@ -10,7 +10,7 @@ import { GoogleLoginService } from '../google-login.service';
 import { LoadingService } from '../loading.service';
 import { NavbarDataService } from '../main/navbar-data.service';
 import { User } from '../models/User';
-import {NgProgress} from '@ngx-progressbar/core';
+import { NgProgress } from '@ngx-progressbar/core';
 
 @Component({
   selector: 'app-navbar',

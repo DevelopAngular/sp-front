@@ -10,7 +10,7 @@ import { DisplayCardComponent } from '../display-card/display-card.component';
 import { DateTimePickerComponent } from '../date-time-picker/date-time-picker.component';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {NgProgressModule} from '@ngx-progressbar/core';
+import { NgProgressModule } from '@ngx-progressbar/core';
 
 @NgModule({
   imports: [
