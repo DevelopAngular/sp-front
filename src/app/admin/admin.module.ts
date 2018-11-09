@@ -1,8 +1,15 @@
 ﻿import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import { MatTableModule } from '@angular/material/table';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSortModule } from '@angular/material/sort';
+
 import { SharedModule } from '../shared/shared.module';
-import { AdminPageComponent } from './admin-page/admin-page.component';
 import { AdminRoutingModule } from './admin-routing.module';
+
+import { AdminPageComponent } from './admin-page/admin-page.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { NavComponent } from './nav/nav.component';
 import { NavButtonComponent } from './nav-button/nav-button.component';
@@ -11,7 +18,9 @@ import { SearchComponent } from './search/search.component';
 import { AccountsComponent } from './accounts/accounts.component';
 import { AppInputComponent } from './../app-input/app-input.component';
 import { PassConfigComponent } from './pass-config/pass-config.component';
-import { FormsModule } from '@angular/forms';
+import { DataTableComponent } from './data-table/data-table.component';;
+import { FeedbackComponent } from './feedback/feedback.component';
+import { SupportComponent } from './support/support.component'
 
 
 @NgModule({
@@ -19,7 +28,11 @@ import { FormsModule } from '@angular/forms';
     CommonModule,
     SharedModule,
     AdminRoutingModule,
-    FormsModule
+    FormsModule,
+    MatTableModule,
+    MatCheckboxModule,
+    MatSortModule,
+
   ],
   declarations: [
     AdminPageComponent,
@@ -31,10 +44,15 @@ import { FormsModule } from '@angular/forms';
     AccountsComponent,
     PassConfigComponent,
     AppInputComponent,
-  ],
+
+    DataTableComponent ,
+
+    FeedbackComponent ,
+
+    SupportComponent],
   providers: [
       //NavbarDataService
-  ]
+  ],
 })
 export class AdminModule {
 }

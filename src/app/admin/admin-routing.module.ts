@@ -6,6 +6,8 @@ import { HallmonitorComponent } from './hallmonitor/hallmonitor.component';
 import { SearchComponent } from './search/search.component';
 import { AccountsComponent } from './accounts/accounts.component';
 import { PassConfigComponent } from './pass-config/pass-config.component';
+import { FeedbackComponent } from './feedback/feedback.component';
+import { SupportComponent } from './support/support.component';
 
 const routes: Routes = [
   {
@@ -15,7 +17,9 @@ const routes: Routes = [
       {path: 'hallmonitor', component: HallmonitorComponent},
       {path: 'search', component: SearchComponent},
       {path: 'accounts', component: AccountsComponent},
-      {path: 'passconfig', component: PassConfigComponent}
+      {path: 'passconfig', component: PassConfigComponent},
+      {path: 'feedback', component: FeedbackComponent},
+      {path: 'support', component: SupportComponent}
     ]
   },
 ];

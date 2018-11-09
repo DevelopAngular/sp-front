@@ -1,0 +1,9 @@
+<div class="overlay-container">
+  <div class="overlay-header" [ngStyle]="{'background-image': getHeaderGradient}">
+    <div class="checkbox">
+      <mat-slide-toggle (change)="toggleChange()"></mat-slide-toggle>
+    </div>
+    <div class="title">{{ title }}</div>
+    <div class="button" (click)="onCancel()">Done</div>
+  </div>
+</div>

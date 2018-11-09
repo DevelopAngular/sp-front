@@ -1,7 +1,7 @@
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatDialogModule, MatProgressSpinnerModule, MatSliderModule } from '@angular/material';
+import {MatDialogModule, MatProgressSpinnerModule, MatSliderModule, MatSlideToggleModule} from '@angular/material';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -24,6 +24,7 @@ import { SharedModule } from './shared/shared.module';
 import { UserService } from './user.service';
 import { LoginComponent } from './login/login.component';
 import {ProgressInterceptor} from './progress-interceptor';
+import {OverlayContainerComponent} from './admin/overlay-container/overlay-container.component';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: 'main/passes', pathMatch: 'full'},
@@ -49,10 +50,13 @@ const appRoutes: Routes = [
     OptionsComponent,
     IntroComponent,
     LoginComponent,
+      OverlayContainerComponent
   ],
   entryComponents: [
     ConsentMenuComponent,
     OptionsComponent,
+    OverlayContainerComponent
+
   ],
   imports: [
     BrowserModule,
@@ -68,6 +72,7 @@ const appRoutes: Routes = [
     MatButtonModule,
     MatCardModule,
     MatDialogModule,
+    MatSlideToggleModule,
 
     RouterModule.forRoot(
       appRoutes

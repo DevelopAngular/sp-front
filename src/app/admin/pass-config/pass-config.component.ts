@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import { MatDialog } from '@angular/material';
+import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
 
 @Component({
   selector: 'app-pass-congif',
@@ -7,9 +9,33 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PassConfigComponent implements OnInit {
 
-  constructor() { }
+    data = [
+        {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H', surname: 'Petrov'},
+        {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He', surname: 'Petrov'},
+        {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li', surname: 'Petrov'},
+        {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be', surname: 'Petrov'},
+        {position: 5, name: 'Boron', weight: 10.811, symbol: 'B', surname: 'Petrov'},
+        {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C', surname: 'Petrov'},
+        {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N', surname: 'Petrov'},
+        {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O', surname: 'Petrov'},
+        {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F', surname: 'Petrov'},
+        {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne', surname: 'Petrov'},
+    ];
+
+  constructor(
+      private dialog: MatDialog,
+  ) { }
 
   ngOnInit() {
+  }
+
+  newRoom(ev) {
+    this.dialog.open(OverlayContainerComponent, {
+      panelClass: 'form-dialog-container',
+      width: '1000px',
+      height: '700px',
+      data: {object: 'START'}
+    });
   }
 
 }
