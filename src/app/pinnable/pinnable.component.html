@@ -2,8 +2,12 @@
      [@pressState]="buttonState" [style.box-shadow]="shadow"
      (mousedown)="onPress(true)" (mouseup)="onPress(false)"
      (mouseenter)="hovered = true" (mouseleave)="onPress(false); hovered = false">
+     <div *ngIf="selected" class="selected-overlay"></div>
   <div class="card" [style.background]="getGradient()">
-    <img class="icon" [src]="pinnable.icon | resolveAsset" alt="ICON">
+    <img *ngIf="!selected" class="icon" [src]="pinnable.icon | resolveAsset" alt="ICON">
+    <div *ngIf="selected" class="selected-icon-wrapper">
+      <img class="selected-icon" [src]="'./assets/Check (Blue).png' | resolveAsset" alt="ICON">
+    </div>
     <div class="title-bar">
       <div class="title">
         {{pinnable.title}}

@@ -2,9 +2,12 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { MatTableModule } from '@angular/material/table';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatSortModule } from '@angular/material/sort';
+import {
+  MatTableModule,
+  MatCheckboxModule,
+  MatSortModule,
+  MatGridListModule
+} from '@angular/material';
 
 import { SharedModule } from '../shared/shared.module';
 import { AdminRoutingModule } from './admin-routing.module';
@@ -19,9 +22,9 @@ import { AccountsComponent } from './accounts/accounts.component';
 import { AppInputComponent } from './../app-input/app-input.component';
 import { PassConfigComponent } from './pass-config/pass-config.component';
 import { DataTableComponent } from './data-table/data-table.component';;
-import { FeedbackComponent } from './feedback/feedback.component';
-import { SupportComponent } from './support/support.component'
-
+import { FeedbackComponent } from './feedback/feedback.component';
+import { SupportComponent } from './support/support.component';
+import { PinnableCollectionComponent } from './pinnable-collection/pinnable-collection.component'
 
 @NgModule({
   imports: [
@@ -32,7 +35,7 @@ import { SupportComponent } from './support/support.component'
     MatTableModule,
     MatCheckboxModule,
     MatSortModule,
-
+    MatGridListModule
   ],
   declarations: [
     AdminPageComponent,
@@ -44,12 +47,11 @@ import { SupportComponent } from './support/support.component'
     AccountsComponent,
     PassConfigComponent,
     AppInputComponent,
-
-    DataTableComponent ,
-
-    FeedbackComponent ,
-
-    SupportComponent],
+    DataTableComponent,
+    FeedbackComponent,
+    SupportComponent,
+    PinnableCollectionComponent
+  ],
   providers: [
       //NavbarDataService
   ],

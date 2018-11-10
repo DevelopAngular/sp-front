@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { MatProgressBarModule } from '@angular/material';
+import { MatProgressBarModule, MatGridListModule } from '@angular/material';
 import { GradientButtonComponent } from '../gradient-button/gradient-button.component';
 import { NavButtonComponent } from '../nav-button/nav-button.component';
 import { NavbarComponent } from '../navbar/navbar.component';
@@ -11,6 +11,7 @@ import { DateTimePickerComponent } from '../date-time-picker/date-time-picker.co
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgProgressModule } from '@ngx-progressbar/core';
+import { PinnableComponent } from '../pinnable/pinnable.component';
 
 @NgModule({
   imports: [
@@ -20,6 +21,7 @@ import { NgProgressModule } from '@ngx-progressbar/core';
     OwlNativeDateTimeModule,
     FormsModule,
     ReactiveFormsModule,
+    MatGridListModule,
     NgProgressModule.forRoot()
   ],
   declarations: [
@@ -29,7 +31,8 @@ import { NgProgressModule } from '@ngx-progressbar/core';
     NavbarComponent,
     NavButtonComponent,
     DisplayCardComponent,
-    DateTimePickerComponent
+    DateTimePickerComponent,
+    PinnableComponent
   ],
   exports: [
     GradientButtonComponent,
@@ -37,7 +40,8 @@ import { NgProgressModule } from '@ngx-progressbar/core';
     SmartpassLogoComponent,
     NavbarComponent,
     DisplayCardComponent,
-    DateTimePickerComponent
+    DateTimePickerComponent,
+    PinnableComponent
   ],
 })
 export class SharedModule {
