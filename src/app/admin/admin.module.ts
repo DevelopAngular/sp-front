@@ -18,15 +18,15 @@ import { SearchComponent } from './search/search.component';
 import { AccountsComponent } from './accounts/accounts.component';
 import { AppInputComponent } from './../app-input/app-input.component';
 import { PassConfigComponent } from './pass-config/pass-config.component';
-import { DataTableComponent } from './data-table/data-table.component';;
-import { FeedbackComponent } from './feedback/feedback.component'
-;
-import { SupportComponent } from './support/support.component'
+import { DataTableComponent } from './data-table/data-table.component';
+import { FeedbackComponent } from './feedback/feedback.component';
+import { SupportComponent } from './support/support.component';
 import {TraveltypePickerComponent} from '../traveltype-picker/traveltype-picker.component';
+import { ColorPalletPickerComponent } from './color-pallet-picker/color-pallet-picker.component';
 
 
 @NgModule({
-  imports: [
+    imports: [
     CommonModule,
     SharedModule,
     AdminRoutingModule,
@@ -47,13 +47,16 @@ import {TraveltypePickerComponent} from '../traveltype-picker/traveltype-picker.
     PassConfigComponent,
     AppInputComponent,
     TraveltypePickerComponent,
+    ColorPalletPickerComponent,
 
-    DataTableComponent ,
+    DataTableComponent,
 
-    FeedbackComponent ,
+    FeedbackComponent,
 
-    SupportComponent],
-  providers: [
+    SupportComponent,
+  ],
+
+    providers: [
       //NavbarDataService
   ],
 })

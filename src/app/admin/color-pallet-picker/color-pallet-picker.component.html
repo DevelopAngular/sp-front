@@ -1,0 +1,12 @@
+<div class="color-wrapper">
+  <div class="color-title">Color</div>
+  <div class="colors">
+    <div class="pick-color"
+         *ngFor="let color of colors"
+         [style.background]="color.color"
+         [style.box-shadow]="(color.selected ? '0px 0px 50px ' + color.color : 'none')"
+         (click)="changeColor(color)"
+    >
+    </div>
+  </div>
+</div>
