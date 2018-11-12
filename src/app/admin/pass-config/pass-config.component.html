@@ -18,3 +18,6 @@
 <div class="data-table">
   <app-data-table [width]="'100%'" [isCheckbox]="true" [data]="data" [height]="'400px'"></app-data-table>
 </div>
+<div class="travel-picker">
+  <app-traveltype-picker (onSelect)="choiceTravel($event)" [choices]="['unrestricted', 'restricted']" [width]="'220px'" [height]="'35px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-traveltype-picker>
+</div>

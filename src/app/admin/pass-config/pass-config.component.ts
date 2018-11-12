@@ -38,4 +38,8 @@ export class PassConfigComponent implements OnInit {
     });
   }
 
+  choiceTravel(emit) {
+      console.log(emit);
+  }
+
 }

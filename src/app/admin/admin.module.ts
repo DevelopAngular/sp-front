@@ -19,8 +19,10 @@ import { AccountsComponent } from './accounts/accounts.component';
 import { AppInputComponent } from './../app-input/app-input.component';
 import { PassConfigComponent } from './pass-config/pass-config.component';
 import { DataTableComponent } from './data-table/data-table.component';;
-import { FeedbackComponent } from './feedback/feedback.component';
+import { FeedbackComponent } from './feedback/feedback.component'
+;
 import { SupportComponent } from './support/support.component'
+import {TraveltypePickerComponent} from '../traveltype-picker/traveltype-picker.component';
 
 
 @NgModule({
@@ -44,6 +46,7 @@ import { SupportComponent } from './support/support.component'
     AccountsComponent,
     PassConfigComponent,
     AppInputComponent,
+    TraveltypePickerComponent,
 
     DataTableComponent ,
 
