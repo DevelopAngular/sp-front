@@ -1,6 +1,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatDialogModule, MatProgressSpinnerModule, MatSliderModule, MatSlideToggleModule} from '@angular/material';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -23,7 +23,7 @@ import { OptionsComponent } from './options/options.component';
 import { SharedModule } from './shared/shared.module';
 import { UserService } from './user.service';
 import { LoginComponent } from './login/login.component';
-import {OverlayContainerComponent} from './admin/overlay-container/overlay-container.component';
+import { OverlayContainerComponent } from './admin/overlay-container/overlay-container.component';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: 'main/passes', pathMatch: 'full'},
@@ -49,7 +49,7 @@ const appRoutes: Routes = [
     OptionsComponent,
     IntroComponent,
     LoginComponent,
-      OverlayContainerComponent
+    OverlayContainerComponent
   ],
   entryComponents: [
     ConsentMenuComponent,
@@ -61,6 +61,7 @@ const appRoutes: Routes = [
     BrowserModule,
     BrowserAnimationsModule,
     SharedModule,
+    ReactiveFormsModule,
 
     MatSliderModule,
 

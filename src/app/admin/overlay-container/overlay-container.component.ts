@@ -1,4 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 import { HallPass } from '../../models/HallPass';
@@ -14,6 +15,7 @@ export class OverlayContainerComponent implements OnInit {
 
   pass: HallPass | Invitation | Request;
   title: string = 'Bathroom';
+  form: FormGroup;
 
   constructor(
       private dialogRef: MatDialogRef<OverlayContainerComponent>,
@@ -25,10 +27,13 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   ngOnInit() {
+      this.buildForm();
   }
 
-  toggleChange() {
-    console.log('toggle');
+  buildForm() {
+    this.form = new FormGroup({
+        isEdit: new FormControl(true)
+    });
   }
 
   onCancel() {
