@@ -21,8 +21,9 @@ import { PassConfigComponent } from './pass-config/pass-config.component';
 import { DataTableComponent } from './data-table/data-table.component';
 import { FeedbackComponent } from './feedback/feedback.component';
 import { SupportComponent } from './support/support.component';
-import {TraveltypePickerComponent} from '../traveltype-picker/traveltype-picker.component';
+import { TraveltypePickerComponent } from '../traveltype-picker/traveltype-picker.component';
 import { ColorPalletPickerComponent } from './color-pallet-picker/color-pallet-picker.component';
+import { IconPickerComponent } from './icon-picker/icon-picker.component';
 
 
 @NgModule({
@@ -54,6 +55,8 @@ import { ColorPalletPickerComponent } from './color-pallet-picker/color-pallet-p
     FeedbackComponent,
 
     SupportComponent,
+
+    IconPickerComponent
   ],
 
     providers: [
