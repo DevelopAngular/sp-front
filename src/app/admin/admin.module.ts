@@ -21,47 +21,49 @@ import { PassConfigComponent } from './pass-config/pass-config.component';
 import { DataTableComponent } from './data-table/data-table.component';
 import { FeedbackComponent } from './feedback/feedback.component';
 import { SupportComponent } from './support/support.component';
-import {TraveltypePickerComponent} from '../traveltype-picker/traveltype-picker.component';
+import { TraveltypePickerComponent } from '../traveltype-picker/traveltype-picker.component';
 import { ColorPalletPickerComponent } from './color-pallet-picker/color-pallet-picker.component';
+import { IconPickerComponent } from './icon-picker/icon-picker.component';
 
 
 @NgModule({
     imports: [
-    CommonModule,
-    SharedModule,
-    AdminRoutingModule,
-    FormsModule,
-    MatTableModule,
-    MatCheckboxModule,
-    MatSortModule,
+        CommonModule,
+        SharedModule,
+        AdminRoutingModule,
+        FormsModule,
+        MatTableModule,
+        MatCheckboxModule,
+        MatSortModule,
 
-  ],
-  declarations: [
-    AdminPageComponent,
-    DashboardComponent,
-    NavComponent,
-    NavButtonComponent,
-    HallmonitorComponent,
-    SearchComponent,
-    AccountsComponent,
-    PassConfigComponent,
-    AppInputComponent,
-    TraveltypePickerComponent,
-    ColorPalletPickerComponent,
-
-    DataTableComponent,
-
-    FeedbackComponent,
-
-    SupportComponent,
     ],
-  entryComponents: [
-      AppInputComponent,
-    ],
+    declarations: [
+        AdminPageComponent,
+        DashboardComponent,
+        NavComponent,
+        NavButtonComponent,
+        HallmonitorComponent,
+        SearchComponent,
+        AccountsComponent,
+        PassConfigComponent,
+        AppInputComponent,
+        TraveltypePickerComponent,
+        ColorPalletPickerComponent,
 
+        DataTableComponent,
+
+        FeedbackComponent,
+
+        SupportComponent,
+
+        IconPickerComponent
+    ],
+    entryComponents: [
+        AppInputComponent,
+    ],
     providers: [
-      //NavbarDataService
-  ],
+        //NavbarDataService
+    ],
 })
 export class AdminModule {
 }
