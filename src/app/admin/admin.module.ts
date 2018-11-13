@@ -54,7 +54,10 @@ import { ColorPalletPickerComponent } from './color-pallet-picker/color-pallet-p
     FeedbackComponent,
 
     SupportComponent,
-  ],
+    ],
+  entryComponents: [
+      AppInputComponent,
+    ],
 
     providers: [
       //NavbarDataService

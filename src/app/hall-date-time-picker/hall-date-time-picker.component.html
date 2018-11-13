@@ -1,0 +1,12 @@
+﻿<div class="date-time-wrapper" >
+  From - To
+  <app-date-time-picker [_selectedMoment]="searchDate_From" [min]="min" [showTime]="true" (onUpdate)="setSearchDate_From($event)" [showTwoCalender]="true" (onUpdate_2ndCal)="setSearchDate_To($event)"></app-date-time-picker>
+  <br /><br />
+  <app-gradient-button [minHeight]="'40px'"
+                       [hoverColor]="'#00b476'"
+                       [fontSize]="'15px'"
+                       [cursor]="'pointer'"
+                       (click)="DateRangeClick()">
+    Search {{getDisplayRange}}
+  </app-gradient-button>
+</div>

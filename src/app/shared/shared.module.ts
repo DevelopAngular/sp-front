@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatProgressBarModule } from '@angular/material';
 import { GradientButtonComponent } from '../gradient-button/gradient-button.component';
@@ -28,7 +28,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     NavButtonComponent,
     DisplayCardComponent,
     DateTimePickerComponent
-  ],
+  ],//entryComponents: [
+      //DateTimePickerComponent,
+  //],
   exports: [
     GradientButtonComponent,
     ResolveAssetPipe,

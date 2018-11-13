@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+﻿import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {MatDialogModule, MatProgressSpinnerModule, MatSliderModule, MatSlideToggleModule} from '@angular/material';
@@ -21,9 +21,11 @@ import { IntroComponent } from './intro/intro.component';
 import { LoadingService } from './loading.service';
 import { OptionsComponent } from './options/options.component';
 import { SharedModule } from './shared/shared.module';
+import { AdminModule } from './admin/admin.module';
 import { UserService } from './user.service';
 import { LoginComponent } from './login/login.component';
-import {OverlayContainerComponent} from './admin/overlay-container/overlay-container.component';
+import { OverlayContainerComponent } from './admin/overlay-container/overlay-container.component';
+import { HallDateTimePickerComponent } from './hall-date-time-picker/hall-date-time-picker.component';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: 'main/passes', pathMatch: 'full'},
@@ -49,19 +51,20 @@ const appRoutes: Routes = [
     OptionsComponent,
     IntroComponent,
     LoginComponent,
-      OverlayContainerComponent
+    OverlayContainerComponent,
+    HallDateTimePickerComponent,
   ],
   entryComponents: [
     ConsentMenuComponent,
     OptionsComponent,
-    OverlayContainerComponent
-
+      OverlayContainerComponent,
+      HallDateTimePickerComponent,
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     SharedModule,
-
+      AdminModule,
     MatSliderModule,
 
     FormsModule,

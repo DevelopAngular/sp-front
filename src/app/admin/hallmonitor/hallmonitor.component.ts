@@ -3,7 +3,7 @@ import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component'
 import { MatDialogRef, MatDialog } from '@angular/material';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Util } from '../../../Util';
-import { DateTimePickerComponent } from '../../date-time-picker/date-time-picker.component';
+//import { DateTimePickerComponent } from '../../date-time-picker/date-time-picker.component';
 
 @Component({
   selector: 'app-hallmonitor',

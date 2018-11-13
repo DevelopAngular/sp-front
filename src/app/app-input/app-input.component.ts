@@ -1,6 +1,7 @@
 ﻿import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { DateTimePickerComponent } from '../date-time-picker/date-time-picker.component';
+//import { DateTimePickerComponent } from '../date-time-picker/date-time-picker.component';
+import { HallDateTimePickerComponent } from '../hall-date-time-picker/hall-date-time-picker.component';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Util } from '../../Util';
 
@@ -20,6 +21,8 @@ export class AppInputComponent implements OnInit {
     @Output() onUpdate = new EventEmitter<string>();
     @Input() IsRequired: boolean = false;
     @Input() IsDate: boolean = false;
+
+    input_DateRange: string;
 
     @ViewChild('appInput') input: ElementRef;
 
@@ -55,12 +58,12 @@ export class AppInputComponent implements OnInit {
   {
       if (this.IsDate)
       {
-         /*this.dialog.open(DateTimePickerComponent, {
+          this.dialog.open(HallDateTimePickerComponent, {
               width: '750px',
               panelClass: 'form-dialog-container',
               backdropClass: 'custom-backdrop',
               data: { 'forLater': true, 'forStaff': true }
-          });*/
+          });
 
           this.showDates = !this.showDates;
 
