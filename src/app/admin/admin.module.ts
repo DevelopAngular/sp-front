@@ -21,10 +21,10 @@ import { SearchComponent } from './search/search.component';
 import { AccountsComponent } from './accounts/accounts.component';
 import { AppInputComponent } from './../app-input/app-input.component';
 import { PassConfigComponent } from './pass-config/pass-config.component';
-import { DataTableComponent } from './data-table/data-table.component';;
+import { DataTableComponent } from './data-table/data-table.component';
 import { FeedbackComponent } from './feedback/feedback.component';
 import { SupportComponent } from './support/support.component';
-import { PinnableCollectionComponent } from './pinnable-collection/pinnable-collection.component'
+import { PinnableCollectionComponent } from './pinnable-collection/pinnable-collection.component';
 import { TraveltypePickerComponent } from '../traveltype-picker/traveltype-picker.component';
 import { ColorPalletPickerComponent } from './color-pallet-picker/color-pallet-picker.component';
 import { IconPickerComponent } from './icon-picker/icon-picker.component';
