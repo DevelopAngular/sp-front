@@ -1,9 +1,9 @@
 <form [formGroup]="form">
   <div class="overlay-container">
     <div class="overlay-header" [ngStyle]="{'background-image': getHeaderGradient}">
-      <div class="onoffswitch">
-        <input type="checkbox" name="onoffswitch" formControlName="isEdit" class="onoffswitch-checkbox" id="myonoffswitch" checked>
-        <label class="onoffswitch-label" for="myonoffswitch"></label>
+      <div class="isEdit">
+        <input type="checkbox" name="isEdit" formControlName="isEdit" class="isEdit-checkbox" id="isEdit" checked>
+        <label class="isEdit-label" for="isEdit"></label>
       </div>
       <div class="title">{{ title }}</div>
       <div class="button" (click)="onCancel()">Done</div>
