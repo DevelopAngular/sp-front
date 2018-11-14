@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
+import {FormControl, FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-pass-congif',
@@ -8,6 +9,9 @@ import { OverlayContainerComponent } from '../overlay-container/overlay-containe
   styleUrls: ['./pass-config.component.scss']
 })
 export class PassConfigComponent implements OnInit {
+
+    settingsForm: FormGroup;
+    schoolName = 'Springfield High School';
 
     data = [
         {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H', surname: 'Petrov'},
@@ -27,9 +31,18 @@ export class PassConfigComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+      this.buildForm();
+  }
+
+  buildForm() {
+      this.settingsForm = new FormGroup({
+          isFuture: new FormControl(true),
+          defaultTime: new FormControl('5 min'),
+      });
   }
 
   newRoom(ev) {
+      console.log(this.settingsForm.value);
     this.dialog.open(OverlayContainerComponent, {
       panelClass: 'form-dialog-container',
       width: '1000px',

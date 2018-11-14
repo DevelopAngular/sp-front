@@ -35,6 +35,7 @@ import { PinnableComponent } from '../pinnable/pinnable.component';
     PinnableComponent
   ],
   exports: [
+    ReactiveFormsModule,
     GradientButtonComponent,
     ResolveAssetPipe,
     SmartpassLogoComponent,

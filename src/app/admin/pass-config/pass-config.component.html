@@ -2,25 +2,27 @@
   <div class="pass-config-header">
       <div class="school-title">
           <img class="school-icon" src="../../../assets/School (Blue).png">
-          <div class="school-name">Springfield High School</div>
+          <div class="school-name">{{ schoolName }}</div>
       </div>
       <div class="header-settings">
           <img class="settings-icon" src="../../../assets/Gear (Blue).png">
           <div class="settings-actions">
-              <div class="action-top">
-                  <span class="settings-action-top-title">Future Passes</span>
-                  <span>
-                      <div class="onoffswitch">
-                          <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
-                          <label class="onoffswitch-label" for="myonoffswitch"></label>
-                      </div>
-                  </span>
-              </div>
-              <div class="settings-divider"></div>
-              <div class="action-bottom">
-                  <span class="settings-action-bottom-title">Default Pass Time</span>
-                  <span><input type="text" class="settings-input"></span>
-              </div>
+              <form [formGroup]="settingsForm">
+                  <div class="action-top">
+                      <span class="settings-action-top-title">Future Passes</span>
+                      <span>
+                          <div class="future">
+                              <input type="checkbox" formControlName="isFuture" name="future" class="future-checkbox" id="future" checked>
+                              <label class="future-label" for="future"></label>
+                          </div>
+                      </span>
+                  </div>
+                  <div class="settings-divider"></div>
+                  <div class="action-bottom">
+                      <span class="settings-action-bottom-title">Default Pass Time</span>
+                      <span><input type="text" name="defaultTime" formControlName="defaultTime" class="settings-input"></span>
+                  </div>
+              </form>
           </div>
       </div>
   </div>
