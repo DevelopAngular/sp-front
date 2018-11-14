@@ -1,9 +1,12 @@
+<form [formGroup]="form">
 <div class="overlay-container">
   <div class="overlay-header" [ngStyle]="{'background-image': getHeaderGradient}">
-    <div class="checkbox">
-      <mat-slide-toggle (change)="toggleChange()"></mat-slide-toggle>
+    <div class="onoffswitch">
+      <input type="checkbox" name="onoffswitch" formControlName="isEdit" class="onoffswitch-checkbox" id="myonoffswitch" checked>
+      <label class="onoffswitch-label" for="myonoffswitch"></label>
     </div>
     <div class="title">{{ title }}</div>
     <div class="button" (click)="onCancel()">Done</div>
   </div>
 </div>
+</form>
