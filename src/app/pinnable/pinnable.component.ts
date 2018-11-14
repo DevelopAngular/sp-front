@@ -23,13 +23,18 @@ export class PinnableComponent implements OnInit {
   forStaff: boolean = false;
 
   @Input()
+  forCollection: boolean = false;
+
+  @Input()
   valid: boolean = true;
 
-  @Output() onSelectEvent: EventEmitter<Pinnable> = new EventEmitter();
+  @Output() 
+  onSelectEvent: EventEmitter<Pinnable> = new EventEmitter();
 
   restricted: boolean = false;
   buttonDown = false;
   hovered: boolean;
+  selected: boolean = false;
 
   constructor(private sanitizer: DomSanitizer) {
 
@@ -53,8 +58,10 @@ export class PinnableComponent implements OnInit {
   }
 
   onSelect() {
-    // console.log("Pinnable Selected");
     if(this.valid)
+      if(this.forCollection){
+        this.selected = !this.selected;
+      }
       this.onSelectEvent.emit(this.pinnable);
   }
 

@@ -10,6 +10,7 @@ import { GoogleLoginService } from '../google-login.service';
 import { LoadingService } from '../loading.service';
 import { NavbarDataService } from '../main/navbar-data.service';
 import { User } from '../models/User';
+import { NgProgress } from '@ngx-progressbar/core';
 
 @Component({
   selector: 'app-navbar',
@@ -23,15 +24,23 @@ export class NavbarComponent implements OnInit {
 
   isStaff: boolean;
   user: User;
-
+  isProcess$ = this.process.ref().state;
   tab: string = 'passes';
   inboxVisibility: boolean = true;
 
   navbarEnabled = false;
 
-  constructor(private dataService: DataService, public dialog: MatDialog, private router: Router, private location: Location,
-              public loadingService: LoadingService, public loginService: GoogleLoginService, private _zone: NgZone,
-              private navbarData: NavbarDataService) {
+  constructor(
+      private dataService: DataService,
+      public dialog: MatDialog,
+      private router: Router,
+      private location: Location,
+      public loadingService: LoadingService,
+      public loginService: GoogleLoginService,
+      private _zone: NgZone,
+      private navbarData: NavbarDataService,
+      private process: NgProgress
+  ) {
 
     const navbarEnabled$ = Observable.combineLatest(
       this.loadingService.isLoading$,

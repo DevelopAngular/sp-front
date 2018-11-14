@@ -46,7 +46,7 @@
 
 .names-overlay{
     position: absolute;
-    bottom: 5px;
+    bottom: 0px;
     background: rgba(200, 200, 200, .7);
     mix-blend-mode: soft-light;
     width: 121px;
@@ -61,7 +61,7 @@
     font-family: 'Helvetica Neue',sans-serif;
     font-size: 0.8em;
     position: absolute;
-    bottom: 7px;
+    bottom: 3px;
     width: 121px;
     display: flex;
     justify-content: center;

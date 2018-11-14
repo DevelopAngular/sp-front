@@ -2,9 +2,12 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { MatTableModule } from '@angular/material/table';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatSortModule } from '@angular/material/sort';
+import {
+  MatTableModule,
+  MatCheckboxModule,
+  MatSortModule,
+  MatGridListModule
+} from '@angular/material';
 
 import { SharedModule } from '../shared/shared.module';
 import { AdminRoutingModule } from './admin-routing.module';
@@ -18,25 +21,27 @@ import { SearchComponent } from './search/search.component';
 import { AccountsComponent } from './accounts/accounts.component';
 import { AppInputComponent } from './../app-input/app-input.component';
 import { PassConfigComponent } from './pass-config/pass-config.component';
-import { DataTableComponent } from './data-table/data-table.component';
+import { DataTableComponent } from './data-table/data-table.component';;
 import { FeedbackComponent } from './feedback/feedback.component';
 import { SupportComponent } from './support/support.component';
+import { PinnableCollectionComponent } from './pinnable-collection/pinnable-collection.component'
 import { TraveltypePickerComponent } from '../traveltype-picker/traveltype-picker.component';
 import { ColorPalletPickerComponent } from './color-pallet-picker/color-pallet-picker.component';
 import { IconPickerComponent } from './icon-picker/icon-picker.component';
 
 
 @NgModule({
-    imports: [
-        CommonModule,
-        SharedModule,
-        AdminRoutingModule,
-        FormsModule,
-        MatTableModule,
-        MatCheckboxModule,
-        MatSortModule,
+  imports: [
+    CommonModule,
+    SharedModule,
+    AdminRoutingModule,
+    FormsModule,
+    MatTableModule,
+    MatCheckboxModule,
+    MatSortModule,
+    MatGridListModule
+  ],
 
-    ],
     declarations: [
         AdminPageComponent,
         DashboardComponent,
@@ -49,7 +54,7 @@ import { IconPickerComponent } from './icon-picker/icon-picker.component';
         AppInputComponent,
         TraveltypePickerComponent,
         ColorPalletPickerComponent,
-
+        PinnableCollectionComponent,
         DataTableComponent,
 
         FeedbackComponent,

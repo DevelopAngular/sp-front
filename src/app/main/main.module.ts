@@ -3,14 +3,14 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatDialogModule,
-  MatGridListModule,
   MatIconModule,
   MatProgressBarModule,
   MatSelectModule,
   MatSliderModule,
-  MatSlideToggleModule
+  MatSlideToggleModule,
+  MatChipsModule,
+  MatGridListModule
 } from '@angular/material';
-import { MatChipsModule } from '@angular/material/chips';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { CardButtonComponent } from '../card-button/card-button.component';
 import { ContainerCardComponent } from '../container-card/container-card.component';
@@ -35,7 +35,6 @@ import { PassCellComponent } from '../pass-cell/pass-cell.component';
 import { PassCollectionComponent } from '../pass-collection/pass-collection.component';
 import { PassTileComponent } from '../pass-tile/pass-tile.component';
 import { PassesComponent } from '../passes/passes.component';
-import { PinnableComponent } from '../pinnable/pinnable.component';
 import { ReportFormComponent } from '../report-form/report-form.component';
 import { RequestAcceptComponent } from '../request-accept/request-accept.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
@@ -55,7 +54,6 @@ import { NavbarDataService } from './navbar-data.service';
     CommonModule,
     SharedModule,
     MainRoutingModule,
-    MatGridListModule,
     MatIconModule,
     MatSlideToggleModule,
     FormsModule,
@@ -66,6 +64,7 @@ import { NavbarDataService } from './navbar-data.service';
     MatSliderModule,
     MatProgressBarModule,
     MatDialogModule,
+    MatGridListModule
   ],
   declarations: [
     HallMonitorComponent,
@@ -87,7 +86,6 @@ import { NavbarDataService } from './navbar-data.service';
     StudentSearchComponent,
     StudentPickerComponent,
     ReportFormComponent,
-    PinnableComponent,
     DurationPickerComponent,
     PassCardComponent,
     RequestCardComponent,

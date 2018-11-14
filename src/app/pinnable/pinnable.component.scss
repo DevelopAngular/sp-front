@@ -1,18 +1,20 @@
 .card {
   width: inherit;
-  height: 61px;
-  padding-top: 8.9px;
+  height: 70px;
   border-radius: 7px;
   color: white;
-  text-align: center;
   font-family: 'Helvetica Neue', sans-serif;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .icon {
-  width: 28.5px;
-  height: 29.5px;
+  width: 30px;
+  height: 30px;
 }
 
 .title-bar{
@@ -20,6 +22,8 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
+  position: relative;
+  z-index: 2;
 }
 
 .title {
@@ -68,8 +72,39 @@
   user-select: none;
 }
 
+.selected-overlay {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 7px;
+  background-color: rgba(255, 255 , 255, .25);
+}
+
 .mat-button {
   line-height: inherit;
   padding: 0px;
   font-family: inherit;
+}
+
+.selected-icon-wrapper{
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.selected-icon{
+  width: 27px;
+  height: 27px;
 }

@@ -1,6 +1,5 @@
-<mat-progress-bar class="loading-theme" *ngIf="navbarEnabled; else staticLoading;"
-                  mode="indeterminate"></mat-progress-bar>
-<ng-template class="static-loading" #staticLoading><div class="static-loading"></div></ng-template>
+<div *ngIf="!(isProcess$ | async).active" class="static-loading" #staticLoading><div class="static-loading"></div></div>
+<ng-progress [color]="'#04CD33'" [spinner]="false" [fixed]="true" [speed]="200" [thick]="true"></ng-progress>
 <div *ngIf="showNav" class="bar">
   <div class="heading grow">
     <app-smartpass-logo></app-smartpass-logo>

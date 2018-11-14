@@ -1,4 +1,4 @@
-﻿import { HttpClientModule } from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatDialogModule, MatProgressSpinnerModule, MatSliderModule, MatSlideToggleModule} from '@angular/material';
@@ -24,7 +24,8 @@ import { SharedModule } from './shared/shared.module';
 import { AdminModule } from './admin/admin.module';
 import { UserService } from './user.service';
 import { LoginComponent } from './login/login.component';
-import { OverlayContainerComponent } from './admin/overlay-container/overlay-container.component';
+import {ProgressInterceptor} from './progress-interceptor';
+import {OverlayContainerComponent} from './admin/overlay-container/overlay-container.component';
 import { HallDateTimePickerComponent } from './hall-date-time-picker/hall-date-time-picker.component';
 
 const appRoutes: Routes = [
@@ -92,6 +93,7 @@ const appRoutes: Routes = [
     UserService,
     GoogleLoginService,
     LoadingService,
+    { provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true },
   ],
   bootstrap: [AppComponent]
 })
