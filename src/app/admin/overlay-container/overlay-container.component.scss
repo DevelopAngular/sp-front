@@ -1,6 +1,7 @@
 .overlay-container {
   width: 100%;
   display: flex;
+  flex-direction: column;
 }
 
 .overlay-header {

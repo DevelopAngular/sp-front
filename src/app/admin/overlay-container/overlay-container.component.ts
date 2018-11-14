@@ -40,4 +40,8 @@ export class OverlayContainerComponent implements OnInit {
     this.dialogRef.close();
   }
 
+    choiceTravel(emit) {
+      console.log(emit);
+    }
+
 }

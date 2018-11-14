@@ -25,9 +25,9 @@ import { DataTableComponent } from './data-table/data-table.component';
 import { FeedbackComponent } from './feedback/feedback.component';
 import { SupportComponent } from './support/support.component';
 import { PinnableCollectionComponent } from './pinnable-collection/pinnable-collection.component';
-import { TraveltypePickerComponent } from '../traveltype-picker/traveltype-picker.component';
 import { ColorPalletPickerComponent } from './color-pallet-picker/color-pallet-picker.component';
 import { IconPickerComponent } from './icon-picker/icon-picker.component';
+import { OverlayContainerComponent } from './overlay-container/overlay-container.component';
 
 
 @NgModule({
@@ -52,7 +52,7 @@ import { IconPickerComponent } from './icon-picker/icon-picker.component';
         AccountsComponent,
         PassConfigComponent,
         AppInputComponent,
-        TraveltypePickerComponent,
+        OverlayContainerComponent,
         ColorPalletPickerComponent,
         PinnableCollectionComponent,
         DataTableComponent,
@@ -65,6 +65,7 @@ import { IconPickerComponent } from './icon-picker/icon-picker.component';
     ],
     entryComponents: [
         AppInputComponent,
+        OverlayContainerComponent,
     ],
 
     providers: [

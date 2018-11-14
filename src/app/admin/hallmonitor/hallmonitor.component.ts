@@ -68,7 +68,7 @@ export class HallmonitorComponent implements OnInit {
       ConsentNoText = 'No Thanks';
 
 
-      const ConfirmationDialog = this.dialog.open(ConsentMenuComponent, {
+  const ConfirmationDialog = this.dialog.open(ConsentMenuComponent, {
           panelClass: 'consent-dialog-container',
           backdropClass: 'invis-backdrop',
           data: { 'header': header, 'trigger': target, 'ConsentText': ConsentText, 'ConsentYesText': ConsentYesText, 'ConsentNoText': ConsentNoText, 'ConsentButtonColor': ConsentButtonColor}
