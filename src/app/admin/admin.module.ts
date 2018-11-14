@@ -61,6 +61,7 @@ import { IconPickerComponent } from './icon-picker/icon-picker.component';
     entryComponents: [
         AppInputComponent,
     ],
+
     providers: [
         //NavbarDataService
     ],

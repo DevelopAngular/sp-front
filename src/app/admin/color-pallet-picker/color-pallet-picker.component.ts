@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-color-pallet-picker',
-  templateUrl: './color-pallet-picker.component.html',
-  styleUrls: ['./color-pallet-picker.component.scss']
+    selector: 'app-color-pallet-picker',
+    templateUrl: './color-pallet-picker.component.html',
+    styleUrls: ['./color-pallet-picker.component.scss']
 })
 export class ColorPalletPickerComponent implements OnInit {
 
@@ -30,9 +30,9 @@ export class ColorPalletPickerComponent implements OnInit {
   ngOnInit() {
   }
 
-  changeColor(color) {
-      this.selectedId = color.id;
-      console.log('Color', color);
-  }
+    changeColor(color) {
+        this.selectedId = color.id;
+        console.log('Color', color);
+    }
 
 }
