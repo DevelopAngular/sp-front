@@ -1,16 +1,16 @@
-﻿import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
-import { MatDialog } from '@angular/material';
+﻿import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, Inject } from '@angular/core';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 //import { DateTimePickerComponent } from '../date-time-picker/date-time-picker.component';
 import { HallDateTimePickerComponent } from '../hall-date-time-picker/hall-date-time-picker.component';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Util } from '../../Util';
-
 
 @Component({
   selector: 'app-input',
   templateUrl: './app-input.component.html',
   styleUrls: ['./app-input.component.scss']
 })
+
 export class AppInputComponent implements OnInit {
 
     @Input() input_type: string = "text";
@@ -23,7 +23,7 @@ export class AppInputComponent implements OnInit {
     @Input() IsDate: boolean = false;
 
     input_DateRange: string;
-
+    
     @ViewChild('appInput') input: ElementRef;
 
     showDates: boolean = false;
@@ -34,6 +34,7 @@ export class AppInputComponent implements OnInit {
 
     @Output() onUpdateDateRange: EventEmitter<string> = new EventEmitter();
 
+    //constructor(public dialog: MatDialog) {
     constructor(public dialog: MatDialog) {
         this.setSearchDate_From(new Date());
         this.setSearchDate_To(new Date());
@@ -58,15 +59,27 @@ export class AppInputComponent implements OnInit {
   {
       if (this.IsDate)
       {
-          this.dialog.open(HallDateTimePickerComponent, {
+          //this.dialog.open(HallDateTimePickerComponent, {
+          //    width: '750px',
+          //    panelClass: 'form-dialog-container',
+          //    backdropClass: 'custom-backdrop',
+          //    data: { 'forLater': true, 'forStaff': true }
+          //});
+          //this.showDates = !this.showDates;
+          //this.showDates = true;
+          const dialogRef = this.dialog.open(HallDateTimePickerComponent, {
               width: '750px',
               panelClass: 'form-dialog-container',
               backdropClass: 'custom-backdrop',
-              data: { 'forLater': true, 'forStaff': true }
+              data: {input_DateRange: this.input_DateRange}
           });
-
-          this.showDates = !this.showDates;
-
+          
+          dialogRef.afterClosed().subscribe(data => {
+              console.log("Result :" + data['input_DateRange']);
+              this.input_DateRange = data['input_DateRange'];
+              this.input.nativeElement.value = this.input_DateRange;
+              this.onUpdateDateRange.emit(this.input_DateRange);
+          });
       }
   }
 
@@ -96,7 +109,8 @@ export class AppInputComponent implements OnInit {
 
   DateRangeClick()
   {
-      this.showDates = !this.showDates;
+      //this.showDates = !this.showDates;
+      this.showDates = false;
       this.input.nativeElement.value = Util.formatDateTimeForDateRange(this.searchDate_From, this.searchDate_To);
       this.onUpdateDateRange.emit(Util.formatDateTimeForDateRange(this.searchDate_From, this.searchDate_To));
   }

@@ -1,5 +1,5 @@
-﻿import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
-import { MatDialog } from '@angular/material';
+﻿import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, Inject} from '@angular/core';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Util } from '../../Util';
 
@@ -8,9 +8,10 @@ import { Util } from '../../Util';
   templateUrl: './hall-date-time-picker.component.html',
   styleUrls: ['./hall-date-time-picker.component.scss']
 })
+
 export class HallDateTimePickerComponent implements OnInit {
 
-    @Input() showDates: boolean = false;
+    input_DateRange: string;
 
     min: Date = new Date('December 17, 1995 03:24:00');
     searchDate_From$ = new BehaviorSubject<Date>(null);
@@ -18,7 +19,7 @@ export class HallDateTimePickerComponent implements OnInit {
 
     @Output() onUpdateDateRange: EventEmitter<string> = new EventEmitter();
 
-    constructor() {
+    constructor(public dialog: MatDialog, public dialogRef: MatDialogRef<HallDateTimePickerComponent>) {
         this.setSearchDate_From(new Date());
         this.setSearchDate_To(new Date());
     }
@@ -49,5 +50,13 @@ export class HallDateTimePickerComponent implements OnInit {
       return Util.formatDateTimeForDateRange(this.searchDate_From, this.searchDate_To);
       //return this.searchDate_1st;
   }
-    
+
+  DateRangeClick() {      
+      this.onUpdateDateRange.emit(Util.formatDateTimeForDateRange(this.searchDate_From, this.searchDate_To));
+      this.input_DateRange = Util.formatDateTimeForDateRange(this.searchDate_From, this.searchDate_To);
+      //this.dialog.closeAll();
+      this.dialogRef.close({
+          'input_DateRange': this.input_DateRange
+      });
+  }
 }

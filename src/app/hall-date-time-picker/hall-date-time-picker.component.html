@@ -6,7 +6,7 @@
                        [hoverColor]="'#00b476'"
                        [fontSize]="'15px'"
                        [cursor]="'pointer'"
-                       (click)="DateRangeClick()">
+                       (click)="DateRangeClick()" (onUpdateDateRange)="input_DateRange">
     Search {{getDisplayRange}}
   </app-gradient-button>
 </div>
