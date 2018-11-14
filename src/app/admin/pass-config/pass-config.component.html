@@ -1,4 +1,5 @@
 <div class="pass-config-wrapper">
+<div style="display: flex; justify-content: center">
   <div class="pass-config-header">
       <div class="school-title">
           <img class="school-icon" src="../../../assets/School (Blue).png">
@@ -20,10 +21,16 @@
                   <div class="settings-divider"></div>
                   <div class="action-bottom">
                       <span class="settings-action-bottom-title">Default Pass Time</span>
-                      <span><input type="text" name="defaultTime" formControlName="defaultTime" class="settings-input"></span>
+                      <input type="text" name="defaultTime" formControlName="defaultTime" class="settings-input">
                   </div>
               </form>
           </div>
+      </div>
+  </div>
+</div>
+  <div class="pass-config-content">
+      <div class="pinnables">
+          <app-pinnable-collection [pinnables]="pinnables$ | async" (selectedEvent)="selectPinnable($event)"></app-pinnable-collection>
       </div>
   </div>
 </div>
@@ -44,16 +51,4 @@
 
 <div class="data-table">
   <app-data-table [width]="'100%'" [isCheckbox]="true" [data]="data" [height]="'400px'"></app-data-table>
-</div>
-
-<div class="travel-picker">
-  <app-traveltype-picker (onSelect)="choiceTravel($event)" [choices]="['unrestricted', 'restricted']" [width]="'220px'" [height]="'35px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-traveltype-picker>
-</div>
-<div class="overlay" style="display: flex">
-  <div class="color-picker">
-      <app-color-pallet-picker></app-color-pallet-picker>
-  </div>
-  <div class="icon-picker">
-    <app-icon-picker></app-icon-picker>
-  </div>
 </div>

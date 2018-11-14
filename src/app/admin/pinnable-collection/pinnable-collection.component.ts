@@ -1,5 +1,7 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter, ElementRef} from '@angular/core';
 import { Pinnable } from '../../models/Pinnable';
+import {MatDialog} from '@angular/material';
+import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 
 @Component({
   selector: 'app-pinnable-collection',
@@ -20,7 +22,7 @@ export class PinnableCollectionComponent implements OnInit {
     return (this.selectedPinnables.length > 0?'Bulk Edit Rooms':'New');
   }
 
-  constructor() { }
+  constructor(private dialog: MatDialog) { }
 
   ngOnInit() {
 
@@ -36,10 +38,29 @@ export class PinnableCollectionComponent implements OnInit {
       this.selectedPinnables.push(pinnable);
       //console.log('[Pinnable Collection]: ', 'Pinnable Added: ', this.selectedPinnables)
     }
+    this.selectedEvent.emit(this.selectedPinnables);
   }
 
-  submitSelection(){
-    console.log('[Pinnable Collection]: ', 'Submitted');
+  submitSelection(event) {
+    const target = new ElementRef(event.currentTarget);
+    const options = [];
+    if (this.selectedPinnables.length > 0) {
+        options.push(this.genOption('Bulk Edit Rooms', '#1F195E', 'edit_rooms'));
+        options.push(this.genOption('New Folder With Selected Rooms', '#1F195E', 'new_folder_with_rooms'));
+        options.push(this.genOption('Delete Rooms', 'red', 'delete_rooms'));
+    } else {
+        options.push(this.genOption('New Room', '#1F195E', 'create_room'));
+        options.push(this.genOption('New Folder', '#1F195E', 'create_folder'));
+    }
+      const consetDialog = this.dialog.open(ConsentMenuComponent, {
+          panelClass: 'consent-dialog-container',
+          backdropClass: 'invis-backdrop',
+          data: { header: '', trigger: target, options: options }
+      });
   }
+
+    genOption(display, color, action) {
+        return { display: display, color: color, action: action };
+    }
 
 }

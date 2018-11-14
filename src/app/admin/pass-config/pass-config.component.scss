@@ -1,6 +1,7 @@
 .pass-config-wrapper {
   display: flex;
   justify-content: center;
+  flex-direction: column;
 }
 
 :host {
@@ -121,6 +122,12 @@
 }
 .future-checkbox:checked + .future-label:before {
   right: 0px;
+}
+
+.pinnables {
+  width: 90%;
+  display: flex;
+  justify-content: center;
 }
 
 .new-room-button {

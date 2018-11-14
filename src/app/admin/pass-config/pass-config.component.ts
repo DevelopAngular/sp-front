@@ -1,7 +1,13 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
+import { FormControl, FormGroup } from '@angular/forms';
+
+import { Observable } from 'rxjs';
+
+import { HttpService } from '../../http-service';
+import { Pinnable } from '../../models/Pinnable';
 import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
-import {FormControl, FormGroup} from '@angular/forms';
+import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 
 @Component({
   selector: 'app-pass-congif',
@@ -12,6 +18,7 @@ export class PassConfigComponent implements OnInit {
 
     settingsForm: FormGroup;
     schoolName = 'Springfield High School';
+    pinnables$: Observable<Pinnable[]>;
 
     data = [
         {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H', surname: 'Petrov'},
@@ -28,10 +35,12 @@ export class PassConfigComponent implements OnInit {
 
   constructor(
       private dialog: MatDialog,
+      private httpService: HttpService
   ) { }
 
   ngOnInit() {
       this.buildForm();
+      this.pinnables$ = this.httpService.get('v1/pinnables');
   }
 
   buildForm() {
@@ -42,7 +51,6 @@ export class PassConfigComponent implements OnInit {
   }
 
   newRoom(ev) {
-      console.log(this.settingsForm.value);
     this.dialog.open(OverlayContainerComponent, {
       panelClass: 'form-dialog-container',
       width: '1000px',
@@ -51,8 +59,8 @@ export class PassConfigComponent implements OnInit {
     });
   }
 
-  choiceTravel(emit) {
-      console.log(emit);
+  selectPinnable(pinnables: Pinnable[]) {
+    console.log(pinnables);
   }
 
 }

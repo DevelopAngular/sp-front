@@ -12,6 +12,7 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgProgressModule } from '@ngx-progressbar/core';
 import { PinnableComponent } from '../pinnable/pinnable.component';
+import {TraveltypePickerComponent} from '../traveltype-picker/traveltype-picker.component';
 
 @NgModule({
   imports: [
@@ -32,7 +33,8 @@ import { PinnableComponent } from '../pinnable/pinnable.component';
     NavButtonComponent,
     DisplayCardComponent,
     DateTimePickerComponent,
-    PinnableComponent
+    PinnableComponent,
+    TraveltypePickerComponent,
   ],
   exports: [
     ReactiveFormsModule,
@@ -42,7 +44,8 @@ import { PinnableComponent } from '../pinnable/pinnable.component';
     NavbarComponent,
     DisplayCardComponent,
     DateTimePickerComponent,
-    PinnableComponent
+    PinnableComponent,
+    TraveltypePickerComponent,
   ],
 })
 export class SharedModule {

@@ -45,7 +45,6 @@ import { StudentPickerComponent } from '../student-picker/student-picker.compone
 import { StudentSearchComponent } from '../student-search/student-search.component';
 import { TeacherDropdownComponent } from '../teacher-dropdown/teacher-dropdown.component';
 import { TravelViewComponent } from '../travel-view/travel-view.component';
-import { TraveltypePickerComponent } from '../traveltype-picker/traveltype-picker.component';
 import { MainRoutingModule } from './main-routing.module';
 import { NavbarDataService } from './navbar-data.service';
 
@@ -94,7 +93,6 @@ import { NavbarDataService } from './navbar-data.service';
     TravelViewComponent,
     CardButtonComponent,
     PagerComponent,
-    TraveltypePickerComponent,
     LocationCellComponent,
     LocationPickerComponent,
     ContainerCardComponent,
