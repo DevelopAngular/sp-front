@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 
 @Component({
   selector: 'app-icon-picker',
@@ -6,6 +6,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./icon-picker.component.scss']
 })
 export class IconPickerComponent implements OnInit {
+
+  @Output() selectedEvent: EventEmitter<any> = new EventEmitter();
 
   selectedId: number = 5;
   icons = [
@@ -27,7 +29,7 @@ export class IconPickerComponent implements OnInit {
 
   changeIcon(icon) {
     this.selectedId = icon.id;
-    console.log('Icon', icon);
+    this.selectedEvent.emit(icon);
   }
 
 }

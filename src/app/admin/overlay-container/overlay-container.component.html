@@ -1,25 +1,38 @@
 <form [formGroup]="form">
   <div class="overlay-container">
-    <div class="overlay-header" [ngStyle]="{'background-image': getHeaderGradient}">
-      <div class="isEdit">
+    <div class="overlay-header" [ngStyle]="{'background-image': gradientColor}">
+      <div class="isEdit" *ngIf="false">
         <input type="checkbox" name="isEdit" formControlName="isEdit" class="isEdit-checkbox" id="isEdit" checked>
         <label class="isEdit-label" for="isEdit"></label>
       </div>
+      <img class="back-button" src="../../../assets/Back Button (White).png">
       <div class="title">{{ title }}</div>
-      <div class="button" (click)="onCancel()">Done</div>
+      <div *ngIf="false" class="button" (click)="onCancel()">Done</div>
     </div>
-
-    <div class="travel-picker">
-      <app-traveltype-picker (onSelect)="choiceTravel($event)" [choices]="['unrestricted', 'restricted']" [width]="'220px'" [height]="'35px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-traveltype-picker>
+  <div class="overlay-content">
+    <div class="left-content">
+      <div class="room-inputs">
+        <div class="room-name">
+          <app-input  [input_label]="input_lable + ' Name'" (onUpdate)="input_value1=$event"></app-input>
+        </div>
+        <div class="room-number">
+          <app-input  [input_label]="'Room Number'" [placeholder]="'Number'" (onUpdate)="input_value1=$event"></app-input>
+        </div>
+      </div>
+      <div class="travel-picker">
+        <app-traveltype-picker (onSelect)="getChoiceTravel($event)" [choices]="['unrestricted', 'restricted']" [width]="'220px'" [height]="'35px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-traveltype-picker>
+      </div>
     </div>
-    <div class="overlay" style="display: flex">
+    <div class="divider"></div>
+    <div class="right-content">
+      <div class="right-content-title">Appearance</div>
       <div class="color-picker">
-        <app-color-pallet-picker></app-color-pallet-picker>
+        <app-color-pallet-picker (selectedEvent)="getChoiceColor($event)"></app-color-pallet-picker>
       </div>
       <div class="icon-picker">
-        <app-icon-picker></app-icon-picker>
+        <app-icon-picker (selectedEvent)="getChoiceIcon($event)"></app-icon-picker>
       </div>
     </div>
-
+  </div>
   </div>
 </form>
