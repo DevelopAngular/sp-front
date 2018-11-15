@@ -18,6 +18,7 @@ export class AppInputComponent implements OnInit {
     @Input() input_value: string = "";
     @Input() Success: boolean;
     @Input() input_label: string;
+    @Input() placeholder: string = '';
     @Output() onUpdate = new EventEmitter<string>();
     @Input() IsRequired: boolean = false;
     @Input() IsDate: boolean = false;

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 
 @Component({
     selector: 'app-color-pallet-picker',
@@ -6,6 +6,8 @@ import { Component, OnInit } from '@angular/core';
     styleUrls: ['./color-pallet-picker.component.scss']
 })
 export class ColorPalletPickerComponent implements OnInit {
+
+  @Output() selectedEvent: EventEmitter<any> = new EventEmitter();
 
   selectedId: number = 6;
   colors = [
@@ -32,7 +34,7 @@ export class ColorPalletPickerComponent implements OnInit {
 
     changeColor(color) {
         this.selectedId = color.id;
-        console.log('Color', color);
+        this.selectedEvent.emit(color);
     }
 
 }
