@@ -3,6 +3,10 @@ import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component'
 import { MatDialogRef, MatDialog } from '@angular/material';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Util } from '../../../Util';
+import { Request } from '../../models/Request';
+import { User } from '../../models/User';
+import { DataService } from '../../data-service';
+import { HttpService } from '../../http-service';
 
 @Component({
   selector: 'app-hallmonitor',
@@ -13,6 +17,8 @@ export class HallmonitorComponent implements OnInit {
     input_value1: string;
     input_value2: string;
     input_DateRange: string;
+
+    selectedStudents: User[] = [];
 
     min: Date = new Date('December 17, 1995 03:24:00');
     calendarToggled = false;

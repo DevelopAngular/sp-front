@@ -1,12 +1,22 @@
 ﻿<div class="date-time-wrapper" >
-  From - To
-  <app-date-time-picker [_selectedMoment]="searchDate_From" [min]="min" [showTime]="true" (onUpdate)="setSearchDate_From($event)" [showTwoCalender]="true" (onUpdate_2ndCal)="setSearchDate_To($event)"></app-date-time-picker>
-  <br /><br />
-  <app-gradient-button [minHeight]="'40px'"
-                       [hoverColor]="'#00b476'"
-                       [fontSize]="'15px'"
-                       [cursor]="'pointer'"
-                       (click)="DateRangeClick()" (onUpdateDateRange)="input_DateRange">
-    Search {{getDisplayRange}}
-  </app-gradient-button>
+
+  <div class="divider" style="background-image: radial-gradient(circle at 98% 97%, rgb(3, 207, 49), rgb(0, 180, 118));">
+    <img class="back-button" [src]="'./assets/Back Button (Transparent).png' | resolveAsset" (click)="back()">
+    <div class="divider-header">
+      <img class="divider-icon" [src]="'./assets/Scheduled Pass (White).png' | resolveAsset">
+      <div class="divider-text">Select Date & Time </div>
+    </div>
+  </div>
+
+  <div class="datetime-area">
+    <app-date-time-picker [_selectedMoment]="searchDate_From" [min]="min" [showTime]="true" (onUpdate)="setSearchDate_From($event)" [showTwoCalender]="true" (onUpdate_2ndCal)="setSearchDate_To($event)"></app-date-time-picker>
+    <br /><br />
+    <app-gradient-button [minHeight]="'40px'"
+                         [hoverColor]="'#00b476'"
+                         [fontSize]="'15px'"
+                         [cursor]="'pointer'"
+                         (click)="DateRangeClick()" (onUpdateDateRange)="input_DateRange">
+      Search {{getDisplayRange}}
+    </app-gradient-button>
+  </div>
 </div>

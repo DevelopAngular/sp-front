@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -42,7 +42,7 @@ import { SettingsComponent } from '../settings/settings.component';
 import { SharedModule } from '../shared/shared.module';
 import { SignOutComponent } from '../sign-out/sign-out.component';
 import { StudentPickerComponent } from '../student-picker/student-picker.component';
-import { StudentSearchComponent } from '../student-search/student-search.component';
+//import { StudentSearchComponent } from '../student-search/student-search.component';
 import { TeacherDropdownComponent } from '../teacher-dropdown/teacher-dropdown.component';
 import { TravelViewComponent } from '../travel-view/travel-view.component';
 import { MainRoutingModule } from './main-routing.module';
@@ -82,7 +82,7 @@ import { NavbarDataService } from './navbar-data.service';
     InlinePassCardComponent,
     LocationTableComponent,
     FavoriteFormComponent,
-    StudentSearchComponent,
+    //StudentSearchComponent,
     StudentPickerComponent,
     ReportFormComponent,
     DurationPickerComponent,

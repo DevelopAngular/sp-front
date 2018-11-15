@@ -1,6 +1,18 @@
 ﻿import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { MatProgressBarModule, MatGridListModule } from '@angular/material';
+//import { MatProgressBarModule, MatGridListModule } from '@angular/material';
+import {
+MatProgressBarModule, MatGridListModule,
+    MatDialogModule,
+    MatIconModule,
+    MatSelectModule,
+    MatSliderModule,
+    MatSlideToggleModule,
+    MatChipsModule,
+} from '@angular/material';
+
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+
 import { GradientButtonComponent } from '../gradient-button/gradient-button.component';
 import { NavButtonComponent } from '../nav-button/nav-button.component';
 import { NavbarComponent } from '../navbar/navbar.component';
@@ -12,7 +24,9 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgProgressModule } from '@ngx-progressbar/core';
 import { PinnableComponent } from '../pinnable/pinnable.component';
-import {TraveltypePickerComponent} from '../traveltype-picker/traveltype-picker.component';
+import { TraveltypePickerComponent } from '../traveltype-picker/traveltype-picker.component';
+import { StudentSearchComponent } from '../student-search/student-search.component';
+
 
 @NgModule({
   imports: [
@@ -22,7 +36,13 @@ import {TraveltypePickerComponent} from '../traveltype-picker/traveltype-picker.
     OwlNativeDateTimeModule,
     FormsModule,
     ReactiveFormsModule,
-    MatGridListModule,
+      MatGridListModule,
+      MatDialogModule,
+      MatIconModule,
+      MatSelectModule,
+      MatSliderModule,
+      MatSlideToggleModule,
+      MatChipsModule,
     NgProgressModule.forRoot()
   ],
   declarations: [
@@ -34,7 +54,8 @@ import {TraveltypePickerComponent} from '../traveltype-picker/traveltype-picker.
     DisplayCardComponent,
     DateTimePickerComponent,
     PinnableComponent,
-    TraveltypePickerComponent,
+      TraveltypePickerComponent,
+      StudentSearchComponent
   ],
   exports: [
     ReactiveFormsModule,
@@ -45,7 +66,8 @@ import {TraveltypePickerComponent} from '../traveltype-picker/traveltype-picker.
     DisplayCardComponent,
     DateTimePickerComponent,
     PinnableComponent,
-    TraveltypePickerComponent,
+      TraveltypePickerComponent,
+      StudentSearchComponent,
   ],
 })
 export class SharedModule {

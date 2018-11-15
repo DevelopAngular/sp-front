@@ -59,4 +59,11 @@ export class HallDateTimePickerComponent implements OnInit {
           'input_DateRange': this.input_DateRange
       });
   }
+
+  back() {
+      
+          this.dialogRef.close();
+          return false;
+  }
+
 }
