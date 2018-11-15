@@ -75,10 +75,12 @@ export class AppInputComponent implements OnInit {
           });
           
           dialogRef.afterClosed().subscribe(data => {
+            if(data != undefined){
               console.log("Result :" + data['input_DateRange']);
               this.input_DateRange = data['input_DateRange'];
               this.input.nativeElement.value = this.input_DateRange;
               this.onUpdateDateRange.emit(this.input_DateRange);
+            }
           });
       }
   }
