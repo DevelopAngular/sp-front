@@ -24,7 +24,7 @@ export class TogglePickerComponent implements OnInit {
     choice1_values: string[] = [];
     choice2_values: string[] = [];
     choice3_values: string[] = [];
-    
+
   constructor() { }
 
   ngOnInit() {
@@ -32,7 +32,11 @@ export class TogglePickerComponent implements OnInit {
               this.choice1 = this.choices[0];
               this.choice2 = this.choices[1];
               this.choice3 = this.choices[2];
-      } 
+      }
+      if (this.choices.length === 2) {
+          this.choice1 = this.choices[0];
+          this.choice2 = this.choices[1];
+      }
       this.selectedChoice = this.choice1;
       this.onSelect.emit(this.travelValue(this.selectedChoice));
   }

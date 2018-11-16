@@ -13,14 +13,39 @@
     <div class="left-content">
       <div class="room-inputs">
         <div class="room-name">
-          <app-input  [input_label]="input_lable + ' Name'" (onUpdate)="input_value1=$event"></app-input>
+          <app-input [input_label]="input_lable + ' Name'" (onUpdate)="input_value1=$event"></app-input>
         </div>
-        <div class="room-number">
-          <app-input  [input_label]="'Room Number'" [placeholder]="'Number'" (onUpdate)="input_value1=$event"></app-input>
+        <div class="room-number" *ngIf="overlayType === 'newRoom'">
+          <app-input [input_label]="'Room Number'" [placeholder]="'Number'" (onUpdate)="input_value1=$event"></app-input>
         </div>
       </div>
-      <div class="travel-picker">
-        <app-traveltype-picker (onSelect)="getChoiceTravel($event)" [choices]="['unrestricted', 'restricted']" [width]="'220px'" [height]="'35px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-traveltype-picker>
+      <div class="teacher-search" *ngIf="overlayType === 'newRoom'">
+        <app-input [input_label]="'Teachers in Room'" (onUpdate)="input_value1=$event"></app-input>
+      </div>
+      <div style="display: flex" *ngIf="overlayType === 'newRoom'">
+        <div class="travel-picker">
+          <div class="toggle-label">Travel Type</div>
+          <app-toggle-picker (onSelect)="getChoiceToggle($event)" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+        </div>
+        <div class="time-limit">
+          <app-input [input_label]="'Time Limit'" [placeholder]="'minutes'" (onUpdate)="input_value1=$event"></app-input>
+        </div>
+      </div>
+      <div class="restriction-settings" *ngIf="overlayType === 'newRoom'">
+        <div class="restriction-picker-1">
+          <div class="toggle-label">Restriction For Now</div>
+          <app-toggle-picker (onSelect)="getChoiceToggle($event)" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+        </div>
+        <div class="restriction-picker-2">
+          <div class="toggle-label">Restriction For Future</div>
+          <app-toggle-picker (onSelect)="getChoiceToggle($event)" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+        </div>
+      </div>
+      <div class="rooms-in-folder" *ngIf="overlayType === 'newFolder'">
+        <div class="rooms-in-folder-title">Rooms in Folder</div>
+        <div class="rooms-in-folder-content">
+          <div class="not-rooms-in-folder">To add rooms, enter a folder name and select an appearance</div>
+        </div>
       </div>
     </div>
     <div class="divider"></div>

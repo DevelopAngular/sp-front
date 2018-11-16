@@ -85,8 +85,8 @@ export class PassConfigComponent implements OnInit {
   dialogContainer(data, component) {
       this.dialog.open(component, {
           panelClass: 'form-dialog-container',
-          width: '65%',
-          height: '700px',
+          width: '1018px',
+          height: '600px',
           data: data
       });
   }
