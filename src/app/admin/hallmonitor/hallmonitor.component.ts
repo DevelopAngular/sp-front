@@ -8,6 +8,8 @@ import { User } from '../../models/User';
 import { DataService } from '../../data-service';
 import { HttpService } from '../../http-service';
 
+import { Pinnable } from '../../models/Pinnable';
+
 @Component({
   selector: 'app-hallmonitor',
   templateUrl: './hallmonitor.component.html',
@@ -17,6 +19,8 @@ export class HallmonitorComponent implements OnInit {
     input_value1: string;
     input_value2: string;
     input_DateRange: string;
+
+    rooms: Pinnable[];
 
     selectedStudents: User[] = [];
 
@@ -148,6 +152,10 @@ export class HallmonitorComponent implements OnInit {
           return true;
       }
       return false;
+  }
+
+  getChoiceValue(emit) {
+      console.log(emit);
   }
    
 }

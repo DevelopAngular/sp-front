@@ -28,6 +28,7 @@ import { PinnableCollectionComponent } from './pinnable-collection/pinnable-coll
 import { ColorPalletPickerComponent } from './color-pallet-picker/color-pallet-picker.component';
 import { IconPickerComponent } from './icon-picker/icon-picker.component';
 import { OverlayContainerComponent } from './overlay-container/overlay-container.component';
+import { TogglePickerComponent } from './toggle-picker/toggle-picker.component';
 
 
 @NgModule({
@@ -61,7 +62,9 @@ import { OverlayContainerComponent } from './overlay-container/overlay-container
 
         SupportComponent,
 
-        IconPickerComponent
+        IconPickerComponent,
+
+        TogglePickerComponent
     ],
     entryComponents: [
         AppInputComponent,
