@@ -11,7 +11,7 @@
       [style.width]="'120px'"
       [cursor]="'pointer'"
       [fontSize]="'12px'"
-      (buttonClick)="submitSelection()"
+      (buttonClick)="buttonClicked($event)"
       [leftIcon]="(selectedPinnables.length > 0?null:'./assets/Create (White).png')"
       [leftImageWidth]="'10px'"
       [leftImageHeight]="'10px'"

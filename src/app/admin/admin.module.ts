@@ -24,7 +24,8 @@ import { PassConfigComponent } from './pass-config/pass-config.component';
 import { DataTableComponent } from './data-table/data-table.component';;
 import { FeedbackComponent } from './feedback/feedback.component';
 import { SupportComponent } from './support/support.component';
-import { PinnableCollectionComponent } from './pinnable-collection/pinnable-collection.component'
+import { PinnableCollectionComponent } from './pinnable-collection/pinnable-collection.component';
+import { BackButtonComponent } from './back-button/back-button.component'
 
 @NgModule({
   imports: [
@@ -50,9 +51,9 @@ import { PinnableCollectionComponent } from './pinnable-collection/pinnable-coll
     DataTableComponent,
     FeedbackComponent,
     SupportComponent,
-    PinnableCollectionComponent
-  ],
-  providers: [
+    PinnableCollectionComponent,
+    BackButtonComponent
+  ], providers: [
       //NavbarDataService
   ],
 })
