@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TogglePickerComponent } from './toggle-picker.component';
+import { BackButtonComponent } from './back-button.component';
 
-describe('TogglePickerComponent', () => {
-  let component: TogglePickerComponent;
-  let fixture: ComponentFixture<TogglePickerComponent>;
+describe('BackButtonComponent', () => {
+  let component: BackButtonComponent;
+  let fixture: ComponentFixture<BackButtonComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TogglePickerComponent ]
+      declarations: [ BackButtonComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TogglePickerComponent);
+    fixture = TestBed.createComponent(BackButtonComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

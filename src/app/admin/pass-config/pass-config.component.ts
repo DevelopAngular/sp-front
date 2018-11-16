@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { FormControl, FormGroup } from '@angular/forms';
 
@@ -7,8 +7,6 @@ import { Observable } from 'rxjs';
 import { HttpService } from '../../http-service';
 import { Pinnable } from '../../models/Pinnable';
 import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
-import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
-import {filter, map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-pass-congif',
@@ -52,55 +50,32 @@ export class PassConfigComponent implements OnInit {
       });
   }
 
-  genOption(display, color, action) {
-     return { display: display, color: color, action: action };
-  }
-
-  selectPinnable({data, event}) {
-      this.selectedPinnables = data;
-      const target = new ElementRef(event.currentTarget);
-      const options = [];
-      if (data.length > 0) {
-          options.push(this.genOption('Bulk Edit Rooms', '#1F195E', 'edit_rooms'));
-          options.push(this.genOption('New Folder With Selected Rooms', '#1F195E', 'new_folder_with_rooms'));
-          options.push(this.genOption('Delete Rooms', 'red', 'delete_rooms'));
-      } else {
-          options.push(this.genOption('New Room', '#1F195E', 'new_room'));
-          options.push(this.genOption('New Folder', '#1F195E', 'new_folder'));
-      }
-      const consetDialog = this.dialog.open(ConsentMenuComponent, {
-          panelClass: 'consent-dialog-container',
-          backdropClass: 'invis-backdrop',
-          data: { header: '', trigger: target, options: options }
-      });
-
-      consetDialog.afterClosed().pipe(filter(response => !!response))
-          .subscribe(action => {
-            this.buildData(action);
-          });
+  selectPinnable({action, selection}) {
+      this.selectedPinnables = selection;
+      this.buildData(action);
   }
 
   buildData(action) {
       let data;
       let component = OverlayContainerComponent;
       switch (action) {
-          case 'new_room': {
+          case 'newRoom': {
               data = { type: action };
               break;
           }
-          case 'new_folder': {
+          case 'newFolder': {
               data = { type: action };
               break;
           }
-          case 'edit_rooms': {
+          case 'edit': {
               data = { type: action, rooms: this.selectedPinnables };
               break;
           }
-          case 'new_folder_with_rooms': {
+          case 'newFolderWithSelections': {
               data = { type: action, rooms: this.selectedPinnables };
               break;
           }
-          case 'delete_rooms': {
+          case 'delete': {
               return console.log('delete Method');
           }
       }

@@ -28,13 +28,13 @@ export class OverlayContainerComponent implements OnInit {
     let text;
     let input_lable;
     switch (this.overlayType) {
-        case 'new_room': {
+        case 'newRoom': {
           colors = '#03CF31,#00B476';
           text = 'New Room';
           input_lable = 'Room';
           break;
         }
-        case 'new_folder': {
+        case 'newFolder': {
           colors = '#03CF31,#00B476';
           text = 'New Folder';
           input_lable = 'Folder';

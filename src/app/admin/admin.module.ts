@@ -25,10 +25,10 @@ import { DataTableComponent } from './data-table/data-table.component';
 import { FeedbackComponent } from './feedback/feedback.component';
 import { SupportComponent } from './support/support.component';
 import { PinnableCollectionComponent } from './pinnable-collection/pinnable-collection.component';
+import { BackButtonComponent } from './back-button/back-button.component';
 import { ColorPalletPickerComponent } from './color-pallet-picker/color-pallet-picker.component';
 import { IconPickerComponent } from './icon-picker/icon-picker.component';
 import { OverlayContainerComponent } from './overlay-container/overlay-container.component';
-import { TogglePickerComponent } from './toggle-picker/toggle-picker.component';
 
 
 @NgModule({
@@ -57,14 +57,12 @@ import { TogglePickerComponent } from './toggle-picker/toggle-picker.component';
         ColorPalletPickerComponent,
         PinnableCollectionComponent,
         DataTableComponent,
-
+        BackButtonComponent,
         FeedbackComponent,
 
         SupportComponent,
 
-        IconPickerComponent,
-
-        TogglePickerComponent
+        IconPickerComponent
     ],
     entryComponents: [
         AppInputComponent,

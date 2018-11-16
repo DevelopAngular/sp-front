@@ -43,7 +43,6 @@ export class RequestCardComponent implements OnInit {
       public dataService: DataService,
       private _zone: NgZone,
       private loadingService: LoadingService,
-      private liveDataService: LiveDataService,
   ) {}
 
   ngOnInit() {

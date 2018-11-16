@@ -30,7 +30,7 @@
 </div>
   <div class="pass-config-content">
       <div class="pinnables">
-          <app-pinnable-collection [pinnables]="pinnables$ | async" (selectedEvent)="selectPinnable($event)"></app-pinnable-collection>
+          <app-pinnable-collection [pinnables]="pinnables$ | async" (roomEvent)="selectPinnable($event)"></app-pinnable-collection>
       </div>
   </div>
 </div>
@@ -44,7 +44,7 @@
                        [leftIcon]="'./assets/Create (White).png'"
                        [leftImageWidth]="'25px'"
                        [leftImageHeight]="'25px'"
-                       (click)="newRoom($event)">
+                       >
     New Room
   </app-gradient-button>
 </div>

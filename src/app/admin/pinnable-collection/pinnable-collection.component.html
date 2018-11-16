@@ -7,11 +7,11 @@
       {{(selectedPinnables.length > 0?(selectedPinnables.length +' Rooms Selected'):'Bulk Select')}}
     </div>
     <app-gradient-button
-      [minHeight]="'30px'"
+      [minHeight]="'25px'"
       [style.width]="'120px'"
       [cursor]="'pointer'"
       [fontSize]="'12px'"
-      (buttonClick)="submitSelection($event)"
+      (buttonClick)="buttonClicked($event)"
       [leftIcon]="(selectedPinnables.length > 0?null:'./assets/Create (White).png')"
       [leftImageWidth]="'10px'"
       [leftImageHeight]="'10px'"
