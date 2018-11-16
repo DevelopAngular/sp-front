@@ -20,10 +20,6 @@ export class TogglePickerComponent implements OnInit {
     choice3: string;
     selectedChoice: string;
     bottomRadius: boolean = true;
-
-    choice1_values: string[] = [];
-    choice2_values: string[] = [];
-    choice3_values: string[] = [];
     
   constructor() { }
 
@@ -44,14 +40,7 @@ export class TogglePickerComponent implements OnInit {
           this.bottomRadius = false;
       }
       this.selectedChoice = travelType;
-      if (this.selectedChoice === this.choices[0]) {
-          this.choice1_values.fill('0');
-      } else if (this.selectedChoice === this.choices[1]) {
-          this.choice2_values.fill('0');
-      } else {
-          this.choice3_values.fill('0');
-      }
-
+     
       this.onSelect.emit(this.travelValue(travelType));
   }
 
@@ -80,15 +69,6 @@ export class TogglePickerComponent implements OnInit {
       }
       // return this.selectedChoice === choice ? '#FFFFFF' : this.altColor;
   }
-
-  displayValues() {
-      if (this.selectedChoice === this.choices[0]) {
-
-      } else if (this.selectedChoice === this.choices[1]){
-
-      } else {
-
-      }
-  }
+    
 
 }

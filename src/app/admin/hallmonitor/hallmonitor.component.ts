@@ -20,6 +20,9 @@ export class HallmonitorComponent implements OnInit {
     input_value2: string;
     input_DateRange: string;
 
+    choices = ['Origin', 'Destination', 'Both'];
+    selectedtoggleValue: string = this.choices[0];
+
     rooms: Pinnable[];
 
     selectedStudents: User[] = [];
@@ -155,7 +158,8 @@ export class HallmonitorComponent implements OnInit {
   }
 
   getChoiceValue(emit) {
+      this.selectedtoggleValue = emit;
       console.log(emit);
   }
-   
+    
 }

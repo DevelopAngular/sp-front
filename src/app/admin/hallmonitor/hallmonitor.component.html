@@ -48,19 +48,19 @@
       Searching by Date & Time : {{input_DateRange}}
 
       <app-student-search [style.width]="'75%'" (onUpdate)="selectedStudents=$event" [selectedStudents]="selectedStudents"></app-student-search>
-      <app-gradient-button *ngIf="selectedStudents && selectedStudents.length > 0"
+      <!--<app-gradient-button *ngIf="selectedStudents && selectedStudents.length > 0"
                            [gradient]="'#03CF31,#00B476'"
                            [hoverColor]="'#00B476'"
                            [minWidth]="'90px'"
                            [minHeight]="'30px'"
-                           [fontSize]="'14px'"
-                           [disabled]="selectedStudents.length<1"
-                           (buttonClick)="setFormState(((forLater&&isDeclinable)?'to-pinnables':'from'))"
-                           [style.width]="'90px'">
+                           [fontSize]="'14px'"                           
+                           [disabled]="selectedStudents.length<1"                           
+                           [style.width]="'90px'"> 
         Done ({{ selectedStudents.length }})
-      </app-gradient-button>
-      
-      <app-toggle-picker (onSelect)="getChoiceValue($event)" [choices]="['Origin', 'Destination' , 'Both']" [width]="'220px'" [height]="'35px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker> 
+      </app-gradient-button>--><!--(buttonClick)="setFormState(((forLater&&isDeclinable)?'to-pinnables':'from'))"-->
+       {{selectedtoggleValue}}
+      <!--<app-location-table *ngIf="type==='location'" (onSelect)="closeDialog($event)" [type]="'location'" [placeholder]="'Search rooms'" (onSelected)="closeDialog($event)"></app-location-table>-->
+      <app-toggle-picker (onSelect)="getChoiceValue($event)" [choices]="choices" [width]="'220px'" [height]="'35px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker> 
 
       <br />
       <br />
