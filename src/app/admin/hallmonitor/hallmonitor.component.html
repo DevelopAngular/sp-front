@@ -60,7 +60,13 @@
         Done ({{ selectedStudents.length }})
       </app-gradient-button>
       
+      <app-toggle-picker (onSelect)="getChoiceValue($event)" [choices]="['Origin', 'Destination' , 'Both']" [width]="'220px'" [height]="'35px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker> 
+
+      <br />
+      <br />
+
     </div>
+
     <div class="main-page-right">
       <app-display-card [title]="'Reported Students'" [hasDivider]="false" [fontSize]="'15pt'" [icon]="'./assets/Report (Red).png'" [subtitle_fontSize]="'10pt'" [subtitle]="'5 Reported Student Today'" [righttext]="'ab'" [righticon]="'./assets/Hallway (Blue).png'">
         <div style="padding-left:16px;padding-top:16px;">
