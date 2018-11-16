@@ -7,7 +7,7 @@
        [style.background-color]="getBackgroundColor(choice1)" style="border-right: 1px solid">
     {{choice1}}
   </div>
-  <div *ngIf="choice2" [style.width]="'50%'" class="option"  (click)="updateType(choice2)"
+  <div *ngIf="choice2" [style.width]="'50%'" class="option bordered"  (click)="updateType(choice2)"
        [style.color]="getFontColor(choice2)"
        [style.background-color]="getBackgroundColor(choice2)" style="border-right: 1px solid">
     {{choice2}}

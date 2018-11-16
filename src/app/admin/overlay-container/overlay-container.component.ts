@@ -58,6 +58,10 @@ export class OverlayContainerComponent implements OnInit {
     console.log(emit);
   }
 
+  getChoiceToggle(emit) {
+    console.log(emit);
+  }
+
   ngOnInit() {
       this.buildForm();
       this.rooms = this.dialogData['rooms'];

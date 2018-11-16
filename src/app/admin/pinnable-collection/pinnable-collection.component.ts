@@ -66,7 +66,7 @@ export class PinnableCollectionComponent implements OnInit {
         this.buttonMenuOpen = true;
       });
 
-      cancelDialog.afterClosed().pipe(filter(res => !!res)).subscribe(action =>{
+      cancelDialog.afterClosed().subscribe(action =>{
         this.buttonMenuOpen = false;
         if(action){
           console.log('[Pinnable Collection, Dialog]:', action, ' --- ', this.selectedPinnables);
