@@ -26,6 +26,7 @@ import { NgProgressModule } from '@ngx-progressbar/core';
 import { PinnableComponent } from '../pinnable/pinnable.component';
 import { TraveltypePickerComponent } from '../traveltype-picker/traveltype-picker.component';
 import { StudentSearchComponent } from '../student-search/student-search.component';
+import { DisplayReportCellComponent } from '../display-report-cell/display-report-cell.component';
 
 
 @NgModule({
@@ -55,7 +56,8 @@ import { StudentSearchComponent } from '../student-search/student-search.compone
     DateTimePickerComponent,
     PinnableComponent,
       TraveltypePickerComponent,
-      StudentSearchComponent
+      StudentSearchComponent,
+      DisplayReportCellComponent,
   ],
   exports: [
     ReactiveFormsModule,
@@ -68,6 +70,7 @@ import { StudentSearchComponent } from '../student-search/student-search.compone
     PinnableComponent,
       TraveltypePickerComponent,
       StudentSearchComponent,
+      DisplayReportCellComponent,
   ],
 })
 export class SharedModule {

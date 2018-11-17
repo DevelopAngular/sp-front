@@ -5,6 +5,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Util } from '../../../Util';
 import { Request } from '../../models/Request';
 import { User } from '../../models/User';
+import { Report } from '../../models/Report';
 import { DataService } from '../../data-service';
 import { HttpService } from '../../http-service';
 
@@ -26,6 +27,7 @@ export class HallmonitorComponent implements OnInit {
     rooms: Pinnable[];
 
     selectedStudents: User[] = [];
+    studentreport: Report[] = [];
 
     min: Date = new Date('December 17, 1995 03:24:00');
     calendarToggled = false;
@@ -38,8 +40,8 @@ export class HallmonitorComponent implements OnInit {
     constructor(
         public dialog: MatDialog
         
-    ) { 
-      
+    ) {         
+        //this.studentreport[0]['id'] = '1';
     }
 
   ngOnInit() {

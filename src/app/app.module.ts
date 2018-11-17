@@ -1,4 +1,4 @@
-import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+﻿import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatDialogModule, MatProgressSpinnerModule, MatSliderModule, MatSlideToggleModule} from '@angular/material';
@@ -26,6 +26,7 @@ import { UserService } from './user.service';
 import { LoginComponent } from './login/login.component';
 import { ProgressInterceptor } from './progress-interceptor';
 import { HallDateTimePickerComponent } from './hall-date-time-picker/hall-date-time-picker.component';
+
 
 const appRoutes: Routes = [
   {path: '', redirectTo: 'main/passes', pathMatch: 'full'},
