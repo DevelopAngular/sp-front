@@ -1,5 +1,24 @@
 <div class="search-wrapper">
-  <app-pinnable [forCollection]="true" [pinnable]="testPinnable1"></app-pinnable>
-  <app-pinnable-collection [pinnables]="testPinnables"></app-pinnable-collection>
-  <app-back-button></app-back-button>
+  <div class="input-header">
+      <app-input  [input_label]="'by Student Name'" ></app-input>
+      <app-input  [input_label]="'by Date & Time'" ></app-input>
+      <app-input  [input_label]="'by Room Name'" ></app-input>
+  </div>
+  <div class="default-message" *ngIf="!hasSearched">
+    <div class="title-text">
+      <img class="icon" [src]="'./assets/Search (Blue).png' | resolveAsset">
+      <div>Search</div>
+    </div>
+    <div class="small-text">
+      This is an ultimate search query of everything going on in the school. <br>
+      <br>
+      You can search for a single item or multiple items within search search field <br>
+      as well as search more than one field at a time to filter your results. <br>
+      <br>
+      In the end, you can generate PDF reports.
+    </div>
+  </div>
+  <div class="button-footer">
+
+  </div>
 </div>
