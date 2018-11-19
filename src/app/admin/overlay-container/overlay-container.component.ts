@@ -13,10 +13,24 @@ export class OverlayContainerComponent implements OnInit {
 
   rooms: Pinnable[];
   overlayType: string;
-  title: string;
-  input_lable: string;
+  roomName: string;
+  roomNumber: string;
+  timeLimit: string;
+  travelType: string;
+  nowRestriction: string;
+  futureRestriction: string;
+  colorPicker: string;
+  iconPicker: string;
+  input_label: string;
   gradientColor: string;
+
   form: FormGroup;
+
+  buttonsInFolder = [
+      { title: 'New Room', icon: './assets/Create (White).png', location: 'newRoom'},
+      { title: 'Import Rooms', icon: null, location: 'importRooms'},
+      { title: 'Add Existing', icon: null, location: 'addExisting'}
+  ];
 
   constructor(
       private dialogRef: MatDialogRef<OverlayContainerComponent>,
@@ -26,40 +40,24 @@ export class OverlayContainerComponent implements OnInit {
   getHeaderData() {
     let colors;
     let text;
-    let input_lable;
+    let input_label;
     switch (this.overlayType) {
         case 'newRoom': {
           colors = '#03CF31,#00B476';
           text = 'New Room';
-          input_lable = 'Room';
+          input_label = 'Room';
           break;
         }
         case 'newFolder': {
           colors = '#03CF31,#00B476';
           text = 'New Folder';
-          input_lable = 'Folder';
+          input_label = 'Folder';
           break;
         }
     }
     this.gradientColor = 'radial-gradient(circle at 98% 97%,' + colors + ')';
-    this.input_lable = input_lable;
-    this.title = text;
-  }
-
-  getChoiceTravel(emit) {
-    console.log(emit);
-  }
-
-  getChoiceColor(emit) {
-    console.log(emit);
-  }
-
-  getChoiceIcon(emit) {
-    console.log(emit);
-  }
-
-  getChoiceToggle(emit) {
-    console.log(emit);
+    this.input_label = input_label;
+    this.roomName = text;
   }
 
   ngOnInit() {
@@ -67,7 +65,6 @@ export class OverlayContainerComponent implements OnInit {
       this.rooms = this.dialogData['rooms'];
       this.overlayType = this.dialogData['type'];
       this.getHeaderData();
-      console.log('!!!!', this.rooms);
   }
 
   buildForm() {
@@ -76,14 +73,35 @@ export class OverlayContainerComponent implements OnInit {
     });
   }
 
+  setLocation(location) {
+    switch (location) {
+        case 'newRoom': {
+          return this.overlayType = 'newRoom';
+        }
+        case 'newFolder': {
+          return this.overlayType = 'newFolder';
+        }
+        case 'importRooms': {
+          return this.overlayType = 'importRooms';
+        }
+        case 'addExisting': {
+          return this.overlayType = 'addExisting';
+        }
+    }
+  }
+
+  back() {
+    this.dialogRef.close();
+  }
+
   onCancel() {
     this.dialogRef.close();
   }
 
-
-
-
-
-
-
+  roomNameValidator() {
+    if (!this.roomName || this.roomName === '' || this.roomName === 'New Room' || this.roomName === 'New Folder') {
+      return true;
+    }
+    return false;
+  }
 }
