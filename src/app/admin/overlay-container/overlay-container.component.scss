@@ -190,4 +190,43 @@
     margin: 40px 0 0 66px;
   }
 
+  .content-buttons-in-folder {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+
+    .button-in-folder {
+      margin-left: 15px;
+    }
+  }
+
+}
+
+.add-existing-content {
+  display: flex;
+  justify-content: center;
+
+  .existing-room-header {
+    display: flex;
+    justify-content: space-between;
+    box-shadow: 0 0 2px darkgrey;
+    width: 594px;
+    align-items: center;
+    height: 100px;
+    margin-top: 20px;
+    border-radius: 12px;
+
+    .header-title {
+      margin-right: 157px;
+      font-weight: bolder;
+      font-size: 19px;
+      color: gray;
+    }
+    .back-button {
+      width: 40px;
+      height: 40px;
+      margin-left: 20px;
+      cursor: pointer;
+    }
+  }
 }

@@ -5,18 +5,18 @@
         <input type="checkbox" name="isEdit" formControlName="isEdit" class="isEdit-checkbox" id="isEdit" checked>
         <label class="isEdit-label" for="isEdit"></label>
       </div>
-      <img class="back-button" src="../../../assets/Back Button (White).png">
-      <div class="title">{{ title }}</div>
+      <img class="back-button" *ngIf="overlayType !== 'addExisting'" src="../../../assets/Back Button (White).png" (click)="back()">
+      <div class="title">{{ roomName }}</div>
       <div *ngIf="false" class="button" (click)="onCancel()">Done</div>
     </div>
   <div class="overlay-content">
     <div class="left-content">
-      <div class="room-inputs">
+      <div class="room-inputs" *ngIf="overlayType === 'newRoom' || overlayType === 'newFolder'">
         <div class="room-name">
-          <app-input [input_label]="input_lable + ' Name'" (onUpdate)="input_value1=$event"></app-input>
+          <app-input [input_label]="input_label + ' Name'" [Success]="!roomNameValidator()" (onUpdate)="roomName = $event === '' ? 'New ' + input_label : $event;"></app-input>
         </div>
         <div class="room-number" *ngIf="overlayType === 'newRoom'">
-          <app-input [input_label]="'Room Number'" [placeholder]="'Number'" (onUpdate)="input_value1=$event"></app-input>
+          <app-input [input_label]="'Room Number'" [placeholder]="'Number'" (onUpdate)="roomNumber=$event"></app-input>
         </div>
       </div>
       <div class="teacher-search" *ngIf="overlayType === 'newRoom'">
@@ -25,37 +25,60 @@
       <div style="display: flex" *ngIf="overlayType === 'newRoom'">
         <div class="travel-picker">
           <div class="toggle-label">Travel Type</div>
-          <app-toggle-picker (onSelect)="getChoiceToggle($event)" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+          <app-toggle-picker (onSelect)="travelType=$event" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
         <div class="time-limit">
-          <app-input [input_label]="'Time Limit'" [placeholder]="'minutes'" (onUpdate)="input_value1=$event"></app-input>
+          <app-input [input_label]="'Time Limit'" [placeholder]="'minutes'" (onUpdate)="timeLimit=$event"></app-input>
         </div>
       </div>
       <div class="restriction-settings" *ngIf="overlayType === 'newRoom'">
         <div class="restriction-picker-1">
           <div class="toggle-label">Restriction For Now</div>
-          <app-toggle-picker (onSelect)="getChoiceToggle($event)" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+          <app-toggle-picker (onSelect)="nowRestriction=$event" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
         <div class="restriction-picker-2">
           <div class="toggle-label">Restriction For Future</div>
-          <app-toggle-picker (onSelect)="getChoiceToggle($event)" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+          <app-toggle-picker (onSelect)="futureRestriction=$event" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
       </div>
       <div class="rooms-in-folder" *ngIf="overlayType === 'newFolder'">
         <div class="rooms-in-folder-title">Rooms in Folder</div>
         <div class="rooms-in-folder-content">
-          <div class="not-rooms-in-folder">To add rooms, enter a folder name and select an appearance</div>
+          <div class="not-rooms-in-folder" *ngIf="roomNameValidator()">To add rooms, enter a folder name and select an appearance</div>
+          <div class="content-buttons-in-folder" *ngIf="!roomNameValidator()">
+            <div class="button-in-folder" *ngFor="let button of buttonsInFolder">
+              <app-gradient-button
+                      [minHeight]="'35px'"
+                      [style.width]="'120px'"
+                      [cursor]="'pointer'"
+                      [fontSize]="'12px'"
+                      (buttonClick)="setLocation(button.location)"
+                      [leftIcon]="button.icon"
+                      [leftImageWidth]="'10px'"
+                      [leftImageHeight]="'10px'"
+              >
+                {{ button.title }}</app-gradient-button>
+            </div>
+          </div>
         </div>
       </div>
+
+      <div class="add-existing-content" *ngIf="overlayType === 'addExisting'">
+        <div class="existing-room-header">
+          <img class="back-button" (click)="setLocation('newFolder')" src="../../../assets/Back Button (Grey).png">
+          <div class="header-title">Add Existing Room to Folder</div>
+        </div>
+      </div>
+
     </div>
     <div class="divider"></div>
     <div class="right-content">
       <div class="right-content-title">Appearance</div>
       <div class="color-picker">
-        <app-color-pallet-picker (selectedEvent)="getChoiceColor($event)"></app-color-pallet-picker>
+        <app-color-pallet-picker (selectedEvent)="colorPicker=$event.color"></app-color-pallet-picker>
       </div>
       <div class="icon-picker">
-        <app-icon-picker (selectedEvent)="getChoiceIcon($event)"></app-icon-picker>
+        <app-icon-picker (selectedEvent)="iconPicker=$event"></app-icon-picker>
       </div>
     </div>
   </div>
