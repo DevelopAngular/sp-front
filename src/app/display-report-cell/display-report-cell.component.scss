@@ -102,8 +102,18 @@
 .righticon {
   padding: 0 16px 20px 0;
   margin-right: 0;
+  float: right;
 }
 
 .subtitlecls {
   padding-left: 16px;
+}
+.float-left {
+  float:left;
+}
+.float-right {
+  float: right;
+}
+.clear {
+  clear:both;
 }

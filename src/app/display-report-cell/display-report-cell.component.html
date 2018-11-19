@@ -7,16 +7,20 @@
       </div>
     </div>
 
-    <div (click)="printReport()"> <img *ngIf="!!righticon" class="display-card-header-icon righticon" [src]="righticon | resolveAsset"></div>
-    <span class="display-card-header-icon righticon">{{created}}</span>
+    <span class="righticon">{{created}}</span>
 
   </div>
   <div [style.background-color]="(hasDivider?'#B5B7BA':'#FFF')" class="display-card-divider"></div>
+  <div  class="float-left">
+    <div (click)="printReport()"> <img *ngIf="!!righticon" class="display-card-header-icon righticon" [src]="righticon | resolveAsset"></div>
   <div [style.font-size]="subtitle_fontSize" class="subtitlecls">
-    Reported by :{{issuer}}
+    Reported by {{issuer}}
   </div>
   <div [style.font-size]="subtitle_fontSize" class="subtitlecls">
-    Message : {{message}}
+     {{message}}
   </div>
-  <ng-content [style.left]="'35px'" [style.position]="'relative'"></ng-content>
+    
+  <ng-content [style.left]="'35px'" [style.position]="'relative'"></ng-content>    
+    </div>   
+  <div class="clear"></div>
 </div>
