@@ -25,7 +25,6 @@ import { AdminModule } from './admin/admin.module';
 import { UserService } from './user.service';
 import { LoginComponent } from './login/login.component';
 import {ProgressInterceptor} from './progress-interceptor';
-import {OverlayContainerComponent} from './admin/overlay-container/overlay-container.component';
 import { HallDateTimePickerComponent } from './hall-date-time-picker/hall-date-time-picker.component';
 
 const appRoutes: Routes = [
@@ -52,13 +51,11 @@ const appRoutes: Routes = [
     OptionsComponent,
     IntroComponent,
     LoginComponent,
-    OverlayContainerComponent,
     HallDateTimePickerComponent,
   ],
   entryComponents: [
     ConsentMenuComponent,
     OptionsComponent,
-    OverlayContainerComponent,
     HallDateTimePickerComponent,
   ],
   imports: [
