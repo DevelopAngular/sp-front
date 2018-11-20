@@ -1,19 +1,6 @@
-﻿  <div class="InputWrapper">
-    <label [ngClass]="{clserrorLabel: Success===false}">{{input_label}}</label>
-    <input #appInput type={{input_type}} class="{{input_class}}" value="{{input_value}}" (keyup)="UpdateInputValue();"  placeholder="Please enter {{input_label}}" [ngClass]="{clserrorInput: Success===false}" (click)="OpenDatePicker()"/>
-    <img *ngIf='Success===true' src="./assets/Check (Blue).png"/>
-    <img *ngIf='Success===false' src="./assets/Report (Red).png"/>
-  </div>
-<div class="date-time-wrapper"  *ngIf="showDates==true">
-  From - To
-  <app-date-time-picker [_selectedMoment]="searchDate_From" [min]="min" [showTime]="true" (onUpdate)="setSearchDate_From($event)" [showTwoCalender]="true" (onUpdate_2ndCal)="setSearchDate_To($event)"></app-date-time-picker>
-  <br/><br />
-  <app-gradient-button 
-                       [minHeight]="'40px'"
-                       [hoverColor]="'#00b476'"
-                       [fontSize]="'15px'"
-                       [cursor]="'pointer'"
-                       (click)="DateRangeClick()">
-    Search {{getDisplayRange}}
-  </app-gradient-button>
+﻿<div class="InputWrapper" click="clickAction()">
+  <label [ngClass]="{clserrorLabel: Success===false}">{{input_label}}</label>
+  <input #appInput type={{input_type}} class="{{input_class}}" value="{{input_value}}" (keyup)="UpdateInputValue();"  placeholder="Please enter {{input_label}}" [ngClass]="{clserrorInput: Success===false}" (click)="OpenDatePicker()"/>
+  <img *ngIf='Success===true' src="./assets/Check (Blue).png"/>
+  <img *ngIf='Success===false' src="./assets/Report (Red).png"/>
 </div>

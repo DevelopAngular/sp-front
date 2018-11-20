@@ -1,0 +1,40 @@
+.input-wrapper {
+    border-radius: 0.5rem;
+    position: relative;
+    min-width:300px;
+}
+
+.label-wrapper{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.label-icon{
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+
+.label-text{
+    font-weight:bold;
+}
+
+.input {
+    margin-bottom: 5px;
+    width: 220px;
+    height: 40px;
+    border-radius: 20px;
+    box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.08;
+    letter-spacing: 0.3px;
+}
+
+input {
+    border: 0px;
+    padding: 0 0 0 15px;
+}

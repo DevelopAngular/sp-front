@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
+  MatDialogModule,
   MatTableModule,
   MatCheckboxModule,
   MatSortModule,
@@ -25,7 +26,10 @@ import { DataTableComponent } from './data-table/data-table.component';;
 import { FeedbackComponent } from './feedback/feedback.component';
 import { SupportComponent } from './support/support.component';
 import { PinnableCollectionComponent } from './pinnable-collection/pinnable-collection.component';
-import { BackButtonComponent } from './back-button/back-button.component'
+import { BackButtonComponent } from './back-button/back-button.component';
+import { RoundInputComponent } from './round-input/round-input.component';
+import { SquareInputComponent } from './square-input/square-input.component';
+import { DateInputComponent } from './date-input/date-input.component';
 
 @NgModule({
   imports: [
@@ -36,7 +40,8 @@ import { BackButtonComponent } from './back-button/back-button.component'
     MatTableModule,
     MatCheckboxModule,
     MatSortModule,
-    MatGridListModule
+    MatGridListModule,
+    MatDialogModule
   ],
   declarations: [
     AdminPageComponent,
@@ -52,8 +57,15 @@ import { BackButtonComponent } from './back-button/back-button.component'
     FeedbackComponent,
     SupportComponent,
     PinnableCollectionComponent,
-    BackButtonComponent
-  ], providers: [
+    BackButtonComponent,
+    RoundInputComponent,
+    SquareInputComponent,
+    DateInputComponent
+  ],
+  entryComponents: [
+    DateInputComponent
+  ],
+  providers: [
       //NavbarDataService
   ],
 })

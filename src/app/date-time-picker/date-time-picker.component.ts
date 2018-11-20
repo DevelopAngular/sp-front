@@ -1,4 +1,6 @@
 ﻿import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatDialogRef } from '@angular/material';
+import { Util } from '../../Util';
 
 @Component({
   selector: 'app-date-time-picker',
@@ -21,6 +23,8 @@ export class DateTimePickerComponent implements OnInit {
   @Input() min_2ndCal: Date = new Date();
   @Input() _selectedMoment_2ndCal: Date = new Date();
   @Output() onUpdate_2ndCal: EventEmitter<any> = new EventEmitter();
+
+  @Output() onconfirm: EventEmitter<any> = new EventEmitter();
   
 
   constructor() {
@@ -47,6 +51,10 @@ export class DateTimePickerComponent implements OnInit {
       return this._selectedMoment_2ndCal;
   }
 
+  get dateRangeText(){
+    return Util.formatDateTimeForDateRange(this._selectedMoment, this._selectedMoment_2ndCal);
+  }
+
   ngOnInit() {
     console.log('[Date-Time Debug]: ', 'Date-Time where at');
     this._selectedMoment.setMinutes(this._selectedMoment.getMinutes()+1)
@@ -58,5 +66,9 @@ export class DateTimePickerComponent implements OnInit {
     this._selectedMoment_2ndCal.setMinutes(this._selectedMoment_2ndCal.getMinutes() + 1)
     this.min_2ndCal.setMinutes(this.min_2ndCal.getMinutes() + 1)
     this.onUpdate_2ndCal.emit(this._selectedMoment_2ndCal);
+  }
+
+  confirmDates(){
+    this.onconfirm.emit(this.dateRangeText);
   }
 }

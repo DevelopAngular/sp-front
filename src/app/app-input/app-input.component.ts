@@ -17,9 +17,10 @@ export class AppInputComponent implements OnInit {
     @Input() input_value: string = "";
     @Input() Success: boolean;
     @Input() input_label: string;
-    @Output() onUpdate = new EventEmitter<string>();
     @Input() IsRequired: boolean = false;
     @Input() IsDate: boolean = false;
+
+    @Output() onUpdate = new EventEmitter<string>();
 
     @ViewChild('appInput') input: ElementRef;
 
@@ -39,62 +40,56 @@ export class AppInputComponent implements OnInit {
     ngOnInit() {
         if (this.IsRequired)
             this.Success = false;
-  }
+    }
 
-  ChangeStatus(status) {
-      this.Success = status;
-  }
+    ChangeStatus(status) {
+        this.Success = status;
+    }
 
-  UpdateInputValue()
-  {
-      this.input_value = this.input.nativeElement.value;
-      this.onUpdate.emit(this.input_value);
-  }
+    UpdateInputValue(){
+        this.input_value = this.input.nativeElement.value;
+        this.onUpdate.emit(this.input_value);
+    }
 
-  OpenDatePicker()
-  {
-      if (this.IsDate)
-      {
-         /*this.dialog.open(DateTimePickerComponent, {
-              width: '750px',
-              panelClass: 'form-dialog-container',
-              backdropClass: 'custom-backdrop',
-              data: { 'forLater': true, 'forStaff': true }
-          });*/
+    OpenDatePicker(){
+        if (this.IsDate){
+            /*this.dialog.open(DateTimePickerComponent, {
+            width: '750px',
+            panelClass: 'form-dialog-container',
+            backdropClass: 'custom-backdrop',
+            data: { 'forLater': true, 'forStaff': true }
+            });*/
 
-          this.showDates = !this.showDates;
+            this.showDates = !this.showDates;
+        }
+    }
 
-      }
-  }
+    setSearchDate_From(date: Date) {
+        if (date != null || date != undefined) {
+            this.searchDate_From$.next(date);
+        }
+    }
 
-  setSearchDate_From(date: Date) {
-      if (date != null || date != undefined) {
-          this.searchDate_From$.next(date);
-      }
-  }
-  get searchDate_From() {
-      return this.searchDate_From$.value;
-  }
+    get searchDate_From() {
+        return this.searchDate_From$.value;
+    }
 
-  setSearchDate_To(date: Date) {
-      if (date != null || date != undefined) {
-          this.searchDate_To$.next(date);
-      }
-  }
-  get searchDate_To() {
-      return this.searchDate_To$.value;
-  }
+    setSearchDate_To(date: Date) {
+        if (date != null || date != undefined) {
+            this.searchDate_To$.next(date);
+        }
+    }
+    get searchDate_To() {
+        return this.searchDate_To$.value;
+    }
 
-  get getDisplayRange() {
+    get getDisplayRange() {
+        return Util.formatDateTimeForDateRange(this.searchDate_From, this.searchDate_To);
+    }
 
-      return Util.formatDateTimeForDateRange(this.searchDate_From, this.searchDate_To);
-      //return this.searchDate_1st;
-  }
-
-  DateRangeClick()
-  {
-      this.showDates = !this.showDates;
-      this.input.nativeElement.value = Util.formatDateTimeForDateRange(this.searchDate_From, this.searchDate_To);
-      this.onUpdateDateRange.emit(Util.formatDateTimeForDateRange(this.searchDate_From, this.searchDate_To));
-  }
+    DateRangeClick(){
+        this.showDates = !this.showDates;
+        this.input.nativeElement.value = Util.formatDateTimeForDateRange(this.searchDate_From, this.searchDate_To);
+        this.onUpdateDateRange.emit(Util.formatDateTimeForDateRange(this.searchDate_From, this.searchDate_To));
+    }
 }

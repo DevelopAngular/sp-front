@@ -20,6 +20,7 @@ import { Request } from '../models/Request';
 import { User } from '../models/User';
 import { PassCardComponent } from '../pass-card/pass-card.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
+import { DateInputComponent } from '../admin/date-input/date-input.component';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('edit_all_hallpass');

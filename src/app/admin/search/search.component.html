@@ -1,8 +1,7 @@
 <div class="search-wrapper">
   <div class="input-header">
-      <app-input  [input_label]="'by Student Name'" ></app-input>
-      <app-input  [input_label]="'by Date & Time'" ></app-input>
-      <app-input  [input_label]="'by Room Name'" ></app-input>
+      <app-round-input [labelText]="'Date and Time'" [type]="'dates'" [placeholder]="'this thing'" (ontextupdate)="$event"></app-round-input>
+      <app-round-input [labelText]="'Text stuff'" [type]="'text'" [placeholder]="'this thing'" (ontextupdate)="$event"></app-round-input>
   </div>
   <div class="default-message" *ngIf="!hasSearched">
     <div class="title-text">

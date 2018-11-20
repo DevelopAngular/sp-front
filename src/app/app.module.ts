@@ -45,18 +45,16 @@ const appRoutes: Routes = [
   declarations: [
     AppComponent,
     GoogleSigninComponent,
-
     ConsentMenuComponent,
     OptionsComponent,
     IntroComponent,
     LoginComponent,
-      OverlayContainerComponent
+    OverlayContainerComponent
   ],
   entryComponents: [
     ConsentMenuComponent,
     OptionsComponent,
     OverlayContainerComponent
-
   ],
   imports: [
     BrowserModule,
