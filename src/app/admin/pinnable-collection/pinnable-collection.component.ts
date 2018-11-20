@@ -2,7 +2,6 @@ import { Component, OnInit, Input, Output, EventEmitter, ElementRef } from '@ang
 import { Pinnable } from '../../models/Pinnable';
 import { MatDialog } from '@angular/material';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
-import {filter} from 'rxjs/operators';
 
 @Component({
   selector: 'app-pinnable-collection',

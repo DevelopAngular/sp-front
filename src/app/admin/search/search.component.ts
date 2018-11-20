@@ -15,6 +15,9 @@ export class SearchComponent implements OnInit {
   testPinnables:Pinnable[] = [];
   testProfile:ColorProfile;
 
+
+  hasSearched: boolean = false;
+
   constructor() { }
 
   ngOnInit() {

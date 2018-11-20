@@ -1,4 +1,4 @@
-﻿  <div class="InputWrapper">
+  <div class="InputWrapper">
     <label [ngClass]="{clserrorLabel: Success===false}">{{input_label}}</label>
     <input #appInput type={{input_type}} class="{{input_class}}" value="{{input_value}}" (keyup)="UpdateInputValue();"  [placeholder]="(placeholder==''?'Please enter ' + input_label: placeholder)" [ngClass]="{clserrorInput: Success===false}" (click)="OpenDatePicker()"/>
     <img *ngIf='Success===true' src="./assets/Check (Blue).png"/>

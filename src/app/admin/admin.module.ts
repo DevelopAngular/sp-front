@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
+  MatDialogModule,
   MatTableModule,
   MatCheckboxModule,
   MatSortModule,
@@ -26,6 +27,9 @@ import { FeedbackComponent } from './feedback/feedback.component';
 import { SupportComponent } from './support/support.component';
 import { PinnableCollectionComponent } from './pinnable-collection/pinnable-collection.component';
 import { BackButtonComponent } from './back-button/back-button.component';
+import { RoundInputComponent } from './round-input/round-input.component';
+import { SquareInputComponent } from './square-input/square-input.component';
+import { DateInputComponent } from './date-input/date-input.component';
 import { ColorPalletPickerComponent } from './color-pallet-picker/color-pallet-picker.component';
 import { IconPickerComponent } from './icon-picker/icon-picker.component';
 import { OverlayContainerComponent } from './overlay-container/overlay-container.component';
@@ -41,40 +45,42 @@ import { TogglePickerComponent } from './toggle-picker/toggle-picker.component';
     MatTableModule,
     MatCheckboxModule,
     MatSortModule,
-    MatGridListModule
+    MatGridListModule,
+    MatDialogModule
   ],
+  declarations: [
+    AdminPageComponent,
+    DashboardComponent,
+    NavComponent,
+    NavButtonComponent,
+    HallmonitorComponent,
+    SearchComponent,
+    AccountsComponent,
+    PassConfigComponent,
+    AppInputComponent,
+    DataTableComponent,
+    FeedbackComponent,
+    SupportComponent,
+    PinnableCollectionComponent,
+    OverlayContainerComponent,
+    ColorPalletPickerComponent,
+    PinnableCollectionComponent,
+    BackButtonComponent,
+    RoundInputComponent,
+    SquareInputComponent,
+    DateInputComponent,
+    IconPickerComponent,
 
-    declarations: [
-        AdminPageComponent,
-        DashboardComponent,
-        NavComponent,
-        NavButtonComponent,
-        HallmonitorComponent,
-        SearchComponent,
-        AccountsComponent,
-        PassConfigComponent,
-        AppInputComponent,
-        OverlayContainerComponent,
-        ColorPalletPickerComponent,
-        PinnableCollectionComponent,
-        DataTableComponent,
-        BackButtonComponent,
-        FeedbackComponent,
-
-        SupportComponent,
-
-        IconPickerComponent,
-
-        TogglePickerComponent
-    ],
-    entryComponents: [
-        AppInputComponent,
-        OverlayContainerComponent,
-    ],
-
-    providers: [
-        //NavbarDataService
-    ],
+    TogglePickerComponent
+  ],
+  entryComponents: [
+    AppInputComponent,
+    OverlayContainerComponent,
+    DateInputComponent
+  ],
+  providers: [
+      //NavbarDataService
+  ],
 })
 export class AdminModule {
 }

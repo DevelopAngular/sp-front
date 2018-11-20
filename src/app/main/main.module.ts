@@ -47,6 +47,7 @@ import { TeacherDropdownComponent } from '../teacher-dropdown/teacher-dropdown.c
 import { TravelViewComponent } from '../travel-view/travel-view.component';
 import { MainRoutingModule } from './main-routing.module';
 import { NavbarDataService } from './navbar-data.service';
+import { DateInputComponent } from '../admin/date-input/date-input.component';
 
 @NgModule({
   imports: [
@@ -97,8 +98,7 @@ import { NavbarDataService } from './navbar-data.service';
     LocationPickerComponent,
     ContainerCardComponent,
     TeacherDropdownComponent,
-    MainPageComponent,
-    
+    MainPageComponent
   ],
   entryComponents: [
     HallpassFormComponent,
@@ -110,7 +110,7 @@ import { NavbarDataService } from './navbar-data.service';
     RequestCardComponent,
     InvitationCardComponent,
     InfoEditorComponent,
-    TeacherDropdownComponent,
+    TeacherDropdownComponent
   ],
   providers: [
     NavbarDataService
