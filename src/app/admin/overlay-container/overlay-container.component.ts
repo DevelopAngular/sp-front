@@ -74,20 +74,26 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   setLocation(location) {
+    let type;
     switch (location) {
         case 'newRoom': {
-          return this.overlayType = 'newRoom';
+          type = 'newRoom';
+          break;
         }
         case 'newFolder': {
-          return this.overlayType = 'newFolder';
+          type = 'newFolder';
+          break;
         }
         case 'importRooms': {
-          return this.overlayType = 'importRooms';
+          type = 'importRooms';
+          break;
         }
         case 'addExisting': {
-          return this.overlayType = 'addExisting';
+          type = 'addExisting';
+          break;
         }
     }
+    return this.overlayType = type;
   }
 
   back() {
