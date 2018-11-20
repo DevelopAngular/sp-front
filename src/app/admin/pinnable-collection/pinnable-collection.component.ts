@@ -13,6 +13,9 @@ export class PinnableCollectionComponent implements OnInit {
   @Input()
   pinnables: Pinnable[];
 
+  @Input()
+  header: boolean = true;
+
   @Output()
   roomEvent: EventEmitter<any> = new EventEmitter();
 
@@ -39,6 +42,7 @@ export class PinnableCollectionComponent implements OnInit {
       this.selectedPinnables.push(pinnable);
       //console.log('[Pinnable Collection]: ', 'Pinnable Added: ', this.selectedPinnables)
     }
+    if (!this.header) { this.roomEvent.emit(this.selectedPinnables); }
   }
 
   buttonClicked(evnt: MouseEvent){

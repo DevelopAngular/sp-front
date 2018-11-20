@@ -3,6 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 import { Pinnable } from '../../models/Pinnable';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-overlay-container',
@@ -11,9 +12,11 @@ import { Pinnable } from '../../models/Pinnable';
 })
 export class OverlayContainerComponent implements OnInit {
 
-  rooms: Pinnable[];
+  selectedRooms: Pinnable[] = [];
+  pinnables$: Observable<Pinnable[]>;
   overlayType: string;
   roomName: string;
+  folderName: string;
   roomNumber: string;
   timeLimit: string;
   travelType: string;
@@ -21,13 +24,13 @@ export class OverlayContainerComponent implements OnInit {
   futureRestriction: string;
   colorPicker: string;
   iconPicker: string;
-  input_label: string;
   gradientColor: string;
+  hideAppearance: boolean = false;
 
   form: FormGroup;
 
   buttonsInFolder = [
-      { title: 'New Room', icon: './assets/Create (White).png', location: 'newRoom'},
+      { title: 'New Room', icon: './assets/Create (White).png', location: 'newRoomInFolder'},
       { title: 'Import Rooms', icon: null, location: 'importRooms'},
       { title: 'Add Existing', icon: null, location: 'addExisting'}
   ];
@@ -39,31 +42,32 @@ export class OverlayContainerComponent implements OnInit {
 
   getHeaderData() {
     let colors;
-    let text;
-    let input_label;
     switch (this.overlayType) {
         case 'newRoom': {
           colors = '#03CF31,#00B476';
-          text = 'New Room';
-          input_label = 'Room';
+          this.roomName = 'New Room';
           break;
         }
         case 'newFolder': {
           colors = '#03CF31,#00B476';
-          text = 'New Folder';
-          input_label = 'Folder';
+          this.folderName = 'New Folder';
           break;
         }
     }
     this.gradientColor = 'radial-gradient(circle at 98% 97%,' + colors + ')';
-    this.input_label = input_label;
-    this.roomName = text;
+  }
+
+  get isValidForm() {
+      return !this.requireValidator(this.roomName) && !this.requireValidator(this.roomNumber) && !this.requireValidator(this.timeLimit);
   }
 
   ngOnInit() {
       this.buildForm();
-      this.rooms = this.dialogData['rooms'];
       this.overlayType = this.dialogData['type'];
+      if (this.dialogData['rooms']) {
+          this.selectedRooms = this.dialogData['rooms'];
+      }
+      this.pinnables$ = this.dialogData['pinnables$'];
       this.getHeaderData();
   }
 
@@ -75,25 +79,38 @@ export class OverlayContainerComponent implements OnInit {
 
   setLocation(location) {
     let type;
+    let hideAppearance;
     switch (location) {
-        case 'newRoom': {
-          type = 'newRoom';
+        case 'newRoomInFolder': {
+          this.roomName = 'New Room';
+          hideAppearance = true;
+          type = 'newRoomInFolder';
           break;
         }
         case 'newFolder': {
+          this.selectedRooms = [];
+          hideAppearance = false;
           type = 'newFolder';
           break;
         }
         case 'importRooms': {
+          hideAppearance = true;
           type = 'importRooms';
           break;
         }
         case 'addExisting': {
+          hideAppearance = true;
           type = 'addExisting';
           break;
         }
     }
-    return this.overlayType = type;
+    this.hideAppearance = hideAppearance;
+    this.overlayType = type;
+    return false;
+  }
+
+  addToFolder() {
+      console.log(this.selectedRooms);
   }
 
   back() {
@@ -104,8 +121,12 @@ export class OverlayContainerComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  roomNameValidator() {
-    if (!this.roomName || this.roomName === '' || this.roomName === 'New Room' || this.roomName === 'New Folder') {
+  done() {
+    this.dialogRef.close();
+  }
+
+  requireValidator(value) {
+    if (!value || value === '' || value === 'New Room' || value === 'New Folder') {
       return true;
     }
     return false;

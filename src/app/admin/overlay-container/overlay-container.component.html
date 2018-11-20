@@ -5,33 +5,68 @@
         <input type="checkbox" name="isEdit" formControlName="isEdit" class="isEdit-checkbox" id="isEdit" checked>
         <label class="isEdit-label" for="isEdit"></label>
       </div>
-      <img class="back-button" *ngIf="overlayType !== 'addExisting'" src="../../../assets/Back Button (White).png" (click)="back()">
-      <div class="title">{{ roomName }}</div>
+      <img class="back-button" *ngIf="overlayType !== 'addExisting' && overlayType !== 'newRoomInFolder'" src="../../../assets/Back Button (White).png" (click)="back()">
+      <div class="title" *ngIf="overlayType === 'newRoom'">{{ roomName }}</div>
+      <div
+        class="title"
+        *ngIf="overlayType === 'newFolder' || overlayType === 'newRoomInFolder' || overlayType === 'addExisting' || overlayType === 'importRooms'"
+      >{{ folderName }}
+      </div>
       <div *ngIf="false" class="button" (click)="onCancel()">Done</div>
     </div>
   <div class="overlay-content">
     <div class="left-content">
-      <div class="room-inputs" *ngIf="overlayType === 'newRoom' || overlayType === 'newFolder'">
+      <div class="new-room-in-folder" *ngIf="overlayType === 'newRoomInFolder'">
+          <div class="new-room-in-folder-header">
+            <img class="back-button" (click)="setLocation('newFolder')" src="../../../assets/Back Button (Grey).png">
+            <div class="room-in-folder-title">{{ roomName }}</div>
+            <div class="header-in-folder-button">
+              <span *ngIf="false">Incomplete</span>
+                <app-gradient-button *ngIf="isValidForm"
+                        [minHeight]="'40px'"
+                        [style.width]="'120px'"
+                        [cursor]="'pointer'"
+                        [fontSize]="'12px'"
+                        (buttonClick)="done()"
+                >
+                Done</app-gradient-button>
+            </div>
+          </div>
+      </div>
+      <div class="room-inputs" *ngIf="overlayType === 'newRoom' || overlayType === 'newFolder' || overlayType === 'newRoomInFolder'">
         <div class="room-name">
-          <app-input [input_label]="input_label + ' Name'" [Success]="!roomNameValidator()" (onUpdate)="roomName = $event === '' ? 'New ' + input_label : $event;"></app-input>
+          <app-input
+             *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder'"
+             [input_label]="'Room Name'"
+             [input_value]="(roomName !== 'New Room' ? roomName : '')"
+             [Success]="!requireValidator(roomName)"
+             (onUpdate)="roomName = $event === '' ? 'New Room': $event;">
+          </app-input>
+          <app-input
+              *ngIf="overlayType === 'newFolder'"
+              [input_label]="'Folder Name'"
+              [input_value]="(folderName !== 'New Folder' ? folderName : '')"
+              [Success]="!requireValidator(folderName)"
+              (onUpdate)="folderName = $event === '' ? 'New Folder': $event;">
+          </app-input>
         </div>
-        <div class="room-number" *ngIf="overlayType === 'newRoom'">
-          <app-input [input_label]="'Room Number'" [placeholder]="'Number'" (onUpdate)="roomNumber=$event"></app-input>
+        <div class="room-number" *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder'">
+          <app-input [input_label]="'Room Number'" [input_value]="roomNumber" [Success]="!requireValidator(roomNumber)" [placeholder]="'Number'" (onUpdate)="roomNumber=$event"></app-input>
         </div>
       </div>
-      <div class="teacher-search" *ngIf="overlayType === 'newRoom'">
+      <div class="teacher-search" *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder'">
         <app-input [input_label]="'Teachers in Room'" (onUpdate)="input_value1=$event"></app-input>
       </div>
-      <div style="display: flex" *ngIf="overlayType === 'newRoom'">
+      <div style="display: flex" *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder'">
         <div class="travel-picker">
           <div class="toggle-label">Travel Type</div>
           <app-toggle-picker (onSelect)="travelType=$event" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
         <div class="time-limit">
-          <app-input [input_label]="'Time Limit'" [placeholder]="'minutes'" (onUpdate)="timeLimit=$event"></app-input>
+          <app-input [input_label]="'Time Limit'" [input_value]="timeLimit" [Success]="!requireValidator(timeLimit)" [placeholder]="'minutes'" (onUpdate)="timeLimit=$event"></app-input>
         </div>
       </div>
-      <div class="restriction-settings" *ngIf="overlayType === 'newRoom'">
+      <div class="restriction-settings" *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder'">
         <div class="restriction-picker-1">
           <div class="toggle-label">Restriction For Now</div>
           <app-toggle-picker (onSelect)="nowRestriction=$event" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
@@ -44,8 +79,8 @@
       <div class="rooms-in-folder" *ngIf="overlayType === 'newFolder'">
         <div class="rooms-in-folder-title">Rooms in Folder</div>
         <div class="rooms-in-folder-content">
-          <div class="not-rooms-in-folder" *ngIf="roomNameValidator()">To add rooms, enter a folder name and select an appearance</div>
-          <div class="content-buttons-in-folder" *ngIf="!roomNameValidator()">
+          <div class="not-rooms-in-folder" *ngIf="requireValidator(folderName)">To add rooms, enter a folder name and select an appearance</div>
+          <div class="content-buttons-in-folder" *ngIf="!requireValidator(folderName)">
             <div class="button-in-folder" *ngFor="let button of buttonsInFolder">
               <app-gradient-button
                       [minHeight]="'35px'"
@@ -68,17 +103,38 @@
           <img class="back-button" (click)="setLocation('newFolder')" src="../../../assets/Back Button (Grey).png">
           <div class="header-title">Add Existing Room to Folder</div>
         </div>
+        <div class="add-rooms-button" *ngIf="selectedRooms.length > 0">
+          <div class="selected-rooms-text">{{ selectedRooms.length }} Rooms Selected</div>
+          <app-gradient-button
+                  [minHeight]="'35px'"
+                  [style.width]="'120px'"
+                  [cursor]="'pointer'"
+                  [fontSize]="'12px'"
+                  (buttonClick)="addToFolder()"
+          >
+            Add to Folder</app-gradient-button>
+        </div>
+        <div class="info-text" *ngIf="!selectedRooms || selectedRooms.length === 0">
+          <span>Choose existing rooms to add to the {{ roomName }} folder.</span><br/>
+          <span>Note: appearance settings will be lost</span>
+        </div>
+        <div class="pinnable-collection">
+          <app-pinnable-collection [header]="false" [pinnables]="pinnables$ | async" (roomEvent)="selectedRooms=$event"></app-pinnable-collection>
+        </div>
       </div>
 
     </div>
     <div class="divider"></div>
     <div class="right-content">
-      <div class="right-content-title">Appearance</div>
-      <div class="color-picker">
-        <app-color-pallet-picker (selectedEvent)="colorPicker=$event.color"></app-color-pallet-picker>
-      </div>
-      <div class="icon-picker">
-        <app-icon-picker (selectedEvent)="iconPicker=$event"></app-icon-picker>
+      <div style="position: relative">
+        <div class="inactive" *ngIf="hideAppearance"></div>
+        <div class="right-content-title">Appearance</div>
+        <div class="color-picker">
+          <app-color-pallet-picker (selectedEvent)="colorPicker=$event.color"></app-color-pallet-picker>
+        </div>
+        <div class="icon-picker">
+          <app-icon-picker (selectedEvent)="iconPicker=$event"></app-icon-picker>
+        </div>
       </div>
     </div>
   </div>

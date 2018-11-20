@@ -1,5 +1,5 @@
 <div class="collection-wrapper">
-  <div class="collection-header">
+  <div class="collection-header" *ngIf="header">
     <div class="collection-title">
       Rooms
     </div>
@@ -18,7 +18,7 @@
     >
     {{headerButtonText}}</app-gradient-button>
   </div>
-  <div class="collection-divider"></div>
+  <div class="collection-divider" *ngIf="header"></div>
   <mat-grid-list class="grid center" cols="4" rowHeight="75px" gutterSize="10px" [style.width]="'550px'">
     <mat-grid-tile *ngFor="let pinnable of pinnables">
       <app-pinnable [forCollection]="true" [pinnable]="pinnable" (onSelectEvent)="updatePinnables($event)"></app-pinnable>
