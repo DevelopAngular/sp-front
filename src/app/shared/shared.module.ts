@@ -2,13 +2,13 @@
 import { NgModule } from '@angular/core';
 //import { MatProgressBarModule, MatGridListModule } from '@angular/material';
 import {
-MatProgressBarModule, MatGridListModule,
-    MatDialogModule,
-    MatIconModule,
-    MatSelectModule,
-    MatSliderModule,
-    MatSlideToggleModule,
-    MatChipsModule,
+  MatProgressBarModule, MatGridListModule,
+  MatDialogModule,
+  MatIconModule,
+  MatSelectModule,
+  MatSliderModule,
+  MatSlideToggleModule,
+  MatChipsModule, MatCardModule,
 } from '@angular/material';
 
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
@@ -44,6 +44,7 @@ import { DisplayReportCellComponent } from '../display-report-cell/display-repor
       MatSliderModule,
       MatSlideToggleModule,
       MatChipsModule,
+      MatCardModule,
     NgProgressModule.forRoot()
   ],
   declarations: [
@@ -61,6 +62,7 @@ import { DisplayReportCellComponent } from '../display-report-cell/display-repor
   ],
   exports: [
     ReactiveFormsModule,
+    MatCardModule,
     GradientButtonComponent,
     ResolveAssetPipe,
     SmartpassLogoComponent,

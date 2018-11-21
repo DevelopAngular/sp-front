@@ -19,7 +19,6 @@ import { NavComponent } from './nav/nav.component';
 import { NavButtonComponent } from './nav-button/nav-button.component';
 import { HallmonitorComponent } from './hallmonitor/hallmonitor.component';
 import { SearchComponent } from './search/search.component';
-import { AccountsComponent } from './accounts/accounts.component';
 import { AppInputComponent } from './../app-input/app-input.component';
 import { PassConfigComponent } from './pass-config/pass-config.component';
 import { DataTableComponent } from './data-table/data-table.component';
@@ -55,7 +54,6 @@ import { TogglePickerComponent } from './toggle-picker/toggle-picker.component';
     NavButtonComponent,
     HallmonitorComponent,
     SearchComponent,
-    AccountsComponent,
     PassConfigComponent,
     AppInputComponent,
     DataTableComponent,

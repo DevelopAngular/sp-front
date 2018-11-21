@@ -56,6 +56,13 @@ body {
   height: 412px;
 }
 
+.accounts-profiles-dialog .mat-dialog-container{
+  border-radius: 10px;
+  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  padding: 0;
+}
+
 .editor-dialog{
   border-radius: 10px;
   overflow: hidden;
@@ -103,13 +110,13 @@ body {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #D6D6D6; 
+  background: #D6D6D6;
   border-radius: 4px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #B6B6B6; 
+  background: #B6B6B6;
 }
 
 input:focus{
