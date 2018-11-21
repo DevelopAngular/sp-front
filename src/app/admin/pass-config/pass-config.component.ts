@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { HttpService } from '../../http-service';
 import { Pinnable } from '../../models/Pinnable';
 import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
-import {shareReplay} from 'rxjs/operators';
+import {map, shareReplay} from 'rxjs/operators';
 
 @Component({
   selector: 'app-pass-congif',
@@ -65,7 +65,10 @@ export class PassConfigComponent implements OnInit {
               break;
           }
           case 'newFolder': {
-              data = { type: action, pinnables$: this.pinnables$.pipe(shareReplay(1)) };
+              const pinnables$ = this.pinnables$.pipe(map(pinnables => {
+                  return pinnables.filter(pinnable => pinnable.type !== 'category');
+              }), shareReplay(1));
+              data = { type: action, pinnables$: pinnables$ };
               break;
           }
           case 'edit': {

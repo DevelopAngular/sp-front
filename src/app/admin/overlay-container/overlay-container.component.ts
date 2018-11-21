@@ -1,9 +1,10 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 import { Pinnable } from '../../models/Pinnable';
-import {Observable} from 'rxjs';
+import { Observable } from 'rxjs';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-overlay-container',
@@ -11,6 +12,8 @@ import {Observable} from 'rxjs';
   styleUrls: ['./overlay-container.component.scss']
 })
 export class OverlayContainerComponent implements OnInit {
+
+  @ViewChild('file') selectedFile;
 
   selectedRooms: Pinnable[] = [];
   pinnables$: Observable<Pinnable[]>;
@@ -69,11 +72,16 @@ export class OverlayContainerComponent implements OnInit {
       }
       this.pinnables$ = this.dialogData['pinnables$'];
       this.getHeaderData();
+
+      this.form.get('file').valueChanges.subscribe(res => {
+          this.overlayType = 'settingsRooms';
+      });
   }
 
   buildForm() {
     this.form = new FormGroup({
-        isEdit: new FormControl(true)
+        isEdit: new FormControl(true),
+        file: new FormControl()
     });
   }
 
@@ -109,6 +117,10 @@ export class OverlayContainerComponent implements OnInit {
     return false;
   }
 
+  changeColor(color) {
+    this.gradientColor = 'radial-gradient(circle at 98% 97%,' + color.gradientColor + ')';
+  }
+
   addToFolder() {
       console.log(this.selectedRooms);
   }
@@ -131,4 +143,11 @@ export class OverlayContainerComponent implements OnInit {
     }
     return false;
   }
+
+  uniqueValidator(value) {
+    // this.pinnables$.pipe(map(pinnables => {
+    //    pinnables.find()
+    // }));
+  }
+
 }
