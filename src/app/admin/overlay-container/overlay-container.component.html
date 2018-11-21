@@ -1,25 +1,33 @@
 <form [formGroup]="form">
   <div class="overlay-container">
     <div class="overlay-header" [ngStyle]="{'background-image': gradientColor}">
-      <div class="isEdit" *ngIf="false">
+      <div class="isEdit" *ngIf="isValidForm && overlayType === 'newRoom'">
         <input type="checkbox" name="isEdit" formControlName="isEdit" class="isEdit-checkbox" id="isEdit" checked>
         <label class="isEdit-label" for="isEdit"></label>
       </div>
-      <img class="back-button" *ngIf="overlayType !== 'addExisting' && overlayType !== 'newRoomInFolder'" src="../../../assets/Back Button (White).png" (click)="back()">
+      <img class="back-button" *ngIf="overlayType !== 'addExisting' && overlayType !== 'newRoomInFolder' && overlayType !== 'importRooms' && !isValidForm" src="../../../assets/Back Button (White).png" (click)="back()">
       <div class="title" *ngIf="overlayType === 'newRoom'">{{ roomName }}</div>
       <div
         class="title"
         *ngIf="overlayType === 'newFolder' || overlayType === 'newRoomInFolder' || overlayType === 'addExisting' || overlayType === 'importRooms'"
       >{{ folderName }}
       </div>
-      <div *ngIf="false" class="button" (click)="onCancel()">Done</div>
+      <div *ngIf="overlayType === 'newRoom'" style="margin-right: 25px;width: 121px;">
+        <div *ngIf="isValidForm" class="button" (click)="onCancel()">Done</div>
+        <div *ngIf="!isValidForm" style="color: white">Incomplete</div>
+      </div>
     </div>
+
+<div style="position: relative">
+<div class="inactive" *ngIf="!form.get('isEdit').value"></div>
   <div class="overlay-content">
     <div class="left-content">
-      <div class="new-room-in-folder" *ngIf="overlayType === 'newRoomInFolder'">
+      <div class="new-room-in-folder" *ngIf="overlayType === 'newRoomInFolder' || overlayType === 'importRooms' || overlayType === 'settingsRooms'">
           <div class="new-room-in-folder-header">
-            <img class="back-button" (click)="setLocation('newFolder')" src="../../../assets/Back Button (Grey).png">
-            <div class="room-in-folder-title">{{ roomName }}</div>
+            <img class="back-button" (click)="(overlayType === 'settingsRooms' ? setLocation('importRooms') : setLocation('newFolder'))" src="../../../assets/Back Button (Grey).png">
+            <div [ngClass]="{'room-in-folder-title-inactive': !isValidForm, 'room-in-folder-title-active': isValidForm }">
+              {{ (overlayType === 'newRoomInFolder' ? roomName : 'Import Rooms') }}
+            </div>
             <div class="header-in-folder-button">
               <span *ngIf="false">Incomplete</span>
                 <app-gradient-button *ngIf="isValidForm"
@@ -123,14 +131,27 @@
         </div>
       </div>
 
+      <div class="import-rooms-content" *ngIf="overlayType === 'importRooms'">
+        <div class="import-rooms-info">
+          Import a list of room names, room numbers, and room names from an Excel spreadsheet or CSV
+        </div>
+        <div class="download-template-link">Download Template</div>
+        <div class="choose-file" (click)="file.click()">
+          <input type="file" formControlName="file" #file style="display: none"/>
+            <img class="choose-icon" src="../../../assets/Spreadsheet (Grey).png">
+            <span class="choose-text">Choose File</span>
+        </div>
+      </div>
+
     </div>
+
     <div class="divider"></div>
     <div class="right-content">
       <div style="position: relative">
         <div class="inactive" *ngIf="hideAppearance"></div>
         <div class="right-content-title">Appearance</div>
         <div class="color-picker">
-          <app-color-pallet-picker (selectedEvent)="colorPicker=$event.color"></app-color-pallet-picker>
+          <app-color-pallet-picker (selectedEvent)="changeColor($event)"></app-color-pallet-picker>
         </div>
         <div class="icon-picker">
           <app-icon-picker (selectedEvent)="iconPicker=$event"></app-icon-picker>
@@ -138,5 +159,6 @@
       </div>
     </div>
   </div>
-  </div>
+</div> <!-- Inactive div -->
+</div> <!-- Overlay container -->
 </form>
