@@ -25,7 +25,9 @@ export class UserService {
       .subscribe(this.userData);
 
     this.pollingService.listen().subscribe(this._logging.debug);
-
+  }
+  getUsersList() {
+    return this.http.get<any>('v1/users');
   }
 
 }

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
 import {MatSort, MatTableDataSource} from '@angular/material';
 
@@ -16,6 +16,8 @@ export class DataTableComponent implements OnInit {
   @Input() backgroundColor: string = 'white';
   @Input() textColor: string = 'black';
   @Input() textHeaderColor: string = '#4b4876';
+
+  @Output() selectedUsers: EventEmitter<any[]> = new EventEmitter();
 
   @ViewChild(MatSort) sort: MatSort;
 
@@ -46,6 +48,10 @@ export class DataTableComponent implements OnInit {
         this.isAllSelected() ?
             this.selection.clear() :
             this.data.forEach(row => this.selection.select(row));
+    }
+
+    pushOutSelected() {
+      this.selectedUsers.emit(this.selection.selected);
     }
 }
 

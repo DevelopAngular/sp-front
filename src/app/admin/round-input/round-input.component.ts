@@ -16,6 +16,8 @@ export class RoundInputComponent implements OnInit {
   @Input() completeService: any; //A function that determines how the input should search.
   @Input() overlay: boolean; //Determines if the autocomplete is an overlay or in element. If it is null/
   @Input() hasTogglePicker: boolean;
+  @Input() width: string;
+  @Input() minWidth: string;
 
   @Output() ontextupdate: EventEmitter<any> = new EventEmitter();
   @Output() ontoogleupdate: EventEmitter<any> = new EventEmitter();

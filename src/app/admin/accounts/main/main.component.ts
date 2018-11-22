@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {MatDialog} from '@angular/material';
-import {GSuiteDialogComponent} from '../g-suite-dialog/g-suite-dialog.component';
+import {GSuiteDialogComponent} from '../dialogs/g-suite-dialog/g-suite-dialog.component';
 
 
 @Component({
@@ -17,8 +17,13 @@ export class MainComponent implements OnInit {
   ngOnInit() {
   }
   openGSuiteDialog() {
-    const DR = this.matDialog.open(GSuiteDialogComponent, {ariaDescribedBy: '#g-suite', width: '768px', height: '560px', panelClass: 'accounts-profiles-dialog'});
-          DR.afterClosed().subscribe((v) => { console.log(v); });
+    const DR = this.matDialog.open(GSuiteDialogComponent,
+                            {
+                              ariaDescribedBy: '#g-suite',
+                              width: '768px', height: '560px',
+                              panelClass: 'accounts-profiles-dialog'
+                            });
+          // DR.afterClosed().subscribe((v) => { console.log(v); });
   }
 
 }

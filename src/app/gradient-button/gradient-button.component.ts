@@ -31,10 +31,12 @@ export class GradientButtonComponent {
   @Input() rightIcon: string;
   @Input() text: string;
   @Input() textColor: string;
+  @Input() width: number;
   @Input() minWidth: number;
   @Input() minHeight: number;
   @Input() disabled: boolean = false;
   @Input() fontSize: string = '20px';
+  @Input() fontWeight: string|number;
   @Input() leftImageWidth: string;
   @Input() leftImageHeight: string;
   @Input() cursor: string;

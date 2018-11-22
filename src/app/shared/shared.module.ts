@@ -8,7 +8,7 @@ import {
   MatSelectModule,
   MatSliderModule,
   MatSlideToggleModule,
-  MatChipsModule, MatCardModule,
+  MatChipsModule, MatCardModule, MatCheckboxModule, MatTab, MatTableModule, MatProgressSpinnerModule,
 } from '@angular/material';
 
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
@@ -27,6 +27,10 @@ import { PinnableComponent } from '../pinnable/pinnable.component';
 import { TraveltypePickerComponent } from '../traveltype-picker/traveltype-picker.component';
 import { StudentSearchComponent } from '../student-search/student-search.component';
 import { DisplayReportCellComponent } from '../display-report-cell/display-report-cell.component';
+import {BackButtonComponent} from '../admin/back-button/back-button.component';
+import {SearchComponent} from '../admin/search/search.component';
+import {RoundInputComponent} from '../admin/round-input/round-input.component';
+import {DataTableComponent} from '../admin/data-table/data-table.component';
 
 
 @NgModule({
@@ -37,6 +41,9 @@ import { DisplayReportCellComponent } from '../display-report-cell/display-repor
     OwlNativeDateTimeModule,
     FormsModule,
     ReactiveFormsModule,
+      MatCheckboxModule,
+      MatTableModule,
+      MatProgressSpinnerModule,
       MatGridListModule,
       MatDialogModule,
       MatIconModule,
@@ -48,6 +55,10 @@ import { DisplayReportCellComponent } from '../display-report-cell/display-repor
     NgProgressModule.forRoot()
   ],
   declarations: [
+    DataTableComponent,
+    BackButtonComponent,
+    RoundInputComponent,
+    SearchComponent,
     GradientButtonComponent,
     ResolveAssetPipe,
     SmartpassLogoComponent,
@@ -61,8 +72,15 @@ import { DisplayReportCellComponent } from '../display-report-cell/display-repor
       DisplayReportCellComponent,
   ],
   exports: [
+    DataTableComponent,
     ReactiveFormsModule,
+    MatTableModule,
+    MatProgressSpinnerModule,
     MatCardModule,
+    MatCheckboxModule,
+    BackButtonComponent,
+    RoundInputComponent,
+    SearchComponent,
     GradientButtonComponent,
     ResolveAssetPipe,
     SmartpassLogoComponent,
