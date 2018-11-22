@@ -1,8 +1,8 @@
-﻿<div class="display-card-wrapper" [style.min-height]="(inbox?'500px':'')">
+﻿<div class="display-card-wrapper">
   <div class="display-card-header justify-content">
     <div class="flexCls">
      
-      <div class="display-card-header-title" [style.font-size]="fontSize">
+      <div class="display-card-header-title">
         {{student_name}}
       </div>
     </div>
@@ -13,10 +13,10 @@
   <div [style.background-color]="(hasDivider?'#B5B7BA':'#FFF')" class="display-card-divider"></div>
   <div  class="float-left">
     <div (click)="printReport()"> <img *ngIf="!!righticon" class="display-card-header-icon righticon" [src]="righticon | resolveAsset"></div>
-  <div [style.font-size]="subtitle_fontSize" class="subtitlecls">
+  <div class="subtitlecls">
     Reported by {{issuer}}
   </div>
-  <div [style.font-size]="subtitle_fontSize" class="subtitlecls">
+  <div class="subtitlecls">
      {{message}}
   </div>
     
