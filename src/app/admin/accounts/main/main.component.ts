@@ -11,17 +11,17 @@ import {GSuiteDialogComponent} from '../dialogs/g-suite-dialog/g-suite-dialog.co
 export class MainComponent implements OnInit {
   constructor(
     public matDialog: MatDialog,
-    // public md: GSuiteDialogComponent
 ) {}
 
   ngOnInit() {
+
   }
   openGSuiteDialog() {
     const DR = this.matDialog.open(GSuiteDialogComponent,
                             {
-                              ariaDescribedBy: '#g-suite',
                               width: '768px', height: '560px',
-                              panelClass: 'accounts-profiles-dialog'
+                              panelClass: 'accounts-profiles-dialog',
+                              backdropClass: 'custom-bd'
                             });
           // DR.afterClosed().subscribe((v) => { console.log(v); });
   }

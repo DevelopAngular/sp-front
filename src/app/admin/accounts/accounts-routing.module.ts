@@ -4,6 +4,9 @@ import {MainComponent} from './main/main.component';
 import {AccountsComponent} from './accounts.component';
 import {GSuiteDialogComponent} from './dialogs/g-suite-dialog/g-suite-dialog.component';
 import {AdministratorsComponent} from './administrators/administrators.component';
+import {TeachersComponent} from './teachers/teachers.component';
+import {StudentsComponent} from './students/students.component';
+import {SubsitutesComponent} from './subsitutes/subsitutes.component';
 
 const routes: Routes = [
   {
@@ -14,14 +17,19 @@ const routes: Routes = [
         path: '',
         component: MainComponent
       },
-      // {
-      //   path: 'd',
-      //   component: GSuiteDialogComponent
-      // },
       {
         path: 'administrators',
         component: AdministratorsComponent
-      }
+      },     {
+        path: 'teachers',
+        component: TeachersComponent
+      },     {
+        path: 'students',
+        component: StudentsComponent
+      },     {
+        path: 'substitutes',
+        component: SubsitutesComponent
+      },
     ]
   }
 ];
