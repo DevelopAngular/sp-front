@@ -5,16 +5,35 @@
         <input type="checkbox" name="isEdit" formControlName="isEdit" class="isEdit-checkbox" id="isEdit" checked>
         <label class="isEdit-label" for="isEdit"></label>
       </div>
-      <img class="back-button" *ngIf="overlayType !== 'addExisting' && overlayType !== 'newRoomInFolder' && overlayType !== 'importRooms' && !isValidForm" src="../../../assets/Back Button (White).png" (click)="back()">
+      <img class="back-button"
+           *ngIf="overlayType !== 'addExisting'
+           && overlayType !== 'newRoomInFolder'
+           && overlayType !== 'importRooms'
+           && !isValidForm
+           && overlayType !== 'settingsRooms' && overlayType !== 'edit'"
+           src="../../../assets/Back Button (White).png" (click)="back()">
       <div class="title" *ngIf="overlayType === 'newRoom'">{{ roomName }}</div>
       <div
         class="title"
-        *ngIf="overlayType === 'newFolder' || overlayType === 'newRoomInFolder' || overlayType === 'addExisting' || overlayType === 'importRooms'"
+        *ngIf="overlayType === 'newFolder'
+        || overlayType === 'newRoomInFolder'
+        || overlayType === 'addExisting'
+        || overlayType === 'importRooms'
+        || overlayType === 'settingsRooms'
+        || overlayType === 'edit'"
       >{{ folderName }}
       </div>
-      <div *ngIf="overlayType === 'newRoom'" style="margin-right: 25px;width: 121px;">
+      <div *ngIf="overlayType === 'newRoom' || overlayType === 'edit'" style="margin-right: 25px;width: 121px;">
+        <app-gradient-button *ngIf="!requireValidator(timeLimit) && overlayType === 'edit'"
+                             [minHeight]="'40px'"
+                             [style.width]="'120px'"
+                             [cursor]="'pointer'"
+                             [fontSize]="'12px'"
+                             (buttonClick)="done()"
+        >
+          Done</app-gradient-button>
         <div *ngIf="isValidForm" class="button" (click)="onCancel()">Done</div>
-        <div *ngIf="!isValidForm" style="color: white">Incomplete</div>
+        <div *ngIf="!isValidForm && overlayType !== 'edit'" style="color: white">Incomplete</div>
       </div>
     </div>
 
@@ -22,15 +41,19 @@
 <div class="inactive" *ngIf="!form.get('isEdit').value"></div>
   <div class="overlay-content">
     <div class="left-content">
-      <div class="new-room-in-folder" *ngIf="overlayType === 'newRoomInFolder' || overlayType === 'importRooms' || overlayType === 'settingsRooms'">
+      <div class="edit-rooms-left-content" *ngIf="overlayType === 'edit'">
+        <div class="edit-rooms-left-title">Bulk edit the rooms added. Any change will override the previous setting.</div>
+      </div>
+      <div class="new-room-in-folder"
+           *ngIf="overlayType === 'newRoomInFolder' || overlayType === 'importRooms' || overlayType === 'settingsRooms'">
           <div class="new-room-in-folder-header">
             <img class="back-button" (click)="(overlayType === 'settingsRooms' ? setLocation('importRooms') : setLocation('newFolder'))" src="../../../assets/Back Button (Grey).png">
-            <div [ngClass]="{'room-in-folder-title-inactive': !isValidForm, 'room-in-folder-title-active': isValidForm }">
-              {{ (overlayType === 'newRoomInFolder' ? roomName : 'Import Rooms') }}
+            <div [ngClass]="{'room-in-folder-title-inactive': !isValidForm, 'room-in-folder-title-active': isValidForm || (overlayType === 'settingsRooms')}">
+              {{ (overlayType === 'newRoomInFolder' ? roomName : (overlayType === 'settingsRooms' ? 'Adding ' + selectedRooms.length + ' Rooms' : 'Import Rooms')) }}
             </div>
             <div class="header-in-folder-button">
-              <span *ngIf="false">Incomplete</span>
-                <app-gradient-button *ngIf="isValidForm"
+              <span *ngIf="overlayType === 'settingsRooms' && requireValidator(timeLimit)">Incomplete</span>
+                <app-gradient-button *ngIf="isValidForm || (!requireValidator(timeLimit) && overlayType === 'settingsRooms')"
                         [minHeight]="'40px'"
                         [style.width]="'120px'"
                         [cursor]="'pointer'"
@@ -40,6 +63,9 @@
                 Done</app-gradient-button>
             </div>
           </div>
+        <div class="edit-rooms-info" *ngIf="overlayType === 'settingsRooms'">
+          Bulk edit the rooms added. Each room can be individually customized later.
+        </div>
       </div>
       <div class="room-inputs" *ngIf="overlayType === 'newRoom' || overlayType === 'newFolder' || overlayType === 'newRoomInFolder'">
         <div class="room-name">
@@ -65,16 +91,31 @@
       <div class="teacher-search" *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder'">
         <app-input [input_label]="'Teachers in Room'" (onUpdate)="input_value1=$event"></app-input>
       </div>
-      <div style="display: flex" *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder'">
+      <div style="display: flex"
+           *ngIf="overlayType === 'newRoom'
+           || overlayType === 'newRoomInFolder'
+           || overlayType === 'settingsRooms'
+           || overlayType === 'edit'"
+      >
         <div class="travel-picker">
           <div class="toggle-label">Travel Type</div>
           <app-toggle-picker (onSelect)="travelType=$event" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
-        <div class="time-limit">
+        <div class="time-limit"
+             *ngIf="overlayType === 'newRoom'
+             || overlayType === 'newRoomInFolder'
+             || overlayType === 'settingsRooms'
+             || overlayType === 'edit'"
+        >
           <app-input [input_label]="'Time Limit'" [input_value]="timeLimit" [Success]="!requireValidator(timeLimit)" [placeholder]="'minutes'" (onUpdate)="timeLimit=$event"></app-input>
         </div>
       </div>
-      <div class="restriction-settings" *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder'">
+      <div class="restriction-settings"
+           *ngIf="overlayType === 'newRoom'
+           || overlayType === 'newRoomInFolder'
+           || overlayType === 'settingsRooms'
+           || overlayType === 'edit'"
+      >
         <div class="restriction-picker-1">
           <div class="toggle-label">Restriction For Now</div>
           <app-toggle-picker (onSelect)="nowRestriction=$event" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
@@ -130,14 +171,13 @@
           <app-pinnable-collection [header]="false" [pinnables]="pinnables$ | async" (roomEvent)="selectedRooms=$event"></app-pinnable-collection>
         </div>
       </div>
-
+      <input type="file" formControlName="file" #file style="display: none"/>
       <div class="import-rooms-content" *ngIf="overlayType === 'importRooms'">
         <div class="import-rooms-info">
           Import a list of room names, room numbers, and room names from an Excel spreadsheet or CSV
         </div>
         <div class="download-template-link">Download Template</div>
         <div class="choose-file" (click)="file.click()">
-          <input type="file" formControlName="file" #file style="display: none"/>
             <img class="choose-icon" src="../../../assets/Spreadsheet (Grey).png">
             <span class="choose-text">Choose File</span>
         </div>
@@ -147,7 +187,7 @@
 
     <div class="divider"></div>
     <div class="right-content">
-      <div style="position: relative">
+      <div style="position: relative" *ngIf="overlayType !== 'edit'">
         <div class="inactive" *ngIf="hideAppearance"></div>
         <div class="right-content-title">Appearance</div>
         <div class="color-picker">
@@ -157,6 +197,16 @@
           <app-icon-picker (selectedEvent)="iconPicker=$event"></app-icon-picker>
         </div>
       </div>
+
+        <div class="edit-right-content" *ngIf="overlayType === 'edit'">
+          <div class="edit-right-title">Rooms Editing</div>
+          <div class="selected-rooms">
+            <div class="selected-room" *ngFor="let room of selectedRooms">
+              <app-pinnable [pinnable]="room" [width]="'150px'" [height]="'90px'" [iconWidth]="'40px'"></app-pinnable>
+            </div>
+          </div>
+        </div>
+
     </div>
   </div>
 </div> <!-- Inactive div -->

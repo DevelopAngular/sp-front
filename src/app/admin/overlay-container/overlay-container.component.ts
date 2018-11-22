@@ -4,7 +4,6 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 import { Pinnable } from '../../models/Pinnable';
 import { Observable } from 'rxjs';
-import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-overlay-container',
@@ -56,6 +55,11 @@ export class OverlayContainerComponent implements OnInit {
           this.folderName = 'New Folder';
           break;
         }
+        case 'edit': {
+          colors = '#606981, #ACB4C1';
+          this.folderName = 'Bulk Edit Rooms';
+          break;
+        }
     }
     this.gradientColor = 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
@@ -74,7 +78,7 @@ export class OverlayContainerComponent implements OnInit {
       this.getHeaderData();
 
       this.form.get('file').valueChanges.subscribe(res => {
-          this.overlayType = 'settingsRooms';
+          this.setLocation('settingsRooms');
       });
   }
 
@@ -109,6 +113,11 @@ export class OverlayContainerComponent implements OnInit {
         case 'addExisting': {
           hideAppearance = true;
           type = 'addExisting';
+          break;
+        }
+        case 'settingsRooms': {
+          hideAppearance = true;
+          type = 'settingsRooms';
           break;
         }
     }

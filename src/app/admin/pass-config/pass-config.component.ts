@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { HttpService } from '../../http-service';
 import { Pinnable } from '../../models/Pinnable';
 import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
-import {map, shareReplay} from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 
 @Component({
   selector: 'app-pass-congif',
@@ -76,7 +76,7 @@ export class PassConfigComponent implements OnInit {
               break;
           }
           case 'newFolderWithSelections': {
-              data = { type: action, rooms: this.selectedPinnables };
+              data = { type: 'newFolder', rooms: this.selectedPinnables };
               break;
           }
           case 'delete': {
