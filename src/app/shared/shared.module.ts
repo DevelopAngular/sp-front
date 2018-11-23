@@ -1,6 +1,5 @@
 ﻿import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-//import { MatProgressBarModule, MatGridListModule } from '@angular/material';
 import {
   MatProgressBarModule, MatGridListModule,
   MatDialogModule,
@@ -8,10 +7,9 @@ import {
   MatSelectModule,
   MatSliderModule,
   MatSlideToggleModule,
-  MatChipsModule, MatCardModule, MatCheckboxModule, MatTab, MatTableModule, MatProgressSpinnerModule,
+  MatChipsModule, MatCardModule, MatCheckboxModule, MatTableModule, MatProgressSpinnerModule,
 } from '@angular/material';
 
-import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 import { GradientButtonComponent } from '../gradient-button/gradient-button.component';
 import { NavButtonComponent } from '../nav-button/nav-button.component';
@@ -27,10 +25,6 @@ import { PinnableComponent } from '../pinnable/pinnable.component';
 import { TraveltypePickerComponent } from '../traveltype-picker/traveltype-picker.component';
 import { StudentSearchComponent } from '../student-search/student-search.component';
 import { DisplayReportCellComponent } from '../display-report-cell/display-report-cell.component';
-import {BackButtonComponent} from '../admin/back-button/back-button.component';
-import {SearchComponent} from '../admin/search/search.component';
-import {RoundInputComponent} from '../admin/round-input/round-input.component';
-import {DataTableComponent} from '../admin/data-table/data-table.component';
 
 
 @NgModule({
@@ -55,10 +49,6 @@ import {DataTableComponent} from '../admin/data-table/data-table.component';
     NgProgressModule.forRoot()
   ],
   declarations: [
-    DataTableComponent,
-    BackButtonComponent,
-    RoundInputComponent,
-    SearchComponent,
     GradientButtonComponent,
     ResolveAssetPipe,
     SmartpassLogoComponent,
@@ -72,15 +62,11 @@ import {DataTableComponent} from '../admin/data-table/data-table.component';
       DisplayReportCellComponent,
   ],
   exports: [
-    DataTableComponent,
     ReactiveFormsModule,
     MatTableModule,
     MatProgressSpinnerModule,
     MatCardModule,
     MatCheckboxModule,
-    BackButtonComponent,
-    RoundInputComponent,
-    SearchComponent,
     GradientButtonComponent,
     ResolveAssetPipe,
     SmartpassLogoComponent,
