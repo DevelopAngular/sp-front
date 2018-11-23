@@ -152,8 +152,8 @@
           <img class="back-button" (click)="setLocation('newFolder')" src="../../../assets/Back Button (Grey).png">
           <div class="header-title">Add Existing Room to Folder</div>
         </div>
-        <div class="add-rooms-button" *ngIf="selectedRooms.length > 0">
-          <div class="selected-rooms-text">{{ selectedRooms.length }} Rooms Selected</div>
+        <div class="add-rooms-button" *ngIf="selectedRoomsInFolder.length > 0">
+          <div class="selected-rooms-text">{{ selectedRoomsInFolder.length }} Rooms Selected</div>
           <app-gradient-button
                   [minHeight]="'35px'"
                   [style.width]="'120px'"
@@ -163,12 +163,12 @@
           >
             Add to Folder</app-gradient-button>
         </div>
-        <div class="info-text" *ngIf="!selectedRooms || selectedRooms.length === 0">
+        <div class="info-text" *ngIf="!selectedRoomsInFolder || selectedRoomsInFolder.length === 0">
           <span>Choose existing rooms to add to the {{ roomName }} folder.</span><br/>
           <span>Note: appearance settings will be lost</span>
         </div>
         <div class="pinnable-collection">
-          <app-pinnable-collection [header]="false" [pinnables]="pinnables$ | async" (roomEvent)="selectedRooms=$event"></app-pinnable-collection>
+          <app-pinnable-collection [header]="false" [pinnables]="pinnables$ | async" (roomEvent)="selectedRoomsInFolder=$event"></app-pinnable-collection>
         </div>
       </div>
       <input type="file" formControlName="file" #file style="display: none"/>
