@@ -81,6 +81,8 @@ export class OverlayContainerComponent implements OnInit {
       this.form.get('file').valueChanges.subscribe(res => {
           this.setLocation('settingsRooms');
       });
+
+      console.log('IIIIII', this.selectedRooms);
   }
 
   buildForm() {
@@ -132,7 +134,8 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   addToFolder() {
-      console.log(this.selectedRooms);
+    this.selectedRooms = this.selectedRooms.concat(this.selectedRoomsInFolder);
+    this.setLocation('newFolder');
   }
 
   back() {

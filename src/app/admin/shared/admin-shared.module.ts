@@ -13,7 +13,15 @@ import { RoundInputComponent } from '../round-input/round-input.component';
 import { SquareInputComponent } from '../square-input/square-input.component';
 import { AppInputComponent } from '../../app-input/app-input.component';
 import { FormsModule } from '@angular/forms';
-import { MatCheckboxModule, MatDialogModule, MatGridListModule, MatSortModule, MatTableModule } from '@angular/material';
+import {
+    MatCheckboxModule,
+    MatDialogModule,
+    MatGridListModule,
+    MatSortModule,
+    MatTableModule,
+    MatListModule,
+    MatDividerModule
+} from '@angular/material';
 import { IconPickerComponent } from '../icon-picker/icon-picker.component';
 import { ColorPalletPickerComponent } from '../color-pallet-picker/color-pallet-picker.component';
 import { TogglePickerComponent } from '../toggle-picker/toggle-picker.component';
@@ -28,6 +36,8 @@ import { TogglePickerComponent } from '../toggle-picker/toggle-picker.component'
     MatSortModule,
     MatGridListModule,
     MatDialogModule,
+    MatListModule,
+    MatDividerModule,
   ],
   declarations: [
       BackButtonComponent,

@@ -68,7 +68,7 @@ export class PassConfigComponent implements OnInit {
               const pinnables$ = this.pinnables$.pipe(map(pinnables => {
                   return pinnables.filter(pinnable => pinnable.type !== 'category');
               }), shareReplay(1));
-              data = { type: action, pinnables$: pinnables$ };
+              data = { type: action, pinnables$: pinnables$, rooms: this.selectedPinnables };
               break;
           }
           case 'edit': {
