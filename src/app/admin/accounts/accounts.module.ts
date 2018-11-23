@@ -2,11 +2,12 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { AccountsRoutingModule } from './accounts-routing.module';
-import {AccountsComponent} from './accounts.component';
-import {MainComponent} from './main/main.component';
-import {SharedModule} from '../../shared/shared.module';
+import { AccountsComponent } from './accounts.component';
+import { MainComponent } from './main/main.component';
+import { SharedModule } from '../../shared/shared.module';
 import { GSuiteDialogComponent } from './dialogs/g-suite-dialog/g-suite-dialog.component';
 import { AdministratorsComponent } from './administrators/administrators.component';
+import { AdminSharedModule } from '../shared/admin-shared.module';
 import { AddAccountDialogComponent } from './dialogs/add-account-dialog/add-account-dialog.component';
 import { EditRestrictionsDialogComponent } from './dialogs/edit-restrictions-dialog/edit-restrictions-dialog.component';
 import { RemoveAccountDialogComponent } from './dialogs/remove-account-dialog/remove-account-dialog.component';
@@ -20,9 +21,9 @@ import { AddTeacherProfileDialogComponent } from './dialogs/add-teacher-profile-
   imports: [
     CommonModule,
     AccountsRoutingModule,
-    SharedModule
+    SharedModule,
+    AdminSharedModule,
   ],
-  entryComponents: [GSuiteDialogComponent, AddTeacherProfileDialogComponent, AddRoomsDialogComponent, AddAccountDialogComponent, EditRestrictionsDialogComponent, RemoveAccountDialogComponent],
   declarations: [
     AccountsComponent,
     MainComponent,
@@ -36,6 +37,14 @@ import { AddTeacherProfileDialogComponent } from './dialogs/add-teacher-profile-
     SubsitutesComponent,
     AddRoomsDialogComponent,
     AddTeacherProfileDialogComponent,
-  ]
+  ],
+  entryComponents: [
+    GSuiteDialogComponent,
+    AddTeacherProfileDialogComponent,
+    AddRoomsDialogComponent,
+    AddAccountDialogComponent,
+    EditRestrictionsDialogComponent,
+    RemoveAccountDialogComponent
+  ],
 })
 export class AccountsModule { }

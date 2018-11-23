@@ -24,7 +24,7 @@ import { SharedModule } from './shared/shared.module';
 import { AdminModule } from './admin/admin.module';
 import { UserService } from './user.service';
 import { LoginComponent } from './login/login.component';
-import {ProgressInterceptor} from './progress-interceptor';
+import { ProgressInterceptor } from './progress-interceptor';
 import { HallDateTimePickerComponent } from './hall-date-time-picker/hall-date-time-picker.component';
 
 const appRoutes: Routes = [

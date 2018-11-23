@@ -15,6 +15,7 @@ export class OverlayContainerComponent implements OnInit {
   @ViewChild('file') selectedFile;
 
   selectedRooms: Pinnable[] = [];
+  selectedRoomsInFolder: Pinnable[] = [];
   pinnables$: Observable<Pinnable[]>;
   overlayType: string;
   roomName: string;
@@ -100,7 +101,7 @@ export class OverlayContainerComponent implements OnInit {
           break;
         }
         case 'newFolder': {
-          this.selectedRooms = [];
+          this.selectedRoomsInFolder = [];
           hideAppearance = false;
           type = 'newFolder';
           break;
