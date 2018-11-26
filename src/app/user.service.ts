@@ -11,7 +11,6 @@ import { Logger } from './logger.service';
 import { User } from './models/User';
 import { PollingService } from './polling-service';
 
-
 @Injectable()
 export class UserService {
 
@@ -26,8 +25,9 @@ export class UserService {
 
     this.pollingService.listen().subscribe(this._logging.debug);
   }
-  getUsersList() {
-    return this.http.get<any>('v1/users');
+
+  getUsersList(role: string = '', search: string = '') {
+    return this.http.get<any>('v1/users' + (role === '' ? '' : '?role=' + encodeURI(role)) + (search === '' ? '' : '&search=' + encodeURI(search)));
   }
 
 }

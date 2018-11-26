@@ -3,32 +3,37 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 import {FormControl, FormGroup} from '@angular/forms';
 
 @Component({
-  selector: 'app-edit-restrictions-dialog',
-  templateUrl: './edit-restrictions-dialog.component.html',
-  styleUrls: ['./edit-restrictions-dialog.component.scss']
+  selector: 'app-accounts-dialog',
+  templateUrl: './accounts-dialog.component.html',
+  styleUrls: ['./accounts-dialog.component.scss']
 })
-export class EditRestrictionsDialogComponent implements OnInit {
+export class AccountsDialogComponent implements OnInit {
 
   public layout: string;
+  public img: string;
   public palette: string;
   public header: string;
   public buttonColor: string;
   public buttonText: string;
+  public controlsIteratable: any[];
   public form: FormGroup;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private DR: MatDialogRef<EditRestrictionsDialogComponent>
-  ) {
-
-
-
-  }
+    private DR: MatDialogRef<AccountsDialogComponent>
+  ) { }
 
   ngOnInit() {
 
     switch (this.data.mode) {
-
+      case 'gsuite' :
+        this.layout = 'gsuite';
+        this.img = 'assets/google/google_logo.svg';
+        this.header = 'Manage G Suite Integration';
+        this.buttonText = 'Confirm';
+        this.buttonColor =  '#FFFFFF, #FFFFFF';
+        this.palette = `radial-gradient(circle at 80% 67%, ${this.buttonColor})`;
+        break
       case 'restrictions' : {
         this.layout = 'restrictions';
         this.header = 'Add/Modify Restrictions';
@@ -37,12 +42,12 @@ export class EditRestrictionsDialogComponent implements OnInit {
         this.palette = `radial-gradient(circle at 80% 67%, ${this.buttonColor})`;
         const restrictions = this.data.restrictions;
         const group: any = {};
-
         for (const key in restrictions) {
           console.log(key);
-          group[key] = new FormControl(restrictions[key]);
+          group[key] = new FormControl(restrictions[key]['restriction']);
         }
         this.form = new FormGroup(group);
+        this.controlsIteratable = Object.values(restrictions);
         break;
       }
       case 'remove' :
@@ -53,6 +58,7 @@ export class EditRestrictionsDialogComponent implements OnInit {
         this.palette = `radial-gradient(circle at 80% 67%, ${this.buttonColor})`;
         break
       case 'teacher' :
+        this.layout = 'teacher',
         this.header = 'Add/Modify Acting Teacher Profile';
         this.buttonText = 'Add/Modify';
         this.buttonColor = '#13BF9E, #00D99B';
@@ -66,6 +72,7 @@ export class EditRestrictionsDialogComponent implements OnInit {
         this.palette = `radial-gradient(circle at 80% 67%, ${this.buttonColor})`;
         break
       case 'create':
+        this.layout = 'create';
         this.header = 'Create Account to Administrator Profile',
         this.buttonText = 'Add Accounts to Profile';
         this.buttonColor = '#03cf31, #00b476';
@@ -73,6 +80,6 @@ export class EditRestrictionsDialogComponent implements OnInit {
     };
   }
   closeDialog() {
-    this.DR.close(this.form.value);
+    this.DR.close('closed');
   }
 }

@@ -7,6 +7,8 @@ import { SearchComponent } from './search/search.component';
 import { PassConfigComponent } from './pass-config/pass-config.component';
 import { FeedbackComponent } from './feedback/feedback.component';
 import { SupportComponent } from './support/support.component';
+import {AccountsComponent} from './accounts/accounts.component';
+import {AccountsRoleComponent} from './accounts-role/accounts-role.component';
 
 const routes: Routes = [
   {
@@ -15,7 +17,9 @@ const routes: Routes = [
       {path: 'dashboard', component: DashboardComponent},
       {path: 'hallmonitor', component: HallmonitorComponent},
       {path: 'search', component: SearchComponent},
-      {path: 'accounts', loadChildren: './accounts/accounts.module#AccountsModule'},
+      // {path: 'accounts', loadChildren: './accounts/accounts.module#AccountsModule'},
+      {path: 'accounts', component: AccountsComponent},
+      {path: 'accounts/:role', component: AccountsRoleComponent},
       {path: 'passconfig', component: PassConfigComponent},
       {path: 'feedback', component: FeedbackComponent},
       {path: 'support', component: SupportComponent}

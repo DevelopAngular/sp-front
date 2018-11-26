@@ -1,0 +1,29 @@
+<div class="student-search-wrapper">
+  <div class="input">
+    <mat-chip-list #chipList>
+      <mat-chip
+        *ngFor="let student of selectedStudents"
+        [removable]="true"
+        (removed)="removeStudent(student)">
+        {{student.display_name}}
+        <mat-icon matChipRemove>cancel</mat-icon>
+      </mat-chip>
+      <input
+        placeholder="Search students"
+        #studentInput
+        [matChipInputFor]="chipList"
+        [matChipInputAddOnBlur]="true"
+        [value]="inputValue"
+        (input)="onSearch(studentInput.value)"
+      >
+    </mat-chip-list>
+  </div>
+  <div *ngIf="showOptions" class="options-wrapper">
+    <div *ngFor="let student of students | async" (click)="studentInput.value = ''; addStudent(student)"  class="option-wrapper">
+      <div class="option-content">
+        {{ student.display_name }}({{student.primary_email}})
+      </div>
+      <div class="option-divider"></div>
+    </div>
+  </div>
+</div>

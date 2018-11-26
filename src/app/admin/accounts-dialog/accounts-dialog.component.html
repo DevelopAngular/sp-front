@@ -1,8 +1,11 @@
 <mat-card class="dialog">
   <mat-card-header [style.box-shadow]="'0 0 5px 3px #ddd'" [style.background]="palette">
     <div class="flex-center-center py" [style.width]="'100%'">
+      <div class="pr mr" *ngIf="img">
+        <img [src]="img" alt="google-icon" width="44" height="44">
+      </div>
       <div>
-        <p class="card_header">{{header}}</p>
+        <p class="card_header" [class.card_header]="data.mode != 'gsuite'">{{header}}</p>
       </div>
     </div>
   </mat-card-header>
@@ -23,26 +26,14 @@
         <div class="card-content_right">
           <form [formGroup]="form">
             <h3 style="margin-top: 0">Mock restriction object</h3>
-            <div class="pl" [style.border-bottom]="'1px solid #ccc'">
-              <app-toggle-input class="" [style.border-bottom]="'1px solid #ccc'" [form]="form" [controlName]="'dashboard_access'" [controlLabel]="'Access to Dashboard'"></app-toggle-input>
+
+            <div class="pl" [style.border-bottom]="'1px solid #ccc'" *ngFor="let control of controlsIteratable">
+              <app-toggle-input [style.border-bottom]="'1px solid #ccc'"
+                                [form]="form" [controlName]="control.controlName"
+                                [controlLabel]="control.controlLabel"></app-toggle-input>
             </div>
-            <div class="pl" [style.border-bottom]="'1px solid #ccc'">
-              <app-toggle-input class="" [style.border-bottom]="'1px solid #ccc'" [form]="form" [controlName]="'hall_monitor_access'" [controlLabel]="'Access to Hall Monitor'"></app-toggle-input>
-            </div>
-            <div class="pl" [style.border-bottom]="'1px solid #ccc'">
-              <app-toggle-input class="" [style.border-bottom]="'1px solid #ccc'" [form]="form" [controlName]="'search_access'" [controlLabel]="'Access to Search'"></app-toggle-input>
-            </div>
-            <div class="pl" [style.border-bottom]="'1px solid #ccc'">
-              <app-toggle-input class="" [style.border-bottom]="'1px solid #ccc'" [form]="form" [controlName]="'accounts_access'" [controlLabel]="'Access to Accounts & Profiles'"></app-toggle-input>
-            </div>
-            <div class="pl" [style.border-bottom]="'1px solid #ccc'">
-              <app-toggle-input class="" [style.border-bottom]="'1px solid #ccc'" [form]="form" [controlName]="'pass_config_access'" [controlLabel]="'Access to Pass Configuration'"></app-toggle-input>
-            </div>
-            <div class="pl" [style.border-bottom]="'1px solid #ccc'">
-              <app-toggle-input class="" [style.border-bottom]="'1px solid #ccc'" [form]="form" [controlName]="'school_setting_access'" [controlLabel]="'Access to School Settings'"></app-toggle-input>
-            </div>
+
           </form>
-          <!--<pre>{{form.value | json}}</pre>-->
         </div>
       </div>
       <div *ngSwitchCase="'remove'">
@@ -61,7 +52,55 @@
           </div>
         </div>
       </div>
-      <div class="w-100 flex-center-center" [style.margin]="'40px auto'">
+      <div class="flex-center-center w-100"  *ngSwitchCase="'teacher'">
+        <div [style.width]="'60%'">
+          <p [style.padding]="'30px 0px 20px 0px'" [style.color]="'#ccc'">
+            Search through all teacher profiles. Select a teacher profile that this Secretary or Substitute can act as.
+          </p>
+          <div class="">
+            <app-profiles-search [role]="data.role"></app-profiles-search>
+          </div>
+        </div>
+      </div>
+      <div class="flex-center-center w-100" *ngSwitchCase="'create'">
+        <div [style.width]="'60%'">
+          <p [style.padding]="'30px 0px 20px 0px'" [style.color]="'#ccc'">
+            Search through all G Suite for Education accounts.
+            If you want to add a new user, create an account for him/her through G Suite first.
+          </p>
+          <div class="">
+            <app-profiles-search [role]="data.role"></app-profiles-search>
+          </div>
+        </div>
+      </div>
+      <div class="flex-start-between h-100" *ngSwitchCase="'gsuite'">
+        <div class="card-content_left" [style.width]="'65%'" [style.border-right]="'1px solid #ccc'">
+          <p>
+            New User Rules
+          </p>
+          <p>
+            If you import or add new user accounts on G Suite, we'll create a profile for them automatically based on the rules set up.
+          </p>
+        </div>
+        <div class="card-content_right" [style.width]="'35%'">
+          <div mat-calendar-body="pb mb">
+            <div class="flex-center-center pb mb">
+              <div [style.width]="'217px'">
+                <app-gradient-button [gradient]="'#022F68, #2F66AB'" [minHeight]="'28px'">
+                  <span style="font-weight: normal; font-size: 16px">Manually <span style="color: #0C46A2">Sync</span></span>
+                </app-gradient-button>
+              </div>
+            </div>
+            <p>
+              Update your imported users' details in G Suite - we'll sync these changes for you on our end every 4 hours.
+            </p>
+          </div>
+          <time>
+            Last Sync: Today, 9:34 AM
+          </time>
+        </div>
+      </div>
+      <div class="w-100 flex-center-center" *ngIf="data.mode != 'gsuite'" [style.margin]="'40px auto'">
         <app-gradient-button [gradient]="buttonColor" [minHeight]="'36px'" (buttonClick)="closeDialog()">
           <span style="font-weight: normal; font-size: 16px; padding: 7px 35px;">{{buttonText}}</span>
         </app-gradient-button>

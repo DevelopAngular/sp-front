@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { EditRestrictionsDialogComponent } from './edit-restrictions-dialog.component';
+import { EditRestrictionsDialogComponent } from './accounts-dialog.component';
 
 describe('EditRestrictionsDialogComponent', () => {
   let component: EditRestrictionsDialogComponent;

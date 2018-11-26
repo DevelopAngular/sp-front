@@ -15,7 +15,11 @@ import { SquareInputComponent } from '../square-input/square-input.component';
 import {  TogglePickerComponent } from '../toggle-picker/toggle-picker.component';
 import {AppInputComponent} from '../../app-input/app-input.component';
 import {FormsModule} from '@angular/forms';
-import {MatCheckboxModule, MatDialogModule, MatGridListModule, MatSortModule, MatTableModule} from '@angular/material';
+import {
+  MatCheckboxModule, MatChipsModule, MatDialogModule, MatGridListModule, MatIconModule, MatSortModule,
+  MatTableModule
+} from '@angular/material';
+import {ToggleInputComponent} from '../toggle-input/toggle-input.component';
 
 @NgModule({
   imports: [
@@ -27,8 +31,11 @@ import {MatCheckboxModule, MatDialogModule, MatGridListModule, MatSortModule, Ma
     MatSortModule,
     MatGridListModule,
     MatDialogModule,
+    MatChipsModule,
+    MatIconModule,
   ],
   declarations: [
+      ToggleInputComponent,
       BackButtonComponent,
       ColorPalletPickerComponent,
       DataTableComponent,
@@ -44,6 +51,7 @@ import {MatCheckboxModule, MatDialogModule, MatGridListModule, MatSortModule, Ma
       AppInputComponent,
   ],
   exports: [
+      ToggleInputComponent,
       BackButtonComponent,
       ColorPalletPickerComponent,
       DataTableComponent,
@@ -57,6 +65,8 @@ import {MatCheckboxModule, MatDialogModule, MatGridListModule, MatSortModule, Ma
       SquareInputComponent,
       TogglePickerComponent,
       AppInputComponent,
+      MatChipsModule,
+      MatIconModule,
   ],
   entryComponents: [
       AppInputComponent,
