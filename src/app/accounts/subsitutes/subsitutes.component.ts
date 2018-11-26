@@ -7,6 +7,7 @@ import {MatDialog} from '@angular/material';
 import {UserService} from '../../../user.service';
 import {RemoveAccountDialogComponent} from '../dialogs/remove-account-dialog/remove-account-dialog.component';
 import {AddTeacherProfileDialogComponent} from '../dialogs/add-teacher-profile-dialog/add-teacher-profile-dialog.component';
+import {debounceTime} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'app-subsitutes',
@@ -14,9 +15,9 @@ import {AddTeacherProfileDialogComponent} from '../dialogs/add-teacher-profile-d
   styleUrls: ['./subsitutes.component.scss']
 })
 export class SubsitutesComponent implements OnInit, OnDestroy {
-
-  private _dialogMap: Map<string, any> = new Map();
-  private _destroy$: Subject<any> = new Subject();
+  private role: string = 'staff_secretary';
+  private dialogMap: Map<string, any> = new Map();
+  private destroy$: Subject<any> = new Subject();
   public userList: any[] = [];
   public selectedUsers: any[] = [];
   constructor(
@@ -25,14 +26,41 @@ export class SubsitutesComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this._dialogMap.set('atd', AddTeacherProfileDialogComponent);
-    this._dialogMap.set('aad', AddAccountDialogComponent);
-    this._dialogMap.set('erd', EditRestrictionsDialogComponent);
-    this._dialogMap.set('rad', RemoveAccountDialogComponent);
+    this.dialogMap.set('atd', AddTeacherProfileDialogComponent);
+    this.dialogMap.set('aad', AddAccountDialogComponent);
+    this.dialogMap.set('erd', EditRestrictionsDialogComponent);
+    this.dialogMap.set('rad', RemoveAccountDialogComponent);
 
+    this.getUserList();
+
+  }
+  showSerarchParam(e) {
+    console.log(e);
+    this.getUserList(e);
+  }
+  showSelected(e) {
+    console.log(e);
+    this.selectedUsers = e;
+  }
+  openDialog(mode) {
+    const DR = this.matDialog.open(EditRestrictionsDialogComponent,
+      {
+        data: {
+          mode: mode,
+        },
+        width: '768px', height: '560px',
+        panelClass: 'accounts-profiles-dialog',
+        backdropClass: 'custom-bd'
+      });
+  }
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+  private getUserList(query: string = '') {
     this.userService
-      .getUsersList()
-      .pipe(takeUntil(this._destroy$))
+      .getUsersList(this.role, query)
+      .pipe(takeUntil(this.destroy$), debounceTime(500))
       .subscribe((userList) => {
         this.userList = userList.map((raw) => {
           return {
@@ -44,24 +72,4 @@ export class SubsitutesComponent implements OnInit, OnDestroy {
         });
       });
   }
-  showSerarchParam(e) {
-    console.log(e);
-  }
-  showSelected(e) {
-    console.log(e);
-    this.selectedUsers = e;
-  }
-  openDialog(target) {
-    const DR = this.matDialog.open(this._dialogMap.get(target),
-      {
-        width: '768px', height: '560px',
-        panelClass: 'accounts-profiles-dialog',
-        backdropClass: 'custom-bd'
-      });
-  }
-  ngOnDestroy() {
-    this._destroy$.next();
-    this._destroy$.complete();
-  }
-
 }

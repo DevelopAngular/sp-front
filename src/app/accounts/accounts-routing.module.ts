@@ -17,19 +17,26 @@ const routes: Routes = [
         path: '',
         component: MainComponent
       },
+      // {
+      //   path: 'administrators',
+      //   component: AdministratorsComponent
+      // },
+      // {
+      //   path: 'teachers',
+      //   component: TeachersComponent
+      // },
       {
-        path: 'administrators',
-        component: AdministratorsComponent
-      },     {
-        path: 'teachers',
+        path: '/:role',
         component: TeachersComponent
-      },     {
-        path: 'students',
-        component: StudentsComponent
-      },     {
-        path: 'substitutes',
-        component: SubsitutesComponent
       },
+      // {
+      //   path: 'students',
+      //   component: StudentsComponent
+      // },
+      // {
+      //   path: 'substitutes',
+      //   component: SubsitutesComponent
+      // },
     ]
   }
 ];

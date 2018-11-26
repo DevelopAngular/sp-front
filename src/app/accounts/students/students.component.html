@@ -4,11 +4,11 @@
       <app-back-button routerLink="/accounts"></app-back-button>
     </div>
     <div class="mt mx pt px">
-      <div class="card_header">Teachers</div>
+      <div class="card_header">Students</div>
       <p class="card_title mr pr">
-        <span>87 profiles </span><br>
-        A teacher has a room or multiple rooms where students can create passes to.
-        A teacher can manage passes in his/her room and create passes.
+        <span>1,678 profiles</span><br>
+        A student can create passes, schedule passes for the future,
+        and send pass requests to teachers.
       </p>
     </div>
     <div class="ml pl">
@@ -28,7 +28,7 @@
           [minWidth]="'300px'"
           [type]="'text'"
           [placeholder]="'Search profiles'"
-          (ontextupdate)="showSerarchParam($event)">
+          (ontextupdate)="showSearchParam($event)">
 
         </app-round-input>
       </div>
@@ -36,8 +36,10 @@
   </div>
 
   <div class="table">
+
     <div *ngIf="!userList.length" class="loading-theme spinner flex-center-center">
-      <mat-spinner [color]="'accent'"></mat-spinner>
+      <mat-spinner *ngIf="!placeholder" [color]="'accent'"></mat-spinner>
+      <h1 class="header" *ngIf="placeholder">No matches found.</h1>
     </div>
     <div *ngIf="userList.length" >
       <div class="tool-panel flex-center-start m p">
@@ -48,35 +50,11 @@
           <app-gradient-button
             [cursor]="'pointer'"
             [minHeight]="'32px'"
-            [width]="'185px'"
-            [fontSize]="'14px'"
-            [fontWeight]="400"
-            [gradient]="'#022F68, #2F66AB'"
-            (buttonClick)="openDialog('ard')">
-            <span>Add/Modify Rooms</span>
-          </app-gradient-button>
-        </div>
-        <div class="m p">
-          <app-gradient-button
-            [cursor]="'pointer'"
-            [minHeight]="'32px'"
-            [width]="'215px'"
-            [fontSize]="'14px'"
-            [fontWeight]="400"
-            [gradient]="'#0B9FC1, #00C0C7'"
-            (buttonClick)="openDialog('erd')">
-            <span>Add/Modify Restrictions</span>
-          </app-gradient-button>
-        </div>
-        <div class="m p">
-          <app-gradient-button
-            [cursor]="'pointer'"
-            [minHeight]="'32px'"
             [width]="'280px'"
             [fontSize]="'14px'"
             [fontWeight]="400"
             [gradient]="'#DA2370, #FB434A'"
-            (buttonClick)="openDialog('rad')">
+            (buttonClick)="openDialog('remove')">
             <span>Remove Account from this Profile</span>
           </app-gradient-button>
         </div>
@@ -89,3 +67,4 @@
     </div>
   </div>
 </div>
+
