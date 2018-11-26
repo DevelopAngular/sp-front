@@ -9,7 +9,7 @@
         <mat-icon matChipRemove>cancel</mat-icon>
       </mat-chip>
       <input
-        placeholder="Search profiles"
+        [placeholder]="placeholder"
         #studentInput
         [matChipInputFor]="chipList"
         [matChipInputAddOnBlur]="true"

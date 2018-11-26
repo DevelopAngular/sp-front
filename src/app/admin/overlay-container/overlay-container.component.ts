@@ -201,7 +201,11 @@ export class OverlayContainerComponent implements OnInit {
         this.readyRoomsToEdit = [];
      }
     if (action === 'delete') {
-        // Request delete rooms
+        this.deleteRoom();
     }
   }
+
+    deleteRoom() {
+      // Delete Request
+    }
 }

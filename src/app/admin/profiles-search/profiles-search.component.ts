@@ -14,6 +14,7 @@ import {HttpService} from '../../http-service';
 export class ProfilesSearchComponent implements OnInit {
 
   @Input() role: string;
+  @Input() placeholder: string = 'Search profiles';
 
   private destroy$: Subject<any> = new Subject();
   private searchChangeObserver$: Subject<string>;

@@ -27,6 +27,7 @@ import { ColorPalletPickerComponent } from '../color-pallet-picker/color-pallet-
 import { TogglePickerComponent } from '../toggle-picker/toggle-picker.component';
 import {ToggleInputComponent} from '../toggle-input/toggle-input.component';
 import {AccountsDialogComponent} from '../accounts-dialog/accounts-dialog.component';
+import {ProfilesSearchComponent} from '../profiles-search/profiles-search.component';
 
 @NgModule({
   imports: [
@@ -58,6 +59,7 @@ import {AccountsDialogComponent} from '../accounts-dialog/accounts-dialog.compon
       SquareInputComponent,
       TogglePickerComponent,
       AppInputComponent,
+      ProfilesSearchComponent
   ],
   exports: [
       MatChipsModule,
@@ -76,6 +78,7 @@ import {AccountsDialogComponent} from '../accounts-dialog/accounts-dialog.compon
       SquareInputComponent,
       TogglePickerComponent,
       AppInputComponent,
+      ProfilesSearchComponent
   ],
   entryComponents: [
       AccountsDialogComponent,

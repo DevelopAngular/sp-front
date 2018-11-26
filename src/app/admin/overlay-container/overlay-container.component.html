@@ -89,7 +89,8 @@
         </div>
       </div>
       <div class="teacher-search" *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder'">
-        <app-input [input_label]="'Teachers in Room'" (onUpdate)="input_value1=$event"></app-input>
+        <div class="teacher-title">Teachers in Room</div>
+        <app-profiles-search [placeholder]="'Search Teacher'" [role]="'_profile_teacher'"></app-profiles-search>
       </div>
       <div style="display: flex"
            *ngIf="overlayType === 'newRoom'
@@ -125,11 +126,25 @@
           <app-toggle-picker (onSelect)="futureRestriction=$event" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
       </div>
+
+      <!--<div class="footer-delete-button" *ngIf="overlayType === 'newRoom' && isValidForm">-->
+        <!--<app-gradient-button-->
+                <!--[gradient]="'#F52B4F, #F37426'"-->
+                <!--[minHeight]="'40px'"-->
+                <!--[style.width]="'120px'"-->
+                <!--[cursor]="'pointer'"-->
+                <!--[fontSize]="'12px'"-->
+                <!--(buttonClick)="deleteRoom()"-->
+        <!--&gt;-->
+          <!--Delete Room</app-gradient-button>-->
+      <!--</div>-->
+
       <div class="rooms-in-folder" *ngIf="overlayType === 'newFolder'">
         <div class="rooms-in-folder-title">Rooms in Folder ({{ selectedRooms.length }})</div>
-        <div class="rooms-in-folder-content">
+        <div class="rooms-in-folder-content" [ngClass]="{'rooms-scrolling': selectedRooms.length > 5}">
           <div class="not-rooms-in-folder" *ngIf="requireValidator(folderName)">To add rooms, enter a folder name and select an appearance</div>
-          <div class="content-buttons-in-folder" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length <= 0">
+
+          <div class="content-buttons-in-folder" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length <= 0 && selectedRooms.length <= 5">
               <div class="button-in-folder" *ngFor="let button of buttonsInFolder">
                 <app-gradient-button
                         [minHeight]="'35px'"
@@ -144,7 +159,7 @@
                   {{ button.title }}</app-gradient-button>
               </div>
           </div>
-          <div class="content-buttons-in-folder" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length > 0">
+          <div class="content-buttons-in-folder" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length > 0 && selectedRooms.length <= 5">
             <div class="button-in-folder" *ngFor="let button of buttonsWithSelectedRooms">
               <app-gradient-button
                       [minHeight]="'35px'"
@@ -168,6 +183,38 @@
               </div>
             </mat-list>
           </div>
+
+
+          <div class="content-buttons-in-folder button-column" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length <= 0 && selectedRooms.length > 5">
+            <div class="button-in-folder gd-button" *ngFor="let button of buttonsInFolder">
+              <app-gradient-button
+                      [minHeight]="'35px'"
+                      [style.width]="'120px'"
+                      [cursor]="'pointer'"
+                      [fontSize]="'12px'"
+                      (buttonClick)="setLocation(button.location)"
+                      [leftIcon]="button.icon"
+                      [leftImageWidth]="'10px'"
+                      [leftImageHeight]="'10px'"
+              >
+                {{ button.title }}</app-gradient-button>
+            </div>
+          </div>
+          <div class="content-buttons-in-folder button-column" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length > 0 && selectedRooms.length > 5">
+            <div class="button-in-folder gd-button" *ngFor="let button of buttonsWithSelectedRooms">
+              <app-gradient-button
+                      [minHeight]="'35px'"
+                      [gradient]="button.color"
+                      [style.width]="button.width"
+                      [cursor]="'pointer'"
+                      [fontSize]="'12px'"
+                      (buttonClick)="onEditRooms(button.action)"
+              >
+                {{ button.title }}</app-gradient-button>
+            </div>
+          </div>
+
+
         </div>
       </div>
 

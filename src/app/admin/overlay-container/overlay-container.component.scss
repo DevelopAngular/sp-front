@@ -56,6 +56,11 @@
   .teacher-search {
     margin: 30px;
     width: 82%;
+
+    .teacher-title {
+      color: #1D1A5E;
+      font-weight: bold;
+    }
   }
 
   .travel-picker {
@@ -403,6 +408,21 @@
 
   .room:hover {
     background-color: #dce2e7;
+  }
+}
+
+.rooms-scrolling {
+  display: flex;
+}
+
+.button-column {
+  align-items: center;
+  flex-direction: column;
+  position: fixed;
+  margin-left: 347px;
+
+  .gd-button {
+    margin-bottom: 10px;
   }
 }
 
