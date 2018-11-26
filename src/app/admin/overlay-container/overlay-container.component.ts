@@ -1,9 +1,12 @@
-import {Component, Inject, OnInit, ViewChild} from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
-import { Pinnable } from '../../models/Pinnable';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+import { Pinnable } from '../../models/Pinnable';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-overlay-container',
@@ -16,6 +19,7 @@ export class OverlayContainerComponent implements OnInit {
 
   selectedRooms: Pinnable[] = [];
   selectedRoomsInFolder: Pinnable[] = [];
+  readyRoomsToEdit: Pinnable[] = [];
   pinnables$: Observable<Pinnable[]>;
   overlayType: string;
   roomName: string;
@@ -25,7 +29,6 @@ export class OverlayContainerComponent implements OnInit {
   travelType: string;
   nowRestriction: string;
   futureRestriction: string;
-  colorPicker: string;
   iconPicker: string;
   gradientColor: string;
   hideAppearance: boolean = false;
@@ -75,7 +78,19 @@ export class OverlayContainerComponent implements OnInit {
       if (this.dialogData['rooms']) {
           this.selectedRooms = this.dialogData['rooms'];
       }
-      this.pinnables$ = this.dialogData['pinnables$'];
+
+      if (this.dialogData['pinnables$']) {
+          this.pinnables$ = this.dialogData['pinnables$'];
+
+          this.pinnables$ = this.pinnables$.pipe(map(pinnables => {
+              const pinnablesIds = _.filter(pinnables, {type: 'location'}).map(item => item.id);
+              const currentPinnablesIds = this.selectedRooms.map(item => item.id);
+              return pinnables.filter(item => {
+                  return item.id === _.pullAll(pinnablesIds, currentPinnablesIds).find(id => item.id === id);
+              });
+          }));
+      }
+
       this.getHeaderData();
 
       this.form.get('file').valueChanges.subscribe(res => {
@@ -102,6 +117,7 @@ export class OverlayContainerComponent implements OnInit {
         }
         case 'newFolder': {
           this.selectedRoomsInFolder = [];
+          this.readyRoomsToEdit = [];
           hideAppearance = false;
           type = 'newFolder';
           break;
@@ -132,7 +148,8 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   addToFolder() {
-      console.log(this.selectedRooms);
+    this.selectedRooms = _.concat(this.selectedRooms, this.selectedRoomsInFolder);
+    this.setLocation('newFolder');
   }
 
   back() {
@@ -154,10 +171,21 @@ export class OverlayContainerComponent implements OnInit {
     return false;
   }
 
-  uniqueValidator(value) {
-    // this.pinnables$.pipe(map(pinnables => {
-    //    pinnables.find()
-    // }));
+  selectedRoomsEvent(event, room) {
+      if (event.checked) {
+          this.readyRoomsToEdit.push(room);
+      } else {
+          this.readyRoomsToEdit = this.readyRoomsToEdit.filter(readyRoom => readyRoom.id !== room.id);
+      }
+      if (this.readyRoomsToEdit.length > 0) {
+         let button1 = this.buttonsInFolder[0];
+         let button2 = this.buttonsInFolder[1];
+         let button3 = this.buttonsInFolder[2];
+         button1.title = 'Bulk Edit Rooms';
+         button1.icon = null;
+         button1.location = 'settingsRooms';
+         button2.title = 'Remove From Folder';
+         button2.location = '';
+      }
   }
-
 }

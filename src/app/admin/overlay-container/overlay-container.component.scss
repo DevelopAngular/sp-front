@@ -394,3 +394,15 @@
   margin: 10px;
 }
 
+.rooms-list {
+  width: 265px;
+
+  mat-list-item {
+    width: 240px;
+  }
+
+  .room:hover {
+    background-color: #dce2e7;
+  }
+}
+

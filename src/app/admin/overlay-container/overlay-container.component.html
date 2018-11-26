@@ -144,6 +144,17 @@
                 {{ button.title }}</app-gradient-button>
             </div>
           </div>
+
+          <div class="rooms-list" *ngIf="selectedRooms.length > 0 && !requireValidator(folderName)">
+            <mat-list>
+              <div class="room" *ngFor="let room of selectedRooms">
+                <mat-checkbox (change)="selectedRoomsEvent($event, room)">
+                  <mat-list-item>{{ room.title }}</mat-list-item>
+                </mat-checkbox>
+                <mat-divider></mat-divider>
+              </div>
+            </mat-list>
+          </div>
         </div>
       </div>
 
