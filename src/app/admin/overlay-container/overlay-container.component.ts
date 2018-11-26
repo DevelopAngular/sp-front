@@ -32,6 +32,7 @@ export class OverlayContainerComponent implements OnInit {
   iconPicker: string;
   gradientColor: string;
   hideAppearance: boolean = false;
+  isEditRooms: boolean = false;
 
   form: FormGroup;
 
@@ -39,6 +40,11 @@ export class OverlayContainerComponent implements OnInit {
       { title: 'New Room', icon: './assets/Create (White).png', location: 'newRoomInFolder'},
       { title: 'Import Rooms', icon: null, location: 'importRooms'},
       { title: 'Add Existing', icon: null, location: 'addExisting'}
+  ];
+  buttonsWithSelectedRooms = [
+      { title: 'Bulk Edit Rooms', action: 'edit', color: '#F52B4F, #F37426', width: '120px'},
+      { title: 'Remove From Folder', action: 'remove_from_folder', color: '#606981, #ACB4C1', width: '150px'},
+      { title: 'Delete Rooms', action: 'delete', color: '#F52B4F, #F37426', width: '120px'}
   ];
 
   constructor(
@@ -118,6 +124,7 @@ export class OverlayContainerComponent implements OnInit {
         case 'newFolder': {
           this.selectedRoomsInFolder = [];
           this.readyRoomsToEdit = [];
+          this.isEditRooms = false;
           hideAppearance = false;
           type = 'newFolder';
           break;
@@ -177,15 +184,24 @@ export class OverlayContainerComponent implements OnInit {
       } else {
           this.readyRoomsToEdit = this.readyRoomsToEdit.filter(readyRoom => readyRoom.id !== room.id);
       }
-      if (this.readyRoomsToEdit.length > 0) {
-         let button1 = this.buttonsInFolder[0];
-         let button2 = this.buttonsInFolder[1];
-         let button3 = this.buttonsInFolder[2];
-         button1.title = 'Bulk Edit Rooms';
-         button1.icon = null;
-         button1.location = 'settingsRooms';
-         button2.title = 'Remove From Folder';
-         button2.location = '';
-      }
+
+  }
+
+  onEditRooms(action) {
+    if (action === 'edit') {
+        this.isEditRooms = true;
+        this.setLocation('settingsRooms');
+    }
+    if (action === 'remove_from_folder') {
+        const currentRoomsIds = this.readyRoomsToEdit.map(item => item.id);
+        const allSelectedRoomsIds = this.selectedRooms.map(item => item.id);
+        this.selectedRooms = this.selectedRooms.filter(item => {
+            return item.id === _.pullAll(allSelectedRoomsIds, currentRoomsIds).find(id => item.id === id);
+        });
+        this.readyRoomsToEdit = [];
+     }
+    if (action === 'delete') {
+        // Request delete rooms
+    }
   }
 }
