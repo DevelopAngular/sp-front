@@ -18,7 +18,7 @@ export class ToggleInputComponent implements OnInit {
 
   @Output() pushOutValue: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  public e: Observable<MouseEvent>;
+  public e: Observable<Event>;
 
   constructor() { }
   ngOnInit() {

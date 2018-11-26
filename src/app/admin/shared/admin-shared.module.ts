@@ -14,23 +14,27 @@ import { SquareInputComponent } from '../square-input/square-input.component';
 import { AppInputComponent } from '../../app-input/app-input.component';
 import { FormsModule } from '@angular/forms';
 import {
-    MatCheckboxModule,
-    MatDialogModule,
-    MatGridListModule,
-    MatSortModule,
-    MatTableModule,
-    MatListModule,
-    MatDividerModule
+  MatCheckboxModule,
+  MatDialogModule,
+  MatGridListModule,
+  MatSortModule,
+  MatTableModule,
+  MatListModule,
+  MatDividerModule, MatChipsModule, MatIconModule
 } from '@angular/material';
 import { IconPickerComponent } from '../icon-picker/icon-picker.component';
 import { ColorPalletPickerComponent } from '../color-pallet-picker/color-pallet-picker.component';
 import { TogglePickerComponent } from '../toggle-picker/toggle-picker.component';
+import {ToggleInputComponent} from '../toggle-input/toggle-input.component';
+import {AccountsDialogComponent} from '../accounts-dialog/accounts-dialog.component';
 
 @NgModule({
   imports: [
     CommonModule,
     SharedModule,
     FormsModule,
+    MatChipsModule,
+    MatIconModule,
     MatTableModule,
     MatCheckboxModule,
     MatSortModule,
@@ -40,6 +44,7 @@ import { TogglePickerComponent } from '../toggle-picker/toggle-picker.component'
     MatDividerModule,
   ],
   declarations: [
+      ToggleInputComponent,
       BackButtonComponent,
       ColorPalletPickerComponent,
       DataTableComponent,
@@ -55,6 +60,9 @@ import { TogglePickerComponent } from '../toggle-picker/toggle-picker.component'
       AppInputComponent,
   ],
   exports: [
+      MatChipsModule,
+      MatIconModule,
+      ToggleInputComponent,
       BackButtonComponent,
       ColorPalletPickerComponent,
       DataTableComponent,
@@ -70,6 +78,7 @@ import { TogglePickerComponent } from '../toggle-picker/toggle-picker.component'
       AppInputComponent,
   ],
   entryComponents: [
+      AccountsDialogComponent,
       AppInputComponent,
       OverlayContainerComponent,
       DateInputComponent

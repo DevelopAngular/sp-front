@@ -9,13 +9,12 @@ import {MatDialog} from '@angular/material';
 })
 export class AccountsComponent implements OnInit {
 
-  constructor(
-    public matDialog: MatDialog,
-
-  ) { }
+  constructor(public matDialog: MatDialog,) {
+  }
 
   ngOnInit() {
   }
+
   openDialog(mode) {
     const DR = this.matDialog.open(AccountsDialogComponent,
       {
@@ -26,4 +25,5 @@ export class AccountsComponent implements OnInit {
         panelClass: 'accounts-profiles-dialog',
         backdropClass: 'custom-bd'
       });
+  }
 }
