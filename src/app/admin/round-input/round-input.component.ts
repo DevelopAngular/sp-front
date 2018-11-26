@@ -2,6 +2,8 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { DateInputComponent } from '../date-input/date-input.component';
 import { HallpassFormComponent } from '../../hallpass-form/hallpass-form.component';
+import { Paged } from '../../location-table/location-table.component';
+import { HttpService } from '../../http-service';
 
 @Component({
   selector: 'app-round-input',
@@ -13,18 +15,21 @@ export class RoundInputComponent implements OnInit {
   @Input() labelText: string;
   @Input() placeholder: string;
   @Input() type: string; //Can be 'text', 'chips', or 'dates'
-  @Input() completeService: any; //A function that determines how the input should search.
+  @Input() searchEndpoint: any; //API endpoint to search from
   @Input() hasTogglePicker: boolean;
 
   @Output() ontextupdate: EventEmitter<any> = new EventEmitter();
   @Output() ontoogleupdate: EventEmitter<any> = new EventEmitter();
+  @Output() onchipupdate: EventEmitter<any> = new EventEmitter();
 
   selected: boolean;
   value: any;
   toDate: Date;
   fromDate: Date;
+  searchOptions: Promise<any[]>;
+  selections: any[] = ['Yo', 'Hey', 'Testing'];
 
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog, private http: HttpService) { }
 
   ngOnInit() {
 
@@ -56,7 +61,56 @@ export class RoundInputComponent implements OnInit {
   changeAction(change: any){
     if(this.type == 'text'){
       this.ontextupdate.emit(change)
+    } else if(this.type == 'chips'){
+      this.onSearch(change);
     }
+  }
+
+  onSearch(search: string) {
+    if(search!=='')
+      this.searchOptions = this.http.get<Paged<any>>(this.searchEndpoint + (search === '' ? '' : '&search=' + encodeURI(search))).toPromise().then(paged => this.removeDuplicateOptions(paged.results));
+    else
+      this.searchOptions = null;
+      this.value = '';
+  }
+
+  removeSelection(selection: any) {
+    var index = this.selections.indexOf(selection, 0);
+    if (index > -1) {
+      this.selections.splice(index, 1);
+    }
+    this.onchipupdate.emit(this.selections);
+    this.onSearch('');
+  }
+
+  addStudent(selection: any) {
+    this.value = '';
+    this.onSearch('');
+    if (!this.selections.includes(selection)) {
+      this.selections.push(selection);
+      this.onchipupdate.emit(this.selections);
+    }
+  }
+
+  removeDuplicateOptions(options): any[] {
+    let fixedOptions: any[] = options;
+    let optionsToRemove: any[] = [];
+    for (let selectedStudent of this.selections) {
+      for (let student of fixedOptions) {
+        if (selectedStudent.id === student.id) {
+          optionsToRemove.push(student);
+        }
+      }
+    }
+
+    for (let optionToRemove of optionsToRemove) {
+      var index = fixedOptions.indexOf(optionToRemove, 0);
+      if (index > -1) {
+        fixedOptions.splice(index, 1);
+      }
+    }
+
+    return fixedOptions;
   }
 
 }

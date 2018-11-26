@@ -10,8 +10,18 @@
           (input)="changeAction(input.value)" (click)="focusAction(true)" (focusout)="focusAction(false)"
           [(ngModel)]="value" >
   </div>
-  <div *ngIf="type == 'chips'" class="field-wrapper">
-
-  </div>
+  <mat-chip-list #chipList *ngIf="type == 'chips'" class="input">
+    <mat-chip
+      *ngFor="let selection of selections"
+      [removable]="true"
+      (removed)="removeSelection(selection)">
+      {{selection.toString()}}
+      <mat-icon matChipRemove>cancel</mat-icon>
+    </mat-chip>
+    <input #input class="input" type="text"
+      [placeholder]="placeholder" [readonly]="type == 'dates'" [matChipInputFor]="chipList" [matChipInputAddOnBlur]="true"
+      (input)="changeAction(input.value)" (click)="focusAction(true)" (focusout)="focusAction(false)"
+      [(ngModel)]="value" >
+  </mat-chip-list>
   
 </div>

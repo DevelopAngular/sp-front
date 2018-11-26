@@ -130,6 +130,12 @@ textarea:focus {
   border: 1px solid #595487 !important;
 }
 
+.mat-chip-list-wrapper{
+  height: 40px;
+  border-radius: 20px;
+  box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
+}
+
 /* :host /deep/ .mat-button-focus-overlay {
     background-color: rgba(0, 0, 0, 0);
 } */

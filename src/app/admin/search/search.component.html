@@ -1,7 +1,8 @@
 <div class="search-wrapper">
   <div class="input-header">
-      <app-round-input [labelText]="'Date and Time'" [type]="'dates'" [placeholder]="'this thing'" (ontextupdate)="$event"></app-round-input>
-      <app-round-input [labelText]="'Text stuff'" [type]="'text'" [placeholder]="'this thing'" (ontextupdate)="$event"></app-round-input>
+      <app-round-input [labelText]="'Date and Time'" [type]="'dates'" [placeholder]="'Date placeholder'" (ontextupdate)="$event"></app-round-input>
+      <app-round-input [labelText]="'Text stuff'" [type]="'text'" [placeholder]="'Text placeholder'" (ontextupdate)="$event"></app-round-input>
+      <app-round-input [labelText]="'Chip stuff'" [type]="'chips'" [placeholder]="'Chip Placeholder'" [searchEndpoint]="'v1/users?role=hallpass_student&limit=5'" (onchipupdate)="$event"></app-round-input>
   </div>
   <div class="default-message" *ngIf="!hasSearched">
     <div class="title-text">

@@ -28,13 +28,18 @@
     box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
     font-family: 'Helvetica Neue', sans-serif;
     font-size: 16px;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: 1.08;
-    letter-spacing: 0.3px;
 }
 
 input {
     border: 0px;
     padding: 0 0 0 15px;
+}
+
+input:focus{
+    outline: none;
+    border: none !important;
+}
+
+mat-input-container.md-input-focused label {
+    display: none
 }

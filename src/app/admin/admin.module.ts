@@ -7,7 +7,9 @@ import {
   MatTableModule,
   MatCheckboxModule,
   MatSortModule,
-  MatGridListModule
+  MatGridListModule,
+  MatChipsModule,
+  MatIconModule
 } from '@angular/material';
 
 import { SharedModule } from '../shared/shared.module';
@@ -45,7 +47,9 @@ import { TogglePickerComponent } from './toggle-picker/toggle-picker.component';
     MatCheckboxModule,
     MatSortModule,
     MatGridListModule,
-    MatDialogModule
+    MatDialogModule,
+    MatChipsModule,
+    MatIconModule
   ],
   declarations: [
     AdminPageComponent,
