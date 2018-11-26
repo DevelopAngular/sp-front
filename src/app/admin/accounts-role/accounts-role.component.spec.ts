@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GSuiteDialogComponent } from './g-suite-dialog.component';
+import { AccountsRoleComponent } from './accounts-role.component';
 
-describe('GSuiteDialogComponent', () => {
-  let component: GSuiteDialogComponent;
-  let fixture: ComponentFixture<GSuiteDialogComponent>;
+describe('AccountsRoleComponent', () => {
+  let component: AccountsRoleComponent;
+  let fixture: ComponentFixture<AccountsRoleComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ GSuiteDialogComponent ]
+      declarations: [ AccountsRoleComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(GSuiteDialogComponent);
+    fixture = TestBed.createComponent(AccountsRoleComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

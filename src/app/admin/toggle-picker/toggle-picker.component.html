@@ -2,19 +2,34 @@
      [style.border]="'solid ' + border + ' 1px'"
      [style.width]="width"
      [style.height]="height">
-  <div class="option" [class.left-radius]="!bottomRadius" [style.width]="choice2?'50%':'inherit'" (click)="updateType(choice1)"
+  <div class="option"
+       [class.left-radius]="!bottomRadius"
+       [style.width]="choice2?'50%':'inherit'"
+       (click)="updateType(choice1)"
        [style.color]="getFontColor(choice1)"
-       [style.background-color]="getBackgroundColor(choice1)">
+       [style.background-color]="getBackgroundColor(choice1)"
+       style="border-right: 1px solid #1d1a5e;"
+  >
     {{choice1}}
   </div>
-  <div *ngIf="choice2" [style.width]="'50%'" class="option bordered"  (click)="updateType(choice2)"
+  <div *ngIf="choice2"
+        class="option"
+       (click)="updateType(choice2)"
+       [style.width]="'50%'"
        [style.color]="getFontColor(choice2)"
-       [style.background-color]="getBackgroundColor(choice2)">
+       [style.background-color]="getBackgroundColor(choice2)"
+  >
     {{choice2}}
   </div>
-  <div *ngIf="choice3" [style.width]="'50%'" class="option" [class.right-radius]="bottomRadius" (click)="updateType(choice3)"
+  <div *ngIf="choice3"
+       [style.width]="'50%'"
+       class="option"
+       [class.right-radius]="bottomRadius"
+       (click)="updateType(choice3)"
        [style.color]="getFontColor(choice3)"
-       [style.background-color]="getBackgroundColor(choice3)" >
+       [style.background-color]="getBackgroundColor(choice3)"
+       style="border-left: 1px solid #1d1a5e;"
+  >
     {{choice3}}
   </div>
 </div>

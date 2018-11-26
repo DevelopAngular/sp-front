@@ -17,6 +17,8 @@ export class RoundInputComponent implements OnInit {
   @Input() type: string; //Can be 'text', 'chips', or 'dates'
   @Input() searchEndpoint: any; //API endpoint to search from
   @Input() hasTogglePicker: boolean;
+  @Input() width: string;
+  @Input() minWidth: string;
 
   @Output() ontextupdate: EventEmitter<any> = new EventEmitter();
   @Output() ontoogleupdate: EventEmitter<any> = new EventEmitter();

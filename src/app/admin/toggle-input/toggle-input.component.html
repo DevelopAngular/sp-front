@@ -1,0 +1,9 @@
+<div [formGroup]="form" class="layout">
+  <div>
+    <p>{{controlLabel}}</p>
+  </div>
+  <div class="future">
+    <input type="checkbox" [formControlName]="controlName" #inp class="future-checkbox" [id]="controlName">
+    <label class="future-label" [for]="controlName"></label>
+  </div>
+</div>

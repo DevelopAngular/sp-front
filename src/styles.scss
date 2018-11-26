@@ -55,10 +55,24 @@ body {
   width: 335px;
   height: 412px;
 }
-
+.accounts-profiles-dialog{
+  margin-left: 285px !important;
+}
 .accounts-profiles-dialog .mat-dialog-container{
   border-radius: 10px;
   box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  padding: 0;
+}
+
+.overlay-dialog {
+  margin-left: 285px !important;
+}
+
+.overlay-dialog .mat-dialog-container{
+  border-radius: 10px;
+  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
   margin: 0;
   padding: 0;
 }
@@ -149,6 +163,10 @@ textarea:focus {
   background-color: rgba(0, 0, 0, 0);
 }
 
+.custom-bd{
+  left: 285px;
+  background: rgba(0, 0, 0, .3);
+}
 html, body {
   max-width: 100%;
   overflow-x: hidden;

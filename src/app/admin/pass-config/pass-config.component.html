@@ -5,27 +5,30 @@
           <img class="school-icon" src="../../../assets/School (Blue).png">
           <div class="school-name">{{ schoolName }}</div>
       </div>
-      <div class="header-settings">
-          <img class="settings-icon" src="../../../assets/Gear (Blue).png">
-          <div class="settings-actions">
-              <form [formGroup]="settingsForm">
-                  <div class="action-top">
-                      <span class="settings-action-top-title">Future Passes</span>
-                      <span>
-                          <div class="future">
-                              <input type="checkbox" formControlName="isFuture" name="future" class="future-checkbox" id="future" checked>
-                              <label class="future-label" for="future"></label>
-                          </div>
-                      </span>
-                  </div>
-                  <div class="settings-divider"></div>
-                  <div class="action-bottom">
-                      <span class="settings-action-bottom-title">Default Pass Time</span>
-                      <input type="text" name="defaultTime" formControlName="defaultTime" class="settings-input">
-                  </div>
-              </form>
-          </div>
-      </div>
+
+      <!-- //TODO  for future block -->
+      <!--<div class="header-settings">-->
+          <!--<img class="settings-icon" src="../../../assets/Gear (Blue).png">-->
+          <!--<div class="settings-actions">-->
+              <!--<form [formGroup]="settingsForm">-->
+                  <!--<div class="action-top">-->
+                      <!--<span class="settings-action-top-title">Future Passes</span>-->
+                      <!--<span>-->
+                          <!--<div class="future">-->
+                              <!--<input type="checkbox" formControlName="isFuture" name="future" class="future-checkbox" id="future" checked>-->
+                              <!--<label class="future-label" for="future"></label>-->
+                          <!--</div>-->
+                      <!--</span>-->
+                  <!--</div>-->
+                  <!--<div class="settings-divider"></div>-->
+                  <!--<div class="action-bottom">-->
+                      <!--<span class="settings-action-bottom-title">Default Pass Time</span>-->
+                      <!--<input type="text" name="defaultTime" formControlName="defaultTime" class="settings-input">-->
+                  <!--</div>-->
+              <!--</form>-->
+          <!--</div>-->
+      <!--</div>-->
+
   </div>
 </div>
   <div class="pass-config-content">
@@ -33,22 +36,4 @@
           <app-pinnable-collection [pinnables]="pinnables$ | async" (roomEvent)="selectPinnable($event)"></app-pinnable-collection>
       </div>
   </div>
-</div>
-
-<div class="new-room-button">
-  <app-gradient-button [minWidth]="'170px'"
-                       [minHeight]="'60px'"
-                       [hoverColor]="'#00b476'"
-                       [fontSize]="'20px'"
-                       [cursor]="'pointer'"
-                       [leftIcon]="'./assets/Create (White).png'"
-                       [leftImageWidth]="'25px'"
-                       [leftImageHeight]="'25px'"
-                       >
-    New Room
-  </app-gradient-button>
-</div>
-
-<div class="data-table">
-  <app-data-table [width]="'100%'" [isCheckbox]="true" [data]="data" [height]="'400px'"></app-data-table>
 </div>

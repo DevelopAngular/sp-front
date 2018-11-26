@@ -1,6 +1,5 @@
 ﻿import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-//import { MatProgressBarModule, MatGridListModule } from '@angular/material';
 import {
   MatProgressBarModule, MatGridListModule,
   MatDialogModule,
@@ -8,10 +7,9 @@ import {
   MatSelectModule,
   MatSliderModule,
   MatSlideToggleModule,
-  MatChipsModule, MatCardModule,
+  MatChipsModule, MatCardModule, MatCheckboxModule, MatTableModule, MatProgressSpinnerModule,
 } from '@angular/material';
 
-import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 import { GradientButtonComponent } from '../gradient-button/gradient-button.component';
 import { NavButtonComponent } from '../nav-button/nav-button.component';
@@ -37,6 +35,9 @@ import { DisplayReportCellComponent } from '../display-report-cell/display-repor
     OwlNativeDateTimeModule,
     FormsModule,
     ReactiveFormsModule,
+      MatCheckboxModule,
+      MatTableModule,
+      MatProgressSpinnerModule,
       MatGridListModule,
       MatDialogModule,
       MatIconModule,
@@ -62,7 +63,10 @@ import { DisplayReportCellComponent } from '../display-report-cell/display-repor
   ],
   exports: [
     ReactiveFormsModule,
+    MatTableModule,
+    MatProgressSpinnerModule,
     MatCardModule,
+    MatCheckboxModule,
     GradientButtonComponent,
     ResolveAssetPipe,
     SmartpassLogoComponent,

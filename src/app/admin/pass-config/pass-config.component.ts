@@ -7,7 +7,6 @@ import { Observable } from 'rxjs';
 import { HttpService } from '../../http-service';
 import { Pinnable } from '../../models/Pinnable';
 import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
-import {map, shareReplay} from 'rxjs/operators';
 
 @Component({
   selector: 'app-pass-congif',
@@ -20,19 +19,6 @@ export class PassConfigComponent implements OnInit {
     schoolName = 'Springfield High School';
     selectedPinnables: Pinnable[];
     pinnables$: Observable<Pinnable[]>;
-
-    data = [
-        {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H', surname: 'Petrov'},
-        {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He', surname: 'Petrov'},
-        {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li', surname: 'Petrov'},
-        {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be', surname: 'Petrov'},
-        {position: 5, name: 'Boron', weight: 10.811, symbol: 'B', surname: 'Petrov'},
-        {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C', surname: 'Petrov'},
-        {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N', surname: 'Petrov'},
-        {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O', surname: 'Petrov'},
-        {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F', surname: 'Petrov'},
-        {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne', surname: 'Petrov'},
-    ];
 
   constructor(
       private dialog: MatDialog,
@@ -65,10 +51,7 @@ export class PassConfigComponent implements OnInit {
               break;
           }
           case 'newFolder': {
-              const pinnables$ = this.pinnables$.pipe(map(pinnables => {
-                  return pinnables.filter(pinnable => pinnable.type !== 'category');
-              }), shareReplay(1));
-              data = { type: action, pinnables$: pinnables$ };
+              data = { type: action, pinnables$: this.pinnables$, rooms: this.selectedPinnables };
               break;
           }
           case 'edit': {
@@ -76,7 +59,7 @@ export class PassConfigComponent implements OnInit {
               break;
           }
           case 'newFolderWithSelections': {
-              data = { type: action, rooms: this.selectedPinnables };
+              data = { type: 'newFolder', rooms: this.selectedPinnables };
               break;
           }
           case 'delete': {
@@ -88,7 +71,8 @@ export class PassConfigComponent implements OnInit {
 
   dialogContainer(data, component) {
       this.dialog.open(component, {
-          panelClass: 'form-dialog-container',
+          panelClass: 'overlay-dialog',
+          backdropClass: 'custom-bd',
           width: '1018px',
           height: '600px',
           data: data

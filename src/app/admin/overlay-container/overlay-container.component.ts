@@ -1,10 +1,12 @@
-import {Component, Inject, OnInit, ViewChild} from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
-import { Pinnable } from '../../models/Pinnable';
 import { Observable } from 'rxjs';
-import {map} from 'rxjs/operators';
+import { map } from 'rxjs/operators';
+
+import { Pinnable } from '../../models/Pinnable';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-overlay-container',
@@ -16,6 +18,8 @@ export class OverlayContainerComponent implements OnInit {
   @ViewChild('file') selectedFile;
 
   selectedRooms: Pinnable[] = [];
+  selectedRoomsInFolder: Pinnable[] = [];
+  readyRoomsToEdit: Pinnable[] = [];
   pinnables$: Observable<Pinnable[]>;
   overlayType: string;
   roomName: string;
@@ -25,10 +29,10 @@ export class OverlayContainerComponent implements OnInit {
   travelType: string;
   nowRestriction: string;
   futureRestriction: string;
-  colorPicker: string;
   iconPicker: string;
   gradientColor: string;
   hideAppearance: boolean = false;
+  isEditRooms: boolean = false;
 
   form: FormGroup;
 
@@ -36,6 +40,11 @@ export class OverlayContainerComponent implements OnInit {
       { title: 'New Room', icon: './assets/Create (White).png', location: 'newRoomInFolder'},
       { title: 'Import Rooms', icon: null, location: 'importRooms'},
       { title: 'Add Existing', icon: null, location: 'addExisting'}
+  ];
+  buttonsWithSelectedRooms = [
+      { title: 'Bulk Edit Rooms', action: 'edit', color: '#F52B4F, #F37426', width: '120px'},
+      { title: 'Remove From Folder', action: 'remove_from_folder', color: '#606981, #ACB4C1', width: '150px'},
+      { title: 'Delete Rooms', action: 'delete', color: '#F52B4F, #F37426', width: '120px'}
   ];
 
   constructor(
@@ -56,6 +65,11 @@ export class OverlayContainerComponent implements OnInit {
           this.folderName = 'New Folder';
           break;
         }
+        case 'edit': {
+          colors = '#606981, #ACB4C1';
+          this.folderName = 'Bulk Edit Rooms';
+          break;
+        }
     }
     this.gradientColor = 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
@@ -70,11 +84,23 @@ export class OverlayContainerComponent implements OnInit {
       if (this.dialogData['rooms']) {
           this.selectedRooms = this.dialogData['rooms'];
       }
-      this.pinnables$ = this.dialogData['pinnables$'];
+
+      if (this.dialogData['pinnables$']) {
+          this.pinnables$ = this.dialogData['pinnables$'];
+
+          this.pinnables$ = this.pinnables$.pipe(map(pinnables => {
+              const pinnablesIds = _.filter(pinnables, {type: 'location'}).map(item => item.id);
+              const currentPinnablesIds = this.selectedRooms.map(item => item.id);
+              return pinnables.filter(item => {
+                  return item.id === _.pullAll(pinnablesIds, currentPinnablesIds).find(id => item.id === id);
+              });
+          }));
+      }
+
       this.getHeaderData();
 
       this.form.get('file').valueChanges.subscribe(res => {
-          this.overlayType = 'settingsRooms';
+          this.setLocation('settingsRooms');
       });
   }
 
@@ -96,7 +122,9 @@ export class OverlayContainerComponent implements OnInit {
           break;
         }
         case 'newFolder': {
-          this.selectedRooms = [];
+          this.selectedRoomsInFolder = [];
+          this.readyRoomsToEdit = [];
+          this.isEditRooms = false;
           hideAppearance = false;
           type = 'newFolder';
           break;
@@ -111,6 +139,11 @@ export class OverlayContainerComponent implements OnInit {
           type = 'addExisting';
           break;
         }
+        case 'settingsRooms': {
+          hideAppearance = true;
+          type = 'settingsRooms';
+          break;
+        }
     }
     this.hideAppearance = hideAppearance;
     this.overlayType = type;
@@ -122,7 +155,8 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   addToFolder() {
-      console.log(this.selectedRooms);
+    this.selectedRooms = _.concat(this.selectedRooms, this.selectedRoomsInFolder);
+    this.setLocation('newFolder');
   }
 
   back() {
@@ -144,10 +178,34 @@ export class OverlayContainerComponent implements OnInit {
     return false;
   }
 
-  uniqueValidator(value) {
-    // this.pinnables$.pipe(map(pinnables => {
-    //    pinnables.find()
-    // }));
+  selectedRoomsEvent(event, room) {
+      if (event.checked) {
+          this.readyRoomsToEdit.push(room);
+      } else {
+          this.readyRoomsToEdit = this.readyRoomsToEdit.filter(readyRoom => readyRoom.id !== room.id);
+      }
+
   }
 
+  onEditRooms(action) {
+    if (action === 'edit') {
+        this.isEditRooms = true;
+        this.setLocation('settingsRooms');
+    }
+    if (action === 'remove_from_folder') {
+        const currentRoomsIds = this.readyRoomsToEdit.map(item => item.id);
+        const allSelectedRoomsIds = this.selectedRooms.map(item => item.id);
+        this.selectedRooms = this.selectedRooms.filter(item => {
+            return item.id === _.pullAll(allSelectedRoomsIds, currentRoomsIds).find(id => item.id === id);
+        });
+        this.readyRoomsToEdit = [];
+     }
+    if (action === 'delete') {
+        this.deleteRoom();
+    }
+  }
+
+    deleteRoom() {
+      // Delete Request
+    }
 }

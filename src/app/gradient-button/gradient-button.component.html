@@ -1,8 +1,8 @@
 <div mat-raised-button class="button"
      [style.background]="styleGradient"
+     [style.width]="width"
      [style.min-width]="minWidth"
      [style.min-height]="minHeight"
-     [style.font-size]="fontSize"
      [style.box-shadow]="shadow"
      [style.cursor]="cursor"
      [@pressState]="buttonState" (click)="onClick($event)"
@@ -12,7 +12,11 @@
   <div class="wrapper">
     <img *ngIf="leftIcon" [style.width]="leftImageWidth" [style.height]="leftImageHeight" class="icon left-icon" [src]="leftIcon | resolveAsset">
     <div class="text-content" [style.text-align]="contentAlign">
-      <div class="content-wrapper" style="display: inline-block;" [style.color]="textColor">
+      <div class="content-wrapper"
+           style="display: inline-block;"
+           [style.color]="textColor"
+           [style.font-weight]="fontWeight"
+           [style.font-size]="fontSize">
         <ng-content></ng-content>
       </div>
     </div>

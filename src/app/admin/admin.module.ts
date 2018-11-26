@@ -1,7 +1,7 @@
 ﻿import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 
+<<<<<<< HEAD
 import {
   MatDialogModule,
   MatTableModule,
@@ -13,35 +13,29 @@ import {
 } from '@angular/material';
 
 import { SharedModule } from '../shared/shared.module';
+=======
+>>>>>>> admin-dev
 import { AdminRoutingModule } from './admin-routing.module';
 
 import { AdminPageComponent } from './admin-page/admin-page.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { NavComponent } from './nav/nav.component';
-import { NavButtonComponent } from './nav-button/nav-button.component';
 import { HallmonitorComponent } from './hallmonitor/hallmonitor.component';
 import { SearchComponent } from './search/search.component';
-import { AppInputComponent } from './../app-input/app-input.component';
 import { PassConfigComponent } from './pass-config/pass-config.component';
-import { DataTableComponent } from './data-table/data-table.component';
 import { FeedbackComponent } from './feedback/feedback.component';
 import { SupportComponent } from './support/support.component';
-import { PinnableCollectionComponent } from './pinnable-collection/pinnable-collection.component';
-import { BackButtonComponent } from './back-button/back-button.component';
-import { RoundInputComponent } from './round-input/round-input.component';
-import { SquareInputComponent } from './square-input/square-input.component';
-import { DateInputComponent } from './date-input/date-input.component';
-import { ColorPalletPickerComponent } from './color-pallet-picker/color-pallet-picker.component';
-import { IconPickerComponent } from './icon-picker/icon-picker.component';
-import { OverlayContainerComponent } from './overlay-container/overlay-container.component';
-import { TogglePickerComponent } from './toggle-picker/toggle-picker.component';
-
+import { SharedModule } from '../shared/shared.module';
+import { AdminSharedModule } from './shared/admin-shared.module';
+import { AccountsComponent } from './accounts/accounts.component';
+import { AccountsRoleComponent } from './accounts-role/accounts-role.component';
+import {AccountsDialogComponent} from './accounts-dialog/accounts-dialog.component';;
 
 @NgModule({
   imports: [
     CommonModule,
     SharedModule,
     AdminRoutingModule,
+<<<<<<< HEAD
     FormsModule,
     MatTableModule,
     MatCheckboxModule,
@@ -50,36 +44,23 @@ import { TogglePickerComponent } from './toggle-picker/toggle-picker.component';
     MatDialogModule,
     MatChipsModule,
     MatIconModule
+=======
+    AdminSharedModule,
+>>>>>>> admin-dev
   ],
   declarations: [
     AdminPageComponent,
     DashboardComponent,
-    NavComponent,
-    NavButtonComponent,
     HallmonitorComponent,
     SearchComponent,
     PassConfigComponent,
-    AppInputComponent,
-    DataTableComponent,
     FeedbackComponent,
     SupportComponent,
-    PinnableCollectionComponent,
-    OverlayContainerComponent,
-    ColorPalletPickerComponent,
-    PinnableCollectionComponent,
-    BackButtonComponent,
-    RoundInputComponent,
-    SquareInputComponent,
-    DateInputComponent,
-    IconPickerComponent,
-
-    TogglePickerComponent
-  ],
-  entryComponents: [
-    AppInputComponent,
-    OverlayContainerComponent,
-    DateInputComponent
-  ],
+    AccountsDialogComponent,
+    AccountsComponent,
+    AccountsRoleComponent ,
+   ],
+  entryComponents: [AccountsDialogComponent],
   providers: [
       //NavbarDataService
   ],

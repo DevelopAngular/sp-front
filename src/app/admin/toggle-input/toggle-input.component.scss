@@ -1,0 +1,40 @@
+.layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.future {
+  position: relative; width: 49px;
+  -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+}
+.future-checkbox {
+  display: none;
+}
+.future-label {
+  display: block; overflow: hidden; cursor: pointer;
+  height: 27px; padding: 0; line-height: 27px;
+  border: 2px solid #E3E3E3; border-radius: 27px;
+  background-color: #FFFFFF;
+  transition: background-color 0.3s ease-in;
+}
+.future-label:before {
+  content: "";
+  display: block; width: 27px; margin: 0px;
+  background: #FFFFFF;
+  position: absolute; top: 0; bottom: 0;
+  right: 20px;
+  border: 2px solid #E3E3E3; border-radius: 27px;
+  transition: all 0.3s ease-in 0s;
+}
+
+
+.future-checkbox:checked + .future-label {
+  background-color: #04CD39;
+}
+.future-checkbox:checked + .future-label, .future-checkbox:checked + .future-label:before {
+  border-color: #04CD39;
+}
+.future-checkbox:checked + .future-label:before {
+  right: 0px;
+}
