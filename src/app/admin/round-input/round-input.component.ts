@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { DateInputComponent } from '../date-input/date-input.component';
 import { HallpassFormComponent } from '../../hallpass-form/hallpass-form.component';
@@ -10,7 +10,7 @@ import { HttpService } from '../../http-service';
   templateUrl: './round-input.component.html',
   styleUrls: ['./round-input.component.scss']
 })
-export class RoundInputComponent implements OnInit {
+export class RoundInputComponent implements AfterViewInit {
 
   @Input() labelText: string;
   @Input() placeholder: string;
@@ -29,12 +29,31 @@ export class RoundInputComponent implements OnInit {
   toDate: Date;
   fromDate: Date;
   searchOptions: Promise<any[]>;
-  selections: any[] = ['Yo', 'Hey', 'Testing'];
+  selections: any[] = ['Yo', 'Hey', 'Testing', 'Yo', 'Hey', 'Testing', 'Yo', 'Hey', 'Testing', 'Yo', 'Hey', 'Testing', 'Yo', 'Hey', 'Testing'];
+  chipListHeight: string = '40px';
 
   constructor(public dialog: MatDialog, private http: HttpService) { }
 
   ngOnInit() {
+    
+  }
 
+  ngAfterViewInit(){
+    if(this.type == 'chips'){
+      console.log(this.getHeight(this.chipList.nativeElement))
+    }
+  }
+
+  @ViewChild('chipList', { read: ElementRef }) chipList:ElementRef;
+
+  getHeight(element){
+    element = element.cloneNode(true);
+    element.style.visibility = "hidden";
+    document.body.appendChild(element);
+    var height = element.offsetHeight + 0;
+    document.body.removeChild(element);
+    element.style.visibility = "visible";
+    return height;
   }
 
   focusAction(selected: boolean){

@@ -4,17 +4,20 @@
     <div class="label-text" [style.color]="(selected?'#1D1A5E':'#7F879D')">{{ labelText }}</div>
   </div>
 
+  <div *ngIf="(type == 'text' || type == 'dates') && selected" class="inputSelector"></div>
   <div *ngIf="type == 'text' || type == 'dates'" class="field-wrapper">
     <input #input class="input" type="text" [style.width]="width" [style.min-width]="minWidth"
           [placeholder]="placeholder" [readonly]="type == 'dates'"
           (input)="changeAction(input.value)" (click)="focusAction(true)" (focusout)="focusAction(false)"
           [(ngModel)]="value" >
   </div>
-  <mat-chip-list #chipList *ngIf="type == 'chips'" class="input">
+  <div *ngIf="type=='chips'" class="chipInputSelector" (click)="input.focus()" [style.height]="chipListHeight?chipListHeight:'40px'"></div>
+  <mat-chip-list #chipList *ngIf="type == 'chips'" class="input" (click)="input.focus()">
     <mat-chip
       *ngFor="let selection of selections"
       [removable]="true"
-      (removed)="removeSelection(selection)">
+      (removed)="removeSelection(selection)"
+      (click)="input.focus()">
       {{selection.toString()}}
       <mat-icon matChipRemove>cancel</mat-icon>
     </mat-chip>
@@ -22,6 +25,6 @@
       [placeholder]="placeholder" [readonly]="type == 'dates'" [matChipInputFor]="chipList" [matChipInputAddOnBlur]="true"
       (input)="changeAction(input.value)" (click)="focusAction(true)" (focusout)="focusAction(false)"
       [(ngModel)]="value" >
+      {{ value }}
   </mat-chip-list>
-  
 </div>
