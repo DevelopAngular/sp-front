@@ -14,7 +14,7 @@ function isUserStaff(user: User): boolean {
   return user.roles.includes('edit_all_hallpass');
 }
 
-class ActivePassProvider implements PassLikeProvider {
+export class ActivePassProvider implements PassLikeProvider {
 
   constructor(private liveDataService: LiveDataService, private searchQueries: Observable<string>) {
   }
