@@ -1,3 +1,103 @@
-<div class="dashboard-wrapper">
-  Dashboard Works
+<div class="dashboard-wrapper flex-start-start flex-column flex-wrap">
+  <div class="card card__role flex-end-between mr">
+    <div class="">
+      <div class="card_header mb">Number of Active Hall Passes</div>
+      <div class="card_title" [style.text-align]="'center'">
+        <div style="min-height: 65px;" class="flex-center-center">
+          <div style="font-size: 4em">{{activeHallpasses?.length}}</div>
+
+          <div *ngIf="!activeHallpasses" class="loading-theme spinner flex-center-center">
+            <mat-spinner [color]="'accent'" [diameter]="'35'"></mat-spinner>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div>
+        <img class="label-icon" src="/assets/Hallway (Blue).png" alt="Hallway (Blue).png" width="25">
+      </div>
+      <app-gradient-button
+        [leftIcon]="'./assets/Print (White).png'"
+        [cursor]="'pointer'"
+        [minHeight]="'62px'"
+        [width]="'188px'"
+        [fontSize]="'14px'"
+        [fontWeight]="400"
+        (buttonClick)="openDialog('create')">
+        <span>Report of Students</span>
+      </app-gradient-button>
+    </div>
+  </div>
+  <div class="card card__role flex-center-between mr mt">
+    <img class="label-icon" src="/assets/Hallway (Blue).png" alt="Hallway (Blue).png" width="25">
+    <div>
+      <div class="card_header">
+        <img src="/assets/Report (Red).png" alt="Report (Red).png" width="30" [style.vertical-align]="'bottom'">
+        <span class="pl">Reported Students</span>
+      </div>
+      <p class="card_title py">
+        5 reports today.
+      </p>
+    </div>
+  </div>
+  <div class="card card__role flex-center-between ml mt">
+    <span class="label-icon">All Time</span>
+    <div>
+      <div class="card_header">Average Pass Time</div>
+
+      <div class="card_title my py" [style.font-size]="'24px'" [style.min-height]="'55px'">
+        <div *ngIf="!averagePassTime" class="loading-theme spinner flex-center-center">
+          <mat-spinner [color]="'accent'" [diameter]="'35'"></mat-spinner>
+        </div>
+        <span *ngIf="averagePassTime">{{averagePassTime}} minutes</span>
+      </div>
+
+    </div>
+  </div>
+  <div class="card card__role flex-center-between ml mt" [style.padding-top]="'15px'" [style.padding-bottom]="'15px'">
+    <div>
+      <div class="card_header my py">Pass Usage</div>
+      <!--Chart-->
+      <canvas baseChart width="380" height="260" #ctx
+              [datasets]="lineChartData"
+              [labels]="lineChartLabels"
+              [options]="lineChartOptions"
+              [colors]="lineChartColors"
+              [legend]="lineChartLegend"
+              [chartType]="lineChartType"
+              (chartHover)="chartHovered($event)"
+      (chartClick)="chartClicked($event)"></canvas>
+    </div>
+  </div>
+  <div class="card card__role flex-center-between ml mb">
+    <span class="label-icon">All Time</span>
+    <div class="w-100">
+      <div class="card_header">
+        Most Frequent Room <br> Destinations
+      </div>
+      <div class="flex-start-between pt card_title">
+        <div>
+          <div>
+            1. Bathroom
+          </div>
+          <div>
+            2. Water Fountain
+          </div>
+          <div>
+            3. Nurse
+          </div>
+        </div>
+        <div>
+          <div>
+            4. Gardner
+          </div>
+          <div>
+            5. Pool
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
 </div>

@@ -23,7 +23,9 @@
               "src/styles.scss",
               "node_modules/font-awesome/css/font-awesome.min.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/chart.js/dist/Chart.bundle.js"
+            ]
           },
           "configurations": {
             "local": {
