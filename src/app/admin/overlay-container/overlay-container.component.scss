@@ -54,7 +54,7 @@
   }
 
   .teacher-search {
-    margin: 30px;
+    margin: 10px 0 0 29px;
     width: 82%;
 
     .teacher-title {
@@ -423,6 +423,21 @@
 
   .gd-button {
     margin-bottom: 10px;
+  }
+}
+
+.footer-delete-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 60px;
+
+  .footer-info-text {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    color: darkgray;
   }
 }
 
