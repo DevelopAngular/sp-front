@@ -1,6 +1,26 @@
 <div class="pass-config-wrapper">
-<div style="display: flex; justify-content: center">
+<div class="pass-config-container">
+
   <div class="pass-config-header">
+
+      <div class="changes-log" *ngIf="true">
+          <div class="changes-log-text">
+              0 unpublished edits
+          </div>
+          <div class="changes-buttons">
+              <div class="discard-button">Discard</div>
+              <app-gradient-button
+                      [minHeight]="'39px'"
+                      [style.width]="'153px'"
+                      [cursor]="'pointer'"
+                      [fontSize]="'12px'"
+                      (buttonClick)="saveChanges()"
+              >
+                  Publish</app-gradient-button>
+          </div>
+      </div>
+
+    <div class="school-logo">
       <div class="school-title">
           <img class="school-icon" src="../../../assets/School (Blue).png">
           <div class="school-name">{{ schoolName }}</div>
@@ -29,6 +49,8 @@
           <!--</div>-->
       <!--</div>-->
 
+
+    </div>
   </div>
 </div>
   <div class="pass-config-content">

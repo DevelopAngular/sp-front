@@ -79,4 +79,8 @@ export class PassConfigComponent implements OnInit {
       });
   }
 
+    saveChanges() {
+      console.log('request');
+    }
+
 }

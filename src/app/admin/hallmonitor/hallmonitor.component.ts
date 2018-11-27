@@ -1,15 +1,14 @@
 ﻿import { Component, OnInit, ElementRef} from '@angular/core';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
-import { MatDialogRef, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Util } from '../../../Util';
-import { Request } from '../../models/Request';
 import { User } from '../../models/User';
 import { Report } from '../../models/Report';
-import { DataService } from '../../data-service';
-import { HttpService } from '../../http-service';
-
 import { Pinnable } from '../../models/Pinnable';
+import { ActivePassProvider } from '../../hall-monitor/hall-monitor.component';
+import { LiveDataService } from '../../live-data/live-data.service';
+import { PassLikeProvider } from '../../models/providers';
+
 
 @Component({
   selector: 'app-hallmonitor',
@@ -17,6 +16,10 @@ import { Pinnable } from '../../models/Pinnable';
   styleUrls: ['./hallmonitor.component.scss']
 })
 export class HallmonitorComponent implements OnInit {
+
+    activePassProvider: PassLikeProvider;
+    searchQuery$ = new BehaviorSubject('');
+    minDate = new Date();
     input_value1: string;
     input_value2: string;
     input_DateRange: string;
@@ -38,14 +41,28 @@ export class HallmonitorComponent implements OnInit {
     searchDate_2nd$ = new BehaviorSubject<Date>(null);
 
     constructor(
-        public dialog: MatDialog
+        public dialog: MatDialog,
+        private liveDataService: LiveDataService
         
     ) {         
         //this.studentreport[0]['id'] = '1';
     }
 
   ngOnInit() {
-    }
+    this.activePassProvider = new ActivePassProvider(this.liveDataService, this.searchQuery$);
+  }
+
+  onSearch(searchValue) {
+     this.searchQuery$.next(searchValue);
+  }
+
+  setSearchDate(date) {
+    console.log(date);
+  }
+
+  openDateDialog() {
+
+  }
 
   genOption(display, color, action) {
       return { display: display, color: color, action: action }

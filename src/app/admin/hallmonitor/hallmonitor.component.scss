@@ -26,6 +26,76 @@
   }
 }
 
+:host {
+  width: 100%;
+}
+
+.hallmonitor-wrapper {
+  display: flex;
+}
+
+.left-content {
+  display: flex;
+  flex-direction: column;
+  width: 45%;
+  align-items: center;
+  margin: 60px 0 0 90px;
+
+  .hall-monitor-bottom {
+    width: 100%;
+    margin-top: 60px;
+  }
+}
+
+.right-content {
+  margin: 60px 70px 0 70px;
+  width: 45%;
+  border-radius: 10px;
+  box-shadow: 0 0 2px darkgrey;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+
+  .right-content-header {
+    display: flex;
+    width: 90%;
+    height: 60px;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+
+    .report-text {
+      display: flex;
+      align-items: center;
+
+      .report-icon {
+        width: 39px;
+        height: 39px;
+      }
+
+      .text {
+        font-size: 25px;
+        margin-left: 18px;
+        font-weight: bold;
+        color: #3d396b;
+      }
+    }
+
+    .calendar-icon {
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+    }
+  }
+
+  .reports {
+    width: 100%;
+  }
+
+
+}
+
 .passes-wrapper {
   display: flex;
   flex-direction: row;

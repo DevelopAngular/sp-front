@@ -25,6 +25,9 @@ import { PinnableComponent } from '../pinnable/pinnable.component';
 import { TraveltypePickerComponent } from '../traveltype-picker/traveltype-picker.component';
 import { StudentSearchComponent } from '../student-search/student-search.component';
 import { DisplayReportCellComponent } from '../display-report-cell/display-report-cell.component';
+import {PassCollectionComponent} from '../pass-collection/pass-collection.component';
+import {PassTileComponent} from '../pass-tile/pass-tile.component';
+import {PassCellComponent} from '../pass-cell/pass-cell.component';
 
 
 @NgModule({
@@ -60,6 +63,9 @@ import { DisplayReportCellComponent } from '../display-report-cell/display-repor
       TraveltypePickerComponent,
       StudentSearchComponent,
       DisplayReportCellComponent,
+      PassCollectionComponent,
+      PassTileComponent,
+      PassCellComponent,
   ],
   exports: [
     ReactiveFormsModule,
@@ -77,6 +83,9 @@ import { DisplayReportCellComponent } from '../display-report-cell/display-repor
       TraveltypePickerComponent,
       StudentSearchComponent,
       DisplayReportCellComponent,
+      PassCollectionComponent,
+      PassTileComponent,
+      PassCellComponent,
   ],
 })
 export class SharedModule {
