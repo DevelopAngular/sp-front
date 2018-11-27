@@ -10,7 +10,6 @@
           (input)="changeAction(input.value)" (click)="focusAction(true)" (focusout)="focusAction(false)"
           [(ngModel)]="value" >
   </div>
-<<<<<<< HEAD
   <mat-chip-list #chipList *ngIf="type == 'chips'" class="input">
     <mat-chip
       *ngFor="let selection of selections"
@@ -25,10 +24,4 @@
       [(ngModel)]="value" >
   </mat-chip-list>
   
-=======
-  <div *ngIf="type == 'chips'" class="field-wrapper">
-
-  </div>
-
->>>>>>> admin-dev
 </div>
