@@ -1,16 +1,71 @@
 .pass-config-wrapper {
   display: flex;
-  justify-content: center;
+  background-color: #f8faff;
   flex-direction: column;
+  align-items: center;
 }
 
 :host {
   width: 100%;
 }
 
+.pass-config-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: 91%;
+
+  .school-logo {
+    width: 100%;
+    display: flex;
+    flex-grow: 1;
+    justify-content: space-between;
+  }
+}
+
+.changes-log {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 63px;
+  background-color: #1f195e;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+
+  .changes-log-text {
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  }
+
+  .changes-buttons {
+    display: flex;
+    align-items: center;
+    margin-right: 14px;
+
+    .discard-button {
+      color: white;
+      margin-right: 30px;
+    }
+
+    .discard-button:hover {
+      width: 81px;
+      height: 30px;
+      border-radius: 15px;
+      background-color: #7b7df1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+  }
+}
+
 .pass-config-header {
   width: 91%;
-  height: 120px;
+  height: 174px;
   border-radius: 10px;
   margin-top: 30px;
   margin-bottom: 30px;
@@ -18,6 +73,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-direction: column;
 }
 
 .school-title {

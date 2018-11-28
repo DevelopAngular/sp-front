@@ -1,0 +1,17 @@
+.pointer-wrapper{
+  width: 100px;
+  height: 19px;
+  overflow: hidden;
+  position: relative;
+  left: 73px;
+  top: -29px;
+}
+
+.pointer{
+  width: 100px;
+  height: 100px;
+  transform: rotate(45deg);
+  position: relative;
+  top: 21px;
+  background-color: rgba(255, 255, 255, 1);
+}

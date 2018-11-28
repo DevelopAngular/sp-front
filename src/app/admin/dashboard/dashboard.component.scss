@@ -1,3 +1,118 @@
-.dashboard-wrapper{
-    background-color: #F8FAFF;
+:host{
+  padding: 25px;
+  box-sizing: border-box;
+  display: flex;
+  width: 100%;
+  background-color: #F8FAFF;
+  .dashboard-wrapper{
+    max-height: 80vh;
+    .card{
+      box-sizing: border-box;
+      padding: 28px 38px 37px 32px ;
+      background-color: #fff;
+      border-radius: 10px;
+      font-size: 17px;
+      color: #1F195E;
+      -webkit-box-shadow: 0px 0px 5px 1px #ddd;
+      -moz-box-shadow:  0px 0px 5px 1px #ddd;
+      box-shadow:  0px 0px 5px 1px #ddd;
+      &_header{
+        font-size: 24px;
+        color: #3D396B;
+      }
+      &_title{
+        font-size: 14px;
+        color: #7F879D;
+      }
+      &__role{
+        position: relative;
+        width: 450px;
+        margin: 15px;
+        .label-icon{
+          position: absolute;
+          top: 10px;
+          right: 10px;
+        }
+      }
+    }
+  }
+
+  @mixin flexLayout($align, $justify) {
+    display: flex;
+    align-items: $align;
+    justify-content: $justify;
+  }
+
+  .flex-start-start{
+    @include flexLayout(flex-start, flex-start);
+  }
+  .flex-center-between{
+    @include flexLayout(center, space-between);
+  }
+  .flex-start-between{
+    @include flexLayout(flex-start, space-between);
+  }
+  .flex-end-between{
+    @include flexLayout(flex-end, space-between);
+  }
+  .flex-ceter-around{
+    @include flexLayout(center, space-around);
+  }
+  .flex-start-center{
+    @include flexLayout(flex-start, center);
+  }
+  .flex-center-center{
+    @include flexLayout(center, center);
+  }
+  .flex-center-start{
+    @include flexLayout(center, flex-start);
+  }
+  .flex-center-end{
+    @include flexLayout(center, flex-end);
+  }
+  .flex-wrap{
+    flex-wrap: wrap;
+  }
+  .flex-nowrap{
+    flex-wrap: nowrap;
+  }
+  .flex-column{
+    flex-direction: column;
+  }
+
+  .w-100{
+    width: 100%;
+  }
+  .h-100{
+    height: 100%;
+  }
+
+  .p{
+    padding: 10px;
+  }
+  .px{
+    padding: 0 10px ;
+  }
+  .py{
+    padding: 10px 0;
+  }
+  .pt { padding-top: 10px}
+  .pb { padding-bottom: 10px}
+  .pl { padding-left: 10px}
+  .pr { padding-right: 10px}
+
+  .m{
+    margin: 10px;
+  }
+  .mx{
+    margin: 0 10px;
+  }
+  .my{
+    margin: 10px 0;
+  }
+  .mt{ margin-top: 10px}
+  .mb{ margin-bottom: 10px}
+  .ml{ margin-left: 10px}
+  .mr{ margin-right: 10px}
+
 }

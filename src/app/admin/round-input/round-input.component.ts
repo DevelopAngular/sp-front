@@ -60,9 +60,9 @@ export class RoundInputComponent implements AfterViewInit {
     this.selected = selected;
     if(selected && this.type == 'dates'){
       const dateDialog = this.dialog.open(DateInputComponent, {
-        width: '750px',
+        width: '900px',
         panelClass: 'form-dialog-container',
-        backdropClass: 'custom-backdrop',
+        backdropClass: 'custom-bp',
         data: {'to':this.toDate?this.toDate:new Date(), 'from':this.fromDate?this.fromDate:new Date()}
       });
 

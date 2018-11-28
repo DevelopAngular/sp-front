@@ -1,5 +1,8 @@
 import { Component, NgZone, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
 import { GoogleLoginService } from './google-login.service';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
+import {filter, map, mergeMap} from 'rxjs/operators';
 
 /**
  * @title Autocomplete overview
@@ -13,8 +16,14 @@ import { GoogleLoginService } from './google-login.service';
 export class AppComponent implements OnInit {
 
   isAuthenticated = false;
+  public pdf: boolean = false;
 
-  constructor(public loginService: GoogleLoginService, private _zone: NgZone) {
+  constructor(
+    public loginService: GoogleLoginService,
+    private _zone: NgZone,
+    private activatedRoute: ActivatedRoute,
+    private router: Router, private location: Location
+  ) {
   }
 
   ngOnInit() {
@@ -23,6 +32,19 @@ export class AppComponent implements OnInit {
         this.isAuthenticated = t;
       });
     });
+    this.router.events
+      .pipe(
+        filter(event => event instanceof NavigationEnd),
+        map(() => this.activatedRoute),
+        map((route) => {
+          while (route.firstChild) { route = route.firstChild; }
+          return route;
+        }),
+        mergeMap((route) => route.data)
+      )
+      .subscribe((data) => {
+        this.pdf = data.hideScroll;
+      });
   }
 
 

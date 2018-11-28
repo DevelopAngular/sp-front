@@ -1,13 +1,13 @@
 ﻿import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import {
-  MatProgressBarModule, MatGridListModule,
-  MatDialogModule,
-  MatIconModule,
-  MatSelectModule,
-  MatSliderModule,
-  MatSlideToggleModule,
-  MatChipsModule, MatCardModule, MatCheckboxModule, MatTableModule, MatProgressSpinnerModule,
+    MatProgressBarModule, MatGridListModule,
+    MatDialogModule,
+    MatIconModule,
+    MatSelectModule,
+    MatSliderModule,
+    MatSlideToggleModule,
+    MatChipsModule, MatCardModule, MatCheckboxModule, MatTableModule, MatProgressSpinnerModule, MatDividerModule,
 } from '@angular/material';
 
 
@@ -25,6 +25,9 @@ import { PinnableComponent } from '../pinnable/pinnable.component';
 import { TraveltypePickerComponent } from '../traveltype-picker/traveltype-picker.component';
 import { StudentSearchComponent } from '../student-search/student-search.component';
 import { DisplayReportCellComponent } from '../display-report-cell/display-report-cell.component';
+import {PassCollectionComponent} from '../pass-collection/pass-collection.component';
+import {PassTileComponent} from '../pass-tile/pass-tile.component';
+import {PassCellComponent} from '../pass-cell/pass-cell.component';
 
 
 @NgModule({
@@ -46,6 +49,7 @@ import { DisplayReportCellComponent } from '../display-report-cell/display-repor
       MatSlideToggleModule,
       MatChipsModule,
       MatCardModule,
+      MatDividerModule,
     NgProgressModule.forRoot()
   ],
   declarations: [
@@ -60,6 +64,9 @@ import { DisplayReportCellComponent } from '../display-report-cell/display-repor
       TraveltypePickerComponent,
       StudentSearchComponent,
       DisplayReportCellComponent,
+      PassCollectionComponent,
+      PassTileComponent,
+      PassCellComponent,
   ],
   exports: [
     ReactiveFormsModule,
@@ -77,6 +84,9 @@ import { DisplayReportCellComponent } from '../display-report-cell/display-repor
       TraveltypePickerComponent,
       StudentSearchComponent,
       DisplayReportCellComponent,
+      PassCollectionComponent,
+      PassTileComponent,
+      PassCellComponent,
   ],
 })
 export class SharedModule {

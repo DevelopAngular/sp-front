@@ -127,17 +127,22 @@
         </div>
       </div>
 
-      <!--<div class="footer-delete-button" *ngIf="overlayType === 'newRoom' && isValidForm">-->
-        <!--<app-gradient-button-->
-                <!--[gradient]="'#F52B4F, #F37426'"-->
-                <!--[minHeight]="'40px'"-->
-                <!--[style.width]="'120px'"-->
-                <!--[cursor]="'pointer'"-->
-                <!--[fontSize]="'12px'"-->
-                <!--(buttonClick)="deleteRoom()"-->
-        <!--&gt;-->
-          <!--Delete Room</app-gradient-button>-->
-      <!--</div>-->
+      <div class="footer-delete-button" *ngIf="overlayType === 'newRoom' && isValidForm">
+        <app-gradient-button
+                [gradient]="'#F52B4F, #F37426'"
+                [minHeight]="'40px'"
+                [style.width]="'140px'"
+                [cursor]="'pointer'"
+                [fontSize]="'12px'"
+                (buttonClick)="deleteRoom()"
+        >
+          Delete Room</app-gradient-button>
+
+        <div class="footer-info-text">
+          This will erase all active and scheduled passes to and from this room.<br/>
+          This will not erase any expired passes to or from this room.
+        </div>
+      </div>
 
       <div class="rooms-in-folder" *ngIf="overlayType === 'newFolder'">
         <div class="rooms-in-folder-title">Rooms in Folder ({{ selectedRooms.length }})</div>

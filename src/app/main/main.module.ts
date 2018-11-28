@@ -32,7 +32,7 @@ import { PagerComponent } from '../pager/pager.component';
 import { PassCardTemplateComponent } from '../pass-card-template/pass-card-template.component';
 import { PassCardComponent } from '../pass-card/pass-card.component';
 import { PassCellComponent } from '../pass-cell/pass-cell.component';
-import { PassCollectionComponent } from '../pass-collection/pass-collection.component';
+// import { PassCollectionComponent } from '../pass-collection/pass-collection.component';
 import { PassTileComponent } from '../pass-tile/pass-tile.component';
 import { PassesComponent } from '../passes/passes.component';
 import { ReportFormComponent } from '../report-form/report-form.component';
@@ -72,10 +72,9 @@ import { DateInputComponent } from '../admin/date-input/date-input.component';
     PassesComponent,
     SettingsComponent,
     SignOutComponent,
-    PassCollectionComponent,
     DropdownComponent,
-    PassTileComponent,
-    PassCellComponent,
+    // PassTileComponent,
+    // PassCellComponent,
     HallpassFormComponent,
     InfoEditorComponent,
     RequestAcceptComponent,
