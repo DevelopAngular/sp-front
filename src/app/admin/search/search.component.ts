@@ -22,7 +22,7 @@ export class SearchComponent implements OnInit {
   constructor(private httpService: HttpService) { }
 
   ngOnInit() {
-    this.testProfile = new ColorProfile('', 'testing', '#3D56F7,#A957F0', '#A957F0', '', '#A957F0', '');
+    this.testProfile = new ColorProfile('', 'testing', '#3D56F7,#A957F0', '#A957F1', '', '#A957F0', '');
     this.testPinnable1 = new Pinnable('1', 'Testing1', '', 'https://storage.googleapis.com/courier-static/icons/Bathroom.png', '', null, null, this.testProfile);
     this.testPinnable2 = new Pinnable('2', 'Testing2', '', 'https://storage.googleapis.com/courier-static/icons/Office.png', '', null, null, this.testProfile);
     this.testPinnable3 = new Pinnable('3', 'Testing3', '', 'https://storage.googleapis.com/courier-static/icons/Gym.png', '', null, null, this.testProfile);
