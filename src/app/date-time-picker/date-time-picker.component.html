@@ -9,7 +9,7 @@
         <owl-date-time-inline  [(ngModel)]="selectedMomentt_2ndCal" [min]="min" [hour12Timer]="true" [min]="min_2ndCal" [pickerType]="showTime_2ndCal?'both':'calendar'"></owl-date-time-inline>
     </div>
   </div>
-  <div class="button">
+  <div class="button" *ngIf="showTwoCalender">
     <app-gradient-button *ngIf="showTwoCalender"
                           [minWidth]="'242px'"
                           [minHeight]="'33px'"
