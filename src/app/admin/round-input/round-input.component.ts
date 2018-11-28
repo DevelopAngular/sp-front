@@ -35,9 +35,9 @@ export class RoundInputComponent implements OnInit {
     this.selected = selected;
     if(selected && this.type == 'dates'){
       const dateDialog = this.dialog.open(DateInputComponent, {
-        width: '750px',
+        width: '900px',
         panelClass: 'form-dialog-container',
-        backdropClass: 'custom-backdrop'
+        backdropClass: 'custom-bd'
       });
 
       dateDialog.afterOpen().subscribe(()=>{this.selected = true;});

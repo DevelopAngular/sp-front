@@ -1,10 +1,43 @@
 .date-time-wrapper{
     width: 100%;
     display: flex;
-    justify-content: center;
+    align-items: center;
+    flex-direction: column;
     font-family: 'Helvetica Neue', sans-serif;
 }
 
 .owl-dt-calendar-table .owl-dt-calendar-cell-selected{
     background-color: #04CD33;
 }
+
+.calendars {
+    display: flex;
+    justify-content: center;
+
+    .calendar-text {
+        margin: 30px 0 15px 0;
+        font-size: 20px;
+        font-weight: bold;
+        color: darkgray;
+    }
+
+    .first {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .second {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-left: 100px;
+    }
+}
+
+.button {
+  margin: 30px;
+}
+
+
+
