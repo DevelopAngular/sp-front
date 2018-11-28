@@ -5,7 +5,6 @@
       <div class="card_title" [style.text-align]="'center'">
         <div style="min-height: 65px;" class="flex-center-center">
           <div style="font-size: 4em">{{activeHallpasses?.length}}</div>
-
           <div *ngIf="!activeHallpasses" class="loading-theme spinner flex-center-center">
             <mat-spinner [color]="'accent'" [diameter]="'35'"></mat-spinner>
           </div>
@@ -23,7 +22,7 @@
         [width]="'188px'"
         [fontSize]="'14px'"
         [fontWeight]="400"
-        (buttonClick)="openDialog('create')">
+        (buttonClick)="previewPDF()">
         <span>Report of Students</span>
       </app-gradient-button>
     </div>
@@ -95,8 +94,6 @@
             5. Pool
           </div>
         </div>
-
-
       </div>
     </div>
   </div>

@@ -25,7 +25,8 @@ import { AdminModule } from './admin/admin.module';
 import { UserService } from './user.service';
 import { LoginComponent } from './login/login.component';
 import { ProgressInterceptor } from './progress-interceptor';
-import { HallDateTimePickerComponent } from './hall-date-time-picker/hall-date-time-picker.component';
+import { HallDateTimePickerComponent } from './hall-date-time-picker/hall-date-time-picker.component';;
+import { PdfComponent } from './pdf/pdf.component'
 
 const appRoutes: Routes = [
   {path: '', redirectTo: 'main/passes', pathMatch: 'full'},
@@ -40,6 +41,12 @@ const appRoutes: Routes = [
     canActivate: [AuthenticatedGuard],
     loadChildren: 'app/admin/admin.module#AdminModule'
   },
+  {
+    path: 'pdf/:source',
+    canActivate: [AuthenticatedGuard],
+    component: PdfComponent,
+    data: { hideScroll: true }
+  },
 ];
 
 @NgModule({
@@ -52,6 +59,7 @@ const appRoutes: Routes = [
     IntroComponent,
     LoginComponent,
     HallDateTimePickerComponent,
+    PdfComponent
   ],
   entryComponents: [
     ConsentMenuComponent,

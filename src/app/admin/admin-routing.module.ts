@@ -17,7 +17,6 @@ const routes: Routes = [
       {path: 'dashboard', component: DashboardComponent},
       {path: 'hallmonitor', component: HallmonitorComponent},
       {path: 'search', component: SearchComponent},
-      // {path: 'accounts', loadChildren: './accounts/accounts.module#AccountsModule'},
       {path: 'accounts', component: AccountsComponent},
       {path: 'accounts/:role', component: AccountsRoleComponent},
       {path: 'passconfig', component: PassConfigComponent},

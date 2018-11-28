@@ -1,11 +1,18 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {HttpService} from '../../http-service';
 import {HallPass} from '../../models/HallPass';
+// import * as jsPDF from 'jspdf';
+import {Router} from '@angular/router';
+
+declare const jsPDF;
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss']
+  styleUrls: ['./dashboard.component.scss'],
+  providers: [
+    { provide: 'Window',  useValue: window }
+  ]
 })
 export class DashboardComponent implements OnInit {
 
@@ -26,7 +33,9 @@ export class DashboardComponent implements OnInit {
   public averagePassTime: number|string;
 
   constructor(
+    private router: Router,
     private http: HttpService,
+    @Inject('Window') private window: Window,
   ) { }
   ngOnInit() {
 
@@ -98,6 +107,44 @@ export class DashboardComponent implements OnInit {
       }
     ];
 
+  }
+
+  previewPDF() {
+
+    const doc = new jsPDF();
+    doc.setFontSize(24);
+    doc.text(60, 20, 'Active Hall Pass Report');
+    doc.line(10, 26, 200 , 26);
+    doc.setFontSize(12);
+    doc.text(10, 45, 'All Active Hall Passes on mm:dd:yy at hh:mm (AM/PM)');
+
+    const columns = [
+      {title: 'Student Name', dataKey: 'student name'},
+      {title: 'Origin', dataKey: 'origin'},
+      {title: 'Destination', dataKey: 'destination'},
+      {title: 'Travel Type', dataKey: 'travel type'},
+    ];
+    const rows = [
+      {'student name': 'Hellen Keller', 'origin': 'Washington', 'destination': 'Nurse', 'travel type' : 'OW'},
+      {'student name': 'Hellen Keller', 'origin': 'Washington', 'destination': 'Nurse', 'travel type' : 'OW'},
+      {'student name': 'Hellen Keller', 'origin': 'Washington', 'destination': 'Nurse', 'travel type' : 'OW'},
+      {'student name': 'Hellen Keller', 'origin': 'Washington', 'destination': 'Nurse', 'travel type' : 'OW'},
+      {'student name': 'Hellen Keller', 'origin': 'Washington', 'destination': 'Nurse', 'travel type' : 'OW'},
+    ];
+
+    doc.autoTable(columns, rows, {
+      theme: 'striped',
+      headerStyles: {
+      },
+      columnStyles: {
+      },
+      alternateRowStyles: {
+      },
+      margin: {top: 60, left: 10},
+      addPageContent: function(data) {
+      }
+    });
+    window.open(`http://localhost:4200/pdf/${encodeURIComponent(doc.output('datauristring'))}`);
   }
 
   public chartClicked(e:any):void {
