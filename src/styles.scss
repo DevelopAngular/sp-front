@@ -111,6 +111,10 @@ body {
   text-align: center;
 }
 
+.calendar-dialog-container .mat-dialog-container {
+  padding: 0;
+}
+
 /* width */
 ::-webkit-scrollbar {
   width: 8px;

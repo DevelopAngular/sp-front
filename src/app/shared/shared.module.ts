@@ -1,13 +1,13 @@
 ﻿import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import {
-  MatProgressBarModule, MatGridListModule,
-  MatDialogModule,
-  MatIconModule,
-  MatSelectModule,
-  MatSliderModule,
-  MatSlideToggleModule,
-  MatChipsModule, MatCardModule, MatCheckboxModule, MatTableModule, MatProgressSpinnerModule,
+    MatProgressBarModule, MatGridListModule,
+    MatDialogModule,
+    MatIconModule,
+    MatSelectModule,
+    MatSliderModule,
+    MatSlideToggleModule,
+    MatChipsModule, MatCardModule, MatCheckboxModule, MatTableModule, MatProgressSpinnerModule, MatDividerModule,
 } from '@angular/material';
 
 
@@ -49,6 +49,7 @@ import {PassCellComponent} from '../pass-cell/pass-cell.component';
       MatSlideToggleModule,
       MatChipsModule,
       MatCardModule,
+      MatDividerModule,
     NgProgressModule.forRoot()
   ],
   declarations: [

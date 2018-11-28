@@ -15,6 +15,7 @@ export class ConsentMenuComponent implements OnInit {
 
   header: string;
   options: any[];
+
   ConsentText: string;
   ConsentYesText: string;
   ConsentNoText: string;
@@ -32,8 +33,6 @@ export class ConsentMenuComponent implements OnInit {
     this.options = data['options'];
 
     this._matDialogRef = _matDialogRef;
-
-    console.log(this._matDialogRef);
 
     this.triggerElementRef = data['trigger'];
     this.ConsentText = data['ConsentText'];
@@ -62,5 +61,4 @@ export class ConsentMenuComponent implements OnInit {
   onNoClick(): void {
       this._matDialogRef.close();
   }
-
 }

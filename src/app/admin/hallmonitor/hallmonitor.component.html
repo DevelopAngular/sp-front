@@ -30,20 +30,19 @@
                 <img src="../../../assets/Report (Red).png" class="report-icon">
                 <div class="text">Reported Students</div>
             </div>
-            <img src="../../../assets/Calendar (Blue).png" class="calendar-icon" (click)="openDateDialog()">
+            <img src="../../../assets/Calendar (Blue).png" class="calendar-icon" (click)="openDateDialog($event)">
         </div>
-        <div class="reports">
+        <div class="reports" *ngFor="let b of [1,1,1,1,1,1,1]">
           <app-display-report-cell
              [student_name]="'testStudent'"
              [issuer]="'testTeacher'"
              [created]="'Today 09:32 PM'"
-             [message]="'caught without pass'"
+             [message]="'caught without pass dfg dfgfdds df gd dfgegds sgdgfd sdfdsgs sgdsf sdfsdfs sdsdfx '"
              [hasDivider]="true"
              [righticon]="'./assets/Print (Grey).png'"></app-display-report-cell>
-
+          <div class="divider"></div>
         </div>
     </div>
-    <!--<app-date-time-picker  [min]="minDate" [showTime]="true" (onUpdate)="setSearchDate($event)"></app-date-time-picker>-->
 </div>
 
 
