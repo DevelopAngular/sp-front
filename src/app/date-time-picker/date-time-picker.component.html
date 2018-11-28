@@ -1,17 +1,23 @@
 ﻿<div class="date-time-wrapper">
-  <div *ngIf="showTwoCalender">From</div>
-  <owl-date-time-inline [(ngModel)]="selectedMoment" [hour12Timer]="true" [min]="min" [pickerType]="showTime?'both':'calendar'"></owl-date-time-inline>
-  <div *ngIf="showTwoCalender" style="padding-left:100px">
-    <div *ngIf="showTwoCalender">To</div>
-    <owl-date-time-inline  [(ngModel)]="selectedMomentt_2ndCal" [min]="min" [hour12Timer]="true" [min]="min_2ndCal" [pickerType]="showTime_2ndCal?'both':'calendar'"></owl-date-time-inline>
+  <div class="calendars">
+    <div class="first">
+      <div *ngIf="showTwoCalender" class="calendar-text">From</div>
+      <owl-date-time-inline [(ngModel)]="selectedMoment" [hour12Timer]="true" [min]="min" [pickerType]="showTime?'both':'calendar'"></owl-date-time-inline>
+    </div>
+    <div class="second" *ngIf="showTwoCalender">
+        <div *ngIf="showTwoCalender" class="calendar-text">To</div>
+        <owl-date-time-inline  [(ngModel)]="selectedMomentt_2ndCal" [min]="min" [hour12Timer]="true" [min]="min_2ndCal" [pickerType]="showTime_2ndCal?'both':'calendar'"></owl-date-time-inline>
+    </div>
   </div>
-  <app-gradient-button *ngIf="showTwoCalender"
-                        [minWidth]="'150px'"
-                        [minHeight]="'40px'"
-                        [hoverColor]="'#00b476'"
-                        [fontSize]="'15px'"
-                        [cursor]="'pointer'"
-                        (click)="confirmDates()">
-    {{ dateRangeText }}
-  </app-gradient-button>
+  <div class="button" *ngIf="showTwoCalender">
+    <app-gradient-button *ngIf="showTwoCalender"
+                          [minWidth]="'242px'"
+                          [minHeight]="'33px'"
+                          [hoverColor]="'#00b476'"
+                          [fontSize]="'15px'"
+                          [cursor]="'pointer'"
+                          (click)="confirmDates()">
+      {{ dateRangeText }}
+    </app-gradient-button>
+  </div>
 </div>

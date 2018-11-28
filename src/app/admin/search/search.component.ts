@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Pinnable } from '../../models/Pinnable';
 import { ColorProfile } from '../../models/ColorProfile';
+import {HttpService} from '../../http-service';
 
 @Component({
   selector: 'app-search',
@@ -18,7 +19,7 @@ export class SearchComponent implements OnInit {
 
   hasSearched: boolean = false;
 
-  constructor() { }
+  constructor(private httpService: HttpService) { }
 
   ngOnInit() {
     this.testProfile = new ColorProfile('', 'testing', '#3D56F7,#A957F0', '#A957F0', '', '#A957F0', '');

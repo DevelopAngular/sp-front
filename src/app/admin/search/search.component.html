@@ -1,23 +1,28 @@
 <div class="search-wrapper">
   <div class="input-header">
-      <app-round-input [labelText]="'Date and Time'" [type]="'dates'" [placeholder]="'this thing'" (ontextupdate)="$event"></app-round-input>
-      <app-round-input [labelText]="'Text stuff'" [type]="'text'" [placeholder]="'this thing'" (ontextupdate)="$event"></app-round-input>
+    <app-round-input [width]="'260px'" [labelText]="'By Student Name'" [type]="'text'" [placeholder]="'Search Students'" (ontextupdate)="$event"></app-round-input>
+    <app-round-input [width]="'260px'" [labelText]="'Date and Time'" [type]="'dates'" [placeholder]="'Search date & time range'" (ontextupdate)="$event"></app-round-input>
+    <app-round-input [width]="'260px'" [labelText]="'By Room Name'" [type]="'text'" [placeholder]="'Search Rooms'" (ontextupdate)="$event"></app-round-input>
   </div>
-  <div class="default-message" *ngIf="!hasSearched">
-    <div class="title-text">
-      <img class="icon" [src]="'./assets/Search (Blue).png' | resolveAsset">
-      <div>Search</div>
+  <div class="search-content">
+    <div class="default-message" *ngIf="!hasSearched">
+      <div class="search-button">
+        <div class="title-text">
+          <img class="icon" [src]="'./assets/Search (Blue).png' | resolveAsset">
+          <div>Search</div>
+        </div>
+      </div>
+      <div class="small-text">
+        This is an ultimate search query of everything going on in the school. <br>
+        <br>
+        You can search for a single item or multiple items within search search field <br>
+        as well as search more than one field at a time to filter your results. <br>
+        <br>
+        In the end, you can generate PDF reports.
+      </div>
     </div>
-    <div class="small-text">
-      This is an ultimate search query of everything going on in the school. <br>
-      <br>
-      You can search for a single item or multiple items within search search field <br>
-      as well as search more than one field at a time to filter your results. <br>
-      <br>
-      In the end, you can generate PDF reports.
-    </div>
-  </div>
-  <div class="button-footer">
+    <div class="button-footer">
 
+    </div>
   </div>
 </div>

@@ -3,24 +3,19 @@
     <div class="flexCls">
      
       <div class="display-card-header-title">
-        {{student_name}}
+        {{ student_name }}
       </div>
+      <div class="righticon">{{ created }}</div>
     </div>
 
-    <span class="righticon">{{created}}</span>
-
   </div>
-  <div [style.background-color]="(hasDivider?'#B5B7BA':'#FFF')" class="display-card-divider"></div>
-  <div  class="float-left">
-    <div (click)="printReport()"> <img *ngIf="!!righticon" class="display-card-header-icon righticon" [src]="righticon | resolveAsset"></div>
-  <div class="subtitlecls">
-    Reported by {{issuer}}
+  <div  class="card-content">
+    <div class="subtitlecls">
+      <div style="font-weight: bold">Reported by {{ issuer }}</div><br>
+      <div style="width: 90%">{{ message }}</div>
+    </div>
+    <div (click)="printReport()" class="print-icon">
+      <img *ngIf="!!righticon" [src]="righticon | resolveAsset">
+    </div>
   </div>
-  <div class="subtitlecls">
-     {{message}}
-  </div>
-    
-  <ng-content [style.left]="'35px'" [style.position]="'relative'"></ng-content>    
-    </div>   
-  <div class="clear"></div>
 </div>

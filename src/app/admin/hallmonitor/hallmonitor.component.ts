@@ -8,6 +8,7 @@ import { Pinnable } from '../../models/Pinnable';
 import { ActivePassProvider } from '../../hall-monitor/hall-monitor.component';
 import { LiveDataService } from '../../live-data/live-data.service';
 import { PassLikeProvider } from '../../models/providers';
+import {CalendarComponent} from '../calendar/calendar.component';
 
 
 @Component({
@@ -56,12 +57,13 @@ export class HallmonitorComponent implements OnInit {
      this.searchQuery$.next(searchValue);
   }
 
-  setSearchDate(date) {
-    console.log(date);
-  }
-
-  openDateDialog() {
-
+  openDateDialog(event) {
+    const target = new ElementRef(event.currentTarget);
+    this.dialog.open(CalendarComponent, {
+        panelClass: 'calendar-dialog-container',
+        backdropClass: 'invis-backdrop',
+        data: { 'trigger': target }
+    });
   }
 
   genOption(display, color, action) {
