@@ -3,8 +3,8 @@
     <div class="collection-title">
       Rooms
     </div>
-    <div class="selected-counter">
-      {{(selectedPinnables.length > 0?(selectedPinnables.length +' Rooms Selected'):'Bulk Select')}}
+    <div class="selected-counter" (click)="bulkSelect = !bulkSelect">
+      {{ (bulkSelect?(selectedPinnables.length +' Rooms Selected'):'Bulk Select')}}
     </div>
     <app-gradient-button
       [minHeight]="'25px'"
@@ -12,7 +12,7 @@
       [cursor]="'pointer'"
       [fontSize]="'12px'"
       (buttonClick)="buttonClicked($event)"
-      [leftIcon]="(selectedPinnables.length > 0?null:'./assets/Create (White).png')"
+      [leftIcon]="headerButtonIcon"
       [leftImageWidth]="'10px'"
       [leftImageHeight]="'10px'"
     >
@@ -21,7 +21,7 @@
   <div class="collection-divider" *ngIf="header"></div>
   <mat-grid-list class="grid center" cols="4" rowHeight="75px" gutterSize="10px" [style.width]="'550px'">
     <mat-grid-tile *ngFor="let pinnable of pinnables">
-      <app-pinnable [forCollection]="true" [pinnable]="pinnable" (onSelectEvent)="updatePinnables($event)"></app-pinnable>
+      <app-pinnable [forBulk]="bulkSelect" [forCollection]="true" [pinnable]="pinnable" (onSelectEvent)="updatePinnables($event)"></app-pinnable>
     </mat-grid-tile>
   </mat-grid-list>
 </div>

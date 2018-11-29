@@ -1,7 +1,6 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { DateInputComponent } from '../date-input/date-input.component';
-import { HallpassFormComponent } from '../../hallpass-form/hallpass-form.component';
 import { Paged } from '../../location-table/location-table.component';
 import { HttpService } from '../../http-service';
 
@@ -10,11 +9,11 @@ import { HttpService } from '../../http-service';
   templateUrl: './round-input.component.html',
   styleUrls: ['./round-input.component.scss']
 })
-export class RoundInputComponent implements AfterViewInit {
+export class RoundInputComponent implements OnInit {
 
   @Input() labelText: string;
   @Input() placeholder: string;
-  @Input() type: string; //Can be 'text', 'chips', or 'dates'
+  @Input() type: string; //Can be 'text', 'multi', or 'dates'
   @Input() searchEndpoint: any; //API endpoint to search from
   @Input() hasTogglePicker: boolean;
   @Input() width: string;
@@ -38,24 +37,6 @@ export class RoundInputComponent implements AfterViewInit {
     
   }
 
-  ngAfterViewInit(){
-    if(this.type == 'chips'){
-      console.log(this.getHeight(this.chipList.nativeElement))
-    }
-  }
-
-  @ViewChild('chipList', { read: ElementRef }) chipList:ElementRef;
-
-  getHeight(element){
-    element = element.cloneNode(true);
-    element.style.visibility = "hidden";
-    document.body.appendChild(element);
-    var height = element.offsetHeight + 0;
-    document.body.removeChild(element);
-    element.style.visibility = "visible";
-    return height;
-  }
-
   focusAction(selected: boolean){
     this.selected = selected;
     if(selected && this.type == 'dates'){
@@ -76,6 +57,11 @@ export class RoundInputComponent implements AfterViewInit {
           this.ontextupdate.emit({'to':dates['to'], 'from': dates['from']});
         }
       });
+    } else if(selected && this.type == 'multi'){
+      this.value = '';
+      //open options menu
+    } else if(!selected && this.type == 'multi'){
+      //set value to parsed selections
     }
   }
 

@@ -35,6 +35,9 @@ export class PinnableComponent implements OnInit {
   forCollection: boolean = false;
 
   @Input()
+  forBulk: boolean = false;
+
+  @Input()
   valid: boolean = true;
 
   @Output() 
@@ -68,7 +71,7 @@ export class PinnableComponent implements OnInit {
 
   onSelect() {
     if(this.valid)
-      if(this.forCollection){
+      if(this.forCollection && this.forBulk){
         this.selected = !this.selected;
       }
       this.onSelectEvent.emit(this.pinnable);
