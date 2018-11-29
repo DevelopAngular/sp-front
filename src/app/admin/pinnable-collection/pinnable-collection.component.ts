@@ -21,9 +21,14 @@ export class PinnableCollectionComponent implements OnInit {
 
   selectedPinnables:Pinnable[] = [];
   buttonMenuOpen: boolean = false;
+  bulkSelect: boolean  = false;
 
   get headerButtonText(){
-    return (this.selectedPinnables.length > 0?'Bulk Edit Rooms':'New');
+    return (this.selectedPinnables.length < 1 || !this.bulkSelect?'New':'Bulk Edit Rooms');
+  }
+
+  get headerButtonIcon(){
+    return (this.selectedPinnables.length < 1 || !this.bulkSelect?'./assets/Create (White).png':null);
   }
 
   constructor(public dialog: MatDialog) { }
@@ -32,17 +37,25 @@ export class PinnableCollectionComponent implements OnInit {
 
   }
 
+  toggleBulk(){
+    this.bulkSelect = !this.bulkSelect;
+    this.selectedPinnables = [];
+  }
+
   updatePinnables(pinnable:Pinnable){
     if(this.selectedPinnables.includes(pinnable)){
-      //console.log('[Pinnable Collection]: ', 'Pinnable In: ', this.selectedPinnables);
       this.selectedPinnables.splice(this.selectedPinnables.indexOf(pinnable), 1);
-      //console.log('[Pinnable Collection]: ', 'Pinnable Removed: ', this.selectedPinnables)
     } else{
-      //console.log('[Pinnable Collection]: ', 'Pinnable Not In: ', this.selectedPinnables);
-      this.selectedPinnables.push(pinnable);
-      //console.log('[Pinnable Collection]: ', 'Pinnable Added: ', this.selectedPinnables)
+      if(this.bulkSelect)
+        this.selectedPinnables.push(pinnable);
     }
-    if (!this.header) { this.roomEvent.emit(this.selectedPinnables); }
+    if (!this.header) {
+      if(this.bulkSelect){
+        this.roomEvent.emit(this.selectedPinnables);
+      } else{
+        this.roomEvent.emit(pinnable);
+      }
+    }
   }
 
   buttonClicked(evnt: MouseEvent){
@@ -50,7 +63,7 @@ export class PinnableCollectionComponent implements OnInit {
       const target = new ElementRef(evnt.currentTarget);
       let options = [];
 
-      if(this.selectedPinnables.length > 0){
+      if(this.selectedPinnables.length > 0 && this.bulkSelect){
         options.push(this.genOption('Bulk Edit Selection','#3D396B','edit'));
         options.push(this.genOption('New Folder with Selection','#3D396B','newFolder'));
         options.push(this.genOption('Delete Selection','#E32C66','delete'));

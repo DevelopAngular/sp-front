@@ -6,6 +6,30 @@
     font-family: 'Helvetica Neue', sans-serif;
 }
 
+.header-text{
+    width: 50%;
+    text-align: center;
+}
+
+.date-header{
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+}
+
+.calendars{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.footer{
+    width: 100%;
+    display: flex;
+    justify-content: center; 
+}
+
 .owl-dt-calendar-table .owl-dt-calendar-cell-selected{
     background-color: #04CD33;
 }

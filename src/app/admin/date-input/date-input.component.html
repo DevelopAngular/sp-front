@@ -3,4 +3,4 @@
     <div class="divider-text">Date & Time Range</div>
   </div>
 </div>
-<app-date-time-picker [showTwoCalender]="true" (onUpdate)="fromDate=$event" (onUpdate_2ndCal)="toDate=$event" (onconfirm)="dialogRef.close({'from':fromDate, 'to':toDate, 'text':$event})"></app-date-time-picker>
+<app-date-time-picker [_selectedMoment]="fromDate" [_selectedMoment_2ndCal]="toDate" [showTwoCalender]="true" (onUpdate)="fromDate=$event" (onUpdate_2ndCal)="toDate=$event" (onconfirm)="dialogRef.close({'from':fromDate, 'to':toDate, 'text':$event})"></app-date-time-picker>

@@ -56,4 +56,8 @@ export class Location extends BaseModel {
   get nameRoom(): string {
     return this.title + ' (' + this.room + ')';
   }
+
+  toString(): string{
+    return this.nameRoom;
+  }
 }

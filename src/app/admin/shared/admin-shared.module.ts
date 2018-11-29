@@ -28,6 +28,7 @@ import { TogglePickerComponent } from '../toggle-picker/toggle-picker.component'
 import {ToggleInputComponent} from '../toggle-input/toggle-input.component';
 import {AccountsDialogComponent} from '../accounts-dialog/accounts-dialog.component';
 import {ProfilesSearchComponent} from '../profiles-search/profiles-search.component';
+import { InputHelperDialogComponent } from '../input-helper-dialog/input-helper-dialog.component'
 
 @NgModule({
   imports: [
@@ -50,6 +51,7 @@ import {ProfilesSearchComponent} from '../profiles-search/profiles-search.compon
       ColorPalletPickerComponent,
       DataTableComponent,
       DateInputComponent,
+      InputHelperDialogComponent,
       IconPickerComponent,
       NavComponent,
       NavButtonComponent,
@@ -69,6 +71,7 @@ import {ProfilesSearchComponent} from '../profiles-search/profiles-search.compon
       ColorPalletPickerComponent,
       DataTableComponent,
       DateInputComponent,
+      InputHelperDialogComponent,
       IconPickerComponent,
       NavComponent,
       NavButtonComponent,
@@ -84,7 +87,8 @@ import {ProfilesSearchComponent} from '../profiles-search/profiles-search.compon
       AccountsDialogComponent,
       AppInputComponent,
       OverlayContainerComponent,
-      DateInputComponent
+      DateInputComponent,
+      InputHelperDialogComponent
   ]
 })
 export class AdminSharedModule { }

@@ -1,6 +1,16 @@
 ﻿import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
+import {
+  MatDialogModule,
+  MatTableModule,
+  MatCheckboxModule,
+  MatSortModule,
+  MatGridListModule,
+  MatChipsModule,
+  MatIconModule
+} from '@angular/material';
+
 import { AdminRoutingModule } from './admin-routing.module';
 
 import { AdminPageComponent } from './admin-page/admin-page.component';
@@ -14,6 +24,8 @@ import { SharedModule } from '../shared/shared.module';
 import { AdminSharedModule } from './shared/admin-shared.module';
 import { AccountsComponent } from './accounts/accounts.component';
 import { AccountsRoleComponent } from './accounts-role/accounts-role.component';
+import { FormsModule } from '@angular/forms';
+import { NavComponent } from './nav/nav.component'
 import { AccountsDialogComponent } from './accounts-dialog/accounts-dialog.component';
 import { ChartsModule } from 'ng2-charts';
 import { CalendarComponent } from './calendar/calendar.component';
@@ -23,6 +35,14 @@ import { CalendarComponent } from './calendar/calendar.component';
     CommonModule,
     SharedModule,
     AdminRoutingModule,
+    FormsModule,
+    MatTableModule,
+    MatCheckboxModule,
+    MatSortModule,
+    MatGridListModule,
+    MatDialogModule,
+    MatChipsModule,
+    MatIconModule,
     AdminSharedModule,
     ChartsModule
   ],
@@ -36,8 +56,8 @@ import { CalendarComponent } from './calendar/calendar.component';
     SupportComponent,
     AccountsDialogComponent,
     AccountsComponent,
-    AccountsRoleComponent ,
-    CalendarComponent,
+    AccountsRoleComponent,
+    CalendarComponent
    ],
   entryComponents: [AccountsDialogComponent, CalendarComponent],
   providers: [

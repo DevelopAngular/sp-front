@@ -41,7 +41,7 @@ export class DateTimePickerComponent implements OnInit {
   }
 
 
-  set selectedMomentt_2ndCal(newMoment: Date) {
+  set selectedMoment_2ndCal(newMoment: Date) {
       this._selectedMoment_2ndCal = newMoment;
       this.onUpdate_2ndCal.emit(this._selectedMoment_2ndCal);
       console.log('[Date-Time Moment]: ', this._selectedMoment_2ndCal);

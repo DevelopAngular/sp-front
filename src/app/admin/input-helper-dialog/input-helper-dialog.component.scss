@@ -1,0 +1,39 @@
+.divider {
+    width: 100%;
+    height: 65px;
+    margin: 0 0 0 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+    position: relative;
+    background-image: radial-gradient(circle at 98% 97%, #03CF31, #00B476);
+}
+
+.divider-header{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.divider-text {
+    color: white;
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.08;
+    letter-spacing: 0.3px;
+}
+
+.student-select{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 300px;
+    justify-content: space-between;
+    align-items: center;
+}
