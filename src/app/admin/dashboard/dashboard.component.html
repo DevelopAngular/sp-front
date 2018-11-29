@@ -12,10 +12,11 @@
       </div>
     </div>
     <div>
-      <div>
-        <img class="label-icon" src="/assets/Hallway (Blue).png" alt="Hallway (Blue).png" width="25">
-      </div>
+      <a routerLink="/admin/hallmonitor" class="label-icon">
+        <img [src]="'/assets/Hallway (Blue).png' | resolveAsset" alt="Hallway (Blue).png" width="25">
+      </a>
       <app-gradient-button
+        [disabled]="!activeHallpasses"
         [leftIcon]="'./assets/Print (White).png'"
         [cursor]="'pointer'"
         [minHeight]="'62px'"
@@ -28,10 +29,12 @@
     </div>
   </div>
   <div class="card card__role flex-center-between mr mt">
-    <img class="label-icon" src="/assets/Hallway (Blue).png" alt="Hallway (Blue).png" width="25">
+    <a routerLink="/admin/hallmonitor" class="label-icon">
+      <img routerLink="/admin/hallmonitor" [src]="'/assets/Hallway (Blue).png' | resolveAsset" alt="Hallway (Blue).png" width="25">
+    </a>
     <div>
       <div class="card_header">
-        <img src="/assets/Report (Red).png" alt="Report (Red).png" width="30" [style.vertical-align]="'bottom'">
+        <img [src]="'/assets/Report (Red).png' | resolveAsset" alt="Report (Red).png" width="30" [style.vertical-align]="'bottom'">
         <span class="pl">Reported Students</span>
       </div>
       <p class="card_title py">
