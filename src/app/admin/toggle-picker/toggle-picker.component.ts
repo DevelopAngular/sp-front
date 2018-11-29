@@ -12,6 +12,7 @@ export class TogglePickerComponent implements OnInit {
     @Input() border: string = '#FFFFFF';
     @Input() width: string = '120px';
     @Input() height: string = '20px';
+    @Input() currentChoose;
 
     @Output() onSelect: EventEmitter<any> = new EventEmitter();
 
@@ -37,7 +38,19 @@ export class TogglePickerComponent implements OnInit {
           this.choice1 = this.choices[0];
           this.choice2 = this.choices[1];
       }
-      this.selectedChoice = this.choice1;
+      if (this.currentChoose) {
+          switch (this.currentChoose) {
+              case false: {
+                this.selectedChoice = 'Unrestricted';
+                break;
+              }
+              case true: {
+                this.selectedChoice = 'Restricted';
+              }
+          }
+      } else {
+          this.selectedChoice = this.choice1;
+      }
       this.onSelect.emit(this.travelValue(this.selectedChoice));
   }
 
@@ -60,18 +73,7 @@ export class TogglePickerComponent implements OnInit {
   }
 
   travelValue(travelType: string) {
-      return travelType;
-      //switch (travelType) {
-      //    case 'Origin': {
-      //        return 'origin';
-      //    }
-      //    case 'Destination': {
-      //        return 'destination';
-      //    }
-      //    case 'Both': {
-      //        return 'both';
-      //    }
-      //}
+     return travelType;
   }
 
   getFontColor(choice: string) {

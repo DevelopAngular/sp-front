@@ -1,7 +1,7 @@
 <form [formGroup]="form">
   <div class="overlay-container">
     <div class="overlay-header" [ngStyle]="{'background-image': gradientColor}">
-      <div class="isEdit" *ngIf="isValidForm && overlayType === 'newRoom'">
+      <div class="isEdit" *ngIf="isValidForm && overlayType === 'newRoom' || overlayType === 'editRoom'">
         <input type="checkbox" name="isEdit" formControlName="isEdit" class="isEdit-checkbox" id="isEdit" checked>
         <label class="isEdit-label" for="isEdit"></label>
       </div>
@@ -10,9 +10,11 @@
            && overlayType !== 'newRoomInFolder'
            && overlayType !== 'importRooms'
            && !isValidForm
-           && overlayType !== 'settingsRooms' && overlayType !== 'edit'"
-           src="../../../assets/Back Button (White).png" (click)="back()">
-      <div class="title" *ngIf="overlayType === 'newRoom'">{{ roomName }}</div>
+           && overlayType !== 'settingsRooms'
+           && overlayType !== 'edit'
+           && overlayType !== 'editRoom'"
+           [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
+      <div class="title" *ngIf="overlayType === 'newRoom' || overlayType === 'editRoom'">{{ roomName }}</div>
       <div
         class="title"
         *ngIf="overlayType === 'newFolder'
@@ -23,7 +25,7 @@
         || overlayType === 'edit'"
       >{{ folderName }}
       </div>
-      <div *ngIf="overlayType === 'newRoom' || overlayType === 'edit'" style="margin-right: 25px;width: 121px;">
+      <div *ngIf="overlayType === 'newRoom' || overlayType === 'edit' || overlayType === 'editRoom' || overlayType === 'newFolder'" style="margin-right: 25px;width: 121px;">
         <app-gradient-button *ngIf="!requireValidator(timeLimit) && overlayType === 'edit'"
                              [minHeight]="'40px'"
                              [style.width]="'120px'"
@@ -32,8 +34,8 @@
                              (buttonClick)="done()"
         >
           Done</app-gradient-button>
-        <div *ngIf="isValidForm" class="button" (click)="onCancel()">Done</div>
-        <div *ngIf="!isValidForm && overlayType !== 'edit'" style="color: white">Incomplete</div>
+        <div *ngIf="isValidForm || (overlayType === 'editRoom' || (overlayType === 'newFolder' && selectedRooms.length > 0))" class="button" (click)="onCancel()">Pubish</div>
+        <div *ngIf="!isValidForm && overlayType !== 'edit' && overlayType !== 'editRoom' && overlayType !== 'newFolder'" style="color: white">Incomplete</div>
       </div>
     </div>
 
@@ -47,7 +49,7 @@
       <div class="new-room-in-folder"
            *ngIf="overlayType === 'newRoomInFolder' || overlayType === 'importRooms' || overlayType === 'settingsRooms'">
           <div class="new-room-in-folder-header">
-            <img class="back-button" (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : setLocation('newFolder'))" src="../../../assets/Back Button (Grey).png">
+            <img class="back-button" (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : setLocation('newFolder'))" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
             <div [ngClass]="{'room-in-folder-title-inactive': !isValidForm, 'room-in-folder-title-active': isValidForm || (overlayType === 'settingsRooms')}">
               {{ (overlayType === 'newRoomInFolder' ? roomName : (overlayType === 'settingsRooms' ? (isEditRooms ? 'Editing ' + readyRoomsToEdit.length : 'Adding ' + selectedRooms.length)  + ' Rooms' : 'Import Rooms')) }}
             </div>
@@ -67,10 +69,10 @@
           Bulk edit the rooms added. {{ (isEditRooms ? 'Any change will override thi previous setting' : 'Each room can be individually customized later.') }}
         </div>
       </div>
-      <div class="room-inputs" *ngIf="overlayType === 'newRoom' || overlayType === 'newFolder' || overlayType === 'newRoomInFolder'">
+      <div class="room-inputs" *ngIf="overlayType === 'newRoom' || overlayType === 'newFolder' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'">
         <div class="room-name">
           <app-input
-             *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder'"
+             *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'"
              [input_label]="'Room Name'"
              [input_value]="(roomName !== 'New Room' ? roomName : '')"
              [Success]="!requireValidator(roomName)"
@@ -84,29 +86,31 @@
               (onUpdate)="folderName = $event === '' ? 'New Folder': $event; requireValidator(folderName) ? readyRoomsToEdit=[] : readyRoomsToEdit">
           </app-input>
         </div>
-        <div class="room-number" *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder'">
+        <div class="room-number" *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'">
           <app-input [input_label]="'Room Number'" [input_value]="roomNumber" [Success]="!requireValidator(roomNumber)" [placeholder]="'Number'" (onUpdate)="roomNumber=$event"></app-input>
         </div>
       </div>
-      <div class="teacher-search" *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder'">
+      <div class="teacher-search" *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'">
         <div class="teacher-title">Teachers in Room</div>
-        <app-profiles-search [placeholder]="'Search Teacher'" [role]="'_profile_teacher'"></app-profiles-search>
+        <app-profiles-search [placeholder]="'Search Teacher'" [selectedStudents]="selectedTichers" (onUpdate)="selectedTichers=$event" [role]="'_profile_teacher'"></app-profiles-search>
       </div>
       <div style="display: flex"
            *ngIf="overlayType === 'newRoom'
            || overlayType === 'newRoomInFolder'
            || overlayType === 'settingsRooms'
-           || overlayType === 'edit'"
+           || overlayType === 'edit'
+           || overlayType === 'editRoom'"
       >
         <div class="travel-picker">
           <div class="toggle-label">Travel Type</div>
-          <app-toggle-picker (onSelect)="travelType=$event" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+          <app-toggle-picker (onSelect)="travelUpdate($event)" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
         <div class="time-limit"
              *ngIf="overlayType === 'newRoom'
              || overlayType === 'newRoomInFolder'
              || overlayType === 'settingsRooms'
-             || overlayType === 'edit'"
+             || overlayType === 'edit'
+             || overlayType === 'editRoom'"
         >
           <app-input [input_label]="'Time Limit'" [input_value]="timeLimit" [Success]="!requireValidator(timeLimit)" [placeholder]="'minutes'" (onUpdate)="timeLimit=$event"></app-input>
         </div>
@@ -115,19 +119,19 @@
            *ngIf="overlayType === 'newRoom'
            || overlayType === 'newRoomInFolder'
            || overlayType === 'settingsRooms'
-           || overlayType === 'edit'"
+           || overlayType === 'edit' || overlayType === 'editRoom'"
       >
         <div class="restriction-picker-1">
           <div class="toggle-label">Restriction For Now</div>
-          <app-toggle-picker (onSelect)="nowRestriction=$event" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+          <app-toggle-picker (onSelect)="nowRestriction = $event === 'Restricted'" [currentChoose]="nowRestriction || null" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
         <div class="restriction-picker-2">
           <div class="toggle-label">Restriction For Future</div>
-          <app-toggle-picker (onSelect)="futureRestriction=$event" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+          <app-toggle-picker (onSelect)="futureRestriction = $event === 'Restricted'" [currentChoose]="futureRestriction || null" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
       </div>
 
-      <div class="footer-delete-button" *ngIf="overlayType === 'newRoom' && isValidForm">
+      <div class="footer-delete-button" *ngIf="overlayType === 'editRoom' && isValidForm">
         <app-gradient-button
                 [gradient]="'#F52B4F, #F37426'"
                 [minHeight]="'40px'"
@@ -225,7 +229,7 @@
 
       <div class="add-existing-content" *ngIf="overlayType === 'addExisting'">
         <div class="existing-room-header">
-          <img class="back-button" (click)="setLocation('newFolder')" src="../../../assets/Back Button (Grey).png">
+          <img class="back-button" (click)="setLocation('newFolder')" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
           <div class="header-title">Add Existing Room to Folder</div>
         </div>
         <div class="add-rooms-button" *ngIf="selectedRoomsInFolder.length > 0">
@@ -254,7 +258,7 @@
         </div>
         <div class="download-template-link">Download Template</div>
         <div class="choose-file" (click)="file.click()">
-            <img class="choose-icon" src="../../../assets/Spreadsheet (Grey).png">
+            <img class="choose-icon" [src]="'./assets/Spreadsheet (Grey).png' | resolveAsset">
             <span class="choose-text">Choose File</span>
         </div>
       </div>
