@@ -57,7 +57,7 @@ import { CalendarComponent } from './calendar/calendar.component';
     AccountsDialogComponent,
     AccountsComponent,
     AccountsRoleComponent,
-    CalendarComponent,
+    CalendarComponent
    ],
   entryComponents: [AccountsDialogComponent, CalendarComponent],
   providers: [

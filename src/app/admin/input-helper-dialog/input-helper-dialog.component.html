@@ -1,0 +1,21 @@
+<div class="divider">
+  <div class="divider-header">
+    <div class="divider-text">{{ headerText }}</div>
+  </div>
+</div>
+<app-date-time-picker *ngIf="type=='dates'" [_selectedMoment]="fromDate" [_selectedMoment_2ndCal]="toDate" [showTwoCalender]="true" (onUpdate)="fromDate=$event" (onUpdate_2ndCal)="toDate=$event" (onconfirm)="closeDialog($event)"></app-date-time-picker>
+<div *ngIf="type=='user'" class="student-select" [style.height]="'300px'">
+    <app-student-search  [style.width]="'75%'" (onUpdate)="selectedStudents=$event" [selectedStudents]="selectedStudents"></app-student-search>
+    <app-gradient-button
+      *ngIf="type=='user'"
+      [gradient]="'#03CF31,#00B476'"
+      [hoverColor]="'#00B476'"
+      [minWidth]="'90px'"
+      [minHeight]="'30px'"
+      [fontSize]="'14px'"
+      (buttonClick)="closeDialog()"
+      [style.width]="'90px'"
+      [style.margin-bottom]="'20px'"
+      >
+    Done ({{ selectedStudents.length }})</app-gradient-button>
+</div>

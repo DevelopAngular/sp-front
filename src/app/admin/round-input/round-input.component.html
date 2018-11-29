@@ -4,9 +4,8 @@
     <div class="label-text" [style.color]="(selected?'#1D1A5E':'#7F879D')">{{ labelText }}</div>
   </div>
 
-  <div class="chipInputSelector" [style.width]="width"></div>
-  <div *ngIf="(type == 'text' || type == 'dates') && selected" class="inputSelector"></div>
-  <div *ngIf="type == 'text' || type == 'dates'" class="field-wrapper">
+  <div *ngIf="selected" class="inputSelector" [style.width]="width"></div>
+  <div class="field-wrapper">
     <input #input class="input" type="text" [style.width]="width" [style.min-width]="minWidth"
           [placeholder]="placeholder" [readonly]="type == 'dates'"
           (input)="changeAction(input.value)" (click)="focusAction(true)" (focusout)="focusAction(false)"
