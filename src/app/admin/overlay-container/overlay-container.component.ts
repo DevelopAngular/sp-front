@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 
 import { Pinnable } from '../../models/Pinnable';
 import * as _ from 'lodash';
+import {User} from '../../models/User';
 
 @Component({
   selector: 'app-overlay-container',
@@ -19,20 +20,25 @@ export class OverlayContainerComponent implements OnInit {
 
   selectedRooms: Pinnable[] = [];
   selectedRoomsInFolder: Pinnable[] = [];
+  selectedTichers: User[] = [];
   readyRoomsToEdit: Pinnable[] = [];
+  pinnable: Pinnable;
   pinnables$: Observable<Pinnable[]>;
   overlayType: string;
   roomName: string;
   folderName: string;
-  roomNumber: string;
-  timeLimit: string;
+  roomNumber: string | number;
+  timeLimit: string | number;
   travelType: string;
-  nowRestriction: string;
-  futureRestriction: string;
+  nowRestriction: boolean;
+  futureRestriction: boolean;
   iconPicker: string;
   gradientColor: string;
   hideAppearance: boolean = false;
   isEditRooms: boolean = false;
+
+  roomsChanges: any;
+  foldersChanges: any;
 
   form: FormGroup;
 
@@ -61,9 +67,25 @@ export class OverlayContainerComponent implements OnInit {
           break;
         }
         case 'newFolder': {
+            if (!!this.pinnable) {
+                colors = this.pinnable.gradient_color;
+                this.folderName = this.pinnable.title;
+                break;
+            }
           colors = '#03CF31,#00B476';
           this.folderName = 'New Folder';
           break;
+        }
+        case 'editRoom': {
+            colors = this.pinnable.gradient_color;
+            this.roomName = this.pinnable.title;
+            this.timeLimit = this.pinnable.location.max_allowed_time;
+            this.roomNumber = this.pinnable.location.room;
+            this.selectedTichers = this.pinnable.location.teachers;
+            this.nowRestriction = this.pinnable.location.restricted;
+            this.futureRestriction = this.pinnable.location.scheduling_restricted;
+            console.log('PIN', this.pinnable);
+            break;
         }
         case 'edit': {
           colors = '#606981, #ACB4C1';
@@ -81,6 +103,9 @@ export class OverlayContainerComponent implements OnInit {
   ngOnInit() {
       this.buildForm();
       this.overlayType = this.dialogData['type'];
+      if (this.dialogData['pinnable']) {
+          this.pinnable = this.dialogData['pinnable'];
+      }
       if (this.dialogData['rooms']) {
           this.selectedRooms = this.dialogData['rooms'];
       }
@@ -164,10 +189,28 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   onCancel() {
-    this.dialogRef.close();
+    if (this.overlayType === 'newRoom' || this.overlayType === 'editRoom') {
+       const data = {
+         title: this.roomName,
+         color_profile: this.gradientColor,
+         icon: this.iconPicker,
+         location: {
+           title: this.roomName,
+           room: this.roomNumber,
+           restricted: this.nowRestriction,
+           scheduling_restricted: this.futureRestriction,
+           required_attachments: [],
+           travel_types: this.travelType,
+           max_allowed_time: this.timeLimit
+         },
+         category: this.pinnable.category
+       };
+       this.dialogRef.close(data);
+    }
   }
 
   done() {
+    console.log('DONE');
     this.dialogRef.close();
   }
 
@@ -205,7 +248,15 @@ export class OverlayContainerComponent implements OnInit {
     }
   }
 
-    deleteRoom() {
+  deleteRoom() {
       // Delete Request
-    }
+  }
+
+  travelUpdate(type) {
+    console.log('TYPE', type);
+  }
+
+  onUpdate(event) {
+      console.log('EVENT', event);
+  }
 }

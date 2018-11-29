@@ -7,6 +7,8 @@ import { Observable } from 'rxjs';
 import { HttpService } from '../../http-service';
 import { Pinnable } from '../../models/Pinnable';
 import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
+import * as _ from 'lodash';
+import {filter} from 'rxjs/operators';
 
 @Component({
   selector: 'app-pass-congif',
@@ -18,7 +20,11 @@ export class PassConfigComponent implements OnInit {
     settingsForm: FormGroup;
     schoolName = 'Springfield High School';
     selectedPinnables: Pinnable[];
+    pinnable: Pinnable;
     pinnables$: Observable<Pinnable[]>;
+    icons$;
+
+    dataChanges: any[] = [];
 
   constructor(
       private dialog: MatDialog,
@@ -38,6 +44,10 @@ export class PassConfigComponent implements OnInit {
   }
 
   selectPinnable({action, selection}) {
+      if (action === 'room/folder_edit' && !_.isArray(selection)) {
+          this.pinnable = selection;
+        return this.buildData(this.pinnable.type === 'location' ? 'editRoom' : 'editFolder');
+      }
       this.selectedPinnables = selection;
       this.buildData(action);
   }
@@ -52,6 +62,14 @@ export class PassConfigComponent implements OnInit {
           }
           case 'newFolder': {
               data = { type: action, pinnables$: this.pinnables$, rooms: this.selectedPinnables };
+              break;
+          }
+          case 'editRoom': {
+              data = { type: action, pinnable: this.pinnable };
+              break;
+          }
+          case 'editFolder': {
+              data = { type: 'newFolder', pinnable: this.pinnable, pinnables$: this.pinnables$ };
               break;
           }
           case 'edit': {
@@ -70,17 +88,25 @@ export class PassConfigComponent implements OnInit {
   }
 
   dialogContainer(data, component) {
-      this.dialog.open(component, {
+     const overlayDialog =  this.dialog.open(component, {
           panelClass: 'overlay-dialog',
           backdropClass: 'custom-bd',
           width: '1018px',
           height: '600px',
           data: data
       });
+
+     overlayDialog.afterClosed().pipe(filter(res => !!res)).subscribe(response => {
+         this.dataChanges.push(response);
+     });
   }
 
-    saveChanges() {
-      console.log('request');
-    }
+  saveChanges() {
+    console.log('request');
+  }
+
+  discard() {
+    this.dataChanges = [];
+  }
 
 }

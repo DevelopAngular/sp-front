@@ -42,20 +42,19 @@ export class PinnableCollectionComponent implements OnInit {
     this.selectedPinnables = [];
   }
 
-  updatePinnables(pinnable:Pinnable){
-    if(this.selectedPinnables.includes(pinnable)){
-      this.selectedPinnables.splice(this.selectedPinnables.indexOf(pinnable), 1);
-    } else{
-      if(this.bulkSelect)
-        this.selectedPinnables.push(pinnable);
+  updatePinnables(pinnable: Pinnable) {
+    if (!!this.selectedPinnables.find(pin => pin.id === pinnable.id)) {
+     return this.selectedPinnables.splice(this.selectedPinnables.indexOf(pinnable), 1);
+    } else {
+      if (this.bulkSelect)
+       return this.selectedPinnables.push(pinnable);
     }
-    if (!this.header) {
-      if(this.bulkSelect){
+      if (!this.header) {
+        this.selectedPinnables.push(pinnable);
         this.roomEvent.emit(this.selectedPinnables);
       } else{
-        this.roomEvent.emit(pinnable);
+        this.roomEvent.emit({ action: 'room/folder_edit', selection: pinnable });
       }
-    }
   }
 
   buttonClicked(evnt: MouseEvent){

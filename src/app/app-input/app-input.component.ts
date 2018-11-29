@@ -15,11 +15,11 @@ export class AppInputComponent implements OnInit {
 
     @Input() input_type: string = "text";
     @Input() input_class: string;
-    @Input() input_value: string = "";
+    @Input() input_value: string | number = "";
     @Input() Success: boolean;
     @Input() input_label: string;
     @Input() placeholder: string = '';
-    @Output() onUpdate = new EventEmitter<string>();
+    @Output() onUpdate = new EventEmitter<string | number>();
     @Input() IsRequired: boolean = false;
     @Input() IsDate: boolean = false;
 
