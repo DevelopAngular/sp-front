@@ -72,7 +72,6 @@ const appRoutes: Routes = [
     SharedModule,
     ReactiveFormsModule,
 
-    AdminModule,
     MatSliderModule,
 
     FormsModule,
