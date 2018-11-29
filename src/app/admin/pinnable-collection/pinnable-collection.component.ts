@@ -37,11 +37,17 @@ export class PinnableCollectionComponent implements OnInit {
 
   }
 
+  toggleBulk(){
+    this.bulkSelect = !this.bulkSelect;
+    this.selectedPinnables = [];
+  }
+
   updatePinnables(pinnable:Pinnable){
     if(this.selectedPinnables.includes(pinnable)){
       this.selectedPinnables.splice(this.selectedPinnables.indexOf(pinnable), 1);
     } else{
-      this.selectedPinnables.push(pinnable);
+      if(this.bulkSelect)
+        this.selectedPinnables.push(pinnable);
     }
     if (!this.header) {
       if(this.bulkSelect){

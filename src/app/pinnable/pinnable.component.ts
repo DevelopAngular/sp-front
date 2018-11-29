@@ -40,13 +40,15 @@ export class PinnableComponent implements OnInit {
   @Input()
   valid: boolean = true;
 
+  @Input()
+  selected: boolean = false;
+
   @Output() 
   onSelectEvent: EventEmitter<Pinnable> = new EventEmitter();
 
   restricted: boolean = false;
   buttonDown = false;
   hovered: boolean;
-  selected: boolean = false;
 
   constructor(private sanitizer: DomSanitizer) {
 
@@ -71,9 +73,6 @@ export class PinnableComponent implements OnInit {
 
   onSelect() {
     if(this.valid)
-      if(this.forCollection && this.forBulk){
-        this.selected = !this.selected;
-      }
       this.onSelectEvent.emit(this.pinnable);
   }
 
