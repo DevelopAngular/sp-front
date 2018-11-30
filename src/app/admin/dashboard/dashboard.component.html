@@ -13,7 +13,7 @@
     </div>
     <div>
       <a routerLink="/admin/hallmonitor" class="label-icon">
-        <img [src]="'/assets/Hallway (Blue).png' | resolveAsset" alt="Hallway (Blue).png" width="25">
+        <img [src]="'./assets/Hallway (Blue).png' | resolveAsset" alt="Hallway (Blue).png" width="25">
       </a>
       <app-gradient-button
         [disabled]="!activeHallpasses"
@@ -30,11 +30,11 @@
   </div>
   <div class="card card__role flex-center-between mr mt">
     <a routerLink="/admin/hallmonitor" class="label-icon">
-      <img routerLink="/admin/hallmonitor" [src]="'/assets/Hallway (Blue).png' | resolveAsset" alt="Hallway (Blue).png" width="25">
+      <img routerLink="/admin/hallmonitor" [src]="'./assets/Hallway (Blue).png' | resolveAsset" alt="Hallway (Blue).png" width="25">
     </a>
     <div>
       <div class="card_header">
-        <img [src]="'/assets/Report (Red).png' | resolveAsset" alt="Report (Red).png" width="30" [style.vertical-align]="'bottom'">
+        <img [src]="'./assets/Report (Red).png' | resolveAsset" alt="Report (Red).png" width="30" [style.vertical-align]="'bottom'">
         <span class="pl">Reported Students</span>
       </div>
       <p class="card_title py">

@@ -27,10 +27,10 @@
     <div class="right-content">
         <div class="right-content-header">
             <div class="report-text">
-                <img [src]="'../../../assets/Report (Red).png' | resolveAsset" class="report-icon">
+                <img [src]="'./assets/Report (Red).png' | resolveAsset" class="report-icon">
                 <div class="text">Reported Students</div>
             </div>
-            <img [src]="'../../../assets/Calendar (Blue).png' | resolveAsset" class="calendar-icon" (click)="openDateDialog($event)">
+            <img [src]="'./assets/Calendar (Blue).png' | resolveAsset" class="calendar-icon" (click)="openDateDialog($event)">
         </div>
         <div class="reports" *ngFor="let b of [1,1,1,1,1,1,1]">
           <app-display-report-cell
