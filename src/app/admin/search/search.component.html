@@ -1,12 +1,25 @@
 <div class="search-wrapper">
   <div class="input-header">
-    <app-round-input [width]="'260px'" [labelText]="'By Student Name'" [type]="'multiuser'" [placeholder]="'Search Students'" (onselectionupdate)="$event"></app-round-input>
-    <app-round-input [width]="'260px'" [labelText]="'Date and Time'" [type]="'dates'" [placeholder]="'Search date & time range'" (ontextupdate)="$event"></app-round-input>
-    <app-round-input [width]="'260px'" [labelText]="'By Room Name'" [type]="'multilocation'" [placeholder]="'Search Rooms'" (onselectionupdate)="$event" (ontoggleupdate)="$event"></app-round-input>
+    <app-round-input [width]="'260px'" [labelText]="'By Student Name'" [type]="'multiuser'" [placeholder]="'Search Students'" (onselectionupdate)="selectedStudents=$event"></app-round-input>
+    <app-round-input [width]="'260px'" [labelText]="'Date and Time'" [type]="'dates'" [placeholder]="'Search date & time range'" (ontextupdate)="selectedDate=$event"></app-round-input>
+    <app-round-input [width]="'260px'" [labelText]="'By Room Name'" [type]="'multilocation'" [placeholder]="'Search Rooms'" (onselectionupdate)="selectedRooms=$event" (ontoggleupdate)="$event"></app-round-input>
   </div>
-  <div class="search-content">
-    <div class="default-message" *ngIf="!hasSearched">
-      <div class="search-button">
+  <div class="search-content-table" *ngIf="hasSearched">
+    <div class="search-header">
+      <div class="text-header">
+        All Passes, Searching by {{ (selectedStudents && selectedStudents.length > 0 ? 'Student Name' : '') + (selectedDate && selectedDate !== '' ? ',Date & Time' : '') + (selectedRooms && selectedRooms.length > 0 ? ',Room Name' : '')}}
+      </div>
+      <div class="divider"></div>
+      <app-data-table [data]="tableData" [height]="'450px'" (selectedUsers)="selectedReport=$event"></app-data-table>
+    </div>
+  </div>
+  <div class="report-button" *ngIf="selectedReport.length > 0">
+    Generate Report<br/>
+    {{ selectedReport.length }} passes selected
+  </div>
+  <div class="search-content" *ngIf="!hasSearched">
+    <div class="default-message">
+      <div class="search-button" (click)="search()">
         <div class="title-text">
           <img class="icon" [src]="'./assets/Search (Blue).png' | resolveAsset">
           <div>Search</div>

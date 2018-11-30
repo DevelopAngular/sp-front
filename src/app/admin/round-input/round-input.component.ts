@@ -1,9 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { DateInputComponent } from '../date-input/date-input.component';
 import { Paged } from '../../location-table/location-table.component';
 import { HttpService } from '../../http-service';
 import { InputHelperDialogComponent } from '../input-helper-dialog/input-helper-dialog.component';
+import {FormGroup} from '@angular/forms';
+import {fromEvent, Observable} from 'rxjs';
 
 @Component({
   selector: 'app-round-input',
@@ -19,11 +21,10 @@ export class RoundInputComponent implements OnInit {
   @Input() hasTogglePicker: boolean;
   @Input() width: string;
   @Input() minWidth: string;
-
   @Output() ontextupdate: EventEmitter<any> = new EventEmitter();
   @Output() ontoogleupdate: EventEmitter<any> = new EventEmitter();
   @Output() onselectionupdate: EventEmitter<any> = new EventEmitter();
-
+  @Output() controlValue = new EventEmitter();
   selected: boolean;
   value: string;
   toDate: Date;
@@ -33,10 +34,11 @@ export class RoundInputComponent implements OnInit {
   chipListHeight: string = '40px';
   toggleState: string = 'Either';
 
+  public e: Observable<Event>;
+
   constructor(public dialog: MatDialog, private http: HttpService) { }
 
   ngOnInit() {
-    
   }
 
   focusAction(selected: boolean){
@@ -84,7 +86,7 @@ export class RoundInputComponent implements OnInit {
 
   changeAction(change: any){
     if(this.type == 'text'){
-      this.ontextupdate.emit(change)
+      this.ontextupdate.emit(change);
     }
   }
 
