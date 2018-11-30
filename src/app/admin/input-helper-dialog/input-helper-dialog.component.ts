@@ -15,6 +15,8 @@ export class InputHelperDialogComponent implements OnInit {
   selectedStudents: any[] = [];
   selectedLocations: any[] = [];
 
+  toggleState: string = '';
+
   get headerText(){
     if(this.type == 'dates')
       return 'Date & Time Range';
@@ -32,6 +34,8 @@ export class InputHelperDialogComponent implements OnInit {
     this.fromDate = this.data['from'];
     this.selectedStudents = this.data['selections'];
     this.selectedLocations = this.data['selections'];
+    this.toggleState = this.data['toggleState'];
+    console.log(this.toggleState)
   }
 
   closeDialog(event: any){
@@ -51,7 +55,7 @@ export class InputHelperDialogComponent implements OnInit {
         text += this.selectedLocations[s]['title'] + ' (' + this.selectedLocations[s]['room'] + ')' +', ';
       text = text.substring(0, text.length-2);
       console.log(this.selectedLocations)
-      this.dialogRef.close({'selection':this.selectedLocations, 'text': text});
+      this.dialogRef.close({'selection':this.selectedLocations, 'text': text, 'toggleState': this.toggleState});
     }
   }
 }

@@ -31,6 +31,7 @@ export class RoundInputComponent implements OnInit {
   searchOptions: Promise<any[]>;
   selections: any[] = [];
   chipListHeight: string = '40px';
+  toggleState: string = 'Either';
 
   constructor(public dialog: MatDialog, private http: HttpService) { }
 
@@ -64,7 +65,7 @@ export class RoundInputComponent implements OnInit {
         width: '900px',
         panelClass: 'form-dialog-container',
         backdropClass: 'custom-bp',
-        data: {'type':this.type.substring(5), 'selections': this.selections}
+        data: {'type':this.type.substring(5), 'selections': this.selections, 'toggleState': this.toggleState}
       });
 
       dateDialog.afterOpen().subscribe(()=>{this.selected = true;});
@@ -73,7 +74,9 @@ export class RoundInputComponent implements OnInit {
         if(data){
           this.value = data['text'];
           this.selections = data['selection']
+          this.toggleState = data['toggleState'];
           this.onselectionupdate.emit(this.selections);
+          this.ontoogleupdate.emit(this.hasTogglePicker);
         }
       });
     }

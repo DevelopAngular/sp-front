@@ -13,13 +13,12 @@ export class TogglePickerComponent implements OnInit {
     @Input() width: string = '120px';
     @Input() height: string = '20px';
     @Input() currentChoose;
-
+    @Input() selectedChoice: string;
     @Output() onSelect: EventEmitter<any> = new EventEmitter();
 
     choice1: string;
     choice2: string;
     choice3: string;
-    selectedChoice: string;
     bottomRadius: boolean = true;
 
     choice1_values: string[] = [];
@@ -49,7 +48,7 @@ export class TogglePickerComponent implements OnInit {
               }
           }
       } else {
-          this.selectedChoice = this.choice1;
+          this.selectedChoice = this.selectedChoice?this.selectedChoice:this.choice1;
       }
       this.onSelect.emit(this.travelValue(this.selectedChoice));
   }

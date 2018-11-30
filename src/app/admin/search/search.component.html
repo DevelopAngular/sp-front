@@ -2,7 +2,7 @@
   <div class="input-header">
     <app-round-input [width]="'260px'" [labelText]="'By Student Name'" [type]="'multiuser'" [placeholder]="'Search Students'" (onselectionupdate)="$event"></app-round-input>
     <app-round-input [width]="'260px'" [labelText]="'Date and Time'" [type]="'dates'" [placeholder]="'Search date & time range'" (ontextupdate)="$event"></app-round-input>
-    <app-round-input [width]="'260px'" [labelText]="'By Room Name'" [type]="'multilocation'" [placeholder]="'Search Rooms'" (onselectionupdate)="$event"></app-round-input>
+    <app-round-input [width]="'260px'" [labelText]="'By Room Name'" [type]="'multilocation'" [placeholder]="'Search Rooms'" (onselectionupdate)="$event" (ontoggleupdate)="$event"></app-round-input>
   </div>
   <div class="search-content">
     <div class="default-message" *ngIf="!hasSearched">

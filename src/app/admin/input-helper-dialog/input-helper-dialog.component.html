@@ -21,6 +21,7 @@
 </div>
 <div *ngIf="type=='location'" class="student-select" [style.height]="'300px'">
   <app-location-search  [style.width]="'75%'" (onUpdate)="selectedLocations=$event" [selectedLocations]="selectedLocations"></app-location-search>
+  <app-toggle-picker (onSelect)="toggleState = $event" [selectedChoice]="toggleState" [choices]="['Origin', 'Destination' , 'Either']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
   <app-gradient-button
     [gradient]="'#03CF31,#00B476'"
     [hoverColor]="'#00B476'"
