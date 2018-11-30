@@ -10,7 +10,6 @@ import { OverlayContainerComponent } from '../overlay-container/overlay-containe
 import { PinnableCollectionComponent } from '../pinnable-collection/pinnable-collection.component';
 import { SharedModule } from '../../shared/shared.module';
 import { RoundInputComponent } from '../round-input/round-input.component';
-import { SquareInputComponent } from '../square-input/square-input.component';
 import { AppInputComponent } from '../../app-input/app-input.component';
 import { FormsModule } from '@angular/forms';
 import {
@@ -28,7 +27,8 @@ import { TogglePickerComponent } from '../toggle-picker/toggle-picker.component'
 import {ToggleInputComponent} from '../toggle-input/toggle-input.component';
 import {AccountsDialogComponent} from '../accounts-dialog/accounts-dialog.component';
 import {ProfilesSearchComponent} from '../profiles-search/profiles-search.component';
-import { InputHelperDialogComponent } from '../input-helper-dialog/input-helper-dialog.component'
+import { InputHelperDialogComponent } from '../input-helper-dialog/input-helper-dialog.component';
+import { LocationSearchComponent } from '../location-search/location-search.component';
 
 @NgModule({
   imports: [
@@ -58,10 +58,10 @@ import { InputHelperDialogComponent } from '../input-helper-dialog/input-helper-
       OverlayContainerComponent,
       PinnableCollectionComponent,
       RoundInputComponent,
-      SquareInputComponent,
       TogglePickerComponent,
       AppInputComponent,
-      ProfilesSearchComponent
+      ProfilesSearchComponent,
+      LocationSearchComponent
   ],
   exports: [
       MatChipsModule,
@@ -78,10 +78,10 @@ import { InputHelperDialogComponent } from '../input-helper-dialog/input-helper-
       OverlayContainerComponent,
       PinnableCollectionComponent,
       RoundInputComponent,
-      SquareInputComponent,
       TogglePickerComponent,
       AppInputComponent,
-      ProfilesSearchComponent
+      ProfilesSearchComponent,
+      LocationSearchComponent
   ],
   entryComponents: [
       AccountsDialogComponent,

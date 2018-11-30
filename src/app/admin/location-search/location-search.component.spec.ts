@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SquareInputComponent } from './square-input.component';
+import { LocationSearchComponent } from './location-search.component';
 
-describe('SquareInputComponent', () => {
-  let component: SquareInputComponent;
-  let fixture: ComponentFixture<SquareInputComponent>;
+describe('LocationSearchComponent', () => {
+  let component: LocationSearchComponent;
+  let fixture: ComponentFixture<LocationSearchComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SquareInputComponent ]
+      declarations: [ LocationSearchComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SquareInputComponent);
+    fixture = TestBed.createComponent(LocationSearchComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

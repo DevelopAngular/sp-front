@@ -13,6 +13,7 @@ export class InputHelperDialogComponent implements OnInit {
   fromDate: Date;
 
   selectedStudents: any[] = [];
+  selectedLocations: any[] = [];
 
   get headerText(){
     if(this.type == 'dates')
@@ -29,7 +30,8 @@ export class InputHelperDialogComponent implements OnInit {
     this.type = this.data['type'];
     this.toDate = this.data['to'];
     this.fromDate = this.data['from'];
-    this.selectedStudents = this.data['selections']
+    this.selectedStudents = this.data['selections'];
+    this.selectedLocations = this.data['selections'];
   }
 
   closeDialog(event: any){
@@ -42,6 +44,14 @@ export class InputHelperDialogComponent implements OnInit {
       text = text.substring(0, text.length-2);
       console.log(this.selectedStudents)
       this.dialogRef.close({'selection':this.selectedStudents, 'text': text});
+    }
+    if(this.type == 'location'){
+      let text: string = '';
+      for(let s in this.selectedLocations)
+        text += this.selectedLocations[s]['title'] + ' (' + this.selectedLocations[s]['room'] + ')' +', ';
+      text = text.substring(0, text.length-2);
+      console.log(this.selectedLocations)
+      this.dialogRef.close({'selection':this.selectedLocations, 'text': text});
     }
   }
 }

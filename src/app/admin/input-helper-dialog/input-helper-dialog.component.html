@@ -19,3 +19,17 @@
       >
     Done ({{ selectedStudents.length }})</app-gradient-button>
 </div>
+<div *ngIf="type=='location'" class="student-select" [style.height]="'300px'">
+  <app-location-search  [style.width]="'75%'" (onUpdate)="selectedLocations=$event" [selectedLocations]="selectedLocations"></app-location-search>
+  <app-gradient-button
+    [gradient]="'#03CF31,#00B476'"
+    [hoverColor]="'#00B476'"
+    [minWidth]="'90px'"
+    [minHeight]="'30px'"
+    [fontSize]="'14px'"
+    (buttonClick)="closeDialog()"
+    [style.width]="'90px'"
+    [style.margin-bottom]="'20px'"
+    >
+  Done ({{ selectedLocations.length }})</app-gradient-button>
+</div>

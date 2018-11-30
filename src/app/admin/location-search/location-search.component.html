@@ -1,0 +1,29 @@
+<div class="location-search-wrapper">
+  <div class="input">
+    <mat-chip-list #chipList>
+        <mat-chip
+          *ngFor="let location of selectedLocations"
+          [removable]="true"
+          (removed)="removeLocation(location)">
+          {{ location.title + ' (' + location.room + ')' }}
+          <mat-icon matChipRemove>cancel</mat-icon>
+        </mat-chip>
+        <input
+          placeholder="Search locations"
+          #locationInput
+          [matChipInputFor]="chipList"
+          [matChipInputAddOnBlur]="true"
+          [value]="inputValue"
+          (input)="onSearch(locationInput.value)"
+        >
+    </mat-chip-list>
+  </div>
+    <div *ngIf="showOptions" class="options-wrapper">
+      <div *ngFor="let location of locations | async" (click)="locationInput.value = ''; addLocation(location)"  class="option-wrapper">
+        <div class="option-content">
+          {{ location.title + ' (' + location.room + ')' }}
+        </div>
+        <div class="option-divider"></div>
+      </div>
+    </div>
+  </div>
