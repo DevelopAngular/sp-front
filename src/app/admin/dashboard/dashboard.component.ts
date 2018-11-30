@@ -157,7 +157,7 @@ export class DashboardComponent implements OnInit {
         data
           .pipe(
             map((hp_list: HallPass[]) => {
-              console.log(hp_list);
+              // console.log(hp_list);
               return hp_list.map(hp => {
                return {
                   'Student Name': hp.student.display_name,
@@ -175,7 +175,9 @@ export class DashboardComponent implements OnInit {
               });
             })
           )
-          .subscribe(this.pdf.generate);
+          .subscribe((active_hp) => {
+            this.pdf.generate(active_hp, null, 'p', 'dashboard');
+          });
           // .subscribe(console.log);
         // data.pipe(
         //   map(item => item.destination)

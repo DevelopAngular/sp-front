@@ -13,7 +13,7 @@
       <app-data-table [data]="tableData" [height]="'450px'" (selectedUsers)="selectedReport=$event"></app-data-table>
     </div>
   </div>
-  <div class="report-button" *ngIf="selectedReport.length > 0">
+  <div class="report-button" *ngIf="selectedReport.length > 0" (click)="previewPDF()">
     Generate Report<br/>
     {{ selectedReport.length }} passes selected
   </div>

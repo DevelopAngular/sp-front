@@ -27,6 +27,7 @@ export class UserService {
   }
 
   getUsersList(role: string = '', search: string = '') {
+    console.log('usr', this);
     return this.http.get<any>('v1/users' + (role === '' ? '' : '?role=' + encodeURI(role)) + (search === '' ? '' : '&search=' + encodeURI(search)));
   }
 

@@ -4,6 +4,7 @@ import { ColorProfile } from '../../models/ColorProfile';
 import { HttpService } from '../../http-service';
 import * as _ from 'lodash';
 import {filter, finalize, map} from 'rxjs/operators';
+import {PdfGeneratorService} from '../pdf-generator.service';
 
 
 @Component({
@@ -28,7 +29,7 @@ export class SearchComponent implements OnInit {
 
   hasSearched: boolean = false;
 
-  constructor(private httpService: HttpService) { }
+  constructor(private httpService: HttpService, private pdf: PdfGeneratorService) { }
 
   ngOnInit() {
     this.passes$ = this.httpService.get('v1/hall_passes');
@@ -61,6 +62,22 @@ export class SearchComponent implements OnInit {
             });
         }), finalize(() => this.hasSearched = true)).subscribe(res => this.tableData = res);
     }
+  }
+  previewPDF() {
+    console.log(this.tableData);
+
+    this.tableData = this.tableData.map((row) => {
+      for (const key in row) {
+        row[key] = typeof row[key] !== 'string' ? row[key].toString() : row[key];
+        console.log(row);
+      }
+      return row;
+    })
+
+
+
+
+    this.pdf.generate(this.tableData, null, 'l', 'search');
   }
 
 }
