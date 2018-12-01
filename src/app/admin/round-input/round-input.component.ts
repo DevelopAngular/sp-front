@@ -22,7 +22,7 @@ export class RoundInputComponent implements OnInit {
   @Input() width: string;
   @Input() minWidth: string;
   @Output() ontextupdate: EventEmitter<any> = new EventEmitter();
-  @Output() ontoogleupdate: EventEmitter<any> = new EventEmitter();
+  @Output() ontoggleupdate: EventEmitter<any> = new EventEmitter();
   @Output() onselectionupdate: EventEmitter<any> = new EventEmitter();
   @Output() controlValue = new EventEmitter();
   selected: boolean;
@@ -78,7 +78,7 @@ export class RoundInputComponent implements OnInit {
           this.selections = data['selection']
           this.toggleState = data['toggleState'];
           this.onselectionupdate.emit(this.selections);
-          this.ontoogleupdate.emit(this.hasTogglePicker);
+          this.ontoggleupdate.emit(this.toggleState);
         }
       });
     }

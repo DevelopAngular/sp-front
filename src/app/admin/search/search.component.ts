@@ -14,17 +14,11 @@ import {PdfGeneratorService} from '../pdf-generator.service';
 })
 export class SearchComponent implements OnInit {
 
-  testPinnable1:Pinnable;
-  testPinnable2:Pinnable;
-  testPinnable3:Pinnable;
-  testPinnables:Pinnable[] = [];
-  testProfile:ColorProfile;
-
   tableData;
-  passes$;
   selectedStudents;
   selectedDate;
   selectedRooms;
+  roomSearchType;
   selectedReport = [];
 
   hasSearched: boolean = false;
@@ -32,35 +26,74 @@ export class SearchComponent implements OnInit {
   constructor(private httpService: HttpService, private pdf: PdfGeneratorService) { }
 
   ngOnInit() {
-    this.passes$ = this.httpService.get('v1/hall_passes');
-    // this.testProfile = new ColorProfile('', 'testing', '#3D56F7,#A957F0', '#A957F1', '', '#A957F0', '');
-    // this.testPinnable1 = new Pinnable('1', 'Testing1', '', 'https://storage.googleapis.com/courier-static/icons/Bathroom.png', '', null, null, this.testProfile);
-    // this.testPinnable2 = new Pinnable('2', 'Testing2', '', 'https://storage.googleapis.com/courier-static/icons/Office.png', '', null, null, this.testProfile);
-    // this.testPinnable3 = new Pinnable('3', 'Testing3', '', 'https://storage.googleapis.com/courier-static/icons/Gym.png', '', null, null, this.testProfile);
-    // this.testPinnables.push(this.testPinnable1);
-    // this.testPinnables.push(this.testPinnable2);
-    // this.testPinnables.push(this.testPinnable3);
+
   }
 
   search() {
-    if (this.selectedStudents) {
-        this.passes$.pipe(filter(res => !!this.selectedStudents), map((passes: any[]) => {
-            const studentIds = this.selectedStudents.map(student => student.id);
-            return passes.filter(pass => {
-                return pass.student.id === studentIds.find(id => id === pass.student.id);
-            });
-        }), map((passes: any[]) => {
-            return passes.map(pass => {
-                return {
-                    'Student Name': pass.student.first_name + ' ' + pass.student.last_name,
-                    'Origin': pass.origin.title,
-                    'Destination': pass.destination.title,
-                    'TravelType': 'type',
-                    'Date & Time': pass.created,
-                    'Duration': pass.destination.max_allowed_time
-                };
-            });
-        }), finalize(() => this.hasSearched = true)).subscribe(res => this.tableData = res);
+    if (this.selectedStudents || this.selectedDate || this.selectedRooms) {
+        let url = 'v1/hall_passes?';
+
+        if(this.selectedRooms){
+          console.log('Has rooms\t', this.roomSearchType)
+          if(this.roomSearchType=='Origin'){
+            let origins: any[] = this.selectedRooms.map(r => r['id']);
+
+            Array.from(Array(origins.length).keys()).map(i => {url += 'origin=' +origins[i] +'&'});
+          }
+
+          if(this.roomSearchType=='Destination'){
+            let destinations: any[] = this.selectedRooms.map(r => r['id']);
+
+            Array.from(Array(destinations.length).keys()).map(i => {url += 'destination=' +destinations[i] +'&'});
+          }
+
+          if(this.roomSearchType=='Either'){
+            let locations: any[] = this.selectedRooms.map(r => r['id']);
+
+            Array.from(Array(locations.length).keys()).map(i => {url += 'location=' +locations[i] +'&'});
+          }
+        }
+        
+        if(this.selectedStudents){
+          let students: any[] = this.selectedStudents.map(s => s['id']);
+          
+          Array.from(Array(students.length).keys()).map(i => {url += 'student=' +students[i] +'&'});
+        }
+        
+        if(this.selectedDate){
+          let start = this.selectedDate['from'].toISOString();
+          let end = this.selectedDate['to'].toISOString();
+          
+          console.log('Start: ', start, '\nEnd: ', end);
+
+          url += (start?('created_after=' +start +'&'):'');
+          url += (end?('end_time_before=' +end):'');
+        }
+
+        this.httpService.get(url).subscribe(data =>{
+          console.log(data);
+        });
+
+      //   if (this.selectedStudents) {
+      //     this.passes$.pipe(filter(res => !!this.selectedStudents), map((passes: any[]) => {
+      //         const studentIds = this.selectedStudents.map(student => student.id);
+      //         return passes.filter(pass => {
+      //             return pass.student.id === studentIds.find(id => id === pass.student.id);
+      //         });
+      //     }), map((passes: any[]) => {
+      //         return passes.map(pass => {
+      //             return {
+      //                 'Student Name': pass.student.first_name + ' ' + pass.student.last_name,
+      //                 'Origin': pass.origin.title,
+      //                 'Destination': pass.destination.title,
+      //                 'TravelType': 'type',
+      //                 'Date & Time': pass.created,
+      //                 'Duration': pass.destination.max_allowed_time
+      //             };
+      //         });
+      //     }), finalize(() => this.hasSearched = true)).subscribe(res => this.tableData = res);
+      // }
+  
     }
   }
   previewPDF() {
@@ -73,8 +106,6 @@ export class SearchComponent implements OnInit {
       }
       return row;
     })
-
-
 
 
     this.pdf.generate(this.tableData, null, 'l', 'search');
