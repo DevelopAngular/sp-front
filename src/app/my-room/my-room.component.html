@@ -4,7 +4,7 @@
       <div class="my-room-header">
         <div class="selected-teacher" (click)="showOptions($event)">
           {{ roomOptions?selectedLocation.title:"" }}
-          <img *ngIf="!optionsOpen && showArrow" class="disclosure-icon" src="../../assets/Disclosure Indicator (Blue).png">
+          <img *ngIf="!optionsOpen && showArrow" class="disclosure-icon" [src]="'./assets/Disclosure Indicator (Blue).png' | resolveAsset">
         </div>
         <input
           class="input"

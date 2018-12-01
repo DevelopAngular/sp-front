@@ -4,10 +4,10 @@
   <ng-content *ngIf="page==3" select=".page-3" class="page-content"></ng-content>
   <ng-content *ngIf="page==4" select=".page-4" class="page-content"></ng-content>
   <div class="paginator-container">
-    <div class="paginator-button"><img *ngIf="hideLeftButton.value" (click)="leftPaginator()" class="button-image" src="../../assets/Disclosure Left (White).png"></div>
+    <div class="paginator-button"><img *ngIf="hideLeftButton.value" (click)="leftPaginator()" class="button-image" [src]="'./assets/Disclosure Left (White).png' | resolveAsset"></div>
     <div *ngIf="pages > 1" class="paginator-wrapper">
         <div *ngFor="let $page of $pages" class="pager-page-selector" [style.background-color]="page===$page?'#FFF':'rgba(255,255,255,0.3)'"></div>
     </div>
-    <div class="paginator-button"><img class="button-image" *ngIf="hideRightButton.value" (click)="RightPaginator()" src="../../assets/Disclosure Right (White).png"></div>
+    <div class="paginator-button"><img class="button-image" *ngIf="hideRightButton.value" (click)="RightPaginator()" [src]="'./assets/Disclosure Right (White).png' | resolveAsset"></div>
   </div>
 </div>
