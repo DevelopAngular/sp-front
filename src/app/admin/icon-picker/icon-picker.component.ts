@@ -1,4 +1,21 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+
+
+class Icon {
+    public state: boolean;
+
+    constructor(private active: string,
+                private inactive: string) {
+    }
+
+    toggleState() {
+        this.state = !this.state;
+    }
+
+    get Thumbnail(): string {
+        return this.state ? this.active : this.inactive;
+    }
+}
 
 @Component({
   selector: 'app-icon-picker',
@@ -7,20 +24,21 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 })
 export class IconPickerComponent implements OnInit {
 
+  @Input() set icons(value: Array<string>) {
+      if (value) {
+          const blueIcons = value.filter(icon => icon.includes('(Blue)'));
+          const whiteIcons = value.filter(icon => icon.includes('(White)'));
+          this._icons = whiteIcons.map((white, index) => {
+              return new Icon(blueIcons[index], white);
+          });
+      }
+  }
+
   @Output() selectedEvent: EventEmitter<any> = new EventEmitter();
 
-  selectedId: number = 5;
-  icons = [
-      { id: 1, active: '../../../assets/Gear (Blue).png', inactive: '../../../assets/Gear (White).png'},
-      { id: 2, active: '../../../assets/Grid (Blue).png', inactive: '../../../assets/Grid (White).png'},
-      { id: 3, active: '../../../assets/Calendar (Blue).png', inactive: '../../../assets/Calendar (White).png'},
-      { id: 4, active: '../../../assets/Check (Blue).png', inactive: '../../../assets/Check (White).png'},
-      { id: 5, active: '../../../assets/Hallway (Blue).png', inactive: '../../../assets/Hallway (White).png'},
-      { id: 6, active: '../../../assets/My Room (Blue).png', inactive: '../../../assets/My Room (White).png'},
-      { id: 7, active: '../../../assets/Request (Blue).png', inactive: '../../../assets/Request (White).png'},
-      { id: 8, active: '../../../assets/Search (Blue).png', inactive: '../../../assets/Search (White).png'},
-      { id: 9, active: '../../../assets/Star (Blue).png', inactive: '../../../assets/Star (White).png'}
-  ];
+  _icons: Array<Icon>;
+
+  public selectedIcon: Icon;
 
   constructor() { }
 
@@ -28,8 +46,12 @@ export class IconPickerComponent implements OnInit {
   }
 
   changeIcon(icon) {
-    this.selectedId = icon.id;
-    this.selectedEvent.emit(icon);
+      if (this.selectedIcon) {
+          this.selectedIcon.toggleState();
+      }
+      this.selectedIcon = icon;
+      this.selectedIcon.toggleState();
+      this.selectedEvent.emit(icon);
   }
 
 }

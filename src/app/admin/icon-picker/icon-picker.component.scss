@@ -1,5 +1,4 @@
 .icon-collection {
-  background-color: #B6B6B6;
   display: flex;
   padding: 16px;
   width: 294px;
@@ -21,4 +20,8 @@
 .icon {
   width: 30px;
   height: 30px;
+}
+
+.greyIcon {
+  filter: brightness(.3);
 }

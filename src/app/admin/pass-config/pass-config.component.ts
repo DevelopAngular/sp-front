@@ -23,6 +23,7 @@ export class PassConfigComponent implements OnInit {
     pinnable: Pinnable;
     pinnables$: Observable<Pinnable[]>;
     icons$;
+    colors$;
 
     dataChanges: any[] = [];
 
@@ -34,6 +35,9 @@ export class PassConfigComponent implements OnInit {
   ngOnInit() {
       this.buildForm();
       this.pinnables$ = this.httpService.get('v1/pinnables');
+      this.icons$ = this.httpService.get('v1/room_icons');
+      this.colors$ = this.httpService.get('v1/color_profiles');
+
   }
 
   buildForm() {
@@ -57,27 +61,58 @@ export class PassConfigComponent implements OnInit {
       let component = OverlayContainerComponent;
       switch (action) {
           case 'newRoom': {
-              data = { type: action };
+              data = {
+                  type: action,
+                  icons$: this.icons$,
+                  colors$: this.colors$
+              };
               break;
           }
           case 'newFolder': {
-              data = { type: action, pinnables$: this.pinnables$, rooms: this.selectedPinnables };
+              data = {
+                  type: action,
+                  pinnables$: this.pinnables$,
+                  rooms: this.selectedPinnables,
+                  icons$: this.icons$,
+                  colors$: this.colors$
+              };
               break;
           }
           case 'editRoom': {
-              data = { type: action, pinnable: this.pinnable };
+              data = {
+                  type: action,
+                  pinnable: this.pinnable,
+                  icons$: this.icons$,
+                  colors$: this.colors$
+              };
               break;
           }
           case 'editFolder': {
-              data = { type: 'newFolder', pinnable: this.pinnable, pinnables$: this.pinnables$ };
+              data = {
+                  type: 'newFolder',
+                  pinnable: this.pinnable,
+                  pinnables$: this.pinnables$,
+                  icons$: this.icons$,
+                  colors$: this.colors$
+              };
               break;
           }
           case 'edit': {
-              data = { type: action, rooms: this.selectedPinnables };
+              data = {
+                  type: action,
+                  rooms: this.selectedPinnables,
+                  icons$: this.icons$,
+                  colors$: this.colors$
+              };
               break;
           }
           case 'newFolderWithSelections': {
-              data = { type: 'newFolder', rooms: this.selectedPinnables };
+              data = {
+                  type: 'newFolder',
+                  rooms: this.selectedPinnables,
+                  icons$: this.icons$,
+                  colors$: this.colors$
+              };
               break;
           }
           case 'delete': {
@@ -102,7 +137,7 @@ export class PassConfigComponent implements OnInit {
   }
 
   saveChanges() {
-    console.log('request');
+    console.log('request', this.dataChanges);
   }
 
   discard() {
