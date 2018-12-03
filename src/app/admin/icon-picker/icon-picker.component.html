@@ -1,7 +1,7 @@
 <div class="icon-wrapper">
   <div class="icon-title">Icon</div>
   <div class="icon-collection">
-    <div class="icon-container" *ngFor="let icon of icons" (click)="changeIcon(icon)">
-      <img class="icon" [src]="(selectedId === icon.id ? icon.active : icon.inactive)"></div>
+    <div class="icon-container" *ngFor="let icon of _icons" (click)="changeIcon(icon)">
+      <img class="icon" [ngClass]="{greyIcon: !!icon.Thumbnail.includes('White')}" [src]="icon.Thumbnail"></div>
   </div>
 </div>

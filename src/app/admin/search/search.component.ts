@@ -5,6 +5,7 @@ import { HttpService } from '../../http-service';
 import * as _ from 'lodash';
 import {filter, finalize, map} from 'rxjs/operators';
 import {PdfGeneratorService} from '../pdf-generator.service';
+import {HallPass} from '../../models/HallPass';
 
 
 @Component({
@@ -14,12 +15,14 @@ import {PdfGeneratorService} from '../pdf-generator.service';
 })
 export class SearchComponent implements OnInit {
 
-  tableData;
+  tableData = [];
   selectedStudents;
   selectedDate;
   selectedRooms;
   roomSearchType;
   selectedReport = [];
+
+  spinner: boolean = false;
 
   hasSearched: boolean = false;
 
@@ -30,11 +33,11 @@ export class SearchComponent implements OnInit {
   }
 
   search() {
+      this.spinner = true;
     if (this.selectedStudents || this.selectedDate || this.selectedRooms) {
         let url = 'v1/hall_passes?';
-
         if(this.selectedRooms){
-          console.log('Has rooms\t', this.roomSearchType)
+          console.log('Has rooms\t', this.roomSearchType);
           if(this.roomSearchType=='Origin'){
             let origins: any[] = this.selectedRooms.map(r => r['id']);
 
@@ -53,49 +56,64 @@ export class SearchComponent implements OnInit {
             Array.from(Array(locations.length).keys()).map(i => {url += 'location=' +locations[i] +'&'});
           }
         }
-        
+
         if(this.selectedStudents){
           let students: any[] = this.selectedStudents.map(s => s['id']);
-          
+
           Array.from(Array(students.length).keys()).map(i => {url += 'student=' +students[i] +'&'});
         }
-        
-        if(this.selectedDate){
+
+        if (this.selectedDate) {
           let start = this.selectedDate['from'].toISOString();
           let end = this.selectedDate['to'].toISOString();
-          
+
           console.log('Start: ', start, '\nEnd: ', end);
 
           url += (start?('created_after=' +start +'&'):'');
           url += (end?('end_time_before=' +end):'');
         }
 
-        this.httpService.get(url).subscribe(data =>{
-          console.log(data);
+        this.httpService.get(url).pipe(filter(res => !!res))
+            .subscribe((data: HallPass[]) => {
+                console.log('DATA', data);
+            this.tableData = data.map(hallPass => {
+               return {
+                   'Student Name': hallPass.student.first_name + ' ' + hallPass.student.last_name,
+                   'Origin': hallPass.origin.title,
+                   'Destination': hallPass.destination.title,
+                   'TravelType': hallPass.travel_type,
+                   'Date & Time': hallPass.created,
+                   'Duration': hallPass.destination.max_allowed_time
+               };
+            });
+            this.spinner = false;
+            this.hasSearched = true;
         });
 
-      //   if (this.selectedStudents) {
-      //     this.passes$.pipe(filter(res => !!this.selectedStudents), map((passes: any[]) => {
-      //         const studentIds = this.selectedStudents.map(student => student.id);
-      //         return passes.filter(pass => {
-      //             return pass.student.id === studentIds.find(id => id === pass.student.id);
-      //         });
-      //     }), map((passes: any[]) => {
-      //         return passes.map(pass => {
-      //             return {
-      //                 'Student Name': pass.student.first_name + ' ' + pass.student.last_name,
-      //                 'Origin': pass.origin.title,
-      //                 'Destination': pass.destination.title,
-      //                 'TravelType': 'type',
-      //                 'Date & Time': pass.created,
-      //                 'Duration': pass.destination.max_allowed_time
-      //             };
-      //         });
-      //     }), finalize(() => this.hasSearched = true)).subscribe(res => this.tableData = res);
-      // }
-  
     }
   }
+
+  dateEmit(date) {
+      this.selectedDate = date;
+      if (this.hasSearched) {
+          this.search();
+      }
+  }
+
+  roomEmit(rooms) {
+    this.selectedRooms = rooms;
+    if (this.hasSearched) {
+      this.search();
+    }
+  }
+
+  studentsEmit(students) {
+      this.selectedStudents = students;
+      if (this.hasSearched) {
+          this.search();
+      }
+  }
+
   previewPDF() {
     console.log(this.tableData);
 

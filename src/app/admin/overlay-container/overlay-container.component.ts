@@ -18,7 +18,7 @@ export class OverlayContainerComponent implements OnInit {
 
   @ViewChild('file') selectedFile;
 
-  selectedRooms: Pinnable[] = [];
+  selectedRooms = [];
   selectedRoomsInFolder: Pinnable[] = [];
   selectedTichers: User[] = [];
   readyRoomsToEdit: Pinnable[] = [];
@@ -32,13 +32,17 @@ export class OverlayContainerComponent implements OnInit {
   travelType: string;
   nowRestriction: boolean;
   futureRestriction: boolean;
-  iconPicker: string;
   gradientColor: string;
   hideAppearance: boolean = false;
   isEditRooms: boolean = false;
 
-  roomsChanges: any;
-  foldersChanges: any;
+  color_profile;
+  selectedIcon;
+  icons$;
+  colors$;
+
+  newRoomsInFolder = [];
+  editingRooms = [];
 
   form: FormGroup;
 
@@ -70,6 +74,8 @@ export class OverlayContainerComponent implements OnInit {
             if (!!this.pinnable) {
                 colors = this.pinnable.gradient_color;
                 this.folderName = this.pinnable.title;
+                this.color_profile = this.pinnable.color_profile;
+                this.selectedIcon = this.pinnable.icon;
                 break;
             }
           colors = '#03CF31,#00B476';
@@ -84,7 +90,8 @@ export class OverlayContainerComponent implements OnInit {
             this.selectedTichers = this.pinnable.location.teachers;
             this.nowRestriction = this.pinnable.location.restricted;
             this.futureRestriction = this.pinnable.location.scheduling_restricted;
-            console.log('PIN', this.pinnable);
+            this.color_profile = this.pinnable.color_profile;
+            this.selectedIcon = this.pinnable.icon;
             break;
         }
         case 'edit': {
@@ -102,7 +109,10 @@ export class OverlayContainerComponent implements OnInit {
 
   ngOnInit() {
       this.buildForm();
+
       this.overlayType = this.dialogData['type'];
+      this.icons$ = this.dialogData['icons$'];
+      this.colors$ = this.dialogData['colors$'];
       if (this.dialogData['pinnable']) {
           this.pinnable = this.dialogData['pinnable'];
       }
@@ -176,7 +186,8 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   changeColor(color) {
-    this.gradientColor = 'radial-gradient(circle at 98% 97%,' + color.gradientColor + ')';
+    this.color_profile = color;
+    this.gradientColor = 'radial-gradient(circle at 98% 97%,' + color.gradient_color + ')';
   }
 
   addToFolder() {
@@ -192,8 +203,8 @@ export class OverlayContainerComponent implements OnInit {
     if (this.overlayType === 'newRoom' || this.overlayType === 'editRoom') {
        const data = {
          title: this.roomName,
-         color_profile: this.gradientColor,
-         icon: this.iconPicker,
+         color_profile: this.color_profile,
+         icon: this.selectedIcon,
          location: {
            title: this.roomName,
            room: this.roomNumber,
@@ -203,15 +214,75 @@ export class OverlayContainerComponent implements OnInit {
            travel_types: this.travelType,
            max_allowed_time: this.timeLimit
          },
-         category: this.pinnable.category
+         category: 'location'
        };
-       this.dialogRef.close(data);
+
+        this.dialogRef.close({ data, action: 'newRoom'});
+    }
+
+    if (this.overlayType === 'newFolder') {
+        const data = {
+            title: this.folderName,
+            color_profile: this.color_profile,
+            icon: this.selectedIcon,
+            location: null,
+            category: 'category'
+        };
+        console.log('CREATE FOLDER', data);
+        this.dialogRef.close({ data, action: 'newFolder' });
     }
   }
 
   done() {
-    console.log('DONE');
-    this.dialogRef.close();
+      if (this.overlayType === 'newRoomInFolder') {
+          const data = {
+              title: this.roomName,
+              color_profile: null,
+              icon: null,
+              location: {
+                  title: this.roomName,
+                  room: this.roomNumber,
+                  restricted: this.nowRestriction,
+                  scheduling_restricted: this.futureRestriction,
+                  required_attachments: [],
+                  travel_types: this.travelType,
+                  max_allowed_time: this.timeLimit
+              },
+              category: 'location'
+          };
+
+          console.log('NEW ROOM IN FOLDER', data);
+
+          this.newRoomsInFolder.push(data);
+          this.selectedRooms.push(data);
+          this.setLocation('newFolder');
+      }
+      if (this.overlayType === 'settingsRooms') {
+          this.readyRoomsToEdit.forEach(room => {
+              room.location.restricted = this.nowRestriction;
+              room.location.scheduling_restricted = this.futureRestriction;
+              room.location.max_allowed_time = +this.timeLimit;
+              return room;
+          });
+          this.editingRooms = this.readyRoomsToEdit;
+
+          console.log('EDIT ROOMS IN FOLDER', this.editingRooms);
+
+          this.setLocation('newFolder');
+       }
+
+       if (this.overlayType === 'edit') {
+           this.selectedRooms.forEach(room => {
+               room.location.restricted = this.nowRestriction;
+               room.location.scheduling_restricted = this.futureRestriction;
+               room.location.max_allowed_time = +this.timeLimit;
+               return room;
+           });
+
+           console.log('EDIT ROOMS', this.selectedRooms);
+
+           this.dialogRef.close({ data: this.selectedRooms, action: 'EditRooms' });
+       }
   }
 
   requireValidator(value) {

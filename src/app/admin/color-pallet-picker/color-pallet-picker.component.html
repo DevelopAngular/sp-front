@@ -3,8 +3,8 @@
   <div class="colors">
     <div class="pick-color"
          *ngFor="let color of colors"
-         [style.background]="color.color"
-         [style.box-shadow]="(selectedId === color.id ? '0px 0px 50px ' + color.color : 'none')"
+         [style.background]="color.solid_color"
+         [style.box-shadow]="(selectedId === color.id ? '0px 0px 50px ' + color.solid_color : 'none')"
          (click)="changeColor(color)"
     >
     </div>
