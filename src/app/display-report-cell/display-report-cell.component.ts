@@ -24,21 +24,24 @@ export class DisplayReportCellComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+
+    const reportDate = new Date(this.created);
+    const time = reportDate.getHours() < 12
+      ?
+      `${reportDate.getHours()}:${reportDate.getMinutes() < 10 ? '0' : ''}${reportDate.getMinutes()} AM`
+      :
+      `${reportDate.getHours() - 12}:${reportDate.getMinutes() < 10 ? '0' : ''}${reportDate.getMinutes()} PM`;
+    const prettyReportDate = `${reportDate.getMonth() + 1}/${reportDate.getDate()}  ${time}`;
+
     this.data = {
-      hasDivider: this.hasDivider,
       student_name: this.student_name,
-      righticon: this.righticon,
-      created: this.created,
+      created: prettyReportDate,
       message: this.message,
       issuer: this.issuer,
-      reportData: this.reportData
     }
     console.log(this.data);
   }
-
   printReport() {
-    this.pdf.generate(this.data, [],'p', 'hallmonitor')
-      console.log("Report");
+    this.pdf.generate(this.data, [], 'p', 'hallmonitor');
   }
-
 }

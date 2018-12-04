@@ -39,7 +39,8 @@ const appRoutes: Routes = [
   {
     path: 'admin',
     canActivate: [AuthenticatedGuard],
-    loadChildren: 'app/admin/admin.module#AdminModule'
+    loadChildren: 'app/admin/admin.module#AdminModule',
+    data: { hideScroll: true }
   },
   {
     path: 'pdf/:source',

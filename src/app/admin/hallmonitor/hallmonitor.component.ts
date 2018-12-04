@@ -9,6 +9,8 @@ import { ActivePassProvider } from '../../hall-monitor/hall-monitor.component';
 import { LiveDataService } from '../../live-data/live-data.service';
 import { PassLikeProvider } from '../../models/providers';
 import {CalendarComponent} from '../calendar/calendar.component';
+import {HttpService} from '../../http-service';
+import {map} from 'rxjs/operators';
 
 
 @Component({
@@ -31,7 +33,7 @@ export class HallmonitorComponent implements OnInit {
     rooms: Pinnable[];
 
     selectedStudents: User[] = [];
-    studentreport: Report[] = [];
+    studentreport: Report[]|any[] = [];
 
     min: Date = new Date('December 17, 1995 03:24:00');
     calendarToggled = false;
@@ -43,17 +45,33 @@ export class HallmonitorComponent implements OnInit {
 
     constructor(
         public dialog: MatDialog,
-        private liveDataService: LiveDataService
-        
-    ) {         
-        //this.studentreport[0]['id'] = '1';
+        private liveDataService: LiveDataService,
+        private http: HttpService,
+
+    ) {
+      this.activePassProvider = new ActivePassProvider(this.liveDataService, this.searchQuery$);
+      //this.studentreport[0]['id'] = '1';
     }
 
   ngOnInit() {
     this.activePassProvider = new ActivePassProvider(this.liveDataService, this.searchQuery$);
+    this.http.get('v1/event_reports')
+      .subscribe((list: Report[]) => {
+        console.log(list);
+        this.studentreport = list.map((report) => {
+          return {
+            student_name: report.student.display_name,
+            issuer: report.issuer.display_name,
+            created: report.created,
+            message: report.message,
+          };
+        });
+        console.log(this.studentreport);
+    });
   }
 
   onSearch(searchValue) {
+      console.log(searchValue);
      this.searchQuery$.next(searchValue);
   }
 
@@ -74,7 +92,7 @@ export class HallmonitorComponent implements OnInit {
       const target = new ElementRef(evt.currentTarget);
       let options = [];
       let header = '';
-      
+
       header = 'This is simple plain text.';
 
       this.dialog.open(ConsentMenuComponent, {
@@ -94,7 +112,7 @@ export class HallmonitorComponent implements OnInit {
       let ConsentNoText = '';
       let ConsentButtonColor = 'green';
 
-      
+
       header = 'This is sample of Consent';
       ConsentText = 'Are you sure you want to do this process ?'
       ConsentYesText = 'Ok';
@@ -120,7 +138,7 @@ export class HallmonitorComponent implements OnInit {
       const target = new ElementRef(evt.currentTarget);
       let options = [];
       let header = '';
-      
+
 
 
       header = 'This is sample of list options';
@@ -128,7 +146,7 @@ export class HallmonitorComponent implements OnInit {
       options.push(this.genOption('Option 1', 'Orange', 'Opt1'));
       options.push(this.genOption('Option 2', 'Black', 'Opt2'));
       options.push(this.genOption('Option 3', 'Green', 'Opt3'));
-    
+
 
 
       const OptionsDialog = this.dialog.open(ConsentMenuComponent, {
@@ -162,7 +180,7 @@ export class HallmonitorComponent implements OnInit {
       {
           return true;
       }
-      
+
       return false;
   }
 
@@ -182,5 +200,4 @@ export class HallmonitorComponent implements OnInit {
       this.selectedtoggleValue = emit;
       console.log(emit);
   }
-    
 }

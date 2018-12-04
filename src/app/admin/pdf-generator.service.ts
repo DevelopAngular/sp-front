@@ -24,7 +24,7 @@ export class PdfGeneratorService {
                 `${thisMoment.getHours()}:${thisMoment.getMinutes()} AM`
                           :
                 `${thisMoment.getHours() - 12}:${thisMoment.getMinutes()} PM`;
-    const prettyNow = `${thisMoment.getMonth()}:${thisMoment.getDate()}:${thisMoment.getFullYear()} at ${time}`;
+    const prettyNow = `${thisMoment.getMonth() + 1}/${thisMoment.getDate()}/${thisMoment.getFullYear()} at ${time}`;
 
     let heading = {
       header: 'Active Hall Pass Report',
@@ -219,11 +219,15 @@ export class PdfGeneratorService {
           drawUnstructRows: (__data) => {
             table.drawLogo();
             table.drawLink()
+            doc.setTextColor('#000000');
             doc.setFontSize(14);
+            doc.setFontStyle('bold');
             doc.text(table.left, table.top + table.lh * (1 + 1), __data.student_name);
             doc.setTextColor('#666666');
-            doc.text(A4.width - 150, table.top + table.lh * (1 + 1), __data.created);
+            const rightSpace = doc.getStringUnitWidth(__data.created) * 14;
+            doc.text(A4.width - table.right - rightSpace, table.top + table.lh * (1 + 1), __data.created);
             doc.setFontSize(12);
+            doc.setFontStyle('normal');
             doc.text(table.left, table.top + table.lh * (2 + 1), `Reported by ${__data.issuer}:`);
             doc.text(table.left, table.top + table.lh * (3 + 1) - 16, __data.message);
           }

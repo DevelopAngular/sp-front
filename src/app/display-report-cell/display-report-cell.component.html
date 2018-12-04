@@ -1,11 +1,11 @@
 ﻿<div class="display-card-wrapper">
   <div class="display-card-header justify-content">
     <div class="flexCls">
-     
+
       <div class="display-card-header-title">
         {{ student_name }}
       </div>
-      <div class="righticon">{{ created }}</div>
+      <div class="righticon">{{ created | date : 'medium'}}</div>
     </div>
 
   </div>
@@ -14,7 +14,7 @@
       <div style="font-weight: bold">Reported by {{ issuer }}</div><br>
       <div style="width: 90%">{{ message }}</div>
     </div>
-    <div (click)="printReport()" class="print-icon">
+    <div (click)="printReport()" [style.cursor]="'pointer'" class="print-icon">
       <img *ngIf="!!righticon" [src]="righticon | resolveAsset">
     </div>
   </div>

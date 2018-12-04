@@ -1,4 +1,4 @@
-<div style="height: 100%;" [style.overflow-y]=" pdf ? 'hidden' : 'scroll'" [style.display]="isAuthenticated ? 'block' : 'none'">
+<div style="height: 100%;" [style.overflow-y]=" hideScroll ? 'hidden' : 'scroll'" [style.display]="isAuthenticated ? 'block' : 'none'">
   <router-outlet></router-outlet>
 </div>
 <app-login *ngIf="!isAuthenticated"></app-login>

@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GoogleLoginService } from '../../google-login.service';
+import {HttpService} from '../../http-service';
+import {User} from '../../models/User';
 
 @Component({
   selector: 'app-admin-page',
@@ -8,7 +10,13 @@ import { GoogleLoginService } from '../../google-login.service';
 })
 export class AdminPageComponent implements OnInit {
 
-  constructor(public loginService: GoogleLoginService) {
+
+
+
+  constructor(
+    public loginService: GoogleLoginService,
+  ) {
+
   }
 
   ngOnInit() {

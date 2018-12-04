@@ -16,7 +16,7 @@ import {filter, map, mergeMap} from 'rxjs/operators';
 export class AppComponent implements OnInit {
 
   isAuthenticated = false;
-  public pdf: boolean = false;
+  public hideScroll: boolean = false;
 
   constructor(
     public loginService: GoogleLoginService,
@@ -43,7 +43,7 @@ export class AppComponent implements OnInit {
         mergeMap((route) => route.data)
       )
       .subscribe((data) => {
-        this.pdf = data.hideScroll;
+        this.hideScroll = data.hideScroll;
       });
   }
 
