@@ -1,5 +1,11 @@
 import { BaseModel } from '../models/base';
 
+/**
+ * This class holds all the information relevant to displaying a list of items.
+ *
+ * It may hold more items than the ones that are currently shown to support filtering and sorting.
+ *
+ */
 export class State<ModelType extends BaseModel> {
   passes: ModelType[];
   filtered_passes: ModelType[];

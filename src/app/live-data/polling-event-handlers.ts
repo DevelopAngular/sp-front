@@ -7,12 +7,18 @@ import { PollingEvent } from '../polling-service';
 import { PollingEventContext, PollingEventHandler } from './events';
 import { State } from './state';
 
+/**
+ * Matches some polling events in order to update the State object based on the polling event.
+ */
 export interface EventHandler<ModelType extends BaseModel> {
   matches(event: PollingEvent): boolean;
 
   handle(state: State<ModelType>, context: PollingEventContext<ModelType>, data: any): State<ModelType> | 'skip';
 }
 
+/**
+ * A partial implementation of EventHandler that filters based on the polling events' action.
+ */
 abstract class BaseEventHandler<ModelType extends BaseModel> implements EventHandler<ModelType> {
 
   // noinspection TypeScriptAbstractClassConstructorCanBeMadeProtected
@@ -27,6 +33,10 @@ abstract class BaseEventHandler<ModelType extends BaseModel> implements EventHan
 
 }
 
+/**
+ * Adds an item (or array of items) provided by a polling event to the State
+ * object they match the provided filter.
+ */
 export class AddItem<ModelType extends PassLike> extends BaseEventHandler<ModelType> {
   constructor(actions: string[], private decoder: (raw: any) => ModelType, private filter?: (pass: ModelType) => boolean) {
     super(actions);
@@ -45,6 +55,9 @@ export class AddItem<ModelType extends PassLike> extends BaseEventHandler<ModelT
   }
 }
 
+/**
+ * Removed an item provided by a polling event from the State object.
+ */
 export class RemoveItem<ModelType extends PassLike> extends BaseEventHandler<ModelType> {
   constructor(actions: string[], private decoder: (raw: any) => ModelType) {
     super(actions);
@@ -58,6 +71,10 @@ export class RemoveItem<ModelType extends PassLike> extends BaseEventHandler<Mod
   }
 }
 
+/**
+ * Removes a Pass Request when a 'pass_request.accept' action is received.
+ * The data provided by this action is a hall pass so it needs to be handled by different EventHandler.
+ */
 export class RemoveRequestOnApprove extends BaseEventHandler<Request> {
   constructor(actions: string[]) {
     super(actions);
@@ -71,6 +88,10 @@ export class RemoveRequestOnApprove extends BaseEventHandler<Request> {
   }
 }
 
+/**
+ * Removes a Pass Invitation when a 'pass_invitation.accept' action is received.
+ * The data provided by this action is a hall pass so it needs to be handled by different EventHandler.
+ */
 export class RemoveInvitationOnApprove extends BaseEventHandler<Invitation> {
   constructor(actions: string[]) {
     super(actions);
@@ -84,7 +105,10 @@ export class RemoveInvitationOnApprove extends BaseEventHandler<Invitation> {
   }
 }
 
-class RemoveItemWithDelay<ModelType extends PassLike> extends BaseEventHandler<ModelType> {
+/**
+ * Similar to RemoveItem but updates the item immediately and removes it from the State object after a delay.
+ */
+export class RemoveItemWithDelay<ModelType extends PassLike> extends BaseEventHandler<ModelType> {
   constructor(actions: string[], private decoder: (raw: any) => ModelType) {
     super(actions);
   }
@@ -102,6 +126,12 @@ class RemoveItemWithDelay<ModelType extends PassLike> extends BaseEventHandler<M
   }
 }
 
+/**
+ * Convert an array of individual event handlers into a PollingEventHandler.
+ *
+ * @param handlers An Array of EventHandler objects.
+ * @return A PollingEventHandler.
+ */
 export function makePollingEventHandler<ModelType extends BaseModel>(handlers: EventHandler<ModelType>[]): PollingEventHandler<ModelType> {
   return (state: State<ModelType>, action: PollingEventContext<ModelType>) => {
 
