@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { FormControl, FormGroup } from '@angular/forms';
 
-import { Observable } from 'rxjs';
+import {forkJoin, Observable} from 'rxjs';
 
 import { HttpService } from '../../http-service';
 import { Pinnable } from '../../models/Pinnable';
 import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
 import * as _ from 'lodash';
-import {filter} from 'rxjs/operators';
+import {filter, map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-pass-congif',
@@ -93,7 +93,8 @@ export class PassConfigComponent implements OnInit {
                   pinnable: this.pinnable,
                   pinnables$: this.pinnables$,
                   icons$: this.icons$,
-                  colors$: this.colors$
+                  colors$: this.colors$,
+                  isEditFolder: true
               };
               break;
           }
@@ -115,9 +116,6 @@ export class PassConfigComponent implements OnInit {
               };
               break;
           }
-          case 'delete': {
-              return console.log('delete Method');
-          }
       }
       return this.dialogContainer(data, component);
   }
@@ -132,7 +130,7 @@ export class PassConfigComponent implements OnInit {
       });
 
      overlayDialog.afterClosed().pipe(filter(res => !!res)).subscribe(response => {
-         this.dataChanges.push(response);
+         this.pinnables$ = this.httpService.get('v1/pinnables');
      });
   }
 

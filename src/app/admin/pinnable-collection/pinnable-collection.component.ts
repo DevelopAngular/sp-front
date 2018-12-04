@@ -2,6 +2,8 @@ import { Component, OnInit, Input, Output, EventEmitter, ElementRef } from '@ang
 import { Pinnable } from '../../models/Pinnable';
 import { MatDialog } from '@angular/material';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
+import {forkJoin} from 'rxjs';
+import {HttpService} from '../../http-service';
 
 @Component({
   selector: 'app-pinnable-collection',
@@ -31,7 +33,7 @@ export class PinnableCollectionComponent implements OnInit {
     return (this.selectedPinnables.length < 1 || !this.bulkSelect?'./assets/Create (White).png':null);
   }
 
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog, private http: HttpService) { }
 
   ngOnInit() {
 
@@ -83,9 +85,18 @@ export class PinnableCollectionComponent implements OnInit {
 
       cancelDialog.afterClosed().subscribe(action =>{
         this.buttonMenuOpen = false;
-        if(action){
-          console.log('[Pinnable Collection, Dialog]:', action, ' --- ', this.selectedPinnables);
-          this.roomEvent.emit({'action': action, 'selection': this.selectedPinnables});
+        if (action === 'delete') {
+          const currentPinIds = this.selectedPinnables.map(pinnable => pinnable.id);
+          this.pinnables = this.pinnables.filter(pinnable => pinnable.id !== currentPinIds.find(id => id === pinnable.id));
+            const pinnableToDelete = this.selectedPinnables.map(pinnable => {
+                return this.http.delete(`v1/pinnables/${pinnable.id}`);
+            });
+            return forkJoin(pinnableToDelete).subscribe(() => this.toggleBulk());
+        } else {
+            if (action) {
+                console.log('[Pinnable Collection, Dialog]:', action, ' --- ', this.selectedPinnables);
+                this.roomEvent.emit({'action': action, 'selection': this.selectedPinnables});
+            }
         }
       });
 
