@@ -15,6 +15,9 @@ import { BasicPassLikeProvider, PassLikeProvider, WrappedProvider } from '../mod
 import { User } from '../models/User';
 import { TeacherDropdownComponent } from '../teacher-dropdown/teacher-dropdown.component';
 
+/**
+ * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
+ */
 abstract class RoomPassProvider implements PassLikeProvider {
 
   // noinspection TypeScriptAbstractClassConstructorCanBeMadeProtected
@@ -25,10 +28,12 @@ abstract class RoomPassProvider implements PassLikeProvider {
   protected abstract fetchPasses(sortingEvents: Observable<HallPassFilter>, location: Location, date: Date): Observable<PassLike[]>;
 
   watch(sort: Observable<string>) {
+    // merge the sort events and search events into one Observable that emits the current state of both.
     const sort$ = sort.map(s => ({sort: s}));
     const search$ = this.search$.map(s => ({search_query: s}));
     const merged$ = mergeObject({sort: '-created', search_query: ''}, Observable.merge(sort$, search$));
 
+    // Create a subject that will replay the last state. This is necessary because of the use of switchMap.
     const mergedReplay = new ReplaySubject<HallPassFilter>(1);
     merged$.subscribe(mergedReplay);
 
@@ -92,6 +97,7 @@ export class MyRoomComponent implements OnInit {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
 
+    // Construct the providers we need.
     this.activePasses = new WrappedProvider(new ActivePassProvider(liveDataService, this.selectedLocation$,
       this.searchDate$, this.searchQuery$));
     this.originPasses = new WrappedProvider(new OriginPassProvider(liveDataService, this.selectedLocation$,
@@ -99,6 +105,7 @@ export class MyRoomComponent implements OnInit {
     this.destinationPasses = new WrappedProvider(new DestinationPassProvider(liveDataService, this.selectedLocation$,
       this.searchDate$, this.searchQuery$));
 
+    // Use WrappedProvider's length$ to keep the hasPasses subject up to date.
     Observable.combineLatest(
       this.activePasses.length$,
       this.originPasses.length$,

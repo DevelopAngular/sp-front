@@ -31,16 +31,86 @@ import { State } from './state';
 
 
 interface WatchData<ModelType extends BaseModel, ExternalEventType> {
+  /**
+   * An observable of events that are external to the websocket connection.
+   * Typically these events will be triggered by UI actions such as changing
+   * the sort order or changing filter settings.
+   */
   externalEvents: Observable<ExternalEventType>;
+
+  /**
+   * Not currently used. Please set this to the closest websocket namespace that
+   * matches the events you care about. For example, if your PollingEventHandler
+   * uses `hall_pass.create` and `hall_pass.update`, this should be `hall_pass`.
+   */
   eventNamespace: string;
+
+  /**
+   * The url to load the initial items of this data watch. Typically this will be
+   * a GET request with the filters encoded as query parameters.
+   */
   initialUrl: string;
-  rawDecoder?: (any) => ModelType;
+
+  /**
+   * Decode the raw JSON response into an array of initial items of ModelType.
+   * This parameter handles the raw response which is often not necessary.
+   *
+   * @param any Decoded JSON response from the initialUrl request.
+   */
+  rawDecoder?: (any) => ModelType[];
+
+  /**
+   * If the initialUrl call returns a Paged<...> response, watch() handles
+   * this and will call this decoder on each object of the result. Most model
+   * types have a fromJSON method which is often used as the decoder.
+   *
+   * @param any A JSON object to be decoded.
+   */
   decoder: (any) => ModelType;
+
+  /**
+   * When an external event is received, this function gets called with the
+   * current state and the external event. It must return a new state, but
+   * the new state could be the same state that was passed in or a changed
+   * version of the passed in state.
+   *
+   * A typical usage might be to update flags on the State object regarding
+   * sort order. In general sorting and filtering of the items should not
+   * happen in this function. It should be done in handlePost().
+   */
   handleExternalEvent: (state: State<ModelType>, e: ExternalEventType) => State<ModelType>;
+
+  /**
+   * When an event from the websocket is received, this function gets called
+   * with the current state and the PollingEventContext. It must return a new
+   * state, but the new state could be the same state that was passed in or
+   * a changed version of the passed in state.
+   *
+   * A typical usage might be to insert new items, remove deleted ones, and
+   * update any items already held by the State object when their websocket
+   * events occur. In general sorting and filtering of the items should not
+   * happen in this function. It should be done in handlePost().
+   */
   handlePollingEvent: PollingEventHandler<ModelType>;
+
+  /**
+   * Called after any events are processed to sort and filter items. The
+   * main purpose of this function is to somehow set the State object's
+   * `filtered_passes` field. Simple implementations might perform
+   * `state.filtered_passes = state.passes;` but often more complex filtering
+   * and sorting is required.
+   *
+   * @param state
+   */
   handlePost: (state: State<ModelType>) => State<ModelType>;
 }
 
+/**
+ * For a given date, return the Date objects corresponding to the
+ * previous midnight and the next midnight.
+ *
+ * @param date
+ */
 function getDateLimits(date: Date) {
   const start = new Date(+date);
 
@@ -51,10 +121,19 @@ function getDateLimits(date: Date) {
   return {start, end};
 }
 
-
+/**
+ * Given an object, returns whether it should be included.
+ */
 type FilterFunc<T> = (item: T) => boolean;
 
-function mergeFilters<T>(filters: FilterFunc<T>[]) {
+/**
+ * Takes a list of filters and `&&` (ANDs) them together. If one filter
+ * rejects an item, the returned filter will too.
+ *
+ * @param filters An array of filters.
+ * @return A filter function
+ */
+function mergeFilters<T>(filters: FilterFunc<T>[]): FilterFunc<T> {
   return (item: T) => {
     for (const filter of filters) {
       if (!filter(item)) {
@@ -66,6 +145,9 @@ function mergeFilters<T>(filters: FilterFunc<T>[]) {
   };
 }
 
+/**
+ * Types of filters for hall passes.
+ */
 export type PassFilterType = { type: 'issuer', value: User } | { type: 'student', value: User } | { type: 'location', value: Location };
 
 export type RequestFilterType =
@@ -73,6 +155,9 @@ export type RequestFilterType =
   | { type: 'student', value: User }
   | { type: 'destination', value: Location };
 
+/**
+ * An interface representing how hall passes should be filtered.
+ */
 export interface HallPassFilter {
   sort: string;
   search_query: string;
@@ -90,17 +175,28 @@ export class LiveDataService {
   private watch<ModelType extends BaseModel, ExternalEventType>(config: WatchData<ModelType, ExternalEventType>):
     Observable<ModelType[]> {
 
+    // Wrap external events in an object so that we can distinguish event types after they are merged.
     const wrappedExternalEvents: Observable<ExternalEvent<ExternalEventType>> = config.externalEvents
       .map(event => (<ExternalEvent<ExternalEventType>>{type: 'external-event', event: event}));
 
+    // A subject for loopback events. These are events usually triggered by the postDelayed() function after a delay.
     const loopbackEvents = new Subject<TransformFunc<ModelType>>();
 
+    /**
+     * A function to register a state transformation function to run after a period of time.
+     * A typical use might be that an item is marked "deleted" if a delete event is received and
+     *  the deletion is indicated visually somehow. Then, the item is removed altogether after a
+     * short period of time by a transformation function given here.
+     *
+     * @see RemoveItemWithDelay
+     */
     function postDelayed(ms: number, func: (s: State<ModelType>) => State<ModelType>) {
       setTimeout(() => {
         loopbackEvents.next({type: 'transform-func', func: func});
       }, ms);
     }
 
+    // Wrap polling events and provide the postDelayed function so that future events can be scheduled.
     function wrapPollingEvent(event: PollingEvent): PollingEventContext<ModelType> {
       return {
         type: 'polling-event',
@@ -111,13 +207,23 @@ export class LiveDataService {
 
     const passEvents: Observable<PollingEventContext<ModelType>> = this.polling.listen().map(wrapPollingEvent);
 
+    /* A merged observable of all event sources and an initial event 'reload' that is
+     * used to run the accumulator() function and thereby set `filtered_passes`.
+     */
     const events: Observable<Action<ModelType, ExternalEventType>> = Observable.merge(wrappedExternalEvents, passEvents,
       loopbackEvents, Observable.of<'reload'>('reload'));
 
+    /**
+     * Takes a current state and an event, deduces the type of event, calls the appropriate
+     * handler, then calls handlePost() to set `filtered_passes`.
+     *
+     * @param state The current state
+     * @param action The event to handle.
+     * @return A new (or modified) state.
+     */
     const accumulator = (state: State<ModelType>, action: Action<ModelType, ExternalEventType>) => {
-      //console.log('acc()', state, action);
       if (action === 'reload') {
-        // do nothing
+        // do nothing, but handlePost() still runs.
       } else if (isExternalEvent(action)) {
         state = config.handleExternalEvent(state, action.event);
       } else if (isTransformFunc(action)) {
@@ -136,10 +242,16 @@ export class LiveDataService {
     const rawDecoder = config.rawDecoder !== undefined ? config.rawDecoder
       : (json) => json.results.map(raw => config.decoder(raw));
 
+    /**
+     * Calls the initialUrl, decodes the result into items, then uses RxJS scan()
+     * to handle each event and keep track of the current state.
+     *
+     * The State object's `filtered_passes` is returned.
+     */
     return this.http.get<Paged<any>>(config.initialUrl)
       .pipe(
         map(rawDecoder),
-        switchMap(passes => events.scan<Action<ModelType, ExternalEventType>, State<ModelType>>(accumulator, new State(passes))),
+        switchMap(items => events.scan<Action<ModelType, ExternalEventType>, State<ModelType>>(accumulator, new State(items))),
         map(state => state.filtered_passes)
       );
   }
