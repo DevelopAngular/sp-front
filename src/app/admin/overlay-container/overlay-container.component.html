@@ -25,7 +25,7 @@
         || overlayType === 'edit'"
       >{{ folderName }}
       </div>
-      <div *ngIf="overlayType === 'newRoom' || overlayType === 'edit' || overlayType === 'editRoom' || (overlayType === 'newFolder' && color_profile && selectedIcon)" style="margin-right: 25px;width: 121px;">
+      <div *ngIf="(overlayType === 'newRoom' && color_profile && selectedIcon) || overlayType === 'edit' || overlayType === 'editRoom' || (overlayType === 'newFolder' && color_profile && selectedIcon)" style="margin-right: 25px;width: 121px;">
         <app-gradient-button *ngIf="!requireValidator(timeLimit) && overlayType === 'edit'"
                              [minHeight]="'40px'"
                              [style.width]="'120px'"
@@ -33,7 +33,7 @@
                              [fontSize]="'12px'"
                              (buttonClick)="done()"
         >
-          Done</app-gradient-button>
+          Publish</app-gradient-button>
         <div *ngIf="isValidForm || (overlayType === 'editRoom' || (overlayType === 'newFolder' && selectedRooms.length > 0))" class="button" (click)="onCancel()">Pubish</div>
         <div *ngIf="!isValidForm && overlayType !== 'edit' && overlayType !== 'editRoom' && overlayType !== 'newFolder'" style="color: white">Incomplete</div>
       </div>

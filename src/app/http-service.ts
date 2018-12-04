@@ -270,4 +270,20 @@ export class HttpService {
     return this.performRequest(ctx => this.http.put<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token)));
   }
 
+    patch<T>(url, body?: any, config?: Config): Observable<T> {
+        const formData: FormData = new FormData();
+        for (const prop in body) {
+            if (body.hasOwnProperty(prop)) {
+                if (body[prop] instanceof Array) {
+                    for (const sprop of body[prop]) {
+                        formData.append(prop, sprop);
+                    }
+                } else {
+                    formData.append(prop, body[prop]);
+                }
+            }
+        }
+        return this.performRequest(ctx => this.http.patch<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token)));
+    }
+
 }

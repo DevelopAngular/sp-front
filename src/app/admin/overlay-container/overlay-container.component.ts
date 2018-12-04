@@ -2,12 +2,14 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {forkJoin, Observable, of} from 'rxjs';
+import {map, switchMap} from 'rxjs/operators';
 
 import { Pinnable } from '../../models/Pinnable';
 import * as _ from 'lodash';
 import {User} from '../../models/User';
+import {HttpService} from '../../http-service';
+import { Location } from '../../models/Location';
 
 @Component({
   selector: 'app-overlay-container',
@@ -29,12 +31,13 @@ export class OverlayContainerComponent implements OnInit {
   folderName: string;
   roomNumber: string | number;
   timeLimit: string | number;
-  travelType: string;
+  travelType: string[];
   nowRestriction: boolean;
   futureRestriction: boolean;
   gradientColor: string;
   hideAppearance: boolean = false;
   isEditRooms: boolean = false;
+  isEditFolder: boolean = false;
 
   color_profile;
   selectedIcon;
@@ -42,7 +45,6 @@ export class OverlayContainerComponent implements OnInit {
   colors$;
 
   newRoomsInFolder = [];
-  editingRooms = [];
 
   form: FormGroup;
 
@@ -60,6 +62,7 @@ export class OverlayContainerComponent implements OnInit {
   constructor(
       private dialogRef: MatDialogRef<OverlayContainerComponent>,
       @Inject(MAT_DIALOG_DATA) public dialogData: any,
+      private http: HttpService,
   ) { }
 
   getHeaderData() {
@@ -131,6 +134,9 @@ export class OverlayContainerComponent implements OnInit {
               });
           }));
       }
+      if (this.dialogData['isEditFolder']) {
+          this.isEditFolder = true;
+      }
 
       this.getHeaderData();
 
@@ -200,88 +206,112 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   onCancel() {
-    if (this.overlayType === 'newRoom' || this.overlayType === 'editRoom') {
-       const data = {
-         title: this.roomName,
-         color_profile: this.color_profile,
-         icon: this.selectedIcon,
-         location: {
-           title: this.roomName,
-           room: this.roomNumber,
-           restricted: this.nowRestriction,
-           scheduling_restricted: this.futureRestriction,
-           required_attachments: [],
-           travel_types: this.travelType,
-           max_allowed_time: this.timeLimit
-         },
-         category: 'location'
-       };
+    if (this.overlayType === 'newRoom') {
+       const location = {
+                title: this.roomName,
+                room: this.roomNumber,
+                restricted: this.nowRestriction,
+                scheduling_restricted: this.futureRestriction,
+                teachers: this.selectedTichers.map(teacher => teacher.id),
+                travel_types: this.travelType,
+                max_allowed_time: +this.timeLimit
+        };
 
-        this.dialogRef.close({ data, action: 'newRoom'});
+       this.http.post('v1/locations', location)
+           .pipe(switchMap((loc: Location) => {
+               const pinnable = {
+                   title: this.roomName,
+                   color_profile: this.color_profile.id,
+                   icon: this.selectedIcon.inactive,
+                   location: loc.id,
+               };
+               return this.http.post('v1/pinnables', pinnable);
+           })).subscribe(response => this.dialogRef.close());
     }
 
     if (this.overlayType === 'newFolder') {
-        const data = {
-            title: this.folderName,
-            color_profile: this.color_profile,
-            icon: this.selectedIcon,
-            location: null,
-            category: 'category'
+        console.log('Roomsss', this.selectedRooms);
+        const locationsToUpdate$ = this.selectedRooms.map(location => {
+            location.category = this.folderName;
+            return this.http.patch(`v1/locations/${location.id}`, location);
+        });
+        forkJoin(locationsToUpdate$).pipe(switchMap(locations => {
+            const newFolder = {
+                title: this.folderName,
+                color_profile: this.color_profile.id,
+                icon: this.selectedIcon.inactive,
+                category: this.folderName
+            };
+            return this.isEditFolder ? this.http.patch(`v1/pinnables/${this.pinnable.id}`, newFolder) : this.http.post('v1/pinnables', newFolder);
+        })).subscribe(res => this.dialogRef.close());
+    }
+    if (this.overlayType === 'editRoom') {
+        const location = {
+            title: this.roomName,
+            room: this.roomNumber,
+            restricted: this.nowRestriction,
+            scheduling_restricted: this.futureRestriction,
+            teachers: this.selectedTichers.map(teacher => teacher.id),
+            travel_types: this.travelType,
+            max_allowed_time: +this.timeLimit
         };
-        console.log('CREATE FOLDER', data);
-        this.dialogRef.close({ data, action: 'newFolder' });
+
+        this.http.patch(`v1/locations/${this.pinnable.location.id}`, location)
+            .pipe(switchMap((loc: Location) => {
+                const pinnable = {
+                    title: this.roomName,
+                    color_profile: this.color_profile.id,
+                    icon: this.selectedIcon.inactive,
+                    location: loc.id,
+                };
+                return this.http.patch(`v1/pinnables/${this.pinnable.id}`, pinnable);
+            })).subscribe(response => this.dialogRef.close());
     }
   }
 
   done() {
       if (this.overlayType === 'newRoomInFolder') {
-          const data = {
-              title: this.roomName,
-              color_profile: null,
-              icon: null,
-              location: {
+          const location = {
                   title: this.roomName,
                   room: this.roomNumber,
                   restricted: this.nowRestriction,
                   scheduling_restricted: this.futureRestriction,
-                  required_attachments: [],
+                  teachers: this.selectedTichers.map(teacher => teacher.id),
                   travel_types: this.travelType,
-                  max_allowed_time: this.timeLimit
-              },
-              category: 'location'
-          };
+                  max_allowed_time: +this.timeLimit
+            };
 
-          console.log('NEW ROOM IN FOLDER', data);
-
-          this.newRoomsInFolder.push(data);
-          this.selectedRooms.push(data);
-          this.setLocation('newFolder');
+          console.log('NEW ROOM IN FOLDER', location);
+          this.http.post('v1/locations', location).subscribe(loc => {
+              this.newRoomsInFolder.push(loc);
+              this.selectedRooms.push(loc);
+              this.setLocation('newFolder');
+          });
       }
       if (this.overlayType === 'settingsRooms') {
-          this.readyRoomsToEdit.forEach(room => {
-              room.location.restricted = this.nowRestriction;
-              room.location.scheduling_restricted = this.futureRestriction;
-              room.location.max_allowed_time = +this.timeLimit;
-              return room;
+          this.readyRoomsToEdit.forEach((room: any) => {
+             this.selectedRooms.forEach(roomToEdit => {
+                if (roomToEdit.id === room.id) {
+                    room.restricted = this.nowRestriction;
+                    room.scheduling_restricted = this.futureRestriction;
+                    room.max_allowed_time = +this.timeLimit;
+                }
+             });
           });
-          this.editingRooms = this.readyRoomsToEdit;
-
-          console.log('EDIT ROOMS IN FOLDER', this.editingRooms);
 
           this.setLocation('newFolder');
        }
 
        if (this.overlayType === 'edit') {
-           this.selectedRooms.forEach(room => {
-               room.location.restricted = this.nowRestriction;
-               room.location.scheduling_restricted = this.futureRestriction;
-               room.location.max_allowed_time = +this.timeLimit;
-               return room;
+          const roomsToEdit = this.selectedRooms.map((room: any) => {
+               return this.http.patch(`v1/locations/${room.location.id}`,
+                   {
+                       restricted: this.nowRestriction,
+                       scheduling_restricted: this.futureRestriction,
+                       max_allowed_time: +this.timeLimit
+                   });
            });
-
-           console.log('EDIT ROOMS', this.selectedRooms);
-
-           this.dialogRef.close({ data: this.selectedRooms, action: 'EditRooms' });
+           forkJoin(roomsToEdit).subscribe(res => this.dialogRef.close());
        }
   }
 
@@ -320,11 +350,22 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   deleteRoom() {
-      // Delete Request
+      this.http.delete(`v1/pinnables/${this.pinnable.id}`).subscribe(res => {
+          console.log(res);
+          this.dialogRef.close();
+      });
   }
 
   travelUpdate(type) {
-    console.log('TYPE', type);
+   let travelType: string;
+   if (type === 'Round-trip') {
+     travelType = 'round_trip';
+   } else if (type === 'One-way') {
+     travelType = 'one_way';
+   } else if (type === 'Both') {
+     travelType = 'both';
+   }
+   this.travelType = [travelType];
   }
 
   onUpdate(event) {
