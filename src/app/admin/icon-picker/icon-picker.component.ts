@@ -1,21 +1,21 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
-
-class Icon {
-    public state: boolean;
-
-    constructor(private active: string,
-                private inactive: string) {
-    }
-
-    toggleState() {
-        this.state = !this.state;
-    }
-
-    get Thumbnail(): string {
-        return this.state ? this.active : this.inactive;
-    }
-}
+//
+// class Icon {
+//     public state: boolean;
+//
+//     constructor(private active: string,
+//                 private inactive: string) {
+//     }
+//
+//     toggleState() {
+//         this.state = !this.state;
+//     }
+//
+//     get Thumbnail(): string {
+//         return this.state ? this.active : this.inactive;
+//     }
+// }
 
 @Component({
   selector: 'app-icon-picker',
@@ -24,21 +24,11 @@ class Icon {
 })
 export class IconPickerComponent implements OnInit {
 
-  @Input() set icons(value: Array<string>) {
-      if (value) {
-          const blueIcons = value.filter(icon => icon.includes('(Blue)'));
-          const whiteIcons = value.filter(icon => icon.includes('(White)'));
-          this._icons = whiteIcons.map((white, index) => {
-              return new Icon(blueIcons[index], white);
-          });
-      }
-  }
+  @Input() icons$;
 
   @Output() selectedEvent: EventEmitter<any> = new EventEmitter();
 
-  _icons: Array<Icon>;
-
-  public selectedIcon: Icon;
+  public selectedIconId;
 
   constructor() { }
 
@@ -46,12 +36,8 @@ export class IconPickerComponent implements OnInit {
   }
 
   changeIcon(icon) {
-      if (this.selectedIcon) {
-          this.selectedIcon.toggleState();
-      }
-      this.selectedIcon = icon;
-      this.selectedIcon.toggleState();
-      this.selectedEvent.emit(icon);
+    this.selectedIconId = icon.id;
+    this.selectedEvent.emit(icon);
   }
 
 }

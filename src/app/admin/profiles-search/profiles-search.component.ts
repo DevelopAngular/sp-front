@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/internal/operators';
+import {debounceTime, distinctUntilChanged, filter, map, switchMap} from 'rxjs/internal/operators';
 import {Observable, Subject} from 'rxjs';
 import {UserService} from '../../user.service';
 import {Paged} from '../../models';
@@ -23,7 +23,7 @@ export class ProfilesSearchComponent implements OnInit {
   public wait: boolean;
 
   @Output() result: EventEmitter<{wait: boolean, userList: any[]}> = new EventEmitter();
-
+  @Output() isEmitUsers: EventEmitter<boolean> = new EventEmitter();
 
   //
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
@@ -39,7 +39,6 @@ export class ProfilesSearchComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.role);
   }
   showSearchParam(searchValue) {
 
@@ -79,8 +78,15 @@ export class ProfilesSearchComponent implements OnInit {
     this.searchChangeObserver$.next(searchValue);
   }
   onSearch(search: string) {
+    this.isEmitUsers.emit(false);
     if(search!=='')
-      this.students = this.http.get<Paged<any>>('v1/users?role=' + this.role + '&limit=5' + (search === '' ? '' : '&search=' + encodeURI(search))).toPromise().then(paged => this.removeDuplicateStudents(paged.results));
+      this.students = this.http.get<Paged<any>>('v1/users?role=' + this.role + '&limit=5' + (search === '' ? '' : '&search=' + encodeURI(search)))
+          .toPromise().then(paged => {
+            if (paged.results.length > 0) {
+              this.isEmitUsers.emit(true);
+              return  this.removeDuplicateStudents(paged.results);
+            }
+          });
     else
       this.students = null;
     this.inputValue = '';
@@ -97,6 +103,7 @@ export class ProfilesSearchComponent implements OnInit {
 
   addStudent(student: User) {
     console.log(student);
+    this.isEmitUsers.emit(false);
     this.inputValue = '';
     this.onSearch('');
     if (!this.selectedStudents.includes(student)) {

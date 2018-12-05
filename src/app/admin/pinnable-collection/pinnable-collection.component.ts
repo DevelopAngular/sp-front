@@ -39,6 +39,11 @@ export class PinnableCollectionComponent implements OnInit {
 
   }
 
+  clearSelected() {
+    this.bulkSelect = false;
+    this.selectedPinnables = [];
+  }
+
   toggleBulk(){
     this.bulkSelect = !this.bulkSelect;
     this.selectedPinnables = [];
