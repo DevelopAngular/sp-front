@@ -1,8 +1,8 @@
 <div class="account-wrapper">
-  <div *ngIf="!accounts['total'].length" class="loading-theme spinner flex-center-center">
+  <div *ngIf="!(accounts$ | async).total" class="loading-theme spinner flex-center-center">
     <mat-spinner [color]="'accent'" [diameter]="'135'"></mat-spinner>
   </div>
-  <div *ngIf="accounts['total'].length">
+  <div *ngIf="(accounts$ | async).total">
 
     <div class="card card__top-bar">
       <div class="accounts flex-center-between">
@@ -11,9 +11,10 @@
             <img src="assets/google/google_logo.svg" alt="google-icon" width="44" height="44">
           </div>
           <div>
-            <p class="card_header">{{accounts['total'].length}} Accounts</p>
+            <p class="card_header">{{(accounts$ | async).total}} Accounts</p>
           </div>
         </div>
+        <!--<pre>{{(accounts$ | async)['total'] | json}}</pre>-->
         <div class="mx">
           <p class="card_title">
             Users sign-in with their Google Suite for Education school account.
@@ -46,7 +47,7 @@
           <div>
             <div class="card_header">Administrators</div>
             <p class="card_title">
-              <span>{{accounts['_profile_admin']}} profiles </span><br>
+              <span>{{(accounts$ | async).admin_count}} profiles </span><br>
               An administrator has a high-level look at the school, configures passes, and views/generates reports.
             </p>
           </div>
@@ -58,7 +59,7 @@
           <div>
             <div class="card_header">Teachers</div>
             <p class="card_title">
-              <span>{{accounts['_profile_teacher']}} profiles </span><br>
+              <span>{{(accounts$ | async).teacher_count}} profiles </span><br>
               A teacher has a room or multiple rooms where students can create passes to.
               A teacher can manage passes in his/her room and create passes.
             </p>
@@ -73,7 +74,7 @@
           <div>
             <div class="card_header">Students</div>
             <p class="card_title">
-              <span>{{accounts['_profile_student']}} profiles</span><br>
+              <span>{{(accounts$ | async).student_count }} profiles</span><br>
               A student can create passes, schedule passes for the future,
               and send pass requests to teachers.
             </p>
@@ -82,19 +83,19 @@
             Manage Profiles
           </div>
         </div>
-        <div class="card card__role flex-center-between">
-          <div>
-            <div class="card_header">Secretaries & Substitutes</div>
-            <p class="card_title">
-              <span>{{accounts['staff_secretary']}} profiles</span><br>
-              A secretary or substitute teacher acts as a certain teacher when they sign-in.
-              They can manage passes in his/her room and create passes as that teacher.
-            </p>
-          </div>
-          <div class="card card__mp-btn mx" [routerLink]="['/admin/accounts', 'staff_secretary']">
-            Manage Profiles
-          </div>
-        </div>
+        <!--<div class="card card__role flex-center-between" style="display: none;">-->
+          <!--<div>-->
+            <!--<div class="card_header">Secretaries & Substitutes</div>-->
+            <!--<p class="card_title">-->
+              <!--<span>{{(accounts$ | async).aff_secretary}} profiles</span><br>-->
+              <!--A secretary or substitute teacher acts as a certain teacher when they sign-in.-->
+              <!--They can manage passes in his/her room and create passes as that teacher.-->
+            <!--</p>-->
+          <!--</div>-->
+          <!--<div class="card card__mp-btn mx" [routerLink]="['/admin/accounts', 'staff_secretary']">-->
+            <!--Manage Profiles-->
+          <!--</div>-->
+        <!--</div>-->
       </div>
     </div>
   </div>

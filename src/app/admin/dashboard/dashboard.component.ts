@@ -43,34 +43,14 @@ export class DashboardComponent implements OnInit {
       this.http.get('v1/hall_passes/stats'),
       this.http.get('v1/hall_passes?active=true'),
       this.http.get('v1/event_reports'),
-      this.http.get('v1/hall_passes/aggregated'),
-
     )
-      .subscribe((result: any[]) => {
-        // const stampsResult = result[0].results;
-        this.passStatistic = result[1][0]['rows'];
-        this.averagePassTime = result[1][1]['value'];
-        this.activeHallpasses = result[1][2]['value'];
-        // this.activeHallpasses = result[2];
-        this.reports = result[3];
-        const ExecutionTime = [];
-
-        // if (stampsResult && stampsResult.length) {
-        //   stampsResult.forEach((hp) => {
-        //     if ( (new Date(hp.end_time).getTime() - new Date(hp.start_time).getTime()) > 0 ) {
-        //       ExecutionTime.push(new Date(hp.end_time).getTime() - new Date(hp.start_time).getTime());
-        //     }
-        //   });
-        //
-        //   let time = 0;
-        //   for (let i = 0; i < ExecutionTime.length; i++) {
-        //     time += ExecutionTime[i];
-        //   }
-        //   this.averagePassTime = (time / ExecutionTime.length / 60000).toFixed(2);
-        // } else {
-        //   this.averagePassTime = 0;
-        // }
-      })
+    .subscribe((result: any[]) => {
+      this.passStatistic = result[1][0]['rows'];
+      this.averagePassTime = result[1][1]['value'];
+      this.activeHallpasses = result[2];
+      this.reports =  result[3];
+      // this.reports = [];
+    })
 
     this.gradient = this.ctx.nativeElement.getContext('2d').createLinearGradient(0, 380, 0, 0);
     this.gradient.addColorStop(0.5, 'rgba(0,207,49,0.01)');
@@ -156,7 +136,6 @@ export class DashboardComponent implements OnInit {
   previewPDF() {
 
     const data = ObservableOf(this.activeHallpasses);
-        console.log(data)
         data
           .pipe(
             map((hp_list: HallPass[]) => {

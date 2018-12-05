@@ -256,6 +256,10 @@ export class LiveDataService {
       );
   }
 
+  getDateRange(date: Date) {
+    return getDateLimits(date);
+  }
+
   watchHallPassesFromLocation(sortingEvents: Observable<HallPassFilter>, filter: Location, date: Date = null): Observable<HallPass[]> {
     const queryFilter: QueryParams = {
       limit: 20,

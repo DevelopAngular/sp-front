@@ -224,10 +224,10 @@ export class HttpService {
   }
 
   get<T>(url, config?: Config): Observable<T> {
-    console.log('Making request: ' + url);
+    // console.log('Making request: ' + url);
     return this.performRequest(ctx => this.http.get<T>(makeUrl(ctx.server, url), makeConfig(config, ctx.auth.access_token)))
       .do(x => {
-        console.log('Finished request: ' + url, x);
+        // console.log('Finished request: ' + url, x);
       });
   }
 

@@ -26,7 +26,14 @@ export class CalendarComponent implements OnInit {
   }
 
   setSearchDate(date) {
-     console.log(date);
+     let _date;
+     if (date) {
+       _date = date;
+     } else {
+       _date = new Date();
+     }
+     console.log(_date);
+     this._matDialogRef.close({date: _date});
   }
 
 }

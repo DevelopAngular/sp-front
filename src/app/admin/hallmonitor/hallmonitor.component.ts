@@ -55,33 +55,27 @@ export class HallmonitorComponent implements OnInit {
 
   ngOnInit() {
     this.activePassProvider = new ActivePassProvider(this.liveDataService, this.searchQuery$);
-    this.http.get('v1/event_reports')
-      .subscribe((list: Report[]) => {
-        console.log(list);
-        this.studentreport = list.map((report) => {
-          return {
-            student_name: report.student.display_name,
-            issuer: report.issuer.display_name,
-            created: report.created,
-            message: report.message,
-          };
-        });
-        console.log(this.studentreport);
-    });
+    this.getReports(this.minDate);
   }
 
   onSearch(searchValue) {
-      console.log(searchValue);
      this.searchQuery$.next(searchValue);
   }
 
+
+
   openDateDialog(event) {
     const target = new ElementRef(event.currentTarget);
-    this.dialog.open(CalendarComponent, {
+    const DR = this.dialog.open(CalendarComponent, {
         panelClass: 'calendar-dialog-container',
         backdropClass: 'invis-backdrop',
         data: { 'trigger': target }
     });
+    DR.afterClosed().subscribe((data) => {
+        console.log('82 Date ===> :', data.date);
+        this.getReports(data.date);
+      }
+    );
   }
 
   genOption(display, color, action) {
@@ -199,5 +193,21 @@ export class HallmonitorComponent implements OnInit {
   getChoiceValue(emit) {
       this.selectedtoggleValue = emit;
       console.log(emit);
+  }
+  private getReports(date: Date) {
+    const range = this.liveDataService.getDateRange(date);
+    console.log(range);
+    this.http.get(`v1/event_reports?created_before=${range.end.toISOString()}&created_after=${range.start.toISOString()}`)
+    // this.http.get(`v1/event_reports`)
+      .subscribe((list: Report[]) => {
+        this.studentreport = list.map((report) => {
+          return {
+            student_name: report.student.display_name,
+            issuer: report.issuer.display_name,
+            created: report.created,
+            message: report.message,
+          };
+        });
+      });
   }
 }

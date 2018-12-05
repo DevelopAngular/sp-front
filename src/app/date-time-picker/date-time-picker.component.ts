@@ -1,4 +1,4 @@
-﻿import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+﻿import { Component, EventEmitter, Input, OnInit, OnDestroy,Output } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
 import { Util } from '../../Util';
 
@@ -7,7 +7,7 @@ import { Util } from '../../Util';
   templateUrl: './date-time-picker.component.html',
   styleUrls: ['./date-time-picker.component.scss']
 })
-export class DateTimePickerComponent implements OnInit {
+export class DateTimePickerComponent implements OnInit, OnDestroy{
 
   @Input() showTime: boolean = true;
   @Input() min: Date = new Date();
@@ -25,14 +25,15 @@ export class DateTimePickerComponent implements OnInit {
   @Output() onUpdate_2ndCal: EventEmitter<any> = new EventEmitter();
 
   @Output() onconfirm: EventEmitter<any> = new EventEmitter();
-  
+
 
   constructor() {
   }
 
   set selectedMoment(newMoment: Date){
     this._selectedMoment = newMoment;
-    this.onUpdate.emit(this._selectedMoment);
+    // this.onUpdate.emit(this._selectedMoment);
+    this.ngOnDestroy();
     console.log('[Date-Time Moment]: ', this._selectedMoment);
   }
 
@@ -59,7 +60,7 @@ export class DateTimePickerComponent implements OnInit {
     console.log('[Date-Time Debug]: ', 'Date-Time where at');
     this._selectedMoment.setMinutes(this._selectedMoment.getMinutes()+1)
     this.min.setMinutes(this.min.getMinutes()+1)
-    this.onUpdate.emit(this._selectedMoment);
+    // this.onUpdate.emit(this._selectedMoment);
 
 
     console.log('[Date-Time Debug]: ', 'Date-Time where at');
@@ -67,7 +68,9 @@ export class DateTimePickerComponent implements OnInit {
     this.min_2ndCal.setMinutes(this.min_2ndCal.getMinutes() + 1)
     this.onUpdate_2ndCal.emit(this._selectedMoment_2ndCal);
   }
-
+  ngOnDestroy() {
+    this.onUpdate.emit(this._selectedMoment);
+  }
   confirmDates(){
     this.onconfirm.emit(this.dateRangeText);
   }

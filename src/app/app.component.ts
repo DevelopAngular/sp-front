@@ -37,12 +37,13 @@ export class AppComponent implements OnInit {
         filter(event => event instanceof NavigationEnd),
         map(() => this.activatedRoute),
         map((route) => {
-          while (route.firstChild) { route = route.firstChild; }
+          if (route.firstChild) { route = route.firstChild; }
           return route;
         }),
         mergeMap((route) => route.data)
       )
       .subscribe((data) => {
+        console.log(data);
         this.hideScroll = data.hideScroll;
       });
   }

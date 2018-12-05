@@ -51,7 +51,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         )
         .subscribe((userList) => {
           if (userList && userList.length) {
-            // this.placeholder = false;
             this.userList = userList.map((raw) => {
               return {
                 'Name': raw.display_name,
