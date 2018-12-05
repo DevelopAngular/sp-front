@@ -7,7 +7,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 })
 export class ColorPalletPickerComponent implements OnInit {
 
-  @Input() colors;
+  @Input() colors$;
 
   @Input() selectedColorProfile;
 

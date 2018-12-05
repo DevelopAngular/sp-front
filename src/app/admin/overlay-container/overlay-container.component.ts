@@ -2,7 +2,7 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
-import {forkJoin, Observable, of} from 'rxjs';
+import {forkJoin, Observable} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 
 import { Pinnable } from '../../models/Pinnable';
@@ -41,8 +41,9 @@ export class OverlayContainerComponent implements OnInit {
 
   color_profile;
   selectedIcon;
-  icons$;
   colors$;
+
+  showSearchTeacherOptions: boolean;
 
   newRoomsInFolder = [];
 
@@ -114,7 +115,6 @@ export class OverlayContainerComponent implements OnInit {
       this.buildForm();
 
       this.overlayType = this.dialogData['type'];
-      this.icons$ = this.dialogData['icons$'];
       this.colors$ = this.dialogData['colors$'];
       if (this.dialogData['pinnable']) {
           this.pinnable = this.dialogData['pinnable'];
@@ -133,6 +133,7 @@ export class OverlayContainerComponent implements OnInit {
                   return item.id === _.pullAll(pinnablesIds, currentPinnablesIds).find(id => item.id === id);
               });
           }));
+
       }
       if (this.dialogData['isEditFolder']) {
           this.isEditFolder = true;
@@ -222,7 +223,7 @@ export class OverlayContainerComponent implements OnInit {
                const pinnable = {
                    title: this.roomName,
                    color_profile: this.color_profile.id,
-                   icon: this.selectedIcon.inactive,
+                   icon: this.selectedIcon.inactive_icon,
                    location: loc.id,
                };
                return this.http.post('v1/pinnables', pinnable);
@@ -230,20 +231,30 @@ export class OverlayContainerComponent implements OnInit {
     }
 
     if (this.overlayType === 'newFolder') {
-        console.log('Roomsss', this.selectedRooms);
         const locationsToUpdate$ = this.selectedRooms.map(location => {
-            location.category = this.folderName;
-            return this.http.patch(`v1/locations/${location.id}`, location);
+            let id;
+            let data;
+            if (location.location) {
+                id = location.location.id;
+                data = location.location;
+                data.category = this.folderName;
+            }
+            if (!location.location) {
+                id = location.id;
+                data = location;
+                data.category = this.folderName;
+            }
+            return this.http.patch(`v1/locations/${id}`, data);
         });
         forkJoin(locationsToUpdate$).pipe(switchMap(locations => {
             const newFolder = {
                 title: this.folderName,
                 color_profile: this.color_profile.id,
-                icon: this.selectedIcon.inactive,
+                icon: this.selectedIcon.inactive_icon,
                 category: this.folderName
             };
-            return this.isEditFolder ? this.http.patch(`v1/pinnables/${this.pinnable.id}`, newFolder) : this.http.post('v1/pinnables', newFolder);
-        })).subscribe(res => this.dialogRef.close());
+        return this.isEditFolder ? this.http.patch(`v1/pinnables/${this.pinnable.id}`, newFolder) : this.http.post('v1/pinnables', newFolder);
+        })).subscribe(res => this.dialogRef.close(true));
     }
     if (this.overlayType === 'editRoom') {
         const location = {
@@ -261,7 +272,7 @@ export class OverlayContainerComponent implements OnInit {
                 const pinnable = {
                     title: this.roomName,
                     color_profile: this.color_profile.id,
-                    icon: this.selectedIcon.inactive,
+                    icon: this.selectedIcon.inactive_icon,
                     location: loc.id,
                 };
                 return this.http.patch(`v1/pinnables/${this.pinnable.id}`, pinnable);
@@ -368,7 +379,12 @@ export class OverlayContainerComponent implements OnInit {
    this.travelType = [travelType];
   }
 
-  onUpdate(event) {
-      console.log('EVENT', event);
+  selectTeacherEvent(teachers) {
+    this.selectedTichers = teachers;
+  }
+
+  isEmitTeachers(event) {
+      this.showSearchTeacherOptions = event;
+      console.log('EMMIIITT', event);
   }
 }

@@ -11,25 +11,43 @@
       </div>
       <div class="divider"></div>
       <app-data-table [data]="tableData" *ngIf="tableData.length > 0 && !spinner" [height]="'450px'" (selectedUsers)="selectedReport=$event"></app-data-table>
-      <div class="loading-theme" *ngIf="spinner"  style="display: flex; justify-content: center; align-items: center;">
-        <mat-spinner [color]="'accent'" [diameter]="'35'"></mat-spinner>
-      </div>
       <div class="nopass-text" *ngIf="tableData.length === 0 && !spinner">
         No Passes
       </div>
     </div>
   </div>
-  <div class="report-button" *ngIf="selectedReport.length > 0 && tableData.length > 0" (click)="previewPDF()">
-    Generate Report<br/>
-    {{ selectedReport.length }} passes selected
+  <div class="buttons" *ngIf="hasSearched">
+    <div class="report-button" *ngIf="selectedReport.length > 0 && tableData.length > 0 && !spinner" (click)="previewPDF()">
+      Generate Report<br/>
+      {{ selectedReport.length }} passes selected
+    </div>
+
+    <app-gradient-button *ngIf="!spinner"
+              [minHeight]="'80px'"
+              [style.width]="'230px'"
+              [cursor]="'pointer'"
+              [fontSize]="'23px'"
+              (buttonClick)="search()"
+              [leftIcon]="'./assets/Search (White).png'"
+              [leftImageWidth]="'30px'"
+              [leftImageHeight]="'30px'"
+      >
+        Search</app-gradient-button>
   </div>
-  <div class="search-content" *ngIf="!hasSearched">
+  <div class="search-content" *ngIf="!hasSearched && !spinner">
     <div class="default-message">
-      <div class="search-button" (click)="search()">
-        <div class="title-text">
-          <img class="icon" [src]="'./assets/Search (Blue).png' | resolveAsset">
-          <div>Search</div>
-        </div>
+      <div class="search-button">
+        <app-gradient-button
+                [minHeight]="'80px'"
+                [style.width]="'230px'"
+                [cursor]="'pointer'"
+                [fontSize]="'23px'"
+                (buttonClick)="search()"
+                [leftIcon]="'./assets/Search (White).png'"
+                [leftImageWidth]="'30px'"
+                [leftImageHeight]="'30px'"
+        >
+          Search</app-gradient-button>
       </div>
       <div class="small-text">
         This is an ultimate search query of everything going on in the school. <br>
@@ -40,8 +58,10 @@
         In the end, you can generate PDF reports.
       </div>
     </div>
-    <div class="button-footer">
-
+  </div>
+  <div class="spinner" *ngIf="spinner">
+    <div class="loading-theme"  style="display: flex; justify-content: center; align-items: center;">
+      <mat-spinner [color]="'accent'" [diameter]="'60'"></mat-spinner>
     </div>
   </div>
 </div>

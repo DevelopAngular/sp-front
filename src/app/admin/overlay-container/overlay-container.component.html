@@ -92,14 +92,14 @@
       </div>
       <div class="teacher-search" *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'">
         <div class="teacher-title">Teachers in Room</div>
-        <app-profiles-search [placeholder]="'Search Teacher'" [selectedStudents]="selectedTichers" (onUpdate)="selectedTichers=$event" [role]="'_profile_teacher'"></app-profiles-search>
+        <app-profiles-search [placeholder]="'Search Teacher'" [selectedStudents]="selectedTichers" (isEmitUsers)="isEmitTeachers($event)" (onUpdate)="selectTeacherEvent($event)" [role]="'_profile_teacher'"></app-profiles-search>
       </div>
       <div style="display: flex"
-           *ngIf="overlayType === 'newRoom'
+           *ngIf="(overlayType === 'newRoom'
            || overlayType === 'newRoomInFolder'
            || overlayType === 'settingsRooms'
            || overlayType === 'edit'
-           || overlayType === 'editRoom'"
+           || overlayType === 'editRoom') && !showSearchTeacherOptions"
       >
         <div class="travel-picker">
           <div class="toggle-label">Travel Type</div>
@@ -116,10 +116,11 @@
         </div>
       </div>
       <div class="restriction-settings"
-           *ngIf="overlayType === 'newRoom'
+           *ngIf="(overlayType === 'newRoom'
            || overlayType === 'newRoomInFolder'
            || overlayType === 'settingsRooms'
-           || overlayType === 'edit' || overlayType === 'editRoom'"
+           || overlayType === 'edit'
+           || overlayType === 'editRoom') && !showSearchTeacherOptions"
       >
         <div class="restriction-picker-1">
           <div class="toggle-label">Restriction For Now</div>
@@ -131,7 +132,7 @@
         </div>
       </div>
 
-      <div class="footer-delete-button" *ngIf="overlayType === 'editRoom' && isValidForm">
+      <div class="footer-delete-button" *ngIf="(overlayType === 'editRoom' && isValidForm) && !showSearchTeacherOptions">
         <app-gradient-button
                 [gradient]="'#F52B4F, #F37426'"
                 [minHeight]="'40px'"
@@ -271,10 +272,10 @@
         <div class="inactive" *ngIf="hideAppearance"></div>
         <div class="right-content-title">Appearance</div>
         <div class="color-picker">
-          <app-color-pallet-picker [selectedColorProfile]="color_profile" [colors]="colors$ | async" (selectedEvent)="changeColor($event)"></app-color-pallet-picker>
+          <app-color-pallet-picker [selectedColorProfile]="color_profile" [colors$]="colors$" (selectedEvent)="changeColor($event)"></app-color-pallet-picker>
         </div>
         <div class="icon-picker">
-          <app-icon-picker [icons]="icons$ | async" (selectedEvent)="selectedIcon=$event"></app-icon-picker>
+          <app-icon-picker (selectedEvent)="selectedIcon=$event"></app-icon-picker>
         </div>
       </div>
 

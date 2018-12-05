@@ -2,7 +2,7 @@
   <div class="color-title">Color</div>
   <div class="colors">
     <div class="pick-color"
-         *ngFor="let color of colors"
+         *ngFor="let color of colors$ | async"
          [style.background]="color.solid_color"
          [style.box-shadow]="(selectedId === color.id ? '0px 0px 50px ' + color.solid_color : 'none')"
          (click)="changeColor(color)"

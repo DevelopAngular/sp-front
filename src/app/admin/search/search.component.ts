@@ -33,8 +33,9 @@ export class SearchComponent implements OnInit {
   }
 
   search() {
-      this.spinner = true;
     if (this.selectedStudents || this.selectedDate || this.selectedRooms) {
+        this.spinner = true;
+        this.selectedReport = [];
         let url = 'v1/hall_passes?';
         if(this.selectedRooms){
           console.log('Has rooms\t', this.roomSearchType);
@@ -77,12 +78,18 @@ export class SearchComponent implements OnInit {
             .subscribe((data: HallPass[]) => {
                 console.log('DATA', data);
             this.tableData = data.map(hallPass => {
+                let travelType;
+                if (hallPass.travel_type === 'one_way') { travelType = 'One Way'; }
+                if (hallPass.travel_type === 'round_trip') { travelType = 'Round Trip'; }
+                if (hallPass.travel_type === 'both') { travelType = 'Both'; }
+               const oldDate = new Date('2013-03-10T02:00:00Z');
+               const newDate = oldDate.getFullYear() + '-' + 0 + (oldDate.getMonth() + 1) + '-' + oldDate.getDate();
                return {
                    'Student Name': hallPass.student.first_name + ' ' + hallPass.student.last_name,
                    'Origin': hallPass.origin.title,
                    'Destination': hallPass.destination.title,
-                   'TravelType': hallPass.travel_type,
-                   'Date & Time': hallPass.created,
+                   'Travel Type': travelType,
+                   'Date & Time': newDate,
                    'Duration': hallPass.destination.max_allowed_time
                };
             });
@@ -95,23 +102,14 @@ export class SearchComponent implements OnInit {
 
   dateEmit(date) {
       this.selectedDate = date;
-      if (this.hasSearched) {
-          this.search();
-      }
   }
 
   roomEmit(rooms) {
     this.selectedRooms = rooms;
-    if (this.hasSearched) {
-      this.search();
-    }
   }
 
   studentsEmit(students) {
       this.selectedStudents = students;
-      if (this.hasSearched) {
-          this.search();
-      }
   }
 
   previewPDF() {

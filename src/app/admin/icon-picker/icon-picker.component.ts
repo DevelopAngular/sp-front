@@ -1,21 +1,22 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {HttpService} from '../../http-service';
 
-
-class Icon {
-    public state: boolean;
-
-    constructor(private active: string,
-                private inactive: string) {
-    }
-
-    toggleState() {
-        this.state = !this.state;
-    }
-
-    get Thumbnail(): string {
-        return this.state ? this.active : this.inactive;
-    }
-}
+//
+// class Icon {
+//     public state: boolean;
+//
+//     constructor(private active: string,
+//                 private inactive: string) {
+//     }
+//
+//     toggleState() {
+//         this.state = !this.state;
+//     }
+//
+//     get Thumbnail(): string {
+//         return this.state ? this.active : this.inactive;
+//     }
+// }
 
 @Component({
   selector: 'app-icon-picker',
@@ -24,34 +25,21 @@ class Icon {
 })
 export class IconPickerComponent implements OnInit {
 
-  @Input() set icons(value: Array<string>) {
-      if (value) {
-          const blueIcons = value.filter(icon => icon.includes('(Blue)'));
-          const whiteIcons = value.filter(icon => icon.includes('(White)'));
-          this._icons = whiteIcons.map((white, index) => {
-              return new Icon(blueIcons[index], white);
-          });
-      }
-  }
+  icons$;
 
   @Output() selectedEvent: EventEmitter<any> = new EventEmitter();
 
-  _icons: Array<Icon>;
+  public selectedIconId;
 
-  public selectedIcon: Icon;
-
-  constructor() { }
+  constructor(private http: HttpService) { }
 
   ngOnInit() {
+    this.icons$ = this.http.get('v1/room_icons');
   }
 
   changeIcon(icon) {
-      if (this.selectedIcon) {
-          this.selectedIcon.toggleState();
-      }
-      this.selectedIcon = icon;
-      this.selectedIcon.toggleState();
-      this.selectedEvent.emit(icon);
+    this.selectedIconId = icon.id;
+    this.selectedEvent.emit(icon);
   }
 
 }

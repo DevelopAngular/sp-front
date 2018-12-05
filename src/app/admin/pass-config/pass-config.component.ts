@@ -1,14 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { FormControl, FormGroup } from '@angular/forms';
 
-import {forkJoin, Observable} from 'rxjs';
+import { Observable} from 'rxjs';
+import {filter, switchMap} from 'rxjs/operators';
 
 import { HttpService } from '../../http-service';
 import { Pinnable } from '../../models/Pinnable';
 import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
 import * as _ from 'lodash';
-import {filter, map} from 'rxjs/operators';
+import {PinnableCollectionComponent} from '../pinnable-collection/pinnable-collection.component';
 
 @Component({
   selector: 'app-pass-congif',
@@ -17,11 +18,14 @@ import {filter, map} from 'rxjs/operators';
 })
 export class PassConfigComponent implements OnInit {
 
+    @ViewChild(PinnableCollectionComponent) pinColComponent;
+
     settingsForm: FormGroup;
     schoolName = 'Springfield High School';
     selectedPinnables: Pinnable[];
     pinnable: Pinnable;
     pinnables$: Observable<Pinnable[]>;
+    pinnables;
     icons$;
     colors$;
 
@@ -35,6 +39,7 @@ export class PassConfigComponent implements OnInit {
   ngOnInit() {
       this.buildForm();
       this.pinnables$ = this.httpService.get('v1/pinnables');
+      this.pinnables$.subscribe(res => this.pinnables = res);
       this.icons$ = this.httpService.get('v1/room_icons');
       this.colors$ = this.httpService.get('v1/color_profiles');
 
@@ -58,7 +63,7 @@ export class PassConfigComponent implements OnInit {
 
   buildData(action) {
       let data;
-      let component = OverlayContainerComponent;
+      const component = OverlayContainerComponent;
       switch (action) {
           case 'newRoom': {
               data = {
@@ -129,13 +134,15 @@ export class PassConfigComponent implements OnInit {
           data: data
       });
 
-     overlayDialog.afterClosed().pipe(filter(res => !!res)).subscribe(response => {
-         this.pinnables$ = this.httpService.get('v1/pinnables');
+     overlayDialog.afterClosed()
+         .pipe(switchMap(() => this.httpService.get('v1/pinnables'))).subscribe(res => {
+             this.pinnables = res;
+             this.selectedPinnables = [];
+             this.pinColComponent.clearSelected();
      });
   }
 
   saveChanges() {
-    console.log('request', this.dataChanges);
   }
 
   discard() {

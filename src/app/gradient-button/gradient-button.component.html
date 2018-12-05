@@ -9,17 +9,19 @@
      (mouseenter)="onHover(true)" (mouseleave)="onHover(false)"
      (mousedown)="onPress(true)" (mouseup)="onPress(false)"
      [ngClass]="{'center': !(leftIcon || rightIcon)}">
-  <div class="wrapper">
-    <img *ngIf="leftIcon" [style.width]="leftImageWidth" [style.height]="leftImageHeight" class="icon left-icon" [src]="leftIcon | resolveAsset">
-    <div class="text-content" [style.text-align]="contentAlign">
-      <div class="content-wrapper"
-           style="display: inline-block;"
-           [style.color]="textColor"
-           [style.font-weight]="fontWeight"
-           [style.font-size]="fontSize">
-        <ng-content></ng-content>
+  <div class="wrapper-container">
+    <div class="wrapper">
+      <img *ngIf="leftIcon" [style.width]="leftImageWidth" [style.height]="leftImageHeight" class="icon left-icon" [src]="leftIcon | resolveAsset">
+      <div class="text-content" [style.text-align]="contentAlign">
+        <div class="content-wrapper"
+             style="display: inline-block;"
+             [style.color]="textColor"
+             [style.font-weight]="fontWeight"
+             [style.font-size]="fontSize">
+          <ng-content></ng-content>
+        </div>
       </div>
+      <img *ngIf="rightIcon" class="icon right-icon" [src]="rightIcon | resolveAsset">
     </div>
-    <img *ngIf="rightIcon" class="icon right-icon" [src]="rightIcon | resolveAsset">
   </div>
 </div>
