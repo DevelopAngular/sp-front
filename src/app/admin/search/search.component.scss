@@ -5,6 +5,7 @@
 
 .search-wrapper{
     width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -19,9 +20,14 @@
     margin-bottom: 20px;
 }
 
-.report-button {
+.buttons {
+    display: flex;
     margin-top: 100px;
     margin-bottom: 10px;
+}
+
+.report-button {
+    margin-right: 75px;
     background-color: white;
     width: 250px;
     height: 80px;
@@ -31,7 +37,7 @@
     align-items: center;
     font-size: 17px;
     font-weight: bold;
-    color: darkgray;
+    color: #6c6990;
     box-shadow: 0 0 4px darkgrey;
     cursor: pointer;
 }
@@ -69,15 +75,16 @@
     justify-content: space-between;
 
     .search-button {
-        width: 230px;
-        height: 80px;
         display: flex;
         justify-content: center;
-        box-shadow: 0 0 4px darkgrey;
-        border-radius: 12px;
-        cursor: pointer;
-        background-color: white;
     }
+}
+
+.spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15%;
 }
 
 .default-message{
