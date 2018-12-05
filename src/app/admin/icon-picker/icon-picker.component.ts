@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {HttpService} from '../../http-service';
 
 //
 // class Icon {
@@ -24,15 +25,16 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 })
 export class IconPickerComponent implements OnInit {
 
-  @Input() icons$;
+  icons$;
 
   @Output() selectedEvent: EventEmitter<any> = new EventEmitter();
 
   public selectedIconId;
 
-  constructor() { }
+  constructor(private http: HttpService) { }
 
   ngOnInit() {
+    this.icons$ = this.http.get('v1/room_icons');
   }
 
   changeIcon(icon) {

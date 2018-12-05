@@ -41,7 +41,6 @@ export class OverlayContainerComponent implements OnInit {
 
   color_profile;
   selectedIcon;
-  icons$;
   colors$;
 
   showSearchTeacherOptions: boolean;
@@ -116,7 +115,6 @@ export class OverlayContainerComponent implements OnInit {
       this.buildForm();
 
       this.overlayType = this.dialogData['type'];
-      this.icons$ = this.dialogData['icons$'];
       this.colors$ = this.dialogData['colors$'];
       if (this.dialogData['pinnable']) {
           this.pinnable = this.dialogData['pinnable'];
