@@ -29,7 +29,9 @@ import { NavComponent } from './nav/nav.component'
 import { AccountsDialogComponent } from './accounts-dialog/accounts-dialog.component';
 import { ChartsModule } from 'ng2-charts';
 import { CalendarComponent } from './calendar/calendar.component';
-import {PdfGeneratorService} from './pdf-generator.service';
+import {PdfGeneratorService} from './pdf-generator.service';import { CurrentUserResolver } from './currentUser.resolver';;
+import { RestrictionDummyComponent } from './restriction-dummy/restriction-dummy.component'
+;
 
 @NgModule({
   imports: [
@@ -58,12 +60,15 @@ import {PdfGeneratorService} from './pdf-generator.service';
     AccountsDialogComponent,
     AccountsComponent,
     AccountsRoleComponent,
-    CalendarComponent
-   ],
+    CalendarComponent,
+    RestrictionDummyComponent
+  ],
+
   entryComponents: [AccountsDialogComponent, CalendarComponent],
   providers: [
       //NavbarDataService
     PdfGeneratorService,
+    CurrentUserResolver
   ],
 })
 export class AdminModule {

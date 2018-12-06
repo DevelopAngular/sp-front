@@ -1,8 +1,9 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { LoadingService } from '../../loading.service';
 import { DataService } from '../../data-service';
 import { User } from '../../models/User';
+import {ReplaySubject, Subject} from 'rxjs';
 
 
 @Component({
@@ -12,22 +13,25 @@ import { User } from '../../models/User';
 })
 export class NavComponent implements OnInit {
   buttons = [
-            {title: 'Dashboard', route:'dashboard', imgUrl:'./assets/Dashboard'},
-            {title: 'Hall Monitor', route:'hallmonitor', imgUrl:'./assets/Hallway'},
-            {title: 'Search', route:'search', imgUrl:'./assets/Search'},
-            {title: 'Accounts & Profiles', route:'accounts', imgUrl:'./assets/Accounts'},
-            {title: 'Pass Configuration', route:'passconfig', imgUrl:'./assets/Arrow'},
-            {title: 'Feedback', route:'feedback', imgUrl:'./assets/Feedback'},
-            {title: 'Support', route:'support', imgUrl:'./assets/Support'},
+            {title: 'Dashboard', route:'dashboard', imgUrl:'./assets/Dashboard', requiredRoles: ['_profile_admin', 'admin_dashboard']},
+            {title: 'Hall Monitor', route:'hallmonitor', imgUrl:'./assets/Hallway', requiredRoles: ['_profile_admin', 'admin_hall_monitor']},
+            {title: 'Search', route:'search', imgUrl:'./assets/Search', requiredRoles: ['_profile_admin', 'admin_search']},
+            {title: 'Accounts & Profiles', route:'accounts', imgUrl:'./assets/Accounts', requiredRoles: ['_profile_admin', 'admin_accounts']},
+            {title: 'Pass Configuration', route:'passconfig', imgUrl:'./assets/Arrow', requiredRoles: ['_profile_admin', 'admin_dashboard']},
+            {title: 'Feedback', route:'feedback', imgUrl:'./assets/Feedback', requiredRoles: ['_profile_admin']},
+            {title: 'Support', route:'support', imgUrl:'./assets/Support', requiredRoles: ['_profile_admin']},
             ]
-
+  fakeMenu: ReplaySubject<boolean> = new ReplaySubject<boolean>();
   tab:string = "dashboard"
+  currentUser: User;
 
-  user:User;
+  user;
 
-  constructor(public router:Router, private dataService: DataService, public loadingService: LoadingService, private _zone: NgZone) { }
+  constructor(public router:Router, private activeRoute: ActivatedRoute, private dataService: DataService, public loadingService: LoadingService, private _zone: NgZone) { }
 
   ngOnInit() {
+
+
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit[urlSplit.length-1];
 
@@ -42,16 +46,42 @@ export class NavComponent implements OnInit {
     this.dataService.currentUser
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {
+
         this._zone.run(() => {
           this.user = user;
           this.dataService.updateInbox(this.tab!=='settings');
         });
       });
+
+    
+    console.log('CurrentRoute ===> \n', this.activeRoute.snapshot, );
+
+    this.activeRoute.data.subscribe((_resolved: any) => {
+        this.currentUser =_resolved.currentUser;
+        console.log('CurrentRoute ===> \n', (this.activeRoute.snapshot as any)._routerState.url, !this.hasRoles(this.buttons[0].requiredRoles));
+
+        this.buttons.forEach((button) => {
+        console.log(button);
+
+          if (
+            ((this.activeRoute.snapshot as any)._routerState.url == `/admin/${button.route}`)
+              &&
+            !this.hasRoles(button.requiredRoles)
+          ) {
+            console.log("suka davay next ")
+            this.fakeMenu.next(true);
+          }
+        });
+    })
   }
 
   route(route:string){
     this.tab = route;
     this.router.navigateByUrl('/admin/' + this.tab);
-    this.tab = this.tab;    
+    this.tab = this.tab;
+  }
+
+  hasRoles(roles: string[]) {
+    return roles.every((_role) => this.currentUser.roles.includes(_role));
   }
 }

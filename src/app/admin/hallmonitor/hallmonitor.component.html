@@ -26,23 +26,38 @@
     </div>
 
     <div class="right-content">
+      <div class="right-content-internal">
         <div class="right-content-header">
-            <div class="report-text">
-                <img [src]="'./assets/Report (Red).png' | resolveAsset" class="report-icon">
-                <div class="text">Reported Students</div>
+          <div class="report-text">
+            <img [src]="'./assets/Report (Red).png' | resolveAsset" class="report-icon">
+            <div class="text">Reported Students</div>
+          </div>
+          <img [src]="'./assets/Calendar (Blue).png' | resolveAsset" class="calendar-icon" (click)="openDateDialog($event)">
+        </div>
+        <div class="reports">
+          <div *ngIf="studentreport.length">
+
+            <div *ngFor="let report of studentreport">
+
+              <app-display-report-cell
+                [student_name]="report.student_name"
+                [issuer]="report.issuer"
+                [created]="report.created"
+                [message]="report.message || 'empty'"
+                [hasDivider]="true"
+                [righticon]="'./assets/Print (Grey).png'"></app-display-report-cell>
+              <div class="divider"></div>
+
             </div>
-            <img [src]="'./assets/Calendar (Blue).png' | resolveAsset" class="calendar-icon" (click)="openDateDialog($event)">
+          </div>
+          <div *ngIf="!studentreport.length" >
+            <p [style.color]="'#666666'">
+              There are no reports for the selected date and/or search.
+            </p>
+            <div class="divider"></div>
+          </div>
         </div>
-        <div class="reports" *ngFor="let report of studentreport">
-          <app-display-report-cell
-             [student_name]="report.student_name"
-             [issuer]="report.issuer"
-             [created]="report.created"
-             [message]="report.message || 'empty'"
-             [hasDivider]="true"
-             [righticon]="'./assets/Print (Grey).png'"></app-display-report-cell>
-          <div class="divider"></div>
-        </div>
+      </div>
     </div>
 </div>
 

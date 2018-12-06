@@ -1,0 +1,24 @@
+:host{
+    width: 100%;
+    height: 100%;
+    .dummy-wrapper {
+        width: inherit;
+        height: inherit;
+        display: flex;
+        flex-direction: column;
+        .dummy{
+            box-sizing: border-box;
+            margin-top: 150px;
+            padding: 30px;
+            font-size: 24px;
+            font-style: bold;
+            color: #777777;
+            text-align: center;
+        }
+        .go_back{
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+    }
+}

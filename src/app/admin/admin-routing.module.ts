@@ -9,10 +9,15 @@ import { FeedbackComponent } from './feedback/feedback.component';
 import { SupportComponent } from './support/support.component';
 import {AccountsComponent} from './accounts/accounts.component';
 import {AccountsRoleComponent} from './accounts-role/accounts-role.component';
+import { CurrentUserResolver } from './currentUser.resolver';
 
 const routes: Routes = [
   {
-    path: '', component: AdminPageComponent, children: [
+    path: '', component: AdminPageComponent,
+    resolve: {
+      currentUser: CurrentUserResolver 
+    },
+    children: [
       {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
       {path: 'dashboard', component: DashboardComponent},
       {path: 'hallmonitor', component: HallmonitorComponent},

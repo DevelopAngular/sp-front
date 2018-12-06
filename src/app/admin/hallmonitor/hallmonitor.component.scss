@@ -33,6 +33,8 @@
 }
 
 .hallmonitor-wrapper {
+  height: 100%;
+  width: 100%;
   display: flex;
   background-color: #f8faff;
 }
@@ -51,59 +53,63 @@
 }
 
 .right-content {
-  margin: 60px 70px 0 70px;
+  margin: 60px 70px 20px 70px;
   width: 40%;
   border-radius: 10px;
   box-shadow: 0 0 2px darkgrey;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
   background-color: white;
-
-  .right-content-header {
-    display: flex;
-    width: 90%;
-    height: 60px;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 10px;
-
-    .report-text {
+  overflow: hidden;
+  .right-content-internal{
+    height: calc(100% - 10px);
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+    margin: 5px 0;
+    overflow-y: auto;
+    .right-content-header {
       display: flex;
+      width: 90%;
+      height: 60px;
+      justify-content: space-between;
       align-items: center;
+      margin-top: 10px;
 
-      .report-icon {
-        width: 39px;
-        height: 39px;
+      .report-text {
+        display: flex;
+        align-items: center;
+
+        .report-icon {
+          width: 39px;
+          height: 39px;
+        }
+
+        .text {
+          font-size: 25px;
+          margin-left: 18px;
+          font-weight: bold;
+          color: #3d396b;
+        }
       }
 
-      .text {
-        font-size: 25px;
-        margin-left: 18px;
-        font-weight: bold;
-        color: #3d396b;
+      .calendar-icon {
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
       }
     }
 
-    .calendar-icon {
-      width: 30px;
-      height: 30px;
-      cursor: pointer;
-    }
-  }
+    .reports {
+      width: 95%;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
 
-  .reports {
-    width: 95%;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-
-    .divider {
-      width: 100%;
-      height: 1px;
-      background: darkgray;
-      margin-bottom: 20px;
+      .divider {
+        width: 100%;
+        height: 1px;
+        background: darkgray;
+        margin-bottom: 20px;
+      }
     }
   }
 
