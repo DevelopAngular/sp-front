@@ -1,5 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {HttpService} from '../../http-service';
+import {ReplaySubject} from 'rxjs';
+import {shareReplay} from 'rxjs/operators';
 
 //
 // class Icon {
@@ -34,7 +36,7 @@ export class IconPickerComponent implements OnInit {
   constructor(private http: HttpService) { }
 
   ngOnInit() {
-    this.icons$ = this.http.get('v1/room_icons');
+    this.icons$ = this.http.get('v1/room_icons').pipe(shareReplay(1));
   }
 
   changeIcon(icon) {

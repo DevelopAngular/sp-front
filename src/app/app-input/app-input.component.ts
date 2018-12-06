@@ -15,102 +15,22 @@ export class AppInputComponent implements OnInit {
 
     @Input() input_type: string = "text";
     @Input() input_class: string;
-    @Input() input_value: string | number = "";
-    @Input() Success: boolean;
+    @Input() input_value: string | number;
     @Input() input_label: string;
     @Input() placeholder: string = '';
+
+    @Input() formGroup;
+    @Input() controlName;
+
     @Output() onUpdate = new EventEmitter<string | number>();
-    @Input() IsRequired: boolean = false;
-    @Input() IsDate: boolean = false;
-
-    input_DateRange: string;
-
-    @ViewChild('appInput') input: ElementRef;
-
-    showDates: boolean = false;
-
-    min: Date = new Date('December 17, 1995 03:24:00');
-    searchDate_From$ = new BehaviorSubject<Date>(null);
-    searchDate_To$ = new BehaviorSubject<Date>(null);
-
-    @Output() onUpdateDateRange: EventEmitter<string> = new EventEmitter();
 
     constructor(public dialog: MatDialog) {
-        this.setSearchDate_From(new Date());
-        this.setSearchDate_To(new Date());
     }
 
     ngOnInit() {
-        if (this.IsRequired)
-            this.Success = false;
-    }
-
-    ChangeStatus(status) {
-        this.Success = status;
-    }
-
-    UpdateInputValue(){
-        this.input_value = this.input.nativeElement.value;
-        this.onUpdate.emit(this.input_value);
-    }
-
-  OpenDatePicker()
-  {
-      if (this.IsDate)
-      {
-          //this.dialog.open(HallDateTimePickerComponent, {
-          //    width: '750px',
-          //    panelClass: 'form-dialog-container',
-          //    backdropClass: 'custom-backdrop',
-          //    data: { 'forLater': true, 'forStaff': true }
-          //});
-          //this.showDates = !this.showDates;
-          //this.showDates = true;
-          // const dialogRef = this.dialog.open(HallDateTimePickerComponent, {
-          //     width: '750px',
-          //     panelClass: 'form-dialog-container',
-          //     backdropClass: 'custom-backdrop',
-          //     data: {input_DateRange: this.input_DateRange}
-          // });
-          //
-          // dialogRef.afterClosed().subscribe(data => {
-          //   if(data != undefined){
-          //     console.log("Result :" + data['input_DateRange']);
-          //     this.input_DateRange = data['input_DateRange'];
-          //     this.input.nativeElement.value = this.input_DateRange;
-          //     this.onUpdateDateRange.emit(this.input_DateRange);
-          //   }
-          // });
-          this.showDates = !this.showDates;
-      }
-  }
-
-    setSearchDate_From(date: Date) {
-        if (date != null || date != undefined) {
-            this.searchDate_From$.next(date);
-        }
-    }
-
-    get searchDate_From() {
-        return this.searchDate_From$.value;
-    }
-
-    setSearchDate_To(date: Date) {
-        if (date != null || date != undefined) {
-            this.searchDate_To$.next(date);
-        }
-    }
-    get searchDate_To() {
-        return this.searchDate_To$.value;
-    }
-
-    get getDisplayRange() {
-        return Util.formatDateTimeForDateRange(this.searchDate_From, this.searchDate_To);
-    }
-
-    DateRangeClick(){
-        this.showDates = !this.showDates;
-        this.input.nativeElement.value = Util.formatDateTimeForDateRange(this.searchDate_From, this.searchDate_To);
-        this.onUpdateDateRange.emit(Util.formatDateTimeForDateRange(this.searchDate_From, this.searchDate_To));
+        this.controlName.setValue(this.input_value);
+        this.controlName.valueChanges.subscribe(res => {
+            this.onUpdate.emit(res);
+        });
     }
 }
