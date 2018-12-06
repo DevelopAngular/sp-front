@@ -21,9 +21,9 @@ export class PdfGeneratorService {
     const thisMoment = new Date();
     const time = thisMoment.getHours() < 12
                           ?
-                `${thisMoment.getHours()}:${thisMoment.getMinutes()} AM`
+                `${thisMoment.getHours()}:${thisMoment.getMinutes() < 10 ? '0' : ''}${thisMoment.getMinutes()} AM`
                           :
-                `${thisMoment.getHours() - 12}:${thisMoment.getMinutes()} PM`;
+                `${thisMoment.getHours() - 12}:${thisMoment.getMinutes() < 10 ? '0' : ''}${thisMoment.getMinutes()} PM`;
     const prettyNow = `${thisMoment.getMonth() + 1}/${thisMoment.getDate()}/${thisMoment.getFullYear()} at ${time}`;
 
     let heading = {
@@ -40,6 +40,11 @@ export class PdfGeneratorService {
         break;
       }
       case('search'): {
+
+        let _title =
+
+
+
         heading = {
           header: 'Administrative Pass Report',
           title: 'All Passes, Searching by Date & Time and Room Name: 8/7, 11:05 AM to 8/9, 1:43 PM; Gardner, Nurse as Both Origin and Destination'

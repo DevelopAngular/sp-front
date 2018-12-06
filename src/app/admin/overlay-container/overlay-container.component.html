@@ -275,7 +275,7 @@
           <app-color-pallet-picker [selectedColorProfile]="color_profile" [colors$]="colors$" (selectedEvent)="changeColor($event)"></app-color-pallet-picker>
         </div>
         <div class="icon-picker">
-          <app-icon-picker (selectedEvent)="selectedIcon=$event"></app-icon-picker>
+          <app-icon-picker (selectedEvent)="selectedIcon=$event; show($event)"></app-icon-picker>
         </div>
       </div>
 

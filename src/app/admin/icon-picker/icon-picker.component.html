@@ -2,6 +2,10 @@
   <div class="icon-title">Icon</div>
   <div class="icon-collection">
     <div class="icon-container" *ngFor="let icon of icons$ | async" (click)="changeIcon(icon)">
-      <img class="icon" [ngClass]="{ greyIcon: selectedIconId !== icon.id }" [src]="(selectedIconId === icon.id ? icon.active_icon : icon.inactive_icon)"></div>
+      <div class="icon-wrapper">
+        <img class="icon"  [ngStyle]="{'opacity': selectedIconId === icon.id && icon.active ? 1 : 0, 'z-index': icon.active ? 1000 : 100}" [src]="icon.active_icon">
+        <img class="icon greyIcon" [ngStyle]="{'opacity': selectedIconId === icon.id && icon.active ? 0 : 1, 'z-index': icon.active ? 100 : 1000}" [src]="icon.inactive_icon">
+      </div>
+    </div>
   </div>
 </div>

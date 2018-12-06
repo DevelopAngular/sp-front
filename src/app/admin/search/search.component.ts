@@ -82,7 +82,7 @@ export class SearchComponent implements OnInit {
                 if (hallPass.travel_type === 'one_way') { travelType = 'One Way'; }
                 if (hallPass.travel_type === 'round_trip') { travelType = 'Round Trip'; }
                 if (hallPass.travel_type === 'both') { travelType = 'Both'; }
-               const oldDate = new Date('2013-03-10T02:00:00Z');
+               const oldDate = new Date(hallPass.created);
                const newDate = oldDate.getFullYear() + '-' + 0 + (oldDate.getMonth() + 1) + '-' + oldDate.getDate();
                return {
                    'Student Name': hallPass.student.first_name + ' ' + hallPass.student.last_name,
@@ -118,7 +118,7 @@ export class SearchComponent implements OnInit {
     this.tableData = this.tableData.map((row) => {
       for (const key in row) {
         row[key] = typeof row[key] !== 'string' ? row[key].toString() : row[key];
-        console.log(row);
+        // console.log(row);
       }
       return row;
     })

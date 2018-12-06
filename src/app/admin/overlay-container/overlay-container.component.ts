@@ -387,4 +387,7 @@ export class OverlayContainerComponent implements OnInit {
       this.showSearchTeacherOptions = event;
       console.log('EMMIIITT', event);
   }
+  show(e) {
+    console.log(e)
+  }
 }

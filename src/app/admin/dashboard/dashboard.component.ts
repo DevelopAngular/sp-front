@@ -42,15 +42,18 @@ export class DashboardComponent implements OnInit {
       this.http.get('v1/hall_passes?limit=100&sort=created'),
       this.http.get('v1/hall_passes/stats'),
       this.http.get('v1/hall_passes?active=true'),
+      // this.http.get('v1/hall_passes'),
       this.http.get('v1/event_reports'),
     )
     .subscribe((result: any[]) => {
       this.passStatistic = result[1][0]['rows'];
       this.averagePassTime = result[1][1]['value'];
-      this.activeHallpasses = result[2];
+      // this.activeHallpasses = result[2];
+      this.activeHallpasses = result[0].results;
       this.reports =  result[3];
       // this.reports = [];
-    })
+    });
+
 
     this.gradient = this.ctx.nativeElement.getContext('2d').createLinearGradient(0, 380, 0, 0);
     this.gradient.addColorStop(0.5, 'rgba(0,207,49,0.01)');
@@ -144,14 +147,10 @@ export class DashboardComponent implements OnInit {
                   'Student Name': hp.student.display_name,
                   'Origin': hp.origin.title,
                   'Destination': hp.destination.title,
-                  'Travel Type': hp.destination.travel_types
-                      .map((tt) => {
-                        const _tt: any = tt
+                  // 'Travel Type': hp.travel_type
+                  'Travel Type': hp.travel_type
                                         .split('_')
-                                        .map(chunk => chunk.slice(0, 1).toUpperCase()).join('');
-                        return _tt;
-                      })
-                      .join(', '),
+                                        .map(chunk => chunk.slice(0, 1).toUpperCase()).join('')
                 };
               });
             })

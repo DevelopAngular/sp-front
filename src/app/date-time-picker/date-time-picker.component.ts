@@ -10,7 +10,7 @@ import { Util } from '../../Util';
 export class DateTimePickerComponent implements OnInit, OnDestroy{
 
   @Input() showTime: boolean = true;
-  @Input() min: Date = new Date();
+  @Input() min: Date;
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
 
   timeS = '--:--';
