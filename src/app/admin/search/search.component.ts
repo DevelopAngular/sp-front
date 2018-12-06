@@ -82,14 +82,19 @@ export class SearchComponent implements OnInit {
                 if (hallPass.travel_type === 'one_way') { travelType = 'One Way'; }
                 if (hallPass.travel_type === 'round_trip') { travelType = 'Round Trip'; }
                 if (hallPass.travel_type === 'both') { travelType = 'Both'; }
-               const oldDate = new Date(hallPass.created);
-               const newDate = oldDate.getFullYear() + '-' + 0 + (oldDate.getMonth() + 1) + '-' + oldDate.getDate();
-               return {
+                const reportDate = new Date(hallPass.created);
+                const time = reportDate.getHours() < 12
+                    ?
+                    `${reportDate.getHours()}:${reportDate.getMinutes() < 10 ? '0' : ''}${reportDate.getMinutes()} AM`
+                    :
+                    `${reportDate.getHours() - 12}:${reportDate.getMinutes() < 10 ? '0' : ''}${reportDate.getMinutes()} PM`;
+                const prettyReportDate = `${reportDate.getMonth() + 1}/${reportDate.getDate()}  ${time}`;
+                return {
                    'Student Name': hallPass.student.first_name + ' ' + hallPass.student.last_name,
                    'Origin': hallPass.origin.title,
                    'Destination': hallPass.destination.title,
                    'Travel Type': travelType,
-                   'Date & Time': newDate,
+                   'Date & Time': prettyReportDate,
                    'Duration': hallPass.destination.max_allowed_time
                };
             });
@@ -113,18 +118,19 @@ export class SearchComponent implements OnInit {
   }
 
   previewPDF() {
-    console.log(this.tableData);
+      console.log(this.tableData);
+      if (this.selectedReport.length > 0) {
+          this.selectedReport = this.selectedReport.map((row) => {
+              for (const key in row) {
+                  row[key] = typeof row[key] !== 'string' ? row[key].toString() : row[key];
+                  console.log(row);
+              }
+              return row;
+          });
 
-    this.tableData = this.tableData.map((row) => {
-      for (const key in row) {
-        row[key] = typeof row[key] !== 'string' ? row[key].toString() : row[key];
-        // console.log(row);
+
+          this.pdf.generate(this.selectedReport, null, 'l', 'search');
       }
-      return row;
-    })
-
-
-    this.pdf.generate(this.tableData, null, 'l', 'search');
   }
 
 }
