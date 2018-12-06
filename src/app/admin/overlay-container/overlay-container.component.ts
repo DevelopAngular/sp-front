@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 import {forkJoin, Observable} from 'rxjs';
@@ -108,7 +108,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   get isValidForm() {
-      return !this.requireValidator(this.roomName) && !this.requireValidator(this.roomNumber) && !this.requireValidator(this.timeLimit);
+      return !this.requireValidator(this.roomName) && !this.requireValidator(this.roomNumber) && this.form.get('timeLimit').valid;
   }
 
   ngOnInit() {
@@ -149,7 +149,11 @@ export class OverlayContainerComponent implements OnInit {
   buildForm() {
     this.form = new FormGroup({
         isEdit: new FormControl(true),
-        file: new FormControl()
+        file: new FormControl(),
+        roomName: new FormControl('', [Validators.required]),
+        folderName: new FormControl('', [Validators.required]),
+        roomNumber: new FormControl('', [Validators.required]),
+        timeLimit: new FormControl(0, [Validators.required, Validators.pattern('^[0-9]*[.,]?[0-9]+$')])
     });
   }
 
@@ -385,7 +389,10 @@ export class OverlayContainerComponent implements OnInit {
 
   isEmitTeachers(event) {
       this.showSearchTeacherOptions = event;
-      console.log('EMMIIITT', event);
+  }
+
+  onUpdate(time) {
+      this.timeLimit = time;
   }
   show(e) {
     console.log(e)
