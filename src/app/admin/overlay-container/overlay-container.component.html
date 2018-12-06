@@ -34,7 +34,7 @@
                              (buttonClick)="done()"
         >
           Publish</app-gradient-button>
-        <div *ngIf="isValidForm && (overlayType === 'editRoom' || overlayType === 'newRoom'|| (overlayType === 'newFolder' && selectedRooms.length > 0))" class="button" (click)="onCancel()">Publish</div>
+        <div *ngIf="isValidForm || (overlayType === 'editRoom' || overlayType === 'newRoom'|| (overlayType === 'newFolder' && selectedRooms.length > 0))" class="button" (click)="onCancel()">Publish</div>
         <div *ngIf="!isValidForm && overlayType !== 'edit' && overlayType !== 'editRoom' && overlayType !== 'newFolder'" style="color: white">Incomplete</div>
       </div>
     </div>
@@ -153,7 +153,7 @@
         </div>
       </div>
 
-      <div class="footer-delete-button" *ngIf="(overlayType === 'editRoom' && isValidForm) && !showSearchTeacherOptions">
+      <div class="footer-delete-button" *ngIf="(overlayType === 'editRoom') && !showSearchTeacherOptions">
         <app-gradient-button
                 [gradient]="'#F52B4F, #F37426'"
                 [minHeight]="'40px'"

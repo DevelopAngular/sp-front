@@ -28,7 +28,9 @@ export class AppInputComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.controlName.setValue(this.input_value);
+        if (this.input_value) {
+            this.controlName.setValue(this.input_value);
+        }
         this.controlName.valueChanges.subscribe(res => {
             this.onUpdate.emit(res);
         });

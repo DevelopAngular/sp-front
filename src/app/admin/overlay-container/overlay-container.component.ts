@@ -108,7 +108,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   get isValidForm() {
-      return !this.requireValidator(this.roomName) && !this.requireValidator(this.roomNumber) && this.form.get('timeLimit').valid;
+      return this.form.get('roomName').valid && this.form.get('roomNumber').value && this.form.get('timeLimit').valid;
   }
 
   ngOnInit() {
@@ -153,7 +153,7 @@ export class OverlayContainerComponent implements OnInit {
         roomName: new FormControl('', [Validators.required]),
         folderName: new FormControl('', [Validators.required]),
         roomNumber: new FormControl('', [Validators.required]),
-        timeLimit: new FormControl(0, [Validators.required, Validators.pattern('^[0-9]*[.,]?[0-9]+$')])
+        timeLimit: new FormControl(null, [Validators.required, Validators.pattern('^[0-9]*[.,]?[0-9]+$')])
     });
   }
 
@@ -242,6 +242,7 @@ export class OverlayContainerComponent implements OnInit {
                 id = location.location.id;
                 data = location.location;
                 data.category = this.folderName;
+                data.teachers = data.teachers.map(t => t.id);
             }
             if (!location.location) {
                 id = location.id;
