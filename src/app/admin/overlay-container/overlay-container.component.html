@@ -34,7 +34,7 @@
                              (buttonClick)="done()"
         >
           Publish</app-gradient-button>
-        <div *ngIf="isValidForm || (overlayType === 'editRoom' || overlayType === 'newRoom'|| (overlayType === 'newFolder' && selectedRooms.length > 0))" class="button" (click)="onCancel()">Publish</div>
+        <div *ngIf="isValidForm && (overlayType === 'editRoom' || overlayType === 'newRoom' || (overlayType === 'newFolder' && selectedRooms.length > 0))" class="button" (click)="onCancel()">Publish</div>
         <div *ngIf="!isValidForm && overlayType !== 'edit' && overlayType !== 'editRoom' && overlayType !== 'newFolder'" style="color: white">Incomplete</div>
       </div>
     </div>
@@ -93,7 +93,7 @@
         <div class="room-number" *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'">
           <app-input
                   [input_label]="'Room Number'"
-                  [input_value]="roomNumber"
+                  [input_value]="roomNumber ? roomNumber : ''"
                   [placeholder]="'Number'"
                   (onUpdate)="roomNumber=$event"
                   [formGroup]="form"
@@ -126,7 +126,7 @@
         >
           <app-input
                   [input_label]="'Time Limit'"
-                  [input_value]="timeLimit"
+                  [input_value]="timeLimit ? timeLimit : ''"
                   [placeholder]="'minutes'"
                   (onUpdate)="onUpdate($event)"
                   [formGroup]="form"
@@ -289,7 +289,7 @@
 
     <div class="divider"></div>
     <div class="right-content">
-      <div style="position: relative" *ngIf="overlayType !== 'edit'">
+      <div style="position: relative; width: 100%; height: 100%" *ngIf="overlayType !== 'edit'">
         <div class="inactive" *ngIf="hideAppearance"></div>
         <div class="right-content-title">Appearance</div>
         <div class="color-picker">
