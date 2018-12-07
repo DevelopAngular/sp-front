@@ -68,7 +68,6 @@ export class NavComponent implements OnInit {
               &&
             !this.hasRoles(button.requiredRoles)
           ) {
-            console.log("suka davay next ")
             this.fakeMenu.next(true);
           }
         });

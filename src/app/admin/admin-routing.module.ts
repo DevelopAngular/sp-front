@@ -15,7 +15,7 @@ const routes: Routes = [
   {
     path: '', component: AdminPageComponent,
     resolve: {
-      currentUser: CurrentUserResolver 
+      currentUser: CurrentUserResolver
     },
     children: [
       {path: '', redirectTo: 'dashboard', pathMatch: 'full'},

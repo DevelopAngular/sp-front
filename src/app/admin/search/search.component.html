@@ -1,8 +1,8 @@
 <div class="search-wrapper">
   <div class="input-header">
-    <app-round-input [width]="'260px'" [labelText]="'By Student Name'" [type]="'multiuser'" [placeholder]="'Search Students'" (onselectionupdate)="studentsEmit($event)"></app-round-input>
-    <app-round-input [width]="'260px'" [labelText]="'Date and Time'" [type]="'dates'" [placeholder]="'Search date & time range'" (ontextupdate)="dateEmit($event)"></app-round-input>
-    <app-round-input [width]="'260px'" [labelText]="'By Room Name'" [type]="'multilocation'" [placeholder]="'Search Rooms'" (onselectionupdate)="roomEmit($event)" (ontoggleupdate)="roomSearchType=$event"></app-round-input>
+      <app-round-input [width]="'260px'" [labelText]="'By Student Name'" [type]="'multiuser'" [placeholder]="'Search Students'" (onselectionupdate)="studentsEmit($event)"></app-round-input>
+      <app-round-input [width]="'260px'" [labelText]="'Date and Time'" [type]="'dates'" [placeholder]="'Search date & time range'" (ontextupdate)="dateEmit($event)"></app-round-input>
+      <app-round-input [width]="'260px'" [labelText]="'By Room Name'" [type]="'multilocation'" [placeholder]="'Search Rooms'" (onselectionupdate)="roomEmit($event)" (ontoggleupdate)="roomSearchType=$event"></app-round-input>
   </div>
   <div class="content">
   <div class="search-content-table" *ngIf="hasSearched">
@@ -11,7 +11,7 @@
           All Passes, Searching by {{ (selectedStudents && selectedStudents.length > 0 ? 'Student Name' : '') + (selectedDate && selectedDate !== '' ? ',Date & Time' : '') + (selectedRooms && selectedRooms.length > 0 ? ',Room Name' : '')}}
         </div>
         <div class="divider"></div>
-        <app-data-table [data]="tableData" *ngIf="tableData.length > 0 && !spinner" [height]="'450px'" (selectedUsers)="selectedReport=$event"></app-data-table>
+        <app-data-table [data]="tableData" *ngIf="tableData.length > 0 && !spinner" [height]="'540px'" (selectedUsers)="selectedReport=$event"></app-data-table>
         <div class="nopass-text" *ngIf="tableData.length === 0 && !spinner">
           There are no passes that match the search parameters!
         </div>
@@ -34,17 +34,12 @@
         </div>
       </div>
       <div class="spinner" *ngIf="spinner">
-        <div class="loading-theme"  style="display: flex; justify-content: center; align-items: center;">
+        <div class="loading-theme"  style="display: flex; justify-content: center; align-items: center; margin-top: 150px; margin-bottom: 200px">
           <mat-spinner [color]="'accent'" [diameter]="'60'"></mat-spinner>
         </div>
       </div>
     </div>
     <div class="buttons">
-      <div class="report-button" (click)="previewPDF()" *ngIf="hasSearched">
-        Generate Report<br/>
-        {{ selectedReport.length }} passes selected
-      </div>
-
       <app-gradient-button
                 [minHeight]="'80px'"
                 [style.width]="'230px'"
@@ -56,6 +51,10 @@
                 [leftImageHeight]="'30px'"
         >
           Search</app-gradient-button>
+      <div class="report-button" (click)="previewPDF()" *ngIf="hasSearched">
+        Generate Report<br/>
+        {{ selectedReport.length }} passes selected
+      </div>
     </div>
   </div>
 </div>
