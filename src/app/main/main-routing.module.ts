@@ -6,10 +6,11 @@ import { MyRoomComponent } from '../my-room/my-room.component';
 import { PassesComponent } from '../passes/passes.component';
 import { SettingsComponent } from '../settings/settings.component';
 import { SignOutComponent } from '../sign-out/sign-out.component';
+import {CurrentUserResolver} from '../currentUser.resolver';
 
 const routes: Routes = [
   {
-    path: '', component: MainPageComponent, children: [
+    path: '', component: MainPageComponent, resolve: { currentUser: CurrentUserResolver }, children: [
       {path: '', redirectTo: 'passes', pathMatch: 'full'},
       {path: 'passes', component: PassesComponent},
       {path: 'hallmonitor', component: HallMonitorComponent},

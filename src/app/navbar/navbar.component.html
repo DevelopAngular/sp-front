@@ -4,10 +4,26 @@
   <div class="heading grow">
     <app-smartpass-logo></app-smartpass-logo>
   </div>
-  <div [style.display]="isStaff?'':'none'" class="teacherNav">
-    <app-nav-button [selected]="tab==='passes'" [content]="'Passes'" [icon]="'./assets/Arrow'" (onClick)="updateTab('passes')"></app-nav-button>
-    <app-nav-button [selected]="tab==='hallmonitor'" [content]="'Hall Monitor'" [icon]="'./assets/Hallway'" (onClick)="updateTab('hallmonitor')"></app-nav-button>
-    <app-nav-button [selected]="tab==='myroom'" [content]="'My Room'" [icon]="'./assets/My Room'" (onClick)="updateTab('myroom')"></app-nav-button>
+  <div *ngIf="isStaff" class="teacherNav">
+    <div *ngFor="let button of buttons">
+      <ng-container *ngIf="hasRoles(button.requiredRoles)">
+        <app-nav-button
+                [selected]="button.tab"
+                [content]="button.title"
+                [icon]="button.imgUrl"
+                (onClick)="updateTab(button.route)">
+        </app-nav-button>
+      </ng-container>
+    </div>
+    <div *ngFor="let button of buttons">
+      <ng-container *ngIf="fakeMenu | async">
+        <app-nav-button
+                [selected]="button.tab"
+                [content]="button.title"
+                [icon]="button.imgUrl">
+        </app-nav-button>
+      </ng-container>
+    </div>
   </div>
   <div class="user-info">
     <div class="name">{{ user?user.display_name:'' }}</div>

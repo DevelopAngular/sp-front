@@ -28,6 +28,15 @@ import { DisplayReportCellComponent } from '../display-report-cell/display-repor
 import {PassCollectionComponent} from '../pass-collection/pass-collection.component';
 import {PassTileComponent} from '../pass-tile/pass-tile.component';
 import {PassCellComponent} from '../pass-cell/pass-cell.component';
+import { RestrictionDummyComponent } from '../admin/restriction-dummy/restriction-dummy.component';
+import {BackButtonComponent} from '../admin/back-button/back-button.component';
+import {PassCardComponent} from '../pass-card/pass-card.component';
+import {PassCardTemplateComponent} from '../pass-card-template/pass-card-template.component';
+import {TravelViewComponent} from '../travel-view/travel-view.component';
+import {DurationPickerComponent} from '../duration-picker/duration-picker.component';
+import {CardButtonComponent} from '../card-button/card-button.component';
+import {PagerComponent} from '../pager/pager.component';
+
 
 
 @NgModule({
@@ -67,7 +76,18 @@ import {PassCellComponent} from '../pass-cell/pass-cell.component';
       PassCollectionComponent,
       PassTileComponent,
       PassCellComponent,
+      RestrictionDummyComponent,
+      BackButtonComponent,
+      PassCardComponent,
+      PassCardTemplateComponent,
+      TravelViewComponent,
+      DurationPickerComponent,
+      CardButtonComponent,
+      PagerComponent,
   ],
+    entryComponents: [
+        PassCardComponent,
+    ],
   exports: [
     ReactiveFormsModule,
     MatTableModule,
@@ -87,6 +107,13 @@ import {PassCellComponent} from '../pass-cell/pass-cell.component';
       PassCollectionComponent,
       PassTileComponent,
       PassCellComponent,
+      RestrictionDummyComponent,
+      BackButtonComponent,
+      PassCardTemplateComponent,
+      TravelViewComponent,
+      DurationPickerComponent,
+      CardButtonComponent,
+      PagerComponent,
   ],
 })
 export class SharedModule {

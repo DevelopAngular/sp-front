@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { BackButtonComponent } from '../back-button/back-button.component';
 import { DataTableComponent } from '../data-table/data-table.component';
 import { DateInputComponent } from '../date-input/date-input.component';
 import { NavComponent } from '../nav/nav.component';
@@ -47,7 +46,6 @@ import { LocationSearchComponent } from '../location-search/location-search.comp
   ],
   declarations: [
       ToggleInputComponent,
-      BackButtonComponent,
       ColorPalletPickerComponent,
       DataTableComponent,
       DateInputComponent,
@@ -67,7 +65,6 @@ import { LocationSearchComponent } from '../location-search/location-search.comp
       MatChipsModule,
       MatIconModule,
       ToggleInputComponent,
-      BackButtonComponent,
       ColorPalletPickerComponent,
       DataTableComponent,
       DateInputComponent,

@@ -9,7 +9,7 @@ import { FeedbackComponent } from './feedback/feedback.component';
 import { SupportComponent } from './support/support.component';
 import {AccountsComponent} from './accounts/accounts.component';
 import {AccountsRoleComponent} from './accounts-role/accounts-role.component';
-import { CurrentUserResolver } from './currentUser.resolver';
+import { CurrentUserResolver } from '../currentUser.resolver';
 
 const routes: Routes = [
   {

@@ -1,4 +1,7 @@
 <app-navbar></app-navbar>
-<ng-container *ngIf="loginService.isAuthenticated$ | async">
+<ng-container *ngIf="!isTeacher()">
+  <app-restriction-dummy></app-restriction-dummy>
+</ng-container>
+<ng-container *ngIf="isTeacher() && loginService.isAuthenticated$ | async">
   <router-outlet></router-outlet>
 </ng-container>

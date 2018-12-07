@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 
 import 'rxjs/add/operator/map';
 import { GoogleLoginService } from '../google-login.service';
+import {User} from '../models/User';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-main-page',
@@ -10,9 +12,26 @@ import { GoogleLoginService } from '../google-login.service';
 })
 export class MainPageComponent implements OnInit {
 
-  constructor(public loginService: GoogleLoginService) {
-  }
+    public currentUser: User;
 
-  ngOnInit() {
-  }
+    constructor(
+        public loginService: GoogleLoginService,
+        private route: ActivatedRoute
+    ) {
+
+    }
+
+    ngOnInit() {
+        this.route.data.subscribe((_resolved: any) => {
+            this.currentUser =_resolved.currentUser;
+            console.log(this.currentUser);
+        });
+    }
+
+    isTeacher() {
+      return true;
+
+      // TODO when the roles of teachers will be ready
+        // return this.currentUser.roles.includes('_profile_teacher');
+    }
 }
