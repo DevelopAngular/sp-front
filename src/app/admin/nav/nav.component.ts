@@ -20,14 +20,20 @@ export class NavComponent implements OnInit {
             {title: 'Pass Configuration', route:'passconfig', imgUrl:'./assets/Arrow', requiredRoles: ['_profile_admin', 'admin_dashboard']},
             {title: 'Feedback', route:'feedback', imgUrl:'./assets/Feedback', requiredRoles: ['_profile_admin']},
             {title: 'Support', route:'support', imgUrl:'./assets/Support', requiredRoles: ['_profile_admin']},
-            ]
+            ];
   fakeMenu: ReplaySubject<boolean> = new ReplaySubject<boolean>();
-  tab:string = "dashboard"
+  tab:string = "dashboard";
   currentUser: User;
 
   user;
 
-  constructor(public router:Router, private activeRoute: ActivatedRoute, private dataService: DataService, public loadingService: LoadingService, private _zone: NgZone) { }
+  constructor(
+      public router:Router,
+      private activeRoute: ActivatedRoute,
+      private dataService: DataService,
+      public loadingService: LoadingService,
+      private _zone: NgZone
+  ) { }
 
   ngOnInit() {
 
@@ -74,7 +80,7 @@ export class NavComponent implements OnInit {
     })
   }
 
-  route(route:string){
+  route( route: string) {
     this.tab = route;
     this.router.navigateByUrl('/admin/' + this.tab);
     this.tab = this.tab;

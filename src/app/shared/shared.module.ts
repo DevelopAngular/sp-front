@@ -28,6 +28,9 @@ import { DisplayReportCellComponent } from '../display-report-cell/display-repor
 import {PassCollectionComponent} from '../pass-collection/pass-collection.component';
 import {PassTileComponent} from '../pass-tile/pass-tile.component';
 import {PassCellComponent} from '../pass-cell/pass-cell.component';
+import { RestrictionDummyComponent } from '../admin/restriction-dummy/restriction-dummy.component';
+import {BackButtonComponent} from '../admin/back-button/back-button.component';
+
 
 
 @NgModule({
@@ -67,6 +70,8 @@ import {PassCellComponent} from '../pass-cell/pass-cell.component';
       PassCollectionComponent,
       PassTileComponent,
       PassCellComponent,
+      RestrictionDummyComponent,
+      BackButtonComponent,
   ],
   exports: [
     ReactiveFormsModule,
@@ -87,6 +92,8 @@ import {PassCellComponent} from '../pass-cell/pass-cell.component';
       PassCollectionComponent,
       PassTileComponent,
       PassCellComponent,
+      RestrictionDummyComponent,
+      BackButtonComponent,
   ],
 })
 export class SharedModule {

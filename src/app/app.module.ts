@@ -27,6 +27,7 @@ import { LoginComponent } from './login/login.component';
 import { ProgressInterceptor } from './progress-interceptor';
 import { HallDateTimePickerComponent } from './hall-date-time-picker/hall-date-time-picker.component';;
 import { PdfComponent } from './pdf/pdf.component'
+import {CurrentUserResolver} from './currentUser.resolver';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: 'main/passes', pathMatch: 'full'},
@@ -98,6 +99,7 @@ const appRoutes: Routes = [
     UserService,
     GoogleLoginService,
     LoadingService,
+    CurrentUserResolver,
     { provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true },
   ],
   bootstrap: [AppComponent]

@@ -25,13 +25,10 @@ import { AdminSharedModule } from './shared/admin-shared.module';
 import { AccountsComponent } from './accounts/accounts.component';
 import { AccountsRoleComponent } from './accounts-role/accounts-role.component';
 import { FormsModule } from '@angular/forms';
-import { NavComponent } from './nav/nav.component'
 import { AccountsDialogComponent } from './accounts-dialog/accounts-dialog.component';
 import { ChartsModule } from 'ng2-charts';
 import { CalendarComponent } from './calendar/calendar.component';
-import {PdfGeneratorService} from './pdf-generator.service';import { CurrentUserResolver } from './currentUser.resolver';;
-import { RestrictionDummyComponent } from './restriction-dummy/restriction-dummy.component'
-;
+import {PdfGeneratorService} from './pdf-generator.service';
 
 @NgModule({
   imports: [
@@ -61,14 +58,12 @@ import { RestrictionDummyComponent } from './restriction-dummy/restriction-dummy
     AccountsComponent,
     AccountsRoleComponent,
     CalendarComponent,
-    RestrictionDummyComponent
   ],
 
   entryComponents: [AccountsDialogComponent, CalendarComponent],
   providers: [
       //NavbarDataService
     PdfGeneratorService,
-    CurrentUserResolver
   ],
 })
 export class AdminModule {

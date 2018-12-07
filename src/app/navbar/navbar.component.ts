@@ -1,7 +1,7 @@
 import { Component, NgZone, OnInit, Input } from '@angular/core';
 import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material';
-import { Router, NavigationEnd } from '@angular/router';
+import {Router, NavigationEnd, ActivatedRoute} from '@angular/router';
 
 import 'rxjs/add/observable/combineLatest';
 import { Observable } from 'rxjs/Observable';
@@ -11,6 +11,7 @@ import { LoadingService } from '../loading.service';
 import { NavbarDataService } from '../main/navbar-data.service';
 import { User } from '../models/User';
 import { NgProgress } from '@ngx-progressbar/core';
+import {ReplaySubject} from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -30,6 +31,15 @@ export class NavbarComponent implements OnInit {
 
   navbarEnabled = false;
 
+  buttons = [
+      {title: 'Passes', route: 'passes', imgUrl: './assets/Arrow', tab: this.tab === 'passes', requiredRoles: ['create_hallpass', 'create_report', 'edit_all_hallpass', 'flag_hallpass', 'view_traveling_users']},
+      {title: 'Hall Monitor', route: 'hallmonitor', imgUrl: './assets/Hallway', tab: this.tab === 'hallmonitor',  requiredRoles: ['create_hallpass', 'create_report', 'edit_all_hallpass', 'flag_hallpass', 'view_traveling_users']},
+      {title: 'My Room', route: 'myroom', imgUrl: './assets/My Room', tab: this.tab === 'myroom',  requiredRoles: ['create_hallpass', 'create_report', 'edit_all_hallpass', 'flag_hallpass', 'view_traveling_users']},
+  ];
+
+  currentUser;
+  fakeMenu: ReplaySubject<boolean> = new ReplaySubject<boolean>();
+
   constructor(
       private dataService: DataService,
       public dialog: MatDialog,
@@ -39,7 +49,8 @@ export class NavbarComponent implements OnInit {
       public loginService: GoogleLoginService,
       private _zone: NgZone,
       private navbarData: NavbarDataService,
-      private process: NgProgress
+      private process: NgProgress,
+      private activeRoute: ActivatedRoute
   ) {
 
     const navbarEnabled$ = Observable.combineLatest(
@@ -85,10 +96,30 @@ export class NavbarComponent implements OnInit {
           this.dataService.updateInbox(this.tab!=='settings');
         });
       });
+
+    this.activeRoute.data.subscribe(_resolved => {
+        this.currentUser =_resolved.currentUser;
+        console.log('CurrentRoute ===> \n', (this.activeRoute.snapshot as any)._routerState.url, !this.hasRoles(this.buttons[0].requiredRoles));
+
+        this.buttons.forEach((button) => {
+
+            if (
+                ((this.activeRoute.snapshot as any)._routerState.url == `/main/${button.route}`)
+                &&
+                !this.hasRoles(button.requiredRoles)
+            ) {
+                this.fakeMenu.next(true);
+            }
+        });
+    });
   }
 
   get notificationBadge$() {
     return this.navbarData.notificationBadge$;
+  }
+
+  hasRoles(roles: string[]) {
+     return roles.every((_role) => this.user.roles.includes(_role));
   }
 
   showOptions() {
