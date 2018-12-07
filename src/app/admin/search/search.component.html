@@ -8,7 +8,7 @@
   <div class="search-content-table" *ngIf="hasSearched">
       <div class="search-header">
         <div class="text-header">
-          All Passes, Searching by {{ (selectedStudents && selectedStudents.length > 0 ? 'Student Name' : '') + (selectedDate && selectedDate !== '' ? ',Date & Time' : '') + (selectedRooms && selectedRooms.length > 0 ? ',Room Name' : '')}}
+          {{sortParamsHeader}}
         </div>
         <div class="divider"></div>
         <app-data-table [data]="tableData" *ngIf="tableData.length > 0 && !spinner" [height]="'540px'" (selectedUsers)="selectedReport=$event"></app-data-table>

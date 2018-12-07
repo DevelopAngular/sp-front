@@ -1,6 +1,7 @@
-import {Component, OnInit, Input, Inject} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
+import {Component, OnInit, Inject} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {FormControl, FormGroup} from '@angular/forms';
+import {HttpService} from '../../http-service';
 
 @Component({
   selector: 'app-accounts-dialog',
@@ -17,10 +18,12 @@ export class AccountsDialogComponent implements OnInit {
   public buttonText: string;
   public controlsIteratable: any[];
   public form: FormGroup;
+  private beforeClosedHook: Function;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private DR: MatDialogRef<AccountsDialogComponent>
+    private DR: MatDialogRef<AccountsDialogComponent>,
+    private http: HttpService
   ) { }
 
   ngOnInit() {
@@ -41,13 +44,23 @@ export class AccountsDialogComponent implements OnInit {
         this.buttonColor =  '#1893E9, #05B5DE';
         this.palette = `radial-gradient(circle at 80% 67%, ${this.buttonColor})`;
         const restrictions = this.data.restrictions;
+        const restrictionsFor = this.data.selectedUsers;
         const group: any = {};
         for (const key in restrictions) {
-          console.log(key);
           group[key] = new FormControl(restrictions[key]['restriction']);
         }
         this.form = new FormGroup(group);
         this.controlsIteratable = Object.values(restrictions);
+        this.beforeClosedHook = function() {
+          restrictionsFor.forEach((user) => {
+            this.http
+                  .post(`v1/users/${user['#Id']}/roles`, this.form.value)
+                  .subscribe((res) => {
+                    console.log(res);
+                  });
+          });
+
+        }
         break;
       }
       case 'remove' :
@@ -80,6 +93,9 @@ export class AccountsDialogComponent implements OnInit {
     };
   }
   closeDialog() {
+
+    this.beforeClosedHook();
+
     this.DR.close('closed');
   }
 }

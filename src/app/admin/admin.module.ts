@@ -32,6 +32,7 @@ import { CalendarComponent } from './calendar/calendar.component';
 import {PdfGeneratorService} from './pdf-generator.service';import { CurrentUserResolver } from './currentUser.resolver';;
 import { RestrictionDummyComponent } from './restriction-dummy/restriction-dummy.component'
 ;
+import {DatePrettyHelper} from './date-pretty.helper';
 
 @NgModule({
   imports: [
@@ -68,7 +69,8 @@ import { RestrictionDummyComponent } from './restriction-dummy/restriction-dummy
   providers: [
       //NavbarDataService
     PdfGeneratorService,
-    CurrentUserResolver
+    CurrentUserResolver,
+    DatePrettyHelper
   ],
 })
 export class AdminModule {

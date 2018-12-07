@@ -100,11 +100,13 @@
           </time>
         </div>
       </div>
+
       <div class="w-100 flex-center-center" *ngIf="data.mode != 'gsuite'" [style.margin]="'40px auto'">
         <app-gradient-button [gradient]="buttonColor" [minHeight]="'36px'" (buttonClick)="closeDialog()">
           <span style="font-weight: normal; font-size: 16px; padding: 7px 35px;">{{buttonText}}</span>
         </app-gradient-button>
       </div>
+
     </div>
   </mat-card-content>
 </mat-card>

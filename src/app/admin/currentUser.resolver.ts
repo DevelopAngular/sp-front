@@ -16,6 +16,6 @@ export class CurrentUserResolver implements Resolve<User> {
         route: ActivatedRouteSnapshot,
         state: RouterStateSnapshot
     ): Observable<User> {
-        return this.dataService.currentUser
+        return this.dataService.currentUser;
     };
 }
