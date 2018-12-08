@@ -29,6 +29,7 @@ import { AccountsDialogComponent } from './accounts-dialog/accounts-dialog.compo
 import { ChartsModule } from 'ng2-charts';
 import { CalendarComponent } from './calendar/calendar.component';
 import {PdfGeneratorService} from './pdf-generator.service';
+import {DatePrettyHelper} from './date-pretty.helper';
 
 @NgModule({
   imports: [
@@ -64,6 +65,7 @@ import {PdfGeneratorService} from './pdf-generator.service';
   providers: [
       //NavbarDataService
     PdfGeneratorService,
+    DatePrettyHelper
   ],
 })
 export class AdminModule {

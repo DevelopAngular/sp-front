@@ -30,7 +30,7 @@ import { MainPageComponent } from '../main-page/main-page.component';
 import { MyRoomComponent } from '../my-room/my-room.component';
 import { PagerComponent } from '../pager/pager.component';
 import { PassCardTemplateComponent } from '../pass-card-template/pass-card-template.component';
-import { PassCardComponent } from '../pass-card/pass-card.component';
+// import { PassCardComponent } from '../pass-card/pass-card.component';
 import { PassCellComponent } from '../pass-cell/pass-cell.component';
 // import { PassCollectionComponent } from '../pass-collection/pass-collection.component';
 import { PassTileComponent } from '../pass-tile/pass-tile.component';
@@ -85,7 +85,7 @@ import { DateInputComponent } from '../admin/date-input/date-input.component';
     //StudentSearchComponent,
     StudentPickerComponent,
     ReportFormComponent,
-    PassCardComponent,
+    // PassCardComponent,
     RequestCardComponent,
     InvitationCardComponent,
     LocationCellComponent,

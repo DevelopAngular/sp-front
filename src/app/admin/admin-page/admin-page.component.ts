@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { GoogleLoginService } from '../../google-login.service';
-import {HttpService} from '../../http-service';
 import {User} from '../../models/User';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import {ReplaySubject} from 'rxjs';
 
 @Component({
   selector: 'app-admin-page',
@@ -11,7 +11,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 })
 export class AdminPageComponent implements OnInit {
 
-
+  public outletDummySwitcher$: ReplaySubject<boolean> = new ReplaySubject<boolean>();
   public currentUser: User;
 
   constructor(
@@ -23,11 +23,14 @@ export class AdminPageComponent implements OnInit {
 
   ngOnInit() {
     this.route.data.subscribe((_resolved: any) => {
-      this.currentUser =_resolved.currentUser;
-      console.log(this.currentUser);
-    })
+      this.currentUser = _resolved.currentUser;
+      // console.log(this.currentUser);
+    });
   }
   isAdmin() {
     return this.currentUser.roles.includes('_profile_admin');
+  }
+  hideOutlet(event: boolean) {
+    this.outletDummySwitcher$.next(event);
   }
 }

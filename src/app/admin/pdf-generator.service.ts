@@ -1,8 +1,10 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import { tap } from 'rxjs/operators';
-import {forkJoin, fromEvent, Subject, Subscription, zip} from 'rxjs';
-import {switchMap} from 'rxjs/internal/operators';
+import { tap, switchMap } from 'rxjs/operators';
+import { fromEvent, zip} from 'rxjs';
+import {environment} from '../../environments/environment';
+import {DatePrettyHelper} from './date-pretty.helper';
+
 declare const jsPDF;
 declare const window;
 
@@ -10,21 +12,14 @@ declare const window;
 )
 export class PdfGeneratorService {
 
-  private imageCast$: Subject<any> = new Subject<any>();
-
   constructor(
-    public httpService: HttpClient
+    public httpService: HttpClient,
   ) { }
 
-  generate(data: any[], headers?: string[], orientation: string = 'p', page: string = ''): void {
+  generate(data: any[], headers?: string[], orientation: string = 'p', page: string = '', title?: string): void {
 
     const thisMoment = new Date();
-    const time = thisMoment.getHours() < 12
-                          ?
-                `${thisMoment.getHours()}:${thisMoment.getMinutes() < 10 ? '0' : ''}${thisMoment.getMinutes()} AM`
-                          :
-                `${thisMoment.getHours() - 12}:${thisMoment.getMinutes() < 10 ? '0' : ''}${thisMoment.getMinutes()} PM`;
-    const prettyNow = `${thisMoment.getMonth() + 1}/${thisMoment.getDate()}/${thisMoment.getFullYear()} at ${time}`;
+    const prettyNow = DatePrettyHelper.transform(new Date());
 
     let heading = {
       header: 'Active Hall Pass Report',
@@ -41,13 +36,9 @@ export class PdfGeneratorService {
       }
       case('search'): {
 
-        let _title =
-
-
-
         heading = {
           header: 'Administrative Pass Report',
-          title: 'All Passes, Searching by Date & Time and Room Name: 8/7, 11:05 AM to 8/9, 1:43 PM; Gardner, Nurse as Both Origin and Destination'
+          title: title
         };
         break;
       }
@@ -61,20 +52,17 @@ export class PdfGeneratorService {
     }
 
     const _orientation = orientation === 'l' ? 'landscape' : 'portrait';
-
     const _headers: string[] = headers ||  Object.keys(data[0]);
     const _data: any[] = data;
-
-
     const doc = new jsPDF(_orientation, 'pt');
-    const currentHost = `${window.location.protocol}//${window.location.host}`;
+    const currentHost = `${window.location.protocol}//${window.location.host}${ environment.production ? '/app' : ''}`;
+    console.log(currentHost);
     const logoPath = `${currentHost}/assets/Arrow%20(Green).png`;
     const reportPath = `${currentHost}/assets/Report%20(Red).png`;
     const imgLogo = new FileReader();
     const reportLogo = new FileReader();
     let imgBase64Logo, imgBase64Report;
 
-    // let logoSub = new Subscription();
     zip(
       this.httpService
         .get(logoPath, {responseType: 'blob'})
@@ -122,7 +110,6 @@ export class PdfGeneratorService {
           sp: Math.round((A4.width - (29 * 2) ) / _headers.length),
           col: 11,
           drawLink: () => {
-            //  View more information at smartpass.app/app
             const linkPlaceholder = 'View more information at smartpass.app/app';
             const link = 'https://smartpass.app/app';
             const linkRoundSpace = A4.width - (doc.getStringUnitWidth(linkPlaceholder) * 12);
@@ -134,7 +121,6 @@ export class PdfGeneratorService {
             doc.textWithLink(linkPlaceholder, linkRoundSpace / 2, A4.height - 21,{ url: link });
           },
           drawPagination: (total) => {
-            // doc.setPage(1);
             console.log(total);
             doc.setFontSize(14);
             doc.setTextColor('#333333');
@@ -176,13 +162,11 @@ export class PdfGeneratorService {
 
             doc.setLineWidth(1.5);
             doc.line(table.left, table.top + 6, A4.width - table.right, table.top + 6);
-            // doc.line(table.left, 87, A4.width - table.right, 87);
           },
           drawRows: (__data) => {
 
             table.drawLogo();
             table.drawLink();
-            // table.drawPagination(pageCounter);
 
             doc.setLineWidth(0.5);
             doc.setFontSize(12);
@@ -207,7 +191,6 @@ export class PdfGeneratorService {
                     doc.setPage(++pageCounter);
                     table.drawLogo();
                     table.drawLink();
-                    // table.drawPagination(pageCounter);
                     breakLoop = true;
                     break;
                   }
@@ -266,10 +249,6 @@ export class PdfGeneratorService {
         window.localStorage.setItem('pdf_src', `${encodeURIComponent(doc.output('datauristring'))}`);
 
         window.open(`${currentHost}/pdf/report`);
-        // window.open(`${currentHost}/pdf/${encodeURIComponent(imgBase64Logo)}`);
-        // window.open(`${currentHost}/pdf/${encodeURIComponent(doc.output('datauristring'))}`);
-        // window.open(doc.output('datauristring'));
-        // doc.output('datauri');
       });
   }
 }

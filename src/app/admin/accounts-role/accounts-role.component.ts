@@ -53,6 +53,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           if (userList && userList.length) {
             this.userList = userList.map((raw) => {
               return {
+                '#Id': raw.id,
                 'Name': raw.display_name,
                 'Account Email': raw.primary_email,
                 'Last Sign-in': raw.last_updated,
@@ -74,36 +75,36 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     const restrictions = this.role === '_profile_admin'
                                     ?
                         {
-                          'dashboard_access': {
-                            restriction: false,
-                            controlName: 'dashboard_access',
+                          'admin_dashboard': {
+                            restriction: true,
+                            controlName: 'admin_dashboard',
                             controlLabel: 'Access to Dashboard'
                           },
-                          'hall_monitor_access': {
-                            controlName: 'hall_monitor_access',
+                          'admin_hall_monitor': {
+                            controlName: 'admin_hall_monitor',
                             restriction: true,
                             controlLabel: 'Access to Hall Monitor'
                           },
-                          'search_access': {
-                            controlName: 'search_access',
-                            restriction: false,
+                          'admin_search': {
+                            controlName: 'admin_search',
+                            restriction: true,
                             controlLabel: 'Access to Search'
                           },
-                          'accounts_access': {
-                            controlName: 'accounts_access',
-                            restriction: false,
+                          'admin_accounts': {
+                            controlName: 'admin_accounts',
+                            restriction: true,
                             controlLabel: 'Access to Accounts & Profiles'
                           },
-                          'pass_config_access': {
-                            controlName: 'pass_config_access',
+                          'admin_pass_config': {
+                            controlName: 'admin_pass_config',
                             restriction: true,
                             controlLabel: 'Access to Pass Configuration'
                           },
-                          'school_setting_access': {
-                            controlName: 'school_setting_access',
-                            restriction: true,
-                            controlLabel: 'Access to School Settings'
-                          },
+                          // 'admin_school_setting': {
+                          //   controlName: 'admin_school_setting',
+                          //   restriction: true,
+                          //   controlLabel: 'Access to School Settings'
+                          // },
                         }
                                     :
                         {
@@ -140,6 +141,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           this.placeholder = false;
           this.userList = userList.map((raw) => {
             return {
+              '#Id': raw.id,
               'Name': raw.display_name,
               'Account Email': raw.primary_email,
               'Last Sign-in': raw.last_updated,

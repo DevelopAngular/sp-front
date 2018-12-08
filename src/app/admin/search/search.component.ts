@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import {filter, finalize, map} from 'rxjs/operators';
 import {PdfGeneratorService} from '../pdf-generator.service';
 import {HallPass} from '../../models/HallPass';
+import {DatePrettyHelper} from '../date-pretty.helper';
 
 
 @Component({
@@ -25,6 +26,7 @@ export class SearchComponent implements OnInit {
   spinner: boolean = false;
 
   hasSearched: boolean = false;
+  sortParamsHeader: string;
 
   constructor(private httpService: HttpService, private pdf: PdfGeneratorService) { }
 
@@ -34,6 +36,7 @@ export class SearchComponent implements OnInit {
 
   search() {
     if (this.selectedStudents || this.selectedDate || this.selectedRooms) {
+      this.sortParamsHeader = `All Passes, Searching by ${(this.selectedStudents && this.selectedStudents.length > 0 ? 'Student Name' : '') + (this.selectedDate && this.selectedDate !== '' ? ', Date & Time' : '') + (this.selectedRooms && this.selectedRooms.length > 0 ? ', Room Name' : '')}`;
         this.spinner = true;
         this.selectedReport = [];
         let url = 'v1/hall_passes?';
@@ -118,18 +121,32 @@ export class SearchComponent implements OnInit {
   }
 
   previewPDF() {
-      console.log(this.tableData);
+      console.log(this.selectedRooms);
       if (this.selectedReport.length > 0) {
           this.selectedReport = this.selectedReport.map((row) => {
               for (const key in row) {
-                  row[key] = typeof row[key] !== 'string' ? row[key].toString() : row[key];
+                  row[key] = typeof row[key] !== 'string' ? row[key] + ' min' : row[key];
                   console.log(row);
               }
               return row;
           });
 
+          let prettyFrom = '';
+          let prettyTo = '';
+          if ( this.selectedDate ) {
+            prettyFrom = DatePrettyHelper.transform(this.selectedDate.from);
+            prettyTo = DatePrettyHelper.transform(this.selectedDate.to);
+          }
+          let rooms = '';
+          if (this.selectedRooms) {
+            rooms = this.selectedRooms.map((room) => {
+              return room.title;
+            }).join(', ');
+          }
 
-          this.pdf.generate(this.selectedReport, null, 'l', 'search');
+          const title = `${this.sortParamsHeader}: ${this.selectedDate ? `from ${prettyFrom} to ${prettyTo};` : ''} ${this.selectedRooms ? rooms : ''}`;
+
+          this.pdf.generate(this.selectedReport, null, 'l', 'search', title);
       }
   }
 
