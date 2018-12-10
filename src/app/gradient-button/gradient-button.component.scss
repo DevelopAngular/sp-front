@@ -48,8 +48,11 @@
   padding-top: 8.9px;
   border-radius: 7px;
   color: white;
-  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
   font-family: 'Helvetica Neue', sans-serif;
+  transition: box-shadow .2s ease;
+  &:hover{
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  }
 }
 
 .clickRipple {

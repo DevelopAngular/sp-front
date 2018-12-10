@@ -1,9 +1,9 @@
 .pass-card-wrapper{
-  width: 305px;
-  height: 397px;
+  width: 262px;
+  height: 352px;
   border-radius: 10px;
   color: white;
-  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 9px 0 white;
   font-family: 'Helvetica Neue', sans-serif;
   padding: 15px 15px 0 15px;
 }
@@ -29,12 +29,12 @@
 
 .pass-card-header-info-title{
   font-weight: bold;
-  font-size: 11pt;
+  font-size: 14pt;
 }
 
 .pass-card-header-info-subtitle{
   font-weight: 400;
-  font-size: 8pt;
+  font-size: 10pt;
 }
 
 .pass-card-header-info-title, .pass-card-header-info-subtitle{
@@ -60,7 +60,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 277px;
+  height: 222px;
 }
 
 .pass-card-body-left{
@@ -89,7 +89,7 @@
 }
 
 .student-wrapper{
-  width: 100%;
+  width: 292px;
   height: 35px;
   background: rgba(200, 200, 200, .7);
   mix-blend-mode: soft-light;
@@ -99,13 +99,13 @@
 }
 
 .student-text-wrapper{
-  width: 100%;
-  height: 25px;
+  width: 292px;
+  height: 39px;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  bottom: 65px;
+  bottom: 73px;
   border-radius: 0 0 10px 10px;
   color: white;
   font-size: 13px;

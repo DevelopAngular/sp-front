@@ -52,8 +52,8 @@ body {
   box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
   margin: 0;
   padding: 0;
-  width: 335px;
-  height: 412px;
+  width: 262px;
+  height: 366px;
 }
 .accounts-profiles-dialog{
   margin-left: 285px !important;
@@ -140,13 +140,19 @@ body {
 input:focus{
   outline-offset: 0;
   outline: none;
-  border: 1px solid #595487 !important;
+  transition: border .2s ease;
+  &:focus {
+    border: 1px solid #595487 !important;
+  }
 }
 
 textarea:focus {
   outline-offset: 0;
   outline: none;
-  border: 1px solid #595487 !important;
+  transition: border .2s ease;
+  &:focus {
+    border: 1px solid #595487 !important;
+  }
 }
 
 // .mat-chip-list-wrapper{

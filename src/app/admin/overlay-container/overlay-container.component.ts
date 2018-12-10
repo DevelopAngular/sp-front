@@ -150,11 +150,15 @@ export class OverlayContainerComponent implements OnInit {
     this.form = new FormGroup({
         isEdit: new FormControl(true),
         file: new FormControl(),
-        roomName: new FormControl('', [Validators.required]),
+        roomName: new FormControl('', [Validators.required, Validators.maxLength(12)]),
         folderName: new FormControl('', [Validators.required]),
-        roomNumber: new FormControl('', [Validators.required]),
+        roomNumber: new FormControl('', [Validators.required, Validators.maxLength(5)]),
         timeLimit: new FormControl(null, [
-            Validators.required, Validators.pattern('^[0-9]*?[0-9]+$'), Validators.min(1)]
+            Validators.required,
+            Validators.pattern('^[0-9]*?[0-9]+$'),
+            Validators.min(1),
+            Validators.max(59)
+            ]
         )
     });
   }
@@ -375,15 +379,15 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   travelUpdate(type) {
-   let travelType: string;
+   let travelType: string[];
    if (type === 'Round-trip') {
-     travelType = 'round_trip';
+     travelType = ['round_trip'];
    } else if (type === 'One-way') {
-     travelType = 'one_way';
+     travelType = ['one_way'];
    } else if (type === 'Both') {
-     travelType = 'both';
+     travelType = ['round_trip', 'one_way'];
    }
-   this.travelType = [travelType];
+   this.travelType = travelType;
   }
 
   selectTeacherEvent(teachers) {
