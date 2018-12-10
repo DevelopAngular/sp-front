@@ -140,13 +140,19 @@ body {
 input:focus{
   outline-offset: 0;
   outline: none;
-  border: 1px solid #595487 !important;
+  transition: border .2s ease;
+  &:focus {
+    border: 1px solid #595487 !important;
+  }
 }
 
 textarea:focus {
   outline-offset: 0;
   outline: none;
-  border: 1px solid #595487 !important;
+  transition: border .2s ease;
+  &:focus {
+    border: 1px solid #595487 !important;
+  }
 }
 
 // .mat-chip-list-wrapper{
