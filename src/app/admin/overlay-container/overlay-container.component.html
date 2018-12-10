@@ -1,10 +1,10 @@
 <form [formGroup]="form">
   <div class="overlay-container">
     <div class="overlay-header" [ngStyle]="{'background-image': gradientColor}">
-      <div class="isEdit" *ngIf="isValidForm && overlayType === 'newRoom' || overlayType === 'editRoom'">
-        <input type="checkbox" name="isEdit" formControlName="isEdit" class="isEdit-checkbox" id="isEdit" checked>
-        <label class="isEdit-label" for="isEdit"></label>
-      </div>
+      <!--<div class="isEdit" *ngIf="isValidForm && overlayType === 'newRoom' || overlayType === 'editRoom'">-->
+        <!--<input type="checkbox" name="isEdit" formControlName="isEdit" class="isEdit-checkbox" id="isEdit" checked>-->
+        <!--<label class="isEdit-label" for="isEdit"></label>-->
+      <!--</div>-->
       <img class="back-button"
            *ngIf="overlayType !== 'addExisting'
            && overlayType !== 'newRoomInFolder'
