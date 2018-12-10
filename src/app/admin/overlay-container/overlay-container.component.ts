@@ -379,15 +379,15 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   travelUpdate(type) {
-   let travelType: string;
+   let travelType: string[];
    if (type === 'Round-trip') {
-     travelType = 'round_trip';
+     travelType = ['round_trip'];
    } else if (type === 'One-way') {
-     travelType = 'one_way';
+     travelType = ['one_way'];
    } else if (type === 'Both') {
-     travelType = 'both';
+     travelType = ['round_trip', 'one_way'];
    }
-   this.travelType = [travelType];
+   this.travelType = travelType;
   }
 
   selectTeacherEvent(teachers) {
