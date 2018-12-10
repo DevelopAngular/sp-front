@@ -39,7 +39,7 @@
     </div>
     <div *ngIf="!forStaff; else staffPanel" class="card-body-right">
       <div *ngIf="forInput; else studentNoInput" class="card-body-right">
-        <app-card-button (onClick)="newRequest()" [disabled]="performingAction" [width]="'297px'" [height]="'79px'" [gradientColor]="request.color_profile.gradient_color">
+        <app-card-button (onClick)="newRequest()" [disabled]="performingAction" [width]="'269px'" [height]="'79px'" [gradientColor]="request.color_profile.gradient_color">
           <div class="request-button-content">
             <div class="request-pass-content-text">Send Request</div>
             <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">

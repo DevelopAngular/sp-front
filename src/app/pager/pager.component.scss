@@ -1,6 +1,6 @@
 .pager-wrapper{
     width: 283px;
-    height: 180px;
+    height: 128px;
     display: flex;
     flex-direction: column;
     color: #FFF;
@@ -20,7 +20,7 @@
     display: flex;
     justify-content: center;
     flex-direction: row;
-    margin-top: -7px;
+    margin-top: 17px;
 }
 
 .pager-page-selector{
@@ -38,14 +38,23 @@
   width: 25px;
 }
 .paginator-container {
+    position: relative;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: baseline;
     width: 100%;
 }
 
 .paginator-button {
     width: 25px;
+    position: absolute;
+    top: -17px;
+    &__left{
+        left: 0;
+    }
+    &__right{
+        right: 0;
+    }
 }
 .button-image:hover {
     width: 25px;

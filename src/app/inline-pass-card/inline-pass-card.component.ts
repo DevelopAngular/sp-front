@@ -23,7 +23,7 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
   valid: boolean = true;
   returnData: any = {};
   overlayWidth: number = 0;
-  buttonWidth: number = 297;
+  buttonWidth: number = 269;
 
   selectedDuration: number;
   selectedTravelType: string;
