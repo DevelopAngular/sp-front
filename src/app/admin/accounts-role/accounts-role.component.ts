@@ -1,11 +1,12 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {Observable, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {MatDialog} from '@angular/material';
 import {UserService} from '../../user.service';
 import {AccountsDialogComponent} from '../accounts-dialog/accounts-dialog.component';
 import { ActivatedRoute } from '@angular/router';
 import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/internal/operators';
+import {Util} from '../../../Util';
 
 @Component({
   selector: 'app-accounts-role',
@@ -18,6 +19,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   private searchChangeObserver$: Subject<string>;
 
   public role: string;
+  public userAmount: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   public userList: any[] = [];
   public selectedUsers: any[] = [];
   public placeholder: boolean;
@@ -35,7 +37,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       this.getUserList();
     });
   }
-  showSearchParam(searchValue) {
+  findRelevantAccounts(searchValue) {
     console.log(searchValue);
     this.placeholder = false;
     this.userList = [];
@@ -51,13 +53,14 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         )
         .subscribe((userList) => {
           if (userList && userList.length) {
+            // this.userAmount.next(userList.length);
             this.userList = userList.map((raw) => {
               return {
                 '#Id': raw.id,
                 'Name': raw.display_name,
                 'Account Email': raw.primary_email,
                 'Last Sign-in': raw.last_updated,
-                'Restrictions': 'None'
+                // 'Restrictions': 'None'
               };
             });
           } else {
@@ -139,13 +142,14 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       .subscribe((userList) => {
         if (userList && userList.length) {
           this.placeholder = false;
+          this.userAmount.next(userList.length);
           this.userList = userList.map((raw) => {
             return {
               '#Id': raw.id,
               'Name': raw.display_name,
               'Account Email': raw.primary_email,
-              'Last Sign-in': raw.last_updated,
-              'Restrictions': 'None'
+              'Last Sign-in': Util.formatDateTime(new Date(raw.last_updated)),
+              // 'Restrictions': 'None'
             };
           });
         } else {

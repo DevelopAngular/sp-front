@@ -28,12 +28,6 @@ import { LocationPickerComponent } from '../location-picker/location-picker.comp
 import { LocationTableComponent } from '../location-table/location-table.component';
 import { MainPageComponent } from '../main-page/main-page.component';
 import { MyRoomComponent } from '../my-room/my-room.component';
-import { PagerComponent } from '../pager/pager.component';
-import { PassCardTemplateComponent } from '../pass-card-template/pass-card-template.component';
-// import { PassCardComponent } from '../pass-card/pass-card.component';
-import { PassCellComponent } from '../pass-cell/pass-cell.component';
-// import { PassCollectionComponent } from '../pass-collection/pass-collection.component';
-import { PassTileComponent } from '../pass-tile/pass-tile.component';
 import { PassesComponent } from '../passes/passes.component';
 import { ReportFormComponent } from '../report-form/report-form.component';
 import { RequestAcceptComponent } from '../request-accept/request-accept.component';
@@ -42,12 +36,9 @@ import { SettingsComponent } from '../settings/settings.component';
 import { SharedModule } from '../shared/shared.module';
 import { SignOutComponent } from '../sign-out/sign-out.component';
 import { StudentPickerComponent } from '../student-picker/student-picker.component';
-//import { StudentSearchComponent } from '../student-search/student-search.component';
 import { TeacherDropdownComponent } from '../teacher-dropdown/teacher-dropdown.component';
-import { TravelViewComponent } from '../travel-view/travel-view.component';
 import { MainRoutingModule } from './main-routing.module';
 import { NavbarDataService } from './navbar-data.service';
-import { DateInputComponent } from '../admin/date-input/date-input.component';
 
 @NgModule({
   imports: [
@@ -73,8 +64,6 @@ import { DateInputComponent } from '../admin/date-input/date-input.component';
     SettingsComponent,
     SignOutComponent,
     DropdownComponent,
-    // PassTileComponent,
-    // PassCellComponent,
     HallpassFormComponent,
     InfoEditorComponent,
     RequestAcceptComponent,
@@ -82,10 +71,8 @@ import { DateInputComponent } from '../admin/date-input/date-input.component';
     InlinePassCardComponent,
     LocationTableComponent,
     FavoriteFormComponent,
-    //StudentSearchComponent,
     StudentPickerComponent,
     ReportFormComponent,
-    // PassCardComponent,
     RequestCardComponent,
     InvitationCardComponent,
     LocationCellComponent,

@@ -35,21 +35,6 @@ export class AccountsComponent implements OnInit {
       console.log(u_list);
       this.accounts$.next(u_list);
     });
-    // this.userService.getUsersList().subscribe((u_list: User[]) => {
-    //     this.accounts['total'] = u_list;
-    //     const compareRoles = ['_profile_admin', '_profile_teacher', '_profile_student', 'staff_secretary'];
-    //
-    //     u_list.forEach((user) => {
-    //
-    //         compareRoles.forEach((role) => {
-    //           if (user.roles.includes(role)) {
-    //             this.accounts[role]++;
-    //           }
-    //         });
-    //
-    //     });
-    // });
-
   }
 
   openDialog(mode) {

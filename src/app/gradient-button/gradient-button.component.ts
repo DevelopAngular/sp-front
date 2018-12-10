@@ -25,6 +25,7 @@ const cssColorRegexp = new RegExp(`^(${CSS_COLOR_REGEXP})$`, 'i');
 })
 export class GradientButtonComponent {
 
+  @Input() border: string;
   @Input() gradient: string;
   @Input() hoverColor: string;
   @Input() leftIcon: string;
@@ -61,7 +62,7 @@ export class GradientButtonComponent {
         // console.log("[Color Sanitizer]: ", "Color passed");
         return this.sanitizer.bypassSecurityTrustStyle(color);
       } else {
-        // console.log("[Color Sanitizer]: ", "Color did not pass");
+        console.log("[Color Sanitizer]: ", "Color did not pass");
         return this.sanitizer.bypassSecurityTrustStyle(DEFAULT_GRADIENT);
       }
     } else {

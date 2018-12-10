@@ -25,7 +25,7 @@ export class NavComponent implements OnInit {
             {title: 'Support', route:'support', imgUrl:'./assets/Support', requiredRoles: ['_profile_admin']},
             ];
   fakeMenu: ReplaySubject<boolean> = new ReplaySubject<boolean>();
-  tab:string = "dashboard";
+  tab:string[] = ["dashboard"];
   currentUser: User;
 
   user;
@@ -42,13 +42,14 @@ export class NavComponent implements OnInit {
 
 
     let urlSplit: string[] = location.pathname.split('/');
-    this.tab = urlSplit[urlSplit.length-1];
+    this.tab = urlSplit.slice(1);
 
     this.router.events.subscribe(value => {
       if(value instanceof NavigationEnd){
         let urlSplit: string[] = value.url.split('/');
-        this.tab = urlSplit[urlSplit.length-1];
-        this.tab = ((this.tab==='' || this.tab==='admin')?'dashboard':this.tab);
+        this.tab = urlSplit.slice(1);
+        console.log(this.tab);
+        this.tab = ((this.tab===[''] || this.tab===['admin'])?['dashboard']:this.tab);
       }
     });
 
@@ -58,13 +59,13 @@ export class NavComponent implements OnInit {
 
         this._zone.run(() => {
           this.user = user;
-          this.dataService.updateInbox(this.tab!=='settings');
+          this.dataService.updateInbox(!this.tab.includes('settings'));
         });
       });
 
     this.activeRoute.data.subscribe((_resolved: any) => {
         this.currentUser = _resolved.currentUser;
-        // console.log('CurrentRoute ===> \n', (this.activeRoute.snapshot as any)._routerState.url, !this.hasRoles(this.buttons[0].requiredRoles));
+        console.log('CurrentRoute ===> \n', (this.activeRoute.snapshot as any)._routerState.url, !this.hasRoles(this.buttons[0].requiredRoles));
 
         this.buttons.forEach((button) => {
 
@@ -81,8 +82,8 @@ export class NavComponent implements OnInit {
   }
 
   route( route: string) {
-    this.tab = route;
-    this.router.navigateByUrl('/admin/' + this.tab);
+    this.tab = [route];
+    this.router.navigate(this.tab);
     this.tab = this.tab;
   }
 

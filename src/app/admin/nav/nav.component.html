@@ -11,7 +11,7 @@
         <ng-container *ngIf="hasRoles(button.requiredRoles)">
           <app-nav-button
             [style.margin-bottom]="'15px'"
-            [selected]="tab===button.route"
+            [selected]="tab.includes(button.route)"
             [content]="button.title"
             [icon]="button.imgUrl"
             (onClick)="route($event)"

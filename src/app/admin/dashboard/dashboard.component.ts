@@ -5,6 +5,7 @@ import {PdfGeneratorService} from '../pdf-generator.service';
 import {Observable, Subject, of as ObservableOf, zip, BehaviorSubject, ReplaySubject} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Report} from '../../models/Report';
+import {LiveDataService} from '../../live-data/live-data.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -36,16 +37,19 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private http: HttpService,
+    private liveDataService: LiveDataService,
     private pdf: PdfGeneratorService,
   ) { }
 
   ngOnInit() {
+    const todayReports = this.liveDataService.getDateRange(new Date());
 
     zip(
       this.http.get('v1/hall_passes?limit=100&sort=created'),
       this.http.get('v1/hall_passes/stats'),
       this.http.get('v1/hall_passes?active=true'),
-      this.http.get('v1/event_reports'),
+      // this.http.get('v1/event_reports'),
+      this.http.get(`v1/event_reports?created_before=${todayReports.end.toISOString()}&created_after=${todayReports.start.toISOString()}`),
       this.http.get('v1/admin/dashboard'),
     )
     .subscribe((result: any[]) => {
@@ -54,7 +58,8 @@ export class DashboardComponent implements OnInit {
       this.activeHallpasses = result[2];
       // this.activeHallpasses = result[0].results;
       this.reports =  result[3];
-      this.lineChartData = [{ data: result[4].hall_pass_usage.map(numb => numb + (Math.random() * 25))}];
+      this.lineChartData = [{ data: result[4].hall_pass_usage.map(numb => numb + Math.ceil((Math.random() * 25)))}];
+      console.log(this.lineChartData[0].data);
       // this.reports = [];
     });
 

@@ -50,7 +50,9 @@
     &__role{
       height: 200px;
       margin: 20px 0 0 0;
-
+      .no-outline, .no-outline:focus,.no-outline:active{
+        outline: none;
+      }
     }
     &__mp-btn{
       display: block;

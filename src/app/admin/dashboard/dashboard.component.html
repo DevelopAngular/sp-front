@@ -5,7 +5,7 @@
         <div class="card_header mb">Number of Active Hall Passes</div>
         <div class="card_title" [style.text-align]="'center'">
           <div style="min-height: 65px;" class="flex-center-center">
-            <div style="font-size: 4em">{{activeHallpasses?.length}}</div>
+            <div [style.font-size]="'4em'" [style.font-weight]="'900'">{{activeHallpasses?.length}}</div>
             <div *ngIf="!activeHallpasses" class="loading-theme spinner flex-center-center">
               <mat-spinner [color]="'accent'" [diameter]="'35'"></mat-spinner>
             </div>
@@ -42,8 +42,9 @@
           <div *ngIf="!reports" class="loading-theme spinner flex-center-left pt">
             <mat-spinner [color]="'accent'" [diameter]="'35'"></mat-spinner>
           </div>
-          <div *ngIf="reports" class="card_title py">
-            {{reports.length}} reports today.
+          <div *ngIf="reports" [style.padding-top]="'32px'" class="card_title">
+            <span *ngIf="reports.length">{{reports.length}} Reported Students Today.</span>
+            <span *ngIf="!reports.length">No Reported Students Today.</span>
           </div>
         </div>
       </div>

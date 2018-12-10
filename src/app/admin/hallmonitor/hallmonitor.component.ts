@@ -208,7 +208,8 @@ export class HallmonitorComponent implements OnInit {
             message: report.message,
           };
         });
-        this.studentreport = this.studentreport.concat(this.studentreport, this.studentreport);
+        this.studentreport;
+        // this.studentreport = this.studentreport.concat(this.studentreport, this.studentreport);
       });
   }
 }
