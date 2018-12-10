@@ -32,9 +32,9 @@ export class NavbarComponent implements OnInit {
   navbarEnabled = false;
 
   buttons = [
-      {title: 'Passes', route: 'passes', imgUrl: './assets/Arrow', tab: this.tab === 'passes', requiredRoles: ['create_hallpass', 'create_report', 'edit_all_hallpass', 'flag_hallpass', 'view_traveling_users']},
-      {title: 'Hall Monitor', route: 'hallmonitor', imgUrl: './assets/Hallway', tab: this.tab === 'hallmonitor',  requiredRoles: ['create_hallpass', 'create_report', 'edit_all_hallpass', 'flag_hallpass', 'view_traveling_users']},
-      {title: 'My Room', route: 'myroom', imgUrl: './assets/My Room', tab: this.tab === 'myroom',  requiredRoles: ['create_hallpass', 'create_report', 'edit_all_hallpass', 'flag_hallpass', 'view_traveling_users']},
+      {title: 'Passes', route: 'passes', imgUrl: './assets/Arrow', requiredRoles: ['create_hallpass', 'create_report', 'edit_all_hallpass', 'flag_hallpass', 'view_traveling_users']},
+      {title: 'Hall Monitor', route: 'hallmonitor', imgUrl: './assets/Hallway', requiredRoles: ['create_hallpass', 'create_report', 'edit_all_hallpass', 'flag_hallpass', 'view_traveling_users']},
+      {title: 'My Room', route: 'myroom', imgUrl: './assets/My Room', requiredRoles: ['create_hallpass', 'create_report', 'edit_all_hallpass', 'flag_hallpass', 'view_traveling_users']},
   ];
 
   currentUser;
@@ -140,6 +140,9 @@ export class NavbarComponent implements OnInit {
 
   updateTab(route: string) {
     this.tab = route;
+    if (this.tab === 'hallmonitor') {
+
+    }
     console.log('[updateTab()]: ', this.tab);
     this.router.navigateByUrl('/main/' + this.tab);
   }
