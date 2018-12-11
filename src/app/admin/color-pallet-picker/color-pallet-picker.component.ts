@@ -25,7 +25,6 @@ export class ColorPalletPickerComponent implements OnInit {
           map((colors: any[]) => {
           return colors.filter(color => color.id !== 1 && color.id !== 6);
       }));
-      this.colors$.subscribe(res => console.log('COLORS', res));
       if (this.selectedColorProfile) {
           this.selectedId = this.selectedColorProfile.id;
       }
