@@ -30,11 +30,18 @@
                              [minHeight]="'40px'"
                              [style.width]="'120px'"
                              [cursor]="'pointer'"
-                             [fontSize]="'12px'"
+                             [fontSize]="'14px'"
                              (buttonClick)="done()"
         >
           Publish</app-gradient-button>
-        <div *ngIf="isValidForm && (overlayType === 'editRoom' || overlayType === 'newRoom' || (overlayType === 'newFolder' && selectedRooms.length > 0))" class="button" (click)="onCancel()">Publish</div>
+        <app-gradient-button *ngIf="isValidForm && form.dirty && (overlayType === 'editRoom' || overlayType === 'newRoom' || (overlayType === 'newFolder' && selectedRooms.length > 0))"
+                             [minHeight]="'40px'"
+                             [style.width]="'120px'"
+                             [cursor]="'pointer'"
+                             [fontSize]="'14px'"
+                             (buttonClick)="onCancel()"
+        >
+          Publish</app-gradient-button>
         <div *ngIf="!isValidForm && overlayType !== 'edit' && overlayType !== 'editRoom' && overlayType !== 'newFolder'" style="color: white">Incomplete</div>
       </div>
     </div>
@@ -207,7 +214,7 @@
           <div class="rooms-list" *ngIf="selectedRooms.length > 0 && !requireValidator(folderName)">
             <mat-list>
               <div class="room" *ngFor="let room of selectedRooms">
-                <mat-checkbox (change)="selectedRoomsEvent($event, room)">
+                <mat-checkbox style="margin-left: 12px" (change)="selectedRoomsEvent($event, room)">
                   <mat-list-item>{{ room.title }}</mat-list-item>
                 </mat-checkbox>
                 <mat-divider></mat-divider>
