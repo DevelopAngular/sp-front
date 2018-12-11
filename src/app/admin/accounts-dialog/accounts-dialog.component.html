@@ -1,5 +1,5 @@
-<mat-card class="dialog">
-  <mat-card-header [style.box-shadow]="'0 0 5px 3px #ddd'" [style.background]="palette">
+<div class="dialog">
+  <div [style.box-shadow]="'0 0 5px 3px #ddd'" [style.background]="palette">
     <div class="flex-center-center py" [style.width]="'100%'">
       <div class="pr mr" *ngIf="img">
         <img [src]="img" alt="google-icon" width="44" height="44">
@@ -8,8 +8,8 @@
         <p class="card_header" [class.card_header]="data.mode != 'gsuite'">{{header}}</p>
       </div>
     </div>
-  </mat-card-header>
-  <mat-card-content class="card-content flex-start-between">
+  </div>
+  <section class="card-content flex-start-between">
     <div class="flex-center-between flex-column h-100 w-100" [ngSwitch]="layout">
       <div class="flex-start-between w-100"  *ngSwitchCase="'restrictions'">
         <div class="card-content_left">
@@ -85,9 +85,16 @@
         <div class="card-content_right" [style.width]="'35%'">
           <div mat-calendar-body="pb mb">
             <div class="flex-center-center pb mb">
-              <div [style.width]="'217px'">
-                <app-gradient-button [gradient]="'#022F68, #2F66AB'" [minHeight]="'28px'">
-                  <span style="font-weight: normal; font-size: 16px">Manually <span style="color: #0C46A2">Sync</span></span>
+              <div [style.width]="'150px'">
+                <app-gradient-button
+                  [gradient]="'#022F68, #2F66AB'"
+                  [hoverColor]="'#022F68'"
+                  [fontSize]="'12px'"
+                  [fontWeight]="'900'"
+                  [textColor]="'#FFFFFF'"
+                  [minHeight]="'28px'"
+                  [cursor]="'pointer'">
+                  <span>Manually Sync</span>
                 </app-gradient-button>
               </div>
             </div>
@@ -108,5 +115,5 @@
       </div>
 
     </div>
-  </mat-card-content>
-</mat-card>
+  </section>
+</div>

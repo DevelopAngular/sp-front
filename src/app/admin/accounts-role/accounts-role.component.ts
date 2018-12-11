@@ -55,13 +55,13 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           if (userList && userList.length) {
             // this.userAmount.next(userList.length);
             this.userList = userList.map((raw) => {
-              return {
-                '#Id': raw.id,
+              const rawObj = {
                 'Name': raw.display_name,
                 'Account Email': raw.primary_email,
-                'Last Sign-in': raw.last_updated,
-                // 'Restrictions': 'None'
+                'Last Sign-in': Util.formatDateTime(new Date(raw.last_updated)),
               };
+              Object.defineProperty(rawObj, '#Id', { enumerable: false, value: raw.id});
+              return  rawObj;
             });
           } else {
             this.placeholder = true;
@@ -71,7 +71,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     this.searchChangeObserver$.next(searchValue);
   }
   showSelected(e) {
-    console.log(e);
+    if (e.length) {
+      console.log(e[0]['#Id']);
+
+    }
     this.selectedUsers = e;
   }
   openDialog(mode) {
@@ -144,13 +147,13 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           this.placeholder = false;
           this.userAmount.next(userList.length);
           this.userList = userList.map((raw) => {
-            return {
-              '#Id': raw.id,
+            const rawObj = {
               'Name': raw.display_name,
               'Account Email': raw.primary_email,
               'Last Sign-in': Util.formatDateTime(new Date(raw.last_updated)),
-              // 'Restrictions': 'None'
             };
+            Object.defineProperty(rawObj, '#Id', { enumerable: false, value: raw.id});
+            return  rawObj;
           });
         } else {
           this.placeholder = true;

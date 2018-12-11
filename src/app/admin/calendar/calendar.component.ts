@@ -9,6 +9,7 @@ import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material'
 export class CalendarComponent implements OnInit {
 
   triggerElementRef: ElementRef;
+  previousSelectedDate: Date;
   minDate: Date = new Date('December 17, 1995 03:24:00');
 
   constructor(
@@ -18,6 +19,7 @@ export class CalendarComponent implements OnInit {
 
   ngOnInit() {
     this.triggerElementRef = this.data['trigger'];
+    this.previousSelectedDate = this.data['previousSelectedDate'];
 
       const matDialogConfig: MatDialogConfig = new MatDialogConfig();
       const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();

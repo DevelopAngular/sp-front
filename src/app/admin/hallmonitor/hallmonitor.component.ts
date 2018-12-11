@@ -43,6 +43,8 @@ export class HallmonitorComponent implements OnInit {
     searchDate_1st$ = new BehaviorSubject<Date>(null);
     searchDate_2nd$ = new BehaviorSubject<Date>(null);
 
+    private reportsDate: Date = new Date();
+
     constructor(
         public dialog: MatDialog,
         private liveDataService: LiveDataService,
@@ -69,11 +71,17 @@ export class HallmonitorComponent implements OnInit {
     const DR = this.dialog.open(CalendarComponent, {
         panelClass: 'calendar-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: { 'trigger': target }
+        data: {
+          'trigger': target,
+          'previousSelectedDate': this.reportsDate
+        }
     });
     DR.afterClosed().subscribe((data) => {
-        console.log('82 Date ===> :', data.date);
-        this.getReports(data.date);
+        // console.log('82 Date ===> :', data.date);
+        if (this.reportsDate.getTime() !== data.date.getTime()) {
+          this.reportsDate = new Date(data.date);
+          this.getReports(this.reportsDate);
+        }
       }
     );
   }
