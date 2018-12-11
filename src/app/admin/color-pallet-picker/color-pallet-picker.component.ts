@@ -1,4 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {HttpService} from '../../http-service';
+import {map, shareReplay} from 'rxjs/operators';
 
 @Component({
     selector: 'app-color-pallet-picker',
@@ -7,7 +9,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 })
 export class ColorPalletPickerComponent implements OnInit {
 
-  @Input() colors$;
+  colors$;
 
   @Input() selectedColorProfile;
 
@@ -15,9 +17,15 @@ export class ColorPalletPickerComponent implements OnInit {
 
   selectedId: number;
 
-  constructor() { }
+  constructor(private httpService: HttpService) { }
 
   ngOnInit() {
+      this.colors$ = this.httpService.get('v1/color_profiles').pipe(
+          shareReplay(1),
+          map((colors: any[]) => {
+          return colors.filter(color => color.id !== 1 && color.id !== 6);
+      }));
+      this.colors$.subscribe(res => console.log('COLORS', res));
       if (this.selectedColorProfile) {
           this.selectedId = this.selectedColorProfile.id;
       }

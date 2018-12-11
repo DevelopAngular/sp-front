@@ -300,7 +300,7 @@
         <div class="inactive" *ngIf="hideAppearance"></div>
         <div class="right-content-title">Appearance</div>
         <div class="color-picker">
-          <app-color-pallet-picker [selectedColorProfile]="color_profile" [colors$]="colors$" (selectedEvent)="changeColor($event)"></app-color-pallet-picker>
+          <app-color-pallet-picker [selectedColorProfile]="color_profile" (selectedEvent)="changeColor($event)"></app-color-pallet-picker>
         </div>
         <div class="icon-picker">
           <app-icon-picker (selectedEvent)="selectedIcon=$event; show($event)"></app-icon-picker>
