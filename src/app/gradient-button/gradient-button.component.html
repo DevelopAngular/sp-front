@@ -7,6 +7,7 @@
      [style.box-shadow]="shadow"
      [style.cursor]="cursor"
      (click)="onClick($event)"
+     [@pressState]="buttonState"
      (mouseenter)="onHover(true)" (mouseleave)="onHover(false)"
      (mousedown)="onPress(true)" (mouseup)="onPress(false)"
      [@pressState]="buttonState"

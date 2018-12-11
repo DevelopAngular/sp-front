@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {HttpService} from '../../http-service';
-import {map} from 'rxjs/internal/operators';
+import {map, shareReplay} from 'rxjs/internal/operators';
 import {DomSanitizer} from '@angular/platform-browser';
 
 
@@ -24,7 +24,7 @@ export class IconPickerComponent implements OnInit {
 
   ngOnInit() {
     this.icons$ = this.http.get('v1/room_icons')
-      .pipe(
+      .pipe(shareReplay(1),
       map((icons: any) => {
         return icons.map((_icon) => {
           _icon.active = false;

@@ -81,7 +81,7 @@ export class PassCollectionComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-      this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
+      this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(100));
   }
 
   getEmptyMessage() {
