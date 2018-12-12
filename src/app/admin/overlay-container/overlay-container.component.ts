@@ -43,6 +43,8 @@ export class OverlayContainerComponent implements OnInit {
   color_profile;
   selectedIcon;
 
+  isDirtysettings: boolean;
+
   showSearchTeacherOptions: boolean;
 
   newRoomsInFolder = [];
@@ -208,6 +210,12 @@ export class OverlayContainerComponent implements OnInit {
   changeColor(color) {
     this.color_profile = color;
     this.gradientColor = 'radial-gradient(circle at 98% 97%,' + color.gradient_color + ')';
+    this.isDirtysettings = true;
+  }
+
+  changeIcon(icon) {
+    this.selectedIcon = icon;
+    this.isDirtysettings = true;
   }
 
   addToFolder() {

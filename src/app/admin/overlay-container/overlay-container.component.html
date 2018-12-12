@@ -32,11 +32,11 @@
                              (buttonClick)="done()"
         >
           Publish</app-gradient-button>
-        <app-gradient-button *ngIf="isValidForm && form.dirty && (overlayType === 'editRoom' || overlayType === 'newRoom') || (overlayType === 'newFolder' && form.get('folderName').valid  && color_profile && selectedIcon)"
+        <app-gradient-button *ngIf="isValidForm && (form.dirty || isDirtysettings) && (overlayType === 'editRoom' || overlayType === 'newRoom') || (overlayType === 'newFolder' && form.get('folderName').valid  && color_profile && selectedIcon)"
                              [minHeight]="'40px'"
                              [style.width]="'120px'"
                              [cursor]="'pointer'"
-                             [gradient]="pinnable.color_profile.gradient_color"
+                             [gradient]="color_profile.gradient_color"
                              [fontSize]="'14px'"
                              (buttonClick)="onCancel()"
         >
@@ -303,7 +303,7 @@
           <app-color-pallet-picker [selectedColorProfile]="color_profile" (selectedEvent)="changeColor($event)"></app-color-pallet-picker>
         </div>
         <div class="icon-picker">
-          <app-icon-picker (selectedEvent)="selectedIcon=$event; show($event)"></app-icon-picker>
+          <app-icon-picker (selectedEvent)="changeIcon($event); show($event)"></app-icon-picker>
         </div>
       </div>
 
