@@ -38,6 +38,7 @@ export class OverlayContainerComponent implements OnInit {
   hideAppearance: boolean = false;
   isEditRooms: boolean = false;
   isEditFolder: boolean = false;
+  locationsOfFolder;
 
   color_profile;
   selectedIcon;
@@ -116,9 +117,13 @@ export class OverlayContainerComponent implements OnInit {
       this.overlayType = this.dialogData['type'];
       if (this.dialogData['pinnable']) {
           this.pinnable = this.dialogData['pinnable'];
+          if (this.pinnable.type === 'category') {
+              this.http.get(`v1/locations?category=${this.pinnable.category}&`)
+                  .subscribe(res => this.selectedRooms = this.selectedRooms.concat(res));
+          }
       }
       if (this.dialogData['rooms']) {
-          this.selectedRooms = this.dialogData['rooms'];
+          this.selectedRooms = this.selectedRooms.concat(this.dialogData['rooms']);
       }
 
       if (this.dialogData['pinnables$']) {
@@ -261,6 +266,9 @@ export class OverlayContainerComponent implements OnInit {
                 id = location.id;
                 data = location;
                 data.category = this.folderName;
+                if (data.teachers) {
+                    data.teachers = data.teachers.map(teacher => teacher.id);
+                }
             }
             return this.http.patch(`v1/locations/${id}`, data);
         });
@@ -374,7 +382,10 @@ export class OverlayContainerComponent implements OnInit {
         this.readyRoomsToEdit = [];
      }
     if (action === 'delete') {
-        this.deleteRoom();
+        const roomsToDelete = this.readyRoomsToEdit.map(room => {
+            return this.http.delete(`v1/locations/${room.id}`);
+        });
+        forkJoin(roomsToDelete).subscribe(res => console.log('[DeletedRooms] ===>> ', res));
     }
   }
 

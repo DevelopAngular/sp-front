@@ -34,7 +34,7 @@
                              (buttonClick)="done()"
         >
           Publish</app-gradient-button>
-        <app-gradient-button *ngIf="isValidForm && form.dirty && (overlayType === 'editRoom' || overlayType === 'newRoom') || (overlayType === 'newFolder' && form.get('folderName').valid && form.get('folderName').dirty && color_profile && selectedIcon)"
+        <app-gradient-button *ngIf="isValidForm && form.dirty && (overlayType === 'editRoom' || overlayType === 'newRoom') || (overlayType === 'newFolder' && form.get('folderName').valid  && color_profile && selectedIcon)"
                              [minHeight]="'40px'"
                              [style.width]="'120px'"
                              [cursor]="'pointer'"
