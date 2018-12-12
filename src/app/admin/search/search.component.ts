@@ -92,16 +92,17 @@ export class SearchComponent implements OnInit {
                     :
                     `${reportDate.getHours() - 12}:${reportDate.getMinutes() < 10 ? '0' : ''}${reportDate.getMinutes()} PM`;
                 const prettyReportDate = `${reportDate.getMonth() + 1}/${reportDate.getDate()}  ${time}`;
-                // const startTime = new Date(hallPass.start_time).getTime();
-                // const endTime = new Date(hallPass.end_time).getTime();
-                // const duration = (endTime - startTime) * 36000;
+                const diff: number = (new Date(hallPass.end_time).getTime() - new Date(hallPass.start_time).getTime()) / 1000;
+                const mins: number = Math.floor(Math.floor(diff) / 60);
+                const secs: number = Math.abs(Math.floor(diff) % 60);
+                const duration = mins + (secs === 0 ? '' : ':') + (secs === 0 ? '' : secs < 10 ? '0' + secs : secs) + ' min';
                 return {
                    'Student Name': hallPass.student.first_name + ' ' + hallPass.student.last_name,
                    'Origin': hallPass.origin.title,
                    'Destination': hallPass.destination.title,
                    'Travel Type': travelType,
                    'Date & Time': prettyReportDate,
-                   'Duration': hallPass.destination.max_allowed_time
+                   'Duration': duration
                };
             });
             this.spinner = false;

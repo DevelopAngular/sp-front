@@ -9,10 +9,8 @@
            *ngIf="overlayType !== 'addExisting'
            && overlayType !== 'newRoomInFolder'
            && overlayType !== 'importRooms'
-           && !isValidForm
            && overlayType !== 'settingsRooms'
-           && overlayType !== 'edit'
-           && overlayType !== 'editRoom'"
+           && overlayType !== 'edit'"
            [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
       <div class="title" *ngIf="overlayType === 'newRoom' || overlayType === 'editRoom'">{{ roomName }}</div>
       <div
@@ -34,10 +32,11 @@
                              (buttonClick)="done()"
         >
           Publish</app-gradient-button>
-        <app-gradient-button *ngIf="isValidForm && form.dirty && (overlayType === 'editRoom' || overlayType === 'newRoom') || (overlayType === 'newFolder' && form.get('folderName').valid && form.get('folderName').dirty && color_profile && selectedIcon)"
+        <app-gradient-button *ngIf="isValidForm && (form.dirty || isDirtysettings) && (overlayType === 'editRoom' || overlayType === 'newRoom') || (overlayType === 'newFolder' && form.get('folderName').valid  && color_profile && selectedIcon)"
                              [minHeight]="'40px'"
                              [style.width]="'120px'"
                              [cursor]="'pointer'"
+                             [gradient]="color_profile.gradient_color"
                              [fontSize]="'14px'"
                              (buttonClick)="onCancel()"
         >
@@ -122,7 +121,7 @@
       >
         <div class="travel-picker">
           <div class="toggle-label">Travel Type</div>
-          <app-toggle-picker (onSelect)="travelUpdate($event)" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+          <app-toggle-picker (onSelect)="travelUpdate($event)" [currentChoose]="travelType" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
         <div class="time-limit"
              *ngIf="overlayType === 'newRoom'
@@ -162,8 +161,8 @@
 
       <div class="footer-delete-button" *ngIf="(overlayType === 'editRoom') && !showSearchTeacherOptions">
         <app-gradient-button
-                [hoverColor]="'#F52B4F'"
-                [gradient]="'#F52B4F, #F37426'"
+                [hoverColor]="'#DA2370'"
+                [gradient]="'#DA2370,#FB434A'"
                 [minHeight]="'40px'"
                 [style.width]="'140px'"
                 [cursor]="'pointer'"
@@ -304,7 +303,7 @@
           <app-color-pallet-picker [selectedColorProfile]="color_profile" (selectedEvent)="changeColor($event)"></app-color-pallet-picker>
         </div>
         <div class="icon-picker">
-          <app-icon-picker (selectedEvent)="selectedIcon=$event; show($event)"></app-icon-picker>
+          <app-icon-picker [selectedIconPicker]="selectedIcon" (selectedEvent)="changeIcon($event); show($event)"></app-icon-picker>
         </div>
       </div>
 

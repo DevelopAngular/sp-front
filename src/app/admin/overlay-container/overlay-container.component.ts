@@ -42,6 +42,8 @@ export class OverlayContainerComponent implements OnInit {
   color_profile;
   selectedIcon;
 
+  isDirtysettings: boolean;
+
   showSearchTeacherOptions: boolean;
 
   newRoomsInFolder = [];
@@ -95,6 +97,7 @@ export class OverlayContainerComponent implements OnInit {
             this.futureRestriction = this.pinnable.location.scheduling_restricted;
             this.color_profile = this.pinnable.color_profile;
             this.selectedIcon = this.pinnable.icon;
+            this.travelType = this.pinnable.location.travel_types;
             break;
         }
         case 'edit': {
@@ -116,9 +119,13 @@ export class OverlayContainerComponent implements OnInit {
       this.overlayType = this.dialogData['type'];
       if (this.dialogData['pinnable']) {
           this.pinnable = this.dialogData['pinnable'];
+          if (this.pinnable.type === 'category') {
+              this.http.get(`v1/locations?category=${this.pinnable.category}&`)
+                  .subscribe(res => this.selectedRooms = this.selectedRooms.concat(res));
+          }
       }
       if (this.dialogData['rooms']) {
-          this.selectedRooms = this.dialogData['rooms'];
+          this.selectedRooms = this.selectedRooms.concat(this.dialogData['rooms']);
       }
 
       if (this.dialogData['pinnables$']) {
@@ -203,6 +210,12 @@ export class OverlayContainerComponent implements OnInit {
   changeColor(color) {
     this.color_profile = color;
     this.gradientColor = 'radial-gradient(circle at 98% 97%,' + color.gradient_color + ')';
+    this.isDirtysettings = true;
+  }
+
+  changeIcon(icon) {
+    this.selectedIcon = icon;
+    this.isDirtysettings = true;
   }
 
   addToFolder() {
@@ -239,6 +252,15 @@ export class OverlayContainerComponent implements OnInit {
     }
 
     if (this.overlayType === 'newFolder') {
+        if (this.selectedRooms.length < 1) {
+            const newFolder = {
+                title: this.folderName,
+                color_profile: this.color_profile.id,
+                icon: this.selectedIcon.inactive_icon,
+                category: this.folderName
+            };
+            this.http.patch(`v1/pinnables/${this.pinnable.id}`, newFolder).subscribe(res => this.dialogRef.close());
+        }
         const locationsToUpdate$ = this.selectedRooms.map(location => {
             let id;
             let data;
@@ -252,6 +274,9 @@ export class OverlayContainerComponent implements OnInit {
                 id = location.id;
                 data = location;
                 data.category = this.folderName;
+                if (data.teachers) {
+                    data.teachers = data.teachers.map(teacher => teacher.id);
+                }
             }
             return this.http.patch(`v1/locations/${id}`, data);
         });
@@ -365,7 +390,10 @@ export class OverlayContainerComponent implements OnInit {
         this.readyRoomsToEdit = [];
      }
     if (action === 'delete') {
-        this.deleteRoom();
+        const roomsToDelete = this.readyRoomsToEdit.map(room => {
+            return this.http.delete(`v1/locations/${room.id}`);
+        });
+        forkJoin(roomsToDelete).subscribe(res => console.log('[DeletedRooms] ===>> ', res));
     }
   }
 

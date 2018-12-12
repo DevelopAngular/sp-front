@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {HttpService} from '../../http-service';
 import {map, shareReplay} from 'rxjs/internal/operators';
 import {DomSanitizer} from '@angular/platform-browser';
+import * as _ from 'lodash';
 
 
 @Component({
@@ -12,6 +13,8 @@ import {DomSanitizer} from '@angular/platform-browser';
 export class IconPickerComponent implements OnInit {
 
   icons$;
+
+  @Input() selectedIconPicker;
 
   @Output() selectedEvent: EventEmitter<any> = new EventEmitter();
 
@@ -27,7 +30,14 @@ export class IconPickerComponent implements OnInit {
       .pipe(shareReplay(1),
       map((icons: any) => {
         return icons.map((_icon) => {
-          _icon.active = false;
+            if (this.selectedIconPicker) {
+                if (this.selectedIconPicker === _icon.inactive_icon) {
+                    this.selectedIconId = _icon.id;
+                   _icon.active = true;
+                   return _icon;
+                }
+            }
+            _icon.active = false;
           return _icon;
         });
       })
