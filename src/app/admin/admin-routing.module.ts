@@ -10,6 +10,7 @@ import { SupportComponent } from './support/support.component';
 import {AccountsComponent} from './accounts/accounts.component';
 import {AccountsRoleComponent} from './accounts-role/accounts-role.component';
 import { CurrentUserResolver } from '../currentUser.resolver';
+import {SettingsComponent} from './settings/settings.component';
 
 const routes: Routes = [
   {
@@ -25,6 +26,7 @@ const routes: Routes = [
       {path: 'accounts', component: AccountsComponent},
       {path: 'accounts/:role', component: AccountsRoleComponent},
       {path: 'passconfig', component: PassConfigComponent},
+      {path: 'settings', component: SettingsComponent},
       {path: 'feedback', component: FeedbackComponent},
       {path: 'support', component: SupportComponent},
       {path: '**', redirectTo: 'dashboard', pathMatch: 'full'},

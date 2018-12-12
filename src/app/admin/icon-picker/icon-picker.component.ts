@@ -34,17 +34,17 @@ export class IconPickerComponent implements OnInit {
     );
   }
 
-    changeIcon(icon) {
-        if ( this.selectedIconId !== icon.id && icon.active) {
-            icon.active = false;
-        }
-        if (icon.active) {
-            icon.active = false;
-        } else {
-            icon.active = true;
-        }
-        this.selectedIconId = icon.id;
-        this.selectedEvent.emit(icon);
-    }
+  changeIcon(icon) {
+      if ( this.selectedIconId !== icon.id && icon.active) {
+          icon.active = false;
+      }
+      if (icon.active) {
+          icon.active = false;
+      } else {
+          icon.active = true;
+      }
+      this.selectedIconId = icon.id;
+      this.selectedEvent.emit(icon);
+  }
 
 }

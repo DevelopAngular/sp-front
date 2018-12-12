@@ -30,6 +30,7 @@ import { ChartsModule } from 'ng2-charts';
 import { CalendarComponent } from './calendar/calendar.component';
 import {PdfGeneratorService} from './pdf-generator.service';
 import {DatePrettyHelper} from './date-pretty.helper';
+import { SettingsComponent } from './settings/settings.component';
 
 @NgModule({
   imports: [
@@ -59,6 +60,7 @@ import {DatePrettyHelper} from './date-pretty.helper';
     AccountsComponent,
     AccountsRoleComponent,
     CalendarComponent,
+    SettingsComponent
   ],
 
   entryComponents: [AccountsDialogComponent, CalendarComponent],

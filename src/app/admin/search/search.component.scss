@@ -10,16 +10,18 @@
 }
 .search-wrapper{
     width: 100%;
+    height: 100%;
     overflow: auto;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     align-items: center;
     background-color: #f8faff;
 }
 
 .divider {
     width: 100%;
-    height: 2px;
+    height: 1px;
     background-color: darkgray;
     margin-top: 10px;
     margin-bottom: 20px;
@@ -27,6 +29,8 @@
 
 .buttons {
     display: flex;
+    flex: 1 1 auto;
+    align-items: center;
     margin-bottom: 30px;
 }
 
@@ -79,7 +83,6 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-end;
-    height: 100%;
     width: 100%;
 }
 
