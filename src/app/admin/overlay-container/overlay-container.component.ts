@@ -239,6 +239,15 @@ export class OverlayContainerComponent implements OnInit {
     }
 
     if (this.overlayType === 'newFolder') {
+        if (this.selectedRooms.length < 1) {
+            const newFolder = {
+                title: this.folderName,
+                color_profile: this.color_profile.id,
+                icon: this.selectedIcon.inactive_icon,
+                category: this.folderName
+            };
+            this.http.patch(`v1/pinnables/${this.pinnable.id}`, newFolder).subscribe(res => this.dialogRef.close());
+        }
         const locationsToUpdate$ = this.selectedRooms.map(location => {
             let id;
             let data;
