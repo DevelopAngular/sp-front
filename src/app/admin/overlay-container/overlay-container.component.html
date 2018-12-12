@@ -121,7 +121,7 @@
       >
         <div class="travel-picker">
           <div class="toggle-label">Travel Type</div>
-          <app-toggle-picker (onSelect)="travelUpdate($event)" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+          <app-toggle-picker (onSelect)="travelUpdate($event)" [currentChoose]="travelType" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
         <div class="time-limit"
              *ngIf="overlayType === 'newRoom'
@@ -303,7 +303,7 @@
           <app-color-pallet-picker [selectedColorProfile]="color_profile" (selectedEvent)="changeColor($event)"></app-color-pallet-picker>
         </div>
         <div class="icon-picker">
-          <app-icon-picker (selectedEvent)="changeIcon($event); show($event)"></app-icon-picker>
+          <app-icon-picker [selectedIconPicker]="selectedIcon" (selectedEvent)="changeIcon($event); show($event)"></app-icon-picker>
         </div>
       </div>
 

@@ -1,4 +1,5 @@
 ﻿import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-toggle-picker',
@@ -38,13 +39,19 @@ export class TogglePickerComponent implements OnInit {
           this.choice2 = this.choices[1];
       }
       if (this.currentChoose) {
-          switch (this.currentChoose) {
-              case false: {
-                this.selectedChoice = 'Unrestricted';
-                break;
+          if (_.isArray(this.currentChoose)) {
+              if (this.currentChoose.includes('round_trip')) {
+
               }
-              case true: {
-                this.selectedChoice = 'Restricted';
+          } else {
+              switch (this.currentChoose) {
+                  case false: {
+                      this.selectedChoice = 'Unrestricted';
+                      break;
+                  }
+                  case true: {
+                      this.selectedChoice = 'Restricted';
+                  }
               }
           }
       } else {

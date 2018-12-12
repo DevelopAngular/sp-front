@@ -38,7 +38,6 @@ export class OverlayContainerComponent implements OnInit {
   hideAppearance: boolean = false;
   isEditRooms: boolean = false;
   isEditFolder: boolean = false;
-  locationsOfFolder;
 
   color_profile;
   selectedIcon;
@@ -98,6 +97,7 @@ export class OverlayContainerComponent implements OnInit {
             this.futureRestriction = this.pinnable.location.scheduling_restricted;
             this.color_profile = this.pinnable.color_profile;
             this.selectedIcon = this.pinnable.icon;
+            this.travelType = this.pinnable.location.travel_types;
             break;
         }
         case 'edit': {
