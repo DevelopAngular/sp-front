@@ -26,7 +26,7 @@ export class PassConfigComponent implements OnInit {
     pinnable: Pinnable;
     pinnables$: Observable<Pinnable[]>;
     pinnables;
-    colors$;
+    schools$;
 
     dataChanges: any[] = [];
 
@@ -38,6 +38,8 @@ export class PassConfigComponent implements OnInit {
   ngOnInit() {
       this.buildForm();
       this.pinnables$ = this.httpService.get('v1/pinnables');
+      this.schools$ = this.httpService.get('v1/schools');
+      this.schools$.subscribe(res => this.schoolName =  res[0].name);
       this.pinnables$.subscribe(res => this.pinnables = res);
 
   }
