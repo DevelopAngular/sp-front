@@ -92,16 +92,17 @@ export class SearchComponent implements OnInit {
                     :
                     `${reportDate.getHours() - 12}:${reportDate.getMinutes() < 10 ? '0' : ''}${reportDate.getMinutes()} PM`;
                 const prettyReportDate = `${reportDate.getMonth() + 1}/${reportDate.getDate()}  ${time}`;
-                // const startTime = new Date(hallPass.start_time).getTime();
-                // const endTime = new Date(hallPass.end_time).getTime();
-                // const duration = (endTime - startTime) * 36000;
+                const diff: number = (new Date(hallPass.end_time).getTime() - new Date(hallPass.start_time).getTime()) / 1000;
+                const mins: number = Math.floor(Math.floor(diff) / 60);
+                const secs: number = Math.abs(Math.floor(diff) % 60);
+                const duration = mins + (secs === 0 ? '' : ':') + (secs === 0 ? '' : secs < 10 ? '0' + secs : secs) + ' min';
                 return {
                    'Student Name': hallPass.student.first_name + ' ' + hallPass.student.last_name,
                    'Origin': hallPass.origin.title,
                    'Destination': hallPass.destination.title,
                    'Travel Type': travelType,
                    'Date & Time': prettyReportDate,
-                   'Duration': hallPass.destination.max_allowed_time
+                   'Duration': duration
                };
             });
             this.spinner = false;
@@ -126,12 +127,12 @@ export class SearchComponent implements OnInit {
   previewPDF() {
       console.log(this.selectedRooms);
       if (this.selectedReport.length > 0) {
-          this.selectedReport = this.selectedReport.map((row) => {
+           const _selectedReport = this.selectedReport.map((row) => {
+              const _copy = {};
               for (const key in row) {
-                  row[key] = typeof row[key] !== 'string' ? row[key] + ' min' : row[key];
-                  console.log(row);
+                  _copy[key] = typeof row[key] !== 'string' ? row[key] + ' min' : row[key];
               }
-              return row;
+              return _copy;
           });
 
           let prettyFrom = '';
@@ -149,7 +150,7 @@ export class SearchComponent implements OnInit {
 
           const title = `${this.sortParamsHeader}: ${this.selectedDate ? `from ${prettyFrom} to ${prettyTo};` : ''} ${this.selectedRooms ? rooms : ''}`;
 
-          this.pdf.generate(this.selectedReport, null, 'l', 'search', title);
+          this.pdf.generate(_selectedReport, null, 'l', 'search', title);
       }
   }
 

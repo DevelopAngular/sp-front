@@ -1,4 +1,11 @@
 .data-table-wrapper {
+  .sticky-header {
+    position: sticky;
+    top: -22px;
+    border-bottom: 2px solid #878787;
+    z-index: 100;
+    background-color: #F8FAFF;
+  }
 }
 
 table {

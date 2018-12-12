@@ -16,16 +16,16 @@ export class NavComponent implements OnInit {
   @Output('restrictAccess') restrictAccess: EventEmitter<boolean> = new EventEmitter();
 
   buttons = [
-            {title: 'Dashboard', route:'dashboard', imgUrl:'./assets/Dashboard', requiredRoles: ['_profile_admin', 'admin_dashboard']},
-            {title: 'Hall Monitor', route:'hallmonitor', imgUrl:'./assets/Hallway', requiredRoles: ['_profile_admin', 'admin_hall_monitor']},
-            {title: 'Search', route:'search', imgUrl:'./assets/Search', requiredRoles: ['_profile_admin', 'admin_search']},
-            {title: 'Accounts & Profiles', route:'accounts', imgUrl:'./assets/Accounts', requiredRoles: ['_profile_admin', 'admin_accounts']},
-            {title: 'Pass Configuration', route:'passconfig', imgUrl:'./assets/Arrow', requiredRoles: ['_profile_admin', 'admin_pass_config']},
-            {title: 'Feedback', route:'feedback', imgUrl:'./assets/Feedback', requiredRoles: ['_profile_admin']},
-            {title: 'Support', route:'support', imgUrl:'./assets/Support', requiredRoles: ['_profile_admin']},
-            ];
+    {title: 'Dashboard', route : 'dashboard', imgUrl : './assets/Dashboard', requiredRoles: ['_profile_admin', 'admin_dashboard']},
+    {title: 'Hall Monitor', route : 'hallmonitor', imgUrl : './assets/Hallway', requiredRoles: ['_profile_admin', 'admin_hall_monitor']},
+    {title: 'Search', route : 'search', imgUrl : './assets/Search', requiredRoles: ['_profile_admin', 'admin_search']},
+    {title: 'Accounts & Profiles', route : 'accounts', imgUrl : './assets/Accounts', requiredRoles: ['_profile_admin', 'admin_accounts']},
+    {title: 'Pass Configuration', route : 'passconfig', imgUrl : './assets/Arrow', requiredRoles: ['_profile_admin', 'admin_pass_config']},
+    {title: 'Feedback', route : 'feedback', imgUrl : './assets/Feedback', requiredRoles: ['_profile_admin']},
+    {title: 'Support', route : 'support', imgUrl : './assets/Support', requiredRoles: ['_profile_admin']},
+  ];
   fakeMenu: ReplaySubject<boolean> = new ReplaySubject<boolean>();
-  tab:string[] = ["dashboard"];
+  tab: string[] = ['dashboard'];
   currentUser: User;
 
   user;
@@ -84,7 +84,6 @@ export class NavComponent implements OnInit {
   route( route: string) {
     this.tab = ['admin', route];
     this.router.navigate(this.tab);
-    // this.tab = this.tab;
   }
   isSelected(route: string) {
     return this.tab.includes(route);

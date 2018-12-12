@@ -1,0 +1,22 @@
+<div class="settings-wrapper">
+  <div class="flex-center-center mt pt">
+    <div>
+      <div>
+        <h2 class="px" [style.color]="'#134482'">Settings</h2>
+      </div>
+      <div class="flex-center-start" >
+        <div *ngFor="let setting of settings" class="px">
+          <app-gradient-button
+            [cursor]="'pointer'"
+            [minWidth]="'121px'"
+            [minHeight]="'74px'"
+            [gradient]="setting.color_profile.gradient_color"
+            [hoverColor]="setting.color_profile.solid_color"
+            [fontSize]="'17px'"
+            (click)="settingsAction(setting.action)">{{setting.title}}
+          </app-gradient-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

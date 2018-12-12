@@ -43,7 +43,7 @@ export class NavbarComponent implements OnInit {
   constructor(
       private dataService: DataService,
       public dialog: MatDialog,
-      private router: Router,
+      public router: Router,
       private location: Location,
       public loadingService: LoadingService,
       public loginService: GoogleLoginService,

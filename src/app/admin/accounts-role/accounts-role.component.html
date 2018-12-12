@@ -1,4 +1,4 @@
-<div class="container">
+<div class="accounts-role-wrapper">
   <div class="card flex-start-between" style="width: 100%">
     <div class="mt mr pt pr">
       <app-back-button routerLink="/admin/accounts"></app-back-button>
@@ -126,7 +126,6 @@
       <!--</div>-->
       <app-data-table
         [data]="userList"
-        [height]="'468px'"
         (selectedUsers)="showSelected($event)">
       </app-data-table>
     </div>

@@ -13,7 +13,7 @@ export class DataTableComponent implements OnInit {
   @Input() height: string = 'none';
   @Input() isCheckbox: boolean = true;
   @Input() data: any[];
-  @Input() backgroundColor: string = 'white';
+  @Input() backgroundColor: string = 'transparent';
   @Input() textColor: string = 'black';
   @Input() textHeaderColor: string = '#4b4876';
 
@@ -38,20 +38,20 @@ export class DataTableComponent implements OnInit {
       }
   }
 
-    isAllSelected() {
-        const numSelected = this.selection.selected.length;
-        const numRows = this.data.length;
-        return numSelected === numRows;
-    }
+  isAllSelected() {
+      const numSelected = this.selection.selected.length;
+      const numRows = this.data.length;
+      return numSelected === numRows;
+  }
 
-    masterToggle() {
-        this.isAllSelected() ?
-            this.selection.clear() :
-            this.data.forEach(row => this.selection.select(row));
-    }
+  masterToggle() {
+      this.isAllSelected() ?
+          this.selection.clear() :
+          this.data.forEach(row => this.selection.select(row));
+  }
 
-    pushOutSelected() {
-      this.selectedUsers.emit(this.selection.selected);
-    }
+  pushOutSelected() {
+    this.selectedUsers.emit(this.selection.selected);
+  }
 }
 

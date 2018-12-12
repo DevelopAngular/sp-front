@@ -31,6 +31,9 @@
   </div>
   <div class="nav-footer">
     <div class="footer-text">{{(user?user.display_name:'')}}</div>
-    <img (click)="router.navigateByUrl('/main/settings')" class="footer-settings" [src]="'./assets/Gear (Blue).png' | resolveAsset" alt="">
+    <div>
+      <img (click)="router.navigateByUrl('/main/passes')" class="footer-settings" [src]="'./assets/Switch Account (Blue).png' | resolveAsset" alt="" *ngIf="hasRoles(['_profile_teacher', '_profile_admin'])">
+      <img (click)="router.navigateByUrl('/admin/settings')" class="footer-settings" [src]="'./assets/Gear (Blue).png' | resolveAsset" alt="">
+    </div>
   </div>
 </div>

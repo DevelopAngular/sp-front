@@ -11,7 +11,7 @@
   height: inherit;
   display: flex;
   align-items: center;
-  //cursor: pointer;
+  transition: box-shadow .3s ease;
   user-select: none;
 }
 

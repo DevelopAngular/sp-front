@@ -61,6 +61,7 @@ export class HallmonitorComponent implements OnInit {
   }
 
   onSearch(searchValue) {
+      console.log('It emits here!', searchValue);
      this.searchQuery$.next(searchValue);
   }
 
