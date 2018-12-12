@@ -21,8 +21,15 @@ export class DashboardComponent implements OnInit {
   //   { data: [5, 14, 9, 12, 11, 10, 15, 5] },
   // ];
 
-  public lineChartLabels: Array<any> = Array.from(Array(24).keys()).map(hour => hour + (hour < 12 ? 'AM' : 'PM'));
-    // ['8AM', '9AM', '10AM', '11AM', '12PM', '1PM', '2PM', '3PM'];
+  public lineChartLabels: Array<any> = Array.from(Array(9).keys()).map(hour => {
+    hour += 8;
+
+    if ( (hour) <= 12 ) {
+      return  `${hour} ${ hour < 12 ? 'AM' : 'PM' }`;
+    } else {
+      return `${(hour - 12)} PM`;
+    }
+  });
   public lineChartOptions: any;
   public gradient: any;
 
@@ -33,7 +40,7 @@ export class DashboardComponent implements OnInit {
   public activeHallpasses: HallPass[];
   public reports: Report[];
   public averagePassTime: number|string;
-  public hiddenChart: ReplaySubject<boolean> = new ReplaySubject<boolean>();
+  public hiddenChart: boolean = true;
 
   constructor(
     private http: HttpService,
@@ -59,6 +66,7 @@ export class DashboardComponent implements OnInit {
       // this.activeHallpasses = result[0].results;
       this.reports =  result[3];
       this.lineChartData = [{ data: result[4].hall_pass_usage.map(numb => numb + Math.ceil((Math.random() * 25)))}];
+      this.hiddenChart = false;
       console.log(this.lineChartData[0].data);
       // this.reports = [];
     });
@@ -80,8 +88,10 @@ export class DashboardComponent implements OnInit {
         scales: {
           yAxes: [{
             ticks: {
-              suggestedMin: 5,
-              suggestedMax: 16,
+              suggestedMin: 0,
+              stepSize: 5,
+              suggestedMax: 35,
+
             },
             gridLines: {
               display: true,

@@ -49,7 +49,7 @@ export class NavComponent implements OnInit {
         let urlSplit: string[] = value.url.split('/');
         this.tab = urlSplit.slice(1);
         console.log(this.tab);
-        this.tab = ((this.tab===[''] || this.tab===['admin'])?['dashboard']:this.tab);
+        this.tab = ( (this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab );
       }
     });
 
@@ -65,7 +65,7 @@ export class NavComponent implements OnInit {
 
     this.activeRoute.data.subscribe((_resolved: any) => {
         this.currentUser = _resolved.currentUser;
-        console.log('CurrentRoute ===> \n', (this.activeRoute.snapshot as any)._routerState.url, !this.hasRoles(this.buttons[0].requiredRoles));
+        // console.log('CurrentRoute ===> \n', (this.activeRoute.snapshot as any)._routerState.url, !this.hasRoles(this.buttons[0].requiredRoles));
 
         this.buttons.forEach((button) => {
 
@@ -78,15 +78,17 @@ export class NavComponent implements OnInit {
             this.fakeMenu.next(true);
           }
         });
-    })
+    });
   }
 
   route( route: string) {
-    this.tab = [route];
+    this.tab = ['admin', route];
     this.router.navigate(this.tab);
-    this.tab = this.tab;
+    // this.tab = this.tab;
   }
-
+  isSelected(route: string) {
+    return this.tab.includes(route);
+  }
   hasRoles(roles: string[]) {
     // const mockRoles = [
     //  '_profile_admin',

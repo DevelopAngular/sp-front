@@ -94,7 +94,7 @@ export class SearchComponent implements OnInit {
                 const prettyReportDate = `${reportDate.getMonth() + 1}/${reportDate.getDate()}  ${time}`;
                 // const startTime = new Date(hallPass.start_time).getTime();
                 // const endTime = new Date(hallPass.end_time).getTime();
-                // const duration = new Date(endTime - startTime).getMinutes();
+                // const duration = (endTime - startTime) * 36000;
                 return {
                    'Student Name': hallPass.student.first_name + ' ' + hallPass.student.last_name,
                    'Origin': hallPass.origin.title,

@@ -30,11 +30,18 @@
                              [minHeight]="'40px'"
                              [style.width]="'120px'"
                              [cursor]="'pointer'"
-                             [fontSize]="'12px'"
+                             [fontSize]="'14px'"
                              (buttonClick)="done()"
         >
           Publish</app-gradient-button>
-        <div *ngIf="isValidForm && (overlayType === 'editRoom' || overlayType === 'newRoom' || (overlayType === 'newFolder' && selectedRooms.length > 0))" class="button" (click)="onCancel()">Publish</div>
+        <app-gradient-button *ngIf="isValidForm && form.dirty && (overlayType === 'editRoom' || overlayType === 'newRoom') || (overlayType === 'newFolder' && form.get('folderName').valid && form.get('folderName').dirty && color_profile && selectedIcon)"
+                             [minHeight]="'40px'"
+                             [style.width]="'120px'"
+                             [cursor]="'pointer'"
+                             [fontSize]="'14px'"
+                             (buttonClick)="onCancel()"
+        >
+          Publish</app-gradient-button>
         <div *ngIf="!isValidForm && overlayType !== 'edit' && overlayType !== 'editRoom' && overlayType !== 'newFolder'" style="color: white">Incomplete</div>
       </div>
     </div>
@@ -54,8 +61,8 @@
               {{ (overlayType === 'newRoomInFolder' ? roomName : (overlayType === 'settingsRooms' ? (isEditRooms ? 'Editing ' + readyRoomsToEdit.length : 'Adding ' + selectedRooms.length)  + ' Rooms' : 'Import Rooms')) }}
             </div>
             <div class="header-in-folder-button">
-              <span *ngIf="overlayType === 'settingsRooms' && requireValidator(timeLimit)">Incomplete</span>
-                <app-gradient-button *ngIf="isValidForm || (!requireValidator(timeLimit) && overlayType === 'settingsRooms')"
+              <span *ngIf="overlayType === 'settingsRooms' && form.get('timeLimit').invalid">Incomplete</span>
+                <app-gradient-button *ngIf="isValidForm || (form.get('timeLimit').valid && overlayType === 'settingsRooms')"
                         [minHeight]="'40px'"
                         [style.width]="'120px'"
                         [cursor]="'pointer'"
@@ -155,6 +162,7 @@
 
       <div class="footer-delete-button" *ngIf="(overlayType === 'editRoom') && !showSearchTeacherOptions">
         <app-gradient-button
+                [hoverColor]="'#F52B4F'"
                 [gradient]="'#F52B4F, #F37426'"
                 [minHeight]="'40px'"
                 [style.width]="'140px'"
@@ -207,7 +215,7 @@
           <div class="rooms-list" *ngIf="selectedRooms.length > 0 && !requireValidator(folderName)">
             <mat-list>
               <div class="room" *ngFor="let room of selectedRooms">
-                <mat-checkbox (change)="selectedRoomsEvent($event, room)">
+                <mat-checkbox style="margin-left: 12px" (change)="selectedRoomsEvent($event, room)">
                   <mat-list-item>{{ room.title }}</mat-list-item>
                 </mat-checkbox>
                 <mat-divider></mat-divider>
@@ -293,7 +301,7 @@
         <div class="inactive" *ngIf="hideAppearance"></div>
         <div class="right-content-title">Appearance</div>
         <div class="color-picker">
-          <app-color-pallet-picker [selectedColorProfile]="color_profile" [colors$]="colors$" (selectedEvent)="changeColor($event)"></app-color-pallet-picker>
+          <app-color-pallet-picker [selectedColorProfile]="color_profile" (selectedEvent)="changeColor($event)"></app-color-pallet-picker>
         </div>
         <div class="icon-picker">
           <app-icon-picker (selectedEvent)="selectedIcon=$event; show($event)"></app-icon-picker>
