@@ -9,10 +9,8 @@
            *ngIf="overlayType !== 'addExisting'
            && overlayType !== 'newRoomInFolder'
            && overlayType !== 'importRooms'
-           && !isValidForm
            && overlayType !== 'settingsRooms'
-           && overlayType !== 'edit'
-           && overlayType !== 'editRoom'"
+           && overlayType !== 'edit'"
            [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
       <div class="title" *ngIf="overlayType === 'newRoom' || overlayType === 'editRoom'">{{ roomName }}</div>
       <div
@@ -38,6 +36,7 @@
                              [minHeight]="'40px'"
                              [style.width]="'120px'"
                              [cursor]="'pointer'"
+                             [gradient]="pinnable.color_profile.gradient_color"
                              [fontSize]="'14px'"
                              (buttonClick)="onCancel()"
         >
