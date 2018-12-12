@@ -1,5 +1,5 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import { MatDialog } from '@angular/material';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {MatDialog, MatDialogRef} from '@angular/material';
 import { FormControl, FormGroup } from '@angular/forms';
 
 import { Observable} from 'rxjs';
@@ -16,7 +16,7 @@ import {PinnableCollectionComponent} from '../pinnable-collection/pinnable-colle
   templateUrl: './pass-config.component.html',
   styleUrls: ['./pass-config.component.scss']
 })
-export class PassConfigComponent implements OnInit {
+export class PassConfigComponent implements OnInit, OnDestroy {
 
     @ViewChild(PinnableCollectionComponent) pinColComponent;
 
@@ -32,7 +32,7 @@ export class PassConfigComponent implements OnInit {
 
   constructor(
       private dialog: MatDialog,
-      private httpService: HttpService
+      private httpService: HttpService,
   ) { }
 
   ngOnInit() {
@@ -42,6 +42,10 @@ export class PassConfigComponent implements OnInit {
       this.schools$.subscribe(res => this.schoolName =  res[0].name);
       this.pinnables$.subscribe(res => this.pinnables = res);
 
+  }
+
+  ngOnDestroy() {
+    // this.dialog.closeAll();
   }
 
   buildForm() {
@@ -116,6 +120,7 @@ export class PassConfigComponent implements OnInit {
      const overlayDialog =  this.dialog.open(component, {
           panelClass: 'overlay-dialog',
           backdropClass: 'custom-bd',
+          disableClose: true,
           width: '1018px',
           height: '600px',
           data: data
