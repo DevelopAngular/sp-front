@@ -41,7 +41,13 @@ export class TogglePickerComponent implements OnInit {
       if (this.currentChoose) {
           if (_.isArray(this.currentChoose)) {
               if (this.currentChoose.includes('round_trip')) {
-
+                  this.selectedChoice = 'Round-trip';
+              }
+              if (this.currentChoose.includes('one_way')) {
+                  this.selectedChoice = 'One-way';
+              }
+              if (this.currentChoose.includes('round_trip') && this.currentChoose.includes('one_way')) {
+                  this.selectedChoice = 'Both';
               }
           } else {
               switch (this.currentChoose) {
