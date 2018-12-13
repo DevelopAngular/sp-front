@@ -15,7 +15,7 @@
     </ng-template>
 
     <div *ngIf="forInput" class="card-body-right">
-      <app-card-button (onClick)="newPass()" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'81px'" [gradientColor]="pass?.color_profile.gradient_color">
+      <app-card-button (onClick)="newPass()" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'" [gradientColor]="pass?.color_profile.gradient_color">
         <div class="start-pass-content">
           <div class="start-pass-content-text">{{((forFuture && forInput)?'Schedule Pass':'Start Pass')}}</div>
           <img class="button-icon-right" [src]="'./assets/One Arrow.png' | resolveAsset">

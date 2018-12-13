@@ -182,7 +182,6 @@ export class PassesComponent implements OnInit {
       user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : Observable.of(null))
         .pipe(filter(res => !!res))
       .subscribe(passLike => {
-          console.log('1111111', passLike);
           if (passLike) {
             const nowDate = new Date();
             const startDate = new Date(passLike.start_time);
@@ -266,7 +265,7 @@ export class PassesComponent implements OnInit {
       'selectedStudents': selectedStudents,
     };
     this.dialog.open(component, {
-      panelClass: 'pass-card-dialog-container',
+      panelClass: (this.isStaff ? 'teacher-' : 'student-') + 'pass-card-dialog-container',
       backdropClass: 'custom-backdrop',
       disableClose: true,
       data: data
