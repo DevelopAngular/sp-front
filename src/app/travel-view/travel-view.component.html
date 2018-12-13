@@ -1,4 +1,4 @@
-<div class="travel-view-wrapper" [style.justify-content]="(shrink?'unset':'space-evenly')">
+<div class="travel-view-wrapper" [style.justify-content]="(shrink?'unset':'space-around')">
   <div *ngIf="(!(type==='invitation') || forStaff); else originButton;">
     {{ ((type==='invitation')?(pass?.default_origin?pass?.default_origin.title:"Their Location"):pass?.origin.title) }}
   </div>
@@ -20,7 +20,7 @@
     </app-card-button>
   </ng-template>
   <img [src]="'./assets/' +(pass?.travel_type==='one_way'?'Arrow':'Arrows Round Trip') +' (White).png' | resolveAsset"
-      [style.height]="(pass?.travel_type==='one_way'?'55px':'55px')" [style.width]="(pass?.travel_type==='one_way'?'52px':'152px')"
+      [style.height]="(pass?.travel_type==='one_way'?'65px':'65px')" [style.width]="(pass?.travel_type==='one_way'?'66px':'155px')"
       [style.margin]="(shrink?'15px 0':'-40px')">
   <div>
     {{ pass?.destination.title }}

@@ -3,7 +3,8 @@
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
-    height: 90px;
+    margin-top: 26px;
+    //height: 90px;
 }
 
 .button-content{
@@ -24,6 +25,8 @@
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    width: 335px;
+    height: 412px;
 }
 
 .start-pass-content{

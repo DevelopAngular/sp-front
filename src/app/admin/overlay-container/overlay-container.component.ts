@@ -56,9 +56,9 @@ export class OverlayContainerComponent implements OnInit {
       { title: 'Add Existing', icon: null, location: 'addExisting'}
   ];
   buttonsWithSelectedRooms = [
-      { title: 'Bulk Edit Rooms', action: 'edit', color: '#F52B4F, #F37426', width: '120px'},
-      { title: 'Remove From Folder', action: 'remove_from_folder', color: '#606981, #ACB4C1', width: '150px'},
-      { title: 'Delete Rooms', action: 'delete', color: '#F52B4F, #F37426', width: '120px'}
+      { title: 'Bulk Edit Rooms', action: 'edit', color: '#F52B4F, #F37426', hover: '#F52B4F', width: '120px'},
+      { title: 'Remove From Folder', action: 'remove_from_folder', color: '#606981, #ACB4C1', hover: '#606981', width: '150px'},
+      { title: 'Delete Rooms', action: 'delete', color: '#DA2370,#FB434A', hover: '#DA2370',  width: '120px'}
   ];
 
   constructor(
@@ -155,8 +155,8 @@ export class OverlayContainerComponent implements OnInit {
     this.form = new FormGroup({
         isEdit: new FormControl(true),
         file: new FormControl(),
-        roomName: new FormControl('', [Validators.required, Validators.maxLength(12)]),
-        folderName: new FormControl('', [Validators.required]),
+        roomName: new FormControl('', [Validators.required, Validators.maxLength(17)]),
+        folderName: new FormControl('', [Validators.required, Validators.maxLength(17)]),
         roomNumber: new FormControl('', [Validators.required, Validators.maxLength(5)]),
         timeLimit: new FormControl(null, [
             Validators.required,
@@ -391,9 +391,16 @@ export class OverlayContainerComponent implements OnInit {
      }
     if (action === 'delete') {
         const roomsToDelete = this.readyRoomsToEdit.map(room => {
-            return this.http.delete(`v1/locations/${room.id}`);
+            return this.http.delete(`v1/pinnables/${room.id}`);
         });
-        forkJoin(roomsToDelete).subscribe(res => console.log('[DeletedRooms] ===>> ', res));
+        forkJoin(roomsToDelete).subscribe(res => {
+            const currentRoomsIds = this.readyRoomsToEdit.map(item => item.id);
+            const allSelectedRoomsIds = this.selectedRooms.map(item => item.id);
+            this.selectedRooms = this.selectedRooms.filter(item => {
+                return item.id === _.pullAll(allSelectedRoomsIds, currentRoomsIds).find(id => item.id === id);
+            });
+            this.readyRoomsToEdit = [];
+        });
     }
   }
 
@@ -416,6 +423,14 @@ export class OverlayContainerComponent implements OnInit {
    this.travelType = travelType;
   }
 
+  nowRestrictionUpdate(restriction) {
+    this.nowRestriction = restriction === 'Restricted';
+  }
+
+  futureRestrictionUpdate(restriction) {
+    this.futureRestriction = restriction === 'Restricted';
+  }
+
   selectTeacherEvent(teachers) {
     this.selectedTichers = teachers;
   }
@@ -426,8 +441,5 @@ export class OverlayContainerComponent implements OnInit {
 
   onUpdate(time) {
       this.timeLimit = time;
-  }
-  show(e) {
-    console.log(e)
   }
 }

@@ -22,7 +22,7 @@
         </ng-template>
       <div class="card-body-right" *ngIf="!forStaff; else staffPanel">
         <div *ngIf="forInput; else studentNoInput" class="card-body-right">
-          <app-card-button (onClick)="newPass()" [disabled]="performingAction" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'81px'" [gradientColor]="pass.color_profile.gradient_color">
+          <app-card-button (onClick)="newPass()" [disabled]="performingAction" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'" [gradientColor]="pass.color_profile.gradient_color">
             <div class="start-pass-content">
               <div class="start-pass-content-text">{{((forFuture && forInput)?'Schedule Pass':(forStaff?'Send Pass':'Start Pass'))}}</div>
               <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
@@ -31,7 +31,7 @@
         </div>
         <ng-template #studentNoInput class="card-body-right">
           <div *ngIf="isActive" class="card-body-right">
-            <app-card-button *ngIf="!(forStaff || forMonitor)" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'81px'"  [gradientColor]="pass.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">
+            <app-card-button *ngIf="!(forStaff || forMonitor)" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'"  [gradientColor]="pass.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">
               <div class="end-pass-content">
                 {{ timeLeft +(timeLeft===''?'':' -')}} End Pass
               </div>
@@ -44,7 +44,7 @@
       </div>
       <ng-template #staffPanel class="card-body-right">
         <div *ngIf="forInput; else staffNoInput" class="card-body-right">
-          <app-card-button (onClick)="newPass()" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'81px'" [gradientColor]="pass.color_profile.gradient_color">
+          <app-card-button (onClick)="newPass()" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'" [gradientColor]="pass.color_profile.gradient_color">
             <div class="start-pass-content">
               <div class="start-pass-content-text">{{((forFuture && forInput)?'Schedule Pass' +(selectedStudents.length>1?'es':''):(forStaff?'Send Pass' +(selectedStudents.length>1?'es':''):'Start Pass' +(selectedStudents.length>1?'es':'')))}}</div>
               <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
