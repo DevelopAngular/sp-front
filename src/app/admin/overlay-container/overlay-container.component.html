@@ -143,7 +143,7 @@
           </app-input>
         </div>
       </div>
-      <div class="restriction-settings"
+      <div class="restriction-settings" [ngStyle]="{'margin-bottom': (overlayType === 'newRoomInFolder' ? '35px' : 'none')}"
            *ngIf="(overlayType === 'newRoom'
            || overlayType === 'newRoomInFolder'
            || overlayType === 'settingsRooms'
