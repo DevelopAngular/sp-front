@@ -3,6 +3,7 @@
   <app-gradient-button
     class="login-button"
     [gradient]="'#FFFFFF,#FFFFFF'"
+    [cursor]="'pointer'"
     [hoverColor]="'#F1F1F1'"
     [minWidth]="'300px'"
     [minHeight]="'100px'"
@@ -15,7 +16,7 @@
     [textColor]="'#666666'"
     [leftImageWidth]="'40px'"
     [leftImageHeight]="'40px'"
-    >Sign in with Google</app-gradient-button> 
+    >Sign in with Google</app-gradient-button>
     <!-- <img *ngIf="isLoaded" [src]=" | resolveAsset" style="transform: scale(0.65);"> -->
 </div>
 
@@ -25,6 +26,7 @@
   <input class="input" name="password" placeholder="Password" type="password" [(ngModel)]="demoPassword"><br>
   <app-gradient-button
   [gradient]="'#04CD33,#04CD33'"
+  [cursor]="'pointer'"
   [hoverColor]="'#00C92F'"
   [minWidth]="'90px'"
   [minHeight]="'30px'"
