@@ -122,7 +122,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
           backdropClass: 'custom-bd',
           disableClose: true,
           width: '1018px',
-          height: '600px',
+          height: '560px',
           data: data
       });
 
