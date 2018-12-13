@@ -391,9 +391,16 @@ export class OverlayContainerComponent implements OnInit {
      }
     if (action === 'delete') {
         const roomsToDelete = this.readyRoomsToEdit.map(room => {
-            return this.http.delete(`v1/locations/${room.id}`);
+            return this.http.delete(`v1/pinnables/${room.id}`);
         });
-        forkJoin(roomsToDelete).subscribe(res => console.log('[DeletedRooms] ===>> ', res));
+        forkJoin(roomsToDelete).subscribe(res => {
+            const currentRoomsIds = this.readyRoomsToEdit.map(item => item.id);
+            const allSelectedRoomsIds = this.selectedRooms.map(item => item.id);
+            this.selectedRooms = this.selectedRooms.filter(item => {
+                return item.id === _.pullAll(allSelectedRoomsIds, currentRoomsIds).find(id => item.id === id);
+            });
+            this.readyRoomsToEdit = [];
+        });
     }
   }
 
