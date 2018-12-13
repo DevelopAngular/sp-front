@@ -155,7 +155,7 @@ export class OverlayContainerComponent implements OnInit {
     this.form = new FormGroup({
         isEdit: new FormControl(true),
         file: new FormControl(),
-        roomName: new FormControl('', [Validators.required, Validators.maxLength(12)]),
+        roomName: new FormControl('', [Validators.required, Validators.maxLength(17)]),
         folderName: new FormControl('', [Validators.required]),
         roomNumber: new FormControl('', [Validators.required, Validators.maxLength(5)]),
         timeLimit: new FormControl(null, [
