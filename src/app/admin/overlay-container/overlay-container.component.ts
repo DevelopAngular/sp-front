@@ -416,6 +416,14 @@ export class OverlayContainerComponent implements OnInit {
    this.travelType = travelType;
   }
 
+  nowRestrictionUpdate(restriction) {
+    this.nowRestriction = restriction === 'Restricted';
+  }
+
+  futureRestrictionUpdate(restriction) {
+    this.futureRestriction = restriction === 'Restricted';
+  }
+
   selectTeacherEvent(teachers) {
     this.selectedTichers = teachers;
   }
@@ -426,8 +434,5 @@ export class OverlayContainerComponent implements OnInit {
 
   onUpdate(time) {
       this.timeLimit = time;
-  }
-  show(e) {
-    console.log(e)
   }
 }
