@@ -184,6 +184,7 @@
             <div class="button-in-folder" *ngFor="let button of buttonsWithSelectedRooms">
               <app-gradient-button
                       [minHeight]="'35px'"
+                      [hoverColor]="button.hover"
                       [gradient]="button.color"
                       [style.width]="button.width"
                       [cursor]="'pointer'"
@@ -225,6 +226,7 @@
             <div class="button-in-folder gd-button" *ngFor="let button of buttonsWithSelectedRooms">
               <app-gradient-button
                       [minHeight]="'35px'"
+                      [hoverColor]="button.hover"
                       [gradient]="button.color"
                       [style.width]="button.width"
                       [cursor]="'pointer'"

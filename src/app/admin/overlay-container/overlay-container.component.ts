@@ -56,9 +56,9 @@ export class OverlayContainerComponent implements OnInit {
       { title: 'Add Existing', icon: null, location: 'addExisting'}
   ];
   buttonsWithSelectedRooms = [
-      { title: 'Bulk Edit Rooms', action: 'edit', color: '#F52B4F, #F37426', width: '120px'},
-      { title: 'Remove From Folder', action: 'remove_from_folder', color: '#606981, #ACB4C1', width: '150px'},
-      { title: 'Delete Rooms', action: 'delete', color: '#F52B4F, #F37426', width: '120px'}
+      { title: 'Bulk Edit Rooms', action: 'edit', color: '#F52B4F, #F37426', hover: '#F52B4F', width: '120px'},
+      { title: 'Remove From Folder', action: 'remove_from_folder', color: '#606981, #ACB4C1', hover: '#606981', width: '150px'},
+      { title: 'Delete Rooms', action: 'delete', color: '#DA2370,#FB434A', hover: '#DA2370',  width: '120px'}
   ];
 
   constructor(
