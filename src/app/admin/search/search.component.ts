@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import { Pinnable } from '../../models/Pinnable';
 import { ColorProfile } from '../../models/ColorProfile';
 import { HttpService } from '../../http-service';
@@ -15,6 +15,8 @@ import {DatePrettyHelper} from '../date-pretty.helper';
   styleUrls: ['./search.component.scss']
 })
 export class SearchComponent implements OnInit {
+
+  @ViewChild('printPdf') printPdf: ElementRef;
 
   tableData = [];
   selectedStudents = [];
@@ -158,7 +160,11 @@ export class SearchComponent implements OnInit {
 
           const title = `${this.sortParamsHeader}: ${this.selectedDate ? `from ${prettyFrom} to ${prettyTo};` : ''} ${this.selectedRooms ? rooms : ''}`;
 
-          this.pdf.generate(_selectedReport, null, 'l', 'search', title);
+          this.pdf.generate(_selectedReport,  this.printPdf.nativeElement, 'l', 'search', title);;
+
+          // setTimeout(() => {
+          //   this.printPdf.nativeElement.click();
+          // }, 3000);
       }
   }
 

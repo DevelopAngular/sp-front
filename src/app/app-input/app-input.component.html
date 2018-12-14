@@ -1,5 +1,5 @@
 <form [formGroup]="formGroup">
-<div class="InputWrapper">
+  <div class="InputWrapper">
     <label [ngClass]="{clserrorLabel: controlName.invalid}">{{input_label}}</label>
     <input [formControl]="controlName" type={{input_type}} class="{{input_class}}" [placeholder]="(placeholder==''?'Please enter ' + input_label: placeholder)" [ngClass]="{clserrorInput: controlName.invalid}"/>
     <img *ngIf='controlName.valid' src="./assets/Check (Blue).png"/>

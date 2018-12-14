@@ -19,7 +19,7 @@ export class PdfComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    const fileType = 'data:application/pdf';
+    // const fileType = 'data:application/pdf';
     // this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params: any) => {
     //   console.log(params);
     //   this.source = this.sanitizer.bypassSecurityTrustResourceUrl(decodeURIComponent(params.source));

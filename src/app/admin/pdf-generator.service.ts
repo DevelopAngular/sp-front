@@ -16,8 +16,11 @@ export class PdfGeneratorService {
     public httpService: HttpClient,
   ) { }
 
-  generate(data: any[], headers?: string[], orientation: string = 'p', page: string = '', title?: string): void {
+  generate(data: any[], redirectLink: HTMLAnchorElement, orientation: string = 'p', page: string = '', title?: string): void {
 
+    window.localStorage.removeItem('pdf_src');
+
+    const _redirectLink = redirectLink;
     const thisMoment = new Date();
     const prettyNow = DatePrettyHelper.transform(new Date());
 
@@ -52,7 +55,7 @@ export class PdfGeneratorService {
     }
 
     const _orientation = orientation === 'l' ? 'landscape' : 'portrait';
-    const _headers: string[] = headers ||  Object.keys(data[0]);
+    const _headers: string[] = Object.keys(data.map ? data[0] : data );
     const _data: any[] = data;
     const doc = new jsPDF(_orientation, 'pt');
     const currentHost = `${window.location.protocol}//${window.location.host}${ environment.production ? '/app' : ''}`;
@@ -86,8 +89,8 @@ export class PdfGeneratorService {
         )
     ).subscribe((res) => {
         console.log(res);
-        imgBase64Logo = (res[0].currentTarget as any).result;
-        imgBase64Report = (res[1].currentTarget as any).result;
+        imgBase64Logo = (res[0].srcElement as any).result;
+        imgBase64Report = (res[1].srcElement as any).result;
       //
         const A4 = _orientation === 'portrait'
           ?
@@ -247,8 +250,22 @@ export class PdfGeneratorService {
         table.drawPagination(pageCounter);
 
         window.localStorage.setItem('pdf_src', `${encodeURIComponent(doc.output('datauristring'))}`);
+        (function() {
+          const timer = 100;
 
-        window.open(`${currentHost}/pdf/report`);
+          function _pdfRedirect(_timer) {
+            setTimeout(() => {
+              console.log(_redirectLink)
+              if (window.localStorage.getItem('pdf_src')) {
+                _redirectLink.click();
+              } else {
+                _pdfRedirect(_timer += timer * 2 );
+              }
+            }, _timer);
+          }
+          _pdfRedirect(timer);
+        }());
+        // window.open(`${currentHost}/pdf/report`);
       });
   }
 }

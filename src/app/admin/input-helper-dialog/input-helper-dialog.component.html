@@ -1,4 +1,7 @@
 <div class="divider">
+  <div class="button-clear" *ngIf="type === 'dates'" (click)="fromDate = ''; toDate = ''; closeDialog('')">
+    <span>Clear</span>
+  </div>
   <div class="divider-header">
     <div class="divider-text">{{ headerText }}</div>
   </div>

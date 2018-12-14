@@ -47,7 +47,8 @@ const appRoutes: Routes = [
   },
   {path: 'sign-out', component: SignOutComponent},
   {
-    path: 'pdf/:source',
+    // path: 'pdf/:source',
+    path: 'pdf/report',
     canActivate: [AuthenticatedGuard],
     component: PdfComponent,
     data: {hideScroll: true}

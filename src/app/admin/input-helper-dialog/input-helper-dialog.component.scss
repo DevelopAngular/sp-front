@@ -1,13 +1,23 @@
 .divider {
+    position: relative;
     width: 100%;
     height: 65px;
     margin: 0 0 0 0;
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
     box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
     position: relative;
     background-image: radial-gradient(circle at 98% 97%, #03CF31, #00B476);
+    .button-clear {
+      position: absolute;
+      left: 25px;
+      color: #FFFFFF;
+      font-weight: 900;
+      cursor: pointer;
+      user-select: none;
+    }
 }
 
 .divider-header{

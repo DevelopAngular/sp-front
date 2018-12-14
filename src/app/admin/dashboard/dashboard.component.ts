@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {HttpService} from '../../http-service';
 import {HallPass} from '../../models/HallPass';
 import {PdfGeneratorService} from '../pdf-generator.service';
@@ -14,6 +14,7 @@ import {LiveDataService} from '../../live-data/live-data.service';
 })
 export class DashboardComponent implements OnInit {
 
+  @ViewChild('printPdf') printPdf: ElementRef;
   @ViewChild('ctx') ctx: any;
 
   public lineChartData: Array<any> = [ {data: Array.from(Array(24).keys()).map(() => 0)} ];
@@ -190,7 +191,7 @@ export class DashboardComponent implements OnInit {
           )
           .subscribe((active_hp) => {
             if (active_hp.length) {
-              this.pdf.generate(active_hp, null, 'p', 'dashboard');
+              this.pdf.generate(active_hp, this.printPdf.nativeElement, 'p', 'dashboard');
             }
           });
   }
