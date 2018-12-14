@@ -1,9 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 
-import 'rxjs/add/operator/map';
-import { GoogleLoginService } from '../google-login.service';
-import {User} from '../models/User';
-import {ActivatedRoute} from '@angular/router';
 import { UserService } from '../user.service';
 
 @Component({
@@ -13,23 +9,16 @@ import { UserService } from '../user.service';
 })
 export class MainPageComponent implements OnInit {
 
-    public currentUser: User;
+  constructor(
+    public userService: UserService
+  ) {
+    console.log('MainPage.constructor');
+  }
 
-    constructor(
-        public userService: UserService,
-        private route: ActivatedRoute
-    ) {
+  ngOnInit() {
+  }
 
-    }
-
-    ngOnInit() {
-        this.route.data.subscribe((_resolved: any) => {
-            this.currentUser =_resolved.currentUser;
-            console.log(this.currentUser);
-        });
-    }
-
-    shouldShowRouter() {
-      return this.userService.userData.map(u => u.isStudent() || u.isTeacher());
-    }
+  shouldShowRouter() {
+    return this.userService.userData.map(u => u.isStudent() || u.isTeacher());
+  }
 }

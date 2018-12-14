@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { empty, of } from 'rxjs';
 
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/do';
@@ -102,7 +103,7 @@ export class HttpService {
     const preferredEnvironment = environment.preferEnvironment;
 
     if (preferredEnvironment && typeof preferredEnvironment === 'object') {
-      return Observable.of(preferredEnvironment as LoginServer);
+      return of(preferredEnvironment as LoginServer);
     }
 
     return this.http.post('https://smartpass.app/api/discovery/find', data)
@@ -127,7 +128,7 @@ export class HttpService {
 
     return this.getLoginServers(c).pipe(flatMap(server => {
       if (server === null) {
-        return Observable.empty();
+        return empty();
       }
 
       console.log(`Chosen server: ${server.name}`);
@@ -165,7 +166,7 @@ export class HttpService {
 
     return this.getLoginServers(c).pipe(flatMap(server => {
       if (server === null) {
-        return Observable.empty();
+        return empty();
       }
 
       const config = new FormData();
@@ -290,20 +291,20 @@ export class HttpService {
     return this.performRequest(ctx => this.http.put<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token)));
   }
 
-    patch<T>(url, body?: any, config?: Config): Observable<T> {
-        const formData: FormData = new FormData();
-        for (const prop in body) {
-            if (body.hasOwnProperty(prop)) {
-                if (body[prop] instanceof Array) {
-                    for (const sprop of body[prop]) {
-                        formData.append(prop, sprop);
-                    }
-                } else {
-                    formData.append(prop, body[prop]);
-                }
-            }
+  patch<T>(url, body?: any, config?: Config): Observable<T> {
+    const formData: FormData = new FormData();
+    for (const prop in body) {
+      if (body.hasOwnProperty(prop)) {
+        if (body[prop] instanceof Array) {
+          for (const sprop of body[prop]) {
+            formData.append(prop, sprop);
+          }
+        } else {
+          formData.append(prop, body[prop]);
         }
-        return this.performRequest(ctx => this.http.patch<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token)));
+      }
     }
+    return this.performRequest(ctx => this.http.patch<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token)));
+  }
 
 }

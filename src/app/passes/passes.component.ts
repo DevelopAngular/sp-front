@@ -1,6 +1,6 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { combineLatest } from 'rxjs';
+import { combineLatest, empty, of, merge } from 'rxjs';
 
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
@@ -43,13 +43,13 @@ class FuturePassProvider implements PassLikeProvider {
 
 class ActivePassProvider implements PassLikeProvider {
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>,
-              private excluded$: Observable<PassLike[]> = Observable.empty()) {
+              private excluded$: Observable<PassLike[]> = empty()) {
   }
 
   watch(sort: Observable<string>) {
 
     const sort$ = sort.map(s => ({sort: s}));
-    const merged$ = mergeObject({sort: '-created', search_query: ''}, Observable.merge(sort$));
+    const merged$ = mergeObject({sort: '-created', search_query: ''}, merge(sort$));
 
     const mergedReplay = new ReplaySubject<HallPassFilter>(1);
     merged$.subscribe(mergedReplay);
@@ -89,7 +89,7 @@ class InboxRequestProvider implements PassLikeProvider {
   constructor(
     private liveDataService: LiveDataService,
     private user$: Observable<User>,
-    private excluded$: Observable<PassLike[]> = Observable.empty(),
+    private excluded$: Observable<PassLike[]> = empty(),
     private dataService: DataService) {
   }
 
@@ -138,7 +138,7 @@ export class PassesComponent implements OnInit {
   private isActivePass$ = this.dataService.isActivePass$;
   private isActiveRequest$ = this.dataService.isActiveRequest$;
 
-  inboxHasItems: Observable<boolean> = Observable.of(false);
+  inboxHasItems: Observable<boolean> = of(false);
 
   user: User;
   isStaff = false;
@@ -180,7 +180,7 @@ export class PassesComponent implements OnInit {
       });
 
     this.dataService.currentUser.switchMap(user =>
-      user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : Observable.of(null))
+      user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null))
       .pipe(filter(res => !!res))
       .subscribe(passLike => {
         if (passLike) {

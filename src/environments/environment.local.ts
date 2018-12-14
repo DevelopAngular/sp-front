@@ -10,4 +10,5 @@ export const environment = {
     name: 'Local',
     ws_url: 'ws://localhost:8053/',
   },
+  funData: true,
 };

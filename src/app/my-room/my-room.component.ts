@@ -1,6 +1,6 @@
 import { Component, ElementRef, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { combineLatest } from 'rxjs';
+import { combineLatest, merge } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
@@ -32,7 +32,7 @@ abstract class RoomPassProvider implements PassLikeProvider {
     // merge the sort events and search events into one Observable that emits the current state of both.
     const sort$ = sort.map(s => ({sort: s}));
     const search$ = this.search$.map(s => ({search_query: s}));
-    const merged$ = mergeObject({sort: '-created', search_query: ''}, Observable.merge(sort$, search$));
+    const merged$ = mergeObject({sort: '-created', search_query: ''}, merge(sort$, search$));
 
     // Create a subject that will replay the last state. This is necessary because of the use of switchMap.
     const mergedReplay = new ReplaySubject<HallPassFilter>(1);
@@ -153,7 +153,7 @@ export class MyRoomComponent implements OnInit {
       .subscribe(user => {
         this._zone.run(() => {
           this.user = user;
-          this.isStaff = user.roles.includes('edit_all_hallpass');
+          this.isStaff = user.isTeacher() || user.isAdmin();
         });
 
         this.dataService.getLocationsWithTeacher(this.user).subscribe(locations => {

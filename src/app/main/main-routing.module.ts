@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CurrentUserResolver } from '../currentUser.resolver';
 import { HallMonitorComponent } from '../hall-monitor/hall-monitor.component';
 import { MainPageComponent } from '../main-page/main-page.component';
 import { MyRoomComponent } from '../my-room/my-room.component';
@@ -9,7 +8,7 @@ import { SettingsComponent } from '../settings/settings.component';
 
 const routes: Routes = [
   {
-    path: '', component: MainPageComponent, resolve: {currentUser: CurrentUserResolver}, children: [
+    path: '', component: MainPageComponent, children: [
       {path: '', redirectTo: 'passes', pathMatch: 'full'},
       {path: 'passes', component: PassesComponent},
       {path: 'hallmonitor', component: HallMonitorComponent},

@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+
+import { of } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { mergeMap } from 'rxjs/operators';
 import { GoogleApiService } from './google-api.service';
@@ -22,7 +24,7 @@ export class GoogleAuthService {
         return this.loadGapiAuth();
       }));
     }
-    return Observable.of(this.GoogleAuth);
+    return of(this.GoogleAuth);
   }
 
   loadGapiAuth() {

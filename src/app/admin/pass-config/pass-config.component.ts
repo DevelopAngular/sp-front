@@ -21,7 +21,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     @ViewChild(PinnableCollectionComponent) pinColComponent;
 
     settingsForm: FormGroup;
-    schoolName = 'Springfield High School';
+    schoolName = '';
     selectedPinnables: Pinnable[];
     pinnable: Pinnable;
     pinnables$: Observable<Pinnable[]>;

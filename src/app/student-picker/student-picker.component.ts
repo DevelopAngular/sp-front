@@ -1,17 +1,17 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { of } from 'rxjs';
 import 'rxjs/add/observable/of';
 
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/takeUntil';
-import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Subject } from 'rxjs/Subject';
 import { HttpService } from '../http-service';
+import { Paged } from '../models';
 import { User } from '../models/User';
-import { Paged} from '../models';
 
 @Component({
   selector: 'app-student-picker',
@@ -42,7 +42,7 @@ export class StudentPickerComponent implements OnDestroy {
           return this.http.get<Paged<any>>('v1/users?role=hallpass_student&limit=10&search=' + encodeURI(query))
             .map(json => json.results);
         } else {
-          return Observable.of([]);
+          return of([]);
         }
       })
       .map((json: any[]) => {

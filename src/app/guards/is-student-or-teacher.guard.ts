@@ -15,13 +15,19 @@ export class IsStudentOrTeacherGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
 
+    console.log('SeaA');
+
     return this.userService.userData.map(u => {
 
       if (u.isAdmin() && !(u.isStudent() || u.isTeacher())) {
+        console.log('SeaB');
+
         this._zone.run(() => {
           this.router.navigate(['admin']);
         });
       }
+
+      console.log('SeaC');
 
       return true;
     });

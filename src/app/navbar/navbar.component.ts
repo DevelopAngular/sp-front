@@ -33,9 +33,9 @@ export class NavbarComponent implements OnInit {
   navbarEnabled = false;
 
   buttons = [
-      {title: 'Passes', route: 'passes', imgUrl: './assets/Arrow', requiredRoles: ['create_hallpass', 'create_report', 'edit_all_hallpass', 'flag_hallpass', 'view_traveling_users']},
-      {title: 'Hall Monitor', route: 'hallmonitor', imgUrl: './assets/Hallway', requiredRoles: ['create_hallpass', 'create_report', 'edit_all_hallpass', 'flag_hallpass', 'view_traveling_users']},
-      {title: 'My Room', route: 'myroom', imgUrl: './assets/My Room', requiredRoles: ['create_hallpass', 'create_report', 'edit_all_hallpass', 'flag_hallpass', 'view_traveling_users']},
+      {title: 'Passes', route: 'passes', imgUrl: './assets/Arrow', requiredRoles: ['create_hallpass']},
+      {title: 'Hall Monitor', route: 'hallmonitor', imgUrl: './assets/Hallway', requiredRoles: ['view_traveling_users']},
+      {title: 'My Room', route: 'myroom', imgUrl: './assets/My Room', requiredRoles: ['_profile_teacher']},
   ];
 
   currentUser;
@@ -96,7 +96,7 @@ export class NavbarComponent implements OnInit {
       .subscribe(user => {
         this._zone.run(() => {
           this.user = user;
-          this.isStaff = user.roles.includes('edit_all_hallpass');
+          this.isStaff = user.isAdmin() || user.isTeacher();
           this.dataService.updateInbox(this.tab!=='settings');
         });
       });

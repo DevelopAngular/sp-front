@@ -1,5 +1,6 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
+import { merge } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { DataService } from '../data-service';
@@ -24,7 +25,7 @@ export class ActivePassProvider implements PassLikeProvider {
     const sort$ = sort.map(s => ({sort: s}));
     const search$ = this.searchQueries.map(s => ({search_query: s}));
 
-    const merged$ = mergeObject({sort: '-created', search_query: ''}, Observable.merge(sort$, search$));
+    const merged$ = mergeObject({sort: '-created', search_query: ''}, merge(sort$, search$));
 
     return this.liveDataService.watchActiveHallPasses(merged$);
   }
