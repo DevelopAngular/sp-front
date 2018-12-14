@@ -79,27 +79,19 @@ export class HttpService {
 
   get accessToken(): Observable<AuthContext> {
 
-    console.log('A');
-
     if (!this.hasRequestedToken) {
-      console.log('B');
-
       this.fetchServerAuth()
         .subscribe((auth: AuthContext) => {
           this.accessTokenSubject.next(auth);
-          console.log('D');
         });
 
       this.hasRequestedToken = true;
     }
 
-    console.log('C');
-
     return this.accessTokenSubject.filter(e => !!e);
   }
 
   private getLoginServers(data: FormData): Observable<LoginServer> {
-    console.log('getLoginServers()');
     const preferredEnvironment = environment.preferEnvironment;
 
     if (preferredEnvironment && typeof preferredEnvironment === 'object') {
@@ -114,9 +106,6 @@ export class HttpService {
         } else {
           return null;
         }
-      })
-      .do(e => {
-        console.log('getLoginServers() -> ', e);
       });
   }
 
@@ -190,12 +179,9 @@ export class HttpService {
   }
 
   private fetchServerAuth(): Observable<AuthContext> {
-    console.log('AA');
     return this.loginService.getIdToken()
-      .do(x => console.log('BB', x))
       .switchMap(googleToken => {
         if (isDemoLogin(googleToken)) {
-          console.log('CC');
           return this.loginManual(googleToken.username, googleToken.password)
             .catch(err => {
               if (err.status !== 401) {
@@ -206,7 +192,6 @@ export class HttpService {
               return this.fetchServerAuth();
             });
         } else {
-          console.log('DD');
           return this.loginGoogleAuth(googleToken);
         }
       });
@@ -214,16 +199,11 @@ export class HttpService {
 
   private performRequest<T>(predicate: (ctx: AuthContext) => Observable<T>): Observable<T> {
     return this.accessToken
-      .do(x => {
-        console.log('Got server access token:', x);
-      })
       .switchMap(ctx => predicate(ctx))
       .catch(err => {
         if (err.status !== 401) {
           throw err;
         }
-
-        console.log('getting new token');
 
         // invalidate the existing token
         this.accessTokenSubject.next(null);
@@ -245,10 +225,10 @@ export class HttpService {
   }
 
   get<T>(url, config?: Config): Observable<T> {
-    console.log('Making request: ' + url);
+    // console.log('Making request: ' + url);
     return this.performRequest(ctx => this.http.get<T>(makeUrl(ctx.server, url), makeConfig(config, ctx.auth.access_token)))
       .do(x => {
-        console.log('Finished request: ' + url, x);
+        // console.log('Finished request: ' + url, x);
       });
   }
 

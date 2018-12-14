@@ -12,7 +12,6 @@ export class MainPageComponent implements OnInit {
   constructor(
     public userService: UserService
   ) {
-    console.log('MainPage.constructor');
   }
 
   ngOnInit() {

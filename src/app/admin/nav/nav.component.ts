@@ -78,9 +78,8 @@ export class NavComponent implements OnInit {
               &&
             !this.hasRoles(button.requiredRoles)
           ) {
-            console.log('mark restricted and fakeMenu');
             this.restrictAccess.emit(true);
-            // this.fakeMenu.next(true);
+            this.fakeMenu.next(true);
           }
         });
     });

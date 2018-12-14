@@ -47,7 +47,6 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('ngOnInit dashboard');
     const todayReports = this.liveDataService.getDateRange(new Date());
     let hour = 8;
     let _minute_iterator = 0;

@@ -6,6 +6,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/publishReplay';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { HttpService } from './http-service';
+import { constructUrl } from './live-data/helpers';
 import { Logger } from './logger.service';
 import { User } from './models/User';
 import { PollingService } from './polling-service';
@@ -18,10 +19,10 @@ export class UserService {
   constructor(private http: HttpService,
               private pollingService: PollingService, private _logging: Logger) {
 
-    this.userData.subscribe(
-      u => console.log('next user:', u),
-      e => console.log('user error:', e),
-      () => console.log('userData complete'));
+    // this.userData.subscribe(
+    //   u => console.log('next user:', u),
+    //   e => console.log('user error:', e),
+    //   () => console.log('userData complete'));
 
     this.http.get<any>('v1/users/@me')
       .map(raw => User.fromJSON(raw))
@@ -32,7 +33,17 @@ export class UserService {
 
   getUsersList(role: string = '', search: string = '') {
     console.log('usr', this);
-    return this.http.get<any>('v1/users' + (role === '' ? '' : '?role=' + encodeURI(role)) + (search === '' ? '' : '&search=' + encodeURI(search)));
+
+    const params: any = {};
+    if (role !== '') {
+      params.role = role;
+    }
+
+    if (search !== '') {
+      params.search = search;
+    }
+
+    return this.http.get<any>(constructUrl('v1/users', params));
   }
 
 }
