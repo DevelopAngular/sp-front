@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { GoogleLoginService } from '../../google-login.service';
-import {User} from '../../models/User';
-import { ActivatedRoute } from '@angular/router';
-import {ReplaySubject} from 'rxjs';
+
+import { combineLatest } from 'rxjs';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Observable } from 'rxjs/Observable';
+import { UserService } from '../../user.service';
 
 @Component({
   selector: 'app-admin-page',
@@ -11,26 +12,19 @@ import {ReplaySubject} from 'rxjs';
 })
 export class AdminPageComponent implements OnInit {
 
-  public outletDummySwitcher$: ReplaySubject<boolean> = new ReplaySubject<boolean>();
-  public currentUser: User;
+  private outletDummySwitcher$ = new BehaviorSubject<boolean>(false);
 
-  constructor(
-    public loginService: GoogleLoginService,
-    private route: ActivatedRoute
-  ) {
+  public showDummySwitcher$: Observable<boolean>;
 
+  constructor(private userService: UserService) {
+    this.showDummySwitcher$ = combineLatest(this.userService.userData, this.outletDummySwitcher$, (u, d) => d || !u.isAdmin());
   }
 
   ngOnInit() {
-    this.route.data.subscribe((_resolved: any) => {
-      this.currentUser = _resolved.currentUser;
-      // console.log(this.currentUser);
-    });
   }
-  isAdmin() {
-    return this.currentUser.roles.includes('_profile_admin');
-  }
+
   hideOutlet(event: boolean) {
     this.outletDummySwitcher$.next(event);
   }
+
 }

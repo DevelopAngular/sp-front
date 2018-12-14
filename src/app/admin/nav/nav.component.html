@@ -8,7 +8,7 @@
   <div class="nav-buttons">
     <div *ngIf="!(fakeMenu | async)">
       <div *ngFor="let button of buttons">
-        <ng-container *ngIf="hasRoles(button.requiredRoles)">
+        <ng-container *ngIf="hasRoles(button.requiredRoles) | async">
           <app-nav-button
             [style.margin-bottom]="'15px'"
             [selected]="isSelected(button.route)"

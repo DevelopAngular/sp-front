@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { GoogleAuthService } from 'ng-gapi';
 
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/filter';
@@ -16,12 +15,17 @@ export class UserService {
 
   public userData: ReplaySubject<User> = new ReplaySubject<User>(1);
 
-  constructor(private googleAuth: GoogleAuthService, private http: HttpService,
+  constructor(private http: HttpService,
               private pollingService: PollingService, private _logging: Logger) {
+
+    this.userData.subscribe(
+      u => console.log('next user:', u),
+      e => console.log('user error:', e),
+      () => console.log('userData complete'));
 
     this.http.get<any>('v1/users/@me')
       .map(raw => User.fromJSON(raw))
-      .subscribe(this.userData);
+      .subscribe(user => this.userData.next(user));
 
     this.pollingService.listen().subscribe(this._logging.debug);
   }

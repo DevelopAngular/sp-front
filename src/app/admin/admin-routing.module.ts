@@ -9,15 +9,11 @@ import { FeedbackComponent } from './feedback/feedback.component';
 import { SupportComponent } from './support/support.component';
 import {AccountsComponent} from './accounts/accounts.component';
 import {AccountsRoleComponent} from './accounts-role/accounts-role.component';
-import { CurrentUserResolver } from '../currentUser.resolver';
 import {SettingsComponent} from './settings/settings.component';
 
 const routes: Routes = [
   {
     path: '', component: AdminPageComponent,
-    resolve: {
-      currentUser: CurrentUserResolver
-    },
     children: [
       {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
       {path: 'dashboard', component: DashboardComponent},

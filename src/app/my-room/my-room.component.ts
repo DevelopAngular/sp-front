@@ -1,5 +1,6 @@
 import { Component, ElementRef, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
+import { combineLatest } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
@@ -37,7 +38,7 @@ abstract class RoomPassProvider implements PassLikeProvider {
     const mergedReplay = new ReplaySubject<HallPassFilter>(1);
     merged$.subscribe(mergedReplay);
 
-    return Observable.combineLatest(this.location$, this.date$, (location, date) => ({location, date}))
+    return combineLatest(this.location$, this.date$, (location, date) => ({location, date}))
       .switchMap(({location, date}) => this.fetchPasses(mergedReplay, location, date));
   }
 }
@@ -106,7 +107,7 @@ export class MyRoomComponent implements OnInit {
       this.searchDate$, this.searchQuery$));
 
     // Use WrappedProvider's length$ to keep the hasPasses subject up to date.
-    Observable.combineLatest(
+    combineLatest(
       this.activePasses.length$,
       this.originPasses.length$,
       this.destinationPasses.length$,
