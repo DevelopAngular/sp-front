@@ -17,9 +17,9 @@ import {DatePrettyHelper} from '../date-pretty.helper';
 export class SearchComponent implements OnInit {
 
   tableData = [];
-  selectedStudents;
+  selectedStudents = [];
   selectedDate;
-  selectedRooms;
+  selectedRooms = [];
   roomSearchType;
   selectedReport = [];
 
@@ -35,7 +35,7 @@ export class SearchComponent implements OnInit {
   }
 
   search() {
-    if (this.selectedStudents || this.selectedDate || this.selectedRooms) {
+    if (this.selectedStudents.length || this.selectedDate || this.selectedRooms.length) {
       this.sortParamsHeader = `All Passes, Searching by ${(this.selectedStudents && this.selectedStudents.length > 0 ? 'Student Name' : '') + (this.selectedDate && this.selectedDate !== '' ? ', Date & Time' : '') + (this.selectedRooms && this.selectedRooms.length > 0 ? ', Room Name' : '')}`;
         this.spinner = true;
         this.selectedReport = [];
@@ -113,17 +113,25 @@ export class SearchComponent implements OnInit {
   }
 
   dateEmit(date) {
-      this.selectedDate = date;
+    console.log(date);
+    this.selectedDate = date;
   }
 
   roomEmit(rooms) {
+    console.log(rooms);
     this.selectedRooms = rooms;
   }
 
   studentsEmit(students) {
-      this.selectedStudents = students;
+    console.log(students);
+    this.selectedStudents = students;
   }
-
+  resetSearchState() {
+    this.tableData = [];
+    this.selectedStudents = [];
+    this.selectedReport = [];
+    this.hasSearched = false;
+  }
   previewPDF() {
       console.log(this.selectedRooms);
       if (this.selectedReport.length > 0) {

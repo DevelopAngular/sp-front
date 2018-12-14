@@ -125,7 +125,7 @@ export class PassCollectionComponent implements OnInit {
     }
 
     const dialogRef = this.dialog.open(PassCollectionComponent.getDetailDialog(pass), {
-      panelClass: 'pass-card-dialog-container',
+      panelClass: (this.forStaff ? 'teacher-' : 'student-') + 'pass-card-dialog-container',
       backdropClass: 'custom-backdrop',
       data: data,
     });

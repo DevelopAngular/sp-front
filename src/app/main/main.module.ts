@@ -2,20 +2,18 @@
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
+  MatChipsModule,
   MatDialogModule,
+  MatGridListModule,
   MatIconModule,
   MatProgressBarModule,
   MatSelectModule,
   MatSliderModule,
-  MatSlideToggleModule,
-  MatChipsModule,
-  MatGridListModule
+  MatSlideToggleModule
 } from '@angular/material';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
-import { CardButtonComponent } from '../card-button/card-button.component';
 import { ContainerCardComponent } from '../container-card/container-card.component';
 import { DropdownComponent } from '../dropdown/dropdown.component';
-import { DurationPickerComponent } from '../duration-picker/duration-picker.component';
 import { FavoriteFormComponent } from '../favorite-form/favorite-form.component';
 import { HallMonitorComponent } from '../hall-monitor/hall-monitor.component';
 import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
@@ -34,7 +32,6 @@ import { RequestAcceptComponent } from '../request-accept/request-accept.compone
 import { RequestCardComponent } from '../request-card/request-card.component';
 import { SettingsComponent } from '../settings/settings.component';
 import { SharedModule } from '../shared/shared.module';
-import { SignOutComponent } from '../sign-out/sign-out.component';
 import { StudentPickerComponent } from '../student-picker/student-picker.component';
 import { TeacherDropdownComponent } from '../teacher-dropdown/teacher-dropdown.component';
 import { MainRoutingModule } from './main-routing.module';
@@ -62,7 +59,6 @@ import { NavbarDataService } from './navbar-data.service';
     MyRoomComponent,
     PassesComponent,
     SettingsComponent,
-    SignOutComponent,
     DropdownComponent,
     HallpassFormComponent,
     InfoEditorComponent,

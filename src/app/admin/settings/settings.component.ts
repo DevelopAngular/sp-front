@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {ColorProfile} from '../../models/ColorProfile';
-import {Router} from '@angular/router';
+import { Router } from '@angular/router';
+import { ColorProfile } from '../../models/ColorProfile';
 
 @Component({
   selector: 'app-settings',
@@ -20,15 +20,18 @@ export class SettingsComponent implements OnInit {
       'title': 'Sign out'
     }
   ];
+
   constructor(
     private router: Router
-  ) { }
+  ) {
+  }
 
   ngOnInit() {
   }
+
   settingsAction(action: string) {
     if (action === 'signout') {
-      this.router.navigate(['main/sign-out']);
+      this.router.navigate(['sign-out']);
     }
   }
 }

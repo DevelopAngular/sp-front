@@ -42,7 +42,7 @@
           <div *ngIf="!reports" class="loading-theme spinner flex-center-left pt">
             <mat-spinner [color]="'accent'" [diameter]="'35'"></mat-spinner>
           </div>
-          <div *ngIf="reports" [style.padding-top]="'32px'" class="card_title">
+          <div *ngIf="reports" [style.padding-top]="'32px'" [style.font-size]="'16px'" class="card_title">
             <span *ngIf="reports.length">{{reports.length}} Reported Students Today.</span>
             <span *ngIf="!reports.length">No Reported Students Today.</span>
           </div>
@@ -54,7 +54,7 @@
       <div>
         <div class="card_header">Average Pass Time</div>
 
-        <div class="card_title my py" [style.font-size]="'24px'" [style.min-height]="'55px'">
+        <div class="card_title my py" [style.font-size]="'22px'" [style.min-height]="'55px'">
           <div *ngIf="!averagePassTime" class="loading-theme spinner flex-center-left">
             <mat-spinner [color]="'accent'" [diameter]="'35'"></mat-spinner>
           </div>

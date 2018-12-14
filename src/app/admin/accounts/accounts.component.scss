@@ -24,13 +24,11 @@
   .card{
     box-sizing: border-box;
     padding: 16px 33px 20px 33px ;
-    background-color: #fff;
     border-radius: 10px;
     font-size: 17px;
     color: #1F195E;
-    -webkit-box-shadow: 0px 0px 5px 1px #ddd;
-    -moz-box-shadow:  0px 0px 5px 1px #ddd;
-    box-shadow:  0px 0px 5px 1px #ddd;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, .2);
+    background-color: #FFFFFF;
     &_header{
       font-size: 24px;
       font-weight: 900;

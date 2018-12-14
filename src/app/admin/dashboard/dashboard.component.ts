@@ -21,15 +21,10 @@ export class DashboardComponent implements OnInit {
   //   { data: [5, 14, 9, 12, 11, 10, 15, 5] },
   // ];
 
-  public lineChartLabels: Array<any> = Array.from(Array(9).keys()).map(hour => {
-    hour += 8;
+  public lineChartLabels: Array<any> = [];
+    // Array.from(Array(24).keys()).map(hour =>
 
-    if ( (hour) <= 12 ) {
-      return  `${hour} ${ hour < 12 ? 'AM' : 'PM' }`;
-    } else {
-      return `${(hour - 12)} PM`;
-    }
-  });
+
   public lineChartOptions: any;
   public gradient: any;
 
@@ -50,6 +45,27 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     const todayReports = this.liveDataService.getDateRange(new Date());
+    let hour = 8;
+    let _minute_iterator = 0;
+    const _quater_hour = 15;
+    while (hour < 14) {
+      let minutes = _minute_iterator * _quater_hour;
+      let time;
+      if (_minute_iterator === 4) {
+        _minute_iterator = 0;
+        minutes = 0;
+        hour++;
+      }
+      if ( (hour) <= 12 ) {
+        time = `${hour}:${minutes !== 0 ? minutes : minutes + '0'} ${ hour < 12 ? 'AM' : 'PM' }`;
+      } else {
+        time = `${(hour - 12)}:${minutes !== 0 ? minutes : minutes + '0'} PM`;
+      }
+      _minute_iterator++;
+      this.lineChartLabels.push(time);
+    };
+    console.log(this.lineChartLabels);
+    this.lineChartLabels = this.lineChartLabels.slice(0, this.lineChartLabels.length - 1);
 
     zip(
       this.http.get('v1/hall_passes?limit=100&sort=created'),

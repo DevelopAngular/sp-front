@@ -4,11 +4,14 @@
     <div class="label-text" [style.color]="(selected?'#1D1A5E':'#7F879D')">{{ labelText }}</div>
   </div>
 
-  <div *ngIf="selected" class="inputSelector" [style.width]="width"></div>
+  <!--<div *ngIf="selected" class="inputSelector" [style.width]="width"></div>-->
   <div class="field-wrapper">
-    <input #input class="input" type="text" [style.width]="width" [style.min-width]="minWidth"
-          [placeholder]="placeholder" [readonly]="type == 'dates'"
-          (input)="changeAction(input.value)" (click)="focusAction(true)" (focusout)="focusAction(false)"
-          [(ngModel)]="value" >
+    <div [style.border]="'1px solid transparent'" [style.margin-bottom]="'5px'" [ngClass]="{'inputSelector': selected === true}">
+
+      <input #input class="input" type="text" [style.width]="width" [style.min-width]="minWidth"
+             [placeholder]="placeholder" [readonly]="type == 'dates'"
+             (input)="changeAction(input.value)" (click)="focusAction(true)" (focusout)="focusAction(false)"
+             [(ngModel)]="value" >
+    </div>
   </div>
 </div>

@@ -4,11 +4,12 @@
     min-width:300px;
 }
 
-.label-wrapper{
+.label-wrapper, .field-wrapper{
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin-bottom: 5px;
+    justify-content: center;
+    margin: 10px auto;
 }
 
 .label-icon{
@@ -24,7 +25,6 @@
 .input {
     position: relative;
     z-index: 2;
-    margin-bottom: 5px;
     width: 220px;
     height: 40px;
     border-radius: 20px;
@@ -50,13 +50,6 @@ input:focus{
 // }
 
 .inputSelector{
-    position: absolute;
-    z-index: 3;
-    padding: 0 7px;
-    height: 40px;
     border-radius: 20px;
-    outline-offset: 0;
-    outline: none;
     border: 1px solid #595487 !important;
-    pointer-events: none;
 }

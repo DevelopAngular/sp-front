@@ -27,12 +27,24 @@ export class User extends BaseModel {
       primary_email: string = JSON['primary_email'],
       roles: string[] = [];
 
-    let rolesJSON = JSON['roles'];
+    const rolesJSON = JSON['roles'];
     for (let i = 0; i < rolesJSON.length; i++) {
       roles.push(rolesJSON[i]);
     }
 
     return new User(id, created, last_updated, first_name, last_name, display_name, primary_email, roles);
+  }
+
+  isAdmin() {
+    return this.roles.includes('_profile_admin');
+  }
+
+  isStudent() {
+    return this.roles.includes('_profile_student');
+  }
+
+  isTeacher() {
+    return this.roles.includes('_profile_teacher');
   }
 
   toString() {

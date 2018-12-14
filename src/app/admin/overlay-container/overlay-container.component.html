@@ -32,7 +32,7 @@
                              (buttonClick)="done()"
         >
           Publish</app-gradient-button>
-        <app-gradient-button *ngIf="isValidForm && (form.dirty || isDirtysettings) && (overlayType === 'editRoom' || overlayType === 'newRoom') || (overlayType === 'newFolder' && form.get('folderName').valid  && color_profile && selectedIcon)"
+        <app-gradient-button *ngIf="isValidForm && (form.dirty || isDirtysettings) && (overlayType === 'editRoom' || overlayType === 'newRoom') || (overlayType === 'newFolder' && form.get('folderName').valid && (isDirtysettings || form.get('folderName').dirty)  && color_profile && selectedIcon)"
                              [minHeight]="'40px'"
                              [style.width]="'120px'"
                              [cursor]="'pointer'"
@@ -49,6 +49,7 @@
 <div class="inactive" *ngIf="!form.get('isEdit').value"></div>
   <div class="overlay-content">
     <div class="left-content">
+     <div class="left-wrapper" style="margin-bottom: 4%;">
       <div class="edit-rooms-left-content" *ngIf="overlayType === 'edit'">
         <div class="edit-rooms-left-title">Bulk edit the rooms added. Any change will override the previous setting.</div>
       </div>
@@ -112,7 +113,7 @@
         <div class="teacher-title">Teachers in Room</div>
         <app-profiles-search [placeholder]="'Search Teacher'" [selectedStudents]="selectedTichers" (isEmitUsers)="isEmitTeachers($event)" (onUpdate)="selectTeacherEvent($event)" [role]="'_profile_teacher'"></app-profiles-search>
       </div>
-      <div style="display: flex"
+      <div style="display: flex; margin-top: 13px; margin-bottom: 13px"
            *ngIf="(overlayType === 'newRoom'
            || overlayType === 'newRoomInFolder'
            || overlayType === 'settingsRooms'
@@ -142,7 +143,7 @@
           </app-input>
         </div>
       </div>
-      <div class="restriction-settings"
+      <div class="restriction-settings" [ngStyle]="{'margin-bottom': (overlayType === 'newRoomInFolder' ? '35px' : 'none')}"
            *ngIf="(overlayType === 'newRoom'
            || overlayType === 'newRoomInFolder'
            || overlayType === 'settingsRooms'
@@ -151,29 +152,11 @@
       >
         <div class="restriction-picker-1">
           <div class="toggle-label">Restriction For Now</div>
-          <app-toggle-picker (onSelect)="nowRestriction = $event === 'Restricted'" [currentChoose]="nowRestriction || null" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+          <app-toggle-picker (onSelect)="nowRestrictionUpdate($event)" [currentChoose]="nowRestriction || null" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
         <div class="restriction-picker-2">
           <div class="toggle-label">Restriction For Future</div>
-          <app-toggle-picker (onSelect)="futureRestriction = $event === 'Restricted'" [currentChoose]="futureRestriction || null" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
-        </div>
-      </div>
-
-      <div class="footer-delete-button" *ngIf="(overlayType === 'editRoom') && !showSearchTeacherOptions">
-        <app-gradient-button
-                [hoverColor]="'#DA2370'"
-                [gradient]="'#DA2370,#FB434A'"
-                [minHeight]="'40px'"
-                [style.width]="'140px'"
-                [cursor]="'pointer'"
-                [fontSize]="'12px'"
-                (buttonClick)="deleteRoom()"
-        >
-          Delete Room</app-gradient-button>
-
-        <div class="footer-info-text">
-          This will erase all active and scheduled passes to and from this room.<br/>
-          This will not erase any expired passes to or from this room.
+          <app-toggle-picker (onSelect)="futureRestrictionUpdate($event)" [currentChoose]="futureRestriction || null" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
       </div>
 
@@ -201,6 +184,7 @@
             <div class="button-in-folder" *ngFor="let button of buttonsWithSelectedRooms">
               <app-gradient-button
                       [minHeight]="'35px'"
+                      [hoverColor]="button.hover"
                       [gradient]="button.color"
                       [style.width]="button.width"
                       [cursor]="'pointer'"
@@ -242,6 +226,7 @@
             <div class="button-in-folder gd-button" *ngFor="let button of buttonsWithSelectedRooms">
               <app-gradient-button
                       [minHeight]="'35px'"
+                      [hoverColor]="button.hover"
                       [gradient]="button.color"
                       [style.width]="button.width"
                       [cursor]="'pointer'"
@@ -291,10 +276,29 @@
             <span class="choose-text">Choose File</span>
         </div>
       </div>
+     </div>
+        <div class="footer-delete-button" *ngIf="(overlayType === 'editRoom') && !showSearchTeacherOptions">
+            <app-gradient-button
+                    [hoverColor]="'#DA2370'"
+                    [gradient]="'#DA2370,#FB434A'"
+                    [minHeight]="'40px'"
+                    [style.width]="'140px'"
+                    [cursor]="'pointer'"
+                    [fontSize]="'12px'"
+                    (buttonClick)="deleteRoom()"
+            >
+                Delete Room</app-gradient-button>
+
+            <div class="footer-info-text">
+                This will erase all active and scheduled passes to and from this room.<br/>
+                This will not erase any expired passes to or from this room.
+            </div>
+        </div>
+
+
 
     </div>
-
-    <div class="divider"></div>
+      <div class="divider"></div>
     <div class="right-content">
       <div style="position: relative; width: 100%; height: 100%" *ngIf="overlayType !== 'edit'">
         <div class="inactive" *ngIf="hideAppearance"></div>
@@ -303,7 +307,7 @@
           <app-color-pallet-picker [selectedColorProfile]="color_profile" (selectedEvent)="changeColor($event)"></app-color-pallet-picker>
         </div>
         <div class="icon-picker">
-          <app-icon-picker [selectedIconPicker]="selectedIcon" (selectedEvent)="changeIcon($event); show($event)"></app-icon-picker>
+          <app-icon-picker [selectedIconPicker]="selectedIcon" (selectedEvent)="changeIcon($event);"></app-icon-picker>
         </div>
       </div>
 

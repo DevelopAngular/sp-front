@@ -28,6 +28,8 @@
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    width: 335px;
+    height: 412px;
 }
 
 .card-body-right{
@@ -35,6 +37,7 @@
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
+    margin-top: 26px;
 }
 
 .request-description{
