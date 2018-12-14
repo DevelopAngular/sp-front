@@ -17,6 +17,10 @@
   right: 16px;
 }
 
+img {
+  pointer-events: none;
+}
+
 .InputWrapper input {
   border: 1px solid transparent;
   background-color: #F8F8F8;

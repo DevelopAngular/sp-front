@@ -408,7 +408,11 @@
   mat-list-item {
     width: 240px;
   }
-
+  .room {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
   .room:hover {
     background-color: #dce2e7;
   }
