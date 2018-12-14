@@ -32,15 +32,15 @@
                              (buttonClick)="done()"
         >
           Publish</app-gradient-button>
-        <app-gradient-button *ngIf="isValidForm && (form.dirty || isDirtysettings) && (overlayType === 'editRoom' || overlayType === 'newRoom') || (overlayType === 'newFolder' && form.get('folderName').valid && (isDirtysettings || form.get('folderName').dirty)  && color_profile && selectedIcon)"
-                             [minHeight]="'40px'"
-                             [style.width]="'120px'"
-                             [cursor]="'pointer'"
-                             [gradient]="color_profile.gradient_color"
-                             [fontSize]="'14px'"
-                             (buttonClick)="onCancel()"
-        >
-          Publish</app-gradient-button>
+            <app-gradient-button *ngIf="isValidForm && (form.dirty || isDirtysettings) && (overlayType === 'editRoom' || overlayType === 'newRoom') || (overlayType === 'newFolder' && form.get('folderName').valid && (isDirtysettings || form.get('folderName').dirty)  && color_profile && selectedIcon)"
+                                 [minHeight]="'40px'"
+                                 [style.width]="'120px'"
+                                 [cursor]="'pointer'"
+                                 [gradient]="color_profile.gradient_color"
+                                 [fontSize]="'14px'"
+                                 (buttonClick)="onCancel()"
+            >
+              Publish</app-gradient-button>
         <div *ngIf="!isValidForm && overlayType !== 'edit' && overlayType !== 'editRoom' && overlayType !== 'newFolder'" style="color: white">Incomplete</div>
       </div>
     </div>
