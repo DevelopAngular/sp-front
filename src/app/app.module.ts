@@ -24,7 +24,6 @@ import { HttpService } from './http-service';
 import { IntroComponent } from './intro/intro.component';
 import { LoadingService } from './loading.service';
 import { LoginComponent } from './login/login.component';
-import { NotAuthenticatedComponent } from './not-authenticated/not-authenticated.component';
 import { OptionsComponent } from './options/options.component';
 import { PdfComponent } from './pdf/pdf.component';
 import { ProgressInterceptor } from './progress-interceptor';
@@ -67,8 +66,7 @@ const appRoutes: Routes = [
     LoginComponent,
     HallDateTimePickerComponent,
     PdfComponent
-    ,
-    NotAuthenticatedComponent],
+  ],
   entryComponents: [
     ConsentMenuComponent,
     OptionsComponent,
