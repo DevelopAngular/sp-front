@@ -62,7 +62,7 @@
             </div>
             <div class="header-in-folder-button">
               <span *ngIf="overlayType === 'settingsRooms' && form.get('timeLimit').invalid">Incomplete</span>
-                <app-gradient-button *ngIf="isValidForm || (form.get('timeLimit').valid && overlayType === 'settingsRooms')"
+                <app-gradient-button *ngIf="(isValidForm && form.dirty && overlayType === 'newRoomInFolder') || (form.get('timeLimit').valid && overlayType === 'settingsRooms')"
                         [minHeight]="'40px'"
                         [style.width]="'120px'"
                         [cursor]="'pointer'"
@@ -199,8 +199,8 @@
             <mat-list>
               <div class="room" *ngFor="let room of selectedRooms">
                 <mat-checkbox style="margin-left: 12px" (change)="selectedRoomsEvent($event, room)">
-                  <mat-list-item>{{ room.title }}</mat-list-item>
                 </mat-checkbox>
+                <mat-list-item (click)="setToEditRoom(room)">{{ room.title }}</mat-list-item>
                 <mat-divider></mat-divider>
               </div>
             </mat-list>

@@ -38,6 +38,8 @@ export class OverlayContainerComponent implements OnInit {
   hideAppearance: boolean = false;
   isEditRooms: boolean = false;
   isEditFolder: boolean = false;
+  editRoomInFolder: boolean;
+  roomToEdit: Location;
 
   color_profile;
   selectedIcon;
@@ -187,9 +189,11 @@ export class OverlayContainerComponent implements OnInit {
           break;
         }
         case 'newFolder': {
+          this.editRoomInFolder = false;
           this.selectedRoomsInFolder = [];
           this.readyRoomsToEdit = [];
           this.isEditRooms = false;
+          this.form.markAsPristine();
           hideAppearance = false;
           type = 'newFolder';
           break;
@@ -208,6 +212,11 @@ export class OverlayContainerComponent implements OnInit {
           hideAppearance = true;
           type = 'settingsRooms';
           break;
+        }
+        case 'editRoomInFolder': {
+          this.editRoomInFolder = true;
+          hideAppearance = true;
+          type = 'newRoomInFolder';
         }
     }
     this.hideAppearance = hideAppearance;
@@ -233,6 +242,20 @@ export class OverlayContainerComponent implements OnInit {
 
   back() {
     this.dialogRef.close();
+  }
+
+  setToEditRoom(room) {
+      this.roomToEdit = room;
+      this.roomName = room.title;
+      this.timeLimit = room.max_allowed_time;
+      this.roomNumber = room.room;
+      this.selectedTichers = room.teachers;
+      this.nowRestriction = room.restricted;
+      this.futureRestriction = room.scheduling_restricted;
+      this.travelType = room.travel_types;
+
+      this.setLocation('editRoomInFolder');
+
   }
 
   onCancel() {
@@ -333,13 +356,19 @@ export class OverlayContainerComponent implements OnInit {
                   travel_types: this.travelType,
                   max_allowed_time: +this.timeLimit
             };
-
-          console.log('NEW ROOM IN FOLDER', location);
-          this.http.post('v1/locations', location).subscribe(loc => {
-              this.newRoomsInFolder.push(loc);
-              this.selectedRooms.push(loc);
-              this.setLocation('newFolder');
-          });
+          if (this.editRoomInFolder) {
+              this.http.patch(`v1/locations/${this.roomToEdit.id}`, location).subscribe(res => {
+                  this.selectedRooms = this.selectedRooms.filter(room => room.id !== this.roomToEdit.id);
+                  this.selectedRooms.unshift(res);
+                  this.setLocation('newFolder');
+              });
+          } else {
+              this.http.post('v1/locations', location).subscribe(loc => {
+                  this.newRoomsInFolder.push(loc);
+                  this.selectedRooms.push(loc);
+                  this.setLocation('newFolder');
+              });
+          }
       }
       if (this.overlayType === 'settingsRooms') {
           this.readyRoomsToEdit.forEach((room: any) => {
