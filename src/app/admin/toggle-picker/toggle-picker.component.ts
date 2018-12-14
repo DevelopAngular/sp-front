@@ -63,7 +63,7 @@ export class TogglePickerComponent implements OnInit {
       } else {
           this.selectedChoice = this.selectedChoice?this.selectedChoice:this.choice1;
       }
-      this.onSelect.emit(this.travelValue(this.selectedChoice));
+      // this.onSelect.emit(this.travelValue(this.selectedChoice));
   }
 
   updateType(travelType: string) {

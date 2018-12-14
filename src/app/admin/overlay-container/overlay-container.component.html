@@ -62,7 +62,7 @@
             </div>
             <div class="header-in-folder-button">
               <span *ngIf="overlayType === 'settingsRooms' && form.get('timeLimit').invalid">Incomplete</span>
-                <app-gradient-button *ngIf="(isValidForm && form.dirty && overlayType === 'newRoomInFolder') || (form.get('timeLimit').valid && overlayType === 'settingsRooms')"
+                <app-gradient-button *ngIf="(isValidForm && (form.dirty || isDirtysettings) && overlayType === 'newRoomInFolder') || (form.get('timeLimit').valid && overlayType === 'settingsRooms')"
                         [minHeight]="'40px'"
                         [style.width]="'120px'"
                         [cursor]="'pointer'"

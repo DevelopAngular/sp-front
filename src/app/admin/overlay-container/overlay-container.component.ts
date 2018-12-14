@@ -465,14 +465,17 @@ export class OverlayContainerComponent implements OnInit {
      travelType = ['round_trip', 'one_way'];
    }
    this.travelType = travelType;
+   this.isDirtysettings = true;
   }
 
   nowRestrictionUpdate(restriction) {
     this.nowRestriction = restriction === 'Restricted';
+    this.isDirtysettings = true;
   }
 
   futureRestrictionUpdate(restriction) {
     this.futureRestriction = restriction === 'Restricted';
+    this.isDirtysettings = true;
   }
 
   selectTeacherEvent(teachers) {
