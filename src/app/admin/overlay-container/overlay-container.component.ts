@@ -194,6 +194,7 @@ export class OverlayContainerComponent implements OnInit {
           this.readyRoomsToEdit = [];
           this.isEditRooms = false;
           this.form.markAsPristine();
+          this.isDirtysettings = false;
           hideAppearance = false;
           type = 'newFolder';
           break;
