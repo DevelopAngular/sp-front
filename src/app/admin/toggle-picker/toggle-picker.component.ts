@@ -15,6 +15,7 @@ export class TogglePickerComponent implements OnInit {
     @Input() height: string = '20px';
     @Input() currentChoose;
     @Input() selectedChoice: string;
+    @Output() onDirty: EventEmitter<boolean> = new EventEmitter();
     @Output() onSelect: EventEmitter<any> = new EventEmitter();
 
     choice1: string;
@@ -61,9 +62,9 @@ export class TogglePickerComponent implements OnInit {
               }
           }
       } else {
-          this.selectedChoice = this.selectedChoice?this.selectedChoice:this.choice1;
+          this.selectedChoice = this.selectedChoice ? this.selectedChoice : this.choice1;
       }
-      // this.onSelect.emit(this.travelValue(this.selectedChoice));
+      this.onSelect.emit(this.travelValue(this.selectedChoice));
   }
 
   updateType(travelType: string) {
@@ -82,6 +83,7 @@ export class TogglePickerComponent implements OnInit {
       }
 
       this.onSelect.emit(this.travelValue(travelType));
+      this.onDirty.emit(true);
   }
 
   travelValue(travelType: string) {
