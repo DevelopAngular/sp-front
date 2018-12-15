@@ -163,7 +163,7 @@ export class OverlayContainerComponent implements OnInit {
 
   buildForm() {
     this.form = new FormGroup({
-        isEdit: new FormControl(true),
+        // isEdit: new FormControl(true),
         file: new FormControl(),
         roomName: new FormControl('', [Validators.required, Validators.maxLength(17)]),
         folderName: new FormControl('', [Validators.required, Validators.maxLength(17)]),
@@ -191,9 +191,13 @@ export class OverlayContainerComponent implements OnInit {
         case 'newFolder': {
           this.editRoomInFolder = false;
           this.selectedRoomsInFolder = [];
+          this.selectedTichers = [];
+          this.roomName = '';
+          this.roomNumber = '';
+          this.timeLimit = '';
           this.readyRoomsToEdit = [];
           this.isEditRooms = false;
-          this.form.markAsPristine();
+          this.form.reset();
           this.isDirtysettings = false;
           hideAppearance = false;
           type = 'newFolder';
@@ -466,21 +470,19 @@ export class OverlayContainerComponent implements OnInit {
      travelType = ['round_trip', 'one_way'];
    }
    this.travelType = travelType;
-   this.isDirtysettings = true;
   }
 
   nowRestrictionUpdate(restriction) {
     this.nowRestriction = restriction === 'Restricted';
-    this.isDirtysettings = true;
   }
 
   futureRestrictionUpdate(restriction) {
     this.futureRestriction = restriction === 'Restricted';
-    this.isDirtysettings = true;
   }
 
   selectTeacherEvent(teachers) {
     this.selectedTichers = teachers;
+    this.isDirtysettings = true;
   }
 
   isEmitTeachers(event) {

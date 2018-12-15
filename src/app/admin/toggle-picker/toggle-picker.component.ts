@@ -17,14 +17,8 @@ export class TogglePickerComponent implements OnInit {
     @Input() selectedChoice: string;
     @Input() disabled: boolean;
     @Input() noSelected: boolean = false;
+    @Output() onDirty: EventEmitter<boolean> = new EventEmitter();
     @Output() onSelect: EventEmitter<any> = new EventEmitter();
-
-
-    passedColor: {
-      altColor: string,
-      border: string,
-    }
-    disabledColor: string = '#999999';
 
     choice1: string;
     choice2: string;
@@ -35,16 +29,10 @@ export class TogglePickerComponent implements OnInit {
     choice2_values: string[] = [];
     choice3_values: string[] = [];
 
+    disabledColor = '#999999';
   constructor() { }
 
   ngOnInit() {
-      this.passedColor = {
-        altColor: this.altColor,
-        border: this.border
-      }
-
-    console.log('Selected choise ===> ', this.passedColor, this.noSelected);
-
       if (this.choices.length === 3) {
               this.choice1 = this.choices[0];
               this.choice2 = this.choices[1];
@@ -84,7 +72,7 @@ export class TogglePickerComponent implements OnInit {
           this.selectedChoice = this.selectedChoice ? this.selectedChoice : this.choice1;
         }
       }
-      // this.onSelect.emit(this.travelValue(this.selectedChoice));
+      this.onSelect.emit(this.travelValue(this.selectedChoice));
   }
 
   updateType(travelType: string) {
@@ -103,6 +91,7 @@ export class TogglePickerComponent implements OnInit {
       }
 
       this.onSelect.emit(this.travelValue(travelType));
+      this.onDirty.emit(true);
   }
 
   travelValue(travelType: string) {

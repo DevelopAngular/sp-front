@@ -1,5 +1,5 @@
 <div class="request-card-container" ondragstart="return false">
-  <app-pass-card-template (onCancel)="cancelRequest($event)" [hasDivider]="((request.status==='pending' || request.status==='accepted') && !forInput && !forStaff) || (request.status!=='pending' && forStaff)" [pass]="request" [closeIcon]="'./assets/' +((!forStaff && !forInput)?'Trash':'Three dots') +' (Transparent).png'">
+  <app-pass-card-template (onCancel)="cancelRequest($event)" [hasDivider]="((request.status==='pending' || request.status==='accepted') && !forInput && !forStaff) || (request.status!=='pending' && forStaff)" [pass]="request" [closeIcon]="'./assets/' +((!forStaff && !forInput)?'Trash':'Back Button') +' (Transparent).png'">
     <div class="card-subtitle">
       {{ ((request.request_time && forFuture)?formatDateTime(request.request_time):(forStaff?'Pass for Now':'')) }}
     </div>

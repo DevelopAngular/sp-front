@@ -11,6 +11,7 @@ import { Pinnable } from '../models/Pinnable';
 import { Request } from '../models/Request';
 import { User } from '../models/User';
 import {BehaviorSubject} from 'rxjs';
+import {FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-hallpass-form',
@@ -54,6 +55,8 @@ export class HallpassFormComponent implements OnInit {
   isNotDeny: boolean = true;
   studentMessage: string;
 
+  declinable: FormControl;
+
   public pinnables: Promise<Pinnable[]>;
 
   constructor(
@@ -63,7 +66,8 @@ export class HallpassFormComponent implements OnInit {
       @Inject(MAT_DIALOG_DATA) public dialogData: any,
       public dialogRef: MatDialogRef<HallpassFormComponent>,
   ) {
-
+    this.declinable = new FormControl(true);
+    this.declinable.valueChanges.subscribe(res => this.isDeclinable = res);
     this.pinnables = this.http.get<any[]>('v1/pinnables').toPromise().then(json => json.map(raw => Pinnable.fromJSON(raw)));
   }
 
@@ -382,6 +386,7 @@ export class HallpassFormComponent implements OnInit {
         this.dialogRef.close({
           'templatePass': templateRequest,
           'forLater': this.forLater,
+          'selectedStudents': this.selectedStudents,
           'restricted': true,
           'type': 'request'
         });
