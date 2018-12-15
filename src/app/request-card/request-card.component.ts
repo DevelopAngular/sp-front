@@ -12,6 +12,8 @@ import { DataService } from '../data-service';
 import { LoadingService } from '../loading.service';
 import { filter } from 'rxjs/operators';
 import {LiveDataService} from '../live-data/live-data.service';
+import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
+import {PassCardComponent} from '../pass-card/pass-card.component';
 
 @Component({
   selector: 'app-request-card',
@@ -28,9 +30,11 @@ export class RequestCardComponent implements OnInit {
 
   selectedDuration: number;
   selectedTravelType: string;
+  selectedStudents;
   messageEditOpen: boolean = false;
   dateEditOpen: boolean = false;
   cancelOpen: boolean = false;
+  pinnableOpen: boolean = false;
   user: User;
 
   performingAction: boolean;
@@ -51,12 +55,14 @@ export class RequestCardComponent implements OnInit {
     this.forFuture = this.data['forFuture'];
     this.fromPast = this.data['fromPast'];
     this.forStaff = this.data['forStaff'];
+    this.selectedStudents = this.data['selectedStudents'];
 
     this.dataService.currentUser
     .pipe(this.loadingService.watchFirst)
     .subscribe(user => {
       this._zone.run(() => {
         this.user = user;
+        this.forStaff = user.roles.includes('_profile_teacher');
       });
     });
   }
@@ -177,9 +183,35 @@ export class RequestCardComponent implements OnInit {
         }
         header = 'Are you sure you want to ' +(this.forStaff?'deny':'delete') +' this pass request' +(this.forStaff?'':' you sent') +'?';
       } else{
-        options.push(this.genOption('Change Message','#3D396B','editMessage'));
-        options.push(this.genOption('Stop making pass','#E32C66','stop'));
-        header = 'Are you sure you want to stop making this pass?';
+          if (!this.pinnableOpen) {
+              this.dialogRef.close();
+              const dialogRef = this.dialog.open(HallpassFormComponent, {
+                  width: '750px',
+                  panelClass: 'form-dialog-container',
+                  backdropClass: 'custom-backdrop',
+                  data: {
+                      'fromLocation': this.request.origin,
+                      'fromHistory': ['from', 'to-pinnables'],
+                      'fromHistoryIndex': 1,
+                      'colorProfile': this.request.color_profile,
+                      'forLater': this.forFuture,
+                      'forStaff': this.forStaff,
+                      'selectedStudents': this.selectedStudents
+
+                  }
+              });
+                  // dialogRef.afterClosed().pipe(filter(res => !!res)).subscribe((result: Object) => {
+                  //     this.openInputCard(result['templatePass'],
+                  //         result['forLater'],
+                  //         result['forStaff'],
+                  //         result['selectedStudents'],
+                  //         (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent)),
+                  //         result['fromHistory'],
+                  //         result['fromHistoryIndex']
+                  //     );
+                  // });
+          }
+          return false;
       }
       const cancelDialog = this.dialog.open(ConsentMenuComponent, {
         panelClass: 'consent-dialog-container',
@@ -261,6 +293,25 @@ export class RequestCardComponent implements OnInit {
       });
     }
   }
+
+    openInputCard(templatePass, forLater, forStaff, selectedStudents, component, fromHistory, fromHistoryIndex) {
+        let data = {
+            'pass': templatePass,
+            'fromPast': false,
+            'fromHistory': fromHistory,
+            'fromHistoryIndex': fromHistoryIndex,
+            'forFuture': forLater,
+            'forInput': true,
+            'forStaff': forStaff,
+            'selectedStudents': selectedStudents,
+        };
+        this.dialog.open(component, {
+            panelClass: 'pass-card-dialog-container',
+            backdropClass: 'custom-backdrop',
+            disableClose: true,
+            data: data
+        });
+    }
 
   denyRequest(denyMessage: string){
     let endpoint: string = 'v1/pass_requests/' +this.request.id +'/deny';

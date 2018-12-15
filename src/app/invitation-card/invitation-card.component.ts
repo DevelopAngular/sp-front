@@ -13,6 +13,7 @@ import { LoadingService } from '../loading.service';
 import {HallpassFormComponent} from '../hallpass-form/hallpass-form.component';
 import {RequestCardComponent} from '../request-card/request-card.component';
 import {PassCardComponent} from '../pass-card/pass-card.component';
+import {filter} from 'rxjs/operators';
 
 @Component({
   selector: 'app-invitation-card',
@@ -135,7 +136,6 @@ export class InvitationCardComponent implements OnInit {
               panelClass: 'form-dialog-container',
               backdropClass: 'custom-backdrop',
               data: {
-
                   'fromLocation': this.selectedOrigin,
                   'fromHistory': this.fromHistory,
                   'fromHistoryIndex': this.fromHistoryIndex,
@@ -145,7 +145,7 @@ export class InvitationCardComponent implements OnInit {
                   'selectedStudents': this.selectedStudents || true
               }
           });
-          dialogRef.afterClosed()
+          dialogRef.afterClosed().pipe(filter(res => !!res))
               .subscribe((result: Object) => {
                   this.openInputCard(result['templatePass'],
                       result['forLater'],
