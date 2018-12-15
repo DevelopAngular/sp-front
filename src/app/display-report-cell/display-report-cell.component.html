@@ -3,20 +3,19 @@
     <div class="flexCls">
 
       <div class="display-card-header-title">
-        {{ student_name }}
+        {{ student_name }},{{ student_name }},{{ student_name }}
       </div>
-      <div class="righticon">{{ created | date : 'medium'}}</div>
+      <div class="righticon">{{ created}}</div>
     </div>
 
   </div>
   <div  class="card-content">
     <div class="subtitlecls">
-      <div style="font-weight: bold">Reported by {{ issuer }}</div><br>
-      <div style="width: 90%">{{ message }}</div>
+      <div style="font-weight: bold">Reported by {{ issuer }}:</div>
+      <div style="width: 90%">{{ message.slice(0, message.length / 2 ) }}</div>
     </div>
-    <div>
-
-      <div (click)="printReport()" [style.cursor]="'pointer'" class="print-icon">
+    <div class="print-icon">
+      <div (click)="printReport()" [style.cursor]="'pointer'">
         <img *ngIf="!!righticon" [src]="righticon | resolveAsset">
       </div>
       <a #printPdf href="pdf/report" target="_blank"></a>

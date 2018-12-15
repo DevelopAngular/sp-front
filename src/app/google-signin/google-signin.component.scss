@@ -51,7 +51,12 @@ mat-progress-spinner.inline {
 .demo-text:hover{
   background-color: #F1F1F1;
 }
-
+.error-text {
+  color: red;
+  text-align: center;
+  font-size: 1.1em;
+  max-width: 60vw;
+}
 .input {
   margin-bottom: 5px;
   width: 220px;
@@ -75,4 +80,5 @@ input {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
 }

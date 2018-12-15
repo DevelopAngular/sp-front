@@ -54,7 +54,7 @@
 
 .right-content {
   margin: 60px 70px 20px 70px;
-  min-width: 330px;
+  min-width: 470px;
   width: 40%;
   border-radius: 10px;
   box-shadow: 0 0 2px darkgrey;
@@ -69,12 +69,13 @@
     overflow-y: auto;
     .right-content-header {
       display: flex;
-      width: 90%;
+      //width: 90%;
       height: 60px;
       justify-content: space-between;
       align-items: center;
       margin-top: 10px;
-
+      box-sizing: border-box;
+      padding: 0 10px 15px 10px;
       .report-text {
         display: flex;
         align-items: center;
@@ -86,7 +87,7 @@
 
         .text {
           font-size: 25px;
-          margin-left: 18px;
+          margin: 0 18px;
           font-weight: bold;
           color: #3d396b;
         }
@@ -100,7 +101,7 @@
     }
 
     .reports {
-      width: 95%;
+      //width: 95%;
       display: flex;
       justify-content: center;
       flex-direction: column;
@@ -157,9 +158,6 @@
   margin: 0 25px;
 }
 
-.text {
-  color: #767676;
-}
 .hallmoniter {
   display: flex;
   flex-direction: row;

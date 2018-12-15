@@ -91,7 +91,7 @@ const appRoutes: Routes = [
     MatSlideToggleModule,
 
     RouterModule.forRoot(
-      appRoutes, {enableTracing: true}
+      appRoutes, {enableTracing: false}
     ),
     GoogleApiModule.forRoot({
       provide: NG_GAPI_CONFIG,

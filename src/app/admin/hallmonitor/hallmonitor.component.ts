@@ -11,6 +11,7 @@ import { PassLikeProvider } from '../../models/providers';
 import {CalendarComponent} from '../calendar/calendar.component';
 import {HttpService} from '../../http-service';
 import {map} from 'rxjs/operators';
+import {Util} from '../../../Util';
 
 
 @Component({
@@ -19,7 +20,6 @@ import {map} from 'rxjs/operators';
   styleUrls: ['./hallmonitor.component.scss']
 })
 export class HallmonitorComponent implements OnInit {
-
     activePassProvider: PassLikeProvider;
     searchQuery$ = new BehaviorSubject('');
     minDate = new Date();
@@ -43,7 +43,7 @@ export class HallmonitorComponent implements OnInit {
     searchDate_1st$ = new BehaviorSubject<Date>(null);
     searchDate_2nd$ = new BehaviorSubject<Date>(null);
 
-    private reportsDate: Date = new Date();
+    public reportsDate: Date = new Date();
 
     constructor(
         public dialog: MatDialog,
@@ -58,6 +58,32 @@ export class HallmonitorComponent implements OnInit {
   ngOnInit() {
     this.activePassProvider = new ActivePassProvider(this.liveDataService, this.searchQuery$);
     this.getReports(this.minDate);
+    // this.studentreport = [
+    //   {
+    //     student_name: 'Hannah Banks',
+    //     issuer: 'Madelene Lin',
+    //     created: 'Oct. 4, 7:04 PM',
+    //     message: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium assumenda dignissimos dolores ea facilis odio placeat quibusdam repudiandae similique tempore?'
+    //   },
+    //   {
+    //     student_name: 'Hannah Banks',
+    //     issuer: 'Madelene Lin',
+    //     created: 'Oct. 4, 7:04 PM',
+    //     message: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium assumenda dignissimos dolores ea facilis odio placeat quibusdam repudiandae similique tempore?\n'
+    //   },
+    //   {
+    //     student_name: 'Hannah Banks',
+    //     issuer: 'Madelene Lin',
+    //     created: 'Oct. 4, 4:18 PM',
+    //     message: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium assumenda dignissimos dolores ea facilis odio placeat quibusdam repudiandae similique tempore?\n'
+    //   },
+    //   {
+    //     student_name: 'Hannah Banks',
+    //     issuer: 'Madelene Lin',
+    //     created: 'Oct. 4, 4:18 PM',
+    //     message: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium assumenda dignissimos dolores ea facilis odio placeat quibusdam repudiandae similique tempore?\n'
+    //   }
+    // ];
   }
 
   onSearch(searchValue) {
@@ -213,12 +239,11 @@ export class HallmonitorComponent implements OnInit {
           return {
             student_name: report.student.display_name,
             issuer: report.issuer.display_name,
-            created: report.created,
+            created: Util.formatDateTime(new Date(report.created)),
             message: report.message,
           };
         });
-        this.studentreport;
-        // this.studentreport = this.studentreport.concat(this.studentreport, this.studentreport);
+        this.studentreport = this.studentreport.concat(this.studentreport, this.studentreport);
       });
   }
 }
