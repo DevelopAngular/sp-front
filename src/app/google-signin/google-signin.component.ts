@@ -17,6 +17,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
 
   keyListener;
   demoLoginEnabled = false;
+  showErrorText = false;
 
   demoUsername = '';
   demoPassword = '';
@@ -72,7 +73,16 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   }
 
   initLogin() {
-    this.loginService.signIn();
+    this.loginService
+          .signIn()
+          .catch((err) => {
+
+            console.log('Error occured', err);
+
+            this.demoLoginEnabled = true;
+            this.showErrorText = true;
+
+          });
   }
 
   ngOnDestroy(): void {

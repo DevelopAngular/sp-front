@@ -24,7 +24,6 @@
         </app-pass-collection>
       </div>
     </div>
-
     <div class="right-content">
       <div class="right-content-internal">
         <div class="right-content-header">
@@ -34,11 +33,13 @@
           </div>
           <img [src]="'./assets/Calendar (Blue).png' | resolveAsset" class="calendar-icon" (click)="openDateDialog($event)">
         </div>
+        <h3 style="text-align: center; margin: 15px" *ngIf="studentreport.length">{{reportsDate | date}}</h3>
         <div class="reports">
           <div *ngIf="studentreport.length">
 
             <div *ngFor="let report of studentreport">
 
+              <div class="divider"></div>
               <app-display-report-cell
                 [student_name]="report.student_name"
                 [issuer]="report.issuer"
@@ -46,7 +47,6 @@
                 [message]="report.message || 'empty'"
                 [hasDivider]="true"
                 [righticon]="'./assets/Print (Grey).png'"></app-display-report-cell>
-              <div class="divider"></div>
 
             </div>
           </div>
@@ -59,6 +59,8 @@
         </div>
       </div>
     </div>
+  <!--<pre>{{studentreport | json}}</pre>-->
+
 </div>
 
 

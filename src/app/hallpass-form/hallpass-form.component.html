@@ -50,7 +50,11 @@
     <div class="datetime-right">
       <div *ngIf="forStaff" class="toggle-wrapper loading-theme">
         <div class="toggle-title">Declinable</div>
-        <mat-slide-toggle [checked]="isDeclinable" (change)="isDeclinable = $event.checked"></mat-slide-toggle>
+        <div class="onoffswitch">
+          <input type="checkbox" name="onoffswitch" [formControl]="declinable" class="onoffswitch-checkbox" id="myonoffswitch" checked>
+          <label class="onoffswitch-label" for="myonoffswitch"></label>
+        </div>
+        <!--<mat-slide-toggle [checked]="isDeclinable" (change)="isDeclinable = $event.checked"></mat-slide-toggle>-->
       </div>
       <div *ngIf="forStaff" class="toggle-divider"></div>
       <div *ngIf="forStaff" class="toggle-description">

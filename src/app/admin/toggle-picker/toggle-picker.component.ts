@@ -15,6 +15,9 @@ export class TogglePickerComponent implements OnInit {
     @Input() height: string = '20px';
     @Input() currentChoose;
     @Input() selectedChoice: string;
+    @Input() disabled: boolean;
+    @Input() noSelected: boolean = false;
+    @Output() onDirty: EventEmitter<boolean> = new EventEmitter();
     @Output() onSelect: EventEmitter<any> = new EventEmitter();
 
     choice1: string;
@@ -26,6 +29,7 @@ export class TogglePickerComponent implements OnInit {
     choice2_values: string[] = [];
     choice3_values: string[] = [];
 
+    disabledColor = '#999999';
   constructor() { }
 
   ngOnInit() {
@@ -61,7 +65,12 @@ export class TogglePickerComponent implements OnInit {
               }
           }
       } else {
-          this.selectedChoice = this.selectedChoice?this.selectedChoice:this.choice1;
+        if (this.noSelected) {
+          this.selectedChoice = '';
+        } else {
+
+          this.selectedChoice = this.selectedChoice ? this.selectedChoice : this.choice1;
+        }
       }
       this.onSelect.emit(this.travelValue(this.selectedChoice));
   }
@@ -82,6 +91,7 @@ export class TogglePickerComponent implements OnInit {
       }
 
       this.onSelect.emit(this.travelValue(travelType));
+      this.onDirty.emit(true);
   }
 
   travelValue(travelType: string) {
@@ -89,7 +99,10 @@ export class TogglePickerComponent implements OnInit {
   }
 
   getFontColor(choice: string) {
-      return this.selectedChoice !== choice ? this.altColor : '#FFFFFF';
+    if (!this.selectedChoice) {
+        return this.disabledColor;
+    }
+    return this.selectedChoice !== choice ? this.altColor : '#FFFFFF';
   }
 
   getBackgroundColor(choice: string) {

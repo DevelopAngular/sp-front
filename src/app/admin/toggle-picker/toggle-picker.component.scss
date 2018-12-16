@@ -1,4 +1,5 @@
 ﻿.wrapper {
+  position: relative;
   //border: solid white 1px;
   border-radius: 5px;
   //width: 120px;
@@ -17,6 +18,14 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  .disabled {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background-color: rgba( 0, 0, 0, .15 );
+  }
 }
 
 .option {

@@ -1,12 +1,12 @@
-import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
-import { zip } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { HttpService } from '../../http-service';
-import { LiveDataService } from '../../live-data/live-data.service';
-import { HallPass } from '../../models/HallPass';
-import { Report } from '../../models/Report';
-import { PdfGeneratorService } from '../pdf-generator.service';
+import {Component, ElementRef, OnInit, ViewChild, NgZone} from '@angular/core';
+import {HttpService} from '../../http-service';
+import {HallPass} from '../../models/HallPass';
+import {PdfGeneratorService} from '../pdf-generator.service';
+import {Observable, Subject, of as ObservableOf, zip, BehaviorSubject, ReplaySubject} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {Report} from '../../models/Report';
+import {LiveDataService} from '../../live-data/live-data.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,6 +15,7 @@ import { PdfGeneratorService } from '../pdf-generator.service';
 })
 export class DashboardComponent implements OnInit {
 
+  @ViewChild('printPdf') printPdf: ElementRef;
   @ViewChild('ctx') ctx: any;
 
   public lineChartData: Array<any> = [{data: Array.from(Array(24).keys()).map(() => 0)}];

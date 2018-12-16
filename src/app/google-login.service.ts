@@ -118,7 +118,8 @@ export class GoogleLoginService {
 
     console.log('logging in...');
 
-    auth.signIn().then(user => {
+    return auth.signIn().then(user => {
+      console.log(user);
       this.updateAuth(user.getAuthResponse());
     });
 

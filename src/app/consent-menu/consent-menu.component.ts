@@ -44,7 +44,9 @@ export class ConsentMenuComponent implements OnInit {
   ngOnInit() {
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
-    matDialogConfig.position = { left: `${rect.left - 14 - (rect.width / 2)}px`, top: `${rect.bottom + 15}px` };
+    // matDialogConfig.position = { left: `${rect.left - 122}px`, top: `${rect.bottom + 15}px` };
+    matDialogConfig.position = { left: `${rect.left + (rect.width / 2) - (275 / 2)}px`, top: `${rect.bottom + 15}px` };
+    // matDialogConfig.position = { left: `${rect.left - 14 - (rect.width / 2)}px`, top: `${rect.bottom + 15}px` };
     matDialogConfig.width = '275px';
     this._matDialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);
     this._matDialogRef.updatePosition(matDialogConfig.position);

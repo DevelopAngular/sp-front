@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, Input} from '@angular/core';
+﻿import {Component, OnInit, Input, ViewChild, ElementRef} from '@angular/core';
 import { Report } from '../models/Report';
 import {PdfGeneratorService} from '../admin/pdf-generator.service';
 
@@ -8,6 +8,8 @@ import {PdfGeneratorService} from '../admin/pdf-generator.service';
   styleUrls: ['./display-report-cell.component.scss']
 })
 export class DisplayReportCellComponent implements OnInit {
+
+    @ViewChild('printPdf') printPdf: ElementRef;
 
     @Input() hasDivider: boolean = true;
     @Input() student_name: string;
@@ -38,9 +40,9 @@ export class DisplayReportCellComponent implements OnInit {
       created: prettyReportDate,
       message: this.message,
       issuer: this.issuer,
-    }
+    };
   }
   printReport() {
-    this.pdf.generate(this.data, [], 'p', 'hallmonitor');
+    this.pdf.generate(this.data, this.printPdf.nativeElement, 'p', 'hallmonitor');
   }
 }

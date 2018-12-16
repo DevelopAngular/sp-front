@@ -324,7 +324,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
             'selectedStudents': selectedStudents,
         };
         this.dialog.open(component, {
-            panelClass: 'pass-card-dialog-container',
+            panelClass: (this.forStaff ? 'teacher-' : 'student-') + 'pass-card-dialog-container',
             backdropClass: 'custom-backdrop',
             disableClose: true,
             data: data

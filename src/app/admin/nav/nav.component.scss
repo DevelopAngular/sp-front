@@ -36,12 +36,16 @@
 
 .active-route {
     background-color: rgb(228, 235, 255);
-    display: flex;
-    justify-content: center;
-    align-items: center;
     border-radius: 50%;
-    width: 45px;
-    height: 45px;
+    animation: active-route .2s ease forwards;
+}
+@keyframes active-route{
+  0%{
+    box-shadow: 0 0 0 0px rgb(228, 235, 255);
+  }
+  100%{
+    box-shadow: 0 0 0 10px rgb(228, 235, 255);
+  }
 }
 
 .footer-text{

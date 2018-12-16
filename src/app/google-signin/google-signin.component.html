@@ -19,11 +19,16 @@
     >Sign in with Google</app-gradient-button>
     <!-- <img *ngIf="isLoaded" [src]=" | resolveAsset" style="transform: scale(0.65);"> -->
 </div>
-
+<div class="error-text" *ngIf="showErrorText">
+  <p>
+    Failed to Sign in
+    This account is not part of a SmartPass registered organization.
+    Please sign in with your school account or contact your school administrator.</p>
+</div>
 
 <form class="login-form" *ngIf="demoLoginEnabled" onsubmit="return false;" style="margin-top: 30px;">
-  <input class="input" name="username" placeholder="Username" type="text" [(ngModel)]="demoUsername"><br>
-  <input class="input" name="password" placeholder="Password" type="password" [(ngModel)]="demoPassword"><br>
+  <input class="input" name="username" placeholder="Username" (focus)="showErrorText = false" type="text" [(ngModel)]="demoUsername"><br>
+  <input class="input" name="password" placeholder="Password" (focus)="showErrorText = false" type="password" [(ngModel)]="demoPassword"><br>
   <app-gradient-button
   [gradient]="'#04CD33,#04CD33'"
   [cursor]="'pointer'"

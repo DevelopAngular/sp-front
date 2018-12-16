@@ -94,6 +94,10 @@
   height: 45px;
 }
 
+img {
+  pointer-events: none;
+}
+
 .settings-icon {
   width: 30px;
   height: 30px;

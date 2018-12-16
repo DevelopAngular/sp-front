@@ -1,6 +1,6 @@
 ﻿.display-card-wrapper {
   min-width: 308px;
-  padding: 25px 0;
+  padding-bottom: 15px;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -25,9 +25,10 @@
 }
 
 .display-card-header-title {
-  color: #1F195E;
+  color: #E32C66;
   font-family: 'Helvetica Neue', sans-serif;
   font-weight: bold;
+  margin-right: 20px;
 }
 
 .display-card-divider {
@@ -45,25 +46,28 @@
 
 .flexCls {
   display: flex;
-  padding: 0 0 0 16px;
-  width: 95%;
+  //padding: 0 0 0 16px;
+  //width: 95%;
   justify-content: space-between;
 }
 
 .righticon {
-  padding: 0 16px 20px 0;
+  white-space: nowrap;
+  color: #767676;
+  //padding: 0 16px 20px 0;
   margin-right: 0;
-  float: right;
+  //float: right;
 }
 
 .subtitlecls {
-  padding-left: 16px;
+  color: #767676;
+  //padding-left: 16px;
 }
 
 .card-content {
   display: flex;
   justify-content: space-between;
-  width: 95%;
+  //width: 95%;
 }
 
 .print-icon {
@@ -72,7 +76,8 @@
 
   img {
     width: 30px;
-    height: 30px
+    height: 30px;
+    padding-right: 10px;
   }
 }
 

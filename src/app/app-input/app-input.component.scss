@@ -17,8 +17,12 @@
   right: 16px;
 }
 
+img {
+  pointer-events: none;
+}
+
 .InputWrapper input {
-  border: none;
+  border: 1px solid transparent;
   background-color: #F8F8F8;
   display: block;
   width: 95%;
@@ -34,7 +38,7 @@
 }
 
 .InputWrapper input:focus {
- 
+
 }
 .clserrorLabel {
   color: red !important;
