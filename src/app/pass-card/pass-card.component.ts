@@ -297,11 +297,14 @@ export class PassCardComponent implements OnInit, OnDestroy {
             console.log('[Future Pass Cancelled]: ', httpData);
             this.dialogRef.close();
           });
-        } else if(action === 'report'){
+        } else if(action === 'report') {
           this.dialogRef.close({'report':this.pass.student});
-        } else if(action === 'end'){
+        } else if(action === 'end') {
           const endPoint:string = 'v1/hall_passes/' +this.pass.id +'/ended';
-          this.http.post(endPoint).subscribe(()=>{this.dialogRef.close();});
+          this.http.post(endPoint).subscribe(() => {
+            this.dataService.isActivePass$.next(false);
+            this.dialogRef.close();
+          });
         }
       });
     }
