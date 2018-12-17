@@ -16,17 +16,19 @@
         <a routerLink="/admin/hallmonitor" class="label-icon">
           <img [src]="'./assets/Hallway (Blue).png' | resolveAsset" alt="Hallway (Blue).png" width="25">
         </a>
-        <app-gradient-button
-          [disabled]="!activeHallpasses?.length"
-          [leftIcon]="'./assets/Print (White).png'"
-          [cursor]="'pointer'"
-          [minHeight]="'62px'"
-          [width]="'188px'"
-          [fontSize]="'14px'"
-          [fontWeight]="400"
-          (buttonClick)="previewPDF()">
-          <span>Report of Students</span>
-        </app-gradient-button>
+        <div [ngStyle]="{'opacity': activeHallpasses?.length ? '1' : '.5'}">
+          <app-gradient-button
+            [disabled]="!activeHallpasses?.length"
+            [leftIcon]="'./assets/Print (White).png'"
+            [cursor]="activeHallpasses?.length ? 'pointer' : 'default'"
+            [minHeight]="'62px'"
+            [width]="'188px'"
+            [fontSize]="'14px'"
+            [fontWeight]="400"
+            (buttonClick)="previewPDF()">
+            <span>Report of Students</span>
+          </app-gradient-button>
+        </div>
         <a #printPdf href="pdf/report" target="_blank"></a>
       </div>
     </div>
