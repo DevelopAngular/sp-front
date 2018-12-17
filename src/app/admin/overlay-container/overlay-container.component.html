@@ -5,7 +5,7 @@
         <!--<input type="checkbox" name="isEdit" formControlName="isEdit" class="isEdit-checkbox" id="isEdit" checked>-->
         <!--<label class="isEdit-label" for="isEdit"></label>-->
       <!--</div>-->
-      <img class="back-button"
+      <img class="back-button" draggable="false"
            *ngIf="overlayType !== 'addExisting'
            && overlayType !== 'newRoomInFolder'
            && overlayType !== 'importRooms'
@@ -56,7 +56,7 @@
       <div class="new-room-in-folder"
            *ngIf="overlayType === 'newRoomInFolder' || overlayType === 'importRooms' || overlayType === 'settingsRooms'">
           <div class="new-room-in-folder-header">
-            <img class="back-button" (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : setLocation('newFolder'))" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
+            <img draggable="false" class="back-button" (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : setLocation('newFolder'))" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
             <div [ngClass]="{'room-in-folder-title-inactive': !isValidForm, 'room-in-folder-title-active': isValidForm || (overlayType === 'settingsRooms')}">
               {{ (overlayType === 'newRoomInFolder' ? roomName : (overlayType === 'settingsRooms' ? (isEditRooms ? 'Editing ' + readyRoomsToEdit.length : 'Adding ' + selectedRooms.length)  + ' Rooms' : 'Import Rooms')) }}
             </div>
@@ -204,7 +204,7 @@
                   </mat-checkbox>
                   <div class="room-edit" (click)="setToEditRoom(room)">
                     <mat-list-item>{{ room.title }}</mat-list-item>
-                    <img [src]="'./assets/Disclosure Indicator (Grey).png' | resolveAsset">
+                    <img draggable="false" [src]="'./assets/Disclosure Indicator (Grey).png' | resolveAsset">
                   </div>
                 </div>
                 <mat-divider></mat-divider>
@@ -249,7 +249,7 @@
 
       <div class="add-existing-content" *ngIf="overlayType === 'addExisting'">
         <div class="existing-room-header">
-          <img class="back-button" (click)="setLocation('newFolder')" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
+          <img draggable="false" class="back-button" (click)="setLocation('newFolder')" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
           <div class="header-title">Add Existing Room to Folder</div>
         </div>
         <div class="add-rooms-button" *ngIf="selectedRoomsInFolder.length > 0">
@@ -278,7 +278,7 @@
         </div>
         <div class="download-template-link">Download Template</div>
         <div class="choose-file" (click)="file.click()">
-            <img class="choose-icon" [src]="'./assets/Spreadsheet (Grey).png' | resolveAsset">
+            <img draggable="false" class="choose-icon" [src]="'./assets/Spreadsheet (Grey).png' | resolveAsset">
             <span class="choose-text">Choose File</span>
         </div>
       </div>

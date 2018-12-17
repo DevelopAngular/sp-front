@@ -1,4 +1,4 @@
 <div class="nav-button-wrapper" (click)="doClick()" [style.background]="backgroundColor" [style.color]="textColor">
-  <img class="nav-button-icon" [src]="_icon | resolveAsset">
+  <img draggable="false" class="nav-button-icon" [src]="_icon | resolveAsset">
   <div class="nav-button-text">{{ content }}</div>
 </div>

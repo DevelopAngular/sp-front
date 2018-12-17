@@ -1,12 +1,12 @@
 <div class="collection-wrapper" *ngIf="(currentPasses$ | async) && (currentPasses$ | async).length>0 || emptyMessage">
   <div class="collection-header">
-      <img class="collection-icon" [src]="icon | resolveAsset">
+      <img draggable="false" class="collection-icon" [src]="icon | resolveAsset">
       <div class="collection-title">
         {{title}}
       </div>
       <div class="sort-label" *ngIf="hasSort" (click)="openSortDialog($event)">Sort</div>
       <!--<app-dropdown *ngIf="hasSort" class="sort-selector" (onSelect)="onSortSelected($event)" [options]="sortOptions"></app-dropdown>-->
-      <img class="collection-display-toggle" [src]="'./assets/' +(displayState==='grid'?'List':'Grid') +' (Blue).png'| resolveAsset" (click)="displayState=(displayState==='list'?'grid':'list')" [style.margin-left]="hasSort?'10px':'auto'">
+      <img draggable="false" class="collection-display-toggle" [src]="'./assets/' +(displayState==='grid'?'List':'Grid') +' (Blue).png'| resolveAsset" (click)="displayState=(displayState==='list'?'grid':'list')" [style.margin-left]="hasSort?'10px':'auto'">
   </div>
   <div class="collection-divider"></div>
   <div *ngIf="(currentPasses$ | async)">

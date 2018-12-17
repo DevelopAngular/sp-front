@@ -14,7 +14,7 @@
       </div>
       <div>
         <a routerLink="/admin/hallmonitor" class="label-icon">
-          <img [src]="'./assets/Hallway (Blue).png' | resolveAsset" alt="Hallway (Blue).png" width="25">
+          <img draggable="false" [src]="'./assets/Hallway (Blue).png' | resolveAsset" alt="Hallway (Blue).png" width="25">
         </a>
         <div [ngStyle]="{'opacity': activeHallpasses?.length ? '1' : '.5'}">
           <app-gradient-button
@@ -34,11 +34,11 @@
     </div>
     <div class="card card__role flex-center-between mr mt">
       <a routerLink="/admin/hallmonitor" class="label-icon">
-        <img [src]="'./assets/Hallway (Blue).png' | resolveAsset" alt="Hallway (Blue).png" width="25">
+        <img draggable="false" [src]="'./assets/Hallway (Blue).png' | resolveAsset" alt="Hallway (Blue).png" width="25">
       </a>
       <div>
         <div class="card_header">
-          <img [src]="'./assets/Report (Red).png' | resolveAsset" alt="Report (Red).png" width="30" [style.vertical-align]="'bottom'">
+          <img draggable="false" [src]="'./assets/Report (Red).png' | resolveAsset" alt="Report (Red).png" width="30" [style.vertical-align]="'bottom'">
           <span class="pl">Reported Students</span>
         </div>
         <div [style.min-height]="'55px'">
