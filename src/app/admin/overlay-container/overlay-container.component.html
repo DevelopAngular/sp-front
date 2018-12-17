@@ -197,10 +197,15 @@
 
           <div class="rooms-list" *ngIf="selectedRooms.length > 0 && !requireValidator(folderName)">
             <mat-list>
-              <div class="room" *ngFor="let room of selectedRooms">
-                <mat-checkbox style="margin-left: 12px" (change)="selectedRoomsEvent($event, room)">
-                </mat-checkbox>
-                <mat-list-item (click)="setToEditRoom(room)">{{ room.title }}</mat-list-item>
+              <div *ngFor="let room of selectedRooms">
+                <div class="room">
+                  <mat-checkbox style="margin-left: 12px" (change)="selectedRoomsEvent($event, room)">
+                  </mat-checkbox>
+                  <div class="room-edit" (click)="setToEditRoom(room)">
+                    <mat-list-item>{{ room.title }}</mat-list-item>
+                    <img [src]="'./assets/Disclosure Indicator (Grey).png' | resolveAsset">
+                  </div>
+                </div>
                 <mat-divider></mat-divider>
               </div>
             </mat-list>
