@@ -11,7 +11,7 @@
      (mousedown)="onPress(true)" (mouseup)="onPress(false)"
      [@pressState]="buttonState"
      [ngClass]="{'center': !(leftIcon || rightIcon)}">
-  <div class="wrapper-container">
+  <div class="wrapper-container" [style.width]="textWidth">
     <div class="wrapper">
       <img draggable="false" *ngIf="leftIcon" [style.width]="leftImageWidth" [style.height]="leftImageHeight" class="icon left-icon" [src]="leftIcon | resolveAsset">
       <div class="text-content" [style.text-align]="contentAlign">
