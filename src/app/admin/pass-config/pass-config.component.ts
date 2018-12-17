@@ -1,15 +1,15 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {MatDialog, MatDialogRef} from '@angular/material';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material';
 import { FormControl, FormGroup } from '@angular/forms';
 
-import { Observable} from 'rxjs';
-import {filter, switchMap} from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 import { HttpService } from '../../http-service';
 import { Pinnable } from '../../models/Pinnable';
 import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
-import * as _ from 'lodash';
 import {PinnableCollectionComponent} from '../pinnable-collection/pinnable-collection.component';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-pass-congif',
@@ -45,7 +45,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // this.dialog.closeAll();
+    this.dialog.closeAll();
   }
 
   buildForm() {
