@@ -9,6 +9,7 @@
       <mat-grid-list [cols]="3" rowHeight="85px">
         <mat-grid-tile [style.overflow]="'visible'" class="custom-mat-tile" *ngFor="let setting of settings">
             <app-gradient-button
+              [cursor]="'pointer'"
               [minWidth]="'121px'"
               [minHeight]="'74px'"
               [gradient]="setting.color_profile.gradient_color"

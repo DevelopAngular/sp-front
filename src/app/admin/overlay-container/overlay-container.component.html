@@ -37,6 +37,7 @@
                                  [style.width]="'120px'"
                                  [cursor]="'pointer'"
                                  [gradient]="color_profile.overlay_color + ',' + color_profile.time_color"
+                                 [hoverColor]="color_profile.overlay_color"
                                  [fontSize]="'14px'"
                                  (buttonClick)="onCancel()"
             >
@@ -122,7 +123,7 @@
       >
         <div class="travel-picker">
           <div class="toggle-label">Travel Type</div>
-          <app-toggle-picker (onSelect)="travelUpdate($event)" (onDirty)="isDirtysettings=$event" [noSelected]="overlayType === 'newRoom' ? true : false" [currentChoose]="travelType" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+          <app-toggle-picker (onSelect)="travelUpdate($event)" (onDirty)="isDirtysettings=$event" [noSelected]="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'importRooms' ? true : false" [currentChoose]="travelType" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
         <div class="time-limit"
              *ngIf="overlayType === 'newRoom'
@@ -152,11 +153,11 @@
       >
         <div class="restriction-picker-1">
           <div class="toggle-label">Restriction For Now</div>
-          <app-toggle-picker (onSelect)="nowRestrictionUpdate($event)" (onDirty)="isDirtysettings=$event" [noSelected]="overlayType === 'newRoom' ? true : false" [currentChoose]="nowRestriction || null" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+          <app-toggle-picker (onSelect)="nowRestrictionUpdate($event)" (onDirty)="isDirtysettings=$event" [noSelected]="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' ? true : false" [currentChoose]="nowRestriction || null" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
         <div class="restriction-picker-2">
           <div class="toggle-label">Restriction For Future</div>
-          <app-toggle-picker (onSelect)="futureRestrictionUpdate($event)" (onDirty)="isDirtysettings=$event" [noSelected]="overlayType === 'newRoom' ? true : false" [currentChoose]="futureRestriction || null" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+          <app-toggle-picker (onSelect)="futureRestrictionUpdate($event)" (onDirty)="isDirtysettings=$event" [noSelected]="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' ? true : false" [currentChoose]="futureRestriction || null" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
       </div>
 
@@ -270,7 +271,11 @@
         <div class="import-rooms-info">
           Import a list of room names, room numbers, and room names from an Excel spreadsheet or CSV
         </div>
-        <div class="download-template-link">Download Template</div>
+        <div>
+          <a class="download-template-link" [href]="'./assets/xlsx/Rooms Set Up.xlsx' | resolveAsset" download>
+            Download Template
+          </a>
+        </div>
         <div class="choose-file" (click)="file.click()">
             <img class="choose-icon" [src]="'./assets/Spreadsheet (Grey).png' | resolveAsset">
             <span class="choose-text">Choose File</span>
