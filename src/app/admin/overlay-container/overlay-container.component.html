@@ -162,6 +162,7 @@
 
       <div class="rooms-in-folder" *ngIf="overlayType === 'newFolder'">
         <div class="rooms-in-folder-title">Rooms in Folder ({{ selectedRooms.length }})</div>
+        <mat-divider></mat-divider>
         <div class="rooms-in-folder-content" [ngClass]="{'rooms-scrolling': selectedRooms.length > 5}">
           <div class="not-rooms-in-folder" *ngIf="requireValidator(folderName)">To add rooms, enter a folder name and select an appearance</div>
 
