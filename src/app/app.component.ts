@@ -3,6 +3,7 @@ import { Location } from '@angular/common';
 import { GoogleLoginService } from './google-login.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {filter, map, mergeMap} from 'rxjs/operators';
+import {DeviceDetection} from './device-detection.helper';
 
 /**
  * @title Autocomplete overview
@@ -27,6 +28,12 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
+    if ( !DeviceDetection.isIOSTablet() && !DeviceDetection.isMacOS() ) {
+      const link = document.createElement('link');
+            link.setAttribute('rel', 'stylesheet');
+            link.setAttribute('href', './assets/css/custom_scrollbar.css');
+            document.head.appendChild(link);
+    }
     this.loginService.isAuthenticated$.subscribe(t => {
       this._zone.run(() => {
         this.isAuthenticated = t;

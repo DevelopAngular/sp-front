@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CurrentUserResolver } from '../currentUser.resolver';
+import { CurrentUserResolver } from '../current-user.resolver';
 import { HallMonitorComponent } from '../hall-monitor/hall-monitor.component';
 import { MainPageComponent } from '../main-page/main-page.component';
 import { MyRoomComponent } from '../my-room/my-room.component';

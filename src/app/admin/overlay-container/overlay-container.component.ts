@@ -10,6 +10,7 @@ import * as _ from 'lodash';
 import {User} from '../../models/User';
 import {HttpService} from '../../http-service';
 import { Location } from '../../models/Location';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-overlay-container',
@@ -19,7 +20,6 @@ import { Location } from '../../models/Location';
 export class OverlayContainerComponent implements OnInit {
 
   @ViewChild('file') selectedFile;
-
   selectedRooms = [];
   selectedRoomsInFolder: Pinnable[] = [];
   selectedTichers: User[] = [];
@@ -116,6 +116,9 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   ngOnInit() {
+
+      console.log(XLSX);
+
       this.buildForm();
 
       this.overlayType = this.dialogData['type'];
@@ -158,6 +161,19 @@ export class OverlayContainerComponent implements OnInit {
 
       this.form.get('file').valueChanges.subscribe(res => {
           this.setLocation('settingsRooms');
+
+          const FR = new FileReader();
+                FR.onload = (res: any) => {
+                  const raw = XLSX.read(res.target.result, {type: 'binary'});
+                  const sn = raw.SheetNames[0];
+                  const stringCollection = raw.Sheets[sn];
+                  const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1});
+                  console.log(data);
+                  return;
+                };
+                if(res) {
+                  FR.readAsBinaryString(this.selectedFile.nativeElement.files[0]);
+                }
       });
   }
 
@@ -351,6 +367,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   done() {
+    console.log(this.overlayType);
       if (this.overlayType === 'newRoomInFolder') {
           const location = {
                   title: this.roomName,

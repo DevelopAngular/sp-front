@@ -2,7 +2,7 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {HttpService} from '../../http-service';
 import {HallPass} from '../../models/HallPass';
 import {PdfGeneratorService} from '../pdf-generator.service';
-import {Observable, Subject, of as ObservableOf, zip, BehaviorSubject, ReplaySubject} from 'rxjs';
+import {of as ObservableOf, zip} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Report} from '../../models/Report';
 import {LiveDataService} from '../../live-data/live-data.service';
@@ -45,6 +45,7 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+
     const todayReports = this.liveDataService.getDateRange(new Date());
     let hour = 8;
     let _minute_iterator = 0;

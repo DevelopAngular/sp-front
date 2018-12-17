@@ -37,6 +37,7 @@
                                  [style.width]="'120px'"
                                  [cursor]="'pointer'"
                                  [gradient]="color_profile.overlay_color + ',' + color_profile.time_color"
+                                 [hoverColor]="color_profile.overlay_color"
                                  [fontSize]="'14px'"
                                  (buttonClick)="onCancel()"
             >
@@ -49,6 +50,7 @@
 <!--<div class="inactive" *ngIf="!form.get('isEdit').value"></div>-->
   <div class="overlay-content">
     <div class="left-content">
+      {{overlayType}}
      <div class="left-wrapper" style="margin-bottom: 4%;">
       <div class="edit-rooms-left-content" *ngIf="overlayType === 'edit'">
         <div class="edit-rooms-left-title">Bulk edit the rooms added. Any change will override the previous setting.</div>
@@ -276,7 +278,11 @@
         <div class="import-rooms-info">
           Import a list of room names, room numbers, and room names from an Excel spreadsheet or CSV
         </div>
-        <div class="download-template-link">Download Template</div>
+        <div>
+          <a class="download-template-link" [href]="'./assets/xlsx/Rooms Set Up.xlsx' | resolveAsset" download>
+            Download Template
+          </a>
+        </div>
         <div class="choose-file" (click)="file.click()">
             <img draggable="false" class="choose-icon" [src]="'./assets/Spreadsheet (Grey).png' | resolveAsset">
             <span class="choose-text">Choose File</span>
