@@ -1,6 +1,6 @@
 <div class="input-wrapper" click="clickAction()" xmlns="http://www.w3.org/1999/html">
   <div *ngIf="labelText" class="label-wrapper">
-    <img class="label-icon" [src]="'./assets/Search '+(selected?'(Blue)':'(Grey)') +'.png' | resolveAsset">
+    <img draggable="false" class="label-icon" [src]="'./assets/Search '+(selected?'(Blue)':'(Grey)') +'.png' | resolveAsset">
     <div class="label-text" [style.color]="(selected?'#1D1A5E':'#7F879D')">{{ labelText }}</div>
   </div>
 

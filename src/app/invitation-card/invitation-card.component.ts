@@ -205,7 +205,7 @@ export class InvitationCardComponent implements OnInit {
   }
 
     openInputCard(templatePass, forLater, forStaff, selectedStudents, component, fromHistory, fromHistoryIndex) {
-        let data = {
+        const data = {
             'pass': templatePass,
             'fromPast': false,
             'fromHistory': fromHistory,
@@ -216,7 +216,7 @@ export class InvitationCardComponent implements OnInit {
             'selectedStudents': selectedStudents,
         };
         this.dialog.open(component, {
-            panelClass: 'pass-card-dialog-container',
+            panelClass: (forStaff ? 'teacher-' : 'student-') + 'pass-card-dialog-container',
             backdropClass: 'custom-backdrop',
             disableClose: true,
             data: data

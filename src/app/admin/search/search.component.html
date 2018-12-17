@@ -35,20 +35,22 @@
     </div>
     <div class="buttons">
       <app-gradient-button *ngIf="!spinner && !hasSearched"
-        [ngStyle]="{'opacity': !selectedStudents.length && !selectedDate && !selectedRooms.length && !hasSearched || spinner? '.5' : '1'}"
+        [ngStyle]="{'opacity': isDisabled? '.5' : '1'}"
         [style.margin]="'0 20px'"
         [gradient]="'#FFFFFF,#FFFFFF'"
         [hoverColor]="'#F5F5F5'"
         [minHeight]="'65px'"
         [width]="'215px'"
-        [cursor]="'pointer'"
+        [cursor]="!isDisabled ? 'pointer' : 'default'"
         [textColor]="'#134482'"
         [fontSize]="'23px'"
         [border]="'1px solid 1px solid #eee'"
         (buttonClick)="search()"
         [leftIcon]="'./assets/Search (Blue).png'"
         [leftImageWidth]="'30px'"
-        [leftImageHeight]="'30px'">
+        [leftImageHeight]="'30px'"
+        [disabled]="isDisabled"
+      >
 
           <span>Search</span>
 

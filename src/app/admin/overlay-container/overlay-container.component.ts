@@ -161,19 +161,19 @@ export class OverlayContainerComponent implements OnInit {
 
       this.form.get('file').valueChanges.subscribe(res => {
           this.setLocation('settingsRooms');
+
           const FR = new FileReader();
                 FR.onload = (res: any) => {
-                  const govno = XLSX.read(res.target.result, {type: 'binary'});
-                  const sn = govno.SheetNames[0];
-                  const collect = govno.Sheets[sn];
-                  const norm = XLSX.utils.sheet_to_json(collect, {header: 1});
-                  console.log(norm);
+                  const raw = XLSX.read(res.target.result, {type: 'binary'});
+                  const sn = raw.SheetNames[0];
+                  const stringCollection = raw.Sheets[sn];
+                  const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1});
+                  console.log(data);
                   return;
                 };
-                FR.readAsBinaryString(this.selectedFile.nativeElement.files[0]);
-
-
-
+                if(res) {
+                  FR.readAsBinaryString(this.selectedFile.nativeElement.files[0]);
+                }
       });
   }
 
@@ -367,6 +367,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   done() {
+    console.log(this.overlayType);
       if (this.overlayType === 'newRoomInFolder') {
           const location = {
                   title: this.roomName,

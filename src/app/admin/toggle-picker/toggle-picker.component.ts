@@ -17,6 +17,7 @@ export class TogglePickerComponent implements OnInit {
     @Input() selectedChoice: string;
     @Input() disabled: boolean;
     @Input() noSelected: boolean = false;
+    @Input() fontSize: string = '11px';
     @Output() onDirty: EventEmitter<boolean> = new EventEmitter();
     @Output() onSelect: EventEmitter<any> = new EventEmitter();
 
