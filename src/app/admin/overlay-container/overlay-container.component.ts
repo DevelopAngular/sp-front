@@ -433,7 +433,7 @@ export class OverlayContainerComponent implements OnInit {
                           max_allowed_time: +this.timeLimit
                       });
               });
-              forkJoin(locationsToEdit).subscribe(res => this.dialogRef.close());
+              forkJoin(locationsToEdit).subscribe(() => this.dialogRef.close());
           }
        }
   }
