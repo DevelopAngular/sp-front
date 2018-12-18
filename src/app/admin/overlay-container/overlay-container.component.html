@@ -31,7 +31,7 @@
                              (buttonClick)="done()"
         >
           Publish</app-gradient-button>
-            <app-gradient-button *ngIf="isValidForm && (form.dirty || isDirtysettings) && (overlayType === 'editRoom' || overlayType === 'newRoom') || (overlayType === 'newFolder' && form.get('folderName').valid && (isDirtysettings || form.get('folderName').dirty)  && color_profile && selectedIcon)"
+            <app-gradient-button *ngIf="isValidForm && (form.dirty || isDirtysettings) && (overlayType === 'editRoom' || overlayType === 'newRoom') || (overlayType === 'newFolder' && form.get('folderName').valid && (isDirtysettings || form.get('folderName').dirty || isChangeLocations.value)  && color_profile && selectedIcon)"
                                  [minHeight]="'40px'"
                                  [style.width]="'120px'"
                                  [cursor]="'pointer'"
@@ -122,7 +122,7 @@
       >
         <div class="travel-picker">
           <div class="toggle-label">Travel Type</div>
-          <app-toggle-picker [fontSize]="'13px'" (onSelect)="travelUpdate($event)" (onDirty)="isDirtysettings=$event" [noSelected]="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'settingsRooms' ? true : false" [currentChoose]="travelType" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+          <app-toggle-picker [fontSize]="'13px'" (onSelect)="travelUpdate($event)" (onDirty)="isDirtysettings=$event" [noSelected]="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' ? true : false" [currentChoose]="travelType" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
         <div class="time-limit"
              *ngIf="overlayType === 'newRoom'
@@ -304,7 +304,9 @@
             </div>
         </div>
 
-
+        <div class="bulk-warning-text" *ngIf="bulkWarningText">
+            Keep in mind that editing a Folder in this menu will edit all rooms within that folder
+        </div>
 
     </div>
       <div class="divider"></div>

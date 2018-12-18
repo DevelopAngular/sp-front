@@ -2,7 +2,7 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
-import {forkJoin, Observable} from 'rxjs';
+import {BehaviorSubject, forkJoin, Observable} from 'rxjs';
 import { map, switchMap} from 'rxjs/operators';
 
 import { Pinnable } from '../../models/Pinnable';
@@ -44,7 +44,9 @@ export class OverlayContainerComponent implements OnInit {
   color_profile;
   selectedIcon;
 
+  bulkWarningText: boolean;
   isDirtysettings: boolean;
+  isChangeLocations = new BehaviorSubject(false);
 
   showSearchTeacherOptions: boolean;
 
@@ -105,6 +107,8 @@ export class OverlayContainerComponent implements OnInit {
         case 'edit': {
           colors = '#606981, #ACB4C1';
           this.folderName = 'Bulk Edit Rooms';
+          console.log('BULK SELECTED ROOMS =====>>> \n', this.selectedRooms);
+          this.bulkWarningText = !!_.find(this.selectedRooms, {type: 'category'});
           break;
         }
     }
@@ -202,6 +206,7 @@ export class OverlayContainerComponent implements OnInit {
           this.roomName = 'New Room';
           hideAppearance = true;
           type = 'newRoomInFolder';
+            this.isChangeLocations.next(false);
           break;
         }
         case 'newFolder': {
@@ -235,9 +240,9 @@ export class OverlayContainerComponent implements OnInit {
           break;
         }
         case 'editRoomInFolder': {
-          this.editRoomInFolder = true;
           hideAppearance = true;
           type = 'newRoomInFolder';
+          this.editRoomInFolder = true;
         }
     }
     this.hideAppearance = hideAppearance;
@@ -379,9 +384,9 @@ export class OverlayContainerComponent implements OnInit {
                   max_allowed_time: +this.timeLimit
             };
           if (this.editRoomInFolder) {
-              this.http.patch(`v1/locations/${this.roomToEdit.id}`, location).subscribe(res => {
-                  this.selectedRooms = this.selectedRooms.filter(room => room.id !== this.roomToEdit.id);
-                  this.selectedRooms.unshift(res);
+              this.http.patch(`v1/locations/${this.roomToEdit.id}`, location).subscribe((res: Location) => {
+                  const newCollection = this.selectedRooms.filter(room => room.id !== this.roomToEdit.id);
+                  this.selectedRooms = [res, ...newCollection];
                   this.setLocation('newFolder');
               });
           } else {
@@ -393,17 +398,20 @@ export class OverlayContainerComponent implements OnInit {
           }
       }
       if (this.overlayType === 'settingsRooms') {
-          this.readyRoomsToEdit.forEach((room: any) => {
-             this.selectedRooms.forEach(roomToEdit => {
-                if (roomToEdit.id === room.id) {
-                    room.restricted = this.nowRestriction;
-                    room.scheduling_restricted = this.futureRestriction;
-                    room.max_allowed_time = +this.timeLimit;
-                }
-             });
+          const locationsToEdit = this.readyRoomsToEdit.map(room => {
+              return this.http.patch(`v1/locations/${room.id}`,
+                  {
+                      restricted: this.nowRestriction,
+                      scheduling_restricted: this.futureRestriction,
+                      max_allowed_time: +this.timeLimit
+                  });
           });
-
-          this.setLocation('newFolder');
+          forkJoin(locationsToEdit).subscribe(res => {
+              const locIds = res.map((loc: Location) => loc.id);
+              const newCollection = this.selectedRooms.filter(room => room.id !== locIds.find(id => id === room.id));
+              this.selectedRooms = [...res, ...newCollection];
+              this.setLocation('newFolder');
+          });
        }
 
        if (this.overlayType === 'edit') {
