@@ -60,8 +60,9 @@
           <div class="new-room-in-folder-header">
             <img draggable="false" class="back-button" (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : setLocation('newFolder'))" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
             <div [ngClass]="{'room-in-folder-title-inactive': !isValidForm, 'room-in-folder-title-active': isValidForm || (overlayType === 'settingsRooms')}">
-              {{ (overlayType === 'newRoomInFolder' ? roomName : (overlayType === 'settingsRooms' ? (isEditRooms ? 'Editing ' + readyRoomsToEdit.length : 'Adding ' + selectedRooms.length)  + ' Rooms' : 'Import Rooms')) }}
+              {{ (overlayType === 'newRoomInFolder' ? roomName : (overlayType === 'settingsRooms' ? (isEditRooms ? 'Editing ' + readyRoomsToEdit.length : 'Adding ' + importedRooms.length)  + ' Rooms' : 'Import Rooms')) }}
             </div>
+            <!--<div>{{importedRooms.length}} actually</div>-->
             <div class="header-in-folder-button">
               <span *ngIf="overlayType === 'settingsRooms' && form.get('timeLimit').invalid">Incomplete</span>
                 <app-gradient-button *ngIf="(isValidForm && (form.dirty || isDirtysettings) && overlayType === 'newRoomInFolder') || (form.get('timeLimit').valid && overlayType === 'settingsRooms')"
@@ -71,6 +72,8 @@
                         [fontSize]="'12px'"
                         (buttonClick)="done()"
                 >
+                  <!-- Here should be called http post as many times as importedRoms.length is. -->
+
                 Done</app-gradient-button>
             </div>
           </div>

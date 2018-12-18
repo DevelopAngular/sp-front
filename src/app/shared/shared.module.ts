@@ -36,6 +36,7 @@ import {TravelViewComponent} from '../travel-view/travel-view.component';
 import {DurationPickerComponent} from '../duration-picker/duration-picker.component';
 import {CardButtonComponent} from '../card-button/card-button.component';
 import {PagerComponent} from '../pager/pager.component';
+import {RoundInputComponent} from '../admin/round-input/round-input.component';
 
 
 
@@ -84,6 +85,7 @@ import {PagerComponent} from '../pager/pager.component';
       DurationPickerComponent,
       CardButtonComponent,
       PagerComponent,
+      RoundInputComponent
   ],
     entryComponents: [
         PassCardComponent,
@@ -114,6 +116,8 @@ import {PagerComponent} from '../pager/pager.component';
       DurationPickerComponent,
       CardButtonComponent,
       PagerComponent,
+      RoundInputComponent
+
   ],
 })
 export class SharedModule {

@@ -92,13 +92,33 @@
           color: #3d396b;
         }
       }
-
       .calendar-icon {
         width: 30px;
         height: 30px;
         cursor: pointer;
       }
+      .calendar-icon-container {
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+      }
+      .active-calendar-icon {
+        background-color: rgb(228, 235, 255);
+        animation: active-calenar .2s ease forwards;
+      }
+      @keyframes active-calenar{
+        0%{
+          box-shadow: 0 0 0 0px rgb(228, 235, 255);
+        }
+        100%{
+          box-shadow: 0 0 0 10px rgb(228, 235, 255);
+        }
+      }
     }
+
 
     .reports {
       //width: 95%;
