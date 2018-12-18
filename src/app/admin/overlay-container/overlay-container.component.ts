@@ -3,7 +3,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 import {forkJoin, Observable} from 'rxjs';
-import {finalize, map, switchMap} from 'rxjs/operators';
+import { map, switchMap} from 'rxjs/operators';
 
 import { Pinnable } from '../../models/Pinnable';
 import * as _ from 'lodash';
