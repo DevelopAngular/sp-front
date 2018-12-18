@@ -1,5 +1,5 @@
 <div class="account-wrapper">
-  <div *ngIf="!(accounts$ | async).total" class="loading-theme spinner flex-center-center">
+  <div *ngIf="!(accounts$ | async).total" class="loading-theme spinner h-100 flex-center-center">
     <mat-spinner [color]="'accent'" [diameter]="'135'"></mat-spinner>
   </div>
   <div *ngIf="(accounts$ | async).total">

@@ -10,7 +10,7 @@ export class SupportComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    window.open('https://smartpass.app/support');
+    // window.open('https://smartpass.app/support');
   }
 
 }

@@ -10,7 +10,7 @@ export class FeedbackComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    window.open('https://smartpass.app/feedback');
+    // window.open('https://smartpass.app/feedback');
   }
 
 }
