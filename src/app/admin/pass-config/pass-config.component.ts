@@ -99,10 +99,31 @@ export class PassConfigComponent implements OnInit, OnDestroy {
               break;
           }
           case 'edit': {
-              data = {
-                  type: action,
-                  rooms: this.selectedPinnables,
-              };
+              if (this.selectedPinnables.length === 1) {
+                  if (this.selectedPinnables[0].type === 'location') {
+                      data = {
+                          type: 'editRoom',
+                          pinnable: this.selectedPinnables[0]
+                      };
+                      break;
+                  }
+                  if (this.selectedPinnables[0].type === 'category') {
+                      data = {
+                          type: 'newFolder',
+                          pinnable: this.selectedPinnables[0],
+                          pinnables$: this.pinnables$,
+                          isEditFolder: true
+                      };
+                      break;
+                  }
+
+              } else {
+                  data = {
+                      type: action,
+                      rooms: this.selectedPinnables,
+                  };
+                  break;
+              }
               break;
           }
           case 'newFolderWithSelections': {
