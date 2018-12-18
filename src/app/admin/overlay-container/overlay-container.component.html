@@ -166,40 +166,39 @@
       </div>
 
       <div class="rooms-in-folder" *ngIf="overlayType === 'newFolder'">
+        <div class="content-buttons-in-folder" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length <= 0 && selectedRooms.length <= 5">
+          <div class="button-in-folder" *ngFor="let button of buttonsInFolder">
+            <app-gradient-button
+                    [minHeight]="'35px'"
+                    [style.width]="'120px'"
+                    [cursor]="'pointer'"
+                    [fontSize]="'12px'"
+                    (buttonClick)="setLocation(button.location)"
+                    [leftIcon]="button.icon"
+                    [leftImageWidth]="'10px'"
+                    [leftImageHeight]="'10px'"
+            >
+              {{ button.title }}</app-gradient-button>
+          </div>
+        </div>
+        <div class="content-buttons-in-folder" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length > 0 && selectedRooms.length <= 5">
+          <div class="button-in-folder" *ngFor="let button of buttonsWithSelectedRooms">
+            <app-gradient-button
+                    [minHeight]="'35px'"
+                    [hoverColor]="button.hover"
+                    [gradient]="button.color"
+                    [style.width]="button.width"
+                    [cursor]="'pointer'"
+                    [fontSize]="'12px'"
+                    (buttonClick)="onEditRooms(button.action)"
+            >
+              {{ button.title }}</app-gradient-button>
+          </div>
+        </div>
         <div class="rooms-in-folder-title">Rooms in Folder ({{ selectedRooms.length }})</div>
-        <mat-divider></mat-divider>
+        <mat-divider style="margin-top: 9px"></mat-divider>
         <div class="rooms-in-folder-content" [ngClass]="{'rooms-scrolling': selectedRooms.length > 5}">
           <div class="not-rooms-in-folder" *ngIf="requireValidator(folderName)">To add rooms, enter a folder name and select an appearance</div>
-
-          <div class="content-buttons-in-folder" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length <= 0 && selectedRooms.length <= 5">
-              <div class="button-in-folder" *ngFor="let button of buttonsInFolder">
-                <app-gradient-button
-                        [minHeight]="'35px'"
-                        [style.width]="'120px'"
-                        [cursor]="'pointer'"
-                        [fontSize]="'12px'"
-                        (buttonClick)="setLocation(button.location)"
-                        [leftIcon]="button.icon"
-                        [leftImageWidth]="'10px'"
-                        [leftImageHeight]="'10px'"
-                >
-                  {{ button.title }}</app-gradient-button>
-              </div>
-          </div>
-          <div class="content-buttons-in-folder" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length > 0 && selectedRooms.length <= 5">
-            <div class="button-in-folder" *ngFor="let button of buttonsWithSelectedRooms">
-              <app-gradient-button
-                      [minHeight]="'35px'"
-                      [hoverColor]="button.hover"
-                      [gradient]="button.color"
-                      [style.width]="button.width"
-                      [cursor]="'pointer'"
-                      [fontSize]="'12px'"
-                      (buttonClick)="onEditRooms(button.action)"
-              >
-                {{ button.title }}</app-gradient-button>
-            </div>
-          </div>
 
           <div class="rooms-list" *ngIf="selectedRooms.length > 0 && !requireValidator(folderName)">
             <mat-list>
