@@ -411,9 +411,21 @@ export class OverlayContainerComponent implements OnInit {
           const locationsFromFolder = _.filter(this.selectedRooms, {type: 'category'}).map((folder: any) => {
              return  this.http.get(`v1/locations?category=${folder.category}&`);
           });
-          forkJoin(locationsFromFolder).pipe(switchMap((res) => {
-              const mergeLocations = _.concat(selectedLocations, ...res);
-              const locationsToEdit = mergeLocations.map((room: any) => {
+          if (locationsFromFolder.length) {
+              forkJoin(locationsFromFolder).pipe(switchMap((res) => {
+                  const mergeLocations = _.concat(selectedLocations, ...res);
+                  const locationsToEdit = mergeLocations.map((room: any) => {
+                      return this.http.patch(`v1/locations/${room.id}`,
+                          {
+                              restricted: this.nowRestriction,
+                              scheduling_restricted: this.futureRestriction,
+                              max_allowed_time: +this.timeLimit
+                          });
+                  });
+                  return forkJoin(locationsToEdit);
+              })).subscribe(() => this.dialogRef.close());
+          } else {
+              const locationsToEdit = selectedLocations.map((room: any) => {
                   return this.http.patch(`v1/locations/${room.id}`,
                       {
                           restricted: this.nowRestriction,
@@ -421,8 +433,8 @@ export class OverlayContainerComponent implements OnInit {
                           max_allowed_time: +this.timeLimit
                       });
               });
-              return forkJoin(locationsToEdit);
-          })).subscribe(() => this.dialogRef.close());
+              forkJoin(locationsToEdit).subscribe(res => this.dialogRef.close());
+          }
        }
   }
 

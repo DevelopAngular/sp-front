@@ -9,8 +9,7 @@
            *ngIf="overlayType !== 'addExisting'
            && overlayType !== 'newRoomInFolder'
            && overlayType !== 'importRooms'
-           && overlayType !== 'settingsRooms'
-           && overlayType !== 'edit'"
+           && overlayType !== 'settingsRooms'"
            [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
       <div class="title" *ngIf="overlayType === 'newRoom' || overlayType === 'editRoom'">{{ roomName }}</div>
       <div
