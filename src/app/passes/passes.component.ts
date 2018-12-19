@@ -183,6 +183,9 @@ export class PassesComponent implements OnInit {
       user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null))
       .pipe(filter(res => !!res))
       .subscribe(passLike => {
+        if (!passLike) {
+          this.dataService.isActivePass$.next(false);
+        }
         if (passLike) {
           const nowDate = new Date();
           const startDate = new Date(passLike.start_time);

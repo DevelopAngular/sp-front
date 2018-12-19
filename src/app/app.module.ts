@@ -11,7 +11,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 import { GAPI_CONFIG } from './config';
 import { ConsentMenuComponent } from './consent-menu/consent-menu.component';
-import { CurrentUserResolver } from './currentUser.resolver';
+import { CurrentUserResolver } from './current-user.resolver';
 import { DataService } from './data-service';
 import { GoogleLoginService } from './google-login.service';
 import { GoogleSigninComponent } from './google-signin/google-signin.component';
@@ -31,6 +31,7 @@ import { GoogleAuthService } from './services/google-auth.service';
 import { SharedModule } from './shared/shared.module';
 import { SignOutComponent } from './sign-out/sign-out.component';
 import { UserService } from './user.service';
+import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: 'main/passes', pathMatch: 'full'},
@@ -79,7 +80,7 @@ const appRoutes: Routes = [
     BrowserAnimationsModule,
     SharedModule,
     ReactiveFormsModule,
-
+    InfiniteScrollModule,
     MatSliderModule,
 
     FormsModule,

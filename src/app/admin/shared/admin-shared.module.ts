@@ -8,7 +8,7 @@ import { NavButtonComponent } from '../nav-button/nav-button.component';
 import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
 import { PinnableCollectionComponent } from '../pinnable-collection/pinnable-collection.component';
 import { SharedModule } from '../../shared/shared.module';
-import { RoundInputComponent } from '../round-input/round-input.component';
+// import { RoundInputComponent } from '../round-input/round-input.component';
 import { AppInputComponent } from '../../app-input/app-input.component';
 import { FormsModule } from '@angular/forms';
 import {
@@ -55,7 +55,7 @@ import { LocationSearchComponent } from '../location-search/location-search.comp
       NavButtonComponent,
       OverlayContainerComponent,
       PinnableCollectionComponent,
-      RoundInputComponent,
+      // RoundInputComponent,
       TogglePickerComponent,
       AppInputComponent,
       ProfilesSearchComponent,
@@ -74,7 +74,7 @@ import { LocationSearchComponent } from '../location-search/location-search.comp
       NavButtonComponent,
       OverlayContainerComponent,
       PinnableCollectionComponent,
-      RoundInputComponent,
+      // RoundInputComponent,
       TogglePickerComponent,
       AppInputComponent,
       ProfilesSearchComponent,

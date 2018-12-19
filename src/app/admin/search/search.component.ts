@@ -32,6 +32,10 @@ export class SearchComponent implements OnInit {
 
   constructor(private httpService: HttpService, private pdf: PdfGeneratorService) { }
 
+  get isDisabled() {
+      return !this.selectedStudents.length && !this.selectedDate && !this.selectedRooms.length && !this.hasSearched || this.spinner;
+  }
+
   ngOnInit() {
 
   }

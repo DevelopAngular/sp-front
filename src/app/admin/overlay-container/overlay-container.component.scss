@@ -20,6 +20,18 @@
   justify-content: space-between;
 }
 
+.room-edit {
+  display: flex;
+  align-items: center;
+  width: 235px;
+
+  img {
+    width: 25px;
+    height: 22px;
+    margin-right: 15px;
+  }
+}
+
 .title {
   display: flex;
   flex-grow: 1;
@@ -202,7 +214,8 @@
   .content-buttons-in-folder {
     display: flex;
     justify-content: center;
-    margin-top: 10px;
+    margin-top: 30px;
+    margin-bottom: 20px;
 
     .button-in-folder {
       margin-left: 15px;
@@ -341,6 +354,8 @@
     font-weight: bolder;
     cursor: pointer;
     color: #1d1a5e;
+    text-decoration: none;
+    display: inline-block;
   }
 
   .choose-file {
@@ -351,7 +366,7 @@
     align-items: center;
     box-shadow: 0 0 10px darkgrey;
     border-radius: 20px;
-    margin-top: 50px;
+    margin-top: 46px;
     cursor: pointer;
 
     .choose-icon {
@@ -378,6 +393,7 @@
   align-items: center;
   display: flex;
   flex-direction: column;
+  margin-top: 20px;
 
   .edit-right-title {
     font-size: 19px;
@@ -404,6 +420,7 @@
 
 .rooms-list {
   width: 265px;
+  margin-top: 7px;
 
   mat-list-item {
     width: 240px;
@@ -412,6 +429,12 @@
     display: flex;
     align-items: center;
     cursor: pointer;
+  }
+
+  list-divider {
+    width: 100%;
+    height: 1px;
+    background-color: darkgray;
   }
   .room:hover {
     background-color: #dce2e7;
@@ -446,5 +469,13 @@
     margin-bottom: 15px;
     color: darkgray;
   }
+}
+
+.bulk-warning-text {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 70px;
+  color: darkgray;
 }
 

@@ -52,6 +52,7 @@
     "oboe": "^2.1.4",
     "rxjs": "^6.2.2",
     "sass-loader": "^7.0.3",
+    "xlsx": "^0.14.1",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {

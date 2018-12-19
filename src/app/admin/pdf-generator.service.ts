@@ -1,17 +1,15 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import { tap, switchMap } from 'rxjs/operators';
-import { fromEvent, zip} from 'rxjs';
+import {BehaviorSubject, fromEvent, zip} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {DatePrettyHelper} from './date-pretty.helper';
 
 declare const jsPDF;
 declare const window;
 
-@Injectable(
-)
+@Injectable()
 export class PdfGeneratorService {
-
   constructor(
     public httpService: HttpClient,
   ) { }
@@ -59,7 +57,6 @@ export class PdfGeneratorService {
     const _data: any[] = data;
     const doc = new jsPDF(_orientation, 'pt');
     const currentHost = `${window.location.protocol}//${window.location.host}${ environment.production ? '/app' : ''}`;
-    console.log(currentHost);
     const logoPath = `${currentHost}/assets/Arrow%20(Green).png`;
     const reportPath = `${currentHost}/assets/Report%20(Red).png`;
     const imgLogo = new FileReader();
@@ -88,7 +85,6 @@ export class PdfGeneratorService {
           }),
         )
     ).subscribe((res) => {
-        console.log(res);
         imgBase64Logo = (res[0].srcElement as any).result;
         imgBase64Report = (res[1].srcElement as any).result;
       //

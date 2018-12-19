@@ -1,8 +1,10 @@
+:host:focus {
+  outline: none;
+}
 .wrapper-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
 }
 .button {
   border-radius: 10px;

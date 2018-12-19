@@ -26,6 +26,7 @@ export class HallmonitorComponent implements OnInit {
     input_value1: string;
     input_value2: string;
     input_DateRange: string;
+    activeCalendar: boolean;
 
     choices = ['Origin', 'Destination', 'Both'];
     selectedtoggleValue: string = this.choices[0];
@@ -94,6 +95,7 @@ export class HallmonitorComponent implements OnInit {
 
 
   openDateDialog(event) {
+    this.activeCalendar = true;
     const target = new ElementRef(event.currentTarget);
     const DR = this.dialog.open(CalendarComponent, {
         panelClass: 'calendar-dialog-container',
@@ -104,7 +106,9 @@ export class HallmonitorComponent implements OnInit {
         }
     });
     DR.afterClosed().subscribe((data) => {
-        // console.log('82 Date ===> :', data.date);
+        this.activeCalendar = false;
+
+      // console.log('82 Date ===> :', data.date);
         if (this.reportsDate.getTime() !== data.date.getTime()) {
           this.reportsDate = new Date(data.date);
           this.getReports(this.reportsDate);

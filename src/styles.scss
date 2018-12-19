@@ -136,28 +136,6 @@ body {
   padding: 0;
 }
 
-/* width */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-  background: white;
-  border-radius: 4px;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #D6D6D6;
-  border-radius: 4px;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #B6B6B6;
-}
-
 input:focus{
   outline-offset: 0;
   outline: none;
@@ -201,11 +179,13 @@ textarea:focus {
   background-color: rgba(0, 0, 0, 0);
 }
 
-.custom-bd{
-  left: 285px;
-  background: rgba(0, 0, 0, .3);
+.custom-bd {
+  background-image: linear-gradient(to right, transparent 285px,rgba(0, 0, 0, 0.3) 0);
 }
 html, body {
   max-width: 100%;
   overflow-x: hidden;
+}
+[routerLink], [routerLink]:focus, [routerLinkActive] {
+  outline: none;
 }

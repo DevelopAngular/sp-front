@@ -5,12 +5,11 @@
         <!--<input type="checkbox" name="isEdit" formControlName="isEdit" class="isEdit-checkbox" id="isEdit" checked>-->
         <!--<label class="isEdit-label" for="isEdit"></label>-->
       <!--</div>-->
-      <img class="back-button"
+      <img class="back-button" draggable="false"
            *ngIf="overlayType !== 'addExisting'
            && overlayType !== 'newRoomInFolder'
            && overlayType !== 'importRooms'
-           && overlayType !== 'settingsRooms'
-           && overlayType !== 'edit'"
+           && overlayType !== 'settingsRooms'"
            [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
       <div class="title" *ngIf="overlayType === 'newRoom' || overlayType === 'editRoom'">{{ roomName }}</div>
       <div
@@ -32,11 +31,12 @@
                              (buttonClick)="done()"
         >
           Publish</app-gradient-button>
-            <app-gradient-button *ngIf="isValidForm && (form.dirty || isDirtysettings) && (overlayType === 'editRoom' || overlayType === 'newRoom') || (overlayType === 'newFolder' && form.get('folderName').valid && (isDirtysettings || form.get('folderName').dirty)  && color_profile && selectedIcon)"
+            <app-gradient-button *ngIf="isValidForm && (form.dirty || isDirtysettings) && (overlayType === 'editRoom' || overlayType === 'newRoom') || (overlayType === 'newFolder' && form.get('folderName').valid && (isDirtysettings || form.get('folderName').dirty || isChangeLocations.value)  && color_profile && selectedIcon)"
                                  [minHeight]="'40px'"
                                  [style.width]="'120px'"
                                  [cursor]="'pointer'"
                                  [gradient]="color_profile.overlay_color + ',' + color_profile.time_color"
+                                 [hoverColor]="color_profile.overlay_color"
                                  [fontSize]="'14px'"
                                  (buttonClick)="onCancel()"
             >
@@ -56,10 +56,11 @@
       <div class="new-room-in-folder"
            *ngIf="overlayType === 'newRoomInFolder' || overlayType === 'importRooms' || overlayType === 'settingsRooms'">
           <div class="new-room-in-folder-header">
-            <img class="back-button" (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : setLocation('newFolder'))" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
+            <img draggable="false" class="back-button" (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : setLocation('newFolder'))" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
             <div [ngClass]="{'room-in-folder-title-inactive': !isValidForm, 'room-in-folder-title-active': isValidForm || (overlayType === 'settingsRooms')}">
-              {{ (overlayType === 'newRoomInFolder' ? roomName : (overlayType === 'settingsRooms' ? (isEditRooms ? 'Editing ' + readyRoomsToEdit.length : 'Adding ' + selectedRooms.length)  + ' Rooms' : 'Import Rooms')) }}
+              {{ (overlayType === 'newRoomInFolder' ? roomName : (overlayType === 'settingsRooms' ? (isEditRooms ? 'Editing ' + readyRoomsToEdit.length : 'Adding ' + importedRooms.length)  + ' Rooms' : 'Import Rooms')) }}
             </div>
+            <!--<div>{{importedRooms.length}} actually</div>-->
             <div class="header-in-folder-button">
               <span *ngIf="overlayType === 'settingsRooms' && form.get('timeLimit').invalid">Incomplete</span>
                 <app-gradient-button *ngIf="(isValidForm && (form.dirty || isDirtysettings) && overlayType === 'newRoomInFolder') || (form.get('timeLimit').valid && overlayType === 'settingsRooms')"
@@ -69,6 +70,8 @@
                         [fontSize]="'12px'"
                         (buttonClick)="done()"
                 >
+                  <!-- Here should be called http post as many times as importedRoms.length is. -->
+
                 Done</app-gradient-button>
             </div>
           </div>
@@ -122,7 +125,7 @@
       >
         <div class="travel-picker">
           <div class="toggle-label">Travel Type</div>
-          <app-toggle-picker (onSelect)="travelUpdate($event)" (onDirty)="isDirtysettings=$event" [noSelected]="overlayType === 'newRoom' ? true : false" [currentChoose]="travelType" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+          <app-toggle-picker [fontSize]="'13px'" (onSelect)="travelUpdate($event)" (onDirty)="isDirtysettings=$event" [noSelected]="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' ? true : false" [currentChoose]="travelType" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
         <div class="time-limit"
              *ngIf="overlayType === 'newRoom'
@@ -152,55 +155,60 @@
       >
         <div class="restriction-picker-1">
           <div class="toggle-label">Restriction For Now</div>
-          <app-toggle-picker (onSelect)="nowRestrictionUpdate($event)" (onDirty)="isDirtysettings=$event" [noSelected]="overlayType === 'newRoom' ? true : false" [currentChoose]="nowRestriction || null" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+          <app-toggle-picker [fontSize]="'13px'" (onSelect)="nowRestrictionUpdate($event)" (onDirty)="isDirtysettings=$event" [noSelected]="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'settingsRooms' ? true : false" [currentChoose]="nowRestriction || null" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
         <div class="restriction-picker-2">
           <div class="toggle-label">Restriction For Future</div>
-          <app-toggle-picker (onSelect)="futureRestrictionUpdate($event)" (onDirty)="isDirtysettings=$event" [noSelected]="overlayType === 'newRoom' ? true : false" [currentChoose]="futureRestriction || null" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+          <app-toggle-picker [fontSize]="'13px'" (onSelect)="futureRestrictionUpdate($event)" (onDirty)="isDirtysettings=$event" [noSelected]="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'settingsRooms' ? true : false" [currentChoose]="futureRestriction || null" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
       </div>
 
       <div class="rooms-in-folder" *ngIf="overlayType === 'newFolder'">
+        <div class="content-buttons-in-folder" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length <= 0 && selectedRooms.length <= 5">
+          <div class="button-in-folder" *ngFor="let button of buttonsInFolder">
+            <app-gradient-button
+                    [minHeight]="'35px'"
+                    [style.width]="'120px'"
+                    [cursor]="'pointer'"
+                    [fontSize]="'12px'"
+                    (buttonClick)="setLocation(button.location)"
+                    [leftIcon]="button.icon"
+                    [leftImageWidth]="'10px'"
+                    [leftImageHeight]="'10px'"
+            >
+              {{ button.title }}</app-gradient-button>
+          </div>
+        </div>
+        <div class="content-buttons-in-folder" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length > 0 && selectedRooms.length <= 5">
+          <div class="button-in-folder" *ngFor="let button of buttonsWithSelectedRooms">
+            <app-gradient-button
+                    [minHeight]="'35px'"
+                    [hoverColor]="button.hover"
+                    [gradient]="button.color"
+                    [style.width]="button.width"
+                    [cursor]="'pointer'"
+                    [fontSize]="'12px'"
+                    (buttonClick)="onEditRooms(button.action)"
+            >
+              {{ button.title }}</app-gradient-button>
+          </div>
+        </div>
         <div class="rooms-in-folder-title">Rooms in Folder ({{ selectedRooms.length }})</div>
+        <mat-divider style="margin-top: 9px"></mat-divider>
         <div class="rooms-in-folder-content" [ngClass]="{'rooms-scrolling': selectedRooms.length > 5}">
           <div class="not-rooms-in-folder" *ngIf="requireValidator(folderName)">To add rooms, enter a folder name and select an appearance</div>
 
-          <div class="content-buttons-in-folder" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length <= 0 && selectedRooms.length <= 5">
-              <div class="button-in-folder" *ngFor="let button of buttonsInFolder">
-                <app-gradient-button
-                        [minHeight]="'35px'"
-                        [style.width]="'120px'"
-                        [cursor]="'pointer'"
-                        [fontSize]="'12px'"
-                        (buttonClick)="setLocation(button.location)"
-                        [leftIcon]="button.icon"
-                        [leftImageWidth]="'10px'"
-                        [leftImageHeight]="'10px'"
-                >
-                  {{ button.title }}</app-gradient-button>
-              </div>
-          </div>
-          <div class="content-buttons-in-folder" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length > 0 && selectedRooms.length <= 5">
-            <div class="button-in-folder" *ngFor="let button of buttonsWithSelectedRooms">
-              <app-gradient-button
-                      [minHeight]="'35px'"
-                      [hoverColor]="button.hover"
-                      [gradient]="button.color"
-                      [style.width]="button.width"
-                      [cursor]="'pointer'"
-                      [fontSize]="'12px'"
-                      (buttonClick)="onEditRooms(button.action)"
-              >
-                {{ button.title }}</app-gradient-button>
-            </div>
-          </div>
-
           <div class="rooms-list" *ngIf="selectedRooms.length > 0 && !requireValidator(folderName)">
             <mat-list>
-              <div class="room" *ngFor="let room of selectedRooms">
-                <mat-checkbox style="margin-left: 12px" (change)="selectedRoomsEvent($event, room)">
-                </mat-checkbox>
-                <mat-list-item (click)="setToEditRoom(room)">{{ room.title }}</mat-list-item>
+              <div *ngFor="let room of selectedRooms">
+                <div class="room">
+                  <mat-checkbox style="margin-left: 12px" (change)="selectedRoomsEvent($event, room)">
+                  </mat-checkbox>
+                  <div class="room-edit" (click)="setToEditRoom(room)">
+                    <mat-list-item>{{ room.title }}</mat-list-item>
+                    <img draggable="false" [src]="'./assets/Disclosure Indicator (Grey).png' | resolveAsset">
+                  </div>
+                </div>
                 <mat-divider></mat-divider>
               </div>
             </mat-list>
@@ -243,7 +251,7 @@
 
       <div class="add-existing-content" *ngIf="overlayType === 'addExisting'">
         <div class="existing-room-header">
-          <img class="back-button" (click)="setLocation('newFolder')" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
+          <img draggable="false" class="back-button" (click)="setLocation('newFolder')" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
           <div class="header-title">Add Existing Room to Folder</div>
         </div>
         <div class="add-rooms-button" *ngIf="selectedRoomsInFolder.length > 0">
@@ -270,9 +278,13 @@
         <div class="import-rooms-info">
           Import a list of room names, room numbers, and room names from an Excel spreadsheet or CSV
         </div>
-        <div class="download-template-link">Download Template</div>
+        <div>
+          <a class="download-template-link" [href]="'./assets/xlsx/Rooms Set Up.xlsx' | resolveAsset" download>
+            Download Template
+          </a>
+        </div>
         <div class="choose-file" (click)="file.click()">
-            <img class="choose-icon" [src]="'./assets/Spreadsheet (Grey).png' | resolveAsset">
+            <img draggable="false" class="choose-icon" [src]="'./assets/Spreadsheet (Grey).png' | resolveAsset">
             <span class="choose-text">Choose File</span>
         </div>
       </div>
@@ -295,7 +307,9 @@
             </div>
         </div>
 
-
+        <div class="bulk-warning-text" *ngIf="bulkWarningText">
+            Keep in mind that editing a Folder in this menu will edit all rooms within that folder
+        </div>
 
     </div>
       <div class="divider"></div>
