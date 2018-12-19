@@ -283,7 +283,7 @@
   .new-room-in-folder-header {
     display: flex;
     justify-content: space-between;
-    box-shadow: 0 0 2px darkgrey;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
     width: 594px;
     align-items: center;
     height: 100px;
@@ -291,9 +291,10 @@
     border-radius: 12px;
 
     .room-in-folder-title-inactive {
+      margin-left: 76px;
       font-weight: bolder;
       font-size: 19px;
-      color: gray;
+      color: #7f879d;
     }
 
     .room-in-folder-title-active {
@@ -340,8 +341,7 @@
   align-items: center;
 
   .import-rooms-info {
-    font-weight: bolder;
-    color: darkgrey;
+    color: #7f879d;
     font-size: 18px;
     text-align: center;
     width: 530px;
@@ -349,8 +349,8 @@
   }
 
   .download-template-link {
-    font-size: 19px;
-    margin-top: 56px;
+    font-size: 18px;
+    margin-top: 30px;
     font-weight: bolder;
     cursor: pointer;
     color: #1d1a5e;

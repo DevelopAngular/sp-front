@@ -291,10 +291,27 @@
             Download Template
           </a>
         </div>
-        <div class="choose-file" (click)="file.click()">
-            <img draggable="false" class="choose-icon" [src]="'./assets/Spreadsheet (Grey).png' | resolveAsset">
-            <span class="choose-text">Choose File</span>
-        </div>
+          <app-gradient-button
+            style="margin-top: 68px;"
+            [gradient]="'#FFFFFF,#FFFFFF'"
+            [hoverColor]="'#F5F5F5'"
+            [minHeight]="'110px'"
+            [width]="'285px'"
+            [cursor]="'pointer'"
+            [textColor]="'#7f879d'"
+            [fontSize]="'23px'"
+            [border]="'1px solid 1px solid #eee'"
+            (buttonClick)="file.click()"
+            [leftIcon]="'./assets/Spreadsheet (Grey).png'"
+            [leftImageWidth]="'30px'"
+            [leftImageHeight]="'30px'"
+          >
+              <span>Upload file</span>
+          </app-gradient-button>
+        <!--<div class="choose-file" (click)="file.click()">-->
+            <!--<img draggable="false" class="choose-icon" [src]="'./assets/Spreadsheet (Grey).png' | resolveAsset">-->
+            <!--<span class="choose-text">Choose File</span>-->
+        <!--</div>-->
       </div>
      </div>
         <div class="footer-delete-button" *ngIf="(overlayType === 'editRoom') && !showSearchTeacherOptions">
