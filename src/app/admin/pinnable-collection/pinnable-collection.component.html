@@ -1,21 +1,23 @@
 <div class="collection-wrapper">
   <div class="collection-header" *ngIf="header">
     <div class="collection-title">
-      Rooms
+      {{ selectedPinnables.length ? selectedPinnables.length + ' Selected' : 'Rooms' }}
     </div>
-    <div class="selected-counter" (click)="toggleBulk()">
-      {{ (bulkSelect?(selectedPinnables.length +' Rooms Selected'):'Bulk Select')}}
+    <div class="selected-counter" (click)="toggleBulk()" [ngStyle]="{'font-weight': bulkSelect ? 'bold' : 'normal'}">
+      {{ (bulkSelect?('Done'):'Bulk Select')}}
     </div>
     <app-gradient-button
+      [ngStyle]="{'opacity': bulkSelect && !selectedPinnables.length ? '.5' : '1'}"
       [minHeight]="'25px'"
       [width]="'120px'"
       [hoverColor]="'#00B476'"
-      [cursor]="'pointer'"
+      [cursor]="!bulkSelect || selectedPinnables.length ? 'pointer' : 'default'"
       [fontSize]="'12px'"
       (buttonClick)="buttonClicked($event)"
       [leftIcon]="headerButtonIcon"
       [leftImageWidth]="'10px'"
       [leftImageHeight]="'10px'"
+      [disabled]="bulkSelect && !selectedPinnables.length"
     >
     {{headerButtonText}}</app-gradient-button>
   </div>

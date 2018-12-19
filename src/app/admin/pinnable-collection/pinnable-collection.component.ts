@@ -21,7 +21,7 @@ export class PinnableCollectionComponent implements OnInit {
   @Output()
   roomEvent: EventEmitter<any> = new EventEmitter();
 
-  selectedPinnables:Pinnable[] = [];
+  selectedPinnables: Pinnable[] = [];
   buttonMenuOpen: boolean = false;
   bulkSelect: boolean  = false;
 
