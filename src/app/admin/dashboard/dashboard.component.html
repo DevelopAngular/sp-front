@@ -46,14 +46,14 @@
             <mat-spinner [color]="'accent'" [diameter]="'35'"></mat-spinner>
           </div>
           <div *ngIf="reports" [style.padding-top]="'32px'" [style.font-size]="'16px'" class="card_title">
-            <span *ngIf="reports.length">{{reports.length}} Reported Students Today.</span>
+            <span *ngIf="reports.length">{{reports.length}} Reported Student<span *ngIf="reports.length > 1 || reports.length === 0 ">s</span> Today.</span>
             <span *ngIf="!reports.length">No Reported Students Today.</span>
           </div>
         </div>
       </div>
     </div>
     <div class="card card__role flex-center-between ml mt">
-      <span class="label-icon">All Time</span>
+      <span class="label-icon">ALL TIME</span>
       <div>
         <div class="card_header">Average Pass Time</div>
 
@@ -90,7 +90,7 @@
       </div>
     </div>
     <div class="card card__role flex-center-between ml mb">
-      <span class="label-icon">All Time</span>
+      <span class="label-icon">ALL TIME</span>
       <div class="w-100">
         <div class="card_header">
           Most Frequent Room <br> Destinations
