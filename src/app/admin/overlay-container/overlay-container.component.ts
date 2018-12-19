@@ -48,7 +48,7 @@ export class OverlayContainerComponent implements OnInit {
 
   bulkWarningText: boolean;
   isDirtysettings: boolean;
-  isChangeLocations = new BehaviorSubject(false);
+  isChangeLocations = new BehaviorSubject<boolean>(false);
 
   showSearchTeacherOptions: boolean;
 
@@ -292,8 +292,9 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   addToFolder() {
-    this.selectedRooms = _.concat(this.selectedRooms, this.selectedRoomsInFolder);
-    this.setLocation('newFolder');
+      this.isChangeLocations.next(true);
+      this.selectedRooms = [...this.selectedRoomsInFolder, ...this.selectedRooms];
+      this.setLocation('newFolder');
   }
 
   back() {
@@ -418,12 +419,14 @@ export class OverlayContainerComponent implements OnInit {
                   const newCollection = this.selectedRooms.filter(room => room.id !== this.roomToEdit.id);
                   this.selectedRooms = [res, ...newCollection];
                   this.setLocation('newFolder');
+                  this.isChangeLocations.next(true);
               });
           } else {
               this.http.post('v1/locations', location).subscribe(loc => {
                   this.newRoomsInFolder.push(loc);
                   this.selectedRooms.push(loc);
                   this.setLocation('newFolder');
+                  this.isChangeLocations.next(true);
               });
           }
       }
@@ -439,6 +442,7 @@ export class OverlayContainerComponent implements OnInit {
               zip(...this.importedRooms).subscribe((result) => {
                   this.selectedRooms = [...result, ...this.selectedRooms];
                   this.setLocation('newFolder');
+                  this.isChangeLocations.next(true);
               });
 
           } else if (this.readyRoomsToEdit.length) {
@@ -464,6 +468,7 @@ export class OverlayContainerComponent implements OnInit {
                   const newCollection = this.selectedRooms.filter(room => room.id !== locIds.find(id => id === room.id));
                   this.selectedRooms = [...res, ...newCollection];
                   this.setLocation('newFolder');
+                  this.isChangeLocations.next(true);
               });
           }
        }
@@ -558,7 +563,7 @@ export class OverlayContainerComponent implements OnInit {
    } else if (type === 'One-way') {
      travelType = ['one_way'];
    } else if (type === 'Both') {
-     travelType = ['round_trip', 'one_way'];
+     travelType = ['one_way', 'round_trip'];
    }
    this.travelType = travelType;
   }
