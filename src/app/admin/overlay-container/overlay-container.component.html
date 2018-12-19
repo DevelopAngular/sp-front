@@ -83,6 +83,8 @@
         <div class="room-name">
           <app-input
              *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'"
+             [width]="'287px'"
+             [maxLength]="17"
              [input_label]="'Room Name'"
              [input_value]="(roomName !== 'New Room' ? roomName : '')"
              (onUpdate)="roomName = $event === '' ? 'New Room': $event;"
@@ -92,6 +94,8 @@
           </app-input>
           <app-input
               *ngIf="overlayType === 'newFolder'"
+              [width]="'289px'"
+              [maxLength]="17"
               [input_label]="'Folder Name'"
               [input_value]="(folderName !== 'New Folder' ? folderName : '')"
               (onUpdate)="folderName = $event === '' ? 'New Folder': $event; requireValidator(folderName) ? readyRoomsToEdit=[] : readyRoomsToEdit"
@@ -102,6 +106,8 @@
         </div>
         <div class="room-number" *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'">
           <app-input
+                  [width]="'121px'"
+                  [maxLength]="5"
                   [input_label]="'Room Number'"
                   [input_value]="roomNumber ? roomNumber : ''"
                   [placeholder]="'Number'"
@@ -135,6 +141,8 @@
              || overlayType === 'editRoom'"
         >
           <app-input
+                  [width]="'105px'"
+                  [maxLength]="2"
                   [input_label]="'Time Limit'"
                   [input_value]="timeLimit ? timeLimit : ''"
                   [placeholder]="'minutes'"
