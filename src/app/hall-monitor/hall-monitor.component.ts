@@ -9,6 +9,8 @@ import { LoadingService } from '../loading.service';
 import { PassLikeProvider } from '../models/providers';
 import { User } from '../models/User';
 import { ReportFormComponent } from '../report-form/report-form.component';
+import {Report} from '../models/Report';
+import { delay, filter, map } from 'rxjs/operators';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('edit_all_hallpass');
@@ -44,6 +46,8 @@ export class HallMonitorComponent implements OnInit {
   user: User;
   isStaff = false;
   canView = false;
+  sendReports: Report[] = [];
+  isActiveMessage: boolean;
 
   searchQuery$ = new BehaviorSubject('');
 
@@ -75,6 +79,14 @@ export class HallMonitorComponent implements OnInit {
       height: '365px',
       panelClass: 'form-dialog-container',
       backdropClass: 'custom-backdrop',
+    });
+
+    dialogRef.afterClosed().pipe(filter(res => !!res), map(res => {
+        this.sendReports = res;
+        this.isActiveMessage = true;
+        return res;
+    }), delay(3000)).subscribe(() => {
+      this.isActiveMessage = false;
     });
   }
 

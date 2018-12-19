@@ -42,7 +42,7 @@ export class ReportFormComponent implements OnInit {
 
     this.http.post(endpoint, body).subscribe(data => {
       console.log(data);
-      this.dialogRef.close();
+      this.dialogRef.close(data);
     });
   }
 }

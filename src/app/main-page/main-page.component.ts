@@ -23,15 +23,13 @@ export class MainPageComponent implements OnInit {
 
     ngOnInit() {
         this.route.data.subscribe((_resolved: any) => {
-            this.currentUser =_resolved.currentUser;
+            this.currentUser = _resolved.currentUser;
             console.log(this.currentUser);
         });
     }
 
     isTeacher() {
-      return true;
-
       // TODO when the roles of teachers will be ready
-        // return this.currentUser.roles.includes('_profile_teacher');
+        return this.currentUser.roles.includes('_profile_teacher');
     }
 }

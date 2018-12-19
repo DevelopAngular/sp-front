@@ -32,9 +32,9 @@ export class NavbarComponent implements OnInit {
   navbarEnabled = false;
 
   buttons = [
-      {title: 'Passes', route: 'passes', imgUrl: './assets/Arrow', requiredRoles: ['create_hallpass', 'create_report', 'edit_all_hallpass', 'flag_hallpass', 'view_traveling_users']},
-      {title: 'Hall Monitor', route: 'hallmonitor', imgUrl: './assets/Hallway', requiredRoles: ['create_hallpass', 'create_report', 'edit_all_hallpass', 'flag_hallpass', 'view_traveling_users']},
-      {title: 'My Room', route: 'myroom', imgUrl: './assets/My Room', requiredRoles: ['create_hallpass', 'create_report', 'edit_all_hallpass', 'flag_hallpass', 'view_traveling_users']},
+      {title: 'Passes', route: 'passes', imgUrl: './assets/Arrow', requiredRoles: ['_profile_teacher']},
+      {title: 'Hall Monitor', route: 'hallmonitor', imgUrl: './assets/Hallway', requiredRoles: ['_profile_teacher']},
+      {title: 'My Room', route: 'myroom', imgUrl: './assets/My Room', requiredRoles: ['_profile_teacher']},
   ];
 
   currentUser;
