@@ -246,6 +246,7 @@ export class OverlayContainerComponent implements OnInit {
           this.roomNumber = '';
           this.timeLimit = '';
           this.readyRoomsToEdit = [];
+          this.importedRooms = [];
           this.isEditRooms = false;
           this.form.reset();
           this.isDirtysettings = false;
@@ -440,14 +441,23 @@ export class OverlayContainerComponent implements OnInit {
                   this.setLocation('newFolder');
               });
 
-          } else if (this.readyRoomsToEdit) {
+          } else if (this.readyRoomsToEdit.length) {
               const locationsToEdit = this.readyRoomsToEdit.map(room => {
-                  return this.http.patch(`v1/locations/${room.id}`,
-                      {
-                          restricted: this.nowRestriction,
-                          scheduling_restricted: this.futureRestriction,
-                          max_allowed_time: +this.timeLimit
-                      });
+                  if (room.location) {
+                      return this.http.patch(`v1/locations/${room.location.id}`,
+                          {
+                              restricted: this.nowRestriction,
+                              scheduling_restricted: this.futureRestriction,
+                              max_allowed_time: +this.timeLimit
+                          });
+                  } else {
+                      return this.http.patch(`v1/locations/${room.id}`,
+                          {
+                              restricted: this.nowRestriction,
+                              scheduling_restricted: this.futureRestriction,
+                              max_allowed_time: +this.timeLimit
+                          });
+                  }
               });
               forkJoin(locationsToEdit).subscribe(res => {
                   const locIds = res.map((loc: Location) => loc.id);
