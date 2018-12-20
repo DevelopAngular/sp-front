@@ -1,5 +1,5 @@
 <div class="search-wrapper">
-  <div>
+  <div class="w-100">
 
     <div class="input-header" (click)="resetSearchState()">
       <app-round-input [width]="'260px'" [labelText]="'By Student Name'" [type]="'multiuser'" [placeholder]="'Search Students'" (onselectionupdate)="studentsEmit($event)"></app-round-input>
@@ -42,11 +42,11 @@
         [minHeight]="'65px'"
         [width]="'215px'"
         [cursor]="!isDisabled ? 'pointer' : 'default'"
-        [textColor]="'#134482'"
+        [textColor]="isDisabled ? 'rgb(120, 140, 165)' : '#134482'"
         [fontSize]="'23px'"
         [border]="'1px solid 1px solid #eee'"
         (buttonClick)="search()"
-        [leftIcon]="'./assets/Search (Blue).png'"
+        [leftIcon]="isDisabled ? './assets/Search (Grey).png' : './assets/Search (Blue).png'"
         [leftImageWidth]="'30px'"
         [leftImageHeight]="'30px'"
         [disabled]="isDisabled"
@@ -58,24 +58,24 @@
     </div>
     <div class="report-button-ground" *ngIf="spinner || hasSearched">
 
-      <div [ngStyle]="{'opacity': !selectedReport.length ? '.5' : '1'}">
+      <a #printPdf (click)="previewPDF($event)" href="pdf/report" target="_blank" draggable="true" [ngStyle]="{'opacity': !selectedReport.length ? '.5' : '1'}">
         <app-gradient-button  class="report-button"
                               [gradient]="'#FFFFFF,#FFFFFF'"
                               [hoverColor]="'#F5F5F5'"
                               [minHeight]="'65px'"
                               [width]="'215px'"
                               [cursor]="'pointer'"
-                              [textColor]="'#134482'"
+                              [textColor]="selectedReport.length === 0 ? 'rgb(120, 140, 165)' : '#134482'"
                               [fontSize]="'17px'"
                               [border]="'1px solid 1px solid #eee'"
-                              (buttonClick)="previewPDF()">
+                              [disabled]="selectedReport.length === 0">
           <div [style.text-align]="'center'">
             <span>Generate Report </span><br/>
             <span>{{ selectedReport.length }} passes selected</span>
           </div>
         </app-gradient-button>
-        <a #printPdf href="pdf/report" target="_blank"></a>
-      </div>
+        <!--<a #printPdf href="pdf/report" target="_blank"></a>-->
+      </a>
     </div>
     <div class="search-content" *ngIf="!hasSearched">
 

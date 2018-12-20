@@ -236,18 +236,20 @@ export class HallmonitorComponent implements OnInit {
   private getReports(date: Date) {
     const range = this.liveDataService.getDateRange(date);
     console.log(range);
-    this.http.get(`v1/event_reports?created_before=${range.end.toISOString()}&created_after=${range.start.toISOString()}`)
+    // this.http.get(`v1/event_reports?created_before=${range.end.toISOString()}&created_after=${range.start.toISOString()}`)
+    this.http.get(`v1/event_reports`)
     // this.http.get(`v1/event_reports`)
       .subscribe((list: Report[]) => {
         this.studentreport = list.map((report) => {
           return {
             student_name: report.student.display_name,
             issuer: report.issuer.display_name,
-            created: Util.formatDateTime(new Date(report.created)),
+            created: Util.formatDateTime(new Date(report.created), false, true),
             message: report.message,
           };
         });
-        this.studentreport = this.studentreport.concat(this.studentreport, this.studentreport);
+        console.log(this.studentreport);
+        // this.studentreport = this.studentreport.concat(this.studentreport, this.studentreport);
       });
   }
 }
