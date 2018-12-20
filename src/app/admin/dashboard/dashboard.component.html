@@ -16,7 +16,7 @@
         <a routerLink="/admin/hallmonitor" class="label-icon">
           <img draggable="false" [src]="'./assets/Hallway (Blue).png' | resolveAsset" alt="Hallway (Blue).png" width="25">
         </a>
-        <div [ngStyle]="{'opacity': activeHallpasses?.length ? '1' : '.5'}">
+        <a  href="pdf/report" target="_blank" style="display: block;" [ngStyle]="{'opacity': activeHallpasses?.length ? '1' : '.5'}">
           <app-gradient-button
             [disabled]="!activeHallpasses?.length"
             [leftIcon]="'./assets/Print (White).png'"
@@ -28,8 +28,7 @@
             (buttonClick)="previewPDF()">
             <span>Report of Students</span>
           </app-gradient-button>
-        </div>
-        <a #printPdf href="pdf/report" target="_blank"></a>
+        </a>
       </div>
     </div>
     <div class="card card__role flex-center-between mr mt">

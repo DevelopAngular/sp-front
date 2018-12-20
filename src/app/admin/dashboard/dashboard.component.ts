@@ -16,9 +16,7 @@ import {switchMap, takeUntil} from 'rxjs/internal/operators';
 })
 export class DashboardComponent implements OnInit, OnDestroy {
 
-  @ViewChild('printPdf') printPdf: ElementRef;
   @ViewChild('ctx') ctx: any;
-  @ViewChild('ctxt') ctxt: any;
   private shareChartData$: Subject<any> = new Subject();
   public lineChartData: Array<any> = [ {data: Array.from(Array(24).keys()).map(() => 0)} ];
   // public lineChartData: Array<any> = [ {data: []} ];
@@ -69,8 +67,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     .subscribe((result: any[]) => {
       this.passStatistic = result[1][0]['rows'];
       this.averagePassTime = result[1][1]['value'];
-      this.activeHallpasses = result[2];
-      // this.activeHallpasses = result[0].results;
+      // this.activeHallpasses = result[2];
+      this.activeHallpasses = result[0].results;
       this.reports =  result[3];
       this.lineChartData = [{ data: result[4].hall_pass_usage.map(numb => numb + Math.ceil((Math.random() * Math.random() * 30)))}];
       // this.lineChartData = [{ data: result[4].hall_pass_usage}];
@@ -261,7 +259,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           )
           .subscribe((active_hp) => {
             if (active_hp.length) {
-              this.pdf.generate(active_hp, this.printPdf.nativeElement, 'p', 'dashboard');
+              this.pdf.generate(active_hp, 'p', 'dashboard');
             }
           });
   }

@@ -138,8 +138,8 @@ export class SearchComponent implements OnInit {
     this.selectedReport = [];
     this.hasSearched = false;
   }
-  previewPDF() {
-      console.log(this.selectedRooms);
+  previewPDF(event) {
+      console.log(this.selectedReport);
       if (this.selectedReport.length > 0) {
            const _selectedReport = this.selectedReport.map((row) => {
               const _copy = {};
@@ -164,11 +164,9 @@ export class SearchComponent implements OnInit {
 
           const title = `${this.sortParamsHeader}: ${this.selectedDate ? `from ${prettyFrom} to ${prettyTo};` : ''} ${this.selectedRooms ? rooms : ''}`;
 
-          this.pdf.generate(_selectedReport,  this.printPdf.nativeElement, 'l', 'search', title);;
-
-          // setTimeout(() => {
-          //   this.printPdf.nativeElement.click();
-          // }, 3000);
+            this.pdf.generate(_selectedReport, 'l', 'search', title);
+      } else {
+        event.preventDefault();
       }
   }
 
