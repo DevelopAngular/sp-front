@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {HttpService} from '../../http-service';
 import {map, shareReplay} from 'rxjs/operators';
 
@@ -15,9 +15,13 @@ export class ColorPalletPickerComponent implements OnInit {
 
   @Output() selectedEvent: EventEmitter<any> = new EventEmitter();
 
-  selectedId: number;
+  @ViewChild('col') pickColor;
 
-  constructor(private httpService: HttpService) { }
+  selectedId: number;
+  activeShadow: number = 20;
+  inactiveShadow: number = 0;
+
+  constructor(private httpService: HttpService, private renderer: Renderer2) { }
 
   ngOnInit() {
       this.colors$ = this.httpService.get('v1/color_profiles').pipe(
@@ -34,5 +38,16 @@ export class ColorPalletPickerComponent implements OnInit {
         this.selectedId = color.id;
         this.selectedEvent.emit(color);
     }
+
+  overEffect(color, ev) {
+    // this.renderer
+    //     .setStyle(ev.nativeElement, 'box-shadow',
+    //         (this.selectedId === color.id ? '0px 0px 50px ' + color.solid_color : '0 2px 4px 0px rgba(0, 0, 0, 0.1)'));
+    // this.selectedId === id ? this.activeShadow += 20 : this.inactiveShadow += 20;
+  }
+
+  leaveEffect(id) {
+    // this.selectedId === id ? this.activeShadow -= 20 : this.inactiveShadow -= 20;
+  }
 
 }

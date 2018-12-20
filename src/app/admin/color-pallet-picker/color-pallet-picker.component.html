@@ -2,10 +2,13 @@
   <div class="color-title">Color</div>
   <div class="colors">
     <div class="pick-color"
+         #col
          *ngFor="let color of colors$ | async"
          [style.background]="color.solid_color"
-         [style.box-shadow]="(selectedId === color.id ? '0px 0px 50px ' + color.solid_color : 'none')"
+         [ngStyle]="{'box-shadow': selectedId === color.id ? '0px 0px 20px ' + color.solid_color : '0 2px 4px 0px rgba(0, 0, 0, 0.1)'}"
          (click)="changeColor(color)"
+         (mouseover)="overEffect(color, $event)"
+         (mouseleave)="leaveEffect(color)"
     >
     </div>
   </div>
