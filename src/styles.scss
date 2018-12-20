@@ -141,7 +141,7 @@ input:focus{
   outline: none;
   transition: border .2s ease;
   &:focus {
-    border: 1px solid #595487 !important;
+    border: 1px solid #595487;
   }
 }
 

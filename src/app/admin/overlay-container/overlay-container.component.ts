@@ -48,6 +48,11 @@ export class OverlayContainerComponent implements OnInit {
 
   bulkWarningText: boolean;
   isDirtysettings: boolean;
+  isDirtyTravel: boolean;
+  isDirtyNowRestriction: boolean;
+  isDirtyFutureRestriction: boolean;
+  isDirtyColor: boolean;
+  isDirtyIcon: boolean;
   isChangeLocations = new BehaviorSubject<boolean>(false);
 
   showSearchTeacherOptions: boolean;
@@ -121,6 +126,33 @@ export class OverlayContainerComponent implements OnInit {
   get isValidForm() {
       return this.form.get('roomName').valid && this.form.get('roomNumber').value && this.form.get('timeLimit').valid;
   }
+
+  get showPublishNewRoom() {
+      return this.form.get('roomName').valid &&
+             this.form.get('roomNumber').valid &&
+             this.form.get('timeLimit').valid &&
+             this.isDirtyNowRestriction &&
+             this.isDirtyFutureRestriction &&
+             this.color_profile && this.selectedIcon;
+  }
+
+  get showPublishEditRoom() {
+     return this.isValidForm &&
+            (this.form.dirty ||
+                this.isDirtysettings ||
+                this.isDirtyFutureRestriction ||
+                this.isDirtyNowRestriction ||
+                this.isDirtyTravel);
+  }
+
+  get showPublishFolder() {
+    return (this.form.get('folderName').valid &&
+            this.form.get('folderName').dirty &&
+            this.color_profile && this.selectedIcon) ||
+            (this.isChangeLocations.value && this.color_profile && this.selectedIcon) ||
+            (this.isEditFolder && (this.isDirtyIcon || this.isDirtyColor || this.isChangeLocations.value));
+  }
+
 
   ngOnInit() {
 
@@ -242,6 +274,9 @@ export class OverlayContainerComponent implements OnInit {
           this.editRoomInFolder = false;
           this.selectedRoomsInFolder = [];
           this.selectedTichers = [];
+          this.travelType = [];
+          this.nowRestriction = false;
+          this.futureRestriction = false;
           this.roomName = '';
           this.roomNumber = '';
           this.timeLimit = '';
@@ -284,11 +319,13 @@ export class OverlayContainerComponent implements OnInit {
     this.color_profile = color;
     this.gradientColor = 'radial-gradient(circle at 98% 97%,' + color.gradient_color + ')';
     this.isDirtysettings = true;
+    this.isDirtyColor = true;
   }
 
   changeIcon(icon) {
     this.selectedIcon = icon;
     this.isDirtysettings = true;
+    this.isDirtyIcon = true;
   }
 
   addToFolder() {

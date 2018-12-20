@@ -1,8 +1,15 @@
 <form [formGroup]="formGroup">
   <div class="InputWrapper">
-    <label [ngClass]="{clserrorLabel: controlName.invalid}">{{input_label}}</label>
-    <input [style.width]="width" [maxlength]="maxLength" [formControl]="controlName" type={{input_type}} class="{{input_class}}" [placeholder]="(placeholder==''?'Please enter ' + input_label: placeholder)" [ngClass]="{clserrorInput: controlName.invalid}"/>
+    <label [ngClass]="{clserrorLabel: controlName.invalid && controlName.touched}">{{input_label}}</label>
+    <input
+       [style.width]="width"
+       [maxlength]="maxLength"
+       [formControl]="controlName"
+       [type]="input_type"
+       [class]="input_class"
+       [placeholder]="(placeholder=='' ? '' : placeholder)"
+       [ngClass]="{clserrorInput: controlName.invalid && controlName.touched}"/>
     <img *ngIf='controlName.valid' src="./assets/Check (Blue).png"/>
-    <img *ngIf='controlName.invalid' src="./assets/Report (Red).png"/>
+    <img *ngIf='controlName.invalid && controlName.touched' src="./assets/Report (Red).png"/>
   </div>
 </form>
