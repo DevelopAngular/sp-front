@@ -29,7 +29,8 @@ export class MainPageComponent implements OnInit {
     }
 
     isTeacher() {
+        return true;
       // TODO when the roles of teachers will be ready
-        return this.currentUser.roles.includes('_profile_teacher');
+      //   return this.currentUser.roles.includes('_profile_teacher');
     }
 }
