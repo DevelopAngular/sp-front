@@ -13,13 +13,6 @@
 }
 
 .pick-color {
-  width: 33px;
-  height: 33px;
-  border-radius: 50%;
-  display: flex;
-  margin: 5px;
-  cursor: pointer;
-  border: 5px solid white;
   &:nth-child(1) {
     margin-left: 40px;
   }

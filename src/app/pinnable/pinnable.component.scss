@@ -70,6 +70,7 @@
   border-radius: 7px;
   cursor: pointer;
   user-select: none;
+  transition: box-shadow .3s ease;
 }
 
 .selected-overlay {

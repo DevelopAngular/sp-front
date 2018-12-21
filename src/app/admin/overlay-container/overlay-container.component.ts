@@ -27,6 +27,7 @@ export class OverlayContainerComponent implements OnInit {
   readyRoomsToEdit: Pinnable[] = [];
   pinnable: Pinnable;
   pinnables$: Observable<Pinnable[]>;
+  currentLocationInEditRoomFolder;
   overlayType: string;
   roomName: string;
   folderName: string;
@@ -46,9 +47,18 @@ export class OverlayContainerComponent implements OnInit {
   color_profile;
   selectedIcon;
 
+  initialState;
+  currentState;
+  stateStatus: boolean;
+
   bulkWarningText: boolean;
   isDirtysettings: boolean;
-  isChangeLocations = new BehaviorSubject(false);
+  isDirtyTravel: boolean;
+  isDirtyNowRestriction: boolean;
+  isDirtyFutureRestriction: boolean;
+  isDirtyColor: boolean;
+  isDirtyIcon: boolean;
+  isChangeLocations = new BehaviorSubject<boolean>(false);
 
   showSearchTeacherOptions: boolean;
 
@@ -121,6 +131,47 @@ export class OverlayContainerComponent implements OnInit {
   get isValidForm() {
       return this.form.get('roomName').valid && this.form.get('roomNumber').value && this.form.get('timeLimit').valid;
   }
+
+  get showPublishNewRoom() {
+      return this.form.get('roomName').valid &&
+             this.form.get('roomNumber').valid &&
+             this.form.get('timeLimit').valid &&
+             this.isDirtyNowRestriction &&
+             this.isDirtyFutureRestriction &&
+             this.color_profile && this.selectedIcon;
+  }
+
+  get showPublishEditRoom() {
+     return this.isValidForm &&
+            (this.stateStatus ||
+                // this.isDirtysettings ||
+                // this.isDirtyFutureRestriction ||
+                // this.isDirtyNowRestriction ||
+                this.isDirtyTravel);
+  }
+
+  get showPublishFolder() {
+    return (this.form.get('folderName').valid &&
+            this.form.get('folderName').dirty &&
+            this.color_profile && this.selectedIcon) ||
+            (this.isChangeLocations.value && this.color_profile && this.selectedIcon) ||
+            (this.isEditFolder && (this.isDirtyIcon || this.isDirtyColor || this.isChangeLocations.value));
+  }
+
+  get showDoneButton() {
+    return (this.isValidForm &&
+        (this.newRoomFormDirty ||
+            this.isDirtyNowRestriction ||
+            this.isDirtyFutureRestriction ||
+            this.isDirtyTravel) &&
+        this.overlayType === 'newRoomInFolder') ||
+        (this.form.get('timeLimit').valid && this.overlayType === 'settingsRooms');
+  }
+
+  get newRoomFormDirty() {
+    return this.form.get('roomName').dirty || this.form.get('roomNumber').dirty || this.form.get('timeLimit').dirty;
+  }
+
 
   ngOnInit() {
 
@@ -209,6 +260,23 @@ export class OverlayContainerComponent implements OnInit {
                 });
         }
       });
+
+      this.initialState = {
+          roomName: this.roomName,
+          folderName: this.folderName,
+          roomNumber: this.roomNumber,
+          restricted: this.nowRestriction,
+          scheduling_restricted: this.futureRestriction,
+          travel_type: this.travelType,
+          teachers: this.selectedTichers,
+          color: this.color_profile.id,
+          icon: this.selectedIcon,
+          timeLimit: this.timeLimit
+      };
+
+      this.form.valueChanges.subscribe(res => {
+          this.changeState();
+      });
   }
 
   buildForm() {
@@ -228,6 +296,50 @@ export class OverlayContainerComponent implements OnInit {
     });
   }
 
+  changeState() {
+     const initState = this.initialState;
+     const currState = {
+         roomName: this.roomName,
+         folderName: this.folderName,
+         roomNumber: this.roomNumber,
+         restricted: this.nowRestriction,
+         scheduling_restricted: this.futureRestriction,
+         travel_type: this.travelType,
+         teachers: this.selectedTichers,
+         color: this.color_profile.id,
+         icon: this.selectedIcon,
+         timeLimit: this.timeLimit
+     };
+     const status = [];
+    if (currState.roomName) {
+        status.push(currState.roomName === initState.roomName);
+    }
+    if (currState.folderName) {
+        status.push(currState.folderName === initState.folderName);
+    }
+    if (currState.roomNumber) {
+        status.push(currState.roomNumber === initState.roomNumber);
+    }
+    if (currState.timeLimit) {
+        status.push(+currState.timeLimit === initState.timeLimit);
+    }
+    if (currState.restricted) {
+        status.push(currState.restricted === initState.restricted);
+    }
+    if (currState.scheduling_restricted) {
+        status.push(currState.scheduling_restricted === initState.scheduling_restricted);
+    }
+    if (currState.icon) {
+        status.push(currState.icon === initState.icon);
+    }
+    if (currState.color) {
+        status.push(currState.color === initState.color);
+    }
+   this.stateStatus = status.includes(false);
+      console.log('STATUS', this.stateStatus);
+      console.log('Array', status);
+  }
+
   setLocation(location) {
     let type;
     let hideAppearance;
@@ -242,10 +354,14 @@ export class OverlayContainerComponent implements OnInit {
           this.editRoomInFolder = false;
           this.selectedRoomsInFolder = [];
           this.selectedTichers = [];
+          this.travelType = [];
+          this.nowRestriction = false;
+          this.futureRestriction = false;
           this.roomName = '';
           this.roomNumber = '';
           this.timeLimit = '';
           this.readyRoomsToEdit = [];
+          this.importedRooms = [];
           this.isEditRooms = false;
           this.form.reset();
           this.isDirtysettings = false;
@@ -282,17 +398,21 @@ export class OverlayContainerComponent implements OnInit {
   changeColor(color) {
     this.color_profile = color;
     this.gradientColor = 'radial-gradient(circle at 98% 97%,' + color.gradient_color + ')';
-    this.isDirtysettings = true;
+    this.isDirtyColor = true;
+    this.changeState();
   }
 
   changeIcon(icon) {
     this.selectedIcon = icon;
-    this.isDirtysettings = true;
+    this.isDirtyIcon = true;
+    this.changeState();
   }
 
   addToFolder() {
-    this.selectedRooms = _.concat(this.selectedRooms, this.selectedRoomsInFolder);
-    this.setLocation('newFolder');
+      this.isChangeLocations.next(true);
+      const locationsToAdd = this.selectedRoomsInFolder.map(room => room.location);
+      this.selectedRooms = [...locationsToAdd, ...this.selectedRooms];
+      this.setLocation('newFolder');
   }
 
   back() {
@@ -308,6 +428,8 @@ export class OverlayContainerComponent implements OnInit {
       this.nowRestriction = room.restricted;
       this.futureRestriction = room.scheduling_restricted;
       this.travelType = room.travel_types;
+
+      this.currentLocationInEditRoomFolder = room;
 
       this.setLocation('editRoomInFolder');
 
@@ -417,12 +539,14 @@ export class OverlayContainerComponent implements OnInit {
                   const newCollection = this.selectedRooms.filter(room => room.id !== this.roomToEdit.id);
                   this.selectedRooms = [res, ...newCollection];
                   this.setLocation('newFolder');
+                  this.isChangeLocations.next(true);
               });
           } else {
               this.http.post('v1/locations', location).subscribe(loc => {
                   this.newRoomsInFolder.push(loc);
                   this.selectedRooms.push(loc);
                   this.setLocation('newFolder');
+                  this.isChangeLocations.next(true);
               });
           }
       }
@@ -438,22 +562,33 @@ export class OverlayContainerComponent implements OnInit {
               zip(...this.importedRooms).subscribe((result) => {
                   this.selectedRooms = [...result, ...this.selectedRooms];
                   this.setLocation('newFolder');
+                  this.isChangeLocations.next(true);
               });
 
-          } else if (this.readyRoomsToEdit) {
+          } else if (this.readyRoomsToEdit.length) {
               const locationsToEdit = this.readyRoomsToEdit.map(room => {
-                  return this.http.patch(`v1/locations/${room.id}`,
-                      {
-                          restricted: this.nowRestriction,
-                          scheduling_restricted: this.futureRestriction,
-                          max_allowed_time: +this.timeLimit
-                      });
+                  if (room.location) {
+                      return this.http.patch(`v1/locations/${room.location.id}`,
+                          {
+                              restricted: this.nowRestriction,
+                              scheduling_restricted: this.futureRestriction,
+                              max_allowed_time: +this.timeLimit
+                          });
+                  } else {
+                      return this.http.patch(`v1/locations/${room.id}`,
+                          {
+                              restricted: this.nowRestriction,
+                              scheduling_restricted: this.futureRestriction,
+                              max_allowed_time: +this.timeLimit
+                          });
+                  }
               });
               forkJoin(locationsToEdit).subscribe(res => {
                   const locIds = res.map((loc: Location) => loc.id);
                   const newCollection = this.selectedRooms.filter(room => room.id !== locIds.find(id => id === room.id));
                   this.selectedRooms = [...res, ...newCollection];
                   this.setLocation('newFolder');
+                  this.isChangeLocations.next(true);
               });
           }
        }
@@ -535,10 +670,27 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   deleteRoom() {
+    if (this.overlayType === 'editRoom' || this.isEditFolder) {
       this.http.delete(`v1/pinnables/${this.pinnable.id}`).subscribe(res => {
-          console.log(res);
-          this.dialogRef.close();
+        console.log(res);
+        this.dialogRef.close();
       });
+    }
+
+    if (this.editRoomInFolder) {
+        console.log('Kill Me', this.currentLocationInEditRoomFolder);
+        this.selectedRooms = this.selectedRooms.filter(room => room.id !== this.currentLocationInEditRoomFolder.id);
+        this.setLocation('newFolder');
+        this.isChangeLocations.next(true);
+
+        // TODO Uncomment when the endpoint is ready
+        // this.http.delete(`v1/locations/${this.currentLocationInEditRoomFolder.id}`).subscribe((res: Location) => {
+        //     this.selectedRooms = this.selectedRooms.filter(room => room.id !== res.id);
+        //     this.setLocation('newFolder');
+        //     this.isChangeLocations.next(true);
+        // });
+    }
+
   }
 
   travelUpdate(type) {
@@ -548,22 +700,26 @@ export class OverlayContainerComponent implements OnInit {
    } else if (type === 'One-way') {
      travelType = ['one_way'];
    } else if (type === 'Both') {
-     travelType = ['round_trip', 'one_way'];
+     travelType = ['one_way', 'round_trip'];
    }
    this.travelType = travelType;
+   this.changeState();
   }
 
   nowRestrictionUpdate(restriction) {
     this.nowRestriction = restriction === 'Restricted';
+    this.changeState();
   }
 
   futureRestrictionUpdate(restriction) {
     this.futureRestriction = restriction === 'Restricted';
+    this.changeState();
   }
 
   selectTeacherEvent(teachers) {
     this.selectedTichers = teachers;
     this.isDirtysettings = true;
+    this.changeState();
   }
 
   isEmitTeachers(event) {

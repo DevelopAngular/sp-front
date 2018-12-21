@@ -1,11 +1,11 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {HttpService} from '../../http-service';
-import {map, shareReplay} from 'rxjs/operators';
+import { Component, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
+import { HttpService } from '../../http-service';
+import { map, shareReplay } from 'rxjs/operators';
 
 @Component({
     selector: 'app-color-pallet-picker',
     templateUrl: './color-pallet-picker.component.html',
-    styleUrls: ['./color-pallet-picker.component.scss']
+    styleUrls: ['./color-pallet-picker.component.scss'],
 })
 export class ColorPalletPickerComponent implements OnInit {
 
@@ -15,9 +15,11 @@ export class ColorPalletPickerComponent implements OnInit {
 
   @Output() selectedEvent: EventEmitter<any> = new EventEmitter();
 
+  @ViewChild('col') pickColor;
+
   selectedId: number;
 
-  constructor(private httpService: HttpService) { }
+  constructor(private httpService: HttpService, private renderer: Renderer2) { }
 
   ngOnInit() {
       this.colors$ = this.httpService.get('v1/color_profiles').pipe(
@@ -30,9 +32,9 @@ export class ColorPalletPickerComponent implements OnInit {
       }
   }
 
-    changeColor(color) {
-        this.selectedId = color.id;
-        this.selectedEvent.emit(color);
-    }
+  changeColor(color) {
+    this.selectedId = color.id;
+    this.selectedEvent.emit(color);
+  }
 
 }

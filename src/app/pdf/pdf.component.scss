@@ -1,9 +1,13 @@
 :host{
   width: 100%;
   height: 100%;
+  background-color: #f8faff;
+  .source-wrapper{
+    width: inherit;
+    height: inherit;
+  }
   .source{
-    //width: calc(100vw - 15px);
-    width: 100%;
-    height: 100%;
+    width: inherit;
+    height: inherit;
   }
 }

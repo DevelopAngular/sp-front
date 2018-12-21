@@ -1,24 +1,26 @@
 import { environment } from '../../../environments/environment';
-import {Component, ElementRef, OnInit, ViewChild, NgZone} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild, NgZone} from '@angular/core';
 import {HttpService} from '../../http-service';
 import {HallPass} from '../../models/HallPass';
 import {PdfGeneratorService} from '../pdf-generator.service';
-import {of as ObservableOf, zip} from 'rxjs';
+import {interval, of as ObservableOf, Subject, zip} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Report} from '../../models/Report';
 import {LiveDataService} from '../../live-data/live-data.service';
+import {switchMap, takeUntil} from 'rxjs/internal/operators';
+
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
 
-  @ViewChild('printPdf') printPdf: ElementRef;
   @ViewChild('ctx') ctx: any;
-
-  public lineChartData: Array<any> = [{data: Array.from(Array(24).keys()).map(() => 0)}];
+  private shareChartData$: Subject<any> = new Subject();
+  public lineChartData: Array<any> = [ {data: Array.from(Array(24).keys()).map(() => 0)} ];
+  // public lineChartData: Array<any> = [ {data: []} ];
   // = [
   //   { data: [5, 14, 9, 12, 11, 10, 15, 5] },
   // ];
@@ -29,7 +31,6 @@ export class DashboardComponent implements OnInit {
 
   public lineChartOptions: any;
   public gradient: any;
-
   public lineChartColors: Array<any>;
   public lineChartLegend: boolean = false;
   public lineChartType: string = 'line';
@@ -38,6 +39,11 @@ export class DashboardComponent implements OnInit {
   public reports: Report[];
   public averagePassTime: number | string;
   public hiddenChart: boolean = true;
+
+  public lineChartTicks: any =  {
+    suggestedMin: 0,
+    stepSize: 5,
+  };
 
   constructor(
     private http: HttpService,
@@ -49,35 +55,9 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
 
+    this.drawChartXaxis();
+
     const todayReports = this.liveDataService.getDateRange(new Date());
-    let hour = 8;
-    let _minute_iterator = 0;
-    const _quater_hour = 15;
-    while (hour < 14) {
-      let minutes = _minute_iterator * _quater_hour;
-      let time;
-      if (_minute_iterator === 4) {
-        _minute_iterator = 0;
-        minutes = 0;
-        hour++;
-      }
-      if ((hour) <= 12) {
-        time = `${hour}:${minutes !== 0 ? minutes : minutes + '0'} ${hour < 12 ? 'AM' : 'PM'}`;
-      } else {
-        time = `${(hour - 12)}:${minutes !== 0 ? minutes : minutes + '0'} PM`;
-      }
-      _minute_iterator++;
-      this.lineChartLabels.push(time);
-    }
-
-    console.log(this.lineChartLabels);
-    this.lineChartLabels = this.lineChartLabels.slice(0, this.lineChartLabels.length - 1);
-
-    /*
-    {"name":"Most Visited Locations","type":"list","rows":[{"name":"asd","value":"1736 passes"},{"name":"sdf","value":"1223 passes"},
-    {"name":"Room","value":"796 passes"},{"name":"Nurse","value":"539 passes"},{"name":"Water","value":"528 passes"}]},
-    {"name":"Average pass time","type":"single","value":"46.64 seconds"},{"name":"Active Pass Count","type":"single","value":0}
-     */
 
     zip(
       this.http.get('v1/hall_passes/stats'),
@@ -100,7 +80,7 @@ export class DashboardComponent implements OnInit {
         this.reports = eventReports;
 
         if (environment.funData) {
-          this.lineChartData = [{data: dashboard.hall_pass_usage.map(numb => numb + Math.ceil((Math.random() * 25)))}];
+          this.lineChartData = [{data: dashboard.hall_pass_usage.map(numb => numb +  Math.ceil((Math.random() * Math.random() * 30)))}];
         } else {
           this.lineChartData = [{data: dashboard.hall_pass_usage}];
         }
@@ -110,84 +90,166 @@ export class DashboardComponent implements OnInit {
         // this.reports = [];
       });
 
-    this.gradient = this.ctx.nativeElement.getContext('2d').createLinearGradient(0, 380, 0, 0);
-    this.gradient.addColorStop(0.5, 'rgba(0,207,49,0.01)');
-    this.gradient.addColorStop(1, 'rgba(0,180, 118, 0.8)');
-    this.lineChartColors = [
-      {
-        backgroundColor: this.gradient,
-        borderColor: 'rgba(0,159,0,1)',
-        pointBackgroundColor: 'rgba(148,159,177,1)',
-        pointBorderColor: '#fff',
-        pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-      }
-    ];
-    this.lineChartOptions = {
-      scales: {
-        yAxes: [{
-          ticks: {
-            suggestedMin: 0,
-            stepSize: 5,
-            suggestedMax: 35,
+    interval(60000)
+      .pipe(
+        switchMap(() => this.http.get('v1/admin/dashboard')),
+        takeUntil(this.shareChartData$)
+      )
+      .subscribe((result: any) => {
+        this.lineChartData = [{
+          data: result.hall_pass_usage.map(numb => numb + Math.ceil((Math.random() * Math.random() * 30)))
+        }];
+      });
 
-          },
-          gridLines: {
-            display: true,
-            borderDash: [10, 10]
-          },
-          scaleLabel: {
-            display: true,
-            fontColor: 'black',
-            fontSize: 16,
-            labelString: 'Number of active passes',
-            padding: 20
+      this.gradient = this.ctx.nativeElement.getContext('2d').createLinearGradient(0, 380, 0, 0);
+      this.gradient.addColorStop(0.5, 'rgba(0,207,49,0.01)');
+      this.gradient.addColorStop(1, 'rgba(0,180, 118, 0.8)');
+      this.lineChartColors = [
+        {
+          backgroundColor:  this.gradient,
+          pointBackgroundColor: 'transparent',
+          borderColor: 'rgba(0,159,0,1)',
+          // pointHoverBackgroundColor: 'rgba(148,159,177,1)',
+          pointHoverBackgroundColor: '#FFFFFF',
+          pointBorderColor: 'transparent',
+          pointBorderWidth: 3,
+          pointHoverRadius: 6,
+          // steppedLine: true,
+          // snapGaps: true,
+          // showLine: false,
+          // pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: '#134482'
+        }
+      ];
+      this.lineChartOptions = {
+        hover: {
+          onHover: (event, active) => {
+            if (active && active.length) {
+              console.log(active);
+              const context = this.ctx.nativeElement.getContext('2d');
+              context.beginPath();
+              context.moveTo(active[0]._view.x, active[0]._view.y + 5);
+              context.strokeStyle = '#134482';
+              context.lineWidth = 2;
+              context.lineTo(active[0]._view.x, active[0]._xScale.top);
+              context.stroke();
+            }
           }
-        }],
-        xAxes: [{
-          ticks: {},
-          gridLines: {
-            display: false
-          },
-          scaleLabel: {
-            display: true,
-            fontColor: 'black',
-            fontSize: 16,
-            labelString: 'Time',
-            padding: 10,
-          },
-        }]
-      },
-      tooltips: {
-        displayColors: false,
-        backgroundColor: '#FFFFFF',
-        borderColor: 'rgba(0, 0, 0, .1)',
-        borderWidth: 1,
-        bodyFontColor: '#333333',
-        footerFontColor: '#333333',
-        bodyFontSize: 18,
-        footerFontStyle: 'normal',
-        callbacks: {
-          labelColor: function (tooltipItem, chart) {
-            return {
-              borderColor: 'rgb(100, 0, 0)',
-              backgroundColor: 'rgba(100, 0, 0, .4)'
-            };
-          },
-          label: function (tooltipItems, data) {
-            let _label = '' + tooltipItems.yLabel;
-            _label = _label.padStart(7, ' ');
-            return _label;
-          },
-          title: (tooltipItem, data) => {
-            return;
-          },
-          footer: (tooltipItems, data) => {
-            return 'active passes';
+        },
+        elements: {
+          line: {
+            // tension: 0
+          }
+        },
+        scales: {
+          yAxes: [{
+            ticks: this.lineChartTicks,
+            gridLines: {
+              display: true,
+              borderDash: [10, 10],
+              drawBorder: true
+            },
+            scaleLabel: {
+              display: true,
+              fontColor: '#134482',
+              fontSize: 14,
+              labelString: 'Number of active passes',
+              padding: 20
+            }
+          }],
+          xAxes: [{
+            ticks: {
+
+            },
+            gridLines: {
+              display: false,
+            },
+            scaleLabel: {
+              display: true,
+              fontColor: '#134482',
+              fontSize: 14,
+              labelString: 'Time',
+              padding: 10,
+            },
+          }]
+        },
+        vertical: {
+
+        },
+        tooltips: {
+          position: 'nearest',
+          x: 10,
+          y: 10,
+          displayColors: false,
+          backgroundColor: '#FFFFFF',
+          borderColor: 'rgba(0, 0, 0, .1)',
+          borderWidth: 1,
+          bodyFontColor: '#134482',
+          bodyFontSize: 22,
+          footerFontSize: 14,
+          footerFontColor: '#134482',
+          footerFontStyle: 'normal',
+          xPadding: 22,
+          yPadding: 14,
+          // custom: (tooltipModel) => {
+          //   console.log(tooltipModel);
+          //   const _context = this.ctxt.nativeElement.getContext('2d');
+          //         _context.beginPath();
+          //         _context.moveTo(0, 0);
+          //         _context.strokeStyle = '#ff0000';
+          //         _context.lineTo(300, 100);
+          //         _context.stroke();
+          // },
+          callbacks: {
+            verticalLine: (x, y) => {
+              console.log(x, y);
+            },
+            labelColor: (tooltipItem, chart) => {
+              return {
+                borderColor: 'rgb(100, 0, 0)',
+                backgroundColor: 'rgba(100, 0, 0, .4)'
+              };
+            },
+            label: (tooltipItems, data) => {
+              let _label = new String(tooltipItems.yLabel)
+              _label = _label.padStart(7, ' ');
+              return _label;
+            },
+            title: (tooltipItem, data) => {
+              console.log(tooltipItem);
+              return;
+            },
+            footer: (tooltipItems, data) => {
+              return 'active passes';
+            }
           }
         }
+      };
+  }
+
+  private drawChartXaxis() {
+    let hour = 8;
+    let _minute_iterator = 0;
+    const _quater_hour = 15;
+    while (hour < 16) {
+      let minutes = _minute_iterator * _quater_hour;
+      let time;
+      if (_minute_iterator === 4) {
+        _minute_iterator = 0;
+        minutes = 0;
+        hour++;
       }
+      if ( (hour) <= 12 ) {
+        time = `${hour}:${minutes !== 0 ? minutes : minutes + '0'} ${ hour < 12 ? 'AM' : 'PM' }`;
+      } else {
+        time = `${(hour - 12)}:${minutes !== 0 ? minutes : minutes + '0'} PM`;
+      }
+      _minute_iterator++;
+      this.lineChartLabels.push(time);
     };
+    // console.log(this.lineChartLabels);
+    this.lineChartLabels = this.lineChartLabels.slice(0, this.lineChartLabels.length - 1);
+
   }
 
   previewPDF() {
@@ -218,12 +280,17 @@ export class DashboardComponent implements OnInit {
       )
       .subscribe((active_hp) => {
         if (active_hp.length) {
-          this.pdf.generate(active_hp, null, 'p', 'dashboard');
+          this.pdf.generate(active_hp, 'p', 'dashboard');
         }
       });
   }
 
-  public chartClicked(e: any): void {
+  ngOnDestroy() {
+    this.shareChartData$.next();
+    this.shareChartData$.complete();
+  }
+
+  public chartClicked(e: any):void {
     console.log(e);
   }
 

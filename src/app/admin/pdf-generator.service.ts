@@ -14,12 +14,10 @@ export class PdfGeneratorService {
     public httpService: HttpClient,
   ) { }
 
-  generate(data: any[], redirectLink: HTMLAnchorElement, orientation: string = 'p', page: string = '', title?: string): void {
+  generate(data: any[], orientation: string = 'p', page: string = '', title?: string): void {
 
     window.localStorage.removeItem('pdf_src');
 
-    const _redirectLink = redirectLink;
-    const thisMoment = new Date();
     const prettyNow = DatePrettyHelper.transform(new Date());
 
     let heading = {
@@ -212,15 +210,17 @@ export class PdfGeneratorService {
             doc.text(table.left, table.top + table.lh * (1 + 1), __data.student_name);
             doc.setTextColor('#666666');
             const rightSpace = doc.getStringUnitWidth(__data.created) * 14;
+            // doc.text(A4.width - table.right - rightSpace, table.top + table.lh * (1 + 1), __data.created);
             doc.text(A4.width - table.right - rightSpace, table.top + table.lh * (1 + 1), __data.created);
             doc.setFontSize(12);
-            doc.setFontStyle('normal');
             doc.text(table.left, table.top + table.lh * (2 + 1), `Reported by ${__data.issuer}:`);
+            doc.setFontStyle('normal');
             doc.text(table.left, table.top + table.lh * (3 + 1) - 16, __data.message);
           }
         };
 
         doc.setFontSize(24);
+        doc.setFontStyle('bold');
 
         const headerWidth = doc.getStringUnitWidth(heading.header) * 24;
         const headerRoundSpace = A4.width - headerWidth;
@@ -246,22 +246,7 @@ export class PdfGeneratorService {
         table.drawPagination(pageCounter);
 
         window.localStorage.setItem('pdf_src', `${encodeURIComponent(doc.output('datauristring'))}`);
-        (function() {
-          const timer = 100;
 
-          function _pdfRedirect(_timer) {
-            setTimeout(() => {
-              console.log(_redirectLink)
-              if (window.localStorage.getItem('pdf_src')) {
-                _redirectLink.click();
-              } else {
-                _pdfRedirect(_timer += timer * 2 );
-              }
-            }, _timer);
-          }
-          _pdfRedirect(timer);
-        }());
-        // window.open(`${currentHost}/pdf/report`);
       });
   }
 }

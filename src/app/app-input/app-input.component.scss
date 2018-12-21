@@ -13,8 +13,8 @@
   height: 26px;
   margin-left: 1rem;
   position: absolute;
-  top: 33px;
-  right: 16px;
+  top: 35px;
+  right: 1px;
 }
 
 img {
@@ -38,7 +38,7 @@ img {
 }
 
 .InputWrapper input:focus {
-
+  border: 1px solid #595487;
 }
 .clserrorLabel {
   color: red !important;

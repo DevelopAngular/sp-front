@@ -1,0 +1,10 @@
+.color-wrapper {
+  width: 33px;
+  height: 33px;
+  border-radius: 50%;
+  display: flex;
+  margin: 5px;
+  cursor: pointer;
+  border: 4px solid white;
+  transition: box-shadow .3s ease;
+}

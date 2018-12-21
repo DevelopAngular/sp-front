@@ -8,7 +8,6 @@ import { NavButtonComponent } from '../nav-button/nav-button.component';
 import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
 import { PinnableCollectionComponent } from '../pinnable-collection/pinnable-collection.component';
 import { SharedModule } from '../../shared/shared.module';
-// import { RoundInputComponent } from '../round-input/round-input.component';
 import { AppInputComponent } from '../../app-input/app-input.component';
 import { FormsModule } from '@angular/forms';
 import {
@@ -28,6 +27,7 @@ import {AccountsDialogComponent} from '../accounts-dialog/accounts-dialog.compon
 import {ProfilesSearchComponent} from '../profiles-search/profiles-search.component';
 import { InputHelperDialogComponent } from '../input-helper-dialog/input-helper-dialog.component';
 import { LocationSearchComponent } from '../location-search/location-search.component';
+import { ColorComponent } from '../color-pallet-picker/color/color.component';
 
 @NgModule({
   imports: [
@@ -59,7 +59,8 @@ import { LocationSearchComponent } from '../location-search/location-search.comp
       TogglePickerComponent,
       AppInputComponent,
       ProfilesSearchComponent,
-      LocationSearchComponent
+      LocationSearchComponent,
+      ColorComponent
   ],
   exports: [
       MatChipsModule,
@@ -78,7 +79,8 @@ import { LocationSearchComponent } from '../location-search/location-search.comp
       TogglePickerComponent,
       AppInputComponent,
       ProfilesSearchComponent,
-      LocationSearchComponent
+      LocationSearchComponent,
+      ColorComponent
   ],
   entryComponents: [
       AccountsDialogComponent,

@@ -60,7 +60,7 @@ import { SettingsComponent } from './settings/settings.component';
     AccountsComponent,
     AccountsRoleComponent,
     CalendarComponent,
-    SettingsComponent
+    SettingsComponent,
   ],
 
   entryComponents: [AccountsDialogComponent, CalendarComponent],

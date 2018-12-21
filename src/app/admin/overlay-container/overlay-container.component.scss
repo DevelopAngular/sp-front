@@ -13,6 +13,7 @@
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   font-weight: 900;
+  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
 }
 
 .overlay-content {
@@ -42,6 +43,12 @@
   width: 32px;
   height: 32px;
   margin-left: 20px;
+  cursor: pointer;
+}
+
+.cancel-button {
+  margin-left: 30px;
+  color: white;
   cursor: pointer;
 }
 
@@ -127,6 +134,7 @@
     color: #0c3a75;
     font-size: 22px;
     font-weight: bolder;
+    margin-right: 20px;
   }
   .color-picker {
     margin: 15px 0 30px 0;
@@ -283,7 +291,7 @@
   .new-room-in-folder-header {
     display: flex;
     justify-content: space-between;
-    box-shadow: 0 0 2px darkgrey;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
     width: 594px;
     align-items: center;
     height: 100px;
@@ -291,9 +299,10 @@
     border-radius: 12px;
 
     .room-in-folder-title-inactive {
+      margin-left: 76px;
       font-weight: bolder;
       font-size: 19px;
-      color: gray;
+      color: #7f879d;
     }
 
     .room-in-folder-title-active {
@@ -317,6 +326,13 @@
       margin-left: 20px;
       cursor: pointer;
     }
+
+    .cancel-button-in-folder-header {
+      margin-left: 20px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
   }
 }
 
@@ -340,8 +356,7 @@
   align-items: center;
 
   .import-rooms-info {
-    font-weight: bolder;
-    color: darkgrey;
+    color: #7f879d;
     font-size: 18px;
     text-align: center;
     width: 530px;
@@ -349,8 +364,8 @@
   }
 
   .download-template-link {
-    font-size: 19px;
-    margin-top: 56px;
+    font-size: 18px;
+    margin-top: 30px;
     font-weight: bolder;
     cursor: pointer;
     color: #1d1a5e;
@@ -419,8 +434,10 @@
 }
 
 .rooms-list {
-  width: 265px;
+  width: 276px;
   margin-top: 7px;
+  height: 264px;
+  overflow: auto;
 
   mat-list-item {
     width: 240px;
@@ -443,13 +460,13 @@
 
 .rooms-scrolling {
   display: flex;
+  height: 280px;
 }
 
 .button-column {
   align-items: center;
   flex-direction: column;
-  position: fixed;
-  margin-left: 347px;
+  margin-left: 65px;
 
   .gd-button {
     margin-bottom: 10px;
@@ -461,12 +478,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: 90px;
 
   .footer-info-text {
     text-align: center;
     margin-top: 10px;
-    margin-bottom: 15px;
+    margin-bottom: 30px;
     color: darkgray;
   }
 }

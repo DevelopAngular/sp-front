@@ -2,7 +2,7 @@
 
   <div class="divider" [style.background-image]="'radial-gradient(circle at 73% 71%, #E7A700,#EFCE00)'">
     <img class="divider-icon" [src]="'./assets/Star (White).png' | resolveAsset">
-    <div class="divider-text">Favorties</div>
+    <div class="divider-text">Favorites</div>
   </div>
   <div class="content">
     <app-location-table class="locations" (onStar)="onStar($event)" [showFavorites]="true" [type]="'location'" [placeholder]="'Search rooms'" [showStars]="true"></app-location-table>
