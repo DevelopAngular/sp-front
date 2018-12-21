@@ -1,14 +1,15 @@
 <div class="color-wrapper">
   <div class="color-title">Color</div>
   <div class="colors">
-    <div class="pick-color"
+    <div class="pick-color i"
          #col
-         *ngFor="let color of colors$ | async"
+         *ngFor="let color of colors$ | async; let i = index"
+         [@pressState]="buttonState"
+         (mouseenter)="onHover(true)" (mouseleave)="onHover(false)"
+         (mousedown)="onPress(true)" (mouseup)="onPress(false)"
          [style.background]="color.solid_color"
          [ngStyle]="{'box-shadow': selectedId === color.id ? '0px 0px 20px ' + color.solid_color : '0 2px 4px 0px rgba(0, 0, 0, 0.1)'}"
          (click)="changeColor(color)"
-         (mouseover)="overEffect(color, $event)"
-         (mouseleave)="leaveEffect(color)"
     >
     </div>
   </div>

@@ -43,7 +43,7 @@ export class PinnableComponent implements OnInit {
   @Input()
   selected: boolean = false;
 
-  @Output() 
+  @Output()
   onSelectEvent: EventEmitter<Pinnable> = new EventEmitter();
 
   restricted: boolean = false;

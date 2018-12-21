@@ -9,8 +9,15 @@
            *ngIf="overlayType !== 'addExisting'
            && overlayType !== 'newRoomInFolder'
            && overlayType !== 'importRooms'
-           && overlayType !== 'settingsRooms'"
+           && overlayType !== 'settingsRooms' && (!showPublishFolder && !showPublishNewRoom && !showPublishEditRoom)"
            [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
+
+      <div class="cancel-button" *ngIf="overlayType !== 'addExisting'
+           && overlayType !== 'newRoomInFolder'
+           && overlayType !== 'importRooms'
+           && overlayType !== 'settingsRooms'
+           && (showPublishFolder || showPublishNewRoom || showPublishEditRoom)" (click)="back()">Cancel</div>
+
       <div class="title" *ngIf="overlayType === 'newRoom' || overlayType === 'editRoom'">{{ roomName }}</div>
       <div
         class="title"
@@ -77,14 +84,21 @@
       <div class="new-room-in-folder"
            *ngIf="overlayType === 'newRoomInFolder' || overlayType === 'importRooms' || overlayType === 'settingsRooms'">
           <div class="new-room-in-folder-header">
-            <img draggable="false" class="back-button" (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : setLocation('newFolder'))" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
+
+            <img draggable="false" class="back-button" *ngIf="!showDoneButton" (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : setLocation('newFolder'))" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
+
+            <div class="cancel-button-in-folder-header"
+                 *ngIf="showDoneButton"
+                 (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : setLocation('newFolder'))"
+            >Cancel</div>
+
             <div [ngClass]="{'room-in-folder-title-inactive': !isValidForm, 'room-in-folder-title-active': isValidForm || (overlayType === 'settingsRooms')}">
               {{ (overlayType === 'newRoomInFolder' ? roomName : (overlayType === 'settingsRooms' ? (isEditRooms ? 'Editing ' + readyRoomsToEdit.length : 'Adding ' + importedRooms.length)  + ' Rooms' : 'Import Rooms')) }}
             </div>
             <!--<div>{{importedRooms.length}} actually</div>-->
             <div class="header-in-folder-button">
               <span *ngIf="overlayType === 'settingsRooms' && form.get('timeLimit').invalid">Incomplete</span>
-                <app-gradient-button *ngIf="(isValidForm && (form.dirty || isDirtyNowRestriction || isDirtyFutureRestriction || isDirtyTravel) && overlayType === 'newRoomInFolder') || (form.get('timeLimit').valid && overlayType === 'settingsRooms')"
+                <app-gradient-button *ngIf="showDoneButton"
                         [minHeight]="'40px'"
                         [style.width]="'120px'"
                         [cursor]="'pointer'"
@@ -142,7 +156,7 @@
         <div class="teacher-title">Teachers in Room</div>
         <app-profiles-search [placeholder]="'Search Teachers'" [selectedStudents]="selectedTichers" (isEmitUsers)="isEmitTeachers($event)" (onUpdate)="selectTeacherEvent($event)" [role]="'_profile_teacher'"></app-profiles-search>
       </div>
-      <div style="display: flex; margin-top: 13px; margin-bottom: 13px"
+      <div style="display: flex; margin-top: 16px; margin-bottom: 13px"
            *ngIf="(overlayType === 'newRoom'
            || overlayType === 'newRoomInFolder'
            || overlayType === 'settingsRooms'

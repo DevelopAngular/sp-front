@@ -46,6 +46,12 @@
   cursor: pointer;
 }
 
+.cancel-button {
+  margin-left: 30px;
+  color: white;
+  cursor: pointer;
+}
+
 .left-content {
   display: flex;
   flex-direction: column;
@@ -320,6 +326,13 @@
       margin-left: 20px;
       cursor: pointer;
     }
+
+    .cancel-button-in-folder-header {
+      margin-left: 20px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
   }
 }
 

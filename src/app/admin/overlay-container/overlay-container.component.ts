@@ -153,6 +153,20 @@ export class OverlayContainerComponent implements OnInit {
             (this.isEditFolder && (this.isDirtyIcon || this.isDirtyColor || this.isChangeLocations.value));
   }
 
+  get showDoneButton() {
+    return (this.isValidForm &&
+        (this.newRoomFormDirty ||
+            this.isDirtyNowRestriction ||
+            this.isDirtyFutureRestriction ||
+            this.isDirtyTravel) &&
+        this.overlayType === 'newRoomInFolder') ||
+        (this.form.get('timeLimit').valid && this.overlayType === 'settingsRooms');
+  }
+
+  get newRoomFormDirty() {
+    return this.form.get('roomName').dirty || this.form.get('roomNumber').dirty || this.form.get('timeLimit').dirty;
+  }
+
 
   ngOnInit() {
 

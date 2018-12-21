@@ -1,11 +1,13 @@
-import {Component, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
-import {HttpService} from '../../http-service';
-import {map, shareReplay} from 'rxjs/operators';
+import { Component, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
+import { HttpService } from '../../http-service';
+import { map, shareReplay } from 'rxjs/operators';
+import { bumpIn } from '../../animations';
 
 @Component({
     selector: 'app-color-pallet-picker',
     templateUrl: './color-pallet-picker.component.html',
-    styleUrls: ['./color-pallet-picker.component.scss']
+    styleUrls: ['./color-pallet-picker.component.scss'],
+    animations: [bumpIn]
 })
 export class ColorPalletPickerComponent implements OnInit {
 
@@ -18,10 +20,15 @@ export class ColorPalletPickerComponent implements OnInit {
   @ViewChild('col') pickColor;
 
   selectedId: number;
-  activeShadow: number = 20;
-  inactiveShadow: number = 0;
+
+  buttonDown = false;
+  hovered: boolean = false;
 
   constructor(private httpService: HttpService, private renderer: Renderer2) { }
+
+  get buttonState() {
+     return this.buttonDown ? 'down' : 'up';
+  }
 
   ngOnInit() {
       this.colors$ = this.httpService.get('v1/color_profiles').pipe(
@@ -34,10 +41,21 @@ export class ColorPalletPickerComponent implements OnInit {
       }
   }
 
-    changeColor(color) {
-        this.selectedId = color.id;
-        this.selectedEvent.emit(color);
-    }
+  changeColor(color) {
+    this.selectedId = color.id;
+    this.selectedEvent.emit(color);
+  }
+
+  onPress(press: boolean) {
+    this.buttonDown = press;
+  }
+
+  onHover(hover: boolean){
+     this.hovered = hover;
+     if (!hover) {
+      this.buttonDown = false;
+     }
+  }
 
   overEffect(color, ev) {
     // this.renderer
