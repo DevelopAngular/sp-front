@@ -33,11 +33,17 @@
     font-size: 16px;
     caret-color: auto;
 }
-
+.input-focus-wrapper {
+  border: 1px solid transparent;
+  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+  border-radius: 20px;
+  margin-bottom: 5px;
+}
 input {
     border: 0px;
     padding: 0 0 0 15px;
     caret-color: auto;
+
 }
 
 input:focus{

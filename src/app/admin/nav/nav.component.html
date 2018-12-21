@@ -1,32 +1,34 @@
 <div class="nav-wrapper">
 
-  <div class="nav-header">
-    <app-smartpass-logo></app-smartpass-logo>
-  </div>
-
-  <div class="divider"></div>
-  <div class="nav-buttons">
-    <div *ngIf="!(fakeMenu | async)">
-      <div *ngFor="let button of buttons">
-        <ng-container *ngIf="hasRoles(button.requiredRoles)">
-          <app-nav-button
-            [style.margin-bottom]="'15px'"
-            [selected]="isSelected(button.route)"
-            [content]="button.title"
-            [icon]="button.imgUrl"
-            (onClick)="route(button.route)">
-          </app-nav-button>
-        </ng-container>
-      </div>
+  <div class="nav-main">
+    <div class="nav-header">
+      <app-smartpass-logo></app-smartpass-logo>
     </div>
-    <div *ngFor="let button of buttons">
-      <ng-container *ngIf="fakeMenu | async">
+
+    <div class="divider"></div>
+    <div class="nav-buttons">
+      <div *ngIf="!(fakeMenu | async)">
+        <div *ngFor="let button of buttons">
+          <ng-container *ngIf="hasRoles(button.requiredRoles)">
+            <app-nav-button
+              [style.margin-bottom]="'15px'"
+              [selected]="isSelected(button.route)"
+              [content]="button.title"
+              [icon]="button.imgUrl"
+              (onClick)="route(button.route)">
+            </app-nav-button>
+          </ng-container>
+        </div>
+      </div>
+      <div *ngFor="let button of buttons">
+        <ng-container *ngIf="fakeMenu | async">
           <app-nav-button
             [style.margin-bottom]="'15px'"
             [content]="button.title"
             [icon]="button.imgUrl">
           </app-nav-button>
-      </ng-container>
+        </ng-container>
+      </div>
     </div>
   </div>
   <div class="nav-footer">

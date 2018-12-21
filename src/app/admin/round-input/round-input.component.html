@@ -6,7 +6,7 @@
 
   <!--<div *ngIf="selected" class="inputSelector" [style.width]="width"></div>-->
   <div class="field-wrapper">
-    <div [style.border]="'1px solid transparent'" [style.margin-bottom]="'5px'" [ngClass]="{'inputSelector': selected === true}">
+    <div class="input-focus-wrapper" [ngClass]="{'inputSelector': selected === true}">
 
       <input #input class="input" type="text" [style.width]="width" [style.min-width]="minWidth"
              [placeholder]="placeholder" [readonly]="type == 'dates'"

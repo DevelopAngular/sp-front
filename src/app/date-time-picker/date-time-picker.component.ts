@@ -30,14 +30,14 @@ export class DateTimePickerComponent implements OnInit, OnDestroy{
   constructor() {
   }
 
-  set selectedMoment(newMoment: Date){
+  set selectedMoment(newMoment: Date) {
     this._selectedMoment = newMoment;
     // this.onUpdate.emit(this._selectedMoment);
     this.ngOnDestroy();
     console.log('[Date-Time Moment]: ', this._selectedMoment);
   }
 
-  get selectedMoment(){
+  get selectedMoment() {
     return this._selectedMoment;
   }
 
@@ -58,7 +58,9 @@ export class DateTimePickerComponent implements OnInit, OnDestroy{
 
   ngOnInit() {
     console.log('[Date-Time Debug]: ', 'Date-Time where at');
-    this._selectedMoment.setMinutes(this._selectedMoment.getMinutes()+1)
+    if(this._selectedMoment) {
+      this._selectedMoment.setMinutes(this._selectedMoment.getMinutes()+1)
+    }
     this.min.setMinutes(this.min.getMinutes()+1)
     // this.onUpdate.emit(this._selectedMoment);
 
@@ -71,7 +73,7 @@ export class DateTimePickerComponent implements OnInit, OnDestroy{
   ngOnDestroy() {
     this.onUpdate.emit(this._selectedMoment);
   }
-  confirmDates(){
+  confirmDates() {
     this.onconfirm.emit(this.dateRangeText);
   }
 }

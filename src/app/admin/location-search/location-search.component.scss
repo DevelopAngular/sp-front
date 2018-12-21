@@ -25,8 +25,10 @@ mat-input-container.md-input-focused label {
 }
 
 .options-wrapper{
-    margin: 10px auto 10px auto;
+    margin: 10px auto 0 auto;
     width: 180px;
+    height: 115px;
+    overflow-y: scroll;
 }
 
 .option-wrapper {

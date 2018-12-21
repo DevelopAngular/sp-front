@@ -10,8 +10,14 @@ import { LiveDataService } from '../../live-data/live-data.service';
 import { PassLikeProvider } from '../../models/providers';
 import {CalendarComponent} from '../calendar/calendar.component';
 import {HttpService} from '../../http-service';
-import {map} from 'rxjs/operators';
 import {Util} from '../../../Util';
+import {groupBy, mergeMap, map, toArray} from 'rxjs/operators';
+// import { groupBy as LodashGroupBy }from 'lodash';
+import {from, Observable} from 'rxjs';
+import {sequence} from '@angular/animations';
+import {switchMap, tap} from 'rxjs/internal/operators';
+import { groupBy as lodashGroupBy} from 'lodash';
+
 
 
 @Component({
@@ -27,7 +33,6 @@ export class HallmonitorComponent implements OnInit {
     input_value2: string;
     input_DateRange: string;
     activeCalendar: boolean;
-
     choices = ['Origin', 'Destination', 'Both'];
     selectedtoggleValue: string = this.choices[0];
 
@@ -44,7 +49,7 @@ export class HallmonitorComponent implements OnInit {
     searchDate_1st$ = new BehaviorSubject<Date>(null);
     searchDate_2nd$ = new BehaviorSubject<Date>(null);
 
-    public reportsDate: Date = new Date();
+    public reportsDate: Date;
 
     constructor(
         public dialog: MatDialog,
@@ -58,33 +63,7 @@ export class HallmonitorComponent implements OnInit {
 
   ngOnInit() {
     this.activePassProvider = new ActivePassProvider(this.liveDataService, this.searchQuery$);
-    this.getReports(this.minDate);
-    // this.studentreport = [
-    //   {
-    //     student_name: 'Hannah Banks',
-    //     issuer: 'Madelene Lin',
-    //     created: 'Oct. 4, 7:04 PM',
-    //     message: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium assumenda dignissimos dolores ea facilis odio placeat quibusdam repudiandae similique tempore?'
-    //   },
-    //   {
-    //     student_name: 'Hannah Banks',
-    //     issuer: 'Madelene Lin',
-    //     created: 'Oct. 4, 7:04 PM',
-    //     message: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium assumenda dignissimos dolores ea facilis odio placeat quibusdam repudiandae similique tempore?\n'
-    //   },
-    //   {
-    //     student_name: 'Hannah Banks',
-    //     issuer: 'Madelene Lin',
-    //     created: 'Oct. 4, 4:18 PM',
-    //     message: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium assumenda dignissimos dolores ea facilis odio placeat quibusdam repudiandae similique tempore?\n'
-    //   },
-    //   {
-    //     student_name: 'Hannah Banks',
-    //     issuer: 'Madelene Lin',
-    //     created: 'Oct. 4, 4:18 PM',
-    //     message: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium assumenda dignissimos dolores ea facilis odio placeat quibusdam repudiandae similique tempore?\n'
-    //   }
-    // ];
+    this.getReports();
   }
 
   onSearch(searchValue) {
@@ -102,16 +81,19 @@ export class HallmonitorComponent implements OnInit {
         backdropClass: 'invis-backdrop',
         data: {
           'trigger': target,
-          'previousSelectedDate': this.reportsDate
+          'previousSelectedDate': this.reportsDate ? new Date(this.reportsDate) : null,
         }
     });
-    DR.afterClosed().subscribe((data) => {
+    DR.afterClosed()
+      .subscribe((data) => {
         this.activeCalendar = false;
-
-      // console.log('82 Date ===> :', data.date);
-        if (this.reportsDate.getTime() !== data.date.getTime()) {
-          this.reportsDate = new Date(data.date);
-          this.getReports(this.reportsDate);
+      console.log('82 Date ===> :', data.date);
+        if (data.date) {
+          if ( !this.reportsDate || (this.reportsDate && this.reportsDate.getTime() !== data.date.getTime()) ) {
+            this.reportsDate = new Date(data.date);
+            console.log(this.reportsDate);
+            this.getReports(this.reportsDate);
+          }
         }
       }
     );
@@ -135,8 +117,7 @@ export class HallmonitorComponent implements OnInit {
       });
   }
 
-  TooltipConfirmation(evt: MouseEvent)
-  {
+  TooltipConfirmation(evt: MouseEvent) {
       const target = new ElementRef(evt.currentTarget);
       let options = [];
       let header = '';
@@ -233,23 +214,51 @@ export class HallmonitorComponent implements OnInit {
       this.selectedtoggleValue = emit;
       console.log(emit);
   }
-  private getReports(date: Date) {
+  private getReports(date?: Date) {
     const range = this.liveDataService.getDateRange(date);
     console.log(range);
-    // this.http.get(`v1/event_reports?created_before=${range.end.toISOString()}&created_after=${range.start.toISOString()}`)
-    this.http.get(`v1/event_reports`)
-    // this.http.get(`v1/event_reports`)
-      .subscribe((list: Report[]) => {
-        this.studentreport = list.map((report) => {
-          return {
-            student_name: report.student.display_name,
-            issuer: report.issuer.display_name,
-            created: Util.formatDateTime(new Date(report.created), false, true),
-            message: report.message,
+    this.http.get(`v1/event_reports${ date ? `?created_before=${range.end.toISOString()}&created_after=${range.start.toISOString()}` : ''}`)
+      .pipe(
+          map((list: any[]) => {
+
+          return list.map((report, index) => {
+            return {
+              student_name: report.student.display_name,
+              issuer: report.issuer.display_name,
+              createdDate: Util.formatDateTime(new Date(report.created), false, true).split(', ')[0],
+              created: Util.formatDateTime(new Date(report.created), false, true),
+              message: report.message,
+            };
+          });
+
+        }),
+        switchMap((list: any[]) => {
+
+          const groupedStudentreport: any[] = [];
+          const temp = {
+            date: null,
+            reports: []
           };
-        });
-        console.log(this.studentreport);
-        // this.studentreport = this.studentreport.concat(this.studentreport, this.studentreport);
+          list.forEach((report, index) => {
+
+            if (index < list.length) {
+              temp.date = report.createdDate;
+              temp.reports.push(report);
+
+              if ( (index === list.length - 1) || report.createdDate !== list[index + 1].createdDate)  {
+                groupedStudentreport.push(Object.assign({}, temp));
+                temp.date = '';
+                temp.reports = [];
+                return;
+              }
+            }
+          });
+          return groupedStudentreport;
+        }),
+        toArray()
+      )
+      .subscribe((list: any[]) => {
+        this.studentreport = list;
       });
   }
 }
