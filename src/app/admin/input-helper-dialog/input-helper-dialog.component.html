@@ -24,16 +24,19 @@
 </div>
 <div *ngIf="type=='location'" class="student-select" [style.height]="'300px'">
   <app-location-search  [style.width]="'75%'" (onUpdate)="selectedLocations=$event" [selectedLocations]="selectedLocations"></app-location-search>
-  <app-toggle-picker (onSelect)="toggleState = $event" [selectedChoice]="toggleState" [choices]="['Origin', 'Destination' , 'Either']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
-  <app-gradient-button
-    [gradient]="'#03CF31,#00B476'"
-    [hoverColor]="'#00B476'"
-    [minWidth]="'90px'"
-    [minHeight]="'30px'"
-    [fontSize]="'14px'"
-    (buttonClick)="closeDialog()"
-    [style.width]="'90px'"
-    [style.margin-bottom]="'20px'"
+  <div class="button-panel">
+
+    <app-toggle-picker (onSelect)="toggleState = $event" [selectedChoice]="toggleState" [choices]="['Origin', 'Destination' , 'Either']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+    <app-gradient-button
+      [gradient]="'#03CF31,#00B476'"
+      [hoverColor]="'#00B476'"
+      [minWidth]="'90px'"
+      [minHeight]="'30px'"
+      [fontSize]="'14px'"
+      (buttonClick)="closeDialog()"
+      [style.width]="'90px'"
+      [style.margin]="'20px auto'"
     >
-  Done ({{ selectedLocations.length }})</app-gradient-button>
+      Done ({{ selectedLocations.length }})</app-gradient-button>
+  </div>
 </div>

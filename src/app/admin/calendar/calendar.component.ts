@@ -32,7 +32,7 @@ export class CalendarComponent implements OnInit {
      if (date) {
        _date = date;
      } else {
-       _date = new Date();
+       _date = '';
      }
      console.log(_date);
      this._matDialogRef.close({date: _date});

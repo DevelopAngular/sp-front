@@ -1,12 +1,16 @@
 .nav-wrapper{
     display: flex;
     flex-direction: column;
-    padding: 0 30px;
     background: white;
     height: 100%;
     white-space: nowrap;
+    position: relative;
+    overflow-x: hidden;
 }
-
+.nav-main {
+  overflow-y: scroll;
+  padding: 0 30px;
+}
 .nav-header{
     display: flex;
     flex-direction: row;
@@ -20,11 +24,17 @@
 }
 
 .nav-footer{
+    bottom: 0;
+    position: absolute;
+    height: 60px;
+    width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin: auto 0 30px 0;
-    justify-content: space-between
+    justify-content: space-between;
+    background-color: #FFFFFF;
+    box-shadow: -12px -15px 20px 3px #ffF;
+    right: 10px;
 }
 
 .divider{
@@ -40,19 +50,20 @@
     animation: active-route .2s ease forwards;
 }
 @keyframes active-route{
-  0%{
-    box-shadow: 0 0 0 0px rgb(228, 235, 255);
-  }
-  100%{
-    box-shadow: 0 0 0 10px rgb(228, 235, 255);
-  }
+    0%{
+      box-shadow: 0 0 0 0px rgb(228, 235, 255);
+    }
+    100%{
+      box-shadow: 0 0 0 10px rgb(228, 235, 255);
+    }
 }
 
 .footer-text {
-  font-size: 14pt;
-  font-weight: 900;
-  padding-left: 15px;
-  color: #3d396b;
+    font-size: 14pt;
+    margin-left: 25px;
+    font-weight: 900;
+    padding-left: 15px;
+    color: #3d396b;
 }
 
 .footer-settings{

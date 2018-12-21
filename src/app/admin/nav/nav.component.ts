@@ -19,8 +19,8 @@ export class NavComponent implements OnInit {
     {title: 'Dashboard', route : 'dashboard', imgUrl : './assets/Dashboard', requiredRoles: ['_profile_admin', 'admin_dashboard']},
     {title: 'Hall Monitor', route : 'hallmonitor', imgUrl : './assets/Hallway', requiredRoles: ['_profile_admin', 'admin_hall_monitor']},
     {title: 'Search', route : 'search', imgUrl : './assets/Search', requiredRoles: ['_profile_admin', 'admin_search']},
-    {title: 'Accounts & Profiles', route : 'accounts', imgUrl : './assets/Accounts', requiredRoles: ['_profile_admin', 'admin_accounts']},
     {title: 'Pass Configuration', route : 'passconfig', imgUrl : './assets/Arrow', requiredRoles: ['_profile_admin', 'admin_pass_config']},
+    {title: 'Accounts & Profiles', route : 'accounts', imgUrl : './assets/Accounts', requiredRoles: ['_profile_admin', 'admin_accounts']},
     {title: 'Feedback', route : 'feedback', imgUrl : './assets/Feedback', requiredRoles: ['_profile_admin']},
     {title: 'Support', route : 'support', imgUrl : './assets/Support', requiredRoles: ['_profile_admin']},
   ];

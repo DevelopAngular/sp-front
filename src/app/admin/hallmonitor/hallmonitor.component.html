@@ -32,31 +32,33 @@
             <div class="text">Reported Students</div>
           </div>
           <div class="calendar-icon-container" [ngClass]="{'active-calendar-icon': activeCalendar}">
-            <img draggable="false" [src]="'./assets/Calendar (Blue).png' | resolveAsset" class="calendar-icon" (click)="openDateDialog($event)">
+            <img draggable="false" [src]="( !reportsDate ? './assets/Calendar (Blue).png' : './assets/Calendar (Light Blue).png') | resolveAsset" class="calendar-icon" (click)="openDateDialog($event)">
           </div>
         </div>
-        <h3 style="text-align: center; margin: 15px" *ngIf="studentreport.length">{{reportsDate | date}}</h3>
+        <h3 style="text-align: center; margin: 15px; color: #134482" *ngIf="!studentreport.length">{{reportsDate | date : 'MMM. d' }}</h3>
         <div class="reports">
+          <!--<pre>{{studentreport | json}}</pre>-->
           <div *ngIf="studentreport.length">
 
-            <div *ngFor="let report of studentreport">
-
-              <div class="divider"></div>
-              <app-display-report-cell
-                [student_name]="report.student_name"
-                [issuer]="report.issuer"
-                [created]="report.created"
-                [message]="report.message || 'empty'"
-                [hasDivider]="true"
-                [righticon]="'./assets/Print (Grey).png'"></app-display-report-cell>
-
+            <div *ngFor="let reportGroup of studentreport">
+              <h3 style="text-align: center; margin: 15px; color: #134482" *ngIf="reportGroup.date">{{reportGroup.date}}</h3>
+              <div *ngFor="let report of reportGroup.reports">
+                <div class="divider"></div>
+                <app-display-report-cell
+                  [student_name]="report.student_name"
+                  [issuer]="report.issuer"
+                  [created]="report.created"
+                  [message]="report.message || 'empty'"
+                  [hasDivider]="true"
+                  [righticon]="'./assets/Print (Grey).png'"></app-display-report-cell>
+              </div>
             </div>
           </div>
           <div *ngIf="!studentreport.length" >
-            <p [style.color]="'#666666'">
-              There are no reporters for the selected date.
-            </p>
             <div class="divider"></div>
+            <p [style.color]="'#666666'" [style.text-align]="'center'">
+              No Reported Students for the selected date
+            </p>
           </div>
         </div>
       </div>
