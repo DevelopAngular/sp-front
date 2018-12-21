@@ -47,6 +47,7 @@ export class OverlayContainerComponent implements OnInit {
   color_profile;
   selectedIcon;
 
+  initialState;
   currentState;
   stateStatus: boolean;
 
@@ -260,7 +261,7 @@ export class OverlayContainerComponent implements OnInit {
         }
       });
 
-      this.currentState = {
+      this.initialState = {
           roomName: this.roomName,
           folderName: this.folderName,
           roomNumber: this.roomNumber,
@@ -274,7 +275,7 @@ export class OverlayContainerComponent implements OnInit {
       };
 
       this.form.valueChanges.subscribe(res => {
-          this.changeState(res);
+          this.changeState();
       });
   }
 
@@ -295,29 +296,44 @@ export class OverlayContainerComponent implements OnInit {
     });
   }
 
-  changeState(state) {
-     const currState = this.currentState;
+  changeState() {
+     const initState = this.initialState;
+     const currState = {
+         roomName: this.roomName,
+         folderName: this.folderName,
+         roomNumber: this.roomNumber,
+         restricted: this.nowRestriction,
+         scheduling_restricted: this.futureRestriction,
+         travel_type: this.travelType,
+         teachers: this.selectedTichers,
+         color: this.color_profile.id,
+         icon: this.selectedIcon,
+         timeLimit: this.timeLimit
+     };
      const status = [];
-    if (state.roomName) {
-        status.push(state.roomName === currState.roomName);
+    if (currState.roomName) {
+        status.push(currState.roomName === initState.roomName);
     }
-    if (state.roomNumber) {
-        status.push(state.roomNumber === currState.roomNumber);
+    if (currState.folderName) {
+        status.push(currState.folderName === initState.folderName);
     }
-    if (state.timeLimit) {
-        status.push(+state.timeLimit === currState.timeLimit);
+    if (currState.roomNumber) {
+        status.push(currState.roomNumber === initState.roomNumber);
     }
-    if (state.restriction) {
-        status.push(state.restriction === currState.restriction);
+    if (currState.timeLimit) {
+        status.push(+currState.timeLimit === initState.timeLimit);
     }
-    if (state.scheduling_restricted) {
-        status.push(state.scheduling_restricted === currState.scheduling_restricted);
+    if (currState.restricted) {
+        status.push(currState.restricted === initState.restricted);
     }
-    if (state.icon) {
-        status.push(state.icon === currState.icon);
+    if (currState.scheduling_restricted) {
+        status.push(currState.scheduling_restricted === initState.scheduling_restricted);
     }
-    if (state.color) {
-        status.push(state.color === currState.color);
+    if (currState.icon) {
+        status.push(currState.icon === initState.icon);
+    }
+    if (currState.color) {
+        status.push(currState.color === initState.color);
     }
    this.stateStatus = status.includes(false);
       console.log('STATUS', this.stateStatus);
@@ -383,13 +399,13 @@ export class OverlayContainerComponent implements OnInit {
     this.color_profile = color;
     this.gradientColor = 'radial-gradient(circle at 98% 97%,' + color.gradient_color + ')';
     this.isDirtyColor = true;
-    this.changeState({ color: color.id });
+    this.changeState();
   }
 
   changeIcon(icon) {
     this.selectedIcon = icon;
     this.isDirtyIcon = true;
-    this.changeState({ icon: icon.inactive_icon });
+    this.changeState();
   }
 
   addToFolder() {
@@ -687,23 +703,23 @@ export class OverlayContainerComponent implements OnInit {
      travelType = ['one_way', 'round_trip'];
    }
    this.travelType = travelType;
-   this.changeState({ travel_type: travelType });
+   this.changeState();
   }
 
   nowRestrictionUpdate(restriction) {
     this.nowRestriction = restriction === 'Restricted';
-    this.changeState({ restriction: this.nowRestriction });
+    this.changeState();
   }
 
   futureRestrictionUpdate(restriction) {
     this.futureRestriction = restriction === 'Restricted';
-    this.changeState({ scheduling_restricted: this.futureRestriction });
+    this.changeState();
   }
 
   selectTeacherEvent(teachers) {
     this.selectedTichers = teachers;
     this.isDirtysettings = true;
-    this.changeState({ teachers });
+    this.changeState();
   }
 
   isEmitTeachers(event) {
