@@ -27,6 +27,7 @@ export class OverlayContainerComponent implements OnInit {
   readyRoomsToEdit: Pinnable[] = [];
   pinnable: Pinnable;
   pinnables$: Observable<Pinnable[]>;
+  currentLocationInEditRoomFolder;
   overlayType: string;
   roomName: string;
   folderName: string;
@@ -344,7 +345,8 @@ export class OverlayContainerComponent implements OnInit {
 
   addToFolder() {
       this.isChangeLocations.next(true);
-      this.selectedRooms = [...this.selectedRoomsInFolder, ...this.selectedRooms];
+      const locationsToAdd = this.selectedRoomsInFolder.map(room => room.location);
+      this.selectedRooms = [...locationsToAdd, ...this.selectedRooms];
       this.setLocation('newFolder');
   }
 
@@ -361,6 +363,8 @@ export class OverlayContainerComponent implements OnInit {
       this.nowRestriction = room.restricted;
       this.futureRestriction = room.scheduling_restricted;
       this.travelType = room.travel_types;
+
+      this.currentLocationInEditRoomFolder = room;
 
       this.setLocation('editRoomInFolder');
 
@@ -601,10 +605,27 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   deleteRoom() {
+    if (this.overlayType === 'editRoom' || this.isEditFolder) {
       this.http.delete(`v1/pinnables/${this.pinnable.id}`).subscribe(res => {
-          console.log(res);
-          this.dialogRef.close();
+        console.log(res);
+        this.dialogRef.close();
       });
+    }
+
+    if (this.editRoomInFolder) {
+        console.log('Kill Me', this.currentLocationInEditRoomFolder);
+        this.selectedRooms = this.selectedRooms.filter(room => room.id !== this.currentLocationInEditRoomFolder.id);
+        this.setLocation('newFolder');
+        this.isChangeLocations.next(true);
+
+        // TODO Uncomment when the endpoint is ready
+        // this.http.delete(`v1/locations/${this.currentLocationInEditRoomFolder.id}`).subscribe((res: Location) => {
+        //     this.selectedRooms = this.selectedRooms.filter(room => room.id !== res.id);
+        //     this.setLocation('newFolder');
+        //     this.isChangeLocations.next(true);
+        // });
+    }
+
   }
 
   travelUpdate(type) {

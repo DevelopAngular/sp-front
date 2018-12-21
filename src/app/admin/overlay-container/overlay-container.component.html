@@ -348,23 +348,47 @@
         <!--</div>-->
       </div>
      </div>
-        <div class="footer-delete-button" *ngIf="(overlayType === 'editRoom') && !showSearchTeacherOptions">
+        <div class="footer-delete-button"
+          *ngIf="(overlayType === 'editRoom' ||(editRoomInFolder && isValidForm)) && !showSearchTeacherOptions"
+          [style.margin-top]="overlayType === 'editRoom' ? '90px' : '50px'"
+        >
             <app-gradient-button
                     [hoverColor]="'#DA2370'"
                     [gradient]="'#DA2370,#FB434A'"
                     [minHeight]="'40px'"
                     [style.width]="'140px'"
                     [cursor]="'pointer'"
-                    [fontSize]="'12px'"
+                    [fontSize]="'14px'"
                     (buttonClick)="deleteRoom()"
             >
                 Delete Room</app-gradient-button>
 
             <div class="footer-info-text">
-                This will erase all active and scheduled passes to and from this room.<br/>
-                This will not erase any expired passes to or from this room.
+              This <b style="color: gray">will</b> erase all active and scheduled passes to and from this room.<br/>
+              This <b style="color: gray">will not</b> erase any expired passes to or from this room.
             </div>
         </div>
+
+      <div class="footer-delete-button"
+           *ngIf="overlayType === 'newFolder' && isEditFolder && selectedRooms.length"
+           style="margin-top: 20px"
+      >
+        <app-gradient-button
+                [hoverColor]="'#DA2370'"
+                [gradient]="'#DA2370,#FB434A'"
+                [minHeight]="'40px'"
+                [style.width]="'140px'"
+                [cursor]="'pointer'"
+                [fontSize]="'14px'"
+                (buttonClick)="deleteRoom()"
+        >
+          Delete Folder</app-gradient-button>
+
+        <div class="footer-info-text">
+          This <b style="color: gray">will</b> erase all active and scheduled passes to and from all rooms in this folder.<br/>
+          This <b style="color: gray">will not</b> erase any expired passes to or from any rooms in this folder.
+        </div>
+      </div>
 
         <div class="bulk-warning-text" *ngIf="bulkWarningText">
             Keep in mind that editing a Folder in this menu will edit all rooms within that folder
