@@ -154,12 +154,4 @@ export class PassConfigComponent implements OnInit, OnDestroy {
              this.pinColComponent.clearSelected();
      });
   }
-
-  saveChanges() {
-  }
-
-  discard() {
-    this.dataChanges = [];
-  }
-
 }

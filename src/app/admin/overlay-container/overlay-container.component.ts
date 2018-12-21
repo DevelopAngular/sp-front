@@ -47,6 +47,9 @@ export class OverlayContainerComponent implements OnInit {
   color_profile;
   selectedIcon;
 
+  currentState;
+  stateStatus: boolean;
+
   bulkWarningText: boolean;
   isDirtysettings: boolean;
   isDirtyTravel: boolean;
@@ -139,10 +142,10 @@ export class OverlayContainerComponent implements OnInit {
 
   get showPublishEditRoom() {
      return this.isValidForm &&
-            (this.form.dirty ||
-                this.isDirtysettings ||
-                this.isDirtyFutureRestriction ||
-                this.isDirtyNowRestriction ||
+            (this.stateStatus ||
+                // this.isDirtysettings ||
+                // this.isDirtyFutureRestriction ||
+                // this.isDirtyNowRestriction ||
                 this.isDirtyTravel);
   }
 
@@ -256,6 +259,23 @@ export class OverlayContainerComponent implements OnInit {
                 });
         }
       });
+
+      this.currentState = {
+          roomName: this.roomName,
+          folderName: this.folderName,
+          roomNumber: this.roomNumber,
+          restricted: this.nowRestriction,
+          scheduling_restricted: this.futureRestriction,
+          travel_type: this.travelType,
+          teachers: this.selectedTichers,
+          color: this.color_profile.id,
+          icon: this.selectedIcon,
+          timeLimit: this.timeLimit
+      };
+
+      this.form.valueChanges.subscribe(res => {
+          this.changeState(res);
+      });
   }
 
   buildForm() {
@@ -273,6 +293,35 @@ export class OverlayContainerComponent implements OnInit {
             ]
         )
     });
+  }
+
+  changeState(state) {
+     const currState = this.currentState;
+     const status = [];
+    if (state.roomName) {
+        status.push(state.roomName === currState.roomName);
+    }
+    if (state.roomNumber) {
+        status.push(state.roomNumber === currState.roomNumber);
+    }
+    if (state.timeLimit) {
+        status.push(+state.timeLimit === currState.timeLimit);
+    }
+    if (state.restriction) {
+        status.push(state.restriction === currState.restriction);
+    }
+    if (state.scheduling_restricted) {
+        status.push(state.scheduling_restricted === currState.scheduling_restricted);
+    }
+    if (state.icon) {
+        status.push(state.icon === currState.icon);
+    }
+    if (state.color) {
+        status.push(state.color === currState.color);
+    }
+   this.stateStatus = status.includes(false);
+      console.log('STATUS', this.stateStatus);
+      console.log('Array', status);
   }
 
   setLocation(location) {
@@ -333,14 +382,14 @@ export class OverlayContainerComponent implements OnInit {
   changeColor(color) {
     this.color_profile = color;
     this.gradientColor = 'radial-gradient(circle at 98% 97%,' + color.gradient_color + ')';
-    this.isDirtysettings = true;
     this.isDirtyColor = true;
+    this.changeState({ color: color.id });
   }
 
   changeIcon(icon) {
     this.selectedIcon = icon;
-    this.isDirtysettings = true;
     this.isDirtyIcon = true;
+    this.changeState({ icon: icon.inactive_icon });
   }
 
   addToFolder() {
@@ -638,19 +687,23 @@ export class OverlayContainerComponent implements OnInit {
      travelType = ['one_way', 'round_trip'];
    }
    this.travelType = travelType;
+   this.changeState({ travel_type: travelType });
   }
 
   nowRestrictionUpdate(restriction) {
     this.nowRestriction = restriction === 'Restricted';
+    this.changeState({ restriction: this.nowRestriction });
   }
 
   futureRestrictionUpdate(restriction) {
     this.futureRestriction = restriction === 'Restricted';
+    this.changeState({ scheduling_restricted: this.futureRestriction });
   }
 
   selectTeacherEvent(teachers) {
     this.selectedTichers = teachers;
     this.isDirtysettings = true;
+    this.changeState({ teachers });
   }
 
   isEmitTeachers(event) {
