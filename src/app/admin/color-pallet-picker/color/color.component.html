@@ -1,0 +1,8 @@
+<div class="color-wrapper"
+     [@pressState]="buttonState"
+     (mouseenter)="onHover(true)" (mouseleave)="onHover(false)"
+     (mousedown)="onPress(true)" (mouseup)="onPress(false)"
+     [style.box-shadow]="shadow"
+     [style.background]="color.solid_color"
+     (click)="changeColor($event)">
+</div>
