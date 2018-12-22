@@ -157,8 +157,10 @@ export class SearchComponent implements OnInit {
     if (this.selectedReport.length > 0) {
       const _selectedReport = this.selectedReport.map((row) => {
         const _copy = {};
-        for (const key of row) {
-          _copy[key] = typeof row[key] !== 'string' ? row[key] + ' min' : row[key];
+        for (const key in row) {
+          if (row.hasOwnProperty(key)) {
+            _copy[key] = typeof row[key] !== 'string' ? row[key] + ' min' : row[key];
+          }
         }
         return _copy;
       });
@@ -178,6 +180,8 @@ export class SearchComponent implements OnInit {
 
       const title = `${this.sortParamsHeader}: ${this.selectedDate ? `from ${prettyFrom} to ${prettyTo};` : ''} ${this.selectedRooms ? rooms : ''}`;
 
+
+      console.log('_selectedReport', _selectedReport);
       this.pdf.generate(_selectedReport, 'l', 'search', title);
     } else {
       event.preventDefault();
