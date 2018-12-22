@@ -167,20 +167,11 @@ export class OverlayContainerComponent implements OnInit {
 
   get showDoneButton() {
     return (this.isValidForm &&
-        // (
-            // this.newRoomFormDirty ||
-            // this.isDirtyNowRestriction ||
-            // this.isDirtyFutureRestriction ||
-            // this.isDirtyTravel) &&
-        (this.stateStatus && this.editRoomInFolder) &&
-        this.overlayType === 'newRoomInFolder') ||
+        (this.editRoomInFolder ? this.stateStatus : true) &&
+        this.overlayType === 'newRoomInFolder' &&
+        (!this.editRoomInFolder ? (this.isDirtyNowRestriction && this.isDirtyFutureRestriction) : true)) ||
         (this.form.get('timeLimit').valid && this.overlayType === 'settingsRooms');
   }
-
-  get newRoomFormDirty() {
-    return this.form.get('roomName').dirty || this.form.get('roomNumber').dirty || this.form.get('timeLimit').dirty;
-  }
-
 
   ngOnInit() {
 
@@ -311,7 +302,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   changeState() {
-    if (this.overlayType === 'editRoom' || this.isEditFolder || this.editRoomInFolder) {
+    if (this.overlayType === 'editRoom' || (this.isEditFolder && this.overlayType !== 'newRoomInFolder') || this.editRoomInFolder) {
         const initState = this.initialState;
         const currState: FormState = {
             roomName: this.roomName,
@@ -347,9 +338,6 @@ export class OverlayContainerComponent implements OnInit {
             status.push(currState.icon === initState.icon);
         }
         this.stateStatus = status.includes(false);
-        // console.log('STATUS', status);
-        // console.log('Array', currState);
-        // console.log(this.stateStatus);
     }
   }
 
@@ -449,7 +437,7 @@ export class OverlayContainerComponent implements OnInit {
       this.initialState = {
           roomName: room.title,
           roomNumber: room.room,
-          teachers: room.teachers,
+          teachers: room.teachers.map(t => +t.id),
           restricted: room.restricted,
           scheduling_restricted: room.scheduling_restricted,
           travel_type: room.travel_types,
