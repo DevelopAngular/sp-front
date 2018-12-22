@@ -251,9 +251,25 @@ export class PdfGeneratorService {
         }
         table.drawPagination(pageCounter);
 
-        const link = URL.createObjectURL(doc.output('blob'));
+        const isSafari = !!window.safari;
 
-        LinkGeneratedDialogComponent.createDialog(this.dialog, 'Report Generated', link);
+        const linkConsumer = (theLink) => {
+          LinkGeneratedDialogComponent.createDialog(this.dialog, 'Report Generated', theLink);
+        };
+
+        const blob = doc.output('blob');
+
+        if (isSafari) {
+
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            linkConsumer(reader.result);
+          };
+          reader.readAsDataURL(blob);
+
+        } else {
+          linkConsumer(URL.createObjectURL(blob));
+        }
 
       });
   }
