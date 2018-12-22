@@ -133,6 +133,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
         return x;
       })).subscribe();
     }
+
   }
 
   ngOnDestroy() {
