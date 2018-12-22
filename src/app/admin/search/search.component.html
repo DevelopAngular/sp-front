@@ -58,7 +58,7 @@
     </div>
     <div class="report-button-ground" *ngIf="spinner || hasSearched">
 
-      <a #printPdf (click)="previewPDF($event)" href="pdf/report" target="_blank" draggable="true" [ngStyle]="{'opacity': !selectedReport.length ? '.5' : '1'}">
+      <div (click)="previewPDF($event)" draggable="true" [ngStyle]="{'opacity': !selectedReport.length ? '.5' : '1'}">
         <app-gradient-button  class="report-button"
                               [gradient]="'#FFFFFF,#FFFFFF'"
                               [hoverColor]="'#F5F5F5'"
@@ -75,7 +75,7 @@
           </div>
         </app-gradient-button>
         <!--<a #printPdf href="pdf/report" target="_blank"></a>-->
-      </a>
+      </div>
     </div>
     <div class="search-content" *ngIf="!hasSearched">
 
