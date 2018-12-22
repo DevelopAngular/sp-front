@@ -242,7 +242,7 @@
 
           <div class="rooms-list" *ngIf="selectedRooms.length > 0 && !requireValidator(folderName)">
             <mat-list>
-              <div *ngFor="let room of selectedRooms">
+              <div *ngFor="let room of sortSelectedRooms">
                 <div class="room">
                   <mat-checkbox style="margin-left: 12px" (change)="selectedRoomsEvent($event, room)">
                   </mat-checkbox>

@@ -173,6 +173,10 @@ export class OverlayContainerComponent implements OnInit {
         (this.form.get('timeLimit').valid && this.overlayType === 'settingsRooms');
   }
 
+  get sortSelectedRooms() {
+    return _.sortBy(this.selectedRooms, (res) => res.title.toLowerCase());
+  }
+
   ngOnInit() {
 
       console.log(XLSX);
@@ -683,7 +687,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   deleteRoom() {
-    if (this.overlayType === 'editRoom' || this.isEditFolder) {
+    if (this.overlayType === 'editRoom' || (this.isEditFolder && this.overlayType === 'newFolder')) {
       this.http.delete(`v1/pinnables/${this.pinnable.id}`).subscribe(res => {
         console.log(res);
         this.dialogRef.close();
@@ -691,7 +695,6 @@ export class OverlayContainerComponent implements OnInit {
     }
 
     if (this.editRoomInFolder) {
-        console.log('Kill Me', this.currentLocationInEditRoomFolder);
         this.selectedRooms = this.selectedRooms.filter(room => room.id !== this.currentLocationInEditRoomFolder.id);
         this.setLocation('newFolder');
         this.isChangeLocations.next(true);
