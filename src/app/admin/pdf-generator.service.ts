@@ -254,12 +254,19 @@ export class PdfGeneratorService {
         const isSafari = !!window.safari;
 
         const linkConsumer = (theLink) => {
+          // Show the link to the user. The important part here is that the link is opened by the
+          // user from an href attribute on an <a> tag or the new window is opened during a click event.
+          // Most browsers will refuse to open a new tab/window if it is not opened during a user-triggered event.
           LinkGeneratedDialogComponent.createDialog(this.dialog, 'Report Generated', theLink);
         };
 
         const blob = doc.output('blob');
 
+        // create a blob link for the PDF
         if (isSafari) {
+
+          // Safari will not open URLs from createObjectURL() so this
+          // hack with a FileReader is used instead.
 
           const reader = new FileReader();
           reader.onloadend = () => {
