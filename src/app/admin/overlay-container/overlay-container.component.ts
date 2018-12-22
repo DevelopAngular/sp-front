@@ -7,11 +7,24 @@ import { map, switchMap} from 'rxjs/operators';
 
 import { Pinnable } from '../../models/Pinnable';
 import * as _ from 'lodash';
-import {User} from '../../models/User';
-import {HttpService} from '../../http-service';
+import { User } from '../../models/User';
+import { HttpService } from '../../http-service';
 import { Location } from '../../models/Location';
 import * as XLSX from 'xlsx';
-import {UserService} from '../../user.service';
+import { UserService } from '../../user.service';
+
+export interface FormState {
+    roomName: string;
+    folderName?: string;
+    roomNumber: string | number;
+    restricted: boolean;
+    scheduling_restricted: boolean;
+    travel_type: string[];
+    teachers: number[];
+    color?: number;
+    icon?: string;
+    timeLimit: number;
+}
 
 @Component({
   selector: 'app-overlay-container',
@@ -47,8 +60,7 @@ export class OverlayContainerComponent implements OnInit {
   color_profile;
   selectedIcon;
 
-  initialState;
-  currentState;
+  initialState: FormState;
   stateStatus: boolean;
 
   bulkWarningText: boolean;
@@ -142,20 +154,15 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   get showPublishEditRoom() {
-     return this.isValidForm &&
-            (this.stateStatus ||
-                // this.isDirtysettings ||
-                // this.isDirtyFutureRestriction ||
-                // this.isDirtyNowRestriction ||
-                this.isDirtyTravel);
+     return this.isValidForm && this.stateStatus;
   }
 
   get showPublishFolder() {
     return (this.form.get('folderName').valid &&
-            this.form.get('folderName').dirty &&
+            this.stateStatus &&
             this.color_profile && this.selectedIcon) ||
             (this.isChangeLocations.value && this.color_profile && this.selectedIcon) ||
-            (this.isEditFolder && (this.isDirtyIcon || this.isDirtyColor || this.isChangeLocations.value));
+            (this.isEditFolder && (this.isChangeLocations.value));
   }
 
   get showDoneButton() {
@@ -260,19 +267,7 @@ export class OverlayContainerComponent implements OnInit {
                 });
         }
       });
-
-      this.initialState = {
-          roomName: this.roomName,
-          folderName: this.folderName,
-          roomNumber: this.roomNumber,
-          restricted: this.nowRestriction,
-          scheduling_restricted: this.futureRestriction,
-          travel_type: this.travelType,
-          teachers: this.selectedTichers,
-          color: this.color_profile.id,
-          icon: this.selectedIcon,
-          timeLimit: this.timeLimit
-      };
+      this.buildInitialState();
 
       this.form.valueChanges.subscribe(res => {
           this.changeState();
@@ -296,48 +291,65 @@ export class OverlayContainerComponent implements OnInit {
     });
   }
 
+  buildInitialState() {
+      if (this.overlayType === 'editRoom' || this.isEditFolder) {
+          this.initialState = {
+              roomName: this.roomName,
+              folderName: this.folderName,
+              roomNumber: this.roomNumber,
+              restricted: this.nowRestriction,
+              scheduling_restricted: this.futureRestriction,
+              travel_type: this.travelType,
+              teachers: this.selectedTichers.map(t => +t.id),
+              color: this.color_profile.id,
+              icon: this.selectedIcon,
+              timeLimit: +this.timeLimit
+          };
+      }
+  }
+
   changeState() {
-     const initState = this.initialState;
-     const currState = {
-         roomName: this.roomName,
-         folderName: this.folderName,
-         roomNumber: this.roomNumber,
-         restricted: this.nowRestriction,
-         scheduling_restricted: this.futureRestriction,
-         travel_type: this.travelType,
-         teachers: this.selectedTichers,
-         color: this.color_profile.id,
-         icon: this.selectedIcon,
-         timeLimit: this.timeLimit
-     };
-     const status = [];
-    if (currState.roomName) {
+    if (this.overlayType === 'editRoom' || this.isEditFolder || this.editRoomInFolder) {
+        const initState = this.initialState;
+        const currState: FormState = {
+            roomName: this.roomName,
+            folderName: this.folderName,
+            roomNumber: this.roomNumber,
+            restricted: this.nowRestriction,
+            scheduling_restricted: this.futureRestriction,
+            travel_type: this.travelType,
+            teachers: this.selectedTichers.map(t => +t.id),
+            color: this.color_profile.id,
+            icon: this.selectedIcon.inactive_icon,
+            timeLimit: +this.timeLimit
+        };
+        debugger;
+        const status = [];
         status.push(currState.roomName === initState.roomName);
-    }
-    if (currState.folderName) {
-        status.push(currState.folderName === initState.folderName);
-    }
-    if (currState.roomNumber) {
         status.push(currState.roomNumber === initState.roomNumber);
-    }
-    if (currState.timeLimit) {
-        status.push(+currState.timeLimit === initState.timeLimit);
-    }
-    if (currState.restricted) {
         status.push(currState.restricted === initState.restricted);
-    }
-    if (currState.scheduling_restricted) {
         status.push(currState.scheduling_restricted === initState.scheduling_restricted);
+        status.push(_.isEqual(currState.teachers, initState.teachers));
+        if (currState.folderName && initState.folderName) {
+            status.push(currState.folderName === initState.folderName);
+        }
+        if (currState.color && initState.color) {
+            status.push(currState.color === initState.color);
+        }
+        if (currState.timeLimit && initState.timeLimit) {
+            status.push(currState.timeLimit === initState.timeLimit);
+        }
+        if (currState.travel_type && initState.travel_type) {
+            status.push(_.isEqual(currState.travel_type.sort(), initState.travel_type.sort()));
+        }
+        if (currState.icon && initState.icon) {
+            status.push(currState.icon === initState.icon);
+        }
+        this.stateStatus = status.includes(false);
+        console.log('STATUS', status);
+        console.log('Array', currState);
+        console.log(this.stateStatus);
     }
-    if (currState.icon) {
-        status.push(currState.icon === initState.icon);
-    }
-    if (currState.color) {
-        status.push(currState.color === initState.color);
-    }
-   this.stateStatus = status.includes(false);
-      console.log('STATUS', this.stateStatus);
-      console.log('Array', status);
   }
 
   setLocation(location) {
@@ -365,6 +377,8 @@ export class OverlayContainerComponent implements OnInit {
           this.isEditRooms = false;
           this.form.reset();
           this.isDirtysettings = false;
+          this.buildInitialState();
+          this.stateStatus = false;
           hideAppearance = false;
           type = 'newFolder';
           break;
@@ -430,6 +444,17 @@ export class OverlayContainerComponent implements OnInit {
       this.travelType = room.travel_types;
 
       this.currentLocationInEditRoomFolder = room;
+
+      console.log('InitialState', this.initialState);
+      this.initialState = {
+          roomName: room.title,
+          roomNumber: room.room,
+          teachers: room.teachers,
+          restricted: room.restricted,
+          scheduling_restricted: room.scheduling_restricted,
+          travel_type: room.travel_types,
+          timeLimit: room.max_allowed_time
+      };
 
       this.setLocation('editRoomInFolder');
 
