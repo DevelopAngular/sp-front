@@ -46,10 +46,12 @@
 
 .collection-grid-wrapper{
     margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
 }
 
-.custom-mat-tile{
-    overflow: visible;
+.tile{
+  padding: 5px;
 }
 
 .sort-label{
@@ -61,7 +63,7 @@
 }
 
 .sort-selector{
-    margin: 0 5px;  
+    margin: 0 5px;
 }
 
 .empty-message{

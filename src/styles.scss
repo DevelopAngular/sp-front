@@ -77,24 +77,25 @@ body {
 }
 
 .accounts-profiles-dialog{
-  margin-left: 285px !important;
+  margin-left: 302px !important;
 }
 .accounts-profiles-dialog .mat-dialog-container{
   border-radius: 10px;
   box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
-  margin: 0;
+  margin: 10px;
   padding: 0;
 }
 
 .overlay-dialog {
-  margin-left: 285px !important;
+  margin-left: 302px !important;
+
 }
 
 .overlay-dialog .mat-dialog-container{
   border-radius: 10px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  margin: 0;
+  margin: 10px;
   padding: 0;
 }
 
@@ -180,7 +181,7 @@ textarea:focus {
 }
 
 .custom-bd {
-  background-image: linear-gradient(to right, transparent 285px,rgba(0, 0, 0, 0.3) 0);
+  background-image: linear-gradient(to right, transparent 302px,rgba(0, 0, 0, 0.3) 0);
 }
 html, body {
   max-width: 100%;

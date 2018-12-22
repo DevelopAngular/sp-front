@@ -1,219 +1,232 @@
-.pass-config-wrapper {
-  display: flex;
-  background-color: #f8faff;
-  flex-direction: column;
-  align-items: center;
-  height: 100%;
-}
-
 :host {
   width: 100%;
-}
+  height: 100%;
+  padding: 25px;
+  box-sizing: border-box;
+  overflow: scroll;
+  background-color: #f8faff;
 
-.pass-config-container {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  width: 91%;
-
-  .school-logo {
+  .pass-config-wrapper {
+    background-color: #f8faff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
     width: 100%;
-    display: flex;
-    flex-grow: 1;
-    justify-content: space-between;
+    min-width: 800px;
   }
-}
 
-.changes-log {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  height: 63px;
-  background-color: #1f195e;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
 
-  .changes-log-text {
+  .pass-config-container {
     display: flex;
-    flex-grow: 1;
-    align-items: center;
     justify-content: center;
-    color: white;
+    flex-direction: column;
+    width: 100%;
+
+    .school-logo {
+      width: 100%;
+      display: flex;
+      flex-grow: 1;
+      justify-content: space-between;
+    }
   }
 
-  .changes-buttons {
+  .changes-log {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 63px;
+    background-color: #1f195e;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+
+    .changes-log-text {
+      display: flex;
+      flex-grow: 1;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .changes-buttons {
+      display: flex;
+      align-items: center;
+      margin-right: 14px;
+
+      .discard-button {
+        color: white;
+        margin-right: 30px;
+      }
+
+      .discard-button:hover {
+        width: 81px;
+        height: 30px;
+        border-radius: 15px;
+        background-color: #7b7df1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .pass-config-header {
+    width: 91%;
+    border-radius: 10px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, .2);
+    background-color: #FFFFFF;
     display: flex;
     align-items: center;
-    margin-right: 14px;
-
-    .discard-button {
-      color: white;
-      margin-right: 30px;
-    }
-
-    .discard-button:hover {
-      width: 81px;
-      height: 30px;
-      border-radius: 15px;
-      background-color: #7b7df1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-    }
+    justify-content: space-between;
+    flex-direction: column;
   }
-}
 
-.pass-config-header {
-  width: 91%;
-  border-radius: 10px;
-  margin-top: 30px;
-  margin-bottom: 30px;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, .2);
-  background-color: #FFFFFF;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-direction: column;
-}
+  .school-title {
+    margin-left: 5%;
+    display: flex;
+    align-items: center;
+  }
 
-.school-title {
-  margin-left: 5%;
-  display: flex;
-  align-items: center;
-}
+  .school-name {
+    margin-left: 20px;
+    font-weight: bolder;
+    color: #3d396b;
+    font-size: 25px;
+  }
 
-.school-name {
-  margin-left: 20px;
-  font-weight: bolder;
-  color: #3d396b;
-  font-size: 25px;
-}
+  .school-icon {
+    width: 45px;
+    height: 45px;
+  }
 
-.school-icon {
-  width: 45px;
-  height: 45px;
-}
+  img {
+    pointer-events: none;
+  }
 
-img {
-  pointer-events: none;
-}
+  .settings-icon {
+    width: 30px;
+    height: 30px;
+  }
 
-.settings-icon {
-  width: 30px;
-  height: 30px;
-}
+  .header-settings {
+    display: flex;
+    margin-right: 30px;
+  }
 
-.header-settings {
-  display: flex;
-  margin-right: 30px;
-}
+  .settings-actions {
+    margin-left: 16px;
+  }
 
-.settings-actions {
-  margin-left: 16px;
-}
+  .settings-divider {
+    width: 100%;
+    height: 1px;
+    background-color: darkgrey;
+    margin-top: 4px;
+    margin-bottom: 1px;
+  }
 
-.settings-divider {
-  width: 100%;
-  height: 1px;
-  background-color: darkgrey;
-  margin-top: 4px;
-  margin-bottom: 1px;
-}
+  .action-top {
+    display: flex;
+    align-items: center;
+  }
 
-.action-top {
-  display: flex;
-  align-items: center;
-}
+  .settings-action-top-title {
+    margin-right: 100px;
+    font-size: 18px;
+    color: gray;
+  }
 
-.settings-action-top-title {
-  margin-right: 100px;
-  font-size: 18px;
-  color: gray;
-}
+  .settings-input {
+    width: 99px;
+    height: 30px;
+    border-radius: 9px;
+    border: none;
+    background-color: #edeef0;
+    outline: none;
+    text-align: center;
+    font-size: 18px;
+  }
 
-.settings-input {
-  width: 99px;
-  height: 30px;
-  border-radius: 9px;
-  border: none;
-  background-color: #edeef0;
-  outline: none;
-  text-align: center;
-  font-size: 18px;
-}
-
-.settings-action-bottom-title {
-  margin-right: 22px;
-  font-size: 18px;
-  color: gray;
-}
+  .settings-action-bottom-title {
+    margin-right: 22px;
+    font-size: 18px;
+    color: gray;
+  }
 
 
-.future {
-  position: relative; width: 49px;
-  -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
-}
-.future-checkbox {
-  display: none;
-}
-.future-label {
-  display: block; overflow: hidden; cursor: pointer;
-  height: 27px; padding: 0; line-height: 27px;
-  border: 2px solid #E3E3E3; border-radius: 27px;
-  background-color: #FFFFFF;
-  transition: background-color 0.3s ease-in;
-}
-.future-label:before {
-  content: "";
-  display: block; width: 27px; margin: 0px;
-  background: #FFFFFF;
-  position: absolute; top: 0; bottom: 0;
-  right: 20px;
-  border: 2px solid #E3E3E3; border-radius: 27px;
-  transition: all 0.3s ease-in 0s;
+  .future {
+    position: relative; width: 49px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+  }
+  .future-checkbox {
+    display: none;
+  }
+  .future-label {
+    display: block; overflow: hidden; cursor: pointer;
+    height: 27px; padding: 0; line-height: 27px;
+    border: 2px solid #E3E3E3; border-radius: 27px;
+    background-color: #FFFFFF;
+    transition: background-color 0.3s ease-in;
+  }
+  .future-label:before {
+    content: "";
+    display: block; width: 27px; margin: 0px;
+    background: #FFFFFF;
+    position: absolute; top: 0; bottom: 0;
+    right: 20px;
+    border: 2px solid #E3E3E3; border-radius: 27px;
+    transition: all 0.3s ease-in 0s;
+  }
+
+
+  .future-checkbox:checked + .future-label {
+    background-color: #04CD39;
+  }
+  .future-checkbox:checked + .future-label, .future-checkbox:checked + .future-label:before {
+    border-color: #04CD39;
+  }
+  .future-checkbox:checked + .future-label:before {
+    right: 0px;
+  }
+
+  ::ng-deep .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background, .mat-checkbox-checked.mat-accent .mat-checkbox-background {
+    background-color: #7f879d;
+  }
+
+  ::ng-deep .mat-checkbox-checked.mat-accent .mat-checkbox-background {
+    background-color: #7f879d;
+  }
+
+  .pinnables {
+    width: 90%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .new-room-button {
+    width: 170px;
+  }
+
+  .travel-picker {
+    margin: 30px;
+  }
+
+  .color-picker {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+  }
+
+  .icon-picker {
+    width: 50%;
+  }
+
+
 }
 
 
-.future-checkbox:checked + .future-label {
-  background-color: #04CD39;
-}
-.future-checkbox:checked + .future-label, .future-checkbox:checked + .future-label:before {
-  border-color: #04CD39;
-}
-.future-checkbox:checked + .future-label:before {
-  right: 0px;
-}
 
-::ng-deep .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background, .mat-checkbox-checked.mat-accent .mat-checkbox-background {
-  background-color: #7f879d;
-}
-
-::ng-deep .mat-checkbox-checked.mat-accent .mat-checkbox-background {
-  background-color: #7f879d;
-}
-
-.pinnables {
-  width: 90%;
-  display: flex;
-  justify-content: center;
-}
-
-.new-room-button {
-  width: 170px;
-}
-
-.travel-picker {
-  margin: 30px;
-}
-
-.color-picker {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 50%;
-}
-
-.icon-picker {
-  width: 50%;
-}

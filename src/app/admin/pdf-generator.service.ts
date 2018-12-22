@@ -58,7 +58,7 @@ export class PdfGeneratorService {
     const _orientation = orientation === 'l' ? 'landscape' : 'portrait';
     const _headers: string[] = Object.keys(data.map ? data[0] : data);
     const _data: any[] = data;
-    const doc = new jsPDF(_orientation, 'pt');
+    const doc = new jsPDF(_orientation, 'pt', [ 609.5, 792]);
     const logoPath = this.locationService.prepareExternalUrl('/assets/Arrow%20(Green).png');
     const reportPath = this.locationService.prepareExternalUrl('/assets/Report%20(Red).png');
     const imgLogo = new FileReader();
@@ -94,13 +94,13 @@ export class PdfGeneratorService {
         const A4 = _orientation === 'portrait'
           ?
           {
-            height: 842,
-            width: 595,
+            height: 792,
+            width: 609.5,
           }
           :
           {
-            height: 595,
-            width: 842,
+            height: 609.5,
+            width: 792,
           };
         let pageCounter: number = 1;
 
@@ -261,7 +261,6 @@ export class PdfGeneratorService {
         };
 
         const blob = doc.output('blob');
-
         // create a blob link for the PDF
         if (isSafari) {
 
