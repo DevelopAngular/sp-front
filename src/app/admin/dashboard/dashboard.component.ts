@@ -6,8 +6,9 @@ import {PdfGeneratorService} from '../pdf-generator.service';
 import {interval, of as ObservableOf, Subject, zip} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Report} from '../../models/Report';
-import {LiveDataService} from '../../live-data/live-data.service';
+import {HallPassFilter, LiveDataService} from '../../live-data/live-data.service';
 import {switchMap, takeUntil} from 'rxjs/internal/operators';
+import {DataService} from '../../data-service';
 
 
 @Component({
@@ -47,6 +48,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private http: HttpService,
+    private dataService: DataService,
     private liveDataService: LiveDataService,
     private pdf: PdfGeneratorService,
     private _zone: NgZone
@@ -56,6 +58,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
     this.drawChartXaxis();
+
+
+    this.liveDataService.watchActiveHallPasses(new Subject<HallPassFilter>().asObservable())
+      .subscribe((activeHallpasses: HallPass[]) => {
+        this.numActivePasses = activeHallpasses.length;
+      });
 
     const todayReports = this.liveDataService.getDateRange(new Date());
 
@@ -71,9 +79,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.passStatistic = entry['rows'];
           } else if (entry.name.toLowerCase() === 'average pass time') {
             this.averagePassTime = entry['value'];
-          } else if (entry.name === 'Active Pass Count') {
-            this.numActivePasses = entry['value'];
           }
+          // else if (entry.name === 'Active Pass Count') {
+          //   this.numActivePasses = entry['value'];
+          // }
         }
 
         // this.activeHallpasses = result[0].results;

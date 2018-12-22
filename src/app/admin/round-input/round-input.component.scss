@@ -4,12 +4,15 @@
     min-width:300px;
 }
 
-.label-wrapper, .field-wrapper{
+.field-wrapper{
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    margin: 10px auto;
+}
+.label-wrapper {
+  @extend .field-wrapper;
+  margin: 10px auto;
 }
 
 .label-icon{

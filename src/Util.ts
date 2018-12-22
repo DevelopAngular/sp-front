@@ -9,21 +9,6 @@
                         'July', 'Aug.', 'Sept.',
                         'Oct.', 'Nov.', 'Dec.'];
 
-    static formatDateTimeUTC(ISOdate) {
-      /*
-      * This static methot helps avoid confusion with Timezones.
-      * It takes an ISO date string and returns pretty formated
-      * date like 'Util.formatDateTime()' but from the existing
-      * date in string format.
-      * */
-      let passedDate = new Date(ISOdate);
-
-      const [day, month, year, time] = passedDate.toUTCString().split(', ').slice(1).join('').split(' ');
-      const [hours, minutes, seconds] = time.split(':');
-      console.log(day, month, year, time);
-      return `${day} ${hours}:${minutes}AM/PM`;
-    }
-
     static formatDateTime(s: Date, timeOnly?: boolean, utc?: boolean) {
         let hours = utc ? s.getUTCHours() : s.getHours();
         let formattedTime:string = ((hours > 12) ? hours - 12 : hours) + ':' + ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + ((hours > 12) ? ' PM' : ' AM');

@@ -43,14 +43,15 @@ export class RoundInputComponent implements OnInit {
 
   focusAction(selected: boolean){
     this.selected = selected;
-    if(selected && this.type == 'dates'){
+    if (selected && this.type == 'dates') {
       const dateDialog = this.dialog.open(InputHelperDialogComponent, {
         width: '900px',
-        panelClass: 'form-dialog-container',
-        backdropClass: 'custom-bp',
+        panelClass: 'accounts-profiles-dialog',
+        backdropClass: 'custom-bd',
         data: {'type':'dates', 'to':this.toDate?this.toDate:new Date(), 'from':this.fromDate?this.fromDate:new Date()}
       });
-
+      // panelClass: 'accounts-profiles-dialog',
+      // backdropClass: 'custom-bd'
       dateDialog.afterOpen().subscribe(()=>{this.selected = true;});
 
       dateDialog.afterClosed().subscribe(dates =>{
@@ -61,13 +62,13 @@ export class RoundInputComponent implements OnInit {
           this.ontextupdate.emit({'to':dates['to'], 'from': dates['from']});
         }
       });
-    } else if(selected && this.type.includes('multi')){
+    } else if (selected && this.type.includes('multi')) {
       console.log(this.type.substring(5))
       const dateDialog = this.dialog.open(InputHelperDialogComponent, {
         width: '900px',
-        panelClass: 'form-dialog-container',
-        backdropClass: 'custom-bp',
-        data: {'type':this.type.substring(5), 'selections': this.selections, 'toggleState': this.toggleState}
+        panelClass: 'accounts-profiles-dialog',
+        backdropClass: 'custom-bd',
+        data: {'type': this.type.substring(5), 'selections': this.selections, 'toggleState': this.toggleState}
       });
 
       dateDialog.afterOpen().subscribe(()=>{this.selected = true;});
