@@ -1,4 +1,5 @@
-import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { environment } from '../../../environments/environment';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild, NgZone} from '@angular/core';
 import {HttpService} from '../../http-service';
 import {HallPass} from '../../models/HallPass';
 import {PdfGeneratorService} from '../pdf-generator.service';
@@ -25,7 +26,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // ];
 
   public lineChartLabels: Array<any> = [];
-    // Array.from(Array(24).keys()).map(hour =>
+  // Array.from(Array(24).keys()).map(hour =>
 
 
   public lineChartOptions: any;
@@ -34,9 +35,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public lineChartLegend: boolean = false;
   public lineChartType: string = 'line';
   public passStatistic: any;
-  public activeHallpasses: HallPass[];
+  public numActivePasses = -1;
   public reports: Report[];
-  public averagePassTime: number|string;
+  public averagePassTime: number | string;
   public hiddenChart: boolean = true;
 
   public lineChartTicks: any =  {
@@ -48,7 +49,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private liveDataService: LiveDataService,
     private pdf: PdfGeneratorService,
-  ) { }
+    private _zone: NgZone
+  ) {
+  }
 
   ngOnInit() {
 
@@ -57,25 +60,36 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const todayReports = this.liveDataService.getDateRange(new Date());
 
     zip(
-      this.http.get('v1/hall_passes?limit=100&sort=created'),
       this.http.get('v1/hall_passes/stats'),
-      this.http.get('v1/hall_passes?active=true'),
-      // this.http.get('v1/event_reports'),
       this.http.get(`v1/event_reports?created_before=${todayReports.end.toISOString()}&created_after=${todayReports.start.toISOString()}`),
       this.http.get('v1/admin/dashboard'),
     )
-    .subscribe((result: any[]) => {
-      this.passStatistic = result[1][0]['rows'];
-      this.averagePassTime = result[1][1]['value'];
-      // this.activeHallpasses = result[2];
-      this.activeHallpasses = result[0].results;
-      this.reports =  result[3];
-      this.lineChartData = [{ data: result[4].hall_pass_usage.map(numb => numb + Math.ceil((Math.random() * Math.random() * 30)))}];
-      // this.lineChartData = [{ data: result[4].hall_pass_usage}];
-      this.hiddenChart = false;
-      delete this.lineChartTicks.suggestedMax;
+      .subscribe(([stats, eventReports, dashboard]: any[]) => {
 
-    });
+        for (const entry of stats) {
+          if (entry.name === 'Most Visited Locations') {
+            this.passStatistic = entry['rows'];
+          } else if (entry.name.toLowerCase() === 'average pass time') {
+            this.averagePassTime = entry['value'];
+          } else if (entry.name === 'Active Pass Count') {
+            this.numActivePasses = entry['value'];
+          }
+        }
+
+        // this.activeHallpasses = result[0].results;
+        this.reports = eventReports;
+
+        if (environment.funData) {
+          this.lineChartData = [{data: dashboard.hall_pass_usage.map(numb => numb +  Math.ceil((Math.random() * Math.random() * 30)))}];
+        } else {
+          this.lineChartData = [{data: dashboard.hall_pass_usage}];
+        }
+
+        this.hiddenChart = false;
+        console.log(this.lineChartData[0].data);
+        // this.reports = [];
+      });
+
     interval(60000)
       .pipe(
         switchMap(() => this.http.get('v1/admin/dashboard')),
@@ -240,47 +254,47 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   previewPDF() {
 
-    const data = ObservableOf(this.activeHallpasses);
-        data
-          .pipe(
-            map((hp_list: HallPass[]) => {
-              return hp_list.map(hp => {
-               return {
-                  'Student Name': hp.student.display_name,
-                  'Origin': hp.origin.title,
-                  'Destination': hp.destination.title,
-                  // 'Travel Type': hp.travel_type
-                  'Travel Type': hp.travel_type
-                                        .split('_')
-                                        .map(chunk => chunk.slice(0, 1).toUpperCase()).join('')
-                };
-              });
-            })
-          )
-          .subscribe((active_hp) => {
-            if (active_hp.length) {
-              this.pdf.generate(active_hp, 'p', 'dashboard');
-            }
+    const data = this.http.get('v1/hall_passes?active=true');
+
+
+    data
+      .do((hp_list: HallPass[]) => {
+        this._zone.run(() => {
+          this.numActivePasses = hp_list.length;
+        });
+      })
+      .pipe(
+        map((hp_list: HallPass[]) => {
+          return hp_list.map(hp => {
+            return {
+              'Student Name': hp.student.display_name,
+              'Origin': hp.origin.title,
+              'Destination': hp.destination.title,
+              // 'Travel Type': hp.travel_type
+              'Travel Type': hp.travel_type
+                .split('_')
+                .map(chunk => chunk.slice(0, 1).toUpperCase()).join('')
+            };
           });
+        })
+      )
+      .subscribe((active_hp) => {
+        if (active_hp.length) {
+          this.pdf.generate(active_hp, 'p', 'dashboard');
+        }
+      });
   }
 
   ngOnDestroy() {
     this.shareChartData$.next();
     this.shareChartData$.complete();
   }
-  public chartClicked(e:any):void {
+
+  public chartClicked(e: any):void {
     console.log(e);
-    // const context = this.ctx.nativeElement.getContext('2d');
-    // console.log(Chart.Tooltip);
-    // context.beginPath();
-    // context.moveTo(0, 0);
-    // context.strokeStyle = '#ff0000';
-    // context.lineTo(300, 100);
-    // // context.lineTo(point.x, scale.endPoint);
-    // context.stroke();
   }
 
-  public chartHovered(e:any):void {
+  public chartHovered(e: any): void {
     console.log(e);
   }
 }

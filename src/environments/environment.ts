@@ -7,4 +7,5 @@ export const environment = {
   production: false,
   buildType: 'default',
   preferEnvironment: ('Staging' as null|string|any),
+  funData: true,
 };

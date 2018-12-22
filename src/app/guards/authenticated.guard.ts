@@ -15,7 +15,7 @@ export class AuthenticatedGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
 
-    return this.loginService.isAuthenticated$;
+    return this.loginService.isAuthenticated$.do(v => console.log('is authenticated (guard):', v));
   }
 
 }

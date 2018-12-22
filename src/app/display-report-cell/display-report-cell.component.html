@@ -16,7 +16,7 @@
     </div>
     <div class="print-icon">
       <div [style.cursor]="'pointer'">
-        <a #printPdf  (click)="printReport($event)" href="pdf/report" target="_blank"><img draggable="false" *ngIf="!!righticon" [src]="righticon | resolveAsset"></a>
+        <div (click)="printReport($event)"><img draggable="false" *ngIf="!!righticon" [src]="righticon | resolveAsset"></div>
       </div>
     </div>
   </div>

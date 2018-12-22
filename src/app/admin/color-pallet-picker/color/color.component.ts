@@ -43,7 +43,7 @@ export class ColorComponent implements OnInit {
 
   ngOnInit() {}
 
-  changeColor() {
+  changeColor(event: any) {
     this.selectedColor.emit(this.color);
   }
 

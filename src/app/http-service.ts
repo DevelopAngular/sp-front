@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { empty, of } from 'rxjs';
 
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/do';
@@ -8,6 +9,7 @@ import 'rxjs/add/operator/first';
 import 'rxjs/add/operator/switchMap';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
+import { flatMap } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 import { GoogleLoginService, isDemoLogin } from './google-login.service';
 
@@ -92,8 +94,8 @@ export class HttpService {
   private getLoginServers(data: FormData): Observable<LoginServer> {
     const preferredEnvironment = environment.preferEnvironment;
 
-    if (typeof preferredEnvironment === 'object') {
-      return Observable.of(preferredEnvironment as LoginServer);
+    if (preferredEnvironment && typeof preferredEnvironment === 'object') {
+      return of(preferredEnvironment as LoginServer);
     }
 
     return this.http.post('https://smartpass.app/api/discovery/find', data)
@@ -113,9 +115,9 @@ export class HttpService {
     c.append('email', username);
     c.append('platform_type', 'web');
 
-    return this.getLoginServers(c).flatMap(server => {
+    return this.getLoginServers(c).pipe(flatMap(server => {
       if (server === null) {
-        return Observable.empty();
+        return empty();
       }
 
       console.log(`Chosen server: ${server.name}`);
@@ -140,19 +142,20 @@ export class HttpService {
           return {auth: auth, server: server} as AuthContext;
         });
 
-    });
+    }));
   }
 
   private loginGoogleAuth(googleToken: string): Observable<AuthContext> {
+    console.log('loginGoogleAuth()');
 
     const c = new FormData();
     c.append('token', googleToken);
     c.append('provider', 'google-auth-token');
     c.append('platform_type', 'web');
 
-    return this.getLoginServers(c).flatMap(server => {
+    return this.getLoginServers(c).pipe(flatMap(server => {
       if (server === null) {
-        return Observable.empty();
+        return empty();
       }
 
       const config = new FormData();
@@ -172,7 +175,7 @@ export class HttpService {
           return {auth: auth, server: server} as AuthContext;
         });
 
-    });
+    }));
   }
 
   private fetchServerAuth(): Observable<AuthContext> {
@@ -201,8 +204,6 @@ export class HttpService {
         if (err.status !== 401) {
           throw err;
         }
-
-        console.log('getting new token');
 
         // invalidate the existing token
         this.accessTokenSubject.next(null);
@@ -270,20 +271,20 @@ export class HttpService {
     return this.performRequest(ctx => this.http.put<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token)));
   }
 
-    patch<T>(url, body?: any, config?: Config): Observable<T> {
-        const formData: FormData = new FormData();
-        for (const prop in body) {
-            if (body.hasOwnProperty(prop)) {
-                if (body[prop] instanceof Array) {
-                    for (const sprop of body[prop]) {
-                        formData.append(prop, sprop);
-                    }
-                } else {
-                    formData.append(prop, body[prop]);
-                }
-            }
+  patch<T>(url, body?: any, config?: Config): Observable<T> {
+    const formData: FormData = new FormData();
+    for (const prop in body) {
+      if (body.hasOwnProperty(prop)) {
+        if (body[prop] instanceof Array) {
+          for (const sprop of body[prop]) {
+            formData.append(prop, sprop);
+          }
+        } else {
+          formData.append(prop, body[prop]);
         }
-        return this.performRequest(ctx => this.http.patch<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token)));
+      }
     }
+    return this.performRequest(ctx => this.http.patch<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token)));
+  }
 
 }

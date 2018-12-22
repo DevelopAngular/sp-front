@@ -8,7 +8,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
-import { GoogleApiModule, NG_GAPI_CONFIG } from 'ng-gapi';
 import { AppComponent } from './app.component';
 import { GAPI_CONFIG } from './config';
 import { ConsentMenuComponent } from './consent-menu/consent-menu.component';
@@ -27,6 +26,8 @@ import { LoginComponent } from './login/login.component';
 import { OptionsComponent } from './options/options.component';
 import { PdfComponent } from './pdf/pdf.component';
 import { ProgressInterceptor } from './progress-interceptor';
+import { GoogleApiService, SP_GAPI_CONFIG } from './services/google-api.service';
+import { GoogleAuthService } from './services/google-auth.service';
 import { SharedModule } from './shared/shared.module';
 import { SignOutComponent } from './sign-out/sign-out.component';
 import { UserService } from './user.service';
@@ -94,10 +95,6 @@ const appRoutes: Routes = [
     RouterModule.forRoot(
       appRoutes, {enableTracing: false}
     ),
-    GoogleApiModule.forRoot({
-      provide: NG_GAPI_CONFIG,
-      useValue: GAPI_CONFIG,
-    }),
   ],
   providers: [
     DataService,
@@ -106,7 +103,10 @@ const appRoutes: Routes = [
     GoogleLoginService,
     LoadingService,
     CurrentUserResolver,
+    GoogleApiService,
+    GoogleAuthService,
     {provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true},
+    {provide: SP_GAPI_CONFIG, useValue: GAPI_CONFIG}
   ],
   bootstrap: [AppComponent]
 })

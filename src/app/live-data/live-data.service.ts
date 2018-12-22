@@ -29,6 +29,8 @@ import { constructUrl, QueryParams } from './helpers';
 import { AddItem, makePollingEventHandler, RemoveInvitationOnApprove, RemoveItem, RemoveRequestOnApprove } from './polling-event-handlers';
 import { State } from './state';
 
+import {combineLatest, empty, merge, of} from 'rxjs';
+
 
 interface WatchData<ModelType extends BaseModel, ExternalEventType> {
   /**
@@ -210,8 +212,8 @@ export class LiveDataService {
     /* A merged observable of all event sources and an initial event 'reload' that is
      * used to run the accumulator() function and thereby set `filtered_passes`.
      */
-    const events: Observable<Action<ModelType, ExternalEventType>> = Observable.merge(wrappedExternalEvents, passEvents,
-      loopbackEvents, Observable.of<'reload'>('reload'));
+    const events: Observable<Action<ModelType, ExternalEventType>> = merge(wrappedExternalEvents, passEvents,
+      loopbackEvents, of<'reload'>('reload'));
 
     /**
      * Takes a current state and an event, deduces the type of event, calls the appropriate
@@ -395,7 +397,7 @@ export class LiveDataService {
     }
 
     return this.watch<HallPass, string>({
-      externalEvents: Observable.empty(),
+      externalEvents: empty(),
       eventNamespace: 'hall_pass',
       initialUrl: `v1/hall_passes?limit=20&active=future${queryFilter}`,
       decoder: data => HallPass.fromJSON(data),
@@ -435,7 +437,7 @@ export class LiveDataService {
     }
 
     return this.watch<HallPass, string>({
-      externalEvents: Observable.empty(),
+      externalEvents: empty(),
       eventNamespace: 'hall_pass',
       initialUrl: `v1/hall_passes?limit=20&active=past${queryFilter}`,
       decoder: data => HallPass.fromJSON(data),
@@ -454,7 +456,7 @@ export class LiveDataService {
     const isStudent = filter.roles.includes('hallpass_student');
 
     return this.watch<Request, string>({
-      externalEvents: Observable.empty(),
+      externalEvents: empty(),
       eventNamespace: 'pass_request',
       initialUrl: `v1/inbox/${isStudent ? 'student' : 'teacher'}`,
       rawDecoder: (json) => json.pass_requests.map(d => Request.fromJSON(d)),
@@ -473,7 +475,7 @@ export class LiveDataService {
     const isStudent = filter.roles.includes('hallpass_student');
 
     return this.watch<Invitation, string>({
-      externalEvents: Observable.empty(),
+      externalEvents: empty(),
       eventNamespace: 'pass_invitation',
       initialUrl: `v1/inbox/${isStudent ? 'student' : 'teacher'}`,
       rawDecoder: (json) => json.invitations.map(d => Invitation.fromJSON(d)),
@@ -505,7 +507,7 @@ export class LiveDataService {
     }
 
     return this.watch<Request, string>({
-      externalEvents: Observable.empty(),
+      externalEvents: empty(),
       eventNamespace: 'pass_request',
       initialUrl: `v1/pass_requests?limit=20&active=true${queryFilter}`,
       decoder: data => Request.fromJSON(data),
@@ -520,10 +522,10 @@ export class LiveDataService {
 
   watchActivePassLike(student: User): Observable<PassLike> {
 
-    const passes$ = this.watchActiveHallPasses(Observable.empty(), {type: 'student', value: student});
+    const passes$ = this.watchActiveHallPasses(empty(), {type: 'student', value: student});
     const requests$ = this.watchActiveRequests(student);
 
-    const merged$ = Observable.combineLatest(
+    const merged$ = combineLatest(
       passes$.map(passes => passes.length ? passes[0] : null).startWith(null),
       requests$.map(requests => requests.length ? requests[0] : null).startWith(null),
       (pass, request) => ({pass: pass, request: request}));

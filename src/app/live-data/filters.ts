@@ -44,7 +44,7 @@ export function filterHallPasses(state: State<HallPass>): State<HallPass> {
         'student.first_name',
         'student.last_name',
         'destination.title',
-      ]
+      ] as any[]
     };
 
     const fuse = new Fuse(state.passes, options);

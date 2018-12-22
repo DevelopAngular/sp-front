@@ -5,8 +5,9 @@
         <div class="card_header mb">Number of Active Hall Passes</div>
         <div class="card_title" [style.text-align]="'center'">
           <div style="min-height: 65px;" class="flex-center-center">
-            <div [style.font-size]="'4em'" [style.font-weight]="'900'">{{activeHallpasses?.length}}</div>
-            <div *ngIf="!activeHallpasses" class="loading-theme spinner flex-center-center">
+            <div [style.font-size]="'4em'"
+                 [style.font-weight]="'900'">{{ numActivePasses >= 0 ? numActivePasses : ''}}</div>
+            <div *ngIf="numActivePasses === -1" class="loading-theme spinner flex-center-center">
               <mat-spinner [color]="'accent'" [diameter]="'35'"></mat-spinner>
             </div>
           </div>
@@ -16,11 +17,11 @@
         <a routerLink="/admin/hallmonitor" class="label-icon">
           <img draggable="false" [src]="'./assets/Hallway (Blue).png' | resolveAsset" alt="Hallway (Blue).png" width="25">
         </a>
-        <a  href="pdf/report" target="_blank" style="display: block;" [ngStyle]="{'opacity': activeHallpasses?.length ? '1' : '.5'}">
+        <div style="display: block;" [ngStyle]="{'opacity': numActivePasses > 0 ? '1' : '.5'}">
           <app-gradient-button
-            [disabled]="!activeHallpasses?.length"
+            [disabled]="numActivePasses <= 0"
             [leftIcon]="'./assets/Print (White).png'"
-            [cursor]="activeHallpasses?.length ? 'pointer' : 'default'"
+            [cursor]="numActivePasses > 0 ? 'pointer' : 'default'"
             [minHeight]="'62px'"
             [width]="'188px'"
             [fontSize]="'14px'"
@@ -28,7 +29,7 @@
             (buttonClick)="previewPDF()">
             <span>Report of Students</span>
           </app-gradient-button>
-        </a>
+        </div>
       </div>
     </div>
     <div class="card card__role flex-center-between mr mt">
@@ -37,7 +38,8 @@
       </a>
       <div>
         <div class="card_header">
-          <img draggable="false" [src]="'./assets/Report (Red).png' | resolveAsset" alt="Report (Red).png" width="30" [style.vertical-align]="'bottom'">
+          <img draggable="false" [src]="'./assets/Report (Red).png' | resolveAsset" alt="Report (Red).png" width="30"
+               [style.vertical-align]="'bottom'">
           <span class="pl">Reported Students</span>
         </div>
         <div [style.min-height]="'55px'">
@@ -68,7 +70,8 @@
   </div>
 
   <div class="flex-start-between flex-column">
-    <div class="card card__role flex-center-between chart-container ml mt" [style.padding-top]="'15px'" [style.padding-bottom]="'15px'">
+    <div class="card card__role flex-center-between chart-container ml mt" [style.padding-top]="'15px'"
+         [style.padding-bottom]="'15px'">
       <div class="flex-center-center loading-theme spinner chart-spinner" *ngIf="hiddenChart">
         <mat-spinner [color]="'accent'" [diameter]="'35'" class=""></mat-spinner>
       </div>
@@ -94,12 +97,14 @@
         <div class="card_header">
           Most Frequent Room <br> Destinations
         </div>
-        <div *ngIf="passStatistic" class="flex-start-between flex-column flex-wrap w-100 pt card_title" [style.max-height]="'50px'">
+        <div *ngIf="passStatistic" class="flex-start-between flex-column flex-wrap w-100 pt card_title"
+             [style.max-height]="'50px'">
           <div *ngFor="let place of passStatistic; let n = index;">
             {{n + 1}}. {{place.name}}
           </div>
         </div>
-        <div *ngIf="!passStatistic" class="loading-theme spinner flex-center-center" [style.padding-top]="'8px'" [style.min-height]="'50px'">
+        <div *ngIf="!passStatistic" class="loading-theme spinner flex-center-center" [style.padding-top]="'8px'"
+             [style.min-height]="'50px'">
           <mat-spinner [color]="'accent'" [diameter]="'35'"></mat-spinner>
         </div>
       </div>

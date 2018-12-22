@@ -3,8 +3,6 @@ import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material';
 import {Router, NavigationEnd, ActivatedRoute} from '@angular/router';
 
-import 'rxjs/add/observable/combineLatest';
-import { Observable } from 'rxjs/Observable';
 import { DataService } from '../data-service';
 import { GoogleLoginService } from '../google-login.service';
 import { LoadingService } from '../loading.service';
@@ -12,6 +10,9 @@ import { NavbarDataService } from '../main/navbar-data.service';
 import { User } from '../models/User';
 import { NgProgress } from '@ngx-progressbar/core';
 import {ReplaySubject} from 'rxjs';
+import { UserService } from '../user.service';
+
+import {combineLatest} from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -42,6 +43,7 @@ export class NavbarComponent implements OnInit {
 
   constructor(
       private dataService: DataService,
+      private userService: UserService,
       public dialog: MatDialog,
       public router: Router,
       private location: Location,
@@ -53,7 +55,7 @@ export class NavbarComponent implements OnInit {
       private activeRoute: ActivatedRoute
   ) {
 
-    const navbarEnabled$ = Observable.combineLatest(
+    const navbarEnabled$ = combineLatest(
       this.loadingService.isLoading$,
       this.loginService.isAuthenticated$,
       (a, b) => a && b);
@@ -87,24 +89,24 @@ export class NavbarComponent implements OnInit {
       }
     });
 
-    this.dataService.currentUser
+    console.log('loading navbar');
+
+    this.userService.userData
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {
         this._zone.run(() => {
           this.user = user;
-          this.isStaff = user.roles.includes('edit_all_hallpass');
+          this.isStaff = user.isAdmin() || user.isTeacher();
           this.dataService.updateInbox(this.tab!=='settings');
         });
       });
 
-    this.activeRoute.data.subscribe(_resolved => {
-        this.currentUser =_resolved.currentUser;
-        console.log('CurrentRoute ===> \n', (this.activeRoute.snapshot as any)._routerState.url, !this.hasRoles(this.buttons[0].requiredRoles));
+    this.userService.userData.subscribe(user => {
 
         this.buttons.forEach((button) => {
 
             if (
-                ((this.activeRoute.snapshot as any)._routerState.url == `/main/${button.route}`)
+                ((this.activeRoute.snapshot as any)._routerState.url === `/main/${button.route}`)
                 &&
                 !this.hasRoles(button.requiredRoles)
             ) {

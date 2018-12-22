@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
+
+import { combineLatest } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
 import { DataService } from '../data-service';
 import { LiveDataService } from '../live-data/live-data.service';
 import { UserService } from '../user.service';
@@ -33,7 +34,7 @@ export class NavbarDataService {
       const requestCount$ = this.liveData.watchInboxRequests(user)
         .map(requests => count(requests, request => !request.isRead));
 
-      return Observable.combineLatest(
+      return combineLatest(
         invitationCount$, requestCount$,
         (iCount, rCount) => iCount + rCount
       );
