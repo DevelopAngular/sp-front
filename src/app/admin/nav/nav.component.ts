@@ -33,6 +33,7 @@ export class NavComponent implements OnInit {
   console = console;
 
   user: User;
+  showButton: boolean;
 
   constructor(
       public router: Router,
@@ -64,6 +65,7 @@ export class NavComponent implements OnInit {
 
         this._zone.run(() => {
           this.user = user;
+          this.showButton = user.roles.includes('_profile_admin') && user.roles.includes('_profile_teacher');
           this.dataService.updateInbox(!this.tab.includes('settings'));
         });
       });

@@ -34,7 +34,7 @@
   <div class="nav-footer">
     <div class="footer-text">{{(user?user.display_name:'')}}</div>
     <div>
-      <img draggable="false" (click)="router.navigateByUrl('/main/passes')" class="footer-settings" [src]="'./assets/Switch Account (Blue).png' | resolveAsset" alt="" *ngIf="hasRoles(['_profile_teacher', '_profile_admin'])">
+      <img draggable="false" (click)="router.navigateByUrl('/main/passes')" class="footer-settings" [src]="'./assets/Switch Account (Blue).png' | resolveAsset" alt="" *ngIf="showButton">
       <!--<div [ngClass]="{'active-route': isSelected('settings')}">-->
         <img draggable="false" (click)="router.navigateByUrl('/admin/settings')" [ngClass]="{'active-route': isSelected('settings')}" class="footer-settings" [src]="'./assets/Gear (Blue).png' | resolveAsset" alt="">
       <!--</div>-->

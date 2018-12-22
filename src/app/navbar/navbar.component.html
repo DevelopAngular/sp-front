@@ -6,21 +6,12 @@
   </div>
   <div *ngIf="isStaff" class="teacherNav">
     <div *ngFor="let button of buttons">
-      <ng-container *ngIf="hasRoles(button.requiredRoles)">
+      <ng-container *ngIf="isStaff">
         <app-nav-button
                 [selected]="tab === button.route"
                 [content]="button.title"
                 [icon]="button.imgUrl"
                 (onClick)="updateTab(button.route)">
-        </app-nav-button>
-      </ng-container>
-    </div>
-    <div *ngFor="let button of buttons">
-      <ng-container *ngIf="fakeMenu | async">
-        <app-nav-button
-                [selected]="tab === button.route"
-                [content]="button.title"
-                [icon]="button.imgUrl">
         </app-nav-button>
       </ng-container>
     </div>
@@ -38,7 +29,7 @@
     <div *ngIf="isStaff" class="support-wrapper" (click)="openSupport()">
       <img class="support" [src]="'./assets/Support (Blue).png' | resolveAsset">
     </div>
-    <div class="admin-view-wrapper" (click)="router.navigate(['admin/dashboard'])"  *ngIf="hasRoles(['_profile_teacher', '_profile_admin'])">
+    <div class="admin-view-wrapper" (click)="router.navigate(['admin/dashboard'])"  *ngIf="isStaff">
       <img class="admin-view" [src]="'./assets/Switch Account (Blue).png' | resolveAsset" alt="">
     </div>
     <div (click)="showOptions()" class="options-wrapper" [style.background-color]="(optionsOpen?'#E4EBFF':'transparent')">
