@@ -167,10 +167,12 @@ export class OverlayContainerComponent implements OnInit {
 
   get showDoneButton() {
     return (this.isValidForm &&
-        (this.newRoomFormDirty ||
-            this.isDirtyNowRestriction ||
-            this.isDirtyFutureRestriction ||
-            this.isDirtyTravel) &&
+        // (
+            // this.newRoomFormDirty ||
+            // this.isDirtyNowRestriction ||
+            // this.isDirtyFutureRestriction ||
+            // this.isDirtyTravel) &&
+        (this.stateStatus && this.editRoomInFolder) &&
         this.overlayType === 'newRoomInFolder') ||
         (this.form.get('timeLimit').valid && this.overlayType === 'settingsRooms');
   }
@@ -323,7 +325,6 @@ export class OverlayContainerComponent implements OnInit {
             icon: this.selectedIcon.inactive_icon,
             timeLimit: +this.timeLimit
         };
-        debugger;
         const status = [];
         status.push(currState.roomName === initState.roomName);
         status.push(currState.roomNumber === initState.roomNumber);
@@ -346,9 +347,9 @@ export class OverlayContainerComponent implements OnInit {
             status.push(currState.icon === initState.icon);
         }
         this.stateStatus = status.includes(false);
-        console.log('STATUS', status);
-        console.log('Array', currState);
-        console.log(this.stateStatus);
+        // console.log('STATUS', status);
+        // console.log('Array', currState);
+        // console.log(this.stateStatus);
     }
   }
 
@@ -445,7 +446,6 @@ export class OverlayContainerComponent implements OnInit {
 
       this.currentLocationInEditRoomFolder = room;
 
-      console.log('InitialState', this.initialState);
       this.initialState = {
           roomName: room.title,
           roomNumber: room.room,
