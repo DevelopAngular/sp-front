@@ -4,6 +4,8 @@ import { bumpIn } from '../animations';
 import { PassLike } from '../models';
 import { getInnerPassContent, getInnerPassName, isBadgeVisible } from './pass-display-util';
 import { DomSanitizer } from '../../../node_modules/@angular/platform-browser';
+import { Request } from '../models/Request';
+import { Invitation } from '../models/Invitation';
 
 @Component({
   selector: 'app-pass-tile',
@@ -17,7 +19,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
 
   @Input() pass: PassLike;
   @Input() fromPast = false;
-  @Input() forFuture = false;
+  @Input() forFuture;
   @Input() isActive = false;
   @Input() forStaff = false;
 
@@ -34,7 +36,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   }
 
   get tileContent() {
-    return this.isActive?(this.timeLeft +(this.valid?' Remaining':' Expiring')):getInnerPassContent(this.pass, (!(this.pass['request_time'] && this.forFuture) && this.forStaff));
+    return this.isActive?(this.timeLeft +(this.valid?' Remaining':' Expiring')):getInnerPassContent(this.pass, (!this.pass['request_time'] && this.pass instanceof Request) || !(this.pass instanceof Invitation));
   }
 
   get tileName() {

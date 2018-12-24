@@ -23,7 +23,7 @@ import { PassCardComponent } from '../pass-card/pass-card.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
 
 function isUserStaff(user: User): boolean {
-  return user.roles.includes('edit_all_hallpass');
+  return user.roles.includes('_profile_teacher');
 }
 
 class FuturePassProvider implements PassLikeProvider {
