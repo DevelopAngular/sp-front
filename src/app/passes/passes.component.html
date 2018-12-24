@@ -32,6 +32,7 @@
       <app-pass-collection *ngIf="isStaff" [isActive]="true" [forStaff]="isStaff" [style.width]="'400px'" [passProvider]="activePasses" [title]="'Active Passes'" [icon]="'./assets/Hallway (Blue).png'" [columns]="3"></app-pass-collection>
     </div>
     <div class="future-passes">
+      {{isStaff}}
       <app-pass-collection [forFuture]="true" [forStaff]="isStaff" [style.width]="'400px'" [passProvider]="futurePasses" [title]="'Scheduled Passes'" [icon]="'./assets/Scheduled Pass (Blue).png'" [columns]="3"></app-pass-collection>
     </div>
     <div class="past-passes">

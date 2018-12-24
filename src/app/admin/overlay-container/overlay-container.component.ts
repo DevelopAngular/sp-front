@@ -1,8 +1,8 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
-import {BehaviorSubject, forkJoin, fromEvent, Observable, zip} from 'rxjs';
+import {BehaviorSubject, forkJoin, fromEvent, Observable, Subject, zip} from 'rxjs';
 import { map, switchMap} from 'rxjs/operators';
 
 import { Pinnable } from '../../models/Pinnable';
@@ -32,6 +32,23 @@ export interface FormState {
   styleUrls: ['./overlay-container.component.scss']
 })
 export class OverlayContainerComponent implements OnInit {
+
+  public roomList: {
+    domElement: ElementRef,
+    ready: Subject<ElementRef>,
+    topScroll: number
+  } = {
+    domElement: null,
+    ready: new Subject<ElementRef>(),
+    topScroll: 0
+  };
+
+  @ViewChild('roomList') set content(content: ElementRef) {
+    this.roomList.domElement = content;
+    if (this.roomList.domElement) {
+      this.roomList.ready.next(this.roomList.domElement);
+    }
+  }
 
   @ViewChild('file') selectedFile;
   selectedRooms = [];
@@ -179,8 +196,6 @@ export class OverlayContainerComponent implements OnInit {
 
   ngOnInit() {
 
-      console.log(XLSX);
-
       this.buildForm();
 
       this.overlayType = this.dialogData['type'];
@@ -271,6 +286,10 @@ export class OverlayContainerComponent implements OnInit {
       });
   }
 
+  // ngAfterViewInit() {
+  //   console.log(this.scrollElement);
+  // }
+
   buildForm() {
     this.form = new FormGroup({
         // isEdit: new FormControl(true),
@@ -302,6 +321,11 @@ export class OverlayContainerComponent implements OnInit {
               icon: this.selectedIcon,
               timeLimit: +this.timeLimit
           };
+      }
+      if (this.overlayType = 'newFolder') {
+        this.roomList.ready.asObservable().subscribe((el: ElementRef) => {
+          el.nativeElement.scrollTop = this.roomList.topScroll;
+        });
       }
   }
 
@@ -449,7 +473,7 @@ export class OverlayContainerComponent implements OnInit {
       };
 
       this.setLocation('editRoomInFolder');
-
+      this.roomList.topScroll = this.roomList.domElement.nativeElement.scrollTop;
   }
 
   onCancel() {
@@ -512,7 +536,20 @@ export class OverlayContainerComponent implements OnInit {
                 icon: this.selectedIcon.inactive_icon,
                 category: this.folderName
             };
-        return this.isEditFolder ? this.http.patch(`v1/pinnables/${this.pinnable.id}`, newFolder) : this.http.post('v1/pinnables', newFolder);
+        return this.isEditFolder
+                ?
+               this.http.patch(`v1/pinnables/${this.pinnable.id}`, newFolder)
+                :
+          zip(
+            this.http.get('v1/pinnables?arranged=true'),
+            this.http.post('v1/pinnables', newFolder)
+          ).pipe(
+             switchMap((result: any[]) => {
+               const arrengedSequence = result[0].map(item => item.id);
+                     arrengedSequence.unshift(result[1].id);
+               return this.http.post(`v1/pinnables/arranged`, { order: arrengedSequence.join(',')});
+             })
+          );
         })).subscribe(res => this.dialogRef.close(true));
     }
     if (this.overlayType === 'editRoom') {

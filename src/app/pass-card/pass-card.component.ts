@@ -89,14 +89,27 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   get hasClose(){
     if(this.forInput){
+      console.log('1');
       return true;
     } else if(this.forMonitor){
+      console.log('2');
+
       return !this.fromPast;
     } else if(this.forStaff){
+      console.log('3');
+
       return this.forFuture || this.isActive;
+    } else if ( this.user.id === this.pass.student.id && this.forFuture) {
+      console.log('4/1.2');
+
+      return true;
     } else if(!this.forStaff && this.forFuture){
+      console.log('4');
+
       return false;
     }else{
+      console.log('5');
+
       return this.forFuture;
     }
   }

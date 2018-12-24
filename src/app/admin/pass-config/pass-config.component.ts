@@ -37,7 +37,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
       this.buildForm();
-      this.pinnables$ = this.httpService.get('v1/pinnables');
+      this.pinnables$ = this.httpService.get('v1/pinnables/arranged');
       this.schools$ = this.httpService.get('v1/schools');
       this.schools$.subscribe(res => this.schoolName =  res[0].name);
       this.pinnables$.subscribe(res => this.pinnables = res);
@@ -148,7 +148,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       });
 
      overlayDialog.afterClosed()
-         .pipe(switchMap(() => this.httpService.get('v1/pinnables'))).subscribe(res => {
+         .pipe(switchMap(() => this.httpService.get('v1/pinnables?arranged=true'))).subscribe(res => {
              this.pinnables = res;
              this.selectedPinnables = [];
              this.pinColComponent.clearSelected();

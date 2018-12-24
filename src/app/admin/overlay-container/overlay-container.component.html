@@ -240,7 +240,7 @@
         <div class="rooms-in-folder-content" [ngClass]="{'rooms-scrolling': selectedRooms.length > 5}">
           <div class="not-rooms-in-folder" *ngIf="requireValidator(folderName)">To add rooms, enter a folder name and select an appearance</div>
 
-          <div class="rooms-list" *ngIf="selectedRooms.length > 0 && !requireValidator(folderName)">
+          <div class="rooms-list" #roomList *ngIf="selectedRooms.length > 0 && !requireValidator(folderName)">
             <mat-list>
               <div *ngFor="let room of sortSelectedRooms">
                 <div class="room">
