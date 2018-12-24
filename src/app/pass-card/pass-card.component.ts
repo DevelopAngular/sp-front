@@ -79,6 +79,14 @@ export class PassCardComponent implements OnInit, OnDestroy {
     return Util.formatDateTime(s);
   }
 
+  get closeIcon(){
+    if(((this.isActive && this.forStaff) || this.forMonitor)){
+      return './assets/Three dots (Transparent).png';
+    } else{
+      return './assets/'+(this.forInput?'Back Button ': 'Trash ') + '(Transparent).png';
+    }
+  }
+
   get hasClose(){
     if(this.forInput){
       return true;
@@ -86,14 +94,11 @@ export class PassCardComponent implements OnInit, OnDestroy {
       return !this.fromPast;
     } else if(this.forStaff){
       return this.forFuture || this.isActive;
-    } else{
-      if(this.forFuture && this.pass.issuer.isSameObject(this.user)){
-        return true;
-      } else{
-        return this.forFuture;
-      }
+    } else if(!this.forStaff && this.forFuture){
+      return false;
+    }else{
+      return this.forFuture;
     }
-
   }
 
   ngOnInit() {

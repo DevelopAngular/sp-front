@@ -5,7 +5,7 @@
             [forStaff]="forStaff"
             [pass]="pass"
             [rightJustify]="(fromPast || forFuture)?'center':'flex-end'"
-            [closeIcon]="(((isActive && forStaff) || forMonitor)?'./assets/Three dots (Transparent).png':'./assets/'+(forInput?'Back Button ': 'Trash ') + '(Transparent).png')"
+            [closeIcon]="closeIcon"
             [hasClose]="hasClose"
             (onCancel)="cancelEdit($event)">
 

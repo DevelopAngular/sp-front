@@ -76,7 +76,7 @@ export class LocationTableComponent implements OnInit {
       this.choices = this.staticChoices;
     } else{
       this.http.get<Paged<Location>>('v1/'
-        +(this.type==='teachers'?'users?role=edit_all_hallpass&':('locations'
+        +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
           +(!!this.category ? ('?category=' +this.category +'&') : '?')
         ))
         +'limit=10'
@@ -102,7 +102,7 @@ export class LocationTableComponent implements OnInit {
     // } else{
       if(search!==''){
         this.http.get<Paged<Location>>('v1/'
-        +(this.type==='teachers'?'users?role=edit_all_hallpass&':('locations'
+        +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
           +(!!this.category ? ('?category=' +this.category +'&') : '?')
         ))
         +'limit=4'
@@ -113,7 +113,7 @@ export class LocationTableComponent implements OnInit {
         });
       } else{
         this.http.get<Paged<Location>>('v1/'
-        +(this.type==='teachers'?'users?role=edit_all_hallpass&':('locations'
+        +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
           +(!!this.category ? ('?category=' +this.category +'&') : '?')
         ))
         +'limit=10'

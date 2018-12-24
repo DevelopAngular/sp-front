@@ -14,7 +14,7 @@ import {Report} from '../models/Report';
 import { delay, filter, map } from 'rxjs/operators';
 
 function isUserStaff(user: User): boolean {
-  return user.roles.includes('edit_all_hallpass');
+  return user.roles.includes('_profile_teacher');
 }
 
 export class ActivePassProvider implements PassLikeProvider {
@@ -68,7 +68,7 @@ export class HallMonitorComponent implements OnInit {
       .subscribe(user => {
         this._zone.run(() => {
           this.user = user;
-          this.isStaff = user.roles.includes('edit_all_hallpass');
+          this.isStaff = user.roles.includes('_profile_teacher');
           this.canView = user.roles.includes('view_traveling_users');
         });
       });
