@@ -70,7 +70,7 @@ export class SearchComponent implements OnInit {
           });
         }
       }
-
+      console.log('[Selected Students]:', this.selectedStudents)
       if (this.selectedStudents) {
         let students: any[] = this.selectedStudents.map(s => s['id']);
 
@@ -80,13 +80,19 @@ export class SearchComponent implements OnInit {
       }
 
       if (this.selectedDate) {
-        let start = this.selectedDate['from'].toISOString();
-        let end = this.selectedDate['to'].toISOString();
-
+        let start;
+        let end;
+        if(this.selectedDate['from']){
+          start = this.selectedDate['from'].toISOString();
+          url += (start ? ('created_after=' + start + '&') : '');
+        }
+        if(this.selectedDate['to']){
+          end = this.selectedDate['to'].toISOString();
+          url += (end ? ('end_time_before=' + end) : '');
+        }
+        
         console.log('Start: ', start, '\nEnd: ', end);
-
-        url += (start ? ('created_after=' + start + '&') : '');
-        url += (end ? ('end_time_before=' + end) : '');
+        
       }
 
       this.httpService.get(url).pipe(filter(res => !!res))
@@ -131,23 +137,22 @@ export class SearchComponent implements OnInit {
   }
 
   dateEmit(date) {
-    console.log(date);
-    this.selectedDate = date;
+    console.log('Selected Date:', this.selectedDate, '-> Date:', date, 'Selected Rooms:', this.selectedRooms, 'Selected Students:', this.selectedStudents);
+    this.selectedDate = date?date:this.selectedDate;
   }
 
   roomEmit(rooms) {
-    console.log(rooms);
-    this.selectedRooms = rooms;
+    console.log('Selected Date:', this.selectedDate, 'Selected Rooms:', this.selectedRooms, '-> Rooms:', rooms, 'Selected Students:', this.selectedStudents);
+    this.selectedRooms = rooms?rooms:this.selectedRooms;
   }
 
   studentsEmit(students) {
-    console.log(students);
-    this.selectedStudents = students;
+    console.log('Selected Date:', this.selectedDate, 'Selected Rooms:', this.selectedRooms, 'Selected Students:', this.selectedStudents, '-> Students:', students);
+    this.selectedStudents = students?students:this.selectedStudents;
   }
 
   resetSearchState() {
     this.tableData = [];
-    this.selectedStudents = [];
     this.selectedReport = [];
     this.hasSearched = false;
   }
