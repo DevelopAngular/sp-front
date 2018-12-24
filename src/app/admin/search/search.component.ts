@@ -137,17 +137,20 @@ export class SearchComponent implements OnInit {
   }
 
   dateEmit(date) {
-    console.log('Selected Date:', this.selectedDate, '-> Date:', date, 'Selected Rooms:', this.selectedRooms, 'Selected Students:', this.selectedStudents);
+    //console.log('Selected Date:', this.selectedDate, '-> Date:', date, 'Selected Rooms:', this.selectedRooms, 'Selected Students:', this.selectedStudents);
+    console.log(date);
     this.selectedDate = date?date:this.selectedDate;
   }
 
   roomEmit(rooms) {
-    console.log('Selected Date:', this.selectedDate, 'Selected Rooms:', this.selectedRooms, '-> Rooms:', rooms, 'Selected Students:', this.selectedStudents);
+    //console.log('Selected Date:', this.selectedDate, 'Selected Rooms:', this.selectedRooms, '-> Rooms:', rooms, 'Selected Students:', this.selectedStudents);
+    console.log(rooms);
     this.selectedRooms = rooms?rooms:this.selectedRooms;
   }
 
   studentsEmit(students) {
-    console.log('Selected Date:', this.selectedDate, 'Selected Rooms:', this.selectedRooms, 'Selected Students:', this.selectedStudents, '-> Students:', students);
+    //console.log('Selected Date:', this.selectedDate, 'Selected Rooms:', this.selectedRooms, 'Selected Students:', this.selectedStudents, '-> Students:', students);
+    console.log(students);
     this.selectedStudents = students?students:this.selectedStudents;
   }
 
