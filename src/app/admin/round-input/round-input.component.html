@@ -8,7 +8,7 @@
   <div class="field-wrapper">
     <div class="input-focus-wrapper" [ngClass]="{'inputSelector': selected === true}">
 
-      <input #input class="input" type="text" [style.width]="width" [style.min-width]="minWidth"
+      <input #input class="input" [type]="html5type" [style.width]="width" [style.min-width]="minWidth"
              [placeholder]="placeholder" [readonly]="type == 'dates'"
              (input)="changeAction(input.value)" (click)="focusAction(true)" (focusout)="focusAction(false)"
              [(ngModel)]="value" >
