@@ -47,6 +47,7 @@ export class PassCollectionComponent implements OnInit {
   @Input() passProvider: PassLikeProvider;
 
   @Output() sortMode = new EventEmitter<string>();
+  @Output() reportFromPassCard = new EventEmitter();
 
   currentPasses$;
 
@@ -137,6 +138,9 @@ export class PassCollectionComponent implements OnInit {
           panelClass: 'form-dialog-container',
           backdropClass: 'custom-backdrop',
           data: {'report': dialogData['report']}
+        });
+        reportRef.afterClosed().subscribe(dd => {
+          this.reportFromPassCard.emit(dd);
         });
       }
     });

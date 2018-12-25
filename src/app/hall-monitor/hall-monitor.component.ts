@@ -91,6 +91,18 @@ export class HallMonitorComponent implements OnInit {
     });
   }
 
+  onReportFromPassCard(studends) {
+    if (studends) {
+      this.sendReports = studends;
+      this.isActiveMessage = true;
+      setTimeout(() => {
+        this.isActiveMessage = false;
+      }, 3000);
+    } else {
+      return;
+    }
+  }
+
   onSearch(search: string) {
     console.log('Here it emits!');
     this.searchQuery$.next(search);

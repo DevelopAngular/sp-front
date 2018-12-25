@@ -3,7 +3,7 @@
     <div class="current-pass">
       <div *ngIf="isActivePass || isActiveRequest; else newPass;" class="center">
         <app-inline-request-card *ngIf="isActiveRequest && !isActivePass" [request]="currentRequest"></app-inline-request-card>
-        <app-inline-pass-card *ngIf="isActivePass" [pass]="currentPass" [isActive]="true"></app-inline-pass-card>
+        <app-inline-pass-card *ngIf="dataService.isActivePass$ | async" [pass]="currentPass" [isActive]="true"></app-inline-pass-card>
       </div>
       <ng-template #newPass>
         <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Create (Blue).png'">
@@ -32,7 +32,6 @@
       <app-pass-collection *ngIf="isStaff" [isActive]="true" [forStaff]="isStaff" [style.width]="'400px'" [passProvider]="activePasses" [title]="'Active Passes'" [icon]="'./assets/Hallway (Blue).png'" [columns]="3"></app-pass-collection>
     </div>
     <div class="future-passes">
-      {{isStaff}}
       <app-pass-collection [forFuture]="true" [forStaff]="isStaff" [style.width]="'400px'" [passProvider]="futurePasses" [title]="'Scheduled Passes'" [icon]="'./assets/Scheduled Pass (Blue).png'" [columns]="3"></app-pass-collection>
     </div>
     <div class="past-passes">
