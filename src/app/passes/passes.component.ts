@@ -86,6 +86,8 @@ class PastPassProvider implements PassLikeProvider {
 
 class InboxRequestProvider implements PassLikeProvider {
 
+  isStudent: boolean;
+
   constructor(
     private liveDataService: LiveDataService,
     private user$: Observable<User>,
@@ -97,9 +99,15 @@ class InboxRequestProvider implements PassLikeProvider {
     const sortReplay = new ReplaySubject<string>(1);
     sort.subscribe(sortReplay);
 
-      const requests$ = this.user$.pipe(switchMap(user => this.liveDataService.watchInboxRequests(user)))
+      const requests$ = this.user$.pipe(switchMap(user => {
+        this.isStudent = user.isStudent();
+        return this.liveDataService.watchInboxRequests(user);
+      }))
           .pipe(map(req => {
-              return req.filter(r => !!r.request_time);
+              if (this.isStudent) {
+                return req.filter(r => !!r.request_time);
+              }
+              return req;
           }));
 
     return requests$;
