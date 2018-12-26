@@ -278,7 +278,7 @@ export class HallpassFormComponent implements OnInit {
 
     if(!back){
       this.formState = state;
-      if (this.formState !== 'to-category' && !this.formStateHistory.find(s => s === state)) {
+      if (!this.formStateHistory.find(s => s === state)) {
           this.formStateHistory.push(this.formState);
       }
       this.formHistoryIndex = this.formStateHistory.length - 1;
