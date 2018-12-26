@@ -34,10 +34,16 @@ class FuturePassProvider implements PassLikeProvider {
     const sortReplay = new ReplaySubject<string>(1);
     sort.subscribe(sortReplay);
 
-    return this.user$.switchMap(user => this.liveDataService.watchFutureHallPasses(
-      user.roles.includes('hallpass_student')
-        ? {type: 'student', value: user}
-        : {type: 'issuer', value: user}));
+    const futurePasses$ = this.user$.pipe(switchMap(user => this.liveDataService.watchFutureHallPasses(
+        user.roles.includes('hallpass_student')
+            ? {type: 'student', value: user}
+            : {type: 'issuer', value: user})))
+        .pipe(map(passes => {
+            const now = new Date();
+            return passes.filter(pass => pass.start_time.getTime() >= now.getTime());
+        }));
+
+    return futurePasses$;
   }
 }
 
