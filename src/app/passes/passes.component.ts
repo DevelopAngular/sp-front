@@ -97,7 +97,12 @@ class InboxRequestProvider implements PassLikeProvider {
     const sortReplay = new ReplaySubject<string>(1);
     sort.subscribe(sortReplay);
 
-    return this.user$.pipe(switchMap(user => this.liveDataService.watchInboxRequests(user)));
+      const requests$ = this.user$.pipe(switchMap(user => this.liveDataService.watchInboxRequests(user)))
+          .pipe(map(req => {
+              return req.filter(r => !!r.request_time);
+          }));
+
+    return requests$;
   }
 
 }
