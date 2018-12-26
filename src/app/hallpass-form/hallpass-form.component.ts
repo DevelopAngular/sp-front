@@ -46,7 +46,7 @@ export class HallpassFormComponent implements OnInit {
   toState: string = 'pinnables';
   toCategory: string = '';
   selectedStudents: User[] = [];
-  startTime: Date = new Date();
+  startTime = new Date();
   requestMessage: string = '';
   isDeclinable: boolean = true;
   formStateHistory: string[] = [];
@@ -228,10 +228,6 @@ export class HallpassFormComponent implements OnInit {
     matDialogConfig.height = this.formState === 'datetime' ? '516px' : '385px';
     matDialogConfig.width = '750px';
     this.dialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);
-  }
-
-  setStartTime(event) {
-    this.startTime = new Date(event);
   }
 
   back() {
