@@ -10,7 +10,7 @@ import { MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '../../../node_mo
 export class TeacherDropdownComponent implements OnInit {
 
   choices: Location[];
-
+  selected: Location;
   _matDialogRef: MatDialogRef<TeacherDropdownComponent>;
   triggerElementRef: ElementRef;
 
@@ -18,6 +18,7 @@ export class TeacherDropdownComponent implements OnInit {
     this._matDialogRef = _matDialogRef;
     this.triggerElementRef = data['trigger'];
     this.choices = data['choices'];
+    this.selected = data['selected'];
   }
 
   ngOnInit() {

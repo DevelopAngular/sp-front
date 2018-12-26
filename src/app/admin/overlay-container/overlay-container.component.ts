@@ -322,7 +322,7 @@ export class OverlayContainerComponent implements OnInit {
               timeLimit: +this.timeLimit
           };
       }
-      if (this.overlayType = 'newFolder') {
+      if (this.overlayType === 'newFolder') {
         this.roomList.ready.asObservable().subscribe((el: ElementRef) => {
           el.nativeElement.scrollTop = this.roomList.topScroll;
         });

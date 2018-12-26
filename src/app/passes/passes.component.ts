@@ -181,18 +181,20 @@ export class PassesComponent implements OnInit {
 
     this.dataService.currentUser.switchMap(user =>
       user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null))
-      .pipe(filter(res => !!res))
       .subscribe(passLike => {
         if (!passLike) {
           this.dataService.isActivePass$.next(false);
         }
         if (passLike) {
-          console.log('passLike', passLike);
           const nowDate = new Date();
           const startDate = new Date(passLike.start_time);
           const endDate = new Date(passLike.end_time);
-          if (nowDate.getTime() >= startDate.getTime() && nowDate.getTime() !== endDate.getTime()) {
-            this.dataService.isActivePass$.next(true);
+          if (nowDate.getTime() >= startDate.getTime()) {
+            if (nowDate.getTime() <= endDate.getTime()) {
+              this.dataService.isActivePass$.next(true);
+            } else {
+              this.dataService.isActivePass$.next(false);
+            }
           }
           if (!(!!passLike.request_time) && passLike.status) {
             this.dataService.isActiveRequest$.next(true);

@@ -20,7 +20,7 @@ export class TogglePickerComponent implements OnInit {
     @Input() fontSize: string = '11px';
     @Output() onDirty: EventEmitter<boolean> = new EventEmitter();
     @Output() onSelect: EventEmitter<any> = new EventEmitter();
-
+    private restrictionMap = new Map();
     choice1: string;
     choice2: string;
     choice3: string;
@@ -43,36 +43,33 @@ export class TogglePickerComponent implements OnInit {
           this.choice1 = this.choices[0];
           this.choice2 = this.choices[1];
       }
-      if (this.currentChoose) {
-          if (_.isArray(this.currentChoose)) {
-              if (this.currentChoose.includes('round_trip')) {
-                  this.selectedChoice = 'Round-trip';
-              }
-              if (this.currentChoose.includes('one_way')) {
-                  this.selectedChoice = 'One-way';
-              }
-              if (this.currentChoose.includes('round_trip') && this.currentChoose.includes('one_way')) {
-                  this.selectedChoice = 'Both';
-              }
-          } else {
-              switch (this.currentChoose) {
-                  case false: {
-                      this.selectedChoice = 'Unrestricted';
-                      break;
-                  }
-                  case true: {
-                      this.selectedChoice = 'Restricted';
-                  }
-              }
-          }
-      } else {
-        if (this.noSelected) {
-          this.selectedChoice = '';
-        } else {
 
-          this.selectedChoice = this.selectedChoice ? this.selectedChoice : this.choice1;
+      switch (typeof this.currentChoose) {
+        case ('object'): {
+          if (this.currentChoose.includes('round_trip')) {
+            this.selectedChoice = 'Round-trip';
+          }
+          if (this.currentChoose.includes('one_way')) {
+            this.selectedChoice = 'One-way';
+          }
+          if (this.currentChoose.includes('round_trip') && this.currentChoose.includes('one_way')) {
+            this.selectedChoice = 'Both';
+          }
+          break;
+        }
+        case ('boolean'): {
+          if (this.currentChoose) {
+            this.selectedChoice = 'Restricted';
+          } else {
+            if (this.noSelected) {
+              this.selectedChoice = '';
+            } else {
+              this.selectedChoice = this.selectedChoice ? this.selectedChoice : this.choice1;
+            }
+          }
         }
       }
+
       this.onSelect.emit(this.travelValue(this.selectedChoice));
   }
 

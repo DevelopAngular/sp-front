@@ -165,7 +165,7 @@
       >
         <div class="travel-picker">
           <div class="toggle-label">Travel Type</div>
-          <app-toggle-picker [fontSize]="'13px'" (onSelect)="travelUpdate($event)" (onDirty)="isDirtyTravel=$event" [noSelected]="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' ? true : false" [currentChoose]="travelType" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+          <app-toggle-picker [fontSize]="'13px'" (onSelect)="travelUpdate($event)" (onDirty)="isDirtyTravel=$event" [noSelected]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && !editRoomInFolder) ? true : false" [currentChoose]="travelType" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
         <div class="time-limit"
              *ngIf="overlayType === 'newRoom'
@@ -197,11 +197,11 @@
       >
         <div class="restriction-picker-1">
           <div class="toggle-label">Restriction For Now</div>
-          <app-toggle-picker [fontSize]="'13px'" (onSelect)="nowRestrictionUpdate($event)" (onDirty)="isDirtyNowRestriction=$event" [noSelected]="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'settingsRooms' ? true : false" [currentChoose]="nowRestriction || null" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+          <app-toggle-picker [fontSize]="'13px'" (onSelect)="nowRestrictionUpdate($event)" (onDirty)="isDirtyNowRestriction=$event" [noSelected]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && !editRoomInFolder) ? true : false" [currentChoose]="nowRestriction" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
         <div class="restriction-picker-2">
           <div class="toggle-label">Restriction For Future</div>
-          <app-toggle-picker [fontSize]="'13px'" (onSelect)="futureRestrictionUpdate($event)" (onDirty)="isDirtyFutureRestriction=$event" [noSelected]="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'settingsRooms' ? true : false" [currentChoose]="futureRestriction || null" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+          <app-toggle-picker [fontSize]="'13px'" (onSelect)="futureRestrictionUpdate($event)" (onDirty)="isDirtyFutureRestriction=$event" [noSelected]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && !editRoomInFolder) ? true : false" [currentChoose]="futureRestriction" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
       </div>
 
@@ -241,6 +241,7 @@
           <div class="not-rooms-in-folder" *ngIf="requireValidator(folderName)">To add rooms, enter a folder name and select an appearance</div>
 
           <div class="rooms-list" #roomList *ngIf="selectedRooms.length > 0 && !requireValidator(folderName)">
+            here it is
             <mat-list>
               <div *ngFor="let room of sortSelectedRooms">
                 <div class="room">
