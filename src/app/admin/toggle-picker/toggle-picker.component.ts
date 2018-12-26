@@ -46,6 +46,7 @@ export class TogglePickerComponent implements OnInit {
 
       switch (typeof this.currentChoose) {
         case ('object'): {
+            debugger;
           if (this.currentChoose.includes('round_trip')) {
             this.selectedChoice = 'Round-trip';
           }

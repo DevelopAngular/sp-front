@@ -153,7 +153,10 @@
         </div>
       </div>
       <div class="teacher-search" *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'">
-        <div class="teacher-title">Teachers in Room</div>
+          <div class="teacher-title">
+              <span>Teachers in Room</span>
+              <img (mouseover)="openInfo($event)" (mouseleave)="closeInfo()" class="support-icon" [src]="'./assets/Support (Blue).png' | resolveAsset">
+          </div>
         <app-profiles-search [placeholder]="'Search Teachers'" [selectedStudents]="selectedTichers" (isEmitUsers)="isEmitTeachers($event)" (onUpdate)="selectTeacherEvent($event)" [role]="'_profile_teacher'"></app-profiles-search>
       </div>
       <div style="display: flex; margin-top: 16px; margin-bottom: 13px"
@@ -168,7 +171,7 @@
             <span>Travel Type</span>
             <img (mouseover)="openInfo($event)" (mouseleave)="closeInfo()" class="support-icon" [src]="'./assets/Support (Blue).png' | resolveAsset">
           </div>
-          <app-toggle-picker [fontSize]="'13px'" (onSelect)="travelUpdate($event)" (onDirty)="isDirtyTravel=$event" [noSelected]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && !editRoomInFolder) ? true : false" [currentChoose]="travelType" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+            <app-toggle-picker [fontSize]="'13px'" (onSelect)="travelUpdate($event)" (onDirty)="isDirtyTravel=$event" [noSelected]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && !editRoomInFolder) ? true : false" [currentChoose]="travelType" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
         <div class="time-limit"
              *ngIf="overlayType === 'newRoom'
@@ -180,10 +183,13 @@
           <app-input
                   [width]="'105px'"
                   [maxLength]="2"
+                  (over)="openInfo($event)"
+                  (leave)="closeInfo()"
                   [input_label]="'Time Limit'"
                   [input_value]="timeLimit ? timeLimit : ''"
                   [placeholder]="'minutes'"
                   (onUpdate)="onUpdate($event)"
+                  [rightIcon]="'./assets/Support (Blue).png'"
                   [formGroup]="form"
                   [controlName]="form.get('timeLimit')"
           >
@@ -203,11 +209,14 @@
             <span>Restriction For Now</span>
             <img class="support-icon" (mouseover)="openInfo($event)" (mouseleave)="closeInfo()" [src]="'./assets/Support (Blue).png' | resolveAsset">
           </div>
-          <app-toggle-picker [fontSize]="'13px'" (onSelect)="nowRestrictionUpdate($event)" (onDirty)="isDirtyNowRestriction=$event" [noSelected]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && !editRoomInFolder) ? true : false" [currentChoose]="nowRestriction || null" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+            <app-toggle-picker [fontSize]="'13px'" (onSelect)="nowRestrictionUpdate($event)" (onDirty)="isDirtyNowRestriction=$event" [noSelected]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && !editRoomInFolder) ? true : false" [currentChoose]="nowRestriction" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
         <div class="restriction-picker-2">
-          <div class="toggle-label">Restriction For Future</div>
-          <app-toggle-picker [fontSize]="'13px'" (onSelect)="futureRestrictionUpdate($event)" (onDirty)="isDirtyFutureRestriction=$event" [noSelected]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && !editRoomInFolder) ? true : false" [currentChoose]="futureRestriction || null" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+            <div class="toggle-label">
+                <span>Restriction For Future</span>
+                <img (mouseover)="openInfo($event)" (mouseleave)="closeInfo()" class="support-icon" [src]="'./assets/Support (Blue).png' | resolveAsset">
+            </div>
+            <app-toggle-picker [fontSize]="'13px'" (onSelect)="futureRestrictionUpdate($event)" (onDirty)="isDirtyFutureRestriction=$event" [noSelected]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && !editRoomInFolder) ? true : false" [currentChoose]="futureRestriction" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
       </div>
 
