@@ -34,10 +34,16 @@ class FuturePassProvider implements PassLikeProvider {
     const sortReplay = new ReplaySubject<string>(1);
     sort.subscribe(sortReplay);
 
-    return this.user$.switchMap(user => this.liveDataService.watchFutureHallPasses(
-      user.roles.includes('hallpass_student')
-        ? {type: 'student', value: user}
-        : {type: 'issuer', value: user}));
+    const futurePasses$ = this.user$.pipe(switchMap(user => this.liveDataService.watchFutureHallPasses(
+        user.roles.includes('hallpass_student')
+            ? {type: 'student', value: user}
+            : {type: 'issuer', value: user})))
+        .pipe(map(passes => {
+            const now = new Date();
+            return passes.filter(pass => pass.start_time.getTime() >= now.getTime());
+        }));
+
+    return futurePasses$;
   }
 }
 
@@ -86,6 +92,8 @@ class PastPassProvider implements PassLikeProvider {
 
 class InboxRequestProvider implements PassLikeProvider {
 
+  isStudent: boolean;
+
   constructor(
     private liveDataService: LiveDataService,
     private user$: Observable<User>,
@@ -97,7 +105,18 @@ class InboxRequestProvider implements PassLikeProvider {
     const sortReplay = new ReplaySubject<string>(1);
     sort.subscribe(sortReplay);
 
-    return this.user$.pipe(switchMap(user => this.liveDataService.watchInboxRequests(user)));
+      const requests$ = this.user$.pipe(switchMap(user => {
+        this.isStudent = user.isStudent();
+        return this.liveDataService.watchInboxRequests(user);
+      }))
+          .pipe(map(req => {
+              if (this.isStudent) {
+                return req.filter(r => !!r.request_time);
+              }
+              return req;
+          }));
+
+    return requests$;
   }
 
 }
@@ -183,7 +202,8 @@ export class PassesComponent implements OnInit {
       user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null))
       .subscribe(passLike => {
         if (!passLike) {
-          this.dataService.isActivePass$.next(false);
+         this.dataService.isActiveRequest$.next(false);
+         this.dataService.isActivePass$.next(false);
         }
         if (passLike) {
           const nowDate = new Date();

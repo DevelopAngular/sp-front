@@ -1,6 +1,9 @@
 <form [formGroup]="formGroup">
   <div class="InputWrapper">
-    <label [ngClass]="{clserrorLabel: controlName.invalid && ( inp.focused || controlName.touched )}">{{input_label}}</label>
+    <div style="display: flex">
+      <label [ngClass]="{clserrorLabel: controlName.invalid && ( inp.focused || controlName.touched )}">{{input_label}}</label>
+      <img class="support-icon" (mouseover)="over.emit($event)" (mouseleave)="leave.emit()" *ngIf="rightIcon" [src]="rightIcon | resolveAsset"/>
+    </div>
     <input #inp
        [style.width]="width"
        [maxlength]="maxLength"
@@ -11,7 +14,8 @@
        [ngClass]="{clserrorInput: controlName.invalid && ( inp.focused || controlName.touched )}"
        (focus)="inp.focused = true"
        (blur)="inp.focused = false"/>
-    <img *ngIf='controlName.valid' src="./assets/Check (Blue).png"/>
-    <img *ngIf='controlName.invalid && ( inp.focused || controlName.touched )' src="./assets/Report (Red).png"/>
+    <img *ngIf='controlName.valid' class="success-icon" [src]="'./assets/Check (Blue).png' | resolveAsset"/>
+    <img *ngIf='controlName.invalid && ( inp.focused || controlName.touched )'
+         class="success-icon" [src]="'./assets/Report (Red).png' | resolveAsset"/>
   </div>
 </form>

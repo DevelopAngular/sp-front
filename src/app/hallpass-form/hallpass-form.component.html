@@ -45,7 +45,7 @@
   <!-- Used to select the start time of a pass for later -->
   <div *ngIf="formState == 'datetime'" class="datetime-area">
     <div class="datetime-left">
-      <app-date-time-picker (onUpdate)="requestTime=$event"></app-date-time-picker>
+      <app-date-time-picker [min]="startTime" (onUpdate)="requestTime=$event"></app-date-time-picker>
     </div>
     <div class="datetime-right">
       <div *ngIf="forStaff" class="toggle-wrapper loading-theme">

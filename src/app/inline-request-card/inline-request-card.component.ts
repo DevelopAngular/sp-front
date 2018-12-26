@@ -56,11 +56,11 @@ export class InlineRequestCardComponent implements OnInit {
         backdropClass: 'invis-backdrop',
         data: {'header': header, 'options': options, 'trigger': target}
       });
-  
+
       cancelDialog.afterOpen().subscribe( () =>{
         this.cancelOpen = true;
       });
-  
+
       cancelDialog.afterClosed().subscribe(action => {
         this.cancelOpen = false;
         if (action === 'delete') {

@@ -1,4 +1,4 @@
-import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Inject, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
@@ -111,6 +111,7 @@ export class OverlayContainerComponent implements OnInit {
       @Inject(MAT_DIALOG_DATA) public dialogData: any,
       private userService: UserService,
       private http: HttpService,
+      private renderer: Renderer2
   ) { }
 
   getHeaderData() {
@@ -781,5 +782,14 @@ export class OverlayContainerComponent implements OnInit {
 
   onUpdate(time) {
       this.timeLimit = time;
+  }
+
+  openInfo(el: ElementRef) {
+    console.log('OPEN-INFO', el);
+    // this.renderer.setProperty(el.nativeElement, 'src', './assets/Support (Grey).png');
+  }
+
+  closeInfo() {
+    console.log('CLOSE-INFO');
   }
 }
