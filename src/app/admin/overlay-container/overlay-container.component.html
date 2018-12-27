@@ -423,7 +423,7 @@
       </div>
      </div>
         <div class="footer-delete-button"
-          *ngIf="(overlayType === 'editRoom' ||(editRoomInFolder && isValidForm)) && !showSearchTeacherOptions"
+          *ngIf="(overlayType === 'editRoom' || (editRoomInFolder)) && !showSearchTeacherOptions"
           [style.margin-top]="overlayType === 'editRoom' ? '90px' : '50px'"
         >
             <app-gradient-button
