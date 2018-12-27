@@ -31,7 +31,6 @@ export interface FormState {
   selector: 'app-overlay-container',
   templateUrl: './overlay-container.component.html',
   styleUrls: ['./overlay-container.component.scss'],
-  encapsulation: ViewEncapsulation.None,
 })
 export class OverlayContainerComponent implements OnInit {
 
@@ -806,13 +805,6 @@ export class OverlayContainerComponent implements OnInit {
 
   openInfo({event, action}) {
     this.isActiveIcon[action] = true;
-    // const target = new ElementRef(event.currentTarget);
-    // this.dialog.open(ConsentMenuComponent, {
-    //     id: 'ttt',
-    //     panelClass: 'consent-dialog-container',
-    //     backdropClass: 'invis-backdrop',
-    //     data: {'header': 'sdgsdgsfgds', 'trigger': target}
-    // });
   }
 
   closeInfo(action) {

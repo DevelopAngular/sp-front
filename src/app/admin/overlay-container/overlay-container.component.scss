@@ -16,9 +16,9 @@
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
 }
 
-.tooltip {
+::ng-deep .tooltip {
   background-color: white;
-  padding: 15px !important;
+  padding: 15px;
   color: #7f879d !important;
   text-align: center;
   display: flex;
