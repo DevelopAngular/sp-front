@@ -33,6 +33,7 @@ import { SignOutComponent } from './sign-out/sign-out.component';
 import { UserService } from './user.service';
 import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 
+
 const appRoutes: Routes = [
   {path: '', redirectTo: 'main/passes', pathMatch: 'full'},
   {path: 'main/intro', component: IntroComponent},

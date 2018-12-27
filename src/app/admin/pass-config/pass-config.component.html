@@ -55,7 +55,7 @@
 </div>
   <div class="pass-config-content">
       <div class="pinnables">
-          <app-pinnable-collection [pinnables]="pinnables" (roomEvent)="selectPinnable($event)"></app-pinnable-collection>
+          <app-pinnable-collection [pinnables]="pinnables" (orderChangedEvent)="updatePinnablesOrder($event)" (roomEvent)="selectPinnable($event)"></app-pinnable-collection>
       </div>
   </div>
 </div>
