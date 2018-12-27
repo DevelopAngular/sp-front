@@ -12,11 +12,25 @@
            && overlayType !== 'settingsRooms' && (!showPublishFolder && !showPublishNewRoom && !showPublishEditRoom)"
            [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
 
-      <div class="cancel-button" *ngIf="overlayType !== 'addExisting'
+      <!--<div class="cancel-button" *ngIf="overlayType !== 'addExisting'-->
+           <!--&& overlayType !== 'newRoomInFolder'-->
+           <!--&& overlayType !== 'importRooms'-->
+           <!--&& overlayType !== 'settingsRooms'-->
+           <!--&& (showPublishFolder || showPublishNewRoom || showPublishEditRoom)" (click)="back()">Cancel</div>-->
+        <app-gradient-button style="margin-left: 15px" *ngIf="overlayType !== 'addExisting'
            && overlayType !== 'newRoomInFolder'
            && overlayType !== 'importRooms'
            && overlayType !== 'settingsRooms'
-           && (showPublishFolder || showPublishNewRoom || showPublishEditRoom)" (click)="back()">Cancel</div>
+           && (showPublishFolder || showPublishNewRoom || showPublishEditRoom)"
+                             [gradient]="color_profile.overlay_color + ',' + color_profile.time_color"
+                             [hoverColor]="color_profile.overlay_color"
+                             [minHeight]="'40px'"
+                             [style.width]="'120px'"
+                             [cursor]="'pointer'"
+                             [fontSize]="'14px'"
+                             (buttonClick)="back()"
+        >Cancel
+        </app-gradient-button>
 
       <div class="title" *ngIf="overlayType === 'newRoom' || overlayType === 'editRoom'">{{ roomName }}</div>
       <div
