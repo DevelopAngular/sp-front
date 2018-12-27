@@ -12,7 +12,6 @@ import { HttpService } from '../../http-service';
 import { Location } from '../../models/Location';
 import * as XLSX from 'xlsx';
 import { UserService } from '../../user.service';
-import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 
 export interface FormState {
     roomName: string;
@@ -107,7 +106,6 @@ export class OverlayContainerComponent implements OnInit {
   isChangeLocations = new BehaviorSubject<boolean>(false);
 
   showSearchTeacherOptions: boolean;
-  consentDialog;
 
   newRoomsInFolder = [];
 
@@ -126,11 +124,9 @@ export class OverlayContainerComponent implements OnInit {
 
   constructor(
       private dialogRef: MatDialogRef<OverlayContainerComponent>,
-      private _matDialogRef: MatDialogRef<ConsentMenuComponent>,
       @Inject(MAT_DIALOG_DATA) public dialogData: any,
       private userService: UserService,
       private http: HttpService,
-      private dialog: MatDialog
   ) { }
 
   getHeaderData() {

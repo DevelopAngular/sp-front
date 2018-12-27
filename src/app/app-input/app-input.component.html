@@ -1,7 +1,7 @@
 <form [formGroup]="formGroup">
   <div class="InputWrapper">
     <div style="display: flex">
-      <label [ngClass]="{clserrorLabel: controlName.invalid && ( inp.focused || controlName.touched )}">{{input_label}}</label>
+      <label [ngClass]="{clserrorLabel: controlName.invalid && controlName.touched}">{{input_label}}</label>
       <div class="tooltip-container">
         <img
            [matTooltip]="tooltipText"
@@ -14,13 +14,6 @@
           <div class="arrow-down"></div>
         </div>
       </div>
-      <!--<img-->
-        <!--class="support-icon"-->
-        <!--[matTooltip]="tooltipText"-->
-        <!--[matTooltipClass]="{'tooltip': true}"-->
-        <!--(mouseover)="over.emit({event: $event, action: 'timeLimit'})"-->
-        <!--(mouseleave)="leave.emit('timeLimit')"-->
-        <!--*ngIf="rightIcon" [src]="rightIcon | resolveAsset"/>-->
     </div>
     <input #inp
        [style.width]="width"
@@ -29,11 +22,11 @@
        [type]="input_type"
        [class]="input_class"
        [placeholder]="(placeholder=='' ? '' : placeholder)"
-       [ngClass]="{clserrorInput: controlName.invalid && ( inp.focused || controlName.touched )}"
+       [ngClass]="{clserrorInput: controlName.invalid && controlName.touched }"
        (focus)="inp.focused = true"
        (blur)="inp.focused = false"/>
     <img *ngIf='controlName.valid' class="success-icon" [src]="'./assets/Check (Blue).png' | resolveAsset"/>
-    <img *ngIf='controlName.invalid && ( inp.focused || controlName.touched )'
+    <img *ngIf='controlName.invalid && controlName.touched'
          class="success-icon" [src]="'./assets/Report (Red).png' | resolveAsset"/>
   </div>
 </form>
