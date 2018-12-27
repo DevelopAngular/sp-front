@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ColorProfile } from '../../models/ColorProfile';
 
+declare const window;
+
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
@@ -32,6 +34,8 @@ export class SettingsComponent implements OnInit {
   settingsAction(action: string) {
     if (action === 'signout') {
       this.router.navigate(['sign-out']);
+    } else if (action === 'about') {
+      window.open('https://smartpass.app/about');
     }
   }
 }
