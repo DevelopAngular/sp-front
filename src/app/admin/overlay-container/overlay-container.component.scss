@@ -80,6 +80,7 @@
     .teacher-title {
       color: #1D1A5E;
       font-weight: bold;
+      display: flex;
     }
   }
 
@@ -93,6 +94,7 @@
     margin-bottom: 10px;
     color: #1d1a5e;
     font-weight: bolder;
+    display: flex;
   }
 
   .restriction-settings {
@@ -496,5 +498,11 @@
   justify-content: center;
   margin-top: 70px;
   color: darkgray;
+}
+
+.support-icon {
+  width: 20px;
+  height: 20px;
+  margin-left: 7px;
 }
 

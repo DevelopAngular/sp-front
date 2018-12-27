@@ -5,9 +5,17 @@
   <div class="options-wrapper">
     <div class="option" *ngFor="let choice of choices" (click)="_matDialogRef.close(choice)">
       <div class="option-data">
-        {{ choice.title }}
+        <div class="option-data_leftside">
+          <span>{{ choice.title }}</span>
+        </div>
+        <div class="option-data_rightside">
+          <div>{{choice.room}}</div>
+          <div class="marked-room">
+            <img *ngIf="choice.room === selected.room && choice.title === selected.title" [style.width]="'20px'" [style.height]="'20px'" [src]="'./assets/Check (Blue).png' | resolveAsset" alt="Check (Blue).png">
+          </div>
+        </div>
       </div>
-      <div class="option-divider"></div>     
+      <div class="option-divider"></div>
     </div>
   </div>
 </div>

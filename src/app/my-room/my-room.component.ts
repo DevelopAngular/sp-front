@@ -130,11 +130,11 @@ export class MyRoomComponent implements OnInit {
   }
 
   get choices() {
-    if (this.selectedLocation !== null) {
-      return this.roomOptions.filter((room) => room.id !== this.selectedLocation.id);
-    } else {
+    // if (this.selectedLocation !== null) {
+    //   return this.roomOptions.filter((room) => room.id !== this.selectedLocation.id);
+    // } else {
       return this.roomOptions;
-    }
+    // }
   }
 
   get showArrow() {
@@ -177,7 +177,10 @@ export class MyRoomComponent implements OnInit {
       const optionDialog = this.dialog.open(TeacherDropdownComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: {'choices': this.choices, 'trigger': target}
+        data: {
+          'choices': this.choices,
+          'selected': this.selectedLocation,
+          'trigger': target}
       });
 
       optionDialog.afterOpen().subscribe(() => {

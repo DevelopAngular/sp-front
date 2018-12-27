@@ -16,11 +16,14 @@ export class AppInputComponent implements OnInit {
     @Input() placeholder: string = '';
     @Input() maxLength: number = 100;
     @Input() width: string;
+    @Input() rightIcon: string;
 
     @Input() formGroup;
     @Input() controlName;
 
     @Output() onUpdate = new EventEmitter<string | number>();
+    @Output() over = new EventEmitter();
+    @Output() leave = new EventEmitter();
 
     constructor(public dialog: MatDialog) {
     }

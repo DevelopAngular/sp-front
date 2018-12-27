@@ -18,6 +18,7 @@ export class RoundInputComponent implements OnInit {
   @Input() placeholder: string;
   @Input() type: string;
   //Can be 'text', 'multilocation', 'multiuser', or 'dates'  There may be some places where multiuser may need to be split into student and teacher. I tried finding a better way to do this, but this is just short term.
+  @Input() html5type: string = 'text'; // text, password, number etc.
   @Input() hasTogglePicker: boolean;
   @Input() width: string;
   @Input() minWidth: string;

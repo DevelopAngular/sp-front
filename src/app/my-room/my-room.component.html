@@ -2,9 +2,10 @@
   <div *ngIf="isStaff && selectedLocation && userLoaded" class="my-room-wrapper" [style.width]="calendarToggled?'900px':'550px'">
     <div class="my-room-left">
       <div class="my-room-header">
+        <!--<p>{{optionsOpen}} | {{showArrow}}</p>-->
         <div class="selected-teacher" (click)="showOptions($event)">
           {{ roomOptions?selectedLocation.title:"" }}
-          <img *ngIf="!optionsOpen && showArrow" class="disclosure-icon" [src]="'./assets/Disclosure Indicator (Blue).png' | resolveAsset">
+          <img *ngIf="showArrow" class="disclosure-icon" [src]="'./assets/Disclosure Indicator (Blue).png' | resolveAsset">
         </div>
         <input
           class="input"
@@ -32,4 +33,5 @@
   </div>
   <h3 *ngIf="isStaff && !selectedLocation && userLoaded">You don't have any rooms</h3>
   <h3 *ngIf="!isStaff && userLoaded">You don't have access to this page</h3>
+
 </div>

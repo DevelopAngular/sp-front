@@ -80,12 +80,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
           } else if (entry.name.toLowerCase() === 'average pass time') {
             this.averagePassTime = entry['value'];
           }
-          // else if (entry.name === 'Active Pass Count') {
-          //   this.numActivePasses = entry['value'];
-          // }
         }
 
-        // this.activeHallpasses = result[0].results;
         this.reports = eventReports;
 
         if (environment.funData) {
@@ -93,10 +89,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         } else {
           this.lineChartData = [{data: dashboard.hall_pass_usage}];
         }
-
         this.hiddenChart = false;
-        console.log(this.lineChartData[0].data);
-        // this.reports = [];
       });
 
     interval(60000)
@@ -118,15 +111,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
           backgroundColor:  this.gradient,
           pointBackgroundColor: 'transparent',
           borderColor: 'rgba(0,159,0,1)',
-          // pointHoverBackgroundColor: 'rgba(148,159,177,1)',
           pointHoverBackgroundColor: '#FFFFFF',
           pointBorderColor: 'transparent',
           pointBorderWidth: 3,
           pointHoverRadius: 6,
-          // steppedLine: true,
-          // snapGaps: true,
-          // showLine: false,
-          // pointHoverBackgroundColor: '#fff',
           pointHoverBorderColor: '#134482'
         }
       ];

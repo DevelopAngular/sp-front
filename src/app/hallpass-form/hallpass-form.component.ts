@@ -46,7 +46,7 @@ export class HallpassFormComponent implements OnInit {
   toState: string = 'pinnables';
   toCategory: string = '';
   selectedStudents: User[] = [];
-  startTime: Date = new Date();
+  startTime = new Date();
   requestMessage: string = '';
   isDeclinable: boolean = true;
   formStateHistory: string[] = [];
@@ -230,10 +230,6 @@ export class HallpassFormComponent implements OnInit {
     this.dialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);
   }
 
-  setStartTime(event) {
-    this.startTime = new Date(event);
-  }
-
   back() {
     this.toCategory = '';
     let newIndex = this.formHistoryIndex - 1;
@@ -282,7 +278,7 @@ export class HallpassFormComponent implements OnInit {
 
     if(!back){
       this.formState = state;
-      if (this.formState !== 'to-category' && !this.formStateHistory.find(s => s === state)) {
+      if (!this.formStateHistory.find(s => s === state)) {
           this.formStateHistory.push(this.formState);
       }
       this.formHistoryIndex = this.formStateHistory.length - 1;

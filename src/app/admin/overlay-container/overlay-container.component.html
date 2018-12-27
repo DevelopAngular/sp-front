@@ -153,7 +153,10 @@
         </div>
       </div>
       <div class="teacher-search" *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'">
-        <div class="teacher-title">Teachers in Room</div>
+          <div class="teacher-title">
+              <span>Teachers in Room</span>
+              <img (mouseover)="openInfo($event)" (mouseleave)="closeInfo()" class="support-icon" [src]="'./assets/Support (Blue).png' | resolveAsset">
+          </div>
         <app-profiles-search [placeholder]="'Search Teachers'" [selectedStudents]="selectedTichers" (isEmitUsers)="isEmitTeachers($event)" (onUpdate)="selectTeacherEvent($event)" [role]="'_profile_teacher'"></app-profiles-search>
       </div>
       <div style="display: flex; margin-top: 16px; margin-bottom: 13px"
@@ -164,8 +167,11 @@
            || overlayType === 'editRoom') && !showSearchTeacherOptions"
       >
         <div class="travel-picker">
-          <div class="toggle-label">Travel Type</div>
-          <app-toggle-picker [fontSize]="'13px'" (onSelect)="travelUpdate($event)" (onDirty)="isDirtyTravel=$event" [noSelected]="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' ? true : false" [currentChoose]="travelType" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+          <div class="toggle-label">
+            <span>Travel Type</span>
+            <img (mouseover)="openInfo($event)" (mouseleave)="closeInfo()" class="support-icon" [src]="'./assets/Support (Blue).png' | resolveAsset">
+          </div>
+            <app-toggle-picker [fontSize]="'13px'" (onSelect)="travelUpdate($event)" (onDirty)="isDirtyTravel=$event" [noSelected]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && !editRoomInFolder) ? true : false" [currentChoose]="travelType" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
         <div class="time-limit"
              *ngIf="overlayType === 'newRoom'
@@ -177,10 +183,13 @@
           <app-input
                   [width]="'105px'"
                   [maxLength]="2"
+                  (over)="openInfo($event)"
+                  (leave)="closeInfo()"
                   [input_label]="'Time Limit'"
                   [input_value]="timeLimit ? timeLimit : ''"
                   [placeholder]="'minutes'"
                   (onUpdate)="onUpdate($event)"
+                  [rightIcon]="'./assets/Support (Blue).png'"
                   [formGroup]="form"
                   [controlName]="form.get('timeLimit')"
           >
@@ -196,12 +205,18 @@
            || overlayType === 'editRoom') && !showSearchTeacherOptions"
       >
         <div class="restriction-picker-1">
-          <div class="toggle-label">Restriction For Now</div>
-          <app-toggle-picker [fontSize]="'13px'" (onSelect)="nowRestrictionUpdate($event)" (onDirty)="isDirtyNowRestriction=$event" [noSelected]="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'settingsRooms' ? true : false" [currentChoose]="nowRestriction || null" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+          <div class="toggle-label">
+            <span>Restriction For Now</span>
+            <img class="support-icon" (mouseover)="openInfo($event)" (mouseleave)="closeInfo()" [src]="'./assets/Support (Blue).png' | resolveAsset">
+          </div>
+            <app-toggle-picker [fontSize]="'13px'" (onSelect)="nowRestrictionUpdate($event)" (onDirty)="isDirtyNowRestriction=$event" [noSelected]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && !editRoomInFolder) ? true : false" [currentChoose]="nowRestriction" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
         <div class="restriction-picker-2">
-          <div class="toggle-label">Restriction For Future</div>
-          <app-toggle-picker [fontSize]="'13px'" (onSelect)="futureRestrictionUpdate($event)" (onDirty)="isDirtyFutureRestriction=$event" [noSelected]="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'settingsRooms' ? true : false" [currentChoose]="futureRestriction || null" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+            <div class="toggle-label">
+                <span>Restriction For Future</span>
+                <img (mouseover)="openInfo($event)" (mouseleave)="closeInfo()" class="support-icon" [src]="'./assets/Support (Blue).png' | resolveAsset">
+            </div>
+            <app-toggle-picker [fontSize]="'13px'" (onSelect)="futureRestrictionUpdate($event)" (onDirty)="isDirtyFutureRestriction=$event" [noSelected]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && !editRoomInFolder) ? true : false" [currentChoose]="futureRestriction" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
       </div>
 
@@ -240,7 +255,7 @@
         <div class="rooms-in-folder-content" [ngClass]="{'rooms-scrolling': selectedRooms.length > 5}">
           <div class="not-rooms-in-folder" *ngIf="requireValidator(folderName)">To add rooms, enter a folder name and select an appearance</div>
 
-          <div class="rooms-list" *ngIf="selectedRooms.length > 0 && !requireValidator(folderName)">
+          <div class="rooms-list" #roomList *ngIf="selectedRooms.length > 0 && !requireValidator(folderName)">
             <mat-list>
               <div *ngFor="let room of sortSelectedRooms">
                 <div class="room">

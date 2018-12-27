@@ -8,7 +8,17 @@
   font-weight:bold;
 }
 
-.InputWrapper img.ng-star-inserted {
+//.InputWrapper img.ng-star-inserted {
+//  width: 26px;
+//  height: 26px;
+//  margin-left: 1rem;
+//  position: absolute;
+//  top: 35px;
+//  right: 1px;
+//}
+
+
+.success-icon {
   width: 26px;
   height: 26px;
   margin-left: 1rem;
@@ -17,8 +27,10 @@
   right: 1px;
 }
 
-img {
-  pointer-events: none;
+.support-icon {
+  width: 20px;
+  height: 20px;
+  margin-left: 7px;
 }
 
 .InputWrapper input {

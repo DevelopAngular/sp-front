@@ -88,15 +88,17 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   get hasClose(){
-    if(this.forInput){
+    if(this.forInput) {
       return true;
-    } else if(this.forMonitor){
+    } else if (this.forMonitor) {
       return !this.fromPast;
-    } else if(this.forStaff){
+    } else if (this.forStaff) {
       return this.forFuture || this.isActive;
-    } else if(!this.forStaff && this.forFuture){
+    } else if ( this.user.id === this.pass.student.id && this.forFuture) {
+      return true;
+    } else if (!this.forStaff && this.forFuture){
       return false;
-    }else{
+    } else {
       return this.forFuture;
     }
   }
@@ -290,7 +292,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
         data: {'header': header, 'options': options, 'trigger': target}
       });
 
-      cancelDialog.afterOpen().subscribe( () =>{
+      cancelDialog.afterOpen().subscribe( () => {
         this.cancelOpen = true;
       });
 
