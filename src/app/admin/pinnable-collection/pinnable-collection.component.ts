@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
 import {forkJoin} from 'rxjs';
 import {HttpService} from '../../http-service';
+import {DragulaService} from 'ng2-dragula';
 
 @Component({
   selector: 'app-pinnable-collection',
@@ -20,10 +21,14 @@ export class PinnableCollectionComponent implements OnInit {
 
   @Output()
   roomEvent: EventEmitter<any> = new EventEmitter();
+  @Output()
+  orderChangedEvent: EventEmitter<number[]> = new EventEmitter<number[]>();
 
   selectedPinnables: Pinnable[] = [];
   buttonMenuOpen: boolean = false;
   bulkSelect: boolean  = false;
+
+  pinnableIdArranged = [];
 
   get headerButtonText(){
     return (this.selectedPinnables.length < 1 || !this.bulkSelect?'New':'Bulk Edit Rooms');
@@ -33,10 +38,27 @@ export class PinnableCollectionComponent implements OnInit {
     return (this.selectedPinnables.length < 1 || !this.bulkSelect?'./assets/Create (White).png':null);
   }
 
-  constructor(public dialog: MatDialog, private http: HttpService) { }
+  constructor(
+    public dialog: MatDialog,
+    private http: HttpService,
+    public dragulaService: DragulaService
+  ) {
+    // dragulaService.createGroup('pins', {
+    //   removeOnSpill: true
+    // });
+  }
 
   ngOnInit() {
+    setTimeout(() => {
+      this.pinnableIdArranged = this.pinnables.map(pin => pin.id);
+      console.log(this.pinnableIdArranged);
 
+    }, 1000);
+  }
+
+  onPinablesOrderChanged(newOrder) {
+    console.log(newOrder);
+    this.orderChangedEvent.emit(newOrder);
   }
 
   clearSelected() {

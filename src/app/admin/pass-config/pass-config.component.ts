@@ -48,6 +48,28 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     this.dialog.closeAll();
   }
 
+
+  updatePinnablesOrder(newOrder) {
+
+    const pinnableIdArranged = newOrder.map(pin => pin.id);
+
+
+    this.httpService
+      .post('v1/pinnables/arranged', {
+        order: pinnableIdArranged.join(',')
+      })
+      .pipe(
+        switchMap((): Observable<Pinnable[]> => {
+          return this.httpService
+            .get('v1/pinnables/arranged');
+        })
+      )
+      .subscribe((res) => {
+        this.pinnables = res;
+        console.log(res.map(i => i.id));
+      });
+  }
+
   buildForm() {
       this.settingsForm = new FormGroup({
           isFuture: new FormControl(true),

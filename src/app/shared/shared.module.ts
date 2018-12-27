@@ -37,6 +37,7 @@ import {DurationPickerComponent} from '../duration-picker/duration-picker.compon
 import {CardButtonComponent} from '../card-button/card-button.component';
 import {PagerComponent} from '../pager/pager.component';
 import {RoundInputComponent} from '../admin/round-input/round-input.component';
+import {DragulaModule} from 'ng2-dragula';
 
 
 
@@ -60,7 +61,8 @@ import {RoundInputComponent} from '../admin/round-input/round-input.component';
       MatChipsModule,
       MatCardModule,
       MatDividerModule,
-    NgProgressModule.forRoot()
+    NgProgressModule.forRoot(),
+    DragulaModule.forRoot()
   ],
   declarations: [
     GradientButtonComponent,
@@ -116,7 +118,8 @@ import {RoundInputComponent} from '../admin/round-input/round-input.component';
       DurationPickerComponent,
       CardButtonComponent,
       PagerComponent,
-      RoundInputComponent
+      RoundInputComponent,
+      DragulaModule
 
   ],
 })
