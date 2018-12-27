@@ -6,7 +6,7 @@
   <div class="paginator-container">
     <div class="paginator-button paginator-button__left"><img *ngIf="hideLeftButton.value" (click)="leftPaginator()" class="button-image" [src]="'./assets/Disclosure Left (White).png' | resolveAsset"></div>
     <div *ngIf="pages > 1" class="paginator-wrapper">
-        <div *ngFor="let $page of $pages" class="pager-page-selector" [style.background-color]="page===$page?'#FFF':'rgba(255,255,255,0.3)'"></div>
+        <div *ngFor="let $page of $pages" class="pager-page-selector" (click)="DotPagination($page)" [style.background-color]="page===$page?'#FFF':'rgba(255,255,255,0.3)'"></div>
     </div>
     <div class="paginator-button paginator-button__right"><img class="button-image" *ngIf="hideRightButton.value" (click)="RightPaginator()" [src]="'./assets/Disclosure Right (White).png' | resolveAsset"></div>
   </div>
