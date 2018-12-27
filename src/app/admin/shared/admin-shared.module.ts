@@ -17,7 +17,10 @@ import {
   MatSortModule,
   MatTableModule,
   MatListModule,
-  MatDividerModule, MatChipsModule, MatIconModule
+  MatDividerModule,
+  MatChipsModule,
+  MatIconModule,
+  MatTooltipModule
 } from '@angular/material';
 import { IconPickerComponent } from '../icon-picker/icon-picker.component';
 import { ColorPalletPickerComponent } from '../color-pallet-picker/color-pallet-picker.component';
@@ -43,6 +46,7 @@ import { ColorComponent } from '../color-pallet-picker/color/color.component';
     MatDialogModule,
     MatListModule,
     MatDividerModule,
+    MatTooltipModule,
   ],
   declarations: [
       ToggleInputComponent,
