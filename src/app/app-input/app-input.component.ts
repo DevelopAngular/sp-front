@@ -17,6 +17,7 @@ export class AppInputComponent implements OnInit {
     @Input() maxLength: number = 100;
     @Input() width: string;
     @Input() rightIcon: string;
+    @Input() tooltipText: string;
 
     @Input() formGroup;
     @Input() controlName;

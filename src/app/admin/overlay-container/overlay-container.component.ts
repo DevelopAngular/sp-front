@@ -1,6 +1,6 @@
-import {Component, ElementRef, Inject, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {Component, ElementRef, Inject, OnInit, Renderer2, ViewChild, ViewEncapsulation} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 
 import {BehaviorSubject, forkJoin, fromEvent, Observable, Subject, zip} from 'rxjs';
 import { map, switchMap} from 'rxjs/operators';
@@ -12,6 +12,7 @@ import { HttpService } from '../../http-service';
 import { Location } from '../../models/Location';
 import * as XLSX from 'xlsx';
 import { UserService } from '../../user.service';
+import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 
 export interface FormState {
     roomName: string;
@@ -29,7 +30,8 @@ export interface FormState {
 @Component({
   selector: 'app-overlay-container',
   templateUrl: './overlay-container.component.html',
-  styleUrls: ['./overlay-container.component.scss']
+  styleUrls: ['./overlay-container.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class OverlayContainerComponent implements OnInit {
 
@@ -43,6 +45,22 @@ export class OverlayContainerComponent implements OnInit {
     topScroll: 0
   };
 
+  public isActiveIcon = {
+    teachers: false,
+    travel: false,
+    timeLimit: false,
+    restriction: false,
+    scheduling_restricted: false
+  };
+
+  public tooltipText = {
+    teachers: 'Which teachers should see pass activity in this room?',
+    travel: 'Will the the room will be avilable to make only round-trip passes, only one-way passes, or both?',
+    timeLimit: 'What is the maximum time limit that a student can make the pass for themselves?',
+    restriction: 'Does the pass need digital approval from a teacher to become an active pass?',
+    scheduling_restricted: 'Does the pass need digital approval from a teacher to become a scheduled pass?'
+  };
+
   @ViewChild('roomList') set content(content: ElementRef) {
     this.roomList.domElement = content;
     if (this.roomList.domElement) {
@@ -53,7 +71,7 @@ export class OverlayContainerComponent implements OnInit {
   @ViewChild('file') selectedFile;
   selectedRooms = [];
   selectedRoomsInFolder: Pinnable[] = [];
-  selectedTichers: User[] = [];
+  selectedTeachers: User[] = [];
   readyRoomsToEdit: Pinnable[] = [];
   pinnable: Pinnable;
   pinnables$: Observable<Pinnable[]>;
@@ -90,6 +108,7 @@ export class OverlayContainerComponent implements OnInit {
   isChangeLocations = new BehaviorSubject<boolean>(false);
 
   showSearchTeacherOptions: boolean;
+  consentDialog;
 
   newRoomsInFolder = [];
 
@@ -108,10 +127,11 @@ export class OverlayContainerComponent implements OnInit {
 
   constructor(
       private dialogRef: MatDialogRef<OverlayContainerComponent>,
+      private _matDialogRef: MatDialogRef<ConsentMenuComponent>,
       @Inject(MAT_DIALOG_DATA) public dialogData: any,
       private userService: UserService,
       private http: HttpService,
-      private renderer: Renderer2
+      private dialog: MatDialog
   ) { }
 
   getHeaderData() {
@@ -139,7 +159,7 @@ export class OverlayContainerComponent implements OnInit {
             this.roomName = this.pinnable.title;
             this.timeLimit = this.pinnable.location.max_allowed_time;
             this.roomNumber = this.pinnable.location.room;
-            this.selectedTichers = this.pinnable.location.teachers;
+            this.selectedTeachers = this.pinnable.location.teachers;
             this.nowRestriction = this.pinnable.location.restricted;
             this.futureRestriction = this.pinnable.location.scheduling_restricted;
             this.color_profile = this.pinnable.color_profile;
@@ -317,7 +337,7 @@ export class OverlayContainerComponent implements OnInit {
               restricted: this.nowRestriction,
               scheduling_restricted: this.futureRestriction,
               travel_type: this.travelType,
-              teachers: this.selectedTichers.map(t => +t.id),
+              teachers: this.selectedTeachers.map(t => +t.id),
               color: this.color_profile.id,
               icon: this.selectedIcon,
               timeLimit: +this.timeLimit
@@ -340,7 +360,7 @@ export class OverlayContainerComponent implements OnInit {
             restricted: this.nowRestriction,
             scheduling_restricted: this.futureRestriction,
             travel_type: this.travelType,
-            teachers: this.selectedTichers.map(t => +t.id),
+            teachers: this.selectedTeachers.map(t => +t.id),
             color: this.color_profile.id,
             icon: this.selectedIcon.inactive_icon,
             timeLimit: +this.timeLimit
@@ -383,7 +403,7 @@ export class OverlayContainerComponent implements OnInit {
         case 'newFolder': {
           this.editRoomInFolder = false;
           this.selectedRoomsInFolder = [];
-          this.selectedTichers = [];
+          this.selectedTeachers = [];
           this.travelType = [];
           this.nowRestriction = false;
           this.futureRestriction = false;
@@ -456,7 +476,7 @@ export class OverlayContainerComponent implements OnInit {
       this.roomName = room.title;
       this.timeLimit = room.max_allowed_time;
       this.roomNumber = room.room;
-      this.selectedTichers = room.teachers;
+      this.selectedTeachers = room.teachers;
       this.nowRestriction = room.restricted;
       this.futureRestriction = room.scheduling_restricted;
       this.travelType = room.travel_types;
@@ -484,7 +504,7 @@ export class OverlayContainerComponent implements OnInit {
                 room: this.roomNumber,
                 restricted: this.nowRestriction,
                 scheduling_restricted: this.futureRestriction,
-                teachers: this.selectedTichers.map(teacher => teacher.id),
+                teachers: this.selectedTeachers.map(teacher => teacher.id),
                 travel_types: this.travelType,
                 max_allowed_time: +this.timeLimit
         };
@@ -559,7 +579,7 @@ export class OverlayContainerComponent implements OnInit {
             room: this.roomNumber,
             restricted: this.nowRestriction,
             scheduling_restricted: this.futureRestriction,
-            teachers: this.selectedTichers.map(teacher => teacher.id),
+            teachers: this.selectedTeachers.map(teacher => teacher.id),
             travel_types: this.travelType,
             max_allowed_time: +this.timeLimit
         };
@@ -585,7 +605,7 @@ export class OverlayContainerComponent implements OnInit {
                   room: this.roomNumber,
                   restricted: this.nowRestriction,
                   scheduling_restricted: this.futureRestriction,
-                  teachers: this.selectedTichers.map(teacher => teacher.id),
+                  teachers: this.selectedTeachers.map(teacher => teacher.id),
                   travel_types: this.travelType,
                   max_allowed_time: +this.timeLimit
             };
@@ -771,7 +791,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   selectTeacherEvent(teachers) {
-    this.selectedTichers = teachers;
+    this.selectedTeachers = teachers;
     this.isDirtysettings = true;
     this.changeState();
   }
@@ -784,12 +804,18 @@ export class OverlayContainerComponent implements OnInit {
       this.timeLimit = time;
   }
 
-  openInfo(el: ElementRef) {
-    console.log('OPEN-INFO', el);
-    // this.renderer.setProperty(el.nativeElement, 'src', './assets/Support (Grey).png');
+  openInfo({event, action}) {
+    this.isActiveIcon[action] = true;
+    // const target = new ElementRef(event.currentTarget);
+    // this.dialog.open(ConsentMenuComponent, {
+    //     id: 'ttt',
+    //     panelClass: 'consent-dialog-container',
+    //     backdropClass: 'invis-backdrop',
+    //     data: {'header': 'sdgsdgsfgds', 'trigger': target}
+    // });
   }
 
-  closeInfo() {
-    console.log('CLOSE-INFO');
+  closeInfo(action) {
+    this.isActiveIcon[action] = false;
   }
 }
