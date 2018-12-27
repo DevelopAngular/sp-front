@@ -1,5 +1,5 @@
 import {Component, ElementRef, Inject, OnInit, Renderer2, ViewChild, ViewEncapsulation} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 
 import {BehaviorSubject, forkJoin, fromEvent, Observable, Subject, zip} from 'rxjs';
@@ -310,9 +310,15 @@ export class OverlayContainerComponent implements OnInit {
     this.form = new FormGroup({
         // isEdit: new FormControl(true),
         file: new FormControl(),
-        roomName: new FormControl('', [Validators.required, Validators.maxLength(17)]),
-        folderName: new FormControl('', [Validators.required, Validators.maxLength(17)]),
-        roomNumber: new FormControl('', [Validators.required, Validators.maxLength(5)]),
+        roomName: new FormControl('',
+            [Validators.required, Validators.maxLength(17)],
+            this.uniqueRoomNameValidator.bind(this)),
+        folderName: new FormControl('',
+            [Validators.required, Validators.maxLength(17)],
+            this.uniqueFolderNameValidator.bind(this)),
+        roomNumber: new FormControl('',
+            [Validators.required, Validators.maxLength(5)],
+            this.uniqueRoomNumberValidator.bind(this)),
         timeLimit: new FormControl(null, [
             Validators.required,
             Validators.pattern('^[0-9]*?[0-9]+$'),
@@ -321,6 +327,27 @@ export class OverlayContainerComponent implements OnInit {
             ]
         )
     });
+  }
+
+  uniqueRoomNameValidator(control: AbstractControl) {
+      return this.http.get(`v1/locations/check_fields?title=${control.value}`)
+          .pipe(map((res: any) => {
+              return res.title_used ? { title: true } : null;
+          }));
+  }
+
+  uniqueRoomNumberValidator(control: AbstractControl) {
+      return this.http.get(`v1/locations/check_fields?room=${control.value}`)
+          .pipe(map((res: any) => {
+              return res.title_used ? { room: true } : null;
+          }));
+  }
+
+  uniqueFolderNameValidator(control: AbstractControl) {
+      return this.http.get(`v1/pinnables/check_fields?title=${control.value}`)
+          .pipe(map((res: any) => {
+              return res.title_used ? { title: true } : null;
+          }));
   }
 
   buildInitialState() {
@@ -726,7 +753,7 @@ export class OverlayContainerComponent implements OnInit {
      }
     if (action === 'delete') {
         const roomsToDelete = this.readyRoomsToEdit.map(room => {
-            return this.http.delete(`v1/pinnables/${room.id}`);
+            return this.http.delete(`v1/locations/${room.id}`);
         });
         forkJoin(roomsToDelete).subscribe(res => {
             const currentRoomsIds = this.readyRoomsToEdit.map(item => item.id);
@@ -735,6 +762,7 @@ export class OverlayContainerComponent implements OnInit {
                 return item.id === _.pullAll(allSelectedRoomsIds, currentRoomsIds).find(id => item.id === id);
             });
             this.readyRoomsToEdit = [];
+            this.isChangeLocations.next(true);
         });
     }
   }
@@ -748,16 +776,16 @@ export class OverlayContainerComponent implements OnInit {
     }
 
     if (this.editRoomInFolder) {
-        this.selectedRooms = this.selectedRooms.filter(room => room.id !== this.currentLocationInEditRoomFolder.id);
-        this.setLocation('newFolder');
-        this.isChangeLocations.next(true);
+        // this.selectedRooms = this.selectedRooms.filter(room => room.id !== this.currentLocationInEditRoomFolder.id);
+        // this.setLocation('newFolder');
+        // this.isChangeLocations.next(true);
 
         // TODO Uncomment when the endpoint is ready
-        // this.http.delete(`v1/locations/${this.currentLocationInEditRoomFolder.id}`).subscribe((res: Location) => {
-        //     this.selectedRooms = this.selectedRooms.filter(room => room.id !== res.id);
-        //     this.setLocation('newFolder');
-        //     this.isChangeLocations.next(true);
-        // });
+        this.http.delete(`v1/locations/${this.currentLocationInEditRoomFolder.id}`).subscribe((res: Location) => {
+            this.selectedRooms = this.selectedRooms.filter(room => room.id !== this.currentLocationInEditRoomFolder.id);
+            this.setLocation('newFolder');
+            this.isChangeLocations.next(true);
+        });
     }
 
   }
