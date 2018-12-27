@@ -17,6 +17,7 @@ export class AppInputComponent implements OnInit {
     @Input() maxLength: number = 100;
     @Input() width: string;
     @Input() rightIcon: string;
+    @Input() tooltipText: string;
 
     @Input() formGroup;
     @Input() controlName;
@@ -29,7 +30,9 @@ export class AppInputComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.controlName.setValue(this.input_value);
+        setTimeout(() => {
+            this.controlName.setValue(this.input_value);
+        }, 50);
         this.controlName.valueChanges.subscribe(res => {
             this.onUpdate.emit(res);
         });

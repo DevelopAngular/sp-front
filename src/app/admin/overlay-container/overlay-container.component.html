@@ -12,11 +12,25 @@
            && overlayType !== 'settingsRooms' && (!showPublishFolder && !showPublishNewRoom && !showPublishEditRoom)"
            [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
 
-      <div class="cancel-button" *ngIf="overlayType !== 'addExisting'
+      <!--<div class="cancel-button" *ngIf="overlayType !== 'addExisting'-->
+           <!--&& overlayType !== 'newRoomInFolder'-->
+           <!--&& overlayType !== 'importRooms'-->
+           <!--&& overlayType !== 'settingsRooms'-->
+           <!--&& (showPublishFolder || showPublishNewRoom || showPublishEditRoom)" (click)="back()">Cancel</div>-->
+        <app-gradient-button style="margin-left: 15px" *ngIf="overlayType !== 'addExisting'
            && overlayType !== 'newRoomInFolder'
            && overlayType !== 'importRooms'
            && overlayType !== 'settingsRooms'
-           && (showPublishFolder || showPublishNewRoom || showPublishEditRoom)" (click)="back()">Cancel</div>
+           && (showPublishFolder || showPublishNewRoom || showPublishEditRoom)"
+                             [gradient]="color_profile.overlay_color + ',' + color_profile.time_color"
+                             [hoverColor]="color_profile.overlay_color"
+                             [minHeight]="'40px'"
+                             [style.width]="'120px'"
+                             [cursor]="'pointer'"
+                             [fontSize]="'14px'"
+                             (buttonClick)="back()"
+        >Cancel
+        </app-gradient-button>
 
       <div class="title" *ngIf="overlayType === 'newRoom' || overlayType === 'editRoom'">{{ roomName }}</div>
       <div
@@ -155,9 +169,20 @@
       <div class="teacher-search" *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'">
           <div class="teacher-title">
               <span>Teachers in Room</span>
-              <img (mouseover)="openInfo($event)" (mouseleave)="closeInfo()" class="support-icon" [src]="'./assets/Support (Blue).png' | resolveAsset">
+              <div class="tooltip-container">
+                  <img
+                     [matTooltip]="tooltipText.teachers"
+                     matTooltipClass="tooltip"
+                     (mouseover)="openInfo({event: $event, action: 'teachers' })"
+                     (mouseleave)="closeInfo('teachers')"
+                     class="support-icon"
+                     [src]="(isActiveIcon.teachers ? './assets/Support (Grey).png' : './assets/Support (Blue).png') | resolveAsset">
+                <div class="arrow-down-container">
+                    <div class="arrow-down"></div>
+                </div>
+              </div>
           </div>
-        <app-profiles-search [placeholder]="'Search Teachers'" [selectedStudents]="selectedTichers" (isEmitUsers)="isEmitTeachers($event)" (onUpdate)="selectTeacherEvent($event)" [role]="'_profile_teacher'"></app-profiles-search>
+        <app-profiles-search [placeholder]="'Search Teachers'" [selectedStudents]="selectedTeachers" (isEmitUsers)="isEmitTeachers($event)" (onUpdate)="selectTeacherEvent($event)" [role]="'_profile_teacher'"></app-profiles-search>
       </div>
       <div style="display: flex; margin-top: 16px; margin-bottom: 13px"
            *ngIf="(overlayType === 'newRoom'
@@ -169,7 +194,18 @@
         <div class="travel-picker">
           <div class="toggle-label">
             <span>Travel Type</span>
-            <img (mouseover)="openInfo($event)" (mouseleave)="closeInfo()" class="support-icon" [src]="'./assets/Support (Blue).png' | resolveAsset">
+              <div class="tooltip-container">
+                  <img
+                    [matTooltip]="tooltipText.travel"
+                    matTooltipClass="tooltip"
+                    (mouseover)="openInfo({event: $event, action: 'travel' })"
+                    (mouseleave)="closeInfo('travel')"
+                    class="support-icon"
+                    [src]="(isActiveIcon.travel ? './assets/Support (Grey).png' : './assets/Support (Blue).png') | resolveAsset">
+                  <div class="arrow-down-container">
+                      <div class="arrow-down"></div>
+                  </div>
+              </div>
           </div>
             <app-toggle-picker [fontSize]="'13px'" (onSelect)="travelUpdate($event)" (onDirty)="isDirtyTravel=$event" [noSelected]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && !editRoomInFolder) ? true : false" [currentChoose]="travelType" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
@@ -183,13 +219,14 @@
           <app-input
                   [width]="'105px'"
                   [maxLength]="2"
+                  [tooltipText]="tooltipText.timeLimit"
                   (over)="openInfo($event)"
-                  (leave)="closeInfo()"
+                  (leave)="closeInfo($event)"
                   [input_label]="'Time Limit'"
                   [input_value]="timeLimit ? timeLimit : ''"
                   [placeholder]="'minutes'"
                   (onUpdate)="onUpdate($event)"
-                  [rightIcon]="'./assets/Support (Blue).png'"
+                  [rightIcon]="(isActiveIcon.timeLimit ? './assets/Support (Grey).png' : './assets/Support (Blue).png')"
                   [formGroup]="form"
                   [controlName]="form.get('timeLimit')"
           >
@@ -207,14 +244,36 @@
         <div class="restriction-picker-1">
           <div class="toggle-label">
             <span>Restriction For Now</span>
-            <img class="support-icon" (mouseover)="openInfo($event)" (mouseleave)="closeInfo()" [src]="'./assets/Support (Blue).png' | resolveAsset">
+              <div class="tooltip-container">
+                  <img
+                    [matTooltip]="tooltipText.restriction"
+                    matTooltipClass="tooltip"
+                    (mouseover)="openInfo({event: $event, action: 'restriction' })"
+                    (mouseleave)="closeInfo('restriction')"
+                    class="support-icon"
+                    [src]="(isActiveIcon.restriction ? './assets/Support (Grey).png' : './assets/Support (Blue).png') | resolveAsset">
+                  <div class="arrow-down-container">
+                      <div class="arrow-down"></div>
+                  </div>
+              </div>
           </div>
             <app-toggle-picker [fontSize]="'13px'" (onSelect)="nowRestrictionUpdate($event)" (onDirty)="isDirtyNowRestriction=$event" [noSelected]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && !editRoomInFolder) ? true : false" [currentChoose]="nowRestriction" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
         <div class="restriction-picker-2">
             <div class="toggle-label">
                 <span>Restriction For Future</span>
-                <img (mouseover)="openInfo($event)" (mouseleave)="closeInfo()" class="support-icon" [src]="'./assets/Support (Blue).png' | resolveAsset">
+                <div class="tooltip-container">
+                    <img
+                      [matTooltip]="tooltipText.scheduling_restricted"
+                      matTooltipClass="tooltip"
+                      (mouseover)="openInfo({event: $event, action: 'scheduling_restricted' })"
+                      (mouseleave)="closeInfo('scheduling_restricted')"
+                      class="support-icon"
+                      [src]="(isActiveIcon.scheduling_restricted ? './assets/Support (Grey).png' : './assets/Support (Blue).png') | resolveAsset">
+                    <div class="arrow-down-container">
+                        <div class="arrow-down"></div>
+                    </div>
+                </div>
             </div>
             <app-toggle-picker [fontSize]="'13px'" (onSelect)="futureRestrictionUpdate($event)" (onDirty)="isDirtyFutureRestriction=$event" [noSelected]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && !editRoomInFolder) ? true : false" [currentChoose]="futureRestriction" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
@@ -336,7 +395,7 @@
           Import a list of room names, room numbers, and room names from an Excel spreadsheet or CSV
         </div>
         <div>
-          <a class="download-template-link" [href]="'./assets/xlsx/Rooms Set Up.xlsx' | resolveAsset" download>
+          <a class="download-template-link" [href]="'./assets/xlsx/Rooms Configuration.xlsx' | resolveAsset" download>
             Download Template
           </a>
         </div>
@@ -364,7 +423,7 @@
       </div>
      </div>
         <div class="footer-delete-button"
-          *ngIf="(overlayType === 'editRoom' ||(editRoomInFolder && isValidForm)) && !showSearchTeacherOptions"
+          *ngIf="(overlayType === 'editRoom' || (editRoomInFolder)) && !showSearchTeacherOptions"
           [style.margin-top]="overlayType === 'editRoom' ? '90px' : '50px'"
         >
             <app-gradient-button

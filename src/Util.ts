@@ -11,7 +11,7 @@
 
     static formatDateTime(s: Date, timeOnly?: boolean, utc?: boolean) {
         let hours = utc ? s.getUTCHours() : s.getHours();
-        let formattedTime:string = ((hours > 12) ? hours - 12 : hours) + ':' + ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + ((hours > 12) ? ' PM' : ' AM');
+        let formattedTime:string = ((hours > 12) ? hours - 12 : hours === 0 ? 12 : hours) + ':' + ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + ((hours > 12) ? ' PM' : ' AM');
         if(timeOnly)
           return formattedTime;
 

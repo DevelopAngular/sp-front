@@ -45,6 +45,9 @@ export class IconPickerComponent implements OnInit {
   }
 
   changeIcon(icon) {
+      if (this.selectedIconId === icon.id) {
+          return;
+      }
       if ( this.selectedIconId !== icon.id && icon.active) {
           icon.active = false;
       }

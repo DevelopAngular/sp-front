@@ -22,9 +22,9 @@
     {{headerButtonText}}</app-gradient-button>
   </div>
   <div class="collection-divider" *ngIf="header"></div>
-  <mat-grid-list class="grid center" cols="4" rowHeight="75px" gutterSize="10px" [style.width]="'550px'">
-    <mat-grid-tile *ngFor="let pinnable of pinnables">
+  <div [style.width]="'560px'" style="display: flex;flex-wrap: wrap" dragula="pinnables" [dragulaModel]="pinnables" (dragulaModelChange)="onPinablesOrderChanged($event)">
+    <div *ngFor="let pinnable of pinnables" style="padding: 10px">
       <app-pinnable [forStaff]="true" [selected]="selectedPinnables.indexOf(pinnable) != -1" [forBulk]="bulkSelect" [forCollection]="true" [pinnable]="pinnable" (onSelectEvent)="updatePinnables($event)"></app-pinnable>
-    </mat-grid-tile>
-  </mat-grid-list>
+    </div>
+  </div>
 </div>

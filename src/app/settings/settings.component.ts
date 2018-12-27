@@ -13,7 +13,7 @@ export interface Setting {
   title: string;
 }
 
-declare var window;
+declare const window;
 
 @Component({
   selector: 'app-settings',
@@ -40,7 +40,7 @@ export class SettingsComponent implements OnInit {
     });
     this.settings.push({
       'color_profile': new ColorProfile('', '', '#0B9FC1,#00C0C7', '#0B9FC1', '', '', ''),
-      'action': 'team',
+      'action': 'about',
       'title': 'About'
     });
     this.settings.push({
@@ -85,6 +85,8 @@ export class SettingsComponent implements OnInit {
       this.router.navigate(['main/intro']);
     } else if (action === 'team') {
       window.open('https://smartpass.app/team.html');
+    } else if (action === 'about') {
+      window.open('https://smartpass.app/about');
     } else if (action === 'support') {
       if (this.isStaff) {
         window.open('https://smartpass.app/support');

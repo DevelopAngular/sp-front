@@ -49,5 +49,20 @@ export class PagerComponent implements OnInit {
     }
     this.page += 1;
   }
+  DotPagination(dot) {
+    this.page = dot;
+    if (dot === 1) {
+      this.hideLeftButton.next(false);
+      this.hideRightButton.next(true);
+    }
+    if (dot > 1 && dot < this.$pages.length + 1) {
+      this.hideLeftButton.next(true);
+      this.hideRightButton.next(true);
+    }
+    if (dot === this.$pages.length) {
+      this.hideLeftButton.next(true);
+      this.hideRightButton.next(false);
+    }
 
+  }
 }

@@ -43,6 +43,7 @@
     "ng-gapi": "^0.0.51",
     "ng-pick-datetime": "^6.0.10",
     "ng2-charts": "^1.6.0",
+    "ng2-dragula": "^2.1.1",
     "ng4-material-dropdown": "^1.0.0",
     "ngx-chips": "^1.9.2",
     "ngx-infinite-scroll": "^6.0.0",

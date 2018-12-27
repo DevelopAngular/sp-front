@@ -1,6 +1,6 @@
-import {Component, ElementRef, Inject, OnInit, Renderer2, ViewChild} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import {Component, ElementRef, Inject, OnInit, Renderer2, ViewChild, ViewEncapsulation} from '@angular/core';
+import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 
 import {BehaviorSubject, forkJoin, fromEvent, Observable, Subject, zip} from 'rxjs';
 import { map, switchMap} from 'rxjs/operators';
@@ -29,7 +29,7 @@ export interface FormState {
 @Component({
   selector: 'app-overlay-container',
   templateUrl: './overlay-container.component.html',
-  styleUrls: ['./overlay-container.component.scss']
+  styleUrls: ['./overlay-container.component.scss'],
 })
 export class OverlayContainerComponent implements OnInit {
 
@@ -43,6 +43,22 @@ export class OverlayContainerComponent implements OnInit {
     topScroll: 0
   };
 
+  public isActiveIcon = {
+    teachers: false,
+    travel: false,
+    timeLimit: false,
+    restriction: false,
+    scheduling_restricted: false
+  };
+
+  public tooltipText = {
+    teachers: 'Which teachers should see pass activity in this room?',
+    travel: 'Will the the room will be avilable to make only round-trip passes, only one-way passes, or both?',
+    timeLimit: 'What is the maximum time limit that a student can make the pass for themselves?',
+    restriction: 'Does the pass need digital approval from a teacher to become an active pass?',
+    scheduling_restricted: 'Does the pass need digital approval from a teacher to become a scheduled pass?'
+  };
+
   @ViewChild('roomList') set content(content: ElementRef) {
     this.roomList.domElement = content;
     if (this.roomList.domElement) {
@@ -53,7 +69,7 @@ export class OverlayContainerComponent implements OnInit {
   @ViewChild('file') selectedFile;
   selectedRooms = [];
   selectedRoomsInFolder: Pinnable[] = [];
-  selectedTichers: User[] = [];
+  selectedTeachers: User[] = [];
   readyRoomsToEdit: Pinnable[] = [];
   pinnable: Pinnable;
   pinnables$: Observable<Pinnable[]>;
@@ -111,7 +127,6 @@ export class OverlayContainerComponent implements OnInit {
       @Inject(MAT_DIALOG_DATA) public dialogData: any,
       private userService: UserService,
       private http: HttpService,
-      private renderer: Renderer2
   ) { }
 
   getHeaderData() {
@@ -139,7 +154,7 @@ export class OverlayContainerComponent implements OnInit {
             this.roomName = this.pinnable.title;
             this.timeLimit = this.pinnable.location.max_allowed_time;
             this.roomNumber = this.pinnable.location.room;
-            this.selectedTichers = this.pinnable.location.teachers;
+            this.selectedTeachers = this.pinnable.location.teachers;
             this.nowRestriction = this.pinnable.location.restricted;
             this.futureRestriction = this.pinnable.location.scheduling_restricted;
             this.color_profile = this.pinnable.color_profile;
@@ -295,9 +310,15 @@ export class OverlayContainerComponent implements OnInit {
     this.form = new FormGroup({
         // isEdit: new FormControl(true),
         file: new FormControl(),
-        roomName: new FormControl('', [Validators.required, Validators.maxLength(17)]),
-        folderName: new FormControl('', [Validators.required, Validators.maxLength(17)]),
-        roomNumber: new FormControl('', [Validators.required, Validators.maxLength(5)]),
+        roomName: new FormControl('',
+            [Validators.required, Validators.maxLength(17)],
+            this.uniqueRoomNameValidator.bind(this)),
+        folderName: new FormControl('',
+            [Validators.required, Validators.maxLength(17)],
+            this.uniqueFolderNameValidator.bind(this)),
+        roomNumber: new FormControl('',
+            [Validators.required, Validators.maxLength(5)],
+            this.uniqueRoomNumberValidator.bind(this)),
         timeLimit: new FormControl(null, [
             Validators.required,
             Validators.pattern('^[0-9]*?[0-9]+$'),
@@ -306,6 +327,27 @@ export class OverlayContainerComponent implements OnInit {
             ]
         )
     });
+  }
+
+  uniqueRoomNameValidator(control: AbstractControl) {
+      return this.http.get(`v1/locations/check_fields?title=${control.value}`)
+          .pipe(map((res: any) => {
+              return res.title_used ? { title: true } : null;
+          }));
+  }
+
+  uniqueRoomNumberValidator(control: AbstractControl) {
+      return this.http.get(`v1/locations/check_fields?room=${control.value}`)
+          .pipe(map((res: any) => {
+              return res.title_used ? { room: true } : null;
+          }));
+  }
+
+  uniqueFolderNameValidator(control: AbstractControl) {
+      return this.http.get(`v1/pinnables/check_fields?title=${control.value}`)
+          .pipe(map((res: any) => {
+              return res.title_used ? { title: true } : null;
+          }));
   }
 
   buildInitialState() {
@@ -317,7 +359,7 @@ export class OverlayContainerComponent implements OnInit {
               restricted: this.nowRestriction,
               scheduling_restricted: this.futureRestriction,
               travel_type: this.travelType,
-              teachers: this.selectedTichers.map(t => +t.id),
+              teachers: this.selectedTeachers.map(t => +t.id),
               color: this.color_profile.id,
               icon: this.selectedIcon,
               timeLimit: +this.timeLimit
@@ -340,7 +382,7 @@ export class OverlayContainerComponent implements OnInit {
             restricted: this.nowRestriction,
             scheduling_restricted: this.futureRestriction,
             travel_type: this.travelType,
-            teachers: this.selectedTichers.map(t => +t.id),
+            teachers: this.selectedTeachers.map(t => +t.id),
             color: this.color_profile.id,
             icon: this.selectedIcon.inactive_icon,
             timeLimit: +this.timeLimit
@@ -383,7 +425,7 @@ export class OverlayContainerComponent implements OnInit {
         case 'newFolder': {
           this.editRoomInFolder = false;
           this.selectedRoomsInFolder = [];
-          this.selectedTichers = [];
+          this.selectedTeachers = [];
           this.travelType = [];
           this.nowRestriction = false;
           this.futureRestriction = false;
@@ -456,7 +498,7 @@ export class OverlayContainerComponent implements OnInit {
       this.roomName = room.title;
       this.timeLimit = room.max_allowed_time;
       this.roomNumber = room.room;
-      this.selectedTichers = room.teachers;
+      this.selectedTeachers = room.teachers;
       this.nowRestriction = room.restricted;
       this.futureRestriction = room.scheduling_restricted;
       this.travelType = room.travel_types;
@@ -484,7 +526,7 @@ export class OverlayContainerComponent implements OnInit {
                 room: this.roomNumber,
                 restricted: this.nowRestriction,
                 scheduling_restricted: this.futureRestriction,
-                teachers: this.selectedTichers.map(teacher => teacher.id),
+                teachers: this.selectedTeachers.map(teacher => teacher.id),
                 travel_types: this.travelType,
                 max_allowed_time: +this.timeLimit
         };
@@ -559,7 +601,7 @@ export class OverlayContainerComponent implements OnInit {
             room: this.roomNumber,
             restricted: this.nowRestriction,
             scheduling_restricted: this.futureRestriction,
-            teachers: this.selectedTichers.map(teacher => teacher.id),
+            teachers: this.selectedTeachers.map(teacher => teacher.id),
             travel_types: this.travelType,
             max_allowed_time: +this.timeLimit
         };
@@ -585,7 +627,7 @@ export class OverlayContainerComponent implements OnInit {
                   room: this.roomNumber,
                   restricted: this.nowRestriction,
                   scheduling_restricted: this.futureRestriction,
-                  teachers: this.selectedTichers.map(teacher => teacher.id),
+                  teachers: this.selectedTeachers.map(teacher => teacher.id),
                   travel_types: this.travelType,
                   max_allowed_time: +this.timeLimit
             };
@@ -711,7 +753,7 @@ export class OverlayContainerComponent implements OnInit {
      }
     if (action === 'delete') {
         const roomsToDelete = this.readyRoomsToEdit.map(room => {
-            return this.http.delete(`v1/pinnables/${room.id}`);
+            return this.http.delete(`v1/locations/${room.id}`);
         });
         forkJoin(roomsToDelete).subscribe(res => {
             const currentRoomsIds = this.readyRoomsToEdit.map(item => item.id);
@@ -720,6 +762,7 @@ export class OverlayContainerComponent implements OnInit {
                 return item.id === _.pullAll(allSelectedRoomsIds, currentRoomsIds).find(id => item.id === id);
             });
             this.readyRoomsToEdit = [];
+            this.isChangeLocations.next(true);
         });
     }
   }
@@ -733,16 +776,16 @@ export class OverlayContainerComponent implements OnInit {
     }
 
     if (this.editRoomInFolder) {
-        this.selectedRooms = this.selectedRooms.filter(room => room.id !== this.currentLocationInEditRoomFolder.id);
-        this.setLocation('newFolder');
-        this.isChangeLocations.next(true);
+        // this.selectedRooms = this.selectedRooms.filter(room => room.id !== this.currentLocationInEditRoomFolder.id);
+        // this.setLocation('newFolder');
+        // this.isChangeLocations.next(true);
 
         // TODO Uncomment when the endpoint is ready
-        // this.http.delete(`v1/locations/${this.currentLocationInEditRoomFolder.id}`).subscribe((res: Location) => {
-        //     this.selectedRooms = this.selectedRooms.filter(room => room.id !== res.id);
-        //     this.setLocation('newFolder');
-        //     this.isChangeLocations.next(true);
-        // });
+        this.http.delete(`v1/locations/${this.currentLocationInEditRoomFolder.id}`).subscribe((res: Location) => {
+            this.selectedRooms = this.selectedRooms.filter(room => room.id !== this.currentLocationInEditRoomFolder.id);
+            this.setLocation('newFolder');
+            this.isChangeLocations.next(true);
+        });
     }
 
   }
@@ -771,7 +814,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   selectTeacherEvent(teachers) {
-    this.selectedTichers = teachers;
+    this.selectedTeachers = teachers;
     this.isDirtysettings = true;
     this.changeState();
   }
@@ -784,12 +827,11 @@ export class OverlayContainerComponent implements OnInit {
       this.timeLimit = time;
   }
 
-  openInfo(el: ElementRef) {
-    console.log('OPEN-INFO', el);
-    // this.renderer.setProperty(el.nativeElement, 'src', './assets/Support (Grey).png');
+  openInfo({event, action}) {
+    this.isActiveIcon[action] = true;
   }
 
-  closeInfo() {
-    console.log('CLOSE-INFO');
+  closeInfo(action) {
+    this.isActiveIcon[action] = false;
   }
 }
