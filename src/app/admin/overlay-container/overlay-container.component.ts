@@ -332,21 +332,21 @@ export class OverlayContainerComponent implements OnInit {
   uniqueRoomNameValidator(control: AbstractControl) {
       return this.http.get(`v1/locations/check_fields?title=${control.value}`)
           .pipe(map((res: any) => {
-              return res.title_used ? { title: true } : null;
+              return res.title_used && this.pinnable.title !== this.roomName ? { title: true } : null;
           }));
   }
 
   uniqueRoomNumberValidator(control: AbstractControl) {
       return this.http.get(`v1/locations/check_fields?room=${control.value}`)
           .pipe(map((res: any) => {
-              return res.title_used ? { room: true } : null;
+              return res.title_used && this.pinnable.location.room !== this.roomNumber ? { room: true } : null;
           }));
   }
 
   uniqueFolderNameValidator(control: AbstractControl) {
       return this.http.get(`v1/pinnables/check_fields?title=${control.value}`)
           .pipe(map((res: any) => {
-              return res.title_used ? { title: true } : null;
+              return res.title_used && this.pinnable.title !== this.folderName ? { title: true } : null;
           }));
   }
 
