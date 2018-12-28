@@ -13,7 +13,7 @@
         </ng-template>
       </div>
       <app-pager *ngIf="!forInput">
-        <div class="page-1" [style.max-height]="'122px'">
+        <div class="page-1" [style.max-height]="'122px'" style="margin-bottom: 16px">
           <app-duration-picker *ngIf="forInput; else noInput;" (onChange)="selectedDuration=$event"  [maxDuration]="(request.destination.max_allowed_time?request.destination.max_allowed_time:15)"></app-duration-picker>
           <ng-template #noInput>
             <app-travel-view [pass]="request" [shrink]="true"></app-travel-view>
