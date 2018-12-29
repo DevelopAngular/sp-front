@@ -94,7 +94,7 @@ export class OverlayContainerComponent implements OnInit {
   selectedIcon;
 
   initialState: FormState;
-  stateStatus: boolean;
+  isFormStateDirty: boolean;
 
   bulkWarningText: boolean;
   isDirtysettings: boolean;
@@ -187,12 +187,12 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   get showPublishEditRoom() {
-     return this.isValidForm && this.stateStatus;
+     return this.isValidForm && this.isFormStateDirty;
   }
 
   get showPublishFolder() {
     return (this.form.get('folderName').valid &&
-            this.stateStatus &&
+            this.isFormStateDirty &&
             this.color_profile && this.selectedIcon) ||
             (this.isChangeLocations.value && this.color_profile && this.selectedIcon) ||
             (this.isEditFolder && (this.isChangeLocations.value));
@@ -200,13 +200,14 @@ export class OverlayContainerComponent implements OnInit {
 
   get showDoneButton() {
     return (this.isValidForm &&
-        (this.editRoomInFolder ? this.stateStatus : true) &&
+        (this.editRoomInFolder ? this.isFormStateDirty : true) &&
         this.overlayType === 'newRoomInFolder' &&
         (!this.editRoomInFolder ? (this.isDirtyNowRestriction && this.isDirtyFutureRestriction) : true)) ||
         (this.form.get('timeLimit').valid && this.overlayType === 'settingsRooms');
   }
 
   get sortSelectedRooms() {
+
     return _.sortBy(this.selectedRooms, (res) => res.title.toLowerCase());
   }
 
@@ -408,7 +409,7 @@ export class OverlayContainerComponent implements OnInit {
         if (currState.icon && initState.icon) {
             status.push(currState.icon === initState.icon);
         }
-        this.stateStatus = status.includes(false);
+        this.isFormStateDirty = status.includes(false);
     }
   }
 
@@ -438,7 +439,7 @@ export class OverlayContainerComponent implements OnInit {
           this.form.reset();
           this.isDirtysettings = false;
           this.buildInitialState();
-          this.stateStatus = false;
+          this.isFormStateDirty = false;
           hideAppearance = false;
           type = 'newFolder';
           break;
@@ -519,7 +520,7 @@ export class OverlayContainerComponent implements OnInit {
       this.roomList.topScroll = this.roomList.domElement.nativeElement.scrollTop;
   }
 
-  onCancel() {
+  onPublish() {
     if (this.overlayType === 'newRoom') {
        const location = {
                 title: this.roomName,
@@ -834,4 +835,30 @@ export class OverlayContainerComponent implements OnInit {
   closeInfo(action) {
     this.isActiveIcon[action] = false;
   }
+
+  get showFolderName() {
+    return this.overlayType === 'newFolder'
+      || this.overlayType === 'newRoomInFolder'
+      || this.overlayType === 'addExisting'
+      || this.overlayType === 'importRooms'
+      || this.overlayType === 'settingsRooms'
+      || this.overlayType === 'edit';
+  }
+
+  get backButtonState() {
+    if (this.overlayType === 'addExisting'
+      || this.overlayType === 'newRoomInFolder'
+      || this.overlayType === 'importRooms'
+      || this.overlayType === 'settingsRooms') {
+      return null;
+    }
+
+    if (this.showPublishFolder || this.showPublishNewRoom || this.showPublishEditRoom) {
+      return 'cancel';
+    } else {
+      return 'back';
+    }
+  }
+
+
 }

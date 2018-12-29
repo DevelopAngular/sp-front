@@ -1,27 +1,13 @@
 <form [formGroup]="form">
   <div class="overlay-container">
     <div class="overlay-header" [ngStyle]="{'background-image': gradientColor}">
-      <!--<div class="isEdit" *ngIf="isValidForm && overlayType === 'newRoom' || overlayType === 'editRoom'">-->
-        <!--<input type="checkbox" name="isEdit" formControlName="isEdit" class="isEdit-checkbox" id="isEdit" checked>-->
-        <!--<label class="isEdit-label" for="isEdit"></label>-->
-      <!--</div>-->
+
       <img class="back-button" draggable="false"
-           *ngIf="overlayType !== 'addExisting'
-           && overlayType !== 'newRoomInFolder'
-           && overlayType !== 'importRooms'
-           && overlayType !== 'settingsRooms' && (!showPublishFolder && !showPublishNewRoom && !showPublishEditRoom)"
+           *ngIf="backButtonState === 'back'"
+           alt="Go Back"
            [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
 
-      <!--<div class="cancel-button" *ngIf="overlayType !== 'addExisting'-->
-           <!--&& overlayType !== 'newRoomInFolder'-->
-           <!--&& overlayType !== 'importRooms'-->
-           <!--&& overlayType !== 'settingsRooms'-->
-           <!--&& (showPublishFolder || showPublishNewRoom || showPublishEditRoom)" (click)="back()">Cancel</div>-->
-        <app-gradient-button style="margin-left: 15px" *ngIf="overlayType !== 'addExisting'
-           && overlayType !== 'newRoomInFolder'
-           && overlayType !== 'importRooms'
-           && overlayType !== 'settingsRooms'
-           && (showPublishFolder || showPublishNewRoom || showPublishEditRoom)"
+        <app-gradient-button style="margin-left: 15px" *ngIf="backButtonState === 'cancel'"
                              [gradient]="color_profile.overlay_color + ',' + color_profile.time_color"
                              [hoverColor]="color_profile.overlay_color"
                              [minHeight]="'40px'"
@@ -35,12 +21,7 @@
       <div class="title" *ngIf="overlayType === 'newRoom' || overlayType === 'editRoom'">{{ roomName }}</div>
       <div
         class="title"
-        *ngIf="overlayType === 'newFolder'
-        || overlayType === 'newRoomInFolder'
-        || overlayType === 'addExisting'
-        || overlayType === 'importRooms'
-        || overlayType === 'settingsRooms'
-        || overlayType === 'edit'"
+        *ngIf="showFolderName"
       >{{ folderName }}
       </div>
       <div *ngIf="(overlayType === 'newRoom') || overlayType === 'edit' || overlayType === 'editRoom' || (overlayType === 'newFolder')" style="margin-right: 25px;width: 121px;">
@@ -59,7 +40,7 @@
                                  [gradient]="color_profile.overlay_color + ',' + color_profile.time_color"
                                  [hoverColor]="color_profile.overlay_color"
                                  [fontSize]="'14px'"
-                                 (buttonClick)="onCancel()"
+                                 (buttonClick)="onPublish()"
             >Publish
             </app-gradient-button>
         <app-gradient-button *ngIf="showPublishNewRoom && overlayType === 'newRoom'"
@@ -69,7 +50,7 @@
                              [gradient]="color_profile.overlay_color + ',' + color_profile.time_color"
                              [hoverColor]="color_profile.overlay_color"
                              [fontSize]="'14px'"
-                             (buttonClick)="onCancel()"
+                             (buttonClick)="onPublish()"
         >Publish
         </app-gradient-button>
         <app-gradient-button *ngIf="showPublishFolder && overlayType === 'newFolder'"
@@ -79,7 +60,7 @@
                              [gradient]="color_profile.overlay_color + ',' + color_profile.time_color"
                              [hoverColor]="color_profile.overlay_color"
                              [fontSize]="'14px'"
-                             (buttonClick)="onCancel()"
+                             (buttonClick)="onPublish()"
         >Publish
         </app-gradient-button>
 
