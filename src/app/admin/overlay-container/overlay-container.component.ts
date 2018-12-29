@@ -53,7 +53,7 @@ export class OverlayContainerComponent implements OnInit {
 
   public tooltipText = {
     teachers: 'Which teachers should see pass activity in this room?',
-    travel: 'Will the the room will be avilable to make only round-trip passes, only one-way passes, or both?',
+    travel: 'Will the the room will be available to make only round-trip passes, only one-way passes, or both?',
     timeLimit: 'What is the maximum time limit that a student can make the pass for themselves?',
     restriction: 'Does the pass need digital approval from a teacher to become an active pass?',
     scheduling_restricted: 'Does the pass need digital approval from a teacher to become a scheduled pass?'
