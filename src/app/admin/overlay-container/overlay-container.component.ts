@@ -770,7 +770,16 @@ export class OverlayContainerComponent implements OnInit {
 
   deleteRoom() {
     if (this.overlayType === 'editRoom' || (this.isEditFolder && this.overlayType === 'newFolder')) {
-      this.http.delete(`v1/pinnables/${this.pinnable.id}`).subscribe(res => {
+
+      const deletions = [
+        this.http.delete(`v1/pinnables/${this.pinnable.id}`)
+      ];
+
+      if (this.pinnable.location) {
+        deletions.push(this.http.delete(`v1/locations/${this.pinnable.location.id}`));
+      }
+
+      zip(...deletions).subscribe(res => {
         console.log(res);
         this.dialogRef.close();
       });
