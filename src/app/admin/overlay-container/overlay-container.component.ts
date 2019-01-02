@@ -191,9 +191,8 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   get showPublishFolder() {
-    return (this.form.get('folderName').valid &&
-        (this.isFormStateDirty || this.editRoomInFolder) &&
-            !!this.color_profile && !!this.selectedIcon) ||
+    return (this.isFormStateDirty || this.editRoomInFolder) &&
+            !!this.color_profile && !!this.selectedIcon ||
             (this.isChangeLocations.value && !!this.color_profile && !!this.selectedIcon) ||
             (this.isEditFolder && (this.isChangeLocations.value));
   }
