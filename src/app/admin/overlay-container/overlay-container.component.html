@@ -15,7 +15,7 @@
         *ngIf="showFolderName"
       >{{ folderName }}
       </div>
-      <div *ngIf="(overlayType === 'newRoom') || overlayType === 'edit' || overlayType === 'editRoom' || (overlayType === 'newFolder')" style="margin-right: 25px;width: 121px;">
+      <div *ngIf="(overlayType === 'newRoom') || overlayType === 'edit' || overlayType === 'editRoom' || overlayType === 'newFolder' || overlayType === 'newRoomInFolder' || overlayType === 'addExisting'" style="margin-right: 25px;width: 121px;">
         <app-gradient-button *ngIf="form.get('timeLimit').valid && overlayType === 'edit'"
                              [minHeight]="'40px'"
                              [style.width]="'120px'"
@@ -44,7 +44,7 @@
                              (buttonClick)="onPublish()"
         >Publish
         </app-gradient-button>
-        <app-gradient-button *ngIf="showPublishFolder && overlayType === 'newFolder'"
+        <app-gradient-button *ngIf="showPublishFolder && (overlayType === 'newFolder' || overlayType === 'newRoomInFolder' || overlayType === 'addExisting')"
                              [minHeight]="'40px'"
                              [style.width]="'120px'"
                              [cursor]="'pointer'"
@@ -54,9 +54,7 @@
                              (buttonClick)="onPublish()"
         >Publish
         </app-gradient-button>
-
-        <div *ngIf="!showPublishNewRoom  && overlayType !== 'edit' && overlayType !== 'editRoom' && overlayType !== 'newFolder'" style="color: white">Incomplete</div>
-        <!--<div *ngIf="overlayType === 'newFolder' && !showPublishFolder && !isEditFolder" style="color: white">Incomplete</div>-->
+        <div *ngIf="!showPublishNewRoom  && overlayType !== 'edit' && overlayType !== 'editRoom' && overlayType !== 'newFolder' && overlayType === 'newRoomImFolder'" style="color: white">Incomplete</div>
       </div>
     </div>
 
@@ -71,14 +69,14 @@
       <div class="new-room-in-folder"
            *ngIf="overlayType === 'newRoomInFolder' || overlayType === 'importRooms' || overlayType === 'settingsRooms'">
           <div class="new-room-in-folder-header">
+            <div style="margin-left: 20px; width: 53px">
+                <img draggable="false" class="back-button" *ngIf="!showDoneButton" (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : setLocation('newFolder'))" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
 
-            <img draggable="false" class="back-button" *ngIf="!showDoneButton" (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : setLocation('newFolder'))" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
-
-            <div class="cancel-button-in-folder-header"
-                 *ngIf="showDoneButton"
-                 (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : setLocation('newFolder'))"
-            >Cancel</div>
-
+                <div class="cancel-button-in-folder-header"
+                     *ngIf="showDoneButton"
+                     (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : setLocation('newFolder'))"
+                >Cancel</div>
+            </div>
             <div [ngClass]="{'room-in-folder-title-inactive': !isValidForm, 'room-in-folder-title-active': isValidForm || (overlayType === 'settingsRooms')}">
               {{ (overlayType === 'newRoomInFolder' ? roomName : (overlayType === 'settingsRooms' ? (isEditRooms ? 'Editing ' + readyRoomsToEdit.length : 'Adding ' + importedRooms.length)  + ' Rooms' : 'Import Rooms')) }}
             </div>
@@ -181,7 +179,7 @@
                   </div>
               </div>
           </div>
-            <app-toggle-picker [fontSize]="'13px'" (onSelect)="travelUpdate($event)" (onDirty)="isDirtyTravel=$event" [noSelected]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && !editRoomInFolder) ? true : false" [currentChoose]="travelType" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+            <app-toggle-picker [fontSize]="'13px'" (onSelect)="travelUpdate($event)" (onDirty)="isDirtyTravel=$event" [noSelected]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && !editRoomInFolder) ? true : false" [currentChoose]="travelType ? travelType : []" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
         <div class="time-limit"
              *ngIf="overlayType === 'newRoom'
@@ -231,7 +229,7 @@
                   </div>
               </div>
           </div>
-            <app-toggle-picker [fontSize]="'13px'" (onSelect)="nowRestrictionUpdate($event)" (onDirty)="isDirtyNowRestriction=$event" [noSelected]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && !editRoomInFolder) ? true : false" [currentChoose]="nowRestriction" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+            <app-toggle-picker [fontSize]="'13px'" (onSelect)="nowRestrictionUpdate($event)" (onDirty)="isDirtyNowRestriction=$event" [noSelected]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && !editRoomInFolder) ? true : false" [currentChoose]="nowRestriction ? nowRestriction : false" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
         <div class="restriction-picker-2">
             <div class="toggle-label">
@@ -249,7 +247,7 @@
                     </div>
                 </div>
             </div>
-            <app-toggle-picker [fontSize]="'13px'" (onSelect)="futureRestrictionUpdate($event)" (onDirty)="isDirtyFutureRestriction=$event" [noSelected]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && !editRoomInFolder) ? true : false" [currentChoose]="futureRestriction" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+            <app-toggle-picker [fontSize]="'13px'" (onSelect)="futureRestrictionUpdate($event)" (onDirty)="isDirtyFutureRestriction=$event" [noSelected]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && !editRoomInFolder) ? true : false" [currentChoose]="futureRestriction ? futureRestriction : false" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
         </div>
       </div>
 
