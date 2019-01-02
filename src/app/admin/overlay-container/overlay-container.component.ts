@@ -174,7 +174,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   get isValidForm() {
-      return this.form.get('roomName').valid && this.form.get('roomNumber').value && this.form.get('timeLimit').valid;
+      return this.form.get('roomName').valid && this.form.get('roomNumber').valid && this.form.get('timeLimit').valid;
   }
 
   get showPublishNewRoom() {
@@ -183,7 +183,7 @@ export class OverlayContainerComponent implements OnInit {
              this.form.get('timeLimit').valid &&
              this.isDirtyNowRestriction &&
              this.isDirtyFutureRestriction &&
-             this.color_profile && this.selectedIcon;
+             !!this.color_profile && !!this.selectedIcon;
   }
 
   get showPublishEditRoom() {
@@ -192,9 +192,9 @@ export class OverlayContainerComponent implements OnInit {
 
   get showPublishFolder() {
     return (this.form.get('folderName').valid &&
-            this.isFormStateDirty &&
-            this.color_profile && this.selectedIcon) ||
-            (this.isChangeLocations.value && this.color_profile && this.selectedIcon) ||
+        (this.isFormStateDirty || this.editRoomInFolder) &&
+            !!this.color_profile && !!this.selectedIcon) ||
+            (this.isChangeLocations.value && !!this.color_profile && !!this.selectedIcon) ||
             (this.isEditFolder && (this.isChangeLocations.value));
   }
 
@@ -557,7 +557,7 @@ export class OverlayContainerComponent implements OnInit {
            })).subscribe(response => this.dialogRef.close());
     }
 
-    if (this.overlayType === 'newFolder') {
+    if (this.overlayType === 'newFolder' || this.overlayType === 'newRoomInFolder') {
         if (this.selectedRooms.length < 1) {
             const newFolder = {
                 title: this.folderName,
@@ -881,9 +881,10 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   get backButtonState() {
-    if (this.overlayType === 'addExisting'
-      || this.overlayType === 'newRoomInFolder'
-      || this.overlayType === 'importRooms'
+    if (
+        // this.overlayType === 'addExisting'
+      // || this.overlayType === 'newRoomInFolder'
+       this.overlayType === 'importRooms'
       || this.overlayType === 'settingsRooms') {
       return null;
     }

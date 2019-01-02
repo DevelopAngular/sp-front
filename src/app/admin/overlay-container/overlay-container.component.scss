@@ -90,14 +90,18 @@
 .back-button {
   width: 32px;
   height: 32px;
-  margin-left: 20px;
+  //margin-left: 20px;
   cursor: pointer;
 }
 
 .cancel-button {
-  margin-left: 30px;
   color: white;
   cursor: pointer;
+}
+
+.left-buttons {
+  width: 53px;
+  margin-left: 30px;
 }
 
 .left-content {
@@ -269,7 +273,7 @@
   .not-rooms-in-folder {
     color: #8e8e93;
     font-weight: bold;
-    margin: 40px 0 0 66px;
+    margin: 40px 0 0 40px;
   }
 
   .content-buttons-in-folder {
@@ -376,12 +380,12 @@
     .back-button {
       width: 40px;
       height: 40px;
-      margin-left: 20px;
+      //margin-left: 20px;
       cursor: pointer;
     }
 
     .cancel-button-in-folder-header {
-      margin-left: 20px;
+      //margin-left: 20px;
       font-weight: bold;
       cursor: pointer;
     }
