@@ -174,7 +174,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   get isValidForm() {
-      return this.form.get('roomName').valid && this.form.get('roomNumber').value && this.form.get('timeLimit').valid;
+      return this.form.get('roomName').valid && this.form.get('roomNumber').valid && this.form.get('timeLimit').valid;
   }
 
   get showPublishNewRoom() {

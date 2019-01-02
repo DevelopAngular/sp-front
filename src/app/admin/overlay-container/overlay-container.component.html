@@ -56,6 +56,7 @@
         </app-gradient-button>
 
         <div *ngIf="!showPublishNewRoom  && overlayType !== 'edit' && overlayType !== 'editRoom' && overlayType !== 'newFolder'" style="color: white">Incomplete</div>
+        <!--<div *ngIf="overlayType === 'newFolder' && !showPublishFolder && !isEditFolder" style="color: white">Incomplete</div>-->
       </div>
     </div>
 
@@ -83,7 +84,7 @@
             </div>
             <!--<div>{{importedRooms.length}} actually</div>-->
             <div class="header-in-folder-button">
-              <span *ngIf="overlayType === 'settingsRooms' && form.get('timeLimit').invalid">Incomplete</span>
+              <span *ngIf="(overlayType === 'settingsRooms' && form.get('timeLimit').invalid)">Incomplete</span>
                 <app-gradient-button *ngIf="showDoneButton"
                         [minHeight]="'40px'"
                         [style.width]="'120px'"
@@ -94,6 +95,7 @@
                   <!-- Here should be called http post as many times as importedRoms.length is. -->
 
                 Done</app-gradient-button>
+                <div *ngIf="!showDoneButton && !editRoomInFolder">Incomplete</div>
             </div>
           </div>
         <div class="edit-rooms-info" *ngIf="overlayType === 'settingsRooms'">
