@@ -12,6 +12,7 @@ import { HttpService } from '../../http-service';
 import { Location } from '../../models/Location';
 import * as XLSX from 'xlsx';
 import { UserService } from '../../user.service';
+import { disableBodyScroll } from 'body-scroll-lock';
 
 export interface FormState {
     roomName: string;
@@ -127,6 +128,7 @@ export class OverlayContainerComponent implements OnInit {
       @Inject(MAT_DIALOG_DATA) public dialogData: any,
       private userService: UserService,
       private http: HttpService,
+      private elRef: ElementRef
   ) { }
 
   getHeaderData() {
@@ -212,7 +214,18 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   ngOnInit() {
+      disableBodyScroll(this.elRef.nativeElement, {
+        allowTouchMove: (el) => {
+          while (el && el !== this.elRef.nativeElement) {
+            // if (el.getAttribute('body-scroll-lock-ignore') !== null) {
+            // }
+            // console.log(el);
+            el = el.parentNode;
+            return true;
 
+          }
+        }
+      });
       this.buildForm();
 
       this.overlayType = this.dialogData['type'];
@@ -303,10 +316,6 @@ export class OverlayContainerComponent implements OnInit {
       });
   }
 
-  // ngAfterViewInit() {
-  //   console.log(this.scrollElement);
-  // }
-
   buildForm() {
     this.form = new FormGroup({
         // isEdit: new FormControl(true),
@@ -329,7 +338,9 @@ export class OverlayContainerComponent implements OnInit {
         )
     });
   }
-
+  showFC(v) {
+    console.log(v)
+  }
   uniqueRoomNameValidator(control: AbstractControl) {
       return this.http.get(`v1/locations/check_fields?title=${control.value}`)
           .pipe(map((res: any) => {

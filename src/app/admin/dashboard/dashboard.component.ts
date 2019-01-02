@@ -9,6 +9,7 @@ import {Report} from '../../models/Report';
 import {HallPassFilter, LiveDataService} from '../../live-data/live-data.service';
 import {switchMap, takeUntil} from 'rxjs/internal/operators';
 import {DataService} from '../../data-service';
+import { disableBodyScroll } from 'body-scroll-lock';
 
 
 @Component({
@@ -17,7 +18,6 @@ import {DataService} from '../../data-service';
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-
   @ViewChild('ctx') ctx: any;
   private shareChartData$: Subject<any> = new Subject();
   public lineChartData: Array<any> = [ {data: Array.from(Array(24).keys()).map(() => 0)} ];
@@ -51,14 +51,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private dataService: DataService,
     private liveDataService: LiveDataService,
     private pdf: PdfGeneratorService,
-    private _zone: NgZone
+    private _zone: NgZone,
+    private elRef: ElementRef
   ) {
   }
 
   ngOnInit() {
-
+    disableBodyScroll(this.elRef.nativeElement);
     this.drawChartXaxis();
-
 
     this.liveDataService.watchActiveHallPasses(new Subject<HallPassFilter>().asObservable())
       .subscribe((activeHallpasses: HallPass[]) => {

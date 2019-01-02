@@ -11,12 +11,9 @@ import { PassLikeProvider } from '../../models/providers';
 import {CalendarComponent} from '../calendar/calendar.component';
 import {HttpService} from '../../http-service';
 import {Util} from '../../../Util';
-import {groupBy, mergeMap, map, toArray} from 'rxjs/operators';
-// import { groupBy as LodashGroupBy }from 'lodash';
-import {from, Observable} from 'rxjs';
-import {sequence} from '@angular/animations';
+import {map, toArray} from 'rxjs/operators';
 import {switchMap, tap} from 'rxjs/internal/operators';
-import { groupBy as lodashGroupBy} from 'lodash';
+import { disableBodyScroll } from 'body-scroll-lock';
 
 
 
@@ -55,6 +52,7 @@ export class HallmonitorComponent implements OnInit {
         public dialog: MatDialog,
         private liveDataService: LiveDataService,
         private http: HttpService,
+        private elRef: ElementRef
 
     ) {
       this.activePassProvider = new ActivePassProvider(this.liveDataService, this.searchQuery$);
@@ -62,6 +60,7 @@ export class HallmonitorComponent implements OnInit {
     }
 
   ngOnInit() {
+      disableBodyScroll(this.elRef.nativeElement);
     this.activePassProvider = new ActivePassProvider(this.liveDataService, this.searchQuery$);
     this.getReports();
   }

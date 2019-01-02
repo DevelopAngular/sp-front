@@ -34,7 +34,7 @@ export class AppInputComponent implements OnInit {
             this.controlName.setValue(this.input_value);
         }, 50);
         this.controlName.valueChanges.subscribe(res => {
-            this.onUpdate.emit(res);
+          this.onUpdate.emit(res);
         });
     }
 }
