@@ -730,13 +730,26 @@ export class OverlayContainerComponent implements OnInit {
     return false;
   }
 
-  selectedRoomsEvent(event, room) {
-      if (event.checked) {
-          this.readyRoomsToEdit.push(room);
-      } else {
-          this.readyRoomsToEdit = this.readyRoomsToEdit.filter(readyRoom => readyRoom.id !== room.id);
-      }
+  selectedRoomsEvent(event, room, all?: boolean) {
 
+    if (all) {
+      if (event.checked) {
+        this.readyRoomsToEdit = this.selectedRooms;
+      } else {
+        this.readyRoomsToEdit = [];
+      }
+    } else if (event.checked) {
+        this.readyRoomsToEdit.push(room);
+    } else {
+      this.readyRoomsToEdit = this.readyRoomsToEdit.filter(readyRoom => readyRoom.id !== room.id);
+    }
+
+  }
+
+  isSelected(room) {
+    return this.readyRoomsToEdit.find((item) => {
+      return room.id === item.id;
+    });
   }
 
   onEditRooms(action) {

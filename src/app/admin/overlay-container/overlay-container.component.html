@@ -297,9 +297,23 @@
 
           <div class="rooms-list" #roomList *ngIf="selectedRooms.length > 0 && !requireValidator(folderName)">
             <mat-list>
+              <div>
+                <div class="room">
+                  <mat-checkbox style="margin-left: 12px"
+                                [checked]="readyRoomsToEdit.length === selectedRooms.length"
+                                [indeterminate]="readyRoomsToEdit.length && readyRoomsToEdit.length < selectedRooms.length"
+                                (change)="selectedRoomsEvent($event, null, true)"
+                  >
+                  </mat-checkbox>
+                  <div class="room-edit">
+                    <mat-list-item>All...</mat-list-item>
+                  </div>
+                </div>
+                <mat-divider></mat-divider>
+              </div>
               <div *ngFor="let room of sortSelectedRooms">
                 <div class="room">
-                  <mat-checkbox style="margin-left: 12px" (change)="selectedRoomsEvent($event, room)">
+                  <mat-checkbox style="margin-left: 12px" [checked]="isSelected(room)" (change)="selectedRoomsEvent($event, room)">
                   </mat-checkbox>
                   <div class="room-edit" (click)="setToEditRoom(room)">
                     <mat-list-item>{{ room.title }}</mat-list-item>
