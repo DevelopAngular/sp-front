@@ -1,14 +1,14 @@
 <form [formGroup]="form">
   <div class="overlay-container">
     <div class="overlay-header" [ngStyle]="{'background-image': gradientColor}">
-
+    <div class="left-buttons">
       <img class="back-button" draggable="false"
            *ngIf="backButtonState === 'back'"
            alt="Go Back"
            [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
 
         <div class="cancel-button" *ngIf="backButtonState === 'cancel'" (click)="back()">Cancel</div>
-
+    </div>
       <div class="title" *ngIf="overlayType === 'newRoom' || overlayType === 'editRoom'">{{ roomName }}</div>
       <div
         class="title"
