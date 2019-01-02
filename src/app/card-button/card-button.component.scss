@@ -1,9 +1,9 @@
 .card-button-container{
-    border-radius: 10px;
+    border-radius: 15px;
 }
 
 .card-button-base{
-    border-radius: 10px;
+    border-radius: 15px;
     background-color: rgba(200, 200, 200, .7);
     mix-blend-mode: soft-light;
     cursor: pointer;
@@ -17,10 +17,11 @@
 
 .card-button-base:hover{
     box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.3);
+    transition: box-shadow .3s ease;
 }
 
 .card-button-overlay-base{
-    border-radius: 10px 0 0 10px;
+    border-radius: 15px 0 0 15px;
     position: absolute;
     top: inherit;
     left: inherit;
@@ -30,6 +31,6 @@
 .card-button-overlay-wrapper{
     overflow: hidden;
     position: relative;
-    border-radius: 10px;
+    border-radius: 15px;
     margin-top: -50px;
 }

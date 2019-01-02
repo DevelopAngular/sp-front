@@ -4,6 +4,7 @@ import { HttpService } from '../../http-service';
 import { HallPass } from '../../models/HallPass';
 import { DatePrettyHelper } from '../date-pretty.helper';
 import { PdfGeneratorService } from '../pdf-generator.service';
+import { disableBodyScroll } from 'body-scroll-lock';
 
 
 @Component({
@@ -27,7 +28,7 @@ export class SearchComponent implements OnInit {
   hasSearched: boolean = false;
   sortParamsHeader: string;
 
-  constructor(private httpService: HttpService, private pdf: PdfGeneratorService) {
+  constructor(private httpService: HttpService, private pdf: PdfGeneratorService, private elRef: ElementRef) {
   }
 
   get isDisabled() {
@@ -35,7 +36,7 @@ export class SearchComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    disableBodyScroll(this.elRef.nativeElement);
   }
 
   search() {
@@ -90,9 +91,9 @@ export class SearchComponent implements OnInit {
           end = this.selectedDate['to'].toISOString();
           url += (end ? ('end_time_before=' + end) : '');
         }
-        
+
         console.log('Start: ', start, '\nEnd: ', end);
-        
+
       }
 
       this.httpService.get(url).pipe(filter(res => !!res))

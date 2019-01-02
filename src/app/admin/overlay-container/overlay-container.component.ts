@@ -12,6 +12,7 @@ import { HttpService } from '../../http-service';
 import { Location } from '../../models/Location';
 import * as XLSX from 'xlsx';
 import { UserService } from '../../user.service';
+import { disableBodyScroll } from 'body-scroll-lock';
 
 export interface FormState {
     roomName: string;
@@ -53,7 +54,7 @@ export class OverlayContainerComponent implements OnInit {
 
   public tooltipText = {
     teachers: 'Which teachers should see pass activity in this room?',
-    travel: 'Will the the room will be avilable to make only round-trip passes, only one-way passes, or both?',
+    travel: 'Will the the room will be available to make only round-trip passes, only one-way passes, or both?',
     timeLimit: 'What is the maximum time limit that a student can make the pass for themselves?',
     restriction: 'Does the pass need digital approval from a teacher to become an active pass?',
     scheduling_restricted: 'Does the pass need digital approval from a teacher to become a scheduled pass?'
@@ -94,7 +95,7 @@ export class OverlayContainerComponent implements OnInit {
   selectedIcon;
 
   initialState: FormState;
-  stateStatus: boolean;
+  isFormStateDirty: boolean;
 
   bulkWarningText: boolean;
   isDirtysettings: boolean;
@@ -127,6 +128,7 @@ export class OverlayContainerComponent implements OnInit {
       @Inject(MAT_DIALOG_DATA) public dialogData: any,
       private userService: UserService,
       private http: HttpService,
+      private elRef: ElementRef
   ) { }
 
   getHeaderData() {
@@ -174,7 +176,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   get isValidForm() {
-      return this.form.get('roomName').valid && this.form.get('roomNumber').value && this.form.get('timeLimit').valid;
+      return this.form.get('roomName').valid && this.form.get('roomNumber').valid && this.form.get('timeLimit').valid;
   }
 
   get showPublishNewRoom() {
@@ -183,35 +185,46 @@ export class OverlayContainerComponent implements OnInit {
              this.form.get('timeLimit').valid &&
              this.isDirtyNowRestriction &&
              this.isDirtyFutureRestriction &&
-             this.color_profile && this.selectedIcon;
+             !!this.color_profile && !!this.selectedIcon;
   }
 
   get showPublishEditRoom() {
-     return this.isValidForm && this.stateStatus;
+     return this.isValidForm && this.isFormStateDirty;
   }
 
   get showPublishFolder() {
-    return (this.form.get('folderName').valid &&
-            this.stateStatus &&
-            this.color_profile && this.selectedIcon) ||
-            (this.isChangeLocations.value && this.color_profile && this.selectedIcon) ||
+    return (this.isFormStateDirty || this.editRoomInFolder) &&
+            !!this.color_profile && !!this.selectedIcon ||
+            (this.isChangeLocations.value && !!this.color_profile && !!this.selectedIcon) ||
             (this.isEditFolder && (this.isChangeLocations.value));
   }
 
   get showDoneButton() {
     return (this.isValidForm &&
-        (this.editRoomInFolder ? this.stateStatus : true) &&
+        (this.editRoomInFolder ? this.isFormStateDirty : true) &&
         this.overlayType === 'newRoomInFolder' &&
         (!this.editRoomInFolder ? (this.isDirtyNowRestriction && this.isDirtyFutureRestriction) : true)) ||
         (this.form.get('timeLimit').valid && this.overlayType === 'settingsRooms');
   }
 
   get sortSelectedRooms() {
+
     return _.sortBy(this.selectedRooms, (res) => res.title.toLowerCase());
   }
 
   ngOnInit() {
+      disableBodyScroll(this.elRef.nativeElement, {
+        allowTouchMove: (el) => {
+          while (el && el !== this.elRef.nativeElement) {
+            // if (el.getAttribute('body-scroll-lock-ignore') !== null) {
+            // }
+            // console.log(el);
+            el = el.parentNode;
+            return true;
 
+          }
+        }
+      });
       this.buildForm();
 
       this.overlayType = this.dialogData['type'];
@@ -302,10 +315,6 @@ export class OverlayContainerComponent implements OnInit {
       });
   }
 
-  // ngAfterViewInit() {
-  //   console.log(this.scrollElement);
-  // }
-
   buildForm() {
     this.form = new FormGroup({
         // isEdit: new FormControl(true),
@@ -328,25 +337,40 @@ export class OverlayContainerComponent implements OnInit {
         )
     });
   }
-
+  showFC(v) {
+    console.log(v)
+  }
   uniqueRoomNameValidator(control: AbstractControl) {
       return this.http.get(`v1/locations/check_fields?title=${control.value}`)
           .pipe(map((res: any) => {
-              return res.title_used ? { title: true } : null;
+              if (this.overlayType === 'newRoom' || (this.overlayType === 'newRoomInFolder' && !this.editRoomInFolder)) {
+                  return res.title_used ? { title: true } : null;
+              }
+              return res.title_used &&
+              (this.editRoomInFolder ?
+                  this.currentLocationInEditRoomFolder.title : this.pinnable.location.title) !== this.roomName ? { title: true } : null;
           }));
   }
 
   uniqueRoomNumberValidator(control: AbstractControl) {
       return this.http.get(`v1/locations/check_fields?room=${control.value}`)
           .pipe(map((res: any) => {
-              return res.title_used ? { room: true } : null;
+              if (this.overlayType === 'newRoom' || (this.overlayType === 'newRoomInFolder' && !this.editRoomInFolder)) {
+                  return res.title_used ? { room: true } : null;
+              }
+              return res.title_used &&
+              (this.editRoomInFolder ?
+                  this.currentLocationInEditRoomFolder.room : this.pinnable.location.room) !== this.roomNumber ? { room: true } : null;
           }));
   }
 
   uniqueFolderNameValidator(control: AbstractControl) {
       return this.http.get(`v1/pinnables/check_fields?title=${control.value}`)
           .pipe(map((res: any) => {
-              return res.title_used ? { title: true } : null;
+              if (this.overlayType === 'newFolder' && !this.isEditFolder) {
+                  return res.title_used ? { title: true } : null;
+              }
+              return res.title_used && this.pinnable.title !== this.folderName ? { title: true } : null;
           }));
   }
 
@@ -408,7 +432,7 @@ export class OverlayContainerComponent implements OnInit {
         if (currState.icon && initState.icon) {
             status.push(currState.icon === initState.icon);
         }
-        this.stateStatus = status.includes(false);
+        this.isFormStateDirty = status.includes(false);
     }
   }
 
@@ -438,7 +462,7 @@ export class OverlayContainerComponent implements OnInit {
           this.form.reset();
           this.isDirtysettings = false;
           this.buildInitialState();
-          this.stateStatus = false;
+          this.isFormStateDirty = false;
           hideAppearance = false;
           type = 'newFolder';
           break;
@@ -519,7 +543,7 @@ export class OverlayContainerComponent implements OnInit {
       this.roomList.topScroll = this.roomList.domElement.nativeElement.scrollTop;
   }
 
-  onCancel() {
+  onPublish() {
     if (this.overlayType === 'newRoom') {
        const location = {
                 title: this.roomName,
@@ -543,7 +567,7 @@ export class OverlayContainerComponent implements OnInit {
            })).subscribe(response => this.dialogRef.close());
     }
 
-    if (this.overlayType === 'newFolder') {
+    if (this.overlayType === 'newFolder' || this.overlayType === 'newRoomInFolder') {
         if (this.selectedRooms.length < 1) {
             const newFolder = {
                 title: this.folderName,
@@ -729,13 +753,26 @@ export class OverlayContainerComponent implements OnInit {
     return false;
   }
 
-  selectedRoomsEvent(event, room) {
-      if (event.checked) {
-          this.readyRoomsToEdit.push(room);
-      } else {
-          this.readyRoomsToEdit = this.readyRoomsToEdit.filter(readyRoom => readyRoom.id !== room.id);
-      }
+  selectedRoomsEvent(event, room, all?: boolean) {
 
+    if (all) {
+      if (event.checked) {
+        this.readyRoomsToEdit = this.selectedRooms;
+      } else {
+        this.readyRoomsToEdit = [];
+      }
+    } else if (event.checked) {
+        this.readyRoomsToEdit.push(room);
+    } else {
+      this.readyRoomsToEdit = this.readyRoomsToEdit.filter(readyRoom => readyRoom.id !== room.id);
+    }
+
+  }
+
+  isSelected(room) {
+    return this.readyRoomsToEdit.find((item) => {
+      return room.id === item.id;
+    });
   }
 
   onEditRooms(action) {
@@ -769,7 +806,16 @@ export class OverlayContainerComponent implements OnInit {
 
   deleteRoom() {
     if (this.overlayType === 'editRoom' || (this.isEditFolder && this.overlayType === 'newFolder')) {
-      this.http.delete(`v1/pinnables/${this.pinnable.id}`).subscribe(res => {
+
+      const deletions = [
+        this.http.delete(`v1/pinnables/${this.pinnable.id}`)
+      ];
+
+      if (this.pinnable.location) {
+        deletions.push(this.http.delete(`v1/locations/${this.pinnable.location.id}`));
+      }
+
+      zip(...deletions).subscribe(res => {
         console.log(res);
         this.dialogRef.close();
       });
@@ -834,4 +880,31 @@ export class OverlayContainerComponent implements OnInit {
   closeInfo(action) {
     this.isActiveIcon[action] = false;
   }
+
+  get showFolderName() {
+    return this.overlayType === 'newFolder'
+      || this.overlayType === 'newRoomInFolder'
+      || this.overlayType === 'addExisting'
+      || this.overlayType === 'importRooms'
+      || this.overlayType === 'settingsRooms'
+      || this.overlayType === 'edit';
+  }
+
+  get backButtonState() {
+    if (
+        // this.overlayType === 'addExisting'
+      // || this.overlayType === 'newRoomInFolder'
+       this.overlayType === 'importRooms'
+      || this.overlayType === 'settingsRooms') {
+      return null;
+    }
+
+    if (this.showPublishFolder || this.showPublishNewRoom || this.showPublishEditRoom) {
+      return 'cancel';
+    } else {
+      return 'back';
+    }
+  }
+
+
 }

@@ -245,6 +245,7 @@ mat-grid-tile .location-wrapper > .inner > app-location-picker {
   font-stretch: normal;
   line-height: 1.08;
   letter-spacing: 0.3px;
+  background: transparent;
   &:focus {
     transition: border .3s ease;
   }

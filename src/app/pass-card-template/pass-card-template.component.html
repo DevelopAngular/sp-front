@@ -1,15 +1,17 @@
 <div class="pass-card-wrapper" [style.background-image]="getGradient()">
   <div class="pass-card-header">
-    <img  class="pass-card-header-icon" [src]="pass.icon | resolveAsset">
-    <div class="pass-card-header-info">
-      <div class="pass-card-header-info-title">
-        {{ pass.destination.title }}
+    <div class="pass-card-header-content">
+      <img  class="pass-card-header-icon" [src]="pass.icon | resolveAsset">
+      <div class="pass-card-header-info">
+        <div class="pass-card-header-info-title">
+          {{ pass.destination.title }}
+        </div>
+        <div class="pass-card-header-info-subtitle">
+          <ng-content select=".card-subtitle"></ng-content>
+        </div>
       </div>
-      <div class="pass-card-header-info-subtitle">
-        <ng-content select=".card-subtitle"></ng-content>
-      </div>
+      <img *ngIf="hasClose" (click)="onCancel.emit($event)" class="pass-card-header-close" [src]="closeIcon | resolveAsset">
     </div>
-    <img *ngIf="hasClose" (click)="onCancel.emit($event)" class="pass-card-header-close" [src]="closeIcon | resolveAsset">
   </div>
   <div class="pass-card-hdivider"></div>
   <div class="pass-card-body">
