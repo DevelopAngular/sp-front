@@ -333,7 +333,7 @@ export class OverlayContainerComponent implements OnInit {
   uniqueRoomNameValidator(control: AbstractControl) {
       return this.http.get(`v1/locations/check_fields?title=${control.value}`)
           .pipe(map((res: any) => {
-              return res.title_used && this.pinnable.title !== this.roomName ? { title: true } : null;
+              return res.title_used && (this.pinnable.location.title) !== this.roomName ? { title: true } : null;
           }));
   }
 
