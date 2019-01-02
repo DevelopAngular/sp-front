@@ -7,16 +7,7 @@
            alt="Go Back"
            [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
 
-        <app-gradient-button style="margin-left: 15px" *ngIf="backButtonState === 'cancel'"
-                             [gradient]="color_profile.overlay_color + ',' + color_profile.time_color"
-                             [hoverColor]="color_profile.overlay_color"
-                             [minHeight]="'40px'"
-                             [style.width]="'120px'"
-                             [cursor]="'pointer'"
-                             [fontSize]="'14px'"
-                             (buttonClick)="back()"
-        >Cancel
-        </app-gradient-button>
+        <div class="cancel-button" *ngIf="backButtonState === 'cancel'" (click)="back()">Cancel</div>
 
       <div class="title" *ngIf="overlayType === 'newRoom' || overlayType === 'editRoom'">{{ roomName }}</div>
       <div
