@@ -26,7 +26,34 @@
        (focus)="inp.focused = true"
        (blur)="inp.focused = false"/>
     <img *ngIf='controlName.valid' class="success-icon" [src]="'./assets/Check (Blue).png' | resolveAsset"/>
-    <img *ngIf='controlName.invalid && controlName.touched'
+    <div class="tooltip-container tooltip-container__inline " *ngIf='controlName.invalid && controlName.touched && controlName.errors.title'>
+      <img
+        [matTooltip]="'Room name already used'"
+        matTooltipClass="tooltip"
+        class="success-icon"
+        [src]="'./assets/Report (Red).png' | resolveAsset">
+      <div class="arrow-down-container">
+        <div class="arrow-down">x</div>
+      </div>
+    </div>
+    <img *ngIf='controlName.invalid && controlName.touched && !controlName.errors.title'
          class="success-icon" [src]="'./assets/Report (Red).png' | resolveAsset"/>
+    <!--<p style="color: red" *ngIf="controlName.errors?.title">Bad name!</p>-->
+    <!--<pre>{{controlName.errors | json}}</pre>-->
   </div>
 </form>
+
+<!--
+<div class="tooltip-container">
+  <img
+    [matTooltip]="tooltipText.travel"
+    matTooltipClass="tooltip"
+    (mouseover)="openInfo({event: $event, action: 'travel' })"
+    (mouseleave)="closeInfo('travel')"
+    class="support-icon"
+    [src]="(isActiveIcon.travel ? './assets/Support (Grey).png' : './assets/Support (Blue).png') | resolveAsset">
+  <div class="arrow-down-container">
+    <div class="arrow-down"></div>
+  </div>
+</div>
+-->

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { FormControl, FormGroup } from '@angular/forms';
 
@@ -10,6 +10,7 @@ import { Pinnable } from '../../models/Pinnable';
 import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
 import {PinnableCollectionComponent} from '../pinnable-collection/pinnable-collection.component';
 import * as _ from 'lodash';
+import { disableBodyScroll } from 'body-scroll-lock';
 
 @Component({
   selector: 'app-pass-congif',
@@ -33,9 +34,11 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   constructor(
       private dialog: MatDialog,
       private httpService: HttpService,
+      private elRef: ElementRef
   ) { }
 
   ngOnInit() {
+      disableBodyScroll(this.elRef.nativeElement);
       this.buildForm();
       this.pinnables$ = this.httpService.get('v1/pinnables/arranged');
       this.schools$ = this.httpService.get('v1/schools');

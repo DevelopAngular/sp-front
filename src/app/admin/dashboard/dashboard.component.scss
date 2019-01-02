@@ -1,5 +1,6 @@
 :host{
-  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  overflow: auto;
   padding: 25px;
   box-sizing: border-box;
   display: flex;

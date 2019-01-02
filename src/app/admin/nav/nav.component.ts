@@ -1,13 +1,12 @@
-import {Component, OnInit, NgZone, Output, EventEmitter} from '@angular/core';
+import {Component, OnInit, NgZone, Output, EventEmitter, ViewChild, ElementRef} from '@angular/core';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { LoadingService } from '../../loading.service';
 import { DataService } from '../../data-service';
 import { User } from '../../models/User';
-import {ReplaySubject, Subject} from 'rxjs';
 import { UserService } from '../../user.service';
-
+import { disableBodyScroll } from 'body-scroll-lock';
 
 @Component({
   selector: 'app-nav',
@@ -15,9 +14,9 @@ import { UserService } from '../../user.service';
   styleUrls: ['./nav.component.scss']
 })
 export class NavComponent implements OnInit {
-
+  @ViewChild('navMain') navMain: ElementRef;
   @Output('restrictAccess') restrictAccess: EventEmitter<boolean> = new EventEmitter();
-
+  test
   buttons = [
     {title: 'Dashboard', route : 'dashboard', imgUrl : './assets/Dashboard', requiredRoles: ['_profile_admin', 'admin_dashboard']},
     {title: 'Hall Monitor', route : 'hallmonitor', imgUrl : './assets/Hallway', requiredRoles: ['_profile_admin', 'admin_hall_monitor']},
@@ -46,6 +45,7 @@ export class NavComponent implements OnInit {
 
   ngOnInit() {
 
+    disableBodyScroll(this.navMain.nativeElement);
 
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit.slice(1);

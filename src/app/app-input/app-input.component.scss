@@ -36,6 +36,20 @@
 
 .tooltip-container {
   position: relative;
+  &__inline {
+    position: absolute;
+    top: 35px;
+    right: 1px;
+    .success-icon {
+      top: 0;
+      left: 0;
+      position: unset;
+      margin-left: 5px;
+    }
+    .success-icon:hover + .arrow-down-container {
+      opacity: 1;
+    }
+  }
   .arrow-down-container{
     opacity: 0;
     transition: .25s ease;
