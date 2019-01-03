@@ -68,7 +68,7 @@ export class HallpassFormComponent implements OnInit {
   ) {
     this.declinable = new FormControl(true);
     this.declinable.valueChanges.subscribe(res => this.isDeclinable = res);
-    this.pinnables = this.http.get<any[]>('v1/pinnables').toPromise().then(json => json.map(raw => Pinnable.fromJSON(raw)));
+    this.pinnables = this.http.get<any[]>('v1/pinnables/arranged').toPromise().then(json => json.map(raw => Pinnable.fromJSON(raw)));
   }
 
   get fromGradient() {
