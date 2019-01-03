@@ -104,6 +104,10 @@ export class OverlayContainerComponent implements OnInit {
   isDirtyFutureRestriction: boolean;
   isDirtyColor: boolean;
   isDirtyIcon: boolean;
+
+  isChangeState: boolean;
+  isChangeStateInFolder: boolean;
+
   isChangeLocations = new BehaviorSubject<boolean>(false);
 
   showSearchTeacherOptions: boolean;
@@ -192,11 +196,16 @@ export class OverlayContainerComponent implements OnInit {
      return this.isValidForm && this.isFormStateDirty;
   }
 
-  get showPublishFolder() {
-    return (this.isFormStateDirty || this.editRoomInFolder) &&
-            !!this.color_profile && !!this.selectedIcon ||
-            (this.isChangeLocations.value && !!this.color_profile && !!this.selectedIcon) ||
-            (this.isEditFolder && (this.isChangeLocations.value));
+  get showPublishNewFolder() {
+    return this.form.get('folderName').valid &&
+        !!this.color_profile &&
+        !!this.selectedIcon &&
+        this.isChangeState &&
+        (!!this.selectedRooms.length);
+  }
+
+  get showPublishEditFolder() {
+      return this.showPublishNewFolder && (this.isFormStateDirty || this.isChangeLocations.value) && this.isEditFolder;
   }
 
   get showDoneButton() {
@@ -212,7 +221,60 @@ export class OverlayContainerComponent implements OnInit {
     return _.sortBy(this.selectedRooms, (res) => res.title.toLowerCase());
   }
 
-  ngOnInit() {
+
+  get showFolderName() {
+    return this.overlayType === 'newFolder'
+       || this.overlayType === 'newRoomInFolder'
+       || this.overlayType === 'addExisting'
+       || this.overlayType === 'importRooms'
+       || this.overlayType === 'settingsRooms'
+       || this.overlayType === 'edit';
+    }
+
+  get hideHeaderIcon() {
+    return this.overlayType === 'newRoomInFolder' ||
+        this.overlayType === 'importRooms' ||
+        this.overlayType === 'settingsRooms' ||
+        this.overlayType === 'addExisting';
+  }
+
+  get backButtonState() {
+    if (this.overlayType === 'newRoom' ||
+        (this.overlayType === 'newFolder' && !this.isEditFolder)
+        || this.overlayType === 'edit'
+    ) {
+        return !this.isChangeState;
+    }
+    if (this.overlayType === 'editRoom' || this.isEditFolder) {
+      return this.isChangeLocations.value ? !this.isChangeLocations.value : !this.isFormStateDirty;
+    }
+  }
+
+  get backButtonsStateInFolder() {
+    if (this.overlayType === 'newRoomInFolder' && !this.editRoomInFolder) {
+       return this.isChangeStateInFolder ||
+           this.isDirtyNowRestriction ||
+           this.isDirtyFutureRestriction ||
+           this.isDirtyTravel;
+    }
+    if (this.overlayType === 'newRoomInFolder' && this.editRoomInFolder) {
+       return this.isFormStateDirty;
+    }
+    if (this.overlayType === 'settingsRooms') {
+        return this.isChangeStateInFolder ||
+            this.isDirtyNowRestriction ||
+            this.isDirtyFutureRestriction ||
+            this.isDirtyTravel;
+    }
+  }
+
+  get inactiveTogglePickerSettings() {
+      return this.overlayType === 'newRoom' ||
+          (this.overlayType === 'newRoomInFolder' && !this.editRoomInFolder) ||
+          this.overlayType === 'settingsRooms' ||
+          this.overlayType === 'edit';
+  }
+    ngOnInit() {
       disableBodyScroll(this.elRef.nativeElement, {
         allowTouchMove: (el) => {
           while (el && el !== this.elRef.nativeElement) {
@@ -311,7 +373,16 @@ export class OverlayContainerComponent implements OnInit {
       this.buildInitialState();
 
       this.form.valueChanges.subscribe(res => {
-          this.changeState();
+          if (!!res.file || !!res.roomName || !!res.folderName || !!res.roomNumber || !!res.timeLimit) {
+              this.changeState();
+          } else {
+            this.isChangeState = false;
+          }
+          if (!!res.roomName || res.roomNumber || res.timeLimit) {
+              this.isChangeStateInFolder = true;
+          } else {
+              this.isChangeStateInFolder = false;
+          }
       });
   }
 
@@ -337,9 +408,7 @@ export class OverlayContainerComponent implements OnInit {
         )
     });
   }
-  showFC(v) {
-    console.log(v)
-  }
+
   uniqueRoomNameValidator(control: AbstractControl) {
       return this.http.get(`v1/locations/check_fields?title=${control.value}`)
           .pipe(map((res: any) => {
@@ -397,6 +466,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   changeState() {
+    this.isChangeState = true;
     if (this.overlayType === 'editRoom' || (this.isEditFolder && this.overlayType !== 'newRoomInFolder') || this.editRoomInFolder) {
         const initState = this.initialState;
         const currState: FormState = {
@@ -644,7 +714,6 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   done() {
-    console.log(this.overlayType);
       if (this.overlayType === 'newRoomInFolder') {
           const location = {
                   title: this.roomName,
@@ -846,17 +915,24 @@ export class OverlayContainerComponent implements OnInit {
      travelType = ['one_way', 'round_trip'];
    }
    this.travelType = travelType;
-   this.changeState();
+   if (!!travelType) {
+     this.isChangeState = false;
+     this.changeState();
+   }
   }
 
   nowRestrictionUpdate(restriction) {
     this.nowRestriction = restriction === 'Restricted';
-    this.changeState();
+    if (!!restriction) {
+      this.changeState();
+    }
   }
 
   futureRestrictionUpdate(restriction) {
     this.futureRestriction = restriction === 'Restricted';
-    this.changeState();
+    if (!!restriction) {
+      this.changeState();
+    }
   }
 
   selectTeacherEvent(teachers) {
@@ -880,31 +956,5 @@ export class OverlayContainerComponent implements OnInit {
   closeInfo(action) {
     this.isActiveIcon[action] = false;
   }
-
-  get showFolderName() {
-    return this.overlayType === 'newFolder'
-      || this.overlayType === 'newRoomInFolder'
-      || this.overlayType === 'addExisting'
-      || this.overlayType === 'importRooms'
-      || this.overlayType === 'settingsRooms'
-      || this.overlayType === 'edit';
-  }
-
-  get backButtonState() {
-    if (
-        // this.overlayType === 'addExisting'
-      // || this.overlayType === 'newRoomInFolder'
-       this.overlayType === 'importRooms'
-      || this.overlayType === 'settingsRooms') {
-      return null;
-    }
-
-    if (this.showPublishFolder || this.showPublishNewRoom || this.showPublishEditRoom) {
-      return 'cancel';
-    } else {
-      return 'back';
-    }
-  }
-
 
 }
