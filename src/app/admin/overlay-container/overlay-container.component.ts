@@ -344,11 +344,11 @@ export class OverlayContainerComponent implements OnInit {
       return this.http.get(`v1/locations/check_fields?title=${control.value}`)
           .pipe(map((res: any) => {
               if (this.overlayType === 'newRoom' || (this.overlayType === 'newRoomInFolder' && !this.editRoomInFolder)) {
-                  return res.title_used ? { title: true } : null;
+                  return res.title_used ? { room_name: true } : null;
               }
               return res.title_used &&
               (this.editRoomInFolder ?
-                  this.currentLocationInEditRoomFolder.title : this.pinnable.location.title) !== this.roomName ? { title: true } : null;
+                  this.currentLocationInEditRoomFolder.title : this.pinnable.location.title) !== this.roomName ? { room_name: true } : null;
           }));
   }
 
@@ -356,11 +356,11 @@ export class OverlayContainerComponent implements OnInit {
       return this.http.get(`v1/locations/check_fields?room=${control.value}`)
           .pipe(map((res: any) => {
               if (this.overlayType === 'newRoom' || (this.overlayType === 'newRoomInFolder' && !this.editRoomInFolder)) {
-                  return res.title_used ? { room: true } : null;
+                  return res.title_used ? { room_number: true } : null;
               }
               return res.title_used &&
               (this.editRoomInFolder ?
-                  this.currentLocationInEditRoomFolder.room : this.pinnable.location.room) !== this.roomNumber ? { room: true } : null;
+                  this.currentLocationInEditRoomFolder.room : this.pinnable.location.room) !== this.roomNumber ? { room_number: true } : null;
           }));
   }
 
@@ -368,9 +368,9 @@ export class OverlayContainerComponent implements OnInit {
       return this.http.get(`v1/pinnables/check_fields?title=${control.value}`)
           .pipe(map((res: any) => {
               if (this.overlayType === 'newFolder' && !this.isEditFolder) {
-                  return res.title_used ? { title: true } : null;
+                  return res.title_used ? { folder_name: true } : null;
               }
-              return res.title_used && this.pinnable.title !== this.folderName ? { title: true } : null;
+              return res.title_used && this.pinnable.title !== this.folderName ? { folder_name: true } : null;
           }));
   }
 
