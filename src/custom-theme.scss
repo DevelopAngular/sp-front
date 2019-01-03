@@ -60,6 +60,14 @@ $loading-theme-primary: mat-palette($mat-dark-green);
 $loading-theme-accent: mat-palette($mat-light-green);
 $loading-theme: mat-light-theme($loading-theme-accent, $loading-theme-primary);
 
+$loading-theme-white-primary: mat-palette($mat-white);
+$loading-theme-white-accent: mat-palette($mat-white);
+$loading-theme-white: mat-light-theme($loading-theme-white-accent, $loading-theme-white-primary);
+
+
 .loading-theme {
     @include angular-material-theme($loading-theme);
+  &_white {
+    @include angular-material-theme($loading-theme-white);
+  }
 }

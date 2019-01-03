@@ -94,9 +94,11 @@ export class PassCardComponent implements OnInit, OnDestroy {
       return !this.fromPast;
     } else if (this.forStaff) {
       return this.forFuture || this.isActive;
-    } else if ( this.user.id === this.pass.student.id && this.forFuture) {
-      return true;
-    } else if (!this.forStaff && this.forFuture){
+    }
+    // else if ( this.user.id === this.pass.student.id && this.forFuture) {
+    //   return true;
+    // }
+    else if (!this.forStaff && this.forFuture){
       return false;
     } else {
       return this.forFuture;
@@ -236,20 +238,25 @@ export class PassCardComponent implements OnInit, OnDestroy {
     if (this.forFuture) {
         body['start_time'] = this.pass.start_time.toISOString();
     }
-    console.log(body);
+
       this.http.post(endPoint, body).subscribe((data) => {
-          this.dialogRef.close();
+        this.performingAction = true;
+
+        this.dialogRef.close();
       });
   }
 
   cancelEdit(evt: MouseEvent){
+
     if(!this.cancelOpen){
       const target = new ElementRef(evt.currentTarget);
       let options = [];
       let header = '';
 
       if((this.isActive && this.forStaff) || this.forMonitor){
-        options.push(this.genOption('Report Student','#3D396B','report'));
+        if (!this.user.isAdmin()) {
+          options.push(this.genOption('Report Student','#3D396B','report'));
+        }
         options.push(this.genOption('End Pass','#E32C66','end'));
         header = 'What would you like to do with this pass?';
       } else{

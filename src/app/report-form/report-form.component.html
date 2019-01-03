@@ -5,7 +5,7 @@
     <div class="divider-text">Report Student(s)</div>
   </div>
 
-  <div class="student-select" [style.height]="showOptions?'300px':'125px'">
+  <div class="student-select">
     <app-student-search [selectedStudents]="selectedStudents" [showOptions]="showOptions" [style.width]="'75%'" (onUpdate)="selectedStudents=$event" (click)="showOptions=true"></app-student-search>
     <app-gradient-button
       *ngIf="showOptions && selectedStudents && selectedStudents.length > 0"

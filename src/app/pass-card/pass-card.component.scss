@@ -37,6 +37,9 @@
 
 .start-pass-content{
     @extend .button-content;
+    .spinner {
+      margin-left: 25px;
+    }
 }
 
 .end-pass-content{
@@ -55,7 +58,7 @@
     width: 100%;
     align-items: center;
     justify-content: center;
-    text-align: center; 
+    text-align: center;
     //padding-bottom: 20px;
     //margin-top: 36px;
 }

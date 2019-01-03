@@ -308,6 +308,7 @@ export class HallpassFormComponent implements OnInit {
   }
 
   pinnableSelected(event: Pinnable) {
+    console.log(event);
     if (event.type == 'location') {
       this.to_title = event.title;
       this.toIcon = event.icon || '';

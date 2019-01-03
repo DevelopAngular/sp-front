@@ -83,6 +83,9 @@ export class PassCollectionComponent implements OnInit {
 
   ngOnInit() {
       this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(100));
+      // this.currentPasses$.subscribe((data) => {
+      //   console.log(data);
+      // });
   }
 
   getEmptyMessage() {
@@ -124,7 +127,6 @@ export class PassCollectionComponent implements OnInit {
         forStaff: this.forStaff,
       };
     }
-
     const dialogRef = this.dialog.open(PassCollectionComponent.getDetailDialog(pass), {
       panelClass: (this.forStaff ? 'teacher-' : 'student-') + 'pass-card-dialog-container',
       backdropClass: 'custom-backdrop',

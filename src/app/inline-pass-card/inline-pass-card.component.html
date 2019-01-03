@@ -1,10 +1,10 @@
 <div class="inline-card-container" ondragstart="return false;">
     <app-pass-card-template [pass]="pass" [rightJustify]="(fromPast || forFuture)?'center':'flex-end'" [hasClose]="!isActive || fromPast" [closeIcon]="'Trash (Transparent).png'">
-  
+
     <div class="card-subtitle" *ngIf="fromPast || forFuture">
       {{ formatDateTime() }}
     </div>
-  
+
     <div *ngIf="forInput; else noInput" class="card-body-left">
         <app-traveltype-picker (onSelect)="selectedTravelType=$event" [choices]="pass.destination.travel_types" [altColor]="pass.color_profile.solid_color"></app-traveltype-picker>
 
@@ -32,6 +32,6 @@
     <div *ngIf="fromPast || forFuture && !forInput" class="card-body-right">
       {{ forFuture?'Pass Auto Starts': getDuration() +' - Total Time' }}
     </div>
-  
+
   </app-pass-card-template>
 </div>

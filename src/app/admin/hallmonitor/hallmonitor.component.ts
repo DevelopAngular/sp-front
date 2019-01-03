@@ -218,21 +218,20 @@ export class HallmonitorComponent implements OnInit {
     console.log(range);
     this.http.get(`v1/event_reports${ date ? `?created_before=${range.end.toISOString()}&created_after=${range.start.toISOString()}` : ''}`)
       .pipe(
-          map((list: any[]) => {
+        map((list: any[]) => {
 
           return list.map((report, index) => {
             return {
               student_name: report.student.display_name,
               issuer: report.issuer.display_name,
-              createdDate: Util.formatDateTime(new Date(report.created), false, true).split(', ')[0],
-              created: Util.formatDateTime(new Date(report.created), false, true),
+              createdDate: Util.formatDateTime(new Date(report.created), false, false).split(', ')[0],
+              created: Util.formatDateTime(new Date(report.created), false, false),
               message: report.message,
             };
           });
 
         }),
         switchMap((list: any[]) => {
-
           const groupedStudentreport: any[] = [];
           const temp = {
             date: null,
