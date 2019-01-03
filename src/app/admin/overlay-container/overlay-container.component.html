@@ -3,11 +3,11 @@
     <div class="overlay-header" [ngStyle]="{'background-image': gradientColor}">
     <div class="left-buttons">
       <img class="back-button" draggable="false"
-           *ngIf="backButtonState === 'back'"
+           *ngIf="backButtonState && !hideHeaderIcon"
            alt="Go Back"
            [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
 
-        <div class="cancel-button" *ngIf="backButtonState === 'cancel'" (click)="back()">Cancel</div>
+        <div class="cancel-button" *ngIf="!backButtonState && !hideHeaderIcon" (click)="back()">Cancel</div>
     </div>
       <div class="title" *ngIf="overlayType === 'newRoom' || overlayType === 'editRoom'">{{ roomName }}</div>
       <div
@@ -44,17 +44,30 @@
                              (buttonClick)="onPublish()"
         >Publish
         </app-gradient-button>
-        <app-gradient-button *ngIf="showPublishFolder && (overlayType === 'newFolder' || overlayType === 'newRoomInFolder' || overlayType === 'addExisting')"
-                             [minHeight]="'40px'"
-                             [style.width]="'120px'"
-                             [cursor]="'pointer'"
-                             [gradient]="color_profile.overlay_color + ',' + color_profile.time_color"
-                             [hoverColor]="color_profile.overlay_color"
-                             [fontSize]="'14px'"
-                             (buttonClick)="onPublish()"
-        >Publish
+        <div *ngIf="!showPublishNewRoom && overlayType === 'newRoom' && isChangeState" style="color: white">Incomplete</div>
+
+        <app-gradient-button *ngIf="showPublishNewFolder && overlayType === 'newFolder' && !isEditFolder"
+             [minHeight]="'40px'"
+             [style.width]="'120px'"
+             [cursor]="'pointer'"
+             [gradient]="color_profile.overlay_color + ',' + color_profile.time_color"
+             [hoverColor]="color_profile.overlay_color"
+             [fontSize]="'14px'"
+             (buttonClick)="onPublish()"
+          >Publish
         </app-gradient-button>
-        <div *ngIf="!showPublishNewRoom  && overlayType !== 'edit' && overlayType !== 'editRoom' && overlayType !== 'newFolder' && overlayType === 'newRoomImFolder'" style="color: white">Incomplete</div>
+        <div *ngIf="!showPublishNewFolder && overlayType === 'newFolder' && !isEditFolder && isChangeState" style="color: white">Incomplete</div>
+
+        <app-gradient-button *ngIf="showPublishEditFolder && overlayType === 'newFolder' && isEditFolder"
+             [minHeight]="'40px'"
+             [style.width]="'120px'"
+             [cursor]="'pointer'"
+             [gradient]="color_profile.overlay_color + ',' + color_profile.time_color"
+             [hoverColor]="color_profile.overlay_color"
+             [fontSize]="'14px'"
+             (buttonClick)="onPublish()"
+          >Publish
+        </app-gradient-button>
       </div>
     </div>
 
@@ -70,10 +83,10 @@
            *ngIf="overlayType === 'newRoomInFolder' || overlayType === 'importRooms' || overlayType === 'settingsRooms'">
           <div class="new-room-in-folder-header">
             <div style="margin-left: 20px; width: 53px">
-                <img draggable="false" class="back-button" *ngIf="!showDoneButton" (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : setLocation('newFolder'))" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
+                <img draggable="false" class="back-button" *ngIf="!backButtonsStateInFolder" (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : setLocation('newFolder'))" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
 
                 <div class="cancel-button-in-folder-header"
-                     *ngIf="showDoneButton"
+                     *ngIf="backButtonsStateInFolder"
                      (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : setLocation('newFolder'))"
                 >Cancel</div>
             </div>
@@ -82,7 +95,7 @@
             </div>
             <!--<div>{{importedRooms.length}} actually</div>-->
             <div class="header-in-folder-button">
-              <span *ngIf="(overlayType === 'settingsRooms' && form.get('timeLimit').invalid)">Incomplete</span>
+              <!--<span *ngIf="(overlayType === 'settingsRooms' && form.get('timeLimit').invalid)">Incomplete</span>-->
                 <app-gradient-button *ngIf="showDoneButton"
                         [minHeight]="'40px'"
                         [style.width]="'120px'"
@@ -93,7 +106,7 @@
                   <!-- Here should be called http post as many times as importedRoms.length is. -->
 
                 Done</app-gradient-button>
-                <div *ngIf="!showDoneButton && !editRoomInFolder">Incomplete</div>
+                <div *ngIf="backButtonsStateInFolder && !showDoneButton">Incomplete</div>
             </div>
           </div>
         <div class="edit-rooms-info" *ngIf="overlayType === 'settingsRooms'">
@@ -179,7 +192,18 @@
                   </div>
               </div>
           </div>
-            <app-toggle-picker [fontSize]="'13px'" (onSelect)="travelUpdate($event)" (onDirty)="isDirtyTravel=$event" [noSelected]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && !editRoomInFolder) ? true : false" [currentChoose]="travelType ? travelType : []" [choices]="['Round-trip', 'One-way' , 'Both']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+            <app-toggle-picker
+                    [fontSize]="'13px'"
+                    (onSelect)="travelUpdate($event)"
+                    (onDirty)="isDirtyTravel=$event"
+                    [noSelected]="inactiveTogglePickerSettings"
+                    [currentChoose]="travelType ? travelType : []"
+                    [choices]="['Round-trip', 'One-way' , 'Both']"
+                    [width]="'350px'"
+                    [height]="'30px'"
+                    [altColor]="'#1f195e'"
+                    [border]="'#1f195e'">
+            </app-toggle-picker>
         </div>
         <div class="time-limit"
              *ngIf="overlayType === 'newRoom'
@@ -229,7 +253,18 @@
                   </div>
               </div>
           </div>
-            <app-toggle-picker [fontSize]="'13px'" (onSelect)="nowRestrictionUpdate($event)" (onDirty)="isDirtyNowRestriction=$event" [noSelected]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && !editRoomInFolder) ? true : false" [currentChoose]="nowRestriction ? nowRestriction : false" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+            <app-toggle-picker
+                    [fontSize]="'13px'"
+                    (onSelect)="nowRestrictionUpdate($event)"
+                    (onDirty)="isDirtyNowRestriction=$event"
+                    [noSelected]="inactiveTogglePickerSettings"
+                    [currentChoose]="nowRestriction ? nowRestriction : false"
+                    [choices]="['Unrestricted', 'Restricted']"
+                    [width]="'100%'"
+                    [height]="'30px'"
+                    [altColor]="'#1f195e'"
+                    [border]="'#1f195e'">
+            </app-toggle-picker>
         </div>
         <div class="restriction-picker-2">
             <div class="toggle-label">
@@ -247,7 +282,18 @@
                     </div>
                 </div>
             </div>
-            <app-toggle-picker [fontSize]="'13px'" (onSelect)="futureRestrictionUpdate($event)" (onDirty)="isDirtyFutureRestriction=$event" [noSelected]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && !editRoomInFolder) ? true : false" [currentChoose]="futureRestriction ? futureRestriction : false" [choices]="['Unrestricted', 'Restricted']" [width]="'100%'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
+            <app-toggle-picker
+                    [fontSize]="'13px'"
+                    (onSelect)="futureRestrictionUpdate($event)"
+                    (onDirty)="isDirtyFutureRestriction=$event"
+                    [noSelected]="inactiveTogglePickerSettings"
+                    [currentChoose]="futureRestriction ? futureRestriction : false"
+                    [choices]="['Unrestricted', 'Restricted']"
+                    [width]="'100%'"
+                    [height]="'30px'"
+                    [altColor]="'#1f195e'"
+                    [border]="'#1f195e'">
+            </app-toggle-picker>
         </div>
       </div>
 
