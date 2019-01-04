@@ -32,10 +32,9 @@ export class State<ModelType extends BaseModel> {
     for (let i = 0; i < this.passes.length; i++) {
       if (this.passes[i].id === item.id) {
         this.passes[i] = item;
+        this.pass_lookup[item.id] = item;
       }
     }
-
-    this.pass_lookup[item.id] = item;
   }
 
   addOrUpdateItem(item: ModelType) {

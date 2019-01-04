@@ -56,6 +56,28 @@ export class AddItem<ModelType extends PassLike> extends BaseEventHandler<ModelT
 }
 
 /**
+ * Updates an item (or array of items) provided by a polling event to the State
+ * object that match the provided filter only if the item already exists in the state object.
+ */
+export class UpdateItem<ModelType extends PassLike> extends BaseEventHandler<ModelType> {
+  constructor(actions: string[], private decoder: (raw: any) => ModelType, private filter?: (pass: ModelType) => boolean) {
+    super(actions);
+  }
+
+  handle(state: State<ModelType>, context: PollingEventContext<ModelType>, data: any): State<ModelType> | 'skip' {
+    const dataArray = Array.isArray(data) ? data : [data];
+
+    for (const rawItem of dataArray) {
+      const pass = this.decoder(rawItem);
+      if (!this.filter || this.filter(pass)) {
+        state.updateItem(pass);
+      }
+    }
+    return state;
+  }
+}
+
+/**
  * Removed an item provided by a polling event from the State object.
  */
 export class RemoveItem<ModelType extends PassLike> extends BaseEventHandler<ModelType> {
