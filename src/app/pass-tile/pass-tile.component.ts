@@ -78,7 +78,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
     }
   }
 
-  formatDateTime(date: Date, timeOnly?: boolean){
+  formatDateTime(date: Date, timeOnly?: boolean) {
     return Util.formatDateTime(date, timeOnly);
   }
 

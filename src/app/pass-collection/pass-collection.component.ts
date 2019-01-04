@@ -82,7 +82,7 @@ export class PassCollectionComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-      this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(100));
+      this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
       // this.currentPasses$.subscribe((data) => {
       //   console.log(data);
       // });
