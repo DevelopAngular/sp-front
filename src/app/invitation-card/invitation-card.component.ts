@@ -142,7 +142,8 @@ export class InvitationCardComponent implements OnInit {
                   'colorProfile': this.invitation.color_profile,
                   'forLater': this.forFuture,
                   'forStaff': this.forStaff,
-                  'selectedStudents': this.selectedStudents || true
+                  'selectedStudents': this.selectedStudents || true,
+                  'requestTime': this.invitation.date_choices[0]
               }
           });
           dialogRef.afterClosed().pipe(filter(res => !!res))

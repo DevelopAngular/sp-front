@@ -189,6 +189,9 @@ export class HallpassFormComponent implements OnInit {
       this.formStateHistory = this.dialogData['fromHistory'];
       this.formHistoryIndex = this.dialogData['fromHistoryIndex'];
       this.selectedStudents = this.dialogData['selectedStudents'];
+      if(this.dialogData['requestTime']){
+        this.requestTime = this.dialogData['requestTime'];
+      }
       this.isRedirected.next(false);
       this.setFormState(this.formStateHistory[this.formHistoryIndex]);
     }
@@ -205,7 +208,6 @@ export class HallpassFormComponent implements OnInit {
         this._fromProfile = this.greenProfile;
         this.from_title = this.fromLocation.title;
       }
-
       if (this.dialogData['isDeny']) {
         this.isNotDeny = false;
         this.studentMessage = this.dialogData['studentMessage'];

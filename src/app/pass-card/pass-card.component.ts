@@ -273,7 +273,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
                     'colorProfile': this.pass.color_profile,
                     'forLater': this.forFuture,
                     'forStaff': this.forStaff,
-                    'selectedStudents': this.selectedStudents
+                    'selectedStudents': this.selectedStudents,
+                    'requestTime': this.pass.start_time
                 }
             });
             dialogRef.afterClosed().pipe(filter(res => !!res)).subscribe((result: Object) => {

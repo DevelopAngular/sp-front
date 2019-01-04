@@ -35,7 +35,7 @@
   </div>
 
   <div class="divider" [style.background-image]="dividerGradient">
-    <img *ngIf="formState !== 'from'" class="back-button" [src]="'./assets/Back Button (Transparent).png' | resolveAsset" (click)="back()">
+    <img class="back-button" [src]="'./assets/Back Button (Transparent).png' | resolveAsset" (click)="back()">
     <div class="divider-header">
       <img class="divider-icon" [src]="dividerIcon | resolveAsset">
       <div class="divider-text">{{dividerText}}</div>
@@ -45,7 +45,7 @@
   <!-- Used to select the start time of a pass for later -->
   <div *ngIf="formState == 'datetime'" class="datetime-area">
     <div class="datetime-left">
-      <app-date-time-picker [min]="startTime" (onUpdate)="requestTime=$event"></app-date-time-picker>
+      <app-date-time-picker [min]="startTime" [_selectedMoment]="requestTime" (onUpdate)="requestTime=$event"></app-date-time-picker>
     </div>
     <div class="datetime-right">
       <div *ngIf="forStaff" class="toggle-wrapper loading-theme">

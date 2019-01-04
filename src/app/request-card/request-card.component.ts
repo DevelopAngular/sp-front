@@ -197,7 +197,6 @@ export class RequestCardComponent implements OnInit {
                       'forLater': this.forFuture,
                       'forStaff': this.forStaff,
                       'selectedStudents': this.selectedStudents
-
                   }
               });
               dialogRef.afterClosed().pipe(filter(res => !!res)).subscribe((result: Object) => {
