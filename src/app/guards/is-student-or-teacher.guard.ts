@@ -1,8 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
-import { Observable, race } from 'rxjs';
-import { interval } from 'rxjs/observable/interval';
-import { User } from '../models/User';
+import { Observable } from 'rxjs';
 import { UserService } from '../user.service';
 
 @Injectable({
@@ -17,16 +15,9 @@ export class IsStudentOrTeacherGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
 
-    console.log('SeaA');
-
-    return race<User | number>(
-      this.userService.userData,
-      interval(500)
-    )
-      .take(1)
+    return this.userService.getUserWithTimeout()
       .map(u => {
-
-        if (typeof u === 'number') {
+        if (u === null) {
           return false;
         }
 

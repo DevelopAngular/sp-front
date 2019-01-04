@@ -45,6 +45,12 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       });
     });
 
+    this.loginService.showLoginError$.subscribe(show => {
+      this._ngZone.run(() => {
+        this.showErrorText = show;
+      });
+    });
+
     let textBuffer = '';
 
     this.keyListener = (event) => {
@@ -66,23 +72,23 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   }
 
   demoLogin() {
-    if(this.demoUsername && this.demoPassword){
-      console.log(this.demoUsername, this.demoPassword);
+    if (this.demoUsername && this.demoPassword) {
+      this.loginService.showLoginError$.next(false);
       this.loginService.signInDemoMode(this.demoUsername, this.demoPassword);
     }
   }
 
   initLogin() {
+    this.loginService.showLoginError$.next(false);
     this.loginService
-          .signIn()
-          .catch((err) => {
+      .signIn()
+      .catch((err) => {
+        console.log('Error occured', err);
 
-            console.log('Error occured', err);
-
-            this.demoLoginEnabled = true;
-            this.showErrorText = true;
-
-          });
+        if (err && err.error !== 'popup_closed_by_user') {
+          this.loginService.showLoginError$.next(true);
+        }
+      });
   }
 
   ngOnDestroy(): void {

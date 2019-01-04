@@ -18,8 +18,10 @@ mat-progress-spinner.inline {
 }
 
 .wrapper {
+  display: flex;
+  flex-direction: column;
   padding: 0 0;
-  text-align: center;
+  // text-align: center;
 }
 
 .wrapper > .grow {

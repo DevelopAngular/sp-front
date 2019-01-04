@@ -4,6 +4,9 @@ import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/publishReplay';
+import { interval } from 'rxjs/observable/interval';
+import { race } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { HttpService } from './http-service';
 import { constructUrl } from './live-data/helpers';
@@ -29,6 +32,13 @@ export class UserService {
       .subscribe(user => this.userData.next(user));
 
     this.pollingService.listen().subscribe(this._logging.debug);
+  }
+
+  getUserWithTimeout(max: number = 250): Observable<User | null> {
+    return race<User | null>(
+      this.userData,
+      interval(max).map(() => null)
+    ).take(1);
   }
 
   getUsersList(role: string = '', search: string = '') {

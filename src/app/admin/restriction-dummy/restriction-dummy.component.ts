@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {Router} from '@angular/router';
+import { Router } from '@angular/router';
+import { UserService } from '../../user.service';
 
 @Component({
   selector: 'app-restriction-dummy',
@@ -9,12 +10,31 @@ import {Router} from '@angular/router';
 export class RestrictionDummyComponent implements OnInit {
 
   constructor(
-    private router: Router
-  ) { }
+    private router: Router,
+    private userService: UserService
+  ) {
+  }
 
   ngOnInit() {
   }
+
   goHome() {
-    this.router.navigate(['/main']);
+    this.userService.getUserWithTimeout().subscribe(user => {
+      if (user) {
+        if (user.isStudent() || user.isTeacher()) {
+          this.router.navigate(['/main']);
+          return;
+        }
+
+        if (user.isAdmin()) {
+          this.router.navigate(['/admin']);
+          return;
+        }
+      }
+
+      this.router.navigate(['/sign-out']);
+    });
+
+
   }
 }

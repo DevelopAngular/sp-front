@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { empty, of } from 'rxjs';
+import { of } from 'rxjs';
 
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/do';
@@ -8,6 +8,7 @@ import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/first';
 import 'rxjs/add/operator/switchMap';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { throwError } from 'rxjs/internal/observable/throwError';
 import { Observable } from 'rxjs/Observable';
 import { flatMap } from 'rxjs/operators';
 import { environment } from '../environments/environment';
@@ -65,6 +66,14 @@ export interface AuthContext {
   auth: ServerAuth;
 }
 
+class LoginServerError extends Error {
+  constructor(msg: string) {
+    super(msg);
+    // required for instanceof to work properly
+    Object.setPrototypeOf(this, LoginServerError.prototype);
+  }
+}
+
 @Injectable()
 export class HttpService {
 
@@ -117,7 +126,7 @@ export class HttpService {
 
     return this.getLoginServers(c).pipe(flatMap(server => {
       if (server === null) {
-        return empty();
+        return throwError(new LoginServerError('No login server!'));
       }
 
       console.log(`Chosen server: ${server.name}`);
@@ -155,7 +164,7 @@ export class HttpService {
 
     return this.getLoginServers(c).pipe(flatMap(server => {
       if (server === null) {
-        return empty();
+        return throwError(new LoginServerError('No login server!'));
       }
 
       const config = new FormData();
@@ -178,22 +187,35 @@ export class HttpService {
     }));
   }
 
-  private fetchServerAuth(): Observable<AuthContext> {
+  private fetchServerAuth(retryNum: number = 0): Observable<AuthContext> {
     return this.loginService.getIdToken()
       .switchMap(googleToken => {
+        let authContext$: Observable<AuthContext>;
+
         if (isDemoLogin(googleToken)) {
-          return this.loginManual(googleToken.username, googleToken.password)
-            .catch(err => {
-              if (err.status !== 401) {
-                throw err;
+          authContext$ = this.loginManual(googleToken.username, googleToken.password);
+        } else {
+          authContext$ = this.loginGoogleAuth(googleToken);
+        }
+
+        return authContext$
+          .do(() => {
+            this.loginService.setAuthenticated();
+          })
+          .catch(err => {
+            if (err instanceof LoginServerError || err.status === 401) {
+              if (isDemoLogin(googleToken)) {
+                googleToken.invalid = true;
               }
 
-              googleToken.invalid = true;
-              return this.fetchServerAuth();
-            });
-        } else {
-          return this.loginGoogleAuth(googleToken);
-        }
+              this.loginService.clearInternal(true);
+              this.loginService.showLoginError$.next(true);
+              return this.fetchServerAuth(retryNum + 1);
+            }
+
+            throw err;
+          });
+
       });
   }
 
