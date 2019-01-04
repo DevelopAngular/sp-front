@@ -189,6 +189,11 @@ export class HallpassFormComponent implements OnInit {
       this.formStateHistory = this.dialogData['fromHistory'];
       this.formHistoryIndex = this.dialogData['fromHistoryIndex'];
       this.selectedStudents = this.dialogData['selectedStudents'];
+      if (this.dialogData['toCategory']) {
+          this.toCategory = this.dialogData['toCategory'];
+          this.toIcon = this.dialogData['toIcon'];
+          this._toProfile = this.dialogData['toProfile'];
+      }
       this.isRedirected.next(false);
       this.setFormState(this.formStateHistory[this.formHistoryIndex]);
     }
@@ -381,6 +386,8 @@ export class HallpassFormComponent implements OnInit {
       if (this.requestTarget) {
         let templateRequest: Request = new Request('template', null, this.fromLocation, this.toLocation, this.requestMessage, '', 'pending', null, '', this.toIcon, this.requestTarget, this.requestTime, '', null, null, this._toProfile, null, null, 60, null);
         this.dialogRef.close({
+          'fromHistory': this.formStateHistory,
+          'fromHistoryIndex': this.formHistoryIndex,
           'templatePass': templateRequest,
           'forLater': this.forLater,
           'selectedStudents': this.selectedStudents,
