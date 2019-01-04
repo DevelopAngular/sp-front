@@ -1,5 +1,5 @@
 ﻿import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { NgModule, ErrorHandler, Injectable } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule, MatProgressSpinnerModule, MatSliderModule, MatSlideToggleModule } from '@angular/material';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
+import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { GAPI_CONFIG } from './config';
 import { ConsentMenuComponent } from './consent-menu/consent-menu.component';
@@ -33,6 +34,7 @@ import { SignOutComponent } from './sign-out/sign-out.component';
 import { UserService } from './user.service';
 import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 
+import * as Sentry from '@sentry/browser';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: 'main/passes', pathMatch: 'full'},
@@ -57,6 +59,21 @@ const appRoutes: Routes = [
     data: {hideScroll: true}
   },
 ];
+
+Sentry.init({
+  dsn: 'https://2efc0ebe21a14bc0a677b369124c5a03@sentry.io/1364508'
+});
+
+@Injectable()
+export class SentryErrorHandler implements ErrorHandler {
+  constructor() {}
+  handleError(error) {
+    if (environment.production) {
+      Sentry.captureException(error.originalError || error);
+    }
+    throw error;
+  }
+}
 
 @NgModule({
   declarations: [
@@ -107,7 +124,8 @@ const appRoutes: Routes = [
     GoogleApiService,
     GoogleAuthService,
     {provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true},
-    {provide: SP_GAPI_CONFIG, useValue: GAPI_CONFIG}
+    {provide: SP_GAPI_CONFIG, useValue: GAPI_CONFIG},
+    {provide: ErrorHandler, useClass: SentryErrorHandler}
   ],
   bootstrap: [AppComponent]
 })

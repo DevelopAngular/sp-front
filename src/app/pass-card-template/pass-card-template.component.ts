@@ -28,7 +28,6 @@ export class PassCardTemplateComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('SUKA gde dannye !!? ===> ', this.pass);
   }
 
   getGradient() {

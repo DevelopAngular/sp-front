@@ -43,7 +43,7 @@
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
-    margin-top: 26px;
+    //margin-top: 26px;
 }
 
 .request-description{
@@ -177,4 +177,28 @@
 .smaller{
     font-weight: 400;
     font-size: 17px;
+}
+
+.student-wrapper{
+    width: 334px;
+    height: 51px;
+    background: rgba(200, 200, 200, .7);
+    mix-blend-mode: soft-light;
+    position: relative;
+    bottom: 51px;
+    border-radius: 0 0 15px 15px;
+}
+
+.student-text-wrapper{
+    width: 335px;
+    height: 51px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    bottom: 100px;
+    border-radius: 0 0 10px 10px;
+    color: white;
+    font-size: 13px;
+    font-family: 'Helvetica Neue', sans-serif;
 }

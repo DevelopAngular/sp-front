@@ -1,5 +1,7 @@
-import {Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material';
+import { BehaviorSubject } from 'rxjs';
 import { DataService } from '../data-service';
 import { HttpService } from '../http-service';
 import { ColorProfile } from '../models/ColorProfile';
@@ -10,8 +12,6 @@ import { Location } from '../models/Location';
 import { Pinnable } from '../models/Pinnable';
 import { Request } from '../models/Request';
 import { User } from '../models/User';
-import {BehaviorSubject} from 'rxjs';
-import {FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-hallpass-form',
@@ -60,11 +60,11 @@ export class HallpassFormComponent implements OnInit {
   public pinnables: Promise<Pinnable[]>;
 
   constructor(
-      private http: HttpService,
-      private dataService: DataService,
-      public dialog: MatDialog,
-      @Inject(MAT_DIALOG_DATA) public dialogData: any,
-      public dialogRef: MatDialogRef<HallpassFormComponent>,
+    private http: HttpService,
+    private dataService: DataService,
+    public dialog: MatDialog,
+    @Inject(MAT_DIALOG_DATA) public dialogData: any,
+    public dialogRef: MatDialogRef<HallpassFormComponent>,
   ) {
     this.declinable = new FormControl(true);
     this.declinable.valueChanges.subscribe(res => this.isDeclinable = res);
@@ -129,15 +129,15 @@ export class HallpassFormComponent implements OnInit {
     }
   }
 
-  get fromEnabled(){
+  get fromEnabled() {
     return !(this.forLater && this.forStaff && this.isDeclinable);
   }
 
   get dividerText() {
     if (this.formState === 'from') {
-        return 'From where?';
+      return 'From where?';
     } else if (this.formState.substring(0, 2) === 'to') {
-      if(this.toCategory)
+      if (this.toCategory)
         return this.toCategory;
       else
         return 'To where?';
@@ -154,7 +154,7 @@ export class HallpassFormComponent implements OnInit {
 
   get dividerIcon() {
     if (this.formState === 'from' || this.formState.substring(0, 2) === 'to' || this.formState === 'students') {
-      if(this.toCategory && this.formState.substring(0, 2) === 'to')
+      if (this.toCategory && this.formState.substring(0, 2) === 'to')
         return this.toIcon;
       else
         return './assets/Search (White).png';
@@ -162,7 +162,7 @@ export class HallpassFormComponent implements OnInit {
       return './assets/Message (White).png';
     } else if (this.formState === 'datetime') {
       return './assets/Scheduled Pass (White).png';
-    } else if(this.formState === 'restrictedTarget'){
+    } else if (this.formState === 'restrictedTarget') {
       return './assets/Lock (White).png';
     }
   }
@@ -184,13 +184,20 @@ export class HallpassFormComponent implements OnInit {
     if (this.dialogData['selectedStudents']) {
       this.fromLocation = this.dialogData['fromLocation'];
       if (this.fromLocation) {
-          this.from_title = this.fromLocation.title;
+        this.from_title = this.fromLocation.title;
       }
       this.formStateHistory = this.dialogData['fromHistory'];
       this.formHistoryIndex = this.dialogData['fromHistoryIndex'];
       this.selectedStudents = this.dialogData['selectedStudents'];
-      if(this.dialogData['requestTime']){
+
+      if (this.dialogData['requestTime']) {
         this.requestTime = this.dialogData['requestTime'];
+      }
+
+      if (this.dialogData['toCategory']) {
+        this.toCategory = this.dialogData['toCategory'];
+        this.toIcon = this.dialogData['toIcon'];
+        this._toProfile = this.dialogData['toProfile'];
       }
       this.isRedirected.next(false);
       this.setFormState(this.formStateHistory[this.formHistoryIndex]);
@@ -214,7 +221,7 @@ export class HallpassFormComponent implements OnInit {
       }
     }
     if (this.isRedirected.value) {
-        this.setFormState(this.entryState ? this.entryState : (this.forLater ? 'datetime' : (this.forStaff ? 'students' : 'from')));
+      this.setFormState(this.entryState ? this.entryState : (this.forLater ? 'datetime' : (this.forStaff ? 'students' : 'from')));
     }
     this.updateFormHeight();
 
@@ -235,7 +242,7 @@ export class HallpassFormComponent implements OnInit {
   back() {
     this.toCategory = '';
     let newIndex = this.formHistoryIndex - 1;
-    if(this.formStateHistory[newIndex] !== 'restrictedTarget'){
+    if (this.formStateHistory[newIndex] !== 'restrictedTarget') {
       this._toProfile = null;
       this.requestTarget = null;
     }
@@ -252,24 +259,24 @@ export class HallpassFormComponent implements OnInit {
       });
     } else {
       if (this.formStateHistory[newIndex] === 'to-category') {
-          this.setFormState('to-pinnables', true);
+        this.setFormState('to-pinnables', true);
       } else {
-          this.setFormState(this.formStateHistory[newIndex], true);
+        this.setFormState(this.formStateHistory[newIndex], true);
       }
     }
 
-    if(this.formState === 'to-pinnables' || this.formState === 'to-category'){
+    if (this.formState === 'to-pinnables' || this.formState === 'to-category') {
       this.toLocation = null;
-      this.to_title = "To";
+      this.to_title = 'To';
     }
 
     console.log('[Form History]: \n-----==========-----', this.formStateHistory, this.formHistoryIndex);
   }
 
-  setFormState(state, back?:boolean) {
+  setFormState(state, back?: boolean) {
     this.pinnables.then(val => console.log(val));
     if (this.entryState && this.formState) {
-      console.log(this.entryState +' && ' +this.formState);
+      console.log(this.entryState + ' && ' + this.formState);
       this.dialogRef.close({
         'fromLocation': this.fromLocation,
         'startTime': this.requestTime,
@@ -278,20 +285,20 @@ export class HallpassFormComponent implements OnInit {
       return;
     }
 
-    if(!back){
+    if (!back) {
       this.formState = state;
       if (!this.formStateHistory.find(s => s === state)) {
-          this.formStateHistory.push(this.formState);
+        this.formStateHistory.push(this.formState);
       }
       this.formHistoryIndex = this.formStateHistory.length - 1;
       console.log('[Form History]: \n-----==========-----', this.formStateHistory, this.formHistoryIndex);
-    } else{
-      if(state === 'from'){
+    } else {
+      if (state === 'from') {
         this.fromLocation = null;
         this.from_title = 'From';
       }
       let index = this.formStateHistory.indexOf(this.formState);
-      if(index > -1){
+      if (index > -1) {
         this.formStateHistory.splice(index, 1);
       }
 
@@ -383,6 +390,8 @@ export class HallpassFormComponent implements OnInit {
       if (this.requestTarget) {
         let templateRequest: Request = new Request('template', null, this.fromLocation, this.toLocation, this.requestMessage, '', 'pending', null, '', this.toIcon, this.requestTarget, this.requestTime, '', null, null, this._toProfile, null, null, 60, null);
         this.dialogRef.close({
+          'fromHistory': this.formStateHistory,
+          'fromHistoryIndex': this.formHistoryIndex,
           'templatePass': templateRequest,
           'forLater': this.forLater,
           'selectedStudents': this.selectedStudents,
