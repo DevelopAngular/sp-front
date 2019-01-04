@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+
+import { combineLatest, empty, merge, of } from 'rxjs';
 import 'rxjs/add/observable/empty';
 
 import 'rxjs/add/operator/startWith';
@@ -26,10 +28,15 @@ import {
 } from './events';
 import { filterHallPasses, filterNewestFirst, identityFilter } from './filters';
 import { constructUrl, QueryParams } from './helpers';
-import { AddItem, makePollingEventHandler, RemoveInvitationOnApprove, RemoveItem, RemoveRequestOnApprove } from './polling-event-handlers';
+import {
+  AddItem,
+  makePollingEventHandler,
+  RemoveInvitationOnApprove,
+  RemoveItem,
+  RemoveRequestOnApprove,
+  UpdateItem
+} from './polling-event-handlers';
 import { State } from './state';
-
-import {combineLatest, empty, merge, of} from 'rxjs';
 
 
 interface WatchData<ModelType extends BaseModel, ExternalEventType> {
@@ -455,6 +462,10 @@ export class LiveDataService {
   watchInboxRequests(filter: User): Observable<Request[]> {
     const isStudent = filter.roles.includes('hallpass_student');
 
+    const denyHandler = isStudent
+      ? new AddItem(['pass_request.deny'], Request.fromJSON)
+      : new RemoveItem(['pass_request.deny'], Request.fromJSON);
+
     return this.watch<Request, string>({
       externalEvents: empty(),
       eventNamespace: 'pass_request',
@@ -463,9 +474,11 @@ export class LiveDataService {
       decoder: data => Request.fromJSON(data),
       handleExternalEvent: (s: State<Request>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([
-        new AddItem(['pass_request.create', 'pass_request.update'], Request.fromJSON),
-        new RemoveItem(['pass_request.deny', 'pass_request.cancel'], Request.fromJSON),
-        new RemoveRequestOnApprove(['pass_request.accept'])
+        new AddItem(['pass_request.create'], Request.fromJSON),
+        new UpdateItem(['pass_request.update'], Request.fromJSON),
+        new RemoveItem(['pass_request.cancel'], Request.fromJSON),
+        new RemoveRequestOnApprove(['pass_request.accept']),
+        denyHandler,
       ]),
       handlePost: filterNewestFirst
     });
@@ -473,6 +486,10 @@ export class LiveDataService {
 
   watchInboxInvitations(filter: User): Observable<Invitation[]> {
     const isStudent = filter.roles.includes('hallpass_student');
+
+    const denyHandler = isStudent
+      ? new RemoveItem(['pass_request.deny'], Invitation.fromJSON)
+      : new AddItem(['pass_request.deny'], Invitation.fromJSON);
 
     return this.watch<Invitation, string>({
       externalEvents: empty(),
@@ -482,9 +499,11 @@ export class LiveDataService {
       decoder: data => Invitation.fromJSON(data),
       handleExternalEvent: (s: State<Invitation>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([
-        new AddItem(['pass_invitation.create', 'pass_invitation.update'], Invitation.fromJSON),
-        new RemoveItem(['pass_invitation.deny', 'pass_invitation.cancel'], Invitation.fromJSON),
-        new RemoveInvitationOnApprove(['pass_invitation.accept'])
+        new AddItem(['pass_invitation.create'], Invitation.fromJSON),
+        new UpdateItem(['pass_invitation.update'], Invitation.fromJSON),
+        new RemoveItem(['pass_invitation.cancel'], Invitation.fromJSON),
+        new RemoveInvitationOnApprove(['pass_invitation.accept']),
+        denyHandler,
       ]),
       handlePost: filterNewestFirst
     });
