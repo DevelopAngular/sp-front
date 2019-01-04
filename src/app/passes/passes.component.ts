@@ -129,7 +129,9 @@ class InboxInvitationProvider implements PassLikeProvider {
     const sortReplay = new ReplaySubject<string>(1);
     sort.subscribe(sortReplay);
 
-    return this.user$.switchMap(user => this.liveDataService.watchInboxInvitations(user));
+    const invitations$ = this.user$.switchMap(user => this.liveDataService.watchInboxInvitations(user));
+
+    return invitations$;
   }
 }
 
