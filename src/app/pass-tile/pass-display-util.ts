@@ -30,7 +30,7 @@ export function getInnerPassContent(pass: PassLike, now?: boolean) {
   //     return 'Request for Now';
   // }
   if (!(pass instanceof HallPass)) {
-    if (pass.status === 'denied') {
+    if (pass.status === 'declined') {
       return 'Denied';
     }
   }

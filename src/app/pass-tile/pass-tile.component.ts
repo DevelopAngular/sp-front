@@ -3,7 +3,7 @@ import { EventEmitter } from 'events';
 import { bumpIn } from '../animations';
 import { PassLike } from '../models';
 import { getInnerPassContent, getInnerPassName, isBadgeVisible } from './pass-display-util';
-import { DomSanitizer } from '../../../node_modules/@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Request } from '../models/Request';
 import { Invitation } from '../models/Invitation';
 
@@ -36,7 +36,11 @@ export class PassTileComponent implements OnInit, OnDestroy {
   }
 
   get tileContent() {
-    return this.isActive?(this.timeLeft +(this.valid?' Remaining':' Expiring')):getInnerPassContent(this.pass, (!this.pass['request_time'] && this.pass instanceof Request) || !(this.pass instanceof Invitation));
+    if (this.isActive) {
+      return this.timeLeft + (this.valid ? ' Remaining' : ' Expiring');
+    } else {
+      return getInnerPassContent(this.pass, (!this.pass['request_time'] && this.pass instanceof Request) || !(this.pass instanceof Invitation));
+    }
   }
 
   get tileName() {

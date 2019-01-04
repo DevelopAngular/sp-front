@@ -139,7 +139,9 @@ export class RequestCardComponent implements OnInit {
         };
 
         this.http.post(endpoint, body).subscribe(() => {
-          this.dialogRef.close();
+          this.http.post(`v1/pass_requests/${this.request.id}/cancel`).subscribe(() => {
+            this.dialogRef.close();
+          });
         });
       });
     }
