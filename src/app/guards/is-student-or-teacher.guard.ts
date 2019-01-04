@@ -1,6 +1,8 @@
 import { Injectable, NgZone } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, race } from 'rxjs';
+import { interval } from 'rxjs/observable/interval';
+import { User } from '../models/User';
 import { UserService } from '../user.service';
 
 @Injectable({
@@ -17,19 +19,29 @@ export class IsStudentOrTeacherGuard implements CanActivate {
 
     console.log('SeaA');
 
-    return this.userService.userData.map(u => {
+    return race<User | number>(
+      this.userService.userData,
+      interval(500)
+    )
+      .take(1)
+      .map(u => {
 
-      if (u.isAdmin() && !(u.isStudent() || u.isTeacher())) {
-        console.log('SeaB');
+        if (typeof u === 'number') {
+          return false;
+        }
 
-        this._zone.run(() => {
-          this.router.navigate(['admin']);
-        });
-      }
+        if (u.isAdmin() && !(u.isStudent() || u.isTeacher())) {
+          console.log('SeaB');
 
-      console.log('SeaC');
+          this._zone.run(() => {
+            this.router.navigate(['admin']);
+          });
+        }
 
-      return true;
-    });
+        console.log('SeaC');
+
+        return true;
+      })
+      .do(v => console.log('canActivate:', v));
   }
 }
