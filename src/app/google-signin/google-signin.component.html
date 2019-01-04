@@ -1,4 +1,4 @@
-<div class="wrapper"*ngIf="!demoLoginEnabled">
+<div class="wrapper" *ngIf="!demoLoginEnabled">
 
   <app-gradient-button
     class="login-button"
@@ -9,7 +9,6 @@
     [minHeight]="'100px'"
     [fontSize]="'22px'"
     (buttonClick)="initLogin()"
-    [style.width]="'90px'"
     [style.margin]="'0 auto'"
     [disabled]="!isLoaded"
     [leftIcon]="'./assets/google/google_logo.svg'"
@@ -27,9 +26,9 @@
 </div>
 
 <form class="login-form" *ngIf="demoLoginEnabled" onsubmit="return false;" style="margin-top: 30px;">
-  <app-round-input [placeholder]="'Username'" [type]="'text'" (click)="showErrorText = false" (ontextupdate)="demoUsername = $event">
+  <app-round-input [placeholder]="'Username'" [type]="'text'" (ontextupdate)="demoUsername = $event">
   </app-round-input>
-  <app-round-input [placeholder]="'Password'" [type]="'text'" [html5type]="'password'" (click)="showErrorText = false" (ontextupdate)="demoPassword = $event">
+  <app-round-input [placeholder]="'Password'" [type]="'text'" [html5type]="'password'" (ontextupdate)="demoPassword = $event">
   </app-round-input>
   <app-gradient-button
   [gradient]="'#04CD33,#04CD33'"

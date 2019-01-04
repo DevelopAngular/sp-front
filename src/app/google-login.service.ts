@@ -33,6 +33,7 @@ export class GoogleLoginService {
 
   private authToken$ = new BehaviorSubject<AuthObject>(null);
 
+  public showLoginError$ = new BehaviorSubject(false);
   public isAuthenticated$ = new ReplaySubject<boolean>(1);
 
   constructor(private googleAuth: GoogleAuthService) {
@@ -49,6 +50,7 @@ export class GoogleLoginService {
 
     const savedAuth = localStorage.getItem(STORAGE_KEY);
     if (savedAuth) {
+      console.log('Loading saved auth:', savedAuth);
       const auth: AuthResponse = JSON.parse(savedAuth);
       this.updateAuth(auth);
     }
@@ -77,17 +79,22 @@ export class GoogleLoginService {
     if (this.needNewToken()) {
       this.authToken$.next(null);
       this.isAuthenticated$.next(false);
+      localStorage.removeItem(STORAGE_KEY);
     }
 
     return this.authToken$
-      .filter(t => !!t)
+      .filter(t => !!t && (!isDemoLogin(t) || !t.invalid))
       .take(1)
       .map(a => isDemoLogin(a) ? a : a.id_token);
   }
 
   private updateAuth(auth: AuthResponse) {
     this.authToken$.next(auth);
+  }
+
+  setAuthenticated() {
     this.isAuthenticated$.next(true);
+    this.showLoginError$.next(false);
   }
 
   clearInternal(permanent: boolean = false) {
@@ -127,7 +134,6 @@ export class GoogleLoginService {
 
   signInDemoMode(username: string, password: string) {
     this.authToken$.next({username: username, password: password, type: 'demo-login'});
-    this.isAuthenticated$.next(true);
   }
 
 }
