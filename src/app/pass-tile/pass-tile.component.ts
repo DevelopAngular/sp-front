@@ -6,6 +6,7 @@ import { getInnerPassContent, getInnerPassName, isBadgeVisible } from './pass-di
 import { DomSanitizer } from '@angular/platform-browser';
 import { Request } from '../models/Request';
 import { Invitation } from '../models/Invitation';
+import { Util } from '../../Util';
 
 @Component({
   selector: 'app-pass-tile',
@@ -39,7 +40,11 @@ export class PassTileComponent implements OnInit, OnDestroy {
     if (this.isActive) {
       return this.timeLeft + (this.valid ? ' Remaining' : ' Expiring');
     } else {
-      return getInnerPassContent(this.pass, (!this.pass['request_time'] && this.pass instanceof Request) || !(this.pass instanceof Invitation));
+      return this.pass instanceof Request ?
+          ((this.pass.request_time && this.forFuture) ?
+              this.formatDateTime(this.pass.request_time) : (this.forStaff ? 'Pass for Now' : '')) :
+          getInnerPassContent(this.pass, (!this.pass['request_time'] && this.pass instanceof Request) ||
+              !(this.pass instanceof Invitation));
     }
   }
 
@@ -71,6 +76,10 @@ export class PassTileComponent implements OnInit, OnDestroy {
           this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
       }, 1000));
     }
+  }
+
+  formatDateTime(date: Date, timeOnly?: boolean){
+    return Util.formatDateTime(date, timeOnly);
   }
 
   ngOnDestroy() {
