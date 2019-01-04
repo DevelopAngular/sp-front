@@ -31,7 +31,9 @@ import { GoogleAuthService } from './services/google-auth.service';
 import { SharedModule } from './shared/shared.module';
 import { SignOutComponent } from './sign-out/sign-out.component';
 import { UserService } from './user.service';
-import {InfiniteScrollModule} from 'ngx-infinite-scroll';
+import {InfiniteScrollModule} from 'ngx-infinite-scroll';;
+import { SelectProfileComponent } from './select-profile/select-profile.component'
+
 
 
 const appRoutes: Routes = [
@@ -41,6 +43,10 @@ const appRoutes: Routes = [
     path: 'main',
     canActivate: [AuthenticatedGuard, IsStudentOrTeacherGuard],
     loadChildren: 'app/main/main.module#MainModule'
+  },
+  {
+    path: 'select-profile',
+    component: SelectProfileComponent
   },
   {
     path: 'admin',
@@ -58,19 +64,20 @@ const appRoutes: Routes = [
   },
 ];
 
+
 @NgModule({
   declarations: [
     AppComponent,
     GoogleSigninComponent,
     SignOutComponent,
-
     ConsentMenuComponent,
     OptionsComponent,
     IntroComponent,
     LoginComponent,
     HallDateTimePickerComponent,
     PdfComponent
-  ],
+,
+    SelectProfileComponent  ],
   entryComponents: [
     ConsentMenuComponent,
     OptionsComponent,

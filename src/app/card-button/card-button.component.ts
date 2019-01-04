@@ -27,7 +27,7 @@ export class CardButtonComponent implements OnInit {
   constructor(private dataService: DataService) { }
 
   ngOnInit() {
-  console.log('Passed gradiend ===> ', this.gradientColor);
+  // console.log('Passed gradiend ===> ', this.gradientColor);
   }
 
   get buttonState() {
@@ -35,7 +35,7 @@ export class CardButtonComponent implements OnInit {
   }
 
   buttonClicked() {
-    // this.dataService.isActivePass$.next(false); .
+    this.dataService.isActivePass$.next(false);
     if (!this.disabled) {
         this.onClick.emit();
     }
@@ -49,7 +49,7 @@ export class CardButtonComponent implements OnInit {
     // console.log('Passed gradiend ===> ', this.gradientColor);
 
     let gradient: string[] = this.gradientColor.split(',');
-        // let gradient: string[] = '#134472, #549abb'.split(',');
+    //   let gradient: string[] = '#134472, #549abb'.split(',');
 
         return 'radial-gradient(circle at 73% 71%, ' + gradient[0] + ', ' + gradient[1] + ')';
   }
