@@ -1,5 +1,5 @@
 <div class="request-card-container" ondragstart="return false">
-  <app-pass-card-template (onCancel)="cancelRequest($event)" [hasDivider]="((request.status==='pending' || request.status==='accepted') && !forInput && !forStaff) || (request.status!=='pending' && forStaff)" [pass]="request" [closeIcon]="'./assets/' +((!forStaff && !forInput)?'Trash':'Back Button') +' (Transparent).png'">
+  <app-pass-card-template (onCancel)="cancelRequest($event)" [hasDivider]="((request.status==='pending' || request.status==='accepted') && !forInput && !forStaff) || (request.status!=='pending' && forStaff)" [pass]="request" [closeIcon]="'./assets/' +((!forStaff && !forInput)?'Trash':(forStaff ? 'Three dots' : 'Back Button')) +' (Transparent).png'">
     <div class="card-subtitle">
       {{ ((request.request_time && forFuture)?formatDateTime(request.request_time):(forStaff?'Pass for Now':'')) }}
     </div>
@@ -103,4 +103,8 @@
       </div>
     </ng-template>
   </app-pass-card-template>
+  <div *ngIf="forStaff" class="student-wrapper"></div>
+  <div *ngIf="forStaff" class="student-text-wrapper">
+    {{ request.student.display_name }}
+  </div>
 </div>

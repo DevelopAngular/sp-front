@@ -60,14 +60,14 @@ class ActivePassProvider implements PassLikeProvider {
     const mergedReplay = new ReplaySubject<HallPassFilter>(1);
     merged$.subscribe(mergedReplay);
 
-    const passes$ = this.user$.switchMap(user => this.liveDataService.watchActiveHallPasses(mergedReplay,
+    const passes$ = this.user$.pipe(switchMap(user => this.liveDataService.watchActiveHallPasses(mergedReplay,
       user.roles.includes('hallpass_student')
         ? {type: 'student', value: user}
-        : {type: 'issuer', value: user}))
-      .pipe(map(passes => {
+        : {type: 'issuer', value: user})),
+        (map((passes: any[]) => {
         const now = new Date();
         return passes.filter(pass => pass.start_time.getTime() <= now.getTime());
-      }));
+      })));
 
     const excluded$ = this.excluded$.startWith([]);
 
@@ -129,7 +129,9 @@ class InboxInvitationProvider implements PassLikeProvider {
     const sortReplay = new ReplaySubject<string>(1);
     sort.subscribe(sortReplay);
 
-    return this.user$.switchMap(user => this.liveDataService.watchInboxInvitations(user));
+    const invitations$ = this.user$.switchMap(user => this.liveDataService.watchInboxInvitations(user));
+
+    return invitations$;
   }
 }
 

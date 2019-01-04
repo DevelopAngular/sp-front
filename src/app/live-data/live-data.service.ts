@@ -542,7 +542,9 @@ export class LiveDataService {
   watchActivePassLike(student: User): Observable<PassLike> {
 
     const passes$ = this.watchActiveHallPasses(empty(), {type: 'student', value: student});
-    const requests$ = this.watchActiveRequests(student);
+    const requests$ = this.watchActiveRequests(student).pipe(map(requests => {
+      return requests.filter(req => !req.request_time);
+    }));
 
     const merged$ = combineLatest(
       passes$.map(passes => passes.length ? passes[0] : null).startWith(null),

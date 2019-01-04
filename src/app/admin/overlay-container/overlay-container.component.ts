@@ -477,8 +477,8 @@ export class OverlayContainerComponent implements OnInit {
             scheduling_restricted: this.futureRestriction,
             travel_type: this.travelType,
             teachers: this.selectedTeachers.map(t => +t.id),
-            color: this.color_profile.id,
-            icon: this.selectedIcon.inactive_icon,
+            color: this.overlayType === 'editRoom' || this.isEditFolder ? this.color_profile.id : null,
+            icon: this.overlayType === 'editRoom' || this.isEditFolder ? this.selectedIcon.inactive_icon : null,
             timeLimit: +this.timeLimit
         };
         const status = [];
