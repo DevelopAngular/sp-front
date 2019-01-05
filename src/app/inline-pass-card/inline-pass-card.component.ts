@@ -55,11 +55,14 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
     this.subscribers$.unsubscribe();
   }
 
-  endPass() {
-    console.log("END YOBANUY PASS!", this.pass);
+  endPass(){
+    // console.log('END PASS ===>', this.pass);
     this.performingAction = true;
     const endPoint: string = 'v1/hall_passes/' +this.pass.id +'/ended';
-    this.http.post(endPoint).subscribe(res => this.dataService.isActivePass$.next(false));
+    this.http.post(endPoint).subscribe(res => {
+      // this.dataService.isActiveRequest$.next(false);
+      this.dataService.isActivePass$.next(false);
+    });
   }
 
 }

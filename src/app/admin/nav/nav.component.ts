@@ -65,7 +65,7 @@ export class NavComponent implements OnInit {
 
         this._zone.run(() => {
           this.user = user;
-          this.showButton = user.roles.includes('_profile_admin') && user.roles.includes('_profile_teacher');
+          this.showButton = user.roles.includes('_profile_admin') && ( user.roles.includes('_profile_teacher') || user.roles.includes('_profile_student') );
           this.dataService.updateInbox(!this.tab.includes('settings'));
         });
       });

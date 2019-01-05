@@ -8,7 +8,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
-import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { AppComponent } from './app.component';
 import { GAPI_CONFIG } from './config';
 import { ConsentMenuComponent } from './consent-menu/consent-menu.component';
@@ -33,14 +32,25 @@ import { GoogleAuthService } from './services/google-auth.service';
 import { SharedModule } from './shared/shared.module';
 import { SignOutComponent } from './sign-out/sign-out.component';
 import { UserService } from './user.service';
+import {InfiniteScrollModule} from 'ngx-infinite-scroll';
+import {SelectProfileComponent} from './select-profile/select-profile.component';
+
+
 
 const appRoutes: Routes = [
-  {path: '', redirectTo: 'main/passes', pathMatch: 'full'},
+  {path: '', redirectTo: 'select-profile', pathMatch: 'full'},
   {path: 'main/intro', component: IntroComponent},
   {
     path: 'main',
     canActivate: [AuthenticatedGuard, IsStudentOrTeacherGuard],
     loadChildren: 'app/main/main.module#MainModule'
+  },
+  {
+    path: 'select-profile',
+    component: SelectProfileComponent,
+    resolve: {
+      currentUser: CurrentUserResolver
+    }
   },
   {
     path: 'admin',
@@ -64,14 +74,14 @@ const appRoutes: Routes = [
     AppComponent,
     GoogleSigninComponent,
     SignOutComponent,
-
     ConsentMenuComponent,
     OptionsComponent,
     IntroComponent,
     LoginComponent,
     HallDateTimePickerComponent,
     PdfComponent
-  ],
+,
+    SelectProfileComponent  ],
   entryComponents: [
     ConsentMenuComponent,
     OptionsComponent,
