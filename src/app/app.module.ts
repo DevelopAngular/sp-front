@@ -1,5 +1,5 @@
 ﻿import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { NgModule, ErrorHandler, Injectable } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule, MatProgressSpinnerModule, MatSliderModule, MatSlideToggleModule } from '@angular/material';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,12 +8,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
-import { environment } from '../environments/environment';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { AppComponent } from './app.component';
 import { GAPI_CONFIG } from './config';
 import { ConsentMenuComponent } from './consent-menu/consent-menu.component';
 import { CurrentUserResolver } from './current-user.resolver';
 import { DataService } from './data-service';
+import { SentryErrorHandler } from './error-handler';
 import { GoogleLoginService } from './google-login.service';
 import { GoogleSigninComponent } from './google-signin/google-signin.component';
 import { AuthenticatedGuard } from './guards/authenticated.guard';
@@ -32,9 +33,6 @@ import { GoogleAuthService } from './services/google-auth.service';
 import { SharedModule } from './shared/shared.module';
 import { SignOutComponent } from './sign-out/sign-out.component';
 import { UserService } from './user.service';
-import {InfiniteScrollModule} from 'ngx-infinite-scroll';
-
-import * as Sentry from '@sentry/browser';
 
 const appRoutes: Routes = [
   {path: '', redirectTo: 'main/passes', pathMatch: 'full'},
@@ -60,20 +58,6 @@ const appRoutes: Routes = [
   },
 ];
 
-Sentry.init({
-  dsn: 'https://2efc0ebe21a14bc0a677b369124c5a03@sentry.io/1364508'
-});
-
-@Injectable()
-export class SentryErrorHandler implements ErrorHandler {
-  constructor() {}
-  handleError(error) {
-    if (environment.production) {
-      Sentry.captureException(error.originalError || error);
-    }
-    throw error;
-  }
-}
 
 @NgModule({
   declarations: [
