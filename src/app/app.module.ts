@@ -37,6 +37,7 @@ import { UserService } from './user.service';
 
 const appRoutes: Routes = [
   {path: 'main/intro', component: IntroComponent},
+  {path: '', redirectTo: 'main/passes', pathMatch: 'full'},
   {
     path: '',
     canActivate: [NotSeenIntroGuard],
