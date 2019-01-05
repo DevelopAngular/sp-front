@@ -548,8 +548,6 @@ export class LiveDataService {
       return requests.filter(req => !req.request_time);
     }));
 
-    requests$.subscribe(res => console.log('REQUEST', res));
-
     const merged$ = combineLatest(
       passes$.map(passes => passes.length ? passes[0] : null).startWith(null),
       requests$.map(requests => requests.length ? requests[0] : null).startWith(null),

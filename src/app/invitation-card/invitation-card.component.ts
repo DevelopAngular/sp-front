@@ -116,9 +116,9 @@ export class InvitationCardComponent implements OnInit {
     let body = {
       'start_time' : this.invitation.date_choices[0].toISOString(),
       'origin' : this.selectedOrigin.id
-    }
+    };
 
-    this.http.post(endpoint, body).subscribe((data)=>{
+    this.http.post(endpoint, body).subscribe((data: any) => {
       console.log('[Invitation Accepted]: ', data);
       this.dialogRef.close();
     });
