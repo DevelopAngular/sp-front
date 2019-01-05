@@ -262,18 +262,23 @@ export class PassCardComponent implements OnInit, OnDestroy {
       } else{
         if (this.forInput) {
             this.dialogRef.close();
+            const isCategory = this.fromHistory[this.fromHistoryIndex] === 'to-category';
             const dialogRef = this.dialog.open(HallpassFormComponent, {
                 width: '750px',
                 panelClass: 'form-dialog-container',
                 backdropClass: 'custom-backdrop',
                 data: {
+                    'toIcon': isCategory ? this.pass.icon : null,
+                    'toProfile': this.pass.color_profile,
+                    'toCategory': isCategory ? this.pass.destination.category : null,
                     'fromLocation': this.pass.origin,
                     'fromHistory': this.fromHistory,
                     'fromHistoryIndex': this.fromHistoryIndex,
                     'colorProfile': this.pass.color_profile,
                     'forLater': this.forFuture,
                     'forStaff': this.forStaff,
-                    'selectedStudents': this.selectedStudents
+                    'selectedStudents': this.selectedStudents,
+                    'requestTime': this.pass.start_time
                 }
             });
             dialogRef.afterClosed().pipe(filter(res => !!res)).subscribe((result: Object) => {

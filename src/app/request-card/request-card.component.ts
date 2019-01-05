@@ -31,6 +31,8 @@ export class RequestCardComponent implements OnInit {
   selectedDuration: number;
   selectedTravelType: string;
   selectedStudents;
+  fromHistory;
+  fromHistoryIndex;
   messageEditOpen: boolean = false;
   dateEditOpen: boolean = false;
   cancelOpen: boolean = false;
@@ -56,6 +58,8 @@ export class RequestCardComponent implements OnInit {
     this.fromPast = this.data['fromPast'];
     this.forStaff = this.data['forStaff'];
     this.selectedStudents = this.data['selectedStudents'];
+    this.fromHistory = this.data['fromHistory'];
+    this.fromHistoryIndex = this.data['fromHistoryIndex'];
 
     this.dataService.currentUser
     .pipe(this.loadingService.watchFirst)
@@ -199,7 +203,6 @@ export class RequestCardComponent implements OnInit {
                       'forLater': this.forFuture,
                       'forStaff': this.forStaff,
                       'selectedStudents': this.selectedStudents
-
                   }
               });
               dialogRef.afterClosed().pipe(filter(res => !!res)).subscribe((result: Object) => {

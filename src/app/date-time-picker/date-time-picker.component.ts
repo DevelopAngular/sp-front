@@ -31,6 +31,7 @@ export class DateTimePickerComponent implements OnInit, OnDestroy{
   }
 
   set selectedMoment(newMoment: Date) {
+    newMoment.setSeconds(0);
     this._selectedMoment = newMoment;
     // this.onUpdate.emit(this._selectedMoment);
     this.ngOnDestroy();
@@ -43,9 +44,10 @@ export class DateTimePickerComponent implements OnInit, OnDestroy{
 
 
   set selectedMoment_2ndCal(newMoment: Date) {
-      this._selectedMoment_2ndCal = newMoment;
-      this.onUpdate_2ndCal.emit(this._selectedMoment_2ndCal);
-      console.log('[Date-Time Moment]: ', this._selectedMoment_2ndCal);
+    newMoment.setSeconds(0);
+    this._selectedMoment_2ndCal = newMoment;
+    this.onUpdate_2ndCal.emit(this._selectedMoment_2ndCal);
+    console.log('[Date-Time Moment]: ', this._selectedMoment_2ndCal);
   }
 
   get selectedMoment_2ndCal() {
@@ -58,14 +60,14 @@ export class DateTimePickerComponent implements OnInit, OnDestroy{
 
   ngOnInit() {
     console.log('[Date-Time Debug]: ', 'Date-Time where at');
-    if(this._selectedMoment) {
-      this._selectedMoment.setMinutes(this._selectedMoment.getMinutes() + 1);
-    }
     this.min.setMinutes(this.min.getMinutes() + 5);
-    // this.onUpdate.emit(this._selectedMoment);
+    if(!this._selectedMoment) {
+      this._selectedMoment = this.min;
+    }
+    
+    this.onUpdate.emit(this._selectedMoment);
 
-
-    console.log('[Date-Time Debug]: ', this.min);
+    console.log('[Date-Time Debug]: ', this._selectedMoment);
     this._selectedMoment_2ndCal.setMinutes(this._selectedMoment_2ndCal.getMinutes() + 1);
     this.min_2ndCal.setMinutes(this.min_2ndCal.getMinutes() + 1);
     this.onUpdate_2ndCal.emit(this._selectedMoment_2ndCal);

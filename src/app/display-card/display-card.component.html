@@ -1,7 +1,7 @@
 ﻿<div class="display-card-wrapper" [style.min-height]="(inbox?'500px':'')">
-  <div class="display-card-header justify-content" >
+  <div class="display-card-header justify-content"  [style.margin-bottom]="headerBottomSpace">
     <div class="flexCls">
-      <img *ngIf="!!icon && !inbox" class="display-card-header-icon" [src]="icon | resolveAsset">
+      <img *ngIf="!!icon && !inbox" class="display-card-header-icon" [src]="icon | resolveAsset" [style.height]="iconSize" [style.width]="iconSize">
 
       <div *ngIf="!!icon && inbox" class="inbox-wrapper">
         <img class="inbox-icon" [src]="'./assets/Inbox Full (Blue).png' | resolveAsset">
@@ -17,10 +17,10 @@
       </div>
     </div>
 
-      <img *ngIf="!!righticon" class="display-card-header-icon righticon" [src]="righticon | resolveAsset">
+      <img *ngIf="!!righticon" class="display-card-header-icon righticon" [src]="righticon | resolveAsset"  [style.height]="iconSize" [style.width]="iconSize">
     <div *ngIf="!!righttext && !righticon" class="display-card-header-icon righticon" >{{righttext}}</div>
 
-    
+
   </div>
   <div [style.background-color]="(hasDivider?'#B5B7BA':'#FFF')" class="display-card-divider"></div>
   <div *ngIf="subtitle!=null" [style.font-size]="subtitle_fontSize" class="subtitlecls">

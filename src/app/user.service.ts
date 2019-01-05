@@ -34,7 +34,7 @@ export class UserService {
     this.pollingService.listen().subscribe(this._logging.debug);
   }
 
-  getUserWithTimeout(max: number = 250): Observable<User | null> {
+  getUserWithTimeout(max: number = 10000): Observable<User | null> {
     return race<User | null>(
       this.userData,
       interval(max).map(() => null)

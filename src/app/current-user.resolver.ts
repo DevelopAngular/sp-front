@@ -4,6 +4,7 @@ import { User } from './models/User';
 import { DataService } from './data-service';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
+import {take} from 'rxjs/internal/operators';
 
 @Injectable()
 export class CurrentUserResolver implements Resolve<User> {
@@ -16,6 +17,6 @@ export class CurrentUserResolver implements Resolve<User> {
         route: ActivatedRouteSnapshot,
         state: RouterStateSnapshot
     ): Observable<User> {
-        return this.dataService.currentUser;
+        return this.dataService.currentUser.pipe(take(1));
     }
 }

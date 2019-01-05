@@ -131,18 +131,23 @@ export class InvitationCardComponent implements OnInit {
       let header = '';
       if (this.forInput) {
           this.dialogRef.close();
+          const isCategory = this.fromHistory[this.fromHistoryIndex] === 'to-category';
           const dialogRef = this.dialog.open(HallpassFormComponent, {
               width: '750px',
               panelClass: 'form-dialog-container',
               backdropClass: 'custom-backdrop',
               data: {
+                  'toIcon': isCategory ? this.invitation.icon : null,
+                  'toProfile': this.invitation.color_profile,
+                  'toCategory': isCategory ? this.invitation.destination.category : null,
                   'fromLocation': this.selectedOrigin,
                   'fromHistory': this.fromHistory,
                   'fromHistoryIndex': this.fromHistoryIndex,
                   'colorProfile': this.invitation.color_profile,
                   'forLater': this.forFuture,
                   'forStaff': this.forStaff,
-                  'selectedStudents': this.selectedStudents || true
+                  'selectedStudents': this.selectedStudents || true,
+                  'requestTime': this.invitation.date_choices[0]
               }
           });
           dialogRef.afterClosed().pipe(filter(res => !!res))

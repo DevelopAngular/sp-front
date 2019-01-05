@@ -2,6 +2,8 @@ import { Component, NgZone, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { GoogleLoginService } from '../google-login.service';
 import {DeviceDetection} from '../device-detection.helper';
+import {UserService} from '../user.service';
+import {filter, switchMap, take} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'app-login',
@@ -15,17 +17,23 @@ export class LoginComponent implements OnInit {
   public appLink: string;
   public titleText: string;
   public isMobileDevice: boolean = false;
+  // private userService: UserService;
 
-  constructor(private loginService: GoogleLoginService, private router: Router, private _zone: NgZone) {
+  constructor(private userService: UserService, private loginService: GoogleLoginService, private router: Router, private _zone: NgZone) {
 
-    this.loginService.isAuthenticated$
-      .filter(v => v)
-      .take(1)
-      .subscribe(value => {
-        this._zone.run(() => {
-          this.router.navigate(['main/passes']);
-        });
-      });
+    // this.loginService.isAuthenticated$.pipe(
+    //   filter(v => v),
+    //   take(1),
+    //   switchMap(() => {
+    //     return this.userService.userData;
+    //   })
+    // )
+    // .subscribe(value => {
+    //   this._zone.run(() => {
+    //
+    //     this.router.navigate(['main/passes']);
+    //   });
+    // });
 
   }
 

@@ -25,6 +25,7 @@ export class NavbarComponent implements OnInit {
   @Input() hasNav = true;
 
   isStaff: boolean;
+  showSwitchButton: boolean = false;
   user: User;
   isProcess$ = this.process.ref().state;
   tab: string = 'passes';
@@ -97,6 +98,7 @@ export class NavbarComponent implements OnInit {
         this._zone.run(() => {
           this.user = user;
           this.isStaff = user.isAdmin() || user.isTeacher();
+          this.showSwitchButton = [user.isAdmin(), user.isTeacher(), user.isStudent()].filter(val => !!val).length > 1;
           this.dataService.updateInbox(this.tab!=='settings');
         });
       });

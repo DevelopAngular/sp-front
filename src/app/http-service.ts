@@ -87,7 +87,7 @@ export class HttpService {
   }
 
   get accessToken(): Observable<AuthContext> {
-    console.log('Check out access token =============> ', this.hasRequestedToken);
+
     if (!this.hasRequestedToken) {
       this.fetchServerAuth()
         .subscribe((auth: AuthContext) => {

@@ -26,9 +26,10 @@ export function getFormattedPassDate(pass: PassLike) {
 }
 
 export function getInnerPassContent(pass: PassLike, now?: boolean) {
-  // if (now && !(pass instanceof HallPass)) {
-  //     return 'Request for Now';
-  // }
+  if (now && !(pass instanceof HallPass)) {
+      return 'Request for Now';
+  }
+
   if (!(pass instanceof HallPass)) {
     if (pass.status === 'declined') {
       return 'Denied';

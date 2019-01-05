@@ -533,7 +533,8 @@ export class LiveDataService {
       handleExternalEvent: (s: State<Request>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([
         new AddItem(['pass_request.create'], Request.fromJSON, filterFunc),
-        new RemoveItem(['pass_request.cancel'], Request.fromJSON)
+        new RemoveItem(['pass_request.cancel'], Request.fromJSON),
+        new RemoveRequestOnApprove(['pass_request.accept']),
       ]),
       handlePost: identityFilter
     });
@@ -542,7 +543,9 @@ export class LiveDataService {
   watchActivePassLike(student: User): Observable<PassLike> {
 
     const passes$ = this.watchActiveHallPasses(empty(), {type: 'student', value: student});
-    const requests$ = this.watchActiveRequests(student);
+    const requests$ = this.watchActiveRequests(student).pipe(map(requests => {
+      return requests.filter(req => !req.request_time);
+    }));
 
     const merged$ = combineLatest(
       passes$.map(passes => passes.length ? passes[0] : null).startWith(null),

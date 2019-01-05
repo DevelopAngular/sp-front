@@ -1,4 +1,6 @@
-<div style="height: 100%;" [style.overflow-y]=" hideScroll ? 'hidden' : 'scroll'" [style.display]="isAuthenticated ? 'block' : 'none'">
-  <router-outlet></router-outlet>
+<div style="height: 100%;" *ngIf="showUI | async">
+  <div style="height: 100%;" [style.overflow-y]=" hideScroll ? 'hidden' : 'scroll'" [style.display]="isAuthenticated ? 'block' : 'none'">
+    <router-outlet></router-outlet>
+  </div>
+  <app-login *ngIf="!isAuthenticated"></app-login>
 </div>
-<app-login *ngIf="!isAuthenticated"></app-login>
