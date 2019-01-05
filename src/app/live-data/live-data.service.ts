@@ -533,7 +533,8 @@ export class LiveDataService {
       handleExternalEvent: (s: State<Request>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([
         new AddItem(['pass_request.create'], Request.fromJSON, filterFunc),
-        new RemoveItem(['pass_request.cancel'], Request.fromJSON)
+        new RemoveItem(['pass_request.cancel'], Request.fromJSON),
+        new RemoveRequestOnApprove(['pass_request.accept']),
       ]),
       handlePost: identityFilter
     });
