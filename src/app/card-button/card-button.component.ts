@@ -19,6 +19,7 @@ export class CardButtonComponent implements OnInit {
   @Input() disabled: boolean;
   @Input() content: string;
   @Input() gradientColor: string;
+  @Input() margin_top: string;
 
 
   @Output() onClick: EventEmitter<any> = new EventEmitter();

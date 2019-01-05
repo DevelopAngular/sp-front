@@ -535,6 +535,7 @@ export class LiveDataService {
         new AddItem(['pass_request.create'], Request.fromJSON, filterFunc),
         new RemoveItem(['pass_request.cancel'], Request.fromJSON),
         new RemoveRequestOnApprove(['pass_request.accept']),
+        new UpdateItem(['pass_request.deny'], Request.fromJSON)
       ]),
       handlePost: identityFilter
     });
@@ -546,6 +547,8 @@ export class LiveDataService {
     const requests$ = this.watchActiveRequests(student).pipe(map(requests => {
       return requests.filter(req => !req.request_time);
     }));
+
+    requests$.subscribe(res => console.log('REQUEST', res));
 
     const merged$ = combineLatest(
       passes$.map(passes => passes.length ? passes[0] : null).startWith(null),

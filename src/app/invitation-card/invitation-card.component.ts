@@ -187,8 +187,8 @@ export class InvitationCardComponent implements OnInit {
           let endpoint: string = 'v1/invitations/' +this.invitation.id +'/deny';
           let body = {
             'message' : ''
-          }
-          this.http.post(endpoint, body).subscribe((httpData)=>{
+          };
+          this.http.post(endpoint, body).subscribe((httpData) => {
             console.log('[Invitation Denied]: ', httpData);
             this.dialogRef.close();
           });
