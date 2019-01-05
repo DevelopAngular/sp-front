@@ -36,6 +36,7 @@ export class IntroComponent implements OnInit {
   }
 
   endIntro() {
+    localStorage.setItem('smartpass_intro', 'seen');
     this.router.navigate(['main/passes']);
   }
 

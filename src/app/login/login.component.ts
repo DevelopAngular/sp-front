@@ -18,14 +18,16 @@ export class LoginComponent implements OnInit {
 
   constructor(private loginService: GoogleLoginService, private router: Router, private _zone: NgZone) {
 
-    this.loginService.isAuthenticated$
-      .filter(v => v)
-      .take(1)
-      .subscribe(value => {
-        this._zone.run(() => {
-          this.router.navigate(['main/passes']);
-        });
-      });
+    // this code does not appear to be required and it messes with routing for the intro page. (2019-01-05)
+
+    // this.loginService.isAuthenticated$
+    //   .filter(v => v)
+    //   .take(1)
+    //   .subscribe(value => {
+    //     this._zone.run(() => {
+    //       this.router.navigate(['main/passes']);
+    //     });
+    //   });
 
   }
 

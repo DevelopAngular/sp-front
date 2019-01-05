@@ -20,6 +20,7 @@ import { GoogleSigninComponent } from './google-signin/google-signin.component';
 import { AuthenticatedGuard } from './guards/authenticated.guard';
 import { IsAdminGuard } from './guards/is-admin.guard';
 import { IsStudentOrTeacherGuard } from './guards/is-student-or-teacher.guard';
+import { NotSeenIntroGuard } from './guards/not-seen-intro.guard';
 import { HallDateTimePickerComponent } from './hall-date-time-picker/hall-date-time-picker.component';
 import { HttpService } from './http-service';
 import { IntroComponent } from './intro/intro.component';
@@ -35,27 +36,33 @@ import { SignOutComponent } from './sign-out/sign-out.component';
 import { UserService } from './user.service';
 
 const appRoutes: Routes = [
-  {path: '', redirectTo: 'main/passes', pathMatch: 'full'},
   {path: 'main/intro', component: IntroComponent},
   {
-    path: 'main',
-    canActivate: [AuthenticatedGuard, IsStudentOrTeacherGuard],
-    loadChildren: 'app/main/main.module#MainModule'
+    path: '',
+    canActivate: [NotSeenIntroGuard],
+    children: [
+      {
+        path: 'main',
+        canActivate: [AuthenticatedGuard, IsStudentOrTeacherGuard],
+        loadChildren: 'app/main/main.module#MainModule'
+      },
+      {
+        path: 'admin',
+        canActivate: [AuthenticatedGuard, IsAdminGuard],
+        loadChildren: 'app/admin/admin.module#AdminModule',
+        data: {hideScroll: true}
+      },
+      {path: 'sign-out', component: SignOutComponent},
+      {
+        // path: 'pdf/:source',
+        path: 'pdf/report',
+        canActivate: [AuthenticatedGuard],
+        component: PdfComponent,
+        data: {hideScroll: true}
+      },
+    ]
   },
-  {
-    path: 'admin',
-    canActivate: [AuthenticatedGuard, IsAdminGuard],
-    loadChildren: 'app/admin/admin.module#AdminModule',
-    data: {hideScroll: true}
-  },
-  {path: 'sign-out', component: SignOutComponent},
-  {
-    // path: 'pdf/:source',
-    path: 'pdf/report',
-    canActivate: [AuthenticatedGuard],
-    component: PdfComponent,
-    data: {hideScroll: true}
-  },
+  {path: '**', redirectTo: 'main/passes', pathMatch: 'full'},
 ];
 
 
@@ -70,7 +77,7 @@ const appRoutes: Routes = [
     IntroComponent,
     LoginComponent,
     HallDateTimePickerComponent,
-    PdfComponent
+    PdfComponent,
   ],
   entryComponents: [
     ConsentMenuComponent,
