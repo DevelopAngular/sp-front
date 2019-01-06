@@ -8,13 +8,17 @@ export function filterHallPasses(state: State<HallPass>): State<HallPass> {
   if (state.sort) {
 
     const compareString = (a, b) => a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase());
+    const combineComparisons = (...comparisons: number[]) => comparisons.find(c => c !== 0) || 0;
 
     const sortFns = {
       'created': (a: HallPass, b: HallPass) => (+a.created) - (+b.created),
       'expiration_time': (a: HallPass, b: HallPass) => (+a.expiration_time) - (+b.expiration_time),
       'start_time': (a: HallPass, b: HallPass) => (+a.start_time) - (+b.start_time),
       'destination_name': (a: HallPass, b: HallPass) => compareString(a.destination.title, b.destination.title),
-      'student_name': (a: HallPass, b: HallPass) => compareString(a.student.display_name, b.student.display_name),
+      'student_name': (a: HallPass, b: HallPass) =>
+        combineComparisons(
+          compareString(a.student.last_name, b.student.last_name),
+          compareString(a.student.first_name, b.student.first_name)),
     };
 
     for (const key of Object.keys(sortFns)) {
