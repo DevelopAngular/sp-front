@@ -52,7 +52,13 @@ export class GoogleLoginService {
     if (savedAuth) {
       console.log('Loading saved auth:', savedAuth);
       const auth: AuthResponse = JSON.parse(savedAuth);
-      this.updateAuth(auth);
+      if (auth.id_token !== undefined || isDemoLogin(auth)) {
+        this.updateAuth(auth);
+      } else {
+        this.isAuthenticated$.next(false);
+      }
+    } else {
+      this.isAuthenticated$.next(false);
     }
 
   }
@@ -88,11 +94,12 @@ export class GoogleLoginService {
       .map(a => isDemoLogin(a) ? a : a.id_token);
   }
 
-  private updateAuth(auth: AuthResponse) {
+  private updateAuth(auth: AuthResponse | DemoLogin) {
     this.authToken$.next(auth);
   }
 
   setAuthenticated() {
+    console.log('setAuthenticated()');
     this.isAuthenticated$.next(true);
     this.showLoginError$.next(false);
   }
