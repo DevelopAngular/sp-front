@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { $WebSocket } from 'angular2-websocket/angular2-websocket';
-import { Observable } from 'rxjs/index';
+import { BehaviorSubject, Observable } from 'rxjs/index';
 import { filter, map, publish, refCount, switchMap, tap } from 'rxjs/operators';
 import { AuthContext, HttpService } from './http-service';
 import { Logger } from './logger.service';
@@ -39,6 +39,8 @@ export class PollingService {
 
   private readonly eventStream: Observable<PollingEvent>;
 
+  isConnected$ = new BehaviorSubject(false);
+
   constructor(private http: HttpService, private _logger: Logger) {
 
     this.eventStream = this.getEventListener().pipe(publish(), refCount());
@@ -54,11 +56,24 @@ export class PollingService {
           reconnectIfNotNormalClose: true,
         });
 
-        ws.onOpen(() => {
-          ws.send4Direct(JSON.stringify({'action': 'authenticate', 'token': ctx.auth.access_token}));
-        });
-
         return Observable.create(s => {
+
+          ws.onOpen(() => {
+            ws.send4Direct(JSON.stringify({'action': 'authenticate', 'token': ctx.auth.access_token}));
+
+            // any time the websocket opens, trigger an invalidation event because listeners can't trust their
+            // current state but by refreshing and listening from here, they will get all updates. (technically
+            // there is a small unsafe window because the invalidation event should be sent when the authentication
+            // success event is received)
+            s.next({
+              type: 'message',
+              data: {
+                action: 'invalidate',
+                data: null,
+              },
+            });
+            this.isConnected$.next(true);
+          });
 
           ws.onMessage(event => {
             s.next({
@@ -78,6 +93,10 @@ export class PollingService {
           // even if a reconnect will be attempted.
           ws.getDataStream().subscribe(() => null, () => null, () => {
             s.complete();
+          });
+
+          ws.onClose(() => {
+            this.isConnected$.next(false);
           });
 
           return () => {
