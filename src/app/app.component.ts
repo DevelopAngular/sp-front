@@ -4,6 +4,7 @@ import { GoogleLoginService } from './google-login.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {filter, map, mergeMap} from 'rxjs/operators';
 import {DeviceDetection} from './device-detection.helper';
+import {BehaviorSubject} from 'rxjs';
 
 /**
  * @title Autocomplete overview
@@ -18,12 +19,13 @@ export class AppComponent implements OnInit {
 
   isAuthenticated = false;
   public hideScroll: boolean = false;
+  public showUI: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor(
     public loginService: GoogleLoginService,
     private _zone: NgZone,
     private activatedRoute: ActivatedRoute,
-    private router: Router, private location: Location
+    private router: Router, private location: Location,
   ) {
   }
 
@@ -34,8 +36,11 @@ export class AppComponent implements OnInit {
             link.setAttribute('href', './assets/css/custom_scrollbar.css');
             document.head.appendChild(link);
     }
+
     this.loginService.isAuthenticated$.subscribe(t => {
+      // console.log('Auth response ===>', t);
       this._zone.run(() => {
+        this.showUI.next(true);
         this.isAuthenticated = t;
       });
     });
@@ -50,7 +55,7 @@ export class AppComponent implements OnInit {
         mergeMap((route) => route.data)
       )
       .subscribe((data) => {
-        console.log(data);
+        // console.log(data);
         this.hideScroll = data.hideScroll;
       });
   }

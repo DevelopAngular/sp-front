@@ -535,6 +535,7 @@ export class LiveDataService {
         new AddItem(['pass_request.create'], Request.fromJSON, filterFunc),
         new RemoveItem(['pass_request.cancel'], Request.fromJSON),
         new RemoveRequestOnApprove(['pass_request.accept']),
+        new UpdateItem(['pass_request.deny'], Request.fromJSON)
       ]),
       handlePost: identityFilter
     });

@@ -95,9 +95,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
     } else if (this.forStaff) {
       return this.forFuture || this.isActive;
     }
-    // else if ( this.user.id === this.pass.student.id && this.forFuture) {
-    //   return true;
-    // }
+    else if ( this.user.id === this.pass.student.id && this.forFuture) {
+      return true;
+    }
     else if (!this.forStaff && this.forFuture){
       return false;
     } else {

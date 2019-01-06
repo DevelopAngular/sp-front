@@ -24,7 +24,7 @@
             <div class="message" [style.height]="(forInput?'70px':'110px')" [style.margin-bottom]="(forInput?'4px':'0px')">
               <span [style.font-weight]="'bold'">{{(forStaff?'Message from ' +studentName +':':'Your message:')}}</span><br>
               {{ (request.attachment_message===''?'No message':request.attachment_message) }}
-              <div *ngIf="request.status==='denied'">
+              <div *ngIf="request.status==='declined'">
                   <br>
                   <span [style.font-weight]="'bold'">Message from {{request.teacher.last_name}}:</span><br>
                   {{ (request.declined_message===''?'No message':request.declined_message) }} <!-- deny_message -->

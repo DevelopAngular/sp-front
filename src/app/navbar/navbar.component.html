@@ -29,7 +29,7 @@
     <div *ngIf="isStaff" class="support-wrapper" (click)="openSupport()">
       <img class="support" [src]="'./assets/Support (Blue).png' | resolveAsset">
     </div>
-    <div class="admin-view-wrapper" (click)="router.navigate(['admin/dashboard'])"  *ngIf="isStaff">
+    <div class="admin-view-wrapper" (click)="router.navigateByUrl('/select-profile')"  *ngIf="showSwitchButton">
       <img class="admin-view" [src]="'./assets/Switch Account (Blue).png' | resolveAsset" alt="">
     </div>
     <div (click)="showOptions()" class="options-wrapper" [style.background-color]="(optionsOpen?'#E4EBFF':'transparent')">
