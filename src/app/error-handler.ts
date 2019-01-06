@@ -1,5 +1,6 @@
 import { ErrorHandler, Injectable } from '@angular/core';
 import * as Sentry from '@sentry/browser';
+import { environment } from '../environments/environment';
 
 
 Sentry.init({
@@ -10,8 +11,10 @@ Sentry.init({
 export class SentryErrorHandler implements ErrorHandler {
   constructor() {}
   handleError(error) {
-    // if (environment.production) {
-    Sentry.captureException(error.originalError || error);
-    // }
+    if (environment.production) {
+      Sentry.captureException(error.originalError || error);
+    }
+
+    console.error(error);
   }
 }
