@@ -49,16 +49,23 @@ export class PollingService {
       switchMap((ctx: AuthContext) => {
         const url = ctx.server.ws_url;
 
-        const ws = new $WebSocket(url);
+        const ws = new $WebSocket(url, null, {
+          maxTimeout: 5000,
+          reconnectIfNotNormalClose: true,
+        });
 
-        ws.send4Direct(JSON.stringify({'action': 'authenticate', 'token': ctx.auth.access_token}));
+        ws.onOpen(() => {
+          ws.send4Direct(JSON.stringify({'action': 'authenticate', 'token': ctx.auth.access_token}));
+        });
 
         return Observable.create(s => {
 
-          ws.onMessage(event => s.next({
-            type: 'message',
-            data: JSON.parse(event.data),
-          }));
+          ws.onMessage(event => {
+            s.next({
+              type: 'message',
+              data: JSON.parse(event.data),
+            });
+          });
 
           ws.onError(event => {
             s.next({
@@ -67,7 +74,11 @@ export class PollingService {
             });
           });
 
-          ws.onClose(() => s.complete());
+          // we can't use .onClose() because onClose is triggered whenever the internal connection closes
+          // even if a reconnect will be attempted.
+          ws.getDataStream().subscribe(() => null, () => null, () => {
+            s.complete();
+          });
 
           return () => {
             ws.close();
