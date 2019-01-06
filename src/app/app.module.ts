@@ -38,7 +38,7 @@ import { SelectProfileComponent } from './select-profile/select-profile.componen
 
 
 const appRoutes: Routes = [
-  {path: 'main/intro', component: IntroComponent},
+  {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroComponent},
   {path: '', redirectTo: 'select-profile', pathMatch: 'full'},
   {
     path: '',

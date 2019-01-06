@@ -88,6 +88,8 @@ export class HttpService {
 
   get accessToken(): Observable<AuthContext> {
 
+    console.log('get accessToken');
+
     if (!this.hasRequestedToken) {
       this.fetchServerAuth()
         .subscribe((auth: AuthContext) => {
@@ -119,6 +121,8 @@ export class HttpService {
   }
 
   private loginManual(username: string, password: string): Observable<AuthContext> {
+
+    console.log('loginManual()');
 
     const c = new FormData();
     c.append('email', username);
@@ -188,9 +192,12 @@ export class HttpService {
   }
 
   private fetchServerAuth(retryNum: number = 0): Observable<AuthContext> {
+    console.log('fetchServerAuth');
     return this.loginService.getIdToken()
       .switchMap(googleToken => {
         let authContext$: Observable<AuthContext>;
+
+        console.log('getIdToken');
 
         if (isDemoLogin(googleToken)) {
           authContext$ = this.loginManual(googleToken.username, googleToken.password);
@@ -226,6 +233,8 @@ export class HttpService {
         if (err.status !== 401) {
           throw err;
         }
+
+        console.log('performRequest');
 
         // invalidate the existing token
         this.accessTokenSubject.next(null);

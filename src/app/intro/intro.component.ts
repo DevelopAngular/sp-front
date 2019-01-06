@@ -22,12 +22,15 @@ export class IntroComponent implements OnInit {
   buttons = {'left': false, 'right': false};
 
   constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService, private router: Router) {
+    console.log('intro.constructor');
   }
 
   ngOnInit() {
+    console.log('intro.onInit()');
     this.dataService.currentUser
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {
+        console.log('intro.subscribe()');
         this._zone.run(() => {
           this.user = user;
           this.isStaff = user.roles.includes('_profile_teacher');
