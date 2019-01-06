@@ -423,22 +423,22 @@ export class LiveDataService {
 
   watchPastHallPasses(filter?: PassFilterType): Observable<HallPass[]> {
     let queryFilter = '';
-    let filterFunc = (pass: HallPass) => true;
+    const filters: FilterFunc<HallPass>[] = [];
 
     if (filter) {
       if (filter.type === 'issuer') {
         queryFilter = `&issuer=${filter.value.id}`;
-        filterFunc = (pass: HallPass) => pass.issuer.id === filter.value.id;
+        filters.push((pass: HallPass) => pass.issuer.id === filter.value.id);
       }
 
       if (filter.type === 'student') {
         queryFilter = `&student=${filter.value.id}`;
-        filterFunc = (pass: HallPass) => pass.student.id === filter.value.id;
+        filters.push((pass: HallPass) => pass.student.id === filter.value.id);
 
       }
       if (filter.type === 'location') {
         queryFilter = `&location=${filter.value.id}`;
-        filterFunc = (pass: HallPass) => pass.origin.id === filter.value.id || pass.destination.id === filter.value.id;
+        filters.push((pass: HallPass) => pass.origin.id === filter.value.id || pass.destination.id === filter.value.id);
 
       }
     }
@@ -450,7 +450,7 @@ export class LiveDataService {
       decoder: data => HallPass.fromJSON(data),
       handleExternalEvent: (s: State<HallPass>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([
-        new AddItem(['hall_pass.end', 'pass_request.accept', 'pass_invitation.accept'], HallPass.fromJSON, filterFunc)
+        new AddItem(['hall_pass.end'], HallPass.fromJSON, mergeFilters(filters))
       ]),
       handlePost: (s: State<HallPass>) => {
         s.sort = '-start_time';
