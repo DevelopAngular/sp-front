@@ -19,6 +19,7 @@ import { GoogleSigninComponent } from './google-signin/google-signin.component';
 import { AuthenticatedGuard } from './guards/authenticated.guard';
 import { IsAdminGuard } from './guards/is-admin.guard';
 import { IsStudentOrTeacherGuard } from './guards/is-student-or-teacher.guard';
+import { NotSeenIntroGuard } from './guards/not-seen-intro.guard';
 import { HallDateTimePickerComponent } from './hall-date-time-picker/hall-date-time-picker.component';
 import { HttpService } from './http-service';
 import { IntroComponent } from './intro/intro.component';
@@ -32,40 +33,46 @@ import { GoogleAuthService } from './services/google-auth.service';
 import { SharedModule } from './shared/shared.module';
 import { SignOutComponent } from './sign-out/sign-out.component';
 import { UserService } from './user.service';
-import {InfiniteScrollModule} from 'ngx-infinite-scroll';
-import {SelectProfileComponent} from './select-profile/select-profile.component';
-
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { SelectProfileComponent } from './select-profile/select-profile.component';
 
 
 const appRoutes: Routes = [
-  {path: '', redirectTo: 'select-profile', pathMatch: 'full'},
   {path: 'main/intro', component: IntroComponent},
+  {path: '', redirectTo: 'select-profile', pathMatch: 'full'},
   {
-    path: 'main',
-    canActivate: [AuthenticatedGuard, IsStudentOrTeacherGuard],
-    loadChildren: 'app/main/main.module#MainModule'
+    path: '',
+    canActivate: [NotSeenIntroGuard],
+    children: [
+      {
+        path: 'main',
+        canActivate: [AuthenticatedGuard, IsStudentOrTeacherGuard],
+        loadChildren: 'app/main/main.module#MainModule'
+      },
+      {
+        path: 'select-profile',
+        component: SelectProfileComponent,
+        resolve: {
+          currentUser: CurrentUserResolver
+        }
+      },
+      {
+        path: 'admin',
+        canActivate: [AuthenticatedGuard, IsAdminGuard],
+        loadChildren: 'app/admin/admin.module#AdminModule',
+        data: {hideScroll: true}
+      },
+      {path: 'sign-out', component: SignOutComponent},
+      {
+        // path: 'pdf/:source',
+        path: 'pdf/report',
+        canActivate: [AuthenticatedGuard],
+        component: PdfComponent,
+        data: {hideScroll: true}
+      },
+    ]
   },
-  {
-    path: 'select-profile',
-    component: SelectProfileComponent,
-    resolve: {
-      currentUser: CurrentUserResolver
-    }
-  },
-  {
-    path: 'admin',
-    canActivate: [AuthenticatedGuard, IsAdminGuard],
-    loadChildren: 'app/admin/admin.module#AdminModule',
-    data: {hideScroll: true}
-  },
-  {path: 'sign-out', component: SignOutComponent},
-  {
-    // path: 'pdf/:source',
-    path: 'pdf/report',
-    canActivate: [AuthenticatedGuard],
-    component: PdfComponent,
-    data: {hideScroll: true}
-  },
+  {path: '**', redirectTo: 'main/passes', pathMatch: 'full'},
 ];
 
 
@@ -79,9 +86,9 @@ const appRoutes: Routes = [
     IntroComponent,
     LoginComponent,
     HallDateTimePickerComponent,
-    PdfComponent
-,
-    SelectProfileComponent  ],
+    PdfComponent,
+    SelectProfileComponent,
+  ],
   entryComponents: [
     ConsentMenuComponent,
     OptionsComponent,

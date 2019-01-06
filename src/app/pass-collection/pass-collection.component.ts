@@ -159,6 +159,10 @@ export class PassCollectionComponent implements OnInit {
           'isSort': true,
         }
     });
+
+    sortDialog.afterClosed().subscribe(sortMode => {
+      this.onSortSelected(sortMode);
+    });
   }
 
 }

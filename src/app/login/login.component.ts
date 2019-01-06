@@ -1,9 +1,8 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { DeviceDetection } from '../device-detection.helper';
 import { GoogleLoginService } from '../google-login.service';
-import {DeviceDetection} from '../device-detection.helper';
-import {UserService} from '../user.service';
-import {filter, switchMap, take} from 'rxjs/internal/operators';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +16,6 @@ export class LoginComponent implements OnInit {
   public appLink: string;
   public titleText: string;
   public isMobileDevice: boolean = false;
-  // private userService: UserService;
 
   constructor(private userService: UserService, private loginService: GoogleLoginService, private router: Router, private _zone: NgZone) {
 
@@ -34,7 +32,6 @@ export class LoginComponent implements OnInit {
     //     this.router.navigate(['main/passes']);
     //   });
     // });
-
   }
 
   ngOnInit() {

@@ -34,11 +34,11 @@ export function filterHallPasses(state: State<HallPass>): State<HallPass> {
 
     const options = {
       shouldSort: true,
-      threshold: 0.6,
+      threshold: 0.3,
       location: 0,
       distance: 100,
       maxPatternLength: 32,
-      minMatchCharLength: 1,
+      minMatchCharLength: 3,
       keys: [
         'student.display_name',
         'student.first_name',

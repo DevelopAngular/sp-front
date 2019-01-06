@@ -20,7 +20,8 @@ export class HallPass extends BaseModel {
               public color_profile: ColorProfile,
               public flow_start: Date,
               public parent_invitation: string,
-              public parent_request: string) {
+              public parent_request: string,
+              public cancellable_by_student: boolean = true) {
     super();
   }
 
@@ -46,8 +47,13 @@ export class HallPass extends BaseModel {
       color_profile: ColorProfile = ColorProfile.fromJSON(JSON['color_profile']),
       flow_start: Date = new Date(JSON['flow_start']),
       parent_invitation: string = JSON['parent_invitation'],
-      parent_request: string = JSON['parent_request'];
+      parent_request: string = JSON['parent_request'],
+      cancellable_by_student: boolean = !!JSON['cancellable_by_student'];
 
-    return new HallPass(id, student, issuer, created, last_updated, start_time, expiration_time, end_time, origin, destination, travel_type, gradient_color, icon, color_profile, flow_start, parent_invitation, parent_request);
+    return new HallPass(id, student, issuer, created,
+      last_updated, start_time, expiration_time,
+      end_time, origin, destination, travel_type,
+      gradient_color, icon, color_profile, flow_start,
+      parent_invitation, parent_request, cancellable_by_student);
   }
 }
