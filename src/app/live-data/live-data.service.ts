@@ -251,14 +251,17 @@ export class LiveDataService {
     const rawDecoder = config.rawDecoder !== undefined ? config.rawDecoder
       : (json) => json.results.map(raw => config.decoder(raw));
 
+    const fullReload$ = merge(of('invalidate'), this.polling.listen('invalidate'));
+
     /**
      * Calls the initialUrl, decodes the result into items, then uses RxJS scan()
      * to handle each event and keep track of the current state.
      *
      * The State object's `filtered_passes` is returned.
      */
-    return this.http.get<Paged<any>>(config.initialUrl)
+    return fullReload$
       .pipe(
+        switchMap(() => this.http.get<Paged<any>>(config.initialUrl)),
         map(rawDecoder),
         switchMap(items => events.scan<Action<ModelType, ExternalEventType>, State<ModelType>>(accumulator, new State(items))),
         map(state => state.filtered_passes)
