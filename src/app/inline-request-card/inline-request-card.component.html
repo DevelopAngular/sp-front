@@ -53,7 +53,7 @@
       </div>
     </div>
     <div *ngIf="request?.status==='declined'" class="card-body-right">
-      <app-card-button [width]="'269px'" [height]="'81px'" [margin_top]="'112px'" [gradientColor]="request?.color_profile.gradient_color">
+      <app-card-button (click)="resendRequest()" [width]="'269px'" [height]="'81px'" [margin_top]="'112px'" [gradientColor]="request?.color_profile.gradient_color">
         <div class="resend-button-content">
           <div class="resend-button-content-title">{{ (forFuture?'Change Date & Time':'Resend Request') }}</div>
           <div class="resend-button-content-subtitle">Pass Request Denied</div>

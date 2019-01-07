@@ -491,8 +491,8 @@ export class LiveDataService {
     const isStudent = filter.roles.includes('hallpass_student');
 
     const denyHandler = isStudent
-      ? new RemoveItem(['pass_request.deny'], Invitation.fromJSON)
-      : new AddItem(['pass_request.deny'], Invitation.fromJSON);
+      ? new RemoveItem(['pass_invitation.deny'], Invitation.fromJSON)
+      : new AddItem(['pass_invitation.deny'], Invitation.fromJSON);
 
     return this.watch<Invitation, string>({
       externalEvents: empty(),

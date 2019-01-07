@@ -74,6 +74,31 @@ export class InlineRequestCardComponent implements OnInit {
     }
   }
 
+  resendRequest() {
+    if (this.forFuture) {
+      // TODO(2019-01-07) a lot of the resend logic in request-card and inline-request-card should probably be unified.
+      throw new Error('Changing date time not currently supported by this component.');
+    }
+
+    const endpoint = 'v1/pass_requests';
+    const body: any = {
+      'origin' : this.request.origin.id,
+      'destination' : this.request.destination.id,
+      'attachment_message' : this.request.attachment_message,
+      'travel_type' : this.request.travel_type,
+      'teacher' : this.request.teacher.id,
+      // !forFuture means that request_time is definitely null
+      'duration' : this.request.duration,
+    };
+
+    this.http.post(endpoint, body).subscribe(() => {
+      this.http.post(`v1/pass_requests/${this.request.id}/cancel`).subscribe(() => {
+        console.log('pass request resent');
+      });
+    });
+
+  }
+
   genOption(display, color, action){
     return {display: display, color: color, action: action}
   }
