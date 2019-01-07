@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/map';
 
@@ -36,7 +36,7 @@ export class GoogleLoginService {
   public showLoginError$ = new BehaviorSubject(false);
   public isAuthenticated$ = new ReplaySubject<boolean>(1);
 
-  constructor(private googleAuth: GoogleAuthService) {
+  constructor(private googleAuth: GoogleAuthService, private _zone: NgZone) {
 
     this.authToken$.subscribe(auth => {
       console.log('Loaded auth response:', auth);
@@ -133,8 +133,10 @@ export class GoogleLoginService {
     console.log('logging in...');
 
     return auth.signIn().then(user => {
-      console.log(user);
-      this.updateAuth(user.getAuthResponse());
+      this._zone.run(() => {
+        console.log(user);
+        this.updateAuth(user.getAuthResponse());
+      });
     });
 
   }

@@ -1,5 +1,6 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { MatDialog } from '@angular/material';
+import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { DataService } from '../data-service';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
@@ -49,7 +50,7 @@ export class PassCollectionComponent implements OnInit {
   @Output() sortMode = new EventEmitter<string>();
   @Output() reportFromPassCard = new EventEmitter();
 
-  currentPasses$;
+  currentPasses$: Observable<PassLike[]>;
 
   sortOptions = [
       { display: 'Pass Expiration Time', color: 'darkBlue', action: 'expiration_time', toggle: false },
