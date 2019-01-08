@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, OnDestroy} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -52,6 +52,10 @@ export class PassCollectionComponent implements OnInit {
 
   currentPasses$: Observable<PassLike[]>;
 
+  timers: number[] = [];
+
+  timerEvent:EventEmitter<any> = new EventEmitter();
+
   sortOptions = [
       { display: 'Pass Expiration Time', color: 'darkBlue', action: 'expiration_time', toggle: false },
       { display: 'Student Name', color: 'darkBlue', action: 'student_name', toggle: false },
@@ -84,9 +88,23 @@ export class PassCollectionComponent implements OnInit {
 
   ngOnInit() {
       this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
+      
+      if(this.isActive){
+        this.timers.push(window.setInterval(() => {
+          this.timerEvent.emit();
+        }, 1000));
+      }
       // this.currentPasses$.subscribe((data) => {
       //   console.log(data);
       // });
+  }
+
+  ngOnDestroy() {
+    this.timers.forEach(id => {
+      console.log('Clearing interval');
+      clearInterval(id);
+    });
+    this.timers = [];
   }
 
   getEmptyMessage() {

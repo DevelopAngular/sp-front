@@ -1,8 +1,9 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, EventEmitter } from '@angular/core';
 import { HallPass } from '../models/HallPass';
 import { Invitation } from '../models/Invitation';
 import { Request } from '../models/Request';
 import { getInnerPassContent, getInnerPassName, isBadgeVisible } from '../pass-tile/pass-display-util';
+import { Util } from '../../Util';
 
 @Component({
   selector: 'app-pass-cell',
@@ -16,6 +17,7 @@ export class PassCellComponent implements OnInit, OnDestroy {
   @Input() forFuture = false;
   @Input() isActive = false;
   @Input() forStaff = false;
+  @Input() timerEvent:EventEmitter<any> = new EventEmitter();
 
   timeLeft;
   valid: boolean = true;
@@ -29,7 +31,15 @@ export class PassCellComponent implements OnInit, OnDestroy {
   }
 
   get cellContent() {
-    return this.isActive?(this.timeLeft +(this.valid?' Remaining':' Expiring')):getInnerPassContent(this.pass, (!(this.pass['request_time'] && this.forFuture) && this.forStaff));
+    if (this.isActive) {
+      return this.timeLeft + (this.valid ? ' Remaining' : ' Expiring');
+    } else {
+      return this.pass instanceof Request ?
+          ((this.pass.request_time && this.forFuture) ?
+            (!this.forStaff ? getInnerPassContent(this.pass) : Util.formatDateTime(this.pass.request_time)) : (this.forStaff ? 'Pass for Now' : '')) :
+          getInnerPassContent(this.pass, (!this.pass['request_time'] && this.pass instanceof Request) ||
+              !(this.pass instanceof Invitation));
+    }
   }
 
   get isBadgeVisible() {
@@ -42,8 +52,8 @@ export class PassCellComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.valid = this.isActive;
-    if (!!this.pass && this.isActive) {
-      this.timers.push(window.setInterval(() => {
+    if (this.timerEvent) {
+      this.timerEvent.subscribe(() => {
         let end: Date = this.pass['expiration_time'];
         let now: Date = new Date();
         let diff: number = (end.getTime() - now.getTime()) / 1000;
@@ -51,7 +61,7 @@ export class PassCellComponent implements OnInit, OnDestroy {
         let secs: number = Math.abs(Math.floor(diff) % 60);
         this.valid = end > now;
         this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
-      }, 750));
+      });
     }
   }
 
