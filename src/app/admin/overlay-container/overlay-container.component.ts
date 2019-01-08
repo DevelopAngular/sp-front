@@ -397,8 +397,7 @@ export class OverlayContainerComponent implements OnInit {
             [Validators.required, Validators.maxLength(17)],
             this.uniqueFolderNameValidator.bind(this)),
         roomNumber: new FormControl('',
-            [Validators.required, Validators.maxLength(5)],
-            this.uniqueRoomNumberValidator.bind(this)),
+            [Validators.required, Validators.maxLength(5)]),
         timeLimit: new FormControl(null, [
             Validators.required,
             Validators.pattern('^[0-9]*?[0-9]+$'),

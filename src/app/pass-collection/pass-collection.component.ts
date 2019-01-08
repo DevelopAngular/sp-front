@@ -88,7 +88,7 @@ export class PassCollectionComponent implements OnInit {
 
   ngOnInit() {
       this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
-      
+
       if(this.isActive){
         this.timers.push(window.setInterval(() => {
           this.timerEvent.emit();
