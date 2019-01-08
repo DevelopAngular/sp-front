@@ -84,11 +84,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
         this.reports = eventReports;
 
-        if (environment.funData) {
-          this.lineChartData = [{data: dashboard.hall_pass_usage.map(numb => numb +  Math.ceil((Math.random() * Math.random() * 30)))}];
-        } else {
+        // if (environment.funData) {
+        //   this.lineChartData = [{data: dashboard.hall_pass_usage.map(numb => numb +  Math.ceil((Math.random() * Math.random() * 30)))}];
+        // } else {
           this.lineChartData = [{data: dashboard.hall_pass_usage}];
-        }
+        // }
         this.hiddenChart = false;
       });
 

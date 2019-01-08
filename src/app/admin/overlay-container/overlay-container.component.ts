@@ -358,11 +358,13 @@ export class OverlayContainerComponent implements OnInit {
       this.form.get('file').valueChanges.subscribe(_file => {
           this.setLocation('settingsRooms');
         if (_file) {
+          console.log('File there ===>', _file);
           const FR = new FileReader();
                 FR.readAsBinaryString(this.selectedFile.nativeElement.files[0]);
 
                 fromEvent(FR, 'load').pipe(
                   map(( res: any) => {
+                    console.log('Result', res);
                     const raw = XLSX.read(res.target.result, {type: 'binary'});
                     const sn = raw.SheetNames[0];
                     const stringCollection = raw.Sheets[sn];
@@ -370,10 +372,11 @@ export class OverlayContainerComponent implements OnInit {
                     const headers = data[0];
                     let rows = data.slice(1);
                         rows = rows.map((row, index) => {
-                            const _room: any = {};
+                          console.log('Parsed room ===>', row);
+                          const _room: any = {};
                                   _room.title = row[0];
                                   _room.room = row[1];
-                                  _room.teachers = row[2].split(', ');
+                                  _room.teachers = <string>row[2] ? row[2].split(', ') : [];
                                   console.dir(_room);
                             return _room;
                         });
