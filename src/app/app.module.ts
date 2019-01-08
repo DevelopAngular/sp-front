@@ -1,5 +1,5 @@
 ﻿import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { ErrorHandler, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule, MatProgressSpinnerModule, MatSliderModule, MatSlideToggleModule } from '@angular/material';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,7 +13,7 @@ import { GAPI_CONFIG } from './config';
 import { ConsentMenuComponent } from './consent-menu/consent-menu.component';
 import { CurrentUserResolver } from './current-user.resolver';
 import { DataService } from './data-service';
-import { SentryErrorHandler } from './error-handler';
+import { provideErrorHandler } from './error-handler';
 import { GoogleLoginService } from './google-login.service';
 import { GoogleSigninComponent } from './google-signin/google-signin.component';
 import { AuthenticatedGuard } from './guards/authenticated.guard';
@@ -126,7 +126,7 @@ const appRoutes: Routes = [
     GoogleAuthService,
     {provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true},
     {provide: SP_GAPI_CONFIG, useValue: GAPI_CONFIG},
-    // {provide: ErrorHandler, useClass: SentryErrorHandler}
+    provideErrorHandler()
   ],
   bootstrap: [AppComponent]
 })
