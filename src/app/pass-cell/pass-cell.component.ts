@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, OnDestroy, EventEmitter } from '@angular/core';
+import { Subject } from 'rxjs/Subject';
 import { HallPass } from '../models/HallPass';
 import { Invitation } from '../models/Invitation';
 import { Request } from '../models/Request';
@@ -17,7 +18,7 @@ export class PassCellComponent implements OnInit, OnDestroy {
   @Input() forFuture = false;
   @Input() isActive = false;
   @Input() forStaff = false;
-  @Input() timerEvent:EventEmitter<any> = new EventEmitter();
+  @Input() timerEvent: Subject<any>;
 
   timeLeft;
   valid: boolean = true;

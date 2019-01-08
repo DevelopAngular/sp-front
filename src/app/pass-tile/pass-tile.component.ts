@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, Output, OnDestroy, EventEmitter } from '@angular/core';
+import { Subject } from 'rxjs/Subject';
 import { bumpIn } from '../animations';
 import { PassLike } from '../models';
 import { getInnerPassContent, getInnerPassName, isBadgeVisible } from './pass-display-util';
@@ -22,7 +23,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   @Input() forFuture;
   @Input() isActive = false;
   @Input() forStaff = false;
-  @Input() timerEvent:EventEmitter<any> = new EventEmitter();
+  @Input() timerEvent: Subject<any>;
 
   @Output() tileSelected = new EventEmitter();
 

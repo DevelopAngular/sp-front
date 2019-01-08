@@ -13,7 +13,7 @@ import {HallpassFormComponent} from '../hallpass-form/hallpass-form.component';
 import {filter, map} from 'rxjs/operators';
 import {RequestCardComponent} from '../request-card/request-card.component';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
-import {interval, Subscription} from 'rxjs';
+import {interval, merge, of, Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-pass-card',
@@ -127,7 +127,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
         });
     if (!!this.pass && this.isActive) {
       console.log('Starting interval');
-      interval(1000).pipe(map(x => {
+      merge(of(0), interval(1000)).pipe(map(x => {
         let end: Date = this.pass.expiration_time;
         let now: Date = new Date();
         let diff: number = (end.getTime() - now.getTime()) / 1000;
