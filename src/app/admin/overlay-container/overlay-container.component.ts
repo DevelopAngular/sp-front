@@ -173,6 +173,11 @@ export class OverlayContainerComponent implements OnInit {
         case 'edit': {
           colors = '#606981, #ACB4C1';
           this.folderName = 'Bulk Edit Rooms';
+          this.form.get('timeLimit').clearValidators();
+          this.form.get('timeLimit').setValidators([
+              Validators.pattern('^[0-9]*?[0-9]+$'),
+              Validators.min(1),
+              Validators.max(59)]);
           console.log('BULK SELECTED ROOMS =====>>> \n', this.selectedRooms);
           this.bulkWarningText = !!_.find(this.selectedRooms, {type: 'category'});
           break;
@@ -215,7 +220,14 @@ export class OverlayContainerComponent implements OnInit {
         (this.editRoomInFolder ? this.isFormStateDirty : true) &&
         this.overlayType === 'newRoomInFolder' &&
         (!this.editRoomInFolder ? (this.isDirtyNowRestriction && this.isDirtyFutureRestriction) : true)) ||
-        (this.form.get('timeLimit').valid && this.overlayType === 'settingsRooms');
+        (this.form.get('timeLimit').valid && this.overlayType === 'settingsRooms' && this.settingsTouched);
+  }
+
+  get settingsTouched() {
+     return this.isDirtyNowRestriction ||
+      this.isDirtyFutureRestriction ||
+      this.isDirtyTravel ||
+      !!this.timeLimit;
   }
 
   get sortSelectedRooms() {
@@ -544,6 +556,10 @@ export class OverlayContainerComponent implements OnInit {
           this.readyRoomsToEdit = [];
           this.importedRooms = [];
           this.isEditRooms = false;
+          this.form.get('timeLimit').setValidators([Validators.required,
+              Validators.pattern('^[0-9]*?[0-9]+$'),
+              Validators.min(1),
+              Validators.max(59)]);
           this.form.reset();
           this.isDirtysettings = false;
           this.buildInitialState();
@@ -772,21 +788,33 @@ export class OverlayContainerComponent implements OnInit {
               });
 
           } else if (this.readyRoomsToEdit.length) {
+              if (!this.isDirtyNowRestriction &&
+                  !this.isDirtyFutureRestriction &&
+                  !this.isDirtyTravel &&
+                  !this.form.get('timeLimit').dirty) {
+                 return this.setLocation('newFolder');
+              }
               const locationsToEdit = this.readyRoomsToEdit.map(room => {
                   if (room.location) {
-                      return this.http.patch(`v1/locations/${room.location.id}`,
-                          {
-                              restricted: this.nowRestriction,
-                              scheduling_restricted: this.futureRestriction,
-                              max_allowed_time: +this.timeLimit
-                          });
+                      const data: any = {
+                          restricted: this.nowRestriction,
+                          scheduling_restricted: this.futureRestriction,
+                          travel_types: this.travelType
+                      };
+                      if (this.timeLimit) {
+                          data.max_allowed_time =  +this.timeLimit;
+                      }
+                      return this.http.patch(`v1/locations/${room.location.id}`, data);
                   } else {
-                      return this.http.patch(`v1/locations/${room.id}`,
-                          {
-                              restricted: this.nowRestriction,
-                              scheduling_restricted: this.futureRestriction,
-                              max_allowed_time: +this.timeLimit
-                          });
+                      const data: any = {
+                          restricted: this.nowRestriction,
+                          scheduling_restricted: this.futureRestriction,
+                          travel_types: this.travelType
+                      };
+                      if (this.timeLimit) {
+                          data.max_allowed_time =  +this.timeLimit;
+                      }
+                      return this.http.patch(`v1/locations/${room.id}`, data);
                   }
               });
               forkJoin(locationsToEdit).subscribe(res => {
@@ -800,6 +828,12 @@ export class OverlayContainerComponent implements OnInit {
        }
 
        if (this.overlayType === 'edit') {
+           if (!this.isDirtyNowRestriction &&
+               !this.isDirtyFutureRestriction &&
+               !this.isDirtyTravel &&
+               !this.form.get('timeLimit').dirty) {
+               return this.dialogRef.close();
+           }
          this.showPublishSpinner = true;
          const selectedLocations = _.filter(this.selectedRooms, {type: 'location'}).map((res: any) => res.location);
           const locationsFromFolder = _.filter(this.selectedRooms, {type: 'category'}).map((folder: any) => {
@@ -809,23 +843,30 @@ export class OverlayContainerComponent implements OnInit {
               forkJoin(locationsFromFolder).pipe(switchMap((res) => {
                   const mergeLocations = _.concat(selectedLocations, ...res);
                   const locationsToEdit = mergeLocations.map((room: any) => {
-                      return this.http.patch(`v1/locations/${room.id}`,
-                          {
-                              restricted: this.nowRestriction,
-                              scheduling_restricted: this.futureRestriction,
-                              max_allowed_time: +this.timeLimit
-                          });
+                      const data: any = {
+                          restricted: this.nowRestriction,
+                          scheduling_restricted: this.futureRestriction,
+                          travel_types: this.travelType
+                      };
+                      if (this.timeLimit) {
+                          data.max_allowed_time =  +this.timeLimit;
+                      }
+
+                      return this.http.patch(`v1/locations/${room.id}`, data);
                   });
                   return forkJoin(locationsToEdit);
               })).subscribe(() => this.dialogRef.close());
           } else {
               const locationsToEdit = selectedLocations.map((room: any) => {
-                  return this.http.patch(`v1/locations/${room.id}`,
-                      {
-                          restricted: this.nowRestriction,
-                          scheduling_restricted: this.futureRestriction,
-                          max_allowed_time: +this.timeLimit
-                      });
+                  const data: any = {
+                      restricted: this.nowRestriction,
+                      scheduling_restricted: this.futureRestriction,
+                      travel_types: this.travelType
+                  };
+                  if (this.timeLimit) {
+                      data.max_allowed_time =  +this.timeLimit;
+                  }
+                  return this.http.patch(`v1/locations/${room.id}`, data);
               });
               forkJoin(locationsToEdit).subscribe(() => this.dialogRef.close());
           }
@@ -864,6 +905,11 @@ export class OverlayContainerComponent implements OnInit {
   onEditRooms(action) {
     if (action === 'edit') {
         this.isEditRooms = true;
+        this.form.get('timeLimit').clearValidators();
+        this.form.get('timeLimit').setValidators([
+            Validators.pattern('^[0-9]*?[0-9]+$'),
+            Validators.min(1),
+            Validators.max(59)]);
         this.setLocation('settingsRooms');
     }
     if (action === 'remove_from_folder') {

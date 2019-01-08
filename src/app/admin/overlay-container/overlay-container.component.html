@@ -16,7 +16,7 @@
       >{{ folderName }}
       </div>
       <div *ngIf="(overlayType === 'newRoom') || overlayType === 'edit' || overlayType === 'editRoom' || overlayType === 'newFolder' || overlayType === 'newRoomInFolder' || overlayType === 'addExisting'" style="margin-right: 25px;width: 121px;">
-        <app-gradient-button *ngIf="form.get('timeLimit').valid && overlayType === 'edit'"
+        <app-gradient-button *ngIf="form.get('timeLimit').valid && overlayType === 'edit' && settingsTouched"
                              [minHeight]="'40px'"
                              [style.width]="'120px'"
                              [cursor]="'pointer'"
