@@ -90,4 +90,16 @@
   .ml{ margin-left: 10px}
   .mr{ margin-right: 10px}
 
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    height: 82%;
+    align-items: flex-end;
+    font-size: 19px;
+
+    a {
+      text-decoration: none;
+      color: #7f879d;
+    }
+  }
 }
