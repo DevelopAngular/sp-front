@@ -173,7 +173,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       });
 
      overlayDialog.afterClosed()
-         .pipe(switchMap(() => this.httpService.get('v1/pinnables?arranged=true'))).subscribe(res => {
+         .pipe(switchMap(() => this.httpService.get('v1/pinnables/arranged'))).subscribe(res => {
              this.pinnables = res;
              this.selectedPinnables = [];
              this.pinColComponent.clearSelected();
