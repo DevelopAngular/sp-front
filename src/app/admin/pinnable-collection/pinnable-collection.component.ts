@@ -51,13 +51,13 @@ export class PinnableCollectionComponent implements OnInit {
   ngOnInit() {
     setTimeout(() => {
       this.pinnableIdArranged = this.pinnables.map(pin => pin.id);
-      console.log(this.pinnableIdArranged);
+      // console.log(this.pinnableIdArranged);
 
     }, 1000);
   }
 
   onPinablesOrderChanged(newOrder) {
-    console.log(newOrder);
+    // console.log(newOrder);
     this.orderChangedEvent.emit(newOrder);
   }
 

@@ -62,11 +62,11 @@ export class DateTimePickerComponent implements OnInit, OnDestroy{
     console.log('[Date-Time Debug]: ', 'Date-Time where at');
     this.min.setMinutes(this.min.getMinutes() + 5);
     this._selectedMoment.setMinutes(this._selectedMoment.getMinutes() + 5);
-    if(!this._selectedMoment) {
+    if (!this._selectedMoment) {
       this._selectedMoment = this.min;
     }
-    
-    this.onUpdate.emit(this._selectedMoment);
+
+    // this.onUpdate.emit(this._selectedMoment);
 
     console.log('[Date-Time Debug]: ', this._selectedMoment);
     this._selectedMoment_2ndCal.setMinutes(this._selectedMoment_2ndCal.getMinutes() + 1);

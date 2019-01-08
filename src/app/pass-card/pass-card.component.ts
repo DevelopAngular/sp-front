@@ -96,7 +96,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
       return this.forFuture || this.isActive;
     }
     else if ( this.user.id === this.pass.student.id && this.forFuture) {
-      return true;
+      return this.pass.cancellable_by_student;
     }
     else if (!this.forStaff && this.forFuture){
       return false;

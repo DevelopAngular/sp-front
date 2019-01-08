@@ -1,5 +1,4 @@
-import { Component, Input, OnInit, Output, OnDestroy } from '@angular/core';
-import { EventEmitter } from 'events';
+import { Component, Input, OnInit, Output, OnDestroy, EventEmitter } from '@angular/core';
 import { bumpIn } from '../animations';
 import { PassLike } from '../models';
 import { getInnerPassContent, getInnerPassName, isBadgeVisible } from './pass-display-util';
@@ -23,6 +22,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   @Input() forFuture;
   @Input() isActive = false;
   @Input() forStaff = false;
+  @Input() timerEvent:EventEmitter<any> = new EventEmitter();
 
   @Output() tileSelected = new EventEmitter();
 
@@ -65,16 +65,16 @@ export class PassTileComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.valid = this.isActive;
-    if (!!this.pass && this.isActive) {
-      this.timers.push(window.setInterval(() => {
-          let end: Date = this.pass['expiration_time'];
-          let now: Date = new Date();
-          let diff: number = (end.getTime() - now.getTime()) / 1000;
-          let mins: number = Math.floor(Math.abs(Math.floor(diff) / 60));
-          let secs: number = Math.abs(Math.floor(diff) % 60);
-          this.valid = end > now;
-          this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
-      }, 1000));
+    if (this.timerEvent) {
+      this.timerEvent.subscribe(() => {
+        let end: Date = this.pass['expiration_time'];
+        let now: Date = new Date();
+        let diff: number = (end.getTime() - now.getTime()) / 1000;
+        let mins: number = Math.floor(Math.abs(Math.floor(diff) / 60));
+        let secs: number = Math.abs(Math.floor(diff) % 60);
+        this.valid = end > now;
+        this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
+      });
     }
   }
 
