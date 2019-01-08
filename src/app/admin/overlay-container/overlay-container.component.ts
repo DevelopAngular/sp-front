@@ -788,12 +788,6 @@ export class OverlayContainerComponent implements OnInit {
               });
 
           } else if (this.readyRoomsToEdit.length) {
-              if (!this.isDirtyNowRestriction &&
-                  !this.isDirtyFutureRestriction &&
-                  !this.isDirtyTravel &&
-                  !this.form.get('timeLimit').dirty) {
-                 return this.setLocation('newFolder');
-              }
               const locationsToEdit = this.readyRoomsToEdit.map(room => {
                   if (room.location) {
                       const data: any = {
@@ -828,12 +822,6 @@ export class OverlayContainerComponent implements OnInit {
        }
 
        if (this.overlayType === 'edit') {
-           if (!this.isDirtyNowRestriction &&
-               !this.isDirtyFutureRestriction &&
-               !this.isDirtyTravel &&
-               !this.form.get('timeLimit').dirty) {
-               return this.dialogRef.close();
-           }
          this.showPublishSpinner = true;
          const selectedLocations = _.filter(this.selectedRooms, {type: 'location'}).map((res: any) => res.location);
           const locationsFromFolder = _.filter(this.selectedRooms, {type: 'category'}).map((folder: any) => {
