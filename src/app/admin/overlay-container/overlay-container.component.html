@@ -22,7 +22,7 @@
                              [cursor]="'pointer'"
                              [fontSize]="'14px'"
                              (buttonClick)="done()"
-        >Publish
+        >{{(showPublishSpinner ? null : 'Publish')}}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
         </app-gradient-button>
         <app-gradient-button *ngIf="showPublishEditRoom && overlayType === 'editRoom'"
                                  [minHeight]="'40px'"
@@ -32,7 +32,7 @@
                                  [hoverColor]="color_profile.overlay_color"
                                  [fontSize]="'14px'"
                                  (buttonClick)="onPublish()"
-            >Publish
+            >{{(showPublishSpinner ? null : 'Publish')}}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
             </app-gradient-button>
         <app-gradient-button *ngIf="showPublishNewRoom && overlayType === 'newRoom'"
                              [minHeight]="'40px'"
@@ -42,7 +42,7 @@
                              [hoverColor]="color_profile.overlay_color"
                              [fontSize]="'14px'"
                              (buttonClick)="onPublish()"
-        >Publish
+        >{{(showPublishSpinner ? null : 'Publish')}}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
         </app-gradient-button>
         <div *ngIf="!showPublishNewRoom && overlayType === 'newRoom' && isChangeState" style="color: white">Incomplete</div>
 
@@ -54,7 +54,7 @@
              [hoverColor]="color_profile.overlay_color"
              [fontSize]="'14px'"
              (buttonClick)="onPublish()"
-          >Publish
+          >{{(showPublishSpinner ? null : 'Publish')}}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
         </app-gradient-button>
         <div *ngIf="!showPublishNewFolder && overlayType === 'newFolder' && !isEditFolder && isChangeState" style="color: white">Incomplete</div>
 
@@ -66,7 +66,7 @@
              [hoverColor]="color_profile.overlay_color"
              [fontSize]="'14px'"
              (buttonClick)="onPublish()"
-          >Publish
+          >{{(showPublishSpinner ? null : 'Publish')}}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
         </app-gradient-button>
       </div>
     </div>

@@ -116,6 +116,8 @@ export class OverlayContainerComponent implements OnInit {
 
   form: FormGroup;
 
+  showPublishSpinner: boolean;
+
   buttonsInFolder = [
       { title: 'New Room', icon: './assets/Create (White).png', location: 'newRoomInFolder'},
       { title: 'Import Rooms', icon: null, location: 'importRooms'},
@@ -613,6 +615,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   onPublish() {
+    this.showPublishSpinner = true;
     if (this.overlayType === 'newRoom') {
        const location = {
                 title: this.roomName,
@@ -783,6 +786,7 @@ export class OverlayContainerComponent implements OnInit {
        }
 
        if (this.overlayType === 'edit') {
+         this.showPublishSpinner = true;
          const selectedLocations = _.filter(this.selectedRooms, {type: 'location'}).map((res: any) => res.location);
           const locationsFromFolder = _.filter(this.selectedRooms, {type: 'category'}).map((folder: any) => {
              return  this.http.get(`v1/locations?category=${folder.category}&`);
