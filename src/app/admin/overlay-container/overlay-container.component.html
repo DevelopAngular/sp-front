@@ -298,7 +298,7 @@
       </div>
 
       <div class="rooms-in-folder" *ngIf="overlayType === 'newFolder'">
-        <div class="content-buttons-in-folder" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length <= 0 && selectedRooms.length <= 5">
+        <div class="content-buttons-in-folder" *ngIf="readyRoomsToEdit.length <= 0 && selectedRooms.length <= 5">
           <div class="button-in-folder" *ngFor="let button of buttonsInFolder">
             <app-gradient-button
                     [minHeight]="'35px'"
@@ -313,7 +313,7 @@
               {{ button.title }}</app-gradient-button>
           </div>
         </div>
-        <div class="content-buttons-in-folder" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length > 0 && selectedRooms.length <= 5">
+        <div class="content-buttons-in-folder" *ngIf="readyRoomsToEdit.length > 0 && selectedRooms.length <= 5">
           <div class="button-in-folder" *ngFor="let button of buttonsWithSelectedRooms">
             <app-gradient-button
                     [minHeight]="'35px'"
@@ -330,9 +330,9 @@
         <div class="rooms-in-folder-title">Rooms in Folder ({{ selectedRooms.length }})</div>
         <mat-divider style="margin-top: 9px"></mat-divider>
         <div class="rooms-in-folder-content" [ngClass]="{'rooms-scrolling': selectedRooms.length > 5}">
-          <div class="not-rooms-in-folder" *ngIf="form.get('folderName').valid && !selectedRooms.length">To add rooms, enter a folder name and select an appearance</div>
+          <div class="not-rooms-in-folder" *ngIf="!selectedRooms.length">To add rooms, enter a folder name and select an appearance</div>
 
-          <div class="rooms-list" #roomList *ngIf="selectedRooms.length > 0 && !requireValidator(folderName)">
+          <div class="rooms-list" #roomList *ngIf="selectedRooms.length > 0">
             <mat-list>
               <div>
                 <div class="room">

@@ -300,7 +300,21 @@ export class OverlayContainerComponent implements OnInit {
           }
       }
       if (this.dialogData['rooms']) {
-          this.selectedRooms = this.selectedRooms.concat(this.dialogData['rooms']);
+          if (this.overlayType === 'newFolder') {
+              this.dialogData['rooms'].forEach((room: Pinnable) => {
+                  if (room.type === 'category') {
+                      this.http.get(`v1/locations?category=${room.category}&`)
+                          .subscribe((res: Location[]) => {
+                              this.selectedRooms = [...this.selectedRooms, ...res];
+                          });
+                  } else {
+                      this.selectedRooms.push(room.location);
+                  }
+              });
+          } else {
+              this.selectedRooms = this.dialogData['rooms'];
+          }
+          console.log('Its rooms ===>>>', this.selectedRooms);
       }
 
       if (this.dialogData['pinnables$']) {
