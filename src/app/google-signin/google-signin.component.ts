@@ -67,8 +67,17 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
 
   }
 
+  updateDemoUsername(event) {
+    // console.log('UN ===>', event, this.demoLoginEnabled);
+    this.demoUsername = event;
+  }
+
   toggleDemoLogin() {
     this.demoLoginEnabled = !this.demoLoginEnabled;
+    // console.log('Bug there ===>', this.demoLoginEnabled);
+    // if(!this.demoLoginEnabled) {
+    //   console.log(e);
+    // };
   }
 
   demoLogin() {

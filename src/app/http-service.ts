@@ -88,7 +88,7 @@ export class HttpService {
 
   get accessToken(): Observable<AuthContext> {
 
-    console.log('get accessToken');
+    // console.log('get accessToken');
 
     if (!this.hasRequestedToken) {
       this.fetchServerAuth()

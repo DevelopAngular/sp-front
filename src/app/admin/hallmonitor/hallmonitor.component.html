@@ -37,7 +37,6 @@
         </div>
         <h3 style="text-align: center; margin: 15px; color: #134482" *ngIf="!studentreport.length">{{reportsDate | date : 'MMM. d' }}</h3>
         <div class="reports">
-          <!--<pre>{{studentreport | json}}</pre>-->
           <div *ngIf="studentreport.length">
 
             <div *ngFor="let reportGroup of studentreport">
@@ -63,7 +62,6 @@
         </div>
       </div>
     </div>
-  <!--<pre>{{studentreport | json}}</pre>-->
 
 </div>
 

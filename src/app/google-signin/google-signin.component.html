@@ -26,7 +26,7 @@
 </div>
 
 <form class="login-form" *ngIf="demoLoginEnabled" onsubmit="return false;" style="margin-top: 30px;">
-  <app-round-input [placeholder]="'Username'" [type]="'text'" (ontextupdate)="demoUsername = $event">
+  <app-round-input [placeholder]="'Username'" [type]="'text'" (ontextupdate)="updateDemoUsername($event)">
   </app-round-input>
   <app-round-input [placeholder]="'Password'" [type]="'text'" [html5type]="'password'" (ontextupdate)="demoPassword = $event">
   </app-round-input>
