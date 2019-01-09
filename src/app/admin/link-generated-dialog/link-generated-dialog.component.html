@@ -1,10 +1,16 @@
-<div>
-  <p>
+<div class="container">
+  <div class="heading">
     {{ name }}
-  </p>
-  <p>
-    <a [href]="link" target="_blank">Click here to open in new tab.</a>
-  </p>
+  </div>
+  <div class="main">
+    <app-gradient-button [minHeight]="'40px'" [width]="'120px'" [fontSize]="'14px'">
+
+      <a class="link" [href]="link" target="_blank">
+        <span>Open</span>
+        <img [src]="'./assets/External Link (White).png' | resolveAsset" alt="Etxernal Link (White).png">
+      </a>
+    </app-gradient-button>
+  </div>
 </div>
 
 

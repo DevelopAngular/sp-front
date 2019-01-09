@@ -18,32 +18,39 @@
     >Sign in with Google</app-gradient-button>
     <!-- <img *ngIf="isLoaded" [src]=" | resolveAsset" style="transform: scale(0.65);"> -->
 </div>
-<div class="error-text" *ngIf="showErrorText">
-  <p>
-    Failed to Sign in
-    This account is not part of a SmartPass registered organization.
-    Please sign in with your school account or contact your school administrator.</p>
+<div class="error-toast-container">
+  <div class="error-text" *ngIf="showErrorText">
+    <div class="error-text_header">Oops! Sign in error.</div>
+    <div class="error-text_message">
+      Please sign in with your school account or contact your school administrator.
+    </div>
+    <div class="error-close-btn" (click)="showErrorText = false">
+      <img [src]="'./assets/Close (Grey).png'" alt="">
+    </div>
+  </div>
 </div>
 
 <form class="login-form" *ngIf="demoLoginEnabled" onsubmit="return false;" style="margin-top: 30px;">
-  <app-round-input [placeholder]="'Username'" [type]="'text'" (ontextupdate)="updateDemoUsername($event)">
+  <app-round-input [placeholder]="'Username'" [type]="'text'" [fieldIcon]="'./assets/User Login (Grey).png'" [style.margin-bottom]="'10px'" (ontextupdate)="updateDemoUsername($event)">
   </app-round-input>
-  <app-round-input [placeholder]="'Password'" [type]="'text'" [html5type]="'password'" (ontextupdate)="demoPassword = $event">
+  <app-round-input [placeholder]="'Password'" [type]="'text'" [fieldIcon]="'./assets/Lock (Grey).png'" [style.margin-bottom]="'10px'" [html5type]="'password'" (ontextupdate)="demoPassword = $event">
   </app-round-input>
   <app-gradient-button
-  [gradient]="'#04CD33,#04CD33'"
-  [cursor]="'pointer'"
-  [hoverColor]="'#00C92F'"
-  [minWidth]="'90px'"
-  [minHeight]="'30px'"
-  [fontSize]="'14px'"
-  (buttonClick)="demoLogin()"
-  [style.width]="'90px'"
-  [style.margin]="'0 auto'"
+    [style.margin-tom]="'15px'"
+    [gradient]="'#FFFFFF,#FFFFFF'"
+    [cursor]="'pointer'"
+    [hoverColor]="'#FFFFFF'"
+    [minWidth]="'90px'"
+    [minHeight]="'30px'"
+    [fontSize]="'14px'"
+    [textColor]="'#04CD33'"
+    (buttonClick)="demoLogin()"
+    [style.width]="'90px'"
+    [style.margin]="'0 auto'"
   >Login</app-gradient-button>
 </form>
 
-<div class="demo-text-wrapper" (click)="toggleDemoLogin()"><div class="demo-text">{{demoLoginEnabled?'Standard Sign In':'Demo Sign In'}}</div></div>
+<div class="demo-text-wrapper" (click)="toggleDemoLogin()"><div class="demo-text">{{demoLoginEnabled?'Sign In With Google':'Alternative Sign In'}}</div></div>
 
 <!--</mat-card>-->
 

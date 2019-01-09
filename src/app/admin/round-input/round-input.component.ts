@@ -22,6 +22,7 @@ export class RoundInputComponent implements OnInit {
   @Input() hasTogglePicker: boolean;
   @Input() width: string;
   @Input() minWidth: string;
+  @Input() fieldIcon: string;
   @Output() ontextupdate: EventEmitter<any> = new EventEmitter();
   @Output() ontoggleupdate: EventEmitter<any> = new EventEmitter();
   @Output() onselectionupdate: EventEmitter<any> = new EventEmitter();

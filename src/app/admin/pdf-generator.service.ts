@@ -257,7 +257,7 @@ export class PdfGeneratorService {
           // Show the link to the user. The important part here is that the link is opened by the
           // user from an href attribute on an <a> tag or the new window is opened during a click event.
           // Most browsers will refuse to open a new tab/window if it is not opened during a user-triggered event.
-          LinkGeneratedDialogComponent.createDialog(this.dialog, 'Report Generated', theLink);
+          LinkGeneratedDialogComponent.createDialog(this.dialog, 'Report Generated Succeccfully', theLink);
         };
 
         const blob = doc.output('blob');

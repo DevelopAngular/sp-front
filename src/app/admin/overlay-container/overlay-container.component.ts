@@ -293,12 +293,8 @@ export class OverlayContainerComponent implements OnInit {
       disableBodyScroll(this.elRef.nativeElement, {
         allowTouchMove: (el) => {
           while (el && el !== this.elRef.nativeElement) {
-            // if (el.getAttribute('body-scroll-lock-ignore') !== null) {
-            // }
-            // console.log(el);
             el = el.parentNode;
             return true;
-
           }
         }
       });
@@ -368,7 +364,7 @@ export class OverlayContainerComponent implements OnInit {
                     const raw = XLSX.read(res.target.result, {type: 'binary'});
                     const sn = raw.SheetNames[0];
                     const stringCollection = raw.Sheets[sn];
-                    const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1});
+                    const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
                     const headers = data[0];
                     let rows = data.slice(1);
                         rows = rows.map((row, index) => {

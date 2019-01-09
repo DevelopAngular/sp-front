@@ -26,13 +26,24 @@ export class AppInputComponent implements OnInit {
     @Output() over = new EventEmitter();
     @Output() leave = new EventEmitter();
 
+    public rightIconUntouched: string;
+
     constructor(public dialog: MatDialog) {
+      // this.rightIconUntouched = this.rightIcon.replace('Blue', 'Grey');
     }
 
     ngOnInit() {
-        setTimeout(() => {
+      console.log('right_icon ===> ', this.rightIcon);
+      // this.rightIconUntouched = this.rightIcon.replace('Blue', 'Grey');
+
+      if (this.rightIcon) {
+        this.rightIconUntouched = this.rightIcon.replace('Blue', 'Grey');
+      }
+
+      setTimeout(() => {
             this.controlName.setValue(this.input_value);
-        }, 50);
+
+      }, 50);
         this.controlName.valueChanges.subscribe(res => {
           this.onUpdate.emit(res);
         });

@@ -1,9 +1,9 @@
-<div class="container">
+<div class="container" [style.background-image]="trustedBackgroundUrl | resolveAsset">
 
   <div style="flex-grow: 0.5;"></div>
 
   <div class="brand">
-    <app-smartpass-logo [scale]="1.5"></app-smartpass-logo>
+    <app-smartpass-logo [scale]="1.5" [logoAsset]="'./assets/Logo (White).svg'"></app-smartpass-logo>
   </div>
   <div class="grow" *ngIf="!isMobileDevice"></div>
 
@@ -16,9 +16,9 @@
   <div class="grow"></div>
 
   <div class="passes" *ngIf="!isMobileDevice">
-    <img [src]="'./assets/intro/Pass Tile 1.png' | resolveAsset">
-    <img [src]="'./assets/intro/Pass Tile 2.png' | resolveAsset">
-    <img [src]="'./assets/intro/Pass Tile 3.png' | resolveAsset">
+    <img height="173" [src]="'./assets/intro/Pass Tile 1.svg' | resolveAsset">
+    <img height="173" [src]="'./assets/intro/Pass Tile 2.svg' | resolveAsset">
+    <img height="173" [src]="'./assets/intro/Pass Tile 3.svg' | resolveAsset">
   </div>
 
   <div style="flex-grow: 0.5;"></div>
