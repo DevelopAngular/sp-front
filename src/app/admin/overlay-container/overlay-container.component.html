@@ -518,7 +518,7 @@
           <div class="edit-right-title">Rooms Editing</div>
           <div class="selected-rooms">
             <div class="selected-room" *ngFor="let room of selectedRooms">
-              <app-pinnable [pinnable]="room" [width]="'150px'" [height]="'90px'" [iconWidth]="'40px'"></app-pinnable>
+              <app-pinnable [pinnable]="room" [forStaff]="true"></app-pinnable>
             </div>
           </div>
         </div>
