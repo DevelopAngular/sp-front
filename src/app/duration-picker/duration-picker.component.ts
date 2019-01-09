@@ -9,10 +9,10 @@ import { Component, EventEmitter, OnInit, Output , Input} from '@angular/core';
 export class DurationPickerComponent implements OnInit {
 
   @Input()
-  minDuration:number = 1;
-   
+  minDuration: number = 1;
+
   @Input()
-  maxDuration:number = 5;
+  maxDuration: number = 5;
 
   @Input()
   forStaff: boolean;
@@ -27,7 +27,7 @@ export class DurationPickerComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    this.selectedDuration = 5;
+    this.selectedDuration = this.maxDuration;
     this.onChange.emit(this.selectedDuration);
   }
 
