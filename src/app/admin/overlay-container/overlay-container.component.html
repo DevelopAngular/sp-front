@@ -104,8 +104,8 @@
                         (buttonClick)="done()"
                 >
                   <!-- Here should be called http post as many times as importedRoms.length is. -->
-
-                Done</app-gradient-button>
+                    {{(showDoneSpinner ? null : 'Done')}}<mat-spinner *ngIf="showDoneSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
+                </app-gradient-button>
                 <div *ngIf="backButtonsStateInFolder && !showDoneButton">Incomplete</div>
             </div>
           </div>

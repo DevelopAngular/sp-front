@@ -117,6 +117,7 @@ export class OverlayContainerComponent implements OnInit {
   form: FormGroup;
 
   showPublishSpinner: boolean;
+  showDoneSpinner: boolean;
 
   buttonsInFolder = [
       { title: 'New Room', icon: './assets/Create (White).png', location: 'newRoomInFolder'},
@@ -547,6 +548,7 @@ export class OverlayContainerComponent implements OnInit {
         }
         case 'newFolder': {
           this.editRoomInFolder = false;
+          this.showDoneSpinner = false;
           this.selectedRoomsInFolder = [];
           this.selectedTeachers = [];
           this.travelType = [];
@@ -748,6 +750,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   done() {
+      this.showDoneSpinner = true;
       if (this.overlayType === 'newRoomInFolder') {
           const location = {
                   title: this.roomName,
