@@ -178,7 +178,7 @@ export class HallpassFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('[Form Data]: ', this.dialogData);
+    // console.log('[Form Data]: ', this.dialogData);
     this.forLater = this.dialogData['forLater'];
     this.forStaff = this.dialogData['forStaff'];
     if (this.dialogData['selectedStudents']) {
@@ -189,6 +189,13 @@ export class HallpassFormComponent implements OnInit {
       this.formStateHistory = this.dialogData['fromHistory'];
       this.formHistoryIndex = this.dialogData['fromHistoryIndex'];
       this.selectedStudents = this.dialogData['selectedStudents'];
+      if (this.dialogData['toLocation']) {
+        this.toLocation = this.dialogData['toLocation'];
+        this._toProfile = this.dialogData['colorProfile'];
+        this.requestTarget = this.dialogData['requestTarget'];
+        this.toIcon = this.dialogData['toIcon'];
+        this.to_title = this.toLocation.title;
+      }
 
       if (this.dialogData['requestTime']) {
         this.requestTime = this.dialogData['requestTime'];
@@ -270,11 +277,11 @@ export class HallpassFormComponent implements OnInit {
       this.to_title = 'To';
     }
 
-    console.log('[Form History]: \n-----==========-----', this.formStateHistory, this.formHistoryIndex);
+    // console.log('[Form History]: \n-----==========-----', this.formStateHistory, this.formHistoryIndex);
   }
 
   setFormState(state, back?: boolean) {
-    this.pinnables.then(val => console.log(val));
+    // this.pinnables.then(val => console.log(val));
     if (this.entryState && this.formState) {
       console.log(this.entryState + ' && ' + this.formState);
       this.dialogRef.close({
@@ -287,11 +294,12 @@ export class HallpassFormComponent implements OnInit {
 
     if (!back) {
       this.formState = state;
-      if (!this.formStateHistory.find(s => s === state)) {
+        console.log('STATE ====>>>>', state);
+        if (!this.formStateHistory.find(s => s === state)) {
         this.formStateHistory.push(this.formState);
       }
       this.formHistoryIndex = this.formStateHistory.length - 1;
-      console.log('[Form History]: \n-----==========-----', this.formStateHistory, this.formHistoryIndex);
+      // console.log('[Form History]: \n-----==========-----', this.formStateHistory, this.formHistoryIndex);
     } else {
       if (state === 'from') {
         this.fromLocation = null;
@@ -376,7 +384,6 @@ export class HallpassFormComponent implements OnInit {
 
   sendRequest(message: string) {
     this.requestMessage = message;
-    this.setFormState('');
     this.determinePass();
   }
 
