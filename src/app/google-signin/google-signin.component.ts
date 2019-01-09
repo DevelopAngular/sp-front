@@ -88,6 +88,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   }
 
   initLogin() {
+    this.showErrorText = false;
     this.loginService.showLoginError$.next(false);
     this.loginService
       .signIn()

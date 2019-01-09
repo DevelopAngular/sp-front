@@ -38,4 +38,5 @@ export class SettingsComponent implements OnInit {
       window.open('https://smartpass.app/about');
     }
   }
+
 }

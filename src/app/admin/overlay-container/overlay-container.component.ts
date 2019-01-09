@@ -117,6 +117,7 @@ export class OverlayContainerComponent implements OnInit {
   form: FormGroup;
 
   showPublishSpinner: boolean;
+  showDoneSpinner: boolean;
 
   buttonsInFolder = [
       { title: 'New Room', icon: './assets/Create (White).png', location: 'newRoomInFolder'},
@@ -292,12 +293,8 @@ export class OverlayContainerComponent implements OnInit {
       disableBodyScroll(this.elRef.nativeElement, {
         allowTouchMove: (el) => {
           while (el && el !== this.elRef.nativeElement) {
-            // if (el.getAttribute('body-scroll-lock-ignore') !== null) {
-            // }
-            // console.log(el);
             el = el.parentNode;
             return true;
-
           }
         }
       });
@@ -326,7 +323,6 @@ export class OverlayContainerComponent implements OnInit {
           } else {
               this.selectedRooms = this.dialogData['rooms'];
           }
-          console.log('Its rooms ===>>>', this.selectedRooms);
       }
 
       if (this.dialogData['pinnables$']) {
@@ -368,7 +364,7 @@ export class OverlayContainerComponent implements OnInit {
                     const raw = XLSX.read(res.target.result, {type: 'binary'});
                     const sn = raw.SheetNames[0];
                     const stringCollection = raw.Sheets[sn];
-                    const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1});
+                    const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
                     const headers = data[0];
                     let rows = data.slice(1);
                         rows = rows.map((row, index) => {
@@ -422,7 +418,7 @@ export class OverlayContainerComponent implements OnInit {
         // isEdit: new FormControl(true),
         file: new FormControl(),
         roomName: new FormControl('',
-            [Validators.required, Validators.maxLength(17)],
+            [Validators.required, Validators.maxLength(15)],
             this.uniqueRoomNameValidator.bind(this)),
         folderName: new FormControl('',
             [Validators.required, Validators.maxLength(17)],
@@ -548,6 +544,7 @@ export class OverlayContainerComponent implements OnInit {
         }
         case 'newFolder': {
           this.editRoomInFolder = false;
+          this.showDoneSpinner = false;
           this.selectedRoomsInFolder = [];
           this.selectedTeachers = [];
           this.travelType = [];
@@ -749,6 +746,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   done() {
+      this.showDoneSpinner = true;
       if (this.overlayType === 'newRoomInFolder') {
           const location = {
                   title: this.roomName,

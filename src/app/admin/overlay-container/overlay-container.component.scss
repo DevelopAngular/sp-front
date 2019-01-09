@@ -202,7 +202,7 @@
 .right-content {
   display: flex;
   flex-direction: column;
-  //width: 335px;
+  width: 335px;
   height: 100%;
   align-items: center;
   overflow: auto;
@@ -381,7 +381,6 @@
     border-radius: 12px;
 
     .room-in-folder-title-inactive {
-      margin-left: 76px;
       font-weight: bolder;
       font-size: 19px;
       color: #7f879d;

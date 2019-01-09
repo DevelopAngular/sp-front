@@ -1,6 +1,8 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, OnDestroy} from '@angular/core';
 import { MatDialog } from '@angular/material';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Subject } from 'rxjs/Subject';
 import { DataService } from '../data-service';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
@@ -54,7 +56,7 @@ export class PassCollectionComponent implements OnInit {
 
   timers: number[] = [];
 
-  timerEvent:EventEmitter<any> = new EventEmitter();
+  timerEvent: Subject<void> = new BehaviorSubject(null);
 
   sortOptions = [
       { display: 'Pass Expiration Time', color: 'darkBlue', action: 'expiration_time', toggle: false },
@@ -91,7 +93,7 @@ export class PassCollectionComponent implements OnInit {
 
       if(this.isActive){
         this.timers.push(window.setInterval(() => {
-          this.timerEvent.emit();
+          this.timerEvent.next(null);
         }, 1000));
       }
       // this.currentPasses$.subscribe((data) => {

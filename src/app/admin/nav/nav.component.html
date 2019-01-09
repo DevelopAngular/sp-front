@@ -15,7 +15,7 @@
               [selected]="isSelected(button.route)"
               [content]="button.title"
               [icon]="button.imgUrl"
-              (onClick)="route(button.route)">
+              (onClick)="route(button)">
             </app-nav-button>
           </ng-container>
         </div>
@@ -32,7 +32,7 @@
     </div>
   </div>
   <div class="nav-footer">
-    <div class="footer-text">{{(user?user.display_name:'')}}</div>
+    <div class="footer-text">{{(user?user.display_name : '')}}</div>
     <div>
       <img draggable="false" (click)="router.navigateByUrl('/select-profile')" class="footer-settings" [src]="'./assets/Switch Account (Blue).png' | resolveAsset" alt="" *ngIf="showButton">
       <img draggable="false" (click)="router.navigateByUrl('/admin/settings')" [ngClass]="{'active-route': isSelected('settings')}" class="footer-settings" [src]="'./assets/Gear (Blue).png' | resolveAsset" alt="">

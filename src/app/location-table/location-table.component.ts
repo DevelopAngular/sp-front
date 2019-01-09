@@ -143,7 +143,7 @@ export class LocationTableComponent implements OnInit {
     if(event.starred){
       this.addLoc(event, this.starredChoices);
     } else{
-      //this.removeLoc(event, this.starredChoices);
+      this.removeLoc(event, this.starredChoices);
     }
     this.onSearch('');
     this.onStar.emit(event);

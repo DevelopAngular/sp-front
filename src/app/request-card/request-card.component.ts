@@ -190,6 +190,10 @@ export class RequestCardComponent implements OnInit {
         header = 'Are you sure you want to ' +(this.forStaff?'deny':'delete') +' this pass request' +(this.forStaff?'':' you sent') +'?';
       } else{
           if (!this.pinnableOpen) {
+
+              console.log('History', this.fromHistory);
+              console.log('HistoryIndex', this.fromHistoryIndex);
+
               this.dialogRef.close();
               const dialogRef = this.dialog.open(HallpassFormComponent, {
                   width: '750px',
@@ -197,12 +201,15 @@ export class RequestCardComponent implements OnInit {
                   backdropClass: 'custom-backdrop',
                   data: {
                       'fromLocation': this.request.origin,
-                      'fromHistory': ['from', 'to-pinnables'],
-                      'fromHistoryIndex': 1,
+                      'fromHistory': this.fromHistory,
+                      'fromHistoryIndex': this.fromHistoryIndex,
                       'colorProfile': this.request.color_profile,
                       'forLater': this.forFuture,
                       'forStaff': this.forStaff,
-                      'selectedStudents': this.selectedStudents
+                      'selectedStudents': this.selectedStudents,
+                      'toLocation': this.request.destination,
+                      'requestTarget': this.request.teacher,
+                      'toIcon': this.request.icon
                   }
               });
               dialogRef.afterClosed().pipe(filter(res => !!res)).subscribe((result: Object) => {

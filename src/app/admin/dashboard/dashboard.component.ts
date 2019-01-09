@@ -99,7 +99,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       )
       .subscribe((result: any) => {
         this.lineChartData = [{
-          data: result.hall_pass_usage.map(numb => numb + Math.ceil((Math.random() * Math.random() * 30)))
+          // data: result.hall_pass_usage.map(numb => numb + Math.ceil((Math.random() * Math.random() * 30)))
+          data: result.hall_pass_usage
         }];
       });
 
@@ -287,7 +288,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.shareChartData$.complete();
   }
 
-  public chartClicked(e: any):void {
+  public chartClicked(e: any): void {
     console.log(e);
   }
 

@@ -18,7 +18,11 @@ export class LinkGeneratedDialogComponent implements OnInit {
   link: string | SafeUrl;
 
   static createDialog(dialog: MatDialog, name: string, link: string) {
-    return dialog.open(LinkGeneratedDialogComponent, {data: {name, link}});
+    return dialog.open(LinkGeneratedDialogComponent, {
+      panelClass: 'accounts-profiles-dialog',
+      backdropClass: 'custom-bd',
+      data: {name, link}
+    });
   }
 
   constructor(private sanitizer: DomSanitizer, @Inject(MAT_DIALOG_DATA) public data: LinkGeneratedDialogData) {

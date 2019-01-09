@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angula
 import { HallPass} from '../models/HallPass';
 import { HttpService } from '../http-service';
 import { DataService } from '../data-service';
-import { interval } from 'rxjs';
+import { interval, merge, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -33,7 +33,7 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
   constructor(private http: HttpService, private dataService: DataService) { }
 
   ngOnInit() {
-      this.subscribers$ = interval(1000).pipe(map(x => {
+      this.subscribers$ = merge(of(0), interval(1000)).pipe(map(x => {
           if (!!this.pass && this.isActive) {
               let end: Date = this.pass.expiration_time;
               let now: Date = new Date();
