@@ -326,7 +326,6 @@ export class OverlayContainerComponent implements OnInit {
           } else {
               this.selectedRooms = this.dialogData['rooms'];
           }
-          console.log('Its rooms ===>>>', this.selectedRooms);
       }
 
       if (this.dialogData['pinnables$']) {
@@ -422,7 +421,7 @@ export class OverlayContainerComponent implements OnInit {
         // isEdit: new FormControl(true),
         file: new FormControl(),
         roomName: new FormControl('',
-            [Validators.required, Validators.maxLength(17)],
+            [Validators.required, Validators.maxLength(15)],
             this.uniqueRoomNameValidator.bind(this)),
         folderName: new FormControl('',
             [Validators.required, Validators.maxLength(17)],

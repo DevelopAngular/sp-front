@@ -118,7 +118,7 @@
           <app-input
              *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'"
              [width]="'287px'"
-             [maxLength]="17"
+             [maxLength]="15"
              [input_label]="'Room Name'"
              [input_value]="(roomName !== 'New Room' ? roomName : '')"
              (onUpdate)="roomName = $event === '' ? 'New Room': $event;"
