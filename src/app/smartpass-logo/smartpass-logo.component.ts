@@ -8,6 +8,7 @@ import { Component, Input, OnInit } from '@angular/core';
 export class SmartpassLogoComponent {
 
   @Input() scale = 1;
+  @Input() logoAsset: string;
 
   constructor() { }
 

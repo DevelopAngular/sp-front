@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { DeviceDetection } from '../device-detection.helper';
 import { GoogleLoginService } from '../google-login.service';
 import { UserService } from '../user.service';
+import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-login',
@@ -16,25 +17,15 @@ export class LoginComponent implements OnInit {
   public appLink: string;
   public titleText: string;
   public isMobileDevice: boolean = false;
+  public trustedBackgroundUrl: SafeUrl;
 
-  constructor(private userService: UserService, private loginService: GoogleLoginService, private router: Router, private _zone: NgZone) {
+  constructor(private userService: UserService, private loginService: GoogleLoginService, private router: Router, private sanitizer: DomSanitizer, private _zone: NgZone) {
 
-    // this.loginService.isAuthenticated$.pipe(
-    //   filter(v => v),
-    //   take(1),
-    //   switchMap(() => {
-    //     return this.userService.userData;
-    //   })
-    // )
-    // .subscribe(value => {
-    //   this._zone.run(() => {
-    //
-    //     this.router.navigate(['main/passes']);
-    //   });
-    // });
   }
 
   ngOnInit() {
+    this.trustedBackgroundUrl = this.sanitizer.bypassSecurityTrustStyle('url(\'./assets/Login Background.svg\')');
+
     this.isIOSMobile = DeviceDetection.isIOSMobile();
     this.isAndroid = DeviceDetection.isAndroid();
 

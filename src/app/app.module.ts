@@ -126,7 +126,7 @@ const appRoutes: Routes = [
     GoogleAuthService,
     {provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true},
     {provide: SP_GAPI_CONFIG, useValue: GAPI_CONFIG},
-    provideErrorHandler()
+    // provideErrorHandler()
   ],
   bootstrap: [AppComponent]
 })

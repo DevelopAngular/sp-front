@@ -18,13 +18,13 @@ export class NavComponent implements OnInit {
   @Output('restrictAccess') restrictAccess: EventEmitter<boolean> = new EventEmitter();
   test
   buttons = [
-    {title: 'Dashboard', route : 'dashboard', imgUrl : './assets/Dashboard', requiredRoles: ['_profile_admin', 'admin_dashboard']},
-    {title: 'Hall Monitor', route : 'hallmonitor', imgUrl : './assets/Hallway', requiredRoles: ['_profile_admin', 'admin_hall_monitor']},
-    {title: 'Search', route : 'search', imgUrl : './assets/Search', requiredRoles: ['_profile_admin', 'admin_search']},
-    {title: 'Pass Configuration', route : 'passconfig', imgUrl : './assets/Arrow', requiredRoles: ['_profile_admin', 'admin_pass_config']},
-    {title: 'Accounts & Profiles', route : 'accounts', imgUrl : './assets/Accounts', requiredRoles: ['_profile_admin', 'admin_accounts']},
-    {title: 'Feedback', route : 'feedback', imgUrl : './assets/Feedback', requiredRoles: ['_profile_admin']},
-    {title: 'Support', route : 'support', imgUrl : './assets/Support', requiredRoles: ['_profile_admin']},
+    {title: 'Dashboard', route : 'dashboard', type: 'routerLink', imgUrl : './assets/Dashboard', requiredRoles: ['_profile_admin', 'admin_dashboard']},
+    {title: 'Hall Monitor', route : 'hallmonitor', type: 'routerLink', imgUrl : './assets/Hallway', requiredRoles: ['_profile_admin', 'admin_hall_monitor']},
+    {title: 'Search', route : 'search', type: 'routerLink', imgUrl : './assets/Search', requiredRoles: ['_profile_admin', 'admin_search']},
+    {title: 'Pass Configuration', route : 'passconfig', type: 'routerLink', imgUrl : './assets/Arrow', requiredRoles: ['_profile_admin', 'admin_pass_config']},
+    {title: 'Accounts & Profiles', route : 'accounts', type: 'routerLink', imgUrl : './assets/Accounts', requiredRoles: ['_profile_admin', 'admin_accounts']},
+    {title: 'Feedback', link : 'https://www.smartpass.app/feedback', type: 'staticButton', imgUrl : './assets/Feedback', requiredRoles: ['_profile_admin']},
+    {title: 'Support', link : 'https://www.smartpass.app/support', type: 'staticButton', imgUrl : './assets/Support', requiredRoles: ['_profile_admin']},
   ];
   fakeMenu = new BehaviorSubject<boolean>(false);
   tab: string[] = ['dashboard'];
@@ -51,7 +51,7 @@ export class NavComponent implements OnInit {
     this.tab = urlSplit.slice(1);
 
     this.router.events.subscribe(value => {
-      if(value instanceof NavigationEnd){
+      if ( value instanceof NavigationEnd ) {
         let urlSplit: string[] = value.url.split('/');
         this.tab = urlSplit.slice(1);
         console.log(this.tab);
@@ -72,24 +72,30 @@ export class NavComponent implements OnInit {
 
     this.userService.userData.subscribe((user: any) => {
         // console.log('CurrentRoute ===> \n', (this.activeRoute.snapshot as any)._routerState.url, !this.hasRoles(this.buttons[0].requiredRoles));
-
-        this.buttons.forEach((button) => {
-
-          if (
-            ((this.activeRoute.snapshot as any)._routerState.url === `/admin/${button.route}`)
-              &&
-            !this.hasRoles(button.requiredRoles)
-          ) {
-            this.restrictAccess.emit(true);
-            this.fakeMenu.next(true);
-          }
-        });
+      this.buttons.forEach((button) => {
+        if (
+          ((this.activeRoute.snapshot as any)._routerState.url === `/admin/${button.route}`)
+            &&
+          !this.hasRoles(button.requiredRoles)
+        ) {
+          this.restrictAccess.emit(true);
+          this.fakeMenu.next(true);
+        }
+      });
     });
   }
 
-  route( route: string) {
-    this.tab = ['admin', route];
-    this.router.navigate(this.tab);
+  route( button: any) {
+    switch (button.type) {
+      case 'routerLink': {
+        this.tab = ['admin', button.route];
+        this.router.navigate(this.tab);
+        break;
+      }
+      case 'staticButton': {
+        window.open(button.link);
+      }
+    }
   }
   isSelected(route: string) {
     return this.tab.includes(route);

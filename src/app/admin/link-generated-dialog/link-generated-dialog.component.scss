@@ -1,0 +1,39 @@
+.container {
+  box-sizing: border-box;
+  padding: 30px 40px;
+  .heading {
+    font-size: 18px;
+    font-weight: bold;
+    color: #134482;
+  }
+  .main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    .link {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      color: white;
+      span {
+        padding-top: 3px;
+        padding-right: 5px;
+      }
+      img {
+        width: 25px;
+        height: 25px;
+      }
+      &:focus {
+        color: white;
+        outline: none;
+      }
+      &:active {
+        color: white;
+      }
+      &:visited {
+        color: white;
+      }
+    }
+  }
+}

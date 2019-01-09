@@ -9,7 +9,7 @@
            (mouseover)="over.emit({event: $event, action: 'timeLimit'})"
            (mouseleave)="leave.emit('timeLimit')"
            class="support-icon"
-           *ngIf="rightIcon" [src]="rightIcon | resolveAsset"/>
+           *ngIf="rightIcon" [src]="input_value ? rightIcon : rightIconUntouched | resolveAsset"/>
         <div class="arrow-down-container">
           <div class="arrow-down"></div>
         </div>
