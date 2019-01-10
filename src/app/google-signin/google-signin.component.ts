@@ -1,5 +1,7 @@
 import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { GoogleLoginService } from '../google-login.service';
+import {MatDialog} from '@angular/material';
+import {ErrorToastComponent} from '../error-toast/error-toast.component';
 
 @Component({
   selector: 'google-signin',
@@ -22,7 +24,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   demoUsername = '';
   demoPassword = '';
 
-  constructor(private _ngZone: NgZone, private loginService: GoogleLoginService) {
+  constructor(private _ngZone: NgZone, private loginService: GoogleLoginService, private matDialog: MatDialog) {
 
     let intervalId: any;
 
@@ -47,7 +49,16 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
 
     this.loginService.showLoginError$.subscribe(show => {
       this._ngZone.run(() => {
-        this.showErrorText = show;
+        if (show) {
+          this.matDialog.open(ErrorToastComponent, {
+            panelClass: 'error-toast-dialog-container',
+            position: {
+              top: '25px',
+              right: '25px'
+            }
+          });
+        }
+
       });
     });
 

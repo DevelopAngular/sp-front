@@ -10,6 +10,8 @@ import {HallPassFilter, LiveDataService} from '../../live-data/live-data.service
 import {switchMap, takeUntil} from 'rxjs/internal/operators';
 import {DataService} from '../../data-service';
 import { disableBodyScroll } from 'body-scroll-lock';
+import {DragulaService} from 'ng2-dragula';
+
 
 
 @Component({
@@ -18,17 +20,13 @@ import { disableBodyScroll } from 'body-scroll-lock';
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit, OnDestroy {
+  @ViewChild('draggableContainer') draggableContainer: ElementRef;
   @ViewChild('ctx') ctx: any;
+
   private shareChartData$: Subject<any> = new Subject();
   public lineChartData: Array<any> = [ {data: Array.from(Array(24).keys()).map(() => 0)} ];
-  // public lineChartData: Array<any> = [ {data: []} ];
-  // = [
-  //   { data: [5, 14, 9, 12, 11, 10, 15, 5] },
-  // ];
 
   public lineChartLabels: Array<any> = [];
-  // Array.from(Array(24).keys()).map(hour =>
-
 
   public lineChartOptions: any;
   public gradient: any;
@@ -40,6 +38,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public reports: Report[];
   public averagePassTime: number | string;
   public hiddenChart: boolean = true;
+  public devices: HTMLElement[];
 
   public lineChartTicks: any =  {
     suggestedMin: 0,
@@ -58,6 +57,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     disableBodyScroll(this.elRef.nativeElement);
+    const _devices = this.draggableContainer.nativeElement.childNodes
+    this.devices = Array.from(Array(_devices.length).keys()).map(index => _devices[index]);
+
+    // console.log(this.draggableContainer.nativeElement.childNodes);
+
     this.drawChartXaxis();
 
     this.liveDataService.watchActiveHallPasses(new Subject<HallPassFilter>().asObservable())
@@ -121,18 +125,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
       ];
       this.lineChartOptions = {
         hover: {
-          onHover: (event, active) => {
-            if (active && active.length) {
-              console.log(active);
-              const context = this.ctx.nativeElement.getContext('2d');
-              context.beginPath();
-              context.moveTo(active[0]._view.x, active[0]._view.y + 5);
-              context.strokeStyle = '#134482';
-              context.lineWidth = 2;
-              context.lineTo(active[0]._view.x, active[0]._xScale.top);
-              context.stroke();
-            }
-          }
+          intersect: false,
+          // onHover: (event, active) => {
+          //   const context = this.ctx.nativeElement.getContext('2d');
+          //
+          //   console.log('1st step ===>');
+          //   if (active && active.length) {
+          //     console.log(active);
+          //     context.beginPath();
+          //     context.moveTo(active[0]._view.x, active[0]._view.y + 5);
+          //     context.strokeStyle = '#134482';
+          //     context.lineWidth = 2;
+          //     context.lineTo(active[0]._view.x, active[0]._xScale.top);
+          //     context.stroke();
+          //   }
+          // }
         },
         elements: {
           line: {
@@ -175,6 +182,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
         },
         tooltips: {
+          mode: 'index',
+          intersect: false,
           position: 'nearest',
           x: 10,
           y: 10,
@@ -209,12 +218,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
               };
             },
             label: (tooltipItems, data) => {
+
               let _label = new String(tooltipItems.yLabel)
               _label = _label.padStart(7, ' ');
               return _label;
             },
             title: (tooltipItem, data) => {
-              console.log(tooltipItem);
+              // console.log(tooltipItem);
               return;
             },
             footer: (tooltipItems, data) => {
@@ -223,6 +233,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
           }
         }
       };
+  }
+
+  onDevicesOrderChanged(event) {
+    console.log(event);
   }
 
   private drawChartXaxis() {

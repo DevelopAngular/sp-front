@@ -132,6 +132,7 @@
   overflow: auto;
   position: relative;
   height: 100%;
+  width: 614px;
   .room-inputs {
     display: flex;
     margin: 30px 25px;
@@ -210,7 +211,6 @@
 
   .right-content-title{
     text-align: center;
-    color: #0c3a75;
     font-size: 22px;
     font-weight: bolder;
     margin-right: 20px;
@@ -579,7 +579,7 @@
   width: 20px;
   height: 20px;
   margin-left: 7px;
-  cursor: pointer;
+  cursor: help;
 }
 .support-icon:hover + .arrow-down-container {
   opacity: 1;

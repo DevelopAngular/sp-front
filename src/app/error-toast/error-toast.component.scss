@@ -1,0 +1,28 @@
+.error-text {
+  position: relative;
+  width: 375px;
+  height: auto;
+  border-radius: 20px;
+  box-shadow: 0 3px 10px 2px rgba(0,0,0,.3);
+  background-color: #FFFFFF;
+  color: #E32C66;
+  text-align: center;
+  box-sizing: border-box;
+  padding: 25px 40px;
+  &_header {
+    font-weight: bold;
+    margin: 10px auto 10px auto;
+  }
+  &_message {
+    padding-bottom: 10px;
+  }
+  .error-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+    img {
+      width: 20px;
+    }
+  }
+}

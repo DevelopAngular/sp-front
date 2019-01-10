@@ -112,6 +112,12 @@ body {
   background-color: rgba(1, 25, 52, 0.7);
 }
 
+.error-toast-dialog-container .mat-dialog-container {
+  width: auto;
+  height: auto;
+  padding: 0;
+  background: transparent;
+}
 .message-dialog-container .mat-dialog-container {
   @extend .editor-dialog;
   width: 300px;

@@ -23,7 +23,7 @@ export class NavComponent implements OnInit {
     {title: 'Search', route : 'search', type: 'routerLink', imgUrl : './assets/Search', requiredRoles: ['_profile_admin', 'admin_search']},
     {title: 'Pass Configuration', route : 'passconfig', type: 'routerLink', imgUrl : './assets/Arrow', requiredRoles: ['_profile_admin', 'admin_pass_config']},
     {title: 'Accounts & Profiles', route : 'accounts', type: 'routerLink', imgUrl : './assets/Accounts', requiredRoles: ['_profile_admin', 'admin_accounts']},
-    {title: 'Feedback', link : 'https://www.smartpass.app/feedback', type: 'staticButton', imgUrl : './assets/Feedback', requiredRoles: ['_profile_admin']},
+    {title: 'Feedback', link : 'https://www.smartpass.app/feedback', type: 'staticButton', externalApp: 'mailto:feedback@smartpass.app', imgUrl : './assets/Feedback', requiredRoles: ['_profile_admin']},
     {title: 'Support', link : 'https://www.smartpass.app/support', type: 'staticButton', imgUrl : './assets/Support', requiredRoles: ['_profile_admin']},
   ];
   fakeMenu = new BehaviorSubject<boolean>(false);
@@ -93,7 +93,11 @@ export class NavComponent implements OnInit {
         break;
       }
       case 'staticButton': {
-        window.open(button.link);
+        if (button.externalApp) {
+          window.location.href = button.externalApp;
+        } else {
+          window.open(button.link);
+        }
       }
     }
   }

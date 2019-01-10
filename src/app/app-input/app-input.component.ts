@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+﻿import {Component, OnInit, Input, Output, EventEmitter, ViewChild, Renderer2} from '@angular/core';
 import { MatDialog } from '@angular/material';
 
 
@@ -18,6 +18,7 @@ export class AppInputComponent implements OnInit {
     @Input() width: string;
     @Input() rightIcon: string;
     @Input() tooltipText: string;
+    @Input() isFocus: boolean;
 
     @Input() formGroup;
     @Input() controlName;
@@ -25,6 +26,8 @@ export class AppInputComponent implements OnInit {
     @Output() onUpdate = new EventEmitter<string | number>();
     @Output() over = new EventEmitter();
     @Output() leave = new EventEmitter();
+
+    @ViewChild('inp') input;
 
     public rightIconUntouched: string;
 
@@ -42,10 +45,13 @@ export class AppInputComponent implements OnInit {
 
       setTimeout(() => {
             this.controlName.setValue(this.input_value);
-
       }, 50);
         this.controlName.valueChanges.subscribe(res => {
           this.onUpdate.emit(res);
         });
+    }
+
+    updateFocus(el) {
+      this.isFocus  ? el.focus() : el.blur();
     }
 }
