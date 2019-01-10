@@ -507,7 +507,7 @@
     <div class="right-content">
       <div style="position: relative; width: 100%; height: 100%; margin-top: 26px" *ngIf="overlayType !== 'edit'">
         <div class="inactive" *ngIf="hideAppearance"></div>
-        <div class="right-content-title" [ngStyle]="{'color':  color_profile && selectedIcon ? '' : ' #1F195E' }">Appearance</div>
+        <div class="right-content-title" [ngStyle]="{'color':  color_profile && selectedIcon ? '#1F195E' : '#8e8e93' }">Appearance</div>
         <div class="color-picker">
           <app-color-pallet-picker [selectedColorProfile]="color_profile" (selectedEvent)="changeColor($event)"></app-color-pallet-picker>
         </div>
