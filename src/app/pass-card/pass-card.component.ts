@@ -88,21 +88,22 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   get hasClose(){
-    if(this.forInput) {
-      return true;
-    } else if (this.forMonitor) {
-      return !this.fromPast;
-    } else if (this.forStaff) {
-      return this.forFuture || this.isActive;
-    }
-    else if ( this.user.id === this.pass.student.id && this.forFuture) {
-      return this.pass.cancellable_by_student;
-    }
-    else if (!this.forStaff && this.forFuture){
-      return false;
-    } else {
-      return this.forFuture;
-    }
+    return this.forInput || this.forStaff || (this.pass.cancellable_by_student && !this.forStaff);
+    // if(this.forInput) {
+    //   return true;
+    // } else if (this.forMonitor) {
+    //   return !this.fromPast;
+    // } else if (this.forStaff) {
+    //   return this.forFuture || this.isActive;
+    // }
+    // else if ( this.user.id === this.pass.student.id && this.forFuture) {
+    //   return this.pass.cancellable_by_student;
+    // }
+    // else if (!this.forStaff && this.forFuture){
+    //   return false;
+    // } else {
+    //   return this.forFuture;
+    // }
   }
 
   ngOnInit() {
@@ -125,6 +126,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
             this.buildPages();
           });
         });
+    console.log('[Trashcan]: ', 'this.forInput('+this.forInput +') || (this.pass.cancellable_by_student('+this.pass.cancellable_by_student +') == (this.forStaff('+!this.forStaff +'))', '=', this.forInput || (this.pass.cancellable_by_student && !this.forStaff));
     if (!!this.pass && this.isActive) {
       console.log('Starting interval');
       merge(of(0), interval(1000)).pipe(map(x => {
