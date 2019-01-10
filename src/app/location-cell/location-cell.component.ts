@@ -58,10 +58,15 @@ export class LocationCellComponent implements OnInit {
   }
 
   get textColor(){
-    if(this.valid)
-      return this.sanitizer.bypassSecurityTrustStyle('#767676');
-    else
-      return this.sanitizer.bypassSecurityTrustStyle('#FFFFFF');
+    if (this.valid) {
+      if (this.hovered) {
+        return this.sanitizer.bypassSecurityTrustStyle('#201a5e');
+      } else {
+          return this.sanitizer.bypassSecurityTrustStyle('#767676');
+      }
+    } else {
+       return this.sanitizer.bypassSecurityTrustStyle('#FFFFFF');
+    }
   }
 
   ngOnInit() {

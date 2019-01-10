@@ -97,7 +97,9 @@
 
   <!-- Used to select the from_location -->
   <div *ngIf="formState == 'from'">
-    <app-location-table [forStaff]="forStaff" [forLater]="forLater" [showFavorites]="true" class="locations" [type]="'location'" [placeholder]="'Search rooms'" (onSelect)="locationChosen($event, 'from')"></app-location-table>
+    <app-location-table [forStaff]="forStaff" [forLater]="forLater" [showStars]="true" [noRightStar]="true" [showFavorites]="true" class="locations" [type]="'location'" [placeholder]="'Search rooms'" (onSelect)="locationChosen($event, 'from')">
+    </app-location-table>
+    <!--<div style="position: absolute; bottom: 0; left: 0; right: 0">sdfsdfdsfdf</div>-->
   </div>
 
   <!-- Used to select the to_location -->
@@ -111,7 +113,8 @@
     </div>
     <div *ngIf="formState == 'to-category'">
       <app-location-table class="center" (onSelect)="locationChosen($event, 'to')"
-                          [invalidLocation]="(fromLocation?fromLocation.id:'')" [forStaff]="forStaff" [hasLocks]="true" [category]="toCategory" [type]="'location'" [placeholder]="'Search ' +toCategory.toLowerCase()" > </app-location-table>
+                          [invalidLocation]="(fromLocation?fromLocation.id:'')" [forStaff]="forStaff" [hasLocks]="true" [category]="toCategory" [type]="'location'" [placeholder]="'Search ' +toCategory.toLowerCase()" >
+      </app-location-table>
     </div>
   </div>
   <div *ngIf="formState == 'restrictedTarget'">

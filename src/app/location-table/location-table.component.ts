@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, Directive, HostListener } from '@angular/core';
 import { HttpService } from '../http-service';
 import { Location } from '../models/Location';
+import {finalize} from 'rxjs/operators';
 
 export interface Paged<T> {
   results: T[];
@@ -46,16 +47,28 @@ export class LocationTableComponent implements OnInit {
   @Input()
   invalidLocation: string;
 
+  @Input()
+  noRightStar: boolean;
+
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<string> = new EventEmitter();
+
+  leftShadow: boolean = true;
+  rightShadow: boolean = true;
 
   @HostListener('scroll', ['$event'])
   onScroll(event) {
     let tracker = event.target;
 
     let limit = tracker.scrollHeight - tracker.clientHeight;
+    if (event.target.scrollTop < limit) {
+      this.leftShadow = true;
+    }
+    if (event.target.scrollTop === limit) {
+      this.leftShadow = false;
+    }
     if (event.target.scrollTop === limit && this.nextChoices) {
-      this.http.get<Paged<Location>>(this.nextChoices)
+      this.http.get<Paged<Location>>(this.nextChoices).pipe(finalize(() => this.leftShadow = true))
         .toPromise().then(p => {
           p.results.map(element => this.choices.push(element));
           this.nextChoices = p.next;
@@ -63,6 +76,17 @@ export class LocationTableComponent implements OnInit {
     }
   }
 
+  @HostListener('scroll', ['$event'])
+  leftScroll(event) {
+      const tracker = event.target;
+      const limit = tracker.scrollHeight - tracker.clientHeight;
+      if (event.target.scrollTop < limit) {
+          this.rightShadow = true;
+      }
+      if (event.target.scrollTop === limit) {
+          this.rightShadow = false;
+      }
+  }
   choices: any[] = [];
   starredChoices: any[] = [];
   search: string = '';
