@@ -10,9 +10,23 @@
   </div>
   <div class="page-center">
     <div class="card-wrapper" *ngFor="let profile of availableProfiles">
-      <app-display-card [title]="profile.title" [hasDivider]="true" [fontSize]="'26px'" [icon]="profile.icon" [headerBottomSpace]="'15px'" [iconSize]="'40px'">
+      <app-display-card
+        [title]="profile.title"
+        [hasDivider]="true"
+        [backgroundColor]="'#FFFFFF'"
+        [fontSize]="'26px'"
+        [icon]="profile.icon"
+        [headerBottomSpace]="'15px'"
+        [iconSize]="'40px'">
         <div class="button-container">
-          <app-gradient-button [width]="'160px'" [minHeight]="'60px'" [cursor]="'pointer'" (buttonClick)="switchTo(profile.redirectPath)">Open</app-gradient-button>
+          <app-gradient-button
+            [width]="'160px'"
+            [minHeight]="'60px'"
+            [cursor]="'pointer'"
+            (buttonClick)="switchTo(profile.redirectPath)"
+          >
+            Open
+          </app-gradient-button>
         </div>
       </app-display-card>
     </div>

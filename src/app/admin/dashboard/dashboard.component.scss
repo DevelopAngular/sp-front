@@ -8,47 +8,58 @@
   background-color: #F8FAFF;
   .dashboard-wrapper{
     max-height: 80vh;
-    .card{
-      box-sizing: border-box;
-      padding: 28px 38px 37px 32px ;
-      border-radius: 10px;
-      font-size: 17px;
-      color: #1F195E;
-      box-shadow: 0 1px 5px rgba(0, 0, 0, .2);
-      background-color: #FFFFFF;
-      &_header{
-        font-size: 24px;
-        color: #3D396B;
-        font-weight: 900;
-      }
-      &_title{
-        font-size: 14px;
-        color: #7F879D;
-      }
-      &__role{
-        position: relative;
-        width: 460px;
-        margin: 15px;
-        .label-icon{
-          position: absolute;
-          top: 12px;
-          right: 14px;
-          color: #7F879D;
-        }
-      }
+    flex-direction: column;
+  }
+
+}
+@media screen and (max-width: 1320px) {
+  .dashboard-wrapper {
+    flex-direction: row !important;
+  }
+}
+.floating{
+  float: left;
+}
+  .card{
+    box-sizing: border-box;
+    padding: 28px 38px 37px 32px ;
+    border-radius: 10px;
+    font-size: 17px;
+    color: #1F195E;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, .2);
+    background-color: #FFFFFF;
+    &_header{
+      font-size: 24px;
+      color: #3D396B;
+      font-weight: 900;
     }
-    .chart-container{
+    &_title{
+      font-size: 14px;
+      color: #7F879D;
+    }
+    &__role{
       position: relative;
-      .chart-spinner{
-        //background-color: rgba(255,255,255,.9);
+      width: 460px;
+      margin: 15px;
+      .label-icon{
         position: absolute;
-        width: 460px;
-        height: 358px;
-        top: 0;
-        left: 0;
+        top: 12px;
+        right: 14px;
+        color: #7F879D;
       }
     }
   }
+.chart-container{
+  position: relative;
+}
+.chart-spinner{
+  //background-color: rgba(255,255,255,.9);
+  position: absolute;
+  width: 460px;
+  height: 358px;
+  top: 0;
+  left: 0;
+}
 
   @mixin flexLayout($align, $justify) {
     display: flex;
@@ -127,5 +138,3 @@
   .mb{ margin-bottom: 10px}
   .ml{ margin-left: 10px}
   .mr{ margin-right: 10px}
-
-}

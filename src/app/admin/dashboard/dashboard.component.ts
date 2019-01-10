@@ -10,6 +10,8 @@ import {HallPassFilter, LiveDataService} from '../../live-data/live-data.service
 import {switchMap, takeUntil} from 'rxjs/internal/operators';
 import {DataService} from '../../data-service';
 import { disableBodyScroll } from 'body-scroll-lock';
+import {DragulaService} from 'ng2-dragula';
+
 
 
 @Component({
@@ -18,7 +20,9 @@ import { disableBodyScroll } from 'body-scroll-lock';
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit, OnDestroy {
+  @ViewChild('draggableContainer') draggableContainer: ElementRef;
   @ViewChild('ctx') ctx: any;
+
   private shareChartData$: Subject<any> = new Subject();
   public lineChartData: Array<any> = [ {data: Array.from(Array(24).keys()).map(() => 0)} ];
 
@@ -34,6 +38,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public reports: Report[];
   public averagePassTime: number | string;
   public hiddenChart: boolean = true;
+  public devices: HTMLElement[];
 
   public lineChartTicks: any =  {
     suggestedMin: 0,
@@ -52,6 +57,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     disableBodyScroll(this.elRef.nativeElement);
+    const _devices = this.draggableContainer.nativeElement.childNodes
+    this.devices = Array.from(Array(_devices.length).keys()).map(index => _devices[index]);
+
+    // console.log(this.draggableContainer.nativeElement.childNodes);
+
     this.drawChartXaxis();
 
     this.liveDataService.watchActiveHallPasses(new Subject<HallPassFilter>().asObservable())
@@ -223,6 +233,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
           }
         }
       };
+  }
+
+  onDevicesOrderChanged(event) {
+    console.log(event);
   }
 
   private drawChartXaxis() {

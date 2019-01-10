@@ -94,7 +94,7 @@ export class SettingsComponent implements OnInit {
         window.open('https://smartpass.app/studentdocs');
       }
     } else if (action === 'feedback') {
-      window.open('https://www.smartpass.app/feedback');
+      window.location.href = 'mailto:feedback@smartpass.app';
     } else if (action === 'back') {
       window.history.back();
     }
