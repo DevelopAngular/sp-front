@@ -58,7 +58,10 @@
       </div>
       <div *ngIf="forStaff" class="toggle-divider"></div>
       <div *ngIf="forStaff" class="toggle-description">
-        If a student is able to decline a pass sent to them. <br><br> You {{isDeclinable?'don\'t':''}} have to know the location of the student(s) if non-declinable.
+        <span *ngIf="isDeclinable">The student has the option to decline the pass. <br/><br/>
+          You must also select from where the student will be traveling.</span>
+        <span *ngIf="!isDeclinable">The student can no longer decline the pass. <br/><br/>
+          In this case, you do not need to know the location from where the student will be traveling.</span>
       </div>
       <app-gradient-button
         [gradient]="'#03CF31,#00B476'"
