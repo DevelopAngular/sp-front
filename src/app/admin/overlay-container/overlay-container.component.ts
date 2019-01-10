@@ -113,6 +113,7 @@ export class OverlayContainerComponent implements OnInit {
   showSearchTeacherOptions: boolean;
 
   newRoomsInFolder = [];
+  pinnableToDeleteIds: number[] = [];
 
   form: FormGroup;
 
@@ -609,6 +610,7 @@ export class OverlayContainerComponent implements OnInit {
 
   addToFolder() {
       this.isChangeLocations.next(true);
+      this.pinnableToDeleteIds = this.selectedRoomsInFolder.map(pin => +pin.id);
       const locationsToAdd = this.selectedRoomsInFolder.map(room => room.location);
       this.selectedRooms = [...locationsToAdd, ...this.selectedRooms];
       this.setLocation('newFolder');
@@ -719,7 +721,11 @@ export class OverlayContainerComponent implements OnInit {
                return this.http.post(`v1/pinnables/arranged`, { order: arrengedSequence.join(',')});
              })
           );
-        })).subscribe(res => this.dialogRef.close(true));
+        })).subscribe(() => !this.pinnableToDeleteIds.length ? this.dialogRef.close() : false);
+        if (this.pinnableToDeleteIds.length) {
+          const deleteRequests = this.pinnableToDeleteIds.map(id => this.http.delete(`v1/pinnables/${id}`));
+          zip(...deleteRequests).subscribe(() => this.dialogRef.close());
+        }
     }
     if (this.overlayType === 'editRoom') {
         const location = {

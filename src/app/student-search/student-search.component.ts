@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/observable/of';
 
@@ -12,16 +12,22 @@ import { User } from '../models/User';
   styleUrls: ['./student-search.component.scss']
 })
 
-export class StudentSearchComponent {
+export class StudentSearchComponent implements AfterViewInit {
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
   @Input() showOptions: boolean = true;
   @Input() selectedStudents: User[] = [];
+
+  @ViewChild('studentInput') input;
 
   students: Promise<any[]>;
   inputValue: string = '';
 
   constructor(private http: HttpService) {
     // this.onSearch('');
+  }
+
+  ngAfterViewInit() {
+    this.input.nativeElement.focus();
   }
 
   onSearch(search: string) {
