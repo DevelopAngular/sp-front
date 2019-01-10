@@ -21,10 +21,9 @@
        [formControl]="controlName"
        [type]="input_type"
        [class]="input_class"
+       (focus)="updateFocus(inp)"
        [placeholder]="(placeholder=='' ? '' : placeholder)"
        [ngClass]="{clserrorInput: controlName.invalid && controlName.touched }"
-       (focus)="inp.focused = true"
-       (blur)="inp.focused = false"
         spellcheck="true"/>
     <!--<img *ngIf='controlName.valid' class="success-icon" [src]="'./assets/Check (Blue).png' | resolveAsset"/>-->
     <div class="tooltip-container tooltip-container__inline "
