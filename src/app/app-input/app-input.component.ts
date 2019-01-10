@@ -52,6 +52,6 @@ export class AppInputComponent implements OnInit {
     }
 
     updateFocus(el) {
-      this.isFocus ? el.focus() : el.blur();
+      this.isFocus  ? el.focus() : el.blur();
     }
 }

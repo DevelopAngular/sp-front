@@ -155,7 +155,7 @@
       </div>
       <div class="teacher-search" *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'">
           <div class="teacher-title">
-              <span [ngStyle]="{'color': !selectedTeachers.length ? '#999999' : '#1d1a5e'}">Teachers in Room</span>
+              <span [ngStyle]="{'color': !selectedTeachers.length ? '#999999' : ' #1F195E'}">Teachers in Room</span>
               <div class="tooltip-container">
                   <img
                      [matTooltip]="tooltipText.teachers"
@@ -180,7 +180,7 @@
       >
         <div class="travel-picker">
           <div class="toggle-label">
-            <span [ngStyle]="{'color': !travelType ? '#999999' : '#1d1a5e'}">Travel Type</span>
+            <span [ngStyle]="{'color': !travelType ? '#999999' : ' #1F195E'}">Travel Type</span>
               <div class="tooltip-container">
                   <img
                     [matTooltip]="tooltipText.travel"
@@ -241,7 +241,7 @@
       >
         <div class="restriction-picker-1">
           <div class="toggle-label">
-            <span [ngStyle]="{'color': nowRestriction === undefined ? '#999999' : '#1d1a5e'}">Restriction For Now</span>
+            <span [ngStyle]="{'color': nowRestriction === undefined ? '#999999' : ' #1F195E'}">Restriction For Now</span>
               <div class="tooltip-container">
                   <img
                     [matTooltip]="tooltipText.restriction"
@@ -270,7 +270,7 @@
         </div>
         <div class="restriction-picker-2">
             <div class="toggle-label">
-                <span [ngStyle]="{'color': futureRestriction === undefined ? '#999999' : '#1d1a5e'}">Restriction For Future</span>
+                <span [ngStyle]="{'color': futureRestriction === undefined ? '#999999' : ' #1F195E'}">Restriction For Future</span>
                 <div class="tooltip-container">
                     <img
                       [matTooltip]="tooltipText.scheduling_restricted"
@@ -507,7 +507,7 @@
     <div class="right-content">
       <div style="position: relative; width: 100%; height: 100%; margin-top: 26px" *ngIf="overlayType !== 'edit'">
         <div class="inactive" *ngIf="hideAppearance"></div>
-        <div class="right-content-title" [ngStyle]="{'color':  color_profile && selectedIcon ? '' : '#8E8E93' }">Appearance</div>
+        <div class="right-content-title" [ngStyle]="{'color':  color_profile && selectedIcon ? '' : ' #1F195E' }">Appearance</div>
         <div class="color-picker">
           <app-color-pallet-picker [selectedColorProfile]="color_profile" (selectedEvent)="changeColor($event)"></app-color-pallet-picker>
         </div>

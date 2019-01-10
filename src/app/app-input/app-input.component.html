@@ -1,7 +1,7 @@
 <form [formGroup]="formGroup">
   <div class="InputWrapper">
     <div style="display: flex">
-      <label [ngClass]="{clserrorLabel: controlName.invalid && controlName.touched}" [ngStyle]="{'color': input_value ? '#134482' : '#999999'}">{{input_label}}</label>
+      <label [ngClass]="{clserrorLabel: controlName.invalid && controlName.touched}" [ngStyle]="{'color': input_value ? ' #1F195E' : '#999999'}">{{input_label}}</label>
       <div class="tooltip-container">
         <img
            [matTooltip]="tooltipText"
@@ -22,6 +22,7 @@
        [type]="input_type"
        [class]="input_class"
        (focus)="updateFocus(inp)"
+       (click)="isFocus = true; updateFocus(inp)"
        [placeholder]="(placeholder=='' ? '' : placeholder)"
        [ngClass]="{clserrorInput: controlName.invalid && controlName.touched }"
         spellcheck="true"/>
