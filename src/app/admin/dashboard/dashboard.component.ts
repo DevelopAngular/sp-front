@@ -21,14 +21,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   @ViewChild('ctx') ctx: any;
   private shareChartData$: Subject<any> = new Subject();
   public lineChartData: Array<any> = [ {data: Array.from(Array(24).keys()).map(() => 0)} ];
-  // public lineChartData: Array<any> = [ {data: []} ];
-  // = [
-  //   { data: [5, 14, 9, 12, 11, 10, 15, 5] },
-  // ];
 
   public lineChartLabels: Array<any> = [];
-  // Array.from(Array(24).keys()).map(hour =>
-
 
   public lineChartOptions: any;
   public gradient: any;
@@ -121,18 +115,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
       ];
       this.lineChartOptions = {
         hover: {
-          onHover: (event, active) => {
-            if (active && active.length) {
-              console.log(active);
-              const context = this.ctx.nativeElement.getContext('2d');
-              context.beginPath();
-              context.moveTo(active[0]._view.x, active[0]._view.y + 5);
-              context.strokeStyle = '#134482';
-              context.lineWidth = 2;
-              context.lineTo(active[0]._view.x, active[0]._xScale.top);
-              context.stroke();
-            }
-          }
+          intersect: false,
+          // onHover: (event, active) => {
+          //   const context = this.ctx.nativeElement.getContext('2d');
+          //
+          //   console.log('1st step ===>');
+          //   if (active && active.length) {
+          //     console.log(active);
+          //     context.beginPath();
+          //     context.moveTo(active[0]._view.x, active[0]._view.y + 5);
+          //     context.strokeStyle = '#134482';
+          //     context.lineWidth = 2;
+          //     context.lineTo(active[0]._view.x, active[0]._xScale.top);
+          //     context.stroke();
+          //   }
+          // }
         },
         elements: {
           line: {
@@ -175,6 +172,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
         },
         tooltips: {
+          mode: 'index',
+          intersect: false,
           position: 'nearest',
           x: 10,
           y: 10,
@@ -209,12 +208,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
               };
             },
             label: (tooltipItems, data) => {
+
               let _label = new String(tooltipItems.yLabel)
               _label = _label.padStart(7, ' ');
               return _label;
             },
             title: (tooltipItem, data) => {
-              console.log(tooltipItem);
+              // console.log(tooltipItem);
               return;
             },
             footer: (tooltipItems, data) => {

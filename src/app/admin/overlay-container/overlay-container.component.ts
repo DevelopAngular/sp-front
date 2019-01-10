@@ -715,7 +715,7 @@ export class OverlayContainerComponent implements OnInit {
           ).pipe(
              switchMap((result: any[]) => {
                const arrengedSequence = result[0].map(item => item.id);
-                     arrengedSequence.unshift(result[1].id);
+                     arrengedSequence.push(result[1].id);
                return this.http.post(`v1/pinnables/arranged`, { order: arrengedSequence.join(',')});
              })
           );
