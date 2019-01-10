@@ -35,6 +35,7 @@ import { SignOutComponent } from './sign-out/sign-out.component';
 import { UserService } from './user.service';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { SelectProfileComponent } from './select-profile/select-profile.component';
+import { ErrorToastComponent } from './error-toast/error-toast.component'
 
 
 const appRoutes: Routes = [
@@ -88,11 +89,13 @@ const appRoutes: Routes = [
     HallDateTimePickerComponent,
     PdfComponent,
     SelectProfileComponent,
+    ErrorToastComponent
   ],
   entryComponents: [
     ConsentMenuComponent,
     OptionsComponent,
     HallDateTimePickerComponent,
+    ErrorToastComponent
   ],
   imports: [
     BrowserModule,
