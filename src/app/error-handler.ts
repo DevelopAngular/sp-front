@@ -3,10 +3,6 @@ import * as Sentry from '@sentry/browser';
 import { environment } from '../environments/environment';
 
 
-Sentry.init({
-  dsn: 'https://2efc0ebe21a14bc0a677b369124c5a03@sentry.io/1364508'
-});
-
 export function getErrorHandler(): ErrorHandler {
   if (environment.production) {
     return new SentryErrorHandler();
@@ -27,6 +23,10 @@ export function provideErrorHandler(): Provider {
 export class SentryErrorHandler implements ErrorHandler {
 
   constructor() {
+    console.log('Error Handler Loaded.');
+    Sentry.init({
+      dsn: 'https://2efc0ebe21a14bc0a677b369124c5a03@sentry.io/1364508'
+    });
   }
 
   handleError(error) {

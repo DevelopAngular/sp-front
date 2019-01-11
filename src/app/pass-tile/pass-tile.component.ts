@@ -7,6 +7,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Request } from '../models/Request';
 import { Invitation } from '../models/Invitation';
 import { Util } from '../../Util';
+import {filter} from 'rxjs/operators';
 
 @Component({
   selector: 'app-pass-tile',
@@ -67,7 +68,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.valid = this.isActive;
     if (this.timerEvent) {
-      this.timerEvent.subscribe(() => {
+      this.timerEvent.pipe(filter(() => !!this.pass['expiration_time'])).subscribe(() => {
         let end: Date = this.pass['expiration_time'];
         let now: Date = new Date();
         let diff: number = (end.getTime() - now.getTime()) / 1000;

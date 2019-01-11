@@ -26,13 +26,13 @@
         <img class="inbox-front" [src]="'./assets/Inbox Front (Blue).png' | resolveAsset">
       </div>
     </div>
-    <div *ngIf="isStaff" class="support-wrapper" (click)="openSupport()">
+    <div *ngIf="isStaff" class="support-wrapper global-opacity-icons" (click)="openSupport()">
       <img class="support" [src]="'./assets/Support (Blue).png' | resolveAsset">
     </div>
-    <div class="admin-view-wrapper" (click)="router.navigateByUrl('/select-profile')"  *ngIf="showSwitchButton">
+    <div class="admin-view-wrapper global-opacity-icons" (click)="router.navigateByUrl('/select-profile')"  *ngIf="showSwitchButton">
       <img class="admin-view" [src]="'./assets/Switch Account (Blue).png' | resolveAsset" alt="">
     </div>
-    <div (click)="showOptions()" class="options-wrapper" [style.background-color]="(optionsOpen?'#E4EBFF':'transparent')">
+    <div (click)="showOptions()" class="options-wrapper global-opacity-icons" [style.background-color]="(optionsOpen?'#E4EBFF':'transparent')">
       <img class="options" [src]="'./assets/Gear (Blue).png' | resolveAsset">
     </div>
   </div>

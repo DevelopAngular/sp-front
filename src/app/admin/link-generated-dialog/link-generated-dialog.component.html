@@ -3,11 +3,11 @@
     {{ name }}
   </div>
   <div class="main">
-    <app-gradient-button [minHeight]="'40px'" [width]="'120px'" [fontSize]="'14px'">
+    <app-gradient-button [minHeight]="'40px'" [width]="'120px'" [fontSize]="'14px'" (buttonClick)="dialogRef.close()">
 
       <a class="link" [href]="link" target="_blank">
         <span>Open</span>
-        <img [src]="'./assets/External Link (White).png' | resolveAsset" alt="Etxernal Link (White).png">
+        <img [src]="'./assets/External Link (White).png' | resolveAsset" alt="External Link (White).png">
       </a>
     </app-gradient-button>
   </div>

@@ -3,7 +3,7 @@
     <div class="collection-title">
       {{ selectedPinnables.length ? selectedPinnables.length + ' Selected' : 'Rooms' }}
     </div>
-    <div class="selected-counter" (click)="toggleBulk()" [ngStyle]="{'font-weight': bulkSelect ? 'bold' : 'normal'}">
+    <div class="selected-counter global-opacity-icons" (click)="toggleBulk()" [ngStyle]="{'font-weight': bulkSelect ? 'bold' : 'normal'}">
       {{ (bulkSelect?('Done'):'Bulk Select')}}
     </div>
     <app-gradient-button

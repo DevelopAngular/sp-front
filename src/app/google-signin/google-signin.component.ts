@@ -19,7 +19,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
 
   keyListener;
   demoLoginEnabled = false;
-  showErrorText = false;
+  showSpinner = false;
 
   demoUsername = '';
   demoPassword = '';
@@ -99,16 +99,20 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   }
 
   initLogin() {
-    this.showErrorText = false;
+    this.showSpinner = true;
     this.loginService.showLoginError$.next(false);
     this.loginService
       .signIn()
+      .then(() => {
+        this.showSpinner = false;
+      })
       .catch((err) => {
         console.log('Error occured', err);
 
         if (err && err.error !== 'popup_closed_by_user') {
           this.loginService.showLoginError$.next(true);
         }
+        this.showSpinner = false;
       });
   }
 

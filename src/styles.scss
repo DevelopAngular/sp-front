@@ -199,6 +199,13 @@ html, body {
   outline: none;
 }
 
+.global-opacity-icons {
+  transition: opacity .3s ease;
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
 //////////////// Dragula Styles /////////////////
 
 /* in-flight clone */

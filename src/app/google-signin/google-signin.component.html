@@ -11,11 +11,18 @@
     (buttonClick)="initLogin()"
     [style.margin]="'0 auto'"
     [disabled]="!isLoaded"
-    [leftIcon]="'./assets/google/google_logo.svg'"
+    [leftIcon]="showSpinner ? null : './assets/google/google_logo.svg'"
     [textColor]="'#666666'"
     [leftImageWidth]="'40px'"
     [leftImageHeight]="'40px'"
-    >Sign in with Google</app-gradient-button>
+    >
+    <div *ngIf="!showSpinner">
+      <span>Sign in with Google</span>
+    </div>
+    <div  *ngIf="showSpinner" class="loading-theme_white">
+      <mat-spinner [diameter]="35"></mat-spinner>
+    </div>
+  </app-gradient-button>
 </div>
 
 <form class="login-form" *ngIf="demoLoginEnabled" onsubmit="return false;">

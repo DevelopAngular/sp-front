@@ -60,8 +60,8 @@
       <div *ngIf="forStaff" class="toggle-description">
         <span *ngIf="isDeclinable">The student has the option to decline the pass. <br/><br/>
           You must also select from where the student will be traveling.</span>
-        <span *ngIf="!isDeclinable">The student can no longer decline the pass. <br/><br/>
-          In this case, you do not need to know the location from where the student will be traveling.</span>
+        <span *ngIf="!isDeclinable">The student cannot decline the pass. <br/><br/>
+          You do not need to know the location from where the student will be travelling.</span>
       </div>
       <app-gradient-button
         [gradient]="'#03CF31,#00B476'"
@@ -123,11 +123,10 @@
   <div *ngIf="formState == 'restrictedMessage'" class="message center">
     <textarea
        class="message-box"
-       #messageBox [placeholder]="(!isNotDeny ? studentMessage : 'Attach a message' +(requestTarget?(' for ' +requestTarget.last_name):''))"
+       #messageBox [placeholder]="(!isNotDeny ? '' : 'Attach a message' +(requestTarget?(' for ' +requestTarget.last_name):''))"
        [(ngModel)]="requestMessage"
        autofocus
     >
-      {{ requestMessage }}
     </textarea>
       <app-gradient-button *ngIf="isNotDeny"
         [gradient]="'#00B476, #03CF31'"
