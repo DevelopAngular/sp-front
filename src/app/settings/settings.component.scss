@@ -5,6 +5,7 @@
     max-width: 490px;
     width: 490px;
     padding-right:90px;
+    height: 85%;
 }
 
 .settings-wrapper{
@@ -12,6 +13,7 @@
     flex-direction: column;
     max-width: 400px;
     width: 400px;
+    height: 100%;
 }
 
 .settings-header{
@@ -50,4 +52,17 @@
     font-family: 'Helvetica Neue', sans-serif;
     color: #3D396B;
     font-size: 18px;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    font-size: 18px;
+    height: 100%;
+    margin-bottom: 30px;
+
+    a {
+        color: #7f879d;
+    }
 }
