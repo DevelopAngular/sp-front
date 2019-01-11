@@ -25,7 +25,7 @@
             [cursor]="'pointer'"
             (buttonClick)="switchTo(profile.redirectPath)"
           >
-            Open
+            {{(showSpinner ? null : 'Open')}}<mat-spinner *ngIf="showSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
           </app-gradient-button>
         </div>
       </app-display-card>
