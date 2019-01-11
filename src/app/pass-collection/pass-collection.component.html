@@ -4,9 +4,9 @@
       <div class="collection-title">
         {{title}}
       </div>
-      <div class="sort-label" *ngIf="hasSort" (click)="openSortDialog($event)">Sort</div>
+      <div class="sort-label global-opacity-icons" *ngIf="hasSort" (click)="openSortDialog($event)">Sort</div>
       <!--<app-dropdown *ngIf="hasSort" class="sort-selector" (onSelect)="onSortSelected($event)" [options]="sortOptions"></app-dropdown>-->
-      <img draggable="false" class="collection-display-toggle" [src]="'./assets/' +(displayState==='grid'?'List':'Grid') +' (Blue).png'| resolveAsset" (click)="displayState=(displayState==='list'?'grid':'list')" [style.margin-left]="hasSort?'10px':'auto'">
+      <img draggable="false" class="collection-display-toggle global-opacity-icons" [src]="'./assets/' +(displayState==='grid'?'List':'Grid') +' (Blue).png'| resolveAsset" (click)="displayState=(displayState==='list'?'grid':'list')" [style.margin-left]="hasSort?'10px':'auto'">
   </div>
   <div class="collection-divider"></div>
   <div *ngIf="(currentPasses$ | async)">

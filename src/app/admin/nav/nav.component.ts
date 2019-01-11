@@ -16,7 +16,7 @@ import { disableBodyScroll } from 'body-scroll-lock';
 export class NavComponent implements OnInit {
   @ViewChild('navMain') navMain: ElementRef;
   @Output('restrictAccess') restrictAccess: EventEmitter<boolean> = new EventEmitter();
-  test
+
   buttons = [
     {title: 'Dashboard', route : 'dashboard', type: 'routerLink', imgUrl : './assets/Dashboard', requiredRoles: ['_profile_admin', 'admin_dashboard']},
     {title: 'Hall Monitor', route : 'hallmonitor', type: 'routerLink', imgUrl : './assets/Hallway', requiredRoles: ['_profile_admin', 'admin_hall_monitor']},
