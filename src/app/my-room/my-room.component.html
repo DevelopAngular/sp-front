@@ -31,7 +31,8 @@
       <app-date-time-picker [_selectedMoment]="searchDate" [min]="min" [showTime]="false" (onUpdate)="setSearchDate($event)"></app-date-time-picker>
     </div>
   </div>
-  <h3 *ngIf="isStaff && !selectedLocation && userLoaded">You don't have any rooms</h3>
-  <h3 *ngIf="!isStaff && userLoaded">You don't have access to this page</h3>
-
+  <div class="no-content-info">
+    <h3 *ngIf="isStaff && !selectedLocation && userLoaded">No rooms</h3>
+    <h3 *ngIf="!isStaff && userLoaded">You don't have access to this page</h3>
+  </div>
 </div>
