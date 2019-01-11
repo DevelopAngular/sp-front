@@ -88,7 +88,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   get hasClose(){
-    return this.forInput || this.forStaff || (this.pass.cancellable_by_student && !this.forStaff);
+    return (this.forInput || this.forStaff || this.pass.cancellable_by_student) && !this.fromPast;
     // if(this.forInput) {
     //   return true;
     // } else if (this.forMonitor) {
