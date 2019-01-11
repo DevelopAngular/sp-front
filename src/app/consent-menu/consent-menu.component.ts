@@ -1,4 +1,4 @@
-﻿import { Component, Inject, ElementRef, OnInit } from '@angular/core';
+﻿import {Component, Inject, ElementRef, OnInit, HostListener} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef  } from '@angular/material';
 import { DomSanitizer } from '../../../node_modules/@angular/platform-browser';
 import {DataService} from '../data-service';
@@ -23,6 +23,11 @@ export class ConsentMenuComponent implements OnInit {
 
   isSort = false;
 
+  @HostListener('window:resize', ['$event.target'])
+    onResize() {
+      this.updatePosition();
+    }
+
   constructor(
       @Inject(MAT_DIALOG_DATA) public data: any[],
       _matDialogRef: MatDialogRef<ConsentMenuComponent>,
@@ -42,12 +47,16 @@ export class ConsentMenuComponent implements OnInit {
   }
 
   ngOnInit() {
-    const matDialogConfig: MatDialogConfig = new MatDialogConfig();
-    const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
-    matDialogConfig.position = { left: `${rect.left + (rect.width / 2) - (275 / 2)}px`, top: `${rect.bottom + 15}px` };
-    matDialogConfig.width = '275px';
-    this._matDialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);
-    this._matDialogRef.updatePosition(matDialogConfig.position);
+    this.updatePosition();
+  }
+
+  updatePosition() {
+      const matDialogConfig: MatDialogConfig = new MatDialogConfig();
+      const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
+      matDialogConfig.position = { left: `${rect.left + (rect.width / 2) - (275 / 2)}px`, top: `${rect.bottom + 15}px` };
+      matDialogConfig.width = '275px';
+      this._matDialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);
+      this._matDialogRef.updatePosition(matDialogConfig.position);
   }
 
   getColor(option){
