@@ -3,7 +3,7 @@
     {{ name }}
   </div>
   <div class="main">
-    <app-gradient-button [minHeight]="'40px'" [width]="'120px'" [fontSize]="'14px'">
+    <app-gradient-button [minHeight]="'40px'" [width]="'120px'" [fontSize]="'14px'" (buttonClick)="dialogRef.close()">
 
       <a class="link" [href]="link" target="_blank">
         <span>Open</span>

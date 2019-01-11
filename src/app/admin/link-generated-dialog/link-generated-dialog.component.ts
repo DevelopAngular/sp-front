@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog } from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 export interface LinkGeneratedDialogData {
@@ -25,10 +25,13 @@ export class LinkGeneratedDialogComponent implements OnInit {
     });
   }
 
-  constructor(private sanitizer: DomSanitizer, @Inject(MAT_DIALOG_DATA) public data: LinkGeneratedDialogData) {
+  constructor(
+      private sanitizer: DomSanitizer,
+      @Inject(MAT_DIALOG_DATA) public data: LinkGeneratedDialogData,
+      public dialogRef: MatDialogRef<LinkGeneratedDialogComponent>,
+      ) {
     this.name = data.name;
     this.link = this.sanitizer.bypassSecurityTrustUrl(data.link);
-    ;
   }
 
   ngOnInit() {
