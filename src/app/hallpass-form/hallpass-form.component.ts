@@ -197,10 +197,6 @@ export class HallpassFormComponent implements OnInit {
         this.to_title = this.toLocation.title;
       }
 
-      if (this.dialogData['requestTime']) {
-        this.requestTime = this.dialogData['requestTime'];
-      }
-
       if (this.dialogData['toCategory']) {
         this.toCategory = this.dialogData['toCategory'];
         this.toIcon = this.dialogData['toIcon'];
@@ -208,6 +204,9 @@ export class HallpassFormComponent implements OnInit {
       }
       this.isRedirected.next(false);
       this.setFormState(this.formStateHistory[this.formHistoryIndex]);
+    }
+    if (this.dialogData['requestTime']) {
+      this.requestTime = this.dialogData['requestTime'];
     }
     this.entryState = this.dialogData['entryState'];
     if (this.entryState) {
@@ -295,6 +294,7 @@ export class HallpassFormComponent implements OnInit {
     if (!back) {
       this.formState = state;
         console.log('STATE ====>>>>', state);
+
         if (!this.formStateHistory.find(s => s === state)) {
         this.formStateHistory.push(this.formState);
       }

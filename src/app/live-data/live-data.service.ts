@@ -376,8 +376,8 @@ export class LiveDataService {
         return s;
       },
       handlePollingEvent: makePollingEventHandler([
-        new AddItem(['hall_pass.start', 'pass_request.accept', 'pass_invitation.accept'],
-          HallPass.fromJSON, mergeFilters(filters)),
+        new AddItem(['hall_pass.start', 'pass_request.accept', 'pass_invitation.accept'], HallPass.fromJSON, mergeFilters(filters)),
+        new UpdateItem(['hall_pass.start', 'pass_request.accept', 'pass_invitation.accept'], HallPass.fromJSON),
         new RemoveItem(['hall_pass.end', 'hall_pass.cancel'], HallPass.fromJSON)
       ]),
       handlePost: filterHallPasses
@@ -556,7 +556,7 @@ export class LiveDataService {
       requests$.map(requests => requests.length ? requests[0] : null).startWith(null),
       (pass, request) => ({pass: pass, request: request}));
 
-    return merged$.map(m => {
+    return merged$.pipe(map(m => {
       if (m.pass) {
         return m.pass;
       }
@@ -564,7 +564,7 @@ export class LiveDataService {
         return m.request;
       }
       return null;
-    });
+    }));
   }
 
 }

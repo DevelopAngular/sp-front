@@ -37,8 +37,8 @@ class FuturePassProvider implements PassLikeProvider {
     const futurePasses$ = this.user$.pipe(switchMap(user => this.liveDataService.watchFutureHallPasses(
       user.roles.includes('hallpass_student')
         ? {type: 'student', value: user}
-        : {type: 'issuer', value: user})))
-      .pipe(map(passes => {
+        : {type: 'issuer', value: user})),
+      map(passes => {
         const now = new Date();
         return passes.filter(pass => pass.start_time.getTime() >= now.getTime());
       }));
@@ -64,10 +64,13 @@ class ActivePassProvider implements PassLikeProvider {
       user.roles.includes('hallpass_student')
         ? {type: 'student', value: user}
         : {type: 'issuer', value: user})),
-      (map((passes: any[]) => {
+      map((passes: any[]) => {
+
         const now = new Date();
-        return passes.filter(pass => pass.start_time.getTime() <= now.getTime());
-      })));
+        return passes.filter(pass => {
+          return pass.start_time.getTime() <= now.getTime();
+        });
+      }));
 
     const excluded$ = this.excluded$.startWith([]);
 
@@ -213,13 +216,16 @@ export class PassesComponent implements OnInit {
           const startDate = new Date(passLike.start_time);
           const endDate = new Date(passLike.end_time);
           if (nowDate.getTime() >= startDate.getTime()) {
+
             if (nowDate.getTime() <= endDate.getTime()) {
+
               this.dataService.isActivePass$.next(true);
             } else {
               this.dataService.isActivePass$.next(false);
             }
           }
           if (!(!!passLike.request_time) && passLike.status) {
+
             this.dataService.isActiveRequest$.next(true);
           }
         }
@@ -274,12 +280,12 @@ export class PassesComponent implements OnInit {
       'forStaff': forStaff,
       'selectedStudents': selectedStudents,
     };
+
     this.dialog.open(component, {
       panelClass: (this.isStaff ? 'teacher-' : 'student-') + 'pass-card-dialog-container',
       backdropClass: 'custom-backdrop',
       disableClose: true,
       data: data
     });
-    console.log(data);
   }
 }

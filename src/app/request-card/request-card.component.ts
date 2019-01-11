@@ -120,13 +120,14 @@ export class RequestCardComponent implements OnInit {
         data: {'entryState': 'datetime',
               'originalToLocation': this.request.destination,
               'colorProfile': this.request.color_profile,
-              'originalFromLocation': this.request.origin}
+              'originalFromLocation': this.request.origin,
+              'requestTime': this.request.request_time}
       });
-  
+
       dateDialog.afterOpen().subscribe( () =>{
         this.dateEditOpen = true;
       });
-  
+
       dateDialog.afterClosed().subscribe(data => {
         this.request.request_time = data['startTime']?data['startTime']:this.request.request_time;
         this.dateEditOpen = false;
@@ -163,11 +164,11 @@ export class RequestCardComponent implements OnInit {
               'colorProfile': this.request.color_profile,
               'originalFromLocation': this.request.origin}
       });
-  
+
       infoDialog.afterOpen().subscribe( () => {
         this.messageEditOpen = true;
       });
-  
+
       infoDialog.afterClosed().subscribe(data =>{
         this.request.attachment_message = data['message']===''?this.request.attachment_message:data['message'];
         this.messageEditOpen = false;
@@ -230,11 +231,11 @@ export class RequestCardComponent implements OnInit {
         backdropClass: 'invis-backdrop',
         data: {'header': header, 'options': options, 'trigger': target}
       });
-  
+
       cancelDialog.afterOpen().subscribe( () =>{
         this.cancelOpen = true;
       });
-  
+
       cancelDialog.afterClosed().subscribe(action =>{
         this.cancelOpen = false;
         if(action === 'cancel' || action === 'stop'){
@@ -268,7 +269,8 @@ export class RequestCardComponent implements OnInit {
             //   });
             // }
           } else {
-              const messageDialog = this.dialog.open(HallpassFormComponent, {
+
+            const messageDialog = this.dialog.open(HallpassFormComponent, {
                   width: '750px',
                   panelClass: 'form-dialog-container',
                   backdropClass: 'invis-backdrop',
@@ -293,6 +295,7 @@ export class RequestCardComponent implements OnInit {
               });
           }
         } else if(action === 'delete'){
+
           let endpoint: string = 'v1/pass_requests/' +this.request.id +'/cancel';
           let body = {
             'message' : ''

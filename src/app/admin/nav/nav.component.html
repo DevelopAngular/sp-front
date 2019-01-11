@@ -33,9 +33,9 @@
   </div>
   <div class="nav-footer">
     <div class="footer-text">{{(user?user.display_name : '')}}</div>
-    <div>
-      <img draggable="false" (click)="router.navigateByUrl('/select-profile')" class="footer-settings global-opacity-icons" [src]="'./assets/Switch Account (Blue).png' | resolveAsset" alt="" *ngIf="showButton">
-      <img draggable="false" (click)="router.navigateByUrl('/admin/settings')" [ngClass]="{'active-route': isSelected('settings')}" class="footer-settings global-opacity-icons" [src]="'./assets/Gear (Blue).png' | resolveAsset" alt="">
+    <div [style.display]="'flex'">
+      <img draggable="false" (click)="router.navigateByUrl('/select-profile')" class="footer-settings" [src]="'./assets/Switch Account (Blue).png' | resolveAsset" alt="" *ngIf="showButton">
+      <img draggable="false" (click)="router.navigateByUrl('/admin/settings')" [ngClass]="{'active-route': isSelected('settings')}" class="footer-settings" [src]="'./assets/Gear (Blue).png' | resolveAsset" alt="">
     </div>
   </div>
 </div>
