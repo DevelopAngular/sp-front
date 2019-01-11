@@ -155,6 +155,7 @@ export class PassCollectionComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(dialogData => {
+      console.log('Closed with ===>', dialogData);
       if (dialogData && dialogData['report']) {
         const reportRef = this.dialog.open(ReportFormComponent, {
           width: '750px',

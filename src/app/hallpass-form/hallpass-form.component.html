@@ -123,11 +123,10 @@
   <div *ngIf="formState == 'restrictedMessage'" class="message center">
     <textarea
        class="message-box"
-       #messageBox [placeholder]="(!isNotDeny ? studentMessage : 'Attach a message' +(requestTarget?(' for ' +requestTarget.last_name):''))"
+       #messageBox [placeholder]="(!isNotDeny ? '' : 'Attach a message' +(requestTarget?(' for ' +requestTarget.last_name):''))"
        [(ngModel)]="requestMessage"
        autofocus
     >
-      {{ requestMessage }}
     </textarea>
       <app-gradient-button *ngIf="isNotDeny"
         [gradient]="'#00B476, #03CF31'"

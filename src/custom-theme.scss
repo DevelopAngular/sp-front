@@ -61,7 +61,7 @@ $loading-theme-accent: mat-palette($mat-light-green);
 $loading-theme: mat-light-theme($loading-theme-accent, $loading-theme-primary);
 
 $loading-theme-white-primary: mat-palette($mat-white);
-$loading-theme-white-accent: mat-palette($mat-white);
+$loading-theme-white-accent: mat-palette($mat-grey);
 $loading-theme-white: mat-light-theme($loading-theme-white-accent, $loading-theme-white-primary);
 
 
