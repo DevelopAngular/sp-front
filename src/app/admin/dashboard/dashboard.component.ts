@@ -1,17 +1,14 @@
-import { environment } from '../../../environments/environment';
-import {Component, ElementRef, OnDestroy, OnInit, ViewChild, NgZone} from '@angular/core';
-import {HttpService} from '../../http-service';
-import {HallPass} from '../../models/HallPass';
-import {PdfGeneratorService} from '../pdf-generator.service';
-import {interval, of as ObservableOf, Subject, zip} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {Report} from '../../models/Report';
-import {HallPassFilter, LiveDataService} from '../../live-data/live-data.service';
-import {switchMap, takeUntil} from 'rxjs/internal/operators';
-import {DataService} from '../../data-service';
+import { Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { disableBodyScroll } from 'body-scroll-lock';
-import {DragulaService} from 'ng2-dragula';
-
+import { interval, Subject, zip } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/internal/operators';
+import { map } from 'rxjs/operators';
+import { DataService } from '../../data-service';
+import { HttpService } from '../../http-service';
+import { HallPassFilter, LiveDataService } from '../../live-data/live-data.service';
+import { HallPass } from '../../models/HallPass';
+import { Report } from '../../models/Report';
+import { PdfGeneratorService } from '../pdf-generator.service';
 
 
 @Component({
@@ -24,7 +21,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   @ViewChild('ctx') ctx: any;
 
   private shareChartData$: Subject<any> = new Subject();
-  public lineChartData: Array<any> = [ {data: Array.from(Array(24).keys()).map(() => 0)} ];
+  public lineChartData: Array<any> = [{data: Array.from(Array(24).keys()).map(() => 0)}];
 
   public lineChartLabels: Array<any> = [];
 
@@ -40,7 +37,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public hiddenChart: boolean = true;
   public devices: HTMLElement[];
 
-  public lineChartTicks: any =  {
+  public lineChartTicks: any = {
     suggestedMin: 0,
     stepSize: 5,
   };
@@ -57,7 +54,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     disableBodyScroll(this.elRef.nativeElement);
-    const _devices = this.draggableContainer.nativeElement.childNodes
+    const _devices = this.draggableContainer.nativeElement.childNodes;
     this.devices = Array.from(Array(_devices.length).keys()).map(index => _devices[index]);
 
     // console.log(this.draggableContainer.nativeElement.childNodes);
@@ -71,11 +68,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     const todayReports = this.liveDataService.getDateRange(new Date());
 
-    zip(
-      this.http.get('v1/hall_passes/stats'),
-      this.http.get(`v1/event_reports?created_before=${todayReports.end.toISOString()}&created_after=${todayReports.start.toISOString()}`),
-      this.http.get('v1/admin/dashboard'),
-    )
+    this.http.globalReload$
+      .switchMap(() => {
+        return zip(
+          this.http.get('v1/hall_passes/stats'),
+          this.http.get(`v1/event_reports?created_before=${todayReports.end.toISOString()}&created_after=${todayReports.start.toISOString()}`),
+          this.http.get('v1/admin/dashboard'),
+        );
+      })
       .subscribe(([stats, eventReports, dashboard]: any[]) => {
 
         for (const entry of stats) {
@@ -91,7 +91,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         // if (environment.funData) {
         //   this.lineChartData = [{data: dashboard.hall_pass_usage.map(numb => numb +  Math.ceil((Math.random() * Math.random() * 30)))}];
         // } else {
-          this.lineChartData = [{data: dashboard.hall_pass_usage}];
+        this.lineChartData = [{data: dashboard.hall_pass_usage}];
         // }
         this.hiddenChart = false;
       });
@@ -108,131 +108,127 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }];
       });
 
-      this.gradient = this.ctx.nativeElement.getContext('2d').createLinearGradient(0, 380, 0, 0);
-      this.gradient.addColorStop(0.5, 'rgba(0,207,49,0.01)');
-      this.gradient.addColorStop(1, 'rgba(0,180, 118, 0.8)');
-      this.lineChartColors = [
-        {
-          backgroundColor:  this.gradient,
-          pointBackgroundColor: 'transparent',
-          borderColor: 'rgba(0,159,0,1)',
-          pointHoverBackgroundColor: '#FFFFFF',
-          pointBorderColor: 'transparent',
-          pointBorderWidth: 3,
-          pointHoverRadius: 6,
-          pointHoverBorderColor: '#134482'
+    this.gradient = this.ctx.nativeElement.getContext('2d').createLinearGradient(0, 380, 0, 0);
+    this.gradient.addColorStop(0.5, 'rgba(0,207,49,0.01)');
+    this.gradient.addColorStop(1, 'rgba(0,180, 118, 0.8)');
+    this.lineChartColors = [
+      {
+        backgroundColor: this.gradient,
+        pointBackgroundColor: 'transparent',
+        borderColor: 'rgba(0,159,0,1)',
+        pointHoverBackgroundColor: '#FFFFFF',
+        pointBorderColor: 'transparent',
+        pointBorderWidth: 3,
+        pointHoverRadius: 6,
+        pointHoverBorderColor: '#134482'
+      }
+    ];
+    this.lineChartOptions = {
+      hover: {
+        intersect: false,
+        // onHover: (event, active) => {
+        //   const context = this.ctx.nativeElement.getContext('2d');
+        //
+        //   console.log('1st step ===>');
+        //   if (active && active.length) {
+        //     console.log(active);
+        //     context.beginPath();
+        //     context.moveTo(active[0]._view.x, active[0]._view.y + 5);
+        //     context.strokeStyle = '#134482';
+        //     context.lineWidth = 2;
+        //     context.lineTo(active[0]._view.x, active[0]._xScale.top);
+        //     context.stroke();
+        //   }
+        // }
+      },
+      elements: {
+        line: {
+          // tension: 0
         }
-      ];
-      this.lineChartOptions = {
-        hover: {
-          intersect: false,
-          // onHover: (event, active) => {
-          //   const context = this.ctx.nativeElement.getContext('2d');
-          //
-          //   console.log('1st step ===>');
-          //   if (active && active.length) {
-          //     console.log(active);
-          //     context.beginPath();
-          //     context.moveTo(active[0]._view.x, active[0]._view.y + 5);
-          //     context.strokeStyle = '#134482';
-          //     context.lineWidth = 2;
-          //     context.lineTo(active[0]._view.x, active[0]._xScale.top);
-          //     context.stroke();
-          //   }
-          // }
-        },
-        elements: {
-          line: {
-            // tension: 0
+      },
+      scales: {
+        yAxes: [{
+          ticks: this.lineChartTicks,
+          gridLines: {
+            display: true,
+            borderDash: [10, 10],
+            drawBorder: true
+          },
+          scaleLabel: {
+            display: true,
+            fontColor: '#134482',
+            fontSize: 14,
+            labelString: 'Number of active passes',
+            padding: 20
           }
-        },
-        scales: {
-          yAxes: [{
-            ticks: this.lineChartTicks,
-            gridLines: {
-              display: true,
-              borderDash: [10, 10],
-              drawBorder: true
-            },
-            scaleLabel: {
-              display: true,
-              fontColor: '#134482',
-              fontSize: 14,
-              labelString: 'Number of active passes',
-              padding: 20
-            }
-          }],
-          xAxes: [{
-            ticks: {
+        }],
+        xAxes: [{
+          ticks: {},
+          gridLines: {
+            display: false,
+          },
+          scaleLabel: {
+            display: true,
+            fontColor: '#134482',
+            fontSize: 14,
+            labelString: 'Time',
+            padding: 10,
+          },
+        }]
+      },
+      vertical: {},
+      tooltips: {
+        mode: 'index',
+        intersect: false,
+        position: 'nearest',
+        x: 10,
+        y: 10,
+        displayColors: false,
+        backgroundColor: '#FFFFFF',
+        borderColor: 'rgba(0, 0, 0, .1)',
+        borderWidth: 1,
+        bodyFontColor: '#134482',
+        bodyFontSize: 22,
+        footerFontSize: 14,
+        footerFontColor: '#134482',
+        footerFontStyle: 'normal',
+        xPadding: 22,
+        yPadding: 14,
+        // custom: (tooltipModel) => {
+        //   console.log(tooltipModel);
+        //   const _context = this.ctxt.nativeElement.getContext('2d');
+        //         _context.beginPath();
+        //         _context.moveTo(0, 0);
+        //         _context.strokeStyle = '#ff0000';
+        //         _context.lineTo(300, 100);
+        //         _context.stroke();
+        // },
+        callbacks: {
+          verticalLine: (x, y) => {
+            console.log(x, y);
+          },
+          labelColor: (tooltipItem, chart) => {
+            return {
+              borderColor: 'rgb(100, 0, 0)',
+              backgroundColor: 'rgba(100, 0, 0, .4)'
+            };
+          },
+          label: (tooltipItems, data) => {
 
-            },
-            gridLines: {
-              display: false,
-            },
-            scaleLabel: {
-              display: true,
-              fontColor: '#134482',
-              fontSize: 14,
-              labelString: 'Time',
-              padding: 10,
-            },
-          }]
-        },
-        vertical: {
-
-        },
-        tooltips: {
-          mode: 'index',
-          intersect: false,
-          position: 'nearest',
-          x: 10,
-          y: 10,
-          displayColors: false,
-          backgroundColor: '#FFFFFF',
-          borderColor: 'rgba(0, 0, 0, .1)',
-          borderWidth: 1,
-          bodyFontColor: '#134482',
-          bodyFontSize: 22,
-          footerFontSize: 14,
-          footerFontColor: '#134482',
-          footerFontStyle: 'normal',
-          xPadding: 22,
-          yPadding: 14,
-          // custom: (tooltipModel) => {
-          //   console.log(tooltipModel);
-          //   const _context = this.ctxt.nativeElement.getContext('2d');
-          //         _context.beginPath();
-          //         _context.moveTo(0, 0);
-          //         _context.strokeStyle = '#ff0000';
-          //         _context.lineTo(300, 100);
-          //         _context.stroke();
-          // },
-          callbacks: {
-            verticalLine: (x, y) => {
-              console.log(x, y);
-            },
-            labelColor: (tooltipItem, chart) => {
-              return {
-                borderColor: 'rgb(100, 0, 0)',
-                backgroundColor: 'rgba(100, 0, 0, .4)'
-              };
-            },
-            label: (tooltipItems, data) => {
-
-              let _label = new String(tooltipItems.yLabel)
-              _label = _label.padStart(7, ' ');
-              return _label;
-            },
-            title: (tooltipItem, data) => {
-              // console.log(tooltipItem);
-              return;
-            },
-            footer: (tooltipItems, data) => {
-              return 'active passes';
-            }
+            let _label = new String(tooltipItems.yLabel);
+            _label = _label.padStart(7, ' ');
+            return _label;
+          },
+          title: (tooltipItem, data) => {
+            // console.log(tooltipItem);
+            return;
+          },
+          footer: (tooltipItems, data) => {
+            return 'active passes';
           }
         }
-      };
+      }
+    };
   }
 
   onDevicesOrderChanged(event) {
@@ -251,14 +247,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
         minutes = 0;
         hour++;
       }
-      if ( (hour) <= 12 ) {
-        time = `${hour}:${minutes !== 0 ? minutes : minutes + '0'} ${ hour < 12 ? 'AM' : 'PM' }`;
+      if ((hour) <= 12) {
+        time = `${hour}:${minutes !== 0 ? minutes : minutes + '0'} ${hour < 12 ? 'AM' : 'PM'}`;
       } else {
         time = `${(hour - 12)}:${minutes !== 0 ? minutes : minutes + '0'} PM`;
       }
       _minute_iterator++;
       this.lineChartLabels.push(time);
-    };
+    }
+    ;
     // console.log(this.lineChartLabels);
     // this.lineChartLabels = this.lineChartLabels.slice(0, this.lineChartLabels.length - 1);
 

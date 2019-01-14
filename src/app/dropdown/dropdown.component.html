@@ -1,5 +1,62 @@
-<div class="dropdown-wrapper">
-  <select class="dropdown" (change)="optionSelected($event.target.value)">
-    <option class="option" *ngFor="let option of options" [value]="option.value">{{ option.toString() }}</option>
-  </select>
+<div class="pointer-wrapper"><div class="pointer"></div></div>
+<div class="consent-wrapper">
+  <div class="consent-header" *ngIf="heading"> {{heading}}</div>
+  <div class="divider"></div>
+  <div class="options-wrapper" *ngIf="locations">
+    <div class="option" *ngFor="let location of locations" (click)="_matDialogRef.close(location)">
+      <div class="option-data">
+        <div class="option-data_leftside">
+          <span>{{ location.title }}</span>
+        </div>
+        <div class="option-data_rightside">
+          <div>{{location.room}}</div>
+          <div class="marked-room">
+            <img *ngIf="location.room === selectedLocation.room && location.title === selectedLocation.title" [style.width]="'20px'" [style.height]="'20px'" [src]="'./assets/Check (Blue).png' | resolveAsset" alt="Check (Blue).png">
+          </div>
+        </div>
+      </div>
+      <div class="option-divider"></div>
+    </div>
+  </div>
+  <div class="options-wrapper" *ngIf="schools">
+    <div class="option" *ngFor="let school of schools" (click)="_matDialogRef.close(school)">
+      <div class="option-data">
+          <div class="option-data_leftside">
+            <div>
+              <span>{{ school.name }}</span>
+            </div>
+            <div class="option-roles">
+              {{partOfProfile(school)}}
+            </div>
+          </div>
+          <div class="option-data_rightside">
+            <div class="marked-room">
+              <img *ngIf="school.id === selectedSchool.id && school.name === selectedSchool.name" [style.width]="'20px'" [style.height]="'20px'" [src]="'./assets/Check (Blue).png' | resolveAsset" alt="Check (Blue).png">
+            </div>
+          </div>
+      </div>
+      <!--<div class="option-roles">-->
+        <!--<span *ngIf="school.my_roles.includes('_profile_admin')">Administrator</span>-->
+        <!--<span *ngIf="school.my_roles.includes('_profile_teacher')">Teacher</span>-->
+        <!--<span *ngIf="school.my_roles.includes('_profile_student')">Student</span>-->
+      <!--</div>-->
+      <div class="option-divider"></div>
+    </div>
+  </div>
 </div>
+
+<!-- <div [style.width]="elementWidth" [ngClass]="{'wrapper-no-options': !showOptions, 'wrapper-options': showOptions}">
+  <div class="selected-teacher" (click)="showOptions = !showOptions && showArrow">
+    {{ options?options[selectedIndex].title:"" }}
+    <mat-icon *ngIf="!showOptions && showArrow" class="drop-arrow">arrow_drop_down</mat-icon>
+    <mat-icon *ngIf="showOptions && showArrow" class="drop-arrow">arrow_drop_up</mat-icon>
+  </div>
+  <div class="options" [style.width]="elementWidth" *ngIf="showOptions">
+    <div class="option" *ngFor="let choice of choices" (click)="select(choice)">
+      <div class="option-data">
+        {{ choice.title }}
+      </div> -->
+      <!-- <div class="option-divider"></div>      -->
+    <!-- </div>
+  </div>
+</div> -->

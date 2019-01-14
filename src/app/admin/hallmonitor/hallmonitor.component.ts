@@ -62,7 +62,10 @@ export class HallmonitorComponent implements OnInit {
   ngOnInit() {
       disableBodyScroll(this.elRef.nativeElement);
     this.activePassProvider = new ActivePassProvider(this.liveDataService, this.searchQuery$);
-    this.getReports();
+    this.http.globalReload$.subscribe(() => {
+      this.getReports();
+    });
+
   }
 
   onSearch(searchValue) {

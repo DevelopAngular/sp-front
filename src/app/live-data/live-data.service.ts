@@ -178,7 +178,16 @@ export interface HallPassFilter {
 })
 export class LiveDataService {
 
+  private globalReload$ = new Subject();
+
   constructor(private http: HttpService, private polling: PollingService) {
+    this.http.schoolIdSubject.subscribe(() => {
+      setTimeout(() => {
+        this.globalReload$.next(null);
+      }, 5);
+    });
+
+    this.globalReload$.subscribe(() => console.log('Global reload event'));
   }
 
   private watch<ModelType extends BaseModel, ExternalEventType>(config: WatchData<ModelType, ExternalEventType>):
@@ -251,7 +260,11 @@ export class LiveDataService {
     const rawDecoder = config.rawDecoder !== undefined ? config.rawDecoder
       : (json) => json.results.map(raw => config.decoder(raw));
 
-    const fullReload$ = merge(of('invalidate'), this.polling.listen('invalidate'));
+    const fullReload$ = merge(
+      of('invalidate'),
+      this.polling.listen('invalidate'),
+      this.globalReload$.map(() => 'invalidate')
+    );
 
     /**
      * Calls the initialUrl, decodes the result into items, then uses RxJS scan()

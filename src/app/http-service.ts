@@ -10,7 +10,7 @@ import 'rxjs/add/operator/switchMap';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { throwError } from 'rxjs/internal/observable/throwError';
 import { Observable } from 'rxjs/Observable';
-import { flatMap } from 'rxjs/operators';
+import { delay, flatMap } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 import { GoogleLoginService, isDemoLogin } from './google-login.service';
 
@@ -38,11 +38,20 @@ function ensureFields<T, K extends keyof T>(obj: T, keys: K[]) {
 
 function makeConfig(config: Config, access_token: string, school_id:string): Config & { responseType: 'json' } {
   
+  // console.log('[school_id]: ', school_id)
+
   let headers:any = {'Authorization': 'Bearer ' + access_token}
 
   if(school_id){
-    headers['X-School-Id'] = school_id;
+    headers['X-School-Id'] = '' +school_id;
   }
+
+  // console.log('[X-School-Id]: ', headers['X-School-Id'])
+  // console.log('[Headers]: ', headers)
+  // console.log('[Headers]: ', Object.assign({}, config || {}, {
+  //   headers: headers,
+  //   responseType: 'json',
+  // }) as any);
 
   return Object.assign({}, config || {}, {
     headers: headers,
@@ -86,6 +95,8 @@ export class HttpService {
 
   private accessTokenSubject: BehaviorSubject<AuthContext> = new BehaviorSubject<AuthContext>(null);
   public schoolIdSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+
+  public globalReload$ = this.schoolIdSubject.pipe(delay(5));
 
   private hasRequestedToken = false;
 

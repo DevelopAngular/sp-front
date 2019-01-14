@@ -1,0 +1,26 @@
+:host {
+  height: 50px;
+  width: 100%;
+  .school-toggle-bar-wrapper {
+    position: relative;
+    z-index: 111;
+    height: 50px;
+    box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, .1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .selected-school {
+      display: flex;
+      align-items: center;
+      padding-top: 3px;
+      cursor: pointer;
+      .school-name {
+        padding-right: 10px;
+        color: #134472;
+      }
+      .disclosure-icon {
+        width: 20px;
+      }
+    }
+  }
+}

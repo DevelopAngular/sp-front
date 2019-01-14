@@ -13,7 +13,6 @@ import {
 } from '@angular/material';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { ContainerCardComponent } from '../container-card/container-card.component';
-import { DropdownComponent } from '../dropdown/dropdown.component';
 import { FavoriteFormComponent } from '../favorite-form/favorite-form.component';
 import { HallMonitorComponent } from '../hall-monitor/hall-monitor.component';
 import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
@@ -33,7 +32,6 @@ import { RequestCardComponent } from '../request-card/request-card.component';
 import { SettingsComponent } from '../settings/settings.component';
 import { SharedModule } from '../shared/shared.module';
 import { StudentPickerComponent } from '../student-picker/student-picker.component';
-import { TeacherDropdownComponent } from '../teacher-dropdown/teacher-dropdown.component';
 import { MainRoutingModule } from './main-routing.module';
 import { NavbarDataService } from './navbar-data.service';
 
@@ -59,7 +57,6 @@ import { NavbarDataService } from './navbar-data.service';
     MyRoomComponent,
     PassesComponent,
     SettingsComponent,
-    DropdownComponent,
     HallpassFormComponent,
     InfoEditorComponent,
     RequestAcceptComponent,
@@ -74,7 +71,6 @@ import { NavbarDataService } from './navbar-data.service';
     LocationCellComponent,
     LocationPickerComponent,
     ContainerCardComponent,
-    TeacherDropdownComponent,
     MainPageComponent
   ],
   entryComponents: [
@@ -86,7 +82,7 @@ import { NavbarDataService } from './navbar-data.service';
     RequestCardComponent,
     InvitationCardComponent,
     InfoEditorComponent,
-    TeacherDropdownComponent
+
   ],
   providers: [
     NavbarDataService
