@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MatDialog, MatDialogRef} from '@angular/material';
 
 @Component({
@@ -8,13 +8,18 @@ import {MatDialog, MatDialogRef} from '@angular/material';
 })
 export class ErrorToastComponent implements OnInit {
 
+  @Output() closeEvent = new EventEmitter<boolean>();
+  public toggleToast: boolean;
   constructor(
-    private dialogRef: MatDialogRef<ErrorToastComponent>
+    // private dialogRef: MatDialogRef<ErrorToastComponent>
   ) { }
 
   ngOnInit() {
+    setTimeout(() => { this.toggleToast = true; }, 250);
   }
   close() {
-    this.dialogRef.close();
+    // this.dialogRef.close();
+    this.toggleToast = false;
+    this.closeEvent.emit(false);
   }
 }

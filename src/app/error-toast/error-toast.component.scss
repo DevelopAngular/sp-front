@@ -1,28 +1,58 @@
-.error-text {
-  position: relative;
-  width: 375px;
-  height: auto;
-  border-radius: 20px;
-  box-shadow: 0 3px 10px 2px rgba(0,0,0,.3);
-  background-color: #FFFFFF;
-  color: #E32C66;
-  text-align: center;
-  box-sizing: border-box;
-  padding: 25px 40px;
-  &_header {
-    font-weight: bold;
-    margin: 10px auto 10px auto;
-  }
-  &_message {
-    padding-bottom: 10px;
-  }
-  .error-close-btn {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    cursor: pointer;
-    img {
-      width: 20px;
+:host {
+  position: fixed;
+  z-index: 5;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(0, 0, 0, .3);
+  top: 0;
+  left: 0;
+  transition: all .5s ease;
+  .error-toast-container{
+    opacity: 1;
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    .error-text {
+      position: relative;
+      width: 375px;
+      height: auto;
+      border-radius: 20px;
+      box-shadow: 0 3px 10px 2px rgba(0,0,0,.3);
+      background-color: #FFFFFF;
+      color: #E32C66;
+      text-align: center;
+      box-sizing: border-box;
+      padding: 25px 40px;
+      opacity: 0;
+      left: 250px;
+      transition: all .3s ease;
+      //animation: slide .25s ease forwards;
+      &_header {
+        font-weight: bold;
+        margin: 10px auto 10px auto;
+      }
+      &_message {
+        padding-bottom: 10px;
+      }
+      .error-close-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        cursor: pointer;
+        img {
+          width: 20px;
+        }
+      }
+    }
+    @keyframes slide {
+      0% {
+        opacity: 0;
+        left: 450px;
+      }
+      100% {
+        opacity: 1;
+        left: 0;
+      }
     }
   }
 }

@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs/index';
 import { filter, map, publish, refCount, switchMap, tap } from 'rxjs/operators';
 import { AuthContext, HttpService } from './http-service';
 import { Logger } from './logger.service';
+import {headersToString} from 'selenium-webdriver/http';
 
 interface RawMessage {
   type: string;

@@ -260,7 +260,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.lineChartLabels.push(time);
     };
     // console.log(this.lineChartLabels);
-    this.lineChartLabels = this.lineChartLabels.slice(0, this.lineChartLabels.length - 1);
+    // this.lineChartLabels = this.lineChartLabels.slice(0, this.lineChartLabels.length - 1);
 
   }
 

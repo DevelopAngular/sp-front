@@ -1,5 +1,9 @@
 <div class="wrapper" *ngIf="!demoLoginEnabled">
 
+  <div *ngIf="showError">
+    <app-error-toast (closeEvent)="onClose($event)"></app-error-toast>
+  </div>
+
   <app-gradient-button
     class="login-button"
     [gradient]="'#FFFFFF,#FFFFFF'"

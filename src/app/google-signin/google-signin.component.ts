@@ -16,7 +16,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   public isLoaded = false;
   public progressValue = 0;
   public progressType = 'determinate';
-
+  public showError: boolean;
   keyListener;
   demoLoginEnabled = false;
   showSpinner = false;
@@ -50,13 +50,14 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     this.loginService.showLoginError$.subscribe(show => {
       this._ngZone.run(() => {
         if (show) {
-          this.matDialog.open(ErrorToastComponent, {
-            panelClass: 'error-toast-dialog-container',
-            position: {
-              top: '25px',
-              right: '25px'
-            }
-          });
+          this.showError = true;
+          // this.matDialog.open(ErrorToastComponent, {
+          //   panelClass: 'error-toast-dialog-container',
+          //   position: {
+          //     top: '25px',
+          //     right: '25px'
+          //   }
+          // });
         }
 
       });
@@ -77,7 +78,11 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     };
 
   }
-
+  onClose(evt) {
+    setTimeout(() => {
+      this.showError = evt;
+    }, 400);
+  }
   updateDemoUsername(event) {
     // console.log('UN ===>', event, this.demoLoginEnabled);
     this.demoUsername = event;
@@ -107,9 +112,10 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.showSpinner = false;
       })
       .catch((err) => {
-        console.log('Error occured', err);
+        console.log('Error occured =====>', err);
 
         if (err && err.error !== 'popup_closed_by_user') {
+          console.log('Erro should be shown ====>')
           this.loginService.showLoginError$.next(true);
         }
         this.showSpinner = false;
