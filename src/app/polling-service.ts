@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { $WebSocket } from 'angular2-websocket/angular2-websocket';
-import { BehaviorSubject, Observable } from 'rxjs/index';
+import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs/index';
 import { filter, map, publish, refCount, switchMap, tap } from 'rxjs/operators';
 import { AuthContext, HttpService } from './http-service';
 import { Logger } from './logger.service';
@@ -39,6 +39,8 @@ export class PollingService {
 
   private readonly eventStream: Observable<PollingEvent>;
 
+  private sendMessageQueue$ = new Subject();
+
   isConnected$ = new BehaviorSubject(false);
 
   constructor(private http: HttpService, private _logger: Logger) {
@@ -58,6 +60,8 @@ export class PollingService {
 
         return Observable.create(s => {
 
+          let sendMessageSubscription: Subscription = null;
+
           ws.onOpen(() => {
             ws.send4Direct(JSON.stringify({'action': 'authenticate', 'token': ctx.auth.access_token}));
 
@@ -73,6 +77,14 @@ export class PollingService {
               },
             });
             this.isConnected$.next(true);
+
+            if (sendMessageSubscription !== null) {
+              sendMessageSubscription.unsubscribe();
+              sendMessageSubscription = null;
+            }
+            sendMessageSubscription = this.sendMessageQueue$.subscribe(message => {
+              ws.send4Direct(JSON.stringify(message));
+            });
           });
 
           ws.onMessage(event => {
@@ -96,6 +108,10 @@ export class PollingService {
           });
 
           ws.onClose(() => {
+            if (sendMessageSubscription !== null) {
+              sendMessageSubscription.unsubscribe();
+              sendMessageSubscription = null;
+            }
             this.isConnected$.next(false);
           });
 
@@ -125,6 +141,10 @@ export class PollingService {
     } else {
       return this.eventStream;
     }
+  }
+
+  sendMessage(action: String, data: any) {
+    this.sendMessageQueue$.next({action, data});
   }
 
 }
