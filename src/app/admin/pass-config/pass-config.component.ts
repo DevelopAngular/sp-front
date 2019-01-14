@@ -37,7 +37,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   ) { }
 
   get schoolName(){
-      return this.httpService.schoolIdSubject.value.name;
+      return this.httpService.schoolIdSubject.value?this.httpService.schoolIdSubject.value.name:'';
   }
 
   ngOnInit() {

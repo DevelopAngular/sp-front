@@ -23,6 +23,7 @@ export class SchoolToggleBarComponent implements OnInit {
   ngOnInit() {
     this.currentSchool = this.schools[0];
     this.http.schoolIdSubject.next(this.currentSchool);
+    //console.log(this.http.schoolIdSubject.value);
   }
   showOptions(evt: MouseEvent) {
     // if (!this.optionsOpen && this.roomOptions && this.roomOptions.length > 1) {
