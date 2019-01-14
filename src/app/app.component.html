@@ -1,4 +1,10 @@
-<div style="height: 100%;" *ngIf="showUI | async">
+<div class="global-container" *ngIf="showUI | async">
+
+  <!-- Here will be a school toggle bar -->
+  <app-school-toggle-bar *ngIf="schools && schools.length >= 1"
+    [schools]="schools"
+  ></app-school-toggle-bar>
+
   <div style="height: 100%;" [style.overflow-y]=" hideScroll ? 'hidden' : 'scroll'" [style.display]="isAuthenticated ? 'block' : 'none'">
     <router-outlet></router-outlet>
   </div>

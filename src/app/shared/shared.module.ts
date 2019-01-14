@@ -38,6 +38,7 @@ import {CardButtonComponent} from '../card-button/card-button.component';
 import {PagerComponent} from '../pager/pager.component';
 import {RoundInputComponent} from '../admin/round-input/round-input.component';
 import {DragulaModule} from 'ng2-dragula';
+import {DropdownComponent} from '../dropdown/dropdown.component';
 
 
 
@@ -65,6 +66,7 @@ import {DragulaModule} from 'ng2-dragula';
     DragulaModule.forRoot()
   ],
   declarations: [
+    DropdownComponent,
     GradientButtonComponent,
     ResolveAssetPipe,
     SmartpassLogoComponent,
@@ -90,7 +92,8 @@ import {DragulaModule} from 'ng2-dragula';
       RoundInputComponent
   ],
     entryComponents: [
-        PassCardComponent,
+      PassCardComponent,
+      DropdownComponent,
     ],
   exports: [
     ReactiveFormsModule,
@@ -98,6 +101,7 @@ import {DragulaModule} from 'ng2-dragula';
     MatProgressSpinnerModule,
     MatCardModule,
     MatCheckboxModule,
+    DragulaModule,
     GradientButtonComponent,
     ResolveAssetPipe,
     SmartpassLogoComponent,
@@ -105,21 +109,21 @@ import {DragulaModule} from 'ng2-dragula';
     DisplayCardComponent,
     DateTimePickerComponent,
     PinnableComponent,
-      TraveltypePickerComponent,
-      StudentSearchComponent,
-      DisplayReportCellComponent,
-      PassCollectionComponent,
-      PassTileComponent,
-      PassCellComponent,
-      RestrictionDummyComponent,
-      BackButtonComponent,
-      PassCardTemplateComponent,
-      TravelViewComponent,
-      DurationPickerComponent,
-      CardButtonComponent,
-      PagerComponent,
-      RoundInputComponent,
-      DragulaModule
+    DropdownComponent,
+    TraveltypePickerComponent,
+    StudentSearchComponent,
+    DisplayReportCellComponent,
+    PassCollectionComponent,
+    PassTileComponent,
+    PassCellComponent,
+    RestrictionDummyComponent,
+    BackButtonComponent,
+    PassCardTemplateComponent,
+    TravelViewComponent,
+    DurationPickerComponent,
+    CardButtonComponent,
+    PagerComponent,
+    RoundInputComponent,
 
   ],
 })

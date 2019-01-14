@@ -14,7 +14,7 @@ import { Location } from '../models/Location';
 import { testPasses } from '../models/mock_data';
 import { BasicPassLikeProvider, PassLikeProvider, WrappedProvider } from '../models/providers';
 import { User } from '../models/User';
-import { TeacherDropdownComponent } from '../teacher-dropdown/teacher-dropdown.component';
+import {DropdownComponent} from '../dropdown/dropdown.component';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -174,12 +174,13 @@ export class MyRoomComponent implements OnInit {
   showOptions(evt: MouseEvent) {
     if (!this.optionsOpen && this.roomOptions && this.roomOptions.length > 1) {
       const target = new ElementRef(evt.currentTarget);
-      const optionDialog = this.dialog.open(TeacherDropdownComponent, {
+      const optionDialog = this.dialog.open(DropdownComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {
-          'choices': this.choices,
-          'selected': this.selectedLocation,
+          'heading': 'CHANGE ROOM',
+          'locations': this.choices,
+          'selectedLocation': this.selectedLocation,
           'trigger': target}
       });
 

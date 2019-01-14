@@ -5,6 +5,8 @@ import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {filter, map, mergeMap} from 'rxjs/operators';
 import {DeviceDetection} from './device-detection.helper';
 import {BehaviorSubject} from 'rxjs';
+import {HttpService} from './http-service';
+import {School} from './models/School';
 
 /**
  * @title Autocomplete overview
@@ -17,12 +19,14 @@ import {BehaviorSubject} from 'rxjs';
 
 export class AppComponent implements OnInit {
 
-  isAuthenticated = false;
+  public isAuthenticated = false;
   public hideScroll: boolean = false;
   public showUI: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public schools: School[];
 
   constructor(
     public loginService: GoogleLoginService,
+    private http: HttpService,
     private _zone: NgZone,
     private activatedRoute: ActivatedRoute,
     private router: Router, private location: Location,
@@ -38,10 +42,20 @@ export class AppComponent implements OnInit {
     }
 
     this.loginService.isAuthenticated$.subscribe(t => {
+
       // console.log('Auth response ===>', t);
+
       this._zone.run(() => {
         this.showUI.next(true);
         this.isAuthenticated = t;
+        if (this.isAuthenticated) {
+          this.http
+            .get<School[]>('v1/schools')
+            .subscribe((schools: School[]) => {
+              console.log(schools);
+              this.schools = schools;
+            });
+        }
       });
     });
     this.router.events
