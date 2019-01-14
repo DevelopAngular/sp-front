@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TeacherDropdownComponent } from './teacher-dropdown.component';
+import { SchoolToggleBarComponent } from './school-toggle-bar.component';
 
-describe('TeacherDropdownComponent', () => {
-  let component: TeacherDropdownComponent;
-  let fixture: ComponentFixture<TeacherDropdownComponent>;
+describe('SchoolToggleBarComponent', () => {
+  let component: SchoolToggleBarComponent;
+  let fixture: ComponentFixture<SchoolToggleBarComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TeacherDropdownComponent ]
+      declarations: [ SchoolToggleBarComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TeacherDropdownComponent);
+    fixture = TestBed.createComponent(SchoolToggleBarComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
