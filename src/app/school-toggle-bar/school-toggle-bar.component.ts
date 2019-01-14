@@ -22,7 +22,7 @@ export class SchoolToggleBarComponent implements OnInit {
 
   ngOnInit() {
     this.currentSchool = this.schools[0];
-    this.http.schoolIdSubject.next(this.currentSchool.id);
+    this.http.schoolIdSubject.next(this.currentSchool);
   }
   showOptions(evt: MouseEvent) {
     // if (!this.optionsOpen && this.roomOptions && this.roomOptions.length > 1) {
@@ -43,7 +43,7 @@ export class SchoolToggleBarComponent implements OnInit {
 
       optionDialog.afterClosed().subscribe(data => {
         this.currentSchool = data ? data : this.currentSchool;
-        this.http.schoolIdSubject.next(this.currentSchool.id);
+        this.http.schoolIdSubject.next(this.currentSchool);
         // this.optionsOpen = false;
         // this.selectedLocation = data == null ? this.selectedLocation : data;
         // this.selectedLocation$.next(this.selectedLocation);

@@ -2,7 +2,7 @@ import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core
 import { MatDialog } from '@angular/material';
 import { FormControl, FormGroup } from '@angular/forms';
 
-import { Observable } from 'rxjs';
+import { Observable, zip } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { HttpService } from '../../http-service';
@@ -22,7 +22,6 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     @ViewChild(PinnableCollectionComponent) pinColComponent;
 
     settingsForm: FormGroup;
-    schoolName;
     selectedPinnables: Pinnable[];
     pinnable: Pinnable;
     pinnables$: Observable<Pinnable[]>;
@@ -37,13 +36,23 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       private elRef: ElementRef
   ) { }
 
+  get schoolName(){
+      return this.httpService.schoolIdSubject.value.name;
+  }
+
   ngOnInit() {
-      disableBodyScroll(this.elRef.nativeElement);
-      this.buildForm();
-      this.pinnables$ = this.httpService.get('v1/pinnables/arranged');
-      this.schools$ = this.httpService.get('v1/schools');
-      this.schools$.subscribe(res => this.schoolName =  res[0].name);
-      this.pinnables$.subscribe(res => this.pinnables = res);
+    disableBodyScroll(this.elRef.nativeElement);
+    this.buildForm();
+    this.pinnables$ = this.httpService.get('v1/pinnables/arranged');
+    // this.schools$ = this.httpService.get('v1/schools');
+    // this.schools$.subscribe(res => this.schoolName =  res[0].name);
+    this.pinnables$.subscribe(res => this.pinnables = res);
+
+    this.httpService.globalReload$.subscribe(() =>{
+        console.log('Updating pinnables on global reload')
+        this.pinnables$ = this.httpService.get('v1/pinnables/arranged');
+        this.pinnables$.subscribe(res => this.pinnables = res);
+    });
 
   }
 
