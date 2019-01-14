@@ -54,6 +54,8 @@ export class AppComponent implements OnInit {
             .subscribe((schools: School[]) => {
               console.log(schools);
               this.schools = schools;
+              this.http.schoolIdSubject.next(this.schools[0]);
+              //console.log(this.http.schoolIdSubject.value);
             });
         }
       });
