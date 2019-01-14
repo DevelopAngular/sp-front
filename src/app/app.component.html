@@ -1,7 +1,7 @@
 <div class="global-container" *ngIf="showUI | async">
 
   <!-- Here will be a school toggle bar -->
-  <app-school-toggle-bar *ngIf="schools && schools.length >= 1"
+  <app-school-toggle-bar *ngIf="schools && schools.length > 1"
     [schools]="schools"
   ></app-school-toggle-bar>
 
