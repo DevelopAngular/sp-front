@@ -113,7 +113,7 @@ export class HttpService {
       .map((servers: LoginServer[]) => {
         console.log(servers);
         if (servers.length > 0) {
-          return servers.find(s => s.name === preferredEnvironment) || servers[0];
+          return servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
         } else {
           return null;
         }
