@@ -38,12 +38,17 @@ function ensureFields<T, K extends keyof T>(obj: T, keys: K[]) {
 
 function makeConfig(config: Config, access_token: string, school_id:string): Config & { responseType: 'json' } {
   
+  console.log('[school_id]: ', school_id)
+
   let headers:any = {'Authorization': 'Bearer ' + access_token}
 
   if(school_id){
     headers['X-School-Id'] = school_id;
   }
 
+  console.log('[X-School-Id]: ', headers['X-School-Id'])
+  console.log('[Headers]: ', headers);
+  
   return Object.assign({}, config || {}, {
     headers: headers,
     responseType: 'json',
