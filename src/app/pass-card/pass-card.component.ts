@@ -70,8 +70,12 @@ export class PassCardComponent implements OnInit, OnDestroy {
       private loadingService: LoadingService
   ) {}
 
-  getUserName(user: User){
-    return user.isSameObject(this.user)?'Me':user.first_name.substr(0, 1) +'. ' +user.last_name;
+  getUserName(user: any) {
+    if (user instanceof User) {
+      return user.isSameObject(this.user)?'Me':user.first_name.substr(0, 1) +'. ' +user.last_name;
+    } else {
+      return user.first_name.substr(0, 1) +'. ' +user.last_name;
+    }
   }
 
   get startTime(){
@@ -160,6 +164,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   formatDateTime(date: Date){
+    date = new Date(date);
     return Util.formatDateTime(date);
   }
 

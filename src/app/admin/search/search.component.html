@@ -13,7 +13,7 @@
             {{sortParamsHeader}}
           </div>
           <div class="divider"></div>
-          <app-data-table [data]="tableData" *ngIf="tableData.length > 0 && !spinner" (selectedUsers)="selectedReport=$event"></app-data-table>
+          <app-data-table [data]="tableData" *ngIf="tableData.length > 0 && !spinner" (selectedUsers)="selectedReport=$event" (selectedRow)="selectedPass($event)"></app-data-table>
           <div class="nopass-text" *ngIf="tableData.length === 0 && !spinner">
             There are no passes that match the search parameters!
           </div>

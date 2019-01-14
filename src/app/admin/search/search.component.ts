@@ -5,6 +5,10 @@ import { HallPass } from '../../models/HallPass';
 import { DatePrettyHelper } from '../date-pretty.helper';
 import { PdfGeneratorService } from '../pdf-generator.service';
 import { disableBodyScroll } from 'body-scroll-lock';
+import * as _ from 'lodash';
+import {PassCardComponent} from '../../pass-card/pass-card.component';
+import {MatDialog} from '@angular/material';
+import {User} from '../../models/User';
 
 
 @Component({
@@ -22,13 +26,19 @@ export class SearchComponent implements OnInit {
   selectedRooms = [];
   roomSearchType;
   selectedReport = [];
+  passes: HallPass[];
 
   spinner: boolean = false;
 
   hasSearched: boolean = false;
   sortParamsHeader: string;
 
-  constructor(private httpService: HttpService, private pdf: PdfGeneratorService, private elRef: ElementRef) {
+  constructor(
+      private httpService: HttpService,
+      private pdf: PdfGeneratorService,
+      private elRef: ElementRef,
+      public dialog: MatDialog
+  ) {
   }
 
   get isDisabled() {
@@ -99,6 +109,7 @@ export class SearchComponent implements OnInit {
       this.httpService.get(url).pipe(filter(res => !!res))
         .subscribe((data: HallPass[]) => {
           console.log('DATA', data);
+          this.passes = data;
           this.tableData = data.map(hallPass => {
             let travelType;
             if (hallPass.travel_type === 'one_way') {
@@ -121,14 +132,16 @@ export class SearchComponent implements OnInit {
             const mins: number = Math.floor(Math.floor(diff) / 60);
             const secs: number = Math.abs(Math.floor(diff) % 60);
             const duration = mins + (secs === 0 ? '' : ':') + (secs === 0 ? '' : secs < 10 ? '0' + secs : secs) + ' min';
-            return {
-              'Student Name': hallPass.student.first_name + ' ' + hallPass.student.last_name,
-              'Origin': hallPass.origin.title,
-              'Destination': hallPass.destination.title,
-              'Travel Type': travelType,
-              'Date & Time': prettyReportDate,
-              'Duration': duration
+            const passes = {
+                'Student Name': hallPass.student.first_name + ' ' + hallPass.student.last_name,
+                'Origin': hallPass.origin.title,
+                'Destination': hallPass.destination.title,
+                'Travel Type': travelType,
+                'Date & Time': prettyReportDate,
+                'Duration': duration
             };
+            Object.defineProperty(passes, '#Id', { enumerable: false, value: hallPass.id});
+            return passes;
           });
           this.spinner = false;
           this.hasSearched = true;
@@ -153,6 +166,25 @@ export class SearchComponent implements OnInit {
     //console.log('Selected Date:', this.selectedDate, 'Selected Rooms:', this.selectedRooms, 'Selected Students:', this.selectedStudents, '-> Students:', students);
     console.log(students);
     this.selectedStudents = students?students:this.selectedStudents;
+  }
+
+  selectedPass(pass) {
+    const selectedPass: HallPass = _.find(this.passes, {id: pass['#Id']});
+    selectedPass.start_time = new Date(selectedPass.start_time);
+    selectedPass.end_time = new Date(selectedPass.end_time);
+      const data = {
+          pass: selectedPass,
+          fromPast: true,
+          forFuture: false,
+          forMonitor: false,
+          isActive: false,
+          forStaff: true,
+      };
+      const dialogRef = this.dialog.open(PassCardComponent, {
+          panelClass: 'teacher-pass-card-dialog-container',
+          backdropClass: 'custom-backdrop',
+          data: data,
+      });
   }
 
   resetSearchState() {
