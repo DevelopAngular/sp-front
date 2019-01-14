@@ -26,6 +26,7 @@ testing:
     - deploy
   variables:
     AUTO_DEVOPS_DOMAIN: "smartpass-testing.lavanote.com"
+    IMAGE_TAG_SUFFIX: "testing"
   environment:
     name: testing
     url: "https://smartpass-testing.lavanote.com"
@@ -50,6 +51,7 @@ staging:
     - deploy
   variables:
     AUTO_DEVOPS_DOMAIN: "notify-messenger-notify-server-staging.lavanote.com"
+    IMAGE_TAG_SUFFIX: "production"
   environment:
       name: staging
       url: "https://notify-messenger-notify-server-staging.lavanote.com"
@@ -73,6 +75,7 @@ production:
   - deploy
   variables:
     AUTO_DEVOPS_DOMAIN: "smartpass.app"
+    IMAGE_TAG_SUFFIX: "production"
   environment:
     name: production
     url: "https://smartpass.app"
