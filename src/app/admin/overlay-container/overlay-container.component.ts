@@ -15,7 +15,7 @@ import { UserService } from '../../user.service';
 import { disableBodyScroll } from 'body-scroll-lock';
 
 export interface FormState {
-    roomName: string;
+    roomName?: string;
     folderName?: string;
     roomNumber: string | number;
     restricted: boolean;
@@ -515,7 +515,8 @@ export class OverlayContainerComponent implements OnInit {
         status.push(currState.scheduling_restricted === initState.scheduling_restricted);
         status.push(_.isEqual(currState.teachers, initState.teachers));
         if (currState.folderName && initState.folderName) {
-            status.push(currState.folderName === initState.folderName);
+            // status.push(currState.folderName === initState.folderName);
+            status.push(!this.form.get('folderName').dirty);
         }
         if (currState.color && initState.color) {
             status.push(currState.color === initState.color);

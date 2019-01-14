@@ -1,7 +1,7 @@
 <form [formGroup]="formGroup">
   <div class="InputWrapper">
     <div style="display: flex">
-      <label [ngClass]="{clserrorLabel: controlName.invalid && controlName.touched}" [ngStyle]="{'color': input_value ? ' #1F195E' : '#999999'}">{{input_label}}</label>
+      <label [ngClass]="{clserrorLabel: controlName.invalid && controlName.errors && controlName.touched}" [ngStyle]="{'color': input_value ? ' #1F195E' : '#999999'}">{{input_label}}</label>
       <div class="tooltip-container">
         <img
            [matTooltip]="tooltipText"
@@ -21,10 +21,10 @@
        [formControl]="controlName"
        [type]="input_type"
        [class]="input_class"
-       (focus)="updateFocus(inp)"
+       (focus)="updateFocus(inp); controlName.markAsUntouched()"
        (click)="isFocus = true; updateFocus(inp)"
        [placeholder]="(placeholder=='' ? '' : placeholder)"
-       [ngClass]="{clserrorInput: controlName.invalid && controlName.touched }"
+       [ngClass]="{clserrorInput: controlName.invalid && controlName.errors && controlName.touched }"
         spellcheck="true"/>
     <!--<img *ngIf='controlName.valid' class="success-icon" [src]="'./assets/Check (Blue).png' | resolveAsset"/>-->
     <div class="tooltip-container tooltip-container__inline "
@@ -46,7 +46,7 @@
         <div class="arrow-down">x</div>
       </div>
     </div>
-    <img *ngIf='controlName.invalid && controlName.touched && (!controlName.errors.room_name && !controlName.errors.folder_name && !controlName.errors.room_number)'
+    <img *ngIf='controlName.invalid && controlName.errors && controlName.touched && (!controlName.errors.room_name && !controlName.errors.folder_name && !controlName.errors.room_number)'
          class="success-icon" [src]="'./assets/Report (Red).png' | resolveAsset"/>
     <!--<p style="color: red" *ngIf="controlName.errors?.title">Bad name!</p>-->
     <!--<pre>{{controlName.errors | json}}</pre>-->

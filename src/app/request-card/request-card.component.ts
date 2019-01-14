@@ -183,18 +183,14 @@ export class RequestCardComponent implements OnInit {
       let header = '';
       if(!this.forInput){
         if(this.forStaff){
-          // options.push(this.genOption('Add Message & Deny','#3D396B','denyMessage'));
-          options.push(this.genOption('Deny Pass Request','#E32C66','deny'));
+          options.push(this.genOption('Deny with Message','#3D396B','deny'));
+          options.push(this.genOption('Deny','#E32C66','delete'));
         } else{
           options.push(this.genOption('Delete Pass Request','#E32C66','delete'));
         }
         header = 'Are you sure you want to ' +(this.forStaff?'deny':'delete') +' this pass request' +(this.forStaff?'':' you sent') +'?';
       } else{
           if (!this.pinnableOpen) {
-
-              console.log('History', this.fromHistory);
-              console.log('HistoryIndex', this.fromHistoryIndex);
-
               this.dialogRef.close();
               const dialogRef = this.dialog.open(HallpassFormComponent, {
                   width: '750px',
