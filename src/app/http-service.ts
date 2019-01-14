@@ -10,7 +10,7 @@ import 'rxjs/add/operator/switchMap';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { throwError } from 'rxjs/internal/observable/throwError';
 import { Observable } from 'rxjs/Observable';
-import { flatMap } from 'rxjs/operators';
+import { delay, flatMap } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 import { GoogleLoginService, isDemoLogin } from './google-login.service';
 
@@ -95,6 +95,8 @@ export class HttpService {
 
   private accessTokenSubject: BehaviorSubject<AuthContext> = new BehaviorSubject<AuthContext>(null);
   public schoolIdSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+
+  public globalReload$ = this.schoolIdSubject.pipe(delay(5));
 
   private hasRequestedToken = false;
 
