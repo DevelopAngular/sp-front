@@ -1,6 +1,6 @@
-import {Component, ElementRef, Inject, OnInit, Renderer2, ViewChild, ViewEncapsulation} from '@angular/core';
+import {Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 
 import {BehaviorSubject, forkJoin, fromEvent, Observable, Subject, zip} from 'rxjs';
 import { map, switchMap} from 'rxjs/operators';
@@ -509,26 +509,34 @@ export class OverlayContainerComponent implements OnInit {
             timeLimit: +this.timeLimit
         };
         const status = [];
-        status.push(currState.roomName === initState.roomName);
-        status.push(currState.roomNumber === initState.roomNumber);
-        status.push(currState.restricted === initState.restricted);
-        status.push(currState.scheduling_restricted === initState.scheduling_restricted);
+        // status.push(currState.roomName === initState.roomName);
+        status.push(!this.form.get('roomName').dirty);
+        // status.push(currState.roomNumber === initState.roomNumber);
+        status.push(!this.form.get('roomNumber').dirty);
+        // status.push(currState.restricted === initState.restricted);
+        status.push(!this.isDirtyNowRestriction);
+        // status.push(currState.scheduling_restricted === initState.scheduling_restricted);
+        status.push(!this.isDirtyFutureRestriction);
         status.push(_.isEqual(currState.teachers, initState.teachers));
         if (currState.folderName && initState.folderName) {
             // status.push(currState.folderName === initState.folderName);
             status.push(!this.form.get('folderName').dirty);
         }
         if (currState.color && initState.color) {
-            status.push(currState.color === initState.color);
+            // status.push(currState.color === initState.color);
+            status.push(!this.isDirtyColor);
         }
         if (currState.timeLimit && initState.timeLimit) {
-            status.push(currState.timeLimit === initState.timeLimit);
+            // status.push(currState.timeLimit === initState.timeLimit);
+            status.push(!this.form.get('timeLimit').dirty);
         }
         if (currState.travel_type && initState.travel_type) {
-            status.push(_.isEqual(currState.travel_type.sort(), initState.travel_type.sort()));
+            // status.push(_.isEqual(currState.travel_type.sort(), initState.travel_type.sort()));
+            status.push(!this.isDirtyTravel);
         }
         if (currState.icon && initState.icon) {
-            status.push(currState.icon === initState.icon);
+            // status.push(currState.icon === initState.icon);
+            status.push(!this.isDirtyIcon);
         }
         this.isFormStateDirty = status.includes(false);
     }
