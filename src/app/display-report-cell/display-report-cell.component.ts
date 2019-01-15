@@ -1,7 +1,6 @@
-﻿import {Component, OnInit, Input, ViewChild, ElementRef} from '@angular/core';
+﻿import { Component, OnInit, Input } from '@angular/core';
 import { Report } from '../models/Report';
-import {PdfGeneratorService} from '../admin/pdf-generator.service';
-import {Util} from '../../Util';
+import { PdfGeneratorService } from '../admin/pdf-generator.service';
 
 @Component({
   selector: 'app-display-report-cell',
@@ -13,7 +12,7 @@ export class DisplayReportCellComponent implements OnInit {
     @Input() hasDivider: boolean = true;
     @Input() student_name: string;
     @Input() righticon: string;
-    @Input() created: string
+    @Input() created: string;
     @Input() message: string;
     @Input() issuer: string;
     @Input() reportData: Report[] = [];

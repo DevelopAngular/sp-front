@@ -5,7 +5,7 @@
         *ngFor="let student of selectedStudents"
         [removable]="true"
         (removed)="removeStudent(student)">
-        {{student.display_name}}
+        {{student.display_name + ' (' + student.primary_email.split('@', 1)[0] + ')'}}
         <mat-icon matChipRemove>cancel</mat-icon>
       </mat-chip>
       <input
