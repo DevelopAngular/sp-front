@@ -49,17 +49,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
 
     this.loginService.showLoginError$.subscribe(show => {
       this._ngZone.run(() => {
-        if (show) {
-          this.showError = true;
-          // this.matDialog.open(ErrorToastComponent, {
-          //   panelClass: 'error-toast-dialog-container',
-          //   position: {
-          //     top: '25px',
-          //     right: '25px'
-          //   }
-          // });
-        }
-
+          this.showError = show;
       });
     });
 
@@ -76,7 +66,6 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.toggleDemoLogin();
       }
     };
-
   }
   onClose(evt) {
     setTimeout(() => {

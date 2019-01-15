@@ -1,19 +1,25 @@
 :host {
-  position: fixed;
-  z-index: 5;
-  height: 100vh;
-  width: 100vw;
-  background-color: rgba(0, 0, 0, .3);
-  top: 0;
-  left: 0;
-  transition: all .5s ease;
+  //position: fixed;
+  //z-index: 5;
+  //height: 100vh;
+  //width: 100vw;
+  //background-color: rgba(0, 0, 0, .3);
+  //top: 0;
+  //left: 0;
+  //transition: all .5s ease;
   .error-toast-container{
-    opacity: 1;
     position: fixed;
-    top: 30px;
-    right: 30px;
+    z-index: 5;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, .3);
+    top: 0;
+    left: 0;
+    transition: all .5s ease;
     .error-text {
-      position: relative;
+      position: absolute;
+      top: 30px;
+      //right: 30px;
       width: 375px;
       height: auto;
       border-radius: 20px;
@@ -23,8 +29,8 @@
       text-align: center;
       box-sizing: border-box;
       padding: 25px 40px;
-      opacity: 0;
-      left: 250px;
+      //opacity: 0;
+      //left: 250px;
       transition: all .3s ease;
       //animation: slide .25s ease forwards;
       &_header {

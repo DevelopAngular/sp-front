@@ -34,11 +34,15 @@
     box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
     font-family: 'Helvetica Neue', sans-serif;
     font-size: 16px;
+    color: #134482;
     caret-color: auto;
+    &::placeholder {
+      color: #999999;
+  }
 }
 .input-focus-wrapper {
   border: 1px solid transparent;
-  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
   border-radius: 20px;
   margin-bottom: 5px;
   position: relative;
@@ -46,16 +50,26 @@
     position: absolute;
     z-index: 3;
     width: 18px;
-    left: 12px;
+    left: 17px;
     top: 0;
     bottom: 0;
     margin: auto 0;
-    padding-bottom: 2px;
+    //padding-bottom: 2px;
+    &_close {
+      right: 17px;
+      left: auto;
+      opacity: .7;
+      cursor: pointer;
+      transition: opacity .2s;
+      &:hover {
+        opacity: 1;
+      }
+    }
   }
 }
 input {
     border: 0px;
-    padding: 0 0 0 40px;
+    padding: 0 0 0 45px;
     caret-color: auto;
 
 }
@@ -71,5 +85,5 @@ input:focus{
 
 .inputSelector{
     border-radius: 20px;
-    border: 1px solid #595487 !important;
+    border: 1px solid #134482 !important;
 }

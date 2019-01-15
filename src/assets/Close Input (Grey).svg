@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
+    <title>Background</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Web---Redesigns" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Text-Fields" transform="translate(-282.000000, -261.000000)" fill="#A5ABBA">
+            <g id="Search" transform="translate(81.000000, 249.000000)">
+                <g id="Cancel" transform="translate(201.000000, 12.000000)">
+                    <path d="M8,16 C3.581722,16 0,12.418278 0,8 C0,3.581722 3.581722,0 8,0 C12.418278,0 16,3.581722 16,8 C16,12.418278 12.418278,16 8,16 Z M8,7.51515152 L5.09090909,4.60606061 L4.60606061,5.09090909 L7.51515152,8 L4.60606061,10.9090909 L5.09090909,11.3939394 L8,8.48484848 L10.9090909,11.3939394 L11.3939394,10.9090909 L8.48484848,8 L11.3939394,5.09090909 L10.9090909,4.60606061 L8,7.51515152 Z" id="Background"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

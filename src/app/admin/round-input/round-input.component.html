@@ -10,8 +10,9 @@
       <img *ngIf="fieldIcon" class="field-icon" [src]="fieldIcon | resolveAsset" alt="icon">
       <input #input class="input" [type]="html5type" [style.width]="width" [style.min-width]="minWidth"
              [placeholder]="placeholder" [readonly]="type == 'dates'"
-             (input)="changeAction(input.value)" (click)="focusAction(true)" (focusout)="focusAction(false)"
+             (input)="changeAction(input)" (click)="focusAction(true)" (focusout)="focusAction(false)"
              [(ngModel)]="value" >
+      <img *ngIf="showCloseIcon | async" class="field-icon field-icon_close" [src]="closeIcon | resolveAsset" alt="icon" (click)="changeAction(input, true)">
     </div>
   </div>
 </div>

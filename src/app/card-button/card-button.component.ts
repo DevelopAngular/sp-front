@@ -50,7 +50,6 @@ export class CardButtonComponent implements OnInit {
     // console.log('Passed gradiend ===> ', this.gradientColor);
 
     let gradient: string[] = this.gradientColor.split(',');
-    //   let gradient: string[] = '#134472, #549abb'.split(',');
 
         return 'radial-gradient(circle at 73% 71%, ' + gradient[0] + ', ' + gradient[1] + ')';
   }

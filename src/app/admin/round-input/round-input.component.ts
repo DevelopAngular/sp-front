@@ -5,7 +5,7 @@ import { Paged } from '../../location-table/location-table.component';
 import { HttpService } from '../../http-service';
 import { InputHelperDialogComponent } from '../input-helper-dialog/input-helper-dialog.component';
 import {FormGroup} from '@angular/forms';
-import {fromEvent, Observable} from 'rxjs';
+import {BehaviorSubject, fromEvent, Observable} from 'rxjs';
 
 @Component({
   selector: 'app-round-input',
@@ -22,11 +22,13 @@ export class RoundInputComponent implements OnInit {
   @Input() hasTogglePicker: boolean;
   @Input() width: string;
   @Input() minWidth: string;
-  @Input() fieldIcon: string;
+  @Input() fieldIcon: string = './assets/Search Input (Grey).png';
   @Output() ontextupdate: EventEmitter<any> = new EventEmitter();
   @Output() ontoggleupdate: EventEmitter<any> = new EventEmitter();
   @Output() onselectionupdate: EventEmitter<any> = new EventEmitter();
   @Output() controlValue = new EventEmitter();
+  closeIcon: string = './assets/Close Input (Grey).svg';
+  showCloseIcon: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   selected: boolean;
   value: string;
   toDate: Date;
@@ -76,7 +78,7 @@ export class RoundInputComponent implements OnInit {
       dateDialog.afterOpen().subscribe(()=>{this.selected = true;});
 
       dateDialog.afterClosed().subscribe(data =>{
-        if(data){
+        if (data) {
           this.value = data['text'];
           this.selections = data['selection']
           this.toggleState = data['toggleState'];
@@ -87,9 +89,20 @@ export class RoundInputComponent implements OnInit {
     }
   }
 
-  changeAction(change: any){
-    if(this.type == 'text'){
-      this.ontextupdate.emit(change);
+  changeAction(inp: HTMLInputElement, reset?: boolean) {
+    if (reset) {
+      this.selected = reset;
+      inp.value = '';
+      inp.focus();
+      return;
+    }
+    if (this.type === 'text') {
+      this.ontextupdate.emit(inp.value);
+    }
+    if ( inp.value.length > 0) {
+      this.showCloseIcon.next(true);
+    } else {
+      this.showCloseIcon.next(false);
     }
   }
 
