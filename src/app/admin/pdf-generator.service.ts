@@ -159,7 +159,11 @@ export class PdfGeneratorService {
             doc.setFontStyle('bold');
 
             __headers.forEach((header, n) => {
-              doc.text(table.left + (table.sp * n), table.top - 6, header);
+                if (n === 1) {
+                    doc.text(table.left + (table.sp * n) + 25, table.top - 6, header);
+                } else {
+                    doc.text(table.left + (table.sp * n), table.top - 6, header);
+                }
             });
 
             doc.setLineWidth(1.5);
@@ -184,7 +188,11 @@ export class PdfGeneratorService {
                   n = j;
                   if ((table.top + table.lh * (n + 1)) < (A4.height - 50)) {
                     _headers.forEach((header, i) => {
-                      doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1), cell[_headers[i]]);
+                      if (i === 1) {
+                        doc.text(table.left + (table.sp * i) + 25, table.top + table.lh * (n + 1), cell[_headers[i]]);
+                      } else {
+                        doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1), cell[_headers[i]]);
+                      }
                     });
                     doc.line(table.left, table.top + table.lh * (n + 1) + 8, A4.width - table.right, table.top + table.lh * (n + 1) + 8);
                   } else {

@@ -132,8 +132,10 @@ export class SearchComponent implements OnInit {
             const mins: number = Math.floor(Math.floor(diff) / 60);
             const secs: number = Math.abs(Math.floor(diff) % 60);
             const duration = mins + (secs === 0 ? '' : ':') + (secs === 0 ? '' : secs < 10 ? '0' + secs : secs) + ' min';
+            const name = hallPass.student.first_name + ' ' + hallPass.student.last_name +
+                ` (${hallPass.student.primary_email.split('@', 1)[0]})`;
             const passes = {
-                'Student Name': hallPass.student.first_name + ' ' + hallPass.student.last_name,
+                'Student Name': name,
                 'Origin': hallPass.origin.title,
                 'Destination': hallPass.destination.title,
                 'Travel Type': travelType,
