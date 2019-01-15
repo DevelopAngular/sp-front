@@ -1,8 +1,12 @@
+:host {
+    max-width: 303px;
+}
 .nav-wrapper{
     display: flex;
     flex-direction: column;
     background: white;
     height: 100%;
+    width: 303px;
     white-space: nowrap;
     position: relative;
     overflow-x: hidden;
