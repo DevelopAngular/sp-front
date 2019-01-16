@@ -62,15 +62,22 @@ const appRoutes: Routes = [
         path: 'admin',
         canActivate: [AuthenticatedGuard, IsAdminGuard],
         loadChildren: 'app/admin/admin.module#AdminModule',
-        data: {hideScroll: true}
+        data: {
+          hideScroll: true
+        }
       },
-      {path: 'sign-out', component: SignOutComponent},
+      {
+        path: 'sign-out',
+        component: SignOutComponent,
+      },
       {
         // path: 'pdf/:source',
         path: 'pdf/report',
         canActivate: [AuthenticatedGuard],
         component: PdfComponent,
-        data: {hideScroll: true}
+        data: {
+          hideScroll: true
+        }
       },
     ]
   },

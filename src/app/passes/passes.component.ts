@@ -1,6 +1,6 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { combineLatest, empty, merge, of } from 'rxjs';
+import {combineLatest, empty, forkJoin, merge, of, Subject, zip} from 'rxjs';
 
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
@@ -21,6 +21,7 @@ import { Request } from '../models/Request';
 import { User } from '../models/User';
 import { PassCardComponent } from '../pass-card/pass-card.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
+import {delay, skip} from 'rxjs/internal/operators';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('_profile_teacher');
@@ -162,7 +163,7 @@ export class PassesComponent implements OnInit {
   isActivePass$ = this.dataService.isActivePass$;
   isActiveRequest$ = this.dataService.isActiveRequest$;
 
-  inboxHasItems: Observable<boolean> = of(false);
+  inboxHasItems: Subject<boolean> = new Subject<boolean>();
 
   user: User;
   isStaff = false;
@@ -195,11 +196,23 @@ export class PassesComponent implements OnInit {
           this.sentRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser));
         }
 
-        this.inboxHasItems = combineLatest(
-          this.receivedRequests.length$.startWith(0),
-          this.sentRequests.length$.startWith(0),
-          (l1, l2) => l1 > 0 || l2 > 0
-        );
+        zip(
+          this.receivedRequests.length$.asObservable(),
+          this.sentRequests.length$.asObservable()
+        ).pipe(
+          skip(2)
+        ).subscribe((val) => {
+          this.inboxHasItems.next(!val.reduce((a, b) => a + b));
+          // console.log('==============================================>', val);
+        });
+
+        // this.inboxHasItems = combineLatest(
+        //   this.receivedRequests.length$.startWith(0),
+        //   this.sentRequests.length$.startWith(0),
+        //   (l1, l2) => l1 > 0 || l2 > 0
+        // );
+        //   this.receivedRequests.length$
+
 
       });
 

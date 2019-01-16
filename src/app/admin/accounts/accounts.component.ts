@@ -5,6 +5,7 @@ import {HttpService} from '../../http-service';
 import {User} from '../../models/User';
 import {UserService} from '../../user.service';
 import {BehaviorSubject, ReplaySubject, Subject} from 'rxjs';
+import {switchMap} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'app-accounts',
@@ -29,7 +30,10 @@ export class AccountsComponent implements OnInit {
 
   ngOnInit() {
 
-    this.http.get('v1/admin/accounts').subscribe((u_list: any) => {
+    this.http.globalReload$.pipe(
+      switchMap(() => this.http.get('v1/admin/accounts'))
+    )
+    .subscribe((u_list: any) => {
       console.log(u_list, Object.values(u_list));
       u_list.total = Object.values(u_list).reduce((a: number, b: number) => a + b);
       console.log(u_list);

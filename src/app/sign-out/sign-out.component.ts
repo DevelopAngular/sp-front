@@ -10,9 +10,11 @@ import { HttpService } from '../http-service';
 export class SignOutComponent implements AfterContentInit {
 
   constructor(private http: HttpService, private loginService: GoogleLoginService) {
+    this.http.schoolIdSubject.next(null);
   }
 
   ngAfterContentInit() {
+
     setTimeout(() => {
       this.http.clearInternal();
       this.loginService.clearInternal(true);
