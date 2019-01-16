@@ -13,6 +13,7 @@ import { Observable } from 'rxjs/Observable';
 import { delay, flatMap } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 import { GoogleLoginService, isDemoLogin } from './google-login.service';
+import { School } from './models/School';
 
 export const SESSION_STORAGE_KEY = 'accessToken';
 
@@ -36,14 +37,14 @@ function ensureFields<T, K extends keyof T>(obj: T, keys: K[]) {
   }
 }
 
-function makeConfig(config: Config, access_token: string, school_id:string): Config & { responseType: 'json' } {
+function makeConfig(config: Config, access_token: string, school_id:School): Config & { responseType: 'json' } {
   
   // console.log('[school_id]: ', school_id)
 
   let headers:any = {'Authorization': 'Bearer ' + access_token}
 
   if(school_id){
-    headers['X-School-Id'] = '' +school_id;
+    headers['X-School-Id'] = '' +school_id.id;
   }
 
   // console.log('[X-School-Id]: ', headers['X-School-Id'])
@@ -94,7 +95,7 @@ class LoginServerError extends Error {
 export class HttpService {
 
   private accessTokenSubject: BehaviorSubject<AuthContext> = new BehaviorSubject<AuthContext>(null);
-  public schoolIdSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+  public schoolIdSubject: BehaviorSubject<School> = new BehaviorSubject<School>(null);
 
   public globalReload$ = this.schoolIdSubject.pipe(delay(5));
 

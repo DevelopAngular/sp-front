@@ -27,7 +27,8 @@ export class UserService {
     //   e => console.log('user error:', e),
     //   () => console.log('userData complete'));
 
-    this.http.get<any>('v1/users/@me')
+    this.http.globalReload$
+      .switchMap(() => this.http.get<any>('v1/users/@me'))
       .map(raw => User.fromJSON(raw))
       .subscribe(user => this.userData.next(user));
 
