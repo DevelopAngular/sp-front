@@ -5,8 +5,9 @@ import {MatDialog} from '@angular/material';
 import {UserService} from '../../user.service';
 import {AccountsDialogComponent} from '../accounts-dialog/accounts-dialog.component';
 import { ActivatedRoute } from '@angular/router';
-import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/internal/operators';
+import {debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/internal/operators';
 import {Util} from '../../../Util';
+import {HttpService} from '../../http-service';
 
 @Component({
   selector: 'app-accounts-role',
@@ -27,11 +28,20 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,
+    private http: HttpService,
     private matDialog: MatDialog,
   ) { }
 
   ngOnInit() {
-    this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params: any) => {
+    this.http.globalReload$.pipe(
+      tap(() => {
+        this.userList = [];
+      }),
+      switchMap(() => {
+        return this.route.params.pipe(takeUntil(this.destroy$));
+      })
+    )
+    .subscribe((params: any) => {
       console.log(params);
       this.role = params.role;
       this.getUserList();

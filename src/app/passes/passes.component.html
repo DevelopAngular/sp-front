@@ -41,11 +41,19 @@
   <div class="main-page-right" *ngIf="dataService.inboxState | async">
     <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'22pt'" [icon]="(isStaff?'./assets/Inbox Full (Blue).png':'')" [inbox]="true">
       <div class="inbox-content">
-        <app-pass-collection [forStaff]="isStaff" [forFuture]="true" [isActive]="false" [style.width]="'258px'" [passProvider]="isStaff?receivedRequests:sentRequests" [title]="isStaff?'Received':'Sent'" [icon]="'./assets/' +(isStaff?'Request':'Lock') +' (Blue).png'" [columns]="2"></app-pass-collection>
-        <app-pass-collection [forStaff]="isStaff" [forFuture]="true" [isActive]="false" [style.width]="'258px'" [passProvider]="isStaff?sentRequests:receivedRequests" [title]="isStaff?'Sent':'Received'" [icon]="'./assets/' +(isStaff?'Lock':'Request') +' (Blue).png'" [columns]="2"></app-pass-collection>
+        <div>
+          <app-pass-collection [forStaff]="isStaff" [forFuture]="true" [isActive]="false" [style.width]="'258px'" [passProvider]="isStaff?receivedRequests:sentRequests" [title]="isStaff?'Received':'Sent'" [icon]="'./assets/' +(isStaff?'Request':'Lock') +' (Blue).png'" [columns]="2"></app-pass-collection>
+          <!--<div *ngIf="isStaff ? (receivedRequests.length$ | async) : (sentRequests.length$ | async)" class="text">No requests sent or received</div>-->
+        </div>
+        <div>
+          <app-pass-collection [forStaff]="isStaff" [forFuture]="true" [isActive]="false" [style.width]="'258px'" [passProvider]="isStaff?sentRequests:receivedRequests" [title]="isStaff?'Sent':'Received'" [icon]="'./assets/' +(isStaff?'Lock':'Request') +' (Blue).png'" [columns]="2"></app-pass-collection>
+          <!--<div *ngIf="isStaff ? (sentRequests.length$ | async) : (receivedRequests.length$ | async)" class="text">No requests sent or received</div>-->
+        </div>
+        <!--<div *ngIf="">PPC</div>-->
         <!-- No pass requests -->
 
-        <div *ngIf="!(inboxHasItems | async)" class="text">No requests sent or received</div>
+        <div *ngIf="inboxHasItems | async" class="text">No requests sent or received</div>
+        <!--<pre>{{!(inboxHasItems | async) | json}}</pre>-->
       </div>
     </app-display-card>
   </div>

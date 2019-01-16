@@ -7,6 +7,7 @@ import {DeviceDetection} from './device-detection.helper';
 import {BehaviorSubject} from 'rxjs';
 import {HttpService} from './http-service';
 import {School} from './models/School';
+import {tap} from 'rxjs/internal/operators';
 
 /**
  * @title Autocomplete overview
@@ -23,6 +24,7 @@ export class AppComponent implements OnInit {
   public hideScroll: boolean = false;
   public showUI: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public schools: School[];
+  // public schoolIdSubject: BehaviorSubject<School>;
 
   constructor(
     public loginService: GoogleLoginService,
@@ -31,6 +33,7 @@ export class AppComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private router: Router, private location: Location,
   ) {
+    // this.schoolIdSubject = this.http.schoolIdSubject;
   }
 
   ngOnInit() {
@@ -54,12 +57,24 @@ export class AppComponent implements OnInit {
             .subscribe((schools: School[]) => {
               console.log(schools);
               this.schools = schools;
-              this.http.schoolIdSubject.next(this.schools[0]);
+
+              if (localStorage.getItem('schoolId')) {
+                this.http.schoolIdSubject.next(JSON.parse(localStorage.getItem('schoolId')));
+              } else {
+                this.http.schoolIdSubject.next(this.schools[0]);
+              }
               //console.log(this.http.schoolIdSubject.value);
             });
+        } else {
+          this.schools = [];
         }
       });
     });
+    this.http.schoolIdSubject.subscribe((value => {
+      if (!value) {
+        this.schools = [];
+      }
+    }))
     this.router.events
       .pipe(
         filter(event => event instanceof NavigationEnd),
@@ -72,6 +87,9 @@ export class AppComponent implements OnInit {
       )
       .subscribe((data) => {
         // console.log(data);
+        if (data.signOut) {
+          this.schools = [];
+        }
         this.hideScroll = data.hideScroll;
       });
   }

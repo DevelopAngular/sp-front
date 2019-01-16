@@ -106,12 +106,13 @@
         <div class="card_header">
           Most Frequent Room <br> Destinations
         </div>
-        <div *ngIf="passStatistic" class="flex-start-between flex-column flex-wrap w-100 pt card_title"
+        <div *ngIf="passStatistic && passStatistic.length" class="flex-start-between flex-column flex-wrap w-100 pt card_title"
              [style.max-height]="'50px'">
           <div *ngFor="let place of passStatistic; let n = index;">
             {{n + 1}}. {{place.name}}
           </div>
         </div>
+        <div *ngIf="passStatistic && !passStatistic.length" class="card_title">Unknown</div>
         <div *ngIf="!passStatistic" class="loading-theme spinner flex-center-center" [style.padding-top]="'8px'"
              [style.min-height]="'50px'">
           <mat-spinner [color]="'accent'" [diameter]="'35'"></mat-spinner>

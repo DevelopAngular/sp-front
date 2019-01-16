@@ -30,7 +30,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public lineChartColors: Array<any>;
   public lineChartLegend: boolean = false;
   public lineChartType: string = 'line';
-  public passStatistic: any;
+  public passStatistic: any[] | string;
   public numActivePasses = -1;
   public reports: Report[];
   public averagePassTime: number | string;
@@ -79,10 +79,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .subscribe(([stats, eventReports, dashboard]: any[]) => {
 
         for (const entry of stats) {
-          if (entry.name === 'Most Visited Locations') {
-            this.passStatistic = entry['rows'];
-          } else if (entry.name.toLowerCase() === 'average pass time') {
-            this.averagePassTime = entry['value'];
+          switch (entry.name) {
+            case 'Most Visited Locations': {
+              this.passStatistic = entry['rows'].length ? entry['rows'] : [];
+              break;
+            }
+            case 'Average pass time': {
+              this.averagePassTime = entry['value'] ? entry['value'] : 'Unknown';
+              break;
+            }
+          }
+
+          if (!stats.find((item) => item['name'] === 'Average pass time')) {
+            this.averagePassTime = 'Unknown';
           }
         }
 

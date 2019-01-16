@@ -10,6 +10,7 @@ import {School} from '../models/School';
 })
 export class DropdownComponent implements OnInit {
 
+  alignSelf: boolean;
   heading: string = '';
   locations: Location[];
   schools: School[];
@@ -26,6 +27,7 @@ export class DropdownComponent implements OnInit {
     this.schools = data['schools'];
     this.selectedLocation = data['selectedLocation'];
     this.selectedSchool = data['selectedSchool'];
+    this.alignSelf = data['alignSelf'];
 
   }
 
@@ -33,22 +35,26 @@ export class DropdownComponent implements OnInit {
 
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
-    matDialogConfig.position = { left: `${rect.left - 50}px`, top: `${rect.bottom + 15}px` };
+    matDialogConfig.position = { left: `${rect.left - (this.alignSelf ? rect.width : 50)}px`, top: `${rect.bottom + 15}px` };
     matDialogConfig.width = '350px';
     matDialogConfig.height = '200px';
     this._matDialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);
     this._matDialogRef.updatePosition(matDialogConfig.position);
   }
   partOfProfile(school) {
-      const roles = [];
+
+    const roles = [];
       if (school.my_roles.includes('_profile_admin')) {
         roles.push('Administrator');
-      } else if (school.my_roles.includes('_profile_teacher')) {
+      }
+      if (school.my_roles.includes('_profile_teacher')) {
         roles.push('Teacher');
-      } else if (school.my_roles.includes('_profile_student')) {
+      }
+      if (school.my_roles.includes('_profile_student')) {
         roles.push('Student');
       }
-      return roles.join(', ');
+
+    return roles.join(', ');
   }
 
   getTextWidth(text: string, fontSize: number){

@@ -21,7 +21,11 @@ export class SchoolToggleBarComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.currentSchool = this.schools[0];
+    this.currentSchool = localStorage.getItem('currentSchool')
+                          ?
+                         JSON.parse(localStorage.getItem('currentSchool'))
+                          :
+                         this.schools[0];
     this.http.schoolIdSubject.next(this.currentSchool);
   }
   showOptions(evt: MouseEvent) {
@@ -30,13 +34,17 @@ export class SchoolToggleBarComponent implements OnInit {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {
+          'alignSelf': true,
           'schools': this.schools,
           'selectedSchool': this.currentSchool,
           'trigger': target
         }
       });
       optionDialog.afterClosed().subscribe(data => {
-        this.currentSchool = data ? data : this.currentSchool;
+        if (data) {
+          localStorage.setItem('currentSchool', JSON.stringify(data));
+          this.currentSchool = data;
+        }
         this.http.schoolIdSubject.next(this.currentSchool);
       });
     }
