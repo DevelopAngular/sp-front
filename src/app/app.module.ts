@@ -35,9 +35,8 @@ import { SignOutComponent } from './sign-out/sign-out.component';
 import { UserService } from './user.service';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { SelectProfileComponent } from './select-profile/select-profile.component';
-import { ErrorToastComponent } from './error-toast/error-toast.component'
-;
-import { SchoolToggleBarComponent } from './school-toggle-bar/school-toggle-bar.component'
+import { ErrorToastComponent } from './error-toast/error-toast.component';
+import { SchoolToggleBarComponent } from './school-toggle-bar/school-toggle-bar.component';
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroComponent},
@@ -97,9 +96,9 @@ const appRoutes: Routes = [
     HallDateTimePickerComponent,
     PdfComponent,
     SelectProfileComponent,
-    ErrorToastComponent
-,
-    SchoolToggleBarComponent  ],
+    ErrorToastComponent,
+    SchoolToggleBarComponent,
+],
   entryComponents: [
     ConsentMenuComponent,
     OptionsComponent,

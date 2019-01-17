@@ -1,9 +1,10 @@
-<div class="wrapper" [style.width]="type==='location'?'430px':'200px'">
+<div class="wrapper" [style.flex-direction]="horizontalTable ? 'row' : 'column'" [style.width]="type==='location'?'430px':'200px'">
+  <input class="input" *ngIf="!horizontalTable" #searchBox [value]="search" [placeholder]="placeholder" (keyup)="onSearch(searchBox.value)">
   <div *ngIf="type==='location' && showFavorites" class="table-left">
-    <div class="fav-header">
+    <div class="fav-header" [style.margin-top]="horizontalTable ? '27px' : '10px'">
       Favorites
     </div>
-    <div *ngIf="favoritesLoaded" class="choices" (scroll)="leftScroll($event)">
+    <div *ngIf="favoritesLoaded" class="choices" [style.width]="horizontalTable ? '180px' : '190px'" (scroll)="leftScroll($event)">
       <app-location-cell class="choice" *ngFor="let choice of starredChoices"
         (onSelect)="choiceSelected($event)" (onStar)="star($event)"
         [value]="choice" [type]="type" [starred]="true" [showStar]="showStars">
@@ -12,10 +13,11 @@
     </div>
     <div *ngIf="rightShadow" class="shadow"></div>
   </div>
-  <div class="table-right" [style.margin]="'0 ' +(showFavorites?'0':'auto')">
-    <input class="input" #searchBox [value]="search" [placeholder]="placeholder" (keyup)="onSearch(searchBox.value)">
+  <div *ngIf="!horizontalTable" class="fav-header">All Rooms</div>
+  <div class="table-right" [style.height]="horizontalTable ? '189px' : 'none'" [style.margin]="'0 ' +(showFavorites?'0':'auto')">
+    <input *ngIf="horizontalTable" class="input" #searchBox [value]="search" [placeholder]="placeholder" (keyup)="onSearch(searchBox.value)">
     <div class="quick-label" *ngIf="staticChoices">Quick Select</div>
-    <div class="choices" (scroll)="onScroll($event)">
+    <div class="choices" [style.width]="horizontalTable ? '180px' : '190px'" (scroll)="onScroll($event)">
       <app-location-cell [hasLocks]="hasLocks" [forLater]="forLater" [forStaff]="forStaff" class="choice" *ngFor="let choice of choices" [showStar]="showStars && !noRightStar" [starred]="false"
                         (onSelect)="choiceSelected($event)" (onStar)="star($event)"
                         [value]="choice" [type]="type" [valid]="!invalidLocation || choice.id !== invalidLocation">

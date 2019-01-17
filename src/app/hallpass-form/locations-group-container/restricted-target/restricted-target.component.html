@@ -1,0 +1,27 @@
+<div class="rest-tar-wrapper">
+  <div class="rest-tar-header">
+    <img class="back-button" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
+    <div class="rest-tar-header-text">
+      <img class="search-icon" [src]="'./assets/Search (Grey).png' | resolveAsset">
+      <div class="text">Send Pass Request To?</div>
+    </div>
+  </div>
+
+  <div class="rest-tar-content">
+    <app-location-table
+       class="center"
+       (onSelect)="updateTarget($event)"
+       [type]="'teachers'"
+       [placeholder]="'Search teachers'"
+       [staticChoices]="['Patchell']">
+    </app-location-table>
+  </div>
+
+  <div class="rest-tar-footer">
+    <div class="footer-rest-tar-text">
+      <div class="footer-text" [style.font-weight]="'bold'">Origin</div>
+      <img class="footer-icon" [src]="'./assets/Arrows_long_right.png' | resolveAsset">
+      <div class="footer-text">Destination</div>
+    </div>
+  </div>
+</div>

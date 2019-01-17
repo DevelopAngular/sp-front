@@ -50,6 +50,9 @@ export class LocationTableComponent implements OnInit {
   @Input()
   noRightStar: boolean;
 
+  @Input()
+  horizontalTable: boolean = true;
+
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<string> = new EventEmitter();
 
