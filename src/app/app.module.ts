@@ -35,9 +35,16 @@ import { SignOutComponent } from './sign-out/sign-out.component';
 import { UserService } from './user.service';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { SelectProfileComponent } from './select-profile/select-profile.component';
-import { ErrorToastComponent } from './error-toast/error-toast.component'
-;
-import { SchoolToggleBarComponent } from './school-toggle-bar/school-toggle-bar.component'
+import { ErrorToastComponent } from './error-toast/error-toast.component';
+import { SchoolToggleBarComponent } from './school-toggle-bar/school-toggle-bar.component';
+import { GroupsContainerComponent } from './groups/groups-container/groups-container.component';
+import { GroupsStep1Component } from './groups/groups-step1/groups-step1.component';
+import { GroupsStep2Component } from './groups/groups-step2/groups-step2.component';
+import { GroupsStep3Component } from './groups/groups-step3/groups-step3.component';
+import { GroupsStep4Component } from './groups/groups-step4/groups-step4.component';
+import { GroupsStep5Component } from './groups/groups-step5/groups-step5.component';
+import { GroupsStep6Component } from './groups/groups-step6/groups-step6.component';
+import {GroupsStepComponent} from './groups/groups-step/groups-step.component';
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroComponent},
@@ -97,9 +104,17 @@ const appRoutes: Routes = [
     HallDateTimePickerComponent,
     PdfComponent,
     SelectProfileComponent,
-    ErrorToastComponent
-,
-    SchoolToggleBarComponent  ],
+    ErrorToastComponent,
+    SchoolToggleBarComponent ,
+    GroupsContainerComponent ,
+    GroupsStep6Component,
+    GroupsStep5Component,
+    GroupsStep4Component,
+    GroupsStep3Component,
+    GroupsStep2Component,
+    GroupsStep1Component,
+    GroupsStepComponent
+  ],
   entryComponents: [
     ConsentMenuComponent,
     OptionsComponent,

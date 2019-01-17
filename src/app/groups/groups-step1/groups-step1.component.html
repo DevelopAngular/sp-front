@@ -1,0 +1,64 @@
+<div class="step-1-container">
+  <div class="header">
+    <img class="header_back-button" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
+    <div class="header_title">
+      <img class="header_icon" [src]="'./assets/Search (Blue).png' | resolveAsset">
+      <div class="header_text">Select students(s)</div>
+    </div>
+    <div></div>
+  </div>
+  <div class="content">
+    <div class="content-left">
+      <div class="content-left_wrapper">
+        <div>
+          <div class="content-left_header">Student Groups</div>
+        </div>
+        <div class="content-left_groups">
+          <div>
+            <span class="content-left_placeholder">No student groups</span>
+          </div>
+        </div>
+        <div class="content-left_create-group">
+          <app-gradient-button
+            [minHeight]="'45px'"
+            [fontSize]="'14px'"
+            [width]="'180px'"
+            [hoverColor]="'#FFFFFF'"
+            [gradient]="'#FFFFFF,#FFFFFF'"
+            [textColor]="'#134482'"
+            [leftIcon]="'./assets/Create (Blue).png'"
+            [leftImageHeight]="'13px'"
+            [leftImageWidth]="'13px'"
+            [subtitle]=" selectedStudents.length ? 'with selected students' : null "
+            (buttonClick)="nextStep()"
+          >
+            <div class="create-button">
+              <div>
+
+                <span class="create-button_title">New Student Group</span>
+              </div>
+              <!--<span class="create-button_subtitle">with selected students</span>-->
+            </div>
+          </app-gradient-button>
+        </div>
+      </div>
+    </div>
+    <div class="content-right">
+      <div class="content-right_sudent-search">
+        <div class="seach-wrapper">
+          <app-student-search
+            (onUpdate)="selectedStudents=$event" [selectedStudents]="selectedStudents"
+          ></app-student-search>
+        </div>
+      </div>
+      <div class="content-right_next" *ngIf="selectedStudents && selectedStudents.length">
+        <app-gradient-button
+          [width]="'105px'"
+          [minHeight]="'35px'"
+          [fontSize]="'14px'"
+          (buttonClick)="nextStep()"
+        >Next ({{selectedStudents.length}})</app-gradient-button>
+      </div>
+    </div>
+  </div>
+</div>

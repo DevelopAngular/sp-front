@@ -1,0 +1,10 @@
+<div class="groups-container">
+  <app-groups-step1 (studentsSelected)="onStudentsSelected($event)"></app-groups-step1>
+  <br>
+  <app-groups-step2 [selectedStudents]="selectedStudents" [form]="groupDTO"></app-groups-step2>
+  <br>
+  <app-groups-step3></app-groups-step3>
+  <!--<app-groups-step4></app-groups-step4>-->
+  <!--<app-groups-step5></app-groups-step5>-->
+  <!--<app-groups-step6></app-groups-step6>-->
+</div>

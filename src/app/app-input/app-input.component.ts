@@ -16,6 +16,7 @@ export class AppInputComponent implements OnInit {
     @Input() placeholder: string = '';
     @Input() maxLength: number = 100;
     @Input() width: string;
+    @Input() padding: string = '.5rem 0';
     @Input() rightIcon: string;
     @Input() tooltipText: string;
     @Input() isFocus: boolean;

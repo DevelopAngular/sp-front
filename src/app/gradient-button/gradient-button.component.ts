@@ -31,6 +31,7 @@ export class GradientButtonComponent {
   @Input() leftIcon: string;
   @Input() rightIcon: string;
   @Input() text: string;
+  @Input() subtitle: string;
   @Input() textColor: string;
   @Input() width: number;
   @Input() minWidth: number;
