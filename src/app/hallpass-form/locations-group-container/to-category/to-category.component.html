@@ -1,0 +1,29 @@
+<div class="category-wrapper">
+  <div class="category-header">
+    <img class="back-button" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
+    <div class="category-header-text">
+      <img class="search-icon" [src]="'./assets/Search (Grey).png' | resolveAsset">
+      <div class="text">Classrooms</div>
+    </div>
+  </div>
+
+  <div class="category-content">
+    <app-location-table
+        class="center"
+        (onSelect)="locationChosen($event)"
+        [forStaff]="true"
+        [hasLocks]="true"
+        [category]="'Classrooms'"
+        [type]="'location'"
+        [placeholder]="'Search ' + 'Classrooms'" >
+    </app-location-table>
+  </div>
+
+  <div class="category-footer">
+    <div class="footer-category-text">
+      <div class="footer-text" [style.font-weight]="'bold'">Origin</div>
+      <img class="footer-icon" [src]="'./assets/Arrows_long_right.png' | resolveAsset">
+      <div class="footer-text">Destination</div>
+    </div>
+  </div>
+</div>

@@ -34,6 +34,12 @@ import { SharedModule } from '../shared/shared.module';
 import { StudentPickerComponent } from '../student-picker/student-picker.component';
 import { MainRoutingModule } from './main-routing.module';
 import { NavbarDataService } from './navbar-data.service';
+import { DateTimeComponent } from '../hallpass-form/locations-group-container/date-time/date-time.component';
+import { FromWhereComponent } from '../hallpass-form/locations-group-container/from-where/from-where.component';
+import { ToWhereComponent } from '../hallpass-form/locations-group-container/to-where/to-where.component';
+import { LocationsGroupContainerComponent } from '../hallpass-form/locations-group-container/locations-group-container.component';
+import {ToCategoryComponent} from '../hallpass-form/locations-group-container/to-category/to-category.component';
+import {RestrictedTargetComponent} from '../hallpass-form/locations-group-container/restricted-target/restricted-target.component';
 
 @NgModule({
   imports: [
@@ -71,7 +77,13 @@ import { NavbarDataService } from './navbar-data.service';
     LocationCellComponent,
     LocationPickerComponent,
     ContainerCardComponent,
-    MainPageComponent
+    MainPageComponent,
+    DateTimeComponent,
+    FromWhereComponent,
+    ToWhereComponent,
+    ToCategoryComponent,
+    RestrictedTargetComponent,
+    LocationsGroupContainerComponent
   ],
   entryComponents: [
     HallpassFormComponent,
