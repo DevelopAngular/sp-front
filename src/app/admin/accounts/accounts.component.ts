@@ -35,7 +35,11 @@ export class AccountsComponent implements OnInit {
     )
     .subscribe((u_list: any) => {
       console.log(u_list, Object.values(u_list));
-      u_list.total = Object.values(u_list).reduce((a: number, b: number) => a + b);
+      if (u_list.total_count !== undefined) {
+        u_list.total = u_list.total_count;
+      } else {
+        u_list.total = Object.values(u_list).reduce((a: number, b: number) => a + b);
+      }
       console.log(u_list);
       this.accounts$.next(u_list);
     });
