@@ -3,7 +3,7 @@
   <mat-chip-list #chipList>
       <mat-chip
         *ngFor="let student of selectedStudents"
-        [removable]="true"
+        [removable]="!disabled"
         (removed)="removeStudent(student)">
         {{student.display_name + ' (' + student.primary_email.split('@', 1)[0] + ')'}}
         <mat-icon matChipRemove>cancel</mat-icon>
@@ -12,6 +12,7 @@
         placeholder="Search students"
         #studentInput
         autofocus
+        [disabled]="disabled"
         [matChipInputFor]="chipList"
         [matChipInputAddOnBlur]="true"
         [value]="inputValue"

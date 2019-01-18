@@ -1,5 +1,7 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {User} from '../../models/User';
+import {StudentList} from '../../models/StudentList';
+import {Navigation} from '../groups-container/groups-container.component';
 
 @Component({
   selector: 'app-groups-step1',
@@ -8,21 +10,58 @@ import {User} from '../../models/User';
 })
 export class GroupsStep1Component implements OnInit {
 
-  @Output('studentsSelected')
-  stagePassedEvent: EventEmitter<{ nextStep: number, data: User[]}> = new EventEmitter<{ nextStep: number, data: User[]}>();
+  @Input() groups: StudentList[] = []
+
+  public selectedGroup: StudentList;
+
+  @Output('stateChangeEvent')
+  stateChangeEvent: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
   public selectedStudents: User[] = [];
 
-  constructor() { }
+  constructor(
+  ) { }
 
   ngOnInit() {
+
   }
 
   nextStep() {
-  this.stagePassedEvent.emit({
-    nextStep: 2,
-    data: this.selectedStudents
-  });
+
   }
 
+  createGroup() {
+    this.stateChangeEvent.emit({
+      state: 2,
+      fromState: 1,
+      data: this.selectedStudents
+    });
+  }
+
+
+  selectGroup(group) {
+    if ( !this.selectedGroup || (this.selectedGroup && (this.selectedGroup.id !== group.id)) ) {
+      this.selectedGroup = group;
+      this.selectedStudents = this.selectedGroup.users;
+    } else {
+      this.selectedGroup = null;
+      this.selectedStudents = [];
+
+    }
+  }
+
+  editGroup(group) {
+    this.stateChangeEvent.emit({
+      state: 3,
+      fromState: 1,
+      data: group
+    });
+  }
+
+  back() {
+    this.selectedGroup = null;
+    this.selectedStudents = [];
+  }
 }
+
+

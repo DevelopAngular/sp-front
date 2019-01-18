@@ -1,7 +1,7 @@
 ﻿import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogModule, MatProgressSpinnerModule, MatSliderModule, MatSlideToggleModule } from '@angular/material';
+import {MatDialogModule, MatListModule, MatProgressSpinnerModule, MatSliderModule, MatSlideToggleModule} from '@angular/material';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -137,6 +137,7 @@ const appRoutes: Routes = [
     MatCardModule,
     MatDialogModule,
     MatSlideToggleModule,
+    MatListModule,
 
     RouterModule.forRoot(
       appRoutes, {enableTracing: false}

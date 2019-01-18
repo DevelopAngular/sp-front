@@ -8,6 +8,7 @@ import {
   MatSliderModule,
   MatSlideToggleModule,
   MatChipsModule, MatCardModule, MatCheckboxModule, MatTableModule, MatProgressSpinnerModule, MatDividerModule, MatTooltipModule,
+  MatListModule,
 } from '@angular/material';
 
 
@@ -52,6 +53,7 @@ import {AppInputComponent} from '../app-input/app-input.component';
     FormsModule,
     ReactiveFormsModule,
       MatTooltipModule,
+      MatListModule,
       MatCheckboxModule,
       MatTableModule,
       MatProgressSpinnerModule,
