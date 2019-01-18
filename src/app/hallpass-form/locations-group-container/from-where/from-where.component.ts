@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {LocationService} from '../location.service';
 
 @Component({
   selector: 'app-from-where',
@@ -7,9 +8,21 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FromWhereComponent implements OnInit {
 
-  constructor() { }
+  @Input() date;
+
+  @Output() selectedLocation: EventEmitter<any> = new EventEmitter<any>();
+
+  constructor(private locService: LocationService) { }
 
   ngOnInit() {
+  }
+
+  locationChosen(location) {
+    this.selectedLocation.emit(location);
+  }
+
+  back() {
+    this.locService.changeLocation$.next('date');
   }
 
 }

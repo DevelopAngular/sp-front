@@ -7,21 +7,58 @@
         </div>
     </div>
     <div class="date-content">
-      <div class="time-picker">
-          <app-date-time-picker [min]="startTime" [_selectedMoment]="requestTime" (onUpdate)="requestTime=$event"></app-date-time-picker>
+        <div class="decline-content" *ngIf="isStaff">
+            <div class="toggle-text">
+              <div class="toggle-title">Declinable</div>
+              <div class="info-text-1">
+                <span>{{'The student ' + (declinable.value ? 'has the option to ' : ' cannot ') + 'decline the pass.'}}</span><br/>
+                <span *ngIf="declinable.value">You must also select from where the student will be traveling.</span>
+                <span *ngIf="!declinable.value">You do not need to know the location from where the student will be travelling.</span>
+              </div>
+            </div>
+                <div class="toggle">
+                  <div class="onoffswitch">
+                    <input type="checkbox" name="onoffswitch" [formControl]="declinable" class="onoffswitch-checkbox" id="myonoffswitch" checked>
+                    <label class="onoffswitch-label" for="myonoffswitch"></label>
+                  </div>
+                </div>
+        </div>
+        <mat-divider *ngIf="isStaff"></mat-divider>
+      <div class="teacher" *ngIf="isStaff">
+          <div class="time-picker">
+              <app-date-time-picker [min]="startTime" [_selectedMoment]="requestTime" (onUpdate)="requestTime=$event"></app-date-time-picker>
+          </div>
+          <div class="next-button">
+              <app-gradient-button
+                      [gradient]="'#03CF31,#00B476'"
+                      [cursor]="'pointer'"
+                      [hoverColor]="'#00B476'"
+                      [minWidth]="'104px'"
+                      [minHeight]="'35px'"
+                      [fontSize]="'14px'"
+                      (buttonClick)="next()"
+                      [style.width]="'90px'"
+                      [style.margin]="'15px auto'"
+              >Next</app-gradient-button>
+          </div>
       </div>
-      <div class="next-button">
-          <app-gradient-button
-                  [gradient]="'#03CF31,#00B476'"
-                  [cursor]="'pointer'"
-                  [hoverColor]="'#00B476'"
-                  [minWidth]="'104px'"
-                  [minHeight]="'35px'"
-                  [fontSize]="'14px'"
-                  (buttonClick)="next()"
-                  [style.width]="'90px'"
-                  [style.margin]="'15px auto'"
-          >Next</app-gradient-button>
+      <div class="student" *ngIf="!isStaff">
+          <div class="time-picker">
+              <app-date-time-picker [min]="startTime" [_selectedMoment]="requestTime" (onUpdate)="requestTime=$event"></app-date-time-picker>
+          </div>
+          <div class="next-button">
+              <app-gradient-button
+                      [gradient]="'#03CF31,#00B476'"
+                      [cursor]="'pointer'"
+                      [hoverColor]="'#00B476'"
+                      [minWidth]="'104px'"
+                      [minHeight]="'35px'"
+                      [fontSize]="'14px'"
+                      (buttonClick)="next()"
+                      [style.width]="'90px'"
+                      [style.margin]="'15px auto'"
+              >Next</app-gradient-button>
+          </div>
       </div>
     </div>
 </div>

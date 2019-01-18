@@ -1,4 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, NgZone, OnInit, Output} from '@angular/core';
+import {Observable, Subject} from 'rxjs';
+import { User } from '../../models/User';
+import { DataService } from '../../data-service';
+import { LocationService } from './location.service';
 
 @Component({
   selector: 'app-locations-group-container',
@@ -7,9 +11,47 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LocationsGroupContainerComponent implements OnInit {
 
-  constructor() { }
+  @Output() response: EventEmitter<any> = new EventEmitter<any>();
+
+  user$: Observable<User>;
+  isStaff: boolean;
+  currentState: string;
+
+  data: any = {};
+
+  constructor(private dataService: DataService, private locationService: LocationService) { }
 
   ngOnInit() {
+    this.locationService.changeLocation$.subscribe(state => {
+      this.currentState = state;
+    });
+    this.user$ = this.dataService.currentUser;
+    this.user$.subscribe((user: User) => this.isStaff = user.isTeacher() || user.isAdmin());
+  }
+
+  selectedDate({date, declinable}) {
+    this.data.date = date;
+    this.data.declinable = declinable;
+    this.locationService.changeLocation$.next('from');
+  }
+
+  selectedLocation(location) {
+    this.data.location = location;
+    this.locationService.changeLocation$.next('toWhere');
+  }
+
+  selectedPinnable(pinnable) {
+    if (pinnable.category) {
+      this.locationService.changeLocation$.next('category');
+    } else {
+      this.response.emit(this.data);
+    }
+    this.data.pinnable = pinnable;
+
+  }
+
+  fromCategory(location) {
+    this.data.locFromCategory = location;
   }
 
 }

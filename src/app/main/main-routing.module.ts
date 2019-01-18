@@ -5,6 +5,7 @@ import { MainPageComponent } from '../main-page/main-page.component';
 import { MyRoomComponent } from '../my-room/my-room.component';
 import { PassesComponent } from '../passes/passes.component';
 import { SettingsComponent } from '../settings/settings.component';
+import {CurrentUserResolver} from '../current-user.resolver';
 
 const routes: Routes = [
   {

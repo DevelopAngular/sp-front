@@ -1,6 +1,6 @@
 <div class="from-wrapper">
   <div class="from-header">
-    <img class="back-button" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
+    <img class="back-button" [src]="'./assets/Back Button (Grey).png' | resolveAsset" (click)="back()">
     <div class="from-header-text">
       <img class="search-icon" [src]="'./assets/Search (Grey).png' | resolveAsset">
       <div class="text">From where?</div>
@@ -18,7 +18,9 @@
          [noRightStar]="true"
          [showFavorites]="true"
          [type]="'location'"
-         [placeholder]="'Search rooms'">
+         [placeholder]="'Search rooms'"
+         (onSelect)="locationChosen($event)"
+      >
       </app-location-table>
     </div>
   </div>

@@ -450,6 +450,10 @@ export class HallpassFormComponent implements OnInit {
     }
   }
 
+  openPassCard(data) {
+    console.log('OPENNN ===>>>', data);
+  }
+
   newRequest(message: string) {
     let body = {
       'destination': this.toLocation.id,

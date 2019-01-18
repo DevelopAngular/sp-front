@@ -1,4 +1,4 @@
-.rest-tar-wrapper {
+.rest-mes-wrapper {
   width: 395px;
   height: 474px;
   display: flex;
@@ -6,7 +6,7 @@
   align-items: center;
   position: relative;
 
-  .rest-tar-header {
+  .rest-mes-header {
     width: 100%;
     height: 64px;
     display: flex;
@@ -23,10 +23,10 @@
       cursor: pointer;
     }
 
-    .rest-tar-header-text {
+    .rest-mes-header-text {
       display: flex;
       align-items: center;
-      margin-right: 90px;
+      margin-right: 160px;
 
       .search-icon{
         width: 25px;
@@ -46,7 +46,45 @@
       }
     }
   }
-  .rest-tar-footer {
+
+  .content-wrapper {
+    display: flex;
+    align-items: center;
+
+    .rest-mes-content {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      margin-top: 25px;
+
+      .message-box{
+        width: 309px;
+        height: 70px;
+        border: 1px solid transparent;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
+        font-family: 'Helvetica Neue', sans-serif;
+        font-size: 16px;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: 1.08;
+        letter-spacing: 0.3px;
+        background: transparent;
+        &:focus {
+          transition: border .3s ease;
+        }
+      }
+
+      .buttons {
+
+      }
+    }
+  }
+
+  .rest-mes-footer {
     width: 100%;
     display: flex;
     justify-content: center;
@@ -56,7 +94,7 @@
     position: absolute;
     bottom: 0;
 
-    .footer-rest-tar-text {
+    .footer-rest-mes-text {
       display: flex;
       align-items: center;
 

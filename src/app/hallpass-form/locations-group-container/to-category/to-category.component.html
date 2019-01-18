@@ -1,9 +1,9 @@
 <div class="category-wrapper">
-  <div class="category-header">
-    <img class="back-button" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
+  <div class="category-header" [style.background-image]="headerGradient">
+    <img class="back-button" [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
     <div class="category-header-text">
-      <img class="search-icon" [src]="'./assets/Search (Grey).png' | resolveAsset">
-      <div class="text">Classrooms</div>
+      <img class="search-icon" [src]="pinnable.icon | resolveAsset">
+      <div class="text">{{pinnable.category}}</div>
     </div>
   </div>
 
@@ -13,9 +13,9 @@
         (onSelect)="locationChosen($event)"
         [forStaff]="true"
         [hasLocks]="true"
-        [category]="'Classrooms'"
+        [category]="pinnable.category"
         [type]="'location'"
-        [placeholder]="'Search ' + 'Classrooms'" >
+        [placeholder]="'Search ' + pinnable.category" >
     </app-location-table>
   </div>
 
