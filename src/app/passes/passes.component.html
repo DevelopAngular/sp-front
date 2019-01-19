@@ -52,7 +52,7 @@
         <!--<div *ngIf="">PPC</div>-->
         <!-- No pass requests -->
 
-        <div *ngIf="inboxHasItems | async" class="text">No requests sent or received</div>
+        <div *ngIf="!(inboxHasItems | async)" class="text">No requests sent or received</div>
         <!--<pre>{{!(inboxHasItems | async) | json}}</pre>-->
       </div>
     </app-display-card>

@@ -163,7 +163,7 @@ export class PassesComponent implements OnInit {
   isActivePass$ = this.dataService.isActivePass$;
   isActiveRequest$ = this.dataService.isActiveRequest$;
 
-  inboxHasItems: Subject<boolean> = new Subject<boolean>();
+  inboxHasItems: Observable<boolean> = of(false);
 
   user: User;
   isStaff = false;
@@ -195,24 +195,6 @@ export class PassesComponent implements OnInit {
             excludedRequests, this.dataService));
           this.sentRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser));
         }
-
-        zip(
-          this.receivedRequests.length$.asObservable(),
-          this.sentRequests.length$.asObservable()
-        ).pipe(
-          skip(2)
-        ).subscribe((val) => {
-          this.inboxHasItems.next(!val.reduce((a, b) => a + b));
-          // console.log('==============================================>', val);
-        });
-
-        // this.inboxHasItems = combineLatest(
-        //   this.receivedRequests.length$.startWith(0),
-        //   this.sentRequests.length$.startWith(0),
-        //   (l1, l2) => l1 > 0 || l2 > 0
-        // );
-        //   this.receivedRequests.length$
-
 
       });
 
@@ -259,6 +241,13 @@ export class PassesComponent implements OnInit {
           this.isStaff = user.roles.includes('_profile_teacher') || user.roles.includes('_profile_admin');
         });
       });
+      
+      this.inboxHasItems = combineLatest(
+        this.receivedRequests.length$.startWith(0),
+        this.sentRequests.length$.startWith(0),
+        (l1, l2) => (l1 + l2) > 0
+      );
+
   }
 
   showForm(forLater: boolean): void {
