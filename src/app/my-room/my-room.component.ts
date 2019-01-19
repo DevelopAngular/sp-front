@@ -1,6 +1,6 @@
 import { Component, ElementRef, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { combineLatest, merge } from 'rxjs';
+import { combineLatest, merge, of } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
@@ -90,7 +90,7 @@ export class MyRoomComponent implements OnInit {
   searchDate$ = new BehaviorSubject<Date>(null);
   selectedLocation$ = new ReplaySubject<Location>(1);
 
-  hasPasses = new BehaviorSubject(false);
+  hasPasses: Observable<boolean> = of(false);
 
   constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService,
               public dialog: MatDialog, private liveDataService: LiveDataService) {
@@ -107,12 +107,12 @@ export class MyRoomComponent implements OnInit {
       this.searchDate$, this.searchQuery$));
 
     // Use WrappedProvider's length$ to keep the hasPasses subject up to date.
-    combineLatest(
+    this.hasPasses = combineLatest(
       this.activePasses.length$,
       this.originPasses.length$,
       this.destinationPasses.length$,
-      (l1, l2, l3) => l1 > 0 || l2 > 0 || l3 > 0
-    ).subscribe(this.hasPasses);
+      (l1, l2, l3) => l1 + l2 + l3 > 0
+    );
   }
 
   setSearchDate(date: Date) {
@@ -168,6 +168,7 @@ export class MyRoomComponent implements OnInit {
   }
 
   onSearch(search: string) {
+    this.inputValue = search;
     this.searchQuery$.next(search);
   }
 

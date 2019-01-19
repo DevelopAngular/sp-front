@@ -28,6 +28,11 @@
         </app-display-card>
       </ng-template>
     </div>
+    <div *ngIf="!(passesHaveItems | async)" class="empty-container">
+      <img class="empty-passes-svg" [src]="'./assets/emptyStates/emptyPasses.svg' | resolveAsset" alt="empty-svg">
+      <div class="big-text" [style.margin]="'10px 0'">Jump Right In</div>
+      <div class="text">The hallway will never be the same</div>
+    </div>
     <div class="active-passes">
       <app-pass-collection *ngIf="isStaff" [isActive]="true" [forStaff]="isStaff" [style.width]="'400px'" [passProvider]="activePasses" [title]="'Active Passes'" [icon]="'./assets/Hallway (Blue).png'" [columns]="3"></app-pass-collection>
     </div>
@@ -38,7 +43,7 @@
       <app-pass-collection [maxHeight]="'100%'" [emptyMessage]="'No Passes'" [fromPast]="true" [forStaff]="isStaff" [style.width]="'400px'" [passProvider]="pastPasses" [title]="'Expired Passes'" [icon]="'./assets/Expired Passes (Blue).png'" [columns]="3"></app-pass-collection>
     </div>
   </div>
-  <div class="main-page-right" *ngIf="dataService.inboxState | async">
+  <div class="main-page-right" *ngIf="showInbox">
     <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'22pt'" [icon]="(isStaff?'./assets/Inbox Full (Blue).png':'')" [inbox]="true">
       <div class="inbox-content">
         <div>
@@ -52,7 +57,11 @@
         <!--<div *ngIf="">PPC</div>-->
         <!-- No pass requests -->
 
-        <div *ngIf="!(inboxHasItems | async)" class="text">No requests sent or received</div>
+        <div *ngIf="!(inboxHasItems | async)" class="empty-container">
+          <img class="empty-inbox-svg" [src]="'./assets/emptyStates/emptyInbox.svg' | resolveAsset" alt="empty-svg">
+          <div class="big-text" [style.margin]="'10px 0'">All Caught Up</div>
+          <div class="text">No pass requests sent or received</div>
+        </div>
         <!--<pre>{{!(inboxHasItems | async) | json}}</pre>-->
       </div>
     </app-display-card>

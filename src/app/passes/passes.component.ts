@@ -151,9 +151,9 @@ export class PassesComponent implements OnInit {
   testRequests: PassLikeProvider;
   testInvitations: PassLikeProvider;
 
-  futurePasses: PassLikeProvider;
-  activePasses: PassLikeProvider;
-  pastPasses: PassLikeProvider;
+  futurePasses: WrappedProvider;
+  activePasses: WrappedProvider;
+  pastPasses: WrappedProvider;
 
   sentRequests: WrappedProvider;
   receivedRequests: WrappedProvider;
@@ -164,9 +164,20 @@ export class PassesComponent implements OnInit {
   isActiveRequest$ = this.dataService.isActiveRequest$;
 
   inboxHasItems: Observable<boolean> = of(false);
+  passesHaveItems: Observable<boolean> = of(false);
 
   user: User;
   isStaff = false;
+
+  get showInbox(){
+    if(!this.isStaff){
+      return this.dataService.inboxState;
+    } else if(!this.inboxHasItems && !this.passesHaveItems){
+      return false;
+    } else{
+      return true;
+    }
+  }
 
   constructor(public dataService: DataService, public dialog: MatDialog, private _zone: NgZone,
               private loadingService: LoadingService, private liveDataService: LiveDataService) {
@@ -177,9 +188,9 @@ export class PassesComponent implements OnInit {
 
     const excludedPasses = this.currentPass$.map(p => p !== null ? [p] : []);
 
-    this.futurePasses = new FuturePassProvider(this.liveDataService, this.dataService.currentUser);
-    this.activePasses = new ActivePassProvider(this.liveDataService, this.dataService.currentUser, excludedPasses);
-    this.pastPasses = new PastPassProvider(this.liveDataService, this.dataService.currentUser);
+    this.futurePasses = new WrappedProvider(new FuturePassProvider(this.liveDataService, this.dataService.currentUser));
+    this.activePasses = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.dataService.currentUser, excludedPasses));
+    this.pastPasses = new WrappedProvider(new PastPassProvider(this.liveDataService, this.dataService.currentUser));
 
     this.dataService.currentUser
       .map(user => user.roles.includes('hallpass_student')) // TODO filter events to only changes.
@@ -246,6 +257,13 @@ export class PassesComponent implements OnInit {
         this.receivedRequests.length$.startWith(0),
         this.sentRequests.length$.startWith(0),
         (l1, l2) => (l1 + l2) > 0
+      );
+
+      this.passesHaveItems = combineLatest(
+        this.activePasses.length$.startWith(0),
+        this.futurePasses.length$.startWith(0),
+        this.pastPasses.length$.startWith(0),
+        (l1, l2, l3) => (l1 + l2 + l3) > 0
       );
 
   }

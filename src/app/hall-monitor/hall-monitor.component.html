@@ -21,7 +21,6 @@
     </div>
     <div class="hall-monitor-bottom">
       <app-pass-collection
-        [emptyMessage]="'No Active Passes'"
         [hasSort]="true"
         [isActive]="true"
         [forStaff]="isStaff"
@@ -33,8 +32,19 @@
         [columns]="4"
         (reportFromPassCard)="onReportFromPassCard($event)"
       >
-
       </app-pass-collection>
+      <div *ngIf="!(hasPasses | async)">
+        <div class="empty-container" *ngIf="inputValue != ''">
+          <img class="empty-svg" [src]="'./assets/emptyStates/emptyHallSearch.svg' | resolveAsset" alt="empty-svg">
+          <div class="big-text" [style.margin]="'10px 0'">Nothing to See Here</div>
+          <div class="small-text">Search again or click the report button</div>
+        </div>
+        <div class="empty-container" *ngIf="inputValue==''">
+          <img class="empty-svg" [src]="'./assets/emptyStates/emptyHall.svg' | resolveAsset" alt="empty-svg">
+          <div class="big-text" [style.margin]="'10px 0'">Take the Day Off</div>
+          <div class="small-text">There aren't any active passes now</div>
+        </div>
+      </div>
     </div>
     <div class="footer-message" *ngIf="isActiveMessage">
       <div class="successfully-message">

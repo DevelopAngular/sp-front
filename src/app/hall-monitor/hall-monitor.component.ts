@@ -1,13 +1,13 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { merge } from 'rxjs';
+import { merge, of, combineLatest } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { DataService } from '../data-service';
 import { mergeObject } from '../live-data/helpers';
 import { LiveDataService } from '../live-data/live-data.service';
 import { LoadingService } from '../loading.service';
-import { PassLikeProvider } from '../models/providers';
+import { PassLikeProvider, WrappedProvider } from '../models/providers';
 import { User } from '../models/User';
 import { ReportFormComponent } from '../report-form/report-form.component';
 import {Report} from '../models/Report';
@@ -40,7 +40,7 @@ export class ActivePassProvider implements PassLikeProvider {
 })
 export class HallMonitorComponent implements OnInit {
 
-  activePassProvider: PassLikeProvider;
+  activePassProvider: WrappedProvider;
 
   inputValue = '';
 
@@ -52,9 +52,11 @@ export class HallMonitorComponent implements OnInit {
 
   searchQuery$ = new BehaviorSubject('');
 
+  hasPasses: Observable<boolean> = of(false);
+
   constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService,
               public dialog: MatDialog, private liveDataService: LiveDataService) {
-    this.activePassProvider = new ActivePassProvider(this.liveDataService, this.searchQuery$);
+    this.activePassProvider = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.searchQuery$));
     // this.activePassProvider = new BasicPassLikeProvider(testPasses);
   }
 
@@ -72,6 +74,11 @@ export class HallMonitorComponent implements OnInit {
           this.canView = user.roles.includes('view_traveling_users');
         });
       });
+
+      this.hasPasses = combineLatest(
+        this.activePassProvider.length$,
+        (l1) => l1 > 0
+      );
   }
 
   openReportForm() {
@@ -104,7 +111,7 @@ export class HallMonitorComponent implements OnInit {
   }
 
   onSearch(search: string) {
-    console.log('Here it emits!');
+    this.inputValue = search;
     this.searchQuery$.next(search);
   }
 
