@@ -1,0 +1,70 @@
+
+.from-footer {
+  width: 395px;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 7px 0px 8px;
+  opacity: 0.7;
+  display: flex;
+  align-items: center;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  .footer-from-teacher-text {
+    width: 100%;
+  }
+
+  .default-footer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+
+    .default-text {
+      margin-left: 120px;
+    }
+  }
+}
+
+.arrow-icon {
+  width: 30px;
+  height: 15px;
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+.center {
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  .footer-text {
+    color: #1F195E;
+  }
+
+  .center-text {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 7px;
+    margin-left: 48px;
+  }
+
+}
+
+.footer-icon {
+  width: 48px;
+  height: 10px;
+  margin: 0 15px 0 15px;
+}
+
+.new-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.top {
+  color: #1F195E;;
+}

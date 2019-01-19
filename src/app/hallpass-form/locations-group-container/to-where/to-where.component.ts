@@ -16,6 +16,10 @@ export class ToWhereComponent implements OnInit {
 
   @Input() isStaff: boolean;
 
+  @Input() date;
+
+  @Input() students;
+
   @Output() selectedPinnable: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(private http: HttpService, private locService: LocationService) { }

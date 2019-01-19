@@ -1,9 +1,10 @@
-import {Component, EventEmitter, NgZone, OnInit, Output} from '@angular/core';
-import {Observable, Subject} from 'rxjs';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Observable } from 'rxjs';
 import { User } from '../../models/User';
 import { DataService } from '../../data-service';
 import { LocationService } from './location.service';
-import {Pinnable} from '../../models/Pinnable';
+import { Pinnable } from '../../models/Pinnable';
+import { Util } from '../../../Util';
 
 @Component({
   selector: 'app-locations-group-container',
@@ -23,6 +24,14 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   constructor(private dataService: DataService, private locationService: LocationService) { }
 
+  get showDate() {
+      if (!this.data.date) {
+          return false;
+      } else {
+          return Util.formatDateTime(new Date(this.data.date));
+      }
+  }
+
   ngOnInit() {
     this.locationService.changeLocation$.subscribe(state => {
       this.currentState = state;
@@ -38,23 +47,37 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.locationService.changeLocation$.next('from');
   }
 
-  selectedLocation(location) {
-    this.data.location = location;
+  fromWhere(location) {
+    this.data.fromLocation = location;
     this.locationService.changeLocation$.next('toWhere');
   }
 
-  selectedPinnable(pinnable) {
-    if (pinnable.category) {
-      this.locationService.changeLocation$.next('category');
+  toWhere(pinnable) {
+    this.data.toLocation = pinnable;
+      if (pinnable.category) {
+        this.locationService.changeLocation$.next('category');
     } else {
-      this.response.emit(this.data);
+        this.response.emit(this.data);
     }
-    this.data.pinnable = pinnable;
 
   }
 
   fromCategory(location) {
     this.data.locFromCategory = location;
+      if (location.restricted && !this.isStaff) {
+        this.locationService.changeLocation$.next('restrictedTarget');
+    } else {
+       this.response.emit(this.data);
+    }
+  }
+
+  requestTarget(teacher) {
+    this.data.requestTarget = teacher;
+    this.locationService.changeLocation$.next('message');
+  }
+
+  resultMessage(message) {
+    this.data.message = message;
     this.response.emit(this.data);
   }
 

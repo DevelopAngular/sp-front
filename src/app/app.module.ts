@@ -37,10 +37,6 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { SelectProfileComponent } from './select-profile/select-profile.component';
 import { ErrorToastComponent } from './error-toast/error-toast.component';
 import { SchoolToggleBarComponent } from './school-toggle-bar/school-toggle-bar.component';
-import { GroupsContainerComponent } from './groups/groups-container/groups-container.component';
-import { GroupsStep1Component } from './groups/groups-step1/groups-step1.component';
-import { GroupsStep2Component } from './groups/groups-step2/groups-step2.component';
-import { GroupsStep3Component } from './groups/groups-step3/groups-step3.component';
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroComponent},
@@ -101,7 +97,7 @@ const appRoutes: Routes = [
     PdfComponent,
     SelectProfileComponent,
     ErrorToastComponent,
-    SchoolToggleBarComponent ,
+    SchoolToggleBarComponent,
 
   ],
   entryComponents: [

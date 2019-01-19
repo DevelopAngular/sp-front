@@ -46,19 +46,21 @@
       }
     }
   }
-  .rest-tar-footer {
+  .target-footer {
     width: 100%;
     display: flex;
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 7px 0px 8px;
     justify-content: center;
     align-items: center;
-    height: 43px;
     z-index: 100;
     position: absolute;
     bottom: 0;
 
-    .footer-rest-tar-text {
+    .footer-from-text {
       display: flex;
       align-items: center;
+      flex-direction: column;
 
       .footer-text {
         color: #1F195E;
@@ -67,8 +69,14 @@
 
     .footer-icon {
       width: 48px;
-      height: 14px;
+      height: 10px;
       margin: 0 15px 0 15px;
     }
+  }
+
+  .center-text {
+    display: flex;
+    align-items: center;
+    padding: 7px;
   }
 }

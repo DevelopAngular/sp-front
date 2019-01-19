@@ -1,6 +1,6 @@
 <div class="rest-tar-wrapper">
   <div class="rest-tar-header" [style.background-image]="headerGradient">
-    <img class="back-button" [src]="'./assets/Back Button (White).png' | resolveAsset">
+    <img class="back-button" [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
     <div class="rest-tar-header-text">
       <img class="search-icon" [src]="'./assets/Lock (White).png' | resolveAsset">
       <div class="text">Send Pass Request To?</div>
@@ -13,15 +13,19 @@
        (onSelect)="updateTarget($event)"
        [type]="'teachers'"
        [placeholder]="'Search teachers'"
-       [staticChoices]="['Patchell']">
+       [staticChoices]="toLocation.teachers">
     </app-location-table>
   </div>
 
-  <div class="rest-tar-footer">
-    <div class="footer-rest-tar-text">
-      <div class="footer-text" [style.font-weight]="'bold'">Origin</div>
-      <img class="footer-icon" [src]="'./assets/Arrows_long_right.png' | resolveAsset">
-      <div class="footer-text">Destination</div>
+  <div class="target-footer" [style.height]="date ? '65px' : '43px'">
+    <div class="footer-from-text">
+      <div class="date" [style.color]="'#1F195E'" *ngIf="date">{{ date }}</div>
+      <div class="center-text">
+        <div class="footer-text">{{ fromLocation.title }}</div>
+        <img class="footer-icon" [src]="'./assets/Arrows_long_right.png' | resolveAsset">
+        <div class="footer-text">{{ toLocation.title }}</div>
+      </div>
     </div>
   </div>
+
 </div>

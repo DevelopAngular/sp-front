@@ -11,33 +11,27 @@
     <app-location-table
         class="center"
         (onSelect)="locationChosen($event)"
-        [forStaff]="true"
+        [forStaff]="isStaff"
         [hasLocks]="true"
         [horizontalTable]="false"
         [category]="pinnable.category"
+        [invalidLocation]="(fromLocation ? fromLocation.id : '')"
         [type]="'location'"
         [placeholder]="'Search ' + pinnable.category" >
     </app-location-table>
   </div>
 
-  <div class="category-footer">
-    <div class="footer-category-text">
-      <div class="footer-text" [style.font-weight]="'bold'">Origin</div>
-      <img class="footer-icon" [src]="'./assets/Arrows_long_right.png' | resolveAsset">
-      <div class="footer-text">Destination</div>
-    </div>
-  </div>
-
-  <div class="category-footer" *ngIf="isStaff">
-    <div class="footer-category-text">
-      <div class="top" *ngIf="">
-
-      </div>
-      <div class="center">
-        <div class="footer-text" [style.font-weight]="'bold'">Origin</div>
+  <div class="category-footer" [style.height]="date ? '65px' : '43px'" *ngIf="!isStaff">
+    <div class="footer-from-text">
+      <div class="date" [style.color]="'#1F195E'" *ngIf="date">{{ date }}</div>
+      <div class="center-text">
+        <div class="footer-text">{{ fromLocation.title }}</div>
         <img class="footer-icon" [src]="'./assets/Arrows_long_right.png' | resolveAsset">
-        <div class="footer-text">Destination</div>
+        <div class="footer-text" [style.font-weight]="'bold'">Destination</div>
       </div>
     </div>
   </div>
+
+  <app-teacher-footer [fromLocation]="fromLocation" *ngIf="isStaff" [date]="date" [students]="students"></app-teacher-footer>
+
 </div>

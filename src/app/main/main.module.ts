@@ -47,6 +47,7 @@ import {GroupsContainerComponent} from '../groups/groups-container/groups-contai
 import {GroupsStep1Component} from '../groups/groups-step1/groups-step1.component';
 import {GroupsStep2Component} from '../groups/groups-step2/groups-step2.component';
 import {GroupsStep3Component} from '../groups/groups-step3/groups-step3.component';
+import {TeacherFooterComponent} from '../hallpass-form/locations-group-container/teacher-footer/teacher-footer.component';
 
 @NgModule({
   imports: [
@@ -94,6 +95,7 @@ import {GroupsStep3Component} from '../groups/groups-step3/groups-step3.componen
     ToCategoryComponent,
     RestrictedTargetComponent,
     RestrictedMessageComponent,
+    TeacherFooterComponent,
     LocationsGroupContainerComponent,
     GroupsContainerComponent ,
     GroupsStep1Component,

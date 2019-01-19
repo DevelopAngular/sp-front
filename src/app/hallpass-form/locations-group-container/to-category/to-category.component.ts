@@ -12,6 +12,12 @@ export class ToCategoryComponent implements OnInit {
 
   @Input() isStaff: boolean;
 
+  @Input() date;
+
+  @Input() students;
+
+  @Input() fromLocation;
+
   @Output() locFromCategory: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(private locService: LocationService) { }

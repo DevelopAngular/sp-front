@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Pinnable} from '../../../models/Pinnable';
+import {LocationService} from '../location.service';
 
 @Component({
   selector: 'app-restricted-target',
@@ -7,18 +9,32 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RestrictedTargetComponent implements OnInit {
 
-  constructor() { }
+  @Input() pinnable: Pinnable;
+
+  @Input() date;
+
+  @Input() toLocation;
+
+  @Input() fromLocation;
+
+  @Output() requestTarget: EventEmitter<any> = new EventEmitter<any>();
+
+  constructor(private locService: LocationService) { }
 
   get headerGradient() {
-    const colors = '#03CF31,#00B476';
+    const colors = this.pinnable.gradient_color;
     return 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
 
   ngOnInit() {
   }
 
-  updateTarget(event) {
+  back() {
+    this.locService.changeLocation$.next('category');
+  }
 
+  updateTarget(target) {
+    this.requestTarget.emit(target);
   }
 
 }

@@ -1,6 +1,6 @@
 <div class="rest-mes-wrapper">
   <div class="rest-mes-header" [style.background-image]="headerGradient">
-    <img class="back-button" [src]="'./assets/Back Button (White).png' | resolveAsset">
+    <img class="back-button" [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
     <div class="rest-mes-header-text">
       <img class="search-icon" [src]="'./assets/Message (White).png' | resolveAsset">
       <div class="text">Message</div>
@@ -10,7 +10,7 @@
     <div class="rest-mes-content">
      <textarea
              class="message-box"
-             [placeholder]="'Attach a message for '"
+             [placeholder]="'Attach a message for ' + (teacher ? teacher.last_name : '')"
              [formControl]="message"
              autofocus
      >
@@ -41,11 +41,14 @@
     </div>
   </div>
 
-  <div class="rest-mes-footer">
-    <div class="footer-rest-mes-text">
-      <div class="footer-text" [style.font-weight]="'bold'">Origin</div>
-      <img class="footer-icon" [src]="'./assets/Arrows_long_right.png' | resolveAsset">
-      <div class="footer-text">Destination</div>
+  <div class="message-footer" [style.height]="date ? '65px' : '43px'">
+    <div class="footer-from-text">
+      <div class="date" [style.color]="'#1F195E'" *ngIf="date">{{ date }}</div>
+      <div class="center-text">
+        <div class="footer-text">{{ fromLocation.title }}</div>
+        <img class="footer-icon" [src]="'./assets/Arrows_long_right.png' | resolveAsset">
+        <div class="footer-text">{{ toLocation.title }}</div>
+      </div>
     </div>
   </div>
 </div>

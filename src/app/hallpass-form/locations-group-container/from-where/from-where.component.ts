@@ -17,17 +17,7 @@ export class FromWhereComponent implements OnInit {
 
   @Output() selectedLocation: EventEmitter<any> = new EventEmitter<any>();
 
-  showFullFooter: boolean;
-
   constructor(private locService: LocationService) { }
-
-  get showDate() {
-    if (!this.date) {
-      return false;
-    } else {
-      return Util.formatDateTime(new Date(this.date));
-    }
-  }
 
   ngOnInit() {
   }

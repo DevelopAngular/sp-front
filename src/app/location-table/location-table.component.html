@@ -1,6 +1,6 @@
 <div class="wrapper" [style.flex-direction]="horizontalTable ? 'row' : 'column'" [style.width]="type==='location'? (!horizontalTable ? '395px': '430px') :'200px'">
   <input class="input" *ngIf="!horizontalTable" #searchBox [value]="search" [placeholder]="placeholder" (keyup)="onSearch(searchBox.value)">
-  <div *ngIf="type==='location' && showFavorites" class="table-left" [style.height]="heightLeftTable">
+  <div *ngIf="type==='location' && showFavorites" class="table-left" [style.height]="!starredChoices.length ? '100px' : heightLeftTable">
     <div class="fav-header" [style.margin-top]="horizontalTable ? '27px' : '10px'">
       Favorites
     </div>
