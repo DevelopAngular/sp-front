@@ -44,6 +44,9 @@ staging:
   stage: deploy_staging
   script:
     - apk add --no-cache bash tree nodejs yarn
+    - ls -l / ; pwd
+    - "[ -d /mem_fs ] && cp -r /notify-messenger/hall-pass-web /mem_fs/hall-pass-web && cd /mem_fs/hall-pass-web || echo 'Not using mem disk!'"
+    - pwd
     - source scripts/auto_devops.sh
     - scripts/build.sh
     - install_dependencies
@@ -70,6 +73,7 @@ production:
   script:
   - apk add --no-cache bash tree nodejs yarn
   - source scripts/auto_devops.sh
+  # no build command. This causes it to reuse the pre-built images from staging because IMAGE_TAG_SUFFIX is shared.
   - install_dependencies
   - download_chart
   - ensure_namespace
