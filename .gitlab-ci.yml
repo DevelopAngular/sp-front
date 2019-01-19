@@ -17,7 +17,7 @@ testing:
   script:
     - apk add --no-cache bash tree nodejs yarn
     - ls -l / ; pwd
-    - "[ -d /mem_fs ] && mv notify-messenger /mem_fs && cd /mem_fs/notify-messenger/hall-pass-web || echo 'Not using mem disk!'"
+    - "[ -d /mem_fs ] && mv /notify-messenger /mem_fs && cd /mem_fs/notify-messenger/hall-pass-web || echo 'Not using mem disk!'"
     - pwd
     - source scripts/auto_devops.sh
     - scripts/build.sh
