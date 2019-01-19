@@ -66,6 +66,7 @@ production:
   stage: deploy_prod
   script:
   - apk add --no-cache bash tree nodejs yarn
+  - ls -l /
   - source scripts/auto_devops.sh
   - install_dependencies
   - download_chart
