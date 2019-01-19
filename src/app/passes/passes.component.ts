@@ -195,12 +195,6 @@ export class PassesComponent implements OnInit {
           this.sentRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser));
         }
 
-        this.inboxHasItems = combineLatest(
-          this.receivedRequests.length$.startWith(0),
-          this.sentRequests.length$.startWith(0),
-          (l1, l2) => l1 > 0 || l2 > 0
-        );
-
       });
 
     this.dataService.currentUser.switchMap(user =>
@@ -246,6 +240,13 @@ export class PassesComponent implements OnInit {
           this.isStaff = user.roles.includes('_profile_teacher') || user.roles.includes('_profile_admin');
         });
       });
+      
+      this.inboxHasItems = combineLatest(
+        this.receivedRequests.length$.startWith(0),
+        this.sentRequests.length$.startWith(0),
+        (l1, l2) => (l1 + l2) > 0
+      );
+
   }
 
   showForm(forLater: boolean): void {
