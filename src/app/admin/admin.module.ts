@@ -62,8 +62,7 @@ import { SupportComponent } from './support/support.component';
     AccountsRoleComponent,
     CalendarComponent,
     SettingsComponent,
-    LinkGeneratedDialogComponent,
-    TestComponent
+    LinkGeneratedDialogComponent
   ],
   entryComponents: [AccountsDialogComponent, CalendarComponent, LinkGeneratedDialogComponent],
   providers: [
