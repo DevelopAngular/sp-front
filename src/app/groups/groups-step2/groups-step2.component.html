@@ -1,11 +1,25 @@
 <div class="step-1-container">
   <div class="header">
-    <img class="header_back-button" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
+    <div class="header_back-button" (click)="back()">
+      <!--<img class="header_back-button" [src]="'./assets/Back Button (Grey).png' | resolveAsset">-->
+      <span>Cancel</span>
+    </div>
     <div class="header_title">
       <!--<img class="header_icon" [src]="'./assets/Search (Blue).png' | resolveAsset">-->
       <div class="header_text">New Student Group</div>
+      <span  *ngIf="selectedStudents && selectedStudents.length ">{{selectedStudents.length}} students</span>
     </div>
-    <div></div>
+    <div class="header_save">
+      <div *ngIf="form.get('title').value && (selectedStudents && selectedStudents.length)">
+        <app-gradient-button
+          [width]="'105px'"
+          [minHeight]="'35px'"
+          [fontSize]="'14px'"
+          [cursor]="'pointer'"
+          (buttonClick)="nextStep()"
+        >Save</app-gradient-button>
+      </div>
+    </div>
   </div>
   <div class="content">
 
@@ -19,17 +33,24 @@
             <app-input
               [controlName]="form.get('title')"
               [formGroup]="form"
-              [padding]="'4px 0'"
+              [padding]="'4px'"
               [width]="'200px'"
             ></app-input>
           </div>
           <div class="content-left_upload">
             <app-gradient-button
               [gradient]="'#022F68,#2F66AB'"
+              [hoverColor]="'#022F68'"
               [minHeight]="'35px'"
               [width]="'120px'"
               [fontSize]="'13px'"
-            >Upload File</app-gradient-button>
+              [cursor]="'pointer'"
+            >
+              <label>
+                Upload File
+                <input type="file" hidden>
+              </label>
+            </app-gradient-button>
           </div>
         </div>
         <div class="content-left_groups">
@@ -74,14 +95,7 @@
           ></app-student-search>
         </div>
       </div>
-      <div class="content-right_next" *ngIf="selectedStudents && selectedStudents.length">
-        <app-gradient-button
-          [width]="'105px'"
-          [minHeight]="'35px'"
-          [fontSize]="'14px'"
-          (buttonClick)="nextStep()"
-        >Next ({{selectedStudents.length}})</app-gradient-button>
-      </div>
+
     </div>
   </div>
 </div>

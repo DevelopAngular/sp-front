@@ -1,6 +1,8 @@
 <div class="step-1-container">
   <div class="header">
-    <img class="header_back-button" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
+    <div class="header_back-button"  *ngIf="selectedGroup" (click)="back()">
+      <img class="header_back-button" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
+    </div>
     <div class="header_title">
       <img class="header_icon" [src]="'./assets/Search (Blue).png' | resolveAsset">
       <div class="header_text">Select students(s)</div>
@@ -14,11 +16,36 @@
           <div class="content-left_header">Student Groups</div>
         </div>
         <div class="content-left_groups">
-          <div>
-            <span class="content-left_placeholder">No student groups</span>
+          <div  class="goups-container">
+            <div class="content-left_placeholder" *ngIf="!groups || (groups && !groups.length)">
+              <span>No student groups</span>
+            </div>
+            <div *ngIf="groups && groups.length">
+              <mat-list>
+                <div *ngFor="let group of groups">
+                  <mat-list-item (click)="selectGroup(group)" class="group"
+                                 [ngClass]="{'group_selected' : ( selectedGroup && (selectedGroup.id === group.id))}">
+                    <div class="group-name">
+                      <span>{{group.title}}</span>
+                      <img class="group-icon"
+                           [src]="( selectedGroup && (selectedGroup.id === group.id)
+                                    ?
+                                    './assets/Disclosure Left (Blue).png'
+                                    :
+                                    './assets/Disclosure Indicator (Grey).png') | resolveAsset"
+                           alt="Disclosure Indicator (Grey).png">
+                    </div>
+                  </mat-list-item>
+                  <mat-divider></mat-divider>
+                </div>
+              </mat-list>
+            </div>
+          </div>
+          <div class="shadow-hint-container">
+            <div class="shadow-hint"></div>
           </div>
         </div>
-        <div class="content-left_create-group">
+        <div class="content-left_create-group" *ngIf="!selectedGroup">
           <app-gradient-button
             [minHeight]="'45px'"
             [fontSize]="'14px'"
@@ -29,8 +56,9 @@
             [leftIcon]="'./assets/Create (Blue).png'"
             [leftImageHeight]="'13px'"
             [leftImageWidth]="'13px'"
+            [cursor]="'pointer'"
             [subtitle]=" selectedStudents.length ? 'with selected students' : null "
-            (buttonClick)="nextStep()"
+            (buttonClick)="createGroup()"
           >
             <div class="create-button">
               <div>
@@ -46,19 +74,35 @@
     <div class="content-right">
       <div class="content-right_sudent-search">
         <div class="seach-wrapper">
-          <app-student-search
+          <app-student-search [disabled]="selectedGroup"
             (onUpdate)="selectedStudents=$event" [selectedStudents]="selectedStudents"
           ></app-student-search>
         </div>
       </div>
       <div class="content-right_next" *ngIf="selectedStudents && selectedStudents.length">
-        <app-gradient-button
-          [width]="'105px'"
-          [minHeight]="'35px'"
-          [fontSize]="'14px'"
-          (buttonClick)="nextStep()"
-        >Next ({{selectedStudents.length}})</app-gradient-button>
+        <div *ngIf="selectedGroup" [style.padding-right]="'20px'">
+          <app-gradient-button
+            [width]="'105px'"
+            [minHeight]="'35px'"
+            [fontSize]="'14px'"
+            [gradient]="'#022F68,#2F66AB'"
+            [hoverColor]="'#022F68'"
+            [cursor]="'pointer'"
+            (buttonClick)="editGroup(selectedGroup)"
+          >Edit Group</app-gradient-button>
+        </div>
+        <div>
+          <app-gradient-button
+            [width]="'105px'"
+            [minHeight]="'35px'"
+            [fontSize]="'14px'"
+            [cursor]="'pointer'"
+            (buttonClick)="nextStep()"
+          >Next ({{selectedStudents.length}})</app-gradient-button>
+        </div>
       </div>
     </div>
   </div>
 </div>
+<!--<pre>{{selectedGroup | json}}</pre>-->
+

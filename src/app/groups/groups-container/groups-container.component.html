@@ -1,10 +1,25 @@
 <div class="groups-container">
-  <app-groups-step1 (studentsSelected)="onStudentsSelected($event)"></app-groups-step1>
-  <br>
-  <app-groups-step2 [selectedStudents]="selectedStudents" [form]="groupDTO"></app-groups-step2>
-  <br>
-  <app-groups-step3></app-groups-step3>
-  <!--<app-groups-step4></app-groups-step4>-->
-  <!--<app-groups-step5></app-groups-step5>-->
-  <!--<app-groups-step6></app-groups-step6>-->
+  <div *ngIf="currentState == states.SelectStudents">
+    <app-groups-step1
+      [groups]="groups"
+      (stateChangeEvent)="onStateChange($event)">
+    </app-groups-step1>
+  </div>
+  <!--<br>-->
+  <div *ngIf="currentState == states.CreateGroup">
+    <app-groups-step2
+      [selectedStudents]="selectedStudents"
+      [form]="groupDTO"
+      (stateChangeEvent)="onStateChange($event)">
+
+    </app-groups-step2>
+  </div>
+  <!--<br>-->
+  <div *ngIf="currentState === states.EditGroup">
+    <app-groups-step3
+      [editGroup]="selectedGroup"
+      [form]="groupDTO"
+      (stateChangeEvent)="onStateChange($event)">
+    </app-groups-step3>
+  </div>
 </div>

@@ -1,7 +1,7 @@
 ﻿import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogModule, MatProgressSpinnerModule, MatSliderModule, MatSlideToggleModule } from '@angular/material';
+import {MatDialogModule, MatListModule, MatProgressSpinnerModule, MatSliderModule, MatSlideToggleModule} from '@angular/material';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -41,10 +41,6 @@ import { GroupsContainerComponent } from './groups/groups-container/groups-conta
 import { GroupsStep1Component } from './groups/groups-step1/groups-step1.component';
 import { GroupsStep2Component } from './groups/groups-step2/groups-step2.component';
 import { GroupsStep3Component } from './groups/groups-step3/groups-step3.component';
-import { GroupsStep4Component } from './groups/groups-step4/groups-step4.component';
-import { GroupsStep5Component } from './groups/groups-step5/groups-step5.component';
-import { GroupsStep6Component } from './groups/groups-step6/groups-step6.component';
-import {GroupsStepComponent} from './groups/groups-step/groups-step.component';
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroComponent},
@@ -106,14 +102,7 @@ const appRoutes: Routes = [
     SelectProfileComponent,
     ErrorToastComponent,
     SchoolToggleBarComponent ,
-    GroupsContainerComponent ,
-    GroupsStep6Component,
-    GroupsStep5Component,
-    GroupsStep4Component,
-    GroupsStep3Component,
-    GroupsStep2Component,
-    GroupsStep1Component,
-    GroupsStepComponent
+
   ],
   entryComponents: [
     ConsentMenuComponent,

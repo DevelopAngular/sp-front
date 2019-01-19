@@ -272,10 +272,12 @@ export class PassesComponent implements OnInit {
     this.locService.changeLocation$.next('date');
     const dialogRef = this.dialog.open(HallpassFormComponent, {
       // width: '750px',
-      // panelClass: 'form-dialog-container',
-      // backdropClass: 'custom-backdrop',
-      // data: {'forLater': forLater, 'forStaff': this.isStaff}
+      // height: '100px',
+      panelClass: 'form-dialog-container',
+      backdropClass: 'custom-backdrop',
+      data: {'forLater': forLater, 'forStaff': this.isStaff}
     });
+
     dialogRef.afterClosed()
       .pipe(filter(res => !!res)).subscribe((result: Object) => {
       this.openInputCard(result['templatePass'],
@@ -290,7 +292,7 @@ export class PassesComponent implements OnInit {
   }
 
   openInputCard(templatePass, forLater, forStaff, selectedStudents, component, fromHistory, fromHistoryIndex) {
-    let data = {
+    const data = {
       'pass': templatePass,
       'fromPast': false,
       'fromHistory': fromHistory,

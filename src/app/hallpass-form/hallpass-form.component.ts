@@ -229,7 +229,7 @@ export class HallpassFormComponent implements OnInit {
     if (this.isRedirected.value) {
       this.setFormState(this.entryState ? this.entryState : (this.forLater ? 'datetime' : (this.forStaff ? 'students' : 'from')));
     }
-    this.updateFormHeight();
+    // this.updateFormHeight();
 
     this.dataService.currentUser.subscribe(user => {
       this.user = user;
@@ -314,7 +314,7 @@ export class HallpassFormComponent implements OnInit {
       this.formHistoryIndex = this.formStateHistory.length - 1;
     }
 
-    this.updateFormHeight();
+    // this.updateFormHeight();
 
     if (state === 'to') {
       if (!!this.fromLocation) {

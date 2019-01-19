@@ -1,6 +1,12 @@
-<!--&lt;!&ndash; Show the form designated for students &ndash;&gt;-->
-<!--<div class="form">-->
-  <!--&lt;!&ndash; Buttons responsible for choosing formState &ndash;&gt;-->
+<!-- Show the form designated for students -->
+<div class="form">
+  <!-- Buttons responsible for choosing formState -->
+  <div *ngIf="false">
+    <app-groups-container></app-groups-container>
+  </div>
+  <div *ngIf="true">
+    <app-locations-group-container (response)="openPassCard($event)"></app-locations-group-container>
+  </div>
   <!--<div class="locs" *ngIf="formState!=='datetime' && formState!=='students' && isNotDeny">-->
     <!--<app-gradient-button-->
       <!--class="location-button"-->
@@ -150,5 +156,4 @@
             <!--class="message-deny-button"-->
     <!--&gt;Deny Pass Request</app-gradient-button>-->
   <!--</div>-->
-<!--</div>-->
-<app-locations-group-container (response)="openPassCard($event)"></app-locations-group-container>
+</div>

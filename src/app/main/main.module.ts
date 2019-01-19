@@ -6,6 +6,7 @@ import {
     MatDialogModule,
     MatDividerModule,
     MatGridListModule,
+    MatListModule,
     MatIconModule,
     MatProgressBarModule,
     MatSelectModule,
@@ -42,6 +43,10 @@ import { LocationsGroupContainerComponent } from '../hallpass-form/locations-gro
 import { ToCategoryComponent } from '../hallpass-form/locations-group-container/to-category/to-category.component';
 import { RestrictedTargetComponent } from '../hallpass-form/locations-group-container/restricted-target/restricted-target.component';
 import { RestrictedMessageComponent } from '../hallpass-form/locations-group-container/restricted-message/restricted-message.component';
+import {GroupsContainerComponent} from '../groups/groups-container/groups-container.component';
+import {GroupsStep1Component} from '../groups/groups-step1/groups-step1.component';
+import {GroupsStep2Component} from '../groups/groups-step2/groups-step2.component';
+import {GroupsStep3Component} from '../groups/groups-step3/groups-step3.component';
 
 @NgModule({
   imports: [
@@ -59,7 +64,9 @@ import { RestrictedMessageComponent } from '../hallpass-form/locations-group-con
     MatProgressBarModule,
     MatDialogModule,
     MatGridListModule,
-    MatDividerModule
+    MatDividerModule,
+    MatGridListModule,
+    MatListModule
   ],
   declarations: [
     HallMonitorComponent,
@@ -87,7 +94,11 @@ import { RestrictedMessageComponent } from '../hallpass-form/locations-group-con
     ToCategoryComponent,
     RestrictedTargetComponent,
     RestrictedMessageComponent,
-    LocationsGroupContainerComponent
+    LocationsGroupContainerComponent,
+    GroupsContainerComponent ,
+    GroupsStep1Component,
+    GroupsStep2Component,
+    GroupsStep3Component,
   ],
   entryComponents: [
     HallpassFormComponent,

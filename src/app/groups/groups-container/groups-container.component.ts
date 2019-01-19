@@ -1,45 +1,98 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {GroupsHistoryManagerService} from '../groups-history-manager.service';
 import {User} from '../../models/User';
 import {FormArray, FormControl, FormGroup} from '@angular/forms';
+import {StudentList} from '../../models/StudentList';
+import {HttpService} from '../../http-service';
+import {BehaviorSubject} from 'rxjs';
+
+
+export interface Navigation {
+  step?: number;
+  state: number;
+  fromState: number;
+  data: User[]|StudentList;
+}
+
+export enum States {
+  SelectStudents = 1,
+  CreateGroup = 2,
+  EditGroup = 3
+}
+
 
 @Component({
   selector: 'app-groups-container',
   templateUrl: './groups-container.component.html',
   styleUrls: ['./groups-container.component.scss']
 })
+
+
+
+
 export class GroupsContainerComponent implements OnInit {
 
+
+  @Output() nextStep: EventEmitter<Navigation> = new EventEmitter<Navigation>();
+
+  updateData$: BehaviorSubject<null> = new BehaviorSubject<null>(null);
+  states;
+  currentState: number = 1;
+  selectedGroup: StudentList;
+  groups: StudentList[];
   selectedStudents: User[] = [];
   groupDTO: FormGroup;
-  steps: Map<number, string>;
-  form: any;
 
-  constructor() {
 
-    this.steps = new Map<number, string>();
-    this.steps.set(1, 'select students');
-    this.steps.set(2, 'create group');
-    this.steps.set(3, 'edit group');
-    this.steps.set(4, 'select students');
-    this.steps.set(5, 'select students');
-    this.steps.set(6, 'select students');
+  constructor(
+    private http: HttpService
+  ) {
+
+    this.states = States;
 
     this.groupDTO = new FormGroup({
-      title: new FormControl('name'),
+      title: new FormControl(''),
       users: new FormControl(this.selectedStudents),
     });
   }
 
   ngOnInit() {
-    // this.selectedStudents = GroupsHistoryManagerService.getSelectedStudents();
+    this.updateData$.subscribe(() => {
+      this.http.get('v1/student_lists')
+        .subscribe((groups: StudentList[]) => {
+          this.groups = groups;
+        });
+    });
   }
 
-  onStudentsSelected(evt) {
-    // GroupsHistoryManagerService.setSelectedStudents(evt);
-    this.selectedStudents = evt.data;
-    this.groupDTO.get('users').setValue(evt.data);
-    console.log('======>', this.groupDTO.value);
-
+  onStateChange(evt) {
+    switch ( evt.state ) {
+      case (3): {
+        this.selectedGroup = evt.data
+        break;
+      }
+      case (2): {
+        this.selectedStudents = evt.data;
+        this.groupDTO.get('users').setValue(evt.data);
+        break;
+      }
+      case (1): {
+        if (evt.fromState === 3) {
+          this.selectedGroup = evt.data;
+        } else {
+          this.selectedStudents = evt.data;
+        }
+        break;
+      }
+      case(0): {
+        // this.nextStep.emit({
+        //   step: 3,
+        //   state: 1,
+        //
+        // })
+      }
+    }
+    this.currentState = evt.state;
+    this.updateData$.next(null);
   }
 }
