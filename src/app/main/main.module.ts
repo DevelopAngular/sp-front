@@ -2,14 +2,15 @@
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
-  MatChipsModule,
-  MatDialogModule,
-  MatGridListModule,
-  MatIconModule,
-  MatProgressBarModule,
-  MatSelectModule,
-  MatSliderModule,
-  MatSlideToggleModule
+    MatChipsModule,
+    MatDialogModule,
+    MatDividerModule,
+    MatGridListModule,
+    MatIconModule,
+    MatProgressBarModule,
+    MatSelectModule,
+    MatSliderModule,
+    MatSlideToggleModule
 } from '@angular/material';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { ContainerCardComponent } from '../container-card/container-card.component';
@@ -38,8 +39,9 @@ import { DateTimeComponent } from '../hallpass-form/locations-group-container/da
 import { FromWhereComponent } from '../hallpass-form/locations-group-container/from-where/from-where.component';
 import { ToWhereComponent } from '../hallpass-form/locations-group-container/to-where/to-where.component';
 import { LocationsGroupContainerComponent } from '../hallpass-form/locations-group-container/locations-group-container.component';
-import {ToCategoryComponent} from '../hallpass-form/locations-group-container/to-category/to-category.component';
-import {RestrictedTargetComponent} from '../hallpass-form/locations-group-container/restricted-target/restricted-target.component';
+import { ToCategoryComponent } from '../hallpass-form/locations-group-container/to-category/to-category.component';
+import { RestrictedTargetComponent } from '../hallpass-form/locations-group-container/restricted-target/restricted-target.component';
+import { RestrictedMessageComponent } from '../hallpass-form/locations-group-container/restricted-message/restricted-message.component';
 
 @NgModule({
   imports: [
@@ -56,7 +58,8 @@ import {RestrictedTargetComponent} from '../hallpass-form/locations-group-contai
     MatSliderModule,
     MatProgressBarModule,
     MatDialogModule,
-    MatGridListModule
+    MatGridListModule,
+    MatDividerModule
   ],
   declarations: [
     HallMonitorComponent,
@@ -83,6 +86,7 @@ import {RestrictedTargetComponent} from '../hallpass-form/locations-group-contai
     ToWhereComponent,
     ToCategoryComponent,
     RestrictedTargetComponent,
+    RestrictedMessageComponent,
     LocationsGroupContainerComponent
   ],
   entryComponents: [

@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import {Router} from '@angular/router';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-date-time',
@@ -8,15 +8,26 @@ import {Router} from '@angular/router';
 })
 export class DateTimeComponent implements OnInit {
 
+  @Input() isStaff: boolean;
+
+  @Output() result: EventEmitter<any> = new EventEmitter<any>();
+
   startTime: Date = new Date();
   requestTime: Date = new Date();
 
-  constructor(private router: Router) { }
+  declinable: FormControl;
+
+  constructor() { }
 
   ngOnInit() {
+    this.declinable = new FormControl(false);
   }
 
   next() {
+    this.result.emit({
+        date: this.requestTime,
+        declinable: this.declinable.value
+    });
   }
 
 }

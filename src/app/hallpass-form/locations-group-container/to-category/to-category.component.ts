@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { LocationService } from '../location.service';
 
 @Component({
   selector: 'app-to-category',
@@ -7,15 +8,28 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ToCategoryComponent implements OnInit {
 
-  pinnable;
+  @Input() pinnable;
 
-  constructor() { }
+  @Input() isStaff: boolean;
+
+  @Output() locFromCategory: EventEmitter<any> = new EventEmitter<any>();
+
+  constructor(private locService: LocationService) { }
+
+  get headerGradient() {
+     const colors = this.pinnable.gradient_color;
+     return 'radial-gradient(circle at 98% 97%,' + colors + ')';
+  }
 
   ngOnInit() {
   }
 
-  locationChosen(event) {
+  locationChosen(location) {
+    this.locFromCategory.emit(location);
+  }
 
+  back() {
+    this.locService.changeLocation$.next('toWhere');
   }
 
 }

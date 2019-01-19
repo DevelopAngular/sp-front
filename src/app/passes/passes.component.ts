@@ -22,6 +22,7 @@ import { User } from '../models/User';
 import { PassCardComponent } from '../pass-card/pass-card.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
 import {delay, skip} from 'rxjs/internal/operators';
+import {LocationService} from '../hallpass-form/locations-group-container/location.service';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('_profile_teacher');
@@ -168,8 +169,14 @@ export class PassesComponent implements OnInit {
   user: User;
   isStaff = false;
 
-  constructor(public dataService: DataService, public dialog: MatDialog, private _zone: NgZone,
-              private loadingService: LoadingService, private liveDataService: LiveDataService) {
+  constructor(
+      public dataService: DataService,
+      public dialog: MatDialog,
+      private _zone: NgZone,
+      private loadingService: LoadingService,
+      private liveDataService: LiveDataService,
+      private locService: LocationService
+  ) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
     this.testRequests = new BasicPassLikeProvider(testRequests);
@@ -262,13 +269,13 @@ export class PassesComponent implements OnInit {
   }
 
   showForm(forLater: boolean): void {
+    this.locService.changeLocation$.next('date');
     const dialogRef = this.dialog.open(HallpassFormComponent, {
-      width: '750px',
-      panelClass: 'form-dialog-container',
-      backdropClass: 'custom-backdrop',
-      data: {'forLater': forLater, 'forStaff': this.isStaff}
+      // width: '750px',
+      // panelClass: 'form-dialog-container',
+      // backdropClass: 'custom-backdrop',
+      // data: {'forLater': forLater, 'forStaff': this.isStaff}
     });
-
     dialogRef.afterClosed()
       .pipe(filter(res => !!res)).subscribe((result: Object) => {
       this.openInputCard(result['templatePass'],
