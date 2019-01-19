@@ -46,7 +46,8 @@ import { RestrictedMessageComponent } from '../hallpass-form/locations-group-con
 import {GroupsContainerComponent} from '../groups/groups-container/groups-container.component';
 import {GroupsStep1Component} from '../groups/groups-step1/groups-step1.component';
 import {GroupsStep2Component} from '../groups/groups-step2/groups-step2.component';
-import {GroupsStep3Component} from '../groups/groups-step3/groups-step3.component';
+import {GroupsStep3Component} from '../groups/groups-step3/groups-step3.component';;
+import { DateTimeContainerComponent } from '../date-time-container/date-time-container.component'
 
 @NgModule({
   imports: [
@@ -99,6 +100,7 @@ import {GroupsStep3Component} from '../groups/groups-step3/groups-step3.componen
     GroupsStep1Component,
     GroupsStep2Component,
     GroupsStep3Component,
+    DateTimeContainerComponent
   ],
   entryComponents: [
     HallpassFormComponent,

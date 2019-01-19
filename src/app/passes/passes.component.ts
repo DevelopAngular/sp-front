@@ -275,7 +275,10 @@ export class PassesComponent implements OnInit {
       // height: '100px',
       panelClass: 'form-dialog-container',
       backdropClass: 'custom-backdrop',
-      data: {'forLater': forLater, 'forStaff': this.isStaff}
+      data: {
+        'forLater': forLater,
+        'forStaff': this.isStaff,
+      }
     });
 
     dialogRef.afterClosed()

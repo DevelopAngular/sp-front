@@ -6,7 +6,7 @@
     </div>
     <div class="header_title">
       <!--<img class="header_icon" [src]="'./assets/Search (Blue).png' | resolveAsset">-->
-      <div class="header_text">New Student Group</div>
+      <div class="header_text">{{editGroup.title}}</div>
       <span  *ngIf="editGroup.users && editGroup.users.length ">{{editGroup.users.length}} students</span>
     </div>
     <div class="header_save">
@@ -22,7 +22,6 @@
     </div>
   </div>
   <div class="content">
-
 
     <div class="content-left">
       <div class="content-left_wrapper">

@@ -1,12 +1,26 @@
 <!-- Show the form designated for students -->
 <div class="form">
   <!-- Buttons responsible for choosing formState -->
-  <div *ngIf="false">
-    <app-groups-container></app-groups-container>
+
+
+
+  <div *ngIf="FORM_STATE.step === 1">
+
+    <app-date-time-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)" ></app-date-time-container>
   </div>
-  <div *ngIf="true">
-    <app-locations-group-container (response)="openPassCard($event)"></app-locations-group-container>
+
+  <div *ngIf="FORM_STATE.step === 2">
+
+    <app-groups-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-groups-container>
   </div>
+
+  <div *ngIf="FORM_STATE.step === 3">
+
+    <app-locations-group-container (response)="onNextStep($event)"></app-locations-group-container>
+  </div>
+
+
+
   <!--<div class="locs" *ngIf="formState!=='datetime' && formState!=='students' && isNotDeny">-->
     <!--<app-gradient-button-->
       <!--class="location-button"-->

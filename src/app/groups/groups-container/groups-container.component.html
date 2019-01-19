@@ -1,6 +1,7 @@
 <div class="groups-container">
   <div *ngIf="currentState == states.SelectStudents">
     <app-groups-step1
+      [selectedGroup]="FORM_STATE.data.selectedGroup"
       [groups]="groups"
       (stateChangeEvent)="onStateChange($event)">
     </app-groups-step1>
