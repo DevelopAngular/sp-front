@@ -1,0 +1,19 @@
+<div>
+  <div *ngIf="currentState === states.HallPass">
+
+    <app-pass-card></app-pass-card>
+  </div>
+  <div *ngIf="currentState === states.Request">
+
+    <app-request-card
+      [request]="template"
+      [forStaff]="FORM_STATE.formMode.role === 1"
+      [forInput]="true"
+      [forFuture]="true"
+    ></app-request-card>
+  </div>
+  <div *ngIf="currentState === states.Invitation">
+
+    <app-invitation-card></app-invitation-card>
+  </div>
+</div>

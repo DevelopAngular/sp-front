@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {User} from '../../models/User';
 import {StudentList} from '../../models/StudentList';
-import {Navigation} from '../groups-container/groups-container.component';
+import {Navigation} from '../../hallpass-form/hallpass-form.component';
 
 @Component({
   selector: 'app-groups-step1',
@@ -10,15 +10,12 @@ import {Navigation} from '../groups-container/groups-container.component';
 })
 export class GroupsStep1Component implements OnInit {
 
+  @Input() selectedGroup: StudentList = null;
   @Input() groups: StudentList[] = []
 
-  public selectedGroup: StudentList;
+  @Output() stateChangeEvent: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
-
-
-  @Output('stateChangeEvent')
-  stateChangeEvent: EventEmitter<Navigation> = new EventEmitter<Navigation>();
-
+  // public selectedGroup: StudentList;
   public selectedStudents: User[] = [];
 
   constructor(
@@ -26,21 +23,34 @@ export class GroupsStep1Component implements OnInit {
 
   ngOnInit() {
 
+    if (this.selectedGroup) {
+      this.selectedStudents = this.selectedGroup.users;
+    }
+
   }
 
   nextStep() {
+    // console.log('SLECTED ====>', this.selectedStudents, this.selectedGroup);
+
     this.stateChangeEvent.emit({
-      state: 0,
+      step: 3,
+      state: 1,
       fromState: 1,
-      data: this.selectedGroup || this.selectedStudents
+      data: {
+        selectedStudents: this.selectedStudents,
+        selectedGroup: this.selectedGroup
+      }
     });
   }
 
   createGroup() {
     this.stateChangeEvent.emit({
+      step: 2,
       state: 2,
       fromState: 1,
-      data: this.selectedStudents
+      data: {
+        selectedStudents: this.selectedStudents
+      }
     });
   }
 
@@ -57,10 +67,16 @@ export class GroupsStep1Component implements OnInit {
   }
 
   editGroup(group) {
+
+    console.log(' GROUP ==================>', group);
+
     this.stateChangeEvent.emit({
+      step: 2,
       state: 3,
       fromState: 1,
-      data: group
+      data: {
+        selectedGroup: group
+      }
     });
   }
 

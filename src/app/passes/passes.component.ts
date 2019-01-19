@@ -269,12 +269,15 @@ export class PassesComponent implements OnInit {
   }
 
   showForm(forLater: boolean): void {
-    this.locService.changeLocation$.next('date');
+    this.locService.changeLocation$.next('from');
     const dialogRef = this.dialog.open(HallpassFormComponent, {
       // width: '750px',
       panelClass: 'form-dialog-container',
       backdropClass: 'custom-backdrop',
-      data: {'forLater': forLater, 'forStaff': this.isStaff}
+      data: {
+        'forLater': forLater,
+        'forStaff': this.isStaff,
+      }
     });
 
     dialogRef.afterClosed()

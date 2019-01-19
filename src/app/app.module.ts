@@ -97,7 +97,7 @@ const appRoutes: Routes = [
     PdfComponent,
     SelectProfileComponent,
     ErrorToastComponent,
-    SchoolToggleBarComponent,
+    SchoolToggleBarComponent
 
   ],
   entryComponents: [

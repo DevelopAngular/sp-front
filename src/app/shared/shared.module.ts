@@ -129,7 +129,8 @@ import {AppInputComponent} from '../app-input/app-input.component';
     CardButtonComponent,
     PagerComponent,
     RoundInputComponent,
-    AppInputComponent
+    AppInputComponent,
+    PassCardComponent
 
   ],
 })

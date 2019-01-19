@@ -48,6 +48,8 @@ import {GroupsStep1Component} from '../groups/groups-step1/groups-step1.componen
 import {GroupsStep2Component} from '../groups/groups-step2/groups-step2.component';
 import {GroupsStep3Component} from '../groups/groups-step3/groups-step3.component';
 import {TeacherFooterComponent} from '../hallpass-form/locations-group-container/teacher-footer/teacher-footer.component';
+import { DateTimeContainerComponent } from '../date-time-container/date-time-container.component'
+import { FormFactorContainerComponent } from '../form-factor-container/form-factor-container.component'
 
 @NgModule({
   imports: [
@@ -101,6 +103,8 @@ import {TeacherFooterComponent} from '../hallpass-form/locations-group-container
     GroupsStep1Component,
     GroupsStep2Component,
     GroupsStep3Component,
+    DateTimeContainerComponent,
+    FormFactorContainerComponent
   ],
   entryComponents: [
     HallpassFormComponent,

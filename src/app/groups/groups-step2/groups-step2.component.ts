@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {User} from '../../models/User';
 import {FormControl, FormGroup} from '@angular/forms';
 import {HttpService} from '../../http-service';
-import {Navigation} from '../groups-container/groups-container.component';
+import {Navigation} from '../../hallpass-form/hallpass-form.component';
 
 @Component({
   selector: 'app-groups-step2',
@@ -40,9 +40,9 @@ export class GroupsStep2Component implements OnInit {
 
   back() {
     this.stateChangeEvent.emit({
+      step: 2,
       state: 1,
       fromState: 2,
-      data: []
     });
   }
 }

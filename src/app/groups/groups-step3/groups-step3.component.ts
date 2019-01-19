@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {StudentList} from '../../models/StudentList';
 import {HttpService} from '../../http-service';
 import {FormGroup} from '@angular/forms';
-import {Navigation} from '../groups-container/groups-container.component';
+import {Navigation} from '../../hallpass-form/hallpass-form.component';
 
 @Component({
   selector: 'app-groups-step3',
@@ -62,9 +62,12 @@ export class GroupsStep3Component implements OnInit {
   back() {
 
     this.stateChangeEvent.emit({
+      step: 2,
       state: 1,
       fromState: 3,
-      data: this.editGroup
+      data: {
+        selectedGroup: this.editGroup
+      }
     });
   }
 }
