@@ -104,7 +104,7 @@ export class LocationTableComponent implements OnInit {
           +(!!this.category ? ('?category=' +this.category +'&') : '?')
         ))
         +'limit=10'
-        +(this.type==='location'?'&starred=false':''))
+        +((this.type==='location' && this.showFavorites)?'&starred=false':''))
         .toPromise().then(p => {
           this.choices = p.results;
           this.nextChoices = p.next;
@@ -131,7 +131,7 @@ export class LocationTableComponent implements OnInit {
         ))
         +'limit=4'
         +'&search=' +search
-        +(this.type==='location'?'&starred=false':''))
+        +((this.type==='location' && this.showFavorites)?'&starred=false':''))
         .toPromise().then(p => {
           this.choices = this.filterResults(p.results);
         });
