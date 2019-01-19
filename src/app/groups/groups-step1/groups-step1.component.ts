@@ -14,6 +14,8 @@ export class GroupsStep1Component implements OnInit {
 
   public selectedGroup: StudentList;
 
+
+
   @Output('stateChangeEvent')
   stateChangeEvent: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
@@ -27,7 +29,11 @@ export class GroupsStep1Component implements OnInit {
   }
 
   nextStep() {
-
+    this.stateChangeEvent.emit({
+      state: 0,
+      fromState: 1,
+      data: this.selectedGroup || this.selectedStudents
+    });
   }
 
   createGroup() {

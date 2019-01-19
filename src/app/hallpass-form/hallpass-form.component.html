@@ -1,159 +1,159 @@
 <!-- Show the form designated for students -->
 <div class="form">
   <!-- Buttons responsible for choosing formState -->
-  <div *ngIf="">
-
+  <div *ngIf="true">
+    <app-groups-container></app-groups-container>
   </div>
   <div *ngIf="">
 
   </div>
-  <div class="locs" *ngIf="formState!=='datetime' && formState!=='students' && isNotDeny">
-    <app-gradient-button
-      class="location-button"
-      [gradient]="fromGradient"
-      [hoverColor]="fromSolid"
-      [minWidth]="'175px'"
-      [minHeight]="'80px'"
-      [fontSize]="'16px'"
-      [disabled]="true"
-      (buttonClick)="setFormState('from')"
-    >{{ from_title }}
-    </app-gradient-button>
+  <!--<div class="locs" *ngIf="formState!=='datetime' && formState!=='students' && isNotDeny">-->
+    <!--<app-gradient-button-->
+      <!--class="location-button"-->
+      <!--[gradient]="fromGradient"-->
+      <!--[hoverColor]="fromSolid"-->
+      <!--[minWidth]="'175px'"-->
+      <!--[minHeight]="'80px'"-->
+      <!--[fontSize]="'16px'"-->
+      <!--[disabled]="true"-->
+      <!--(buttonClick)="setFormState('from')"-->
+    <!--&gt;{{ from_title }}-->
+    <!--</app-gradient-button>-->
 
-    <!-- <div class="type-arrows"> -->
-    <!-- <img [class.hidden]="travelType != 'round_trip'" class="round-trip"
-          [src]="'./assets/RT Arrow.png' | resolveAsset"> -->
-    <img class="arrow" [src]="'./assets/Arrow (Green).png' | resolveAsset">
-    <!-- </div> -->
+    <!--&lt;!&ndash; <div class="type-arrows"> &ndash;&gt;-->
+    <!--&lt;!&ndash; <img [class.hidden]="travelType != 'round_trip'" class="round-trip"-->
+          <!--[src]="'./assets/RT Arrow.png' | resolveAsset"> &ndash;&gt;-->
+    <!--<img class="arrow" [src]="'./assets/Arrow (Green).png' | resolveAsset">-->
+    <!--&lt;!&ndash; </div> &ndash;&gt;-->
 
-    <app-gradient-button
-      class="location-button"
-      [gradient]="toGradient"
-      [hoverColor]="toSolid"
-      [minWidth]="'175px'"
-      [minHeight]="'80px'"
-      [fontSize]="'16px'"
-      [disabled]="true"
-      (buttonClick)="setFormState('to-pinnables')"
-    > {{ to_title }}
-    </app-gradient-button>
+    <!--<app-gradient-button-->
+      <!--class="location-button"-->
+      <!--[gradient]="toGradient"-->
+      <!--[hoverColor]="toSolid"-->
+      <!--[minWidth]="'175px'"-->
+      <!--[minHeight]="'80px'"-->
+      <!--[fontSize]="'16px'"-->
+      <!--[disabled]="true"-->
+      <!--(buttonClick)="setFormState('to-pinnables')"-->
+    <!--&gt; {{ to_title }}-->
+    <!--</app-gradient-button>-->
 
-  </div>
+  <!--</div>-->
 
-  <div class="divider" [style.background-image]="dividerGradient">
-    <img class="back-button" [src]="'./assets/Back Button (Transparent).png' | resolveAsset" (click)="back()">
-    <div class="divider-header">
-      <img class="divider-icon" [src]="dividerIcon | resolveAsset">
-      <div class="divider-text">{{dividerText}}</div>
-    </div>
-  </div>
+  <!--<div class="divider" [style.background-image]="dividerGradient">-->
+    <!--<img class="back-button" [src]="'./assets/Back Button (Transparent).png' | resolveAsset" (click)="back()">-->
+    <!--<div class="divider-header">-->
+      <!--<img class="divider-icon" [src]="dividerIcon | resolveAsset">-->
+      <!--<div class="divider-text">{{dividerText}}</div>-->
+    <!--</div>-->
+  <!--</div>-->
 
-  <!-- Used to select the start time of a pass for later -->
-  <div *ngIf="formState == 'datetime'" class="datetime-area">
-    <div class="datetime-left">
-      <app-date-time-picker [min]="startTime" [_selectedMoment]="requestTime" (onUpdate)="requestTime=$event"></app-date-time-picker>
-    </div>
-    <div class="datetime-right">
-      <div *ngIf="forStaff" class="toggle-wrapper loading-theme">
-        <div class="toggle-title">Declinable</div>
-        <div class="onoffswitch">
-          <input type="checkbox" name="onoffswitch" [formControl]="declinable" class="onoffswitch-checkbox" id="myonoffswitch" checked>
-          <label class="onoffswitch-label" for="myonoffswitch"></label>
-        </div>
-        <!--<mat-slide-toggle [checked]="isDeclinable" (change)="isDeclinable = $event.checked"></mat-slide-toggle>-->
-      </div>
-      <div *ngIf="forStaff" class="toggle-divider"></div>
-      <div *ngIf="forStaff" class="toggle-description">
-        <span *ngIf="isDeclinable">The student has the option to decline the pass. <br/><br/>
-          You must also select from where the student will be traveling.</span>
-        <span *ngIf="!isDeclinable">The student cannot decline the pass. <br/><br/>
-          You do not need to know the location from where the student will be travelling.</span>
-      </div>
-      <app-gradient-button
-        [gradient]="'#03CF31,#00B476'"
-        [cursor]="'pointer'"
-        [hoverColor]="'#00B476'"
-        [minWidth]="'90px'"
-        [minHeight]="'30px'"
-        [fontSize]="'14px'"
-        (buttonClick)="setFormState((forStaff?'students':'from'))"
-        [style.width]="'90px'"
-        [style.margin]="'15px auto'"
-      >
-      Next</app-gradient-button>
-    </div>
-  </div>
+  <!--&lt;!&ndash; Used to select the start time of a pass for later &ndash;&gt;-->
+  <!--<div *ngIf="formState == 'datetime'" class="datetime-area">-->
+    <!--<div class="datetime-left">-->
+      <!--<app-date-time-picker [min]="startTime" [_selectedMoment]="requestTime" (onUpdate)="requestTime=$event"></app-date-time-picker>-->
+    <!--</div>-->
+    <!--<div class="datetime-right">-->
+      <!--<div *ngIf="forStaff" class="toggle-wrapper loading-theme">-->
+        <!--<div class="toggle-title">Declinable</div>-->
+        <!--<div class="onoffswitch">-->
+          <!--<input type="checkbox" name="onoffswitch" [formControl]="declinable" class="onoffswitch-checkbox" id="myonoffswitch" checked>-->
+          <!--<label class="onoffswitch-label" for="myonoffswitch"></label>-->
+        <!--</div>-->
+        <!--&lt;!&ndash;<mat-slide-toggle [checked]="isDeclinable" (change)="isDeclinable = $event.checked"></mat-slide-toggle>&ndash;&gt;-->
+      <!--</div>-->
+      <!--<div *ngIf="forStaff" class="toggle-divider"></div>-->
+      <!--<div *ngIf="forStaff" class="toggle-description">-->
+        <!--<span *ngIf="isDeclinable">The student has the option to decline the pass. <br/><br/>-->
+          <!--You must also select from where the student will be traveling.</span>-->
+        <!--<span *ngIf="!isDeclinable">The student cannot decline the pass. <br/><br/>-->
+          <!--You do not need to know the location from where the student will be travelling.</span>-->
+      <!--</div>-->
+      <!--<app-gradient-button-->
+        <!--[gradient]="'#03CF31,#00B476'"-->
+        <!--[cursor]="'pointer'"-->
+        <!--[hoverColor]="'#00B476'"-->
+        <!--[minWidth]="'90px'"-->
+        <!--[minHeight]="'30px'"-->
+        <!--[fontSize]="'14px'"-->
+        <!--(buttonClick)="setFormState((forStaff?'students':'from'))"-->
+        <!--[style.width]="'90px'"-->
+        <!--[style.margin]="'15px auto'"-->
+      <!--&gt;-->
+      <!--Next</app-gradient-button>-->
+    <!--</div>-->
+  <!--</div>-->
 
-  <div *ngIf="formState==='students'" class="student-select">
-    <app-student-search [style.width]="'75%'" (onUpdate)="selectedStudents=$event" [selectedStudents]="selectedStudents"></app-student-search>
-      <app-gradient-button
-      *ngIf="selectedStudents && selectedStudents.length > 0"
-      [gradient]="'#03CF31,#00B476'"
-      [hoverColor]="'#00B476'"
-      [cursor]="'pointer'"
-      [minWidth]="'90px'"
-      [minHeight]="'30px'"
-      [fontSize]="'14px'"
-      [disabled]="selectedStudents.length<1"
-      (buttonClick)="setFormState(((forLater&&isDeclinable)?'to-pinnables':'from'))"
-      [style.width]="'90px'"
-    >
-    Done ({{ selectedStudents.length }})</app-gradient-button>
-  </div>
+  <!--<div *ngIf="formState==='students'" class="student-select">-->
+    <!--<app-student-search [style.width]="'75%'" (onUpdate)="selectedStudents=$event" [selectedStudents]="selectedStudents"></app-student-search>-->
+      <!--<app-gradient-button-->
+      <!--*ngIf="selectedStudents && selectedStudents.length > 0"-->
+      <!--[gradient]="'#03CF31,#00B476'"-->
+      <!--[hoverColor]="'#00B476'"-->
+      <!--[cursor]="'pointer'"-->
+      <!--[minWidth]="'90px'"-->
+      <!--[minHeight]="'30px'"-->
+      <!--[fontSize]="'14px'"-->
+      <!--[disabled]="selectedStudents.length<1"-->
+      <!--(buttonClick)="setFormState(((forLater&&isDeclinable)?'to-pinnables':'from'))"-->
+      <!--[style.width]="'90px'"-->
+    <!--&gt;-->
+    <!--Done ({{ selectedStudents.length }})</app-gradient-button>-->
+  <!--</div>-->
 
-  <!-- Used to select the from_location -->
-  <div *ngIf="formState == 'from'">
-    <app-location-table [forStaff]="forStaff" [forLater]="forLater" [showStars]="true" [noRightStar]="true" [showFavorites]="true" class="locations" [type]="'location'" [placeholder]="'Search rooms'" (onSelect)="locationChosen($event, 'from')">
-    </app-location-table>
-    <!--<div style="position: absolute; bottom: 0; left: 0; right: 0">sdfsdfdsfdf</div>-->
-  </div>
+  <!--&lt;!&ndash; Used to select the from_location &ndash;&gt;-->
+  <!--<div *ngIf="formState == 'from'">-->
+    <!--<app-location-table [forStaff]="forStaff" [forLater]="forLater" [showStars]="true" [noRightStar]="true" [showFavorites]="true" class="locations" [type]="'location'" [placeholder]="'Search rooms'" (onSelect)="locationChosen($event, 'from')">-->
+    <!--</app-location-table>-->
+    <!--&lt;!&ndash;<div style="position: absolute; bottom: 0; left: 0; right: 0">sdfsdfdsfdf</div>&ndash;&gt;-->
+  <!--</div>-->
 
-  <!-- Used to select the to_location -->
-  <div *ngIf="formState.substring(0, 2) == 'to'">
-    <div *ngIf="formState == 'to-pinnables'" class="pinnable-wrapper">
-      <mat-grid-list class="grid center" cols="4" rowHeight="75px" gutterSize="10px" [style.width]="'550px'">
-        <mat-grid-tile *ngFor="let pinnable of pinnables | async">
-          <app-pinnable [valid]="(fromLocation?(!pinnable.location || pinnable.location.id !== fromLocation.id):true)" [forStaff]="forStaff" [forLater]="forLater" [pinnable]="pinnable" (onSelectEvent)="pinnableSelected($event)"></app-pinnable>
-        </mat-grid-tile>
-      </mat-grid-list>
-    </div>
-    <div *ngIf="formState == 'to-category'">
-      <app-location-table class="center" (onSelect)="locationChosen($event, 'to')"
-                          [invalidLocation]="(fromLocation?fromLocation.id:'')" [forStaff]="forStaff" [hasLocks]="true" [category]="toCategory" [type]="'location'" [placeholder]="'Search ' +toCategory.toLowerCase()" >
-      </app-location-table>
-    </div>
-  </div>
-  <div *ngIf="formState == 'restrictedTarget'">
-      <app-location-table class="center" (onSelect)="updateTarget($event)" [type]="'teachers'" [placeholder]="'Search teachers'" [staticChoices]="toLocation.teachers"></app-location-table>
-  </div>
-  <div *ngIf="formState == 'restrictedMessage'" class="message center">
-    <textarea
-       class="message-box"
-       #messageBox [placeholder]="(!isNotDeny ? '' : 'Attach a message' +(requestTarget?(' for ' +requestTarget.last_name):''))"
-       [(ngModel)]="requestMessage"
-       autofocus
-    >
-    </textarea>
-      <app-gradient-button *ngIf="isNotDeny"
-        [gradient]="'#00B476, #03CF31'"
-        [hoverColor]="'#04CD33'"
-        [cursor]="'pointer'"
-        [minWidth]="'50px'"
-        [minHeight]="'20px'"
-        [fontSize]="'12px'"
-        (buttonClick)="sendRequest(messageBox.value)"
-        class="message-button">
-      {{(requestMessage===''?'Skip':'Add Message')}}
-      </app-gradient-button>
-    <app-gradient-button *ngIf="!isNotDeny"
-            [gradient]="'#DA2370,#FB434A'"
-            [hoverColor]="'#DA2370'"
-            [cursor]="'pointer'"
-            [minWidth]="'185px'"
-            [minHeight]="'35px'"
-            [fontSize]="'14px'"
-            (buttonClick)="sendRequest(messageBox.value)"
-            class="message-deny-button"
-    >Deny Pass Request</app-gradient-button>
-  </div>
+  <!--&lt;!&ndash; Used to select the to_location &ndash;&gt;-->
+  <!--<div *ngIf="formState.substring(0, 2) == 'to'">-->
+    <!--<div *ngIf="formState == 'to-pinnables'" class="pinnable-wrapper">-->
+      <!--<mat-grid-list class="grid center" cols="4" rowHeight="75px" gutterSize="10px" [style.width]="'550px'">-->
+        <!--<mat-grid-tile *ngFor="let pinnable of pinnables | async">-->
+          <!--<app-pinnable [valid]="(fromLocation?(!pinnable.location || pinnable.location.id !== fromLocation.id):true)" [forStaff]="forStaff" [forLater]="forLater" [pinnable]="pinnable" (onSelectEvent)="pinnableSelected($event)"></app-pinnable>-->
+        <!--</mat-grid-tile>-->
+      <!--</mat-grid-list>-->
+    <!--</div>-->
+    <!--<div *ngIf="formState == 'to-category'">-->
+      <!--<app-location-table class="center" (onSelect)="locationChosen($event, 'to')"-->
+                          <!--[invalidLocation]="(fromLocation?fromLocation.id:'')" [forStaff]="forStaff" [hasLocks]="true" [category]="toCategory" [type]="'location'" [placeholder]="'Search ' +toCategory.toLowerCase()" >-->
+      <!--</app-location-table>-->
+    <!--</div>-->
+  <!--</div>-->
+  <!--<div *ngIf="formState == 'restrictedTarget'">-->
+      <!--<app-location-table class="center" (onSelect)="updateTarget($event)" [type]="'teachers'" [placeholder]="'Search teachers'" [staticChoices]="toLocation.teachers"></app-location-table>-->
+  <!--</div>-->
+  <!--<div *ngIf="formState == 'restrictedMessage'" class="message center">-->
+    <!--<textarea-->
+       <!--class="message-box"-->
+       <!--#messageBox [placeholder]="(!isNotDeny ? '' : 'Attach a message' +(requestTarget?(' for ' +requestTarget.last_name):''))"-->
+       <!--[(ngModel)]="requestMessage"-->
+       <!--autofocus-->
+    <!--&gt;-->
+    <!--</textarea>-->
+      <!--<app-gradient-button *ngIf="isNotDeny"-->
+        <!--[gradient]="'#00B476, #03CF31'"-->
+        <!--[hoverColor]="'#04CD33'"-->
+        <!--[cursor]="'pointer'"-->
+        <!--[minWidth]="'50px'"-->
+        <!--[minHeight]="'20px'"-->
+        <!--[fontSize]="'12px'"-->
+        <!--(buttonClick)="sendRequest(messageBox.value)"-->
+        <!--class="message-button">-->
+      <!--{{(requestMessage===''?'Skip':'Add Message')}}-->
+      <!--</app-gradient-button>-->
+    <!--<app-gradient-button *ngIf="!isNotDeny"-->
+            <!--[gradient]="'#DA2370,#FB434A'"-->
+            <!--[hoverColor]="'#DA2370'"-->
+            <!--[cursor]="'pointer'"-->
+            <!--[minWidth]="'185px'"-->
+            <!--[minHeight]="'35px'"-->
+            <!--[fontSize]="'14px'"-->
+            <!--(buttonClick)="sendRequest(messageBox.value)"-->
+            <!--class="message-deny-button"-->
+    <!--&gt;Deny Pass Request</app-gradient-button>-->
+  <!--</div>-->
 </div>

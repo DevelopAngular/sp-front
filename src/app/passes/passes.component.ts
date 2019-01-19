@@ -241,7 +241,7 @@ export class PassesComponent implements OnInit {
           this.isStaff = user.roles.includes('_profile_teacher') || user.roles.includes('_profile_admin');
         });
       });
-      
+
       this.inboxHasItems = combineLatest(
         this.receivedRequests.length$.startWith(0),
         this.sentRequests.length$.startWith(0),
@@ -252,7 +252,7 @@ export class PassesComponent implements OnInit {
 
   showForm(forLater: boolean): void {
     const dialogRef = this.dialog.open(HallpassFormComponent, {
-      width: '750px',
+      // width: '750px',
       panelClass: 'form-dialog-container',
       backdropClass: 'custom-backdrop',
       data: {'forLater': forLater, 'forStaff': this.isStaff}
@@ -266,7 +266,8 @@ export class PassesComponent implements OnInit {
         result['selectedStudents'],
         (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent)),
         result['fromHistory'],
-        result['fromHistoryIndex']
+        result['fromHistoryIndex'],
+        // currentStep: 9
       );
     });
   }

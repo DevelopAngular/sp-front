@@ -2,7 +2,7 @@
   <div *ngIf="currentState == states.SelectStudents">
     <app-groups-step1
       [groups]="groups"
-      (stateChangeEvent)="onStudentsSelected($event)">
+      (stateChangeEvent)="onStateChange($event)">
     </app-groups-step1>
   </div>
   <br>
@@ -10,7 +10,7 @@
     <app-groups-step2
       [selectedStudents]="selectedStudents"
       [form]="groupDTO"
-      (stateChangeEvent)="onStudentsSelected($event)">
+      (stateChangeEvent)="onStateChange($event)">
 
     </app-groups-step2>
   </div>
@@ -19,7 +19,7 @@
     <app-groups-step3
       [editGroup]="selectedGroup"
       [form]="groupDTO"
-      (stateChangeEvent)="onStudentsSelected($event)">
+      (stateChangeEvent)="onStateChange($event)">
     </app-groups-step3>
   </div>
 </div>

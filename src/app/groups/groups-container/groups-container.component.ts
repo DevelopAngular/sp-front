@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {GroupsHistoryManagerService} from '../groups-history-manager.service';
 import {User} from '../../models/User';
 import {FormArray, FormControl, FormGroup} from '@angular/forms';
@@ -8,6 +8,7 @@ import {BehaviorSubject} from 'rxjs';
 
 
 export interface Navigation {
+  step?: number;
   state: number;
   fromState: number;
   data: User[]|StudentList;
@@ -31,8 +32,10 @@ export enum States {
 
 export class GroupsContainerComponent implements OnInit {
 
-  updateData$: BehaviorSubject<null> = new BehaviorSubject<null>(null);
 
+  @Output() nextStep: EventEmitter<Navigation> = new EventEmitter<Navigation>();
+
+  updateData$: BehaviorSubject<null> = new BehaviorSubject<null>(null);
   states;
   currentState: number = 1;
   selectedGroup: StudentList;
@@ -62,7 +65,7 @@ export class GroupsContainerComponent implements OnInit {
     });
   }
 
-  onStudentsSelected(evt) {
+  onStateChange(evt) {
     switch ( evt.state ) {
       case (3): {
         this.selectedGroup = evt.data
@@ -80,6 +83,13 @@ export class GroupsContainerComponent implements OnInit {
           this.selectedStudents = evt.data;
         }
         break;
+      }
+      case(0): {
+        // this.nextStep.emit({
+        //   step: 3,
+        //   state: 1,
+        //
+        // })
       }
     }
     this.currentState = evt.state;

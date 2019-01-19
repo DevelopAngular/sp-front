@@ -5,7 +5,7 @@ import {
   MatChipsModule,
   MatDialogModule,
   MatGridListModule,
-  MatIconModule,
+  MatIconModule, MatListModule,
   MatProgressBarModule,
   MatSelectModule,
   MatSliderModule,
@@ -34,6 +34,10 @@ import { SharedModule } from '../shared/shared.module';
 import { StudentPickerComponent } from '../student-picker/student-picker.component';
 import { MainRoutingModule } from './main-routing.module';
 import { NavbarDataService } from './navbar-data.service';
+import {GroupsContainerComponent} from '../groups/groups-container/groups-container.component';
+import {GroupsStep1Component} from '../groups/groups-step1/groups-step1.component';
+import {GroupsStep2Component} from '../groups/groups-step2/groups-step2.component';
+import {GroupsStep3Component} from '../groups/groups-step3/groups-step3.component';
 
 @NgModule({
   imports: [
@@ -50,7 +54,8 @@ import { NavbarDataService } from './navbar-data.service';
     MatSliderModule,
     MatProgressBarModule,
     MatDialogModule,
-    MatGridListModule
+    MatGridListModule,
+    MatListModule
   ],
   declarations: [
     HallMonitorComponent,
@@ -71,7 +76,11 @@ import { NavbarDataService } from './navbar-data.service';
     LocationCellComponent,
     LocationPickerComponent,
     ContainerCardComponent,
-    MainPageComponent
+    MainPageComponent,
+    GroupsContainerComponent ,
+    GroupsStep1Component,
+    GroupsStep2Component,
+    GroupsStep3Component,
   ],
   entryComponents: [
     HallpassFormComponent,
