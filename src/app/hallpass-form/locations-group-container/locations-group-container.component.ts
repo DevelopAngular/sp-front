@@ -3,6 +3,7 @@ import {Observable, Subject} from 'rxjs';
 import { User } from '../../models/User';
 import { DataService } from '../../data-service';
 import { LocationService } from './location.service';
+import {Pinnable} from '../../models/Pinnable';
 
 @Component({
   selector: 'app-locations-group-container',
@@ -16,6 +17,7 @@ export class LocationsGroupContainerComponent implements OnInit {
   user$: Observable<User>;
   isStaff: boolean;
   currentState: string;
+  pinnables: Promise<Pinnable[]>;
 
   data: any = {};
 
@@ -25,6 +27,7 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.locationService.changeLocation$.subscribe(state => {
       this.currentState = state;
     });
+    this.pinnables = this.locationService.getPinnable();
     this.user$ = this.dataService.currentUser;
     this.user$.subscribe((user: User) => this.isStaff = user.isTeacher() || user.isAdmin());
   }
@@ -52,6 +55,7 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   fromCategory(location) {
     this.data.locFromCategory = location;
+    this.response.emit(this.data);
   }
 
 }

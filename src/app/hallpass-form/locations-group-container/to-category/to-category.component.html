@@ -13,6 +13,7 @@
         (onSelect)="locationChosen($event)"
         [forStaff]="true"
         [hasLocks]="true"
+        [horizontalTable]="false"
         [category]="pinnable.category"
         [type]="'location'"
         [placeholder]="'Search ' + pinnable.category" >
@@ -24,6 +25,19 @@
       <div class="footer-text" [style.font-weight]="'bold'">Origin</div>
       <img class="footer-icon" [src]="'./assets/Arrows_long_right.png' | resolveAsset">
       <div class="footer-text">Destination</div>
+    </div>
+  </div>
+
+  <div class="category-footer" *ngIf="isStaff">
+    <div class="footer-category-text">
+      <div class="top" *ngIf="">
+
+      </div>
+      <div class="center">
+        <div class="footer-text" [style.font-weight]="'bold'">Origin</div>
+        <img class="footer-icon" [src]="'./assets/Arrows_long_right.png' | resolveAsset">
+        <div class="footer-text">Destination</div>
+      </div>
     </div>
   </div>
 </div>

@@ -12,14 +12,15 @@ export class ToWhereComponent implements OnInit {
 
   @Input() location;
 
-  @Output() selectedPinnable: EventEmitter<any> = new EventEmitter<any>();
+  @Input() pinnables: Promise<Pinnable[]>;
 
-  public pinnables: Promise<Pinnable[]>;
+  @Input() isStaff: boolean;
+
+  @Output() selectedPinnable: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(private http: HttpService, private locService: LocationService) { }
 
   ngOnInit() {
-    this.pinnables = this.http.get<any[]>('v1/pinnables/arranged').toPromise().then(json => json.map(raw => Pinnable.fromJSON(raw)));
   }
 
   pinnableSelected(pinnable) {

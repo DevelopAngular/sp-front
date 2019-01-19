@@ -11,7 +11,7 @@
     <div class="pin-collection">
       <mat-grid-list class="grid center" cols="3" rowHeight="75px" gutterSize="10px" [style.width]="'395px'">
         <mat-grid-tile *ngFor="let pinnable of pinnables | async">
-          <app-pinnable [valid]="true" [forStaff]="true" [forLater]="false" [pinnable]="pinnable" (onSelectEvent)="pinnableSelected($event)"></app-pinnable>
+          <app-pinnable [valid]="(pinnable.location ? pinnable.location.id !== location.id : true)" [forStaff]="true" [forLater]="false" [pinnable]="pinnable" (onSelectEvent)="pinnableSelected($event)"></app-pinnable>
         </mat-grid-tile>
       </mat-grid-list>
     </div>

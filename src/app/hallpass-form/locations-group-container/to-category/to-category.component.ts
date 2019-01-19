@@ -10,6 +10,8 @@ export class ToCategoryComponent implements OnInit {
 
   @Input() pinnable;
 
+  @Input() isStaff: boolean;
+
   @Output() locFromCategory: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(private locService: LocationService) { }

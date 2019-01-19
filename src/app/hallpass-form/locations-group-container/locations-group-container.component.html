@@ -1,8 +1,8 @@
 <div class="locations-group-wrapper">
   <app-date-time [isStaff]="isStaff" (result)="selectedDate($event)" *ngIf="currentState == 'date'"></app-date-time>
-  <app-from-where [date]="data.date" (selectedLocation)="selectedLocation($event)" *ngIf="currentState == 'from'"></app-from-where>
-  <app-to-where (selectedPinnable)="selectedPinnable($event)" *ngIf="currentState == 'toWhere'"></app-to-where>
-  <app-to-category (locFromCategory)="fromCategory($event)" [pinnable]="data.pinnable" *ngIf="currentState == 'category'"></app-to-category>
+  <app-from-where [isStaff]="isStaff" [date]="data.date" (selectedLocation)="selectedLocation($event)" *ngIf="currentState == 'from'"></app-from-where>
+  <app-to-where [isStaff]="isStaff" (selectedPinnable)="selectedPinnable($event)" [pinnables]="pinnables" [location]="data.location" *ngIf="currentState == 'toWhere'"></app-to-where>
+  <app-to-category [isStaff]="isStaff" (locFromCategory)="fromCategory($event)" [pinnable]="data.pinnable" *ngIf="currentState == 'category'"></app-to-category>
   <app-restricted-target *ngIf="false"></app-restricted-target>
   <app-restricted-message *ngIf="false"></app-restricted-message>
 </div>
