@@ -32,7 +32,6 @@ import { SearchComponent } from './search/search.component';
 import { SettingsComponent } from './settings/settings.component';
 import { AdminSharedModule } from './shared/admin-shared.module';
 import { SupportComponent } from './support/support.component';
-import { TestComponent } from './test/test.component';
 
 @NgModule({
   imports: [
