@@ -291,15 +291,7 @@ export class RequestCardComponent implements OnInit {
               });
           }
         } else if(action === 'delete'){
-
-          let endpoint: string = 'v1/pass_requests/' +this.request.id +'/cancel';
-          let body = {
-            'message' : ''
-          };
-          this.http.post(endpoint, body).subscribe((httpData) => {
-            console.log('[Request Cancelled]: ', httpData);
-            this.dialogRef.close();
-          });
+          this.denyRequest('No message');
         }
       });
     }
@@ -330,7 +322,7 @@ export class RequestCardComponent implements OnInit {
       'message' : denyMessage
     };
     this.http.post(endpoint, body).subscribe((httpData) => {
-      console.log('[Invitation Denied]: ', httpData);
+      console.log('[Request Denied]: ', httpData);
       this.dialogRef.close();
     });
   }
