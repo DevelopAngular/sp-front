@@ -91,7 +91,8 @@ export class MyRoomComponent implements OnInit {
   selectedLocation$ = new ReplaySubject<Location>(1);
 
   hasPasses: Observable<boolean> = of(false);
-
+  passesLoaded: Observable<boolean> = of(false);
+  
   constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService,
               public dialog: MatDialog, private liveDataService: LiveDataService) {
     this.setSearchDate(new Date());
@@ -107,12 +108,6 @@ export class MyRoomComponent implements OnInit {
       this.searchDate$, this.searchQuery$));
 
     // Use WrappedProvider's length$ to keep the hasPasses subject up to date.
-    this.hasPasses = combineLatest(
-      this.activePasses.length$,
-      this.originPasses.length$,
-      this.destinationPasses.length$,
-      (l1, l2, l3) => l1 + l2 + l3 > 0
-    );
   }
 
   setSearchDate(date: Date) {
@@ -165,6 +160,19 @@ export class MyRoomComponent implements OnInit {
           });
         });
       });
+
+      this.hasPasses = combineLatest(
+        this.activePasses.length$,
+        this.originPasses.length$,
+        this.destinationPasses.length$,
+        (l1, l2, l3) => l1 + l2 + l3 > 0
+      );
+      this.passesLoaded = combineLatest(
+        this.activePasses.loaded$,
+        this.originPasses.loaded$,
+        this.destinationPasses.loaded$,
+        (l1, l2, l3) => l1 && l2 && l3
+      );
   }
 
   onSearch(search: string) {

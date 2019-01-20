@@ -51,6 +51,7 @@ export class HallMonitorComponent implements OnInit {
   isActiveMessage: boolean;
 
   searchQuery$ = new BehaviorSubject('');
+  passesLoaded: Observable<boolean> = of(false);
 
   hasPasses: Observable<boolean> = of(false);
 
@@ -78,6 +79,11 @@ export class HallMonitorComponent implements OnInit {
       this.hasPasses = combineLatest(
         this.activePassProvider.length$,
         (l1) => l1 > 0
+      );
+
+      this.passesLoaded = combineLatest(
+        this.activePassProvider.loaded$,
+        (l1) => l1
       );
   }
 

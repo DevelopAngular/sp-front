@@ -24,7 +24,7 @@
         <app-pass-collection [forStaff]="isStaff" [style.width]="'550px'" [passProvider]="originPasses" [title]="'Passes from ' +selectedLocation.title" [icon]="'./assets/Arrow Reverse (Blue).png'" [columns]="4"></app-pass-collection>
         <app-pass-collection [forStaff]="isStaff" [style.width]="'550px'" [passProvider]="destinationPasses" [title]="'Passes to ' +selectedLocation.title" [icon]="'./assets/Arrow (Blue).png'" [columns]="4"></app-pass-collection>
 
-        <div *ngIf="!(hasPasses | async)">
+        <div *ngIf="!(hasPasses | async) && (passesLoaded | async)">
           <div class="empty-container" *ngIf="inputValue != ''">
             <img class="empty-svg" [src]="'./assets/emptyStates/emptyRoomSearch.svg' | resolveAsset" alt="empty-svg">
             <div class="big-text" [style.margin]="'10px 0'">No Results</div>
