@@ -65,9 +65,9 @@
       <div *ngIf="forStaff" class="toggle-divider"></div>
       <div *ngIf="forStaff" class="toggle-description">
         <span *ngIf="isDeclinable">The student has the option to decline the pass. <br/><br/>
-          You must also select from where the student will be traveling.</span>
-        <span *ngIf="!isDeclinable">The student cannot decline the pass. <br/><br/>
           You do not need to know the location from where the student will be travelling.</span>
+        <span *ngIf="!isDeclinable">The student cannot decline the pass. <br/><br/>
+          You must enter the location from where the student will be traveling.</span>
       </div>
       <app-gradient-button
         [gradient]="'#03CF31,#00B476'"
@@ -118,7 +118,7 @@
       </mat-grid-list>
     </div>
     <div *ngIf="formState == 'to-category'">
-      <app-location-table class="center" (onSelect)="locationChosen($event, 'to')"
+      <app-location-table class="center" (onSelect)="locationChosen($event, 'to')" [forLater]="forLater"
                           [invalidLocation]="(fromLocation?fromLocation.id:'')" [forStaff]="forStaff" [hasLocks]="true" [category]="toCategory" [type]="'location'" [placeholder]="'Search ' +toCategory.toLowerCase()" >
       </app-location-table>
     </div>
