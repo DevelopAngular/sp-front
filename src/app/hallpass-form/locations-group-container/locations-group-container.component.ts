@@ -48,12 +48,6 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.user$.subscribe((user: User) => this.isStaff = user.isTeacher() || user.isAdmin());
   }
 
-  selectedDate({date, declinable}) {
-    this.data.date = date;
-    this.data.declinable = declinable;
-    this.locationService.changeLocation$.next('from');
-  }
-
   fromWhere(location) {
     this.data.fromLocation = location;
     this.locationService.changeLocation$.next('toWhere');
@@ -61,13 +55,17 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   toWhere(pinnable) {
     this.pinnable = pinnable;
+    const restricted = ((this.pinnable.location.restricted && !this.showDate) || (this.pinnable.location.scheduling_restricted && !!this.showDate));
     if (pinnable.category) {
-        this.locationService.changeLocation$.next('category');
+       this.locationService.changeLocation$.next('category');
     } else {
         this.data.toLocation = pinnable.location;
-        this.postComposetData();
-
-      }
+        if (!this.isStaff && restricted) {
+            this.locationService.changeLocation$.next('restrictedTarget');
+        } else {
+            this.postComposetData();
+        }
+    }
 
   }
 

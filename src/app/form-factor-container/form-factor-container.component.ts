@@ -1,6 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormFactor, Navigation} from '../hallpass-form/hallpass-form.component';
-import {HttpService} from '../http-service';
 import {Request} from '../models/Request';
 import {HallPass} from '../models/HallPass';
 import {Invitation} from '../models/Invitation';
@@ -29,8 +28,9 @@ export class FormFactorContainerComponent implements OnInit {
   ngOnInit() {
 
     this.currentState = this.FORM_STATE.formMode.formFactor;
+    debugger;
 
-    if ( this.FORM_STATE.formMode.formFactor === this.states.Request) {
+    if (this.FORM_STATE.formMode.formFactor === this.states.Request) {
       debugger;
       this.template = new Request(
         'template',
@@ -55,6 +55,10 @@ export class FormFactorContainerComponent implements OnInit {
         null
       );
 
+    }
+
+    if (this.FORM_STATE.formMode.formFactor === this.states.HallPass) {
+      debugger;
     }
 
     console.log('FF ===>', this.currentState);
