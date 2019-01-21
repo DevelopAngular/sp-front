@@ -39,6 +39,7 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   ngOnInit() {
     console.log('Step #3 ======>', this.FORM_STATE);
+    this.data.toLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.to ? this.FORM_STATE.data.direction.to : null;
     this.locationService.changeLocation$.subscribe(state => {
       if (state === 'exit') {
 
