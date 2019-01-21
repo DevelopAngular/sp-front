@@ -8,8 +8,13 @@
 }
 
 .form {
-  width: inherit;
-  height: inherit;
+  width: auto;
+  height: auto;
+  transition: all .5s ease;
+  &:hover {
+    //background: red;
+    //width: 900px;
+  }
 }
 
 .form-stepper {
@@ -398,3 +403,19 @@ textarea {
 .onoffswitch-checkbox:checked + .onoffswitch-label:before {
   right: 0px;
 }
+
+//.state-transition {
+//  animation: stateTransition .5s ease forwards;
+//}
+//
+//@keyframes stateTransition {
+//  0% {
+//    opacity: 0;
+//    transform: translateX(-500px);
+//  }
+//  100% {
+//    opacity: 1;
+//    transform: translateX(0px);
+//  }
+//}
+

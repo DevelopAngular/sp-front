@@ -1,0 +1,44 @@
+<div>
+
+  <div [style.height]="FORM_STATE.formMode.role === 1 ? '451px' : '412px'"
+       [style.width]="'334px'"
+       *ngIf="FORM_STATE.formMode.formFactor === states.HallPass && template">
+
+    <app-pass-card
+      [pass]="template"
+      [forStaff]="FORM_STATE.formMode.role === 1"
+      [forInput]="true"
+      [forFuture]="false"
+      [students]="FORM_STATE.formMode.role === 1 ? FORM_STATE.data.selectedStudents : []"
+      (cardEvent)="onNextStep($event)">
+
+    </app-pass-card>
+  </div>
+  <div [style.height]="FORM_STATE.formMode.role === 1 ? '451px' : '412px'"
+       [style.width]="'334px'"
+       *ngIf="FORM_STATE.formMode.formFactor === states.Request && template">
+
+    <app-request-card
+      [request]="template"
+      [forStaff]="FORM_STATE.formMode.role === 1"
+      [forInput]="true"
+      [forFuture]="true"
+      (cardEvent)="onNextStep($event)"
+    ></app-request-card>
+  </div>
+
+  <div [style.height]="FORM_STATE.formMode.role === 1 ? '451px' : '412px'"
+       [style.width]="'334px'"
+       *ngIf="FORM_STATE.formMode.formFactor === states.Invitation && template">
+    <app-invitation-card
+      [invitation]="template"
+      [forStaff]="FORM_STATE.formMode.role === 1"
+      [forInput]="true"
+      [forFuture]="true"
+      [selectedStudents]="FORM_STATE.data.selectedStudents"
+      (cardEvent)="onNextStep($event)"
+    >
+
+    </app-invitation-card>
+  </div>
+</div>

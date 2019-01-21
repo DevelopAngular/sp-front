@@ -63,14 +63,17 @@ export class InvitationCardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.invitation = this.data['pass'];
-    this.forFuture = this.data['forFuture'];
-    this.fromPast = this.data['fromPast'];
-    this.forStaff = this.data['forStaff'];
-    this.forInput = this.data['forInput'];
-    this.fromHistory = this.data['fromHistory'];
-    this.fromHistoryIndex = this.data['fromHistoryIndex'];
-    this.selectedStudents = this.data['selectedStudents'];
+
+    if (this.data['pass']) {
+      this.invitation = this.data['pass'];
+      this.forFuture = this.data['forFuture'];
+      this.fromPast = this.data['fromPast'];
+      this.forStaff = this.data['forStaff'];
+      this.forInput = this.data['forInput'];
+      this.fromHistory = this.data['fromHistory'];
+      this.fromHistoryIndex = this.data['fromHistoryIndex'];
+      this.selectedStudents = this.data['selectedStudents'];
+    }
   if (this.invitation) {
     this.selectedOrigin = this.invitation.default_origin;
   }
@@ -174,11 +177,11 @@ export class InvitationCardComponent implements OnInit {
         backdropClass: 'invis-backdrop',
         data: {'header': header, 'options': options, 'trigger': target}
       });
-  
+
       consentDialog.afterOpen().subscribe( () =>{
         this.denyOpen = true;
       });
-  
+
       consentDialog.afterClosed().subscribe(action =>{
         this.denyOpen = false;
         if(action === 'cancel'){

@@ -2,14 +2,16 @@
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
-  MatChipsModule,
-  MatDialogModule,
-  MatGridListModule,
-  MatIconModule,
-  MatProgressBarModule,
-  MatSelectModule,
-  MatSliderModule,
-  MatSlideToggleModule
+    MatChipsModule,
+    MatDialogModule,
+    MatDividerModule,
+    MatGridListModule,
+    MatListModule,
+    MatIconModule,
+    MatProgressBarModule,
+    MatSelectModule,
+    MatSliderModule,
+    MatSlideToggleModule
 } from '@angular/material';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { ContainerCardComponent } from '../container-card/container-card.component';
@@ -34,6 +36,20 @@ import { SharedModule } from '../shared/shared.module';
 import { StudentPickerComponent } from '../student-picker/student-picker.component';
 import { MainRoutingModule } from './main-routing.module';
 import { NavbarDataService } from './navbar-data.service';
+import { DateTimeComponent } from '../hallpass-form/locations-group-container/date-time/date-time.component';
+import { FromWhereComponent } from '../hallpass-form/locations-group-container/from-where/from-where.component';
+import { ToWhereComponent } from '../hallpass-form/locations-group-container/to-where/to-where.component';
+import { LocationsGroupContainerComponent } from '../hallpass-form/locations-group-container/locations-group-container.component';
+import { ToCategoryComponent } from '../hallpass-form/locations-group-container/to-category/to-category.component';
+import { RestrictedTargetComponent } from '../hallpass-form/locations-group-container/restricted-target/restricted-target.component';
+import { RestrictedMessageComponent } from '../hallpass-form/locations-group-container/restricted-message/restricted-message.component';
+import {GroupsContainerComponent} from '../groups/groups-container/groups-container.component';
+import {GroupsStep1Component} from '../groups/groups-step1/groups-step1.component';
+import {GroupsStep2Component} from '../groups/groups-step2/groups-step2.component';
+import {GroupsStep3Component} from '../groups/groups-step3/groups-step3.component';
+import {TeacherFooterComponent} from '../hallpass-form/locations-group-container/teacher-footer/teacher-footer.component';
+import { DateTimeContainerComponent } from '../date-time-container/date-time-container.component'
+import { FormFactorContainerComponent } from '../form-factor-container/form-factor-container.component'
 
 @NgModule({
   imports: [
@@ -50,7 +66,10 @@ import { NavbarDataService } from './navbar-data.service';
     MatSliderModule,
     MatProgressBarModule,
     MatDialogModule,
-    MatGridListModule
+    MatGridListModule,
+    MatDividerModule,
+    MatGridListModule,
+    MatListModule
   ],
   declarations: [
     HallMonitorComponent,
@@ -71,7 +90,21 @@ import { NavbarDataService } from './navbar-data.service';
     LocationCellComponent,
     LocationPickerComponent,
     ContainerCardComponent,
-    MainPageComponent
+    MainPageComponent,
+    DateTimeComponent,
+    FromWhereComponent,
+    ToWhereComponent,
+    ToCategoryComponent,
+    RestrictedTargetComponent,
+    RestrictedMessageComponent,
+    TeacherFooterComponent,
+    LocationsGroupContainerComponent,
+    GroupsContainerComponent ,
+    GroupsStep1Component,
+    GroupsStep2Component,
+    GroupsStep3Component,
+    DateTimeContainerComponent,
+    FormFactorContainerComponent
   ],
   entryComponents: [
     HallpassFormComponent,

@@ -6,7 +6,7 @@
 }
 
 .input {
-    margin-top: 20px;
+    //margin-top: 20px;
     margin-bottom: 5px;
 }
 
@@ -31,6 +31,8 @@ mat-input-container.md-input-focused label {
 .options-wrapper{
     margin: 10px auto 10px auto;
     width: 180px;
+    height: 150px;
+    overflow: auto;
 }
 
 .option-wrapper {

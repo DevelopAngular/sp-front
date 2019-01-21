@@ -22,6 +22,7 @@ import { User } from '../models/User';
 import { PassCardComponent } from '../pass-card/pass-card.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
 import {delay, skip} from 'rxjs/internal/operators';
+import {LocationService} from '../hallpass-form/locations-group-container/location.service';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('_profile_teacher');
@@ -163,6 +164,7 @@ export class PassesComponent implements OnInit {
   isActivePass$ = this.dataService.isActivePass$;
   isActiveRequest$ = this.dataService.isActiveRequest$;
 
+  // inboxHasItems: Subject<boolean> = new Subject<boolean>();
   inboxHasItems: Observable<boolean> = of(false);
   passesHaveItems: Observable<boolean> = of(false);
 
@@ -182,8 +184,14 @@ export class PassesComponent implements OnInit {
     }
   }
 
-  constructor(public dataService: DataService, public dialog: MatDialog, private _zone: NgZone,
-              private loadingService: LoadingService, private liveDataService: LiveDataService) {
+  constructor(
+      public dataService: DataService,
+      public dialog: MatDialog,
+      private _zone: NgZone,
+      private loadingService: LoadingService,
+      private liveDataService: LiveDataService,
+      private locService: LocationService
+  ) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
     this.testRequests = new BasicPassLikeProvider(testRequests);
@@ -209,6 +217,24 @@ export class PassesComponent implements OnInit {
             excludedRequests, this.dataService));
           this.sentRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser));
         }
+
+        zip(
+          this.receivedRequests.length$.asObservable(),
+          this.sentRequests.length$.asObservable()
+        ).pipe(
+          skip(2)
+        ).subscribe((val) => {
+          this.inboxHasItems.next(!val.reduce((a, b) => a + b));
+          // console.log('==============================================>', val);
+        });
+
+        // this.inboxHasItems = combineLatest(
+        //   this.receivedRequests.length$.startWith(0),
+        //   this.sentRequests.length$.startWith(0),
+        //   (l1, l2) => l1 > 0 || l2 > 0
+        // );
+        //   this.receivedRequests.length$
+
 
       });
 
@@ -255,7 +281,7 @@ export class PassesComponent implements OnInit {
           this.isStaff = user.roles.includes('_profile_teacher') || user.roles.includes('_profile_admin');
         });
       });
-      
+
       this.inboxHasItems = combineLatest(
         this.receivedRequests.length$.startWith(0),
         this.sentRequests.length$.startWith(0),
@@ -285,11 +311,15 @@ export class PassesComponent implements OnInit {
   }
 
   showForm(forLater: boolean): void {
+    this.locService.nextStep('from');
     const dialogRef = this.dialog.open(HallpassFormComponent, {
-      width: '750px',
+      // width: '750px',
       panelClass: 'form-dialog-container',
       backdropClass: 'custom-backdrop',
-      data: {'forLater': forLater, 'forStaff': this.isStaff}
+      data: {
+        'forLater': forLater,
+        'forStaff': this.isStaff,
+      }
     });
 
     dialogRef.afterClosed()
@@ -306,7 +336,7 @@ export class PassesComponent implements OnInit {
   }
 
   openInputCard(templatePass, forLater, forStaff, selectedStudents, component, fromHistory, fromHistoryIndex) {
-    let data = {
+    const data = {
       'pass': templatePass,
       'fromPast': false,
       'fromHistory': fromHistory,

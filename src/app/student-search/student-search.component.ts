@@ -13,9 +13,11 @@ import { User } from '../models/User';
 })
 
 export class StudentSearchComponent implements AfterViewInit {
-  @Output() onUpdate: EventEmitter<any> = new EventEmitter();
+
+  @Input() disabled: false;
   @Input() showOptions: boolean = true;
   @Input() selectedStudents: User[] = [];
+  @Output() onUpdate: EventEmitter<any> = new EventEmitter();
 
   @ViewChild('studentInput') input;
 

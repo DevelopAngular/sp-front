@@ -1,0 +1,17 @@
+:host {
+  .state-transition {
+    animation: stateTransition .5s ease forwards;
+  }
+
+  @keyframes stateTransition {
+    0% {
+      opacity: 0;
+      transform: translateX(-500px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0px);
+    }
+  }
+
+}

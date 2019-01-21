@@ -1,0 +1,54 @@
+<div class="rest-mes-wrapper">
+  <div class="rest-mes-header" [style.background-image]="headerGradient">
+    <img class="back-button" [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
+    <div class="rest-mes-header-text">
+      <img class="search-icon" [src]="'./assets/Message (White).png' | resolveAsset">
+      <div class="text">Message</div>
+    </div>
+  </div>
+  <div class="content-wrapper">
+    <div class="rest-mes-content">
+     <textarea
+             class="message-box"
+             [placeholder]="'Attach a message for ' + (teacher ? teacher.last_name : '')"
+             [formControl]="message"
+             autofocus
+     >
+    </textarea>
+      <div class="buttons">
+        <app-gradient-button *ngIf="true"
+                             [gradient]="'#00B476, #03CF31'"
+                             [hoverColor]="'#04CD33'"
+                             [cursor]="'pointer'"
+                             [width]="'104px'"
+                             [minHeight]="'34px'"
+                             [fontSize]="'12px'"
+                             (buttonClick)="sendRequest()"
+                             class="message-button">
+          {{(message.value === '' ? 'Skip':'Add Message')}}
+        </app-gradient-button>
+        <app-gradient-button *ngIf="false"
+                             [gradient]="'#DA2370,#FB434A'"
+                             [hoverColor]="'#DA2370'"
+                             [cursor]="'pointer'"
+                             [minWidth]="'185px'"
+                             [minHeight]="'35px'"
+                             [fontSize]="'14px'"
+                             (buttonClick)="sendRequest()"
+                             class="message-deny-button"
+        >Deny Pass Request</app-gradient-button>
+      </div>
+    </div>
+  </div>
+
+  <div class="message-footer" [style.height]="date ? '65px' : '43px'">
+    <div class="footer-from-text">
+      <div class="date" [style.color]="'#1F195E'" *ngIf="date">{{ date }}</div>
+      <div class="center-text">
+        <div class="footer-text">{{ fromLocation.title }}</div>
+        <img class="footer-icon" [src]="'./assets/Arrows_long_right.png' | resolveAsset">
+        <div class="footer-text">{{ toLocation.title }}</div>
+      </div>
+    </div>
+  </div>
+</div>

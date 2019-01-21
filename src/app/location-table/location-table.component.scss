@@ -12,7 +12,6 @@
 
 .table-left{
   position: relative;
-  height: 189px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -22,13 +21,11 @@
   font-size: 16px;
   font-weight: bold;
   color: #1F195E;
-  margin-top: 27px;
   margin-bottom: 16px;
 }
 
 .table-right{
   width: 200px;
-  height: 189px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -55,8 +52,6 @@ input {
 }
 
 .choices {
-  width: 180px;
-  height: 140px;
   overflow: auto;
 }
 

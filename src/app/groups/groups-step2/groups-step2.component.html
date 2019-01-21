@@ -1,0 +1,101 @@
+<div class="step-1-container">
+  <div class="header">
+    <div class="header_back-button" (click)="back()">
+      <!--<img class="header_back-button" [src]="'./assets/Back Button (Grey).png' | resolveAsset">-->
+      <span>Cancel</span>
+    </div>
+    <div class="header_title">
+      <!--<img class="header_icon" [src]="'./assets/Search (Blue).png' | resolveAsset">-->
+      <div class="header_text">New Student Group</div>
+      <span  *ngIf="selectedStudents && selectedStudents.length ">{{selectedStudents.length}} students</span>
+    </div>
+    <div class="header_save">
+      <div *ngIf="form.get('title').value && (selectedStudents && selectedStudents.length)">
+        <app-gradient-button
+          [width]="'105px'"
+          [minHeight]="'35px'"
+          [fontSize]="'14px'"
+          [cursor]="'pointer'"
+          (buttonClick)="nextStep()"
+        >Save</app-gradient-button>
+      </div>
+    </div>
+  </div>
+  <div class="content">
+
+
+    <div class="content-left">
+      <div class="content-left_wrapper">
+        <div>
+          <div>
+
+            <div class="content-left_header">Student Group Name</div>
+            <app-input
+              [controlName]="form.get('title')"
+              [formGroup]="form"
+              [padding]="'4px'"
+              [width]="'200px'"
+            ></app-input>
+          </div>
+          <div class="content-left_upload">
+            <app-gradient-button
+              [gradient]="'#022F68,#2F66AB'"
+              [hoverColor]="'#022F68'"
+              [minHeight]="'35px'"
+              [width]="'120px'"
+              [fontSize]="'13px'"
+              [cursor]="'pointer'"
+            >
+              <label>
+                Upload File
+                <input type="file" hidden>
+              </label>
+            </app-gradient-button>
+          </div>
+        </div>
+        <div class="content-left_groups">
+          <div>
+            <div class="content-left_placeholder">
+              Upload an Exel spreadsheet of student <strong>email address</strong>
+              to quickly select students.
+            </div>
+          </div>
+        </div>
+        <!--<div class="content-left_create-group">-->
+          <!--<app-gradient-button-->
+            <!--[minHeight]="'45px'"-->
+            <!--[fontSize]="'14px'"-->
+            <!--[width]="'180px'"-->
+            <!--[hoverColor]="'#FFFFFF'"-->
+            <!--[gradient]="'#FFFFFF,#FFFFFF'"-->
+            <!--[textColor]="'#134482'"-->
+            <!--[leftIcon]="'./assets/Create (Blue).png'"-->
+            <!--[leftImageHeight]="'13px'"-->
+            <!--[leftImageWidth]="'13px'"-->
+            <!--[subtitle]=" selectedStudents.length ? 'with selected students' : null "-->
+          <!--&gt;-->
+            <!--<div class="create-button">-->
+              <!--<div>-->
+
+                <!--<span class="create-button_title">New Student Group</span>-->
+              <!--</div>-->
+              <!--&lt;!&ndash;<span class="create-button_subtitle">with selected students</span>&ndash;&gt;-->
+            <!--</div>-->
+          <!--</app-gradient-button>-->
+        <!--</div>-->
+      </div>
+    </div>
+
+
+    <div class="content-right">
+      <div class="content-right_sudent-search">
+        <div class="seach-wrapper">
+          <app-student-search
+            (onUpdate)="selectedStudents=$event" [selectedStudents]="selectedStudents"
+          ></app-student-search>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

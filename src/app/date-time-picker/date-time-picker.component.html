@@ -2,11 +2,11 @@
   <div class="calendars">
     <div class="first">
       <div *ngIf="showTwoCalender" class="calendar-text">From</div>
-      <owl-date-time-inline [(ngModel)]="selectedMoment" [hour12Timer]="true" [min]="min" [pickerType]="showTime?'both':'calendar'"></owl-date-time-inline>
+      <owl-date-time-inline [(ngModel)]="selectedMoment"  [hour12Timer]="true" [min]="min" [pickerType]="showTime?'both':'calendar'"></owl-date-time-inline>
     </div>
     <div class="second" *ngIf="showTwoCalender">
         <div *ngIf="showTwoCalender" class="calendar-text">To</div>
-        <owl-date-time-inline  [(ngModel)]="selectedMoment_2ndCal" [min]="min" [hour12Timer]="true" [min]="min_2ndCal" [pickerType]="showTime_2ndCal?'both':'calendar'"></owl-date-time-inline>
+        <owl-date-time-inline [(ngModel)]="selectedMoment_2ndCal" [min]="min" [hour12Timer]="true" [min]="min_2ndCal" [pickerType]="showTime_2ndCal?'both':'calendar'"></owl-date-time-inline>
     </div>
   </div>
   <div class="button" *ngIf="showTwoCalender">

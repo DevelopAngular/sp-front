@@ -1,0 +1,44 @@
+<div class="from-wrapper">
+  <div class="from-header">
+    <img class="back-button" [src]="'./assets/Back Button (Grey).png' | resolveAsset" (click)="back()">
+    <div class="from-header-text">
+      <img class="search-icon" [src]="'./assets/Search (Grey).png' | resolveAsset">
+      <div class="text">From where?</div>
+    </div>
+  </div>
+
+  <div class="from-content">
+    <div class="location-tables">
+      <app-location-table
+         class="locations"
+         [forStaff]="true"
+         [height]="'107px'"
+         [heightLeftTable]="'153px'"
+         [horizontalTable]="false"
+         [rightHeaderText]="true"
+         [forLater]="true"
+         [showStars]="true"
+         [noRightStar]="true"
+         [showFavorites]="true"
+         [type]="'location'"
+         [placeholder]="'Search rooms'"
+         (onSelect)="locationChosen($event)"
+      >
+      </app-location-table>
+    </div>
+  </div>
+
+  <div class="from-footer" [style.height]="date ? '65px' : '43px'" *ngIf="!isStaff">
+    <div class="footer-from-text">
+      <div class="date" [style.color]="'#1F195E'" *ngIf="date">{{ date }}</div>
+      <div class="center-text">
+        <div class="footer-text" [style.font-weight]="'bold'">Origin</div>
+        <img class="footer-icon" [src]="'./assets/Arrows_long_right.png' | resolveAsset">
+        <div class="footer-text">Destination</div>
+      </div>
+    </div>
+  </div>
+
+  <app-teacher-footer *ngIf="isStaff" [date]="date" [students]="students"></app-teacher-footer>
+
+</div>

@@ -1,13 +1,14 @@
 ﻿import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import {
-    MatProgressBarModule, MatGridListModule,
-    MatDialogModule,
-    MatIconModule,
-    MatSelectModule,
-    MatSliderModule,
-    MatSlideToggleModule,
-    MatChipsModule, MatCardModule, MatCheckboxModule, MatTableModule, MatProgressSpinnerModule, MatDividerModule,
+  MatProgressBarModule, MatGridListModule,
+  MatDialogModule,
+  MatIconModule,
+  MatSelectModule,
+  MatSliderModule,
+  MatSlideToggleModule,
+  MatChipsModule, MatCardModule, MatCheckboxModule, MatTableModule, MatProgressSpinnerModule, MatDividerModule, MatTooltipModule,
+  MatListModule,
 } from '@angular/material';
 
 
@@ -39,6 +40,7 @@ import {PagerComponent} from '../pager/pager.component';
 import {RoundInputComponent} from '../admin/round-input/round-input.component';
 import {DragulaModule} from 'ng2-dragula';
 import {DropdownComponent} from '../dropdown/dropdown.component';
+import {AppInputComponent} from '../app-input/app-input.component';
 
 
 
@@ -50,6 +52,8 @@ import {DropdownComponent} from '../dropdown/dropdown.component';
     OwlNativeDateTimeModule,
     FormsModule,
     ReactiveFormsModule,
+      MatTooltipModule,
+      MatListModule,
       MatCheckboxModule,
       MatTableModule,
       MatProgressSpinnerModule,
@@ -89,7 +93,8 @@ import {DropdownComponent} from '../dropdown/dropdown.component';
       DurationPickerComponent,
       CardButtonComponent,
       PagerComponent,
-      RoundInputComponent
+      RoundInputComponent,
+      AppInputComponent
   ],
     entryComponents: [
       PassCardComponent,
@@ -124,6 +129,8 @@ import {DropdownComponent} from '../dropdown/dropdown.component';
     CardButtonComponent,
     PagerComponent,
     RoundInputComponent,
+    AppInputComponent,
+    PassCardComponent
 
   ],
 })
