@@ -1,22 +1,22 @@
 <div>
 
-  <div *ngIf="currentState === states.HallPass">
+  <div *ngIf="FORM_STATE.formMode.formFactor === states.HallPass">
 
-    <app-pass-card></app-pass-card>
+    <app-pass-card (cardEvent)="onNextStep($event)"></app-pass-card>
   </div>
 
-  <div *ngIf="currentState === states.Request">
+  <div *ngIf="FORM_STATE.formMode.formFactor === states.Request">
 
     <app-request-card
       [request]="template"
       [forStaff]="FORM_STATE.formMode.role === 1"
       [forInput]="true"
       [forFuture]="true"
-      (back)="onBack()"
+      (cardEvent)="onNextStep($event)"
     ></app-request-card>
   </div>
 
-  <div *ngIf="currentState === states.Invitation">
+  <div *ngIf="FORM_STATE.formMode.formFactor === states.Invitation">
 
     <app-invitation-card></app-invitation-card>
   </div>

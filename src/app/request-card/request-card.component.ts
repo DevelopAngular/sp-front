@@ -28,7 +28,7 @@ export class RequestCardComponent implements OnInit {
   @Input() forInput: boolean = false;
   @Input() forStaff: boolean = false;
 
-  @Output() back: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() cardEvent: EventEmitter<any> = new EventEmitter<any>();
 
   selectedDuration: number;
   selectedTravelType: string;
@@ -196,7 +196,7 @@ export class RequestCardComponent implements OnInit {
           if (!this.pinnableOpen) {
             // debugger;
 
-            this.back.emit(true);
+            this.cardEvent.emit({});
 
 
             //   this.dialogRef.close();
