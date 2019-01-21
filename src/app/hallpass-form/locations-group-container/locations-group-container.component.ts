@@ -52,6 +52,7 @@ export class LocationsGroupContainerComponent implements OnInit {
     });
     this.pinnables = this.locationService.getPinnable();
     this.user$ = this.dataService.currentUser;
+    this.pinnable = this.FORM_STATE.data.direction ? this.FORM_STATE.data.direction.pinnable : null;
     this.user$.subscribe((user: User) => this.isStaff = user.isTeacher() || user.isAdmin());
   }
 
@@ -66,7 +67,7 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   toWhere(pinnable) {
     this.pinnable = pinnable;
-    this.FORM_STATE.data.direction.pinnable =pinnable;
+    this.FORM_STATE.data.direction.pinnable = pinnable;
     if (pinnable.category) {
        return this.locationService.nextStep('category');
     } else {
@@ -103,6 +104,7 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   resultMessage(message) {
     this.data.message = message;
+    this.FORM_STATE.data.message = message;
     this.postComposetData();
   }
 
@@ -111,20 +113,10 @@ export class LocationsGroupContainerComponent implements OnInit {
 
     // this.FORM_STATE.formMode.formFactor = this.data.toLocation.restricted ? FormFactor.Request : FormFactor.HallPass
 
-    if (this.FORM_STATE.formMode.role === Role.Student && this.data.toLocation.restricted) {
+    if (this.FORM_STATE.formMode.role === Role.Student && this.FORM_STATE.data.direction.to.restricted) {
       this.FORM_STATE.formMode.formFactor = FormFactor.Request;
     }
-
-
     this.FORM_STATE.step = 4;
-    this.FORM_STATE.data.direction = {
-      from: this.data.fromLocation,
-      to: this.data.toLocation,
-      pinnable: this.pinnable,
-      restricted: this.data.toLocation.restricted
-    };
-    this.FORM_STATE.data.message = this.data.message;
-    this.FORM_STATE.data.requestTarget = this.data.requestTarget;
 
     console.log('After locs choised ======>', this.FORM_STATE);
     this.nextStepEvent.emit(this.FORM_STATE);
