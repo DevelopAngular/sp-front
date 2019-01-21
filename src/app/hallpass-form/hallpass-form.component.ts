@@ -38,6 +38,7 @@ export interface Navigation {
       from: Location;
       to: Location;
       pinnable?: Pinnable;
+      restricted?: boolean;
     },
     message?: string,
     requestTarget?: User
@@ -79,11 +80,21 @@ export class HallpassFormComponent implements OnInit {
     };
 
     this.FORM_STATE.formMode.role = this.dialogData['forStaff'] ? Role.Teacher : Role.Student;
-    this.FORM_STATE.formMode.formFactor = this.dialogData['forLater'] ? this.dialogData['forStaff'] ? FormFactor.Invitation : FormFactor.Request : FormFactor.HallPass;
+    // this.FORM_STATE.formMode.formFactor = this.dialogData['forLater'] ? this.dialogData['forStaff'] ? FormFactor.Invitation : FormFactor.Request : FormFactor.HallPass;
 
     if ( this.dialogData['forLater'] ) {
+
+      if ( this.dialogData['forStaff'] ) {
+        this.FORM_STATE.formMode.formFactor = FormFactor.Invitation;
+      } else {
+        this.FORM_STATE.formMode.formFactor = FormFactor.Request;
+      }
+
       this.FORM_STATE.step = 1;
     } else {
+
+      this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
+
       if ( this.dialogData['forStaff'] ) {
           this.FORM_STATE.step = 2;
           this.FORM_STATE.state = 1;

@@ -1,7 +1,7 @@
 <!-- Show the form designated for students -->
 <div class="form">
   <!-- Buttons responsible for choosing formState -->
-
+  <h1 style="text-align: center">{{FORM_STATE.formMode.formFactor}}</h1>
 
 
   <div *ngIf="FORM_STATE.step === 1">
@@ -16,7 +16,7 @@
 
   <div *ngIf="FORM_STATE.step === 3">
 
-    <app-locations-group-container [FORM_STATE]="FORM_STATE" (response)="onNextStep($event)"></app-locations-group-container>
+    <app-locations-group-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-locations-group-container>
   </div>
   <div *ngIf="FORM_STATE.step === 4">
 

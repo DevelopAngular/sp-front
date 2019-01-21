@@ -6,7 +6,7 @@ import { LocationService } from './location.service';
 import { Pinnable } from '../../models/Pinnable';
 import { Util } from '../../../Util';
 import {FormState} from '../../admin/overlay-container/overlay-container.component';
-import {Navigation} from '../hallpass-form.component';
+import {FormFactor, Navigation, Role} from '../hallpass-form.component';
 
 @Component({
   selector: 'app-locations-group-container',
@@ -17,7 +17,7 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   @Input() FORM_STATE: Navigation;
 
-  @Output() response: EventEmitter<any> = new EventEmitter<any>();
+  @Output() nextStepEvent: EventEmitter<any> = new EventEmitter<any>();
 
   user$: Observable<User>;
   isStaff: boolean;
@@ -93,16 +93,25 @@ export class LocationsGroupContainerComponent implements OnInit {
 
 
   private postComposetData() {
+
+    this.FORM_STATE.formMode.formFactor = this.data.toLocation.restricted ? FormFactor.Request : FormFactor.HallPass
+
+    if (this.FORM_STATE.formMode.role === Role.Student && this.data.toLocation.restricted) {
+      this.FORM_STATE.formMode.formFactor = FormFactor.Request;
+    }
+
+
     this.FORM_STATE.step = 4;
     this.FORM_STATE.data.direction = {
       from: this.data.fromLocation,
       to: this.data.toLocation,
-      pinnable: this.pinnable
+      pinnable: this.pinnable,
+      restricted: this.data.toLocation.restricted
     };
     this.FORM_STATE.data.message = this.data.message;
     this.FORM_STATE.data.requestTarget = this.data.requestTarget;
 
     console.log('After locs choised ======>', this.FORM_STATE);
-    this.response.emit(this.FORM_STATE);
+    this.nextStepEvent.emit(this.FORM_STATE);
   }
 }
