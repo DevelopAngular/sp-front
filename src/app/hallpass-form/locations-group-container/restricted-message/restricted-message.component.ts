@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import {LocationService} from '../location.service';
+import {Navigation} from '../../hallpass-form.component';
 
 @Component({
   selector: 'app-restricted-message',
@@ -9,15 +10,15 @@ import {LocationService} from '../location.service';
 })
 export class RestrictedMessageComponent implements OnInit {
 
-  @Input() pinnable;
+  @Input() formState: Navigation;
 
   @Input() teacher;
 
   @Input() date;
 
-  @Input() fromLocation;
+  fromLocation;
 
-  @Input() toLocation;
+  toLocation;
 
   @Output() resultMessage: EventEmitter<any> = new EventEmitter<any>();
 
@@ -26,12 +27,15 @@ export class RestrictedMessageComponent implements OnInit {
   constructor(private locService: LocationService) { }
 
   get headerGradient() {
-    const colors = this.pinnable.gradient_color;
+    const colors = this.formState.data.direction.pinnable.gradient_color;
     return 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
 
   ngOnInit() {
     this.message = new FormControl('');
+    this.fromLocation = this.formState.data.direction.from;
+    this.toLocation = this.formState.data.direction.to;
+    this.teacher = this.formState.data.requestTarget;
   }
 
   back() {

@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { LocationService } from '../location.service';
+import {Navigation} from '../../hallpass-form.component';
+import {Pinnable} from '../../../models/Pinnable';
 
 @Component({
   selector: 'app-to-category',
@@ -8,7 +10,7 @@ import { LocationService } from '../location.service';
 })
 export class ToCategoryComponent implements OnInit {
 
-  @Input() pinnable;
+  @Input() formState: Navigation;
 
   @Input() isStaff: boolean;
 
@@ -20,14 +22,18 @@ export class ToCategoryComponent implements OnInit {
 
   @Output() locFromCategory: EventEmitter<any> = new EventEmitter<any>();
 
+  pinnable: Pinnable;
+
   constructor(private locService: LocationService) { }
 
   get headerGradient() {
-     const colors = this.pinnable.gradient_color;
+     const colors = this.formState.data.direction.pinnable.gradient_color;
      return 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
 
   ngOnInit() {
+    this.fromLocation = this.formState.data.direction.from;
+    this.pinnable = this.formState.data.direction.pinnable;
   }
 
   locationChosen(location) {

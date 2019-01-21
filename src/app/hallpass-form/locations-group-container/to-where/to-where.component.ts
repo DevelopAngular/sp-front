@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { Pinnable } from '../../../models/Pinnable';
 import { HttpService } from '../../../http-service';
 import { LocationService } from '../location.service';
+import {Navigation} from '../../hallpass-form.component';
 
 @Component({
   selector: 'app-to-where',
@@ -11,6 +12,8 @@ import { LocationService } from '../location.service';
 export class ToWhereComponent implements OnInit {
 
   @Input() location;
+
+  @Input() formState: Navigation;
 
   @Input() pinnables: Promise<Pinnable[]>;
 
@@ -25,6 +28,7 @@ export class ToWhereComponent implements OnInit {
   constructor(private http: HttpService, private locService: LocationService) { }
 
   ngOnInit() {
+    this.location = this.formState.data.direction.from;
   }
 
   pinnableSelected(pinnable) {

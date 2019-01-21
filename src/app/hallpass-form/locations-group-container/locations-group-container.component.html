@@ -1,7 +1,7 @@
 <div class="locations-group-wrapper">
   <app-from-where [isStaff]="isStaff" [date]="showDate" (selectedLocation)="fromWhere($event)" *ngIf="currentState == 'from'"></app-from-where>
-  <app-to-where [isStaff]="isStaff"  [date]="showDate" (selectedPinnable)="toWhere($event)" [pinnables]="pinnables" [location]="data.fromLocation" *ngIf="currentState == 'toWhere'"></app-to-where>
-  <app-to-category [isStaff]="isStaff" [fromLocation]="data.fromLocation" [date]="showDate" (locFromCategory)="fromCategory($event)" [pinnable]="pinnable" *ngIf="currentState == 'category'"></app-to-category>
-  <app-restricted-target [date]="showDate" [pinnable]="pinnable" [fromLocation]="data.fromLocation" [toLocation]="data.toLocation" (requestTarget)="requestTarget($event)" *ngIf="currentState == 'restrictedTarget'"></app-restricted-target>
-  <app-restricted-message [teacher]="data.requestTarget" [date]="showDate" [fromLocation]="data.fromLocation" [toLocation]="data.toLocation" (resultMessage)="resultMessage($event)" [pinnable]="pinnable" *ngIf="currentState == 'message'"></app-restricted-message>
+  <app-to-where [formState]="FORM_STATE" [isStaff]="isStaff"  [date]="showDate" (selectedPinnable)="toWhere($event)" [pinnables]="pinnables" [location]="data.fromLocation" *ngIf="currentState == 'toWhere'"></app-to-where>
+  <app-to-category [formState]="FORM_STATE" [isStaff]="isStaff" [fromLocation]="data.fromLocation" [date]="showDate" (locFromCategory)="fromCategory($event)" *ngIf="currentState == 'category'"></app-to-category>
+  <app-restricted-target [formState]="FORM_STATE" [date]="showDate" [pinnable]="pinnable"  (requestTarget)="requestTarget($event)" *ngIf="currentState == 'restrictedTarget'"></app-restricted-target>
+  <app-restricted-message [formState]="FORM_STATE" [teacher]="data.requestTarget" [date]="showDate" (resultMessage)="resultMessage($event)" *ngIf="currentState == 'message'"></app-restricted-message>
 </div>
