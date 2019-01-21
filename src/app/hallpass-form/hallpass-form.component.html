@@ -1,12 +1,13 @@
 <!-- Show the form designated for students -->
 <div class="form">
   <!-- Buttons responsible for choosing formState -->
-  <h1 style="text-align: center">{{FORM_STATE.formMode.formFactor}}</h1>
+  <!--<h1 style="text-align: center">{{FORM_STATE.formMode.formFactor}}</h1>-->
 
 
   <div class="state-transition" *ngIf="FORM_STATE.step === 1">
-
-    <app-date-time-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)" ></app-date-time-container>
+    <div class="date-picker">
+      <app-date-time-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)" ></app-date-time-container>
+    </div>
   </div>
 
   <div class="state-transition" *ngIf="FORM_STATE.step === 2">

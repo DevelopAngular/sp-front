@@ -29,6 +29,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
   @Input() isActive: boolean = false;
   @Input() forStaff: boolean = false;
   @Input() forMonitor: boolean = false;
+  @Input() students: User[] = [];
+
   @Output() cardEvent: EventEmitter<any> = new EventEmitter();
 
   timeLeft: string = '';
@@ -40,7 +42,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   selectedDuration: number;
   selectedTravelType: string;
   cancelOpen: boolean = false;
-  selectedStudents: User[];
+  selectedStudents: User[] = [];
   fromHistory;
   fromHistoryIndex;
 
@@ -111,16 +113,26 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.pass = this.data['pass'];
-    this.forInput = this.data['forInput'];
-    this.isActive = this.data['isActive'];
-    this.forFuture = this.data['forFuture'];
-    this.fromPast = this.data['fromPast'];
-    this.forStaff = this.data['forStaff'];
-    this.selectedStudents = this.data['selectedStudents'];
-    this.forMonitor = this.data['forMonitor'];
-    this.fromHistory = this.data['fromHistory'];
-    this.fromHistoryIndex = this.data['fromHistoryIndex'];
+    console.log(this.pass);
+
+
+
+    if (this.data['pass']) {
+      this.pass = this.data['pass'];
+      this.forInput = this.data['forInput'];
+      this.isActive = this.data['isActive'];
+      this.forFuture = this.data['forFuture'];
+      this.fromPast = this.data['fromPast'];
+      this.forStaff = this.data['forStaff'];
+      this.selectedStudents = this.data['selectedStudents'];
+      this.forMonitor = this.data['forMonitor'];
+      this.fromHistory = this.data['fromHistory'];
+      this.fromHistoryIndex = this.data['fromHistoryIndex'];
+    } else {
+      this.selectedStudents = this.students;
+    }
+
+
 
     this.dataService.currentUser
         .pipe(this.loadingService.watchFirst)

@@ -26,7 +26,9 @@
         <mat-divider *ngIf="isStaff"></mat-divider>
       <div class="teacher" *ngIf="isStaff">
           <div class="time-picker">
+            <div class="time-picker-scaled">
               <app-date-time-picker [min]="startTime" [_selectedMoment]="requestTime" (onUpdate)="requestTime=$event"></app-date-time-picker>
+            </div>
           </div>
           <div class="next-button">
               <app-gradient-button
@@ -44,7 +46,9 @@
       </div>
       <div class="student" *ngIf="!isStaff">
           <div class="time-picker">
+            <div class="time-picker-scaled">
               <app-date-time-picker [min]="startTime" [_selectedMoment]="requestTime" (onUpdate)="requestTime=$event"></app-date-time-picker>
+            </div>
           </div>
           <div class="next-button">
               <app-gradient-button

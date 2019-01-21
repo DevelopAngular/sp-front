@@ -55,14 +55,18 @@ export class RequestCardComponent implements OnInit {
 
   ngOnInit() {
     console.log(this.request);
-    // this.request = this.data['pass'];
-    // this.forInput = this.data['forInput'];
-    // this.forFuture = this.data['forFuture'];
-    // this.fromPast = this.data['fromPast'];
-    // this.forStaff = this.data['forStaff'];
-    // this.selectedStudents = this.data['selectedStudents'];
-    // this.fromHistory = this.data['fromHistory'];
-    // this.fromHistoryIndex = this.data['fromHistoryIndex'];
+
+    if (this.data['pass']) {
+      this.request = this.data['pass'];
+      this.forInput = this.data['forInput'];
+      this.forFuture = this.data['forFuture'];
+      this.fromPast = this.data['fromPast'];
+      this.forStaff = this.data['forStaff'];
+      this.selectedStudents = this.data['selectedStudents'];
+      this.fromHistory = this.data['fromHistory'];
+      this.fromHistoryIndex = this.data['fromHistoryIndex'];
+    }
+
 
     this.dataService.currentUser
     .pipe(this.loadingService.watchFirst)
