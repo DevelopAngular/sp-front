@@ -30,7 +30,7 @@ export class RestrictedTargetComponent implements OnInit {
   }
 
   back() {
-    this.locService.changeLocation$.next('category');
+    this.locService.back();
   }
 
   updateTarget(target) {

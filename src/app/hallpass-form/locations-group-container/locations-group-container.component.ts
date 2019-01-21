@@ -22,6 +22,7 @@ export class LocationsGroupContainerComponent implements OnInit {
   user$: Observable<User>;
   isStaff: boolean;
   currentState: string;
+  pastState: string;
   pinnables: Promise<Pinnable[]>;
   pinnable: Pinnable;
 
@@ -41,7 +42,6 @@ export class LocationsGroupContainerComponent implements OnInit {
     console.log('Step #3 ======>', this.FORM_STATE);
     this.locationService.changeLocation$.subscribe(state => {
       this.currentState = state;
-      // debugger;
     });
     this.pinnables = this.locationService.getPinnable();
     this.user$ = this.dataService.currentUser;
@@ -50,20 +50,20 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   fromWhere(location) {
     this.data.fromLocation = location;
-    this.locationService.changeLocation$.next('toWhere');
+    this.locationService.nextStep('toWhere');
   }
 
   toWhere(pinnable) {
     this.pinnable = pinnable;
-    const restricted = ((this.pinnable.location.restricted && !this.showDate) || (this.pinnable.location.scheduling_restricted && !!this.showDate));
     if (pinnable.category) {
-       this.locationService.changeLocation$.next('category');
+       return this.locationService.nextStep('category');
     } else {
         this.data.toLocation = pinnable.location;
-        if (!this.isStaff && restricted) {
-            this.locationService.changeLocation$.next('restrictedTarget');
+        const restricted = ((this.pinnable.location.restricted && !this.showDate) || (this.pinnable.location.scheduling_restricted && !!this.showDate));
+        if (!this.isStaff && restricted && pinnable.location) {
+           return this.locationService.nextStep('restrictedTarget');
         } else {
-            this.postComposetData();
+           return this.postComposetData();
         }
     }
 
@@ -72,7 +72,7 @@ export class LocationsGroupContainerComponent implements OnInit {
   fromCategory(location) {
     this.data.toLocation = location;
       if (location.restricted && !this.isStaff) {
-        this.locationService.changeLocation$.next('restrictedTarget');
+          this.locationService.nextStep('restrictedTarget');
     } else {
        this.postComposetData();
     }
@@ -83,7 +83,7 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   requestTarget(teacher) {
     this.data.requestTarget = teacher;
-    this.locationService.changeLocation$.next('message');
+    this.locationService.nextStep('message');
   }
 
   resultMessage(message) {

@@ -28,10 +28,8 @@ export class FormFactorContainerComponent implements OnInit {
   ngOnInit() {
 
     this.currentState = this.FORM_STATE.formMode.formFactor;
-    debugger;
 
     if (this.FORM_STATE.formMode.formFactor === this.states.Request) {
-      debugger;
       this.template = new Request(
         'template',
         null,
@@ -58,7 +56,6 @@ export class FormFactorContainerComponent implements OnInit {
     }
 
     if (this.FORM_STATE.formMode.formFactor === this.states.HallPass) {
-      debugger;
     }
 
     console.log('FF ===>', this.currentState);

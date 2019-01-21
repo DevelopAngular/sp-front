@@ -269,7 +269,7 @@ export class PassesComponent implements OnInit {
   }
 
   showForm(forLater: boolean): void {
-    this.locService.changeLocation$.next('from');
+    this.locService.nextStep('from');
     const dialogRef = this.dialog.open(HallpassFormComponent, {
       // width: '750px',
       panelClass: 'form-dialog-container',

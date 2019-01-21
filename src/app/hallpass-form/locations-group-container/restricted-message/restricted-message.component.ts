@@ -35,7 +35,7 @@ export class RestrictedMessageComponent implements OnInit {
   }
 
   back() {
-    this.locService.changeLocation$.next('restrictedTarget');
+    this.locService.back();
   }
 
   sendRequest() {

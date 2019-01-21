@@ -32,7 +32,7 @@ export class ToWhereComponent implements OnInit {
   }
 
   back() {
-    this.locService.changeLocation$.next('from');
+    this.locService.back();
   }
 
 }
