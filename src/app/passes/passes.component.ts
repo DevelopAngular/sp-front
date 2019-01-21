@@ -218,15 +218,15 @@ export class PassesComponent implements OnInit {
           this.sentRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser));
         }
 
-        zip(
-          this.receivedRequests.length$.asObservable(),
-          this.sentRequests.length$.asObservable()
-        ).pipe(
-          skip(2)
-        ).subscribe((val) => {
-          this.inboxHasItems.next(!val.reduce((a, b) => a + b));
-          // console.log('==============================================>', val);
-        });
+        // zip(
+        //   this.receivedRequests.length$.asObservable(),
+        //   this.sentRequests.length$.asObservable()
+        // ).pipe(
+        //   skip(2)
+        // ).subscribe((val) => {
+        //   this.inboxHasItems.next(!val.reduce((a, b) => a + b));
+        //   // console.log('==============================================>', val);
+        // });
 
         // this.inboxHasItems = combineLatest(
         //   this.receivedRequests.length$.startWith(0),
