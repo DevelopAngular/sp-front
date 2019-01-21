@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Pinnable} from '../../../models/Pinnable';
 import {LocationService} from '../location.service';
+import {Navigation} from '../../hallpass-form.component';
 
 @Component({
   selector: 'app-restricted-target',
@@ -11,22 +12,26 @@ export class RestrictedTargetComponent implements OnInit {
 
   @Input() pinnable: Pinnable;
 
+  @Input() formState: Navigation;
+
   @Input() date;
 
-  @Input() toLocation;
+  toLocation;
 
-  @Input() fromLocation;
+  fromLocation;
 
   @Output() requestTarget: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(private locService: LocationService) { }
 
   get headerGradient() {
-    const colors = this.pinnable.gradient_color;
+    const colors = this.formState.data.direction.pinnable.gradient_color;
     return 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
 
   ngOnInit() {
+    this.fromLocation = this.formState.data.direction.from;
+    this.toLocation = this.formState.data.direction.to;
   }
 
   back() {

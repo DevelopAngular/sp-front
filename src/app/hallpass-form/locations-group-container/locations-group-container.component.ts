@@ -22,7 +22,6 @@ export class LocationsGroupContainerComponent implements OnInit {
   user$: Observable<User>;
   isStaff: boolean;
   currentState: string;
-  pastState: string;
   pinnables: Promise<Pinnable[]>;
   pinnable: Pinnable;
 
@@ -58,15 +57,21 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   fromWhere(location) {
     this.data.fromLocation = location;
+    this.FORM_STATE.data.direction = {
+      from: location,
+      to: null
+    };
     this.locationService.nextStep('toWhere');
   }
 
   toWhere(pinnable) {
     this.pinnable = pinnable;
+    this.FORM_STATE.data.direction.pinnable =pinnable;
     if (pinnable.category) {
        return this.locationService.nextStep('category');
     } else {
         this.data.toLocation = pinnable.location;
+        this.FORM_STATE.data.direction.to = pinnable.location;
         const restricted = ((this.pinnable.location.restricted && !this.showDate) || (this.pinnable.location.scheduling_restricted && !!this.showDate));
         if (!this.isStaff && restricted && pinnable.location) {
            return this.locationService.nextStep('restrictedTarget');
@@ -79,6 +84,7 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   fromCategory(location) {
     this.data.toLocation = location;
+    this.FORM_STATE.data.direction.to = location;
       if (location.restricted && !this.isStaff) {
           this.locationService.nextStep('restrictedTarget');
     } else {
@@ -91,6 +97,7 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   requestTarget(teacher) {
     this.data.requestTarget = teacher;
+    this.FORM_STATE.data.requestTarget = teacher;
     this.locationService.nextStep('message');
   }
 
