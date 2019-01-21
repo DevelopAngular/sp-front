@@ -33,10 +33,14 @@ export class LocationService {
     this.changeLocation$.next(step);
   }
 
-  back() {
+  back(close: boolean = false) {
     this.historyState.index -= 1;
     if (!this.historyState.index) {
-      this.dialog.closeAll();
+      // this.dialog.closeAll();
+      if (close) {
+        this.dialog.closeAll();
+      }
+      this.changeLocation$.next('exit');
     }
     this.changeLocation$.next(this.historyState.past[this.historyState.index]);
   }

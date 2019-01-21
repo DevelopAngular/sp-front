@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormFactor, Navigation} from '../hallpass-form/hallpass-form.component';
 import {Request} from '../models/Request';
 import {HallPass} from '../models/HallPass';
@@ -16,6 +16,7 @@ export class FormFactorContainerComponent implements OnInit {
 
 
   @Input() FORM_STATE: Navigation;
+  @Output() nextStepEvent: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
   public states: any = FormFactor;
   public currentState: number;
@@ -42,7 +43,7 @@ export class FormFactorContainerComponent implements OnInit {
         '',
         this.FORM_STATE.data.direction.pinnable.icon,
         this.FORM_STATE.data.requestTarget,
-        this.FORM_STATE.data.date.date,
+        this.FORM_STATE.data.date ? this.FORM_STATE.data.date.date : new Date(),
         '',
         null,
         null,
@@ -62,6 +63,23 @@ export class FormFactorContainerComponent implements OnInit {
 
 
 
+  }
+
+
+  onNextStep(evt) {
+    // console.log('event ============>', evt);
+    // this.FORM_STATE.step = evt.step;
+    // this.FORM_STATE.state = evt.state;
+    // this.FORM_STATE.data.date = evt.data.date;
+    this.FORM_STATE = evt;
+    console.log('FORM FACTOR event ============>', evt);
+
+  }
+
+  onBack() {
+    this.FORM_STATE.step = 3;
+    this.FORM_STATE.state = 1;
+    this.nextStepEvent.emit(this.FORM_STATE);
   }
 
 }

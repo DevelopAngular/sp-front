@@ -41,6 +41,14 @@ export class LocationsGroupContainerComponent implements OnInit {
   ngOnInit() {
     console.log('Step #3 ======>', this.FORM_STATE);
     this.locationService.changeLocation$.subscribe(state => {
+      if (state === 'exit') {
+
+        this.FORM_STATE.step = 1;
+        this.FORM_STATE.state = 1;
+
+        this.nextStepEvent.emit(this.FORM_STATE);
+
+      }
       this.currentState = state;
     });
     this.pinnables = this.locationService.getPinnable();
@@ -94,7 +102,7 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   private postComposetData() {
 
-    this.FORM_STATE.formMode.formFactor = this.data.toLocation.restricted ? FormFactor.Request : FormFactor.HallPass
+    // this.FORM_STATE.formMode.formFactor = this.data.toLocation.restricted ? FormFactor.Request : FormFactor.HallPass
 
     if (this.FORM_STATE.formMode.role === Role.Student && this.data.toLocation.restricted) {
       this.FORM_STATE.formMode.formFactor = FormFactor.Request;

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef, NgZone } from '@angular/core';
+import {Component, OnInit, Input, ElementRef, NgZone, Output, EventEmitter} from '@angular/core';
 import { Request } from '../models/Request';
 import { User } from '../models/User';
 import { Util } from '../../Util';
@@ -27,6 +27,8 @@ export class RequestCardComponent implements OnInit {
   @Input() fromPast: boolean = false;
   @Input() forInput: boolean = false;
   @Input() forStaff: boolean = false;
+
+  @Output() back: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   selectedDuration: number;
   selectedTravelType: string;
@@ -192,34 +194,39 @@ export class RequestCardComponent implements OnInit {
         header = 'Are you sure you want to ' +(this.forStaff?'deny':'delete') +' this pass request' +(this.forStaff?'':' you sent') +'?';
       } else{
           if (!this.pinnableOpen) {
-              this.dialogRef.close();
-              const dialogRef = this.dialog.open(HallpassFormComponent, {
-                  width: '750px',
-                  panelClass: 'form-dialog-container',
-                  backdropClass: 'custom-backdrop',
-                  data: {
-                      'fromLocation': this.request.origin,
-                      'fromHistory': this.fromHistory,
-                      'fromHistoryIndex': this.fromHistoryIndex,
-                      'colorProfile': this.request.color_profile,
-                      'forLater': this.forFuture,
-                      'forStaff': this.forStaff,
-                      'selectedStudents': this.selectedStudents,
-                      'toLocation': this.request.destination,
-                      'requestTarget': this.request.teacher,
-                      'toIcon': this.request.icon
-                  }
-              });
-              dialogRef.afterClosed().pipe(filter(res => !!res)).subscribe((result: Object) => {
-                 this.openInputCard(result['templatePass'],
-                    result['forLater'],
-                    result['forStaff'],
-                    result['selectedStudents'],
-                    (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent)),
-                    result['fromHistory'],
-                    result['fromHistoryIndex']
-              );
-          });
+            // debugger;
+
+            this.back.emit(true);
+
+
+            //   this.dialogRef.close();
+          //     const dialogRef = this.dialog.open(HallpassFormComponent, {
+          //         width: '750px',
+          //         panelClass: 'form-dialog-container',
+          //         backdropClass: 'custom-backdrop',
+          //         data: {
+          //             'fromLocation': this.request.origin,
+          //             'fromHistory': this.fromHistory,
+          //             'fromHistoryIndex': this.fromHistoryIndex,
+          //             'colorProfile': this.request.color_profile,
+          //             'forLater': this.forFuture,
+          //             'forStaff': this.forStaff,
+          //             'selectedStudents': this.selectedStudents,
+          //             'toLocation': this.request.destination,
+          //             'requestTarget': this.request.teacher,
+          //             'toIcon': this.request.icon
+          //         }
+          //     });
+          //     dialogRef.afterClosed().pipe(filter(res => !!res)).subscribe((result: Object) => {
+          //        this.openInputCard(result['templatePass'],
+          //           result['forLater'],
+          //           result['forStaff'],
+          //           result['selectedStudents'],
+          //           (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent)),
+          //           result['fromHistory'],
+          //           result['fromHistoryIndex']
+          //     );
+          // });
           }
           return false;
       }

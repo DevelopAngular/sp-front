@@ -20,7 +20,7 @@
   </div>
   <div *ngIf="FORM_STATE.step === 4">
 
-    <app-form-factor-container [FORM_STATE]="FORM_STATE"></app-form-factor-container>
+    <app-form-factor-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-form-factor-container>
   </div>
 
 
