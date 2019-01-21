@@ -35,7 +35,7 @@ export class ToCategoryComponent implements OnInit {
   }
 
   back() {
-    this.locService.changeLocation$.next('toWhere');
+    this.locService.back();
   }
 
 }

@@ -27,7 +27,7 @@ export class FromWhereComponent implements OnInit {
   }
 
   back() {
-    this.locService.changeLocation$.next('date');
+    this.locService.back();
   }
 
 }
