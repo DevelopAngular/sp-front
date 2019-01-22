@@ -93,8 +93,9 @@ export class GradientButtonComponent {
     return 'center';
   }
 
-  get shadow(){
-    return this.sanitizer.bypassSecurityTrustStyle(((this.hovered&&!this.disabled)?'0 2px 4px 1px rgba(0, 0, 0, 0.3)':'0 1px 4px 0px rgba(0, 0, 0, 0.25)'));
+  get shadow() {
+    return this.sanitizer.bypassSecurityTrustStyle(((this.hovered && !this.disabled) ?
+        '0 2px 4px 1px rgba(0, 0, 0, 0.3)' : '0 1px 4px 0px rgba(0, 0, 0, 0.25)'));
   }
 
   onPress(press: boolean) {
