@@ -17,7 +17,7 @@ import { PdfGeneratorService } from '../pdf-generator.service';
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-  @ViewChild('draggableContainer') draggableContainer: ElementRef;
+  // @ViewChild('draggableContainer') draggableContainer: ElementRef;
   @ViewChild('ctx') ctx: any;
 
   private shareChartData$: Subject<any> = new Subject();
@@ -54,8 +54,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     disableBodyScroll(this.elRef.nativeElement);
-    const _devices = this.draggableContainer.nativeElement.childNodes;
-    this.devices = Array.from(Array(_devices.length).keys()).map(index => _devices[index]);
+    // const _devices = this.draggableContainer.nativeElement.childNodes;
+    // this.devices = Array.from(Array(_devices.length).keys()).map(index => _devices[index]);
 
     // console.log(this.draggableContainer.nativeElement.childNodes);
 
@@ -240,9 +240,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     };
   }
 
-  onDevicesOrderChanged(event) {
-    console.log(event);
-  }
+  // onDevicesOrderChanged(event) {
+  //   console.log(event);
+  // }
 
   private drawChartXaxis() {
     let hour = 8;

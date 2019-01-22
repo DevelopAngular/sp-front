@@ -1,11 +1,12 @@
 import {Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef} from '@angular/core';
-import { MatDialog } from '@angular/material';
+import {MatChipList, MatDialog} from '@angular/material';
 import { DateInputComponent } from '../date-input/date-input.component';
 import { Paged } from '../../location-table/location-table.component';
 import { HttpService } from '../../http-service';
 import { InputHelperDialogComponent } from '../input-helper-dialog/input-helper-dialog.component';
 import {FormGroup} from '@angular/forms';
-import {BehaviorSubject, fromEvent, Observable} from 'rxjs';
+import {BehaviorSubject, fromEvent, Observable, Subject} from 'rxjs';
+import {User} from '../../models/User';
 
 @Component({
   selector: 'app-round-input',
@@ -14,6 +15,8 @@ import {BehaviorSubject, fromEvent, Observable} from 'rxjs';
 })
 export class RoundInputComponent implements OnInit {
 
+  @ViewChild('input') input: ElementRef;
+
   @Input() labelText: string;
   @Input() placeholder: string;
   @Input() type: string;
@@ -21,13 +24,19 @@ export class RoundInputComponent implements OnInit {
   @Input() html5type: string = 'text'; // text, password, number etc.
   @Input() hasTogglePicker: boolean;
   @Input() width: string;
-  @Input() minWidth: string;
+  @Input() minWidth: string = '300px';
   @Input() fieldIcon: string = './assets/Search Input (Grey).png';
+  @Input() fieldIconPosition: string = 'left'; // Can be 'right' or 'left'
+  @Input() closeIcon: boolean = false;
+  @Input() disabled: boolean = false;
+  @Input() focused: boolean = false;
+  @Input() chipInput: ElementRef = null;
+  @Input() selectReset$: Subject<string>;
   @Output() ontextupdate: EventEmitter<any> = new EventEmitter();
   @Output() ontoggleupdate: EventEmitter<any> = new EventEmitter();
   @Output() onselectionupdate: EventEmitter<any> = new EventEmitter();
   @Output() controlValue = new EventEmitter();
-  closeIcon: string = './assets/Close Input (Grey).svg';
+  closeIconAsset: string = './assets/Close Input (Grey).svg';
   showCloseIcon: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   selected: boolean;
   value: string;
@@ -43,6 +52,14 @@ export class RoundInputComponent implements OnInit {
   constructor(public dialog: MatDialog, private http: HttpService) { }
 
   ngOnInit() {
+    if (this.focused) {
+      this.focusAction(true);
+    }
+    if (this.selectReset$) {
+      this.selectReset$.subscribe((_value: string) => {
+        this.value = _value;
+      });
+    }
   }
 
   focusAction(selected: boolean){
@@ -94,15 +111,16 @@ export class RoundInputComponent implements OnInit {
       this.selected = reset;
       inp.value = '';
       inp.focus();
-      return;
     }
     if (this.type === 'text') {
       this.ontextupdate.emit(inp.value);
     }
     if ( inp.value.length > 0) {
-      this.showCloseIcon.next(true);
+        this.showCloseIcon.next(true);
     } else {
-      this.showCloseIcon.next(false);
+      setTimeout(() => {
+        this.showCloseIcon.next(false);
+      }, 220);
     }
   }
 

@@ -1,7 +1,8 @@
-import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import {Component, EventEmitter, NgZone, OnDestroy, OnInit, Output} from '@angular/core';
 import { GoogleLoginService } from '../google-login.service';
 import {MatDialog} from '@angular/material';
-import {ErrorToastComponent} from '../error-toast/error-toast.component';
+
+export enum LoginMethod { OAuth = 1, LocalStrategy = 2}
 
 @Component({
   selector: 'google-signin',
@@ -11,15 +12,18 @@ import {ErrorToastComponent} from '../error-toast/error-toast.component';
 
 export class GoogleSigninComponent implements OnInit, OnDestroy {
 
+  @Output() showError: EventEmitter<{ loggedWith: number, error: boolean} > = new EventEmitter<{loggedWith: number, error: boolean}>();
+
+
   public name = 'Not Logged in!';
 
   public isLoaded = false;
   public progressValue = 0;
   public progressType = 'determinate';
-  public showError: boolean;
+  public showSpinner: boolean;
+  public loggedWith: number;
   keyListener;
   demoLoginEnabled = false;
-  showSpinner = false;
 
   demoUsername = '';
   demoPassword = '';
@@ -49,23 +53,26 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
 
     this.loginService.showLoginError$.subscribe(show => {
       this._ngZone.run(() => {
-          this.showError = show;
+          this.showError.emit( {
+            loggedWith: this.loggedWith,
+            error: show,
+          });
       });
     });
-
-    let textBuffer = '';
-
-    this.keyListener = (event) => {
-      textBuffer += event.key;
-
-      if (textBuffer.length > 20) {
-        textBuffer = textBuffer.substring(textBuffer.length - 20);
-      }
-
-      if (textBuffer.endsWith('demo')) {
-        this.toggleDemoLogin();
-      }
-    };
+    //
+    // let textBuffer = '';
+    //
+    // this.keyListener = (event) => {
+    //   textBuffer += event.key;
+    //
+    //   if (textBuffer.length > 20) {
+    //     textBuffer = textBuffer.substring(textBuffer.length - 20);
+    //   }
+    //
+    //   if (textBuffer.endsWith('demo')) {
+    //     this.toggleDemoLogin();
+    //   }
+    // };
   }
   onClose(evt) {
     setTimeout(() => {
@@ -87,12 +94,14 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
 
   demoLogin() {
     if (this.demoUsername && this.demoPassword) {
+      this.loggedWith = LoginMethod.LocalStrategy;
       this.loginService.showLoginError$.next(false);
       this.loginService.signInDemoMode(this.demoUsername, this.demoPassword);
     }
   }
 
   initLogin() {
+    this.loggedWith = LoginMethod.OAuth;
     this.showSpinner = true;
     this.loginService.showLoginError$.next(false);
     this.loginService

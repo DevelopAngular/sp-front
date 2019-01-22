@@ -1,13 +1,22 @@
 <div *ngIf="user">
   <div *ngIf="canView" class="hall-monitor-wrapper">
     <div class="hall-monitor-top">
-      <input
-        class="input"
+      <app-round-input
+        [type]="'text'"
+        [minWidth]="'315px'"
+        [width]="'315px'"
         [placeholder]="'Search'"
-        #searchInput
-        [value]="inputValue"
-        (input)="onSearch(searchInput.value)"
-      >
+        [fieldIconPosition]="'right'"
+        [style.margin-right]="'40px'"
+        (ontextupdate)="onSearch($event)"
+      ></app-round-input>
+      <!--<input-->
+        <!--class="input"-->
+        <!--[placeholder]="'Search'"-->
+        <!--#searchInput-->
+        <!--[value]="inputValue"-->
+        <!--(input)="onSearch(searchInput.value)"-->
+      <!--&gt;-->
       <app-gradient-button
         [gradient]="'#DA2370,#FB434A'"
         [cursor]="'pointer'"

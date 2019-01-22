@@ -7,13 +7,25 @@
           {{ roomOptions?selectedLocation.title:"" }}
           <img *ngIf="showArrow" class="disclosure-icon" [src]="'./assets/Disclosure Indicator (Blue).png' | resolveAsset">
         </div>
-        <input
-          class="input"
-          [placeholder]="'Search'"
-          #searchInput
-          [value]="inputValue"
-          (input)="onSearch(searchInput.value)"
-        >
+        <!--<input-->
+          <!--class="input"-->
+          <!--[placeholder]="'Search'"-->
+          <!--#searchInput-->
+          <!--[value]="inputValue"-->
+          <!--(input)="onSearch(searchInput.value)"-->
+        <!--&gt;-->
+        <div [style.margin-left]="'auto'"
+             [style.margin-right]="'10px'">
+          <app-round-input
+            [minWidth]="'215px'"
+            [width]="'215px'"
+            [type]="'text'"
+            [placeholder]="'Search'"
+            [fieldIconPosition]="'right'"
+            [closeIcon]="true"
+            (ontextupdate)="onSearch($event)"
+          ></app-round-input>
+        </div>
         <div class="calendar-wrapper" (click)="calendarToggled=!calendarToggled" [style.background-color]="(calendarToggled?'#E4EBFF':'transparent')">
           <img class="calendar-icon" [src]="'./assets/Calendar (Blue).png' | resolveAsset">
         </div>

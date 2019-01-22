@@ -8,6 +8,9 @@
 .input {
     //margin-top: 20px;
     margin-bottom: 5px;
+    &:focus {
+      outline: none !important;
+    }
 }
 
 input {
