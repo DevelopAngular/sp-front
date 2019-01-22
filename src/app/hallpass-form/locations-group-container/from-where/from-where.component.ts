@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {LocationService} from '../location.service';
-import {Util} from '../../../../Util';
+import {Navigation} from '../../hallpass-form.component';
 
 @Component({
   selector: 'app-from-where',
@@ -13,7 +13,9 @@ export class FromWhereComponent implements OnInit {
 
   @Input() isStaff: boolean;
 
-  @Input() students;
+  @Input() formState: Navigation;
+
+  @Input() studentText;
 
   @Output() selectedLocation: EventEmitter<any> = new EventEmitter<any>();
 

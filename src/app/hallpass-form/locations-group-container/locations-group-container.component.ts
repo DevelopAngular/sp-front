@@ -36,6 +36,15 @@ export class LocationsGroupContainerComponent implements OnInit {
       }
   }
 
+  get studentText() {
+     if (!this.FORM_STATE.data.selectedStudents.length) {
+        return false;
+     } else {
+       return this.FORM_STATE.data.selectedStudents[0].display_name +
+           (this.FORM_STATE.data.selectedStudents.length > 1 ? ` (${this.FORM_STATE.data.selectedStudents.length - 1})` : '');
+     }
+    }
+
   ngOnInit() {
     console.log('Step #3 ======>', this.FORM_STATE);
     this.data.toLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.to ? this.FORM_STATE.data.direction.to : null;

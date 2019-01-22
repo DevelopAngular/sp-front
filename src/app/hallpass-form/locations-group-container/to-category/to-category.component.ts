@@ -16,7 +16,7 @@ export class ToCategoryComponent implements OnInit {
 
   @Input() date;
 
-  @Input() students;
+  @Input() studentText;
 
   @Input() fromLocation;
 

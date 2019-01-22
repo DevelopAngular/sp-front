@@ -18,8 +18,8 @@
           </div>
           <img class="arrow-icon" [src]="'./assets/icon-arrow-close.png' | resolveAsset" (click)="showFullFooter = false">
         </div>
-        <div class="bottom" *ngIf="showFullFooter">
-          Bottom
+        <div class="bottom" *ngIf="showFullFooter && studentText">
+          {{ studentText }}
         </div>
       </div>
     </div>

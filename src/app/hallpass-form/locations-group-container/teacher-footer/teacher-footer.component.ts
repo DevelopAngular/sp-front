@@ -9,7 +9,7 @@ export class TeacherFooterComponent implements OnInit {
 
   @Input() date;
 
-  @Input() students;
+  @Input() studentText;
 
   @Input() currentState: string;
 

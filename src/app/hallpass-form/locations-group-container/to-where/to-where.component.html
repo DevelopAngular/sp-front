@@ -18,6 +18,6 @@
   </div>
 
   <app-student-footer *ngIf="!isStaff" [formState]="formState" [date]="date"></app-student-footer>
-  <app-teacher-footer *ngIf="isStaff" [fromLocation]="location" [date]="date" [students]="students"></app-teacher-footer>
+  <app-teacher-footer *ngIf="isStaff" [fromLocation]="location" [studentText]="studentText" [date]="date"></app-teacher-footer>
 
 </div>

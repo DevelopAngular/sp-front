@@ -21,7 +21,7 @@ export class ToWhereComponent implements OnInit {
 
   @Input() date;
 
-  @Input() students;
+  @Input() studentText;
 
   @Output() selectedPinnable: EventEmitter<any> = new EventEmitter<any>();
 
