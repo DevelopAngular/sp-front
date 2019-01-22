@@ -92,13 +92,18 @@
 
   .footer-links {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
+    flex-direction: column;
     height: 82%;
-    align-items: flex-end;
+    align-items: center;
     font-size: 18px;
 
     a {
       color: #7f879d;
+    }
+    .version-text {
+      color: #7f879d;
+      padding: 5px;
     }
   }
 }

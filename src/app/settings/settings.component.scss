@@ -56,13 +56,21 @@
 
 .footer-links {
     display: flex;
-    justify-content: center;
-    align-items: flex-end;
+    justify-content: flex-end;
+    align-items: center;
     font-size: 18px;
     height: 100%;
+    flex-direction: column;
     margin-bottom: 30px;
 
     a {
         color: #7f879d;
     }
+    .version-text {
+        color: #7f879d;
+        padding: 5px;
+    }
+}
+.links {
+    display: flex;
 }
