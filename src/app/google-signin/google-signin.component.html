@@ -46,7 +46,14 @@
     (buttonClick)="demoLogin()"
     [style.width]="'90px'"
     [style.margin]="'0 auto'"
-  >Sign in</app-gradient-button>
+  >
+    <div *ngIf="!showSpinner">
+      <span>Sign in</span>
+    </div>
+    <div  *ngIf="showSpinner" class="loading-theme_white">
+      <mat-spinner [diameter]="25"></mat-spinner>
+    </div>
+  </app-gradient-button>
 </form>
 
 <div class="demo-text-wrapper" (click)="toggleDemoLogin()"><div class="demo-text">{{demoLoginEnabled?'Sign in with Google':'Alternative Sign in'}}</div></div>

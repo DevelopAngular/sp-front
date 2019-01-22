@@ -2,6 +2,8 @@ import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { GoogleLoginService } from '../google-login.service';
 import {MatDialog} from '@angular/material';
 import {ErrorToastComponent} from '../error-toast/error-toast.component';
+import {of} from 'rxjs';
+import {finalize} from 'rxjs/operators';
 
 @Component({
   selector: 'google-signin',
@@ -86,9 +88,14 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   }
 
   demoLogin() {
+    this.showSpinner = true;
     if (this.demoUsername && this.demoPassword) {
       this.loginService.showLoginError$.next(false);
-      this.loginService.signInDemoMode(this.demoUsername, this.demoPassword);
+      of(this.loginService.signInDemoMode(this.demoUsername, this.demoPassword))
+      .pipe(
+        finalize(() => {
+          this.showSpinner = false;
+      }));
     }
   }
 
