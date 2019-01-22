@@ -5,6 +5,7 @@ import 'rxjs/add/observable/of';
 import { HttpService } from '../http-service';
 import { Paged } from '../models';
 import { User } from '../models/User';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-student-search',
@@ -22,22 +23,23 @@ export class StudentSearchComponent implements AfterViewInit {
   @ViewChild('studentInput') input;
 
   students: Promise<any[]>;
-  inputValue: string = '';
+  inputValue$: Subject<string> = new Subject<string>();
 
   constructor(private http: HttpService) {
     // this.onSearch('');
   }
 
   ngAfterViewInit() {
-    this.input.nativeElement.focus();
+    // this.input.nativeElement.focus();
   }
 
   onSearch(search: string) {
-    if(search!=='')
+    if (search!=='') {
       this.students = this.http.get<Paged<any>>('v1/users?role=hallpass_student&limit=5' + (search === '' ? '' : '&search=' + encodeURI(search))).toPromise().then(paged => this.removeDuplicateStudents(paged.results));
-    else
+    } else {
       this.students = null;
-      this.inputValue = '';
+      this.inputValue$.next('');
+    }
   }
 
   removeStudent(student: User) {
@@ -51,7 +53,7 @@ export class StudentSearchComponent implements AfterViewInit {
 
   addStudent(student: User) {
     console.log(student);
-    this.inputValue = '';
+    this.inputValue$.next('');
     this.onSearch('');
     if (!this.selectedStudents.includes(student)) {
       this.selectedStudents.push(student);

@@ -1,7 +1,7 @@
 .input-wrapper {
     border-radius: 0.5rem;
     position: relative;
-    min-width:300px;
+    //min-width:300px;
 }
 
 .field-wrapper{
@@ -30,6 +30,7 @@
     z-index: 2;
     width: 220px;
     height: 40px;
+    box-sizing: border-box;
     border-radius: 20px;
     box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
     font-family: 'Helvetica Neue', sans-serif;
@@ -44,7 +45,7 @@
   border: 1px solid transparent;
   transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
   border-radius: 20px;
-  margin-bottom: 5px;
+  //margin-bottom: 5px;
   position: relative;
   .field-icon {
     position: absolute;
@@ -54,11 +55,14 @@
     top: 0;
     bottom: 0;
     margin: auto 0;
+    &__right {
+      left: unset;
+      right: 17px;
+    }
     //padding-bottom: 2px;
-    &_close {
+    &__close {
       right: 17px;
       left: auto;
-      opacity: .7;
       cursor: pointer;
       transition: opacity .2s;
       &:hover {
@@ -67,9 +71,19 @@
     }
   }
 }
+
+//@keyframes showClose {
+//  0% {
+//
+//  }
+//  100% {
+//
+//  }
+//}
+
 input {
     border: 0px;
-    padding: 0 0 0 45px;
+    //padding: 0 0 0 45px;
     caret-color: auto;
 
 }

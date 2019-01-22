@@ -112,7 +112,6 @@ const appRoutes: Routes = [
     ReactiveFormsModule,
     InfiniteScrollModule,
     MatSliderModule,
-
     FormsModule,
     MatFormFieldModule,
     MatProgressSpinnerModule,

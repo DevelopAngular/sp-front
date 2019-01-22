@@ -43,6 +43,7 @@ export class GradientButtonComponent {
   @Input() leftImageHeight: string;
   @Input() cursor: string;
   @Input() textWidth: string = '100%';
+  @Input() buttonLink: string; // needs for the links so that don't brake an existing markup and the entire button is clickable
   @Output() buttonClick = new EventEmitter<any>();
 
   buttonDown = false;
