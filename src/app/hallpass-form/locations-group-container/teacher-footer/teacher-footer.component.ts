@@ -19,11 +19,6 @@ export class TeacherFooterComponent implements OnInit {
 
   showFullFooter: boolean = false;
 
-  text: {
-    fromLocation: string,
-    toLocation: string
-  };
-
   constructor() { }
 
   get fromLocationText() {
@@ -35,28 +30,6 @@ export class TeacherFooterComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.getTextLocation();
   }
-
-  getTextLocation() {
-    if (!this.fromLocation && !this.toLocation) {
-      return this.text = {
-         fromLocation: 'Origin',
-         toLocation: 'Destination'
-      };
-    }
-    if (this.fromLocation && !this.toLocation) {
-       return this.text = {
-          fromLocation: this.fromLocation.title,
-          toLocation: 'Destination'
-       };
-    }
-    if (this.fromLocation && this.toLocation) {
-       return this.text = {
-          fromLocation: this.fromLocation.title,
-          toLocation: this.toLocation.title
-       };
-    }
-    }
 
 }

@@ -17,17 +17,7 @@
     </div>
   </div>
 
-  <div class="to-footer" [style.height]="date ? '65px' : '43px'" *ngIf="!isStaff">
-    <div class="footer-from-text">
-      <div class="date" [style.color]="'#1F195E'" *ngIf="date">{{ date }}</div>
-      <div class="center-text">
-        <div class="footer-text">{{ location.title }}</div>
-        <img class="footer-icon" [src]="'./assets/Arrows_long_right.png' | resolveAsset">
-        <div class="footer-text" [style.font-weight]="'bold'">Destination</div>
-      </div>
-    </div>
-  </div>
-
-  <app-teacher-footer [fromLocation]="location" *ngIf="isStaff" [date]="date" [students]="students"></app-teacher-footer>
+  <app-student-footer *ngIf="!isStaff" [formState]="formState" [date]="date"></app-student-footer>
+  <app-teacher-footer *ngIf="isStaff" [fromLocation]="location" [date]="date" [students]="students"></app-teacher-footer>
 
 </div>

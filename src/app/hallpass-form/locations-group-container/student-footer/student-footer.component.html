@@ -1,0 +1,12 @@
+<div class="wrapper">
+  <div class="target-footer" [style.height]="date ? '65px' : '43px'">
+    <div class="footer-from-text">
+      <div class="date" [style.color]="'#1F195E'" *ngIf="date">{{ date }}</div>
+      <div class="center-text">
+        <div class="footer-text" (click)="goToFrom()" [style.font-weight]="!fromLocation ? 'bold' : 'normal'">{{ fromLocationText }}</div>
+        <img class="footer-icon" [src]="'./assets/Arrows_long_right.png' | resolveAsset">
+        <div class="footer-text" (click)="goTo()" [style.font-weight]="!toLocation ? 'bold' : 'normal'">{{ toLocationText }}</div>
+      </div>
+    </div>
+  </div>
+</div>

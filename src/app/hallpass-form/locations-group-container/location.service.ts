@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Pinnable } from '../../models/Pinnable';
-import {HttpService} from '../../http-service';
-import {MatDialog} from '@angular/material';
+import { HttpService } from '../../http-service';
+import { MatDialog } from '@angular/material';
 
 @Injectable({
   providedIn: 'root'

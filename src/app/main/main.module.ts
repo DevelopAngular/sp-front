@@ -48,8 +48,9 @@ import {GroupsStep1Component} from '../groups/groups-step1/groups-step1.componen
 import {GroupsStep2Component} from '../groups/groups-step2/groups-step2.component';
 import {GroupsStep3Component} from '../groups/groups-step3/groups-step3.component';
 import {TeacherFooterComponent} from '../hallpass-form/locations-group-container/teacher-footer/teacher-footer.component';
-import { DateTimeContainerComponent } from '../date-time-container/date-time-container.component'
-import { FormFactorContainerComponent } from '../form-factor-container/form-factor-container.component'
+import { DateTimeContainerComponent } from '../date-time-container/date-time-container.component';
+import { FormFactorContainerComponent } from '../form-factor-container/form-factor-container.component';
+import {StudentFooterComponent} from '../hallpass-form/locations-group-container/student-footer/student-footer.component';
 
 @NgModule({
   imports: [
@@ -98,6 +99,7 @@ import { FormFactorContainerComponent } from '../form-factor-container/form-fact
     RestrictedTargetComponent,
     RestrictedMessageComponent,
     TeacherFooterComponent,
+    StudentFooterComponent,
     LocationsGroupContainerComponent,
     GroupsContainerComponent ,
     GroupsStep1Component,

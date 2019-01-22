@@ -5,7 +5,6 @@ import { DataService } from '../../data-service';
 import { LocationService } from './location.service';
 import { Pinnable } from '../../models/Pinnable';
 import { Util } from '../../../Util';
-import {FormState} from '../../admin/overlay-container/overlay-container.component';
 import {FormFactor, Navigation, Role} from '../hallpass-form.component';
 
 @Component({

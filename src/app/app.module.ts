@@ -98,7 +98,6 @@ const appRoutes: Routes = [
     SelectProfileComponent,
     ErrorToastComponent,
     SchoolToggleBarComponent
-
   ],
   entryComponents: [
     ConsentMenuComponent,
