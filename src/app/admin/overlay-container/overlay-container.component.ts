@@ -509,34 +509,25 @@ export class OverlayContainerComponent implements OnInit {
             timeLimit: +this.timeLimit
         };
         const status = [];
-        // status.push(currState.roomName === initState.roomName);
-        status.push(!this.form.get('roomName').dirty);
-        // status.push(currState.roomNumber === initState.roomNumber);
-        status.push(!this.form.get('roomNumber').dirty);
-        // status.push(currState.restricted === initState.restricted);
-        status.push(!this.isDirtyNowRestriction);
-        // status.push(currState.scheduling_restricted === initState.scheduling_restricted);
-        status.push(!this.isDirtyFutureRestriction);
+        status.push(currState.roomName === initState.roomName);
+        status.push(currState.roomNumber === initState.roomNumber);
+        status.push(currState.restricted === initState.restricted);
+        status.push(currState.scheduling_restricted === initState.scheduling_restricted);
         status.push(_.isEqual(currState.teachers, initState.teachers));
         if (currState.folderName && initState.folderName) {
-            // status.push(currState.folderName === initState.folderName);
-            status.push(!this.form.get('folderName').dirty);
+            status.push(currState.folderName === initState.folderName);
         }
         if (currState.color && initState.color) {
-            // status.push(currState.color === initState.color);
-            status.push(!this.isDirtyColor);
+            status.push(currState.color === initState.color);
         }
         if (currState.timeLimit && initState.timeLimit) {
-            // status.push(currState.timeLimit === initState.timeLimit);
-            status.push(!this.form.get('timeLimit').dirty);
+            status.push(currState.timeLimit === initState.timeLimit);
         }
         if (currState.travel_type && initState.travel_type) {
-            // status.push(_.isEqual(currState.travel_type.sort(), initState.travel_type.sort()));
-            status.push(!this.isDirtyTravel);
+            status.push(_.isEqual(currState.travel_type.sort(), initState.travel_type.sort()));
         }
         if (currState.icon && initState.icon) {
-            // status.push(currState.icon === initState.icon);
-            status.push(!this.isDirtyIcon);
+            status.push(currState.icon === initState.icon);
         }
         this.isFormStateDirty = status.includes(false);
     }
