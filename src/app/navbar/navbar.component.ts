@@ -14,6 +14,8 @@ import { UserService } from '../user.service';
 
 import {combineLatest} from 'rxjs';
 
+import * as _ from 'lodash';
+
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
@@ -97,11 +99,17 @@ export class NavbarComponent implements OnInit {
       .subscribe(user => {
         this._zone.run(() => {
           this.user = user;
+          console.log('User =>>>>>', user);
           this.isStaff = user.isAdmin() || user.isTeacher();
           this.showSwitchButton = [user.isAdmin(), user.isTeacher(), user.isStudent()].filter(val => !!val).length > 1;
-          this.dataService.updateInbox(this.tab!=='settings');
+          this.dataService.updateInbox(this.tab !== 'settings');
         });
       });
+    this.dataService.getLocationsWithTeacher(this.user).subscribe(res => {
+      _.remove(this.buttons, (el) => {
+        return el.route === 'myroom' && !res.length;
+      });
+    });
 
     this.userService.userData.subscribe(user => {
 

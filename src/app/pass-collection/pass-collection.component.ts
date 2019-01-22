@@ -32,7 +32,7 @@ export class SortOption {
   styleUrls: ['./pass-collection.component.scss']
 })
 
-export class PassCollectionComponent implements OnInit {
+export class PassCollectionComponent implements OnInit, OnDestroy {
 
   @Input() displayState = 'grid';
   @Input() title: string;
