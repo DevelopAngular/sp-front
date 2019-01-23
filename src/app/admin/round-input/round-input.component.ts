@@ -52,9 +52,14 @@ export class RoundInputComponent implements OnInit {
   constructor(public dialog: MatDialog, private http: HttpService) { }
 
   ngOnInit() {
-    if (this.focused) {
-      this.focusAction(true);
-    }
+
+    setTimeout(() => {    console.log(this.input);
+      if (this.input && this.focused) {
+        this.focusAction(true);
+        this.changeAction(this.input.nativeElement, true);
+      }
+    }, 500)
+
     if (this.selectReset$) {
       this.selectReset$.subscribe((_value: string) => {
         this.value = _value;

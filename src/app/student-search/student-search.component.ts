@@ -15,7 +15,8 @@ import {Subject} from 'rxjs';
 
 export class StudentSearchComponent implements AfterViewInit {
 
-  @Input() disabled: false;
+  @Input() disabled: boolean = false;
+  @Input() focused: boolean = false;
   @Input() showOptions: boolean = true;
   @Input() selectedStudents: User[] = [];
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
@@ -31,6 +32,10 @@ export class StudentSearchComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     // this.input.nativeElement.focus();
+    if (this.selectedStudents.length) {
+      this.focused = true;
+    }
+
   }
 
   onSearch(search: string) {

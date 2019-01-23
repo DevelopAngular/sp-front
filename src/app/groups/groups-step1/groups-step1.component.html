@@ -73,7 +73,8 @@
     <div class="content-right">
       <div class="content-right_sudent-search">
         <div class="seach-wrapper">
-          <app-student-search [disabled]="false"
+          <app-student-search
+            [focused]="true"
             (onUpdate)="updateInternalData($event)" [selectedStudents]="selectedStudents"
           ></app-student-search>
         </div>
