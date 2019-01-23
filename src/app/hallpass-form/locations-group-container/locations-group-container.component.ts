@@ -37,7 +37,7 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   get studentText() {
-     if (!this.FORM_STATE.data.selectedStudents.length) {
+     if (!this.FORM_STATE.data.selectedStudents) {
         return false;
      } else {
        return this.FORM_STATE.data.selectedStudents[0].display_name +

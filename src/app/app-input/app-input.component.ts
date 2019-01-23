@@ -40,6 +40,10 @@ export class AppInputComponent implements OnInit {
       console.log('right_icon ===> ', this.rightIcon);
       // this.rightIconUntouched = this.rightIcon.replace('Blue', 'Grey');
 
+      if (this.isFocus) {
+        this.updateFocus(this.input.nativeElement);
+      }
+
       if (this.rightIcon) {
         this.rightIconUntouched = this.rightIcon.replace('Blue', 'Grey');
       }

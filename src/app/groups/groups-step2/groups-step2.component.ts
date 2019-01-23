@@ -43,6 +43,9 @@ export class GroupsStep2Component implements OnInit {
       step: 2,
       state: 1,
       fromState: 2,
+      data: {
+        selectedStudents: this.selectedStudents
+      }
     });
   }
 }

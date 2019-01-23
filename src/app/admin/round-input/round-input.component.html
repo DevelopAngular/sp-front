@@ -24,6 +24,7 @@
 
       <input *ngIf="chipInput" #input class="input"
              [type]="html5type"
+             [disabled]="disabled"
              [matChipInputFor]="chipInput"
              [matChipInputAddOnBlur]="true"
              [style.margin]="'0px'"

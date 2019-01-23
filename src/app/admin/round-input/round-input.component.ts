@@ -25,7 +25,7 @@ export class RoundInputComponent implements OnInit {
   @Input() hasTogglePicker: boolean;
   @Input() width: string;
   @Input() minWidth: string = '300px';
-  @Input() fieldIcon: string = './assets/Search Input (Grey).png';
+  @Input() fieldIcon: string = './assets/Search Input (Blue).png';
   @Input() fieldIconPosition: string = 'left'; // Can be 'right' or 'left'
   @Input() closeIcon: boolean = false;
   @Input() disabled: boolean = false;

@@ -51,22 +51,26 @@ export class GroupsContainerComponent implements OnInit {
 
   ngOnInit() {
     this.updateData$.subscribe(() => {
+
       this.http.get('v1/student_lists')
         .subscribe((groups: StudentList[]) => {
+          console.log('Emit should happen and it happens ====>', groups);
+
           this.groups = groups;
+          // this.FORM_STATE.data.selectedGroup =
         });
     });
   }
 
   onStateChange(evt) {
-    console.log('FORM_STATE =========>', evt);
 
-    if ( evt.step === 3 ) {
+    if ( evt.step === 3 || evt.step === 1 || evt.step === 0  ) {
       this.FORM_STATE.step = evt.step;
       this.FORM_STATE.state = 1;
       this.FORM_STATE.data.selectedGroup = evt.data.selectedGroup;
       this.FORM_STATE.data.selectedStudents = evt.data.selectedStudents;
       this.nextStepEvent.emit(this.FORM_STATE);
+      return;
     }
 
     switch ( evt.state ) {
@@ -81,25 +85,14 @@ export class GroupsContainerComponent implements OnInit {
       }
       case (1): {
         if (evt.fromState === 3) {
-          console.log('TUT YEBANYY SELECT ======>', evt);
-          this.FORM_STATE.data.selectedGroup = evt.data.selectedGroup;
-          this.selectedGroup = evt.data.selectedGroup;
+          console.log('Emit should happen ====>');
+          this.FORM_STATE.data.selectedGroup = this.groups.find(group => group.id === evt.data.selectedGroup.id);
+          // this.selectedGroup = evt.data.selectedGroup;
         } else {
           this.selectedStudents = evt.data.selectedStudents;
         }
         break;
       }
-      // case(0): {
-      //   console.log('FORM_STATE before =========>', evt);
-      //
-      //   // this.FORM_STATE.step = evt.step; // 3
-      //   // this.FORM_STATE.state = 1;
-      //   // this.FORM_STATE.data.selectedStudents = evt.selectedStudents;
-      //   // this.FORM_STATE.data.selectedGroup = evt.selectedGroup;
-      //   // console.log('FORM_STATE after =========>', this.FORM_STATE);
-      //   this.FORM_STATE = evt;
-      //   this.nextStepEvent.emit(this.FORM_STATE);
-      // }
     }
     this.currentState = evt.state;
     this.updateData$.next(null);
