@@ -13,6 +13,7 @@ build_date=$(date)
 
 cat > src/build-info.ts <<EOF
 
+export const BUILD_INFO_REAL = true;
 export const RELEASE_NAME = '${release_name}';
 export const BUILD_DATE = '${build_date}';
 
