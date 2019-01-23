@@ -108,10 +108,9 @@ export class HallpassFormComponent implements OnInit {
   }
 
   onNextStep(evt) {
-    // console.log('event ============>', evt);
-      // this.FORM_STATE.step = evt.step;
-      // this.FORM_STATE.state = evt.state;
-      // this.FORM_STATE.data.date = evt.data.date;
+    if (evt === 'exit') {
+      this.dialogRef.close();
+    }
     this.FORM_STATE = evt;
     console.log('FORM FACTOR event ============>', evt);
 

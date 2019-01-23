@@ -37,7 +37,7 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   get studentText() {
-     if (!this.FORM_STATE.data.selectedStudents.length) {
+     if (!this.FORM_STATE.data.selectedStudents) {
         return false;
      } else {
        return this.FORM_STATE.data.selectedStudents[0].display_name +
@@ -46,16 +46,23 @@ export class LocationsGroupContainerComponent implements OnInit {
     }
 
   ngOnInit() {
-    console.log('Step #3 ======>', this.FORM_STATE);
+    this.locationService.firstStep(!!this.showDate, !!this.studentText);
     this.data.toLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.to ? this.FORM_STATE.data.direction.to : null;
     this.locationService.changeLocation$.subscribe(state => {
       if (state === 'exit') {
-
+       this.nextStepEvent.emit('exit');
+      }
+      if (state === 'date') {
         this.FORM_STATE.step = 1;
         this.FORM_STATE.state = 1;
 
         this.nextStepEvent.emit(this.FORM_STATE);
 
+      }
+      if (state === 'students') {
+          this.FORM_STATE.step = 2;
+          this.FORM_STATE.state = 1;
+          this.nextStepEvent.emit(this.FORM_STATE);
       }
       this.currentState = state;
     });
@@ -127,7 +134,6 @@ export class LocationsGroupContainerComponent implements OnInit {
     }
     this.FORM_STATE.step = 4;
 
-    console.log('After locs choised ======>', this.FORM_STATE);
     this.nextStepEvent.emit(this.FORM_STATE);
   }
 }

@@ -11,7 +11,7 @@
     height: 64px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    position: relative;
     box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
 
 
@@ -19,6 +19,7 @@
       width: 26px;
       height: 26px;
       margin-left: 20px;
+      position: absolute;
       user-select: none;
       cursor: pointer;
     }
@@ -26,7 +27,7 @@
     .rest-tar-header-text {
       display: flex;
       align-items: center;
-      margin-right: 90px;
+      margin: 0 auto;
 
       .search-icon{
         width: 25px;

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef, NgZone } from '@angular/core';
+import {Component, OnInit, Input, ElementRef, NgZone, Output, EventEmitter} from '@angular/core';
 import { Invitation } from '../models/Invitation';
 import { User } from '../models/User';
 import { Location} from '../models/Location';
@@ -28,6 +28,8 @@ export class InvitationCardComponent implements OnInit {
   @Input() forStaff: boolean = false;
   @Input() forInput: boolean = false;
   @Input() selectedStudents: User[] = [];
+
+  @Output() cardEvent: EventEmitter<any> = new EventEmitter<any>();
 
   selectedOrigin: Location;
   denyOpen: boolean = false;
@@ -133,37 +135,38 @@ export class InvitationCardComponent implements OnInit {
       let options = [];
       let header = '';
       if (this.forInput) {
-          this.dialogRef.close();
-          const isCategory = this.fromHistory[this.fromHistoryIndex] === 'to-category';
-          const dialogRef = this.dialog.open(HallpassFormComponent, {
-              width: '750px',
-              panelClass: 'form-dialog-container',
-              backdropClass: 'custom-backdrop',
-              data: {
-                  'toIcon': isCategory ? this.invitation.icon : null,
-                  'toProfile': this.invitation.color_profile,
-                  'toCategory': isCategory ? this.invitation.destination.category : null,
-                  'fromLocation': this.selectedOrigin,
-                  'fromHistory': this.fromHistory,
-                  'fromHistoryIndex': this.fromHistoryIndex,
-                  'colorProfile': this.invitation.color_profile,
-                  'forLater': this.forFuture,
-                  'forStaff': this.forStaff,
-                  'selectedStudents': this.selectedStudents || true,
-                  'requestTime': this.invitation.date_choices[0]
-              }
-          });
-          dialogRef.afterClosed().pipe(filter(res => !!res))
-              .subscribe((result: Object) => {
-                  this.openInputCard(result['templatePass'],
-                      result['forLater'],
-                      result['forStaff'],
-                      result['selectedStudents'],
-                      (result['type'] === 'invitation' ? InvitationCardComponent : RequestCardComponent),
-                      result['fromHistory'],
-                      result['fromHistoryIndex']
-                  );
-              });
+          this.cardEvent.emit({});
+          // this.dialogRef.close();
+          // const isCategory = this.fromHistory[this.fromHistoryIndex] === 'to-category';
+          // const dialogRef = this.dialog.open(HallpassFormComponent, {
+          //     width: '750px',
+          //     panelClass: 'form-dialog-container',
+          //     backdropClass: 'custom-backdrop',
+          //     data: {
+          //         'toIcon': isCategory ? this.invitation.icon : null,
+          //         'toProfile': this.invitation.color_profile,
+          //         'toCategory': isCategory ? this.invitation.destination.category : null,
+          //         'fromLocation': this.selectedOrigin,
+          //         'fromHistory': this.fromHistory,
+          //         'fromHistoryIndex': this.fromHistoryIndex,
+          //         'colorProfile': this.invitation.color_profile,
+          //         'forLater': this.forFuture,
+          //         'forStaff': this.forStaff,
+          //         'selectedStudents': this.selectedStudents || true,
+          //         'requestTime': this.invitation.date_choices[0]
+          //     }
+          // });
+          // dialogRef.afterClosed().pipe(filter(res => !!res))
+          //     .subscribe((result: Object) => {
+          //         this.openInputCard(result['templatePass'],
+          //             result['forLater'],
+          //             result['forStaff'],
+          //             result['selectedStudents'],
+          //             (result['type'] === 'invitation' ? InvitationCardComponent : RequestCardComponent),
+          //             result['fromHistory'],
+          //             result['fromHistoryIndex']
+          //         );
+          //     });
           return false;
       } else if (!this.forStaff) {
         options.push(this.genOption('Decline Pass Request','#F00','decline'));

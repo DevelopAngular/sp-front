@@ -36,8 +36,6 @@ export class FormFactorContainerComponent implements OnInit {
         switch (this.FORM_STATE.formMode.formFactor) {
           case (this.states.HallPass): {
 
-            // debugger
-
             this.template = new HallPass(
               'template',
               _user,
@@ -62,6 +60,7 @@ export class FormFactorContainerComponent implements OnInit {
             break;
           }
           case (this.states.Request): {
+
             this.template = new Request(
               'template',
               null,
@@ -87,6 +86,7 @@ export class FormFactorContainerComponent implements OnInit {
             break;
           }
           case (this.states.Invitation): {
+
             this.template = new Invitation(
               'template',
               null,
@@ -109,45 +109,7 @@ export class FormFactorContainerComponent implements OnInit {
             break;
           }
         }
-    })
-
-    // this.currentState = this.FORM_STATE.formMode.formFactor;
-
-
-    //
-    // if (this.FORM_STATE.formMode.formFactor === this.states.Request) {
-    //   this.template = new Request(
-    //     'template',
-    //     null,
-    //     this.FORM_STATE.data.direction.from,
-    //     this.FORM_STATE.data.direction.to,
-    //     this.FORM_STATE.data.message,
-    //     '',
-    //     'pending',
-    //     null,
-    //     '',
-    //     this.FORM_STATE.data.direction.pinnable.icon,
-    //     this.FORM_STATE.data.requestTarget,
-    //     this.FORM_STATE.data.date ? this.FORM_STATE.data.date.date : new Date(),
-    //     '',
-    //     null,
-    //     null,
-    //     this.FORM_STATE.data.direction.pinnable.color_profile,
-    //     null,
-    //     null,
-    //     60,
-    //     null
-    //   );
-    //
-    // }
-
-    // if (this.FORM_STATE.formMode.formFactor === this.states.HallPass) {
-    // }
-
-    console.log('FF ===>', this.currentState);
-
-
-
+    });
   }
 
 
