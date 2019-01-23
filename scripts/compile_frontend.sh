@@ -25,6 +25,12 @@ echo "Using config: $config"
 
 ng build -c "$config" --base-href '/app/' # --deploy-url "$deploy_url"
 
-sentry-cli releases --org 'smartpass' files "$release_name" upload-sourcemaps --rewrite --url-prefix "~/app" ./dist/
+echo 'Uploading sourcemaps'
+
+sentry-cli releases --org 'smartpass' files --project 'hall-pass-web' "$release_name" upload-sourcemaps --rewrite --url-prefix "~/app" ./dist/
+
+echo 'finalizing project'
 
 sentry-cli releases --org 'smartpass' finalize --project 'hall-pass-web' "$release_name"
+
+echo 'Done compiling.'
