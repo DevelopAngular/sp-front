@@ -1,6 +1,6 @@
 :host {
   .step-1-container {
-    $primary-color: #134482;
+    $primary-color: #3D396B;
     $secondary-color: #999999;
 
 
@@ -30,7 +30,9 @@
         align-items: center;
       }
       &_back-button {
-        width: 30px;
+        //width: 30px;
+        display: flex;
+        align-items: center;
         height: 30px;
         position: absolute;
         left: 20px;
@@ -52,7 +54,7 @@
     }
     .content {
       width: 100%;
-      height: 100%;
+      height: 335px;
       flex: 1 1 auto;
       display: flex;
       &-left {
@@ -163,13 +165,14 @@
         }
       }
       &-right {
-        //height: 100%;
+        height: 100%;
+        overflow-y: auto;
         flex: 1 1 auto;
         box-sizing: border-box;
         padding: 30px 25px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+        //display: flex;
+        //flex-direction: column;
+        //justify-content: space-between;
         &_sudent-search {
           display: flex;
           justify-content: center;

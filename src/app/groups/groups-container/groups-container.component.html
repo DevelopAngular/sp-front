@@ -3,6 +3,7 @@
     <app-groups-step1
       [selectedGroup]="FORM_STATE.data.selectedGroup"
       [groups]="groups"
+      [hasBackArrow]="FORM_STATE.formMode.formFactor === 2 || FORM_STATE.formMode.formFactor === 3"
       (stateChangeEvent)="onStateChange($event)">
     </app-groups-step1>
   </div>

@@ -1,13 +1,12 @@
 <div class="step-1-container">
   <div class="header">
-    <div class="header_back-button"  *ngIf="selectedGroup" (click)="back()">
+    <div class="header_back-button" (click)="back()">
       <img class="header_back-button" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
     </div>
     <div class="header_title">
       <img class="header_icon" [src]="'./assets/Search (Blue).png' | resolveAsset">
       <div class="header_text">Select students(s)</div>
     </div>
-    <div></div>
   </div>
   <div class="content">
     <div class="content-left">
@@ -28,9 +27,10 @@
                     <div class="group-name">
                       <span>{{group.title}}</span>
                       <img class="group-icon"
+                           [style.transform]="selectedGroup && (selectedGroup.id === group.id) ? 'rotate(-90deg)' : 'none'"
                            [src]="( selectedGroup && (selectedGroup.id === group.id)
                                     ?
-                                    './assets/Disclosure Left (Blue).png'
+                                    './assets/Disclosure Indicator (Blue).png'
                                     :
                                     './assets/Disclosure Indicator (Grey).png') | resolveAsset"
                            alt="Disclosure Indicator (Grey).png">
@@ -52,7 +52,7 @@
             [width]="'180px'"
             [hoverColor]="'#FFFFFF'"
             [gradient]="'#FFFFFF,#FFFFFF'"
-            [textColor]="'#134482'"
+            [textColor]="'#1F195E'"
             [leftIcon]="'./assets/Create (Blue).png'"
             [leftImageHeight]="'13px'"
             [leftImageWidth]="'13px'"
@@ -65,7 +65,6 @@
 
                 <span class="create-button_title">New Student Group</span>
               </div>
-              <!--<span class="create-button_subtitle">with selected students</span>-->
             </div>
           </app-gradient-button>
         </div>
@@ -74,8 +73,9 @@
     <div class="content-right">
       <div class="content-right_sudent-search">
         <div class="seach-wrapper">
-          <app-student-search [disabled]="selectedGroup"
-            (onUpdate)="selectedStudents=$event" [selectedStudents]="selectedStudents"
+          <app-student-search
+            [focused]="true"
+            (onUpdate)="updateInternalData($event)" [selectedStudents]="selectedStudents"
           ></app-student-search>
         </div>
       </div>

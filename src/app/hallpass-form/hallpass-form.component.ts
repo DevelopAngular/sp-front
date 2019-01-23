@@ -56,8 +56,6 @@ export class HallpassFormComponent implements OnInit {
 
   public FORM_STATE: Navigation;
 
-  // public FORM_MODE: FormMode = Object.create({});
-
   constructor(
     private http: HttpService,
     private dataService: DataService,
@@ -80,7 +78,6 @@ export class HallpassFormComponent implements OnInit {
     };
 
     this.FORM_STATE.formMode.role = this.dialogData['forStaff'] ? Role.Teacher : Role.Student;
-    // this.FORM_STATE.formMode.formFactor = this.dialogData['forLater'] ? this.dialogData['forStaff'] ? FormFactor.Invitation : FormFactor.Request : FormFactor.HallPass;
 
     if ( this.dialogData['forLater'] ) {
 
@@ -108,11 +105,14 @@ export class HallpassFormComponent implements OnInit {
   }
 
   onNextStep(evt) {
-    if (evt === 'exit') {
+
+    if (evt.step === 0 || evt === 'exit') {
       this.dialogRef.close();
+      return;
+    } else {
+      this.FORM_STATE = evt;
+      console.log('FORM FACTOR event ============>', evt);
     }
-    this.FORM_STATE = evt;
-    console.log('FORM FACTOR event ============>', evt);
 
   }
 }

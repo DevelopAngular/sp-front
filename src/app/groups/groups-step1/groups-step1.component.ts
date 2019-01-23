@@ -11,7 +11,8 @@ import {Navigation} from '../../hallpass-form/hallpass-form.component';
 export class GroupsStep1Component implements OnInit {
 
   @Input() selectedGroup: StudentList = null;
-  @Input() groups: StudentList[] = []
+  @Input() groups: StudentList[] = [];
+  @Input() hasBackArrow: boolean = false;
 
   @Output() stateChangeEvent: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
@@ -80,9 +81,51 @@ export class GroupsStep1Component implements OnInit {
     });
   }
 
+  updateInternalData(evt) {
+    if (this.selectedGroup) {
+      this.selectedGroup = null;
+    }
+    this.selectedStudents = evt;
+    this.stateChangeEvent.emit(
+      {
+        step: 2,
+        state: 1,
+        data: {
+          selectedStudents: this.selectedStudents,
+          selectedGroup: this.selectedGroup
+        }
+      }
+    );
+  }
+
   back() {
-    this.selectedGroup = null;
-    this.selectedStudents = [];
+    if (this.selectedGroup) {
+      this.selectedGroup = null;
+      this.selectedStudents = [];
+      return;
+    } else if (this.hasBackArrow) {
+      this.stateChangeEvent.emit({
+        step: 1,
+        // state: 1,
+        // fromState: 1,
+        data: {
+          selectedStudents: this.selectedStudents,
+          selectedGroup: this.selectedGroup
+        }
+      });
+    } else {
+      this.stateChangeEvent.emit({
+        step: 0,
+        // state: 1,
+        // fromState: 1,
+        data: {
+          selectedStudents: this.selectedStudents,
+          selectedGroup: this.selectedGroup
+        }
+      });
+    }
+
+
   }
 }
 
