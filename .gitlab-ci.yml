@@ -7,6 +7,8 @@ variables:
 
   KUBERNETES_VERSION: 1.10.3
   HELM_VERSION: 2.9.1
+  SENTRY_ORG: "smartpass"
+  SENTRY_PROJECT: "hall-pass-web"
 
 stages:
   - deploy_staging
