@@ -16,4 +16,8 @@ fi
 
 echo "Using config: $config"
 
+release_name=$(sentry-cli releases propose-version)
+
+echo "Using release name: $release_name"
+
 ng build -c "$config" --base-href '/app/' # --deploy-url "$deploy_url"
