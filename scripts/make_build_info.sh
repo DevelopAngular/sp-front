@@ -2,7 +2,7 @@
 set -e
 
 
-if [[ -f 'src/build-info.ts' ]]; then
+if [[ ! -f 'src/build-info.ts' ]]; then
   echo 'Could not find src/build-info.ts'
   echo 'You may be in the wrong directory'
   exit 1
