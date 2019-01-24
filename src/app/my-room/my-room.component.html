@@ -3,7 +3,7 @@
     <div class="my-room-left">
       <div class="my-room-header">
         <!--<p>{{optionsOpen}} | {{showArrow}}</p>-->
-        <div class="selected-teacher" (click)="showOptions($event)">
+        <div class="selected-teacher" #target (click)="showOptions(target)">
           {{ roomOptions?selectedLocation.title:"" }}
           <img *ngIf="showArrow" class="disclosure-icon" [src]="'./assets/Disclosure Indicator (Blue).png' | resolveAsset">
         </div>

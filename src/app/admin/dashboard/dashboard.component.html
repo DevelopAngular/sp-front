@@ -84,7 +84,15 @@
         <mat-spinner [color]="'accent'" [diameter]="'35'" class=""></mat-spinner>
       </div>
       <div>
-        <div class="card_header my py">Pass Usage</div>
+        <div class="card_header flex-center-between my py">
+          <div>
+            <span>Pass Usage</span>
+          </div>
+          <div class="calendar-icon-container" [ngClass]="{'active-calendar-icon': activeCalendar}">
+            <img draggable="false" [src]="( !chartsDate ? './assets/Calendar (Blue).png' : './assets/Calendar (Light Blue).png') | resolveAsset" class="calendar-icon" (click)="openDateDialog($event)">
+          </div>
+        </div>
+
         <!--Chart-->
         <div [ngStyle]="{'opacity': hiddenChart ?  .1 : 1}">
           <canvas baseChart width="380" height="260" #ctx

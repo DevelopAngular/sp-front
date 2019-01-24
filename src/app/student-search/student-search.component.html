@@ -1,6 +1,21 @@
 <div class="student-search-wrapper">
-<div class="input">
-  <mat-chip-list #chipList>
+  <div class="input">
+    <mat-chip-list #chipList>
+        <div [style.padding-bottom]="'5px'">
+          <app-round-input
+            [minWidth]="'360px'"
+            [width]="'360px'"
+            [type]="'text'"
+            [chipInput]="chipList"
+            [placeholder]="'Search students'"
+            [disabled]="disabled"
+            [fieldIconPosition]="'right'"
+            [focused]="focused"
+            [selectReset$]="inputValue$"
+            (ontextupdate)="onSearch($event)"
+          >
+          </app-round-input>
+        </div>
       <mat-chip
         *ngFor="let student of selectedStudents"
         [removable]="!disabled"
@@ -8,32 +23,18 @@
         {{student.display_name + ' (' + student.primary_email.split('@', 1)[0] + ')'}}
         <mat-icon matChipRemove>cancel</mat-icon>
       </mat-chip>
-      <app-round-input
-        [minWidth]="'360px'"
-        [width]="'360px'"
-        [type]="'text'"
-        [chipInput]="chipList"
-        [placeholder]="'Search students'"
-        [disabled]="disabled"
-        [fieldIconPosition]="'right'"
-        [focused]="focused"
-        [selectReset$]="inputValue$"
-        (ontextupdate)="onSearch($event)"
-
-      >
-      </app-round-input>
       <!--<input-->
-        <!--placeholder="Search students"-->
-        <!--#studentInput-->
-        <!--autofocus-->
-        <!--[disabled]="disabled"-->
-        <!--[matChipInputFor]="chipList"-->
-        <!--[matChipInputAddOnBlur]="true"-->
-        <!--[value]="inputValue"-->
-        <!--(input)="onSearch(studentInput.value)"-->
-      <!--&gt;-->
-  </mat-chip-list>
-</div>
+          <!--placeholder="Search students"-->
+          <!--#studentInput-->
+          <!--autofocus-->
+          <!--[disabled]="disabled"-->
+          <!--[matChipInputFor]="chipList"-->
+          <!--[matChipInputAddOnBlur]="true"-->
+          <!--[value]="inputValue"-->
+          <!--(input)="onSearch(studentInput.value)"-->
+        <!--&gt;-->
+    </mat-chip-list>
+  </div>
   <div *ngIf="showOptions" class="options-wrapper">
     <div *ngFor="let student of students | async" (click)="inputValue$.next(''); addStudent(student)"  class="option-wrapper">
       <div class="option-content">
