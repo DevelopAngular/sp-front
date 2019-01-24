@@ -1,7 +1,6 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormControl} from '@angular/forms';
-import {LocationService} from '../location.service';
-import {Navigation} from '../../hallpass-form.component';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { Navigation } from '../../hallpass-form.component';
 
 @Component({
   selector: 'app-date-time',
@@ -24,6 +23,9 @@ export class DateTimeComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    if (this.formState.data.date) {
+      this.requestTime = new Date(this.formState.data.date.date);
+    }
     this.declinable = new FormControl(false);
   }
 
