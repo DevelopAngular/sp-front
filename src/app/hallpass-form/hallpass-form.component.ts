@@ -81,13 +81,14 @@ export class HallpassFormComponent implements OnInit {
 
     if ( this.dialogData['forLater'] ) {
 
+      this.FORM_STATE.step = 1;
+
       if ( this.dialogData['forStaff'] ) {
         this.FORM_STATE.formMode.formFactor = FormFactor.Invitation;
       } else {
-        this.FORM_STATE.formMode.formFactor = FormFactor.Request;
+        this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
       }
 
-      this.FORM_STATE.step = 1;
     } else {
 
       this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;

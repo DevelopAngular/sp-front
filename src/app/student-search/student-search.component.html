@@ -35,7 +35,7 @@
         <!--&gt;-->
     </mat-chip-list>
   </div>
-  <div *ngIf="showOptions" class="options-wrapper">
+  <div *ngIf="showOptions" [ngClass]="{'options-wrapper': students}">
     <div *ngFor="let student of students | async" (click)="inputValue$.next(''); addStudent(student)"  class="option-wrapper">
       <div class="option-content">
         {{ student.display_name }}
