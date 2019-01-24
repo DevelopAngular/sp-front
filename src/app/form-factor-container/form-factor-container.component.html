@@ -8,7 +8,7 @@
       [pass]="template"
       [forStaff]="FORM_STATE.formMode.role === 1"
       [forInput]="true"
-      [forFuture]="false"
+      [forFuture]="FORM_STATE.data.date ? true : false"
       [students]="FORM_STATE.formMode.role === 1 ? FORM_STATE.data.selectedStudents : []"
       (cardEvent)="onNextStep($event)">
 
@@ -17,12 +17,11 @@
   <div [style.height]="FORM_STATE.formMode.role === 1 ? '451px' : '412px'"
        [style.width]="'334px'"
        *ngIf="FORM_STATE.formMode.formFactor === states.Request && template">
-
     <app-request-card
       [request]="template"
       [forStaff]="FORM_STATE.formMode.role === 1"
       [forInput]="true"
-      [forFuture]="true"
+      [forFuture]="FORM_STATE.data.date ? true : false"
       (cardEvent)="onNextStep($event)"
     ></app-request-card>
   </div>
@@ -34,7 +33,7 @@
       [invitation]="template"
       [forStaff]="FORM_STATE.formMode.role === 1"
       [forInput]="true"
-      [forFuture]="true"
+      [forFuture]="FORM_STATE.data.date ? true : false"
       [selectedStudents]="FORM_STATE.data.selectedStudents"
       (cardEvent)="onNextStep($event)"
     >

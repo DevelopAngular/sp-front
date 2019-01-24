@@ -17,7 +17,7 @@ export class DropdownComponent implements OnInit {
   selectedLocation: Location
   selectedSchool: School;
   _matDialogRef: MatDialogRef<DropdownComponent>;
-  triggerElementRef: ElementRef;
+  triggerElementRef: HTMLElement;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any[], _matDialogRef: MatDialogRef<DropdownComponent>) {
     this._matDialogRef = _matDialogRef;
@@ -34,13 +34,15 @@ export class DropdownComponent implements OnInit {
   ngOnInit() {
 
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
-    const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
-    matDialogConfig.position = { left: `${rect.left - (this.alignSelf ? rect.width : 50)}px`, top: `${rect.bottom + 15}px` };
+    const rect = this.triggerElementRef.getBoundingClientRect();
     matDialogConfig.width = '350px';
     matDialogConfig.height = '200px';
+    console.log('RECT =====>', rect, matDialogConfig);
+    matDialogConfig.position = { left: `${rect.left + (rect.width / 2 - parseInt(matDialogConfig.width, 10) / 2 ) }px`, top: `${rect.bottom + 15}px` };
     this._matDialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);
     this._matDialogRef.updatePosition(matDialogConfig.position);
   }
+
   partOfProfile(school) {
 
     const roles = [];

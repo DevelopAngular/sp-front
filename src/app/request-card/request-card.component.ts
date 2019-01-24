@@ -279,7 +279,7 @@ export class RequestCardComponent implements OnInit {
           } else {
 
             const messageDialog = this.dialog.open(HallpassFormComponent, {
-                  width: '750px',
+                  // width: '750px',
                   panelClass: 'form-dialog-container',
                   backdropClass: 'invis-backdrop',
                   data: {'entryState': 'restrictedMessage',

@@ -9,6 +9,8 @@ import { HallPassFilter, LiveDataService } from '../../live-data/live-data.servi
 import { HallPass } from '../../models/HallPass';
 import { Report } from '../../models/Report';
 import { PdfGeneratorService } from '../pdf-generator.service';
+import {CalendarComponent} from '../calendar/calendar.component';
+import {MatDialog} from '@angular/material';
 
 
 @Component({
@@ -19,6 +21,10 @@ import { PdfGeneratorService } from '../pdf-generator.service';
 export class DashboardComponent implements OnInit, OnDestroy {
   // @ViewChild('draggableContainer') draggableContainer: ElementRef;
   @ViewChild('ctx') ctx: any;
+
+  public chartsDate: Date;
+  public activeCalendar: boolean;
+
 
   private shareChartData$: Subject<any> = new Subject();
   public lineChartData: Array<any> = [{data: Array.from(Array(24).keys()).map(() => 0)}];
@@ -48,7 +54,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private liveDataService: LiveDataService,
     private pdf: PdfGeneratorService,
     private _zone: NgZone,
-    private elRef: ElementRef
+    private elRef: ElementRef,
+    private dialog: MatDialog
   ) {
   }
 
@@ -301,6 +308,39 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.pdf.generate(active_hp, 'p', 'dashboard');
         }
       });
+  }
+
+
+  openDateDialog(event) {
+
+    this.activeCalendar = true;
+    const target = new ElementRef(event.currentTarget);
+    const DR = this.dialog.open(CalendarComponent, {
+      panelClass: 'calendar-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {
+        'trigger': target,
+        'previousSelectedDate': this.chartsDate ? new Date(this.chartsDate) : null,
+      }
+    });
+
+    DR.afterClosed()
+      .subscribe((data) => {
+          this.activeCalendar = false;
+          console.log('82 Date ===> :', data.date);
+          if (data.date) {
+            if ( !this.chartsDate || (this.chartsDate && this.chartsDate.getTime() !== data.date.getTime()) ) {
+              this.chartsDate = new Date(data.date);
+              console.log(this.chartsDate);
+              // this.getReports(this.chartsDate);
+              this.http.get('v1/admin/dashboard')
+                .subscribe((dashboard: any) => {
+                  this.lineChartData = [{data: dashboard.hall_pass_usage}];
+                });
+            }
+          }
+        }
+      );
   }
 
   ngOnDestroy() {

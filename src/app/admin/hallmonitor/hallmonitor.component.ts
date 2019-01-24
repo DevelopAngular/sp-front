@@ -23,6 +23,7 @@ import { disableBodyScroll } from 'body-scroll-lock';
   styleUrls: ['./hallmonitor.component.scss']
 })
 export class HallmonitorComponent implements OnInit {
+
     activePassProvider: PassLikeProvider;
     searchQuery$ = new BehaviorSubject('');
     minDate = new Date();

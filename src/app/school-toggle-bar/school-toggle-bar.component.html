@@ -1,5 +1,5 @@
 <div class="school-toggle-bar-wrapper">
-  <div class="selected-school" (click)="showOptions($event)">
+  <div class="selected-school" #targetElement (click)="showOptions(targetElement)">
     <span class="school-name">{{ currentSchool.name }}</span>
     <img class="disclosure-icon" [src]="'./assets/Disclosure Indicator (Blue).png' | resolveAsset">
   </div>

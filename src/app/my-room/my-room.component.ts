@@ -92,7 +92,7 @@ export class MyRoomComponent implements OnInit {
 
   hasPasses: Observable<boolean> = of(false);
   passesLoaded: Observable<boolean> = of(false);
-  
+
   constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService,
               public dialog: MatDialog, private liveDataService: LiveDataService) {
     this.setSearchDate(new Date());
@@ -180,9 +180,9 @@ export class MyRoomComponent implements OnInit {
     this.searchQuery$.next(search);
   }
 
-  showOptions(evt: MouseEvent) {
+  showOptions(target: HTMLElement) {
     if (!this.optionsOpen && this.roomOptions && this.roomOptions.length > 1) {
-      const target = new ElementRef(evt.currentTarget);
+      // const target = new ElementRef(evt.currentTarget);
       const optionDialog = this.dialog.open(DropdownComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
