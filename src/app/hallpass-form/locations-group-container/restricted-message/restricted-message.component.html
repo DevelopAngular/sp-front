@@ -12,6 +12,8 @@
              class="message-box"
              [placeholder]="'Attach a message for ' + (teacher ? teacher.last_name : '')"
              [formControl]="message"
+             [style.width]="'350px'"
+             [style.height]="date ? '250px' : '270px'"
              autofocus
      >
     </textarea>
@@ -25,7 +27,7 @@
                              [fontSize]="'12px'"
                              (buttonClick)="sendRequest()"
                              class="message-button">
-          {{(message.value === '' ? 'Skip':'Add Message')}}
+          {{(message.value ? 'Add Message' : 'Skip')}}
         </app-gradient-button>
         <app-gradient-button *ngIf="false"
                              [gradient]="'#DA2370,#FB434A'"

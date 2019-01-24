@@ -18,6 +18,11 @@ export class DateTimeContainerComponent implements OnInit {
   }
 
   nextStep(evt) {
+    if (evt === 'exit') {
+      this.FORM_STATE.step = 0;
+      this.FORM_STATE.state = 1;
+      return this.nextStepEvent.emit(this.FORM_STATE);
+    }
     console.log('Local Date event =====>', evt, this.FORM_STATE);
     this.FORM_STATE.step = this.FORM_STATE.formMode.role === 1 ? 2 : 3;
     // Object.defineProperty(this.FORM_STATE.data, 'date', evt)

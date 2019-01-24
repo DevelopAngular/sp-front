@@ -1,1 +1,1 @@
-<app-date-time [isStaff]="FORM_STATE.formMode.role === 1" (result)="nextStep($event)"></app-date-time>
+<app-date-time [isStaff]="FORM_STATE.formMode.role === 1"  [formState]="FORM_STATE" (result)="nextStep($event)"></app-date-time>

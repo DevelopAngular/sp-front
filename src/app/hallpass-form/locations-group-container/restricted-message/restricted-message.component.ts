@@ -1,7 +1,9 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { FormControl } from '@angular/forms';
-import {LocationService} from '../location.service';
-import {Navigation} from '../../hallpass-form.component';
+import { LocationService } from '../location.service';
+import { Navigation } from '../../hallpass-form.component';
+import { Location } from '../../../models/Location';
+import { User } from '../../../models/User';
 
 @Component({
   selector: 'app-restricted-message',
@@ -12,15 +14,15 @@ export class RestrictedMessageComponent implements OnInit {
 
   @Input() formState: Navigation;
 
-  @Input() teacher;
+  @Input() teacher: User;
 
-  @Input() date;
-
-  fromLocation;
-
-  toLocation;
+  @Input() date: string | boolean;
 
   @Output() resultMessage: EventEmitter<any> = new EventEmitter<any>();
+
+  fromLocation: Location;
+
+  toLocation: Location;
 
   message: FormControl;
 
@@ -32,7 +34,7 @@ export class RestrictedMessageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.message = new FormControl('');
+    this.message = new FormControl(this.formState.data.message);
     this.fromLocation = this.formState.data.direction.from;
     this.toLocation = this.formState.data.direction.to;
     this.teacher = this.formState.data.requestTarget;

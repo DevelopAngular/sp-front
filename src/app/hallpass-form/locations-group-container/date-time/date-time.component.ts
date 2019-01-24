@@ -1,5 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormControl} from '@angular/forms';
+import {LocationService} from '../location.service';
+import {Navigation} from '../../hallpass-form.component';
 
 @Component({
   selector: 'app-date-time',
@@ -9,6 +11,8 @@ import {FormControl} from '@angular/forms';
 export class DateTimeComponent implements OnInit {
 
   @Input() isStaff: boolean;
+
+  @Input() formState: Navigation;
 
   @Output() result: EventEmitter<any> = new EventEmitter<any>();
 
@@ -24,11 +28,14 @@ export class DateTimeComponent implements OnInit {
   }
 
   next() {
-    console.log('!!!!!!!!!!!!!!!!', this.requestTime);
     this.result.emit({
         date: this.requestTime,
         declinable: this.declinable.value
     });
+  }
+
+  back() {
+    this.result.emit('exit');
   }
 
 }
