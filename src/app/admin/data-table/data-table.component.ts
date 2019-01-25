@@ -32,6 +32,14 @@ export class DataTableComponent implements OnInit {
   ngOnInit() {
       this.dataSource = new MatTableDataSource(this.data);
       this.dataSource.sort = this.sort;
+      this.dataSource.sortingDataAccessor = (item, property) => {
+          switch (property) {
+              case 'Date & Time': {
+                  return new Date(item[property]);
+              }
+              default: return item[property];
+          }
+      };
       this.displayedColumns = Object.keys(this.data[0]);
       this.columnsToDisplay = this.displayedColumns.slice();
       if (this.isCheckbox) {

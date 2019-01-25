@@ -1,14 +1,14 @@
 .time-picker{
-  margin: 14px;
-  width: 200px;
-  height: 296px;
+  margin: 9px;
+  width: 270px;
+  height: 330px;
   position: relative;
-  overflow: hidden;
+  //overflow: hidden;
   .time-picker-scaled {
-    transform: scale(.68);
+    transform: scale(.80);
     position: absolute;
-    top: -70px;
-    left: -48px;
+    top: -50px;
+    left: -14px;
   }
 }
 
@@ -22,8 +22,8 @@
   align-items: center;
 }
 
-.date.content {
-  width: 100%;
+.date-content {
+  height: 87%;
 }
 
 .teacher {
