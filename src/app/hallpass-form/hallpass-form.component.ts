@@ -27,7 +27,7 @@ export interface FormMode {
 
 export interface Navigation {
   step: number;
-  state?: number;
+  state?: number|string;
   fromState?: number;
   formMode?: FormMode;
   data?: {
@@ -40,9 +40,12 @@ export interface Navigation {
       pinnable?: Pinnable;
       restricted?: boolean;
     },
+    icon?: string
+    gradient?: string;
     message?: string,
     requestTarget?: User
   };
+  forInput?: boolean;
 }
 
 
@@ -65,7 +68,7 @@ export class HallpassFormComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-
+    console.log('INIT HAPPPENED =====>');
     this.FORM_STATE = {
       step: null,
       state: null,
@@ -74,41 +77,85 @@ export class HallpassFormComponent implements OnInit {
         role: null,
         formFactor: null,
       },
-      data: {}
+      data: {},
+      forInput: this.dialogData['forInput'] || false
     };
 
-    this.FORM_STATE.formMode.role = this.dialogData['forStaff'] ? Role.Teacher : Role.Student;
+    switch (this.dialogData['forInput']) {
+      case (true): {
 
-    if ( this.dialogData['forLater'] ) {
+        // this.FORM_STATE = {
+        //   step: null,
+        //   state: null,
+        //   fromState: null,
+        //   formMode: {
+        //     role: null,
+        //     formFactor: null,
+        //   },
+        //   data: {}
+        // };
 
-      this.FORM_STATE.step = 1;
+        this.FORM_STATE.formMode.role = this.dialogData['forStaff'] ? Role.Teacher : Role.Student;
 
-      if ( this.dialogData['forStaff'] ) {
-        this.FORM_STATE.formMode.formFactor = FormFactor.Invitation;
-      } else {
-        this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
+        if ( this.dialogData['forLater'] ) {
+
+          this.FORM_STATE.step = 1;
+
+          if ( this.dialogData['forStaff'] ) {
+            this.FORM_STATE.formMode.formFactor = FormFactor.Invitation;
+          } else {
+            this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
+          }
+
+        } else {
+
+          this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
+
+          if ( this.dialogData['forStaff'] ) {
+            this.FORM_STATE.step = 2;
+            this.FORM_STATE.state = 1;
+          } else {
+            this.FORM_STATE.step = 3;
+            this.FORM_STATE.state = 1;
+          }
+        }
+
+        console.log('INITIAL STATE ======>', this.FORM_STATE, FormFactor.Invitation);
+        break;
+
       }
+      case (false): {
 
-    } else {
+        this.FORM_STATE.formMode.formFactor = FormFactor.Request;
+        this.FORM_STATE.formMode.role = this.dialogData['isDeny'] ? Role.Teacher : Role.Student;
+        this.FORM_STATE.step = this.dialogData['entryState'].step;
+        this.FORM_STATE.state = this.dialogData['entryState'].state;
+        this.FORM_STATE.data.date = {
+          date: this.dialogData['request_time']
+        };
+        this.FORM_STATE.data.requestTarget = this.dialogData['teacher'];
+        this.FORM_STATE.data.gradient = this.dialogData['gradient'];
+        this.FORM_STATE.data.direction = {
+          from: this.dialogData['originalFromLocation'],
+          to: this.dialogData['originalToLocation']
+        };
 
-      this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
+        console.log('NOT FOR INPUT ======>', this.FORM_STATE);;
 
-      if ( this.dialogData['forStaff'] ) {
-          this.FORM_STATE.step = 2;
-          this.FORM_STATE.state = 1;
-      } else {
-        this.FORM_STATE.step = 3;
-        this.FORM_STATE.state = 1;
+        break;
       }
     }
 
-    console.log('INITIAL STATE ======>', this.FORM_STATE, FormFactor.Invitation);
+
+
+
+
   }
 
   onNextStep(evt) {
 
     if (evt.step === 0 || evt === 'exit') {
-      this.dialogRef.close();
+      this.dialogRef.close(evt);
       return;
     } else {
       this.FORM_STATE = evt;

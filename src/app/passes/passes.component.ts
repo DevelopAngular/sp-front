@@ -317,12 +317,15 @@ export class PassesComponent implements OnInit {
       data: {
         'forLater': forLater,
         'forStaff': this.isStaff,
+        'forInput': true
       }
     });
 
     dialogRef.afterClosed().subscribe(() => {
         this.locService.historyState.index = null;
         this.locService.historyState.past = [];
+        this.locService.forFuture = false;
+        this.locService.toStudents = false;
     });
   }
 }

@@ -7,6 +7,8 @@ import { Pinnable } from '../../models/Pinnable';
 import { Util } from '../../../Util';
 import {FormFactor, Navigation, Role} from '../hallpass-form.component';
 
+export enum States {from = 1, toWhere = 2, category = 3, restrictedTarget = 4, message = 5}
+
 @Component({
   selector: 'app-locations-group-container',
   templateUrl: './locations-group-container.component.html',
@@ -29,10 +31,14 @@ export class LocationsGroupContainerComponent implements OnInit {
   constructor(private dataService: DataService, private locationService: LocationService) { }
 
   get showDate() {
-      if (!this.FORM_STATE.data.date) {
+      if ( this.FORM_STATE.data.date ) {
+
+        if (!this.FORM_STATE.data.date.date ) {
           return false;
-      } else {
+        } else {
           return Util.formatDateTime(new Date(this.FORM_STATE.data.date.date));
+        }
+
       }
   }
 
@@ -49,8 +55,13 @@ export class LocationsGroupContainerComponent implements OnInit {
     }
 
   ngOnInit() {
+    if (this.FORM_STATE.state && this.FORM_STATE.state === 5 ) {
+      this.locationService.changeLocation$.next(States[this.FORM_STATE.state]);
+    } else {
       this.locationService.firstStep(!!this.showDate, !!this.studentText);
+    }
     this.data.toLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.to ? this.FORM_STATE.data.direction.to : null;
+
     this.locationService.changeLocation$.subscribe(state => {
       if (state === 'exit') {
        this.nextStepEvent.emit('exit');
@@ -87,6 +98,8 @@ export class LocationsGroupContainerComponent implements OnInit {
   toWhere(pinnable) {
     this.pinnable = pinnable;
     this.FORM_STATE.data.direction.pinnable = pinnable;
+    this.FORM_STATE.data.gradient = pinnable.gradient_color;
+    this.FORM_STATE.data.icon = pinnable.icon;
     if (pinnable.category) {
        return this.locationService.nextStep('category');
     } else {
@@ -112,30 +125,31 @@ export class LocationsGroupContainerComponent implements OnInit {
     }
   }
 
-
-
-
   requestTarget(teacher) {
     this.data.requestTarget = teacher;
     this.FORM_STATE.data.requestTarget = teacher;
     this.locationService.nextStep('message');
   }
 
-  resultMessage(message) {
+  resultMessage(message, denyMessage: boolean = false) {
     this.data.message = message;
     this.FORM_STATE.data.message = message;
-    this.postComposetData();
+    this.postComposetData(denyMessage);
   }
 
 
-  private postComposetData() {
+  private postComposetData(close: boolean = false) {
 
-    // this.FORM_STATE.formMode.formFactor = this.data.toLocation.restricted ? FormFactor.Request : FormFactor.HallPass
-
-    if (this.FORM_STATE.formMode.role === Role.Student && this.FORM_STATE.data.direction.to.restricted) {
+    if (
+      (this.FORM_STATE.formMode.role === Role.Student)
+        &&
+      (this.FORM_STATE.data.date
+          ? Role.Student && this.FORM_STATE.data.direction.to.scheduling_restricted
+          : Role.Student && this.FORM_STATE.data.direction.to.restricted)
+    ) {
       this.FORM_STATE.formMode.formFactor = FormFactor.Request;
     }
-    this.FORM_STATE.step = 4;
+    this.FORM_STATE.step =  close ? 0 : 4;
 
     this.nextStepEvent.emit(this.FORM_STATE);
   }

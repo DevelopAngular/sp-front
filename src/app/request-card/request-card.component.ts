@@ -14,6 +14,7 @@ import { filter } from 'rxjs/operators';
 import {LiveDataService} from '../live-data/live-data.service';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
 import {PassCardComponent} from '../pass-card/pass-card.component';
+import {fakeAsync} from '@angular/core/testing';
 
 @Component({
   selector: 'app-request-card',
@@ -121,24 +122,32 @@ export class RequestCardComponent implements OnInit {
   changeDate() {
     if (!this.dateEditOpen) {
       const dateDialog = this.dialog.open(HallpassFormComponent, {
-        width: '750px',
+        // width: '750px',
         panelClass: 'form-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: {'entryState': 'datetime',
+        data: {
+              // 'entryState': 'datetime',
+              'entryState': {
+                step: 1,
+                state: 1
+              },
+              'forInput': false,
               'originalToLocation': this.request.destination,
               'colorProfile': this.request.color_profile,
               'originalFromLocation': this.request.origin,
-              'requestTime': this.request.request_time}
+              'request_time': this.request.request_time
+        }
       });
 
       dateDialog.afterOpen().subscribe( () =>{
         this.dateEditOpen = true;
       });
 
-      dateDialog.afterClosed().subscribe(data => {
-        this.request.request_time = data['startTime']?data['startTime']:this.request.request_time;
+      dateDialog.afterClosed().subscribe(matData => {
+        console.log('DENIED data ===>', matData.data);
+        this.request.request_time = matData.data.date ? matData.data.date.date : this.request.request_time;
         this.dateEditOpen = false;
-
+        console.log('RIGHT REQUEST TIME =====>', this.request.request_time);
         let endpoint: string = "v1/pass_requests";
         let body: any = {
           'origin' : this.request.origin.id,
@@ -190,8 +199,8 @@ export class RequestCardComponent implements OnInit {
       let header = '';
       if(!this.forInput){
         if(this.forStaff){
-          options.push(this.genOption('Deny with Message','#3D396B','deny'));
-          options.push(this.genOption('Deny','#E32C66','delete'));
+          options.push(this.genOption('Deny with Message','#3D396B','deny_with_message'));
+          options.push(this.genOption('Deny','#E32C66','deny'));
         } else{
           options.push(this.genOption('Delete Pass Request','#E32C66','delete'));
         }
@@ -245,12 +254,14 @@ export class RequestCardComponent implements OnInit {
       });
 
       cancelDialog.afterClosed().subscribe(action =>{
+        console.log('DENIED with message ===>', action);
+
         this.cancelOpen = false;
         if(action === 'cancel' || action === 'stop'){
           this.dialogRef.close();
         } else if(action === 'editMessage'){
           this.editMessage();
-        }else if(action.indexOf('deny') === 0) {
+        }else if(action.indexOf('deny_with_message') === 0) {
           let denyMessage: string = '';
           if(action.indexOf('Message') > -1) {
             // if(!this.messageEditOpen) {
@@ -282,10 +293,15 @@ export class RequestCardComponent implements OnInit {
                   // width: '750px',
                   panelClass: 'form-dialog-container',
                   backdropClass: 'invis-backdrop',
-                  data: {'entryState': 'restrictedMessage',
+                  data: {
+                      'forInput': false,
+                      // 'entryState': 'restrictedMessage',
+                      'entryState': { step: 3, state: 5 },
+                      'teacher': this.request.teacher,
                       'originalMessage': '',
                       'originalToLocation': this.request.destination,
                       'colorProfile': this.request.color_profile,
+                      'gradient': this.request.gradient_color,
                       'originalFromLocation': this.request.origin,
                       'isDeny': true,
                       'studentMessage': this.request.attachment_message
@@ -296,14 +312,24 @@ export class RequestCardComponent implements OnInit {
                   this.messageEditOpen = true;
               });
 
-              messageDialog.afterClosed().pipe(filter(res => !!res)).subscribe(data => {
-                  denyMessage = data['message'];
-                  this.messageEditOpen = false;
-                  this.denyRequest(denyMessage);
+              messageDialog.afterClosed().pipe(filter(res => !!res)).subscribe(matData => {
+                  // denyMessage = data['message'];
+                  if (matData.data) {
+                    denyMessage = matData.data.message;
+                    this.messageEditOpen = false;
+                    this.denyRequest(denyMessage);
+                  }
               });
           }
-        } else if(action === 'delete'){
+        } else if (action === 'deny') {
+
           this.denyRequest('No message');
+
+        } else if (action === 'delete') {
+
+            this.http.post(`v1/pass_requests/${this.request.id}/cancel`).subscribe(() => {
+              this.dialogRef.close();
+            });
         }
       });
     }

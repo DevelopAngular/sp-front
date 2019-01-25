@@ -3,7 +3,7 @@
   <div [style.height]="FORM_STATE.formMode.role === 1 ? '451px' : '412px'"
        [style.width]="'334px'"
        *ngIf="FORM_STATE.formMode.formFactor === states.HallPass && template">
-
+    <!--HAL-->
     <app-pass-card
       [pass]="template"
       [forStaff]="FORM_STATE.formMode.role === 1"
@@ -17,6 +17,7 @@
   <div [style.height]="FORM_STATE.formMode.role === 1 ? '451px' : '412px'"
        [style.width]="'334px'"
        *ngIf="FORM_STATE.formMode.formFactor === states.Request && template">
+    <!--REQ {{FORM_STATE.formMode.formFactor}} | {{states.Request}}-->
     <app-request-card
       [request]="template"
       [forStaff]="FORM_STATE.formMode.role === 1"
@@ -29,6 +30,7 @@
   <div [style.height]="FORM_STATE.formMode.role === 1 ? '451px' : '412px'"
        [style.width]="'334px'"
        *ngIf="FORM_STATE.formMode.formFactor === states.Invitation && template">
+    <!--INV-->
     <app-invitation-card
       [invitation]="template"
       [forStaff]="FORM_STATE.formMode.role === 1"

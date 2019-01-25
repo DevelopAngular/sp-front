@@ -3,5 +3,5 @@
   <app-to-where [studentText]="studentText" [formState]="FORM_STATE" [isStaff]="isStaff"  [date]="showDate" (selectedPinnable)="toWhere($event)" [pinnables]="pinnables" [location]="data.fromLocation" *ngIf="currentState == 'toWhere'"></app-to-where>
   <app-to-category [studentText]="studentText" [formState]="FORM_STATE" [isStaff]="isStaff" [fromLocation]="data.fromLocation" [date]="showDate" (locFromCategory)="fromCategory($event)" *ngIf="currentState == 'category'"></app-to-category>
   <app-restricted-target [formState]="FORM_STATE" [date]="showDate" [pinnable]="pinnable"  (requestTarget)="requestTarget($event)" *ngIf="currentState == 'restrictedTarget'"></app-restricted-target>
-  <app-restricted-message [formState]="FORM_STATE" [teacher]="data.requestTarget" [date]="showDate" (resultMessage)="resultMessage($event)" *ngIf="currentState == 'message'"></app-restricted-message>
+  <app-restricted-message [formState]="FORM_STATE" [gradient]="FORM_STATE.data.gradient" [teacher]="data.requestTarget" [date]="showDate" (resultMessage)="resultMessage($event, !FORM_STATE.forInput)" *ngIf="currentState == 'message'"></app-restricted-message>
 </div>

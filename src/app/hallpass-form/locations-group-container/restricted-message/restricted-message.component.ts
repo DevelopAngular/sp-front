@@ -14,6 +14,8 @@ export class RestrictedMessageComponent implements OnInit {
 
   @Input() formState: Navigation;
 
+  @Input() gradient: string;
+
   @Input() teacher: User;
 
   @Input() date: string | boolean;
@@ -29,7 +31,8 @@ export class RestrictedMessageComponent implements OnInit {
   constructor(private locService: LocationService) { }
 
   get headerGradient() {
-    const colors = this.formState.data.direction.pinnable.gradient_color;
+    // const colors = this.formState.data.direction.pinnable.gradient_color;
+    const colors = this.gradient;
     return 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
 

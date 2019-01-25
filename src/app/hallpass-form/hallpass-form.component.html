@@ -6,6 +6,7 @@
 
   <div class="state-transition" *ngIf="FORM_STATE.step === 1">
     <div class="date-picker">
+
       <app-date-time-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)" ></app-date-time-container>
     </div>
   </div>
