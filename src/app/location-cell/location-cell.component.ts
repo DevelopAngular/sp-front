@@ -46,6 +46,10 @@ export class LocationCellComponent implements OnInit {
     return !this.forStaff && ((this.value.restricted && !this.forLater) || (this.value.scheduling_restricted && this.forLater));
   }
 
+  get cursor(){
+    return this.valid?'pointer':'not-allowed';
+  }
+
   get bgColor(){
     if(this.valid){
       if(this.hovered)
@@ -53,19 +57,31 @@ export class LocationCellComponent implements OnInit {
       else
         return this.sanitizer.bypassSecurityTrustStyle('#FFFFFF');
     }else{
-      return this.sanitizer.bypassSecurityTrustStyle('#767676');
+      return this.sanitizer.bypassSecurityTrustStyle('#FFFFFF');
     }
   }
 
   get textColor(){
     if (this.valid) {
       if (this.hovered) {
-        return this.sanitizer.bypassSecurityTrustStyle('#201a5e');
+        return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
       } else {
-          return this.sanitizer.bypassSecurityTrustStyle('#767676');
+          return this.sanitizer.bypassSecurityTrustStyle('#555558');
       }
     } else {
-       return this.sanitizer.bypassSecurityTrustStyle('#FFFFFF');
+       return this.sanitizer.bypassSecurityTrustStyle('#CDCDCE');
+    }
+  }
+
+  get roomColor(){
+    if (this.valid) {
+      if (this.hovered) {
+        return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
+      } else {
+          return this.sanitizer.bypassSecurityTrustStyle('#B5B5B5');
+      }
+    } else {
+       return this.sanitizer.bypassSecurityTrustStyle('#CDCDCE');
     }
   }
 
