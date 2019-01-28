@@ -14,6 +14,8 @@ export class StudentFooterComponent implements OnInit {
 
   @Input() date;
 
+  @Input() state;
+
   fromLocation: Location;
   toLocation: Location;
 

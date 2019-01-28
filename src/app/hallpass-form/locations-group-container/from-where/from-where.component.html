@@ -28,7 +28,7 @@
     </div>
   </div>
 
-  <app-student-footer [date]="date" *ngIf="!isStaff"></app-student-footer>
+  <app-student-footer [date]="date" [state]="'from'" *ngIf="!isStaff"></app-student-footer>
   <app-teacher-footer *ngIf="isStaff" [date]="date" [studentText]="studentText"></app-teacher-footer>
 
 </div>
