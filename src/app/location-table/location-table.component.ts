@@ -172,7 +172,10 @@ export class LocationTableComponent implements OnInit {
     this.onSelect.emit(choice);
   }
 
-  star(event){
+  star(event) {
+    if (!this.horizontalTable) {
+      return this.choiceSelected(event);
+    }
     if(event.starred){
       this.addLoc(event, this.starredChoices);
     } else{

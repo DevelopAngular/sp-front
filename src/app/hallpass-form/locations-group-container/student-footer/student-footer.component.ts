@@ -17,7 +17,7 @@ export class StudentFooterComponent implements OnInit {
   fromLocation: Location;
   toLocation: Location;
 
-  constructor(private locService: LocationService) { }
+  constructor() { }
 
   get fromLocationText() {
     return this.fromLocation ? this.fromLocation.title : 'Origin';
