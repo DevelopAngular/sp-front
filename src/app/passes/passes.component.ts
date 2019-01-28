@@ -322,7 +322,8 @@ export class PassesComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(() => {
-        this.locService.historyState.index = null;
+      console.log('CLOSED =====> ');
+      this.locService.historyState.index = null;
         this.locService.historyState.past = [];
         this.locService.forFuture = false;
         this.locService.toStudents = false;

@@ -1,4 +1,7 @@
 :host {
+  .groups-container {
+    background-color: #fff;
+  }
   .state-transition {
     animation: stateTransition .5s ease forwards;
   }

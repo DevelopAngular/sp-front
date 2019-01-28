@@ -116,6 +116,7 @@ export class FormFactorContainerComponent implements OnInit {
 
   onNextStep(evt) {
     this.FORM_STATE.step = 3;
+    this.FORM_STATE.previousStep = 4;
     this.FORM_STATE.state = 1;
     this.nextStepEvent.emit(this.FORM_STATE);
     // this.FORM_STATE = evt;

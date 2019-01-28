@@ -1,15 +1,10 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {GroupsHistoryManagerService} from '../groups-history-manager.service';
 import {User} from '../../models/User';
-import {FormArray, FormControl, FormGroup} from '@angular/forms';
+import {FormControl, FormGroup} from '@angular/forms';
 import {StudentList} from '../../models/StudentList';
 import {HttpService} from '../../http-service';
 import {BehaviorSubject} from 'rxjs';
 import {Navigation} from '../../hallpass-form/hallpass-form.component';
-import {FormState} from '../../admin/overlay-container/overlay-container.component';
-
-
-
 
 export enum States {
   SelectStudents = 1,
@@ -26,7 +21,7 @@ export enum States {
 export class GroupsContainerComponent implements OnInit {
 
   @Input() FORM_STATE: Navigation;
-  @Output() nextStepEvent: EventEmitter<Navigation> = new EventEmitter<Navigation>();
+  @Output() nextStepEvent: EventEmitter<Navigation | string > = new EventEmitter<Navigation | string >();
 
   updateData$: BehaviorSubject<null> = new BehaviorSubject<null>(null);
   states;
@@ -54,18 +49,21 @@ export class GroupsContainerComponent implements OnInit {
 
       this.http.get('v1/student_lists')
         .subscribe((groups: StudentList[]) => {
-          console.log('Emit should happen and it happens ====>', groups);
-
           this.groups = groups;
-          // this.FORM_STATE.data.selectedGroup =
         });
     });
   }
 
   onStateChange(evt) {
 
-    if ( evt.step === 3 || evt.step === 1 || evt.step === 0  ) {
+    if ( evt === 'exit' ) {
+      this.nextStepEvent.emit('exit');
+      return;
+    }
+
+    if ( evt.step === 3 || evt.step === 1 ) {
       this.FORM_STATE.step = evt.step;
+      this.FORM_STATE.previousStep = 2;
       this.FORM_STATE.state = 1;
       this.FORM_STATE.data.selectedGroup = evt.data.selectedGroup;
       this.FORM_STATE.data.selectedStudents = evt.data.selectedStudents;
@@ -85,9 +83,7 @@ export class GroupsContainerComponent implements OnInit {
       }
       case (1): {
         if (evt.fromState === 3) {
-          console.log('Emit should happen ====>');
           this.FORM_STATE.data.selectedGroup = this.groups.find(group => group.id === evt.data.selectedGroup.id);
-          // this.selectedGroup = evt.data.selectedGroup;
         } else {
           this.selectedStudents = evt.data.selectedStudents;
         }

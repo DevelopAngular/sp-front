@@ -65,18 +65,22 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.locationService.changeLocation$.subscribe(state => {
       if (state === 'exit') {
        this.nextStepEvent.emit('exit');
+       return;
       }
       if (state === 'date') {
         this.FORM_STATE.step = 1;
         this.FORM_STATE.state = 1;
+        this.FORM_STATE.previousStep = 3;
 
         this.nextStepEvent.emit(this.FORM_STATE);
-
+        return;
       }
       if (state === 'students') {
           this.FORM_STATE.step = 2;
           this.FORM_STATE.state = 1;
-          this.nextStepEvent.emit(this.FORM_STATE);
+          this.FORM_STATE.previousStep = 3;
+        this.nextStepEvent.emit(this.FORM_STATE);
+        return;
       }
       this.currentState = state;
     });

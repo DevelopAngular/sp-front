@@ -14,7 +14,7 @@ export class GroupsStep1Component implements OnInit {
   @Input() groups: StudentList[] = [];
   @Input() hasBackArrow: boolean = false;
 
-  @Output() stateChangeEvent: EventEmitter<Navigation> = new EventEmitter<Navigation>();
+  @Output() stateChangeEvent: EventEmitter<Navigation | string> = new EventEmitter<Navigation | string>();
 
   // public selectedGroup: StudentList;
   public selectedStudents: User[] = [];
@@ -114,15 +114,17 @@ export class GroupsStep1Component implements OnInit {
         }
       });
     } else {
-      this.stateChangeEvent.emit({
-        step: 0,
-        // state: 1,
-        // fromState: 1,
-        data: {
-          selectedStudents: this.selectedStudents,
-          selectedGroup: this.selectedGroup
-        }
-      });
+
+      this.stateChangeEvent.emit('exit');
+      // this.stateChangeEvent.emit({
+      //   step: 0,
+      //   // state: 1,
+      //   // fromState: 1,
+      //   data: {
+      //     selectedStudents: this.selectedStudents,
+      //     selectedGroup: this.selectedGroup
+      //   }
+      // });
     }
 
 

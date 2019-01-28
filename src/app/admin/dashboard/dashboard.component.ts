@@ -45,7 +45,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   public lineChartTicks: any = {
     suggestedMin: 0,
-    stepSize: 5,
+    precision: 0
+    // stepSize: 5,
   };
 
   constructor(
@@ -103,9 +104,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
 
         this.reports = eventReports;
-
+        delete this.lineChartTicks.stepSize;
         // if (environment.funData) {
-        //   this.lineChartData = [{data: dashboard.hall_pass_usage.map(numb => numb +  Math.ceil((Math.random() * Math.random() * 30)))}];
+        //   this.lineChartData = [{data: dashboard.hall_pass_usage.map(numb => numb +  Math.ceil((Math.random() * Math.random() * 300)))}];
         // } else {
         this.lineChartData = [{data: dashboard.hall_pass_usage}];
         // }
@@ -271,7 +272,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       _minute_iterator++;
       this.lineChartLabels.push(time);
     }
-    ;
     // console.log(this.lineChartLabels);
     // this.lineChartLabels = this.lineChartLabels.slice(0, this.lineChartLabels.length - 1);
 
