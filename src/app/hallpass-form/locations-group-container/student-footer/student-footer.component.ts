@@ -34,12 +34,4 @@ export class StudentFooterComponent implements OnInit {
     }
   }
 
-  goToFrom() {
-    this.locService.changeLocation$.next('from');
-  }
-
-  goTo() {
-    this.locService.changeLocation$.next('toWhere');
-  }
-
 }
