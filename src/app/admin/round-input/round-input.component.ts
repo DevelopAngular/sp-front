@@ -53,7 +53,7 @@ export class RoundInputComponent implements OnInit {
 
   ngOnInit() {
 
-    setTimeout(() => {    console.log(this.input);
+    setTimeout(() => {
       if (this.input && this.focused) {
         this.focusAction(true);
         this.changeAction(this.input.nativeElement, true);

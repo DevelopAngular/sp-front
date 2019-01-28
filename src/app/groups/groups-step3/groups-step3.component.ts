@@ -3,6 +3,7 @@ import {StudentList} from '../../models/StudentList';
 import {HttpService} from '../../http-service';
 import {FormGroup} from '@angular/forms';
 import {Navigation} from '../../hallpass-form/hallpass-form.component';
+import {skip} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'app-groups-step3',
@@ -16,6 +17,8 @@ export class GroupsStep3Component implements OnInit {
 
   @Output() stateChangeEvent: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
+  public allowToSave: boolean = false;
+
   constructor(
     private http: HttpService
   ) { }
@@ -23,6 +26,13 @@ export class GroupsStep3Component implements OnInit {
   ngOnInit() {
     this.form.get('title').setValue(this.editGroup.title);
     this.form.get('users').setValue(this.editGroup.users);
+    this.form.valueChanges
+      .pipe(
+        skip(1)
+      )
+      .subscribe((val: any) => {
+        this.allowToSave = true;
+      });
   }
 
   updateUsers(evt) {
@@ -52,21 +62,21 @@ export class GroupsStep3Component implements OnInit {
   removeGroup() {
 
     this.http.delete(`v1/student_lists/${this.editGroup.id}`)
-      .subscribe((group) => {
+      .subscribe((group: StudentList) => {
         for ( const control in this.form.controls) {
           this.form.controls[control].setValue(null);
         }
-        this.back();
+        this.back(group);
       });
   }
-  back() {
+  back(updatedGroup?: StudentList) {
 
     this.stateChangeEvent.emit({
       step: 2,
       state: 1,
       fromState: 3,
       data: {
-        selectedGroup: this.editGroup
+        selectedGroup: updatedGroup ? updatedGroup : this.editGroup
       }
     });
   }

@@ -10,7 +10,7 @@
       <span  *ngIf="editGroup.users && editGroup.users.length ">{{editGroup.users.length}} student<span *ngIf="editGroup.users.length > 1">s</span></span>
     </div>
     <div class="header_save">
-      <div *ngIf="form.get('title').value && (editGroup.users && editGroup.users.length)">
+      <div *ngIf="allowToSave && form.get('title').value && (editGroup.users && editGroup.users.length)">
         <app-gradient-button
           [width]="'105px'"
           [minHeight]="'35px'"
@@ -86,12 +86,11 @@
       </div>
     </div>
 
-
     <div class="content-right">
       <div class="content-right_sudent-search">
         <div class="seach-wrapper" *ngIf="editGroup && editGroup.users">
           <app-student-search
-            (onUpdate)="updateUsers($event)" [selectedStudents]="editGroup.users"
+            (onUpdate)="updateUsers($event)" [focused]="true" [selectedStudents]="editGroup.users"
           ></app-student-search>
         </div>
       </div>

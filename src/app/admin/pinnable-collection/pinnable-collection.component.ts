@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter, ElementRef } from '@ang
 import { Pinnable } from '../../models/Pinnable';
 import { MatDialog } from '@angular/material';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
-import {forkJoin} from 'rxjs';
+import {BehaviorSubject, forkJoin, Subject} from 'rxjs';
 import {HttpService} from '../../http-service';
 import {DragulaService} from 'ng2-dragula';
 
@@ -18,6 +18,8 @@ export class PinnableCollectionComponent implements OnInit {
 
   @Input()
   header: boolean = true;
+
+  @Input() resetBulkSelect$: BehaviorSubject<boolean>;
 
   @Output()
   roomEvent: EventEmitter<any> = new EventEmitter();
@@ -54,6 +56,11 @@ export class PinnableCollectionComponent implements OnInit {
       // console.log(this.pinnableIdArranged);
 
     }, 1000);
+    this.resetBulkSelect$.subscribe((val: boolean) => {
+      if (val) {
+        this.bulkSelect = false;
+      }
+    });
   }
 
   onPinablesOrderChanged(newOrder) {
@@ -71,12 +78,16 @@ export class PinnableCollectionComponent implements OnInit {
     this.selectedPinnables = [];
   }
 
+  isSelected(pinnable: Pinnable): boolean {
+    return this.selectedPinnables.findIndex((P: Pinnable) => P.id === pinnable.id) !== -1;
+  }
+
   updatePinnables(pinnable: Pinnable) {
     if (!!this.selectedPinnables.find(pin => pin.id === pinnable.id)) {
      return this.selectedPinnables.splice(this.selectedPinnables.indexOf(pinnable), 1);
     } else {
       if (this.bulkSelect)
-       return this.selectedPinnables.push(pinnable);
+        return this.selectedPinnables.push(pinnable);
     }
       if (!this.header) {
         this.selectedPinnables.push(pinnable);

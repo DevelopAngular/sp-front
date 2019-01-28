@@ -2,6 +2,7 @@
   <div class="state-transition-none"  *ngIf="currentState == states.SelectStudents">
     <app-groups-step1
       [selectedGroup]="FORM_STATE.data.selectedGroup"
+      [selectedStudents]="FORM_STATE.data.selectedStudents ? FORM_STATE.data.selectedStudents : []"
       [groups]="groups"
       [hasBackArrow]="FORM_STATE.formMode.formFactor === 2 || FORM_STATE.formMode.formFactor === 3"
       (stateChangeEvent)="onStateChange($event)">

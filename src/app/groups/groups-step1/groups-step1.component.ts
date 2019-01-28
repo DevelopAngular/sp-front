@@ -11,13 +11,14 @@ import {Navigation} from '../../hallpass-form/hallpass-form.component';
 export class GroupsStep1Component implements OnInit {
 
   @Input() selectedGroup: StudentList = null;
+  @Input() selectedStudents: User[] = [];
   @Input() groups: StudentList[] = [];
   @Input() hasBackArrow: boolean = false;
 
   @Output() stateChangeEvent: EventEmitter<Navigation | string> = new EventEmitter<Navigation | string>();
 
   // public selectedGroup: StudentList;
-  public selectedStudents: User[] = [];
+  // public selectedStudents: User[] = [];
 
   constructor(
   ) { }

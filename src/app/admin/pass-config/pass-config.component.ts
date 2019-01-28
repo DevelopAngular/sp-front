@@ -2,7 +2,7 @@ import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core
 import { MatDialog } from '@angular/material';
 import { FormControl, FormGroup } from '@angular/forms';
 
-import { Observable, zip } from 'rxjs';
+import {BehaviorSubject, Observable, zip} from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { HttpService } from '../../http-service';
@@ -20,6 +20,8 @@ import { disableBodyScroll } from 'body-scroll-lock';
 export class PassConfigComponent implements OnInit, OnDestroy {
 
     @ViewChild(PinnableCollectionComponent) pinColComponent;
+
+    public pinnableCollectionBlurEvent$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
     settingsForm: FormGroup;
     selectedPinnables: Pinnable[];
@@ -60,6 +62,15 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     this.dialog.closeAll();
   }
 
+  onPinnnableBlur(evt) {
+    console.log(evt.target.className)
+    if (evt.target && (evt.target.className === 'selected-counter global-opacity-icons')) {
+      console.log(evt.target);
+      this.pinnableCollectionBlurEvent$.next(false);
+    } else {
+      this.pinnableCollectionBlurEvent$.next(true);
+    }
+  }
 
   updatePinnablesOrder(newOrder) {
 

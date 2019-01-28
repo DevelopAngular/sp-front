@@ -80,7 +80,7 @@
         </div>
       </div>
       <div class="content-right_next" *ngIf="selectedStudents && selectedStudents.length">
-        <div *ngIf="selectedGroup" [style.padding-right]="'20px'">
+        <div *ngIf="selectedGroup" [style.padding-right]="'20px'" class="button-shadow">
           <app-gradient-button
             [width]="'105px'"
             [minHeight]="'35px'"
@@ -91,7 +91,7 @@
             (buttonClick)="editGroup(selectedGroup)"
           >Edit Group</app-gradient-button>
         </div>
-        <div>
+        <div class="button-shadow">
           <app-gradient-button
             [width]="'105px'"
             [minHeight]="'35px'"

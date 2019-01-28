@@ -103,9 +103,29 @@
   align-items: center;
   position: relative;
   z-index: 2;
+  //position: relative;
+  img {
+    //width: inherit;
+    //height: inherit;
+    //position: absolute;
+    //left: 0;
+    //right: 0;
+    //margin: auto;
+    animation: selectedPinnable .2s ease forwards;
+  }
+}
+@keyframes selectedPinnable {
+  0% {
+    opacity: .6;
+    transform: scale(2);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .selected-icon{
-  width: 27px;
-  height: 27px;
+  width: 26px;
+  height: 26px;
 }

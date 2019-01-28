@@ -2,7 +2,7 @@ import {Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 
-import {BehaviorSubject, forkJoin, fromEvent, Observable, Subject, zip} from 'rxjs';
+import {BehaviorSubject, forkJoin, fromEvent, Observable, of, Subject, zip} from 'rxjs';
 import { map, switchMap} from 'rxjs/operators';
 
 import { Pinnable } from '../../models/Pinnable';
@@ -352,52 +352,55 @@ export class OverlayContainerComponent implements OnInit {
 
       this.getHeaderData();
 
-      this.form.get('file').valueChanges.subscribe(_file => {
-          this.setLocation('settingsRooms');
-        if (_file) {
-          console.log('File there ===>', _file);
-          const FR = new FileReader();
-                FR.readAsBinaryString(this.selectedFile.nativeElement.files[0]);
+      fromEvent(this.selectedFile.nativeElement , 'change')
+        .pipe(
+          switchMap((evt: Event) => {
+            this.setLocation('settingsRooms');
 
-                fromEvent(FR, 'load').pipe(
-                  map(( res: any) => {
-                    console.log('Result', res);
-                    const raw = XLSX.read(res.target.result, {type: 'binary'});
-                    const sn = raw.SheetNames[0];
-                    const stringCollection = raw.Sheets[sn];
-                    const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
-                    const headers = data[0];
-                    let rows = data.slice(1);
-                        rows = rows.map((row, index) => {
-                          console.log('Parsed room ===>', row);
-                          const _room: any = {};
-                                  _room.title = row[0];
-                                  _room.room = row[1];
-                                  _room.teachers = <string>row[2] ? row[2].split(', ') : [];
-                                  console.dir(_room);
-                            return _room;
-                        });
-                    return rows;
-                  }),
-                  switchMap((_rooms: any[]): Observable<any[]> => {
-                    return this.userService.getUsersList('_profile_teacher').pipe(map((teachers: any[]) => {
-                      return _rooms.map((_room) => {
-                        const teachersIdArray = [];
-                        teachers.map((_teacher) => {
-                          if (_room.teachers.includes(_teacher.primary_email)) {
-                            teachersIdArray.push(_teacher.id);
-                          }
-                        });
-                        _room.teachers = teachersIdArray;
-                        return _room;
-                      });
-                    }));
-                  })
-                ).subscribe((rooms) => {
-                  this.importedRooms = rooms;
-                });
-        }
-      });
+            const FR = new FileReader();
+                  FR.readAsBinaryString(this.selectedFile.nativeElement.files[0]);
+            return fromEvent(FR, 'load');
+          }),
+          map(( res: any) => {
+            console.log('Result', res);
+            const raw = XLSX.read(res.target.result, {type: 'binary'});
+            const sn = raw.SheetNames[0];
+            const stringCollection = raw.Sheets[sn];
+            const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
+            const headers = data[0];
+            let rows = data.slice(1);
+            rows = rows.map((row, index) => {
+              console.log('Parsed room ===>', row);
+              const _room: any = {};
+              _room.title = row[0];
+              _room.room = row[1];
+              _room.teachers = <string>row[2] ? row[2].split(', ') : [];
+              console.dir(_room);
+              return _room;
+            });
+            return rows;
+          }),
+          switchMap((_rooms: any[]): Observable<any[]> => {
+            return this.userService.getUsersList('_profile_teacher')
+              .pipe(
+                map((teachers: any[]) => {
+                  return _rooms.map((_room) => {
+                    const teachersIdArray = [];
+                    teachers.map((_teacher) => {
+                      if (_room.teachers.includes(_teacher.primary_email)) {
+                        teachersIdArray.push(_teacher.id);
+                      }
+                    });
+                    _room.teachers = teachersIdArray;
+                    return _room;
+                  });
+                }));
+            }),
+          )
+          .subscribe((rooms) => {
+            this.importedRooms = rooms;
+          });
+
       this.buildInitialState();
 
       this.form.valueChanges.subscribe(res => {

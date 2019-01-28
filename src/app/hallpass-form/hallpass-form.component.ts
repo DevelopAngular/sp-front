@@ -143,11 +143,6 @@ export class HallpassFormComponent implements OnInit {
       }
     }
 
-    // this.stepTransition = {
-    //   'state-transition__left-right': this.FORM_STATE.previousStep < this.FORM_STATE.step,
-    //   'state-transition__right-left': this.FORM_STATE.previousStep > this.FORM_STATE.step
-    // };
-
   }
 
   onNextStep(evt) {
@@ -156,6 +151,8 @@ export class HallpassFormComponent implements OnInit {
       this.dialogRef.close(evt);
       return;
     } else {
+      console.log('STEP EVENT ===== ===>', evt);
+
       this.stepTransition['state-transition__left-right'] = this.FORM_STATE.previousStep < this.FORM_STATE.step;
       this.stepTransition['state-transition__right-left'] = this.FORM_STATE.previousStep > this.FORM_STATE.step;
       this.FORM_STATE = evt;
