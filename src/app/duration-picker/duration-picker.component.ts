@@ -27,7 +27,7 @@ export class DurationPickerComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    this.selectedDuration = this.maxDuration;
+    this.selectedDuration = this.maxDuration < 5 ? this.maxDuration : 5;
     this.onChange.emit(this.selectedDuration);
   }
 
