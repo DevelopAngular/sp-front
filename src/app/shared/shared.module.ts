@@ -41,6 +41,7 @@ import {RoundInputComponent} from '../admin/round-input/round-input.component';
 import {DragulaModule} from 'ng2-dragula';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {AppInputComponent} from '../app-input/app-input.component';
+import {InputTextareaModule} from 'primeng/inputtextarea';
 
 
 
@@ -66,6 +67,7 @@ import {AppInputComponent} from '../app-input/app-input.component';
       MatChipsModule,
       MatCardModule,
       MatDividerModule,
+      InputTextareaModule,
     NgProgressModule.forRoot(),
     DragulaModule.forRoot()
   ],
@@ -130,7 +132,8 @@ import {AppInputComponent} from '../app-input/app-input.component';
     PagerComponent,
     RoundInputComponent,
     AppInputComponent,
-    PassCardComponent
+    PassCardComponent,
+    InputTextareaModule
 
   ],
 })
