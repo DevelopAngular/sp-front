@@ -1,3 +1,63 @@
+.state-transition {
+  animation: stateTransition .3s ease-in-out forwards;
+  &__left-right {
+    animation: stateTransitionLeftRight .3s ease-in-out forwards;
+  }
+  &__right-left {
+    animation: stateTransitionRightLeft .3s ease-in-out forwards;
+  }
+  &__bottom-top {
+    animation: stateTransitionBottomTop .3s ease-in-out forwards;
+  }
+  &__none {
+    animation: none;
+  }
+}
+//
+//@keyframes stateTransition {
+//  0% {
+//    opacity: 0;
+//    //transform: translateX(-50px);
+//  }
+//  100% {
+//    opacity: 1;
+//    transform: translateX(0px);
+//  }
+//}
+@keyframes stateTransitionLeftRight {
+  0% {
+    opacity: .1;
+    transform: translateX(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0px);
+  }
+}
+@keyframes stateTransitionRightLeft {
+  0% {
+    opacity: .1;
+    transform: translateX(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0px);
+  }
+}
+@keyframes stateTransitionBottomTop {
+  0% {
+    //width: 0;
+    opacity: .1;
+    transform: translateY(50px) scale(.9);
+  }
+  100% {
+    //width: 334px;
+    opacity: 1;
+    transform: translateY(0px) scale(1);
+  }
+}
+
+
 .pointer {
   position: absolute;
   left: 50%;

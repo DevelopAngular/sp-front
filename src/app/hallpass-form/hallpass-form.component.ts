@@ -27,6 +27,7 @@ export interface FormMode {
 
 export interface Navigation {
   step: number;
+  previousStep?: number;
   state?: number|string;
   fromState?: number;
   formMode?: FormMode;
@@ -38,7 +39,7 @@ export interface Navigation {
       from: Location;
       to: Location;
       pinnable?: Pinnable;
-      restricted?: boolean;
+      // restricted?: boolean;
     },
     icon?: string
     gradient?: string;
@@ -58,6 +59,12 @@ export interface Navigation {
 export class HallpassFormComponent implements OnInit {
 
   public FORM_STATE: Navigation;
+  public animateNextStep: number;
+  public animatePrevStep: number;
+  public stepTransition: Object = {
+    'state-transition__left-right': false,
+    'state-transition__right-left': false
+  };
 
   constructor(
     private http: HttpService,
@@ -68,10 +75,14 @@ export class HallpassFormComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log('INIT HAPPPENED =====>');
+
+
+
+
     this.FORM_STATE = {
       step: null,
-      state: null,
+      previousStep: 0,
+      state: 1,
       fromState: null,
       formMode: {
         role: null,
@@ -83,17 +94,6 @@ export class HallpassFormComponent implements OnInit {
 
     switch (this.dialogData['forInput']) {
       case (true): {
-
-        // this.FORM_STATE = {
-        //   step: null,
-        //   state: null,
-        //   fromState: null,
-        //   formMode: {
-        //     role: null,
-        //     formFactor: null,
-        //   },
-        //   data: {}
-        // };
 
         this.FORM_STATE.formMode.role = this.dialogData['forStaff'] ? Role.Teacher : Role.Student;
 
@@ -113,14 +113,13 @@ export class HallpassFormComponent implements OnInit {
 
           if ( this.dialogData['forStaff'] ) {
             this.FORM_STATE.step = 2;
-            this.FORM_STATE.state = 1;
+            // this.FORM_STATE.state = 1;
           } else {
             this.FORM_STATE.step = 3;
-            this.FORM_STATE.state = 1;
+            // this.FORM_STATE.state = 1;
           }
         }
 
-        console.log('INITIAL STATE ======>', this.FORM_STATE, FormFactor.Invitation);
         break;
 
       }
@@ -140,29 +139,32 @@ export class HallpassFormComponent implements OnInit {
           to: this.dialogData['originalToLocation']
         };
 
-        console.log('NOT FOR INPUT ======>', this.FORM_STATE);;
-
         break;
       }
     }
 
-
-
-
+    // this.stepTransition = {
+    //   'state-transition__left-right': this.FORM_STATE.previousStep < this.FORM_STATE.step,
+    //   'state-transition__right-left': this.FORM_STATE.previousStep > this.FORM_STATE.step
+    // };
 
   }
 
   onNextStep(evt) {
-
     if (evt.step === 0 || evt === 'exit') {
+      console.log('EXIT ===>', evt);
       this.dialogRef.close(evt);
       return;
     } else {
+      this.stepTransition['state-transition__left-right'] = this.FORM_STATE.previousStep < this.FORM_STATE.step;
+      this.stepTransition['state-transition__right-left'] = this.FORM_STATE.previousStep > this.FORM_STATE.step;
       this.FORM_STATE = evt;
-      console.log('FORM FACTOR event ============>', evt);
     }
-
   }
+
+  // private updateTransition() {
+  //   return
+  // }
 }
 
 // @Component({
