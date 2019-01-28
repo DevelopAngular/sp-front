@@ -75,10 +75,6 @@ export class HallpassFormComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-
-
-
-
     this.FORM_STATE = {
       step: null,
       previousStep: 0,
@@ -124,7 +120,6 @@ export class HallpassFormComponent implements OnInit {
 
       }
       case (false): {
-
         this.FORM_STATE.formMode.formFactor = FormFactor.Request;
         this.FORM_STATE.formMode.role = this.dialogData['isDeny'] ? Role.Teacher : Role.Student;
         this.FORM_STATE.step = this.dialogData['entryState'].step;
