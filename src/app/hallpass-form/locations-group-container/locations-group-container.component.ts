@@ -64,7 +64,7 @@ export class LocationsGroupContainerComponent implements OnInit {
 
     this.locationService.changeLocation$.subscribe(state => {
       if (state === 'exit') {
-       this.nextStepEvent.emit('exit');
+       this.nextStepEvent.emit({action: 'exit', data: null });
        return;
       }
       if (state === 'date') {
@@ -91,6 +91,15 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   fromWhere(location) {
+    if (this.FORM_STATE.data.hasClose) {
+       return  this.nextStepEvent.emit(
+            {
+                action: 'exit',
+                data: {
+                    'fromLocation': location
+                }
+            });
+    }
     this.data.fromLocation = location;
     this.FORM_STATE.data.direction = {
       from: location,

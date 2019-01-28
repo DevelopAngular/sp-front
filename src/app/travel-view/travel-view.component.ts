@@ -42,19 +42,20 @@ export class TravelViewComponent implements OnInit {
         backdropClass: 'invis-backdrop',
         data: {
               'forInput': false,
+              'hasClose': true,
               'entryState': { step: 3, state: 1 },
               'originalToLocation': this.pass.destination,
               'colorProfile': this.pass.color_profile,
               'originalFromLocation': this.pass['default_origin']}
       });
-  
-      locationDialog.afterOpen().subscribe(() =>{
+
+      locationDialog.afterOpen().subscribe(() => {
         this.locationChangeOpen = true;
       });
-  
-      locationDialog.afterClosed().subscribe(data =>{
+
+      locationDialog.afterClosed().subscribe(data => {
         console.log('Emiting with: ', data);
-        this.locationSelected.emit((data && data['fromLocation'])?data['fromLocation']:this.pass['default_origin']);
+        this.locationSelected.emit((data.data && data.data['fromLocation']) ? data.data['fromLocation'] : this.pass['default_origin']);
         this.locationChangeOpen = false;
       });
     }
