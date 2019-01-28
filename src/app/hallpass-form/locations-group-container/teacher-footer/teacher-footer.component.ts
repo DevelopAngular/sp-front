@@ -17,6 +17,8 @@ export class TeacherFooterComponent implements OnInit {
 
   @Input() toLocation;
 
+  @Input() state: string;
+
   showFullFooter: boolean = false;
 
   constructor() { }

@@ -5,6 +5,7 @@ import { Request } from '../models/Request';
 import { MatDialog } from '@angular/material';
 import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
 import {DataService} from '../data-service';
+import {LocationService} from '../hallpass-form/locations-group-container/location.service';
 
 @Component({
   selector: 'app-travel-view',
@@ -23,7 +24,7 @@ export class TravelViewComponent implements OnInit {
   type: string;
   locationChangeOpen: boolean = false;
 
-  constructor(public dialog: MatDialog, private dataService: DataService) { }
+  constructor(public dialog: MatDialog, private dataService: DataService, private locService: LocationService) { }
 
   ngOnInit() {
     this.type = (this.pass instanceof HallPass) ? 'hallpass' :
@@ -34,23 +35,27 @@ export class TravelViewComponent implements OnInit {
   changeLocation(){
     if(!this.locationChangeOpen){
       console.log('Opening from location in travel view');
+      this.locService.nextStep('from');
       const locationDialog = this.dialog.open(HallpassFormComponent, {
-        width: '750px',
+        // width: '750px',
         panelClass: 'form-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: {'entryState': 'from',
+        data: {
+              'forInput': false,
+              'hasClose': true,
+              'entryState': { step: 3, state: 1 },
               'originalToLocation': this.pass.destination,
               'colorProfile': this.pass.color_profile,
               'originalFromLocation': this.pass['default_origin']}
       });
-  
-      locationDialog.afterOpen().subscribe(() =>{
+
+      locationDialog.afterOpen().subscribe(() => {
         this.locationChangeOpen = true;
       });
-  
-      locationDialog.afterClosed().subscribe(data =>{
+
+      locationDialog.afterClosed().subscribe(data => {
         console.log('Emiting with: ', data);
-        this.locationSelected.emit((data && data['fromLocation'])?data['fromLocation']:this.pass['default_origin']);
+        this.locationSelected.emit((data.data && data.data['fromLocation']) ? data.data['fromLocation'] : this.pass['default_origin']);
         this.locationChangeOpen = false;
       });
     }

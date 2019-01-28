@@ -44,7 +44,8 @@ export interface Navigation {
     icon?: string
     gradient?: string;
     message?: string,
-    requestTarget?: User
+    requestTarget?: User,
+    hasClose?: boolean
   };
   forInput?: boolean;
 }
@@ -75,10 +76,6 @@ export class HallpassFormComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-
-
-
-
     this.FORM_STATE = {
       step: null,
       previousStep: 0,
@@ -124,7 +121,9 @@ export class HallpassFormComponent implements OnInit {
 
       }
       case (false): {
-
+        if (this.dialogData['hasClose']) {
+         this.FORM_STATE.data.hasClose = true;
+        }
         this.FORM_STATE.formMode.formFactor = FormFactor.Request;
         this.FORM_STATE.formMode.role = this.dialogData['isDeny'] ? Role.Teacher : Role.Student;
         this.FORM_STATE.step = this.dialogData['entryState'].step;
@@ -146,7 +145,7 @@ export class HallpassFormComponent implements OnInit {
   }
 
   onNextStep(evt) {
-    if (evt.step === 0 || evt === 'exit') {
+    if (evt.step === 0 || evt.action === 'exit') {
       console.log('EXIT ===>', evt);
       this.dialogRef.close(evt);
       return;
@@ -432,15 +431,15 @@ export class HallpassFormComponent implements OnInit {
 //
 //   // setFormState(state, back?: boolean) {
 //   //   // this.pinnables.then(val => console.log(val));
-//   //   if (this.entryState && this.formState) {
-//   //     console.log(this.entryState + ' && ' + this.formState);
-//   //     this.dialogRef.close({
-//   //       'fromLocation': this.fromLocation,
-//   //       'startTime': this.requestTime,
-//   //       'message': this.requestMessage
-//   //     });
-//   //     return;
-//   //   }
+//     if (this.entryState && this.formState) {
+//       console.log(this.entryState + ' && ' + this.formState);
+//       this.dialogRef.close({
+//         'fromLocation': this.fromLocation,
+//         'startTime': this.requestTime,
+//         'message': this.requestMessage
+//       });
+//       return;
+//     }
 //   //
 //   //   if (!back) {
 //   //     this.formState = state;

@@ -10,7 +10,7 @@ export class DateTimeContainerComponent implements OnInit {
 
   @Input() FORM_STATE: Navigation;
   @Output('nextStepEvent')
-  nextStepEvent: EventEmitter<Navigation | string> = new EventEmitter<Navigation | string>();
+  nextStepEvent: EventEmitter<Navigation | {action: string, data: any}> = new EventEmitter<Navigation | {action: string, data: any}>();
 
   constructor() { }
 
@@ -20,7 +20,7 @@ export class DateTimeContainerComponent implements OnInit {
   nextStep(evt) {
 
     if (evt === 'exit') {
-      this.nextStepEvent.emit('exit');
+      this.nextStepEvent.emit({ action: 'exit', data: null });
       return;
     }
     this.FORM_STATE.step = this.FORM_STATE.forInput ? (this.FORM_STATE.formMode.role === 1 ? 2 : 3) : 0;

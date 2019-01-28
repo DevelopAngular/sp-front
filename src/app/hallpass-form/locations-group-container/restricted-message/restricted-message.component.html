@@ -10,10 +10,14 @@
     <div class="rest-mes-content">
      <textarea
              class="message-box"
+             [rows]="4"
+             [cols]="30"
+             pInputTextarea
+             autoResize="autoResize"
              [placeholder]="'Attach a message for ' + (teacher ? teacher.last_name : '')"
              [formControl]="message"
              [style.width]="'350px'"
-             [style.height]="date ? '250px' : '270px'"
+             [style.max-height]="date ? '250px' : '270px'"
              autofocus
      >
     </textarea>

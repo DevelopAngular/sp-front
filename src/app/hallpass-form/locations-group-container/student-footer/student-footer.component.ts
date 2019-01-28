@@ -14,17 +14,19 @@ export class StudentFooterComponent implements OnInit {
 
   @Input() date;
 
+  @Input() state;
+
   fromLocation: Location;
   toLocation: Location;
 
-  constructor(private locService: LocationService) { }
+  constructor() { }
 
   get fromLocationText() {
     return this.fromLocation ? this.fromLocation.title : 'Origin';
   }
 
   get toLocationText() {
-    return this.toLocation ? this.toLocation.title : 'Destination';
+    return this.toLocation && (this.state !== 'to' && this.state !== 'category') ? this.toLocation.title : 'Destination';
   }
 
   ngOnInit() {
@@ -32,14 +34,6 @@ export class StudentFooterComponent implements OnInit {
       this.fromLocation = this.formState.data.direction.from;
       this.toLocation = this.formState.data.direction.to;
     }
-  }
-
-  goToFrom() {
-    this.locService.changeLocation$.next('from');
-  }
-
-  goTo() {
-    this.locService.changeLocation$.next('toWhere');
   }
 
 }
