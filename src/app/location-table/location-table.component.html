@@ -9,7 +9,7 @@
         (onSelect)="choiceSelected($event)" (onStar)="star($event)"
         [value]="choice" [type]="type" [starred]="true" [showStar]="showStars">
       </app-location-cell>
-      <div *ngIf="starredChoices.length<1" class="no-favs">No Favorites. <div *ngIf="!showStars">Add Favorites in Settings.</div></div>
+      <div *ngIf="starredChoices.length<1" class="no-favs">Add Favorites in Settings.<div *ngIf="!showStars">Add Favorites in Settings.</div></div>
     </div>
     <div *ngIf="rightShadow" class="shadow"></div>
   </div>

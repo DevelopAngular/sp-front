@@ -52,7 +52,7 @@ input {
 }
 
 .choices {
-  overflow: auto;
+  overflow: visible;
 }
 
 .quick-label{
@@ -65,12 +65,12 @@ input {
   color: #767676;
 }
 
-.shadow {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: white;
-  opacity: 0.5;
-  height: 20px
-}
+// .shadow {
+//   position: absolute;
+//   bottom: 0;
+//   left: 0;
+//   right: 0;
+//   background-color: white;
+//   opacity: 0.5;
+//   height: 20px
+// }
