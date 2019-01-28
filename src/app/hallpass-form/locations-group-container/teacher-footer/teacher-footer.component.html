@@ -12,9 +12,9 @@
         </div>
         <div class="center">
           <div class="center-text">
-            <div class="footer-text" [style.font-weight]="'bold'">{{ fromLocationText }}</div>
+            <div class="footer-text" [style.font-weight]="(!fromLocation ? 'bold' : 'normal')">{{ fromLocationText }}</div>
             <img class="footer-icon" [src]="'./assets/Arrows_long_right.png' | resolveAsset">
-            <div class="footer-text">{{ toLocationText }}</div>
+            <div class="footer-text" [style.font-weight]="(!toLocation && state !== 'from' ? 'bold' : 'normal')">{{ toLocationText }}</div>
           </div>
           <img class="arrow-icon" [src]="'./assets/icon-arrow-close.png' | resolveAsset" (click)="showFullFooter = false">
         </div>

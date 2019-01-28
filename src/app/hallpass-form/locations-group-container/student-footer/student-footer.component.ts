@@ -26,7 +26,7 @@ export class StudentFooterComponent implements OnInit {
   }
 
   get toLocationText() {
-    return this.toLocation ? this.toLocation.title : 'Destination';
+    return this.toLocation && (this.state !== 'to' && this.state !== 'category') ? this.toLocation.title : 'Destination';
   }
 
   ngOnInit() {

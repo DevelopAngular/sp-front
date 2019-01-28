@@ -5,7 +5,7 @@
       <div class="center-text">
         <div class="footer-text" [style.font-weight]="!fromLocation ? 'bold' : 'normal'">{{ fromLocationText }}</div>
         <img class="footer-icon" [src]="'./assets/Arrows_long_right.png' | resolveAsset">
-        <div class="footer-text" [style.font-weight]="!toLocation && state !== 'from' ? 'bold' : 'normal'">{{ toLocationText }}</div>
+        <div class="footer-text" [style.font-weight]="(!toLocation && state !== 'from') || (state === 'to' || state === 'category') ? 'bold' : 'normal'">{{ toLocationText }}</div>
       </div>
     </div>
   </div>
