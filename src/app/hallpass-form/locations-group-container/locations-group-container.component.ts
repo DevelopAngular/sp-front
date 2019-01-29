@@ -160,13 +160,12 @@ export class LocationsGroupContainerComponent implements OnInit {
       (this.FORM_STATE.formMode.role === Role.Student)
         &&
       (this.FORM_STATE.data.date
-          ? Role.Student && this.FORM_STATE.data.direction.to.scheduling_restricted
+          ? Role.Student && (this.FORM_STATE.data.direction.to.scheduling_restricted || this.FORM_STATE.data.direction.to.restricted)
           : Role.Student && this.FORM_STATE.data.direction.to.restricted)
     ) {
       this.FORM_STATE.formMode.formFactor = FormFactor.Request;
     }
     this.FORM_STATE.step =  close ? 0 : 4;
-
     this.nextStepEvent.emit(this.FORM_STATE);
   }
 }

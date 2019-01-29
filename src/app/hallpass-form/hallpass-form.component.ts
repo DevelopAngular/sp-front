@@ -91,7 +91,6 @@ export class HallpassFormComponent implements OnInit {
 
     switch (this.dialogData['forInput']) {
       case (true): {
-
         this.FORM_STATE.formMode.role = this.dialogData['forStaff'] ? Role.Teacher : Role.Student;
 
         if ( this.dialogData['forLater'] ) {
@@ -101,6 +100,7 @@ export class HallpassFormComponent implements OnInit {
           if ( this.dialogData['forStaff'] ) {
             this.FORM_STATE.formMode.formFactor = FormFactor.Invitation;
           } else {
+
             this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
           }
 

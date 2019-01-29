@@ -185,7 +185,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   buildPages(){
-    debugger;
     if(this.pass.parent_invitation){
       this.buildPage('Pass Request Sent', 'by ' +this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.flow_start), (this.pagerPages+1));
       this.buildPage('Pass Request Accepted', 'by ' +this.getUserName(this.pass.student), this.formatDateTime(this.pass.created), (this.pagerPages+1));
@@ -194,8 +193,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
       this.buildPage('Pass Request Accepted', 'by ' +this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), (this.pagerPages+1));
     } else if(this.forFuture && this.pass.issuer ) {
       this.buildPage('Pass Sent', 'by ' +this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), (this.pagerPages+1));
-    } else if(this.pass.issuer) {
-      debugger;
+    } else if (this.pass.issuer) {
       this.buildPage('Pass Created', 'by ' +this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), (this.pagerPages+1));
     }
 

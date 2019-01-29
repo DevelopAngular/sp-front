@@ -21,7 +21,7 @@ export enum States {
 export class GroupsContainerComponent implements OnInit {
 
   @Input() FORM_STATE: Navigation;
-  @Output() nextStepEvent: EventEmitter<Navigation | string > = new EventEmitter<Navigation | string >();
+  @Output() nextStepEvent: EventEmitter<Navigation | { action: string, data: any }> = new EventEmitter<Navigation | { action: string, data: any } >();
 
   updateData$: BehaviorSubject<null> = new BehaviorSubject<null>(null);
   states;
@@ -57,7 +57,7 @@ export class GroupsContainerComponent implements OnInit {
   onStateChange(evt) {
 
     if ( evt === 'exit' ) {
-      this.nextStepEvent.emit('exit');
+      this.nextStepEvent.emit({ action: 'exit', data: null });
       return;
     }
 
