@@ -4,8 +4,131 @@
     <img class="button-icon" [src]="'./assets/Arrow Reversed (Green).png' | resolveAsset">
   </div>
 
-  <img class="slide" [src]="'./assets/intro/' +(isStaff?'Teacher':'Student') +'/Intro ' +slideIndex +'.png' | resolveAsset">
-  
+  <!--<img class="slide" [src]="'./assets/intro/' +(isStaff?'Teacher':'Student') +'/Intro ' +slideIndex +'.png' | resolveAsset">-->
+
+
+  <div class="box slide slide__3" *ngIf="slideIndex == 3">
+    <div class="title">
+      <span>  Rooms with locks need teacher permission. <br>
+        Send the pass request to a teacher for approval.</span>
+    </div>
+    <div>
+
+      <div>
+        <div class="locs">
+          <app-gradient-button
+            class="location-button"
+            [gradient]="'radial-gradient(circle at 73% 71%, rgb(203, 213, 229), rgb(203, 213, 229))'"
+            [minWidth]="'175px'"
+            [minHeight]="'80px'"
+            [fontSize]="'16px'"
+            [disabled]="true"
+          >{{ 'from_title' }}
+          </app-gradient-button>
+
+          <!-- <div class="type-arrows"> -->
+          <!-- <img [class.hidden]="travelType != 'round_trip'" class="round-trip"
+                [src]="'./assets/RT Arrow.png' | resolveAsset"> -->
+          <img class="arrow" height="30" width="30" [src]="'./assets/Arrow (Green).png' | resolveAsset">
+          <!-- </div> -->
+
+          <app-gradient-button
+            class="location-button"
+            [gradient]="'radial-gradient(circle at 73% 71%, rgb(203, 213, 229), rgb(203, 213, 229))'"
+            [minWidth]="'175px'"
+            [minHeight]="'80px'"
+            [fontSize]="'16px'"
+            [disabled]="true"
+          > {{ 'to_title' }}
+          </app-gradient-button>
+
+        </div>
+
+        <div class="divider" [style.background-image]="'radial-gradient(circle at 73% 71%, rgb(203, 213, 229), rgb(203, 213, 229))'">
+          <img class="back-button" height="30" width="30" [src]="'./assets/Back Button (Transparent).png' | resolveAsset">
+          <div class="divider-header">
+            <img class="divider-icon" height="30" width="30" [src]="'./assets/Search (Transparent).png' | resolveAsset">
+            <div class="divider-text">{{'dividerText'}}</div>
+          </div>
+        </div>
+      </div>
+
+
+
+      <div>
+        <div class="pinnable-wrapper">
+          <!--<mat-grid-list class="grid center" cols="4" rowHeight="75px" gutterSize="10px" [style.width]="'550px'">-->
+            <!--<mat-grid-tile *ngFor="let pinnable of pinnables | async">-->
+          <div *ngFor="let mockPinnable of slides['#4']">
+            <app-pinnable [mock]="mockPinnable"></app-pinnable>
+          </div>
+            <!--</mat-grid-tile>-->
+          <!--</mat-grid-list>-->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="box slide slide__2" *ngIf="slideIndex == 2">
+    <div class="title">
+      <span>Create hall passes for now or for the future</span>
+    </div>
+    <!--<div>-->
+      <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Create (Blue).png'">
+        <div class="pass-buttons">
+          <app-gradient-button
+            [minWidth]="'121px'"
+            [minHeight]="'74px'"
+            [hoverColor]="'#00b476'"
+            [fontSize]="'15px'"
+            [cursor]="'none'"
+            >Now
+          </app-gradient-button>
+          <app-gradient-button
+            [minWidth]="'121px'"
+            [minHeight]="'74px'"
+            [hoverColor]="'#00b476'"
+            [fontSize]="'15px'"
+            [cursor]="'none'"
+            >Future
+          </app-gradient-button>
+        </div>
+      </app-display-card>
+
+      <div class="pass-collection">
+        <app-pass-collection [mock]="slides['#2']" [title]="'Scheduled Passes'" [icon]="'./assets/Scheduled Pass (Blue).png'" [columns]="3"></app-pass-collection>
+      </div>
+      <div class="pass-collection">
+        <app-pass-collection [mock]="slides['#3']" [title]="'Expired Passes'" [icon]="'./assets/Expired Passes (Blue).png'" [columns]="3"></app-pass-collection>
+      </div>
+    <!--</div>-->
+    <div class="anti-click"></div>
+  </div>
+
+  <div class="box slide slide__1" *ngIf="slideIndex == 1">
+
+    <div class="logo">
+      <app-smartpass-logo [scale]="1.25"></app-smartpass-logo>
+    </div>
+    <div class="greeting">
+      <div>
+        <span>Welcome {{user.first_name}}!</span>
+      </div>
+      <div>
+        <span>Let's show you around.</span>
+      </div>
+    </div>
+    <div class="tiles-wrapper">
+      <div class="tiles">
+        <div *ngFor="let mockTile of slides['#1']; let idx = index">
+          <div [style.transform]="idx % 2 === 0 ? 'rotate(-3deg)' : 'rotate(3deg)'">
+            <app-pass-tile [mock]="mockTile"></app-pass-tile>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <app-gradient-button
     class="end-button"
     *ngIf="slideIndex===7"
@@ -16,8 +139,10 @@
     [fontSize]="'18px'"
     (buttonClick)="endIntro()"
     >Get Started</app-gradient-button>
+
   <div *ngIf="slideIndex!==7" class="button-right" (click)="slideIndex=slideIndex+1"
       [@pressState]="getButtonState('right')" (mousedown)="onPress(true, 'right')" (mouseup)="onPress(false, 'right')">
     <img class="button-icon" [src]="'./assets/Arrow (Green).png' | resolveAsset">
   </div>
+
 </div>

@@ -1,4 +1,5 @@
-<div class="collection-wrapper" *ngIf="(currentPasses$ | async) && (currentPasses$ | async).length>0 || emptyMessage">
+<div class="collection-wrapper" *ngIf="!mock && (currentPasses$ | async) && (currentPasses$ | async).length>0 || emptyMessage">
+  <!--<pre>{{test | json}}</pre>-->
   <div class="collection-header">
       <img draggable="false" class="collection-icon" [src]="icon | resolveAsset">
       <div class="collection-title">
@@ -29,3 +30,23 @@
     </ng-template>
   </div>
 </div>
+
+<!-- Needs for Intro page -->
+
+<div class="collection-wrapper" *ngIf="mock" [style.width]="'393px'">
+  <div class="collection-header">
+    <img draggable="false" class="collection-icon" [src]="icon | resolveAsset">
+    <div class="collection-title">
+      {{title}}
+    </div>
+    <img draggable="false" class="collection-display-toggle global-opacity-icons" [src]="'./assets/' +(displayState==='grid'?'List':'Grid') +' (Blue).png'| resolveAsset" [style.margin-left]="hasSort?'10px':'auto'">
+  </div>
+  <div class="collection-divider"></div>
+    <div class="collection-grid-wrapper">
+      <div class="tile" *ngFor="let mockTile of mock">
+        <app-pass-tile [mock]="mockTile"></app-pass-tile>
+      </div>
+    </div>
+</div>
+
+<!-- End -->
