@@ -103,7 +103,8 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.data.fromLocation = location;
     this.FORM_STATE.data.direction = {
       from: location,
-      to: null
+      to: this.data.toLocation,
+      pinnable: this.pinnable
     };
     this.locationService.nextStep('toWhere');
   }

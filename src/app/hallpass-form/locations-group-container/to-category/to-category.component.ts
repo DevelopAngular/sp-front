@@ -34,6 +34,9 @@ export class ToCategoryComponent implements OnInit {
   ngOnInit() {
     this.fromLocation = this.formState.data.direction.from;
     this.pinnable = this.formState.data.direction.pinnable;
+    if (!this.pinnable) {
+        console.log('LOG =====>>>>', this.formState);
+    }
   }
 
   locationChosen(location) {

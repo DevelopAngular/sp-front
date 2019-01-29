@@ -20,6 +20,8 @@ export class LocationService {
   };
   forFuture: boolean;
   toStudents: boolean;
+  isLastStep: boolean;
+  pastState: string;
 
   constructor(private http: HttpService, public dialog: MatDialog) {
   }
@@ -37,21 +39,33 @@ export class LocationService {
      if (this.forFuture && this.toStudents) {
        return this.changeLocation$.next('toWhere');
      }
-     this.changeLocation$.next('from');
+     this.nextStep('from');
     }
   }
 
   nextStep(step) {
     if (step) {
+        if (this.historyState.past.includes(step)) {
+            if (this.isLastStep) {
+                this.isLastStep = false;
+                return this.changeLocation$.next(this.pastState);
+            }
+            this.isLastStep = true;
+            this.pastState = this.changeLocation$.value;
+            console.log('HISTORY1 ===>>>>>', this.changeLocation$.value);
+             this.changeLocation$.next(step);
+             this.historyState.past = _.uniq(this.historyState.past);
+            return;
+        }
         this.historyState.past.push(this.changeLocation$.value);
-        this.historyState.index += 1;
-        console.log('HISTORY ===>>>>>', this.historyState);
+        this.historyState.index = this.historyState.past.length - 1;
+        console.log('HISTORY2 ===>>>>>', this.historyState);
         this.changeLocation$.next(step);
     }
   }
 
   back() {
-    if (!this.historyState.index) {
+    if (!this.historyState.index || !this.historyState.past[this.historyState.index]) {
       if (this.toStudents) {
         return this.changeLocation$.next('students');
       }
@@ -60,12 +74,20 @@ export class LocationService {
       }
         return this.changeLocation$.next('exit');
     } else {
-        this.historyState.index -= 1;
         console.log('BACK HISTORY ===>>>', this.historyState);
         this.changeLocation$.next(this.historyState.past[this.historyState.index]);
+        this.historyState.index -= 1;
         _.remove(this.historyState.past, (el) => {
             return el === this.changeLocation$.value;
         });
     }
+  }
+
+  clearHistory() {
+      this.historyState.index = null;
+      this.historyState.past = [];
+      this.forFuture = false;
+      this.toStudents = false;
+      this.isLastStep = false;
   }
 }

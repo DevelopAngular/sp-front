@@ -30,8 +30,8 @@ export class RestrictedTargetComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.fromLocation = this.formState.data.direction.from;
-    this.toLocation = this.formState.data.direction.to;
+      this.fromLocation = this.formState.data.direction.from;
+      this.toLocation = this.formState.data.direction.to;
   }
 
   back() {
