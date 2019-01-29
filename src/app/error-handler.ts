@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandler, Injectable, Provider } from '@angular/core';
 import * as Sentry from '@sentry/browser';
 import { BrowserOptions } from '@sentry/browser';
@@ -41,8 +42,29 @@ export class SentryErrorHandler implements ErrorHandler {
     Sentry.init(sentryConfig);
   }
 
-  handleError(error) {
+  private static reportError(error) {
+    if (error instanceof HttpErrorResponse) {
+      // the server should never send a 1xx error code
+      // 5xx means server error so both should be reported
+      // even though the server logs errors internally.
+      if (error.status >= 200 && error.status < 500) {
+        return;
+      }
+
+      Sentry.captureException({
+        status: error.status,
+        url: error.url,
+        error: (error.error || null)
+      });
+
+      return;
+    }
+
     Sentry.captureException(error.originalError || error);
+  }
+
+  handleError(error) {
+    SentryErrorHandler.reportError(error);
     console.error(error);
   }
 }
