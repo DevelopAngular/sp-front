@@ -185,6 +185,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   buildPages(){
+    debugger;
     if(this.pass.parent_invitation){
       this.buildPage('Pass Request Sent', 'by ' +this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.flow_start), (this.pagerPages+1));
       this.buildPage('Pass Request Accepted', 'by ' +this.getUserName(this.pass.student), this.formatDateTime(this.pass.created), (this.pagerPages+1));
@@ -194,9 +195,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
     } else if(this.forFuture && this.pass.issuer ) {
       this.buildPage('Pass Sent', 'by ' +this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), (this.pagerPages+1));
     } else if(this.pass.issuer) {
-      if(!this.pass.issuer.roles.includes('hallpass_student')){
+      debugger;
       this.buildPage('Pass Created', 'by ' +this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), (this.pagerPages+1));
-    }}
+    }
 
     if(this.isActive){
       this.buildPage('Pass Started', '', this.formatDateTime(this.pass.created), (this.pagerPages+1));
@@ -234,10 +235,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
     this.pagerPages++;
   }
 
-  newPass(){
+  newPass() {
     this.performingAction = true;
     const endPoint:string = 'v1/hall_passes' +(this.forStaff?'/bulk_create':'');
-
     const body = {
       'duration' : this.selectedDuration * 60,
       'origin' : this.pass.origin.id,

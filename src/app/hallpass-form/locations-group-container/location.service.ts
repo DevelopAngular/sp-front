@@ -34,6 +34,9 @@ export class LocationService {
     if (!this.historyState.index) {
      this.forFuture = toDate;
      this.toStudents = toStudents;
+     if (this.forFuture && this.toStudents) {
+       return this.changeLocation$.next('toWhere');
+     }
      this.changeLocation$.next('from');
     }
   }

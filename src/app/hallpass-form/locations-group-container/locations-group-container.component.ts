@@ -110,7 +110,10 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   toWhere(pinnable) {
     this.pinnable = pinnable;
-    this.FORM_STATE.data.direction.pinnable = pinnable;
+    this.FORM_STATE.data.direction = {
+        from: this.data.fromLocation,
+        pinnable: pinnable
+    };
     this.FORM_STATE.data.gradient = pinnable.gradient_color;
     this.FORM_STATE.data.icon = pinnable.icon;
     if (pinnable.category) {

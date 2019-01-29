@@ -28,7 +28,7 @@ export class ToWhereComponent implements OnInit {
   constructor(private http: HttpService, private locService: LocationService) { }
 
   ngOnInit() {
-    this.location = this.formState.data.direction.from;
+    this.location = this.formState.data.direction ? this.formState.data.direction.from : null;
   }
 
   pinnableSelected(pinnable) {

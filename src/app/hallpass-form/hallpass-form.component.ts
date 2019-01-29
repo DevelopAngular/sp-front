@@ -36,8 +36,8 @@ export interface Navigation {
     selectedStudents?: User[];
     selectedGroup?: StudentList;
     direction?: {
-      from: Location;
-      to: Location;
+      from?: Location;
+      to?: Location;
       pinnable?: Pinnable;
       // restricted?: boolean;
     },
