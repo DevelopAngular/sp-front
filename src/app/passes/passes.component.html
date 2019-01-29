@@ -46,11 +46,11 @@
   <div class="main-page-right" *ngIf="showInbox">
     <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'22pt'" [icon]="(isStaff?'./assets/Inbox Full (Blue).png':'')" [inbox]="true">
       <div class="inbox-content">
-        <div>
+        <div class="requests-or-invitations">
           <app-pass-collection [forStaff]="isStaff" [forFuture]="true" [isActive]="false" [style.width]="'258px'" [passProvider]="isStaff?receivedRequests:sentRequests" [title]="isStaff?'Received':'Sent'" [icon]="'./assets/' +(isStaff?'Request':'Lock') +' (Blue).png'" [columns]="2"></app-pass-collection>
           <!--<div *ngIf="isStaff ? (receivedRequests.length$ | async) : (sentRequests.length$ | async)" class="text">No requests sent or received</div>-->
         </div>
-        <div>
+        <div class="requests-or-invitations">
           <app-pass-collection [forStaff]="isStaff" [forFuture]="true" [isActive]="false" [style.width]="'258px'" [passProvider]="isStaff?sentRequests:receivedRequests" [title]="isStaff?'Sent':'Received'" [icon]="'./assets/' +(isStaff?'Lock':'Request') +' (Blue).png'" [columns]="2"></app-pass-collection>
           <!--<div *ngIf="isStaff ? (sentRequests.length$ | async) : (receivedRequests.length$ | async)" class="text">No requests sent or received</div>-->
         </div>

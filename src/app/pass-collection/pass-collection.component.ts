@@ -34,6 +34,7 @@ export class SortOption {
 
 export class PassCollectionComponent implements OnInit, OnDestroy {
 
+  @Input() mock = false;
   @Input() displayState = 'grid';
   @Input() title: string;
   @Input() icon: string;
@@ -65,6 +66,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   ];
 
   sort$ = this.dataService.sort$;
+  test: any;
 
   private static getDetailDialog(pass: PassLike): any {
     if (pass instanceof HallPass) {
@@ -82,23 +84,27 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
     return null;
   }
-
   constructor(
       public dialog: MatDialog,
       private dataService: DataService,
   ) {}
 
   ngOnInit() {
-      this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
+      if (this.mock) {
 
-      if(this.isActive){
-        this.timers.push(window.setInterval(() => {
-          this.timerEvent.next(null);
-        }, 1000));
+      } else {
+        this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
+
+        if(this.isActive){
+          this.timers.push(window.setInterval(() => {
+            this.timerEvent.next(null);
+          }, 1000));
+        }
+        // this.currentPasses$.subscribe((data) => {
+        //   console.log(data);
+        //   this.test = data[0];
+        // });
       }
-      // this.currentPasses$.subscribe((data) => {
-      //   console.log(data);
-      // });
   }
 
   ngOnDestroy() {

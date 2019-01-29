@@ -1,4 +1,4 @@
-<div class="tile-wrapper" [style.background]="backgroundGradient()"
+<div *ngIf="!mock" class="tile-wrapper" [style.background]="backgroundGradient()"
       [style.justify-content]="forStaff?'unset':'center'"
       [style.box-shadow]="boxShadow"
       [@pressState]="buttonState" (click)="onClick($event)"
@@ -13,3 +13,19 @@
 <div *ngIf="forStaff" class="names-overlay"></div>
 <div *ngIf="forStaff" class="names">{{ tileName }}</div>
 </div>
+
+
+<!-- Needs for Intro flow -->
+
+<div *ngIf="mock"
+     class="tile-wrapper"
+     [style.background]="'radial-gradient(circle at 73% 71%,' + mock.gradient + ')'"
+     [style.justify-content]="forStaff?'unset':'center'"
+     [style.box-shadow]="boxShadow">
+  <div class="tile-title" [style.margin-top]="forStaff?'13px':'0px'" >{{ mock.header }}</div>
+  <div class="tile-content">{{ mock.content }}</div>
+  <img [style.width]="'15px'" [style.height]="'15px'" *ngIf="mock <= 2" [src]="'./assets/Arrow (White).png' | resolveAsset" class="tile-round-trip">
+  <img [style.width]="'35px'" [style.height]="'15px'" *ngIf="mock > 2" [src]="'./assets/Arrows Round Trip (White).png' | resolveAsset" class="tile-one-way">
+</div>
+
+<!-- end -->
