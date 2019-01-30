@@ -1,4 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
+import {LocationService} from '../location.service';
+import {Navigation} from '../../hallpass-form.component';
 
 @Component({
   selector: 'app-teacher-footer',
@@ -19,9 +21,11 @@ export class TeacherFooterComponent implements OnInit {
 
   @Input() state: string;
 
+  @Input() formState: Navigation;
+
   showFullFooter: boolean = false;
 
-  constructor() { }
+  constructor(private locService: LocationService) { }
 
   get fromLocationText() {
     return this.fromLocation ? this.fromLocation.title : 'Origin';
@@ -31,7 +35,37 @@ export class TeacherFooterComponent implements OnInit {
     return this.toLocation ? this.toLocation.title : 'Destination';
   }
 
+  get fromCursor() {
+     return this.state !== 'from' && !this.date;
+  }
+
+  get toCursor() {
+    return this.state !== 'to' && this.state !== 'from';
+  }
+
   ngOnInit() {
+  }
+
+  goToFromWhere() {
+     if (this.state === 'from' || this.date) {
+        return false;
+     }
+    this.locService.nextStep('from');
+  }
+
+  goToToWhere() {
+     if (this.state === 'to' || this.state === 'from') {
+       return false;
+     }
+    this.locService.nextStep('toWhere');
+  }
+
+  goToStudents() {
+
+  }
+
+  goToDate() {
+    this.locService.changeLocation$.next('date');
   }
 
 }

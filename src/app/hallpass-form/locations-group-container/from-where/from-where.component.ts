@@ -18,6 +18,7 @@ export class FromWhereComponent implements OnInit {
   @Input() studentText;
 
   @Output() selectedLocation: EventEmitter<any> = new EventEmitter<any>();
+  @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(private locService: LocationService) { }
 
@@ -29,7 +30,8 @@ export class FromWhereComponent implements OnInit {
   }
 
   back() {
-    this.locService.back();
+    // this.locService.back();
+    this.backButton.emit({ action: 'exit' });
   }
 
 }

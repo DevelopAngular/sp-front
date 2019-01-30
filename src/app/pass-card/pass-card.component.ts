@@ -9,7 +9,7 @@ import { HttpService } from '../http-service';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { DataService } from '../data-service';
 import { LoadingService } from '../loading.service';
-import {HallpassFormComponent} from '../hallpass-form/hallpass-form.component';
+import {HallpassFormComponent, Navigation} from '../hallpass-form/hallpass-form.component';
 import {filter, map} from 'rxjs/operators';
 import {RequestCardComponent} from '../request-card/request-card.component';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
@@ -29,6 +29,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   @Input() isActive: boolean = false;
   @Input() forStaff: boolean = false;
   @Input() forMonitor: boolean = false;
+  @Input() formState: Navigation;
   @Input() students: User[] = [];
 
   @Output() cardEvent: EventEmitter<any> = new EventEmitter();
@@ -274,7 +275,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
         header = 'What would you like to do with this pass?';
       } else{
         if (this.forInput) {
-          this.cardEvent.emit({});
+          this.formState.step = 3;
+          this.formState.previousStep = 4;
+          this.cardEvent.emit(this.formState);
             // this.dialogRef.close();
             // const isCategory = this.fromHistory[this.fromHistoryIndex] === 'to-category';
             // const dialogRef = this.dialog.open(HallpassFormComponent, {

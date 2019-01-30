@@ -25,6 +25,8 @@ export class ToWhereComponent implements OnInit {
 
   @Output() selectedPinnable: EventEmitter<any> = new EventEmitter<any>();
 
+  @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
+
   constructor(private http: HttpService, private locService: LocationService) { }
 
   ngOnInit() {
@@ -36,7 +38,23 @@ export class ToWhereComponent implements OnInit {
   }
 
   back() {
-    this.locService.back();
+    //   if (!!this.date &&
+    //       !!this.studentText &&
+    //       (this.formState.previousStep === 2 || this.formState.previousStep === 4)
+    //   ) {
+    //       this.formState.step = 2;
+    //       this.formState.state = 1;
+    //       this.formState.previousStep = 3;
+    //   } else {
+    //     this.formState.state -= 1;
+    //   }
+    //
+    // this.backButton.emit(this.formState);
+      this.backButton.emit({action: 'toWhere'});
+  }
+
+  changeLocation(event) {
+
   }
 
 }

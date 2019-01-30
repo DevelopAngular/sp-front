@@ -7,7 +7,7 @@ import { Pinnable } from '../../models/Pinnable';
 import { Util } from '../../../Util';
 import {FormFactor, Navigation, Role} from '../hallpass-form.component';
 
-export enum States {from = 1, toWhere = 2, category = 3, restrictedTarget = 4, message = 5}
+export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, message = 5 }
 
 @Component({
   selector: 'app-locations-group-container',
@@ -22,7 +22,6 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   user$: Observable<User>;
   isStaff: boolean;
-  currentState: string;
   pinnables: Promise<Pinnable[]>;
   pinnable: Pinnable;
 
@@ -55,35 +54,11 @@ export class LocationsGroupContainerComponent implements OnInit {
     }
 
   ngOnInit() {
-    if (this.FORM_STATE.state && this.FORM_STATE.state === 5 ) {
-      this.locationService.changeLocation$.next(States[this.FORM_STATE.state]);
-    } else {
-      this.locationService.firstStep(!!this.showDate, !!this.studentText);
+    if (!!this.studentText && !!this.showDate && this.FORM_STATE.previousStep === 2) {
+      this.FORM_STATE.state = 2;
     }
+
     this.data.toLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.to ? this.FORM_STATE.data.direction.to : null;
-
-    this.locationService.changeLocation$.subscribe(state => {
-      if (state === 'exit') {
-       this.nextStepEvent.emit({action: 'exit', data: null });
-       return;
-      }
-      if (state === 'date') {
-        this.FORM_STATE.step = 1;
-        this.FORM_STATE.state = 1;
-        this.FORM_STATE.previousStep = 3;
-
-        this.nextStepEvent.emit(this.FORM_STATE);
-        return;
-      }
-      if (state === 'students') {
-          this.FORM_STATE.step = 2;
-          this.FORM_STATE.state = 1;
-          this.FORM_STATE.previousStep = 3;
-        this.nextStepEvent.emit(this.FORM_STATE);
-        return;
-      }
-      this.currentState = state;
-    });
     this.pinnables = this.locationService.getPinnable();
     this.user$ = this.dataService.currentUser;
     this.pinnable = this.FORM_STATE.data.direction ? this.FORM_STATE.data.direction.pinnable : null;
@@ -106,7 +81,7 @@ export class LocationsGroupContainerComponent implements OnInit {
       to: this.data.toLocation,
       pinnable: this.pinnable
     };
-    this.locationService.nextStep('toWhere');
+      this.FORM_STATE.state = States.toWhere;
   }
 
   toWhere(pinnable) {
@@ -118,13 +93,13 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.FORM_STATE.data.gradient = pinnable.gradient_color;
     this.FORM_STATE.data.icon = pinnable.icon;
     if (pinnable.category) {
-       return this.locationService.nextStep('category');
+        return this.FORM_STATE.state = States.category;
     } else {
         this.data.toLocation = pinnable.location;
         this.FORM_STATE.data.direction.to = pinnable.location;
         const restricted = ((this.pinnable.location.restricted && !this.showDate) || (this.pinnable.location.scheduling_restricted && !!this.showDate));
         if (!this.isStaff && restricted && pinnable.location) {
-           return this.locationService.nextStep('restrictedTarget');
+            return this.FORM_STATE.state = States.restrictedTarget;
         } else {
            return this.postComposetData();
         }
@@ -136,7 +111,7 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.data.toLocation = location;
     this.FORM_STATE.data.direction.to = location;
       if (location.restricted && !this.isStaff) {
-          this.locationService.nextStep('restrictedTarget');
+          this.FORM_STATE.state = States.restrictedTarget;
     } else {
        this.postComposetData();
     }
@@ -145,7 +120,7 @@ export class LocationsGroupContainerComponent implements OnInit {
   requestTarget(teacher) {
     this.data.requestTarget = teacher;
     this.FORM_STATE.data.requestTarget = teacher;
-    this.locationService.nextStep('message');
+      this.FORM_STATE.state = States.message;
   }
 
   resultMessage(message, denyMessage: boolean = false) {
@@ -168,5 +143,37 @@ export class LocationsGroupContainerComponent implements OnInit {
     }
     this.FORM_STATE.step =  close ? 0 : 4;
     this.nextStepEvent.emit(this.FORM_STATE);
+  }
+
+  back(event) {
+      if (event.action === 'exit') {
+          if (!!this.showDate) {
+              this.FORM_STATE.step = 1;
+              this.FORM_STATE.state = 1;
+              this.FORM_STATE.previousStep = 3;
+              this.nextStepEvent.emit(this.FORM_STATE);
+              return;
+          }
+          if (!!this.studentText && this.FORM_STATE.state === 1) {
+              this.FORM_STATE.step = 2;
+              this.FORM_STATE.state = 1;
+              this.FORM_STATE.previousStep = 3;
+              this.nextStepEvent.emit(this.FORM_STATE);
+              return;
+          }
+          this.nextStepEvent.emit({action: 'exit', data: null });
+          return;
+      }
+      if (!!this.showDate &&
+          !!this.studentText &&
+          (this.FORM_STATE.previousStep === 2 || this.FORM_STATE.previousStep === 4) &&
+          event.action === 'toWhere') {
+            this.FORM_STATE.step = 2;
+            this.FORM_STATE.state = 1;
+            this.FORM_STATE.previousStep = 3;
+            this.nextStepEvent.emit(this.FORM_STATE);
+            return;
+      }
+      this.FORM_STATE.state -= 1;
   }
 }

@@ -10,7 +10,7 @@ import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../data-service';
 import { LoadingService } from '../loading.service';
-import {HallpassFormComponent} from '../hallpass-form/hallpass-form.component';
+import {HallpassFormComponent, Navigation} from '../hallpass-form/hallpass-form.component';
 import {RequestCardComponent} from '../request-card/request-card.component';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {filter} from 'rxjs/operators';
@@ -27,6 +27,7 @@ export class InvitationCardComponent implements OnInit {
   @Input() fromPast: boolean = false;
   @Input() forStaff: boolean = false;
   @Input() forInput: boolean = false;
+  @Input() formState: Navigation;
   @Input() selectedStudents: User[] = [];
 
   @Output() cardEvent: EventEmitter<any> = new EventEmitter<any>();
@@ -135,7 +136,9 @@ export class InvitationCardComponent implements OnInit {
       let options = [];
       let header = '';
       if (this.forInput) {
-          this.cardEvent.emit({});
+          this.formState.step = 3;
+          this.formState.previousStep = 4;
+          this.cardEvent.emit(this.formState);
           // this.dialogRef.close();
           // const isCategory = this.fromHistory[this.fromHistoryIndex] === 'to-category';
           // const dialogRef = this.dialog.open(HallpassFormComponent, {

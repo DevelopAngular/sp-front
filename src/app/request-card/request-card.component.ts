@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material';
 import { Inject } from '@angular/core';
 import { HttpService } from '../http-service';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
-import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
+import {HallpassFormComponent, Navigation} from '../hallpass-form/hallpass-form.component';
 import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../data-service';
 import { LoadingService } from '../loading.service';
@@ -28,6 +28,7 @@ export class RequestCardComponent implements OnInit {
   @Input() fromPast: boolean = false;
   @Input() forInput: boolean = false;
   @Input() forStaff: boolean = false;
+  @Input() formState: Navigation;
 
   @Output() cardEvent: EventEmitter<any> = new EventEmitter<any>();
 
@@ -207,9 +208,9 @@ export class RequestCardComponent implements OnInit {
         header = 'Are you sure you want to ' +(this.forStaff?'deny':'delete') +' this pass request' +(this.forStaff?'':' you sent') +'?';
       } else{
           if (!this.pinnableOpen) {
-            // debugger;
-
-            this.cardEvent.emit({});
+            this.formState.step = 3;
+            this.formState.previousStep = 4;
+            this.cardEvent.emit(this.formState);
 
 
             //   this.dialogRef.close();

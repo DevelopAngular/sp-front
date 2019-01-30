@@ -8,6 +8,7 @@
       [pass]="template"
       [forStaff]="FORM_STATE.formMode.role === 1"
       [forInput]="true"
+      [formState]="FORM_STATE"
       [forFuture]="FORM_STATE.data.date ? true : false"
       [students]="FORM_STATE.formMode.role === 1 ? FORM_STATE.data.selectedStudents : []"
       (cardEvent)="onNextStep($event)">
@@ -22,6 +23,7 @@
       [request]="template"
       [forStaff]="FORM_STATE.formMode.role === 1"
       [forInput]="true"
+      [formState]="FORM_STATE"
       [forFuture]="FORM_STATE.data.date ? true : false"
       (cardEvent)="onNextStep($event)"
     ></app-request-card>
@@ -35,6 +37,7 @@
       [invitation]="template"
       [forStaff]="FORM_STATE.formMode.role === 1"
       [forInput]="true"
+      [formState]="FORM_STATE"
       [forFuture]="FORM_STATE.data.date ? true : false"
       [selectedStudents]="FORM_STATE.data.selectedStudents"
       (cardEvent)="onNextStep($event)"

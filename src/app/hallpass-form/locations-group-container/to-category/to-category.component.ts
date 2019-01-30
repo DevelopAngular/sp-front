@@ -22,6 +22,8 @@ export class ToCategoryComponent implements OnInit {
 
   @Output() locFromCategory: EventEmitter<any> = new EventEmitter<any>();
 
+  @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
+
   pinnable: Pinnable;
 
   constructor(private locService: LocationService) { }
@@ -44,7 +46,9 @@ export class ToCategoryComponent implements OnInit {
   }
 
   back() {
-    this.locService.back();
+    // this.locService.back();
+      console.log('Categoty', this.formState);
+      this.backButton.emit({action: 'categoty'});
   }
 
 }

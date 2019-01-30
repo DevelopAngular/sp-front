@@ -138,6 +138,7 @@ export class IntroComponent implements OnInit {
           this.isStaff = user.roles.includes('_profile_teacher');
         });
       });
+      this.endIntro();
   }
 
   endIntro() {

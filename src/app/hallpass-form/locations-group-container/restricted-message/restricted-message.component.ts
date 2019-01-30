@@ -21,6 +21,7 @@ export class RestrictedMessageComponent implements OnInit {
   @Input() date: string | boolean;
 
   @Output() resultMessage: EventEmitter<any> = new EventEmitter<any>();
+  @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
 
   fromLocation: Location;
 
@@ -44,7 +45,8 @@ export class RestrictedMessageComponent implements OnInit {
   }
 
   back() {
-    this.locService.back();
+    this.backButton.emit({});
+    // this.locService.back();
   }
 
   sendRequest() {

@@ -22,6 +22,8 @@ export class RestrictedTargetComponent implements OnInit {
 
   @Output() requestTarget: EventEmitter<any> = new EventEmitter<any>();
 
+  @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
+
   constructor(private locService: LocationService) { }
 
   get headerGradient() {
@@ -35,7 +37,8 @@ export class RestrictedTargetComponent implements OnInit {
   }
 
   back() {
-    this.locService.back();
+    // this.locService.back();
+    this.backButton.emit({});
   }
 
   updateTarget(target) {

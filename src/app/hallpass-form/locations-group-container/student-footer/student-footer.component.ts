@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { Navigation } from '../../hallpass-form.component';
 import { Location } from '../../../models/Location';
 import {LocationService} from '../location.service';
@@ -15,6 +15,8 @@ export class StudentFooterComponent implements OnInit {
   @Input() date;
 
   @Input() state;
+
+  @Output() changeLocation: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
   fromLocation: Location;
   toLocation: Location;
@@ -48,14 +50,22 @@ export class StudentFooterComponent implements OnInit {
     if (this.state === 'from') {
       return false;
     }
-    this.locService.nextStep('from');
+    this.formState.state = 1;
+    this.changeLocation.emit(this.formState);
   }
 
   goToToWhere() {
     if (this.state === 'to' || this.state === 'from') {
       return false;
     }
-    this.locService.nextStep('toWhere');
+    this.formState.state = 2;
+    this.changeLocation.emit(this.formState);
+  }
+
+  goToDate() {
+    this.formState.step = 1;
+    this.formState.state = 1;
+    this.changeLocation.emit(this.formState);
   }
 
 }

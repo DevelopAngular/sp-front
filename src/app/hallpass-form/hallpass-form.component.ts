@@ -28,7 +28,7 @@ export interface FormMode {
 export interface Navigation {
   step: number;
   previousStep?: number;
-  state?: number|string;
+  state?: any;
   fromState?: number;
   formMode?: FormMode;
   data?: {
@@ -85,7 +85,11 @@ export class HallpassFormComponent implements OnInit {
         role: null,
         formFactor: null,
       },
-      data: {},
+      data: {
+        selectedGroup: null,
+        direction: {},
+
+      },
       forInput: this.dialogData['forInput'] || false
     };
 
