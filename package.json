@@ -44,7 +44,7 @@
     "jspdf-autotable": "^2.3.5",
     "lodash": "^4.17.11",
     "ng-gapi": "^0.0.51",
-    "ng-pick-datetime": "^6.0.10",
+    "ng-pick-datetime": "^6.0.16",
     "ng2-charts": "^1.6.0",
     "ng2-dragula": "^2.1.1",
     "ng4-material-dropdown": "^1.0.0",
