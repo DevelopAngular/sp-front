@@ -173,6 +173,14 @@ export interface HallPassFilter {
 }
 
 
+function makeSchoolFilter(http: HttpService) {
+  return (obj: BaseModel) => {
+    const school = http.schoolIdSubject.value;
+    return school === null || obj.isAssignedToSchool(school.id);
+  };
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -290,7 +298,10 @@ export class LiveDataService {
       limit: 20,
       origin: filter.id
     };
-    const filters: FilterFunc<HallPass>[] = [pass => pass.origin.id === filter.id];
+    const filters: FilterFunc<HallPass>[] = [
+      makeSchoolFilter(this.http),
+      pass => pass.origin.id === filter.id
+    ];
 
     if (date !== null) {
       const limits = getDateLimits(date);
@@ -322,7 +333,10 @@ export class LiveDataService {
       limit: 20,
       destination: filter.id
     };
-    const filters: FilterFunc<HallPass>[] = [pass => pass.destination.id === filter.id];
+    const filters: FilterFunc<HallPass>[] = [
+      makeSchoolFilter(this.http),
+      pass => pass.destination.id === filter.id
+    ];
 
     if (date !== null) {
       const limits = getDateLimits(date);
@@ -354,7 +368,9 @@ export class LiveDataService {
       limit: 20,
       active: true
     };
-    const filters: FilterFunc<HallPass>[] = [];
+    const filters: FilterFunc<HallPass>[] = [
+      makeSchoolFilter(this.http)
+    ];
 
     if (filter) {
       if (filter.type === 'issuer') {
@@ -399,22 +415,26 @@ export class LiveDataService {
 
   watchFutureHallPasses(filter?: PassFilterType): Observable<HallPass[]> {
     let queryFilter = '';
-    let filterFunc = (pass: HallPass) => true;
+
+    const filters: FilterFunc<HallPass>[] = [
+      makeSchoolFilter(this.http),
+      pass => pass.start_time > new Date()
+    ];
 
     if (filter) {
       if (filter.type === 'issuer') {
         queryFilter = `&issuer=${filter.value.id}`;
-        filterFunc = (pass: HallPass) => pass.issuer.id === filter.value.id;
+        filters.push((pass: HallPass) => pass.issuer.id === filter.value.id);
       }
 
       if (filter.type === 'student') {
         queryFilter = `&student=${filter.value.id}`;
-        filterFunc = (pass: HallPass) => pass.student.id === filter.value.id;
+        filters.push((pass: HallPass) => pass.student.id === filter.value.id);
 
       }
       if (filter.type === 'location') {
         queryFilter = `&location=${filter.value.id}`;
-        filterFunc = (pass: HallPass) => pass.origin.id === filter.value.id || pass.destination.id === filter.value.id;
+        filters.push((pass: HallPass) => pass.origin.id === filter.value.id || pass.destination.id === filter.value.id);
 
       }
     }
@@ -427,7 +447,7 @@ export class LiveDataService {
       handleExternalEvent: (s: State<HallPass>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([
         new AddItem(['hall_pass.create', 'hall_pass.update', 'pass_request.accept', 'pass_invitation.accept'], HallPass.fromJSON,
-          (pass) => filterFunc(pass) && pass.start_time > new Date()),
+          mergeFilters(filters)),
         new RemoveItem(['hall_pass.start', 'hall_pass.cancel'], HallPass.fromJSON)
       ]),
       handlePost: (s: State<HallPass>) => {
@@ -439,7 +459,9 @@ export class LiveDataService {
 
   watchPastHallPasses(filter?: PassFilterType): Observable<HallPass[]> {
     let queryFilter = '';
-    const filters: FilterFunc<HallPass>[] = [];
+    const filters: FilterFunc<HallPass>[] = [
+      makeSchoolFilter(this.http),
+    ];
 
     if (filter) {
       if (filter.type === 'issuer') {
@@ -478,8 +500,12 @@ export class LiveDataService {
   watchInboxRequests(filter: User): Observable<Request[]> {
     const isStudent = filter.roles.includes('hallpass_student');
 
+    const filters: FilterFunc<Request>[] = [
+      makeSchoolFilter(this.http)
+    ];
+
     const denyHandler = isStudent
-      ? new AddItem(['pass_request.deny'], Request.fromJSON)
+      ? new AddItem(['pass_request.deny'], Request.fromJSON, mergeFilters(filters))
       : new RemoveItem(['pass_request.deny'], Request.fromJSON);
 
     return this.watch<Request, string>({
@@ -490,7 +516,7 @@ export class LiveDataService {
       decoder: data => Request.fromJSON(data),
       handleExternalEvent: (s: State<Request>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([
-        new AddItem(['pass_request.create'], Request.fromJSON),
+        new AddItem(['pass_request.create'], Request.fromJSON, mergeFilters(filters)),
         new UpdateItem(['pass_request.update'], Request.fromJSON),
         new RemoveItem(['pass_request.cancel'], Request.fromJSON),
         new RemoveRequestOnApprove(['pass_request.accept']),
@@ -503,9 +529,13 @@ export class LiveDataService {
   watchInboxInvitations(filter: User): Observable<Invitation[]> {
     const isStudent = filter.roles.includes('hallpass_student');
 
+    const filters: FilterFunc<Invitation>[] = [
+      makeSchoolFilter(this.http)
+    ];
+
     const denyHandler = isStudent
       ? new RemoveItem(['pass_invitation.deny'], Invitation.fromJSON)
-      : new AddItem(['pass_invitation.deny'], Invitation.fromJSON);
+      : new AddItem(['pass_invitation.deny'], Invitation.fromJSON, mergeFilters(filters));
 
     return this.watch<Invitation, string>({
       externalEvents: empty(),
@@ -515,7 +545,7 @@ export class LiveDataService {
       decoder: data => Invitation.fromJSON(data),
       handleExternalEvent: (s: State<Invitation>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([
-        new AddItem(['pass_invitation.create'], Invitation.fromJSON),
+        new AddItem(['pass_invitation.create'], Invitation.fromJSON, mergeFilters(filters)),
         new UpdateItem(['pass_invitation.update'], Invitation.fromJSON),
         new RemoveItem(['pass_invitation.cancel'], Invitation.fromJSON),
         new RemoveInvitationOnApprove(['pass_invitation.accept']),
@@ -527,15 +557,18 @@ export class LiveDataService {
 
   watchActiveRequests(filter: User | Location = null): Observable<Request[]> {
     let queryFilter = '';
-    let filterFunc = (pass: Request) => true;
+
+    const filters: FilterFunc<Request>[] = [
+      makeSchoolFilter(this.http)
+    ];
 
     if (filter instanceof User) {
       queryFilter = `&student=${filter.id}`;
-      filterFunc = (pass: Request) => pass.student.id === filter.id;
+      filters.push((pass: Request) => pass.student.id === filter.id);
 
     } else if (filter instanceof Location) {
       queryFilter = `&destination=${filter.id}`;
-      filterFunc = (pass: Request) => pass.destination.id === filter.id;
+      filters.push((pass: Request) => pass.destination.id === filter.id);
 
     } else if (filter !== null) {
       throw Error(`Unknown filter arg: ${filter}`);
@@ -548,7 +581,7 @@ export class LiveDataService {
       decoder: data => Request.fromJSON(data),
       handleExternalEvent: (s: State<Request>, e: string) => s,
       handlePollingEvent: makePollingEventHandler([
-        new AddItem(['pass_request.create'], Request.fromJSON, filterFunc),
+        new AddItem(['pass_request.create'], Request.fromJSON, mergeFilters(filters)),
         new RemoveItem(['pass_request.cancel'], Request.fromJSON),
         new RemoveRequestOnApprove(['pass_request.accept']),
         new UpdateItem(['pass_request.deny'], Request.fromJSON)

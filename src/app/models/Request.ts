@@ -60,8 +60,14 @@ export class Request extends BaseModel implements ReadableModel {
       created: Date = new Date(JSON['created']
       );
 
-    return new Request(id, student, origin, destination, attachment_message, travel_type, status, hallpass, gradient_color,
+    const request = new Request(id, student, origin, destination, attachment_message, travel_type, status, hallpass, gradient_color,
       icon, teacher, request_time, declined_message, student_has_dismissed, cancelled, color_profile, last_read, last_updated, duration, created);
+
+    if (JSON['school_id']) {
+      (request as any).school_id = JSON['school_id'];
+    }
+
+    return request;
   }
 
 }
