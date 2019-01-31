@@ -54,6 +54,14 @@ export class Invitation extends BaseModel implements ReadableModel {
       date_choices.push(new Date(datesJSON[i]));
     }
 
-    return new Invitation(id, student, default_origin, destination, date_choices, issuer, status, duration, gradient_color, icon, travel_type, color_profile, cancelled, last_read, last_updated, created);
+
+
+    const invitation =  new Invitation(id, student, default_origin, destination, date_choices, issuer, status, duration, gradient_color, icon, travel_type, color_profile, cancelled, last_read, last_updated, created);
+
+    if (JSON['school_id']) {
+      (invitation as any).school_id = JSON['school_id'];
+    }
+
+    return invitation;
   }
 }
