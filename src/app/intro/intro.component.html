@@ -4,130 +4,391 @@
     <img class="button-icon" [src]="'./assets/Arrow Reversed (Green).png' | resolveAsset">
   </div>
 
-  <!--<img class="slide" [src]="'./assets/intro/' +(isStaff?'Teacher':'Student') +'/Intro ' +slideIndex +'.png' | resolveAsset">-->
+  <div class="box">
 
+    <div class="slide slide_7" *ngIf="slideIndex === 7">
 
-  <div class="box slide slide__3" *ngIf="slideIndex == 3">
-    <div class="title">
-      <span>  Rooms with locks need teacher permission. <br>
-        Send the pass request to a teacher for approval.</span>
+      <div class="logo">
+        <app-smartpass-logo [scale]="1.25"></app-smartpass-logo>
+      </div>
+      <div class="end">
+        <span>You're all set!</span>
+      </div>
+
     </div>
-    <div>
 
-      <div>
-        <div class="locs">
-          <app-gradient-button
-            class="location-button"
-            [gradient]="'radial-gradient(circle at 73% 71%, rgb(203, 213, 229), rgb(203, 213, 229))'"
-            [minWidth]="'175px'"
-            [minHeight]="'80px'"
-            [fontSize]="'16px'"
-            [disabled]="true"
-          >{{ 'from_title' }}
-          </app-gradient-button>
+    <div class="slide slide_5-6 slide_5-6__6 " *ngIf="slideIndex === 6">
 
-          <!-- <div class="type-arrows"> -->
-          <!-- <img [class.hidden]="travelType != 'round_trip'" class="round-trip"
-                [src]="'./assets/RT Arrow.png' | resolveAsset"> -->
-          <img class="arrow" height="30" width="30" [src]="'./assets/Arrow (Green).png' | resolveAsset">
-          <!-- </div> -->
+      <ng-container *ngIf="isStaff; else forStudent_6">
 
-          <app-gradient-button
-            class="location-button"
-            [gradient]="'radial-gradient(circle at 73% 71%, rgb(203, 213, 229), rgb(203, 213, 229))'"
-            [minWidth]="'175px'"
-            [minHeight]="'80px'"
-            [fontSize]="'16px'"
-            [disabled]="true"
-          > {{ 'to_title' }}
-          </app-gradient-button>
+        <div class="left-side">
+          <p>
+            See pass requests that you <br>
+            <b>sent</b>  to students that <br>
+            students still need to accept.
+        </div>
+        <div class="right-side">
+          <app-display-card [mock]="2" [title]="'Requests'" [hasDivider]="false" [fontSize]="'24px'" [backgroundColor]="'#FFFFFF'">
+            <div class="pass-collection pass-collection__transparent" [style.padding-top]="'10px'">
+              <app-pass-collection [mock]="slides['#3.2']" [title]="'Received'" [displayState]="'list'" [forStaff]="isStaff" [icon]="'./assets/Scheduled Pass (Blue).png'" [columns]="2"></app-pass-collection>
+            </div>
+            <div class="pass-collection" [style.padding]="'30px 0'">
+              <app-pass-collection [mock]="slides['#6.1']" [title]="'Sent'" [icon]="'./assets/Expired Passes (Blue).png'" [columns]="2"></app-pass-collection>
+            </div>
+          </app-display-card>
 
         </div>
 
-        <div class="divider" [style.background-image]="'radial-gradient(circle at 73% 71%, rgb(203, 213, 229), rgb(203, 213, 229))'">
-          <img class="back-button" height="30" width="30" [src]="'./assets/Back Button (Transparent).png' | resolveAsset">
-          <div class="divider-header">
-            <img class="divider-icon" height="30" width="30" [src]="'./assets/Search (Transparent).png' | resolveAsset">
-            <div class="divider-text">{{'dividerText'}}</div>
+      </ng-container>
+      <ng-template #forStudent_6>
+        <div class="left-side">
+          <div class="left-side_inbox">
+            <div class="inbox-wrapper">
+              <img class="inbox-icon" src="./assets/Inbox Full (Blue).png">
+
+              <div class="inbox-modifiers">
+                <img class="inbox-badge" src="./assets/Inbox Number.png">
+                <div class="inbox-number">1</div>
+                <img class="inbox-front" src="./assets/Inbox Front (Blue).png">
+              </div>
+            </div>
+          </div>
+          <div class="left-side_title">
+
+          <span>
+            See pass requests that you <br>
+            <b>received</b> from teachers that <br>
+            you can accept or decline.
+          </span>
+
+          </div>
+        </div>
+        <div class="right-side">
+          <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'24px'" [backgroundColor]="'#FFFFFF'">
+            <div class="pass-collection pass-collection__transparent" [style.padding-top]="'0px'">
+              <app-pass-collection [mock]="slides['#5']" [title]="'Sent'" [icon]="'./assets/Scheduled Pass (Blue).png'" [columns]="2"></app-pass-collection>
+            </div>
+            <div class="pass-collection" [style.padding]="'30px 0'">
+              <app-pass-collection [mock]="slides['#6']" [title]="'Received'" [icon]="'./assets/Expired Passes (Blue).png'" [columns]="2"></app-pass-collection>
+            </div>
+          </app-display-card>
+        </div>
+      </ng-template>
+
+    </div>
+
+    <div class="slide slide_5-6" *ngIf="slideIndex === 5">
+
+
+      <ng-container *ngIf="isStaff; else forStudent_5">
+          <div class="left-side">
+              <p>
+                See pass requests that <br>
+                you’ve <b>received</b>  from <br>
+                students that you can <br>
+                approve or decline.</p>
+          </div>
+          <div class="right-side">
+            <app-display-card [mock]="2" [title]="'Requests'" [hasDivider]="false" [fontSize]="'24px'" [backgroundColor]="'#FFFFFF'">
+              <div class="pass-collection" [style.padding-top]="'10px'">
+                <app-pass-collection [mock]="slides['#3.2']" [title]="'Received'" [displayState]="'list'" [forStaff]="isStaff" [icon]="'./assets/Scheduled Pass (Blue).png'" [columns]="2"></app-pass-collection>
+              </div>
+              <div class="pass-collection pass-collection__transparent" [style.padding]="'30px 0'">
+                <app-pass-collection [mock]="slides['#6.1']" [title]="'Sent'" [icon]="'./assets/Expired Passes (Blue).png'" [columns]="2"></app-pass-collection>
+              </div>
+            </app-display-card>
+
+          </div>
+
+      </ng-container>
+
+
+      <ng-template #forStudent_5>
+          <div class="left-side">
+            <div class="left-side_inbox">
+              <div class="inbox-wrapper">
+                <img class="inbox-icon" src="./assets/Inbox Full (Blue).png">
+
+                <div class="inbox-modifiers">
+                  <img class="inbox-badge" src="./assets/Inbox Number.png">
+                  <div class="inbox-number">1</div>
+                  <img class="inbox-front" src="./assets/Inbox Front (Blue).png">
+                </div>
+              </div>
+            </div>
+            <div class="left-side_title">
+
+          <span>
+            See pass requests that you <br>
+            <b>sent</b> for rooms that need <br>
+            teacher permission.
+          </span>
+
+            </div>
+          </div>
+          <div class="right-side">
+            <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'24px'" [backgroundColor]="'#FFFFFF'">
+              <div class="pass-collection" [style.padding-top]="'0px'">
+                <app-pass-collection [mock]="slides['#5']" [title]="'Sent'" [icon]="'./assets/Scheduled Pass (Blue).png'" [columns]="2"></app-pass-collection>
+              </div>
+              <div class="pass-collection pass-collection__transparent" [style.padding]="'30px 0'">
+                <app-pass-collection [mock]="slides['#6']" [title]="'Received'" [icon]="'./assets/Expired Passes (Blue).png'" [columns]="2"></app-pass-collection>
+              </div>
+            </app-display-card>
+          </div>
+
+      </ng-template>
+
+    </div>
+
+    <div class="slide slide_4" *ngIf="slideIndex === 4">
+
+      <ng-container *ngIf="isStaff; else forStudent_4">
+        <div class="for-staff_4">
+          <div class="title"><span>When creating a future pass, you have the option to make a pass declineble.</span></div>
+          <div class="date">
+            <app-date-time [mock]="true" [isStaff]="isStaff"></app-date-time>
+          </div>
+        </div>
+      </ng-container>
+
+
+      <ng-template #forStudent_4>
+        <div class="for-student_4">
+          <div class="title">
+
+        <span>Change how long you need the pass to be. <br>
+              After time runs out, the pass is expired.</span>
+          </div>
+
+          <div class="pass-card">
+            <div class="pass-card_header">
+              <div class="left-box">
+                <img class="picture" [src]="'https://storage.googleapis.com/courier-static/release-icons/Bathroom%20(White).png'" alt="">
+                <span class="text">Bathroom</span>
+              </div>
+              <div>
+                <img class="arrow" [src]="'./assets/Back Button (Transparent).png' | resolveAsset" alt="">
+              </div>
+            </div>
+            <div class="pass-card_body">
+              <div class="top-side">
+                <div>
+                  <app-traveltype-picker [choices]="['round_trip']" [altColor]="'#5352E4'"></app-traveltype-picker>
+                  <app-duration-picker [plural]="false" [maxDuration]="10"></app-duration-picker>
+                </div>
+                <div>
+                </div>
+              </div>
+              <div class="bottom-side">
+                <div class="start-pass-content">
+                  <div class="start-pass-content-text"></div>
+                  <div></div>
+                  <b>Start Pass</b>
+                  <img width="20" [src]="'./assets/Arrow (White).png' | resolveAsset">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+
+    </div>
+
+    <div class="slide slide_3" *ngIf="slideIndex === 3">
+
+      <ng-container *ngIf="isStaff; else forStudent_3">
+        <div class="for-staff_3">
+          <div class="title">
+            <span>Create hall passes for your students and schedule passes for the future.</span>
+          </div>
+          <div class="content">
+            <div class="left-side">
+              <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Create (Blue).png'">
+                <div class="pass-buttons">
+                  <app-gradient-button
+                    [minWidth]="'121px'"
+                    [minHeight]="'74px'"
+                    [hoverColor]="'#00b476'"
+                    [fontSize]="'15px'"
+                    [cursor]="'auto'"
+                  >Now
+                  </app-gradient-button>
+                  <app-gradient-button
+                    [minWidth]="'121px'"
+                    [minHeight]="'74px'"
+                    [hoverColor]="'#00b476'"
+                    [fontSize]="'15px'"
+                    [cursor]="'auto'"
+                  >Future
+                  </app-gradient-button>
+                </div>
+              </app-display-card>
+
+              <div class="pass-collection pass-collection__transparent" [style.padding-top]="'35px'">
+                <app-pass-collection [mock]="slides['#2']" [title]="'Active Passes'" [forStaff]="isStaff" [icon]="'./assets/Hallway (Blue).png'" [columns]="3"></app-pass-collection>
+              </div>
+              <div class="pass-collection pass-collection__transparent" [style.padding-top]="'35px'">
+                <app-pass-collection [mock]="slides['#3.1']" [title]="'Scheduled Passes'" [forStaff]="isStaff" [icon]="'./assets/Scheduled Pass (Blue).png'" [columns]="3"></app-pass-collection>
+              </div>
+              <div class="pass-collection pass-collection__transparent" [style.padding-top]="'35px'">
+                <app-pass-collection [mock]="slides['#3']" [title]="'Expired Passes'" [forStaff]="isStaff" [icon]="'./assets/Expired Passes (Blue).png'" [columns]="3"></app-pass-collection>
+              </div>
+            </div>
+
+            <div class="right-side">
+              <app-display-card [mock]="2" [title]="'Requests'" [hasDivider]="false" [fontSize]="'24px'" [backgroundColor]="'#FFFFFF'">
+                <div class="pass-collection" [style.padding-top]="'10px'">
+                  <app-pass-collection [mock]="slides['#3.2']" [title]="'Received'" [displayState]="'list'" [forStaff]="isStaff" [icon]="'./assets/Scheduled Pass (Blue).png'" [columns]="2"></app-pass-collection>
+                </div>
+                <div class="pass-collection" [style.padding]="'30px 0'">
+                  <app-pass-collection [mock]="slides['#6.1']" [title]="'Sent'" [icon]="'./assets/Expired Passes (Blue).png'" [columns]="2"></app-pass-collection>
+                </div>
+              </app-display-card>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #forStudent_3>
+        <div class="for-student_3">
+          <div class="title">
+        <span>  Rooms with locks need teacher permission. <br>
+          Send the pass request to a teacher for approval.</span>
+          </div>
+          <div>
+
+            <div class="form">
+              <div class="locs">
+                <app-gradient-button
+                  [minWidth]="'135px'"
+                  [minHeight]="'62px'"
+                  [fontSize]="'14px'"
+                  [disabled]="true"
+                >{{ 'Jefferson' }}
+                </app-gradient-button>
+
+                <img class="arrow" [src]="'./assets/Arrow (Green).png' | resolveAsset">
+
+                <app-gradient-button
+                  [gradient]="'#56617D, #74839B'"
+                  [minWidth]="'135px'"
+                  [minHeight]="'62px'"
+                  [fontSize]="'14px'"
+                  [disabled]="true"
+                > {{ 'To' }}
+                </app-gradient-button>
+              </div>
+
+              <div class="divider" [style.background-image]="'radial-gradient(circle at 73% 71%, #606981, #CBD5E5)'">
+                <img class="back-button" [src]="'./assets/Back Button (Transparent).png' | resolveAsset">
+                <div class="divider-header">
+                  <img class="divider-icon" [src]="'./assets/Search (White).png' | resolveAsset">
+                  <div class="divider-text">{{'To where ?'}}</div>
+                </div>
+              </div>
+              <div>
+                <div class="pinnable-wrapper">
+                  <div *ngFor="let mockPinnable of slides['#4']" class="pinnable">
+                    <app-pinnable [mock]="mockPinnable"></app-pinnable>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </ng-template>
+
+    </div>
+
+    <div class="slide slide_2" *ngIf="slideIndex === 2">
+
+      <ng-container *ngIf="isStaff; else forStudent_2">
+        <div class="for-staff_2">
+          <div class="top-header"><span>Three tabs</span></div>
+          <div class="tab">
+            <div class="tab_heading"><img [src]="'./assets/Arrow (Blue).png'" alt="Arrow (Blue).png"><span>Passes</span></div>
+            <p class="tab_description">Create hall passes for students. <br>
+              See all hall passes that you’ve created and sent.</p>
+          </div>
+          <div class="tab">
+            <div class="tab_heading"><img [src]="'./assets/Hallway (Blue).png'" alt="Hallway (Blue).png"><span>Hall monitor</span></div>
+            <p class="tab_description">See all currently active passes in the school. <br>
+              Report students for not having a pass.</p>
+          </div>
+          <div class="tab">
+            <div class="tab_heading"><img [src]="'./assets/My Room (Blue).png'" alt="My Room (Blue).png"><span>My Room</span></div>
+            <p class="tab_description">See all passes that are created to and from your room(s). <br>
+              View scheduled passes for your room.</p>
+          </div>
+        </div>
+
+      </ng-container>
+
+      <ng-template #forStudent_2>
+        <div class="for-student_2">
+          <div class="title">
+            <span>Create hall passes for now or for the future</span>
+          </div>
+          <!--<div>-->
+          <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Create (Blue).png'">
+            <div class="pass-buttons">
+              <app-gradient-button
+                [minWidth]="'121px'"
+                [minHeight]="'74px'"
+                [hoverColor]="'#00b476'"
+                [fontSize]="'15px'"
+                [cursor]="'auto'"
+              >Now
+              </app-gradient-button>
+              <app-gradient-button
+                [minWidth]="'121px'"
+                [minHeight]="'74px'"
+                [hoverColor]="'#00b476'"
+                [fontSize]="'15px'"
+                [cursor]="'auto'"
+              >Future
+              </app-gradient-button>
+            </div>
+          </app-display-card>
+
+          <div class="pass-collection pass-collection__transparent" [style.padding-top]="'35px'">
+            <app-pass-collection [mock]="slides['#2']" [title]="'Scheduled Passes'" [icon]="'./assets/Scheduled Pass (Blue).png'" [columns]="3"></app-pass-collection>
+          </div>
+          <div class="pass-collection pass-collection__transparent" [style.padding-top]="'35px'">
+            <app-pass-collection [mock]="slides['#3']" [title]="'Expired Passes'" [icon]="'./assets/Expired Passes (Blue).png'" [columns]="3"></app-pass-collection>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+
+    <div class="slide slide_1" *ngIf="slideIndex === 1">
+
+      <div class="logo">
+        <app-smartpass-logo [scale]="1.25"></app-smartpass-logo>
+      </div>
+      <div class="greeting">
+        <div>
+          <span>Welcome {{user.first_name}}!</span>
+        </div>
+        <div>
+          <span>Let's show you around.</span>
+        </div>
+      </div>
+      <div class="tiles-wrapper">
+        <div class="tiles">
+          <div *ngFor="let mockTile of slides['#1']; let idx = index">
+            <div [style.transform]="idx % 2 === 0 ? 'rotate(-3deg)' : 'rotate(3deg)'">
+              <app-pass-tile [mock]="mockTile"></app-pass-tile>
+            </div>
           </div>
         </div>
       </div>
-
-
-
-      <div>
-        <div class="pinnable-wrapper">
-          <!--<mat-grid-list class="grid center" cols="4" rowHeight="75px" gutterSize="10px" [style.width]="'550px'">-->
-            <!--<mat-grid-tile *ngFor="let pinnable of pinnables | async">-->
-          <div *ngFor="let mockPinnable of slides['#4']">
-            <app-pinnable [mock]="mockPinnable"></app-pinnable>
-          </div>
-            <!--</mat-grid-tile>-->
-          <!--</mat-grid-list>-->
-        </div>
-      </div>
     </div>
-  </div>
-
-  <div class="box slide slide__2" *ngIf="slideIndex == 2">
-    <div class="title">
-      <span>Create hall passes for now or for the future</span>
-    </div>
-    <!--<div>-->
-      <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Create (Blue).png'">
-        <div class="pass-buttons">
-          <app-gradient-button
-            [minWidth]="'121px'"
-            [minHeight]="'74px'"
-            [hoverColor]="'#00b476'"
-            [fontSize]="'15px'"
-            [cursor]="'none'"
-            >Now
-          </app-gradient-button>
-          <app-gradient-button
-            [minWidth]="'121px'"
-            [minHeight]="'74px'"
-            [hoverColor]="'#00b476'"
-            [fontSize]="'15px'"
-            [cursor]="'none'"
-            >Future
-          </app-gradient-button>
-        </div>
-      </app-display-card>
-
-      <div class="pass-collection">
-        <app-pass-collection [mock]="slides['#2']" [title]="'Scheduled Passes'" [icon]="'./assets/Scheduled Pass (Blue).png'" [columns]="3"></app-pass-collection>
-      </div>
-      <div class="pass-collection">
-        <app-pass-collection [mock]="slides['#3']" [title]="'Expired Passes'" [icon]="'./assets/Expired Passes (Blue).png'" [columns]="3"></app-pass-collection>
-      </div>
-    <!--</div>-->
     <div class="anti-click"></div>
   </div>
 
-  <div class="box slide slide__1" *ngIf="slideIndex == 1">
-
-    <div class="logo">
-      <app-smartpass-logo [scale]="1.25"></app-smartpass-logo>
-    </div>
-    <div class="greeting">
-      <div>
-        <span>Welcome {{user.first_name}}!</span>
-      </div>
-      <div>
-        <span>Let's show you around.</span>
-      </div>
-    </div>
-    <div class="tiles-wrapper">
-      <div class="tiles">
-        <div *ngFor="let mockTile of slides['#1']; let idx = index">
-          <div [style.transform]="idx % 2 === 0 ? 'rotate(-3deg)' : 'rotate(3deg)'">
-            <app-pass-tile [mock]="mockTile"></app-pass-tile>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <app-gradient-button
     class="end-button"
@@ -136,6 +397,7 @@
     [hoverColor]="'#00B476'"
     [minWidth]="'150px'"
     [minHeight]="'50px'"
+    [cursor]="'pointer'"
     [fontSize]="'18px'"
     (buttonClick)="endIntro()"
     >Get Started</app-gradient-button>

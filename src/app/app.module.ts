@@ -1,7 +1,7 @@
 ﻿import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {MatDialogModule, MatListModule, MatProgressSpinnerModule, MatSliderModule, MatSlideToggleModule} from '@angular/material';
+import {MatDialogModule, MatProgressSpinnerModule, MatSliderModule, MatSlideToggleModule} from '@angular/material';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -36,12 +36,12 @@ import { UserService } from './user.service';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { SelectProfileComponent } from './select-profile/select-profile.component';
 import { ErrorToastComponent } from './error-toast/error-toast.component';
-import { SchoolToggleBarComponent } from './school-toggle-bar/school-toggle-bar.component';;
-import { ItemListComponent } from './item-list/item-list.component';
+import { SchoolToggleBarComponent } from './school-toggle-bar/school-toggle-bar.component';
+import { ItemListComponent } from './item-list/item-list.component';
 import { ItemCellComponent } from './item-cell/item-cell.component'
 
 const appRoutes: Routes = [
-  {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroComponent},
+  {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroComponent, data: { hideSchoolToggleBar: true}},
   {path: '', redirectTo: 'select-profile', pathMatch: 'full'},
   {
     path: '',
@@ -99,10 +99,10 @@ const appRoutes: Routes = [
     PdfComponent,
     SelectProfileComponent,
     ErrorToastComponent,
-    SchoolToggleBarComponent,
-    ItemListComponent
-,
-    ItemCellComponent  ],
+    SchoolToggleBarComponent,
+    ItemListComponent,
+    ItemCellComponent
+  ],
   entryComponents: [
     ConsentMenuComponent,
     OptionsComponent,

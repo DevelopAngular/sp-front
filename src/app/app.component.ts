@@ -22,6 +22,7 @@ export class AppComponent implements OnInit {
 
   public isAuthenticated = false;
   public hideScroll: boolean = false;
+  public hideSchoolToggleBar: boolean = false;
   public showUI: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public schools: School[];
   // public schoolIdSubject: BehaviorSubject<School>;
@@ -89,6 +90,11 @@ export class AppComponent implements OnInit {
         // console.log(data);
         if (data.signOut) {
           this.schools = [];
+        }
+        if (data.hideSchoolToggleBar) {
+          this.hideSchoolToggleBar = true;
+        } else {
+          this.hideSchoolToggleBar = false;
         }
         this.hideScroll = data.hideScroll;
       });

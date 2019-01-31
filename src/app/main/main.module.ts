@@ -36,7 +36,6 @@ import { SharedModule } from '../shared/shared.module';
 import { StudentPickerComponent } from '../student-picker/student-picker.component';
 import { MainRoutingModule } from './main-routing.module';
 import { NavbarDataService } from './navbar-data.service';
-import { DateTimeComponent } from '../hallpass-form/locations-group-container/date-time/date-time.component';
 import { FromWhereComponent } from '../hallpass-form/locations-group-container/from-where/from-where.component';
 import { ToWhereComponent } from '../hallpass-form/locations-group-container/to-where/to-where.component';
 import { LocationsGroupContainerComponent } from '../hallpass-form/locations-group-container/locations-group-container.component';
@@ -92,7 +91,6 @@ import {StudentFooterComponent} from '../hallpass-form/locations-group-container
     LocationPickerComponent,
     ContainerCardComponent,
     MainPageComponent,
-    DateTimeComponent,
     FromWhereComponent,
     ToWhereComponent,
     ToCategoryComponent,

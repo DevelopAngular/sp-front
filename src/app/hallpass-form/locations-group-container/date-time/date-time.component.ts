@@ -9,6 +9,7 @@ import { Navigation } from '../../hallpass-form.component';
 })
 export class DateTimeComponent implements OnInit {
 
+  @Input() mock = null;
   @Input() isStaff: boolean;
 
   @Input() formState: Navigation;
@@ -23,10 +24,16 @@ export class DateTimeComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    if (this.formState.data.date) {
-      this.requestTime = new Date(this.formState.data.date.date);
+    if (this.mock) {
+      this.requestTime = new Date();
+      this.declinable = new FormControl(true);
+    } else {
+      if (this.formState.data.date) {
+        this.requestTime = new Date(this.formState.data.date.date);
+      }
+      this.declinable = new FormControl(false);
     }
-    this.declinable = new FormControl(false);
+
   }
 
   next() {
