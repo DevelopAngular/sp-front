@@ -42,6 +42,7 @@ import {DragulaModule} from 'ng2-dragula';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {AppInputComponent} from '../app-input/app-input.component';
 import {InputTextareaModule} from 'primeng/inputtextarea';
+import {DateTimeComponent} from '../hallpass-form/locations-group-container/date-time/date-time.component';
 
 
 
@@ -80,6 +81,7 @@ import {InputTextareaModule} from 'primeng/inputtextarea';
     NavButtonComponent,
     DisplayCardComponent,
     DateTimePickerComponent,
+    DateTimeComponent,
     PinnableComponent,
       TraveltypePickerComponent,
       StudentSearchComponent,
@@ -133,7 +135,8 @@ import {InputTextareaModule} from 'primeng/inputtextarea';
     RoundInputComponent,
     AppInputComponent,
     PassCardComponent,
-    InputTextareaModule
+    InputTextareaModule,
+    DateTimeComponent,
 
   ],
 })

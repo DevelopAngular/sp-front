@@ -42,7 +42,7 @@
       <div class="title">
         {{mock.header}}
       </div>
-      <img *ngIf="mock.type === 'category'" class="category-icon" [src]="'./assets/Arrow (White).png' | resolveAsset" alt="ARROW">
+      <img *ngIf="mock.arrow === true" class="category-icon" [src]="'./assets/Arrow (White).png' | resolveAsset" alt="ARROW">
     </div>
     <div *ngIf="mock.restricted" class="overlay-container">
       <div class="overlay"></div>

@@ -85,9 +85,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
     if (this.mock) {
-
       // this.pass = null;
       // this.fromPast = false;
       // this.forFuture = true;
