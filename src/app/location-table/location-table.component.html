@@ -6,6 +6,7 @@
     </div>
     <div *ngIf="favoritesLoaded" class="choices" [style.height]="height" [style.width]="horizontalTable ? '180px' : '190px'" (scroll)="leftScroll($event)">
       <app-location-cell class="choice" *ngFor="let choice of starredChoices"
+        dragula="locations" [dragulaModel]="starredChoices" (dragulaModelChange)="updateOrderLocation($event)"
         (onSelect)="choiceSelected($event)" (onStar)="star($event)"
         [value]="choice" [type]="type" [starred]="true" [showStar]="showStars">
       </app-location-cell>

@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, Directive, HostListener
 import { HttpService } from '../http-service';
 import { Location } from '../models/Location';
 import {finalize} from 'rxjs/operators';
+import {DragulaService} from 'ng2-dragula';
 
 export interface Paged<T> {
   results: T[];
@@ -101,7 +102,8 @@ export class LocationTableComponent implements OnInit {
   search: string = '';
   nextChoices: string = '';
   favoritesLoaded: boolean;
-  constructor(private http: HttpService) {
+
+  constructor(private http: HttpService, private dragulaService: DragulaService) {
   }
 
   ngOnInit() {
@@ -126,6 +128,11 @@ export class LocationTableComponent implements OnInit {
         this.favoritesLoaded = true;
       });
     }
+    this.dragulaService.createGroup('locations', {});
+  }
+
+  updateOrderLocation(locations) {
+    console.log(locations);
   }
 
   onSearch(search: string) {
