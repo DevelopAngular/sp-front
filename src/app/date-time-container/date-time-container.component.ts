@@ -18,22 +18,29 @@ export class DateTimeContainerComponent implements OnInit {
   }
 
   nextStep(evt) {
+    this.FORM_STATE.data.date = evt;
 
     if (evt === 'exit') {
       this.nextStepEvent.emit({ action: 'exit', data: null });
       return;
     }
 
-      // this.FORM_STATE.step = this.FORM_STATE.previousStep > 3 ? this.FORM_STATE.previousStep : evt.step ;
-      if (this.FORM_STATE.previousStep > 2) {
-          this.FORM_STATE.step = this.FORM_STATE.previousStep;
-      } else {
-          this.FORM_STATE.step = this.FORM_STATE.forInput ? (this.FORM_STATE.formMode.role === 1 ? 2 : 3) : 0;
-      }
+    if (this.FORM_STATE.previousStep === 3) {
+      this.FORM_STATE.step = this.FORM_STATE.previousStep;
+      this.FORM_STATE.state = this.FORM_STATE.previousState;
+      this.FORM_STATE.previousStep = 1;
+      return this.nextStepEvent.emit(this.FORM_STATE);
+    }
+
+
+    if (this.FORM_STATE.previousStep > 2) {
+        this.FORM_STATE.step = this.FORM_STATE.previousStep;
+    } else {
+        this.FORM_STATE.step = this.FORM_STATE.forInput ? (this.FORM_STATE.formMode.role === 1 ? 2 : 3) : 0;
+    }
 
     this.FORM_STATE.previousStep = 1;
     this.FORM_STATE.state = 1 ;
-    this.FORM_STATE.data.date = evt;
 
     console.log('Date FORM_STATE =====>', this.FORM_STATE);
 

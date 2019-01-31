@@ -27,7 +27,7 @@ export class ToWhereComponent implements OnInit {
 
   @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(private http: HttpService, private locService: LocationService) { }
+  constructor() { }
 
   ngOnInit() {
     this.location = this.formState.data.direction ? this.formState.data.direction.from : null;
@@ -38,23 +38,24 @@ export class ToWhereComponent implements OnInit {
   }
 
   back() {
-    //   if (!!this.date &&
-    //       !!this.studentText &&
-    //       (this.formState.previousStep === 2 || this.formState.previousStep === 4)
-    //   ) {
-    //       this.formState.step = 2;
-    //       this.formState.state = 1;
-    //       this.formState.previousStep = 3;
-    //   } else {
-    //     this.formState.state -= 1;
-    //   }
+    if (!!this.date &&
+        !!this.studentText &&
+        (this.formState.previousStep === 2 || this.formState.previousStep === 4)
+    ) {
+        this.formState.previousState = this.formState.state;
+        this.formState.step = 2;
+        this.formState.state = 1;
+        this.formState.previousStep = 3;
+    } else {
+      this.formState.previousState = this.formState.state;
+      if (this.formState.formMode.formFactor === 3) {
+        this.formState.step = 2;
+      } else {
+        this.formState.state -= 1;
+      }
+    }
     //
-    // this.backButton.emit(this.formState);
-      this.backButton.emit({action: 'toWhere'});
-  }
-
-  changeLocation(event) {
-
+    this.backButton.emit(this.formState);
   }
 
 }

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { LocationService } from '../location.service';
-import {Navigation} from '../../hallpass-form.component';
-import {Pinnable} from '../../../models/Pinnable';
+
+import { Navigation } from '../../hallpass-form.component';
+import { Pinnable } from '../../../models/Pinnable';
 
 @Component({
   selector: 'app-to-category',
@@ -22,11 +22,11 @@ export class ToCategoryComponent implements OnInit {
 
   @Output() locFromCategory: EventEmitter<any> = new EventEmitter<any>();
 
-  @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
+  @Output() backButton: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
   pinnable: Pinnable;
 
-  constructor(private locService: LocationService) { }
+  constructor() { }
 
   get headerGradient() {
      const colors = this.formState.data.direction.pinnable.gradient_color;
@@ -36,9 +36,6 @@ export class ToCategoryComponent implements OnInit {
   ngOnInit() {
     this.fromLocation = this.formState.data.direction.from;
     this.pinnable = this.formState.data.direction.pinnable;
-    if (!this.pinnable) {
-        console.log('LOG =====>>>>', this.formState);
-    }
   }
 
   locationChosen(location) {
@@ -46,9 +43,9 @@ export class ToCategoryComponent implements OnInit {
   }
 
   back() {
-    // this.locService.back();
-      console.log('Categoty', this.formState);
-      this.backButton.emit({action: 'categoty'});
+    this.formState.previousState = this.formState.state;
+    this.formState.state -= 1;
+    this.backButton.emit(this.formState);
   }
 
 }

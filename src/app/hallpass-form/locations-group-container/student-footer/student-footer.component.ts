@@ -21,7 +21,7 @@ export class StudentFooterComponent implements OnInit {
   fromLocation: Location;
   toLocation: Location;
 
-  constructor(private locService: LocationService) { }
+  constructor() { }
 
   get fromLocationText() {
     return this.fromLocation ? this.fromLocation.title : 'Origin';
@@ -50,6 +50,7 @@ export class StudentFooterComponent implements OnInit {
     if (this.state === 'from') {
       return false;
     }
+    this.formState.previousState = this.formState.state;
     this.formState.state = 1;
     this.changeLocation.emit(this.formState);
   }
@@ -58,13 +59,16 @@ export class StudentFooterComponent implements OnInit {
     if (this.state === 'to' || this.state === 'from') {
       return false;
     }
+    this.formState.previousState = this.formState.state;
     this.formState.state = 2;
     this.changeLocation.emit(this.formState);
   }
 
   goToDate() {
+    this.formState.previousState = this.formState.state;
     this.formState.step = 1;
     this.formState.state = 1;
+    this.formState.previousStep = 3;
     this.changeLocation.emit(this.formState);
   }
 

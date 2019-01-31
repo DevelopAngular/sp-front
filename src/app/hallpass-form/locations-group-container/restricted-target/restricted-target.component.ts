@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Pinnable} from '../../../models/Pinnable';
-import {LocationService} from '../location.service';
-import {Navigation} from '../../hallpass-form.component';
+
+import { Pinnable } from '../../../models/Pinnable';
+import { Navigation } from '../../hallpass-form.component';
 
 @Component({
   selector: 'app-restricted-target',
@@ -24,7 +24,7 @@ export class RestrictedTargetComponent implements OnInit {
 
   @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(private locService: LocationService) { }
+  constructor() { }
 
   get headerGradient() {
     const colors = this.formState.data.direction.pinnable.gradient_color;
@@ -37,8 +37,14 @@ export class RestrictedTargetComponent implements OnInit {
   }
 
   back() {
-    // this.locService.back();
-    this.backButton.emit({});
+   const restricted = ((this.toLocation.restricted && !this.date) || (this.toLocation.scheduling_restricted && !!this.date));
+    if (restricted && this.pinnable.location) {
+      this.formState.state = 2;
+    } else {
+      this.formState.state -= 1;
+    }
+    this.formState.previousState = this.formState.state;
+    this.backButton.emit(this.formState);
   }
 
   updateTarget(target) {

@@ -29,7 +29,7 @@ export class RestrictedMessageComponent implements OnInit {
 
   message: FormControl;
 
-  constructor(private locService: LocationService) { }
+  constructor() { }
 
   get headerGradient() {
     // const colors = this.formState.data.direction.pinnable.gradient_color;
@@ -45,8 +45,13 @@ export class RestrictedMessageComponent implements OnInit {
   }
 
   back() {
-    this.backButton.emit({});
-    // this.locService.back();
+    if (!this.formState.forInput) {
+      this.formState.step = 0;
+    } else {
+      this.formState.previousState = this.formState.state;
+      this.formState.state -= 1;
+    }
+    this.backButton.emit(this.formState);
   }
 
   sendRequest() {

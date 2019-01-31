@@ -22,6 +22,6 @@
   </div>
 
   <app-student-footer *ngIf="!isStaff" [formState]="formState" [state]="'category'" [date]="date"></app-student-footer>
-  <app-teacher-footer [fromLocation]="fromLocation" *ngIf="isStaff" [state]="'category'" [date]="date" [studentText]="studentText"></app-teacher-footer>
+  <app-teacher-footer [fromLocation]="fromLocation" [formState]="formState" *ngIf="isStaff" [state]="'category'" [date]="date" [studentText]="studentText"></app-teacher-footer>
 
 </div>

@@ -54,10 +54,6 @@ export class LocationsGroupContainerComponent implements OnInit {
     }
 
   ngOnInit() {
-    if (!!this.studentText && !!this.showDate && this.FORM_STATE.previousStep === 2) {
-      this.FORM_STATE.state = 2;
-    }
-
     this.data.toLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.to ? this.FORM_STATE.data.direction.to : null;
     this.pinnables = this.locationService.getPinnable();
     this.user$ = this.dataService.currentUser;
@@ -81,7 +77,11 @@ export class LocationsGroupContainerComponent implements OnInit {
       to: this.data.toLocation,
       pinnable: this.pinnable
     };
+    if (this.FORM_STATE.state < this.FORM_STATE.previousState) {
+        this.FORM_STATE.state = this.FORM_STATE.previousState;
+    } else {
       this.FORM_STATE.state = States.toWhere;
+    }
   }
 
   toWhere(pinnable) {
@@ -99,6 +99,7 @@ export class LocationsGroupContainerComponent implements OnInit {
         this.FORM_STATE.data.direction.to = pinnable.location;
         const restricted = ((this.pinnable.location.restricted && !this.showDate) || (this.pinnable.location.scheduling_restricted && !!this.showDate));
         if (!this.isStaff && restricted && pinnable.location) {
+            this.FORM_STATE.previousState = this.FORM_STATE.state;
             return this.FORM_STATE.state = States.restrictedTarget;
         } else {
            return this.postComposetData();
@@ -111,6 +112,7 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.data.toLocation = location;
     this.FORM_STATE.data.direction.to = location;
       if (location.restricted && !this.isStaff) {
+          this.FORM_STATE.previousState = this.FORM_STATE.state;
           this.FORM_STATE.state = States.restrictedTarget;
     } else {
        this.postComposetData();
@@ -120,7 +122,7 @@ export class LocationsGroupContainerComponent implements OnInit {
   requestTarget(teacher) {
     this.data.requestTarget = teacher;
     this.FORM_STATE.data.requestTarget = teacher;
-      this.FORM_STATE.state = States.message;
+    this.FORM_STATE.state = States.message;
   }
 
   resultMessage(message, denyMessage: boolean = false) {
@@ -146,34 +148,7 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   back(event) {
-      if (event.action === 'exit') {
-          if (!!this.showDate) {
-              this.FORM_STATE.step = 1;
-              this.FORM_STATE.state = 1;
-              this.FORM_STATE.previousStep = 3;
-              this.nextStepEvent.emit(this.FORM_STATE);
-              return;
-          }
-          if (!!this.studentText && this.FORM_STATE.state === 1) {
-              this.FORM_STATE.step = 2;
-              this.FORM_STATE.state = 1;
-              this.FORM_STATE.previousStep = 3;
-              this.nextStepEvent.emit(this.FORM_STATE);
-              return;
-          }
-          this.nextStepEvent.emit({action: 'exit', data: null });
-          return;
-      }
-      if (!!this.showDate &&
-          !!this.studentText &&
-          (this.FORM_STATE.previousStep === 2 || this.FORM_STATE.previousStep === 4) &&
-          event.action === 'toWhere') {
-            this.FORM_STATE.step = 2;
-            this.FORM_STATE.state = 1;
-            this.FORM_STATE.previousStep = 3;
-            this.nextStepEvent.emit(this.FORM_STATE);
-            return;
-      }
-      this.FORM_STATE.state -= 1;
+    this.FORM_STATE = event;
+    this.nextStepEvent.emit(this.FORM_STATE);
   }
 }

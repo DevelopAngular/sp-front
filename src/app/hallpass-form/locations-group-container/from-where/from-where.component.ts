@@ -20,7 +20,7 @@ export class FromWhereComponent implements OnInit {
   @Output() selectedLocation: EventEmitter<any> = new EventEmitter<any>();
   @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(private locService: LocationService) { }
+  constructor() { }
 
   ngOnInit() {
   }
@@ -30,8 +30,20 @@ export class FromWhereComponent implements OnInit {
   }
 
   back() {
-    // this.locService.back();
-    this.backButton.emit({ action: 'exit' });
+      if (!!this.date) {
+          this.formState.previousState = 1;
+          this.formState.step = 1;
+          this.formState.state = 1;
+          this.formState.previousStep = 3;
+      } else if (!!this.studentText && this.formState.state === 1) {
+          this.formState.previousState = 1;
+          this.formState.step = 2;
+          this.formState.state = 1;
+          this.formState.previousStep = 3;
+      } else {
+        this.formState.step = 0;
+      }
+      this.backButton.emit(this.formState);
   }
 
 }

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {LocationService} from '../location.service';
 import {Navigation} from '../../hallpass-form.component';
 
@@ -22,6 +22,8 @@ export class TeacherFooterComponent implements OnInit {
   @Input() state: string;
 
   @Input() formState: Navigation;
+
+  @Output() changeLocation: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
   showFullFooter: boolean = false;
 
@@ -50,22 +52,33 @@ export class TeacherFooterComponent implements OnInit {
      if (this.state === 'from' || this.date) {
         return false;
      }
-    this.locService.nextStep('from');
+      this.formState.previousState = this.formState.state;
+      this.formState.state = 1;
+      this.changeLocation.emit(this.formState);
   }
 
   goToToWhere() {
      if (this.state === 'to' || this.state === 'from') {
        return false;
      }
-    this.locService.nextStep('toWhere');
+     this.formState.previousState = this.formState.state;
+     this.formState.state = 2;
+     this.changeLocation.emit(this.formState);
   }
 
   goToStudents() {
-
+    this.formState.previousState = this.formState.state;
+    this.formState.step = 2;
+    this.formState.previousStep = 3;
+    this.changeLocation.emit(this.formState);
   }
 
   goToDate() {
-    this.locService.changeLocation$.next('date');
+    this.formState.previousState = this.formState.state;
+    this.formState.step = 1;
+    this.formState.state = 1;
+    this.formState.previousStep = 3;
+    this.changeLocation.emit(this.formState);
   }
 
 }

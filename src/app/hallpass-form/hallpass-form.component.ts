@@ -29,6 +29,7 @@ export interface Navigation {
   step: number;
   previousStep?: number;
   state?: any;
+  previousState?: number;
   fromState?: number;
   formMode?: FormMode;
   data?: {
@@ -149,6 +150,7 @@ export class HallpassFormComponent implements OnInit {
   }
 
   onNextStep(evt) {
+    // debugger;
     if (evt.step === 0 || evt.action === 'exit') {
       console.log('EXIT ===>', evt);
       this.dialogRef.close(evt);

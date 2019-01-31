@@ -55,17 +55,23 @@ export class GroupsContainerComponent implements OnInit {
   }
 
   onStateChange(evt) {
-
     if ( evt === 'exit' ) {
       this.nextStepEvent.emit({ action: 'exit', data: null });
       return;
+    }
+
+    if (this.FORM_STATE.previousStep === 3) {
+        this.FORM_STATE.step = this.FORM_STATE.previousStep;
+        this.FORM_STATE.state = this.FORM_STATE.previousState;
+        this.FORM_STATE.previousStep = 2;
+        return this.nextStepEvent.emit(this.FORM_STATE);
     }
 
     if ( evt.step === 3 || evt.step === 1 ) {
       // this.FORM_STATE.step = evt.step;
       this.FORM_STATE.step = this.FORM_STATE.previousStep && this.FORM_STATE.previousStep > 3 ? this.FORM_STATE.previousStep : evt.step ;
       this.FORM_STATE.previousStep = 2;
-      this.FORM_STATE.state = 1;
+      this.FORM_STATE.state = this.FORM_STATE.formMode.formFactor === 3 ? 2 : 1;
       this.FORM_STATE.data.selectedGroup = evt.data.selectedGroup;
       this.FORM_STATE.data.selectedStudents = evt.data.selectedStudents;
       this.nextStepEvent.emit(this.FORM_STATE);
@@ -74,7 +80,7 @@ export class GroupsContainerComponent implements OnInit {
 
     switch ( evt.state ) {
       case (3): {
-        this.selectedGroup = evt.data.selectedGroup
+        this.selectedGroup = evt.data.selectedGroup;
         break;
       }
       case (2): {

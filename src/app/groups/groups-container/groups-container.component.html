@@ -3,6 +3,7 @@
     <app-groups-step1
       [selectedGroup]="FORM_STATE.data.selectedGroup"
       [selectedStudents]="FORM_STATE.data.selectedStudents ? FORM_STATE.data.selectedStudents : []"
+      [formState]="FORM_STATE"
       [groups]="groups"
       [hasBackArrow]="FORM_STATE.formMode.formFactor === 2 || FORM_STATE.formMode.formFactor === 3"
       (stateChangeEvent)="onStateChange($event)">

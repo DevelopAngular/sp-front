@@ -13,6 +13,7 @@ export class GroupsStep1Component implements OnInit {
   @Input() selectedGroup: StudentList = null;
   @Input() selectedStudents: User[] = [];
   @Input() groups: StudentList[] = [];
+  @Input() formState: Navigation;
   @Input() hasBackArrow: boolean = false;
 
   @Output() stateChangeEvent: EventEmitter<Navigation | string> = new EventEmitter<Navigation | string>();
@@ -105,6 +106,7 @@ export class GroupsStep1Component implements OnInit {
       this.selectedStudents = [];
       return;
     } else if (this.hasBackArrow) {
+      this.formState.previousStep = 2;
       this.stateChangeEvent.emit({
         step: 1,
         // state: 1,
@@ -115,7 +117,6 @@ export class GroupsStep1Component implements OnInit {
         }
       });
     } else {
-
       this.stateChangeEvent.emit('exit');
       // this.stateChangeEvent.emit({
       //   step: 0,
