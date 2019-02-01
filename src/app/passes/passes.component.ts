@@ -323,7 +323,7 @@ export class PassesComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
       console.log('CLOSED =====> ');
-      this.locService.clearHistory();
+      // this.locService.clearHistory();
     });
   }
 }
