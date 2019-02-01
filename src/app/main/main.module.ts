@@ -42,13 +42,13 @@ import { LocationsGroupContainerComponent } from '../hallpass-form/locations-gro
 import { ToCategoryComponent } from '../hallpass-form/locations-group-container/to-category/to-category.component';
 import { RestrictedTargetComponent } from '../hallpass-form/locations-group-container/restricted-target/restricted-target.component';
 import { RestrictedMessageComponent } from '../hallpass-form/locations-group-container/restricted-message/restricted-message.component';
-import {GroupsContainerComponent} from '../groups/groups-container/groups-container.component';
-import {GroupsStep1Component} from '../groups/groups-step1/groups-step1.component';
-import {GroupsStep2Component} from '../groups/groups-step2/groups-step2.component';
-import {GroupsStep3Component} from '../groups/groups-step3/groups-step3.component';
+import {GroupsContainerComponent} from '../hallpass-form/groups/groups-container/groups-container.component';
+import {GroupsStep1Component} from '../hallpass-form/groups/groups-step1/groups-step1.component';
+import {GroupsStep2Component} from '../hallpass-form/groups/groups-step2/groups-step2.component';
+import {GroupsStep3Component} from '../hallpass-form/groups/groups-step3/groups-step3.component';
 import {TeacherFooterComponent} from '../hallpass-form/locations-group-container/teacher-footer/teacher-footer.component';
-import { DateTimeContainerComponent } from '../date-time-container/date-time-container.component';
-import { FormFactorContainerComponent } from '../form-factor-container/form-factor-container.component';
+import { DateTimeContainerComponent } from '../hallpass-form/date-time-container/date-time-container.component';
+import { FormFactorContainerComponent } from '../hallpass-form/form-factor-container/form-factor-container.component';
 import {StudentFooterComponent} from '../hallpass-form/locations-group-container/student-footer/student-footer.component';
 
 @NgModule({

@@ -128,7 +128,7 @@ export class LocationTableComponent implements OnInit {
         this.favoritesLoaded = true;
       });
     }
-    this.dragulaService.createGroup('locations', {});
+    // this.dragulaService.createGroup('locations', {});
   }
 
   updateOrderLocation(locations) {

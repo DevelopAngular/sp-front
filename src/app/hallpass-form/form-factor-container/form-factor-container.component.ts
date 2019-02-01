@@ -1,9 +1,10 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormFactor, Navigation} from '../hallpass-form/hallpass-form.component';
-import {Request} from '../models/Request';
-import {HallPass} from '../models/HallPass';
-import {Invitation} from '../models/Invitation';
-import {DataService} from '../data-service';
+
+import { FormFactor, Navigation } from '../hallpass-form.component';
+import { HallPass } from '../../models/HallPass';
+import { Request } from '../../models/Request';
+import { Invitation } from '../../models/Invitation';
+import { DataService } from '../../data-service';
 
 
 
@@ -32,10 +33,8 @@ export class FormFactorContainerComponent implements OnInit {
 
     this.dataService.currentUser
       .subscribe((_user) => {
-
         switch (this.FORM_STATE.formMode.formFactor) {
           case (this.states.HallPass): {
-
             this.template = new HallPass(
               'template',
               _user,

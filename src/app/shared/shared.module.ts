@@ -42,7 +42,7 @@ import {DragulaModule} from 'ng2-dragula';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {AppInputComponent} from '../app-input/app-input.component';
 import {InputTextareaModule} from 'primeng/inputtextarea';
-import {DateTimeComponent} from '../hallpass-form/locations-group-container/date-time/date-time.component';
+import {DateTimeComponent} from '../hallpass-form/date-time-container/date-time/date-time.component';
 
 
 

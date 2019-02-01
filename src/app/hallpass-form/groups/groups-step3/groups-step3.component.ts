@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {StudentList} from '../../models/StudentList';
-import {HttpService} from '../../http-service';
+import {StudentList} from '../../../models/StudentList';
+import {HttpService} from '../../../http-service';
 import {FormGroup} from '@angular/forms';
-import {Navigation} from '../../hallpass-form/hallpass-form.component';
+import {Navigation} from '../../hallpass-form.component';
 import {skip} from 'rxjs/internal/operators';
 
 @Component({

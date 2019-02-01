@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {User} from '../../models/User';
-import {StudentList} from '../../models/StudentList';
-import {Navigation} from '../../hallpass-form/hallpass-form.component';
+import {User} from '../../../models/User';
+import {StudentList} from '../../../models/StudentList';
+import {Navigation} from '../../hallpass-form.component';
 
 @Component({
   selector: 'app-groups-step1',

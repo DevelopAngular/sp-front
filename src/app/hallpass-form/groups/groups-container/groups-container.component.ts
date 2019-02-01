@@ -1,10 +1,10 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {User} from '../../models/User';
+import {User} from '../../../models/User';
 import {FormControl, FormGroup} from '@angular/forms';
-import {StudentList} from '../../models/StudentList';
-import {HttpService} from '../../http-service';
+import {StudentList} from '../../../models/StudentList';
+import {HttpService} from '../../../http-service';
 import {BehaviorSubject} from 'rxjs';
-import {Navigation} from '../../hallpass-form/hallpass-form.component';
+import {Navigation} from '../../hallpass-form.component';
 
 export enum States {
   SelectStudents = 1,

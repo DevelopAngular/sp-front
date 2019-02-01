@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {User} from '../../models/User';
+import {User} from '../../../models/User';
 import {FormControl, FormGroup} from '@angular/forms';
-import {HttpService} from '../../http-service';
-import {Navigation} from '../../hallpass-form/hallpass-form.component';
+import {HttpService} from '../../../http-service';
+import {Navigation} from '../../hallpass-form.component';
 
 @Component({
   selector: 'app-groups-step2',

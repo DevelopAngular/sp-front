@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Navigation} from '../hallpass-form/hallpass-form.component';
+import {Navigation} from '../hallpass-form.component';
 
 @Component({
   selector: 'app-date-time-container',
