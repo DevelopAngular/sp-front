@@ -1,5 +1,4 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {LocationService} from '../location.service';
 import {Navigation} from '../../main-hall-pass-form.component';
 
 @Component({

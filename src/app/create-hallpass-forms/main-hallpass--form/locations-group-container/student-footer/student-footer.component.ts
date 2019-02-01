@@ -1,7 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { Navigation } from '../../main-hall-pass-form.component';
 import { Location } from '../../../../models/Location';
-import {LocationService} from '../location.service';
 
 @Component({
   selector: 'app-student-footer',

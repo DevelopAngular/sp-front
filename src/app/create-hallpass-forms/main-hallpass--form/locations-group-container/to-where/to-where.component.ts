@@ -1,7 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { Pinnable } from '../../../../models/Pinnable';
-import { HttpService } from '../../../../http-service';
-import { LocationService } from '../location.service';
 import {Navigation} from '../../main-hall-pass-form.component';
 
 @Component({

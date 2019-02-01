@@ -21,7 +21,6 @@ import { User } from '../models/User';
 import { PassCardComponent } from '../pass-card/pass-card.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
 import {delay, skip} from 'rxjs/internal/operators';
-import {LocationService} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/location.service';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 
 function isUserStaff(user: User): boolean {
@@ -190,7 +189,6 @@ export class PassesComponent implements OnInit {
       private _zone: NgZone,
       private loadingService: LoadingService,
       private liveDataService: LiveDataService,
-      private locService: LocationService
   ) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
@@ -325,5 +323,46 @@ export class PassesComponent implements OnInit {
       console.log('CLOSED =====> ');
       // this.locService.clearHistory();
     });
+  }
+
+  // showForm(forLater: boolean): void {
+  //     const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
+  //         width: '750px',
+  //         panelClass: 'form-dialog-container',
+  //         backdropClass: 'custom-backdrop',
+  //         data: {'forLater': forLater, 'forStaff': this.isStaff}
+  //     });
+  //
+  //     dialogRef.afterClosed()
+  //         .pipe(filter(res => !!res)).subscribe((result: Object) => {
+  //         this.openInputCard(result['templatePass'],
+  //             result['forLater'],
+  //             result['forStaff'],
+  //             result['selectedStudents'],
+  //             (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent)),
+  //             result['fromHistory'],
+  //             result['fromHistoryIndex']
+  //         );
+  //     });
+  // }
+
+  openInputCard(templatePass, forLater, forStaff, selectedStudents, component, fromHistory, fromHistoryIndex) {
+      const data = {
+          'pass': templatePass,
+          'fromPast': false,
+          'fromHistory': fromHistory,
+          'fromHistoryIndex': fromHistoryIndex,
+          'forFuture': forLater,
+          'forInput': true,
+          'forStaff': forStaff,
+          'selectedStudents': selectedStudents,
+      };
+
+      this.dialog.open(component, {
+          panelClass: (this.isStaff ? 'teacher-' : 'student-') + 'pass-card-dialog-container',
+          backdropClass: 'custom-backdrop',
+          disableClose: true,
+          data: data
+      });
   }
 }

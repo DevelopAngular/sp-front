@@ -42,10 +42,10 @@ import { LocationsGroupContainerComponent } from '../create-hallpass-forms/main-
 import { ToCategoryComponent } from '../create-hallpass-forms/main-hallpass--form/locations-group-container/to-category/to-category.component';
 import { RestrictedTargetComponent } from '../create-hallpass-forms/main-hallpass--form/locations-group-container/restricted-target/restricted-target.component';
 import { RestrictedMessageComponent } from '../create-hallpass-forms/main-hallpass--form/locations-group-container/restricted-message/restricted-message.component';
-import {GroupsContainerComponent} from '../create-hallpass-forms/main-hallpass--form/groups/groups-container/groups-container.component';
-import {GroupsStep1Component} from '../create-hallpass-forms/main-hallpass--form/groups/groups-step1/groups-step1.component';
-import {GroupsStep2Component} from '../create-hallpass-forms/main-hallpass--form/groups/groups-step2/groups-step2.component';
-import {GroupsStep3Component} from '../create-hallpass-forms/main-hallpass--form/groups/groups-step3/groups-step3.component';
+import {GroupsContainerComponent} from '../create-hallpass-forms/main-hallpass--form/student-groups/groups-container/groups-container.component';
+import {GroupsStep1Component} from '../create-hallpass-forms/main-hallpass--form/student-groups/groups-step1/groups-step1.component';
+import {GroupsStep2Component} from '../create-hallpass-forms/main-hallpass--form/student-groups/groups-step2/groups-step2.component';
+import {GroupsStep3Component} from '../create-hallpass-forms/main-hallpass--form/student-groups/groups-step3/groups-step3.component';
 import { TeacherFooterComponent } from '../create-hallpass-forms/main-hallpass--form/locations-group-container/teacher-footer/teacher-footer.component';
 import { DateTimeContainerComponent } from '../create-hallpass-forms/main-hallpass--form/date-time-container/date-time-container.component';
 import { FormFactorContainerComponent } from '../create-hallpass-forms/main-hallpass--form/form-factor-container/form-factor-container.component';

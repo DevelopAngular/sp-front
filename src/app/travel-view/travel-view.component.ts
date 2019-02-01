@@ -3,9 +3,8 @@ import { HallPass } from '../models/HallPass';
 import { Invitation } from '../models/Invitation';
 import { Request } from '../models/Request';
 import { MatDialog } from '@angular/material';
-import {DataService} from '../data-service';
-import {LocationService} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/location.service';
-import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
+import { DataService } from '../data-service';
+import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 
 @Component({
   selector: 'app-travel-view',
@@ -18,13 +17,13 @@ export class TravelViewComponent implements OnInit {
   @Input() pass: HallPass | Invitation | Request;
   @Input() shrink: boolean = false;
   @Input() forStaff: boolean = false;
-  
+
   @Output() locationSelected: EventEmitter<any> = new EventEmitter();
   isActivePass$ = this.dataService.isActivePass$.value;
   type: string;
   locationChangeOpen: boolean = false;
 
-  constructor(public dialog: MatDialog, private dataService: DataService, private locService: LocationService) { }
+  constructor(public dialog: MatDialog, private dataService: DataService) { }
 
   ngOnInit() {
     this.type = (this.pass instanceof HallPass) ? 'hallpass' :
@@ -35,7 +34,6 @@ export class TravelViewComponent implements OnInit {
   changeLocation(){
     if(!this.locationChangeOpen){
       console.log('Opening from location in travel view');
-      this.locService.nextStep('from');
       const locationDialog = this.dialog.open(CreateHallpassFormsComponent, {
         // width: '750px',
         panelClass: 'form-dialog-container',

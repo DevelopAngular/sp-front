@@ -1,5 +1,4 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {LocationService} from '../location.service';
 import {Navigation} from '../../main-hall-pass-form.component';
 
 @Component({
@@ -27,7 +26,7 @@ export class TeacherFooterComponent implements OnInit {
 
   showFullFooter: boolean = false;
 
-  constructor(private locService: LocationService) { }
+  constructor() { }
 
   get fromLocationText() {
     return this.fromLocation ? this.fromLocation.title : 'Origin';

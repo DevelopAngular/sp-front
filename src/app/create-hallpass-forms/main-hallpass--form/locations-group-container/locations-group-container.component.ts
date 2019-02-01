@@ -2,10 +2,10 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { Observable } from 'rxjs';
 import { User } from '../../../models/User';
 import { DataService } from '../../../data-service';
-import { LocationService } from './location.service';
 import { Pinnable } from '../../../models/Pinnable';
 import { Util } from '../../../../Util';
 import {FormFactor, Navigation, Role} from '../main-hall-pass-form.component';
+import {CreateFormService} from '../../create-form.service';
 
 export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, message = 5 }
 
@@ -27,7 +27,7 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   data: any = {};
 
-  constructor(private dataService: DataService, private locationService: LocationService) { }
+  constructor(private dataService: DataService, private formService: CreateFormService) { }
 
   get showDate() {
       if ( this.FORM_STATE.data.date ) {
@@ -55,7 +55,7 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   ngOnInit() {
     this.data.toLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.to ? this.FORM_STATE.data.direction.to : null;
-    this.pinnables = this.locationService.getPinnable();
+    this.pinnables = this.formService.getPinnable();
     this.user$ = this.dataService.currentUser;
     this.pinnable = this.FORM_STATE.data.direction ? this.FORM_STATE.data.direction.pinnable : null;
     this.user$.subscribe((user: User) => this.isStaff = user.isTeacher() || user.isAdmin());

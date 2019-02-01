@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { LocationService } from '../location.service';
 import { Navigation } from '../../main-hall-pass-form.component';
 import { Location } from '../../../../models/Location';
 import { User } from '../../../../models/User';
