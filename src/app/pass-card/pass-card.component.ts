@@ -9,7 +9,7 @@ import { HttpService } from '../http-service';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { DataService } from '../data-service';
 import { LoadingService } from '../loading.service';
-import {HallpassFormComponent, Navigation} from '../hallpass-form/hallpass-form.component';
+import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import {filter, map} from 'rxjs/operators';
 import {RequestCardComponent} from '../request-card/request-card.component';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
@@ -255,7 +255,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
       this.http.post(endPoint, body).subscribe((data) => {
         this.performingAction = true;
-
         this.dialogRef.close();
       });
   }
@@ -280,7 +279,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
           this.cardEvent.emit(this.formState);
             // this.dialogRef.close();
             // const isCategory = this.fromHistory[this.fromHistoryIndex] === 'to-category';
-            // const dialogRef = this.dialog.open(HallpassFormComponent, {
+            // const dialogRef = this.dialog.open(MainHallPassFormComponent, {
             //     width: '750px',
             //     panelClass: 'form-dialog-container',
             //     backdropClass: 'custom-backdrop',

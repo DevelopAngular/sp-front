@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material';
 import { Inject } from '@angular/core';
 import { HttpService } from '../http-service';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
-import {HallpassFormComponent, Navigation} from '../hallpass-form/hallpass-form.component';
+import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../data-service';
 import { LoadingService } from '../loading.service';
@@ -15,6 +15,7 @@ import {LiveDataService} from '../live-data/live-data.service';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {fakeAsync} from '@angular/core/testing';
+import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 
 @Component({
   selector: 'app-request-card',
@@ -122,7 +123,7 @@ export class RequestCardComponent implements OnInit {
 
   changeDate() {
     if (!this.dateEditOpen) {
-      const dateDialog = this.dialog.open(HallpassFormComponent, {
+      const dateDialog = this.dialog.open(CreateHallpassFormsComponent, {
         // width: '750px',
         panelClass: 'form-dialog-container',
         backdropClass: 'invis-backdrop',
@@ -171,7 +172,7 @@ export class RequestCardComponent implements OnInit {
 
   editMessage(){
     if(!this.messageEditOpen) {
-      const infoDialog = this.dialog.open(HallpassFormComponent, {
+      const infoDialog = this.dialog.open(CreateHallpassFormsComponent, {
         width: '750px',
         panelClass: 'form-dialog-container',
         backdropClass: 'invis-backdrop',
@@ -214,7 +215,7 @@ export class RequestCardComponent implements OnInit {
 
 
             //   this.dialogRef.close();
-          //     const dialogRef = this.dialog.open(HallpassFormComponent, {
+          //     const dialogRef = this.dialog.open(MainHallPassFormComponent, {
           //         width: '750px',
           //         panelClass: 'form-dialog-container',
           //         backdropClass: 'custom-backdrop',
@@ -266,7 +267,7 @@ export class RequestCardComponent implements OnInit {
           let denyMessage: string = '';
           if(action.indexOf('Message') > -1) {
             // if(!this.messageEditOpen) {
-            //   const infoDialog = this.dialog.open(HallpassFormComponent, {
+            //   const infoDialog = this.dialog.open(MainHallPassFormComponent, {
             //     width: '750px',
             //     panelClass: 'form-dialog-container',
             //     backdropClass: 'invis-backdrop',
@@ -290,7 +291,7 @@ export class RequestCardComponent implements OnInit {
             // }
           } else {
 
-            const messageDialog = this.dialog.open(HallpassFormComponent, {
+            const messageDialog = this.dialog.open(CreateHallpassFormsComponent, {
                   // width: '750px',
                   panelClass: 'form-dialog-container',
                   backdropClass: 'invis-backdrop',

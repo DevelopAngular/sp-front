@@ -3,9 +3,9 @@ import { HallPass } from '../models/HallPass';
 import { Invitation } from '../models/Invitation';
 import { Request } from '../models/Request';
 import { MatDialog } from '@angular/material';
-import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
 import {DataService} from '../data-service';
-import {LocationService} from '../hallpass-form/locations-group-container/location.service';
+import {LocationService} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/location.service';
+import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 
 @Component({
   selector: 'app-travel-view',
@@ -36,7 +36,7 @@ export class TravelViewComponent implements OnInit {
     if(!this.locationChangeOpen){
       console.log('Opening from location in travel view');
       this.locService.nextStep('from');
-      const locationDialog = this.dialog.open(HallpassFormComponent, {
+      const locationDialog = this.dialog.open(CreateHallpassFormsComponent, {
         // width: '750px',
         panelClass: 'form-dialog-container',
         backdropClass: 'invis-backdrop',

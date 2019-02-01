@@ -10,7 +10,7 @@ import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../data-service';
 import { LoadingService } from '../loading.service';
-import {HallpassFormComponent, Navigation} from '../hallpass-form/hallpass-form.component';
+import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import {RequestCardComponent} from '../request-card/request-card.component';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {filter} from 'rxjs/operators';
@@ -141,7 +141,7 @@ export class InvitationCardComponent implements OnInit {
           this.cardEvent.emit(this.formState);
           // this.dialogRef.close();
           // const isCategory = this.fromHistory[this.fromHistoryIndex] === 'to-category';
-          // const dialogRef = this.dialog.open(HallpassFormComponent, {
+          // const dialogRef = this.dialog.open(MainHallPassFormComponent, {
           //     width: '750px',
           //     panelClass: 'form-dialog-container',
           //     backdropClass: 'custom-backdrop',

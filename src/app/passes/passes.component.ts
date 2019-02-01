@@ -8,7 +8,6 @@ import { filter, map, switchMap } from 'rxjs/operators';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 
 import { DataService } from '../data-service';
-import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
 import { mergeObject } from '../live-data/helpers';
 import { HallPassFilter, LiveDataService } from '../live-data/live-data.service';
@@ -22,7 +21,8 @@ import { User } from '../models/User';
 import { PassCardComponent } from '../pass-card/pass-card.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
 import {delay, skip} from 'rxjs/internal/operators';
-import {LocationService} from '../hallpass-form/locations-group-container/location.service';
+import {LocationService} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/location.service';
+import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('_profile_teacher');
@@ -311,7 +311,7 @@ export class PassesComponent implements OnInit {
   }
 
   showForm(forLater: boolean): void {
-    const dialogRef = this.dialog.open(HallpassFormComponent, {
+    const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
       panelClass: 'form-dialog-container',
       backdropClass: 'custom-backdrop',
       data: {

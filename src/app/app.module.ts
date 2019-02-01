@@ -38,7 +38,7 @@ import { SelectProfileComponent } from './select-profile/select-profile.componen
 import { ErrorToastComponent } from './error-toast/error-toast.component';
 import { SchoolToggleBarComponent } from './school-toggle-bar/school-toggle-bar.component';
 import { ItemListComponent } from './item-list/item-list.component';
-import { ItemCellComponent } from './item-cell/item-cell.component'
+import { ItemCellComponent } from './item-cell/item-cell.component';
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroComponent, data: { hideSchoolToggleBar: true}},
@@ -101,7 +101,7 @@ const appRoutes: Routes = [
     ErrorToastComponent,
     SchoolToggleBarComponent,
     ItemListComponent,
-    ItemCellComponent
+    ItemCellComponent,
   ],
   entryComponents: [
     ConsentMenuComponent,
