@@ -22,6 +22,7 @@ import { PassCardComponent } from '../pass-card/pass-card.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
 import {delay, skip} from 'rxjs/internal/operators';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
+import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('_profile_teacher');
@@ -172,6 +173,7 @@ export class PassesComponent implements OnInit {
 
   user: User;
   isStaff = false;
+  isSeen$: BehaviorSubject<boolean>;
 
   get showInbox(){
     if(!this.isStaff){
@@ -189,6 +191,7 @@ export class PassesComponent implements OnInit {
       private _zone: NgZone,
       private loadingService: LoadingService,
       private liveDataService: LiveDataService,
+      private createFormService: CreateFormService
   ) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
@@ -305,12 +308,13 @@ export class PassesComponent implements OnInit {
         this.pastPasses.loaded$,
         (l1, l2, l3) => l1 && l2 && l3
       );
+      this.isSeen$ = this.createFormService.isSeen$;
 
   }
 
-  showForm(forLater: boolean): void {
-    const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
-      panelClass: 'form-dialog-container',
+  showMainForm(forLater: boolean): void {
+    const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
+      panelClass: 'main-form-dialog-container',
       backdropClass: 'custom-backdrop',
       data: {
         'forLater': forLater,
@@ -318,33 +322,28 @@ export class PassesComponent implements OnInit {
         'forInput': true
       }
     });
-
-    dialogRef.afterClosed().subscribe(() => {
-      console.log('CLOSED =====> ');
-      // this.locService.clearHistory();
-    });
   }
 
-  // showForm(forLater: boolean): void {
-  //     const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
-  //         width: '750px',
-  //         panelClass: 'form-dialog-container',
-  //         backdropClass: 'custom-backdrop',
-  //         data: {'forLater': forLater, 'forStaff': this.isStaff}
-  //     });
-  //
-  //     dialogRef.afterClosed()
-  //         .pipe(filter(res => !!res)).subscribe((result: Object) => {
-  //         this.openInputCard(result['templatePass'],
-  //             result['forLater'],
-  //             result['forStaff'],
-  //             result['selectedStudents'],
-  //             (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent)),
-  //             result['fromHistory'],
-  //             result['fromHistoryIndex']
-  //         );
-  //     });
-  // }
+  showFirstSeenForm(forLater: boolean): void {
+      const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
+          width: '750px',
+          panelClass: 'form-dialog-container',
+          backdropClass: 'custom-backdrop',
+          data: {'forLater': forLater, 'forStaff': this.isStaff}
+      });
+
+      dialogRef.afterClosed()
+          .pipe(filter(res => !!res)).subscribe((result: Object) => {
+          this.openInputCard(result['templatePass'],
+              result['forLater'],
+              result['forStaff'],
+              result['selectedStudents'],
+              (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent)),
+              result['fromHistory'],
+              result['fromHistoryIndex']
+          );
+      });
+  }
 
   openInputCard(templatePass, forLater, forStaff, selectedStudents, component, fromHistory, fromHistoryIndex) {
       const data = {

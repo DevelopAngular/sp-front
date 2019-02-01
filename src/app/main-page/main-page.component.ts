@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { UserService } from '../user.service';
+import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 
 @Component({
   selector: 'app-main-page',
@@ -10,11 +11,13 @@ import { UserService } from '../user.service';
 export class MainPageComponent implements OnInit {
 
   constructor(
-    public userService: UserService
+    public userService: UserService,
+    private createFormService: CreateFormService
   ) {
   }
 
   ngOnInit() {
+    this.createFormService.seen();
   }
 
     isTeacher() {

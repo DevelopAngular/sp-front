@@ -1,2 +1,9 @@
-<app-main-hallpass-form *ngIf="true"></app-main-hallpass-form>
-<app-first-seen-form *ngIf="false"></app-first-seen-form>
+<div class="form-wrapper">
+    <div class="main-form">
+        <app-main-hallpass-form *ngIf="isSeen$ | async"></app-main-hallpass-form>
+    </div>
+    <div class="first-seen-form">
+        <app-first-seen-form *ngIf="!(isSeen$ | async)"></app-first-seen-form>
+    </div>
+</div>
+

@@ -1,6 +1,6 @@
 <div class="wrapper" [style.flex-direction]="horizontalTable ? 'row' : 'column'" [style.width]="type==='location'? (!horizontalTable ? '395px': '430px') :'200px'">
   <!--<input class="input" *ngIf="!horizontalTable" #searchBox [value]="search" [placeholder]="placeholder" (keyup)="onSearch(searchBox.value)">-->
-  <app-round-input
+  <app-round-input *ngIf="!horizontalTable"
     [style.margin]="'20px' "
     [minWidth]="'20px auto 5px auto'"
     [width]="'200px'"
@@ -27,7 +27,18 @@
   </div>
   <div *ngIf="rightHeaderText" class="fav-header">All Rooms</div>
   <div class="table-right" [style.height]="horizontalTable ? '189px' : 'none'" [style.margin]="'0 ' +(showFavorites?'0':'auto')">
-    <input *ngIf="horizontalTable" class="input" #searchBox [value]="search" [placeholder]="placeholder" (keyup)="onSearch(searchBox.value)">
+    <app-round-input *ngIf="horizontalTable"
+            [style.margin]="'20px' "
+            [minWidth]="'20px auto 5px auto'"
+            [width]="'200px'"
+            [type]="'text'"
+            [placeholder]="'Search rooms'"
+            [fieldIconPosition]="'left'"
+            [closeIcon]="true"
+            [focused]="true"
+            (ontextupdate)="onSearch($event)"
+    ></app-round-input>
+    <!--<input *ngIf="horizontalTable" class="input" #searchBox [value]="search" [placeholder]="placeholder" (keyup)="onSearch(searchBox.value)">-->
     <div class="quick-label" *ngIf="staticChoices">Quick Select</div>
     <div class="choices" [style.height]="height === '107px' ? '121px' : height" [style.width]="horizontalTable ? '180px' : '190px'" (scroll)="onScroll($event)">
       <app-location-cell [hasLocks]="hasLocks" [forLater]="forLater" [forStaff]="forStaff" class="choice" *ngFor="let choice of choices" [showStar]="showStars && !noRightStar" [starred]="false"

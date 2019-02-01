@@ -13,7 +13,9 @@ import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-ha
 import {filter, map} from 'rxjs/operators';
 import {RequestCardComponent} from '../request-card/request-card.component';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
-import {interval, merge, of, Subscription} from 'rxjs';
+import {BehaviorSubject, interval, merge, of, Subscription} from 'rxjs';
+import {CreateFormService} from '../create-hallpass-forms/create-form.service';
+import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 
 @Component({
   selector: 'app-pass-card',
@@ -61,6 +63,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   performingAction: boolean;
 
+  isSeen$: BehaviorSubject<boolean>;
+
   subscribers$: Subscription;
 
   constructor(
@@ -70,7 +74,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
       public dialog: MatDialog,
       public dataService: DataService,
       private _zone: NgZone,
-      private loadingService: LoadingService
+      private loadingService: LoadingService,
+      private createFormService: CreateFormService
   ) {}
 
   getUserName(user: any) {
@@ -156,6 +161,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
         this.overlayWidth = (this.buttonWidth * (diff/dur));
         return x;
       })).subscribe();
+      this.isSeen$ = this.createFormService.isSeen$;
     }
 
   }
@@ -274,39 +280,42 @@ export class PassCardComponent implements OnInit, OnDestroy {
         header = 'What would you like to do with this pass?';
       } else{
         if (this.forInput) {
-          this.formState.step = 3;
-          this.formState.previousStep = 4;
-          this.cardEvent.emit(this.formState);
-            // this.dialogRef.close();
-            // const isCategory = this.fromHistory[this.fromHistoryIndex] === 'to-category';
-            // const dialogRef = this.dialog.open(MainHallPassFormComponent, {
-            //     width: '750px',
-            //     panelClass: 'form-dialog-container',
-            //     backdropClass: 'custom-backdrop',
-            //     data: {
-            //         'toIcon': isCategory ? this.pass.icon : null,
-            //         'toProfile': this.pass.color_profile,
-            //         'toCategory': isCategory ? this.pass.destination.category : null,
-            //         'fromLocation': this.pass.origin,
-            //         'fromHistory': this.fromHistory,
-            //         'fromHistoryIndex': this.fromHistoryIndex,
-            //         'colorProfile': this.pass.color_profile,
-            //         'forLater': this.forFuture,
-            //         'forStaff': this.forStaff,
-            //         'selectedStudents': this.selectedStudents,
-            //         'requestTime': this.pass.start_time
-            //     }
-            // });
-            // dialogRef.afterClosed().pipe(filter(res => !!res)).subscribe((result: Object) => {
-            //         this.openInputCard(result['templatePass'],
-            //             result['forLater'],
-            //             result['forStaff'],
-            //             result['selectedStudents'],
-            //             (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent)),
-            //             result['fromHistory'],
-            //             result['fromHistoryIndex']
-            //         );
-            //     });
+          if (this.isSeen$.value) {
+              this.formState.step = 3;
+              this.formState.previousStep = 4;
+              this.cardEvent.emit(this.formState);
+          } else {
+            this.dialogRef.close();
+            const isCategory = this.fromHistory[this.fromHistoryIndex] === 'to-category';
+            const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
+                width: '750px',
+                panelClass: 'form-dialog-container',
+                backdropClass: 'custom-backdrop',
+                data: {
+                    'toIcon': isCategory ? this.pass.icon : null,
+                    'toProfile': this.pass.color_profile,
+                    'toCategory': isCategory ? this.pass.destination.category : null,
+                    'fromLocation': this.pass.origin,
+                    'fromHistory': this.fromHistory,
+                    'fromHistoryIndex': this.fromHistoryIndex,
+                    'colorProfile': this.pass.color_profile,
+                    'forLater': this.forFuture,
+                    'forStaff': this.forStaff,
+                    'selectedStudents': this.selectedStudents,
+                    'requestTime': this.pass.start_time
+                }
+            });
+            dialogRef.afterClosed().pipe(filter(res => !!res)).subscribe((result: Object) => {
+                    this.openInputCard(result['templatePass'],
+                        result['forLater'],
+                        result['forStaff'],
+                        result['selectedStudents'],
+                        (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent)),
+                        result['fromHistory'],
+                        result['fromHistoryIndex']
+                    );
+                });
+          }
             return false;
         } else if(this.forFuture){
           options.push(this.genOption('Delete Scheduled Pass','#E32C66','delete'));
