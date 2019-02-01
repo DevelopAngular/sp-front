@@ -35,15 +35,22 @@ export class GroupsStep1Component implements OnInit {
   nextStep() {
     // console.log('SLECTED ====>', this.selectedStudents, this.selectedGroup);
 
-    this.stateChangeEvent.emit({
-      step: 3,
-      state: 1,
-      fromState: 1,
-      data: {
-        selectedStudents: this.selectedStudents,
-        selectedGroup: this.selectedGroup
-      }
-    });
+    this.formState.step = 3;
+    this.formState.state = 1;
+    this.formState.fromState = 1;
+
+    if ( this.selectedGroup) {
+      this.formState.data.selectedGroup = this.selectedGroup;
+      this.formState.data.selectedStudents = this.selectedGroup.users;
+
+    } else {
+      this.formState.data.selectedGroup = null;
+      this.formState.data.selectedStudents = this.selectedStudents;
+    }
+
+
+
+    this.stateChangeEvent.emit(this.formState);
   }
 
   createGroup() {
@@ -84,20 +91,20 @@ export class GroupsStep1Component implements OnInit {
   }
 
   updateInternalData(evt) {
-    if (this.selectedGroup) {
-      this.selectedGroup = null;
-    }
-    this.selectedStudents = evt;
-    this.stateChangeEvent.emit(
-      {
-        step: 2,
-        state: 1,
-        data: {
-          selectedStudents: this.selectedStudents,
-          selectedGroup: this.selectedGroup
-        }
-      }
-    );
+    // if (this.selectedGroup) {
+      this.formState.data.selectedGroup = null;
+    // }
+    this.formState.data.selectedStudents = evt;
+    // this.stateChangeEvent.emit(
+    //   {
+    //     step: 2,
+    //     state: 1,
+    //     data: {
+    //       selectedStudents: this.selectedStudents,
+    //       selectedGroup: this.selectedGroup
+    //     }
+    //   }
+    // );
   }
 
   back() {

@@ -308,19 +308,34 @@
         <div class="for-staff_2">
           <div class="top-header"><span>Three tabs</span></div>
           <div class="tab">
-            <div class="tab_heading"><img [src]="'./assets/Arrow (Blue).png'" alt="Arrow (Blue).png"><span>Passes</span></div>
-            <p class="tab_description">Create hall passes for students. <br>
-              See all hall passes that you’ve created and sent.</p>
+            <div class="tab_image"><img [src]="'./assets/Arrow (Blue).png'" alt="Arrow (Blue).png"></div>
+            <div>
+              <div class="tab_heading">
+                <span>Passes</span>
+              </div>
+              <p class="tab_description">Create hall passes for students. <br>
+                See all hall passes that you’ve created and sent.</p>
+            </div>
           </div>
           <div class="tab">
-            <div class="tab_heading"><img [src]="'./assets/Hallway (Blue).png'" alt="Hallway (Blue).png"><span>Hall monitor</span></div>
-            <p class="tab_description">See all currently active passes in the school. <br>
-              Report students for not having a pass.</p>
+            <div class="tab_image"><img [src]="'./assets/Hallway (Blue).png'" alt="Hallway (Blue).png"></div>
+            <div>
+              <div class="tab_heading">
+                <span>Hall monitor</span>
+              </div>
+              <p class="tab_description">See all currently active passes in the school. <br>
+                Report students for not having a pass.</p>
+            </div>
           </div>
           <div class="tab">
-            <div class="tab_heading"><img [src]="'./assets/My Room (Blue).png'" alt="My Room (Blue).png"><span>My Room</span></div>
-            <p class="tab_description">See all passes that are created to and from your room(s). <br>
-              View scheduled passes for your room.</p>
+            <div class="tab_image"><img [src]="'./assets/My Room (Blue).png'" alt="My Room (Blue).png"></div>
+            <div>
+              <div class="tab_heading">
+                <span>My Room</span>
+              </div>
+              <p class="tab_description">See all passes that are created to and from your room(s). <br>
+                View scheduled passes for your room.</p>
+            </div>
           </div>
         </div>
 
@@ -386,7 +401,10 @@
         </div>
       </div>
     </div>
-    <div class="anti-click"></div>
+
+    <!-- It needs in order to all the components will be disabled-->
+      <div class="anti-click"></div>
+    <!-- End -->
   </div>
 
 

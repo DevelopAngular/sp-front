@@ -1,6 +1,6 @@
 <!--<div class="dashboard-wrapper flex-start-start flex-wrap" #draggableContainer dragula="devices" [dragulaModel]="devices" (dragulaModelChange)="onDevicesOrderChanged($event)">-->
-<div class="dashboard-wrapper flex-start-start flex-wrap">
-  <!--<div class="flex-start-between flex-column">-->
+<div class="dashboard-wrapper">
+  <div class="left">
   <div class="">
     <div class="card card__role flex-end-between mr">
       <div class="">
@@ -74,9 +74,9 @@
       </div>
     </div>
   </div>
-  <!--</div>-->
+  </div>
 
-  <!--<div class="flex-start-between flex-column">-->
+  <div class="right">
   <div class="">
     <div class="card card__role flex-center-between chart-container ml mt" [style.padding-top]="'15px'"
          [style.padding-bottom]="'15px'">
@@ -129,6 +129,6 @@
       </div>
     </div>
   </div>
-  <!--</div>-->
+  </div>
 
 </div>

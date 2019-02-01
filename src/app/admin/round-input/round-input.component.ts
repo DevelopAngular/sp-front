@@ -56,7 +56,8 @@ export class RoundInputComponent implements OnInit {
     setTimeout(() => {
       if (this.input && this.focused) {
         this.focusAction(true);
-        this.changeAction(this.input.nativeElement, true);
+        this.input.nativeElement.focus();
+        // this.changeAction(this.input.nativeElement, true);
       }
     }, 500)
 
@@ -67,7 +68,7 @@ export class RoundInputComponent implements OnInit {
     }
   }
 
-  focusAction(selected: boolean){
+  focusAction(selected: boolean) {
     this.selected = selected;
     if (selected && this.type == 'dates') {
       const dateDialog = this.dialog.open(InputHelperDialogComponent, {

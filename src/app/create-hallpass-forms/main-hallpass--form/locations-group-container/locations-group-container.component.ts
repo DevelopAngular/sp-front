@@ -44,12 +44,11 @@ export class LocationsGroupContainerComponent implements OnInit {
   get studentText() {
      if (!this.FORM_STATE.data.selectedStudents) {
         return false;
+     } else if (this.FORM_STATE.data.selectedGroup) {
+         return this.FORM_STATE.data.selectedGroup.title;
      } else {
-         if (this.FORM_STATE.data.selectedGroup) {
-             return this.FORM_STATE.data.selectedGroup.title;
-         }
        return this.FORM_STATE.data.selectedStudents[0].display_name +
-           (this.FORM_STATE.data.selectedStudents.length > 1 ? ` (${this.FORM_STATE.data.selectedStudents.length - 1})` : '');
+         (this.FORM_STATE.data.selectedStudents.length > 1 ? ` (${this.FORM_STATE.data.selectedStudents.length - 1})` : '');
      }
     }
 
