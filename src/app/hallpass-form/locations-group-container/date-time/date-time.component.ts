@@ -18,8 +18,7 @@ export class DateTimeComponent implements OnInit {
 
   startTime: Date = new Date();
   requestTime: Date = new Date();
-
-  declinable: FormControl;
+  declinable: FormControl = new FormControl(false);
 
   constructor() { }
 
@@ -30,8 +29,8 @@ export class DateTimeComponent implements OnInit {
     } else {
       if (this.formState.data.date) {
         this.requestTime = new Date(this.formState.data.date.date);
+        this.declinable.setValue(this.formState.data.date.declinable);
       }
-      this.declinable = new FormControl(false);
     }
 
   }

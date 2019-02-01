@@ -7,16 +7,29 @@
   width: 100%;
   background-color: #F8FAFF;
   .dashboard-wrapper{
-    max-height: 80vh;
-    flex-direction: column;
+    display: flex;
+    flex-wrap: wrap;
+    //max-height: 80vh;
+    //flex-direction: column;
   }
 
 }
-@media screen and (max-width: 1320px) {
-  .dashboard-wrapper {
-    flex-direction: row !important;
-  }
-}
+//@media screen and (max-width: 1320px) {
+//  .dashboard-wrapper {
+//    flex-direction: row !important;
+//    flex-wrap: nowrap;
+//    max-height: unset;
+//  }
+//}
+//@media screen and (max-height: 742px) {
+//  .dashboard-wrapper {
+//    flex-direction: row !important;
+//    flex-wrap: nowrap;
+//    max-height: unset;
+//  }
+//}
+
+
 .floating{
   float: left;
 }

@@ -262,11 +262,16 @@ export class IntroComponent implements OnInit {
           };
         });
       });
-      this.endIntro();
+      // this.endIntro();
   }
 
   endIntro() {
-    localStorage.setItem('smartpass_intro', 'seen');
+
+    if (this.isStaff) {
+      localStorage.setItem('smartpass_intro_teacher', 'seen');
+    } else {
+      localStorage.setItem('smartpass_intro_student', 'seen');
+    }
     this.router.navigate(['select-profile']);
   }
 

@@ -92,20 +92,26 @@
       }
       color: #3D396B;
       .tab {
+        display: flex;
         padding-top: 55px;
         text-align: left;
-        &_heading {
+        &_image {
           display: flex;
-          align-items: center;
-          font-size: 20px;
-          font-weight: bold;
+          padding-right: 10px;
+          align-items: flex-start;
           img {
-            width: 35px;
+            width: 55px;
             padding-right: 10px;
           }
         }
+        &_heading {
+          font-size: 20px;
+          font-weight: bold;
+        }
         &_description {
-          color: #46474C;
+          color: #7F879D;
+          font-size: 14px;
+          max-width: 220px;
         }
       }
     }
