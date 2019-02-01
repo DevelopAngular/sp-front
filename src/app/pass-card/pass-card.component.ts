@@ -63,7 +63,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   performingAction: boolean;
 
-  isSeen$: BehaviorSubject<boolean>;
+  isSeen$: boolean;
 
   subscribers$: Subscription;
 
@@ -161,7 +161,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
         this.overlayWidth = (this.buttonWidth * (diff/dur));
         return x;
       })).subscribe();
-      this.isSeen$ = this.createFormService.isSeen$;
+      this.createFormService.isSeen$.subscribe(res => this.isSeen$ = res);
     }
 
   }
@@ -280,7 +280,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
         header = 'What would you like to do with this pass?';
       } else{
         if (this.forInput) {
-          if (this.isSeen$.value) {
+          if (this.isSeen$) {
               this.formState.step = 3;
               this.formState.previousStep = 4;
               this.cardEvent.emit(this.formState);
