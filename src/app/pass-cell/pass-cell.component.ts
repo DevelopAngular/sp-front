@@ -5,6 +5,7 @@ import { Invitation } from '../models/Invitation';
 import { Request } from '../models/Request';
 import { getInnerPassContent, getInnerPassName, isBadgeVisible } from '../pass-tile/pass-display-util';
 import { Util } from '../../Util';
+import {filter} from 'rxjs/operators';
 
 @Component({
   selector: 'app-pass-cell',
@@ -60,7 +61,7 @@ export class PassCellComponent implements OnInit, OnDestroy {
 
       this.valid = this.isActive;
       if (this.timerEvent) {
-        this.timerEvent.subscribe(() => {
+        this.timerEvent.pipe(filter(() => this.pass instanceof HallPass )).subscribe(() => {
           let end: Date = this.pass['expiration_time'];
           let now: Date = new Date();
           let diff: number = (end.getTime() - now.getTime()) / 1000;
