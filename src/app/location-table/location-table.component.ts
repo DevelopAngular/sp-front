@@ -3,6 +3,8 @@ import { HttpService } from '../http-service';
 import { Location } from '../models/Location';
 import {finalize} from 'rxjs/operators';
 import {DragulaService} from 'ng2-dragula';
+import * as _ from 'lodash';
+
 
 export interface Paged<T> {
   results: T[];
@@ -46,7 +48,7 @@ export class LocationTableComponent implements OnInit {
   hasLocks: boolean;
 
   @Input()
-  invalidLocation: string;
+  invalidLocation: string | number;
 
   @Input()
   noRightStar: boolean;
@@ -107,7 +109,7 @@ export class LocationTableComponent implements OnInit {
   }
 
   ngOnInit() {
-    if(this.staticChoices){
+      if(this.staticChoices){
       this.choices = this.staticChoices;
     } else{
       this.http.get<Paged<Location>>('v1/'
@@ -128,12 +130,13 @@ export class LocationTableComponent implements OnInit {
         this.favoritesLoaded = true;
       });
     }
-    // this.dragulaService.createGroup('locations', {});
   }
 
   updateOrderLocation(locations) {
-    console.log(locations);
+    const body = {'locations': locations.map(loc => loc.id)};
+    this.http.put('v1/users/@me/starred', body).subscribe();
   }
+
 
   onSearch(search: string) {
     this.search = search.toLowerCase();

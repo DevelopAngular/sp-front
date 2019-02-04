@@ -10,7 +10,7 @@ import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-ha
 import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../data-service';
 import { LoadingService } from '../loading.service';
-import { filter } from 'rxjs/operators';
+import {filter, tap} from 'rxjs/operators';
 import {LiveDataService} from '../live-data/live-data.service';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
 import {PassCardComponent} from '../pass-card/pass-card.component';
@@ -45,7 +45,7 @@ export class RequestCardComponent implements OnInit {
   cancelOpen: boolean = false;
   pinnableOpen: boolean = false;
   user: User;
-  isSeen$: boolean;
+  isSeen: boolean;
 
   performingAction: boolean;
 
@@ -83,7 +83,7 @@ export class RequestCardComponent implements OnInit {
         this.forStaff = user.roles.includes('_profile_teacher');
       });
     });
-    this.createFormService.isSeen$.subscribe(res => this.isSeen$ = res);
+    this.createFormService.isSeen$.subscribe(res => this.isSeen = res);
   }
 
   get studentName(){
@@ -128,31 +128,47 @@ export class RequestCardComponent implements OnInit {
 
   changeDate() {
     if (!this.dateEditOpen) {
-      const dateDialog = this.dialog.open(CreateHallpassFormsComponent, {
-        // width: '750px',
-        panelClass: 'form-dialog-container',
-        backdropClass: 'invis-backdrop',
-        data: {
-              // 'entryState': 'datetime',
-              'entryState': {
-                step: 1,
-                state: 1
-              },
-              'forInput': false,
-              'originalToLocation': this.request.destination,
-              'colorProfile': this.request.color_profile,
-              'originalFromLocation': this.request.origin,
-              'request_time': this.request.request_time
+       let config;
+        if (this.isSeen) {
+            config = {
+                panelClass: 'form-dialog-container',
+                backdropClass: 'invis-backdrop',
+                data: {
+                    'entryState': {
+                        step: 1,
+                        state: 1
+                    },
+                    'forInput': false,
+                    'originalToLocation': this.request.destination,
+                    'colorProfile': this.request.color_profile,
+                    'originalFromLocation': this.request.origin,
+                    'request_time': this.request.request_time
+                }
+            };
+        } else {
+            config = {
+                width: '750px',
+                panelClass: 'form-dialog-container',
+                backdropClass: 'invis-backdrop',
+                data: {'entryState': 'datetime',
+                    'originalToLocation': this.request.destination,
+                    'colorProfile': this.request.color_profile,
+                    'originalFromLocation': this.request.origin,
+                    'requestTime': this.request.request_time}
+            };
         }
-      });
+      const dateDialog = this.dialog.open(CreateHallpassFormsComponent, config);
 
-      dateDialog.afterOpen().subscribe( () =>{
+      dateDialog.afterOpen().subscribe( () => {
         this.dateEditOpen = true;
       });
 
-      dateDialog.afterClosed().subscribe(matData => {
-        console.log('DENIED data ===>', matData.data);
-        this.request.request_time = matData.data.date ? matData.data.date.date : this.request.request_time;
+      dateDialog.afterClosed().pipe(filter(res => !!res)).subscribe(matData => {
+        if (this.isSeen) {
+          this.request.request_time = matData.data.date ? matData.data.date.date : this.request.request_time;
+        } else {
+          this.request.request_time = matData.startTime;
+        }
         this.dateEditOpen = false;
         console.log('RIGHT REQUEST TIME =====>', this.request.request_time);
         let endpoint: string = "v1/pass_requests";
@@ -214,7 +230,7 @@ export class RequestCardComponent implements OnInit {
         header = 'Are you sure you want to ' +(this.forStaff?'deny':'delete') +' this pass request' +(this.forStaff?'':' you sent') +'?';
       } else{
           if (!this.pinnableOpen) {
-            if (this.isSeen$) {
+            if (this.isSeen) {
                 this.formState.step = 3;
                 this.formState.previousStep = 4;
                 this.cardEvent.emit(this.formState);
@@ -261,10 +277,13 @@ export class RequestCardComponent implements OnInit {
         this.cancelOpen = true;
       });
 
-      cancelDialog.afterClosed().subscribe(action =>{
+      cancelDialog.afterClosed()
+          .subscribe(action => {
+            this.cancelOpen = false;
+            if (!action) {
+              return false;
+            }
         console.log('DENIED with message ===>', action);
-
-        this.cancelOpen = false;
         if(action === 'cancel' || action === 'stop'){
           this.dialogRef.close();
         } else if(action === 'editMessage'){
@@ -296,25 +315,40 @@ export class RequestCardComponent implements OnInit {
             //   });
             // }
           } else {
-
-            const messageDialog = this.dialog.open(CreateHallpassFormsComponent, {
-                  // width: '750px',
-                  panelClass: 'form-dialog-container',
-                  backdropClass: 'invis-backdrop',
-                  data: {
-                      'forInput': false,
-                      // 'entryState': 'restrictedMessage',
-                      'entryState': { step: 3, state: 5 },
-                      'teacher': this.request.teacher,
-                      'originalMessage': '',
-                      'originalToLocation': this.request.destination,
-                      'colorProfile': this.request.color_profile,
-                      'gradient': this.request.gradient_color,
-                      'originalFromLocation': this.request.origin,
-                      'isDeny': true,
-                      'studentMessage': this.request.attachment_message
-                  }
-              });
+            let config;
+            if (this.isSeen) {
+                config = {
+                    panelClass: 'form-dialog-container',
+                    backdropClass: 'invis-backdrop',
+                    data: {
+                        'forInput': false,
+                        'entryState': { step: 3, state: 5 },
+                        'teacher': this.request.teacher,
+                        'originalMessage': '',
+                        'originalToLocation': this.request.destination,
+                        'colorProfile': this.request.color_profile,
+                        'gradient': this.request.gradient_color,
+                        'originalFromLocation': this.request.origin,
+                        'isDeny': true,
+                        'studentMessage': this.request.attachment_message
+                    }
+                };
+            } else {
+                config =  {
+                    width: '750px',
+                    panelClass: 'form-dialog-container',
+                    backdropClass: 'invis-backdrop',
+                    data: {'entryState': 'restrictedMessage',
+                        'originalMessage': '',
+                        'originalToLocation': this.request.destination,
+                        'colorProfile': this.request.color_profile,
+                        'originalFromLocation': this.request.origin,
+                        'isDeny': true,
+                        'studentMessage': this.request.attachment_message
+                    }
+                };
+            }
+            const messageDialog = this.dialog.open(CreateHallpassFormsComponent, config);
 
               messageDialog.afterOpen().subscribe( () => {
                   this.messageEditOpen = true;
@@ -328,6 +362,10 @@ export class RequestCardComponent implements OnInit {
                     console.log('DENIED =====>', matData, action);
                     // debugger;
                     this.denyRequest(denyMessage);
+                  } else {
+                      denyMessage = matData.message;
+                      this.messageEditOpen = false;
+                      this.denyRequest(denyMessage);
                   }
               });
               return;

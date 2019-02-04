@@ -26,7 +26,7 @@ export class FavoriteFormComponent implements OnInit {
   closeDialog(){
     let endpoint = 'v1/users/@me/starred';
     let body = {'locations': this.starChanges.map(loc => loc.id)};
-    console.log(body.locations)
+    console.log(body.locations);
     this.http.put(endpoint, body).subscribe();
     this.dialogRef.close();
   }

@@ -15,12 +15,19 @@
     <div class="fav-header" [style.margin-top]="horizontalTable ? '27px' : '10px'">
       Favorites
     </div>
-    <div *ngIf="favoritesLoaded" class="choices" [style.height]="height" [style.width]="horizontalTable ? '180px' : '190px'" (scroll)="leftScroll($event)">
+    <div *ngIf="favoritesLoaded"
+         class="choices"
+         dragula="locations"
+         [(dragulaModel)]="starredChoices"
+         (dragulaModelChange)="updateOrderLocation($event)"
+         [style.height]="height" [style.width]="horizontalTable ? '180px' : '190px'"
+         (scroll)="leftScroll($event)">
+
       <app-location-cell class="choice" *ngFor="let choice of starredChoices"
-        dragula="locations" [dragulaModel]="starredChoices" (dragulaModelChange)="updateOrderLocation($event)"
         (onSelect)="choiceSelected($event)" (onStar)="star($event)"
         [value]="choice" [type]="type" [starred]="true" [showStar]="showStars">
       </app-location-cell>
+
       <div *ngIf="starredChoices.length<1" class="no-favs">Add Favorites in Settings.<div *ngIf="!showStars">Add Favorites in Settings.</div></div>
     </div>
     <div *ngIf="rightShadow" class="shadow"></div>
