@@ -178,10 +178,10 @@ export class PassesComponent implements OnInit {
   get showInbox(){
     if(!this.isStaff){
       return this.dataService.inboxState;
-    } else if(!this.inboxHasItems && !this.passesHaveItems){
-      return false;
+    } else if(!this.inboxHasItems && !this.passesHaveItems) {
+      return of(false);
     } else{
-      return true;
+      return of(true);
     }
   }
 
