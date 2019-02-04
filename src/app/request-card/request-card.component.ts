@@ -10,7 +10,7 @@ import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-ha
 import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../data-service';
 import { LoadingService } from '../loading.service';
-import { filter } from 'rxjs/operators';
+import {filter, tap} from 'rxjs/operators';
 import {LiveDataService} from '../live-data/live-data.service';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
 import {PassCardComponent} from '../pass-card/pass-card.component';
@@ -163,7 +163,7 @@ export class RequestCardComponent implements OnInit {
         this.dateEditOpen = true;
       });
 
-      dateDialog.afterClosed().subscribe(matData => {
+      dateDialog.afterClosed().pipe(filter(res => !!res)).subscribe(matData => {
         if (this.isSeen) {
           this.request.request_time = matData.data.date ? matData.data.date.date : this.request.request_time;
         } else {
@@ -277,10 +277,13 @@ export class RequestCardComponent implements OnInit {
         this.cancelOpen = true;
       });
 
-      cancelDialog.afterClosed().subscribe(action =>{
+      cancelDialog.afterClosed()
+          .subscribe(action => {
+            this.cancelOpen = false;
+            if (!action) {
+              return false;
+            }
         console.log('DENIED with message ===>', action);
-
-        this.cancelOpen = false;
         if(action === 'cancel' || action === 'stop'){
           this.dialogRef.close();
         } else if(action === 'editMessage'){
