@@ -68,6 +68,7 @@ export class StudentFooterComponent implements OnInit {
     this.formState.step = 1;
     this.formState.state = 1;
     this.formState.previousStep = 3;
+    this.formState.quickNavigator = true;
     this.changeLocation.emit(this.formState);
   }
 

@@ -69,6 +69,7 @@ export class TeacherFooterComponent implements OnInit {
     this.formState.previousState = this.formState.state;
     this.formState.step = 2;
     this.formState.previousStep = 3;
+    this.formState.quickNavigator = true;
     this.changeLocation.emit(this.formState);
   }
 
@@ -77,6 +78,7 @@ export class TeacherFooterComponent implements OnInit {
     this.formState.step = 1;
     this.formState.state = 1;
     this.formState.previousStep = 3;
+    this.formState.quickNavigator = true;
     this.changeLocation.emit(this.formState);
   }
 

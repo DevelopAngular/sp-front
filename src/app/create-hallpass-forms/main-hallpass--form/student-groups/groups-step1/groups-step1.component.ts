@@ -54,6 +54,7 @@ export class GroupsStep1Component implements OnInit {
   }
 
   createGroup() {
+    this.formState.quickNavigator = false;
     this.stateChangeEvent.emit({
       step: 2,
       state: 2,

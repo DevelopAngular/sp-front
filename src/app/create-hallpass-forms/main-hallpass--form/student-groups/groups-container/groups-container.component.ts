@@ -60,8 +60,7 @@ export class GroupsContainerComponent implements OnInit {
       return;
     }
 
-    if (this.FORM_STATE.previousStep === 3) {
-      // debugger;
+    if (this.FORM_STATE.quickNavigator) {
         this.FORM_STATE.step = this.FORM_STATE.previousStep;
         this.FORM_STATE.state = this.FORM_STATE.previousState;
         this.FORM_STATE.previousStep = 2;

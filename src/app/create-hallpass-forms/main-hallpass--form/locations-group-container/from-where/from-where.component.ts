@@ -34,11 +34,13 @@ export class FromWhereComponent implements OnInit {
           this.formState.step = 1;
           this.formState.state = 1;
           this.formState.previousStep = 3;
+          this.formState.quickNavigator = true;
       } else if (!!this.studentText && this.formState.state === 1) {
           this.formState.previousState = 1;
           this.formState.step = 2;
           this.formState.state = 1;
           this.formState.previousStep = 3;
+          this.formState.quickNavigator = true;
       } else {
         this.formState.step = 0;
       }
