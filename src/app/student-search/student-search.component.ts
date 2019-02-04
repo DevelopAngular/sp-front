@@ -33,7 +33,9 @@ export class StudentSearchComponent implements AfterViewInit {
   ngAfterViewInit() {
     // this.input.nativeElement.focus();
     if (this.selectedStudents.length) {
-      this.focused = true;
+      setTimeout(() => {
+        this.focused = true;
+      }, 50);
     }
 
   }
