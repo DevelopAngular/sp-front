@@ -45,7 +45,7 @@ export class RequestCardComponent implements OnInit {
   cancelOpen: boolean = false;
   pinnableOpen: boolean = false;
   user: User;
-  isSeen$: boolean;
+  isSeen: boolean;
 
   performingAction: boolean;
 
@@ -83,7 +83,7 @@ export class RequestCardComponent implements OnInit {
         this.forStaff = user.roles.includes('_profile_teacher');
       });
     });
-    this.createFormService.isSeen$.subscribe(res => this.isSeen$ = res);
+    this.createFormService.isSeen$.subscribe(res => this.isSeen = res);
   }
 
   get studentName(){
@@ -214,7 +214,7 @@ export class RequestCardComponent implements OnInit {
         header = 'Are you sure you want to ' +(this.forStaff?'deny':'delete') +' this pass request' +(this.forStaff?'':' you sent') +'?';
       } else{
           if (!this.pinnableOpen) {
-            if (this.isSeen$) {
+            if (this.isSeen) {
                 this.formState.step = 3;
                 this.formState.previousStep = 4;
                 this.cardEvent.emit(this.formState);

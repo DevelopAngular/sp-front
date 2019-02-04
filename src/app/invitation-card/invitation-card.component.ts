@@ -14,6 +14,8 @@ import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-ha
 import {RequestCardComponent} from '../request-card/request-card.component';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {filter} from 'rxjs/operators';
+import {CreateFormService} from '../create-hallpass-forms/create-form.service';
+import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 
 @Component({
   selector: 'app-invitation-card',
@@ -40,13 +42,15 @@ export class InvitationCardComponent implements OnInit {
   performingAction: boolean;
   fromHistory;
   fromHistoryIndex;
+  isSeen: boolean;
 
   constructor(
       public dialogRef: MatDialogRef<InvitationCardComponent>,
       @Inject(MAT_DIALOG_DATA) public data: any,
       public dialog: MatDialog, private http: HttpService,
       public dataService: DataService, private _zone: NgZone,
-      private loadingService: LoadingService
+      private loadingService: LoadingService,
+      private createFormService: CreateFormService
   ) {}
 
   get studentName(){
@@ -87,6 +91,7 @@ export class InvitationCardComponent implements OnInit {
         this.user = user;
       });
     });
+  this.createFormService.isSeen$.subscribe(res => this.isSeen = res);
   }
 
   formatDateTime(date: Date){
@@ -136,40 +141,43 @@ export class InvitationCardComponent implements OnInit {
       let options = [];
       let header = '';
       if (this.forInput) {
-          this.formState.step = 3;
-          this.formState.previousStep = 4;
-          this.cardEvent.emit(this.formState);
-          // this.dialogRef.close();
-          // const isCategory = this.fromHistory[this.fromHistoryIndex] === 'to-category';
-          // const dialogRef = this.dialog.open(MainHallPassFormComponent, {
-          //     width: '750px',
-          //     panelClass: 'form-dialog-container',
-          //     backdropClass: 'custom-backdrop',
-          //     data: {
-          //         'toIcon': isCategory ? this.invitation.icon : null,
-          //         'toProfile': this.invitation.color_profile,
-          //         'toCategory': isCategory ? this.invitation.destination.category : null,
-          //         'fromLocation': this.selectedOrigin,
-          //         'fromHistory': this.fromHistory,
-          //         'fromHistoryIndex': this.fromHistoryIndex,
-          //         'colorProfile': this.invitation.color_profile,
-          //         'forLater': this.forFuture,
-          //         'forStaff': this.forStaff,
-          //         'selectedStudents': this.selectedStudents || true,
-          //         'requestTime': this.invitation.date_choices[0]
-          //     }
-          // });
-          // dialogRef.afterClosed().pipe(filter(res => !!res))
-          //     .subscribe((result: Object) => {
-          //         this.openInputCard(result['templatePass'],
-          //             result['forLater'],
-          //             result['forStaff'],
-          //             result['selectedStudents'],
-          //             (result['type'] === 'invitation' ? InvitationCardComponent : RequestCardComponent),
-          //             result['fromHistory'],
-          //             result['fromHistoryIndex']
-          //         );
-          //     });
+        if (this.isSeen) {
+            this.formState.step = 3;
+            this.formState.previousStep = 4;
+            this.cardEvent.emit(this.formState);
+        } else {
+          this.dialogRef.close();
+          const isCategory = this.fromHistory[this.fromHistoryIndex] === 'to-category';
+          const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
+              width: '750px',
+              panelClass: 'form-dialog-container',
+              backdropClass: 'custom-backdrop',
+              data: {
+                  'toIcon': isCategory ? this.invitation.icon : null,
+                  'toProfile': this.invitation.color_profile,
+                  'toCategory': isCategory ? this.invitation.destination.category : null,
+                  'fromLocation': this.selectedOrigin,
+                  'fromHistory': this.fromHistory,
+                  'fromHistoryIndex': this.fromHistoryIndex,
+                  'colorProfile': this.invitation.color_profile,
+                  'forLater': this.forFuture,
+                  'forStaff': this.forStaff,
+                  'selectedStudents': this.selectedStudents || true,
+                  'requestTime': this.invitation.date_choices[0]
+              }
+          });
+          dialogRef.afterClosed().pipe(filter(res => !!res))
+              .subscribe((result: Object) => {
+                  this.openInputCard(result['templatePass'],
+                      result['forLater'],
+                      result['forStaff'],
+                      result['selectedStudents'],
+                      (result['type'] === 'invitation' ? InvitationCardComponent : RequestCardComponent),
+                      result['fromHistory'],
+                      result['fromHistoryIndex']
+                  );
+              });
+        }
           return false;
       } else if (!this.forStaff) {
         options.push(this.genOption('Decline Pass Request','#F00','decline'));
