@@ -88,4 +88,7 @@
     align-items: center;
     padding: 7px;
   }
+  mat-grid-tile {
+   overflow: inherit !important;
+  }
 }
