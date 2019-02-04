@@ -48,7 +48,7 @@ export class LocationTableComponent implements OnInit {
   hasLocks: boolean;
 
   @Input()
-  invalidLocation: string;
+  invalidLocation: string | number;
 
   @Input()
   noRightStar: boolean;
@@ -109,7 +109,7 @@ export class LocationTableComponent implements OnInit {
   }
 
   ngOnInit() {
-    if(this.staticChoices){
+      if(this.staticChoices){
       this.choices = this.staticChoices;
     } else{
       this.http.get<Paged<Location>>('v1/'

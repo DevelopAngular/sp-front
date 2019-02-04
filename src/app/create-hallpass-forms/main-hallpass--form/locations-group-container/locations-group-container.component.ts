@@ -71,6 +71,7 @@ export class LocationsGroupContainerComponent implements OnInit {
             });
     }
     this.data.fromLocation = location;
+    debugger;
     this.FORM_STATE.data.direction = {
       from: location,
       to: this.data.toLocation,

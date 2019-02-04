@@ -113,7 +113,7 @@
     </div>
     <div *ngIf="formState == 'to-category'">
       <app-location-table class="center" (onSelect)="locationChosen($event, 'to')" [forLater]="forLater"
-                          [invalidLocation]="(fromLocation?fromLocation.id:'')" [forStaff]="forStaff" [hasLocks]="true" [category]="toCategory" [type]="'location'" [placeholder]="'Search ' +toCategory.toLowerCase()" >
+                          [invalidLocation]="( fromLocation ? +fromLocation.id : '')" [forStaff]="forStaff" [hasLocks]="true" [category]="toCategory" [type]="'location'" [placeholder]="'Search ' +toCategory.toLowerCase()" >
       </app-location-table>
     </div>
   </div>

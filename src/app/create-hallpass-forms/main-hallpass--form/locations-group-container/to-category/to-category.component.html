@@ -15,7 +15,7 @@
         [hasLocks]="true"
         [horizontalTable]="false"
         [category]="pinnable.category"
-        [invalidLocation]="(fromLocation ? fromLocation.id : '')"
+        [invalidLocation]="(fromLocation ? +fromLocation.id : '')"
         [type]="'location'"
         [placeholder]="'Search ' + pinnable.category" >
     </app-location-table>
