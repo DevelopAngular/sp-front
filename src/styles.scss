@@ -130,6 +130,13 @@ body {
   padding: 0;
   background: transparent;
 }
+
+//.next-release-dialog-container .mat-dialog-container {
+//  width: auto;
+//  height: auto;
+//  padding: 0;
+//  background: transparent;
+//}
 .message-dialog-container .mat-dialog-container {
   @extend .editor-dialog;
   width: 300px;

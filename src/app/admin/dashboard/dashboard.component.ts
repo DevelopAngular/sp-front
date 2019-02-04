@@ -71,6 +71,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.liveDataService.watchActiveHallPasses(new Subject<HallPassFilter>().asObservable())
       .subscribe((activeHallpasses: HallPass[]) => {
+        // console.log('Watch activity ======>', activeHallpasses);
         this.numActivePasses = activeHallpasses.length;
       });
 

@@ -125,6 +125,9 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   resultMessage(message, denyMessage: boolean = false) {
+    if (!message) {
+      return;
+    }
     this.data.message = message;
     this.FORM_STATE.data.message = message;
     this.postComposetData(denyMessage);
@@ -148,6 +151,8 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   back(event) {
     this.FORM_STATE = event;
+    this.data.message = null;
+    this.FORM_STATE.data.message = null;
     this.nextStepEvent.emit(this.FORM_STATE);
   }
 }

@@ -39,6 +39,7 @@ import { ErrorToastComponent } from './error-toast/error-toast.component';
 import { SchoolToggleBarComponent } from './school-toggle-bar/school-toggle-bar.component';
 import { ItemListComponent } from './item-list/item-list.component';
 import { ItemCellComponent } from './item-cell/item-cell.component';
+import { NextReleaseComponent } from './next-release/next-release.component'
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroComponent, data: { hideSchoolToggleBar: true}},
@@ -102,12 +103,14 @@ const appRoutes: Routes = [
     SchoolToggleBarComponent,
     ItemListComponent,
     ItemCellComponent,
+    NextReleaseComponent
   ],
   entryComponents: [
     ConsentMenuComponent,
     OptionsComponent,
     HallDateTimePickerComponent,
-    ErrorToastComponent
+    ErrorToastComponent,
+    NextReleaseComponent
   ],
   imports: [
     BrowserModule,

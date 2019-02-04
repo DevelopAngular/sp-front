@@ -351,7 +351,7 @@ export class LiveDataService {
 
   watchActiveHallPasses(sortingEvents: Observable<HallPassFilter>, filter?: PassFilterType, date: Date = null): Observable<HallPass[]> {
     const queryFilter: QueryParams = {
-      limit: 20,
+      limit: 100000,
       active: true
     };
     const filters: FilterFunc<HallPass>[] = [];

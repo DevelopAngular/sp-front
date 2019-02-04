@@ -78,9 +78,11 @@ export class DateTimePickerComponent implements OnInit, OnDestroy{
 
   ngOnInit() {
     console.log('[Date-Time Debug]: ', 'Date-Time where at');
-    this.min.setSeconds(0);
-    this.min.setMinutes(0);
-    this.min.setHours(0);
+    if (this.min && this.min instanceof Date) {
+      this.min.setSeconds(0);
+      this.min.setMinutes(0);
+      this.min.setHours(0);
+    }
     this._selectedMoment.setMinutes(this._selectedMoment.getMinutes() + 5);
     this._selectedMoment.setSeconds(0);
     this.default = this._selectedMoment;

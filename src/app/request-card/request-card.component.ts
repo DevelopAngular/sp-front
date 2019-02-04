@@ -322,12 +322,15 @@ export class RequestCardComponent implements OnInit {
 
               messageDialog.afterClosed().pipe(filter(res => !!res)).subscribe(matData => {
                   // denyMessage = data['message'];
-                  if (matData.data) {
+                  if (matData.data && matData.data.message) {
                     denyMessage = matData.data.message;
                     this.messageEditOpen = false;
+                    console.log('DENIED =====>', matData, action);
+                    // debugger;
                     this.denyRequest(denyMessage);
                   }
               });
+              return;
           }
         } else if (action === 'deny') {
 

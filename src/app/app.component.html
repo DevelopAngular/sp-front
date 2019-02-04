@@ -1,5 +1,7 @@
 <div class="global-container" *ngIf="showUI | async">
 
+  <ng-template appNextRelease></ng-template>
+
   <!-- Here will be a school toggle bar -->
   <app-school-toggle-bar *ngIf="( schools && schools.length > 1 ) && !hideSchoolToggleBar"
     [schools]="schools"

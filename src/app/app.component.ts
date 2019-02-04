@@ -1,13 +1,15 @@
-import { Component, NgZone, OnInit } from '@angular/core';
+import {AfterViewInit, Component, NgZone, OnInit} from '@angular/core';
 import { Location } from '@angular/common';
 import { GoogleLoginService } from './google-login.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {filter, map, mergeMap} from 'rxjs/operators';
+import {delay, filter, map, mergeMap, timeout} from 'rxjs/operators';
 import {DeviceDetection} from './device-detection.helper';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, empty, of} from 'rxjs';
 import {HttpService} from './http-service';
 import {School} from './models/School';
-import {tap} from 'rxjs/internal/operators';
+import {MatDialog} from '@angular/material';
+import {NextReleaseComponent} from './next-release/next-release.component';
+import {UserService} from './user.service';
 
 /**
  * @title Autocomplete overview
@@ -18,7 +20,7 @@ import {tap} from 'rxjs/internal/operators';
   styleUrls: ['./app.component.scss']
 })
 
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterViewInit {
 
   public isAuthenticated = false;
   public hideScroll: boolean = false;
@@ -30,14 +32,18 @@ export class AppComponent implements OnInit {
   constructor(
     public loginService: GoogleLoginService,
     private http: HttpService,
+    private userService: UserService,
     private _zone: NgZone,
     private activatedRoute: ActivatedRoute,
     private router: Router, private location: Location,
+    private matDialog: MatDialog
   ) {
     // this.schoolIdSubject = this.http.schoolIdSubject;
   }
 
   ngOnInit() {
+
+
     if ( !DeviceDetection.isIOSTablet() && !DeviceDetection.isMacOS() ) {
       const link = document.createElement('link');
             link.setAttribute('rel', 'stylesheet');
@@ -71,6 +77,21 @@ export class AppComponent implements OnInit {
         }
       });
     });
+
+    // ============== SPA-407 ====================> Needs to be uncommented when the backend logic will completed
+    // this.userService
+    //   .getUserWithTimeout()
+    //   .subscribe((user) => {
+    //     this.matDialog.open(NextReleaseComponent, {
+    //       panelClass: 'form-dialog-container',
+    //       data: {
+    //         'isTeacher': user.isTeacher(),
+    //         'isStudent': user.isStudent()
+    //       }
+    //     });
+    //   });
+    // ============== SPA-407 ===================> End
+
     this.http.schoolIdSubject.subscribe((value => {
       if (!value) {
         this.schools = [];
@@ -99,6 +120,12 @@ export class AppComponent implements OnInit {
         this.hideScroll = data.hideScroll;
       });
   }
-
+  ngAfterViewInit() {
+    // setTimeout(() => {
+    //   this.matDialog.open(NextReleaseComponent, {
+    //     panelClass: 'form-dialog-container'
+    //   });
+    // }, 1000);
+  }
 
 }

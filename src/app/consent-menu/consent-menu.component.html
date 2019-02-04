@@ -10,4 +10,5 @@
         </div>
       </div>
      <div *ngFor="let option of options" [style.color]="getColor(option)" class="option-wrapper" (click)="_matDialogRef.close(option.action)">{{ option.display }}</div>
+    <pre>{{options | json}}</pre>
 </div>
