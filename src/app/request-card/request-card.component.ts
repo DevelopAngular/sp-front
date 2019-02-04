@@ -128,31 +128,47 @@ export class RequestCardComponent implements OnInit {
 
   changeDate() {
     if (!this.dateEditOpen) {
-      const dateDialog = this.dialog.open(CreateHallpassFormsComponent, {
-        // width: '750px',
-        panelClass: 'form-dialog-container',
-        backdropClass: 'invis-backdrop',
-        data: {
-              // 'entryState': 'datetime',
-              'entryState': {
-                step: 1,
-                state: 1
-              },
-              'forInput': false,
-              'originalToLocation': this.request.destination,
-              'colorProfile': this.request.color_profile,
-              'originalFromLocation': this.request.origin,
-              'request_time': this.request.request_time
+       let config;
+        if (this.isSeen) {
+            config = {
+                panelClass: 'form-dialog-container',
+                backdropClass: 'invis-backdrop',
+                data: {
+                    'entryState': {
+                        step: 1,
+                        state: 1
+                    },
+                    'forInput': false,
+                    'originalToLocation': this.request.destination,
+                    'colorProfile': this.request.color_profile,
+                    'originalFromLocation': this.request.origin,
+                    'request_time': this.request.request_time
+                }
+            };
+        } else {
+            config = {
+                width: '750px',
+                panelClass: 'form-dialog-container',
+                backdropClass: 'invis-backdrop',
+                data: {'entryState': 'datetime',
+                    'originalToLocation': this.request.destination,
+                    'colorProfile': this.request.color_profile,
+                    'originalFromLocation': this.request.origin,
+                    'requestTime': this.request.request_time}
+            };
         }
-      });
+      const dateDialog = this.dialog.open(CreateHallpassFormsComponent, config);
 
-      dateDialog.afterOpen().subscribe( () =>{
+      dateDialog.afterOpen().subscribe( () => {
         this.dateEditOpen = true;
       });
 
       dateDialog.afterClosed().subscribe(matData => {
-        console.log('DENIED data ===>', matData.data);
-        this.request.request_time = matData.data.date ? matData.data.date.date : this.request.request_time;
+        if (this.isSeen) {
+          this.request.request_time = matData.data.date ? matData.data.date.date : this.request.request_time;
+        } else {
+          this.request.request_time = matData.startTime;
+        }
         this.dateEditOpen = false;
         console.log('RIGHT REQUEST TIME =====>', this.request.request_time);
         let endpoint: string = "v1/pass_requests";
@@ -296,25 +312,40 @@ export class RequestCardComponent implements OnInit {
             //   });
             // }
           } else {
-
-            const messageDialog = this.dialog.open(CreateHallpassFormsComponent, {
-                  // width: '750px',
-                  panelClass: 'form-dialog-container',
-                  backdropClass: 'invis-backdrop',
-                  data: {
-                      'forInput': false,
-                      // 'entryState': 'restrictedMessage',
-                      'entryState': { step: 3, state: 5 },
-                      'teacher': this.request.teacher,
-                      'originalMessage': '',
-                      'originalToLocation': this.request.destination,
-                      'colorProfile': this.request.color_profile,
-                      'gradient': this.request.gradient_color,
-                      'originalFromLocation': this.request.origin,
-                      'isDeny': true,
-                      'studentMessage': this.request.attachment_message
-                  }
-              });
+            let config;
+            if (this.isSeen) {
+                config = {
+                    panelClass: 'form-dialog-container',
+                    backdropClass: 'invis-backdrop',
+                    data: {
+                        'forInput': false,
+                        'entryState': { step: 3, state: 5 },
+                        'teacher': this.request.teacher,
+                        'originalMessage': '',
+                        'originalToLocation': this.request.destination,
+                        'colorProfile': this.request.color_profile,
+                        'gradient': this.request.gradient_color,
+                        'originalFromLocation': this.request.origin,
+                        'isDeny': true,
+                        'studentMessage': this.request.attachment_message
+                    }
+                };
+            } else {
+                config =  {
+                    width: '750px',
+                    panelClass: 'form-dialog-container',
+                    backdropClass: 'invis-backdrop',
+                    data: {'entryState': 'restrictedMessage',
+                        'originalMessage': '',
+                        'originalToLocation': this.request.destination,
+                        'colorProfile': this.request.color_profile,
+                        'originalFromLocation': this.request.origin,
+                        'isDeny': true,
+                        'studentMessage': this.request.attachment_message
+                    }
+                };
+            }
+            const messageDialog = this.dialog.open(CreateHallpassFormsComponent, config);
 
               messageDialog.afterOpen().subscribe( () => {
                   this.messageEditOpen = true;
@@ -326,6 +357,10 @@ export class RequestCardComponent implements OnInit {
                     denyMessage = matData.data.message;
                     this.messageEditOpen = false;
                     this.denyRequest(denyMessage);
+                  } else {
+                      denyMessage = matData.message;
+                      this.messageEditOpen = false;
+                      this.denyRequest(denyMessage);
                   }
               });
           }
