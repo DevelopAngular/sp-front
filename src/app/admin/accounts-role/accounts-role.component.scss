@@ -11,7 +11,7 @@
     height: 100%;
     .card{
       box-sizing: border-box;
-      padding: 16px 33px 20px 33px ;
+      padding: 25px 35px;
       background-color: #fff;
       border-radius: 10px;
       font-size: 17px;
@@ -55,9 +55,15 @@
         background: radial-gradient(circle at 73% 71%, rgb(96, 105, 129), rgb(172, 180, 193))}
     }
     .table{
+      padding-top: 20px;
       .spinner{
         height: 568px;
       }
+    }
+    .tool-panel {
+      box-sizing: border-box;
+      padding-left: 30px;
+      //min-height: 110px;
     }
   }
 

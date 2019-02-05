@@ -61,7 +61,7 @@
           <div>
             <div class="card_header">Administrators</div>
             <p class="card_title">
-              <span>{{(accounts$ | async).admin_count}} profiles </span><br>
+              <span>{{(accounts$ | async).admin_count}} user{{(accounts$ | async).admin_count> 1 ? 's' : ''}}</span><br>
               An administrator has a high-level look at the school, configures passes, and views/generates reports.
             </p>
           </div>
@@ -82,7 +82,7 @@
           <div>
             <div class="card_header">Students</div>
             <p class="card_title">
-              <span>{{(accounts$ | async).student_count }} profiles</span><br>
+              <span>{{(accounts$ | async).student_count }} user{{(accounts$ | async).student_count > 1 ? 's' : ''}}</span><br>
               A student can create passes, schedule passes for the future,
               and send pass requests to teachers.
             </p>
@@ -106,7 +106,7 @@
           <div>
             <div class="card_header">Teachers</div>
             <p class="card_title">
-              <span>{{(accounts$ | async).teacher_count}} profiles </span><br>
+              <span>{{(accounts$ | async).teacher_count}} user{{(accounts$ | async).teacher_count> 1 ? 's' : ''}}</span><br>
               A teacher has a room or multiple rooms where students can create passes to.
               A teacher can manage passes in his/her room and create passes.
             </p>

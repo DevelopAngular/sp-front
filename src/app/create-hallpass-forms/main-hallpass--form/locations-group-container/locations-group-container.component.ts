@@ -125,7 +125,7 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   resultMessage(message, denyMessage: boolean = false) {
-    if (!message) {
+    if (!message && !this.FORM_STATE.forInput) {
       return;
     }
     this.data.message = message;

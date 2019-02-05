@@ -7,14 +7,14 @@
       <div *ngSwitchCase="'_profile_admin'">
         <div class="card_header">Administrators</div>
         <p class="card_title mr pr">
-          <span>{{userAmount| async}} profiles </span><br>
+          <span>{{userAmount| async}} user{{(userAmount | async) > 1 ? 's' : ''}} </span><br>
           An administrator has a high-level look at the school, configures passes, and views/generates reports.
         </p>
       </div>
       <div *ngSwitchCase="'_profile_teacher'">
         <div class="card_header">Teachers</div>
         <p class="card_title mr pr">
-          <span>{{userAmount| async}} profiles </span><br>
+          <span>{{userAmount| async}} user{{(userAmount | async) > 1 ? 's' : ''}} </span><br>
           A teacher has a room or multiple rooms where students can create passes to.
           A teacher can manage passes in his/her room and create passes.
         </p>
@@ -22,7 +22,7 @@
       <div *ngSwitchCase="'_profile_student'">
         <div class="card_header">Students</div>
         <p class="card_title mr pr">
-          <span>{{userAmount| async}} profiles </span><br>
+          <span>{{userAmount| async}} user{{(userAmount | async) > 1 ? 's' : ''}} </span><br>
           A student can create passes, schedule passes for the future,
           and send pass requests to teachers.
         </p>
@@ -30,29 +30,31 @@
       <div *ngSwitchCase="'staff_secretary'">
         <div class="card_header">Secretaries & Substitutes</div>
         <p class="card_title mr pr">
-          <span>{{userAmount| async}} profiles </span><br>
+          <span>{{userAmount| async}} user{{(userAmount | async) > 1 ? 's' : ''}} </span><br>
           A secretary or substitute teacher acts as a certain teacher when they sign-in.
           They can manage passes in his/her room and create passes as that teacher.
         </p>
       </div>
     </div>
     <div class="ml pl">
-      <!--<div class="flex-start-end">-->
-        <!--<app-gradient-button-->
-          <!--[cursor]="'pointer'"-->
-          <!--[minHeight]="'62px'"-->
-          <!--[width]="'270px'"-->
-          <!--[fontSize]="'14px'"-->
-          <!--[fontWeight]="400"-->
-          <!--(buttonClick)="openDialog('create')">-->
-          <!--<span>Add Account to Profile</span>-->
-        <!--</app-gradient-button>-->
-      <!--</div>-->
-      <div class="ml mt pl pt">
+      <div class="flex-start-end">
+        <app-gradient-button
+          [cursor]="'pointer'"
+          [minHeight]="'43px'"
+          [width]="'225px'"
+          [fontSize]="'14px'"
+          [fontWeight]="'bold'"
+          (buttonClick)="openDialog('create')">
+          <div class="flex-center-center">
+            <img [src]="'./assets/Create (White).png'" width="24" class="pr" alt="Create (White).png"><span>Add Account to Profile</span>
+          </div>
+        </app-gradient-button>
+      </div>
+      <div class="ml pl pt">
         <app-round-input
-          [width]="'300px'"
+          [minWidth]="'280px'"
           [type]="'text'"
-          [placeholder]="'Search profiles'"
+          [placeholder]="'Search users'"
           (ontextupdate)="findRelevantAccounts($event)">
         </app-round-input>
       </div>
@@ -64,68 +66,73 @@
       <mat-spinner *ngIf="!placeholder" [color]="'accent'"></mat-spinner>
       <h1 [style.color]="'#666666'" *ngIf="placeholder">No matches found.</h1>
     </div>
-    <div *ngIf="userList.length" class="my py">
-      <!--<div class="tool-panel flex-center-start my py">-->
-        <!--<div class="m p" [style.min-width]="'150px'">-->
-          <!--<p class="">{{selectedUsers.length}} Profile<span *ngIf="selectedUsers.length > 1">s</span> Selected:</p>-->
-        <!--</div>-->
-        <!--<div class="my py" *ngIf="role === 'staff_secretary'">-->
+    <div *ngIf="userList.length" class="">
+      <div class="tool-panel">
+
+        <div *ngIf="selectedUsers.length" class="flex-center-start">
+          <div class="m px" [style.min-width]="'150px'">
+            <p class="">{{selectedUsers.length}} Profile<span *ngIf="selectedUsers.length > 1">s</span> Selected:</p>
+          </div>
+          <!--<div class="my py" *ngIf="role === 'staff_secretary'">-->
           <!--<app-gradient-button-->
-            <!--[disabled]="!selectedUsers.length"-->
-            <!--[cursor]="'pointer'"-->
-            <!--[minHeight]="'32px'"-->
-            <!--[width]="'295px'"-->
-            <!--[fontSize]="'14px'"-->
-            <!--[fontWeight]="400"-->
-            <!--[gradient]="'#13BF9E, #00D99B'"-->
-            <!--(buttonClick)="openDialog('teacher')">-->
-            <!--<span>Add/Modify Acting Teacher Account</span>-->
+          <!--[disabled]="!selectedUsers.length"-->
+          <!--[cursor]="'pointer'"-->
+          <!--[minHeight]="'32px'"-->
+          <!--[width]="'295px'"-->
+          <!--[fontSize]="'14px'"-->
+          <!--[fontWeight]="400"-->
+          <!--[gradient]="'#13BF9E, #00D99B'"-->
+          <!--(buttonClick)="openDialog('teacher')">-->
+          <!--<span>Add/Modify Acting Teacher Account</span>-->
           <!--</app-gradient-button>-->
-        <!--</div>-->
-        <!--<div class="m p" *ngIf="role === '_profile_teacher'">-->
+          <!--</div>-->
+          <!--<div class="m p" *ngIf="role === '_profile_teacher'">-->
           <!--<app-gradient-button-->
 
-            <!--[disabled]="!selectedUsers.length"-->
-            <!--[cursor]="'pointer'"-->
-            <!--[minHeight]="'32px'"-->
-            <!--[width]="'185px'"-->
-            <!--[fontSize]="'14px'"-->
-            <!--[fontWeight]="400"-->
-            <!--[gradient]="'#022F68, #2F66AB'"-->
-            <!--(buttonClick)="openDialog('rooms')">-->
-            <!--<span>Add/Modify Rooms</span>-->
+          <!--[disabled]="!selectedUsers.length"-->
+          <!--[cursor]="'pointer'"-->
+          <!--[minHeight]="'32px'"-->
+          <!--[width]="'185px'"-->
+          <!--[fontSize]="'14px'"-->
+          <!--[fontWeight]="400"-->
+          <!--[gradient]="'#022F68, #2F66AB'"-->
+          <!--(buttonClick)="openDialog('rooms')">-->
+          <!--<span>Add/Modify Rooms</span>-->
           <!--</app-gradient-button>-->
-        <!--</div>-->
-        <!--<div class="my py"  *ngIf="role !== 'hallpass_student'">-->
+          <!--</div>-->
+          <!--<div class="my py"  *ngIf="role !== 'hallpass_student'">-->
           <!--<app-gradient-button-->
 
-            <!--[disabled]="!selectedUsers.length"-->
-            <!--[cursor]="'pointer'"-->
-            <!--[minHeight]="'32px'"-->
-            <!--[width]="'215px'"-->
-            <!--[fontSize]="'14px'"-->
-            <!--[fontWeight]="400"-->
-            <!--[gradient]="'#0B9FC1, #00C0C7'"-->
-            <!--(buttonClick)="openDialog('restrictions')">-->
-            <!--<span>Add/Modify Restrictions</span>-->
+          <!--[disabled]="!selectedUsers.length"-->
+          <!--[cursor]="'pointer'"-->
+          <!--[minHeight]="'32px'"-->
+          <!--[width]="'215px'"-->
+          <!--[fontSize]="'14px'"-->
+          <!--[fontWeight]="400"-->
+          <!--[gradient]="'#0B9FC1, #00C0C7'"-->
+          <!--(buttonClick)="openDialog('restrictions')">-->
+          <!--<span>Add/Modify Restrictions</span>-->
           <!--</app-gradient-button>-->
-        <!--</div>-->
-        <!--<div class="m p">-->
-          <!--<app-gradient-button-->
-            <!--[disabled]="!selectedUsers.length"-->
-            <!--[cursor]="'pointer'"-->
-            <!--[minHeight]="'32px'"-->
-            <!--[width]="'280px'"-->
-            <!--[fontSize]="'14px'"-->
-            <!--[fontWeight]="400"-->
-            <!--[gradient]="'#DA2370, #FB434A'"-->
-            <!--(buttonClick)="openDialog('remove')">-->
-            <!--<span>Remove Account from this Profile</span>-->
-          <!--</app-gradient-button>-->
-        <!--</div>-->
-      <!--</div>-->
+          <!--</div>-->
+          <div class="m x" #eventTarget  [style.opacity]="consentMenuOpened ? '.5' : '1'">
+            <app-gradient-button
+              [disabled]="!selectedUsers.length"
+              [cursor]="'pointer'"
+              [minHeight]="'32px'"
+              [width]="'280px'"
+              [fontSize]="'14px'"
+              [fontWeight]="400"
+              [gradient]="'#DA2370, #FB434A'"
+              [hoverColor]="'#DA2370'"
+              (buttonClick)="openDialog('remove', eventTarget)">
+              <span>Remove user from this profile</span>
+            </app-gradient-button>
+          </div>
+        </div>
+      </div>
       <!--<pre>{{userList| json}}</pre>-->
       <app-data-table
+        class="my"
         [data]="userList"
         (selectedUsers)="showSelected($event)">
       </app-data-table>

@@ -1,5 +1,5 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {Component, ElementRef, Input, OnDestroy, OnInit} from '@angular/core';
+import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {MatDialog} from '@angular/material';
 import {UserService} from '../../user.service';
@@ -8,6 +8,8 @@ import { ActivatedRoute } from '@angular/router';
 import {debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/internal/operators';
 import {Util} from '../../../Util';
 import {HttpService} from '../../http-service';
+import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
+import {DropdownComponent} from '../../dropdown/dropdown.component';
 
 @Component({
   selector: 'app-accounts-role',
@@ -24,6 +26,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   public userList: any[] = [];
   public selectedUsers: any[] = [];
   public placeholder: boolean;
+  public consentMenuOpened: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -87,7 +90,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     }
     this.selectedUsers = e;
   }
-  openDialog(mode) {
+
+  openDialog(mode, eventTarget?: HTMLElement) {
     const restrictions = this.role === '_profile_admin'
                                     ?
                         {
@@ -130,6 +134,54 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
                             controlLabel: 'Access to Hall Monitor'
                           },
                         };
+
+    // =========== SPA=476 ============> It's temporary. Needs to suggest to leave the dialog as it is. If it will be declined, remove it.
+
+    if ( mode === 'remove') {
+
+      this.consentMenuOpened = true;
+
+      const DR = this.matDialog.open(ConsentMenuComponent,
+        {
+          data: {
+            role: this.role,
+            selectedUsers: this.selectedUsers,
+            mode: mode,
+            restrictions: restrictions,
+            alignSelf: true,
+            header: `Are you sure you want to remove this user${this.selectedUsers.length > 1 ? 's' : ''}?`,
+            options: [{display: 'Confirm Remove', color: '#FFFFFF', buttonColor: '#DA2370, #FB434A', action: 'confirm'}],
+            optionsView: 'button',
+            trigger: new ElementRef(eventTarget)
+          },
+          panelClass: 'consent-dialog-container',
+          backdropClass: 'invis-backdrop',
+        });
+      DR.afterClosed()
+        .pipe(
+          switchMap((action): Observable<any> => {
+            console.log(action);
+
+            if (action === 'confirm') {
+              let role: any = this.role.split('_');
+                  role = role[role.length - 1];
+              return zip(...this.selectedUsers.map((user) => this.http.delete(`v1/users/${user.id}/profiles/${role}`)));
+            } else {
+              return of(null);
+            }
+
+          }),
+        )
+        .subscribe((res) => {
+          this.consentMenuOpened = false;
+          this.http.schoolIdSubject.next(this.http.schoolIdSubject.value);
+        });
+
+      return;
+    }
+
+    // =========== SPA=476 end ============>
+
     const DR = this.matDialog.open(AccountsDialogComponent,
       {
         data: {

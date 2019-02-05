@@ -3,6 +3,9 @@ import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef  } from '@angular/materi
 import { DomSanitizer } from '../../../node_modules/@angular/platform-browser';
 import {DataService} from '../data-service';
 
+
+type optionsView = 'inline' | 'button';
+
 @Component({
   selector: 'app-consent-menu',
   templateUrl: './consent-menu.component.html',
@@ -15,7 +18,7 @@ export class ConsentMenuComponent implements OnInit {
 
   header: string;
   options: any[];
-
+  optionsView: optionsView = 'inline';
   ConsentText: string;
   ConsentYesText: string;
   ConsentNoText: string;
@@ -36,6 +39,7 @@ export class ConsentMenuComponent implements OnInit {
   ) {
     this.header = data['header'];
     this.options = data['options'];
+    this.optionsView = data['optionsView'] || 'inline';
 
     this._matDialogRef = _matDialogRef;
 
