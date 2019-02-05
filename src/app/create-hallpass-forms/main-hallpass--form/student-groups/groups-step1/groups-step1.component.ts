@@ -34,10 +34,14 @@ export class GroupsStep1Component implements OnInit {
 
   nextStep() {
     // console.log('SLECTED ====>', this.selectedStudents, this.selectedGroup);
-
-    this.formState.step = 3;
-    this.formState.state = 1;
-    this.formState.fromState = 1;
+    if (this.formState.forLater) {
+        this.formState.step = 1;
+        this.formState.fromState = 1;
+    } else {
+        this.formState.step = 3;
+        this.formState.state = 1;
+        this.formState.fromState = 1;
+    }
 
     if ( this.selectedGroup) {
       this.formState.data.selectedGroup = this.selectedGroup;
@@ -113,17 +117,6 @@ export class GroupsStep1Component implements OnInit {
       this.selectedGroup = null;
       this.selectedStudents = [];
       return;
-    } else if (this.hasBackArrow) {
-      this.formState.previousStep = 2;
-      this.stateChangeEvent.emit({
-        step: 1,
-        // state: 1,
-        // fromState: 1,
-        data: {
-          selectedStudents: this.selectedStudents,
-          selectedGroup: this.selectedGroup
-        }
-      });
     } else {
       this.stateChangeEvent.emit('exit');
       // this.stateChangeEvent.emit({

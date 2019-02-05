@@ -41,6 +41,7 @@ export interface Navigation {
     hasClose?: boolean
   };
   forInput?: boolean;
+  forLater?: boolean;
 }
 
 
@@ -83,14 +84,18 @@ export class MainHallPassFormComponent implements OnInit {
         direction: {},
 
       },
-      forInput: this.dialogData['forInput'] || false
+      forInput: this.dialogData['forInput'] || false,
+      forLater: this.dialogData['forLater']
     };
-
     switch (this.dialogData['forInput']) {
       case (true): {
         this.FORM_STATE.formMode.role = this.dialogData['forStaff'] ? Role.Teacher : Role.Student;
-        if ( this.dialogData['forLater'] ) {
-          this.FORM_STATE.step = 1;
+        if (this.dialogData['forLater']) {
+          if (this.dialogData['forStaff']) {
+            this.FORM_STATE.step = 2;
+          } else {
+            this.FORM_STATE.step = 1;
+          }
           if ( this.dialogData['forStaff'] ) {
             this.FORM_STATE.formMode.formFactor = FormFactor.Invitation;
           } else {

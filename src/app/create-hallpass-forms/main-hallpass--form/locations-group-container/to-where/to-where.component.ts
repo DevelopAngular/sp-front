@@ -41,13 +41,12 @@ export class ToWhereComponent implements OnInit {
         (this.formState.previousStep === 2 || this.formState.previousStep === 4)
     ) {
         this.formState.previousState = this.formState.state;
-        this.formState.step = 2;
-        this.formState.state = 1;
+        this.formState.step = 1;
         this.formState.previousStep = 3;
     } else {
       this.formState.previousState = this.formState.state;
       if (this.formState.formMode.formFactor === 3) {
-        this.formState.step = 2;
+        this.formState.step = 1;
       } else {
         this.formState.state -= 1;
       }
