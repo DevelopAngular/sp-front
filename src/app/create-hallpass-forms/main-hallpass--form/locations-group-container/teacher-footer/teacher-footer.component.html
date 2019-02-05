@@ -1,10 +1,10 @@
 <div class="from-footer" [style.height]="!showFullFooter ? '43px' : '89px'">
     <div class="footer-from-teacher-text">
-      <div class="default-footer" *ngIf="!showFullFooter">
+      <div class="default-footer" *ngIf="!showFullFooter" (click)="showFullFooter = true">
         <div class="default-text">
           Expand Pass Details
         </div>
-        <img class="arrow-icon" [src]="'./assets/icon-arrow-open.png' | resolveAsset" (click)="showFullFooter = true">
+        <img class="arrow-icon" [src]="'./assets/icon-arrow-open.png' | resolveAsset">
       </div>
       <div class="new-footer" *ngIf="showFullFooter">
         <div class="top cursor" (click)="goToDate()" *ngIf="date">
