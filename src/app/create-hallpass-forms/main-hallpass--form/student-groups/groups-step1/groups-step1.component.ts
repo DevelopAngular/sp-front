@@ -101,6 +101,9 @@ export class GroupsStep1Component implements OnInit {
     this.selectedGroup = null;
     // }
     this.formState.data.selectedStudents = evt;
+    this.formState.state = 1;
+    this.formState.studentNavigation = true;
+    this.stateChangeEvent.emit(this.formState);
       // console.log('!!!!!!!!!!!!!', this.selectedGroup);
       // debugger;
       // this.stateChangeEvent.emit(

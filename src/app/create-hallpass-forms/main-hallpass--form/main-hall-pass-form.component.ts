@@ -19,7 +19,8 @@ export interface FormMode {
 export interface Navigation {
   step: number;
   previousStep?: number;
-  quickNavigator?: boolean,
+  quickNavigator?: boolean;
+  studentNavigation?: boolean;
   state?: any;
   previousState?: number;
   fromState?: number;
