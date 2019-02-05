@@ -92,14 +92,14 @@ export class NavbarComponent implements OnInit {
       }
     });
 
-    console.log('loading navbar');
+    // console.log('loading navbar');
 
     this.userService.userData
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {
         this._zone.run(() => {
           this.user = user;
-          console.log('User =>>>>>', user);
+          // console.log('User =>>>>>', user);
           this.isStaff = user.isAdmin() || user.isTeacher();
           this.showSwitchButton = [user.isAdmin(), user.isTeacher(), user.isStudent()].filter(val => !!val).length > 1;
           this.dataService.updateInbox(this.tab !== 'settings');

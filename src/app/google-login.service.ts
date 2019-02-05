@@ -39,7 +39,7 @@ export class GoogleLoginService {
   constructor(private googleAuth: GoogleAuthService, private _zone: NgZone) {
 
     this.authToken$.subscribe(auth => {
-      console.log('Loaded auth response:', auth);
+      // console.log('Loaded auth response:', auth);
 
       if (auth) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(auth));
@@ -50,7 +50,7 @@ export class GoogleLoginService {
 
     const savedAuth = localStorage.getItem(STORAGE_KEY);
     if (savedAuth) {
-      console.log('Loading saved auth:', savedAuth);
+      // console.log('Loading saved auth:', savedAuth);
       const auth: AuthResponse = JSON.parse(savedAuth);
       if (auth.id_token !== undefined || isDemoLogin(auth)) {
         this.updateAuth(auth);
@@ -99,7 +99,7 @@ export class GoogleLoginService {
   }
 
   setAuthenticated() {
-    console.log('setAuthenticated()');
+    // console.log('setAuthenticated()');
     this.isAuthenticated$.next(true);
     this.showLoginError$.next(false);
   }
@@ -130,7 +130,7 @@ export class GoogleLoginService {
       return;
     }
 
-    console.log('logging in...');
+    // console.log('logging in...');
 
     return auth.signIn().then(user => {
       this._zone.run(() => {

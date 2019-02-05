@@ -22,27 +22,26 @@ export class NotSeenIntroGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
 
-    console.log('canActivate intro:', localStorage.getItem('smartpass_intro') !== 'seen');
+    // console.log('canActivate intro:', localStorage.getItem('smartpass_intro') !== 'seen');
 
     return this.http.get<any>('v1/users/@me')
       .pipe(
         map(raw => User.fromJSON(raw)),
         map((user) => {
-        if (!user) {
-          return false;
-        }
-        if (user.isStudent()) {
-          if (localStorage.getItem('smartpass_intro_student') !== 'seen') {
-            this.router.navigateByUrl('/main/intro').catch(e => this.errorHandler.handleError(e));
+          if (!user) {
+            return false;
           }
-        } else if (user.isTeacher()) {
-          if (localStorage.getItem('smartpass_intro_teacher') !== 'seen') {
-            this.router.navigateByUrl('/main/intro').catch(e => this.errorHandler.handleError(e));
+          if (user.isStudent()) {
+            if (localStorage.getItem('smartpass_intro_student') !== 'seen') {
+              this.router.navigateByUrl('/main/intro').catch(e => this.errorHandler.handleError(e));
+            }
+          } else if (user.isTeacher()) {
+            if (localStorage.getItem('smartpass_intro_teacher') !== 'seen') {
+              this.router.navigateByUrl('/main/intro').catch(e => this.errorHandler.handleError(e));
+            }
           }
-        }
-        return true;
-      }),
-      tap(() => console.log('======> OK'))
+          return true;
+        })
       );
-  }
+    }
 }

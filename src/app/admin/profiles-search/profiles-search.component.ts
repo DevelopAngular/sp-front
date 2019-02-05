@@ -18,6 +18,8 @@ export class ProfilesSearchComponent implements OnInit {
 
   private destroy$: Subject<any> = new Subject();
   private searchChangeObserver$: Subject<string>;
+  public inputValue$: Subject<string> = new Subject<string>();
+
 
   public userList: any[] = [];
   public wait: boolean;
@@ -29,6 +31,7 @@ export class ProfilesSearchComponent implements OnInit {
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
   @Input() showOptions: boolean = true;
   @Input() selectedStudents: User[] = [];
+
 
   students: Promise<any[]>;
   inputValue: string = '';

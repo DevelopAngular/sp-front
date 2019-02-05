@@ -131,7 +131,7 @@ export class HttpService {
 
     return this.http.post('https://smartpass.app/api/discovery/find', data)
       .map((servers: LoginServer[]) => {
-        console.log(servers);
+        // console.log(servers);
         if (servers.length > 0) {
           return servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
         } else {
@@ -142,7 +142,7 @@ export class HttpService {
 
   private loginManual(username: string, password: string): Observable<AuthContext> {
 
-    console.log('loginManual()');
+    // console.log('loginManual()');
 
     const c = new FormData();
     c.append('email', username);
@@ -153,7 +153,7 @@ export class HttpService {
         return throwError(new LoginServerError('No login server!'));
       }
 
-      console.log(`Chosen server: ${server.name}`);
+      // console.log(`Chosen server: ${server.name}`);
 
       const config = new FormData();
 
@@ -162,7 +162,7 @@ export class HttpService {
       config.append('username', username);
       config.append('password', password);
 
-      console.log('loginManual()');
+      // console.log('loginManual()');
 
       return this.http.post(makeUrl(server, 'o/token/'), config)
         .map((data: any) => {
@@ -179,7 +179,7 @@ export class HttpService {
   }
 
   private loginGoogleAuth(googleToken: string): Observable<AuthContext> {
-    console.log('loginGoogleAuth()');
+    // console.log('loginGoogleAuth()');
 
     const c = new FormData();
     c.append('token', googleToken);
@@ -212,12 +212,12 @@ export class HttpService {
   }
 
   private fetchServerAuth(retryNum: number = 0): Observable<AuthContext> {
-    console.log('fetchServerAuth');
+    // console.log('fetchServerAuth');
     return this.loginService.getIdToken()
       .switchMap(googleToken => {
         let authContext$: Observable<AuthContext>;
 
-        console.log('getIdToken');
+        // console.log('getIdToken');
 
         if (isDemoLogin(googleToken)) {
           authContext$ = this.loginManual(googleToken.username, googleToken.password);
@@ -254,7 +254,7 @@ export class HttpService {
           throw err;
         }
 
-        console.log('performRequest');
+        // console.log('performRequest');
 
         // invalidate the existing token
         this.accessTokenSubject.next(null);

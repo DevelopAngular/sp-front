@@ -43,7 +43,6 @@ export class UserService {
   }
 
   getUsersList(role: string = '', search: string = '') {
-    console.log('usr', this);
 
     const params: any = {};
     if (role !== '') {

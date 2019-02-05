@@ -161,11 +161,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         .pipe(
           switchMap((action): Observable<any> => {
             console.log(action);
-
+            this.consentMenuOpened = false;
             if (action === 'confirm') {
               let role: any = this.role.split('_');
                   role = role[role.length - 1];
-              return zip(...this.selectedUsers.map((user) => this.http.delete(`v1/users/${user.id}/profiles/${role}`)));
+              console.log('======>>>>>', role, this.selectedUsers);
+              return zip(...this.selectedUsers.map((user) => this.http.delete(`v1/users/${user['#Id']}/profiles/${role}`)));
             } else {
               return of(null);
             }
@@ -173,8 +174,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           }),
         )
         .subscribe((res) => {
-          this.consentMenuOpened = false;
-          this.http.schoolIdSubject.next(this.http.schoolIdSubject.value);
+          console.log(res);
+          if (res != null) {
+
+            this.http.schoolIdSubject.next(this.http.schoolIdSubject.value);
+
+          }
         });
 
       return;

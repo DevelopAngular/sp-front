@@ -62,7 +62,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           this.http
             .get<School[]>('v1/schools')
             .subscribe((schools: School[]) => {
-              console.log(schools);
+              // console.log(schools);
               this.schools = schools;
 
               if (localStorage.getItem('schoolId')) {
