@@ -18,7 +18,7 @@ export class DateTimeComponent implements OnInit {
 
   startTime: Date = new Date();
   requestTime: Date = new Date();
-  declinable: FormControl = new FormControl(false);
+  declinable: FormControl = new FormControl(true);
 
   constructor() { }
 
