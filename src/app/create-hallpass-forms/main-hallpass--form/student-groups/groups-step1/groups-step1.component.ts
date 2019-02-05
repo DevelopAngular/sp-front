@@ -97,10 +97,13 @@ export class GroupsStep1Component implements OnInit {
 
   updateInternalData(evt) {
     // if (this.selectedGroup) {
-      this.formState.data.selectedGroup = null;
+    this.formState.data.selectedGroup = null;
+    this.selectedGroup = null;
     // }
     this.formState.data.selectedStudents = evt;
-    // this.stateChangeEvent.emit(
+      // console.log('!!!!!!!!!!!!!', this.selectedGroup);
+      // debugger;
+      // this.stateChangeEvent.emit(
     //   {
     //     step: 2,
     //     state: 1,

@@ -1,6 +1,6 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Pinnable } from '../../../../models/Pinnable';
-import {Navigation} from '../../main-hall-pass-form.component';
+import { Navigation } from '../../main-hall-pass-form.component';
 
 @Component({
   selector: 'app-to-where',
