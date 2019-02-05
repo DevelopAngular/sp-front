@@ -29,7 +29,7 @@ export class FromWhereComponent implements OnInit {
   }
 
   back() {
-      if (!!this.date) {
+      if (this.formState.forLater) {
           this.formState.previousState = 1;
           this.formState.step = 1;
           this.formState.state = 1;

@@ -53,6 +53,7 @@ export class LocationsGroupContainerComponent implements OnInit {
     }
 
   ngOnInit() {
+    this.FORM_STATE.studentNavigation = false;
     this.data.toLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.to ? this.FORM_STATE.data.direction.to : null;
     this.pinnables = this.formService.getPinnable();
     this.user$ = this.dataService.currentUser;
@@ -135,15 +136,12 @@ export class LocationsGroupContainerComponent implements OnInit {
 
 
   private postComposetData(close: boolean = false) {
-
-    if (
-      (this.FORM_STATE.formMode.role === Role.Student)
-        &&
-      (this.FORM_STATE.data.date
-          ? Role.Student && (this.FORM_STATE.data.direction.to.scheduling_restricted || this.FORM_STATE.data.direction.to.restricted)
-          : Role.Student && this.FORM_STATE.data.direction.to.restricted)
-    ) {
-      this.FORM_STATE.formMode.formFactor = FormFactor.Request;
+    const restricted = ((this.FORM_STATE.data.direction.to.restricted && !this.showDate) || (this.FORM_STATE.data.direction.to.scheduling_restricted && !!this.showDate));
+    if (!this.isStaff && restricted) {
+        this.FORM_STATE.formMode.formFactor = FormFactor.Request;
+    }
+    if (!this.isStaff && !restricted) {
+        this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
     }
     this.FORM_STATE.step =  close ? 0 : 4;
     this.nextStepEvent.emit(this.FORM_STATE);

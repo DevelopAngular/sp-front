@@ -58,6 +58,9 @@ export class LocationTableComponent implements OnInit {
   @Input() heightLeftTable: string = '189px';
 
   @Input()
+  inputWidth: string = '200px';
+
+  @Input()
   horizontalTable: boolean = true;
 
   @Input() rightHeaderText: boolean = false;

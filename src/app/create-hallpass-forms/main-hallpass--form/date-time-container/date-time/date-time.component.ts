@@ -15,10 +15,11 @@ export class DateTimeComponent implements OnInit {
   @Input() formState: Navigation;
 
   @Output() result: EventEmitter<any> = new EventEmitter<any>();
+  @Output() backButton: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
   startTime: Date = new Date();
   requestTime: Date = new Date();
-  declinable: FormControl = new FormControl(false);
+  declinable: FormControl = new FormControl(true);
 
   constructor() { }
 
@@ -36,14 +37,20 @@ export class DateTimeComponent implements OnInit {
   }
 
   next() {
-    this.result.emit({
-        date: this.requestTime,
-        declinable: this.declinable.value
-    });
+    this.formState.data.date = {
+      date: this.requestTime,
+      declinable: this.declinable.value
+    };
+    this.result.emit(this.formState);
   }
 
   back() {
-    this.result.emit('exit');
+    if (this.isStaff) {
+      this.formState.step = 2;
+    } else {
+      this.formState.step = 0;
+    }
+    this.backButton.emit(this.formState);
   }
 
 }

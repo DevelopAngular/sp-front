@@ -1,6 +1,6 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Pinnable } from '../../../../models/Pinnable';
-import {Navigation} from '../../main-hall-pass-form.component';
+import { Navigation } from '../../main-hall-pass-form.component';
 
 @Component({
   selector: 'app-to-where',
@@ -41,13 +41,12 @@ export class ToWhereComponent implements OnInit {
         (this.formState.previousStep === 2 || this.formState.previousStep === 4)
     ) {
         this.formState.previousState = this.formState.state;
-        this.formState.step = 2;
-        this.formState.state = 1;
+        this.formState.step = 1;
         this.formState.previousStep = 3;
     } else {
       this.formState.previousState = this.formState.state;
       if (this.formState.formMode.formFactor === 3) {
-        this.formState.step = 2;
+        this.formState.step = 1;
       } else {
         this.formState.state -= 1;
       }
