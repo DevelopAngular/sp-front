@@ -79,7 +79,12 @@
   </div>
 
   <div *ngIf="formState==='students'" class="student-select">
-    <app-student-search [style.width]="'75%'" (onUpdate)="selectedStudents=$event" [selectedStudents]="selectedStudents"></app-student-search>
+    <app-student-search
+            [style.width]="'75%'"
+            (onUpdate)="selectedStudents=$event"
+            [focused]="true"
+            [selectedStudents]="selectedStudents">
+    </app-student-search>
       <app-gradient-button
       *ngIf="selectedStudents && selectedStudents.length > 0"
       [gradient]="'#03CF31,#00B476'"
