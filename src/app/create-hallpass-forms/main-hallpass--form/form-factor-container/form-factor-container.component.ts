@@ -30,8 +30,8 @@ export class FormFactorContainerComponent implements OnInit {
 
 
   ngOnInit() {
-
-    this.dataService.currentUser
+      console.log('Form Factor =====>>>>', this.FORM_STATE.formMode.formFactor);
+      this.dataService.currentUser
       .subscribe((_user) => {
         switch (this.FORM_STATE.formMode.formFactor) {
           case (this.states.HallPass): {

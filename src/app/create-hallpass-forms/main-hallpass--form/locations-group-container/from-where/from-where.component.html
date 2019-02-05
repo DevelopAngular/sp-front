@@ -27,7 +27,6 @@
       </app-location-table>
     </div>
   </div>
-
   <app-student-footer [date]="date" [formState]="formState" [state]="'from'" *ngIf="!isStaff"></app-student-footer>
   <app-teacher-footer *ngIf="isStaff" [formState]="formState" [date]="date" [studentText]="studentText" [state]="'from'"></app-teacher-footer>
 

@@ -119,7 +119,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (this.data['pass']) {
+      if (this.data['pass']) {
       this.pass = this.data['pass'];
       this.forInput = this.data['forInput'];
       this.isActive = this.data['isActive'];
@@ -161,9 +161,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
         this.overlayWidth = (this.buttonWidth * (diff/dur));
         return x;
       })).subscribe();
-      this.createFormService.isSeen$.subscribe(res => this.isSeen = res);
     }
-
+    this.createFormService.isSeen$.subscribe(res => this.isSeen = res);
   }
 
   ngOnDestroy() {
@@ -286,6 +285,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
               this.cardEvent.emit(this.formState);
           } else {
             this.dialogRef.close();
+            debugger;
             const isCategory = this.fromHistory[this.fromHistoryIndex] === 'to-category';
             const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
                 width: '750px',

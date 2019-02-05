@@ -61,8 +61,6 @@ export class RequestCardComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log(this.request);
-
     if (this.data['pass']) {
       this.request = this.data['pass'];
       this.forInput = this.data['forInput'];

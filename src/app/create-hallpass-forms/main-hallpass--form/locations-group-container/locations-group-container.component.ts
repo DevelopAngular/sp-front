@@ -125,7 +125,7 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   resultMessage(message, denyMessage: boolean = false) {
-    if (!message) {
+    if (!message && !this.FORM_STATE.forInput) {
       return;
     }
     this.data.message = message;
@@ -135,15 +135,12 @@ export class LocationsGroupContainerComponent implements OnInit {
 
 
   private postComposetData(close: boolean = false) {
-
-    if (
-      (this.FORM_STATE.formMode.role === Role.Student)
-        &&
-      (this.FORM_STATE.data.date
-          ? Role.Student && (this.FORM_STATE.data.direction.to.scheduling_restricted || this.FORM_STATE.data.direction.to.restricted)
-          : Role.Student && this.FORM_STATE.data.direction.to.restricted)
-    ) {
-      this.FORM_STATE.formMode.formFactor = FormFactor.Request;
+    const restricted = ((this.FORM_STATE.data.direction.to.restricted && !this.showDate) || (this.FORM_STATE.data.direction.to.scheduling_restricted && !!this.showDate));
+    if (!this.isStaff && restricted) {
+        this.FORM_STATE.formMode.formFactor = FormFactor.Request;
+    }
+    if (!this.isStaff && !restricted) {
+        this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
     }
     this.FORM_STATE.step =  close ? 0 : 4;
     this.nextStepEvent.emit(this.FORM_STATE);
