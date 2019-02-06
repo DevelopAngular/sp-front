@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {animate, state, style, transition, trigger} from '@angular/animations';
 import { Observable } from 'rxjs';
 import { User } from '../../../models/User';
 import { DataService } from '../../../data-service';
@@ -12,13 +13,65 @@ export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, 
 @Component({
   selector: 'app-locations-group-container',
   templateUrl: './locations-group-container.component.html',
-  styleUrls: ['./locations-group-container.component.scss']
+  styleUrls: ['./locations-group-container.component.scss'],
+  animations: [
+    trigger('NextStep', [
+        state('Start', style({
+          // width: '425px',
+          opacity: 1,
+          transform: 'translateX(0px)',
+          display: 'block'
+        })),
+        state('Finish', style({
+          // width: '0px',
+          opacity: 0,
+          transform: 'translateX(100px)',
+          display: 'none'
+        })),
+      // state('StartReverse', style({
+      //   // width: '425px',
+      //   opacity: 1,
+      //   transform: 'translateX(0px)',
+      //   display: 'block'
+      // })),
+      state('FinishReverse', style({
+        // width: '0px',
+        opacity: 0,
+        transform: 'translateX(-100px)',
+        display: 'none'
+      })),
+        transition('Start => Finish, Finish => Start', animate('0.8s 0s ease', null)),
+        transition('Start => FinishReverse, FinishReverse => Start', animate('0.8s 0s ease', null)),
+        // transition('requestsOpened => requestsClosed', animate('0.5s 0s ease', null)),
+      ],
+    ),
+    // trigger('PrevStep', [
+    //     state('Start', style({
+    //       // width: '425px',
+    //       opacity: 1,
+    //       transform: 'translateX(0px)',
+    //       display: 'block'
+    //     })),
+    //     state('Finish', style({
+    //       // width: '0px',
+    //       opacity: 0,
+    //       transform: 'translateX(-100px)',
+    //       display: 'none'
+    //     })),
+    //     transition('Start => Finish, Finish => Start', animate('0.8s 0s ease', null)),
+    //     // transition('requestsOpened => requestsClosed', animate('0.5s 0s ease', null)),
+    //   ],
+    // ),
+  ]
 })
 export class LocationsGroupContainerComponent implements OnInit {
 
   @Input() FORM_STATE: Navigation;
 
   @Output() nextStepEvent: EventEmitter<any> = new EventEmitter<any>();
+
+
+  statePointerWithDelay: number;
 
   user$: Observable<User>;
   isStaff: boolean;
@@ -53,12 +106,46 @@ export class LocationsGroupContainerComponent implements OnInit {
     }
 
   ngOnInit() {
+
+    this.statePointerWithDelay = this.FORM_STATE.state;
+
     this.FORM_STATE.studentNavigation = false;
     this.data.toLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.to ? this.FORM_STATE.data.direction.to : null;
     this.pinnables = this.formService.getPinnable();
     this.user$ = this.dataService.currentUser;
     this.pinnable = this.FORM_STATE.data.direction ? this.FORM_STATE.data.direction.pinnable : null;
     this.user$.subscribe((user: User) => this.isStaff = user.isTeacher() || user.isAdmin());
+  }
+
+
+  stateTransition(stateNumber: number) {
+
+      if (stateNumber === this.FORM_STATE.state) {
+
+        if (stateNumber < this.FORM_STATE.previousState) {
+          return 'Start';
+        } else {
+          return 'Start';
+        }
+
+      } else {
+
+        if (stateNumber < this.FORM_STATE.previousState) {
+          return 'Finish';
+        } else {
+          return 'Finish';
+        }
+      }
+
+  }
+
+  stateTransitionBack(stateNumber: number) {
+
+      if (stateNumber < this.FORM_STATE.previousState) {
+        return 'Start';
+      } else {
+        return 'Finish';
+      }
   }
 
   fromWhere(location) {
@@ -78,10 +165,15 @@ export class LocationsGroupContainerComponent implements OnInit {
       pinnable: this.pinnable
     };
     if (this.FORM_STATE.state < this.FORM_STATE.previousState) {
-        this.FORM_STATE.state = this.FORM_STATE.previousState;
+        [this.FORM_STATE.state, this.FORM_STATE.previousState] = [this.FORM_STATE.previousState, this.FORM_STATE.state];
     } else {
+      this.FORM_STATE.previousState = States.from;
       this.FORM_STATE.state = States.toWhere;
     }
+
+    setTimeout(() => {
+      this.statePointerWithDelay = this.FORM_STATE.state;
+    }, 850);
   }
 
   toWhere(pinnable) {

@@ -43,7 +43,7 @@
       <app-pass-collection [maxHeight]="'100%'" [fromPast]="true" [forStaff]="isStaff" [style.width]="'400px'" [passProvider]="pastPasses" [title]="'Expired Passes'" [icon]="'./assets/Expired Passes (Blue).png'" [columns]="3"></app-pass-collection>
     </div>
   </div>
-  <div class="main-page-right" *ngIf="showInbox | async">
+  <div class="main-page-right" [@OpenOrCloseRequests]="(showInboxAnimated() | async) ? 'requestsOpened' : 'requestsClosed'">
     <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'22pt'" [icon]="(isStaff?'./assets/Inbox Full (Blue).png':'')" [inbox]="true">
       <div class="inbox-content">
         <div class="requests-or-invitations">

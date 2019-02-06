@@ -50,7 +50,8 @@ export interface Navigation {
 @Component({
   selector: 'app-main-hallpass-form',
   templateUrl: './main-hall-pass-form.component.html',
-  styleUrls: ['./main-hall-pass-form.component.scss']
+  styleUrls: ['./main-hall-pass-form.component.scss'],
+
 })
 export class MainHallPassFormComponent implements OnInit {
 

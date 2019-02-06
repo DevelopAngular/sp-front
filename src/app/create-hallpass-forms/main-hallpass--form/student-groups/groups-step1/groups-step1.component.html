@@ -14,7 +14,7 @@
         <div>
           <div class="content-left_header">Student Groups</div>
         </div>
-        <div class="content-left_groups">
+        <div class="content-left_groups" (click)="selectGroup(null, $event)">
           <div  class="goups-container">
             <div class="content-left_placeholder" *ngIf="!groups || (groups && !groups.length)">
               <span>No student groups</span>
@@ -22,7 +22,7 @@
             <div *ngIf="groups && groups.length">
               <mat-list>
                 <div *ngFor="let group of groups">
-                  <mat-list-item (click)="selectGroup(group)" class="group"
+                  <mat-list-item (click)="selectGroup(group, $event)" class="group"
                                  [ngClass]="{'group_selected' : ( selectedGroup && (selectedGroup.id === group.id))}">
                     <div class="group-name">
                       <span>{{group.title}}</span>

@@ -69,16 +69,19 @@ export class GroupsStep1Component implements OnInit {
     });
   }
 
+  selectGroup(group, evt: Event) {
 
-  selectGroup(group) {
-    if ( !this.selectedGroup || (this.selectedGroup && (this.selectedGroup.id !== group.id)) ) {
+    if (!group) {
+      this.selectedGroup = null;
+    } else if ( !this.selectedGroup || (this.selectedGroup && (this.selectedGroup.id !== group.id)) ) {
       this.selectedGroup = group;
       this.selectedStudents = this.selectedGroup.users;
     } else {
       this.selectedGroup = null;
       this.selectedStudents = [];
-
     }
+    evt.stopPropagation();
+
   }
 
   editGroup(group) {
