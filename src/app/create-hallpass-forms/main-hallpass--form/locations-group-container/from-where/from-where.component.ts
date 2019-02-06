@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {Navigation} from '../../main-hall-pass-form.component';
 
 @Component({
@@ -19,6 +19,20 @@ export class FromWhereComponent implements OnInit {
   @Output() selectedLocation: EventEmitter<any> = new EventEmitter<any>();
   @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
 
+  shadow: boolean = true;
+
+    @HostListener('scroll', ['$event'])
+    tableScroll(event) {
+        const tracker = event.target;
+        const limit = tracker.scrollHeight - tracker.clientHeight;
+        if (event.target.scrollTop < limit) {
+            this.shadow = true;
+        }
+        if (event.target.scrollTop === limit) {
+            this.shadow = false;
+        }
+    }
+
   constructor() { }
 
   ngOnInit() {
@@ -27,6 +41,7 @@ export class FromWhereComponent implements OnInit {
   locationChosen(location) {
     this.selectedLocation.emit(location);
   }
+
 
   back() {
       if (this.formState.forLater) {

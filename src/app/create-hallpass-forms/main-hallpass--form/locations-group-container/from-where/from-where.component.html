@@ -7,7 +7,7 @@
     </div>
   </div>
 
-  <div class="from-content">
+  <div class="from-content" (scroll)="tableScroll($event)">
     <div class="location-tables">
       <app-location-table
          class="locations"
@@ -28,6 +28,7 @@
       </app-location-table>
     </div>
   </div>
+  <div class="shadow" *ngIf="shadow"></div>
   <app-student-footer [date]="date" [formState]="formState" [state]="'from'" *ngIf="!isStaff"></app-student-footer>
   <app-teacher-footer *ngIf="isStaff" [formState]="formState" [date]="date" [studentText]="studentText" [state]="'from'"></app-teacher-footer>
 
