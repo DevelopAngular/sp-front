@@ -14,10 +14,9 @@ import {filter, tap} from 'rxjs/operators';
 import {LiveDataService} from '../live-data/live-data.service';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
 import {PassCardComponent} from '../pass-card/pass-card.component';
-import {fakeAsync} from '@angular/core/testing';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
-import {BehaviorSubject} from 'rxjs';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-request-card',
@@ -354,6 +353,10 @@ export class RequestCardComponent implements OnInit {
 
               messageDialog.afterClosed().pipe(filter(res => !!res)).subscribe(matData => {
                   // denyMessage = data['message'];
+                  if (_.isNull(matData.data.message)) {
+                      this.messageEditOpen = false;
+                      return;
+                  }
                   if (matData.data && matData.data.message) {
                     denyMessage = matData.data.message;
                     this.messageEditOpen = false;
