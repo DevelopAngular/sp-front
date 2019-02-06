@@ -285,7 +285,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
               this.cardEvent.emit(this.formState);
           } else {
             this.dialogRef.close();
-            debugger;
             const isCategory = this.fromHistory[this.fromHistoryIndex] === 'to-category';
             const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
                 width: '750px',

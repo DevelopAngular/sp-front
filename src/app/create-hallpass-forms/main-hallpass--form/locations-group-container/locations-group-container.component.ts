@@ -42,15 +42,17 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   get studentText() {
-     if (!this.FORM_STATE.data.selectedStudents) {
-        return false;
-     } else if (this.FORM_STATE.data.selectedGroup) {
-         return this.FORM_STATE.data.selectedGroup.title;
-     } else {
-       return this.FORM_STATE.data.selectedStudents[0].display_name +
-         (this.FORM_STATE.data.selectedStudents.length > 1 ? ` (${this.FORM_STATE.data.selectedStudents.length - 1})` : '');
-     }
-    }
+   if (this.isStaff) {
+       if (!this.FORM_STATE.data.selectedStudents) {
+           return false;
+       } else if (this.FORM_STATE.data.selectedGroup) {
+           return this.FORM_STATE.data.selectedGroup.title;
+       } else {
+           return this.FORM_STATE.data.selectedStudents[0].display_name +
+               (this.FORM_STATE.data.selectedStudents.length > 1 ? ` (${this.FORM_STATE.data.selectedStudents.length - 1})` : '');
+       }
+   }
+  }
 
   ngOnInit() {
     this.data.toLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.to ? this.FORM_STATE.data.direction.to : null;
