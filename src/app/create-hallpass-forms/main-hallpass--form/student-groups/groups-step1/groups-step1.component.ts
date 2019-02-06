@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {StudentList} from '../../../../models/StudentList';
 import {User} from '../../../../models/User';
+import {HttpService} from '../../../../http-service';
 
 @Component({
   selector: 'app-groups-step1',
@@ -17,12 +18,12 @@ export class GroupsStep1Component implements OnInit {
   @Input() hasBackArrow: boolean = false;
 
   @Output() stateChangeEvent: EventEmitter<Navigation | string> = new EventEmitter<Navigation | string>();
+  @Output() createGroupEmit: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
   // public selectedGroup: StudentList;
   // public selectedStudents: User[] = [];
 
-  constructor(
-  ) { }
+  constructor(private http: HttpService) { }
 
   ngOnInit() {
 
@@ -58,15 +59,11 @@ export class GroupsStep1Component implements OnInit {
   }
 
   createGroup() {
-    this.formState.quickNavigator = false;
-    this.stateChangeEvent.emit({
-      step: 2,
-      state: 2,
-      fromState: 1,
-      data: {
-        selectedStudents: this.selectedStudents
-      }
-    });
+    this.formState.state = 2;
+    this.formState.step = 2;
+    this.formState.fromState = 1;
+    this.formState.data.selectedStudents = this.selectedStudents;
+    this.createGroupEmit.emit(this.formState);
   }
 
 
@@ -85,7 +82,7 @@ export class GroupsStep1Component implements OnInit {
 
     console.log(' GROUP ==================>', group);
 
-    this.stateChangeEvent.emit({
+    this.createGroupEmit.emit({
       step: 2,
       state: 3,
       fromState: 1,
@@ -96,26 +93,14 @@ export class GroupsStep1Component implements OnInit {
   }
 
   updateInternalData(evt) {
-    // if (this.selectedGroup) {
     this.formState.data.selectedGroup = null;
     this.selectedGroup = null;
-    // }
     this.formState.data.selectedStudents = evt;
     this.formState.state = 1;
-    this.formState.studentNavigation = true;
-    this.stateChangeEvent.emit(this.formState);
-      // console.log('!!!!!!!!!!!!!', this.selectedGroup);
-      // debugger;
-      // this.stateChangeEvent.emit(
-    //   {
-    //     step: 2,
-    //     state: 1,
-    //     data: {
-    //       selectedStudents: this.selectedStudents,
-    //       selectedGroup: this.selectedGroup
-    //     }
-    //   }
-    // );
+    this.http.get('v1/student_lists')
+        .subscribe((groups: StudentList[]) => {
+            this.groups = groups;
+        });
   }
 
   back() {
@@ -125,15 +110,6 @@ export class GroupsStep1Component implements OnInit {
       return;
     } else {
       this.stateChangeEvent.emit('exit');
-      // this.stateChangeEvent.emit({
-      //   step: 0,
-      //   // state: 1,
-      //   // fromState: 1,
-      //   data: {
-      //     selectedStudents: this.selectedStudents,
-      //     selectedGroup: this.selectedGroup
-      //   }
-      // });
     }
 
 

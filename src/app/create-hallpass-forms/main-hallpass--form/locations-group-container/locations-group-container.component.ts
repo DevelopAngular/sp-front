@@ -53,7 +53,6 @@ export class LocationsGroupContainerComponent implements OnInit {
     }
 
   ngOnInit() {
-    this.FORM_STATE.studentNavigation = false;
     this.data.toLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.to ? this.FORM_STATE.data.direction.to : null;
     this.pinnables = this.formService.getPinnable();
     this.user$ = this.dataService.currentUser;

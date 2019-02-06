@@ -60,7 +60,7 @@ export class GroupsContainerComponent implements OnInit {
       return;
     }
 
-    if (this.FORM_STATE.quickNavigator && !this.FORM_STATE.studentNavigation) {
+    if (this.FORM_STATE.quickNavigator) {
         this.FORM_STATE.step = this.FORM_STATE.previousStep;
         this.FORM_STATE.state = this.FORM_STATE.previousState;
         this.FORM_STATE.previousStep = 2;
@@ -78,24 +78,48 @@ export class GroupsContainerComponent implements OnInit {
       return;
     }
 
-    switch ( evt.state ) {
-      case (3): {
-        this.selectedGroup = evt.data.selectedGroup;
-        break;
-      }
-      case (2): {
-        this.selectedStudents = evt.data.selectedStudents;
-        this.groupDTO.get('users').setValue(evt.data.selectedStudents);
-        break;
-      }
-      case (1): {
-        if (evt.fromState === 3) {
-          this.FORM_STATE.data.selectedGroup = evt.data.selectedGroup;
-        } else {
-          this.selectedStudents = evt.data.selectedStudents;
+    // switch ( evt.state ) {
+    //   case (3): {
+    //     this.selectedGroup = evt.data.selectedGroup;
+    //     break;
+    //   }
+    //   case (2): {
+    //     this.selectedStudents = evt.data.selectedStudents;
+    //     this.groupDTO.get('users').setValue(evt.data.selectedStudents);
+    //     break;
+    //   }
+    //   case (1): {
+    //     if (evt.fromState === 3) {
+    //       this.FORM_STATE.data.selectedGroup = evt.data.selectedGroup;
+    //     } else {
+    //       this.selectedStudents = evt.data.selectedStudents;
+    //     }
+    //     break;
+    //   }
+    // }
+    // this.currentState = evt.state;
+    // this.updateData$.next(null);
+  }
+
+  groupNextStep(evt) {
+    switch (evt.state) {
+        case (3): {
+            this.selectedGroup = evt.data.selectedGroup;
+            break;
         }
-        break;
-      }
+        case (2): {
+            this.selectedStudents = evt.data.selectedStudents;
+            this.groupDTO.get('users').setValue(evt.data.selectedStudents);
+            break;
+        }
+        case (1): {
+            if (evt.fromState === 3) {
+                this.FORM_STATE.data.selectedGroup = evt.data.selectedGroup;
+            } else {
+                this.selectedStudents = evt.data.selectedStudents;
+            }
+            break;
+        }
     }
     this.currentState = evt.state;
     this.updateData$.next(null);

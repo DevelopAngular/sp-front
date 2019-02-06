@@ -20,7 +20,6 @@ export interface Navigation {
   step: number;
   previousStep?: number;
   quickNavigator?: boolean;
-  studentNavigation?: boolean;
   state?: any;
   previousState?: number;
   fromState?: number;

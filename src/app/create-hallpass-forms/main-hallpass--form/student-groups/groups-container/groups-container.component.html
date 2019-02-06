@@ -6,6 +6,7 @@
       [formState]="FORM_STATE"
       [groups]="groups"
       [hasBackArrow]="FORM_STATE.formMode.formFactor === 2 || FORM_STATE.formMode.formFactor === 3"
+      (createGroupEmit)="groupNextStep($event)"
       (stateChangeEvent)="onStateChange($event)">
     </app-groups-step1>
   </div>
@@ -14,7 +15,7 @@
     <app-groups-step2
       [selectedStudents]="selectedStudents"
       [form]="groupDTO"
-      (stateChangeEvent)="onStateChange($event)">
+      (stateChangeEvent)="groupNextStep($event)">
 
     </app-groups-step2>
   </div>
@@ -23,7 +24,7 @@
     <app-groups-step3
       [editGroup]="selectedGroup"
       [form]="groupDTO"
-      (stateChangeEvent)="onStateChange($event)">
+      (stateChangeEvent)="groupNextStep($event)">
     </app-groups-step3>
   </div>
 </div>
