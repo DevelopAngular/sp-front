@@ -81,6 +81,7 @@ export class MainHallPassFormComponent implements OnInit {
       },
       data: {
         selectedGroup: null,
+        selectedStudents: [],
         direction: {},
 
       },
