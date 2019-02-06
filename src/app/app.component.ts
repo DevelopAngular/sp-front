@@ -10,6 +10,7 @@ import {School} from './models/School';
 import {MatDialog} from '@angular/material';
 import {NextReleaseComponent} from './next-release/next-release.component';
 import {UserService} from './user.service';
+import {StorageService} from './storage.service';
 
 /**
  * @title Autocomplete overview
@@ -35,15 +36,14 @@ export class AppComponent implements OnInit, AfterViewInit {
     private userService: UserService,
     private _zone: NgZone,
     private activatedRoute: ActivatedRoute,
-    private router: Router, private location: Location,
-    private matDialog: MatDialog
+    private router: Router,
+    private location: Location,
+    private matDialog: MatDialog,
   ) {
     // this.schoolIdSubject = this.http.schoolIdSubject;
   }
 
   ngOnInit() {
-
-
     if ( !DeviceDetection.isIOSTablet() && !DeviceDetection.isMacOS() ) {
       const link = document.createElement('link');
             link.setAttribute('rel', 'stylesheet');

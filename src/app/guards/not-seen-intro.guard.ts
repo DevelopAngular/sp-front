@@ -14,7 +14,7 @@ export class NotSeenIntroGuard implements CanActivate {
   constructor(
     private router: Router,
     private http: HttpService,
-    private errorHandler: ErrorHandler
+    private errorHandler: ErrorHandler,
   ) {
   }
 
