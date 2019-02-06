@@ -48,11 +48,11 @@ export class GroupsStep3Component implements OnInit {
           if (dto.users.length) {
 
             this.http.patch(`v1/student_lists/${this.editGroup.id}`, dto)
-              .subscribe((group) => {
-                for ( const control in this.form.controls) {
+              .subscribe((group: StudentList) => {
+                  for ( const control in this.form.controls) {
                   this.form.controls[control].setValue(null);
                 }
-                this.back();
+                this.back(group);
               });
           } else {
             this.removeGroup();
@@ -69,14 +69,13 @@ export class GroupsStep3Component implements OnInit {
         this.back(group);
       });
   }
-  back(updatedGroup?: StudentList) {
-
+  back(updatedGroup: StudentList) {
     this.stateChangeEvent.emit({
       step: 2,
       state: 1,
       fromState: 3,
       data: {
-        selectedGroup: updatedGroup ? updatedGroup : this.editGroup
+        selectedGroup: updatedGroup
       }
     });
   }
