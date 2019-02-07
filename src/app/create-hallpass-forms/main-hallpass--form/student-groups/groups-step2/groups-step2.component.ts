@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {User} from '../../../../models/User';
 import {FormControl, FormGroup} from '@angular/forms';
-import {HttpService} from '../../../../http-service';
+import {HttpService} from '../../../../services/http-service';
 import {Navigation} from '../../main-hall-pass-form.component';
 
 @Component({

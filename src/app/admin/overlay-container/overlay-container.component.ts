@@ -8,10 +8,10 @@ import { map, switchMap} from 'rxjs/operators';
 import { Pinnable } from '../../models/Pinnable';
 import * as _ from 'lodash';
 import { User } from '../../models/User';
-import { HttpService } from '../../http-service';
+import { HttpService } from '../../services/http-service';
 import { Location } from '../../models/Location';
 import * as XLSX from 'xlsx';
-import { UserService } from '../../user.service';
+import { UserService } from '../../services/user.service';
 import { disableBodyScroll } from 'body-scroll-lock';
 
 export interface FormState {

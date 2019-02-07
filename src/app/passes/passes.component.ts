@@ -14,11 +14,11 @@ import { Observable } from 'rxjs/Observable';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 
-import { DataService } from '../data-service';
+import { DataService } from '../services/data-service';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
 import { mergeObject } from '../live-data/helpers';
 import { HallPassFilter, LiveDataService } from '../live-data/live-data.service';
-import { LoadingService } from '../loading.service';
+import { LoadingService } from '../services/loading.service';
 import { exceptPasses, PassLike } from '../models';
 import { HallPass } from '../models/HallPass';
 import { testInvitations, testPasses, testRequests } from '../models/mock_data';

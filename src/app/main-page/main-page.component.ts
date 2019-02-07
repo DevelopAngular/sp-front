@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { UserService } from '../user.service';
+import { UserService } from '../services/user.service';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 
 @Component({

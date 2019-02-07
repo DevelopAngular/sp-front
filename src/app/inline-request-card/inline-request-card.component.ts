@@ -1,10 +1,10 @@
 import { Component, OnInit, Input, ElementRef } from '@angular/core';
-import { HttpService } from '../http-service';
+import { HttpService } from '../services/http-service';
 import { Util } from '../../Util';
 import { Request } from '../models/Request'
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { MatDialog } from '@angular/material';
-import {DataService} from '../data-service';
+import {DataService} from '../services/data-service';
 import {finalize} from 'rxjs/operators';
 
 @Component({

@@ -1,8 +1,8 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DeviceDetection } from '../device-detection.helper';
-import { GoogleLoginService } from '../google-login.service';
-import { UserService } from '../user.service';
+import { GoogleLoginService } from '../services/google-login.service';
+import { UserService } from '../services/user.service';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 
 @Component({

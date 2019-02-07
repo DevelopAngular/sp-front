@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {StudentList} from '../../../../models/StudentList';
 import {User} from '../../../../models/User';
-import {HttpService} from '../../../../http-service';
+import {HttpService} from '../../../../services/http-service';
 
 @Component({
   selector: 'app-groups-step1',

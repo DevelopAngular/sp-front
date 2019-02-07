@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {AccountsDialogComponent} from '../accounts-dialog/accounts-dialog.component';
 import {MatDialog} from '@angular/material';
-import {HttpService} from '../../http-service';
+import {HttpService} from '../../services/http-service';
 import {User} from '../../models/User';
-import {UserService} from '../../user.service';
+import {UserService} from '../../services/user.service';
 import {BehaviorSubject, ReplaySubject, Subject} from 'rxjs';
 import {switchMap} from 'rxjs/internal/operators';
 

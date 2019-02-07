@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
-import { DataService } from '../../data-service';
-import { HttpService } from '../../http-service';
+import { DataService } from '../../services/data-service';
+import { HttpService } from '../../services/http-service';
 import { Location } from '../../models/Location';
 import { Pinnable } from '../../models/Pinnable';
 import { User } from '../../models/User';

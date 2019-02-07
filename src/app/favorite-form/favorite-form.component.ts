@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '../../../node_modules/@angular/material';
-import { HttpService } from '../http-service';
+import { HttpService } from '../services/http-service';
 import { Location } from '../models/Location';
 
 @Component({

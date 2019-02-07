@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
-import { HttpService } from '../../http-service';
+import { HttpService } from '../../services/http-service';
 import { map, shareReplay } from 'rxjs/operators';
 
 @Component({

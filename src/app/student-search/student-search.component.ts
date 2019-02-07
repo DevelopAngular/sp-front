@@ -2,7 +2,7 @@ import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/observable/of';
 
-import { HttpService } from '../http-service';
+import { HttpService } from '../services/http-service';
 import { Paged } from '../models';
 import { User } from '../models/User';
 import {Subject} from 'rxjs';

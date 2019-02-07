@@ -1,5 +1,5 @@
 import {Component, EventEmitter, NgZone, OnDestroy, OnInit, Output} from '@angular/core';
-import { GoogleLoginService } from '../google-login.service';
+import { GoogleLoginService } from '../services/google-login.service';
 import {MatDialog} from '@angular/material';
 
 export enum LoginMethod { OAuth = 1, LocalStrategy = 2}

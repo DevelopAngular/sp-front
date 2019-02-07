@@ -1,9 +1,9 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
-import { DataService } from '../data-service';
+import { DataService } from '../services/data-service';
 import { FavoriteFormComponent } from '../favorite-form/favorite-form.component';
-import { LoadingService } from '../loading.service';
+import { LoadingService } from '../services/loading.service';
 import { ColorProfile } from '../models/ColorProfile';
 import { User } from '../models/User';
 

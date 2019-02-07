@@ -2,10 +2,10 @@ import {Component, OnInit, NgZone, Output, EventEmitter, ViewChild, ElementRef} 
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
-import { LoadingService } from '../../loading.service';
-import { DataService } from '../../data-service';
+import { LoadingService } from '../../services/loading.service';
+import { DataService } from '../../services/data-service';
 import { User } from '../../models/User';
-import { UserService } from '../../user.service';
+import { UserService } from '../../services/user.service';
 import { disableBodyScroll } from 'body-scroll-lock';
 
 @Component({

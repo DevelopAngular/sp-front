@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { combineLatest } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
-import { UserService } from '../../user.service';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-admin-page',

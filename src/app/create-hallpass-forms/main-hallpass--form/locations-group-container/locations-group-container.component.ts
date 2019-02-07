@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import { Observable } from 'rxjs';
 import { User } from '../../../models/User';
-import { DataService } from '../../../data-service';
+import { DataService } from '../../../services/data-service';
 import { Pinnable } from '../../../models/Pinnable';
 import { Util } from '../../../../Util';
 import {FormFactor, Navigation, Role} from '../main-hall-pass-form.component';

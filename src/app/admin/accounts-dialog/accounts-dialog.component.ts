@@ -1,7 +1,7 @@
 import {Component, OnInit, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {FormControl, FormGroup} from '@angular/forms';
-import {HttpService} from '../../http-service';
+import {HttpService} from '../../services/http-service';
 
 @Component({
   selector: 'app-accounts-dialog',

@@ -1,16 +1,16 @@
 import {AfterViewInit, Component, NgZone, OnInit} from '@angular/core';
 import { Location } from '@angular/common';
-import { GoogleLoginService } from './google-login.service';
+import { GoogleLoginService } from './services/google-login.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {delay, filter, map, mergeMap, timeout} from 'rxjs/operators';
 import {DeviceDetection} from './device-detection.helper';
 import {BehaviorSubject, empty, of} from 'rxjs';
-import {HttpService} from './http-service';
+import {HttpService} from './services/http-service';
 import {School} from './models/School';
 import {MatDialog} from '@angular/material';
 import {NextReleaseComponent} from './next-release/next-release.component';
-import {UserService} from './user.service';
-import {StorageService} from './storage.service';
+import {UserService} from './services/user.service';
+import {StorageService} from './services/storage.service';
 
 /**
  * @title Autocomplete overview

@@ -6,15 +6,15 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { map, switchMap } from 'rxjs/operators';
 import { HttpService } from './http-service';
-import { PassLike } from './models';
-import { HallPass } from './models/HallPass';
-import { Invitation } from './models/Invitation';
-import { Location } from './models/Location';
-import { Request } from './models/Request';
-import { User } from './models/User';
+import { PassLike } from '../models/index';
+import { Invitation } from '../models/Invitation';
+import { Location } from '../models/Location';
+import { Request } from '../models/Request';
+import { User } from '../models/User';
 import { PollingService } from './polling-service';
 import { UserService } from './user.service';
 import {ReplaySubject, Subject} from 'rxjs';
+import { HallPass } from '../models/HallPass';
 
 export type Partial<T> = {
   [P in keyof T]?: T[P];

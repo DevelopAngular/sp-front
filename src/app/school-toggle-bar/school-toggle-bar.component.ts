@@ -2,7 +2,7 @@ import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {School} from '../models/School';
-import {HttpService} from '../http-service';
+import {HttpService} from '../services/http-service';
 
 @Component({
   selector: 'app-school-toggle-bar',

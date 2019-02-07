@@ -9,7 +9,7 @@ import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/takeUntil';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Subject } from 'rxjs/Subject';
-import { HttpService } from '../http-service';
+import { HttpService } from '../services/http-service';
 import { Paged } from '../models';
 import { User } from '../models/User';
 

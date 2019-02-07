@@ -3,7 +3,7 @@ import { Pinnable } from '../../models/Pinnable';
 import { MatDialog } from '@angular/material';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
 import {BehaviorSubject, forkJoin, Subject} from 'rxjs';
-import {HttpService} from '../../http-service';
+import {HttpService} from '../../services/http-service';
 import {DragulaService} from 'ng2-dragula';
 
 @Component({

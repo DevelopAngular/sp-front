@@ -1,10 +1,10 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {debounceTime, distinctUntilChanged, filter, map, switchMap} from 'rxjs/internal/operators';
 import {Observable, Subject} from 'rxjs';
-import {UserService} from '../../user.service';
+import {UserService} from '../../services/user.service';
 import {Paged} from '../../models';
 import {User} from '../../models/User';
-import {HttpService} from '../../http-service';
+import {HttpService} from '../../services/http-service';
 
 @Component({
   selector: 'app-profiles-search',

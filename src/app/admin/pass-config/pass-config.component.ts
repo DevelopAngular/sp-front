@@ -5,7 +5,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import {BehaviorSubject, Observable, zip} from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { HttpService } from '../../http-service';
+import { HttpService } from '../../services/http-service';
 import { Pinnable } from '../../models/Pinnable';
 import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
 import {PinnableCollectionComponent} from '../pinnable-collection/pinnable-collection.component';

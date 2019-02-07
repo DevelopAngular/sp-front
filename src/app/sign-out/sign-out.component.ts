@@ -1,6 +1,6 @@
 import { AfterContentInit, Component } from '@angular/core';
-import { GoogleLoginService } from '../google-login.service';
-import { HttpService } from '../http-service';
+import { GoogleLoginService } from '../services/google-login.service';
+import { HttpService } from '../services/http-service';
 
 @Component({
   selector: 'app-sign-out',

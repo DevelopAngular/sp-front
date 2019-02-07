@@ -3,14 +3,14 @@ import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material';
 import {Router, NavigationEnd, ActivatedRoute} from '@angular/router';
 
-import { DataService } from '../data-service';
-import { GoogleLoginService } from '../google-login.service';
-import { LoadingService } from '../loading.service';
+import { DataService } from '../services/data-service';
+import { GoogleLoginService } from '../services/google-login.service';
+import { LoadingService } from '../services/loading.service';
 import { NavbarDataService } from '../main/navbar-data.service';
 import { User } from '../models/User';
 import { NgProgress } from '@ngx-progressbar/core';
 import {ReplaySubject} from 'rxjs';
-import { UserService } from '../user.service';
+import { UserService } from '../services/user.service';
 
 import {combineLatest} from 'rxjs';
 

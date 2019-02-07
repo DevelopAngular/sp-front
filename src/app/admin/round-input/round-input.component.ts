@@ -2,7 +2,7 @@ import {Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef} f
 import {MatChipList, MatDialog} from '@angular/material';
 import { DateInputComponent } from '../date-input/date-input.component';
 import { Paged } from '../../location-table/location-table.component';
-import { HttpService } from '../../http-service';
+import { HttpService } from '../../services/http-service';
 import { InputHelperDialogComponent } from '../input-helper-dialog/input-helper-dialog.component';
 import {FormGroup} from '@angular/forms';
 import {BehaviorSubject, fromEvent, Observable, Subject} from 'rxjs';

@@ -9,7 +9,7 @@ import { ActivePassProvider } from '../../hall-monitor/hall-monitor.component';
 import { LiveDataService } from '../../live-data/live-data.service';
 import { PassLikeProvider } from '../../models/providers';
 import {CalendarComponent} from '../calendar/calendar.component';
-import {HttpService} from '../../http-service';
+import {HttpService} from '../../services/http-service';
 import {Util} from '../../../Util';
 import {map, toArray} from 'rxjs/operators';
 import {switchMap, tap} from 'rxjs/internal/operators';

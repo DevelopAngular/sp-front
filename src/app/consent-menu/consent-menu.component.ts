@@ -1,7 +1,7 @@
 ﻿import {Component, Inject, ElementRef, OnInit, HostListener} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef  } from '@angular/material';
 import { DomSanitizer } from '../../../node_modules/@angular/platform-browser';
-import {DataService} from '../data-service';
+import {DataService} from '../services/data-service';
 
 
 type optionsView = 'inline' | 'button';

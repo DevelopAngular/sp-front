@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { bumpIn } from '../animations';
-import {DataService} from '../data-service';
+import {DataService} from '../services/data-service';
 
 @Component({
   selector: 'app-card-button',

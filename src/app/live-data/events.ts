@@ -1,5 +1,5 @@
 import { BaseModel } from '../models/base';
-import { PollingEvent } from '../polling-service';
+import { PollingEvent } from '../services/polling-service';
 import { State } from './state';
 
 /**

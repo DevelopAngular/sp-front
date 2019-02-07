@@ -11,9 +11,9 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { throwError } from 'rxjs/internal/observable/throwError';
 import { Observable } from 'rxjs/Observable';
 import { delay, flatMap } from 'rxjs/operators';
-import { environment } from '../environments/environment';
+import { environment } from '../../environments/environment';
 import { GoogleLoginService, isDemoLogin } from './google-login.service';
-import { School } from './models/School';
+import { School } from '../models/School';
 
 export const SESSION_STORAGE_KEY = 'accessToken';
 

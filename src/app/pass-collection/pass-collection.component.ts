@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Subject } from 'rxjs/Subject';
-import { DataService } from '../data-service';
+import { DataService } from '../services/data-service';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
 import { HallPass } from '../models/HallPass';
 import { Invitation } from '../models/Invitation';

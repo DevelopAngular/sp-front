@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {HttpService} from '../../http-service';
+import {HttpService} from '../../services/http-service';
 import {map, shareReplay} from 'rxjs/internal/operators';
 import {DomSanitizer} from '@angular/platform-browser';
 import * as _ from 'lodash';

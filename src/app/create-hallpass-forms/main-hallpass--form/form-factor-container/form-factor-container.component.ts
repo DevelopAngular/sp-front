@@ -4,7 +4,7 @@ import { FormFactor, Navigation } from '../main-hall-pass-form.component';
 import { HallPass } from '../../../models/HallPass';
 import { Request } from '../../../models/Request';
 import { Invitation } from '../../../models/Invitation';
-import { DataService } from '../../../data-service';
+import { DataService } from '../../../services/data-service';
 
 
 

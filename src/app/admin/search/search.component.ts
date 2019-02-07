@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { filter } from 'rxjs/operators';
-import { HttpService } from '../../http-service';
+import { HttpService } from '../../services/http-service';
 import { HallPass } from '../../models/HallPass';
 import { DatePrettyHelper } from '../date-pretty.helper';
 import { PdfGeneratorService } from '../pdf-generator.service';

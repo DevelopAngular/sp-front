@@ -1,7 +1,7 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { DataService } from '../data-service';
-import { LoadingService } from '../loading.service';
+import { DataService } from '../services/data-service';
+import { LoadingService } from '../services/loading.service';
 import { User } from '../models/User';
 import { bumpIn } from '../animations';
 import {PassLike} from '../models';

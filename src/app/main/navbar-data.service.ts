@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 
 import { combineLatest } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { DataService } from '../data-service';
+import { DataService } from '../services/data-service';
 import { LiveDataService } from '../live-data/live-data.service';
-import { UserService } from '../user.service';
+import { UserService } from '../services/user.service';
 
 function count<T>(items: T[], fn: (item: T) => boolean): number {
   let acc = 0;

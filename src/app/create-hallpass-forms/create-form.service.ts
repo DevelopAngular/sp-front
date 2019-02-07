@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Pinnable } from '../models/Pinnable';
-import { HttpService } from '../http-service';
+import { HttpService } from '../services/http-service';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({

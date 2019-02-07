@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Location } from '../models/Location';
-import { HttpService } from '../http-service';
+import { HttpService } from '../services/http-service';
 import { DomSanitizer } from '../../../node_modules/@angular/platform-browser';
 
 @Component({

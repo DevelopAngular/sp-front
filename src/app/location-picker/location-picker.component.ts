@@ -2,7 +2,7 @@ import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@ang
 import { FormControl } from '@angular/forms';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Subject } from 'rxjs/Subject';
-import { HttpService } from '../http-service';
+import { HttpService } from '../services/http-service';
 import { Location } from '../models/Location';
 import { Paged } from '../models';
 

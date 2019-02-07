@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import { HallPass} from '../models/HallPass';
-import { HttpService } from '../http-service';
-import { DataService } from '../data-service';
+import { HttpService } from '../services/http-service';
+import { DataService } from '../services/data-service';
 import { interval, merge, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 

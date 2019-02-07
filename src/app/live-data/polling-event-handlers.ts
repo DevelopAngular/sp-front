@@ -3,7 +3,7 @@ import { BaseModel } from '../models/base';
 import { HallPass } from '../models/HallPass';
 import { Invitation } from '../models/Invitation';
 import { Request } from '../models/Request';
-import { PollingEvent } from '../polling-service';
+import { PollingEvent } from '../services/polling-service';
 import { PollingEventContext, PollingEventHandler } from './events';
 import { State } from './state';
 

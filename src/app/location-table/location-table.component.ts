@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, Directive, HostListener } from '@angular/core';
-import { HttpService } from '../http-service';
+import { HttpService } from '../services/http-service';
 import { Location } from '../models/Location';
 import {finalize} from 'rxjs/operators';
 import {DragulaService} from 'ng2-dragula';

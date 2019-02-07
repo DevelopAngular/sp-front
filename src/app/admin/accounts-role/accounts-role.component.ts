@@ -2,12 +2,12 @@ import {Component, ElementRef, Input, OnDestroy, OnInit} from '@angular/core';
 import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {MatDialog} from '@angular/material';
-import {UserService} from '../../user.service';
+import {UserService} from '../../services/user.service';
 import {AccountsDialogComponent} from '../accounts-dialog/accounts-dialog.component';
 import { ActivatedRoute } from '@angular/router';
 import {debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/internal/operators';
 import {Util} from '../../../Util';
-import {HttpService} from '../../http-service';
+import {HttpService} from '../../services/http-service';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {DropdownComponent} from '../../dropdown/dropdown.component';
 

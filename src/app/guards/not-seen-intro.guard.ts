@@ -1,9 +1,9 @@
 import { ErrorHandler, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import {Observable, of} from 'rxjs';
-import {UserService} from '../user.service';
+import {UserService} from '../services/user.service';
 import {map, tap} from 'rxjs/operators';
-import {HttpService} from '../http-service';
+import {HttpService} from '../services/http-service';
 import {User} from '../models/User';
 
 @Injectable({

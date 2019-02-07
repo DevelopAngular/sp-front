@@ -9,9 +9,9 @@ import { race } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { HttpService } from './http-service';
-import { constructUrl } from './live-data/helpers';
+import { constructUrl } from '../live-data/helpers';
 import { Logger } from './logger.service';
-import { User } from './models/User';
+import { User } from '../models/User';
 import { PollingService } from './polling-service';
 
 @Injectable()

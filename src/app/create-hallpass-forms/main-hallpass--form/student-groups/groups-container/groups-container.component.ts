@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {User} from '../../../../models/User';
 import {FormControl, FormGroup} from '@angular/forms';
 import {StudentList} from '../../../../models/StudentList';
-import {HttpService} from '../../../../http-service';
+import {HttpService} from '../../../../services/http-service';
 import {BehaviorSubject} from 'rxjs';
 import {Navigation} from '../../main-hall-pass-form.component';
 
