@@ -1,12 +1,12 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {animate, state, style, transition, trigger} from '@angular/animations';
-import { Observable } from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import { User } from '../../../models/User';
 import { DataService } from '../../../data-service';
 import { Pinnable } from '../../../models/Pinnable';
 import { Util } from '../../../../Util';
 import {FormFactor, Navigation, Role} from '../main-hall-pass-form.component';
 import {CreateFormService} from '../../create-form.service';
+import {NextStep, NextStepColored, ScaledCard} from '../../../animations';
 
 export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, message = 5 }
 
@@ -14,55 +14,7 @@ export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, 
   selector: 'app-locations-group-container',
   templateUrl: './locations-group-container.component.html',
   styleUrls: ['./locations-group-container.component.scss'],
-  animations: [
-    trigger('NextStep', [
-        state('Start', style({
-          // width: '425px',
-          opacity: 1,
-          transform: 'translateX(0px)',
-          display: 'block'
-        })),
-        state('Finish', style({
-          // width: '0px',
-          opacity: 0,
-          transform: 'translateX(100px)',
-          display: 'none'
-        })),
-      // state('StartReverse', style({
-      //   // width: '425px',
-      //   opacity: 1,
-      //   transform: 'translateX(0px)',
-      //   display: 'block'
-      // })),
-      state('FinishReverse', style({
-        // width: '0px',
-        opacity: 0,
-        transform: 'translateX(-100px)',
-        display: 'none'
-      })),
-        transition('Start => Finish, Finish => Start', animate('0.8s 0s ease', null)),
-        transition('Start => FinishReverse, FinishReverse => Start', animate('0.8s 0s ease', null)),
-        // transition('requestsOpened => requestsClosed', animate('0.5s 0s ease', null)),
-      ],
-    ),
-    // trigger('PrevStep', [
-    //     state('Start', style({
-    //       // width: '425px',
-    //       opacity: 1,
-    //       transform: 'translateX(0px)',
-    //       display: 'block'
-    //     })),
-    //     state('Finish', style({
-    //       // width: '0px',
-    //       opacity: 0,
-    //       transform: 'translateX(-100px)',
-    //       display: 'none'
-    //     })),
-    //     transition('Start => Finish, Finish => Start', animate('0.8s 0s ease', null)),
-    //     // transition('requestsOpened => requestsClosed', animate('0.5s 0s ease', null)),
-    //   ],
-    // ),
-  ]
+  animations: [NextStep, NextStepColored]
 })
 export class LocationsGroupContainerComponent implements OnInit {
 
@@ -76,6 +28,10 @@ export class LocationsGroupContainerComponent implements OnInit {
   pinnable: Pinnable;
 
   data: any = {};
+
+  frameMotion$: BehaviorSubject<any>;
+
+  motionDirection = '';
 
   constructor(private dataService: DataService, private formService: CreateFormService) { }
 
@@ -105,6 +61,10 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    this.frameMotion$ = this.formService.getFrameMotionDirection();
+
+    // this.FORM_STATE.previousState = 0;
     this.data.toLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.to ? this.FORM_STATE.data.direction.to : null;
     this.pinnables = this.formService.getPinnable();
     this.user$ = this.dataService.currentUser;
@@ -115,35 +75,72 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   stateTransition(stateNumber: number) {
 
-      if (stateNumber === this.FORM_STATE.state) {
+    // if (stateNumber === this.FORM_STATE.state) {
+    if (this.motionDirection === 'forward') {
 
-        if (stateNumber < this.FORM_STATE.previousState) {
-          return 'Start';
-        } else {
-          return 'Start';
-        }
-
-      } else {
-
-        if (stateNumber < this.FORM_STATE.previousState) {
-          return 'Finish';
-        } else {
-          return 'Finish';
-        }
-      }
-
+         return {
+          to: -100,
+          // halfTo: -50,
+          from: 100,
+          // halfFrom: -50
+        };
+    } else if (this.motionDirection === 'back') {
+      return {
+        to: 100,
+        // halfTo: -50,
+        from: -100,
+        // halfFrom: -50
+      };
+    }
+      // if (stateNumber < this.FORM_STATE.previousState) {
+      //
+      //   return {
+      //     to: 100,
+      //     // halfTo: -50,
+      //     from: -100,
+      //     // halfFrom: -50
+      //   };
+      //
+      // } else if (stateNumber > this.FORM_STATE.previousState) {
+      //
+      //   return {
+      //     to: -100,
+      //     // halfTo: 50,
+      //     from: 100,
+      //     // halfFrom: 50
+      //   };
+      //
+      // }
+    // } else if (stateNumber === this.FORM_STATE.state) {
+    //
+    //   if (stateNumber < this.FORM_STATE.previousState) {
+    //
+    //     return {
+    //       to: -100,
+    //       // halfTo: -50,
+    //       from: -100,
+    //       // halfFrom: -50
+    //     };
+    //
+    //   } else if (stateNumber > this.FORM_STATE.previousState) {
+    //
+    //     return {
+    //       to: 100,
+    //       // halfTo: 50,
+    //       from: 100,
+    //       // halfFrom: 50
+    //     };
+    //
+    //   }
+    // }
   }
 
-  stateTransitionBack(stateNumber: number) {
-
-      if (stateNumber < this.FORM_STATE.previousState) {
-        return 'Start';
-      } else {
-        return 'Finish';
-      }
-  }
 
   fromWhere(location) {
+    // this.setFrameMotion('forward');
+    //
+    // this.motionDirection = 'forward';
+
     if (this.FORM_STATE.data.hasClose) {
        return  this.nextStepEvent.emit(
             {
@@ -168,6 +165,10 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   toWhere(pinnable) {
+    // this.setFrameMotion('forward');
+    //
+    // this.motionDirection = 'forward';
+
     this.pinnable = pinnable;
     this.FORM_STATE.data.direction = {
         from: this.data.fromLocation,
@@ -176,7 +177,8 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.FORM_STATE.data.gradient = pinnable.gradient_color;
     this.FORM_STATE.data.icon = pinnable.icon;
     if (pinnable.category) {
-        return this.FORM_STATE.state = States.category;
+      this.FORM_STATE.previousState = States.toWhere;
+      return this.FORM_STATE.state = States.category;
     } else {
         this.data.toLocation = pinnable.location;
         this.FORM_STATE.data.direction.to = pinnable.location;
@@ -192,6 +194,10 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   fromCategory(location) {
+    // this.setFrameMotion('forward');
+    //
+    // this.motionDirection = 'forward';
+
     this.data.toLocation = location;
     this.FORM_STATE.data.direction.to = location;
       if (location.restricted && !this.isStaff) {
@@ -203,12 +209,18 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   requestTarget(teacher) {
+    // this.setFrameMotion('forward');
+    //
+    // this.motionDirection = 'forward';
+
     this.data.requestTarget = teacher;
     this.FORM_STATE.data.requestTarget = teacher;
     this.FORM_STATE.state = States.message;
   }
 
   resultMessage(message, denyMessage: boolean = false) {
+    // this.motionDirection = 'forward';
+
     if (!message) {
       message = '';
     }
@@ -230,7 +242,24 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.nextStepEvent.emit(this.FORM_STATE);
   }
 
+  // setFrameMotion(direction: string) {
+  //   if (direction === 'forward') {
+  //     this.frameMotion = {
+  //       to: -100,
+  //       from: 100
+  //     }
+  //   } else {
+  //     this.frameMotion = {
+  //       to: 100,
+  //       from: -100
+  //     }
+  //   }
+  // }
+
   back(event) {
+    // this.setFrameMotion('back');
+    // [this.frameMotion.to, this.frameMotion.from] = [this.frameMotion.from, this.frameMotion.to];
+
     this.FORM_STATE = event;
     this.data.message = null;
     this.FORM_STATE.data.message = null;

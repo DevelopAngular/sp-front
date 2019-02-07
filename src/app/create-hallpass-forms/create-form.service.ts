@@ -9,6 +9,7 @@ import { BehaviorSubject } from 'rxjs';
 export class CreateFormService {
 
   isSeen$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  private frameMotionDirection$: BehaviorSubject<any> = new BehaviorSubject({ to: -100, from: 100});
 
   constructor(private http: HttpService) { }
 
@@ -24,5 +25,22 @@ export class CreateFormService {
     } else {
       localStorage.setItem('first-modal', 'seen');
     }
+  }
+
+  setFrameMotionDirection(direction: string = 'forward') {
+
+    switch (direction) {
+      case ('forward'): {
+        this.frameMotionDirection$.next({ to: -100, halfTo: -50, from: 100, halfFrom: 50});
+        break;
+      }
+      case ('back'): {
+        this.frameMotionDirection$.next({ to: 100, halfTo: 50, from: -100, halfFrom: -50});
+        break;
+      }
+    }
+  }
+  getFrameMotionDirection() {
+    return  this.frameMotionDirection$;
   }
 }

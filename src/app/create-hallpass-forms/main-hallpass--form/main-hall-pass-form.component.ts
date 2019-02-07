@@ -6,6 +6,7 @@ import { Location } from '../../models/Location';
 import { Pinnable } from '../../models/Pinnable';
 import { User } from '../../models/User';
 import { StudentList } from '../../models/StudentList';
+import {NextStep, NextStepColored, ScaledCard} from '../../animations';
 
 export enum Role { Teacher = 1, Student = 2 }
 
@@ -50,6 +51,7 @@ export interface Navigation {
   selector: 'app-main-hallpass-form',
   templateUrl: './main-hall-pass-form.component.html',
   styleUrls: ['./main-hall-pass-form.component.scss'],
+  animations: [NextStep, NextStepColored, ScaledCard]
 
 })
 export class MainHallPassFormComponent implements OnInit {

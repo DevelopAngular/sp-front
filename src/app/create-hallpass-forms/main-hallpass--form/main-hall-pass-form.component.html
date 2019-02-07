@@ -12,11 +12,11 @@
   <div [ngClass]="stepTransition" *ngIf="FORM_STATE.step === 2">
     <app-groups-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-groups-container>
   </div>
-  <div [ngClass]="!stepTransition" *ngIf="FORM_STATE.step === 3">
+  <div [ngClass]="!stepTransition" class="fixed-card" [@ScaledCard] *ngIf="FORM_STATE.step === 3">
 
     <app-locations-group-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-locations-group-container>
   </div>
-  <div [ngClass]="{'state-transition__bottom-top': true}" *ngIf="FORM_STATE.step === 4">
+  <div [ngClass]="{'state-transition__bottom-top': false}" class="fixed-card" [@ScaledCard] *ngIf="FORM_STATE.step === 4">
 
     <app-form-factor-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-form-factor-container>
   </div>
