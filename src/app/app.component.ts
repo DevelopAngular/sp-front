@@ -11,6 +11,7 @@ import {MatDialog} from '@angular/material';
 import {NextReleaseComponent} from './next-release/next-release.component';
 import {UserService} from './services/user.service';
 import {StorageService} from './services/storage.service';
+import {ApiService} from './services/api.service';
 
 /**
  * @title Autocomplete overview
@@ -33,6 +34,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   constructor(
     public loginService: GoogleLoginService,
     private http: HttpService,
+    private apiService: ApiService,
     private userService: UserService,
     private _zone: NgZone,
     private activatedRoute: ActivatedRoute,
@@ -59,8 +61,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.showUI.next(true);
         this.isAuthenticated = t;
         if (this.isAuthenticated) {
-          this.http
-            .get<School[]>('v1/schools')
+          this.apiService.getSchools()
             .subscribe((schools: School[]) => {
               // console.log(schools);
               this.schools = schools;

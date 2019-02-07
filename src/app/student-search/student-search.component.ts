@@ -6,6 +6,7 @@ import { HttpService } from '../services/http-service';
 import { Paged } from '../models';
 import { User } from '../models/User';
 import {Subject} from 'rxjs';
+import {ApiService} from '../services/api.service';
 
 @Component({
   selector: 'app-student-search',
@@ -26,7 +27,7 @@ export class StudentSearchComponent implements AfterViewInit {
   students: Promise<any[]>;
   inputValue$: Subject<string> = new Subject<string>();
 
-  constructor(private http: HttpService) {
+  constructor(private apiService: ApiService) {
     // this.onSearch('');
   }
 
@@ -41,8 +42,9 @@ export class StudentSearchComponent implements AfterViewInit {
   }
 
   onSearch(search: string) {
-    if (search!=='') {
-      this.students = this.http.get<Paged<any>>('v1/users?role=hallpass_student&limit=5' + (search === '' ? '' : '&search=' + encodeURI(search))).toPromise().then(paged => this.removeDuplicateStudents(paged.results));
+    if (search !== '') {
+      this.students = this.apiService.searchProfile('hallpass_student',5, encodeURI(search))
+          .toPromise().then(paged => this.removeDuplicateStudents(paged.results));
     } else {
       this.students = null;
       this.inputValue$.next('');

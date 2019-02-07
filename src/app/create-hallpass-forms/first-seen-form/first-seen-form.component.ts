@@ -6,12 +6,12 @@ import { User } from '../../models/User';
 import { Location } from '../../models/Location';
 import { ColorProfile } from '../../models/ColorProfile';
 import { DataService } from '../../services/data-service';
-import { HttpService } from '../../services/http-service';
 import { Pinnable } from '../../models/Pinnable';
 import { Duration } from '../../models/Duration';
 import { HallPass } from '../../models/HallPass';
 import { Request } from '../../models/Request';
 import {Invitation} from '../../models/Invitation';
+import {ApiService} from '../../services/api.service';
 
 
 @Component({
@@ -61,7 +61,7 @@ export class FirstSeenFormComponent implements OnInit {
   public pinnables: Promise<Pinnable[]>;
 
   constructor(
-    private http: HttpService,
+    private apiService: ApiService,
     private dataService: DataService,
     public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
@@ -69,7 +69,7 @@ export class FirstSeenFormComponent implements OnInit {
   ) {
     this.declinable = new FormControl(true);
     this.declinable.valueChanges.subscribe(res => this.isDeclinable = res);
-    this.pinnables = this.http.get<any[]>('v1/pinnables/arranged').toPromise().then(json => json.map(raw => Pinnable.fromJSON(raw)));
+    this.pinnables = this.apiService.getPinnables().toPromise().then(json => json.map(raw => Pinnable.fromJSON(raw)));
   }
 
   get fromGradient() {
@@ -452,15 +452,14 @@ export class FirstSeenFormComponent implements OnInit {
   }
 
   newRequest(message: string) {
-    let body = {
+    const body = {
       'destination': this.toLocation.id,
       'origin': this.fromLocation.id,
       'attachment_message': message,
       'travel_type': this.travelType,
       'teacher': this.toLocation.teachers[0].id
     };
-
-    this.http.post('v1/pass_requests', body,).subscribe((data) => {
+    this.apiService.createRequest(body).subscribe((data) => {
       // console.log("Request POST Data: ", data);
       this.dialogRef.close(Request.fromJSON(data));
     });
@@ -475,7 +474,7 @@ export class FirstSeenFormComponent implements OnInit {
       'travel_type': this.travelType
     };
 
-    this.http.post('v1/hall_passes', body,).subscribe((data) => {
+    this.apiService.createPass(body).subscribe((data) => {
       // console.log("Request POST Data: ", data);
       this.dialogRef.close(HallPass.fromJSON(data));
     });

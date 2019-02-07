@@ -2,9 +2,9 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {User} from '../../../../models/User';
 import {FormControl, FormGroup} from '@angular/forms';
 import {StudentList} from '../../../../models/StudentList';
-import {HttpService} from '../../../../services/http-service';
 import {BehaviorSubject} from 'rxjs';
 import {Navigation} from '../../main-hall-pass-form.component';
+import {ApiService} from '../../../../services/api.service';
 
 export enum States {
   SelectStudents = 1,
@@ -33,7 +33,7 @@ export class GroupsContainerComponent implements OnInit {
 
 
   constructor(
-    private http: HttpService
+    private apiService: ApiService
   ) {
 
     this.states = States;
@@ -47,7 +47,7 @@ export class GroupsContainerComponent implements OnInit {
   ngOnInit() {
     this.updateData$.subscribe(() => {
 
-      this.http.get('v1/student_lists')
+      this.apiService.getStudentGroups()
         .subscribe((groups: StudentList[]) => {
           this.groups = groups;
         });

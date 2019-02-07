@@ -1,21 +1,20 @@
-import {Component, OnInit, Input, ElementRef, NgZone, Output, EventEmitter} from '@angular/core';
+import { Component, OnInit, Input, ElementRef, NgZone, Output, EventEmitter } from '@angular/core';
 import { Invitation } from '../models/Invitation';
 import { User } from '../models/User';
 import { Location} from '../models/Location';
 import { Util } from '../../Util';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { Inject } from '@angular/core';
-import { HttpService } from '../services/http-service';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
 import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
-import {RequestCardComponent} from '../request-card/request-card.component';
-import {PassCardComponent} from '../pass-card/pass-card.component';
-import {filter} from 'rxjs/operators';
-import {CreateFormService} from '../create-hallpass-forms/create-form.service';
-import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
+import { RequestCardComponent } from '../request-card/request-card.component';
+import { filter } from 'rxjs/operators';
+import { CreateFormService } from '../create-hallpass-forms/create-form.service';
+import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
+import { ApiService } from '../services/api.service';
 
 @Component({
   selector: 'app-invitation-card',
@@ -47,8 +46,10 @@ export class InvitationCardComponent implements OnInit {
   constructor(
       public dialogRef: MatDialogRef<InvitationCardComponent>,
       @Inject(MAT_DIALOG_DATA) public data: any,
-      public dialog: MatDialog, private http: HttpService,
-      public dataService: DataService, private _zone: NgZone,
+      public dialog: MatDialog,
+      private apiService: ApiService,
+      public dataService: DataService,
+      private _zone: NgZone,
       private loadingService: LoadingService,
       private createFormService: CreateFormService
   ) {}
@@ -105,8 +106,6 @@ export class InvitationCardComponent implements OnInit {
 
   newInvitation(){
     this.performingAction = true;
-    const endPoint:string = 'v1/invitations/bulk_create';
-
     const body = {
       'students' : this.selectedStudents.map(user => user.id),
       'default_origin' : this.invitation.default_origin?this.invitation.default_origin.id:null,
@@ -114,22 +113,21 @@ export class InvitationCardComponent implements OnInit {
       'date_choices' : this.invitation.date_choices.map(date => date.toISOString()),
       'duration' : this.selectedDuration*60,
       'travel_type' : this.selectedTravelType
-    }
+    };
 
-    this.http.post(endPoint, body).subscribe((data)=>{
+    this.apiService.createInvitation(body).subscribe((data) => {
       this.dialogRef.close();
     });
   }
 
   acceptInvitation(){
     this.performingAction = true;
-    let endpoint: string = 'v1/invitations/' +this.invitation.id +'/accept';
-    let body = {
+    const body = {
       'start_time' : this.invitation.date_choices[0].toISOString(),
       'origin' : this.selectedOrigin.id
     };
 
-    this.http.post(endpoint, body).subscribe((data: any) => {
+    this.apiService.acceptInvitation(this.invitation.id, body).subscribe((data: any) => {
       console.log('[Invitation Accepted]: ', data);
       this.dialogRef.close();
     });
@@ -201,20 +199,18 @@ export class InvitationCardComponent implements OnInit {
         if(action === 'cancel'){
           this.dialogRef.close();
         } else if(action === 'decline'){
-          let endpoint: string = 'v1/invitations/' +this.invitation.id +'/deny';
-          let body = {
+          const body = {
             'message' : ''
           };
-          this.http.post(endpoint, body).subscribe((httpData) => {
+          this.apiService.denyInvitation(this.invitation.id, body).subscribe((httpData) => {
             console.log('[Invitation Denied]: ', httpData);
             this.dialogRef.close();
           });
-        } else if(action === 'delete'){
-          let endpoint: string = 'v1/invitations/' +this.invitation.id +'/cancel';
-          let body = {
+        } else if(action === 'delete') {
+          const body = {
             'message' : ''
-          }
-          this.http.post(endpoint, body).subscribe((httpData)=>{
+          };
+          this.apiService.cancelInvitation(this.invitation.id, body).subscribe((httpData) => {
             console.log('[Invitation Cancelled]: ', httpData);
             this.dialogRef.close();
           });

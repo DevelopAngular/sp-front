@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '../../../node_modules/@angular/material';
-import { HttpService } from '../services/http-service';
 import { Location } from '../models/Location';
+import { ApiService } from '../services/api.service';
 
 @Component({
   selector: 'app-favorite-form',
@@ -12,11 +12,13 @@ export class FavoriteFormComponent implements OnInit {
 
   starChanges: any[] = [];
 
-  constructor(private dialogRef: MatDialogRef<FavoriteFormComponent>, private http: HttpService) { }
+  constructor(
+      private dialogRef: MatDialogRef<FavoriteFormComponent>,
+      private apiService: ApiService
+  ) { }
 
   ngOnInit() {
-    let endpoint = 'v1/users/@me/starred';
-      this.http.get(endpoint).toPromise().then((stars:any[]) => {
+      this.apiService.getFavoriteLocations().toPromise().then((stars:any[]) => {
         this.starChanges = stars.map(val => Location.fromJSON(val));
       });
 
@@ -24,10 +26,9 @@ export class FavoriteFormComponent implements OnInit {
   }
 
   closeDialog(){
-    let endpoint = 'v1/users/@me/starred';
-    let body = {'locations': this.starChanges.map(loc => loc.id)};
+    const body = {'locations': this.starChanges.map(loc => loc.id)};
     console.log(body.locations);
-    this.http.put(endpoint, body).subscribe();
+    this.apiService.updateFavoriteLocations(body).subscribe();
     this.dialogRef.close();
   }
 

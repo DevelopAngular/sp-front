@@ -83,6 +83,7 @@ export class DateTimePickerComponent implements OnInit, OnDestroy{
       this.min.setMinutes(0);
       this.min.setHours(0);
     }
+
     this._selectedMoment.setMinutes(this._selectedMoment.getMinutes() + 5);
     this._selectedMoment.setSeconds(0);
     this.default = this._selectedMoment;

@@ -5,6 +5,7 @@ import {UserService} from '../../services/user.service';
 import {Paged} from '../../models';
 import {User} from '../../models/User';
 import {HttpService} from '../../services/http-service';
+import {ApiService} from '../../services/api.service';
 
 @Component({
   selector: 'app-profiles-search',
@@ -38,7 +39,8 @@ export class ProfilesSearchComponent implements OnInit {
   //
   constructor(
     private userService: UserService,
-    private http: HttpService
+    private http: HttpService,
+    private apiService: ApiService
   ) { }
 
   ngOnInit() {
@@ -82,8 +84,8 @@ export class ProfilesSearchComponent implements OnInit {
   }
   onSearch(search: string) {
     this.isEmitUsers.emit(false);
-    if(search!=='')
-      this.students = this.http.get<Paged<any>>('v1/users?role=' + this.role + '&limit=5' + (search === '' ? '' : '&search=' + encodeURI(search)))
+    if(search !== '')
+      this.students = this.apiService.searchProfile(this.role, 5, encodeURI(search))
           .toPromise().then(paged => {
             if (paged.results.length > 0) {
               this.isEmitUsers.emit(true);

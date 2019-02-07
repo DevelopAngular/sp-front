@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {User} from '../../../../models/User';
 import {FormControl, FormGroup} from '@angular/forms';
-import {HttpService} from '../../../../services/http-service';
 import {Navigation} from '../../main-hall-pass-form.component';
+import {ApiService} from '../../../../services/api.service';
 
 @Component({
   selector: 'app-groups-step2',
@@ -18,7 +18,7 @@ export class GroupsStep2Component implements OnInit {
 
 
   constructor(
-    private http: HttpService
+    private apiService: ApiService
   ) { }
 
   ngOnInit() {
@@ -28,8 +28,7 @@ export class GroupsStep2Component implements OnInit {
 
     const dto = this.form.value;
           dto.users = dto.users.map(user => user.id);
-
-    this.http.post('v1/student_lists', dto)
+    this.apiService.createStudentGroup(dto)
       .subscribe((group) => {
         for ( const control in this.form.controls) {
           this.form.controls[control].setValue(null);

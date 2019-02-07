@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import {AccountsDialogComponent} from '../accounts-dialog/accounts-dialog.component';
-import {MatDialog} from '@angular/material';
-import {HttpService} from '../../services/http-service';
-import {User} from '../../models/User';
-import {UserService} from '../../services/user.service';
-import {BehaviorSubject, ReplaySubject, Subject} from 'rxjs';
-import {switchMap} from 'rxjs/internal/operators';
+import { AccountsDialogComponent } from '../accounts-dialog/accounts-dialog.component';
+import { MatDialog } from '@angular/material';
+import { HttpService } from '../../services/http-service';
+import { UserService } from '../../services/user.service';
+import { BehaviorSubject } from 'rxjs';
+import { switchMap } from 'rxjs/internal/operators';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-accounts',
@@ -25,13 +25,14 @@ export class AccountsComponent implements OnInit {
   constructor(
     public matDialog: MatDialog,
     private userService: UserService,
-    private http: HttpService
+    private http: HttpService,
+    private apiService: ApiService
   ) { }
 
   ngOnInit() {
 
     this.http.globalReload$.pipe(
-      switchMap(() => this.http.get('v1/admin/accounts'))
+      switchMap(() => this.apiService.getAdminAccounts())
     )
     .subscribe((u_list: any) => {
       console.log(u_list, Object.values(u_list));

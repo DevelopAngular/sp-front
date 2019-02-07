@@ -5,6 +5,7 @@ import {UserService} from '../services/user.service';
 import {map, tap} from 'rxjs/operators';
 import {HttpService} from '../services/http-service';
 import {User} from '../models/User';
+import {ApiService} from '../services/api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,7 @@ export class NotSeenIntroGuard implements CanActivate {
   constructor(
     private router: Router,
     private http: HttpService,
+    private apiService: ApiService,
     private errorHandler: ErrorHandler,
   ) {
   }
@@ -24,7 +26,7 @@ export class NotSeenIntroGuard implements CanActivate {
 
     // console.log('canActivate intro:', localStorage.getItem('smartpass_intro') !== 'seen');
 
-    return this.http.get<any>('v1/users/@me')
+    return this.apiService.getUser()
       .pipe(
         map(raw => User.fromJSON(raw)),
         map((user) => {

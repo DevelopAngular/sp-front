@@ -11,6 +11,7 @@ import { Report } from '../../models/Report';
 import { PdfGeneratorService } from '../pdf-generator.service';
 import {CalendarComponent} from '../calendar/calendar.component';
 import {MatDialog} from '@angular/material';
+import {ApiService} from '../../services/api.service';
 
 
 @Component({
@@ -51,6 +52,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private http: HttpService,
+    private apiService: ApiService,
     private dataService: DataService,
     private liveDataService: LiveDataService,
     private pdf: PdfGeneratorService,
@@ -77,14 +79,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     const todayReports = this.liveDataService.getDateRange(new Date());
 
-    this.http.globalReload$
-      .switchMap(() => {
+    this.http.globalReload$.pipe(
+      switchMap(() => {
         return zip(
-          this.http.get('v1/hall_passes/stats'),
-          this.http.get(`v1/event_reports?created_before=${todayReports.end.toISOString()}&created_after=${todayReports.start.toISOString()}`),
-          this.http.get('v1/admin/dashboard'),
+          this.apiService.getPassStats(),
+          this.apiService.searchReports(todayReports.end.toISOString(), todayReports.start.toISOString()),
+          this.apiService.getDashboardData(),
         );
-      })
+      }))
       .subscribe(([stats, eventReports, dashboard]: any[]) => {
 
         for (const entry of stats) {
@@ -116,7 +118,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     interval(60000)
       .pipe(
-        switchMap(() => this.http.get('v1/admin/dashboard')),
+        switchMap(() => this.apiService.getDashboardData()),
         takeUntil(this.shareChartData$)
       )
       .subscribe((result: any) => {
@@ -280,7 +282,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   previewPDF() {
 
-    const data = this.http.get('v1/hall_passes?active=true');
+    const data = this.apiService.getActivePasses();
 
 
     data
@@ -334,7 +336,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
               this.chartsDate = new Date(data.date);
               console.log(this.chartsDate);
               // this.getReports(this.chartsDate);
-              this.http.get('v1/admin/dashboard')
+              this.apiService.getDashboardData()
                 .subscribe((dashboard: any) => {
                   this.lineChartData = [{data: dashboard.hall_pass_usage}];
                 });

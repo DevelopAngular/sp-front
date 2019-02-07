@@ -4,6 +4,7 @@ import { HttpService } from '../services/http-service';
 import { DataService } from '../services/data-service';
 import { interval, merge, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import {ApiService} from '../services/api.service';
 
 @Component({
   selector: 'app-inline-pass-card',
@@ -30,7 +31,7 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
   performingAction: boolean;
   subscribers$;
 
-  constructor(private http: HttpService, private dataService: DataService) { }
+  constructor(private http: HttpService, private dataService: DataService, private apiService: ApiService) { }
 
   ngOnInit() {
       this.subscribers$ = merge(of(0), interval(1000)).pipe(map(x => {
@@ -58,9 +59,7 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
   endPass(){
     // console.log('END PASS ===>', this.pass);
     this.performingAction = true;
-    const endPoint: string = 'v1/hall_passes/' +this.pass.id +'/ended';
-    this.http.post(endPoint).subscribe(res => {
-      // this.dataService.isActiveRequest$.next(false);
+    this.apiService.endPass(this.pass.id).subscribe(res => {
       this.dataService.isActivePass$.next(false);
     });
   }

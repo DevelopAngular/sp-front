@@ -3,8 +3,7 @@ import { Pinnable } from '../../models/Pinnable';
 import { MatDialog } from '@angular/material';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
 import {BehaviorSubject, forkJoin, Subject} from 'rxjs';
-import {HttpService} from '../../services/http-service';
-import {DragulaService} from 'ng2-dragula';
+import {ApiService} from '../../services/api.service';
 
 @Component({
   selector: 'app-pinnable-collection',
@@ -42,8 +41,7 @@ export class PinnableCollectionComponent implements OnInit {
 
   constructor(
     public dialog: MatDialog,
-    private http: HttpService,
-    public dragulaService: DragulaService
+    private apiService: ApiService
   ) {
     // dragulaService.createGroup('pins', {
     //   removeOnSpill: true
@@ -56,11 +54,13 @@ export class PinnableCollectionComponent implements OnInit {
       // console.log(this.pinnableIdArranged);
 
     }, 1000);
-    this.resetBulkSelect$.subscribe((val: boolean) => {
-      if (val) {
-        this.bulkSelect = false;
-      }
-    });
+    if (this.resetBulkSelect$) {
+        this.resetBulkSelect$.subscribe((val: boolean) => {
+            if (val) {
+                this.bulkSelect = false;
+            }
+        });
+    }
   }
 
   onPinablesOrderChanged(newOrder) {
@@ -127,7 +127,7 @@ export class PinnableCollectionComponent implements OnInit {
           const currentPinIds = this.selectedPinnables.map(pinnable => pinnable.id);
           this.pinnables = this.pinnables.filter(pinnable => pinnable.id !== currentPinIds.find(id => id === pinnable.id));
             const pinnableToDelete = this.selectedPinnables.map(pinnable => {
-                return this.http.delete(`v1/pinnables/${pinnable.id}`);
+                return this.apiService.deletePinnable(pinnable.id);
             });
             return forkJoin(pinnableToDelete).subscribe(() => this.toggleBulk());
         } else {

@@ -4,19 +4,18 @@ import { User } from '../models/User';
 import { Util } from '../../Util';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material';
 import { Inject } from '@angular/core';
-import { HttpService } from '../services/http-service';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
 import {filter, tap} from 'rxjs/operators';
-import {LiveDataService} from '../live-data/live-data.service';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import * as _ from 'lodash';
+import {ApiService} from '../services/api.service';
 
 @Component({
   selector: 'app-request-card',
@@ -51,7 +50,7 @@ export class RequestCardComponent implements OnInit {
   constructor(
       public dialogRef: MatDialogRef<RequestCardComponent>,
       @Inject(MAT_DIALOG_DATA) public data: any,
-      private http: HttpService,
+      private apiService: ApiService,
       public dialog: MatDialog,
       public dataService: DataService,
       private _zone: NgZone,
@@ -101,7 +100,6 @@ export class RequestCardComponent implements OnInit {
 
   newRequest(){
     this.performingAction = true;
-    const endPoint: string = 'v1/pass_requests';
     const body = this.forFuture?{
           'origin' : this.request.origin.id,
           'destination' : this.request.destination.id,
@@ -118,7 +116,7 @@ export class RequestCardComponent implements OnInit {
           'teacher' : this.request.teacher.id,
           'duration' : this.selectedDuration*60,
         };
-      this.http.post(endPoint, body).subscribe((res: Request) => {
+      this.apiService.createRequest(body).subscribe((res: Request) => {
           this.dialogRef.close();
       });
   }
@@ -168,8 +166,7 @@ export class RequestCardComponent implements OnInit {
         }
         this.dateEditOpen = false;
         console.log('RIGHT REQUEST TIME =====>', this.request.request_time);
-        let endpoint: string = "v1/pass_requests";
-        let body: any = {
+        const body: any = {
           'origin' : this.request.origin.id,
           'destination' : this.request.destination.id,
           'attachment_message' : this.request.attachment_message,
@@ -179,8 +176,8 @@ export class RequestCardComponent implements OnInit {
           'duration' : this.request.duration,
         };
 
-        this.http.post(endpoint, body).subscribe(() => {
-          this.http.post(`v1/pass_requests/${this.request.id}/cancel`).subscribe(() => {
+        this.apiService.createRequest(body).subscribe(() => {
+          this.apiService.cancelRequest(this.request.id).subscribe(() => {
             this.dialogRef.close();
           });
         });
@@ -376,8 +373,7 @@ export class RequestCardComponent implements OnInit {
           this.denyRequest('No message');
 
         } else if (action === 'delete') {
-
-            this.http.post(`v1/pass_requests/${this.request.id}/cancel`).subscribe(() => {
+            this.apiService.cancelRequest(this.request.id).subscribe(() => {
               this.dialogRef.close();
             });
         }
@@ -405,11 +401,10 @@ export class RequestCardComponent implements OnInit {
     }
 
   denyRequest(denyMessage: string){
-    let endpoint: string = 'v1/pass_requests/' +this.request.id +'/deny';
-    let body = {
+    const body = {
       'message' : denyMessage
     };
-    this.http.post(endpoint, body).subscribe((httpData) => {
+    this.apiService.denyRequest(this.request.id, body).subscribe((httpData) => {
       console.log('[Request Denied]: ', httpData);
       this.dialogRef.close();
     });
@@ -421,9 +416,8 @@ export class RequestCardComponent implements OnInit {
 
   approveRequest() {
     this.performingAction = true;
-    let endpoint: string = 'v1/pass_requests/' +this.request.id +'/accept';
-    let body = [];
-    this.http.post(endpoint, body).subscribe(() => {
+    const body = [];
+    this.apiService.acceptRequest(this.request.id, body).subscribe(() => {
       this.dialogRef.close();
     });
   }

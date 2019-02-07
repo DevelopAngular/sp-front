@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { HttpService } from '../../services/http-service';
 import { map, shareReplay } from 'rxjs/operators';
+import {ApiService} from '../../services/api.service';
 
 @Component({
     selector: 'app-color-pallet-picker',
@@ -19,10 +20,10 @@ export class ColorPalletPickerComponent implements OnInit {
 
   selectedId: number;
 
-  constructor(private httpService: HttpService, private renderer: Renderer2) { }
+  constructor(private apiService: ApiService) { }
 
   ngOnInit() {
-      this.colors$ = this.httpService.get('v1/color_profiles').pipe(
+      this.colors$ = this.apiService.getColors().pipe(
           shareReplay(1),
           map((colors: any[]) => {
           return colors.filter(color => color.id !== 1 && color.id !== 6);

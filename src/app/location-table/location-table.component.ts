@@ -4,6 +4,7 @@ import { Location } from '../models/Location';
 import {finalize} from 'rxjs/operators';
 import {DragulaService} from 'ng2-dragula';
 import * as _ from 'lodash';
+import {ApiService} from '../services/api.service';
 
 
 export interface Paged<T> {
@@ -108,7 +109,7 @@ export class LocationTableComponent implements OnInit {
   nextChoices: string = '';
   favoritesLoaded: boolean;
 
-  constructor(private http: HttpService, private dragulaService: DragulaService) {
+  constructor(private http: HttpService, private apiService: ApiService) {
   }
 
   ngOnInit() {
@@ -127,8 +128,7 @@ export class LocationTableComponent implements OnInit {
         });
     }
     if(this.type==='location'){
-      let endpoint = 'v1/users/@me/starred';
-      this.http.get(endpoint).toPromise().then((stars:any[]) => {
+      this.apiService.getFavoriteLocations().toPromise().then((stars:any[]) => {
         this.starredChoices = stars.map(val => Location.fromJSON(val));
         this.favoritesLoaded = true;
       });
@@ -137,7 +137,7 @@ export class LocationTableComponent implements OnInit {
 
   updateOrderLocation(locations) {
     const body = {'locations': locations.map(loc => loc.id)};
-    this.http.put('v1/users/@me/starred', body).subscribe();
+    this.apiService.updateFavoriteLocations(body).subscribe();
   }
 
 

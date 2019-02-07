@@ -11,6 +11,7 @@ import { OverlayContainerComponent } from '../overlay-container/overlay-containe
 import {PinnableCollectionComponent} from '../pinnable-collection/pinnable-collection.component';
 import * as _ from 'lodash';
 import { disableBodyScroll } from 'body-scroll-lock';
+import {ApiService} from '../../services/api.service';
 
 @Component({
   selector: 'app-pass-congif',
@@ -35,24 +36,24 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   constructor(
       private dialog: MatDialog,
       private httpService: HttpService,
+      private apiService: ApiService,
       private elRef: ElementRef
   ) { }
 
   get schoolName(){
-      return this.httpService.schoolIdSubject.value?this.httpService.schoolIdSubject.value.name:'';
+      return this.httpService.schoolIdSubject.value ? this.httpService.schoolIdSubject.value.name : '';
   }
 
   ngOnInit() {
     disableBodyScroll(this.elRef.nativeElement);
     this.buildForm();
-    this.pinnables$ = this.httpService.get('v1/pinnables/arranged');
+    this.pinnables$ = this.apiService.getPinnables();
     // this.schools$ = this.httpService.get('v1/schools');
     // this.schools$.subscribe(res => this.schoolName =  res[0].name);
     this.pinnables$.subscribe(res => this.pinnables = res);
 
-    this.httpService.globalReload$.subscribe(() =>{
-        console.log('Updating pinnables on global reload')
-        this.pinnables$ = this.httpService.get('v1/pinnables/arranged');
+    this.httpService.globalReload$.subscribe(() => {
+        this.pinnables$ = this.apiService.getPinnables();
         this.pinnables$.subscribe(res => this.pinnables = res);
     });
 
@@ -76,15 +77,10 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 
     const pinnableIdArranged = newOrder.map(pin => pin.id);
 
-
-    this.httpService
-      .post('v1/pinnables/arranged', {
-        order: pinnableIdArranged.join(',')
-      })
+    this.apiService.createArrangedPinnable({order: pinnableIdArranged.join(',')})
       .pipe(
         switchMap((): Observable<Pinnable[]> => {
-          return this.httpService
-            .get('v1/pinnables/arranged');
+          return this.apiService.getPinnables();
         })
       )
       .subscribe((res) => {
@@ -193,7 +189,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       });
 
      overlayDialog.afterClosed()
-         .pipe(switchMap(() => this.httpService.get('v1/pinnables/arranged'))).subscribe(res => {
+         .pipe(switchMap(() => this.apiService.getPinnables())).subscribe(res => {
              this.pinnables = res;
              this.selectedPinnables = [];
              this.pinColComponent.clearSelected();

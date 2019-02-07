@@ -13,6 +13,7 @@ import { Location } from '../../models/Location';
 import * as XLSX from 'xlsx';
 import { UserService } from '../../services/user.service';
 import { disableBodyScroll } from 'body-scroll-lock';
+import {ApiService} from '../../services/api.service';
 
 export interface FormState {
     roomName?: string;
@@ -136,6 +137,7 @@ export class OverlayContainerComponent implements OnInit {
       @Inject(MAT_DIALOG_DATA) public dialogData: any,
       private userService: UserService,
       private http: HttpService,
+      private apiService: ApiService,
       private elRef: ElementRef
   ) { }
 
@@ -305,7 +307,7 @@ export class OverlayContainerComponent implements OnInit {
       if (this.dialogData['pinnable']) {
           this.pinnable = this.dialogData['pinnable'];
           if (this.pinnable.type === 'category') {
-              this.http.get(`v1/locations?category=${this.pinnable.category}&`)
+              this.apiService.getLocationsWithCategory(this.pinnable.category)
                   .subscribe((res: Location[]) => this.selectedRooms = res);
           }
       }
@@ -313,7 +315,7 @@ export class OverlayContainerComponent implements OnInit {
           if (this.overlayType === 'newFolder') {
               this.dialogData['rooms'].forEach((room: Pinnable) => {
                   if (room.type === 'category') {
-                      this.http.get(`v1/locations?category=${room.category}&`)
+                      this.apiService.getLocationsWithCategory(room.category)
                           .subscribe((res: Location[]) => {
                               this.selectedRooms = [...this.selectedRooms, ...res];
                           });
@@ -440,7 +442,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   uniqueRoomNameValidator(control: AbstractControl) {
-      return this.http.get(`v1/locations/check_fields?title=${control.value}`)
+      return this.apiService.checkLocationName(control.value)
           .pipe(map((res: any) => {
               if (this.overlayType === 'newRoom' || (this.overlayType === 'newRoomInFolder' && !this.editRoomInFolder)) {
                   return res.title_used ? { room_name: true } : null;
@@ -452,7 +454,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   uniqueRoomNumberValidator(control: AbstractControl) {
-      return this.http.get(`v1/locations/check_fields?room=${control.value}`)
+      return this.apiService.checkLocationNumber(control.value)
           .pipe(map((res: any) => {
               if (this.overlayType === 'newRoom' || (this.overlayType === 'newRoomInFolder' && !this.editRoomInFolder)) {
                   return res.title_used ? { room_number: true } : null;
@@ -464,7 +466,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   uniqueFolderNameValidator(control: AbstractControl) {
-      return this.http.get(`v1/pinnables/check_fields?title=${control.value}`)
+      return this.apiService.checkPinnableName(control.value)
           .pipe(map((res: any) => {
               if (this.overlayType === 'newFolder' && !this.isEditFolder) {
                   return res.title_used ? { folder_name: true } : null;
@@ -661,8 +663,7 @@ export class OverlayContainerComponent implements OnInit {
                 travel_types: this.travelType,
                 max_allowed_time: +this.timeLimit
         };
-
-       this.http.post('v1/locations', location)
+       this.apiService.createLocation(location)
            .pipe(switchMap((loc: Location) => {
                const pinnable = {
                    title: this.roomName,
@@ -670,7 +671,7 @@ export class OverlayContainerComponent implements OnInit {
                    icon: this.selectedIcon.inactive_icon,
                    location: loc.id,
                };
-               return this.http.post('v1/pinnables', pinnable);
+               return this.apiService.createPinnable(pinnable);
            })).subscribe(response => this.dialogRef.close());
     }
 
@@ -682,7 +683,8 @@ export class OverlayContainerComponent implements OnInit {
                 icon: this.selectedIcon.inactive_icon,
                 category: this.folderName
             };
-            this.http.patch(`v1/pinnables/${this.pinnable.id}`, newFolder).subscribe(res => this.dialogRef.close());
+            this.apiService.updatePinnable(this.pinnable.id, newFolder)
+            .subscribe(res => this.dialogRef.close());
         }
         const locationsToUpdate$ = this.selectedRooms.map(location => {
             let id;
@@ -701,7 +703,7 @@ export class OverlayContainerComponent implements OnInit {
                     data.teachers = data.teachers.map(teacher => teacher.id);
                 }
             }
-            return this.http.patch(`v1/locations/${id}`, data);
+            return this.apiService.updateLocation(id, data);
         });
         forkJoin(locationsToUpdate$).pipe(switchMap(locations => {
             const newFolder = {
@@ -712,21 +714,21 @@ export class OverlayContainerComponent implements OnInit {
             };
         return this.isEditFolder
                 ?
-               this.http.patch(`v1/pinnables/${this.pinnable.id}`, newFolder)
+               this.apiService.updatePinnable(this.pinnable.id, newFolder)
                 :
           zip(
-            this.http.get('v1/pinnables?arranged=true'),
-            this.http.post('v1/pinnables', newFolder)
+            this.apiService.getArrangedPinnables(),
+            this.apiService.createPinnable(newFolder)
           ).pipe(
              switchMap((result: any[]) => {
                const arrengedSequence = result[0].map(item => item.id);
                      arrengedSequence.push(result[1].id);
-               return this.http.post(`v1/pinnables/arranged`, { order: arrengedSequence.join(',')});
+               return this.apiService.createArrangedPinnable( { order: arrengedSequence.join(',')});
              })
           );
         })).subscribe(() => !this.pinnableToDeleteIds.length ? this.dialogRef.close() : false);
         if (this.pinnableToDeleteIds.length) {
-          const deleteRequests = this.pinnableToDeleteIds.map(id => this.http.delete(`v1/pinnables/${id}`));
+          const deleteRequests = this.pinnableToDeleteIds.map(id => this.apiService.deletePinnable(id));
           zip(...deleteRequests).subscribe(() => this.dialogRef.close());
         }
     }
@@ -740,8 +742,7 @@ export class OverlayContainerComponent implements OnInit {
             travel_types: this.travelType,
             max_allowed_time: +this.timeLimit
         };
-
-        this.http.patch(`v1/locations/${this.pinnable.location.id}`, location)
+        this.apiService.updateLocation(this.pinnable.location.id, location)
             .pipe(switchMap((loc: Location) => {
                 const pinnable = {
                     title: this.roomName,
@@ -749,7 +750,7 @@ export class OverlayContainerComponent implements OnInit {
                     icon: this.selectedIcon.inactive_icon,
                     location: loc.id,
                 };
-                return this.http.patch(`v1/pinnables/${this.pinnable.id}`, pinnable);
+                return this.apiService.updatePinnable(this.pinnable.id, pinnable);
             })).subscribe(response => this.dialogRef.close());
     }
   }
@@ -767,14 +768,16 @@ export class OverlayContainerComponent implements OnInit {
                   max_allowed_time: +this.timeLimit
             };
           if (this.editRoomInFolder) {
-              this.http.patch(`v1/locations/${this.roomToEdit.id}`, location).subscribe((res: Location) => {
+              this.apiService.updateLocation(this.roomToEdit.id, location)
+              .subscribe((res: Location) => {
                   const newCollection = this.selectedRooms.filter(room => room.id !== this.roomToEdit.id);
                   this.selectedRooms = [res, ...newCollection];
                   this.setLocation('newFolder');
                   this.isChangeLocations.next(true);
               });
           } else {
-              this.http.post('v1/locations', location).subscribe(loc => {
+              this.apiService.createLocation(location)
+              .subscribe(loc => {
                   this.newRoomsInFolder.push(loc);
                   this.selectedRooms.push(loc);
                   this.setLocation('newFolder');
@@ -789,7 +792,7 @@ export class OverlayContainerComponent implements OnInit {
                   _room.scheduling_restricted = this.futureRestriction;
                   _room.max_allowed_time = +this.timeLimit;
                   _room.travel_types = this.travelType;
-                  return this.http.post('v1/locations', _room);
+                  return this.apiService.createLocation(_room);
               });
               zip(...this.importedRooms).subscribe((result) => {
                   this.selectedRooms = [...result, ...this.selectedRooms];
@@ -808,7 +811,7 @@ export class OverlayContainerComponent implements OnInit {
                       if (this.timeLimit) {
                           data.max_allowed_time =  +this.timeLimit;
                       }
-                      return this.http.patch(`v1/locations/${room.location.id}`, data);
+                      return this.apiService.updateLocation(room.location.id, data);
                   } else {
                       const data: any = {
                           restricted: this.nowRestriction,
@@ -818,7 +821,7 @@ export class OverlayContainerComponent implements OnInit {
                       if (this.timeLimit) {
                           data.max_allowed_time =  +this.timeLimit;
                       }
-                      return this.http.patch(`v1/locations/${room.id}`, data);
+                      return this.apiService.updateLocation(room.id, data);
                   }
               });
               forkJoin(locationsToEdit).subscribe(res => {
@@ -835,7 +838,7 @@ export class OverlayContainerComponent implements OnInit {
          this.showPublishSpinner = true;
          const selectedLocations = _.filter(this.selectedRooms, {type: 'location'}).map((res: any) => res.location);
           const locationsFromFolder = _.filter(this.selectedRooms, {type: 'category'}).map((folder: any) => {
-             return  this.http.get(`v1/locations?category=${folder.category}&`);
+              return this.apiService.getLocationsWithCategory(folder.category);
           });
           if (locationsFromFolder.length) {
               forkJoin(locationsFromFolder).pipe(switchMap((res) => {
@@ -849,8 +852,7 @@ export class OverlayContainerComponent implements OnInit {
                       if (this.timeLimit) {
                           data.max_allowed_time =  +this.timeLimit;
                       }
-
-                      return this.http.patch(`v1/locations/${room.id}`, data);
+                      return this.apiService.updateLocation(room.id, data);
                   });
                   return forkJoin(locationsToEdit);
               })).subscribe(() => this.dialogRef.close());
@@ -864,7 +866,7 @@ export class OverlayContainerComponent implements OnInit {
                   if (this.timeLimit) {
                       data.max_allowed_time =  +this.timeLimit;
                   }
-                  return this.http.patch(`v1/locations/${room.id}`, data);
+                  return this.apiService.updateLocation(room.id, data);
               });
               forkJoin(locationsToEdit).subscribe(() => this.dialogRef.close());
           }
@@ -920,7 +922,7 @@ export class OverlayContainerComponent implements OnInit {
      }
     if (action === 'delete') {
         const roomsToDelete = this.readyRoomsToEdit.map(room => {
-            return this.http.delete(`v1/locations/${room.id}`);
+            return this.apiService.deleteLocation(room.id);
         });
         forkJoin(roomsToDelete).subscribe(res => {
             const currentRoomsIds = this.readyRoomsToEdit.map(item => item.id);
@@ -938,11 +940,11 @@ export class OverlayContainerComponent implements OnInit {
     if (this.overlayType === 'editRoom' || (this.isEditFolder && this.overlayType === 'newFolder')) {
 
       const deletions = [
-        this.http.delete(`v1/pinnables/${this.pinnable.id}`)
+        this.apiService.deletePinnable(this.pinnable.id)
       ];
 
       if (this.pinnable.location) {
-        deletions.push(this.http.delete(`v1/locations/${this.pinnable.location.id}`));
+        deletions.push(this.apiService.deleteLocation(this.pinnable.location.id));
       }
 
       zip(...deletions).subscribe(res => {
@@ -952,12 +954,8 @@ export class OverlayContainerComponent implements OnInit {
     }
 
     if (this.editRoomInFolder) {
-        // this.selectedRooms = this.selectedRooms.filter(room => room.id !== this.currentLocationInEditRoomFolder.id);
-        // this.setLocation('newFolder');
-        // this.isChangeLocations.next(true);
-
-        // TODO Uncomment when the endpoint is ready
-        this.http.delete(`v1/locations/${this.currentLocationInEditRoomFolder.id}`).subscribe((res: Location) => {
+        this.apiService.deleteLocation(this.currentLocationInEditRoomFolder.id)
+        .subscribe((res: Location) => {
             this.selectedRooms = this.selectedRooms.filter(room => room.id !== this.currentLocationInEditRoomFolder.id);
             this.setLocation('newFolder');
             this.isChangeLocations.next(true);

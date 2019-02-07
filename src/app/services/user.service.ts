@@ -13,6 +13,8 @@ import { constructUrl } from '../live-data/helpers';
 import { Logger } from './logger.service';
 import { User } from '../models/User';
 import { PollingService } from './polling-service';
+import {ApiService} from './api.service';
+import {map, switchMap} from 'rxjs/operators';
 
 @Injectable()
 export class UserService {
@@ -20,6 +22,7 @@ export class UserService {
   public userData: ReplaySubject<User> = new ReplaySubject<User>(1);
 
   constructor(private http: HttpService,
+              private apiService: ApiService,
               private pollingService: PollingService, private _logging: Logger) {
 
     // this.userData.subscribe(
@@ -28,8 +31,7 @@ export class UserService {
     //   () => console.log('userData complete'));
 
     this.http.globalReload$
-      .switchMap(() => this.http.get<any>('v1/users/@me'))
-      .map(raw => User.fromJSON(raw))
+        .pipe(switchMap(() => this.apiService.getUser()), map(raw => User.fromJSON(raw)))
       .subscribe(user => this.userData.next(user));
 
     this.pollingService.listen().subscribe(this._logging.debug);

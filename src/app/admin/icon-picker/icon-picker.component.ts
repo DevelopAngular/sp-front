@@ -1,8 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {HttpService} from '../../services/http-service';
 import {map, shareReplay} from 'rxjs/internal/operators';
-import {DomSanitizer} from '@angular/platform-browser';
 import * as _ from 'lodash';
+import {ApiService} from '../../services/api.service';
 
 
 @Component({
@@ -21,12 +20,11 @@ export class IconPickerComponent implements OnInit {
   public selectedIconId;
 
   constructor(
-    private http: HttpService,
-    private sanitizer: DomSanitizer
+    private apiService: ApiService,
   ) { }
 
   ngOnInit() {
-    this.icons$ = this.http.get('v1/room_icons')
+    this.icons$ = this.apiService.getIcons()
       .pipe(shareReplay(1),
       map((icons: any) => {
         return icons.map((_icon) => {

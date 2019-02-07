@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Pinnable } from '../models/Pinnable';
-import { HttpService } from '../services/http-service';
 import { BehaviorSubject } from 'rxjs';
+import { ApiService } from '../services/api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,10 +10,10 @@ export class CreateFormService {
 
   isSeen$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  constructor(private http: HttpService) { }
+  constructor(private apiService: ApiService) { }
 
   getPinnable() {
-    return this.http.get<any[]>('v1/pinnables/arranged')
+    return this.apiService.getPinnables()
         .toPromise()
         .then(json => json.map(raw => Pinnable.fromJSON(raw)));
   }
