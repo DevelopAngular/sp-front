@@ -1,5 +1,5 @@
 <div class="rest-tar-wrapper">
-  <div class="rest-tar-header" [style.background-image]="headerGradient">
+  <div class="rest-tar-header" [style.background-image]="headerGradient" *ngIf="animatedComponetVivibility"  [@HeaderShowingUp]>
     <img class="back-button" [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
     <div class="rest-tar-header-text">
       <img class="search-icon" [src]="'./assets/Lock (White).png' | resolveAsset">
@@ -7,7 +7,7 @@
     </div>
   </div>
 
-  <div class="rest-tar-content">
+  <div class="rest-tar-content" *ngIf="animatedComponetVivibility" [@BodyShowingUp]="{value: '', params: frameMotion$ | async}">
     <app-location-table
        class="center"
        (onSelect)="updateTarget($event)"
@@ -17,6 +17,6 @@
     </app-location-table>
   </div>
   <div class="shadow"></div>
-  <app-student-footer [formState]="formState" [date]="date"></app-student-footer>
+  <app-student-footer [formState]="formState" [date]="date" *ngIf="animatedComponetVivibility" [@HeaderShowingUp]></app-student-footer>
 
 </div>

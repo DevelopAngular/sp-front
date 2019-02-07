@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Pinnable } from '../../../../models/Pinnable';
 import { Navigation } from '../../main-hall-pass-form.component';
+import {CreateFormService} from '../../../create-form.service';
 
 @Component({
   selector: 'app-to-where',
@@ -25,34 +26,51 @@ export class ToWhereComponent implements OnInit {
 
   @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor() { }
+  constructor(
+    private formService: CreateFormService
+  ) { }
 
   ngOnInit() {
     this.location = this.formState.data.direction ? this.formState.data.direction.from : null;
   }
 
   pinnableSelected(pinnable) {
-    this.selectedPinnable.emit(pinnable);
+
+    this.formService.setFrameMotionDirection('forward');
+
+    setTimeout(() => {
+      this.selectedPinnable.emit(pinnable);
+
+    }, 100);
+
+
   }
 
   back() {
-    if (!!this.date &&
+
+    this.formService.setFrameMotionDirection('back');
+
+    setTimeout(() => {
+      if (!!this.date &&
         !!this.studentText &&
         (this.formState.previousStep === 2 || this.formState.previousStep === 4)
-    ) {
+      ) {
         this.formState.previousState = this.formState.state;
         this.formState.step = 1;
         this.formState.previousStep = 3;
-    } else {
-      this.formState.previousState = this.formState.state;
-      if (this.formState.formMode.formFactor === 3) {
-        this.formState.step = 1;
       } else {
-        this.formState.state -= 1;
+        this.formState.previousState = this.formState.state;
+        if (this.formState.formMode.formFactor === 3) {
+          this.formState.step = 1;
+        } else {
+          this.formState.state -= 1;
+        }
       }
-    }
-    //
-    this.backButton.emit(this.formState);
+      //
+      this.backButton.emit(this.formState);
+    }, 100)
+
+
   }
 
 }

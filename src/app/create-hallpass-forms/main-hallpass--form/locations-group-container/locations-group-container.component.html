@@ -1,6 +1,6 @@
 <div class="locations-group-wrapper">
-  <!--<pre>  {{FORM_STATE.state}}</pre>-->
-  <div style="position: absolute" [@NextStep]="stateTransition(1)">
+  <!--<pre>  {{FORM_STATE.state}} {{FORM_STATE.previousState}} {{ FORM_STATE.state > FORM_STATE.previousState}}</pre>-->
+  <div *ngIf="FORM_STATE.state === 1" style="position: absolute" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
 
     <app-from-where
       [studentText]="studentText"
@@ -11,7 +11,7 @@
       (selectedLocation)="fromWhere($event)"
     ></app-from-where>
   </div>
-  <div style="position: absolute" [@NextStep]="stateTransition(2)">
+  <div *ngIf="FORM_STATE.state === 2" style="position: absolute" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
 
     <app-to-where
       [studentText]="studentText"
@@ -24,31 +24,41 @@
       (selectedPinnable)="toWhere($event)"
     ></app-to-where>
   </div>
-  <app-to-category
-    *ngIf="FORM_STATE.state === 3"
-    [studentText]="studentText"
-    [formState]="FORM_STATE"
-    [isStaff]="isStaff"
-    [fromLocation]="data.fromLocation"
-    [date]="showDate"
-    (backButton)="back($event)"
-    (locFromCategory)="fromCategory($event)"
-  ></app-to-category>
-  <app-restricted-target
-    *ngIf="FORM_STATE.state === 4"
-    [formState]="FORM_STATE"
-    [date]="showDate"
-    [pinnable]="pinnable"
-    (backButton)="back($event)"
-    (requestTarget)="requestTarget($event)"
-  ></app-restricted-target>
-  <app-restricted-message
-    *ngIf="FORM_STATE.state === 5"
-    [formState]="FORM_STATE"
-    (backButton)="back($event)"
-    [gradient]="FORM_STATE.data.gradient"
-    [teacher]="data.requestTarget"
-    [date]="showDate"
-    (resultMessage)="resultMessage($event, !FORM_STATE.forInput)"
-  ></app-restricted-message>
+  <div *ngIf="FORM_STATE.state === 3" style="position: absolute">
+  <!--<div *ngIf="FORM_STATE.state === 3" style="position: absolute" [@NextStep]="{ value: '', params: frameMotion$ | async} ">-->
+    <app-to-category
+      [studentText]="studentText"
+      [formState]="FORM_STATE"
+      [isStaff]="isStaff"
+      [fromLocation]="data.fromLocation"
+      [date]="showDate"
+      (backButton)="back($event)"
+      (locFromCategory)="fromCategory($event)"
+    ></app-to-category>
+  </div>
+  <div *ngIf="FORM_STATE.state === 4" style="position: absolute">
+  <!--<div *ngIf="FORM_STATE.state === 4" style="position: absolute" [@NextStep]="{ value: '', params: frameMotion$ | async} ">-->
+
+    <app-restricted-target
+      [formState]="FORM_STATE"
+      [date]="showDate"
+      [pinnable]="pinnable"
+      (backButton)="back($event)"
+      (requestTarget)="requestTarget($event)"
+    ></app-restricted-target>
+  </div>
+
+  <div *ngIf="FORM_STATE.state === 5" style="position: absolute">
+  <!--<div *ngIf="FORM_STATE.state === 5" style="position: absolute" [@NextStep]="{ value: '', params: frameMotion$ | async} ">-->
+
+    <app-restricted-message
+      [formState]="FORM_STATE"
+      (backButton)="back($event)"
+      [gradient]="FORM_STATE.data.gradient"
+      [teacher]="data.requestTarget"
+      [date]="showDate"
+      (resultMessage)="resultMessage($event, !FORM_STATE.forInput)"
+    ></app-restricted-message>
+  </div>
+
 </div>

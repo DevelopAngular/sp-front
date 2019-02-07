@@ -2,11 +2,15 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 import { Navigation } from '../../main-hall-pass-form.component';
 import { Pinnable } from '../../../../models/Pinnable';
+import {CreateFormService} from '../../../create-form.service';
+import {BodyShowingUp, HeaderShowingUp} from '../../../../animations';
+import {BehaviorSubject} from 'rxjs';
 
 @Component({
   selector: 'app-to-category',
   templateUrl: './to-category.component.html',
-  styleUrls: ['./to-category.component.scss']
+  styleUrls: ['./to-category.component.scss'],
+  animations: [HeaderShowingUp, BodyShowingUp]
 })
 export class ToCategoryComponent implements OnInit {
 
@@ -26,7 +30,13 @@ export class ToCategoryComponent implements OnInit {
 
   pinnable: Pinnable;
 
-  constructor() { }
+  animatedComponetVivibility: boolean = true;
+
+  frameMotion$: BehaviorSubject<any>;
+
+  constructor(
+    private formService: CreateFormService
+  ) { }
 
   get headerGradient() {
      const colors = this.formState.data.direction.pinnable.gradient_color;
@@ -34,18 +44,30 @@ export class ToCategoryComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.fromLocation = this.formState.data.direction.from;
     this.pinnable = this.formState.data.direction.pinnable;
   }
 
   locationChosen(location) {
-    this.locFromCategory.emit(location);
+    this.formService.setFrameMotionDirection('forward');
+    this.animatedComponetVivibility = false;
+    setTimeout(() => {
+      this.locFromCategory.emit(location);
+    }, 250);
+
   }
 
   back() {
-    this.formState.previousState = this.formState.state;
-    this.formState.state -= 1;
-    this.backButton.emit(this.formState);
+
+    this.formService.setFrameMotionDirection('back');
+    this.animatedComponetVivibility = false;
+
+    setTimeout(() => {
+      this.formState.previousState = this.formState.state;
+      this.formState.state -= 1;
+      this.backButton.emit(this.formState);
+    }, 250);
   }
 
 }

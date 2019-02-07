@@ -71,9 +71,20 @@
   width: auto;
   height: auto;
   transition: all .5s ease;
+  position: relative;
+  width: 425px;
+  height: 500px;
   &:hover {
     //background: red;
     //width: 900px;
+  }
+  .fixed-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
   }
 }
 
