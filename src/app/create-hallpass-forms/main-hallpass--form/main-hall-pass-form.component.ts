@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { DataService } from '../../services/data-service';
 import { HttpService } from '../../services/http-service';
@@ -7,6 +7,7 @@ import { Pinnable } from '../../models/Pinnable';
 import { User } from '../../models/User';
 import { StudentList } from '../../models/StudentList';
 import {NextStep, NextStepColored, ScaledCard} from '../../animations';
+import {startWith} from 'rxjs/operators';
 
 export enum Role { Teacher = 1, Student = 2 }
 
@@ -57,12 +58,14 @@ export interface Navigation {
 export class MainHallPassFormComponent implements OnInit {
 
   public FORM_STATE: Navigation;
-  public animateNextStep: number;
-  public animatePrevStep: number;
   public stepTransition: Object = {
     'state-transition__left-right': false,
     'state-transition__right-left': false
   };
+  public formSize = {
+    height: '0px',
+    width: '0px'
+  }
 
   constructor(
     private http: HttpService,
@@ -138,10 +141,11 @@ export class MainHallPassFormComponent implements OnInit {
         break;
       }
     }
-
+    this.setFormSize();
   }
 
   onNextStep(evt) {
+    // this.setFormSize();
     if (evt.step === 0 || evt.action === 'exit') {
       console.log('EXIT ===>', evt);
       this.dialogRef.close(evt);
@@ -153,5 +157,32 @@ export class MainHallPassFormComponent implements OnInit {
       this.stepTransition['state-transition__right-left'] = this.FORM_STATE.previousStep > this.FORM_STATE.step;
       this.FORM_STATE = evt;
     }
+  }
+
+  setFormSize() {
+
+      switch (this.FORM_STATE.step) {
+        case (1): {
+          this.formSize.width =  `425px`;
+          this.formSize.height =  `500px`;
+          break;
+        }
+        case (2): {
+          this.formSize.width =  `700px`;
+          this.formSize.height =  `400px`;
+          break;
+        }
+        case (3): {
+          this.formSize.width =  `425px`;
+          this.formSize.height =  `500px`;
+          break;
+        }
+        case (4): {
+          this.formSize.width =  `334px`;
+          this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '412px';
+          break;
+        }
+      }
+      console.log(this.formSize);
   }
 }

@@ -62,7 +62,10 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   ngOnInit() {
 
+    this.formService.setFrameMotionDirection('disable');
+
     this.frameMotion$ = this.formService.getFrameMotionDirection();
+
 
     // this.FORM_STATE.previousState = 0;
     this.data.toLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.to ? this.FORM_STATE.data.direction.to : null;

@@ -30,6 +30,10 @@ export class CreateFormService {
   setFrameMotionDirection(direction: string = 'forward') {
 
     switch (direction) {
+      case ('disable'): {
+        this.frameMotionDirection$.next({ to: -100, halfTo: -50, from: 0, halfFrom: 0});
+        break;
+      }
       case ('forward'): {
         this.frameMotionDirection$.next({ to: -100, halfTo: -50, from: 100, halfFrom: 50});
         break;

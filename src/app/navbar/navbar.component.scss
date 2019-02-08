@@ -66,6 +66,11 @@
   width: 34%;
   flex-direction: row;
   justify-content: space-between;
+  &_tab {
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: center;
+  }
 }
 
 .navButton {

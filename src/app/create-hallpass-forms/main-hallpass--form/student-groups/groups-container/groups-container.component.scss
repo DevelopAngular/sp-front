@@ -1,6 +1,8 @@
 :host {
   .groups-container {
     background-color: #fff;
+    //border-radius: 15px;
+    //overflow: hidden;
   }
   .state-transition {
     animation: stateTransition .5s ease forwards;

@@ -38,7 +38,7 @@ function ensureFields<T, K extends keyof T>(obj: T, keys: K[]) {
 }
 
 function makeConfig(config: Config, access_token: string, school_id:School): Config & { responseType: 'json' } {
-  
+
   // console.log('[school_id]: ', school_id)
 
   let headers:any = {'Authorization': 'Bearer ' + access_token}
@@ -96,6 +96,8 @@ export class HttpService {
 
   private accessTokenSubject: BehaviorSubject<AuthContext> = new BehaviorSubject<AuthContext>(null);
   public schoolIdSubject: BehaviorSubject<School> = new BehaviorSubject<School>(null);
+  private school: School = JSON.parse(localStorage.getItem('currentSchool'));
+
 
   public globalReload$ = this.schoolIdSubject.pipe(delay(5));
 
@@ -277,7 +279,14 @@ export class HttpService {
 
   get<T>(url, config?: Config): Observable<T> {
     // console.log('Making request: ' + url);
-    return this.performRequest(ctx => this.http.get<T>(makeUrl(ctx.server, url), makeConfig(config, ctx.auth.access_token, this.schoolIdSubject.value)))
+
+
+    // if (this.school) {
+    //
+    // }
+    // this.http.schoolIdSubject.next(JSON.parse(school));
+
+    return this.performRequest(ctx => this.http.get<T>(makeUrl(ctx.server, url), makeConfig(config, ctx.auth.access_token, this.school)))
       .do(x => {
         // console.log('Finished request: ' + url, x);
       });
@@ -299,11 +308,11 @@ export class HttpService {
       }
       body = formData;
     }
-    return this.performRequest(ctx => this.http.post<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.schoolIdSubject.value)));
+    return this.performRequest(ctx => this.http.post<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.school)));
   }
 
   delete<T>(url, config?: Config): Observable<T> {
-    return this.performRequest(ctx => this.http.delete<T>(makeUrl(ctx.server, url), makeConfig(config, ctx.auth.access_token, this.schoolIdSubject.value)));
+    return this.performRequest(ctx => this.http.delete<T>(makeUrl(ctx.server, url), makeConfig(config, ctx.auth.access_token, this.school)));
   }
 
   put<T>(url, body?: any, config?: Config): Observable<T> {
@@ -319,7 +328,7 @@ export class HttpService {
         }
       }
     }
-    return this.performRequest(ctx => this.http.put<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.schoolIdSubject.value)));
+    return this.performRequest(ctx => this.http.put<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.school)));
   }
 
   patch<T>(url, body?: any, config?: Config): Observable<T> {
@@ -335,7 +344,7 @@ export class HttpService {
         }
       }
     }
-    return this.performRequest(ctx => this.http.patch<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.schoolIdSubject.value)));
+    return this.performRequest(ctx => this.http.patch<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.school)));
   }
 
 }
