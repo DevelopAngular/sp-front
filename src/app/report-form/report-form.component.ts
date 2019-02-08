@@ -2,6 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { User } from '../models/User';
 import { HttpService } from '../services/http-service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '../../../node_modules/@angular/material';
+import {ApiService} from '../services/api.service';
 
 @Component({
   selector: 'app-report-form',
@@ -16,6 +17,7 @@ export class ReportFormComponent implements OnInit {
   reportMessage: string = '';
 
   constructor(private http: HttpService,
+              private apiService: ApiService,
               private dialogRef: MatDialogRef<ReportFormComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
@@ -34,13 +36,12 @@ export class ReportFormComponent implements OnInit {
   }
 
   sendReport() {
-    const endpoint = 'v1/event_reports/bulk_create';
     const body = {
       'students' : this.selectedStudents.map(user => user.id),
       'message' : this.reportMessage
     };
 
-    this.http.post(endpoint, body).subscribe(data => {
+    this.apiService.sendReport(body).subscribe(data => {
       console.log(data);
       this.dialogRef.close(data);
     });

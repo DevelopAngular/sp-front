@@ -5,7 +5,6 @@ import { Util } from '../../Util';
 import { MatDialogRef, MatDialog } from '@angular/material';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { Inject } from '@angular/core';
-import { HttpService } from '../services/http-service';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
@@ -16,6 +15,7 @@ import {InvitationCardComponent} from '../invitation-card/invitation-card.compon
 import {BehaviorSubject, interval, merge, of, Subscription} from 'rxjs';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
+import {ApiService} from '../services/api.service';
 
 @Component({
   selector: 'app-pass-card',
@@ -70,7 +70,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   constructor(
       public dialogRef: MatDialogRef<PassCardComponent>,
       @Inject(MAT_DIALOG_DATA) public data: any,
-      private http: HttpService,
+      private apiService: ApiService,
       public dialog: MatDialog,
       public dataService: DataService,
       private _zone: NgZone,
@@ -241,7 +241,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   newPass() {
     this.performingAction = true;
-    const endPoint:string = 'v1/hall_passes' +(this.forStaff?'/bulk_create':'');
     const body = {
       'duration' : this.selectedDuration * 60,
       'origin' : this.pass.origin.id,
@@ -257,8 +256,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
     if (this.forFuture) {
         body['start_time'] = this.pass.start_time.toISOString();
     }
-
-      this.http.post(endPoint, body).subscribe((data) => {
+     const getRequest$ = this.forStaff ? this.apiService.bulkCreatePass(body) : this.apiService.createPass(body);
+      getRequest$.subscribe((data) => {
         this.performingAction = true;
         this.dialogRef.close();
       });
@@ -335,17 +334,15 @@ export class PassCardComponent implements OnInit, OnDestroy {
       cancelDialog.afterClosed().subscribe(action => {
           this.cancelOpen = false;
       if(action === 'delete'){
-          let endpoint: string = 'v1/hall_passes/' +this.pass.id +'/cancel';
           let body = {};
-          this.http.post(endpoint, body).subscribe((httpData)=>{
+          this.apiService.cancelPass(this.pass.id, body).subscribe((httpData) => {
             console.log('[Future Pass Cancelled]: ', httpData);
             this.dialogRef.close();
           });
         } else if(action === 'report') {
           this.dialogRef.close({'report':this.pass.student});
         } else if(action === 'end') {
-          const endPoint:string = 'v1/hall_passes/' +this.pass.id +'/ended';
-          this.http.post(endPoint).subscribe(() => {
+          this.apiService.endPass(this.pass.id).subscribe(() => {
             this.dataService.isActivePass$.next(false);
             this.dialogRef.close();
           });

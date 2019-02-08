@@ -128,6 +128,14 @@ export class ApiService {
     return this.http.post('v1/hall_passes', data);
   }
 
+  bulkCreatePass(data) {
+    return this.http.post('v1/hall_passes/bulk_create', data);
+  }
+
+  cancelPass(id, data) {
+    return this.http.post(`v1/hall_passes/${id}/cancel`, data);
+  }
+
   endPass(id) {
     return this.http.post(`v1/hall_passes/${id}/ended`);
   }
@@ -140,6 +148,11 @@ export class ApiService {
   getReports() {
     return this.http.get('v1/event_reports');
   }
+
+  sendReport(data) {
+    return this.http.post('v1/event_reports/bulk_create', data);
+  }
+
   searchReports(before, after) {
     return this.http.get(`v1/event_reports?created_before=${before}&created_after=${after}`);
   }
@@ -172,6 +185,10 @@ export class ApiService {
 
   getDashboardData() {
     return this.http.get('v1/admin/dashboard');
+  }
+
+  deleteProfile(id, role) {
+    return this.http.delete(`v1/users/${id}/profiles/${role}`);
   }
 
   //// Icons

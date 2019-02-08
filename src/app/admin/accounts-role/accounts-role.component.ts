@@ -10,6 +10,7 @@ import {Util} from '../../../Util';
 import {HttpService} from '../../services/http-service';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {DropdownComponent} from '../../dropdown/dropdown.component';
+import {ApiService} from '../../services/api.service';
 
 @Component({
   selector: 'app-accounts-role',
@@ -32,6 +33,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private userService: UserService,
     private http: HttpService,
+    private apiService: ApiService,
     private matDialog: MatDialog,
   ) { }
 
@@ -166,7 +168,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               let role: any = this.role.split('_');
                   role = role[role.length - 1];
               console.log('======>>>>>', role, this.selectedUsers);
-              return zip(...this.selectedUsers.map((user) => this.http.delete(`v1/users/${user['#Id']}/profiles/${role}`)));
+              return zip(...this.selectedUsers.map((user) => this.apiService.deleteProfile(user['#Id'], role)));
             } else {
               return of(null);
             }
