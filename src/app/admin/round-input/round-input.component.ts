@@ -69,7 +69,7 @@ export class RoundInputComponent implements OnInit {
   }
 
   focusAction(selected: boolean) {
-    this.selected = selected;
+    // this.selected = selected;
     if (selected && this.type == 'dates') {
       const dateDialog = this.dialog.open(InputHelperDialogComponent, {
         width: '900px',
