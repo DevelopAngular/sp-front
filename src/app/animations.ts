@@ -13,7 +13,7 @@ export const bumpIn = trigger('pressState', [
 ]);
 
 export const NextStep = trigger('NextStep', [
-  transition(':enter', animate('0.8s 0s ease', keyframes([
+  transition(':enter', animate('0.7s 0s ease', keyframes([
       style({
         opacity: 0,
         transform: 'translateX({{from}}px)',
@@ -29,7 +29,7 @@ export const NextStep = trigger('NextStep', [
     ])),
     { params: { from: 100, halfFrom: 50}}
   ),
-  transition(':leave', animate('0.8s 0s ease', keyframes([
+  transition(':leave', animate('0.7s 0s ease', keyframes([
       style({
         opacity: 1,
         transform: 'translateX(0px)',
@@ -48,7 +48,7 @@ export const NextStep = trigger('NextStep', [
 ]);
 
 export const NextStepColored = trigger('NextStepColored', [
-  transition(':enter', animate('0.3s 0s ease', keyframes([
+  transition(':enter', animate('0.7s 0s ease', keyframes([
       style({
         opacity: 0,
         // transform: 'translateX({{from}}px)',
@@ -64,7 +64,7 @@ export const NextStepColored = trigger('NextStepColored', [
     ])),
     // { params: { from: 100, halfFrom: 50}}
   ),
-  transition(':leave', animate('0.3s 0s ease', keyframes([
+  transition(':leave', animate('0.7s 0s ease', keyframes([
       style({
         opacity: 1,
         // transform: 'translateX(0px)',
@@ -86,7 +86,7 @@ export const NextStepColored = trigger('NextStepColored', [
 
 export const HeaderShowingUp = trigger('HeaderShowingUp', [
 
-  transition(':enter', animate('0.8s 0s ease', keyframes([
+  transition(':enter', animate('0.7s 0s ease', keyframes([
     style({
       opacity: 0
     }),
@@ -97,7 +97,7 @@ export const HeaderShowingUp = trigger('HeaderShowingUp', [
       opacity: 1
     })
   ]))),
-  transition(':leave', animate('0.8s 0s ease', keyframes([
+  transition(':leave', animate('0.7s 0s ease', keyframes([
     style({
       opacity: 1
     }),
@@ -111,7 +111,7 @@ export const HeaderShowingUp = trigger('HeaderShowingUp', [
 ]);
 
 export const BodyShowingUp = trigger('BodyShowingUp', [
-  transition(':enter', animate('0.8s 0s ease', keyframes([
+  transition(':enter', animate('0.7s 0s ease', keyframes([
     style({
       opacity: 0,
       transform: 'translateX({{from}}px)',
@@ -127,7 +127,7 @@ export const BodyShowingUp = trigger('BodyShowingUp', [
   ])),
     { params: { from: 100, halfFrom: 50}}
   ),
-  transition(':leave', animate('0.8s 0s ease', keyframes([
+  transition(':leave', animate('0.7s 0s ease', keyframes([
     style({
       opacity: 1,
       transform: 'translateX(0px)',
@@ -147,13 +147,13 @@ export const BodyShowingUp = trigger('BodyShowingUp', [
 
 export const ScaledCard = trigger('ScaledCard', [
 
-  transition(':enter', animate('0.5s 0s ease', keyframes([
+  transition(':enter', animate('0.7s 0s ease', keyframes([
     style({
       opacity: 0,
       transform: 'scale(1.3)'
     }),
     style({
-      opacity: 0.7,
+      opacity: 0,
       transform: 'scale(1.1)'
 
     }),
@@ -162,13 +162,13 @@ export const ScaledCard = trigger('ScaledCard', [
       transform: 'scale(1)'
     })
   ]))),
-  transition(':leave', animate('0.5s 0s ease', keyframes([
+  transition(':leave', animate('0.7s 0s ease', keyframes([
     style({
       opacity: 1,
       transform: 'scale(1)'
     }),
     style({
-      opacity: 0.7,
+      opacity: 0,
       transform: 'scale(0.9)'
 
     }),

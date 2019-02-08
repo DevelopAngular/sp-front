@@ -68,16 +68,11 @@
 }
 
 .form {
-  width: auto;
-  height: auto;
-  transition: all .5s ease;
+  background: rgba(255, 255, 255, 1);
+  border-radius: 15px;
+  overflow: hidden;
+  transition: width .5s ease, height .5s ease;
   position: relative;
-  width: 425px;
-  height: 500px;
-  &:hover {
-    //background: red;
-    //width: 900px;
-  }
   .fixed-card {
     position: absolute;
     top: 0;

@@ -1,10 +1,13 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Navigation} from '../main-hall-pass-form.component';
+import {NextStep, NextStepColored} from '../../../animations';
 
 @Component({
   selector: 'app-date-time-container',
   templateUrl: './date-time-container.component.html',
-  styleUrls: ['./date-time-container.component.scss']
+  styleUrls: ['./date-time-container.component.scss'],
+  animations: [NextStep, NextStepColored]
+
 })
 export class DateTimeContainerComponent implements OnInit {
 

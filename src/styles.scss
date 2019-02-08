@@ -54,8 +54,16 @@ body {
 .main-form-dialog-container .mat-dialog-container {
   border-radius: 15px;
   background-color: transparent;
-  overflow: hidden;
+  //overflow: hidden;
   //box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+  //width: 100vw !important;
+  //height: 100vh !important;
+  //position: fixed;
+  //top: 0;
+  //left: 0;
+  //display: flex;
+  //align-items: center;
+  //justify-content: center;
   box-shadow: none;
   margin: 0;
   padding: 0;
