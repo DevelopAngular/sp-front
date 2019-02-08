@@ -37,7 +37,7 @@ export class ApiService {
   }
 
   searchLocations(limit = 10, config = '') {
-      return this.http.get(`v1/locations?limit=${limit}${config}`);
+      return this.http.get<Paged<any>>(`v1/locations?limit=${limit}${config}`);
   }
 
   checkLocationName(value) {

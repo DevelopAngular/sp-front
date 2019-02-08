@@ -2,6 +2,7 @@ import { Injectable, NgZone } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { UserService } from '../services/user.service';
+import {map, skip, tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +16,8 @@ export class IsStudentOrTeacherGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
 
-    return this.userService.getUserWithTimeout()
-      .map(u => {
+    return this.userService.getUserWithTimeout().pipe(
+      map(u => {
         // console.log('USER >>>>>>>>>>>>>>', u);
 
         if (u === null) {
@@ -35,6 +36,6 @@ export class IsStudentOrTeacherGuard implements CanActivate {
 
         return true;
       })
-      .do(v => console.log('canActivate:', v));
+      ,tap(v => console.log('canActivate:', v)));
   }
 }

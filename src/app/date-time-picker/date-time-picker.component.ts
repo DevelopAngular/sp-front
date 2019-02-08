@@ -1,4 +1,4 @@
-﻿import { Component, EventEmitter, Input, OnInit, OnDestroy,Output } from '@angular/core';
+﻿import { Component, EventEmitter, Input, OnInit, OnDestroy, Output } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
 import { Util } from '../../Util';
 
@@ -26,7 +26,7 @@ export class DateTimePickerComponent implements OnInit, OnDestroy{
 
   @Output() onconfirm: EventEmitter<any> = new EventEmitter();
 
-  @Input() default:Date;
+  @Input() default: Date;
 
   constructor() {
   }
@@ -39,17 +39,18 @@ export class DateTimePickerComponent implements OnInit, OnDestroy{
     let omins = this.default.getMinutes();
 
     let invalid = false;
+
     if(newMoment.getDate() == this.min.getDate() && newMoment.getMonth() == this.min.getMonth()){
       invalid = (nhrs < ohrs) || (nhrs == ohrs && nmins < omins)
     }
 
 
-    if(invalid){
+    if (invalid) {
       this._selectedMoment = this.default;
-      console.log('Time Invalid')
+      console.log('Time Invalid');
     } else{
       this._selectedMoment = newMoment;
-      console.log('Time Valid')
+      console.log('Time Valid');
     }
 
     this.ngOnDestroy();
@@ -72,7 +73,7 @@ export class DateTimePickerComponent implements OnInit, OnDestroy{
       return this._selectedMoment_2ndCal;
   }
 
-  get dateRangeText(){
+  get dateRangeText() {
     return Util.formatDateTimeForDateRange(this._selectedMoment, this._selectedMoment_2ndCal);
   }
 
@@ -83,10 +84,11 @@ export class DateTimePickerComponent implements OnInit, OnDestroy{
       this.min.setMinutes(0);
       this.min.setHours(0);
     }
-
-    this._selectedMoment.setMinutes(this._selectedMoment.getMinutes() + 5);
-    this._selectedMoment.setSeconds(0);
-    this.default = this._selectedMoment;
+    if (this._selectedMoment) {
+      this._selectedMoment.setMinutes(this._selectedMoment.getMinutes() + 5);
+      this._selectedMoment.setSeconds(0);
+      this.default = this._selectedMoment;
+    }
     if (!this._selectedMoment) {
       this._selectedMoment = this.default;
     }
