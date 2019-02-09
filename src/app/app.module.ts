@@ -41,6 +41,9 @@ import { ItemListComponent } from './item-list/item-list.component';
 import { ItemCellComponent } from './item-cell/item-cell.component';
 import { NextReleaseComponent } from './next-release/next-release.component';
 import { NotificationService } from './services/notification-service';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFireMessagingModule } from '@angular/fire/messaging';
+import { environment } from '../environments/environment';
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroComponent, data: { hideSchoolToggleBar: true}},
@@ -132,6 +135,8 @@ const appRoutes: Routes = [
     RouterModule.forRoot(
       appRoutes, {enableTracing: false}
     ),
+    AngularFireModule.initializeApp(environment.firebase, 'notifyhallpass'),
+    AngularFireMessagingModule
   ],
   providers: [
     DataService,
