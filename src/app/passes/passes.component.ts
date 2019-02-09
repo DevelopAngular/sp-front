@@ -222,7 +222,8 @@ export class PassesComponent implements OnInit {
       private _zone: NgZone,
       private loadingService: LoadingService,
       private liveDataService: LiveDataService,
-      private createFormService: CreateFormService
+      private createFormService: CreateFormService,
+      private notifService: NotificationService
   ) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
@@ -340,6 +341,10 @@ export class PassesComponent implements OnInit {
         (l1, l2, l3) => l1 && l2 && l3
       );
       this.isSeen$ = this.createFormService.isSeen$;
+
+      this.notifService.requestNotificationPermission().then(() => {
+        this.notifService.getNotificationAuth();
+      });
 
   }
 
