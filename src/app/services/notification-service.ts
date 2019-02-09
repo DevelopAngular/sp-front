@@ -56,7 +56,7 @@ export class NotificationService {
             requireInteraction: true
         }
         let notif = new Notification(notification.notification.title, notifOptions)
-        console.log(notif, Notification.permission, Notification)
+        console.log(notif)
     }
 
     private showFunc(){
