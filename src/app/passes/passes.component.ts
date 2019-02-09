@@ -30,6 +30,7 @@ import { RequestCardComponent } from '../request-card/request-card.component';
 import {delay, skip} from 'rxjs/internal/operators';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
+import { NotificationService } from '../services/notification-service';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('_profile_teacher');

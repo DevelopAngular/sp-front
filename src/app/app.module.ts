@@ -40,7 +40,7 @@ import { SchoolToggleBarComponent } from './school-toggle-bar/school-toggle-bar.
 import { ItemListComponent } from './item-list/item-list.component';
 import { ItemCellComponent } from './item-cell/item-cell.component';
 import { NextReleaseComponent } from './next-release/next-release.component';
-import { NotificationService } from './notification-service';
+import { NotificationService } from './services/notification-service';
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroComponent, data: { hideSchoolToggleBar: true}},

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { AngularFireMessaging } from '@angular/fire/messaging';
 import { HttpService } from './http-service';
-import { Notification as Notif} from './models/Notification';
+import { Notification as Notif} from '../models/Notification';
 import { from } from 'rxjs';
 
 @Injectable()
