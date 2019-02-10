@@ -343,8 +343,9 @@ export class PassesComponent implements OnInit {
       );
       this.isSeen$ = this.createFormService.isSeen$;
 
-      this.notifService.requestNotificationPermission().then(() => {
-        this.notifService.getNotificationAuth();
+      this.notifService.requestNotificationPermission().then((perm) => {
+        if(perm == 'granted')
+          this.notifService.getNotificationAuth();
       });
 
   }
