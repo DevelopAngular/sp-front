@@ -22,6 +22,7 @@ export class DateTimeContainerComponent implements OnInit {
 
   nextStep(evt) {
     this.FORM_STATE = evt;
+    debugger;
     if (this.FORM_STATE.quickNavigator) {
       this.FORM_STATE.step = this.FORM_STATE.previousStep;
       this.FORM_STATE.state = this.FORM_STATE.previousState;
@@ -52,6 +53,7 @@ export class DateTimeContainerComponent implements OnInit {
 
   back(event) {
     this.FORM_STATE = event;
+    this.nextStepEvent.emit(this.FORM_STATE);
   }
 
 }
