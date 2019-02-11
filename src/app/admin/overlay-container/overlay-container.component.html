@@ -170,7 +170,15 @@
                 </div>
               </div>
           </div>
-        <app-profiles-search [placeholder]="'Search Teachers'" [selectedStudents]="selectedTeachers" (isEmitUsers)="isEmitTeachers($event)" (onUpdate)="selectTeacherEvent($event)" [role]="'_profile_teacher'"></app-profiles-search>
+          <div class="search-teacher" style="display: flex">
+              <app-profiles-search
+                      [placeholder]="'Search Teachers'"
+                      [selectedStudents]="selectedTeachers"
+                      (isEmitUsers)="isEmitTeachers($event)"
+                      (onUpdate)="selectTeacherEvent($event)"
+                      [role]="'_profile_teacher'">
+              </app-profiles-search>
+          </div>
       </div>
       <div style="display: flex; margin-top: 16px; margin-bottom: 13px"
            *ngIf="(overlayType === 'newRoom'

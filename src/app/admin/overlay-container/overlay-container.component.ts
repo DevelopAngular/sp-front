@@ -1001,7 +1001,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   isEmitTeachers(event) {
-      this.showSearchTeacherOptions = event;
+     this.showSearchTeacherOptions = event;
   }
 
   onUpdate(time) {
