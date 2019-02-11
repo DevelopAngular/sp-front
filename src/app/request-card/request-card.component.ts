@@ -117,6 +117,7 @@ export class RequestCardComponent implements OnInit {
           'duration' : this.selectedDuration*60,
         };
       this.apiService.createRequest(body).subscribe((res: Request) => {
+          this.performingAction = true;
           this.dialogRef.close();
       });
   }
