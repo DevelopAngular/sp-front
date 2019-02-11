@@ -85,11 +85,12 @@ export class ProfilesSearchComponent implements OnInit {
   onSearch(search: string) {
     this.isEmitUsers.emit(false);
     if(search !== '')
-      this.students = this.apiService.searchProfile(this.role, 5, encodeURI(search))
-          .toPromise().then(paged => {
-            if (paged.results.length > 0) {
+      this.students = this.apiService.searchProfileAll(encodeURI(search))
+          .toPromise().then((users: User[]) => {
+            console.log(users);
+            if (users.length > 0) {
               this.isEmitUsers.emit(true);
-              return  this.removeDuplicateStudents(paged.results);
+              return this.removeDuplicateStudents(users);
             }
           });
     else

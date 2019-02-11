@@ -178,6 +178,10 @@ export class ApiService {
     return this.http.get<Paged<any>>(`v1/users?role=${role}&limit=${limit}&search=${search}`);
   }
 
+  searchProfileAll(search) {
+    return this.http.get(`v1/users?search=${search}`);
+  }
+
   //// Admin
   getAdminAccounts() {
     return this.http.get('v1/admin/accounts');
@@ -187,7 +191,10 @@ export class ApiService {
     return this.http.get('v1/admin/dashboard');
   }
 
-  deleteProfile(id, role) {
+  addUserToProfile(id, role) {
+    return this.http.put(`v1/users/${id}/profiles/${role}`);
+  }
+  deleteUserFromProfile(id, role) {
     return this.http.delete(`v1/users/${id}/profiles/${role}`);
   }
 

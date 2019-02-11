@@ -1,5 +1,6 @@
 <div class="rest-mes-wrapper">
-  <div class="rest-mes-header" [style.background-image]="headerGradient" *ngIf="animatedComponetVivibility"  [@HeaderShowingUp]>
+  <div class="rest-mes-header" [style.background-image]="headerGradient">
+  <!--<div class="rest-mes-header" [style.background-image]="headerGradient" *ngIf="animatedComponetVivibility"  [@HeaderShowingUp]>-->
     <img class="back-button" [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
     <div class="rest-mes-header-text">
       <img class="search-icon" [src]="'./assets/Message (White).png' | resolveAsset">
@@ -47,5 +48,6 @@
     </div>
   </div>
 
-  <app-student-footer [formState]="formState" [date]="date" *ngIf="animatedComponetVivibility" [@HeaderShowingUp]></app-student-footer>
+  <!--<app-student-footer [formState]="formState" [date]="date" *ngIf="animatedComponetVivibility" [@HeaderShowingUp]></app-student-footer>-->
+  <app-student-footer [formState]="formState" [date]="date"></app-student-footer>
 </div>

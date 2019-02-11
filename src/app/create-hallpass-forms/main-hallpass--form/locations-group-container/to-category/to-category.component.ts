@@ -30,7 +30,9 @@ export class ToCategoryComponent implements OnInit {
 
   pinnable: Pinnable;
 
-  animatedComponetVivibility: boolean = true;
+  animatedComponetVisibility: boolean = true;
+
+  isDisabled: boolean = false;
 
   frameMotion$: BehaviorSubject<any>;
 
@@ -44,30 +46,37 @@ export class ToCategoryComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.formState.previousState > this.formState.state) {
+      this.isDisabled = true;
+    }
+
+
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.fromLocation = this.formState.data.direction.from;
     this.pinnable = this.formState.data.direction.pinnable;
   }
 
   locationChosen(location) {
+    this.isDisabled = true;
     this.formService.setFrameMotionDirection('forward');
-    this.animatedComponetVivibility = false;
+    // this.animatedComponetVisibility = false;
     setTimeout(() => {
+      // this.formState.previousState = this.formState.state;
       this.locFromCategory.emit(location);
-    }, 250);
+    }, 550);
 
   }
 
   back() {
-
     this.formService.setFrameMotionDirection('back');
-    this.animatedComponetVivibility = false;
+    this.animatedComponetVisibility = false;
+    this.isDisabled = false;
 
     setTimeout(() => {
       this.formState.previousState = this.formState.state;
       this.formState.state -= 1;
       this.backButton.emit(this.formState);
-    }, 250);
+    }, 550);
   }
 
 }
