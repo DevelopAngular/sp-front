@@ -19,6 +19,7 @@ export class StudentFooterComponent implements OnInit {
 
   fromLocation: Location;
   toLocation: Location;
+  forInput: boolean;
 
   constructor() { }
 
@@ -31,22 +32,23 @@ export class StudentFooterComponent implements OnInit {
   }
 
   get fromCursor() {
-    return this.state !== 'from';
+    return this.state !== 'from' && this.forInput;
   }
 
   get toCursor() {
-    return this.state !== 'to' && this.state !== 'from';
+    return this.state !== 'to' && this.state !== 'from' && this.forInput;
   }
 
   ngOnInit() {
     if (this.formState) {
+      this.forInput = this.formState.forInput;
       this.fromLocation = this.formState.data.direction.from;
       this.toLocation = this.formState.data.direction.to;
     }
   }
 
   goToFromWhere() {
-    if (this.state === 'from') {
+    if (this.state === 'from' || !this.forInput) {
       return false;
     }
     this.formState.previousState = this.formState.state;
@@ -55,7 +57,7 @@ export class StudentFooterComponent implements OnInit {
   }
 
   goToToWhere() {
-    if (this.state === 'to' || this.state === 'from') {
+    if (this.state === 'to' || this.state === 'from' || !this.forInput) {
       return false;
     }
     this.formState.previousState = this.formState.state;
