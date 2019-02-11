@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Navigation } from '../../main-hall-pass-form.component';
 import { Location } from '../../../../models/Location';
@@ -27,6 +27,8 @@ export class RestrictedMessageComponent implements OnInit {
   @Output() resultMessage: EventEmitter<any> = new EventEmitter<any>();
   @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
 
+  @ViewChild('messageBox') messageBox: ElementRef;
+
   fromLocation: Location;
 
   toLocation: Location;
@@ -34,6 +36,7 @@ export class RestrictedMessageComponent implements OnInit {
   message: FormControl;
   animatedComponetVivibility: boolean = true;
   frameMotion$: BehaviorSubject<any>;
+
   constructor(
     private formService: CreateFormService
   ) { }
@@ -46,6 +49,9 @@ export class RestrictedMessageComponent implements OnInit {
 
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
+    setTimeout(() => {
+        this.messageBox.nativeElement.focus();
+    }, 50);
     this.message = new FormControl(this.formState.data.message);
     this.fromLocation = this.formState.data.direction.from;
     this.toLocation = this.formState.data.direction.to;
