@@ -98,12 +98,12 @@ export class RoundInputComponent implements OnInit {
         data: {'type': this.type.substring(5), 'selections': this.selections, 'toggleState': this.toggleState}
       });
 
-      dateDialog.afterOpen().subscribe(()=>{this.selected = true;});
+      dateDialog.afterOpen().subscribe(() => {this.selected = true;});
 
       dateDialog.afterClosed().subscribe(data =>{
         if (data) {
           this.value = data['text'];
-          this.selections = data['selection']
+          this.selections = data['selection'];
           this.toggleState = data['toggleState'];
           this.onselectionupdate.emit(this.selections);
           this.ontoggleupdate.emit(this.toggleState);
