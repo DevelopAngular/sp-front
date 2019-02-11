@@ -59,7 +59,7 @@ export class RoundInputComponent implements OnInit {
         this.input.nativeElement.focus();
         // this.changeAction(this.input.nativeElement, true);
       }
-    }, 500)
+    }, 500);
 
     if (this.selectReset$) {
       this.selectReset$.subscribe((_value: string) => {
@@ -114,7 +114,7 @@ export class RoundInputComponent implements OnInit {
 
   changeAction(inp: HTMLInputElement, reset?: boolean) {
     if (reset) {
-      this.selected = reset;
+      // this.selected = reset;
       inp.value = '';
       inp.focus();
     }
