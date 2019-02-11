@@ -76,8 +76,8 @@ export class SettingsComponent implements OnInit {
       this.router.navigate(['sign-out']);
     } else if (action === 'favorite') {
       this.dialog.open(FavoriteFormComponent, {
-        width: '750px',
-        height: '365px',
+        // width: '750px',
+        // height: '365px',
         panelClass: 'form-dialog-container',
         backdropClass: 'custom-backdrop',
       });
