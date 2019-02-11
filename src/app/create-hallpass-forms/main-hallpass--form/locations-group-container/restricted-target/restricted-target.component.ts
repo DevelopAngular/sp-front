@@ -57,12 +57,12 @@ export class RestrictedTargetComponent implements OnInit {
     setTimeout(() => {
 
       const restricted = ((this.toLocation.restricted && !this.date) || (this.toLocation.scheduling_restricted && !!this.date));
+      this.formState.previousState = this.formState.state;
       if (restricted && this.pinnable.location) {
         this.formState.state = 2;
       } else {
         this.formState.state -= 1;
       }
-      this.formState.previousState = this.formState.state;
       this.backButton.emit(this.formState);
     }, 250);
 

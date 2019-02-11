@@ -40,6 +40,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.http.globalReload$.pipe(
       tap(() => {
+        this.selectedUsers = [];
         this.userList = [];
       }),
       switchMap(() => {
@@ -168,7 +169,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               let role: any = this.role.split('_');
                   role = role[role.length - 1];
               console.log('======>>>>>', role, this.selectedUsers);
-              return zip(...this.selectedUsers.map((user) => this.apiService.deleteProfile(user['#Id'], role)));
+              return zip(...this.selectedUsers.map((user) => this.apiService.deleteUserFromProfile(user['#Id'], role)));
             } else {
               return of(null);
             }
@@ -201,8 +202,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         panelClass: 'accounts-profiles-dialog',
         backdropClass: 'custom-bd'
       });
-    DR.afterClosed().subscribe(v => console.log(v));
+    DR.afterClosed().subscribe((v) => {
+      console.log(v)
+      this.http.schoolIdSubject.next(this.http.schoolIdSubject.value);
+    });
   }
+
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();

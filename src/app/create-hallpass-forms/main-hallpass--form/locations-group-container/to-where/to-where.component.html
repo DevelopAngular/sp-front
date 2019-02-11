@@ -1,13 +1,13 @@
 <div class="to-wrapper">
   <div class="to-header">
+  <!--<div class="to-header" *ngIf="animatedComponetVivibility" [@HeaderShowingUp]>-->
     <img class="back-button" [src]="'./assets/Combined Shape.svg' | resolveAsset" (click)="back()">
     <div class="to-header-text">
       <img class="search-icon" [src]="'./assets/Search (Blue).png' | resolveAsset">
       <div class="text">To where?</div>
     </div>
   </div>
-
-  <div class="to-content">
+  <div class="to-content" *ngIf="animatedComponetVisibility" [@NextStep]="{value: '', params: frameMotion$ | async}">
     <div class="pin-collection">
       <mat-grid-list class="grid center" cols="3" rowHeight="75px" gutterSize="10px" [style.width]="'395px'">
         <mat-grid-tile *ngFor="let pinnable of pinnables | async">
@@ -17,7 +17,7 @@
     </div>
   </div>
 
-  <app-student-footer *ngIf="!isStaff" [formState]="formState" [state]="'to'" [date]="date"></app-student-footer>
-  <app-teacher-footer *ngIf="isStaff" [fromLocation]="location" [formState]="formState" [state]="'to'" [studentText]="studentText" [date]="date"></app-teacher-footer>
+  <app-student-footer *ngIf="!isStaff && animatedComponetVisibility" [formState]="formState" [state]="'to'" [date]="date"></app-student-footer>
+  <app-teacher-footer *ngIf="isStaff && animatedComponetVisibility" [fromLocation]="location" [formState]="formState" [state]="'to'" [studentText]="studentText" [date]="date"></app-teacher-footer>
 
 </div>

@@ -3,16 +3,18 @@
   <!-- Buttons responsible for choosing formState -->
   <!--<h1 style="text-align: center">{{FORM_STATE.formMode.formFactor}}</h1>-->
 
-  <div class="fixed-card"  [style.width]="formSize.width" [style.height]="formSize.height" *ngIf="FORM_STATE.step === 1" [@NextStepColored] (@NextStepColored.start)="setFormSize()">
-    <div class="date-picker">
-      <app-date-time-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)" ></app-date-time-container>
-    </div>
-  </div>
+  <div style="" [style.width]="formSize.width" [style.height]="formSize.height">
 
-  <!--<div></div>-->
-  <div class="fixed-card"  [style.width]="formSize.width" [style.height]="formSize.height" *ngIf="FORM_STATE.step === 2"  [@NextStepColored] (@NextStepColored.start)="setFormSize()">
-    <div>
-      <app-groups-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-groups-container>
+    <div class="fixed-card"  [style.width]="formSize.width" [style.height]="formSize.height" *ngIf="FORM_STATE.step === 1" [@NextStepColored] (@NextStepColored.start)="setFormSize()">
+      <div class="date-picker">
+        <app-date-time-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)" ></app-date-time-container>
+      </div>
+    </div>
+    <div class="fixed-card"  [style.width]="formSize.width" [style.height]="formSize.height" *ngIf="FORM_STATE.step === 2"  [@NextStepColored] (@NextStepColored.start)="setFormSize()">
+
+      <div>
+        <app-groups-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-groups-container>
+      </div>
     </div>
   </div>
 

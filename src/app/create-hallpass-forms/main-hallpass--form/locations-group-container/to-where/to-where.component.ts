@@ -1,12 +1,16 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, NgZone, OnInit, Output} from '@angular/core';
 import { Pinnable } from '../../../../models/Pinnable';
 import { Navigation } from '../../main-hall-pass-form.component';
 import {CreateFormService} from '../../../create-form.service';
+import {BehaviorSubject} from 'rxjs';
+import {BodyShowingUp, HeaderShowingUp, NextStep} from '../../../../animations';
 
 @Component({
   selector: 'app-to-where',
   templateUrl: './to-where.component.html',
-  styleUrls: ['./to-where.component.scss']
+  styleUrls: ['./to-where.component.scss'],
+  animations: [HeaderShowingUp, BodyShowingUp, NextStep]
+
 })
 export class ToWhereComponent implements OnInit {
 
@@ -26,29 +30,47 @@ export class ToWhereComponent implements OnInit {
 
   @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
 
+  animatedComponetVisibility: boolean = true;
+
+  isDisabled: boolean = false;
+
+  frameMotion$: BehaviorSubject<any>;
+
   constructor(
-    private formService: CreateFormService
+    private formService: CreateFormService,
+    private _zone: NgZone,
+    private changeDetectorRef: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
+    this.frameMotion$ = this.formService.getFrameMotionDirection();
+
     this.location = this.formState.data.direction ? this.formState.data.direction.from : null;
   }
 
   pinnableSelected(pinnable) {
 
-    this.formService.setFrameMotionDirection('forward');
+    // this._zone.run(() => {
+      this.formService.setFrameMotionDirection('forward');
+      this.animatedComponetVisibility = false;
+      this.changeDetectorRef.detectChanges();
+
+    // })
 
     setTimeout(() => {
       this.selectedPinnable.emit(pinnable);
 
-    }, 100);
+    }, 250);
 
 
   }
 
   back() {
-
-    this.formService.setFrameMotionDirection('back');
+    // this._zone.run(() => {
+      this.formService.setFrameMotionDirection('back');
+      this.animatedComponetVisibility = false;
+      this.changeDetectorRef.detectChanges();
+    // })
 
     setTimeout(() => {
       if (!!this.date &&
@@ -68,7 +90,7 @@ export class ToWhereComponent implements OnInit {
       }
       //
       this.backButton.emit(this.formState);
-    }, 100)
+    }, 250);
 
 
   }
