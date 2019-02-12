@@ -15,7 +15,6 @@
     position: relative;
     box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
 
-
     .back-button {
       width: 26px;
       height: 26px;
@@ -47,6 +46,11 @@
         letter-spacing: 0.3px;
       }
     }
+  }
+
+  .rest-tar-content {
+    overflow: auto;
+    width: 100%;
   }
   .target-footer {
     width: 100%;
@@ -85,7 +89,7 @@
 .shadow {
   position: absolute;
   opacity: 0.7;
-  bottom: 43px;
+  //bottom: 43px;
   left: 0;
   right: 0;
   height: 3px;

@@ -21,48 +21,21 @@ export interface Paged<T> {
 
 export class LocationTableComponent implements OnInit {
 
-  @Input()
-  category: string;
-
-  @Input()
-  placeholder: string;
-
-  @Input()
-  type: string;
-
-  @Input()
-  showStars: string;
-
-  @Input()
-  showFavorites: boolean;
-
-  @Input()
-  staticChoices: any[];
-
-  @Input()
-  forStaff: boolean;
-
-  @Input()
-  forLater: boolean;
-
-  @Input()
-  hasLocks: boolean;
-
-  @Input()
-  invalidLocation: string | number;
-
-  @Input()
-  noRightStar: boolean;
-
+  @Input() category: string;
+  @Input() placeholder: string;
+  @Input() type: string;
+  @Input() showStars: string;
+  @Input() showFavorites: boolean;
+  @Input() staticChoices: any[];
+  @Input() forStaff: boolean;
+  @Input() forLater: boolean;
+  @Input() hasLocks: boolean;
+  @Input() invalidLocation: string | number;
+  @Input() noRightStar: boolean;
   @Input() height: string = '140px';
-
   @Input() heightLeftTable: string = '189px';
-
-  @Input()
-  inputWidth: string = '200px';
-
+  @Input() inputWidth: string = '200px';
   @Input() isEdit: boolean = false;
-
   @Input() rightHeaderText: boolean = false;
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
@@ -70,6 +43,13 @@ export class LocationTableComponent implements OnInit {
 
   leftShadow: boolean = true;
   rightShadow: boolean = true;
+
+  choices: any[] = [];
+  starredChoices: any[] = [];
+  search: string = '';
+  nextChoices: string = '';
+  favoritesLoaded: boolean;
+  saveChoices;
 
   @HostListener('scroll', ['$event'])
   onScroll(event) {
@@ -102,17 +82,12 @@ export class LocationTableComponent implements OnInit {
           this.rightShadow = false;
       }
   }
-  choices: any[] = [];
-  starredChoices: any[] = [];
-  search: string = '';
-  nextChoices: string = '';
-  favoritesLoaded: boolean;
 
   constructor(private http: HttpService, private apiService: ApiService) {
   }
 
   ngOnInit() {
-      if(this.staticChoices){
+      if (this.staticChoices) {
       this.choices = this.staticChoices;
     } else{
       this.http.get<Paged<Location>>('v1/'
@@ -156,7 +131,7 @@ export class LocationTableComponent implements OnInit {
         .toPromise().then(p => {
           this.choices = this.filterResults(p.results);
         });
-      } else{
+      } else {
         this.http.get<Paged<Location>>('v1/'
         +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
           +(!!this.category ? ('?category=' +this.category +'&') : '?')
@@ -164,7 +139,11 @@ export class LocationTableComponent implements OnInit {
         +'limit=10'
         +(this.type==='location'?'&starred=false':''))
         .toPromise().then(p => {
-          this.choices = this.filterResults(p.results);
+          if (this.staticChoices) {
+            this.choices = this.filterResults(this.staticChoices);
+          } else {
+            this.choices = this.filterResults(p.results);
+          }
           this.nextChoices = p.next;
           this.search = '';
         });

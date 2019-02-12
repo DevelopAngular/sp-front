@@ -8,7 +8,7 @@
     </div>
   </div>
 
-  <div class="rest-tar-content" *ngIf="animatedComponetVivibility" [@BodyShowingUp]="{value: '', params: frameMotion$ | async}">
+  <div class="rest-tar-content" [style.height]="date ? '74%' : '78%'" (scroll)="tableScroll($event)" *ngIf="animatedComponetVivibility" [@BodyShowingUp]="{value: '', params: frameMotion$ | async}">
     <app-location-table
        class="center"
        (onSelect)="updateTarget($event)"
@@ -17,7 +17,7 @@
        [staticChoices]="toLocation.teachers">
     </app-location-table>
   </div>
-  <div class="shadow"></div>
+  <div class="shadow" [style.bottom]="date ? '65px' : '43px'" *ngIf="shadow"></div>
   <!--<app-student-footer [formState]="formState" [date]="date" *ngIf="animatedComponetVivibility"></app-student-footer>-->
   <app-student-footer [formState]="formState" [date]="date" *ngIf="animatedComponetVivibility" [@HeaderShowingUp]></app-student-footer>
 

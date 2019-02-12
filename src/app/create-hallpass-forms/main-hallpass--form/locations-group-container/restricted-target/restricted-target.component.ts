@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 
 import { Pinnable } from '../../../../models/Pinnable';
 import { Navigation } from '../../main-hall-pass-form.component';
@@ -25,13 +25,26 @@ export class RestrictedTargetComponent implements OnInit {
 
   fromLocation;
 
-  @Output() requestTarget: EventEmitter<any> = new EventEmitter<any>();
-
-  @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
+  shadow: boolean = true;
 
   animatedComponetVivibility: boolean = true;
   frameMotion$: BehaviorSubject<any>;
 
+  @Output() requestTarget: EventEmitter<any> = new EventEmitter<any>();
+
+  @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
+
+    @HostListener('scroll', ['$event'])
+    tableScroll(event) {
+        const tracker = event.target;
+        const limit = tracker.scrollHeight - tracker.clientHeight;
+        if (event.target.scrollTop < limit) {
+            this.shadow = true;
+        }
+        if (event.target.scrollTop === limit) {
+            this.shadow = false;
+        }
+    }
 
   constructor(
     private formService: CreateFormService
