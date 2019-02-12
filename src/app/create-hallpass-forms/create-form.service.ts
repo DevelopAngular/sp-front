@@ -8,7 +8,7 @@ import { ApiService } from '../services/api.service';
 })
 export class CreateFormService {
 
-  isSeen$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  isSeen$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   private frameMotionDirection$: BehaviorSubject<any> = new BehaviorSubject({ to: -100, from: 100});
 
   constructor(private apiService: ApiService) { }
