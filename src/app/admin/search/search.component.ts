@@ -9,6 +9,7 @@ import * as _ from 'lodash';
 import {PassCardComponent} from '../../pass-card/pass-card.component';
 import {MatDialog} from '@angular/material';
 import {User} from '../../models/User';
+import { Util } from '../../../Util';
 
 
 @Component({
@@ -47,6 +48,8 @@ export class SearchComponent implements OnInit {
 
   ngOnInit() {
     disableBodyScroll(this.elRef.nativeElement);
+    let wrongDate = Util.formatDateTime(new Date('2019-01-04T10:18:56Z'));
+        console.log('WRONG DATE +++>>', wrongDate);
   }
 
   search() {
@@ -122,9 +125,9 @@ export class SearchComponent implements OnInit {
               travelType = 'Both';
             }
             const reportDate = new Date(hallPass.created);
-            const time = reportDate.getHours() < 12
+            const time = reportDate.getHours() <= 12
               ?
-              `${reportDate.getHours()}:${reportDate.getMinutes() < 10 ? '0' : ''}${reportDate.getMinutes()} AM`
+              `${reportDate.getHours()}:${reportDate.getMinutes() < 10 ? '0' : ''}${reportDate.getMinutes()} ${reportDate.getHours() === 12 ? 'PM' : 'AM'}`
               :
               `${reportDate.getHours() - 12}:${reportDate.getMinutes() < 10 ? '0' : ''}${reportDate.getMinutes()} PM`;
             const prettyReportDate = `${reportDate.getMonth() + 1}/${reportDate.getDate()}  ${time}`;

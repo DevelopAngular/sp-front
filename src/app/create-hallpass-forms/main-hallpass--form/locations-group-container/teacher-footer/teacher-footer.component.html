@@ -1,6 +1,6 @@
-<div class="from-footer" [style.height]="!showFullFooter ? '43px' : '89px'">
+<div class="from-footer" [style.height]="!showFullFooter ? '43px' : '89px'" (click)="showFullFooter = !showFullFooter">
     <div class="footer-from-teacher-text">
-      <div class="default-footer" *ngIf="!showFullFooter" (click)="showFullFooter = true">
+      <div class="default-footer" *ngIf="!showFullFooter">
         <div class="default-text">
           Expand Pass Details
         </div>
@@ -12,13 +12,13 @@
         </div>
         <div class="center">
           <div class="center-text">
-            <div class="footer-text" [ngClass]="{'cursor': fromCursor}" (click)="goToFromWhere()" [style.font-weight]="(!fromLocation ? 'bold' : 'normal')">{{ fromLocationText }}</div>
+            <div class="footer-text" [ngClass]="{'cursor': fromCursor}" (click)="goToFromWhere($event)" [style.font-weight]="(!fromLocation ? 'bold' : 'normal')">{{ fromLocationText }}</div>
             <img class="footer-icon" [src]="'./assets/Arrows_long_right.png' | resolveAsset">
-            <div class="footer-text" [ngClass]="{'cursor': toCursor}" (click)="goToToWhere()" [style.font-weight]="(!toLocation && state !== 'from' ? 'bold' : 'normal')">{{ toLocationText }}</div>
+            <div class="footer-text" [ngClass]="{'cursor': toCursor}" (click)="goToToWhere($event)" [style.font-weight]="(!toLocation && state !== 'from' ? 'bold' : 'normal')">{{ toLocationText }}</div>
           </div>
-          <img class="arrow-icon" [src]="'./assets/icon-arrow-close.png' | resolveAsset" (click)="showFullFooter = false">
+          <img class="arrow-icon" [src]="'./assets/icon-arrow-close.png' | resolveAsset">
         </div>
-        <div class="bottom cursor" (click)="goToStudents()" *ngIf="showFullFooter && studentText">
+        <div class="bottom cursor" (click)="goToStudents($event)" *ngIf="showFullFooter && studentText">
           {{ studentText }}
         </div>
       </div>

@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {User} from '../../../../models/User';
-import {FormControl, FormGroup} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {StudentList} from '../../../../models/StudentList';
 import {BehaviorSubject} from 'rxjs';
 import {Navigation} from '../../main-hall-pass-form.component';
@@ -39,8 +39,8 @@ export class GroupsContainerComponent implements OnInit {
     this.states = States;
 
     this.groupDTO = new FormGroup({
-      title: new FormControl(''),
-      users: new FormControl(this.selectedStudents),
+      title: new FormControl('', {updateOn: 'change'}),
+      users: new FormControl(this.selectedStudents, {updateOn: 'change'}),
     });
   }
 
@@ -114,7 +114,7 @@ export class GroupsContainerComponent implements OnInit {
         }
         case (1): {
             if (evt.fromState === 3) {
-                this.FORM_STATE.data.selectedGroup = evt.data.selectedGroup;
+                this.FORM_STATE.data.selectedGroup = this.groups.find(group => group.id === evt.data.selectedGroup.id);
             } else {
                 this.selectedStudents = evt.data.selectedStudents;
             }

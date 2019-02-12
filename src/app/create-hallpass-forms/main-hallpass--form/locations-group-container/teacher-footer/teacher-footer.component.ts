@@ -47,7 +47,8 @@ export class TeacherFooterComponent implements OnInit {
   ngOnInit() {
   }
 
-  goToFromWhere() {
+  goToFromWhere(evt: Event) {
+    evt.stopPropagation();
      if (this.state === 'from' || this.date) {
         return false;
      }
@@ -56,7 +57,8 @@ export class TeacherFooterComponent implements OnInit {
       this.changeLocation.emit(this.formState);
   }
 
-  goToToWhere() {
+  goToToWhere(evt: Event) {
+    evt.stopPropagation();
      if (this.state === 'to' || this.state === 'from') {
        return false;
      }
@@ -65,7 +67,8 @@ export class TeacherFooterComponent implements OnInit {
      this.changeLocation.emit(this.formState);
   }
 
-  goToStudents() {
+  goToStudents(evt: Event) {
+    evt.stopPropagation();
     this.formState.previousState = this.formState.state;
     this.formState.step = 2;
     this.formState.previousStep = 3;
@@ -81,5 +84,8 @@ export class TeacherFooterComponent implements OnInit {
     this.formState.quickNavigator = true;
     this.changeLocation.emit(this.formState);
   }
-
+  setShowFooter(evt: Event) {
+    this.showFullFooter = !this.showFullFooter;
+    evt.stopPropagation();
+  }
 }

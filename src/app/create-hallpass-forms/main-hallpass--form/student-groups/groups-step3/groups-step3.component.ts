@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {StudentList} from '../../../../models/StudentList';
 import {HttpService} from '../../../../services/http-service';
 import {FormGroup} from '@angular/forms';
@@ -11,7 +11,7 @@ import {ApiService} from '../../../../services/api.service';
   templateUrl: './groups-step3.component.html',
   styleUrls: ['./groups-step3.component.scss']
 })
-export class GroupsStep3Component implements OnInit {
+export class GroupsStep3Component implements OnInit, AfterViewInit {
 
   @Input() form: FormGroup;
   @Input() editGroup: StudentList;
@@ -22,7 +22,8 @@ export class GroupsStep3Component implements OnInit {
 
   constructor(
     private http: HttpService,
-    private apiSevice: ApiService
+    private apiSevice: ApiService,
+    private changeDetectionRef: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
@@ -36,10 +37,15 @@ export class GroupsStep3Component implements OnInit {
         this.allowToSave = true;
       });
   }
+  ngAfterViewInit(): void {
+    this.changeDetectionRef.detectChanges();
+  }
 
   updateUsers(evt) {
+    console.log('45 =>', evt);
     this.editGroup.users = evt;
     this.form.get('users').setValue(evt);
+    this.form.get('users').markAsDirty();
   }
 
   updateGroup() {
@@ -70,6 +76,8 @@ export class GroupsStep3Component implements OnInit {
       });
   }
   back(updatedGroup: StudentList) {
+    this.form.get('title').reset();
+    this.form.get('users').reset();
     this.stateChangeEvent.emit({
       step: 2,
       state: 1,
