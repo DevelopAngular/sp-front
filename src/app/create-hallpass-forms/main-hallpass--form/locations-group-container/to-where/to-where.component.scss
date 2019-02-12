@@ -6,7 +6,7 @@
   align-items: center;
   position: relative;
 
-  .to-header {
+  .header {
     width: 100%;
     height: 64px;
     display: flex;
@@ -48,7 +48,7 @@
     }
   }
 
-  .to-content {
+  .content {
     height: 363px;
     overflow: auto;
 

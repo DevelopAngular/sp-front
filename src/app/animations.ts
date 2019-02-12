@@ -1,4 +1,4 @@
-import {animate, keyframes, state, style, transition, trigger} from '@angular/animations';
+import {animate, group, keyframes, query, state, style, transition, trigger} from '@angular/animations';
 import {st} from '@angular/core/src/render3';
 
 export const bumpIn = trigger('pressState', [
@@ -13,20 +13,37 @@ export const bumpIn = trigger('pressState', [
 ]);
 
 export const NextStep = trigger('NextStep', [
-  transition(':enter', animate('0.7s 0s ease', keyframes([
+  transition(':enter', group([query('.header', animate('0.7s 0s ease', keyframes([
       style({
-        opacity: 0,
-        transform: 'translateX({{from}}px)',
+        opacity: 0.5,
+        backgroundColor: 'red',
+        // transform: 'translateX({{from}}px)',
       }),
       style({
-        opacity: 0,
-        transform: 'translateX({{halfFrom}}px)',
+        opacity: 0.5,
+        backgroundColor: 'red',
+        // transform: 'translateX({{halfFrom}}px)',
       }),
       style({
+        backgroundColor: 'green',
         opacity: 1,
-        transform: 'translateX(0px)',
+        // transform: 'translateX(0px)',
       })
-    ])),
+    ]))),
+      query('.content', animate('0.7s 0s ease', keyframes([
+        style({
+          opacity: 0,
+          transform: 'translateX({{from}}px)',
+        }),
+        style({
+          opacity: 0,
+          transform: 'translateX({{halfFrom}}px)',
+        }),
+        style({
+          opacity: 1,
+          transform: 'translateX(0px)',
+        })
+      ])))]),
     { params: { from: 100, halfFrom: 50}}
   ),
   transition(':leave', animate('0.7s 0s ease', keyframes([
