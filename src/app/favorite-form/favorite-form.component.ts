@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 // import { MatDialogRef } from '../../../node_modules/@angular/material';
 import { Location } from '../models/Location';
 import { ApiService } from '../services/api.service';
@@ -9,7 +9,7 @@ import { MatDialogRef } from '@angular/material';
   templateUrl: './favorite-form.component.html',
   styleUrls: ['./favorite-form.component.scss']
 })
-export class FavoriteFormComponent implements OnInit {
+export class FavoriteFormComponent implements OnInit, OnDestroy {
 
   starChanges: any[] = [];
 
@@ -26,11 +26,14 @@ export class FavoriteFormComponent implements OnInit {
     this.dialogRef.updatePosition({top: '120px'});
   }
 
+  ngOnDestroy() {
+    this.dialogRef.close(this.starChanges.map(loc => loc.id));
+  }
+
   closeDialog(){
-    const body = {'locations': this.starChanges.map(loc => loc.id)};
-    console.log(body.locations);
-    this.apiService.updateFavoriteLocations(body).subscribe();
-    this.dialogRef.close();
+    // const body = {'locations': this.starChanges.map(loc => loc.id)};
+    // console.log(body.locations);
+    // this.apiService.updateFavoriteLocations(body).subscribe();
   }
 
   onStar(loc: any){
@@ -56,7 +59,7 @@ export class FavoriteFormComponent implements OnInit {
   }
 
   back() {
-    this.dialogRef.close();
+    this.dialogRef.close(this.starChanges.map(loc => loc.id));
   }
 
 }

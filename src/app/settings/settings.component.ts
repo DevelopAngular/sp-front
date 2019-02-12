@@ -6,6 +6,8 @@ import { FavoriteFormComponent } from '../favorite-form/favorite-form.component'
 import { LoadingService } from '../services/loading.service';
 import { ColorProfile } from '../models/ColorProfile';
 import { User } from '../models/User';
+import {switchMap} from 'rxjs/operators';
+import {ApiService} from '../services/api.service';
 
 export interface Setting {
   color_profile: ColorProfile;
@@ -26,8 +28,14 @@ export class SettingsComponent implements OnInit {
   user: User;
   isStaff: boolean;
 
-  constructor(public router: Router, public dialog: MatDialog, private dataService: DataService,
-              private _zone: NgZone, public loadingService: LoadingService) {
+  constructor(
+      public router: Router,
+      public dialog: MatDialog,
+      private dataService: DataService,
+      private _zone: NgZone,
+      public loadingService: LoadingService,
+      private apiService: ApiService
+  ) {
     this.settings.push({
       'color_profile': new ColorProfile('', '', '#E7A700,#EFCE00', '#E7A700', '', '', ''),
       'action': 'favorite',
@@ -75,12 +83,18 @@ export class SettingsComponent implements OnInit {
     if (action === 'signout') {
       this.router.navigate(['sign-out']);
     } else if (action === 'favorite') {
-      this.dialog.open(FavoriteFormComponent, {
+      const favRef = this.dialog.open(FavoriteFormComponent, {
         // width: '750px',
         // height: '365px',
         panelClass: 'form-dialog-container',
         backdropClass: 'custom-backdrop',
       });
+
+      favRef.afterClosed().pipe(switchMap(data => {
+        const body = {'locations': data };
+        return this.apiService.updateFavoriteLocations(body);
+      })).subscribe();
+
     } else if (action === 'intro') {
       this.router.navigate(['main/intro']);
     } else if (action === 'team') {
