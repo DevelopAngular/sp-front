@@ -20,11 +20,11 @@ export class CreateFormService {
   }
 
   seen() {
-    if (localStorage.getItem('first-modal') === 'seen') {
-      this.isSeen$.next(true);
-    } else {
-      localStorage.setItem('first-modal', 'seen');
-    }
+    // if (localStorage.getItem('first-modal') === 'seen') {
+    //   this.isSeen$.next(true);
+    // } else {
+    //   localStorage.setItem('first-modal', 'seen');
+    // }
   }
 
   setFrameMotionDirection(direction: string = 'forward') {
