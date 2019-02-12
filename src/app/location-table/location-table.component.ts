@@ -61,8 +61,7 @@ export class LocationTableComponent implements OnInit {
   @Input()
   inputWidth: string = '200px';
 
-  @Input()
-  horizontalTable: boolean = true;
+  @Input() isEdit: boolean = false;
 
   @Input() rightHeaderText: boolean = false;
 
@@ -186,7 +185,7 @@ export class LocationTableComponent implements OnInit {
   }
 
   star(event) {
-    if (!this.horizontalTable) {
+    if (!this.isEdit) {
       return this.choiceSelected(event);
     }
     if(event.starred){

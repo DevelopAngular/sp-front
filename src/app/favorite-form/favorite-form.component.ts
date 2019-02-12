@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '../../../node_modules/@angular/material';
+// import { MatDialogRef } from '../../../node_modules/@angular/material';
 import { Location } from '../models/Location';
 import { ApiService } from '../services/api.service';
+import { MatDialogRef } from '@angular/material';
 
 @Component({
   selector: 'app-favorite-form',
@@ -52,6 +53,10 @@ export class FavoriteFormComponent implements OnInit {
       console.log('removeinf')
       array.splice(index, 1);
     }
+  }
+
+  back() {
+    this.dialogRef.close();
   }
 
 }
