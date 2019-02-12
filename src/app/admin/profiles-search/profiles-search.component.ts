@@ -44,6 +44,7 @@ export class ProfilesSearchComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+
   }
   showSearchParam(searchValue) {
 
