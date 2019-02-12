@@ -10,5 +10,13 @@ export const environment = {
     name: 'Local',
     ws_url: 'ws://localhost:8053/',
   },
+  firebase: {
+    apiKey: 'AIzaSyDKAexSUkOIj63hP9MkLi22CHpykkh_4Bs',
+    authDomain: 'notifyhallpass.firebaseapp.com',
+    databaseURL: 'https://notifyhallpass.firebaseio.com',
+    projectId: 'notifyhallpass',
+    storageBucket: 'notifyhallpass.appspot.com',
+    messagingSenderId: '625620388494'
+  },
   funData: true,
 };
