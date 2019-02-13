@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import {StorageService} from './storage.service';
 
 export enum Level {
   OFF = 0,
@@ -35,7 +36,7 @@ function logConsole(level: Level, args: IArgs) {
 })
 export class Logger {
 
-  constructor() {
+  constructor(private storage: StorageService) {
     console.log('Logging level: ' + Level[this.level]);
 
     // Pre-bind logging functions.
@@ -70,7 +71,7 @@ export class Logger {
   }
 
   get level(): Level {
-    const savedLevel = localStorage.getItem('logger_service_level');
+    const savedLevel = this.storage.getItem('logger_service_level');
     if (savedLevel) {
       return +savedLevel;
     } else {
@@ -79,7 +80,7 @@ export class Logger {
   }
 
   set level(l: Level) {
-    localStorage.setItem('logger_service_level', '' + l);
+    this.storage.setItem('logger_service_level', '' + l);
   }
 
   // Proxy log methods

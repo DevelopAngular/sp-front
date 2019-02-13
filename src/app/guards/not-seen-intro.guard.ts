@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { UserService } from '../services/user.service';
 import { map, tap } from 'rxjs/operators';
 import { User } from '../models/User';
+import {StorageService} from '../services/storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,7 @@ export class NotSeenIntroGuard implements CanActivate {
     private router: Router,
     private userService: UserService,
     private errorHandler: ErrorHandler,
+    private storage: StorageService
   ) {
   }
 
@@ -31,11 +33,11 @@ export class NotSeenIntroGuard implements CanActivate {
             return false;
           }
           if (user.isStudent()) {
-            if (localStorage.getItem('smartpass_intro_student') !== 'seen') {
+            if (this.storage.getItem('smartpass_intro_student') !== 'seen') {
               this.router.navigateByUrl('/main/intro').catch(e => this.errorHandler.handleError(e));
             }
           } else if (user.isTeacher()) {
-            if (localStorage.getItem('smartpass_intro_teacher') !== 'seen') {
+            if (this.storage.getItem('smartpass_intro_teacher') !== 'seen') {
               this.router.navigateByUrl('/main/intro').catch(e => this.errorHandler.handleError(e));
             }
           }

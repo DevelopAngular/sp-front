@@ -39,8 +39,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     private _zone: NgZone,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private location: Location,
-    private matDialog: MatDialog,
+    private storage: StorageService
   ) {
     // this.schoolIdSubject = this.http.schoolIdSubject;
   }
@@ -66,8 +65,8 @@ export class AppComponent implements OnInit, AfterViewInit {
               // console.log(schools);
               this.schools = schools;
 
-              if (localStorage.getItem('schoolId')) {
-                this.http.schoolIdSubject.next(JSON.parse(localStorage.getItem('schoolId')));
+              if (this.storage.getItem('schoolId')) {
+                this.http.schoolIdSubject.next(JSON.parse(this.storage.getItem('schoolId')));
               } else {
                 this.http.schoolIdSubject.next(this.schools[0]);
               }
@@ -97,7 +96,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (!value) {
         this.schools = [];
       }
-    }))
+    }));
     this.router.events
       .pipe(
         filter(event => event instanceof NavigationEnd),

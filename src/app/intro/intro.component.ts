@@ -7,6 +7,7 @@ import { bumpIn } from '../animations';
 import {PassLike} from '../models';
 import {HallPass} from '../models/HallPass';
 import {Subject} from 'rxjs';
+import {StorageService} from '../services/storage.service';
 
 @Component({
   selector: 'app-intro',
@@ -24,7 +25,13 @@ export class IntroComponent implements OnInit {
   buttons = {'left': false, 'right': false};
   slides;
 
-  constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService, private router: Router) {
+  constructor(
+      public dataService: DataService,
+      private _zone: NgZone,
+      private loadingService: LoadingService,
+      private router: Router,
+      private storage: StorageService
+  ) {
     console.log('intro.constructor');
   }
 
@@ -268,9 +275,9 @@ export class IntroComponent implements OnInit {
   endIntro() {
 
     if (this.isStaff) {
-      localStorage.setItem('smartpass_intro_teacher', 'seen');
+      this.storage.setItem('smartpass_intro_teacher', 'seen');
     } else {
-      localStorage.setItem('smartpass_intro_student', 'seen');
+      this.storage.setItem('smartpass_intro_student', 'seen');
     }
     this.router.navigate(['select-profile']);
   }

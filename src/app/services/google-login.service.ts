@@ -10,6 +10,7 @@ import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { GoogleAuthService } from './google-auth.service';
 import AuthResponse = gapi.auth2.AuthResponse;
 import GoogleAuth = gapi.auth2.GoogleAuth;
+import {StorageService} from './storage.service';
 
 const STORAGE_KEY = 'google_auth';
 
@@ -36,19 +37,23 @@ export class GoogleLoginService {
   public showLoginError$ = new BehaviorSubject(false);
   public isAuthenticated$ = new ReplaySubject<boolean>(1);
 
-  constructor(private googleAuth: GoogleAuthService, private _zone: NgZone) {
+  constructor(
+      private googleAuth: GoogleAuthService,
+      private _zone: NgZone,
+      private storage: StorageService
+  ) {
 
     this.authToken$.subscribe(auth => {
       // console.log('Loaded auth response:', auth);
 
       if (auth) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(auth));
+        this.storage.setItem(STORAGE_KEY, JSON.stringify(auth));
       }
     });
 
     this.googleAuth.getAuth().subscribe(auth => this.googleAuthTool.next(auth));
 
-    const savedAuth = localStorage.getItem(STORAGE_KEY);
+    const savedAuth = this.storage.getItem(STORAGE_KEY);
     if (savedAuth) {
       // console.log('Loading saved auth:', savedAuth);
       const auth: AuthResponse = JSON.parse(savedAuth);
@@ -85,7 +90,7 @@ export class GoogleLoginService {
     if (this.needNewToken()) {
       this.authToken$.next(null);
       this.isAuthenticated$.next(false);
-      localStorage.removeItem(STORAGE_KEY);
+      this.storage.removeItem(STORAGE_KEY);
     }
 
     return this.authToken$
@@ -111,7 +116,7 @@ export class GoogleLoginService {
       this.isAuthenticated$.next(false);
     }
 
-    localStorage.removeItem(STORAGE_KEY);
+    this.storage.removeItem(STORAGE_KEY);
   }
 
   /**

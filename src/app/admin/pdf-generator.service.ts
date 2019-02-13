@@ -7,6 +7,7 @@ import { switchMap, tap } from 'rxjs/operators';
 import { DatePrettyHelper } from './date-pretty.helper';
 import { LinkGeneratedDialogComponent } from './link-generated-dialog/link-generated-dialog.component';
 import { OPEN_SANS_BOLD, OPEN_SANS_REGULAR } from './pdf-fonts';
+import {StorageService} from '../services/storage.service';
 
 declare const jsPDF;
 declare const window;
@@ -16,13 +17,14 @@ export class PdfGeneratorService {
   constructor(
     public httpService: HttpClient,
     private locationService: Location,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private storage: StorageService
   ) {
   }
 
   generate(data: any[], orientation: string = 'p', page: string = '', title?: string): void {
 
-    window.localStorage.removeItem('pdf_src');
+    this.storage.removeItem('pdf_src');
 
     const prettyNow = DatePrettyHelper.transform(new Date());
 
