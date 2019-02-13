@@ -34,7 +34,7 @@ export class AdminService {
     return this.http.get('v1/admin/dashboard');
   }
 
-  getFilteredDashbordData(date: Date) {
+  getFilteredDashboardData(date: Date) {
     return this.http.get(`v1/admin/dashboard?start=${date}`);
   }
 

@@ -338,7 +338,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
               this.chartsDate = new Date(data.date);
               console.log(this.chartsDate);
               // this.getReports(this.chartsDate);
-              this.adminService.getFilteredDashbordData(this.chartsDate)
+              this.adminService.getFilteredDashboardData(this.chartsDate)
                 .subscribe((dashboard: any) => {
                   this.lineChartData = [{data: dashboard.hall_pass_usage}];
                 });
