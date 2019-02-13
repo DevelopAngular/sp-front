@@ -38,7 +38,11 @@ export class DateTimeContainerComponent implements OnInit {
 
     this.FORM_STATE.previousStep = 1;
     if (this.FORM_STATE.formMode.role === 1) {
-      this.FORM_STATE.state = 2;
+      if (this.FORM_STATE.data.date.declinable) {
+          this.FORM_STATE.state = 2;
+      } else {
+         this.FORM_STATE.state = 1;
+      }
     } else {
       this.FORM_STATE.state = 1;
     }

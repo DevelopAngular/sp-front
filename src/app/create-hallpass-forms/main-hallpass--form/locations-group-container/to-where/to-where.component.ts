@@ -82,8 +82,8 @@ export class ToWhereComponent implements OnInit {
         this.formState.previousStep = 3;
       } else {
         this.formState.previousState = this.formState.state;
-        if (this.formState.formMode.formFactor === 3) {
-          this.formState.step = 1;
+        if (this.formState.formMode.formFactor === 3 && this.formState.data.date.declinable) {
+            this.formState.step = 1;
         } else {
           this.formState.state -= 1;
         }

@@ -77,28 +77,6 @@ export class GroupsContainerComponent implements OnInit {
       this.nextStepEvent.emit(this.FORM_STATE);
       return;
     }
-
-    // switch ( evt.state ) {
-    //   case (3): {
-    //     this.selectedGroup = evt.data.selectedGroup;
-    //     break;
-    //   }
-    //   case (2): {
-    //     this.selectedStudents = evt.data.selectedStudents;
-    //     this.groupDTO.get('users').setValue(evt.data.selectedStudents);
-    //     break;
-    //   }
-    //   case (1): {
-    //     if (evt.fromState === 3) {
-    //       this.FORM_STATE.data.selectedGroup = evt.data.selectedGroup;
-    //     } else {
-    //       this.selectedStudents = evt.data.selectedStudents;
-    //     }
-    //     break;
-    //   }
-    // }
-    // this.currentState = evt.state;
-    // this.updateData$.next(null);
   }
 
   groupNextStep(evt) {

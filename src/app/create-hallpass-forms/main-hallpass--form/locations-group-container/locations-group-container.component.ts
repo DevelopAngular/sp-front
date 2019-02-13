@@ -65,7 +65,7 @@ export class LocationsGroupContainerComponent implements OnInit {
     // this.formService.setFrameMotionDirection('disable');
 
     this.frameMotion$ = this.formService.getFrameMotionDirection();
-
+    this.FORM_STATE.quickNavigator = false;
 
     // this.FORM_STATE.previousState = 0;
     this.data.toLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.to ? this.FORM_STATE.data.direction.to : null;
@@ -162,8 +162,9 @@ export class LocationsGroupContainerComponent implements OnInit {
     if (this.FORM_STATE.state < this.FORM_STATE.previousState) {
         [this.FORM_STATE.state, this.FORM_STATE.previousState] = [this.FORM_STATE.previousState, this.FORM_STATE.state];
     } else {
-      this.FORM_STATE.previousState = States.from;
-      this.FORM_STATE.state = States.toWhere;
+       this.FORM_STATE.previousState = States.from;
+       this.FORM_STATE.state = States.toWhere;
+
     }
   }
 
@@ -240,6 +241,13 @@ export class LocationsGroupContainerComponent implements OnInit {
     }
     if (!this.isStaff && !restricted) {
         this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
+    }
+    if (this.isStaff) {
+      if (this.FORM_STATE.data.date && this.FORM_STATE.data.date.declinable) {
+         this.FORM_STATE.formMode.formFactor = FormFactor.Invitation;
+      } else {
+         this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
+      }
     }
     this.FORM_STATE.step =  close ? 0 : 4;
     this.nextStepEvent.emit(this.FORM_STATE);
