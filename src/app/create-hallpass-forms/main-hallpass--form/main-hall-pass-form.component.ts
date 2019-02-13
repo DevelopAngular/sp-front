@@ -34,7 +34,6 @@ export interface Navigation {
       from?: Location;
       to?: Location;
       pinnable?: Pinnable;
-      // restricted?: boolean;
     },
     icon?: string
     gradient?: string;
@@ -58,18 +57,12 @@ export interface Navigation {
 export class MainHallPassFormComponent implements OnInit {
 
   public FORM_STATE: Navigation;
-  public stepTransition: Object = {
-    'state-transition__left-right': false,
-    'state-transition__right-left': false
-  };
   public formSize = {
     height: '0px',
     width: '0px'
   }
 
   constructor(
-    private http: HttpService,
-    private dataService: DataService,
     public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     public dialogRef: MatDialogRef<MainHallPassFormComponent>,
@@ -153,10 +146,9 @@ export class MainHallPassFormComponent implements OnInit {
     } else {
       console.log('STEP EVENT ===== ===>', evt);
 
-      this.stepTransition['state-transition__left-right'] = this.FORM_STATE.previousStep < this.FORM_STATE.step;
-      this.stepTransition['state-transition__right-left'] = this.FORM_STATE.previousStep > this.FORM_STATE.step;
       this.FORM_STATE = evt;
     }
+    this.setFormSize();
   }
 
   setFormSize() {

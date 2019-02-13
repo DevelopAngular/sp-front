@@ -16,7 +16,7 @@
     </div>
   </div>
 
-  <div class="fixed-card" [style.width]="formSize.width" [style.height]="formSize.height" *ngIf="FORM_STATE.step === 3" [@NextStepColored] (@NextStepColored.start)="setFormSize()">
+  <div class="fixed-card" [style.width]="formSize.width" [style.height]="formSize.height" *ngIf="FORM_STATE.step === 3">
     <div >
       <app-locations-group-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-locations-group-container>
     </div>

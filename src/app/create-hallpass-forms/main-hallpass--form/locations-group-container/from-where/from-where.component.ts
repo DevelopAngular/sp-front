@@ -43,7 +43,13 @@ export class FromWhereComponent implements OnInit {
 
   locationChosen(location) {
 
+    // function headerGradient() {
+    //   const colors = this.formState.data.direction.pinnable.gradient_color;
+    //   return 'radial-gradient(circle at 98% 97%,' + colors + ')';
+    // }
+
     this.formService.setFrameMotionDirection('forward');
+    // this.formService.setFrameMotionDirection('setColoredTransition', headerGradient());
 
     setTimeout(() => {
       this.formState.previousState = 1;

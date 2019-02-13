@@ -10,7 +10,7 @@ import {BehaviorSubject} from 'rxjs';
   selector: 'app-to-category',
   templateUrl: './to-category.component.html',
   styleUrls: ['./to-category.component.scss'],
-  animations: [HeaderShowingUp, BodyShowingUp]
+  // animations: [HeaderShowingUp, BodyShowingUp]
 })
 export class ToCategoryComponent implements OnInit {
 
@@ -30,7 +30,7 @@ export class ToCategoryComponent implements OnInit {
 
   pinnable: Pinnable;
 
-  animatedComponetVivibility: boolean = true;
+  // animatedComponetVivibility: boolean = true;
 
   frameMotion$: BehaviorSubject<any>;
 
@@ -51,23 +51,24 @@ export class ToCategoryComponent implements OnInit {
 
   locationChosen(location) {
     this.formService.setFrameMotionDirection('forward');
-    this.animatedComponetVivibility = false;
+    // this.animatedComponetVivibility = false;
     setTimeout(() => {
       this.locFromCategory.emit(location);
-    }, 250);
+    }, 100);
 
   }
 
   back() {
 
     this.formService.setFrameMotionDirection('back');
-    this.animatedComponetVivibility = false;
+    console.log('BACK BACK BACK ____>');
+    // this.animatedComponetVivibility = false;
 
     setTimeout(() => {
       this.formState.previousState = this.formState.state;
       this.formState.state -= 1;
       this.backButton.emit(this.formState);
-    }, 250);
+    }, 100);
   }
 
 }

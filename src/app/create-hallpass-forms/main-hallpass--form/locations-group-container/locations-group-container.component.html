@@ -1,5 +1,6 @@
 <div class="locations-group-wrapper">
   <!--<pre>  {{FORM_STATE.state}} {{FORM_STATE.previousState}} {{ FORM_STATE.state > FORM_STATE.previousState}}</pre>-->
+  <!--<pre>{{frameMotion$| async | json}}</pre>-->
   <div *ngIf="FORM_STATE.state === 1" style="position: absolute" [@NextStep]="{ value: '', params: frameMotion$ | async}">
 
     <app-from-where
@@ -24,8 +25,9 @@
       (selectedPinnable)="toWhere($event)"
     ></app-to-where>
   </div>
-  <div *ngIf="FORM_STATE.state === 3" style="position: absolute">
-  <!--<div *ngIf="FORM_STATE.state === 3" style="position: absolute" [@NextStep]="{ value: '', params: frameMotion$ | async} ">-->
+  <!--<div *ngIf="FORM_STATE.state === 3" style="position: absolute">-->
+  <div *ngIf="FORM_STATE.state === 3" style="position: absolute" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
+
     <app-to-category
       [studentText]="studentText"
       [formState]="FORM_STATE"
@@ -36,8 +38,8 @@
       (locFromCategory)="fromCategory($event)"
     ></app-to-category>
   </div>
-  <div *ngIf="FORM_STATE.state === 4" style="position: absolute">
-  <!--<div *ngIf="FORM_STATE.state === 4" style="position: absolute" [@NextStep]="{ value: '', params: frameMotion$ | async} ">-->
+  <!--<div *ngIf="FORM_STATE.state === 4" style="position: absolute">-->
+  <div *ngIf="FORM_STATE.state === 4" style="position: absolute" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
 
     <app-restricted-target
       [formState]="FORM_STATE"
@@ -48,8 +50,8 @@
     ></app-restricted-target>
   </div>
 
-  <div *ngIf="FORM_STATE.state === 5" style="position: absolute">
-  <!--<div *ngIf="FORM_STATE.state === 5" style="position: absolute" [@NextStep]="{ value: '', params: frameMotion$ | async} ">-->
+  <!--<div *ngIf="FORM_STATE.state === 5" style="position: absolute">-->
+  <div *ngIf="FORM_STATE.state === 5" style="position: absolute" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
 
     <app-restricted-message
       [formState]="FORM_STATE"

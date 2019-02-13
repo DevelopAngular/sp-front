@@ -36,7 +36,15 @@ export class ToWhereComponent implements OnInit {
 
   pinnableSelected(pinnable) {
 
+    function headerGradient(_pinnable) {
+      const colors = _pinnable.gradient_color;
+      return 'radial-gradient(circle at 98% 97%,' + colors + ')';
+    }
+
     this.formService.setFrameMotionDirection('forward');
+    this.formService.setFrameMotionDirection('setColoredTransition', headerGradient(pinnable));
+
+    // this.formService.setFrameMotionDirection('forward');
 
     setTimeout(() => {
       this.selectedPinnable.emit(pinnable);
@@ -68,7 +76,7 @@ export class ToWhereComponent implements OnInit {
       }
       //
       this.backButton.emit(this.formState);
-    }, 100)
+    }, 100);
 
 
   }
