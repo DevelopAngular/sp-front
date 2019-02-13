@@ -343,10 +343,8 @@ export class PassesComponent implements OnInit {
       );
       this.isSeen$ = this.createFormService.isSeen$;
 
-      this.notifService.requestNotificationPermission().then(() => {
-        this.notifService.getNotificationAuth();
-      });
-
+      this.notifService.initNotifications(true)
+        .then(hasPerm => console.log(`Has permission to show notifications: ${hasPerm}`));
   }
 
   showMainForm(forLater: boolean): void {
