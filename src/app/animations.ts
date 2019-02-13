@@ -1,4 +1,4 @@
-import {animate, keyframes, state, style, transition, trigger} from '@angular/animations';
+import {animate, group, keyframes, query, state, style, transition, trigger} from '@angular/animations';
 import {st} from '@angular/core/src/render3';
 
 export const bumpIn = trigger('pressState', [
@@ -13,37 +13,69 @@ export const bumpIn = trigger('pressState', [
 ]);
 
 export const NextStep = trigger('NextStep', [
-  transition(':enter', animate('0.7s 0s ease', keyframes([
-      style({
-        opacity: 0,
-        transform: 'translateX({{from}}px)',
-      }),
-      style({
-        opacity: 0,
-        transform: 'translateX({{halfFrom}}px)',
-      }),
-      style({
-        opacity: 1,
-        transform: 'translateX(0px)',
-      })
-    ])),
+  transition(':enter', group([
+
+      query('.from-header, .to-header, .category-header, .rest-tar-header, .rest-mes-header', animate('0.7s 0s ease', keyframes([
+          style({
+            opacity: 0,
+          }),
+          style({
+            opacity: 0.75,
+          }),
+          style({
+            opacity: 1,
+          })
+        ])), {optional: true}
+      ),
+      query('.from-content, .to-content, .category-content, .rest-tar-content, .rest-mes-content', animate('0.7s 0s ease', keyframes([
+          style({
+            opacity: 0,
+            transform: 'translateX({{from}}px)',
+          }),
+          style({
+            opacity: 0.5,
+            transform: 'translateX({{halfFrom}}px)',
+          }),
+          style({
+            opacity: 1,
+            transform: 'translateX(0px)',
+          })
+        ])), {optional: true}
+      )
+    ]),
     { params: { from: 100, halfFrom: 50}}
   ),
-  transition(':leave', animate('0.7s 0s ease', keyframes([
-      style({
-        opacity: 1,
-        transform: 'translateX(0px)',
-      }),
-      style({
-        opacity: 0,
-        transform: 'translateX({{halfTo}}px)',
-      }),
-      style({
-        opacity: 0,
-        transform: 'translateX({{to}}px)',
-      }),
-    ])),
-    { params: { to: -100, halfTo: -50}}
+  transition(':leave', group([
+      query('.from-header, .to-header, .category-header, .rest-tar-header, .rest-mes-header', animate('0.7s 0s ease', keyframes([
+          style({
+            opacity: 1,
+          }),
+          style({
+            opacity: 0.75,
+          }),
+          style({
+            opacity: 0,
+          }),
+        ])), {optional: true}
+      ),
+      query('.from-content, .to-content, .category-content, .rest-tar-content, .rest-mes-content', animate('0.7s 0s ease', keyframes([
+            style({
+              opacity: 1,
+              transform: 'translateX(0px)',
+            }),
+            style({
+              opacity: 0.5,
+              transform: 'translateX({{halfTo}}px)',
+            }),
+            style({
+              opacity: 0,
+              transform: 'translateX({{to}}px)',
+            }),
+
+        ])), {optional: true}
+      )
+    ]),
+      { params: { to: -100, halfTo: -50}}
   )
 ]);
 

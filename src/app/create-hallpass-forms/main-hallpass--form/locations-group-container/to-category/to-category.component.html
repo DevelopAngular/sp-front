@@ -1,14 +1,13 @@
-<div class="category-wrapper" [@.disabled]="isDisabled">
-  <!--<div class="category-header" [style.background-image]="headerGradient">-->
-  <div class="category-header" [style.background-image]="headerGradient" *ngIf="animatedComponetVisibility" [@HeaderShowingUp]>
+<div class="category-wrapper">
+  <div class="category-header" [style.background-image]="headerGradient">
     <img class="back-button" [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
     <div class="category-header-text">
       <img class="search-icon" [src]="pinnable.icon | resolveAsset">
       <div class="text">{{pinnable.category}}</div>
     </div>
   </div>
-    <!--<div class="category-content" *ngIf="animatedComponetVisibility">-->
-    <div class="category-content" *ngIf="animatedComponetVisibility" [@BodyShowingUp]="{value: '', params: (frameMotion$ | async)}">
+
+    <div class="category-content">
       <app-location-table
         class="center"
         (onSelect)="locationChosen($event)"
@@ -22,6 +21,6 @@
       </app-location-table>
     </div>
     <div class="shadow"></div>
-    <app-student-footer *ngIf="!isStaff && animatedComponetVisibility" [formState]="formState" [state]="'category'" [date]="date" [@HeaderShowingUp]></app-student-footer>
-    <app-teacher-footer [fromLocation]="fromLocation" [formState]="formState" *ngIf="isStaff && animatedComponetVisibility" [state]="'category'" [date]="date" [studentText]="studentText" [@HeaderShowingUp]></app-teacher-footer>
+    <app-student-footer *ngIf="!isStaff" [formState]="formState" [state]="'category'" [date]="date"></app-student-footer>
+    <app-teacher-footer [fromLocation]="fromLocation" [formState]="formState" *ngIf="isStaff" [state]="'category'" [date]="date" [studentText]="studentText"></app-teacher-footer>
 </div>

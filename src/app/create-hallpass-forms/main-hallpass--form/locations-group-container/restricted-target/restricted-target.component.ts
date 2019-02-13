@@ -10,7 +10,7 @@ import {BehaviorSubject} from 'rxjs';
   selector: 'app-restricted-target',
   templateUrl: './restricted-target.component.html',
   styleUrls: ['./restricted-target.component.scss'],
-  animations: [HeaderShowingUp, BodyShowingUp]
+  // animations: [HeaderShowingUp, BodyShowingUp]
 
 })
 export class RestrictedTargetComponent implements OnInit {
@@ -27,7 +27,7 @@ export class RestrictedTargetComponent implements OnInit {
 
   shadow: boolean = true;
 
-  animatedComponetVivibility: boolean = true;
+  // animatedComponetVivibility: boolean = true;
   frameMotion$: BehaviorSubject<any>;
 
   @Output() requestTarget: EventEmitter<any> = new EventEmitter<any>();
@@ -65,7 +65,7 @@ export class RestrictedTargetComponent implements OnInit {
 
 
     this.formService.setFrameMotionDirection('back');
-    this.animatedComponetVivibility = false;
+    // this.animatedComponetVivibility = false;
 
     setTimeout(() => {
 
@@ -77,18 +77,18 @@ export class RestrictedTargetComponent implements OnInit {
         this.formState.state -= 1;
       }
       this.backButton.emit(this.formState);
-    }, 250);
+    }, 100);
 
   }
 
   updateTarget(target) {
 
     this.formService.setFrameMotionDirection('forward');
-    this.animatedComponetVivibility = false;
+    // this.animatedComponetVivibility = false;
 
     setTimeout(() => {
       this.requestTarget.emit(target);
-    }, 250);
+    }, 100);
 
   }
 

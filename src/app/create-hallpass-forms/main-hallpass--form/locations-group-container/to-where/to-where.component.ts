@@ -1,16 +1,12 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, NgZone, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Pinnable } from '../../../../models/Pinnable';
 import { Navigation } from '../../main-hall-pass-form.component';
 import {CreateFormService} from '../../../create-form.service';
-import {BehaviorSubject} from 'rxjs';
-import {BodyShowingUp, HeaderShowingUp, NextStep} from '../../../../animations';
 
 @Component({
   selector: 'app-to-where',
   templateUrl: './to-where.component.html',
-  styleUrls: ['./to-where.component.scss'],
-  animations: [HeaderShowingUp, BodyShowingUp, NextStep]
-
+  styleUrls: ['./to-where.component.scss']
 })
 export class ToWhereComponent implements OnInit {
 
@@ -30,47 +26,37 @@ export class ToWhereComponent implements OnInit {
 
   @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
 
-  animatedComponetVisibility: boolean = true;
-
-  isDisabled: boolean = false;
-
-  frameMotion$: BehaviorSubject<any>;
-
   constructor(
-    private formService: CreateFormService,
-    private _zone: NgZone,
-    private changeDetectorRef: ChangeDetectorRef
+    private formService: CreateFormService
   ) { }
 
   ngOnInit() {
-    this.frameMotion$ = this.formService.getFrameMotionDirection();
-
     this.location = this.formState.data.direction ? this.formState.data.direction.from : null;
   }
 
   pinnableSelected(pinnable) {
 
-    // this._zone.run(() => {
-      this.formService.setFrameMotionDirection('forward');
-      this.animatedComponetVisibility = false;
-      this.changeDetectorRef.detectChanges();
+    function headerGradient(_pinnable) {
+      const colors = _pinnable.gradient_color;
+      return 'radial-gradient(circle at 98% 97%,' + colors + ')';
+    }
 
-    // })
+    this.formService.setFrameMotionDirection('forward');
+    this.formService.setFrameMotionDirection('setColoredTransition', headerGradient(pinnable));
+
+    // this.formService.setFrameMotionDirection('forward');
 
     setTimeout(() => {
       this.selectedPinnable.emit(pinnable);
 
-    }, 250);
+    }, 100);
 
 
   }
 
   back() {
-    // this._zone.run(() => {
-      this.formService.setFrameMotionDirection('back');
-      this.animatedComponetVisibility = false;
-      this.changeDetectorRef.detectChanges();
-    // })
+
+    this.formService.setFrameMotionDirection('back');
 
     setTimeout(() => {
       if (!!this.date &&
@@ -90,7 +76,7 @@ export class ToWhereComponent implements OnInit {
       }
       //
       this.backButton.emit(this.formState);
-    }, 250);
+    }, 100);
 
 
   }

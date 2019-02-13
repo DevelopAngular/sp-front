@@ -10,7 +10,7 @@ import {BehaviorSubject} from 'rxjs';
   selector: 'app-to-category',
   templateUrl: './to-category.component.html',
   styleUrls: ['./to-category.component.scss'],
-  animations: [HeaderShowingUp, BodyShowingUp]
+  // animations: [HeaderShowingUp, BodyShowingUp]
 })
 export class ToCategoryComponent implements OnInit {
 
@@ -30,9 +30,7 @@ export class ToCategoryComponent implements OnInit {
 
   pinnable: Pinnable;
 
-  animatedComponetVisibility: boolean = true;
-
-  isDisabled: boolean = false;
+  // animatedComponetVivibility: boolean = true;
 
   frameMotion$: BehaviorSubject<any>;
 
@@ -46,37 +44,31 @@ export class ToCategoryComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.formState.previousState > this.formState.state) {
-      this.isDisabled = true;
-    }
-
-
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.fromLocation = this.formState.data.direction.from;
     this.pinnable = this.formState.data.direction.pinnable;
   }
 
   locationChosen(location) {
-    this.isDisabled = true;
     this.formService.setFrameMotionDirection('forward');
-    // this.animatedComponetVisibility = false;
+    // this.animatedComponetVivibility = false;
     setTimeout(() => {
-      // this.formState.previousState = this.formState.state;
       this.locFromCategory.emit(location);
-    }, 550);
+    }, 100);
 
   }
 
   back() {
+
     this.formService.setFrameMotionDirection('back');
-    this.animatedComponetVisibility = false;
-    this.isDisabled = false;
+    console.log('BACK BACK BACK ____>');
+    // this.animatedComponetVivibility = false;
 
     setTimeout(() => {
       this.formState.previousState = this.formState.state;
       this.formState.state -= 1;
       this.backButton.emit(this.formState);
-    }, 550);
+    }, 100);
   }
 
 }

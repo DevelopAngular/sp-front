@@ -11,7 +11,7 @@ import {BehaviorSubject} from 'rxjs';
   selector: 'app-restricted-message',
   templateUrl: './restricted-message.component.html',
   styleUrls: ['./restricted-message.component.scss'],
-  animations: [HeaderShowingUp, BodyShowingUp]
+  // animations: [HeaderShowingUp, BodyShowingUp]
 
 })
 export class RestrictedMessageComponent implements OnInit {
@@ -34,7 +34,7 @@ export class RestrictedMessageComponent implements OnInit {
   toLocation: Location;
 
   message: FormControl;
-  animatedComponetVivibility: boolean = true;
+  // animatedComponetVivibility: boolean = true;
   frameMotion$: BehaviorSubject<any>;
 
   constructor(
@@ -62,7 +62,7 @@ export class RestrictedMessageComponent implements OnInit {
 
 
     this.formService.setFrameMotionDirection('back');
-    this.animatedComponetVivibility = false;
+    // this.animatedComponetVivibility = false;
 
     setTimeout(() => {
 
@@ -73,7 +73,7 @@ export class RestrictedMessageComponent implements OnInit {
         this.formState.state -= 1;
       }
       this.backButton.emit(this.formState);
-    }, 250);
+    }, 100);
 
 
 
@@ -81,11 +81,11 @@ export class RestrictedMessageComponent implements OnInit {
 
   sendRequest() {
     this.formService.setFrameMotionDirection('forward');
-    this.animatedComponetVivibility = false;
+    // this.animatedComponetVivibility = false;
 
     setTimeout(() => {
       this.resultMessage.emit(this.message.value);
-    }, 250);
+    }, 100);
 
   }
 
