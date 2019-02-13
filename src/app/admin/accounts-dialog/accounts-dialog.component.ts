@@ -4,8 +4,7 @@ import {FormControl, FormGroup} from '@angular/forms';
 import {HttpService} from '../../services/http-service';
 import {User} from '../../models/User';
 import {Observable, zip} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {ApiService} from '../../services/api.service';
+import {UserService} from '../../services/user.service';
 
 @Component({
   selector: 'app-accounts-dialog',
@@ -33,7 +32,7 @@ export class AccountsDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private DR: MatDialogRef<AccountsDialogComponent>,
     private http: HttpService,
-    private api: ApiService
+    private userService: UserService
   ) { }
 
   ngOnInit() {
@@ -62,8 +61,8 @@ export class AccountsDialogComponent implements OnInit {
         this.form = new FormGroup(group);
         this.controlsIteratable = Object.values(restrictions);
         this.beforeClosedHook = function() {
-          return zip(restrictionsFor.map((user) => this.http.post(`v1/users/${user['#Id']}/roles`, this.form.value)));
-        }
+          return zip(restrictionsFor.map((user) => this.userService.createUserRoles(user['#Id'], this.form.value)));
+        };
         break;
       }
       case 'remove' :
@@ -101,7 +100,7 @@ export class AccountsDialogComponent implements OnInit {
           let role: any = this.data.role.split('_');
           role = role[role.length - 1];
           console.log('======>>>>>', role, this.selectedUsers);
-          return zip(...this.selectedUsers.map((user) => this.api.addUserToProfile(user.id, role)));
+          return zip(...this.selectedUsers.map((user) => this.userService.addUserToProfile(user.id, role)));
         };
       }
     }

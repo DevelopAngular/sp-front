@@ -1,11 +1,9 @@
 import { ErrorHandler, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
-import {Observable, of} from 'rxjs';
-import {UserService} from '../services/user.service';
-import {map, tap} from 'rxjs/operators';
-import {HttpService} from '../services/http-service';
-import {User} from '../models/User';
-import {ApiService} from '../services/api.service';
+import { Observable, of } from 'rxjs';
+import { UserService } from '../services/user.service';
+import { map, tap } from 'rxjs/operators';
+import { User } from '../models/User';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +12,7 @@ export class NotSeenIntroGuard implements CanActivate {
 
   constructor(
     private router: Router,
-    private http: HttpService,
-    private apiService: ApiService,
+    private userService: UserService,
     private errorHandler: ErrorHandler,
   ) {
   }
@@ -26,7 +23,7 @@ export class NotSeenIntroGuard implements CanActivate {
 
     // console.log('canActivate intro:', localStorage.getItem('smartpass_intro') !== 'seen');
 
-    return this.apiService.getUser()
+    return this.userService.getUser()
       .pipe(
         map(raw => User.fromJSON(raw)),
         map((user) => {

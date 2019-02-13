@@ -8,8 +8,8 @@ import { disableBodyScroll } from 'body-scroll-lock';
 import * as _ from 'lodash';
 import {PassCardComponent} from '../../pass-card/pass-card.component';
 import {MatDialog} from '@angular/material';
-import {User} from '../../models/User';
 import { Util } from '../../../Util';
+import {HallPassesService} from '../../services/hall-passes.service';
 
 
 @Component({
@@ -36,6 +36,7 @@ export class SearchComponent implements OnInit {
 
   constructor(
       private httpService: HttpService,
+      private hallPassService: HallPassesService,
       private pdf: PdfGeneratorService,
       private elRef: ElementRef,
       public dialog: MatDialog
@@ -109,7 +110,7 @@ export class SearchComponent implements OnInit {
 
       }
 
-      this.httpService.get(url).pipe(filter(res => !!res))
+      this.hallPassService.searchPasses(url).pipe(filter(res => !!res))
         .subscribe((data: HallPass[]) => {
           console.log('DATA', data);
           this.passes = data;

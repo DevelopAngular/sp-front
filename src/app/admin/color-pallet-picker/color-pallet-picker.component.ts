@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { HttpService } from '../../services/http-service';
 import { map, shareReplay } from 'rxjs/operators';
-import {ApiService} from '../../services/api.service';
+import {AdminService} from '../../services/admin.service';
 
 @Component({
     selector: 'app-color-pallet-picker',
@@ -20,7 +20,7 @@ export class ColorPalletPickerComponent implements OnInit {
 
   selectedId: number;
 
-  constructor(private apiService: ApiService) { }
+  constructor(private apiService: AdminService) { }
 
   ngOnInit() {
       this.colors$ = this.apiService.getColors().pipe(

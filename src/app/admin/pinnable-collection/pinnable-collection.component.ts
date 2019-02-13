@@ -3,7 +3,7 @@ import { Pinnable } from '../../models/Pinnable';
 import { MatDialog } from '@angular/material';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
 import {BehaviorSubject, forkJoin, Subject} from 'rxjs';
-import {ApiService} from '../../services/api.service';
+import {HallPassesService} from '../../services/hall-passes.service';
 
 @Component({
   selector: 'app-pinnable-collection',
@@ -41,7 +41,7 @@ export class PinnableCollectionComponent implements OnInit {
 
   constructor(
     public dialog: MatDialog,
-    private apiService: ApiService
+    private hallPassService: HallPassesService
   ) {
     // dragulaService.createGroup('pins', {
     //   removeOnSpill: true
@@ -127,7 +127,7 @@ export class PinnableCollectionComponent implements OnInit {
           const currentPinIds = this.selectedPinnables.map(pinnable => pinnable.id);
           this.pinnables = this.pinnables.filter(pinnable => pinnable.id !== currentPinIds.find(id => id === pinnable.id));
             const pinnableToDelete = this.selectedPinnables.map(pinnable => {
-                return this.apiService.deletePinnable(pinnable.id);
+                return this.hallPassService.deletePinnable(pinnable.id);
             });
             return forkJoin(pinnableToDelete).subscribe(() => this.toggleBulk());
         } else {

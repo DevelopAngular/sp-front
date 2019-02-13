@@ -6,7 +6,7 @@ import { HttpService } from '../services/http-service';
 import { Location } from '../models/Location';
 import { Paged } from '../models';
 import { filter, map, switchMap, takeUntil } from 'rxjs/operators';
-import {ApiService} from '../services/api.service';
+import {LocationsService} from '../services/locations.service';
 
 @Component({
   selector: 'app-location-picker',
@@ -32,7 +32,10 @@ export class LocationPickerComponent implements OnInit, OnDestroy {
   @ViewChild('select', {read: ElementRef}) _select: ElementRef;
   private _onDestroy = new Subject<any>();
 
-  constructor(private http: HttpService, private apiService: ApiService) {
+  constructor(
+      private http: HttpService,
+      private locationService: LocationsService
+  ) {
     this.filteredLocations.next([]);
 
     this.locationFilterCtrl.valueChanges.pipe(
@@ -47,7 +50,7 @@ export class LocationPickerComponent implements OnInit, OnDestroy {
         if (query) {
           url += '&search=' + encodeURIComponent(query);
         }
-        return this.apiService.searchLocations(10, url);
+        return this.locationService.searchLocations(10, url);
         // return this.http.get<Paged<any>>(url);
       }),
       map((json: Paged<any>) => {

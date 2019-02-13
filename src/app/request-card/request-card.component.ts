@@ -15,7 +15,7 @@ import {PassCardComponent} from '../pass-card/pass-card.component';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import * as _ from 'lodash';
-import {ApiService} from '../services/api.service';
+import {RequestsService} from '../services/requests.service';
 
 @Component({
   selector: 'app-request-card',
@@ -50,7 +50,7 @@ export class RequestCardComponent implements OnInit {
   constructor(
       public dialogRef: MatDialogRef<RequestCardComponent>,
       @Inject(MAT_DIALOG_DATA) public data: any,
-      private apiService: ApiService,
+      private requestService: RequestsService,
       public dialog: MatDialog,
       public dataService: DataService,
       private _zone: NgZone,
@@ -116,7 +116,7 @@ export class RequestCardComponent implements OnInit {
           'teacher' : this.request.teacher.id,
           'duration' : this.selectedDuration*60,
         };
-      this.apiService.createRequest(body).subscribe((res: Request) => {
+      this.requestService.createRequest(body).subscribe((res: Request) => {
           this.performingAction = true;
           this.dialogRef.close();
       });
@@ -177,8 +177,8 @@ export class RequestCardComponent implements OnInit {
           'duration' : this.request.duration,
         };
 
-        this.apiService.createRequest(body).subscribe(() => {
-          this.apiService.cancelRequest(this.request.id).subscribe(() => {
+        this.requestService.createRequest(body).subscribe(() => {
+          this.requestService.cancelRequest(this.request.id).subscribe(() => {
             this.dialogRef.close();
           });
         });
@@ -374,7 +374,7 @@ export class RequestCardComponent implements OnInit {
           this.denyRequest('No message');
 
         } else if (action === 'delete') {
-            this.apiService.cancelRequest(this.request.id).subscribe(() => {
+            this.requestService.cancelRequest(this.request.id).subscribe(() => {
               this.dialogRef.close();
             });
         }
@@ -405,7 +405,7 @@ export class RequestCardComponent implements OnInit {
     const body = {
       'message' : denyMessage
     };
-    this.apiService.denyRequest(this.request.id, body).subscribe((httpData) => {
+    this.requestService.denyRequest(this.request.id, body).subscribe((httpData) => {
       console.log('[Request Denied]: ', httpData);
       this.dialogRef.close();
     });
@@ -418,7 +418,7 @@ export class RequestCardComponent implements OnInit {
   approveRequest() {
     this.performingAction = true;
     const body = [];
-    this.apiService.acceptRequest(this.request.id, body).subscribe(() => {
+    this.requestService.acceptRequest(this.request.id, body).subscribe(() => {
       this.dialogRef.close();
     });
   }

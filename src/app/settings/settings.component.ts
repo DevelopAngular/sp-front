@@ -7,7 +7,7 @@ import { LoadingService } from '../services/loading.service';
 import { ColorProfile } from '../models/ColorProfile';
 import { User } from '../models/User';
 import {switchMap} from 'rxjs/operators';
-import {ApiService} from '../services/api.service';
+import {LocationsService} from '../services/locations.service';
 
 export interface Setting {
   color_profile: ColorProfile;
@@ -34,7 +34,7 @@ export class SettingsComponent implements OnInit {
       private dataService: DataService,
       private _zone: NgZone,
       public loadingService: LoadingService,
-      private apiService: ApiService
+      private locationService: LocationsService
   ) {
     this.settings.push({
       'color_profile': new ColorProfile('', '', '#E7A700,#EFCE00', '#E7A700', '', '', ''),
@@ -92,7 +92,7 @@ export class SettingsComponent implements OnInit {
 
       favRef.afterClosed().pipe(switchMap(data => {
         const body = {'locations': data };
-        return this.apiService.updateFavoriteLocations(body);
+        return this.locationService.updateFavoriteLocations(body);
       })).subscribe();
 
     } else if (action === 'intro') {

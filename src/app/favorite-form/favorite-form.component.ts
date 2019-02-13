@@ -1,8 +1,7 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-// import { MatDialogRef } from '../../../node_modules/@angular/material';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '../models/Location';
-import { ApiService } from '../services/api.service';
 import { MatDialogRef } from '@angular/material';
+import { LocationsService } from '../services/locations.service';
 
 @Component({
   selector: 'app-favorite-form',
@@ -15,11 +14,11 @@ export class FavoriteFormComponent implements OnInit, OnDestroy {
 
   constructor(
       private dialogRef: MatDialogRef<FavoriteFormComponent>,
-      private apiService: ApiService
+      private locationService: LocationsService
   ) { }
 
   ngOnInit() {
-      this.apiService.getFavoriteLocations().toPromise().then((stars:any[]) => {
+      this.locationService.getFavoriteLocations().toPromise().then((stars:any[]) => {
         this.starChanges = stars.map(val => Location.fromJSON(val));
       });
 

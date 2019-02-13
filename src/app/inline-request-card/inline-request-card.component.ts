@@ -4,7 +4,7 @@ import { Request } from '../models/Request';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { MatDialog } from '@angular/material';
 import {DataService} from '../services/data-service';
-import {ApiService} from '../services/api.service';
+import {RequestsService} from '../services/requests.service';
 
 @Component({
   selector: 'app-inline-request-card',
@@ -22,7 +22,7 @@ export class InlineRequestCardComponent implements OnInit {
   cancelOpen: boolean = false;
 
   constructor(
-      private apiService: ApiService,
+      private requestService: RequestsService,
       public dialog: MatDialog,
       private dataService: DataService,
   ) { }
@@ -63,7 +63,7 @@ export class InlineRequestCardComponent implements OnInit {
       cancelDialog.afterClosed().subscribe(action => {
         this.cancelOpen = false;
         if (action === 'delete') {
-            this.apiService.cancelRequest(this.request.id).subscribe((data) => {
+            this.requestService.cancelRequest(this.request.id).subscribe((data) => {
                 this.dataService.isActiveRequest$.next(false);
                 console.log('[Request Canceled]: ', data);
             });
@@ -88,8 +88,8 @@ export class InlineRequestCardComponent implements OnInit {
       'duration' : this.request.duration,
     };
 
-    this.apiService.createRequest(body).subscribe(() => {
-        this.apiService.cancelRequest(this.request.id).subscribe(() => {
+    this.requestService.createRequest(body).subscribe(() => {
+        this.requestService.cancelRequest(this.request.id).subscribe(() => {
         console.log('pass request resent');
       });
     });
