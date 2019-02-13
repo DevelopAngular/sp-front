@@ -34,6 +34,10 @@ export class AdminService {
     return this.http.get('v1/admin/dashboard');
   }
 
+  getFilteredDashbordData(date: Date) {
+    return this.http.get(`v1/admin/dashboard?start=${date}`);
+  }
+
   //// Icons
   getIcons() {
     return this.http.get('v1/room_icons');
