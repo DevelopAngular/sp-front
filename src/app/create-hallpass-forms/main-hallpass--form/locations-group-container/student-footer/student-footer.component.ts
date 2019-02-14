@@ -23,7 +23,9 @@ export class StudentFooterComponent implements OnInit {
   toLocation: Location;
   forInput: boolean;
 
-  constructor() { }
+  constructor(
+    private formService: CreateFormService
+  ) { }
 
   get fromLocationText() {
     return this.fromLocation ? this.fromLocation.title : 'Origin';
@@ -86,6 +88,7 @@ export class StudentFooterComponent implements OnInit {
   }
 
   private changeAnimationDirection() {
+    this.formService.setFrameMotionDirection('back');
     this.changeAnimationDirectionEvent.emit(true);
   }
 }

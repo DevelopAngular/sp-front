@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {map, shareReplay} from 'rxjs/internal/operators';
 import * as _ from 'lodash';
-import {ApiService} from '../../services/api.service';
+import {AdminService} from '../../services/admin.service';
 
 
 @Component({
@@ -20,11 +20,11 @@ export class IconPickerComponent implements OnInit {
   public selectedIconId;
 
   constructor(
-    private apiService: ApiService,
+    private adminService: AdminService,
   ) { }
 
   ngOnInit() {
-    this.icons$ = this.apiService.getIcons()
+    this.icons$ = this.adminService.getIcons()
       .pipe(shareReplay(1),
       map((icons: any) => {
         return icons.map((_icon) => {

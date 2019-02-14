@@ -4,7 +4,7 @@ import {HttpService} from '../../../../services/http-service';
 import {FormGroup} from '@angular/forms';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {skip} from 'rxjs/internal/operators';
-import {ApiService} from '../../../../services/api.service';
+import {UserService} from '../../../../services/user.service';
 
 @Component({
   selector: 'app-groups-step3',
@@ -22,7 +22,7 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
 
   constructor(
     private http: HttpService,
-    private apiSevice: ApiService,
+    private userService: UserService,
     private changeDetectionRef: ChangeDetectorRef
   ) { }
 
@@ -54,7 +54,7 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
           dto.users = dto.users.map(user => user.id);
 
           if (dto.users.length) {
-            this.apiSevice.updateStudentGroup(this.editGroup.id, dto)
+            this.userService.updateStudentGroup(this.editGroup.id, dto)
               .subscribe((group: StudentList) => {
                   for ( const control in this.form.controls) {
                   this.form.controls[control].setValue(null);
@@ -67,7 +67,7 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
   }
 
   removeGroup() {
-    this.apiSevice.deleteStudentGroup(this.editGroup.id)
+    this.userService.deleteStudentGroup(this.editGroup.id)
       .subscribe((group: StudentList) => {
         for ( const control in this.form.controls) {
           this.form.controls[control].setValue(null);

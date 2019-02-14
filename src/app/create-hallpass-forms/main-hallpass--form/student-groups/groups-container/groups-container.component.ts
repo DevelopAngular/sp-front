@@ -4,7 +4,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {StudentList} from '../../../../models/StudentList';
 import {BehaviorSubject} from 'rxjs';
 import {Navigation} from '../../main-hall-pass-form.component';
-import {ApiService} from '../../../../services/api.service';
+import {UserService} from '../../../../services/user.service';
 
 export enum States {
   SelectStudents = 1,
@@ -33,7 +33,7 @@ export class GroupsContainerComponent implements OnInit {
 
 
   constructor(
-    private apiService: ApiService
+    private userService: UserService
   ) {
 
     this.states = States;
@@ -47,7 +47,7 @@ export class GroupsContainerComponent implements OnInit {
   ngOnInit() {
     this.updateData$.subscribe(() => {
 
-      this.apiService.getStudentGroups()
+      this.userService.getStudentGroups()
         .subscribe((groups: StudentList[]) => {
           this.groups = groups;
         });

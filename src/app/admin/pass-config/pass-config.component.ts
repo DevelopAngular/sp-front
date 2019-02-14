@@ -1,17 +1,17 @@
-import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { FormControl, FormGroup } from '@angular/forms';
 
-import {BehaviorSubject, Observable, zip} from 'rxjs';
+import { BehaviorSubject, Observable, zip } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { HttpService } from '../../services/http-service';
 import { Pinnable } from '../../models/Pinnable';
 import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
-import {PinnableCollectionComponent} from '../pinnable-collection/pinnable-collection.component';
+import { PinnableCollectionComponent } from '../pinnable-collection/pinnable-collection.component';
 import * as _ from 'lodash';
 import { disableBodyScroll } from 'body-scroll-lock';
-import {ApiService} from '../../services/api.service';
+import { HallPassesService } from '../../services/hall-passes.service';
 
 @Component({
   selector: 'app-pass-congif',
@@ -36,7 +36,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   constructor(
       private dialog: MatDialog,
       private httpService: HttpService,
-      private apiService: ApiService,
+      private hallPassService: HallPassesService,
       private elRef: ElementRef
   ) { }
 
@@ -47,13 +47,13 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   ngOnInit() {
     disableBodyScroll(this.elRef.nativeElement);
     this.buildForm();
-    this.pinnables$ = this.apiService.getPinnables();
+    this.pinnables$ = this.hallPassService.getPinnables();
     // this.schools$ = this.httpService.get('v1/schools');
     // this.schools$.subscribe(res => this.schoolName =  res[0].name);
     this.pinnables$.subscribe(res => this.pinnables = res);
 
     this.httpService.globalReload$.subscribe(() => {
-        this.pinnables$ = this.apiService.getPinnables();
+        this.pinnables$ = this.hallPassService.getPinnables();
         this.pinnables$.subscribe(res => this.pinnables = res);
     });
 
@@ -77,10 +77,10 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 
     const pinnableIdArranged = newOrder.map(pin => pin.id);
 
-    this.apiService.createArrangedPinnable({order: pinnableIdArranged.join(',')})
+    this.hallPassService.createArrangedPinnable({order: pinnableIdArranged.join(',')})
       .pipe(
         switchMap((): Observable<Pinnable[]> => {
-          return this.apiService.getPinnables();
+          return this.hallPassService.getPinnables();
         })
       )
       .subscribe((res) => {
@@ -189,7 +189,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       });
 
      overlayDialog.afterClosed()
-         .pipe(switchMap(() => this.apiService.getPinnables())).subscribe(res => {
+         .pipe(switchMap(() => this.hallPassService.getPinnables())).subscribe(res => {
              this.pinnables = res;
              this.selectedPinnables = [];
              this.pinColComponent.clearSelected();

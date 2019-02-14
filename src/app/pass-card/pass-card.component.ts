@@ -15,7 +15,7 @@ import {InvitationCardComponent} from '../invitation-card/invitation-card.compon
 import {BehaviorSubject, interval, merge, of, Subscription} from 'rxjs';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
-import {ApiService} from '../services/api.service';
+import {HallPassesService} from '../services/hall-passes.service';
 
 @Component({
   selector: 'app-pass-card',
@@ -70,7 +70,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   constructor(
       public dialogRef: MatDialogRef<PassCardComponent>,
       @Inject(MAT_DIALOG_DATA) public data: any,
-      private apiService: ApiService,
+      private hallPassService: HallPassesService,
       public dialog: MatDialog,
       public dataService: DataService,
       private _zone: NgZone,
@@ -256,7 +256,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
     if (this.forFuture) {
         body['start_time'] = this.pass.start_time.toISOString();
     }
-     const getRequest$ = this.forStaff ? this.apiService.bulkCreatePass(body) : this.apiService.createPass(body);
+     const getRequest$ = this.forStaff ? this.hallPassService.bulkCreatePass(body) : this.hallPassService.createPass(body);
       getRequest$.subscribe((data) => {
         this.performingAction = true;
         this.dialogRef.close();
@@ -335,14 +335,14 @@ export class PassCardComponent implements OnInit, OnDestroy {
           this.cancelOpen = false;
       if(action === 'delete'){
           let body = {};
-          this.apiService.cancelPass(this.pass.id, body).subscribe((httpData) => {
+          this.hallPassService.cancelPass(this.pass.id, body).subscribe((httpData) => {
             console.log('[Future Pass Cancelled]: ', httpData);
             this.dialogRef.close();
           });
         } else if(action === 'report') {
           this.dialogRef.close({'report':this.pass.student});
         } else if(action === 'end') {
-          this.apiService.endPass(this.pass.id).subscribe(() => {
+          this.hallPassService.endPass(this.pass.id).subscribe(() => {
             this.dataService.isActivePass$.next(false);
             this.dialogRef.close();
           });

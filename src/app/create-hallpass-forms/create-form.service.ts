@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Pinnable } from '../models/Pinnable';
 import { BehaviorSubject } from 'rxjs';
-import { ApiService } from '../services/api.service';
+import { HallPassesService } from '../services/hall-passes.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +12,7 @@ export class CreateFormService {
   private transition: any;
   private frameMotionDirection$: BehaviorSubject<any>;
 
-  constructor(private apiService: ApiService) {
+  constructor(private hallPassService: HallPassesService) {
     this.transition = {
       to: -100,
       halfTo: -50,
@@ -24,7 +24,7 @@ export class CreateFormService {
   }
 
   getPinnable() {
-    return this.apiService.getPinnables()
+    return this.hallPassService.getPinnables()
         .toPromise()
         .then(json => json.map(raw => Pinnable.fromJSON(raw)));
   }

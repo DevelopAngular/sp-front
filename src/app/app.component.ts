@@ -11,7 +11,7 @@ import {MatDialog} from '@angular/material';
 import {NextReleaseComponent} from './next-release/next-release.component';
 import {UserService} from './services/user.service';
 import {StorageService} from './services/storage.service';
-import {ApiService} from './services/api.service';
+import {AdminService} from './services/admin.service';
 
 /**
  * @title Autocomplete overview
@@ -34,13 +34,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   constructor(
     public loginService: GoogleLoginService,
     private http: HttpService,
-    private apiService: ApiService,
+    private adminService: AdminService,
     private userService: UserService,
     private _zone: NgZone,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private location: Location,
-    private matDialog: MatDialog,
+    private storage: StorageService
   ) {
     // this.schoolIdSubject = this.http.schoolIdSubject;
   }
@@ -61,13 +60,13 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.showUI.next(true);
         this.isAuthenticated = t;
         if (this.isAuthenticated) {
-          this.apiService.getSchools()
+          this.adminService.getSchools()
             .subscribe((schools: School[]) => {
               // console.log(schools);
               this.schools = schools;
 
-              if (localStorage.getItem('schoolId')) {
-                this.http.schoolIdSubject.next(JSON.parse(localStorage.getItem('schoolId')));
+              if (this.storage.getItem('schoolId')) {
+                this.http.schoolIdSubject.next(JSON.parse(this.storage.getItem('schoolId')));
               } else {
                 this.http.schoolIdSubject.next(this.schools[0]);
               }
@@ -97,7 +96,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (!value) {
         this.schools = [];
       }
-    }))
+    }));
     this.router.events
       .pipe(
         filter(event => event instanceof NavigationEnd),

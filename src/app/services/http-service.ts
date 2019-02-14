@@ -14,6 +14,7 @@ import { delay, flatMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { GoogleLoginService, isDemoLogin } from './google-login.service';
 import { School } from '../models/School';
+import {StorageService} from './storage.service';
 
 export const SESSION_STORAGE_KEY = 'accessToken';
 
@@ -96,15 +97,18 @@ export class HttpService {
 
   private accessTokenSubject: BehaviorSubject<AuthContext> = new BehaviorSubject<AuthContext>(null);
   public schoolIdSubject: BehaviorSubject<School> = new BehaviorSubject<School>(null);
-  private school: School = JSON.parse(localStorage.getItem('currentSchool'));
+  private school: School = JSON.parse(this.storage.getItem('currentSchool'));
 
 
   public globalReload$ = this.schoolIdSubject.pipe(delay(5));
 
   private hasRequestedToken = false;
 
-  constructor(private http: HttpClient,
-              private loginService: GoogleLoginService) {
+  constructor(
+      private http: HttpClient,
+      private loginService: GoogleLoginService,
+      private storage: StorageService
+  ) {
 
   }
 

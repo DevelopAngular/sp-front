@@ -5,8 +5,8 @@ import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Subject } from 'rxjs/Subject';
 import { HttpService } from '../services/http-service';
 import { User } from '../models/User';
-import { ApiService } from '../services/api.service';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
+import {UserService} from '../services/user.service';
 
 @Component({
   selector: 'app-student-picker',
@@ -27,14 +27,17 @@ export class StudentPickerComponent implements OnDestroy {
 
   private _onDestroy = new Subject<any>();
 
-  constructor(private http: HttpService, private apiService: ApiService) {
+  constructor(
+      private http: HttpService,
+      private userService: UserService
+  ) {
     this.filteredStudents.next([]);
 
     this.studentsFilterCtrl.valueChanges.pipe(
       takeUntil(this._onDestroy),
         switchMap(query => {
         if (query !== '') {
-          return this.apiService.searchProfile('hallpass_student', 10, encodeURI(query))
+          return this.userService.searchProfile('hallpass_student', 10, encodeURI(query))
             .map(json => json.results);
         } else {
           return of([]);
