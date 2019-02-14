@@ -47,6 +47,7 @@ export class SchoolToggleBarComponent implements OnInit {
         if (data) {
           this.storage.setItem('currentSchool', JSON.stringify(data));
           this.currentSchool = data;
+          this.http.school = JSON.parse(this.storage.getItem('currentSchool'));
         }
         this.http.schoolIdSubject.next(this.currentSchool);
       });

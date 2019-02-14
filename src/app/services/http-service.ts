@@ -97,7 +97,7 @@ export class HttpService {
 
   private accessTokenSubject: BehaviorSubject<AuthContext> = new BehaviorSubject<AuthContext>(null);
   public schoolIdSubject: BehaviorSubject<School> = new BehaviorSubject<School>(null);
-  private school: School = JSON.parse(this.storage.getItem('currentSchool'));
+  public school: School = JSON.parse(this.storage.getItem('currentSchool'));
 
 
   public globalReload$ = this.schoolIdSubject.pipe(delay(5));

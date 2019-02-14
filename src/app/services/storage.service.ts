@@ -5,15 +5,17 @@ import { Injectable } from '@angular/core';
 })
 export class StorageService {
 
+  inMamory: any = {};
+
   constructor() { }
 
   confirm(): boolean {
       const uid = 'confirm';
       let result;
       try {
-          this.setItem(uid, uid);
-          result = this.getItem(uid) === uid;
-          this.removeItem(uid);
+          localStorage.setItem(uid, uid);
+          result = localStorage.getItem(uid) === uid;
+          localStorage.removeItem(uid);
           return result && !!localStorage;
       } catch (exception) {
         return false;
@@ -21,18 +23,39 @@ export class StorageService {
   }
 
   getItem(key) {
-     return localStorage.getItem(key);
+    if (this.confirm()) {
+      return localStorage.getItem(key);
+    } else {
+        if (!this.inMamory[key]) {
+            return null;
+        }
+        return this.inMamory[key];
+    }
   }
 
   setItem(key, data) {
-     return localStorage.setItem(key, data);
+      if (this.confirm()) {
+        return localStorage.setItem(key, data);
+      } else {
+          if (this.inMamory[key]) {
+              this.removeItem(key);
+          }
+          return this.inMamory[key] = data;
+      }
   }
 
   removeItem(key) {
-     return localStorage.removeItem(key);
+      if (this.confirm()) {
+        return localStorage.removeItem(key);
+      }
+      return delete this.inMamory[key];
   }
 
   clear() {
-    return localStorage.clear();
+    if (this.confirm()) {
+      return localStorage.clear();
+    } else {
+      this.inMamory = {};
+    }
   }
 }
