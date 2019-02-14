@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class StorageService {
 
-  inMamory: any = {};
+  memoryStore: any = {};
 
   constructor() { }
 
@@ -26,10 +26,10 @@ export class StorageService {
     if (this.confirm()) {
       return localStorage.getItem(key);
     } else {
-        if (!this.inMamory[key]) {
+        if (!this.memoryStore[key]) {
             return null;
         }
-        return this.inMamory[key];
+        return this.memoryStore[key];
     }
   }
 
@@ -37,10 +37,10 @@ export class StorageService {
       if (this.confirm()) {
         return localStorage.setItem(key, data);
       } else {
-          if (this.inMamory[key]) {
+          if (this.memoryStore[key]) {
               this.removeItem(key);
           }
-          return this.inMamory[key] = data;
+          return this.memoryStore[key] = data;
       }
   }
 
@@ -48,14 +48,14 @@ export class StorageService {
       if (this.confirm()) {
         return localStorage.removeItem(key);
       }
-      return delete this.inMamory[key];
+      return delete this.memoryStore[key];
   }
 
   clear() {
     if (this.confirm()) {
       return localStorage.clear();
     } else {
-      this.inMamory = {};
+      this.memoryStore = {};
     }
   }
 }
