@@ -52,6 +52,13 @@ export class RestrictedMessageComponent implements OnInit {
   }
 
   ngOnInit() {
+
+
+    if (this.formState.previousStep > this.formState.step) {
+      this.headerTransition['rest-mes-header'] = false;
+      this.headerTransition['rest-mes-header_animation-back'] = true;
+    }
+
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     setTimeout(() => {
         this.messageBox.nativeElement.focus();
@@ -65,6 +72,8 @@ export class RestrictedMessageComponent implements OnInit {
   back() {
 
     this.formService.setFrameMotionDirection('back');
+    this.headerTransition['rest-mes-header'] = true;
+    this.headerTransition['rest-mes-header_animation-back'] = false;
 
     setTimeout(() => {
 
@@ -83,8 +92,11 @@ export class RestrictedMessageComponent implements OnInit {
 
   sendRequest() {
     this.formService.setFrameMotionDirection('forward');
+    // this.headerTransition['rest-mes-header'] = false;
+    // this.headerTransition['rest-mes-header_animation-back'] = true;
     setTimeout(() => {
       this.resultMessage.emit(this.message.value);
+      // this.formService.setFrameMotionDirection('back');
     }, 100);
   }
 

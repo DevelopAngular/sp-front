@@ -8,7 +8,7 @@ import { HallPassesService } from '../services/hall-passes.service';
 })
 export class CreateFormService {
 
-  isSeen$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  isSeen$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   private transition: any;
   private frameMotionDirection$: BehaviorSubject<any>;
 

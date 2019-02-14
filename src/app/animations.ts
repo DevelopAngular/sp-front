@@ -211,10 +211,10 @@ export const BodyShowingUp = trigger('BodyShowingUp', [
 
 export const ScaledCard = trigger('ScaledCard', [
 
-  transition(':enter', animate('0.7s 0s ease', keyframes([
+  transition(':enter', animate('.7s 0s ease', keyframes([
     style({
       opacity: 0,
-      transform: 'scale(1.3)'
+      transform: 'scale(1.2)'
     }),
     style({
       opacity: 0,
@@ -226,7 +226,7 @@ export const ScaledCard = trigger('ScaledCard', [
       transform: 'scale(1)'
     })
   ]))),
-  transition(':leave', animate('0.7s 0s ease', keyframes([
+  transition(':leave', animate('.7s 0s ease', keyframes([
     style({
       opacity: 1,
       transform: 'scale(1)'
@@ -238,7 +238,7 @@ export const ScaledCard = trigger('ScaledCard', [
     }),
     style({
       opacity: 0,
-      transform: 'scale(0.7)'
+      transform: 'scale(0.8)'
     })
   ])))
 ]);
