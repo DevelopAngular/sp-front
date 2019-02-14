@@ -34,15 +34,19 @@ export class RestrictedMessageComponent implements OnInit {
   toLocation: Location;
 
   message: FormControl;
-  // animatedComponetVivibility: boolean = true;
+
   frameMotion$: BehaviorSubject<any>;
+
+  headerTransition = {
+    'rest-mes-header': true,
+    'rest-mes-header_animation-back': false
+  }
 
   constructor(
     private formService: CreateFormService
   ) { }
 
   get headerGradient() {
-    // const colors = this.formState.data.direction.pinnable.gradient_color;
     const colors = this.gradient;
     return 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
@@ -60,9 +64,7 @@ export class RestrictedMessageComponent implements OnInit {
 
   back() {
 
-
     this.formService.setFrameMotionDirection('back');
-    // this.animatedComponetVivibility = false;
 
     setTimeout(() => {
 
@@ -81,12 +83,15 @@ export class RestrictedMessageComponent implements OnInit {
 
   sendRequest() {
     this.formService.setFrameMotionDirection('forward');
-    // this.animatedComponetVivibility = false;
-
     setTimeout(() => {
       this.resultMessage.emit(this.message.value);
     }, 100);
+  }
 
+  onChangeAnimationDirection(evt) {
+    console.log(evt);
+    this.headerTransition['rest-mes-header'] = false;
+    this.headerTransition['rest-mes-header_animation-back'] = true;
   }
 
 }

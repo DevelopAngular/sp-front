@@ -1,5 +1,5 @@
 <div class="category-wrapper">
-  <div class="category-header" [style.background-image]="headerGradient">
+  <div [ngClass]="headerTransition" [style.background-image]="headerGradient">
     <img class="back-button" [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
     <div class="category-header-text">
       <img class="search-icon" [src]="pinnable.icon | resolveAsset">

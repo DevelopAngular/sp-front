@@ -1,5 +1,5 @@
 <div class="rest-mes-wrapper">
-  <div class="rest-mes-header" [style.background-image]="headerGradient">
+  <div [ngClass]="headerTransition" [style.background-image]="headerGradient">
     <img class="back-button" [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
     <div class="rest-mes-header-text">
       <img class="search-icon" [src]="'./assets/Message (White).png' | resolveAsset">
@@ -47,5 +47,5 @@
     </div>
   </div>
 
-  <app-student-footer [formState]="formState" [date]="date"></app-student-footer>
+  <app-student-footer [formState]="formState" [date]="date" (changeAnimationDirectionEvent)="onChangeAnimationDirection($event)"></app-student-footer>
 </div>

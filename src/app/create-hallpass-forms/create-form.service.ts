@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Pinnable } from '../models/Pinnable';
 import { BehaviorSubject } from 'rxjs';
 import { ApiService } from '../services/api.service';
-import {transition} from '@angular/animations';
 
 @Injectable({
   providedIn: 'root'
@@ -13,15 +12,13 @@ export class CreateFormService {
   private transition: any;
   private frameMotionDirection$: BehaviorSubject<any>;
 
-
   constructor(private apiService: ApiService) {
     this.transition = {
       to: -100,
       halfTo: -50,
       from: 100,
       halfFrom: 50,
-      // textColor: '#1F195E',
-      // background: '#FFFFFF'
+      direction: 'forward'
     };
     this.frameMotionDirection$ = new BehaviorSubject(this.transition);
   }
@@ -40,7 +37,7 @@ export class CreateFormService {
     // }
   }
 
-  setFrameMotionDirection(direction: string = 'forward', coloredWith?: string /* It should be radial gradient*/) {
+  setFrameMotionDirection(direction: string = 'forward') {
 
 
     switch (direction) {
@@ -54,24 +51,10 @@ export class CreateFormService {
         this.frameMotionDirection$.next(this.transition);
         break;
       }
-      // case ('setColoredTransition'): {
-      //   this.transition.textColor = '#FFFFFF'
-      //   this.transition.background = coloredWith || '#FFFFFF';
-      //
-      //   this.frameMotionDirection$.next(this.transition);
-      //   // this.frameMotionDirection$.next({ to: -100, halfTo: -50, from: 100, halfFrom: 50});
-      //   break;
-      // }
-      // case ('unsetColoredTransition'): {
-      //   this.transition.textColor = ' #1F195E'
-      //   this.transition.background = '#FFFFFF';
-      //
-      //   this.frameMotionDirection$.next(this.transition);
-      //   // this.frameMotionDirection$.next({ to: -100, halfTo: -50, from: 100, halfFrom: 50});
-      //   break;
-      // }
+
       case ('forward'): {
 
+        this.transition.direction = 'forward';
         this.transition.to = -100;
         this.transition.halfTo = -50;
         this.transition.from = 100;
@@ -83,7 +66,7 @@ export class CreateFormService {
         break;
       }
       case ('back'): {
-
+        this.transition.direction = 'back';
         this.transition.to = 100;
         this.transition.halfTo = 50;
         this.transition.from = -100;

@@ -1,5 +1,4 @@
 import {animate, group, keyframes, query, state, style, transition, trigger} from '@angular/animations';
-import {st} from '@angular/core/src/render3';
 
 export const bumpIn = trigger('pressState', [
   state('down', style({
@@ -14,13 +13,24 @@ export const bumpIn = trigger('pressState', [
 
 export const NextStep = trigger('NextStep', [
   transition(':enter', group([
-
       query('.from-header, .to-header, .category-header, .rest-tar-header, .rest-mes-header', animate('0.7s 0s ease', keyframes([
+          style({
+            background: 'transparent'
+          }),
+          style({
+            background: 'transparent'
+          }),
+          style({
+            background: 'transparent'
+          }),
+        ])), {optional: true}
+      ),
+      query('.from-header-text, .to-header-text, .category-header_animation-back, .category-header-text, .rest-tar-header-text, .rest-mes-header-text', animate('0.7s 0s ease', keyframes([
           style({
             opacity: 0,
           }),
           style({
-            opacity: 0.75,
+            opacity: 0.55,
           }),
           style({
             opacity: 1,
@@ -48,10 +58,32 @@ export const NextStep = trigger('NextStep', [
   transition(':leave', group([
       query('.from-header, .to-header, .category-header, .rest-tar-header, .rest-mes-header', animate('0.7s 0s ease', keyframes([
           style({
+            'z-index': 9
+          }),
+          style({
+            'z-index': 9
+          }),
+          style({
+            'z-index': 9
+          }),
+        ])), {optional: true}
+      ),
+      query(`
+        .from-header-text,
+        .to-header-text,
+        .category-header_animation-back,
+        .rest-tar-header_animation-back,
+        .rest-mes-header_animation-back,
+        .category-header-text,
+        .rest-tar-header-text,
+        .rest-mes-header-text 
+      `,
+      animate('0.7s 0s ease', keyframes([
+          style({
             opacity: 1,
           }),
           style({
-            opacity: 0.75,
+            opacity: 0.55,
           }),
           style({
             opacity: 0,
