@@ -1,15 +1,11 @@
-import {Component, EventEmitter, HostListener, Input, NgZone, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {CreateFormService} from '../../../create-form.service';
-import {BodyShowingUp, HeaderShowingUp, NextStep} from '../../../../animations';
-import {BehaviorSubject} from 'rxjs';
 
 @Component({
   selector: 'app-from-where',
   templateUrl: './from-where.component.html',
-  styleUrls: ['./from-where.component.scss'],
-  animations: [HeaderShowingUp, BodyShowingUp, NextStep]
-
+  styleUrls: ['./from-where.component.scss']
 })
 export class FromWhereComponent implements OnInit {
 
@@ -23,12 +19,6 @@ export class FromWhereComponent implements OnInit {
 
   @Output() selectedLocation: EventEmitter<any> = new EventEmitter<any>();
   @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
-
-  animatedComponetVivibility: boolean = true;
-
-  isDisabled: boolean = false;
-
-  frameMotion$: BehaviorSubject<any>;
 
   shadow: boolean = true;
 
@@ -45,26 +35,20 @@ export class FromWhereComponent implements OnInit {
     }
 
   constructor(
-    private formService: CreateFormService,
-    private _zone: NgZone
+    private formService: CreateFormService
   ) { }
 
   ngOnInit() {
-    this.frameMotion$ = this.formService.getFrameMotionDirection();
   }
 
   locationChosen(location) {
 
-    // this._zone.run(() => {
-    //
-    // })
     this.formService.setFrameMotionDirection('forward');
-    this.animatedComponetVivibility = false;
 
     setTimeout(() => {
       this.formState.previousState = 1;
       this.selectedLocation.emit(location);
-    }, 550);
+    }, 100);
 
 
   }
@@ -72,13 +56,7 @@ export class FromWhereComponent implements OnInit {
 
   back() {
 
-    // this._zone.run(() => {
-    //
-    // })
-    //
     this.formService.setFrameMotionDirection('back');
-    this.animatedComponetVivibility = false;
-
 
 
     setTimeout(() => {
@@ -98,6 +76,6 @@ export class FromWhereComponent implements OnInit {
         this.formState.step = 0;
       }
       this.backButton.emit(this.formState);
-    }, 550);
+    }, 100);
   }
 }

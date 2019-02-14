@@ -11,7 +11,7 @@ import {BehaviorSubject} from 'rxjs';
   selector: 'app-restricted-message',
   templateUrl: './restricted-message.component.html',
   styleUrls: ['./restricted-message.component.scss'],
-  animations: [HeaderShowingUp, BodyShowingUp]
+  // animations: [HeaderShowingUp, BodyShowingUp]
 
 })
 export class RestrictedMessageComponent implements OnInit {
@@ -34,20 +34,31 @@ export class RestrictedMessageComponent implements OnInit {
   toLocation: Location;
 
   message: FormControl;
-  animatedComponetVivibility: boolean = true;
+
   frameMotion$: BehaviorSubject<any>;
+
+  headerTransition = {
+    'rest-mes-header': true,
+    'rest-mes-header_animation-back': false
+  }
 
   constructor(
     private formService: CreateFormService
   ) { }
 
   get headerGradient() {
-    // const colors = this.formState.data.direction.pinnable.gradient_color;
     const colors = this.gradient;
     return 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
 
   ngOnInit() {
+
+
+    if (this.formState.previousStep > this.formState.step) {
+      this.headerTransition['rest-mes-header'] = false;
+      this.headerTransition['rest-mes-header_animation-back'] = true;
+    }
+
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     setTimeout(() => {
         this.messageBox.nativeElement.focus();
@@ -60,9 +71,9 @@ export class RestrictedMessageComponent implements OnInit {
 
   back() {
 
-
     this.formService.setFrameMotionDirection('back');
-    this.animatedComponetVivibility = false;
+    this.headerTransition['rest-mes-header'] = true;
+    this.headerTransition['rest-mes-header_animation-back'] = false;
 
     setTimeout(() => {
 
@@ -73,7 +84,7 @@ export class RestrictedMessageComponent implements OnInit {
         this.formState.state -= 1;
       }
       this.backButton.emit(this.formState);
-    }, 250);
+    }, 100);
 
 
 
@@ -81,12 +92,18 @@ export class RestrictedMessageComponent implements OnInit {
 
   sendRequest() {
     this.formService.setFrameMotionDirection('forward');
-    this.animatedComponetVivibility = false;
-
+    // this.headerTransition['rest-mes-header'] = false;
+    // this.headerTransition['rest-mes-header_animation-back'] = true;
     setTimeout(() => {
       this.resultMessage.emit(this.message.value);
-    }, 250);
+      // this.formService.setFrameMotionDirection('back');
+    }, 100);
+  }
 
+  onChangeAnimationDirection(evt) {
+    console.log(evt);
+    this.headerTransition['rest-mes-header'] = false;
+    this.headerTransition['rest-mes-header_animation-back'] = true;
   }
 
 }

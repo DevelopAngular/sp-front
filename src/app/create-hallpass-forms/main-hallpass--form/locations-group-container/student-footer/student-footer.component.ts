@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { Navigation } from '../../main-hall-pass-form.component';
 import { Location } from '../../../../models/Location';
+import {CreateFormService} from '../../../create-form.service';
 
 @Component({
   selector: 'app-student-footer',
@@ -15,13 +16,16 @@ export class StudentFooterComponent implements OnInit {
 
   @Input() state;
 
+  @Output() changeAnimationDirectionEvent: EventEmitter<any> = new EventEmitter<any>();
   @Output() changeLocation: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
   fromLocation: Location;
   toLocation: Location;
   forInput: boolean;
 
-  constructor() { }
+  constructor(
+    private formService: CreateFormService
+  ) { }
 
   get fromLocationText() {
     return this.fromLocation ? this.fromLocation.title : 'Origin';
@@ -48,30 +52,43 @@ export class StudentFooterComponent implements OnInit {
   }
 
   goToFromWhere() {
-    if (this.state === 'from' || !this.forInput) {
-      return false;
-    }
-    this.formState.previousState = this.formState.state;
-    this.formState.state = 1;
-    this.changeLocation.emit(this.formState);
+    this.changeAnimationDirection();
+    setTimeout(() => {
+      if (this.state === 'from' || !this.forInput) {
+        return false;
+      }
+      this.formState.previousState = this.formState.state;
+      this.formState.state = 1;
+      this.changeLocation.emit(this.formState);
+    }, 100);
   }
 
   goToToWhere() {
-    if (this.state === 'to' || this.state === 'from' || !this.forInput) {
-      return false;
-    }
-    this.formState.previousState = this.formState.state;
-    this.formState.state = 2;
-    this.changeLocation.emit(this.formState);
+    this.changeAnimationDirection();
+    setTimeout(() => {
+      if (this.state === 'to' || this.state === 'from' || !this.forInput) {
+        return false;
+      }
+      this.formState.previousState = this.formState.state;
+      this.formState.state = 2;
+      this.changeLocation.emit(this.formState);
+    }, 100);
   }
 
   goToDate() {
-    this.formState.previousState = this.formState.state;
-    this.formState.step = 1;
-    this.formState.state = 1;
-    this.formState.previousStep = 3;
-    this.formState.quickNavigator = true;
-    this.changeLocation.emit(this.formState);
+    this.changeAnimationDirection();
+    setTimeout(() => {
+      this.formState.previousState = this.formState.state;
+      this.formState.step = 1;
+      this.formState.state = 1;
+      this.formState.previousStep = 3;
+      this.formState.quickNavigator = true;
+      this.changeLocation.emit(this.formState);
+    }, 100);
   }
 
+  private changeAnimationDirection() {
+    this.formService.setFrameMotionDirection('back');
+    this.changeAnimationDirectionEvent.emit(true);
+  }
 }

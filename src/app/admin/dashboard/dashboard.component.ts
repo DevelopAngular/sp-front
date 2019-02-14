@@ -65,7 +65,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    disableBodyScroll(this.elRef.nativeElement);
+    // disableBodyScroll(this.elRef.nativeElement);
     // const _devices = this.draggableContainer.nativeElement.childNodes;
     // this.devices = Array.from(Array(_devices.length).keys()).map(index => _devices[index]);
 

@@ -10,7 +10,6 @@ import {BehaviorSubject} from 'rxjs';
   selector: 'app-to-category',
   templateUrl: './to-category.component.html',
   styleUrls: ['./to-category.component.scss'],
-  animations: [HeaderShowingUp, BodyShowingUp]
 })
 export class ToCategoryComponent implements OnInit {
 
@@ -29,27 +28,25 @@ export class ToCategoryComponent implements OnInit {
   @Output() backButton: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
   pinnable: Pinnable;
-
-  animatedComponetVisibility: boolean = true;
-
-  isDisabled: boolean = false;
+  animationDirection: string = 'forward';
 
   frameMotion$: BehaviorSubject<any>;
+
+  headerTransition = {
+    'category-header': false,
+    'category-header_animation-back': true
+  }
 
   constructor(
     private formService: CreateFormService
   ) { }
 
   get headerGradient() {
-     const colors = this.formState.data.direction.pinnable.gradient_color;
+     const colors =  this.animationDirection === 'back' ? '#FFFFFF, #FFFFFF' :  this.formState.data.direction.pinnable.gradient_color;
      return 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
 
   ngOnInit() {
-    if (this.formState.previousState > this.formState.state) {
-      this.isDisabled = true;
-    }
-
 
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.fromLocation = this.formState.data.direction.from;
@@ -57,26 +54,28 @@ export class ToCategoryComponent implements OnInit {
   }
 
   locationChosen(location) {
-    this.isDisabled = true;
     this.formService.setFrameMotionDirection('forward');
-    // this.animatedComponetVisibility = false;
+    this.headerTransition['category-header'] = true;
+    this.headerTransition['category-header_animation-back'] = false;
     setTimeout(() => {
-      // this.formState.previousState = this.formState.state;
       this.locFromCategory.emit(location);
-    }, 550);
+    }, 100);
 
   }
 
   back() {
+
     this.formService.setFrameMotionDirection('back');
-    this.animatedComponetVisibility = false;
-    this.isDisabled = false;
+    this.headerTransition['category-header'] = false;
+    this.headerTransition['category-header_animation-back'] = true;
+
+    // console.log('BACK BACK BACK ____>');
 
     setTimeout(() => {
       this.formState.previousState = this.formState.state;
       this.formState.state -= 1;
       this.backButton.emit(this.formState);
-    }, 550);
+    }, 100);
   }
 
 }

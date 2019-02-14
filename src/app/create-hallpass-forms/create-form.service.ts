@@ -9,9 +9,19 @@ import { HallPassesService } from '../services/hall-passes.service';
 export class CreateFormService {
 
   isSeen$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
-  private frameMotionDirection$: BehaviorSubject<any> = new BehaviorSubject({ to: -100, from: 100});
+  private transition: any;
+  private frameMotionDirection$: BehaviorSubject<any>;
 
-  constructor(private hallPassService: HallPassesService) { }
+  constructor(private hallPassService: HallPassesService) {
+    this.transition = {
+      to: -100,
+      halfTo: -50,
+      from: 100,
+      halfFrom: 50,
+      direction: 'forward'
+    };
+    this.frameMotionDirection$ = new BehaviorSubject(this.transition);
+  }
 
   getPinnable() {
     return this.hallPassService.getPinnables()
@@ -29,17 +39,42 @@ export class CreateFormService {
 
   setFrameMotionDirection(direction: string = 'forward') {
 
+
     switch (direction) {
       case ('disable'): {
-        this.frameMotionDirection$.next({ to: -100, halfTo: -50, from: 0, halfFrom: 0});
+
+        this.transition.to = -100;
+        this.transition.halfTo = -50;
+        this.transition.from = 0;
+        this.transition.halfFrom = 0;
+
+        this.frameMotionDirection$.next(this.transition);
         break;
       }
+
       case ('forward'): {
-        this.frameMotionDirection$.next({ to: -100, halfTo: -50, from: 100, halfFrom: 50});
+
+        this.transition.direction = 'forward';
+        this.transition.to = -100;
+        this.transition.halfTo = -50;
+        this.transition.from = 100;
+        this.transition.halfFrom = 50;
+
+        this.frameMotionDirection$.next(this.transition);
+
+        // this.frameMotionDirection$.next({ to: -100, halfTo: -50, from: 100, halfFrom: 50});
         break;
       }
       case ('back'): {
-        this.frameMotionDirection$.next({ to: 100, halfTo: 50, from: -100, halfFrom: -50});
+        this.transition.direction = 'back';
+        this.transition.to = 100;
+        this.transition.halfTo = 50;
+        this.transition.from = -100;
+        this.transition.halfFrom = -50;
+
+        this.frameMotionDirection$.next(this.transition);
+
+        // this.frameMotionDirection$.next({ to: 100, halfTo: 50, from: -100, halfFrom: -50});
         break;
       }
     }

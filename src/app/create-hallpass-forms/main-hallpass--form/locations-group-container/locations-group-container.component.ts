@@ -68,6 +68,7 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.FORM_STATE.quickNavigator = false;
 
     // this.FORM_STATE.previousState = 0;
+
     this.data.toLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.to ? this.FORM_STATE.data.direction.to : null;
     this.pinnables = this.formService.getPinnable();
     this.user$ = this.dataService.currentUser;
@@ -75,74 +76,7 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.user$.subscribe((user: User) => this.isStaff = user.isTeacher() || user.isAdmin());
   }
 
-
-  stateTransition(stateNumber: number) {
-
-    // if (stateNumber === this.FORM_STATE.state) {
-    if (this.motionDirection === 'forward') {
-
-         return {
-          to: -100,
-          // halfTo: -50,
-          from: 100,
-          // halfFrom: -50
-        };
-    } else if (this.motionDirection === 'back') {
-      return {
-        to: 100,
-        // halfTo: -50,
-        from: -100,
-        // halfFrom: -50
-      };
-    }
-      // if (stateNumber < this.FORM_STATE.previousState) {
-      //
-      //   return {
-      //     to: 100,
-      //     // halfTo: -50,
-      //     from: -100,
-      //     // halfFrom: -50
-      //   };
-      //
-      // } else if (stateNumber > this.FORM_STATE.previousState) {
-      //
-      //   return {
-      //     to: -100,
-      //     // halfTo: 50,
-      //     from: 100,
-      //     // halfFrom: 50
-      //   };
-      //
-      // }
-    // } else if (stateNumber === this.FORM_STATE.state) {
-    //
-    //   if (stateNumber < this.FORM_STATE.previousState) {
-    //
-    //     return {
-    //       to: -100,
-    //       // halfTo: -50,
-    //       from: -100,
-    //       // halfFrom: -50
-    //     };
-    //
-    //   } else if (stateNumber > this.FORM_STATE.previousState) {
-    //
-    //     return {
-    //       to: 100,
-    //       // halfTo: 50,
-    //       from: 100,
-    //       // halfFrom: 50
-    //     };
-    //
-    //   }
-    // }
-  }
-
-
   fromWhere(location) {
-    // this.setFrameMotion('forward');
-    //
-    // this.motionDirection = 'forward';
 
     if (this.FORM_STATE.data.hasClose) {
        return  this.nextStepEvent.emit(
@@ -169,9 +103,6 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   toWhere(pinnable) {
-    // this.setFrameMotion('forward');
-    //
-    // this.motionDirection = 'forward';
 
     this.pinnable = pinnable;
     this.FORM_STATE.data.direction = {
@@ -198,9 +129,6 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   fromCategory(location) {
-    // this.setFrameMotion('forward');
-    //
-    // this.motionDirection = 'forward';
 
     this.data.toLocation = location;
     this.FORM_STATE.data.direction.to = location;
@@ -213,9 +141,6 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   requestTarget(teacher) {
-    // this.setFrameMotion('forward');
-    //
-    // this.motionDirection = 'forward';
 
     this.data.requestTarget = teacher;
     this.FORM_STATE.data.requestTarget = teacher;
@@ -223,7 +148,6 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   resultMessage(message, denyMessage: boolean = false) {
-    // this.motionDirection = 'forward';
 
     if (!message) {
       message = '';
@@ -253,23 +177,7 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.nextStepEvent.emit(this.FORM_STATE);
   }
 
-  // setFrameMotion(direction: string) {
-  //   if (direction === 'forward') {
-  //     this.frameMotion = {
-  //       to: -100,
-  //       from: 100
-  //     }
-  //   } else {
-  //     this.frameMotion = {
-  //       to: 100,
-  //       from: -100
-  //     }
-  //   }
-  // }
-
   back(event) {
-    // this.setFrameMotion('back');
-    // [this.frameMotion.to, this.frameMotion.from] = [this.frameMotion.from, this.frameMotion.to];
 
     this.FORM_STATE = event;
     this.data.message = null;
