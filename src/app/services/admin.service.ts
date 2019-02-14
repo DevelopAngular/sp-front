@@ -35,7 +35,9 @@ export class AdminService {
   }
 
   getFilteredDashboardData(date: Date) {
-    return this.http.get(`v1/admin/dashboard?start=${date}`);
+    // create a date in format YYYY-MM-DD
+    const dateStr = date.toISOString().substring(0, 10);
+    return this.http.get(`v1/admin/dashboard?start=${dateStr}`);
   }
 
   //// Icons
