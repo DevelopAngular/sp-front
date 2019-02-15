@@ -214,11 +214,11 @@ export const ScaledCard = trigger('ScaledCard', [
   transition(':enter', animate('.7s 0s ease', keyframes([
     style({
       opacity: 0,
-      transform: 'scale(1.2)'
+      transform: 'scale(1.5)'
     }),
     style({
-      opacity: 0,
-      transform: 'scale(1.1)'
+      opacity: 0.3,
+      transform: 'scale(1.25)'
 
     }),
     style({
@@ -232,13 +232,13 @@ export const ScaledCard = trigger('ScaledCard', [
       transform: 'scale(1)'
     }),
     style({
-      opacity: 0,
-      transform: 'scale(0.9)'
+      opacity: 0.3,
+      transform: 'scale(0.75)'
 
     }),
     style({
       opacity: 0,
-      transform: 'scale(0.8)'
+      transform: 'scale(0.5)'
     })
   ])))
 ]);
