@@ -62,7 +62,7 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   ngOnInit() {
 
-    // this.formService.setFrameMotionDirection('disable');
+    this.formService.setFrameMotionDirection('disable');
 
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.FORM_STATE.quickNavigator = false;

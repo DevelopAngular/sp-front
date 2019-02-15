@@ -170,9 +170,12 @@ export class MainHallPassFormComponent implements OnInit {
           break;
         }
         case (4): {
-          this.formSize.width =  `334px`;
+          this.formSize.width =  `425px`;
           this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '412px';
           break;
+          // this.formSize.width =  `334px`;
+          // this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '412px';
+          // break;
         }
       }
       console.log(this.formSize);
