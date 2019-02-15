@@ -11,19 +11,12 @@ import {CreateFormService} from '../../../create-form.service';
 export class ToWhereComponent implements OnInit {
 
   @Input() location;
-
   @Input() formState: Navigation;
-
   @Input() pinnables: Promise<Pinnable[]>;
-
   @Input() isStaff: boolean;
-
   @Input() date;
-
   @Input() studentText;
-
   @Output() selectedPinnable: EventEmitter<any> = new EventEmitter<any>();
-
   @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(
@@ -35,21 +28,14 @@ export class ToWhereComponent implements OnInit {
   }
 
   pinnableSelected(pinnable) {
-
     this.formService.setFrameMotionDirection('forward');
-
     setTimeout(() => {
       this.selectedPinnable.emit(pinnable);
-
     }, 100);
-
-
   }
 
   back() {
-
     this.formService.setFrameMotionDirection('back');
-
     setTimeout(() => {
       if (!!this.date &&
         !!this.studentText &&
@@ -60,17 +46,14 @@ export class ToWhereComponent implements OnInit {
         this.formState.previousStep = 3;
       } else {
         this.formState.previousState = this.formState.state;
-        if (this.formState.formMode.formFactor === 3) {
-          this.formState.step = 1;
+        if (this.formState.formMode.formFactor === 3 && this.formState.data.date.declinable) {
+            this.formState.step = 1;
         } else {
           this.formState.state -= 1;
         }
       }
       //
       this.backButton.emit(this.formState);
-    }, 100)
-
-
+    }, 100);
   }
-
 }

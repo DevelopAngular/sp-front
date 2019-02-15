@@ -5,7 +5,7 @@ import { HttpService } from '../../services/http-service';
 import { UserService } from '../../services/user.service';
 import { BehaviorSubject } from 'rxjs';
 import { switchMap } from 'rxjs/internal/operators';
-import { ApiService } from '../../services/api.service';
+import { AdminService } from '../../services/admin.service';
 
 @Component({
   selector: 'app-accounts',
@@ -26,13 +26,13 @@ export class AccountsComponent implements OnInit {
     public matDialog: MatDialog,
     private userService: UserService,
     private http: HttpService,
-    private apiService: ApiService
+    private adminService: AdminService
   ) { }
 
   ngOnInit() {
 
     this.http.globalReload$.pipe(
-      switchMap(() => this.apiService.getAdminAccounts())
+      switchMap(() => this.adminService.getAdminAccounts())
     )
     .subscribe((u_list: any) => {
       console.log(u_list, Object.values(u_list));

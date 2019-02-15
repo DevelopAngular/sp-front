@@ -3,6 +3,7 @@ import {MatDialog} from '@angular/material';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {School} from '../models/School';
 import {HttpService} from '../services/http-service';
+import {StorageService} from '../services/storage.service';
 
 @Component({
   selector: 'app-school-toggle-bar',
@@ -17,13 +18,14 @@ export class SchoolToggleBarComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
-    private http: HttpService
+    private http: HttpService,
+    private storage: StorageService
   ) { }
 
   ngOnInit() {
-    this.currentSchool = localStorage.getItem('currentSchool')
+    this.currentSchool = this.storage.getItem('currentSchool')
                           ?
-                         JSON.parse(localStorage.getItem('currentSchool'))
+                         JSON.parse(this.storage.getItem('currentSchool'))
                           :
                          this.schools[0];
     this.http.schoolIdSubject.next(this.currentSchool);
@@ -43,9 +45,9 @@ export class SchoolToggleBarComponent implements OnInit {
       });
       optionDialog.afterClosed().subscribe(data => {
         if (data) {
-          localStorage.setItem('currentSchool', JSON.stringify(data));
+          this.storage.setItem('currentSchool', JSON.stringify(data));
           this.currentSchool = data;
-          console.log(data)
+          this.http.school = JSON.parse(this.storage.getItem('currentSchool'));
         }
         this.http.schoolIdSubject.next(this.currentSchool);
       });

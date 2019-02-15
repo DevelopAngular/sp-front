@@ -8,7 +8,8 @@ import { disableBodyScroll } from 'body-scroll-lock';
 import * as _ from 'lodash';
 import {PassCardComponent} from '../../pass-card/pass-card.component';
 import {MatDialog} from '@angular/material';
-import {User} from '../../models/User';
+import { Util } from '../../../Util';
+import {HallPassesService} from '../../services/hall-passes.service';
 
 
 @Component({
@@ -35,6 +36,7 @@ export class SearchComponent implements OnInit {
 
   constructor(
       private httpService: HttpService,
+      private hallPassService: HallPassesService,
       private pdf: PdfGeneratorService,
       private elRef: ElementRef,
       public dialog: MatDialog
@@ -47,6 +49,8 @@ export class SearchComponent implements OnInit {
 
   ngOnInit() {
     disableBodyScroll(this.elRef.nativeElement);
+    let wrongDate = Util.formatDateTime(new Date('2019-01-04T10:18:56Z'));
+        console.log('WRONG DATE +++>>', wrongDate);
   }
 
   search() {
@@ -106,7 +110,7 @@ export class SearchComponent implements OnInit {
 
       }
 
-      this.httpService.get(url).pipe(filter(res => !!res))
+      this.hallPassService.searchPasses(url).pipe(filter(res => !!res))
         .subscribe((data: HallPass[]) => {
           console.log('DATA', data);
           this.passes = data;
@@ -122,9 +126,9 @@ export class SearchComponent implements OnInit {
               travelType = 'Both';
             }
             const reportDate = new Date(hallPass.created);
-            const time = reportDate.getHours() < 12
+            const time = reportDate.getHours() <= 12
               ?
-              `${reportDate.getHours()}:${reportDate.getMinutes() < 10 ? '0' : ''}${reportDate.getMinutes()} AM`
+              `${reportDate.getHours()}:${reportDate.getMinutes() < 10 ? '0' : ''}${reportDate.getMinutes()} ${reportDate.getHours() === 12 ? 'PM' : 'AM'}`
               :
               `${reportDate.getHours() - 12}:${reportDate.getMinutes() < 10 ? '0' : ''}${reportDate.getMinutes()} PM`;
             const prettyReportDate = `${reportDate.getMonth() + 1}/${reportDate.getDate()}  ${time}`;

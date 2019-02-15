@@ -2,9 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, Directive, HostListener
 import { HttpService } from '../services/http-service';
 import { Location } from '../models/Location';
 import {finalize} from 'rxjs/operators';
-import {DragulaService} from 'ng2-dragula';
-import * as _ from 'lodash';
-import {ApiService} from '../services/api.service';
+import {LocationsService} from '../services/locations.service';
 
 
 export interface Paged<T> {
@@ -21,49 +19,21 @@ export interface Paged<T> {
 
 export class LocationTableComponent implements OnInit {
 
-  @Input()
-  category: string;
-
-  @Input()
-  placeholder: string;
-
-  @Input()
-  type: string;
-
-  @Input()
-  showStars: string;
-
-  @Input()
-  showFavorites: boolean;
-
-  @Input()
-  staticChoices: any[];
-
-  @Input()
-  forStaff: boolean;
-
-  @Input()
-  forLater: boolean;
-
-  @Input()
-  hasLocks: boolean;
-
-  @Input()
-  invalidLocation: string | number;
-
-  @Input()
-  noRightStar: boolean;
-
+  @Input() category: string;
+  @Input() placeholder: string;
+  @Input() type: string;
+  @Input() showStars: string;
+  @Input() showFavorites: boolean;
+  @Input() staticChoices: any[];
+  @Input() forStaff: boolean;
+  @Input() forLater: boolean;
+  @Input() hasLocks: boolean;
+  @Input() invalidLocation: string | number;
+  @Input() noRightStar: boolean;
   @Input() height: string = '140px';
-
   @Input() heightLeftTable: string = '189px';
-
-  @Input()
-  inputWidth: string = '200px';
-
-  @Input()
-  horizontalTable: boolean = true;
-
+  @Input() inputWidth: string = '200px';
+  @Input() isEdit: boolean = false;
   @Input() rightHeaderText: boolean = false;
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
@@ -71,6 +41,13 @@ export class LocationTableComponent implements OnInit {
 
   leftShadow: boolean = true;
   rightShadow: boolean = true;
+
+  choices: any[] = [];
+  starredChoices: any[] = [];
+  search: string = '';
+  nextChoices: string = '';
+  favoritesLoaded: boolean;
+  saveChoices;
 
   @HostListener('scroll', ['$event'])
   onScroll(event) {
@@ -84,7 +61,8 @@ export class LocationTableComponent implements OnInit {
       this.leftShadow = false;
     }
     if (event.target.scrollTop === limit && this.nextChoices) {
-      this.http.get<Paged<Location>>(this.nextChoices).pipe(finalize(() => this.leftShadow = true))
+        this.locationService.searchLocationsWithConfig(this.nextChoices)
+      .pipe(finalize(() => this.leftShadow = true))
         .toPromise().then(p => {
           p.results.map(element => this.choices.push(element));
           this.nextChoices = p.next;
@@ -103,32 +81,33 @@ export class LocationTableComponent implements OnInit {
           this.rightShadow = false;
       }
   }
-  choices: any[] = [];
-  starredChoices: any[] = [];
-  search: string = '';
-  nextChoices: string = '';
-  favoritesLoaded: boolean;
 
-  constructor(private http: HttpService, private apiService: ApiService) {
+  constructor(
+      private http: HttpService,
+      private locationService: LocationsService
+  ) {
   }
 
   ngOnInit() {
-      if(this.staticChoices){
+      if (this.staticChoices) {
       this.choices = this.staticChoices;
-    } else{
-      this.http.get<Paged<Location>>('v1/'
-        +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
-          +(!!this.category ? ('?category=' +this.category +'&') : '?')
-        ))
-        +'limit=10'
-        +((this.type==='location' && this.showFavorites)?'&starred=false':''))
+    } else {
+
+        const url = 'v1/'
+            +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
+                +(!!this.category ? ('?category=' +this.category +'&') : '?')
+            ))
+            +'limit=10'
+            +((this.type==='location' && this.showFavorites)?'&starred=false':'');
+
+        this.locationService.searchLocationsWithConfig(url)
         .toPromise().then(p => {
           this.choices = p.results;
           this.nextChoices = p.next;
         });
     }
     if(this.type==='location'){
-      this.apiService.getFavoriteLocations().toPromise().then((stars:any[]) => {
+      this.locationService.getFavoriteLocations().toPromise().then((stars:any[]) => {
         this.starredChoices = stars.map(val => Location.fromJSON(val));
         this.favoritesLoaded = true;
       });
@@ -137,7 +116,7 @@ export class LocationTableComponent implements OnInit {
 
   updateOrderLocation(locations) {
     const body = {'locations': locations.map(loc => loc.id)};
-    this.apiService.updateFavoriteLocations(body).subscribe();
+    this.locationService.updateFavoriteLocations(body).subscribe();
   }
 
 
@@ -146,26 +125,36 @@ export class LocationTableComponent implements OnInit {
     // if(this.staticChoices){
     //   this.choices = this.staticChoices.filter(element => {return (element.display_name.toLowerCase().includes(search) || element.first_name.toLowerCase().includes(search) || element.last_name.toLowerCase().includes(search))})
     // } else{
-      if(search!==''){
-        this.http.get<Paged<Location>>('v1/'
-        +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
-          +(!!this.category ? ('?category=' +this.category +'&') : '?')
-        ))
-        +'limit=4'
-        +'&search=' +search
-        +((this.type==='location' && this.showFavorites)?'&starred=false':''))
+      if (search !== '') {
+
+        const url = 'v1/'
+            +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
+                +(!!this.category ? ('?category=' +this.category +'&') : '?')
+            ))
+            +'limit=4'
+            +'&search=' +search
+            +((this.type==='location' && this.showFavorites)?'&starred=false':'');
+
+        this.locationService.searchLocationsWithConfig(url)
         .toPromise().then(p => {
           this.choices = this.filterResults(p.results);
         });
-      } else{
-        this.http.get<Paged<Location>>('v1/'
-        +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
-          +(!!this.category ? ('?category=' +this.category +'&') : '?')
-        ))
-        +'limit=10'
-        +(this.type==='location'?'&starred=false':''))
+      } else {
+
+        const url = 'v1/'
+            +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
+                +(!!this.category ? ('?category=' +this.category +'&') : '?')
+            ))
+            +'limit=10'
+            +(this.type==='location'?'&starred=false':'');
+
+          this.locationService.searchLocationsWithConfig(url)
         .toPromise().then(p => {
-          this.choices = this.filterResults(p.results);
+          if (this.staticChoices) {
+            this.choices = this.filterResults(this.staticChoices);
+          } else {
+            this.choices = this.filterResults(p.results);
+          }
           this.nextChoices = p.next;
           this.search = '';
         });
@@ -186,7 +175,7 @@ export class LocationTableComponent implements OnInit {
   }
 
   star(event) {
-    if (!this.horizontalTable) {
+    if (!this.isEdit) {
       return this.choiceSelected(event);
     }
     if(event.starred){

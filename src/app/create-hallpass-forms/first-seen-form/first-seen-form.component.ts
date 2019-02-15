@@ -11,7 +11,9 @@ import { Duration } from '../../models/Duration';
 import { HallPass } from '../../models/HallPass';
 import { Request } from '../../models/Request';
 import {Invitation} from '../../models/Invitation';
-import {ApiService} from '../../services/api.service';
+import {AdminService} from '../../services/admin.service';
+import {HallPassesService} from '../../services/hall-passes.service';
+import {RequestsService} from '../../services/requests.service';
 
 
 @Component({
@@ -61,7 +63,9 @@ export class FirstSeenFormComponent implements OnInit {
   public pinnables: Promise<Pinnable[]>;
 
   constructor(
-    private apiService: ApiService,
+    private adminService: AdminService,
+    private hallPassService: HallPassesService,
+    private requestService: RequestsService,
     private dataService: DataService,
     public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
@@ -69,7 +73,7 @@ export class FirstSeenFormComponent implements OnInit {
   ) {
     this.declinable = new FormControl(true);
     this.declinable.valueChanges.subscribe(res => this.isDeclinable = res);
-    this.pinnables = this.apiService.getPinnables().toPromise().then(json => json.map(raw => Pinnable.fromJSON(raw)));
+    this.pinnables = this.hallPassService.getPinnables().toPromise().then(json => json.map(raw => Pinnable.fromJSON(raw)));
   }
 
   get fromGradient() {
@@ -459,7 +463,7 @@ export class FirstSeenFormComponent implements OnInit {
       'travel_type': this.travelType,
       'teacher': this.toLocation.teachers[0].id
     };
-    this.apiService.createRequest(body).subscribe((data) => {
+    this.requestService.createRequest(body).subscribe((data) => {
       // console.log("Request POST Data: ", data);
       this.dialogRef.close(Request.fromJSON(data));
     });
@@ -474,7 +478,7 @@ export class FirstSeenFormComponent implements OnInit {
       'travel_type': this.travelType
     };
 
-    this.apiService.createPass(body).subscribe((data) => {
+    this.hallPassService.createPass(body).subscribe((data) => {
       // console.log("Request POST Data: ", data);
       this.dialogRef.close(HallPass.fromJSON(data));
     });

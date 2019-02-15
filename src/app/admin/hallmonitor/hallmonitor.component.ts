@@ -14,7 +14,7 @@ import {Util} from '../../../Util';
 import {map, toArray} from 'rxjs/operators';
 import {switchMap, tap} from 'rxjs/internal/operators';
 import { disableBodyScroll } from 'body-scroll-lock';
-import {ApiService} from '../../services/api.service';
+import {AdminService} from '../../services/admin.service';
 
 
 
@@ -54,7 +54,7 @@ export class HallmonitorComponent implements OnInit {
         public dialog: MatDialog,
         private liveDataService: LiveDataService,
         private http: HttpService,
-        private apiService: ApiService,
+        private adminService: AdminService,
         private elRef: ElementRef
 
     ) {
@@ -222,7 +222,7 @@ export class HallmonitorComponent implements OnInit {
   private getReports(date?: Date) {
     const range = this.liveDataService.getDateRange(date);
     console.log(range);
-    date ? this.apiService.searchReports(range.end.toISOString(), range.start.toISOString()) : this.apiService.getReports()
+    date ? this.adminService.searchReports(range.end.toISOString(), range.start.toISOString()) : this.adminService.getReports()
       .pipe(
         map((list: any[]) => {
 

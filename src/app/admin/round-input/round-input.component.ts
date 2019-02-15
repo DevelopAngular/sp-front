@@ -59,7 +59,7 @@ export class RoundInputComponent implements OnInit {
         this.input.nativeElement.focus();
         // this.changeAction(this.input.nativeElement, true);
       }
-    }, 500)
+    }, 500);
 
     if (this.selectReset$) {
       this.selectReset$.subscribe((_value: string) => {
@@ -98,12 +98,12 @@ export class RoundInputComponent implements OnInit {
         data: {'type': this.type.substring(5), 'selections': this.selections, 'toggleState': this.toggleState}
       });
 
-      dateDialog.afterOpen().subscribe(()=>{this.selected = true;});
+      dateDialog.afterOpen().subscribe(() => {this.selected = true;});
 
       dateDialog.afterClosed().subscribe(data =>{
         if (data) {
           this.value = data['text'];
-          this.selections = data['selection']
+          this.selections = data['selection'];
           this.toggleState = data['toggleState'];
           this.onselectionupdate.emit(this.selections);
           this.ontoggleupdate.emit(this.toggleState);
@@ -114,7 +114,7 @@ export class RoundInputComponent implements OnInit {
 
   changeAction(inp: HTMLInputElement, reset?: boolean) {
     if (reset) {
-      this.selected = reset;
+      // this.selected = reset;
       inp.value = '';
       inp.focus();
     }

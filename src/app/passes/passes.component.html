@@ -14,7 +14,7 @@
               [hoverColor]="'#00b476'"
               [fontSize]="'15px'"
               [cursor]="'pointer'"
-              (click)="isSeen$.value ? showMainForm(false) : showFirstSeenForm(false)">Now
+              (click)="showMainForm(false)">Now
             </app-gradient-button>
             <app-gradient-button
               [minWidth]="'121px'"
@@ -22,7 +22,7 @@
               [hoverColor]="'#00b476'"
               [fontSize]="'15px'"
               [cursor]="'pointer'"
-              (click)="isSeen$.value ? showMainForm(true) : showFirstSeenForm(true)">Future
+              (click)="showMainForm(true)">Future
             </app-gradient-button>
           </div>
         </app-display-card>

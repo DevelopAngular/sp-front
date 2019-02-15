@@ -1,14 +1,15 @@
 <div class="rest-mes-wrapper">
-  <div class="rest-mes-header" [style.background-image]="headerGradient" *ngIf="animatedComponetVivibility"  [@HeaderShowingUp]>
+  <div [ngClass]="headerTransition" [style.background-image]="headerGradient">
     <img class="back-button" [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
     <div class="rest-mes-header-text">
       <img class="search-icon" [src]="'./assets/Message (White).png' | resolveAsset">
       <div class="text">Message</div>
     </div>
   </div>
-  <div class="content-wrapper" *ngIf="animatedComponetVivibility" [@BodyShowingUp]="{value: '', params: frameMotion$ | async}">
+  <div class="content-wrapper">
     <div class="rest-mes-content">
      <textarea
+             #messageBox
              class="message-box"
              [rows]="4"
              [cols]="30"
@@ -18,7 +19,6 @@
              [formControl]="message"
              [style.width]="'350px'"
              [style.max-height]="date ? '250px' : '270px'"
-             autofocus
      >
     </textarea>
       <div class="buttons">
@@ -47,5 +47,5 @@
     </div>
   </div>
 
-  <app-student-footer [formState]="formState" [date]="date" *ngIf="animatedComponetVivibility" [@HeaderShowingUp]></app-student-footer>
+  <app-student-footer [formState]="formState" [date]="date" (changeAnimationDirectionEvent)="onChangeAnimationDirection($event)"></app-student-footer>
 </div>

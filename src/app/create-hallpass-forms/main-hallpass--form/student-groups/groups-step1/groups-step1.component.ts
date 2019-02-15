@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {StudentList} from '../../../../models/StudentList';
 import {User} from '../../../../models/User';
-import {ApiService} from '../../../../services/api.service';
+import {UserService} from '../../../../services/user.service';
 
 @Component({
   selector: 'app-groups-step1',
@@ -23,7 +23,7 @@ export class GroupsStep1Component implements OnInit {
   // public selectedGroup: StudentList;
   // public selectedStudents: User[] = [];
 
-  constructor(private apiService: ApiService) { }
+  constructor(private userService: UserService) { }
 
   ngOnInit() {
 
@@ -100,7 +100,7 @@ export class GroupsStep1Component implements OnInit {
     this.selectedGroup = null;
     this.formState.data.selectedStudents = evt;
     this.formState.state = 1;
-    this.apiService.getStudentGroups()
+    this.userService.getStudentGroups()
         .subscribe((groups: StudentList[]) => {
             this.groups = groups;
         });

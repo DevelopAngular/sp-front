@@ -14,7 +14,7 @@ import { RequestCardComponent } from '../request-card/request-card.component';
 import { filter } from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
-import { ApiService } from '../services/api.service';
+import {RequestsService} from '../services/requests.service';
 
 @Component({
   selector: 'app-invitation-card',
@@ -47,7 +47,7 @@ export class InvitationCardComponent implements OnInit {
       public dialogRef: MatDialogRef<InvitationCardComponent>,
       @Inject(MAT_DIALOG_DATA) public data: any,
       public dialog: MatDialog,
-      private apiService: ApiService,
+      private requestService: RequestsService,
       public dataService: DataService,
       private _zone: NgZone,
       private loadingService: LoadingService,
@@ -115,7 +115,7 @@ export class InvitationCardComponent implements OnInit {
       'travel_type' : this.selectedTravelType
     };
 
-    this.apiService.createInvitation(body).subscribe((data) => {
+    this.requestService.createInvitation(body).subscribe((data) => {
       this.dialogRef.close();
     });
   }
@@ -127,7 +127,7 @@ export class InvitationCardComponent implements OnInit {
       'origin' : this.selectedOrigin.id
     };
 
-    this.apiService.acceptInvitation(this.invitation.id, body).subscribe((data: any) => {
+    this.requestService.acceptInvitation(this.invitation.id, body).subscribe((data: any) => {
       console.log('[Invitation Accepted]: ', data);
       this.dialogRef.close();
     });
@@ -202,7 +202,7 @@ export class InvitationCardComponent implements OnInit {
           const body = {
             'message' : ''
           };
-          this.apiService.denyInvitation(this.invitation.id, body).subscribe((httpData) => {
+          this.requestService.denyInvitation(this.invitation.id, body).subscribe((httpData) => {
             console.log('[Invitation Denied]: ', httpData);
             this.dialogRef.close();
           });
@@ -210,7 +210,7 @@ export class InvitationCardComponent implements OnInit {
           const body = {
             'message' : ''
           };
-          this.apiService.cancelInvitation(this.invitation.id, body).subscribe((httpData) => {
+          this.requestService.cancelInvitation(this.invitation.id, body).subscribe((httpData) => {
             console.log('[Invitation Cancelled]: ', httpData);
             this.dialogRef.close();
           });

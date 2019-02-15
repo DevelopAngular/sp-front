@@ -2,6 +2,9 @@ import {Component, OnInit, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {FormControl, FormGroup} from '@angular/forms';
 import {HttpService} from '../../services/http-service';
+import {User} from '../../models/User';
+import {Observable, zip} from 'rxjs';
+import {UserService} from '../../services/user.service';
 
 @Component({
   selector: 'app-accounts-dialog',
@@ -18,12 +21,18 @@ export class AccountsDialogComponent implements OnInit {
   public buttonText: string;
   public controlsIteratable: any[];
   public form: FormGroup;
-  private beforeClosedHook: Function;
+  public selectedUsers: User[];
+
+
+  private beforeClosedHook: () => Observable<any>;
+
+
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private DR: MatDialogRef<AccountsDialogComponent>,
-    private http: HttpService
+    private http: HttpService,
+    private userService: UserService
   ) { }
 
   ngOnInit() {
@@ -52,15 +61,8 @@ export class AccountsDialogComponent implements OnInit {
         this.form = new FormGroup(group);
         this.controlsIteratable = Object.values(restrictions);
         this.beforeClosedHook = function() {
-          restrictionsFor.forEach((user) => {
-            this.http
-                  .post(`v1/users/${user['#Id']}/roles`, this.form.value)
-                  .subscribe((res) => {
-                    console.log(res);
-                  });
-          });
-
-        }
+          return zip(restrictionsFor.map((user) => this.userService.createUserRoles(user['#Id'], this.form.value)));
+        };
         break;
       }
       case 'remove' :
@@ -84,18 +86,34 @@ export class AccountsDialogComponent implements OnInit {
         this.buttonColor = '#022F68, #2F66AB';
         this.palette = `radial-gradient(circle at 80% 67%, ${this.buttonColor})`;
         break
-      case 'create':
+      case 'create': {
+
+        const profileHeaderName = this.data.role === '_profile_admin' ? 'Administrator' : this.data.role === '_profile_teacher' ? 'Teacher' : 'Student';
+
         this.layout = 'create';
-        this.header = 'Create Account to Administrator Profile',
+        this.header = `Add Account to ${profileHeaderName} Profile`;
         this.buttonText = 'Add Accounts to Profile';
         this.buttonColor = '#03cf31, #00b476';
         this.palette = `radial-gradient(circle at 80% 67%, ${this.buttonColor})`;
-    };
+
+        this.beforeClosedHook = function() {
+          let role: any = this.data.role.split('_');
+          role = role[role.length - 1];
+          console.log('======>>>>>', role, this.selectedUsers);
+          return zip(...this.selectedUsers.map((user) => this.userService.addUserToProfile(user.id, role)));
+        };
+      }
+    }
+  }
+  setSelectedUsers(evt) {
+    this.selectedUsers = evt;
   }
   closeDialog() {
 
-    this.beforeClosedHook();
+    this.beforeClosedHook().subscribe((res) => {
 
-    this.DR.close('closed');
+      this.DR.close(res);
+
+    });
   }
 }

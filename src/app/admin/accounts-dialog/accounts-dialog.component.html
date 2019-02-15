@@ -69,8 +69,9 @@
           </p>
           <div class="">
             <app-profiles-search
-              [role]="data.role">
-
+              [role]="data.role"
+              (onUpdate)="setSelectedUsers($event)"
+            >
             </app-profiles-search>
           </div>
         </div>

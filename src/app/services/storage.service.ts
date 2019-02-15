@@ -5,6 +5,8 @@ import { Injectable } from '@angular/core';
 })
 export class StorageService {
 
+  memoryStore: any = {};
+
   constructor() { }
 
   confirm(): boolean {
@@ -18,5 +20,42 @@ export class StorageService {
       } catch (exception) {
         return false;
       }
+  }
+
+  getItem(key) {
+    if (this.confirm()) {
+      return localStorage.getItem(key);
+    } else {
+        if (!this.memoryStore[key]) {
+            return null;
+        }
+        return this.memoryStore[key];
+    }
+  }
+
+  setItem(key, data) {
+      if (this.confirm()) {
+        return localStorage.setItem(key, data);
+      } else {
+          if (this.memoryStore[key]) {
+              this.removeItem(key);
+          }
+          return this.memoryStore[key] = data;
+      }
+  }
+
+  removeItem(key) {
+      if (this.confirm()) {
+        return localStorage.removeItem(key);
+      }
+      return delete this.memoryStore[key];
+  }
+
+  clear() {
+    if (this.confirm()) {
+      return localStorage.clear();
+    } else {
+      this.memoryStore = {};
+    }
   }
 }
