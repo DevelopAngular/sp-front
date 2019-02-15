@@ -295,14 +295,16 @@ export class OverlayContainerComponent implements OnInit {
           this.overlayType === 'edit';
   }
     ngOnInit() {
-      disableBodyScroll(this.elRef.nativeElement, {
+      disableBodyScroll(this.elRef.nativeElement,
+          {
         allowTouchMove: (el) => {
           while (el && el !== this.elRef.nativeElement) {
             el = el.parentNode;
             return true;
           }
         }
-      });
+      }
+      );
       this.buildForm();
 
       this.overlayType = this.dialogData['type'];
