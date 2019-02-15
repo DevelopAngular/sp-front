@@ -53,6 +53,7 @@ export class TeacherFooterComponent implements OnInit {
         return false;
      }
       this.formState.previousState = this.formState.state;
+      this.formState.fromState = this.formState.state;
       this.formState.state = 1;
       this.changeLocation.emit(this.formState);
   }

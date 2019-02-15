@@ -62,7 +62,7 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   ngOnInit() {
 
-    // this.formService.setFrameMotionDirection('disable');
+    this.formService.setFrameMotionDirection('disable');
 
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.FORM_STATE.quickNavigator = false;
@@ -96,8 +96,12 @@ export class LocationsGroupContainerComponent implements OnInit {
     if (this.FORM_STATE.state < this.FORM_STATE.previousState) {
         [this.FORM_STATE.state, this.FORM_STATE.previousState] = [this.FORM_STATE.previousState, this.FORM_STATE.state];
     } else {
-       this.FORM_STATE.previousState = States.from;
-       this.FORM_STATE.state = States.toWhere;
+        if (this.FORM_STATE.fromState > 1) {
+            this.FORM_STATE.state = this.FORM_STATE.fromState;
+        } else {
+            this.FORM_STATE.state = States.toWhere;
+        }
+        this.FORM_STATE.previousState = States.from;
 
     }
   }

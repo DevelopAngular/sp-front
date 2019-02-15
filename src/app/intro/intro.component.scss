@@ -120,12 +120,16 @@
     max-height: 680px;
     .for-student_3 {
       .form {
-        width: 670px;
-        height: 370px;
+        width: 430px;
+        height: 500px;
         margin: 20px;
         box-sizing: content-box;
         box-shadow: 0 0 5px 3px rgba(0, 0,0 , .1);
         border-radius: 10px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
       .title {
         padding: 50px 0 35px 0;
@@ -142,7 +146,7 @@
         padding: 3%;
         display: flex;
         flex-wrap: wrap;
-        justify-content: center;
+        //justify-content: center;
         .pinnable {
           padding: 7px;
         }
@@ -155,13 +159,28 @@
 
       .divider {
         width: 100%;
-        height: 50px;
+        height: 65px;
         margin: 0 0 0 0;
         display: flex;
         flex-direction: row;
         align-items: center;
         box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
         position: relative;
+        &__footer {
+          //position: absolute;
+          //bottom: 0;
+          flex: 1 1 auto;
+          display: flex;
+          //flex-direction: column;
+          align-items: flex-end;
+          justify-content: center;
+          //padding-bottom: 20px;
+          .shadow {
+            padding: 20px 0;
+            width: 100%;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+          }
+        }
       }
 
       .divider-header{
@@ -189,7 +208,7 @@
       }
 
       .divider-text {
-        color: white;
+        color: #1F195E;
         font-family: 'Helvetica Neue', sans-serif;
         font-size: 16px;
         font-weight: bold;

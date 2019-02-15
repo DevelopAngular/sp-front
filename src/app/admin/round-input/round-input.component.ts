@@ -86,7 +86,7 @@ export class RoundInputComponent implements OnInit {
           this.value = dates['text'];
           this.toDate = dates['to'];
           this.fromDate = dates['from'];
-          this.ontextupdate.emit({'to':dates['to'], 'from': dates['from']});
+          this.ontextupdate.emit({'to': dates['to'], 'from': dates['from']});
         }
       });
     } else if (selected && this.type.includes('multi')) {
@@ -100,7 +100,7 @@ export class RoundInputComponent implements OnInit {
 
       dateDialog.afterOpen().subscribe(() => {this.selected = true;});
 
-      dateDialog.afterClosed().subscribe(data =>{
+      dateDialog.afterClosed().subscribe(data => {
         if (data) {
           this.value = data['text'];
           this.selections = data['selection'];
