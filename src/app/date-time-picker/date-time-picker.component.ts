@@ -39,9 +39,10 @@ export class DateTimePickerComponent implements OnInit, OnDestroy{
     let omins = this.default.getMinutes();
 
     let invalid = false;
-
-    if(newMoment.getDate() == this.min.getDate() && newMoment.getMonth() == this.min.getMonth()){
-      invalid = (nhrs < ohrs) || (nhrs == ohrs && nmins < omins)
+    if (this.min) {
+      if (newMoment.getDate() == this.min.getDate() && newMoment.getMonth() == this.min.getMonth()) {
+          invalid = (nhrs < ohrs) || (nhrs == ohrs && nmins < omins);
+      }
     }
 
 
@@ -74,7 +75,9 @@ export class DateTimePickerComponent implements OnInit, OnDestroy{
   }
 
   get dateRangeText() {
-    return Util.formatDateTimeForDateRange(this._selectedMoment, this._selectedMoment_2ndCal);
+    if (this._selectedMoment) {
+      return Util.formatDateTimeForDateRange(this._selectedMoment, this._selectedMoment_2ndCal);
+    }
   }
 
   ngOnInit() {

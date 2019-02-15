@@ -24,7 +24,7 @@
     </div>
 
   </div>
-  <div class="fixed-card" style="z-index: 35" [style.width]="formSize.width" [style.height]="formSize.height" *ngIf="FORM_STATE.step === 4" [@ScaledCard] (@ScaledCard.start)="setFormSize()">
+  <div class="fixed-card" [style.width]="formSize.width" [style.height]="formSize.height" *ngIf="FORM_STATE.step === 4" [@ScaledCard] (@ScaledCard.start)="setFormSize()">
     <!--<pre>{{formSize | json}}</pre>-->
     <app-form-factor-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-form-factor-container>
   </div>
