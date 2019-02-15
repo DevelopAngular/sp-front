@@ -259,31 +259,38 @@
           <div>
 
             <div class="form">
-              <div class="locs">
-                <app-gradient-button
-                  [minWidth]="'135px'"
-                  [minHeight]="'62px'"
-                  [fontSize]="'14px'"
-                  [disabled]="true"
-                >{{ 'Jefferson' }}
-                </app-gradient-button>
+              <!--<div class="locs">-->
+                <!--<app-gradient-button-->
+                  <!--[minWidth]="'135px'"-->
+                  <!--[minHeight]="'62px'"-->
+                  <!--[fontSize]="'14px'"-->
+                  <!--[disabled]="true"-->
+                <!--&gt;{{ 'Jefferson' }}-->
+                <!--</app-gradient-button>-->
 
-                <img class="arrow" [src]="'./assets/Arrow (Green).png' | resolveAsset">
+                <!--<img class="arrow" [src]="'./assets/Arrow (Green).png' | resolveAsset">-->
 
-                <app-gradient-button
-                  [gradient]="'#56617D, #74839B'"
-                  [minWidth]="'135px'"
-                  [minHeight]="'62px'"
-                  [fontSize]="'14px'"
-                  [disabled]="true"
-                > {{ 'To' }}
-                </app-gradient-button>
-              </div>
+                <!--<app-gradient-button-->
+                  <!--[gradient]="'#56617D, #74839B'"-->
+                  <!--[minWidth]="'135px'"-->
+                  <!--[minHeight]="'62px'"-->
+                  <!--[fontSize]="'14px'"-->
+                  <!--[disabled]="true"-->
+                <!--&gt; {{ 'To' }}-->
+                <!--</app-gradient-button>-->
+              <!--</div>-->
 
-              <div class="divider" [style.background-image]="'radial-gradient(circle at 73% 71%, #606981, #CBD5E5)'">
-                <img class="back-button" [src]="'./assets/Back Button (Transparent).png' | resolveAsset">
+              <!--<div class="divider" [style.background-image]="'radial-gradient(circle at 73% 71%, #606981, #CBD5E5)'">-->
+                <!--<img class="back-button" [src]="'./assets/Back Button (Transparent).png' | resolveAsset">-->
+                <!--<div class="divider-header">-->
+                  <!--<img class="divider-icon" [src]="'./assets/Search (White).png' | resolveAsset">-->
+                  <!--<div class="divider-text">{{'To where ?'}}</div>-->
+                <!--</div>-->
+              <!--</div>-->
+              <div class="divider">
+                <!--<img class="back-button" [src]="'./assets/Back Button (Transparent).png' | resolveAsset">-->
                 <div class="divider-header">
-                  <img class="divider-icon" [src]="'./assets/Search (White).png' | resolveAsset">
+                  <img class="divider-icon" [src]="'./assets/Search (Blue).png' | resolveAsset">
                   <div class="divider-text">{{'To where ?'}}</div>
                 </div>
               </div>
@@ -294,8 +301,13 @@
                   </div>
                 </div>
               </div>
+              <div class="divider divider__footer">
+                <div class="divider-header shadow">
+                  <!--<img class="divider-icon" [src]="'./assets/Search (Blue).png' | resolveAsset">-->
+                  <div class="divider-text"><span style="font-weight: normal">Family Room</span>  <img width="30" style="padding: 0 5px;" [src]="'./assets/Arrows_long_right.png'" alt=""> Destination</div>
+                </div>
+              </div>
             </div>
-
           </div>
         </div>
       </ng-template>
