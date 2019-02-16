@@ -32,8 +32,7 @@ fi
 
 echo "Using config: $config"
 
-<<<<<<< HEAD
-ng build -c "$config" --base-href '/app/' # --deploy-url "$deploy_url"
+yarn ng-high-memory build -c "$config" --base-href '/app/' # --deploy-url "$deploy_url"
 
 echo 'Uploading sourcemaps to Sentry'
 
@@ -48,6 +47,3 @@ echo 'Finalizing project in Sentry'
 sentry-cli releases finalize "$release_name"
 
 echo 'Done compiling.'
-=======
-yarn ng-high-memory build -c "$config" --base-href '/app/' # --deploy-url "$deploy_url"
->>>>>>> next-release
