@@ -4,6 +4,7 @@
      [style.width]="width"
      [style.min-width]="minWidth"
      [style.min-height]="minHeight"
+     [style.height]="minHeight"
      [style.box-shadow]="shadow"
      [style.cursor]="cursor"
      (click)="onClick($event)"
@@ -11,7 +12,7 @@
      (mousedown)="onPress(true)" (mouseup)="onPress(false)"
      [@pressState]="buttonState"
      [ngClass]="{'center': !(leftIcon || rightIcon)}">
-  <div class="wrapper-container" [style.width]="textWidth">
+  <div *ngIf="!buttonLink" class="wrapper-container" [style.width]="textWidth">
     <div class="wrapper">
       <img draggable="false" *ngIf="leftIcon" [style.width]="leftImageWidth" [style.height]="leftImageHeight" class="icon left-icon" [src]="leftIcon | resolveAsset">
       <div class="text-content" [style.text-align]="contentAlign">
@@ -25,4 +26,11 @@
       <img draggable="false" *ngIf="rightIcon" class="icon right-icon" [src]="rightIcon | resolveAsset">
     </div>
   </div>
+  <div *ngIf="buttonLink" class="button-link">
+    <a class="link" [href]="buttonLink" target="_blank">
+      <span>Open</span>
+      <img [src]="'./assets/External Link (White).png' | resolveAsset" alt="External Link (White).png">
+    </a>
+  </div>
+  <div class="subtitle" *ngIf="subtitle">{{subtitle}}</div>
 </div>

@@ -1,5 +1,21 @@
 <div class="pass-config-wrapper">
-<div class="pass-config-container">
+
+  <!-- TO DO !-->
+  <!-- TO DO !-->
+  <!-- TO DO !-->
+  <!-- TO DO !-->
+  <!-- TO DO !-->
+  <!-- TO DO !-->
+<!--<div class="pass-config-wrapper" (click)="onPinnnableBlur($event)">  Tomorrow it should to be completed -->
+  <!-- TO DO !-->
+  <!-- TO DO !-->
+  <!-- TO DO !-->
+  <!-- TO DO !-->
+  <!-- TO DO !-->
+  <!-- TO DO !-->
+
+
+  <div class="pass-config-container">
 
   <div class="pass-config-header" [style.height]="(dataChanges.length > 0 ? '174px' : '119px')">
 
@@ -55,7 +71,7 @@
 </div>
   <div class="pass-config-content">
       <div class="pinnables">
-          <app-pinnable-collection [pinnables]="pinnables" (orderChangedEvent)="updatePinnablesOrder($event)" (roomEvent)="selectPinnable($event)"></app-pinnable-collection>
+          <app-pinnable-collection [pinnables]="pinnables" [resetBulkSelect$]="pinnableCollectionBlurEvent$" (orderChangedEvent)="updatePinnablesOrder($event)" (roomEvent)="selectPinnable($event)"></app-pinnable-collection>
       </div>
   </div>
 </div>

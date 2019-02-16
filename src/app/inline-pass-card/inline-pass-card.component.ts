@@ -1,9 +1,10 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import { HallPass} from '../models/HallPass';
-import { HttpService } from '../http-service';
-import { DataService } from '../data-service';
+import { HttpService } from '../services/http-service';
+import { DataService } from '../services/data-service';
 import { interval, merge, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import {HallPassesService} from '../services/hall-passes.service';
 
 @Component({
   selector: 'app-inline-pass-card',
@@ -30,7 +31,11 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
   performingAction: boolean;
   subscribers$;
 
-  constructor(private http: HttpService, private dataService: DataService) { }
+  constructor(
+      private http: HttpService,
+      private dataService: DataService,
+      private hallPassService: HallPassesService
+  ) { }
 
   ngOnInit() {
       this.subscribers$ = merge(of(0), interval(1000)).pipe(map(x => {
@@ -58,9 +63,7 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
   endPass(){
     // console.log('END PASS ===>', this.pass);
     this.performingAction = true;
-    const endPoint: string = 'v1/hall_passes/' +this.pass.id +'/ended';
-    this.http.post(endPoint).subscribe(res => {
-      // this.dataService.isActiveRequest$.next(false);
+    this.hallPassService.endPass(this.pass.id).subscribe(res => {
       this.dataService.isActivePass$.next(false);
     });
   }

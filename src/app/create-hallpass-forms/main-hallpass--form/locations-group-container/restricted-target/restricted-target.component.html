@@ -1,0 +1,22 @@
+<div class="rest-tar-wrapper">
+  <div [ngClass]="headerTransition" [style.background-image]="headerGradient">
+    <img class="back-button" [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
+    <div class="rest-tar-header-text">
+      <img class="search-icon" [src]="'./assets/Lock (White).png' | resolveAsset">
+      <div class="text">Send Pass Request To?</div>
+    </div>
+  </div>
+
+  <div class="rest-tar-content" [style.height]="date ? '74%' : '78%'" (scroll)="tableScroll($event)">
+    <app-location-table
+       class="center"
+       (onSelect)="updateTarget($event)"
+       [type]="'teachers'"
+       [placeholder]="'Search teachers'"
+       [staticChoices]="toLocation.teachers">
+    </app-location-table>
+  </div>
+  <div class="shadow" [style.bottom]="date ? '65px' : '43px'" *ngIf="shadow"></div>
+  <app-student-footer [formState]="formState" [date]="date" (changeAnimationDirectionEvent)="onChangeAnimationDirection($event)" ></app-student-footer>
+
+</div>

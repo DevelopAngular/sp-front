@@ -3,11 +3,11 @@
     <div class="flexCls">
       <img *ngIf="!!icon && !inbox" class="display-card-header-icon" [src]="icon | resolveAsset" [style.height]="iconSize" [style.width]="iconSize">
 
-      <div *ngIf="!!icon && inbox" class="inbox-wrapper">
+      <div *ngIf="(!!icon && inbox) || mock" class="inbox-wrapper">
         <img class="inbox-icon" [src]="'./assets/Inbox Full (Blue).png' | resolveAsset">
-        <div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0">
+        <div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0 || mock">
           <img class="inbox-badge" [src]="'./assets/Inbox Number.png' | resolveAsset">
-          <div class="inbox-number">{{ notificationBadge$ | async }}</div>
+          <div class="inbox-number">{{ (notificationBadge$ | async) || mock }}</div>
           <img class="inbox-front" [src]="'./assets/Inbox Front (Blue).png' | resolveAsset">
         </div>
       </div>

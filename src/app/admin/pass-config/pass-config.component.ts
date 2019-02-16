@@ -1,16 +1,17 @@
-import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { FormControl, FormGroup } from '@angular/forms';
 
-import { Observable, zip } from 'rxjs';
+import { BehaviorSubject, Observable, zip } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { HttpService } from '../../http-service';
+import { HttpService } from '../../services/http-service';
 import { Pinnable } from '../../models/Pinnable';
 import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
-import {PinnableCollectionComponent} from '../pinnable-collection/pinnable-collection.component';
+import { PinnableCollectionComponent } from '../pinnable-collection/pinnable-collection.component';
 import * as _ from 'lodash';
 import { disableBodyScroll } from 'body-scroll-lock';
+import { HallPassesService } from '../../services/hall-passes.service';
 
 @Component({
   selector: 'app-pass-congif',
@@ -20,6 +21,8 @@ import { disableBodyScroll } from 'body-scroll-lock';
 export class PassConfigComponent implements OnInit, OnDestroy {
 
     @ViewChild(PinnableCollectionComponent) pinColComponent;
+
+    public pinnableCollectionBlurEvent$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
     settingsForm: FormGroup;
     selectedPinnables: Pinnable[];
@@ -33,24 +36,24 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   constructor(
       private dialog: MatDialog,
       private httpService: HttpService,
+      private hallPassService: HallPassesService,
       private elRef: ElementRef
   ) { }
 
   get schoolName(){
-      return this.httpService.schoolIdSubject.value?this.httpService.schoolIdSubject.value.name:'';
+      return this.httpService.schoolIdSubject.value ? this.httpService.schoolIdSubject.value.name : '';
   }
 
   ngOnInit() {
     disableBodyScroll(this.elRef.nativeElement);
     this.buildForm();
-    this.pinnables$ = this.httpService.get('v1/pinnables/arranged');
+    this.pinnables$ = this.hallPassService.getPinnables();
     // this.schools$ = this.httpService.get('v1/schools');
     // this.schools$.subscribe(res => this.schoolName =  res[0].name);
     this.pinnables$.subscribe(res => this.pinnables = res);
 
-    this.httpService.globalReload$.subscribe(() =>{
-        console.log('Updating pinnables on global reload')
-        this.pinnables$ = this.httpService.get('v1/pinnables/arranged');
+    this.httpService.globalReload$.subscribe(() => {
+        this.pinnables$ = this.hallPassService.getPinnables();
         this.pinnables$.subscribe(res => this.pinnables = res);
     });
 
@@ -60,20 +63,24 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     this.dialog.closeAll();
   }
 
+  onPinnnableBlur(evt) {
+    console.log(evt.target.className)
+    if (evt.target && (evt.target.className === 'selected-counter global-opacity-icons')) {
+      console.log(evt.target);
+      this.pinnableCollectionBlurEvent$.next(false);
+    } else {
+      this.pinnableCollectionBlurEvent$.next(true);
+    }
+  }
 
   updatePinnablesOrder(newOrder) {
 
     const pinnableIdArranged = newOrder.map(pin => pin.id);
 
-
-    this.httpService
-      .post('v1/pinnables/arranged', {
-        order: pinnableIdArranged.join(',')
-      })
+    this.hallPassService.createArrangedPinnable({order: pinnableIdArranged.join(',')})
       .pipe(
         switchMap((): Observable<Pinnable[]> => {
-          return this.httpService
-            .get('v1/pinnables/arranged');
+          return this.hallPassService.getPinnables();
         })
       )
       .subscribe((res) => {
@@ -182,7 +189,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       });
 
      overlayDialog.afterClosed()
-         .pipe(switchMap(() => this.httpService.get('v1/pinnables/arranged'))).subscribe(res => {
+         .pipe(switchMap(() => this.hallPassService.getPinnables())).subscribe(res => {
              this.pinnables = res;
              this.selectedPinnables = [];
              this.pinColComponent.clearSelected();

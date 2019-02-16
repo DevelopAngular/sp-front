@@ -5,8 +5,6 @@ import { AdminPageComponent } from './admin-page/admin-page.component';
 import { HallmonitorComponent } from './hallmonitor/hallmonitor.component';
 import { SearchComponent } from './search/search.component';
 import { PassConfigComponent } from './pass-config/pass-config.component';
-import { FeedbackComponent } from './feedback/feedback.component';
-import { SupportComponent } from './support/support.component';
 import {AccountsComponent} from './accounts/accounts.component';
 import {AccountsRoleComponent} from './accounts-role/accounts-role.component';
 import {SettingsComponent} from './settings/settings.component';
@@ -26,7 +24,6 @@ const routes: Routes = [
       // {path: 'feedback', component: FeedbackComponent},
       // {path: 'support', component: SupportComponent},
       {path: '**', redirectTo: 'dashboard', pathMatch: 'full'},
-
     ]
   },
 ];

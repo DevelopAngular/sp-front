@@ -9,11 +9,12 @@ import { ActivePassProvider } from '../../hall-monitor/hall-monitor.component';
 import { LiveDataService } from '../../live-data/live-data.service';
 import { PassLikeProvider } from '../../models/providers';
 import {CalendarComponent} from '../calendar/calendar.component';
-import {HttpService} from '../../http-service';
+import {HttpService} from '../../services/http-service';
 import {Util} from '../../../Util';
 import {map, toArray} from 'rxjs/operators';
 import {switchMap, tap} from 'rxjs/internal/operators';
 import { disableBodyScroll } from 'body-scroll-lock';
+import {AdminService} from '../../services/admin.service';
 
 
 
@@ -23,6 +24,7 @@ import { disableBodyScroll } from 'body-scroll-lock';
   styleUrls: ['./hallmonitor.component.scss']
 })
 export class HallmonitorComponent implements OnInit {
+
     activePassProvider: PassLikeProvider;
     searchQuery$ = new BehaviorSubject('');
     minDate = new Date();
@@ -52,6 +54,7 @@ export class HallmonitorComponent implements OnInit {
         public dialog: MatDialog,
         private liveDataService: LiveDataService,
         private http: HttpService,
+        private adminService: AdminService,
         private elRef: ElementRef
 
     ) {
@@ -219,13 +222,13 @@ export class HallmonitorComponent implements OnInit {
   private getReports(date?: Date) {
     const range = this.liveDataService.getDateRange(date);
     console.log(range);
-    this.http.get(`v1/event_reports${ date ? `?created_before=${range.end.toISOString()}&created_after=${range.start.toISOString()}` : ''}`)
+    date ? this.adminService.searchReports(range.end.toISOString(), range.start.toISOString()) : this.adminService.getReports()
       .pipe(
         map((list: any[]) => {
 
           return list.map((report, index) => {
             return {
-              student_name: report.student.display_name,
+              student_name: report.student.display_name + ` (${report.student.primary_email.split('@', 1)[0]})`,
               issuer: report.issuer.display_name,
               createdDate: Util.formatDateTime(new Date(report.created), false, false).split(', ')[0],
               created: Util.formatDateTime(new Date(report.created), false, false),

@@ -35,12 +35,12 @@ export class InputHelperDialogComponent implements OnInit {
     this.selectedStudents = this.data['selections'];
     this.selectedLocations = this.data['selections'];
     this.toggleState = this.data['toggleState'];
-    console.log(this.toggleState)
+    console.log(this.toggleState);
   }
 
   closeDialog(event: any){
     if(this.type == 'dates')
-      this.dialogRef.close({'from':this.fromDate, 'to':this.toDate, 'text':event})
+      this.dialogRef.close({'from': this.fromDate, 'to': this.toDate, 'text': event})
     if(this.type == 'user'){
       let text: string = '';
       for(let s in this.selectedStudents)

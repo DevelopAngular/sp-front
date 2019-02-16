@@ -1,20 +1,30 @@
 .student-search-wrapper{
   width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
 }
 
 .input {
-  margin-top: 20px;
-  margin-bottom: 5px;
+  margin: 5px auto;
+  display: flex;
+  justify-content: center;
+  &:focus {
+    outline: none !important;
+  }
 }
 
 input {
   border-radius: 20px;
-  border: 1px solid rgba(0, 0, 0, 0.3);
+  border: 1px solid transparent;
   padding: 0 0 0 15px;
   font-family: 'Helvetica Neue', sans-serif;
   font-size: 16px;
   height: 40px;
+  box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.3);
   caret-color: auto;
+
 }
 
 input.mat-chip-input{
@@ -23,14 +33,70 @@ input.mat-chip-input{
 mat-input-container.md-input-focused label {
   display: none
 }
+//
+//.options-wrapper{
+//  //padding-right: 15px;
+//  position: absolute;
+//  top: 40px;
+//  left: 0;
+//  right: 0;
+//  margin: 5px auto 10px auto;
+//  width: 180px;
+//  height: 150px;
+//  overflow: auto;
+//}
+//
+//.option-wrapper {
+//  padding-top: 10px;
+//  cursor: pointer;
+//  background-color: #FFFFFF;
+//
+//}
+//
+//.option-wrapper:hover {
+//  cursor: pointer;
+//  background-color: #F1F1F1;
+//}
+//
+//.option-content {
+//  font-family: 'Helvetica Neue', sans-serif;
+//  font-size: 14px;
+//  font-style: normal;
+//  font-stretch: normal;
+//  line-height: 1.08;
+//  letter-spacing: 0.3px;
+//  display: flex;
+//  flex-direction: row;
+//  justify-content: space-between;
+//  padding: 0 5px 0 5px;
+//  color: #767676
+//}
+//
+//.option-divider{
+//  width: 100%;
+//  height: 1px;
+//  transform: scale(1, 0.5);
+//  background-color: #767676;
+//  margin-top: 10px;
+//}
+
 
 .options-wrapper{
-  padding-right: 15px;
+  position: absolute;
+  top: 45px;
+  left: 0;
+  right: 0;
+  margin: 5px auto 10px auto;
+  width: 370px;
+  height: 150px;
+  overflow: auto;
 }
 
 .option-wrapper {
   padding-top: 10px;
   cursor: pointer;
+  background-color: #FFFFFF;
+
 }
 
 .option-wrapper:hover {
@@ -49,7 +115,7 @@ mat-input-container.md-input-focused label {
   flex-direction: row;
   justify-content: space-between;
   padding: 0 5px 0 5px;
-  color: #767676
+  color: #767676;
 }
 
 .option-divider{

@@ -8,7 +8,7 @@
     height: 1px;
     margin: 10px 0 14px 0;
     width: 100%;
-    background-color: #B5B7BA; 
+    background-color: #B5B7BA;
 }
 
 .collection-title{
@@ -27,5 +27,23 @@
     -khtml-user-select: none; /* Konqueror HTML */
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* Internet Explorer/Edge */
-    user-select: none; 
+    user-select: none;
+}
+.pinnable-item-container {
+  .pinnable-item {
+    width: auto;
+    animation: wiggle .3s ease infinite;
+  }
+}
+@keyframes wiggle {
+  0%{
+    transform: rotate(2deg);
+  }
+  50%{
+    transform: rotate(-2deg);
+  }
+  100%{
+    transform: rotate(2deg);
+  }
+
 }

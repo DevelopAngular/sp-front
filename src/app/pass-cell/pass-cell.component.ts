@@ -5,6 +5,7 @@ import { Invitation } from '../models/Invitation';
 import { Request } from '../models/Request';
 import { getInnerPassContent, getInnerPassName, isBadgeVisible } from '../pass-tile/pass-display-util';
 import { Util } from '../../Util';
+import {filter} from 'rxjs/operators';
 
 @Component({
   selector: 'app-pass-cell',
@@ -13,6 +14,7 @@ import { Util } from '../../Util';
 })
 export class PassCellComponent implements OnInit, OnDestroy {
 
+  @Input() mock = null;
   @Input() pass: HallPass | Invitation | Request;
   @Input() fromPast = false;
   @Input() forFuture = false;
@@ -52,17 +54,23 @@ export class PassCellComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.valid = this.isActive;
-    if (this.timerEvent) {
-      this.timerEvent.subscribe(() => {
-        let end: Date = this.pass['expiration_time'];
-        let now: Date = new Date();
-        let diff: number = (end.getTime() - now.getTime()) / 1000;
-        let mins: number = Math.floor(Math.abs(Math.floor(diff) / 60));
-        let secs: number = Math.abs(Math.floor(diff) % 60);
-        this.valid = end > now;
-        this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
-      });
+
+    if (this.mock) {
+
+    } else {
+
+      this.valid = this.isActive;
+      if (this.timerEvent) {
+        this.timerEvent.pipe(filter(() => this.pass instanceof HallPass )).subscribe(() => {
+          let end: Date = this.pass['expiration_time'];
+          let now: Date = new Date();
+          let diff: number = (end.getTime() - now.getTime()) / 1000;
+          let mins: number = Math.floor(Math.abs(Math.floor(diff) / 60));
+          let secs: number = Math.abs(Math.floor(diff) % 60);
+          this.valid = end > now;
+          this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
+        });
+      }
     }
   }
 

@@ -1,26 +1,43 @@
 <div class="student-search-wrapper">
-<div class="input">
-  <mat-chip-list #chipList>
-      <mat-chip
-        *ngFor="let student of selectedStudents"
-        [removable]="true"
-        (removed)="removeStudent(student)">
-        {{student.display_name}}
-        <mat-icon matChipRemove>cancel</mat-icon>
-      </mat-chip>
-      <input
-        placeholder="Search students"
-        #studentInput
-        autofocus
-        [matChipInputFor]="chipList"
-        [matChipInputAddOnBlur]="true"
-        [value]="inputValue"
-        (input)="onSearch(studentInput.value)"
-      >
-  </mat-chip-list>
-</div>
-  <div *ngIf="showOptions" class="options-wrapper">
-    <div *ngFor="let student of students | async" (click)="studentInput.value = ''; addStudent(student)"  class="option-wrapper">
+  <div class="input">
+    <mat-chip-list #chipList>
+      <div [style.padding-bottom]="'5px'" class="round-input-container">
+        <app-round-input
+          [minWidth]="'380px'"
+          [width]="'380px'"
+          [type]="'text'"
+          [chipInput]="chipList"
+          [placeholder]="'Search students'"
+          [disabled]="disabled"
+          [fieldIconPosition]="'left'"
+          [closeIcon]="true"
+          [focused]="focused"
+          [selectReset$]="inputValue$"
+          (ontextupdate)="onSearch($event)"
+        >
+        </app-round-input>
+      </div>
+    <mat-chip
+      *ngFor="let student of selectedStudents"
+      [removable]="!disabled"
+      (removed)="removeStudent(student)">
+      {{student.display_name + ' (' + student.primary_email.split('@', 1)[0] + ')'}}
+      <mat-icon matChipRemove>cancel</mat-icon>
+    </mat-chip>
+    <!--<input-->
+        <!--placeholder="Search students"-->
+        <!--#studentInput-->
+        <!--autofocus-->
+        <!--[disabled]="disabled"-->
+        <!--[matChipInputFor]="chipList"-->
+        <!--[matChipInputAddOnBlur]="true"-->
+        <!--[value]="inputValue"-->
+        <!--(input)="onSearch(studentInput.value)"-->
+      <!--&gt;-->
+    </mat-chip-list>
+  </div>
+  <div *ngIf="showOptions" [ngClass]="{'options-wrapper': students}">
+    <div *ngFor="let student of students | async" (click)="inputValue$.next(''); addStudent(student)"  class="option-wrapper">
       <div class="option-content">
         {{ student.display_name }}
       </div>

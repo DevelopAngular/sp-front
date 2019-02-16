@@ -1,7 +1,7 @@
 
 import {Resolve, Router, ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
 import { User } from './models/User';
-import { DataService } from './data-service';
+import { DataService } from './services/data-service';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import {take} from 'rxjs/internal/operators';

@@ -1,7 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { HttpService } from '../../http-service';
+import { HttpService } from '../../services/http-service';
 import { Paged } from '../../models';
-import { Location } from '../../models/Location'
+import { Location } from '../../models/Location';
+import { LocationsService } from '../../services/locations.service';
 
 @Component({
   selector: 'app-location-search',
@@ -17,7 +18,10 @@ export class LocationSearchComponent implements OnInit {
   locations: Promise<any[]>;
   inputValue: string = '';
 
-  constructor(private http: HttpService) {
+  constructor(
+      private http: HttpService,
+      private locationService: LocationsService
+  ) {
     // this.onSearch('');
   }
 
@@ -26,8 +30,9 @@ export class LocationSearchComponent implements OnInit {
   }
 
   onSearch(search: string) {
-    if(search!=='')
-      this.locations = this.http.get<Paged<any>>('v1/locations?limit=5' + (search === '' ? '' : '&search=' + encodeURI(search))).toPromise().then(paged => this.removeDuplicateLocations(paged.results));
+    if(search !=='' )
+      this.locations = this.locationService.searchLocations(5, '&search=' + encodeURI(search)).toPromise().then((paged: Paged<any>) => this.removeDuplicateLocations(paged.results));
+      // this.locations = this.http.get<Paged<any>>('v1/locations?limit=5' + (search === '' ? '' : '&search=' + encodeURI(search))).toPromise().then(paged => this.removeDuplicateLocations(paged.results));
     else
       this.locations = null;
       this.inputValue = '';

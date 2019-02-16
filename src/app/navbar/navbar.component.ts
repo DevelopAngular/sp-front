@@ -3,16 +3,18 @@ import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material';
 import {Router, NavigationEnd, ActivatedRoute} from '@angular/router';
 
-import { DataService } from '../data-service';
-import { GoogleLoginService } from '../google-login.service';
-import { LoadingService } from '../loading.service';
+import { DataService } from '../services/data-service';
+import { GoogleLoginService } from '../services/google-login.service';
+import { LoadingService } from '../services/loading.service';
 import { NavbarDataService } from '../main/navbar-data.service';
 import { User } from '../models/User';
 import { NgProgress } from '@ngx-progressbar/core';
 import {ReplaySubject} from 'rxjs';
-import { UserService } from '../user.service';
+import { UserService } from '../services/user.service';
 
 import {combineLatest} from 'rxjs';
+
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-navbar',
@@ -90,18 +92,24 @@ export class NavbarComponent implements OnInit {
       }
     });
 
-    console.log('loading navbar');
+    // console.log('loading navbar');
 
     this.userService.userData
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {
         this._zone.run(() => {
           this.user = user;
+          // console.log('User =>>>>>', user);
           this.isStaff = user.isAdmin() || user.isTeacher();
           this.showSwitchButton = [user.isAdmin(), user.isTeacher(), user.isStudent()].filter(val => !!val).length > 1;
-          this.dataService.updateInbox(this.tab!=='settings');
+          this.dataService.updateInbox(this.tab !== 'settings');
         });
       });
+    this.dataService.getLocationsWithTeacher(this.user).subscribe(res => {
+      _.remove(this.buttons, (el) => {
+        return el.route === 'myroom' && !res.length;
+      });
+    });
 
     this.userService.userData.subscribe(user => {
 

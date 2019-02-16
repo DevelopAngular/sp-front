@@ -1,0 +1,108 @@
+<div class="step-1-container">
+  <div class="header">
+    <!--<div class="header_back-button" (click)="back(editGroup)">-->
+      <!--&lt;!&ndash;<img class="header_back-button" [src]="'./assets/Back Button (Grey).png' | resolveAsset">&ndash;&gt;-->
+      <!--<span class="header_back-button">Cancel</span>-->
+    <!--</div>-->
+    <div class="header_back-button" (click)="back(editGroup)">
+      <img  *ngIf="!form.get('title').dirty && !form.get('users').dirty"
+            class="header_back-button"
+            [src]="'./assets/Back Button (Grey).png' | resolveAsset">
+      <span class="header_back-button"
+            *ngIf="form.get('title').dirty || form.get('users').dirty">Cancel</span>
+    </div>
+    <div class="header_title">
+      <!--<img class="header_icon" [src]="'./assets/Search (Blue).png' | resolveAsset">-->
+      <div class="header_text">{{editGroup.title}}</div>
+      <span  *ngIf="editGroup.users && editGroup.users.length ">{{editGroup.users.length}} student<span *ngIf="editGroup.users.length > 1">s</span></span>
+    </div>
+    <div class="header_save">
+      <div *ngIf="allowToSave && form.get('title').value && (editGroup.users && editGroup.users.length)">
+        <app-gradient-button
+          [width]="'105px'"
+          [minHeight]="'35px'"
+          [fontSize]="'14px'"
+          [cursor]="'pointer'"
+          (buttonClick)="updateGroup()"
+        >Save</app-gradient-button>
+      </div>
+      <div *ngIf="(form.get('title').value || (editGroup.users.length)) && !(form.get('title').value && (editGroup.users.length))">
+        <span [style.user-select]="'none'">Incomplete</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="content-left">
+      <div class="content-left_wrapper">
+        <div>
+          <div>
+
+            <div class="content-left_header">Student Group Name</div>
+            <app-input
+              [controlName]="form.get('title')"
+              [formGroup]="form"
+              [input_value]="editGroup.title"
+              [padding]="'4px'"
+              [width]="'200px'"
+              [isFocus]="false"
+            ></app-input>
+          </div>
+          <!--<div class="content-left_upload">-->
+            <!--<app-gradient-button-->
+              <!--[gradient]="'#022F68,#2F66AB'"-->
+              <!--[hoverColor]="'#022F68'"-->
+              <!--[minHeight]="'32px'"-->
+              <!--[width]="'130px'"-->
+              <!--[fontSize]="'13px'"-->
+              <!--[cursor]="'pointer'"-->
+            <!--&gt;-->
+              <!--<label>-->
+                <!--Upload File-->
+                <!--<input type="file" hidden>-->
+              <!--</label>-->
+            <!--</app-gradient-button>-->
+          <!--</div>-->
+        </div>
+        <!--<div class="content-left_groups">-->
+          <!--<div>-->
+            <!--<div class="content-left_placeholder">-->
+              <!--Upload an Exel spreadsheet of student <strong>email address</strong>-->
+              <!--to quickly select students.-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</div>-->
+        <div class="content-left_delete-group">
+          <app-gradient-button
+            [minHeight]="'32px'"
+            [fontSize]="'14px'"
+            [width]="'130px'"
+            [hoverColor]="'#DA2370'"
+            [gradient]="'#DA2370,#FB434A'"
+            [textColor]="'#FFFFFF'"
+            [leftImageHeight]="'13px'"
+            [leftImageWidth]="'13px'"
+            [cursor]="'pointer'"
+            (buttonClick)="removeGroup()"
+          >
+          <div class="delete-button">
+            <span class="create-button_title">Delete Group</span>
+          </div>
+          </app-gradient-button>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-right">
+      <div class="content-right_sudent-search">
+        <div class="seach-wrapper" *ngIf="editGroup && editGroup.users">
+          <app-student-search
+            (onUpdate)="updateUsers($event)" [focused]="false" [selectedStudents]="editGroup.users"
+          ></app-student-search>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

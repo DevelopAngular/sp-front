@@ -3,7 +3,7 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/co
 import { Observable } from 'rxjs';
 import { NgProgress } from '@ngx-progressbar/core';
 import { finalize } from 'rxjs/operators';
-import {DataService} from './data-service';
+import {DataService} from './services/data-service';
 
 @Injectable()
 export class ProgressInterceptor implements HttpInterceptor {

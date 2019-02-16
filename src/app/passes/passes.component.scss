@@ -38,7 +38,8 @@
 }
 
 .main-page-left{
-    display: flex;
+  margin-right: 80px;
+  display: flex;
     flex-direction: column;
     align-items: center;
 }
@@ -55,12 +56,34 @@
     width: 258px;
 }
 
-.future-passes, .past-passes, .active-passes{
+.future-passes, .past-passes, .active-passes {
     width: 400px;
+    //margin-bottom: 40px;
+}
+.requests-or-invitations {
+    //margin-bottom: 40px;
 }
 
 .main-page-right{
-    margin-left: 80px;
+    //margin-left: 80px;
+    //animation: requestsInMotion .8s ease forwards;
+}
+
+.requests-in-motion {
+  animation: requestsInMotion .8s ease forwards;
+}
+
+@keyframes requestsInMotion {
+  0% {
+    width: 0px;
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  100% {
+    width: 312px;
+    opacity: 1;
+    transform: translateX(0px);
+  }
 }
 
 .inbox-content{
@@ -69,4 +92,25 @@
 
 .text {
   color: #767676;
+}
+
+.big-text {
+    @extend .text;
+    font-size: 16pt;
+}
+
+.empty-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.empty-inbox-svg {
+    margin: 20px 0;
+    width: 200px;
+}
+
+.empty-passes-svg {
+    margin: 20px 0;
+    width: 330px;
 }

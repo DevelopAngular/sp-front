@@ -2,9 +2,11 @@ import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@ang
 import { FormControl } from '@angular/forms';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Subject } from 'rxjs/Subject';
-import { HttpService } from '../http-service';
+import { HttpService } from '../services/http-service';
 import { Location } from '../models/Location';
 import { Paged } from '../models';
+import { filter, map, switchMap, takeUntil } from 'rxjs/operators';
+import {LocationsService} from '../services/locations.service';
 
 @Component({
   selector: 'app-location-picker',
@@ -30,14 +32,17 @@ export class LocationPickerComponent implements OnInit, OnDestroy {
   @ViewChild('select', {read: ElementRef}) _select: ElementRef;
   private _onDestroy = new Subject<any>();
 
-  constructor(private http: HttpService) {
+  constructor(
+      private http: HttpService,
+      private locationService: LocationsService
+  ) {
     this.filteredLocations.next([]);
 
-    this.locationFilterCtrl.valueChanges
-      .filter(query => query !== '')
-      .takeUntil(this._onDestroy)
-      .switchMap(query => {
-        let url = 'v1/locations?limit=10';
+    this.locationFilterCtrl.valueChanges.pipe(
+      filter(query => query !== ''),
+      takeUntil(this._onDestroy),
+      switchMap(query => {
+        let url = '';
         if (this.category) {
           url += '&category=' + encodeURIComponent(this.category);
         }
@@ -45,12 +50,12 @@ export class LocationPickerComponent implements OnInit, OnDestroy {
         if (query) {
           url += '&search=' + encodeURIComponent(query);
         }
-
-        return this.http.get<Paged<any>>(url);
-      })
-      .map((json: Paged<any>) => {
+        return this.locationService.searchLocations(10, url);
+        // return this.http.get<Paged<any>>(url);
+      }),
+      map((json: Paged<any>) => {
         return json.results.map(raw => Location.fromJSON(raw));
-      })
+      }))
       .subscribe(this.filteredLocations);
 
   }

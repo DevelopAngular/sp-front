@@ -25,3 +25,9 @@ table {
   text-transform: capitalize;
   font-weight: bolder !important;
 }
+
+.mat-row:hover {
+  cursor: pointer;
+  transition: opacity .3s ease;
+  opacity: 0.7;
+}

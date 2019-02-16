@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Subject } from 'rxjs/Subject';
-import { DataService } from '../data-service';
+import { DataService } from '../services/data-service';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
 import { HallPass } from '../models/HallPass';
 import { Invitation } from '../models/Invitation';
@@ -32,8 +32,9 @@ export class SortOption {
   styleUrls: ['./pass-collection.component.scss']
 })
 
-export class PassCollectionComponent implements OnInit {
+export class PassCollectionComponent implements OnInit, OnDestroy {
 
+  @Input() mock = false;
   @Input() displayState = 'grid';
   @Input() title: string;
   @Input() icon: string;
@@ -65,6 +66,7 @@ export class PassCollectionComponent implements OnInit {
   ];
 
   sort$ = this.dataService.sort$;
+  test: any;
 
   private static getDetailDialog(pass: PassLike): any {
     if (pass instanceof HallPass) {
@@ -82,23 +84,27 @@ export class PassCollectionComponent implements OnInit {
 
     return null;
   }
-
   constructor(
       public dialog: MatDialog,
       private dataService: DataService,
   ) {}
 
   ngOnInit() {
-      this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
+      if (this.mock) {
 
-      if(this.isActive){
-        this.timers.push(window.setInterval(() => {
-          this.timerEvent.next(null);
-        }, 1000));
+      } else {
+        this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
+
+        if(this.isActive){
+          this.timers.push(window.setInterval(() => {
+            this.timerEvent.next(null);
+          }, 1000));
+        }
+        // this.currentPasses$.subscribe((data) => {
+        //   console.log(data);
+        //   this.test = data[0];
+        // });
       }
-      // this.currentPasses$.subscribe((data) => {
-      //   console.log(data);
-      // });
   }
 
   ngOnDestroy() {

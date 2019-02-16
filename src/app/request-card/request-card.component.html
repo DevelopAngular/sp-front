@@ -41,7 +41,8 @@
       <div *ngIf="forInput; else studentNoInput" class="card-body-right">
         <app-card-button (onClick)="newRequest()" [disabled]="performingAction" [width]="'269px'" [height]="'79px'" [gradientColor]="request.color_profile.gradient_color">
           <div class="request-button-content">
-            <div class="request-pass-content-text">Send Request</div>
+            <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
+            <div *ngIf="!performingAction" class="request-pass-content-text">Send Request</div>
             <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
           </div>
         </app-card-button>
@@ -64,9 +65,10 @@
           </div>
         </div>
         <div *ngIf="request.status==='declined'" class="card-body-right">
-          <app-card-button *ngIf="!forStaff" [disabled]="performingAction" (onClick)="changeDate()"[width]="'297px'" [height]="'81px'" [gradientColor]="request.color_profile.gradient_color">
+          <app-card-button *ngIf="!forStaff" [disabled]="performingAction" (onClick)="changeDate()" [width]="'297px'" [height]="'81px'" [gradientColor]="request.color_profile.gradient_color">
             <div class="resend-button-content">
-              <div class="resend-button-content-title">{{ (forFuture?'Change Date & Time':'Resend Request') }}</div>
+              <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
+              <div *ngIf="!performingAction" class="resend-button-content-title">{{ (forFuture?'Change Date & Time':'Resend Request') }}</div>
               <div class="resend-button-content-subtitle">Pass Request Denied</div>
             </div>
           </app-card-button>
@@ -82,7 +84,8 @@
           <div *ngIf="request.status=='pending'; else staffNotPending" class="card-body-right">
             <app-card-button (onClick)="approveRequest()" [disabled]="performingAction" [width]="'295px'" [height]="'81px'" [gradientColor]="request.color_profile.gradient_color">
               <div class="resend-button-content">
-                <div class="resend-button-content-title">Approve Pass Request</div>
+                <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
+                <div *ngIf="!performingAction" class="resend-button-content-title">Approve Pass Request</div>
                 <div class="resend-button-content-subtitle">{{(request.duration/60) +' min - Received ' +formatDateTime(request.created, true)}}</div>
               </div>
             </app-card-button>

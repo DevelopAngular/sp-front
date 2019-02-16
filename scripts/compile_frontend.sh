@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
 set -e
 
-yarn install
+#if [[ -d "/persistent_volume" ]]; then
+#  echo "Found /persistent_volume, using yarn with cache"
+#
+#  mkdir -p /persistent_volume/yarn_cache
+#
+#  yarn install --cache-folder /persistent_volume/yarn_cache
+#else
+  echo "Using fresh yarn install"
+  yarn install
+#fi
 
 export PATH="$PATH:$(pwd)/node_modules/.bin"
 
@@ -23,6 +32,7 @@ fi
 
 echo "Using config: $config"
 
+<<<<<<< HEAD
 ng build -c "$config" --base-href '/app/' # --deploy-url "$deploy_url"
 
 echo 'Uploading sourcemaps to Sentry'
@@ -38,3 +48,6 @@ echo 'Finalizing project in Sentry'
 sentry-cli releases finalize "$release_name"
 
 echo 'Done compiling.'
+=======
+yarn ng-high-memory build -c "$config" --base-href '/app/' # --deploy-url "$deploy_url"
+>>>>>>> next-release

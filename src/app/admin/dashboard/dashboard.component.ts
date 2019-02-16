@@ -3,12 +3,16 @@ import { disableBodyScroll } from 'body-scroll-lock';
 import { interval, Subject, zip } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/internal/operators';
 import { map } from 'rxjs/operators';
-import { DataService } from '../../data-service';
-import { HttpService } from '../../http-service';
+import { DataService } from '../../services/data-service';
+import { HttpService } from '../../services/http-service';
 import { HallPassFilter, LiveDataService } from '../../live-data/live-data.service';
 import { HallPass } from '../../models/HallPass';
 import { Report } from '../../models/Report';
 import { PdfGeneratorService } from '../pdf-generator.service';
+import {CalendarComponent} from '../calendar/calendar.component';
+import {MatDialog} from '@angular/material';
+import {AdminService} from '../../services/admin.service';
+import {HallPassesService} from '../../services/hall-passes.service';
 
 
 @Component({
@@ -17,8 +21,12 @@ import { PdfGeneratorService } from '../pdf-generator.service';
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-  @ViewChild('draggableContainer') draggableContainer: ElementRef;
+  // @ViewChild('draggableContainer') draggableContainer: ElementRef;
   @ViewChild('ctx') ctx: any;
+
+  public chartsDate: Date;
+  public activeCalendar: boolean;
+
 
   private shareChartData$: Subject<any> = new Subject();
   public lineChartData: Array<any> = [{data: Array.from(Array(24).keys()).map(() => 0)}];
@@ -30,7 +38,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public lineChartColors: Array<any>;
   public lineChartLegend: boolean = false;
   public lineChartType: string = 'line';
-  public passStatistic: any;
+  public passStatistic: any[] | string;
   public numActivePasses = -1;
   public reports: Report[];
   public averagePassTime: number | string;
@@ -39,23 +47,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   public lineChartTicks: any = {
     suggestedMin: 0,
-    stepSize: 5,
+    precision: 0
+    // stepSize: 5,
   };
 
   constructor(
     private http: HttpService,
+    private adminService: AdminService,
+    private hallPassService: HallPassesService,
     private dataService: DataService,
     private liveDataService: LiveDataService,
     private pdf: PdfGeneratorService,
     private _zone: NgZone,
-    private elRef: ElementRef
+    private elRef: ElementRef,
+    private dialog: MatDialog
   ) {
   }
 
   ngOnInit() {
-    disableBodyScroll(this.elRef.nativeElement);
-    const _devices = this.draggableContainer.nativeElement.childNodes;
-    this.devices = Array.from(Array(_devices.length).keys()).map(index => _devices[index]);
+    // disableBodyScroll(this.elRef.nativeElement);
+    // const _devices = this.draggableContainer.nativeElement.childNodes;
+    // this.devices = Array.from(Array(_devices.length).keys()).map(index => _devices[index]);
 
     // console.log(this.draggableContainer.nativeElement.childNodes);
 
@@ -63,33 +75,43 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.liveDataService.watchActiveHallPasses(new Subject<HallPassFilter>().asObservable())
       .subscribe((activeHallpasses: HallPass[]) => {
+        // console.log('Watch activity ======>', activeHallpasses);
         this.numActivePasses = activeHallpasses.length;
       });
 
     const todayReports = this.liveDataService.getDateRange(new Date());
 
-    this.http.globalReload$
-      .switchMap(() => {
+    this.http.globalReload$.pipe(
+      switchMap(() => {
         return zip(
-          this.http.get('v1/hall_passes/stats'),
-          this.http.get(`v1/event_reports?created_before=${todayReports.end.toISOString()}&created_after=${todayReports.start.toISOString()}`),
-          this.http.get('v1/admin/dashboard'),
+          this.hallPassService.getPassStats(),
+          this.adminService.searchReports(todayReports.end.toISOString(), todayReports.start.toISOString()),
+          this.adminService.getDashboardData(),
         );
-      })
+      }))
       .subscribe(([stats, eventReports, dashboard]: any[]) => {
 
         for (const entry of stats) {
-          if (entry.name === 'Most Visited Locations') {
-            this.passStatistic = entry['rows'];
-          } else if (entry.name.toLowerCase() === 'average pass time') {
-            this.averagePassTime = entry['value'];
+          switch (entry.name) {
+            case 'Most Visited Locations': {
+              this.passStatistic = entry['rows'].length ? entry['rows'] : [];
+              break;
+            }
+            case 'Average pass time': {
+              this.averagePassTime = entry['value'] ? entry['value'] : 'Unknown';
+              break;
+            }
+          }
+
+          if (!stats.find((item) => item['name'] === 'Average pass time')) {
+            this.averagePassTime = 'Unknown';
           }
         }
 
         this.reports = eventReports;
-
+        delete this.lineChartTicks.stepSize;
         // if (environment.funData) {
-        //   this.lineChartData = [{data: dashboard.hall_pass_usage.map(numb => numb +  Math.ceil((Math.random() * Math.random() * 30)))}];
+        //   this.lineChartData = [{data: dashboard.hall_pass_usage.map(numb => numb +  Math.ceil((Math.random() * Math.random() * 300)))}];
         // } else {
         this.lineChartData = [{data: dashboard.hall_pass_usage}];
         // }
@@ -98,7 +120,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     interval(60000)
       .pipe(
-        switchMap(() => this.http.get('v1/admin/dashboard')),
+        switchMap(() => this.adminService.getDashboardData()),
         takeUntil(this.shareChartData$)
       )
       .subscribe((result: any) => {
@@ -231,9 +253,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     };
   }
 
-  onDevicesOrderChanged(event) {
-    console.log(event);
-  }
+  // onDevicesOrderChanged(event) {
+  //   console.log(event);
+  // }
 
   private drawChartXaxis() {
     let hour = 8;
@@ -255,15 +277,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
       _minute_iterator++;
       this.lineChartLabels.push(time);
     }
-    ;
     // console.log(this.lineChartLabels);
-    this.lineChartLabels = this.lineChartLabels.slice(0, this.lineChartLabels.length - 1);
+    // this.lineChartLabels = this.lineChartLabels.slice(0, this.lineChartLabels.length - 1);
 
   }
 
   previewPDF() {
 
-    const data = this.http.get('v1/hall_passes?active=true');
+    const data = this.hallPassService.getActivePasses();
 
 
     data
@@ -292,6 +313,39 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.pdf.generate(active_hp, 'p', 'dashboard');
         }
       });
+  }
+
+
+  openDateDialog(event) {
+
+    this.activeCalendar = true;
+    const target = new ElementRef(event.currentTarget);
+    const DR = this.dialog.open(CalendarComponent, {
+      panelClass: 'calendar-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {
+        'trigger': target,
+        'previousSelectedDate': this.chartsDate ? new Date(this.chartsDate) : null,
+      }
+    });
+
+    DR.afterClosed()
+      .subscribe((data) => {
+          this.activeCalendar = false;
+          console.log('82 Date ===> :', data.date);
+          if (data.date) {
+            if ( !this.chartsDate || (this.chartsDate && this.chartsDate.getTime() !== data.date.getTime()) ) {
+              this.chartsDate = new Date(data.date);
+              console.log(this.chartsDate);
+              // this.getReports(this.chartsDate);
+              this.adminService.getFilteredDashboardData(this.chartsDate)
+                .subscribe((dashboard: any) => {
+                  this.lineChartData = [{data: dashboard.hall_pass_usage}];
+                });
+            }
+          }
+        }
+      );
   }
 
   ngOnDestroy() {

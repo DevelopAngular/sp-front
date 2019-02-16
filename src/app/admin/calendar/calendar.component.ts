@@ -11,6 +11,7 @@ export class CalendarComponent implements OnInit {
   triggerElementRef: ElementRef;
   previousSelectedDate: Date;
   minDate: Date = new Date('December 17, 1995 03:24:00');
+  default = new Date();
 
   constructor(
       @Inject(MAT_DIALOG_DATA) public data: any[],

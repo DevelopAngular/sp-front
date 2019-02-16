@@ -1,0 +1,51 @@
+<div class="rest-mes-wrapper">
+  <div [ngClass]="headerTransition" [style.background-image]="headerGradient">
+    <img class="back-button" [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
+    <div class="rest-mes-header-text">
+      <img class="search-icon" [src]="'./assets/Message (White).png' | resolveAsset">
+      <div class="text">Message</div>
+    </div>
+  </div>
+  <div class="content-wrapper">
+    <div class="rest-mes-content">
+     <textarea
+             #messageBox
+             class="message-box"
+             [rows]="4"
+             [cols]="30"
+             pInputTextarea
+             autoResize="autoResize"
+             [placeholder]="'Attach a message for ' + (teacher ? teacher.last_name : '')"
+             [formControl]="message"
+             [style.width]="'350px'"
+             [style.max-height]="date ? '250px' : '270px'"
+     >
+    </textarea>
+      <div class="buttons">
+        <app-gradient-button *ngIf="true"
+                             [gradient]="'#00B476, #03CF31'"
+                             [hoverColor]="'#04CD33'"
+                             [cursor]="'pointer'"
+                             [minWidth]="'104px'"
+                             [minHeight]="'34px'"
+                             [fontSize]="'12px'"
+                             (buttonClick)="sendRequest()"
+                             class="message-button">
+          {{(message.value ? 'Add Message' : 'Skip')}}
+        </app-gradient-button>
+        <app-gradient-button *ngIf="false"
+                             [gradient]="'#DA2370,#FB434A'"
+                             [hoverColor]="'#DA2370'"
+                             [cursor]="'pointer'"
+                             [minWidth]="'185px'"
+                             [minHeight]="'35px'"
+                             [fontSize]="'14px'"
+                             (buttonClick)="sendRequest()"
+                             class="message-deny-button"
+        >Deny Pass Request</app-gradient-button>
+      </div>
+    </div>
+  </div>
+
+  <app-student-footer [formState]="formState" [date]="date" (changeAnimationDirectionEvent)="onChangeAnimationDirection($event)"></app-student-footer>
+</div>

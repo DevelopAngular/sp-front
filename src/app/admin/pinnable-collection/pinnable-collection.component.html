@@ -22,9 +22,14 @@
     {{headerButtonText}}</app-gradient-button>
   </div>
   <div class="collection-divider" *ngIf="header"></div>
-  <div [style.width]="'560px'" style="display: flex;flex-wrap: wrap" dragula="pinnables" [dragulaModel]="pinnables" (dragulaModelChange)="onPinablesOrderChanged($event)">
-    <div *ngFor="let pinnable of pinnables" style="padding: 10px">
-      <app-pinnable [forStaff]="true" [selected]="selectedPinnables.indexOf(pinnable) != -1" [forBulk]="bulkSelect" [forCollection]="true" [pinnable]="pinnable" (onSelectEvent)="updatePinnables($event)"></app-pinnable>
+  <div [style.width]="'560px'" style="display: flex; flex-wrap: wrap" dragula="pinnables" [dragulaModel]="pinnables" (dragulaModelChange)="onPinablesOrderChanged($event)">
+
+    <div *ngFor="let pinnable of pinnables; let i = index" style="padding: 10px">
+      <div class="pinnable-item-container" >
+        <div [ngClass]="{'pinnable-item': this.bulkSelect && !isSelected(pinnable)}" [style.animation-delay]="(i * .1) + 's'">
+          <app-pinnable [forStaff]="true" [selected]="selectedPinnables.indexOf(pinnable) != -1" [forBulk]="bulkSelect" [forCollection]="true" [pinnable]="pinnable" (onSelectEvent)="updatePinnables($event)"></app-pinnable>
+        </div>
+      </div>
     </div>
   </div>
 </div>

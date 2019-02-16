@@ -6,6 +6,8 @@ import { fromEvent, zip } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { DatePrettyHelper } from './date-pretty.helper';
 import { LinkGeneratedDialogComponent } from './link-generated-dialog/link-generated-dialog.component';
+import { OPEN_SANS_BOLD, OPEN_SANS_REGULAR } from './pdf-fonts';
+import {StorageService} from '../services/storage.service';
 
 declare const jsPDF;
 declare const window;
@@ -15,13 +17,14 @@ export class PdfGeneratorService {
   constructor(
     public httpService: HttpClient,
     private locationService: Location,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private storage: StorageService
   ) {
   }
 
   generate(data: any[], orientation: string = 'p', page: string = '', title?: string): void {
 
-    window.localStorage.removeItem('pdf_src');
+    this.storage.removeItem('pdf_src');
 
     const prettyNow = DatePrettyHelper.transform(new Date());
 
@@ -58,12 +61,20 @@ export class PdfGeneratorService {
     const _orientation = orientation === 'l' ? 'landscape' : 'portrait';
     const _headers: string[] = Object.keys(data.map ? data[0] : data);
     const _data: any[] = data;
-    const doc = new jsPDF(_orientation, 'pt', [ 609.5, 792]);
+    const doc = new jsPDF(_orientation, 'pt', [609.5, 792], {filters: ['ASCIIHexEncode']});
     const logoPath = this.locationService.prepareExternalUrl('/assets/Arrow%20(Green).png');
     const reportPath = this.locationService.prepareExternalUrl('/assets/Report%20(Red).png');
     const imgLogo = new FileReader();
     const reportLogo = new FileReader();
     let imgBase64Logo, imgBase64Report;
+
+    doc.addFileToVFS('OpenSans-Regular.ttf', OPEN_SANS_REGULAR);
+    doc.addFileToVFS('OpenSans-Bold.ttf', OPEN_SANS_BOLD);
+
+    doc.addFont('OpenSans-Regular.ttf', 'OpenSans', 'normal');
+    doc.addFont('OpenSans-Bold.ttf', 'OpenSans', 'bold');
+
+    doc.setFont('OpenSans'); // set font
 
     zip(
       this.httpService
@@ -159,7 +170,11 @@ export class PdfGeneratorService {
             doc.setFontStyle('bold');
 
             __headers.forEach((header, n) => {
-              doc.text(table.left + (table.sp * n), table.top - 6, header);
+              if (n === 1) {
+                doc.text(table.left + (table.sp * n) + 25, table.top - 6, header);
+              } else {
+                doc.text(table.left + (table.sp * n), table.top - 6, header);
+              }
             });
 
             doc.setLineWidth(1.5);
@@ -184,7 +199,11 @@ export class PdfGeneratorService {
                   n = j;
                   if ((table.top + table.lh * (n + 1)) < (A4.height - 50)) {
                     _headers.forEach((header, i) => {
-                      doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1), cell[_headers[i]]);
+                      if (i === 1) {
+                        doc.text(table.left + (table.sp * i) + 25, table.top + table.lh * (n + 1), cell[_headers[i]]);
+                      } else {
+                        doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1), cell[_headers[i]]);
+                      }
                     });
                     doc.line(table.left, table.top + table.lh * (n + 1) + 8, A4.width - table.right, table.top + table.lh * (n + 1) + 8);
                   } else {
@@ -257,7 +276,7 @@ export class PdfGeneratorService {
           // Show the link to the user. The important part here is that the link is opened by the
           // user from an href attribute on an <a> tag or the new window is opened during a click event.
           // Most browsers will refuse to open a new tab/window if it is not opened during a user-triggered event.
-          LinkGeneratedDialogComponent.createDialog(this.dialog, 'Report Generated Succeccfully', theLink);
+          LinkGeneratedDialogComponent.createDialog(this.dialog, 'Report Generated Successfully', theLink);
         };
 
         const blob = doc.output('blob');

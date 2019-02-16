@@ -13,7 +13,11 @@ export class SelectProfileComponent implements OnInit {
   public stayHere$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public currentUser: User;
   public availableProfiles: any[] = [];
-  public showSpinner: boolean;
+  public showSpinner = {
+    Administrator: false,
+    Teacher: false,
+    Student: false
+  };
 
 
   constructor(
@@ -65,7 +69,6 @@ export class SelectProfileComponent implements OnInit {
   }
 
   switchTo(account) {
-    this.showSpinner = true;
     this.router.navigate([account]);
   }
   signOut() {

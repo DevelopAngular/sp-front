@@ -19,6 +19,7 @@ import {filter} from 'rxjs/operators';
 })
 export class PassTileComponent implements OnInit, OnDestroy {
 
+  @Input() mock = null;
   @Input() pass: PassLike;
   @Input() fromPast = false;
   @Input() forFuture;
@@ -33,6 +34,24 @@ export class PassTileComponent implements OnInit, OnDestroy {
   valid: boolean = true;
   hovered: boolean;
   timers: number[] = [];
+  //
+  // mockData = {
+  //   headers: [
+  //     'Counselor',
+  //     'Gardner',
+  //     'Bathroom'
+  //   ],
+  //   gradients: [
+  //     '#E38314,#EAB219',
+  //     '#F52B4F,#F37426',
+  //     '#5C4AE3,#336DE4'
+  //   ],
+  //   dates: [
+  //     'Tomorrow, 9:03 AM',
+  //     'Sept 29, 11:35 AM',
+  //     'Today, 8:35 AM'
+  //   ]
+  // };
 
   get buttonState() {
     return this.buttonDown ? 'down' : 'up';
@@ -66,6 +85,15 @@ export class PassTileComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    if (this.mock) {
+      // this.pass = null;
+      // this.fromPast = false;
+      // this.forFuture = true;
+      // this.isActive = false;
+      // this.forStaff = false;
+      // this.timerEvent = new Subject<any>();
+    }
+
     this.valid = this.isActive;
     if (this.timerEvent) {
       this.timerEvent.pipe(filter(() => !!this.pass['expiration_time'])).subscribe(() => {

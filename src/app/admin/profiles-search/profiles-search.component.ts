@@ -1,10 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {debounceTime, distinctUntilChanged, filter, map, switchMap} from 'rxjs/internal/operators';
 import {Observable, Subject} from 'rxjs';
-import {UserService} from '../../user.service';
-import {Paged} from '../../models';
+import {UserService} from '../../services/user.service';
 import {User} from '../../models/User';
-import {HttpService} from '../../http-service';
 
 @Component({
   selector: 'app-profiles-search',
@@ -18,6 +16,8 @@ export class ProfilesSearchComponent implements OnInit {
 
   private destroy$: Subject<any> = new Subject();
   private searchChangeObserver$: Subject<string>;
+  public inputValue$: Subject<string> = new Subject<string>();
+
 
   public userList: any[] = [];
   public wait: boolean;
@@ -30,15 +30,16 @@ export class ProfilesSearchComponent implements OnInit {
   @Input() showOptions: boolean = true;
   @Input() selectedStudents: User[] = [];
 
+
   students: Promise<any[]>;
   inputValue: string = '';
   //
   constructor(
     private userService: UserService,
-    private http: HttpService
   ) { }
 
   ngOnInit() {
+
   }
   showSearchParam(searchValue) {
 
@@ -79,12 +80,13 @@ export class ProfilesSearchComponent implements OnInit {
   }
   onSearch(search: string) {
     this.isEmitUsers.emit(false);
-    if(search!=='')
-      this.students = this.http.get<Paged<any>>('v1/users?role=' + this.role + '&limit=5' + (search === '' ? '' : '&search=' + encodeURI(search)))
-          .toPromise().then(paged => {
-            if (paged.results.length > 0) {
+    if(search !== '')
+      this.students = this.userService.searchProfileAll(encodeURI(search))
+          .toPromise().then((users: User[]) => {
+            console.log(users);
+            if (users.length > 0) {
               this.isEmitUsers.emit(true);
-              return  this.removeDuplicateStudents(paged.results);
+              return this.removeDuplicateStudents(users);
             }
           });
     else

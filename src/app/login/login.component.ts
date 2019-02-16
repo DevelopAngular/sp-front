@@ -1,8 +1,8 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DeviceDetection } from '../device-detection.helper';
-import { GoogleLoginService } from '../google-login.service';
-import { UserService } from '../user.service';
+import { GoogleLoginService } from '../services/google-login.service';
+import { UserService } from '../services/user.service';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 
 @Component({
@@ -18,10 +18,14 @@ export class LoginComponent implements OnInit {
   public titleText: string;
   public isMobileDevice: boolean = false;
   public trustedBackgroundUrl: SafeUrl;
-
-  constructor(private userService: UserService, private loginService: GoogleLoginService, private router: Router, private sanitizer: DomSanitizer, private _zone: NgZone) {
-
-  }
+  public showError = { loggedWith: null, error: null };
+  constructor(
+    private userService: UserService,
+    private loginService: GoogleLoginService,
+    private router: Router,
+    private sanitizer: DomSanitizer,
+    private _zone: NgZone
+  ) {}
 
   ngOnInit() {
     this.trustedBackgroundUrl = this.sanitizer.bypassSecurityTrustStyle('url(\'./assets/Login Background.svg\')');
@@ -39,5 +43,9 @@ export class LoginComponent implements OnInit {
       this.titleText = 'Download SmartPass on the Google Play Store to start making passes.';
     }
   }
-
+  onClose(evt) {
+    setTimeout(() => {
+      this.showError.error = evt;
+    }, 400);
+  }
 }

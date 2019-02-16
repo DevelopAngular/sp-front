@@ -1,0 +1,26 @@
+<div class="category-wrapper">
+  <div [ngClass]="headerTransition" [style.background-image]="headerGradient">
+    <img class="back-button" [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
+    <div class="category-header-text">
+      <img class="search-icon" [src]="pinnable.icon | resolveAsset">
+      <div class="text">{{pinnable.category}}</div>
+    </div>
+  </div>
+
+    <div class="category-content">
+      <app-location-table
+        class="center"
+        (onSelect)="locationChosen($event)"
+        [forStaff]="isStaff"
+        [hasLocks]="true"
+        [inputWidth]="'240px'"
+        [category]="pinnable.category"
+        [invalidLocation]="(fromLocation ? +fromLocation.id : '')"
+        [type]="'location'"
+        [placeholder]="'Search ' + pinnable.category" >
+      </app-location-table>
+    </div>
+    <div class="shadow"></div>
+    <app-student-footer *ngIf="!isStaff" [formState]="formState" [state]="'category'" [date]="date"></app-student-footer>
+    <app-teacher-footer [fromLocation]="fromLocation" [formState]="formState" *ngIf="isStaff" [state]="'category'" [date]="date" [studentText]="studentText"></app-teacher-footer>
+</div>

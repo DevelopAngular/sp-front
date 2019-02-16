@@ -1,7 +1,12 @@
-import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
-import { GoogleLoginService } from '../google-login.service';
+import {Component, EventEmitter, NgZone, OnDestroy, OnInit, Output} from '@angular/core';
+import { GoogleLoginService } from '../services/google-login.service';
 import {MatDialog} from '@angular/material';
+
+export enum LoginMethod { OAuth = 1, LocalStrategy = 2}
 import {ErrorToastComponent} from '../error-toast/error-toast.component';
+import {of} from 'rxjs';
+import {finalize} from 'rxjs/operators';
+import {tap} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'google-signin',
@@ -11,15 +16,18 @@ import {ErrorToastComponent} from '../error-toast/error-toast.component';
 
 export class GoogleSigninComponent implements OnInit, OnDestroy {
 
+  @Output() showError: EventEmitter<{ loggedWith: number, error: boolean} > = new EventEmitter<{loggedWith: number, error: boolean}>();
+
+
   public name = 'Not Logged in!';
 
   public isLoaded = false;
   public progressValue = 0;
   public progressType = 'determinate';
-
+  public showSpinner: boolean = false;
+  public loggedWith: number;
   keyListener;
   demoLoginEnabled = false;
-  showSpinner = false;
 
   demoUsername = '';
   demoPassword = '';
@@ -49,35 +57,33 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
 
     this.loginService.showLoginError$.subscribe(show => {
       this._ngZone.run(() => {
-        if (show) {
-          this.matDialog.open(ErrorToastComponent, {
-            panelClass: 'error-toast-dialog-container',
-            position: {
-              top: '25px',
-              right: '25px'
-            }
-          });
-        }
 
+          this.showError.emit( {
+            loggedWith: this.loggedWith,
+            error: show,
+          });
       });
     });
-
-    let textBuffer = '';
-
-    this.keyListener = (event) => {
-      textBuffer += event.key;
-
-      if (textBuffer.length > 20) {
-        textBuffer = textBuffer.substring(textBuffer.length - 20);
-      }
-
-      if (textBuffer.endsWith('demo')) {
-        this.toggleDemoLogin();
-      }
-    };
-
+    //
+    // let textBuffer = '';
+    //
+    // this.keyListener = (event) => {
+    //   textBuffer += event.key;
+    //
+    //   if (textBuffer.length > 20) {
+    //     textBuffer = textBuffer.substring(textBuffer.length - 20);
+    //   }
+    //
+    //   if (textBuffer.endsWith('demo')) {
+    //     this.toggleDemoLogin();
+    //   }
+    // };
   }
-
+  onClose(evt) {
+    setTimeout(() => {
+      this.showError = evt;
+    }, 400);
+  }
   updateDemoUsername(event) {
     // console.log('UN ===>', event, this.demoLoginEnabled);
     this.demoUsername = event;
@@ -92,13 +98,20 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   }
 
   demoLogin() {
+    this.showSpinner = true;
     if (this.demoUsername && this.demoPassword) {
+      this.loggedWith = LoginMethod.LocalStrategy;
       this.loginService.showLoginError$.next(false);
-      this.loginService.signInDemoMode(this.demoUsername, this.demoPassword);
+      of(this.loginService.signInDemoMode(this.demoUsername, this.demoPassword))
+      .pipe(
+        finalize(() => {
+          this.showSpinner = false;
+      }));
     }
   }
 
   initLogin() {
+    this.loggedWith = LoginMethod.OAuth;
     this.showSpinner = true;
     this.loginService.showLoginError$.next(false);
     this.loginService
@@ -107,9 +120,10 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.showSpinner = false;
       })
       .catch((err) => {
-        console.log('Error occured', err);
+        console.log('Error occured =====>', err);
 
         if (err && err.error !== 'popup_closed_by_user') {
+          console.log('Erro should be shown ====>')
           this.loginService.showLoginError$.next(true);
         }
         this.showSpinner = false;

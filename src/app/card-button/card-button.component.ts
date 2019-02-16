@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { bumpIn } from '../animations';
-import {DataService} from '../data-service';
+import {DataService} from '../services/data-service';
 
 @Component({
   selector: 'app-card-button',
@@ -48,10 +48,9 @@ export class CardButtonComponent implements OnInit {
 
   getGradient() {
     // console.log('Passed gradiend ===> ', this.gradientColor);
-
-    let gradient: string[] = this.gradientColor.split(',');
-    //   let gradient: string[] = '#134472, #549abb'.split(',');
-
-        return 'radial-gradient(circle at 73% 71%, ' + gradient[0] + ', ' + gradient[1] + ')';
+    if (this.gradientColor) {
+      const gradient: string[] = this.gradientColor.split(',');
+      return 'radial-gradient(circle at 73% 71%, ' + gradient[0] + ', ' + gradient[1] + ')';
+    }
   }
 }

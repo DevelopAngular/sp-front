@@ -4,10 +4,10 @@
                       'Wednesday', 'Thursday', 'Friday',
                       'Saturday'];
 
-    static month: string[] = ['Jan.', 'Feb.', 'Mar.',
-                        'Apr.', 'May', 'June',
-                        'July', 'Aug.', 'Sept.',
-                        'Oct.', 'Nov.', 'Dec.'];
+    static month: string[] = ['Jan', 'Feb', 'Mar',
+                        'Apr', 'May', 'June',
+                        'July', 'Aug', 'Sept',
+                        'Oct', 'Nov', 'Dec'];
 
     static formatDateTime(s: Date, timeOnly?: boolean, utc?: boolean) {
         let hours = utc ? s.getUTCHours() : s.getHours();

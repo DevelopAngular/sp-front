@@ -2,20 +2,22 @@
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
-  MatChipsModule,
-  MatDialogModule,
-  MatGridListModule,
-  MatIconModule,
-  MatProgressBarModule,
-  MatSelectModule,
-  MatSliderModule,
-  MatSlideToggleModule
+    MatChipsModule,
+    MatDialogModule,
+    MatDividerModule,
+    MatGridListModule,
+    MatListModule,
+    MatIconModule,
+    MatProgressBarModule,
+    MatSelectModule,
+    MatSliderModule,
+    MatSlideToggleModule
 } from '@angular/material';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { ContainerCardComponent } from '../container-card/container-card.component';
 import { FavoriteFormComponent } from '../favorite-form/favorite-form.component';
 import { HallMonitorComponent } from '../hall-monitor/hall-monitor.component';
-import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
+import { MainHallPassFormComponent } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import { InfoEditorComponent } from '../info-editor/info-editor.component';
 import { InlinePassCardComponent } from '../inline-pass-card/inline-pass-card.component';
 import { InlineRequestCardComponent } from '../inline-request-card/inline-request-card.component';
@@ -34,6 +36,22 @@ import { SharedModule } from '../shared/shared.module';
 import { StudentPickerComponent } from '../student-picker/student-picker.component';
 import { MainRoutingModule } from './main-routing.module';
 import { NavbarDataService } from './navbar-data.service';
+import { FromWhereComponent } from '../create-hallpass-forms/main-hallpass--form/locations-group-container/from-where/from-where.component';
+import { ToWhereComponent } from '../create-hallpass-forms/main-hallpass--form/locations-group-container/to-where/to-where.component';
+import { LocationsGroupContainerComponent } from '../create-hallpass-forms/main-hallpass--form/locations-group-container/locations-group-container.component';
+import { ToCategoryComponent } from '../create-hallpass-forms/main-hallpass--form/locations-group-container/to-category/to-category.component';
+import { RestrictedTargetComponent } from '../create-hallpass-forms/main-hallpass--form/locations-group-container/restricted-target/restricted-target.component';
+import { RestrictedMessageComponent } from '../create-hallpass-forms/main-hallpass--form/locations-group-container/restricted-message/restricted-message.component';
+import {GroupsContainerComponent} from '../create-hallpass-forms/main-hallpass--form/student-groups/groups-container/groups-container.component';
+import {GroupsStep1Component} from '../create-hallpass-forms/main-hallpass--form/student-groups/groups-step1/groups-step1.component';
+import {GroupsStep2Component} from '../create-hallpass-forms/main-hallpass--form/student-groups/groups-step2/groups-step2.component';
+import {GroupsStep3Component} from '../create-hallpass-forms/main-hallpass--form/student-groups/groups-step3/groups-step3.component';
+import { TeacherFooterComponent } from '../create-hallpass-forms/main-hallpass--form/locations-group-container/teacher-footer/teacher-footer.component';
+import { DateTimeContainerComponent } from '../create-hallpass-forms/main-hallpass--form/date-time-container/date-time-container.component';
+import { FormFactorContainerComponent } from '../create-hallpass-forms/main-hallpass--form/form-factor-container/form-factor-container.component';
+import {StudentFooterComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/student-footer/student-footer.component';
+import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
+import {FirstSeenFormComponent} from '../create-hallpass-forms/first-seen-form/first-seen-form.component';
 
 @NgModule({
   imports: [
@@ -50,14 +68,17 @@ import { NavbarDataService } from './navbar-data.service';
     MatSliderModule,
     MatProgressBarModule,
     MatDialogModule,
-    MatGridListModule
+    MatGridListModule,
+    MatDividerModule,
+    MatGridListModule,
+    MatListModule
   ],
   declarations: [
     HallMonitorComponent,
     MyRoomComponent,
     PassesComponent,
     SettingsComponent,
-    HallpassFormComponent,
+    MainHallPassFormComponent,
     InfoEditorComponent,
     RequestAcceptComponent,
     InlineRequestCardComponent,
@@ -71,10 +92,26 @@ import { NavbarDataService } from './navbar-data.service';
     LocationCellComponent,
     LocationPickerComponent,
     ContainerCardComponent,
-    MainPageComponent
+    MainPageComponent,
+    FromWhereComponent,
+    ToWhereComponent,
+    ToCategoryComponent,
+    RestrictedTargetComponent,
+    RestrictedMessageComponent,
+    TeacherFooterComponent,
+    StudentFooterComponent,
+    LocationsGroupContainerComponent,
+    GroupsContainerComponent ,
+    GroupsStep1Component,
+    GroupsStep2Component,
+    GroupsStep3Component,
+    DateTimeContainerComponent,
+    FormFactorContainerComponent,
+    CreateHallpassFormsComponent,
+    FirstSeenFormComponent
   ],
   entryComponents: [
-    HallpassFormComponent,
+    CreateHallpassFormsComponent,
     RequestAcceptComponent,
     InfoEditorComponent,
     FavoriteFormComponent,

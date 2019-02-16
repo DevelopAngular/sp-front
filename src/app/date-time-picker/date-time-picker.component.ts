@@ -1,4 +1,4 @@
-﻿import { Component, EventEmitter, Input, OnInit, OnDestroy,Output } from '@angular/core';
+﻿import { Component, EventEmitter, Input, OnInit, OnDestroy, Output } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
 import { Util } from '../../Util';
 
@@ -26,14 +26,34 @@ export class DateTimePickerComponent implements OnInit, OnDestroy{
 
   @Output() onconfirm: EventEmitter<any> = new EventEmitter();
 
+  @Input() default: Date;
 
   constructor() {
   }
 
   set selectedMoment(newMoment: Date) {
     newMoment.setSeconds(0);
-    this._selectedMoment = newMoment;
-    // this.onUpdate.emit(this._selectedMoment);
+    let nhrs = newMoment.getHours();
+    let nmins = newMoment.getMinutes();
+    let ohrs = this.default.getHours();
+    let omins = this.default.getMinutes();
+
+    let invalid = false;
+    if (this.min) {
+      if (newMoment.getDate() == this.min.getDate() && newMoment.getMonth() == this.min.getMonth()) {
+          invalid = (nhrs < ohrs) || (nhrs == ohrs && nmins < omins);
+      }
+    }
+
+
+    if (invalid) {
+      this._selectedMoment = this.default;
+      console.log('Time Invalid');
+    } else{
+      this._selectedMoment = newMoment;
+      console.log('Time Valid');
+    }
+
     this.ngOnDestroy();
     console.log('[Date-Time Moment]: ', this._selectedMoment);
   }
@@ -54,16 +74,26 @@ export class DateTimePickerComponent implements OnInit, OnDestroy{
       return this._selectedMoment_2ndCal;
   }
 
-  get dateRangeText(){
-    return Util.formatDateTimeForDateRange(this._selectedMoment, this._selectedMoment_2ndCal);
+  get dateRangeText() {
+    if (this._selectedMoment) {
+      return Util.formatDateTimeForDateRange(this._selectedMoment, this._selectedMoment_2ndCal);
+    }
   }
 
   ngOnInit() {
     console.log('[Date-Time Debug]: ', 'Date-Time where at');
-    this.min.setMinutes(this.min.getMinutes() + 5);
-    this._selectedMoment.setMinutes(this._selectedMoment.getMinutes() + 5);
+    if (this.min && this.min instanceof Date) {
+      this.min.setSeconds(0);
+      this.min.setMinutes(0);
+      this.min.setHours(0);
+    }
+    if (this._selectedMoment) {
+      this._selectedMoment.setMinutes(this._selectedMoment.getMinutes() + 5);
+      this._selectedMoment.setSeconds(0);
+      this.default = this._selectedMoment;
+    }
     if (!this._selectedMoment) {
-      this._selectedMoment = this.min;
+      this._selectedMoment = this.default;
     }
 
     // this.onUpdate.emit(this._selectedMoment);

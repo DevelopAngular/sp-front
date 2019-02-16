@@ -5,7 +5,7 @@
     <app-smartpass-logo></app-smartpass-logo>
   </div>
   <div *ngIf="isStaff" class="teacherNav">
-    <div *ngFor="let button of buttons">
+    <div *ngFor="let button of buttons" class="teacherNav_tab">
       <ng-container *ngIf="isStaff">
         <app-nav-button
                 [selected]="tab === button.route"

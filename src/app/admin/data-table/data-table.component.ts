@@ -18,6 +18,7 @@ export class DataTableComponent implements OnInit {
   @Input() textHeaderColor: string = '#4b4876';
 
   @Output() selectedUsers: EventEmitter<any[]> = new EventEmitter();
+  @Output() selectedRow: EventEmitter<any> = new EventEmitter<any>();
 
   @ViewChild(MatSort) sort: MatSort;
 
@@ -31,6 +32,14 @@ export class DataTableComponent implements OnInit {
   ngOnInit() {
       this.dataSource = new MatTableDataSource(this.data);
       this.dataSource.sort = this.sort;
+      this.dataSource.sortingDataAccessor = (item, property) => {
+          switch (property) {
+              case 'Date & Time': {
+                  return new Date(item[property]);
+              }
+              default: return item[property];
+          }
+      };
       this.displayedColumns = Object.keys(this.data[0]);
       this.columnsToDisplay = this.displayedColumns.slice();
       if (this.isCheckbox) {
@@ -47,7 +56,13 @@ export class DataTableComponent implements OnInit {
   masterToggle() {
       this.isAllSelected() ?
           this.selection.clear() :
-          this.data.forEach(row => this.selection.select(row));
+          this.data.forEach(row => {
+              this.selection.select(row);
+          });
+  }
+
+  selectedRowEmit(row) {
+     this.selectedRow.emit(row);
   }
 
   pushOutSelected() {

@@ -7,7 +7,7 @@ import 'rxjs/add/operator/startWith';
 import { Observable } from 'rxjs/Observable';
 import { map, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
-import { HttpService } from '../http-service';
+import { HttpService } from '../services/http-service';
 import { Paged, PassLike } from '../models';
 import { BaseModel } from '../models/base';
 import { HallPass } from '../models/HallPass';
@@ -15,7 +15,7 @@ import { Invitation } from '../models/Invitation';
 import { Location } from '../models/Location';
 import { Request } from '../models/Request';
 import { User } from '../models/User';
-import { PollingEvent, PollingService } from '../polling-service';
+import { PollingEvent, PollingService } from '../services/polling-service';
 import {
   Action,
   ExternalEvent,
@@ -365,7 +365,7 @@ export class LiveDataService {
 
   watchActiveHallPasses(sortingEvents: Observable<HallPassFilter>, filter?: PassFilterType, date: Date = null): Observable<HallPass[]> {
     const queryFilter: QueryParams = {
-      limit: 20,
+      limit: 100000,
       active: true
     };
     const filters: FilterFunc<HallPass>[] = [
