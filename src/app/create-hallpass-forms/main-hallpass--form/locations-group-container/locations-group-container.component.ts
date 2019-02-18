@@ -26,12 +26,8 @@ export class LocationsGroupContainerComponent implements OnInit {
   isStaff: boolean;
   pinnables: Promise<Pinnable[]>;
   pinnable: Pinnable;
-
   data: any = {};
-
   frameMotion$: BehaviorSubject<any>;
-
-  motionDirection = '';
 
   constructor(private dataService: DataService, private formService: CreateFormService) { }
 
@@ -68,7 +64,7 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.FORM_STATE.quickNavigator = false;
 
     // this.FORM_STATE.previousState = 0;
-
+    this.data.fromLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.from ? this.FORM_STATE.data.direction.from : null;
     this.data.toLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.to ? this.FORM_STATE.data.direction.to : null;
     this.pinnables = this.formService.getPinnable();
     this.user$ = this.dataService.currentUser;
@@ -103,7 +99,6 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   toWhere(pinnable) {
-
     this.pinnable = pinnable;
     this.FORM_STATE.data.direction = {
         from: this.data.fromLocation,
