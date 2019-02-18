@@ -47,7 +47,7 @@ export class LocationTableComponent implements OnInit {
   search: string = '';
   nextChoices: string = '';
   favoritesLoaded: boolean;
-  saveChoices;
+  hideFavorites: boolean;
 
   @HostListener('scroll', ['$event'])
   onScroll(event) {
@@ -92,7 +92,6 @@ export class LocationTableComponent implements OnInit {
       if (this.staticChoices) {
       this.choices = this.staticChoices;
     } else {
-
         const url = 'v1/'
             +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
                 +(!!this.category ? ('?category=' +this.category +'&') : '?')
@@ -137,6 +136,7 @@ export class LocationTableComponent implements OnInit {
 
         this.locationService.searchLocationsWithConfig(url)
         .toPromise().then(p => {
+          this.hideFavorites = true;
           this.choices = this.filterResults(p.results);
         });
       } else {
@@ -153,6 +153,7 @@ export class LocationTableComponent implements OnInit {
           if (this.staticChoices) {
             this.choices = this.filterResults(this.staticChoices);
           } else {
+            this.hideFavorites = false;
             this.choices = this.filterResults(p.results);
           }
           this.nextChoices = p.next;
