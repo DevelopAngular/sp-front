@@ -71,18 +71,30 @@
   //background: rgba(255, 255, 255, 1);
   //border-radius: 15px;
   //overflow: hidden;
-  transition: width .7s ease, height .7s ease;
+  transition: width .5s ease, height .5s ease;
   position: relative;
-  .fixed-card {
-    //border-radius: 15px;
-    //overflow: hidden;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: auto;
-  }
+  //display: flex;
+  //align-items: center;
+  //justify-content: center;
+
+}
+.pretty-replace-box {
+  position: relative;
+  //z-index: 10001;
+  overflow: hidden;
+  //background-color: rgba(255, 255, 255, .8);
+  border-radius: 15px;
+}
+
+.fixed-card {
+  //border-radius: 15px;
+  //overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
 }
 
 .form-stepper {
