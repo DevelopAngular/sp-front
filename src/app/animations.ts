@@ -19,52 +19,71 @@ export const NextStep = trigger('NextStep', [
       .category-header,
       .rest-tar-header,
       .rest-mes-header
-      `, animate('0.5s 0s ease', keyframes([
+      `, animate('0.65s 0s ease', keyframes([
           style({
-            background: 'transparent'
+            background: 'transparent',
+            boxShadow: 'none'
           }),
+          // style({
+          //   background: 'transparent',
+          //   boxShadow: 'none'
+          // }),
           style({
-            background: 'transparent'
-          }),
-          style({
-            background: 'transparent'
+            background: 'transparent',
+            boxShadow: 'none'
           }),
         ])), {optional: true}
       ),
+      // query(`.back-button-grey`, animate('0.65s 0s ease', keyframes([
+      //     style({
+      //       opacity: 0,
+      //     }),
+      //
+      //     style({
+      //       opacity: 0,
+      //     }),
+      //   ])), {optional: true}
+      // ),
       query(`
-      .from-header-text,
-      .to-header-text,
+      .from-header-textt,
+      .to-header-textt,
       .category-header_animation-back,
-      .category-header-text,
-      .rest-tar-header-text,
-      .rest-mes-header-text
-      `, animate('0.5s 0s ease', keyframes([
+      .category-header-textt,
+      .rest-tar-header-textt,
+      .rest-mes-header-textt
+      `, animate('0.65s 0s ease', keyframes([
           style({
             opacity: 0,
           }),
-          style({
-            opacity: 0.55,
-          }),
+          // style({
+          //   opacity: 0.55,
+          // }),
           style({
             opacity: 1,
           })
         ])), {optional: true}
       ),
       query(`
+      .from-header-text,
+      .to-header-text,
+      .category-header_animation-backk,
+      .category-header-text,
+      .rest-tar-header-text,
+      .rest-mes-header-text,
       .from-content,
       .to-content,
       .category-content,
       .rest-tar-content,
       .rest-mes-content
-      `, animate('0.5s 0s ease', keyframes([
+      `, animate('0.65s 0s ease', keyframes([
           style({
             opacity: 0,
             transform: 'translateX({{from}}px)',
           }),
-          style({
-            opacity: 0.5,
-            transform: 'translateX({{halfFrom}}px)',
-          }),
+          // style({
+          //   opacity: 0.5,
+          //   transform: 'translateX({{halfFrom}}px)',
+          // }),
           style({
             opacity: 1,
             transform: 'translateX(0px)',
@@ -81,56 +100,74 @@ export const NextStep = trigger('NextStep', [
       .rest-tar-header,
       .rest-mes-header
       `,
-      animate('0.5s 0s ease', keyframes([
+      animate('0.65s 0s ease', keyframes([
           style({
             'z-index': 9
           }),
-          style({
-            'z-index': 9
-          }),
+          // style({
+          //   'z-index': 9
+          // }),
           style({
             'z-index': 9
           }),
         ])), {optional: true}
       ),
+    query(`.back-button-grey`, animate('0.65s 0s ease', keyframes([
+        style({
+          opacity: 0,
+        }),
+
+        style({
+          opacity: 0,
+        }),
+      ])), {optional: true}
+    ),
       query(`
-      .from-header-text,
-      .to-header-text,
+      .from-header-textt,
+      .to-header-textt,
       .category-header_animation-back,
-      .rest-tar-header_animation-back,
-      .rest-mes-header_animation-back,
-      .category-header-text,
-      .rest-tar-header-text,
-      .rest-mes-header-text
+      .rest-tar-header_animation-backk,
+      .rest-mes-header_animation-backk,
+      .category-header-textt,
+      .rest-tar-header-textt,
+      .rest-mes-header-textt
       `,
-      animate('0.5s 0s ease', keyframes([
+      animate('0.65s 0s ease', keyframes([
           style({
             opacity: 1,
           }),
-          style({
-            opacity: 0.55,
-          }),
+          // style({
+          //   opacity: 0.55,
+          // }),
           style({
             opacity: 0,
           }),
         ])), {optional: true}
       ),
       query(`
+      .from-header-text,
+      .to-header-text,
+      .category-header_animation-backk,
+      .rest-tar-header_animation-back,
+      .rest-mes-header_animation-back,
+      .category-header-text,
+      .rest-tar-header-text,
+      .rest-mes-header-text,
       .from-content,
       .to-content,
       .category-content,
       .rest-tar-content,
       .rest-mes-content
       `,
-      animate('0.5s 0s ease', keyframes([
+      animate('0.65s 0s ease', keyframes([
             style({
               opacity: 1,
               transform: 'translateX(0px)',
             }),
-            style({
-              opacity: 0.5,
-              transform: 'translateX({{halfTo}}px)',
-            }),
+            // style({
+            //   opacity: 0.5,
+            //   transform: 'translateX({{halfTo}}px)',
+            // }),
             style({
               opacity: 0,
               transform: 'translateX({{to}}px)',
@@ -143,7 +180,7 @@ export const NextStep = trigger('NextStep', [
 ]);
 
 export const NextStepColored = trigger('NextStepColored', [
-  transition(':enter', animate('0.7s 0s ease', keyframes([
+  transition(':enter', animate('0.65s 0s ease', keyframes([
       style({
         opacity: 0,
         // transform: 'translateX({{from}}px)',
@@ -163,7 +200,7 @@ export const NextStepColored = trigger('NextStepColored', [
     ])),
     // { params: { from: 100, halfFrom: 50}}
   ),
-  transition(':leave', animate('0.7s 0s ease', keyframes([
+  transition(':leave', animate('0.65s 0s ease', keyframes([
       style({
         opacity: 1,
         // transform: 'translateX(0px)',
@@ -189,7 +226,7 @@ export const NextStepColored = trigger('NextStepColored', [
 
 export const HeaderShowingUp = trigger('HeaderShowingUp', [
 
-  transition(':enter', animate('0.7s 0s ease', keyframes([
+  transition(':enter', animate('0.65s 0s ease', keyframes([
     style({
       opacity: 0
     }),
@@ -200,7 +237,7 @@ export const HeaderShowingUp = trigger('HeaderShowingUp', [
       opacity: 1
     })
   ]))),
-  transition(':leave', animate('0.7s 0s ease', keyframes([
+  transition(':leave', animate('0.65s 0s ease', keyframes([
     style({
       opacity: 1
     }),
@@ -214,7 +251,7 @@ export const HeaderShowingUp = trigger('HeaderShowingUp', [
 ]);
 
 export const BodyShowingUp = trigger('BodyShowingUp', [
-  transition(':enter', animate('0.7s 0s ease', keyframes([
+  transition(':enter', animate('0.65s 0s ease', keyframes([
     style({
       opacity: 0,
       transform: 'translateX({{from}}px)',
@@ -230,7 +267,7 @@ export const BodyShowingUp = trigger('BodyShowingUp', [
   ])),
     { params: { from: 100, halfFrom: 50}}
   ),
-  transition(':leave', animate('0.7s 0s ease', keyframes([
+  transition(':leave', animate('0.65s 0s ease', keyframes([
     style({
       opacity: 1,
       transform: 'translateX(0px)',
@@ -250,31 +287,31 @@ export const BodyShowingUp = trigger('BodyShowingUp', [
 
 export const ScaledCard = trigger('ScaledCard', [
 
-  transition(':enter', animate('.5s 0s ease', keyframes([
+  transition(':enter', animate('.65s 0s ease', keyframes([
     style({
       opacity: 0,
       transform: 'scale(1.2)'
     }),
-    style({
-      opacity: 0.2,
-      transform: 'scale(1.1)'
-
-    }),
+    // style({
+    //   opacity: 0.2,
+    //   transform: 'scale(1.1)'
+    //
+    // }),
     style({
       opacity: 1,
       transform: 'scale(1)'
     })
   ]))),
-  transition(':leave', animate('.5s 0s ease', keyframes([
+  transition(':leave', animate('.65s 0s ease', keyframes([
     style({
       opacity: 1,
       transform: 'scale(1)'
     }),
-    style({
-      opacity: 0.2,
-      transform: 'scale(0.9)'
-
-    }),
+    // style({
+    //   opacity: 0.2,
+    //   transform: 'scale(0.9)'
+    //
+    // }),
     style({
       opacity: 0,
       transform: 'scale(0.8)'

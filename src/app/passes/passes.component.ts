@@ -281,6 +281,7 @@ export class PassesComponent implements OnInit {
           this.dataService.isActivePass$.next(false);
         }
         if (passLike) {
+            // debugger;
           const nowDate = new Date();
           const startDate = new Date(passLike.start_time);
           const endDate = new Date(passLike.end_time);

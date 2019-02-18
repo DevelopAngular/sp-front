@@ -1,13 +1,10 @@
-import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
-import { DataService } from '../../services/data-service';
-import { HttpService } from '../../services/http-service';
 import { Location } from '../../models/Location';
 import { Pinnable } from '../../models/Pinnable';
 import { User } from '../../models/User';
 import { StudentList } from '../../models/StudentList';
 import {NextStep, NextStepColored, ScaledCard} from '../../animations';
-import {startWith} from 'rxjs/operators';
 
 export enum Role { Teacher = 1, Student = 2 }
 
@@ -178,6 +175,6 @@ export class MainHallPassFormComponent implements OnInit {
           // break;
         }
       }
-      console.log(this.formSize);
+      // console.log(this.formSize);
   }
 }

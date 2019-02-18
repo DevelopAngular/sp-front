@@ -264,13 +264,13 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   cancelEdit(evt: MouseEvent){
-
     if(!this.cancelOpen){
       const target = new ElementRef(evt.currentTarget);
       let options = [];
       let header = '';
 
       if((this.isActive && this.forStaff) || this.forMonitor){
+
         if (!this.user.isAdmin()) {
           options.push(this.genOption('Report Student','#3D396B','report'));
         }
@@ -279,7 +279,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
       } else{
         if (this.forInput) {
           if (this.isSeen) {
-              this.formState.step = 3;
+
+            this.formState.step = 3;
               this.formState.previousStep = 4;
               this.cardEvent.emit(this.formState);
           } else {

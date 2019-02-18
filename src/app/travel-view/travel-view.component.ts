@@ -7,6 +7,7 @@ import { DataService } from '../services/data-service';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {BehaviorSubject} from 'rxjs';
+import {filter} from 'rxjs/operators';
 
 @Component({
   selector: 'app-travel-view',
@@ -55,10 +56,13 @@ export class TravelViewComponent implements OnInit {
         this.locationChangeOpen = true;
       });
 
-      locationDialog.afterClosed().subscribe(data => {
+      locationDialog.beforeClose().subscribe(() => {
+          this.locationChangeOpen = false;
+      });
+
+      locationDialog.afterClosed().pipe(filter(res => !!res)).subscribe(data => {
         console.log('Emiting with: ', data);
         this.locationSelected.emit((data.data && data.data['fromLocation']) ? data.data['fromLocation'] : this.pass['default_origin']);
-        this.locationChangeOpen = false;
       });
     }
   }

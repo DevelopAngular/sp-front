@@ -36,7 +36,7 @@ export class CardButtonComponent implements OnInit {
   }
 
   buttonClicked() {
-    this.dataService.isActivePass$.next(false);
+    // this.dataService.isActivePass$.next(false);
     if (!this.disabled) {
         this.onClick.emit();
     }
