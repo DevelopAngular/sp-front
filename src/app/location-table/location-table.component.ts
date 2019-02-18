@@ -38,6 +38,7 @@ export class LocationTableComponent implements OnInit {
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<string> = new EventEmitter();
+  @Output() onUpdate: EventEmitter<number[]> = new EventEmitter<number[]>();
 
   leftShadow: boolean = true;
   rightShadow: boolean = true;
@@ -115,7 +116,9 @@ export class LocationTableComponent implements OnInit {
 
   updateOrderLocation(locations) {
     const body = {'locations': locations.map(loc => loc.id)};
-    this.locationService.updateFavoriteLocations(body).subscribe();
+    this.locationService.updateFavoriteLocations(body).subscribe((res: number[]) => {
+      this.onUpdate.emit(res);
+    });
   }
 
 
