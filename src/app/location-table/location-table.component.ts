@@ -1,8 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output, Directive, HostListener } from '@angular/core';
 import { HttpService } from '../services/http-service';
 import { Location } from '../models/Location';
-import {finalize} from 'rxjs/operators';
+import {finalize, map} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
+import {combineLatest} from 'rxjs';
 
 
 export interface Paged<T> {
@@ -35,6 +36,7 @@ export class LocationTableComponent implements OnInit {
   @Input() inputWidth: string = '200px';
   @Input() isEdit: boolean = false;
   @Input() rightHeaderText: boolean = false;
+  @Input() mergedAllRooms: boolean;
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<string> = new EventEmitter();
@@ -49,6 +51,7 @@ export class LocationTableComponent implements OnInit {
   nextChoices: string = '';
   favoritesLoaded: boolean;
   hideFavorites: boolean;
+  locationWithFavorites;
 
   @HostListener('scroll', ['$event'])
   onScroll(event) {
@@ -97,19 +100,25 @@ export class LocationTableComponent implements OnInit {
             +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
                 +(!!this.category ? ('?category=' +this.category +'&') : '?')
             ))
-            +'limit=10'
+            +'limit=1000'
             +((this.type==='location' && this.showFavorites)?'&starred=false':'');
-
-        this.locationService.searchLocationsWithConfig(url)
-        .toPromise().then(p => {
-          this.choices = p.results;
-          this.nextChoices = p.next;
-        });
+        if (this.mergedAllRooms) {
+            this.mergeLocations(url)
+                .subscribe(res => {
+                    this.choices = res.sort((a, b) => a.id - b.id);
+                });
+        } else {
+            this.locationService.searchLocationsWithConfig(url)
+                .toPromise().then(p => {
+                  this.choices = p.results;
+                  this.nextChoices = p.next;
+                });
+        }
     }
     if(this.type==='location'){
-      this.locationService.getFavoriteLocations().toPromise().then((stars:any[]) => {
+      this.locationService.getFavoriteLocations().toPromise().then((stars: any[]) => {
         this.starredChoices = stars.map(val => Location.fromJSON(val));
-        this.favoritesLoaded = true;
+          this.favoritesLoaded = true;
       });
     }
   }
@@ -133,7 +142,7 @@ export class LocationTableComponent implements OnInit {
             +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
                 +(!!this.category ? ('?category=' +this.category +'&') : '?')
             ))
-            +'limit=4'
+            +'limit=100'
             +'&search=' +search
             +((this.type==='location' && this.showFavorites)?'&starred=false':'');
 
@@ -148,22 +157,40 @@ export class LocationTableComponent implements OnInit {
             +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
                 +(!!this.category ? ('?category=' +this.category +'&') : '?')
             ))
-            +'limit=10'
+            +'limit=1000'
             +(this.type==='location'?'&starred=false':'');
-
-          this.locationService.searchLocationsWithConfig(url)
-        .toPromise().then(p => {
-          if (this.staticChoices) {
-            this.choices = this.filterResults(this.staticChoices);
-          } else {
-            this.hideFavorites = false;
-            this.choices = this.filterResults(p.results);
-          }
-          this.nextChoices = p.next;
-          this.search = '';
-        });
+        if (this.mergedAllRooms) {
+          this.mergeLocations(url)
+              .subscribe(res => {
+                this.choices = res.sort((a, b) => a.id - b.id);
+                this.hideFavorites = false;
+              });
+        } else {
+            this.locationService.searchLocationsWithConfig(url)
+                .toPromise().then(p => {
+                if (this.staticChoices) {
+                    this.choices = this.filterResults(this.staticChoices);
+                } else {
+                    this.hideFavorites = false;
+                    this.choices = this.filterResults(p.results);
+                }
+                this.nextChoices = p.next;
+                this.search = '';
+            });
+        }
       }
     // }
+  }
+
+  mergeLocations(url) {
+    return combineLatest(
+        this.locationService.searchLocationsWithConfig(url),
+        this.locationService.getFavoriteLocations()
+    )
+        .pipe(
+            map(([rooms, favorites]: [any, any[]]) => {
+                return [...rooms.results, ...favorites];
+            }));
   }
 
   filterResults(results: any[]){
