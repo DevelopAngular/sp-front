@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, Output, OnDestroy, EventEmitter } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { bumpIn } from '../animations';
 import { PassLike } from '../models';
 import { getInnerPassContent, getInnerPassName, isBadgeVisible } from './pass-display-util';

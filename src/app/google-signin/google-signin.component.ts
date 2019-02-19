@@ -3,10 +3,8 @@ import { GoogleLoginService } from '../services/google-login.service';
 import {MatDialog} from '@angular/material';
 
 export enum LoginMethod { OAuth = 1, LocalStrategy = 2}
-import {ErrorToastComponent} from '../error-toast/error-toast.component';
 import {of} from 'rxjs';
-import {finalize} from 'rxjs/operators';
-import {tap} from 'rxjs/internal/operators';
+import {finalize, tap} from 'rxjs/operators';
 
 @Component({
   selector: 'google-signin',

@@ -1,8 +1,7 @@
 import { Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { disableBodyScroll } from 'body-scroll-lock';
 import { interval, Subject, zip } from 'rxjs';
-import { switchMap, takeUntil } from 'rxjs/internal/operators';
-import { map } from 'rxjs/operators';
+import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { DataService } from '../../services/data-service';
 import { HttpService } from '../../services/http-service';
 import { HallPassFilter, LiveDataService } from '../../live-data/live-data.service';

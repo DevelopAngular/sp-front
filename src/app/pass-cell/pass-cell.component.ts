@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, OnDestroy, EventEmitter } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { HallPass } from '../models/HallPass';
 import { Invitation } from '../models/Invitation';
 import { Request } from '../models/Request';

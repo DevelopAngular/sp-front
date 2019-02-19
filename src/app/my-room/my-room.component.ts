@@ -1,9 +1,9 @@
 import { Component, ElementRef, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { combineLatest, merge, of } from 'rxjs';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
+import { BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 import { Util } from '../../Util';
 import { DataService } from '../services/data-service';
 import { mergeObject } from '../live-data/helpers';

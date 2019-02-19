@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/operator/scan';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { HttpService } from './http-service';
 import { PassLike } from '../models/index';

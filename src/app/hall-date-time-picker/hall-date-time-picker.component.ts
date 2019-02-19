@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, Inject} from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { BehaviorSubject } from 'rxjs';
 import { Util } from '../../Util';
 
 @Component({

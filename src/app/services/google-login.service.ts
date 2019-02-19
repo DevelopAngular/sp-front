@@ -4,9 +4,9 @@ import 'rxjs/add/operator/map';
 
 import 'rxjs/add/operator/skip';
 import 'rxjs/add/operator/take';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
+import { BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 import { GoogleAuthService } from './google-auth.service';
 import AuthResponse = gapi.auth2.AuthResponse;
 import GoogleAuth = gapi.auth2.GoogleAuth;

@@ -4,9 +4,9 @@ import { combineLatest, empty, merge, of } from 'rxjs';
 import 'rxjs/add/observable/empty';
 
 import 'rxjs/add/operator/startWith';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { HttpService } from '../services/http-service';
 import { Paged, PassLike } from '../models';
 import { BaseModel } from '../models/base';

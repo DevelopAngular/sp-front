@@ -1,7 +1,7 @@
 ﻿import { Component, OnInit, ElementRef} from '@angular/core';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
 import { MatDialog } from '@angular/material';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { BehaviorSubject } from 'rxjs';
 import { User } from '../../models/User';
 import { Report } from '../../models/Report';
 import { Pinnable } from '../../models/Pinnable';
@@ -11,8 +11,7 @@ import { PassLikeProvider } from '../../models/providers';
 import {CalendarComponent} from '../calendar/calendar.component';
 import {HttpService} from '../../services/http-service';
 import {Util} from '../../../Util';
-import {map, toArray} from 'rxjs/operators';
-import {switchMap, tap} from 'rxjs/internal/operators';
+import {map, switchMap, toArray} from 'rxjs/operators';
 import { disableBodyScroll } from 'body-scroll-lock';
 import {AdminService} from '../../services/admin.service';
 

@@ -1,24 +1,17 @@
+import { animate, state, style, transition, trigger, } from '@angular/animations';
 import { Component, NgZone, OnInit } from '@angular/core';
-import {
-  trigger,
-  state,
-  style,
-  animate,
-  transition,
-} from '@angular/animations';
 import { MatDialog } from '@angular/material';
-import {combineLatest, empty, forkJoin, merge, of, Subject, zip} from 'rxjs';
+import { combineLatest, empty, merge, of } from 'rxjs';
 
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
-
-import { DataService } from '../services/data-service';
+import { ReplaySubject } from 'rxjs';
+import { CreateFormService } from '../create-hallpass-forms/create-form.service';
+import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
 import { mergeObject } from '../live-data/helpers';
 import { HallPassFilter, LiveDataService } from '../live-data/live-data.service';
-import { LoadingService } from '../services/loading.service';
 import { exceptPasses, PassLike } from '../models';
 import { HallPass } from '../models/HallPass';
 import { testInvitations, testPasses, testRequests } from '../models/mock_data';
@@ -27,10 +20,11 @@ import { Request } from '../models/Request';
 import { User } from '../models/User';
 import { PassCardComponent } from '../pass-card/pass-card.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
-import {delay, skip} from 'rxjs/internal/operators';
-import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
-import {CreateFormService} from '../create-hallpass-forms/create-form.service';
+
+import { DataService } from '../services/data-service';
+import { LoadingService } from '../services/loading.service';
 import { NotificationService } from '../services/notification-service';
+import { TimeService } from '../services/time.service';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('_profile_teacher');
@@ -155,20 +149,20 @@ class InboxInvitationProvider implements PassLikeProvider {
   styleUrls: ['./passes.component.scss'],
   animations: [
     trigger('OpenOrCloseRequests', [
-      state('requestsOpened', style({
-        width: '312px',
-        opacity: 1,
-        transform: 'translateX(0px)',
-        display: 'block'
-      })),
-      state('requestsClosed', style({
-        width: '0px',
-        opacity: 0,
-        transform: 'translateX(50px)',
-        display: 'none'
-      })),
-      transition('requestsClosed => requestsOpened, requestsOpened => requestsClosed', animate('0.8s 0s ease', null)),
-      // transition('requestsOpened => requestsClosed', animate('0.5s 0s ease', null)),
+        state('requestsOpened', style({
+          width: '312px',
+          opacity: 1,
+          transform: 'translateX(0px)',
+          display: 'block'
+        })),
+        state('requestsClosed', style({
+          width: '0px',
+          opacity: 0,
+          transform: 'translateX(50px)',
+          display: 'none'
+        })),
+        transition('requestsClosed => requestsOpened, requestsOpened => requestsClosed', animate('0.8s 0s ease', null)),
+        // transition('requestsOpened => requestsClosed', animate('0.5s 0s ease', null)),
       ],
     ),
   ]
@@ -206,13 +200,13 @@ export class PassesComponent implements OnInit {
     return this.dataService.inboxState;
   }
 
-  get showInbox(){
+  get showInbox() {
     if (!this.isStaff) {
       // console.log('|||||||||||||| Student Now ===>', this.dataService.inboxState);
       return this.dataService.inboxState;
-    } else if(!this.inboxHasItems && !this.passesHaveItems) {
+    } else if (!this.inboxHasItems && !this.passesHaveItems) {
       return of(false);
-    } else{
+    } else {
       return of(true);
     }
   }
@@ -317,35 +311,35 @@ export class PassesComponent implements OnInit {
         });
       });
 
-      this.inboxHasItems = combineLatest(
-        this.receivedRequests.length$.startWith(0),
-        this.sentRequests.length$.startWith(0),
-        (l1, l2) => (l1 + l2) > 0
-      );
+    this.inboxHasItems = combineLatest(
+      this.receivedRequests.length$.startWith(0),
+      this.sentRequests.length$.startWith(0),
+      (l1, l2) => (l1 + l2) > 0
+    );
 
-      this.inboxLoaded = combineLatest(
-        this.receivedRequests.loaded$,
-        this.sentRequests.loaded$,
-        (l1, l2) => l1 && l2
-      );
+    this.inboxLoaded = combineLatest(
+      this.receivedRequests.loaded$,
+      this.sentRequests.loaded$,
+      (l1, l2) => l1 && l2
+    );
 
-      this.passesHaveItems = combineLatest(
-        this.activePasses.length$.startWith(0),
-        this.futurePasses.length$.startWith(0),
-        this.pastPasses.length$.startWith(0),
-        (l1, l2, l3) => (l1 + l2 + l3) > 0
-      );
+    this.passesHaveItems = combineLatest(
+      this.activePasses.length$.startWith(0),
+      this.futurePasses.length$.startWith(0),
+      this.pastPasses.length$.startWith(0),
+      (l1, l2, l3) => (l1 + l2 + l3) > 0
+    );
 
-      this.passesLoaded = combineLatest(
-        this.activePasses.loaded$,
-        this.futurePasses.loaded$,
-        this.pastPasses.loaded$,
-        (l1, l2, l3) => l1 && l2 && l3
-      );
-      this.isSeen$ = this.createFormService.isSeen$;
+    this.passesLoaded = combineLatest(
+      this.activePasses.loaded$,
+      this.futurePasses.loaded$,
+      this.pastPasses.loaded$,
+      (l1, l2, l3) => l1 && l2 && l3
+    );
+    this.isSeen$ = this.createFormService.isSeen$;
 
-      this.notifService.initNotifications(true)
-        .then(hasPerm => console.log(`Has permission to show notifications: ${hasPerm}`));
+    this.notifService.initNotifications(true)
+      .then(hasPerm => console.log(`Has permission to show notifications: ${hasPerm}`));
   }
 
   showMainForm(forLater: boolean): void {
@@ -361,43 +355,43 @@ export class PassesComponent implements OnInit {
   }
 
   showFirstSeenForm(forLater: boolean): void {
-      const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
-          width: '750px',
-          panelClass: 'form-dialog-container',
-          backdropClass: 'custom-backdrop',
-          data: {'forLater': forLater, 'forStaff': this.isStaff}
-      });
+    const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
+      width: '750px',
+      panelClass: 'form-dialog-container',
+      backdropClass: 'custom-backdrop',
+      data: {'forLater': forLater, 'forStaff': this.isStaff}
+    });
 
-      dialogRef.afterClosed()
-          .pipe(filter(res => !!res)).subscribe((result: Object) => {
-          this.openInputCard(result['templatePass'],
-              result['forLater'],
-              result['forStaff'],
-              result['selectedStudents'],
-              (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent)),
-              result['fromHistory'],
-              result['fromHistoryIndex']
-          );
-      });
+    dialogRef.afterClosed()
+      .pipe(filter(res => !!res)).subscribe((result: Object) => {
+      this.openInputCard(result['templatePass'],
+        result['forLater'],
+        result['forStaff'],
+        result['selectedStudents'],
+        (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent)),
+        result['fromHistory'],
+        result['fromHistoryIndex']
+      );
+    });
   }
 
   openInputCard(templatePass, forLater, forStaff, selectedStudents, component, fromHistory, fromHistoryIndex) {
-      const data = {
-          'pass': templatePass,
-          'fromPast': false,
-          'fromHistory': fromHistory,
-          'fromHistoryIndex': fromHistoryIndex,
-          'forFuture': forLater,
-          'forInput': true,
-          'forStaff': forStaff,
-          'selectedStudents': selectedStudents,
-      };
+    const data = {
+      'pass': templatePass,
+      'fromPast': false,
+      'fromHistory': fromHistory,
+      'fromHistoryIndex': fromHistoryIndex,
+      'forFuture': forLater,
+      'forInput': true,
+      'forStaff': forStaff,
+      'selectedStudents': selectedStudents,
+    };
 
-      this.dialog.open(component, {
-          panelClass: (this.isStaff ? 'teacher-' : 'student-') + 'pass-card-dialog-container',
-          backdropClass: 'custom-backdrop',
-          disableClose: true,
-          data: data
-      });
+    this.dialog.open(component, {
+      panelClass: (this.isStaff ? 'teacher-' : 'student-') + 'pass-card-dialog-container',
+      backdropClass: 'custom-backdrop',
+      disableClose: true,
+      data: data
+    });
   }
 }
