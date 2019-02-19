@@ -64,7 +64,6 @@ export class InlineRequestCardComponent implements OnInit {
         this.cancelOpen = false;
         if (action === 'delete') {
             this.requestService.cancelRequest(this.request.id).subscribe((data) => {
-                this.dataService.isActiveRequest$.next(false);
                 console.log('[Request Canceled]: ', data);
             });
         }

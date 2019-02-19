@@ -1,12 +1,8 @@
 import { animate, state, style, transition, trigger, } from '@angular/animations';
 import { Component, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { combineLatest, empty, merge, of } from 'rxjs';
-
-import { BehaviorSubject } from 'rxjs';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, empty, merge, Observable, of, ReplaySubject } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
-import { ReplaySubject } from 'rxjs';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
@@ -182,8 +178,9 @@ export class PassesComponent implements OnInit {
 
   currentPass$ = new BehaviorSubject<HallPass>(null);
   currentRequest$ = new BehaviorSubject<Request>(null);
-  isActivePass$ = this.dataService.isActivePass$;
-  isActiveRequest$ = this.dataService.isActiveRequest$;
+
+  isActivePass$: Observable<boolean>;
+  isActiveRequest$: Observable<boolean>;
 
   // inboxHasItems: Subject<boolean> = new Subject<boolean>();
   inboxHasItems: Observable<boolean> = of(false);
@@ -212,13 +209,14 @@ export class PassesComponent implements OnInit {
   }
 
   constructor(
-      public dataService: DataService,
-      public dialog: MatDialog,
-      private _zone: NgZone,
-      private loadingService: LoadingService,
-      private liveDataService: LiveDataService,
-      private createFormService: CreateFormService,
-      private notifService: NotificationService
+    public dataService: DataService,
+    public dialog: MatDialog,
+    private _zone: NgZone,
+    private loadingService: LoadingService,
+    private liveDataService: LiveDataService,
+    private createFormService: CreateFormService,
+    private notifService: NotificationService,
+    private timeService: TimeService,
   ) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
@@ -266,33 +264,19 @@ export class PassesComponent implements OnInit {
 
       });
 
+    this.isActivePass$ = combineLatest(this.currentPass$, this.timeService.now$, (pass, now) => {
+      return pass !== null
+        && new Date(pass.start_time).getTime() <= now.getTime()
+        && now.getTime() < new Date(pass.end_time).getTime();
+    }).publishReplay(1).refCount();
+
+    this.isActiveRequest$ = this.currentRequest$.map(request => {
+      return request !== null && !request.request_time && request.status === 'pending';
+    });
+
     this.dataService.currentUser.switchMap(user =>
       user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null))
       .subscribe(passLike => {
-        // console.log('Active pass ====> ', passLike);
-        if (!passLike) {
-          this.dataService.isActiveRequest$.next(false);
-          this.dataService.isActivePass$.next(false);
-        }
-        if (passLike) {
-            // debugger;
-          const nowDate = new Date();
-          const startDate = new Date(passLike.start_time);
-          const endDate = new Date(passLike.end_time);
-          if (nowDate.getTime() >= startDate.getTime()) {
-
-            if (nowDate.getTime() <= endDate.getTime()) {
-
-              this.dataService.isActivePass$.next(true);
-            } else {
-              this.dataService.isActivePass$.next(false);
-            }
-          }
-          if (!(!!passLike.request_time) && passLike.status) {
-
-            this.dataService.isActiveRequest$.next(true);
-          }
-        }
         this._zone.run(() => {
           this.currentPass$.next((passLike instanceof HallPass) ? passLike : null);
           this.currentRequest$.next((passLike instanceof Request) ? passLike : null);
