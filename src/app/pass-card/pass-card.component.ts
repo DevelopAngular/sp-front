@@ -16,6 +16,7 @@ import {BehaviorSubject, interval, merge, of, Subscription} from 'rxjs';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {HallPassesService} from '../services/hall-passes.service';
+import { TimeService } from '../services/time.service';
 
 @Component({
   selector: 'app-pass-card',
@@ -75,7 +76,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
       public dataService: DataService,
       private _zone: NgZone,
       private loadingService: LoadingService,
-      private createFormService: CreateFormService
+      private createFormService: CreateFormService,
+      private timeService: TimeService,
   ) {}
 
   getUserName(user: any) {
@@ -148,17 +150,17 @@ export class PassCardComponent implements OnInit, OnDestroy {
     if (!!this.pass && this.isActive) {
       console.log('Starting interval');
       merge(of(0), interval(1000)).pipe(map(x => {
-        let end: Date = this.pass.expiration_time;
-        let now: Date = new Date();
-        let diff: number = (end.getTime() - now.getTime()) / 1000;
-        let mins: number = Math.floor(Math.abs(Math.floor(diff) / 60));
-        let secs: number = Math.abs(Math.floor(diff) % 60);
+        const end: Date = this.pass.expiration_time;
+        const now: Date = this.timeService.nowDate();
+        const diff: number = (end.getTime() - now.getTime()) / 1000;
+        const mins: number = Math.floor(Math.abs(Math.floor(diff) / 60));
+        const secs: number = Math.abs(Math.floor(diff) % 60);
         this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
         this.valid = end > now;
 
-        let start: Date = this.pass.start_time;
-        let dur: number = Math.floor((end.getTime() - start.getTime()) / 1000);
-        this.overlayWidth = (this.buttonWidth * (diff/dur));
+        const start: Date = this.pass.start_time;
+        const dur: number = Math.floor((end.getTime() - start.getTime()) / 1000);
+        this.overlayWidth = (this.buttonWidth * (diff / dur));
         return x;
       })).subscribe();
     }
@@ -344,7 +346,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
           this.dialogRef.close({'report':this.pass.student});
         } else if(action === 'end') {
           this.hallPassService.endPass(this.pass.id).subscribe(() => {
-            this.dataService.isActivePass$.next(false);
             this.dialogRef.close();
           });
         }

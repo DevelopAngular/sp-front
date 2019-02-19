@@ -1,7 +1,8 @@
 import { Component, Input, OnInit, Output, OnDestroy, EventEmitter } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { bumpIn } from '../animations';
 import { PassLike } from '../models';
+import { TimeService } from '../services/time.service';
 import { getInnerPassContent, getInnerPassName, isBadgeVisible } from './pass-display-util';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Request } from '../models/Request';
@@ -81,7 +82,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
     return this.sanitizer.bypassSecurityTrustStyle(this.hovered?'0 2px 4px 1px rgba(0, 0, 0, 0.3)':'0 2px 4px 0px rgba(0, 0, 0, 0.1)');
   }
 
-  constructor(private sanitizer: DomSanitizer) {
+  constructor(private sanitizer: DomSanitizer, private timeService: TimeService) {
   }
 
   ngOnInit() {
@@ -97,11 +98,11 @@ export class PassTileComponent implements OnInit, OnDestroy {
     this.valid = this.isActive;
     if (this.timerEvent) {
       this.timerEvent.pipe(filter(() => !!this.pass['expiration_time'])).subscribe(() => {
-        let end: Date = this.pass['expiration_time'];
-        let now: Date = new Date();
-        let diff: number = (end.getTime() - now.getTime()) / 1000;
-        let mins: number = Math.floor(Math.abs(Math.floor(diff) / 60));
-        let secs: number = Math.abs(Math.floor(diff) % 60);
+        const end: Date = this.pass['expiration_time'];
+        const now: Date = this.timeService.nowDate();
+        const diff: number = (end.getTime() - now.getTime()) / 1000;
+        const mins: number = Math.floor(Math.abs(Math.floor(diff) / 60));
+        const secs: number = Math.abs(Math.floor(diff) % 60);
         this.valid = end > now;
         this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
       });

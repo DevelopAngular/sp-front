@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material';
 import { HttpService } from '../../services/http-service';
 import { UserService } from '../../services/user.service';
 import { BehaviorSubject } from 'rxjs';
-import { switchMap } from 'rxjs/internal/operators';
+import { switchMap } from 'rxjs/operators';
 import { AdminService } from '../../services/admin.service';
 
 @Component({

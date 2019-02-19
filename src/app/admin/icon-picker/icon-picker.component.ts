@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {map, shareReplay} from 'rxjs/internal/operators';
-import * as _ from 'lodash';
+import {map, shareReplay} from 'rxjs/operators';
 import {AdminService} from '../../services/admin.service';
 
 

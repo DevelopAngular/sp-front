@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 
 import { of } from 'rxjs';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { GoogleApiService } from './google-api.service';
 
@@ -12,7 +12,7 @@ export class GoogleAuthService {
 
   GoogleAuth = undefined;
 
-  constructor(private googleApi: GoogleApiService) {
+  constructor(private googleApi: GoogleApiService, private _zone: NgZone) {
     this.googleApi.onLoad().subscribe(() => {
       this.loadGapiAuth();
     });
@@ -28,12 +28,14 @@ export class GoogleAuthService {
   }
 
   loadGapiAuth() {
-    return Observable.create(ob => {
+    return new Observable(ob => {
       gapi.load('auth2', () => {
         gapi.auth2.init(this.googleApi.getConfig().getClientConfig()).then(auth => {
           this.GoogleAuth = auth;
-          ob.next(auth);
-          ob.complete();
+          this._zone.run(() => {
+            ob.next(auth);
+            ob.complete();
+          });
         });
       });
     });

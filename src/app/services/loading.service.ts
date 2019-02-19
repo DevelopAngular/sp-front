@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { concat, EMPTY } from 'rxjs';
 
 import 'rxjs/add/operator/scan';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
+import { ReplaySubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'

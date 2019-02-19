@@ -14,6 +14,7 @@ import {Invitation} from '../../models/Invitation';
 import {AdminService} from '../../services/admin.service';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {RequestsService} from '../../services/requests.service';
+import { TimeService } from '../../services/time.service';
 
 
 @Component({
@@ -43,13 +44,15 @@ export class FirstSeenFormComponent implements OnInit {
   formState: string = '';
   requestTarget: User;
   travelType: string = 'round_trip';
-  requestTime: Date = new Date();
+  // use undefined as sentinel value to replace with current date
+  // because null is a valid request time
+  requestTime: Date = undefined;
   duration: number = 5;
   entryState: string;
   toState: string = 'pinnables';
   toCategory: string = '';
   selectedStudents: User[] = [];
-  startTime = new Date();
+  startTime: Date = undefined;
   requestMessage: string = '';
   isDeclinable: boolean = true;
   formStateHistory: string[] = [];
@@ -70,7 +73,16 @@ export class FirstSeenFormComponent implements OnInit {
     public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     public dialogRef: MatDialogRef<FirstSeenFormComponent>,
+    private timeService: TimeService,
   ) {
+    const now = this.timeService.nowDate();
+    if (this.requestTime === undefined) {
+      this.requestTime = now;
+    }
+    if (this.startTime === undefined) {
+      this.startTime = now;
+    }
+
     this.declinable = new FormControl(true);
     this.declinable.valueChanges.subscribe(res => this.isDeclinable = res);
     this.pinnables = this.hallPassService.getPinnables().toPromise().then(json => json.map(raw => Pinnable.fromJSON(raw)));

@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {debounceTime, distinctUntilChanged, filter, map, switchMap} from 'rxjs/internal/operators';
+import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
 import {Observable, Subject} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {User} from '../../models/User';

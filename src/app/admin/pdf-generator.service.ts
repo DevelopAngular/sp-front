@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { fromEvent, zip } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
+import { TimeService } from '../services/time.service';
 import { DatePrettyHelper } from './date-pretty.helper';
 import { LinkGeneratedDialogComponent } from './link-generated-dialog/link-generated-dialog.component';
 import { OPEN_SANS_BOLD, OPEN_SANS_REGULAR } from './pdf-fonts';
@@ -18,7 +19,8 @@ export class PdfGeneratorService {
     public httpService: HttpClient,
     private locationService: Location,
     private dialog: MatDialog,
-    private storage: StorageService
+    private storage: StorageService,
+    private timeService: TimeService,
   ) {
   }
 
@@ -26,7 +28,7 @@ export class PdfGeneratorService {
 
     this.storage.removeItem('pdf_src');
 
-    const prettyNow = DatePrettyHelper.transform(new Date());
+    const prettyNow = DatePrettyHelper.transform(this.timeService.nowDate());
 
     let heading = {
       header: 'Active Hall Pass Report',

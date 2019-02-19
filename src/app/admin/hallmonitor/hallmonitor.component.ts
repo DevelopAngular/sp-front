@@ -1,18 +1,18 @@
 ﻿import { Component, OnInit, ElementRef} from '@angular/core';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
 import { MatDialog } from '@angular/material';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { BehaviorSubject } from 'rxjs';
 import { User } from '../../models/User';
 import { Report } from '../../models/Report';
 import { Pinnable } from '../../models/Pinnable';
 import { ActivePassProvider } from '../../hall-monitor/hall-monitor.component';
 import { LiveDataService } from '../../live-data/live-data.service';
 import { PassLikeProvider } from '../../models/providers';
+import { TimeService } from '../../services/time.service';
 import {CalendarComponent} from '../calendar/calendar.component';
 import {HttpService} from '../../services/http-service';
 import {Util} from '../../../Util';
-import {map, toArray} from 'rxjs/operators';
-import {switchMap, tap} from 'rxjs/internal/operators';
+import {map, switchMap, toArray} from 'rxjs/operators';
 import { disableBodyScroll } from 'body-scroll-lock';
 import {AdminService} from '../../services/admin.service';
 
@@ -27,7 +27,7 @@ export class HallmonitorComponent implements OnInit {
 
     activePassProvider: PassLikeProvider;
     searchQuery$ = new BehaviorSubject('');
-    minDate = new Date();
+    minDate: Date;
     input_value1: string;
     input_value2: string;
     input_DateRange: string;
@@ -55,9 +55,11 @@ export class HallmonitorComponent implements OnInit {
         private liveDataService: LiveDataService,
         private http: HttpService,
         private adminService: AdminService,
-        private elRef: ElementRef
+        private elRef: ElementRef,
+        private timeService: TimeService,
 
     ) {
+      this.minDate = this.timeService.nowDate();
       this.activePassProvider = new ActivePassProvider(this.liveDataService, this.searchQuery$);
       //this.studentreport[0]['id'] = '1';
     }

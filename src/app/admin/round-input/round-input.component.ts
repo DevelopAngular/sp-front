@@ -1,5 +1,6 @@
 import {Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef} from '@angular/core';
 import {MatChipList, MatDialog} from '@angular/material';
+import { TimeService } from '../../services/time.service';
 import { DateInputComponent } from '../date-input/date-input.component';
 import { Paged } from '../../location-table/location-table.component';
 import { HttpService } from '../../services/http-service';
@@ -49,7 +50,7 @@ export class RoundInputComponent implements OnInit {
 
   public e: Observable<Event>;
 
-  constructor(public dialog: MatDialog, private http: HttpService) { }
+  constructor(public dialog: MatDialog, private timeService: TimeService) { }
 
   ngOnInit() {
 
@@ -70,16 +71,21 @@ export class RoundInputComponent implements OnInit {
 
   focusAction(selected: boolean) {
     // this.selected = selected;
-    if (selected && this.type == 'dates') {
+    if (selected && this.type === 'dates') {
+      const now = this.timeService.nowDate();
       const dateDialog = this.dialog.open(InputHelperDialogComponent, {
         width: '900px',
         panelClass: 'accounts-profiles-dialog',
         backdropClass: 'custom-bd',
-        data: {'type':'dates', 'to':this.toDate?this.toDate:new Date(), 'from':this.fromDate?this.fromDate:new Date()}
+        data: {
+          'type': 'dates',
+          'to': this.toDate ? this.toDate : now ,
+          'from': this.fromDate ? this.fromDate : now
+        }
       });
       // panelClass: 'accounts-profiles-dialog',
       // backdropClass: 'custom-bd'
-      dateDialog.afterOpen().subscribe(()=>{this.selected = true;});
+      dateDialog.afterOpen().subscribe(() => { this.selected = true; });
 
       dateDialog.afterClosed().subscribe(dates =>{
         if(dates){

@@ -3,7 +3,6 @@ import { HallPass } from '../models/HallPass';
 import { Invitation } from '../models/Invitation';
 import { Request } from '../models/Request';
 import { MatDialog } from '@angular/material';
-import { DataService } from '../services/data-service';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {BehaviorSubject} from 'rxjs';
@@ -22,12 +21,11 @@ export class TravelViewComponent implements OnInit {
   @Input() forStaff: boolean = false;
 
   @Output() locationSelected: EventEmitter<any> = new EventEmitter();
-  isActivePass$ = this.dataService.isActivePass$.value;
   isSeen$: BehaviorSubject<boolean>;
   type: string;
   locationChangeOpen: boolean = false;
 
-  constructor(public dialog: MatDialog, private dataService: DataService, private createFormService: CreateFormService) { }
+  constructor(public dialog: MatDialog, private createFormService: CreateFormService) { }
 
   ngOnInit() {
     this.type = (this.pass instanceof HallPass) ? 'hallpass' :
