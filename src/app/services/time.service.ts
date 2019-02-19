@@ -43,14 +43,18 @@ function combineDriftEstimates(estimates: DriftEstimate[]) {
 @Injectable({
   providedIn: 'root'
 })
+/**
+ * This service has static methods for convenience. It must be dependency injected somewhere
+ * to properly load it's drift measurements.
+ */
 export class TimeService {
+  // An estimate the client's time drift from server time. This number is calculated as server time - client time
+  // so that it can be added to the client's current time.
+  private static latestDriftEstimate$ = new BehaviorSubject(0);
 
   private heartbeat$: Observable<PollingEvent>;
   private timeResponse$: Observable<PollingEvent>;
 
-  // An estimate the client's time drift from server time. This number is calculated as server time - client time
-  // so that it can be added to the client's current time.
-  private latestDriftEstimate$ = new BehaviorSubject(0);
 
   now$ = interval(500)
     .map(() => this.nowDate())
@@ -58,6 +62,10 @@ export class TimeService {
       publishReplay(1),
       refCount(),
     );
+
+  static getNowDate(): Date {
+    return new Date(Date.now() + TimeService.latestDriftEstimate$.value);
+  }
 
   constructor(private pollingService: PollingService) {
 
@@ -78,10 +86,10 @@ export class TimeService {
           map(combineDriftEstimates),
           distinctUntilChanged()
         )
-        .subscribe(driftEstimate => this.latestDriftEstimate$.next(driftEstimate));
+        .subscribe(driftEstimate => TimeService.latestDriftEstimate$.next(driftEstimate));
     });
 
-    this.latestDriftEstimate$.subscribe(drift => {
+    TimeService.latestDriftEstimate$.subscribe(drift => {
       console.log(`This computer has an estimated drift of ${-drift}ms from server time`);
     });
 
@@ -109,7 +117,7 @@ export class TimeService {
   }
 
   now() {
-    return Date.now() + this.latestDriftEstimate$.value;
+    return Date.now() + TimeService.latestDriftEstimate$.value;
   }
 
   nowDate(): Date {

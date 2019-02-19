@@ -171,6 +171,8 @@ export class HttpService {
 
       return this.http.post(makeUrl(server, 'o/token/'), config)
         .map((data: any) => {
+          // don't use TimeService for auth because auth is required for time service
+          // to be useful
           data['expires'] = new Date(new Date() + data['expires_in']);
 
           ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
@@ -204,6 +206,8 @@ export class HttpService {
 
       return this.http.post(makeUrl(server, 'auth/by-token'), config)
         .map((data: any) => {
+          // don't use TimeService for auth because auth is required for time service
+          // to be useful
           data['expires'] = new Date(new Date() + data['expires_in']);
 
           ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);

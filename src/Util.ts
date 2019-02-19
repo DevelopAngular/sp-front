@@ -1,4 +1,6 @@
-﻿export class Util{
+﻿import { TimeService } from './app/services/time.service';
+
+export class Util{
 
     static weekday: string[] = ['Sunday', 'Monday', 'Tuesday',
                       'Wednesday', 'Thursday', 'Friday',
@@ -16,7 +18,7 @@
           return formattedTime;
 
         let formattedDate:string = "";
-        let now: Date = new Date();
+        let now: Date = TimeService.getNowDate();
 
         if(s.getFullYear() === now.getFullYear()){
           if(s.getMonth() === now.getMonth()){

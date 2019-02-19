@@ -15,6 +15,7 @@ import { testPasses } from '../models/mock_data';
 import { BasicPassLikeProvider, PassLikeProvider, WrappedProvider } from '../models/providers';
 import { User } from '../models/User';
 import {DropdownComponent} from '../dropdown/dropdown.component';
+import { TimeService } from '../services/time.service';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -94,8 +95,8 @@ export class MyRoomComponent implements OnInit {
   passesLoaded: Observable<boolean> = of(false);
 
   constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService,
-              public dialog: MatDialog, private liveDataService: LiveDataService) {
-    this.setSearchDate(new Date());
+              public dialog: MatDialog, private liveDataService: LiveDataService, private timeService: TimeService) {
+    this.setSearchDate(this.timeService.nowDate());
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
 

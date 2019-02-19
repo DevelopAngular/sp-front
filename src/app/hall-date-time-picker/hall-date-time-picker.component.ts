@@ -2,6 +2,7 @@
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { BehaviorSubject } from 'rxjs';
 import { Util } from '../../Util';
+import { TimeService } from '../services/time.service';
 
 @Component({
   selector: 'app-hall-date-time-picker',
@@ -19,9 +20,11 @@ export class HallDateTimePickerComponent implements OnInit {
 
     @Output() onUpdateDateRange: EventEmitter<string> = new EventEmitter();
 
-    constructor(public dialog: MatDialog, public dialogRef: MatDialogRef<HallDateTimePickerComponent>) {
-        this.setSearchDate_From(new Date());
-        this.setSearchDate_To(new Date());
+    constructor(public dialog: MatDialog,
+                public dialogRef: MatDialogRef<HallDateTimePickerComponent>,
+                private timeService: TimeService) {
+        this.setSearchDate_From(this.timeService.nowDate());
+        this.setSearchDate_To(this.timeService.nowDate());
     }
 
   ngOnInit() {

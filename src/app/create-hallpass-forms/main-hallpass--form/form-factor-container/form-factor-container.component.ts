@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { TimeService } from '../../../services/time.service';
 
 import { FormFactor, Navigation } from '../main-hall-pass-form.component';
 import { HallPass } from '../../../models/HallPass';
@@ -25,11 +26,14 @@ export class FormFactorContainerComponent implements OnInit {
   public template: Request | HallPass | Invitation;
 
   constructor(
-    private dataService: DataService
+    private dataService: DataService,
+    private timeService: TimeService,
   ) { }
 
 
   ngOnInit() {
+      const now = this.timeService.nowDate();
+
       this.dataService.currentUser
       .subscribe((_user) => {
         switch (this.FORM_STATE.formMode.formFactor) {
@@ -40,7 +44,7 @@ export class FormFactorContainerComponent implements OnInit {
               null,
               null,
               null,
-              this.FORM_STATE.data.date ? this.FORM_STATE.data.date.date : new Date(),
+              this.FORM_STATE.data.date ? this.FORM_STATE.data.date.date : now,
               null,
               null,
               this.FORM_STATE.data.direction.from,
@@ -89,7 +93,7 @@ export class FormFactorContainerComponent implements OnInit {
               null,
               null,
               this.FORM_STATE.data.direction.to,
-              [this.FORM_STATE.data.date ? this.FORM_STATE.data.date.date : new Date()],
+              [this.FORM_STATE.data.date ? this.FORM_STATE.data.date.date : now],
               _user,
               'pending',
               5,

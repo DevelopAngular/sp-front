@@ -1,6 +1,7 @@
 ﻿import { Component, EventEmitter, Input, OnInit, OnDestroy, Output } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
 import { Util } from '../../Util';
+import { TimeService } from '../services/time.service';
 
 @Component({
   selector: 'app-date-time-picker',
@@ -15,20 +16,30 @@ export class DateTimePickerComponent implements OnInit, OnDestroy{
 
   timeS = '--:--';
 
-  @Input() _selectedMoment: Date = new Date();
+  @Input() _selectedMoment: Date = null;
 
     //New
   @Input() showTwoCalender: boolean = false;
   @Input() showTime_2ndCal: boolean = true;
-  @Input() min_2ndCal: Date = new Date();
-  @Input() _selectedMoment_2ndCal: Date = new Date();
+  @Input() min_2ndCal: Date = null;
+  @Input() _selectedMoment_2ndCal: Date = null;
   @Output() onUpdate_2ndCal: EventEmitter<any> = new EventEmitter();
 
   @Output() onconfirm: EventEmitter<any> = new EventEmitter();
 
   @Input() default: Date;
 
-  constructor() {
+  constructor(private timeService: TimeService) {
+    const now = this.timeService.nowDate();
+    if (this._selectedMoment === null) {
+      this._selectedMoment = now;
+    }
+    if (this.min_2ndCal === null) {
+      this.min_2ndCal = null;
+    }
+    if (this._selectedMoment_2ndCal === null) {
+      this._selectedMoment_2ndCal = now;
+    }
   }
 
   set selectedMoment(newMoment: Date) {

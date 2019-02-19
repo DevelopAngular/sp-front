@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { TimeService } from '../../../../services/time.service';
 import { Navigation } from '../../main-hall-pass-form.component';
 
 @Component({
@@ -17,15 +18,23 @@ export class DateTimeComponent implements OnInit {
   @Output() result: EventEmitter<any> = new EventEmitter<any>();
   @Output() backButton: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
-  startTime: Date = new Date();
-  requestTime: Date = new Date();
+  startTime: Date = undefined;
+  requestTime: Date = undefined;
   declinable: FormControl = new FormControl(true);
 
-  constructor() { }
+  constructor(private timeService: TimeService) {
+    const now = this.timeService.nowDate();
+    if (this.startTime === undefined) {
+      this.startTime = now;
+    }
+    if (this.requestTime === undefined) {
+      this.requestTime = now;
+    }
+  }
 
   ngOnInit() {
     if (this.mock) {
-      this.requestTime = new Date();
+      this.requestTime = this.timeService.nowDate();
       this.declinable = new FormControl(true);
     } else {
       if (this.formState.data.date) {

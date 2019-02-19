@@ -34,16 +34,10 @@ class FuturePassProvider implements PassLikeProvider {
     const sortReplay = new ReplaySubject<string>(1);
     sort.subscribe(sortReplay);
 
-    const futurePasses$ = this.user$.pipe(switchMap(user => this.liveDataService.watchFutureHallPasses(
+    return this.user$.pipe(switchMap(user => this.liveDataService.watchFutureHallPasses(
       user.roles.includes('hallpass_student')
         ? {type: 'student', value: user}
-        : {type: 'issuer', value: user})),
-      map(passes => {
-        const now = new Date();
-        return passes.filter(pass => pass.start_time.getTime() >= now.getTime());
-      }));
-
-    return futurePasses$;
+        : {type: 'issuer', value: user})));
   }
 }
 
@@ -60,17 +54,12 @@ class ActivePassProvider implements PassLikeProvider {
     const mergedReplay = new ReplaySubject<HallPassFilter>(1);
     merged$.subscribe(mergedReplay);
 
-    const passes$ = this.user$.pipe(switchMap(user => this.liveDataService.watchActiveHallPasses(mergedReplay,
-      user.roles.includes('hallpass_student')
-        ? {type: 'student', value: user}
-        : {type: 'issuer', value: user})),
-      map((passes: any[]) => {
-
-        const now = new Date();
-        return passes.filter(pass => {
-          return pass.start_time.getTime() <= now.getTime();
-        });
-      }));
+    const passes$ = this.user$.pipe(
+      switchMap(user => this.liveDataService.watchActiveHallPasses(mergedReplay,
+        user.roles.includes('hallpass_student')
+          ? {type: 'student', value: user}
+          : {type: 'issuer', value: user}))
+    );
 
     const excluded$ = this.excluded$.startWith([]);
 

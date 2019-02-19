@@ -16,6 +16,7 @@ import { ReportFormComponent } from '../report-form/report-form.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
 import { shareReplay } from 'rxjs/operators';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
+import { TimeService } from '../services/time.service';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -87,6 +88,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   constructor(
       public dialog: MatDialog,
       private dataService: DataService,
+      private timeService: TimeService,
   ) {}
 
   ngOnInit() {
@@ -130,7 +132,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   }
 
   initializeDialog(pass: PassLike) {
-    const now = new Date();
+    const now = this.timeService.nowDate();
     now.setSeconds(now.getSeconds() + 10);
 
     let data: any;

@@ -7,6 +7,7 @@ import { HttpService } from '../../services/http-service';
 import { HallPassFilter, LiveDataService } from '../../live-data/live-data.service';
 import { HallPass } from '../../models/HallPass';
 import { Report } from '../../models/Report';
+import { TimeService } from '../../services/time.service';
 import { PdfGeneratorService } from '../pdf-generator.service';
 import {CalendarComponent} from '../calendar/calendar.component';
 import {MatDialog} from '@angular/material';
@@ -59,7 +60,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private pdf: PdfGeneratorService,
     private _zone: NgZone,
     private elRef: ElementRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private timeService: TimeService,
   ) {
   }
 
@@ -78,7 +80,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.numActivePasses = activeHallpasses.length;
       });
 
-    const todayReports = this.liveDataService.getDateRange(new Date());
+    const todayReports = this.liveDataService.getDateRange(this.timeService.nowDate());
 
     this.http.globalReload$.pipe(
       switchMap(() => {

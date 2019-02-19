@@ -82,6 +82,8 @@ export class GoogleLoginService {
     }
 
     const threshold = 5 * 60 * 1000; // 5 minutes
+    // don't use TimeService for auth because auth is required for time service
+    // to be useful
     return this.authToken$.value.expires_at <= Date.now() + threshold;
   }
 
