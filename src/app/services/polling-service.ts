@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { $WebSocket } from 'angular2-websocket/angular2-websocket';
-import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs/index';
+import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 import { filter, map, publish, refCount, switchMap, tap } from 'rxjs/operators';
 import { AuthContext, HttpService } from './http-service';
 import { Logger } from './logger.service';
@@ -52,6 +52,8 @@ export class PollingService {
   private getRawListener(): Observable<RawMessage> {
     return this.http.accessToken.pipe(
       switchMap((ctx: AuthContext) => {
+        console.log('polling listener');
+
         const url = ctx.server.ws_url;
 
         const ws = new $WebSocket(url, null, {
@@ -59,7 +61,7 @@ export class PollingService {
           reconnectIfNotNormalClose: true,
         });
 
-        return Observable.create(s => {
+        return new Observable(s => {
 
           let sendMessageSubscription: Subscription = null;
 

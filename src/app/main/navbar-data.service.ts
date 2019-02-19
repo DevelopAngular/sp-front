@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { combineLatest } from 'rxjs';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { BehaviorSubject } from 'rxjs';
 import { DataService } from '../services/data-service';
 import { LiveDataService } from '../live-data/live-data.service';
 import { UserService } from '../services/user.service';

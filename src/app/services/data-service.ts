@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/operator/scan';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { HttpService } from './http-service';
 import { PassLike } from '../models/index';
@@ -50,8 +50,6 @@ function constructUrl(base: string, obj: Partial<QueryParams>): string {
 @Injectable()
 export class DataService {
   private inboxSource = new BehaviorSubject<boolean>(false);
-  public isActivePass$ = new BehaviorSubject<boolean>(false);
-  public isActiveRequest$ = new BehaviorSubject<boolean>(false);
   public sort$ = new Subject<string>();
   inboxState = this.inboxSource.asObservable();
 

@@ -1,15 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/first';
 import 'rxjs/add/operator/switchMap';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { throwError } from 'rxjs/internal/observable/throwError';
-import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { delay, flatMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { GoogleLoginService, isDemoLogin } from './google-login.service';
@@ -172,6 +171,8 @@ export class HttpService {
 
       return this.http.post(makeUrl(server, 'o/token/'), config)
         .map((data: any) => {
+          // don't use TimeService for auth because auth is required for time service
+          // to be useful
           data['expires'] = new Date(new Date() + data['expires_in']);
 
           ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
@@ -205,6 +206,8 @@ export class HttpService {
 
       return this.http.post(makeUrl(server, 'auth/by-token'), config)
         .map((data: any) => {
+          // don't use TimeService for auth because auth is required for time service
+          // to be useful
           data['expires'] = new Date(new Date() + data['expires_in']);
 
           ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
@@ -254,7 +257,10 @@ export class HttpService {
 
   private performRequest<T>(predicate: (ctx: AuthContext) => Observable<T>): Observable<T> {
     return this.accessToken
-      .switchMap(ctx => predicate(ctx))
+      .switchMap(ctx => {
+        console.log('performRequest');
+        return predicate(ctx);
+      })
       .catch(err => {
         if (err.status !== 401) {
           throw err;

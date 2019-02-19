@@ -3,7 +3,7 @@ import {StudentList} from '../../../../models/StudentList';
 import {HttpService} from '../../../../services/http-service';
 import {FormGroup} from '@angular/forms';
 import {Navigation} from '../../main-hall-pass-form.component';
-import {skip} from 'rxjs/internal/operators';
+import {skip} from 'rxjs/operators';
 import {UserService} from '../../../../services/user.service';
 
 @Component({

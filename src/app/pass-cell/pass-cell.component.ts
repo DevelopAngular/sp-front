@@ -1,11 +1,12 @@
 import { Component, Input, OnInit, OnDestroy, EventEmitter } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { HallPass } from '../models/HallPass';
 import { Invitation } from '../models/Invitation';
 import { Request } from '../models/Request';
 import { getInnerPassContent, getInnerPassName, isBadgeVisible } from '../pass-tile/pass-display-util';
 import { Util } from '../../Util';
 import {filter} from 'rxjs/operators';
+import { TimeService } from '../services/time.service';
 
 @Component({
   selector: 'app-pass-cell',
@@ -26,7 +27,7 @@ export class PassCellComponent implements OnInit, OnDestroy {
   valid: boolean = true;
   timers: number[] = [];
 
-  constructor() {
+  constructor(private timeService: TimeService) {
   }
 
   get cellName() {
@@ -50,7 +51,7 @@ export class PassCellComponent implements OnInit, OnDestroy {
   }
 
   get isEnded() {
-    return (this.pass instanceof HallPass) && this.pass.end_time < new Date();
+    return (this.pass instanceof HallPass) && this.pass.end_time < this.timeService.nowDate();
   }
 
   ngOnInit() {
@@ -62,11 +63,11 @@ export class PassCellComponent implements OnInit, OnDestroy {
       this.valid = this.isActive;
       if (this.timerEvent) {
         this.timerEvent.pipe(filter(() => this.pass instanceof HallPass )).subscribe(() => {
-          let end: Date = this.pass['expiration_time'];
-          let now: Date = new Date();
-          let diff: number = (end.getTime() - now.getTime()) / 1000;
-          let mins: number = Math.floor(Math.abs(Math.floor(diff) / 60));
-          let secs: number = Math.abs(Math.floor(diff) % 60);
+          const end: Date = this.pass['expiration_time'];
+          const now: Date = this.timeService.nowDate();
+          const diff: number = (end.getTime() - now.getTime()) / 1000;
+          const mins: number = Math.floor(Math.abs(Math.floor(diff) / 60));
+          const secs: number = Math.abs(Math.floor(diff) % 60);
           this.valid = end > now;
           this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
         });

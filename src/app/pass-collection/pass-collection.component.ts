@@ -1,9 +1,9 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, OnDestroy} from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { Subject } from 'rxjs/Subject';
+import { BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { DataService } from '../services/data-service';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
 import { HallPass } from '../models/HallPass';
@@ -16,6 +16,7 @@ import { ReportFormComponent } from '../report-form/report-form.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
 import { shareReplay } from 'rxjs/operators';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
+import { TimeService } from '../services/time.service';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -87,6 +88,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   constructor(
       public dialog: MatDialog,
       private dataService: DataService,
+      private timeService: TimeService,
   ) {}
 
   ngOnInit() {
@@ -130,7 +132,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   }
 
   initializeDialog(pass: PassLike) {
-    const now = new Date();
+    const now = this.timeService.nowDate();
     now.setSeconds(now.getSeconds() + 10);
 
     let data: any;

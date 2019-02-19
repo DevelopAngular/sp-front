@@ -13,6 +13,7 @@
          [isEdit]="true"
          (onStar)="onStar($event)"
          [showFavorites]="true"
+         (onUpdate)="starChangesIds = $event"
          [type]="'location'"
          [placeholder]="'Search rooms'"
          [showStars]="true">

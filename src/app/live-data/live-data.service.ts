@@ -4,9 +4,9 @@ import { combineLatest, empty, merge, of } from 'rxjs';
 import 'rxjs/add/observable/empty';
 
 import 'rxjs/add/operator/startWith';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { HttpService } from '../services/http-service';
 import { Paged, PassLike } from '../models';
 import { BaseModel } from '../models/base';
@@ -16,6 +16,7 @@ import { Location } from '../models/Location';
 import { Request } from '../models/Request';
 import { User } from '../models/User';
 import { PollingEvent, PollingService } from '../services/polling-service';
+import { TimeService } from '../services/time.service';
 import {
   Action,
   ExternalEvent,
@@ -188,7 +189,7 @@ export class LiveDataService {
 
   private globalReload$ = new Subject();
 
-  constructor(private http: HttpService, private polling: PollingService) {
+  constructor(private http: HttpService, private polling: PollingService, private timeService: TimeService) {
     this.http.schoolIdSubject.subscribe(() => {
       setTimeout(() => {
         this.globalReload$.next(null);
@@ -418,7 +419,7 @@ export class LiveDataService {
 
     const filters: FilterFunc<HallPass>[] = [
       makeSchoolFilter(this.http),
-      pass => pass.start_time > new Date()
+      pass => pass.start_time > this.timeService.nowDate()
     ];
 
     if (filter) {

@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { Subject } from 'rxjs/Subject';
+import { ReplaySubject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { HttpService } from '../services/http-service';
 import { Location } from '../models/Location';
 import { Paged } from '../models';
