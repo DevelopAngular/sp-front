@@ -11,6 +11,7 @@ import { LocationsService } from '../services/locations.service';
 export class FavoriteFormComponent implements OnInit, OnDestroy {
 
   starChanges: any[] = [];
+  starChangesIds: number[];
 
   constructor(
       private dialogRef: MatDialogRef<FavoriteFormComponent>,
@@ -20,13 +21,14 @@ export class FavoriteFormComponent implements OnInit, OnDestroy {
   ngOnInit() {
       this.locationService.getFavoriteLocations().toPromise().then((stars:any[]) => {
         this.starChanges = stars.map(val => Location.fromJSON(val));
+        this.starChangesIds = stars.map(star => star.id);
       });
 
     this.dialogRef.updatePosition({top: '120px'});
   }
 
   ngOnDestroy() {
-    this.dialogRef.close(this.starChanges.map(loc => loc.id));
+    this.dialogRef.close(this.starChangesIds);
   }
 
   closeDialog(){
@@ -46,7 +48,8 @@ export class FavoriteFormComponent implements OnInit, OnDestroy {
 
   addLoc(loc: any, array: any[]){
     if(!array.includes(loc))
-      array.push(loc)
+      array.push(loc);
+      this.starChangesIds.push(loc.id);
   }
 
   removeLoc(loc: any, array: any[]){
@@ -54,11 +57,12 @@ export class FavoriteFormComponent implements OnInit, OnDestroy {
     if (index > -1) {
       console.log('removeinf')
       array.splice(index, 1);
+      this.starChangesIds.splice(index, 1);
     }
   }
 
   back() {
-    this.dialogRef.close(this.starChanges.map(loc => loc.id));
+    this.ngOnDestroy();
   }
 
 }
