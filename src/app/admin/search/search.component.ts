@@ -49,8 +49,6 @@ export class SearchComponent implements OnInit {
 
   ngOnInit() {
     disableBodyScroll(this.elRef.nativeElement);
-    let wrongDate = Util.formatDateTime(new Date('2019-01-04T10:18:56Z'));
-        console.log('WRONG DATE +++>>', wrongDate);
   }
 
   search() {

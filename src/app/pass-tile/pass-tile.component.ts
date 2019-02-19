@@ -75,7 +75,8 @@ export class PassTileComponent implements OnInit, OnDestroy {
   }
 
   get isBadgeVisible() {
-    return isBadgeVisible(this.pass);
+    return isBadgeVisible(this.pass) && ((this.pass instanceof Invitation) && !this.forStaff) ||
+        (this.pass instanceof Invitation && this.pass.status === 'declined') || (this.forStaff && this.pass instanceof Request);
   }
 
   get boxShadow(){

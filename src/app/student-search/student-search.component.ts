@@ -60,6 +60,7 @@ export class StudentSearchComponent implements AfterViewInit {
 
   addStudent(student: User) {
     console.log(student);
+    this.input.focus();
     this.inputValue$.next('');
     this.onSearch('');
     if (!this.selectedStudents.includes(student)) {

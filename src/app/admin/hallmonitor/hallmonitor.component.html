@@ -1,17 +1,16 @@
 ﻿<div class="hallmonitor-wrapper">
     <div class="left-content">
-        <div class="hall-monitor-top">
-            <app-round-input
-               [type]="'text'"
-               [width]="'260px'"
-               [placeholder]="'Search'"
-               (ontextupdate)="onSearch($event)">
+      <div class="hall-monitor-top">
+          <app-round-input
+             [type]="'text'"
+             [width]="'260px'"
+             [placeholder]="'Search'"
+             (ontextupdate)="onSearch($event)">
 
-            </app-round-input>
-        </div>
+          </app-round-input>
+      </div>
       <div class="hall-monitor-bottom">
         <app-pass-collection
-           [emptyMessage]="'No Active Passes'"
            [hasSort]="true"
            [isActive]="true"
            [forStaff]="true"
@@ -22,6 +21,18 @@
            [icon]="'./assets/Hallway (Blue).png'"
            [columns]="4">
         </app-pass-collection>
+        <div *ngIf="!(hasPasses | async) && (passesLoaded | async)">
+          <div class="empty-container" *ngIf="searchQuery$.value != ''">
+            <img class="empty-svg" [src]="'./assets/emptyStates/emptyHallSearch.svg' | resolveAsset" alt="empty-svg">
+            <div class="big-text" [style.margin]="'10px 0'">Nothing to See Here</div>
+            <div class="small-text">Search again or click the report button</div>
+          </div>
+          <div class="empty-container" *ngIf="searchQuery$.value == ''">
+            <img class="empty-svg" [src]="'./assets/emptyStates/emptyHall.svg' | resolveAsset" alt="empty-svg">
+            <div class="big-text" [style.margin]="'10px 0'">Take the Day Off</div>
+            <div class="small-text">There aren't any active passes now</div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="right-content">

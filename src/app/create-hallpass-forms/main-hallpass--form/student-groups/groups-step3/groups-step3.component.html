@@ -1,9 +1,5 @@
 <div class="step-1-container">
   <div class="header">
-    <!--<div class="header_back-button" (click)="back(editGroup)">-->
-      <!--&lt;!&ndash;<img class="header_back-button" [src]="'./assets/Back Button (Grey).png' | resolveAsset">&ndash;&gt;-->
-      <!--<span class="header_back-button">Cancel</span>-->
-    <!--</div>-->
     <div class="header_back-button" (click)="back(editGroup)">
       <img  *ngIf="!form.get('title').dirty && !form.get('users').dirty"
             class="header_back-button"
@@ -49,30 +45,50 @@
               [isFocus]="false"
             ></app-input>
           </div>
-          <!--<div class="content-left_upload">-->
-            <!--<app-gradient-button-->
-              <!--[gradient]="'#022F68,#2F66AB'"-->
-              <!--[hoverColor]="'#022F68'"-->
-              <!--[minHeight]="'32px'"-->
-              <!--[width]="'130px'"-->
-              <!--[fontSize]="'13px'"-->
-              <!--[cursor]="'pointer'"-->
-            <!--&gt;-->
-              <!--<label>-->
-                <!--Upload File-->
-                <!--<input type="file" hidden>-->
-              <!--</label>-->
-            <!--</app-gradient-button>-->
-          <!--</div>-->
+          <div class="content-left_upload">
+            <div *ngIf="uploadedStudents" class="content-left_uploaded">
+              <div style="font-weight: bold">
+                <span>{{uploadedStudents.existingStudents.length}} </span><span>students added</span>
+              </div>
+              <div *ngIf="uploadedStudents.unknown.length">
+                <div style="white-space: nowrap">
+                  <span>{{uploadedStudents.unknown.length}} students not added, email error:</span>
+                </div>
+                <div *ngFor="let anonimus of uploadedStudents.unknown">
+                  <span>{{anonimus}}</span>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="!uploadedStudents">
+              <app-gradient-button
+                [gradient]="'#022F68,#2F66AB'"
+                [hoverColor]="'#022F68'"
+                [minHeight]="'35px'"
+                [width]="'120px'"
+                [fontSize]="'13px'"
+                [cursor]="'pointer'"
+                (buttonClick)="studentEmails.click()"
+              >
+                <div *ngIf="loadingIndicator" class="loading-theme_white spinner flex-center-left pt">
+                  <mat-spinner [color]="'white'" [diameter]="'25'"></mat-spinner>
+                </div>
+                <span *ngIf="!loadingIndicator" >
+                Upload File
+              </span>
+              </app-gradient-button>
+            </div>
+            <input type="file" #studentEmails hidden>
+
+          </div>
         </div>
-        <!--<div class="content-left_groups">-->
-          <!--<div>-->
-            <!--<div class="content-left_placeholder">-->
-              <!--Upload an Exel spreadsheet of student <strong>email address</strong>-->
-              <!--to quickly select students.-->
-            <!--</div>-->
-          <!--</div>-->
-        <!--</div>-->
+        <div *ngIf="!uploadedStudents" class="content-left_groups">
+          <div>
+            <div class="content-left_placeholder">
+              Upload an Exel spreadsheet of student <strong>email address</strong>
+              to quickly select students.
+            </div>
+          </div>
+        </div>
         <div class="content-left_delete-group">
           <app-gradient-button
             [minHeight]="'32px'"
