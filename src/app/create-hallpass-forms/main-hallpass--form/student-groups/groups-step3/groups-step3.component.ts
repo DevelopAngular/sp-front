@@ -1,10 +1,13 @@
-import {AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {StudentList} from '../../../../models/StudentList';
 import {HttpService} from '../../../../services/http-service';
 import {FormGroup} from '@angular/forms';
 import {Navigation} from '../../main-hall-pass-form.component';
-import {skip} from 'rxjs/internal/operators';
+import {map, skip, switchMap} from 'rxjs/internal/operators';
 import {UserService} from '../../../../services/user.service';
+import {fromEvent, Observable} from 'rxjs';
+import * as XLSX from 'xlsx';
+import {User} from '../../../../models/User';
 
 @Component({
   selector: 'app-groups-step3',
@@ -12,13 +15,18 @@ import {UserService} from '../../../../services/user.service';
   styleUrls: ['./groups-step3.component.scss']
 })
 export class GroupsStep3Component implements OnInit, AfterViewInit {
+  @ViewChild('studentEmails') studentEmailsFile;
 
   @Input() form: FormGroup;
   @Input() editGroup: StudentList;
 
   @Output() stateChangeEvent: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
+  public uploadedStudents: any;
+  public loadingIndicator: boolean = false;
+
   public allowToSave: boolean = false;
+
 
   constructor(
     private http: HttpService,
@@ -36,6 +44,63 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
       .subscribe((val: any) => {
         this.allowToSave = true;
       });
+
+    fromEvent(this.studentEmailsFile.nativeElement , 'change')
+      .pipe(
+        switchMap((evt: Event) => {
+          this.loadingIndicator = true;
+          const FR = new FileReader();
+          FR.readAsBinaryString(this.studentEmailsFile.nativeElement.files[0]);
+          return fromEvent(FR, 'load');
+        }),
+        map(( res: any) => {
+          console.log('Result', res);
+          const raw = XLSX.read(res.target.result, {type: 'binary'});
+          const sn = raw.SheetNames[0];
+          const stringCollection = raw.Sheets[sn];
+          const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
+          const headers = data[0];
+          console.log(data);
+          return data.slice(1).map(item => item[0]);
+        }),
+        switchMap((_emails: string[]): Observable<any> => {
+
+          console.log(_emails);
+
+          return this.userService.getUsersList('_profile_student')
+            .pipe(
+              map((students: User[]) => {
+
+                const result = {
+                  existingStudents: [],
+                  unknown: []
+                };
+
+                students.forEach((student) => {
+                  const founded = _emails.findIndex(email => student.primary_email === email);
+                  if (founded !== -1) {
+                    result.existingStudents.push(student);
+                    _emails.splice(founded, 1);
+                  }
+                })
+                result.unknown = _emails;
+
+                return result;
+              }));
+          // }));
+        }),
+      )
+      .subscribe((students) => {
+        this.loadingIndicator = false;
+        console.log(students);
+        this.uploadedStudents = students;
+        this.editGroup.users = this.editGroup.users.concat(students.existingStudents);
+        this.updateUsers(this.editGroup.users);
+
+        console.log(this.editGroup.users);
+
+      });
+
   }
   ngAfterViewInit(): void {
     this.changeDetectionRef.detectChanges();

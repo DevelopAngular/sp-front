@@ -7,7 +7,7 @@ import { Report } from '../../models/Report';
 import { Pinnable } from '../../models/Pinnable';
 import { ActivePassProvider } from '../../hall-monitor/hall-monitor.component';
 import { LiveDataService } from '../../live-data/live-data.service';
-import { PassLikeProvider } from '../../models/providers';
+import {PassLikeProvider, WrappedProvider} from '../../models/providers';
 import {CalendarComponent} from '../calendar/calendar.component';
 import {HttpService} from '../../services/http-service';
 import {Util} from '../../../Util';
@@ -15,6 +15,7 @@ import {map, toArray} from 'rxjs/operators';
 import {switchMap, tap} from 'rxjs/internal/operators';
 import { disableBodyScroll } from 'body-scroll-lock';
 import {AdminService} from '../../services/admin.service';
+import {combineLatest, Observable, of} from 'rxjs';
 
 
 
@@ -25,7 +26,7 @@ import {AdminService} from '../../services/admin.service';
 })
 export class HallmonitorComponent implements OnInit {
 
-    activePassProvider: PassLikeProvider;
+    activePassProvider: WrappedProvider;
     searchQuery$ = new BehaviorSubject('');
     minDate = new Date();
     input_value1: string;
@@ -48,6 +49,10 @@ export class HallmonitorComponent implements OnInit {
     searchDate_1st$ = new BehaviorSubject<Date>(null);
     searchDate_2nd$ = new BehaviorSubject<Date>(null);
 
+    passesLoaded: Observable<boolean> = of(false);
+
+    hasPasses: Observable<boolean> = of(false);
+
     public reportsDate: Date;
 
     constructor(
@@ -58,16 +63,26 @@ export class HallmonitorComponent implements OnInit {
         private elRef: ElementRef
 
     ) {
-      this.activePassProvider = new ActivePassProvider(this.liveDataService, this.searchQuery$);
+      this.activePassProvider = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.searchQuery$));
       //this.studentreport[0]['id'] = '1';
     }
 
   ngOnInit() {
       disableBodyScroll(this.elRef.nativeElement);
-    this.activePassProvider = new ActivePassProvider(this.liveDataService, this.searchQuery$);
+    // this.activePassProvider = new ActivePassProvider(this.liveDataService, this.searchQuery$);
     this.http.globalReload$.subscribe(() => {
       this.getReports();
     });
+
+    this.hasPasses = combineLatest(
+      this.activePassProvider.length$,
+      (l1) => l1 > 0
+    );
+
+    this.passesLoaded = combineLatest(
+      this.activePassProvider.loaded$,
+      (l1) => l1
+    );
 
   }
 
