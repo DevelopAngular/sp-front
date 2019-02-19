@@ -19,10 +19,10 @@ export const NextStep = trigger('NextStep', [
       .category-header,
       .rest-tar-header,
       .rest-mes-header
-      `, animate('0.65s 0s ease', keyframes([
+      `, animate('0.5s 0s ease', keyframes([
           style({
             background: 'transparent',
-            boxShadow: 'none'
+            boxShadow: 'none',
           }),
           // style({
           //   background: 'transparent',
@@ -30,20 +30,20 @@ export const NextStep = trigger('NextStep', [
           // }),
           style({
             background: 'transparent',
-            boxShadow: 'none'
+            boxShadow: 'none',
           }),
         ])), {optional: true}
       ),
-      // query(`.back-button-grey`, animate('0.65s 0s ease', keyframes([
-      //     style({
-      //       opacity: 0,
-      //     }),
-      //
-      //     style({
-      //       opacity: 0,
-      //     }),
-      //   ])), {optional: true}
-      // ),
+      query(`.back-button-white`, animate('0.5s 0s ease', keyframes([
+          style({
+            opacity: 0,
+          }),
+
+          style({
+            opacity: 0,
+          }),
+        ])), {optional: true}
+      ),
       query(`
       .from-header-textt,
       .to-header-textt,
@@ -51,7 +51,7 @@ export const NextStep = trigger('NextStep', [
       .category-header-textt,
       .rest-tar-header-textt,
       .rest-mes-header-textt
-      `, animate('0.65s 0s ease', keyframes([
+      `, animate('0.5s 0s ease', keyframes([
           style({
             opacity: 0,
           }),
@@ -75,7 +75,7 @@ export const NextStep = trigger('NextStep', [
       .category-content,
       .rest-tar-content,
       .rest-mes-content
-      `, animate('0.65s 0s ease', keyframes([
+      `, animate('0.5s 0s ease', keyframes([
           style({
             opacity: 0,
             transform: 'translateX({{from}}px)',
@@ -100,19 +100,23 @@ export const NextStep = trigger('NextStep', [
       .rest-tar-header,
       .rest-mes-header
       `,
-      animate('0.65s 0s ease', keyframes([
+      animate('0.5s 0s ease', keyframes([
           style({
-            'z-index': 9
+            'z-index': 9,
+            // 'border-top-left-radius': '15px',
+            // 'border-top-right-radius': '15px'
           }),
           // style({
           //   'z-index': 9
           // }),
           style({
-            'z-index': 9
+            'z-index': 9,
+            // 'border-top-left-radius': '15px',
+            // 'border-top-right-radius': '15px'
           }),
         ])), {optional: true}
       ),
-    query(`.back-button-grey`, animate('0.65s 0s ease', keyframes([
+    query(`.back-button-grey`, animate('0.5s 0s ease', keyframes([
         style({
           opacity: 0,
         }),
@@ -132,7 +136,7 @@ export const NextStep = trigger('NextStep', [
       .rest-tar-header-textt,
       .rest-mes-header-textt
       `,
-      animate('0.65s 0s ease', keyframes([
+      animate('0.5s 0s ease', keyframes([
           style({
             opacity: 1,
           }),
@@ -159,7 +163,7 @@ export const NextStep = trigger('NextStep', [
       .rest-tar-content,
       .rest-mes-content
       `,
-      animate('0.65s 0s ease', keyframes([
+      animate('0.5s 0s ease', keyframes([
             style({
               opacity: 1,
               transform: 'translateX(0px)',
@@ -180,7 +184,7 @@ export const NextStep = trigger('NextStep', [
 ]);
 
 export const NextStepColored = trigger('NextStepColored', [
-  transition(':enter', animate('0.65s 0s ease', keyframes([
+  transition(':enter', animate('0.5s 0s ease', keyframes([
       style({
         opacity: 0,
         // transform: 'translateX({{from}}px)',
@@ -200,7 +204,7 @@ export const NextStepColored = trigger('NextStepColored', [
     ])),
     // { params: { from: 100, halfFrom: 50}}
   ),
-  transition(':leave', animate('0.65s 0s ease', keyframes([
+  transition(':leave', animate('0.5s 0s ease', keyframes([
       style({
         opacity: 1,
         // transform: 'translateX(0px)',
@@ -226,7 +230,7 @@ export const NextStepColored = trigger('NextStepColored', [
 
 export const HeaderShowingUp = trigger('HeaderShowingUp', [
 
-  transition(':enter', animate('0.65s 0s ease', keyframes([
+  transition(':enter', animate('0.5s 0s ease', keyframes([
     style({
       opacity: 0
     }),
@@ -237,7 +241,7 @@ export const HeaderShowingUp = trigger('HeaderShowingUp', [
       opacity: 1
     })
   ]))),
-  transition(':leave', animate('0.65s 0s ease', keyframes([
+  transition(':leave', animate('0.5s 0s ease', keyframes([
     style({
       opacity: 1
     }),
@@ -251,7 +255,7 @@ export const HeaderShowingUp = trigger('HeaderShowingUp', [
 ]);
 
 export const BodyShowingUp = trigger('BodyShowingUp', [
-  transition(':enter', animate('0.65s 0s ease', keyframes([
+  transition(':enter', animate('0.5s 0s ease', keyframes([
     style({
       opacity: 0,
       transform: 'translateX({{from}}px)',
@@ -267,7 +271,7 @@ export const BodyShowingUp = trigger('BodyShowingUp', [
   ])),
     { params: { from: 100, halfFrom: 50}}
   ),
-  transition(':leave', animate('0.65s 0s ease', keyframes([
+  transition(':leave', animate('0.5s 0s ease', keyframes([
     style({
       opacity: 1,
       transform: 'translateX(0px)',
@@ -287,7 +291,7 @@ export const BodyShowingUp = trigger('BodyShowingUp', [
 
 export const ScaledCard = trigger('ScaledCard', [
 
-  transition(':enter', animate('.65s 0s ease', keyframes([
+  transition(':enter', animate('.5s 0s ease', keyframes([
     style({
       opacity: 0,
       transform: 'scale(1.2)'
@@ -302,7 +306,7 @@ export const ScaledCard = trigger('ScaledCard', [
       transform: 'scale(1)'
     })
   ]))),
-  transition(':leave', animate('.65s 0s ease', keyframes([
+  transition(':leave', animate('.5s 0s ease', keyframes([
     style({
       opacity: 1,
       transform: 'scale(1)'

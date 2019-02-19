@@ -92,6 +92,11 @@
           align-items: center;
           justify-content: center;
         }
+        &_uploaded {
+          font-size: 14px;
+          color: $secondary-color;
+          text-align: center;
+        }
         &_create-group {
           //padding-bottom: 30px;
           .create-button {
