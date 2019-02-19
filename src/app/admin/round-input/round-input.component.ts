@@ -56,7 +56,7 @@ export class RoundInputComponent implements OnInit {
     setTimeout(() => {
       if (this.input && this.focused) {
         this.focusAction(true);
-        this.input.nativeElement.focus();
+        this.focus();
         // this.changeAction(this.input.nativeElement, true);
       }
     }, 500);
@@ -66,6 +66,10 @@ export class RoundInputComponent implements OnInit {
         this.value = _value;
       });
     }
+  }
+
+  focus() {
+    this.input.nativeElement.focus();
   }
 
   focusAction(selected: boolean) {
