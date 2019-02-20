@@ -110,9 +110,11 @@ export class DateTimePickerComponent implements OnInit, OnDestroy{
     // this.onUpdate.emit(this._selectedMoment);
 
     console.log('[Date-Time Debug]: ', this._selectedMoment);
-    this._selectedMoment_2ndCal.setMinutes(this._selectedMoment_2ndCal.getMinutes() + 1);
-    this.min_2ndCal.setMinutes(this.min_2ndCal.getMinutes() + 1);
-    this.onUpdate_2ndCal.emit(this._selectedMoment_2ndCal);
+    if (this._selectedMoment_2ndCal && this.min_2ndCal) {
+      this._selectedMoment_2ndCal.setMinutes(this._selectedMoment_2ndCal.getMinutes() + 1);
+      this.min_2ndCal.setMinutes(this.min_2ndCal.getMinutes() + 1);
+      this.onUpdate_2ndCal.emit(this._selectedMoment_2ndCal);
+    }
   }
   ngOnDestroy() {
     this.onUpdate.emit(this._selectedMoment);
