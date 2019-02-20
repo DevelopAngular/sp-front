@@ -88,6 +88,10 @@ export class PassCardComponent implements OnInit, OnDestroy {
     }
   }
 
+  get gradient() {
+      return 'radial-gradient(circle at 73% 71%, ' + this.pass.color_profile.gradient_color + ')';
+  }
+
   get startTime(){
     let s:Date = this.pass['start_time'];
     return Util.formatDateTime(s);
@@ -137,8 +141,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
     }
 
 
-
-    this.dataService.currentUser
+      this.dataService.currentUser
         .pipe(this.loadingService.watchFirst)
         .subscribe(user => {
           this._zone.run(() => {

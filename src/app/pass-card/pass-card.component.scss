@@ -1,3 +1,46 @@
+
+.pass-card-wrapper {
+    width: 335px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    .pass-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+
+        .pass-card-header-icon {
+            width: 34px;
+            height: 34px;
+        }
+
+        .pass-card-header-text {
+            color: white;
+        }
+
+        .pass-card-header-close {
+            width: 29px;
+            height: 29px;
+            cursor: pointer;
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 .card-body-right{
     display: flex;
     flex-direction: column;
