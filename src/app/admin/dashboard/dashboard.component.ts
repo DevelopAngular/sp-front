@@ -94,14 +94,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
         for (const entry of stats) {
           switch (entry.name) {
-            case 'Most Visited Locations': {
+            case 'Most Visited Locations':
               this.passStatistic = entry['rows'].length ? entry['rows'] : [];
               break;
-            }
-            case 'Average pass time': {
+            case 'Average pass time':
               this.averagePassTime = entry['value'] ? entry['value'] : 'Unknown';
               break;
-            }
           }
 
           if (!stats.find((item) => item['name'] === 'Average pass time')) {

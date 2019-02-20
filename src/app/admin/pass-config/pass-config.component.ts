@@ -109,28 +109,25 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       let data;
       const component = OverlayContainerComponent;
       switch (action) {
-          case 'newRoom': {
+          case 'newRoom':
               data = {
                   type: action,
               };
               break;
-          }
-          case 'newFolder': {
+          case 'newFolder':
               data = {
                   type: action,
                   pinnables$: this.pinnables$,
                   rooms: this.selectedPinnables,
               };
               break;
-          }
-          case 'editRoom': {
+          case 'editRoom':
               data = {
                   type: action,
                   pinnable: this.pinnable,
               };
               break;
-          }
-          case 'editFolder': {
+          case 'editFolder':
               data = {
                   type: 'newFolder',
                   pinnable: this.pinnable,
@@ -138,8 +135,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
                   isEditFolder: true
               };
               break;
-          }
-          case 'edit': {
+          case 'edit':
               if (this.selectedPinnables.length === 1) {
                   if (this.selectedPinnables[0].type === 'location') {
                       data = {
@@ -166,14 +162,12 @@ export class PassConfigComponent implements OnInit, OnDestroy {
                   break;
               }
               break;
-          }
-          case 'newFolderWithSelections': {
+          case 'newFolderWithSelections':
               data = {
                   type: 'newFolder',
                   rooms: this.selectedPinnables,
               };
               break;
-          }
       }
       return this.dialogContainer(data, component);
   }

@@ -87,18 +87,17 @@ export class NavComponent implements OnInit {
 
   route( button: any) {
     switch (button.type) {
-      case 'routerLink': {
+      case 'routerLink':
         this.tab = ['admin', button.route];
         this.router.navigate(this.tab);
         break;
-      }
-      case 'staticButton': {
+      case 'staticButton':
         if (button.externalApp) {
           window.location.href = button.externalApp;
         } else {
           window.open(button.link);
         }
-      }
+        break;
     }
   }
   isSelected(route: string) {
