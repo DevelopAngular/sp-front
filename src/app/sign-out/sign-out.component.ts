@@ -10,7 +10,7 @@ import { HttpService } from '../services/http-service';
 export class SignOutComponent implements AfterContentInit {
 
   constructor(private http: HttpService, private loginService: GoogleLoginService) {
-    this.http.schoolIdSubject.next(null);
+    this.http.setSchool(null);
   }
 
   ngAfterContentInit() {
