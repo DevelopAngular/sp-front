@@ -131,11 +131,12 @@ export class LocationsGroupContainerComponent implements OnInit {
 
     this.data.toLocation = location;
     this.FORM_STATE.data.direction.to = location;
-      if (location.restricted && !this.isStaff) {
-          this.FORM_STATE.previousState = this.FORM_STATE.state;
-          this.FORM_STATE.state = States.restrictedTarget;
+    const restricted = ((location.restricted && !this.showDate) || (location.scheduling_restricted && !!this.showDate));
+    if (restricted && !this.isStaff) {
+      this.FORM_STATE.previousState = this.FORM_STATE.state;
+      this.FORM_STATE.state = States.restrictedTarget;
     } else {
-       this.postComposetData();
+      this.postComposetData();
     }
   }
 

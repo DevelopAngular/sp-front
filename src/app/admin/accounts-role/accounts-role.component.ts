@@ -177,9 +177,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         .subscribe((res) => {
           console.log(res);
           if (res != null) {
-
-            this.http.schoolIdSubject.next(this.http.schoolIdSubject.value);
-
+            this.http.setSchool(this.http.getSchool());
           }
         });
 
@@ -201,8 +199,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         backdropClass: 'custom-bd'
       });
     DR.afterClosed().subscribe((v) => {
-      console.log(v)
-      this.http.schoolIdSubject.next(this.http.schoolIdSubject.value);
+      console.log(v);
+      this.http.setSchool(this.http.getSchool());
     });
   }
 

@@ -176,7 +176,7 @@ export interface HallPassFilter {
 
 function makeSchoolFilter(http: HttpService) {
   return (obj: BaseModel) => {
-    const school = http.schoolIdSubject.value;
+    const school = http.getSchool();
     return school === null || obj.isAssignedToSchool(school.id);
   };
 }
@@ -190,7 +190,7 @@ export class LiveDataService {
   private globalReload$ = new Subject();
 
   constructor(private http: HttpService, private polling: PollingService, private timeService: TimeService) {
-    this.http.schoolIdSubject.subscribe(() => {
+    this.http.currentSchool$.subscribe(() => {
       setTimeout(() => {
         this.globalReload$.next(null);
       }, 5);
