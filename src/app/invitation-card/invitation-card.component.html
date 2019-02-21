@@ -1,74 +1,184 @@
-<div class="invitation-card-wrapper">
-  <app-pass-card-template
-          *ngIf="invitation"
-          [selectedStudents]="selectedStudents"
-          [forStaff]="forStaff"
-          [hasDivider]="(!selectedOrigin && !forStaff) || (!forInput && forStaff)"
-          [pass]="invitation"
-          (onCancel)="denyInvitation($event)"
-          [rightJustify]="forStaff?'space-around':'flex-end'"
-          [closeIcon]="'./assets/' +(forStaff?(forInput?'Back Button': 'Trash') :'Three dots') +' (Transparent).png'">
-    <div class="card-subtitle" *ngIf="fromPast || forFuture">
-      {{ formatDateTime(invitation.date_choices[0]) }}
-    </div>
-    <div class="card-body-left">
-      <app-traveltype-picker *ngIf="forStaff && forInput" (onSelect)="selectedTravelType=$event" [choices]="invitation.destination.travel_types" [altColor]="invitation.color_profile.solid_color"></app-traveltype-picker>
 
-      <app-duration-picker *ngIf="forStaff && forInput" [forStaff]="forStaff" [plural]="durationPlural" (onChange)="selectedDuration = $event" [maxDuration]="invitation.destination.max_allowed_time?invitation.destination.max_allowed_time:15"></app-duration-picker>
-      <app-travel-view *ngIf="!forInput" [forStaff]="forStaff" [pass]='invitation' (locationSelected)="setLocation($event)"></app-travel-view>
-    </div>
-    <div class="card-body-right" *ngIf="!forStaff; else staffPanel">
-      <div *ngIf="!!selectedOrigin && !invitation.cancelled; else noLocation;">
-        <app-card-button (onClick)="acceptInvitation()" [disabled]="performingAction" [width]="'288px'" [height]="'79px'" [gradientColor]="invitation.color_profile.gradient_color">
-          <div class="button-content">
-            <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
-            <div *ngIf="!performingAction" class="get-pass-content-text">Get Pass</div>
-            <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
-          </div>
-        </app-card-button>
-      </div>
-      <ng-template #noLocation>
-        <div *ngIf="!invitation.cancelled; else cancelled" class="invitation-description">
-          <img class="invitation-description-icon" [src]="'./assets/Request (White).png' | resolveAsset">
-          <div class="invitation-description-text">
-            Pass Request from {{ invitation.issuer.last_name }}
+<div class="invitation-card-wrapper" [style.background-image]="gradient" [style.height]="forStaff ? '451px' : '412px'">
+  <div class="pass-card-header">
+    <div class="header-content">
+      <div class="header-info">
+        <img  class="pass-card-header-icon" [src]="invitation.icon | resolveAsset">
+        <div class="pass-card-header-text">
+          {{ invitation.destination.title }}
+          <div class="card-subtitle" *ngIf="fromPast || forFuture">
+            {{ formatDateTime(invitation.date_choices[0]) }}
           </div>
         </div>
-        <ng-template #cancelled>
-          <div class="invitation-description">
-            <img class="invitation-description-icon" [src]="'./assets/Report (White).png' | resolveAsset">
+      </div>
+      <img class="pass-card-header-close" (click)="denyInvitation($event)" [src]="'./assets/' +(forStaff?(forInput?'Back Button': 'Trash') :'Three dots') +' (Transparent).png' | resolveAsset">
+    </div>
+    <mat-divider></mat-divider>
+  </div>
+
+  <div class="invitation-card-content" *ngIf="!isModal">
+    <div class="duration-picker">
+      <app-traveltype-picker *ngIf="forStaff && forInput" [width]="(invitation.destination.travel_types.length < 2 ? '96px' : '115px')" [height]="'28px'" (onSelect)="selectedTravelType=$event" [choices]="invitation.destination.travel_types" [altColor]="invitation.color_profile.solid_color"></app-traveltype-picker>
+      <app-duration-picker *ngIf="forStaff && forInput" [forStaff]="forStaff" [plural]="durationPlural" (onChange)="selectedDuration = $event" [maxDuration]="invitation.destination.max_allowed_time?invitation.destination.max_allowed_time:15"></app-duration-picker>
+    </div>
+    <div class="button" *ngIf="forStaff">
+        <div *ngIf="forInput">
+          <app-card-button (onClick)="newInvitation()" [disabled]="performingAction" [width]="'288px'" [height]="'79px'" [gradientColor]="invitation.color_profile.gradient_color">
+            <div class="button-content">
+              <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
+              <div *ngIf="!performingAction" class="button-content-text">Send Request</div>
+              <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
+            </div>
+          </app-card-button>
+        </div>
+      </div>
+  </div>
+
+  <div class="invitation-card-content-modal" *ngIf="isModal">
+
+    <div *ngIf="!forStaff" class="student-view">
+
+      <div class="center-block">
+        <app-travel-view *ngIf="!forInput" [forStaff]="forStaff" [pass]='invitation' (locationSelected)="setLocation($event)"></app-travel-view>
+      </div>
+
+      <mat-divider *ngIf="(!selectedOrigin && !forStaff) || (!forInput && forStaff)"></mat-divider>
+
+      <div class="bottom-block">
+
+        <div *ngIf="!!selectedOrigin && !invitation.cancelled; else noLocation;">
+          <app-card-button (onClick)="acceptInvitation()" [disabled]="performingAction" [width]="'288px'" [height]="'79px'" [gradientColor]="invitation.color_profile.gradient_color">
+            <div class="button-content">
+              <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
+              <div *ngIf="!performingAction" class="get-pass-content-text">Get Pass</div>
+              <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
+            </div>
+          </app-card-button>
+        </div>
+        <ng-template #noLocation>
+          <div *ngIf="!invitation.cancelled; else cancelled" class="invitation-description">
+            <img class="invitation-description-icon" [src]="'./assets/Request (White).png' | resolveAsset">
             <div class="invitation-description-text">
-              Pass Request has been cancelled
+              Pass Request from {{ invitation.issuer.last_name }}
             </div>
           </div>
+          <ng-template #cancelled>
+            <div class="invitation-description">
+              <img class="invitation-description-icon" [src]="'./assets/Report (White).png' | resolveAsset">
+              <div class="invitation-description-text">
+                Pass Request has been cancelled
+              </div>
+            </div>
+          </ng-template>
         </ng-template>
-      </ng-template>
-    </div>
-    <ng-template #staffPanel class="card-body-right">
-      <div *ngIf="forInput; else staffNoInput" class="card-body-right">
-        <app-card-button (onClick)="newInvitation()" [disabled]="performingAction" [width]="'288px'" [height]="'79px'" [gradientColor]="invitation.color_profile.gradient_color">
-          <div class="button-content">
-            <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
-            <div *ngIf="!performingAction" class="button-content-text">Send Request</div>
-            <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
-          </div>
-        </app-card-button>
+
       </div>
-      <ng-template #staffNoInput class="card-body-right">
+    </div>
+
+    <div class="teacher-view" *ngIf="forStaff">
+      <div class="center-block">
+        <app-travel-view *ngIf="!forInput" [forStaff]="forStaff" [pass]='invitation' (locationSelected)="setLocation($event)"></app-travel-view>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="bottom-block">
         <app-pager *ngIf="invitation.status!=='pending'; else pending" [page]="2">
-          <div class="page-1 teacher-details">
+          <div>
             <span class="bold">Pass Request Sent</span><span class="smaller"><br>by {{issuerName}}<br>{{formatDateTime(invitation.created)}}</span>
           </div>
-          <div class="page-2 teacher-details">
+          <div>
             <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{studentName}}<br>{{formatDateTime(invitation.last_updated)}}</span>
           </div>
         </app-pager>
         <ng-template #pending>
-          <div class="teacher-details">
+          <div>
             <span class="bold">Pass Request Sent</span><span class="smaller"><br>by {{issuerName}}<br>{{formatDateTime(invitation.created)}}</span>
           </div>
         </ng-template>
-      </ng-template>
-    </ng-template>
-  </app-pass-card-template>
+      </div>
+    </div>
+  </div>
+
+  <div class="invitation-card-footer" *ngIf="forStaff">
+    <div class="student-footer"></div>
+    <div class="student-text"> {{ studentText }} </div>
+  </div>
 </div>
+
+
+
+<!--<div class="invitation-card-wrapper">-->
+  <!--<app-pass-card-template-->
+          <!--*ngIf="invitation"-->
+          <!--[selectedStudents]="selectedStudents"-->
+          <!--[forStaff]="forStaff"-->
+          <!--[hasDivider]="(!selectedOrigin && !forStaff) || (!forInput && forStaff)"-->
+          <!--[pass]="invitation"-->
+          <!--(onCancel)="denyInvitation($event)"-->
+          <!--[rightJustify]="forStaff?'space-around':'flex-end'"-->
+          <!--[closeIcon]="'./assets/' +(forStaff?(forInput?'Back Button': 'Trash') :'Three dots') +' (Transparent).png'">-->
+    <!--<div class="card-subtitle" *ngIf="fromPast || forFuture">-->
+      <!--{{ formatDateTime(invitation.date_choices[0]) }}-->
+    <!--</div>-->
+    <!--<div class="card-body-left">-->
+      <!--<app-traveltype-picker *ngIf="forStaff && forInput" (onSelect)="selectedTravelType=$event" [choices]="invitation.destination.travel_types" [altColor]="invitation.color_profile.solid_color"></app-traveltype-picker>-->
+
+      <!--<app-duration-picker *ngIf="forStaff && forInput" [forStaff]="forStaff" [plural]="durationPlural" (onChange)="selectedDuration = $event" [maxDuration]="invitation.destination.max_allowed_time?invitation.destination.max_allowed_time:15"></app-duration-picker>-->
+      <!--<app-travel-view *ngIf="!forInput" [forStaff]="forStaff" [pass]='invitation' (locationSelected)="setLocation($event)"></app-travel-view>-->
+    <!--</div>-->
+    <!--<div class="card-body-right" *ngIf="!forStaff; else staffPanel">-->
+      <!--<div *ngIf="!!selectedOrigin && !invitation.cancelled; else noLocation;">-->
+        <!--<app-card-button (onClick)="acceptInvitation()" [disabled]="performingAction" [width]="'288px'" [height]="'79px'" [gradientColor]="invitation.color_profile.gradient_color">-->
+          <!--<div class="button-content">-->
+            <!--<mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>-->
+            <!--<div *ngIf="!performingAction" class="get-pass-content-text">Get Pass</div>-->
+            <!--<img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">-->
+          <!--</div>-->
+        <!--</app-card-button>-->
+      <!--</div>-->
+      <!--<ng-template #noLocation>-->
+        <!--<div *ngIf="!invitation.cancelled; else cancelled" class="invitation-description">-->
+          <!--<img class="invitation-description-icon" [src]="'./assets/Request (White).png' | resolveAsset">-->
+          <!--<div class="invitation-description-text">-->
+            <!--Pass Request from {{ invitation.issuer.last_name }}-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<ng-template #cancelled>-->
+          <!--<div class="invitation-description">-->
+            <!--<img class="invitation-description-icon" [src]="'./assets/Report (White).png' | resolveAsset">-->
+            <!--<div class="invitation-description-text">-->
+              <!--Pass Request has been cancelled-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</ng-template>-->
+      <!--</ng-template>-->
+    <!--</div>-->
+    <!--<ng-template #staffPanel class="card-body-right">-->
+      <!--<div *ngIf="forInput; else staffNoInput" class="card-body-right">-->
+        <!--<app-card-button (onClick)="newInvitation()" [disabled]="performingAction" [width]="'288px'" [height]="'79px'" [gradientColor]="invitation.color_profile.gradient_color">-->
+          <!--<div class="button-content">-->
+            <!--<mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>-->
+            <!--<div *ngIf="!performingAction" class="button-content-text">Send Request</div>-->
+            <!--<img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">-->
+          <!--</div>-->
+        <!--</app-card-button>-->
+      <!--</div>-->
+      <!--<ng-template #staffNoInput class="card-body-right">-->
+        <!--<app-pager *ngIf="invitation.status!=='pending'; else pending" [page]="2">-->
+          <!--<div class="page-1 teacher-details">-->
+            <!--<span class="bold">Pass Request Sent</span><span class="smaller"><br>by {{issuerName}}<br>{{formatDateTime(invitation.created)}}</span>-->
+          <!--</div>-->
+          <!--<div class="page-2 teacher-details">-->
+            <!--<span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{studentName}}<br>{{formatDateTime(invitation.last_updated)}}</span>-->
+          <!--</div>-->
+        <!--</app-pager>-->
+        <!--<ng-template #pending>-->
+          <!--<div class="teacher-details">-->
+            <!--<span class="bold">Pass Request Sent</span><span class="smaller"><br>by {{issuerName}}<br>{{formatDateTime(invitation.created)}}</span>-->
+          <!--</div>-->
+        <!--</ng-template>-->
+      <!--</ng-template>-->
+    <!--</ng-template>-->
+  <!--</app-pass-card-template>-->
+<!--</div>-->

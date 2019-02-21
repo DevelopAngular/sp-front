@@ -41,6 +41,8 @@ export class InvitationCardComponent implements OnInit {
   performingAction: boolean;
   fromHistory;
   fromHistoryIndex;
+
+  isModal: boolean;
   isSeen: boolean;
 
   constructor(
@@ -62,6 +64,22 @@ export class InvitationCardComponent implements OnInit {
     return this.invitation.issuer.isSameObject(this.user)?'Me':this.invitation.issuer.first_name.substr(0, 1) +'. ' +this.invitation.issuer.last_name;
   }
 
+    get gradient() {
+        return 'radial-gradient(circle at 73% 71%, ' + this.invitation.color_profile.gradient_color + ')';
+    }
+
+    get studentText() {
+        return (this.selectedStudents ?
+            (this.selectedStudents.length > 2 ?
+                this.selectedStudents[0].display_name + ' and ' + (this.selectedStudents.length - 1) + ' more' :
+                this.selectedStudents[0].display_name + (this.selectedStudents.length > 1 ?
+                ' and ' + this.selectedStudents[1].display_name : '')) : this.invitation.student.display_name + ` (${this.studentEmail})`);
+    }
+
+    get studentEmail() {
+        return this.invitation.student.primary_email.split('@', 1)[0];
+    }
+
   get status(){
     return this.invitation.status.charAt(0).toUpperCase() + this.invitation.status.slice(1);
   }
@@ -73,6 +91,7 @@ export class InvitationCardComponent implements OnInit {
   ngOnInit() {
 
     if (this.data['pass']) {
+      this.isModal = true;
       this.invitation = this.data['pass'];
       this.forFuture = this.data['forFuture'];
       this.fromPast = this.data['fromPast'];
