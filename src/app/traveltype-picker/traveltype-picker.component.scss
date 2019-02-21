@@ -1,17 +1,11 @@
 .wrapper{
     border: solid white 1px;
     border-radius: 5px;
-    //width: 120px;
-    margin-left: 94px;
-    margin-bottom: -22px;
-    /* padding-top: 6px; */
-    /* margin-top: 7px; */
-    //height: 20px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
     background-color: white;
+    position: absolute;
+    left: 104px;
+    top: 22px;
+    display: flex;
     cursor: pointer;
     -webkit-user-select: none;
     -moz-user-select: none;

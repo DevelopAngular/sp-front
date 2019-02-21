@@ -63,6 +63,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   activePage;
 
   performingAction: boolean;
+  isModal: boolean;
 
   isSeen: boolean;
 
@@ -90,6 +91,18 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   get gradient() {
       return 'radial-gradient(circle at 73% 71%, ' + this.pass.color_profile.gradient_color + ')';
+  }
+
+  get studentText() {
+    return (this.selectedStudents ?
+        (this.selectedStudents.length > 2 ?
+            this.selectedStudents[0].display_name + ' and ' + (this.selectedStudents.length - 1) + ' more' :
+            this.selectedStudents[0].display_name + (this.selectedStudents.length > 1 ?
+            ' and ' + this.selectedStudents[1].display_name : '')) : this.pass.student.display_name + ` (${this.studentEmail})`);
+  }
+
+  get studentEmail() {
+    return this.pass.student.primary_email.split('@', 1)[0];
   }
 
   get startTime(){
@@ -125,7 +138,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-      if (this.data['pass']) {
+    if (this.data['pass']) {
+      this.isModal = true;
       this.pass = this.data['pass'];
       this.forInput = this.data['forInput'];
       this.isActive = this.data['isActive'];
@@ -139,7 +153,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
     } else {
       this.selectedStudents = this.students;
     }
-
 
       this.dataService.currentUser
         .pipe(this.loadingService.watchFirst)
