@@ -153,18 +153,20 @@ export class LocationsGroupContainerComponent implements OnInit {
     }
     this.data.message = message;
     this.FORM_STATE.data.message = message;
-    this.postComposetData(denyMessage);
+    this.postComposetData(denyMessage, true);
   }
 
 
-  private postComposetData(close: boolean = false) {
-    const restricted = ((this.FORM_STATE.data.direction.to.restricted && !this.showDate) || (this.FORM_STATE.data.direction.to.scheduling_restricted && !!this.showDate));
-    if (!this.isStaff && restricted) {
+  private postComposetData(close: boolean = false, isMessage?: boolean) {
+    const restricted = ((this.FORM_STATE.data.direction.to.restricted && !this.FORM_STATE.forLater) ||
+        (this.FORM_STATE.data.direction.to.scheduling_restricted && !!this.FORM_STATE.forLater));
+    if (!this.isStaff && (restricted || isMessage)) {
         this.FORM_STATE.formMode.formFactor = FormFactor.Request;
     }
-    if (!this.isStaff && !restricted) {
-        this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
-    }
+    // if (!this.isStaff && !restricted) {
+    //     debugger;
+    //     this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
+    // }
     if (this.isStaff) {
       if (this.FORM_STATE.data.date && this.FORM_STATE.data.date.declinable) {
          this.FORM_STATE.formMode.formFactor = FormFactor.Invitation;
