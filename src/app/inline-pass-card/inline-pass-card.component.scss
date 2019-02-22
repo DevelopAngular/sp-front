@@ -1,3 +1,63 @@
+
+
+.inline-pass-card-wrapper {
+    width: 335px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    .pass-card-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            width: 291px;
+
+            .header-info {
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        .pass-card-header-icon {
+            width: 34px;
+            height: 34px;
+        }
+
+        .pass-card-header-text {
+            color: white;
+            font-size: 18px;
+            margin-left: 15px;
+        }
+
+    }
+    .inline-pass-card-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .button {
+            color: white;
+        }
+    }
+
+    mat-divider {
+        background-color: white;
+        width: 291px;
+    }
+}
+
+
+
+
+
+
 .card-body-right{
     display: flex;
     flex-direction: column;
