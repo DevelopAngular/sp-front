@@ -45,6 +45,8 @@ export class RequestCardComponent implements OnInit {
   user: User;
   isSeen: boolean;
 
+  isModal: boolean;
+
   performingAction: boolean;
 
   constructor(
@@ -60,6 +62,7 @@ export class RequestCardComponent implements OnInit {
 
   ngOnInit() {
     if (this.data['pass']) {
+      this.isModal = true;
       this.request = this.data['pass'];
       this.forInput = this.data['forInput'];
       this.forFuture = this.data['forFuture'];
@@ -89,6 +92,10 @@ export class RequestCardComponent implements OnInit {
   get teacherName(){
     return this.request.teacher.isSameObject(this.user)?'Me':this.request.teacher.first_name.substr(0, 1) +'. ' +this.request.teacher.last_name;
   }
+
+    get gradient() {
+        return 'radial-gradient(circle at 73% 71%, ' + this.request.color_profile.gradient_color + ')';
+    }
 
   get status(){
     return this.request.status.charAt(0).toUpperCase() + this.request.status.slice(1);

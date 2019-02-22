@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-pager',
@@ -10,6 +10,8 @@ export class PagerComponent implements OnInit {
 
   @Input() page = 1;
   @Input() pages = 2;
+
+  @Input() arrowPosition: string = '-17px';
 
   hideRightButton = new BehaviorSubject(false);
   hideLeftButton = new BehaviorSubject(true);
