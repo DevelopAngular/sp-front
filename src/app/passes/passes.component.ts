@@ -2,7 +2,7 @@ import { animate, state, style, transition, trigger, } from '@angular/animations
 import { Component, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { BehaviorSubject, combineLatest, empty, merge, Observable, of, ReplaySubject } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { filter, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
@@ -43,7 +43,7 @@ class FuturePassProvider implements PassLikeProvider {
 
 class ActivePassProvider implements PassLikeProvider {
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>,
-              private excluded$: Observable<PassLike[]> = empty()) {
+              private excluded$: Observable<PassLike[]> = empty(), private timeService: TimeService) {
   }
 
   watch(sort: Observable<string>) {
@@ -55,10 +55,13 @@ class ActivePassProvider implements PassLikeProvider {
     merged$.subscribe(mergedReplay);
 
     const passes$ = this.user$.pipe(
-      switchMap(user => this.liveDataService.watchActiveHallPasses(mergedReplay,
-        user.roles.includes('hallpass_student')
-          ? {type: 'student', value: user}
-          : {type: 'issuer', value: user}))
+        switchMap(user => this.liveDataService.watchActiveHallPasses(mergedReplay,
+            user.roles.includes('hallpass_student')
+                ? {type: 'student', value: user}
+                : {type: 'issuer', value: user})),
+        withLatestFrom(this.timeService.now$), map(([passes, now]) => {
+          return passes.filter(pass => new Date(pass.start_time).getTime() <= now.getTime());
+        })
     );
 
     const excluded$ = this.excluded$.startWith([]);
@@ -215,7 +218,7 @@ export class PassesComponent implements OnInit {
     const excludedPasses = this.currentPass$.map(p => p !== null ? [p] : []);
 
     this.futurePasses = new WrappedProvider(new FuturePassProvider(this.liveDataService, this.dataService.currentUser));
-    this.activePasses = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.dataService.currentUser, excludedPasses));
+    this.activePasses = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.dataService.currentUser, excludedPasses, this.timeService));
     this.pastPasses = new WrappedProvider(new PastPassProvider(this.liveDataService, this.dataService.currentUser));
 
     this.dataService.currentUser
