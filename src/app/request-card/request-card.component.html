@@ -73,7 +73,7 @@
       <mat-divider *ngIf="((request.status==='pending' || request.status==='accepted') && !forInput && !forStaff) || (request.status!=='pending' && forStaff)"></mat-divider>
 
       <div class="bottom-block">
-        <div *ngIf="request.status==='pending';" class="card-body-right">
+        <div *ngIf="request.status==='pending';">
           <div class="request-description">
             <img class="request-description-icon" [src]="'./assets/Lock (White).png' | resolveAsset">
             <div class="request-description-text">

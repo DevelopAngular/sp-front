@@ -51,13 +51,23 @@
 
         <mat-divider *ngIf="hasDivider"></mat-divider>
 
-        <div class="bottom-block" *ngIf="hasDivider">
-            <div class="request-description">
+        <div class="bottom-block">
+            <div class="request-description" *ngIf="hasDivider">
                 <img class="request-description-icon" [src]="'./assets/Lock (White).png' | resolveAsset">
                 <div class="request-description-text">
                     Pass Request Sent <br>to {{ request?.teacher.last_name }}
                 </div>
             </div>
+
+            <div *ngIf="request?.status==='declined'">
+                <app-card-button (click)="resendRequest()" [width]="'269px'" [height]="'81px'" [margin_top]="'112px'" [gradientColor]="request?.color_profile.gradient_color">
+                    <div class="resend-button-content">
+                        <div class="resend-button-content-title">{{ (forFuture?'Change Date & Time':'Resend Request') }}</div>
+                        <div class="resend-button-content-subtitle">Pass Request Denied</div>
+                    </div>
+                </app-card-button>
+            </div>
+
         </div>
     </div>
 </div>
