@@ -85,12 +85,13 @@ export class PinnableComponent implements OnInit {
   }
 
   getGradient() {
-    if(this.valid){
-      let gradient: string[] = this.pinnable.color_profile.gradient_color.split(',');
+    // if(this.valid){
+      const gradient: string[] = this.pinnable.color_profile.gradient_color.split(',');
       return this.sanitizer.bypassSecurityTrustStyle('radial-gradient(circle at 73% 71%, ' + gradient[0] + ', ' + gradient[1] + ')');
-    } else{
-      return this.sanitizer.bypassSecurityTrustStyle('radial-gradient(circle at 73% 71%, rgb(203, 213, 229), rgb(203, 213, 229))');
-    }
+    // }
+    // else{
+    //   return this.sanitizer.bypassSecurityTrustStyle('radial-gradient(circle at 73% 71%, rgb(203, 213, 229), rgb(203, 213, 229))');
+    // }
   }
 
   onPress(press: boolean) {
