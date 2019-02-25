@@ -43,6 +43,7 @@ import {DropdownComponent} from '../dropdown/dropdown.component';
 import {AppInputComponent} from '../app-input/app-input.component';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import {DateTimeComponent} from '../create-hallpass-forms/main-hallpass--form/date-time-container/date-time/date-time.component';
+import {CalendarComponent} from '../admin/calendar/calendar.component';
 
 
 
@@ -98,11 +99,14 @@ import {DateTimeComponent} from '../create-hallpass-forms/main-hallpass--form/da
       CardButtonComponent,
       PagerComponent,
       RoundInputComponent,
-      AppInputComponent
+      AppInputComponent,
+      CalendarComponent
   ],
     entryComponents: [
       PassCardComponent,
       DropdownComponent,
+      CalendarComponent,
+      CalendarComponent
     ],
   exports: [
     ReactiveFormsModule,
@@ -137,6 +141,7 @@ import {DateTimeComponent} from '../create-hallpass-forms/main-hallpass--form/da
     PassCardComponent,
     InputTextareaModule,
     DateTimeComponent,
+    CalendarComponent
 
   ],
 })

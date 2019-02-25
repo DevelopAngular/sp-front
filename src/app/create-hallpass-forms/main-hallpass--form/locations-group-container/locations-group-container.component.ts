@@ -6,7 +6,7 @@ import { Pinnable } from '../../../models/Pinnable';
 import { Util } from '../../../../Util';
 import {FormFactor, Navigation, Role} from '../main-hall-pass-form.component';
 import {CreateFormService} from '../../create-form.service';
-import {NextStep, NextStepColored, ScaledCard} from '../../../animations';
+import {NextStep} from '../../../animations';
 
 export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, message = 5 }
 
@@ -14,7 +14,7 @@ export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, 
   selector: 'app-locations-group-container',
   templateUrl: './locations-group-container.component.html',
   styleUrls: ['./locations-group-container.component.scss'],
-  animations: [NextStep, NextStepColored]
+  animations: [NextStep]
 })
 export class LocationsGroupContainerComponent implements OnInit {
 
@@ -58,7 +58,7 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   ngOnInit() {
 
-    this.formService.setFrameMotionDirection('disable');
+    // this.formService.setFrameMotionDirection('disable');
 
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.FORM_STATE.quickNavigator = false;
@@ -132,7 +132,7 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.data.toLocation = location;
     this.FORM_STATE.data.direction.to = location;
       if (location.restricted && !this.isStaff) {
-          this.FORM_STATE.previousState = this.FORM_STATE.state;
+          this.FORM_STATE.previousState = States.from;
           this.FORM_STATE.state = States.restrictedTarget;
     } else {
        this.postComposetData();
@@ -143,6 +143,7 @@ export class LocationsGroupContainerComponent implements OnInit {
 
     this.data.requestTarget = teacher;
     this.FORM_STATE.data.requestTarget = teacher;
+    this.FORM_STATE.previousState = States.restrictedTarget
     this.FORM_STATE.state = States.message;
   }
 

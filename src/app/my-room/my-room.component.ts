@@ -1,5 +1,5 @@
 import { Component, ElementRef, NgZone, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import {MatDialog} from '@angular/material';
 import { combineLatest, merge, of } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
 import { Observable } from 'rxjs';
@@ -16,6 +16,7 @@ import { BasicPassLikeProvider, PassLikeProvider, WrappedProvider } from '../mod
 import { User } from '../models/User';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import { TimeService } from '../services/time.service';
+import {CalendarComponent} from '../admin/calendar/calendar.component';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -175,6 +176,36 @@ export class MyRoomComponent implements OnInit {
         (l1, l2, l3) => l1 && l2 && l3
       );
   }
+
+  chooseDate(event) {
+    // this.calendarToggled = this.!calendarToggled
+
+    // this.activeCalendar = true;
+    const target = new ElementRef(event.currentTarget);
+    // const DR = this.dialog.open(CalendarComponent, {
+    //   panelClass: 'calendar-dialog-container',
+    //   backdropClass: 'invis-backdrop',
+    //   data: {
+    //     'trigger': target,
+    //     // 'previousSelectedDate': this.chartsDate ? new Date(this.chartsDate) : null,
+    //   }
+    // });
+
+
+
+    const DR = this.dialog.open(CalendarComponent, {
+      panelClass: 'calendar-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {
+        trigger: target,
+        previousSelectedDate: this.searchDate
+      }
+    });
+    DR.afterClosed().subscribe((_date: Date) => {
+      this.setSearchDate(_date);
+    });
+  }
+
 
   onSearch(search: string) {
     this.inputValue = search;

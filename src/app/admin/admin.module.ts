@@ -20,7 +20,7 @@ import { AccountsComponent } from './accounts/accounts.component';
 import { AdminPageComponent } from './admin-page/admin-page.component';
 
 import { AdminRoutingModule } from './admin-routing.module';
-import { CalendarComponent } from './calendar/calendar.component';
+// import { CalendarComponent } from './calendar/calendar.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { DatePrettyHelper } from './date-pretty.helper';
 import { FeedbackComponent } from './feedback/feedback.component';
@@ -60,11 +60,11 @@ import { SupportComponent } from './support/support.component';
     AccountsDialogComponent,
     AccountsComponent,
     AccountsRoleComponent,
-    CalendarComponent,
+    // CalendarComponent,
     SettingsComponent,
     LinkGeneratedDialogComponent
   ],
-  entryComponents: [AccountsDialogComponent, CalendarComponent, LinkGeneratedDialogComponent],
+  entryComponents: [AccountsDialogComponent, LinkGeneratedDialogComponent],
   providers: [
     // NavbarDataService
     [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],

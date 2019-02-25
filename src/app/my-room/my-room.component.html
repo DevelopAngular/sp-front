@@ -26,7 +26,7 @@
             (ontextupdate)="onSearch($event)"
           ></app-round-input>
         </div>
-        <div class="calendar-wrapper" (click)="calendarToggled=!calendarToggled" [style.background-color]="(calendarToggled?'#E4EBFF':'transparent')">
+        <div class="calendar-wrapper" (click)="chooseDate($event)" [style.background-color]="(calendarToggled?'#E4EBFF':'transparent')">
           <img class="calendar-icon" [src]="'./assets/Calendar (Blue).png' | resolveAsset">
         </div>
         <div class="date-display">{{ dateDisplay }}</div>
@@ -50,9 +50,9 @@
         </div>
       </div>
     </div>
-    <div *ngIf="calendarToggled" class="my-room-right">
-      <app-date-time-picker [_selectedMoment]="searchDate" [min]="min" [showTime]="false" (onUpdate)="setSearchDate($event)"></app-date-time-picker>
-    </div>
+    <!--<div *ngIf="calendarToggled" class="my-room-right">-->
+      <!--<app-date-time-picker [_selectedMoment]="searchDate" [min]="min" [showTime]="false" (onUpdate)="setSearchDate($event)"></app-date-time-picker>-->
+    <!--</div>-->
   </div>
   <div class="no-content-info">
     <h3 *ngIf="isStaff && !selectedLocation && userLoaded">No rooms</h3>

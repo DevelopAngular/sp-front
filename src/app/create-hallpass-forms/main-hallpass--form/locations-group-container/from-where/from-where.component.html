@@ -1,12 +1,11 @@
-<div class="from-wrapper">
-  <div class="from-header" [style.background-image]="'radial-gradient(circle at 98% 97%, #FFFFFF, FFFFFF)'">
+<div class="from-wrapperr"  [ngClass]="{ 'from-wrapper-to-date': formState.forLater, 'from-wrapper': !formState.forLater}">
+  <div class="from-header" [style.background-image]="'radial-gradient(circle at 98% 97%, #FFFFFF, #FFFFFF)'">
     <img class="back-button back-button-grey" [src]="'./assets/Combined Shape.svg' | resolveAsset" (click)="back()">
     <div class="from-header-text">
       <img class="search-icon" [src]="'./assets/Search (Blue).png' | resolveAsset">
       <div class="text">From where?</div>
     </div>
   </div>
-
   <div class="from-content" [style.height]="date ? '74%' : '78%'" (scroll)="tableScroll($event)">
     <div class="location-tables">
       <app-location-table

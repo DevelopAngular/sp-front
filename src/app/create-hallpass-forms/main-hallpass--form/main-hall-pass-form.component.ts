@@ -4,7 +4,9 @@ import { Location } from '../../models/Location';
 import { Pinnable } from '../../models/Pinnable';
 import { User } from '../../models/User';
 import { StudentList } from '../../models/StudentList';
-import {NextStep, NextStepColored, ScaledCard} from '../../animations';
+import {NextStep, ScaledCard} from '../../animations';
+import {BehaviorSubject} from 'rxjs';
+import {CreateFormService} from '../create-form.service';
 
 export enum Role { Teacher = 1, Student = 2 }
 
@@ -48,7 +50,7 @@ export interface Navigation {
   selector: 'app-main-hallpass-form',
   templateUrl: './main-hall-pass-form.component.html',
   styleUrls: ['./main-hall-pass-form.component.scss'],
-  animations: [NextStep, NextStepColored, ScaledCard]
+  animations: [NextStep, ScaledCard]
 
 })
 export class MainHallPassFormComponent implements OnInit {
@@ -58,14 +60,18 @@ export class MainHallPassFormComponent implements OnInit {
     height: '0px',
     width: '0px'
   }
+  frameMotion$: BehaviorSubject<any>;
 
   constructor(
     public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     public dialogRef: MatDialogRef<MainHallPassFormComponent>,
+    private formService: CreateFormService
   ) {}
 
   ngOnInit() {
+    this.frameMotion$ = this.formService.getFrameMotionDirection();
+
     this.FORM_STATE = {
       step: null,
       previousStep: 0,
@@ -129,6 +135,8 @@ export class MainHallPassFormComponent implements OnInit {
   }
 
   onNextStep(evt) {
+    console.log('EXIT ===>', evt);
+
     if (evt.step === 0 || evt.action === 'exit') {
       console.log('EXIT ===>', evt);
       this.dialogRef.close(evt);

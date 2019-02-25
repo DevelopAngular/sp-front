@@ -3,7 +3,6 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Navigation } from '../../main-hall-pass-form.component';
 import { Pinnable } from '../../../../models/Pinnable';
 import {CreateFormService} from '../../../create-form.service';
-import {BodyShowingUp, HeaderShowingUp} from '../../../../animations';
 import {BehaviorSubject} from 'rxjs';
 
 @Component({
