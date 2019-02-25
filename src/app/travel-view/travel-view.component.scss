@@ -1,9 +1,15 @@
 .travel-view-wrapper{
-    height: 217px;
+    //height: 217px;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
+    color: white;
     //margin-top: 16px;
+}
+
+.arrow {
+    margin: 20px 0 20px 0;
 }
 
 .origin-button-content{

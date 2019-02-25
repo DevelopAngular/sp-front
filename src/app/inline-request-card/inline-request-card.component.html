@@ -1,64 +1,147 @@
-<div class="inline-request-container" ondragstart="return false;">
-    <app-pass-card-template
-        (onCancel)="cancelRequest($event)"
-        [hasDivider]="hasDivider"
-        [pass]="request"
-        [closeIcon]="'./assets/Trash (Transparent).png'" [rightJustify]="'none'">
-    <div class="card-subtitle" *ngIf="fromPast || forFuture">
-      {{ formatDateTime() }}
-    </div>
-    <div class="card-body-left">
-      <app-pager>
-        <div class="page-1" [style.max-height]="'122px'">
-            <app-traveltype-picker *ngIf="forInput" (onSelect)="selectedTravelType=$event" [choices]="request?.destination.travel_types" [altColor]="request?.color_profile.solid_color"></app-traveltype-picker>
 
-            <app-duration-picker *ngIf="forInput; else noInput;" (onChange)="selectedDuration=$event"  [maxDuration]="(request?.destination.max_allowed_time?request?.destination.max_allowed_time:15)"></app-duration-picker>
-          <ng-template #noInput>
-              <app-travel-view [pass]="request" [shrink]="true"></app-travel-view>
-          </ng-template>
-        </div>
-        <div class="page-2">
-          <div class="page-2-wrapper">
-            <div class="message" [style.height]="(forInput?'70px':'110px')" [style.margin-bottom]="(forInput?'4px':'0px')">
-              <span [style.font-weight]="'bold'">Your message:</span><br>
-              {{ (request?.attachment_message===''?'No message':request?.attachment_message) }}
-              <div *ngIf="request?.status==='declined'">
-                  <br>
-                  <span [style.font-weight]="'bold'">Message from {{request?.teacher.last_name}}:</span><br>
-                  {{ (request?.declined_message===''?'No message':request?.declined_message) }} <!-- deny_message -->
-              </div>
+
+<div class="inline-request-card-wrapper" [style.background-image]="gradient" [style.height]="'412px'" ondragstart="return false">
+    <div class="pass-card-header">
+        <div class="header-content">
+            <div class="header-info">
+                <img  class="pass-card-header-icon" [src]="request.icon | resolveAsset">
+                <div class="pass-card-header-text">
+                    {{ request.destination.title }}
+                    <div class="card-subtitle" *ngIf="fromPast || forFuture">
+                        {{ formatDateTime() }}
+                    </div>
+                </div>
             </div>
-            <app-card-button *ngIf="forInput" class="edit-button" [width]="'130px'" [height]="'px'" [gradientColor]="request?.color_profile.gradient_color">
-              <div class="button-content">Edit Message</div>
-            </app-card-button>
-          </div>
+            <img class="pass-card-header-close" (click)="cancelRequest($event)" [src]="'./assets/Trash (Transparent).png' | resolveAsset">
         </div>
-      </app-pager>
+        <mat-divider></mat-divider>
     </div>
-    <div *ngIf="forInput" class="card-body-right">
-      <app-card-button (onClick)="newRequest()" [width]="'288px'" [height]="'79px'" [gradientColor]="request?.color_profile.gradient_color">
-        <div class="request-button-content">
-          <img class="button-icon-left" [src]="'./assets/Lock (White).png' | resolveAsset">
-          <div class="request-pass-content-text">Request Pass</div>
-          <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
+
+    <div class="inline-request-content">
+        <div class="center-block">
+
+            <app-pager [arrowPosition]="'-93px'">
+                <div class="page-1">
+                    <app-traveltype-picker *ngIf="forInput" (onSelect)="selectedTravelType=$event" [choices]="request?.destination.travel_types" [altColor]="request?.color_profile.solid_color"></app-traveltype-picker>
+
+                    <app-duration-picker *ngIf="forInput; else noInput;" (onChange)="selectedDuration=$event"  [maxDuration]="(request?.destination.max_allowed_time?request?.destination.max_allowed_time:15)"></app-duration-picker>
+                    <ng-template #noInput>
+                        <app-travel-view [height]="'174px'" [pass]="request" [shrink]="true"></app-travel-view>
+                    </ng-template>
+                </div>
+                <div class="page-2">
+                    <div class="page-2-wrapper">
+                        <div class="message" [style.height]="(forInput?'70px':'174px')" [style.margin-bottom]="(forInput?'4px':'0px')">
+                            <span [style.font-weight]="'bold'">Your message:</span><br>
+                            {{ (request?.attachment_message===''?'No message':request?.attachment_message) }}
+                            <div *ngIf="request?.status==='declined'">
+                                <br>
+                                <span [style.font-weight]="'bold'">Message from {{request?.teacher.last_name}}:</span><br>
+                                {{ (request?.declined_message===''?'No message':request?.declined_message) }} <!-- deny_message -->
+                            </div>
+                        </div>
+                        <app-card-button *ngIf="forInput" class="edit-button" [width]="'130px'" [height]="'px'" [gradientColor]="request?.color_profile.gradient_color">
+                            <div class="button-content">Edit Message</div>
+                        </app-card-button>
+                    </div>
+                </div>
+            </app-pager>
+
         </div>
-      </app-card-button>
-    </div>
-    <div *ngIf="hasDivider" class="card-body-right">
-      <div class="request-description">
-        <img class="request-description-icon" [src]="'./assets/Lock (White).png' | resolveAsset">
-        <div class="request-description-text">
-          Pass Request Sent <br>to {{ request?.teacher.last_name }}
+
+        <mat-divider *ngIf="hasDivider"></mat-divider>
+
+        <div class="bottom-block">
+            <div class="request-description" *ngIf="hasDivider">
+                <img class="request-description-icon" [src]="'./assets/Lock (White).png' | resolveAsset">
+                <div class="request-description-text">
+                    Pass Request Sent <br>to {{ request?.teacher.last_name }}
+                </div>
+            </div>
+
+            <div *ngIf="request?.status==='declined'">
+                <app-card-button (click)="resendRequest()" [width]="'269px'" [height]="'81px'" [margin_top]="'112px'" [gradientColor]="request?.color_profile.gradient_color">
+                    <div class="resend-button-content">
+                        <div class="resend-button-content-title">{{ (forFuture?'Change Date & Time':'Resend Request') }}</div>
+                        <div class="resend-button-content-subtitle">Pass Request Denied</div>
+                    </div>
+                </app-card-button>
+            </div>
+
         </div>
-      </div>
     </div>
-    <div *ngIf="request?.status==='declined'" class="card-body-right">
-      <app-card-button (click)="resendRequest()" [width]="'269px'" [height]="'81px'" [margin_top]="'112px'" [gradientColor]="request?.color_profile.gradient_color">
-        <div class="resend-button-content">
-          <div class="resend-button-content-title">{{ (forFuture?'Change Date & Time':'Resend Request') }}</div>
-          <div class="resend-button-content-subtitle">Pass Request Denied</div>
-        </div>
-      </app-card-button>
-    </div>
-  </app-pass-card-template>
 </div>
+
+
+
+
+
+
+
+
+
+
+<!--<div class="inline-request-container" ondragstart="return false;">-->
+    <!--<app-pass-card-template-->
+        <!--(onCancel)="cancelRequest($event)"-->
+        <!--[hasDivider]="hasDivider"-->
+        <!--[pass]="request"-->
+        <!--[closeIcon]="'./assets/Trash (Transparent).png'" [rightJustify]="'none'">-->
+    <!--<div class="card-subtitle" *ngIf="fromPast || forFuture">-->
+      <!--{{ formatDateTime() }}-->
+    <!--</div>-->
+    <!--<div class="card-body-left">-->
+      <!--<app-pager>-->
+        <!--<div class="page-1" [style.max-height]="'122px'">-->
+            <!--<app-traveltype-picker *ngIf="forInput" (onSelect)="selectedTravelType=$event" [choices]="request?.destination.travel_types" [altColor]="request?.color_profile.solid_color"></app-traveltype-picker>-->
+
+            <!--<app-duration-picker *ngIf="forInput; else noInput;" (onChange)="selectedDuration=$event"  [maxDuration]="(request?.destination.max_allowed_time?request?.destination.max_allowed_time:15)"></app-duration-picker>-->
+          <!--<ng-template #noInput>-->
+              <!--<app-travel-view [pass]="request" [shrink]="true"></app-travel-view>-->
+          <!--</ng-template>-->
+        <!--</div>-->
+        <!--<div class="page-2">-->
+          <!--<div class="page-2-wrapper">-->
+            <!--<div class="message" [style.height]="(forInput?'70px':'110px')" [style.margin-bottom]="(forInput?'4px':'0px')">-->
+              <!--<span [style.font-weight]="'bold'">Your message:</span><br>-->
+              <!--{{ (request?.attachment_message===''?'No message':request?.attachment_message) }}-->
+              <!--<div *ngIf="request?.status==='declined'">-->
+                  <!--<br>-->
+                  <!--<span [style.font-weight]="'bold'">Message from {{request?.teacher.last_name}}:</span><br>-->
+                  <!--{{ (request?.declined_message===''?'No message':request?.declined_message) }} &lt;!&ndash; deny_message &ndash;&gt;-->
+              <!--</div>-->
+            <!--</div>-->
+            <!--<app-card-button *ngIf="forInput" class="edit-button" [width]="'130px'" [height]="'px'" [gradientColor]="request?.color_profile.gradient_color">-->
+              <!--<div class="button-content">Edit Message</div>-->
+            <!--</app-card-button>-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</app-pager>-->
+    <!--</div>-->
+    <!--<div *ngIf="forInput" class="card-body-right">-->
+      <!--<app-card-button (onClick)="newRequest()" [width]="'288px'" [height]="'79px'" [gradientColor]="request?.color_profile.gradient_color">-->
+        <!--<div class="request-button-content">-->
+          <!--<img class="button-icon-left" [src]="'./assets/Lock (White).png' | resolveAsset">-->
+          <!--<div class="request-pass-content-text">Request Pass</div>-->
+          <!--<img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">-->
+        <!--</div>-->
+      <!--</app-card-button>-->
+    <!--</div>-->
+    <!--<div *ngIf="hasDivider" class="card-body-right">-->
+      <!--<div class="request-description">-->
+        <!--<img class="request-description-icon" [src]="'./assets/Lock (White).png' | resolveAsset">-->
+        <!--<div class="request-description-text">-->
+          <!--Pass Request Sent <br>to {{ request?.teacher.last_name }}-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</div>-->
+    <!--<div *ngIf="request?.status==='declined'" class="card-body-right">-->
+      <!--<app-card-button (click)="resendRequest()" [width]="'269px'" [height]="'81px'" [margin_top]="'112px'" [gradientColor]="request?.color_profile.gradient_color">-->
+        <!--<div class="resend-button-content">-->
+          <!--<div class="resend-button-content-title">{{ (forFuture?'Change Date & Time':'Resend Request') }}</div>-->
+          <!--<div class="resend-button-content-subtitle">Pass Request Denied</div>-->
+        <!--</div>-->
+      <!--</app-card-button>-->
+    <!--</div>-->
+  <!--</app-pass-card-template>-->
+<!--</div>-->
