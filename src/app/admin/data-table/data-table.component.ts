@@ -34,10 +34,10 @@ export class DataTableComponent implements OnInit {
       this.dataSource.sort = this.sort;
       this.dataSource.sortingDataAccessor = (item, property) => {
           switch (property) {
-              case 'Date & Time': {
+              case 'Date & Time':
                   return new Date(item[property]);
-              }
-              default: return item[property];
+              default:
+                  return item[property];
           }
       };
       this.displayedColumns = Object.keys(this.data[0]);

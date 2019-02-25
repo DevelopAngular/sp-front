@@ -79,13 +79,12 @@ export class MainHallPassFormComponent implements OnInit {
         selectedGroup: null,
         selectedStudents: [],
         direction: {},
-
       },
       forInput: this.dialogData['forInput'] || false,
       forLater: this.dialogData['forLater']
     };
     switch (this.dialogData['forInput']) {
-      case (true): {
+      case true:
         this.FORM_STATE.formMode.role = this.dialogData['forStaff'] ? Role.Teacher : Role.Student;
         if (this.dialogData['forLater']) {
           if (this.dialogData['forStaff']) {
@@ -102,15 +101,12 @@ export class MainHallPassFormComponent implements OnInit {
           this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
           if ( this.dialogData['forStaff'] ) {
             this.FORM_STATE.step = 2;
-            // this.FORM_STATE.state = 1;
           } else {
             this.FORM_STATE.step = 3;
-            // this.FORM_STATE.state = 1;
           }
         }
         break;
-      }
-      case (false): {
+      case false:
         if (this.dialogData['hasClose']) {
          this.FORM_STATE.data.hasClose = true;
         }
@@ -127,21 +123,18 @@ export class MainHallPassFormComponent implements OnInit {
           from: this.dialogData['originalFromLocation'],
           to: this.dialogData['originalToLocation']
         };
-
         break;
-      }
     }
     this.setFormSize();
   }
 
   onNextStep(evt) {
-    // this.setFormSize();
     if (evt.step === 0 || evt.action === 'exit') {
       console.log('EXIT ===>', evt);
       this.dialogRef.close(evt);
       return;
     } else {
-      console.log('STEP EVENT ===== ===>', evt);
+      console.log('STEP EVENT ===>', evt);
 
       this.FORM_STATE = evt;
     }
@@ -151,30 +144,22 @@ export class MainHallPassFormComponent implements OnInit {
   setFormSize() {
 
       switch (this.FORM_STATE.step) {
-        case (1): {
+        case 1:
           this.formSize.width =  `425px`;
           this.formSize.height =  `500px`;
           break;
-        }
-        case (2): {
+        case 2:
           this.formSize.width =  `700px`;
           this.formSize.height =  `400px`;
           break;
-        }
-        case (3): {
+        case 3:
           this.formSize.width =  `425px`;
           this.formSize.height =  `500px`;
           break;
-        }
-        case (4): {
+        case 4:
           this.formSize.width =  `425px`;
           this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '412px';
           break;
-          // this.formSize.width =  `334px`;
-          // this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '412px';
-          // break;
-        }
       }
-      // console.log(this.formSize);
   }
 }

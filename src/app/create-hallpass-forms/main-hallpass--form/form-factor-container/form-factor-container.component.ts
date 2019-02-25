@@ -37,7 +37,7 @@ export class FormFactorContainerComponent implements OnInit {
       this.dataService.currentUser
       .subscribe((_user) => {
         switch (this.FORM_STATE.formMode.formFactor) {
-          case (this.states.HallPass): {
+          case this.states.HallPass:
             this.template = new HallPass(
               'template',
               _user,
@@ -58,10 +58,8 @@ export class FormFactorContainerComponent implements OnInit {
               '',
               this.FORM_STATE.data.date ? this.FORM_STATE.data.date.declinable : false
             );
-
             break;
-          }
-          case (this.states.Request): {
+          case this.states.Request:
             this.template = new Request(
               'template',
               null,
@@ -85,9 +83,7 @@ export class FormFactorContainerComponent implements OnInit {
               null
             );
             break;
-          }
-          case (this.states.Invitation): {
-
+          case this.states.Invitation:
             this.template = new Invitation(
               'template',
               null,
@@ -106,9 +102,7 @@ export class FormFactorContainerComponent implements OnInit {
               null,
               null
             );
-
             break;
-          }
         }
     });
   }

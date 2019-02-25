@@ -146,12 +146,11 @@ export class OverlayContainerComponent implements OnInit {
   getHeaderData() {
     let colors;
     switch (this.overlayType) {
-        case 'newRoom': {
+        case 'newRoom':
           colors = '#03CF31,#00B476';
           this.roomName = 'New Room';
           break;
-        }
-        case 'newFolder': {
+        case 'newFolder':
             if (!!this.pinnable) {
                 colors = this.pinnable.gradient_color;
                 this.folderName = this.pinnable.title;
@@ -162,8 +161,7 @@ export class OverlayContainerComponent implements OnInit {
           colors = '#03CF31,#00B476';
           this.folderName = 'New Folder';
           break;
-        }
-        case 'editRoom': {
+        case 'editRoom':
             colors = this.pinnable.gradient_color;
             this.roomName = this.pinnable.title;
             this.timeLimit = this.pinnable.location.max_allowed_time;
@@ -175,8 +173,7 @@ export class OverlayContainerComponent implements OnInit {
             this.selectedIcon = this.pinnable.icon;
             this.travelType = this.pinnable.location.travel_types;
             break;
-        }
-        case 'edit': {
+        case 'edit':
           colors = '#606981, #ACB4C1';
           this.folderName = 'Bulk Edit Rooms';
           this.form.get('timeLimit').clearValidators();
@@ -187,7 +184,6 @@ export class OverlayContainerComponent implements OnInit {
           console.log('BULK SELECTED ROOMS =====>>> \n', this.selectedRooms);
           this.bulkWarningText = !!_.find(this.selectedRooms, {type: 'category'});
           break;
-        }
     }
     this.gradientColor = 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
@@ -546,13 +542,12 @@ export class OverlayContainerComponent implements OnInit {
     let type;
     let hideAppearance;
     switch (location) {
-        case 'newRoomInFolder': {
+        case 'newRoomInFolder':
           this.roomName = 'New Room';
           hideAppearance = true;
           type = 'newRoomInFolder';
           break;
-        }
-        case 'newFolder': {
+        case 'newFolder':
           this.editRoomInFolder = false;
           this.showDoneSpinner = false;
           this.selectedRoomsInFolder = [];
@@ -577,27 +572,22 @@ export class OverlayContainerComponent implements OnInit {
           hideAppearance = false;
           type = 'newFolder';
           break;
-        }
-        case 'importRooms': {
+        case 'importRooms':
           hideAppearance = true;
           type = 'importRooms';
           break;
-        }
-        case 'addExisting': {
+        case 'addExisting':
           hideAppearance = true;
           type = 'addExisting';
           break;
-        }
-        case 'settingsRooms': {
+        case 'settingsRooms':
           hideAppearance = true;
           type = 'settingsRooms';
           break;
-        }
-        case 'editRoomInFolder': {
+        case 'editRoomInFolder':
           this.editRoomInFolder = true;
           hideAppearance = true;
           type = 'newRoomInFolder';
-        }
     }
     this.hideAppearance = hideAppearance;
     this.overlayType = type;

@@ -81,23 +81,21 @@ export class GroupsContainerComponent implements OnInit {
 
   groupNextStep(evt) {
     switch (evt.state) {
-        case (3): {
+        case 3:
             this.selectedGroup = evt.data.selectedGroup;
             break;
-        }
-        case (2): {
+
+        case 2:
             this.selectedStudents = evt.data.selectedStudents;
             this.groupDTO.get('users').setValue(evt.data.selectedStudents);
             break;
-        }
-        case (1): {
+        case 1:
             if (evt.fromState === 3) {
                 this.FORM_STATE.data.selectedGroup = this.groups.find(group => group.id === evt.data.selectedGroup.id);
             } else {
                 this.selectedStudents = evt.data.selectedStudents;
             }
             break;
-        }
     }
     this.currentState = evt.state;
     this.updateData$.next(null);

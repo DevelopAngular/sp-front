@@ -41,42 +41,32 @@ export class CreateFormService {
 
 
     switch (direction) {
-      case ('disable'): {
-
+      case 'disable':
         this.transition.to = -100;
         this.transition.halfTo = -50;
         this.transition.from = 0;
         this.transition.halfFrom = 0;
-
         this.frameMotionDirection$.next(this.transition);
         break;
-      }
 
-      case ('forward'): {
-
+      case 'forward':
         this.transition.direction = 'forward';
         this.transition.to = -100;
         this.transition.halfTo = -50;
         this.transition.from = 100;
         this.transition.halfFrom = 50;
-
         this.frameMotionDirection$.next(this.transition);
-
-        // this.frameMotionDirection$.next({ to: -100, halfTo: -50, from: 100, halfFrom: 50});
         break;
-      }
-      case ('back'): {
+
+      case 'back':
         this.transition.direction = 'back';
         this.transition.to = 100;
         this.transition.halfTo = 50;
         this.transition.from = -100;
         this.transition.halfFrom = -50;
-
         this.frameMotionDirection$.next(this.transition);
-
-        // this.frameMotionDirection$.next({ to: 100, halfTo: 50, from: -100, halfFrom: -50});
         break;
-      }
+
     }
   }
   getFrameMotionDirection() {

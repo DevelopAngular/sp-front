@@ -36,28 +36,25 @@ export class PdfGeneratorService {
     };
 
     switch (page) {
-      case('dashboard'): {
+      case 'dashboard':
         heading = {
           header: 'Active Hall Pass Report',
           title: `All Active Hall Passes on ${prettyNow}`
         };
         break;
-      }
-      case('search'): {
+      case 'search' :
 
         heading = {
           header: 'Administrative Pass Report',
           title: title
         };
         break;
-      }
-      case('hallmonitor'): {
+      case 'hallmonitor':
         heading = {
           header: 'Administrative Hall Monitor Report',
           title: ''
         };
         break;
-      }
     }
 
     const _orientation = orientation === 'l' ? 'landscape' : 'portrait';
