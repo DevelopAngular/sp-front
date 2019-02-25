@@ -173,6 +173,10 @@ body {
 
 .calendar-dialog-container .mat-dialog-container {
   padding: 0;
+  overflow: visible;
+  box-shadow: 0 3px 20px 0px rgba(0, 0, 0, 0.15);
+  //background-color: red;
+
 }
 
 input:focus{

@@ -3,6 +3,7 @@ import { Pinnable } from '../../../../models/Pinnable';
 import { Navigation } from '../../main-hall-pass-form.component';
 import {CreateFormService} from '../../../create-form.service';
 import {BehaviorSubject} from 'rxjs';
+import {States} from '../locations-group-container.component';
 
 @Component({
   selector: 'app-restricted-target',
@@ -85,6 +86,7 @@ export class RestrictedTargetComponent implements OnInit {
   updateTarget(target) {
 
     this.formService.setFrameMotionDirection('forward');
+    this.formState.previousState = States.restrictedTarget;
 
     setTimeout(() => {
       this.requestTarget.emit(target);

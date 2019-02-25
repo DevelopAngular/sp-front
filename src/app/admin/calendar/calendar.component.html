@@ -1,3 +1,8 @@
 <div class="calendar-wrapper">
-  <app-date-time-picker [default]="default"  [min]="minDate" [showTime]="false" [_selectedMoment]="previousSelectedDate" (onUpdate)="setSearchDate($event)"></app-date-time-picker>
+  <div class="top-arrow-container">
+    <div class="top-arrow"></div>
+  </div>
+  <div class="date-container">
+    <app-date-time-picker [default]="default"  [min]="minDate" [showTime]="false" [_selectedMoment]="previousSelectedDate" (onUpdate)="setSearchDate($event)"></app-date-time-picker>
+  </div>
 </div>

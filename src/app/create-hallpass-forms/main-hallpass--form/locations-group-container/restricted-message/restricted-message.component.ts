@@ -4,15 +4,12 @@ import { Navigation } from '../../main-hall-pass-form.component';
 import { Location } from '../../../../models/Location';
 import { User } from '../../../../models/User';
 import {CreateFormService} from '../../../create-form.service';
-import {BodyShowingUp, HeaderShowingUp} from '../../../../animations';
 import {BehaviorSubject} from 'rxjs';
 
 @Component({
   selector: 'app-restricted-message',
   templateUrl: './restricted-message.component.html',
   styleUrls: ['./restricted-message.component.scss'],
-  // animations: [HeaderShowingUp, BodyShowingUp]
-
 })
 export class RestrictedMessageComponent implements OnInit {
 
@@ -54,7 +51,7 @@ export class RestrictedMessageComponent implements OnInit {
   ngOnInit() {
 
 
-    if (this.formState.previousStep > this.formState.step) {
+    if (this.formState.previousState > this.formState.state || this.formState.previousStep > this.formState.step) {
       this.headerTransition['rest-mes-header'] = false;
       this.headerTransition['rest-mes-header_animation-back'] = true;
     }
