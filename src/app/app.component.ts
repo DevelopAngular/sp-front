@@ -28,7 +28,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public hideScroll: boolean = false;
   public hideSchoolToggleBar: boolean = false;
   public showUI: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  public schools: School[];
+  public schools: School[] = [];
   // public schoolIdSubject: BehaviorSubject<School>;
 
   constructor(
@@ -55,27 +55,14 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.loginService.isAuthenticated$.subscribe(t => {
 
       // console.log('Auth response ===>', t);
-
       this._zone.run(() => {
         this.showUI.next(true);
         this.isAuthenticated = t;
-        if (this.isAuthenticated) {
-          this.adminService.getSchools()
-            .subscribe((schools: School[]) => {
-              // console.log(schools);
-              this.schools = schools;
-
-              if (this.storage.getItem('schoolId')) {
-                this.http.schoolIdSubject.next(JSON.parse(this.storage.getItem('schoolId')));
-              } else {
-                this.http.schoolIdSubject.next(this.schools[0]);
-              }
-              //console.log(this.http.schoolIdSubject.value);
-            });
-        } else {
-          this.schools = [];
-        }
       });
+    });
+
+    this.http.schools$.subscribe(schools => {
+      this.schools = schools;
     });
 
     // ============== SPA-407 ====================> Needs to be uncommented when the backend logic will completed
@@ -92,7 +79,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     //   });
     // ============== SPA-407 ===================> End
 
-    this.http.schoolIdSubject.subscribe((value => {
+    this.http.currentSchool$.subscribe((value => {
       if (!value) {
         this.schools = [];
       }

@@ -19,17 +19,14 @@ export class SchoolToggleBarComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private http: HttpService,
-    private storage: StorageService
   ) { }
 
   ngOnInit() {
-    this.currentSchool = this.storage.getItem('currentSchool')
-                          ?
-                         JSON.parse(this.storage.getItem('currentSchool'))
-                          :
-                         this.schools[0];
-    this.http.schoolIdSubject.next(this.currentSchool);
+    this.http.currentSchool$.subscribe(school => {
+      this.currentSchool = school;
+    });
   }
+
   showOptions(target: HTMLElement) {
       // const target = new ElementRef(evt.currentTarget);
     console.log('========>', target);
@@ -45,11 +42,8 @@ export class SchoolToggleBarComponent implements OnInit {
       });
       optionDialog.afterClosed().subscribe(data => {
         if (data) {
-          this.storage.setItem('currentSchool', JSON.stringify(data));
-          this.currentSchool = data;
-          this.http.school = JSON.parse(this.storage.getItem('currentSchool'));
+          this.http.setSchool(data);
         }
-        this.http.schoolIdSubject.next(this.currentSchool);
       });
     }
 }

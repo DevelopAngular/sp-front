@@ -8,7 +8,7 @@ export const environment = {
     domain: 'example.com',
     icon_url: '',
     name: 'Local',
-    ws_url: 'ws://localhost:8053/',
+    ws_url: 'ws://localhost:8053/api/debug/v1/long_polling',
   },
   firebase: {
     apiKey: 'AIzaSyDKAexSUkOIj63hP9MkLi22CHpykkh_4Bs',

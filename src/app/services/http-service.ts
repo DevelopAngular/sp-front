@@ -9,7 +9,7 @@ import 'rxjs/add/operator/first';
 import 'rxjs/add/operator/switchMap';
 import { BehaviorSubject } from 'rxjs';
 import { Observable } from 'rxjs';
-import { delay, flatMap } from 'rxjs/operators';
+import { delay, distinctUntilChanged, filter, flatMap, map, switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { GoogleLoginService, isDemoLogin } from './google-login.service';
 import { School } from '../models/School';
@@ -37,14 +37,27 @@ function ensureFields<T, K extends keyof T>(obj: T, keys: K[]) {
   }
 }
 
-function makeConfig(config: Config, access_token: string, school_id:School): Config & { responseType: 'json' } {
+function getSchoolInArray(id: string|number, schools: School[]) {
+  for (let i = 0; i < schools.length; i++) {
+    if (Number(schools[i].id) === Number(id)) {
+      return schools[i];
+    }
+  }
+  return null;
+}
 
-  // console.log('[school_id]: ', school_id)
+function isSchoolInArray(id: string|number, schools: School[]) {
+  return getSchoolInArray(id, schools) !== null;
+}
 
-  let headers:any = {'Authorization': 'Bearer ' + access_token}
+function makeConfig(config: Config, access_token: string, school: School): Config & { responseType: 'json' } {
 
-  if(school_id){
-    headers['X-School-Id'] = '' +school_id.id;
+  const headers: any = {
+    'Authorization': 'Bearer ' + access_token
+  };
+
+  if (school) {
+    headers['X-School-Id'] = '' + school.id;
   }
 
   // console.log('[X-School-Id]: ', headers['X-School-Id'])
@@ -95,11 +108,22 @@ class LoginServerError extends Error {
 export class HttpService {
 
   private accessTokenSubject: BehaviorSubject<AuthContext> = new BehaviorSubject<AuthContext>(null);
-  public schoolIdSubject: BehaviorSubject<School> = new BehaviorSubject<School>(null);
-  public school: School = JSON.parse(this.storage.getItem('currentSchool'));
 
+  public schools$: Observable<School[]> = this.loginService.isAuthenticated$.pipe(
+    filter(v => v),
+    switchMap(() => {
+      return this.get('v1/schools', undefined, null);
+    }),
+  );
 
-  public globalReload$ = this.schoolIdSubject.pipe(delay(5));
+  private currentSchoolSubject = new BehaviorSubject<School>(null);
+  public currentSchool$: Observable<School> = this.currentSchoolSubject.asObservable();
+
+  public globalReload$ = this.currentSchool$.pipe(
+    map(school => school ? school.id : null),
+    distinctUntilChanged(),
+    delay(5)
+  );
 
   private hasRequestedToken = false;
 
@@ -108,6 +132,36 @@ export class HttpService {
       private loginService: GoogleLoginService,
       private storage: StorageService
   ) {
+
+    // the school list is loaded when a user authenticates and we need to choose a current school of the school array.
+    // First, if there is a current school loaded, try to use that one.
+    // Then, if there is a school id saved in local storage, try to use that.
+    // Last, choose a school arbitrarily.
+    this.schools$.subscribe(schools => {
+      console.log('Schools:', schools);
+
+      const lastSchool = this.currentSchoolSubject.getValue();
+      if (lastSchool !== null && isSchoolInArray(lastSchool.id, schools)) {
+        this.currentSchoolSubject.next(getSchoolInArray(lastSchool.id, schools));
+        return;
+      }
+
+      const savedId = this.storage.getItem('last_school_id');
+      if (savedId !== null && isSchoolInArray(savedId, schools)) {
+        this.currentSchoolSubject.next(getSchoolInArray(savedId, schools));
+        return;
+      }
+
+      if (schools.length > 0) {
+        this.currentSchoolSubject.next(schools[0]);
+        return;
+      }
+
+      this.currentSchoolSubject.next(null);
+      return;
+    });
+
+
 
   }
 
@@ -287,19 +341,26 @@ export class HttpService {
     this.hasRequestedToken = false;
   }
 
-  get<T>(url, config?: Config): Observable<T> {
+  setSchool(school: School) {
+    if (school !== null) {
+      this.storage.setItem('last_school_id', school.id);
+    } else {
+      this.storage.removeItem('last_school_id');
+    }
+    this.currentSchoolSubject.next(school);
+  }
+
+  getSchool() {
+    return this.currentSchoolSubject.getValue();
+  }
+
+  get<T>(url, config?: Config, schoolOverride?: School): Observable<T> {
     // console.log('Making request: ' + url);
-
-
-    // if (this.school) {
-    //
-    // }
-    // this.http.schoolIdSubject.next(JSON.parse(school));
-
-    return this.performRequest(ctx => this.http.get<T>(makeUrl(ctx.server, url), makeConfig(config, ctx.auth.access_token, this.school)))
-      .do(x => {
-        // console.log('Finished request: ' + url, x);
-      });
+    return this.performRequest(ctx => {
+      // Explicitly check for undefined because the caller may want to override with null.
+      const school = schoolOverride !== undefined ? schoolOverride : this.getSchool();
+      return this.http.get<T>(makeUrl(ctx.server, url), makeConfig(config, ctx.auth.access_token, school));
+    });
   }
 
   post<T>(url: string, body?: any, config?: Config): Observable<T> {
@@ -318,11 +379,11 @@ export class HttpService {
       }
       body = formData;
     }
-    return this.performRequest(ctx => this.http.post<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.school)));
+    return this.performRequest(ctx => this.http.post<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.getSchool())));
   }
 
   delete<T>(url, config?: Config): Observable<T> {
-    return this.performRequest(ctx => this.http.delete<T>(makeUrl(ctx.server, url), makeConfig(config, ctx.auth.access_token, this.school)));
+    return this.performRequest(ctx => this.http.delete<T>(makeUrl(ctx.server, url), makeConfig(config, ctx.auth.access_token, this.getSchool())));
   }
 
   put<T>(url, body?: any, config?: Config): Observable<T> {
@@ -338,7 +399,7 @@ export class HttpService {
         }
       }
     }
-    return this.performRequest(ctx => this.http.put<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.school)));
+    return this.performRequest(ctx => this.http.put<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.getSchool())));
   }
 
   patch<T>(url, body?: any, config?: Config): Observable<T> {
@@ -354,7 +415,7 @@ export class HttpService {
         }
       }
     }
-    return this.performRequest(ctx => this.http.patch<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.school)));
+    return this.performRequest(ctx => this.http.patch<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.getSchool())));
   }
 
 }
