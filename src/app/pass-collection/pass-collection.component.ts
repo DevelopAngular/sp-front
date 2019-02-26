@@ -1,6 +1,6 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, OnDestroy} from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { BehaviorSubject } from 'rxjs';
+import {BehaviorSubject, merge, of, zip} from 'rxjs';
 import { Observable } from 'rxjs';
 import { ReplaySubject } from 'rxjs';
 import { Subject } from 'rxjs';
@@ -14,9 +14,11 @@ import { PassLike} from '../models';
 import { PassCardComponent } from '../pass-card/pass-card.component';
 import { ReportFormComponent } from '../report-form/report-form.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
-import { shareReplay } from 'rxjs/operators';
+import {mergeAll, shareReplay} from 'rxjs/operators';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import { TimeService } from '../services/time.service';
+
+import * as _ from 'lodash';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -48,8 +50,9 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() forMonitor = false;
   @Input() hasSort = false;
   @Input() maxHeight;
+  @Input() showEmptyHeader: boolean;
 
-  @Input() passProvider: PassLikeProvider;
+  @Input() passProvider: PassLikeProvider | PassLikeProvider[];
 
   @Output() sortMode = new EventEmitter<string>();
   @Output() reportFromPassCard = new EventEmitter();
@@ -95,7 +98,18 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       if (this.mock) {
 
       } else {
-        this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
+        if (_.isArray(this.passProvider)) {
+          /////// Process Block ///////////
+          const merged$ = this.passProvider.map(provider => {
+            return provider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
+          });
+          this.currentPasses$ = zip(...merged$).pipe(mergeAll());
+          this.currentPasses$.subscribe(res => console.log('RES ===>>>', res));
+          debugger;
+        } else {
+            this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
+        }
+        // this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
 
         if(this.isActive){
           this.timers.push(window.setInterval(() => {
