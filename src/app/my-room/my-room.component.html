@@ -1,10 +1,11 @@
 <div *ngIf="userLoaded">
-  <div *ngIf="isStaff && selectedLocation && userLoaded" class="my-room-wrapper" [style.width]="calendarToggled?'900px':'550px'">
+  <div *ngIf="isStaff && userLoaded" class="my-room-wrapper" [style.width]="calendarToggled?'900px':'550px'">
     <div class="my-room-left">
       <div class="my-room-header">
         <!--<p>{{optionsOpen}} | {{showArrow}}</p>-->
         <div class="selected-teacher" #target (click)="showOptions(target)">
-          {{ roomOptions?selectedLocation.title:"" }}
+          <!--{{ roomOptions?selectedLocation.title:"" }}-->
+          {{ selectedLocation ? selectedLocation.title : 'All Rooms'}}
           <img *ngIf="showArrow" class="disclosure-icon" [src]="'./assets/Disclosure Indicator (Blue).png' | resolveAsset">
         </div>
         <!--<input-->
@@ -33,8 +34,8 @@
       </div>
       <div class="my-room-body">
         <app-pass-collection [isActive]="true" [forStaff]="isStaff" [style.width]="'550px'" [passProvider]="activePasses" [title]="'Active Passes'" [icon]="'./assets/Hallway (Blue).png'" [columns]="4"></app-pass-collection>
-        <app-pass-collection [forStaff]="isStaff" [style.width]="'550px'" [passProvider]="originPasses" [title]="'Passes from ' +selectedLocation.title" [icon]="'./assets/Arrow Reverse (Blue).png'" [columns]="4"></app-pass-collection>
-        <app-pass-collection [forStaff]="isStaff" [style.width]="'550px'" [passProvider]="destinationPasses" [title]="'Passes to ' +selectedLocation.title" [icon]="'./assets/Arrow (Blue).png'" [columns]="4"></app-pass-collection>
+        <app-pass-collection [forStaff]="isStaff" [style.width]="'550px'" [passProvider]="originPasses" [title]="'Passes from ' + (selectedLocation ? selectedLocation.title : 'All Rooms')" [icon]="'./assets/Arrow Reverse (Blue).png'" [columns]="4"></app-pass-collection>
+        <app-pass-collection [forStaff]="isStaff" [style.width]="'550px'" [passProvider]="destinationPasses" [title]="'Passes to ' + (selectedLocation ? selectedLocation.title : 'All Rooms')" [icon]="'./assets/Arrow (Blue).png'" [columns]="4"></app-pass-collection>
 
         <div *ngIf="!(hasPasses | async) && (passesLoaded | async)">
           <div class="empty-container" *ngIf="inputValue != ''">

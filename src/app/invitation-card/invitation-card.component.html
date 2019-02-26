@@ -83,11 +83,11 @@
       <mat-divider></mat-divider>
 
       <div class="bottom-block">
-        <app-pager *ngIf="invitation.status!=='pending'; else pending" [page]="2">
-          <div>
+        <app-pager *ngIf="invitation.status !== 'pending'; else pending" [page]="2">
+          <div class="page-1">
             <span class="bold">Pass Request Sent</span><span class="smaller"><br>by {{issuerName}}<br>{{formatDateTime(invitation.created)}}</span>
           </div>
-          <div>
+          <div class="page-2">
             <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{studentName}}<br>{{formatDateTime(invitation.last_updated)}}</span>
           </div>
         </app-pager>
