@@ -1,8 +1,9 @@
 
 .from-footer {
   background-color: white;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 7px 0px 8px;
+  //box-shadow: rgba(0, 0, 0, 0.1) 0px 7px 0px 8px;
   //opacity: 0.7;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
   display: flex;
   z-index: 1;
   align-items: center;
@@ -10,7 +11,9 @@
   bottom: 0;
   left: 0;
   right: 0;
-
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  overflow: hidden;
   .footer-from-teacher-text {
     width: 100%;
   }

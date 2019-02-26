@@ -278,7 +278,7 @@ export class PdfGeneratorService {
           LinkGeneratedDialogComponent.createDialog(this.dialog, 'Report Generated Successfully', theLink);
         };
 
-        const blob = doc.output('blob');
+        const blob = doc.output('blob', {filename: 'test'});
         // create a blob link for the PDF
         if (isSafari) {
 

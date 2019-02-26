@@ -73,6 +73,9 @@
   position: relative;
   z-index: 10;
   background-image: radial-gradient(circle at 98% 97%, #03CF31,#00B476);
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  overflow: hidden;
 }
 
 .divider-header{
