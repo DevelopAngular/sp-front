@@ -87,6 +87,9 @@ export class MyRoomComponent implements OnInit {
   canView = false;
   userLoaded = false;
 
+  mergedOriginPassesPasses = [];
+  mergedDestinationPasses = [];
+
   searchQuery$ = new BehaviorSubject('');
   searchDate$ = new BehaviorSubject<Date>(null);
   selectedLocation$ = new ReplaySubject<Location>(1);
@@ -157,6 +160,11 @@ export class MyRoomComponent implements OnInit {
             this.roomOptions = locations;
             this.selectedLocation = (this.roomOptions.length > 0) ? this.roomOptions[0] : null;
             this.selectedLocation$.next(this.selectedLocation);
+              // this.roomOptions.forEach(room => {
+              //   this.selectedLocation$.next(room);
+              //   this.mergedDestinationPasses.push(this.destinationPasses);
+              //   this.mergedOriginPassesPasses.push(this.originPasses);
+              // });
             this.userLoaded = true;
           });
         });
@@ -184,7 +192,7 @@ export class MyRoomComponent implements OnInit {
   showOptions(target: HTMLElement) {
     if (!this.optionsOpen && this.roomOptions && this.roomOptions.length > 1) {
       // const target = new ElementRef(evt.currentTarget);
-      const optionDialog = this.dialog.open(DropdownComponent, {
+        const optionDialog = this.dialog.open(DropdownComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {
@@ -201,7 +209,8 @@ export class MyRoomComponent implements OnInit {
       optionDialog.afterClosed().subscribe(data => {
         this.optionsOpen = false;
         this.selectedLocation = data == null ? this.selectedLocation : data;
-        this.selectedLocation$.next(this.selectedLocation);
+          console.log(this.selectedLocation);
+          this.selectedLocation$.next(this.selectedLocation);
       });
     }
   }

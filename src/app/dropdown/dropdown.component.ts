@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, ElementRef, Inject } from '@angular/core';
 import { Location } from '../models/Location';
 import { MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '../../../node_modules/@angular/material';
-import {School} from '../models/School';
+import { School } from '../models/School';
 
 @Component({
   selector: 'app-dropdown',
@@ -14,7 +14,7 @@ export class DropdownComponent implements OnInit {
   heading: string = '';
   locations: Location[];
   schools: School[];
-  selectedLocation: Location
+  selectedLocation: Location;
   selectedSchool: School;
   _matDialogRef: MatDialogRef<DropdownComponent>;
   triggerElementRef: HTMLElement;
