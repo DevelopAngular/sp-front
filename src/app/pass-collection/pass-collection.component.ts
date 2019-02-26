@@ -48,6 +48,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() forMonitor = false;
   @Input() hasSort = false;
   @Input() maxHeight;
+  @Input() showEmptyHeader: boolean;
 
   @Input() passProvider: PassLikeProvider;
 
