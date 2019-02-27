@@ -194,7 +194,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           mode: mode,
           restrictions: restrictions
         },
-        width: '768px', height: '560px',
+        width: '1018px', height: '560px',
         panelClass: 'accounts-profiles-dialog',
         backdropClass: 'custom-bd'
       });

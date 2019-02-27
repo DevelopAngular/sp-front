@@ -94,7 +94,7 @@ export class LocationTableComponent implements OnInit {
 
   ngOnInit() {
       if (this.staticChoices) {
-      this.choices = this.staticChoices;
+      this.choices = this.staticChoices.concat(this.staticChoices, this.staticChoices, this.staticChoices);
     } else {
         const url = 'v1/'
             +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
@@ -110,7 +110,7 @@ export class LocationTableComponent implements OnInit {
         } else {
             this.locationService.searchLocationsWithConfig(url)
                 .toPromise().then(p => {
-                  this.choices = p.results;
+                  this.choices = p.results.concat(p.results,p.results,p.results,p.results,p.results);
                   this.nextChoices = p.next;
                 });
         }

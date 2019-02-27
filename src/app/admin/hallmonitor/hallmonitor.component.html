@@ -52,8 +52,8 @@
         <div class="reports">
           <div *ngIf="studentreport.length">
 
-            <div *ngFor="let reportGroup of studentreport">
-              <h3 style="text-align: center; margin: 15px; color: #1F195E" *ngIf="reportGroup.date">{{reportGroup.date}}</h3>
+            <div *ngFor="let reportGroup of studentreport" class="report-group">
+              <h3 class="report-group-header" *ngIf="reportGroup.date">{{reportGroup.date}}</h3>
               <div *ngFor="let report of reportGroup.reports">
                 <div class="divider"></div>
                 <app-display-report-cell
@@ -74,6 +74,7 @@
           </div>
         </div>
       </div>
+      <div class="bottom-shadow" #bottomShadow></div>
     </div>
 
 </div>

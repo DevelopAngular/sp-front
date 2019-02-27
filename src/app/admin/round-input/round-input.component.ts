@@ -102,7 +102,8 @@ export class RoundInputComponent implements OnInit {
     } else if (selected && this.type.includes('multi')) {
       console.log(this.type.substring(5))
       const dateDialog = this.dialog.open(InputHelperDialogComponent, {
-        width: '900px',
+        width: '1018px',
+        height: '560px',
         panelClass: 'accounts-profiles-dialog',
         backdropClass: 'custom-bd',
         data: {'type': this.type.substring(5), 'selections': this.selections, 'toggleState': this.toggleState}
