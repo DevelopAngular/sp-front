@@ -1,7 +1,7 @@
-﻿import { Component, OnInit, ElementRef} from '@angular/core';
+﻿import {Component, OnInit, ElementRef, ViewChild} from '@angular/core';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
 import { MatDialog } from '@angular/material';
-import { BehaviorSubject } from 'rxjs';
+import {BehaviorSubject, fromEvent} from 'rxjs';
 import { User } from '../../models/User';
 import { Report } from '../../models/Report';
 import { Pinnable } from '../../models/Pinnable';
@@ -26,6 +26,7 @@ import {combineLatest, Observable, of} from 'rxjs';
 })
 export class HallmonitorComponent implements OnInit {
 
+    @ViewChild('bottomShadow') bottomShadow;
     activePassProvider: WrappedProvider;
     searchQuery$ = new BehaviorSubject('');
     minDate: Date;
@@ -70,6 +71,9 @@ export class HallmonitorComponent implements OnInit {
     }
 
   ngOnInit() {
+      fromEvent(window, 'scroll').subscribe(() => {
+
+      })
       disableBodyScroll(this.elRef.nativeElement);
     // this.activePassProvider = new ActivePassProvider(this.liveDataService, this.searchQuery$);
     this.http.globalReload$.subscribe(() => {

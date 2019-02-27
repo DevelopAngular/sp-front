@@ -32,7 +32,7 @@
   box-sizing: border-box;
   padding: 25px;
   background-color: #f8faff;
-  overflow-y: scroll;
+  //overflow-y: scroll;
 }
 
 .hallmonitor-wrapper {
@@ -42,6 +42,7 @@
   justify-content: space-between;
   flex-wrap: wrap;
   background-color: #f8faff;
+  overflow: hidden;
 }
 
 .left-content {
@@ -79,23 +80,33 @@
 }
 
 .right-content {
-  margin: 30px 0px 0px 0px;
+  margin: 5px;
   min-width: 450px;
+  height: calc(100% - 10px);
   width: 40%;
   border-radius: 10px;
   box-shadow: 0 0 2px darkgrey;
   background-color: white;
+  position: relative;
   overflow: hidden;
+  .bottom-shadow {
+    position: absolute;
+    bottom: 0px;
+    height: 16px;
+    width: 100%;
+    background-color: #ffffFF;
+    box-shadow: 0px -5px 25px 10px rgba(255, 255, 255, 1);
+  }
   .right-content-internal{
-    height: calc(100% - 10px);
+    height: 100%;
     width: 100%;
     box-sizing: border-box;
-    padding: 20px;
-    margin: 10px 0;
-    overflow-y: auto;
+    padding: 0px 20px;
+    position: relative;
+    overflow: auto;
+
     .right-content-header {
       display: flex;
-      //width: 90%;
       height: 60px;
       justify-content: space-between;
       align-items: center;
@@ -148,15 +159,31 @@
 
     .reports {
       //width: 95%;
+      //height: 100%;
       display: flex;
       justify-content: center;
       flex-direction: column;
+      position: relative;
+      padding-bottom: 15px;
+
 
       .divider {
         width: 100%;
         height: 1px;
         background: darkgray;
         margin-bottom: 20px;
+      }
+      .report-group {
+        .report-group-header {
+          text-align: center;
+          margin: 15px 0px;
+          padding: 15px 0 5px 0;
+          color: #1F195E;
+          position: sticky;
+          top: 0;
+          box-shadow: 0px 5px 25px 10px rgba(255, 255, 255, 1);
+          background: #ffffff;
+        }
       }
     }
   }

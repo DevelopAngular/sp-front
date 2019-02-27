@@ -205,8 +205,8 @@ export class MyRoomComponent implements OnInit {
       panelClass: 'calendar-dialog-container',
       backdropClass: 'invis-backdrop',
       data: {
-        trigger: target,
-        previousSelectedDate: this.searchDate
+        'trigger': target,
+        'previousSelectedDate': this.searchDate
       }
     });
     DR.afterClosed().subscribe((_date: Date) => {
@@ -230,7 +230,8 @@ export class MyRoomComponent implements OnInit {
           'heading': 'CHANGE ROOM',
           'locations': this.choices,
           'selectedLocation': this.selectedLocation,
-          'trigger': target}
+          'trigger': target
+        }
       });
 
       optionDialog.afterOpen().subscribe(() => {
