@@ -34,7 +34,7 @@ export class RestrictedTargetComponent implements OnInit {
   headerTransition = {
     'rest-tar-header': true,
     'rest-tar-header_animation-back': false
-  }
+  };
 
   @HostListener('scroll', ['$event'])
     tableScroll(event) {

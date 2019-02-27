@@ -3,7 +3,7 @@
     <div class="my-room-left">
       <div class="my-room-header">
         <!--<p>{{optionsOpen}} | {{showArrow}}</p>-->
-        <div class="selected-teacher" #target (click)="showOptions(target)">
+        <div class="selected-teacher" [style.cursor]="roomOptions.length > 1 ? 'pointer' : 'default'" #target (click)="showOptions(target)">
           <!--{{ roomOptions?selectedLocation.title:"" }}-->
           {{ selectedLocation ? selectedLocation.title : 'All Rooms'}}
           <img *ngIf="showArrow" class="disclosure-icon" [src]="'./assets/Disclosure Indicator (Blue).png' | resolveAsset">
