@@ -173,6 +173,7 @@
           <div class="search-teacher" style="display: flex">
               <app-profiles-search
                       [placeholder]="'Search Teachers'"
+                      [focused]="false"
                       [selectedStudents]="selectedTeachers"
                       (isEmitUsers)="isEmitTeachers($event)"
                       (onUpdate)="selectTeacherEvent($event)"
