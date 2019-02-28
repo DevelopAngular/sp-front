@@ -22,17 +22,17 @@ export class FromWhereComponent implements OnInit {
 
   shadow: boolean = true;
 
-    @HostListener('scroll', ['$event'])
-    tableScroll(event) {
-        const tracker = event.target;
-        const limit = tracker.scrollHeight - tracker.clientHeight;
-        if (event.target.scrollTop < limit) {
-            this.shadow = true;
-        }
-        if (event.target.scrollTop === limit) {
-            this.shadow = false;
-        }
-    }
+  @HostListener('scroll', ['$event'])
+  tableScroll(event) {
+      const tracker = event.target;
+      const limit = tracker.scrollHeight - tracker.clientHeight;
+      if (event.target.scrollTop < limit) {
+          this.shadow = true;
+      }
+      if (event.target.scrollTop === limit) {
+          this.shadow = false;
+      }
+  }
 
   constructor(
     private formService: CreateFormService

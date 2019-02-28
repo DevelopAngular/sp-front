@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 
 import { Navigation } from '../../main-hall-pass-form.component';
 import { Pinnable } from '../../../../models/Pinnable';
@@ -34,6 +34,20 @@ export class ToCategoryComponent implements OnInit {
   headerTransition = {
     'category-header': false,
     'category-header_animation-back': true
+  };
+
+  shadow: boolean = true;
+
+  @HostListener('scroll', ['$event'])
+  tableScroll(event) {
+      const tracker = event.target;
+      const limit = tracker.scrollHeight - tracker.clientHeight;
+      if (event.target.scrollTop < limit) {
+          this.shadow = true;
+      }
+      if (event.target.scrollTop === limit) {
+          this.shadow = false;
+      }
   }
 
   constructor(
