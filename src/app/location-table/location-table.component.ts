@@ -4,6 +4,7 @@ import { Location } from '../models/Location';
 import {finalize, map} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
 import {combineLatest} from 'rxjs';
+import * as _ from 'lodash';
 
 
 export interface Paged<T> {
@@ -149,7 +150,11 @@ export class LocationTableComponent implements OnInit {
         this.locationService.searchLocationsWithConfig(url)
         .toPromise().then(p => {
           this.hideFavorites = true;
-          this.choices = this.filterResults(p.results);
+            console.log(this.starredChoices);
+            const filtFevLoc = _.filter(this.starredChoices, (item => {
+                return item.title.toLowerCase().includes(this.search);
+            }));
+            this.choices = [...filtFevLoc, ...this.filterResults(p.results)];
         });
       } else {
 

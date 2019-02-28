@@ -30,11 +30,12 @@
 
         .pass-card-header-text {
             color: white;
-            font-size: 18px;
+            font-size: 22px;
             margin-left: 15px;
 
             .card-subtitle {
-                font-size: 12px;
+                font-size: 15px;
+                font-weight: bold;
             }
         }
 
@@ -139,7 +140,7 @@
 }
 
 .request-description{
-    font-weight: bold;
+    font-size: 22px;
     display: flex;
     align-items: center;
 }
@@ -192,17 +193,16 @@
 }
 
 .resend-button-content-title{
-    font-size: 11pt;
-    font-weight: bold;
+    font-size: 22px;
 }
 
 .resend-button-content-subtitle{
-    font-size: 10pt;
-    font-weight: 400;
+    font-size: 15px;
+    font-weight: bold;
 }
 
 .message{
-    font-size: 14px;
+    font-size: 16px;
     width: 130px;
     overflow-y: auto;
 }

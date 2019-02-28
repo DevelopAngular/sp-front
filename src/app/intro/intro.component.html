@@ -163,18 +163,20 @@
 
           <div class="pass-card">
             <div class="pass-card_header">
-              <div class="left-box">
-                <img class="picture" [src]="'https://storage.googleapis.com/courier-static/release-icons/Bathroom%20(White).png'" alt="">
-                <span class="text">Bathroom</span>
-              </div>
-              <div>
-                <img class="arrow" [src]="'./assets/Back Button (Transparent).png' | resolveAsset" alt="">
+              <div class="pass-card-header-content">
+                <div class="left-box">
+                  <img class="picture" [src]="'https://storage.googleapis.com/courier-static/release-icons/Bathroom%20(White).png'" alt="">
+                  <span class="text">Bathroom</span>
+                </div>
+                <div>
+                  <img class="arrow" [src]="'./assets/Back Button (Transparent).png' | resolveAsset" alt="">
+                </div>
               </div>
             </div>
             <div class="pass-card_body">
               <div class="top-side">
-                <div>
-                  <app-traveltype-picker [choices]="['round_trip']" [altColor]="'#5352E4'"></app-traveltype-picker>
+                <div class="duration-picker">
+                  <app-traveltype-picker [choices]="['round_trip']" [width]="'96px'" [height]="'28px'" [altColor]="'#5352E4'"></app-traveltype-picker>
                   <app-duration-picker [plural]="false" [maxDuration]="10"></app-duration-picker>
                 </div>
                 <div>
@@ -184,7 +186,7 @@
                 <div class="start-pass-content">
                   <div class="start-pass-content-text"></div>
                   <div></div>
-                  <b>Start Pass</b>
+                  <b style="font-size: 22px">Start Pass</b>
                   <img width="20" [src]="'./assets/Arrow (White).png' | resolveAsset">
                 </div>
               </div>
@@ -288,7 +290,7 @@
                 <!--</div>-->
               <!--</div>-->
               <div class="divider">
-                <img class="back-button" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
+                <img class="back-button" [src]="'./assets/Combined Shape.svg' | resolveAsset">
                 <div class="divider-header">
                   <img class="divider-icon" [src]="'./assets/Search (Blue).png' | resolveAsset">
                   <div class="divider-text">{{'To where ?'}}</div>
@@ -415,7 +417,7 @@
     </div>
 
     <!-- It needs in order to all the components will be disabled-->
-      <!--<div class="anti-click"></div>-->
+      <div class="anti-click"></div>
     <!-- End -->
   </div>
 

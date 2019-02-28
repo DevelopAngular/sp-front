@@ -32,11 +32,12 @@
 
         .pass-card-header-text {
             color: white;
-            font-size: 18px;
+            font-size: 22px;
             margin-left: 15px;
 
             .card-subtitle {
-                font-size: 12px;
+                font-size: 15px;
+                font-weight: bold;
             }
         }
 
@@ -66,6 +67,8 @@
 
             .request-pass-content-text {
                 color: white;
+                font-size: 22px;
+                font-weight: normal;
             }
         }
 
@@ -144,6 +147,7 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                font-size: 18px;
             }
         }
 
@@ -211,7 +215,7 @@
     position: relative;
     margin: -35px 0 0 0%;
     font-weight: bold;
-    font-size: 10pt;
+    font-size: 22px;
 }
 
 .request-card-container {
@@ -284,20 +288,19 @@
 }
 
 .resend-button-content-title{
-    font-size: 11pt;
-    font-weight: bold;
+    font-size: 22px;
     color: white;
     padding-bottom: 5px;
 }
 
 .resend-button-content-subtitle{
-    font-size: 10pt;
-    font-weight: 400;
+    font-size: 15px;
+    font-weight: bold;
     color: white;
 }
 
 .message{
-    font-size: 14px;
+    font-size: 16px;
     width: 100%;
     overflow-y: auto;
 }
