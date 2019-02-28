@@ -100,16 +100,14 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       } else {
         if (_.isArray(this.passProvider)) {
           /////// Process Block ///////////
-          const merged$ = this.passProvider.map(provider => {
-            return provider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
-          });
-          this.currentPasses$ = zip(...merged$).pipe(mergeAll());
-          this.currentPasses$.subscribe(res => console.log('RES ===>>>', res));
-          debugger;
+          // const merged$ = this.passProvider.map(provider => {
+          //   return provider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
+          // });
+          // this.currentPasses$ = zip(...merged$).pipe(mergeAll());
+          // this.currentPasses$.subscribe(res => console.log('RES ===>>>', res));
         } else {
             this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
         }
-        // this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
 
         if(this.isActive){
           this.timers.push(window.setInterval(() => {
