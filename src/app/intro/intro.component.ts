@@ -213,7 +213,11 @@ export class IntroComponent implements OnInit {
                 header: 'Nurse',
                 gradient: '#DA2370,#FB434A',
                 content: 'https://storage.googleapis.com/courier-static/release-icons/Nurse%20(White).png'
-              },
+              },        {
+                header: 'Cafeteria',
+                gradient: '#022F68,#2F66AB',
+                content: 'https://storage.googleapis.com/courier-static/release-icons/Cafeteria%20(White).png'
+              }
             ],
             '#5': [
               {
