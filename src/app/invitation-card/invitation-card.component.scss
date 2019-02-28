@@ -31,11 +31,12 @@
 
         .pass-card-header-text {
             color: white;
-            font-size: 18px;
+            font-size: 22px;
             margin-left: 15px;
 
             .card-subtitle {
-                font-size: 12px;
+                font-size: 15px;
+                font-weight: bold;
             }
         }
 
@@ -66,6 +67,8 @@
 
             .button-content-text {
                 color: white;
+                font-size: 22px;
+                font-weight: normal;
             }
         }
 
@@ -99,6 +102,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            font-size: 18px;
         }
     }
 
@@ -208,11 +212,10 @@
 }
 
 .bold{
-    font-weight: bold;
-    font-size: 19px;
+    font-size: 22px;
 }
 
 .smaller{
-    font-weight: 400;
-    font-size: 17px;
+    font-weight: bold;
+    font-size: 16px;
 }
