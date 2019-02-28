@@ -13,7 +13,7 @@ export const bumpIn = trigger('pressState', [
 
 export const NextStep = trigger('NextStep', [                                                        // :ENTER PSEUDOSTATE
   transition(':enter', group([
-      query(`.form-factor, .locations-scaled, .scaled-card`, animate('0.5s 0s ease', keyframes([
+      query(`.form-factor, .locations-scaled, .scaled-card`, animate('0.4s 0s ease', keyframes([
         style({
           opacity: 0,
           transform: 'scale(1.2)'
@@ -39,7 +39,7 @@ export const NextStep = trigger('NextStep', [                                   
       .date-picker,
       .student-groups,
       .locations
-      `, animate('0.5s 0s ease', keyframes([
+      `, animate('0.4s 0s ease', keyframes([
           style({
             background: 'transparent',
             boxShadow: 'none',
@@ -54,7 +54,7 @@ export const NextStep = trigger('NextStep', [                                   
           }),
         ])), {optional: true}
       ),
-      query(`.back-button-white`, animate('0.5s 0s ease', keyframes([
+      query(`.back-button-white`, animate('0.4s 0s ease', keyframes([
           style({
             opacity: 0,
           }),
@@ -69,11 +69,9 @@ export const NextStep = trigger('NextStep', [                                   
       .category-header_animation-back,
       .date-picker,
       .student-groups,
-      .groups-containerr,
-      .locationss,
       .target-footer,
       .from-footer
-      `, animate('0.5s 0s ease', keyframes([
+      `, animate('0.4s 0s ease', keyframes([
           style({
             opacity: 0,
           }),
@@ -89,7 +87,6 @@ export const NextStep = trigger('NextStep', [                                   
       .divider-header,
       .from-header-text,
       .to-header-text,
-      .category-header_animation-backk,
       .category-header-text,
       .rest-tar-header-text,
       .rest-mes-header-text,
@@ -99,8 +96,11 @@ export const NextStep = trigger('NextStep', [                                   
       .rest-tar-content,
       .rest-mes-content,
       .date-content,
-      .from-content-to-datee
-      `, animate('0.5s 0s ease', keyframes([
+      .student-select,
+      .message-entry,
+      .divider-text-message,
+      .divider-text-students
+      `, animate('0.4s 0s ease', keyframes([
           style({
             opacity: 0,
             transform: 'translateX({{from}}px)',
@@ -124,7 +124,7 @@ export const NextStep = trigger('NextStep', [                                   
       .date-picker,
       .student-groups,
       .locations
-      `, animate('0.5s 0s ease', keyframes([
+      `, animate('0.4s 0s ease', keyframes([
         style({
           background: 'transparent',
           boxShadow: 'none',
@@ -139,7 +139,7 @@ export const NextStep = trigger('NextStep', [                                   
         }),
       ])), {optional: true}
     ),
-    query(`.form-factor, .locations-scaled, .scaled-card`, animate('0.5s 0s ease', keyframes([
+    query(`.form-factor, .locations-scaled, .scaled-card`, animate('0.4s 0s ease', keyframes([
       style({
         opacity: 1,
         transform: 'scale(1)'
@@ -161,7 +161,7 @@ export const NextStep = trigger('NextStep', [                                   
       .rest-tar-header,
       .rest-mes-header
       `,
-      animate('0.5s 0s ease', keyframes([
+      animate('0.4s 0s ease', keyframes([
           style({
             'z-index': 9,
           }),
@@ -173,7 +173,7 @@ export const NextStep = trigger('NextStep', [                                   
           }),
         ])), {optional: true}
       ),
-    query(`.back-button-grey`, animate('0.5s 0s ease', keyframes([
+    query(`.back-button-grey`, animate('0.4s 0s ease', keyframes([
         style({
           opacity: 0,
         }),
@@ -192,7 +192,7 @@ export const NextStep = trigger('NextStep', [                                   
       .target-footer,
       .from-footer
       `,
-      animate('0.5s 0s ease', keyframes([
+      animate('0.4s 0s ease', keyframes([
           style({
             opacity: 1,
           }),
@@ -219,9 +219,13 @@ export const NextStep = trigger('NextStep', [                                   
       .rest-tar-content,
       .rest-mes-content,
       .date-content,
-      .from-content-to-date
+      .from-content-to-date,
+      .student-select,
+      .message-entry,
+      .divider-text-message,
+      .divider-text-students
       `,
-      animate('0.5s 0s ease', keyframes([
+      animate('0.4s 0s ease', keyframes([
             style({
               opacity: 1,
               transform: 'translateX(0px)',

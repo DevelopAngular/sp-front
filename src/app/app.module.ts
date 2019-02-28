@@ -45,6 +45,7 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFireMessagingModule } from '@angular/fire/messaging';
 import { environment } from '../environments/environment';
 
+
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroComponent, data: { hideSchoolToggleBar: true}},
   {path: '', redirectTo: 'select-profile', pathMatch: 'full'},
@@ -107,8 +108,7 @@ const appRoutes: Routes = [
     SchoolToggleBarComponent,
     ItemListComponent,
     ItemCellComponent,
-    NextReleaseComponent
-  ],
+    NextReleaseComponent,],
   entryComponents: [
     ConsentMenuComponent,
     OptionsComponent,

@@ -108,7 +108,7 @@ import {FirstSeenFormComponent} from '../create-hallpass-forms/first-seen-form/f
     DateTimeContainerComponent,
     FormFactorContainerComponent,
     CreateHallpassFormsComponent,
-    FirstSeenFormComponent
+    FirstSeenFormComponent,
   ],
   entryComponents: [
     CreateHallpassFormsComponent,
