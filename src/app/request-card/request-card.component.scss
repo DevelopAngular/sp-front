@@ -33,11 +33,12 @@
         .pass-card-header-text {
             color: white;
             font-size: 22px;
+            font-weight: bold;
             margin-left: 15px;
 
             .card-subtitle {
                 font-size: 15px;
-                font-weight: bold;
+                font-weight: normal;
             }
         }
 
@@ -68,7 +69,7 @@
             .request-pass-content-text {
                 color: white;
                 font-size: 22px;
-                font-weight: normal;
+                font-weight: bold;
             }
         }
 
@@ -110,10 +111,10 @@
             .request-description {
                 display: flex;
                 align-items: center;
-                width: 200px;
+                width: 225px;
                 .request-description-icon {
-                    width: 27px;
-                    height: 33px;
+                    width: 29px;
+                    height: 29px;
                 }
             }
         }
@@ -147,7 +148,7 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                font-size: 18px;
+                font-size: 17px;
             }
         }
 
@@ -162,6 +163,7 @@
     mat-divider {
         background-color: white;
         width: 291px;
+        opacity: 0.4;
     }
 
 }
@@ -238,12 +240,15 @@
 
 .request-description{
     font-weight: bold;
+    font-size: 20px;
+    text-align: left;
+    width: 225px;
 }
 
 .request-description-icon{
     width: 25px;
     height: auto;
-    margin-right: 7px;
+    margin-right: 10px;
 }
 
 .request-button-content{
@@ -261,8 +266,8 @@
 }
 
 .button-icon-right{
-    width: 17px;
-    height: 17px;
+    width: 24px;
+    height: 24px;
     position: absolute;
     right: 10px;
 }
@@ -290,19 +295,24 @@
 .resend-button-content-title{
     font-size: 22px;
     color: white;
+    font-weight: bold;
     padding-bottom: 5px;
 }
 
 .resend-button-content-subtitle{
     font-size: 15px;
-    font-weight: bold;
+    font-weight: normal;
     color: white;
 }
 
 .message{
     font-size: 16px;
-    width: 100%;
-    overflow-y: auto;
+    width: 225px;
+    text-align: left;
+    //padding-top: 20px;
+    overflow: auto;
+    overflow-wrap: break-word;
+
 }
 
 .student-with-edit{

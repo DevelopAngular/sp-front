@@ -52,6 +52,7 @@
     mat-divider {
         background-color: white;
         width: 291px;
+        opacity: 0.4;
     }
 }
 
@@ -78,6 +79,7 @@
     align-items: center;
     user-select: none;
     cursor: pointer;
+    font-size: 20px;
     position: relative;
     margin: -79px 0 0 0%;
     font-weight: bold;

@@ -32,11 +32,12 @@
         .pass-card-header-text {
             color: white;
             font-size: 22px;
+            font-weight: bold;
             margin-left: 15px;
 
             .card-subtitle {
                 font-size: 15px;
-                font-weight: bold;
+                font-weight: normal;
             }
         }
 
@@ -68,7 +69,7 @@
             .button-content-text {
                 color: white;
                 font-size: 22px;
-                font-weight: normal;
+                font-weight: bold;
             }
         }
 
@@ -102,7 +103,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 18px;
+            font-size: 17px;
         }
     }
 
@@ -130,12 +131,13 @@
     mat-divider {
         background-color: white;
         width: 291px;
+        opacity: 0.4;
     }
 }
 
 
 .button-content{
-    width: 269px;
+    width: 288px;
     height: 81px;
     display: flex;
     flex-direction: row;
@@ -154,10 +156,13 @@
 }
 
 .button-icon-right{
-    width: 17px;
-    height: 17px;
-    position: absolute;
-    right: 10px;
+    width: 24px;
+    height: 24px;
+}
+
+.get-pass-content-text {
+    font-size: 20px;
+    margin-left: 50px;
 }
 
 .card-body-right{
@@ -179,21 +184,21 @@
 }
 
 .invitation-description-icon{
-    width: 25px;
-    height: auto;
-    margin-right: 7px;
+    width: 35px;
+    margin-right: 10px;
 }
 
 .invitation-description-text{
     text-align: left;
+    font-size: 20px;
 }
 
 .button-content{
-    width: 269px;
+    width: 288px;
     height: 81px;
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
     user-select: none;
     cursor: pointer;
@@ -213,9 +218,9 @@
 
 .bold{
     font-size: 22px;
+    font-weight: bold;
 }
 
 .smaller{
-    font-weight: bold;
     font-size: 16px;
 }

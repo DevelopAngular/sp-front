@@ -49,6 +49,7 @@
     mat-divider {
         background-color: white;
         width: 291px;
+        opacity: 0.4;
     }
 
     .inline-request-content {
@@ -140,7 +141,9 @@
 }
 
 .request-description{
-    font-size: 22px;
+    font-size: 21px;
+    font-weight: bold;
+    text-align: left;
     display: flex;
     align-items: center;
 }
@@ -148,7 +151,7 @@
 .request-description-icon{
     width: 27px;
     height: 33px;
-    margin-right: 7px;
+    margin-right: 10px;
 }
 
 .request-button-content{
@@ -203,8 +206,11 @@
 
 .message{
     font-size: 16px;
-    width: 130px;
-    overflow-y: auto;
+    padding-top: 20px;
+    width: 225px;
+    text-align: left;
+    overflow: auto;
+    overflow-wrap: break-word;
 }
 
 .student-with-edit{

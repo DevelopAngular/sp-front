@@ -27,7 +27,7 @@
             <div class="button-content">
               <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
               <div *ngIf="!performingAction" class="button-content-text">
-                {{ 'Send Request' + (selectedStudents.length > 1 ? 's' : '') }}
+                {{ 'Send Pass Request' + (selectedStudents.length > 1 ? 's' : '') }}
               </div>
               <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
             </div>
@@ -87,15 +87,15 @@
       <div class="bottom-block">
         <app-pager *ngIf="invitation.status !== 'pending'; else pending" [page]="2">
           <div class="page-1">
-            <span class="bold">Pass Request Sent</span><span class="smaller"><br>by {{issuerName}}<br>{{formatDateTime(invitation.created)}}</span>
+            <span class="bold">Pass Request Sent</span><span class="smaller"><br>by {{issuerName + ' - ' + formatDateTime(invitation.created)}}</span>
           </div>
           <div class="page-2">
-            <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{studentName}}<br>{{formatDateTime(invitation.last_updated)}}</span>
+            <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{studentName + ' - ' + formatDateTime(invitation.last_updated)}}</span>
           </div>
         </app-pager>
         <ng-template #pending>
           <div>
-            <span class="bold">Pass Request Sent</span><span class="smaller"><br>by {{issuerName}}<br>{{formatDateTime(invitation.created)}}</span>
+            <span class="bold">Pass Request Sent</span><span class="smaller"><br>by {{issuerName + ' - ' + formatDateTime(invitation.created)}}</span>
           </div>
         </ng-template>
       </div>

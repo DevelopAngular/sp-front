@@ -52,7 +52,7 @@
           </div>
           <div class="page-2">
             <div class="page-2-wrapper">
-              <div class="message" [style.height]="(forInput?'70px':'174px')">
+              <div class="message" [style.height]="(forInput?'70px':'160px')">
                 <span [style.font-weight]="'bold'">{{(forStaff?'Message from ' +studentName +':':'Your message:')}}</span><br>
                 {{ (request.attachment_message===''?'No message':request.attachment_message) }}
                 <div *ngIf="request.status==='declined'">
@@ -81,7 +81,7 @@
             </div>
           </div>
         </div>
-        <div *ngIf="request.status==='accepted';" class="card-body-right">
+        <div *ngIf="request.status==='accepted'">
           <div class="request-description">
             <img class="request-description-icon" [src]="'./assets/Arrow (White).png' | resolveAsset">
             <div class="request-description-text">
@@ -108,12 +108,12 @@
         <div class="page-1">
           <app-duration-picker *ngIf="forInput; else noInput;" (onChange)="selectedDuration=$event"  [maxDuration]="(request.destination.max_allowed_time?request.destination.max_allowed_time:15)"></app-duration-picker>
           <ng-template #noInput>
-            <app-travel-view [height]="'174px'" [pass]="request" [shrink]="true"></app-travel-view>
+            <app-travel-view [height]="'164px'" [pass]="request" [shrink]="true"></app-travel-view>
           </ng-template>
         </div>
         <div class="page-2">
           <div class="page-2-wrapper">
-            <div class="message" [style.height]="(forInput?'70px':'174px')">
+            <div class="message" [style.height]="(forInput?'70px':'164px')">
               <span [style.font-weight]="'bold'">{{(forStaff?'Message from ' +studentName +':':'Your message:')}}</span><br>
               {{ (request.attachment_message===''?'No message':request.attachment_message) }}
               <div *ngIf="request.status==='declined'">
@@ -133,7 +133,7 @@
           Something went wrong
         </div>
         <ng-template #staffNoInput>
-          <div *ngIf="request.status=='pending'; else staffNotPending">
+          <div *ngIf="request.status=='pending'; else staffNotPending" style="margin-top: 10px">
             <app-card-button (onClick)="approveRequest()" [disabled]="performingAction" [width]="'295px'" [height]="'81px'" [gradientColor]="request.color_profile.gradient_color">
               <div class="resend-button-content">
                 <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
