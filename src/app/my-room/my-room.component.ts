@@ -24,11 +24,11 @@ import {CalendarComponent} from '../admin/calendar/calendar.component';
 abstract class RoomPassProvider implements PassLikeProvider {
 
   // noinspection TypeScriptAbstractClassConstructorCanBeMadeProtected
-  constructor(protected liveDataService: LiveDataService, protected location$: Observable<Location>,
+  constructor(protected liveDataService: LiveDataService, protected locations$: Observable<Location[]>,
               protected date$: Observable<Date>, protected search$: Observable<string>) {
   }
 
-  protected abstract fetchPasses(sortingEvents: Observable<HallPassFilter>, location: Location, date: Date): Observable<PassLike[]>;
+  protected abstract fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date): Observable<PassLike[]>;
 
   watch(sort: Observable<string>) {
     // merge the sort events and search events into one Observable that emits the current state of both.
@@ -40,26 +40,26 @@ abstract class RoomPassProvider implements PassLikeProvider {
     const mergedReplay = new ReplaySubject<HallPassFilter>(1);
     merged$.subscribe(mergedReplay);
 
-    return combineLatest(this.location$, this.date$, (location, date) => ({location, date}))
-      .switchMap(({location, date}) => this.fetchPasses(mergedReplay, location, date));
+    return combineLatest(this.locations$, this.date$, (locations, date) => ({locations, date}))
+      .switchMap(({locations, date}) => this.fetchPasses(mergedReplay, locations, date));
   }
 }
 
 class ActivePassProvider extends RoomPassProvider {
-  protected fetchPasses(sortingEvents: Observable<HallPassFilter>, location: Location, date: Date) {
-    return this.liveDataService.watchActiveHallPasses(sortingEvents, {type: 'location', value: location}, date);
+  protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
+    return this.liveDataService.watchActiveHallPasses(sortingEvents, {type: 'location', value: locations}, date);
   }
 }
 
 class OriginPassProvider extends RoomPassProvider {
-  protected fetchPasses(sortingEvents: Observable<HallPassFilter>, location: Location, date: Date) {
-    return this.liveDataService.watchHallPassesFromLocation(sortingEvents, location, date);
+  protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
+    return this.liveDataService.watchHallPassesFromLocation(sortingEvents, locations, date);
   }
 }
 
 class DestinationPassProvider extends RoomPassProvider {
-  protected fetchPasses(sortingEvents: Observable<HallPassFilter>, location: Location, date: Date) {
-    return this.liveDataService.watchHallPassesToLocation(sortingEvents, location, date);
+  protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
+    return this.liveDataService.watchHallPassesToLocation(sortingEvents, locations, date);
   }
 }
 
@@ -104,12 +104,14 @@ export class MyRoomComponent implements OnInit {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
 
+    const selectedLocationArray$ = this.selectedLocation$.map(location => [location]);
+
     // Construct the providers we need.
-    this.activePasses = new WrappedProvider(new ActivePassProvider(liveDataService, this.selectedLocation$,
+    this.activePasses = new WrappedProvider(new ActivePassProvider(liveDataService, selectedLocationArray$,
       this.searchDate$, this.searchQuery$));
-    this.originPasses = new WrappedProvider(new OriginPassProvider(liveDataService, this.selectedLocation$,
+    this.originPasses = new WrappedProvider(new OriginPassProvider(liveDataService, selectedLocationArray$,
       this.searchDate$, this.searchQuery$));
-    this.destinationPasses = new WrappedProvider(new DestinationPassProvider(liveDataService, this.selectedLocation$,
+    this.destinationPasses = new WrappedProvider(new DestinationPassProvider(liveDataService, selectedLocationArray$,
       this.searchDate$, this.searchQuery$));
 
     // Use WrappedProvider's length$ to keep the hasPasses subject up to date.

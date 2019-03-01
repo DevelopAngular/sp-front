@@ -158,7 +158,7 @@ function mergeFilters<T>(filters: FilterFunc<T>[]): FilterFunc<T> {
 /**
  * Types of filters for hall passes.
  */
-export type PassFilterType = { type: 'issuer', value: User } | { type: 'student', value: User } | { type: 'location', value: Location };
+export type PassFilterType = { type: 'issuer', value: User } | { type: 'student', value: User } | { type: 'location', value: Location | Location[] };
 
 export type RequestFilterType =
   { type: 'issuer', value: User }
@@ -294,14 +294,16 @@ export class LiveDataService {
     return getDateLimits(date);
   }
 
-  watchHallPassesFromLocation(sortingEvents: Observable<HallPassFilter>, filter: Location, date: Date = null): Observable<HallPass[]> {
+  watchHallPassesFromLocation(sortingEvents: Observable<HallPassFilter>, filter: Location[], date: Date = null): Observable<HallPass[]> {
+    const filterIds = filter.map(l => l.id);
+
     const queryFilter: QueryParams = {
       limit: 20,
-      origin: filter.id
+      origin: filterIds
     };
     const filters: FilterFunc<HallPass>[] = [
       makeSchoolFilter(this.http),
-      pass => pass.origin.id === filter.id
+      pass => filterIds.indexOf(pass.origin.id) >= 0
     ];
 
     if (date !== null) {
@@ -329,14 +331,16 @@ export class LiveDataService {
     });
   }
 
-  watchHallPassesToLocation(sortingEvents: Observable<HallPassFilter>, filter: Location, date: Date = null): Observable<HallPass[]> {
+  watchHallPassesToLocation(sortingEvents: Observable<HallPassFilter>, filter: Location[], date: Date = null): Observable<HallPass[]> {
+    const filterIds = filter.map(l => l.id);
+
     const queryFilter: QueryParams = {
       limit: 20,
-      destination: filter.id
+      destination: filterIds
     };
     const filters: FilterFunc<HallPass>[] = [
       makeSchoolFilter(this.http),
-      pass => pass.destination.id === filter.id
+      pass => filterIds.indexOf(pass.destination.id) >= 0
     ];
 
     if (date !== null) {
@@ -383,8 +387,15 @@ export class LiveDataService {
         filters.push(pass => pass.student.id === filter.value.id);
       }
       if (filter.type === 'location') {
-        queryFilter.location = filter.value.id;
-        filters.push(pass => pass.origin.id === filter.value.id || pass.destination.id === filter.value.id);
+        if (Array.isArray(filter.value)) {
+          const locationIds = filter.value.map(l => l.id);
+          queryFilter.location = locationIds;
+          filters.push((pass: HallPass) => (locationIds.indexOf(pass.origin.id) >= 0) || (locationIds.indexOf(pass.destination.id) >= 0));
+        } else {
+          const locationId = filter.value.id;
+          queryFilter.location = locationId;
+          filters.push((pass: HallPass) => pass.origin.id === locationId || pass.destination.id === locationId);
+        }
       }
     }
 
@@ -434,9 +445,17 @@ export class LiveDataService {
 
       }
       if (filter.type === 'location') {
-        queryFilter = `&location=${filter.value.id}`;
-        filters.push((pass: HallPass) => pass.origin.id === filter.value.id || pass.destination.id === filter.value.id);
-
+        if (Array.isArray(filter.value)) {
+          const locationIds = filter.value.map(l => l.id);
+          for (const id of locationIds) {
+            queryFilter += `&location=${id}`;
+          }
+          filters.push((pass: HallPass) => (locationIds.indexOf(pass.origin.id) >= 0) || (locationIds.indexOf(pass.destination.id) >= 0));
+        } else {
+          const locationId = filter.value.id;
+          queryFilter = `&location=${locationId}`;
+          filters.push((pass: HallPass) => pass.origin.id === locationId || pass.destination.id === locationId);
+        }
       }
     }
 
@@ -476,9 +495,17 @@ export class LiveDataService {
 
       }
       if (filter.type === 'location') {
-        queryFilter = `&location=${filter.value.id}`;
-        filters.push((pass: HallPass) => pass.origin.id === filter.value.id || pass.destination.id === filter.value.id);
-
+        if (Array.isArray(filter.value)) {
+          const locationIds = filter.value.map(l => l.id);
+          for (const id of locationIds) {
+            queryFilter += `&location=${id}`;
+          }
+          filters.push((pass: HallPass) => (locationIds.indexOf(pass.origin.id) >= 0) || (locationIds.indexOf(pass.destination.id) >= 0));
+        } else {
+          const locationId = filter.value.id;
+          queryFilter = `&location=${locationId}`;
+          filters.push((pass: HallPass) => pass.origin.id === locationId || pass.destination.id === locationId);
+        }
       }
     }
 
