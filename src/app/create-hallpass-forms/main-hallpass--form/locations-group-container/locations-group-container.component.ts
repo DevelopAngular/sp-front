@@ -175,8 +175,12 @@ export class LocationsGroupContainerComponent implements OnInit {
          this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
       }
     }
-    this.FORM_STATE.step =  close ? 0 : 4;
-    this.nextStepEvent.emit(this.FORM_STATE);
+    this.FORM_STATE.previousStep = 3;
+    // this.FORM_STATE.step =  close ? 0 : 4;
+    setTimeout(() => {
+      this.FORM_STATE.step =  close ? 0 : 4;
+      this.nextStepEvent.emit(this.FORM_STATE);
+    }, 100);
   }
 
   back(event) {
@@ -184,6 +188,10 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.FORM_STATE = event;
     this.data.message = null;
     this.FORM_STATE.data.message = null;
-    this.nextStepEvent.emit(this.FORM_STATE);
+
+    // setTimeout(() => {
+
+      this.nextStepEvent.emit(this.FORM_STATE);
+    // }, 100);
   }
 }

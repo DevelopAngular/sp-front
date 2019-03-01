@@ -112,6 +112,7 @@ export class LocationTableComponent implements OnInit {
             this.locationService.searchLocationsWithConfig(url)
                 .toPromise().then(p => {
                   this.choices = p.results;
+                  // this.choices = p.results.concat(p.results,p.results,p.results,p.results);
                   this.nextChoices = p.next;
                 });
         }

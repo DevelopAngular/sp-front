@@ -33,6 +33,7 @@ export const NextStep = trigger('NextStep', [                                   
       .to-wrapper-to-date,
       .from-header,
       .to-header,
+      .category-header_animation-back
       .category-header,
       .rest-tar-header,
       .rest-mes-header,
@@ -157,6 +158,7 @@ export const NextStep = trigger('NextStep', [                                   
       query(`
       .from-header,
       .to-header,
+      .to-header-back,
       .category-header,
       .rest-tar-header,
       .rest-mes-header

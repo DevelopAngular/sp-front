@@ -20,7 +20,7 @@
         [placeholder]="'Search ' + pinnable.category" >
       </app-location-table>
     </div>
-    <div class="shadow" [style.bottom]="date ? '65px' : '43px'" *ngIf="shadow"></div>
+    <!--<div class="shadow" [style.bottom]="date ? '65px' : '43px'" *ngIf="shadow"></div>-->
     <app-student-footer *ngIf="!isStaff" [formState]="formState" [state]="'category'" [date]="date"></app-student-footer>
     <app-teacher-footer [fromLocation]="fromLocation" [formState]="formState" *ngIf="isStaff" [state]="'category'" [date]="date" [studentText]="studentText"></app-teacher-footer>
 </div>
