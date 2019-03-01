@@ -3,7 +3,12 @@
       <div class="header-content">
         <div class="header-info">
           <img  class="pass-card-header-icon" [src]="pass.icon | resolveAsset">
-          <div class="pass-card-header-text">{{ pass.destination.title }}</div>
+          <div class="pass-card-header-text">
+            {{ pass.destination.title }}
+            <div class="card-subtitle" *ngIf="fromPast || forFuture">
+              {{ formatDateTime(pass.start_time) }}
+            </div>
+          </div>
         </div>
         <img *ngIf="hasClose" (click)="cancelEdit($event)" class="pass-card-header-close" [src]="closeIcon | resolveAsset">
       </div>
@@ -35,14 +40,14 @@
 
     <div class="top-block">
 
-      <div *ngIf="isActive && !forStaff" class="card-body-right">
+      <div *ngIf="isActive && !forStaff">
         <app-card-button *ngIf="!(forStaff || forMonitor)" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'"  [gradientColor]="pass.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">
           <div class="end-pass-content">
             {{ timeLeft +(timeLeft===''?'':' -')}} End Pass
           </div>
         </app-card-button>
       </div>
-      <div *ngIf="(fromPast || forFuture && !forInput) && !forStaff" class="card-body-right">
+      <div *ngIf="(fromPast || forFuture && !forInput) && !forStaff">
         <span style="font-size: 20px; color: white">{{ forFuture?'Pass Auto Starts': getDuration() +' - Total Time' }}</span>
       </div>
 
