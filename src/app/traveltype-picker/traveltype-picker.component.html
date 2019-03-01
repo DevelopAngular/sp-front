@@ -1,6 +1,7 @@
 <div class="wrapper"
      [style.width]="width"
      [style.height]="height"
+     [style.left]="choice2 ? '78px' : '104px'"
 >
   <div class="option" [class.left-radius]="!bottomRadius" [class.right-radius]="bottomRadius" [style.width]="choice2?'50%':'inherit'" (click)="updateTravelType(choice1)"
       [style.color]="getFontColor(choice1)"
