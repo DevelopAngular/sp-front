@@ -1,16 +1,22 @@
+:host {
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
 .target-footer {
   width: 100%;
   display: flex;
   background-color: white;
-  //box-shadow: rgba(0, 0, 0, 0.1) 0px 7px 0px 8px;
+  box-shadow: -50px 0px 35px 25px rgba(255, 255, 255, 1);
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   justify-content: center;
   align-items: center;
-  z-index: 100;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  //z-index: 100;
+  //position: absolute;
+  //bottom: 0;
+  //left: 0;
+  //right: 0;
   border-bottom-left-radius: 15px;
   border-bottom-right-radius: 15px;
   overflow: hidden;

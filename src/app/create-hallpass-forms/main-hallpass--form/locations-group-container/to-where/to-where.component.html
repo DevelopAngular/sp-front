@@ -1,9 +1,9 @@
 <div class="to-wrapperr" style="opacity: 1" [ngClass]="{ 'to-wrapper-to-date': formState.forLater && formState.formMode.role === 1, 'to-wrapper': !formState.forLater || formState.formMode.role !== 1}">
-  <div class="to-header" [style.background-image]="'radial-gradient(circle at 98% 97%, #FFFFFF, #FFFFFF)'">
+  <div class="" [ngClass]="{'to-header': formState.previousState === states.from && formState.previousStep <= formState.step, 'to-header-back': formState.previousState === states.category || formState.previousStep === 4 }" [style.background-image]="'radial-gradient(circle at 98% 97%, #FFFFFF, #FFFFFF)'">
     <img class="back-button back-button-grey" [src]="'./assets/Combined Shape.svg' | resolveAsset" (click)="back()">
     <div class="to-header-text">
       <img class="search-icon" [src]="'./assets/Search (Blue).png' | resolveAsset">
-      <div class="text">To where?</div>
+      <div class="text">To where? {{formState.previousStep}}</div>
     </div>
   </div>
 

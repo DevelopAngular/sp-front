@@ -6,7 +6,7 @@
       <div class="text">From where?</div>
     </div>
   </div>
-  <div class="from-content" [style.height]="date ? '74%' : '78%'" (scroll)="tableScroll($event)">
+  <div class="from-content" (scroll)="tableScroll($event)">
     <div class="location-tables">
       <app-location-table
          class="locations"
@@ -27,7 +27,7 @@
       </app-location-table>
     </div>
   </div>
-  <div class="shadow" [style.bottom]="date ? '65px' : '43px'" *ngIf="shadow"></div>
+  <!--<div class="shadow" [style.bottom]="date ? '65px' : '43px'" *ngIf="shadow"></div>-->
   <app-student-footer [date]="date" [formState]="formState" [state]="'from'" *ngIf="!isStaff"></app-student-footer>
   <app-teacher-footer *ngIf="isStaff" [formState]="formState" [date]="date" [studentText]="studentText" [state]="'from'"></app-teacher-footer>
 
