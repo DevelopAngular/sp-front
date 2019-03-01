@@ -26,7 +26,9 @@
           <app-card-button (onClick)="newInvitation()" [disabled]="performingAction" [width]="'288px'" [height]="'79px'" [gradientColor]="invitation.color_profile.gradient_color">
             <div class="button-content">
               <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
-              <div *ngIf="!performingAction" class="button-content-text">Send Request</div>
+              <div *ngIf="!performingAction" class="button-content-text">
+                {{ 'Send Request' + (selectedStudents.length > 1 ? 's' : '') }}
+              </div>
               <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
             </div>
           </app-card-button>

@@ -23,7 +23,8 @@
       <app-card-button (onClick)="newPass()" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'" [gradientColor]="pass.color_profile.gradient_color">
         <div class="start-pass-content">
           <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
-          <div *ngIf="!performingAction" class="start-pass-content-text">{{((forFuture && forInput)?'Schedule Pass':(forStaff?'Send Pass':'Start Pass'))}}</div>
+          <div *ngIf="!performingAction" class="start-pass-content-text">
+              {{((forFuture && forInput)?'Schedule Pass' + (selectedStudents.length > 1 ? 'es' : ''):(forStaff?'Send Pass' + (selectedStudents.length > 1 ? 'es' : ''):'Start Pass' + (selectedStudents.length > 1 ? 'es' : '')))}}</div>
           <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
         </div>
       </app-card-button>
