@@ -93,7 +93,7 @@ export class MyRoomComponent implements OnInit {
 
   searchQuery$ = new BehaviorSubject('');
   searchDate$ = new BehaviorSubject<Date>(null);
-  selectedLocation$ = new ReplaySubject<Location>(1);
+  selectedLocation$ = new ReplaySubject<Location[]>(1);
 
   hasPasses: Observable<boolean> = of(false);
   passesLoaded: Observable<boolean> = of(false);
@@ -104,7 +104,7 @@ export class MyRoomComponent implements OnInit {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
 
-    const selectedLocationArray$ = this.selectedLocation$.map(location => [location]);
+    const selectedLocationArray$ = this.selectedLocation$.map(location => location);
 
     // Construct the providers we need.
     this.activePasses = new WrappedProvider(new ActivePassProvider(liveDataService, selectedLocationArray$,
@@ -158,16 +158,11 @@ export class MyRoomComponent implements OnInit {
           this.isStaff = user.isTeacher() || user.isAdmin();
         });
 
-        this.dataService.getLocationsWithTeacher(this.user).subscribe(locations => {
+        this.dataService.getLocationsWithTeacher(this.user).subscribe((locations: Location[]) => {
           this._zone.run(() => {
             this.roomOptions = locations;
-            this.selectedLocation = (this.roomOptions.length > 0) ? this.roomOptions[0] : null;
-            this.selectedLocation$.next(this.selectedLocation);
-              // this.roomOptions.forEach(room => {
-              //   this.selectedLocation$.next(room);
-              //   this.mergedDestinationPasses.push(this.destinationPasses);
-              //   this.mergedOriginPassesPasses.push(this.originPasses);
-              // });
+            // this.selectedLocation = (this.roomOptions.length > 0) ? this.roomOptions[0] : null;
+            this.selectedLocation$.next(locations);
             this.userLoaded = true;
           });
         });
@@ -242,9 +237,8 @@ export class MyRoomComponent implements OnInit {
 
       optionDialog.afterClosed().subscribe(data => {
         this.optionsOpen = false;
-        this.selectedLocation = data == null ? this.selectedLocation : data;
-          console.log(this.selectedLocation);
-          this.selectedLocation$.next(this.selectedLocation);
+        this.selectedLocation = data;
+        this.selectedLocation$.next(data ? [data] : this.roomOptions);
       });
     }
   }

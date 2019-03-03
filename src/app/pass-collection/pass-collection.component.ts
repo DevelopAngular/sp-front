@@ -107,6 +107,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
           // this.currentPasses$.subscribe(res => console.log('RES ===>>>', res));
         } else {
             this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
+            this.currentPasses$.subscribe(res => console.log('RESPONSE ====>>>>', res));
         }
 
         if(this.isActive){
