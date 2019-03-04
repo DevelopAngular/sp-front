@@ -161,6 +161,7 @@ export class MyRoomComponent implements OnInit {
         this.dataService.getLocationsWithTeacher(this.user).subscribe((locations: Location[]) => {
           this._zone.run(() => {
             this.roomOptions = locations;
+            debugger;
             // this.selectedLocation = (this.roomOptions.length > 0) ? this.roomOptions[0] : null;
             this.selectedLocation$.next(locations);
             this.userLoaded = true;
