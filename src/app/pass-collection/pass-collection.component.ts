@@ -97,9 +97,9 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   ngOnInit() {
       if (this.mock) {
 
+      } else {
+        this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
       }
-      this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
-
         if(this.isActive) {
           this.timers.push(window.setInterval(() => {
             this.timerEvent.next(null);
@@ -168,7 +168,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       console.log('Closed with ===>', dialogData);
       if (dialogData && dialogData['report']) {
         const reportRef = this.dialog.open(ReportFormComponent, {
-          width: '750px',
+          width: '425px',
+          height: '500px',
           panelClass: 'form-dialog-container',
           backdropClass: 'custom-backdrop',
           data: {'report': dialogData['report']}
