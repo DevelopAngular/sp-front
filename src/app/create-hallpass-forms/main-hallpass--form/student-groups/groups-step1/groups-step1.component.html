@@ -16,8 +16,13 @@
         </div>
         <div class="content-left_groups" (click)="selectGroup(null, $event)">
           <div  class="goups-container">
-            <div class="content-left_placeholder" *ngIf="!groups || (groups && !groups.length)">
-              <span>No student groups</span>
+            <div class="content-left_placeholder" *ngIf="groups && !groups.length">
+              <div class="no-groups-dummy-image">
+                <img  [src]="'./assets/emptyStates/undraw_group_selfie_ijc6.svg'" alt="undraw_group_selfie_ijc6.svg">
+              </div>
+              <div class="no-groups-dummy-text">
+                <span>No student groups</span>
+              </div>
             </div>
             <div *ngIf="groups && groups.length">
               <mat-list>

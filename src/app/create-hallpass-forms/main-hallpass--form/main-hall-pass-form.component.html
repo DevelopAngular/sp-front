@@ -9,7 +9,7 @@
     <div style="transition: width .5s ease, height .5s ease; " [style.width]="formSize.width" [style.height]="formSize.height">
 
       <div class="fixed-card"  [style.width]="formSize.width" [style.height]="formSize.height" *ngIf="FORM_STATE.step === 1" [@NextStep]="{ value: '', params: frameMotion$ | async}" (@NextStep.start)="setFormSize()">
-        <div [ngClass]="{'date-pickerrr': FORM_STATE.step < 3}" class="">
+        <div [ngClass]="{'date-picker': FORM_STATE.formMode.role === 1}" class="">
           <app-date-time-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)" ></app-date-time-container>
         </div>
       </div>
@@ -24,7 +24,6 @@
          [style.width]="formSize.width"
          [style.height]="formSize.height"
          [@NextStep]="{ value: '', params: frameMotion$ | async}" (@NextStep.start)="setFormSize()">
-      <!--<div class="fixed-card" [style.width]="formSize.width" [style.height]="formSize.height" *ngIf="FORM_STATE.step === 3"  [@ScaledCard] (@ScaledCard.start)="setFormSize()" >-->
       <div class="locations" [ngClass]="{'locations-scaled': FORM_STATE.previousStep > 2}">
         <app-locations-group-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-locations-group-container>
       </div>

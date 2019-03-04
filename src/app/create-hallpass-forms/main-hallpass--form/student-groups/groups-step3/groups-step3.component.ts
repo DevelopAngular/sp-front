@@ -134,6 +134,7 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
   removeGroup() {
     this.userService.deleteStudentGroup(this.editGroup.id)
       .subscribe((group: StudentList) => {
+        console.log('Deleted users ====>', group);
         for ( const control in this.form.controls) {
           this.form.controls[control].setValue(null);
         }

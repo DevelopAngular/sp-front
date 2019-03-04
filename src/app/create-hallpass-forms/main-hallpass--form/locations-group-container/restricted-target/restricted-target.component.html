@@ -13,7 +13,9 @@
        (onSelect)="updateTarget($event)"
        [type]="'teachers'"
        [placeholder]="'Search teachers'"
-       [staticChoices]="toLocation.teachers">
+       [staticChoices]="toLocation.teachers"
+       [dummyString]="'No teachers found'"
+    >
     </app-location-table>
   </div>
   <!--<div class="shadow" [style.bottom]="date ? '65px' : '43px'" *ngIf="shadow"></div>-->

@@ -38,6 +38,7 @@ export class LocationTableComponent implements OnInit {
   @Input() isEdit: boolean = false;
   @Input() rightHeaderText: boolean = false;
   @Input() mergedAllRooms: boolean;
+  @Input() dummyString: '';
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<string> = new EventEmitter();
@@ -152,7 +153,7 @@ export class LocationTableComponent implements OnInit {
 
 
   onSearch(search: string) {
-    this.noChoices = false;
+    // this.noChoices = false;
     this.search = search.toLowerCase();
     // if(this.staticChoices){
     //   this.choices = this.staticChoices.filter(element => {return (element.display_name.toLowerCase().includes(search) || element.first_name.toLowerCase().includes(search) || element.last_name.toLowerCase().includes(search))})
@@ -168,14 +169,22 @@ export class LocationTableComponent implements OnInit {
             +((this.type==='location' && this.showFavorites)?'&starred=false':'');
 
         this.locationService.searchLocationsWithConfig(url)
-        .toPromise().then(p => {
+        .toPromise()
+        .then(p => {
           this.hideFavorites = true;
             console.log(this.starredChoices);
             const filtFevLoc = _.filter(this.starredChoices, (item => {
                 return item.title.toLowerCase().includes(this.search);
             }));
             this.choices = [...filtFevLoc, ...this.filterResults(p.results)];
-        });
+        })
+          .then(() => {
+            if (!this.choices.length) {
+              this.noChoices = true;
+            } else {
+              this.noChoices = false;
+            }
+          });
       } else {
 
         const url = 'v1/'
@@ -189,25 +198,36 @@ export class LocationTableComponent implements OnInit {
               .subscribe(res => {
                 this.choices = res.sort((a, b) => a.id - b.id);
                 this.hideFavorites = false;
+                if (!this.choices.length) {
+                  this.noChoices = true;
+                } else {
+                  this.noChoices = false;
+                }
               });
         } else {
             this.locationService.searchLocationsWithConfig(url)
-                .toPromise().then(p => {
-                if (this.staticChoices) {
-                    this.choices = this.filterResults(this.staticChoices);
+              .toPromise()
+              .then(p => {
+                  if (this.staticChoices) {
+                      this.choices = this.filterResults(this.staticChoices);
+                  } else {
+                      this.hideFavorites = false;
+                      this.choices = this.filterResults(p.results);
+                  }
+                  this.nextChoices = p.next;
+                  this.search = '';
+              })
+              .then(() => {
+                if (!this.choices.length) {
+                  this.noChoices = true;
                 } else {
-                    this.hideFavorites = false;
-                    this.choices = this.filterResults(p.results);
+                  this.noChoices = false;
                 }
-                this.nextChoices = p.next;
-                this.search = '';
-            });
+              });
         }
       }
     // }
-    if (!this.choices.length) {
-      this.noChoices = true;
-    }
+
   }
 
   mergeLocations(url) {

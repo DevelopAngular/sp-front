@@ -30,7 +30,7 @@ export const NextStep = trigger('NextStep', [                                   
       ])), {optional: true}),
       query(`
       .from-wrapper-to-date,
-      .to-wrapper-to-date,
+      .to-wrapper-to-datee,
       .from-header,
       .to-header,
       .category-header_animation-back
@@ -43,7 +43,7 @@ export const NextStep = trigger('NextStep', [                                   
       `, animate('0.4s 0s ease', keyframes([
           style({
             background: 'transparent',
-            boxShadow: 'none',
+            // boxShadow: 'none',
           }),
           // style({
           //   background: 'transparent',
@@ -51,7 +51,7 @@ export const NextStep = trigger('NextStep', [                                   
           // }),
           style({
             background: 'transparent',
-            boxShadow: 'none',
+            // boxShadow: 'none',
           }),
         ])), {optional: true}
       ),
@@ -166,12 +166,15 @@ export const NextStep = trigger('NextStep', [                                   
       animate('0.4s 0s ease', keyframes([
           style({
             'z-index': 9,
+            boxShadow: 'none',
+
           }),
           // style({
           //   'z-index': 9
           // }),
           style({
             'z-index': 9,
+            boxShadow: 'none',
           }),
         ])), {optional: true}
       ),

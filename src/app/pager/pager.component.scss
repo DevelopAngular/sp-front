@@ -51,16 +51,26 @@
     //top: -17px;
     &__left{
         left: 0;
+      img {
+        position: relative;
+        left: -2px;
+      }
     }
     &__right{
         right: 0;
+      img {
+        position: relative;
+        left: 2px;
+      }
     }
 }
-.button-image:hover {
-    width: 25px;
-    height: 25px;
-    background-color: #9d97bc;
-    opacity: 0.3;
+.paginator-button:hover {
+    //width: 25px;
+    //height: 25px;
+    //background-color: #9d97bc;
+    background-color: rgba(255, 255, 255, .1);
+    box-shadow: 0 0 0 8px rgba(255, 255, 255, .1);
+    //opacity: 0.3;
     border-radius: 50%;
     cursor: pointer;
     align-items: center;
