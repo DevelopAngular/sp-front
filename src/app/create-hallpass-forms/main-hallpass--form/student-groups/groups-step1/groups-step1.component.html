@@ -16,7 +16,7 @@
         </div>
         <div class="content-left_groups" (click)="selectGroup(null, $event)">
           <div  class="goups-container">
-            <div class="content-left_placeholder" *ngIf="isEmptyGroups$ | async">
+            <div class="content-left_placeholder" *ngIf="(isEmptyGroups$ | async) && !groups.length">
               <span>No student groups</span>
             </div>
             <div *ngIf="groups && groups.length">

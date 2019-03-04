@@ -4,7 +4,7 @@ import {StudentList} from '../../../../models/StudentList';
 import {User} from '../../../../models/User';
 import {UserService} from '../../../../services/user.service';
 import {Observable, of, timer} from 'rxjs';
-import {finalize, switchMap} from 'rxjs/operators';
+import {finalize, publish, publishReplay, refCount, switchMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-groups-step1',
