@@ -50,6 +50,7 @@ export class GroupsContainerComponent implements OnInit {
       this.userService.getStudentGroups()
         .subscribe((groups: StudentList[]) => {
           this.groups = groups;
+
         });
     });
   }
@@ -91,7 +92,10 @@ export class GroupsContainerComponent implements OnInit {
             break;
         case 1:
             if (evt.fromState === 3) {
+              console.log('After deleting data ====>', evt);
+              if (evt.data.selectedGroup) {
                 this.FORM_STATE.data.selectedGroup = this.groups.find(group => group.id === evt.data.selectedGroup.id);
+              }
             } else {
                 this.selectedStudents = evt.data.selectedStudents;
             }

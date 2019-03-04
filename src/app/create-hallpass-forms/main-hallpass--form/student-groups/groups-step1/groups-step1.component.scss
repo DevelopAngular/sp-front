@@ -166,7 +166,18 @@
           color: $secondary-color;
           font-size: 1.1em;
           text-align: center;
-          padding-top: 35px;
+          //padding-top: 35px;
+          .no-groups-dummy-image {
+            img {
+              width: 130px;
+              margin: 10px auto;
+            }
+          }
+          .no-groups-dummy-text {
+            margin-top: 5px;
+            font-size: 18px;
+            color: #999999;
+          }
         }
       }
       &-right {

@@ -51,7 +51,9 @@ export class DateTimeComponent implements OnInit {
       date: this.requestTime,
       declinable: this.declinable.value
     };
-    this.result.emit(this.formState);
+    setTimeout(() => {
+      this.result.emit(this.formState);
+    }, 100);
   }
 
   back() {
