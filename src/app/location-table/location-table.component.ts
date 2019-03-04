@@ -47,11 +47,13 @@ export class LocationTableComponent implements OnInit {
   rightShadow: boolean = true;
 
   choices: any[] = [];
+  noChoices:boolean = false;
   starredChoices: any[] = [];
   search: string = '';
   nextChoices: string = '';
   favoritesLoaded: boolean;
   hideFavorites: boolean;
+
   locationWithFavorites;
 
   @HostListener('scroll', ['$event'])
@@ -96,6 +98,11 @@ export class LocationTableComponent implements OnInit {
   ngOnInit() {
       if (this.staticChoices) {
       this.choices = this.staticChoices;
+        if (!this.choices.length) {
+          this.noChoices = true;
+        } else {
+          this.noChoices = false;
+        }
     } else {
         const url = 'v1/'
             +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
@@ -107,6 +114,11 @@ export class LocationTableComponent implements OnInit {
             this.mergeLocations(url)
                 .subscribe(res => {
                     this.choices = res.sort((a, b) => a.id - b.id);
+                  if (!this.choices.length) {
+                    this.noChoices = true;
+                  } else {
+                    this.noChoices = false;
+                  }
                 });
         } else {
             this.locationService.searchLocationsWithConfig(url)
@@ -114,15 +126,21 @@ export class LocationTableComponent implements OnInit {
                   this.choices = p.results;
                   // this.choices = p.results.concat(p.results,p.results,p.results,p.results);
                   this.nextChoices = p.next;
+              if (!this.choices.length) {
+                this.noChoices = true;
+              } else {
+                this.noChoices = false;
+              }
                 });
         }
     }
-    if(this.type==='location'){
+    if (this.type==='location'){
       this.locationService.getFavoriteLocations().toPromise().then((stars: any[]) => {
         this.starredChoices = stars.map(val => Location.fromJSON(val));
           this.favoritesLoaded = true;
       });
     }
+
   }
 
   updateOrderLocation(locations) {
@@ -134,6 +152,7 @@ export class LocationTableComponent implements OnInit {
 
 
   onSearch(search: string) {
+    this.noChoices = false;
     this.search = search.toLowerCase();
     // if(this.staticChoices){
     //   this.choices = this.staticChoices.filter(element => {return (element.display_name.toLowerCase().includes(search) || element.first_name.toLowerCase().includes(search) || element.last_name.toLowerCase().includes(search))})
@@ -186,6 +205,9 @@ export class LocationTableComponent implements OnInit {
         }
       }
     // }
+    if (!this.choices.length) {
+      this.noChoices = true;
+    }
   }
 
   mergeLocations(url) {

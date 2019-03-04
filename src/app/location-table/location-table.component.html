@@ -33,7 +33,7 @@
     <!--<div *ngIf="rightShadow" class="shadow"></div>-->
   </div>
   <div *ngIf="rightHeaderText && !hideFavorites" style="margin-top: 10px" class="fav-header">All Rooms</div>
-  <div class="table-right" [style.margin]="'0 ' +(showFavorites?'0':'auto')">
+  <div class="table-right" [style.margin]="'0 ' +(showFavorites?'0':'auto')" *ngIf="!noChoices; else noLocsDummy">
     <!--<app-round-input-->
             <!--[style.margin]="'20px' "-->
             <!--[minWidth]="'20px auto 5px auto'"-->
@@ -55,4 +55,9 @@
     </div>
     <!--<div *ngIf="leftShadow" class="shadow"></div>-->
   </div>
+  <ng-template  #noLocsDummy>
+    <div>
+      <img [src]="'./assets/emptyStates/undraw_people_search_wctu.svg'" alt="undraw_people_search_wctu.svg">
+    </div>
+  </ng-template>
 </div>

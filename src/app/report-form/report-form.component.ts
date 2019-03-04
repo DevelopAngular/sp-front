@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import {Component, OnInit, Inject, ViewChild, ElementRef} from '@angular/core';
 import { User } from '../models/User';
 import { HttpService } from '../services/http-service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '../../../node_modules/@angular/material';
@@ -14,6 +14,13 @@ import {CreateFormService} from '../create-hallpass-forms/create-form.service';
   animations: [NextStep]
 })
 export class ReportFormComponent implements OnInit {
+
+  @ViewChild('messageBox') set content(content: ElementRef) {
+    if (content) {
+      content.nativeElement.focus();
+    }
+  }
+
   frameMotion$;
   formState: string = 'studentSelect';
   selectedStudents: User[] = [];
