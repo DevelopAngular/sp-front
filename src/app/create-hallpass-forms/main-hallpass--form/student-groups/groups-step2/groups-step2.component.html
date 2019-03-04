@@ -2,7 +2,7 @@
   <div class="header">
     <div class="header_back-button" (click)="back()">
       <img  *ngIf="!form.get('title').value && !selectedStudents.length"
-            class="header_back-button"
+            class=""
             [src]="'./assets/Combined Shape.svg' | resolveAsset">
       <span class="header_back-button"
             *ngIf="form.get('title').value || selectedStudents.length">Cancel</span>
