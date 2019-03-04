@@ -90,7 +90,7 @@ export class GroupsContainerComponent implements OnInit {
             this.groupDTO.get('users').setValue(evt.data.selectedStudents);
             break;
         case 1:
-            if (evt.fromState === 3) {
+            if (evt.fromState === 3 && evt.data.selectedGroup) {
                 this.FORM_STATE.data.selectedGroup = this.groups.find(group => group.id === evt.data.selectedGroup.id);
             } else {
                 this.selectedStudents = evt.data.selectedStudents;
