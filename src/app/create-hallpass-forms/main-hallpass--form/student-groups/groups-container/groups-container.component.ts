@@ -5,6 +5,7 @@ import {StudentList} from '../../../../models/StudentList';
 import {BehaviorSubject} from 'rxjs';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {UserService} from '../../../../services/user.service';
+import {switchMap} from 'rxjs/operators';
 
 export enum States {
   SelectStudents = 1,
@@ -45,12 +46,11 @@ export class GroupsContainerComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.updateData$.subscribe(() => {
-
-      this.userService.getStudentGroups()
-        .subscribe((groups: StudentList[]) => {
-          this.groups = groups;
-        });
+    this.updateData$.pipe(switchMap(() => {
+      return this.userService.getStudentGroups();
+    }))
+    .subscribe((groups: StudentList[]) => {
+      this.groups = groups;
     });
   }
 
