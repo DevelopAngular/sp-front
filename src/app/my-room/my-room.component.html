@@ -5,7 +5,7 @@
         <!--<p>{{optionsOpen}} | {{showArrow}}</p>-->
         <div class="selected-teacher" [style.cursor]="roomOptions.length > 1 ? 'pointer' : 'default'" #target (click)="showOptions(target)">
           <!--{{ roomOptions?selectedLocation.title:"" }}-->
-          {{ selectedLocation ? selectedLocation.title : 'All Rooms'}}
+          {{ selectedLocation ? selectedLocation.title : (roomOptions.length > 1 ? 'All Rooms' : roomOptions[0].title)}}
           <img *ngIf="showArrow" class="disclosure-icon" [src]="'./assets/Disclosure Indicator (Blue).png' | resolveAsset">
         </div>
         <!--<input-->

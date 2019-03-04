@@ -206,8 +206,8 @@ export class MyRoomComponent implements OnInit {
         'previousSelectedDate': this.searchDate
       }
     });
-    DR.afterClosed().subscribe((_date: Date) => {
-      this.setSearchDate(_date);
+    DR.afterClosed().subscribe((_date) => {
+      this.setSearchDate(_date.date);
     });
   }
 

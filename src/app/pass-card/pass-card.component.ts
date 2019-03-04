@@ -359,7 +359,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
             this.dialogRef.close();
           });
         } else if(action === 'report') {
-          this.dialogRef.close({'report':this.pass.student});
+          this.dialogRef.close({'report': this.pass.student });
         } else if(action === 'end') {
           this.hallPassService.endPass(this.pass.id).subscribe(() => {
             this.dialogRef.close();

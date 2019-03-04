@@ -52,7 +52,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() maxHeight;
   @Input() showEmptyHeader: boolean;
 
-  @Input() passProvider: PassLikeProvider | PassLikeProvider[];
+  @Input() passProvider: PassLikeProvider;
 
   @Output() sortMode = new EventEmitter<string>();
   @Output() reportFromPassCard = new EventEmitter();
@@ -98,19 +98,9 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       if (this.mock) {
 
       } else {
-        if (_.isArray(this.passProvider)) {
-          /////// Process Block ///////////
-          // const merged$ = this.passProvider.map(provider => {
-          //   return provider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
-          // });
-          // this.currentPasses$ = zip(...merged$).pipe(mergeAll());
-          // this.currentPasses$.subscribe(res => console.log('RES ===>>>', res));
-        } else {
-            this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
-            this.currentPasses$.subscribe(res => console.log('RESPONSE ====>>>>', res));
-        }
-
-        if(this.isActive){
+        this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
+      }
+        if(this.isActive) {
           this.timers.push(window.setInterval(() => {
             this.timerEvent.next(null);
           }, 1000));
@@ -119,7 +109,6 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
         //   console.log(data);
         //   this.test = data[0];
         // });
-      }
   }
 
   ngOnDestroy() {
@@ -179,7 +168,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       console.log('Closed with ===>', dialogData);
       if (dialogData && dialogData['report']) {
         const reportRef = this.dialog.open(ReportFormComponent, {
-          width: '750px',
+          width: '425px',
+          height: '500px',
           panelClass: 'form-dialog-container',
           backdropClass: 'custom-backdrop',
           data: {'report': dialogData['report']}
