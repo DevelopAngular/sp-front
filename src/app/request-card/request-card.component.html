@@ -21,7 +21,7 @@
   <div class="request-card-content" *ngIf="!isModal">
     <div class="duration-picker">
       <app-traveltype-picker
-              [width]="(request.destination.travel_types.length < 2 ? '96px' : '115px')"
+              [width]="(request.destination.travel_types.length < 2 ? '96px' : '145px')"
               [height]="'28px'"
               (onSelect)="selectedTravelType=$event"
               [choices]="request.destination.travel_types"
@@ -52,7 +52,7 @@
           </div>
           <div class="page-2">
             <div class="page-2-wrapper">
-              <div class="message" [style.height]="(forInput?'70px':'160px')">
+              <div class="message" [style.height]="(forInput?'70px':'155px')">
                 <span [style.font-weight]="'bold'">{{(forStaff?'Message from ' +studentName +':':'Your message:')}}</span><br>
                 {{ (request.attachment_message===''?'No message':request.attachment_message) }}
                 <div *ngIf="request.status==='declined'">

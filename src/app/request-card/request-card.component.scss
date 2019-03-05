@@ -118,10 +118,12 @@
             .request-description {
                 display: flex;
                 align-items: center;
-                width: 225px;
+                width: 226px;
                 .request-description-icon {
                     width: 29px;
-                    height: 29px;
+                }
+                .request-description-text {
+                    text-align: left;
                 }
             }
         }
@@ -248,13 +250,9 @@
 .request-description{
     font-weight: bold;
     font-size: 20px;
-    text-align: left;
-    width: 225px;
 }
 
 .request-description-icon{
-    width: 25px;
-    height: auto;
     margin-right: 10px;
 }
 
@@ -316,7 +314,7 @@
     font-size: 16px;
     width: 225px;
     text-align: left;
-    //padding-top: 20px;
+    padding-top: 20px;
     overflow: auto;
     overflow-wrap: break-word;
 
