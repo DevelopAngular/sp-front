@@ -178,7 +178,8 @@ export class OverlayContainerComponent implements OnInit {
             this.travelType = this.pinnable.location.travel_types;
             break;
         case 'edit':
-          colors = '#606981, #ACB4C1';
+          // colors = '#606981, #ACB4C1';
+          this.titleColor = '#1F195E';
           this.folderName = 'Bulk Edit Rooms';
           this.form.get('timeLimit').clearValidators();
           this.form.get('timeLimit').setValidators([
