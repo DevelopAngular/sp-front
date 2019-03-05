@@ -31,11 +31,11 @@ export class CalendarComponent implements OnInit {
 
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
-    this.elementPosition = rect.right < 1000;
+    this.elementPosition = rect.right < 1230;
     if (this.elementPosition) {
        matDialogConfig.position = { left: `${rect.left + (rect.width / 2) - 148 }px`, top: `${rect.bottom + 15}px` };
     } else {
-        matDialogConfig.position = { left: `${rect.left - 200}px`, top: `${rect.bottom + 15}px` };
+       matDialogConfig.position = { left: `${rect.left - 200}px`, top: `${rect.bottom + 15}px` };
     }
 
     this._matDialogRef.updatePosition(matDialogConfig.position);
