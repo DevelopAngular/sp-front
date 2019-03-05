@@ -31,7 +31,7 @@
                 </div>
                 <div class="page-2">
                     <div class="page-2-wrapper">
-                        <div class="message" [style.height]="(forInput?'70px':'160px')" [style.margin-bottom]="(forInput?'4px':'0px')">
+                        <div class="message" [style.height]="(forInput?'70px':'155px')" [style.margin-bottom]="(forInput?'4px':'0px')">
                             <span [style.font-weight]="'bold'">Your message:</span><br>
                             {{ (request?.attachment_message===''?'No message':request?.attachment_message) }}
                             <div *ngIf="request?.status==='declined'">
