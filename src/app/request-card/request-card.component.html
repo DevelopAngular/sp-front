@@ -21,7 +21,7 @@
   <div class="request-card-content" *ngIf="!isModal">
     <div class="duration-picker">
       <app-traveltype-picker
-              [width]="(request.destination.travel_types.length < 2 ? '96px' : '115px')"
+              [width]="(request.destination.travel_types.length < 2 ? '96px' : '145px')"
               [height]="'28px'"
               (onSelect)="selectedTravelType=$event"
               [choices]="request.destination.travel_types"
