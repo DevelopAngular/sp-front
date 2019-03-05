@@ -1,6 +1,7 @@
 .favorite-form-wrapper{
     width: 395px;
     height: 500px;
+  position: relative;
 }
 
 .divider{
@@ -51,8 +52,16 @@
     overflow: auto;
     height: 436px;
     align-items: center;
+    box-sizing: border-box;
+    padding-bottom: 25px;
 
     .save-button {
         margin: 10px;
     }
+}
+.bottom-shadow-hint {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  box-shadow: -35px -5px 25px 18px rgba(255, 255, 255, 1);
 }

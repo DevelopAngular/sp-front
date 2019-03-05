@@ -49,6 +49,7 @@ export class LocationTableComponent implements OnInit {
 
   choices: any[] = [];
   noChoices:boolean = false;
+  mainContentVisibility: boolean = false;
   starredChoices: any[] = [];
   search: string = '';
   nextChoices: string = '';
@@ -97,13 +98,14 @@ export class LocationTableComponent implements OnInit {
   }
 
   ngOnInit() {
-      if (this.staticChoices) {
+    if (this.staticChoices) {
       this.choices = this.staticChoices;
         if (!this.choices.length) {
           this.noChoices = true;
         } else {
           this.noChoices = false;
         }
+        this.mainContentVisibility = true;
     } else {
         const url = 'v1/'
             +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
@@ -120,6 +122,8 @@ export class LocationTableComponent implements OnInit {
                   } else {
                     this.noChoices = false;
                   }
+                  this.mainContentVisibility = true;
+
                 });
         } else {
             this.locationService.searchLocationsWithConfig(url)
@@ -132,13 +136,15 @@ export class LocationTableComponent implements OnInit {
               } else {
                 this.noChoices = false;
               }
-                });
+              this.mainContentVisibility = true;
+            });
         }
     }
     if (this.type==='location'){
       this.locationService.getFavoriteLocations().toPromise().then((stars: any[]) => {
         this.starredChoices = stars.map(val => Location.fromJSON(val));
           this.favoritesLoaded = true;
+          this.mainContentVisibility = true;
       });
     }
 
@@ -159,7 +165,6 @@ export class LocationTableComponent implements OnInit {
     //   this.choices = this.staticChoices.filter(element => {return (element.display_name.toLowerCase().includes(search) || element.first_name.toLowerCase().includes(search) || element.last_name.toLowerCase().includes(search))})
     // } else{
       if (search !== '') {
-
         const url = 'v1/'
             +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
                 +(!!this.category ? ('?category=' +this.category +'&') : '?')
@@ -176,7 +181,8 @@ export class LocationTableComponent implements OnInit {
             const filtFevLoc = _.filter(this.starredChoices, (item => {
                 return item.title.toLowerCase().includes(this.search);
             }));
-            this.choices = [...filtFevLoc, ...this.filterResults(p.results)];
+          this.staticChoices = null;
+          this.choices = [...filtFevLoc, ...this.filterResults(p.results)];
         })
           .then(() => {
             if (!this.choices.length) {

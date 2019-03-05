@@ -85,17 +85,24 @@
             flex-direction: column;
             align-items: center;
         }
-
         .center-block {
             display: flex;
             align-items: center;
             height: 221px;
+          //position: relative;
 
             .page-1 {
                 height: 174px;
                 display: flex;
                 align-items: center;
             }
+            //.page-1, .page-2 {
+            //  position: absolute;
+            //  top: 0;
+            //  left: 0;
+            //  right: 0;
+            //  bottom: 0;
+            //}
         }
 
         .bottom-block {

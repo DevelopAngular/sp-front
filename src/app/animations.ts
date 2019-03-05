@@ -100,7 +100,11 @@ export const NextStep = trigger('NextStep', [                                   
       .student-select,
       .message-entry,
       .divider-text-message,
-      .divider-text-students
+      .divider-text-students,
+      .page-1,
+      .page-2,
+      .page-3,
+      .page-4
       `, animate('0.4s 0s ease', keyframes([
           style({
             opacity: 0,
@@ -228,12 +232,17 @@ export const NextStep = trigger('NextStep', [                                   
       .student-select,
       .message-entry,
       .divider-text-message,
-      .divider-text-students
+      .divider-text-students,
+      .page-1,
+      .page-2,
+      .page-3,
+      .page-4
       `,
       animate('0.4s 0s ease', keyframes([
             style({
               opacity: 1,
               transform: 'translateX(0px)',
+              // position: 'absolute'
             }),
             // style({
             //   opacity: 1.5,
@@ -242,6 +251,7 @@ export const NextStep = trigger('NextStep', [                                   
             style({
               opacity: 0,
               transform: 'translateX({{to}}px)',
+              // position: 'absolute'
             }),
 
         ])), {optional: true}

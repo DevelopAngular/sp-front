@@ -16,11 +16,14 @@ import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hall
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import * as _ from 'lodash';
 import {RequestsService} from '../services/requests.service';
+import {NextStep} from '../animations';
+import {BehaviorSubject} from 'rxjs';
 
 @Component({
   selector: 'app-request-card',
   templateUrl: './request-card.component.html',
-  styleUrls: ['./request-card.component.scss']
+  styleUrls: ['./request-card.component.scss'],
+  animations: [NextStep]
 })
 export class RequestCardComponent implements OnInit {
 
@@ -48,6 +51,8 @@ export class RequestCardComponent implements OnInit {
   isModal: boolean;
 
   performingAction: boolean;
+  frameMotion$: BehaviorSubject<any>;
+
 
   constructor(
       public dialogRef: MatDialogRef<RequestCardComponent>,
@@ -61,6 +66,8 @@ export class RequestCardComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.frameMotion$ = this.createFormService.getFrameMotionDirection();
+
     if (this.data['pass']) {
       this.isModal = true;
       this.request = this.data['pass'];
@@ -104,7 +111,9 @@ export class RequestCardComponent implements OnInit {
   formatDateTime(date: Date, timeOnly?: boolean){
     return Util.formatDateTime(date, timeOnly);
   }
-
+  // log(arg) {
+  //   console.log(arg);
+  // }
   newRequest(){
     this.performingAction = true;
     const body = this.forFuture?{

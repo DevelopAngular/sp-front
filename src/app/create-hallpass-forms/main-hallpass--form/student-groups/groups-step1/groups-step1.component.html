@@ -16,7 +16,7 @@
         </div>
         <div class="content-left_groups" (click)="selectGroup(null, $event)">
           <div  class="goups-container">
-            <div class="content-left_placeholder" *ngIf="(isEmptyGroups$ | async) && !groups.length">
+            <div class="content-left_placeholder" *ngIf="(isEmptyGroups$ | async) && !groups?.length">
                 <div class="no-groups-dummy-image">
                     <img  [src]="'./assets/emptyStates/undraw_group_selfie_ijc6.svg'" alt="undraw_group_selfie_ijc6.svg">
                 </div>
