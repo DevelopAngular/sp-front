@@ -6,13 +6,15 @@
       <img class="back-button" draggable="false"
            *ngIf="backButtonState && !hideHeaderIcon"
            alt="Go Back"
-           [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
+           [src]="'./assets/' + (titleColor === 'white' ? 'Back Button (White).png' : 'Combined Shape.svg') | resolveAsset"
+           (click)="back()">
 
-        <div class="cancel-button" *ngIf="!backButtonState && !hideHeaderIcon" (click)="back()">Cancel</div>
+        <div class="cancel-button" [style.color]="titleColor" *ngIf="!backButtonState && !hideHeaderIcon" (click)="back()">Cancel</div>
     </div>
-      <div class="title" *ngIf="overlayType === 'newRoom' || overlayType === 'editRoom'">{{ roomName }}</div>
+      <div class="title" [style.color]="titleColor" *ngIf="overlayType === 'newRoom' || overlayType === 'editRoom'">{{ roomName }}</div>
       <div
         class="title"
+        [style.color]="titleColor"
         *ngIf="showFolderName"
       >{{ folderName }}
       </div>
@@ -45,7 +47,11 @@
                              (buttonClick)="onPublish()"
         >{{(showPublishSpinner ? null : 'Publish')}}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
         </app-gradient-button>
-        <div *ngIf="!showPublishNewRoom && overlayType === 'newRoom' && isChangeState" style="color: white">Incomplete</div>
+        <div *ngIf="!showPublishNewRoom && overlayType === 'newRoom' && isChangeState"
+             [style.color]="titleColor"
+        >
+            Incomplete
+        </div>
 
         <app-gradient-button *ngIf="showPublishNewFolder && overlayType === 'newFolder' && !isEditFolder"
              [minHeight]="'40px'"
@@ -57,7 +63,12 @@
              (buttonClick)="onPublish()"
           >{{(showPublishSpinner ? null : 'Publish')}}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
         </app-gradient-button>
-        <div *ngIf="!showPublishNewFolder && overlayType === 'newFolder' && !isEditFolder && isChangeState" style="color: white">Incomplete</div>
+        <div
+          *ngIf="!showPublishNewFolder && overlayType === 'newFolder' && !isEditFolder && isChangeState"
+          [style.color]="titleColor"
+        >
+            Incomplete
+        </div>
 
         <app-gradient-button *ngIf="showPublishEditFolder && overlayType === 'newFolder' && isEditFolder"
              [minHeight]="'40px'"
