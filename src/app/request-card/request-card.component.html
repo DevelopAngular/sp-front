@@ -133,7 +133,7 @@
           Something went wrong
         </div>
         <ng-template #staffNoInput>
-          <div *ngIf="request.status=='pending'; else staffNotPending" style="margin-top: 10px">
+          <div *ngIf="request.status=='pending'; else staffNotPending" style="margin-top: 10px; width: 295px;">
             <app-card-button (onClick)="approveRequest()" [disabled]="performingAction" [width]="'295px'" [height]="'81px'" [gradientColor]="request.color_profile.gradient_color">
               <div class="resend-button-content">
                 <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
