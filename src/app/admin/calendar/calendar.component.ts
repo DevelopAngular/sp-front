@@ -1,4 +1,4 @@
-import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, HostListener, Inject, OnInit, ViewChild} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material';
 import { TimeService } from '../../services/time.service';
 
@@ -15,6 +15,11 @@ export class CalendarComponent implements OnInit {
   default: Date = undefined;
   elementPosition;
 
+  @HostListener('window:resize', ['$event.target'])
+    onResize() {
+      this.updateCalendarPosition();
+    }
+
   constructor(
       @Inject(MAT_DIALOG_DATA) public data: any[],
       private _matDialogRef: MatDialogRef<CalendarComponent>,
@@ -28,17 +33,20 @@ export class CalendarComponent implements OnInit {
   ngOnInit() {
     this.triggerElementRef = this.data['trigger'];
     this.previousSelectedDate = this.data['previousSelectedDate'];
+    this.updateCalendarPosition();
+  }
 
-    const matDialogConfig: MatDialogConfig = new MatDialogConfig();
-    const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
-    this.elementPosition = rect.right < 1230;
-    if (this.elementPosition) {
-       matDialogConfig.position = { left: `${rect.left + (rect.width / 2) - 148 }px`, top: `${rect.bottom + 15}px` };
-    } else {
-       matDialogConfig.position = { left: `${rect.left - 200}px`, top: `${rect.bottom + 15}px` };
-    }
+  updateCalendarPosition() {
+      const matDialogConfig: MatDialogConfig = new MatDialogConfig();
+      const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
+      this.elementPosition = rect.right < 1230;
+      if (this.elementPosition) {
+          matDialogConfig.position = { left: `${rect.left + (rect.width / 2) - 148 }px`, top: `${rect.bottom + 15}px` };
+      } else {
+          matDialogConfig.position = { left: `${rect.left - 215}px`, top: `${rect.bottom + 15}px` };
+      }
 
-    this._matDialogRef.updatePosition(matDialogConfig.position);
+      this._matDialogRef.updatePosition(matDialogConfig.position);
   }
 
   setSearchDate(date) {
