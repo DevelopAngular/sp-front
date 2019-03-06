@@ -321,7 +321,7 @@
       </div>
 
       <div class="rooms-in-folder" *ngIf="overlayType === 'newFolder'">
-        <div class="content-buttons-in-folder" *ngIf="readyRoomsToEdit.length <= 0 && selectedRooms.length <= 5">
+        <div class="content-buttons-in-folder" *ngIf="readyRoomsToEdit.length <= 0 && !selectedRooms.length">
           <div class="button-in-folder" *ngFor="let button of buttonsInFolder">
             <app-gradient-button
                     [minHeight]="'35px'"
@@ -336,7 +336,7 @@
               {{ button.title }}</app-gradient-button>
           </div>
         </div>
-        <div class="content-buttons-in-folder" *ngIf="readyRoomsToEdit.length > 0 && selectedRooms.length <= 5">
+        <div class="content-buttons-in-folder" *ngIf="readyRoomsToEdit.length > 0 && !selectedRooms.length">
           <div class="button-in-folder" *ngFor="let button of buttonsWithSelectedRooms">
             <app-gradient-button
                     [minHeight]="'35px'"
@@ -350,26 +350,41 @@
               {{ button.title }}</app-gradient-button>
           </div>
         </div>
-        <div class="rooms-in-folder-title">Rooms in Folder ({{ selectedRooms.length }})</div>
-        <mat-divider style="margin-top: 9px"></mat-divider>
-        <div class="rooms-in-folder-content" [ngClass]="{'rooms-scrolling': selectedRooms.length > 5}">
+        <div [ngClass]="{ 'sticky': isSticky }">
+            <div class="rooms-in-folder-title">
+                <div class="all-rooms-checkbox" *ngIf="selectedRooms.length">
+                    <mat-checkbox style="margin-left: 12px; margin-right: 15px"
+                                  [checked]="readyRoomsToEdit.length === selectedRooms.length"
+                                  [indeterminate]="readyRoomsToEdit.length && readyRoomsToEdit.length < selectedRooms.length"
+                                  (change)="selectedRoomsEvent($event, null, true)"
+                    >
+                    </mat-checkbox>
+                </div>
+                <div class="rooms-length-title">
+                    Rooms in Folder ({{ selectedRooms.length }})
+                </div>
+            </div>
+            <mat-divider style="margin-top: 9px"></mat-divider>
+        </div>
+
+        <div class="rooms-in-folder-content">
           <div class="not-rooms-in-folder" *ngIf="!selectedRooms.length">To add rooms, enter a folder name and select an appearance</div>
 
           <div class="rooms-list" #roomList *ngIf="selectedRooms.length > 0">
             <mat-list>
               <div>
-                <div class="room">
-                  <mat-checkbox style="margin-left: 12px"
-                                [checked]="readyRoomsToEdit.length === selectedRooms.length"
-                                [indeterminate]="readyRoomsToEdit.length && readyRoomsToEdit.length < selectedRooms.length"
-                                (change)="selectedRoomsEvent($event, null, true)"
-                  >
-                  </mat-checkbox>
-                  <div class="room-edit">
-                    <mat-list-item>All...</mat-list-item>
-                  </div>
-                </div>
-                <mat-divider></mat-divider>
+                <!--<div class="room">-->
+                  <!--<mat-checkbox style="margin-left: 12px"-->
+                                <!--[checked]="readyRoomsToEdit.length === selectedRooms.length"-->
+                                <!--[indeterminate]="readyRoomsToEdit.length && readyRoomsToEdit.length < selectedRooms.length"-->
+                                <!--(change)="selectedRoomsEvent($event, null, true)"-->
+                  <!--&gt;-->
+                  <!--</mat-checkbox>-->
+                  <!--<div class="room-edit">-->
+                    <!--<mat-list-item>All...</mat-list-item>-->
+                  <!--</div>-->
+                <!--</div>-->
+                <!--<mat-divider></mat-divider>-->
               </div>
               <div *ngFor="let room of sortSelectedRooms">
                 <div class="room">
@@ -386,7 +401,7 @@
           </div>
 
 
-          <div class="content-buttons-in-folder button-column" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length <= 0 && selectedRooms.length > 5">
+          <div class="content-buttons-in-folder button-column" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length <= 0 && selectedRooms.length">
             <div class="button-in-folder gd-button" *ngFor="let button of buttonsInFolder">
               <app-gradient-button
                       [minHeight]="'35px'"
@@ -401,7 +416,7 @@
                 {{ button.title }}</app-gradient-button>
             </div>
           </div>
-          <div class="content-buttons-in-folder button-column" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length > 0 && selectedRooms.length > 5">
+          <div class="content-buttons-in-folder button-column" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length > 0 && selectedRooms.length">
             <div class="button-in-folder gd-button" *ngFor="let button of buttonsWithSelectedRooms">
               <app-gradient-button
                       [minHeight]="'35px'"

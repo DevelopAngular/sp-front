@@ -124,6 +124,8 @@ export class OverlayContainerComponent implements OnInit {
   showPublishSpinner: boolean;
   showDoneSpinner: boolean;
 
+  isSticky: boolean = true;
+
   buttonsInFolder = [
       { title: 'New Room', icon: './assets/Create (White).png', location: 'newRoomInFolder'},
       { title: 'Import Rooms', icon: null, location: 'importRooms'},
