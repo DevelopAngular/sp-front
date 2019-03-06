@@ -77,6 +77,9 @@
             [routerLink]="['/admin/accounts', '_profile_admin']">
             <span>Manage Profiles</span>
           </app-gradient-button>
+          <div [routerLink]="['/admin/accounts', '_profile_admin']">
+            <span>Manage Users</span> <img width="20" [src]="'./assets/Disclosure Indicator (Grey).png'" alt="">
+          </div>
         </div>
         <div class="card card__role flex-center-between">
           <div>
@@ -123,15 +126,15 @@
             <span>Manage Profiles</span>
           </app-gradient-button>
         </div>
-        <!--<div class="card card__role flex-center-between" style="display: none;">-->
-          <!--<div>-->
-            <!--<div class="card_header">Secretaries & Substitutes</div>-->
-            <!--<p class="card_title">-->
-              <!--<span>{{(accounts$ | async).aff_secretary}} profiles</span><br>-->
-              <!--A secretary or substitute teacher acts as a certain teacher when they sign-in.-->
-              <!--They can manage passes in his/her room and create passes as that teacher.-->
-            <!--</p>-->
-          <!--</div>-->
+        <div class="card card__role flex-center-between">
+          <div>
+            <div class="card_header">Secretaries & Substitutes</div>
+            <p class="card_title">
+              <span>{{'0'}} profiles</span><br>
+              A secretary or substitute teacher acts as a certain teacher when they sign-in.
+              They can manage passes in his/her room and create passes as that teacher.
+            </p>
+          </div>
         <!--<app-gradient-button-->
         <!--[style.padding]='0 15px
         [cursor]='pointer
@@ -143,7 +146,7 @@
           <!--[routerLink]="['/admin/accounts', 'staff_secretary']">-->
           <!--<span>Manage Profiles</span>-->
         <!--</app-gradient-button>-->
-        <!--</div>-->
+        </div>
       </div>
     </div>
   </div>

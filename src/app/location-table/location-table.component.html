@@ -11,7 +11,7 @@
     [focused]="true"
     (ontextupdate)="onSearch($event)"
   ></app-round-input>
-  <div class="main-content" *ngIf="mainContentVisibility && favoritesLoaded">
+  <div class="main-content" *ngIf=" type === 'location' ? ( mainContentVisibility && favoritesLoaded ) : mainContentVisibility ">
 
     <div *ngIf="type==='location' && showFavorites && !hideFavorites" class="table-left">
       <div class="fav-header">
