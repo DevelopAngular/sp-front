@@ -25,9 +25,9 @@ export class CalendarComponent implements OnInit {
       private _matDialogRef: MatDialogRef<CalendarComponent>,
       private timeService: TimeService,
   ) {
-    if (this.default === undefined) {
-      this.default = this.timeService.nowDate();
-    }
+    // if (this.default === undefined) {
+    //   this.default = this.timeService.nowDate();
+    // }
   }
 
   ngOnInit() {

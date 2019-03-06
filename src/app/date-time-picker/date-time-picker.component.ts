@@ -46,19 +46,23 @@ export class DateTimePickerComponent implements OnInit, OnDestroy{
     newMoment.setSeconds(0);
     let nhrs = newMoment.getHours();
     let nmins = newMoment.getMinutes();
-    let ohrs = this.default.getHours();
-    let omins = this.default.getMinutes();
-
     let invalid = false;
-    if (this.min) {
-      if (newMoment.getDate() == this.min.getDate() && newMoment.getMonth() == this.min.getMonth()) {
-          invalid = (nhrs < ohrs) || (nhrs == ohrs && nmins < omins);
-      }
+    if (this.default) {
+        let ohrs = this.default.getHours();
+        let omins = this.default.getMinutes();
+
+        if (this.min) {
+            if (newMoment.getDate() == this.min.getDate() && newMoment.getMonth() == this.min.getMonth()) {
+                invalid = (nhrs < ohrs) || (nhrs == ohrs && nmins < omins);
+            }
+        }
     }
 
 
     if (invalid) {
-      this._selectedMoment = this.default;
+      if (this.default) {
+        this._selectedMoment = this.default;
+      }
       console.log('Time Invalid');
     } else{
       this._selectedMoment = newMoment;

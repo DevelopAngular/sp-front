@@ -243,10 +243,11 @@ export class HallmonitorComponent implements OnInit {
   private getReports(date?: Date) {
     const range = this.liveDataService.getDateRange(date);
     console.log(range);
-    date ? this.adminService.searchReports(range.end.toISOString(), range.start.toISOString()) : this.adminService.getReports()
-      .pipe(
+    const response$ = date ?
+        this.adminService.searchReports(range.end.toISOString(), range.start.toISOString()) :
+        this.adminService.getReports();
+    response$.pipe(
         map((list: any[]) => {
-
           return list.map((report, index) => {
             return {
               student_name: report.student.display_name + ` (${report.student.primary_email.split('@', 1)[0]})`,
