@@ -3,7 +3,9 @@
     {{ name }}
   </div>
   <div class="main">
-    <app-gradient-button [buttonLink]="link" [minHeight]="'40px'" [width]="'120px'" [fontSize]="'14px'" (buttonClick)="dialogRef.close()">
+    <app-gradient-button [documentType]="'xlsx'" [buttonLink]="XLSXlink" [minHeight]="'40px'" [width]="'120px'" [fontSize]="'14px'" (buttonClick)="dialogRef.close()">
+    </app-gradient-button>
+    <app-gradient-button [documentType]="'pdf'" [buttonLink]="PDFlink" [minHeight]="'40px'" [width]="'120px'" [fontSize]="'14px'" (buttonClick)="dialogRef.close()">
     </app-gradient-button>
   </div>
 </div>

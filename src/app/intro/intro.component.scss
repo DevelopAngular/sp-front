@@ -28,7 +28,13 @@
   }
 }
 
+.next-step-animation-trigger {
+  display: flex;
+  justify-content: center;
+}
+
 .slide {
+  position: absolute;
   font-size: 1.05em;
   text-align: center;
 
@@ -189,7 +195,7 @@
         }
       }
 
-      .divider-header{
+      .divider-header-mock {
         display: flex;
         flex-direction: row;
         align-items: center;

@@ -4,7 +4,8 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 export interface LinkGeneratedDialogData {
   name: string;
-  link: string;
+  xlsxLink: string;
+  pdfLink: string;
 }
 
 @Component({
@@ -15,13 +16,14 @@ export interface LinkGeneratedDialogData {
 export class LinkGeneratedDialogComponent implements OnInit {
 
   name: string;
-  link: string | SafeUrl;
+  XLSXlink: string | SafeUrl;
+  PDFlink: string | SafeUrl;
 
-  static createDialog(dialog: MatDialog, name: string, link: string) {
+  static createDialog(dialog: MatDialog, name: string, xlsxLink: string, pdfLink: string) {
     return dialog.open(LinkGeneratedDialogComponent, {
       panelClass: 'accounts-profiles-dialog',
       backdropClass: 'custom-bd',
-      data: {name, link}
+      data: {name, xlsxLink, pdfLink }
     });
   }
 
@@ -31,7 +33,8 @@ export class LinkGeneratedDialogComponent implements OnInit {
       public dialogRef: MatDialogRef<LinkGeneratedDialogComponent>,
       ) {
     this.name = data.name;
-    this.link = this.sanitizer.bypassSecurityTrustUrl(data.link);
+    this.XLSXlink = this.sanitizer.bypassSecurityTrustUrl(data.xlsxLink);
+    this.PDFlink = this.sanitizer.bypassSecurityTrustUrl(data.pdfLink);
   }
 
   ngOnInit() {
