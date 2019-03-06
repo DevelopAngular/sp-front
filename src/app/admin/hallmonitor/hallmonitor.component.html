@@ -45,7 +45,7 @@
             <div class="text">Reported Students</div>
           </div>
           <div class="calendar-icon-container" [ngClass]="{'active-calendar-icon': activeCalendar}">
-            <img draggable="false" [src]="( !reportsDate ? './assets/Calendar (Blue).png' : './assets/Calendar (Light Blue).png') | resolveAsset" class="calendar-icon" (click)="openDateDialog($event)">
+            <img draggable="false" [src]="( inactiveIcon ? './assets/Calendar (Blue).png' : './assets/Calendar (Light Blue).png') | resolveAsset" class="calendar-icon" (click)="openDateDialog($event)">
           </div>
         </div>
         <h3 style="text-align: center; margin: 15px; color: #134482" *ngIf="!studentreport.length">{{reportsDate | date : 'MMM. d' }}</h3>

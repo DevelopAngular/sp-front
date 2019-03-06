@@ -54,6 +54,8 @@ export class HallmonitorComponent implements OnInit {
 
     hasPasses: Observable<boolean> = of(false);
 
+    inactiveIcon: boolean = true;
+
     public reportsDate: Date;
 
     constructor(
@@ -113,8 +115,10 @@ export class HallmonitorComponent implements OnInit {
     DR.afterClosed()
       .subscribe((data) => {
         this.activeCalendar = false;
+
       console.log('82 Date ===> :', data.date);
         if (data.date) {
+          this.inactiveIcon = data.date.getDay() === new Date().getDay();
           if ( !this.reportsDate || (this.reportsDate && this.reportsDate.getTime() !== data.date.getTime()) ) {
             this.reportsDate = new Date(data.date);
             console.log(this.reportsDate);
