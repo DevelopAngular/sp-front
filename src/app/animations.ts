@@ -104,7 +104,8 @@ export const NextStep = trigger('NextStep', [                                   
       .page-1,
       .page-2,
       .page-3,
-      .page-4
+      .page-4,
+      .slide
       `, animate('0.4s 0s ease', keyframes([
           style({
             opacity: 0,
@@ -236,7 +237,8 @@ export const NextStep = trigger('NextStep', [                                   
       .page-1,
       .page-2,
       .page-3,
-      .page-4
+      .page-4,
+      .slide
       `,
       animate('0.4s 0s ease', keyframes([
             style({

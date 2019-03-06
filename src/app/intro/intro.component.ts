@@ -3,18 +3,20 @@ import { Router } from '@angular/router';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
 import { User } from '../models/User';
-import { bumpIn } from '../animations';
+import {bumpIn, NextStep} from '../animations';
 import {PassLike} from '../models';
 import {HallPass} from '../models/HallPass';
-import {Subject} from 'rxjs';
+import {BehaviorSubject, fromEvent, Subject} from 'rxjs';
 import {StorageService} from '../services/storage.service';
+import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 
 @Component({
   selector: 'app-intro',
   templateUrl: './intro.component.html',
   styleUrls: ['./intro.component.scss'],
   animations: [
-    bumpIn
+    bumpIn,
+    NextStep
   ]
 })
 export class IntroComponent implements OnInit {
@@ -25,18 +27,37 @@ export class IntroComponent implements OnInit {
   buttons = {'left': false, 'right': false};
   slides;
 
+  frameMotion$: BehaviorSubject<any>;
+
+  enterTick: Subject<KeyboardEvent> = new Subject<KeyboardEvent>();
+
+
   constructor(
       public dataService: DataService,
       private _zone: NgZone,
       private loadingService: LoadingService,
       private router: Router,
-      private storage: StorageService
+      private storage: StorageService,
+      private formService: CreateFormService
   ) {
     console.log('intro.constructor');
   }
 
   ngOnInit() {
     console.log('intro.onInit()');
+
+
+    fromEvent(document, 'keypress').subscribe((evt: KeyboardEvent) => {
+      console.log(evt);
+      if (evt.keyCode === 13) {
+        this.slide();
+      }
+    });
+
+
+    this.frameMotion$ = this.formService.getFrameMotionDirection();
+
+
     this.dataService.currentUser
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {
@@ -294,4 +315,16 @@ export class IntroComponent implements OnInit {
     return (this.buttons[id] ? 'down' : 'up');
   }
 
+  slide(direction: string = 'forward') {
+    switch (direction) {
+      case 'forward':
+        this.formService.setFrameMotionDirection('forward');
+        setTimeout(() => { this.slideIndex++ }, 100);
+        break;
+      case'back':
+        this.formService.setFrameMotionDirection('back');
+        setTimeout(() => { this.slideIndex-- }, 100);
+        break;
+    }
+  }
 }
