@@ -38,7 +38,7 @@
     justify-content: space-between;
     overflow: hidden;
     &_header{
-      font-size: 24px;
+      //font-size: 24px;
       font-weight: 900;
       color: #3D396B;
       white-space: nowrap;
@@ -73,8 +73,10 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      flex-direction: row;
+      padding: 20px;
       .accounts, .g-suite{
-        flex: 1 1 0;
+        flex: 1 1 50%;
       }
     }
     &__role{

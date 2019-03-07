@@ -34,7 +34,6 @@ export class GroupsStep2Component implements OnInit {
     fromEvent(this.studentEmailsFile.nativeElement , 'change')
       .pipe(
         switchMap((evt: Event) => {
-            debugger;
           this.loadingIndicator = true;
           const FR = new FileReader();
           FR.readAsBinaryString(this.studentEmailsFile.nativeElement.files[0]);

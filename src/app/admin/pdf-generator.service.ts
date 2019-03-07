@@ -271,11 +271,13 @@ export class PdfGeneratorService {
 
         const isSafari = !!window.safari;
 
-        const linkConsumer = ( xlsxLink, pdfLink) => {
+        const linkConsumer = (pdfLink) => {
           // Show the link to the user. The important part here is that the link is opened by the
           // user from an href attribute on an <a> tag or the new window is opened during a click event.
           // Most browsers will refuse to open a new tab/window if it is not opened during a user-triggered event.
-          LinkGeneratedDialogComponent.createDialog(this.dialog, 'Report Generated Successfully', xlsxLink, pdfLink);
+
+          // One more marameter has been added to pass the raw data so that the user could download an Xlsx file from the dialog as well.
+          LinkGeneratedDialogComponent.createDialog(this.dialog, 'Report Generated Successfully', pdfLink, data);
         };
 
         const blob = doc.output('blob', {filename: 'test'});
@@ -287,12 +289,12 @@ export class PdfGeneratorService {
 
           const reader = new FileReader();
           reader.onloadend = () => {
-            linkConsumer(reader.result, null);
+            linkConsumer(reader.result);
           };
           reader.readAsDataURL(blob);
 
         } else {
-          linkConsumer(URL.createObjectURL(blob), null);
+          linkConsumer(URL.createObjectURL(blob));
         }
 
       });

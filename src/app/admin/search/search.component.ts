@@ -10,6 +10,7 @@ import {PassCardComponent} from '../../pass-card/pass-card.component';
 import {MatDialog} from '@angular/material';
 import { Util } from '../../../Util';
 import {HallPassesService} from '../../services/hall-passes.service';
+import {XlsxGeneratorService} from '../xlsx-generator.service';
 
 
 @Component({
@@ -38,6 +39,7 @@ export class SearchComponent implements OnInit {
       private httpService: HttpService,
       private hallPassService: HallPassesService,
       private pdf: PdfGeneratorService,
+      private xlsx: XlsxGeneratorService,
       private elRef: ElementRef,
       public dialog: MatDialog
   ) {

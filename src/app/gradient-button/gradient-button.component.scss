@@ -33,13 +33,13 @@
     font-weight: bold;
     color: white;
     span {
-      padding-top: 3px;
+      //padding-top: 2px;
       padding-right: 5px;
     }
     img {
-      width: 20px;
-      height: 20px;
-      padding-bottom: 3px;
+      width: 23px;
+      height: auto;
+      padding-bottom: 2px;
     }
     &:focus {
       color: white;
