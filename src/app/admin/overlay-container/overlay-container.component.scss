@@ -549,7 +549,6 @@
 .button-column {
   align-items: center;
   flex-direction: column;
-  margin-left: 65px;
 
   .gd-button {
     margin-bottom: 10px;
@@ -597,4 +596,9 @@
   height: 45px;
   justify-content: flex-end;
   background: white;
+}
+
+.sticky-button {
+  position: sticky;
+  top: 150px;
 }

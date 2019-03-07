@@ -1,4 +1,4 @@
-import {Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import {Component, ElementRef, HostListener, Inject, OnInit, ViewChild} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 
@@ -124,7 +124,7 @@ export class OverlayContainerComponent implements OnInit {
   showPublishSpinner: boolean;
   showDoneSpinner: boolean;
 
-  isSticky: boolean = true;
+  isSticky: boolean = false;
 
   buttonsInFolder = [
       { title: 'New Room', icon: './assets/Create (White).png', location: 'newRoomInFolder'},
@@ -136,6 +136,11 @@ export class OverlayContainerComponent implements OnInit {
       { title: 'Remove From Folder', action: 'remove_from_folder', color: '#606981, #ACB4C1', hover: '#606981', width: '150px'},
       { title: 'Delete Rooms', action: 'delete', color: '#DA2370,#FB434A', hover: '#DA2370',  width: '120px'}
   ];
+
+  @HostListener('scroll', ['$event'])
+  onScroll(event) {
+      // console.log(event.target.scrollTop);
+  }
 
   constructor(
       private dialogRef: MatDialogRef<OverlayContainerComponent>,
