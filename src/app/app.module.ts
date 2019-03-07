@@ -108,7 +108,8 @@ const appRoutes: Routes = [
     SchoolToggleBarComponent,
     ItemListComponent,
     ItemCellComponent,
-    NextReleaseComponent,],
+    NextReleaseComponent
+  ],
   entryComponents: [
     ConsentMenuComponent,
     OptionsComponent,

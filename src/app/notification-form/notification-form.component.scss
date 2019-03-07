@@ -1,0 +1,25 @@
+.notif-wrapper {
+  width: 395px;
+  height: 494px;
+
+  .notif-header {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    .back-button {
+      width: 24px;
+      cursor: pointer;
+      position: absolute;
+      left: 15px;
+
+    }
+
+    .header-title {
+      font-size: 17px;
+      color: white;
+    }
+  }
+}
