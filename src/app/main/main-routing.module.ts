@@ -14,7 +14,7 @@ const routes: Routes = [
       {path: 'passes', component: PassesComponent},
       {path: 'hallmonitor', component: HallMonitorComponent},
       {path: 'myroom', component: MyRoomComponent},
-      {path: 'settings', component: SettingsComponent},
+      {path: 'settings', component: SettingsComponent, resolve: {user: CurrentUserResolver} },
     ]
   },
   // {path: 'intro', component: IntroComponent}

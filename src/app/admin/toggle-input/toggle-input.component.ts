@@ -22,7 +22,7 @@ export class ToggleInputComponent implements OnInit {
 
   constructor() { }
   ngOnInit() {
-    this.e = fromEvent(this.inp.nativeElement, 'change')
+    this.e = fromEvent(this.inp.nativeElement, 'change');
     this.e.subscribe((e: any) => this.pushOut(e.target.checked) );
   }
 
