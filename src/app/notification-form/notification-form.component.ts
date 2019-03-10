@@ -80,14 +80,10 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
                           { controlTitle: 'New Pass Requests', formControl: 'new_pass_request' },
                           { controlTitle: 'Pass Request Updates', controlSubtitle: 'Alerts when a pass is accepted or declined by a student.', formControl: 'pass_request_updates' }
                       ]
-                  },
-
-                  {
-                      title: 'My Room',
-                      controls: roomsControls
-                  }
-
-                  );
+                  });
+              if (roomsControls.length > 0) {
+                  this.settings.push({ title: 'My Room', controls: roomsControls });
+              }
               this.buildForm();
           });
   }
