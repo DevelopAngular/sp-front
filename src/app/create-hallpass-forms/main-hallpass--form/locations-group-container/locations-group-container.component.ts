@@ -102,79 +102,82 @@ export class LocationsGroupContainerComponent implements OnInit {
     }
   }
 
-  toWhere(pinnable) {
-    this.pinnable = pinnable;
-    this.FORM_STATE.data.direction = {
-        from: this.data.fromLocation,
-        pinnable: pinnable
-    };
-    this.FORM_STATE.data.gradient = pinnable.gradient_color;
-    this.FORM_STATE.data.icon = pinnable.icon;
-    if (pinnable.category) {
-      this.FORM_STATE.previousState = States.toWhere;
-      return this.FORM_STATE.state = States.category;
-    } else {
-        this.data.toLocation = pinnable.location;
-        this.FORM_STATE.data.direction.to = pinnable.location;
-        const restricted = ((this.pinnable.location.restricted && !this.showDate) || (this.pinnable.location.scheduling_restricted && !!this.showDate));
-        if (!this.isStaff && restricted && pinnable.location) {
-            this.FORM_STATE.previousState = this.FORM_STATE.state;
-            return this.FORM_STATE.state = States.restrictedTarget;
+    toWhere(pinnable) {
+        this.pinnable = pinnable;
+        this.FORM_STATE.data.direction = {
+            from: this.data.fromLocation,
+            pinnable: pinnable
+        };
+        this.FORM_STATE.data.gradient = pinnable.gradient_color;
+        this.FORM_STATE.data.icon = pinnable.icon;
+        if (pinnable.category) {
+            this.FORM_STATE.previousState = States.toWhere;
+            return this.FORM_STATE.state = States.category;
         } else {
-           return this.postComposetData();
+            this.data.toLocation = pinnable.location;
+            this.FORM_STATE.data.direction.to = pinnable.location;
+            const restricted = ((this.pinnable.location.restricted && !this.showDate) || (this.pinnable.location.scheduling_restricted && !!this.showDate));
+            if (!this.isStaff && restricted && pinnable.location) {
+                this.FORM_STATE.previousState = this.FORM_STATE.state;
+                return this.FORM_STATE.state = States.restrictedTarget;
+            } else {
+                return this.postComposetData();
+            }
         }
+
     }
 
-  }
-
   fromCategory(location) {
-
     this.data.toLocation = location;
     this.FORM_STATE.data.direction.to = location;
-    const restricted = ((location.restricted && !this.showDate) || (location.scheduling_restricted && !!this.showDate));
-    if (restricted && !this.isStaff) {
-      this.FORM_STATE.previousState = this.FORM_STATE.state;
-      this.FORM_STATE.state = States.restrictedTarget;
+    // const restricted = ((location.restricted && !this.FORM_STATE.forLater) || (location.scheduling_restricted && !!this.FORM_STATE.forLater));
+    if ((location.restricted || location.scheduling_restricted) && !this.isStaff) {
+        this.FORM_STATE.previousState = States.from;
+        this.FORM_STATE.state = States.restrictedTarget;
     } else {
-      this.postComposetData();
+        this.postComposetData();
     }
   }
 
   requestTarget(teacher) {
-
     this.data.requestTarget = teacher;
     this.FORM_STATE.data.requestTarget = teacher;
+    this.FORM_STATE.previousState = States.restrictedTarget;
     this.FORM_STATE.state = States.message;
   }
 
   resultMessage(message, denyMessage: boolean = false) {
-
     if (!message) {
-      message = '';
+        message = '';
     }
     this.data.message = message;
     this.FORM_STATE.data.message = message;
-    this.postComposetData(denyMessage);
+    this.postComposetData(denyMessage, true);
   }
 
 
-  private postComposetData(close: boolean = false) {
-    const restricted = ((this.FORM_STATE.data.direction.to.restricted && !this.showDate) || (this.FORM_STATE.data.direction.to.scheduling_restricted && !!this.showDate));
-    if (!this.isStaff && restricted) {
-        this.FORM_STATE.formMode.formFactor = FormFactor.Request;
-    }
+  private postComposetData(close: boolean = false, isMessage?: boolean) {
+    const restricted = ((this.FORM_STATE.data.direction.to.restricted && !this.FORM_STATE.forLater) ||
+        (this.FORM_STATE.data.direction.to.scheduling_restricted && !!this.FORM_STATE.forLater));
     if (!this.isStaff && !restricted) {
         this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
     }
-    if (this.isStaff) {
-      if (this.FORM_STATE.data.date && this.FORM_STATE.data.date.declinable) {
-         this.FORM_STATE.formMode.formFactor = FormFactor.Invitation;
-      } else {
-         this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
-      }
+    if (!this.isStaff && (restricted || isMessage)) {
+        this.FORM_STATE.formMode.formFactor = FormFactor.Request;
     }
-    this.FORM_STATE.step =  close ? 0 : 4;
-    this.nextStepEvent.emit(this.FORM_STATE);
+    if (this.isStaff) {
+        if (this.FORM_STATE.data.date && this.FORM_STATE.data.date.declinable) {
+            this.FORM_STATE.formMode.formFactor = FormFactor.Invitation;
+        } else {
+            this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
+        }
+    }
+    this.FORM_STATE.previousStep = 3;
+    // this.FORM_STATE.step =  close ? 0 : 4;
+    setTimeout(() => {
+        this.FORM_STATE.step =  close ? 0 : 4;
+        this.nextStepEvent.emit(this.FORM_STATE);
+    }, 100);
   }
 
   back(event) {
