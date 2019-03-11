@@ -8,6 +8,7 @@ import { ColorProfile } from '../models/ColorProfile';
 import { User } from '../models/User';
 import {switchMap} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
+import {NotificationFormComponent} from '../notification-form/notification-form.component';
 
 export interface Setting {
   color_profile: ColorProfile;
@@ -40,6 +41,11 @@ export class SettingsComponent implements OnInit {
       'color_profile': new ColorProfile('', '', '#E7A700,#EFCE00', '#E7A700', '', '', ''),
       'action': 'favorite',
       'title': 'Favorites'
+    });
+    this.settings.push({
+      'color_profile': new ColorProfile('', '', '#DA2370,#FB434A', '#DA2370', '', '', ''),
+      'action': 'notifications',
+      'title': 'Notifications'
     });
     this.settings.push({
       'color_profile': new ColorProfile('', '', '#03CF31,#00B476', '#00B476', '', '', ''),
@@ -95,6 +101,11 @@ export class SettingsComponent implements OnInit {
         return this.locationService.updateFavoriteLocations(body);
       })).subscribe();
 
+    } else if (action === 'notifications') {
+      const notifRef = this.dialog.open(NotificationFormComponent, {
+          panelClass: 'form-dialog-container',
+          backdropClass: 'custom-backdrop',
+      });
     } else if (action === 'intro') {
       this.router.navigate(['main/intro']);
     } else if (action === 'team') {

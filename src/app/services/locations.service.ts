@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {Paged} from '../models';
 import {HttpService} from './http-service';
+import {User} from "../models/User";
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,10 @@ export class LocationsService {
 
     getLocationsWithCategory(category: string) {
         return this.http.get(`v1/locations?category=${category}&`);
+    }
+
+    getLocationsWithTeacher(teacher: User) {
+        return this.http.get<any[]>(`v1/locations?teacher_id=${teacher.id}`);
     }
 
     createLocation(data) {
