@@ -1,9 +1,19 @@
-<div [formGroup]="form" class="layout">
+<div [formGroup]="form" class="layout" [ngClass]="{'delimiter': delimiter}">
   <div>
     <p>{{controlLabel}}</p>
   </div>
-  <div class="future">
-    <input type="checkbox" [formControlName]="controlName" #inp class="future-checkbox" [id]="controlName">
-    <label class="future-label" [for]="controlName"></label>
+  <div style="display: flex; align-items: center;">
+    <div  *ngIf="disabled">
+      <img [src]="'./assets/Lock (Grey).png'" width="20" style="margin: 0 10px" alt="Lock (Grey).png">
+      <!--{{controlSize}}-->
+    </div>
+
+    <div class="future" [ngClass]="sizedLayout">
+      <input type="checkbox" [formControlName]="controlName" #inp class="future-checkbox" [id]="controlName">
+      <label class="future-label" [for]="controlName"></label>
+    </div>
+  </div>
+  <div class="user-action-none" *ngIf="disabled">
+    <!-- Needs to prevent header editing, but save it's presentation -->
   </div>
 </div>

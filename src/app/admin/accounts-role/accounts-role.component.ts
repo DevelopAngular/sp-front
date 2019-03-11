@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnDestroy, OnInit} from '@angular/core';
+import {Component, ElementRef, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
 import {MatDialog} from '@angular/material';
 import {UserService} from '../../services/user.service';
@@ -9,6 +9,15 @@ import {Util} from '../../../Util';
 import {HttpService} from '../../services/http-service';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {AdminService} from '../../services/admin.service';
+import {ColumnsConfigDialogComponent} from '../columns-config-dialog/columns-config-dialog.component';
+import {FormControl, FormGroup} from '@angular/forms';
+import {StorageService} from '../../services/storage.service';
+import {userError} from '@angular/compiler-cli/src/transformers/util';
+
+
+
+export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
+
 
 @Component({
   selector: 'app-accounts-role',
@@ -26,6 +35,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   public selectedUsers: any[] = [];
   public placeholder: boolean;
   public consentMenuOpened: boolean = false;
+  public dataTableHeaders: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -33,9 +43,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private adminService: AdminService,
     private matDialog: MatDialog,
-  ) { }
+    private _zone: NgZone,
+    private storage: StorageService
+  ) {}
 
   ngOnInit() {
+
     this.http.globalReload$.pipe(
       tap(() => {
         this.selectedUsers = [];
@@ -49,10 +62,76 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       console.log(params);
       this.role = params.role;
       this.getUserList();
+
+      this._zone.run(() => {
+        const headers = this.storage.getItem(`${this.role}_columns`);
+        if ( headers ) {
+          this.dataTableHeaders = JSON.parse(headers);
+        } else {
+          this.dataTableHeaders = {
+            'Name': {
+              value: true,
+              label: 'Name',
+              disabled: true
+            },
+            'Email/Username': {
+              value: true,
+              label: 'Email/Username',
+              disabled: true
+            },
+            'Account Type': {
+              value: false,
+              label: 'Account Type',
+              disabled: false
+            },
+            'Sign-in status': {
+              value: true,
+              label: 'Sign-in status',
+              disabled: false
+            },
+            'Last sign-in': {
+              value: true,
+              label: 'Last sign-in',
+              disabled: false
+            }
+          };
+
+          switch (this.role) {
+            case '_profile_teacher':
+              this.dataTableHeaders['Rooms'] =  {
+                value: true,
+                label: 'Rooms',
+                disabled: false
+              };
+              this.dataTableHeaders['Permissions'] =  {
+                value: false,
+                label: 'Permissions',
+                disabled: false
+              };
+              break;
+
+            case '_profile_admin':
+              this.dataTableHeaders['Permissions'] =  {
+                value: false,
+                label: 'Permissions',
+                disabled: false
+              };
+              break;
+          }
+
+        }
+      });
+
+    });
+
+    TABLE_RELOADING_TRIGGER.subscribe((updatedHeaders) => {
+      this.dataTableHeaders = updatedHeaders;
+      this.getUserList('');
     });
   }
+
   findRelevantAccounts(searchValue) {
-    console.log(searchValue);
+    // console.log(searchValue);
     this.placeholder = false;
     this.userList = [];
 
@@ -67,13 +146,21 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         )
         .subscribe((userList) => {
           if (userList && userList.length) {
-            // this.userAmount.next(userList.length);
             this.userList = userList.map((raw) => {
               const rawObj = {
                 'Name': raw.display_name,
-                'Account Email': raw.primary_email,
-                'Last Sign-in': Util.formatDateTime(new Date(raw.last_updated)),
+                'Email/Username': raw.primary_email,
+                'Rooms': ['Room-1', 'Room-2'].join(','),
+                'Account Type': 'demo',
+                'Sign-in status': 'Enabled',
+                'Last sign-in': Util.formatDateTime(new Date(raw.last_updated)),
+                'Permissions': ['create_hallpasses', 'edit_all_hallpass', 'manage_locations'].join(',')
               };
+              for (const key in rawObj) {
+                if (!this.dataTableHeaders[key] || !this.dataTableHeaders[key].value) {
+                  delete rawObj[key];
+                }
+              }
               Object.defineProperty(rawObj, '#Id', { enumerable: false, value: raw.id});
               return  rawObj;
             });
@@ -84,10 +171,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     }
     this.searchChangeObserver$.next(searchValue);
   }
+
   showSelected(e) {
     if (e.length) {
       console.log(e[0]['#Id']);
-
     }
     this.selectedUsers = e;
   }
@@ -166,7 +253,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             if (action === 'confirm') {
               let role: any = this.role.split('_');
                   role = role[role.length - 1];
-              console.log('======>>>>>', role, this.selectedUsers);
               return zip(...this.selectedUsers.map((user) => this.userService.deleteUserFromProfile(user['#Id'], role)));
             } else {
               return of(null);
@@ -180,7 +266,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             this.http.setSchool(this.http.getSchool());
           }
         });
-
       return;
     }
 
@@ -208,20 +293,47 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
+
+  showColumnSettings(evt: Event) {
+    this.matDialog.open(ColumnsConfigDialogComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {
+        'trigger': evt.currentTarget,
+        'form': this.dataTableHeaders,
+        'role': this.role
+       }
+    });
+  }
+
   private getUserList(query: string = '') {
     this.placeholder = false;
+    this.userList = [];
     this.userService
       .getUsersList(this.role, query)
       .subscribe((userList) => {
+        console.log(userList);
         if (userList && userList.length) {
           this.placeholder = false;
           this.userAmount.next(userList.length);
           this.userList = userList.map((raw) => {
             const rawObj = {
               'Name': raw.display_name,
-              'Account Email': raw.primary_email,
-              'Last Sign-in': Util.formatDateTime(new Date(raw.last_updated)),
+              'Email/Username': raw.primary_email,
+              'Rooms': ['Room-1', 'Room-2'].join(','),
+              'Account Type': 'demo',
+              'Sign-in status': 'Enabled',
+              'Last sign-in': Util.formatDateTime(new Date(raw.last_updated)),
+              'Permissions': ['create_hallpasses', 'edit_all_hallpass', 'manage_locations'].join(',')
             };
+
+            for (const key in rawObj) {
+              if (!this.dataTableHeaders[key] || !this.dataTableHeaders[key].value) {
+                // console.log('383 >>>', this.dataTableHeaders);
+                delete rawObj[key];
+              }
+            }
+
             Object.defineProperty(rawObj, '#Id', { enumerable: false, value: raw.id});
             return  rawObj;
           });
