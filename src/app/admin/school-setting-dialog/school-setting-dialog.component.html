@@ -1,0 +1,30 @@
+<div class="settings-wrapper">
+  <div class="settings-header">
+    <img class="back-button" [src]="'./assets/Combined Shape.svg' | resolveAsset">
+    <div class="settings-header-text">School Settings</div>
+  </div>
+  <div class="settings-content">
+    <div class="controls-block">
+      <form [formGroup]="schoolForm"></form>
+      <div class="display-room-control">
+        <div class="control-text">Display Room Numbers on Passes</div>
+        <div class="toggle-control">
+          <app-toggle-input [form]="schoolForm" [delimiter]="false" [controlName]="'display_room'"></app-toggle-input>
+        </div>
+      </div>
+      <div class="buffer-time-control">
+        <div class="control-text" style="width: 210px">
+          Pass Buffer Time <br>
+          <span class="control-subtext">How long an expiring pass will count up until it automatically ends and moves to the Expired Pass section.</span>
+        </div>
+        <div class="control-input">
+          <app-input [width]="'58px'" [isErrorIcon]="false" [textAlign]="'right'" [formGroup]="schoolForm" [input_value]="schoolForm.get('buffer_time').value" [controlName]="schoolForm.get('buffer_time')"></app-input>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-block">
+      <div class="ask">Have a feature suggestion?</div>
+      <div class="support-email">Email us at support@smartpass.app</div>
+    </div>
+  </div>
+</div>

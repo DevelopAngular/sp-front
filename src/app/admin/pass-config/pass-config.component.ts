@@ -12,6 +12,7 @@ import { PinnableCollectionComponent } from '../pinnable-collection/pinnable-col
 import * as _ from 'lodash';
 import { disableBodyScroll } from 'body-scroll-lock';
 import { HallPassesService } from '../../services/hall-passes.service';
+import {SchoolSettingDialogComponent} from '../school-setting-dialog/school-setting-dialog.component';
 
 @Component({
   selector: 'app-pass-congif',
@@ -47,7 +48,6 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     disableBodyScroll(this.elRef.nativeElement);
-    this.buildForm();
     this.pinnables$ = this.hallPassService.getPinnables();
     // this.schools$ = this.httpService.get('v1/schools');
     // this.schools$.subscribe(res => this.schoolName =  res[0].name);
@@ -90,11 +90,11 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       });
   }
 
-  buildForm() {
-      this.settingsForm = new FormGroup({
-          isFuture: new FormControl(true),
-          defaultTime: new FormControl('5 min'),
-      });
+  openSettings() {
+    this.dialog.open(SchoolSettingDialogComponent, {
+        panelClass: 'overlay-dialog',
+        backdropClass: 'custom-bd',
+    });
   }
 
   selectPinnable({action, selection}) {

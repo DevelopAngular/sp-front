@@ -31,8 +31,10 @@ import { PdfGeneratorService } from './pdf-generator.service';
 import { SearchComponent } from './search/search.component';
 import { SettingsComponent } from './settings/settings.component';
 import { AdminSharedModule } from './shared/admin-shared.module';
-import { SupportComponent } from './support/support.component';;
-import { ColumnsConfigDialogComponent } from './columns-config-dialog/columns-config-dialog.component'
+import { SupportComponent } from './support/support.component';
+import { ColumnsConfigDialogComponent } from './columns-config-dialog/columns-config-dialog.component';
+import { SchoolSettingDialogComponent } from './school-setting-dialog/school-setting-dialog.component';
+
 
 @NgModule({
   imports: [
@@ -63,10 +65,16 @@ import { ColumnsConfigDialogComponent } from './columns-config-dialog/columns-co
     AccountsRoleComponent,
     // CalendarComponent,
     SettingsComponent,
-    LinkGeneratedDialogComponent
-,
-    ColumnsConfigDialogComponent  ],
-  entryComponents: [AccountsDialogComponent, LinkGeneratedDialogComponent, ColumnsConfigDialogComponent],
+    LinkGeneratedDialogComponent,
+    ColumnsConfigDialogComponent ,
+    SchoolSettingDialogComponent
+  ],
+  entryComponents: [
+      AccountsDialogComponent,
+      LinkGeneratedDialogComponent,
+      ColumnsConfigDialogComponent,
+      SchoolSettingDialogComponent
+  ],
   providers: [
     // NavbarDataService
     [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],
