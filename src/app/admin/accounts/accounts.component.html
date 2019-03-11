@@ -18,11 +18,20 @@
         </div>
 
       </div>
-      <div class="g-suite flex-center-between mx">
+      <div class="g-suite flex-center-between">
         <div>
-          <span class="card_header">{{(accounts$ | async).total}} Total Accounts</span>
-          <span class="card_title">2,237 G Suite Accounts Syncing</span>
-          <span class="card_title">23 Active Alternative Accounts</span>
+          <div class="card_header" [style.font-size]="'16px'">
+
+            <span>{{(accounts$ | async).total}} Total Accounts</span>
+          </div>
+          <div class="card_title">
+
+            <span>2,237 G Suite Accounts Syncing</span>
+          </div>
+          <div class="card_title">
+
+            <span>23 Active Alternative Accounts</span>
+          </div>
         </div>
         <div class="mx" (click)="openDialog('gsuite')">
             <app-gradient-button
@@ -40,7 +49,7 @@
             >
               <div class="flex-center-center mx px">
                 <div [style.margin-right]="'15px'">
-                  <img src="assets/google/google_logo.svg" alt="google-icon" width="44" height="44">
+                  <img src="assets/google/google_logo.svg" alt="google-icon" width="31" height="31">
                 </div>
                 <div>
                   <span>Manage G Suite</span>
@@ -58,7 +67,7 @@
           <div class="card_content">
             <div class="card_header">Administrators</div>
             <p class="card_title">
-              <span>{{(accounts$ | async).admin_count}} user{{(accounts$ | async).admin_count> 1 ? 's' : ''}}</span><br>
+              <span [style.font-weight]="'bold'">{{(accounts$ | async).admin_count}} user{{(accounts$ | async).admin_count> 1 ? 's' : ''}}</span><br>
               An administrator has a high-level look at the school, configures passes, and views/generates reports.
             </p>
           </div>
@@ -75,14 +84,14 @@
             <!--<span>Manage Profiles</span>-->
           <!--</app-gradient-button>-->
           <div class="card_manage-users" [routerLink]="['/admin/accounts', '_profile_admin']">
-            <span>Manage Users</span> <img width="20" [src]="'./assets/Disclosure Indicator (Blue).png'" alt="">
+            <span>Manage Users</span> <img draggable="false" width="20" [src]="'./assets/Disclosure Indicator (Blue).png'" alt="">
           </div>
         </div>
         <div class="card card__role">
           <div class="card_content">
             <div class="card_header">Students</div>
             <p class="card_title">
-              <span>{{(accounts$ | async).student_count }} user{{(accounts$ | async).student_count > 1 ? 's' : ''}}</span><br>
+              <span [style.font-weight]="'bold'">{{(accounts$ | async).student_count }} active user{{(accounts$ | async).student_count > 1 ? 's' : ''}}</span><br>
               A student can create passes, schedule passes for the future,
               and send pass requests to teachers.
             </p>
@@ -100,7 +109,7 @@
             <!--<span>Manage Profiles</span>-->
           <!--</app-gradient-button>-->
           <div class="card_manage-users" [routerLink]="['/admin/accounts', '_profile_student']">
-            <span>Manage Users</span> <img width="20" [src]="'./assets/Disclosure Indicator (Blue).png'" alt="">
+            <span>Manage Users</span> <img draggable="false" width="20" [src]="'./assets/Disclosure Indicator (Blue).png'" alt="">
           </div>
         </div>
       </div>
@@ -109,7 +118,7 @@
           <div class="card_content">
             <div class="card_header">Teachers</div>
             <p class="card_title">
-              <span>{{(accounts$ | async).teacher_count}} user{{(accounts$ | async).teacher_count> 1 ? 's' : ''}}</span><br>
+              <span [style.font-weight]="'bold'">{{(accounts$ | async).teacher_count}} active user{{(accounts$ | async).teacher_count> 1 ? 's' : ''}}</span><br>
               A teacher has a room or multiple rooms where students can create passes to.
               A teacher can manage passes in his/her room and create passes.
             </p>
@@ -126,14 +135,14 @@
             <!--<span>Manage Profiles</span>-->
           <!--</app-gradient-button>-->
           <div class="card_manage-users" [routerLink]="['/admin/accounts', '_profile_teacher']">
-            <span>Manage Users</span> <img width="20" [src]="'./assets/Disclosure Indicator (Blue).png'" alt="">
+            <span>Manage Users</span> <img draggable="false" width="20" [src]="'./assets/Disclosure Indicator (Blue).png'" alt="">
           </div>
         </div>
         <div class="card card__role">
           <div class="card_content">
             <div class="card_header">Secretaries & Substitutes</div>
             <p class="card_title">
-              <span>{{(accounts$ | async).secretary_count || 0}} profiles</span><br>
+              <span [style.font-weight]="'bold'">{{(accounts$ | async).secretary_count || 0}} active users</span><br>
               A secretary or substitute teacher acts as a certain teacher when they sign-in.
               They can manage passes in his/her room and create passes as that teacher.
             </p>
@@ -150,7 +159,7 @@
           <!--<span>Manage Profiles</span>-->
         <!--</app-gradient-button>-->
           <div class="card_manage-users" [routerLink]="['/admin/accounts', 'staff_secretary']">
-            <span>Manage Users</span> <img width="20" [src]="'./assets/Disclosure Indicator (Blue).png'" alt="">
+            <span>Manage Users</span> <img draggable="false" width="20" [src]="'./assets/Disclosure Indicator (Blue).png'" alt="">
           </div>
         </div>
       </div>

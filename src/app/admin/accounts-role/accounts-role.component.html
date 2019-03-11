@@ -131,6 +131,9 @@
         </div>
       </div>
       <!--<pre>{{userList| json}}</pre>-->
+      <div class="column-settings">
+        <img draggable="false" width="20" [src]="'./assets/Gear (Blue).png'" alt="Gear (Blue).png" (click)="showColumnSettings($event)">
+      </div>
       <app-data-table
         class="my"
         [data]="userList"

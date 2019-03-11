@@ -1,31 +1,112 @@
+:host {
+  width: 100%;
+}
 .layout {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
+  z-index: 1;
+  .user-action-none {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 2;
+    background-color: rgba(255, 255, 255, .5);
+  }
+}
+.delimiter {
+  border-bottom: 1px solid #ccc;
 }
 
+$disabled: #D3D6DE;
+
 .future {
-  position: relative; width: 49px;
+  position: relative;
   -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
-}
-.future-checkbox {
-  display: none;
-}
-.future-label {
-  display: block; overflow: hidden; cursor: pointer;
-  height: 27px; padding: 0; line-height: 27px;
-  border: 2px solid #E3E3E3; border-radius: 27px;
-  background-color: #FFFFFF;
-  transition: background-color 0.3s ease-in;
-}
-.future-label:before {
-  content: "";
-  display: block; width: 27px; margin: 0px;
-  background: #FFFFFF;
-  position: absolute; top: 0; bottom: 0;
-  right: 20px;
-  border: 2px solid #E3E3E3; border-radius: 27px;
-  transition: all 0.3s ease-in 0s;
+  &__small {
+    width: 39px;
+    .future-checkbox {
+      display: none;
+    }
+    .future-label {
+      display: block;
+      overflow: hidden;
+      cursor: pointer;
+      padding: 0;
+      border: 2px solid $disabled;
+      background-color: $disabled;
+      transition: background-color 0.3s ease-in;
+      height: 21px;
+      line-height: 21px;
+      border-radius: 21px;
+      &::before {
+        content: "";
+        display: block; width: 21px; margin: 0px;
+        background: #FFFFFF;
+        position: absolute; top: 0; bottom: 0;
+        right: 14px;
+        border: 2px solid $disabled; border-radius: 21px;
+        transition: all 0.3s ease-in 0s;
+      }
+    }
+  }
+  &__regular {
+    width: 49px;
+    .future-checkbox {
+      display: none;
+    }
+    .future-label {
+      display: block;
+      overflow: hidden;
+      cursor: pointer;
+      padding: 0;
+      border: 2px solid $disabled;
+      background-color: $disabled;
+      transition: background-color 0.3s ease-in;
+      height: 27px;
+      line-height: 27px;
+      border-radius: 27px;
+      &::before {
+        content: "";
+        display: block; width: 27px; margin: 0px;
+        background: #FFFFFF;
+        position: absolute; top: 0; bottom: 0;
+        right: 20px;
+        border: 2px solid $disabled; border-radius: 27px;
+        transition: all 0.3s ease-in 0s;
+      }
+    }
+  }
+  &__large {
+    width: 59px;
+    .future-checkbox {
+      display: none;
+    }
+    .future-label {
+      display: block;
+      overflow: hidden;
+      cursor: pointer;
+      padding: 0;
+      border: 2px solid $disabled;
+      background-color: $disabled;
+      transition: background-color 0.3s ease-in;
+      height: 37px;
+      line-height: 37px;
+      border-radius: 37px;
+      &::before {
+        content: "";
+        display: block; width: 37px; margin: 0px;
+        background: #FFFFFF;
+        position: absolute; top: 0; bottom: 0;
+        right: 23px;
+        border: 2px solid $disabled; border-radius: 37px;
+        transition: all 0.3s ease-in 0s;
+      }
+    }
+  }
 }
 
 

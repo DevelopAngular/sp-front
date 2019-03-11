@@ -31,7 +31,8 @@ import { PdfGeneratorService } from './pdf-generator.service';
 import { SearchComponent } from './search/search.component';
 import { SettingsComponent } from './settings/settings.component';
 import { AdminSharedModule } from './shared/admin-shared.module';
-import { SupportComponent } from './support/support.component';
+import { SupportComponent } from './support/support.component';;
+import { ColumnsConfigDialogComponent } from './columns-config-dialog/columns-config-dialog.component'
 
 @NgModule({
   imports: [
@@ -63,8 +64,9 @@ import { SupportComponent } from './support/support.component';
     // CalendarComponent,
     SettingsComponent,
     LinkGeneratedDialogComponent
-  ],
-  entryComponents: [AccountsDialogComponent, LinkGeneratedDialogComponent],
+,
+    ColumnsConfigDialogComponent  ],
+  entryComponents: [AccountsDialogComponent, LinkGeneratedDialogComponent, ColumnsConfigDialogComponent],
   providers: [
     // NavbarDataService
     [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],
