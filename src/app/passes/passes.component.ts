@@ -2,7 +2,7 @@ import { animate, state, style, transition, trigger, } from '@angular/animations
 import { Component, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { BehaviorSubject, combineLatest, empty, merge, Observable, of, ReplaySubject } from 'rxjs';
-import { filter, map, switchMap, withLatestFrom } from 'rxjs/operators';
+import {filter, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
@@ -60,7 +60,7 @@ class ActivePassProvider implements PassLikeProvider {
                 ? {type: 'student', value: user}
                 : {type: 'issuer', value: user})),
         withLatestFrom(this.timeService.now$), map(([passes, now]) => {
-          return passes.filter(pass => new Date(pass.start_time).getTime() <= now.getTime());
+            return passes.filter(pass => new Date(pass.start_time).getTime() <= now.getTime());
         })
     );
 

@@ -144,7 +144,6 @@ export class LocationsGroupContainerComponent implements OnInit {
 
     this.data.requestTarget = teacher;
     this.FORM_STATE.data.requestTarget = teacher;
-    this.FORM_STATE.previousState = States.restrictedTarget;
     this.FORM_STATE.state = States.message;
   }
 
