@@ -1,0 +1,21 @@
+<div class="options-wrapper">
+  <div class="options-header" (click)="toggleContent()">
+    <div class="header-text">
+      Advanced Options
+      <img class="open-arrow" [src]="(openedContent ? './assets/Chevron Up (Navy).svg' : './assets/Chevron Down (Navy).svg') | resolveAsset">
+    </div>
+    <mat-divider class="divider"></mat-divider>
+  </div>
+  <div class="options-content" *ngIf="openedContent">
+    <div class="content-header">
+      <span class="text">Sending Pass Request to?</span>
+      <img class="support-icon" [src]="'./assets/Support (Blue).png'">
+    </div>
+    <div class="restriction-toggle">
+      <div class="title">Restriction for Now</div>
+      <div class="toggle">
+
+      </div>
+    </div>
+  </div>
+</div>

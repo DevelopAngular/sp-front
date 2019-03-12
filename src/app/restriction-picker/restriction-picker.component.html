@@ -1,0 +1,14 @@
+<div class="picker-wrappper">
+  <div class="choices" [style.height]="height">
+    <div class="choice"
+         *ngFor="let choice of choices"
+         [style.border]="'0.5px solid ' + selectedColor"
+         (click)="onClick(choice)"
+         [style.width]="width / choices.length -20 + 'px'"
+         [style.color]="selectedChoose === choice ? backgroundColor : selectedColor"
+         [style.font-size]="fontSize + 'px'"
+         [style.background-color]="selectedChoose === choice ? selectedColor : backgroundColor">
+      {{ choice }}
+    </div>
+  </div>
+</div>

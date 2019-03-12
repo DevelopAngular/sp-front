@@ -127,6 +127,7 @@
 
 .left-content {
   display: flex;
+  align-items: center;
   flex-direction: column;
   flex-grow: 1;
   overflow: auto;
@@ -601,4 +602,8 @@
 .sticky-button {
   position: sticky;
   top: 150px;
+}
+
+.advanced-options {
+  width: 90%;
 }

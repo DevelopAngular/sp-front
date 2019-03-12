@@ -25,12 +25,13 @@ import {
 import { IconPickerComponent } from '../icon-picker/icon-picker.component';
 import { ColorPalletPickerComponent } from '../color-pallet-picker/color-pallet-picker.component';
 import { TogglePickerComponent } from '../toggle-picker/toggle-picker.component';
-import {ToggleInputComponent} from '../toggle-input/toggle-input.component';
-import {AccountsDialogComponent} from '../accounts-dialog/accounts-dialog.component';
-import {ProfilesSearchComponent} from '../profiles-search/profiles-search.component';
+import { ToggleInputComponent } from '../toggle-input/toggle-input.component';
+import { AccountsDialogComponent } from '../accounts-dialog/accounts-dialog.component';
+import { ProfilesSearchComponent } from '../profiles-search/profiles-search.component';
 import { InputHelperDialogComponent } from '../input-helper-dialog/input-helper-dialog.component';
 import { LocationSearchComponent } from '../location-search/location-search.component';
 import { ColorComponent } from '../color-pallet-picker/color/color.component';
+import { AdvancedOptionsComponent } from '../overlay-container/advanced-options/advanced-options.component';
 
 @NgModule({
   imports: [
@@ -64,7 +65,9 @@ import { ColorComponent } from '../color-pallet-picker/color/color.component';
       // AppInputComponent,
       ProfilesSearchComponent,
       LocationSearchComponent,
-      ColorComponent
+      ColorComponent,
+      AdvancedOptionsComponent
+
   ],
   exports: [
       MatChipsModule,

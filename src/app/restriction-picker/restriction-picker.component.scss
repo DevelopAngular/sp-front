@@ -1,0 +1,17 @@
+
+.choices {
+  display: flex;
+  align-items: center;
+  height: 100%;
+
+  .choice {
+    display: flex;
+    padding: 10px;
+    border-radius: 5px;
+    word-break: break-all;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+}

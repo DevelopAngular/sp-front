@@ -44,6 +44,7 @@ import {AppInputComponent} from '../app-input/app-input.component';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import {DateTimeComponent} from '../create-hallpass-forms/main-hallpass--form/date-time-container/date-time/date-time.component';
 import {CalendarComponent} from '../admin/calendar/calendar.component';
+import {RestrictionPickerComponent} from '../restriction-picker/restriction-picker.component';
 
 
 
@@ -100,7 +101,8 @@ import {CalendarComponent} from '../admin/calendar/calendar.component';
       PagerComponent,
       RoundInputComponent,
       AppInputComponent,
-      CalendarComponent
+      CalendarComponent,
+      RestrictionPickerComponent
   ],
     entryComponents: [
       PassCardComponent,
@@ -141,7 +143,8 @@ import {CalendarComponent} from '../admin/calendar/calendar.component';
     PassCardComponent,
     InputTextareaModule,
     DateTimeComponent,
-    CalendarComponent
+    CalendarComponent,
+    RestrictionPickerComponent
 
   ],
 })
