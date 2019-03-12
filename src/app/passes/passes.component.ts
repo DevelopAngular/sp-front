@@ -1,18 +1,13 @@
+import { animate, state, style, transition, trigger, } from '@angular/animations';
 import { Component, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { combineLatest, empty, merge, of } from 'rxjs';
-
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject, combineLatest, empty, merge, Observable, of, ReplaySubject } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
-
-import { DataService } from '../data-service';
-import { HallpassFormComponent } from '../hallpass-form/hallpass-form.component';
+import { CreateFormService } from '../create-hallpass-forms/create-form.service';
+import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
 import { mergeObject } from '../live-data/helpers';
 import { HallPassFilter, LiveDataService } from '../live-data/live-data.service';
-import { LoadingService } from '../loading.service';
 import { exceptPasses, PassLike } from '../models';
 import { HallPass } from '../models/HallPass';
 import { testInvitations, testPasses, testRequests } from '../models/mock_data';
@@ -21,6 +16,11 @@ import { Request } from '../models/Request';
 import { User } from '../models/User';
 import { PassCardComponent } from '../pass-card/pass-card.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
+
+import { DataService } from '../services/data-service';
+import { LoadingService } from '../services/loading.service';
+import { NotificationService } from '../services/notification-service';
+import { TimeService } from '../services/time.service';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('_profile_teacher');
@@ -34,16 +34,10 @@ class FuturePassProvider implements PassLikeProvider {
     const sortReplay = new ReplaySubject<string>(1);
     sort.subscribe(sortReplay);
 
-    const futurePasses$ = this.user$.pipe(switchMap(user => this.liveDataService.watchFutureHallPasses(
+    return this.user$.pipe(switchMap(user => this.liveDataService.watchFutureHallPasses(
       user.roles.includes('hallpass_student')
         ? {type: 'student', value: user}
-        : {type: 'issuer', value: user})),
-      map(passes => {
-        const now = new Date();
-        return passes.filter(pass => pass.start_time.getTime() >= now.getTime());
-      }));
-
-    return futurePasses$;
+        : {type: 'issuer', value: user})));
   }
 }
 
@@ -60,17 +54,12 @@ class ActivePassProvider implements PassLikeProvider {
     const mergedReplay = new ReplaySubject<HallPassFilter>(1);
     merged$.subscribe(mergedReplay);
 
-    const passes$ = this.user$.pipe(switchMap(user => this.liveDataService.watchActiveHallPasses(mergedReplay,
-      user.roles.includes('hallpass_student')
-        ? {type: 'student', value: user}
-        : {type: 'issuer', value: user})),
-      map((passes: any[]) => {
-
-        const now = new Date();
-        return passes.filter(pass => {
-          return pass.start_time.getTime() <= now.getTime();
-        });
-      }));
+    const passes$ = this.user$.pipe(
+      switchMap(user => this.liveDataService.watchActiveHallPasses(mergedReplay,
+        user.roles.includes('hallpass_student')
+          ? {type: 'student', value: user}
+          : {type: 'issuer', value: user}))
+    );
 
     const excluded$ = this.excluded$.startWith([]);
 
@@ -142,7 +131,26 @@ class InboxInvitationProvider implements PassLikeProvider {
 @Component({
   selector: 'app-passes',
   templateUrl: './passes.component.html',
-  styleUrls: ['./passes.component.scss']
+  styleUrls: ['./passes.component.scss'],
+  animations: [
+    trigger('OpenOrCloseRequests', [
+        state('requestsOpened', style({
+          width: '312px',
+          opacity: 1,
+          transform: 'translateX(0px)',
+          display: 'block'
+        })),
+        state('requestsClosed', style({
+          width: '0px',
+          opacity: 0,
+          transform: 'translateX(50px)',
+          display: 'none'
+        })),
+        transition('requestsClosed => requestsOpened, requestsOpened => requestsClosed', animate('0.8s 0s ease', null)),
+        // transition('requestsOpened => requestsClosed', animate('0.5s 0s ease', null)),
+      ],
+    ),
+  ]
 })
 export class PassesComponent implements OnInit {
 
@@ -150,25 +158,55 @@ export class PassesComponent implements OnInit {
   testRequests: PassLikeProvider;
   testInvitations: PassLikeProvider;
 
-  futurePasses: PassLikeProvider;
-  activePasses: PassLikeProvider;
-  pastPasses: PassLikeProvider;
+  futurePasses: WrappedProvider;
+  activePasses: WrappedProvider;
+  pastPasses: WrappedProvider;
 
   sentRequests: WrappedProvider;
   receivedRequests: WrappedProvider;
 
   currentPass$ = new BehaviorSubject<HallPass>(null);
   currentRequest$ = new BehaviorSubject<Request>(null);
-  isActivePass$ = this.dataService.isActivePass$;
-  isActiveRequest$ = this.dataService.isActiveRequest$;
 
+  isActivePass$: Observable<boolean>;
+  isActiveRequest$: Observable<boolean>;
+
+  // inboxHasItems: Subject<boolean> = new Subject<boolean>();
   inboxHasItems: Observable<boolean> = of(false);
+  passesHaveItems: Observable<boolean> = of(false);
+
+  inboxLoaded: Observable<boolean> = of(false);
+  passesLoaded: Observable<boolean> = of(false);
 
   user: User;
   isStaff = false;
+  isSeen$: BehaviorSubject<boolean>;
 
-  constructor(public dataService: DataService, public dialog: MatDialog, private _zone: NgZone,
-              private loadingService: LoadingService, private liveDataService: LiveDataService) {
+  showInboxAnimated() {
+    return this.dataService.inboxState;
+  }
+
+  get showInbox() {
+    if (!this.isStaff) {
+      // console.log('|||||||||||||| Student Now ===>', this.dataService.inboxState);
+      return this.dataService.inboxState;
+    } else if (!this.inboxHasItems && !this.passesHaveItems) {
+      return of(false);
+    } else {
+      return of(true);
+    }
+  }
+
+  constructor(
+    public dataService: DataService,
+    public dialog: MatDialog,
+    private _zone: NgZone,
+    private loadingService: LoadingService,
+    private liveDataService: LiveDataService,
+    private createFormService: CreateFormService,
+    private notifService: NotificationService,
+    private timeService: TimeService,
+  ) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
     this.testRequests = new BasicPassLikeProvider(testRequests);
@@ -176,9 +214,9 @@ export class PassesComponent implements OnInit {
 
     const excludedPasses = this.currentPass$.map(p => p !== null ? [p] : []);
 
-    this.futurePasses = new FuturePassProvider(this.liveDataService, this.dataService.currentUser);
-    this.activePasses = new ActivePassProvider(this.liveDataService, this.dataService.currentUser, excludedPasses);
-    this.pastPasses = new PastPassProvider(this.liveDataService, this.dataService.currentUser);
+    this.futurePasses = new WrappedProvider(new FuturePassProvider(this.liveDataService, this.dataService.currentUser));
+    this.activePasses = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.dataService.currentUser, excludedPasses));
+    this.pastPasses = new WrappedProvider(new PastPassProvider(this.liveDataService, this.dataService.currentUser));
 
     this.dataService.currentUser
       .map(user => user.roles.includes('hallpass_student')) // TODO filter events to only changes.
@@ -195,34 +233,39 @@ export class PassesComponent implements OnInit {
           this.sentRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser));
         }
 
+        // zip(
+        //   this.receivedRequests.length$.asObservable(),
+        //   this.sentRequests.length$.asObservable()
+        // ).pipe(
+        //   skip(2)
+        // ).subscribe((val) => {
+        //   this.inboxHasItems.next(!val.reduce((a, b) => a + b));
+        //   // console.log('==============================================>', val);
+        // });
+
+        // this.inboxHasItems = combineLatest(
+        //   this.receivedRequests.length$.startWith(0),
+        //   this.sentRequests.length$.startWith(0),
+        //   (l1, l2) => l1 > 0 || l2 > 0
+        // );
+        //   this.receivedRequests.length$
+
+
       });
+
+    this.isActivePass$ = combineLatest(this.currentPass$, this.timeService.now$, (pass, now) => {
+      return pass !== null
+        && new Date(pass.start_time).getTime() <= now.getTime()
+        && now.getTime() < new Date(pass.end_time).getTime();
+    }).publishReplay(1).refCount();
+
+    this.isActiveRequest$ = this.currentRequest$.map(request => {
+      return request !== null && !request.request_time && request.status === 'pending';
+    });
 
     this.dataService.currentUser.switchMap(user =>
       user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null))
       .subscribe(passLike => {
-        // console.log('Active pass ====> ', passLike);
-        if (!passLike) {
-          this.dataService.isActiveRequest$.next(false);
-          this.dataService.isActivePass$.next(false);
-        }
-        if (passLike) {
-          const nowDate = new Date();
-          const startDate = new Date(passLike.start_time);
-          const endDate = new Date(passLike.end_time);
-          if (nowDate.getTime() >= startDate.getTime()) {
-
-            if (nowDate.getTime() <= endDate.getTime()) {
-
-              this.dataService.isActivePass$.next(true);
-            } else {
-              this.dataService.isActivePass$.next(false);
-            }
-          }
-          if (!(!!passLike.request_time) && passLike.status) {
-
-            this.dataService.isActiveRequest$.next(true);
-          }
-        }
         this._zone.run(() => {
           this.currentPass$.next((passLike instanceof HallPass) ? passLike : null);
           this.currentRequest$.next((passLike instanceof Request) ? passLike : null);
@@ -240,17 +283,52 @@ export class PassesComponent implements OnInit {
           this.isStaff = user.roles.includes('_profile_teacher') || user.roles.includes('_profile_admin');
         });
       });
-      
-      this.inboxHasItems = combineLatest(
-        this.receivedRequests.length$.startWith(0),
-        this.sentRequests.length$.startWith(0),
-        (l1, l2) => (l1 + l2) > 0
-      );
 
+    this.inboxHasItems = combineLatest(
+      this.receivedRequests.length$.startWith(0),
+      this.sentRequests.length$.startWith(0),
+      (l1, l2) => (l1 + l2) > 0
+    );
+
+    this.inboxLoaded = combineLatest(
+      this.receivedRequests.loaded$,
+      this.sentRequests.loaded$,
+      (l1, l2) => l1 && l2
+    );
+
+    this.passesHaveItems = combineLatest(
+      this.activePasses.length$.startWith(0),
+      this.futurePasses.length$.startWith(0),
+      this.pastPasses.length$.startWith(0),
+      (l1, l2, l3) => (l1 + l2 + l3) > 0
+    );
+
+    this.passesLoaded = combineLatest(
+      this.activePasses.loaded$,
+      this.futurePasses.loaded$,
+      this.pastPasses.loaded$,
+      (l1, l2, l3) => l1 && l2 && l3
+    );
+    this.isSeen$ = this.createFormService.isSeen$;
+
+    this.notifService.initNotifications(true)
+      .then(hasPerm => console.log(`Has permission to show notifications: ${hasPerm}`));
   }
 
-  showForm(forLater: boolean): void {
-    const dialogRef = this.dialog.open(HallpassFormComponent, {
+  showMainForm(forLater: boolean): void {
+    const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
+      panelClass: 'main-form-dialog-container',
+      backdropClass: 'custom-backdrop',
+      data: {
+        'forLater': forLater,
+        'forStaff': this.isStaff,
+        'forInput': true
+      }
+    });
+  }
+
+  showFirstSeenForm(forLater: boolean): void {
+    const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
       width: '750px',
       panelClass: 'form-dialog-container',
       backdropClass: 'custom-backdrop',
@@ -271,7 +349,7 @@ export class PassesComponent implements OnInit {
   }
 
   openInputCard(templatePass, forLater, forStaff, selectedStudents, component, fromHistory, fromHistoryIndex) {
-    let data = {
+    const data = {
       'pass': templatePass,
       'fromPast': false,
       'fromHistory': fromHistory,

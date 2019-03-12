@@ -7,16 +7,29 @@
   width: 100%;
   background-color: #F8FAFF;
   .dashboard-wrapper{
-    max-height: 80vh;
-    flex-direction: column;
+    display: flex;
+    flex-wrap: wrap;
+    //max-height: 80vh;
+    //flex-direction: column;
   }
 
 }
-@media screen and (max-width: 1320px) {
-  .dashboard-wrapper {
-    flex-direction: row !important;
-  }
-}
+//@media screen and (max-width: 1320px) {
+//  .dashboard-wrapper {
+//    flex-direction: row !important;
+//    flex-wrap: nowrap;
+//    max-height: unset;
+//  }
+//}
+//@media screen and (max-height: 742px) {
+//  .dashboard-wrapper {
+//    flex-direction: row !important;
+//    flex-wrap: nowrap;
+//    max-height: unset;
+//  }
+//}
+
+
 .floating{
   float: left;
 }
@@ -49,9 +62,38 @@
       }
     }
   }
+
+.calendar-icon-container {
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  .calendar-icon {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+  }
+}
+.active-calendar-icon {
+  background-color: rgb(228, 235, 255);
+  animation: active-calenar .2s ease forwards;
+}
+
+@keyframes active-calenar{
+  0%{
+    box-shadow: 0 0 0 0px rgb(228, 235, 255);
+  }
+  100%{
+    box-shadow: 0 0 0 10px rgb(228, 235, 255);
+  }
+}
+
 .chart-container{
   position: relative;
 }
+
 .chart-spinner{
   //background-color: rgba(255,255,255,.9);
   position: absolute;
@@ -134,7 +176,7 @@
   .my{
     margin: 10px 0;
   }
-  .mt{ margin-top: 10px}
+  .mt{ margin-top: 15px}
   .mb{ margin-bottom: 10px}
   .ml{ margin-left: 10px}
   .mr{ margin-right: 10px}

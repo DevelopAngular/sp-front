@@ -1,0 +1,127 @@
+.rest-mes-wrapper {
+  width: 425px;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  background-color: #ffffff;
+  border-radius: 15px;
+  overflow: hidden;
+  .rest-mes-header, .rest-mes-header_animation-back {
+
+    width: 100%;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    overflow: hidden;
+
+    .back-button {
+      width: 26px;
+      height: 26px;
+      margin-left: 20px;
+      user-select: none;
+      position: absolute;
+      cursor: pointer;
+    }
+
+    .rest-mes-header-text {
+      display: flex;
+      align-items: center;
+      margin: 0 auto;
+
+      .search-icon{
+        width: 25px;
+        height: 25px;
+        margin-right: 10px;
+      }
+
+      .text {
+        color: white;
+        font-family: 'Helvetica Neue', sans-serif;
+        font-size: 16px;
+        font-weight: bold;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: 1.08;
+        letter-spacing: 0.3px;
+      }
+    }
+  }
+
+  .content-wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    .rest-mes-content {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      margin-top: 25px;
+
+      .message-box{
+        border: 1px solid transparent;
+        padding: 10px;
+        height: inherit;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
+        font-family: 'Helvetica Neue', sans-serif;
+        font-size: 16px;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: 1.08;
+        letter-spacing: 0.3px;
+        background: transparent;
+        &:focus {
+          transition: border .3s ease;
+        }
+      }
+
+      .buttons {
+
+      }
+    }
+  }
+
+  .message-footer {
+    width: 100%;
+    display: flex;
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 7px 0px 8px;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    position: absolute;
+    bottom: 0;
+
+    .footer-from-text {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+
+      .footer-text {
+        color: #1F195E;
+      }
+    }
+
+    .footer-icon {
+      width: 48px;
+      height: 10px;
+      margin: 0 15px 0 15px;
+    }
+  }
+
+  .center-text {
+    display: flex;
+    align-items: center;
+    padding: 7px;
+  }
+}

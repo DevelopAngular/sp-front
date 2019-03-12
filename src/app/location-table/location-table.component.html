@@ -1,21 +1,53 @@
-<div class="wrapper" [style.width]="type==='location'?'430px':'200px'">
-  <div *ngIf="type==='location' && showFavorites" class="table-left">
+<div class="wrapper">
+  <!--<input class="input" *ngIf="!horizontalTable" #searchBox [value]="search" [placeholder]="placeholder" (keyup)="onSearch(searchBox.value)">-->
+  <app-round-input
+    [style.margin]="'20px' "
+    [minWidth]="'20px auto 5px auto'"
+    [width]="inputWidth"
+    [type]="'text'"
+    [placeholder]="placeholder"
+    [fieldIconPosition]="'left'"
+    [closeIcon]="true"
+    [focused]="true"
+    (ontextupdate)="onSearch($event)"
+  ></app-round-input>
+  <div *ngIf="type==='location' && showFavorites && !hideFavorites" class="table-left">
     <div class="fav-header">
       Favorites
     </div>
-    <div *ngIf="favoritesLoaded" class="choices" (scroll)="leftScroll($event)">
+    <div *ngIf="favoritesLoaded"
+         class="choices"
+         dragula="locations"
+         [(dragulaModel)]="starredChoices"
+         (dragulaModelChange)="updateOrderLocation($event)"
+         [style.width]="'190px'"
+         (scroll)="leftScroll($event)">
+
       <app-location-cell class="choice" *ngFor="let choice of starredChoices"
         (onSelect)="choiceSelected($event)" (onStar)="star($event)"
         [value]="choice" [type]="type" [starred]="true" [showStar]="showStars">
       </app-location-cell>
-      <div *ngIf="starredChoices.length<1" class="no-favs">No Favorites. <div *ngIf="!showStars">Add Favorites in Settings.</div></div>
+
+      <div *ngIf="starredChoices.length<1" class="no-favs">Add Favorites in Settings.<div *ngIf="!showStars">Add Favorites in Settings.</div></div>
     </div>
-    <div *ngIf="rightShadow" class="shadow"></div>
+    <!--<div *ngIf="rightShadow" class="shadow"></div>-->
   </div>
+  <div *ngIf="rightHeaderText && !hideFavorites" style="margin-top: 10px" class="fav-header">All Rooms</div>
   <div class="table-right" [style.margin]="'0 ' +(showFavorites?'0':'auto')">
-    <input class="input" #searchBox [value]="search" [placeholder]="placeholder" (keyup)="onSearch(searchBox.value)">
+    <!--<app-round-input-->
+            <!--[style.margin]="'20px' "-->
+            <!--[minWidth]="'20px auto 5px auto'"-->
+            <!--[width]="inputWidth"-->
+            <!--[type]="'text'"-->
+            <!--[placeholder]="'Search rooms'"-->
+            <!--[fieldIconPosition]="'left'"-->
+            <!--[closeIcon]="true"-->
+            <!--[focused]="true"-->
+            <!--(ontextupdate)="onSearch($event)"-->
+    <!--&gt;</app-round-input>-->
+    <!--<input *ngIf="horizontalTable" class="input" #searchBox [value]="search" [placeholder]="placeholder" (keyup)="onSearch(searchBox.value)">-->
     <div class="quick-label" *ngIf="staticChoices">Quick Select</div>
-    <div class="choices" (scroll)="onScroll($event)">
+    <div class="choices" [style.width]="'190px'" (scroll)="onScroll($event)">
       <app-location-cell [hasLocks]="hasLocks" [forLater]="forLater" [forStaff]="forStaff" class="choice" *ngFor="let choice of choices" [showStar]="showStars && !noRightStar" [starred]="false"
                         (onSelect)="choiceSelected($event)" (onStar)="star($event)"
                         [value]="choice" [type]="type" [valid]="!invalidLocation || choice.id !== invalidLocation">

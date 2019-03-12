@@ -1,5 +1,6 @@
-import {Component, ElementRef, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material';
+import { Component, ElementRef, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material';
+import { TimeService } from '../../services/time.service';
 
 @Component({
   selector: 'app-calendar',
@@ -11,11 +12,17 @@ export class CalendarComponent implements OnInit {
   triggerElementRef: ElementRef;
   previousSelectedDate: Date;
   minDate: Date = new Date('December 17, 1995 03:24:00');
+  default: Date = undefined;
 
   constructor(
       @Inject(MAT_DIALOG_DATA) public data: any[],
-      private _matDialogRef: MatDialogRef<CalendarComponent>
-  ) { }
+      private _matDialogRef: MatDialogRef<CalendarComponent>,
+      private timeService: TimeService,
+  ) {
+    if (this.default === undefined) {
+      this.default = this.timeService.nowDate();
+    }
+  }
 
   ngOnInit() {
     this.triggerElementRef = this.data['trigger'];

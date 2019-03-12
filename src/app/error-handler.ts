@@ -22,6 +22,14 @@ export function provideErrorHandler(): Provider {
   };
 }
 
+export interface UserContext {
+  id: string;
+  email: string;
+  is_student?: boolean;
+  is_teacher?: boolean;
+  is_admin?: boolean;
+}
+
 @Injectable()
 export class SentryErrorHandler implements ErrorHandler {
 
@@ -67,4 +75,11 @@ export class SentryErrorHandler implements ErrorHandler {
     SentryErrorHandler.reportError(error);
     console.error(error);
   }
+
+  setUserContext(user: UserContext) {
+    Sentry.configureScope(scope => {
+      scope.setUser(user);
+    });
+  }
+
 }

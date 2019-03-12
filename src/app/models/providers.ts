@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { PassLike } from './index';
 
 /**
@@ -33,12 +33,18 @@ export class BasicPassLikeProvider {
 export class WrappedProvider implements PassLikeProvider {
 
   length$ = new BehaviorSubject(0);
+  loaded$ = new BehaviorSubject(false);
 
   constructor(private parent: PassLikeProvider) {
   }
 
   watch(sort: Observable<string>) {
-    return this.parent.watch(sort).do(passes => this.length$.next(passes.length));
+
+    return this.parent.watch(sort).do(passes => {
+      if(this.loaded$.value === false)
+        this.loaded$.next(true);
+      this.length$.next(passes.length);
+    });
   }
 
 }

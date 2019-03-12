@@ -2,9 +2,8 @@ import { Component, OnInit, Input, Output, EventEmitter, ElementRef } from '@ang
 import { Pinnable } from '../../models/Pinnable';
 import { MatDialog } from '@angular/material';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
-import {forkJoin} from 'rxjs';
-import {HttpService} from '../../http-service';
-import {DragulaService} from 'ng2-dragula';
+import {BehaviorSubject, forkJoin, Subject} from 'rxjs';
+import {HallPassesService} from '../../services/hall-passes.service';
 
 @Component({
   selector: 'app-pinnable-collection',
@@ -18,6 +17,8 @@ export class PinnableCollectionComponent implements OnInit {
 
   @Input()
   header: boolean = true;
+
+  @Input() resetBulkSelect$: BehaviorSubject<boolean>;
 
   @Output()
   roomEvent: EventEmitter<any> = new EventEmitter();
@@ -40,8 +41,7 @@ export class PinnableCollectionComponent implements OnInit {
 
   constructor(
     public dialog: MatDialog,
-    private http: HttpService,
-    public dragulaService: DragulaService
+    private hallPassService: HallPassesService
   ) {
     // dragulaService.createGroup('pins', {
     //   removeOnSpill: true
@@ -54,6 +54,13 @@ export class PinnableCollectionComponent implements OnInit {
       // console.log(this.pinnableIdArranged);
 
     }, 1000);
+    if (this.resetBulkSelect$) {
+        this.resetBulkSelect$.subscribe((val: boolean) => {
+            if (val) {
+                this.bulkSelect = false;
+            }
+        });
+    }
   }
 
   onPinablesOrderChanged(newOrder) {
@@ -71,12 +78,16 @@ export class PinnableCollectionComponent implements OnInit {
     this.selectedPinnables = [];
   }
 
+  isSelected(pinnable: Pinnable): boolean {
+    return this.selectedPinnables.findIndex((P: Pinnable) => P.id === pinnable.id) !== -1;
+  }
+
   updatePinnables(pinnable: Pinnable) {
     if (!!this.selectedPinnables.find(pin => pin.id === pinnable.id)) {
      return this.selectedPinnables.splice(this.selectedPinnables.indexOf(pinnable), 1);
     } else {
       if (this.bulkSelect)
-       return this.selectedPinnables.push(pinnable);
+        return this.selectedPinnables.push(pinnable);
     }
       if (!this.header) {
         this.selectedPinnables.push(pinnable);
@@ -116,7 +127,7 @@ export class PinnableCollectionComponent implements OnInit {
           const currentPinIds = this.selectedPinnables.map(pinnable => pinnable.id);
           this.pinnables = this.pinnables.filter(pinnable => pinnable.id !== currentPinIds.find(id => id === pinnable.id));
             const pinnableToDelete = this.selectedPinnables.map(pinnable => {
-                return this.http.delete(`v1/pinnables/${pinnable.id}`);
+                return this.hallPassService.deletePinnable(pinnable.id);
             });
             return forkJoin(pinnableToDelete).subscribe(() => this.toggleBulk());
         } else {

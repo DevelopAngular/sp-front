@@ -9,13 +9,14 @@ import { MatDialog } from '@angular/material';
 })
 export class AppInputComponent implements OnInit {
 
-    @Input() input_type: string = "text";
+    @Input() input_type: string = 'text';
     @Input() input_class: string;
     @Input() input_value: string | number;
     @Input() input_label: string;
     @Input() placeholder: string = '';
     @Input() maxLength: number = 100;
     @Input() width: string;
+    @Input() padding: string = '.5rem';
     @Input() rightIcon: string;
     @Input() tooltipText: string;
     @Input() isFocus: boolean;
@@ -38,6 +39,10 @@ export class AppInputComponent implements OnInit {
     ngOnInit() {
       console.log('right_icon ===> ', this.rightIcon);
       // this.rightIconUntouched = this.rightIcon.replace('Blue', 'Grey');
+
+      if (this.isFocus) {
+        this.updateFocus(this.input.nativeElement);
+      }
 
       if (this.rightIcon) {
         this.rightIconUntouched = this.rightIcon.replace('Blue', 'Grey');

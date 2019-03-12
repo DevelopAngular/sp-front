@@ -21,7 +21,8 @@
       <div *ngIf="!!selectedOrigin && !invitation.cancelled; else noLocation;">
         <app-card-button (onClick)="acceptInvitation()" [disabled]="performingAction" [width]="'288px'" [height]="'79px'" [gradientColor]="invitation.color_profile.gradient_color">
           <div class="button-content">
-            <div class="get-pass-content-text">Get Pass</div>
+            <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
+            <div *ngIf="!performingAction" class="get-pass-content-text">Get Pass</div>
             <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
           </div>
         </app-card-button>
@@ -47,7 +48,8 @@
       <div *ngIf="forInput; else staffNoInput" class="card-body-right">
         <app-card-button (onClick)="newInvitation()" [disabled]="performingAction" [width]="'288px'" [height]="'79px'" [gradientColor]="invitation.color_profile.gradient_color">
           <div class="button-content">
-            <div class="button-content-text">Send Request</div>
+            <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
+            <div *ngIf="!performingAction" class="button-content-text">Send Request</div>
             <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
           </div>
         </app-card-button>

@@ -2,8 +2,7 @@
     display: flex;
     flex-direction: row;
     margin: 40px auto 0;
-    max-width: 490px;
-    width: 490px;
+    width: 586px;
     padding-right:90px;
     height: 85%;
 }
@@ -11,7 +10,6 @@
 .settings-wrapper{
     display: flex;
     flex-direction: column;
-    max-width: 400px;
     width: 400px;
     height: 100%;
 }
@@ -30,7 +28,7 @@
     flex-direction: row;
     align-items: center;
     max-height: 30px;
-    width: 75px;
+    width: 96px;
     padding: 5px 10px;
     border-radius: 15px;
     margin-top: -5px;
@@ -56,13 +54,21 @@
 
 .footer-links {
     display: flex;
-    justify-content: center;
-    align-items: flex-end;
+    justify-content: flex-end;
+    align-items: center;
     font-size: 18px;
     height: 100%;
+    flex-direction: column;
     margin-bottom: 30px;
 
     a {
         color: #7f879d;
     }
+    .version-text {
+        color: #7f879d;
+        padding: 5px;
+    }
+}
+.links {
+    display: flex;
 }

@@ -10,13 +10,14 @@ import {School} from '../models/School';
 })
 export class DropdownComponent implements OnInit {
 
+  alignSelf: boolean;
   heading: string = '';
   locations: Location[];
   schools: School[];
   selectedLocation: Location
   selectedSchool: School;
   _matDialogRef: MatDialogRef<DropdownComponent>;
-  triggerElementRef: ElementRef;
+  triggerElementRef: HTMLElement;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any[], _matDialogRef: MatDialogRef<DropdownComponent>) {
     this._matDialogRef = _matDialogRef;
@@ -26,29 +27,36 @@ export class DropdownComponent implements OnInit {
     this.schools = data['schools'];
     this.selectedLocation = data['selectedLocation'];
     this.selectedSchool = data['selectedSchool'];
+    this.alignSelf = data['alignSelf'];
 
   }
 
   ngOnInit() {
 
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
-    const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
-    matDialogConfig.position = { left: `${rect.left - 50}px`, top: `${rect.bottom + 15}px` };
+    const rect = this.triggerElementRef.getBoundingClientRect();
     matDialogConfig.width = '350px';
     matDialogConfig.height = '200px';
+    console.log('RECT =====>', rect, matDialogConfig);
+    matDialogConfig.position = { left: `${rect.left + (rect.width / 2 - parseInt(matDialogConfig.width, 10) / 2 ) }px`, top: `${rect.bottom + 15}px` };
     this._matDialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);
     this._matDialogRef.updatePosition(matDialogConfig.position);
   }
+
   partOfProfile(school) {
-      const roles = [];
+
+    const roles = [];
       if (school.my_roles.includes('_profile_admin')) {
         roles.push('Administrator');
-      } else if (school.my_roles.includes('_profile_teacher')) {
+      }
+      if (school.my_roles.includes('_profile_teacher')) {
         roles.push('Teacher');
-      } else if (school.my_roles.includes('_profile_student')) {
+      }
+      if (school.my_roles.includes('_profile_student')) {
         roles.push('Student');
       }
-      return roles.join(', ');
+
+    return roles.join(', ');
   }
 
   getTextWidth(text: string, fontSize: number){

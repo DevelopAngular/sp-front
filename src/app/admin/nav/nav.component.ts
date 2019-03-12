@@ -1,11 +1,11 @@
 import {Component, OnInit, NgZone, Output, EventEmitter, ViewChild, ElementRef} from '@angular/core';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
-import { LoadingService } from '../../loading.service';
-import { DataService } from '../../data-service';
+import { BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
+import { LoadingService } from '../../services/loading.service';
+import { DataService } from '../../services/data-service';
 import { User } from '../../models/User';
-import { UserService } from '../../user.service';
+import { UserService } from '../../services/user.service';
 import { disableBodyScroll } from 'body-scroll-lock';
 
 @Component({
@@ -54,7 +54,7 @@ export class NavComponent implements OnInit {
       if ( value instanceof NavigationEnd ) {
         let urlSplit: string[] = value.url.split('/');
         this.tab = urlSplit.slice(1);
-        console.log(this.tab);
+        console.log(this.tab, value.url);
         this.tab = ( (this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab );
       }
     });

@@ -4,10 +4,10 @@ import { combineLatest, empty, merge, of } from 'rxjs';
 import 'rxjs/add/observable/empty';
 
 import 'rxjs/add/operator/startWith';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { Subject } from 'rxjs/Subject';
-import { HttpService } from '../http-service';
+import { Subject } from 'rxjs';
+import { HttpService } from '../services/http-service';
 import { Paged, PassLike } from '../models';
 import { BaseModel } from '../models/base';
 import { HallPass } from '../models/HallPass';
@@ -15,7 +15,8 @@ import { Invitation } from '../models/Invitation';
 import { Location } from '../models/Location';
 import { Request } from '../models/Request';
 import { User } from '../models/User';
-import { PollingEvent, PollingService } from '../polling-service';
+import { PollingEvent, PollingService } from '../services/polling-service';
+import { TimeService } from '../services/time.service';
 import {
   Action,
   ExternalEvent,
@@ -175,7 +176,7 @@ export interface HallPassFilter {
 
 function makeSchoolFilter(http: HttpService) {
   return (obj: BaseModel) => {
-    const school = http.schoolIdSubject.value;
+    const school = http.getSchool();
     return school === null || obj.isAssignedToSchool(school.id);
   };
 }
@@ -188,8 +189,8 @@ export class LiveDataService {
 
   private globalReload$ = new Subject();
 
-  constructor(private http: HttpService, private polling: PollingService) {
-    this.http.schoolIdSubject.subscribe(() => {
+  constructor(private http: HttpService, private polling: PollingService, private timeService: TimeService) {
+    this.http.currentSchool$.subscribe(() => {
       setTimeout(() => {
         this.globalReload$.next(null);
       }, 5);
@@ -365,7 +366,7 @@ export class LiveDataService {
 
   watchActiveHallPasses(sortingEvents: Observable<HallPassFilter>, filter?: PassFilterType, date: Date = null): Observable<HallPass[]> {
     const queryFilter: QueryParams = {
-      limit: 20,
+      limit: 100000,
       active: true
     };
     const filters: FilterFunc<HallPass>[] = [
@@ -405,7 +406,7 @@ export class LiveDataService {
         return s;
       },
       handlePollingEvent: makePollingEventHandler([
-        new AddItem(['hall_pass.start', 'pass_request.accept', 'pass_invitation.accept'], HallPass.fromJSON, mergeFilters(filters)),
+        new AddItem(['hall_pass.start', 'pass_request.accept'], HallPass.fromJSON, mergeFilters(filters)),
         new UpdateItem(['hall_pass.start', 'pass_request.accept', 'pass_invitation.accept'], HallPass.fromJSON),
         new RemoveItem(['hall_pass.end', 'hall_pass.cancel'], HallPass.fromJSON)
       ]),
@@ -418,7 +419,7 @@ export class LiveDataService {
 
     const filters: FilterFunc<HallPass>[] = [
       makeSchoolFilter(this.http),
-      pass => pass.start_time > new Date()
+      pass => pass.start_time > this.timeService.nowDate()
     ];
 
     if (filter) {

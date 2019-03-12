@@ -91,10 +91,10 @@ export class TogglePickerComponent implements OnInit {
       }
 
       this.onSelect.emit(this.travelValue(travelType));
-      this.onDirty.emit(true);
   }
 
   travelValue(travelType: string) {
+      this.onDirty.emit(true);
      return travelType;
   }
 

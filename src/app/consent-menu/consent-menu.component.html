@@ -1,13 +1,32 @@
 ﻿<div class="pointer-wrapper"><div class="pointer"></div></div>
 <div class="consent-wrapper">
     <div class="consent-header">{{ header }}</div>
-      <div *ngIf="!!ConsentText">
-        {{ConsentText}}
+    <div *ngIf="!!ConsentText">
+      {{ConsentText}}
 
-        <div mat-dialog-actions class="center">
-          <div [style.color]="getConcentButtonColor(ConsentButtonColor)" class="option-wrapper marRight" (click)="_matDialogRef.close('doProcess')">{{ConsentYesText}}</div>
-          <div [style.color]="getConcentButtonColor(ConsentButtonColor)" class="option-wrapper" (click)="onNoClick()">{{ConsentNoText}}</div>
-        </div>
+      <div mat-dialog-actions class="center">
+        <div [style.color]="getConcentButtonColor(ConsentButtonColor)" class="option-wrapper marRight" (click)="_matDialogRef.close('doProcess')">{{ConsentYesText}}</div>
+        <div [style.color]="getConcentButtonColor(ConsentButtonColor)" class="option-wrapper" (click)="onNoClick()">{{ConsentNoText}}</div>
       </div>
-     <div *ngFor="let option of options" [style.color]="getColor(option)" class="option-wrapper" (click)="_matDialogRef.close(option.action)">{{ option.display }}</div>
+    </div>
+
+    <div *ngFor="let option of options">
+
+      <div *ngIf="optionsView === 'button'; else stringOptionsView">
+        <app-gradient-button
+          [cursor]="'pointer'"
+          [minHeight]="'32px'"
+          [width]="'200px'"
+          [fontSize]="'14px'"
+          [fontWeight]="400"
+          [gradient]="option.buttonColor"
+          [textColor]="getColor(option)"
+          (buttonClick)="_matDialogRef.close(option.action)">
+          <span>{{option.display}}</span>
+        </app-gradient-button>
+      </div>
+      <ng-template #stringOptionsView>
+        <div [style.color]="getColor(option)" class="option-wrapper" (click)="_matDialogRef.close(option.action)">{{ option.display }}</div>
+      </ng-template>
+    </div>
 </div>

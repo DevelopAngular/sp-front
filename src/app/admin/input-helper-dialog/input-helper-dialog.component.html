@@ -1,5 +1,5 @@
 <div class="divider">
-  <div class="button-clear" *ngIf="type === 'dates'" (click)="fromDate = ''; toDate = ''; closeDialog('')">
+  <div class="button-clear" *ngIf="type === 'dates'" (click)="fromDate = null; toDate = null; closeDialog(null)">
     <span>Clear</span>
   </div>
   <div class="divider-header">

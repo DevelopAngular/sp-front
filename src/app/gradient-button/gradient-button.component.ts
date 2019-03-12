@@ -31,6 +31,7 @@ export class GradientButtonComponent {
   @Input() leftIcon: string;
   @Input() rightIcon: string;
   @Input() text: string;
+  @Input() subtitle: string;
   @Input() textColor: string;
   @Input() width: number;
   @Input() minWidth: number;
@@ -42,6 +43,7 @@ export class GradientButtonComponent {
   @Input() leftImageHeight: string;
   @Input() cursor: string;
   @Input() textWidth: string = '100%';
+  @Input() buttonLink: string; // needs for the links so that don't brake an existing markup and the entire button is clickable
   @Output() buttonClick = new EventEmitter<any>();
 
   buttonDown = false;
@@ -92,8 +94,9 @@ export class GradientButtonComponent {
     return 'center';
   }
 
-  get shadow(){
-    return this.sanitizer.bypassSecurityTrustStyle(((this.hovered&&!this.disabled)?'0 2px 4px 1px rgba(0, 0, 0, 0.3)':'0 1px 4px 0px rgba(0, 0, 0, 0.25)'));
+  get shadow() {
+    return this.sanitizer.bypassSecurityTrustStyle(((this.hovered && !this.disabled) ?
+        '0 2px 4px 1px rgba(0, 0, 0, 0.3)' : '0 1px 4px 0px rgba(0, 0, 0, 0.25)'));
   }
 
   onPress(press: boolean) {

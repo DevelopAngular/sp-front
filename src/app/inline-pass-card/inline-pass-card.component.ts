@@ -1,9 +1,11 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import { HallPass} from '../models/HallPass';
-import { HttpService } from '../http-service';
-import { DataService } from '../data-service';
+import { HttpService } from '../services/http-service';
+import { DataService } from '../services/data-service';
 import { interval, merge, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import {HallPassesService} from '../services/hall-passes.service';
+import { TimeService } from '../services/time.service';
 
 @Component({
   selector: 'app-inline-pass-card',
@@ -30,21 +32,26 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
   performingAction: boolean;
   subscribers$;
 
-  constructor(private http: HttpService, private dataService: DataService) { }
+  constructor(
+      private http: HttpService,
+      private dataService: DataService,
+      private hallPassService: HallPassesService,
+      private timeService: TimeService,
+  ) { }
 
   ngOnInit() {
       this.subscribers$ = merge(of(0), interval(1000)).pipe(map(x => {
           if (!!this.pass && this.isActive) {
-              let end: Date = this.pass.expiration_time;
-              let now: Date = new Date();
-              let diff: number = (end.getTime() - now.getTime()) / 1000;
-              let mins: number = Math.floor(Math.abs(Math.floor(diff) / 60));
-              let secs: number = Math.abs(Math.floor(diff) % 60);
+              const end: Date = this.pass.expiration_time;
+              const now: Date = this.timeService.nowDate();
+              const diff: number = (end.getTime() - now.getTime()) / 1000;
+              const mins: number = Math.floor(Math.abs(Math.floor(diff) / 60));
+              const secs: number = Math.abs(Math.floor(diff) % 60);
               this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
               this.valid = end > now;
 
-              let start: Date = this.pass.start_time;
-              let dur: number = Math.floor((end.getTime() - start.getTime()) / 1000);
+              const start: Date = this.pass.start_time;
+              const dur: number = Math.floor((end.getTime() - start.getTime()) / 1000);
               this.overlayWidth = (this.buttonWidth * (diff / dur));
               return x;
           }
@@ -58,10 +65,8 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
   endPass(){
     // console.log('END PASS ===>', this.pass);
     this.performingAction = true;
-    const endPoint: string = 'v1/hall_passes/' +this.pass.id +'/ended';
-    this.http.post(endPoint).subscribe(res => {
-      // this.dataService.isActiveRequest$.next(false);
-      this.dataService.isActivePass$.next(false);
+    this.hallPassService.endPass(this.pass.id).subscribe(data => {
+      console.log('[Pass Ended]', data);
     });
   }
 

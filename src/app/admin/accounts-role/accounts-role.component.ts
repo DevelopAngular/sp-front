@@ -1,12 +1,14 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
+import {Component, ElementRef, OnDestroy, OnInit} from '@angular/core';
+import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
 import {MatDialog} from '@angular/material';
-import {UserService} from '../../user.service';
+import {UserService} from '../../services/user.service';
 import {AccountsDialogComponent} from '../accounts-dialog/accounts-dialog.component';
 import { ActivatedRoute } from '@angular/router';
-import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/internal/operators';
+import {debounceTime, distinctUntilChanged, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {Util} from '../../../Util';
+import {HttpService} from '../../services/http-service';
+import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
+import {AdminService} from '../../services/admin.service';
 
 @Component({
   selector: 'app-accounts-role',
@@ -23,15 +25,27 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   public userList: any[] = [];
   public selectedUsers: any[] = [];
   public placeholder: boolean;
+  public consentMenuOpened: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,
+    private http: HttpService,
+    private adminService: AdminService,
     private matDialog: MatDialog,
   ) { }
 
   ngOnInit() {
-    this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params: any) => {
+    this.http.globalReload$.pipe(
+      tap(() => {
+        this.selectedUsers = [];
+        this.userList = [];
+      }),
+      switchMap(() => {
+        return this.route.params.pipe(takeUntil(this.destroy$));
+      })
+    )
+    .subscribe((params: any) => {
       console.log(params);
       this.role = params.role;
       this.getUserList();
@@ -77,7 +91,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     }
     this.selectedUsers = e;
   }
-  openDialog(mode) {
+
+  openDialog(mode, eventTarget?: HTMLElement) {
     const restrictions = this.role === '_profile_admin'
                                     ?
                         {
@@ -120,6 +135,57 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
                             controlLabel: 'Access to Hall Monitor'
                           },
                         };
+
+    // =========== SPA=476 ============> It's temporary. Needs to suggest to leave the dialog as it is. If it will be declined, remove it.
+
+    if ( mode === 'remove') {
+
+      this.consentMenuOpened = true;
+
+      const DR = this.matDialog.open(ConsentMenuComponent,
+        {
+          data: {
+            role: this.role,
+            selectedUsers: this.selectedUsers,
+            mode: mode,
+            restrictions: restrictions,
+            alignSelf: true,
+            header: `Are you sure you want to remove this user${this.selectedUsers.length > 1 ? 's' : ''}?`,
+            options: [{display: 'Confirm Remove', color: '#FFFFFF', buttonColor: '#DA2370, #FB434A', action: 'confirm'}],
+            optionsView: 'button',
+            trigger: new ElementRef(eventTarget)
+          },
+          panelClass: 'consent-dialog-container',
+          backdropClass: 'invis-backdrop',
+        });
+      DR.afterClosed()
+        .pipe(
+          switchMap((action): Observable<any> => {
+            console.log(action);
+            this.consentMenuOpened = false;
+            if (action === 'confirm') {
+              let role: any = this.role.split('_');
+                  role = role[role.length - 1];
+              console.log('======>>>>>', role, this.selectedUsers);
+              return zip(...this.selectedUsers.map((user) => this.userService.deleteUserFromProfile(user['#Id'], role)));
+            } else {
+              return of(null);
+            }
+
+          }),
+        )
+        .subscribe((res) => {
+          console.log(res);
+          if (res != null) {
+            this.http.setSchool(this.http.getSchool());
+          }
+        });
+
+      return;
+    }
+
+    // =========== SPA=476 end ============>
+
     const DR = this.matDialog.open(AccountsDialogComponent,
       {
         data: {
@@ -132,8 +198,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         panelClass: 'accounts-profiles-dialog',
         backdropClass: 'custom-bd'
       });
-    DR.afterClosed().subscribe(v => console.log(v));
+    DR.afterClosed().subscribe((v) => {
+      console.log(v);
+      this.http.setSchool(this.http.getSchool());
+    });
   }
+
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();

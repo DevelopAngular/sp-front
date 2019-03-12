@@ -33,8 +33,6 @@ import { SettingsComponent } from './settings/settings.component';
 import { AdminSharedModule } from './shared/admin-shared.module';
 import { SupportComponent } from './support/support.component';
 
-;
-
 @NgModule({
   imports: [
     CommonModule,

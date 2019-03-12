@@ -1,4 +1,4 @@
-<div mat-raised-button class="clickRipple" (click)="onSelect()"
+<div *ngIf="!mock" mat-raised-button class="clickRipple" (click)="onSelect()"
      [@pressState]="buttonState" [style.box-shadow]="shadow"
      (mousedown)="onPress(true)" (mouseup)="onPress(false)"
      (mouseenter)="hovered = true" (mouseleave)="onPress(false); hovered = false"
@@ -22,3 +22,33 @@
     </div>
   </div>
 </div>
+
+
+<!-- Needs for Intro page -->
+
+<div *ngIf="mock" mat-raised-button class="clickRipple"
+     [style.box-shadow]="shadow"
+     [style.width]="width"
+>
+  <!--<div *ngIf="selected" class="selected-overlay"></div>-->
+  <div class="card"
+       [style.background]="'radial-gradient(circle at 73% 71%,' + mock.gradient + ')'"
+       [style.height]="height">
+    <img *ngIf="!selected" [style.width]="iconWidth" [style.height]="iconWidth" [src]="mock.content | resolveAsset" alt="ICON">
+    <!--<div *ngIf="selected" class="selected-icon-wrapper">-->
+      <!--<img class="selected-icon" [src]="'./assets/Check (Blue).png' | resolveAsset" alt="ICON">-->
+    <!--</div>-->
+    <div class="title-bar">
+      <div class="title">
+        {{mock.header}}
+      </div>
+      <img *ngIf="mock.arrow === true" class="category-icon" [src]="'./assets/Arrow (White).png' | resolveAsset" alt="ARROW">
+    </div>
+    <div *ngIf="mock.restricted" class="overlay-container">
+      <div class="overlay"></div>
+      <img class="lock" [src]="'./assets/Lock (White).png' | resolveAsset" alt="LOCK">
+    </div>
+  </div>
+</div>
+
+<!-- End -->

@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import {AccountsDialogComponent} from '../accounts-dialog/accounts-dialog.component';
-import {MatDialog} from '@angular/material';
-import {HttpService} from '../../http-service';
-import {User} from '../../models/User';
-import {UserService} from '../../user.service';
-import {BehaviorSubject, ReplaySubject, Subject} from 'rxjs';
+import { AccountsDialogComponent } from '../accounts-dialog/accounts-dialog.component';
+import { MatDialog } from '@angular/material';
+import { HttpService } from '../../services/http-service';
+import { UserService } from '../../services/user.service';
+import { BehaviorSubject } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { AdminService } from '../../services/admin.service';
 
 @Component({
   selector: 'app-accounts',
@@ -24,14 +25,22 @@ export class AccountsComponent implements OnInit {
   constructor(
     public matDialog: MatDialog,
     private userService: UserService,
-    private http: HttpService
+    private http: HttpService,
+    private adminService: AdminService
   ) { }
 
   ngOnInit() {
 
-    this.http.get('v1/admin/accounts').subscribe((u_list: any) => {
+    this.http.globalReload$.pipe(
+      switchMap(() => this.adminService.getAdminAccounts())
+    )
+    .subscribe((u_list: any) => {
       console.log(u_list, Object.values(u_list));
-      u_list.total = Object.values(u_list).reduce((a: number, b: number) => a + b);
+      if (u_list.total_count !== undefined) {
+        u_list.total = u_list.total_count;
+      } else {
+        u_list.total = Object.values(u_list).reduce((a: number, b: number) => a + b);
+      }
       console.log(u_list);
       this.accounts$.next(u_list);
     });

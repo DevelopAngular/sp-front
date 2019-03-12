@@ -1,0 +1,55 @@
+<div class="next-release-container">
+  <div class="close" (click)="markAsSeen()">
+    <img draggable="false" [src]="'./assets/Close Input (Grey).svg' | resolveAsset" alt="Close Input (Grey).svg">
+  </div>
+  <div class="release-version">
+    <div class="release-version_number">
+      {{releaseIndex}}
+    </div>
+    <h2 class="release-version_heading">What's New</h2>
+  </div>
+  <div class="release-items">
+    <div *ngFor="let item of whatsNewItems;">
+      <div class="release-items_item" *ngIf="item.visible">
+        <div class="left-side">
+          <img [src]="item.icon" alt="tools.svg">
+        </div>
+        <div class="right-side">
+          <div class="item_title">
+            <div><span>{{item.title}}</span></div>
+          </div>
+          <div class="item_description">
+            <span>{{item.description}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--<div>-->
+    <!--<div>-->
+      <!--<img [src]="'./assets/nextReleaseIcons/tools.svg'" alt="tools.svg">-->
+    <!--</div>-->
+    <!--<div>-->
+      <!--<div><span>Header</span></div>-->
+    <!--</div>-->
+    <!--<div><span>Description</span></div>-->
+  <!--</div>  -->
+  <!--<div>-->
+    <!--<div>-->
+      <!--<img [src]="'./assets/nextReleaseIcons/tools.svg'" alt="tools.svg">-->
+    <!--</div>-->
+    <!--<div>-->
+      <!--<div><span>Header</span></div>-->
+    <!--</div>-->
+    <!--<div><span>Description</span></div>-->
+  <!--</div>  -->
+  <!--<div>-->
+    <!--<div>-->
+      <!--<img [src]="'./assets/nextReleaseIcons/tools.svg'" alt="tools.svg">-->
+    <!--</div>-->
+    <!--<div>-->
+      <!--<div><span>Header</span></div>-->
+    <!--</div>-->
+    <!--<div><span>Description</span></div>-->
+  <!--</div>-->
+</div>

@@ -22,9 +22,10 @@
         </ng-template>
       <div class="card-body-right" *ngIf="!forStaff; else staffPanel">
         <div *ngIf="forInput; else studentNoInput" class="card-body-right">
-          <app-card-button (onClick)="newPass()" [disabled]="performingAction" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'" [gradientColor]="pass.color_profile.gradient_color">
+          <app-card-button (onClick)="newPass()" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'" [gradientColor]="pass.color_profile.gradient_color">
             <div class="start-pass-content">
-              <div class="start-pass-content-text">{{((forFuture && forInput)?'Schedule Pass':(forStaff?'Send Pass':'Start Pass'))}}</div>
+              <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
+              <div *ngIf="!performingAction" class="start-pass-content-text">{{((forFuture && forInput)?'Schedule Pass':(forStaff?'Send Pass':'Start Pass'))}}</div>
               <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
             </div>
           </app-card-button>

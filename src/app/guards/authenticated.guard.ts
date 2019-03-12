@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { httpFactory } from '@angular/http/src/http_module';
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
-import { GoogleLoginService } from '../google-login.service';
-import { HttpService } from '../http-service';
+import { GoogleLoginService } from '../services/google-login.service';
+import { HttpService } from '../services/http-service';
 
 @Injectable({
   providedIn: 'root'

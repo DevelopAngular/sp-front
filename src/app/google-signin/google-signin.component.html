@@ -1,5 +1,9 @@
 <div class="wrapper" *ngIf="!demoLoginEnabled">
 
+  <!--<div *ngIf="!showError">-->
+    <!--<app-error-toast (closeEvent)="onClose($event)"></app-error-toast>-->
+  <!--</div>-->
+
   <app-gradient-button
     class="login-button"
     [gradient]="'#FFFFFF,#FFFFFF'"
@@ -26,9 +30,24 @@
 </div>
 
 <form class="login-form" *ngIf="demoLoginEnabled" onsubmit="return false;">
-  <app-round-input [placeholder]="'Username'" [type]="'text'" [fieldIcon]="'./assets/User Login (Grey).png'" [style.margin-bottom]="'10px'" (ontextupdate)="updateDemoUsername($event)">
+  <app-round-input
+    [minWidth]="'260px'"
+    [width]="'260px'"
+    [placeholder]="'Username'"
+    [type]="'text'"
+    [fieldIcon]="'./assets/User Login (Grey).png'"
+    [style.margin-bottom]="'15px'"
+    (ontextupdate)="updateDemoUsername($event)">
   </app-round-input>
-  <app-round-input [placeholder]="'Password'" [type]="'text'" [fieldIcon]="'./assets/Lock (Grey).png'" [style.margin-bottom]="'10px'" [html5type]="'password'" (ontextupdate)="demoPassword = $event">
+  <app-round-input
+    [minWidth]="'260px'"
+    [width]="'260px'"
+    [placeholder]="'Password'"
+    [type]="'text'"
+    [fieldIcon]="'./assets/Lock (Grey).png'"
+    [html5type]="'password'"
+    [style.margin-bottom]="'15px'"
+    (ontextupdate)="demoPassword = $event">
   </app-round-input>
   <app-gradient-button
     [style.margin-tom]="'15px'"
@@ -42,7 +61,14 @@
     (buttonClick)="demoLogin()"
     [style.width]="'90px'"
     [style.margin]="'0 auto'"
-  >Sign in</app-gradient-button>
+  >
+    <div *ngIf="!showSpinner">
+      <span>Sign in</span>
+    </div>
+    <div  *ngIf="showSpinner" class="loading-theme_white">
+      <mat-spinner [diameter]="25"></mat-spinner>
+    </div>
+  </app-gradient-button>
 </form>
 
 <div class="demo-text-wrapper" (click)="toggleDemoLogin()"><div class="demo-text">{{demoLoginEnabled?'Sign in with Google':'Alternative Sign in'}}</div></div>

@@ -1,7 +1,8 @@
 import { Component, Input, OnInit, Output, OnDestroy, EventEmitter } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { bumpIn } from '../animations';
 import { PassLike } from '../models';
+import { TimeService } from '../services/time.service';
 import { getInnerPassContent, getInnerPassName, isBadgeVisible } from './pass-display-util';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Request } from '../models/Request';
@@ -19,6 +20,7 @@ import {filter} from 'rxjs/operators';
 })
 export class PassTileComponent implements OnInit, OnDestroy {
 
+  @Input() mock = null;
   @Input() pass: PassLike;
   @Input() fromPast = false;
   @Input() forFuture;
@@ -33,6 +35,24 @@ export class PassTileComponent implements OnInit, OnDestroy {
   valid: boolean = true;
   hovered: boolean;
   timers: number[] = [];
+  //
+  // mockData = {
+  //   headers: [
+  //     'Counselor',
+  //     'Gardner',
+  //     'Bathroom'
+  //   ],
+  //   gradients: [
+  //     '#E38314,#EAB219',
+  //     '#F52B4F,#F37426',
+  //     '#5C4AE3,#336DE4'
+  //   ],
+  //   dates: [
+  //     'Tomorrow, 9:03 AM',
+  //     'Sept 29, 11:35 AM',
+  //     'Today, 8:35 AM'
+  //   ]
+  // };
 
   get buttonState() {
     return this.buttonDown ? 'down' : 'up';
@@ -55,25 +75,35 @@ export class PassTileComponent implements OnInit, OnDestroy {
   }
 
   get isBadgeVisible() {
-    return isBadgeVisible(this.pass);
+    return isBadgeVisible(this.pass) && ((this.pass instanceof Invitation) && !this.forStaff) ||
+        (this.pass instanceof Invitation && this.pass.status === 'declined') || (this.forStaff && this.pass instanceof Request);
   }
 
   get boxShadow(){
     return this.sanitizer.bypassSecurityTrustStyle(this.hovered?'0 2px 4px 1px rgba(0, 0, 0, 0.3)':'0 2px 4px 0px rgba(0, 0, 0, 0.1)');
   }
 
-  constructor(private sanitizer: DomSanitizer) {
+  constructor(private sanitizer: DomSanitizer, private timeService: TimeService) {
   }
 
   ngOnInit() {
+    if (this.mock) {
+      // this.pass = null;
+      // this.fromPast = false;
+      // this.forFuture = true;
+      // this.isActive = false;
+      // this.forStaff = false;
+      // this.timerEvent = new Subject<any>();
+    }
+
     this.valid = this.isActive;
     if (this.timerEvent) {
       this.timerEvent.pipe(filter(() => !!this.pass['expiration_time'])).subscribe(() => {
-        let end: Date = this.pass['expiration_time'];
-        let now: Date = new Date();
-        let diff: number = (end.getTime() - now.getTime()) / 1000;
-        let mins: number = Math.floor(Math.abs(Math.floor(diff) / 60));
-        let secs: number = Math.abs(Math.floor(diff) % 60);
+        const end: Date = this.pass['expiration_time'];
+        const now: Date = this.timeService.nowDate();
+        const diff: number = (end.getTime() - now.getTime()) / 1000;
+        const mins: number = Math.floor(Math.abs(Math.floor(diff) / 60));
+        const secs: number = Math.abs(Math.floor(diff) % 60);
         this.valid = end > now;
         this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
       });

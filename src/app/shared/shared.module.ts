@@ -1,13 +1,14 @@
 ﻿import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import {
-    MatProgressBarModule, MatGridListModule,
-    MatDialogModule,
-    MatIconModule,
-    MatSelectModule,
-    MatSliderModule,
-    MatSlideToggleModule,
-    MatChipsModule, MatCardModule, MatCheckboxModule, MatTableModule, MatProgressSpinnerModule, MatDividerModule,
+  MatProgressBarModule, MatGridListModule,
+  MatDialogModule,
+  MatIconModule,
+  MatSelectModule,
+  MatSliderModule,
+  MatSlideToggleModule,
+  MatChipsModule, MatCardModule, MatCheckboxModule, MatTableModule, MatProgressSpinnerModule, MatDividerModule, MatTooltipModule,
+  MatListModule,
 } from '@angular/material';
 
 
@@ -39,6 +40,9 @@ import {PagerComponent} from '../pager/pager.component';
 import {RoundInputComponent} from '../admin/round-input/round-input.component';
 import {DragulaModule} from 'ng2-dragula';
 import {DropdownComponent} from '../dropdown/dropdown.component';
+import {AppInputComponent} from '../app-input/app-input.component';
+import {InputTextareaModule} from 'primeng/inputtextarea';
+import {DateTimeComponent} from '../create-hallpass-forms/main-hallpass--form/date-time-container/date-time/date-time.component';
 
 
 
@@ -50,6 +54,8 @@ import {DropdownComponent} from '../dropdown/dropdown.component';
     OwlNativeDateTimeModule,
     FormsModule,
     ReactiveFormsModule,
+      MatTooltipModule,
+      MatListModule,
       MatCheckboxModule,
       MatTableModule,
       MatProgressSpinnerModule,
@@ -62,6 +68,7 @@ import {DropdownComponent} from '../dropdown/dropdown.component';
       MatChipsModule,
       MatCardModule,
       MatDividerModule,
+      InputTextareaModule,
     NgProgressModule.forRoot(),
     DragulaModule.forRoot()
   ],
@@ -74,6 +81,7 @@ import {DropdownComponent} from '../dropdown/dropdown.component';
     NavButtonComponent,
     DisplayCardComponent,
     DateTimePickerComponent,
+    DateTimeComponent,
     PinnableComponent,
       TraveltypePickerComponent,
       StudentSearchComponent,
@@ -89,7 +97,8 @@ import {DropdownComponent} from '../dropdown/dropdown.component';
       DurationPickerComponent,
       CardButtonComponent,
       PagerComponent,
-      RoundInputComponent
+      RoundInputComponent,
+      AppInputComponent
   ],
     entryComponents: [
       PassCardComponent,
@@ -124,6 +133,10 @@ import {DropdownComponent} from '../dropdown/dropdown.component';
     CardButtonComponent,
     PagerComponent,
     RoundInputComponent,
+    AppInputComponent,
+    PassCardComponent,
+    InputTextareaModule,
+    DateTimeComponent,
 
   ],
 })

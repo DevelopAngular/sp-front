@@ -1,4 +1,4 @@
-<div class="cell-wrapper">
+<div class="cell-wrapper" *ngIf="!mock">
   <div class="cell-content-wrapper">
     <ng-container *ngIf="forStaff">
       <div class="cell-title">{{ cellName }}<span *ngIf="isEnded"> (Ended)</span></div>
@@ -14,3 +14,21 @@
   </div>
   <div class="cell-divider"></div>
 </div>
+
+<div class="cell-wrapper"  *ngIf="mock">
+  <div class="cell-content-wrapper">
+    <ng-container *ngIf="forStaff">
+      <div class="cell-title">{{ mock.footer }}<span *ngIf="isEnded"> (Ended)</span></div>
+    </ng-container>
+    <ng-container *ngIf="!forStaff">
+      <div class="cell-title">{{ mock.header }}</div>
+    </ng-container>
+
+    <div class="cell-datetime">{{ mock.content }}</div>
+    <img *ngIf="forStaff" class="location-icon" [src]="mock.icon | resolveAsset">
+    <img *ngIf="!mock.badge" class="cell-arrow" [src]="'./assets/Disclosure Indicator (Grey).png' | resolveAsset">
+    <div *ngIf="mock.badge" class="badge">1</div>
+  </div>
+  <div class="cell-divider"></div>
+</div>
+

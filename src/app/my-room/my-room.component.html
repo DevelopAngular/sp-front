@@ -3,17 +3,29 @@
     <div class="my-room-left">
       <div class="my-room-header">
         <!--<p>{{optionsOpen}} | {{showArrow}}</p>-->
-        <div class="selected-teacher" (click)="showOptions($event)">
+        <div class="selected-teacher" #target (click)="showOptions(target)">
           {{ roomOptions?selectedLocation.title:"" }}
           <img *ngIf="showArrow" class="disclosure-icon" [src]="'./assets/Disclosure Indicator (Blue).png' | resolveAsset">
         </div>
-        <input
-          class="input"
-          [placeholder]="'Search'"
-          #searchInput
-          [value]="inputValue"
-          (input)="onSearch(searchInput.value)"
-        >
+        <!--<input-->
+          <!--class="input"-->
+          <!--[placeholder]="'Search'"-->
+          <!--#searchInput-->
+          <!--[value]="inputValue"-->
+          <!--(input)="onSearch(searchInput.value)"-->
+        <!--&gt;-->
+        <div [style.margin-left]="'auto'"
+             [style.margin-right]="'10px'">
+          <app-round-input
+            [minWidth]="'215px'"
+            [width]="'215px'"
+            [type]="'text'"
+            [placeholder]="'Search'"
+            [fieldIconPosition]="'left'"
+            [closeIcon]="true"
+            (ontextupdate)="onSearch($event)"
+          ></app-round-input>
+        </div>
         <div class="calendar-wrapper" (click)="calendarToggled=!calendarToggled" [style.background-color]="(calendarToggled?'#E4EBFF':'transparent')">
           <img class="calendar-icon" [src]="'./assets/Calendar (Blue).png' | resolveAsset">
         </div>
@@ -24,7 +36,18 @@
         <app-pass-collection [forStaff]="isStaff" [style.width]="'550px'" [passProvider]="originPasses" [title]="'Passes from ' +selectedLocation.title" [icon]="'./assets/Arrow Reverse (Blue).png'" [columns]="4"></app-pass-collection>
         <app-pass-collection [forStaff]="isStaff" [style.width]="'550px'" [passProvider]="destinationPasses" [title]="'Passes to ' +selectedLocation.title" [icon]="'./assets/Arrow (Blue).png'" [columns]="4"></app-pass-collection>
 
-        <div *ngIf="!(hasPasses | async)" class="text">No Passes</div>
+        <div *ngIf="!(hasPasses | async) && (passesLoaded | async)">
+          <div class="empty-container" *ngIf="inputValue != ''">
+            <img class="empty-svg" [src]="'./assets/emptyStates/emptyRoomSearch.svg' | resolveAsset" alt="empty-svg">
+            <div class="big-text" [style.margin]="'10px 0'">No Results</div>
+            <div class="small-text">Search again or change the date</div>
+          </div>
+          <div class="empty-container" *ngIf="inputValue==''">
+            <img class="empty-svg" [src]="'./assets/emptyStates/emptyRoom.svg' | resolveAsset" alt="empty-svg">
+            <div class="big-text" [style.margin]="'10px 0'">It's Blank</div>
+            <div class="small-text">There aren't any passes here</div>
+          </div>
+        </div>
       </div>
     </div>
     <div *ngIf="calendarToggled" class="my-room-right">

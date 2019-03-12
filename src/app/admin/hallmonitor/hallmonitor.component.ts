@@ -1,19 +1,21 @@
 ﻿import { Component, OnInit, ElementRef} from '@angular/core';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
 import { MatDialog } from '@angular/material';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { BehaviorSubject } from 'rxjs';
 import { User } from '../../models/User';
 import { Report } from '../../models/Report';
 import { Pinnable } from '../../models/Pinnable';
 import { ActivePassProvider } from '../../hall-monitor/hall-monitor.component';
 import { LiveDataService } from '../../live-data/live-data.service';
-import { PassLikeProvider } from '../../models/providers';
+import {PassLikeProvider, WrappedProvider} from '../../models/providers';
+import { TimeService } from '../../services/time.service';
 import {CalendarComponent} from '../calendar/calendar.component';
-import {HttpService} from '../../http-service';
+import {HttpService} from '../../services/http-service';
 import {Util} from '../../../Util';
-import {map, toArray} from 'rxjs/operators';
-import {switchMap, tap} from 'rxjs/internal/operators';
+import {map, switchMap, toArray} from 'rxjs/operators';
 import { disableBodyScroll } from 'body-scroll-lock';
+import {AdminService} from '../../services/admin.service';
+import {combineLatest, Observable, of} from 'rxjs';
 
 
 
@@ -23,9 +25,10 @@ import { disableBodyScroll } from 'body-scroll-lock';
   styleUrls: ['./hallmonitor.component.scss']
 })
 export class HallmonitorComponent implements OnInit {
-    activePassProvider: PassLikeProvider;
+
+    activePassProvider: WrappedProvider;
     searchQuery$ = new BehaviorSubject('');
-    minDate = new Date();
+    minDate: Date;
     input_value1: string;
     input_value2: string;
     input_DateRange: string;
@@ -46,25 +49,42 @@ export class HallmonitorComponent implements OnInit {
     searchDate_1st$ = new BehaviorSubject<Date>(null);
     searchDate_2nd$ = new BehaviorSubject<Date>(null);
 
+    passesLoaded: Observable<boolean> = of(false);
+
+    hasPasses: Observable<boolean> = of(false);
+
     public reportsDate: Date;
 
     constructor(
         public dialog: MatDialog,
         private liveDataService: LiveDataService,
         private http: HttpService,
-        private elRef: ElementRef
+        private adminService: AdminService,
+        private elRef: ElementRef,
+        private timeService: TimeService,
 
     ) {
-      this.activePassProvider = new ActivePassProvider(this.liveDataService, this.searchQuery$);
+      this.activePassProvider = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.searchQuery$));
+      this.minDate = this.timeService.nowDate();
       //this.studentreport[0]['id'] = '1';
     }
 
   ngOnInit() {
       disableBodyScroll(this.elRef.nativeElement);
-    this.activePassProvider = new ActivePassProvider(this.liveDataService, this.searchQuery$);
+    // this.activePassProvider = new ActivePassProvider(this.liveDataService, this.searchQuery$);
     this.http.globalReload$.subscribe(() => {
       this.getReports();
     });
+
+    this.hasPasses = combineLatest(
+      this.activePassProvider.length$,
+      (l1) => l1 > 0
+    );
+
+    this.passesLoaded = combineLatest(
+      this.activePassProvider.loaded$,
+      (l1) => l1
+    );
 
   }
 
@@ -219,13 +239,13 @@ export class HallmonitorComponent implements OnInit {
   private getReports(date?: Date) {
     const range = this.liveDataService.getDateRange(date);
     console.log(range);
-    this.http.get(`v1/event_reports${ date ? `?created_before=${range.end.toISOString()}&created_after=${range.start.toISOString()}` : ''}`)
+    date ? this.adminService.searchReports(range.end.toISOString(), range.start.toISOString()) : this.adminService.getReports()
       .pipe(
         map((list: any[]) => {
 
           return list.map((report, index) => {
             return {
-              student_name: report.student.display_name,
+              student_name: report.student.display_name + ` (${report.student.primary_email.split('@', 1)[0]})`,
               issuer: report.issuer.display_name,
               createdDate: Util.formatDateTime(new Date(report.created), false, false).split(', ')[0],
               created: Util.formatDateTime(new Date(report.created), false, false),

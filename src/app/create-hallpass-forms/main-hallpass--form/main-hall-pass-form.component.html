@@ -1,0 +1,40 @@
+<!-- Show the form designated for students -->
+<div class="form" [style.width]="formSize.width" [style.height]="formSize.height">
+  <!-- Buttons responsible for choosing formState -->
+  <!--<h1 style="text-align: center">{{FORM_STATE.formMode.formFactor}}</h1>-->
+
+  <div class="pretty-replace-box"
+       [style.backgroundColor]="FORM_STATE.step < 4 && FORM_STATE.previousStep < 4 ? 'rgba(255, 255, 255, .8)' : 'transparent'"
+       [style.overflow]="FORM_STATE.step === 2 || FORM_STATE.previousStep === 2 ? 'hidden' : 'visible'">
+    <div style="transition: width .5s ease, height .5s ease; " [style.width]="formSize.width" [style.height]="formSize.height">
+
+      <div class="fixed-card"  [style.width]="formSize.width" [style.height]="formSize.height" *ngIf="FORM_STATE.step === 1" [@ScaledCard] (@ScaledCard.start)="setFormSize()">
+        <div class="date-picker">
+          <app-date-time-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)" ></app-date-time-container>
+        </div>
+      </div>
+      <div class="fixed-card" [style.width]="formSize.width" [style.height]="formSize.height" *ngIf="FORM_STATE.step === 2"  [@NextStepColored] (@NextStepColored.start)="setFormSize()">
+
+        <div>
+          <app-groups-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-groups-container>
+        </div>
+      </div>
+    </div>
+
+    <div style="transition: width .5s ease, height .5s ease; " class="fixed-card" *ngIf="FORM_STATE.step === 3"
+         [style.width]="formSize.width"
+         [style.height]="formSize.height"
+         [@ScaledCard] (@ScaledCard.start)="setFormSize()">
+      <!--<div class="fixed-card" [style.width]="formSize.width" [style.height]="formSize.height" *ngIf="FORM_STATE.step === 3"  [@ScaledCard] (@ScaledCard.start)="setFormSize()" >-->
+      <div >
+        <app-locations-group-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-locations-group-container>
+      </div>
+
+    </div>
+  </div>
+  <div class="fixed-card" style="z-index: 15" [style.width]="formSize.width" [style.height]="formSize.height" *ngIf="FORM_STATE.step === 4" [@ScaledCard] (@ScaledCard.start)="setFormSize()">
+    <!--<pre>{{formSize | json}}</pre>-->
+    <app-form-factor-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-form-factor-container>
+  </div>
+
+</div>

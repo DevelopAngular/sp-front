@@ -7,6 +7,7 @@ import { NavbarDataService } from '../main/navbar-data.service';
   styleUrls: ['./display-card.component.scss']
 })
 export class DisplayCardComponent implements OnInit {
+  @Input() mock: number = null;
   @Input() backgroundColor: string;
   @Input() headerBottomSpace: string = '8px';
   @Input() hasDivider: boolean = true;

@@ -16,6 +16,7 @@ body {
   width: 100%;
   height: 100%;
   overflow: auto;
+  box-sizing: content-box !important;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -41,9 +42,29 @@ body {
 }
 
 .form-dialog-container .mat-dialog-container {
-  border-radius: 10px;
+  border-radius: 15px;
   overflow: hidden;
   box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  padding: 0;
+  scrollbar-face-color: #D6D6D6;
+  scrollbar-track-color: white;
+}
+
+.main-form-dialog-container .mat-dialog-container {
+  border-radius: 15px;
+  background-color: transparent;
+  overflow: visible;
+  //box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+  //width: 100vw !important;
+  //height: 100vh !important;
+  //position: fixed;
+  //top: 0;
+  //left: 0;
+  //display: flex;
+  //align-items: center;
+  //justify-content: center;
+  box-shadow: none;
   margin: 0;
   padding: 0;
   scrollbar-face-color: #D6D6D6;
@@ -118,6 +139,13 @@ body {
   padding: 0;
   background: transparent;
 }
+
+//.next-release-dialog-container .mat-dialog-container {
+//  width: auto;
+//  height: auto;
+//  padding: 0;
+//  background: transparent;
+//}
 .message-dialog-container .mat-dialog-container {
   @extend .editor-dialog;
   width: 300px;
@@ -160,7 +188,6 @@ textarea:focus {
   outline-offset: 0;
   outline: none;
   transition: border .2s ease;
-  border: 1px solid #595487 !important;
 }
 
 // .mat-chip-list-wrapper{

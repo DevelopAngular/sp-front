@@ -2,9 +2,9 @@ import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/observable/of';
 
-import { HttpService } from '../http-service';
-import { Paged } from '../models';
 import { User } from '../models/User';
+import {Subject} from 'rxjs';
+import {UserService} from '../services/user.service';
 
 @Component({
   selector: 'app-student-search',
@@ -13,29 +13,40 @@ import { User } from '../models/User';
 })
 
 export class StudentSearchComponent implements AfterViewInit {
-  @Output() onUpdate: EventEmitter<any> = new EventEmitter();
+
+  @Input() disabled: boolean = false;
+  @Input() focused: boolean = false;
   @Input() showOptions: boolean = true;
   @Input() selectedStudents: User[] = [];
+  @Output() onUpdate: EventEmitter<any> = new EventEmitter();
 
   @ViewChild('studentInput') input;
 
   students: Promise<any[]>;
-  inputValue: string = '';
+  inputValue$: Subject<string> = new Subject<string>();
 
-  constructor(private http: HttpService) {
+  constructor(private userService: UserService) {
     // this.onSearch('');
   }
 
   ngAfterViewInit() {
-    this.input.nativeElement.focus();
+    // this.input.nativeElement.focus();
+    // if (this.selectedStudents.length) {
+    //   setTimeout(() => {
+    //     this.focused = true;
+    //   }, 50);
+    // }
+
   }
 
   onSearch(search: string) {
-    if(search!=='')
-      this.students = this.http.get<Paged<any>>('v1/users?role=hallpass_student&limit=5' + (search === '' ? '' : '&search=' + encodeURI(search))).toPromise().then(paged => this.removeDuplicateStudents(paged.results));
-    else
+    if (search !== '') {
+      this.students = this.userService.searchProfile('hallpass_student',5, encodeURI(search))
+          .toPromise().then(paged => this.removeDuplicateStudents(paged.results));
+    } else {
       this.students = null;
-      this.inputValue = '';
+      this.inputValue$.next('');
+    }
   }
 
   removeStudent(student: User) {
@@ -49,7 +60,8 @@ export class StudentSearchComponent implements AfterViewInit {
 
   addStudent(student: User) {
     console.log(student);
-    this.inputValue = '';
+    this.input.focus();
+    this.inputValue$.next('');
     this.onSearch('');
     if (!this.selectedStudents.includes(student)) {
       this.selectedStudents.push(student);

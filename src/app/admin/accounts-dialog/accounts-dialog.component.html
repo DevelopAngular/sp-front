@@ -21,7 +21,7 @@
                 {{user.Name}}({{user['Account Email']}})
             </div>
           </div>
-          <pre>{{form.value | json}}</pre>
+          <!--<pre>{{form.value | json}}</pre>-->
         </div>
         <div class="card-content_right">
           <form [formGroup]="form">
@@ -65,11 +65,14 @@
       <div class="flex-center-center w-100" *ngSwitchCase="'create'">
         <div [style.width]="'60%'">
           <p [style.padding]="'30px 0px 20px 0px'" [style.color]="'#ccc'">
-            Search through all G Suite for Education accounts.
-            If you want to add a new user, create an account for him/her through G Suite first.
+            Search through all G Suite for Education accounts. If you want to add a new user, create an account for him/her through G Suite first.
           </p>
           <div class="">
-            <app-profiles-search [role]="data.role"></app-profiles-search>
+            <app-profiles-search
+              [role]="data.role"
+              (onUpdate)="setSelectedUsers($event)"
+            >
+            </app-profiles-search>
           </div>
         </div>
       </div>

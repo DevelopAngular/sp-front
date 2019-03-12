@@ -13,6 +13,8 @@ import { DomSanitizer } from '../../../node_modules/@angular/platform-browser';
 })
 export class PinnableComponent implements OnInit {
 
+  @Input() mock = null;
+
   @Input()
   pinnable: Pinnable;
 
@@ -62,8 +64,14 @@ export class PinnableComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (!!this.pinnable.location) {
-      this.restricted = ((this.pinnable.location.restricted && !this.forLater) || (this.pinnable.location.scheduling_restricted && this.forLater));
+
+    if (!this.mock) {
+      if (!!this.pinnable.location) {
+        this.restricted = ((this.pinnable.location.restricted && !this.forLater) || (this.pinnable.location.scheduling_restricted && this.forLater));
+      }
+
+    } else {
+
     }
   }
 

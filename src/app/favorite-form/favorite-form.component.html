@@ -1,21 +1,34 @@
-<div class="favortie-form-wrapper">
+<div class="favorite-form-wrapper">
 
   <div class="divider" [style.background-image]="'radial-gradient(circle at 73% 71%, #E7A700,#EFCE00)'">
-    <img class="divider-icon" [src]="'./assets/Star (White).png' | resolveAsset">
-    <div class="divider-text">Favorites</div>
+    <img class="back-button" [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
+    <div class="center">
+      <img class="divider-icon" [src]="'./assets/Star (White).png' | resolveAsset">
+      <div class="divider-text">Favorites</div>
+    </div>
   </div>
   <div class="content">
-    <app-location-table class="locations" (onStar)="onStar($event)" [showFavorites]="true" [type]="'location'" [placeholder]="'Search rooms'" [showStars]="true"></app-location-table>
-  
-    <app-gradient-button
-      [gradient]="'#E7A700,#EFCE00'"
-      [hoverColor]="'#E7A700'"
-      [minWidth]="'90px'"
-      [minHeight]="'30px'"
-      [fontSize]="'14px'"
-      (buttonClick)="closeDialog()"
-      [style.width]="'90px'"
-      [style.margin-bottom]="'14px'"
-    >Save</app-gradient-button>
+    <app-location-table class="locations"
+         [rightHeaderText]="true"
+         [isEdit]="true"
+         (onStar)="onStar($event)"
+         [showFavorites]="true"
+         (onUpdate)="starChangesIds = $event"
+         [type]="'location'"
+         [placeholder]="'Search rooms'"
+         [showStars]="true">
+    </app-location-table>
+  <!--<div class="save-button">-->
+    <!--<app-gradient-button-->
+            <!--[gradient]="'#E7A700,#EFCE00'"-->
+            <!--[hoverColor]="'#E7A700'"-->
+            <!--[minWidth]="'90px'"-->
+            <!--[minHeight]="'30px'"-->
+            <!--[fontSize]="'14px'"-->
+            <!--(buttonClick)="closeDialog()"-->
+            <!--[style.width]="'90px'"-->
+            <!--[style.margin-bottom]="'14px'"-->
+    <!--&gt;Save</app-gradient-button>-->
+  <!--</div>-->
   </div>
 </div>

@@ -1,4 +1,5 @@
-<div class="collection-wrapper" *ngIf="(currentPasses$ | async) && (currentPasses$ | async).length>0 || emptyMessage">
+<div class="collection-wrapper" *ngIf="!mock && (currentPasses$ | async) && (currentPasses$ | async).length>0 || emptyMessage">
+  <!--<pre>{{test | json}}</pre>-->
   <div class="collection-header">
       <img draggable="false" class="collection-icon" [src]="icon | resolveAsset">
       <div class="collection-title">
@@ -29,3 +30,29 @@
     </ng-template>
   </div>
 </div>
+
+<!-- Needs for Intro page -->
+
+<!--<div class="collection-wrapper" *ngIf="mock" [style.width]=" columns === 3 ? '393px' : columns === 2 ? '322px' : 'auto'">-->
+<div class="collection-wrapper" *ngIf="mock">
+  <div class="collection-header">
+    <img draggable="false" class="collection-icon" [src]="icon | resolveAsset">
+    <div class="collection-title">
+      {{title}}
+    </div>
+    <img draggable="false" class="collection-display-toggle global-opacity-icons" [src]="'./assets/' +(displayState==='grid'?'List':'Grid') +' (Blue).png'| resolveAsset" [style.margin-left]="hasSort?'10px':'auto'">
+  </div>
+  <div class="collection-divider"></div>
+    <div class="collection-grid-wrapper" *ngIf="displayState==='grid'; else list">
+      <div class="tile" *ngFor="let mockTile of mock">
+        <app-pass-tile [mock]="mockTile" [forStaff]="forStaff"></app-pass-tile>
+      </div>
+    </div>
+    <ng-template #list>
+      <div class="collection-list-wrapper" [style.max-height]="maxHeight?maxHeight:''">
+        <app-pass-cell *ngFor="let mockCell of mock" [forStaff]="forStaff" [mock]="mockCell"></app-pass-cell>
+      </div>
+    </ng-template>
+</div>
+
+<!-- End -->

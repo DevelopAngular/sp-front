@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { bumpIn } from '../animations';
-import {DataService} from '../data-service';
+import {DataService} from '../services/data-service';
 
 @Component({
   selector: 'app-card-button',
@@ -36,7 +36,7 @@ export class CardButtonComponent implements OnInit {
   }
 
   buttonClicked() {
-    this.dataService.isActivePass$.next(false);
+    // this.dataService.isActivePass$.next(false);
     if (!this.disabled) {
         this.onClick.emit();
     }
@@ -52,6 +52,5 @@ export class CardButtonComponent implements OnInit {
       const gradient: string[] = this.gradientColor.split(',');
       return 'radial-gradient(circle at 73% 71%, ' + gradient[0] + ', ' + gradient[1] + ')';
     }
-    //   let gradient: string[] = '#134472, #549abb'.split(',');
   }
 }

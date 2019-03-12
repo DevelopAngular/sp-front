@@ -5,11 +5,418 @@
     align-items: center;
     overflow: hidden;
     user-select: none;
-    padding-bottom: 10px;
 }
+
+.box {
+  height: 100vh;
+  width: 100vw;
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background-color: #F8FAFF;
+  position: relative;
+  color: #7E879D;
+  .anti-click {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    z-index: 1;
+  }
+}
+
+.slide {
+  font-size: 1.05em;
+  text-align: center;
+
+  padding: 0 30px;
+  background-color: #F8FAFF;
+  .pass-collection {
+    max-width: 393px;
+    &__transparent {
+      opacity: .3;
+    }
+  }
+  &_1 {
+    .logo {
+      padding-top: 100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .greeting {
+      padding-top: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .tiles-wrapper {
+      padding-top: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      flex-direction: column;
+      .tiles {
+        display: flex;
+        div {
+          padding: 4px;
+        }
+      }
+    }
+  }
+  &_2 {
+    .for-student_2 {
+      max-height: 650px;
+      overflow-y: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      .title {
+        padding: 50px 0 35px 0;
+      }
+      .pass-buttons {
+        display: flex;
+        justify-content: space-around;
+      }
+    }
+    .for-staff_2 {
+      .top-header {
+        font-size: 24px;
+        font-weight: bold;
+        padding-top: 55px;
+      }
+      color: #3D396B;
+      .tab {
+        display: flex;
+        padding-top: 55px;
+        text-align: left;
+        &_image {
+          display: flex;
+          padding-right: 10px;
+          align-items: flex-start;
+          img {
+            width: 55px;
+            padding-right: 10px;
+          }
+        }
+        &_heading {
+          font-size: 20px;
+          font-weight: bold;
+        }
+        &_description {
+          color: #7F879D;
+          font-size: 14px;
+          max-width: 220px;
+        }
+      }
+    }
+  }
+  &_3 {
+    max-height: 680px;
+    .for-student_3 {
+      .form {
+        width: 430px;
+        height: 500px;
+        margin: 20px;
+        box-sizing: content-box;
+        box-shadow: 0 0 5px 3px rgba(0, 0,0 , .1);
+        border-radius: 10px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .title {
+        padding: 50px 0 35px 0;
+      }
+      .locs {
+        //margin-top: 35px;
+        padding: 23px 0;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+      }
+
+      .pinnable-wrapper {
+        padding: 3%;
+        display: flex;
+        flex-wrap: wrap;
+        //justify-content: center;
+        .pinnable {
+          padding: 7px;
+        }
+      }
+      .arrow {
+        height: 30px;
+        width: 30px;
+        margin: auto 40px auto 40px;
+      }
+
+      .divider {
+        width: 100%;
+        height: 65px;
+        margin: 0 0 0 0;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+        position: relative;
+        &__footer {
+          //position: absolute;
+          //bottom: 0;
+          flex: 1 1 auto;
+          display: flex;
+          //flex-direction: column;
+          align-items: flex-end;
+          justify-content: center;
+          //padding-bottom: 20px;
+          .shadow {
+            padding: 20px 0;
+            width: 100%;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+          }
+        }
+      }
+
+      .divider-header{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+      }
+
+      .back-button{
+        position: absolute;
+        width: 25px;
+        height: 25px;
+        margin-left: 20px;
+        user-select: none;
+        cursor: pointer;
+      }
+
+      .divider-icon {
+        transform: rotateY(180deg);
+        margin-right: 10px;
+        width: 25px;
+        height: 25px;
+      }
+
+      .divider-text {
+        color: #1F195E;
+        font-family: 'Helvetica Neue', sans-serif;
+        font-size: 16px;
+        font-weight: bold;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: 1.08;
+        letter-spacing: 0.3px;
+      }
+    }
+    .for-staff_3 {
+      max-height: 680px;
+      overflow-y: hidden;
+      .title {
+        padding: 50px 0 35px 0;
+      }
+      .content {
+        display: flex;
+        .left-side {
+          padding-right: 60px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          .pass-buttons {
+            display: flex;
+            justify-content: space-around;
+          }
+        }
+        .right-side {
+          opacity: .5;
+        }
+      }
+    }
+  }
+  &_4 {
+    .for-student_4 {
+      .title {
+        margin-top: 40px;
+      }
+      .pass-card {
+        padding: 15px;
+        margin-top: 60px;
+        width: 334px;
+        height: 412px;
+        border-radius: 10px;
+        background: radial-gradient(circle at 73% 71%, #5C4AE3, #336DE4);
+        color: #FFFFFF;
+        &_header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 5px 0 20px 0;
+          border-bottom: 1px solid rgba(255, 255, 255, .7);
+          .left-box {
+            display: flex;
+            align-items: center;
+            .picture {
+              width: 34px;
+              height: 34px;
+            }
+            .text {
+              font-weight: bold;
+              font-size: 18px;
+              padding-left: 15px;
+            }
+          }
+          .arrow {
+            width: 30px;
+            height: 30px;
+          }
+        }
+        &_body {
+          .top-side {
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .bottom-side {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            .start-pass-content {
+              margin-top: 52px;
+              padding: 0 15px;
+              width: 95%;
+              height: 79px;
+              border-radius: 15px;
+              background-image: radial-gradient(circle at 73% 71%,  #5C4AE3, #336DE4);
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              position: relative;
+              overflow: hidden;
+              &-text {
+                position: absolute;
+                background-color: rgba(200, 200, 200, 0.7);
+                mix-blend-mode: soft-light;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                margin: auto;
+              }
+            }
+          }
+        }
+      }
+    }
+    .for-staff_4 {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      .title  {
+        color: #46474C;
+        padding: 55px 0;
+      }
+      .date {
+        max-width: 425px;
+        margin: 10px;
+        border-radius: 15px;
+        background-color: #fff;
+        box-shadow: 0 0 5px 3px rgba(0, 0,0 , .1);
+        overflow: hidden;
+      }
+    }
+  }
+  &_5-6 {
+
+    display: flex;
+    justify-content: space-between;
+    padding-top: 75px;
+    &__6 {
+      .right-side {
+        position: relative;
+        top: -250px;
+      }
+    }
+    .left-side {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 45px 0 0;
+      &_inbox {
+
+        .inbox-wrapper {
+          width: 50px;
+          height: 50px;
+          border-radius: 25px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
+          transform: scale(1.5);
+          .inbox-icon {
+            width: auto;
+            height: 24px;
+            cursor: pointer;
+          }
+          .inbox-modifiers {
+            width: 45px;
+            height: 45px;
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            .inbox-badge {
+              width: 19px;
+              height: 20px;
+              position: absolute;
+              top: 6px;
+            }
+            .inbox-number {
+              color: white;
+              font-family: 'Helvetica Neue', sans-serif;
+              font-size: 12px;
+              position: absolute;
+              top: 9px;
+            }
+            .inbox-front {
+              width: 20px;
+              height: 10px;
+              position: absolute;
+              top: 22px;
+            }
+          }
+        }
+      }
+      &_title {
+        padding-top: 46px;
+      }
+    }
+    .right-side {}
+  }
+  &_7 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #3D396B;
+    .logo, .end {
+      padding-top: 95px;
+    }
+  }
+}
+
+
 
 .button{
     position: absolute;
+    z-index: 2;
     top: 50%;
     width: 50px;
     height: 50px;
@@ -43,10 +450,11 @@
 }
 
 .end-button{
-    margin-top: -275px;
-}
-
-.slide{
-    margin-right: auto;
-    margin-left: auto;
+  width: 200px;
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  bottom: 275px;
+  margin: 0 auto;
 }

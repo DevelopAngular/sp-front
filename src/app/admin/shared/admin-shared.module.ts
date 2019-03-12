@@ -8,7 +8,7 @@ import { NavButtonComponent } from '../nav-button/nav-button.component';
 import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
 import { PinnableCollectionComponent } from '../pinnable-collection/pinnable-collection.component';
 import { SharedModule } from '../../shared/shared.module';
-import { AppInputComponent } from '../../app-input/app-input.component';
+// import { AppInputComponent } from '../../app-input/app-input.component';
 import { FormsModule } from '@angular/forms';
 import {
   MatCheckboxModule,
@@ -61,7 +61,7 @@ import { ColorComponent } from '../color-pallet-picker/color/color.component';
       PinnableCollectionComponent,
       // RoundInputComponent,
       TogglePickerComponent,
-      AppInputComponent,
+      // AppInputComponent,
       ProfilesSearchComponent,
       LocationSearchComponent,
       ColorComponent
@@ -81,14 +81,14 @@ import { ColorComponent } from '../color-pallet-picker/color/color.component';
       PinnableCollectionComponent,
       // RoundInputComponent,
       TogglePickerComponent,
-      AppInputComponent,
+      // AppInputComponent,
       ProfilesSearchComponent,
       LocationSearchComponent,
       ColorComponent
   ],
   entryComponents: [
       AccountsDialogComponent,
-      AppInputComponent,
+      // AppInputComponent,
       OverlayContainerComponent,
       DateInputComponent,
       InputHelperDialogComponent

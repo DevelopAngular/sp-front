@@ -1,19 +1,20 @@
-import { Component, OnInit, Input, ElementRef, NgZone } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, NgZone, Output, EventEmitter } from '@angular/core';
 import { Invitation } from '../models/Invitation';
 import { User } from '../models/User';
 import { Location} from '../models/Location';
 import { Util } from '../../Util';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { Inject } from '@angular/core';
-import { HttpService } from '../http-service';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { getInnerPassName } from '../pass-tile/pass-display-util';
-import { DataService } from '../data-service';
-import { LoadingService } from '../loading.service';
-import {HallpassFormComponent} from '../hallpass-form/hallpass-form.component';
-import {RequestCardComponent} from '../request-card/request-card.component';
-import {PassCardComponent} from '../pass-card/pass-card.component';
-import {filter} from 'rxjs/operators';
+import { DataService } from '../services/data-service';
+import { LoadingService } from '../services/loading.service';
+import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
+import { RequestCardComponent } from '../request-card/request-card.component';
+import { filter } from 'rxjs/operators';
+import { CreateFormService } from '../create-hallpass-forms/create-form.service';
+import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
+import {RequestsService} from '../services/requests.service';
 
 @Component({
   selector: 'app-invitation-card',
@@ -27,7 +28,10 @@ export class InvitationCardComponent implements OnInit {
   @Input() fromPast: boolean = false;
   @Input() forStaff: boolean = false;
   @Input() forInput: boolean = false;
+  @Input() formState: Navigation;
   @Input() selectedStudents: User[] = [];
+
+  @Output() cardEvent: EventEmitter<any> = new EventEmitter<any>();
 
   selectedOrigin: Location;
   denyOpen: boolean = false;
@@ -37,13 +41,17 @@ export class InvitationCardComponent implements OnInit {
   performingAction: boolean;
   fromHistory;
   fromHistoryIndex;
+  isSeen: boolean;
 
   constructor(
       public dialogRef: MatDialogRef<InvitationCardComponent>,
       @Inject(MAT_DIALOG_DATA) public data: any,
-      public dialog: MatDialog, private http: HttpService,
-      public dataService: DataService, private _zone: NgZone,
-      private loadingService: LoadingService
+      public dialog: MatDialog,
+      private requestService: RequestsService,
+      public dataService: DataService,
+      private _zone: NgZone,
+      private loadingService: LoadingService,
+      private createFormService: CreateFormService
   ) {}
 
   get studentName(){
@@ -63,14 +71,17 @@ export class InvitationCardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.invitation = this.data['pass'];
-    this.forFuture = this.data['forFuture'];
-    this.fromPast = this.data['fromPast'];
-    this.forStaff = this.data['forStaff'];
-    this.forInput = this.data['forInput'];
-    this.fromHistory = this.data['fromHistory'];
-    this.fromHistoryIndex = this.data['fromHistoryIndex'];
-    this.selectedStudents = this.data['selectedStudents'];
+
+    if (this.data['pass']) {
+      this.invitation = this.data['pass'];
+      this.forFuture = this.data['forFuture'];
+      this.fromPast = this.data['fromPast'];
+      this.forStaff = this.data['forStaff'];
+      this.forInput = this.data['forInput'];
+      this.fromHistory = this.data['fromHistory'];
+      this.fromHistoryIndex = this.data['fromHistoryIndex'];
+      this.selectedStudents = this.data['selectedStudents'];
+    }
   if (this.invitation) {
     this.selectedOrigin = this.invitation.default_origin;
   }
@@ -81,6 +92,7 @@ export class InvitationCardComponent implements OnInit {
         this.user = user;
       });
     });
+  this.createFormService.isSeen$.subscribe(res => this.isSeen = res);
   }
 
   formatDateTime(date: Date){
@@ -94,8 +106,6 @@ export class InvitationCardComponent implements OnInit {
 
   newInvitation(){
     this.performingAction = true;
-    const endPoint:string = 'v1/invitations/bulk_create';
-
     const body = {
       'students' : this.selectedStudents.map(user => user.id),
       'default_origin' : this.invitation.default_origin?this.invitation.default_origin.id:null,
@@ -103,22 +113,21 @@ export class InvitationCardComponent implements OnInit {
       'date_choices' : this.invitation.date_choices.map(date => date.toISOString()),
       'duration' : this.selectedDuration*60,
       'travel_type' : this.selectedTravelType
-    }
+    };
 
-    this.http.post(endPoint, body).subscribe((data)=>{
+    this.requestService.createInvitation(body).subscribe((data) => {
       this.dialogRef.close();
     });
   }
 
   acceptInvitation(){
     this.performingAction = true;
-    let endpoint: string = 'v1/invitations/' +this.invitation.id +'/accept';
-    let body = {
+    const body = {
       'start_time' : this.invitation.date_choices[0].toISOString(),
       'origin' : this.selectedOrigin.id
     };
 
-    this.http.post(endpoint, body).subscribe((data: any) => {
+    this.requestService.acceptInvitation(this.invitation.id, body).subscribe((data: any) => {
       console.log('[Invitation Accepted]: ', data);
       this.dialogRef.close();
     });
@@ -130,9 +139,14 @@ export class InvitationCardComponent implements OnInit {
       let options = [];
       let header = '';
       if (this.forInput) {
+        if (this.isSeen) {
+            this.formState.step = 3;
+            this.formState.previousStep = 4;
+            this.cardEvent.emit(this.formState);
+        } else {
           this.dialogRef.close();
           const isCategory = this.fromHistory[this.fromHistoryIndex] === 'to-category';
-          const dialogRef = this.dialog.open(HallpassFormComponent, {
+          const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
               width: '750px',
               panelClass: 'form-dialog-container',
               backdropClass: 'custom-backdrop',
@@ -161,6 +175,7 @@ export class InvitationCardComponent implements OnInit {
                       result['fromHistoryIndex']
                   );
               });
+        }
           return false;
       } else if (!this.forStaff) {
         options.push(this.genOption('Decline Pass Request','#F00','decline'));
@@ -174,30 +189,28 @@ export class InvitationCardComponent implements OnInit {
         backdropClass: 'invis-backdrop',
         data: {'header': header, 'options': options, 'trigger': target}
       });
-  
+
       consentDialog.afterOpen().subscribe( () =>{
         this.denyOpen = true;
       });
-  
+
       consentDialog.afterClosed().subscribe(action =>{
         this.denyOpen = false;
         if(action === 'cancel'){
           this.dialogRef.close();
         } else if(action === 'decline'){
-          let endpoint: string = 'v1/invitations/' +this.invitation.id +'/deny';
-          let body = {
+          const body = {
             'message' : ''
           };
-          this.http.post(endpoint, body).subscribe((httpData) => {
+          this.requestService.denyInvitation(this.invitation.id, body).subscribe((httpData) => {
             console.log('[Invitation Denied]: ', httpData);
             this.dialogRef.close();
           });
-        } else if(action === 'delete'){
-          let endpoint: string = 'v1/invitations/' +this.invitation.id +'/cancel';
-          let body = {
+        } else if(action === 'delete') {
+          const body = {
             'message' : ''
-          }
-          this.http.post(endpoint, body).subscribe((httpData)=>{
+          };
+          this.requestService.cancelInvitation(this.invitation.id, body).subscribe((httpData) => {
             console.log('[Invitation Cancelled]: ', httpData);
             this.dialogRef.close();
           });

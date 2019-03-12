@@ -1,13 +1,15 @@
-﻿export class Util{
+﻿import { TimeService } from './app/services/time.service';
+
+export class Util{
 
     static weekday: string[] = ['Sunday', 'Monday', 'Tuesday',
                       'Wednesday', 'Thursday', 'Friday',
                       'Saturday'];
 
-    static month: string[] = ['Jan.', 'Feb.', 'Mar.',
-                        'Apr.', 'May', 'June',
-                        'July', 'Aug.', 'Sept.',
-                        'Oct.', 'Nov.', 'Dec.'];
+    static month: string[] = ['Jan', 'Feb', 'Mar',
+                        'Apr', 'May', 'June',
+                        'July', 'Aug', 'Sept',
+                        'Oct', 'Nov', 'Dec'];
 
     static formatDateTime(s: Date, timeOnly?: boolean, utc?: boolean) {
         let hours = utc ? s.getUTCHours() : s.getHours();
@@ -16,7 +18,7 @@
           return formattedTime;
 
         let formattedDate:string = "";
-        let now: Date = new Date();
+        let now: Date = TimeService.getNowDate();
 
         if(s.getFullYear() === now.getFullYear()){
           if(s.getMonth() === now.getMonth()){

@@ -5,9 +5,15 @@
   .source-wrapper{
     width: inherit;
     height: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
   }
   .source{
     width: inherit;
     height: inherit;
   }
 }
+
+

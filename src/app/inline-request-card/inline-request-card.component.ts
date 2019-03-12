@@ -1,11 +1,10 @@
 import { Component, OnInit, Input, ElementRef } from '@angular/core';
-import { HttpService } from '../http-service';
 import { Util } from '../../Util';
-import { Request } from '../models/Request'
+import { Request } from '../models/Request';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { MatDialog } from '@angular/material';
-import {DataService} from '../data-service';
-import {finalize} from 'rxjs/operators';
+import {DataService} from '../services/data-service';
+import {RequestsService} from '../services/requests.service';
 
 @Component({
   selector: 'app-inline-request-card',
@@ -23,7 +22,7 @@ export class InlineRequestCardComponent implements OnInit {
   cancelOpen: boolean = false;
 
   constructor(
-      private http: HttpService,
+      private requestService: RequestsService,
       public dialog: MatDialog,
       private dataService: DataService,
   ) { }
@@ -64,9 +63,7 @@ export class InlineRequestCardComponent implements OnInit {
       cancelDialog.afterClosed().subscribe(action => {
         this.cancelOpen = false;
         if (action === 'delete') {
-            let endpoint: string = 'v1/pass_requests/' +this.request.id +'/cancel';
-            this.http.post(endpoint).subscribe((data) => {
-                this.dataService.isActiveRequest$.next(false);
+            this.requestService.cancelRequest(this.request.id).subscribe((data) => {
                 console.log('[Request Canceled]: ', data);
             });
         }
@@ -80,7 +77,6 @@ export class InlineRequestCardComponent implements OnInit {
       throw new Error('Changing date time not currently supported by this component.');
     }
 
-    const endpoint = 'v1/pass_requests';
     const body: any = {
       'origin' : this.request.origin.id,
       'destination' : this.request.destination.id,
@@ -91,8 +87,8 @@ export class InlineRequestCardComponent implements OnInit {
       'duration' : this.request.duration,
     };
 
-    this.http.post(endpoint, body).subscribe(() => {
-      this.http.post(`v1/pass_requests/${this.request.id}/cancel`).subscribe(() => {
+    this.requestService.createRequest(body).subscribe(() => {
+        this.requestService.cancelRequest(this.request.id).subscribe(() => {
         console.log('pass request resent');
       });
     });

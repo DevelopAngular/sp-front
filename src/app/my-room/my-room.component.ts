@@ -1,20 +1,21 @@
 import { Component, ElementRef, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { combineLatest, merge } from 'rxjs';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
+import { combineLatest, merge, of } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 import { Util } from '../../Util';
-import { DataService } from '../data-service';
+import { DataService } from '../services/data-service';
 import { mergeObject } from '../live-data/helpers';
 import { HallPassFilter, LiveDataService } from '../live-data/live-data.service';
-import { LoadingService } from '../loading.service';
+import { LoadingService } from '../services/loading.service';
 import { PassLike } from '../models';
 import { Location } from '../models/Location';
 import { testPasses } from '../models/mock_data';
 import { BasicPassLikeProvider, PassLikeProvider, WrappedProvider } from '../models/providers';
 import { User } from '../models/User';
 import {DropdownComponent} from '../dropdown/dropdown.component';
+import { TimeService } from '../services/time.service';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -90,11 +91,12 @@ export class MyRoomComponent implements OnInit {
   searchDate$ = new BehaviorSubject<Date>(null);
   selectedLocation$ = new ReplaySubject<Location>(1);
 
-  hasPasses = new BehaviorSubject(false);
+  hasPasses: Observable<boolean> = of(false);
+  passesLoaded: Observable<boolean> = of(false);
 
   constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService,
-              public dialog: MatDialog, private liveDataService: LiveDataService) {
-    this.setSearchDate(new Date());
+              public dialog: MatDialog, private liveDataService: LiveDataService, private timeService: TimeService) {
+    this.setSearchDate(this.timeService.nowDate());
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
 
@@ -107,12 +109,6 @@ export class MyRoomComponent implements OnInit {
       this.searchDate$, this.searchQuery$));
 
     // Use WrappedProvider's length$ to keep the hasPasses subject up to date.
-    combineLatest(
-      this.activePasses.length$,
-      this.originPasses.length$,
-      this.destinationPasses.length$,
-      (l1, l2, l3) => l1 > 0 || l2 > 0 || l3 > 0
-    ).subscribe(this.hasPasses);
   }
 
   setSearchDate(date: Date) {
@@ -165,15 +161,29 @@ export class MyRoomComponent implements OnInit {
           });
         });
       });
+
+      this.hasPasses = combineLatest(
+        this.activePasses.length$,
+        this.originPasses.length$,
+        this.destinationPasses.length$,
+        (l1, l2, l3) => l1 + l2 + l3 > 0
+      );
+      this.passesLoaded = combineLatest(
+        this.activePasses.loaded$,
+        this.originPasses.loaded$,
+        this.destinationPasses.loaded$,
+        (l1, l2, l3) => l1 && l2 && l3
+      );
   }
 
   onSearch(search: string) {
+    this.inputValue = search;
     this.searchQuery$.next(search);
   }
 
-  showOptions(evt: MouseEvent) {
+  showOptions(target: HTMLElement) {
     if (!this.optionsOpen && this.roomOptions && this.roomOptions.length > 1) {
-      const target = new ElementRef(evt.currentTarget);
+      // const target = new ElementRef(evt.currentTarget);
       const optionDialog = this.dialog.open(DropdownComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',

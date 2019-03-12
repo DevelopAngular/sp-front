@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 export type Partial<T> = {
   [P in keyof T]?: T[P];
