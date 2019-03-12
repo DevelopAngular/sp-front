@@ -34,7 +34,7 @@ import { AdminSharedModule } from './shared/admin-shared.module';
 import { SupportComponent } from './support/support.component';
 import { ColumnsConfigDialogComponent } from './columns-config-dialog/columns-config-dialog.component';
 import { SchoolSettingDialogComponent } from './school-setting-dialog/school-setting-dialog.component';
-
+import { ProfileCardDialogComponent } from './profile-card-dialog/profile-card-dialog.component'
 
 @NgModule({
   imports: [
@@ -66,14 +66,17 @@ import { SchoolSettingDialogComponent } from './school-setting-dialog/school-set
     // CalendarComponent,
     SettingsComponent,
     LinkGeneratedDialogComponent,
-    ColumnsConfigDialogComponent ,
+    ColumnsConfigDialogComponent,
+    ProfileCardDialogComponent,
     SchoolSettingDialogComponent
+
   ],
   entryComponents: [
-      AccountsDialogComponent,
-      LinkGeneratedDialogComponent,
-      ColumnsConfigDialogComponent,
-      SchoolSettingDialogComponent
+    AccountsDialogComponent,
+    LinkGeneratedDialogComponent,
+    ColumnsConfigDialogComponent,
+    ProfileCardDialogComponent,
+    SchoolSettingDialogComponent
   ],
   providers: [
     // NavbarDataService

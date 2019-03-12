@@ -137,6 +137,8 @@
       <app-data-table
         class="my"
         [data]="userList"
+        [displayedColumns]="dataTableHeadersToDisplay"
+        (selectedRow)="showProfileCard($event)"
         (selectedUsers)="showSelected($event)">
       </app-data-table>
     </div>

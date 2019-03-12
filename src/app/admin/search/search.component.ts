@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { filter } from 'rxjs/operators';
+import {filter, switchMap, tap} from 'rxjs/operators';
 import { HttpService } from '../../services/http-service';
 import { HallPass } from '../../models/HallPass';
 import { DatePrettyHelper } from '../date-pretty.helper';
@@ -11,6 +11,11 @@ import {MatDialog} from '@angular/material';
 import { Util } from '../../../Util';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {XlsxGeneratorService} from '../xlsx-generator.service';
+import {ActivatedRoute, Router} from '@angular/router';
+import {UserService} from '../../services/user.service';
+import {User} from '../../models/User';
+import {Subscription} from 'rxjs';
+import {DataService} from '../../services/data-service';
 
 
 @Component({
@@ -34,6 +39,9 @@ export class SearchComponent implements OnInit {
 
   hasSearched: boolean = false;
   sortParamsHeader: string;
+  initialSearchStudentString: string = '';
+  initialSearchLocationString: string = '';
+  inputPanelVisibility: boolean = true;
 
   constructor(
       private httpService: HttpService,
@@ -41,7 +49,11 @@ export class SearchComponent implements OnInit {
       private pdf: PdfGeneratorService,
       private xlsx: XlsxGeneratorService,
       private elRef: ElementRef,
-      public dialog: MatDialog
+      public dialog: MatDialog,
+      private activatedRoute: ActivatedRoute,
+      private router: Router,
+      private userService: UserService,
+      private dataService: DataService
   ) {
   }
 
@@ -50,15 +62,62 @@ export class SearchComponent implements OnInit {
   }
 
   ngOnInit() {
+
     disableBodyScroll(this.elRef.nativeElement);
+
+    const forceSearch: Subscription = this.activatedRoute.queryParams.pipe(
+      filter((qp) => Object.keys(qp).length > 0 && Object.keys(qp).length === Object.values(qp).length),
+      switchMap((qp: any): any => {
+        this.inputPanelVisibility = false;
+
+        console.log('qp', qp);
+        const {profileId, profileName, role } = qp;
+        this.router.navigate( ['admin/search']);
+
+        switch (role) {
+          case '_profile_student':
+
+
+            return this.userService.searchProfileById(profileId).pipe(
+              tap((profile: User) => {
+                this.initialSearchStudentString = profile.display_name;
+                this.selectedStudents.push(profile);
+              this.search();
+            }));
+          case '_profile_teacher':
+
+            return this.userService.searchProfileById(profileId)
+              .pipe(
+                switchMap((profile: User) => {
+                  return this.dataService.getLocationsWithTeacher(profile);
+                }),
+                tap((locations: any[]) => {
+                  this.roomSearchType = 'Either';
+                  this.selectedRooms = locations;
+                  const titleArray = locations.map((loc) => {
+                    return `${loc.title}(${loc.room})`;
+                  });
+                  this.initialSearchLocationString = titleArray.join(', ')
+                  console.log(this.initialSearchLocationString);
+                  this.search();
+                })
+              );
+        }
+      })
+    ).subscribe((v) => {
+      this.inputPanelVisibility = true;
+      console.log(v);
+      forceSearch.unsubscribe();
+    });
+
   }
 
-  search() {
-    if (this.selectedStudents.length || this.selectedDate || this.selectedRooms.length) {
+  search(query: string = '') {
+    if (this.selectedStudents.length || this.selectedDate || this.selectedRooms.length || query) {
       this.sortParamsHeader = `All Passes, Searching by ${(this.selectedStudents && this.selectedStudents.length > 0 ? 'Student Name' : '') + (this.selectedDate && this.selectedDate !== '' ? ', Date & Time' : '') + (this.selectedRooms && this.selectedRooms.length > 0 ? ', Room Name' : '')}`;
       this.spinner = true;
       this.selectedReport = [];
-      let url = 'v1/hall_passes?';
+      let url = 'v1/hall_passes?' + query;
       if (this.selectedRooms) {
         console.log('Has rooms\t', this.roomSearchType);
         if (this.roomSearchType == 'Origin') {
@@ -112,6 +171,7 @@ export class SearchComponent implements OnInit {
 
       this.hallPassService.searchPasses(url).pipe(filter(res => !!res))
         .subscribe((data: HallPass[]) => {
+
           console.log('DATA', data);
           this.passes = data;
           this.tableData = data.map(hallPass => {
@@ -146,7 +206,7 @@ export class SearchComponent implements OnInit {
                 'Date & Time': prettyReportDate,
                 'Duration': duration
             };
-            Object.defineProperty(passes, '#Id', { enumerable: false, value: hallPass.id});
+            Object.defineProperty(passes, 'id', { enumerable: false, value: hallPass.id});
             return passes;
           });
           this.spinner = false;
@@ -175,7 +235,7 @@ export class SearchComponent implements OnInit {
   }
 
   selectedPass(pass) {
-    const selectedPass: HallPass = _.find(this.passes, {id: pass['#Id']});
+    const selectedPass: HallPass = _.find(this.passes, {id: pass['id']});
     selectedPass.start_time = new Date(selectedPass.start_time);
     selectedPass.end_time = new Date(selectedPass.end_time);
       const data = {

@@ -1,10 +1,10 @@
-<div class="search-wrapper">
+<div class="search-wrapper" *ngIf="inputPanelVisibility">
   <div class="w-100">
 
     <div class="input-header" (click)="resetSearchState()">
-      <app-round-input [width]="'260px'" [labelText]="'By Student Name'" [type]="'multiuser'" [placeholder]="'Search Students'" (onselectionupdate)="studentsEmit($event)"></app-round-input>
+      <app-round-input [width]="'260px'" [labelText]="'By Student Name'" [type]="'multiuser'" [placeholder]="'Search Students'" [initialValue]="initialSearchStudentString" [selections]="selectedStudents" (onselectionupdate)="studentsEmit($event)"></app-round-input>
       <app-round-input [width]="'260px'" [labelText]="'Date and Time'" [type]="'dates'" [placeholder]="'Search date & time range'" (ontextupdate)="dateEmit($event)"></app-round-input>
-      <app-round-input [width]="'260px'" [labelText]="'By Room Name'" [type]="'multilocation'" [placeholder]="'Search Rooms'" (onselectionupdate)="roomEmit($event)" (ontoggleupdate)="roomSearchType=$event"></app-round-input>
+      <app-round-input [width]="'260px'" [labelText]="'By Room Name'" [type]="'multilocation'" [placeholder]="'Search Rooms'" [initialValue]="initialSearchLocationString" [selections]="selectedRooms" (onselectionupdate)="roomEmit($event)" (ontoggleupdate)="roomSearchType=$event"></app-round-input>
     </div>
     <div class="content">
       <div class="search-content-table" *ngIf="hasSearched">
@@ -45,11 +45,11 @@
         [textColor]="isDisabled ? 'rgb(120, 140, 165)' : '#134482'"
         [fontSize]="'23px'"
         [border]="'1px solid 1px solid #eee'"
-        (buttonClick)="search()"
         [leftIcon]="isDisabled ? './assets/Search (Grey).png' : './assets/Search (Blue).png'"
         [leftImageWidth]="'30px'"
         [leftImageHeight]="'30px'"
         [disabled]="isDisabled"
+        (buttonClick)="search()"
       >
 
           <span>Search</span>
