@@ -64,6 +64,8 @@
     }
   }
   .category-content {
+    overflow: auto;
+    width: 100%;
     position: relative;
     z-index: 1;
   }
