@@ -1,7 +1,17 @@
 <div class="settings-wrapper">
   <div class="settings-header">
-    <img class="back-button" [src]="'./assets/Combined Shape.svg' | resolveAsset">
+    <img class="back-button" *ngIf="!changeForm" [src]="'./assets/Combined Shape.svg' | resolveAsset" (click)="close()">
+    <div class="back-button" *ngIf="changeForm" (click)="close()">Cancel</div>
     <div class="settings-header-text">School Settings</div>
+    <div class="save-button" *ngIf="changeForm && schoolForm.valid">
+      <app-gradient-button
+              [width]="'85px'"
+              [minHeight]="'30px'"
+              [fontSize]="'14px'"
+              [cursor]="'pointer'"
+              (buttonClick)="save()"
+      >Save</app-gradient-button>
+    </div>
   </div>
   <div class="settings-content">
     <div class="controls-block">
