@@ -1,0 +1,93 @@
+<div class="profile-card-dialog-container">
+  <div class="card-header">
+    <div class="back-button" (click)="back()">
+      <img [src]="'./assets/Back Button (Grey).png'" alt="Back Button (Grey).png">
+    </div>
+    <span>{{profile['Name']}}</span>
+  </div>
+  <div class="card-body">
+    <div class="card-body_section">
+      <div class="section-content">
+        <div>
+          <div class="section-header">Account Info</div>
+          <span class="profile-property">Name: </span> <span>{{profile['Name']}}</span><br>
+          <span class="profile-property">Email: </span> <span>{{profile['Email/Username']}}</span><br>
+          <span class="profile-property">Account Type: </span> <span>{{profile['Account Type']}}</span><br>
+        </div>
+        <div [style.text-align]="'right'">
+          <div>
+            <img [src]="'./assets/google/google_logo.svg'" alt="google_logo.svg">
+          </div>
+          <div class="learn-more">
+            <span>Learn more</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body_section">
+      <div class="section-content">
+        <div>
+          <div class="section-header">Activity</div>
+          <span class="profile-property">Sign-in status: </span> <span>{{profile['Sign-in status']}}</span><br>
+          <span class="profile-property">Last sign-in: </span> <span>{{profile['Last sign-in']}}</span><br>
+        </div>
+        <div>
+          <app-gradient-button
+            [width]="'141px'"
+            [minHeight]="'35px'"
+            [gradient]="'#FFFFFF,#FFFFFF'"
+            [hoverColor]="'#FFFFFF'"
+            [textColor]="'#1F195E'"
+            [fontSize]="'13px'"
+            [cursor]="'pointer'"
+            (buttonClick)="goToSearch()"
+
+          >
+            <div class="search-button">
+              <span>Go to search</span><img [src]="'./assets/Object.svg'" alt="">
+            </div>
+          </app-gradient-button>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="button">
+
+        <app-gradient-button
+          [width]="'144px'"
+          [minHeight]="'35px'"
+          [gradient]="'#001115,#033294'"
+          [hoverColor]="'#001115'"
+          [textColor]="'#FFFFFF'"
+          [fontSize]="'13px'"
+          [fontWeight]="'normal'"
+          [cursor]="'pointer'"
+        >
+          <span>Disable sign-in</span>
+        </app-gradient-button>
+        <div class="button_message">
+          <span>Message</span>
+        </div>
+      </div>
+      <div class="button">
+
+        <app-gradient-button
+          [width]="'144px'"
+          [minHeight]="'35px'"
+          [gradient]="'#DA2370, #FB434A'"
+          [hoverColor]="'#DA2370'"
+          [textColor]="'#FFFFFF'"
+          [fontSize]="'13px'"
+          [fontWeight]="'normal'"
+        >
+          <span>Remove from Profile</span>
+        </app-gradient-button>
+        <div class="button_message">
+          <span>Message</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <!--<pre>{{profile | json}}</pre>-->
+</div>

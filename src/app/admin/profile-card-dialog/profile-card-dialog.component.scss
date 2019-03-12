@@ -1,0 +1,93 @@
+:host {
+
+  $primary: #1F195E;
+  $secondary: #7F879D;
+
+  @mixin heading ($fs: 14px) {
+    color: $primary;
+    font-weight: bold;
+    font-size: $fs;
+  }
+
+  height: inherit;
+  color: $secondary;
+  font-size: 12px;
+  .profile-card-dialog-container {
+    height: inherit;
+    box-sizing: border-box;
+    //padding: 15px;
+    background-color: #fff;
+    overflow: hidden;
+    border-radius: 15px;
+    .card-header {
+      @include heading(17px);
+      height: 64px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      //color: $primary;
+      //font-size: 17px;
+      //font-weight: bold;
+      position: relative;
+      box-shadow: 0 1px 5px 0px rgba(0, 0, 0, .2);
+      .back-button {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 20px;
+        margin: auto 0;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        img {
+          width: 24px;
+        }
+      }
+    }
+    .card-body {
+      box-sizing: border-box;
+      &_section{
+        box-sizing: border-box;
+        padding: 20px 25px;
+        .section-header {
+          @include heading(15px);
+          padding-bottom: 10px;
+        }
+        .section-content {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          .learn-more {
+            cursor: pointer;
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+          .search-button {
+            display: flex;
+            align-items: center;
+            img {
+              padding-left: 10px;
+            }
+          }
+        }
+        border-bottom: 1px solid #D8D8D8;
+        .profile-property {
+          font-weight: bold;
+        }
+      }
+    }
+    .card-footer {
+      display: flex;
+      justify-content: space-around;
+      padding: 0 15px;
+      .button {
+        margin-top: 95px;
+        text-align: center;
+        &_message {
+          margin-top: 17px;
+        }
+      }
+    }
+  }
+}

@@ -61,7 +61,7 @@ export class AccountsDialogComponent implements OnInit {
         this.form = new FormGroup(group);
         this.controlsIteratable = Object.values(restrictions);
         this.beforeClosedHook = function() {
-          return zip(restrictionsFor.map((user) => this.userService.createUserRoles(user['#Id'], this.form.value)));
+          return zip(restrictionsFor.map((user) => this.userService.createUserRoles(user['id'], this.form.value)));
         };
         break;
       }

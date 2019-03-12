@@ -1,5 +1,5 @@
 import {Component, ElementRef, NgZone, OnDestroy, OnInit} from '@angular/core';
-import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
+import {BehaviorSubject, Observable, of, pipe, Subject, zip} from 'rxjs';
 import {MatDialog} from '@angular/material';
 import {UserService} from '../../services/user.service';
 import {AccountsDialogComponent} from '../accounts-dialog/accounts-dialog.component';
@@ -10,9 +10,8 @@ import {HttpService} from '../../services/http-service';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {AdminService} from '../../services/admin.service';
 import {ColumnsConfigDialogComponent} from '../columns-config-dialog/columns-config-dialog.component';
-import {FormControl, FormGroup} from '@angular/forms';
 import {StorageService} from '../../services/storage.service';
-import {userError} from '@angular/compiler-cli/src/transformers/util';
+import {ProfileCardDialogComponent} from '../profile-card-dialog/profile-card-dialog.component';
 
 
 
@@ -31,6 +30,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   public role: string;
   public userAmount: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  public dataTableHeadersToDisplay: string[] = [];
   public userList: any[] = [];
   public selectedUsers: any[] = [];
   public placeholder: boolean;
@@ -118,7 +118,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               };
               break;
           }
-
         }
       });
 
@@ -142,26 +141,34 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         .pipe(
           debounceTime(300),
           distinctUntilChanged(),
+          tap(() => {
+            this.dataTableHeadersToDisplay = [];
+          }),
           switchMap((value: string) => this.userService.getUsersList(this.role, value))
         )
         .subscribe((userList) => {
           if (userList && userList.length) {
-            this.userList = userList.map((raw) => {
+            this.userList = userList.map((raw, index) => {
               const rawObj = {
                 'Name': raw.display_name,
                 'Email/Username': raw.primary_email,
                 'Rooms': ['Room-1', 'Room-2'].join(','),
-                'Account Type': 'demo',
+                'Account Type': 'G Suite',
                 'Sign-in status': 'Enabled',
                 'Last sign-in': Util.formatDateTime(new Date(raw.last_updated)),
                 'Permissions': ['create_hallpasses', 'edit_all_hallpass', 'manage_locations'].join(',')
               };
               for (const key in rawObj) {
-                if (!this.dataTableHeaders[key] || !this.dataTableHeaders[key].value) {
+                if (!this.dataTableHeaders[key]) {
                   delete rawObj[key];
                 }
+                if (index === 0) {
+                  if (this.dataTableHeaders[key] && this.dataTableHeaders[key].value) {
+                    this.dataTableHeadersToDisplay.push(key);
+                  }
+                }
               }
-              Object.defineProperty(rawObj, '#Id', { enumerable: false, value: raw.id});
+              Object.defineProperty(rawObj, 'id', { enumerable: false, value: raw.id});
               return  rawObj;
             });
           } else {
@@ -169,13 +176,15 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           }
         });
     }
+
     this.searchChangeObserver$.next(searchValue);
   }
 
   showSelected(e) {
     if (e.length) {
-      console.log(e[0]['#Id']);
+      // console.log(e[0]['id']);
     }
+    // console.log(e);
     this.selectedUsers = e;
   }
 
@@ -226,9 +235,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     // =========== SPA=476 ============> It's temporary. Needs to suggest to leave the dialog as it is. If it will be declined, remove it.
 
     if ( mode === 'remove') {
-
       this.consentMenuOpened = true;
-
       const DR = this.matDialog.open(ConsentMenuComponent,
         {
           data: {
@@ -248,12 +255,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       DR.afterClosed()
         .pipe(
           switchMap((action): Observable<any> => {
-            console.log(action);
+            // console.log(action);
             this.consentMenuOpened = false;
             if (action === 'confirm') {
               let role: any = this.role.split('_');
                   role = role[role.length - 1];
-              return zip(...this.selectedUsers.map((user) => this.userService.deleteUserFromProfile(user['#Id'], role)));
+              return zip(...this.selectedUsers.map((user) => this.userService.deleteUserFromProfile(user['id'], role)));
             } else {
               return of(null);
             }
@@ -284,7 +291,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         backdropClass: 'custom-bd'
       });
     DR.afterClosed().subscribe((v) => {
-      console.log(v);
+      // console.log(v);
       this.http.setSchool(this.http.getSchool());
     });
   }
@@ -305,38 +312,57 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
        }
     });
   }
+  showProfileCard(evt) {
+    console.log(evt);
+    this.matDialog.open(ProfileCardDialogComponent, {
+      panelClass: 'overlay-dialog',
+      backdropClass: 'custom-bd',
+      width: '395px',
+      height: '474px',
+      data: {
+        profile: evt,
+        role: this.role
+      }
+    });
+  }
 
   private getUserList(query: string = '') {
     this.placeholder = false;
     this.userList = [];
     this.userService
       .getUsersList(this.role, query)
+      .pipe(tap(() => {
+        this.dataTableHeadersToDisplay = [];
+      }))
       .subscribe((userList) => {
         console.log(userList);
         if (userList && userList.length) {
           this.placeholder = false;
           this.userAmount.next(userList.length);
-          this.userList = userList.map((raw) => {
+          this.userList = userList.map((raw, index) => {
             const rawObj = {
               'Name': raw.display_name,
               'Email/Username': raw.primary_email,
               'Rooms': ['Room-1', 'Room-2'].join(','),
-              'Account Type': 'demo',
+              'Account Type': 'G Suite',
               'Sign-in status': 'Enabled',
               'Last sign-in': Util.formatDateTime(new Date(raw.last_updated)),
               'Permissions': ['create_hallpasses', 'edit_all_hallpass', 'manage_locations'].join(',')
             };
-
             for (const key in rawObj) {
-              if (!this.dataTableHeaders[key] || !this.dataTableHeaders[key].value) {
-                // console.log('383 >>>', this.dataTableHeaders);
+              if (!this.dataTableHeaders[key]) {
                 delete rawObj[key];
               }
+              if (index === 0) {
+                if (this.dataTableHeaders[key] && this.dataTableHeaders[key].value) {
+                  this.dataTableHeadersToDisplay.push(key);
+                }
+              }
             }
-
-            Object.defineProperty(rawObj, '#Id', { enumerable: false, value: raw.id});
+            Object.defineProperty(rawObj, 'id', { enumerable: false, value: raw.id});
             return  rawObj;
           });
+          // console.log(this.dataTableHeadersToDisplay);
         } else {
           this.placeholder = true;
         }
