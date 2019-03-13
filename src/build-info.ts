@@ -17,3 +17,8 @@ export const RELEASE_NAME = '[unknown release name]';
  * A string such as 'Wed Jan 23 12:55:37 EST 2019' (output from /bin/date) indicating when this build was built.
  */
 export const BUILD_DATE = '[unknown build date]';
+
+/**
+ * The base-href value used when compiling the build.
+ */
+export const BASE_HREF = '/';
