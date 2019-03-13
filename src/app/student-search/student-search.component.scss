@@ -8,7 +8,7 @@
 
 .input {
     //margin-top: 20px;
-    margin: 5px auto;
+    margin: 5px 25px;
     display: flex;
     justify-content: center;
     &:focus {
@@ -45,10 +45,13 @@ mat-input-container.md-input-focused label {
   top: 40px;
   left: 0;
   right: 0;
-    margin: 5px auto 10px auto;
-    width: 180px;
-    height: 245px;
+    margin: 5px auto 0px auto;
+    //width: 180px;
+    height: 250px;
     overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .no-students-dummy {
@@ -66,7 +69,8 @@ mat-input-container.md-input-focused label {
 }
 
 .option-wrapper {
-    padding-top: 10px;
+  width: 180px;
+  padding-top: 10px;
     cursor: pointer;
     background-color: #FFFFFF;
 

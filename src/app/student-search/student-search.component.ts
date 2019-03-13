@@ -42,7 +42,7 @@ export class StudentSearchComponent implements AfterViewInit {
 
   onSearch(search: string) {
     if (search !== '') {
-      this.students = this.userService.searchProfile('hallpass_student',5, encodeURI(search))
+      this.students = this.userService.searchProfile('hallpass_student', 50, encodeURI(search))
           .toPromise()
           .then((paged: any) => {
             console.log('PAGED RESULT >>>', paged);

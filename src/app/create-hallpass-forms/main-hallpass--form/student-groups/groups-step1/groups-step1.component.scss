@@ -185,7 +185,7 @@
         overflow-y: auto;
         flex: 1 1 auto;
         box-sizing: border-box;
-        padding: 30px 25px;
+        padding: 30px 0px;
         //display: flex;
         //flex-direction: column;
         //justify-content: space-between;
@@ -195,7 +195,7 @@
           //height: 180px;
           //overflow: auto;
           .seach-wrapper {
-            width: 90%;
+            width: 100%;
           }
         }
         &_next {
