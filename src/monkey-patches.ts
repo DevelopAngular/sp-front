@@ -12,16 +12,22 @@ import { BASE_HREF } from './build-info';
  */
 
 // See: https://github.com/firebase/firebase-js-sdk/blob/master/packages/messaging/src/models/default-sw.ts
-const FIREBASE_MESSAGING_DEFAULT_SW_PATH = '/firebase-messaging-sw.js';
+const DEFAULT_SW_PATH = '/firebase-messaging-sw.js';
+const DEFAULT_SW_SCOPE = '/firebase-cloud-messaging-push-scope';
+
 const PATCHED_SW_PATH = BASE_HREF + 'firebase-messaging-sw.js';
+const PATCHED_SW_SCOPE = BASE_HREF + 'firebase-cloud-messaging-push-scope';
 
 if (navigator && navigator.serviceWorker) {
   const oldRegister = navigator.serviceWorker.register;
 
   navigator.serviceWorker.register = function (url: string, options?: any) {
 
-    if (url === FIREBASE_MESSAGING_DEFAULT_SW_PATH) {
+    if (url === DEFAULT_SW_PATH) {
       url = PATCHED_SW_PATH;
+      if (options) {
+        options.scope = PATCHED_SW_SCOPE;
+      }
     }
 
     return oldRegister.bind(navigator.serviceWorker, url, options)();
