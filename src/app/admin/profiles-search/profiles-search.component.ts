@@ -14,6 +14,7 @@ export class ProfilesSearchComponent implements OnInit {
   @Input() role: string;
   @Input() placeholder: string = 'Search profiles';
   @Input() focused: boolean = true;
+  @Input() width: string = '400px';
 
   private destroy$: Subject<any> = new Subject();
   private searchChangeObserver$: Subject<string>;

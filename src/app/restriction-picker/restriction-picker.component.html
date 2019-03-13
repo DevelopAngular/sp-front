@@ -1,10 +1,12 @@
-<div class="picker-wrappper">
-  <div class="choices" [style.height]="height">
-    <div class="choice"
-         *ngFor="let choice of choices"
+<div class="picker-wrapper">
+  <div class="disabled" *ngIf="disabled"></div>
+  <div class="choices">
+    <div class="choice" [style.height]="height + 'px'"
+         *ngFor="let choice of choices; let i=index;"
          [style.border]="'0.5px solid ' + selectedColor"
+         [ngClass]="{'left-radius': i === 0, 'right-radius': i === choices.length - 1}"
          (click)="onClick(choice)"
-         [style.width]="width / choices.length -20 + 'px'"
+         [style.width]="width / choices.length + 'px'"
          [style.color]="selectedChoose === choice ? backgroundColor : selectedColor"
          [style.font-size]="fontSize + 'px'"
          [style.background-color]="selectedChoose === choice ? selectedColor : backgroundColor">

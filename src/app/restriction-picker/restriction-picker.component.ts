@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 @Component({
   selector: 'app-restriction-picker',
@@ -14,14 +14,21 @@ export class RestrictionPickerComponent implements OnInit {
   @Input() backgroundColor: string = '#FFFFFF';
   @Input() selectedChoose: any;
   @Input() fontSize: number = 15;  // px
+  @Input() disabled: boolean;
+
+  @Output() result: EventEmitter<any> = new EventEmitter<any>();
 
   constructor() { }
 
   ngOnInit() {
+    if (this.selectedChoose) {
+      this.result.emit(this.selectedChoose);
+    }
   }
 
   onClick(choice) {
     this.selectedChoose = choice;
+    this.result.emit(choice);
   }
 
 }
