@@ -9,7 +9,7 @@ import 'rxjs/add/operator/first';
 import 'rxjs/add/operator/switchMap';
 import { BehaviorSubject } from 'rxjs';
 import { Observable } from 'rxjs';
-import { delay, distinctUntilChanged, filter, flatMap, map, switchMap } from 'rxjs/operators';
+import {delay, distinctUntilChanged, filter, flatMap, map, skip, switchMap} from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { GoogleLoginService, isDemoLogin } from './google-login.service';
 import { School } from '../models/School';
@@ -120,6 +120,7 @@ export class HttpService {
   public currentSchool$: Observable<School> = this.currentSchoolSubject.asObservable();
 
   public globalReload$ = this.currentSchool$.pipe(
+    filter(school => !!school),
     map(school => school ? school.id : null),
     distinctUntilChanged(),
     delay(5)
