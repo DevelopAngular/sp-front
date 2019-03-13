@@ -24,7 +24,7 @@ if (navigator && navigator.serviceWorker) {
       url = PATCHED_SW_PATH;
     }
 
-    return oldRegister.bind(navigator.serviceWorker, url, options);
+    return oldRegister.bind(navigator.serviceWorker, url, options)();
   };
 }
 
