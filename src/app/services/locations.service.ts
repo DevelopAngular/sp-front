@@ -18,6 +18,10 @@ export class LocationsService {
         return this.http.get<any[]>(`v1/locations?teacher_id=${teacher.id}`);
     }
 
+    getLocation(id) {
+        return this.http.get(`v1/locations/${id}`);
+    }
+
     createLocation(data) {
         return this.http.post('v1/locations', data);
     }

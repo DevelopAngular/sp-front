@@ -360,6 +360,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               }
             }
             Object.defineProperty(rawObj, 'id', { enumerable: false, value: raw.id});
+            Object.defineProperty(rawObj, '_originalUserProfile', {
+              enumerable: false,
+              configurable: false,
+              writable: false,
+              value: raw
+            });
             return  rawObj;
           });
           // console.log(this.dataTableHeadersToDisplay);

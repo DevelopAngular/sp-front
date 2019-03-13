@@ -14,6 +14,7 @@ import {XlsxGeneratorService} from '../xlsx-generator.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UserService} from '../../services/user.service';
 import {User} from '../../models/User';
+import {Location} from '../../models/Location';
 import {Subscription} from 'rxjs';
 import {DataService} from '../../services/data-service';
 
@@ -69,14 +70,12 @@ export class SearchComponent implements OnInit {
       filter((qp) => Object.keys(qp).length > 0 && Object.keys(qp).length === Object.values(qp).length),
       switchMap((qp: any): any => {
         this.inputPanelVisibility = false;
-
-        console.log('qp', qp);
+        // console.log('qp', qp);
         const {profileId, profileName, role } = qp;
         this.router.navigate( ['admin/search']);
 
         switch (role) {
           case '_profile_student':
-
 
             return this.userService.searchProfileById(profileId).pipe(
               tap((profile: User) => {
@@ -91,7 +90,7 @@ export class SearchComponent implements OnInit {
                 switchMap((profile: User) => {
                   return this.dataService.getLocationsWithTeacher(profile);
                 }),
-                tap((locations: any[]) => {
+                tap((locations: Location[]) => {
                   this.roomSearchType = 'Either';
                   this.selectedRooms = locations;
                   const titleArray = locations.map((loc) => {

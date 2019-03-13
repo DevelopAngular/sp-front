@@ -302,7 +302,7 @@ export class OverlayContainerComponent implements OnInit {
           this.overlayType === 'settingsRooms' ||
           this.overlayType === 'edit';
   }
-    ngOnInit() {
+  ngOnInit() {
       disableBodyScroll(this.elRef.nativeElement,
           {
         allowTouchMove: (el) => {
@@ -318,9 +318,15 @@ export class OverlayContainerComponent implements OnInit {
       this.overlayType = this.dialogData['type'];
       if (this.dialogData['pinnable']) {
           this.pinnable = this.dialogData['pinnable'];
+
           if (this.pinnable.type === 'category') {
               this.locationService.getLocationsWithCategory(this.pinnable.category)
-                  .subscribe((res: Location[]) => this.selectedRooms = res);
+                  .subscribe((res: Location[]) => {
+                    this.selectedRooms = res
+                    if (this.dialogData['forceSelectedLocation']) {
+                      this.setToEditRoom(this.dialogData['forceSelectedLocation']);
+                    }
+                  });
           }
       }
       if (this.dialogData['rooms']) {
@@ -655,7 +661,9 @@ export class OverlayContainerComponent implements OnInit {
       };
 
       this.setLocation('editRoomInFolder');
-      this.roomList.topScroll = this.roomList.domElement.nativeElement.scrollTop;
+      if (!this.dialogData['forceSelectedLocation']) {
+        this.roomList.topScroll = this.roomList.domElement.nativeElement.scrollTop;
+      }
   }
 
   onPublish() {
