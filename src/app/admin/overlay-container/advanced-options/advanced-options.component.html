@@ -11,10 +11,60 @@
       <span class="text">Sending Pass Request to?</span>
       <img class="support-icon" [src]="'./assets/Support (Blue).png'">
     </div>
-    <div class="restriction-toggle">
-      <div class="title">Restriction for Now</div>
-      <div class="toggle">
+    <div class="content-wrapper">
+      <div class="restriction-toggle">
+        <div class="title">Restriction for Now</div>
+        <div class="toggle">
+          <app-restriction-picker
+                  [width]="500"
+                  [height]="50"
+                  [fontSize]="15"
+                  [selectedChoose]="optionState.state"
+                  [choices]="toggleChoices"
+                  (result)="optionState.state = $event"
+          >
+          </app-restriction-picker>
+        </div>
+      </div>
+      <div class="options" [ngSwitch]="optionState.state">
 
+        <div class="default" *ngSwitchCase="toggleChoices[0]">
+          Students can send a pass request to any teacher by searching his/her name.
+          A <strong>Quick Select</strong> menu shows the teachers that are assigned to the origin and destination rooms.
+        </div>
+        <div class="any-teacher" *ngSwitchCase="toggleChoices[1]">
+          <div>Students choose a teacher from the menu who the pass request will get sent to.</div>
+          <div style="display: flex; margin-top: 5px">
+            <span><strong>Select a Teacher</strong> menu shows teachers assigned to:</span>
+            <app-restriction-picker
+                    [width]="270"
+                    [height]="30"
+                    [selectedChoose]="'origin'"
+                    [choices]="['origin', 'destination', 'both']"
+            ></app-restriction-picker>
+          </div>
+        </div>
+        <div class="all-teacher" *ngSwitchCase="toggleChoices[2]">
+          <div>Pass requests will automatically get sent to all teachers assigned to:</div>
+          <app-restriction-picker
+                  [width]="270"
+                  [height]="30"
+                  [selectedChoose]="'origin'"
+                  [choices]="['origin', 'destination', 'both']"
+          ></app-restriction-picker>
+        </div>
+        <div class="certain-teacher" *ngSwitchCase="toggleChoices[3]">
+          <div class="title">Pass requests will automatically get sent to:</div>
+            <app-profiles-search
+                    [width]="'500px'"
+                    [placeholder]="'Search Teachers'"
+                    [focused]="false"
+                    [role]="'_profile_teacher'"
+                    [selectedStudents]="optionState.data.selectedTeachers"
+                    (onUpdate)="changeState('teacher', $event)"
+                    (isEmitUsers)="hideEmit($event)"
+            ></app-profiles-search>
+        </div>
       </div>
     </div>
   </div>

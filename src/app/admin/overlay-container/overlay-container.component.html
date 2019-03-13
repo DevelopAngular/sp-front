@@ -497,11 +497,11 @@
       </div>
      </div>
         <div class="advanced-options" *ngIf="(overlayType === 'editRoom' || (editRoomInFolder)) && !showSearchTeacherOptions">
-            <app-advanced-options></app-advanced-options>
+            <app-advanced-options (hideBottomBlock)="hideDeleteButton = $event"></app-advanced-options>
         </div>
 
         <div class="footer-delete-button"
-          *ngIf="(overlayType === 'editRoom' || (editRoomInFolder)) && !showSearchTeacherOptions"
+          *ngIf="(overlayType === 'editRoom' || (editRoomInFolder)) && !showSearchTeacherOptions && !hideDeleteButton"
           [style.margin-top]="overlayType === 'editRoom' ? '90px' : '50px'"
         >
             <app-gradient-button
