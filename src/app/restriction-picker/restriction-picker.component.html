@@ -10,7 +10,7 @@
          [style.color]="selectedChoose === choice ? backgroundColor : selectedColor"
          [style.font-size]="fontSize + 'px'"
          [style.background-color]="selectedChoose === choice ? selectedColor : backgroundColor">
-      {{ choice }}
+      <div [style.padding-left]="padding + 'px'" [style.padding-right]="padding + 'px'">{{ choice }}</div>
     </div>
   </div>
 </div>
