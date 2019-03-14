@@ -1,0 +1,93 @@
+:host {
+  $primary: #1F195E;
+  $secondary: #7F879D;
+
+  @mixin heading ($fs: 14px) {
+    color: $primary;
+    font-weight: bold;
+    font-size: $fs;
+  }
+
+  height: inherit;
+  color: $secondary;
+  font-size: 12px;
+  .add-user-dialog-container {
+    display: flex;
+    flex-direction: column;
+    .heading {
+      min-height: 64px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at 80% 67%, #03cf31, #00b476);
+      color: #FFFFFF;
+      font-size: 17px;
+      font-weight: bold;
+      position: relative;
+      box-shadow: 0 1px 5px 0px rgba(0, 0, 0, .2);
+      .back-button {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 25px;
+        margin: auto 0;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        color: grey;
+        img {
+          width: 26px;
+        }
+      }
+      .save-button {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 20px;
+        margin: auto 0px;
+        display: flex;
+        align-items: center;
+      }
+    }
+    .content {
+      .content_top{
+        &-header {
+          @include heading(12px)
+        }
+        height: 82px;
+        box-shadow: 0 1px 5px 0px rgba(0, 0, 0, .2);
+        padding: 15px 20px;
+        box-sizing: border-box;
+        &-body {
+          display: flex;
+          justify-content: space-between;
+          .title {
+            flex: 1 1 75%;
+            margin: 5px 0 0 0;
+
+          }
+          .account-type-picker {
+            flex: 1 1 40%;
+            display: flex;
+            justify-content: flex-end;
+          }
+        }
+
+      }
+      .content_rest {
+        display: flex;
+        justify-content: center;
+        .profile-search {
+          //margin-top: 20px;
+          &_label {
+            font-weight: bold;
+            margin: 15px 0;
+          }
+        }
+        .new-alt-acc-form {
+          margin-top: 20px;
+        }
+      }
+    }
+  }
+}

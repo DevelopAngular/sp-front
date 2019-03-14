@@ -1,7 +1,6 @@
 ﻿import { CommonModule, Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
 import {
   MatCheckboxModule,
   MatChipsModule,
@@ -16,11 +15,8 @@ import { SharedModule } from '../shared/shared.module';
 import { AccountsDialogComponent } from './accounts-dialog/accounts-dialog.component';
 import { AccountsRoleComponent } from './accounts-role/accounts-role.component';
 import { AccountsComponent } from './accounts/accounts.component';
-
 import { AdminPageComponent } from './admin-page/admin-page.component';
-
 import { AdminRoutingModule } from './admin-routing.module';
-// import { CalendarComponent } from './calendar/calendar.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { DatePrettyHelper } from './date-pretty.helper';
 import { FeedbackComponent } from './feedback/feedback.component';
@@ -34,8 +30,8 @@ import { AdminSharedModule } from './shared/admin-shared.module';
 import { SupportComponent } from './support/support.component';
 import { ColumnsConfigDialogComponent } from './columns-config-dialog/columns-config-dialog.component';
 import { SchoolSettingDialogComponent } from './school-setting-dialog/school-setting-dialog.component';
-import { ProfileCardDialogComponent } from './profile-card-dialog/profile-card-dialog.component'
-
+import { ProfileCardDialogComponent } from './profile-card-dialog/profile-card-dialog.component';
+import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.component'
 @NgModule({
   imports: [
     CommonModule,
@@ -68,15 +64,17 @@ import { ProfileCardDialogComponent } from './profile-card-dialog/profile-card-d
     LinkGeneratedDialogComponent,
     ColumnsConfigDialogComponent,
     ProfileCardDialogComponent,
-    SchoolSettingDialogComponent
-
+    SchoolSettingDialogComponent,
+    AddUserDialogComponent
   ],
   entryComponents: [
     AccountsDialogComponent,
     LinkGeneratedDialogComponent,
     ColumnsConfigDialogComponent,
     ProfileCardDialogComponent,
-    SchoolSettingDialogComponent
+    SchoolSettingDialogComponent,
+    AddUserDialogComponent
+
   ],
   providers: [
     // NavbarDataService
