@@ -1,0 +1,126 @@
+<div class="add-user-dialog-container">
+  <div class="heading">
+    <div class="back-button">
+      <img [src]="'./assets/Back Button (White).png'" alt="Back Button (Grey).png" >
+    </div>
+    <div><span>Add User To Profile</span></div>
+    <!--<div class="save-button">-->
+      <!--<app-gradient-button>-->
+        <!--Save-->
+      <!--</app-gradient-button>-->
+    <!--</div>-->
+  </div>
+  <div class="content">
+    <div class="content_top">
+      <div class="content_top-header"><span>Account Type</span></div>
+      <div class="content_top-body">
+        <p class="title">
+          Select whether the account you will be adding is from your schools’ G Suite or the account will be an alternative sign-in. Learn more here.
+        </p>
+        <div class="account-type-picker">
+          <app-restriction-picker
+            [choices]="accountTypes"
+            [selectedChoose]="typeChoosen"
+            [height]="22"
+            [width]="167"
+            [fontSize]="12"
+            (result)="typeChoosen = $event"
+          ></app-restriction-picker>
+        </div>
+      </div>
+    </div>
+
+    <div class="content_rest" *ngIf="typeChoosen === accountTypes[0]">
+      <div class="profile-search">
+        <div class="profile-search_label"><span>G Suite Account to Add</span></div>
+        <app-profiles-search
+          (onUpdate)="setSelectedUsers($event)"
+        >
+        </app-profiles-search>
+      </div>
+    </div>
+
+    <div class="content_rest" *ngIf="typeChoosen === accountTypes[1]">
+      <form class="new-alt-acc-form" [formGroup]="newAlternativeAccount">
+
+        <div [style.padding-bottom]="'10px'">
+          <app-input
+            [input_label]="'Name'"
+            [controlName]="newAlternativeAccount.get('name')"
+            [formGroup]="newAlternativeAccount"
+            [input_value]="''"
+            [padding]="'1px'"
+            [width]="'267px'"
+
+          ></app-input>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding-bottom: 5px;">
+          <div style="padding-bottom: 0px;">
+
+            <app-input
+              [input_label]="'Username'"
+              [controlName]="newAlternativeAccount.get('username')"
+              [formGroup]="newAlternativeAccount"
+              [input_value]="''"
+              [padding]="'1px'"
+              [width]="'141px'"
+
+            ></app-input>
+          </div>
+          <div  style="display: flex; flex-direction: column; justify-content: space-between; align-items: center">
+            <div style="font-weight: bold;"><span>Expiration </span> <span>(Optional)</span></div>
+            <app-gradient-button
+              [width]="'112px'"
+              [minHeight]="'27px'"
+              [gradient]="'#001115,#033294'"
+              [hoverColor]="'#001115'"
+              [textColor]="'#FFFFFF'"
+              [fontSize]="'11px'"
+              [fontWeight]="'bold'"
+              [cursor]="'pointer'"
+            >
+              <span>Set Expiration</span>
+            </app-gradient-button>
+
+          </div>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <div style="padding-bottom: 20px;">
+
+            <app-input
+              [input_label]="'Password'"
+              [controlName]="newAlternativeAccount.get('password')"
+              [formGroup]="newAlternativeAccount"
+              [input_value]="''"
+              [padding]="'1px'"
+              [width]="'141px'"
+
+            ></app-input>
+          </div>
+          <div  style="display: flex; flex-direction: column; justify-content: center; align-items: center">
+            <!--<div style="font-weight: bold;"><span>Expiration </span> <span>(Optional)</span></div>-->
+            <app-gradient-button
+              [width]="'112px'"
+              [minHeight]="'40px'"
+              [gradient]="'#FFFFFF,#FFFFFF'"
+              [hoverColor]="'#FFFFFF'"
+              [textColor]="'#7F879D'"
+              [fontSize]="'11px'"
+              [fontWeight]="'bold'"
+              [cursor]="'pointer'"
+            >
+              <div style="display: flex; align-items: center;">
+
+                <img width="20" style="padding-right: 5px;" [src]="'./assets/Print (Grey).png'" alt=""><span>Instructions</span>
+              </div>
+            </app-gradient-button>
+
+          </div>
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+</div>

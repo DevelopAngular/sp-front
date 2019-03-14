@@ -12,6 +12,7 @@ import {AdminService} from '../../services/admin.service';
 import {ColumnsConfigDialogComponent} from '../columns-config-dialog/columns-config-dialog.component';
 import {StorageService} from '../../services/storage.service';
 import {ProfileCardDialogComponent} from '../profile-card-dialog/profile-card-dialog.component';
+import {AddUserDialogComponent} from '../add-user-dialog/add-user-dialog.component';
 
 
 
@@ -312,6 +313,25 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
        }
     });
   }
+
+  addUser() {
+    const DR = this.matDialog.open(AddUserDialogComponent,
+      {
+        data: {
+          role: this.role,
+          selectedUsers: this.selectedUsers,
+        },
+        width: '669px', height: '371px',
+        panelClass: 'accounts-profiles-dialog',
+        backdropClass: 'custom-bd'
+      });
+    DR.afterClosed().subscribe((v) => {
+      // console.log(v);
+      this.http.setSchool(this.http.getSchool());
+    });
+
+  }
+
   showProfileCard(evt) {
     console.log(evt);
 
