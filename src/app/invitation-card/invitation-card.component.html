@@ -61,7 +61,8 @@
           <div *ngIf="!invitation.cancelled; else cancelled" class="invitation-description">
             <img class="invitation-description-icon" [src]="'./assets/Request (White).png' | resolveAsset">
             <div class="invitation-description-text">
-              Pass Request from {{ invitation.issuer.last_name }}
+              Pass Request from: <br>
+              <span style="font-weight: normal">{{ invitation.issuer.first_name + ' ' + invitation.issuer.last_name }}</span>
             </div>
           </div>
           <ng-template #cancelled>
