@@ -1,6 +1,6 @@
 import {Component, ElementRef, NgZone, OnDestroy, OnInit} from '@angular/core';
-import {BehaviorSubject, Observable, of, pipe, Subject, zip} from 'rxjs';
 import {MatDialog} from '@angular/material';
+import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {AccountsDialogComponent} from '../accounts-dialog/accounts-dialog.component';
 import { ActivatedRoute } from '@angular/router';
@@ -225,8 +225,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
                         }
                                     :
                         {
-                          'hall_monitor_access': {
-                            controlName: 'hall_monitor_access',
+                          'admin_hall_monitor': {
+                            controlName: 'admin_hall_monitor',
                             restriction: true,
                             controlLabel: 'Access to Hall Monitor'
                           },
@@ -314,14 +314,72 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
   showProfileCard(evt) {
     console.log(evt);
-    this.matDialog.open(ProfileCardDialogComponent, {
+
+    const profilePermissions = this.role === '_profile_admin'
+                                    ?
+                        {
+                          'admin_dashboard': {
+                            // restriction: true,
+                            controlName: 'admin_dashboard',
+                            controlLabel: 'Dashboard Tab Access'
+                          },
+                          'admin_hall_monitor': {
+                            controlName: 'admin_hall_monitor',
+                            // restriction: true,
+                            controlLabel: 'Hall Monitor Tab Access'
+                          },
+                          'admin_search': {
+                            controlName: 'admin_search',
+                            // restriction: true,
+                            controlLabel: 'Search Tab Access'
+                          },
+                          'admin_accounts': {
+                            controlName: 'admin_accounts',
+                            // restriction: true,
+                            controlLabel: 'Accounts & Profiles Tab Access'
+                          },
+                          'admin_pass_config': {
+                            controlName: 'admin_pass_config',
+                            // restriction: true,
+                            controlLabel: 'Pass Configuration Tab Access'
+                          },
+                          // 'admin_school_settings': {
+                          //   controlName: 'admin_school_settings',
+                          //   restriction: true,
+                          //   controlLabel: 'Access to School Settings'
+                          // },
+                        }
+                                    :
+                        this.role === '_profile_teacher'
+                                    ?
+                        {
+                          'admin_hall_monitor': {
+                            controlName: 'admin_hall_monitor',
+                            restriction: true,
+                            controlLabel: 'Access to Hall Monitor'
+                          },
+                        }
+                                    :
+                        {};
+
+
+    const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
       panelClass: 'overlay-dialog',
       backdropClass: 'custom-bd',
       width: '395px',
       height: '474px',
       data: {
         profile: evt,
-        role: this.role
+        role: this.role,
+        permissions: profilePermissions
+      }
+    });
+
+
+    dialogRef.afterClosed().subscribe((userListReloadTrigger: any) => {
+      console.log(userListReloadTrigger);
+      if (userListReloadTrigger) {
+        this.getUserList();
       }
     });
   }

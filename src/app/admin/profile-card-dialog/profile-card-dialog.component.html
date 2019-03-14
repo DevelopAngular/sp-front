@@ -1,9 +1,27 @@
 <div class="profile-card-dialog-container">
+  <!-- Disables card when some async stuffs occur-->
+  <div class="disabled-state loading-theme spinner" *ngIf="disabledState">
+    <mat-spinner [diameter]="'150'" [color]="'accent'"></mat-spinner>
+  </div>
+  <!-- end -->
   <div class="card-header">
     <div class="back-button" (click)="back()">
-      <img [src]="'./assets/Back Button (Grey).png'" alt="Back Button (Grey).png">
+      <img [src]="'./assets/Back Button (Grey).png'" alt="Back Button (Grey).png" *ngIf="!permissionsFormEditState">
+      <span *ngIf="permissionsFormEditState">Cancel</span>
     </div>
     <span>{{profile['Name']}}</span>
+    <div *ngIf="permissionsFormEditState" class="save-button">
+      <app-gradient-button
+        [minHeight]="'27px'"
+        [width]="'72px'"
+        [fontSize]="'11px'"
+        [fontWeight]="'bold'"
+        [cursor]="'pointer'"
+        (buttonClick)="updateProfilePermissions()"
+      >
+        Save
+      </app-gradient-button>
+    </div>
   </div>
   <div class="content-scrollable-box">
 
@@ -72,7 +90,7 @@
             <span class="profile-property">Sign-in status: </span> <span>{{profile['Sign-in status']}}</span><br>
             <span class="profile-property">Last sign-in: </span> <span>{{profile['Last sign-in']}}</span><br>
           </div>
-          <div>
+          <div *ngIf="data.role !== '_profile_admin'">
             <app-gradient-button
               [width]="'141px'"
               [minHeight]="'35px'"
@@ -91,22 +109,30 @@
           </div>
         </div>
       </div>
-
-      <div class="card-body_section" *ngIf="data.role === '_profile_teacher'">
+      <div class="card-body_section" *ngIf="data.role === '_profile_teacher' || data.role === '_profile_admin'">
         <div class="section-content">
-          <div>
+          <div [style.width]="'100%'">
             <div class="section-header">Permissions</div>
-            <span class="">Hall Monitor Tab Access: </span>
+            <!--<span class="">Hall Monitor Tab Access: </span>-->
+            <div *ngFor="let control of controlsIteratable">
+              <app-toggle-input
+                [form]="permissionsForm"
+                [delimiter]="false"
+                [controlName]="control.controlName"
+                [controlLabel]="control.controlLabel"
+                [controlSize]="'small'"
+              ></app-toggle-input>
+            </div>
           </div>
-          <div>
-            <app-toggle-input
-              [delimiter]="false"
-              [controlSize]="'small'"
-              [form]="testGroup"
-              [controlName]="'test'"
-              [controlLabel]="''"
-            ></app-toggle-input>
-          </div>
+          <!--<div>-->
+            <!--<app-toggle-input-->
+              <!--[delimiter]="false"-->
+              <!--[controlSize]="'small'"-->
+              <!--[form]="testGroup"-->
+              <!--[controlName]="'test'"-->
+              <!--[controlLabel]="''"-->
+            <!--&gt;</app-toggle-input>-->
+          <!--</div>-->
         </div>
       </div>
 
