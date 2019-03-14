@@ -45,6 +45,17 @@
       flex-direction: column;
       align-items: center;
 
+      .now-block {
+        width: 500px;
+      }
+
+      .future-block {
+        width: 500px;
+      }
+
+      .unrestricted {
+        color: #7F879D;
+      }
 
       .restriction-toggle {
         margin-top: 20px;
@@ -58,7 +69,6 @@
 
       .options {
         padding-top: 10px;
-        width: 500px;
         .default {
           color: #7F879D;
         }
@@ -79,6 +89,16 @@
             margin-bottom: 10px;
           }
         }
+      }
+    }
+
+    .future-restriction-toggle {
+      margin-top: 20px;
+
+      .title {
+        margin-bottom: 10px;
+        color: #1d1a5e;
+        font-size: 17px;
       }
     }
   }

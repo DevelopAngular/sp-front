@@ -15,6 +15,7 @@ export class RestrictionPickerComponent implements OnInit {
   @Input() selectedChoose: any;
   @Input() fontSize: number = 15;  // px
   @Input() disabled: boolean;
+  @Input() padding: number = 5;      // px
 
   @Output() result: EventEmitter<any> = new EventEmitter<any>();
 

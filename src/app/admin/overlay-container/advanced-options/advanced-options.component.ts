@@ -1,10 +1,22 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {User} from '../../../models/User';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { User } from '../../../models/User';
 
 export interface OptionState {
-    state: string;
-    data: {
-      selectedTeachers: User[];
+    now: {
+        state: string;
+        data: {
+            selectedTeachers: User[];
+            any_teach_assign: string;
+            all_teach_assign: string;
+        };
+    };
+    future: {
+        state: string;
+        data: {
+            selectedTeachers: User[];
+            any_teach_assign: string;
+            all_teach_assign: string;
+        }
     };
 }
 
@@ -15,9 +27,16 @@ export interface OptionState {
 })
 export class AdvancedOptionsComponent implements OnInit {
 
+  @Input() roomName: string;
+  @Input() nowRestricted: boolean;
+  @Input() futureRestricted: boolean;
+
   @Output() hideBottomBlock: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() resultOptions: EventEmitter<OptionState> = new EventEmitter<OptionState>();
 
   openedContent: boolean;
+  hideFutureBlock: boolean;
+  isActiveTooltip: boolean;
 
   toggleChoices = [
       'Any teacher (default)',
@@ -27,9 +46,21 @@ export class AdvancedOptionsComponent implements OnInit {
   ];
 
   optionState: OptionState = {
-      state: this.toggleChoices[0],
-      data: {
-          selectedTeachers: []
+      now: {
+          state: this.toggleChoices[0],
+          data: {
+              selectedTeachers: [],
+              any_teach_assign: null,
+              all_teach_assign: null,
+          }
+      },
+      future: {
+          state: this.toggleChoices[0],
+          data: {
+              selectedTeachers: [],
+              any_teach_assign: null,
+              all_teach_assign: null,
+          }
       }
   };
 
@@ -43,9 +74,27 @@ export class AdvancedOptionsComponent implements OnInit {
   }
 
   changeState(action, data) {
-    if (action === 'teacher') {
-      this.optionState.data.selectedTeachers = data;
+    switch (action) {
+        case 'now_teacher':
+          this.optionState.now.data.selectedTeachers = data;
+          break;
+        case 'future_teacher':
+          this.optionState.future.data.selectedTeachers = data;
+          break;
+        case 'now_any':
+          this.optionState.now.data.any_teach_assign = data;
+          break;
+        case 'now_all':
+          this.optionState.now.data.all_teach_assign = data;
+          break;
+        case 'future_any':
+          this.optionState.future.data.any_teach_assign = data;
+          break;
+        case 'future_all':
+          this.optionState.future.data.all_teach_assign = data;
+          break;
     }
+    this.resultOptions.emit(this.optionState);
   }
 
   hideEmit(event: boolean) {
