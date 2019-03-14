@@ -506,6 +506,7 @@
 
         <div class="footer-delete-button"
           *ngIf="(overlayType === 'editRoom' || (editRoomInFolder)) && !showSearchTeacherOptions && !hideDeleteButton"
+          [style.justify-content]="!editRoomInFolder ? 'center' : 'safe'"
           [style.margin-top]="overlayType === 'editRoom' ? '90px' : '50px'"
         >
             <app-gradient-button
@@ -526,6 +527,7 @@
         </div>
 
       <div class="footer-delete-button"
+           [style.justify-content]="'center'"
            *ngIf="overlayType === 'newFolder' && isEditFolder"
            style="margin-top: 10px"
       >
