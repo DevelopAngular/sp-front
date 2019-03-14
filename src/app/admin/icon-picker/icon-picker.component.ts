@@ -1,7 +1,14 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {map, shareReplay} from 'rxjs/operators';
+import {debounceTime, delay, distinctUntilChanged, map, shareReplay} from 'rxjs/operators';
 import {AdminService} from '../../services/admin.service';
+import {Observable} from 'rxjs';
 
+export interface Icon {
+    id: string;
+    inactive_icon: string;
+    active: boolean;
+    active_icon: string;
+}
 
 @Component({
   selector: 'app-icon-picker',
@@ -10,13 +17,14 @@ import {AdminService} from '../../services/admin.service';
 })
 export class IconPickerComponent implements OnInit {
 
-  icons$;
+  icons$: Observable<Icon[]>;
 
   @Input() selectedIconPicker;
 
   @Output() selectedEvent: EventEmitter<any> = new EventEmitter();
 
   public selectedIconId;
+  public showSearchInput: boolean;
 
   constructor(
     private adminService: AdminService,
@@ -56,5 +64,11 @@ export class IconPickerComponent implements OnInit {
       this.selectedIconId = icon.id;
       this.selectedEvent.emit(icon);
   }
+
+  search(search) {
+    this.icons$ = this.icons$.pipe(debounceTime(50), map(icons => {
+      return icons.filter(icon => icon.id.toLowerCase().includes(search.toLowerCase()));
+    }));
+}
 
 }

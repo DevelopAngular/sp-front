@@ -1,5 +1,17 @@
 <div class="icon-picker-wrapper">
-  <div class="icon-title" [ngStyle]="{'color': selectedIconId ? '#1F195E' : '#8e8e93'}">Icon</div>
+  <div class="icon-title" [ngStyle]="{'color': selectedIconId ? '#1F195E' : '#8e8e93'}">
+    Icon
+    <img class="search-icon" (click)="showSearchInput = !showSearchInput" [src]="'./assets/Search (Blue).png' | resolveAsset" alt="">
+  </div>
+  <div class="search" *ngIf="showSearchInput">
+    <app-round-input
+            [type]="'text'"
+            [placeholder]="'Search icons'"
+            [focused]="true"
+            [minWidth]="'270px'"
+            (ontextupdate)="search($event)"
+    ></app-round-input>
+  </div>
   <div class="icon-collection">
     <div class="icon-container" *ngFor="let icon of icons$ | async" (click)="changeIcon(icon)">
       <div class="icon-wrapper">
