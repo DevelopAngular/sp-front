@@ -37,6 +37,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   public placeholder: boolean;
   public consentMenuOpened: boolean = false;
   public dataTableHeaders: any;
+  public profilePermissions: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -122,6 +123,53 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         }
       });
 
+      this.profilePermissions =
+        this.role === '_profile_admin'
+                   ?
+        {
+          'admin_dashboard': {
+            // restriction: true,
+            controlName: 'admin_dashboard',
+            controlLabel: 'Dashboard Tab Access'
+          },
+          'admin_hall_monitor': {
+            controlName: 'admin_hall_monitor',
+            // restriction: true,
+            controlLabel: 'Hall Monitor Tab Access'
+          },
+          'admin_search': {
+            controlName: 'admin_search',
+            // restriction: true,
+            controlLabel: 'Search Tab Access'
+          },
+          'admin_accounts': {
+            controlName: 'admin_accounts',
+            // restriction: true,
+            controlLabel: 'Accounts & Profiles Tab Access'
+          },
+          'admin_pass_config': {
+            controlName: 'admin_pass_config',
+            // restriction: true,
+            controlLabel: 'Pass Configuration Tab Access'
+          },
+          // 'admin_school_settings': {
+          //   controlName: 'admin_school_settings',
+          //   restriction: true,
+          //   controlLabel: 'Access to School Settings'
+          // },
+        }
+                   :
+        this.role === '_profile_teacher'
+                   ?
+        {
+          'admin_hall_monitor': {
+            controlName: 'admin_hall_monitor',
+            // restriction: true,
+            controlLabel: 'Access to Hall Monitor'
+          },
+        }
+                   :
+        {};
     });
 
     TABLE_RELOADING_TRIGGER.subscribe((updatedHeaders) => {
@@ -190,48 +238,48 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   openDialog(mode, eventTarget?: HTMLElement) {
-    const restrictions = this.role === '_profile_admin'
-                                    ?
-                        {
-                          'admin_dashboard': {
-                            restriction: true,
-                            controlName: 'admin_dashboard',
-                            controlLabel: 'Access to Dashboard'
-                          },
-                          'admin_hall_monitor': {
-                            controlName: 'admin_hall_monitor',
-                            restriction: true,
-                            controlLabel: 'Access to Hall Monitor'
-                          },
-                          'admin_search': {
-                            controlName: 'admin_search',
-                            restriction: true,
-                            controlLabel: 'Access to Search'
-                          },
-                          'admin_accounts': {
-                            controlName: 'admin_accounts',
-                            restriction: true,
-                            controlLabel: 'Access to Accounts & Profiles'
-                          },
-                          'admin_pass_config': {
-                            controlName: 'admin_pass_config',
-                            restriction: true,
-                            controlLabel: 'Access to Pass Configuration'
-                          },
-                          // 'admin_school_setting': {
-                          //   controlName: 'admin_school_setting',
-                          //   restriction: true,
-                          //   controlLabel: 'Access to School Settings'
-                          // },
-                        }
-                                    :
-                        {
-                          'admin_hall_monitor': {
-                            controlName: 'admin_hall_monitor',
-                            restriction: true,
-                            controlLabel: 'Access to Hall Monitor'
-                          },
-                        };
+    // const restrictions = this.role === '_profile_admin'
+    //                                 ?
+    //                     {
+    //                       'admin_dashboard': {
+    //                         restriction: true,
+    //                         controlName: 'admin_dashboard',
+    //                         controlLabel: 'Access to Dashboard'
+    //                       },
+    //                       'admin_hall_monitor': {
+    //                         controlName: 'admin_hall_monitor',
+    //                         restriction: true,
+    //                         controlLabel: 'Access to Hall Monitor'
+    //                       },
+    //                       'admin_search': {
+    //                         controlName: 'admin_search',
+    //                         restriction: true,
+    //                         controlLabel: 'Access to Search'
+    //                       },
+    //                       'admin_accounts': {
+    //                         controlName: 'admin_accounts',
+    //                         restriction: true,
+    //                         controlLabel: 'Access to Accounts & Profiles'
+    //                       },
+    //                       'admin_pass_config': {
+    //                         controlName: 'admin_pass_config',
+    //                         restriction: true,
+    //                         controlLabel: 'Access to Pass Configuration'
+    //                       },
+    //                       // 'admin_school_setting': {
+    //                       //   controlName: 'admin_school_setting',
+    //                       //   restriction: true,
+    //                       //   controlLabel: 'Access to School Settings'
+    //                       // },
+    //                     }
+    //                                 :
+    //                     {
+    //                       'admin_hall_monitor': {
+    //                         controlName: 'admin_hall_monitor',
+    //                         restriction: true,
+    //                         controlLabel: 'Access to Hall Monitor'
+    //                       },
+    //                     };
 
     // =========== SPA=476 ============> It's temporary. Needs to suggest to leave the dialog as it is. If it will be declined, remove it.
 
@@ -243,7 +291,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             role: this.role,
             selectedUsers: this.selectedUsers,
             mode: mode,
-            restrictions: restrictions,
+            restrictions: this.profilePermissions,
             alignSelf: true,
             header: `Are you sure you want to remove this user${this.selectedUsers.length > 1 ? 's' : ''}?`,
             options: [{display: 'Confirm Remove', color: '#FFFFFF', buttonColor: '#DA2370, #FB434A', action: 'confirm'}],
@@ -285,7 +333,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           role: this.role,
           selectedUsers: this.selectedUsers,
           mode: mode,
-          restrictions: restrictions
+          restrictions: this.profilePermissions
         },
         width: '1018px', height: '560px',
         panelClass: 'accounts-profiles-dialog',
@@ -317,13 +365,14 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   addUser() {
     const DR = this.matDialog.open(AddUserDialogComponent,
       {
+        width: '669px', height: '371px',
+        panelClass: 'accounts-profiles-dialog',
+        backdropClass: 'custom-bd',
         data: {
           role: this.role,
           selectedUsers: this.selectedUsers,
-        },
-        width: '669px', height: '371px',
-        panelClass: 'accounts-profiles-dialog',
-        backdropClass: 'custom-bd'
+          permissions: this.profilePermissions
+        }
       });
     DR.afterClosed().subscribe((v) => {
       // console.log(v);
@@ -335,54 +384,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   showProfileCard(evt) {
     console.log(evt);
 
-    const profilePermissions = this.role === '_profile_admin'
-                                    ?
-                        {
-                          'admin_dashboard': {
-                            // restriction: true,
-                            controlName: 'admin_dashboard',
-                            controlLabel: 'Dashboard Tab Access'
-                          },
-                          'admin_hall_monitor': {
-                            controlName: 'admin_hall_monitor',
-                            // restriction: true,
-                            controlLabel: 'Hall Monitor Tab Access'
-                          },
-                          'admin_search': {
-                            controlName: 'admin_search',
-                            // restriction: true,
-                            controlLabel: 'Search Tab Access'
-                          },
-                          'admin_accounts': {
-                            controlName: 'admin_accounts',
-                            // restriction: true,
-                            controlLabel: 'Accounts & Profiles Tab Access'
-                          },
-                          'admin_pass_config': {
-                            controlName: 'admin_pass_config',
-                            // restriction: true,
-                            controlLabel: 'Pass Configuration Tab Access'
-                          },
-                          // 'admin_school_settings': {
-                          //   controlName: 'admin_school_settings',
-                          //   restriction: true,
-                          //   controlLabel: 'Access to School Settings'
-                          // },
-                        }
-                                    :
-                        this.role === '_profile_teacher'
-                                    ?
-                        {
-                          'admin_hall_monitor': {
-                            controlName: 'admin_hall_monitor',
-                            restriction: true,
-                            controlLabel: 'Access to Hall Monitor'
-                          },
-                        }
-                                    :
-                        {};
-
-
     const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
       panelClass: 'overlay-dialog',
       backdropClass: 'custom-bd',
@@ -391,7 +392,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       data: {
         profile: evt,
         role: this.role,
-        permissions: profilePermissions
+        permissions: this.profilePermissions
       }
     });
 

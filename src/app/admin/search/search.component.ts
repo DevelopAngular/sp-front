@@ -288,7 +288,7 @@ export class SearchComponent implements OnInit {
 
 
       console.log('_selectedReport', _selectedReport);
-      this.pdf.generate(_selectedReport, 'l', 'search', title);
+      this.pdf.generateReport(_selectedReport, 'l', 'search', title);
     } else {
       event.preventDefault();
     }

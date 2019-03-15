@@ -309,7 +309,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       )
       .subscribe((active_hp) => {
         if (active_hp.length) {
-          this.pdf.generate(active_hp, 'p', 'dashboard');
+          this.pdf.generateReport(active_hp, 'p', 'dashboard');
         }
       });
   }

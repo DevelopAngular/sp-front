@@ -2,7 +2,7 @@ import { Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { fromEvent, zip } from 'rxjs';
+import {fromEvent, of, zip} from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { TimeService } from '../services/time.service';
 import { DatePrettyHelper } from './date-pretty.helper';
@@ -15,6 +15,11 @@ declare const window;
 
 @Injectable()
 export class PdfGeneratorService {
+
+  private LOGO_IMG: string;
+  private REPORT_IMG: string;
+  private A4: any;
+
   constructor(
     public httpService: HttpClient,
     private locationService: Location,
@@ -22,11 +27,191 @@ export class PdfGeneratorService {
     private storage: StorageService,
     private timeService: TimeService,
   ) {
+
   }
 
-  generate(data: any[], orientation: string = 'p', page: string = '', title?: string): void {
+  private prepareBaseTemplate(orientation: string, ) {
 
-    this.storage.removeItem('pdf_src');
+    const _orientation = orientation === 'l' ? 'landscape' : 'portrait';
+
+    return this.getAssests()
+                .pipe(
+                  tap((res) => {
+                    this.LOGO_IMG = (res[0].srcElement as any).result;
+                    this.REPORT_IMG = (res[1].srcElement as any).result;
+                    this.A4 = this.setOrientationAndSize(_orientation);
+                  }),
+                  switchMap(() => {
+                    const _doc = new jsPDF(_orientation, 'pt', [609.5, 792], {filters: ['ASCIIHexEncode']});
+                          _doc.addFileToVFS('OpenSans-Regular.ttf', OPEN_SANS_REGULAR);
+                          _doc.addFileToVFS('OpenSans-Bold.ttf', OPEN_SANS_BOLD);
+                          _doc.addFont('OpenSans-Regular.ttf', 'OpenSans', 'normal');
+                          _doc.addFont('OpenSans-Bold.ttf', 'OpenSans', 'bold');
+                          _doc.setFont('OpenSans'); // set font
+                    return of(_doc);
+                  })
+                );
+
+  }
+
+  private getAssests() {
+
+    const logoPath = this.locationService.prepareExternalUrl('/assets/Arrow%20(Green).png');
+    const reportPath = this.locationService.prepareExternalUrl('/assets/Report%20(Red).png');
+    const imgLogo = new FileReader();
+    const reportLogo = new FileReader();
+
+    return zip(
+      this.httpService
+        .get(logoPath, {responseType: 'blob'})
+        .pipe(
+          tap((src) => {
+            imgLogo.readAsDataURL(src);
+          }),
+          switchMap((blob) => {
+            return fromEvent(imgLogo, 'load');
+          }),
+        ),
+      this.httpService
+        .get(reportPath, {responseType: 'blob'})
+        .pipe(
+          tap((src) => {
+            reportLogo.readAsDataURL(src);
+          }),
+          switchMap((blob) => {
+            return fromEvent(reportLogo, 'load');
+          }),
+        )
+    );
+  }
+
+  private drawLogo (doc: any) {
+
+    doc.setFontSize(16);
+    doc.setFontStyle('bold');
+    doc.setTextColor('#33b94a');
+    doc.text(29, this.A4.height - 21, 'SmartPass');
+    doc.addImage(this.LOGO_IMG, 'PNG', 115, this.A4.height - 33, 15, 15);
+    doc.setTextColor('#000000');
+    doc.setFontSize(12);
+    doc.setFontStyle('normal');
+
+  }
+  drawLink (doc) {
+    const linkPlaceholder = 'View more information at smartpass.app/app';
+    const link = 'https://smartpass.app/app';
+    const linkRoundSpace = this.A4.width - (doc.getStringUnitWidth(linkPlaceholder) * 12);
+
+    doc.setTextColor('#666666');
+    doc.setFontSize(12);
+    doc.setFontStyle('normal');
+
+    doc.textWithLink(linkPlaceholder, linkRoundSpace / 2, this.A4.height - 21, {url: link});
+  }
+
+  private setOrientationAndSize (orientation: string) {
+    return orientation === 'portrait'
+                        ?
+                {
+                  height: 792,
+                  width: 609.5,
+                }
+                        :
+                {
+                  height: 609.5,
+                  width: 792,
+                };
+  }
+
+  private drawDocHeader (doc, headerString: string) {
+    doc.setFontSize(24);
+    doc.setFontStyle('bold');
+
+    const headerWidth = doc.getStringUnitWidth(headerString) * 24;
+    const headerRoundSpace = this.A4.width - headerWidth;
+
+    doc.text((headerRoundSpace / 2), 57, headerString);
+
+    doc.line(29, 72, this.A4.width - 29, 72);
+    doc.setFontSize(14);
+  }
+
+  generateProfileInstruction(role: string) {
+    this
+      .prepareBaseTemplate('p')
+      .subscribe((res) => {
+
+        const doc = res;
+        this.drawDocHeader(doc, 'SmartPass Instructions');
+        this.drawLogo(doc);
+
+        doc.line(this.A4.width / 2, 72, this.A4.width / 2, 72 + 334);
+
+        // doc.fromHTML(`<p style="color: #04CD33;"> Hello, World!</p>`, this.A4.width / 2, 350);
+
+        const contentBox = document.createElement('div');
+              contentBox.innerHTML = `<div style="font-family: 'Open Sans', sans-serif;">
+                                        <h3 style="color: #1F195E; margin-bottom: 10px; margin-top: 35px;">Account info</h3>
+                                        <p style=" color: #474747;">
+                                          <b>Name: </b> Peter Luba<br><b>Account Type: </b> Alternative<br><b>Profile Type: </b> Student<br>
+                                        </p>
+                                        <h4 style="color: #474747; margin-bottom: 10px; margin-top: 35px;">Acting on Behalf Of:</h4>
+                                        <p style=" color: #474747;">Benneth Cole(bcol34)</p>
+                                        <p style=" color: #474747;">Samuel Jenkins(sjer)</p>
+                                        <h4 style="color: #474747; margin-bottom: 10px; margin-top: 35px;">Expiration</h4>
+                                        <p style=" color: #474747;">Mar 3, 9:45AM</p>
+                                      </div>`;
+        console.log(contentBox);
+        doc.fromHTML(contentBox, 49, 94);
+
+        doc.setTextColor('#1F195E');
+        doc.setFontSize(15);
+        doc.setFontStyle('bold');
+        doc.text(this.A4.width / 2 + 42, 72 + 186, 'Use “Alternative Sign-in,”');
+        doc.text(this.A4.width / 2 + 42, 72 + 186 + 18, 'not Google Sign-in ');
+        doc.setFontSize(14);
+        doc.setFontStyle('normal');
+
+
+
+
+
+
+
+        const isSafari = !!window.safari;
+
+        const linkConsumer = (pdfLink) => {
+          // Show the link to the user. The important part here is that the link is opened by the
+          // user from an href attribute on an <a> tag or the new window is opened during a click event.
+          // Most browsers will refuse to open a new tab/window if it is not opened during a user-triggered event.
+
+          // One more marameter has been added to pass the raw data so that the user could download an Xlsx file from the dialog as well.
+          LinkGeneratedDialogComponent.createDialog(this.dialog, 'Report Generated Successfully', pdfLink);
+        };
+
+        const blob = doc.output('blob', {filename: 'test'});
+        // create a blob link for the PDF
+        if (isSafari) {
+
+          // Safari will not open URLs from createObjectURL() so this
+          // hack with a FileReader is used instead.
+
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            linkConsumer(reader.result);
+          };
+          reader.readAsDataURL(blob);
+
+        } else {
+          linkConsumer(URL.createObjectURL(blob));
+        }
+
+
+      });
+
+  }
+
+  generateReport(data: any[], orientation: string = 'p', page: string = '', title?: string): void {
 
     const prettyNow = DatePrettyHelper.transform(this.timeService.nowDate());
 
@@ -57,61 +242,15 @@ export class PdfGeneratorService {
         break;
     }
 
-    const _orientation = orientation === 'l' ? 'landscape' : 'portrait';
     const _headers: string[] = Object.keys(data.map ? data[0] : data);
     const _data: any[] = data;
-    const doc = new jsPDF(_orientation, 'pt', [609.5, 792], {filters: ['ASCIIHexEncode']});
-    const logoPath = this.locationService.prepareExternalUrl('/assets/Arrow%20(Green).png');
-    const reportPath = this.locationService.prepareExternalUrl('/assets/Report%20(Red).png');
-    const imgLogo = new FileReader();
-    const reportLogo = new FileReader();
-    let imgBase64Logo, imgBase64Report;
 
-    doc.addFileToVFS('OpenSans-Regular.ttf', OPEN_SANS_REGULAR);
-    doc.addFileToVFS('OpenSans-Bold.ttf', OPEN_SANS_BOLD);
-
-    doc.addFont('OpenSans-Regular.ttf', 'OpenSans', 'normal');
-    doc.addFont('OpenSans-Bold.ttf', 'OpenSans', 'bold');
-
-    doc.setFont('OpenSans'); // set font
-
-    zip(
-      this.httpService
-        .get(logoPath, {responseType: 'blob'})
-        .pipe(
-          tap((src) => {
-            imgLogo.readAsDataURL(src);
-          }),
-          switchMap((blob) => {
-            return fromEvent(imgLogo, 'load');
-          }),
-        ),
-      this.httpService
-        .get(reportPath, {responseType: 'blob'})
-        .pipe(
-          tap((src) => {
-            reportLogo.readAsDataURL(src);
-          }),
-          switchMap((blob) => {
-            return fromEvent(reportLogo, 'load');
-          }),
-        )
-    )
+    this
+      .prepareBaseTemplate(orientation)
       .subscribe((res) => {
-        imgBase64Logo = (res[0].srcElement as any).result;
-        imgBase64Report = (res[1].srcElement as any).result;
-        //
-        const A4 = _orientation === 'portrait'
-          ?
-          {
-            height: 792,
-            width: 609.5,
-          }
-          :
-          {
-            height: 609.5,
-            width: 792,
-          };
+
+        const doc = res;
+
         let pageCounter: number = 1;
 
         const table = {
@@ -119,19 +258,9 @@ export class PdfGeneratorService {
           left: 29,
           right: 29,
           lh: 30,
-          sp: Math.round((A4.width - (29 * 2)) / _headers.length),
+          sp: Math.round((this.A4.width - (29 * 2)) / _headers.length),
           col: 11,
-          drawLink: () => {
-            const linkPlaceholder = 'View more information at smartpass.app/app';
-            const link = 'https://smartpass.app/app';
-            const linkRoundSpace = A4.width - (doc.getStringUnitWidth(linkPlaceholder) * 12);
 
-            doc.setTextColor('#666666');
-            doc.setFontSize(12);
-            doc.setFontStyle('normal');
-
-            doc.textWithLink(linkPlaceholder, linkRoundSpace / 2, A4.height - 21, {url: link});
-          },
           drawPagination: (total) => {
             console.log(total);
             doc.setFontSize(14);
@@ -144,23 +273,11 @@ export class PdfGeneratorService {
 
               doc.setPage(pagePointer);
 
-              doc.text(A4.width - table.right - (doc.getStringUnitWidth(_pagination) * 14), A4.height - 21, _pagination);
+              doc.text(this.A4.width - table.right - (doc.getStringUnitWidth(_pagination) * 14), this.A4.height - 21, _pagination);
             }
 
             doc.setFontSize(12);
             doc.setTextColor('#333333');
-          },
-          drawLogo: () => {
-
-            doc.setFontSize(16);
-            doc.setFontStyle('bold');
-            doc.setTextColor('#33b94a');
-            doc.text(table.left, A4.height - 21, 'SmartPass');
-            doc.addImage(imgBase64Logo, 'PNG', 115, A4.height - 33, 15, 15);
-            doc.setTextColor('#000000');
-            doc.setFontSize(12);
-            doc.setFontStyle('normal');
-
           },
           drawHeaders: (__headers: string[]) => {
 
@@ -177,12 +294,12 @@ export class PdfGeneratorService {
             });
 
             doc.setLineWidth(1.5);
-            doc.line(table.left, table.top + 6, A4.width - table.right, table.top + 6);
+            doc.line(table.left, table.top + 6, this.A4.width - table.right, table.top + 6);
           },
           drawRows: (__data) => {
 
-            table.drawLogo();
-            table.drawLink();
+            this.drawLogo(doc);
+            this.drawLink(doc);
 
             doc.setLineWidth(0.5);
             doc.setFontSize(12);
@@ -196,7 +313,7 @@ export class PdfGeneratorService {
                 for (let j = 0; j < d.length; j++) {
                   cell = d[j];
                   n = j;
-                  if ((table.top + table.lh * (n + 1)) < (A4.height - 50)) {
+                  if ((table.top + table.lh * (n + 1)) < (this.A4.height - 50)) {
                     _headers.forEach((header, i) => {
                       if (i === 1) {
                         doc.text(table.left + (table.sp * i) + 25, table.top + table.lh * (n + 1), cell[_headers[i]]);
@@ -204,13 +321,13 @@ export class PdfGeneratorService {
                         doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1), cell[_headers[i]]);
                       }
                     });
-                    doc.line(table.left, table.top + table.lh * (n + 1) + 8, A4.width - table.right, table.top + table.lh * (n + 1) + 8);
+                    doc.line(table.left, table.top + table.lh * (n + 1) + 8, this.A4.width - table.right, table.top + table.lh * (n + 1) + 8);
                   } else {
                     doc.addPage();
                     table.top = 29;
                     doc.setPage(++pageCounter);
-                    table.drawLogo();
-                    table.drawLink();
+                    this.drawLogo(doc);
+                    this.drawLink(doc);
                     breakLoop = true;
                     break;
                   }
@@ -226,16 +343,15 @@ export class PdfGeneratorService {
             __internalIteration(__data);
           },
           drawUnstructRows: (__data) => {
-            table.drawLogo();
-            table.drawLink();
+            this.drawLogo(doc);
+            this.drawLink(doc);
             doc.setTextColor('#000000');
             doc.setFontSize(14);
             doc.setFontStyle('bold');
             doc.text(table.left, table.top + table.lh * (1 + 1), __data.student_name);
             doc.setTextColor('#666666');
             const rightSpace = doc.getStringUnitWidth(__data.created) * 14;
-            // doc.text(A4.width - table.right - rightSpace, table.top + table.lh * (1 + 1), __data.created);
-            doc.text(A4.width - table.right - rightSpace, table.top + table.lh * (1 + 1), __data.created);
+            doc.text(this.A4.width - table.right - rightSpace, table.top + table.lh * (1 + 1), __data.created);
             doc.setFontSize(12);
             doc.text(table.left, table.top + table.lh * (2 + 1), `Reported by ${__data.issuer}:`);
             doc.setFontStyle('normal');
@@ -243,25 +359,28 @@ export class PdfGeneratorService {
           }
         };
 
-        doc.setFontSize(24);
-        doc.setFontStyle('bold');
 
-        const headerWidth = doc.getStringUnitWidth(heading.header) * 24;
-        const headerRoundSpace = A4.width - headerWidth;
+        this.drawDocHeader(doc, heading.header);
+        // doc.setFontSize(24);
+        // doc.setFontStyle('bold');
+        //
+        // const headerWidth = doc.getStringUnitWidth(heading.header) * 24;
+        // const headerRoundSpace = this.A4.width - headerWidth;
+        //
+        // doc.text((headerRoundSpace / 2), 57, heading.header);
+        //
+        // doc.line(table.left, 72, this.A4.width - table.right, 72);
+        // doc.setFontSize(14);
 
-        doc.text((headerRoundSpace / 2), 57, heading.header);
-
-        doc.line(table.left, 72, A4.width - table.right, 72);
-        doc.setFontSize(14);
         if (heading.title && heading.title.length) {
-          const titleStrings = doc.splitTextToSize(heading.title, A4.width - (29 * 4));
+          const titleStrings = doc.splitTextToSize(heading.title, this.A4.width - (29 * 4));
           titleStrings.forEach((str, i) => {
             doc.text(table.left, 110 - 5 + (i * 16), str);
           });
         }
 
         if (page === 'hallmonitor') {
-          doc.addImage(imgBase64Report, 'PNG', 65, 33, 30, 30);
+          doc.addImage(this.REPORT_IMG, 'PNG', 55, 33, 30, 30);
           table.drawUnstructRows(_data);
         } else {
           table.drawHeaders(_headers);

@@ -44,7 +44,7 @@ export class DisplayReportCellComponent implements OnInit {
   printReport(e) {
     // e.preventDefault();
 
-    this.pdf.generate(this.data, 'p', 'hallmonitor');
+    this.pdf.generateReport(this.data, 'p', 'hallmonitor');
 
   }
 }

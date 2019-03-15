@@ -1,6 +1,8 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {FormControl, FormGroup} from '@angular/forms';
+import {User} from '../../models/User';
+import {PdfGeneratorService} from '../pdf-generator.service';
 
 @Component({
   selector: 'app-add-user-dialog',
@@ -13,9 +15,15 @@ export class AddUserDialogComponent implements OnInit {
   public typeChoosen: string = this.accountTypes[0];
   public newAlternativeAccount: FormGroup;
 
+  public permissionsForm: FormGroup;
+  public permissionsFormEditState: boolean = false;
+  public controlsIteratable: any[];
+  public permissionsChanged: boolean = false;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<AddUserDialogComponent>
+    private dialogRef: MatDialogRef<AddUserDialogComponent>,
+    private pdfService: PdfGeneratorService
   ) {
 
   }
@@ -27,8 +35,31 @@ export class AddUserDialogComponent implements OnInit {
       password: new FormControl(''),
     });
 
+    if (this.data.role !== '_profile_student') {
+      const permissions = this.data.permissions;
+      this.controlsIteratable = Object.values(permissions);
+      const group: any = {};
+      for (const key in permissions) {
+        // const value = (this.profile._originalUserProfile as User).roles.includes(key);
+        // console.log(value);
+        group[key] = new FormControl(true);
+      }
+      this.permissionsForm = new FormGroup(group);
+      this.permissionsForm.valueChanges.subscribe((formValue) => {
+        console.log(formValue);
+        this.permissionsFormEditState = true;
+        // this.permissionsChanged = true;
+
+      });
+    }
   }
   setSelectedUsers(evt) {
     return;
+  }
+  showInstructions(role) {
+    this.pdfService.generateProfileInstruction('_profile_student');
+  }
+  back() {
+    this.dialogRef.close();
   }
 }
