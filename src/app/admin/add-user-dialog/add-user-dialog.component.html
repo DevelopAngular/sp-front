@@ -1,6 +1,6 @@
 <div class="add-user-dialog-container">
   <div class="heading">
-    <div class="back-button">
+    <div class="back-button" (click)="back()">
       <img [src]="'./assets/Back Button (White).png'" alt="Back Button (Grey).png" >
     </div>
     <div><span>Add User To Profile</span></div>
@@ -34,10 +34,25 @@
       <div class="profile-search">
         <div class="profile-search_label"><span>G Suite Account to Add</span></div>
         <app-profiles-search
+          [width]="'360px'"
           (onUpdate)="setSelectedUsers($event)"
         >
         </app-profiles-search>
       </div>
+
+      <div class="profile-permissions" [style.width]="'100%'" *ngIf="data.role !== '_profile_student'">
+        <div class="profile-permissions_heading">Permissions</div>
+        <div *ngFor="let control of controlsIteratable">
+          <app-toggle-input
+            [form]="permissionsForm"
+            [delimiter]="false"
+            [controlName]="control.controlName"
+            [controlLabel]="control.controlLabel"
+            [controlSize]="'small'"
+          ></app-toggle-input>
+        </div>
+      </div>
+
     </div>
 
     <div class="content_rest" *ngIf="typeChoosen === accountTypes[1]">
@@ -108,6 +123,7 @@
               [fontSize]="'11px'"
               [fontWeight]="'bold'"
               [cursor]="'pointer'"
+              (buttonClick)="showInstructions(data.role)"
             >
               <div style="display: flex; align-items: center;">
 
