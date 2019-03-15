@@ -20,7 +20,7 @@ const routes: Routes = [
       {path: 'accounts', component: AccountsComponent},
       {path: 'accounts/:role', component: AccountsRoleComponent},
       {path: 'passconfig', component: PassConfigComponent},
-      {path: 'settings', component: SettingsComponent},
+      // {path: 'settings', component: SettingsComponent},
       // {path: 'feedback', component: FeedbackComponent},
       // {path: 'support', component: SupportComponent},
       {path: '**', redirectTo: 'dashboard', pathMatch: 'full'},

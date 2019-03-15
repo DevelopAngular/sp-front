@@ -7,6 +7,8 @@ import { DataService } from '../../services/data-service';
 import { User } from '../../models/User';
 import { UserService } from '../../services/user.service';
 import { disableBodyScroll } from 'body-scroll-lock';
+import {MatDialog} from '@angular/material';
+import {SettingsComponent} from '../settings/settings.component';
 
 @Component({
   selector: 'app-nav',
@@ -14,6 +16,7 @@ import { disableBodyScroll } from 'body-scroll-lock';
   styleUrls: ['./nav.component.scss']
 })
 export class NavComponent implements OnInit {
+
   @ViewChild('navMain') navMain: ElementRef;
   @Output('restrictAccess') restrictAccess: EventEmitter<boolean> = new EventEmitter();
 
@@ -29,19 +32,21 @@ export class NavComponent implements OnInit {
   fakeMenu = new BehaviorSubject<boolean>(false);
   tab: string[] = ['dashboard'];
 
+    constructor(
+        public router: Router,
+        private activeRoute: ActivatedRoute,
+        private dataService: DataService,
+        private userService: UserService,
+        public loadingService: LoadingService,
+        private dialog: MatDialog,
+        private _zone: NgZone
+    ) { }
+
   console = console;
+    user: User;
 
-  user: User;
   showButton: boolean;
-
-  constructor(
-      public router: Router,
-      private activeRoute: ActivatedRoute,
-      private dataService: DataService,
-      private userService: UserService,
-      public loadingService: LoadingService,
-      private _zone: NgZone
-  ) { }
+  selectedSettings: boolean;
 
   ngOnInit() {
 
@@ -100,6 +105,35 @@ export class NavComponent implements OnInit {
         break;
     }
   }
+
+  openSettings(event) {
+    this.selectedSettings = true;
+    const target = new ElementRef(event.currentTarget);
+    const settingsRef = this.dialog.open(SettingsComponent, {
+      panelClass: 'calendar-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: { 'trigger': target }
+    });
+
+    settingsRef.beforeClose().subscribe(() => {
+      this.selectedSettings = false;
+    });
+
+    settingsRef.afterClosed().subscribe(action => {
+        if (action === 'signout') {
+            this.router.navigate(['sign-out']);
+        } else if (action === 'about') {
+            window.open('https://smartpass.app/about');
+        } else if (action === 'feedback') {
+            window.open('https://www.smartpass.app/feedback');
+        } else if (action === 'support') {
+            window.open('https://www.smartpass.app/support');
+        } else if (action === 'privacy') {
+          window.open('https://www.smartpass.app/legal');
+        }
+    });
+  }
+
   isSelected(route: string) {
     return this.tab.includes(route);
   }

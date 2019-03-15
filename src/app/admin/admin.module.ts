@@ -2,13 +2,13 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-  MatCheckboxModule,
-  MatChipsModule,
-  MatDialogModule,
-  MatGridListModule,
-  MatIconModule,
-  MatSortModule,
-  MatTableModule
+    MatCheckboxModule,
+    MatChipsModule,
+    MatDialogModule, MatDividerModule,
+    MatGridListModule,
+    MatIconModule,
+    MatSortModule,
+    MatTableModule
 } from '@angular/material';
 import { ChartsModule } from 'ng2-charts';
 import { SharedModule } from '../shared/shared.module';
@@ -45,6 +45,7 @@ import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.compon
     MatDialogModule,
     MatChipsModule,
     MatIconModule,
+    MatDividerModule,
     AdminSharedModule,
     ChartsModule
   ],
@@ -73,7 +74,8 @@ import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.compon
     ColumnsConfigDialogComponent,
     ProfileCardDialogComponent,
     SchoolSettingDialogComponent,
-    AddUserDialogComponent
+    AddUserDialogComponent,
+    SettingsComponent,
 
   ],
   providers: [
