@@ -1,7 +1,7 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {debounceTime, delay, distinctUntilChanged, map, shareReplay} from 'rxjs/operators';
-import {AdminService} from '../../services/admin.service';
-import {Observable} from 'rxjs';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { debounceTime, distinctUntilChanged, map, shareReplay } from 'rxjs/operators';
+import { AdminService } from '../../services/admin.service';
+import { Observable } from 'rxjs';
 
 export interface Icon {
     id: string;
@@ -13,7 +13,7 @@ export interface Icon {
 @Component({
   selector: 'app-icon-picker',
   templateUrl: './icon-picker.component.html',
-  styleUrls: ['./icon-picker.component.scss']
+  styleUrls: ['./icon-picker.component.scss'],
 })
 export class IconPickerComponent implements OnInit {
 
@@ -65,9 +65,16 @@ export class IconPickerComponent implements OnInit {
       this.selectedEvent.emit(icon);
   }
 
+  openSearchInput() {
+    this.showSearchInput = !this.showSearchInput;
+  }
+
   search(search) {
-    this.icons$ = this.icons$.pipe(debounceTime(50), map(icons => {
-      return icons.filter(icon => icon.id.toLowerCase().includes(search.toLowerCase()));
+    this.icons$ = this.icons$.pipe(
+        debounceTime(50),
+        distinctUntilChanged(),
+        map(icons => {
+          return icons.filter(icon => icon.id.toLowerCase().includes(search.toLowerCase()));
     }));
 }
 
