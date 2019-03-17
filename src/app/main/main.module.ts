@@ -121,7 +121,8 @@ import {NotificationFormComponent} from '../notification-form/notification-form.
     RequestCardComponent,
     InvitationCardComponent,
     InfoEditorComponent,
-    NotificationFormComponent
+    NotificationFormComponent,
+    SettingsComponent
 
   ],
   providers: [
