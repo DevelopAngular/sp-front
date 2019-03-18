@@ -1,12 +1,12 @@
 <div class="date-wrapper">
     <div class="divider">
         <img class="back-button" [src]="'./assets/Back Button (Transparent).png' | resolveAsset" (click)="back()">
-        <div class="divider-header">
+        <div class="divider-header"  [ngClass]="{'divider-header':!mock, 'divider-header-mock': mock}">
             <img class="divider-icon" [src]="'./assets/Scheduled Pass (White).png' | resolveAsset">
             <div class="divider-text">Select Date & Time</div>
         </div>
     </div>
-    <div class="date-content">
+    <div class="date-contentt" [ngClass]="{'date-content':!mock, 'date-content-mock': mock}">
         <div class="decline-content" *ngIf="isStaff">
             <div class="toggle-text">
               <div class="toggle-title">Declinable</div>
@@ -39,7 +39,6 @@
                       [minHeight]="'35px'"
                       [fontSize]="'14px'"
                       (buttonClick)="next()"
-                      [style.width]="'90px'"
                       [style.margin]="'15px auto'"
               >Next</app-gradient-button>
           </div>
@@ -59,7 +58,6 @@
                       [minHeight]="'35px'"
                       [fontSize]="'14px'"
                       (buttonClick)="next()"
-                      [style.width]="'90px'"
                       [style.margin]="'15px auto'"
               >Next</app-gradient-button>
           </div>

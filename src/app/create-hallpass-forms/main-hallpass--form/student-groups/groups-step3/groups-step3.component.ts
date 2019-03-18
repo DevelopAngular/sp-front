@@ -3,7 +3,7 @@ import {StudentList} from '../../../../models/StudentList';
 import {HttpService} from '../../../../services/http-service';
 import {FormGroup} from '@angular/forms';
 import {Navigation} from '../../main-hall-pass-form.component';
-import {map, skip, switchMap} from 'rxjs/internal/operators';
+import { map, skip, switchMap} from 'rxjs/internal/operators';
 import {UserService} from '../../../../services/user.service';
 import {fromEvent, Observable} from 'rxjs';
 import * as XLSX from 'xlsx';
@@ -82,14 +82,13 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
                     result.existingStudents.push(student);
                     _emails.splice(founded, 1);
                   }
-                })
+                });
                 result.unknown = _emails;
 
                 return result;
               }));
           // }));
-        }),
-      )
+        }))
       .subscribe((students) => {
         this.loadingIndicator = false;
         console.log(students);
@@ -134,6 +133,7 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
   removeGroup() {
     this.userService.deleteStudentGroup(this.editGroup.id)
       .subscribe((group: StudentList) => {
+        console.log('Deleted users ====>', group);
         for ( const control in this.form.controls) {
           this.form.controls[control].setValue(null);
         }

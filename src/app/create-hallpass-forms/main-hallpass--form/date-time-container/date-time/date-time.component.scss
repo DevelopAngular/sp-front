@@ -22,7 +22,7 @@
   align-items: center;
 }
 
-.date-content {
+.date-content, .date-content-mock {
   height: 87%;
 }
 
@@ -71,10 +71,14 @@
   align-items: center;
   box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
   position: relative;
+  z-index: 10;
   background-image: radial-gradient(circle at 98% 97%, #03CF31,#00B476);
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  overflow: hidden;
 }
 
-.divider-header{
+.divider-header, .divider-header-mock {
   display: flex;
   flex-direction: row;
   align-items: center;

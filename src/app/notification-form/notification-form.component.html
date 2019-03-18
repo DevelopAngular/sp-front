@@ -1,0 +1,28 @@
+<div class="notif-wrapper">
+  <div class="notif-header" [style.background-image]="'radial-gradient(circle at 73% 71%, #DA2370,#FB434A)'">
+    <img class="back-button" [src]="'./assets/Back Button (Transparent).png' | resolveAsset" alt="Notification" (click)="dialogRef.close()">
+    <div class="header-title">Notifications</div>
+  </div>
+  <div class="notif-content">
+    <form [formGroup]="notifForm">
+      <div class="setting" *ngFor="let setting of settings">
+        <div class="setting-content">
+            <div class="setting-title">{{ setting.title }}</div>
+            <div class="controls" *ngFor="let control of setting.controls">
+                <div class="control-title">
+                  {{ control.controlTitle }} <br>
+                  <span class="control-subtitle" *ngIf="control.controlSubtitle"> {{ control.controlSubtitle }} </span>
+                </div>
+                <div class="control-toggle">
+                  <div class="onoffswitch">
+                    <input type="checkbox" [name]="control.formControl" [formControlName]="control.formControl" class="onoffswitch-checkbox" [id]="control.formControl">
+                    <label class="onoffswitch-label" [for]="control.formControl"></label>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <mat-divider></mat-divider>
+      </div>
+    </form>
+  </div>
+</div>

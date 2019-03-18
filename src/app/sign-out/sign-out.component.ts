@@ -19,7 +19,7 @@ export class SignOutComponent implements AfterContentInit {
       this.http.clearInternal();
       this.loginService.clearInternal(true);
 
-      location.href = '/';
+      location.href = '/app';
     }, 500);
   }
 

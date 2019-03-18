@@ -1,4 +1,4 @@
-<div class="collection-wrapper" *ngIf="!mock && (currentPasses$ | async) && (currentPasses$ | async).length>0 || emptyMessage">
+<div class="collection-wrapper" *ngIf="!mock && (currentPasses$ | async) && (currentPasses$ | async).length>0 || showEmptyHeader; else emptyMessage">
   <!--<pre>{{test | json}}</pre>-->
   <div class="collection-header">
       <img draggable="false" class="collection-icon" [src]="icon | resolveAsset">

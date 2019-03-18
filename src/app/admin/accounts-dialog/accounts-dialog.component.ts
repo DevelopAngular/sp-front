@@ -61,7 +61,8 @@ export class AccountsDialogComponent implements OnInit {
         this.form = new FormGroup(group);
         this.controlsIteratable = Object.values(restrictions);
         this.beforeClosedHook = function() {
-          return zip(restrictionsFor.map((user) => this.userService.createUserRoles(user['#Id'], this.form.value)));
+          console.log('restrictions', this.data.mode);
+          return zip(...restrictionsFor.map((user) => this.userService.createUserRoles(user['id'], this.form.value)));
         };
         break;
       }
@@ -73,14 +74,14 @@ export class AccountsDialogComponent implements OnInit {
         this.palette = `radial-gradient(circle at 80% 67%, ${this.buttonColor})`;
         break
       case 'teacher' :
-        this.layout = 'teacher',
+        this.layout = 'teacher';
         this.header = 'Add/Modify Acting Teacher Profile';
         this.buttonText = 'Add/Modify';
         this.buttonColor = '#13BF9E, #00D99B';
         this.palette = `radial-gradient(circle at 80% 67%, ${this.buttonColor})`;
         break
       case 'rooms' :
-        this.layout = 'rooms',
+        this.layout = 'rooms';
         this.header = 'Add/Modify Rooms';
         this.buttonText = 'Add/Modify';
         this.buttonColor = '#022F68, #2F66AB';
@@ -109,7 +110,7 @@ export class AccountsDialogComponent implements OnInit {
     this.selectedUsers = evt;
   }
   closeDialog() {
-
+    console.log('it works');
     this.beforeClosedHook().subscribe((res) => {
 
       this.DR.close(res);

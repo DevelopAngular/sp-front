@@ -24,6 +24,7 @@ export class StudentSearchComponent implements AfterViewInit {
 
   students: Promise<any[]>;
   inputValue$: Subject<string> = new Subject<string>();
+  showDummy: boolean = false;
 
   constructor(private userService: UserService) {
     // this.onSearch('');
@@ -41,10 +42,16 @@ export class StudentSearchComponent implements AfterViewInit {
 
   onSearch(search: string) {
     if (search !== '') {
-      this.students = this.userService.searchProfile('hallpass_student',50, encodeURI(search))
-          .toPromise().then(paged => this.removeDuplicateStudents(paged.results));
+      this.students = this.userService.searchProfile('hallpass_student', 50, encodeURI(search))
+          .toPromise()
+          .then((paged: any) => {
+            console.log('PAGED RESULT >>>', paged);
+            this.showDummy = paged.results.length ? false : true;
+            return this.removeDuplicateStudents(paged.results);
+          });
     } else {
       this.students = null;
+      this.showDummy = false;
       this.inputValue$.next('');
     }
   }

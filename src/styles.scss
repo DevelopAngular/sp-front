@@ -120,7 +120,7 @@ body {
   border-radius: 10px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  margin: 10px;
+  //margin: 10px;
   padding: 0;
 }
 
@@ -168,11 +168,16 @@ body {
   @extend .editor-dialog;
   background-color: rgba(255, 255, 255, 1);
   overflow: visible;
-  text-align: center;
+  //text-align: center;
 }
 
 .calendar-dialog-container .mat-dialog-container {
   padding: 0;
+  overflow: visible;
+  box-shadow: 0 3px 20px 0px rgba(0, 0, 0, 0.15);
+  border-radius: 15px;
+  //background-color: red;
+
 }
 
 input:focus{

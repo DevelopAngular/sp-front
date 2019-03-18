@@ -1,4 +1,4 @@
-import {Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import {Component, ElementRef, HostListener, Inject, OnInit, ViewChild} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 
@@ -117,10 +117,14 @@ export class OverlayContainerComponent implements OnInit {
   newRoomsInFolder = [];
   pinnableToDeleteIds: number[] = [];
 
+  titleColor: string = 'white';
+
   form: FormGroup;
 
   showPublishSpinner: boolean;
   showDoneSpinner: boolean;
+
+  hideDeleteButton: boolean;
 
   buttonsInFolder = [
       { title: 'New Room', icon: './assets/Create (White).png', location: 'newRoomInFolder'},
@@ -132,6 +136,11 @@ export class OverlayContainerComponent implements OnInit {
       { title: 'Remove From Folder', action: 'remove_from_folder', color: '#606981, #ACB4C1', hover: '#606981', width: '150px'},
       { title: 'Delete Rooms', action: 'delete', color: '#DA2370,#FB434A', hover: '#DA2370',  width: '120px'}
   ];
+
+  @HostListener('scroll', ['$event'])
+  onScroll(event) {
+      // console.log(event.target.scrollTop);
+  }
 
   constructor(
       private dialogRef: MatDialogRef<OverlayContainerComponent>,
@@ -146,12 +155,12 @@ export class OverlayContainerComponent implements OnInit {
   getHeaderData() {
     let colors;
     switch (this.overlayType) {
-        case 'newRoom': {
-          colors = '#03CF31,#00B476';
+        case 'newRoom':
+          // colors = '#03CF31,#00B476';
+          this.titleColor = '#1F195E';
           this.roomName = 'New Room';
           break;
-        }
-        case 'newFolder': {
+        case 'newFolder':
             if (!!this.pinnable) {
                 colors = this.pinnable.gradient_color;
                 this.folderName = this.pinnable.title;
@@ -159,11 +168,11 @@ export class OverlayContainerComponent implements OnInit {
                 this.selectedIcon = this.pinnable.icon;
                 break;
             }
-          colors = '#03CF31,#00B476';
+          // colors = '#03CF31,#00B476';
+          this.titleColor = '#1F195E';
           this.folderName = 'New Folder';
           break;
-        }
-        case 'editRoom': {
+        case 'editRoom':
             colors = this.pinnable.gradient_color;
             this.roomName = this.pinnable.title;
             this.timeLimit = this.pinnable.location.max_allowed_time;
@@ -175,9 +184,9 @@ export class OverlayContainerComponent implements OnInit {
             this.selectedIcon = this.pinnable.icon;
             this.travelType = this.pinnable.location.travel_types;
             break;
-        }
-        case 'edit': {
-          colors = '#606981, #ACB4C1';
+        case 'edit':
+          // colors = '#606981, #ACB4C1';
+          this.titleColor = '#1F195E';
           this.folderName = 'Bulk Edit Rooms';
           this.form.get('timeLimit').clearValidators();
           this.form.get('timeLimit').setValidators([
@@ -187,7 +196,6 @@ export class OverlayContainerComponent implements OnInit {
           console.log('BULK SELECTED ROOMS =====>>> \n', this.selectedRooms);
           this.bulkWarningText = !!_.find(this.selectedRooms, {type: 'category'});
           break;
-        }
     }
     this.gradientColor = 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
@@ -294,7 +302,7 @@ export class OverlayContainerComponent implements OnInit {
           this.overlayType === 'settingsRooms' ||
           this.overlayType === 'edit';
   }
-    ngOnInit() {
+  ngOnInit() {
       disableBodyScroll(this.elRef.nativeElement,
           {
         allowTouchMove: (el) => {
@@ -310,9 +318,15 @@ export class OverlayContainerComponent implements OnInit {
       this.overlayType = this.dialogData['type'];
       if (this.dialogData['pinnable']) {
           this.pinnable = this.dialogData['pinnable'];
+
           if (this.pinnable.type === 'category') {
               this.locationService.getLocationsWithCategory(this.pinnable.category)
-                  .subscribe((res: Location[]) => this.selectedRooms = res);
+                  .subscribe((res: Location[]) => {
+                    this.selectedRooms = res
+                    if (this.dialogData['forceSelectedLocation']) {
+                      this.setToEditRoom(this.dialogData['forceSelectedLocation']);
+                    }
+                  });
           }
       }
       if (this.dialogData['rooms']) {
@@ -546,13 +560,12 @@ export class OverlayContainerComponent implements OnInit {
     let type;
     let hideAppearance;
     switch (location) {
-        case 'newRoomInFolder': {
+        case 'newRoomInFolder':
           this.roomName = 'New Room';
           hideAppearance = true;
           type = 'newRoomInFolder';
           break;
-        }
-        case 'newFolder': {
+        case 'newFolder':
           this.editRoomInFolder = false;
           this.showDoneSpinner = false;
           this.selectedRoomsInFolder = [];
@@ -577,27 +590,22 @@ export class OverlayContainerComponent implements OnInit {
           hideAppearance = false;
           type = 'newFolder';
           break;
-        }
-        case 'importRooms': {
+        case 'importRooms':
           hideAppearance = true;
           type = 'importRooms';
           break;
-        }
-        case 'addExisting': {
+        case 'addExisting':
           hideAppearance = true;
           type = 'addExisting';
           break;
-        }
-        case 'settingsRooms': {
+        case 'settingsRooms':
           hideAppearance = true;
           type = 'settingsRooms';
           break;
-        }
-        case 'editRoomInFolder': {
+        case 'editRoomInFolder':
           this.editRoomInFolder = true;
           hideAppearance = true;
           type = 'newRoomInFolder';
-        }
     }
     this.hideAppearance = hideAppearance;
     this.overlayType = type;
@@ -606,6 +614,7 @@ export class OverlayContainerComponent implements OnInit {
 
   changeColor(color) {
     this.color_profile = color;
+    this.titleColor = 'white';
     this.gradientColor = 'radial-gradient(circle at 98% 97%,' + color.gradient_color + ')';
     this.isDirtyColor = true;
     this.changeState();
@@ -652,7 +661,9 @@ export class OverlayContainerComponent implements OnInit {
       };
 
       this.setLocation('editRoomInFolder');
-      this.roomList.topScroll = this.roomList.domElement.nativeElement.scrollTop;
+      if (!this.dialogData['forceSelectedLocation']) {
+        this.roomList.topScroll = this.roomList.domElement.nativeElement.scrollTop;
+      }
   }
 
   onPublish() {

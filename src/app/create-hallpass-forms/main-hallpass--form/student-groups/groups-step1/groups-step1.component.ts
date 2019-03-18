@@ -3,6 +3,8 @@ import {Navigation} from '../../main-hall-pass-form.component';
 import {StudentList} from '../../../../models/StudentList';
 import {User} from '../../../../models/User';
 import {UserService} from '../../../../services/user.service';
+import {Observable, of, timer} from 'rxjs';
+import {finalize, publish, publishReplay, refCount, switchMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-groups-step1',
@@ -20,12 +22,17 @@ export class GroupsStep1Component implements OnInit {
   @Output() stateChangeEvent: EventEmitter<Navigation | string> = new EventEmitter<Navigation | string>();
   @Output() createGroupEmit: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
+  isEmptyGroups$: Observable<boolean>;
+
   // public selectedGroup: StudentList;
   // public selectedStudents: User[] = [];
 
   constructor(private userService: UserService) { }
 
   ngOnInit() {
+    this.isEmptyGroups$ = timer(500).pipe(switchMap(() => {
+      return of (!this.groups || (this.groups && !this.groups.length));
+    }));
 
     if (this.selectedGroup) {
       this.selectedStudents = this.selectedGroup.users;

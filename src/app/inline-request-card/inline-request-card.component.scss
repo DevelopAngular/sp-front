@@ -1,13 +1,114 @@
-.page-2-wrapper{
-    height: 122px;
+.inline-request-card-wrapper {
+    width: 335px;
+    border-radius: 15px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: left;
-    scrollbar-face-color: #D6D6D6;
-    scrollbar-track-color: white;
-    overflow: auto;
+    position: relative;
+
+    .pass-card-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            width: 291px;
+
+            .header-info {
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        .pass-card-header-icon {
+            width: 34px;
+            height: 34px;
+        }
+
+        .pass-card-header-text {
+            color: white;
+            font-size: 22px;
+            margin-left: 15px;
+            font-weight: bold;
+
+            .card-subtitle {
+                font-size: 15px;
+                font-weight: normal;
+            }
+        }
+
+        .pass-card-header-close {
+            width: 29px;
+            height: 29px;
+            cursor: pointer;
+        }
+    }
+
+    mat-divider {
+        background-color: white;
+        width: 291px;
+        opacity: 0.4;
+    }
+
+    .inline-request-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .center-block {
+            height: 221px;
+            display: flex;
+            align-items: center;
+
+            .page-1 {
+                height: 174px;
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        .bottom-block {
+            height: 102px;
+            color: white;
+            text-align: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//.page-2-wrapper{
+//    height: 122px;
+//    display: flex;
+//    flex-direction: column;
+//    align-items: center;
+//    text-align: left;
+//    scrollbar-face-color: #D6D6D6;
+//    scrollbar-track-color: white;
+//    overflow: auto;
+//}
 
 .button-content{
     width: 130px;
@@ -41,20 +142,16 @@
 }
 
 .request-description{
-    height: inherit;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    position: relative;
-    top: 15px;
+    font-size: 21px;
     font-weight: bold;
     text-align: left;
+    display: flex;
+    align-items: center;
 }
 
 .request-description-icon{
-    width: 17px;
-    height: 17px;
-    margin-right: 7px;
+    width: 29px;
+    margin-right: 10px;
 }
 
 .request-button-content{
@@ -99,21 +196,22 @@
 }
 
 .resend-button-content-title{
-    font-size: 11pt;
+    font-size: 22px;
     font-weight: bold;
 }
 
 .resend-button-content-subtitle{
-    font-size: 10pt;
-    font-weight: 400;
+    font-size: 15px;
+    font-weight: normal;
 }
 
 .message{
-    font-size: 12px;
-    height: 110px;
-    max-height: 110px;
-    width: 130px;
-    overflow-y: auto;
+    font-size: 16px;
+    padding-top: 20px;
+    width: 225px;
+    text-align: left;
+    overflow: auto;
+    overflow-wrap: break-word;
 }
 
 .student-with-edit{

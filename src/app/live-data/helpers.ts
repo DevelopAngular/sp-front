@@ -4,13 +4,28 @@ export type Partial<T> = {
   [P in keyof T]?: T[P];
 };
 
+type QueryValue = boolean | number | string;
+
 export interface QueryParams {
-  [key: string]: boolean | number | string;
+  [key: string]: QueryValue | QueryValue[];
 }
 
 function encode(obj: Partial<QueryParams>): string {
-  return Object.keys(obj).map(key => `${encodeURIComponent(key)}=${encodeURIComponent(obj[key].toString())}`).join('&');
+  const segments: string[] = [];
+  for (const key of Object.keys(obj)) {
+    const value = obj[key];
 
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        segments.push(encodeURIComponent(key) + '=' + encodeURIComponent(item.toString()));
+      }
+    } else {
+
+      segments.push(encodeURIComponent(key) + '=' + encodeURIComponent(value.toString()));
+    }
+  }
+
+  return segments.join('&');
 }
 
 export function constructUrl(base: string, obj: Partial<QueryParams>): string {

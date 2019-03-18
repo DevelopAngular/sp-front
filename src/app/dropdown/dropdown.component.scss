@@ -1,13 +1,16 @@
 :host {
   position: relative;
+  display: block;
 }
 .pointer-wrapper{
     width: 100px;
     height: 30px;
     overflow: hidden;
     position: absolute;
-    left: -55px;
+    left: 0px;
+    right: 0;
     top: -40px;
+    margin: 0 auto;
 }
 
 .pointer{
@@ -57,6 +60,7 @@
   font-size: 15px;
   padding: 12px 0;
   display: flex;
+  cursor: pointer;
   justify-content: space-between;
   align-items: center;
   .option-data_leftside {

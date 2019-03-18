@@ -3,14 +3,14 @@
     <mat-chip-list #chipList>
       <div [style.padding-bottom]="'5px'">
         <app-round-input
-          [width]="'400px'"
+          [width]="width"
           [type]="'text'"
           [placeholder]="placeholder"
           [disabled]="false"
           [chipInput]="chipList"
           [fieldIconPosition]="'left'"
           [closeIcon]="true"
-          [focused]="true"
+          [focused]="focused"
           [selectReset$]="inputValue$"
           (ontextupdate)="onSearch($event)"
         ></app-round-input>

@@ -4,6 +4,7 @@ import { Location } from '../models/Location';
 import {finalize, map} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
 import {combineLatest} from 'rxjs';
+import * as _ from 'lodash';
 
 
 export interface Paged<T> {
@@ -37,6 +38,7 @@ export class LocationTableComponent implements OnInit {
   @Input() isEdit: boolean = false;
   @Input() rightHeaderText: boolean = false;
   @Input() mergedAllRooms: boolean;
+  @Input() dummyString: '';
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<string> = new EventEmitter();
@@ -46,11 +48,14 @@ export class LocationTableComponent implements OnInit {
   rightShadow: boolean = true;
 
   choices: any[] = [];
+  noChoices:boolean = false;
+  mainContentVisibility: boolean = false;
   starredChoices: any[] = [];
   search: string = '';
   nextChoices: string = '';
   favoritesLoaded: boolean;
   hideFavorites: boolean;
+
   locationWithFavorites;
 
   @HostListener('scroll', ['$event'])
@@ -93,8 +98,14 @@ export class LocationTableComponent implements OnInit {
   }
 
   ngOnInit() {
-      if (this.staticChoices) {
+    if (this.staticChoices) {
       this.choices = this.staticChoices;
+        if (!this.choices.length) {
+          this.noChoices = true;
+        } else {
+          this.noChoices = false;
+        }
+        this.mainContentVisibility = true;
     } else {
         const url = 'v1/'
             +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
@@ -106,21 +117,37 @@ export class LocationTableComponent implements OnInit {
             this.mergeLocations(url)
                 .subscribe(res => {
                     this.choices = res.sort((a, b) => a.id - b.id);
+                  if (!this.choices.length) {
+                    this.noChoices = true;
+                  } else {
+                    this.noChoices = false;
+                  }
+                  this.mainContentVisibility = true;
+
                 });
         } else {
             this.locationService.searchLocationsWithConfig(url)
                 .toPromise().then(p => {
                   this.choices = p.results;
+                  // this.choices = p.results.concat(p.results,p.results,p.results,p.results);
                   this.nextChoices = p.next;
-                });
+              if (!this.choices.length) {
+                this.noChoices = true;
+              } else {
+                this.noChoices = false;
+              }
+              this.mainContentVisibility = true;
+            });
         }
     }
-    if(this.type==='location'){
+    if (this.type==='location'){
       this.locationService.getFavoriteLocations().toPromise().then((stars: any[]) => {
         this.starredChoices = stars.map(val => Location.fromJSON(val));
           this.favoritesLoaded = true;
+          this.mainContentVisibility = true;
       });
     }
+
   }
 
   updateOrderLocation(locations) {
@@ -132,12 +159,12 @@ export class LocationTableComponent implements OnInit {
 
 
   onSearch(search: string) {
+    // this.noChoices = false;
     this.search = search.toLowerCase();
     // if(this.staticChoices){
     //   this.choices = this.staticChoices.filter(element => {return (element.display_name.toLowerCase().includes(search) || element.first_name.toLowerCase().includes(search) || element.last_name.toLowerCase().includes(search))})
     // } else{
       if (search !== '') {
-
         const url = 'v1/'
             +(this.type==='teachers'?'users?role=_profile_teacher&':('locations'
                 +(!!this.category ? ('?category=' +this.category +'&') : '?')
@@ -147,10 +174,23 @@ export class LocationTableComponent implements OnInit {
             +((this.type==='location' && this.showFavorites)?'&starred=false':'');
 
         this.locationService.searchLocationsWithConfig(url)
-        .toPromise().then(p => {
+        .toPromise()
+        .then(p => {
           this.hideFavorites = true;
-          this.choices = this.filterResults(p.results);
-        });
+            console.log(this.starredChoices);
+            const filtFevLoc = _.filter(this.starredChoices, (item => {
+                return item.title.toLowerCase().includes(this.search);
+            }));
+          this.staticChoices = null;
+          this.choices = [...filtFevLoc, ...this.filterResults(p.results)];
+        })
+          .then(() => {
+            if (!this.choices.length) {
+              this.noChoices = true;
+            } else {
+              this.noChoices = false;
+            }
+          });
       } else {
 
         const url = 'v1/'
@@ -164,22 +204,36 @@ export class LocationTableComponent implements OnInit {
               .subscribe(res => {
                 this.choices = res.sort((a, b) => a.id - b.id);
                 this.hideFavorites = false;
+                if (!this.choices.length) {
+                  this.noChoices = true;
+                } else {
+                  this.noChoices = false;
+                }
               });
         } else {
             this.locationService.searchLocationsWithConfig(url)
-                .toPromise().then(p => {
-                if (this.staticChoices) {
-                    this.choices = this.filterResults(this.staticChoices);
+              .toPromise()
+              .then(p => {
+                  if (this.staticChoices) {
+                      this.choices = this.filterResults(this.staticChoices);
+                  } else {
+                      this.hideFavorites = false;
+                      this.choices = this.filterResults(p.results);
+                  }
+                  this.nextChoices = p.next;
+                  this.search = '';
+              })
+              .then(() => {
+                if (!this.choices.length) {
+                  this.noChoices = true;
                 } else {
-                    this.hideFavorites = false;
-                    this.choices = this.filterResults(p.results);
+                  this.noChoices = false;
                 }
-                this.nextChoices = p.next;
-                this.search = '';
-            });
+              });
         }
       }
     // }
+
   }
 
   mergeLocations(url) {

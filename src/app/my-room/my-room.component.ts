@@ -1,5 +1,5 @@
 import { Component, ElementRef, NgZone, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import {MatDialog} from '@angular/material';
 import { combineLatest, merge, of } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
 import { Observable } from 'rxjs';
@@ -16,6 +16,7 @@ import { BasicPassLikeProvider, PassLikeProvider, WrappedProvider } from '../mod
 import { User } from '../models/User';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import { TimeService } from '../services/time.service';
+import {CalendarComponent} from '../admin/calendar/calendar.component';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -23,11 +24,11 @@ import { TimeService } from '../services/time.service';
 abstract class RoomPassProvider implements PassLikeProvider {
 
   // noinspection TypeScriptAbstractClassConstructorCanBeMadeProtected
-  constructor(protected liveDataService: LiveDataService, protected location$: Observable<Location>,
+  constructor(protected liveDataService: LiveDataService, protected locations$: Observable<Location[]>,
               protected date$: Observable<Date>, protected search$: Observable<string>) {
   }
 
-  protected abstract fetchPasses(sortingEvents: Observable<HallPassFilter>, location: Location, date: Date): Observable<PassLike[]>;
+  protected abstract fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date): Observable<PassLike[]>;
 
   watch(sort: Observable<string>) {
     // merge the sort events and search events into one Observable that emits the current state of both.
@@ -39,26 +40,26 @@ abstract class RoomPassProvider implements PassLikeProvider {
     const mergedReplay = new ReplaySubject<HallPassFilter>(1);
     merged$.subscribe(mergedReplay);
 
-    return combineLatest(this.location$, this.date$, (location, date) => ({location, date}))
-      .switchMap(({location, date}) => this.fetchPasses(mergedReplay, location, date));
+    return combineLatest(this.locations$, this.date$, (locations, date) => ({locations, date}))
+      .switchMap(({locations, date}) => this.fetchPasses(mergedReplay, locations, date));
   }
 }
 
 class ActivePassProvider extends RoomPassProvider {
-  protected fetchPasses(sortingEvents: Observable<HallPassFilter>, location: Location, date: Date) {
-    return this.liveDataService.watchActiveHallPasses(sortingEvents, {type: 'location', value: location}, date);
+  protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
+    return this.liveDataService.watchActiveHallPasses(sortingEvents, {type: 'location', value: locations}, date);
   }
 }
 
 class OriginPassProvider extends RoomPassProvider {
-  protected fetchPasses(sortingEvents: Observable<HallPassFilter>, location: Location, date: Date) {
-    return this.liveDataService.watchHallPassesFromLocation(sortingEvents, location, date);
+  protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
+    return this.liveDataService.watchHallPassesFromLocation(sortingEvents, locations, date);
   }
 }
 
 class DestinationPassProvider extends RoomPassProvider {
-  protected fetchPasses(sortingEvents: Observable<HallPassFilter>, location: Location, date: Date) {
-    return this.liveDataService.watchHallPassesToLocation(sortingEvents, location, date);
+  protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
+    return this.liveDataService.watchHallPassesToLocation(sortingEvents, locations, date);
   }
 }
 
@@ -87,9 +88,12 @@ export class MyRoomComponent implements OnInit {
   canView = false;
   userLoaded = false;
 
+  mergedOriginPassesPasses = [];
+  mergedDestinationPasses = [];
+
   searchQuery$ = new BehaviorSubject('');
   searchDate$ = new BehaviorSubject<Date>(null);
-  selectedLocation$ = new ReplaySubject<Location>(1);
+  selectedLocation$ = new ReplaySubject<Location[]>(1);
 
   hasPasses: Observable<boolean> = of(false);
   passesLoaded: Observable<boolean> = of(false);
@@ -100,12 +104,14 @@ export class MyRoomComponent implements OnInit {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
 
+    const selectedLocationArray$ = this.selectedLocation$.map(location => location);
+
     // Construct the providers we need.
-    this.activePasses = new WrappedProvider(new ActivePassProvider(liveDataService, this.selectedLocation$,
+    this.activePasses = new WrappedProvider(new ActivePassProvider(liveDataService, selectedLocationArray$,
       this.searchDate$, this.searchQuery$));
-    this.originPasses = new WrappedProvider(new OriginPassProvider(liveDataService, this.selectedLocation$,
+    this.originPasses = new WrappedProvider(new OriginPassProvider(liveDataService, selectedLocationArray$,
       this.searchDate$, this.searchQuery$));
-    this.destinationPasses = new WrappedProvider(new DestinationPassProvider(liveDataService, this.selectedLocation$,
+    this.destinationPasses = new WrappedProvider(new DestinationPassProvider(liveDataService, selectedLocationArray$,
       this.searchDate$, this.searchQuery$));
 
     // Use WrappedProvider's length$ to keep the hasPasses subject up to date.
@@ -152,11 +158,11 @@ export class MyRoomComponent implements OnInit {
           this.isStaff = user.isTeacher() || user.isAdmin();
         });
 
-        this.dataService.getLocationsWithTeacher(this.user).subscribe(locations => {
+        this.dataService.getLocationsWithTeacher(this.user).subscribe((locations: Location[]) => {
           this._zone.run(() => {
             this.roomOptions = locations;
-            this.selectedLocation = (this.roomOptions.length > 0) ? this.roomOptions[0] : null;
-            this.selectedLocation$.next(this.selectedLocation);
+            // this.selectedLocation = (this.roomOptions.length > 0) ? this.roomOptions[0] : null;
+            this.selectedLocation$.next(locations);
             this.userLoaded = true;
           });
         });
@@ -176,6 +182,36 @@ export class MyRoomComponent implements OnInit {
       );
   }
 
+  chooseDate(event) {
+    // this.calendarToggled = this.!calendarToggled
+
+    // this.activeCalendar = true;
+    const target = new ElementRef(event.currentTarget);
+    // const DR = this.dialog.open(CalendarComponent, {
+    //   panelClass: 'calendar-dialog-container',
+    //   backdropClass: 'invis-backdrop',
+    //   data: {
+    //     'trigger': target,
+    //     // 'previousSelectedDate': this.chartsDate ? new Date(this.chartsDate) : null,
+    //   }
+    // });
+
+
+
+    const DR = this.dialog.open(CalendarComponent, {
+      panelClass: 'calendar-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {
+        'trigger': target,
+        'previousSelectedDate': this.searchDate
+      }
+    });
+    DR.afterClosed().subscribe((_date) => {
+      this.setSearchDate(_date.date);
+    });
+  }
+
+
   onSearch(search: string) {
     this.inputValue = search;
     this.searchQuery$.next(search);
@@ -184,14 +220,15 @@ export class MyRoomComponent implements OnInit {
   showOptions(target: HTMLElement) {
     if (!this.optionsOpen && this.roomOptions && this.roomOptions.length > 1) {
       // const target = new ElementRef(evt.currentTarget);
-      const optionDialog = this.dialog.open(DropdownComponent, {
+        const optionDialog = this.dialog.open(DropdownComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {
           'heading': 'CHANGE ROOM',
           'locations': this.choices,
           'selectedLocation': this.selectedLocation,
-          'trigger': target}
+          'trigger': target
+        }
       });
 
       optionDialog.afterOpen().subscribe(() => {
@@ -200,8 +237,8 @@ export class MyRoomComponent implements OnInit {
 
       optionDialog.afterClosed().subscribe(data => {
         this.optionsOpen = false;
-        this.selectedLocation = data == null ? this.selectedLocation : data;
-        this.selectedLocation$.next(this.selectedLocation);
+        this.selectedLocation = data;
+        this.selectedLocation$.next(data ? [data] : this.roomOptions);
       });
     }
   }

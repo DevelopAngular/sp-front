@@ -1,7 +1,11 @@
-import { Component, NgZone, OnInit, Input } from '@angular/core';
+import {Component, NgZone, OnInit, Input, ElementRef} from "@angular/core";
 import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material';
-import {Router, NavigationEnd, ActivatedRoute} from '@angular/router';
+import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
+
+import { ReplaySubject } from 'rxjs';
+import { combineLatest } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 import { DataService } from '../services/data-service';
 import { GoogleLoginService } from '../services/google-login.service';
@@ -9,11 +13,11 @@ import { LoadingService } from '../services/loading.service';
 import { NavbarDataService } from '../main/navbar-data.service';
 import { User } from '../models/User';
 import { NgProgress } from '@ngx-progressbar/core';
-import {ReplaySubject} from 'rxjs';
 import { UserService } from '../services/user.service';
-
-import {combineLatest} from 'rxjs';
-
+import { SettingsComponent } from '../settings/settings.component';
+import { FavoriteFormComponent } from '../favorite-form/favorite-form.component';
+import { NotificationFormComponent } from '../notification-form/notification-form.component';
+import { LocationsService } from '../services/locations.service';
 import * as _ from 'lodash';
 
 @Component({
@@ -52,6 +56,7 @@ export class NavbarComponent implements OnInit {
       private location: Location,
       public loadingService: LoadingService,
       public loginService: GoogleLoginService,
+      private locationService: LocationsService,
       private _zone: NgZone,
       private navbarData: NavbarDataService,
       private process: NgProgress,
@@ -134,12 +139,60 @@ export class NavbarComponent implements OnInit {
      return roles.every((_role) => this.user.roles.includes(_role));
   }
 
-  showOptions() {
-    if(this.optionsOpen){
-      this.updateTab('passes');
-    } else{
-      this.updateTab('settings');
-    }
+  showOptions(event) {
+    const target = new ElementRef(event.currentTarget);
+    const settingRef = this.dialog.open(SettingsComponent, {
+        panelClass: 'calendar-dialog-container',
+        backdropClass: 'invis-backdrop',
+        data: { 'trigger': target }
+    });
+
+    settingRef.afterClosed().subscribe(action => {
+      this.settingsAction(action);
+    });
+    // if(this.optionsOpen){
+    //   this.updateTab('passes');
+    // } else{
+    //   this.updateTab('settings');
+    // }
+  }
+
+  settingsAction(action: string) {
+      if (action === 'signout') {
+          this.router.navigate(['sign-out']);
+      } else if (action === 'favorite') {
+          const favRef = this.dialog.open(FavoriteFormComponent, {
+              // width: '750px',
+              // height: '365px',
+              panelClass: 'form-dialog-container',
+              backdropClass: 'custom-backdrop',
+          });
+
+          favRef.afterClosed().pipe(switchMap(data => {
+              const body = {'locations': data };
+              return this.locationService.updateFavoriteLocations(body);
+          })).subscribe();
+
+      } else if (action === 'notifications') {
+          const notifRef = this.dialog.open(NotificationFormComponent, {
+              panelClass: 'form-dialog-container',
+              backdropClass: 'custom-backdrop',
+          });
+      } else if (action === 'intro') {
+          this.router.navigate(['main/intro']);
+      } else if (action === 'team') {
+          window.open('https://smartpass.app/team.html');
+      } else if (action === 'about') {
+          window.open('https://smartpass.app/about');
+      } else if (action === 'support') {
+          if (this.isStaff) {
+              window.open('https://smartpass.app/support');
+          } else {
+              window.open('https://smartpass.app/studentdocs');
+          }
+      } else if (action === 'feedback') {
+          window.location.href = 'mailto:feedback@smartpass.app';
+      }
   }
 
   openSupport(){

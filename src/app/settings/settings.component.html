@@ -1,31 +1,56 @@
-<div class="settings-menu-wrapper">
-  <div class="back-wrapper" (click)="settingsAction('back')">
-    <img class="back-image" [src]="'./assets/Disclosure Left (Blue).png' | resolveAsset">
-    <div class="back-text">Back</div>
+
+<div class="settings-wrapper">
+  <div class="top-arrow-container">
+    <div class="top-arrow"></div>
   </div>
-  <div class="settings-wrapper">
-    <div class="settings-header">Settings</div>
-    <div class="settings-button-wrapper">
-      <mat-grid-list [cols]="3" rowHeight="85px">
-        <mat-grid-tile [style.overflow]="'visible'" class="custom-mat-tile" *ngFor="let setting of settings">
-            <app-gradient-button
-              [cursor]="'pointer'"
-              [minWidth]="'121px'"
-              [minHeight]="'74px'"
-              [gradient]="setting.color_profile.gradient_color"
-              [hoverColor]="setting.color_profile.solid_color"
-              [fontSize]="'15px'"
-              (click)="settingsAction(setting.action)">{{setting.title}}
-            </app-gradient-button>
-        </mat-grid-tile>
-      </mat-grid-list>
-    </div>
-    <div class="footer-links">
-      <div class="version-text">SmartPass Version 1.2</div>
-      <div class="links">
-        <div><a href="https://www.smartpass.app/legal" target="_blank">Privacy & Terms</a></div>
-        <div style="margin-left: 20px"><a href="https://www.smartpass.app/acknowledgements" target="_blank">Acknowledgements</a></div>
+  <div class="title">Settings</div>
+  <div class="settings-content">
+    <div class="setting" *ngFor="let setting of settings; let i = index" (click)="dialogRef.close(setting.action)">
+      <div class="content" (mouseenter)="hovered = true" (mouseleave)="hovered = false">
+        <img class="setting-icon" [src]="setting.icon | resolveAsset" alt="SET">
+        <div class="setting-title"> {{setting.title }} </div>
       </div>
+      <mat-divider *ngIf="i === 2 || i === 5"></mat-divider>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="sign-out" (click)="dialogRef.close('signout')">Sign out</div>
+    <div class="options">
+      <span class="version">Version 1.2</span>
+      <span class="privacy">Privacy & Terms</span>
     </div>
   </div>
 </div>
+
+
+<!--<div class="settings-menu-wrapper">-->
+  <!--<div class="back-wrapper" (click)="settingsAction('back')">-->
+    <!--<img class="back-image" [src]="'./assets/Disclosure Left (Blue).png' | resolveAsset">-->
+    <!--<div class="back-text">Back</div>-->
+  <!--</div>-->
+  <!--<div class="settings-wrapper">-->
+    <!--<div class="settings-header">Settings</div>-->
+    <!--<div class="settings-button-wrapper">-->
+      <!--<mat-grid-list [cols]="3" rowHeight="85px">-->
+        <!--<mat-grid-tile [style.overflow]="'visible'" class="custom-mat-tile" *ngFor="let setting of settings">-->
+            <!--<app-gradient-button-->
+              <!--[cursor]="'pointer'"-->
+              <!--[minWidth]="'121px'"-->
+              <!--[minHeight]="'74px'"-->
+              <!--[gradient]="setting.color_profile.gradient_color"-->
+              <!--[hoverColor]="setting.color_profile.solid_color"-->
+              <!--[fontSize]="'15px'"-->
+              <!--(click)="settingsAction(setting.action)">{{setting.title}}-->
+            <!--</app-gradient-button>-->
+        <!--</mat-grid-tile>-->
+      <!--</mat-grid-list>-->
+    <!--</div>-->
+    <!--<div class="footer-links">-->
+      <!--<div class="version-text">SmartPass Version 1.2</div>-->
+      <!--<div class="links">-->
+        <!--<div><a href="https://www.smartpass.app/legal" target="_blank">Privacy & Terms</a></div>-->
+        <!--<div style="margin-left: 20px"><a href="https://www.smartpass.app/acknowledgements" target="_blank">Acknowledgements</a></div>-->
+      <!--</div>-->
+    <!--</div>-->
+  <!--</div>-->
+<!--</div>-->

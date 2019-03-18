@@ -22,6 +22,7 @@ export class RoundInputComponent implements OnInit {
   @Input() placeholder: string;
   @Input() type: string;
   //Can be 'text', 'multilocation', 'multiuser', or 'dates'  There may be some places where multiuser may need to be split into student and teacher. I tried finding a better way to do this, but this is just short term.
+  @Input() initialValue: string = ''; // Allowed only if type is multi*
   @Input() html5type: string = 'text'; // text, password, number etc.
   @Input() hasTogglePicker: boolean;
   @Input() width: string;
@@ -33,6 +34,7 @@ export class RoundInputComponent implements OnInit {
   @Input() focused: boolean = false;
   @Input() chipInput: ElementRef = null;
   @Input() selectReset$: Subject<string>;
+  @Input() selections: any[] = [];
   @Output() ontextupdate: EventEmitter<any> = new EventEmitter();
   @Output() ontoggleupdate: EventEmitter<any> = new EventEmitter();
   @Output() onselectionupdate: EventEmitter<any> = new EventEmitter();
@@ -44,7 +46,6 @@ export class RoundInputComponent implements OnInit {
   toDate: Date;
   fromDate: Date;
   searchOptions: Promise<any[]>;
-  selections: any[] = [];
   chipListHeight: string = '40px';
   toggleState: string = 'Either';
 
@@ -54,6 +55,18 @@ export class RoundInputComponent implements OnInit {
 
   ngOnInit() {
 
+    if (!this.type.includes('multi')) {
+      this.initialValue = '';
+    }
+    // if ( this.selections[0] && this.selections[0] instanceof Location) {
+    //   const titleArray = this.selections[0].map((loc) => {
+    //     return `${loc.title}(${loc.room})`;
+    //   });
+    //   this.initialValue = titleArray.join(', ');
+    // }
+
+    this.value = this.initialValue;
+    console.log(this.value);
     setTimeout(() => {
       if (this.input && this.focused) {
         this.focusAction(true);
@@ -102,7 +115,8 @@ export class RoundInputComponent implements OnInit {
     } else if (selected && this.type.includes('multi')) {
       console.log(this.type.substring(5))
       const dateDialog = this.dialog.open(InputHelperDialogComponent, {
-        width: '900px',
+        width: '1018px',
+        height: '560px',
         panelClass: 'accounts-profiles-dialog',
         backdropClass: 'custom-bd',
         data: {'type': this.type.substring(5), 'selections': this.selections, 'toggleState': this.toggleState}

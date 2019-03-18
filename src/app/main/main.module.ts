@@ -52,6 +52,7 @@ import { FormFactorContainerComponent } from '../create-hallpass-forms/main-hall
 import {StudentFooterComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/student-footer/student-footer.component';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {FirstSeenFormComponent} from '../create-hallpass-forms/first-seen-form/first-seen-form.component';
+import {NotificationFormComponent} from '../notification-form/notification-form.component';
 
 @NgModule({
   imports: [
@@ -108,7 +109,8 @@ import {FirstSeenFormComponent} from '../create-hallpass-forms/first-seen-form/f
     DateTimeContainerComponent,
     FormFactorContainerComponent,
     CreateHallpassFormsComponent,
-    FirstSeenFormComponent
+    FirstSeenFormComponent,
+    NotificationFormComponent
   ],
   entryComponents: [
     CreateHallpassFormsComponent,
@@ -119,6 +121,8 @@ import {FirstSeenFormComponent} from '../create-hallpass-forms/first-seen-form/f
     RequestCardComponent,
     InvitationCardComponent,
     InfoEditorComponent,
+    NotificationFormComponent,
+    SettingsComponent
 
   ],
   providers: [

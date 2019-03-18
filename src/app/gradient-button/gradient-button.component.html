@@ -27,9 +27,13 @@
     </div>
   </div>
   <div *ngIf="buttonLink" class="button-link">
-    <a class="link" [href]="buttonLink" target="_blank">
-      <span>Open</span>
-      <img [src]="'./assets/External Link (White).png' | resolveAsset" alt="External Link (White).png">
+    <!--<a *ngIf="documentType === 'xlsx'" class="link" [href]="buttonLink" target="_blank" name="test">-->
+      <!--<span>XLSX</span>-->
+      <!--<img [src]="'./assets/Download (White).svg' | resolveAsset" alt="External Link (White).png">-->
+    <!--</a>-->
+    <a  *ngIf="documentType === 'pdf'"  class="link" [href]="buttonLink" target="_blank" name="test">
+      <span>PDF</span>
+      <img [src]="'./assets/External Link (White).svg' | resolveAsset" alt="External Link (White).png">
     </a>
   </div>
   <div class="subtitle" *ngIf="subtitle">{{subtitle}}</div>

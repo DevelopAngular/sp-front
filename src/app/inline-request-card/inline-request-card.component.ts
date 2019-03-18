@@ -33,6 +33,10 @@ export class InlineRequestCardComponent implements OnInit {
     }
   }
 
+  get gradient() {
+      return 'radial-gradient(circle at 73% 71%, ' + this.request.color_profile.gradient_color + ')';
+  }
+
   ngOnInit() {
   }
 

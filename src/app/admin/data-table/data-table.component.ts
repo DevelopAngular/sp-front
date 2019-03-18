@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
-import {MatSort, MatTableDataSource} from '@angular/material';
+import { MatSort, MatTableDataSource} from '@angular/material';
 
 @Component({
   selector: 'app-data-table',
@@ -22,25 +22,29 @@ export class DataTableComponent implements OnInit {
 
   @ViewChild(MatSort) sort: MatSort;
 
-  displayedColumns: string[];
+  @Input() displayedColumns: string[];
   columnsToDisplay: string[];
   dataSource;
   selection = new SelectionModel<any>(true, []);
 
-  constructor() {}
+  constructor(
+  ) {}
 
   ngOnInit() {
       this.dataSource = new MatTableDataSource(this.data);
       this.dataSource.sort = this.sort;
       this.dataSource.sortingDataAccessor = (item, property) => {
           switch (property) {
-              case 'Date & Time': {
+              case 'Date & Time':
                   return new Date(item[property]);
-              }
-              default: return item[property];
+              default:
+                  return item[property];
           }
       };
-      this.displayedColumns = Object.keys(this.data[0]);
+      if (!this.displayedColumns) {
+
+        this.displayedColumns = Object.keys(this.data[0]);
+      }
       this.columnsToDisplay = this.displayedColumns.slice();
       if (this.isCheckbox) {
           this.columnsToDisplay.unshift('select');
@@ -62,11 +66,12 @@ export class DataTableComponent implements OnInit {
   }
 
   selectedRowEmit(row) {
-     this.selectedRow.emit(row);
+    this.selectedRow.emit(row);
   }
 
   pushOutSelected() {
     this.selectedUsers.emit(this.selection.selected);
   }
+
 }
 

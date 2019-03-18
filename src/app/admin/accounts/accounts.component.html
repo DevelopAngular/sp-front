@@ -8,130 +8,145 @@
       <div class="accounts flex-center-start">
         <div class="flex-center-start">
           <div class="flex-center-start">
-            <div [style.margin-right]="'15px'">
-              <img src="assets/google/google_logo.svg" alt="google-icon" width="44" height="44">
+
+            <div class="card_header" [style.margin]="'1em 0'">
+              Account & Profile <br>
+              Management
             </div>
-            <div class="card_header" [style.margin]="'1em 0'">{{(accounts$ | async).total}} Accounts</div>
           </div>
-          <!--<div>-->
-            <!--<p class="card_header">{{(accounts$ | async).total}} Accounts</p>-->
-          <!--</div>-->
+
         </div>
-        <div class="mx">
-          <p class="card_title">
-            Users sign-in with their Google Suite for Education school account.
-            <!--Learn more <a href="/" [style.color]="'#1F195E'" [style.text-decoration]="'none'">here</a> .-->
-          </p>
-        </div>
-      </div>
-      <!--<div class="g-suite flex-center-between mx">-->
-        <!--<div class="mx" (click)="openDialog('gsuite')">-->
-            <!--<app-gradient-button-->
-              <!--[style.margin]="'0 15px'"-->
-              <!--[border]="'1px solid #eee'"-->
-              <!--[gradient]="'#FFFFFF, #FFFFFF'"-->
-              <!--[hoverColor]="'#F5F5F5'"-->
-              <!--[cursor]="'pointer'"-->
-              <!--[textColor]="'#134482'"-->
-              <!--[minHeight]="'74px'"-->
-              <!--[width]="'121px'"-->
-              <!--[fontWeight]="'900'"-->
-              <!--[fontSize]="'17px'"-->
-              <!--[textWidth]="'69%'"-->
-            <!--&gt;-->
-              <!--<span>Manage G Suite</span>-->
-            <!--</app-gradient-button>-->
-        <!--</div>-->
-        <!--<div class="pl" [style.border-left]="'1px solid #ccc'">-->
-          <!--<p class="card_title pl" >-->
-            <!--Each account can have multiple profiles. For example,-->
-            <!--even though the school principal-->
-            <!--has an administrator profile,-->
-            <!--he/she also has a teacher profile because he/she has a room.-->
-          <!--</p>-->
-        <!--</div>-->
-      <!--</div>-->
-      <div class="top-bar_g-suit">
 
       </div>
+      <div class="g-suite flex-center-between">
+        <div>
+          <div class="card_header" [style.font-size]="'16px'">
+
+            <span>{{(accounts$ | async).total}} Total Accounts</span>
+          </div>
+          <div class="card_title">
+
+            <span>2,237 G Suite Accounts Syncing</span>
+          </div>
+          <div class="card_title">
+
+            <span>23 Active Alternative Accounts</span>
+          </div>
+        </div>
+        <div class="mx" (click)="openDialog('gsuite')">
+            <app-gradient-button
+              [style.margin]="'0 15px'"
+              [border]="'1px solid #eee'"
+              [gradient]="'#FFFFFF, #FFFFFF'"
+              [hoverColor]="'#F5F5F5'"
+              [cursor]="'pointer'"
+              [textColor]="'#134482'"
+              [minHeight]="'74px'"
+              [width]="'160px'"
+              [fontWeight]="'900'"
+              [fontSize]="'17px'"
+              [textWidth]="'69%'"
+            >
+              <div class="flex-center-center mx px">
+                <div [style.margin-right]="'15px'">
+                  <img src="assets/google/google_logo.svg" alt="google-icon" width="31" height="31">
+                </div>
+                <div>
+                  <span>Manage G Suite</span>
+                </div>
+              </div>
+            </app-gradient-button>
+        </div>
+
+      </div>
+
     </div>
     <div class="card-container">
       <div class="card-container_row mr">
-        <div class="card card__role flex-center-between">
-          <div>
+        <div class="card card__role">
+          <div class="card_content">
             <div class="card_header">Administrators</div>
             <p class="card_title">
-              <span>{{(accounts$ | async).admin_count}} user{{(accounts$ | async).admin_count> 1 ? 's' : ''}}</span><br>
+              <span [style.font-weight]="'bold'">{{(accounts$ | async).admin_count}} user{{(accounts$ | async).admin_count> 1 ? 's' : ''}}</span><br>
               An administrator has a high-level look at the school, configures passes, and views/generates reports.
             </p>
           </div>
-          <app-gradient-button
-            class="no-outline"
-            [style.margin]="'0 15px'"
-            [cursor]="'pointer'"
-            [hoverColor]="'rgb(96, 105, 129)'"
-            [gradient]="'rgb(96, 105, 129), rgb(172, 180, 193)'"
-            [minHeight]="'74px'"
-            [width]="'121px'"
-            [fontSize]="'17px'"
-            [routerLink]="['/admin/accounts', '_profile_admin']">
-            <span>Manage Profiles</span>
-          </app-gradient-button>
+          <!--<app-gradient-button-->
+            <!--class="no-outline"-->
+            <!--[style.margin]="'0 15px'"-->
+            <!--[cursor]="'pointer'"-->
+            <!--[hoverColor]="'rgb(96, 105, 129)'"-->
+            <!--[gradient]="'rgb(96, 105, 129), rgb(172, 180, 193)'"-->
+            <!--[minHeight]="'74px'"-->
+            <!--[width]="'121px'"-->
+            <!--[fontSize]="'17px'"-->
+            <!--[routerLink]="['/admin/accounts', '_profile_admin']">-->
+            <!--<span>Manage Profiles</span>-->
+          <!--</app-gradient-button>-->
+          <div class="card_manage-users" [routerLink]="['/admin/accounts', '_profile_admin']">
+            <span>Manage Users</span><img draggable="false" width="20" [src]="'./assets/Disclosure Indicator (Blue).png'" alt="Disclosure Indicator (Blue).png">
+          </div>
         </div>
-        <div class="card card__role flex-center-between">
-          <div>
+        <div class="card card__role">
+          <div class="card_content">
             <div class="card_header">Students</div>
             <p class="card_title">
-              <span>{{(accounts$ | async).student_count }} user{{(accounts$ | async).student_count > 1 ? 's' : ''}}</span><br>
+              <span [style.font-weight]="'bold'">{{(accounts$ | async).student_count }} active user{{(accounts$ | async).student_count > 1 ? 's' : ''}}</span><br>
               A student can create passes, schedule passes for the future,
               and send pass requests to teachers.
             </p>
           </div>
-          <app-gradient-button
-            class="no-outline"
-            [style.margin]="'0 15px'"
-            [cursor]="'pointer'"
-            [hoverColor]="'rgb(96, 105, 129)'"
-            [gradient]="'rgb(96, 105, 129), rgb(172, 180, 193)'"
-            [minHeight]="'74px'"
-            [width]="'121px'"
-            [fontSize]="'17px'"
-            [routerLink]="['/admin/accounts', '_profile_student']">
-            <span>Manage Profiles</span>
-          </app-gradient-button>
+          <!--<app-gradient-button-->
+            <!--class="no-outline"-->
+            <!--[style.margin]="'0 15px'"-->
+            <!--[cursor]="'pointer'"-->
+            <!--[hoverColor]="'rgb(96, 105, 129)'"-->
+            <!--[gradient]="'rgb(96, 105, 129), rgb(172, 180, 193)'"-->
+            <!--[minHeight]="'74px'"-->
+            <!--[width]="'121px'"-->
+            <!--[fontSize]="'17px'"-->
+            <!--[routerLink]="['/admin/accounts', '_profile_student']">-->
+            <!--<span>Manage Profiles</span>-->
+          <!--</app-gradient-button>-->
+          <div class="card_manage-users" [routerLink]="['/admin/accounts', '_profile_student']">
+            <span>Manage Users</span> <img draggable="false" width="20" [src]="'./assets/Disclosure Indicator (Blue).png'" alt="">
+          </div>
         </div>
       </div>
       <div class="card-container_row ml">
-        <div class="card card__role flex-center-between">
-          <div>
+        <div class="card card__role">
+          <div class="card_content">
             <div class="card_header">Teachers</div>
             <p class="card_title">
-              <span>{{(accounts$ | async).teacher_count}} user{{(accounts$ | async).teacher_count> 1 ? 's' : ''}}</span><br>
+              <span [style.font-weight]="'bold'">{{(accounts$ | async).teacher_count}} active user{{(accounts$ | async).teacher_count> 1 ? 's' : ''}}</span><br>
               A teacher has a room or multiple rooms where students can create passes to.
               A teacher can manage passes in his/her room and create passes.
             </p>
           </div>
-          <app-gradient-button
-            [style.margin]="'0 15px'"
-            [cursor]="'pointer'"
-            [hoverColor]="'rgb(96, 105, 129)'"
-            [gradient]="'rgb(96, 105, 129), rgb(172, 180, 193)'"
-            [minHeight]="'74px'"
-            [width]="'121px'"
-            [fontSize]="'17px'"
-            [routerLink]="['/admin/accounts', '_profile_teacher']">
-            <span>Manage Profiles</span>
-          </app-gradient-button>
+          <!--<app-gradient-button-->
+            <!--[style.margin]="'0 15px'"-->
+            <!--[cursor]="'pointer'"-->
+            <!--[hoverColor]="'rgb(96, 105, 129)'"-->
+            <!--[gradient]="'rgb(96, 105, 129), rgb(172, 180, 193)'"-->
+            <!--[minHeight]="'74px'"-->
+            <!--[width]="'121px'"-->
+            <!--[fontSize]="'17px'"-->
+            <!--[routerLink]="['/admin/accounts', '_profile_teacher']">-->
+            <!--<span>Manage Profiles</span>-->
+          <!--</app-gradient-button>-->
+          <div class="card_manage-users" [routerLink]="['/admin/accounts', '_profile_teacher']">
+            <span>Manage Users</span> <img draggable="false" width="20" [src]="'./assets/Disclosure Indicator (Blue).png'" alt="">
+          </div>
         </div>
-        <!--<div class="card card__role flex-center-between" style="display: none;">-->
-          <!--<div>-->
-            <!--<div class="card_header">Secretaries & Substitutes</div>-->
-            <!--<p class="card_title">-->
-              <!--<span>{{(accounts$ | async).aff_secretary}} profiles</span><br>-->
-              <!--A secretary or substitute teacher acts as a certain teacher when they sign-in.-->
-              <!--They can manage passes in his/her room and create passes as that teacher.-->
-            <!--</p>-->
-          <!--</div>-->
+        <div class="card card__role">
+          <div class="card_content">
+            <div class="card_header">Secretaries & Substitutes</div>
+            <p class="card_title">
+              <span [style.font-weight]="'bold'">{{(accounts$ | async).secretary_count || 0}} active users</span><br>
+              A secretary or substitute teacher acts as a certain teacher when they sign-in.
+              They can manage passes in his/her room and create passes as that teacher.
+            </p>
+          </div>
         <!--<app-gradient-button-->
         <!--[style.padding]='0 15px
         [cursor]='pointer
@@ -143,7 +158,10 @@
           <!--[routerLink]="['/admin/accounts', 'staff_secretary']">-->
           <!--<span>Manage Profiles</span>-->
         <!--</app-gradient-button>-->
-        <!--</div>-->
+          <div class="card_manage-users" [routerLink]="['/admin/accounts', 'staff_secretary']">
+            <span>Manage Users</span> <img draggable="false" width="20" [src]="'./assets/Disclosure Indicator (Blue).png'" alt="">
+          </div>
+        </div>
       </div>
     </div>
   </div>

@@ -6,7 +6,7 @@
         <app-inline-pass-card *ngIf="isActivePass$ | async" [pass]="currentPass$ | async" [isActive]="true"></app-inline-pass-card>
       </div>
       <ng-template #newPass>
-        <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Create (Blue).png'">
+        <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'22px'" [icon]="'./assets/Create (Blue).png'">
           <div class="pass-buttons">
             <app-gradient-button
               [minWidth]="'121px'"
@@ -44,7 +44,7 @@
     </div>
   </div>
   <div class="main-page-right" [@OpenOrCloseRequests]="(showInboxAnimated() | async) ? 'requestsOpened' : 'requestsClosed'">
-    <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'22pt'" [icon]="(isStaff?'./assets/Inbox Full (Blue).png':'')" [inbox]="true">
+    <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'22px'" [icon]="(isStaff?'./assets/Inbox Full (Blue).png':'')" [inbox]="true">
       <div class="inbox-content">
         <div class="requests-or-invitations">
           <app-pass-collection [forStaff]="isStaff" [forFuture]="true" [isActive]="false" [style.width]="'258px'" [passProvider]="isStaff?receivedRequests:sentRequests" [title]="isStaff?'Received':'Sent'" [icon]="'./assets/' +(isStaff?'Request':'Lock') +' (Blue).png'" [columns]="2"></app-pass-collection>

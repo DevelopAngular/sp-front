@@ -5,6 +5,7 @@ import {StudentList} from '../../../../models/StudentList';
 import {BehaviorSubject} from 'rxjs';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {UserService} from '../../../../services/user.service';
+import {switchMap} from 'rxjs/operators';
 
 export enum States {
   SelectStudents = 1,
@@ -45,12 +46,11 @@ export class GroupsContainerComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.updateData$.subscribe(() => {
-
-      this.userService.getStudentGroups()
-        .subscribe((groups: StudentList[]) => {
-          this.groups = groups;
-        });
+    this.updateData$.pipe(switchMap(() => {
+      return this.userService.getStudentGroups();
+    }))
+    .subscribe((groups: StudentList[]) => {
+      this.groups = groups;
     });
   }
 
@@ -81,23 +81,21 @@ export class GroupsContainerComponent implements OnInit {
 
   groupNextStep(evt) {
     switch (evt.state) {
-        case (3): {
+        case 3:
             this.selectedGroup = evt.data.selectedGroup;
             break;
-        }
-        case (2): {
+
+        case 2:
             this.selectedStudents = evt.data.selectedStudents;
             this.groupDTO.get('users').setValue(evt.data.selectedStudents);
             break;
-        }
-        case (1): {
-            if (evt.fromState === 3) {
+        case 1:
+            if (evt.fromState === 3 && evt.data.selectedGroup) {
                 this.FORM_STATE.data.selectedGroup = this.groups.find(group => group.id === evt.data.selectedGroup.id);
             } else {
                 this.selectedStudents = evt.data.selectedStudents;
             }
             break;
-        }
     }
     this.currentState = evt.state;
     this.updateData$.next(null);

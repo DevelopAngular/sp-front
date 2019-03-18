@@ -1,3 +1,7 @@
+.icon-picker-wrapper {
+  width: 270px;
+}
+
 .icon-collection {
   display: flex;
   padding: 3px;
@@ -7,8 +11,22 @@
 }
 
 .icon-title {
-  font-size: 20px;
+  font-size: 17px;
   font-weight: bolder;
+  display: flex;
+  justify-content: space-between;
+
+  .search-icon {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+  }
+}
+
+.search {
+  display: flex;
+  margin: 10px 0 10px 0;
+
 }
 
 .icon-container {

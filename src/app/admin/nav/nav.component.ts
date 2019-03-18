@@ -7,6 +7,8 @@ import { DataService } from '../../services/data-service';
 import { User } from '../../models/User';
 import { UserService } from '../../services/user.service';
 import { disableBodyScroll } from 'body-scroll-lock';
+import {MatDialog} from '@angular/material';
+import {SettingsComponent} from '../settings/settings.component';
 
 @Component({
   selector: 'app-nav',
@@ -14,6 +16,7 @@ import { disableBodyScroll } from 'body-scroll-lock';
   styleUrls: ['./nav.component.scss']
 })
 export class NavComponent implements OnInit {
+
   @ViewChild('navMain') navMain: ElementRef;
   @Output('restrictAccess') restrictAccess: EventEmitter<boolean> = new EventEmitter();
 
@@ -23,25 +26,27 @@ export class NavComponent implements OnInit {
     {title: 'Search', route : 'search', type: 'routerLink', imgUrl : './assets/Search', requiredRoles: ['_profile_admin', 'admin_search']},
     {title: 'Pass Configuration', route : 'passconfig', type: 'routerLink', imgUrl : './assets/Arrow', requiredRoles: ['_profile_admin', 'admin_pass_config']},
     {title: 'Accounts & Profiles', route : 'accounts', type: 'routerLink', imgUrl : './assets/Accounts', requiredRoles: ['_profile_admin', 'admin_accounts']},
-    {title: 'Feedback', link : 'https://www.smartpass.app/feedback', type: 'staticButton', externalApp: 'mailto:feedback@smartpass.app', imgUrl : './assets/Feedback', requiredRoles: ['_profile_admin']},
-    {title: 'Support', link : 'https://www.smartpass.app/support', type: 'staticButton', imgUrl : './assets/Support', requiredRoles: ['_profile_admin']},
+    // {title: 'Feedback', link : 'https://www.smartpass.app/feedback', type: 'staticButton', externalApp: 'mailto:feedback@smartpass.app', imgUrl : './assets/Feedback', requiredRoles: ['_profile_admin']},
+    // {title: 'Support', link : 'https://www.smartpass.app/support', type: 'staticButton', imgUrl : './assets/Support', requiredRoles: ['_profile_admin']},
   ];
   fakeMenu = new BehaviorSubject<boolean>(false);
   tab: string[] = ['dashboard'];
 
+    constructor(
+        public router: Router,
+        private activeRoute: ActivatedRoute,
+        private dataService: DataService,
+        private userService: UserService,
+        public loadingService: LoadingService,
+        private dialog: MatDialog,
+        private _zone: NgZone
+    ) { }
+
   console = console;
+    user: User;
 
-  user: User;
   showButton: boolean;
-
-  constructor(
-      public router: Router,
-      private activeRoute: ActivatedRoute,
-      private dataService: DataService,
-      private userService: UserService,
-      public loadingService: LoadingService,
-      private _zone: NgZone
-  ) { }
+  selectedSettings: boolean;
 
   ngOnInit() {
 
@@ -87,20 +92,48 @@ export class NavComponent implements OnInit {
 
   route( button: any) {
     switch (button.type) {
-      case 'routerLink': {
+      case 'routerLink':
         this.tab = ['admin', button.route];
         this.router.navigate(this.tab);
         break;
-      }
-      case 'staticButton': {
+      case 'staticButton':
         if (button.externalApp) {
           window.location.href = button.externalApp;
         } else {
           window.open(button.link);
         }
-      }
+        break;
     }
   }
+
+  openSettings(event) {
+    this.selectedSettings = true;
+    const target = new ElementRef(event.currentTarget);
+    const settingsRef = this.dialog.open(SettingsComponent, {
+      panelClass: 'calendar-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: { 'trigger': target }
+    });
+
+    settingsRef.beforeClose().subscribe(() => {
+      this.selectedSettings = false;
+    });
+
+    settingsRef.afterClosed().subscribe(action => {
+        if (action === 'signout') {
+            this.router.navigate(['sign-out']);
+        } else if (action === 'about') {
+            window.open('https://smartpass.app/about');
+        } else if (action === 'feedback') {
+            window.open('https://www.smartpass.app/feedback');
+        } else if (action === 'support') {
+            window.open('https://www.smartpass.app/support');
+        } else if (action === 'privacy') {
+          window.open('https://www.smartpass.app/legal');
+        }
+    });
+  }
+
   isSelected(route: string) {
     return this.tab.includes(route);
   }

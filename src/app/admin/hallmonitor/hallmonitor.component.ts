@@ -1,7 +1,7 @@
-﻿import { Component, OnInit, ElementRef} from '@angular/core';
+﻿import {Component, OnInit, ElementRef, ViewChild} from '@angular/core';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
 import { MatDialog } from '@angular/material';
-import { BehaviorSubject } from 'rxjs';
+import {BehaviorSubject, fromEvent} from 'rxjs';
 import { User } from '../../models/User';
 import { Report } from '../../models/Report';
 import { Pinnable } from '../../models/Pinnable';
@@ -26,6 +26,7 @@ import {combineLatest, Observable, of} from 'rxjs';
 })
 export class HallmonitorComponent implements OnInit {
 
+    @ViewChild('bottomShadow') bottomShadow;
     activePassProvider: WrappedProvider;
     searchQuery$ = new BehaviorSubject('');
     minDate: Date;
@@ -53,6 +54,8 @@ export class HallmonitorComponent implements OnInit {
 
     hasPasses: Observable<boolean> = of(false);
 
+    inactiveIcon: boolean = true;
+
     public reportsDate: Date;
 
     constructor(
@@ -70,6 +73,9 @@ export class HallmonitorComponent implements OnInit {
     }
 
   ngOnInit() {
+      fromEvent(window, 'scroll').subscribe(() => {
+
+      })
       disableBodyScroll(this.elRef.nativeElement);
     // this.activePassProvider = new ActivePassProvider(this.liveDataService, this.searchQuery$);
     this.http.globalReload$.subscribe(() => {
@@ -109,8 +115,10 @@ export class HallmonitorComponent implements OnInit {
     DR.afterClosed()
       .subscribe((data) => {
         this.activeCalendar = false;
+
       console.log('82 Date ===> :', data.date);
         if (data.date) {
+          this.inactiveIcon = data.date.getDay() === new Date().getDay();
           if ( !this.reportsDate || (this.reportsDate && this.reportsDate.getTime() !== data.date.getTime()) ) {
             this.reportsDate = new Date(data.date);
             console.log(this.reportsDate);
@@ -239,10 +247,11 @@ export class HallmonitorComponent implements OnInit {
   private getReports(date?: Date) {
     const range = this.liveDataService.getDateRange(date);
     console.log(range);
-    date ? this.adminService.searchReports(range.end.toISOString(), range.start.toISOString()) : this.adminService.getReports()
-      .pipe(
+    const response$ = date ?
+        this.adminService.searchReports(range.end.toISOString(), range.start.toISOString()) :
+        this.adminService.getReports();
+    response$.pipe(
         map((list: any[]) => {
-
           return list.map((report, index) => {
             return {
               student_name: report.student.display_name + ` (${report.student.primary_email.split('@', 1)[0]})`,

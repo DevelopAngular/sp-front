@@ -5,7 +5,7 @@
      [style.width]="width"
 >
      <div *ngIf="selected" class="selected-overlay"></div>
-  <div class="card" [style.background]="getGradient()" [style.height]="height">
+  <div class="card" [style.background]="getGradient()" [style.cursor]="valid ? 'pointer' : 'not-allowed'" [style.opacity]="valid ? 1 : 0.5" [style.height]="height">
     <img *ngIf="!selected" [style.width]="iconWidth" [style.height]="iconWidth" [src]="pinnable.icon | resolveAsset" alt="ICON">
     <div *ngIf="selected" class="selected-icon-wrapper">
       <img class="selected-icon" [src]="'./assets/Check (Blue).png' | resolveAsset" alt="ICON">

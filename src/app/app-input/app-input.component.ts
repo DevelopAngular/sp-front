@@ -19,6 +19,8 @@ export class AppInputComponent implements OnInit {
     @Input() padding: string = '.5rem';
     @Input() rightIcon: string;
     @Input() tooltipText: string;
+    @Input() textAlign: string;
+    @Input() isErrorIcon: boolean = true;
     @Input() isFocus: boolean;
 
     @Input() formGroup;

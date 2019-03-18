@@ -39,6 +39,10 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
       private timeService: TimeService,
   ) { }
 
+    get gradient() {
+        return 'radial-gradient(circle at 73% 71%, ' + this.pass.color_profile.gradient_color + ')';
+    }
+
   ngOnInit() {
       this.subscribers$ = merge(of(0), interval(1000)).pipe(map(x => {
           if (!!this.pass && this.isActive) {

@@ -4,7 +4,9 @@ import { Location } from '../../models/Location';
 import { Pinnable } from '../../models/Pinnable';
 import { User } from '../../models/User';
 import { StudentList } from '../../models/StudentList';
-import {NextStep, NextStepColored, ScaledCard} from '../../animations';
+import {NextStep, ScaledCard} from '../../animations';
+import {BehaviorSubject} from 'rxjs';
+import {CreateFormService} from '../create-form.service';
 
 export enum Role { Teacher = 1, Student = 2 }
 
@@ -48,7 +50,7 @@ export interface Navigation {
   selector: 'app-main-hallpass-form',
   templateUrl: './main-hall-pass-form.component.html',
   styleUrls: ['./main-hall-pass-form.component.scss'],
-  animations: [NextStep, NextStepColored, ScaledCard]
+  animations: [NextStep, ScaledCard]
 
 })
 export class MainHallPassFormComponent implements OnInit {
@@ -58,14 +60,18 @@ export class MainHallPassFormComponent implements OnInit {
     height: '0px',
     width: '0px'
   }
+  frameMotion$: BehaviorSubject<any>;
 
   constructor(
     public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     public dialogRef: MatDialogRef<MainHallPassFormComponent>,
+    private formService: CreateFormService
   ) {}
 
   ngOnInit() {
+    this.frameMotion$ = this.formService.getFrameMotionDirection();
+
     this.FORM_STATE = {
       step: null,
       previousStep: 0,
@@ -79,13 +85,12 @@ export class MainHallPassFormComponent implements OnInit {
         selectedGroup: null,
         selectedStudents: [],
         direction: {},
-
       },
       forInput: this.dialogData['forInput'] || false,
       forLater: this.dialogData['forLater']
     };
     switch (this.dialogData['forInput']) {
-      case (true): {
+      case true:
         this.FORM_STATE.formMode.role = this.dialogData['forStaff'] ? Role.Teacher : Role.Student;
         if (this.dialogData['forLater']) {
           if (this.dialogData['forStaff']) {
@@ -102,15 +107,12 @@ export class MainHallPassFormComponent implements OnInit {
           this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
           if ( this.dialogData['forStaff'] ) {
             this.FORM_STATE.step = 2;
-            // this.FORM_STATE.state = 1;
           } else {
             this.FORM_STATE.step = 3;
-            // this.FORM_STATE.state = 1;
           }
         }
         break;
-      }
-      case (false): {
+      case false:
         if (this.dialogData['hasClose']) {
          this.FORM_STATE.data.hasClose = true;
         }
@@ -127,21 +129,20 @@ export class MainHallPassFormComponent implements OnInit {
           from: this.dialogData['originalFromLocation'],
           to: this.dialogData['originalToLocation']
         };
-
         break;
-      }
     }
     this.setFormSize();
   }
 
   onNextStep(evt) {
-    // this.setFormSize();
+    console.log('EXIT ===>', evt);
+
     if (evt.step === 0 || evt.action === 'exit') {
       console.log('EXIT ===>', evt);
       this.dialogRef.close(evt);
       return;
     } else {
-      console.log('STEP EVENT ===== ===>', evt);
+      console.log('STEP EVENT ===>', evt);
 
       this.FORM_STATE = evt;
     }
@@ -151,30 +152,22 @@ export class MainHallPassFormComponent implements OnInit {
   setFormSize() {
 
       switch (this.FORM_STATE.step) {
-        case (1): {
+        case 1:
           this.formSize.width =  `425px`;
           this.formSize.height =  `500px`;
           break;
-        }
-        case (2): {
+        case 2:
           this.formSize.width =  `700px`;
           this.formSize.height =  `400px`;
           break;
-        }
-        case (3): {
+        case 3:
           this.formSize.width =  `425px`;
           this.formSize.height =  `500px`;
           break;
-        }
-        case (4): {
+        case 4:
           this.formSize.width =  `425px`;
           this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '412px';
           break;
-          // this.formSize.width =  `334px`;
-          // this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '412px';
-          // break;
-        }
       }
-      // console.log(this.formSize);
   }
 }

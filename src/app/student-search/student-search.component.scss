@@ -54,6 +54,20 @@ mat-input-container.md-input-focused label {
   align-items: center;
 }
 
+.no-students-dummy {
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: center;
+  color: #999999;
+  .dummy-image {
+    margin: 15px auto;
+  }
+  .dummy-text {
+    margin: 15px auto;
+    font-size: 17px;
+  }
+}
+
 .option-wrapper {
   width: 180px;
   padding-top: 10px;

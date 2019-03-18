@@ -1,6 +1,6 @@
 <div class="rest-mes-wrapper">
   <div [ngClass]="headerTransition" [style.background-image]="headerGradient">
-    <img class="back-button back-button-white" [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
+    <img class="back-button back-button-whitee" [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
     <div class="rest-mes-header-text">
       <img class="search-icon" [src]="'./assets/Message (White).png' | resolveAsset">
       <div class="text">Message</div>
@@ -8,6 +8,7 @@
   </div>
   <div class="content-wrapper">
     <div class="rest-mes-content">
+      <!--<pre>{{headerTransition | json}}</pre>-->
      <textarea
              #messageBox
              class="message-box"
@@ -15,7 +16,7 @@
              [cols]="30"
              pInputTextarea
              autoResize="autoResize"
-             [placeholder]="'Attach a message for ' + (teacher ? teacher.last_name : '')"
+             [placeholder]="'Attach a message'"
              [formControl]="message"
              [style.width]="'350px'"
              [style.max-height]="date ? '250px' : '270px'"

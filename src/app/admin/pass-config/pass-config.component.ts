@@ -2,8 +2,8 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { MatDialog } from '@angular/material';
 import { FormControl, FormGroup } from '@angular/forms';
 
-import { BehaviorSubject, Observable, zip } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import {BehaviorSubject, Observable, of, Subscription, zip} from 'rxjs';
+import {filter, switchMap, tap} from 'rxjs/operators';
 
 import { HttpService } from '../../services/http-service';
 import { Pinnable } from '../../models/Pinnable';
@@ -12,6 +12,11 @@ import { PinnableCollectionComponent } from '../pinnable-collection/pinnable-col
 import * as _ from 'lodash';
 import { disableBodyScroll } from 'body-scroll-lock';
 import { HallPassesService } from '../../services/hall-passes.service';
+import {SchoolSettingDialogComponent} from '../school-setting-dialog/school-setting-dialog.component';
+import {User} from '../../models/User';
+import {Location} from '../../models/Location';
+import {ActivatedRoute, Router} from '@angular/router';
+import {LocationsService} from '../../services/locations.service';
 
 @Component({
   selector: 'app-pass-congif',
@@ -21,6 +26,7 @@ import { HallPassesService } from '../../services/hall-passes.service';
 export class PassConfigComponent implements OnInit, OnDestroy {
 
     @ViewChild(PinnableCollectionComponent) pinColComponent;
+
 
     public pinnableCollectionBlurEvent$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
@@ -33,11 +39,18 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 
     dataChanges: any[] = [];
 
+    // Needs for OverlayContainer opening if an admin comes from teachers profile card on Accounts&Profiles tab
+    private forceSelectedLocation: Location;
+
   constructor(
       private dialog: MatDialog,
       private httpService: HttpService,
       private hallPassService: HallPassesService,
-      private elRef: ElementRef
+      private elRef: ElementRef,
+      private activatedRoute: ActivatedRoute,
+      private locationsService: LocationsService,
+      private router: Router
+
   ) { }
 
   get schoolName() {
@@ -47,15 +60,48 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     disableBodyScroll(this.elRef.nativeElement);
-    this.buildForm();
+
+
+
     this.pinnables$ = this.hallPassService.getPinnables();
     // this.schools$ = this.httpService.get('v1/schools');
     // this.schools$.subscribe(res => this.schoolName =  res[0].name);
     this.pinnables$.subscribe(res => this.pinnables = res);
 
     this.httpService.globalReload$.subscribe(() => {
-        this.pinnables$ = this.hallPassService.getPinnables();
-        this.pinnables$.subscribe(res => this.pinnables = res);
+      this.pinnables$ = this.hallPassService.getPinnables();
+      this.pinnables$.subscribe(res => this.pinnables = res);
+
+      const forceSelectPinnable: Subscription = this.activatedRoute.queryParams.pipe(
+        filter((qp) => Object.keys(qp).length > 0 && Object.keys(qp).length === Object.values(qp).length),
+        switchMap((qp: any): any => {
+          const {locationId} = qp;
+          this.router.navigate( ['admin/passconfig']);
+
+          // { action: 'room/folder_edit', selection: pinnable }
+          return this.locationsService.getLocation(locationId);
+          // this.selectPinnable({ action: 'room/folder_edit', selection: pinnable })
+        }),
+        switchMap((location: Location) => {
+          return zip(this.pinnables$, of(location));
+        })
+      ).subscribe((result) => {
+        console.log(result);
+
+
+        const [pinnables, location] = result;
+        this.forceSelectedLocation = location;
+        this.pinnable = pinnables.find((pnbl: Pinnable) => pnbl.category === location.category);
+
+        console.log(pinnables, location);
+
+        this.selectPinnable({ action: 'room/folder_edit', selection: this.pinnable });
+
+        forceSelectPinnable.unsubscribe();
+      });
+
+
+
     });
 
   }
@@ -90,14 +136,15 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       });
   }
 
-  buildForm() {
-      this.settingsForm = new FormGroup({
-          isFuture: new FormControl(true),
-          defaultTime: new FormControl('5 min'),
-      });
+  openSettings() {
+    this.dialog.open(SchoolSettingDialogComponent, {
+        panelClass: 'overlay-dialog',
+        backdropClass: 'custom-bd',
+    });
   }
 
   selectPinnable({action, selection}) {
+    console.log('Pinnable data ====>', action, selection);
       if (action === 'room/folder_edit' && !_.isArray(selection)) {
           this.pinnable = selection;
         return this.buildData(this.pinnable.type === 'location' ? 'editRoom' : 'editFolder');
@@ -110,37 +157,36 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       let data;
       const component = OverlayContainerComponent;
       switch (action) {
-          case 'newRoom': {
+          case 'newRoom':
               data = {
                   type: action,
               };
               break;
-          }
-          case 'newFolder': {
+          case 'newFolder':
               data = {
                   type: action,
                   pinnables$: this.pinnables$,
                   rooms: this.selectedPinnables,
               };
               break;
-          }
-          case 'editRoom': {
+          case 'editRoom':
               data = {
                   type: action,
                   pinnable: this.pinnable,
               };
               break;
-          }
-          case 'editFolder': {
+          case 'editFolder':
               data = {
                   type: 'newFolder',
                   pinnable: this.pinnable,
                   pinnables$: this.pinnables$,
                   isEditFolder: true
               };
+              if (this.forceSelectedLocation) {
+                data.forceSelectedLocation = this.forceSelectedLocation;
+              }
               break;
-          }
-          case 'edit': {
+          case 'edit':
               if (this.selectedPinnables.length === 1) {
                   if (this.selectedPinnables[0].type === 'location') {
                       data = {
@@ -167,14 +213,12 @@ export class PassConfigComponent implements OnInit, OnDestroy {
                   break;
               }
               break;
-          }
-          case 'newFolderWithSelections': {
+          case 'newFolderWithSelections':
               data = {
                   type: 'newFolder',
                   rooms: this.selectedPinnables,
               };
               break;
-          }
       }
       return this.dialogContainer(data, component);
   }
@@ -189,6 +233,9 @@ export class PassConfigComponent implements OnInit, OnDestroy {
           data: data
       });
 
+     overlayDialog.afterOpen().subscribe(() => {
+       this.forceSelectedLocation = null;
+     })
      overlayDialog.afterClosed()
          .pipe(switchMap(() => this.hallPassService.getPinnables())).subscribe(res => {
              this.pinnables = res;

@@ -2,8 +2,8 @@
   <div class="header">
     <div class="header_back-button" (click)="back(editGroup)">
       <img  *ngIf="!form.get('title').dirty && !form.get('users').dirty"
-            class="header_back-button"
-            [src]="'./assets/Back Button (Grey).png' | resolveAsset">
+            class="ß"
+            [src]="'./assets/Combined Shape.svg' | resolveAsset">
       <span class="header_back-button"
             *ngIf="form.get('title').dirty || form.get('users').dirty">Cancel</span>
     </div>
@@ -67,7 +67,7 @@
                 [width]="'120px'"
                 [fontSize]="'13px'"
                 [cursor]="'pointer'"
-                (buttonClick)="studentEmails.click()"
+                (buttonClick)="studentEmails.click(); loadingIndicator = true"
               >
                 <div *ngIf="loadingIndicator" class="loading-theme_white spinner flex-center-left pt">
                   <mat-spinner [color]="'white'" [diameter]="'25'"></mat-spinner>

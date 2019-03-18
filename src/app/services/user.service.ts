@@ -60,6 +60,10 @@ export class UserService {
       return this.http.get<Paged<any>>(`v1/users?role=${role}&limit=${limit}&search=${search}`);
   }
 
+  searchProfileById(id) {
+      return this.http.get<User>(`v1/users/${id}`);
+  }
+
   searchProfileAll(search) {
       return this.http.get(`v1/users?search=${search}`);
   }

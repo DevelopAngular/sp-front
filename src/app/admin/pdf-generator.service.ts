@@ -36,28 +36,25 @@ export class PdfGeneratorService {
     };
 
     switch (page) {
-      case('dashboard'): {
+      case 'dashboard':
         heading = {
           header: 'Active Hall Pass Report',
           title: `All Active Hall Passes on ${prettyNow}`
         };
         break;
-      }
-      case('search'): {
+      case 'search' :
 
         heading = {
           header: 'Administrative Pass Report',
           title: title
         };
         break;
-      }
-      case('hallmonitor'): {
+      case 'hallmonitor':
         heading = {
           header: 'Administrative Hall Monitor Report',
           title: ''
         };
         break;
-      }
     }
 
     const _orientation = orientation === 'l' ? 'landscape' : 'portrait';
@@ -274,14 +271,16 @@ export class PdfGeneratorService {
 
         const isSafari = !!window.safari;
 
-        const linkConsumer = (theLink) => {
+        const linkConsumer = (pdfLink) => {
           // Show the link to the user. The important part here is that the link is opened by the
           // user from an href attribute on an <a> tag or the new window is opened during a click event.
           // Most browsers will refuse to open a new tab/window if it is not opened during a user-triggered event.
-          LinkGeneratedDialogComponent.createDialog(this.dialog, 'Report Generated Successfully', theLink);
+
+          // One more marameter has been added to pass the raw data so that the user could download an Xlsx file from the dialog as well.
+          LinkGeneratedDialogComponent.createDialog(this.dialog, 'Report Generated Successfully', pdfLink, data);
         };
 
-        const blob = doc.output('blob');
+        const blob = doc.output('blob', {filename: 'test'});
         // create a blob link for the PDF
         if (isSafari) {
 

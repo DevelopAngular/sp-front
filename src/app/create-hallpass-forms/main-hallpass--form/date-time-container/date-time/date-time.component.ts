@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { TimeService } from '../../../../services/time.service';
 import { Navigation } from '../../main-hall-pass-form.component';
+import {CreateFormService} from '../../../create-form.service';
 
 @Component({
   selector: 'app-date-time',
@@ -22,7 +23,7 @@ export class DateTimeComponent implements OnInit {
   requestTime: Date = undefined;
   declinable: FormControl = new FormControl(true);
 
-  constructor(private timeService: TimeService) {
+  constructor(private timeService: TimeService, private formService: CreateFormService) {
     const now = this.timeService.nowDate();
     if (this.startTime === undefined) {
       this.startTime = now;
@@ -50,16 +51,29 @@ export class DateTimeComponent implements OnInit {
       date: this.requestTime,
       declinable: this.declinable.value
     };
-    this.result.emit(this.formState);
+    setTimeout(() => {
+      this.result.emit(this.formState);
+    }, 100);
   }
 
   back() {
-    if (this.isStaff) {
-      this.formState.step = 2;
-    } else {
-      this.formState.step = 0;
-    }
-    this.backButton.emit(this.formState);
+
+    this.formService.setFrameMotionDirection('back');
+
+
+    setTimeout(() => {
+      if (this.isStaff) {
+        this.formState.step = 2;
+      } else {
+        this.formState.step = 0;
+      }
+      console.log('AaA ===>>>', event);
+      this.backButton.emit(this.formState);
+    }, 100);
+
+
+
+
   }
 
 }

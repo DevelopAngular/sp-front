@@ -1,0 +1,125 @@
+import {Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {User} from '../../models/User';
+import {Location} from '../../models/Location';
+import {Router} from '@angular/router';
+import {switchMap, tap} from 'rxjs/operators';
+import {DataService} from '../../services/data-service';
+import {FormControl, FormGroup} from '@angular/forms';
+import {zip} from 'rxjs';
+import {UserService} from '../../services/user.service';
+
+@Component({
+  selector: 'app-profile-card-dialog',
+  templateUrl: './profile-card-dialog.component.html',
+  styleUrls: ['./profile-card-dialog.component.scss']
+})
+export class ProfileCardDialogComponent implements OnInit {
+
+  public profile: any;
+  public teacherAssignedTo: Location[] = [];
+  public testGroup = new FormGroup({
+      test: new FormControl(true),
+    }
+  )
+  public permissionsForm: FormGroup;
+  public permissionsFormEditState: boolean = false;
+  public controlsIteratable: any[];
+  public permissionsChanged: boolean = false;
+  public testControll = new FormControl(true);
+  public disabledState: boolean = false;
+
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialogRef: MatDialogRef<ProfileCardDialogComponent>,
+    private router: Router,
+    private dataService: DataService,
+    private userService: UserService
+  ) { }
+
+  ngOnInit() {
+    console.log(this.data);
+    this.profile = this.data.profile;
+
+    if (this.data.role === '_profile_teacher') {
+        this.dataService.getLocationsWithTeacher(this.profile._originalUserProfile)
+          .subscribe((locations: Location[]) => {
+            this.teacherAssignedTo = locations;
+          });
+    }
+
+    if (this.data.role !== '_profile_student') {
+      const permissions = this.data.permissions;
+      this.controlsIteratable = Object.values(permissions);
+      const group: any = {};
+      for (const key in permissions) {
+        const value = (this.profile._originalUserProfile as User).roles.includes(key);
+        console.log(value);
+        group[key] = new FormControl(value);
+      }
+      this.permissionsForm = new FormGroup(group);
+      this.permissionsForm.valueChanges.subscribe((formValue) => {
+        console.log(formValue);
+        this.permissionsFormEditState = true;
+        // this.permissionsChanged = true;
+
+      });
+    }
+
+    this.testGroup.valueChanges.subscribe((v) => {
+      console.log('test Group ==>', v);
+      this.permissionsChanged = true;
+    });
+    this.dialogRef.backdropClick().subscribe(() => {
+      this.back();
+    });
+  }
+  goToSearch() {
+    this.dialogRef.close();
+    this.router.navigate(['admin/search'], {
+      queryParams: {
+        profileId: this.profile.id,
+        profileName: this.profile['Name'],
+        role: this.data.role
+      }
+    });
+  }
+  goToPassConfig(location: Location) {
+    this.dialogRef.close();
+
+    if (location) {
+      this.router.navigate(['admin/passconfig'], {
+        queryParams: {
+          locationId: location.id,
+        }
+      });
+
+    } else {
+      this.router.navigate(['admin/passconfig']);
+    }
+
+  }
+
+  updateProfilePermissions() {
+    // return zip(restrictionsFor.map((user) => this.userService.createUserRoles(user['id'], this.form.value)));
+    this.disabledState = true;
+    this.userService
+      .createUserRoles(this.profile.id, this.permissionsForm.value)
+      .subscribe((result) => {
+        console.log(result);
+        this.disabledState = false;
+        this.permissionsChanged = true;
+        this.permissionsFormEditState = false;
+      });
+
+  }
+
+  back() {
+    if (this.permissionsFormEditState) {
+      this.permissionsFormEditState = !this.permissionsFormEditState;
+    } else {
+      console.log(this.permissionsChanged);
+      this.dialogRef.close(this.permissionsChanged);
+    }
+  }
+}

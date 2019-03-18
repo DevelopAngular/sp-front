@@ -1,0 +1,140 @@
+:host {
+
+  $primary: #1F195E;
+  $secondary: #7F879D;
+
+  @mixin heading ($fs: 14px) {
+    color: $primary;
+    font-weight: bold;
+    font-size: $fs;
+  }
+
+  height: inherit;
+  color: $secondary;
+  font-size: 12px;
+  .profile-card-dialog-container {
+    height: inherit;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    //align-items: center;
+    //padding: 15px;
+    background-color: #fff;
+    overflow: hidden;
+    border-radius: 10px;
+    position: relative;
+    .card-header {
+      @include heading(17px);
+      min-height: 64px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      //color: $primary;
+      //font-size: 17px;
+      //font-weight: bold;
+      position: relative;
+      box-shadow: 0 1px 5px 0px rgba(0, 0, 0, .2);
+      .back-button {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 25px;
+        margin: auto 0;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        color: $secondary;
+        img {
+          width: 24px;
+        }
+      }
+      .save-button {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 20px;
+        margin: auto 0px;
+        display: flex;
+        align-items: center;
+      }
+    }
+    .content-scrollable-box {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      overflow: auto;
+    }
+    .card-body {
+      box-sizing: border-box;
+      &_section{
+        box-sizing: border-box;
+        padding: 19px 25px;
+        .section-header {
+          @include heading(15px);
+          padding-bottom: 7px;
+        }
+        .section-content {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          .learn-more {
+            cursor: pointer;
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+          .room-link {
+            cursor: pointer;
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+          .search-button {
+            display: flex;
+            align-items: center;
+            span {
+              //flex: 3 1 auto;
+              width: 106px;
+              text-align: center;
+            }
+            img {
+              //flex: 1 1 20px;
+              //padding-left: 10px;
+            }
+          }
+        }
+        border-bottom: 1px solid #D8D8D8;
+        .profile-property {
+          font-weight: bold;
+        }
+      }
+    }
+    .card-footer {
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-end;
+      padding: 20px 15px 45px 15px;
+      flex: 1 1 auto;
+      .button {
+        //margin-top: 25px;
+        text-align: center;
+        &_message {
+          margin-top: 17px;
+        }
+      }
+    }
+    .disabled-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      z-index: 10;
+      background-color: rgba(255, 255, 255, .75);
+    }
+  }
+}

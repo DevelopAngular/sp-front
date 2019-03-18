@@ -5,7 +5,6 @@ import { MainPageComponent } from '../main-page/main-page.component';
 import { MyRoomComponent } from '../my-room/my-room.component';
 import { PassesComponent } from '../passes/passes.component';
 import { SettingsComponent } from '../settings/settings.component';
-import {CurrentUserResolver} from '../current-user.resolver';
 
 const routes: Routes = [
   {
@@ -14,7 +13,7 @@ const routes: Routes = [
       {path: 'passes', component: PassesComponent},
       {path: 'hallmonitor', component: HallMonitorComponent},
       {path: 'myroom', component: MyRoomComponent},
-      {path: 'settings', component: SettingsComponent},
+      {path: 'settings', component: SettingsComponent },
     ]
   },
   // {path: 'intro', component: IntroComponent}

@@ -1,6 +1,6 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, OnDestroy} from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { BehaviorSubject } from 'rxjs';
+import {BehaviorSubject, merge, of, zip} from 'rxjs';
 import { Observable } from 'rxjs';
 import { ReplaySubject } from 'rxjs';
 import { Subject } from 'rxjs';
@@ -14,9 +14,11 @@ import { PassLike} from '../models';
 import { PassCardComponent } from '../pass-card/pass-card.component';
 import { ReportFormComponent } from '../report-form/report-form.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
-import { shareReplay } from 'rxjs/operators';
+import {mergeAll, shareReplay} from 'rxjs/operators';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import { TimeService } from '../services/time.service';
+
+import * as _ from 'lodash';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -48,6 +50,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() forMonitor = false;
   @Input() hasSort = false;
   @Input() maxHeight;
+  @Input() showEmptyHeader: boolean;
 
   @Input() passProvider: PassLikeProvider;
 
@@ -96,8 +99,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
       } else {
         this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
-
-        if(this.isActive){
+      }
+        if(this.isActive) {
           this.timers.push(window.setInterval(() => {
             this.timerEvent.next(null);
           }, 1000));
@@ -106,7 +109,6 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
         //   console.log(data);
         //   this.test = data[0];
         // });
-      }
   }
 
   ngOnDestroy() {
@@ -166,7 +168,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       console.log('Closed with ===>', dialogData);
       if (dialogData && dialogData['report']) {
         const reportRef = this.dialog.open(ReportFormComponent, {
-          width: '750px',
+          width: '425px',
+          height: '500px',
           panelClass: 'form-dialog-container',
           backdropClass: 'custom-backdrop',
           data: {'report': dialogData['report']}

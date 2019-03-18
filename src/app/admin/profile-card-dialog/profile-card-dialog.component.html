@@ -1,0 +1,170 @@
+<div class="profile-card-dialog-container">
+  <!-- Disables card when some async stuffs occur-->
+  <div class="disabled-state loading-theme spinner" *ngIf="disabledState">
+    <mat-spinner [diameter]="'150'" [color]="'accent'"></mat-spinner>
+  </div>
+  <!-- end -->
+  <div class="card-header">
+    <div class="back-button" (click)="back()">
+      <img [src]="'./assets/Back Button (Grey).png'" alt="Back Button (Grey).png" *ngIf="!permissionsFormEditState">
+      <span *ngIf="permissionsFormEditState">Cancel</span>
+    </div>
+    <span>{{profile['Name']}}</span>
+    <div *ngIf="permissionsFormEditState" class="save-button">
+      <app-gradient-button
+        [minHeight]="'27px'"
+        [width]="'72px'"
+        [fontSize]="'11px'"
+        [fontWeight]="'bold'"
+        [cursor]="'pointer'"
+        (buttonClick)="updateProfilePermissions()"
+      >
+        Save
+      </app-gradient-button>
+    </div>
+  </div>
+  <div class="content-scrollable-box">
+
+    <div class="card-body">
+      <div class="card-body_section">
+        <div class="section-content">
+          <div>
+            <div class="section-header">Account Info</div>
+            <span class="profile-property">Name: </span> <span>{{profile['Name']}}</span><br>
+            <span class="profile-property">Email: </span> <span>{{profile['Email/Username']}}</span><br>
+            <span class="profile-property">Account Type: </span> <span>{{profile['Account Type']}}</span><br>
+          </div>
+          <div [style.text-align]="'right'">
+            <div>
+              <img [src]="'./assets/google/google_logo.svg'" alt="google_logo.svg">
+            </div>
+            <div class="learn-more">
+              <span>Learn more</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body_section" *ngIf="data.role === '_profile_teacher'">
+        <div class="section-content">
+          <div>
+            <div class="section-header">Rooms</div>
+            <div>
+
+              <div style="display: inline">
+                <span class="profile-property">Assigned to: </span>
+              </div>
+              <div style="display: inline" class="room-link" *ngFor="let loc of teacherAssignedTo; let i = index" (click)="goToPassConfig(loc)">
+                <span *ngIf="i > 0">,</span> <span> {{loc.title}}</span>
+              </div>
+              <div style="display: inline">
+                <span *ngIf="!teacherAssignedTo.length"> &mdash; </span>
+              </div>
+
+
+            </div>
+          </div>
+          <div>
+            <app-gradient-button
+              [width]="'141px'"
+              [minHeight]="'52px'"
+              [gradient]="'#FFFFFF,#FFFFFF'"
+              [hoverColor]="'#FFFFFF'"
+              [textColor]="'#1F195E'"
+              [fontSize]="'13px'"
+              [cursor]="'pointer'"
+              (buttonClick)="goToPassConfig()"
+
+            >
+              <div class="search-button">
+                <span>Go to Pass Configuration</span><img [src]="'./assets/Object.svg'" alt="Object.svg">
+              </div>
+            </app-gradient-button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body_section">
+        <div class="section-content">
+          <div>
+            <div class="section-header">Activity</div>
+            <span class="profile-property">Sign-in status: </span> <span>{{profile['Sign-in status']}}</span><br>
+            <span class="profile-property">Last sign-in: </span> <span>{{profile['Last sign-in']}}</span><br>
+          </div>
+          <div *ngIf="data.role !== '_profile_admin'">
+            <app-gradient-button
+              [width]="'141px'"
+              [minHeight]="'35px'"
+              [gradient]="'#FFFFFF,#FFFFFF'"
+              [hoverColor]="'#FFFFFF'"
+              [textColor]="'#1F195E'"
+              [fontSize]="'13px'"
+              [cursor]="'pointer'"
+              (buttonClick)="goToSearch()"
+
+            >
+              <div class="search-button">
+                <span style="">Go to search</span><img [src]="'./assets/Object.svg'" alt="">
+              </div>
+            </app-gradient-button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body_section" *ngIf="data.role === '_profile_teacher' || data.role === '_profile_admin'">
+        <div class="section-content">
+          <div [style.width]="'100%'">
+            <div class="section-header">Permissions</div>
+            <div *ngFor="let control of controlsIteratable">
+              <app-toggle-input
+                [form]="permissionsForm"
+                [delimiter]="false"
+                [controlName]="control.controlName"
+                [controlLabel]="control.controlLabel"
+                [controlSize]="'small'"
+              ></app-toggle-input>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <div class="card-footer">
+      <div class="button">
+        <app-gradient-button
+          [width]="'144px'"
+          [minHeight]="'35px'"
+          [gradient]="'#001115,#033294'"
+          [hoverColor]="'#001115'"
+          [textColor]="'#FFFFFF'"
+          [fontSize]="'13px'"
+          [fontWeight]="'normal'"
+          [cursor]="'pointer'"
+        >
+          <span>Disable sign-in</span>
+        </app-gradient-button>
+        <div class="button_message">
+          <span>Message</span>
+        </div>
+      </div>
+      <div class="button">
+        <app-gradient-button
+          [width]="'144px'"
+          [minHeight]="'35px'"
+          [gradient]="'#DA2370, #FB434A'"
+          [hoverColor]="'#DA2370'"
+          [textColor]="'#FFFFFF'"
+          [fontSize]="'13px'"
+          [fontWeight]="'normal'"
+        >
+          <span>Remove from Profile</span>
+        </app-gradient-button>
+        <div class="button_message">
+          <span>Message</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--<pre>{{profile | json}}</pre>-->
+</div>

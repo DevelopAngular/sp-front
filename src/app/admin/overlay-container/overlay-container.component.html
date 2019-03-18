@@ -1,18 +1,19 @@
 <form [formGroup]="form">
-
   <div class="overlay-container">
     <div class="overlay-header" [ngStyle]="{'background-image': gradientColor}">
     <div class="left-buttons">
       <img class="back-button" draggable="false"
            *ngIf="backButtonState && !hideHeaderIcon"
            alt="Go Back"
-           [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
+           [src]="'./assets/' + (titleColor === 'white' ? 'Back Button (White).png' : 'Combined Shape.svg') | resolveAsset"
+           (click)="back()">
 
-        <div class="cancel-button" *ngIf="!backButtonState && !hideHeaderIcon" (click)="back()">Cancel</div>
+        <div class="cancel-button" [style.color]="titleColor" *ngIf="!backButtonState && !hideHeaderIcon" (click)="back()">Cancel</div>
     </div>
-      <div class="title" *ngIf="overlayType === 'newRoom' || overlayType === 'editRoom'">{{ roomName }}</div>
+      <div class="title" [style.color]="titleColor" *ngIf="overlayType === 'newRoom' || overlayType === 'editRoom'">{{ roomName }}</div>
       <div
         class="title"
+        [style.color]="titleColor"
         *ngIf="showFolderName"
       >{{ folderName }}
       </div>
@@ -45,7 +46,11 @@
                              (buttonClick)="onPublish()"
         >{{(showPublishSpinner ? null : 'Publish')}}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
         </app-gradient-button>
-        <div *ngIf="!showPublishNewRoom && overlayType === 'newRoom' && isChangeState" style="color: white">Incomplete</div>
+        <div *ngIf="!showPublishNewRoom && overlayType === 'newRoom' && isChangeState"
+             [style.color]="titleColor"
+        >
+            Incomplete
+        </div>
 
         <app-gradient-button *ngIf="showPublishNewFolder && overlayType === 'newFolder' && !isEditFolder"
              [minHeight]="'40px'"
@@ -57,7 +62,12 @@
              (buttonClick)="onPublish()"
           >{{(showPublishSpinner ? null : 'Publish')}}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
         </app-gradient-button>
-        <div *ngIf="!showPublishNewFolder && overlayType === 'newFolder' && !isEditFolder && isChangeState" style="color: white">Incomplete</div>
+        <div
+          *ngIf="!showPublishNewFolder && overlayType === 'newFolder' && !isEditFolder && isChangeState"
+          [style.color]="titleColor"
+        >
+            Incomplete
+        </div>
 
         <app-gradient-button *ngIf="showPublishEditFolder && overlayType === 'newFolder' && isEditFolder"
              [minHeight]="'40px'"
@@ -75,7 +85,7 @@
 <div style="position: relative">
 <!--<div class="inactive" *ngIf="!form.get('isEdit').value"></div>-->
   <div class="overlay-content">
-    <div class="left-content">
+    <div class="left-content" (scroll)="onScroll($event)">
      <div class="left-wrapper" style="margin-bottom: 4%;">
       <div class="edit-rooms-left-content" *ngIf="overlayType === 'edit'">
         <div class="edit-rooms-left-title">Bulk edit the rooms added. Any change will override the previous setting.</div>
@@ -173,6 +183,7 @@
           <div class="search-teacher" style="display: flex">
               <app-profiles-search
                       [placeholder]="'Search Teachers'"
+                      [focused]="false"
                       [selectedStudents]="selectedTeachers"
                       (isEmitUsers)="isEmitTeachers($event)"
                       (onUpdate)="selectTeacherEvent($event)"
@@ -309,7 +320,7 @@
       </div>
 
       <div class="rooms-in-folder" *ngIf="overlayType === 'newFolder'">
-        <div class="content-buttons-in-folder" *ngIf="readyRoomsToEdit.length <= 0 && selectedRooms.length <= 5">
+        <div class="content-buttons-in-folder" *ngIf="readyRoomsToEdit.length <= 0 && !selectedRooms.length">
           <div class="button-in-folder" *ngFor="let button of buttonsInFolder">
             <app-gradient-button
                     [minHeight]="'35px'"
@@ -324,7 +335,7 @@
               {{ button.title }}</app-gradient-button>
           </div>
         </div>
-        <div class="content-buttons-in-folder" *ngIf="readyRoomsToEdit.length > 0 && selectedRooms.length <= 5">
+        <div class="content-buttons-in-folder" *ngIf="readyRoomsToEdit.length > 0 && !selectedRooms.length">
           <div class="button-in-folder" *ngFor="let button of buttonsWithSelectedRooms">
             <app-gradient-button
                     [minHeight]="'35px'"
@@ -338,26 +349,41 @@
               {{ button.title }}</app-gradient-button>
           </div>
         </div>
-        <div class="rooms-in-folder-title">Rooms in Folder ({{ selectedRooms.length }})</div>
-        <mat-divider style="margin-top: 9px"></mat-divider>
-        <div class="rooms-in-folder-content" [ngClass]="{'rooms-scrolling': selectedRooms.length > 5}">
+        <div class="sticky">
+            <div class="rooms-in-folder-title">
+                <div class="all-rooms-checkbox" *ngIf="selectedRooms.length">
+                    <mat-checkbox style="margin-left: 12px; margin-right: 15px"
+                                  [checked]="readyRoomsToEdit.length === selectedRooms.length"
+                                  [indeterminate]="readyRoomsToEdit.length && readyRoomsToEdit.length < selectedRooms.length"
+                                  (change)="selectedRoomsEvent($event, null, true)"
+                    >
+                    </mat-checkbox>
+                </div>
+                <div class="rooms-length-title">
+                    Rooms in Folder ({{ selectedRooms.length }})
+                </div>
+            </div>
+            <mat-divider style="margin-top: 9px"></mat-divider>
+        </div>
+
+        <div class="rooms-in-folder-content">
           <div class="not-rooms-in-folder" *ngIf="!selectedRooms.length">To add rooms, enter a folder name and select an appearance</div>
 
           <div class="rooms-list" #roomList *ngIf="selectedRooms.length > 0">
             <mat-list>
               <div>
-                <div class="room">
-                  <mat-checkbox style="margin-left: 12px"
-                                [checked]="readyRoomsToEdit.length === selectedRooms.length"
-                                [indeterminate]="readyRoomsToEdit.length && readyRoomsToEdit.length < selectedRooms.length"
-                                (change)="selectedRoomsEvent($event, null, true)"
-                  >
-                  </mat-checkbox>
-                  <div class="room-edit">
-                    <mat-list-item>All...</mat-list-item>
-                  </div>
-                </div>
-                <mat-divider></mat-divider>
+                <!--<div class="room">-->
+                  <!--<mat-checkbox style="margin-left: 12px"-->
+                                <!--[checked]="readyRoomsToEdit.length === selectedRooms.length"-->
+                                <!--[indeterminate]="readyRoomsToEdit.length && readyRoomsToEdit.length < selectedRooms.length"-->
+                                <!--(change)="selectedRoomsEvent($event, null, true)"-->
+                  <!--&gt;-->
+                  <!--</mat-checkbox>-->
+                  <!--<div class="room-edit">-->
+                    <!--<mat-list-item>All...</mat-list-item>-->
+                  <!--</div>-->
+                <!--</div>-->
+                <!--<mat-divider></mat-divider>-->
               </div>
               <div *ngFor="let room of sortSelectedRooms">
                 <div class="room">
@@ -374,7 +400,8 @@
           </div>
 
 
-          <div class="content-buttons-in-folder button-column" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length <= 0 && selectedRooms.length > 5">
+          <div class="content-buttons-in-folder button-column" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length <= 0 && selectedRooms.length">
+           <div class="sticky-button">
             <div class="button-in-folder gd-button" *ngFor="let button of buttonsInFolder">
               <app-gradient-button
                       [minHeight]="'35px'"
@@ -389,19 +416,22 @@
                 {{ button.title }}</app-gradient-button>
             </div>
           </div>
-          <div class="content-buttons-in-folder button-column" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length > 0 && selectedRooms.length > 5">
-            <div class="button-in-folder gd-button" *ngFor="let button of buttonsWithSelectedRooms">
-              <app-gradient-button
-                      [minHeight]="'35px'"
-                      [hoverColor]="button.hover"
-                      [gradient]="button.color"
-                      [style.width]="button.width"
-                      [cursor]="'pointer'"
-                      [fontSize]="'12px'"
-                      (buttonClick)="onEditRooms(button.action)"
-              >
-                {{ button.title }}</app-gradient-button>
-            </div>
+          </div>
+          <div class="content-buttons-in-folder button-column" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length > 0 && selectedRooms.length">
+               <div class="sticky-button">
+                    <div class="button-in-folder gd-button" *ngFor="let button of buttonsWithSelectedRooms">
+                      <app-gradient-button
+                              [minHeight]="'35px'"
+                              [hoverColor]="button.hover"
+                              [gradient]="button.color"
+                              [style.width]="button.width"
+                              [cursor]="'pointer'"
+                              [fontSize]="'12px'"
+                              (buttonClick)="onEditRooms(button.action)"
+                      >
+                        {{ button.title }}</app-gradient-button>
+                    </div>
+               </div>
           </div>
 
 
@@ -435,7 +465,7 @@
       <input type="file" formControlName="file" #file style="display: none"/>
       <div class="import-rooms-content" *ngIf="overlayType === 'importRooms'">
         <div class="import-rooms-info">
-          Import a list of room names, room numbers, and room names from an Excel spreadsheet or CSV
+          Import a list of room names, room numbers, and teacher(s) in room from an Excel spreadsheet.
         </div>
         <div>
           <a class="download-template-link" [href]="'./assets/xlsx/Rooms Configuration.xlsx' | resolveAsset" download>
@@ -465,8 +495,18 @@
         <!--</div>-->
       </div>
      </div>
+        <div class="advanced-options" *ngIf="(overlayType === 'editRoom' || (editRoomInFolder)) && !showSearchTeacherOptions">
+            <app-advanced-options
+                    [roomName]="roomName"
+                    [nowRestricted]="nowRestriction"
+                    [futureRestricted]="futureRestriction"
+                    (hideBottomBlock)="hideDeleteButton = $event"
+            ></app-advanced-options>
+        </div>
+
         <div class="footer-delete-button"
-          *ngIf="(overlayType === 'editRoom' || (editRoomInFolder)) && !showSearchTeacherOptions"
+          *ngIf="(overlayType === 'editRoom' || (editRoomInFolder)) && !showSearchTeacherOptions && !hideDeleteButton"
+          [style.justify-content]="!editRoomInFolder ? 'center' : 'safe'"
           [style.margin-top]="overlayType === 'editRoom' ? '90px' : '50px'"
         >
             <app-gradient-button
@@ -487,6 +527,7 @@
         </div>
 
       <div class="footer-delete-button"
+           [style.justify-content]="'center'"
            *ngIf="overlayType === 'newFolder' && isEditFolder"
            style="margin-top: 10px"
       >

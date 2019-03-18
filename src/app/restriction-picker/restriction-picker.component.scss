@@ -1,0 +1,43 @@
+.picker-wrapper {
+  position: relative;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  .disabled {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: white;
+    opacity: 0.5;
+  }
+}
+
+.choices {
+  display: flex;
+  align-items: center;
+  height: 100%;
+
+  .choice {
+    display: flex;
+    //padding: 10px;
+    word-break: break-all;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .left-radius {
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+  }
+
+  .right-radius {
+    border-bottom-right-radius: 5px;
+    border-top-right-radius: 5px;
+  }
+}

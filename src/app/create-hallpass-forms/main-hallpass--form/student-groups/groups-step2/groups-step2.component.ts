@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {User} from '../../../../models/User';
-import {FormControl, FormGroup} from '@angular/forms';
+import {FormGroup} from '@angular/forms';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {UserService} from '../../../../services/user.service';
 import {fromEvent, Observable} from 'rxjs';
@@ -73,7 +73,6 @@ export class GroupsStep2Component implements OnInit {
 
                 return result;
               }));
-              // }));
         }),
       )
       .subscribe((students) => {

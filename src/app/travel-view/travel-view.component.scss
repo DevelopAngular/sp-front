@@ -1,9 +1,16 @@
 .travel-view-wrapper{
-    height: 217px;
+    //height: 217px;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
+    color: white;
+    font-size: 20px;
     //margin-top: 16px;
+}
+
+.arrow {
+    margin: 20px 0 20px 0;
 }
 
 .origin-button-content{
@@ -21,11 +28,11 @@
 }
 
 .origin-button-content-text{
-    font-size: 15px;
+    font-size: 20px;
 }
 
 .origin-button-content-icon{
-    width: 17px;
-    height: 17px;
-    margin-right: 5px;
+    width: 25px;
+    height: 25px;
+    margin-right: 7px;
 }

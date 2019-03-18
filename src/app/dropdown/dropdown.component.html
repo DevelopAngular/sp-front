@@ -3,6 +3,20 @@
   <div class="consent-header" *ngIf="heading"> {{heading}}</div>
   <div class="divider"></div>
   <div class="options-wrapper" *ngIf="locations">
+
+    <!-- In Process block ---->
+    <div class="option-data" (click)="_matDialogRef.close(location)">
+      <div class="option-data_leftside">
+        <span>All Rooms</span>
+      </div>
+      <div class="option-data_rightside">
+        <div class="marked-room">
+          <img *ngIf="!selectedLocation" [style.width]="'20px'" [style.height]="'20px'" [src]="'./assets/Check (Blue).png' | resolveAsset" alt="Check (Blue).png">
+        </div>
+      </div>
+    </div>
+    <div class="option-divider"></div>
+
     <div class="option" *ngFor="let location of locations" (click)="_matDialogRef.close(location)">
       <div class="option-data">
         <div class="option-data_leftside">
@@ -11,13 +25,14 @@
         <div class="option-data_rightside">
           <div>{{location.room}}</div>
           <div class="marked-room">
-            <img *ngIf="location.room === selectedLocation.room && location.title === selectedLocation.title" [style.width]="'20px'" [style.height]="'20px'" [src]="'./assets/Check (Blue).png' | resolveAsset" alt="Check (Blue).png">
+            <img *ngIf="selectedLocation ? (location.room === selectedLocation.room && location.title === selectedLocation.title) : false" [style.width]="'20px'" [style.height]="'20px'" [src]="'./assets/Check (Blue).png' | resolveAsset" alt="Check (Blue).png">
           </div>
         </div>
       </div>
       <div class="option-divider"></div>
     </div>
   </div>
+
   <div class="options-wrapper" *ngIf="schools">
     <div class="option" *ngFor="let school of schools" (click)="_matDialogRef.close(school)">
       <div class="option-data">

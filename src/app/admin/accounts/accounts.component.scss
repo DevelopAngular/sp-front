@@ -27,12 +27,16 @@
   }
   .card{
     box-sizing: border-box;
-    padding: 16px 33px 20px 33px ;
+    //padding: 16px 33px 0px 33px ;
     border-radius: 10px;
     font-size: 17px;
     color: #1F195E;
     box-shadow: 0 1px 5px rgba(0, 0, 0, .2);
     background-color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
     &_header{
       font-size: 24px;
       font-weight: 900;
@@ -40,16 +44,47 @@
       white-space: nowrap;
 
     }
+    &_content {
+      height: 155px;
+      box-sizing: border-box;
+      padding: 32px 33px 0px 33px ;
+    }
     &_title{
+      padding: 5px 0px;
       font-size: 14px;
       color: #7F879D;
+    }
+    &_manage-users {
+      height: 44px;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, .2);
+      background-color: #FCFDFF;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      //padding: 15px;
+      //height: 50px;
+      cursor: pointer;
+      transition: background-color .25s ease;
+      img {
+        padding-top: 10px;
+        transform: rotate(-90deg);
+      }
+      &:hover {
+        background-color: #F1F3F6;
+      }
     }
     &__top-bar{
       display: flex;
       justify-content: center;
       align-items: center;
-      .accounts, .g-suite{
-        flex: 1 1 0;
+      flex-direction: row;
+      height: 111px;
+      padding: 0px 20px 0px 33px;
+      .accounts {
+        flex: 1 1 50%;
+      }
+      .g-suite{
+        flex: 1 1 auto;
       }
     }
     &__role{

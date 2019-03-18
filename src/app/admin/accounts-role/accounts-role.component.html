@@ -44,9 +44,9 @@
           [width]="'225px'"
           [fontSize]="'14px'"
           [fontWeight]="'bold'"
-          (buttonClick)="openDialog('create')">
+          (buttonClick)="addUser()">
           <div class="flex-center-center">
-            <img [src]="'./assets/Create (White).png'" width="20" class="pr" alt="Create (White).png"><span>Add Account to Profile</span>
+            <img [src]="'./assets/Create (White).png'" width="20" class="pr" alt="Create (White).png"><span>Add User to Profile</span>
           </div>
         </app-gradient-button>
       </div>
@@ -100,20 +100,19 @@
           <!--<span>Add/Modify Rooms</span>-->
           <!--</app-gradient-button>-->
           <!--</div>-->
-          <!--<div class="my py"  *ngIf="role !== 'hallpass_student'">-->
-          <!--<app-gradient-button-->
-
-          <!--[disabled]="!selectedUsers.length"-->
-          <!--[cursor]="'pointer'"-->
-          <!--[minHeight]="'32px'"-->
-          <!--[width]="'215px'"-->
-          <!--[fontSize]="'14px'"-->
-          <!--[fontWeight]="400"-->
-          <!--[gradient]="'#0B9FC1, #00C0C7'"-->
-          <!--(buttonClick)="openDialog('restrictions')">-->
-          <!--<span>Add/Modify Restrictions</span>-->
-          <!--</app-gradient-button>-->
-          <!--</div>-->
+          <div class="my py"  *ngIf="role !== 'hallpass_student'">
+            <app-gradient-button
+              [disabled]="!selectedUsers.length"
+              [cursor]="'pointer'"
+              [minHeight]="'32px'"
+              [width]="'215px'"
+              [fontSize]="'14px'"
+              [fontWeight]="400"
+              [gradient]="'#0B9FC1, #00C0C7'"
+              (buttonClick)="openDialog('restrictions')">
+              <span>Add/Modify Restrictions</span>
+            </app-gradient-button>
+          </div>
           <div class="m x" #eventTarget  [style.opacity]="consentMenuOpened ? '.5' : '1'">
             <app-gradient-button
               [disabled]="!selectedUsers.length"
@@ -131,9 +130,14 @@
         </div>
       </div>
       <!--<pre>{{userList| json}}</pre>-->
+      <div class="column-settings">
+        <img draggable="false" width="20" [src]="'./assets/Gear (Blue).png'" alt="Gear (Blue).png" (click)="showColumnSettings($event)">
+      </div>
       <app-data-table
         class="my"
         [data]="userList"
+        [displayedColumns]="dataTableHeadersToDisplay"
+        (selectedRow)="showProfileCard($event)"
         (selectedUsers)="showSelected($event)">
       </app-data-table>
     </div>

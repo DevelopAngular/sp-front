@@ -6,7 +6,7 @@ import { Pinnable } from '../../../models/Pinnable';
 import { Util } from '../../../../Util';
 import {FormFactor, Navigation, Role} from '../main-hall-pass-form.component';
 import {CreateFormService} from '../../create-form.service';
-import {NextStep, NextStepColored, ScaledCard} from '../../../animations';
+import {NextStep} from '../../../animations';
 
 export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, message = 5 }
 
@@ -14,7 +14,7 @@ export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, 
   selector: 'app-locations-group-container',
   templateUrl: './locations-group-container.component.html',
   styleUrls: ['./locations-group-container.component.scss'],
-  animations: [NextStep, NextStepColored]
+  animations: [NextStep]
 })
 export class LocationsGroupContainerComponent implements OnInit {
 
@@ -58,7 +58,7 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   ngOnInit() {
 
-    this.formService.setFrameMotionDirection('disable');
+    // this.formService.setFrameMotionDirection('disable');
 
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.FORM_STATE.quickNavigator = false;
@@ -102,53 +102,55 @@ export class LocationsGroupContainerComponent implements OnInit {
     }
   }
 
-    toWhere(pinnable) {
-        this.pinnable = pinnable;
-        this.FORM_STATE.data.direction = {
-            from: this.data.fromLocation,
-            pinnable: pinnable
-        };
-        this.FORM_STATE.data.gradient = pinnable.gradient_color;
-        this.FORM_STATE.data.icon = pinnable.icon;
-        if (pinnable.category) {
-            this.FORM_STATE.previousState = States.toWhere;
-            return this.FORM_STATE.state = States.category;
+  toWhere(pinnable) {
+    this.pinnable = pinnable;
+    this.FORM_STATE.data.direction = {
+        from: this.data.fromLocation,
+        pinnable: pinnable
+    };
+    this.FORM_STATE.data.gradient = pinnable.gradient_color;
+    this.FORM_STATE.data.icon = pinnable.icon;
+    if (pinnable.category) {
+      this.FORM_STATE.previousState = States.toWhere;
+      return this.FORM_STATE.state = States.category;
+    } else {
+        this.data.toLocation = pinnable.location;
+        this.FORM_STATE.data.direction.to = pinnable.location;
+        const restricted = ((this.pinnable.location.restricted && !this.showDate) || (this.pinnable.location.scheduling_restricted && !!this.showDate));
+        if (!this.isStaff && restricted && pinnable.location) {
+            this.FORM_STATE.previousState = this.FORM_STATE.state;
+            return this.FORM_STATE.state = States.restrictedTarget;
         } else {
-            this.data.toLocation = pinnable.location;
-            this.FORM_STATE.data.direction.to = pinnable.location;
-            const restricted = ((this.pinnable.location.restricted && !this.showDate) || (this.pinnable.location.scheduling_restricted && !!this.showDate));
-            if (!this.isStaff && restricted && pinnable.location) {
-                this.FORM_STATE.previousState = this.FORM_STATE.state;
-                return this.FORM_STATE.state = States.restrictedTarget;
-            } else {
-                return this.postComposetData();
-            }
+           return this.postComposetData();
         }
-
     }
 
+  }
+
   fromCategory(location) {
+
     this.data.toLocation = location;
     this.FORM_STATE.data.direction.to = location;
     // const restricted = ((location.restricted && !this.FORM_STATE.forLater) || (location.scheduling_restricted && !!this.FORM_STATE.forLater));
     if ((location.restricted || location.scheduling_restricted) && !this.isStaff) {
-        this.FORM_STATE.previousState = States.from;
-        this.FORM_STATE.state = States.restrictedTarget;
+      this.FORM_STATE.previousState = States.from;
+      this.FORM_STATE.state = States.restrictedTarget;
     } else {
-        this.postComposetData();
+      this.postComposetData();
     }
   }
 
   requestTarget(teacher) {
+
     this.data.requestTarget = teacher;
     this.FORM_STATE.data.requestTarget = teacher;
-    this.FORM_STATE.previousState = States.restrictedTarget;
     this.FORM_STATE.state = States.message;
   }
 
   resultMessage(message, denyMessage: boolean = false) {
+
     if (!message) {
-        message = '';
+      message = '';
     }
     this.data.message = message;
     this.FORM_STATE.data.message = message;
@@ -162,21 +164,21 @@ export class LocationsGroupContainerComponent implements OnInit {
     if (!this.isStaff && !restricted) {
         this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
     }
-    if (!this.isStaff && (restricted || isMessage)) {
-        this.FORM_STATE.formMode.formFactor = FormFactor.Request;
-    }
+      if (!this.isStaff && (restricted || isMessage)) {
+          this.FORM_STATE.formMode.formFactor = FormFactor.Request;
+      }
     if (this.isStaff) {
-        if (this.FORM_STATE.data.date && this.FORM_STATE.data.date.declinable) {
-            this.FORM_STATE.formMode.formFactor = FormFactor.Invitation;
-        } else {
-            this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
-        }
+      if (this.FORM_STATE.data.date && this.FORM_STATE.data.date.declinable) {
+         this.FORM_STATE.formMode.formFactor = FormFactor.Invitation;
+      } else {
+         this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
+      }
     }
     this.FORM_STATE.previousStep = 3;
     // this.FORM_STATE.step =  close ? 0 : 4;
     setTimeout(() => {
-        this.FORM_STATE.step =  close ? 0 : 4;
-        this.nextStepEvent.emit(this.FORM_STATE);
+      this.FORM_STATE.step =  close ? 0 : 4;
+      this.nextStepEvent.emit(this.FORM_STATE);
     }, 100);
   }
 
@@ -185,6 +187,10 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.FORM_STATE = event;
     this.data.message = null;
     this.FORM_STATE.data.message = null;
-    this.nextStepEvent.emit(this.FORM_STATE);
+
+    // setTimeout(() => {
+
+      this.nextStepEvent.emit(this.FORM_STATE);
+    // }, 100);
   }
 }

@@ -28,7 +28,13 @@
   }
 }
 
+.next-step-animation-trigger {
+  display: flex;
+  justify-content: center;
+}
+
 .slide {
+  position: absolute;
   font-size: 1.05em;
   text-align: center;
 
@@ -120,7 +126,7 @@
     max-height: 680px;
     .for-student_3 {
       .form {
-        width: 430px;
+        width: 425px;
         height: 500px;
         margin: 20px;
         box-sizing: content-box;
@@ -143,10 +149,11 @@
       }
 
       .pinnable-wrapper {
-        padding: 3%;
+        padding: 10px;
         display: flex;
         flex-wrap: wrap;
-        //justify-content: center;
+        justify-content: center;
+
         .pinnable {
           padding: 7px;
         }
@@ -180,10 +187,15 @@
             width: 100%;
             border-top: 1px solid rgba(0, 0, 0, 0.1);
           }
+
+          .back-button {
+            width: 26px;
+            height: 26px;
+          }
         }
       }
 
-      .divider-header{
+      .divider-header-mock {
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -248,19 +260,27 @@
         margin-top: 40px;
       }
       .pass-card {
-        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         margin-top: 60px;
         width: 334px;
         height: 412px;
-        border-radius: 10px;
+        border-radius: 15px;
         background: radial-gradient(circle at 73% 71%, #5C4AE3, #336DE4);
         color: #FFFFFF;
         &_header {
           display: flex;
           align-items: center;
-          justify-content: space-between;
-          padding: 5px 0 20px 0;
+          justify-content: center;
+          height: 74px;
           border-bottom: 1px solid rgba(255, 255, 255, .7);
+          .pass-card-header-content {
+            display: flex;
+            justify-content: space-between;
+            width: 291px;
+
+          }
           .left-box {
             display: flex;
             align-items: center;
@@ -269,29 +289,37 @@
               height: 34px;
             }
             .text {
-              font-weight: bold;
-              font-size: 18px;
+              font-size: 22px;
               padding-left: 15px;
             }
           }
           .arrow {
-            width: 30px;
-            height: 30px;
+            width: 29px;
+            height: 29px;
           }
         }
         &_body {
+          height: 325px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-evenly;
+          align-items: center;
           .top-side {
-            margin-top: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
+
+            .duration-picker {
+              position: relative;
+            }
           }
           .bottom-side {
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 288px;
+            height: 79px;
             .start-pass-content {
-              margin-top: 52px;
               padding: 0 15px;
               width: 95%;
               height: 79px;
@@ -455,6 +483,6 @@
   z-index: 2;
   left: 0;
   right: 0;
-  bottom: 275px;
+  bottom: 340px;
   margin: 0 auto;
 }
