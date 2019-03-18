@@ -137,6 +137,7 @@ export class PdfGeneratorService {
   }
 
   generateProfileInstruction(role: string) {
+
     this
       .prepareBaseTemplate('p')
       .subscribe((res) => {
@@ -147,35 +148,58 @@ export class PdfGeneratorService {
 
         doc.line(this.A4.width / 2, 72, this.A4.width / 2, 72 + 334);
 
-        // doc.fromHTML(`<p style="color: #04CD33;"> Hello, World!</p>`, this.A4.width / 2, 350);
+        const teacherLeftSide = `<div style="color: #484747;">
+                                <h3 style="color: #1f195e; margin-bottom: 10px; margin-top: 40px;">Rooms</h3>
+                                <b>Assigned to:</b> Bathroom, Gym<br>Booker, Career Center
+                               </div>
+                              `;
 
-        const contentBox = document.createElement('div');
-              contentBox.innerHTML = `<div style="font-family: 'Open Sans', sans-serif;">
-                                        <h3 style="color: #1F195E; margin-bottom: 10px; margin-top: 35px;">Account info</h3>
-                                        <p style=" color: #474747;">
-                                          <b>Name: </b> Peter Luba<br><b>Account Type: </b> Alternative<br><b>Profile Type: </b> Student<br>
-                                        </p>
-                                        <h4 style="color: #474747; margin-bottom: 10px; margin-top: 35px;">Acting on Behalf Of:</h4>
-                                        <p style=" color: #474747;">Benneth Cole(bcol34)</p>
-                                        <p style=" color: #474747;">Samuel Jenkins(sjer)</p>
-                                        <h4 style="color: #474747; margin-bottom: 10px; margin-top: 35px;">Expiration</h4>
-                                        <p style=" color: #474747;">Mar 3, 9:45AM</p>
-                                      </div>`;
-        console.log(contentBox);
-        doc.fromHTML(contentBox, 49, 94);
+        const studentLeftSide = `<div>
+                                  <h4 style="color: #474747; margin-bottom: 10px; margin-top: 30px;">Acting on Behalf Of:</h4>
+                                  <div style=" color: #474747;">Benneth Cole(bcol34)</div>
+                                  <div style=" color: #474747;">Samuel Jenkins(sjer)</div>
+                                 </div>
+                                `
+
+
+        const contentBoxLeft = `<div style="font-family: 'Open Sans', sans-serif;">
+                                  <h3 style="color: #1F195E; margin-bottom: 10px; margin-top: 15px;">Account info</h3>
+                                  <div style="color: #474747;">
+                                    <b>Name: </b> Peter Luba<br><b>Account Type: </b> Alternative<br><b>Profile Type: </b> Student<br>
+                                  </div>
+                                  <h4 style="color: #474748; margin-bottom: 10px; margin-top: 30px;">Expiration</h4>
+                                  <div style=" color: #484747;">Mar 3, 9:45AM</div>
+                                  ${ role === '_profile_teacher' ? teacherLeftSide : role === '_profile_student' ? studentLeftSide : ''}
+                                </div>`;
+
+        doc.fromHTML(contentBoxLeft, 49, 94);
+
+        const contentBoxRight = `<div style="font-family: 'Open Sans', sans-serif;">
+                                  <h3 style="color: #1F195E; margin-bottom: 14px; margin-top: 15px;">Sign-in</h3>
+                                  <div style="color: #474747">
+                                    <div style="font-weight: bold;">Username: </div>
+                                    <div style=" margin-top: 20px; margin-left: 12px;">pluba1</div>
+                                  </div>
+                                  <div style="color: #474847;">
+                                    <div style="font-weight: bold; margin-top: 35px;">Password: </div>
+                                    <div style="margin-top: 20px; margin-left: 12px;">gerkjb04</div>
+                                  </div>
+                                </div>
+                                `;
+        doc.setFillColor('#F7F7F7');
+
+        doc.roundedRect(this.A4.width / 2 + 30, 152, 141, 27, 3, 3, 'F');
+        doc.roundedRect(this.A4.width / 2 + 30, 218, 141, 27, 3, 3, 'F');
+
+        doc.fromHTML(contentBoxRight, 335, 94);
 
         doc.setTextColor('#1F195E');
         doc.setFontSize(15);
         doc.setFontStyle('bold');
-        doc.text(this.A4.width / 2 + 42, 72 + 186, 'Use “Alternative Sign-in,”');
-        doc.text(this.A4.width / 2 + 42, 72 + 186 + 18, 'not Google Sign-in ');
+        doc.text(this.A4.width / 2 + 30, 255 + 41, 'Use “Alternative Sign-in,”');
+        doc.text(this.A4.width / 2 + 30, 255 + 41 + 18, 'not Google Sign-in ');
         doc.setFontSize(14);
         doc.setFontStyle('normal');
-
-
-
-
-
 
 
         const isSafari = !!window.safari;
@@ -186,7 +210,7 @@ export class PdfGeneratorService {
           // Most browsers will refuse to open a new tab/window if it is not opened during a user-triggered event.
 
           // One more marameter has been added to pass the raw data so that the user could download an Xlsx file from the dialog as well.
-          LinkGeneratedDialogComponent.createDialog(this.dialog, 'Report Generated Successfully', pdfLink);
+          LinkGeneratedDialogComponent.createDialog(this.dialog, 'Instruction Generated Successfully', pdfLink);
         };
 
         const blob = doc.output('blob', {filename: 'test'});
@@ -205,7 +229,6 @@ export class PdfGeneratorService {
         } else {
           linkConsumer(URL.createObjectURL(blob));
         }
-
 
       });
 

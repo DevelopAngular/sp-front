@@ -63,7 +63,7 @@ export class ConsentMenuComponent implements OnInit {
       this._matDialogRef.updatePosition(matDialogConfig.position);
   }
 
-  getColor(option){
+  getColor(option) {
     return this.sanitizer.bypassSecurityTrustStyle(option.color);
   }
 

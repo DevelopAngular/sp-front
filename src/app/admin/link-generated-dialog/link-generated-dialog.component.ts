@@ -19,7 +19,7 @@ export class LinkGeneratedDialogComponent implements OnInit {
   name: string;
   selectedReports: any[];
   pdflink: string | SafeUrl;
-
+  xlsxDoc: boolean = true;
   static createDialog(dialog: MatDialog, name: string, pdfLink: string, selectedReports?: any) {
     return dialog.open(LinkGeneratedDialogComponent, {
       panelClass: 'accounts-profiles-dialog',

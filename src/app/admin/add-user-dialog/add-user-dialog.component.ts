@@ -40,15 +40,12 @@ export class AddUserDialogComponent implements OnInit {
       this.controlsIteratable = Object.values(permissions);
       const group: any = {};
       for (const key in permissions) {
-        // const value = (this.profile._originalUserProfile as User).roles.includes(key);
-        // console.log(value);
         group[key] = new FormControl(true);
       }
       this.permissionsForm = new FormGroup(group);
       this.permissionsForm.valueChanges.subscribe((formValue) => {
         console.log(formValue);
         this.permissionsFormEditState = true;
-        // this.permissionsChanged = true;
 
       });
     }
@@ -57,7 +54,7 @@ export class AddUserDialogComponent implements OnInit {
     return;
   }
   showInstructions(role) {
-    this.pdfService.generateProfileInstruction('_profile_student');
+    this.pdfService.generateProfileInstruction(this.data.role);
   }
   back() {
     this.dialogRef.close();

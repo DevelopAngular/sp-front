@@ -1,34 +1,5 @@
 <div class="accounts-role-wrapper">
 
-  <div style="font-family: 'Open Sans', sans-serif; color: #474747;">
-    <div>
-      <h3 style="color: #1F195E; margin-bottom: 10px; margin-top: 35px;">Account info</h3>
-      <div>
-        <b>Name: </b> <span>Peter Luba</span>
-      </div>
-      <div>
-        <b>Account Type: </b> <span>Alternative</span>
-      </div>
-      <div>
-        <b>Profile Type: </b> <span>Student</span>
-      </div>
-    </div>
-    <div>
-      <h4 style="margin-bottom: 10px; margin-top: 35px;">Acting on Behalf Of:</h4>
-      <div>
-        <div>Benneth Cole(bcol34)</div>
-        <div>Samuel Jenkins(sjer)</div>
-      </div>
-    </div>
-    <div>
-      <h4 style="margin-bottom: 10px; margin-top: 35px;">Expiration</h4>
-      <div>
-        <div>Mar 3, 9:45AM</div>
-      </div>
-    </div>
-  </div>
-
-
   <div class="card flex-start-between" style="width: 100%">
     <div class="mt mr pt pr">
       <app-back-button routerLink="/admin/accounts"></app-back-button>
@@ -100,7 +71,7 @@
       <div class="tool-panel">
 
         <div *ngIf="selectedUsers.length" class="flex-center-start">
-          <div class="m px" [style.min-width]="'150px'">
+          <div class="m px" [style.min-width]="'150px'" [style.font-weight]="'bold'" [style.color]="'#1F195E'">
             <p class="">{{selectedUsers.length}} Profile<span *ngIf="selectedUsers.length > 1">s</span> Selected:</p>
           </div>
           <!--<div class="my py" *ngIf="role === 'staff_secretary'">-->
@@ -130,31 +101,63 @@
           <!--<span>Add/Modify Rooms</span>-->
           <!--</app-gradient-button>-->
           <!--</div>-->
-          <div class="my py"  *ngIf="role !== 'hallpass_student'">
+          <!--<div class="my py"  *ngIf="role !== 'hallpass_student'">-->
+            <!--<app-gradient-button-->
+              <!--[disabled]="!selectedUsers.length"-->
+              <!--[cursor]="'pointer'"-->
+              <!--[minHeight]="'32px'"-->
+              <!--[width]="'215px'"-->
+              <!--[fontSize]="'14px'"-->
+              <!--[fontWeight]="400"-->
+              <!--[gradient]="'#0B9FC1, #00C0C7'"-->
+              <!--(buttonClick)="openDialog('restrictions')">-->
+              <!--<span>Add/Modify Restrictions</span>-->
+            <!--</app-gradient-button>-->
+          <!--</div>-->
+
+
+
+          <div class="p"  *ngIf="role !== '_profile_student'">
             <app-gradient-button
               [disabled]="!selectedUsers.length"
               [cursor]="'pointer'"
               [minHeight]="'32px'"
               [width]="'215px'"
               [fontSize]="'14px'"
-              [fontWeight]="400"
-              [gradient]="'#0B9FC1, #00C0C7'"
-              (buttonClick)="openDialog('restrictions')">
-              <span>Add/Modify Restrictions</span>
+              [fontWeight]="700"
+              [gradient]="'#FFFFFF, #FFFFFF'"
+              [textColor]="'#1F195E'"
+              (buttonClick)="showProfileCard(selectedUsers[0], true)">
+              <span>Bulk Permissions</span>
             </app-gradient-button>
           </div>
-          <div class="m x" #eventTarget  [style.opacity]="consentMenuOpened ? '.5' : '1'">
+
+          <div class="p">
+            <app-gradient-button
+              [disabled]="!selectedUsers.length"
+              [cursor]="'pointer'"
+              [minHeight]="'32px'"
+              [width]="'215px'"
+              [fontSize]="'14px'"
+              [fontWeight]="700"
+              [gradient]="'#001115, #033294'"
+              (buttonClick)="openDialog('restrictions')">
+              <span>Disable sign-in</span>
+            </app-gradient-button>
+          </div>
+
+          <div class="p" #eventTarget  [style.opacity]="consentMenuOpened ? '.5' : '1'">
             <app-gradient-button
               [disabled]="!selectedUsers.length"
               [cursor]="'pointer'"
               [minHeight]="'32px'"
               [width]="'280px'"
               [fontSize]="'14px'"
-              [fontWeight]="400"
+              [fontWeight]="700"
               [gradient]="'#DA2370, #FB434A'"
               [hoverColor]="'#DA2370'"
               (buttonClick)="openDialog('remove', eventTarget)">
-              <span>Remove user from this profile</span>
+              <span>Delete Account & Data</span>
             </app-gradient-button>
           </div>
         </div>

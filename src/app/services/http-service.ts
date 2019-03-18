@@ -213,7 +213,7 @@ export class HttpService {
         return throwError(new LoginServerError('No login server!'));
       }
 
-      // console.log(`Chosen server: ${server.name}`);
+      // console.log(`Chosen server: ${server.name}`, server);
 
       const config = new FormData();
 
@@ -226,6 +226,7 @@ export class HttpService {
 
       return this.http.post(makeUrl(server, 'o/token/'), config)
         .map((data: any) => {
+          // console.log('Auth data : ', data);
           // don't use TimeService for auth because auth is required for time service
           // to be useful
           data['expires'] = new Date(new Date() + data['expires_in']);

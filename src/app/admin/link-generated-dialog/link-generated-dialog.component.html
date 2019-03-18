@@ -3,7 +3,7 @@
     {{ name }}
   </div>
   <div class="main">
-    <app-gradient-button [minHeight]="'40px'" [width]="'120px'" [fontSize]="'14px'" (buttonClick)="downloadXlsxFile(); dialogRef.close()">
+    <app-gradient-button *ngIf="data.selectedReports" [minHeight]="'40px'" [width]="'120px'" [fontSize]="'14px'" (buttonClick)="downloadXlsxFile(); dialogRef.close()">
       <div class="link">
         <span>XLSX</span>
         <img [src]="'./assets/Download (White).svg' | resolveAsset" alt="External Link (White).png">

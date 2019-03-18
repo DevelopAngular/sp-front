@@ -9,7 +9,7 @@
       <img [src]="'./assets/Back Button (Grey).png'" alt="Back Button (Grey).png" *ngIf="!permissionsFormEditState">
       <span *ngIf="permissionsFormEditState">Cancel</span>
     </div>
-    <span>{{profile['Name']}}</span>
+    <span>{{headerText}}</span>
     <div *ngIf="permissionsFormEditState" class="save-button">
       <app-gradient-button
         [minHeight]="'27px'"
@@ -23,7 +23,32 @@
       </app-gradient-button>
     </div>
   </div>
-  <div class="content-scrollable-box">
+
+  <div class="content-scrollable-box" *ngIf="data.bulkPermissions">
+    <div class="card-body">
+
+      <div class="card-body_section" *ngIf="data.role === '_profile_teacher' || data.role === '_profile_admin'">
+        <div class="section-content">
+          <div [style.width]="'100%'">
+            <div class="section-header">Bulk Permissions</div>
+            <div *ngFor="let control of controlsIteratable">
+              <app-toggle-input
+                [form]="permissionsForm"
+                [delimiter]="false"
+                [controlName]="control.controlName"
+                [controlLabel]="control.controlLabel"
+                [controlSize]="'small'"
+              ></app-toggle-input>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <div class="content-scrollable-box" *ngIf="!data.bulkPermissions">
 
     <div class="card-body">
       <div class="card-body_section">

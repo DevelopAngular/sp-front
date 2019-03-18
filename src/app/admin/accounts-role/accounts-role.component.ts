@@ -294,8 +294,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             restrictions: this.profilePermissions,
             alignSelf: true,
             header: `Are you sure you want to remove this user${this.selectedUsers.length > 1 ? 's' : ''}?`,
-            options: [{display: 'Confirm Remove', color: '#FFFFFF', buttonColor: '#DA2370, #FB434A', action: 'confirm'}],
-            optionsView: 'button',
+            // options: [{display: 'Confirm Remove', color: '#FFFFFF', buttonColor: '#DA2370, #FB434A', action: 'confirm'}],
+            options: [{display: 'Confirm Delete', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'confirm'}],
+            // optionsView: 'button',
             trigger: new ElementRef(eventTarget)
           },
           panelClass: 'consent-dialog-container',
@@ -381,8 +382,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   }
 
-  showProfileCard(evt) {
+  showProfileCard(evt, bulk: boolean = false) {
     console.log(evt);
+
+    if (this.selectedUsers.length && !bulk) {
+      return false;
+    }
 
     const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
       panelClass: 'overlay-dialog',
@@ -391,6 +396,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       height: '474px',
       data: {
         profile: evt,
+        bulkPermissions: bulk && this.selectedUsers.length ? this.selectedUsers.map(user => user.id) : null,
         role: this.role,
         permissions: this.profilePermissions
       }
@@ -400,6 +406,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((userListReloadTrigger: any) => {
       console.log(userListReloadTrigger);
       if (userListReloadTrigger) {
+        this.selectedUsers = [];
         this.getUserList();
       }
     });

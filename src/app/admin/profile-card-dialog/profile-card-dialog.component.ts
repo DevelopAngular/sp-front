@@ -28,6 +28,7 @@ export class ProfileCardDialogComponent implements OnInit {
   public permissionsChanged: boolean = false;
   public testControll = new FormControl(true);
   public disabledState: boolean = false;
+  public headerText: string = '';
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -38,8 +39,18 @@ export class ProfileCardDialogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+
     console.log(this.data);
+
     this.profile = this.data.profile;
+
+    if (this.data.bulkPermissions) {
+      this.headerText = this.data.bulkPermissions
+                        ?
+                        this.data.bulkPermissions.length + ` user${this.data.bulkPermissions.length > 1 ? 's' : ''} selected`
+                        :
+                        this.profile['Name'];
+    }
 
     if (this.data.role === '_profile_teacher') {
         this.dataService.getLocationsWithTeacher(this.profile._originalUserProfile)
@@ -66,14 +77,15 @@ export class ProfileCardDialogComponent implements OnInit {
       });
     }
 
-    this.testGroup.valueChanges.subscribe((v) => {
-      console.log('test Group ==>', v);
-      this.permissionsChanged = true;
-    });
+    // this.testGroup.valueChanges.subscribe((v) => {
+    //   console.log('test Group ==>', v);
+    //   this.permissionsChanged = true;
+    // });
     this.dialogRef.backdropClick().subscribe(() => {
       this.back();
     });
   }
+
   goToSearch() {
     this.dialogRef.close();
     this.router.navigate(['admin/search'], {
@@ -101,8 +113,20 @@ export class ProfileCardDialogComponent implements OnInit {
   }
 
   updateProfilePermissions() {
-    // return zip(restrictionsFor.map((user) => this.userService.createUserRoles(user['id'], this.form.value)));
+
     this.disabledState = true;
+
+    if ( this.data.bulkPermissions) {
+      zip(...this.data.bulkPermissions.map((userId) => this.userService.createUserRoles(userId, this.permissionsForm.value)))
+        .subscribe((result) => {
+          console.log(result);
+          this.disabledState = false;
+          this.permissionsChanged = true;
+          this.permissionsFormEditState = false;
+        });
+
+    }
+
     this.userService
       .createUserRoles(this.profile.id, this.permissionsForm.value)
       .subscribe((result) => {
