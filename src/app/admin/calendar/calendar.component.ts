@@ -21,7 +21,7 @@ export class CalendarComponent implements OnInit {
     }
 
   constructor(
-      @Inject(MAT_DIALOG_DATA) public data: any[],
+  @Inject(MAT_DIALOG_DATA) public data: any[],
       private _matDialogRef: MatDialogRef<CalendarComponent>,
       private timeService: TimeService,
   ) {
