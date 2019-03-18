@@ -263,7 +263,7 @@ export class PassesComponent implements OnInit {
     }).publishReplay(1).refCount();
 
     this.isActiveRequest$ = this.currentRequest$.map(request => {
-      return request !== null && !request.request_time && request.status === 'pending';
+      return request !== null && !request.request_time;
     });
 
     this.dataService.currentUser.switchMap(user =>
