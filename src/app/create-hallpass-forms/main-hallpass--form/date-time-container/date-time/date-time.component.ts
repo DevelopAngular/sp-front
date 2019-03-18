@@ -19,18 +19,11 @@ export class DateTimeComponent implements OnInit {
   @Output() result: EventEmitter<any> = new EventEmitter<any>();
   @Output() backButton: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
-  startTime: Date = undefined;
-  requestTime: Date = undefined;
+  startTime: Date = this.timeService.nowDate();
+  requestTime: Date = this.timeService.nowDate();
   declinable: FormControl = new FormControl(true);
 
   constructor(private timeService: TimeService, private formService: CreateFormService) {
-    const now = this.timeService.nowDate();
-    if (this.startTime === undefined) {
-      this.startTime = now;
-    }
-    if (this.requestTime === undefined) {
-      this.requestTime = now;
-    }
   }
 
   ngOnInit() {

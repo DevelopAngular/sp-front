@@ -2,8 +2,12 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandler, Injectable, Provider } from '@angular/core';
 import * as Sentry from '@sentry/browser';
 import { BrowserOptions } from '@sentry/browser';
+import { FirebaseError } from 'firebase';
 import { BUILD_INFO_REAL, RELEASE_NAME } from '../build-info';
 import { environment } from '../environments/environment';
+
+
+const FIREBASE_ERROR_IGNORE_LIST = ['messaging/unsupported-browser'];
 
 
 export function getErrorHandler(): ErrorHandler {
@@ -66,6 +70,15 @@ export class SentryErrorHandler implements ErrorHandler {
       });
 
       return;
+    }
+
+    if (error.name === 'FirebaseError') {
+      const err = error as FirebaseError;
+      if (FIREBASE_ERROR_IGNORE_LIST.indexOf(err.code) >= 0) {
+        console.log('[error-handler] Ignoring Firebase error: ' + err.code);
+        console.log('[error-handler] Error Message: ' + err.message);
+        return;
+      }
     }
 
     Sentry.captureException(error.originalError || error);
