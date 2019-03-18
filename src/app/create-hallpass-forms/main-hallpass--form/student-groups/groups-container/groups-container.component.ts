@@ -92,6 +92,7 @@ export class GroupsContainerComponent implements OnInit {
         case 1:
             if (evt.fromState === 3 && evt.data.selectedGroup) {
                 this.FORM_STATE.data.selectedGroup = this.groups.find(group => group.id === evt.data.selectedGroup.id);
+                this.FORM_STATE.data.selectedStudents = evt.data.selectedStudents;
             } else {
                 this.selectedStudents = evt.data.selectedStudents;
             }

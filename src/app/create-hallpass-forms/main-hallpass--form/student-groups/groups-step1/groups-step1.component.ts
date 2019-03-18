@@ -33,9 +33,8 @@ export class GroupsStep1Component implements OnInit {
     this.isEmptyGroups$ = timer(500).pipe(switchMap(() => {
       return of (!this.groups || (this.groups && !this.groups.length));
     }));
-
     if (this.selectedGroup) {
-      this.selectedStudents = this.selectedGroup.users;
+        this.selectedStudents = this.formState.data.selectedStudents;
     }
 
   }
@@ -91,13 +90,12 @@ export class GroupsStep1Component implements OnInit {
   editGroup(group) {
 
     console.log(' GROUP ==================>', group);
-
     this.createGroupEmit.emit({
       step: 2,
       state: 3,
       fromState: 1,
       data: {
-        selectedGroup: group
+        selectedGroup: group,
       }
     });
   }

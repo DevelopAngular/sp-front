@@ -80,14 +80,12 @@ export class GroupsStep2Component implements OnInit {
         console.log(students);
         this.uploadedStudents = students;
         this.selectedStudents = this.selectedStudents.concat(students.existingStudents);
-        console.log(this.selectedStudents);
 
       });
 
   }
 
   nextStep() {
-
     const dto = this.form.value;
           dto.users = dto.users.map(user => user.id);
     this.userService.createStudentGroup(dto)

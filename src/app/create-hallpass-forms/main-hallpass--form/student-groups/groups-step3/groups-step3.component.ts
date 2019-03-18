@@ -96,8 +96,6 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
         this.editGroup.users = this.editGroup.users.concat(students.existingStudents);
         this.updateUsers(this.editGroup.users);
 
-        console.log(this.editGroup.users);
-
       });
 
   }
@@ -143,12 +141,13 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
   back(updatedGroup: StudentList) {
     this.form.get('title').reset();
     this.form.get('users').reset();
-    this.stateChangeEvent.emit({
+      this.stateChangeEvent.emit({
       step: 2,
       state: 1,
       fromState: 3,
       data: {
-        selectedGroup: updatedGroup
+        selectedGroup: updatedGroup,
+        selectedStudents: this.editGroup.users
       }
     });
   }
