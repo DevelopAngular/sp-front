@@ -32,7 +32,11 @@
     <div class="admin-view-wrapper global-opacity-icons" (click)="router.navigateByUrl('/select-profile')"  *ngIf="showSwitchButton">
       <img class="admin-view" [src]="'./assets/Switch Account (Blue).png' | resolveAsset" alt="">
     </div>
-    <div (click)="showOptions($event)" class="options-wrapper global-opacity-icons" [style.background-color]="(optionsOpen?'#E4EBFF':'transparent')">
+    <div
+      (click)="showOptions($event)"
+      class="options-wrapper global-opacity-icons"
+      [style.background-color]="(isOpenSettings ? '#E4EBFF' : 'transparent')"
+    >
       <img class="options" [src]="'./assets/Gear (Blue).png' | resolveAsset">
     </div>
   </div>

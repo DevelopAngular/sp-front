@@ -37,6 +37,8 @@ export class NavbarComponent implements OnInit {
   tab: string = 'passes';
   inboxVisibility: boolean = true;
 
+  isOpenSettings: boolean;
+
   navbarEnabled = false;
 
   buttons = [
@@ -140,6 +142,7 @@ export class NavbarComponent implements OnInit {
   }
 
   showOptions(event) {
+    this.isOpenSettings = true;
     const target = new ElementRef(event.currentTarget);
     const settingRef = this.dialog.open(SettingsComponent, {
         panelClass: 'calendar-dialog-container',
@@ -147,14 +150,13 @@ export class NavbarComponent implements OnInit {
         data: { 'trigger': target }
     });
 
+    settingRef.beforeClose().subscribe(() => {
+        this.isOpenSettings = false;
+    });
+
     settingRef.afterClosed().subscribe(action => {
       this.settingsAction(action);
     });
-    // if(this.optionsOpen){
-    //   this.updateTab('passes');
-    // } else{
-    //   this.updateTab('settings');
-    // }
   }
 
   settingsAction(action: string) {
@@ -192,6 +194,8 @@ export class NavbarComponent implements OnInit {
           }
       } else if (action === 'feedback') {
           window.location.href = 'mailto:feedback@smartpass.app';
+      } else if (action === 'privacy') {
+          window.open('https://www.smartpass.app/legal');
       }
   }
 

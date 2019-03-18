@@ -6,9 +6,16 @@
   <div class="title">Settings</div>
   <div class="settings-content">
     <div class="setting" *ngFor="let setting of settings; let i = index" (click)="dialogRef.close(setting.action)">
-      <div class="content" (mouseenter)="hovered = true" (mouseleave)="hovered = false">
-        <img class="setting-icon" [src]="setting.icon | resolveAsset" alt="SET">
-        <div class="setting-title"> {{setting.title }} </div>
+      <div class="content"
+           (mouseenter)="onHover(setting.color_profile)"
+           (mouseleave)="hovered = false"
+           [style.background]="hovered && hoveredColor === setting.color_profile ? 'radial-gradient(circle at 73% 71%,' + setting.color_profile + ')' : 'none'"
+      >
+        <img class="setting-icon"
+             [src]="hovered && hoveredColor === setting.color_profile ? setting.hover_icon : setting.icon | resolveAsset" alt="SET">
+        <div class="setting-title"
+             [style.color]="hovered && hoveredColor === setting.color_profile ? '#EFEFEF' : '#7F879D'"
+        > {{setting.title }} </div>
       </div>
       <mat-divider *ngIf="i === 2 || i === 5"></mat-divider>
     </div>
@@ -17,7 +24,7 @@
     <div class="sign-out" (click)="dialogRef.close('signout')">Sign out</div>
     <div class="options">
       <span class="version">Version 1.2</span>
-      <span class="privacy">Privacy & Terms</span>
+      <span class="privacy" (click)="dialogRef.close('privacy')">Privacy & Terms</span>
     </div>
   </div>
 </div>

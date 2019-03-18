@@ -40,10 +40,6 @@
                 align-items: center;
                 padding: 10px 0 10px 0;
                 cursor: pointer;
-
-                &:hover {
-                    //background-color: #00FF00;
-                }
             }
             .setting-icon {
                 width: 20px;
@@ -52,7 +48,6 @@
             }
             .setting-title {
                 font-size: 15px;
-                color: #7F879D;
                 margin-left: 15px;
             }
         }
@@ -73,7 +68,7 @@
 
             &:hover {
                 background-image: radial-gradient(circle at 73% 71%, #606981, #ACB4C1);
-                color: white;
+                color: #EFEFEF;
             }
         }
         .options {
@@ -83,6 +78,7 @@
             justify-content: center;
             .privacy {
                 margin-left: 10px;
+                cursor: pointer;
             }
         }
     }
