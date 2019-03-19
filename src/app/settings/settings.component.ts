@@ -30,6 +30,7 @@ export class SettingsComponent implements OnInit {
   user: User;
   isStaff: boolean;
 
+  hoveredPofile: boolean;
   hovered: boolean;
   hoveredColor: string;
 

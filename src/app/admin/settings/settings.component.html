@@ -1,6 +1,18 @@
 <div class="settings-wrapper">
     <div class="title">Settings</div>
     <div class="settings-content">
+      <div class="profile-switch" *ngIf="true"
+           (mouseenter)="hoveredProfile = true"
+           (mouseleave)="hoveredProfile = false"
+           [style.background-color]="hoveredProfile ? 'rgb(228, 235, 255)' : 'white'"
+      >
+        <div class="option">
+          <img class="switch-icon" [src]="'./assets/Profile Switch (' + (hoveredProfile ? 'Navy' : 'Blue-Gray') + ').svg'| resolveAsset">
+          <div class="option-title" [style.color]="hoveredProfile ? '#1F195E' : '#7F879D'">Switch to Teacher View</div>
+          <img class="arrow-icon" [src]="'./assets/Chevron Right (' + (hoveredProfile ? 'Navy' : 'Blue-Gray') + ').svg' | resolveAsset">
+        </div>
+        <mat-divider></mat-divider>
+      </div>
       <div class="links">
         <div class="link"
              *ngFor="let setting of settings"

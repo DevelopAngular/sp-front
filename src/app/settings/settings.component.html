@@ -5,6 +5,18 @@
   </div>
   <div class="title">Settings</div>
   <div class="settings-content">
+    <div class="profile-switch"
+         (mouseenter)="hoveredPofile = true"
+         (mouseleave)="hoveredPofile = false"
+         [style.background-color]="hoveredPofile ? 'rgb(228, 235, 255)' : 'white'"
+    >
+      <div class="option">
+        <img class="switch-icon" [src]="'./assets/Profile Switch (' + (hoveredPofile ? 'Navy' : 'Blue-Gray') + ').svg'| resolveAsset">
+        <div class="option-title" [style.color]="hoveredPofile ? '#1F195E' : '#7F879D'">Switch to Admin View</div>
+        <img class="arrow-icon" [src]="'./assets/Chevron Right (' + (hoveredPofile ? 'Navy' : 'Blue-Gray') + ').svg' | resolveAsset">
+      </div>
+      <mat-divider></mat-divider>
+    </div>
     <div class="setting" *ngFor="let setting of settings; let i = index" (click)="dialogRef.close(setting.action)">
       <div class="content"
            (mouseenter)="onHover(setting.color_profile)"

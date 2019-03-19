@@ -11,6 +11,10 @@ import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/materia
 export class SettingsComponent implements OnInit {
 
     triggerElementRef: ElementRef;
+
+    isSwitchOption: boolean;
+
+    hoveredProfile: boolean;
     hovered: boolean;
     hoveredColor: string;
 
@@ -47,13 +51,16 @@ export class SettingsComponent implements OnInit {
 
     ngOnInit() {
         this.triggerElementRef = this.data['trigger'];
+        this.isSwitchOption = this.data['isSwitch'];
         this.updateCalendarPosition();
     }
 
     updateCalendarPosition() {
         const matDialogConfig: MatDialogConfig = new MatDialogConfig();
         const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
-        matDialogConfig.position = {left: `${rect.left - 170}px`, top: `${rect.top - 285}px`};
+        //const top = this.isSwitchOption ? 325 : 285;
+        console.log('TTTTTTTTTT =====>>>', this.isSwitchOption);
+        matDialogConfig.position = {left: `${rect.left - 170}px`, top: `${rect.top - 325}px`};
 
         this.dialogRef.updatePosition(matDialogConfig.position);
     }

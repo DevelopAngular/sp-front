@@ -112,7 +112,7 @@ export class NavComponent implements OnInit {
     const settingsRef = this.dialog.open(SettingsComponent, {
       panelClass: 'calendar-dialog-container',
       backdropClass: 'invis-backdrop',
-      data: { 'trigger': target }
+      data: { 'trigger': target, 'isSwitch': this.showButton }
     });
 
     settingsRef.beforeClose().subscribe(() => {

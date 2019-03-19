@@ -1,6 +1,6 @@
 .settings-wrapper {
   width: 244px;
-  height: 265px;
+  //height: 265px;
   position: relative;
 
   .title {
@@ -11,6 +11,30 @@
   }
 
   .settings-content {
+
+    .profile-switch {
+      .option {
+        display: flex;
+        align-items: center;
+        padding: 10px 0 10px 30px;
+        cursor: pointer;
+
+        .option-title {
+          margin: 0 10px 0 10px;
+          font-size: 15px;
+        }
+
+        .switch-icon {
+          width: 20px;
+          height: 20px;
+        }
+        .arrow-icon {
+          width: 15px;
+          height: 15px;
+        }
+      }
+    }
+
     .links {
       height: 105px;
       display: flex;
@@ -40,7 +64,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 65px;
+    height: 80px;
 
     .sign-out {
       padding: 10px 0 10px 30px;
@@ -59,6 +83,7 @@
       justify-content: center;
       color: #7F879D;
       font-size: 12px;
+      margin-bottom: 12px;
 
       .privacy {
         margin-left: 10px;
