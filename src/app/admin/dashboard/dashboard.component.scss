@@ -4,13 +4,25 @@
   padding: 25px;
   box-sizing: border-box;
   display: flex;
+  justify-content: flex-start;
   width: 100%;
-  background-color: #F8FAFF;
+  //background-color: #F8FAFF;
+  background-color: #a8a8a8;
   .dashboard-wrapper{
     display: flex;
+    -ms-flex: 1 1 auto;
+    -webkit-flex: 1 1 auto;
+    flex: 1 1 auto;
+    //flex-grow: 1;
+    //
     //flex-wrap: wrap;
     //max-height: 80vh;
     //flex-direction: column;
+    .left,.right {
+      //min-width: 0;
+      //min-height: 0;
+      //overflow: hidden;
+    }
   }
 
 }
@@ -30,38 +42,35 @@
 //}
 
 
-.floating{
-  float: left;
-}
-  .card{
-    box-sizing: border-box;
-    padding: 28px 38px 37px 32px ;
-    border-radius: 10px;
-    font-size: 17px;
-    color: #1F195E;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, .2);
-    background-color: #FFFFFF;
-    &_header{
-      font-size: 24px;
-      color: #3D396B;
-      font-weight: 900;
-    }
-    &_title{
-      font-size: 14px;
+.card{
+  box-sizing: border-box;
+  padding: 28px 38px 37px 32px ;
+  border-radius: 10px;
+  font-size: 17px;
+  color: #1F195E;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, .2);
+  background-color: #FFFFFF;
+  &_header{
+    font-size: 24px;
+    color: #3D396B;
+    font-weight: 900;
+  }
+  &_title{
+    font-size: 14px;
+    color: #7F879D;
+  }
+  &__role{
+    position: relative;
+    width: 460px;
+    margin: 15px;
+    .label-icon{
+      position: absolute;
+      top: 12px;
+      right: 14px;
       color: #7F879D;
     }
-    &__role{
-      position: relative;
-      width: 460px;
-      margin: 15px;
-      .label-icon{
-        position: absolute;
-        top: 12px;
-        right: 14px;
-        color: #7F879D;
-      }
-    }
   }
+}
 
 .calendar-icon-container {
   width: 45px;
