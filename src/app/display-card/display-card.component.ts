@@ -17,9 +17,9 @@ export class DisplayCardComponent implements OnInit {
   @Input() iconSize: string = '20px';
   @Input() fontSize: string;
   @Input() righticon: string;
-  @Input() subtitle: string
+  @Input() subtitle: string;
   @Input() subtitle_fontSize: string;
-  @Input() righttext:string
+  @Input() righttext:string;
 
 
   constructor(private navbarData: NavbarDataService) { }
