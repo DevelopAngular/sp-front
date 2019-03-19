@@ -10,7 +10,8 @@
     position: relative;
 
     .back-button {
-      width: 24px;
+      width: 28px;
+      height: 28px;
       cursor: pointer;
       position: absolute;
       left: 15px;
@@ -18,8 +19,15 @@
     }
 
     .header-title {
+      display: flex;
       font-size: 17px;
       color: white;
+
+      .header-icon {
+        width: 21px;
+        height: 21px;
+        margin-right: 12px;
+      }
     }
   }
 

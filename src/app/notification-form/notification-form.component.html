@@ -1,7 +1,10 @@
 <div class="notif-wrapper">
   <div class="notif-header" [style.background-image]="'radial-gradient(circle at 73% 71%, #DA2370,#FB434A)'">
     <img class="back-button" [src]="'./assets/Back Button (Transparent).png' | resolveAsset" alt="Notification" (click)="dialogRef.close()">
-    <div class="header-title">Notifications</div>
+    <div class="header-title">
+        <img class="header-icon" [src]="'./assets/Notifications (White).svg' | resolveAsset">
+        Notifications
+    </div>
   </div>
   <div class="notif-content">
     <form [formGroup]="notifForm">
