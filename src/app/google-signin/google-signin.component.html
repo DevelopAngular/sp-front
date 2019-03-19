@@ -35,6 +35,7 @@
     [width]="'260px'"
     [placeholder]="'Username'"
     [type]="'text'"
+    (keyup.enter)="demoLogin()"
     [fieldIcon]="'./assets/User Login (Grey).png'"
     [style.margin-bottom]="'15px'"
     (ontextupdate)="updateDemoUsername($event)">
@@ -44,12 +45,13 @@
     [width]="'260px'"
     [placeholder]="'Password'"
     [type]="'text'"
+    (keyup.enter)="demoLogin()"
     [fieldIcon]="'./assets/Lock (Grey).png'"
     [html5type]="'password'"
     [style.margin-bottom]="'15px'"
     (ontextupdate)="demoPassword = $event">
   </app-round-input>
-  <app-gradient-button
+  <app-gradient-button #button
     [style.margin-tom]="'15px'"
     [gradient]="'#FFFFFF,#FFFFFF'"
     [cursor]="'pointer'"
