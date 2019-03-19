@@ -1,6 +1,5 @@
 ﻿.InputWrapper {
   border-radius: 0.5rem;
-  position: relative;
 }
 
 .InputWrapper label{
@@ -8,23 +7,16 @@
   font-weight:bold;
 }
 
-//.InputWrapper img.ng-star-inserted {
-//  width: 26px;
-//  height: 26px;
-//  margin-left: 1rem;
-//  position: absolute;
-//  top: 35px;
-//  right: 1px;
-//}
-
-
-.success-icon {
-  width: 26px;
-  height: 26px;
-  margin-left: 1rem;
-  position: absolute;
-  top: 35px;
-  right: 1px;
+.input-container {
+  position: relative;
+  .success-icon {
+    width: 26px;
+    height: 26px;
+    position: absolute;
+    top: 8px;
+    bottom: 0;
+    right: 10px;
+  }
 }
 
 .support-icon {
@@ -35,17 +27,17 @@
 }
 
 .tooltip-container {
-  position: relative;
+  //position: relative;
   &__inline {
-    position: absolute;
-    top: 35px;
-    right: 1px;
-    .success-icon {
-      top: 0;
-      left: 0;
-      position: unset;
-      margin-left: 5px;
-    }
+    //position: absolute;
+    //top: 35px;
+    //right: 1px;
+    //.success-icon {
+    //  top: 0;
+    //  left: 0;
+    //  position: unset;
+    //  margin-left: 5px;
+    //}
     .success-icon:hover + .arrow-down-container {
       opacity: 1;
     }

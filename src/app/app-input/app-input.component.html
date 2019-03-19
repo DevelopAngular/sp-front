@@ -15,19 +15,20 @@
         </div>
       </div>
     </div>
-    <input #inp
-       [style.width]="width"
-       [style.text-align]="textAlign"
-       [style.padding]="padding + (textAlign ? ' 16px ' : ' 0px ') + padding + ' 16px'"
-       [maxlength]="maxLength"
-       [formControl]="controlName"
-       [type]="input_type"
-       [class]="input_class"
-       (focus)="updateFocus(inp); controlName.markAsUntouched()"
-       (click)="isFocus = true; updateFocus(inp)"
-       [placeholder]="(placeholder=='' ? '' : placeholder)"
-       [ngClass]="{clserrorInput: controlName.invalid && controlName.errors && controlName.touched }"
-        spellcheck="true"/>
+    <div class="input-container">
+      <input #inp
+             [style.width]="width"
+             [style.text-align]="textAlign"
+             [style.padding]="padding + (textAlign ? ' 16px ' : ' 0px ') + padding + ' 16px'"
+             [maxlength]="maxLength"
+             [formControl]="controlName"
+             [type]="input_type"
+             [class]="input_class"
+             (focus)="updateFocus(inp); controlName.markAsUntouched()"
+             (click)="isFocus = true; updateFocus(inp)"
+             [placeholder]="(placeholder=='' ? '' : placeholder)"
+             [ngClass]="{clserrorInput: controlName.invalid && controlName.errors && controlName.touched }"
+             spellcheck="true"/>
     <!--<img *ngIf='controlName.valid' class="success-icon" [src]="'./assets/Check (Blue).png' | resolveAsset"/>-->
     <div class="tooltip-container tooltip-container__inline "
          *ngIf='controlName.invalid
@@ -50,6 +51,7 @@
     </div>
     <img *ngIf='isErrorIcon && controlName.invalid && controlName.errors && controlName.touched && (!controlName.errors.room_name && !controlName.errors.folder_name && !controlName.errors.room_number)'
          class="success-icon" [src]="'./assets/Report (Red).png' | resolveAsset"/>
+    </div>
     <!--<p style="color: red" *ngIf="controlName.errors?.title">Bad name!</p>-->
     <!--<pre>{{controlName.errors | json}}</pre>-->
   </div>
