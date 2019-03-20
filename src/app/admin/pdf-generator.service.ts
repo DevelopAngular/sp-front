@@ -141,7 +141,6 @@ export class PdfGeneratorService {
     this
       .prepareBaseTemplate('p')
       .subscribe((res) => {
-
         const doc = res;
         this.drawDocHeader(doc, 'SmartPass Instructions');
         this.drawLogo(doc);
@@ -271,6 +270,7 @@ export class PdfGeneratorService {
     this
       .prepareBaseTemplate(orientation)
       .subscribe((res) => {
+        console.log(this.A4);
 
         const doc = res;
 
@@ -329,14 +329,17 @@ export class PdfGeneratorService {
             doc.setTextColor('#555555');
             doc.setFontStyle('normal');
 
+            const ctx = this;
+
             function __internalIteration(d) {
+              // const ctx = PdfGeneratorService.prototype;
               let breakLoop: boolean = false;
               let cell, n;
               if (d && d.length) {
                 for (let j = 0; j < d.length; j++) {
                   cell = d[j];
                   n = j;
-                  if ((table.top + table.lh * (n + 1)) < (this.A4.height - 50)) {
+                  if ((table.top + table.lh * (n + 1)) < (ctx.A4.height - 50)) {
                     _headers.forEach((header, i) => {
                       if (i === 1) {
                         doc.text(table.left + (table.sp * i) + 25, table.top + table.lh * (n + 1), cell[_headers[i]]);
@@ -344,13 +347,13 @@ export class PdfGeneratorService {
                         doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1), cell[_headers[i]]);
                       }
                     });
-                    doc.line(table.left, table.top + table.lh * (n + 1) + 8, this.A4.width - table.right, table.top + table.lh * (n + 1) + 8);
+                    doc.line(table.left, table.top + table.lh * (n + 1) + 8, ctx.A4.width - table.right, table.top + table.lh * (n + 1) + 8);
                   } else {
                     doc.addPage();
                     table.top = 29;
                     doc.setPage(++pageCounter);
-                    this.drawLogo(doc);
-                    this.drawLink(doc);
+                    ctx.drawLogo(doc);
+                    ctx.drawLink(doc);
                     breakLoop = true;
                     break;
                   }

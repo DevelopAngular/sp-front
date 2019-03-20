@@ -44,6 +44,7 @@ import { NotificationService } from './services/notification-service';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireMessagingModule } from '@angular/fire/messaging';
 import { environment } from '../environments/environment';
+// import { SafariScrollDirective } from './safari-scroll.directive'
 
 
 const appRoutes: Routes = [
@@ -108,7 +109,8 @@ const appRoutes: Routes = [
     SchoolToggleBarComponent,
     ItemListComponent,
     ItemCellComponent,
-    NextReleaseComponent
+    NextReleaseComponent,
+    // SafariScrollDirective
   ],
   entryComponents: [
     ConsentMenuComponent,

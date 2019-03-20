@@ -1,5 +1,4 @@
 import {Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
-// import { disableBodyScroll } from 'body-scroll-lock';
 import {fromEvent, interval, Subject, zip} from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { DataService } from '../../services/data-service';
@@ -52,62 +51,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // stepSize: 5,
   };
 
-  @HostListener('scroll', ['$event'])
-  onScroll(event) {
-    const keys = {37: 1, 38: 1, 39: 1, 40: 1};
-
-    function preventDefault(e) {
-      e = e || window.event;
-      if (e.preventDefault)
-        e.preventDefault();
-      e.returnValue = false;
-    }
-
-    function preventDefaultForScrollKeys(e) {
-      if (keys[e.keyCode]) {
-        preventDefault(e);
-        return false;
-      }
-    }
-
-    function disableScroll() {
-      if (window.addEventListener) // older FF
-        window.addEventListener('DOMMouseScroll', preventDefault, false);
-      window.onwheel = preventDefault; // modern standard
-      window.onmousewheel = document.onmousewheel = preventDefault; // older browsers, IE
-      window.ontouchmove  = preventDefault; // mobile
-      document.onkeydown  = preventDefaultForScrollKeys;
-    }
-
-    function enableScroll() {
-      if (window.removeEventListener)
-        window.removeEventListener('DOMMouseScroll', preventDefault, false);
-      window.onmousewheel = document.onmousewheel = null;
-      window.onwheel = null;
-      window.ontouchmove = null;
-      document.onkeydown = null;
-    }
-
-    console.log(event.target.scrollLeft, event.target.clientWidth, event.target.scrollWidth, 'works');
-    if (event.target.scrollLeft <= 1) {
-      event.target.scrollLeft = 0;
-
-      disableScroll();
-      setTimeout(() => {
-        enableScroll();
-      }, 250);
-    }
-    if (event.target.scrollLeft + event.target.clientWidth >= event.target.scrollWidth - 1) {
-      event.target.scrollLeft = event.target.scrollLeft + event.target.clientWidth;
-
-      disableScroll();
-      setTimeout(() => {
-        enableScroll();
-      }, 250);
-    }
-  }
-
-
   constructor(
     private http: HttpService,
     private adminService: AdminService,
@@ -120,29 +63,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private timeService: TimeService,
     private host: ElementRef
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
-    // disableBodyScroll(this.elRef.nativeElement);
     // const _devices = this.draggableContainer.nativeElement.childNodes;
     // this.devices = Array.from(Array(_devices.length).keys()).map(index => _devices[index]);
 
     // console.log(this.draggableContainer.nativeElement.childNodes);
 
-    fromEvent(window, 'resize').subscribe((event) => {
-      // console.log(event);
-      const dashboard = this.host.nativeElement as HTMLElement;
-
-      console.log(dashboard.scrollLeft, dashboard.clientWidth, dashboard.scrollWidth, 'works');
-      // dashboard.scrollLeft = dashboard.scrollWidth - dashboard.clientWidth;
-
-      // (this.host.nativeElement as HTMLElement).scrollLeft = 0;
-      if (dashboard.scrollLeft + dashboard.clientWidth >= dashboard.scrollWidth) {
-        dashboard.scrollLeft = dashboard.scrollWidth - dashboard.clientWidth;
-        console.log(dashboard.scrollLeft);
-      }
-    });
 
     this.drawChartXaxis();
 
