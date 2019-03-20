@@ -103,7 +103,6 @@ export class PollingService {
               data: event,
             });
           });
-
           // we can't use .onClose() because onClose is triggered whenever the internal connection closes
           // even if a reconnect will be attempted.
           ws.getDataStream().subscribe(() => null, () => null, () => {

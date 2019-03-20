@@ -1,17 +1,29 @@
-import {AfterViewInit, Component, NgZone, OnInit} from '@angular/core';
-import { Location } from '@angular/common';
+import {AfterViewInit, Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import { GoogleLoginService } from './services/google-login.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {delay, filter, map, mergeMap, timeout} from 'rxjs/operators';
+import {
+    auditTime, debounceTime,
+    delay,
+    distinctUntilChanged,
+    filter,
+    last,
+    map,
+    mergeMap,
+    publishLast, share,
+    take,
+    takeLast,
+    takeUntil,
+    throttleTime
+} from 'rxjs/operators';
 import {DeviceDetection} from './device-detection.helper';
-import {BehaviorSubject, empty, of} from 'rxjs';
+import {BehaviorSubject, Subject} from 'rxjs';
 import {HttpService} from './services/http-service';
 import {School} from './models/School';
 import {MatDialog} from '@angular/material';
-import {NextReleaseComponent} from './next-release/next-release.component';
 import {UserService} from './services/user.service';
-import {StorageService} from './services/storage.service';
 import {AdminService} from './services/admin.service';
+import {ToastConnectionComponent} from './toast-connection/toast-connection.component';
+import {WebConnectionService} from './services/web-connection.service';
 
 /**
  * @title Autocomplete overview
@@ -22,7 +34,7 @@ import {AdminService} from './services/admin.service';
   styleUrls: ['./app.component.scss']
 })
 
-export class AppComponent implements OnInit, AfterViewInit {
+export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public isAuthenticated = false;
   public hideScroll: boolean = false;
@@ -30,6 +42,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   public showUI: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public schools: School[] = [];
   // public schoolIdSubject: BehaviorSubject<School>;
+
+  private subscriber$ = new Subject();
 
   constructor(
     public loginService: GoogleLoginService,
@@ -39,7 +53,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     private _zone: NgZone,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private storage: StorageService
+    private webConnection: WebConnectionService,
+    private dialog: MatDialog,
   ) {
     // this.schoolIdSubject = this.http.schoolIdSubject;
   }
@@ -52,7 +67,17 @@ export class AppComponent implements OnInit, AfterViewInit {
             document.head.appendChild(link);
     }
 
-    this.loginService.isAuthenticated$.subscribe(t => {
+    this.webConnection.checkConnection().pipe(takeUntil(this.subscriber$),
+        filter(res => !res))
+        .subscribe(() => {
+            this.dialog.open(ToastConnectionComponent, {
+              panelClass: 'toasr',
+              backdropClass: 'invis-backgrop'
+            });
+    });
+
+    this.loginService.isAuthenticated$.pipe(takeUntil(this.subscriber$))
+        .subscribe(t => {
 
       // console.log('Auth response ===>', t);
       this._zone.run(() => {
@@ -61,7 +86,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       });
     });
 
-    this.http.schools$.subscribe(schools => {
+    this.http.schools$.pipe(takeUntil(this.subscriber$))
+        .subscribe(schools => {
       this.schools = schools;
     });
 
@@ -79,13 +105,15 @@ export class AppComponent implements OnInit, AfterViewInit {
     //   });
     // ============== SPA-407 ===================> End
 
-    this.http.currentSchool$.subscribe((value => {
+    this.http.currentSchool$.pipe(takeUntil(this.subscriber$))
+        .subscribe((value => {
       if (!value) {
         this.schools = [];
       }
     }));
     this.router.events
       .pipe(
+        takeUntil(this.subscriber$),
         filter(event => event instanceof NavigationEnd),
         map(() => this.activatedRoute),
         map((route) => {
@@ -107,6 +135,12 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.hideScroll = data.hideScroll;
       });
   }
+
+  ngOnDestroy() {
+    this.subscriber$.next(null);
+    this.subscriber$.complete();
+  }
+
   ngAfterViewInit() {
     // setTimeout(() => {
     //   this.matDialog.open(NextReleaseComponent, {
@@ -114,5 +148,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     //   });
     // }, 1000);
   }
+
 
 }

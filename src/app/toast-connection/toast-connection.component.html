@@ -1,0 +1,4 @@
+<div class="wrapper" [style.background-color]="isConnect ? '#00B476' : '#E32C66'">
+  <div class="title" *ngIf="isConnect">Connected</div>
+  <div class="title" *ngIf="!isConnect">Offline</div>
+</div>
