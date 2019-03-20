@@ -147,7 +147,7 @@ export class NavbarComponent implements OnInit {
     const settingRef = this.dialog.open(SettingsComponent, {
         panelClass: 'calendar-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: { 'trigger': target }
+        data: { 'trigger': target, 'isSwitch': this.showSwitchButton }
     });
 
     settingRef.beforeClose().subscribe(() => {
@@ -164,8 +164,6 @@ export class NavbarComponent implements OnInit {
           this.router.navigate(['sign-out']);
       } else if (action === 'favorite') {
           const favRef = this.dialog.open(FavoriteFormComponent, {
-              // width: '750px',
-              // height: '365px',
               panelClass: 'form-dialog-container',
               backdropClass: 'custom-backdrop',
           });
@@ -182,6 +180,8 @@ export class NavbarComponent implements OnInit {
           });
       } else if (action === 'intro') {
           this.router.navigate(['main/intro']);
+      } else if (action === 'switch') {
+          this.router.navigate(['admin']);
       } else if (action === 'team') {
           window.open('https://smartpass.app/team.html');
       } else if (action === 'about') {

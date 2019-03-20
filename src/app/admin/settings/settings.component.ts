@@ -58,9 +58,9 @@ export class SettingsComponent implements OnInit {
     updateCalendarPosition() {
         const matDialogConfig: MatDialogConfig = new MatDialogConfig();
         const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
-        //const top = this.isSwitchOption ? 325 : 285;
+        const top = this.isSwitchOption ? 325 : 285;
         console.log('TTTTTTTTTT =====>>>', this.isSwitchOption);
-        matDialogConfig.position = {left: `${rect.left - 170}px`, top: `${rect.top - 325}px`};
+        matDialogConfig.position = {left: `${rect.left - 170}px`, top: `${rect.top - top}px`};
 
         this.dialogRef.updatePosition(matDialogConfig.position);
     }
@@ -69,17 +69,4 @@ export class SettingsComponent implements OnInit {
         this.hovered = true;
         this.hoveredColor = color;
     }
-
-    // settingsAction(action: string) {
-    //     if (action === 'signout') {
-    //         this.router.navigate(['sign-out']);
-    //     } else if (action === 'about') {
-    //         window.open('https://smartpass.app/about');
-    //     } else if (action === 'feedback') {
-    //         window.open('https://www.smartpass.app/feedback');
-    //     } else if (action === 'support') {
-    //         window.open('https://www.smartpass.app/support');
-    //     }
-    //
-    // }
 }

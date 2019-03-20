@@ -1,14 +1,9 @@
-import {Component, ElementRef, Inject, NgZone, OnInit, Renderer2, ViewChild} from "@angular/core";
-import {MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef} from "@angular/material";
+import { Component, ElementRef, Inject, NgZone, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material';
 import { Router } from '@angular/router';
 import { DataService } from '../services/data-service';
-import { FavoriteFormComponent } from '../favorite-form/favorite-form.component';
 import { LoadingService } from '../services/loading.service';
-import { ColorProfile } from '../models/ColorProfile';
 import { User } from '../models/User';
-import {switchMap} from 'rxjs/operators';
-import {LocationsService} from '../services/locations.service';
-import {NotificationFormComponent} from '../notification-form/notification-form.component';
 
 export interface Setting {
   color_profile: string;
@@ -30,12 +25,13 @@ export class SettingsComponent implements OnInit {
   user: User;
   isStaff: boolean;
 
+  isSwitch: boolean;
+
   hoveredPofile: boolean;
   hovered: boolean;
   hoveredColor: string;
 
   constructor(
-      public router: Router,
       public dialog: MatDialog,
       @Inject(MAT_DIALOG_DATA) public data: any[],
       public dialogRef: MatDialogRef<SettingsComponent>,
@@ -89,6 +85,8 @@ export class SettingsComponent implements OnInit {
 
   ngOnInit() {
     this.targetElementRef = this.data['trigger'];
+    this.isSwitch = this.data['isSwitch'];
+
     this.updateDialogPosition();
     this.dataService.currentUser
       .pipe(this.loadingService.watchFirst)
@@ -112,5 +110,4 @@ export class SettingsComponent implements OnInit {
 
       this.dialogRef.updatePosition(matDialogConfig.position);
   }
-
 }

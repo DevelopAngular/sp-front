@@ -6,9 +6,11 @@
   <div class="title">Settings</div>
   <div class="settings-content">
     <div class="profile-switch"
+         *ngIf="isSwitch"
          (mouseenter)="hoveredPofile = true"
          (mouseleave)="hoveredPofile = false"
          [style.background-color]="hoveredPofile ? 'rgb(228, 235, 255)' : 'white'"
+         (click)="dialogRef.close('switch')"
     >
       <div class="option">
         <img class="switch-icon" [src]="'./assets/Profile Switch (' + (hoveredPofile ? 'Navy' : 'Blue-Gray') + ').svg'| resolveAsset">

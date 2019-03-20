@@ -1,10 +1,11 @@
 <div class="settings-wrapper">
     <div class="title">Settings</div>
     <div class="settings-content">
-      <div class="profile-switch" *ngIf="true"
+      <div class="profile-switch" *ngIf="isSwitchOption"
            (mouseenter)="hoveredProfile = true"
            (mouseleave)="hoveredProfile = false"
            [style.background-color]="hoveredProfile ? 'rgb(228, 235, 255)' : 'white'"
+           (click)="dialogRef.close('switch')"
       >
         <div class="option">
           <img class="switch-icon" [src]="'./assets/Profile Switch (' + (hoveredProfile ? 'Navy' : 'Blue-Gray') + ').svg'| resolveAsset">

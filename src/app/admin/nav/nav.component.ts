@@ -122,6 +122,8 @@ export class NavComponent implements OnInit {
     settingsRef.afterClosed().subscribe(action => {
         if (action === 'signout') {
             this.router.navigate(['sign-out']);
+        } else if (action === 'switch') {
+          this.router.navigate(['main']);
         } else if (action === 'about') {
             window.open('https://smartpass.app/about');
         } else if (action === 'feedback') {
