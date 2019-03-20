@@ -1,27 +1,28 @@
-﻿<div class="hallmonitor-wrapper">
+﻿<div class="host" appSafariScroll>
+  <div class="hallmonitor-wrapper">
     <div class="left-content">
       <div class="hall-monitor-top">
-          <app-round-input
-             [type]="'text'"
-             [width]="'260px'"
-             [placeholder]="'Search'"
-             [closeIcon]="true"
-             (ontextupdate)="onSearch($event)">
+        <app-round-input
+          [type]="'text'"
+          [width]="'260px'"
+          [placeholder]="'Search'"
+          [closeIcon]="true"
+          (ontextupdate)="onSearch($event)">
 
-          </app-round-input>
+        </app-round-input>
       </div>
       <div class="hall-monitor-bottom">
         <app-pass-collection
-           [hasSort]="true"
-           [isActive]="true"
-           [showEmptyHeader]="true"
-           [forStaff]="true"
-           [forMonitor]="true"
-           [style.width]="'600px'"
-           [passProvider]="activePassProvider"
-           [title]="'Active Passes'"
-           [icon]="'./assets/Hallway (Blue).png'"
-           [columns]="4">
+          [hasSort]="true"
+          [isActive]="true"
+          [showEmptyHeader]="true"
+          [forStaff]="true"
+          [forMonitor]="true"
+          [style.width]="'600px'"
+          [passProvider]="activePassProvider"
+          [title]="'Active Passes'"
+          [icon]="'./assets/Hallway (Blue).png'"
+          [columns]="4">
         </app-pass-collection>
         <div *ngIf="!(hasPasses | async) && (passesLoaded | async)">
           <div class="empty-container" *ngIf="searchQuery$.value != ''">
@@ -77,6 +78,7 @@
       <div class="bottom-shadow" #bottomShadow></div>
     </div>
 
+  </div>
 </div>
 
 

@@ -1,96 +1,98 @@
-<div class="search-wrapper" *ngIf="inputPanelVisibility">
-  <div class="w-100">
+<div class="host" appSafariScroll>
+  <div class="search-wrapper" *ngIf="inputPanelVisibility">
+    <div class="w-100">
 
-    <div class="input-header" (click)="resetSearchState()">
-      <app-round-input [width]="'260px'" [labelText]="'By Student Name'" [type]="'multiuser'" [placeholder]="'Search Students'" [initialValue]="initialSearchStudentString" [selections]="selectedStudents" (onselectionupdate)="studentsEmit($event)"></app-round-input>
-      <app-round-input [width]="'260px'" [labelText]="'Date and Time'" [type]="'dates'" [placeholder]="'Search date & time range'" (ontextupdate)="dateEmit($event)"></app-round-input>
-      <app-round-input [width]="'260px'" [labelText]="'By Room Name'" [type]="'multilocation'" [placeholder]="'Search Rooms'" [initialValue]="initialSearchLocationString" [selections]="selectedRooms" (onselectionupdate)="roomEmit($event)" (ontoggleupdate)="roomSearchType=$event"></app-round-input>
-    </div>
-    <div class="content">
-      <div class="search-content-table" *ngIf="hasSearched">
-        <div class="search-header">
-          <div class="text-header">
-            {{sortParamsHeader}}
-          </div>
-          <div class="divider"></div>
-          <app-data-table [data]="tableData" *ngIf="tableData.length > 0 && !spinner" (selectedUsers)="selectedReport=$event" (selectedRow)="selectedPass($event)"></app-data-table>
-          <div class="nopass-text" *ngIf="tableData.length === 0 && !spinner">
-            There are no passes that match the search parameters!
-          </div>
-          <div class="spinner" *ngIf="spinner">
-            <div class="loading-theme"  style="display: flex; justify-content: center; align-items: center; margin-bottom: 25%">
-              <mat-spinner [color]="'accent'" [diameter]="'60'"></mat-spinner>
+      <div class="input-header" (click)="resetSearchState()">
+        <app-round-input [width]="'260px'" [labelText]="'By Student Name'" [type]="'multiuser'" [placeholder]="'Search Students'" [initialValue]="initialSearchStudentString" [selections]="selectedStudents" (onselectionupdate)="studentsEmit($event)"></app-round-input>
+        <app-round-input [width]="'260px'" [labelText]="'Date and Time'" [type]="'dates'" [placeholder]="'Search date & time range'" (ontextupdate)="dateEmit($event)"></app-round-input>
+        <app-round-input [width]="'260px'" [labelText]="'By Room Name'" [type]="'multilocation'" [placeholder]="'Search Rooms'" [initialValue]="initialSearchLocationString" [selections]="selectedRooms" (onselectionupdate)="roomEmit($event)" (ontoggleupdate)="roomSearchType=$event"></app-round-input>
+      </div>
+      <div class="content">
+        <div class="search-content-table" *ngIf="hasSearched">
+          <div class="search-header">
+            <div class="text-header">
+              {{sortParamsHeader}}
+            </div>
+            <div class="divider"></div>
+            <app-data-table [data]="tableData" *ngIf="tableData.length > 0 && !spinner" (selectedUsers)="selectedReport=$event" (selectedRow)="selectedPass($event)"></app-data-table>
+            <div class="nopass-text" *ngIf="tableData.length === 0 && !spinner">
+              There are no passes that match the search parameters!
+            </div>
+            <div class="spinner" *ngIf="spinner">
+              <div class="loading-theme"  style="display: flex; justify-content: center; align-items: center; margin-bottom: 25%">
+                <mat-spinner [color]="'accent'" [diameter]="'60'"></mat-spinner>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-    </div>
-  </div>
-  <div class="search-main">
-    <div class="spinner" *ngIf="spinner && !hasSearched">
-      <div class="loading-theme"  style="display: flex; justify-content: center; align-items: center; margin-top: 150px; margin-bottom: 200px">
-        <mat-spinner [color]="'accent'" [diameter]="'60'"></mat-spinner>
       </div>
     </div>
-    <div class="buttons">
-      <app-gradient-button *ngIf="!spinner && !hasSearched"
-        [ngStyle]="{'opacity': isDisabled? '.5' : '1'}"
-        [style.margin]="'0 20px'"
-        [gradient]="'#FFFFFF,#FFFFFF'"
-        [hoverColor]="'#F5F5F5'"
-        [minHeight]="'65px'"
-        [width]="'215px'"
-        [cursor]="!isDisabled ? 'pointer' : 'default'"
-        [textColor]="isDisabled ? 'rgb(120, 140, 165)' : '#134482'"
-        [fontSize]="'23px'"
-        [border]="'1px solid 1px solid #eee'"
-        [leftIcon]="isDisabled ? './assets/Search (Grey).png' : './assets/Search (Blue).png'"
-        [leftImageWidth]="'30px'"
-        [leftImageHeight]="'30px'"
-        [disabled]="isDisabled"
-        (buttonClick)="search()"
-      >
+    <div class="search-main">
+      <div class="spinner" *ngIf="spinner && !hasSearched">
+        <div class="loading-theme"  style="display: flex; justify-content: center; align-items: center; margin-top: 150px; margin-bottom: 200px">
+          <mat-spinner [color]="'accent'" [diameter]="'60'"></mat-spinner>
+        </div>
+      </div>
+      <div class="buttons">
+        <app-gradient-button *ngIf="!spinner && !hasSearched"
+                             [ngStyle]="{'opacity': isDisabled? '.5' : '1'}"
+                             [style.margin]="'0 20px'"
+                             [gradient]="'#FFFFFF,#FFFFFF'"
+                             [hoverColor]="'#F5F5F5'"
+                             [minHeight]="'65px'"
+                             [width]="'215px'"
+                             [cursor]="!isDisabled ? 'pointer' : 'default'"
+                             [textColor]="isDisabled ? 'rgb(120, 140, 165)' : '#134482'"
+                             [fontSize]="'23px'"
+                             [border]="'1px solid 1px solid #eee'"
+                             [leftIcon]="isDisabled ? './assets/Search (Grey).png' : './assets/Search (Blue).png'"
+                             [leftImageWidth]="'30px'"
+                             [leftImageHeight]="'30px'"
+                             [disabled]="isDisabled"
+                             (buttonClick)="search()"
+        >
 
           <span>Search</span>
 
-      </app-gradient-button>
-    </div>
-    <div class="report-button-ground" *ngIf="spinner || hasSearched">
-
-      <div (click)="previewPDF($event)" draggable="true" [ngStyle]="{'opacity': !selectedReport.length ? '.5' : '1'}">
-        <app-gradient-button  class="report-button"
-                              [gradient]="'#FFFFFF,#FFFFFF'"
-                              [hoverColor]="'#F5F5F5'"
-                              [minHeight]="'65px'"
-                              [width]="'215px'"
-                              [cursor]="'pointer'"
-                              [textColor]="selectedReport.length === 0 ? 'rgb(120, 140, 165)' : '#134482'"
-                              [fontSize]="'17px'"
-                              [border]="'1px solid 1px solid #eee'"
-                              [disabled]="selectedReport.length === 0">
-          <div [style.text-align]="'center'">
-            <span>Generate Report </span><br/>
-            <span>{{ selectedReport.length }} passes selected</span>
-          </div>
         </app-gradient-button>
-        <!--<a #printPdf href="pdf/report" target="_blank"></a>-->
       </div>
-    </div>
-    <div class="search-content" *ngIf="!hasSearched">
+      <div class="report-button-ground" *ngIf="spinner || hasSearched">
 
-      <div class="default-message" *ngIf="!spinner">
-        <div class="small-text">
-          This is an ultimate search query of everything going on in the school. <br>
-          <br>
-          You can search for a single item or multiple items within search search field <br>
-          as well as search more than one field at a time to filter your results. <br>
-          <br>
-          In the end, you can generate PDF reports.
+        <div (click)="previewPDF($event)" draggable="true" [ngStyle]="{'opacity': !selectedReport.length ? '.5' : '1'}">
+          <app-gradient-button  class="report-button"
+                                [gradient]="'#FFFFFF,#FFFFFF'"
+                                [hoverColor]="'#F5F5F5'"
+                                [minHeight]="'65px'"
+                                [width]="'215px'"
+                                [cursor]="'pointer'"
+                                [textColor]="selectedReport.length === 0 ? 'rgb(120, 140, 165)' : '#134482'"
+                                [fontSize]="'17px'"
+                                [border]="'1px solid 1px solid #eee'"
+                                [disabled]="selectedReport.length === 0">
+            <div [style.text-align]="'center'">
+              <span>Generate Report </span><br/>
+              <span>{{ selectedReport.length }} passes selected</span>
+            </div>
+          </app-gradient-button>
+          <!--<a #printPdf href="pdf/report" target="_blank"></a>-->
         </div>
       </div>
+      <div class="search-content" *ngIf="!hasSearched">
 
+        <div class="default-message" *ngIf="!spinner">
+          <div class="small-text">
+            This is an ultimate search query of everything going on in the school. <br>
+            <br>
+            You can search for a single item or multiple items within search search field <br>
+            as well as search more than one field at a time to filter your results. <br>
+            <br>
+            In the end, you can generate PDF reports.
+          </div>
+        </div>
+
+      </div>
     </div>
-  </div>
 
+  </div>
 </div>

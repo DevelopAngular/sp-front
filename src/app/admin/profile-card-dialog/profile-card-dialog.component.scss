@@ -111,12 +111,14 @@
     }
     .card-footer {
       display: flex;
+      flex-direction: row;
       justify-content: space-around;
       align-items: flex-end;
       padding: 20px 15px 45px 15px;
-      flex: 1 1 auto;
+      flex: 1 1 100px;
       .button {
         //margin-top: 25px;
+        min-height: 50px;
         text-align: center;
         &_message {
           margin-top: 17px;
