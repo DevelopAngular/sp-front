@@ -154,7 +154,8 @@ export class RequestCardComponent implements OnInit {
                     'originalToLocation': this.request.destination,
                     'colorProfile': this.request.color_profile,
                     'originalFromLocation': this.request.origin,
-                    'request_time': this.request.request_time
+                    'request_time': this.request.request_time,
+                    'request': this.request
                 }
             };
         } else {

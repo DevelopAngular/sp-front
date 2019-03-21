@@ -22,8 +22,8 @@
              [style.max-height]="date ? '250px' : '270px'"
      >
     </textarea>
-      <div class="buttons">
-        <app-gradient-button *ngIf="true"
+      <div class="buttons" *ngIf="formState.forInput">
+        <app-gradient-button
                              [gradient]="'#00B476, #03CF31'"
                              [hoverColor]="'#04CD33'"
                              [cursor]="'pointer'"
@@ -34,19 +34,19 @@
                              class="message-button">
           {{(message.value ? 'Next' : 'Skip')}}
         </app-gradient-button>
-        <app-gradient-button *ngIf="false"
-                             [gradient]="'#DA2370,#FB434A'"
-                             [hoverColor]="'#DA2370'"
-                             [cursor]="'pointer'"
-                             [minWidth]="'185px'"
-                             [minHeight]="'35px'"
-                             [fontSize]="'14px'"
-                             (buttonClick)="sendRequest()"
-                             class="message-deny-button"
-        >Deny Pass Request</app-gradient-button>
       </div>
     </div>
   </div>
-
-  <app-student-footer [formState]="formState" [date]="date" (changeAnimationDirectionEvent)="onChangeAnimationDirection($event)"></app-student-footer>
+  <app-gradient-button *ngIf="!formState.forInput"
+                       [style.margin-bottom]="'30px'"
+                       [gradient]="'#DA2370,#FB434A'"
+                       [hoverColor]="'#DA2370'"
+                       [cursor]="'pointer'"
+                       [minWidth]="'181px'"
+                       [minHeight]="'50px'"
+                       [fontSize]="'14px'"
+                       (buttonClick)="sendRequest()"
+                       class="message-deny-button"
+  >Deny Pass Request</app-gradient-button>
+  <app-student-footer *ngIf="formState.forInput" [formState]="formState" [date]="date" (changeAnimationDirectionEvent)="onChangeAnimationDirection($event)"></app-student-footer>
 </div>

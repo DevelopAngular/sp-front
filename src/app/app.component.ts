@@ -1,29 +1,19 @@
-import {AfterViewInit, Component, NgZone, OnDestroy, OnInit} from '@angular/core';
+import { AfterViewInit, Component, HostListener, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+
+import { filter, map, mergeMap, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, Subject } from 'rxjs';
+
+import { DeviceDetection } from './device-detection.helper';
 import { GoogleLoginService } from './services/google-login.service';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {
-    auditTime, debounceTime,
-    delay,
-    distinctUntilChanged,
-    filter,
-    last,
-    map,
-    mergeMap,
-    publishLast, share,
-    take,
-    takeLast,
-    takeUntil,
-    throttleTime
-} from 'rxjs/operators';
-import {DeviceDetection} from './device-detection.helper';
-import {BehaviorSubject, Subject} from 'rxjs';
-import {HttpService} from './services/http-service';
-import {School} from './models/School';
-import {MatDialog} from '@angular/material';
-import {UserService} from './services/user.service';
-import {AdminService} from './services/admin.service';
-import {ToastConnectionComponent} from './toast-connection/toast-connection.component';
-import {WebConnectionService} from './services/web-connection.service';
+import { HttpService } from './services/http-service';
+import { School } from './models/School';
+import { MatDialog } from '@angular/material';
+import { UserService } from './services/user.service';
+import { AdminService } from './services/admin.service';
+import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
+import { WebConnectionService } from './services/web-connection.service';
+import { ResizeInfoDialogComponent } from './resize-info-dialog/resize-info-dialog.component';
 
 /**
  * @title Autocomplete overview
@@ -41,9 +31,28 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public hideSchoolToggleBar: boolean = false;
   public showUI: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public schools: School[] = [];
-  // public schoolIdSubject: BehaviorSubject<School>;
+
+  private openedResizeDialog: boolean;
 
   private subscriber$ = new Subject();
+
+  @HostListener('window:resize', ['$event.target'])
+  onResize(target) {
+      if ((target.innerWidth < 900 || target.innerHeight < 500) && !this.openedResizeDialog) {
+        this.openedResizeDialog = true;
+        setTimeout(() => {
+            this.dialog.open(ResizeInfoDialogComponent, {
+                id: 'ResizeDialog',
+                panelClass: 'toasr',
+                backdropClass: 'white-backdrop',
+                disableClose: true
+            });
+        }, 50);
+      } else if ((target.innerWidth >= 900 && target.innerHeight >= 500) && this.openedResizeDialog) {
+          this.openedResizeDialog = false;
+          this.dialog.getDialogById('ResizeDialog').close();
+      }
+  }
 
   constructor(
     public loginService: GoogleLoginService,
@@ -72,7 +81,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         .subscribe(() => {
             this.dialog.open(ToastConnectionComponent, {
               panelClass: 'toasr',
-              backdropClass: 'invis-backgrop'
+              backdropClass: 'white-backdrop',
+              disableClose: true
             });
     });
 

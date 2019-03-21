@@ -126,6 +126,7 @@ export class MainHallPassFormComponent implements OnInit {
         this.FORM_STATE.data.requestTarget = this.dialogData['teacher'];
         this.FORM_STATE.data.gradient = this.dialogData['gradient'];
         this.FORM_STATE.data.direction = {
+          pinnable: this.dialogData['request'] ? this.dialogData['request'] : null,
           from: this.dialogData['originalFromLocation'],
           to: this.dialogData['originalToLocation']
         };

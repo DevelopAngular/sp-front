@@ -45,6 +45,8 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFireMessagingModule } from '@angular/fire/messaging';
 import { environment } from '../environments/environment';;
 import { ToastConnectionComponent } from './toast-connection/toast-connection.component'
+;
+import { ResizeInfoDialogComponent } from './resize-info-dialog/resize-info-dialog.component'
 
 
 const appRoutes: Routes = [
@@ -110,7 +112,8 @@ const appRoutes: Routes = [
     ItemListComponent,
     ItemCellComponent,
     NextReleaseComponent,
-    ToastConnectionComponent
+    ToastConnectionComponent,
+    ResizeInfoDialogComponent
   ],
   entryComponents: [
     ConsentMenuComponent,
@@ -118,7 +121,8 @@ const appRoutes: Routes = [
     HallDateTimePickerComponent,
     ErrorToastComponent,
     NextReleaseComponent,
-    ToastConnectionComponent
+    ToastConnectionComponent,
+    ResizeInfoDialogComponent
   ],
   imports: [
     BrowserModule,

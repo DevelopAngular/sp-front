@@ -225,6 +225,10 @@ textarea:focus {
   background-color: rgba(0, 0, 0, 0);
 }
 
+.white-backdrop {
+  background: rgba(255, 255, 255, 0.7);
+}
+
 .custom-bd {
   background-image: linear-gradient(to right, transparent 302px,rgba(0, 0, 0, 0.3) 0);
 }

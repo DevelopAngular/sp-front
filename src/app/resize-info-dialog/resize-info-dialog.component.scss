@@ -1,0 +1,22 @@
+.wrapper {
+  width: 285px;
+  height: 143px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .title {
+    font-size: 17px;
+    color: #1F195E;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+
+  .content {
+    text-align: center;
+    width: 166px;
+    color: #7F879D;
+  }
+
+}
