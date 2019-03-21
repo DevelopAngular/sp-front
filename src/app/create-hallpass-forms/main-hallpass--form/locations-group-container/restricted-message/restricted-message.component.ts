@@ -37,7 +37,7 @@ export class RestrictedMessageComponent implements OnInit {
   headerTransition = {
     'rest-mes-header': true,
     'rest-mes-header_animation-back': false
-  }
+  };
 
   constructor(
     private formService: CreateFormService
@@ -49,8 +49,6 @@ export class RestrictedMessageComponent implements OnInit {
   }
 
   ngOnInit() {
-
-
     if (this.formState.previousState > this.formState.state || this.formState.previousStep > this.formState.step) {
       this.headerTransition['rest-mes-header'] = false;
       this.headerTransition['rest-mes-header_animation-back'] = true;

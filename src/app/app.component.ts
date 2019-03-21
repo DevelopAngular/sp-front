@@ -81,7 +81,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         .subscribe(() => {
             this.dialog.open(ToastConnectionComponent, {
               panelClass: 'toasr',
-              hasBackdrop: false,
+              backdropClass: 'white-backdrop',
               disableClose: true
             });
     });
