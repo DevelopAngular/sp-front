@@ -132,25 +132,23 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.data.toLocation = location;
     this.FORM_STATE.data.direction.to = location;
     // const restricted = ((location.restricted && !this.FORM_STATE.forLater) || (location.scheduling_restricted && !!this.FORM_STATE.forLater));
-    if ((location.restricted || location.scheduling_restricted) && !this.isStaff) {
-      this.FORM_STATE.previousState = States.from;
-      this.FORM_STATE.state = States.restrictedTarget;
+    if ((location.restricted || (location.scheduling_restricted && this.FORM_STATE.forLater)) && !this.isStaff) {
+        this.FORM_STATE.previousState = States.from;
+        this.FORM_STATE.state = States.restrictedTarget;
     } else {
-      this.postComposetData();
+        this.postComposetData();
     }
   }
 
   requestTarget(teacher) {
-
     this.data.requestTarget = teacher;
     this.FORM_STATE.data.requestTarget = teacher;
     this.FORM_STATE.state = States.message;
   }
 
   resultMessage(message, denyMessage: boolean = false) {
-
     if (!message) {
-      message = '';
+        message = '';
     }
     this.data.message = message;
     this.FORM_STATE.data.message = message;
