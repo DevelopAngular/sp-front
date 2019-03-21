@@ -1,5 +1,5 @@
 <div class="date-wrapper">
-    <div class="divider">
+    <div class="divider" [style.background-image]="gradient">
         <img class="back-button" [src]="'./assets/Back Button (Transparent).png' | resolveAsset" (click)="back()">
         <div class="divider-header"  [ngClass]="{'divider-header':!mock, 'divider-header-mock': mock}">
             <img class="divider-icon" [src]="'./assets/Scheduled Pass (White).png' | resolveAsset">
@@ -51,9 +51,9 @@
           </div>
           <div class="next-button">
               <app-gradient-button
-                      [gradient]="'#03CF31,#00B476'"
+                      [gradient]="colorProfile ? colorProfile.gradient_color : '#03CF31,#00B476'"
                       [cursor]="'pointer'"
-                      [hoverColor]="'#00B476'"
+                      [hoverColor]="(colorProfile ? colorProfile.solid_color : '#00B476')"
                       [minWidth]="'104px'"
                       [minHeight]="'35px'"
                       [fontSize]="'14px'"
