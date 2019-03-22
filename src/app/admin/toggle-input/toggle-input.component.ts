@@ -44,13 +44,13 @@ export class ToggleInputComponent implements OnInit {
     this._zone.run(() => {
       switch (this.controlSize) {
         case 'small':
-          this.sizedLayout['future__small'] = true;
+          this.sizedLayout['checkbox-container__small'] = true;
           break;
         case 'large':
-          this.sizedLayout['future__large'] = true;
+          this.sizedLayout['checkbox-container__large'] = true;
           break;
         default:
-          this.sizedLayout['future__regular'] = true;
+          this.sizedLayout['checkbox-container__regular'] = true;
       }
     })
 
