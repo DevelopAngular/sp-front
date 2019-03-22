@@ -1,6 +1,6 @@
 <div class="travel-view-wrapper" [style.height]="height">
   <div *ngIf="(!(type==='invitation') || forStaff); else originButton;">
-    {{ ((type==='invitation')?(pass?.default_origin?pass?.default_origin.title:"Their Location"):pass?.origin.title) }}
+    {{ ((type==='invitation')?(pass?.default_origin?pass?.default_origin.title:"Origin"):pass?.origin.title) }}
   </div>
   <ng-template #originButton>
     <app-card-button (onClick)="changeLocation()" [width]="'135px'" [height]="'65px'" [gradientColor]="pass?.color_profile.gradient_color">

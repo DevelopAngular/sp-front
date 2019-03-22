@@ -1,22 +1,22 @@
 <div class="pager-wrapper">
   <!--<pre>{{frameMotion$ | async | json}}</pre>-->
   <div *ngIf="page==1" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-    <div class="page-content">
+    <div class="page-content" [style.align-items]="pages > 1 ? 'stretch' : 'center'">
       <ng-content select=".page-1"></ng-content>
     </div>
   </div>
   <div *ngIf="page==2" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-    <div class="page-content">
+    <div class="page-content" [style.align-items]="pages > 1 ? 'stretch' : 'center'">
       <ng-content select=".page-2"></ng-content>
     </div>
   </div>
   <div *ngIf="page==3" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-    <div class="page-content">
+    <div class="page-content" [style.align-items]="pages > 1 ? 'stretch' : 'center'">
       <ng-content select=".page-3"></ng-content>
     </div>
   </div>
   <div *ngIf="page==4" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-    <div class="page-content">
+    <div class="page-content" [style.align-items]="pages > 1 ? 'stretch' : 'center'">
       <ng-content select=".page-4"></ng-content>
     </div>
   </div>
