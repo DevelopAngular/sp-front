@@ -43,10 +43,10 @@ import { NextReleaseComponent } from './next-release/next-release.component';
 import { NotificationService } from './services/notification-service';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireMessagingModule } from '@angular/fire/messaging';
-import { environment } from '../environments/environment';;
-import { ToastConnectionComponent } from './toast-connection/toast-connection.component'
-;
-import { ResizeInfoDialogComponent } from './resize-info-dialog/resize-info-dialog.component'
+import { environment } from '../environments/environment';
+import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
+import { ResizeInfoDialogComponent } from './resize-info-dialog/resize-info-dialog.component';
+import { SignedOutToastComponent } from './signed-out-toast/signed-out-toast.component'
 
 
 const appRoutes: Routes = [
@@ -113,7 +113,8 @@ const appRoutes: Routes = [
     ItemCellComponent,
     NextReleaseComponent,
     ToastConnectionComponent,
-    ResizeInfoDialogComponent
+    ResizeInfoDialogComponent,
+    SignedOutToastComponent
   ],
   entryComponents: [
     ConsentMenuComponent,
@@ -122,7 +123,9 @@ const appRoutes: Routes = [
     ErrorToastComponent,
     NextReleaseComponent,
     ToastConnectionComponent,
-    ResizeInfoDialogComponent
+    ResizeInfoDialogComponent,
+    SignedOutToastComponent
+
   ],
   imports: [
     BrowserModule,

@@ -14,6 +14,7 @@ import { AdminService } from './services/admin.service';
 import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
 import { WebConnectionService } from './services/web-connection.service';
 import { ResizeInfoDialogComponent } from './resize-info-dialog/resize-info-dialog.component';
+import {StorageService} from './services/storage.service';
 
 /**
  * @title Autocomplete overview
@@ -64,11 +65,16 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private webConnection: WebConnectionService,
     private dialog: MatDialog,
+    private storageService: StorageService
   ) {
     // this.schoolIdSubject = this.http.schoolIdSubject;
   }
 
   ngOnInit() {
+
+    this.storageService.detectChanges();
+
+
     if ( !DeviceDetection.isIOSTablet() && !DeviceDetection.isMacOS() ) {
       const link = document.createElement('link');
             link.setAttribute('rel', 'stylesheet');

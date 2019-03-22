@@ -1,0 +1,31 @@
+:host {
+  .toast-container {
+    width: 285px;
+    height: 145px;
+    font-size: 17px;
+    font-weight: bold;
+    color: #1f195e;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    .title {
+      height: 69px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-bottom: 1px solid #D8D8D8;
+    }
+    .sign-back-in {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}

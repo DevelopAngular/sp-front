@@ -49,13 +49,13 @@ export class ProfileCardDialogComponent implements OnInit {
 
     this.profile = this.data.profile;
 
-    if (this.data.bulkPermissions) {
+    // if (this.data.bulkPermissions) {
+    // }
       this.headerText = this.data.bulkPermissions
                         ?
                         this.data.bulkPermissions.length + ` user${this.data.bulkPermissions.length > 1 ? 's' : ''} selected`
                         :
                         this.profile['Name'];
-    }
 
     if (this.data.role === '_profile_teacher') {
         this.dataService.getLocationsWithTeacher(this.profile._originalUserProfile)

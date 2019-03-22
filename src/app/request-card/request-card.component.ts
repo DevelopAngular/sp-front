@@ -237,8 +237,8 @@ export class RequestCardComponent implements OnInit {
       let header = '';
       if(!this.forInput){
         if(this.forStaff){
-          options.push(this.genOption('Deny with Message','#3D396B','deny_with_message'));
-          options.push(this.genOption('Deny','#E32C66','deny'));
+          options.push(this.genOption('Attach Message & Deny','#3D396B','deny_with_message'));
+          options.push(this.genOption('Deny Pass Request','#E32C66','deny'));
         } else{
           options.push(this.genOption('Delete Pass Request','#E32C66','delete'));
         }
