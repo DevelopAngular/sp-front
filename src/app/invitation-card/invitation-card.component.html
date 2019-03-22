@@ -52,7 +52,7 @@
           <app-card-button (onClick)="acceptInvitation()" [disabled]="performingAction" [width]="'288px'" [height]="'79px'" [gradientColor]="invitation.color_profile.gradient_color">
             <div class="button-content">
               <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
-              <div *ngIf="!performingAction" class="get-pass-content-text">Get Pass</div>
+              <div *ngIf="!performingAction" class="get-pass-content-text">Accept Pass</div>
               <img class="button-icon-right" [src]="'./assets/Arrow (White).png' | resolveAsset">
             </div>
           </app-card-button>
