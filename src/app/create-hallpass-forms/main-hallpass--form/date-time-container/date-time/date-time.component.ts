@@ -40,7 +40,7 @@ export class DateTimeComponent implements OnInit {
       this.declinable = new FormControl(true);
     } else {
       if (this.formState.data.date) {
-        this.colorProfile = this.formState.data.direction.pinnable.color_profile;
+        this.colorProfile = this.formState.data.request.color_profile;
         this.requestTime = new Date(this.formState.data.date.date);
         this.declinable.setValue(this.formState.data.date.declinable);
       }

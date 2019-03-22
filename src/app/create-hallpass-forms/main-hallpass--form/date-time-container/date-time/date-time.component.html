@@ -3,7 +3,7 @@
         <img class="back-button" [src]="'./assets/Back Button (Transparent).png' | resolveAsset" (click)="back()">
         <div class="divider-header"  [ngClass]="{'divider-header':!mock, 'divider-header-mock': mock}">
             <img class="divider-icon" [src]="'./assets/Scheduled Pass (White).png' | resolveAsset">
-            <div class="divider-text">Select Date & Time</div>
+            <div class="divider-text">{{ (formState.forInput ? 'Select': 'Change') }} Date & Time</div>
         </div>
     </div>
     <div class="date-contentt" [ngClass]="{'date-content':!mock, 'date-content-mock': mock}">

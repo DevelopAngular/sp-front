@@ -9,7 +9,7 @@
     <div style="transition: width .5s ease, height .5s ease; " [style.width]="formSize.width" [style.height]="formSize.height">
 
       <div class="fixed-card"  [style.width]="formSize.width" [style.height]="formSize.height" *ngIf="FORM_STATE.step === 1" [@NextStep]="{ value: '', params: frameMotion$ | async}" (@NextStep.start)="setFormSize()">
-        <div [ngClass]="{'date-picker': FORM_STATE.formMode.role === 1}" class="">
+        <div [ngClass]="{'date-picker': FORM_STATE.formMode.role === 1 || FORM_STATE.data.request }" class="">
           <app-date-time-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)" ></app-date-time-container>
         </div>
       </div>

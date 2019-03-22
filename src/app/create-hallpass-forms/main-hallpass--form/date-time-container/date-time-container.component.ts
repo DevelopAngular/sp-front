@@ -40,7 +40,7 @@ export class DateTimeContainerComponent implements OnInit {
       if (this.FORM_STATE.previousStep > 2) {
         this.FORM_STATE.step = this.FORM_STATE.previousStep;
       } else {
-        this.FORM_STATE.step = this.FORM_STATE.forInput ? 3 : 0;
+        this.FORM_STATE.step = this.FORM_STATE.forInput ? 3 : 4;
         // this.FORM_STATE.step = this.FORM_STATE.forInput ? (this.FORM_STATE.formMode.role === 1 ? 2 : 0) : 0;
       }
 

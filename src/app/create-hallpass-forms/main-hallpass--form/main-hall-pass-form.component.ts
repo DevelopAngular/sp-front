@@ -2,6 +2,7 @@ import {Component, Inject, OnInit} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { Location } from '../../models/Location';
 import { Pinnable } from '../../models/Pinnable';
+import { Request } from '../../models/Request';
 import { User } from '../../models/User';
 import { StudentList } from '../../models/StudentList';
 import {NextStep, ScaledCard} from '../../animations';
@@ -26,6 +27,7 @@ export interface Navigation {
   fromState?: number;
   formMode?: FormMode;
   data?: {
+    request?: Request,
     date?: any;
     selectedStudents?: User[];
     selectedGroup?: StudentList;
@@ -123,10 +125,10 @@ export class MainHallPassFormComponent implements OnInit {
         this.FORM_STATE.data.date = {
           date: this.dialogData['request_time']
         };
+        this.FORM_STATE.data.request = this.dialogData['request'];
         this.FORM_STATE.data.requestTarget = this.dialogData['teacher'];
         this.FORM_STATE.data.gradient = this.dialogData['gradient'];
         this.FORM_STATE.data.direction = {
-          pinnable: this.dialogData['request'] ? this.dialogData['request'] : null,
           from: this.dialogData['originalFromLocation'],
           to: this.dialogData['originalToLocation']
         };
@@ -136,10 +138,8 @@ export class MainHallPassFormComponent implements OnInit {
   }
 
   onNextStep(evt) {
-    console.log('EXIT ===>', evt);
 
     if (evt.step === 0 || evt.action === 'exit') {
-      console.log('EXIT ===>', evt);
       this.dialogRef.close(evt);
       return;
     } else {

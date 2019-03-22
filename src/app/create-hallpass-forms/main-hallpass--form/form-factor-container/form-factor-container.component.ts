@@ -6,6 +6,7 @@ import { HallPass } from '../../../models/HallPass';
 import { Request } from '../../../models/Request';
 import { Invitation } from '../../../models/Invitation';
 import { DataService } from '../../../services/data-service';
+import {Pinnable} from '../../../models/Pinnable';
 
 
 
@@ -23,7 +24,7 @@ export class FormFactorContainerComponent implements OnInit {
 
   public states: any = FormFactor;
   public currentState: number;
-  public template: Request | HallPass | Invitation;
+  public template: Request | HallPass | Invitation | Pinnable;
 
   constructor(
     private dataService: DataService,
@@ -59,29 +60,37 @@ export class FormFactorContainerComponent implements OnInit {
               this.FORM_STATE.data.date ? this.FORM_STATE.data.date.declinable : false
             );
             break;
-          case this.states.Request:
-            this.template = new Request(
-              'template',
-              null,
-              this.FORM_STATE.data.direction.from,
-              this.FORM_STATE.data.direction.to,
-              this.FORM_STATE.data.message,
-              '',
-              'pending',
-              null,
-              '',
-              this.FORM_STATE.data.direction.pinnable.icon,
-              this.FORM_STATE.data.requestTarget,
-              this.FORM_STATE.data.date ? this.FORM_STATE.data.date.date : null,
-              '',
-              null,
-              null,
-              this.FORM_STATE.data.direction.pinnable.color_profile,
-              null,
-              null,
-              60,
-              null
-            );
+            case this.states.Request:
+            console.log(this.FORM_STATE);
+            if (this.FORM_STATE.previousStep === 1) {
+              setTimeout(() => {
+                  this.FORM_STATE.data.request.request_time = this.FORM_STATE.data.date.date;
+                  this.template = this.FORM_STATE.data.request;
+              }, 100);
+            } else {
+                this.template = new Request(
+                    'template',
+                    null,
+                    this.FORM_STATE.data.direction.from,
+                    this.FORM_STATE.data.direction.to,
+                    this.FORM_STATE.data.message,
+                    '',
+                    'pending',
+                    null,
+                    '',
+                    this.FORM_STATE.data.direction.pinnable.icon,
+                    this.FORM_STATE.data.requestTarget,
+                    this.FORM_STATE.data.date ? this.FORM_STATE.data.date.date : null,
+                    '',
+                    null,
+                    null,
+                    this.FORM_STATE.data.direction.pinnable.color_profile,
+                    null,
+                    null,
+                    60,
+                    null
+                );
+            }
             break;
           case this.states.Invitation:
             this.template = new Invitation(

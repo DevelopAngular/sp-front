@@ -9,7 +9,7 @@ import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-ha
 import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
-import {filter, tap} from 'rxjs/operators';
+import {filter, switchMap, tap} from 'rxjs/operators';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
@@ -17,7 +17,7 @@ import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import * as _ from 'lodash';
 import {RequestsService} from '../services/requests.service';
 import {NextStep} from '../animations';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, of} from 'rxjs';
 
 @Component({
   selector: 'app-request-card',
@@ -132,7 +132,9 @@ export class RequestCardComponent implements OnInit {
           'teacher' : this.request.teacher.id,
           'duration' : this.selectedDuration*60,
         };
-      this.requestService.createRequest(body).subscribe((res: Request) => {
+      this.requestService.createRequest(body).pipe(switchMap(res => {
+          return this.formState.previousStep === 1 ? this.requestService.cancelRequest(this.request.id) : of(null);
+      })).subscribe((res) => {
           this.performingAction = true;
           this.dialogRef.close();
       });
@@ -142,9 +144,10 @@ export class RequestCardComponent implements OnInit {
     if (!this.dateEditOpen) {
        let config;
         if (this.isSeen) {
+            this.dialogRef.close();
             config = {
                 panelClass: 'form-dialog-container',
-                backdropClass: 'invis-backdrop',
+                backdropClass: 'custom-backdrop',
                 data: {
                     'entryState': {
                         step: 1,
@@ -176,30 +179,30 @@ export class RequestCardComponent implements OnInit {
         this.dateEditOpen = true;
       });
 
-      dateDialog.afterClosed().pipe(filter(res => !!res)).subscribe(matData => {
-        if (this.isSeen) {
-          this.request.request_time = matData.data.date ? matData.data.date.date : this.request.request_time;
-        } else {
-          this.request.request_time = matData.startTime;
-        }
-        this.dateEditOpen = false;
-        console.log('RIGHT REQUEST TIME =====>', this.request.request_time);
-        const body: any = {
-          'origin' : this.request.origin.id,
-          'destination' : this.request.destination.id,
-          'attachment_message' : this.request.attachment_message,
-          'travel_type' : this.request.travel_type,
-          'teacher' : this.request.teacher.id,
-          'request_time' :this.request.request_time.toISOString(),
-          'duration' : this.request.duration,
-        };
-
-        this.requestService.createRequest(body).subscribe(() => {
-          this.requestService.cancelRequest(this.request.id).subscribe(() => {
-            this.dialogRef.close();
-          });
-        });
-      });
+      // dateDialog.afterClosed().pipe(filter(res => !!res)).subscribe(matData => {
+      //   if (this.isSeen) {
+      //     this.request.request_time = matData.data.date ? matData.data.date.date : this.request.request_time;
+      //   } else {
+      //     this.request.request_time = matData.startTime;
+      //   }
+      //   this.dateEditOpen = false;
+      //   console.log('RIGHT REQUEST TIME =====>', this.request.request_time);
+      //   const body: any = {
+      //     'origin' : this.request.origin.id,
+      //     'destination' : this.request.destination.id,
+      //     'attachment_message' : this.request.attachment_message,
+      //     'travel_type' : this.request.travel_type,
+      //     'teacher' : this.request.teacher.id,
+      //     'request_time' :this.request.request_time.toISOString(),
+      //     'duration' : this.request.duration,
+      //   };
+      //
+      //   this.requestService.createRequest(body).subscribe(() => {
+      //     this.requestService.cancelRequest(this.request.id).subscribe(() => {
+      //       this.dialogRef.close();
+      //     });
+      //   });
+      // });
     }
   }
 
@@ -243,7 +246,7 @@ export class RequestCardComponent implements OnInit {
       } else{
           if (!this.pinnableOpen) {
             if (this.isSeen) {
-                this.formState.step = 3;
+                this.formState.step = this.formState.previousStep === 1 ? 1 : 3;
                 this.formState.previousStep = 4;
                 this.cardEvent.emit(this.formState);
             } else {
