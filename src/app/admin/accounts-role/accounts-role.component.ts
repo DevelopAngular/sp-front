@@ -3,7 +3,7 @@ import {MatDialog} from '@angular/material';
 import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {AccountsDialogComponent} from '../accounts-dialog/accounts-dialog.component';
-import { ActivatedRoute } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {debounceTime, distinctUntilChanged, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {Util} from '../../../Util';
 import {HttpService} from '../../services/http-service';
@@ -13,7 +13,9 @@ import {ColumnsConfigDialogComponent} from '../columns-config-dialog/columns-con
 import {StorageService} from '../../services/storage.service';
 import {ProfileCardDialogComponent} from '../profile-card-dialog/profile-card-dialog.component';
 import {AddUserDialogComponent} from '../add-user-dialog/add-user-dialog.component';
-
+import {User} from '../../models/User';
+import {DataService} from '../../services/data-service';
+import {Location} from '../../models/Location';
 
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
@@ -38,34 +40,81 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   public consentMenuOpened: boolean = false;
   public dataTableHeaders: any;
   public profilePermissions: any;
+  public initialSearchString: string;
+  public tabVisibility: boolean = false;
+
+  public accounts$ =
+    new BehaviorSubject<any>({
+      total: 0,
+      admin_count: 0,
+      student_count: 0,
+      teacher_count: 0
+    });
 
   constructor(
+    private router: Router,
     private route: ActivatedRoute,
     private userService: UserService,
     private http: HttpService,
     private adminService: AdminService,
     private matDialog: MatDialog,
     private _zone: NgZone,
-    private storage: StorageService
+    private storage: StorageService,
+    private dataService: DataService
   ) {}
 
   ngOnInit() {
-
+    // debugger;
     this.http.globalReload$.pipe(
       tap(() => {
+
         this.selectedUsers = [];
         this.userList = [];
       }),
+
       switchMap(() => {
         return this.route.params.pipe(takeUntil(this.destroy$));
+      }),
+      switchMap((params) => {
+        this.role = params.role;
+        console.log(params);
+
+        if (this.role === '_all') {
+          return this.adminService.getAdminAccounts()
+            .pipe(tap((u_list: any) => {
+              // console.log(u_list, Object.values(u_list));
+              if (u_list.total_count !== undefined) {
+                u_list.total = u_list.total_count;
+              } else {
+                u_list.total = Object.values(u_list).reduce((a: number, b: number) => a + b);
+              }
+              // console.log(u_list);
+              this.accounts$.next(u_list);
+            }));
+        } else {
+          return of(null);
+        }
+      }),
+      switchMap(() => {
+        return this.route.queryParams.pipe(takeUntil(this.destroy$));
       })
     )
-    .subscribe((params: any) => {
-      console.log(params);
-      this.role = params.role;
-      this.getUserList();
+    .subscribe((qp) => {
+      console.log(qp);
 
-      this._zone.run(() => {
+      const {profileName} = qp;
+
+        this.initialSearchString = this.initialSearchString ? this.initialSearchString : profileName;
+        console.log(this.initialSearchString);
+        this.router.navigate(['admin/accounts', this.role]);
+
+
+
+      this.tabVisibility = true;
+
+      this.getUserList(this.initialSearchString || '');
+
+      // this._zone.run(() => {
         const headers = this.storage.getItem(`${this.role}_columns`);
         if ( headers ) {
           this.dataTableHeaders = JSON.parse(headers);
@@ -85,27 +134,30 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               value: false,
               label: 'Account Type',
               disabled: false
-            },
-            'Sign-in status': {
-              value: true,
-              label: 'Sign-in status',
-              disabled: false
-            },
-            'Last sign-in': {
-              value: true,
-              label: 'Last sign-in',
-              disabled: false
             }
           };
 
+          if (this.role !== '_all') {
+            this.dataTableHeaders['Sign-in status'] = {
+              value: true,
+                label: 'Sign-in status',
+                disabled: false
+            };
+            this.dataTableHeaders['Last sign-in'] = {
+              value: true,
+                label: 'Last sign-in',
+                disabled: false
+            };
+          }
+
           switch (this.role) {
             case '_profile_teacher':
-              this.dataTableHeaders['Rooms'] =  {
+              this.dataTableHeaders['Rooms'] = {
                 value: true,
                 label: 'Rooms',
                 disabled: false
               };
-              this.dataTableHeaders['Permissions'] =  {
+              this.dataTableHeaders['Permissions'] = {
                 value: false,
                 label: 'Permissions',
                 disabled: false
@@ -113,15 +165,21 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               break;
 
             case '_profile_admin':
-              this.dataTableHeaders['Permissions'] =  {
+              this.dataTableHeaders['Permissions'] = {
                 value: false,
                 label: 'Permissions',
                 disabled: false
               };
               break;
+            case '_all':
+              this.dataTableHeaders['Profile(s)'] = {
+                value: false,
+                label: 'Profile(s)',
+                disabled: false
+              };
           }
         }
-      });
+      // });
 
       this.profilePermissions =
         this.role === '_profile_admin'
@@ -197,7 +255,14 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         )
         .subscribe((userList) => {
           if (userList && userList.length) {
+            this.dataTableHeadersToDisplay = [];
             this.userList = userList.map((raw, index) => {
+
+              const partOf = [];
+                if (raw.roles.includes('_profile_student')) partOf.push('Student');
+                if (raw.roles.includes('_profile_teacher')) partOf.push('Teacher');
+                if (raw.roles.includes('_profile_admin')) partOf.push('Administrator');
+
               const rawObj = {
                 'Name': raw.display_name,
                 'Email/Username': raw.primary_email,
@@ -205,7 +270,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
                 'Account Type': 'G Suite',
                 'Sign-in status': 'Enabled',
                 'Last sign-in': Util.formatDateTime(new Date(raw.last_updated)),
-                'Permissions': ['create_hallpasses', 'edit_all_hallpass', 'manage_locations'].join(',')
+                'Permissions': ['create_hallpasses', 'edit_all_hallpass', 'manage_locations'].join(','),
+                'Profile(s)': partOf.join(', ')
               };
               for (const key in rawObj) {
                 if (!this.dataTableHeaders[key]) {
@@ -218,8 +284,16 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
                 }
               }
               Object.defineProperty(rawObj, 'id', { enumerable: false, value: raw.id});
+              Object.defineProperty(rawObj, '_originalUserProfile', {
+                enumerable: false,
+                configurable: false,
+                writable: false,
+                value: raw
+              });
               return  rawObj;
             });
+
+
           } else {
             this.placeholder = true;
           }
@@ -238,48 +312,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   openDialog(mode, eventTarget?: HTMLElement) {
-    // const restrictions = this.role === '_profile_admin'
-    //                                 ?
-    //                     {
-    //                       'admin_dashboard': {
-    //                         restriction: true,
-    //                         controlName: 'admin_dashboard',
-    //                         controlLabel: 'Access to Dashboard'
-    //                       },
-    //                       'admin_hall_monitor': {
-    //                         controlName: 'admin_hall_monitor',
-    //                         restriction: true,
-    //                         controlLabel: 'Access to Hall Monitor'
-    //                       },
-    //                       'admin_search': {
-    //                         controlName: 'admin_search',
-    //                         restriction: true,
-    //                         controlLabel: 'Access to Search'
-    //                       },
-    //                       'admin_accounts': {
-    //                         controlName: 'admin_accounts',
-    //                         restriction: true,
-    //                         controlLabel: 'Access to Accounts & Profiles'
-    //                       },
-    //                       'admin_pass_config': {
-    //                         controlName: 'admin_pass_config',
-    //                         restriction: true,
-    //                         controlLabel: 'Access to Pass Configuration'
-    //                       },
-    //                       // 'admin_school_setting': {
-    //                       //   controlName: 'admin_school_setting',
-    //                       //   restriction: true,
-    //                       //   controlLabel: 'Access to School Settings'
-    //                       // },
-    //                     }
-    //                                 :
-    //                     {
-    //                       'admin_hall_monitor': {
-    //                         controlName: 'admin_hall_monitor',
-    //                         restriction: true,
-    //                         controlLabel: 'Access to Hall Monitor'
-    //                       },
-    //                     };
 
     // =========== SPA=476 ============> It's temporary. Needs to suggest to leave the dialog as it is. If it will be declined, remove it.
 
@@ -382,10 +414,27 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   }
 
+  findProfileByRole(evt) {
+    console.log(evt);
+    // this.tabVisibility = false;
+
+    setTimeout(() => {
+      if (evt instanceof Location) {
+        this.router.navigate(['admin/passconfig'], {
+          queryParams: {
+            locationId: evt.id,
+          }
+        });
+      } else {
+        this.router.navigate(['admin/accounts', evt.role], {queryParams: {profileName: evt.row['Name']}});
+      }
+    }, 1000);
+  }
+
   showProfileCard(evt, bulk: boolean = false) {
     console.log(evt);
 
-    if (this.selectedUsers.length && !bulk) {
+    if (this.selectedUsers.length && !bulk || this.role === '_all')  {
       return false;
     }
 
@@ -413,27 +462,60 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   private getUserList(query: string = '') {
+
     this.placeholder = false;
     this.userList = [];
     this.userService
       .getUsersList(this.role, query)
-      .pipe(tap(() => {
-        this.dataTableHeadersToDisplay = [];
-      }))
-      .subscribe((userList) => {
-        console.log(userList);
+      .pipe(
+        tap(() => {
+          this.dataTableHeadersToDisplay = [];
+        }),
+        switchMap((userList) => {
+
+          if (this.role === '_profile_teacher') {
+            return zip(
+              ...userList.map((user: User) => {
+                return this.dataService.getLocationsWithTeacher(user)
+                  .pipe(
+                    switchMap((locs: Location[]) => {
+                      (user as any).assignedTo = locs;
+                      return of(user);
+                    })
+                  );
+
+              }));
+          } else {
+            // debugger;
+            return of(userList);
+          }
+        })
+      )
+      .subscribe((userList: any) => {
+        // console.log(userList);
         if (userList && userList.length) {
           this.placeholder = false;
           this.userAmount.next(userList.length);
+
+          this.dataTableHeadersToDisplay = [];
+
           this.userList = userList.map((raw, index) => {
+
+            const partOf = [];
+              if (raw.roles.includes('_profile_student')) partOf.push({title: 'Student', role: '_profile_student'});
+              if (raw.roles.includes('_profile_teacher')) partOf.push({title: 'Teacher', role: '_profile_teacher'});
+              if (raw.roles.includes('_profile_admin')) partOf.push({title: 'Administrator', role: '_profile_admin'});
+
             const rawObj = {
               'Name': raw.display_name,
               'Email/Username': raw.primary_email,
-              'Rooms': ['Room-1', 'Room-2'].join(','),
+              'Rooms': raw.assignedTo,
               'Account Type': 'G Suite',
               'Sign-in status': 'Enabled',
               'Last sign-in': Util.formatDateTime(new Date(raw.last_updated)),
-              'Permissions': ['create_hallpasses', 'edit_all_hallpass', 'manage_locations'].join(',')
+              'Permissions': ['create_hallpasses', 'edit_all_hallpass', 'manage_locations'].join(','),
+              'Profile(s)': partOf
+
             };
             for (const key in rawObj) {
               if (!this.dataTableHeaders[key]) {
@@ -454,7 +536,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             });
             return  rawObj;
           });
-          // console.log(this.dataTableHeadersToDisplay);
+          console.log(this.dataTableHeadersToDisplay);
+          console.log(this.userList);
+
         } else {
           this.placeholder = true;
         }

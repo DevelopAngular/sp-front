@@ -15,7 +15,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {UserService} from '../../services/user.service';
 import {User} from '../../models/User';
 import {Location} from '../../models/Location';
-import {Subscription} from 'rxjs';
+import {of, Subscription} from 'rxjs';
 import {DataService} from '../../services/data-service';
 
 
@@ -72,8 +72,8 @@ export class SearchComponent implements OnInit {
         this.inputPanelVisibility = false;
         // console.log('qp', qp);
         const {profileId, profileName, role } = qp;
-        this.router.navigate( ['admin/search']);
-
+        // this.router.navigate( ['admin/search']);
+        console.log(profileId);
         switch (role) {
           case '_profile_student':
 
@@ -96,16 +96,18 @@ export class SearchComponent implements OnInit {
                   const titleArray = locations.map((loc) => {
                     return `${loc.title}(${loc.room})`;
                   });
-                  this.initialSearchLocationString = titleArray.join(', ')
-                  console.log(this.initialSearchLocationString);
+                  this.initialSearchLocationString = titleArray.join(', ');
+                  // console.log(this.initialSearchLocationString);
                   this.search();
                 })
               );
+          default:
+            return of(null);
         }
       })
     ).subscribe((v) => {
       this.inputPanelVisibility = true;
-      console.log(v);
+      console.log(v, forceSearch );
       forceSearch.unsubscribe();
     });
 

@@ -88,7 +88,7 @@
 
             </div>
           </div>
-          <div>
+          <div [style.padding-right]="'10px'">
             <app-gradient-button
               [width]="'141px'"
               [minHeight]="'52px'"
@@ -110,7 +110,7 @@
 
       <div class="card-body_section">
         <div class="section-content">
-          <div>
+          <div [style.padding-right]="'10px'">
             <div class="section-header">Activity</div>
             <span class="profile-property">Sign-in status: </span> <span>{{profile['Sign-in status']}}</span><br>
             <span class="profile-property">Last sign-in: </span> <span>{{profile['Last sign-in']}}</span><br>
@@ -153,7 +153,7 @@
 
 
     </div>
-    <div style="flex: 1 1 auto;">
+    <div style="flex: 1 1 70px; display: flex; min-height: 132px;">
       <div class="card-footer">
         <div class="button">
           <app-gradient-button
@@ -173,17 +173,20 @@
           </div>
         </div>
         <div class="button">
-          <app-gradient-button
-            [width]="'144px'"
-            [minHeight]="'35px'"
-            [gradient]="'#DA2370, #FB434A'"
-            [hoverColor]="'#DA2370'"
-            [textColor]="'#FFFFFF'"
-            [fontSize]="'13px'"
-            [fontWeight]="'normal'"
-          >
-            <span>Remove from Profile</span>
-          </app-gradient-button>
+          <div  #target  [style.opacity]="consentMenuOpened ? '.5' : '1'">
+            <app-gradient-button
+              [width]="'144px'"
+              [minHeight]="'35px'"
+              [gradient]="'#DA2370, #FB434A'"
+              [hoverColor]="'#DA2370'"
+              [textColor]="'#FFFFFF'"
+              [fontSize]="'13px'"
+              [fontWeight]="'normal'"
+              (buttonClick)="deleteAccount(target)"
+            >
+              <span>Remove from Profile</span>
+            </app-gradient-button>
+          </div>
           <div class="button_message">
             <span>Message</span>
           </div>

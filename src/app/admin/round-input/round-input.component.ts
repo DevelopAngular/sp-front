@@ -55,7 +55,7 @@ export class RoundInputComponent implements OnInit {
 
   ngOnInit() {
 
-    if (!this.type.includes('multi')) {
+    if (!this.type.includes('multi') && this.type !== 'text') {
       this.initialValue = '';
     }
     // if ( this.selections[0] && this.selections[0] instanceof Location) {
