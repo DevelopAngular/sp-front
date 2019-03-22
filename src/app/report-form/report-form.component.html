@@ -11,7 +11,7 @@
       <div class="divider-text-message"> <img class="divider-icon" [src]="'./assets/Message (White).png' | resolveAsset">Message </div>
     </div>
   </div>
-  <div style="position: relative; flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between">
+  <div style="position: relative; flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; background-color: white">
 
     <div style="display: flex; flex-direction: column; flex: 1 1 auto" *ngIf="showOptions" [@NextStep]="{ value: '', params: frameMotion$ | async}">
       <div class="student-select">
