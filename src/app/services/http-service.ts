@@ -314,7 +314,7 @@ export class HttpService {
   private performRequest<T>(predicate: (ctx: AuthContext) => Observable<T>): Observable<T> {
     return this.accessToken
       .switchMap(ctx => {
-        console.log('performRequest');
+        // console.log('performRequest');
         return predicate(ctx);
       })
       .catch(err => {

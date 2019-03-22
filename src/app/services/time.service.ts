@@ -90,7 +90,7 @@ export class TimeService {
     });
 
     TimeService.latestDriftEstimate$.subscribe(drift => {
-      console.log(`This computer has an estimated drift of ${-drift}ms from server time`);
+      // console.log(`This computer has an estimated drift of ${-drift}ms from server time`);
     });
 
   }

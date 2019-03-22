@@ -19,6 +19,7 @@ export class DataTableComponent implements OnInit {
 
   @Output() selectedUsers: EventEmitter<any[]> = new EventEmitter();
   @Output() selectedRow: EventEmitter<any> = new EventEmitter<any>();
+  @Output() selectedCell: EventEmitter<any> = new EventEmitter<any>();
 
   @ViewChild(MatSort) sort: MatSort;
 
@@ -63,6 +64,35 @@ export class DataTableComponent implements OnInit {
           this.data.forEach(row => {
               this.selection.select(row);
           });
+  }
+
+  normalizeCell(cellData) {
+    if (!cellData) {
+      return new Array(0);
+    }
+    if (Array.isArray(cellData)) {
+      return cellData;
+    } else {
+      return  new Array(cellData);
+    }
+  }
+  displayCell(cellElement) {
+    if (typeof cellElement === 'string') {
+      return cellElement;
+    } else {
+      return cellElement.title ? cellElement.title : 'Error!';
+    }
+  }
+
+  selectedCellEmit(event, cellElement, element) {
+    // console.log(element);
+    if (typeof cellElement !== 'string') {
+      event.stopPropagation();
+      cellElement.row = element;
+      this.selectedCell.emit(cellElement);
+    } else {
+      return;
+    }
   }
 
   selectedRowEmit(row) {

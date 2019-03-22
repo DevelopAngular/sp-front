@@ -87,6 +87,26 @@
       &:hover {
         background-color: #F1F3F6;
       }
+      &__all {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 17px;
+        padding: 0px 30px;
+        img:first-child {
+          width: 30px;
+          height: 30px;
+          -webkit-transform: none;
+          -moz-transform: none;
+          -ms-transform: none;
+          -o-transform: none;
+          transform: none;
+          padding-top: 0;
+          padding-right: 15px;
+        }
+      }
     }
     &__top-bar{
       display: flex;
@@ -94,11 +114,12 @@
       align-items: center;
       flex-direction: row;
       height: 111px;
-      padding: 0px 20px 0px 33px;
+      padding: 0px 0px 0px 33px;
       .accounts {
         flex: 1 1 50%;
       }
       .g-suite{
+        height: 100%;
         flex: 1 1 auto;
       }
     }

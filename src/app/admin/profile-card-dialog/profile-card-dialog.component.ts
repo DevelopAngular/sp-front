@@ -1,13 +1,15 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {Component, ElementRef, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 import {User} from '../../models/User';
 import {Location} from '../../models/Location';
 import {Router} from '@angular/router';
 import {switchMap, tap} from 'rxjs/operators';
 import {DataService} from '../../services/data-service';
 import {FormControl, FormGroup} from '@angular/forms';
-import {zip} from 'rxjs';
+import {Observable, of, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
+import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
+import {HttpService} from '../../services/http-service';
 
 @Component({
   selector: 'app-profile-card-dialog',
@@ -29,13 +31,16 @@ export class ProfileCardDialogComponent implements OnInit {
   public testControll = new FormControl(true);
   public disabledState: boolean = false;
   public headerText: string = '';
+  public consentMenuOpened: boolean = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<ProfileCardDialogComponent>,
+    private matDialog: MatDialog,
     private router: Router,
     private dataService: DataService,
-    private userService: UserService
+    private userService: UserService,
+    private http: HttpService
   ) { }
 
   ngOnInit() {
@@ -135,6 +140,48 @@ export class ProfileCardDialogComponent implements OnInit {
         this.permissionsChanged = true;
         this.permissionsFormEditState = false;
       });
+
+  }
+
+  deleteAccount(eventTarget: HTMLElement) {
+      this.consentMenuOpened = true;
+      const DR = this.matDialog.open(ConsentMenuComponent,
+        {
+          data: {
+            role: this.data.role,
+            selectedUsers: this.data.profile,
+            alignSelf: true,
+            header: `Are you sure you want to remove this user?`,
+            // options: [{display: 'Confirm Remove', color: '#FFFFFF', buttonColor: '#DA2370, #FB434A', action: 'confirm'}],
+            options: [{display: 'Confirm Delete', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'confirm'}],
+            // optionsView: 'button',
+            trigger: new ElementRef(eventTarget)
+          },
+          panelClass: 'consent-dialog-container',
+          backdropClass: 'invis-backdrop',
+        });
+      DR.afterClosed()
+        .pipe(
+          switchMap((action): Observable<any> => {
+            // console.log(action);
+            this.consentMenuOpened = false;
+            // if (action === 'confirm') {
+            //   let role: any = this.data.role.split('_');
+            //   role = role[role.length - 1];
+            //   return this.userService.deleteUserFromProfile(this.profile.id, role);
+            // } else {
+            //   return of(null);
+            // }
+              return of(null);
+
+          }),
+        )
+        .subscribe((res) => {
+          console.log(res);
+          if (res != null) {
+            this.http.setSchool(this.http.getSchool());
+          }
+        });
 
   }
 

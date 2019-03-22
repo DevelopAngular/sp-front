@@ -8,12 +8,19 @@
   }
 }
 
+.multi-cell {
+  &:hover {
+    text-decoration: underline;
+    //text-shadow: #999999 0 0 3px;
+  }
+}
+
 table {
   width: 100%;
 }
-.cdk-column-Rooms {
-  text-decoration: underline;
-}
+//.cdk-column-Rooms {
+//  text-decoration: underline;
+//}
 
 ::ng-deep .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background, .mat-checkbox-checked.mat-accent .mat-checkbox-background {
   background-color: #7f879d;
