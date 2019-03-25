@@ -89,6 +89,7 @@
         <ng-template #roleProfile>
 
           <app-gradient-button
+            [size]="'medium'"
             [cursor]="'pointer'"
             [minHeight]="'43px'"
             [width]="'225px'"
@@ -170,6 +171,7 @@
 
           <div class="p"  *ngIf="role !== '_profile_student'">
             <app-gradient-button
+              [size]="'small'"
               [disabled]="!selectedUsers.length"
               [cursor]="'pointer'"
               [minHeight]="'32px'"
@@ -185,6 +187,7 @@
 
           <div class="p">
             <app-gradient-button
+              [size]="'small'"
               [disabled]="!selectedUsers.length"
               [cursor]="'pointer'"
               [minHeight]="'32px'"
@@ -192,13 +195,15 @@
               [fontSize]="'14px'"
               [fontWeight]="700"
               [gradient]="'#001115, #033294'"
-              (buttonClick)="openDialog('restrictions')">
+              [hoverColor]="'#022F68'"
+              (buttonClick)="false">
               <span>Disable sign-in</span>
             </app-gradient-button>
           </div>
 
           <div class="p" #eventTarget  [style.opacity]="consentMenuOpened ? '.5' : '1'">
             <app-gradient-button
+              [size]="'small'"
               [disabled]="!selectedUsers.length"
               [cursor]="'pointer'"
               [minHeight]="'32px'"

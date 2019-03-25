@@ -69,6 +69,9 @@
 .paginator-button {
     width: 25px;
     position: absolute;
+    align-items: center;
+    justify-content: center;
+    display: flex;
     //top: -17px;
     &__left{
         left: 12px;
@@ -94,7 +97,7 @@
     //opacity: 0.3;
     border-radius: 50%;
     cursor: pointer;
-    align-items: center;
-    justify-content: center;
-    display: flex;
+    //align-items: center;
+    //justify-content: center;
+    //display: flex;
 }

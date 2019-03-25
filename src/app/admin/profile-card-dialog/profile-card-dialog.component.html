@@ -9,7 +9,10 @@
       <img [src]="'./assets/Back Button (Grey).png'" alt="Back Button (Grey).png" *ngIf="!permissionsFormEditState">
       <span *ngIf="permissionsFormEditState">Cancel</span>
     </div>
-    <span>{{headerText}}</span>
+    <div class="card-header_title">
+      <img [src]="headerIcon" alt="header-icon">
+      <span>{{headerText}}</span>
+    </div>
     <div *ngIf="permissionsFormEditState" class="save-button">
       <app-gradient-button
         [minHeight]="'27px'"
@@ -88,8 +91,9 @@
 
             </div>
           </div>
-          <div [style.padding-right]="'10px'">
+          <div [style.padding-left]="'10px'">
             <app-gradient-button
+              [size]="'small'"
               [width]="'141px'"
               [minHeight]="'52px'"
               [gradient]="'#FFFFFF,#FFFFFF'"
@@ -101,7 +105,7 @@
 
             >
               <div class="search-button">
-                <span>Go to Pass Configuration</span><img [src]="'./assets/Object.svg'" alt="Object.svg">
+                <span>Go to Pass Configuration</span><img width="16px" height="16px" [src]="'./assets/Object.svg'" alt="Object.svg">
               </div>
             </app-gradient-button>
           </div>
@@ -117,6 +121,7 @@
           </div>
           <div *ngIf="data.role !== '_profile_admin'">
             <app-gradient-button
+              [size]="'small'"
               [width]="'141px'"
               [minHeight]="'35px'"
               [gradient]="'#FFFFFF,#FFFFFF'"
@@ -128,7 +133,7 @@
 
             >
               <div class="search-button">
-                <span style="">Go to search</span><img [src]="'./assets/Object.svg'" alt="">
+                <span style="">Go to search</span><img width="16px" height="16px" [src]="'./assets/Object.svg'" alt="">
               </div>
             </app-gradient-button>
           </div>
@@ -157,7 +162,7 @@
       <div class="card-footer">
         <div class="button">
           <app-gradient-button
-            [width]="'144px'"
+            [width]="'150px'"
             [minHeight]="'35px'"
             [gradient]="'#001115,#033294'"
             [hoverColor]="'#001115'"
@@ -175,7 +180,7 @@
         <div class="button">
           <div  #target  [style.opacity]="consentMenuOpened ? '.5' : '1'">
             <app-gradient-button
-              [width]="'144px'"
+              [width]="'150px'"
               [minHeight]="'35px'"
               [gradient]="'#DA2370, #FB434A'"
               [hoverColor]="'#DA2370'"

@@ -1,4 +1,4 @@
-import {Component, ElementRef, NgZone, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material';
 import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
@@ -60,14 +60,13 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     private matDialog: MatDialog,
     private _zone: NgZone,
     private storage: StorageService,
-    private dataService: DataService
+    private dataService: DataService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    // debugger;
     this.http.globalReload$.pipe(
       tap(() => {
-
         this.selectedUsers = [];
         this.userList = [];
       }),
@@ -100,20 +99,14 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       })
     )
     .subscribe((qp) => {
-      console.log(qp);
-
+      // console.log(qp);
       const {profileName} = qp;
 
         this.initialSearchString = this.initialSearchString ? this.initialSearchString : profileName;
-        console.log(this.initialSearchString);
+        // console.log(this.initialSearchString);
         this.router.navigate(['admin/accounts', this.role]);
-
-
-
       this.tabVisibility = true;
-
       this.getUserList(this.initialSearchString || '');
-
       // this._zone.run(() => {
         const headers = this.storage.getItem(`${this.role}_columns`);
         if ( headers ) {
@@ -416,7 +409,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   findProfileByRole(evt) {
     console.log(evt);
-    // this.tabVisibility = false;
+    this.tabVisibility = false;
 
     setTimeout(() => {
       if (evt instanceof Location) {
@@ -428,7 +421,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       } else {
         this.router.navigate(['admin/accounts', evt.role], {queryParams: {profileName: evt.row['Name']}});
       }
-    }, 1000);
+    }, 250);
   }
 
   showProfileCard(evt, bulk: boolean = false) {
@@ -441,8 +434,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
       panelClass: 'overlay-dialog',
       backdropClass: 'custom-bd',
-      width: '395px',
-      height: '474px',
+      width: '425px',
+      height: '500px',
       data: {
         profile: evt,
         bulkPermissions: bulk && this.selectedUsers.length ? this.selectedUsers.map(user => user.id) : null,
@@ -536,8 +529,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             });
             return  rawObj;
           });
-          console.log(this.dataTableHeadersToDisplay);
-          console.log(this.userList);
+          // console.log(this.dataTableHeadersToDisplay);
+          // console.log(this.userList);
 
         } else {
           this.placeholder = true;

@@ -32,6 +32,7 @@ export class ProfileCardDialogComponent implements OnInit {
   public disabledState: boolean = false;
   public headerText: string = '';
   public consentMenuOpened: boolean = false;
+  public headerIcon: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -51,13 +52,30 @@ export class ProfileCardDialogComponent implements OnInit {
 
     // if (this.data.bulkPermissions) {
     // }
+
+
+    this.headerIcon = `./assets/${
+                        this.data.role === '_profile_admin'
+                        ?
+                        'Admin'
+                        :
+                        this.data.role === '_profile_teacher'
+                        ?
+                        'Teacher'
+                        :
+                        'Student'} (Navy).svg`;
       this.headerText = this.data.bulkPermissions
                         ?
                         this.data.bulkPermissions.length + ` user${this.data.bulkPermissions.length > 1 ? 's' : ''} selected`
                         :
                         this.profile['Name'];
 
+    if (this.data.role === '_profile_admin') {
+      this.headerIcon = './assets/Admin (Navy).svg';
+    }
+
     if (this.data.role === '_profile_teacher') {
+      this.headerIcon = './assets/Teacher (Navy).svg';
         this.dataService.getLocationsWithTeacher(this.profile._originalUserProfile)
           .subscribe((locations: Location[]) => {
             this.teacherAssignedTo = locations;

@@ -23,7 +23,7 @@
           <ng-content></ng-content>
         </div>
       </div>
-      <img draggable="false" *ngIf="rightIcon" class="icon right-icon" [src]="rightIcon | resolveAsset">
+      <img draggable="false" [style.width]="leftImageWidth" [style.height]="leftImageHeight" *ngIf="rightIcon" class="icon right-icon" [src]="rightIcon | resolveAsset">
     </div>
   </div>
   <div *ngIf="buttonLink" class="button-link">

@@ -46,6 +46,7 @@ import {DateTimeComponent} from '../create-hallpass-forms/main-hallpass--form/da
 import {CalendarComponent} from '../admin/calendar/calendar.component';
 import {RestrictionPickerComponent} from '../restriction-picker/restriction-picker.component';
 import {SafariScrollDirective} from '../safari-scroll.directive';
+import { ReportSuccessToastComponent } from '../report-success-toast/report-success-toast.component'
 
 
 
@@ -105,12 +106,14 @@ import {SafariScrollDirective} from '../safari-scroll.directive';
       CalendarComponent,
       RestrictionPickerComponent,
       SafariScrollDirective
-  ],
+,
+      ReportSuccessToastComponent  ],
     entryComponents: [
       PassCardComponent,
       DropdownComponent,
       CalendarComponent,
-      CalendarComponent
+      CalendarComponent,
+      ReportSuccessToastComponent
     ],
   exports: [
     ReactiveFormsModule,
@@ -147,8 +150,8 @@ import {SafariScrollDirective} from '../safari-scroll.directive';
     DateTimeComponent,
     CalendarComponent,
     RestrictionPickerComponent,
-    SafariScrollDirective
-
+    SafariScrollDirective,
+    ReportSuccessToastComponent
   ],
 })
 export class SharedModule {
