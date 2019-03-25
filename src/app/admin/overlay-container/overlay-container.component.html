@@ -10,12 +10,17 @@
 
         <div class="cancel-button" [style.color]="titleColor" *ngIf="!backButtonState && !hideHeaderIcon" (click)="back()">Cancel</div>
     </div>
-      <div class="title" [style.color]="titleColor" *ngIf="overlayType === 'newRoom' || overlayType === 'editRoom'">{{ roomName }}</div>
+      <div class="title" [style.color]="titleColor" *ngIf="overlayType === 'newRoom' || overlayType === 'editRoom'">
+          <img class="title-icon" *ngIf="titleIcon" [src]="titleIcon | resolveAsset">
+          {{ roomName }}
+      </div>
       <div
         class="title"
         [style.color]="titleColor"
         *ngIf="showFolderName"
-      >{{ folderName }}
+      >
+          <img class="title-icon" *ngIf="titleIcon" [src]="titleIcon | resolveAsset">
+          {{ folderName }}
       </div>
       <div *ngIf="(overlayType === 'newRoom') || overlayType === 'edit' || overlayType === 'editRoom' || overlayType === 'newFolder' || overlayType === 'newRoomInFolder' || overlayType === 'addExisting'" style="margin-right: 25px;width: 121px;">
         <app-gradient-button *ngIf="form.get('timeLimit').valid && overlayType === 'edit' && settingsTouched"
@@ -128,7 +133,7 @@
         <div class="room-name">
           <app-input
              *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'"
-             [width]="'287px'"
+             [width]="'222px'"
              [maxLength]="15"
              [input_label]="'Room Name'"
              [input_value]="(roomName !== 'New Room' ? roomName : '')"
@@ -153,7 +158,7 @@
         </div>
         <div class="room-number" *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'">
           <app-input
-                  [width]="'115px'"
+                  [width]="'103px'"
                   [maxLength]="5"
                   [input_label]="'Room Number'"
                   [input_value]="roomNumber ? roomNumber : ''"
@@ -221,8 +226,8 @@
                     [noSelected]="inactiveTogglePickerSettings"
                     [currentChoose]="travelType ? travelType : []"
                     [choices]="['Round-trip', 'One-way' , 'Both']"
-                    [width]="'350px'"
-                    [height]="'30px'"
+                    [width]="'280px'"
+                    [height]="'25px'"
                     [altColor]="'#1f195e'"
                     [border]="'#1f195e'">
             </app-toggle-picker>
@@ -235,7 +240,7 @@
              || overlayType === 'editRoom'"
         >
           <app-input
-                  [width]="'105px'"
+                  [width]="'103px'"
                   [maxLength]="2"
                   [tooltipText]="tooltipText.timeLimit"
                   (over)="openInfo($event)"
@@ -282,8 +287,8 @@
                     [noSelected]="inactiveTogglePickerSettings"
                     [currentChoose]="nowRestriction !== undefined ? nowRestriction : undefined"
                     [choices]="['Unrestricted', 'Restricted']"
-                    [width]="'100%'"
-                    [height]="'30px'"
+                    [width]="'187px'"
+                    [height]="'25px'"
                     [altColor]="'#1f195e'"
                     [border]="'#1f195e'">
             </app-toggle-picker>
@@ -311,8 +316,8 @@
                     [noSelected]="inactiveTogglePickerSettings"
                     [currentChoose]="futureRestriction !== undefined ? futureRestriction : undefined"
                     [choices]="['Unrestricted', 'Restricted']"
-                    [width]="'100%'"
-                    [height]="'30px'"
+                    [width]="'187px'"
+                    [height]="'25px'"
                     [altColor]="'#1f195e'"
                     [border]="'#1f195e'">
             </app-toggle-picker>
@@ -459,7 +464,7 @@
           <span>Note: appearance settings will be lost</span>
         </div>
         <div class="pinnable-collection">
-          <app-pinnable-collection [header]="false" [pinnables]="pinnables$ | async" (roomEvent)="selectedRoomsInFolder=$event"></app-pinnable-collection>
+          <app-pinnable-collection [width]="'390px'" [header]="false" [pinnables]="pinnables$ | async" (roomEvent)="selectedRoomsInFolder=$event"></app-pinnable-collection>
         </div>
       </div>
       <input type="file" formControlName="file" #file style="display: none"/>
@@ -473,11 +478,11 @@
           </a>
         </div>
           <app-gradient-button
-            style="margin-top: 68px;"
+            style="margin-top: 35px;"
             [gradient]="'#FFFFFF,#FFFFFF'"
             [hoverColor]="'#F5F5F5'"
-            [minHeight]="'110px'"
-            [width]="'285px'"
+            [minHeight]="'74px'"
+            [width]="'170px'"
             [cursor]="'pointer'"
             [textColor]="'#7f879d'"
             [fontSize]="'23px'"
@@ -529,7 +534,7 @@
       <div class="footer-delete-button"
            [style.justify-content]="'center'"
            *ngIf="overlayType === 'newFolder' && isEditFolder"
-           style="margin-top: 10px"
+           style="margin-top: 40px"
       >
         <app-gradient-button
                 [hoverColor]="'#DA2370'"

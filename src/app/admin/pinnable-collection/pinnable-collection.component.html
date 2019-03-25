@@ -22,7 +22,7 @@
     {{headerButtonText}}</app-gradient-button>
   </div>
   <div class="collection-divider" *ngIf="header"></div>
-  <div [style.width]="'560px'" style="display: flex; flex-wrap: wrap" dragula="pinnables" [dragulaModel]="pinnables" (dragulaModelChange)="onPinablesOrderChanged($event)">
+  <div [style.width]="width" style="display: flex; flex-wrap: wrap" dragula="pinnables" [dragulaModel]="pinnables" (dragulaModelChange)="onPinablesOrderChanged($event)">
 
     <div *ngFor="let pinnable of pinnables; let i = index" style="padding: 10px">
       <div class="pinnable-item-container" >

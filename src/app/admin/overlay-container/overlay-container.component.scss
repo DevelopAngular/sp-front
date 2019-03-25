@@ -1,12 +1,13 @@
 .overlay-container {
-  width: 100%;
+  width: inherit;
+  height: inherit;
   display: flex;
   flex-direction: column;
 }
 
 .overlay-header {
   width: 100%;
-  height: 80px;
+  height: 70px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -68,7 +69,7 @@
 .overlay-content {
   display: flex;
   justify-content: space-between;
-  height: 480px;
+  height: 355px;
 }
 
 .room-edit {
@@ -87,11 +88,17 @@
   display: flex;
   flex-grow: 1;
   justify-content: center;
+
+  .title-icon {
+    width: 21px;
+    height: 21px;
+    margin-right: 12px;
+  }
 }
 
 .back-button {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   //margin-left: 20px;
   cursor: pointer;
 }
@@ -135,7 +142,7 @@
   width: 614px;
   .room-inputs {
     display: flex;
-    margin: 30px 25px;
+    margin: 20px 25px;
 
     .room-number {
       margin-left: 14%;
@@ -174,19 +181,17 @@
     display: flex;
 
     .restriction-picker-1 {
-      margin: 30px 0 0 25px;
-      min-width: 220px;
+      margin: 10px 0 0 25px;
     }
 
     .restriction-picker-2 {
-      margin: 30px 0 0 90px;
-      min-width: 220px;
+      margin: 10px 0 0 50px;
 
     }
   }
 
   .time-limit {
-    margin: 30px 0 0 45px;
+    margin: 30px 0 0 30px;
   }
 }
 
@@ -194,14 +199,14 @@
   width: 1px;
   //height: 700px;
   background: darkgray;
-  margin: 0 20px 0 0px;
+  margin: 0 12px 0 0px;
 }
 
 
 .right-content {
   display: flex;
   flex-direction: column;
-  width: 335px;
+  width: 315px;
   height: 100%;
   align-items: center;
   overflow: auto;
@@ -283,7 +288,7 @@
 }
 
 .rooms-in-folder {
-  margin: 50px 50px 50px 20px;
+  margin: 10px 50px 50px 20px;
 
   .rooms-in-folder-title{
     display: flex;
@@ -304,7 +309,7 @@
 
   .content-buttons-in-folder {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     margin-top: 30px;
     margin-bottom: 20px;
 
@@ -322,16 +327,16 @@
 
   .existing-room-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     box-shadow: 0 0 2px darkgrey;
-    width: 594px;
+    width: 90%;
     align-items: center;
     height: 100px;
     margin-top: 20px;
     border-radius: 12px;
+    position: relative;
 
     .header-title {
-      margin-right: 157px;
       font-weight: bolder;
       font-size: 19px;
       color: gray;
@@ -339,8 +344,9 @@
     .back-button {
       width: 40px;
       height: 40px;
-      margin-left: 20px;
+      left: 20px;
       cursor: pointer;
+      position: absolute;
     }
   }
 
@@ -375,9 +381,9 @@
     display: flex;
     justify-content: space-between;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
-    width: 594px;
+    width: 90%;
     align-items: center;
-    height: 100px;
+    height: 75px;
     margin-top: 20px;
     border-radius: 12px;
 
@@ -441,8 +447,8 @@
     color: #7f879d;
     font-size: 18px;
     text-align: center;
-    width: 530px;
-    margin-top: 57px;
+    width: 85%;
+    margin-top: 25px;
   }
 
   .download-template-link {
@@ -483,7 +489,7 @@
 .edit-rooms-info {
   font-weight: bolder;
   color: darkgray;
-  margin: 30px 0 30px 0;
+  margin: 30px 30px 0 30px;
 }
 
 .edit-right-content {
@@ -507,7 +513,7 @@
   .edit-rooms-left-title{
     font-weight: bolder;
     color: darkgray;
-    margin: 30px 0 30px 0;
+    margin: 30px 0 0 30px;
   }
 }
 
@@ -529,7 +535,7 @@
     cursor: pointer;
   }
 
-  list-divider {
+  .list-divider {
     width: 100%;
     height: 1px;
     background-color: darkgray;
@@ -567,10 +573,8 @@
 }
 
 .bulk-warning-text {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-top: 70px;
+  width: 90%;
+  margin-left: 30px;
   color: darkgray;
 }
 
@@ -597,7 +601,7 @@
 
 .sticky-button {
   position: sticky;
-  top: 150px;
+  top: 100px;
 }
 
 .advanced-options {

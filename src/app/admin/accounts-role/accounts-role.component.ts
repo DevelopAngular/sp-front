@@ -398,7 +398,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   addUser() {
     const DR = this.matDialog.open(AddUserDialogComponent,
       {
-        width: '669px', height: '371px',
+        width: '750px', height: '425px',
         panelClass: 'accounts-profiles-dialog',
         backdropClass: 'custom-bd',
         data: {

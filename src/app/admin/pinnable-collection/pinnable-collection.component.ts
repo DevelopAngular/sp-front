@@ -20,6 +20,8 @@ export class PinnableCollectionComponent implements OnInit {
 
   @Input() resetBulkSelect$: BehaviorSubject<boolean>;
 
+  @Input() width: string = '560px';
+
   @Output()
   roomEvent: EventEmitter<any> = new EventEmitter();
   @Output()
