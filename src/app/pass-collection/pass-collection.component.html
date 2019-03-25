@@ -7,7 +7,8 @@
       </div>
       <div class="sort-label global-opacity-icons" *ngIf="hasSort" (click)="openSortDialog($event)">Sort</div>
       <!--<app-dropdown *ngIf="hasSort" class="sort-selector" (onSelect)="onSortSelected($event)" [options]="sortOptions"></app-dropdown>-->
-      <img draggable="false" class="collection-display-toggle global-opacity-icons" [src]="'./assets/' +(displayState==='grid'?'List':'Grid') +' (Blue).png'| resolveAsset" (click)="displayState=(displayState==='list'?'grid':'list')" [style.margin-left]="hasSort?'10px':'auto'">
+    <!--(click)="displayState=(displayState==='list'?'grid':'list')"-->
+      <img draggable="false" class="collection-display-toggle global-opacity-icons" [src]="'./assets/' +(displayState==='grid'?'List':'Grid') +' (Blue).png'| resolveAsset" [style.margin-left]="hasSort?'10px':'auto'">
   </div>
   <div class="collection-divider"></div>
   <div *ngIf="(currentPasses$ | async)">

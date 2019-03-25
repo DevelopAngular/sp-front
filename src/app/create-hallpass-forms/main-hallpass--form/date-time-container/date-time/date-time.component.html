@@ -12,7 +12,7 @@
               <div class="toggle-title">Declinable</div>
               <div class="info-text-1">
                 <span>{{'The student ' + (declinable.value ? 'has the option to ' : ' cannot ') + 'decline the pass.'}}</span><br/>
-                <span *ngIf="!declinable.value">You must also select from where the student will be traveling.</span>
+                <span *ngIf="!declinable.value">You must also select from where the student will be travelling.</span>
                 <span *ngIf="declinable.value">You do not need to know the location from where the student will be travelling.</span>
               </div>
             </div>
@@ -30,13 +30,13 @@
               <app-date-time-picker [min]="startTime" [_selectedMoment]="requestTime" (onUpdate)="requestTime=$event"></app-date-time-picker>
             </div>
           </div>
-          <div class="next-button">
+          <div style="margin-bottom: 30px">
               <app-gradient-button
                       [gradient]="'#03CF31,#00B476'"
                       [cursor]="'pointer'"
                       [hoverColor]="'#00B476'"
-                      [minWidth]="'104px'"
-                      [minHeight]="'35px'"
+                      [minWidth]="'101px'"
+                      [minHeight]="'40px'"
                       [fontSize]="'14px'"
                       (buttonClick)="next()"
                       [style.margin]="'15px auto'"
@@ -54,8 +54,8 @@
                       [gradient]="colorProfile ? colorProfile.gradient_color : '#03CF31,#00B476'"
                       [cursor]="'pointer'"
                       [hoverColor]="(colorProfile ? colorProfile.solid_color : '#00B476')"
-                      [minWidth]="'104px'"
-                      [minHeight]="'35px'"
+                      [minWidth]="'101px'"
+                      [minHeight]="'40px'"
                       [fontSize]="'14px'"
                       (buttonClick)="next()"
                       [style.margin]="'15px auto'"

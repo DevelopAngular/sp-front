@@ -96,6 +96,8 @@ export class OverlayContainerComponent implements OnInit {
   color_profile;
   selectedIcon;
 
+  titleIcon: string;
+
   initialState: FormState;
   isFormStateDirty: boolean;
 
@@ -166,6 +168,7 @@ export class OverlayContainerComponent implements OnInit {
                 this.folderName = this.pinnable.title;
                 this.color_profile = this.pinnable.color_profile;
                 this.selectedIcon = this.pinnable.icon;
+                this.titleIcon = this.pinnable.icon;
                 break;
             }
           // colors = '#03CF31,#00B476';
@@ -183,6 +186,7 @@ export class OverlayContainerComponent implements OnInit {
             this.color_profile = this.pinnable.color_profile;
             this.selectedIcon = this.pinnable.icon;
             this.travelType = this.pinnable.location.travel_types;
+            this.titleIcon = this.pinnable.icon;
             break;
         case 'edit':
           // colors = '#606981, #ACB4C1';

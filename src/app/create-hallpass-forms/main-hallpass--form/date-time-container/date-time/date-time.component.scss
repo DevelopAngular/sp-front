@@ -5,7 +5,7 @@
   position: relative;
   //overflow: hidden;
   .time-picker-scaled {
-    transform: scale(.80);
+    transform: scale(.776);
     position: absolute;
     top: -50px;
     left: -14px;
@@ -37,15 +37,16 @@
 
 .toggle-title {
   font-weight: bold;
-  color: #1F195E;;
+  color: #1F195E;
+  margin-bottom: 3px;
 }
 
 .decline-content {
   display: flex;
-  padding: 10px;
+  padding: 15px 15px 10px 25px;
 }
 .toggle-text {
-  width: 88%;
+  width: 85%;
 }
 .toggle {
   width: 12%;
@@ -59,7 +60,7 @@
 
 .next-button{
   display: flex;
-  justify-content: center;
+  margin-top: 20px;
 }
 
 .divider {
@@ -96,15 +97,15 @@
 }
 
 .divider-icon {
-  margin-right: 12px;
-  width: 21px;
-  height: 21px;
+  margin-right: 10px;
+  width: 22px;
+  height: 20px;
 }
 
 .divider-text {
   color: white;
   font-family: 'Helvetica Neue', sans-serif;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: bold;
   font-style: normal;
   font-stretch: normal;
