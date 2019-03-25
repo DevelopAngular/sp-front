@@ -1,18 +1,23 @@
-import {Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef} from '@angular/core';
-import {MatChipList, MatDialog} from '@angular/material';
-import { TimeService } from '../../services/time.service';
-import { DateInputComponent } from '../date-input/date-input.component';
-import { Paged } from '../../location-table/location-table.component';
-import { HttpService } from '../../services/http-service';
-import { InputHelperDialogComponent } from '../input-helper-dialog/input-helper-dialog.component';
-import {FormGroup} from '@angular/forms';
-import {BehaviorSubject, fromEvent, Observable, Subject} from 'rxjs';
-import {User} from '../../models/User';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
+import {MatDialog} from '@angular/material';
+import {TimeService} from '../../services/time.service';
+import {InputHelperDialogComponent} from '../input-helper-dialog/input-helper-dialog.component';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 
 @Component({
   selector: 'app-round-input',
   templateUrl: './round-input.component.html',
-  styleUrls: ['./round-input.component.scss']
+  styleUrls: ['./round-input.component.scss'],
 })
 export class RoundInputComponent implements OnInit {
 
@@ -51,7 +56,7 @@ export class RoundInputComponent implements OnInit {
 
   public e: Observable<Event>;
 
-  constructor(public dialog: MatDialog, private timeService: TimeService) { }
+  constructor(public dialog: MatDialog, private timeService: TimeService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
 
@@ -66,6 +71,7 @@ export class RoundInputComponent implements OnInit {
     // }
 
     this.value = this.initialValue;
+    // debugger;
     console.log(this.value);
     setTimeout(() => {
       if (this.input && this.focused) {

@@ -21,10 +21,10 @@
     </div>
   </div>
   <div class="paginator-container">
-    <div class="paginator-button paginator-button__left" [style.top]="arrowPosition"><img *ngIf="hideLeftButton.value" (click)="leftPaginator()" class="button-image" [src]="'./assets/Disclosure Left (White).png' | resolveAsset"></div>
+    <div class="paginator-button paginator-button__left" [style.top]="arrowPosition" (click)="leftPaginator()" ><img *ngIf="hideLeftButton.value" class="button-image" [src]="'./assets/Disclosure Left (White).png' | resolveAsset"></div>
     <div *ngIf="pages > 1" class="paginator-wrapper">
         <div *ngFor="let $page of $pages" class="pager-page-selector" (click)="DotPagination($page)" [style.background-color]="page===$page?'#FFF':'rgba(255,255,255,0.3)'"></div>
     </div>
-    <div class="paginator-button paginator-button__right" [style.top]="arrowPosition"><img class="button-image" *ngIf="hideRightButton.value" (click)="RightPaginator()" [src]="'./assets/Disclosure Right (White).png' | resolveAsset"></div>
+    <div class="paginator-button paginator-button__right" [style.top]="arrowPosition" (click)="RightPaginator()"><img class="button-image" *ngIf="hideRightButton.value" [src]="'./assets/Disclosure Right (White).png' | resolveAsset"></div>
   </div>
 </div>

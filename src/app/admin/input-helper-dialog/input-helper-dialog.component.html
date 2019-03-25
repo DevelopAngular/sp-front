@@ -11,11 +11,13 @@
     <app-student-search  [style.width]="'75%'" (onUpdate)="selectedStudents=$event" [selectedStudents]="selectedStudents"></app-student-search>
     <app-gradient-button
       *ngIf="type=='user'"
+      [size]="'small'"
       [gradient]="'#03CF31,#00B476'"
       [hoverColor]="'#00B476'"
       [minWidth]="'90px'"
       [minHeight]="'30px'"
       [fontSize]="'14px'"
+      [cursor]="'pointer'"
       (buttonClick)="closeDialog()"
       [style.width]="'90px'"
       [style.margin-bottom]="'20px'"
@@ -28,11 +30,13 @@
 
     <app-toggle-picker (onSelect)="toggleState = $event" [selectedChoice]="toggleState" [choices]="['Origin', 'Destination' , 'Either']" [width]="'350px'" [height]="'30px'" [altColor]="'#1f195e'" [border]="'#1f195e'"></app-toggle-picker>
     <app-gradient-button
+      [size]="'small'"
       [gradient]="'#03CF31,#00B476'"
       [hoverColor]="'#00B476'"
       [minWidth]="'90px'"
       [minHeight]="'30px'"
       [fontSize]="'14px'"
+      [cursor]="'pointer'"
       (buttonClick)="closeDialog()"
       [style.width]="'90px'"
       [style.margin]="'20px auto'"

@@ -72,7 +72,7 @@ export class SearchComponent implements OnInit {
         this.inputPanelVisibility = false;
         // console.log('qp', qp);
         const {profileId, profileName, role } = qp;
-        // this.router.navigate( ['admin/search']);
+        this.router.navigate( ['admin/search']);
         console.log(profileId);
         switch (role) {
           case '_profile_student':

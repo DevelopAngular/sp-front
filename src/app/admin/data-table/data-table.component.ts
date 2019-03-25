@@ -32,14 +32,17 @@ export class DataTableComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-      this.dataSource = new MatTableDataSource(this.data);
+    this.dataSource = new MatTableDataSource(this.data);
       this.dataSource.sort = this.sort;
       this.dataSource.sortingDataAccessor = (item, property) => {
+        // console.log(item, property, item[property].split(' ')[1]);
           switch (property) {
-              case 'Date & Time':
-                  return new Date(item[property]);
-              default:
-                  return item[property];
+            case 'Name':
+              return item[property].split(' ')[1];
+            case 'Date & Time':
+                return new Date(item[property]);
+            default:
+                return item[property];
           }
       };
       if (!this.displayedColumns) {

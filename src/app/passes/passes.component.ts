@@ -21,6 +21,7 @@ import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
 import { NotificationService } from '../services/notification-service';
 import { TimeService } from '../services/time.service';
+import {ReportSuccessToastComponent} from '../report-success-toast/report-success-toast.component';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('_profile_teacher');
@@ -368,6 +369,15 @@ export class PassesComponent implements OnInit {
       backdropClass: 'custom-backdrop',
       disableClose: true,
       data: data
+    });
+  }
+  onReportFromPassCard() {
+    this.dialog.open(ReportSuccessToastComponent, {
+      backdropClass: 'invisible-backdrop',
+      panelClass: 'main-form-dialog-container',
+      position: {
+        bottom: '50px'
+      }
     });
   }
 }

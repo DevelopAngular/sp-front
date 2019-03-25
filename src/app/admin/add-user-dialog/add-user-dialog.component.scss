@@ -16,7 +16,7 @@
     flex-direction: column;
     overflow: hidden;
     .heading {
-      min-height: 64px;
+      min-height: 70px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -37,7 +37,8 @@
         cursor: pointer;
         color: grey;
         img {
-          width: 26px;
+          width: 28px;
+          height: 28px;
         }
       }
       .save-button {
