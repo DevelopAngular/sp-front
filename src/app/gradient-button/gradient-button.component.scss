@@ -12,7 +12,7 @@
 }
 .button {
   border-radius: 8px;
-  padding-top: 1px;
+  //padding-top: 1px;
   width: 100%;
   height: 100%;
   display: flex;
@@ -35,15 +35,15 @@
     text-decoration: none;
     font-weight: bold;
     color: white;
-    span {
+    //span {
       //padding-top: 2px;
-      padding-right: 5px;
-    }
-    img {
-      width: 23px;
-      height: auto;
-      padding-bottom: 2px;
-    }
+      //padding-right: 5px;
+    //}
+    //img {
+    //  width: 23px;
+    //  height: auto;
+    //  padding-bottom: 2px;
+    //}
     &:focus {
       color: white;
       outline: none;
@@ -126,12 +126,14 @@
 }
 
 .left-icon {
-  margin-right: 6px;
+  padding-right: 6px;
+  //margin-right: 6px;
   //margin-left: 16px;
 }
 
 .right-icon {
-  margin-right: -5px;
-  margin-left: 7px;
+  //margin-right: -5px;
+  //margin-left: 7px;
+  padding-left: 6px;
 }
 

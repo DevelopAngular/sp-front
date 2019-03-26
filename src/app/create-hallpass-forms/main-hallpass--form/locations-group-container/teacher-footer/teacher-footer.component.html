@@ -8,18 +8,18 @@
         <img class="arrow-icon" [src]="'./assets/icon-arrow-open.png' | resolveAsset">
       </div>
       <div class="new-footer" *ngIf="showFullFooter">
-        <div class="top cursor" (click)="goToDate()" *ngIf="date">
+        <div class="cursor" (click)="goToDate()" *ngIf="date">
           {{ date }}
         </div>
         <div class="center">
           <div class="center-text">
-            <div class="footer-text" [ngClass]="{'cursor': fromCursor}" (click)="goToFromWhere($event)" [style.font-weight]="(!fromLocation ? 'bold' : 'normal')">{{ fromLocationText }}</div>
+            <div class="" [ngClass]="{'cursor': fromCursor}" (click)="goToFromWhere($event)" [style.font-weight]="(!fromLocation ? 'bold' : 'normal')">{{ fromLocationText }}</div>
             <img class="footer-icon" [src]="'./assets/Arrows_long_right.png' | resolveAsset">
             <div class="footer-text" [ngClass]="{'cursor': toCursor}" (click)="goToToWhere($event)" [style.font-weight]="(!toLocation && state !== 'from' ? 'bold' : 'normal')">{{ toLocationText }}</div>
           </div>
           <img class="arrow-icon" [src]="'./assets/icon-arrow-close.png' | resolveAsset">
         </div>
-        <div class="bottom cursor" (click)="goToStudents($event)" *ngIf="showFullFooter && studentText">
+        <div class="cursor" (click)="goToStudents($event)" *ngIf="showFullFooter && studentText">
           {{ studentText }}
         </div>
       </div>

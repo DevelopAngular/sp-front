@@ -9,7 +9,7 @@
     </div>
     <div class="header_title">
       <!--<img class="header_icon" [src]="'./assets/Search (Blue).png' | resolveAsset">-->
-      <div class="header_text">{{editGroup.title}}</div>
+      <div class="header_text ds-dialog-title">{{editGroup.title}}</div>
       <span  *ngIf="editGroup.users && editGroup.users.length ">{{editGroup.users.length}} student<span *ngIf="editGroup.users.length > 1">s</span></span>
     </div>
     <div class="header_save">
@@ -35,7 +35,7 @@
         <div>
           <div>
 
-            <div class="content-left_header">Student Group Name</div>
+            <div class="ds-dialog-subtitle">Student Group Name</div>
             <app-input
               [controlName]="form.get('title')"
               [formGroup]="form"

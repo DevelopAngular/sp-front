@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, ElementRef, Inject, OnInit} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { Location } from '../../models/Location';
 import { Pinnable } from '../../models/Pinnable';
@@ -68,12 +68,12 @@ export class MainHallPassFormComponent implements OnInit {
     public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     public dialogRef: MatDialogRef<MainHallPassFormComponent>,
-    private formService: CreateFormService
+    private formService: CreateFormService,
+    private elementRef: ElementRef
   ) {}
 
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
-
     this.FORM_STATE = {
       step: null,
       previousStep: 0,
@@ -151,8 +151,12 @@ export class MainHallPassFormComponent implements OnInit {
   }
 
   setFormSize() {
+    const form = this.elementRef.nativeElement.closest('.mat-dialog-container');
+          if (form && this.FORM_STATE.step !== 4) {
+            form.style.boxShadow = '0 2px 4px 0px rgba(0, 0, 0, 0.5)';
+          }
 
-      switch (this.FORM_STATE.step) {
+    switch (this.FORM_STATE.step) {
         case 1:
           this.formSize.width =  `425px`;
           this.formSize.height =  `500px`;
@@ -166,6 +170,7 @@ export class MainHallPassFormComponent implements OnInit {
           this.formSize.height =  `500px`;
           break;
         case 4:
+          form.style.boxShadow = 'none';
           this.formSize.width =  `425px`;
           this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '412px';
           break;

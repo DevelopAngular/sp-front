@@ -5,11 +5,11 @@
   </div>
   <!-- end -->
   <div class="card-header">
-    <div class="back-button" (click)="back()">
+    <div class="back-button ds-flex-center-center" (click)="back()">
       <img [src]="'./assets/Back Button (Grey).png'" alt="Back Button (Grey).png" *ngIf="!permissionsFormEditState">
       <span *ngIf="permissionsFormEditState">Cancel</span>
     </div>
-    <div class="card-header_title">
+    <div class="ds-flex-center-center ds-dialog-title">
       <img [src]="headerIcon" alt="header-icon">
       <span>{{headerText}}</span>
     </div>
@@ -33,7 +33,7 @@
       <div class="card-body_section" *ngIf="data.role === '_profile_teacher' || data.role === '_profile_admin'">
         <div class="section-content">
           <div [style.width]="'100%'">
-            <div class="section-header">Bulk Permissions</div>
+            <div class="ds-dialog-heading">Bulk Permissions</div>
             <div *ngFor="let control of controlsIteratable">
               <app-toggle-input
                 [form]="permissionsForm"
@@ -46,27 +46,24 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 
-
   <div class="content-scrollable-box" *ngIf="!data.bulkPermissions">
-
     <div class="card-body">
       <div class="card-body_section">
         <div class="section-content">
           <div>
-            <div class="section-header">Account Info</div>
-            <span class="profile-property">Name: </span> <span>{{profile['Name']}}</span><br>
-            <span class="profile-property">Email: </span> <span>{{profile['Email/Username']}}</span><br>
-            <span class="profile-property">Account Type: </span> <span>{{profile['Account Type']}}</span><br>
+            <div class="ds-dialog-heading">Account Info</div>
+            <span class="ds-dialog-bold-text">Name: </span> <span>{{profile['Name']}}</span><br>
+            <span class="ds-dialog-bold-text">Email: </span> <span>{{profile['Email/Username']}}</span><br>
+            <span class="ds-dialog-bold-text">Account Type: </span> <span>{{profile['Account Type']}}</span><br>
           </div>
           <div [style.text-align]="'right'">
             <div>
               <img [src]="'./assets/google/google_logo.svg'" alt="google_logo.svg">
             </div>
-            <div class="learn-more">
+            <div class="learn-more ds-small-link-text">
               <span>Learn more</span>
             </div>
           </div>
@@ -75,11 +72,11 @@
       <div class="card-body_section" *ngIf="data.role === '_profile_teacher'">
         <div class="section-content">
           <div>
-            <div class="section-header">Rooms</div>
+            <div class="ds-dialog-heading">Rooms</div>
             <div>
 
               <div style="display: inline">
-                <span class="profile-property">Assigned to: </span>
+                <span class="ds-dialog-bold-text">Assigned to: </span>
               </div>
               <div style="display: inline" class="room-link" *ngFor="let loc of teacherAssignedTo; let i = index" (click)="goToPassConfig(loc)">
                 <span *ngIf="i > 0">,</span> <span> {{loc.title}}</span>
@@ -115,9 +112,9 @@
       <div class="card-body_section">
         <div class="section-content">
           <div [style.padding-right]="'10px'">
-            <div class="section-header">Activity</div>
-            <span class="profile-property">Sign-in status: </span> <span>{{profile['Sign-in status']}}</span><br>
-            <span class="profile-property">Last sign-in: </span> <span>{{profile['Last sign-in']}}</span><br>
+            <div class="ds-dialog-heading">Activity</div>
+            <span class="ds-dialog-bold-text">Sign-in status: </span> <span>{{profile['Sign-in status']}}</span><br>
+            <span class="ds-dialog-bold-text">Last sign-in: </span> <span>{{profile['Last sign-in']}}</span><br>
           </div>
           <div *ngIf="data.role !== '_profile_admin'">
             <app-gradient-button
@@ -142,7 +139,7 @@
       <div class="card-body_section" *ngIf="data.role === '_profile_teacher' || data.role === '_profile_admin'">
         <div class="section-content">
           <div [style.width]="'100%'">
-            <div class="section-header">Permissions</div>
+            <div class="ds-dialog-heading">Permissions</div>
             <div *ngFor="let control of controlsIteratable">
               <app-toggle-input
                 [form]="permissionsForm"

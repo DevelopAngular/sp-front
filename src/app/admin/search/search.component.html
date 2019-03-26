@@ -36,6 +36,7 @@
       </div>
       <div class="buttons">
         <app-gradient-button *ngIf="!spinner && !hasSearched"
+                             [size]="'medium'"
                              [ngStyle]="{'opacity': isDisabled? '.5' : '1'}"
                              [style.margin]="'0 20px'"
                              [gradient]="'#FFFFFF,#FFFFFF'"

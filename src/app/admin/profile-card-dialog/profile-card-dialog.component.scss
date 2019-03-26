@@ -24,7 +24,7 @@
     border-radius: 10px;
     position: relative;
     .card-header {
-      @include heading(17px);
+      //@include heading(17px);
       min-height: 70px;
       display: flex;
       justify-content: center;
@@ -34,24 +34,24 @@
       //font-weight: bold;
       position: relative;
       box-shadow: 0 1px 5px 0px rgba(0, 0, 0, .2);
-      &_title {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+      //&_title {
+        //display: flex;
+        //justify-content: center;
+        //align-items: center;
         img {
           width: 21px;
           height: 21px;
           margin-right: 12px;
         }
-      }
+      //}
       .back-button {
         position: absolute;
         top: 0;
         bottom: 0;
         left: 25px;
         margin: auto 0;
-        display: flex;
-        align-items: center;
+        //display: flex;
+        //align-items: center;
         cursor: pointer;
         color: $secondary;
         img {
@@ -80,10 +80,6 @@
       &_section{
         box-sizing: border-box;
         padding: 19px 25px;
-        .section-header {
-          @include heading(15px);
-          padding-bottom: 7px;
-        }
         .section-content {
           display: flex;
           justify-content: space-between;

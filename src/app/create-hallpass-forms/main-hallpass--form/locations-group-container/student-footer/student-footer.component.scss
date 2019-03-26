@@ -1,3 +1,5 @@
+@import "../../../../../design-system.scss";
+
 :host {
   width: 100%;
   position: relative;
@@ -5,6 +7,8 @@
 }
 
 .target-footer {
+  font-size: 15px;
+  color: $navy;
   width: 100%;
   display: flex;
   background-color: white;
@@ -25,10 +29,6 @@
     display: flex;
     align-items: center;
     flex-direction: column;
-
-    .footer-text {
-      color: #1F195E;
-    }
   }
 
   .footer-icon {

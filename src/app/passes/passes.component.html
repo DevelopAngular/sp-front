@@ -9,6 +9,7 @@
         <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'22px'" [icon]="'./assets/Create (Blue).png'">
           <div class="pass-buttons">
             <app-gradient-button
+              [size]="'editable'"
               [minWidth]="'121px'"
               [minHeight]="'74px'"
               [hoverColor]="'#00b476'"
@@ -17,6 +18,7 @@
               (click)="showMainForm(false)">Now
             </app-gradient-button>
             <app-gradient-button
+              [size]="'editable'"
               [minWidth]="'121px'"
               [minHeight]="'74px'"
               [hoverColor]="'#00b476'"

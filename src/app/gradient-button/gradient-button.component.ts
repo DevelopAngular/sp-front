@@ -23,9 +23,14 @@ const cssColorRegexp = new RegExp(`^(${CSS_COLOR_REGEXP})$`, 'i');
     bumpIn
   ]
 })
-export class GradientButtonComponent implements OnInit{
+export class GradientButtonComponent implements OnInit {
 
-  @Input() size: string; // Can be small, medium or large for now. If presented, overrides minHeight pixel value
+  /*
+  * @Input 'size' can be small, medium large or editable.
+  * If editable, all inputs marked as ' > editable' below can be provided, otherwise they will be overriden
+  */
+  @Input() size: string = 'small';
+
   @Input() border: string;
   @Input() gradient: string;
   @Input() hoverColor: string = '#00B476';
@@ -34,14 +39,14 @@ export class GradientButtonComponent implements OnInit{
   @Input() text: string;
   @Input() subtitle: string;
   @Input() textColor: string;
-  @Input() width: string;
-  @Input() minWidth: string;
-  @Input() minHeight: string;
+  @Input() width: string; // > editable
+  @Input() minWidth: string; // > editable
+  @Input() minHeight: string; // > editable
   @Input() disabled: boolean = false;
-  @Input() fontSize: string = '20px';
-  @Input() fontWeight: string;
-  @Input() leftImageWidth: string;
-  @Input() leftImageHeight: string;
+  @Input() fontSize: string = '20px'; // > editable
+  @Input() fontWeight: string = 'bold'; // > editable
+  @Input() leftImageWidth: string; // > editable
+  @Input() leftImageHeight: string; // > editable
   @Input() cursor: string;
   @Input() textWidth: string = '100%';
   @Input() buttonLink: string; // needs for the links so that don't brake an existing markup and the entire button is clickable
@@ -54,7 +59,7 @@ export class GradientButtonComponent implements OnInit{
   constructor(private sanitizer: DomSanitizer) {
   }
   ngOnInit(): void {
-    if (this.size) {
+    if (this.size && this.size !== 'editable') {
 
       this.width = 'auto';
       this.minWidth = this.width;
@@ -65,30 +70,23 @@ export class GradientButtonComponent implements OnInit{
           this.leftImageHeight = '16px';
           this.leftImageWidth = '16px';
           this.minHeight = '40px';
+          this.fontSize = '14px'
           break;
         case 'medium':
           this.leftImageHeight = '21px';
           this.leftImageWidth = '21px';
           this.minHeight = '50px';
+          this.fontSize = '15px';
+          break;
+        case 'large':
+          this.leftImageHeight = '25px';
+          this.leftImageWidth = '25px';
+          this.minHeight = '60px';
+          this.fontSize = '17px';
           break;
       }
     }
   }
-
-  // get buttonHeight() {
-  //   if (this.size) {
-  //
-  //     this.width = 'auto';
-  //     this.minWidth = this.width;
-  //
-  //     switch (this.size) {
-  //       case 'small':
-  //         this.minHeight = '40px';
-  //         break;
-  //     }
-  //   }
-  //   return this.minHeight;
-  // }
 
   get buttonState() {
     return this.buttonDown ? 'down' : 'up';

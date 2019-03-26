@@ -74,12 +74,6 @@
           overflow: hidden;
         }
         border-right: 2px solid rgba(0, 0, 0, .1);
-        &_header {
-          color: $primary-color;
-          //padding: 30px 0;
-          font-size: 1em;
-          font-weight: bold;
-        }
         &_groups {
           width: 100%;
           box-sizing: border-box;
@@ -89,7 +83,6 @@
           position: relative;
           display: flex;
           flex-direction: column;
-
           .group {
             height: 36px;
             color: #767676;

@@ -1,16 +1,16 @@
 <div class="accounts-role-wrapper"  *ngIf="tabVisibility">
 <!--{{initialSearchString}}-->
-  <div class="card flex-start-between" style="width: 100%">
-    <div style="display: flex;">
+  <div class="card ds-flex-start-between" style="width: 100%">
+    <div class="ds-flex-start-start">
 
-      <div class="mt mr pt pr">
+      <div class="ds-mt-20 ds-mr-20">
         <app-back-button routerLink="/admin/accounts"></app-back-button>
       </div>
-      <div class="mt mx pt px" [ngSwitch]="role">
+      <div class="ds-mt-20 ds-mx-20" [ngSwitch]="role">
         <div *ngSwitchCase="'_all'">
-          <div class=" mr pr">
+          <div class="ds-mr-20">
 
-            <div class="card_header mb"><img [src]="'./assets/Settings (Navy).svg' | resolveAsset" alt=""><span>Accounts</span></div>
+            <div class="card_header ds-mb-10"><img [src]="'./assets/Settings (Navy).svg' | resolveAsset" alt=""><span>Accounts</span></div>
             <div class="card_header" [style.font-size]="'16px'">
               <span [style.padding-left]="'0px'">Total Accounts: {{(accounts$ | async).total}} Accounts</span>
             </div>
@@ -28,14 +28,14 @@
         </div>
         <div *ngSwitchCase="'_profile_admin'">
           <div class="card_header"><img [src]="'./assets/Admin (Navy).svg' | resolveAsset" alt=""><span>Administrators</span></div>
-          <p class="card_title mr pr">
+          <p class="card_title mr-20">
             <span>{{userAmount| async}} user{{(userAmount | async) > 1 ? 's' : ''}} </span><br>
             An administrator has a high-level look at the school, configures passes, and views/generates reports.
           </p>
         </div>
         <div *ngSwitchCase="'_profile_teacher'">
           <div class="card_header"><img [src]="'./assets/Teacher (Navy).svg' | resolveAsset" alt=""><span>Teachers</span></div>
-          <p class="card_title mr pr">
+          <p class="card_title ds-mr-20">
             <span>{{userAmount| async}} user{{(userAmount | async) > 1 ? 's' : ''}} </span><br>
             A teacher has a room or multiple rooms where students can create passes to.
             A teacher can manage passes in his/her room and create passes.
@@ -43,7 +43,7 @@
         </div>
         <div *ngSwitchCase="'_profile_student'">
           <div class="card_header"><img [src]="'./assets/Student (Navy).svg' | resolveAsset" alt=""><span>Students</span></div>
-          <p class="card_title mr pr">
+          <p class="card_title ds-mr-20">
             <span>{{userAmount| async}} user{{(userAmount | async) > 1 ? 's' : ''}} </span><br>
             A student can create passes, schedule passes for the future,
             and send pass requests to teachers.
@@ -51,7 +51,7 @@
         </div>
         <div *ngSwitchCase="'staff_secretary'">
           <div class="card_header"><img [src]="'./assets/Secretary (Navy).svg' | resolveAsset" alt=""><span>Secretaries & Substitutes</span></div>
-          <p class="card_title mr pr">
+          <p class="card_title ds-mr-20">
             <span>{{userAmount| async}} user{{(userAmount | async) > 1 ? 's' : ''}} </span><br>
             A secretary or substitute teacher acts as a certain teacher when they sign-in.
             They can manage passes in his/her room and create passes as that teacher.
@@ -59,24 +59,25 @@
         </div>
       </div>
     </div>
-    <div class="ml pl">
-      <div class="flex-start-end">
+    <div class="ds-ml-20">
+      <div class="ds-flex-start-end">
         <ng-container *ngIf="role === '_all'; else roleProfile">
           <app-gradient-button
-          [border]="'1px solid #eee'"
-          [gradient]="'#FFFFFF, #FFFFFF'"
-          [hoverColor]="'#F5F5F5'"
-          [cursor]="'pointer'"
-          [textColor]="'#134482'"
-          [minHeight]="'74px'"
-          [width]="'147px'"
-          [fontWeight]="'900'"
-          [fontSize]="'17px'"
-          [textWidth]="'69%'"
-          (buttonClick)="openDialog('gsuite')"
+            [size]="'editable'"
+            [border]="'1px solid #eee'"
+            [gradient]="'#FFFFFF, #FFFFFF'"
+            [hoverColor]="'#F5F5F5'"
+            [cursor]="'pointer'"
+            [textColor]="'#134482'"
+            [minHeight]="'74px'"
+            [width]="'147px'"
+            [fontWeight]="'900'"
+            [fontSize]="'17px'"
+            [textWidth]="'69%'"
+            (buttonClick)="openDialog('gsuite')"
           >
-            <div class="flex-center-center mx px">
-              <div [style.margin-right]="'15px'">
+            <div class="ds-flex-center-center ds-mx-20">
+              <div class="ds-mr-15">
                 <img src="assets/google/google_logo.svg" alt="google-icon" width="31" height="31">
               </div>
               <div>
@@ -91,18 +92,15 @@
           <app-gradient-button
             [size]="'medium'"
             [cursor]="'pointer'"
-            [minHeight]="'43px'"
-            [width]="'225px'"
-            [fontSize]="'14px'"
-            [fontWeight]="'bold'"
+            [leftIcon]="'./assets/Create (White).png'"
             (buttonClick)="addUser()">
-            <div class="flex-center-center">
-              <img [src]="'./assets/Create (White).png'" width="20" class="pr" alt="Create (White).png"><span>Add User to Profile</span>
+            <div class="ds-flex-center-center">
+              <span>Add User to Profile</span>
             </div>
           </app-gradient-button>
         </ng-template>
       </div>
-      <div class="ml pl pt">
+      <div class="ds-ml-20 ds-pt-10">
         <app-round-input
           [initialValue]="initialSearchString"
           [minWidth]="'280px'"
@@ -115,15 +113,15 @@
   </div>
 
   <div class="table">
-    <div *ngIf="!userList.length" class="loading-theme spinner flex-center-center">
+    <div *ngIf="!userList.length" class="loading-theme spinner ds-flex-center-center">
       <mat-spinner *ngIf="!placeholder" [color]="'accent'"></mat-spinner>
       <h1 [style.color]="'#666666'" *ngIf="placeholder">No matches found.</h1>
     </div>
-    <div *ngIf="userList.length" class="">
+    <div *ngIf="userList.length">
       <div class="tool-panel">
 
         <div *ngIf="selectedUsers.length" class="flex-center-start">
-          <div class="m px" [style.min-width]="'150px'" [style.font-weight]="'bold'" [style.color]="'#1F195E'">
+          <div class="ds-my-20 ds-px-10" [style.min-width]="'150px'" [style.font-weight]="'bold'" [style.color]="'#1F195E'">
             <p class="">{{selectedUsers.length}} Profile<span *ngIf="selectedUsers.length > 1">s</span> Selected:</p>
           </div>
           <!--<div class="my py" *ngIf="role === 'staff_secretary'">-->
@@ -169,7 +167,7 @@
 
 
 
-          <div class="p"  *ngIf="role !== '_profile_student'">
+          <div class="ds-p-10"  *ngIf="role !== '_profile_student'">
             <app-gradient-button
               [size]="'small'"
               [disabled]="!selectedUsers.length"
@@ -185,7 +183,7 @@
             </app-gradient-button>
           </div>
 
-          <div class="p">
+          <div class="ds-p-10">
             <app-gradient-button
               [size]="'small'"
               [disabled]="!selectedUsers.length"
@@ -201,7 +199,7 @@
             </app-gradient-button>
           </div>
 
-          <div class="p" #eventTarget  [style.opacity]="consentMenuOpened ? '.5' : '1'">
+          <div class="ds-p-10" #eventTarget  [style.opacity]="consentMenuOpened ? '.5' : '1'">
             <app-gradient-button
               [size]="'small'"
               [disabled]="!selectedUsers.length"
@@ -223,7 +221,7 @@
         <img draggable="false" width="20" [src]="'./assets/Options (Navy).svg ' | resolveAsset" alt="Gear (Blue).png" (click)="showColumnSettings($event)">
       </div>
       <app-data-table
-        class="my"
+        class="ds-my-10"
         [data]="userList"
         [displayedColumns]="dataTableHeadersToDisplay"
         (selectedCell)="findProfileByRole($event)"

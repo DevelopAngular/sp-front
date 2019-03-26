@@ -1,3 +1,5 @@
+@import "../../../../../design-system.scss";
+
 :host {
   width: 100%;
   position: relative;
@@ -6,19 +8,17 @@
 .from-footer {
   background-color: white;
   box-shadow: -50px 0px 35px 25px rgba(255, 255, 255, 1);
-  //opacity: 0.7;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   display: flex;
   z-index: 1;
   align-items: center;
-  //position: absolute;
-  //bottom: 0;
-  //left: 0;
-  //right: 0;
   width: 100%;
   border-bottom-left-radius: 15px;
   border-bottom-right-radius: 15px;
   overflow: hidden;
+  font-size: 15px;
+  color: $navy;
+
   .footer-from-teacher-text {
     width: 100%;
   }
@@ -48,10 +48,6 @@
   align-items: center;
   width: 100%;
 
-  .footer-text {
-    color: #1F195E;
-  }
-
   .center-text {
     width: 100%;
     display: flex;
@@ -71,13 +67,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.top {
-  color: #1F195E;
-}
-.bottom {
-  color: #1F195E;
 }
 
 .cursor {

@@ -1,16 +1,16 @@
 <div class="host" appSafariScroll>
   <div class="account-wrapper">
-    <div *ngIf="!(accounts$ | async).total" class="loading-theme spinner h-100 flex-center-center">
+    <div *ngIf="!(accounts$ | async).total" class="loading-theme spinner ds-h-100 ds-flex-center-center">
       <mat-spinner [color]="'accent'" [diameter]="'135'"></mat-spinner>
     </div>
     <div *ngIf="(accounts$ | async).total">
 
       <div class="card card__top-bar">
-        <div class="accounts flex-center-start">
-          <div class="flex-center-start">
-            <div class="flex-center-start">
+        <div class="accounts ds-flex-center-start">
+          <div class="ds-flex-center-start">
+            <div class="ds-flex-center-start">
 
-              <div class="card_header" [style.margin]="'1em 0'" [style.font-size]="'29px'">
+              <div class="card_header ds-big-title ds-my-15" [style.margin]="'1em 0'">
                 Account & Profile <br>
                 Management
               </div>
@@ -19,7 +19,7 @@
           </div>
 
         </div>
-        <div class="g-suite flex-center-between">
+        <div class="g-suite ds-flex-center-between">
           <div style="text-align: right; padding-right: 26px;">
             <div class="card_header" [style.font-size]="'16px'">
               <span>Total Accounts: {{(accounts$ | async).total}} Accounts</span>
@@ -57,7 +57,7 @@
 
           <div class="card_manage-users card_manage-users__all" [routerLink]="['/admin/accounts', '_all']">
             <img draggable="false" width="30" [src]="'./assets/Settings (Navy).svg' | resolveAsset" alt="">
-            <div style="text-align: center;" class="px">
+            <div style="text-align: center;" class="ds-px-10">
               <span>Manage <br> Accounts</span>
             </div>
             <img draggable="false" width="17" [src]="'./assets/Disclosure Indicator (Blue).png' | resolveAsset" alt="">
@@ -68,7 +68,7 @@
 
       </div>
       <div class="card-container">
-        <div class="card-container_row mr">
+        <div class="card-container_row ds-mr-10">
           <div class="card card__role">
             <div class="card_content">
               <div class="card_header"><img [src]="'./assets/Admin (Navy).svg' | resolveAsset" alt=""><span>Administrators</span></div>
@@ -97,7 +97,7 @@
             </div>
           </div>
         </div>
-        <div class="card-container_row ml">
+        <div class="card-container_row ds-ml-10">
           <div class="card card__role">
             <div class="card_content">
               <div class="card_header"><img [src]="'./assets/Teacher (Navy).svg' | resolveAsset" alt=""><span>Teachers</span></div>
