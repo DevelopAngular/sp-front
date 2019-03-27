@@ -35,15 +35,19 @@
 
     .settings-content {
 
+        .divider {
+          margin: 7px 0 7px 0;
+        }
+
         .profile-switch {
             .option {
                 display: flex;
                 align-items: center;
-                padding: 10px 0 10px 25px;
+                padding: 12px 0 12px 25px;
                 cursor: pointer;
 
                 .option-title {
-                    margin: 0 10px 0 10px;
+                    margin: 0 12px 0 12px;
                     font-size: 15px;
                 }
 
@@ -61,7 +65,7 @@
             .content {
                 display: flex;
                 align-items: center;
-                padding: 10px 0 10px 0;
+                padding: 12px 0 12px 0;
                 cursor: pointer;
             }
             .setting-icon {
@@ -84,7 +88,7 @@
         justify-content: space-between;
 
         .sign-out {
-            padding: 10px 0 10px 25px;
+            padding: 12px 0 12px 25px;
             color: #7F879D;
             font-size: 15px;
             cursor: pointer;
@@ -107,78 +111,3 @@
         }
     }
 }
-
-//.settings-menu-wrapper{
-//    display: flex;
-//    flex-direction: row;
-//    margin: 40px auto 0;
-//    width: 586px;
-//    padding-right:90px;
-//    height: 85%;
-//}
-//
-//.settings-wrapper{
-//    display: flex;
-//    flex-direction: column;
-//    width: 400px;
-//    height: 100%;
-//}
-//
-//.settings-header{
-//    font-family: 'Helvetica Neue', sans-serif;
-//    color: #3D396B;
-//    font-size: 25px;
-//    font-weight: bold;
-//    padding-left: 10px;
-//    margin-bottom: 15px;
-//}
-//
-//.back-wrapper{
-//    display: flex;
-//    flex-direction: row;
-//    align-items: center;
-//    max-height: 30px;
-//    width: 96px;
-//    padding: 5px 10px;
-//    border-radius: 15px;
-//    margin-top: -5px;
-//    cursor: pointer;
-//    user-select: none;
-//}
-//
-//.back-wrapper:hover{
-//    background-color: #F1F1F1;
-//}
-//
-//.back-image{
-//    height: 25px;
-//    width: auto;
-//    margin-right: 5px;
-//}
-//
-//.back-text{
-//    font-family: 'Helvetica Neue', sans-serif;
-//    color: #3D396B;
-//    font-size: 18px;
-//}
-//
-//.footer-links {
-//    display: flex;
-//    justify-content: flex-end;
-//    align-items: center;
-//    font-size: 18px;
-//    height: 100%;
-//    flex-direction: column;
-//    margin-bottom: 30px;
-//
-//    a {
-//        color: #7f879d;
-//    }
-//    .version-text {
-//        color: #7f879d;
-//        padding: 5px;
-//    }
-//}
-//.links {
-//    display: flex;
-//}

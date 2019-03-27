@@ -58,8 +58,7 @@ export class SettingsComponent implements OnInit {
     updateCalendarPosition() {
         const matDialogConfig: MatDialogConfig = new MatDialogConfig();
         const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
-        const top = this.isSwitchOption ? 325 : 285;
-        console.log('TTTTTTTTTT =====>>>', this.isSwitchOption);
+        const top = this.isSwitchOption ? 365 : 285;
         matDialogConfig.position = {left: `${rect.left - 170}px`, top: `${rect.top - top}px`};
 
         this.dialogRef.updatePosition(matDialogConfig.position);
