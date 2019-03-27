@@ -32,8 +32,10 @@
       </div>
       <div *ngIf="starredChoices.length<1" class="no-favs" ondragstart="return false">
         <img class="star-icon" [src]="'./assets/Star (Yellow).svg'">
-        No Favorite Rooms. <br>
-        Add Favorites in Settings.
+        <div>
+          <span style="font-weight: bold; font-size: 15px; padding-bottom: 3px">No Favorite Rooms.</span> <br>
+          <span>Add Favorites in Settings.</span>
+        </div>
       </div>
       <!--<div *ngIf="rightShadow" class="shadow"></div>-->
     </div>
