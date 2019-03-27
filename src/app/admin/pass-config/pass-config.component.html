@@ -46,6 +46,10 @@
           <div class="header-settings">
             <app-gradient-button
               [width]="'160px'"
+              [size]="'editable'"
+              [leftIcon]="'./assets/Settings (Navy).svg'"
+              [leftImageWidth]="'30px'"
+              [leftImageHeight]="'30px'"
               [minHeight]="'74px'"
               [gradient]="'#FFFFFF, #FFFFFF'"
               [cursor]="'pointer'"
@@ -54,7 +58,7 @@
               [fontSize]="'17px'"
               (click)="openSettings()"
             >
-              <div>School Settings</div>
+              <div>School <br> Settings</div>
             </app-gradient-button>
           </div>
 
