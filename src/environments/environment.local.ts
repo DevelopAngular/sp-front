@@ -1,5 +1,5 @@
 export const environment = {
-  production: false,
+  production: true,
   buildType: 'local',
   preferEnvironment: {
     api_root: 'http://127.0.0.1:8000/',
@@ -19,5 +19,5 @@ export const environment = {
     storageBucket: 'notifyhallpass.appspot.com',
     messagingSenderId: '625620388494'
   },
-  funData: true,
+  funData: false,
 };
