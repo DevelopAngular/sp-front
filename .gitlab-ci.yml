@@ -74,6 +74,37 @@ staging:
   tags:
       - "docker-passthrough"
 
+staging_local:
+  stage: deploy_staging
+  script:
+    - apk add --no-cache bash tree nodejs yarn
+    - "wget 'https://github.com/getsentry/sentry-cli/releases/download/1.37.4/sentry-cli-Linux-x86_64' -O /usr/local/bin/sentry-cli"
+    - chmod +x /usr/local/bin/sentry-cli
+    - ls -l / ; pwd
+    - "[ -d /mem_fs ] && cp -r /notify-messenger/hall-pass-web /mem_fs/hall-pass-web && cd /mem_fs/hall-pass-web || echo 'Not using mem disk!'"
+    - pwd
+    - source scripts/auto_devops.sh
+    - scripts/build.sh
+    - install_dependencies
+    - download_chart
+    - ensure_namespace
+    - install_tiller
+    - create_secret
+    - deploy
+  variables:
+    AUTO_DEVOPS_DOMAIN: "smartpass-local.lavanote.com"
+    IMAGE_TAG_SUFFIX: "production-local"
+  environment:
+    name: local
+    url: "https://smartpass-local.lavanote.com"
+  when: manual
+  only:
+    refs:
+      - master
+    kubernetes: active
+  tags:
+    - "docker-passthrough"
+
 production:
   stage: deploy_prod
   script:
