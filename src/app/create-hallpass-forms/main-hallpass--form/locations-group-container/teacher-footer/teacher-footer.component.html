@@ -5,7 +5,7 @@
         <div class="default-text">
           Expand Pass Details
         </div>
-        <img class="arrow-icon" [src]="'./assets/icon-arrow-open.png' | resolveAsset">
+        <img class="arrow-icon" [src]="'./assets/Chevron Up (Navy).svg' | resolveAsset">
       </div>
       <div class="new-footer" *ngIf="showFullFooter">
         <div class="cursor" (click)="goToDate()" *ngIf="date">
@@ -14,10 +14,10 @@
         <div class="center">
           <div class="center-text">
             <div class="" [ngClass]="{'cursor': fromCursor}" (click)="goToFromWhere($event)" [style.font-weight]="(!fromLocation ? 'bold' : 'normal')">{{ fromLocationText }}</div>
-            <img class="footer-icon" [src]="'./assets/Arrows_long_right.png' | resolveAsset">
+            <img class="footer-icon" [src]="'./assets/Arrow (Navy).svg' | resolveAsset">
             <div class="footer-text" [ngClass]="{'cursor': toCursor}" (click)="goToToWhere($event)" [style.font-weight]="(!toLocation && state !== 'from' ? 'bold' : 'normal')">{{ toLocationText }}</div>
           </div>
-          <img class="arrow-icon" [src]="'./assets/icon-arrow-close.png' | resolveAsset">
+          <img class="arrow-icon" [src]="'./assets/Chevron Down (Navy).svg' | resolveAsset">
         </div>
         <div class="cursor" (click)="goToStudents($event)" *ngIf="showFullFooter && studentText">
           {{ studentText }}

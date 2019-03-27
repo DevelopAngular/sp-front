@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="150px" height="150px" viewBox="0 0 150 150" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
+    <title>Dots (White)</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Dots-(White)" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icons8-menu_2" transform="translate(75.500000, 75.000000) rotate(90.000000) translate(-75.500000, -75.000000) translate(57.500000, 8.500000)" fill="#FFFFFF" fill-rule="nonzero">
+            <path d="M18,0.5 C8.33501688,0.5 0.5,8.5588745 0.5,18.5 C0.5,28.4411255 8.33501688,36.5 18,36.5 C27.6649831,36.5 35.5,28.4411255 35.5,18.5 C35.5,8.5588745 27.6649831,0.5 18,0.5 Z M18,48.5 C8.33501688,48.5 0.5,56.5588745 0.5,66.5 C0.5,76.4411255 8.33501688,84.5 18,84.5 C27.6649831,84.5 35.5,76.4411255 35.5,66.5 C35.5,56.5588745 27.6649831,48.5 18,48.5 Z M18,96.5 C8.33501688,96.5 0.5,104.558875 0.5,114.5 C0.5,124.441125 8.33501688,132.5 18,132.5 C27.6649831,132.5 35.5,124.441125 35.5,114.5 C35.5,104.558875 27.6649831,96.5 18,96.5 Z" id="Shape"></path>
+        </g>
+    </g>
+</svg>

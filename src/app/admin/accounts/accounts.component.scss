@@ -87,6 +87,12 @@
       &:hover {
         background-color: #F1F3F6;
       }
+      &:active {
+        outline: none;
+      }
+      &:focus {
+        outline: none;
+      }
       &__all {
         height: 100%;
         display: flex;

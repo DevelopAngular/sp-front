@@ -27,7 +27,7 @@ export class GradientButtonComponent implements OnInit {
 
   /*
   * @Input 'size' can be small, medium large or editable.
-  * If editable, all inputs marked as ' > editable' below can be provided, otherwise they will be overriden
+  * If editable, all inputs marked as ' > editable' below can be provided, otherwise they will be overridden
   */
   @Input() size: string = 'small';
 

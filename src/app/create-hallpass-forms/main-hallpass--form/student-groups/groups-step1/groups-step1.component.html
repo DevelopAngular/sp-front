@@ -1,10 +1,10 @@
 <div class="step-1-container">
   <div class="header">
     <div class="header_back-button" (click)="back()">
-      <img class="" [src]="'./assets/Combined Shape.svg' | resolveAsset">
+      <img class="header_back-button-icon" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
     </div>
     <div class="header_title">
-      <img class="header_icon" [src]="'./assets/Search (Blue).png' | resolveAsset">
+      <img class="header_icon" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset">
       <div class="header_text ds-dialog-title">Select students(s)</div>
     </div>
   </div>
@@ -35,10 +35,10 @@
                            [style.transform]="selectedGroup && (selectedGroup.id === group.id) ? 'rotate(-90deg)' : 'none'"
                            [src]="( selectedGroup && (selectedGroup.id === group.id)
                                     ?
-                                    './assets/Disclosure Indicator (Blue).png'
+                                    './assets/Chevron Right (Navy).svg'
                                     :
-                                    './assets/Disclosure Indicator (Grey).png') | resolveAsset"
-                           alt="Disclosure Indicator (Grey).png">
+                                    './assets/Chevron Right (Blue-Gray).svg') | resolveAsset"
+                           alt="Chevron Right.svg">
                     </div>
                   </mat-list-item>
                   <mat-divider></mat-divider>
@@ -58,7 +58,7 @@
             [hoverColor]="'#FFFFFF'"
             [gradient]="'#FFFFFF,#FFFFFF'"
             [textColor]="'#1F195E'"
-            [leftIcon]="'./assets/Create (Blue).png'"
+            [leftIcon]="'./assets/Plus (Navy).svg'"
             [leftImageHeight]="'13px'"
             [leftImageWidth]="'13px'"
             [cursor]="'pointer'"

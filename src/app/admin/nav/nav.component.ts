@@ -22,10 +22,10 @@ export class NavComponent implements OnInit {
 
   buttons = [
     {title: 'Dashboard', route : 'dashboard', type: 'routerLink', imgUrl : './assets/Dashboard', requiredRoles: ['_profile_admin', 'admin_dashboard']},
-    {title: 'Hall Monitor', route : 'hallmonitor', type: 'routerLink', imgUrl : './assets/Hallway', requiredRoles: ['_profile_admin', 'admin_hall_monitor']},
-    {title: 'Search', route : 'search', type: 'routerLink', imgUrl : './assets/Search', requiredRoles: ['_profile_admin', 'admin_search']},
-    {title: 'Pass Configuration', route : 'passconfig', type: 'routerLink', imgUrl : './assets/Arrow', requiredRoles: ['_profile_admin', 'admin_pass_config']},
-    {title: 'Accounts & Profiles', route : 'accounts', type: 'routerLink', imgUrl : './assets/Accounts', requiredRoles: ['_profile_admin', 'admin_accounts']},
+    {title: 'Hall Monitor', route : 'hallmonitor', type: 'routerLink', imgUrl : './assets/Walking', requiredRoles: ['_profile_admin', 'admin_hall_monitor']},
+    {title: 'Search', route : 'search', type: 'routerLink', imgUrl : './assets/Search Eye', requiredRoles: ['_profile_admin', 'admin_search']},
+    {title: 'Pass Configuration', route : 'passconfig', type: 'routerLink', imgUrl : './assets/SP Arrow', requiredRoles: ['_profile_admin', 'admin_pass_config']},
+    {title: 'Accounts & Profiles', route : 'accounts', type: 'routerLink', imgUrl : './assets/Users', requiredRoles: ['_profile_admin', 'admin_accounts']},
     // {title: 'Feedback', link : 'https://www.smartpass.app/feedback', type: 'staticButton', externalApp: 'mailto:feedback@smartpass.app', imgUrl : './assets/Feedback', requiredRoles: ['_profile_admin']},
     // {title: 'Support', link : 'https://www.smartpass.app/support', type: 'staticButton', imgUrl : './assets/Support', requiredRoles: ['_profile_admin']},
   ];

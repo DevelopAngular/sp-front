@@ -34,19 +34,19 @@ export class SelectProfileComponent implements OnInit {
         admin: {
           value: this.currentUser.isAdmin(),
           redirectPath: 'admin',
-          icon: './assets/Gear (Blue).png',
+          icon: './assets/Admin (Navy).svg',
           title: 'Administrator',
         },
         teacher: {
           value: this.currentUser.isTeacher(),
           redirectPath: 'main',
-          icon: './assets/My Room (Blue).png',
+          icon: './assets/Teacher (Navy).svg',
           title: 'Teacher'
         },
         student: {
           value: this.currentUser.isStudent(),
           redirectPath: 'main',
-          icon: './assets/Hallway (Blue).png',
+          icon: './assets/Student (Navy).svg',
           title: 'Student'
         }
       };

@@ -1,8 +1,74 @@
 <div class="date-wrapper">
     <div class="divider" [style.background-image]="gradient">
-        <img class="back-button" [src]="'./assets/Back Button (Transparent).png' | resolveAsset" (click)="back()">
+        <img class="back-button" [src]="'./assets/Back Button (White).svg' | resolveAsset" (click)="back()">
         <div class="divider-header"  [ngClass]="{'divider-header':!mock, 'divider-header-mock': mock}">
-            <img class="divider-icon" [src]="'./assets/Scheduled Pass (White).png' | resolveAsset">
+            <img class="divider-icon" [src]="'./assets/Future (White).svg' | resolveAsset">
+            <div class="divider-text ds-dialog-title-white">{{ (formState?.forInput ? 'Select': 'Change') }} Date & Time</div>
+        </div>
+    </div>
+    <div class="date-contentt" [ngClass]="{'date-content':!mock, 'date-content-mock': mock}">
+        <div class="decline-content" *ngIf="isStaff">
+            <div class="toggle-text">
+              <div class="toggle-title">Declinable</div>
+              <div class="info-text-1">
+                <span>{{'The student ' + (declinable.value ? 'has the option to ' : ' cannot ') + 'decline the pass.'}}</span><br/>
+                <span *ngIf="!declinable.value">You must also select from where the student will be travelling.</span>
+                <span *ngIf="declinable.value">You do not need to know the location from where the student will be travelling.</span>
+              </div>
+            </div>
+                <div class="toggle">
+                  <div class="onoffswitch">
+                    <input type="checkbox" name="onoffswitch" [formControl]="declinable" class="onoffswitch-checkbox" id="myonoffswitch" checked>
+                    <label class="onoffswitch-label" for="myonoffswitch"></label>
+                  </div>
+                </div>
+        </div>
+        <mat-divider *ngIf="isStaff"></mat-divider>
+      <div class="teacher" *ngIf="isStaff">
+          <div class="time-picker">
+            <div class="time-picker-scaled">
+              <app-date-time-picker [min]="startTime" [_selectedMoment]="requestTime" (onUpdate)="requestTime=$event"></app-date-time-picker>
+            </div>
+          </div>
+          <div style="margin-bottom: 30px">
+              <app-gradient-button
+                      [gradient]="'#03CF31,#00B476'"
+                      [cursor]="'pointer'"
+                      [hoverColor]="'#00B476'"
+                      [minWidth]="'101px'"
+                      [minHeight]="'40px'"
+                      [fontSize]="'14px'"
+                      (buttonClick)="next()"
+                      [style.margin]="'15px auto'"
+              >Next</app-gradient-button>
+          </div>
+      </div>
+      <div class="student" *ngIf="!isStaff">
+          <div class="time-picker">
+            <div class="time-picker-scaled">
+              <app-date-time-picker [min]="startTime" [_selectedMoment]="requestTime" (onUpdate)="requestTime=$event"></app-date-time-picker>
+            </div>
+          </div>
+          <div class="next-button">
+              <app-gradient-button
+                      [gradient]="colorProfile ? colorProfile.gradient_color : '#03CF31,#00B476'"
+                      [cursor]="'pointer'"
+                      [hoverColor]="(colorProfile ? colorProfile.solid_color : '#00B476')"
+                      [minWidth]="'101px'"
+                      [minHeight]="'40px'"
+                      [fontSize]="'14px'"
+                      (buttonClick)="next()"
+                      [style.margin]="'15px auto'"
+              >Next</app-gradient-button>
+          </div>
+      </div>
+    </div>
+</div>
+<div *ngIf="!mock" class="date-wrapper">
+    <div class="divider" [style.background-image]="gradient">
+        <img class="back-button" [src]="'./assets/Back Button (White).svg' | resolveAsset" (click)="back()">
+        <div class="divider-header"  [ngClass]="{'divider-header':!mock, 'divider-header-mock': mock}">
+            <img class="divider-icon" [src]="'./assets/Future (White).svg' | resolveAsset">
             <div class="divider-text ds-dialog-title-white">{{ (formState.forInput ? 'Select': 'Change') }} Date & Time</div>
         </div>
     </div>

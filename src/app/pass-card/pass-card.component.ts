@@ -112,9 +112,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   get closeIcon(){
     if(((this.isActive && this.forStaff) || this.forMonitor)){
-      return './assets/Three dots (Transparent).png';
+      return './assets/Dots (Transparent).svg';
     } else{
-      return './assets/'+(this.forInput?'Back Button ': 'Trash ') + '(Transparent).png';
+      return './assets/'+(this.forInput?'Back Button ': 'Delete ') + '(Transparent).svg';
     }
   }
 

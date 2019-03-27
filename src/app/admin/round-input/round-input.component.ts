@@ -1,5 +1,4 @@
 import {
-  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -32,7 +31,7 @@ export class RoundInputComponent implements OnInit {
   @Input() hasTogglePicker: boolean;
   @Input() width: string;
   @Input() minWidth: string = '300px';
-  @Input() fieldIcon: string = './assets/Search Input (Blue).png';
+  @Input() fieldIcon: string = './assets/Search Normal (Search-Gray).svg';
   @Input() fieldIconPosition: string = 'left'; // Can be 'right' or 'left'
   @Input() closeIcon: boolean = false;
   @Input() disabled: boolean = false;
@@ -44,7 +43,7 @@ export class RoundInputComponent implements OnInit {
   @Output() ontoggleupdate: EventEmitter<any> = new EventEmitter();
   @Output() onselectionupdate: EventEmitter<any> = new EventEmitter();
   @Output() controlValue = new EventEmitter();
-  closeIconAsset: string = './assets/Close Input (Grey).svg';
+  closeIconAsset: string = './assets/Cancel (Search-Gray).svg';
   showCloseIcon: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   selected: boolean;
   value: string;
