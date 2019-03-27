@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import {FormControl, FormGroup} from '@angular/forms';
 import { TimeService } from '../../../../services/time.service';
 import { Navigation } from '../../main-hall-pass-form.component';
 import { CreateFormService } from '../../../create-form.service';
@@ -22,6 +22,10 @@ export class DateTimeComponent implements OnInit {
 
   startTime: Date = this.timeService.nowDate();
   requestTime: Date = this.timeService.nowDate();
+
+  form: FormGroup = new FormGroup({
+    declinable: new FormControl(true)
+  });
   declinable: FormControl = new FormControl(true);
 
   colorProfile: ColorProfile;
@@ -37,7 +41,7 @@ export class DateTimeComponent implements OnInit {
   ngOnInit() {
     if (this.mock) {
       this.requestTime = this.timeService.nowDate();
-      this.declinable = new FormControl(true);
+      // this.declinable = new FormControl(true);
     } else {
       if (this.formState.data.date) {
         if (this.formState.data.request) {
@@ -53,7 +57,7 @@ export class DateTimeComponent implements OnInit {
   next() {
     this.formState.data.date = {
       date: this.requestTime,
-      declinable: this.declinable.value
+      declinable: this.form.get('declinable').value
     };
     setTimeout(() => {
       this.result.emit(this.formState);

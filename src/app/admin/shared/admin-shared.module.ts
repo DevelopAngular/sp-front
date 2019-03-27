@@ -8,7 +8,6 @@ import { NavButtonComponent } from '../nav-button/nav-button.component';
 import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
 import { PinnableCollectionComponent } from '../pinnable-collection/pinnable-collection.component';
 import { SharedModule } from '../../shared/shared.module';
-// import { AppInputComponent } from '../../app-input/app-input.component';
 import { FormsModule } from '@angular/forms';
 import {
   MatCheckboxModule,
@@ -25,7 +24,6 @@ import {
 import { IconPickerComponent } from '../icon-picker/icon-picker.component';
 import { ColorPalletPickerComponent } from '../color-pallet-picker/color-pallet-picker.component';
 import { TogglePickerComponent } from '../toggle-picker/toggle-picker.component';
-import { ToggleInputComponent } from '../toggle-input/toggle-input.component';
 import { AccountsDialogComponent } from '../accounts-dialog/accounts-dialog.component';
 import { ProfilesSearchComponent } from '../profiles-search/profiles-search.component';
 import { InputHelperDialogComponent } from '../input-helper-dialog/input-helper-dialog.component';
@@ -50,7 +48,6 @@ import { AdvancedOptionsComponent } from '../overlay-container/advanced-options/
     MatTooltipModule,
   ],
   declarations: [
-      ToggleInputComponent,
       ColorPalletPickerComponent,
       DataTableComponent,
       DateInputComponent,
@@ -60,9 +57,7 @@ import { AdvancedOptionsComponent } from '../overlay-container/advanced-options/
       NavButtonComponent,
       OverlayContainerComponent,
       PinnableCollectionComponent,
-      // RoundInputComponent,
       TogglePickerComponent,
-      // AppInputComponent,
       ProfilesSearchComponent,
       LocationSearchComponent,
       ColorComponent,
@@ -72,7 +67,6 @@ import { AdvancedOptionsComponent } from '../overlay-container/advanced-options/
   exports: [
       MatChipsModule,
       MatIconModule,
-      ToggleInputComponent,
       ColorPalletPickerComponent,
       DataTableComponent,
       DateInputComponent,
@@ -82,16 +76,13 @@ import { AdvancedOptionsComponent } from '../overlay-container/advanced-options/
       NavButtonComponent,
       OverlayContainerComponent,
       PinnableCollectionComponent,
-      // RoundInputComponent,
       TogglePickerComponent,
-      // AppInputComponent,
       ProfilesSearchComponent,
       LocationSearchComponent,
       ColorComponent
   ],
   entryComponents: [
       AccountsDialogComponent,
-      // AppInputComponent,
       OverlayContainerComponent,
       DateInputComponent,
       InputHelperDialogComponent
