@@ -1,19 +1,23 @@
+@import '../../../sp-colors';
+
+
 :host {
   //box-sizing: border-box;
   position: relative;
-  font-size: 12px;
+  font-size: 14px;
+  color: $blue-gray;
   .columns-config-container {
     //width: 250px;
     height: auto;
     background-color: #fff;
     border-radius: 10px;
-    padding: 15px;
+    padding: 14px 4px 14px 14px;
     box-sizing: border-box;
     &_header {
-      color: #1F195E;
-      padding-bottom: 10px;
-      font-size: 20px;
-      font-weight: bold;
+      //color: #1F195E;
+      //padding-bottom: 10px;
+      //font-size: 20px;
+      //font-weight: bold;
     }
     //box-shadow: 0 0 0 5px rgba(0, 0, 0, .2);
   }
@@ -22,7 +26,7 @@
     height: 19px;
     overflow: hidden;
     position: absolute;
-    left: 185px;
+    left: 155px;
     top: -29px;
   }
 

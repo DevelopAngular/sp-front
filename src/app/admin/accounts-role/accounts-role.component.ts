@@ -165,8 +165,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               };
               break;
             case '_all':
+              this.dataTableHeaders['Account Type'].value = true;
               this.dataTableHeaders['Profile(s)'] = {
-                value: false,
+                value: true,
                 label: 'Profile(s)',
                 disabled: false
               };
@@ -361,7 +362,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           mode: mode,
           restrictions: this.profilePermissions
         },
-        width: '1018px', height: '560px',
+        width: '425px', height: '500px',
         panelClass: 'accounts-profiles-dialog',
         backdropClass: 'custom-bd'
       });
@@ -424,11 +425,26 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     }, 250);
   }
 
-  showProfileCard(evt, bulk: boolean = false) {
+  showProfileCard(evt, bulk: boolean = false, gSuite: boolean = false) {
     console.log(evt);
 
-    if (this.selectedUsers.length && !bulk || this.role === '_all')  {
+    const data = {
+      profile: evt,
+      bulkPermissions: null,
+      gSuiteSettings: gSuite,
+      role: this.role,
+      permissions: this.profilePermissions
+    }
+
+    if (this.selectedUsers.length && !bulk || this.role === '_all' && !gSuite)  {
       return false;
+    }
+
+    if (bulk && this.selectedUsers.length) {
+      data.bulkPermissions = this.selectedUsers.map(user => user.id);
+    }
+    if (gSuite) {
+      data.gSuiteSettings = gSuite;
     }
 
     const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
@@ -436,12 +452,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       backdropClass: 'custom-bd',
       width: '425px',
       height: '500px',
-      data: {
-        profile: evt,
-        bulkPermissions: bulk && this.selectedUsers.length ? this.selectedUsers.map(user => user.id) : null,
-        role: this.role,
-        permissions: this.profilePermissions
-      }
+      data: data
     });
 
 

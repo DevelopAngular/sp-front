@@ -22,19 +22,15 @@ export class ProfileCardDialogComponent implements OnInit {
 
   public profile: any;
   public teacherAssignedTo: Location[] = [];
-  public testGroup = new FormGroup({
-      test: new FormControl(true),
-    }
-  );
   public permissionsForm: FormGroup;
   public permissionsFormEditState: boolean = false;
   public controlsIteratable: any[];
   public permissionsChanged: boolean = false;
-  public testControll = new FormControl(true);
   public disabledState: boolean = false;
   public headerText: string = '';
   public consentMenuOpened: boolean = false;
   public headerIcon: string;
+  public layout: string = 'viewProfile';
   private initialState;
 
   constructor(
@@ -51,41 +47,47 @@ export class ProfileCardDialogComponent implements OnInit {
 
     console.log(this.data);
 
-    this.profile = this.data.profile;
+    if (this.data.gSuiteSettings) {
+      this.layout = 'gSuiteSettings';
+      this.headerIcon = './assets/google/google_logo.svg';
+    }
+    if (this.data.bulkPermissions) {
+      this.layout = 'bulkPermissions';
 
-    // if (this.data.bulkPermissions) {
-    // }
+    }
+    if (this.data.profile) {
 
-
-    this.headerIcon = `./assets/${
-                        this.data.role === '_profile_admin'
-                        ?
-                        'Admin'
-                        :
-                        this.data.role === '_profile_teacher'
-                        ?
-                        'Teacher'
-                        :
-                        'Student'} (Navy).svg`;
-      this.headerText = this.data.bulkPermissions
-                        ?
-                        this.data.bulkPermissions.length + ` user${this.data.bulkPermissions.length > 1 ? 's' : ''} selected`
-                        :
-                        this.profile['Name'];
-
-    if (this.data.role === '_profile_admin') {
-      this.headerIcon = './assets/Admin (Navy).svg';
+      this.profile = this.data.profile;
+      this.headerIcon = `./assets/${
+                          this.data.role === '_profile_admin'
+                          ?
+                          'Admin'
+                          :
+                          this.data.role === '_profile_teacher'
+                          ?
+                          'Teacher'
+                          :
+                          'Student'} (Navy).svg`;
     }
 
+    this.headerText = this.data.bulkPermissions
+                      ?
+                      this.data.bulkPermissions.length + ` user${this.data.bulkPermissions.length > 1 ? 's' : ''} selected`
+                      :
+                      this.profile
+                      ?
+                      this.profile['Name']
+                      :
+                      'Settings';
+
     if (this.data.role === '_profile_teacher') {
-      this.headerIcon = './assets/Teacher (Navy).svg';
         this.dataService.getLocationsWithTeacher(this.profile._originalUserProfile)
           .subscribe((locations: Location[]) => {
             this.teacherAssignedTo = locations;
           });
     }
 
-    if (this.data.role !== '_profile_student') {
+    if (this.data.role !== '_profile_student' && this.data.role !== '_all') {
       const permissions = this.data.permissions;
       this.controlsIteratable = Object.values(permissions);
       const group: any = {};
@@ -101,6 +103,7 @@ export class ProfileCardDialogComponent implements OnInit {
 
       });
     }
+
 
     // this.testGroup.valueChanges.subscribe((v) => {
     //   console.log('test Group ==>', v);
@@ -122,14 +125,17 @@ export class ProfileCardDialogComponent implements OnInit {
     });
   }
   goToPassConfig(location: Location) {
-    this.dialogRef.close();
+
+
+    // this.dialogRef.close();
 
     if (location) {
-      this.router.navigate(['admin/passconfig'], {
-        queryParams: {
-          locationId: location.id,
-        }
-      });
+      // this.router.navigate(['admin/passconfig'], {
+      //   queryParams: {
+      //     locationId: location.id,
+      //   }
+      // });
+      window.open(`admin/passconfig?locationId=${location.id}`);
 
     } else {
       this.router.navigate(['admin/passconfig']);
