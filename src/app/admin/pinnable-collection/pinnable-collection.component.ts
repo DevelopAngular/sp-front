@@ -38,7 +38,7 @@ export class PinnableCollectionComponent implements OnInit {
   }
 
   get headerButtonIcon(){
-    return (this.selectedPinnables.length < 1 || !this.bulkSelect?'./assets/Create (White).png':null);
+    return (this.selectedPinnables.length < 1 || !this.bulkSelect?'./assets/Plus (White).svg':null);
   }
 
   constructor(

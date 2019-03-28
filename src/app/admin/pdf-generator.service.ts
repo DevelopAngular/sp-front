@@ -56,8 +56,8 @@ export class PdfGeneratorService {
 
   private getAssests() {
 
-    const logoPath = this.locationService.prepareExternalUrl('/assets/Arrow%20(Green).png');
-    const reportPath = this.locationService.prepareExternalUrl('/assets/Report%20(Red).png');
+    const logoPath = this.locationService.prepareExternalUrl('/assets/Legacy/Arrow%20(Green).png');
+    const reportPath = this.locationService.prepareExternalUrl('/assets/Legacy/Report%20(Red).png');
     const imgLogo = new FileReader();
     const reportLogo = new FileReader();
 

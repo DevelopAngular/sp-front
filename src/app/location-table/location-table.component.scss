@@ -81,9 +81,10 @@ input {
 .no-favs{
   color: #767676;
   display: flex;
+  align-items: center;
   text-align: left;
   user-select: none;
-  width: 190px;
+  width: 211px;
 }
 
 .star-icon {

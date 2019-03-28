@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatSort, MatTableDataSource} from '@angular/material';
 
@@ -15,7 +15,7 @@ export class DataTableComponent implements OnInit {
   @Input() data: any[];
   @Input() backgroundColor: string = 'transparent';
   @Input() textColor: string = 'black';
-  @Input() textHeaderColor: string = '#4b4876';
+  @Input() textHeaderColor: string = '#1F195E';
 
   @Output() selectedUsers: EventEmitter<any[]> = new EventEmitter();
   @Output() selectedRow: EventEmitter<any> = new EventEmitter<any>();

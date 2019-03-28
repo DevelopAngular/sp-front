@@ -16,7 +16,7 @@
       .option {
         display: flex;
         align-items: center;
-        padding: 10px 0 10px 30px;
+        padding: 12px 0 12px 30px;
         cursor: pointer;
 
         .option-title {
@@ -36,12 +36,12 @@
     }
 
     .links {
-      height: 105px;
+      height: 121px;
       display: flex;
       flex-direction: column;
 
       .link {
-        padding: 10px 0 10px 0;
+        padding: 12px 0 12px 0;
         display: flex;
         align-items: center;
         cursor: pointer;
@@ -67,7 +67,7 @@
     height: 80px;
 
     .sign-out {
-      padding: 10px 0 10px 30px;
+      padding: 12px 0 12px 30px;
       color: #7F879D;
       font-size: 15px;
       cursor: pointer;
@@ -88,6 +88,9 @@
       .privacy {
         margin-left: 10px;
         cursor: pointer;
+        a {
+          color: #7F879D;
+        }
       }
     }
   }

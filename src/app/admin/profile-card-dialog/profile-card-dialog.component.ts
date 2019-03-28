@@ -11,6 +11,8 @@ import {UserService} from '../../services/user.service';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {HttpService} from '../../services/http-service';
 
+import * as _ from 'lodash';
+
 @Component({
   selector: 'app-profile-card-dialog',
   templateUrl: './profile-card-dialog.component.html',
@@ -23,7 +25,7 @@ export class ProfileCardDialogComponent implements OnInit {
   public testGroup = new FormGroup({
       test: new FormControl(true),
     }
-  )
+  );
   public permissionsForm: FormGroup;
   public permissionsFormEditState: boolean = false;
   public controlsIteratable: any[];
@@ -33,6 +35,7 @@ export class ProfileCardDialogComponent implements OnInit {
   public headerText: string = '';
   public consentMenuOpened: boolean = false;
   public headerIcon: string;
+  private initialState;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -92,10 +95,9 @@ export class ProfileCardDialogComponent implements OnInit {
         group[key] = new FormControl(value);
       }
       this.permissionsForm = new FormGroup(group);
+      this.initialState = _.cloneDeep(this.permissionsForm.value);
       this.permissionsForm.valueChanges.subscribe((formValue) => {
-        console.log(formValue);
-        this.permissionsFormEditState = true;
-        // this.permissionsChanged = true;
+        this.permissionsFormEditState = !_.isEqual(Object.values(this.initialState), Object.values(formValue));
 
       });
     }
@@ -204,11 +206,6 @@ export class ProfileCardDialogComponent implements OnInit {
   }
 
   back() {
-    if (this.permissionsFormEditState) {
-      this.permissionsFormEditState = !this.permissionsFormEditState;
-    } else {
-      console.log(this.permissionsChanged);
-      this.dialogRef.close(this.permissionsChanged);
-    }
+    this.dialogRef.close(this.permissionsChanged);
   }
 }

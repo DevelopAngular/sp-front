@@ -11,16 +11,13 @@
             <div class="toggle-text">
               <div class="toggle-title">Declinable</div>
               <div class="info-text-1">
-                <span>{{'The student ' + (declinable.value ? 'has the option to ' : ' cannot ') + 'decline the pass.'}}</span><br/>
-                <span *ngIf="!declinable.value">You must also select from where the student will be travelling.</span>
-                <span *ngIf="declinable.value">You do not need to know the location from where the student will be travelling.</span>
+                <span>{{'The student ' + (form.get('declinable').value ? 'has the option to ' : ' cannot ') + 'decline the pass.'}}</span><br/>
+                <span *ngIf="!form.get('declinable').value">You must also select from where the student will be travelling.</span>
+                <span *ngIf="form.get('declinable').value">You do not need to know the location from where the student will be travelling.</span>
               </div>
             </div>
                 <div class="toggle">
-                  <div class="onoffswitch">
-                    <input type="checkbox" name="onoffswitch" [formControl]="declinable" class="onoffswitch-checkbox" id="myonoffswitch" checked>
-                    <label class="onoffswitch-label" for="myonoffswitch"></label>
-                  </div>
+                    <app-toggle-input [form]="form" [delimiter]="false" [controlName]="'declinable'" [controlSize]="'small'"></app-toggle-input>
                 </div>
         </div>
         <mat-divider *ngIf="isStaff"></mat-divider>

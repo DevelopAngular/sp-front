@@ -18,7 +18,7 @@
 
     <div class="pass-config-container">
 
-      <div class="pass-config-header" [style.height]="(dataChanges.length > 0 ? '174px' : '119px')">
+      <div class="pass-config-header">
 
         <!--<div class="changes-log" *ngIf="dataChanges.length > 0">-->
         <!--<div class="changes-log-text">-->
@@ -39,7 +39,7 @@
 
         <div class="school-logo">
           <div class="school-title">
-            <img class="school-icon" [src]="'./assets/School (Blue).png' | resolveAsset">
+            <img class="school-icon" [src]="'./assets/School (Navy).svg' | resolveAsset">
             <div class="school-name">{{ schoolName }}</div>
           </div>
 
@@ -47,6 +47,10 @@
             <app-gradient-button
               [size]="'editable'"
               [width]="'160px'"
+              [size]="'editable'"
+              [leftIcon]="'./assets/Settings (Navy).svg'"
+              [leftImageWidth]="'30px'"
+              [leftImageHeight]="'30px'"
               [minHeight]="'74px'"
               [gradient]="'#FFFFFF, #FFFFFF'"
               [cursor]="'pointer'"
@@ -55,7 +59,7 @@
               [fontSize]="'17px'"
               (click)="openSettings()"
             >
-              <div>School Settings</div>
+              <div>School <br> Settings</div>
             </app-gradient-button>
           </div>
 
