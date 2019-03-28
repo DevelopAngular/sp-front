@@ -304,7 +304,8 @@ export class IntroComponent implements OnInit {
     } else {
       this.storage.setItem('smartpass_intro_student', 'seen');
     }
-    this.router.navigate(['select-profile']);
+    this.user.isAdmin() ? this.router.navigate(['/admin']) : this.router.navigate(['/main']);
+    // this.router.navigate(['select-profile']);
   }
 
   onPress(press: boolean, id: string) {
