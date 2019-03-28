@@ -73,6 +73,7 @@
           <div style="padding-bottom: 0px;">
 
             <app-input
+              [disabled]="true"
               [input_label]="'Username'"
               [controlName]="newAlternativeAccount.get('username')"
               [formGroup]="newAlternativeAccount"
@@ -85,6 +86,7 @@
           <div  style="display: flex; flex-direction: column; justify-content: space-between; align-items: center">
             <div style="font-weight: bold;"><span>Expiration </span> <span>(Optional)</span></div>
             <app-gradient-button
+              [size]="'editable'"
               [width]="'112px'"
               [minHeight]="'27px'"
               [gradient]="'#001115,#033294'"
@@ -103,6 +105,7 @@
           <div style="padding-bottom: 20px;">
 
             <app-input
+              [disabled]="true"
               [input_label]="'Password'"
               [controlName]="newAlternativeAccount.get('password')"
               [formGroup]="newAlternativeAccount"
@@ -114,6 +117,7 @@
           </div>
           <div  style="display: flex; flex-direction: column; justify-content: center; align-items: center">
             <app-gradient-button
+              [size]="'editable'"
               [size]="'small'"
               [width]="'112px'"
               [minHeight]="'40px'"

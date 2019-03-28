@@ -31,7 +31,10 @@ import { SupportComponent } from './support/support.component';
 import { ColumnsConfigDialogComponent } from './columns-config-dialog/columns-config-dialog.component';
 import { SchoolSettingDialogComponent } from './school-setting-dialog/school-setting-dialog.component';
 import { ProfileCardDialogComponent } from './profile-card-dialog/profile-card-dialog.component';
-import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.component'
+import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.component';
+
+
+
 @NgModule({
   imports: [
     CommonModule,
@@ -66,7 +69,8 @@ import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.compon
     ColumnsConfigDialogComponent,
     ProfileCardDialogComponent,
     SchoolSettingDialogComponent,
-    AddUserDialogComponent
+    AddUserDialogComponent,
+
   ],
   entryComponents: [
     AccountsDialogComponent,
