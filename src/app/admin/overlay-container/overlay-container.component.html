@@ -5,12 +5,12 @@
       <img class="back-button" draggable="false"
            *ngIf="backButtonState && !hideHeaderIcon"
            alt="Go Back"
-           [src]="'./assets/' + (titleColor === 'white' ? 'Back Button (White).png' : 'Combined Shape.svg') | resolveAsset"
+           [src]="'./assets/' + (titleColor === 'white' ? 'Back Button (White).svg' : 'Combined Shape.svg') | resolveAsset"
            (click)="back()">
 
         <div class="cancel-button" [style.color]="titleColor" *ngIf="!backButtonState && !hideHeaderIcon" (click)="back()">Cancel</div>
     </div>
-      <div class="title" [style.color]="titleColor" *ngIf="overlayType === 'newRoom' || overlayType === 'editRoom'">
+      <div class="title" [ngClass]="{'ds-dialog-title-white': overlayType === 'editRoom', 'ds-dialog-title': overlayType === 'newRoom'}" *ngIf="overlayType === 'newRoom' || overlayType === 'editRoom'">
           <img class="title-icon" *ngIf="titleIcon" [src]="titleIcon | resolveAsset">
           {{ roomName }}
       </div>
@@ -179,7 +179,7 @@
                      (mouseover)="openInfo({event: $event, action: 'teachers' })"
                      (mouseleave)="closeInfo('teachers')"
                      class="support-icon"
-                     [src]="(!selectedTeachers.length || isActiveIcon.teachers ? './assets/Support (Grey).png' : './assets/Support (Blue).png') | resolveAsset">
+                     [src]="(!selectedTeachers.length || isActiveIcon.teachers ? './assets/Support (Blue-Gray).svg' : './assets/Support (Navy).svg') | resolveAsset">
                 <div class="arrow-down-container">
                     <div class="arrow-down"></div>
                 </div>
@@ -213,7 +213,7 @@
                     (mouseover)="openInfo({event: $event, action: 'travel' })"
                     (mouseleave)="closeInfo('travel')"
                     class="support-icon"
-                    [src]="(!travelType || isActiveIcon.travel ? './assets/Support (Grey).png' : './assets/Support (Blue).png') | resolveAsset">
+                    [src]="(!travelType || isActiveIcon.travel ? './assets/Support (Blue-Gray).svg' : './assets/Support (Navy).svg') | resolveAsset">
                   <div class="arrow-down-container">
                       <div class="arrow-down"></div>
                   </div>
@@ -249,7 +249,7 @@
                   [input_value]="timeLimit ? timeLimit : ''"
                   [placeholder]="'minutes'"
                   (onUpdate)="onUpdate($event)"
-                  [rightIcon]="(isActiveIcon.timeLimit ? './assets/Support (Grey).png' : './assets/Support (Blue).png')"
+                  [rightIcon]="(isActiveIcon.timeLimit ? './assets/Support (Blue-Gray).svg' : './assets/Support (Navy).svg')"
                   [formGroup]="form"
                   [controlName]="form.get('timeLimit')"
           >
@@ -274,7 +274,7 @@
                     (mouseover)="openInfo({event: $event, action: 'restriction' })"
                     (mouseleave)="closeInfo('restriction')"
                     class="support-icon"
-                    [src]="((nowRestriction === undefined) || isActiveIcon.restriction ? './assets/Support (Grey).png' : './assets/Support (Blue).png') | resolveAsset">
+                    [src]="((nowRestriction === undefined) || isActiveIcon.restriction ? './assets/Support (Blue-Gray).svg' : './assets/Support (Navy).svg') | resolveAsset">
                   <div class="arrow-down-container">
                       <div class="arrow-down"></div>
                   </div>
@@ -303,7 +303,7 @@
                       (mouseover)="openInfo({event: $event, action: 'scheduling_restricted' })"
                       (mouseleave)="closeInfo('scheduling_restricted')"
                       class="support-icon"
-                      [src]="((futureRestriction === undefined) || isActiveIcon.scheduling_restricted ? './assets/Support (Grey).png' : './assets/Support (Blue).png') | resolveAsset">
+                      [src]="((futureRestriction === undefined) || isActiveIcon.scheduling_restricted ? './assets/Support (Blue-Gray).svg' : './assets/Support (Navy).svg') | resolveAsset">
                     <div class="arrow-down-container">
                         <div class="arrow-down"></div>
                     </div>

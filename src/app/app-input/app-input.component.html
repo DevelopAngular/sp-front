@@ -1,7 +1,12 @@
 <form [formGroup]="formGroup">
   <div class="InputWrapper">
     <div style="display: flex">
-      <label [ngClass]="{clserrorLabel: controlName.invalid && controlName.errors && controlName.touched}" [ngStyle]="{'color': input_value ? ' #1F195E' : '#7F879D'}">{{input_label}}</label>
+      <label
+        class="ds-dialog-heading"
+        [ngClass]="{clserrorLabel: controlName.invalid && controlName.errors && controlName.touched}"
+      >
+        {{input_label}}
+      </label>
       <div class="tooltip-container">
         <img
            [matTooltip]="tooltipText"
@@ -50,7 +55,7 @@
       </div>
     </div>
     <img *ngIf='isErrorIcon && controlName.invalid && controlName.errors && controlName.touched && (!controlName.errors.room_name && !controlName.errors.folder_name && !controlName.errors.room_number)'
-         class="success-icon" [src]="'./assets/Report (Red).png' | resolveAsset"/>
+         class="success-icon" [src]="'./assets/Report (Red).svg' | resolveAsset"/>
     </div>
     <!--<p style="color: red" *ngIf="controlName.errors?.title">Bad name!</p>-->
     <!--<pre>{{controlName.errors | json}}</pre>-->

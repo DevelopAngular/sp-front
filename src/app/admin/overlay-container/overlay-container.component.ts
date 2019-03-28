@@ -158,7 +158,6 @@ export class OverlayContainerComponent implements OnInit {
     let colors;
     switch (this.overlayType) {
         case 'newRoom':
-          // colors = '#03CF31,#00B476';
           this.titleColor = '#1F195E';
           this.roomName = 'New Room';
           break;
@@ -171,7 +170,6 @@ export class OverlayContainerComponent implements OnInit {
                 this.titleIcon = this.pinnable.icon;
                 break;
             }
-          // colors = '#03CF31,#00B476';
           this.titleColor = '#1F195E';
           this.folderName = 'New Folder';
           break;
