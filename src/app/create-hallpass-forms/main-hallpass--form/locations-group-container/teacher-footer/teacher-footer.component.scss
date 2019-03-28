@@ -7,7 +7,6 @@
 }
 .from-footer {
   background-color: white;
-  box-shadow: -50px 0px 35px 25px rgba(255, 255, 255, 1);
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   display: flex;
   z-index: 1;
@@ -34,6 +33,10 @@
 
     }
   }
+}
+
+.target-shadow {
+  box-shadow: -50px 0px 35px 25px rgba(255, 255, 255, 1);
 }
 
 .arrow-icon {
