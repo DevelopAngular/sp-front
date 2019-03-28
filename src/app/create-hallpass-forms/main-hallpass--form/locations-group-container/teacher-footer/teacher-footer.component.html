@@ -2,7 +2,7 @@
 <div class="from-footer"
      [style.height]="!showFullFooter ? '43px' : '89px'"
      (click)="showFullFooter = !showFullFooter"
-     [ngClass]="{'target-footer': state !== 'to'}"
+     [ngClass]="{'target-shadow': state !== 'to'}"
 >
     <div class="footer-from-teacher-text">
       <div class="default-footer" *ngIf="!showFullFooter">

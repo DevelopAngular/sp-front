@@ -9,7 +9,6 @@
     </div>
   </div>
   <div class="notif-content">
-    <form [formGroup]="notifForm">
       <div class="setting" *ngFor="let setting of settings">
         <div class="setting-content">
             <div class="ds-dialog-subtitle">{{ setting.title }}</div>
@@ -19,15 +18,16 @@
                   <span class="control-subtitle ds-cell-description-text" *ngIf="control.controlSubtitle"> {{ control.controlSubtitle }} </span>
                 </div>
                 <div class="control-toggle">
-                  <div class="onoffswitch">
-                    <input type="checkbox" [name]="control.formControl" [formControlName]="control.formControl" class="onoffswitch-checkbox" [id]="control.formControl">
-                    <label class="onoffswitch-label" [for]="control.formControl"></label>
-                  </div>
+                  <app-toggle-input
+                     [delimiter]="false"
+                     [controlSize]="'small'"
+                     [form]="notifForm"
+                     [controlName]="control.formControl"
+                  ></app-toggle-input>
                 </div>
             </div>
         </div>
         <mat-divider></mat-divider>
       </div>
-    </form>
   </div>
 </div>
