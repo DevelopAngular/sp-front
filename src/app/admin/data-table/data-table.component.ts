@@ -92,7 +92,7 @@ export class DataTableComponent implements OnInit {
     if (typeof cellElement !== 'string') {
       event.stopPropagation();
       cellElement.row = element;
-      this.selectedCell.emit(cellElement);
+      // this.selectedCell.emit(cellElement);
     } else {
       return;
     }
