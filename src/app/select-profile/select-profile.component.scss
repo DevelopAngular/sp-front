@@ -1,3 +1,5 @@
+@import '../../sp-colors.scss';
+
 :host {
   -webkit-overflow-scrolling: touch;
   overflow: hidden;
@@ -19,7 +21,7 @@
         padding-left: 15px;
       }
       .page-top_title{
-        color: #134482;
+        color: $navy;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -60,7 +62,7 @@
       .page-bottom_user-name {
         font-size: 1.5em;
         font-weight: bold;
-        color: #134482;
+        color: $navy;
       }
       .page-bottom_sign-out {
         margin-top: 15px;

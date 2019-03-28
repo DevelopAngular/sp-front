@@ -7,12 +7,13 @@
 
         <div class="school-logo">
           <div class="school-title">
-            <img class="school-icon" [src]="'./assets/School (Blue).png' | resolveAsset">
+            <img class="school-icon" [src]="'./assets/School (Navy).svg' | resolveAsset">
             <div class="school-name">{{ schoolName }}</div>
           </div>
 
           <div class="header-settings">
             <app-gradient-button
+              [size]="'editable'"
               [width]="'160px'"
               [size]="'editable'"
               [leftIcon]="'./assets/Settings (Navy).svg'"

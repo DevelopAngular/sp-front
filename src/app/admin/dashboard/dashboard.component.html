@@ -18,13 +18,13 @@
            </div>
            <div>
              <a routerLink="/admin/hallmonitor" class="label-icon">
-               <img draggable="false" [src]="'./assets/Hallway (Blue).png' | resolveAsset" alt="Hallway (Blue).png" width="25">
+               <img draggable="false" [src]="'./assets/Walking (Navy).svg' | resolveAsset" alt="Walking (Navy).svg" width="25">
              </a>
              <div style="display: block;" [ngStyle]="{'opacity': numActivePasses > 0 ? '1' : '.5'}">
                <app-gradient-button
                  [size]="'medium'"
                  [disabled]="numActivePasses <= 0"
-                 [leftIcon]="'./assets/Print (White).png'"
+                 [leftIcon]="'./assets/Print (White).svg'"
                  [cursor]="numActivePasses > 0 ? 'pointer' : 'default'"
                  (buttonClick)="previewPDF()">
                  <div style="white-space: nowrap">
@@ -38,11 +38,11 @@
        <div class="">
          <div class="card card__role ds-flex-center-between ds-mr-10 ds-mt-15">
            <a routerLink="/admin/hallmonitor" class="label-icon">
-             <img draggable="false" [src]="'./assets/Hallway (Blue).png' | resolveAsset" alt="Hallway (Blue).png" width="25">
+             <img draggable="false" [src]="'./assets/Walking (Navy).svg' | resolveAsset" alt="./assets/Walking (Navy).svg" width="25">
            </a>
            <div>
              <div class="card_header">
-               <img draggable="false" [src]="'./assets/Report (Red).png' | resolveAsset" alt="Report (Red).png" width="30"
+               <img draggable="false" [src]="'./assets/Report (Red).svg' | resolveAsset" alt="Report (Red).svg" width="30"
                     [style.vertical-align]="'bottom'">
                <span class="ds-pl-10">Reported Students</span>
              </div>
@@ -88,7 +88,7 @@
                  <span>Pass Usage</span>
                </div>
                <div class="calendar-icon-container" [ngClass]="{'active-calendar-icon': activeCalendar}">
-                 <img draggable="false" [src]="( !chartsDate ? './assets/Calendar (Blue).png' : './assets/Calendar (Light Blue).png') | resolveAsset" class="calendar-icon" (click)="openDateDialog($event)">
+                 <img draggable="false" [src]="( !chartsDate ? './assets/Calendar (Navy).svg' : './assets/Calendar (Blue).svg') | resolveAsset" class="calendar-icon" (click)="openDateDialog($event)">
                </div>
              </div>
 

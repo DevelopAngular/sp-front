@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="17px" height="19px" viewBox="0 0 17 19" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="150px" height="150px" viewBox="0 0 150 150" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
-    <title>icons8-download</title>
+    <title>Download (White)</title>
     <desc>Created with Sketch.</desc>
-    <g id="Web---1.3" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Search-(by-Room)" transform="translate(-704.000000, -303.000000)">
-            <g id="Group" transform="translate(608.000000, 221.000000)">
-                <g id="Done" transform="translate(26.000000, 73.000000)">
-                    <image id="icons8-download" x="68" y="9" width="21" height="21" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAABGdBTUEAALGOfPtRkwAABNdJREFUeAHtnclrFEEUhzNuYBTUg4rLwZMeRHC/qGAigkqI4sG7qJCDetH/JCch6MmLgsSFKGLcT24HD6J/gIKeRFxwIfH3kh4YY/dM1euuN1XpX8Gbnqmuqlf1fZl2nOnp6elhIQESIIFkCDSSmWnBRCcnJ/ux63C2e7TRaDwoaMrq0AQg4zxiAtEscv9c6LwcP4cAwK9E/GyaaNlK3YqcLklUzUlilvmT3IrqBTm7pG5bTn0SVSkLWdyGcLt9bbp1f1fKQrpPL8AMKCQA1DJDUkgZegH6UkgAqGWGpJAy9AL0pZAAUMsMSSFl6AXoSyEBoJYZkkLK0AvQl0ICQC0zJIWUoRegL4UEgFpmyHllOktfvNW9FJuziCOI9YhFCItyFR9G5X7AhjldkbCYBHJ8Q7xDjCKGMaXP2KpLKSFY9F5kloUvV88g/Y7yBygfBUicBpNjkPJIuyz1IQuJdyDpGKLOMmZylw/GboPN9pk7XB+rhCDhXCS4hFjomqhG7YTJxYyR97JVQpBlP2Kjd7b6dNiEpe7TLFcrRJVMM8GE+6gYaYWsThiU1dTXahJphczXJKtZHxUjrZCasbVbLoXYsXbKRCFOmOwaUYgda6dMFOKEya4RhdixdspEIU6Y7BpRiB1rp0wU4oTJrhGF2LF2ykQhTpjsGlGIHWunTBTihMmuEYXYsXbKRCFOmOwaUYgda6dMFOKEya4RhdixdspEIU6Y7BpRiB1rp0wU4oTJrhGF2LF2ykQhTpjsGlGIHWunTBTihMmuUanvh1Q8zT8YbwTxHLEGMYQIdcrqe4x9ASHbnYgTiChYRDEJwBAZffiiy1NspwpO5x/GnWuIvumaym7lEoBHW77pJF8duIy6+4iu84jlkDXSKkPQZ8AGcLfKayjKWAMtMiSV5HqCjXzfpeslFiFymPqvANR3VFYlpSlDxswrz/IqretiEVJ46n5FUjrJEO6Fc7CUEouQIRzHlxUtvEXKeFGbNvVyOBrMxshthtxLsONk7k7jyliErMK6rwNM4bUSM6CDaOcjRWQcQt+vRVyRsxf75MWDvLLreolFiIDYgxirUIqrjJvI2y8TiKHEJER4iJQb2V9tLp+WZ8rD3AbTlbLvgMMz4xbaRSNjeuqKWwCTKyWELI8xeOHhSzHlf7pg7F7EeMgFYGzVlSRie4Y0wXU8fDUb+m5FBvpEdZhqXUOsQmSOlUuJXYYsOmYhlUpJQUYKQppS5Poh6n9TUpGRihCZ526ESkpKMlISopKSmozUhHhJSVFGikKcpKQqI1UhbaWkLCNlIU0pdyBgnTyQkt2/i7vJvh3S9Y8sp0jqb3ah6xuIeJkNIT91lPRV7lIXIh5EgLwsnhUl9v+pzwrIPougEB9aBm0pxACyTwoK8aFl0JZCDCD7pKAQH1oGbSnEALJPCgrxoWXQVivkt8HcUk/xS7MArZAPmmQ16yNfdfAuWiH3vDPVr4OKUe4v1HRihzfzRKS8obe5U9ua7n+NdW/BiXoTvutXPUOyRKeQ7Idvwhq0FybHNTKEjUqIdETCF9gcRHySxyxTBD7iVk5hfaXloTpktSbD4UtO5T+DkB8F24BQn66DvikWObP+LaL5o2BfUlwE50wCJEACJEACJEACJEACJEACJEACJJBH4C8vIvUHTfS/VQAAAABJRU5ErkJggg=="></image>
-                </g>
-            </g>
+    <g id="Download-(White)" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icons8-download" transform="translate(12.000000, 0.000000)" fill="#FFFFFF" fill-rule="nonzero">
+            <path d="M63.5,0 C60.3134545,0 57.7272727,2.58461538 57.7272727,5.76923077 L57.7272727,28.8461538 L69.2727273,28.8461538 L69.2727273,5.76923077 C69.2727273,2.58461538 66.6865455,0 63.5,0 Z M69.2727273,28.8461538 L69.2727273,101.457335 L82.509412,88.2286673 C84.7665483,85.9728981 88.4152699,85.9728981 90.6724062,88.2286673 C92.9295426,90.4844365 92.9295426,94.1309481 90.6724062,96.3867173 L67.5814971,119.46364 C66.4558153,120.58864 64.9778182,121.153846 63.5,121.153846 C62.0221818,121.153846 60.5441847,120.58864 59.4185029,119.46364 L36.3275938,96.3867173 C34.0704557,94.1309481 34.0704563,90.4844365 36.3275938,88.2286673 C38.5847301,85.9728981 42.2334517,85.9728981 44.490588,88.2286673 L57.7272727,101.457335 L57.7272727,28.8461538 L11.5454545,28.8461538 C5.16659091,28.8461538 0,34.0096154 0,40.3846154 L0,138.461538 C0,144.836538 5.16659091,150 11.5454545,150 L115.454545,150 C121.833409,150 127,144.836538 127,138.461538 L127,40.3846154 C127,34.0096154 121.833409,28.8461538 115.454545,28.8461538 L69.2727273,28.8461538 Z" id="Shape"></path>
         </g>
     </g>
 </svg>

@@ -19,11 +19,11 @@
   <div class="user-info">
     <div class="name">{{ user?user.display_name:'' }}</div>
     <div *ngIf="user && !isStaff" class="inbox-wrapper" (click)="inboxClick()" [style.background-color]="(inboxVisibility?'#E4EBFF':'transparent')">
-      <img class="inbox-icon" [src]="'./assets/Inbox Full (Blue).png' | resolveAsset">
+      <img class="inbox-icon" [src]="'./assets/Inbox (Navy).svg' | resolveAsset">
       <div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0">
-        <img class="inbox-badge" [src]="'./assets/Inbox Number.png' | resolveAsset">
+        <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">
         <div class="inbox-number">{{ notificationBadge$ | async }}</div>
-        <img class="inbox-front" [src]="'./assets/Inbox Front (Blue).png' | resolveAsset">
+        <img class="inbox-front" [src]="'./assets/Inbox Bottom (Navy).svg' | resolveAsset">
       </div>
     </div>
     <!--<div *ngIf="isStaff" class="support-wrapper global-opacity-icons" (click)="openSupport()">-->
@@ -37,7 +37,7 @@
       class="options-wrapper global-opacity-icons"
       [style.background-color]="(isOpenSettings ? '#E4EBFF' : 'transparent')"
     >
-      <img class="options" [src]="'./assets/Gear (Blue).png' | resolveAsset">
+      <img class="options" [src]="'./assets/Team (Navy).svg' | resolveAsset">
     </div>
   </div>
 </div>

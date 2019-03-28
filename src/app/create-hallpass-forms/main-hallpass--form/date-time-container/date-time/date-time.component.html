@@ -1,9 +1,9 @@
 <div class="date-wrapper">
     <div class="divider" [style.background-image]="gradient">
-        <img class="back-button" [src]="'./assets/Back Button (Transparent).png' | resolveAsset" (click)="back()">
+        <img class="back-button" [src]="'./assets/Back Button (White).svg' | resolveAsset" (click)="back()">
         <div class="divider-header"  [ngClass]="{'divider-header':!mock, 'divider-header-mock': mock}">
-            <img class="divider-icon" [src]="'./assets/Scheduled Pass (White).png' | resolveAsset">
-            <div class="divider-text ds-dialog-title-white">{{ (formState && formState.forInput ? 'Select': 'Change') }} Date & Time</div>
+            <img class="divider-icon" [src]="'./assets/Future (White).svg' | resolveAsset">
+            <div class="divider-text ds-dialog-title-white">{{ (formState?.forInput ? 'Select': 'Change') }} Date & Time</div>
         </div>
     </div>
     <div class="date-contentt" [ngClass]="{'date-content':!mock, 'date-content-mock': mock}">

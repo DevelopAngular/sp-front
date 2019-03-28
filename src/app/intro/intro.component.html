@@ -1,7 +1,7 @@
 <div *ngIf="user" class="intro-wrapper">
   <div *ngIf="slideIndex!==1" class="button-left" (click)="slide('back')"
       [@pressState]="getButtonState('left')" (mousedown)="onPress(true, 'left')" (mouseup)="onPress(false, 'left')">
-    <img class="button-icon" [src]="'./assets/Arrow Reversed (Green).png' | resolveAsset">
+    <img class="button-icon" [src]="'./assets/SP Arrow Reverse (Green).svg' | resolveAsset">
   </div>
 
   <div class="box" >
@@ -38,10 +38,10 @@
           <div class="right-side">
             <app-display-card [mock]="2" [title]="'Requests'" [hasDivider]="false" [fontSize]="'24px'" [backgroundColor]="'#FFFFFF'">
               <div class="pass-collection pass-collection__transparent" [style.padding-top]="'10px'">
-                <app-pass-collection [mock]="slides['#3.2']" [title]="'Received'" [displayState]="'list'" [forStaff]="isStaff" [icon]="'./assets/Scheduled Pass (Blue).png'" [columns]="2"></app-pass-collection>
+                <app-pass-collection [mock]="slides['#3.2']" [title]="'Received'" [displayState]="'list'" [forStaff]="isStaff" [icon]="'./assets/Future (Navy).svg'" [columns]="2"></app-pass-collection>
               </div>
               <div class="pass-collection" [style.padding]="'30px 0'">
-                <app-pass-collection [mock]="slides['#6.1']" [title]="'Sent'" [icon]="'./assets/Expired Passes (Blue).png'" [columns]="2"></app-pass-collection>
+                <app-pass-collection [mock]="slides['#6.1']" [title]="'Sent'" [icon]="'./assets/Expired (Navy).svg'" [columns]="2"></app-pass-collection>
               </div>
             </app-display-card>
 
@@ -52,12 +52,12 @@
           <div class="left-side">
             <div class="left-side_inbox">
               <div class="inbox-wrapper">
-                <img class="inbox-icon" src="./assets/Inbox Full (Blue).png">
+                <img class="inbox-icon" [src]="'./assets/Inbox (Navy).svg'">
 
                 <div class="inbox-modifiers">
-                  <img class="inbox-badge" src="./assets/Inbox Number.png">
+                  <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg'">
                   <div class="inbox-number">1</div>
-                  <img class="inbox-front" src="./assets/Inbox Front (Blue).png">
+                  <img class="inbox-front" [src]="'./assets/Inbox Bottom (Navy).svg'">
                 </div>
               </div>
             </div>
@@ -74,10 +74,10 @@
           <div class="right-side">
             <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'24px'" [backgroundColor]="'#FFFFFF'">
               <div class="pass-collection pass-collection__transparent" [style.padding-top]="'0px'">
-                <app-pass-collection [mock]="slides['#5']" [title]="'Sent'" [icon]="'./assets/Scheduled Pass (Blue).png'" [columns]="2"></app-pass-collection>
+                <app-pass-collection [mock]="slides['#5']" [title]="'Sent'" [icon]="'./assets/Future (Navy).svg'" [columns]="2"></app-pass-collection>
               </div>
               <div class="pass-collection" [style.padding]="'30px 0'">
-                <app-pass-collection [mock]="slides['#6']" [title]="'Received'" [icon]="'./assets/Expired Passes (Blue).png'" [columns]="2"></app-pass-collection>
+                <app-pass-collection [mock]="slides['#6']" [title]="'Received'" [icon]="'./assets/Expired (Navy).svg'" [columns]="2"></app-pass-collection>
               </div>
             </app-display-card>
           </div>
@@ -101,10 +101,10 @@
           <div class="right-side">
             <app-display-card [mock]="2" [title]="'Requests'" [hasDivider]="false" [fontSize]="'24px'" [backgroundColor]="'#FFFFFF'">
               <div class="pass-collection" [style.padding-top]="'10px'">
-                <app-pass-collection [mock]="slides['#3.2']" [title]="'Received'" [displayState]="'list'" [forStaff]="isStaff" [icon]="'./assets/Scheduled Pass (Blue).png'" [columns]="2"></app-pass-collection>
+                <app-pass-collection [mock]="slides['#3.2']" [title]="'Received'" [displayState]="'list'" [forStaff]="isStaff" [icon]="'./assets/Future (Navy).svg'" [columns]="2"></app-pass-collection>
               </div>
               <div class="pass-collection pass-collection__transparent" [style.padding]="'30px 0'">
-                <app-pass-collection [mock]="slides['#6.1']" [title]="'Sent'" [icon]="'./assets/Expired Passes (Blue).png'" [columns]="2"></app-pass-collection>
+                <app-pass-collection [mock]="slides['#6.1']" [title]="'Sent'" [icon]="'./assets/Expired (Navy).svg'" [columns]="2"></app-pass-collection>
               </div>
             </app-display-card>
 
@@ -117,12 +117,12 @@
           <div class="left-side">
             <div class="left-side_inbox">
               <div class="inbox-wrapper">
-                <img class="inbox-icon" src="./assets/Inbox Full (Blue).png">
+                <img class="inbox-icon" [src]="'./assets/Inbox (Navy).svg'">
 
                 <div class="inbox-modifiers">
-                  <img class="inbox-badge" src="./assets/Inbox Number.png">
+                  <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg'">
                   <div class="inbox-number">1</div>
-                  <img class="inbox-front" src="./assets/Inbox Front (Blue).png">
+                  <img class="inbox-front" [src]="'./assets/Inbox Bottom (Navy).svg'">
                 </div>
               </div>
             </div>
@@ -139,10 +139,10 @@
           <div class="right-side">
             <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'24px'" [backgroundColor]="'#FFFFFF'">
               <div class="pass-collection" [style.padding-top]="'0px'">
-                <app-pass-collection [mock]="slides['#5']" [title]="'Sent'" [icon]="'./assets/Scheduled Pass (Blue).png'" [columns]="2"></app-pass-collection>
+                <app-pass-collection [mock]="slides['#5']" [title]="'Sent'" [icon]="'./assets/Future (Navy).svg'" [columns]="2"></app-pass-collection>
               </div>
               <div class="pass-collection pass-collection__transparent" [style.padding]="'30px 0'">
-                <app-pass-collection [mock]="slides['#6']" [title]="'Received'" [icon]="'./assets/Expired Passes (Blue).png'" [columns]="2"></app-pass-collection>
+                <app-pass-collection [mock]="slides['#6']" [title]="'Received'" [icon]="'./assets/Expired (Navy).svg'" [columns]="2"></app-pass-collection>
               </div>
             </app-display-card>
           </div>
@@ -185,7 +185,7 @@
                     <span class="text">Bathroom</span>
                   </div>
                   <div>
-                    <img class="arrow" [src]="'./assets/Back Button (Transparent).png' | resolveAsset" alt="">
+                    <img class="arrow" [src]="'./assets/Back Button (Transparent).svg' | resolveAsset" alt="">
                   </div>
                 </div>
               </div>
@@ -203,7 +203,7 @@
                     <div class="start-pass-content-text"></div>
                     <div></div>
                     <b style="font-size: 22px">Start Pass</b>
-                    <img width="20" [src]="'./assets/Arrow (White).png' | resolveAsset">
+                    <img width="20" [src]="'./assets/SP Arrow (White).svg' | resolveAsset">
                   </div>
                 </div>
               </div>
@@ -226,9 +226,10 @@
             </div>
             <div class="content">
               <div class="left-side">
-                <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Create (Blue).png'">
+                <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Plus (Navy).svg'">
                   <div class="pass-buttons">
                     <app-gradient-button
+                      [size]="'editable'"
                       [minWidth]="'121px'"
                       [minHeight]="'74px'"
                       [hoverColor]="'#00b476'"
@@ -237,6 +238,7 @@
                     >Now
                     </app-gradient-button>
                     <app-gradient-button
+                      [size]="'editable'"
                       [minWidth]="'121px'"
                       [minHeight]="'74px'"
                       [hoverColor]="'#00b476'"
@@ -248,23 +250,23 @@
                 </app-display-card>
 
                 <div class="pass-collection pass-collection__transparent" [style.padding-top]="'35px'">
-                  <app-pass-collection [mock]="slides['#2']" [title]="'Active Passes'" [forStaff]="isStaff" [icon]="'./assets/Hallway (Blue).png'" [columns]="3"></app-pass-collection>
+                  <app-pass-collection [mock]="slides['#2']" [title]="'Active Passes'" [forStaff]="isStaff" [icon]="'./assets/Walking (Navy).svg'" [columns]="3"></app-pass-collection>
                 </div>
                 <div class="pass-collection pass-collection__transparent" [style.padding-top]="'35px'">
-                  <app-pass-collection [mock]="slides['#3.1']" [title]="'Scheduled Passes'" [forStaff]="isStaff" [icon]="'./assets/Scheduled Pass (Blue).png'" [columns]="3"></app-pass-collection>
+                  <app-pass-collection [mock]="slides['#3.1']" [title]="'Scheduled Passes'" [forStaff]="isStaff" [icon]="'./assets/Future (Navy).svg'" [columns]="3"></app-pass-collection>
                 </div>
                 <div class="pass-collection pass-collection__transparent" [style.padding-top]="'35px'">
-                  <app-pass-collection [mock]="slides['#3']" [title]="'Expired Passes'" [forStaff]="isStaff" [icon]="'./assets/Expired Passes (Blue).png'" [columns]="3"></app-pass-collection>
+                  <app-pass-collection [mock]="slides['#3']" [title]="'Expired Passes'" [forStaff]="isStaff" [icon]="'./assets/Expired (Navy).svg'" [columns]="3"></app-pass-collection>
                 </div>
               </div>
 
               <div class="right-side">
                 <app-display-card [mock]="2" [title]="'Requests'" [hasDivider]="false" [fontSize]="'24px'" [backgroundColor]="'#FFFFFF'">
                   <div class="pass-collection" [style.padding-top]="'10px'">
-                    <app-pass-collection [mock]="slides['#3.2']" [title]="'Received'" [displayState]="'list'" [forStaff]="isStaff" [icon]="'./assets/Scheduled Pass (Blue).png'" [columns]="2"></app-pass-collection>
+                    <app-pass-collection [mock]="slides['#3.2']" [title]="'Received'" [displayState]="'list'" [forStaff]="isStaff" [icon]="'./assets/Future (Navy).svg'" [columns]="2"></app-pass-collection>
                   </div>
                   <div class="pass-collection" [style.padding]="'30px 0'">
-                    <app-pass-collection [mock]="slides['#6.1']" [title]="'Sent'" [icon]="'./assets/Expired Passes (Blue).png'" [columns]="2"></app-pass-collection>
+                    <app-pass-collection [mock]="slides['#6.1']" [title]="'Sent'" [icon]="'./assets/Expired (Navy).svg'" [columns]="2"></app-pass-collection>
                   </div>
                 </app-display-card>
               </div>
@@ -281,38 +283,10 @@
             <div>
 
               <div class="form">
-                <!--<div class="locs">-->
-                <!--<app-gradient-button-->
-                <!--[minWidth]="'135px'"-->
-                <!--[minHeight]="'62px'"-->
-                <!--[fontSize]="'14px'"-->
-                <!--[disabled]="true"-->
-                <!--&gt;{{ 'Jefferson' }}-->
-                <!--</app-gradient-button>-->
-
-                <!--<img class="arrow" [src]="'./assets/Arrow (Green).png' | resolveAsset">-->
-
-                <!--<app-gradient-button-->
-                <!--[gradient]="'#56617D, #74839B'"-->
-                <!--[minWidth]="'135px'"-->
-                <!--[minHeight]="'62px'"-->
-                <!--[fontSize]="'14px'"-->
-                <!--[disabled]="true"-->
-                <!--&gt; {{ 'To' }}-->
-                <!--</app-gradient-button>-->
-                <!--</div>-->
-
-                <!--<div class="divider" [style.background-image]="'radial-gradient(circle at 73% 71%, #606981, #CBD5E5)'">-->
-                <!--<img class="back-button" [src]="'./assets/Back Button (Transparent).png' | resolveAsset">-->
-                <!--<div class="divider-header">-->
-                <!--<img class="divider-icon" [src]="'./assets/Search (White).png' | resolveAsset">-->
-                <!--<div class="divider-text">{{'To where ?'}}</div>-->
-                <!--</div>-->
-                <!--</div>-->
                 <div class="divider">
-                  <img class="back-button" [src]="'./assets/Combined Shape.svg' | resolveAsset">
+                  <img class="back-button" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
                   <div class="divider-header-mock">
-                    <img class="divider-icon" [src]="'./assets/Search (Blue).png' | resolveAsset">
+                    <img class="divider-icon" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset">
                     <div class="divider-text">{{'To where ?'}}</div>
                   </div>
                 </div>
@@ -325,8 +299,7 @@
                 </div>
                 <div class="divider divider__footer">
                   <div class="divider-header-mock shadow">
-                    <!--<img class="divider-icon" [src]="'./assets/Search (Blue).png' | resolveAsset">-->
-                    <div class="divider-text"><span style="font-weight: normal">Family Room</span>  <img width="30" style="padding: 0 5px;" [src]="'./assets/Arrows_long_right.png'" alt=""> Destination</div>
+                    <div class="divider-text"><span style="font-weight: normal">Family Room</span>  <img width="30" style="padding: 0 10px;" [src]="'./assets/Arrow (Navy).svg' | resolveAsset" alt=""> Destination</div>
                   </div>
                 </div>
               </div>
@@ -347,7 +320,7 @@
           <div class="for-staff_2">
             <div class="top-header"><span>Three tabs</span></div>
             <div class="tab">
-              <div class="tab_image"><img [src]="'./assets/Arrow (Blue).png'" alt="Arrow (Blue).png"></div>
+              <div class="tab_image"><img [src]="'./assets/SP Arrow (Navy).svg' | resolveAsset" alt="SP Arrow (Navy).svg"></div>
               <div>
                 <div class="tab_heading">
                   <span>Passes</span>
@@ -357,7 +330,7 @@
               </div>
             </div>
             <div class="tab">
-              <div class="tab_image"><img [src]="'./assets/Hallway (Blue).png'" alt="Hallway (Blue).png"></div>
+              <div class="tab_image"><img [src]="'./assets/Walking (Navy).svg' | resolveAsset" alt="Walking (Navy).svg"></div>
               <div>
                 <div class="tab_heading">
                   <span>Hall monitor</span>
@@ -367,7 +340,7 @@
               </div>
             </div>
             <div class="tab">
-              <div class="tab_image"><img [src]="'./assets/My Room (Blue).png'" alt="My Room (Blue).png"></div>
+              <div class="tab_image"><img [src]="'./assets/Room (Navy).svg' | resolveAsset" alt="Room (Navy).svg"></div>
               <div>
                 <div class="tab_heading">
                   <span>My Room</span>
@@ -386,9 +359,10 @@
               <span>Create hall passes for now or for the future</span>
             </div>
             <!--<div>-->
-            <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Create (Blue).png'">
+            <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Plus (Navy).svg'">
               <div class="pass-buttons">
                 <app-gradient-button
+                  [size]="'editable'"
                   [minWidth]="'121px'"
                   [minHeight]="'74px'"
                   [hoverColor]="'#00b476'"
@@ -397,6 +371,7 @@
                 >Now
                 </app-gradient-button>
                 <app-gradient-button
+                  [size]="'editable'"
                   [minWidth]="'121px'"
                   [minHeight]="'74px'"
                   [hoverColor]="'#00b476'"
@@ -408,10 +383,10 @@
             </app-display-card>
 
             <div class="pass-collection pass-collection__transparent" [style.padding-top]="'35px'">
-              <app-pass-collection [mock]="slides['#2']" [title]="'Scheduled Passes'" [icon]="'./assets/Scheduled Pass (Blue).png'" [columns]="3"></app-pass-collection>
+              <app-pass-collection [mock]="slides['#2']" [title]="'Scheduled Passes'" [icon]="'./assets/Future (Navy).svg'" [columns]="3"></app-pass-collection>
             </div>
             <div class="pass-collection pass-collection__transparent" [style.padding-top]="'35px'">
-              <app-pass-collection [mock]="slides['#3']" [title]="'Expired Passes'" [icon]="'./assets/Expired Passes (Blue).png'" [columns]="3"></app-pass-collection>
+              <app-pass-collection [mock]="slides['#3']" [title]="'Expired Passes'" [icon]="'./assets/Expired (Navy).svg'" [columns]="3"></app-pass-collection>
             </div>
           </div>
         </ng-template>
@@ -468,7 +443,7 @@
 
   <div *ngIf="slideIndex!==7" class="button-right" (click)="slide('forward')"
       [@pressState]="getButtonState('right')" (mousedown)="onPress(true, 'right')" (mouseup)="onPress(false, 'right')">
-    <img class="button-icon" [src]="'./assets/Arrow (Green).png' | resolveAsset">
+    <img class="button-icon" [src]="'./assets/SP Arrow (Green).svg' | resolveAsset">
   </div>
 
 </div>

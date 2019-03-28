@@ -22,7 +22,7 @@
           [style.width]="'600px'"
           [passProvider]="activePassProvider"
           [title]="'Active Passes'"
-          [icon]="'./assets/Hallway (Blue).png'"
+          [icon]="'./assets/Walking (Navy).svg'"
           [columns]="4">
         </app-pass-collection>
         <div *ngIf="!(hasPasses | async) && (passesLoaded | async)">
@@ -43,11 +43,11 @@
       <div class="right-content-internal">
         <div class="right-content-header">
           <div class="report-text">
-            <img draggable="false" [src]="'./assets/Report (Red).png' | resolveAsset" class="report-icon">
+            <img draggable="false" [src]="'./assets/Report (Red).svg' | resolveAsset" class="report-icon">
             <div class="text">Reported Students</div>
           </div>
           <div class="calendar-icon-container" [ngClass]="{'active-calendar-icon': activeCalendar}">
-            <img draggable="false" [src]="( inactiveIcon ? './assets/Calendar (Blue).png' : './assets/Calendar (Light Blue).png') | resolveAsset" class="calendar-icon" (click)="openDateDialog($event)">
+            <img draggable="false" [src]="( inactiveIcon ? './assets/Calendar (Navy).svg' : './assets/Calendar (Blue).svg') | resolveAsset" class="calendar-icon" (click)="openDateDialog($event)">
           </div>
         </div>
         <h3 style="text-align: center; margin: 15px; color: #134482" *ngIf="!studentreport.length">{{reportsDate | date : 'MMM. d' }}</h3>
@@ -64,7 +64,7 @@
                   [created]="report.created"
                   [message]="report.message || 'empty'"
                   [hasDivider]="true"
-                  [righticon]="'./assets/Print (Grey).png'"></app-display-report-cell>
+                  [righticon]="'./assets/Print (Blue-Gray).svg'"></app-display-report-cell>
               </div>
             </div>
           </div>
@@ -81,104 +81,3 @@
 
   </div>
 </div>
-
-
-
-
-
-
-
-<!--<div class="hallmoniter">-->
-    <!--<div class="main-page-left">-->
-      <!--<div class="current-pass">-->
-        <!--<app-gradient-button [minWidth]="'300px'"-->
-                             <!--[minHeight]="'40px'"-->
-                             <!--[hoverColor]="'#00b476'"-->
-                             <!--[fontSize]="'15px'"-->
-                             <!--[cursor]="'pointer'"-->
-                             <!--(click)="TooltipPlainText($event)">-->
-          <!--ToolTip - Support With Plain Text-->
-        <!--</app-gradient-button>-->
-      <!--</div>-->
-      <!--<div class="current-pass">-->
-        <!--<app-gradient-button [minWidth]="'300px'"-->
-                             <!--[minHeight]="'40px'"-->
-                             <!--[hoverColor]="'#00b476'"-->
-                             <!--[fontSize]="'15px'"-->
-                             <!--[cursor]="'pointer'"-->
-                             <!--(click)="TooltipConfirmation($event)">-->
-          <!--ToolTip - Supports Consent-->
-        <!--</app-gradient-button>-->
-      <!--</div>-->
-      <!--<div class="current-pass">-->
-        <!--<app-gradient-button [minWidth]="'300px'"-->
-                             <!--[minHeight]="'40px'"-->
-                             <!--[hoverColor]="'#00b476'"-->
-                             <!--[fontSize]="'15px'"-->
-                             <!--[cursor]="'pointer'"-->
-                             <!--(click)="TooltipOptions($event)">-->
-          <!--ToolTip - Support list of options-->
-        <!--</app-gradient-button>-->
-      <!--</div>-->
-
-
-      <!--<app-input  [input_label]="'Room Name'" (onUpdate)="input_value1=$event" [Success]="Input1Validataion()"></app-input>-->
-
-      <!--<br />-->
-      <!--Input 1 Text : {{input_value1}} <br/>-->
-      <!--Input 1 Sucess Status : {{Input1Validataion()}}  <br />-->
-      <!--Valid Inputs: 'Bathroom,Staffroom'-->
-      <!--<br />-->
-      <!--<br /> <br />-->
-
-      <!--<app-input [input_label]="'Search By Date & Time'" [IsDate]="true" (onUpdateDateRange)="input_DateRange=$event" ></app-input>-->
-
-      <!--<br/>-->
-      <!--<br/>-->
-      <!--Searching by Date & Time : {{input_DateRange}}-->
-
-      <!--<app-student-search [style.width]="'75%'" (onUpdate)="selectedStudents=$event" [selectedStudents]="selectedStudents"></app-student-search>-->
-      <!--&lt;!&ndash;<app-gradient-button *ngIf="selectedStudents && selectedStudents.length > 0"-->
-                           <!--[gradient]="'#03CF31,#00B476'"-->
-                           <!--[hoverColor]="'#00B476'"-->
-                           <!--[minWidth]="'90px'"-->
-                           <!--[minHeight]="'30px'"-->
-                           <!--[fontSize]="'14px'"-->
-                           <!--[disabled]="selectedStudents.length<1"-->
-                           <!--[style.width]="'90px'">-->
-        <!--Done ({{ selectedStudents.length }})-->
-      <!--</app-gradient-button>&ndash;&gt;&lt;!&ndash;(buttonClick)="setFormState(((forLater&&isDeclinable)?'to-pinnables':'from'))"&ndash;&gt;-->
-       <!--&lt;!&ndash;{{selectedtoggleValue}}&ndash;&gt;-->
-      <!--&lt;!&ndash;<app-location-table *ngIf="type==='location'" (onSelect)="closeDialog($event)" [type]="'location'" [placeholder]="'Search rooms'" (onSelected)="closeDialog($event)"></app-location-table>&ndash;&gt;-->
-
-      <!--<br />-->
-      <!--<br />-->
-
-      <!--<app-display-report-cell [student_name]="'testStudent'" [issuer]="'testTeacher'" [created]="'Today 09:32 PM'" [message]="'caught without pass'" [hasDivider]="true" [righticon]="'./assets/Print (Grey).png'"></app-display-report-cell>-->
-
-      <!--<br />-->
-      <!--<br />-->
-
-    <!--</div>-->
-
-    <!--<div class="main-page-right">-->
-      <!--<app-display-card [title]="'Reported Students'" [hasDivider]="false" [fontSize]="'15pt'" [icon]="'./assets/Report (Red).png'" [subtitle_fontSize]="'10pt'" [subtitle]="'5 Reported Student Today'" [righttext]="'ab'" [righticon]="'./assets/Hallway (Blue).png'">-->
-        <!--<div style="padding-left:16px;padding-top:16px;">-->
-          <!--Data Comes here later on...-->
-        <!--</div>-->
-      <!--</app-display-card>-->
-
-      <!--<div style="margin-top:20px;">-->
-        <!--<app-input  [input_label]="'Room Number (Required)'" (onUpdate)="input_value2=$event" [Success]="Input2Validataion()" [input_type]="'text'" [IsRequired]="true"></app-input>-->
-
-        <!--<br />-->
-        <!--Input 2 Text : {{input_value2}} <br />-->
-        <!--Input 2 Sucess Status : {{Input2Validataion()}}<br />-->
-        <!--Valid Inputs: 'AR,BR'-->
-
-      <!--</div>-->
-
-
-    <!--</div>-->
-
-<!--</div>-->

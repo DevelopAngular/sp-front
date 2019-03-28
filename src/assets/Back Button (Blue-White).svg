@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="150px" height="150px" viewBox="0 0 150 150" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
+    <title>Back Button (Blue-White)</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Back-Button-(Blue-White)" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icons8-circled_chevron_left_filled" fill="#D2D5DD" fill-rule="nonzero">
+            <path d="M75,0 C33.6404543,0 0,33.6404543 0,75 C0,116.359546 33.6404543,150 75,150 C116.359546,150 150,116.359546 150,75 C150,33.6404543 116.359546,0 75,0 Z M87.0881446,105.30316 C88.3619217,106.576937 88.3619217,108.640454 87.0881446,109.914232 C86.4512576,110.551122 85.6233033,110.869565 84.7826087,110.869565 C83.9419174,110.869565 83.1139598,110.551122 82.4770728,109.914232 L49.8683772,77.3055359 C48.5946,76.0317587 48.5946,73.9682413 49.8683772,72.6944641 L82.4770728,40.0857685 C83.75085,38.8119913 85.8143674,38.8119913 87.0881446,40.0857685 C88.3619217,41.3595457 88.3619217,43.423063 87.0881446,44.6968402 L56.784988,75 L87.0881446,105.30316 Z" id="Shape"></path>
+        </g>
+    </g>
+</svg>

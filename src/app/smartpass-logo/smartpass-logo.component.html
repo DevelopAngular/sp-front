@@ -1,7 +1,7 @@
 <div class="container">
   <div *ngIf="!logoAsset" class="logo-wrapper" [style.transform]="transformRules">
     <div class="title">SmartPass</div>
-    <img class="logo" [src]="'./assets/Arrow (Green).png' | resolveAsset">
+    <img class="logo" [src]="'./assets/SP Arrow (Green).svg' | resolveAsset">
   </div>
   <div *ngIf="logoAsset" class="logo-wrapper" [style.transform]="transformRules">
     <img height="24" [src]="logoAsset | resolveAsset">

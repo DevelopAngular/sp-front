@@ -170,7 +170,9 @@ export class MainHallPassFormComponent implements OnInit {
           this.formSize.height =  `500px`;
           break;
         case 4:
-          form.style.boxShadow = 'none';
+          if (form) {
+            form.style.boxShadow = 'none';
+          }
           this.formSize.width =  `425px`;
           this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '412px';
           break;

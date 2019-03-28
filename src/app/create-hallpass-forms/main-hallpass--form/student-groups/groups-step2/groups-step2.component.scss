@@ -40,6 +40,10 @@
         font-weight: bold;
         color: $secondary-color;
         cursor: pointer;
+        &-icon {
+          width: 28px;
+          height: 28px;
+        }
       }
       &_icon {
         width: 21px;

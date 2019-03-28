@@ -1,11 +1,11 @@
 <div class="input-wrapper" click="clickAction()" xmlns="http://www.w3.org/1999/html">
   <div *ngIf="labelText" class="label-wrapper">
-    <img draggable="false" class="label-icon" [src]="'./assets/Search '+(selected?'(Blue)':'(Grey)') +'.png' | resolveAsset">
+    <img draggable="false" class="label-icon" [src]="'./assets/Search Eye '+(selected?'(Navy)':'(Blue-Gray)') +'.svg' | resolveAsset">
     <div class="label-text" [style.color]="(selected?'#1D1A5E':'#7F879D')">{{ labelText }}</div>
   </div>
 
   <!--<div *ngIf="selected" class="inputSelector" [style.width]="width"></div>-->
-  <div class="field-wrapper" [style.min-width]="minWidth">
+  <div class="field-wrapper ds" [style.min-width]="minWidth">
     <div class="input-focus-wrapper" [ngClass]="{'inputSelector': selected === true}">
       <img *ngIf="fieldIcon && (fieldIconPosition === 'left')" class="field-icon"
            [src]="fieldIcon | resolveAsset"

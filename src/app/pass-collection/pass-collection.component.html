@@ -8,7 +8,7 @@
       <div class="sort-label global-opacity-icons" *ngIf="hasSort" (click)="openSortDialog($event)">Sort</div>
       <!--<app-dropdown *ngIf="hasSort" class="sort-selector" (onSelect)="onSortSelected($event)" [options]="sortOptions"></app-dropdown>-->
     <!--(click)="displayState=(displayState==='list'?'grid':'list')"-->
-      <!--<img draggable="false" *ngIf="columnViewIcon" class="collection-display-toggle global-opacity-icons" [src]="'./assets/' +(displayState==='grid'?'List':'Grid') +' (Blue).png'| resolveAsset" [style.margin-left]="hasSort?'10px':'auto'">-->
+      <!--<img draggable="false" class="collection-display-toggle global-opacity-icons" [src]="'./assets/' +(displayState==='grid'?'List':'Grid') +' (Navy).svg'| resolveAsset" [style.margin-left]="hasSort?'10px':'auto'">-->
   </div>
   <div class="collection-divider"></div>
   <div *ngIf="(currentPasses$ | async)">
@@ -41,7 +41,7 @@
     <div class="collection-title">
       {{title}}
     </div>
-    <img draggable="false" class="collection-display-toggle global-opacity-icons" [src]="'./assets/' +(displayState==='grid'?'List':'Grid') +' (Blue).png'| resolveAsset" [style.margin-left]="hasSort?'10px':'auto'">
+    <img draggable="false" class="collection-display-toggle global-opacity-icons" [src]="'./assets/' +(displayState==='grid'?'List':'Grid') +' (Navy).svg'| resolveAsset" [style.margin-left]="hasSort?'10px':'auto'">
   </div>
   <div class="collection-divider"></div>
     <div class="collection-grid-wrapper" *ngIf="displayState==='grid'; else list">
