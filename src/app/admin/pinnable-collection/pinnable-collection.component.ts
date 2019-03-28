@@ -2,8 +2,8 @@ import { Component, OnInit, Input, Output, EventEmitter, ElementRef } from '@ang
 import { Pinnable } from '../../models/Pinnable';
 import { MatDialog } from '@angular/material';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
-import {BehaviorSubject, forkJoin, Subject} from 'rxjs';
-import {HallPassesService} from '../../services/hall-passes.service';
+import { BehaviorSubject, forkJoin } from 'rxjs';
+import { HallPassesService } from '../../services/hall-passes.service';
 
 @Component({
   selector: 'app-pinnable-collection',
@@ -21,6 +21,8 @@ export class PinnableCollectionComponent implements OnInit {
   @Input() resetBulkSelect$: BehaviorSubject<boolean>;
 
   @Input() width: string = '560px';
+
+  @Input() isEmptyState: boolean = true;
 
   @Output()
   roomEvent: EventEmitter<any> = new EventEmitter();
@@ -51,7 +53,10 @@ export class PinnableCollectionComponent implements OnInit {
   }
 
   ngOnInit() {
-    setTimeout(() => {
+    if (!this.pinnables) {
+      this.pinnables = [];
+    }
+      setTimeout(() => {
       this.pinnableIdArranged = this.pinnables.map(pin => pin.id);
       // console.log(this.pinnableIdArranged);
 

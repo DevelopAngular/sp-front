@@ -464,7 +464,7 @@
           <span>Note: appearance settings will be lost</span>
         </div>
         <div class="pinnable-collection">
-          <app-pinnable-collection [width]="'390px'" [header]="false" [pinnables]="pinnables$ | async" (roomEvent)="selectedRoomsInFolder=$event"></app-pinnable-collection>
+          <app-pinnable-collection [isEmptyState]="false" [width]="'390px'" [header]="false" [pinnables]="pinnables$ | async" (roomEvent)="selectedRoomsInFolder=$event"></app-pinnable-collection>
         </div>
       </div>
       <input type="file" formControlName="file" #file style="display: none"/>
