@@ -9,12 +9,13 @@
   width: 100%;
   height: 70px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   font-weight: 900;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
 ::ng-deep .tooltip {
@@ -106,13 +107,13 @@
 }
 
 .cancel-button {
-  //color: white;
+  font-size: 15px;
   cursor: pointer;
 }
 
 .left-buttons {
-  width: 53px;
-  margin-left: 30px;
+  position: absolute;
+  left: 20px;
 }
 
 .left-content-wrapper, .right-content-wrapper {
@@ -201,7 +202,7 @@
 .divider {
   width: 1px;
   //height: 700px;
-  background: darkgray;
+  background: #7F879D;
   margin: 0 12px 0 0px;
 }
 
@@ -286,10 +287,6 @@
   width: 13%;
 }
 
-.title {
-  font-size: 20px;
-}
-
 .rooms-in-folder {
   margin: 10px 50px 50px 20px;
 
@@ -297,7 +294,8 @@
     display: flex;
     align-items: center;
     color: #1d1a5e;
-    font-weight: bolder;
+    font-size: 15px;
+    font-weight: bold;
   }
   .rooms-in-folder-content {
     display: flex;
@@ -305,7 +303,7 @@
   }
 
   .not-rooms-in-folder {
-    color: #8e8e93;
+    color: #7F879D;
     font-weight: bold;
     margin: 40px 0 0 40px;
   }
@@ -334,19 +332,19 @@
     box-shadow: 0 0 2px darkgrey;
     width: 90%;
     align-items: center;
-    height: 100px;
+    height: 75px;
     margin-top: 20px;
     border-radius: 12px;
     position: relative;
 
     .header-title {
       font-weight: bolder;
-      font-size: 19px;
-      color: gray;
+      font-size: 17px;
+      color: #7F879D;
     }
     .back-button {
-      width: 40px;
-      height: 40px;
+      width: 35px;
+      height: 35px;
       left: 20px;
       cursor: pointer;
       position: absolute;
@@ -354,12 +352,12 @@
   }
 
   .info-text {
-    color: #8e8e93;
+    color: #7F879D;
     font-weight: bold;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 30px 0 30px 0;
+    margin: 20px 0 20px 0;
   }
 
   .add-rooms-button {
@@ -382,23 +380,24 @@
 
   .new-room-in-folder-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
     width: 90%;
     align-items: center;
     height: 75px;
     margin-top: 20px;
     border-radius: 12px;
+    position: relative;
 
     .room-in-folder-title-inactive {
-      font-weight: bolder;
-      font-size: 19px;
-      color: #7f879d;
+      font-weight: bold;
+      font-size: 17px;
+      color: #7F879D;
     }
 
     .room-in-folder-title-active {
-      font-weight: bolder;
-      font-size: 19px;
+      font-weight: bold;
+      font-size: 17px;
       color: #1d1a5e;
     }
 
@@ -406,20 +405,18 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 120px;
       height: 41px;
-      margin-right: 20px;
+      position: absolute;
+      right: 20px;
     }
 
     .back-button {
-      width: 40px;
-      height: 40px;
-      //margin-left: 20px;
+      width: 35px;
+      height: 35px;
       cursor: pointer;
     }
 
     .cancel-button-in-folder-header {
-      //margin-left: 20px;
       font-weight: bold;
       cursor: pointer;
     }
@@ -447,7 +444,7 @@
   align-items: center;
 
   .import-rooms-info {
-    color: #7f879d;
+    color: #7F879D;
     font-size: 18px;
     text-align: center;
     width: 85%;
@@ -483,15 +480,15 @@
     .choose-text {
       font-size: 22px;
       font-weight: bolder;
-      color: darkgray;
+      color: #7F879D;
       margin-left: 8px;
     }
   }
 }
 
 .edit-rooms-info {
-  font-weight: bolder;
-  color: darkgray;
+  font-weight: bold;
+  color: #7F879D;
   margin: 30px 30px 0 30px;
 }
 
@@ -514,8 +511,7 @@
   justify-content: center;
 
   .edit-rooms-left-title{
-    font-weight: bolder;
-    color: darkgray;
+    color: #7F879D;
     margin: 30px 0 0 30px;
   }
 }
@@ -541,7 +537,7 @@
   .list-divider {
     width: 100%;
     height: 1px;
-    background-color: darkgray;
+    background-color: #7F879D;
   }
   .room:hover {
     background-color: #dce2e7;
@@ -571,14 +567,14 @@
     text-align: center;
     margin-top: 10px;
     padding-bottom: 36px;
-    color: darkgray;
+    color: #7F879D;
   }
 }
 
 .bulk-warning-text {
   width: 90%;
   margin-left: 30px;
-  color: darkgray;
+  color: #7F879D;
 }
 
 .support-icon {

@@ -129,7 +129,7 @@ export class OverlayContainerComponent implements OnInit {
   hideDeleteButton: boolean;
 
   buttonsInFolder = [
-      { title: 'New Room', icon: './assets/Create (White).png', location: 'newRoomInFolder'},
+      { title: 'New Room', icon: './assets/Plus (White).svg', location: 'newRoomInFolder'},
       { title: 'Import Rooms', icon: null, location: 'importRooms'},
       { title: 'Add Existing', icon: null, location: 'addExisting'}
   ];
