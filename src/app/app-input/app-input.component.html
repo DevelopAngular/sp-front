@@ -50,13 +50,13 @@
           "
           matTooltipClass="tooltip"
           class="success-icon"
-          [src]="'./assets/Report (Red).png' | resolveAsset">
+          [src]="'./assets/Report (Red).svg' | resolveAsset">
         <div class="arrow-down-container">
           <div class="arrow-down">x</div>
         </div>
       </div>
       <img *ngIf='isErrorIcon && controlName.invalid && controlName.errors && controlName.touched && (!controlName.errors.room_name && !controlName.errors.folder_name && !controlName.errors.room_number)'
-           class="success-icon" [src]="'./assets/Report (Red).png' | resolveAsset"/>
+           class="success-icon" [src]="'./assets/Report (Red).svg' | resolveAsset"/>
       <div class="disabled"></div>
     </div>
     <!--<p style="color: red" *ngIf="controlName.errors?.title">Bad name!</p>-->

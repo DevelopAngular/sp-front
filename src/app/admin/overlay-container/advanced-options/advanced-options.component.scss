@@ -55,6 +55,7 @@
 
       .unrestricted {
         color: #7F879D;
+        font-size: 15px;
       }
 
       .restriction-toggle {
@@ -64,11 +65,13 @@
           margin-bottom: 10px;
           color: #1d1a5e;
           font-size: 17px;
+          font-weight: bold;
         }
       }
 
       .options {
         padding-top: 10px;
+        font-size: 15px;
         .default {
           color: #7F879D;
         }
