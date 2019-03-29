@@ -25,7 +25,7 @@
           <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
           <div *ngIf="!performingAction" class="start-pass-content-text">
               {{((forFuture && forInput)?'Schedule Pass' + (selectedStudents.length > 1 ? 'es' : ''):(forStaff?'Send Pass' + (selectedStudents.length > 1 ? 'es' : ''):'Start Pass' + (selectedStudents.length > 1 ? 'es' : '')))}}</div>
-          <img class="button-icon-right" [src]="'./assets/SP Arrow (White).svg' | resolveAsset">
+          <img *ngIf="!performingAction"  class="button-icon-right" [src]="'./assets/SP Arrow (White).svg' | resolveAsset">
         </div>
       </app-card-button>
 

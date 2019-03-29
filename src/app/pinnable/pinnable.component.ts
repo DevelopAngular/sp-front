@@ -85,18 +85,16 @@ export class PinnableComponent implements OnInit {
   }
 
   getGradient() {
-    // if(this.valid){
+    if (this.buttonDown) {
+      return this.pinnable.color_profile.pressed_color;
+    } else {
       const gradient: string[] = this.pinnable.color_profile.gradient_color.split(',');
       return this.sanitizer.bypassSecurityTrustStyle('radial-gradient(circle at 73% 71%, ' + gradient[0] + ', ' + gradient[1] + ')');
-    // }
-    // else{
-    //   return this.sanitizer.bypassSecurityTrustStyle('radial-gradient(circle at 73% 71%, rgb(203, 213, 229), rgb(203, 213, 229))');
-    // }
+    }
   }
 
   onPress(press: boolean) {
     this.buttonDown = press;
-    //console.log("[Button State]: ", "The button is " +this.buttonState);
   }
 
 }

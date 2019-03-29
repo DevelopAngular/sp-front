@@ -62,6 +62,12 @@ $primaryFont: "Helvetica Neue", sans-serif;
 }
 .ds-small-link-text {
   @include textSize(12px, $color: $blue-gray);
+  &:hover {
+    text-decoration: underline;
+  }
+  &:focus {
+    outline: none;
+  }
 }
 .ds-segment-control {
   @include textSize(13px);
@@ -195,10 +201,12 @@ $primaryFont: "Helvetica Neue", sans-serif;
     margin: $space;
   }
   @if $side == x {
-    margin: 0 $space;
+    margin-left: $space;
+    margin-right: $space;
   }
   @if $side == y {
-    margin: $space 0;
+    margin-top: $space;
+    margin-bottom: $space;
   }
   @if $side == top {
     margin-top: $space;
@@ -219,10 +227,12 @@ $primaryFont: "Helvetica Neue", sans-serif;
     padding: $space;
   }
   @if $side == x {
-    padding: 0 $space;
+    padding-left: $space;
+    padding-right: $space;
   }
   @if $side == y {
-    padding: $space 0;
+    padding-top: $space;
+    padding-bottom: $space;
   }
   @if $side == top {
     padding-top: $space;

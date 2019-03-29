@@ -202,14 +202,55 @@
     <div class="content-scrollable-box" *ngSwitchCase="'gSuiteSettings'">
       <div class="card-body">
 
-        <div class="card-body_section" *ngIf="data.role === '_profile_teacher' || data.role === '_profile_admin'">
-          <div class="section-content">
-            <div [style.width]="'100%'">
-              <div class="ds-dialog-heading">Last Sync: Today, 9:34 AM</div>
+        <div class=" ds-my-20 ds-mx-25">
+          <div class="ds-dialog-heading">Last Sync: Today, 9:34 AM</div>
+        </div>
+
+        <div class="ds-border-box ds-px-25 ds-py-10">
+          <div class="ds-flex-start-between section-content">
+            <div>
+
+              <div class="ds-w-100 ds-flex-wrap ds-dialog-bold-text">
+                Manually Sync User Details
+              </div>
+              <p class="ds-mr-10">Update your imported users' details in G Suite - we'll sync these changes for you on our end every 4 hours or manually sync here.</p>
+            </div>
+            <div>
+              <app-gradient-button
+              [size]="'small'"
+              [whiteSpace]="'nowrap'"
+              [gradient]="'#13BF9E, #00D99B'"
+              [hoverColor]="'#13BF9E'"
+              [cursor]="'pointer'"
+              >
+                Manually Sync
+              </app-gradient-button>
             </div>
 
           </div>
+
         </div>
+        <div class="ds-border-box ds-px-25 ds-py-10">
+          <div class="ds-flex-start-between section-content">
+            <div>
+              <div class="ds-w-100 ds-flex-wrap ds-dialog-bold-text">Organization Unit Routing</div>
+              <p class="ds-mr-10">Organizational units through G Suite can be routed to certain SmartPass profiles (Students, Administrators, etc.)</p>
+            </div>
+            <div>
+              <app-gradient-button
+                [size]="'small'"
+                [whiteSpace]="'nowrap'"
+                [gradient]="'#001115,#033294'"
+                [hoverColor]="'#001115'"
+                [rightIcon]="'./assets/Chevron Right (White).svg'"
+                [cursor]="'pointer'"
+              >
+                Edit Routing
+              </app-gradient-button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 

@@ -53,7 +53,7 @@
       <!--(ontextupdate)="onSearch($event)"-->
       <!--&gt;</app-round-input>-->
       <!--<input *ngIf="horizontalTable" class="input" #searchBox [value]="search" [placeholder]="placeholder" (keyup)="onSearch(searchBox.value)">-->
-      <div class="quick-label" *ngIf="staticChoices && staticChoices.length <= choices.length">Quick Select</div>
+      <div class="quick-label" *ngIf="staticChoices?.length">Quick Select</div>
       <div class="choices" [style.width]="'190px'" (scroll)="onScroll($event)">
         <app-location-cell [hasLocks]="hasLocks" [forLater]="forLater" [forStaff]="forStaff" class="choice" *ngFor="let choice of choices" [showStar]="showStars && !noRightStar" [starred]="false"
                            (onSelect)="choiceSelected($event)" (onStar)="star($event)"

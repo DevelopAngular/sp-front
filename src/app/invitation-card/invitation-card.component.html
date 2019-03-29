@@ -29,7 +29,7 @@
               <div *ngIf="!performingAction" class="button-content-text">
                 {{ 'Send Pass Request' + (selectedStudents.length > 1 ? 's' : '') }}
               </div>
-              <img class="button-icon-right" [src]="'./assets/SP Arrow (White).svg' | resolveAsset">
+              <img  *ngIf="!performingAction"  class="button-icon-right" [src]="'./assets/SP Arrow (White).svg' | resolveAsset">
             </div>
           </app-card-button>
         </div>

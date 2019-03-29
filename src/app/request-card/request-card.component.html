@@ -34,7 +34,7 @@
         <div class="request-button-content">
           <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
           <div *ngIf="!performingAction" class="request-pass-content-text">Send Request</div>
-          <img class="button-icon-right" [src]="'./assets/SP Arrow (White).svg' | resolveAsset">
+          <img *ngIf="!performingAction"  class="button-icon-right" [src]="'./assets/SP Arrow (White).svg' | resolveAsset">
         </div>
       </app-card-button>
     </div>

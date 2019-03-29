@@ -49,6 +49,7 @@ export class GradientButtonComponent implements OnInit {
   @Input() leftImageHeight: string; // > editable
   @Input() cursor: string;
   @Input() textWidth: string = '100%';
+  @Input() whiteSpace: string = 'wrap';
   @Input() buttonLink: string; // needs for the links so that don't brake an existing markup and the entire button is clickable
   @Input() documentType: string; // can be pdf or xslx/csv
   @Output() buttonClick = new EventEmitter<any>();

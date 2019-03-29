@@ -35,7 +35,7 @@
     <div class="footer-text">{{(user?user.display_name : '')}}</div>
     <div [style.display]="'flex'">
       <!--<img draggable="false" (click)="router.navigateByUrl('/select-profile')" class="footer-settings global-opacity-icons" [src]="'./assets/Switch Account (Blue).png' | resolveAsset" alt="" *ngIf="showButton">-->
-      <img draggable="false" (click)="openSettings($event)" [ngClass]="{'active-route': selectedSettings }" class="footer-settings global-opacity-icons" [src]="'./assets/Team (Navy).svg' | resolveAsset" alt="">
+      <img draggable="false" (click)="openSettings($event)" [ngClass]="{'active-route': selectedSettings }" class="footer-settings global-opacity-icons" [src]="'./assets/Settings (Navy).svg' | resolveAsset" alt="">
     </div>
   </div>
 </div>

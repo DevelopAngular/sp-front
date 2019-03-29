@@ -5,7 +5,7 @@
       <img class="back-button" draggable="false"
            *ngIf="backButtonState && !hideHeaderIcon"
            alt="Go Back"
-           [src]="'./assets/' + (titleColor === 'white' ? 'Back Button (White).svg' : 'Combined Shape.svg') | resolveAsset"
+           [src]="'./assets/' + (titleColor === 'white' ? 'Back Button (Blue-White).svg' : 'Back Button (Light-Gray).svg') | resolveAsset"
            (click)="back()">
 
         <div class="cancel-button" [style.color]="titleColor" *ngIf="!backButtonState && !hideHeaderIcon" (click)="back()">Cancel</div>
