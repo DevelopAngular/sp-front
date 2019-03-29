@@ -2,7 +2,7 @@
   <div class="settings-header">
     <img class="back-button" *ngIf="!changeForm" [src]="'./assets/Combined Shape.svg' | resolveAsset" (click)="close()">
     <div class="back-button" *ngIf="changeForm" (click)="close()">Cancel</div>
-    <div class="settings-header-text">School Settings</div>
+    <div class="ds-dialog-title ">School Settings</div>
     <div class="save-button" *ngIf="changeForm && schoolForm.valid">
       <app-gradient-button
               [width]="'85px'"
@@ -17,15 +17,15 @@
     <div class="controls-block">
       <form [formGroup]="schoolForm"></form>
       <div class="display-room-control">
-        <div class="control-text">Display Room Numbers on Passes</div>
+        <div class="ds-cell-text-2">Display Room Numbers on Passes</div>
         <div class="toggle-control">
-          <app-toggle-input [form]="schoolForm" [delimiter]="false" [controlName]="'display_room'"></app-toggle-input>
+          <app-toggle-input [form]="schoolForm" [controlSize]="'small'" [delimiter]="false" [controlName]="'display_room'"></app-toggle-input>
         </div>
       </div>
       <div class="buffer-time-control">
         <div class="control-text" style="width: 210px">
-          Pass Buffer Time <br>
-          <span class="control-subtext">How long an expiring pass will count up until it automatically ends and moves to the Expired Pass section.</span>
+          <span class="ds-cell-text-2">Pass Buffer Time</span> <br>
+          <span class="ds-cell-description-text">How long an expiring pass will count up until it automatically ends and moves to the Expired Pass section.</span>
         </div>
         <div class="control-input">
           <app-input [width]="'58px'" [isErrorIcon]="false" [textAlign]="'right'" [formGroup]="schoolForm" [input_value]="schoolForm.get('buffer_time').value" [controlName]="schoolForm.get('buffer_time')"></app-input>
@@ -33,8 +33,8 @@
       </div>
     </div>
     <div class="bottom-block">
-      <div class="ask">Have a feature suggestion?</div>
-      <div class="support-email">Email us at support@smartpass.app</div>
+      <div class="ds-dialog-bold-text">Have a feature suggestion?</div>
+      <div class="ds-small-link-text">Email us at support@smartpass.app</div>
     </div>
   </div>
 </div>
