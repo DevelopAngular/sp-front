@@ -46,12 +46,12 @@ import { AngularFireMessagingModule } from '@angular/fire/messaging';
 import { environment } from '../environments/environment';
 import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
 import { ResizeInfoDialogComponent } from './resize-info-dialog/resize-info-dialog.component';
-import { SignedOutToastComponent } from './signed-out-toast/signed-out-toast.component'
+import { SignedOutToastComponent } from './signed-out-toast/signed-out-toast.component';
 
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroComponent, data: { hideSchoolToggleBar: true}},
-  {path: '', redirectTo: 'select-profile', pathMatch: 'full'},
+  {path: '', redirectTo: 'admin', pathMatch: 'full'},
   {
     path: '',
     canActivate: [NotSeenIntroGuard],

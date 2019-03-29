@@ -1,6 +1,5 @@
 .settings-wrapper {
   width: 244px;
-  //height: 265px;
   position: relative;
 
   .title {
@@ -18,10 +17,11 @@
         align-items: center;
         padding: 12px 0 12px 30px;
         cursor: pointer;
+        position: relative;
 
         .option-title {
           margin: 0 10px 0 10px;
-          font-size: 15px;
+          font-size: 17px;
         }
 
         .switch-icon {
@@ -31,6 +31,8 @@
         .arrow-icon {
           width: 15px;
           height: 15px;
+          position: absolute;
+          right: 15px;
         }
       }
     }

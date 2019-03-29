@@ -45,10 +45,11 @@
                 align-items: center;
                 padding: 12px 0 12px 25px;
                 cursor: pointer;
+                position: relative;
 
                 .option-title {
                     margin: 0 12px 0 12px;
-                    font-size: 15px;
+                    font-size: 17px;
                 }
 
                 .switch-icon {
@@ -56,8 +57,10 @@
                     height: 20px;
                 }
                 .arrow-icon {
-                    width: 15px;
+                    width: 9px;
                     height: 15px;
+                    position: absolute;
+                    right: 15px;
                 }
             }
         }

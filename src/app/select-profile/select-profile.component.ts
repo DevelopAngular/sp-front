@@ -1,7 +1,7 @@
-import {Component,  OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {User} from '../models/User';
-import {BehaviorSubject} from 'rxjs';
+import { Component, OnInit} from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { User } from '../models/User';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-select-profile',
@@ -26,7 +26,6 @@ export class SelectProfileComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-
     this.route.data.subscribe((_resolved: any) => {
       this.currentUser = _resolved.currentUser;
 
