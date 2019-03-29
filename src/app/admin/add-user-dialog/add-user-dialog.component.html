@@ -1,9 +1,9 @@
 <div class="add-user-dialog-container">
   <div class="heading">
     <div class="back-button" (click)="back()">
-      <img [src]="'./assets/Back Button (White).png'" alt="Back Button (Grey).png" >
+      <img [src]="'./assets/Back Button (Blue-White).svg'" alt="Back Button (Blue-White).svg" >
     </div>
-    <div><span>Add User To Profile</span></div>
+    <div class="ds-dialog-title-white"><span>Add User To Profile</span></div>
     <!--<div class="save-button">-->
       <!--<app-gradient-button>-->
         <!--Save-->
@@ -12,9 +12,9 @@
   </div>
   <div class="content">
     <div class="content_top">
-      <div class="content_top-header"><span>Account Type</span></div>
+      <div class="content_top-header ds-dialog-subtitle"><span>Account Type</span></div>
       <div class="content_top-body">
-        <p class="title">
+        <p class="title ds-cell-description-text">
           Select whether the account you will be adding is from your schools’ G Suite or the account will be an alternative sign-in. Learn more here.
         </p>
         <div class="account-type-picker">
@@ -41,7 +41,7 @@
       </div>
 
       <div class="profile-permissions" [style.width]="'100%'" *ngIf="data.role !== '_profile_student'">
-        <div class="profile-permissions_heading">Permissions</div>
+        <div class="profile-permissions_heading ds-dialog-subtitle">Permissions</div>
         <div *ngFor="let control of controlsIteratable">
           <app-toggle-input
             [form]="permissionsForm"
