@@ -12,7 +12,7 @@
                     </div>
                 </div>
             </div>
-            <img class="pass-card-header-close" (click)="cancelRequest($event)" [src]="'./assets/Trash (Transparent).png' | resolveAsset">
+            <img class="pass-card-header-close" (click)="cancelRequest($event)" [src]="'./assets/Delete (Transparent).svg' | resolveAsset">
         </div>
         <mat-divider></mat-divider>
     </div>
@@ -53,7 +53,7 @@
 
         <div class="bottom-block">
             <div class="request-description" *ngIf="hasDivider">
-                <img class="request-description-icon" [src]="'./assets/Lock (White).png' | resolveAsset">
+                <img class="request-description-icon" [src]="'./assets/Lock (White).svg' | resolveAsset">
                 <div class="request-description-text">
                     Pass Request Sent <br>to {{ request?.teacher.last_name }}
                 </div>
