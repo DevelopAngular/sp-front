@@ -9,6 +9,11 @@
   flex-direction: column;
   align-items: center;
   //justify-content: space-between;
+
+  .divider {
+    width: 100%;
+    //border-top-width: 2px;
+  }
 }
 
 .table-left{
@@ -16,6 +21,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 200px;
   //animation: fadeIn 3.25s ease forwards;
 
 }
@@ -79,6 +85,7 @@ input {
 }
 
 .no-favs{
+  margin-top: 10px;
   color: #767676;
   display: flex;
   align-items: center;

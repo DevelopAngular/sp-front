@@ -17,6 +17,7 @@
       <div class="fav-header">
         Favorites
       </div>
+      <mat-divider class="divider"></mat-divider>
       <div *ngIf="favoritesLoaded"
            class="choices"
            dragula="locations"
@@ -37,9 +38,9 @@
           <span>Add Favorites in Settings.</span>
         </div>
       </div>
-      <!--<div *ngIf="rightShadow" class="shadow"></div>-->
     </div>
     <div *ngIf="rightHeaderText && !hideFavorites" style="margin-top: 25px" class="fav-header">All Rooms</div>
+    <mat-divider class="divider"></mat-divider>
     <div class="table-right" [style.margin]="'0 ' +(showFavorites?'0':'auto')" *ngIf="choices && !noChoices; else noLocsDummy">
       <!--<app-round-input-->
       <!--[style.margin]="'20px' "-->
