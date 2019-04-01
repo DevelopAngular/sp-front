@@ -103,7 +103,7 @@ export class UserService {
     ).take(1);
   }
 
-  getUsersList(role: string = '', search: string = '') {
+  getUsersList(role: string = '', search: string = '', limit: number = 0) {
 
     const params: any = {};
     if (role !== '' && role !== '_all') {
@@ -112,6 +112,9 @@ export class UserService {
 
     if (search !== '') {
       params.search = search;
+    }
+    if (limit) {
+      params.limit = limit;
     }
 
     return this.http.get<any>(constructUrl('v1/users', params));

@@ -12,7 +12,10 @@ export class DataTableComponent implements OnInit {
   @Input() width: string = '100%';
   @Input() height: string = 'none';
   @Input() isCheckbox: boolean = true;
-  @Input() data: any[];
+  @Input() set data(value: any[]) {
+      this._data = [...value];
+      this.dataSource = new MatTableDataSource(this._data);
+  }
   @Input() backgroundColor: string = 'transparent';
   @Input() textColor: string = 'black';
   @Input() textHeaderColor: string = '#1F195E';
@@ -25,17 +28,17 @@ export class DataTableComponent implements OnInit {
 
   @Input() displayedColumns: string[];
   columnsToDisplay: string[];
-  dataSource;
+  dataSource: MatTableDataSource<any[]>;
   selection = new SelectionModel<any>(true, []);
+
+  private _data: any[] = [];
 
   constructor(
   ) {}
 
   ngOnInit() {
-    this.dataSource = new MatTableDataSource(this.data);
       this.dataSource.sort = this.sort;
       this.dataSource.sortingDataAccessor = (item, property) => {
-        // console.log(item, property, item[property].split(' ')[1]);
           switch (property) {
             case 'Name':
               return item[property].split(' ')[1];
@@ -47,7 +50,7 @@ export class DataTableComponent implements OnInit {
       };
       if (!this.displayedColumns) {
 
-        this.displayedColumns = Object.keys(this.data[0]);
+        this.displayedColumns = Object.keys(this._data[0]);
       }
       this.columnsToDisplay = this.displayedColumns.slice();
       if (this.isCheckbox) {
@@ -57,14 +60,14 @@ export class DataTableComponent implements OnInit {
 
   isAllSelected() {
       const numSelected = this.selection.selected.length;
-      const numRows = this.data.length;
+      const numRows = this._data.length;
       return numSelected === numRows;
   }
 
   masterToggle() {
       this.isAllSelected() ?
           this.selection.clear() :
-          this.data.forEach(row => {
+          this._data.forEach(row => {
               this.selection.select(row);
           });
   }
@@ -104,6 +107,10 @@ export class DataTableComponent implements OnInit {
 
   pushOutSelected() {
     this.selectedUsers.emit(this.selection.selected);
+  }
+
+  clearSelection() {
+    this.selection.clear();
   }
 
 }

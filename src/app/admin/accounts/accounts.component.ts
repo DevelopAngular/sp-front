@@ -35,7 +35,6 @@ export class AccountsComponent implements OnInit {
       switchMap(() => this.adminService.getAdminAccounts())
     )
     .subscribe((u_list: any) => {
-      console.log(u_list, Object.values(u_list));
       if (u_list.total_count !== undefined) {
         u_list.total = u_list.total_count;
       } else {

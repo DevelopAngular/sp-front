@@ -30,6 +30,10 @@ export class AdminService {
     return this.http.get('v1/admin/accounts');
   }
 
+  getAccountsWithLimit() {
+    return this.http.get('v1/admin/accounts');
+  }
+
   getDashboardData() {
     return this.http.get('v1/admin/dashboard');
   }
