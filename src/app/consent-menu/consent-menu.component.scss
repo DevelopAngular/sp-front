@@ -1,10 +1,12 @@
-﻿.pointer-wrapper{
+﻿@import '../../sp-colors.scss';
+
+.pointer-wrapper{
     width: 100px;
     height: 19px;
     overflow: hidden;
     position: relative;
-    left: 73px;
-    top: -29px;
+    left: 87px;
+    top: -19px;
 }
 
 .pointer{
@@ -22,7 +24,11 @@
     flex-direction: column;
     align-items: center;
     position: relative;
-    top: -17px;
+    //top: -17px;
+    //padding-top: 25px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 .consent-sort-wrapper {
@@ -36,25 +42,32 @@
 
 .consent-header{
     max-width: 214px;
-    font-size: 13px;
     margin-bottom: 15px;
-    color: #3D396B;
     text-align: center;
+
 }
 
 .option-wrapper{
-    height: 25px;
+    height: 55px;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    border-radius: 25px;
+    justify-content: center;
     cursor: pointer;
     user-select: none;
     font-weight: bold;
     font-size: 15px;
     text-align: center;
-    padding: 2px 5px;
+    padding: 2px 25px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+    border-top: 1px solid $blue-gray;
+    text-align: center;
+  :hover {
+    //background-color: #ECF1FF;
+    background-color: rgb(236,241,255);
+  }
 }
 
 .option-title {

@@ -1,6 +1,6 @@
 ﻿<div class="pointer-wrapper"><div class="pointer"></div></div>
 <div class="consent-wrapper">
-    <div class="consent-header">{{ header }}</div>
+    <div class="consent-header ds-cell-text-2">{{ header }}</div>
     <div *ngIf="!!ConsentText">
       {{ConsentText}}
 
@@ -10,9 +10,9 @@
       </div>
     </div>
 
-    <div *ngFor="let option of options">
+    <div *ngFor="let option of options" class="ds-w-100">
 
-      <div *ngIf="optionsView === 'button'; else stringOptionsView">
+      <div *ngIf="optionsView === 'button'; else stringOptionsView" class="ds-w-100">
         <app-gradient-button
           [cursor]="'pointer'"
           [minHeight]="'32px'"
@@ -27,7 +27,7 @@
         </app-gradient-button>
       </div>
       <ng-template #stringOptionsView>
-        <div [style.color]="getColor(option)" class="option-wrapper" (click)="_matDialogRef.close(option.action)">{{ option.display }}</div>
+        <div [style.color]="getColor(option)" class="option-wrapper ds-w-100" (click)="_matDialogRef.close(option.action)">{{ option.display }}</div>
       </ng-template>
     </div>
 </div>
