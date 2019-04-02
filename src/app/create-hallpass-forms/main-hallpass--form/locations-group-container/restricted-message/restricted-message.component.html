@@ -6,9 +6,14 @@
       <div class="text ds-dialog-title-white">Message</div>
     </div>
   </div>
+
+  <div class="selected-teacher-header" *ngIf="formState.forInput">
+    <span class="ds-dialog-subtitle">Sending Pass Request To:&nbsp; </span>
+    <span class="" style="color: #7F879D; font-size: 16px">{{ formState.data.requestTarget.display_name }}</span>
+  </div>
+
   <div class="content-wrapper">
     <div class="rest-mes-content">
-      <!--<pre>{{headerTransition | json}}</pre>-->
      <textarea
              #messageBox
              class="message-box"
@@ -19,7 +24,7 @@
              [placeholder]="'Attach a message'"
              [formControl]="message"
              [style.width]="'350px'"
-             [style.max-height]="date ? '250px' : '270px'"
+             [style.max-height]="date ? '190px' : '207px'"
      >
     </textarea>
       <div class="buttons" *ngIf="formState.forInput">
