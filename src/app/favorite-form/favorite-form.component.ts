@@ -24,7 +24,7 @@ export class FavoriteFormComponent implements OnInit, OnDestroy {
         this.starChangesIds = stars.map(star => star.id);
       });
 
-    this.dialogRef.updatePosition({top: '120px'});
+    // this.dialogRef.updatePosition({top: '120px'});
   }
 
   ngOnDestroy() {
