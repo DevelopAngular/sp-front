@@ -17,9 +17,9 @@
         </div>
         <div class="center">
           <div class="center-text">
-            <div class="" [ngClass]="{'cursor': fromCursor}" (click)="goToFromWhere($event)" [style.font-weight]="(!fromLocation ? 'bold' : 'normal')">{{ fromLocationText }}</div>
+            <div class="footer-left-text" [ngClass]="{'cursor': fromCursor}" (click)="goToFromWhere($event)" [style.font-weight]="(!fromLocation ? 'bold' : 'normal')">{{ fromLocationText }}</div>
             <img class="footer-icon" [src]="'./assets/Arrow (Navy).svg' | resolveAsset">
-            <div class="footer-text" [ngClass]="{'cursor': toCursor}" (click)="goToToWhere($event)" [style.font-weight]="(!toLocation && state !== 'from' ? 'bold' : 'normal')">{{ toLocationText }}</div>
+            <div class="footer-right-text" [ngClass]="{'cursor': toCursor}" (click)="goToToWhere($event)" [style.font-weight]="(!toLocation && state !== 'from' ? 'bold' : 'normal')">{{ toLocationText }}</div>
           </div>
           <img class="arrow-icon" [src]="'./assets/Chevron Down (Navy).svg' | resolveAsset">
         </div>

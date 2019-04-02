@@ -3,9 +3,9 @@
     <div class="footer-from-text">
       <div class="date cursor" [style.color]="'#1F195E'" *ngIf="date" (click)="goToDate()">{{ date }}</div>
       <div class="center-text">
-        <div class="footer-text" [ngClass]="{'cursor': fromCursor}" (click)="goToFromWhere()" [style.font-weight]="!fromLocation ? 'bold' : 'normal'">{{ fromLocationText }}</div>
+        <div class="footer-left-text" [ngClass]="{'cursor': fromCursor}" (click)="goToFromWhere()" [style.font-weight]="!fromLocation ? 'bold' : 'normal'">{{ fromLocationText }}</div>
         <img class="footer-icon" [src]="'./assets/Arrow (Navy).svg' | resolveAsset">
-        <div class="footer-text" [ngClass]="{'cursor': toCursor}" (click)="goToToWhere()" [style.font-weight]="(!toLocation && state !== 'from') || (state === 'to' || state === 'category') ? 'bold' : 'normal'">{{ toLocationText }}</div>
+        <div class="footer-right-text" [ngClass]="{'cursor': toCursor}" (click)="goToToWhere()" [style.font-weight]="(!toLocation && state !== 'from') || (state === 'to' || state === 'category') ? 'bold' : 'normal'">{{ toLocationText }}</div>
       </div>
     </div>
   </div>
