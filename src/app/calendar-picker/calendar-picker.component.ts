@@ -17,6 +17,8 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
 
     @Input() selectedDates: CalendarDate[] = [];
     @Input() width: number = 270;
+    @Input() showWeekend: boolean;
+    @Input() showTime: boolean = true;
 
     @Output() onSelectDate = new EventEmitter<CalendarDate>();
 
@@ -30,6 +32,10 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     constructor() {}
 
     ngOnInit(): void {
+        if (this.showWeekend) {
+            this.dayNames.unshift('S');
+            this.dayNames.push('S');
+        }
         this.generateCalendar();
     }
 
@@ -56,7 +62,11 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     }
 
     isWeekendDay(date: moment.Moment): boolean {
-        return moment(date).isoWeekday() !== 6 && moment(date).isoWeekday() !== 7;
+        if (!this.showWeekend) {
+           return moment(date).isoWeekday() !== 6 && moment(date).isoWeekday() !== 7;
+        } else {
+            return true;
+        }
     }
 
     isSelectedMonth(date: moment.Moment): boolean {

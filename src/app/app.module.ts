@@ -47,7 +47,7 @@ import { environment } from '../environments/environment';
 import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
 import { ResizeInfoDialogComponent } from './resize-info-dialog/resize-info-dialog.component';
 import { SignedOutToastComponent } from './signed-out-toast/signed-out-toast.component';
-import {CalendarPickerComponent} from './calendar-picker/calendar-picker.component';
+import { CalendarPickerComponent } from './calendar-picker/calendar-picker.component';
 
 
 const appRoutes: Routes = [

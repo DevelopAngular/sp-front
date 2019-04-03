@@ -49,6 +49,7 @@ import {SafariScrollDirective} from '../safari-scroll.directive';
 import { ReportSuccessToastComponent } from '../report-success-toast/report-success-toast.component'
 import {ToggleInputComponent} from '../admin/toggle-input/toggle-input.component';
 import {CalendarPickerComponent} from '../calendar-picker/calendar-picker.component';
+import {TimePickerComponent} from '../calendar-picker/time-picker/time-picker.component';
 
 
 
@@ -110,7 +111,8 @@ import {CalendarPickerComponent} from '../calendar-picker/calendar-picker.compon
       SafariScrollDirective,
       ReportSuccessToastComponent,
       ToggleInputComponent,
-      CalendarPickerComponent
+      CalendarPickerComponent,
+      TimePickerComponent
   ],
     entryComponents: [
       PassCardComponent,
@@ -157,7 +159,8 @@ import {CalendarPickerComponent} from '../calendar-picker/calendar-picker.compon
     SafariScrollDirective,
     ReportSuccessToastComponent,
     ToggleInputComponent,
-    CalendarPickerComponent
+    CalendarPickerComponent,
+    TimePickerComponent
   ],
 })
 export class SharedModule {

@@ -17,17 +17,20 @@
     <!--</div>-->
   </div>
   <div class="month-grid">
+   <div class="days">
     <div class="day-names">
-      <div
+       <div
         *ngFor="let name of dayNames"
-        class="day-name"
-        [style.width]="(width / 7) + 'px'"
-        [style.height]="(width / 7 - 9) + 'px'"
-      >
-        {{ name }}
-      </div>
+         class="day-name"
+         [style.width]="(width / 7) + 'px'"
+         [style.height]="(width / 7 - 9) + 'px'">
+           {{ name }}
+       </div>
     </div>
-    <mat-divider></mat-divider>
+    <div class="divider" [style.width]="width + 'px'">
+        <mat-divider></mat-divider>
+    </div>
+   </div>
 
     <div class="weeks">
       <div *ngFor="let week of weeks" class="week">
@@ -55,4 +58,8 @@
       </div>
     </div>
   </div>
+    <div class="time-picker" *ngIf="showTime">
+        <mat-divider></mat-divider>
+        <app-time-picker></app-time-picker>
+    </div>
 </div>
