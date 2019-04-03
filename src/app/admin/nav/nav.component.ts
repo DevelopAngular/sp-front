@@ -1,7 +1,6 @@
 import {Component, OnInit, NgZone, Output, EventEmitter, ViewChild, ElementRef} from '@angular/core';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
-import { Observable } from 'rxjs';
+import { BehaviorSubject ,  Observable } from 'rxjs';
 import { LoadingService } from '../../services/loading.service';
 import { DataService } from '../../services/data-service';
 import { User } from '../../models/User';
@@ -9,6 +8,7 @@ import { UserService } from '../../services/user.service';
 import { disableBodyScroll } from 'body-scroll-lock';
 import {MatDialog} from '@angular/material';
 import {SettingsComponent} from '../settings/settings.component';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-nav',
@@ -157,6 +157,9 @@ export class NavComponent implements OnInit {
     //  'view_reports',
     //  'view_traveling_users',
     // ]
-    return this.userService.userData.map(u => roles.every((_role) => u.roles.includes(_role)));
+    return this.userService.userData
+      .pipe(
+        map(u => roles.every((_role) => u.roles.includes(_role)))
+      );
   }
 }

@@ -14,7 +14,7 @@ export class AddUserDialogComponent implements OnInit {
   public accountTypes: string[] = ['G Suite', 'Alternative'];
   public typeChoosen: string = this.accountTypes[0];
   public newAlternativeAccount: FormGroup;
-
+  public selectedUsers: User[];
   public permissionsForm: FormGroup;
   public permissionsFormEditState: boolean = false;
   public controlsIteratable: any[];
@@ -51,7 +51,7 @@ export class AddUserDialogComponent implements OnInit {
     }
   }
   setSelectedUsers(evt) {
-    return;
+    this.selectedUsers = evt;
   }
   showInstructions(role) {
     this.pdfService.generateProfileInstruction(this.data.role);

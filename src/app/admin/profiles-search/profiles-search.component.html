@@ -1,7 +1,7 @@
 <div class="student-search-wrapper">
   <div class="input">
-    <mat-chip-list #chipList>
-      <div [style.padding-bottom]="'5px'">
+    <mat-chip-list [style.width]="'inherit'" #chipList >
+      <div [style.padding-bottom]="'5px'" [style.width]="'inherit'">
         <app-round-input
           [width]="width"
           [type]="'text'"
@@ -22,27 +22,11 @@
         {{student.display_name + ' (' + student.primary_email.split('@', 1)[0] + ')'}}
         <mat-icon matChipRemove>cancel</mat-icon>
       </mat-chip>
-      <!--<input-->
-        <!--[placeholder]="placeholder"-->
-        <!--#studentInput-->
-        <!--[matChipInputFor]="chipList"-->
-        <!--[matChipInputAddOnBlur]="true"-->
-        <!--[value]="inputValue"-->
-        <!--(input)="onSearch(studentInput.value)">-->
-
     </mat-chip-list>
   </div>
-
-  <!--<div *ngIf="showOptions" class="options-wrapper">-->
-    <!--<div *ngFor="let student of students | async" (click)="studentInput.value = ''; addStudent(student)"  class="option-wrapper">-->
-      <!--<div class="option-content">-->
-        <!--{{ student.display_name }} ({{student.primary_email}})-->
-      <!--</div>-->
-      <!--<div class="option-divider"></div>-->
-    <!--</div>-->
-  <!--</div>-->
-
-  <div *ngIf="showOptions" [ngClass]="{'options-wrapper': students}">
+  <div *ngIf="showOptions"
+       [ngClass]="{'options-wrapper': students}"
+       [style.display]="students ? 'block' : 'none'">
     <div *ngFor="let student of students | async" (click)="inputValue$.next(''); addStudent(student)"  class="option-wrapper">
       <div class="option-content">
         {{ student.display_name }} ({{student.primary_email}})

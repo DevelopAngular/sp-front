@@ -1,6 +1,6 @@
 import {Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {fromEvent, interval, Subject, zip} from 'rxjs';
-import { map, switchMap, takeUntil } from 'rxjs/operators';
+import {map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import { DataService } from '../../services/data-service';
 import { HttpService } from '../../services/http-service';
 import { HallPassFilter, LiveDataService } from '../../live-data/live-data.service';
@@ -287,12 +287,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
 
     data
-      .do((hp_list: HallPass[]) => {
-        this._zone.run(() => {
-          this.numActivePasses = hp_list.length;
-        });
-      })
       .pipe(
+        tap((hp_list: HallPass[]) => {
+          this._zone.run(() => {
+            this.numActivePasses = hp_list.length;
+          });
+        }),
         map((hp_list: HallPass[]) => {
           return hp_list.map(hp => {
             return {

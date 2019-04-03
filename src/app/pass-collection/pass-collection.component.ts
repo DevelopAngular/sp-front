@@ -1,9 +1,6 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, OnDestroy} from '@angular/core';
 import { MatDialog } from '@angular/material';
-import {BehaviorSubject, merge, of, zip} from 'rxjs';
-import { Observable } from 'rxjs';
-import { ReplaySubject } from 'rxjs';
-import { Subject } from 'rxjs';
+import {BehaviorSubject, merge, of, zip,  Observable ,  ReplaySubject ,  Subject } from 'rxjs';
 import { DataService } from '../services/data-service';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
 import { HallPass } from '../models/HallPass';

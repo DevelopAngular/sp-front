@@ -7,6 +7,7 @@
 }
 
 .input {
+  width: 100%;
   margin: 5px auto;
   display: flex;
   justify-content: center;
@@ -87,7 +88,7 @@ mat-input-container.md-input-focused label {
   left: 0;
   right: 0;
   margin: 5px auto 10px auto;
-  width: 370px;
+  width: 80%;
   height: 150px;
   overflow: auto;
 }

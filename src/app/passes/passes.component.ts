@@ -2,7 +2,7 @@ import { animate, state, style, transition, trigger, } from '@angular/animations
 import { Component, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { BehaviorSubject, combineLatest, empty, merge, Observable, of, ReplaySubject } from 'rxjs';
-import {filter, map, switchMap, withLatestFrom} from 'rxjs/operators';
+import {filter, map, publishReplay, refCount, startWith, switchMap, withLatestFrom} from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
@@ -49,7 +49,7 @@ class ActivePassProvider implements PassLikeProvider {
 
   watch(sort: Observable<string>) {
 
-    const sort$ = sort.map(s => ({sort: s}));
+    const sort$ = sort.pipe(map(s => ({sort: s})));
     const merged$ = mergeObject({sort: '-created', search_query: ''}, merge(sort$));
 
     const mergedReplay = new ReplaySubject<HallPassFilter>(1);
@@ -65,7 +65,7 @@ class ActivePassProvider implements PassLikeProvider {
         })
     );
 
-    const excluded$ = this.excluded$.startWith([]);
+    const excluded$ = this.excluded$.pipe(startWith([]));
 
     return combineLatest(passes$, excluded$, (passes, excluded) => exceptPasses(passes, excluded));
   }
@@ -79,10 +79,15 @@ class PastPassProvider implements PassLikeProvider {
     const sortReplay = new ReplaySubject<string>(1);
     sort.subscribe(sortReplay);
 
-    return this.user$.switchMap(user => this.liveDataService.watchPastHallPasses(
-      user.roles.includes('hallpass_student')
-        ? {type: 'student', value: user}
-        : {type: 'issuer', value: user}));
+    return this.user$
+            .pipe(
+              switchMap(user => this.liveDataService.watchPastHallPasses(
+          user.roles.includes('hallpass_student')
+                  ? {type: 'student', value: user}
+                  : {type: 'issuer', value: user}
+                )
+              )
+            );
   }
 }
 
@@ -125,7 +130,7 @@ class InboxInvitationProvider implements PassLikeProvider {
     const sortReplay = new ReplaySubject<string>(1);
     sort.subscribe(sortReplay);
 
-    const invitations$ = this.user$.switchMap(user => this.liveDataService.watchInboxInvitations(user));
+    const invitations$ = this.user$.pipe(switchMap(user => this.liveDataService.watchInboxInvitations(user)));
 
     return invitations$;
   }
@@ -216,16 +221,17 @@ export class PassesComponent implements OnInit {
     this.testRequests = new BasicPassLikeProvider(testRequests);
     this.testInvitations = new BasicPassLikeProvider(testInvitations);
 
-    const excludedPasses = this.currentPass$.map(p => p !== null ? [p] : []);
+    const excludedPasses = this.currentPass$.pipe(map(p => p !== null ? [p] : []));
 
     this.futurePasses = new WrappedProvider(new FuturePassProvider(this.liveDataService, this.dataService.currentUser));
     this.activePasses = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.dataService.currentUser, excludedPasses, this.timeService));
     this.pastPasses = new WrappedProvider(new PastPassProvider(this.liveDataService, this.dataService.currentUser));
 
     this.dataService.currentUser
-      .map(user => user.roles.includes('hallpass_student')) // TODO filter events to only changes.
-      .subscribe(isStudent => {
-        const excludedRequests = this.currentRequest$.map(r => r !== null ? [r] : []);
+      .pipe(
+        map(user => user.roles.includes('hallpass_student')) // TODO filter events to only changes.
+      ).subscribe(isStudent => {
+        const excludedRequests = this.currentRequest$.pipe(map(r => r !== null ? [r] : []));
 
         if (isStudent) {
           this.receivedRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser));
@@ -261,21 +267,24 @@ export class PassesComponent implements OnInit {
       return pass !== null
         && new Date(pass.start_time).getTime() <= now.getTime()
         && now.getTime() < new Date(pass.end_time).getTime();
-    }).publishReplay(1).refCount();
+    }).pipe(publishReplay(1), refCount());
 
-    this.isActiveRequest$ = this.currentRequest$.map(request => {
-      return request !== null && !request.request_time;
-    });
+    this.isActiveRequest$ = this.currentRequest$.pipe(
+      map(request => {
+        return request !== null && !request.request_time;
+      })
+    );
 
-    this.dataService.currentUser.switchMap(user =>
-      user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null))
+    this.dataService.currentUser.pipe(
+      switchMap((user: User) =>
+        user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null))
+      )
       .subscribe(passLike => {
         this._zone.run(() => {
           this.currentPass$.next((passLike instanceof HallPass) ? passLike : null);
           this.currentRequest$.next((passLike instanceof Request) ? passLike : null);
         });
       });
-
   }
 
   ngOnInit() {
@@ -289,8 +298,8 @@ export class PassesComponent implements OnInit {
       });
 
     this.inboxHasItems = combineLatest(
-      this.receivedRequests.length$.startWith(0),
-      this.sentRequests.length$.startWith(0),
+      this.receivedRequests.length$.pipe(startWith(0)),
+      this.sentRequests.length$.pipe(startWith(0)),
       (l1, l2) => (l1 + l2) > 0
     );
 
@@ -301,9 +310,9 @@ export class PassesComponent implements OnInit {
     );
 
     this.passesHaveItems = combineLatest(
-      this.activePasses.length$.startWith(0),
-      this.futurePasses.length$.startWith(0),
-      this.pastPasses.length$.startWith(0),
+      this.activePasses.length$.pipe(startWith(0)),
+      this.futurePasses.length$.pipe(startWith(0)),
+      this.pastPasses.length$.pipe(startWith(0)),
       (l1, l2, l3) => (l1 + l2 + l3) > 0
     );
 

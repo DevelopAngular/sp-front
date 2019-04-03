@@ -8,10 +8,12 @@
     font-size: $fs;
   }
 
+  display: block;
   height: inherit;
   color: $secondary;
   font-size: 12px;
   .add-user-dialog-container {
+    height: inherit;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -58,7 +60,7 @@
         }
         height: 82px;
         box-shadow: 0 1px 5px 0px rgba(0, 0, 0, .2);
-        padding: 15px 20px;
+        padding: 15px 25px;
         box-sizing: border-box;
         &-body {
           display: flex;
@@ -69,7 +71,7 @@
 
           }
           .account-type-picker {
-            flex: 1 1 40%;
+            flex: 1 1 35%;
             display: flex;
             justify-content: flex-end;
           }
@@ -79,10 +81,12 @@
       .content_rest {
         display: flex;
         justify-content: center;
-        padding: 15px 20px;
+        padding: 15px 25px;
         .profile-search {
-          margin-right: 33px;
+          //margin-right: 33px;
           //flex: 1 1 auto;
+          flex: 1 1 385px;
+
           &_label {
             font-weight: bold;
             font-size: 15px;

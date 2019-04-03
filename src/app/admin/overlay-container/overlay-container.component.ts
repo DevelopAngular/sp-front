@@ -196,7 +196,7 @@ export class OverlayContainerComponent implements OnInit {
               Validators.min(1),
               Validators.max(59)]);
           console.log('BULK SELECTED ROOMS =====>>> \n', this.selectedRooms);
-          this.bulkWarningText = !!_.find(this.selectedRooms, {type: 'category'});
+          this.bulkWarningText = !!_.find<Location | Pinnable>(this.selectedRooms, {type: 'category'});
           break;
     }
     this.gradientColor = 'radial-gradient(circle at 98% 97%,' + colors + ')';
@@ -352,7 +352,7 @@ export class OverlayContainerComponent implements OnInit {
           this.pinnables$ = this.dialogData['pinnables$'];
 
           this.pinnables$ = this.pinnables$.pipe(map(pinnables => {
-              const filterLocations = _.filter(pinnables, {type: 'location'});
+              const filterLocations = _.filter<Pinnable>(pinnables, {type: 'location'});
               const locationsIds = filterLocations.map(item => item.location.id);
               const currentLocationsIds = this.selectedRooms.map(room => {
                 if (room.type && room.type === 'location') {
@@ -853,8 +853,8 @@ export class OverlayContainerComponent implements OnInit {
 
        if (this.overlayType === 'edit') {
          this.showPublishSpinner = true;
-         const selectedLocations = _.filter(this.selectedRooms, {type: 'location'}).map((res: any) => res.location);
-          const locationsFromFolder = _.filter(this.selectedRooms, {type: 'category'}).map((folder: any) => {
+         const selectedLocations = _.filter<Location | Pinnable>(this.selectedRooms, {type: 'location'}).map((res: any) => res.location);
+          const locationsFromFolder = _.filter<Location | Pinnable>(this.selectedRooms, {type: 'category'}).map((folder: any) => {
               return this.locationService.getLocationsWithCategory(folder.category);
           });
           if (locationsFromFolder.length) {

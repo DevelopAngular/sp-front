@@ -15,6 +15,7 @@ export class ProfilesSearchComponent implements OnInit {
   @Input() placeholder: string = 'Search profiles';
   @Input() focused: boolean = true;
   @Input() width: string = '400px';
+  @Input() type: string = 'alternative'; // Can be alternative or gsuite, endpoint will depend on that.
 
   private destroy$: Subject<any> = new Subject();
   private searchChangeObserver$: Subject<string>;
@@ -82,8 +83,8 @@ export class ProfilesSearchComponent implements OnInit {
   }
   onSearch(search: string) {
     this.isEmitUsers.emit(false);
-    if(search !== '')
-      this.students = this.userService.searchProfileAll(encodeURI(search))
+    if (search !== '') {
+      this.students = this.userService.searchProfileAll(encodeURI(search), 'gsuite')
           .toPromise().then((users: User[]) => {
             console.log(users);
             if (users.length > 0) {
@@ -91,9 +92,10 @@ export class ProfilesSearchComponent implements OnInit {
               return this.removeDuplicateStudents(users);
             }
           });
-    else
+    } else {
       this.students = null;
-    this.inputValue = '';
+      this.inputValue = '';
+    }
   }
 
   removeStudent(student: User) {

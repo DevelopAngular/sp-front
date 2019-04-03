@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { combineLatest } from 'rxjs';
-import { BehaviorSubject } from 'rxjs';
-import { Observable } from 'rxjs';
+import { combineLatest ,  BehaviorSubject ,  Observable } from 'rxjs';
 import { UserService } from '../../services/user.service';
 
 @Component({

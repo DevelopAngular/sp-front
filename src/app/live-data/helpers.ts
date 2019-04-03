@@ -1,3 +1,5 @@
+
+import {scan} from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 export type Partial<T> = {
@@ -39,5 +41,5 @@ export function constructUrl(base: string, obj: Partial<QueryParams>): string {
 
 export function mergeObject<T>(initial: T, updates: Observable<Partial<T>>): Observable<T> {
   // @ts-ignore
-  return updates.scan((current, update) => Object.assign({}, current, update), initial);
+  return updates.pipe(scan((current, update) => Object.assign({}, current, update), initial));
 }
