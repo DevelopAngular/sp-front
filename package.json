@@ -45,6 +45,7 @@
     "jspdf": "^1.5.3",
     "jspdf-autotable": "^2.3.5",
     "lodash": "^4.17.11",
+    "moment": "^2.24.0",
     "ng-connection-service": "^1.0.4",
     "ng-gapi": "^0.0.51",
     "ng-pick-datetime": "^6.0.16",

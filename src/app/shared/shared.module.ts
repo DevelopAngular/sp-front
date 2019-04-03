@@ -48,6 +48,7 @@ import {RestrictionPickerComponent} from '../restriction-picker/restriction-pick
 import {SafariScrollDirective} from '../safari-scroll.directive';
 import { ReportSuccessToastComponent } from '../report-success-toast/report-success-toast.component'
 import {ToggleInputComponent} from '../admin/toggle-input/toggle-input.component';
+import {CalendarPickerComponent} from '../calendar-picker/calendar-picker.component';
 
 
 
@@ -108,7 +109,8 @@ import {ToggleInputComponent} from '../admin/toggle-input/toggle-input.component
       RestrictionPickerComponent,
       SafariScrollDirective,
       ReportSuccessToastComponent,
-      ToggleInputComponent
+      ToggleInputComponent,
+      CalendarPickerComponent
   ],
     entryComponents: [
       PassCardComponent,
@@ -154,7 +156,8 @@ import {ToggleInputComponent} from '../admin/toggle-input/toggle-input.component
     RestrictionPickerComponent,
     SafariScrollDirective,
     ReportSuccessToastComponent,
-    ToggleInputComponent
+    ToggleInputComponent,
+    CalendarPickerComponent
   ],
 })
 export class SharedModule {

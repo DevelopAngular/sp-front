@@ -1,0 +1,154 @@
+@import '../../sp-colors';
+@import '../../design-system';
+
+
+$dayBase: 39px;
+$cloud:'#ccc';
+$base:5px;
+$concrete:'#fff';
+$seafoam:'blue';
+$white:'#fff';
+$teal:'black';
+$light-blue-grey:'#888';
+
+.calendar {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin: 200px auto;
+
+  * {
+    box-sizing: border-box;
+  }
+
+  .calendar-navs {
+    background-color: $cloud;
+    width: 100%;
+  }
+
+  .month-nav {
+    height: 50px;
+    padding: 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    .switch-month {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      &:hover {
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        background-color: $dark-slate-gray;
+      }
+      .month-icon {
+        width: 15px;
+        height: 15px;
+        cursor: pointer;
+      }
+    }
+
+  }
+
+  .year-nav {
+    padding: $base;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .month-grid {
+    .day-names {
+      display: flex;
+      flex-direction: row;
+      color: $navy;
+      font-size: 10px;
+      font-weight: bold;
+      margin: 5px 0 5px 0;
+      background: $concrete;
+      border-bottom-right-radius: 3px;
+      border-bottom-left-radius: 3px;
+    }
+    .weeks {
+      display: flex;
+      flex-direction: column;
+      margin-top: 5px;
+    }
+    .week {
+      display: flex;
+      flex-direction: row;
+    }
+    .week-date,
+    .day-name {
+      text-align: center;
+      padding: 5px;
+      margin: 3px 10px 3px 10px;
+      //width: $dayBase;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .week-date {
+      //height: 30px;
+      position: relative;
+      color: $navy;
+
+      .date-text {
+        z-index: 10;
+        font-size: 14px;
+      }
+
+      &::after {
+        content: '';
+        height: 30px;
+        width: $dayBase;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 6px;
+        transition: background-color 150ms linear, color 150ms linear;
+        z-index: 1;
+      }
+
+      &.hovered {
+        cursor: pointer;
+        color: $navy;
+        &:hover {
+          &:after {
+            background-color: $off-white;
+          }
+        }
+      }
+      &.selected {
+        color: $background-white;
+        background-color: $jade;
+        border-radius: 5px;
+        &:after {
+          background-color: $teal;
+        }
+        &:hover {
+          &:after {
+            background-color: $teal;
+          }
+        }
+      }
+
+      &.disabled {
+        color: $light-gray;
+      }
+      &.is-next-month {
+        color: $blue-gray;
+      }
+    }
+
+    .today {
+      font-weight: bold;
+    }
+  }
+}

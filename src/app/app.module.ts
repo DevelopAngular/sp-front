@@ -1,7 +1,7 @@
 ﻿import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {MatDialogModule, MatProgressSpinnerModule, MatSliderModule, MatSlideToggleModule} from '@angular/material';
+import { MatDialogModule, MatProgressSpinnerModule, MatSliderModule, MatSlideToggleModule } from '@angular/material';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -47,6 +47,7 @@ import { environment } from '../environments/environment';
 import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
 import { ResizeInfoDialogComponent } from './resize-info-dialog/resize-info-dialog.component';
 import { SignedOutToastComponent } from './signed-out-toast/signed-out-toast.component';
+import {CalendarPickerComponent} from './calendar-picker/calendar-picker.component';
 
 
 const appRoutes: Routes = [
@@ -60,6 +61,10 @@ const appRoutes: Routes = [
         path: 'main',
         canActivate: [AuthenticatedGuard, IsStudentOrTeacherGuard],
         loadChildren: 'app/main/main.module#MainModule'
+      },
+      {
+        path: 'calendar',
+        component: CalendarPickerComponent
       },
       {
         path: 'select-profile',
@@ -114,7 +119,7 @@ const appRoutes: Routes = [
     NextReleaseComponent,
     ToastConnectionComponent,
     ResizeInfoDialogComponent,
-    SignedOutToastComponent
+    SignedOutToastComponent,
   ],
   entryComponents: [
     ConsentMenuComponent,
