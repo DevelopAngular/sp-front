@@ -15,17 +15,18 @@ export interface CalendarDate {
 })
 export class CalendarPickerComponent implements OnInit, OnChanges {
 
-    @Input() selectedDates: CalendarDate[] = [];
+    @Input() selectedDates: moment.Moment[] = [];
     @Input() width: number = 270;
     @Input() showWeekend: boolean;
     @Input() showTime: boolean = true;
 
-    @Output() onSelectDate = new EventEmitter<CalendarDate>();
+    @Output() onSelectDate = new EventEmitter<moment.Moment>();
 
     currentDate = moment();
     dayNames = ['M', 'T', 'W', 'T', 'F'];
     weeks: CalendarDate[][] = [];
     sortedDates: CalendarDate[] = [];
+    resultTimePicker: moment.Moment;
 
     public hovered: boolean;
 
@@ -43,7 +44,6 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
         if (changes.selectedDates &&
             changes.selectedDates.currentValue &&
             changes.selectedDates.currentValue.length  > 1) {
-            // sort on date changes for better performance when range checking
             this.sortedDates = _.sortBy(changes.selectedDates.currentValue, (m: CalendarDate) => m.mDate.valueOf());
             this.generateCalendar();
         }
@@ -57,7 +57,7 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
 
     isSelected(date: moment.Moment): boolean {
         return _.findIndex(this.selectedDates, (selectedDate) => {
-            return moment(date).isSame(selectedDate.mDate, 'day');
+            return moment(date).isSame(selectedDate, 'day');
         }) > -1;
     }
 
@@ -78,12 +78,12 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     }
 
     selectDate(date: CalendarDate): void {
-        this.selectedDates = [date];
-        this.isNextMonth(date.mDate);
-        this.onSelectDate.emit(date);
+        const setHour = moment(date.mDate).set('hour', moment().hour());
+        const fullDate = moment(setHour).set('minute', moment().minutes());
+        this.selectedDates = [fullDate];
+        this.onSelectDate.emit(fullDate);
+        console.log(fullDate.format('MM-DD-YYYY / HH : mm'));
     }
-
-    // actions from calendar
 
     prevMonth(): void {
         this.currentDate = moment(this.currentDate).subtract(1, 'months');
@@ -115,7 +115,10 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
         this.generateCalendar();
     }
 
-    // generate the calendar grid
+    timePickerResult(date: moment.Moment) {
+        this.resultTimePicker = date;
+        console.log(moment(date).format('MM-DD-YYYY / HH : mm'));
+    }
 
     generateCalendar(): void {
         const dates = this.fillDates(this.currentDate);

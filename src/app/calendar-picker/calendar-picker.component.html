@@ -60,6 +60,6 @@
   </div>
     <div class="time-picker" *ngIf="showTime">
         <mat-divider></mat-divider>
-        <app-time-picker></app-time-picker>
+        <app-time-picker [currentDate]="selectedDates.length ? selectedDates[0] : currentDate" (timeResult)="timePickerResult($event)"></app-time-picker>
     </div>
 </div>

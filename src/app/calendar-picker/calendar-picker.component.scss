@@ -3,13 +3,8 @@
 
 
 $dayBase: 39px;
-$cloud:'#ccc';
 $base:5px;
-$concrete:'#fff';
-$seafoam:'blue';
-$white:'#fff';
-$teal:'black';
-$light-blue-grey:'#888';
+
 
 .calendar {
   align-items: center;
@@ -23,7 +18,6 @@ $light-blue-grey:'#888';
   }
 
   .calendar-navs {
-    background-color: $cloud;
     width: 100%;
   }
 
@@ -74,7 +68,6 @@ $light-blue-grey:'#888';
       font-size: 10px;
       font-weight: bold;
       margin: 5px 0 5px 0;
-      background: $concrete;
       border-bottom-right-radius: 3px;
       border-bottom-left-radius: 3px;
     }
@@ -92,14 +85,12 @@ $light-blue-grey:'#888';
       text-align: center;
       padding: 5px;
       margin: 3px 10px 3px 10px;
-      //width: $dayBase;
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
     .week-date {
-      //height: 30px;
       position: relative;
       color: $navy;
 
@@ -135,11 +126,10 @@ $light-blue-grey:'#888';
         background-color: $jade;
         border-radius: 5px;
         &:after {
-          background-color: $teal;
+
         }
         &:hover {
           &:after {
-            background-color: $teal;
           }
         }
       }

@@ -1,7 +1,45 @@
 <div class="wrapper">
-  <div class="time">
-    <div class="hours">{{ hour }}</div>
+  <div class="time" (mouseenter)="hovered = true" (mouseleave)="hovered = false">
+    <div class="hours">
+      <img
+        class="arrow"
+        #hours
+        [style.opacity]="hovered ? 1 : 0"
+        (mousedown)="changeTime('hours', 'up')"
+        (mouseup)="destroy('hours', 'up')"
+        [src]="'./assets/Chevron Up (Blue-Gray).svg' | resolveAsset"
+        alt="Icon"
+      >
+      <span>{{ currentDate.format('HH') }}</span>
+      <img
+        class="arrow"
+        [style.opacity]="hovered ? 1 : 0"
+        (mousedown)="changeTime('hours', 'down')"
+        (mouseup)="destroy('hours', 'down')"
+        [src]="'./assets/Chevron Down (Blue-Gray).svg' | resolveAsset"
+        alt="Icon"
+      >
+    </div>
     <div class="separator">:</div>
-    <div class="minutes">{{ minutes }}</div>
+    <div class="minutes">
+      <img
+       class="arrow"
+       [style.opacity]="hovered ? 1 : 0"
+       (mousedown)="changeTime('minutes', 'up')"
+       (mouseup)="destroy('minutes', 'up')"
+       [src]="'./assets/Chevron Up (Blue-Gray).svg' | resolveAsset"
+       alt="Icon"
+      >
+      <span>{{ currentDate.format('mm') }}</span>
+      <img
+       class="arrow"
+       [style.opacity]="hovered ? 1 : 0"
+       (mousedown)="changeTime('minutes', 'down')"
+       (mouseup)="destroy('minutes', 'down')"
+       [src]="'./assets/Chevron Down (Blue-Gray).svg' | resolveAsset"
+       alt="Icon"
+      >
+    </div>
   </div>
+  <div class="format">{{ currentDate.format('A') }}</div>
 </div>

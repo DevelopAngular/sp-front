@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import * as moment from 'moment';
 
 @Component({
@@ -6,22 +6,34 @@ import * as moment from 'moment';
   templateUrl: './time-picker.component.html',
   styleUrls: ['./time-picker.component.scss']
 })
-export class TimePickerComponent implements OnInit, OnChanges {
+export class TimePickerComponent implements OnInit {
 
-  @Input() currentDate = moment();
+  @Input() currentDate: moment.Moment = moment();
 
-  public hour: number;
-  public minutes: number;
+  @Output() timeResult: EventEmitter<moment.Moment> = new EventEmitter<moment.Moment>();
+
+  public hovered: boolean;
+
+  private interval = [];
 
   constructor() { }
 
-  ngOnChanges(changes: SimpleChanges) {
-    debugger;
-  }
-
   ngOnInit() {
-      this.hour = this.currentDate.hour();
-      this.minutes = this.currentDate.minutes();
+    this.timeResult.emit(this.currentDate);
   }
 
+  changeTime(action, up) {
+      if (up === 'up') {
+          this.currentDate = moment(this.currentDate).add(1, action);
+      } else if (up === 'down') {
+          this.currentDate = moment(this.currentDate).subtract(1, action);
+      }
+      this.timeResult.emit(this.currentDate);
+  }
+
+  destroy() {
+    this.interval.forEach(id => {
+      clearInterval(id);
+    });
+  }
 }
