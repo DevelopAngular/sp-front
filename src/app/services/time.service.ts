@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, defer, interval, Observable } from 'rxjs';
-import { distinctUntilChanged, map, publishReplay, refCount, repeat, scan } from 'rxjs/operators';
+import {distinctUntilChanged, map, publishReplay, refCount, repeat, scan, switchMap, take} from 'rxjs/operators';
 import { PollingEvent, PollingService } from './polling-service';
 
 interface RTTimeReport {
@@ -56,8 +56,8 @@ export class TimeService {
   private timeResponse$: Observable<PollingEvent>;
 
 
-  now$ = interval(500)
-    .map(() => this.nowDate())
+  now$ = interval(500).pipe(
+    map(() => this.nowDate()))
     .pipe(
       publishReplay(1),
       refCount(),
@@ -72,26 +72,41 @@ export class TimeService {
     this.heartbeat$ = this.pollingService.listen('heartbeat');
     this.timeResponse$ = this.pollingService.listen('time.time_response');
 
-    this.heartbeat$.take(1).subscribe(() => {
-      this.requestServerTime()
-        .pipe(
-          repeat(10),
-          map(computeEstimatedDrift),
-          scan<DriftEstimate>((acc, value) => {
-            const acc2 = [value, ...acc];
-            // only keep the eight lowest error drift estimates.
-            acc2.sort((a, b) => a.error - b.error);
-            return acc2.slice(0, 7);
-          }, []),
-          map(combineDriftEstimates),
-          distinctUntilChanged()
-        )
-        .subscribe(driftEstimate => TimeService.latestDriftEstimate$.next(driftEstimate));
-    });
+    this.heartbeat$.
+      pipe(
+        take(1),
+        switchMap(() => this.requestServerTime()),
+        repeat(10),
+        map(computeEstimatedDrift),
+        scan<DriftEstimate>((acc, value) => {
+          const acc2 = [value, ...acc];
+          // only keep the eight lowest error drift estimates.
+          acc2.sort((a, b) => a.error - b.error);
+          return acc2.slice(0, 7);
+        }, []),
+        map(combineDriftEstimates),
+        distinctUntilChanged()
+      ).subscribe(driftEstimate => TimeService.latestDriftEstimate$.next(driftEstimate));
 
-    TimeService.latestDriftEstimate$.subscribe(drift => {
-      // console.log(`This computer has an estimated drift of ${-drift}ms from server time`);
-    });
+    // this.requestServerTime()
+        //   .pipe(
+            // repeat(10),
+            // map(computeEstimatedDrift),
+            // scan<DriftEstimate>((acc, value) => {
+            //   const acc2 = [value, ...acc];
+            //   // only keep the eight lowest error drift estimates.
+            //   acc2.sort((a, b) => a.error - b.error);
+            //   return acc2.slice(0, 7);
+            // }, []),
+            // map(combineDriftEstimates),
+            // distinctUntilChanged()
+          // )
+          // .subscribe(driftEstimate => TimeService.latestDriftEstimate$.next(driftEstimate));
+      // });
+
+      TimeService.latestDriftEstimate$.subscribe(drift => {
+        // console.log(`This computer has an estimated drift of ${-drift}ms from server time`);
+      });
 
   }
 
@@ -105,14 +120,16 @@ export class TimeService {
       this.pollingService.sendMessage('time.time_request', null);
 
       return this.timeResponse$
-        .map(event => {
-          return {
-            requestTime: requestTime,
-            serverTime: Date.parse(event.data.utc_time),
-            responseTime: Date.now()
-          };
-        })
-        .take(1);
+        .pipe(
+          map(event => {
+            return {
+              requestTime: requestTime,
+              serverTime: Date.parse(event.data.utc_time),
+              responseTime: Date.now()
+            };
+          }),
+          take(1)
+        );
     });
   }
 

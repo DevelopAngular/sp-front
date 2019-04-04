@@ -1,13 +1,10 @@
 import { ErrorHandler, Injectable } from '@angular/core';
 
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/publishReplay';
-import { interval } from 'rxjs/observable/interval';
-import { race } from 'rxjs';
-import { Observable } from 'rxjs/Observable';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
+
+
+
+
+import { interval ,  race ,  Observable ,  ReplaySubject } from 'rxjs';
 import { SentryErrorHandler } from '../error-handler';
 import { HttpService } from './http-service';
 import { constructUrl } from '../live-data/helpers';
@@ -15,8 +12,9 @@ import { Logger } from './logger.service';
 import { User } from '../models/User';
 import { PollingService } from './polling-service';
 import {AdminService} from './admin.service';
-import {map, switchMap} from 'rxjs/operators';
+import {map, switchMap, take} from 'rxjs/operators';
 import {Paged} from '../models';
+import {School} from '../models/School';
 
 @Injectable()
 export class UserService {
@@ -64,8 +62,18 @@ export class UserService {
       return this.http.get<User>(`v1/users/${id}`);
   }
 
-  searchProfileAll(search) {
-      return this.http.get(`v1/users?search=${search}`);
+  searchProfileAll(search, type: string = 'alternative') {
+      switch (type) {
+        case 'alternative':
+          return this.http.get(`v1/users?search=${search}`);
+        case 'gsuite':
+          return this.http.currentSchool$.pipe(
+            take(1),
+            switchMap((currentSchool: School) => {
+              return this.http.get(`v1/schools/${currentSchool.id}/gsuite_users${search ? `?search=${search}` : ''}`);
+            })
+          );
+      }
   }
 
   addUserToProfile(id, role) {
@@ -99,8 +107,8 @@ export class UserService {
   getUserWithTimeout(max: number = 10000): Observable<User | null> {
     return race<User | null>(
       this.userData,
-      interval(max).map(() => null)
-    ).take(1);
+      interval(max).pipe(map(() => null))
+    ).pipe(take(1));
   }
 
   getUsersList(role: string = '', search: string = '', limit: number = 0) {

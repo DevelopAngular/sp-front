@@ -1,7 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 
-import { of } from 'rxjs';
-import { Observable } from 'rxjs';
+import { of ,  Observable } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { GoogleApiService } from './google-api.service';
 

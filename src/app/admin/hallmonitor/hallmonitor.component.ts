@@ -1,7 +1,7 @@
-﻿import {Component, OnInit, ElementRef, ViewChild} from '@angular/core';
+import {Component, OnInit, ElementRef, ViewChild} from '@angular/core';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
 import { MatDialog } from '@angular/material';
-import {BehaviorSubject, fromEvent} from 'rxjs';
+import {BehaviorSubject, fromEvent, combineLatest, Observable, of} from 'rxjs';
 import { User } from '../../models/User';
 import { Report } from '../../models/Report';
 import { Pinnable } from '../../models/Pinnable';
@@ -15,7 +15,6 @@ import {Util} from '../../../Util';
 import {map, switchMap, toArray} from 'rxjs/operators';
 import { disableBodyScroll } from 'body-scroll-lock';
 import {AdminService} from '../../services/admin.service';
-import {combineLatest, Observable, of} from 'rxjs';
 
 
 

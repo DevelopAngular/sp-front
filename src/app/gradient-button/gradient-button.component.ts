@@ -47,7 +47,7 @@ export class GradientButtonComponent implements OnInit {
   @Input() fontWeight: string = 'bold'; // > editable
   @Input() leftImageWidth: string; // > editable
   @Input() leftImageHeight: string; // > editable
-  @Input() cursor: string;
+  @Input() cursor: string = 'pointer';
   @Input() textWidth: string = '100%';
   @Input() whiteSpace: string = 'wrap';
   @Input() buttonLink: string; // needs for the links so that don't brake an existing markup and the entire button is clickable

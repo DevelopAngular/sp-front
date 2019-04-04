@@ -3,8 +3,7 @@ import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 
-import { ReplaySubject } from 'rxjs';
-import { combineLatest } from 'rxjs';
+import { ReplaySubject ,  combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { DataService } from '../services/data-service';

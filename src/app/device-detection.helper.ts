@@ -54,7 +54,7 @@ export class DeviceDetection {
   static enableScroll() {
     if (window.removeEventListener)
       window.removeEventListener('scroll', preventDefault, false);
-    window.onmousewheel = document.onmousewheel = null;
+    // window.onmousewheel = document.onmousewheel = null;
     window.onwheel = null;
     window.ontouchmove = null;
     document.onkeydown = null;
@@ -63,7 +63,7 @@ export class DeviceDetection {
     if (window.addEventListener) // older FF
       window.addEventListener('scroll', preventDefault, false);
     window.onwheel = preventDefault; // modern standard
-    window.onmousewheel = document.onmousewheel = preventDefault; // older browsers, IE
+    // window.onmousewheel = document.onmousewheel = preventDefault; // older browsers, IE
     window.ontouchmove  = preventDefault; // mobile
     document.onkeydown  = preventDefaultForScrollKeys;
   }

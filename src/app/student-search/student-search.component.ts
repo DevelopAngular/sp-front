@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import 'rxjs/add/observable/fromPromise';
-import 'rxjs/add/observable/of';
+
+
 
 import { User } from '../models/User';
 import {Subject} from 'rxjs';

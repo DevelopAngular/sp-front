@@ -1,8 +1,6 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { merge, of, combineLatest } from 'rxjs';
-import { BehaviorSubject } from 'rxjs';
-import { Observable } from 'rxjs';
+import { merge, of, combineLatest ,  BehaviorSubject ,  Observable } from 'rxjs';
 import { DataService } from '../services/data-service';
 import { mergeObject } from '../live-data/helpers';
 import { LiveDataService } from '../live-data/live-data.service';
@@ -24,8 +22,8 @@ export class ActivePassProvider implements PassLikeProvider {
 
   watch(sort: Observable<string>) {
 
-    const sort$ = sort.map(s => ({sort: s}));
-    const search$ = this.searchQueries.map(s => ({search_query: s}));
+    const sort$ = sort.pipe(map(s => ({sort: s})));
+    const search$ = this.searchQueries.pipe(map(s => ({search_query: s})));
 
     const merged$ = mergeObject({sort: '-created', search_query: ''}, merge(sort$, search$));
 
@@ -62,7 +60,7 @@ export class HallMonitorComponent implements OnInit {
   }
 
   get isStaff$(): Observable<boolean> {
-    return this.dataService.currentUser.map(isUserStaff);
+    return this.dataService.currentUser.pipe(map(isUserStaff));
   }
 
   ngOnInit() {

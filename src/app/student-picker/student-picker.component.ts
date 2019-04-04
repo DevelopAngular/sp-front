@@ -1,8 +1,6 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { of } from 'rxjs';
-import { ReplaySubject } from 'rxjs';
-import { Subject } from 'rxjs';
+import { of ,  ReplaySubject ,  Subject } from 'rxjs';
 import { HttpService } from '../services/http-service';
 import { User } from '../models/User';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
@@ -38,7 +36,9 @@ export class StudentPickerComponent implements OnDestroy {
         switchMap(query => {
         if (query !== '') {
           return this.userService.searchProfile('hallpass_student', 10, encodeURI(query))
-            .map(json => json.results);
+            .pipe(
+              map(json => json.results)
+            );
         } else {
           return of([]);
         }
@@ -55,7 +55,6 @@ export class StudentPickerComponent implements OnDestroy {
                 continue outer;
               }
             }
-
             users.push(selectedUser);
           }
         }

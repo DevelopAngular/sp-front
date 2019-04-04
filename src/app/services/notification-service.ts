@@ -4,6 +4,7 @@ import { Notification as Notif } from '../models/Notification';
 import { HttpService } from './http-service';
 import { from, ReplaySubject } from 'rxjs';
 import has = Reflect.has;
+import {switchMap, take} from 'rxjs/operators';
 
 declare var window: any;
 
@@ -82,8 +83,10 @@ export class NotificationService {
 
   registerNotificationAuth() {
     this.getFireToken()
-      .take(1)
-      .switchMap(token => this.registerToken(token))
+      .pipe(
+        take(1),
+        switchMap(token => this.registerToken(token))
+      )
       .subscribe(registration => {
         this.registration = registration;
         this.listen(true);

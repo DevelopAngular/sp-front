@@ -1,12 +1,12 @@
-import { Injectable, NgZone } from '@angular/core';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/map';
 
-import 'rxjs/add/operator/skip';
-import 'rxjs/add/operator/take';
-import { BehaviorSubject } from 'rxjs';
-import { Observable } from 'rxjs';
-import { ReplaySubject } from 'rxjs';
+import {take, filter, map} from 'rxjs/operators';
+import { Injectable, NgZone } from '@angular/core';
+
+
+
+
+
+import { BehaviorSubject ,  Observable ,  ReplaySubject } from 'rxjs';
 import { GoogleAuthService } from './google-auth.service';
 import AuthResponse = gapi.auth2.AuthResponse;
 import GoogleAuth = gapi.auth2.GoogleAuth;
@@ -69,7 +69,7 @@ export class GoogleLoginService {
   }
 
   isAuthLoaded(): Observable<boolean> {
-    return this.googleAuthTool.map(tool => tool !== null);
+    return this.googleAuthTool.pipe(map(tool => tool !== null));
   }
 
   private needNewToken(): boolean {
@@ -95,10 +95,10 @@ export class GoogleLoginService {
       this.storage.removeItem(STORAGE_KEY);
     }
 
-    return this.authToken$
-      .filter(t => !!t && (!isDemoLogin(t) || !t.invalid))
-      .take(1)
-      .map(a => isDemoLogin(a) ? a : a.id_token);
+    return this.authToken$.pipe(
+      filter(t => !!t && (!isDemoLogin(t) || !t.invalid)),
+      take(1),
+      map(a => isDemoLogin(a) ? a : a.id_token),);
   }
 
   private updateAuth(auth: AuthResponse | DemoLogin) {

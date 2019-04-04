@@ -1,15 +1,8 @@
+
+import {catchError, tap, first, delay, distinctUntilChanged, filter, flatMap, map, skip, switchMap} from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { of, throwError } from 'rxjs';
-
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/first';
-import 'rxjs/add/operator/switchMap';
-import { BehaviorSubject } from 'rxjs';
-import { Observable } from 'rxjs';
-import {delay, distinctUntilChanged, filter, flatMap, map, skip, switchMap} from 'rxjs/operators';
+import { of, throwError ,  BehaviorSubject ,  Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { GoogleLoginService, isDemoLogin } from './google-login.service';
 import { School } from '../models/School';
@@ -112,7 +105,7 @@ export class HttpService {
   public schools$: Observable<School[]> = this.loginService.isAuthenticated$.pipe(
     filter(v => v),
     switchMap(() => {
-      return this.get('v1/schools', undefined, null);
+      return this.get<School[]>('v1/schools', undefined, null);
     }),
   );
 
@@ -179,7 +172,7 @@ export class HttpService {
       this.hasRequestedToken = true;
     }
 
-    return this.accessTokenSubject.filter(e => !!e);
+    return this.accessTokenSubject.pipe(filter(e => !!e));
   }
 
   private getLoginServers(data: FormData): Observable<LoginServer> {
@@ -189,15 +182,15 @@ export class HttpService {
       return of(preferredEnvironment as LoginServer);
     }
 
-    return this.http.post('https://smartpass.app/api/discovery/find', data)
-      .map((servers: LoginServer[]) => {
+    return this.http.post('https://smartpass.app/api/discovery/find', data).pipe(
+      map((servers: LoginServer[]) => {
         // console.log(servers);
         if (servers.length > 0) {
           return servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
         } else {
           return null;
         }
-      });
+      }));
   }
 
   private loginManual(username: string, password: string): Observable<AuthContext> {
@@ -224,8 +217,8 @@ export class HttpService {
 
       // console.log('loginManual()');
 
-      return this.http.post(makeUrl(server, 'o/token/'), config)
-        .map((data: any) => {
+      return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
+        map((data: any) => {
           // console.log('Auth data : ', data);
           // don't use TimeService for auth because auth is required for time service
           // to be useful
@@ -236,7 +229,7 @@ export class HttpService {
           const auth = data as ServerAuth;
 
           return {auth: auth, server: server} as AuthContext;
-        });
+        }));
 
     }));
   }
@@ -260,8 +253,8 @@ export class HttpService {
       config.append('provider', 'google-auth-token');
       config.append('token', googleToken);
 
-      return this.http.post(makeUrl(server, 'auth/by-token'), config)
-        .map((data: any) => {
+      return this.http.post(makeUrl(server, 'auth/by-token'), config).pipe(
+        map((data: any) => {
           // don't use TimeService for auth because auth is required for time service
           // to be useful
           data['expires'] = new Date(new Date() + data['expires_in']);
@@ -271,15 +264,15 @@ export class HttpService {
           const auth = data as ServerAuth;
 
           return {auth: auth, server: server} as AuthContext;
-        });
+        }));
 
     }));
   }
 
   private fetchServerAuth(retryNum: number = 0): Observable<AuthContext> {
     // console.log('fetchServerAuth');
-    return this.loginService.getIdToken()
-      .switchMap(googleToken => {
+    return this.loginService.getIdToken().pipe(
+      switchMap(googleToken => {
         let authContext$: Observable<AuthContext>;
 
         // console.log('getIdToken');
@@ -290,11 +283,11 @@ export class HttpService {
           authContext$ = this.loginGoogleAuth(googleToken);
         }
 
-        return authContext$
-          .do(() => {
+        return authContext$.pipe(
+          tap(() => {
             this.loginService.setAuthenticated();
-          })
-          .catch(err => {
+          }),
+          catchError(err => {
             if (err instanceof LoginServerError || err.status === 401) {
               if (isDemoLogin(googleToken)) {
                 googleToken.invalid = true;
@@ -306,18 +299,18 @@ export class HttpService {
             }
 
             throw err;
-          });
+          }),);
 
-      });
+      }));
   }
 
   private performRequest<T>(predicate: (ctx: AuthContext) => Observable<T>): Observable<T> {
-    return this.accessToken
-      .switchMap(ctx => {
+    return this.accessToken.pipe(
+      switchMap(ctx => {
         // console.log('performRequest');
         return predicate(ctx);
-      })
-      .catch(err => {
+      }),
+      catchError(err => {
         if (err.status !== 401) {
           throw err;
         }
@@ -328,14 +321,14 @@ export class HttpService {
         this.accessTokenSubject.next(null);
 
         // const google_token = localStorage.getItem(SESSION_STORAGE_KEY); // TODO something more robust
-        return this.fetchServerAuth()
-          .switchMap((ctx: AuthContext) => {
+        return this.fetchServerAuth().pipe(
+          switchMap((ctx: AuthContext) => {
             console.log('auth:', ctx);
             this.accessTokenSubject.next(ctx);
             return predicate(ctx);
-          });
-      })
-      .first();
+          }));
+      }),
+      first(),);
   }
 
   clearInternal() {

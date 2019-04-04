@@ -232,11 +232,11 @@ export class SearchComponent implements OnInit {
   studentsEmit(students) {
     //console.log('Selected Date:', this.selectedDate, 'Selected Rooms:', this.selectedRooms, 'Selected Students:', this.selectedStudents, '-> Students:', students);
     console.log(students);
-    this.selectedStudents = students?students:this.selectedStudents;
+    this.selectedStudents = students ? students : this.selectedStudents;
   }
 
   selectedPass(pass) {
-    const selectedPass: HallPass = _.find(this.passes, {id: pass['id']});
+    const selectedPass: HallPass = _.find<HallPass>(this.passes, {id: pass['id']});
     selectedPass.start_time = new Date(selectedPass.start_time);
     selectedPass.end_time = new Date(selectedPass.end_time);
       const data = {

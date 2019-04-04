@@ -4,6 +4,7 @@ import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot } from '@angul
 import { Observable } from 'rxjs';
 import { GoogleLoginService } from '../services/google-login.service';
 import { HttpService } from '../services/http-service';
+import {filter, tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,11 @@ export class AuthenticatedGuard implements CanActivate {
     this.httpService.accessToken.subscribe();
 
     // we don't actually want to cancel routing this path, we want to wait until isAuthenticated$ becomes true.
-    return this.loginService.isAuthenticated$.do(v => console.log('is authenticated (guard):', v)).filter(v => v);
+    return this.loginService.isAuthenticated$
+      .pipe(
+        tap(v => console.log('is authenticated (guard):', v)),
+        filter(v => v)
+      );
 }
 
 }

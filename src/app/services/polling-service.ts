@@ -61,7 +61,7 @@ export class PollingService {
           reconnectIfNotNormalClose: true,
         });
 
-        return new Observable(s => {
+        return new Observable<RawMessage>(s => {
 
           let sendMessageSubscription: Subscription = null;
 

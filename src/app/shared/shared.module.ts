@@ -74,7 +74,8 @@ import {ToggleInputComponent} from '../admin/toggle-input/toggle-input.component
       MatCardModule,
       MatDividerModule,
       InputTextareaModule,
-    NgProgressModule.forRoot(),
+    // NgProgressModule.forRoot(),
+    NgProgressModule.withConfig({}),
     DragulaModule.forRoot()
   ],
   declarations: [

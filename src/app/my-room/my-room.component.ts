@@ -1,9 +1,6 @@
 import { Component, ElementRef, NgZone, OnInit } from '@angular/core';
 import {MatDialog} from '@angular/material';
-import { combineLatest, merge, of } from 'rxjs';
-import { BehaviorSubject } from 'rxjs';
-import { Observable } from 'rxjs';
-import { ReplaySubject } from 'rxjs';
+import { combineLatest, merge, of ,  BehaviorSubject ,  Observable ,  ReplaySubject } from 'rxjs';
 import { Util } from '../../Util';
 import { DataService } from '../services/data-service';
 import { mergeObject } from '../live-data/helpers';
@@ -17,6 +14,7 @@ import { User } from '../models/User';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import { TimeService } from '../services/time.service';
 import {CalendarComponent} from '../admin/calendar/calendar.component';
+import {map, switchMap} from 'rxjs/operators';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -32,8 +30,8 @@ abstract class RoomPassProvider implements PassLikeProvider {
 
   watch(sort: Observable<string>) {
     // merge the sort events and search events into one Observable that emits the current state of both.
-    const sort$ = sort.map(s => ({sort: s}));
-    const search$ = this.search$.map(s => ({search_query: s}));
+    const sort$ = sort.pipe(map(s => ({sort: s})));
+    const search$ = this.search$.pipe(map(s => ({search_query: s})));
     const merged$ = mergeObject({sort: '-created', search_query: ''}, merge(sort$, search$));
 
     // Create a subject that will replay the last state. This is necessary because of the use of switchMap.
@@ -41,7 +39,9 @@ abstract class RoomPassProvider implements PassLikeProvider {
     merged$.subscribe(mergedReplay);
 
     return combineLatest(this.locations$, this.date$, (locations, date) => ({locations, date}))
-      .switchMap(({locations, date}) => this.fetchPasses(mergedReplay, locations, date));
+      .pipe(
+        switchMap(({locations, date}) => this.fetchPasses(mergedReplay, locations, date))
+      );
   }
 }
 
@@ -104,7 +104,7 @@ export class MyRoomComponent implements OnInit {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
 
-    const selectedLocationArray$ = this.selectedLocation$.map(location => location);
+    const selectedLocationArray$ = this.selectedLocation$.pipe(map(location => location));
 
     // Construct the providers we need.
     this.activePasses = new WrappedProvider(new ActivePassProvider(liveDataService, selectedLocationArray$,
