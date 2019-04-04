@@ -34,6 +34,9 @@ export class LocationCellComponent implements OnInit {
   @Input()
   valid: boolean = true;
 
+  @Input()
+  allowOnStar: boolean = false;
+
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<any> = new EventEmitter();
 
@@ -90,11 +93,15 @@ export class LocationCellComponent implements OnInit {
   }
 
   cellSelected() {
-    if(!this.overStar && this.valid)
+    if (this.valid) {
       this.onSelect.emit(this.value);
+      if (this.allowOnStar) {
+        this.star();
+      }
+    }
   }
 
-  star(){
+  star() {
     this.value.starred = !this.value.starred;
     this.onStar.emit(this.value);
   }

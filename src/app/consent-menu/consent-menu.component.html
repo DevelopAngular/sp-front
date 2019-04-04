@@ -27,7 +27,12 @@
         </app-gradient-button>
       </div>
       <ng-template #stringOptionsView>
-        <div [style.color]="getColor(option)" class="option-wrapper ds-w-100" (click)="_matDialogRef.close(option.action)">{{ option.display }}</div>
+        <div [style.color]="getColor(option)" #_option class="option-wrapper ds-w-100"
+             (mousedown)="_option.style.background = '#E2E7F4'"
+             (mouseup)="_option.style.background = 'transparent'"
+             (mouseover)="_option.style.background = '#ECF1FF'"
+             (mouseleave)="_option.style.background = 'transparent'"
+             (click)="_matDialogRef.close(option.action)">{{ option.display }}</div>
       </ng-template>
     </div>
 </div>

@@ -3,7 +3,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 import {User} from '../../models/User';
 import {Location} from '../../models/Location';
 import {Router} from '@angular/router';
-import {switchMap, tap} from 'rxjs/operators';
+import {map, switchMap, tap} from 'rxjs/operators';
 import {DataService} from '../../services/data-service';
 import {FormControl, FormGroup} from '@angular/forms';
 import {Observable, of, zip} from 'rxjs';
@@ -189,23 +189,22 @@ export class ProfileCardDialogComponent implements OnInit {
       DR.afterClosed()
         .pipe(
           switchMap((action): Observable<any> => {
-            // console.log(action);
+            console.log(action);
             this.consentMenuOpened = false;
-            // if (action === 'confirm') {
-            //   let role: any = this.data.role.split('_');
-            //   role = role[role.length - 1];
-            //   return this.userService.deleteUserFromProfile(this.profile.id, role);
-            // } else {
-            //   return of(null);
-            // }
+            if (action === 'confirm') {
+              let role: any = this.data.role.split('_');
+              role = role[role.length - 1];
+              return this.userService.deleteUserFromProfile(this.profile.id, role).pipe(map(() => true));
+            } else {
               return of(null);
-
+            }
           }),
         )
         .subscribe((res) => {
           console.log(res);
           if (res != null) {
             this.http.setSchool(this.http.getSchool());
+            this.dialogRef.close(res);
           }
         });
 

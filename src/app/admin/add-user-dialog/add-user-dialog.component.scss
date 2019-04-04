@@ -83,9 +83,10 @@
         justify-content: center;
         padding: 15px 25px;
         .profile-search {
-          //margin-right: 33px;
+          margin-right: 33px;
           //flex: 1 1 auto;
-          flex: 1 1 385px;
+          //flex: 1 1 385px;
+          width: 385px;
 
           &_label {
             font-weight: bold;
@@ -94,7 +95,8 @@
           }
         }
         .profile-permissions {
-          flex: 1 1 40%;
+          //flex: 1 1 40%;
+          width: 40%;
           &_heading {
             @include heading(14px)
           }

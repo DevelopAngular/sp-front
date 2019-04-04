@@ -1,6 +1,6 @@
 <div class="wrapper" (click)="cellSelected()" (mouseenter)="hovered = true" (mouseleave)="hovered = false" [style.background-color]="bgColor" [style.color]="textColor" [style.cursor]="cursor">
   <div *ngIf="type==='location'" class="info">
-    <img *ngIf="showStar" (mouseenter)="overStar=true" (mouseleave)="overStar=false" (click)="star()" class="star" [src]="'./assets/Star' +(this.value.starred?' (Yellow)':' (Blue-Gray)') +'.svg' | resolveAsset">
+    <img *ngIf="showStar" (mouseenter)="overStar=true" (mouseleave)="overStar=false" class="star" [src]="'./assets/Star' +(this.value.starred?' (Yellow)':' (Blue-Gray)') +'.svg' | resolveAsset">
     <div class="title">
       {{value.title}}
     </div>

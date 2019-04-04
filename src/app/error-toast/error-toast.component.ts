@@ -24,8 +24,9 @@ export class ErrorToastComponent implements OnInit {
   ngOnInit() {
     setTimeout(() => { this.toggleToast = true; }, 250);
   }
-  close() {
+  close(evt: Event) {
     // this.dialogRef.close();
+    evt.stopPropagation();
     this.toggleToast = false;
     this.closeEvent.emit(false);
   }

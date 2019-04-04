@@ -3,7 +3,7 @@ import { GoogleLoginService } from '../services/google-login.service';
 import {MatDialog} from '@angular/material';
 
 export enum LoginMethod { OAuth = 1, LocalStrategy = 2}
-import {of} from 'rxjs';
+import {BehaviorSubject, of, Subject} from 'rxjs';
 import {finalize, tap} from 'rxjs/operators';
 
 @Component({
@@ -14,7 +14,7 @@ import {finalize, tap} from 'rxjs/operators';
 
 export class GoogleSigninComponent implements OnInit, OnDestroy {
 
-  @Output() showError: EventEmitter<{ loggedWith: number, error: boolean} > = new EventEmitter<{loggedWith: number, error: boolean}>();
+  // @Output() showError: EventEmitter<{ loggedWith: number, error: boolean} > = new EventEmitter<{loggedWith: number, error: boolean}>();
 
 
   public name = 'Not Logged in!';
@@ -24,6 +24,11 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   public progressType = 'determinate';
   public showSpinner: boolean = false;
   public loggedWith: number;
+  public showError: BehaviorSubject<{ loggedWith: number, error: boolean} > = new BehaviorSubject<{loggedWith: number, error: boolean}>({
+    loggedWith: this.loggedWith,
+    error: false
+  });
+
   keyListener;
   demoLoginEnabled = false;
 
@@ -53,33 +58,20 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       });
     });
 
-    this.loginService.showLoginError$.subscribe(show => {
-      this._ngZone.run(() => {
-
-          this.showError.emit( {
+    this.loginService.showLoginError$.subscribe((show: boolean) => {
+      this.showError.next({
             loggedWith: this.loggedWith,
             error: show,
           });
       });
-    });
-    //
-    // let textBuffer = '';
-    //
-    // this.keyListener = (event) => {
-    //   textBuffer += event.key;
-    //
-    //   if (textBuffer.length > 20) {
-    //     textBuffer = textBuffer.substring(textBuffer.length - 20);
-    //   }
-    //
-    //   if (textBuffer.endsWith('demo')) {
-    //     this.toggleDemoLogin();
-    //   }
-    // };
   }
   onClose(evt) {
     setTimeout(() => {
-      this.showError = evt;
+      this.showSpinner = false;
+      this.showError.next({
+        loggedWith: this.loggedWith,
+        error: evt
+      });
     }, 400);
   }
   updateDemoUsername(event) {
@@ -102,6 +94,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       this.loginService.showLoginError$.next(false);
       of(this.loginService.signInDemoMode(this.demoUsername, this.demoPassword))
       .pipe(
+        // tap((res) => { console.log(res) }),
         finalize(() => {
           this.showSpinner = false;
       }));

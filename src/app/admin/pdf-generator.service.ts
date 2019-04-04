@@ -422,7 +422,7 @@ export class PdfGeneratorService {
           // Most browsers will refuse to open a new tab/window if it is not opened during a user-triggered event.
 
           // One more marameter has been added to pass the raw data so that the user could download an Xlsx file from the dialog as well.
-          LinkGeneratedDialogComponent.createDialog(this.dialog, 'Report Generated Successfully', pdfLink, data);
+          LinkGeneratedDialogComponent.createDialog(this.dialog, 'Report Generated Successfully', pdfLink, page !== 'hallmonitor' ? data : null);
         };
 
         const blob = doc.output('blob', {filename: 'test'});

@@ -40,6 +40,8 @@ export class LocationTableComponent implements OnInit {
   @Input() mergedAllRooms: boolean;
   @Input() dummyString: '';
   @Input() withMergedStars: boolean = true;
+  @Input() searchExceptFavourites: boolean = false;
+  @Input() allowOnStar: boolean = false;
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<string> = new EventEmitter();
@@ -183,7 +185,9 @@ export class LocationTableComponent implements OnInit {
                 return item.title.toLowerCase().includes(this.search);
             }));
           // this.staticChoices = null;
-          this.choices = [...filtFevLoc, ...this.filterResults(p.results)];
+          this.choices = this.searchExceptFavourites
+                          ? [...this.filterResults(p.results)]
+                          : [...filtFevLoc, ...this.filterResults(p.results)];
         })
           .then(() => {
             if (!this.choices.length) {

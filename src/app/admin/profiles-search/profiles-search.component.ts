@@ -84,7 +84,7 @@ export class ProfilesSearchComponent implements OnInit {
   onSearch(search: string) {
     this.isEmitUsers.emit(false);
     if (search !== '') {
-      this.students = this.userService.searchProfileAll(encodeURI(search), 'gsuite')
+      this.students = this.userService.searchProfileAll(encodeURI(search), this.type)
           .toPromise().then((users: User[]) => {
             console.log(users);
             if (users.length > 0) {
@@ -99,7 +99,7 @@ export class ProfilesSearchComponent implements OnInit {
   }
 
   removeStudent(student: User) {
-    var index = this.selectedStudents.indexOf(student, 0);
+    const index = this.selectedStudents.indexOf(student, 0);
     if (index > -1) {
       this.selectedStudents.splice(index, 1);
     }

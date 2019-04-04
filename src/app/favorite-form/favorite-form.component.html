@@ -9,14 +9,16 @@
   </div>
   <div class="content">
     <app-location-table class="locations"
-         [rightHeaderText]="true"
-         [isEdit]="true"
-         (onStar)="onStar($event)"
-         [showFavorites]="true"
-         (onUpdate)="starChangesIds = $event"
-         [type]="'location'"
-         [placeholder]="'Search rooms'"
-         [showStars]="true">
+                        [rightHeaderText]="true"
+                        [isEdit]="true"
+                        (onStar)="onStar($event)"
+                        [showFavorites]="true"
+                        (onUpdate)="starChangesIds = $event"
+                        [type]="'location'"
+                        [allowOnStar]="true"
+                        [placeholder]="'Search rooms'"
+                        [searchExceptFavourites]="true"
+                        [showStars]="true">
     </app-location-table>
   <!--<div class="save-button">-->
     <!--<app-gradient-button-->

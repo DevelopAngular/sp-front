@@ -59,15 +59,14 @@
     font-size: 15px;
     text-align: center;
     padding: 2px 25px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
     border-top: 1px solid $blue-gray;
     text-align: center;
-  :hover {
-    //background-color: #ECF1FF;
-    background-color: rgb(236,241,255);
-  }
+    //:hover {
+    //  background-color: #ECF1FF;
+    //}
 }
 
 .option-title {

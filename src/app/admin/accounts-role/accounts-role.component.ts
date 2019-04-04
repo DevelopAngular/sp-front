@@ -377,17 +377,19 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             if (action === 'confirm') {
               let role: any = this.role.split('_');
                   role = role[role.length - 1];
-              return zip(...this.selectedUsers.map((user) => this.userService.deleteUserFromProfile(user['id'], role)));
+              return zip(...this.selectedUsers.map((user) => this.userService.deleteUserFromProfile(user['id'], role))).pipe(map(() => true));
             } else {
-              return of(null);
+              return of(false);
             }
 
           }),
         )
         .subscribe((res) => {
           console.log(res);
-          if (res != null) {
+          if (res) {
             this.http.setSchool(this.http.getSchool());
+            this.selectedUsers = [];
+            this.getUserList();
           }
         });
       return;
@@ -395,22 +397,22 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
     // =========== SPA=476 end ============>
 
-    const DR = this.matDialog.open(AccountsDialogComponent,
-      {
-        data: {
-          role: this.role,
-          selectedUsers: this.selectedUsers,
-          mode: mode,
-          restrictions: this.profilePermissions
-        },
-        width: '425px', height: '500px',
-        panelClass: 'accounts-profiles-dialog',
-        backdropClass: 'custom-bd'
-      });
-    DR.afterClosed().subscribe((v) => {
-      // console.log(v);
-      this.http.setSchool(this.http.getSchool());
-    });
+    // const DR = this.matDialog.open(AccountsDialogComponent,
+    //   {
+    //     data: {
+    //       role: this.role,
+    //       selectedUsers: this.selectedUsers,
+    //       mode: mode,
+    //       restrictions: this.profilePermissions
+    //     },
+    //     width: '425px', height: '500px',
+    //     panelClass: 'accounts-profiles-dialog',
+    //     backdropClass: 'custom-bd'
+    //   });
+    // DR.afterClosed().subscribe((v) => {
+    //   // console.log(v);
+    //   this.http.setSchool(this.http.getSchool());
+    // });
   }
 
   ngOnDestroy() {
@@ -445,12 +447,19 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     DR.afterClosed().subscribe((v) => {
       // console.log(v);
       this.http.setSchool(this.http.getSchool());
+      if (v) {
+        this.selectedUsers = [];
+        this.getUserList();
+      }
     });
 
   }
 
   findProfileByRole(evt) {
     console.log(evt);
+    // if (evt instanceof Location) {
+      // this.showProfileCard()
+    // }
     this.tabVisibility = false;
 
     setTimeout(() => {
@@ -524,7 +533,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
                 return this.dataService.getLocationsWithTeacher(user)
                   .pipe(
                     switchMap((locs: Location[]) => {
-                      (user as any).assignedTo = locs;
+                      (user as any).assignedTo = locs.map((l: Location) => {
+                        return l.title;
+                      }).join(', ');
                       return of(user);
                     })
                   );

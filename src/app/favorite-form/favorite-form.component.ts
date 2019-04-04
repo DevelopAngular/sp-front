@@ -38,7 +38,7 @@ export class FavoriteFormComponent implements OnInit, OnDestroy {
   }
 
   onStar(loc: any){
-    console.log(loc.starred, this.starChanges)
+    console.log(loc, this.starChanges)
     if(loc.starred)
       this.addLoc(loc, this.starChanges);
     else

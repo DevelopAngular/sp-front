@@ -11,7 +11,7 @@
     position: absolute;
     left: 0px;
     right: 0;
-    top: -40px;
+    top: -30px;
     margin: 0 auto;
 }
 
@@ -40,6 +40,7 @@
 }
 
 .options-wrapper{
+    padding-top: 20px;
     width: 100%;
     display: flex;
     flex-direction: column;

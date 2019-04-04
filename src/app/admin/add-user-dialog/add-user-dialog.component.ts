@@ -3,6 +3,8 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {FormControl, FormGroup} from '@angular/forms';
 import {User} from '../../models/User';
 import {PdfGeneratorService} from '../pdf-generator.service';
+import {zip} from 'rxjs';
+import {UserService} from '../../services/user.service';
 
 @Component({
   selector: 'app-add-user-dialog',
@@ -23,7 +25,8 @@ export class AddUserDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<AddUserDialogComponent>,
-    private pdfService: PdfGeneratorService
+    private pdfService: PdfGeneratorService,
+    private userService: UserService
   ) {
 
   }
@@ -49,6 +52,16 @@ export class AddUserDialogComponent implements OnInit {
 
       });
     }
+  }
+  addUser() {
+    let role: any = this.data.role.split('_');
+    role = role[role.length - 1];
+    console.log('======>>>>>', role, this.selectedUsers);
+    // return
+    zip(...this.selectedUsers.map((user) => this.userService.addUserToProfile(user.id, role)))
+      .subscribe((res) => {
+          this.dialogRef.close(true);
+      });
   }
   setSelectedUsers(evt) {
     this.selectedUsers = evt;

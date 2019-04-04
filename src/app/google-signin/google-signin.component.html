@@ -4,6 +4,7 @@
     <!--<app-error-toast (closeEvent)="onClose($event)"></app-error-toast>-->
   <!--</div>-->
 
+
   <app-gradient-button
     class="login-button"
     [size]="'medium'"
@@ -73,6 +74,9 @@
     </div>
   </app-gradient-button>
 </form>
+<div *ngIf="(showError | async).error">
+  <app-error-toast [loginMethod]="(showError | async)?.loggedWith" (closeEvent)="onClose($event)"></app-error-toast>
+</div>
 
 <div class="demo-text-wrapper" (click)="toggleDemoLogin()"><div class="demo-text">{{demoLoginEnabled?'Sign in with Google':'Alternative sign-in'}}</div></div>
 

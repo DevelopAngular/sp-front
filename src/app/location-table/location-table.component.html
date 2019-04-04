@@ -28,7 +28,7 @@
 
         <app-location-cell class="choice" *ngFor="let choice of starredChoices"
                            (onSelect)="choiceSelected($event)" (onStar)="star($event)"
-                           [value]="choice" [type]="type" [starred]="true" [showStar]="showStars">
+                           [value]="choice" [type]="type" [starred]="true" [showStar]="showStars" [allowOnStar]="allowOnStar">
         </app-location-cell>
       </div>
       <div *ngIf="starredChoices.length<1" class="no-favs" ondragstart="return false">
@@ -57,7 +57,7 @@
       <div class="quick-label" *ngIf="staticChoices?.length">Quick Select</div>
       <div class="choices" [style.width]="'190px'" (scroll)="onScroll($event)">
         <app-location-cell [hasLocks]="hasLocks" [forLater]="forLater" [forStaff]="forStaff" class="choice" *ngFor="let choice of choices" [showStar]="showStars && !noRightStar" [starred]="false"
-                           (onSelect)="choiceSelected($event)" (onStar)="star($event)"
+                           (onSelect)="choiceSelected($event)" (onStar)="star($event);" [allowOnStar]="allowOnStar"
                            [value]="choice" [type]="type" [valid]="!invalidLocation || choice.id !== invalidLocation">
         </app-location-cell>
       </div>
