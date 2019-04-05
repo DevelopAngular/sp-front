@@ -10,11 +10,16 @@
       </div>
     </div>
     <mat-divider></mat-divider>
-    <!--<div class="year-nav">-->
-      <!--<button (click)="prevYear()">&lt;</button>-->
-      <!--<span>{{ currentDate.format('YYYY') }}</span>-->
-      <!--<button (click)="nextYear()">&gt;</button>-->
-    <!--</div>-->
+    <div class="year-nav">
+        <div class="switch-year" (click)="prevYear()">
+            <img class="year-icon" [src]="'./assets/Chevron Left (Navy).svg' | resolveAsset" alt="prev">
+        </div>
+        <span class="ds-dialog-subtitle">{{ currentDate.format('YYYY') }}</span>
+        <div class="switch-year" (click)="nextYear()">
+            <img class="year-icon" [src]="'./assets/Chevron Right (Navy).svg' | resolveAsset" alt="next">
+        </div>
+    </div>
+    <mat-divider></mat-divider>
   </div>
   <div class="month-grid">
    <div class="days">
@@ -40,14 +45,14 @@
             [style.width]="(width / 7) + 'px'"
             [style.height]="(width / 7 - 9) + 'px'"
             [ngClass]="{'is-next-month': isNextMonth(day.mDate)}"
-            *ngIf="!isSelectedMonth(day.mDate) && isWeekendDay(day.mDate)">
+            *ngIf="!isSelectedMonth(day.mDate) && showWeekendDay(day.mDate)">
             <span class="date-text"
             >{{ day.mDate.date() }}</span>
           </div>
           <div class="week-date"
                [style.width]="(width / 7) + 'px'"
                [style.height]="(width / 7 - 9) + 'px'"
-               *ngIf="isSelectedMonth(day.mDate) && isWeekendDay(day.mDate)"
+               *ngIf="isSelectedMonth(day.mDate) && showWeekendDay(day.mDate)"
                (click)="selectDate(day)"
                (mouseenter)="hovered = true"
                (mouseleave)="hovered = false"

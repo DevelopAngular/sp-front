@@ -51,10 +51,27 @@ $base:5px;
   }
 
   .year-nav {
-    padding: $base;
+    padding: 10px 5px 10px 5px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+
+    .switch-year {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      &:hover {
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        background-color: $dark-slate-gray;
+      }
+      .year-icon {
+        width: 15px;
+        height: 15px;
+        cursor: pointer;
+      }
+    }
   }
 
   .month-grid {
@@ -69,7 +86,6 @@ $base:5px;
       color: $navy;
       font-size: 10px;
       font-weight: bold;
-      margin: 5px 0 5px 0;
       border-bottom-right-radius: 3px;
       border-bottom-left-radius: 3px;
     }
@@ -127,6 +143,7 @@ $base:5px;
         color: $background-white;
         background-color: $jade;
         border-radius: 5px;
+        cursor: pointer;
         &:after {
 
         }

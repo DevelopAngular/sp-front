@@ -31,6 +31,11 @@ export class TimePickerComponent implements OnInit {
       this.timeResult.emit(this.currentDate);
   }
 
+  changeFormat() {
+      this.currentDate = moment(this.currentDate).add(12, 'hour');
+      this.timeResult.emit(this.currentDate);
+  }
+
   destroy() {
     this.interval.forEach(id => {
       clearInterval(id);

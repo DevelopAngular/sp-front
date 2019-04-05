@@ -10,7 +10,7 @@
         [src]="'./assets/Chevron Up (Blue-Gray).svg' | resolveAsset"
         alt="Icon"
       >
-      <span>{{ currentDate.format('HH') }}</span>
+      <span>{{ currentDate.format('hh') }}</span>
       <img
         class="arrow"
         [style.opacity]="hovered ? 1 : 0"
@@ -41,5 +41,5 @@
       >
     </div>
   </div>
-  <div class="format">{{ currentDate.format('A') }}</div>
+  <div class="format" draggable="false" (click)="changeFormat()">{{ currentDate.format('A') }}</div>
 </div>

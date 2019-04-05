@@ -19,6 +19,8 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     @Input() width: number = 270;
     @Input() showWeekend: boolean;
     @Input() showTime: boolean = true;
+    @Input() min: moment.Moment = moment('2019-04-07',       'YYYY-MM-DD HH:mm');
+    @Input() max: moment.Moment;
 
     @Output() onSelectDate = new EventEmitter<moment.Moment>();
 
@@ -27,6 +29,8 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     weeks: CalendarDate[][] = [];
     sortedDates: CalendarDate[] = [];
     resultTimePicker: moment.Moment;
+
+    minDate: boolean;
 
     public hovered: boolean;
 
@@ -38,6 +42,7 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
             this.dayNames.push('S');
         }
         this.generateCalendar();
+        // this.getMinDate();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -49,7 +54,9 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
         }
     }
 
-    // date checkers
+    // getMinDate() {
+    //     this.minDate = this.currentDate.isAfter(this.min);
+    // }
 
     isToday(date: moment.Moment): boolean {
         return moment().isSame(moment(date), 'day');
@@ -61,7 +68,7 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
         }) > -1;
     }
 
-    isWeekendDay(date: moment.Moment): boolean {
+    showWeekendDay(date: moment.Moment): boolean {
         if (!this.showWeekend) {
            return moment(date).isoWeekday() !== 6 && moment(date).isoWeekday() !== 7;
         } else {
