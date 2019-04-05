@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 
 export interface CalendarDate {
     mDate: moment.Moment;
+    disabled?: boolean;
     selected?: boolean;
     today?: boolean;
 }
@@ -19,18 +20,15 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     @Input() width: number = 270;
     @Input() showWeekend: boolean;
     @Input() showTime: boolean = true;
-    @Input() min: moment.Moment = moment('2019-04-07',       'YYYY-MM-DD HH:mm');
-    @Input() max: moment.Moment;
+    @Input() min: moment.Moment;
+    @Input() range: boolean;        ///// In Process
 
-    @Output() onSelectDate = new EventEmitter<moment.Moment>();
+    @Output() onSelectDate = new EventEmitter<moment.Moment[]>();
 
     currentDate = moment();
     dayNames = ['M', 'T', 'W', 'T', 'F'];
     weeks: CalendarDate[][] = [];
     sortedDates: CalendarDate[] = [];
-    resultTimePicker: moment.Moment;
-
-    minDate: boolean;
 
     public hovered: boolean;
 
@@ -41,22 +39,24 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
             this.dayNames.unshift('S');
             this.dayNames.push('S');
         }
+        if (this.min) {
+            this.currentDate = this.min;
+        }
         this.generateCalendar();
-        // this.getMinDate();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.selectedDates &&
             changes.selectedDates.currentValue &&
             changes.selectedDates.currentValue.length  > 1) {
-            this.sortedDates = _.sortBy(changes.selectedDates.currentValue, (m: CalendarDate) => m.mDate.valueOf());
+            this.sortedDates = _.sortBy(changes.selectedDates.currentValue, (m: CalendarDate) => m);
             this.generateCalendar();
         }
     }
 
-    // getMinDate() {
-    //     this.minDate = this.currentDate.isAfter(this.min);
-    // }
+    isBeforeMinDate(date: moment.Moment): boolean {
+      return moment(date).isBefore(this.min) && this.showWeekendDay(date);
+    }
 
     isToday(date: moment.Moment): boolean {
         return moment().isSame(moment(date), 'day');
@@ -85,10 +85,24 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     }
 
     selectDate(date: CalendarDate): void {
-        const setHour = moment(date.mDate).set('hour', moment().hour());
-        const fullDate = moment(setHour).set('minute', moment().minutes());
-        this.selectedDates = [fullDate];
-        this.onSelectDate.emit(fullDate);
+        let bulkSelect;
+        if (this.range) {
+            bulkSelect = true;
+        }
+        const setHour = moment(date.mDate).set('hour', this.currentDate.hour());
+        const fullDate = moment(setHour).set('minute', this.currentDate.minutes());
+        if (bulkSelect && this.selectedDates.length) {
+            if (date.mDate.date() > moment(this.selectedDates[0]).date()) {
+                const countDiff = date.mDate.diff(moment(this.selectedDates[0]), 'days');
+                for (let i = 1; i <= countDiff + 1; i++) {
+
+                }
+            }
+        } else {
+            this.selectedDates = [fullDate];
+        }
+        this.generateCalendar();
+        this.onSelectDate.emit(this.selectedDates);
         console.log(fullDate.format('MM-DD-YYYY / HH : mm'));
     }
 
@@ -123,7 +137,8 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     }
 
     timePickerResult(date: moment.Moment) {
-        this.resultTimePicker = date;
+        this.currentDate = date;
+        this.generateCalendar();
         console.log(moment(date).format('MM-DD-YYYY / HH : mm'));
     }
 
@@ -145,6 +160,7 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
                 const d = moment(firstDayOfGrid).date(date);
                 return {
                     today: this.isToday(d),
+                    disabled: this.min ? this.isBeforeMinDate(d) : false,
                     selected: this.isSelected(d),
                     mDate: d,
                 };

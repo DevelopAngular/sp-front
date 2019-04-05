@@ -14,8 +14,6 @@ export class TimePickerComponent implements OnInit {
 
   public hovered: boolean;
 
-  private interval = [];
-
   constructor() { }
 
   ngOnInit() {
@@ -32,13 +30,16 @@ export class TimePickerComponent implements OnInit {
   }
 
   changeFormat() {
-      this.currentDate = moment(this.currentDate).add(12, 'hour');
+      const addTime = moment(this.currentDate).add(12, 'hour');
+      const removeTime = moment(this.currentDate).subtract(12, 'hour');
+      if (this.currentDate.isSame(addTime, 'day')) {
+          this.currentDate = addTime;
+      } else {
+          this.currentDate = removeTime;
+      }
       this.timeResult.emit(this.currentDate);
   }
 
   destroy() {
-    this.interval.forEach(id => {
-      clearInterval(id);
-    });
   }
 }
