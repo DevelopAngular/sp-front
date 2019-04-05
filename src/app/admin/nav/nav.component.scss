@@ -4,7 +4,7 @@
 .nav-wrapper{
     display: flex;
     flex-direction: column;
-    background: white;
+    background-color: white;
     height: 100%;
     width: 303px;
     white-space: nowrap;
@@ -37,7 +37,7 @@
     align-items: center;
     justify-content: space-between;
     background-color: #FFFFFF;
-    box-shadow: -12px -15px 20px 3px #ffF;
+    box-shadow: -12px -15px 20px 3px #FFFFFF;
     right: 15px;
 }
 

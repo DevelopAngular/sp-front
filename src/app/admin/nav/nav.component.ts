@@ -9,6 +9,7 @@ import { disableBodyScroll } from 'body-scroll-lock';
 import {MatDialog} from '@angular/material';
 import {SettingsComponent} from '../settings/settings.component';
 import {map} from 'rxjs/operators';
+import {DarkThemeSwitch} from '../../dark-theme-switch';
 
 @Component({
   selector: 'app-nav',
@@ -39,7 +40,8 @@ export class NavComponent implements OnInit {
         private userService: UserService,
         public loadingService: LoadingService,
         private dialog: MatDialog,
-        private _zone: NgZone
+        private _zone: NgZone,
+        private darkTheme: DarkThemeSwitch
     ) { }
 
   console = console;
@@ -112,7 +114,7 @@ export class NavComponent implements OnInit {
     const settingsRef = this.dialog.open(SettingsComponent, {
       panelClass: 'calendar-dialog-container',
       backdropClass: 'invis-backdrop',
-      data: { 'trigger': target, 'isSwitch': this.showButton }
+      data: { 'trigger': target, 'isSwitch': this.showButton , darkBackground: this.darkTheme.isEnabled$.value}
     });
 
     settingsRef.beforeClose().subscribe(() => {

@@ -16,6 +16,17 @@
         <div class="option-title" [style.color]="hoveredPofile ? '#1F195E' : '#7F879D'">Administrator View</div>
         <img class="arrow-icon" [src]="'./assets/Chevron Right (' + (hoveredPofile ? 'Navy' : 'Blue-Gray') + ').svg' | resolveAsset">
       </div>
+      <div class="option"
+           (mouseenter)="hoveredTheme = true"
+           (mouseleave)="hoveredTheme = false"
+           [style.background-color]="hoveredTheme ? 'rgb(228, 235, 255)' : 'white'"
+           (click)="darkTheme.switchTheme()"
+      >
+
+        <img class="switch-icon" [src]="'./assets/Moon (' + (hoveredTheme ? 'Navy' : 'Blue-Gray') + ').svg'| resolveAsset">
+        <div class="option-title" [style.color]="hoveredTheme ? '#1F195E' : '#7F879D'">Dark Theme</div>
+
+      </div>
       <mat-divider class="divider"></mat-divider>
     </div>
     <div class="setting"

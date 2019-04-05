@@ -46,11 +46,11 @@
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  background-color: #f8faff;
+  //background-color: #f8faff;
   overflow: auto;
 }
 
-.left-content {
+.hallpass-box {
   display: flex;
   flex-direction: column;
   width: 55%;
@@ -84,7 +84,7 @@
 
 }
 
-.right-content {
+.reported-students {
   margin: 5px;
   min-width: 450px;
   height: calc(100% - 10px);
@@ -102,7 +102,7 @@
     background-color: #ffffFF;
     box-shadow: 0px -5px 25px 10px rgba(255, 255, 255, 1);
   }
-  .right-content-internal{
+  .reported-students-internal{
     height: 100%;
     width: 100%;
     box-sizing: border-box;
@@ -110,7 +110,7 @@
     position: relative;
     overflow: auto;
 
-    .right-content-header {
+    .reported-students-header {
       display: flex;
       height: 60px;
       justify-content: space-between;

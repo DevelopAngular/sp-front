@@ -1,44 +1,47 @@
-<div *ngIf="!(isProcess$ | async).active" class="static-loading" #staticLoading><div class="static-loading"></div></div>
-<ng-progress [color]="'#04CD33'" [spinner]="false" [fixed]="true" [speed]="200" [thick]="true"></ng-progress>
-<div *ngIf="showNav" class="bar">
-  <div class="heading grow">
-    <app-smartpass-logo></app-smartpass-logo>
-  </div>
-  <div *ngIf="isStaff" class="teacherNav">
-    <div *ngFor="let button of buttons" class="teacherNav_tab">
-      <ng-container *ngIf="isStaff">
-        <app-nav-button
-                [selected]="tab === button.route"
-                [content]="button.title"
-                [icon]="button.imgUrl"
-                (onClick)="updateTab(button.route)">
-        </app-nav-button>
-      </ng-container>
+<div class="host">
+
+  <div *ngIf="!(isProcess$ | async).active" class="static-loading" #staticLoading><div class="static-loading"></div></div>
+  <ng-progress [color]="'#04CD33'" [spinner]="false" [fixed]="true" [speed]="200" [thick]="true"></ng-progress>
+  <div *ngIf="showNav" class="bar">
+    <div class="heading grow">
+      <app-smartpass-logo></app-smartpass-logo>
     </div>
-  </div>
-  <div class="user-info">
-    <div class="name">{{ user?user.display_name:'' }}</div>
-    <div *ngIf="user && !isStaff" class="inbox-wrapper" (click)="inboxClick()" [style.background-color]="(inboxVisibility?'#E4EBFF':'transparent')">
-      <img class="inbox-icon" [src]="'./assets/Inbox (Navy).svg' | resolveAsset">
-      <div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0">
-        <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">
-        <div class="inbox-number">{{ notificationBadge$ | async }}</div>
-        <img class="inbox-front" [src]="'./assets/Inbox Bottom (Navy).svg' | resolveAsset">
+    <div *ngIf="isStaff" class="teacherNav">
+      <div *ngFor="let button of buttons" class="teacherNav_tab">
+        <ng-container *ngIf="isStaff">
+          <app-nav-button
+            [selected]="tab === button.route"
+            [content]="button.title"
+            [icon]="button.imgUrl"
+            (onClick)="updateTab(button.route)">
+          </app-nav-button>
+        </ng-container>
       </div>
     </div>
-    <!--<div *ngIf="isStaff" class="support-wrapper global-opacity-icons" (click)="openSupport()">-->
+    <div class="user-info">
+      <div class="name">{{ user?user.display_name:'' }}</div>
+      <div *ngIf="user && !isStaff" class="inbox-wrapper" (click)="inboxClick()" [style.background-color]="(inboxVisibility?'#E4EBFF':'transparent')">
+        <img class="inbox-icon" [src]="'./assets/Inbox (Navy).svg' | resolveAsset">
+        <div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0">
+          <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">
+          <div class="inbox-number">{{ notificationBadge$ | async }}</div>
+          <img class="inbox-front" [src]="'./assets/Inbox Bottom (Navy).svg' | resolveAsset">
+        </div>
+      </div>
+      <!--<div *ngIf="isStaff" class="support-wrapper global-opacity-icons" (click)="openSupport()">-->
       <!--<img class="support" [src]="'./assets/Support (Blue).png' | resolveAsset">-->
-    <!--</div>-->
-    <!--<div class="admin-view-wrapper global-opacity-icons" (click)="router.navigateByUrl('/select-profile')"  *ngIf="showSwitchButton">-->
+      <!--</div>-->
+      <!--<div class="admin-view-wrapper global-opacity-icons" (click)="router.navigateByUrl('/select-profile')"  *ngIf="showSwitchButton">-->
       <!--<img class="admin-view" [src]="'./assets/Switch Account (Blue).png' | resolveAsset" alt="">-->
-    <!--</div>-->
-    <div
-      (click)="showOptions($event)"
-      class="options-wrapper global-opacity-icons"
-      [style.background-color]="(isOpenSettings ? '#E4EBFF' : 'transparent')"
-    >
-      <img class="options" [src]="'./assets/Settings (Navy).svg' | resolveAsset">
+      <!--</div>-->
+      <div
+        (click)="showOptions($event)"
+        class="options-wrapper global-opacity-icons"
+        [style.background-color]="(isOpenSettings ? '#E4EBFF' : 'transparent')"
+      >
+        <img class="options" [src]="'./assets/Settings (Navy).svg' | resolveAsset">
+      </div>
     </div>
   </div>
+  <div [style.display]="(isStaff && showNav)?'':'none'" class="divider"></div>
 </div>
-<div [style.display]="(isStaff && showNav)?'':'none'" class="divider"></div>

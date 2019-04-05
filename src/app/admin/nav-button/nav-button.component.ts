@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {DarkThemeSwitch} from '../../dark-theme-switch';
 
 @Component({
   selector: 'app-nav-button',
@@ -16,7 +17,9 @@ export class NavButtonComponent implements OnInit {
   
 
   get textColor(){
-    return this.selected?'#3D396B':'#7E879D';
+    // return this.selected?'#3D396B':'#7E879D';
+    return this.selected?'#3D396B': this.darkTheme.isEnabled$.value ? '#FFFFFF' : ' #7E879D';
+
   }
 
   get backgroundColor(){
@@ -24,10 +27,12 @@ export class NavButtonComponent implements OnInit {
   }
 
   get _icon(){
-    return this.icon +(this.selected?' (Navy)':' (Blue-Gray)') +'.svg';
+    return this.icon +(this.selected?' (Navy)': this.darkTheme.isEnabled$.value ? ' (White)' : ' (Blue-Gray)') + '.svg';
   }
 
-  constructor() { }
+  constructor(
+    private darkTheme: DarkThemeSwitch
+  ) { }
 
   ngOnInit() {
     

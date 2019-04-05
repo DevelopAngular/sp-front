@@ -337,3 +337,94 @@ $primaryFont: "Helvetica Neue", sans-serif;
 .ds-pr-25 { @include padding(25px, right)}
 
 /* === end === */
+
+
+/* === Dark Theme === */
+
+.router-outlet,
+.bar,
+.passes-wrapper,
+.my-room-wrapper,
+.hall-monitor-wrapper,
+.global-container,
+.settings-wrapper,
+.host,
+.display-card-wrapper,
+.host .card,
+.nav-wrapper,
+.nav-footer,
+.reported-students,
+.report-group-header,
+.bottom-shadow,
+.nav-footer,
+.report-group-header,
+.bottom-shadow,
+.school-toggle-bar-wrapper,
+.settings-wrapper,
+.setting-name {
+  transition: all .2s ease-in;
+}
+
+.ds-dark-theme {
+
+  @mixin veryDark {
+
+    background-color: #0F171E !important;
+    -webkit-background-clip: padding-box !important;
+    -moz-background-clip: padding !important;
+    background-clip: border-box !important;
+    color: #FFFFFF !important;
+
+  }
+
+  @mixin bitDark {
+    background-color: #134482 !important;
+    -webkit-background-clip: padding-box !important;
+    -moz-background-clip: padding !important;
+    background-clip: border-box !important;
+    color: #FFFFFF !important;
+
+  }
+
+  @mixin bitDarkShadow {
+    box-shadow: -12px -15px 20px 3px #134482 !important;
+  }
+  .router-outlet,
+  .passes-wrapper,
+  .my-room-wrapper,
+  .hall-monitor-wrapper,
+  .global-container,
+  .settings-wrapper,
+  .host {
+
+    @include veryDark;
+  }
+
+  .display-card-wrapper,
+  .host .card,
+  .nav-wrapper,
+  .nav-footer,
+  .reported-students,
+  .report-group-header,
+  .bottom-shadow {
+    @include bitDark;
+  }
+
+  .nav-footer,
+  .report-group-header,
+  .bottom-shadow {
+
+    @include bitDarkShadow;
+  }
+
+  .school-toggle-bar-wrapper {
+    background-color: #C5D5FF !important;
+  }
+  .settings-wrapper {
+    .setting-name {
+      color: #FFFFFF;
+    }
+  }
+}
+
+/* === end === */

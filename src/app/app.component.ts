@@ -15,6 +15,7 @@ import { ToastConnectionComponent } from './toast-connection/toast-connection.co
 import { WebConnectionService } from './services/web-connection.service';
 import { ResizeInfoDialogComponent } from './resize-info-dialog/resize-info-dialog.component';
 import {StorageService} from './services/storage.service';
+import {DarkThemeSwitch} from './dark-theme-switch';
 
 /**
  * @title Autocomplete overview
@@ -32,7 +33,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public hideSchoolToggleBar: boolean = false;
   public showUI: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public schools: School[] = [];
-
+  public darkThemeEnabled: boolean;
   private openedResizeDialog: boolean;
 
   private subscriber$ = new Subject();
@@ -56,6 +57,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   constructor(
+    public darkTheme: DarkThemeSwitch,
     public loginService: GoogleLoginService,
     private http: HttpService,
     private adminService: AdminService,
@@ -67,13 +69,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialog: MatDialog,
     private storageService: StorageService
   ) {
-    // this.schoolIdSubject = this.http.schoolIdSubject;
   }
 
   ngOnInit() {
 
     this.storageService.detectChanges();
-
+    this.darkTheme.isEnabled$.subscribe((val) => {
+      this.darkThemeEnabled = val;
+    });
 
     if ( !DeviceDetection.isIOSTablet() && !DeviceDetection.isMacOS() ) {
       const link = document.createElement('link');

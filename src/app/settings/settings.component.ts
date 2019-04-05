@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
 import { User } from '../models/User';
+import {DarkThemeSwitch} from '../dark-theme-switch';
 
 export interface Setting {
   color_profile: string;
@@ -28,6 +29,7 @@ export class SettingsComponent implements OnInit {
   isSwitch: boolean;
 
   hoveredPofile: boolean;
+  hoveredTheme: boolean;
   hovered: boolean;
   hoveredColor: string;
 
@@ -38,6 +40,8 @@ export class SettingsComponent implements OnInit {
       private dataService: DataService,
       private _zone: NgZone,
       public loadingService: LoadingService,
+      public darkTheme: DarkThemeSwitch,
+
   ) {
     this.settings.push({
       'color_profile': '#E7A700, #EFCE00',

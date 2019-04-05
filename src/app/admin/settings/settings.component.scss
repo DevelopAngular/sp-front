@@ -1,6 +1,8 @@
 .settings-wrapper {
   width: 244px;
   position: relative;
+  border-radius: 10px;
+  //overflow: hidden;
 
   .title {
     padding: 20px 0 10px 30px;
@@ -22,6 +24,10 @@
         .option-title {
           margin: 0 10px 0 10px;
           font-size: 17px;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
         }
 
         .switch-icon {

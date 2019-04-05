@@ -50,6 +50,10 @@
                 .option-title {
                     margin: 0 12px 0 12px;
                     font-size: 17px;
+                  -webkit-user-select: none;
+                  -moz-user-select: none;
+                  -ms-user-select: none;
+                  user-select: none;
                 }
 
                 .switch-icon {

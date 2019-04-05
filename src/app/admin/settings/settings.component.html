@@ -1,5 +1,6 @@
-<div class="settings-wrapper">
-    <div class="title">Settings</div>
+<div class="settings-wrapper" [ngStyle]="{'backgroundColor': data.darkBackground ? '#0F171E' : '#FFFFFF'}">
+
+    <div class="title" [ngStyle]="{'color': data.darkBackground ? '#FFFFFF' : '#1F195E'}">Settings</div>
     <div class="settings-content">
       <div class="profile-switch" *ngIf="isSwitchOption">
         <div class="option"
@@ -11,6 +12,24 @@
           <img class="switch-icon" [src]="'./assets/Profile Switch (' + (hoveredProfile ? 'Navy' : 'Blue-Gray') + ').svg'| resolveAsset">
           <div class="option-title" [style.color]="hoveredProfile ? '#1F195E' : '#7F879D'">Teacher View</div>
           <img class="arrow-icon" [src]="'./assets/Chevron Right (' + (hoveredProfile ? 'Navy' : 'Blue-Gray') + ').svg' | resolveAsset">
+
+        </div>
+
+        <div class="option"
+             (mouseenter)="hoveredTheme = true"
+             (mouseleave)="hoveredTheme = false"
+             [style.background-color]="hoveredTheme ? 'rgb(228, 235, 255)' : 'white'"
+             (click)="darkTheme.switchTheme(); data.darkBackground = !data.darkBackground"
+        >
+
+          <img class="switch-icon" [src]="'./assets/Moon (' + (hoveredTheme ? 'Navy' : 'Blue-Gray') + ').svg'| resolveAsset">
+          <div class="option-title" [style.color]="hoveredTheme ? '#1F195E' : '#7F879D'">
+            <span *ngIf="darkTheme.isEnabled$.value; else dark">Light Theme</span>
+            <ng-template #dark>
+              <span >Dark Theme</span>
+            </ng-template>
+          </div>
+
         </div>
         <mat-divider style="margin: 10px 0 10px 0"></mat-divider>
       </div>
@@ -23,7 +42,7 @@
              [style.background]="hovered && hoveredColor === setting.gradient ? 'radial-gradient(circle at 73% 71%,' + setting.gradient + ')' : 'none'"
         >
           <img class="icon" [src]="hovered && hoveredColor === setting.gradient ? setting.hover_icon : setting.icon | resolveAsset" alt="link">
-          <div class="setting-name" [style.color]="hovered && hoveredColor === setting.gradient ? '#EFEFEF' : '#7F879D'">{{ setting.title }}</div>
+          <div class="setting-name" [style.color]="getColor(setting)">{{ setting.title }}</div>
         </div>
       </div>
       <mat-divider style="margin: 10px 0 10px 0"></mat-divider>
@@ -36,37 +55,7 @@
       </div>
     </div>
     <div class="bottom-arrow-container">
-        <div class="bottom-arrow"></div>
+        <div class="bottom-arrow" [ngStyle]="{'backgroundColor': data.darkBackground ? '#0F171E' : '#FFFFFF'}"></div>
     </div>
 </div>
 
-
-<!--<div class="settings-wrapper">-->
-  <!--<div class="flex-center-center mt pt">-->
-    <!--<div>-->
-      <!--<div>-->
-        <!--<h2 class="px" [style.color]="'#134482'">Settings</h2>-->
-      <!--</div>-->
-      <!--<div class="flex-center-start" >-->
-        <!--<div *ngFor="let setting of settings" class="px">-->
-          <!--<app-gradient-button-->
-            <!--[cursor]="'pointer'"-->
-            <!--[minWidth]="'121px'"-->
-            <!--[minHeight]="'74px'"-->
-            <!--[gradient]="setting.color_profile.gradient_color"-->
-            <!--[hoverColor]="setting.color_profile.solid_color"-->
-            <!--[fontSize]="'17px'"-->
-            <!--(click)="settingsAction(setting.action)">{{setting.title}}-->
-          <!--</app-gradient-button>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</div>-->
-  <!--</div>-->
-  <!--<div class="footer-links">-->
-    <!--<div class="version-text">SmartPass Version 1.2</div>-->
-    <!--<div class="links" style="display: flex">-->
-      <!--<div><a href="https://www.smartpass.app/legal" target="_blank">Privacy & Terms</a></div>-->
-      <!--<div style="margin-left: 20px"><a href="https://www.smartpass.app/acknowledgements" target="_blank">Acknowledgements</a></div>-->
-    <!--</div>-->
-  <!--</div>-->
-<!--</div>-->

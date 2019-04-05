@@ -2,6 +2,7 @@ import { Component, ElementRef, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ColorProfile } from '../../models/ColorProfile';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material';
+import {DarkThemeSwitch} from '../../dark-theme-switch';
 
 @Component({
   selector: 'app-settings',
@@ -15,6 +16,7 @@ export class SettingsComponent implements OnInit {
     isSwitchOption: boolean;
 
     hoveredProfile: boolean;
+    hoveredTheme: boolean;
     hovered: boolean;
     hoveredColor: string;
 
@@ -46,7 +48,27 @@ export class SettingsComponent implements OnInit {
         private router: Router,
         public dialogRef: MatDialogRef<SettingsComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any[],
+        public darkTheme: DarkThemeSwitch,
     ) {
+    }
+
+    getColor(setting) {
+      if (this.darkTheme.isEnabled$.value) {
+        if (this.hovered && this.hoveredColor === setting.gradient) {
+          return '#EFEFEF';
+
+        } else {
+          return '#EFEFEF';
+        }
+
+      } else {
+        if (this.hovered && this.hoveredColor === setting.gradient) {
+          return '#7F879D';
+
+        } else {
+          return '#EFEFEF';
+        }
+      }
     }
 
     ngOnInit() {
@@ -58,7 +80,7 @@ export class SettingsComponent implements OnInit {
     updateCalendarPosition() {
         const matDialogConfig: MatDialogConfig = new MatDialogConfig();
         const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
-        const top = this.isSwitchOption ? 365 : 285;
+        const top = this.isSwitchOption ? 405 : 285;
         matDialogConfig.position = {left: `${rect.left - 170}px`, top: `${rect.top - top}px`};
 
         this.dialogRef.updatePosition(matDialogConfig.position);

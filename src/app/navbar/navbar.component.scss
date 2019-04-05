@@ -1,3 +1,6 @@
+:host {
+  background-color: transparent;
+}
 .bar {
   height: 68px;
   /* background-image: radial-gradient(circle at 43% 66%, #03cf31, rgba(1, 129, 85, 0.7)); */
@@ -6,7 +9,8 @@
   flex-direction: row;
   align-items: center;
   user-select: none;
-  margin-top: 15px;
+  padding-top: 15px;
+  padding-bottom: 5px;
 }
 
 .grow {
@@ -195,7 +199,7 @@
 
 .divider{
   width: 90%;
-  margin: 5px auto 0 auto;
+  margin: 0 auto;
   height: 1px;
   background-color: #B5B7BA;
 }
