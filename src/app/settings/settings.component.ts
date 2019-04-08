@@ -9,7 +9,6 @@ import {DarkThemeSwitch} from '../dark-theme-switch';
 export interface Setting {
   color_profile: string;
   icon: string;
-  hover_icon: string;
   action: string;
   title: string;
 }
@@ -28,8 +27,9 @@ export class SettingsComponent implements OnInit {
 
   isSwitch: boolean;
 
-  hoveredPofile: boolean;
+  hoveredProfile: boolean;
   hoveredTheme: boolean;
+  hoveredSignout: boolean;
   hovered: boolean;
   hoveredColor: string;
 
@@ -45,43 +45,37 @@ export class SettingsComponent implements OnInit {
   ) {
     this.settings.push({
       'color_profile': '#E7A700, #EFCE00',
-      'icon': './assets/Star (Blue-Gray).svg',
-      'hover_icon': './assets/Star (White).svg',
+      'icon': 'Star',
       'action': 'favorite',
       'title': 'Favorites'
     });
     this.settings.push({
       'color_profile': '#DA2370, #FB434A',
-      'icon': './assets/Notifications (Blue-Gray).svg',
-      'hover_icon': './assets/Notifications (White).svg',
+      'icon': 'Notifications',
       'action': 'notifications',
       'title': 'Notifications'
     });
     this.settings.push({
       'color_profile': '#03CF31, #00B476',
-      'icon': './assets/Info (Blue-Gray).svg',
-      'hover_icon': './assets/Info (White).svg',
+      'icon': 'Info',
       'action': 'intro',
       'title': 'View Intro'
     });
     this.settings.push({
       'color_profile': '#0B9FC1, #00C0C7',
-      'icon': './assets/Team (Blue-Gray).svg',
-      'hover_icon': './assets/Team (White).svg',
+      'icon': 'Team',
       'action': 'about',
       'title': 'About'
     });
     this.settings.push({
         'color_profile': '#5E4FED, #7D57FF',
-        'icon': './assets/Feedback (Blue-Gray).svg',
-        'hover_icon': './assets/Feedback (White).svg',
+        'icon': 'Feedback',
         'action': 'feedback',
         'title': 'Feedback'
     });
     this.settings.push({
       'color_profile': '#F52B4F, #F37426',
-      'icon': './assets/Support (Blue-Gray).svg',
-      'hover_icon': './assets/Support (White).svg',
+      'icon': 'Support',
       'action': 'support',
       'title': 'Support'
     });
@@ -100,6 +94,25 @@ export class SettingsComponent implements OnInit {
           this.isStaff = user.roles.includes('edit_all_hallpass');
         });
       });
+  }
+
+  getIcon(iconName: string, setting?: any,  hover?: boolean, hoveredColor?: string) {
+
+    return this.darkTheme.getIcon({
+      iconName: iconName,
+      setting: setting,
+      hover: hover,
+      hoveredColor: hoveredColor
+    });
+  }
+
+  getColor(setting?, hover?: boolean, hoveredColor?: string) {
+
+    return this.darkTheme.getColor({
+      setting: setting,
+      hover: hover,
+      hoveredColor: hoveredColor
+    });
   }
 
   onHover(color) {

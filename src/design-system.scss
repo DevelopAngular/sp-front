@@ -360,8 +360,8 @@ $primaryFont: "Helvetica Neue", sans-serif;
 .report-group-header,
 .bottom-shadow,
 .school-toggle-bar-wrapper,
-.settings-wrapper,
-.setting-name {
+.settings-wrapper {
+
   transition: all .2s ease-in;
 }
 
@@ -420,10 +420,15 @@ $primaryFont: "Helvetica Neue", sans-serif;
   .school-toggle-bar-wrapper {
     background-color: #C5D5FF !important;
   }
-  .settings-wrapper {
-    .setting-name {
-      color: #FFFFFF;
+  .nav-wrapper {
+    .nav-footer {
+      .footer-text {
+        color: #FFFFFF;
+      }
     }
+  }
+  .card-header {
+    //color: #FFFFFF !important;
   }
 }
 

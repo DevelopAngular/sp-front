@@ -3,6 +3,7 @@
     width: 244px;
     //height: 382px;
     position: relative;
+    border-radius: 10px;
 
     .top-arrow-container {
         position: absolute;
@@ -114,9 +115,8 @@
             .privacy {
                 margin-left: 10px;
                 cursor: pointer;
-
-                a {
-                    color: #7F879D;
+                &:hover {
+                  text-decoration: underline;
                 }
             }
         }

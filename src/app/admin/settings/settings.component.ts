@@ -17,27 +17,39 @@ export class SettingsComponent implements OnInit {
 
     hoveredProfile: boolean;
     hoveredTheme: boolean;
+    hoveredSignout: boolean;
     hovered: boolean;
     hoveredColor: string;
+
+
+    // settings: = [
+    //   {
+    //     // 'gradient': '#1893E9, #05B5DE',
+    //     'icon': './assets/Profile Switch (Blue-Gray).svg',
+    //     'icon-dark': './assets/Profile Switch (White).svg',
+    //     'hover_icon': './assets/Profile Switch (White).svg',
+    //     'hover_icon-dark': './assets/Profile Switch (Navy).svg',
+    //   },
+    // ]
 
     public settings = [
         {
             'gradient': '#1893E9, #05B5DE',
-            'icon': './assets/Team (Blue-Gray).svg',
+            'icon': 'Team',
             'hover_icon': './assets/Team (White).svg',
             'action': 'about',
             'title': 'About'
         },
         {
             'gradient': '#5E4FED, #7D57FF',
-            'icon': './assets/Feedback (Blue-Gray).svg',
+            'icon': 'Feedback',
             'hover_icon': './assets/Feedback (White).svg',
             'action': 'feedback',
             'title': 'Feedback'
         },
         {
             'gradient': '#F52B4F, #F37426',
-            'icon': './assets/Support (Blue-Gray).svg',
+            'icon': 'Support',
             'hover_icon': './assets/Support (White).svg',
             'action': 'support',
             'title': 'Support'
@@ -52,29 +64,31 @@ export class SettingsComponent implements OnInit {
     ) {
     }
 
-    getColor(setting) {
-      if (this.darkTheme.isEnabled$.value) {
-        if (this.hovered && this.hoveredColor === setting.gradient) {
-          return '#EFEFEF';
 
-        } else {
-          return '#EFEFEF';
-        }
-
-      } else {
-        if (this.hovered && this.hoveredColor === setting.gradient) {
-          return '#7F879D';
-
-        } else {
-          return '#EFEFEF';
-        }
-      }
-    }
 
     ngOnInit() {
         this.triggerElementRef = this.data['trigger'];
         this.isSwitchOption = this.data['isSwitch'];
         this.updateCalendarPosition();
+    }
+
+    getIcon(iconName: string, setting: any,  hover?: boolean, hoveredColor?: string) {
+
+      return this.darkTheme.getIcon({
+        iconName: iconName,
+        setting: setting,
+        hover: hover,
+        hoveredColor: hoveredColor
+      });
+    }
+
+    getColor(setting?, hover?: boolean, hoveredColor?: string) {
+
+      return this.darkTheme.getColor({
+        setting: setting,
+        hover: hover,
+        hoveredColor: hoveredColor
+      });
     }
 
     updateCalendarPosition() {

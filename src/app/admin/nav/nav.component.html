@@ -35,7 +35,12 @@
     <div class="footer-text">{{(user?user.display_name : '')}}</div>
     <div [style.display]="'flex'">
       <!--<img draggable="false" (click)="router.navigateByUrl('/select-profile')" class="footer-settings global-opacity-icons" [src]="'./assets/Switch Account (Blue).png' | resolveAsset" alt="" *ngIf="showButton">-->
-      <img draggable="false" (click)="openSettings($event)" [ngClass]="{'active-route': selectedSettings }" class="footer-settings global-opacity-icons" [src]="'./assets/Settings (Navy).svg' | resolveAsset" alt="">
+      <!--{{darkTheme.isEnabled$.value}}-->
+      <img draggable="false" class="footer-settings global-opacity-icons"
+           [ngClass]="{'active-route': selectedSettings , 'active-route__dark': selectedSettings && darkTheme.isEnabled$.value}"
+           [src]="settingsIcon | resolveAsset" alt="Settings icon"
+           (click)="openSettings($event)"
+      >
     </div>
   </div>
 </div>

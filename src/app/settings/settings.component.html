@@ -1,30 +1,30 @@
 
-<div class="settings-wrapper">
+<div class="settings-wrapper" *ngIf="data" [style.background-color]="darkTheme.getBackground('low')">
   <div class="top-arrow-container">
-    <div class="top-arrow"></div>
+    <div class="top-arrow" [style.background-color]="darkTheme.getBackground('low')"></div>
   </div>
-  <div class="title">Settings</div>
+  <div class="title" [ngStyle]="{'color': darkTheme.isEnabled$.value ? '#FFFFFF' : '#1F195E'}">Settings</div>
   <div class="settings-content">
     <div class="profile-switch" *ngIf="isSwitch">
       <div class="option"
-           (mouseenter)="hoveredPofile = true"
-           (mouseleave)="hoveredPofile = false"
-           [style.background-color]="hoveredPofile ? 'rgb(228, 235, 255)' : 'white'"
+           (mouseenter)="hoveredProfile = true"
+           (mouseleave)="hoveredProfile = false"
+           [style.background-color]="hoveredProfile ? 'rgb(228, 235, 255)' : 'transparent'"
            (click)="dialogRef.close('switch')"
       >
-        <img class="switch-icon" [src]="'./assets/Profile Switch (' + (hoveredPofile ? 'Navy' : 'Blue-Gray') + ').svg'| resolveAsset">
-        <div class="option-title" [style.color]="hoveredPofile ? '#1F195E' : '#7F879D'">Administrator View</div>
-        <img class="arrow-icon" [src]="'./assets/Chevron Right (' + (hoveredPofile ? 'Navy' : 'Blue-Gray') + ').svg' | resolveAsset">
+        <img class="switch-icon" [src]="getIcon('Profile Switch', null,  hoveredProfile) | resolveAsset">
+        <div class="option-title" [style.color]="getColor(null, hoveredProfile)">Administrator View</div>
+        <img class="arrow-icon" [src]="getIcon('Chevron Right', null,  hoveredProfile) | resolveAsset">
       </div>
       <div class="option"
            (mouseenter)="hoveredTheme = true"
            (mouseleave)="hoveredTheme = false"
-           [style.background-color]="hoveredTheme ? 'rgb(228, 235, 255)' : 'white'"
+           [style.background-color]="hoveredTheme ? 'rgb(228, 235, 255)' : 'transparent'"
            (click)="darkTheme.switchTheme()"
       >
 
-        <img class="switch-icon" [src]="'./assets/Moon (' + (hoveredTheme ? 'Navy' : 'Blue-Gray') + ').svg'| resolveAsset">
-        <div class="option-title" [style.color]="hoveredTheme ? '#1F195E' : '#7F879D'">Dark Theme</div>
+        <img class="switch-icon" [src]="getIcon('Moon', null, hoveredTheme) | resolveAsset">
+        <div class="option-title" [style.color]="getColor(null, hoveredTheme) | resolveAsset">Dark Theme</div>
 
       </div>
       <mat-divider class="divider"></mat-divider>
@@ -39,19 +39,24 @@
            [style.background]="hovered && hoveredColor === setting.color_profile ? 'radial-gradient(circle at 73% 71%,' + setting.color_profile + ')' : 'none'"
       >
         <img class="setting-icon"
-             [src]="hovered && hoveredColor === setting.color_profile ? setting.hover_icon : setting.icon | resolveAsset" alt="SET">
+             [src]="getIcon(setting.icon, setting, hovered, hoveredColor) | resolveAsset" alt="SET">
         <div class="setting-title"
-             [style.color]="hovered && hoveredColor === setting.color_profile ? '#EFEFEF' : '#7F879D'"
+             [style.color]="getColor(setting, hovered, hoveredColor)"
         > {{setting.title }} </div>
       </div>
       <mat-divider class="divider" *ngIf="i === 2 || i === 5"></mat-divider>
     </div>
   </div>
   <div class="footer">
-    <div class="sign-out" (click)="dialogRef.close('signout')">Sign out</div>
-    <div class="options">
+    <div class="sign-out"
+         [style.background-color]="hoveredSignout ? 'rgb(228, 235, 255)' : 'transparent'"
+         [style.color]="getColor(null, hoveredSignout)"
+         (mouseenter)="hoveredSignout = true"
+         (mouseleave)="hoveredSignout = false"
+         (click)="dialogRef.close('signout')">Sign out</div>
+    <div class="options" [style.color]="getColor(null, null)">
       <span class="version">Version 1.2</span>
-      <span class="privacy ds-small-link-text" (click)="dialogRef.close('privacy')">Privacy & Terms</span>
+      <span class="privacy" (click)="dialogRef.close('privacy')">Privacy & Terms</span>
     </div>
   </div>
 </div>

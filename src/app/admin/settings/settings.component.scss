@@ -76,28 +76,28 @@
 
     .sign-out {
       padding: 12px 0 12px 30px;
-      color: #7F879D;
+      //color: #7F879D;
       font-size: 15px;
       cursor: pointer;
 
       &:hover {
-        background-color: rgb(228, 235, 255);
-        color: #1F195E;
+        //background-color: rgb(228, 235, 255);
+        //color: #1F195E;
       }
     }
 
     .versions {
       display: flex;
       justify-content: center;
-      color: #7F879D;
+      //color: #7F879D;
       font-size: 12px;
       margin-bottom: 12px;
 
       .privacy {
         margin-left: 10px;
         cursor: pointer;
-        a {
-          color: #7F879D;
+        &:hover {
+          text-decoration: underline;
         }
       }
     }

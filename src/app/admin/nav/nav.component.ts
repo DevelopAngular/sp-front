@@ -6,7 +6,7 @@ import { DataService } from '../../services/data-service';
 import { User } from '../../models/User';
 import { UserService } from '../../services/user.service';
 import { disableBodyScroll } from 'body-scroll-lock';
-import {MatDialog} from '@angular/material';
+import {MatDialog, MatDialogRef} from '@angular/material';
 import {SettingsComponent} from '../settings/settings.component';
 import {map} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
@@ -49,6 +49,10 @@ export class NavComponent implements OnInit {
 
   showButton: boolean;
   selectedSettings: boolean;
+
+  get settingsIcon () {
+    return `./assets/Settings (${this.darkTheme.isEnabled$.value ? 'White' : 'Navy'}).svg`;
+  }
 
   ngOnInit() {
 
@@ -110,8 +114,10 @@ export class NavComponent implements OnInit {
 
   openSettings(event) {
     this.selectedSettings = true;
+    // return;
+
     const target = new ElementRef(event.currentTarget);
-    const settingsRef = this.dialog.open(SettingsComponent, {
+    const settingsRef: MatDialogRef<SettingsComponent> = this.dialog.open(SettingsComponent, {
       panelClass: 'calendar-dialog-container',
       backdropClass: 'invis-backdrop',
       data: { 'trigger': target, 'isSwitch': this.showButton , darkBackground: this.darkTheme.isEnabled$.value}

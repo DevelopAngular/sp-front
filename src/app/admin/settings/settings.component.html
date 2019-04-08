@@ -1,4 +1,4 @@
-<div class="settings-wrapper" [ngStyle]="{'backgroundColor': data.darkBackground ? '#0F171E' : '#FFFFFF'}">
+<div class="settings-wrapper" *ngIf="data" [style.background-color]="darkTheme.getBackground('low')">
 
     <div class="title" [ngStyle]="{'color': data.darkBackground ? '#FFFFFF' : '#1F195E'}">Settings</div>
     <div class="settings-content">
@@ -6,27 +6,27 @@
         <div class="option"
              (mouseenter)="hoveredProfile = true"
              (mouseleave)="hoveredProfile = false"
-             [style.background-color]="hoveredProfile ? 'rgb(228, 235, 255)' : 'white'"
+             [style.background-color]="hoveredProfile ? 'rgb(228, 235, 255)' : 'transparent'"
              (click)="dialogRef.close('switch')"
         >
-          <img class="switch-icon" [src]="'./assets/Profile Switch (' + (hoveredProfile ? 'Navy' : 'Blue-Gray') + ').svg'| resolveAsset">
-          <div class="option-title" [style.color]="hoveredProfile ? '#1F195E' : '#7F879D'">Teacher View</div>
-          <img class="arrow-icon" [src]="'./assets/Chevron Right (' + (hoveredProfile ? 'Navy' : 'Blue-Gray') + ').svg' | resolveAsset">
+          <img class="switch-icon" [src]="getIcon('Profile Switch', null, hoveredProfile) | resolveAsset">
+          <div class="option-title" [style.color]="getColor(null, hoveredProfile)">Teacher View</div>
+          <img class="arrow-icon" [src]="getIcon('Chevron Right', null, hoveredProfile) | resolveAsset">
 
         </div>
 
         <div class="option"
              (mouseenter)="hoveredTheme = true"
              (mouseleave)="hoveredTheme = false"
-             [style.background-color]="hoveredTheme ? 'rgb(228, 235, 255)' : 'white'"
+             [style.background-color]="hoveredTheme ? 'rgb(228, 235, 255)' : 'transparent'"
              (click)="darkTheme.switchTheme(); data.darkBackground = !data.darkBackground"
         >
 
-          <img class="switch-icon" [src]="'./assets/Moon (' + (hoveredTheme ? 'Navy' : 'Blue-Gray') + ').svg'| resolveAsset">
-          <div class="option-title" [style.color]="hoveredTheme ? '#1F195E' : '#7F879D'">
+          <img class="switch-icon" [src]="getIcon('Moon', null, hoveredTheme) | resolveAsset">
+          <div class="option-title" [style.color]="getColor(null, hoveredTheme)">
             <span *ngIf="darkTheme.isEnabled$.value; else dark">Light Theme</span>
             <ng-template #dark>
-              <span >Dark Theme</span>
+              <span>Dark Theme</span>
             </ng-template>
           </div>
 
@@ -41,21 +41,29 @@
              (mouseleave)="hovered = false"
              [style.background]="hovered && hoveredColor === setting.gradient ? 'radial-gradient(circle at 73% 71%,' + setting.gradient + ')' : 'none'"
         >
-          <img class="icon" [src]="hovered && hoveredColor === setting.gradient ? setting.hover_icon : setting.icon | resolveAsset" alt="link">
-          <div class="setting-name" [style.color]="getColor(setting)">{{ setting.title }}</div>
+          <img class="icon" [src]="getIcon(setting.icon, setting, hovered, hoveredColor) | resolveAsset" alt="link">
+          <div class="setting-name" [style.color]="getColor(setting, hovered, hoveredColor)">{{ setting.title }}</div>
         </div>
       </div>
       <mat-divider style="margin: 10px 0 10px 0"></mat-divider>
     </div>
     <div class="footer">
-      <div class="sign-out" (click)="dialogRef.close('signout')">Sign out</div>
-      <div class="versions">
+      <div class="sign-out"
+           [style.background-color]="hoveredSignout ? 'rgb(228, 235, 255)' : 'transparent'"
+           [style.color]="getColor(null, hoveredSignout)"
+           (mouseenter)="hoveredSignout = true"
+           (mouseleave)="hoveredSignout = false"
+           (click)="dialogRef.close('signout')">
+        <span>Sign out</span>
+      </div>
+      <div class="versions" [style.color]="getColor(null, null)">
         <div class="version">Version 1.2</div>
-          <div class="privacy ds-small-link-text" (click)="dialogRef.close('privacy')">Privacy & Terms</div>
+          <div class="privacy"
+               (click)="dialogRef.close('privacy')">Privacy & Terms</div>
       </div>
     </div>
     <div class="bottom-arrow-container">
-        <div class="bottom-arrow" [ngStyle]="{'backgroundColor': data.darkBackground ? '#0F171E' : '#FFFFFF'}"></div>
+        <div class="bottom-arrow" [style.background-color]="darkTheme.getBackground('low')"></div>
     </div>
 </div>
 

@@ -18,6 +18,7 @@ import { FavoriteFormComponent } from '../favorite-form/favorite-form.component'
 import { NotificationFormComponent } from '../notification-form/notification-form.component';
 import { LocationsService } from '../services/locations.service';
 import * as _ from 'lodash';
+import {DarkThemeSwitch} from '../dark-theme-switch';
 
 @Component({
   selector: 'app-navbar',
@@ -61,7 +62,8 @@ export class NavbarComponent implements OnInit {
       private _zone: NgZone,
       private navbarData: NavbarDataService,
       private process: NgProgress,
-      private activeRoute: ActivatedRoute
+      private activeRoute: ActivatedRoute,
+      public darkTheme: DarkThemeSwitch
   ) {
 
     const navbarEnabled$ = combineLatest(
@@ -131,6 +133,25 @@ export class NavbarComponent implements OnInit {
         });
     });
   }
+
+  getIcon(iconName: string, darkFill?: string, lightFill?: string) {
+
+    return this.darkTheme.getIcon({
+      iconName: iconName,
+      darkFill: darkFill,
+      lightFill: lightFill,
+    });
+  }
+
+  getColor(setting?, hover?: boolean, hoveredColor?: string) {
+
+    return this.darkTheme.getColor({
+      setting: setting,
+      hover: hover,
+      hoveredColor: hoveredColor
+    });
+  }
+
 
   get notificationBadge$() {
     return this.navbarData.notificationBadge$;
