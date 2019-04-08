@@ -21,7 +21,7 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     @Input() showWeekend: boolean;
     @Input() showTime: boolean = true;
     @Input() min: moment.Moment;
-    @Input() range: boolean;        ///// In Process
+    @Input() range: boolean;
 
     @Output() onSelectDate = new EventEmitter<moment.Moment[]>();
 
@@ -31,6 +31,7 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     sortedDates: CalendarDate[] = [];
 
     public hovered: boolean;
+    public hoveredDates: moment.Moment[] = [];
 
     constructor() {}
 
@@ -68,6 +69,22 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
         }) > -1;
     }
 
+    isFirstSelectedDay(date: moment.Moment): boolean {
+        return date.isSame(this.selectedDates[0], 'day');
+    }
+
+    isSecondSelectedDay(date: moment.Moment): boolean {
+        return this.selectedDates.length > 1 && date.isSame(this.selectedDates[this.selectedDates.length - 1], 'day');
+    }
+
+    isFirstHoveredDay(date: moment.Moment): boolean {
+        return date.isSame(this.hoveredDates[0], 'day');
+    }
+
+    isSecondHoveredDay(date: moment.Moment): boolean {
+        return this.hoveredDates.length > 1 && date.isSame(this.hoveredDates[this.hoveredDates.length - 1], 'day');
+    }
+
     showWeekendDay(date: moment.Moment): boolean {
         if (!this.showWeekend) {
            return moment(date).isoWeekday() !== 6 && moment(date).isoWeekday() !== 7;
@@ -80,30 +97,61 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
         return moment(date).isSame(this.currentDate, 'month');
     }
 
-    isNextMonth(date: moment.Moment) {
+    isNextMonth(date: moment.Moment): boolean {
         return moment(date).month() === moment(this.currentDate).month() + 1;
     }
 
-    selectDate(date: CalendarDate): void {
-        let bulkSelect;
-        if (this.range) {
-            bulkSelect = true;
+    isRangeHovered(date: moment.Moment): boolean {
+        return this.range && _.findIndex(this.hoveredDates, (hoveredDate) => {
+            return moment(date).isSame(hoveredDate, 'day');
+        }) > -1;
+    }
+
+    hoverDates(date: moment.Moment) {
+        this.hovered = true;
+        if (this.range && this.selectedDates.length === 1 && !this.hoveredDates.length) {
+            const countDiff = date.diff(moment(this.selectedDates[0]), 'days');
+            for (let i = 1; i <= countDiff; i++) {
+                const hoveredDate = moment(this.selectedDates[0]).add(i, 'days');
+                this.hoveredDates.push(hoveredDate);
+                this.hoveredDates.push(date);
+            }
         }
+    }
+
+    disabledHovered() {
+        this.hovered = false;
+        if (this.range && this.selectedDates.length === 1) {
+            this.hoveredDates = [];
+        }
+    }
+
+    selectDate(date: CalendarDate): void {
+        const bulkSelect = this.range;
         const setHour = moment(date.mDate).set('hour', this.currentDate.hour());
         const fullDate = moment(setHour).set('minute', this.currentDate.minutes());
+        if (bulkSelect && this.selectedDates.length > 1) {
+            this.selectedDates = [fullDate];
+        }
         if (bulkSelect && this.selectedDates.length) {
-            if (date.mDate.date() > moment(this.selectedDates[0]).date()) {
+            if (date.mDate.isAfter(moment(this.selectedDates[0]))) {
                 const countDiff = date.mDate.diff(moment(this.selectedDates[0]), 'days');
-                for (let i = 1; i <= countDiff + 1; i++) {
-
+                this.selectedDates.push(date.mDate);
+                for (let i = 1; i <= countDiff; i++) {
+                    const rangeDates = moment(this.selectedDates[0]).add(i, 'day');
+                    if (this.showWeekendDay(rangeDates)) {
+                        this.hoveredDates.push(rangeDates);
+                    }
                 }
+            } else {
+                this.selectedDates = [fullDate];
+                this.hoveredDates = [];
             }
         } else {
             this.selectedDates = [fullDate];
         }
         this.generateCalendar();
         this.onSelectDate.emit(this.selectedDates);
-        console.log(fullDate.format('MM-DD-YYYY / HH : mm'));
     }
 
     prevMonth(): void {

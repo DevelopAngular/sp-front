@@ -8,12 +8,13 @@ import * as moment from 'moment';
 })
 export class CalendarPickerTestComponent implements OnInit {
 
-  selected1 = moment('2019-04-18');
-  selected2 = moment('2019-04-22');
-
   constructor() { }
 
   ngOnInit() {
+  }
+
+  selectedDates(dates) {
+    console.log(dates);
   }
 
 }
