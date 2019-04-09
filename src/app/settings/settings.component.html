@@ -5,8 +5,8 @@
   </div>
   <div class="title" [ngStyle]="{'color': darkTheme.isEnabled$.value ? '#FFFFFF' : '#1F195E'}">Settings</div>
   <div class="settings-content">
-    <div class="profile-switch" *ngIf="isSwitch">
-      <div class="option"
+    <div class="profile-switch">
+      <div class="option"  *ngIf="isSwitch"
            (mouseenter)="hoveredProfile = true"
            (mouseleave)="hoveredProfile = false"
            [style.background-color]="hoveredProfile ? 'rgb(228, 235, 255)' : 'transparent'"
@@ -20,11 +20,16 @@
            (mouseenter)="hoveredTheme = true"
            (mouseleave)="hoveredTheme = false"
            [style.background-color]="hoveredTheme ? 'rgb(228, 235, 255)' : 'transparent'"
-           (click)="darkTheme.switchTheme()"
+           (click)="darkTheme.switchTheme(); data.darkBackground = !data.darkBackground"
       >
 
         <img class="switch-icon" [src]="getIcon('Moon', null, hoveredTheme) | resolveAsset">
-        <div class="option-title" [style.color]="getColor(null, hoveredTheme) | resolveAsset">Dark Theme</div>
+        <div class="option-title" [style.color]="getColor(null, hoveredTheme)">
+          <span *ngIf="darkTheme.isEnabled$.value; else dark">Light Theme</span>
+          <ng-template #dark>
+            <span>Dark Theme</span>
+          </ng-template>
+        </div>
 
       </div>
       <mat-divider class="divider"></mat-divider>

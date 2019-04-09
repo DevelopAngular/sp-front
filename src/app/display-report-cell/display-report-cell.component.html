@@ -1,22 +1,22 @@
-﻿<div class="display-card-wrapper">
+﻿<div class="display-report-cell-wrapper">
   <div class="display-card-header justify-content">
     <div class="flexCls">
 
       <div class="display-card-header-title">
         {{ student_name }}
       </div>
-      <div class="righticon">{{ created}}</div>
+      <div class="righticon" [style.color]="color">{{ created}}</div>
     </div>
 
   </div>
   <div  class="card-content">
-    <div class="subtitlecls">
+    <div class="subtitlecls" [style.color]="color">
       <div style="font-weight: bold">Reported by {{ issuer }}:</div>
       <div style="width: 90%">{{ message }}</div>
     </div>
     <div class="print-icon">
       <div [style.cursor]="'pointer'">
-        <div (click)="printReport($event)"><img draggable="false" *ngIf="!!righticon" [src]="righticon | resolveAsset"></div>
+        <div (click)="printReport($event)"><img draggable="false" *ngIf="!!righticon" [src]="icon | resolveAsset"></div>
       </div>
     </div>
   </div>

@@ -17,6 +17,7 @@ import {User} from '../../models/User';
 import {Location} from '../../models/Location';
 import {of, Subscription} from 'rxjs';
 import {DataService} from '../../services/data-service';
+import {DarkThemeSwitch} from '../../dark-theme-switch';
 
 
 @Component({
@@ -54,7 +55,9 @@ export class SearchComponent implements OnInit {
       private activatedRoute: ActivatedRoute,
       private router: Router,
       private userService: UserService,
-      private dataService: DataService
+      private dataService: DataService,
+      public darkTheme: DarkThemeSwitch
+
   ) {
   }
 

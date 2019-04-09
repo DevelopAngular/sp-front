@@ -32,7 +32,7 @@
     </div>
   </div>
   <div class="nav-footer">
-    <div class="footer-text">{{(user?user.display_name : '')}}</div>
+    <div class="footer-text" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{(user?user.display_name : '')}}</div>
     <div [style.display]="'flex'">
       <!--<img draggable="false" (click)="router.navigateByUrl('/select-profile')" class="footer-settings global-opacity-icons" [src]="'./assets/Switch Account (Blue).png' | resolveAsset" alt="" *ngIf="showButton">-->
       <!--{{darkTheme.isEnabled$.value}}-->

@@ -6,6 +6,7 @@ import { UserService } from '../../services/user.service';
 import { BehaviorSubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { AdminService } from '../../services/admin.service';
+import {DarkThemeSwitch} from '../../dark-theme-switch';
 
 @Component({
   selector: 'app-accounts',
@@ -26,7 +27,8 @@ export class AccountsComponent implements OnInit {
     public matDialog: MatDialog,
     private userService: UserService,
     private http: HttpService,
-    private adminService: AdminService
+    private adminService: AdminService,
+    public darkTheme: DarkThemeSwitch
   ) { }
 
   ngOnInit() {

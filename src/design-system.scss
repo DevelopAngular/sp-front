@@ -341,6 +341,7 @@ $primaryFont: "Helvetica Neue", sans-serif;
 
 /* === Dark Theme === */
 
+.sticky-header,
 .router-outlet,
 .bar,
 .passes-wrapper,
@@ -420,16 +421,18 @@ $primaryFont: "Helvetica Neue", sans-serif;
   .school-toggle-bar-wrapper {
     background-color: #C5D5FF !important;
   }
-  .nav-wrapper {
-    .nav-footer {
-      .footer-text {
-        color: #FFFFFF;
-      }
-    }
-  }
-  .card-header {
-    //color: #FFFFFF !important;
-  }
+  //.nav-wrapper {
+  //  .nav-footer {
+  //    .footer-text {
+  //      color: #FFFFFF;
+  //    }
+  //  }
+  //}
+  //.dashboard-wrapper {
+  //  .card-header {
+  //    color: #FFFFFF !important;
+  //  }
+  //}
 }
 
 /* === end === */

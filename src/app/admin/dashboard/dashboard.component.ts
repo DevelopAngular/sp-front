@@ -12,6 +12,8 @@ import {CalendarComponent} from '../calendar/calendar.component';
 import {MatDialog} from '@angular/material';
 import {AdminService} from '../../services/admin.service';
 import {HallPassesService} from '../../services/hall-passes.service';
+import {DarkThemeSwitch} from '../../dark-theme-switch';
+import {ThemeService} from 'ng2-charts';
 
 
 @Component({
@@ -47,7 +49,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   public lineChartTicks: any = {
     suggestedMin: 0,
-    precision: 0
+    precision: 0,
+    fontColor: this.darkTheme.getColor({white: '#999999', dark: '#FFFFFF'})
     // stepSize: 5,
   };
 
@@ -62,8 +65,40 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // private elRef: ElementRef,
     private dialog: MatDialog,
     private timeService: TimeService,
-    private host: ElementRef
+    private host: ElementRef,
+    public darkTheme: DarkThemeSwitch,
+    private chartTheming: ThemeService
   ) {}
+
+  get cardHeaderColor() {
+    return this.darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'});
+  }
+
+  get calendarIcon() {
+
+
+
+    if (!this.chartsDate) {
+      return this.darkTheme.getIcon({
+        iconName: 'Calendar',
+        lightFill: 'Navy',
+        darkFill: 'White',
+      });
+
+
+    } else {
+      return './assets/Calendar (Blue).svg';
+    }
+//
+//     ( !this.chartsDate ? './assets/Calendar (Navy).svg' : './assets/Calendar (Blue).svg')
+  }
+  getCardIcon(icon) {
+    return this.darkTheme.getIcon({
+      iconName: icon,
+      darkFill: 'White',
+      lightFill: 'Navy'
+    });
+  }
 
   ngOnInit() {
     // const _devices = this.draggableContainer.nativeElement.childNodes;
@@ -73,6 +108,96 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
 
     this.drawChartXaxis();
+    this.darkTheme.isEnabled$.subscribe(() => {
+      // this.lineChartOptions.scales.xAxes[0].tiks.fontColor = this.darkTheme.getColor({white: '#777777', dark: '#FFFFFF'});
+      //   [{
+      //   ticks: {
+      //     fontColor: this.darkTheme.getColor({white: '#999999', dark: '#FFFFFF'})
+      //   },
+      //   gridLines: {
+      //     display: false,
+      //   },
+      //   scaleLabel: {
+      //     display: true,
+      //     fontColor: '#134482',
+      //     fontSize: 14,
+      //     labelString: 'Time',
+      //     padding: 10,
+      //   },
+      // }]
+      // debugger
+      this.chartTheming.setColorschemesOptions({
+        scales: {
+          yAxes: [{
+            ticks: {
+              suggestedMin: 0,
+              fontColor: this.darkTheme.getColor({white: '#999999', dark: '#FFFFFF'})
+              // stepSize: 5,
+            },
+            gridLines: {
+              display: true,
+              borderDash: [10, 10],
+              drawBorder: true
+            },
+            scaleLabel: {
+              display: true,
+              fontColor: this.darkTheme.getColor({white: '#134482', dark: '#FFFFFF'}),
+              fontSize: 14,
+              labelString: 'Number of active passes',
+              padding: 20
+            }
+          }],
+          xAxes: [{
+            ticks: {
+              fontColor: this.darkTheme.getColor({white: '#999999', dark: '#FFFFFF'})
+            },
+            gridLines: {
+              display: false,
+            },
+            scaleLabel: {
+              display: true,
+              fontColor: this.darkTheme.getColor({white: '#134482', dark: '#FFFFFF'}),
+              fontSize: 14,
+              labelString: 'Time',
+              padding: 10,
+            },
+          }]
+        },
+        tooltips: {
+          mode: 'index',
+          intersect: false,
+          position: 'nearest',
+          displayColors: false,
+          backgroundColor: '#FFFFFF',
+          borderColor: 'rgba(0, 0, 0, .1)',
+          borderWidth: 1,
+          bodyFontColor: '#134482',
+          bodyFontSize: 22,
+          footerFontSize: 14,
+          footerFontColor: '#134482',
+          footerFontStyle: 'normal',
+          xPadding: 22,
+          yPadding: 14,
+          callbacks: {
+            labelColor: (tooltipItem, chart) => {
+              return {
+                borderColor: 'rgb(100, 0, 0)',
+                backgroundColor: 'rgba(100, 0, 0, .4)'
+              };
+            },
+            label: (tooltipItems, data) => {
+
+              let _label = new String(tooltipItems.yLabel);
+              _label = _label.padStart(7, ' ');
+              return <string>_label;
+            },
+            footer: (tooltipItems, data) => {
+              return 'active passes';
+            }
+          }
+        }
+      });
+    });
 
     this.liveDataService.watchActiveHallPasses(new Subject<HallPassFilter>().asObservable())
       .subscribe((activeHallpasses: HallPass[]) => {
@@ -145,28 +270,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     ];
     this.lineChartOptions = {
-      hover: {
-        intersect: false,
-        // onHover: (event, active) => {
-        //   const context = this.ctx.nativeElement.getContext('2d');
-        //
-        //   console.log('1st step ===>');
-        //   if (active && active.length) {
-        //     console.log(active);
-        //     context.beginPath();
-        //     context.moveTo(active[0]._view.x, active[0]._view.y + 5);
-        //     context.strokeStyle = '#134482';
-        //     context.lineWidth = 2;
-        //     context.lineTo(active[0]._view.x, active[0]._xScale.top);
-        //     context.stroke();
-        //   }
-        // }
-      },
-      elements: {
-        line: {
-          // tension: 0
-        }
-      },
       scales: {
         yAxes: [{
           ticks: this.lineChartTicks,
@@ -184,7 +287,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
           }
         }],
         xAxes: [{
-          ticks: {},
+          ticks: {
+            fontColor: this.darkTheme.getColor({white: '#999999', dark: '#FFFFFF'})
+          },
           gridLines: {
             display: false,
           },
@@ -197,7 +302,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
           },
         }]
       },
-      vertical: {},
       tooltips: {
         mode: 'index',
         intersect: false,
@@ -215,19 +319,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         footerFontStyle: 'normal',
         xPadding: 22,
         yPadding: 14,
-        // custom: (tooltipModel) => {
-        //   console.log(tooltipModel);
-        //   const _context = this.ctxt.nativeElement.getContext('2d');
-        //         _context.beginPath();
-        //         _context.moveTo(0, 0);
-        //         _context.strokeStyle = '#ff0000';
-        //         _context.lineTo(300, 100);
-        //         _context.stroke();
-        // },
         callbacks: {
-          verticalLine: (x, y) => {
-            console.log(x, y);
-          },
           labelColor: (tooltipItem, chart) => {
             return {
               borderColor: 'rgb(100, 0, 0)',
@@ -239,10 +331,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
             let _label = new String(tooltipItems.yLabel);
             _label = _label.padStart(7, ' ');
             return _label;
-          },
-          title: (tooltipItem, data) => {
-            // console.log(tooltipItem);
-            return;
           },
           footer: (tooltipItems, data) => {
             return 'active passes';

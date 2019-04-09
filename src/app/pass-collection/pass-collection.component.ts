@@ -16,6 +16,7 @@ import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import { TimeService } from '../services/time.service';
 
 import * as _ from 'lodash';
+import {DarkThemeSwitch} from '../dark-theme-switch';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -90,6 +91,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       public dialog: MatDialog,
       private dataService: DataService,
       private timeService: TimeService,
+      private darkTheme: DarkThemeSwitch
   ) {}
 
   ngOnInit() {
@@ -117,6 +119,18 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
     this.timers = [];
   }
 
+  get _icon() {
+    return this.darkTheme.getIcon({
+      iconName: this.icon,
+      darkFill: 'White',
+      lightFill: 'Navy',
+      setting: null
+    });
+  }
+  get _color() {
+    return this.darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'});
+
+  }
   getEmptyMessage() {
     return this.emptyMessage;
   }

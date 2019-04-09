@@ -94,6 +94,19 @@
     box-shadow: 0 0 0 10px rgb(228, 235, 255);
   }
 }
+.active-calendar-icon__dark {
+  background-color: #354DFF;
+  animation: active-calenar__dark .2s ease forwards;
+}
+
+@keyframes active-calenar__dark {
+  0%{
+    box-shadow: 0 0 0 0px #354DFF;
+  }
+  100%{
+    box-shadow: 0 0 0 10px #354DFF;
+  }
+}
 
 .chart-container{
   position: relative;

@@ -22,11 +22,14 @@ export class NavButtonComponent implements OnInit {
 
   }
 
-  get backgroundColor(){
+  get backgroundColor() {
+
     return this.selected?'#E4EBFF':'none';
   }
 
-  get _icon(){
+  get _icon() {
+
+    // return this.darkTheme.getIcon({iconName: 'Navy', setting: null, hover: this.selected});
     return this.icon +(this.selected?' (Navy)': this.darkTheme.isEnabled$.value ? ' (White)' : ' (Blue-Gray)') + '.svg';
   }
 

@@ -9,6 +9,21 @@
     margin-top: -5px;
     cursor: pointer;
     user-select: none;
+    &__dark {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      max-height: 30px;
+      width: 75px;
+      padding: 5px 10px;
+      border-radius: 15px;
+      margin-top: -5px;
+      cursor: pointer;
+      user-select: none;
+      &:hover {
+        background-color: #0b72eb;
+      }
+    }
 }
 
 .back-wrapper:hover{

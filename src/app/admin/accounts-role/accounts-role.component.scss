@@ -25,6 +25,11 @@
       -webkit-box-shadow: 0px 0px 5px 1px #ddd;
       -moz-box-shadow:  0px 0px 5px 1px #ddd;
       box-shadow:  0px 0px 5px 1px #ddd;
+      &__dark {
+        -webkit-box-shadow: 0px 0px 5px 1px #0b72eb;
+        -moz-box-shadow:  0px 0px 5px 1px #0b72eb;
+        box-shadow:  0px 0px 5px 1px #0b72eb;
+      }
       &_header{
         display: flex;
         align-items: center;

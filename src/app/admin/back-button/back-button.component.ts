@@ -1,4 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import {DarkThemeSwitch} from '../../dark-theme-switch';
 
 @Component({
   selector: 'app-back-button',
@@ -9,7 +10,9 @@ export class BackButtonComponent implements OnInit {
   @Output()
   click: EventEmitter<any> = new EventEmitter();
 
-  constructor() { }
+  constructor(
+    public darkTheme: DarkThemeSwitch
+  ) { }
 
   ngOnInit() {
   }

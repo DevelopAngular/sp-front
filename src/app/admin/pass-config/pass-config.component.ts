@@ -17,6 +17,7 @@ import {User} from '../../models/User';
 import {Location} from '../../models/Location';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LocationsService} from '../../services/locations.service';
+import {DarkThemeSwitch} from '../../dark-theme-switch';
 
 @Component({
   selector: 'app-pass-congif',
@@ -49,7 +50,9 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       private elRef: ElementRef,
       private activatedRoute: ActivatedRoute,
       private locationsService: LocationsService,
-      private router: Router
+      private router: Router,
+      public darkTheme: DarkThemeSwitch
+
 
   ) { }
 

@@ -7,13 +7,17 @@
 
     <!-- Checkbox Column -->
     <ng-container matColumnDef="select" *ngIf="isCheckbox">
-      <th mat-header-cell *matHeaderCellDef class="sticky-header">
+      <th mat-header-cell *matHeaderCellDef class="sticky-header"
+          [ngClass]="{'dark-theme-of-checkbox__primary': darkTheme.isEnabled$.value}"
+          [style.background-color]="darkTheme.isEnabled$.value ? '#0F171E' : '#F8FAFF'">
         <mat-checkbox (change)="$event ? masterToggle() : null; pushOutSelected()"
                       [checked]="selection.hasValue() && isAllSelected()"
                       [indeterminate]="selection.hasValue() && !isAllSelected()">
         </mat-checkbox>
       </th>
-      <td mat-cell *matCellDef="let row">
+      <td mat-cell *matCellDef="let row"
+          [ngClass]="{'dark-theme-of-checkbox': darkTheme.isEnabled$.value}"
+      >
         <!--<pre style="font-size: 10px">{{row | json}}</pre>-->
         <mat-checkbox (click)="$event.stopPropagation()"
                       (change)="$event ? selection.toggle(row) : null; pushOutSelected()"
@@ -25,9 +29,12 @@
     <!-- Columns -->
     <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
       <th mat-header-cell *matHeaderCellDef mat-sort-header class="sticky-header"
-          [style.color]="textHeaderColor" [style.text-transform]="'none'"
+          [style.color]="darkTheme.getColor({white: textHeaderColor, dark: '#FFFFFF'})" [style.text-transform]="'none'"
+          [style.background-color]="darkTheme.isEnabled$.value ? '#0F171E' : '#F8FAFF'"
       > {{column}} </th>
-      <td mat-cell *matCellDef="let element" [style.color]="textColor">
+      <td mat-cell *matCellDef="let element"
+
+          [style.color]="darkTheme.getColor({white: textColor, dark: '#767676'})">
         <ng-container *ngIf="normalizeCell(element[column]).length; else empty">
           <span *ngFor="let cellElement of normalizeCell(element[column]); let i = index">
             <!--<span *ngIf="normalizeCell(element[column]).length > 1 && i > 0">, </span>-->

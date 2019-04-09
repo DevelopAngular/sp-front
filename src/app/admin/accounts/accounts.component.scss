@@ -112,6 +112,13 @@
           padding-right: 15px;
         }
       }
+      &__dark {
+        background-color: #139BEB;
+        &:hover {
+          background-color: #0b72eb;
+        }
+
+      }
     }
     &__top-bar{
       display: flex;

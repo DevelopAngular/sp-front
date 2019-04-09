@@ -10,7 +10,8 @@
       <div class="content">
         <div class="search-content-table" *ngIf="hasSearched">
           <div class="search-header">
-            <div class="text-header">
+            <div class="text-header ds-flex-center-start" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#6C6990'})">
+              <img width="18" height="18" class="ds-pr-10" [src]="darkTheme.getIcon({iconName: 'Expired'})" alt="Expired.svg">
               {{sortParamsHeader}}
             </div>
             <div class="divider"></div>

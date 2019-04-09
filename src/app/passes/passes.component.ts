@@ -143,20 +143,27 @@ class InboxInvitationProvider implements PassLikeProvider {
   styleUrls: ['./passes.component.scss'],
   animations: [
     trigger('OpenOrCloseRequests', [
-        state('requestsOpened', style({
+        transition(':enter', [style({
+          width: '312px',
+          opacity: 0,
+          transform: 'translateX(50px)',
+        }),
+
+          animate('.5s 0s ease',  style({
+            width: '312px',
+            opacity: 1,
+            transform: 'translateX(0px)',
+          }))]),
+        transition(':leave', [style({
           width: '312px',
           opacity: 1,
           transform: 'translateX(0px)',
-          display: 'block'
-        })),
-        state('requestsClosed', style({
-          width: '0px',
-          opacity: 0,
-          transform: 'translateX(50px)',
-          display: 'none'
-        })),
-        transition('requestsClosed => requestsOpened, requestsOpened => requestsClosed', animate('0.8s 0s ease', null)),
-        // transition('requestsOpened => requestsClosed', animate('0.5s 0s ease', null)),
+        })
+          , animate('.5s 0s ease',  style({
+            width: '312px',
+            opacity: 0,
+            transform: 'translateX(50px)',
+          }))]),
       ],
     ),
   ]

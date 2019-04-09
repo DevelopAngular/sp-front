@@ -1,6 +1,6 @@
 <div class="collection-wrapper">
   <div class="collection-header" *ngIf="header">
-    <div class="collection-title">
+    <div class="collection-title" [style.color]="darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'})">
       {{ selectedPinnables.length ? selectedPinnables.length + ' Selected' : 'Rooms' }}
     </div>
     <div class="selected-counter global-opacity-icons" (click)="toggleBulk()" [ngStyle]="{'font-weight': bulkSelect ? 'bold' : 'normal'}">

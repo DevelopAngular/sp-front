@@ -28,7 +28,9 @@ export class NavButtonComponent implements OnInit {
   }
 
   get _icon(){
-    return this.icon +(this.selected ? ' (Navy)' : ' (Blue-Gray)') + '.svg';
+    return this.darkTheme.getIcon({iconName: this.icon, setting: null, hover: this.selected});
+
+    // return this.icon +(this.selected ? ' (Navy)' : ' (Blue-Gray)') + '.svg';
   }
 
 

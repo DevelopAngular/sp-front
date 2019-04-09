@@ -5,11 +5,13 @@
        <div class="">
          <div class="card card__role ds-flex-end-between ds-mr-10">
            <div class="">
-             <div class="card_header ds-mb-10">Number of Active Hall Passes</div>
+             <div class="card_header ds-mb-10" [style.color]="cardHeaderColor">Number of Active Hall Passes</div>
              <div class="card_title" [style.text-align]="'center'">
                <div style="min-height: 65px;" class="ds-flex-center-center">
                  <div [style.font-size]="'4em'"
-                      [style.font-weight]="'900'">{{ numActivePasses >= 0 ? numActivePasses : ''}}</div>
+                      [style.font-weight]="'900'"
+                      [style.color]="darkTheme.getColor({white: '#7F879D', dark: '#F9F9F9'})"
+                 >{{ numActivePasses >= 0 ? numActivePasses : ''}}</div>
                  <div *ngIf="numActivePasses === -1" class="loading-theme spinner ds-flex-center-center">
                    <mat-spinner [color]="'accent'" [diameter]="'35'"></mat-spinner>
                  </div>
@@ -18,7 +20,7 @@
            </div>
            <div>
              <a routerLink="/admin/hallmonitor" class="label-icon">
-               <img draggable="false" [src]="'./assets/Walking (Navy).svg' | resolveAsset" alt="Walking (Navy).svg" width="25">
+               <img draggable="false" [src]="getCardIcon('./assets/Walking (Navy).svg') | resolveAsset" alt="Walking (Navy).svg" width="25">
              </a>
              <div style="display: block;" [ngStyle]="{'opacity': numActivePasses > 0 ? '1' : '.5'}">
                <app-gradient-button
@@ -38,19 +40,22 @@
        <div class="">
          <div class="card card__role ds-flex-center-between ds-mr-10 ds-mt-15">
            <a routerLink="/admin/hallmonitor" class="label-icon">
-             <img draggable="false" [src]="'./assets/Walking (Navy).svg' | resolveAsset" alt="./assets/Walking (Navy).svg" width="25">
+             <img draggable="false" [src]="getCardIcon('./assets/Walking (Navy).svg') | resolveAsset" alt="./assets/Walking (Navy).svg" width="25">
            </a>
            <div>
              <div class="card_header">
                <img draggable="false" [src]="'./assets/Report (Red).svg' | resolveAsset" alt="Report (Red).svg" width="30"
                     [style.vertical-align]="'bottom'">
-               <span class="ds-pl-10">Reported Students</span>
+               <span class="ds-pl-10" [style.color]="cardHeaderColor">Reported Students</span>
              </div>
              <div [style.min-height]="'55px'">
                <div *ngIf="!reports" class="loading-theme spinner ds-flex-center-left ds-pt-10">
                  <mat-spinner [color]="'accent'" [diameter]="'35'"></mat-spinner>
                </div>
-               <div *ngIf="reports" [style.padding-top]="'32px'" [style.font-size]="'16px'" class="card_title">
+               <div *ngIf="reports"
+                    [style.padding-top]="'32px'"
+                    [style.font-size]="'16px'" class="card_title"
+                    [style.color]="darkTheme.getColor({white: '#7F879D', dark: '#F9F9F9'})">
                  <span *ngIf="reports.length">{{reports.length}} Reported Student<span *ngIf="reports.length > 1 || reports.length === 0 ">s</span> Today.</span>
                  <span *ngIf="!reports.length">No Reported Students Today.</span>
                </div>
@@ -60,15 +65,15 @@
        </div>
        <div class="">
          <div class="card card__role ds-flex-center-between ds-mt-15">
-           <span class="label-icon">ALL TIME</span>
+           <span class="label-icon" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">ALL TIME</span>
            <div>
-             <div class="card_header">Average Pass Time</div>
+             <div class="card_header" [style.color]="cardHeaderColor">Average Pass Time</div>
 
              <div class="card_title ds-my-20" [style.font-size]="'22px'" [style.min-height]="'55px'">
                <div *ngIf="!averagePassTime" class="loading-theme spinner ds-flex-center-left">
                  <mat-spinner [color]="'accent'" [diameter]="'35'"></mat-spinner>
                </div>
-               <span *ngIf="averagePassTime">{{averagePassTime}}</span>
+               <span *ngIf="averagePassTime"  [style.color]="darkTheme.getColor({white: '#7F879D', dark: '#F9F9F9'})">{{averagePassTime}}</span>
              </div>
 
            </div>
@@ -83,12 +88,15 @@
              <mat-spinner [color]="'accent'" [diameter]="'35'" class=""></mat-spinner>
            </div>
            <div>
-             <div class="card_header ds-flex-center-between ds-my-20">
-               <div>
-                 <span>Pass Usage</span>
-               </div>
-               <div class="calendar-icon-container" [ngClass]="{'active-calendar-icon': activeCalendar}">
-                 <img draggable="false" [src]="( !chartsDate ? './assets/Calendar (Navy).svg' : './assets/Calendar (Blue).svg') | resolveAsset" class="calendar-icon" (click)="openDateDialog($event)">
+             <div class="card_header ds-flex-center-between ds-my-20" [style.color]="cardHeaderColor">
+
+               Pass Usage
+               <div class="calendar-icon-container"
+                    [ngClass]="{
+                    'active-calendar-icon': activeCalendar && !darkTheme.isEnabled$.value,
+                    'active-calendar-icon__dark': activeCalendar && darkTheme.isEnabled$.value
+                    }">
+                 <img draggable="false" [src]="calendarIcon | resolveAsset" class="calendar-icon" (click)="openDateDialog($event)">
                </div>
              </div>
 
@@ -109,15 +117,15 @@
        </div>
        <div class="">
          <div class="card card__role ds-flex-center-between ds-ml-10 ds-mb-10">
-           <span class="label-icon">ALL TIME</span>
+           <span class="label-icon" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">ALL TIME</span>
            <div class="ds-w-100">
-             <div class="card_header">
+             <div class="card_header" [style.color]="cardHeaderColor">
                Most Frequent Room <br> Destinations
              </div>
              <div *ngIf="passStatistic && passStatistic.length"
                   class="ds-flex-start-between ds-flex-column ds-flex-wrap ds-w-100 ds-pt-10 card_title"
                   [style.max-height]="'50px'">
-               <div *ngFor="let place of passStatistic; let n = index;">
+               <div *ngFor="let place of passStatistic; let n = index;" [style.color]="darkTheme.getColor({white: '#7F879D', dark: '#F9F9F9'})">
                  {{n + 1}}. {{place.name}}
                </div>
              </div>

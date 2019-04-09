@@ -12,6 +12,7 @@ import {MatDialog} from '@angular/material';
 import {TimeService} from '../../services/time.service';
 import {InputHelperDialogComponent} from '../input-helper-dialog/input-helper-dialog.component';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {DarkThemeSwitch} from '../../dark-theme-switch';
 
 @Component({
   selector: 'app-round-input',
@@ -55,7 +56,40 @@ export class RoundInputComponent implements OnInit {
 
   public e: Observable<Event>;
 
-  constructor(public dialog: MatDialog, private timeService: TimeService, private cdr: ChangeDetectorRef) { }
+  constructor (
+    public dialog: MatDialog,
+    private timeService: TimeService,
+    public darkTheme: DarkThemeSwitch
+  ) { }
+
+  get labelIcon() {
+    // './assets/Search Eye '+(selected?'(Navy)':'(Blue-Gray)') +'.svg'
+    if (this.selected) {
+      return this.darkTheme.getIcon(
+
+        {
+          iconName: 'Search Eye',
+          darkFill: 'White',
+          lightFill: 'Navy'
+        }
+      );
+
+    } else {
+      return './assets/Search Eye (Blue-Gray).svg';
+    }
+  }
+
+  get labelColor() {
+    // (selected?'#1D1A5E':'#7F879D')
+    if (this.selected) {
+      return this.darkTheme.getColor({
+        white: '#1D1A5E',
+        dark: '#FFFFFF'
+      });
+    } else {
+      return '#7F879D';
+    }
+  }
 
   ngOnInit() {
 

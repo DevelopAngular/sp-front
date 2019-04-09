@@ -1,7 +1,9 @@
 <div class="host" appSafariScroll>
   <div class="accounts-role-wrapper"  *ngIf="tabVisibility">
     <!--{{initialSearchString}}-->
-    <div class="card ds-flex-start-between" style="width: 100%">
+    <div class="card ds-flex-start-between"
+         [ngClass]="{'card__dark': darkTheme.isEnabled$.value}"
+         style="width: 100%">
       <div class="ds-flex-start-start">
 
         <div class="ds-mt-20 ds-mr-20">
@@ -11,9 +13,19 @@
           <div *ngSwitchCase="'_all'">
             <div class="ds-mr-20">
 
-              <div class="card_header ds-mb-10"><img [src]="'./assets/Settings (Navy).svg' | resolveAsset" alt=""><span>Accounts</span></div>
+              <div class="card_header ds-mb-10">
+                <img [src]="darkTheme.getIcon({
+                  iconName: 'Settings',
+                  darkFill: 'White',
+                  lightFill: 'Navy'
+                }) | resolveAsset" alt="Settings.svg">
+                <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Accounts</span>
+              </div>
               <div class="card_header" [style.font-size]="'16px'">
-                <span [style.padding-left]="'0px'">Total Accounts: {{(accounts$ | async).total}} Accounts</span>
+                <span
+                  [style.padding-left]="'0px'"
+                  [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})"
+                >Total Accounts: {{(accounts$ | async).total}} Accounts</span>
               </div>
               <div class="card_title">
                 <span>G Suite: 2,237  Accounts</span>
@@ -28,14 +40,28 @@
             <!--</p>-->
           </div>
           <div *ngSwitchCase="'_profile_admin'">
-            <div class="card_header"><img [src]="'./assets/Admin (Navy).svg' | resolveAsset" alt=""><span>Administrators</span></div>
+            <div class="card_header ds-mb-10">
+              <img [src]="darkTheme.getIcon({
+                  iconName: 'Admin',
+                  darkFill: 'White',
+                  lightFill: 'Navy'
+                }) | resolveAsset" alt="Settings.svg">
+              <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Administrators</span>
+            </div>
             <p class="card_title mr-20">
               <span class="bold">{{userAmount| async}} user{{(userAmount | async) > 1 ? 's' : ''}} </span><br>
               An administrator has a high-level look at the school, configures passes, and views/generates reports.
             </p>
           </div>
           <div *ngSwitchCase="'_profile_teacher'">
-            <div class="card_header"><img [src]="'./assets/Teacher (Navy).svg' | resolveAsset" alt=""><span>Teachers</span></div>
+            <div class="card_header ds-mb-10">
+              <img [src]="darkTheme.getIcon({
+                  iconName: 'Teacher',
+                  darkFill: 'White',
+                  lightFill: 'Navy'
+                }) | resolveAsset" alt="Settings.svg">
+              <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Teachers</span>
+            </div>
             <p class="card_title ds-mr-20">
               <span class="bold">{{userAmount| async}} user{{(userAmount | async) > 1 ? 's' : ''}} </span><br>
               A teacher has a room or multiple rooms where students can create passes to.
@@ -43,7 +69,14 @@
             </p>
           </div>
           <div *ngSwitchCase="'_profile_student'">
-            <div class="card_header"><img [src]="'./assets/Student (Navy).svg' | resolveAsset" alt=""><span>Students</span></div>
+            <div class="card_header ds-mb-10">
+              <img [src]="darkTheme.getIcon({
+                  iconName: 'Student',
+                  darkFill: 'White',
+                  lightFill: 'Navy'
+                }) | resolveAsset" alt="Settings.svg">
+              <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Students</span>
+            </div>
             <p class="card_title ds-mr-20">
               <span class="bold">{{userAmount| async}} user{{(userAmount | async) > 1 ? 's' : ''}} </span><br>
               A student can create passes, schedule passes for the future,
@@ -51,7 +84,14 @@
             </p>
           </div>
           <div *ngSwitchCase="'staff_secretary'">
-            <div class="card_header"><img [src]="'./assets/Secretary (Navy).svg' | resolveAsset" alt=""><span>Secretaries & Substitutes</span></div>
+            <div class="card_header ds-mb-10">
+              <img [src]="darkTheme.getIcon({
+                  iconName: 'Secretary',
+                  darkFill: 'White',
+                  lightFill: 'Navy'
+                }) | resolveAsset" alt="Settings.svg">
+              <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Secretaries & Substitutes</span>
+            </div>
             <p class="card_title ds-mr-20">
               <span class="bold">{{userAmount| async}} user{{(userAmount | async) > 1 ? 's' : ''}} </span><br>
               A secretary or substitute teacher acts as a certain teacher when they sign-in.

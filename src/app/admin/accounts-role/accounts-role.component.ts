@@ -17,6 +17,7 @@ import {User} from '../../models/User';
 import {DataService} from '../../services/data-service';
 import {Location} from '../../models/Location';
 import {DataTableComponent} from '../data-table/data-table.component';
+import {DarkThemeSwitch} from '../../dark-theme-switch';
 
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
@@ -103,7 +104,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     private matDialog: MatDialog,
     private _zone: NgZone,
     private storage: StorageService,
-    private dataService: DataService
+    private dataService: DataService,
+    public darkTheme: DarkThemeSwitch
+
   ) {}
 
   ngOnInit() {

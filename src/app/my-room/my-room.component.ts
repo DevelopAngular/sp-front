@@ -15,6 +15,7 @@ import {DropdownComponent} from '../dropdown/dropdown.component';
 import { TimeService } from '../services/time.service';
 import {CalendarComponent} from '../admin/calendar/calendar.component';
 import {map, switchMap} from 'rxjs/operators';
+import {DarkThemeSwitch} from '../dark-theme-switch';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -98,7 +99,7 @@ export class MyRoomComponent implements OnInit {
   hasPasses: Observable<boolean> = of(false);
   passesLoaded: Observable<boolean> = of(false);
 
-  constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService,
+  constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService, public darkTheme: DarkThemeSwitch,
               public dialog: MatDialog, private liveDataService: LiveDataService, private timeService: TimeService) {
     this.setSearchDate(this.timeService.nowDate());
 
@@ -149,6 +150,11 @@ export class MyRoomComponent implements OnInit {
     }
   }
 
+  get myRoomHeaderColor() {
+    return this.darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'});
+  }
+
+
   ngOnInit() {
     this.dataService.currentUser
       .pipe(this.loadingService.watchFirst)
@@ -180,6 +186,15 @@ export class MyRoomComponent implements OnInit {
         this.destinationPasses.loaded$,
         (l1, l2, l3) => l1 && l2 && l3
       );
+  }
+
+  getIcon(icon) {
+    return this.darkTheme.getIcon({
+      iconName: icon,
+      darkFill: 'White',
+      lightFill: 'Navy',
+      setting: null
+    });
   }
 
   chooseDate(event) {

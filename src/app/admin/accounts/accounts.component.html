@@ -10,7 +10,12 @@
           <div class="ds-flex-center-start">
             <div class="ds-flex-center-start">
 
-              <div class="card_header ds-big-title ds-my-15" [style.margin]="'1em 0'">
+              <div class="card_header ds-my-15"
+                   [style.margin]="'1em 0'"
+                   [style.font-size]="'29px'"
+                   [style.font-weight]="'bold'"
+                   [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})"
+              >
                 Account & Profile <br>
                 Management
               </div>
@@ -21,7 +26,9 @@
         </div>
         <div class="g-suite ds-flex-center-between">
           <div style="text-align: right; padding-right: 26px;">
-            <div class="card_header" [style.font-size]="'16px'">
+            <div class="card_header"
+                 [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})"
+                 [style.font-size]="'16px'">
               <span>Total Accounts: {{(accounts$ | async).total}} Accounts</span>
             </div>
             <div class="card_title">
@@ -55,12 +62,23 @@
               <!--</div>-->
             <!--</app-gradient-button>-->
 
-          <div class="card_manage-users card_manage-users__all" [routerLink]="['/admin/accounts', '_all']">
-            <img draggable="false" width="30" [src]="'./assets/Settings (Navy).svg' | resolveAsset" alt="">
-            <div style="text-align: center;" class="ds-px-10">
+          <div class="card_manage-users card_manage-users__all" [routerLink]="['/admin/accounts', '_all']"
+               [ngClass]="{'card_manage-users__dark': darkTheme.isEnabled$.value}"
+          >
+            <img draggable="false" width="30" [src]="darkTheme.getIcon({
+                iconName: 'Settings',
+                darkFill: 'White',
+                lightFill: 'Navy'
+              }) | resolveAsset" alt="">
+            <div style="text-align: center;" class="ds-px-10"
+              >
               <span>Manage <br> Accounts</span>
             </div>
-            <img draggable="false" width="17" [src]="'./assets/Chevron Right (Navy).svg' | resolveAsset" alt="">
+            <img draggable="false" width="17" [src]="darkTheme.getIcon({
+                iconName: 'Chevron Right',
+                darkFill: 'White',
+                lightFill: 'Navy'
+              }) | resolveAsset" alt="">
           </div>
 
 
@@ -71,20 +89,39 @@
         <div class="card-container_row ds-mr-10">
           <div class="card card__role">
             <div class="card_content">
-              <div class="card_header"><img [src]="'./assets/Admin (Navy).svg' | resolveAsset" alt=""><span>Administrators</span></div>
+              <div class="card_header"
+                   [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})"
+              ><img [src]="darkTheme.getIcon({
+                iconName: 'Admin',
+                darkFill: 'White',
+                lightFill: 'Navy'
+              })  | resolveAsset" alt=""><span>Administrators</span>
+              </div>
               <p class="card_title">
                 <span [style.font-weight]="'bold'">{{(accounts$ | async).admin_count}} user{{(accounts$ | async).admin_count> 1 ? 's' : ''}}</span><br>
                 An administrator has a high-level look at the school, configures passes, and views/generates reports.
               </p>
             </div>
 
-            <div class="card_manage-users" [routerLink]="['/admin/accounts', '_profile_admin']">
-              <span>Manage Users</span><img draggable="false" width="20" [src]="'./assets/Chevron Right (Navy).svg' | resolveAsset" alt="Chevron Right (Navy).svg">
+            <div class="card_manage-users" [routerLink]="['/admin/accounts', '_profile_admin']"
+               [ngClass]="{'card_manage-users__dark': darkTheme.isEnabled$.value}"
+            >
+              <span>Manage Users</span><img draggable="false" width="20" [src]="darkTheme.getIcon({
+                iconName: 'Chevron Right',
+                darkFill: 'White',
+                lightFill: 'Navy'
+              }) | resolveAsset" alt="Chevron Right (Navy).svg">
             </div>
           </div>
           <div class="card card__role">
             <div class="card_content">
-              <div class="card_header"><img [src]="'./assets/Student (Navy).svg' | resolveAsset" alt=""><span>Students</span></div>
+              <div class="card_header"
+                   [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})"
+              ><img [src]="darkTheme.getIcon({
+                iconName: 'Student',
+                darkFill: 'White',
+                lightFill: 'Navy'
+              }) | resolveAsset" alt=""><span>Students</span></div>
               <p class="card_title">
                 <span [style.font-weight]="'bold'">{{(accounts$ | async).student_count }} user{{(accounts$ | async).student_count > 1 ? 's' : ''}}</span><br>
                 A student can create passes, schedule passes for the future,
@@ -92,15 +129,27 @@
               </p>
             </div>
 
-            <div class="card_manage-users" [routerLink]="['/admin/accounts', '_profile_student']">
-              <span>Manage Users</span> <img draggable="false" width="20" [src]="'./assets/Chevron Right (Navy).svg' | resolveAsset" alt="">
+            <div class="card_manage-users" [routerLink]="['/admin/accounts', '_profile_student']"
+               [ngClass]="{'card_manage-users__dark': darkTheme.isEnabled$.value}"
+            >
+              <span>Manage Users</span> <img draggable="false" width="20" [src]="darkTheme.getIcon({
+                iconName: 'Chevron Right',
+                darkFill: 'White',
+                lightFill: 'Navy'
+              }) | resolveAsset" alt="">
             </div>
           </div>
         </div>
         <div class="card-container_row ds-ml-10">
           <div class="card card__role">
             <div class="card_content">
-              <div class="card_header"><img [src]="'./assets/Teacher (Navy).svg' | resolveAsset" alt=""><span>Teachers</span></div>
+              <div class="card_header"
+                   [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})"
+              ><img [src]="darkTheme.getIcon({
+                iconName: 'Teacher',
+                darkFill: 'White',
+                lightFill: 'Navy'
+              }) | resolveAsset" alt=""><span>Teachers</span></div>
               <p class="card_title">
                 <span [style.font-weight]="'bold'">{{(accounts$ | async).teacher_count}} user{{(accounts$ | async).teacher_count> 1 ? 's' : ''}}</span><br>
                 A teacher has a room or multiple rooms where students can create passes to.
@@ -108,13 +157,25 @@
               </p>
             </div>
 
-            <div class="card_manage-users" [routerLink]="['/admin/accounts', '_profile_teacher']">
-              <span>Manage Users</span> <img draggable="false" width="20" [src]="'./assets/Chevron Right (Navy).svg'" alt="">
+            <div class="card_manage-users" [routerLink]="['/admin/accounts', '_profile_teacher']"
+               [ngClass]="{'card_manage-users__dark': darkTheme.isEnabled$.value}"
+            >
+              <span>Manage Users</span> <img draggable="false" width="20" [src]="darkTheme.getIcon({
+                iconName: 'Chevron Right',
+                darkFill: 'White',
+                lightFill: 'Navy'
+              }) | resolveAsset" alt="Chevron Right.svg">
             </div>
           </div>
           <div class="card card__role">
             <div class="card_content">
-              <div class="card_header"><img [src]="'./assets/Secretary (Navy).svg' | resolveAsset" alt=""><span>Secretaries & Substitutes</span></div>
+              <div class="card_header"
+                   [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})"
+              ><img [src]="darkTheme.getIcon({
+                iconName: 'Secretary',
+                darkFill: 'White',
+                lightFill: 'Navy'
+              }) | resolveAsset" alt=""><span>Secretaries & Substitutes</span></div>
               <p class="card_title">
                 <span [style.font-weight]="'bold'">{{(accounts$ | async).secretary_count || 0}} users</span><br>
                 A secretary or substitute teacher acts as a certain teacher when they sign-in.
@@ -122,8 +183,14 @@
               </p>
             </div>
 
-            <div class="card_manage-users" [routerLink]="['/admin/accounts', 'staff_secretary']">
-              <span>Manage Users</span> <img draggable="false" width="20" [src]="'./assets/Chevron Right (Navy).svg'" alt="">
+            <div class="card_manage-users" [routerLink]="['/admin/accounts', 'staff_secretary']"
+               [ngClass]="{'card_manage-users__dark': darkTheme.isEnabled$.value}"
+            >
+              <span>Manage Users</span> <img draggable="false" width="20" [src]="darkTheme.getIcon({
+                iconName: 'Chevron Right',
+                darkFill: 'White',
+                lightFill: 'Navy'
+              }) | resolveAsset" alt="Chevron Right">
             </div>
           </div>
         </div>

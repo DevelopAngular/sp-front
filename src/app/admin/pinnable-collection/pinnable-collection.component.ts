@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
 import { BehaviorSubject, forkJoin } from 'rxjs';
 import { HallPassesService } from '../../services/hall-passes.service';
+import {DarkThemeSwitch} from '../../dark-theme-switch';
 
 @Component({
   selector: 'app-pinnable-collection',
@@ -45,7 +46,9 @@ export class PinnableCollectionComponent implements OnInit {
 
   constructor(
     public dialog: MatDialog,
-    private hallPassService: HallPassesService
+    private hallPassService: HallPassesService,
+    public darkTheme: DarkThemeSwitch
+
   ) {
     // dragulaService.createGroup('pins', {
     //   removeOnSpill: true

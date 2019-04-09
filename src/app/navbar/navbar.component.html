@@ -20,12 +20,16 @@
     </div>
     <div class="user-info">
       <div class="name" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#1F195E'})">{{ user?user.display_name:'' }}</div>
-      <div *ngIf="user && !isStaff" class="inbox-wrapper" (click)="inboxClick()" [style.background-color]="(inboxVisibility?'#E4EBFF':'transparent')">
-        <img class="inbox-icon" [src]="'./assets/Inbox (Navy).svg' | resolveAsset">
+      <div *ngIf="user && !isStaff" class="inbox-wrapper" (click)="inboxClick()"
+           [style.background-color]="(inboxVisibility?'#E4EBFF':'transparent')"
+           [style.background-color]="(inboxVisibility ? darkTheme.isEnabled$.value ? '#134482' : '#E4EBFF' : 'transparent')"
+
+      >
+        <img class="inbox-icon" [src]="darkTheme.getIcon({iconName: 'Inbox'}) | resolveAsset">
         <div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0">
           <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">
           <div class="inbox-number">{{ notificationBadge$ | async }}</div>
-          <img class="inbox-front" [src]="'./assets/Inbox Bottom (Navy).svg' | resolveAsset">
+          <img class="inbox-front" [src]="darkTheme.getIcon({iconName: 'Inbox Bottom'}) | resolveAsset">
         </div>
       </div>
       <!--<div *ngIf="isStaff" class="support-wrapper global-opacity-icons" (click)="openSupport()">-->

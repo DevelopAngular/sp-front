@@ -15,6 +15,7 @@ import {Util} from '../../../Util';
 import {map, switchMap, toArray} from 'rxjs/operators';
 import { disableBodyScroll } from 'body-scroll-lock';
 import {AdminService} from '../../services/admin.service';
+import {DarkThemeSwitch} from '../../dark-theme-switch';
 
 
 
@@ -64,12 +65,31 @@ export class HallmonitorComponent implements OnInit {
         private adminService: AdminService,
         private elRef: ElementRef,
         private timeService: TimeService,
+        public darkTheme: DarkThemeSwitch
 
     ) {
       this.activePassProvider = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.searchQuery$));
       this.minDate = this.timeService.nowDate();
       //this.studentreport[0]['id'] = '1';
     }
+  get calendarIcon() {
+
+
+
+    if (this.inactiveIcon) {
+      return this.darkTheme.getIcon({
+        iconName: 'Calendar',
+        lightFill: 'Navy',
+        darkFill: 'White',
+      });
+
+
+    } else {
+      return './assets/Calendar (Blue).svg';
+    }
+//
+//     ( !this.chartsDate ? './assets/Calendar (Navy).svg' : './assets/Calendar (Blue).svg')
+  }
 
   ngOnInit() {
       fromEvent(window, 'scroll').subscribe(() => {

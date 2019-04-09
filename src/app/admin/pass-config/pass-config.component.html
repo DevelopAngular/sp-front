@@ -3,12 +3,16 @@
 
     <div class="pass-config-container">
 
-      <div class="pass-config-header">
+      <div class="pass-config-header" [style.background-color]="darkTheme.getBackground('high', true)">
 
         <div class="school-logo">
           <div class="school-title">
-            <img class="school-icon" [src]="'./assets/School (Navy).svg' | resolveAsset">
-            <div class="school-name">{{ schoolName }}</div>
+            <img class="school-icon" [src]="darkTheme.getIcon({
+              iconName: './assets/School (Navy).svg',
+              darkFill: 'White',
+              lightFill: 'Navy'
+            }) | resolveAsset">
+            <div class="school-name" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ schoolName }}</div>
           </div>
 
           <div class="header-settings">

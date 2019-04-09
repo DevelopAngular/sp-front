@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatSort, MatTableDataSource} from '@angular/material';
+import {DarkThemeSwitch} from '../../dark-theme-switch';
 
 @Component({
   selector: 'app-data-table',
@@ -34,6 +35,7 @@ export class DataTableComponent implements OnInit {
   private _data: any[] = [];
 
   constructor(
+    public darkTheme: DarkThemeSwitch
   ) {}
 
   ngOnInit() {

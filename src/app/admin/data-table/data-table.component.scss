@@ -8,6 +8,7 @@
     z-index: 100;
     background-color: #F8FAFF;
     font-family: $primaryFont;
+    //transition: all .2s ease;
   }
 }
 
@@ -38,6 +39,18 @@ table {
   //text-transform: capitalize;
   font-weight: bolder !important;
 }
+
+.dark-theme-of-checkbox {
+  ::ng-deep .mat-checkbox-frame {
+    border-color: #767676;
+  }
+  &__primary {
+    ::ng-deep .mat-checkbox-frame {
+      border-color: #FFFFFF;
+    }
+  }
+}
+
 
 .mat-row:hover {
   cursor: pointer;

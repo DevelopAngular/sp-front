@@ -1,4 +1,11 @@
-<div class="back-wrapper" (click)="click.emit()">
-  <img class="back-image" [src]="'./assets/Chevron Left (Navy).svg' | resolveAsset">
-  <div class="back-text">Back</div>
+<div class="back-wrapper"
+     [ngClass]="{
+     'back-wrapper': !darkTheme.isEnabled$.value,
+     'back-wrapper__dark': darkTheme.isEnabled$.value
+     }"
+     (click)="click.emit()">
+  <img class="back-image" [src]="darkTheme.getIcon({
+    iconName: 'Chevron Left'
+  }) | resolveAsset">
+  <div class="back-text" [style.color]="darkTheme.getColor()">Back</div>
 </div>

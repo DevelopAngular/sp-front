@@ -35,7 +35,17 @@ export class DarkThemeSwitch {
             hoveredColor?: string;
             static?: boolean;
 
+  } = {
+    darkFill: 'White',
+    lightFill: 'Navy'
   }) {
+
+    const iconName = /[A-Z]{1}[\w\s]+[^( \()]/;
+
+    if (config.iconName.match(iconName)) {
+      config.iconName = config.iconName.match(iconName)[0];
+    }
+
     let fill: string;
 
     if (config.setting) {
@@ -73,6 +83,9 @@ export class DarkThemeSwitch {
     hoveredColor?: string;
     dark?: string;
     white?: string;
+  } = {
+    dark: '#FFFFFF',
+    white: '#1E194F'
   }) {
 
     if (config.dark && config.white) {
@@ -107,7 +120,7 @@ export class DarkThemeSwitch {
 
   }
 
-  getBackground(tone: string ) {
+  getBackground(tone: string, reverce: boolean = false) {
     // background-color: #134482 !important;    background-color: #0F171E !important;
 
     if (this.isEnabled$.value) {
@@ -122,10 +135,10 @@ export class DarkThemeSwitch {
     } else {
       switch (tone) {
         case 'low':
-          return '#FFFFFF';
+          return reverce ? '#7F879D' : '#FFFFFF';
           break;
         case 'high':
-          return '#7F879D';
+          return reverce ? '#FFFFFF' : '#7F879D';
           break;
       }
     }
