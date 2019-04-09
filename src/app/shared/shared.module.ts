@@ -46,10 +46,12 @@ import {DateTimeComponent} from '../create-hallpass-forms/main-hallpass--form/da
 import {CalendarComponent} from '../admin/calendar/calendar.component';
 import {RestrictionPickerComponent} from '../restriction-picker/restriction-picker.component';
 import {SafariScrollDirective} from '../safari-scroll.directive';
-import { ReportSuccessToastComponent } from '../report-success-toast/report-success-toast.component'
+import { ReportSuccessToastComponent } from '../report-success-toast/report-success-toast.component';
 import {ToggleInputComponent} from '../admin/toggle-input/toggle-input.component';
-import {CalendarPickerComponent} from '../calendar-picker/calendar-picker.component';
-import {TimePickerComponent} from '../calendar-picker/time-picker/time-picker.component';
+import {CalendarPickerComponent} from '../calendar-components/calendar-picker/calendar-picker.component';
+import {TimePickerComponent} from '../calendar-components/time-picker/time-picker.component';
+import {AdminCalendarToggleComponent} from '../calendar-components/admin-calendar-toggle/admin-calendar-toggle.component';
+import {ToggleOptionsComponent} from '../calendar-components/admin-calendar-toggle/toggle-options/toggle-options.component';
 
 
 
@@ -112,7 +114,9 @@ import {TimePickerComponent} from '../calendar-picker/time-picker/time-picker.co
       ReportSuccessToastComponent,
       ToggleInputComponent,
       CalendarPickerComponent,
-      TimePickerComponent
+      TimePickerComponent,
+      AdminCalendarToggleComponent,
+      ToggleOptionsComponent
   ],
     entryComponents: [
       PassCardComponent,
@@ -160,7 +164,9 @@ import {TimePickerComponent} from '../calendar-picker/time-picker/time-picker.co
     ReportSuccessToastComponent,
     ToggleInputComponent,
     CalendarPickerComponent,
-    TimePickerComponent
+    TimePickerComponent,
+    AdminCalendarToggleComponent,
+    ToggleOptionsComponent
   ],
 })
 export class SharedModule {

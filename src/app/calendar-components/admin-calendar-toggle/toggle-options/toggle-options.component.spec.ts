@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CalendarPickerTestComponent } from './calendar-picker-test.component';
+import { ToggleOptionsComponent } from './toggle-options.component';
 
-describe('CalendarPickerTestComponent', () => {
-  let component: CalendarPickerTestComponent;
-  let fixture: ComponentFixture<CalendarPickerTestComponent>;
+describe('ToggleOptionsComponent', () => {
+  let component: ToggleOptionsComponent;
+  let fixture: ComponentFixture<ToggleOptionsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CalendarPickerTestComponent ]
+      declarations: [ ToggleOptionsComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CalendarPickerTestComponent);
+    fixture = TestBed.createComponent(ToggleOptionsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

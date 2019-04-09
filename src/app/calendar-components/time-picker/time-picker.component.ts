@@ -1,12 +1,14 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import * as moment from 'moment';
+import {Subject, timer} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-time-picker',
   templateUrl: './time-picker.component.html',
   styleUrls: ['./time-picker.component.scss']
 })
-export class TimePickerComponent implements OnInit {
+export class TimePickerComponent implements OnInit, OnDestroy {
 
   @Input() currentDate: moment.Moment = moment();
 
@@ -14,10 +16,19 @@ export class TimePickerComponent implements OnInit {
 
   public hovered: boolean;
 
+  destroy$ = new Subject();
+
   constructor() { }
 
   ngOnInit() {
-    this.timeResult.emit(this.currentDate);
+    timer(50).pipe(takeUntil(this.destroy$)).subscribe(() => {
+        this.timeResult.emit(this.currentDate);
+    });
+  }
+
+  ngOnDestroy() {
+      this.destroy$.next();
+      this.destroy$.complete();
   }
 
   changeTime(action, up) {

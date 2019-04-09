@@ -47,7 +47,7 @@ import { environment } from '../environments/environment';
 import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
 import { ResizeInfoDialogComponent } from './resize-info-dialog/resize-info-dialog.component';
 import { SignedOutToastComponent } from './signed-out-toast/signed-out-toast.component';
-import { CalendarPickerTestComponent } from './calendar-picker-test/calendar-picker-test.component';
+import { CalendarComponentsComponent } from './calendar-components/calendar-components.component';
 
 
 const appRoutes: Routes = [
@@ -64,7 +64,7 @@ const appRoutes: Routes = [
       },
       {
         path: 'calendar',
-        component: CalendarPickerTestComponent
+        component: CalendarComponentsComponent
       },
       {
         path: 'select-profile',
@@ -120,7 +120,7 @@ const appRoutes: Routes = [
     ToastConnectionComponent,
     ResizeInfoDialogComponent,
     SignedOutToastComponent,
-    CalendarPickerTestComponent
+    CalendarComponentsComponent,
   ],
   entryComponents: [
     ConsentMenuComponent,

@@ -1,0 +1,58 @@
+@import '../../../sp-colors';
+@import '../../../design-system';
+
+.wrapper {
+  width: 290px;
+  margin: 200px auto;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+
+  &.scrollable {
+    height: 451px;
+    overflow: auto;
+  }
+
+  .sticky-header {
+    width: 100%;
+    position: sticky;
+    top: 0;
+    background-color: $background-white;
+    z-index: 10;
+    .toggle-header {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      align-items: center;
+
+      .selected-date {
+        display: flex;
+        color: $blue-gray;
+        font-size: 15px;
+        justify-content: center;
+        height: 20px;
+      }
+    }
+  }
+
+  .content{
+
+    .days-options {
+
+      .time-range {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px;
+        box-sizing: border-box;
+
+        .divider {
+        }
+      }
+    }
+  }
+
+  .button {
+    width: 101px;
+    margin: 15px auto;
+  }
+}

@@ -1,0 +1,18 @@
+.option {
+  -moz-user-select: none;
+  user-select: none;
+
+  .option-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    cursor: pointer;
+
+    .icon {
+      img {
+        width: 16px;
+      }
+    }
+  }
+}

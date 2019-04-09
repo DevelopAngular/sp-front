@@ -1,25 +1,28 @@
 <div class="calendar" [style.width]="width + 'px'">
   <div class="calendar-navs">
+
+    <div class="year-nav">
+      <div class="switch-year __left" (click)="prevYear()">
+          <img class="year-icon" [src]="'./assets/Chevron Left (Navy).svg' | resolveAsset" alt="prev">
+      </div>
+      <span class="ds-dialog-subtitle">{{ currentDate.format('YYYY') }}</span>
+      <div class="switch-year __right" (click)="nextYear()">
+          <img class="year-icon" [src]="'./assets/Chevron Right (Navy).svg' | resolveAsset" alt="next">
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+
     <div class="month-nav">
-      <div class="switch-month" (click)="prevMonth()">
+      <div class="switch-month __left" (click)="prevMonth()">
         <img class="month-icon" [src]="'./assets/Chevron Left (Navy).svg' | resolveAsset" alt="prev">
       </div>
       <span class="ds-dialog-subtitle">{{ currentDate.format('MMMM') }}</span>
-      <div class="switch-month" (click)="nextMonth()">
+      <div class="switch-month __right" (click)="nextMonth()">
         <img class="month-icon" [src]="'./assets/Chevron Right (Navy).svg' | resolveAsset" alt="next">
       </div>
     </div>
     <mat-divider></mat-divider>
-    <div class="year-nav">
-        <div class="switch-year" (click)="prevYear()">
-            <img class="year-icon" [src]="'./assets/Chevron Left (Navy).svg' | resolveAsset" alt="prev">
-        </div>
-        <span class="ds-dialog-subtitle">{{ currentDate.format('YYYY') }}</span>
-        <div class="switch-year" (click)="nextYear()">
-            <img class="year-icon" [src]="'./assets/Chevron Right (Navy).svg' | resolveAsset" alt="next">
-        </div>
-    </div>
-    <mat-divider></mat-divider>
+
   </div>
   <div class="month-grid">
    <div class="days">
@@ -54,14 +57,14 @@
                [style.width]="(width / 7) + 'px'"
                [style.height]="(width / 7 - 9) + 'px'"
                *ngIf="isSelectedMonth(day.mDate) && showWeekendDay(day.mDate) && !day.disabled"
-               (click)="selectDate(day);"
+               (click)="selectDate(day)"
                (mouseenter)="hoverDates(day.mDate)"
                (mouseleave)="disabledHovered()"
                [ngClass]="{
                     selected: day.selected,
                     today: day.today,
                     leftBorder: day.selected && hoveredDates.length && isFirstSelectedDay(day.mDate),
-                    rightBorder: (day.selected && hoveredDates.length && isSecondSelectedDay(day.mDate)) || (hovered && isSecondHoveredDay(day.mDate) && selectedDates.length == 1),
+                    rightBorder: (day.selected && hoveredDates.length && isLastSelectedDay(day.mDate)) || (hovered && isLastHoveredDay(day.mDate) && selectedDates.length == 1),
                     hovered: hovered && !isSelected(day.mDate) && !isRangeHovered(day.mDate),
                     rangeHovered: isRangeHovered(day.mDate) && !isSelected(day.mDate)
                }">

@@ -1,5 +1,5 @@
-@import '../../sp-colors';
-@import '../../design-system';
+@import '../../../sp-colors';
+@import '../../../design-system';
 
 
 $dayBase: 39px;
@@ -11,9 +11,7 @@ $base:5px;
   display: flex;
   justify-content: center;
   flex-direction: column;
-  margin: 200px auto;
-  padding: 10px;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+  margin: 0 auto;
 
   * {
     box-sizing: border-box;
@@ -29,22 +27,29 @@ $base:5px;
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    position: relative;
 
     .switch-month {
       display: flex;
       align-items: center;
       justify-content: center;
+      position: absolute;
+      border-radius: 50%;
+      cursor: pointer;
+
+      &.__right {
+        right: 0;
+      }
+      &.__left {
+        left: 0;
+      }
       &:hover {
-        //border-radius: 50%;
-        //width: 20px;
-        //height: 20px;
-        //background-color: $dark-slate-gray;
+        background-color: $ultra-light-gray;
+        box-shadow: 0 0 0 5px $ultra-light-gray;
       }
       .month-icon {
         width: 15px;
-        height: 15px;
-        cursor: pointer;
       }
     }
 
@@ -54,22 +59,30 @@ $base:5px;
     padding: 10px 5px 10px 5px;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
+    position: relative;
 
     .switch-year {
       display: flex;
       align-items: center;
       justify-content: center;
+      position: absolute;
+      border-radius: 50%;
+      cursor: pointer;
+
+      &.__right {
+        right: 0;
+      }
+      &.__left {
+        left: 0;
+      }
+
       &:hover {
-        //border-radius: 50%;
-        //width: 20px;
-        //height: 20px;
-        //background-color: $dark-slate-gray;
+        background-color: $ultra-light-gray;
+        box-shadow: 0 0 0 5px $ultra-light-gray;
       }
       .year-icon {
         width: 15px;
-        height: 15px;
-        cursor: pointer;
       }
     }
   }

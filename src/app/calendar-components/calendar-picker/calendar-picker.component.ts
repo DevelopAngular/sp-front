@@ -73,7 +73,7 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
         return date.isSame(this.selectedDates[0], 'day');
     }
 
-    isSecondSelectedDay(date: moment.Moment): boolean {
+    isLastSelectedDay(date: moment.Moment): boolean {
         return this.selectedDates.length > 1 && date.isSame(this.selectedDates[this.selectedDates.length - 1], 'day');
     }
 
@@ -81,7 +81,7 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
         return date.isSame(this.hoveredDates[0], 'day');
     }
 
-    isSecondHoveredDay(date: moment.Moment): boolean {
+    isLastHoveredDay(date: moment.Moment): boolean {
         return this.hoveredDates.length > 1 && date.isSame(this.hoveredDates[this.hoveredDates.length - 1], 'day');
     }
 
@@ -184,7 +184,7 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
         this.generateCalendar();
     }
 
-    timePickerResult(date: moment.Moment) {
+    timePickerResult(date: moment.Moment): void {
         this.currentDate = date;
         this.generateCalendar();
         console.log(moment(date).format('MM-DD-YYYY / HH : mm'));
