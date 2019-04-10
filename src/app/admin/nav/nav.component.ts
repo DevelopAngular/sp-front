@@ -41,7 +41,7 @@ export class NavComponent implements OnInit {
         public loadingService: LoadingService,
         private dialog: MatDialog,
         private _zone: NgZone,
-        private darkTheme: DarkThemeSwitch
+        public darkTheme: DarkThemeSwitch
     ) { }
 
   console = console;

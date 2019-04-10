@@ -4,7 +4,7 @@
     <div class="error-text_message">
       {{errorMessages[this.loginMethod]}}
     </div>
-    <div class="error-close-btn" (click)="close()">
+    <div class="error-close-btn" (click)="close($event)">
       <img [src]="'./assets/Cancel (Blue-Gray).svg'" alt="Cancel (Blue-Gray).svg">
     </div>
   </div>
