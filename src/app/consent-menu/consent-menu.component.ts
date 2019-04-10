@@ -2,6 +2,7 @@
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef  } from '@angular/material';
 import { DomSanitizer } from '../../../node_modules/@angular/platform-browser';
 import {DataService} from '../services/data-service';
+import {DarkThemeSwitch} from '../dark-theme-switch';
 
 
 type optionsView = 'inline' | 'button';
@@ -36,6 +37,7 @@ export class ConsentMenuComponent implements OnInit {
       _matDialogRef: MatDialogRef<ConsentMenuComponent>,
       private sanitizer: DomSanitizer,
       private dataService: DataService,
+      public darkTheme: DarkThemeSwitch
   ) {
     this.header = data['header'];
     this.options = data['options'];

@@ -83,7 +83,6 @@ export class SettingsComponent implements OnInit {
     }
 
     getColor(setting?, hover?: boolean, hoveredColor?: string) {
-
       return this.darkTheme.getColor({
         setting: setting,
         hover: hover,

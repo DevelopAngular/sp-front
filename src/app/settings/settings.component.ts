@@ -7,7 +7,7 @@ import { User } from '../models/User';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 
 export interface Setting {
-  color_profile: string;
+  gradient: string;
   icon: string;
   action: string;
   title: string;
@@ -44,37 +44,37 @@ export class SettingsComponent implements OnInit {
 
   ) {
     this.settings.push({
-      'color_profile': '#E7A700, #EFCE00',
+      'gradient': '#E7A700, #EFCE00',
       'icon': 'Star',
       'action': 'favorite',
       'title': 'Favorites'
     });
     this.settings.push({
-      'color_profile': '#DA2370, #FB434A',
+      'gradient': '#DA2370, #FB434A',
       'icon': 'Notifications',
       'action': 'notifications',
       'title': 'Notifications'
     });
     this.settings.push({
-      'color_profile': '#03CF31, #00B476',
+      'gradient': '#03CF31, #00B476',
       'icon': 'Info',
       'action': 'intro',
       'title': 'View Intro'
     });
     this.settings.push({
-      'color_profile': '#0B9FC1, #00C0C7',
+      'gradient': '#0B9FC1, #00C0C7',
       'icon': 'Team',
       'action': 'about',
       'title': 'About'
     });
     this.settings.push({
-        'color_profile': '#5E4FED, #7D57FF',
+        'gradient': '#5E4FED, #7D57FF',
         'icon': 'Feedback',
         'action': 'feedback',
         'title': 'Feedback'
     });
     this.settings.push({
-      'color_profile': '#F52B4F, #F37426',
+      'gradient': '#F52B4F, #F37426',
       'icon': 'Support',
       'action': 'support',
       'title': 'Support'
@@ -96,7 +96,7 @@ export class SettingsComponent implements OnInit {
       });
   }
 
-  getIcon(iconName: string, setting?: any,  hover?: boolean, hoveredColor?: string) {
+  getIcon(iconName: string, setting: any,  hover?: boolean, hoveredColor?: string) {
 
     return this.darkTheme.getIcon({
       iconName: iconName,
@@ -107,7 +107,6 @@ export class SettingsComponent implements OnInit {
   }
 
   getColor(setting?, hover?: boolean, hoveredColor?: string) {
-
     return this.darkTheme.getColor({
       setting: setting,
       hover: hover,

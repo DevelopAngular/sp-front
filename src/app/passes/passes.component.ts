@@ -143,26 +143,41 @@ class InboxInvitationProvider implements PassLikeProvider {
   styleUrls: ['./passes.component.scss'],
   animations: [
     trigger('OpenOrCloseRequests', [
-        transition(':enter', [style({
-          width: '312px',
-          opacity: 0,
-          transform: 'translateX(50px)',
-        }),
-
-          animate('.5s 0s ease',  style({
-            width: '312px',
-            opacity: 1,
-            transform: 'translateX(0px)',
-          }))]),
-        transition(':leave', [style({
+        state('Opened', style({
+          display: 'block',
           width: '312px',
           opacity: 1,
-          transform: 'translateX(0px)',
-        })
-          , animate('.5s 0s ease',  style({
+          // transform: 'translateX(0px)',
+          'margin-right': '0px',
+
+        })),
+        state('Closed', style({
+          display: 'none',
+          width: '312px',
+          opacity: 0,
+          'margin-right': '-312px'
+          // transform: 'translateX(50px)',
+        })),
+
+        transition('Opened => Closed', [
+          animate('.5s 0s ease',  style({
             width: '312px',
             opacity: 0,
-            transform: 'translateX(50px)',
+            // transform: 'translateX(50px)',
+            'margin-right': '-312px',
+            display: 'none',
+          }))]),
+        transition('Closed => Opened', [
+          style({
+            display: 'block'
+          }),
+          animate('.5s 0s ease',  style({
+            display: 'block',
+            width: '312px',
+            opacity: 1,
+            'margin-right': '0px',
+
+            // transform: 'translateX(0px)',
           }))]),
       ],
     ),

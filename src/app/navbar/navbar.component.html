@@ -25,11 +25,11 @@
            [style.background-color]="(inboxVisibility ? darkTheme.isEnabled$.value ? '#134482' : '#E4EBFF' : 'transparent')"
 
       >
-        <img class="inbox-icon" [src]="darkTheme.getIcon({iconName: 'Inbox'}) | resolveAsset">
+        <img class="inbox-icon" [src]="darkTheme.getIcon({iconName: 'Inbox', darkFill: 'White', lightFill: 'Navy'}) | resolveAsset">
         <div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0">
           <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">
           <div class="inbox-number">{{ notificationBadge$ | async }}</div>
-          <img class="inbox-front" [src]="darkTheme.getIcon({iconName: 'Inbox Bottom'}) | resolveAsset">
+          <img class="inbox-front" [src]="darkTheme.getIcon({iconName: 'Inbox Bottom', darkFill: 'White', lightFill: 'Navy'}) | resolveAsset">
         </div>
       </div>
       <!--<div *ngIf="isStaff" class="support-wrapper global-opacity-icons" (click)="openSupport()">-->

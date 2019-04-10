@@ -128,6 +128,9 @@ export class DarkThemeSwitch {
         case 'low':
           return '#0F171E';
           break;
+
+        case 'middle':
+          return '#1E194F';
         case 'high':
           return '#134482';
           break;
@@ -136,6 +139,9 @@ export class DarkThemeSwitch {
       switch (tone) {
         case 'low':
           return reverce ? '#7F879D' : '#FFFFFF';
+          break;
+        case 'middle':
+          return reverce ? '#FFFFFF' : '#7F879D';
           break;
         case 'high':
           return reverce ? '#FFFFFF' : '#7F879D';

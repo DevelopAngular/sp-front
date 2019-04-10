@@ -35,21 +35,22 @@
       <mat-divider class="divider"></mat-divider>
     </div>
     <div class="setting"
-         *ngFor="let setting of settings; let i = index"
-         (click)="dialogRef.close(setting.action)"
+
     >
       <div class="content"
-           (mouseenter)="onHover(setting.color_profile)"
+           *ngFor="let setting of settings; let i = index"
+           (click)="dialogRef.close(setting.action)"
+           (mouseenter)="onHover(setting.gradient)"
            (mouseleave)="hovered = false"
-           [style.background]="hovered && hoveredColor === setting.color_profile ? 'radial-gradient(circle at 73% 71%,' + setting.color_profile + ')' : 'none'"
+           [style.background]="hovered && hoveredColor === setting.gradient ? 'radial-gradient(circle at 73% 71%,' + setting.gradient + ')' : 'none'"
       >
         <img class="setting-icon"
              [src]="getIcon(setting.icon, setting, hovered, hoveredColor) | resolveAsset" alt="SET">
         <div class="setting-title"
              [style.color]="getColor(setting, hovered, hoveredColor)"
         > {{setting.title }} </div>
-      </div>
       <mat-divider class="divider" *ngIf="i === 2 || i === 5"></mat-divider>
+      </div>
     </div>
   </div>
   <div class="footer">

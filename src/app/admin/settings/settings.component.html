@@ -42,7 +42,9 @@
              [style.background]="hovered && hoveredColor === setting.gradient ? 'radial-gradient(circle at 73% 71%,' + setting.gradient + ')' : 'none'"
         >
           <img class="icon" [src]="getIcon(setting.icon, setting, hovered, hoveredColor) | resolveAsset" alt="link">
-          <div class="setting-name" [style.color]="getColor(setting, hovered, hoveredColor)">{{ setting.title }}</div>
+          <div class="setting-name"
+               [style.color]="getColor(setting, hovered, hoveredColor)"
+          >{{ setting.title }}</div>
         </div>
       </div>
       <mat-divider style="margin: 10px 0 10px 0"></mat-divider>
