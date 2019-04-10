@@ -288,7 +288,7 @@ export class HttpService {
             this.loginService.setAuthenticated();
           }),
           catchError(err => {
-            if (err instanceof LoginServerError || err.status === 401) {
+            if (err instanceof LoginServerError || err.status === 401 || err.status === 400) {
               if (isDemoLogin(googleToken)) {
                 googleToken.invalid = true;
               }

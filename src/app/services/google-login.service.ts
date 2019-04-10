@@ -44,7 +44,7 @@ export class GoogleLoginService {
   ) {
 
     this.authToken$.subscribe(auth => {
-      // console.log('Loaded auth response:', auth);
+      console.log('Loaded auth response:', auth);
 
       if (auth) {
         this.storage.setItem(STORAGE_KEY, JSON.stringify(auth));
