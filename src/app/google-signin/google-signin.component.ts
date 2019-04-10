@@ -94,7 +94,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       this.loginService.showLoginError$.next(false);
       of(this.loginService.signInDemoMode(this.demoUsername, this.demoPassword))
       .pipe(
-        // tap((res) => { console.log(res) }),
+        tap((res) => { console.log(res);}),
         finalize(() => {
           this.showSpinner = false;
       }));

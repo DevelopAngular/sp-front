@@ -29,11 +29,19 @@
     <!-- Columns -->
     <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
       <th mat-header-cell *matHeaderCellDef mat-sort-header class="sticky-header"
-          [style.color]="darkTheme.getColor({white: textHeaderColor, dark: '#FFFFFF'})" [style.text-transform]="'none'"
+          [style.color]="darkTheme.getColor({white: textHeaderColor, dark: '#FFFFFF'})"
+          [style.text-transform]="'none'"
           [style.background-color]="darkTheme.isEnabled$.value ? '#0F171E' : '#F8FAFF'"
       > {{column}} </th>
-      <td mat-cell *matCellDef="let element"
+      <td mat-cell #target *matCellDef="let element; let n = index"
+          class="ds-px-10"
+          (mouseenter)="onHover(target)"
+          (mouseleave)="onLeave(target)"
+          (mousedown)="onDown(target)"
+          (mouseup)="onUp(target)"
 
+          [style.user-select]="'none'"
+          [style.cursor]="'pointer'"
           [style.color]="darkTheme.getColor({white: textColor, dark: '#767676'})">
         <ng-container *ngIf="normalizeCell(element[column]).length; else empty">
           <span *ngFor="let cellElement of normalizeCell(element[column]); let i = index">

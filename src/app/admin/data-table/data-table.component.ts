@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angu
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatSort, MatTableDataSource} from '@angular/material';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-data-table',
@@ -32,11 +33,31 @@ export class DataTableComponent implements OnInit {
   dataSource: MatTableDataSource<any[]>;
   selection = new SelectionModel<any>(true, []);
 
+  hovered: boolean;
+  hoveredCellIndex: number;
+  pressed: boolean;
+
+
   private _data: any[] = [];
 
   constructor(
-    public darkTheme: DarkThemeSwitch
+    public darkTheme: DarkThemeSwitch,
+    private sanitizer: DomSanitizer,
+
   ) {}
+  // get cursor(){
+  //   return this.valid?'pointer':'not-allowed';
+  // }
+
+
+  // get textColor() {
+  //
+  //     if (this.hovered) {
+  //       return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
+  //     } else {
+  //       return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
+  //     }
+  // }
 
   ngOnInit() {
       this.dataSource.sort = this.sort;
@@ -59,6 +80,53 @@ export class DataTableComponent implements OnInit {
           this.columnsToDisplay.unshift('select');
       }
   }
+
+  onHover(target: HTMLElement) {
+
+    this.hovered = true;
+    target.style.backgroundColor = this.getBgColor();
+    target.style.color = this.getCellColor();
+  }
+  onLeave(target: HTMLElement) {
+
+    this.hovered = false;
+    target.style.color = this.getCellColor();
+    target.style.backgroundColor = 'transparent';
+  }
+  onDown(target: HTMLElement) {
+
+    this.pressed = true;
+    target.style.backgroundColor = this.getBgColor();
+  }
+
+  onUp(target: HTMLElement) {
+
+    this.pressed = false;
+    target.style.backgroundColor = this.getBgColor();
+  }
+
+
+  getBgColor() {
+    if (this.hovered) {
+      if (this.pressed) {
+        return this.darkTheme.isEnabled$.value ? '#09A4F7' : '#E2E7F4';
+      } else {
+        return this.darkTheme.isEnabled$.value ? '#0991c3' : '#ECF1FF';
+
+      }
+    } else {
+      return 'transparent';
+    }
+  }
+
+  getCellColor() {
+    if (this.hovered) {
+        return this.darkTheme.isEnabled$.value ? '#FFFFFF' : this.textColor;
+    } else {
+      return this.darkTheme.getColor({white: this.textColor, dark: '#767676'});
+    }
+  }
+
 
   isAllSelected() {
       const numSelected = this.selection.selected.length;

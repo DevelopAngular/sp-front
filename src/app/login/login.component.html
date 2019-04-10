@@ -1,24 +1,18 @@
 <div class="container">
-  <!--<div *ngIf="showError.error">-->
-    <!--<app-error-toast [loginMethod]="showError.loggedWith" (closeEvent)="onClose($event)"></app-error-toast>-->
-  <!--</div>-->
+
   <div class="background" [style.background-image]="trustedBackgroundUrl | resolveAsset"></div>
   <div style="flex-grow: 0.5;"></div>
 
   <div class="brand">
     <app-smartpass-logo [scale]="1.5" [logoAsset]="'./assets/Logo (White).svg'"></app-smartpass-logo>
   </div>
-  <div class="grow" *ngIf="!isMobileDevice"></div>
-
-  <google-signin *ngIf="!isMobileDevice" (showError)="showError = $event"></google-signin>
-
-  <div class="title-text" *ngIf="isMobileDevice">{{titleText}}</div>
-  <a [href]="appLink" *ngIf="isMobileDevice">
-    <app-gradient-button [width]="'266px'" [minHeight]="'80px'" [fontSize]="'28px'">Get SmartPass</app-gradient-button>
-  </a>
   <div class="grow"></div>
 
-  <div class="passes" *ngIf="!isMobileDevice">
+  <google-signin (showError)="showError = $event"></google-signin>
+
+  <div class="grow"></div>
+
+  <div class="passes" [style.transform]="isMobileDevice ? 'scale(.4)' : 'scale(.6)'">
     <img height="173" [src]="'./assets/intro/Pass Tile 1.svg' | resolveAsset">
     <img height="173" [src]="'./assets/intro/Pass Tile 2.svg' | resolveAsset">
     <img height="173" [src]="'./assets/intro/Pass Tile 3.svg' | resolveAsset">

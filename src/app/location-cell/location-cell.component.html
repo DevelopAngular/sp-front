@@ -1,4 +1,12 @@
-<div class="wrapper" (click)="cellSelected()" (mouseenter)="hovered = true" (mouseleave)="hovered = false" [style.background-color]="bgColor" [style.color]="textColor" [style.cursor]="cursor">
+<div class="wrapper"
+     (click)="cellSelected()"
+     (mouseenter)="hovered = true"
+     (mouseleave)="hovered = false"
+     (mousedown)="pressed = true"
+     (mouseup)="pressed = false"
+     [style.background-color]="bgColor"
+     [style.color]="textColor"
+     [style.cursor]="cursor">
   <div *ngIf="type==='location'" class="info">
     <img *ngIf="showStar" (mouseenter)="overStar=true" (mouseleave)="overStar=false" class="star" [src]="'./assets/Star' +(this.value.starred?' (Yellow)':' (Blue-Gray)') +'.svg' | resolveAsset">
     <div class="title">
@@ -6,7 +14,7 @@
     </div>
     <div class="room" [style.color]="roomColor">
       {{value.room}}
-      <img *ngIf="showLock && !showStar && hasLocks" class="lock" [src]="'./assets/Lock' +(this.hovered?' (Navy)':' (Blue-Gray)') +'.svg' | resolveAsset">
+      <img *ngIf="showLock && !showStar && hasLocks" class="lock" [src]="'./assets/Lock (Navy).svg' | resolveAsset">
     </div>
   </div>
 

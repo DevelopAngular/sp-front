@@ -39,23 +39,23 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private subscriber$ = new Subject();
 
-  @HostListener('window:resize', ['$event.target'])
-  onResize(target) {
-      if ((target.innerWidth < 900 || target.innerHeight < 500) && !this.openedResizeDialog) {
-        this.openedResizeDialog = true;
-        setTimeout(() => {
-            this.dialog.open(ResizeInfoDialogComponent, {
-                id: 'ResizeDialog',
-                panelClass: 'toasr',
-                backdropClass: 'white-backdrop',
-                disableClose: true
-            });
-        }, 50);
-      } else if ((target.innerWidth >= 900 && target.innerHeight >= 500) && this.openedResizeDialog) {
-          this.openedResizeDialog = false;
-          this.dialog.getDialogById('ResizeDialog').close();
-      }
-  }
+  // @HostListener('window:resize', ['$event.target'])
+  // onResize(target) {
+  //     if ((target.innerWidth < 900 || target.innerHeight < 500) && !this.openedResizeDialog) {
+  //       this.openedResizeDialog = true;
+  //       setTimeout(() => {
+  //           this.dialog.open(ResizeInfoDialogComponent, {
+  //               id: 'ResizeDialog',
+  //               panelClass: 'toasr',
+  //               backdropClass: 'white-backdrop',
+  //               disableClose: true
+  //           });
+  //       }, 50);
+  //     } else if ((target.innerWidth >= 900 && target.innerHeight >= 500) && this.openedResizeDialog) {
+  //         this.openedResizeDialog = false;
+  //         this.dialog.getDialogById('ResizeDialog').close();
+  //     }
+  // }
 
   constructor(
     public darkTheme: DarkThemeSwitch,
