@@ -35,6 +35,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public schools: School[] = [];
   public darkThemeEnabled: boolean;
   private openedResizeDialog: boolean;
+  private openConnectionDialog: boolean;
 
   private subscriber$ = new Subject();
 
@@ -86,13 +87,20 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.webConnection.checkConnection().pipe(takeUntil(this.subscriber$),
-        filter(res => !res))
+        filter(res => !res && !this.openConnectionDialog))
         .subscribe(() => {
-
-            this.dialog.open(ToastConnectionComponent, {
+            const toastDialog = this.dialog.open(ToastConnectionComponent, {
               panelClass: 'toasr',
               backdropClass: 'white-backdrop',
               disableClose: true
+            });
+
+            toastDialog.afterOpened().subscribe(() => {
+                this.openConnectionDialog = true;
+            });
+
+            toastDialog.afterClosed().subscribe(() => {
+                this.openConnectionDialog = false;
             });
     });
 

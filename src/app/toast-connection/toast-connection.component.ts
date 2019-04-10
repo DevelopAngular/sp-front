@@ -1,9 +1,9 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { WebConnectionService } from '../services/web-connection.service';
 
-import {delay, filter, takeUntil} from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import {MatDialogConfig, MatDialogRef} from '@angular/material';
+import { MatDialogConfig, MatDialogRef } from '@angular/material';
 
 @Component({
   selector: 'app-toast-connection',
@@ -25,13 +25,12 @@ export class ToastConnectionComponent implements OnInit, OnDestroy {
     this.connection.checkConnection()
         .pipe(
             takeUntil(this.subscriber$),
-            filter(res => res),
-            delay(2000))
+            filter(res => res))
         .subscribe(connect => {
             this.isConnect = connect;
             setTimeout(() => {
               this.dialogRef.close();
-            }, 2000);
+            }, 1000);
     });
   }
 
