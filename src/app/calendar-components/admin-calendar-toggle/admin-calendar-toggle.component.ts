@@ -56,7 +56,9 @@ export class AdminCalendarToggleComponent implements OnInit {
     } else if (id === 'range_4') {
       this.openCalendar = true;
       this.selectedDate = { start: null, end: null };
+      return false;
     }
+    this.adminCalendarRes.emit(this.selectedDate);
   }
 
   selectedDaysOption(id) {
@@ -69,10 +71,25 @@ export class AdminCalendarToggleComponent implements OnInit {
         this.selectedDate.end = selectedDates[1];
     } else if (this.toggleResult === 'Days') {
       this.selectedDay = selectedDates[0];
-      this.adminCalendarRes.emit(this.selectedDay);
+      if (this.openTimeRange) {
+         this.selectedDate.start = moment(this.selectedDate.start)
+            .set('month', this.selectedDay.month())
+            .set('year', this.selectedDay.year())
+            .set('date', this.selectedDay.date());
+        this.selectedDate.end = moment(this.selectedDate.end)
+            .set('month', this.selectedDay.month())
+            .set('year', this.selectedDay.year())
+            .set('date', this.selectedDay.date());
+      } else {
+        this.adminCalendarRes.emit(this.selectedDay);
+      }
     } else if (this.toggleResult === 'Weeks') {
-
+      this.adminCalendarRes.emit({start: selectedDates[0], end: selectedDates[1]});
     }
+  }
+
+  resetDate() {
+      this.selectedDate = { start: null, end: null };
   }
 
   save() {

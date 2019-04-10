@@ -181,11 +181,16 @@ $base:5px;
         font-weight: bold;
         border-radius: 5px;
         cursor: pointer;
-        &:after {
 
-        }
-        &:hover {
-          &:after {
+
+        &.first_last_element_radius {
+          border-radius: 0;
+
+          &:nth-child(1) {
+            border-radius: 5px 0 0 5px;
+          }
+          &:nth-child(5) {
+            border-radius: 0 5px 5px 0;
           }
         }
       }

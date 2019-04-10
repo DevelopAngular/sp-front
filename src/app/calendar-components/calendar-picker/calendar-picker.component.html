@@ -62,6 +62,7 @@
                (mouseleave)="disabledHovered()"
                [ngClass]="{
                     selected: day.selected,
+                    first_last_element_radius: rangeWeeks && day.selected,
                     today: day.today,
                     leftBorder: day.selected && hoveredDates.length && isFirstSelectedDay(day.mDate),
                     rightBorder: (day.selected && hoveredDates.length && isLastSelectedDay(day.mDate)) || (hovered && isLastHoveredDay(day.mDate) && selectedDates.length == 1),

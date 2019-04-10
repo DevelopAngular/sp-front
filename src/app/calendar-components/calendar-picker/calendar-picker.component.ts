@@ -22,6 +22,7 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     @Input() showTime: boolean = true;
     @Input() min: moment.Moment;
     @Input() range: boolean;
+    @Input() rangeWeeks: boolean;
 
     @Output() onSelectDate = new EventEmitter<moment.Moment[]>();
 
@@ -102,7 +103,7 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     }
 
     isRangeHovered(date: moment.Moment): boolean {
-        return this.range && _.findIndex(this.hoveredDates, (hoveredDate) => {
+        return (this.range || this.rangeWeeks) && _.findIndex(this.hoveredDates, (hoveredDate) => {
             return moment(date).isSame(hoveredDate, 'day');
         }) > -1;
     }
@@ -116,12 +117,18 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
                 this.hoveredDates.push(hoveredDate);
                 this.hoveredDates.push(date);
             }
+        } else if (this.rangeWeeks) {
+           const start = moment(date).startOf('week');
+           for (let i = 1; i <= 5; i++) {
+               const hovered = moment(start).add(i, 'days');
+               this.hoveredDates.push(hovered);
+           }
         }
     }
 
     disabledHovered() {
         this.hovered = false;
-        if (this.range && this.selectedDates.length === 1) {
+        if ((this.range && this.selectedDates.length === 1) || this.rangeWeeks) {
             this.hoveredDates = [];
         }
     }
@@ -147,6 +154,11 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
                 this.selectedDates = [fullDate];
                 this.hoveredDates = [];
             }
+        } else if (this.rangeWeeks) {
+            this.selectedDates = [...this.hoveredDates];
+            this.onSelectDate.emit([this.selectedDates[0], this.selectedDates[this.selectedDates.length - 1]]);
+            this.generateCalendar();
+            return;
         } else {
             this.selectedDates = [fullDate];
         }

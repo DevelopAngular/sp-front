@@ -12,4 +12,8 @@ export class CalendarComponentsComponent implements OnInit {
   ngOnInit() {
   }
 
+  result(event) {
+    console.log('Admin calendar result ===>>>', event);
+  }
+
 }

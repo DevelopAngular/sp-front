@@ -4,7 +4,7 @@
          [style.height]="toggleResult === 'Range' ? '110px' : '70px'"
     >
       <div class="toggle-picker">
-        <app-restriction-picker (result)="toggleResult = $event" [selectedChoose]="'Range'" [width]="265" [height]="25" [choices]="['Range', 'Days', 'Weeks']"></app-restriction-picker>
+        <app-restriction-picker (result)="toggleResult = $event; resetDate()" [selectedChoose]="'Range'" [width]="265" [height]="25" [choices]="['Range', 'Days', 'Weeks']"></app-restriction-picker>
       </div>
       <div class="selected-date" *ngIf="toggleResult === 'Range'">
         {{ selectedDateText }}
@@ -37,9 +37,9 @@
         <app-toggle-options [selectedId]="'days_1'" [options]="daysOptions" (result)="selectedDaysOption($event)"></app-toggle-options>
       </div>
       <div class="time-range" *ngIf="openTimeRange">
-        <app-time-picker [currentDate]="selectedDay || currentDate" (timeResult)="selectedDate.start = $event"></app-time-picker>
+        <app-time-picker [currentDate]="selectedDate.start || currentDate" (timeResult)="selectedDate.start = $event"></app-time-picker>
         <mat-divider [vertical]="true"></mat-divider>
-        <app-time-picker [currentDate]="selectedDay || currentDate" (timeResult)="selectedDate.end = $event"></app-time-picker>
+        <app-time-picker [currentDate]="selectedDate.end || currentDate" (timeResult)="selectedDate.end = $event"></app-time-picker>
       </div>
       <div class="button" *ngIf="selectedDay && selectedDate.start && selectedDate.end && openTimeRange">
         <app-gradient-button
@@ -49,6 +49,9 @@
                 (buttonClick)="save()"
         >Done</app-gradient-button>
       </div>
+    </div>
+    <div class="weeks" *ngSwitchCase="'Weeks'">
+      <app-calendar-picker [showTime]="false" [rangeWeeks]="true" (onSelectDate)="calendarResult($event)"></app-calendar-picker>
     </div>
   </div>
 </div>
