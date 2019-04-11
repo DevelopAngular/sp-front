@@ -26,7 +26,7 @@ const cssColorRegexp = new RegExp(`^(${CSS_COLOR_REGEXP})$`, 'i');
 export class GradientButtonComponent implements OnInit {
 
   /*
-  * @Input 'size' can be small, medium large or editable.
+  * @Input 'size' can be small, medium, large, xl or editable.
   * If editable, all inputs marked as ' > editable' below can be provided, otherwise they will be overridden
   */
   @Input() size: string = 'small';
@@ -48,6 +48,8 @@ export class GradientButtonComponent implements OnInit {
   @Input() leftImageWidth: string; // > editable
   @Input() leftImageHeight: string; // > editable
   @Input() cursor: string = 'pointer';
+  @Input() cornerRadius: string;
+  @Input() padding: string;
   @Input() textWidth: string = '100%';
   @Input() whiteSpace: string = 'wrap';
   @Input() buttonLink: string; // needs for the links so that don't brake an existing markup and the entire button is clickable
@@ -71,19 +73,36 @@ export class GradientButtonComponent implements OnInit {
           this.leftImageHeight = '16px';
           this.leftImageWidth = '16px';
           this.minHeight = '40px';
-          this.fontSize = '14px'
+          this.fontSize = '14px';
+          this.cornerRadius = '8px';
+          this.padding = '0px 16px';
           break;
         case 'medium':
           this.leftImageHeight = '21px';
           this.leftImageWidth = '21px';
           this.minHeight = '50px';
           this.fontSize = '15px';
+          this.cornerRadius = '8px';
+          this.padding = '0px 16px';
+
           break;
         case 'large':
-          this.leftImageHeight = '25px';
-          this.leftImageWidth = '25px';
-          this.minHeight = '60px';
+          this.leftImageHeight = '21px';
+          this.leftImageWidth = '21px';
+          this.minHeight = '75px';
           this.fontSize = '17px';
+          this.cornerRadius = '10px';
+          this.padding = '0px 20px';
+
+          break;
+        case 'xl':
+          this.leftImageHeight = '21px';
+          this.leftImageWidth = '21px';
+          this.minHeight = '100px';
+          this.fontSize = '22px';
+          this.cornerRadius = '12px';
+          this.padding = '0px 20px';
+
           break;
       }
     }

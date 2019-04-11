@@ -7,12 +7,14 @@
      [style.height]="minHeight"
      [style.box-shadow]="shadow"
      [style.cursor]="cursor"
+     [style.border-radius]="cornerRadius"
      (click)="onClick($event)"
      (mouseenter)="onHover(true)" (mouseleave)="onHover(false)"
      (mousedown)="onPress(true)" (mouseup)="onPress(false)"
      [@pressState]="buttonState"
      [ngClass]="{'center': !(leftIcon || rightIcon)}">
-  <div *ngIf="!buttonLink" class="wrapper-container" [style.width]="textWidth">
+    <!--<span style="position: absolute; top: 0; left: 3px; font-size: 10px;">{{size}}</span>-->
+  <div *ngIf="!buttonLink" class="wrapper-container" [style.width]="textWidth" [style.padding]="padding">
     <div class="wrapper">
       <img draggable="false" *ngIf="leftIcon" [style.width]="leftImageWidth" [style.height]="leftImageHeight" class="icon left-icon" [src]="leftIcon | resolveAsset">
       <div class="text-content" [style.text-align]="contentAlign">
