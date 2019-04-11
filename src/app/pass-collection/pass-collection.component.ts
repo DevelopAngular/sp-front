@@ -63,9 +63,9 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   timerEvent: Subject<void> = new BehaviorSubject(null);
 
   sortOptions = [
-      { display: 'Pass Expiration Time', color: 'darkBlue', action: 'expiration_time', toggle: false },
-      { display: 'Student Name', color: 'darkBlue', action: 'student_name', toggle: false },
-      { display: 'To Location', color: 'darkBlue', action: 'destination_name', toggle: false }
+      { display: 'Pass Expiration Time', color: this.darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'}) , action: 'expiration_time', toggle: false },
+      { display: 'Student Name', color: this.darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'}), action: 'student_name', toggle: false },
+      { display: 'To Location', color: this.darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'}), action: 'destination_name', toggle: false }
   ];
 
   sort$ = this.dataService.sort$;

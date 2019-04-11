@@ -37,7 +37,7 @@
       </div>
       <div class="buttons">
         <app-gradient-button *ngIf="!spinner && !hasSearched"
-                             [size]="'medium'"
+                             [size]="'xl'"
                              [ngStyle]="{'opacity': isDisabled? '.5' : '1'}"
                              [style.margin]="'0 20px'"
                              [gradient]="'#FFFFFF,#FFFFFF'"
@@ -63,6 +63,7 @@
 
         <div (click)="previewPDF($event)" draggable="true" [ngStyle]="{'opacity': !selectedReport.length ? '.5' : '1'}">
           <app-gradient-button  class="report-button"
+                                [size]="'xl'"
                                 [gradient]="'#FFFFFF,#FFFFFF'"
                                 [hoverColor]="'#F5F5F5'"
                                 [minHeight]="'65px'"
