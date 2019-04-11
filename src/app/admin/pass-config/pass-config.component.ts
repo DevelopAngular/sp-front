@@ -231,8 +231,8 @@ export class PassConfigComponent implements OnInit, OnDestroy {
           panelClass: 'overlay-dialog',
           backdropClass: 'custom-bd',
           disableClose: true,
-          width: '750px',
-          height: '425px',
+          width: '800px',
+          height: '500px',
           data: data
       });
 
