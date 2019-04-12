@@ -22,15 +22,6 @@ export class SettingsComponent implements OnInit {
     hoveredColor: string;
 
 
-    // settings: = [
-    //   {
-    //     // 'gradient': '#1893E9, #05B5DE',
-    //     'icon': './assets/Profile Switch (Blue-Gray).svg',
-    //     'icon-dark': './assets/Profile Switch (White).svg',
-    //     'hover_icon': './assets/Profile Switch (White).svg',
-    //     'hover_icon-dark': './assets/Profile Switch (Navy).svg',
-    //   },
-    // ]
 
     public settings = [
         {
@@ -61,6 +52,7 @@ export class SettingsComponent implements OnInit {
         public dialogRef: MatDialogRef<SettingsComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any[],
         public darkTheme: DarkThemeSwitch,
+        private elemRef: ElementRef
     ) {
     }
 
@@ -93,8 +85,18 @@ export class SettingsComponent implements OnInit {
     updateCalendarPosition() {
         const matDialogConfig: MatDialogConfig = new MatDialogConfig();
         const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
-        const top = this.isSwitchOption ? 405 : 285;
-        matDialogConfig.position = {left: `${rect.left - 170}px`, top: `${rect.top - top}px`};
+
+        const dialogRect = this.elemRef.nativeElement.getBoundingClientRect();
+      console.log(dialogRect);
+      const top = this.isSwitchOption ? 405 : 285;
+      console.log(dialogRect.width);
+      matDialogConfig.position = {
+          // left: `${rect.left - 170}px`,
+          left: `${this.data['possition'].x - 183}px`,
+          // top: `${rect - top}px`,
+          // top: `${this.data['possition'].y - dialogRect.height - 20}px`
+          bottom: `${(window.document.body as HTMLElement).clientHeight - this.data['possition'].y + 20}px`
+        };
 
         this.dialogRef.updatePosition(matDialogConfig.position);
     }

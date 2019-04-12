@@ -48,7 +48,7 @@ function constructUrl(base: string, obj: Partial<QueryParams>): string {
 @Injectable()
 export class DataService {
   private inboxSource = new BehaviorSubject<boolean>(false);
-  public sort$ = new Subject<string>();
+  public sort$ = new BehaviorSubject<string>(null);
   inboxState = this.inboxSource.asObservable();
 
   updateInbox(state: boolean) {

@@ -2,8 +2,8 @@
 
     <div class="title" [ngStyle]="{'color': data.darkBackground ? '#FFFFFF' : '#1F195E'}">Settings</div>
     <div class="settings-content">
-      <div class="profile-switch" *ngIf="isSwitchOption">
-        <div class="option"
+      <div class="profile-switch">
+        <div class="option"  *ngIf="isSwitchOption"
              (mouseenter)="hoveredProfile = true"
              (mouseleave)="hoveredProfile = false"
              [style.background-color]="hoveredProfile ? 'rgb(228, 235, 255)' : 'transparent'"

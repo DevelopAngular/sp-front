@@ -113,6 +113,7 @@ export class NavComponent implements OnInit {
   }
 
   openSettings(event) {
+    console.log(event);
     this.selectedSettings = true;
     // return;
 
@@ -120,7 +121,15 @@ export class NavComponent implements OnInit {
     const settingsRef: MatDialogRef<SettingsComponent> = this.dialog.open(SettingsComponent, {
       panelClass: 'calendar-dialog-container',
       backdropClass: 'invis-backdrop',
-      data: { 'trigger': target, 'isSwitch': this.showButton , darkBackground: this.darkTheme.isEnabled$.value}
+      data: {
+        'trigger': target,
+        'isSwitch': this.showButton,
+        darkBackground: this.darkTheme.isEnabled$.value,
+        'possition': {
+          x: event.clientX,
+          y: event.clientY
+        }
+      }
     });
 
     settingsRef.beforeClose().subscribe(() => {

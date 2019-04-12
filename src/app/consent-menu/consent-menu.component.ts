@@ -26,6 +26,7 @@ export class ConsentMenuComponent implements OnInit {
   ConsentButtonColor: string;
 
   isSort = false;
+  sortMode;
 
   @HostListener('window:resize', ['$event.target'])
     onResize() {
@@ -42,7 +43,8 @@ export class ConsentMenuComponent implements OnInit {
     this.header = data['header'];
     this.options = data['options'];
     this.optionsView = data['optionsView'] || 'inline';
-
+    this.isSort = data['isSort'];
+    this.sortMode = data['sortMode'];
     this._matDialogRef = _matDialogRef;
 
     this.triggerElementRef = data['trigger'];

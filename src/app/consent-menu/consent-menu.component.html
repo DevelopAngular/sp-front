@@ -1,42 +1,57 @@
-﻿<div class="consent-wrapper" [style.background-color]="darkTheme.getBackground('middle', true)">
-  <div class="pointer-wrapper" ><div class="pointer" [style.background-color]="darkTheme.getBackground('middle', true)"></div></div>
-  <div class="consent-header" [style.color]="darkTheme.getColor()">{{ header }}</div>
+﻿<div class="consent-wrapper" [style.background-color]="darkTheme.getBackground('low')">
+  <div class="pointer-wrapper" ><div class="pointer" [style.background-color]="darkTheme.getBackground('low')"></div></div>
+  <div class="rounded-corners-box">
+
+    <div *ngIf="header">
+      <div class="consent-header" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#7F879D'})">{{ header }}</div>
+      <div class="option-divider"></div>
+    </div>
+
     <div *ngIf="!!ConsentText">
-      {{ConsentText}}
+        {{ConsentText}}
 
-      <div mat-dialog-actions class="center">
-        <div [style.color]="getConcentButtonColor(ConsentButtonColor)" class="option-wrapper marRight" (click)="_matDialogRef.close('doProcess')">{{ConsentYesText}}</div>
-        <div [style.color]="getConcentButtonColor(ConsentButtonColor)" class="option-wrapper" (click)="onNoClick()">{{ConsentNoText}}</div>
+        <div mat-dialog-actions class="center">
+          <div [style.color]="getConcentButtonColor(ConsentButtonColor)" class="option-wrapper marRight" (click)="_matDialogRef.close('doProcess')">{{ConsentYesText}}</div>
+          <div [style.color]="getConcentButtonColor(ConsentButtonColor)" class="option-wrapper" (click)="onNoClick()">{{ConsentNoText}}</div>
+        </div>
       </div>
-    </div>
 
-    <div *ngFor="let option of options" class="ds-w-100 options-container">
-
-      <div *ngIf="optionsView === 'button'; else stringOptionsView" class="ds-w-100">
-        <app-gradient-button
-          [cursor]="'pointer'"
-          [minHeight]="'32px'"
-          [width]="'200px'"
-          [fontSize]="'14px'"
-          [fontWeight]="400"
-          [hoverColor]="option.color"
-          [gradient]="option.buttonColor"
-          [textColor]="getColor(option)"
-          (buttonClick)="_matDialogRef.close(option.action)">
-          <span>{{option.display}}</span>
-        </app-gradient-button>
+      <div  class="ds-w-100 options-container">
+        <div *ngFor="let option of options">
+          <div *ngIf="optionsView === 'button'; else stringOptionsView" class="ds-w-100">
+            <app-gradient-button
+              [cursor]="'pointer'"
+              [minHeight]="'32px'"
+              [width]="'200px'"
+              [fontSize]="'14px'"
+              [fontWeight]="400"
+              [hoverColor]="option.color"
+              [gradient]="option.buttonColor"
+              [textColor]="getColor(option)"
+              (buttonClick)="_matDialogRef.close(option.action)">
+              <span>{{option.display}}</span>
+            </app-gradient-button>
+          </div>
+          <ng-template #stringOptionsView>
+            <div [style.color]="option.color" #_option class="option-wrapper ds-w-100"
+                 [ngClass]="{
+                  'option-wrapper': !darkTheme.isEnabled$.value,
+                  'option-wrapper__dark': darkTheme.isEnabled$.value
+                 }"
+                 (mousedown)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : 'rgba(226, 231, 244, 1)'"
+                 (mouseup)="_option.style.background = 'transparent'"
+                 (mouseover)="_option.style.background = this.darkTheme.isEnabled$.value ? isSort ? '#47447E' : 'rgba(236, 241, 255, .2)' : 'rgba(236, 241, 255, 1)'"
+                 (mouseleave)="_option.style.background = 'transparent'"
+                 (click)="_matDialogRef.close(option.action)">
+              <div class="ds-w-100 ds-flex-center-between" *ngIf="isSort; else simpleOptions">
+                <span>{{ option.display }}</span>
+                <img width="16" height="16" [src]="darkTheme.getIcon({iconName: 'Check'})" *ngIf="sortMode === option.action" alt="">
+              </div>
+              <ng-template #simpleOptions>{{ option.display }}</ng-template>
+            </div>
+          </ng-template>
+          <div class="option-divider"></div>
+        </div>
       </div>
-      <ng-template #stringOptionsView>
-        <div [style.color]="option.color" #_option class="option-wrapper ds-w-100"
-             [ngClass]="{
-              'option-wrapper': !darkTheme.isEnabled$.value,
-              'option-wrapper__dark': darkTheme.isEnabled$.value
-             }"
-             (mousedown)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : 'rgba(226, 231, 244, 1)'"
-             (mouseup)="_option.style.background = 'transparent'"
-             (mouseover)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(236, 241, 255, .2)' : 'rgba(236, 241, 255, 1)'"
-             (mouseleave)="_option.style.background = 'transparent'"
-             (click)="_matDialogRef.close(option.action)">{{ option.display }} {{option.color}} {{darkTheme.isEnabled$.value}}</div>
-      </ng-template>
-    </div>
+  </div>
 </div>

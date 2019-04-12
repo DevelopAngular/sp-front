@@ -324,7 +324,12 @@ export class LiveDataService {
           HallPass.fromJSON, mergeFilters(filters)),
       ]),
       handlePost: filterHallPasses
-    });
+    }).pipe(
+      map((hallPasses: HallPass[]) => {
+        return hallPasses.filter((h: any) => !h.cancelled);
+        }
+      )
+    );
   }
 
   watchHallPassesToLocation(sortingEvents: Observable<HallPassFilter>, filter: Location[], date: Date = null): Observable<HallPass[]> {
@@ -361,7 +366,12 @@ export class LiveDataService {
           HallPass.fromJSON, mergeFilters(filters)),
       ]),
       handlePost: filterHallPasses
-    });
+    }).pipe(
+      map((hallPasses: HallPass[]) => {
+        return hallPasses.filter((h: any) => !h.cancelled);
+        }
+      )
+    );
   }
 
   watchActiveHallPasses(sortingEvents: Observable<HallPassFilter>, filter?: PassFilterType, date: Date = null): Observable<HallPass[]> {

@@ -202,6 +202,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
           'options': this.sortOptions,
           'trigger': new ElementRef(event.currentTarget),
           'isSort': true,
+          'sortMode': this.dataService.sort$.value
         }
     });
 
