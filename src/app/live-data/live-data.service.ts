@@ -322,6 +322,7 @@ export class LiveDataService {
       handlePollingEvent: makePollingEventHandler([
         new AddItem(['hall_pass.create', 'hall_pass.update', 'hall_pass.end', 'pass_request.accept', 'pass_invitation.accept'],
           HallPass.fromJSON, mergeFilters(filters)),
+        new RemoveItem(['hall_pass.start', 'hall_pass.cancel'], HallPass.fromJSON)
       ]),
       handlePost: filterHallPasses
     }).pipe(
@@ -364,6 +365,7 @@ export class LiveDataService {
       handlePollingEvent: makePollingEventHandler([
         new AddItem(['hall_pass.create', 'hall_pass.update', 'hall_pass.end', 'pass_request.accept', 'pass_invitation.accept'],
           HallPass.fromJSON, mergeFilters(filters)),
+        new RemoveItem(['hall_pass.start', 'hall_pass.cancel'], HallPass.fromJSON)
       ]),
       handlePost: filterHallPasses
     }).pipe(

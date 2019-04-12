@@ -27,7 +27,6 @@ export class HallPass extends BaseModel {
   }
 
   static fromJSON(JSON: any): HallPass {
-    console.log(JSON);
     if (!JSON) {
       return null;
     }
