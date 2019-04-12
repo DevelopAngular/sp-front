@@ -9,11 +9,11 @@ export class RestrictionPickerComponent implements OnInit {
 
   @Input() choices: string[];
   @Input() width: number;  // px
-  @Input() height: number;  // px
-  @Input() selectedColor: string = '#1d1a5e';
+  @Input() height: number = 25;  // px
+  @Input() selectedColor: string = '#1E194F';
   @Input() backgroundColor: string = '#FFFFFF';
   @Input() selectedChoose: any;
-  @Input() fontSize: number = 15;  // px
+  @Input() fontSize: number = 13;  // px
   @Input() disabled: boolean;
   @Input() padding: number = 5;      // px
 

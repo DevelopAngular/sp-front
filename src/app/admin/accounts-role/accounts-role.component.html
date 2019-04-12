@@ -259,7 +259,7 @@
         </div>
         <!--<pre>{{userList| json}}</pre>-->
         <div class="column-settings">
-          <img draggable="false" width="20" [src]="'./assets/Options (Navy).svg' | resolveAsset" alt="Options (Navy).svg" (click)="showColumnSettings($event)">
+          <img draggable="false" width="20" [src]="darkTheme.getIcon({iconName: 'Options', lightFill: 'Navy'}) | resolveAsset" alt="Options (Navy).svg" (click)="showColumnSettings($event)">
         </div>
         <app-data-table
           class="ds-my-10"
