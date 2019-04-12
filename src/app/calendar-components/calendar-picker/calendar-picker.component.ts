@@ -57,7 +57,7 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     }
 
     isBeforeMinDate(date: moment.Moment): boolean {
-      return moment(date).isBefore(this.min) && this.showWeekendDay(date);
+      return moment(date).isBefore(this.min, 'day') && this.showWeekendDay(date);
     }
 
     isToday(date: moment.Moment): boolean {
