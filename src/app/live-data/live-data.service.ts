@@ -324,9 +324,15 @@ export class LiveDataService {
       handlePollingEvent: makePollingEventHandler([
         new AddItem(['hall_pass.create', 'hall_pass.update', 'hall_pass.end', 'pass_request.accept', 'pass_invitation.accept'],
           HallPass.fromJSON, mergeFilters(filters)),
+        new RemoveItem(['hall_pass.start', 'hall_pass.cancel'], HallPass.fromJSON)
       ]),
       handlePost: filterHallPasses
-    });
+    }).pipe(
+      map((hallPasses: HallPass[]) => {
+        return hallPasses.filter((h: any) => !h.cancelled);
+        }
+      )
+    );
   }
 
   watchHallPassesToLocation(sortingEvents: Observable<HallPassFilter>, filter: Location, date: Date = null): Observable<HallPass[]> {
@@ -359,9 +365,15 @@ export class LiveDataService {
       handlePollingEvent: makePollingEventHandler([
         new AddItem(['hall_pass.create', 'hall_pass.update', 'hall_pass.end', 'pass_request.accept', 'pass_invitation.accept'],
           HallPass.fromJSON, mergeFilters(filters)),
+        new RemoveItem(['hall_pass.start', 'hall_pass.cancel'], HallPass.fromJSON)
       ]),
       handlePost: filterHallPasses
-    });
+    }).pipe(
+      map((hallPasses: HallPass[]) => {
+        return hallPasses.filter((h: any) => !h.cancelled);
+        }
+      )
+    );
   }
 
   watchActiveHallPasses(sortingEvents: Observable<HallPassFilter>, filter?: PassFilterType, date: Date = null): Observable<HallPass[]> {
