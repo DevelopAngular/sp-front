@@ -22,7 +22,7 @@
           <img class="title-icon" *ngIf="titleIcon" [src]="titleIcon | resolveAsset">
           {{ folderName }}
       </div>
-      <div *ngIf="(overlayType === 'newRoom') || overlayType === 'edit' || overlayType === 'editRoom' || overlayType === 'newFolder' || overlayType === 'newRoomInFolder' || overlayType === 'addExisting'" style="position: absolute; right: 30px; font-size: 15px">
+      <div *ngIf="(overlayType === 'newRoom') || overlayType === 'edit' || overlayType === 'editRoom' || overlayType === 'newFolder' || overlayType === 'newRoomInFolder' || overlayType === 'addExisting'" style="position: absolute; right: 16px; font-size: 15px">
         <app-gradient-button *ngIf="form.get('timeLimit').valid && overlayType === 'edit' && settingsTouched"
                              [minHeight]="'40px'"
                              [style.width]="'120px'"
