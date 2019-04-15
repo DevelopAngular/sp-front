@@ -57,32 +57,53 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
                 roomsControls.push({controlTitle: `Pass From ${room.title}`, formControl: `from_${room.title}`});
                 roomsControls.push({controlTitle: `Pass To ${room.title}`, formControl: `to_${room.title}`});
               });
-              this.settings.push({
-                  title: 'Active Passes',
-                  controls: [
-                      { controlTitle: '1 Minute Left Alert', formControl: 'left_alert' },
-                      { controlTitle: 'Pass Expiration Alert', formControl: 'expiration_alert' },
-                      { controlTitle: 'New Pass From Teacher', formControl: 'pass_from_teacher' },
-                  ]
-              },
-                  {
-                      title: 'Scheduled Passes',
-                      controls: [
-                          { controlTitle: 'New Scheduled Pass', formControl: 'scheduled_pass' },
-                          { controlTitle: 'Upcoming Scheduled Pass', formControl: 'upcoming_scheduled_pass' },
-                          { controlTitle: 'Scheduled Pass Started', formControl: 'pass_started' },
-                          { controlTitle: 'Scheduled Pass Updates', controlSubtitle: 'Alerts if a scheduled pass is deleted.', formControl: 'pass_updates' }
-                      ]
-                  },
+              if (this.user.isTeacher()) {
+                this.settings.push(
                   {
                       title: 'Pass Requests',
                       controls: [
                           { controlTitle: 'New Pass Requests', formControl: 'new_pass_request' },
                           { controlTitle: 'Pass Request Updates', controlSubtitle: 'Alerts when a pass is accepted or declined by a student.', formControl: 'pass_request_updates' }
                       ]
-                  });
-              if (roomsControls.length > 0) {
-                  this.settings.push({ title: 'My Room', controls: roomsControls });
+                  },
+                  {
+                      title: 'Scheduled Passes',
+                      controls: [
+                          { controlTitle: 'Scheduled Pass Updates', controlSubtitle: 'Alerts if a scheduled pass is deleted.', formControl: 'pass_updates' }
+                      ]
+                  },
+                  {
+                      title: 'My Room',
+                      controls: roomsControls
+                  }
+                );
+              } else {
+                  this.settings.push({
+                          title: 'Active Passes',
+                          controls: [
+                              { controlTitle: '1 Minute Left Alert', formControl: 'left_alert' },
+                              { controlTitle: 'Pass Expiration Alert', formControl: 'expiration_alert' },
+                              { controlTitle: 'New Pass From Teacher', formControl: 'pass_from_teacher' },
+                          ]
+                      },
+                      {
+                          title: 'Scheduled Passes',
+                          controls: [
+                              { controlTitle: 'New Scheduled Pass', formControl: 'scheduled_pass' },
+                              { controlTitle: 'Upcoming Scheduled Pass', formControl: 'upcoming_scheduled_pass' },
+                              { controlTitle: 'Scheduled Pass Started', formControl: 'pass_started' },
+                              { controlTitle: 'Scheduled Pass Updates', controlSubtitle: 'Alerts if a scheduled pass is deleted.', formControl: 'pass_updates' }
+                          ]
+                      },
+                      {
+                          title: 'Pass Requests',
+                          controls: [
+                              { controlTitle: 'New Pass Requests', formControl: 'new_pass_request' },
+                              { controlTitle: 'Pass Request Updates', controlSubtitle: 'Alerts when a pass is accepted or declined by a student.', formControl: 'pass_request_updates' }
+
+                          ]
+                      }
+                      );
               }
               this.buildForm();
           });
