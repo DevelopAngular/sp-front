@@ -54,6 +54,18 @@ export class UserService {
      return this.http.get<User>('v1/users/@me');
   }
 
+  getUserNotification() {
+    return this.http.get('v1/users/@me/notification_settings');
+  }
+
+  enableNotification(id) {
+    return this.http.put(`v1/users/@me/notification_settings/${id}`);
+  }
+
+  disableNotification(id) {
+    return this.http.delete(`v1/users/@me/notification_settings/${id}`);
+  }
+
   searchProfile(role, limit = 5, search) {
       return this.http.get<Paged<any>>(`v1/users?role=${role}&limit=${limit}&search=${search}`);
   }
