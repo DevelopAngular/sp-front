@@ -29,6 +29,7 @@ export class SettingsComponent implements OnInit {
 
   hoveredProfile: boolean;
   hoveredTheme: boolean;
+  pressedTheme: boolean;
   hoveredSignout: boolean;
   hovered: boolean;
   hoveredColor: string;
@@ -79,6 +80,16 @@ export class SettingsComponent implements OnInit {
       'action': 'support',
       'title': 'Support'
     });
+  }
+
+  get _themeBackground() {
+    return this.hoveredTheme
+              ?
+              this.pressedTheme
+                ?
+                'radial-gradient(circle at 73% 71%, #022F68, #2F66AB)'
+                  : 'rgb(228, 235, 255)'
+                    : 'transparent';
   }
 
   ngOnInit() {

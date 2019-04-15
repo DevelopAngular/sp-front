@@ -25,22 +25,23 @@
            (dragulaModelChange)="updateOrderLocation($event)"
            [style.width]="'190px'"
            (scroll)="leftScroll($event)">
-
-        <app-location-cell class="choice" *ngFor="let choice of starredChoices"
-                           (onSelect)="choiceSelected($event)" (onStar)="star($event)"
-                           [value]="choice" [type]="type" [starred]="true" [showStar]="showStars" [allowOnStar]="allowOnStar">
-        </app-location-cell>
+        <div class="choice" *ngFor="let choice of starredChoices">
+          <app-location-cell
+            (onSelect)="choiceSelected($event)" (onStar)="star($event)"
+            [value]="choice" [type]="type" [starred]="true" [showStar]="showStars" [allowOnStar]="allowOnStar">
+          </app-location-cell>
+        </div>
       </div>
       <div *ngIf="starredChoices.length<1" class="no-favs" ondragstart="return false">
         <img class="star-icon" [src]="'./assets/Star (Yellow).svg'">
         <div>
-          <span style="font-weight: bold; font-size: 15px; padding-bottom: 3px">No Favorite Rooms.</span> <br>
-          <span>Add Favorites in Settings.</span>
+          <span class="ds-dialog-bold-text ds-pb-5">No Favorite Rooms</span> <br>
+          <span class="ds-cell-description-text">Add favorites in settings</span>
         </div>
       </div>
+      <div *ngIf="rightHeaderText && !hideFavorites" style="margin-top: 25px" class="fav-header">All Rooms</div>
+      <mat-divider class="divider"></mat-divider>
     </div>
-    <div *ngIf="rightHeaderText && !hideFavorites" style="margin-top: 25px" class="fav-header">All Rooms</div>
-    <mat-divider class="divider"></mat-divider>
     <div class="table-right" [style.margin]="'0 ' +(showFavorites?'0':'auto')" *ngIf="choices && !noChoices; else noLocsDummy">
       <!--<app-round-input-->
       <!--[style.margin]="'20px' "-->
@@ -54,7 +55,7 @@
       <!--(ontextupdate)="onSearch($event)"-->
       <!--&gt;</app-round-input>-->
       <!--<input *ngIf="horizontalTable" class="input" #searchBox [value]="search" [placeholder]="placeholder" (keyup)="onSearch(searchBox.value)">-->
-      <div class="quick-label" *ngIf="staticChoices?.length">Quick Select</div>
+      <div class="quick-label" *ngIf="staticChoices?.length && !search">Quick Select</div>
       <div class="choices" [style.width]="'190px'" (scroll)="onScroll($event)">
         <app-location-cell [hasLocks]="hasLocks" [forLater]="forLater" [forStaff]="forStaff" class="choice" *ngFor="let choice of choices" [showStar]="showStars && !noRightStar" [starred]="false"
                            (onSelect)="choiceSelected($event)" (onStar)="star($event);" [allowOnStar]="allowOnStar"

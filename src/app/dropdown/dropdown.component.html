@@ -1,31 +1,58 @@
-<div class="pointer-wrapper"><div class="pointer"></div></div>
-<div class="consent-wrapper">
-  <div class="consent-header" *ngIf="heading"> {{heading}}</div>
-  <div class="divider"></div>
+<div class="pointer-wrapper"><div class="pointer"  [style.background-color]="darkTheme.getBackground('low')"></div></div>
+<div class="consent-wrapper"  [style.background-color]="darkTheme.getBackground('low')">
+  <div class="consent-header" [style.color]="'#7F879D'" *ngIf="heading"> {{heading}}</div>
+  <div class="option-divider"></div>
+
   <div class="options-wrapper" *ngIf="locations">
 
     <!-- In Process block ---->
-    <div class="option-data" (click)="_matDialogRef.close(location)">
-      <div class="option-data_leftside">
-        <span>All Rooms</span>
-      </div>
-      <div class="option-data_rightside">
-        <div class="marked-room">
-          <img *ngIf="!selectedLocation" [style.width]="'20px'" [style.height]="'20px'" [src]="'./assets/Check (Navy).svg' | resolveAsset" alt="Check (Navy).svg">
-        </div>
-      </div>
-    </div>
-    <div class="option-divider"></div>
+    <div class="option">
 
-    <div class="option" *ngFor="let location of locations" (click)="_matDialogRef.close(location)">
-      <div class="option-data">
+      <div class="option-data"
+           #_option class="option-data"
+           [ngClass]="{
+                'option-wrapper': !darkTheme.isEnabled$.value,
+                'option-wrapper__dark': darkTheme.isEnabled$.value
+               }"
+           (mousedown)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : 'rgba(226, 231, 244, 1)'"
+           (mouseup)="_option.style.background = 'transparent'"
+           (mouseover)="_option.style.background = this.darkTheme.isEnabled$.value ? '#47447E' : 'rgba(236, 241, 255, 1)'"
+           (mouseleave)="_option.style.background = 'transparent'"
+           (click)="_matDialogRef.close(location)">
         <div class="option-data_leftside">
-          <span>{{ location.title }}</span>
+          <span [style.color]="darkTheme.getColor()">All Rooms</span>
         </div>
         <div class="option-data_rightside">
-          <div>{{location.room}}</div>
           <div class="marked-room">
-            <img *ngIf="selectedLocation ? (location.room === selectedLocation.room && location.title === selectedLocation.title) : false" [style.width]="'20px'" [style.height]="'20px'"  [src]="'./assets/Check (Navy).svg' | resolveAsset" alt="Check (Navy).svg">
+            <img *ngIf="!selectedLocation" [style.width]="'20px'" [style.height]="'20px'" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'}) | resolveAsset" alt="Check (Navy).svg">
+          </div>
+        </div>
+      </div>
+
+      <div class="option-divider"></div>
+    </div>
+
+    <div class="option" *ngFor="let location of locations" (click)="_matDialogRef.close(location)">
+      <div #_option class="option-data"
+           [ngClass]="{
+                'option-wrapper': !darkTheme.isEnabled$.value,
+                'option-wrapper__dark': darkTheme.isEnabled$.value
+               }"
+           (mousedown)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : 'rgba(226, 231, 244, 1)'"
+           (mouseup)="_option.style.background = 'transparent'"
+           (mouseover)="_option.style.background = this.darkTheme.isEnabled$.value ? '#47447E' : 'rgba(236, 241, 255, 1)'"
+           (mouseleave)="_option.style.background = 'transparent'"
+      >
+        <div class="option-data_leftside">
+          <span [style.color]="darkTheme.getColor()">{{ location.title }}</span>
+        </div>
+        <div class="option-data_rightside">
+          <div [style.color]="'#7F879D'"
+          >{{location.room}}</div>
+          <div class="marked-room">
+            <img *ngIf="selectedLocation ? (location.room === selectedLocation.room && location.title === selectedLocation.title) : false"
+                 [style.width]="'20px'" [style.height]="'20px'"
+                 [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'}) | resolveAsset" alt="Check (Navy).svg">
           </div>
         </div>
       </div>

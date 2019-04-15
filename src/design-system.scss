@@ -60,6 +60,9 @@ $primaryFont: "Helvetica Neue", sans-serif;
 .ds-dialog-bold-text {
   @include textSize(14px, bold, $blue-gray);
 }
+.ds-dialog-normal-text {
+  @include textSize(14px, normal, $blue-gray);
+}
 .ds-small-link-text {
   @include textSize(12px, $color: $blue-gray);
   &:hover {

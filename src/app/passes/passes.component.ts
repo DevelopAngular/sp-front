@@ -402,13 +402,18 @@ export class PassesComponent implements OnInit {
       data: data
     });
   }
-  onReportFromPassCard() {
-    this.dialog.open(ReportSuccessToastComponent, {
-      backdropClass: 'invisible-backdrop',
-      panelClass: 'main-form-dialog-container',
-      position: {
-        bottom: '50px'
-      }
-    });
+  onReportFromPassCard(evt) {
+
+    console.log(evt);
+
+    if (evt) {
+      this.dialog.open(ReportSuccessToastComponent, {
+        backdropClass: 'invisible-backdrop',
+        panelClass: 'main-form-dialog-container',
+        position: {
+          bottom: '50px'
+        }
+      });
+    }
   }
 }

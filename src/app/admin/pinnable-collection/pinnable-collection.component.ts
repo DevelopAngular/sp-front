@@ -113,12 +113,12 @@ export class PinnableCollectionComponent implements OnInit {
       let options = [];
 
       if(this.selectedPinnables.length > 0 && this.bulkSelect){
-        options.push(this.genOption('Bulk Edit Selection','#3D396B','edit'));
-        options.push(this.genOption('New Folder with Selection','#3D396B','newFolder'));
+        options.push(this.genOption('Bulk Edit Selection', this.darkTheme.getColor(), 'edit'));
+        options.push(this.genOption('New Folder with Selection', this.darkTheme.getColor(), 'newFolder'));
         // options.push(this.genOption('Delete Selection','#E32C66','delete'));
       } else{
-        options.push(this.genOption('New Room','#3D396B','newRoom'));
-        options.push(this.genOption('New Folder','#3D396B','newFolder'));
+        options.push(this.genOption('New Room', this.darkTheme.getColor(), 'newRoom'));
+        options.push(this.genOption('New Folder', this.darkTheme.getColor(), 'newFolder'));
       }
 
       const cancelDialog = this.dialog.open(ConsentMenuComponent, {

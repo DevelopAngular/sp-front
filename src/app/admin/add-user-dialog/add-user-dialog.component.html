@@ -21,7 +21,7 @@
   </div>
   <div class="content">
     <div class="content_top">
-      <div class="content_top-header ds-dialog-subtitle"><span>Account Type</span></div>
+      <div class="content_top-header ds-dialog-heading"><span>Account Type</span></div>
       <div class="content_top-body">
         <p class="title ds-cell-description-text">
           Select whether the account you will be adding is from your schools’ G Suite or the account will be an alternative sign-in. Learn more here.
@@ -41,7 +41,7 @@
 
     <div class="content_rest" *ngIf="typeChoosen === accountTypes[0]">
       <div class="profile-search">
-        <div class="profile-search_label"><span>G Suite Account to Add</span></div>
+        <div class="profile-search_label ds-dialog-heading"><span>G Suite Account to Add</span></div>
         <app-profiles-search
           [type]="'gsuite'"
           [width]="'360px'"
@@ -51,7 +51,7 @@
       </div>
 
       <div class="profile-permissions" [style.width]="'100%'" *ngIf="data.role !== '_profile_student'">
-        <div class="profile-permissions_heading ds-dialog-subtitle">Permissions</div>
+        <div class="profile-permissions_heading ds-dialog-heading">Permissions</div>
         <div *ngFor="let control of controlsIteratable">
           <app-toggle-input
             [form]="permissionsForm"

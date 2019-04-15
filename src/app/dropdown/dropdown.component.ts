@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter, ElementRef, Inject } fr
 import { Location } from '../models/Location';
 import { MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '../../../node_modules/@angular/material';
 import { School } from '../models/School';
+import {DarkThemeSwitch} from '../dark-theme-switch';
 
 @Component({
   selector: 'app-dropdown',
@@ -19,7 +20,11 @@ export class DropdownComponent implements OnInit {
   _matDialogRef: MatDialogRef<DropdownComponent>;
   triggerElementRef: HTMLElement;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any[], _matDialogRef: MatDialogRef<DropdownComponent>) {
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any[],
+    _matDialogRef: MatDialogRef<DropdownComponent>,
+    public  darkTheme: DarkThemeSwitch
+  ) {
     this._matDialogRef = _matDialogRef;
     this.triggerElementRef = data['trigger'];
     this.heading = data['heading'];
@@ -36,7 +41,7 @@ export class DropdownComponent implements OnInit {
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     const rect = this.triggerElementRef.getBoundingClientRect();
     matDialogConfig.width = '350px';
-    matDialogConfig.height = '200px';
+    matDialogConfig.height = '215px';
     console.log('RECT =====>', rect, matDialogConfig);
     matDialogConfig.position = { left: `${rect.left + (rect.width / 2 - parseInt(matDialogConfig.width, 10) / 2 ) }px`, top: `${rect.bottom + 15}px` };
     this._matDialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);
