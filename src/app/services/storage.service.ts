@@ -29,7 +29,7 @@ export class StorageService {
       .subscribe((evt) => {
         // console.log(evt);
         this.matDialog.open(SignedOutToastComponent, {
-                panelClass: 'form-dialog-container',
+                panelClass: 'form-dialog-container-white',
                 backdropClass: 'white-backdrop',
                 data: {}
               });
