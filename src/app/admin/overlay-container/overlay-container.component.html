@@ -502,7 +502,7 @@
         <!--</div>-->
       </div>
      </div>
-        <div class="advanced-options" *ngIf="(overlayType === 'editRoom' || (editRoomInFolder)) && !showSearchTeacherOptions">
+        <div class="advanced-options" *ngIf="(overlayType === 'editRoom' || (editRoomInFolder)) && !showSearchTeacherOptions || overlayType === 'edit'">
             <app-advanced-options
                     [roomName]="roomName"
                     [nowRestricted]="nowRestriction"
@@ -577,7 +577,7 @@
           <div class="edit-right-title">Rooms Editing</div>
           <div class="selected-rooms">
             <div class="selected-room" *ngFor="let room of selectedRooms">
-              <app-pinnable [pinnable]="room" [forStaff]="true"></app-pinnable>
+              <app-pinnable [disabled]="true" [pinnable]="room" [forStaff]="true"></app-pinnable>
             </div>
           </div>
         </div>
