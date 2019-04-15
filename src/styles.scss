@@ -41,6 +41,17 @@ body {
   background-color: transparent;
 }
 
+.form-dialog-container-white .mat-dialog-container {
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  padding: 0;
+  scrollbar-face-color: #D6D6D6;
+  scrollbar-track-color: white;
+  background-color: white;
+}
+
 .main-form-dialog-container .mat-dialog-container {
   border-radius: 14px;
   background-color: transparent;

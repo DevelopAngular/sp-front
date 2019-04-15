@@ -45,6 +45,8 @@ export class PinnableComponent implements OnInit {
   @Input()
   selected: boolean = false;
 
+  @Input() disabled: boolean = false;
+
   @Output()
   onSelectEvent: EventEmitter<Pinnable> = new EventEmitter();
 
@@ -57,7 +59,7 @@ export class PinnableComponent implements OnInit {
   }
 
   get shadow(){
-    if(this.hovered && this.valid)
+    if(this.hovered && this.valid && !this.disabled)
       return this.sanitizer.bypassSecurityTrustStyle('0 2px 4px 1px rgba(0, 0, 0, 0.3)');
     else
       return this.sanitizer.bypassSecurityTrustStyle('0 2px 4px 0px rgba(0, 0, 0, 0.1)');
@@ -76,11 +78,11 @@ export class PinnableComponent implements OnInit {
   }
 
   get buttonState() {
-    return this.valid?this.buttonDown ? 'down' : 'up':'up';
+    return this.valid && !this.disabled ? this.buttonDown ? 'down' : 'up' : 'up';
   }
 
   onSelect() {
-    if(this.valid)
+    if(this.valid && !this.disabled)
       this.onSelectEvent.emit(this.pinnable);
   }
 
@@ -94,7 +96,9 @@ export class PinnableComponent implements OnInit {
   }
 
   onPress(press: boolean) {
-    this.buttonDown = press;
+    if (!this.disabled) {
+      this.buttonDown = press;
+    }
   }
 
 }

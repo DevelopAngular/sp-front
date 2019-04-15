@@ -1,6 +1,6 @@
 <div class="notif-wrapper">
   <div class="notif-header" [style.background-image]="'radial-gradient(circle at 73% 71%, #DA2370,#FB434A)'">
-    <img class="back-button" [src]="'./assets/Back Button (White).svg' | resolveAsset" alt="Notification" (click)="dialogRef.close()">
+    <img class="back-button" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" alt="Notification" (click)="dialogRef.close()">
     <div class="header-title">
         <img class="header-icon" [src]="'./assets/Notifications (White).svg' | resolveAsset">
       <div class="ds-dialog-title-white">
@@ -11,18 +11,19 @@
   <div class="notif-content">
       <div class="setting" *ngFor="let setting of settings">
         <div class="setting-content">
-            <div class="ds-dialog-subtitle" style="margin-bottom: 10px">{{ setting.title }}</div>
-            <div class="controls" *ngFor="let control of setting.controls">
+            <div class="ds-dialog-subtitle" style="margin-bottom: 10px">{{ setting.category_name }}</div>
+            <div class="controls" *ngFor="let notification of setting.notifications">
                 <div class="control-title ds-cell-text-2">
-                  {{ control.controlTitle }} <br>
-                  <span class="control-subtitle ds-cell-description-text" *ngIf="control.controlSubtitle"> {{ control.controlSubtitle }} </span>
+                  {{ notification.name }} <br>
+                  <!--<span class="control-subtitle ds-cell-description-text" *ngIf="control.controlSubtitle"> {{ control.controlSubtitle }} </span>-->
                 </div>
                 <div class="control-toggle">
                   <app-toggle-input
                      [delimiter]="false"
                      [controlSize]="'small'"
                      [form]="notifForm"
-                     [controlName]="control.formControl"
+                     [controlName]="notification.id"
+                     (pushOutValue)="changeForm({value: $event, id: notification.id})"
                   ></app-toggle-input>
                 </div>
             </div>

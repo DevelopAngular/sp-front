@@ -5,7 +5,7 @@
       <img class="back-button" draggable="false"
            *ngIf="backButtonState && !hideHeaderIcon"
            alt="Go Back"
-           [src]="'./assets/' + (titleColor === 'white' ? 'Back Button (Blue-White).svg' : 'Back Button (Light-Gray).svg') | resolveAsset"
+           [src]="'./assets/' + (titleColor === 'white' ? 'Back Button (Light-Gray).svg' : 'Back Button (Blue-White).svg') | resolveAsset"
            (click)="back()">
 
         <div class="cancel-button" [style.color]="titleColor" *ngIf="!backButtonState && !hideHeaderIcon" (click)="back()">Cancel</div>
@@ -22,7 +22,7 @@
           <img class="title-icon" *ngIf="titleIcon" [src]="titleIcon | resolveAsset">
           {{ folderName }}
       </div>
-      <div *ngIf="(overlayType === 'newRoom') || overlayType === 'edit' || overlayType === 'editRoom' || overlayType === 'newFolder' || overlayType === 'newRoomInFolder' || overlayType === 'addExisting'" style="position: absolute; right: 30px; font-size: 15px">
+      <div *ngIf="(overlayType === 'newRoom') || overlayType === 'edit' || overlayType === 'editRoom' || overlayType === 'newFolder' || overlayType === 'newRoomInFolder' || overlayType === 'addExisting'" style="position: absolute; right: 16px; font-size: 15px">
         <app-gradient-button *ngIf="form.get('timeLimit').valid && overlayType === 'edit' && settingsTouched"
                              [minHeight]="'40px'"
                              [style.width]="'120px'"
@@ -502,7 +502,7 @@
         <!--</div>-->
       </div>
      </div>
-        <div class="advanced-options" *ngIf="(overlayType === 'editRoom' || (editRoomInFolder)) && !showSearchTeacherOptions">
+        <div class="advanced-options" *ngIf="(overlayType === 'editRoom' || (editRoomInFolder)) && !showSearchTeacherOptions || overlayType === 'edit'">
             <app-advanced-options
                     [roomName]="roomName"
                     [nowRestricted]="nowRestriction"
@@ -562,7 +562,7 @@
     </div>
       <div class="divider"></div>
     <div class="right-content">
-      <div style="position: relative; width: 100%; height: 100%; margin-top: 26px" *ngIf="overlayType !== 'edit'">
+      <div class="appearance-content" *ngIf="overlayType !== 'edit'">
         <div class="inactive" *ngIf="hideAppearance"></div>
         <div class="right-content-title" [ngStyle]="{'color':  color_profile && selectedIcon ? '#1F195E' : '#8e8e93' }">Appearance</div>
         <div class="color-picker">
@@ -577,7 +577,7 @@
           <div class="edit-right-title">Rooms Editing</div>
           <div class="selected-rooms">
             <div class="selected-room" *ngFor="let room of selectedRooms">
-              <app-pinnable [pinnable]="room" [forStaff]="true"></app-pinnable>
+              <app-pinnable [disabled]="true" [pinnable]="room" [forStaff]="true"></app-pinnable>
             </div>
           </div>
         </div>
