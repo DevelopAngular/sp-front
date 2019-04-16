@@ -330,11 +330,9 @@
     display: flex;
     justify-content: center;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
-    width: 90%;
     align-items: center;
-    height: 75px;
-    margin-top: 20px;
-    border-radius: 12px;
+    height: 78px;
+    width: 100%;
     position: relative;
 
     .room-in-folder-title-inactive {
@@ -345,8 +343,8 @@
 
     .room-in-folder-title-active {
       font-weight: bold;
-      font-size: 17px;
-      color: #1d1a5e;
+      font-size: 16px;
+      color: $navy;
     }
 
     .header-in-folder-button {
@@ -359,14 +357,26 @@
     }
 
     .back-button {
-      width: 35px;
-      height: 35px;
+      width: 123px;
+      height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
+      position: absolute;
+      left: 0;
+
+      &:hover {
+        background-color: #ECF1FF;
+      }
     }
 
     .cancel-button-in-folder-header {
       font-weight: bold;
       cursor: pointer;
+      color: $navy;
+      position: absolute;
+      left: 25px;
     }
 
   }
@@ -435,9 +445,9 @@
 }
 
 .edit-rooms-info {
-  font-weight: bold;
+  font-size: 14px;
   color: #7F879D;
-  margin: 30px 30px 0 30px;
+  margin: 20px 30px 0 30px;
 }
 
 .edit-right-content {

@@ -98,20 +98,17 @@
       <div class="new-room-in-folder"
            *ngIf="overlayType === 'newRoomInFolder' || overlayType === 'importRooms' || overlayType === 'settingsRooms'">
           <div class="new-room-in-folder-header">
-            <div style="position: absolute; left: 30px">
-                <img draggable="false" class="back-button" *ngIf="!backButtonsStateInFolder" (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : setLocation('newFolder'))" [src]="'./assets/Combined Shape.svg' | resolveAsset">
-
-                <div class="cancel-button-in-folder-header"
-                     *ngIf="backButtonsStateInFolder"
-                     (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : setLocation('newFolder'))"
-                >Cancel</div>
+            <div class="back-button" *ngIf="!backButtonsStateInFolder" (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : setLocation('newFolder'))">
+                <app-back-button></app-back-button>
             </div>
+            <div class="cancel-button-in-folder-header"
+                 (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : setLocation('newFolder'))"
+                 *ngIf="backButtonsStateInFolder">
+                Cancel</div>
             <div [ngClass]="{'room-in-folder-title-inactive': !isValidForm, 'room-in-folder-title-active': isValidForm || (overlayType === 'settingsRooms')}">
               {{ (overlayType === 'newRoomInFolder' ? roomName : (overlayType === 'settingsRooms' ? (isEditRooms ? 'Editing ' + readyRoomsToEdit.length : 'Adding ' + importedRooms.length)  + ' Rooms' : 'Import Rooms')) }}
             </div>
-            <!--<div>{{importedRooms.length}} actually</div>-->
             <div class="header-in-folder-button">
-              <!--<span *ngIf="(overlayType === 'settingsRooms' && form.get('timeLimit').invalid)">Incomplete</span>-->
                 <app-gradient-button
                         *ngIf="showDoneButton"
                         [minHeight]="'30px'"
@@ -120,14 +117,14 @@
                         [fontSize]="'12px'"
                         (buttonClick)="done()"
                 >
-                  <!-- Here should be called http post as many times as importedRoms.length is. -->
-                    {{(showDoneSpinner ? null : 'Done')}}<mat-spinner *ngIf="showDoneSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
+                    {{(showDoneSpinner ? null : 'Save')}}<mat-spinner *ngIf="showDoneSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
                 </app-gradient-button>
                 <div *ngIf="backButtonsStateInFolder && !showDoneButton">Incomplete</div>
             </div>
           </div>
         <div class="edit-rooms-info" *ngIf="overlayType === 'settingsRooms'">
-          Bulk edit the rooms added. {{ (isEditRooms ? 'Any change will override thi previous setting' : 'Each room can be individually customized later.') }}
+            {{ (isEditRooms ? 'Any change will override thi previous setting' :
+            'Bulk edit the rooms added. Each room can be individually customized later.') }}
         </div>
       </div>
       <div class="room-inputs" *ngIf="overlayType === 'newRoom' || overlayType === 'newFolder' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'">
@@ -449,8 +446,7 @@
                 [pinnables]="pinnables$ | async"
                 [roomsInFolder]="selectedRoomsInFolder"
                 (back)="setLocation('newFolder')"
-                (save)="addToFolder($event)"
-        >
+                (save)="addToFolder($event)">
         </app-add-existing-room>
 
       <input type="file" formControlName="file" #file style="display: none"/>
@@ -487,7 +483,11 @@
         <!--</div>-->
       </div>
      </div>
-        <div class="advanced-options" *ngIf="(overlayType === 'editRoom' || (editRoomInFolder)) && !showSearchTeacherOptions || overlayType === 'edit'">
+        <div class="advanced-options"
+             *ngIf="(overlayType === 'editRoom' ||
+             (editRoomInFolder)) &&!showSearchTeacherOptions ||
+             overlayType === 'edit' ||
+             (overlayType === 'settingsRooms' && isEditRooms)">
             <app-advanced-options
                     [roomName]="roomName"
                     [nowRestricted]="nowRestriction"

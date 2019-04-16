@@ -63,7 +63,7 @@ import {AddExistingRoomComponent} from '../overlay-container/add-existing-room/a
       LocationSearchComponent,
       ColorComponent,
       AdvancedOptionsComponent,
-      AddExistingRoomComponent
+      AddExistingRoomComponent,
 
   ],
   exports: [
@@ -82,7 +82,7 @@ import {AddExistingRoomComponent} from '../overlay-container/add-existing-room/a
       ProfilesSearchComponent,
       LocationSearchComponent,
       ColorComponent,
-      AddExistingRoomComponent
+      AddExistingRoomComponent,
   ],
   entryComponents: [
       AccountsDialogComponent,
