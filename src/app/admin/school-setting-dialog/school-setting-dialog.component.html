@@ -19,7 +19,7 @@
       <div class="display-room-control">
         <div class="ds-cell-text-2">Display Room Numbers on Passes</div>
         <div class="toggle-control">
-          <app-toggle-input [form]="schoolForm" [controlSize]="'small'" [delimiter]="false" [controlName]="'display_room'"></app-toggle-input>
+          <app-toggle-input [form]="schoolForm" [controlSize]="'small'" [delimiter]="false" [controlName]="'display_card_room'"></app-toggle-input>
         </div>
       </div>
       <div class="buffer-time-control">
@@ -28,7 +28,7 @@
           <span class="ds-cell-description-text">How long an expiring pass will count up until it automatically ends and moves to the Expired Pass section.</span>
         </div>
         <div class="control-input">
-          <app-input [width]="'58px'" [isErrorIcon]="false" [textAlign]="'right'" [formGroup]="schoolForm" [input_value]="schoolForm.get('buffer_time').value" [controlName]="schoolForm.get('buffer_time')"></app-input>
+          <app-input [width]="'58px'" [isErrorIcon]="false" [textAlign]="'right'" [formGroup]="schoolForm" [input_value]="schoolForm.get('pass_buffer_time').value" [controlName]="schoolForm.get('pass_buffer_time')"></app-input>
         </div>
       </div>
     </div>

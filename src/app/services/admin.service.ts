@@ -58,4 +58,8 @@ export class AdminService {
   getSchools(): Observable<School[]> {
     return this.http.get('v1/schools');
   }
+
+  updateSchoolSettings(id, settings) {
+    return this.http.patch(`v1/schools/${id}`, settings);
+  }
 }
