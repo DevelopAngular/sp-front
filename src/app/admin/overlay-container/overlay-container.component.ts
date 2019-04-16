@@ -628,10 +628,10 @@ export class OverlayContainerComponent implements OnInit {
     this.changeState();
   }
 
-  addToFolder() {
+  addToFolder(rooms: any[]) {
       this.isChangeLocations.next(true);
-      this.pinnableToDeleteIds = this.selectedRoomsInFolder.map(pin => +pin.id);
-      const locationsToAdd = this.selectedRoomsInFolder.map(room => room.location);
+      this.pinnableToDeleteIds = rooms.map(pin => +pin.id);
+      const locationsToAdd = rooms.map(room => room.location);
       this.selectedRooms = [...locationsToAdd, ...this.selectedRooms];
       this.setLocation('newFolder');
   }

@@ -444,30 +444,15 @@
         </div>
       </div>
 
-      <div class="add-existing-content" *ngIf="overlayType === 'addExisting'">
-        <div class="existing-room-header">
-          <img draggable="false" class="back-button" (click)="setLocation('newFolder')" [src]="'./assets/Combined Shape.svg' | resolveAsset">
-          <div class="header-title">Add Existing Room to Folder</div>
-        </div>
-        <div class="add-rooms-button" *ngIf="selectedRoomsInFolder.length > 0">
-          <div class="selected-rooms-text">{{ selectedRoomsInFolder.length }} Rooms Selected</div>
-          <app-gradient-button
-                  [minHeight]="'35px'"
-                  [style.width]="'120px'"
-                  [cursor]="'pointer'"
-                  [fontSize]="'12px'"
-                  (buttonClick)="addToFolder()"
-          >
-            Add to Folder</app-gradient-button>
-        </div>
-        <div class="info-text" *ngIf="!selectedRoomsInFolder || selectedRoomsInFolder.length === 0">
-          <span>Choose existing rooms to add to the {{ roomName }} folder.</span><br/>
-          <span>Note: appearance settings will be lost</span>
-        </div>
-        <div class="pinnable-collection">
-          <app-pinnable-collection [isEmptyState]="false" [width]="'390px'" [header]="false" [pinnables]="pinnables$ | async" (roomEvent)="selectedRoomsInFolder=$event"></app-pinnable-collection>
-        </div>
-      </div>
+        <app-add-existing-room
+                *ngIf="overlayType === 'addExisting'"
+                [pinnables]="pinnables$ | async"
+                [roomsInFolder]="selectedRoomsInFolder"
+                (back)="setLocation('newFolder')"
+                (save)="addToFolder($event)"
+        >
+        </app-add-existing-room>
+
       <input type="file" formControlName="file" #file style="display: none"/>
       <div class="import-rooms-content" *ngIf="overlayType === 'importRooms'">
         <div class="import-rooms-info">

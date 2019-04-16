@@ -1,3 +1,5 @@
+@import '../../../sp-colors';
+
 .overlay-container {
   width: inherit;
   height: inherit;
@@ -319,59 +321,6 @@
   }
 
 }
-
-.add-existing-content {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-
-  .existing-room-header {
-    display: flex;
-    justify-content: center;
-    box-shadow: 0 0 2px darkgrey;
-    width: 90%;
-    align-items: center;
-    height: 75px;
-    margin-top: 20px;
-    border-radius: 12px;
-    position: relative;
-
-    .header-title {
-      font-weight: bolder;
-      font-size: 17px;
-      color: #7F879D;
-    }
-    .back-button {
-      width: 35px;
-      height: 35px;
-      left: 20px;
-      cursor: pointer;
-      position: absolute;
-    }
-  }
-
-  .info-text {
-    color: #7F879D;
-    font-weight: bold;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 20px 0 20px 0;
-  }
-
-  .add-rooms-button {
-    display: flex;
-    align-items: center;
-    margin: 30px 0 30px;
-
-    .selected-rooms-text {
-      margin-right: 26px;
-      font-weight: bolder;
-      color: #1d1a5e;
-    }
-  }
-}
-
 .new-room-in-folder {
   display: flex;
   align-items: center;

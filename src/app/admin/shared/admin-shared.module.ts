@@ -30,6 +30,7 @@ import { InputHelperDialogComponent } from '../input-helper-dialog/input-helper-
 import { LocationSearchComponent } from '../location-search/location-search.component';
 import { ColorComponent } from '../color-pallet-picker/color/color.component';
 import { AdvancedOptionsComponent } from '../overlay-container/advanced-options/advanced-options.component';
+import {AddExistingRoomComponent} from '../overlay-container/add-existing-room/add-existing-room.component';
 
 @NgModule({
   imports: [
@@ -61,7 +62,8 @@ import { AdvancedOptionsComponent } from '../overlay-container/advanced-options/
       ProfilesSearchComponent,
       LocationSearchComponent,
       ColorComponent,
-      AdvancedOptionsComponent
+      AdvancedOptionsComponent,
+      AddExistingRoomComponent
 
   ],
   exports: [
@@ -79,7 +81,8 @@ import { AdvancedOptionsComponent } from '../overlay-container/advanced-options/
       TogglePickerComponent,
       ProfilesSearchComponent,
       LocationSearchComponent,
-      ColorComponent
+      ColorComponent,
+      AddExistingRoomComponent
   ],
   entryComponents: [
       AccountsDialogComponent,

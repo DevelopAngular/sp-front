@@ -63,7 +63,6 @@ import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.compon
     AccountsDialogComponent,
     AccountsComponent,
     AccountsRoleComponent,
-    // CalendarComponent,
     SettingsComponent,
     LinkGeneratedDialogComponent,
     ColumnsConfigDialogComponent,
@@ -83,7 +82,6 @@ import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.compon
 
   ],
   providers: [
-    // NavbarDataService
     [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],
     PdfGeneratorService,
     DatePrettyHelper
