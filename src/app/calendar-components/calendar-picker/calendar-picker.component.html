@@ -1,7 +1,7 @@
 <div class="calendar" [style.width]="width + 'px'">
   <div class="calendar-navs">
 
-    <div class="year-nav">
+    <div class="year-nav" *ngIf="showYear">
       <div class="switch-year __left" (click)="prevYear()">
           <img class="year-icon" [src]="'./assets/Chevron Left (Navy).svg' | resolveAsset" alt="prev">
       </div>

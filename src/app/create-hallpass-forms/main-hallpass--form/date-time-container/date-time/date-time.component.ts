@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { TimeService } from '../../../../services/time.service';
 import { Navigation } from '../../main-hall-pass-form.component';
 import { CreateFormService } from '../../../create-form.service';
 import { ColorProfile } from '../../../../models/ColorProfile';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-date-time',
@@ -20,8 +21,8 @@ export class DateTimeComponent implements OnInit {
   @Output() result: EventEmitter<any> = new EventEmitter<any>();
   @Output() backButton: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
-  startTime: Date = this.timeService.nowDate();
-  requestTime: Date = this.timeService.nowDate();
+  startTime: moment.Moment = moment(this.timeService.nowDate());
+  requestTime: moment.Moment = moment(this.timeService.nowDate());
 
   form: FormGroup = new FormGroup({
     declinable: new FormControl(true)
@@ -40,23 +41,27 @@ export class DateTimeComponent implements OnInit {
 
   ngOnInit() {
     if (this.mock) {
-      this.requestTime = this.timeService.nowDate();
+      this.requestTime = moment(this.timeService.nowDate());
       // this.declinable = new FormControl(true);
     } else {
       if (this.formState.data.date) {
         if (this.formState.data.request) {
           this.colorProfile = this.formState.data.request.color_profile;
         }
-        this.requestTime = new Date(this.formState.data.date.date);
+        this.requestTime = moment(this.formState.data.date.date);
         this.declinable.setValue(this.formState.data.date.declinable);
       }
     }
 
   }
 
+  calendarResult(date: moment.Moment[]) {
+    this.requestTime = moment(date[0]);
+  }
+
   next() {
     this.formState.data.date = {
-      date: this.requestTime,
+      date: this.requestTime.toDate(),
       declinable: this.form.get('declinable').value
     };
     setTimeout(() => {

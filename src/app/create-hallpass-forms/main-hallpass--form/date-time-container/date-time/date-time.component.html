@@ -24,7 +24,18 @@
       <div class="teacher" *ngIf="isStaff">
           <div class="time-picker">
             <div class="time-picker-scaled">
-              <app-date-time-picker [min]="startTime" [_selectedMoment]="requestTime" (onUpdate)="requestTime=$event"></app-date-time-picker>
+              <app-calendar-picker
+                      [width]="240"
+                      [min]="startTime"
+                      [selectedDates]="[requestTime]"
+                      [showYear]="false"
+                      (onSelectDate)="calendarResult($event)">
+              </app-calendar-picker>
+              <!--<app-date-time-picker-->
+                      <!--[min]="startTime"-->
+                      <!--[_selectedMoment]="requestTime"-->
+                      <!--(onUpdate)="requestTime=$event">-->
+              <!--</app-date-time-picker>-->
             </div>
           </div>
           <div style="margin-bottom: 30px">
@@ -41,11 +52,14 @@
           </div>
       </div>
       <div class="student" *ngIf="!isStaff">
-          <div class="time-picker">
-            <div class="time-picker-scaled">
-              <app-date-time-picker [min]="startTime" [_selectedMoment]="requestTime" (onUpdate)="requestTime=$event"></app-date-time-picker>
-            </div>
-          </div>
+                <app-calendar-picker
+                        [width]="240"
+                        [min]="startTime"
+                        [selectedDates]="[requestTime]"
+                        [showYear]="false"
+                        (onSelectDate)="calendarResult($event)">
+                </app-calendar-picker>
+              <!--<app-date-time-picker [min]="startTime" [_selectedMoment]="requestTime" (onUpdate)="requestTime=$event"></app-date-time-picker>-->
           <div class="next-button">
               <app-gradient-button
                       [gradient]="colorProfile ? colorProfile.gradient_color : '#03CF31,#00B476'"

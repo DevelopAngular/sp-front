@@ -16,11 +16,12 @@ export interface CalendarDate {
 })
 export class CalendarPickerComponent implements OnInit, OnChanges {
 
-    @Input() selectedDates: moment.Moment[] = [];
     @Input() width: number = 270;
+    @Input() selectedDates: moment.Moment[] = [];
+    @Input() min: moment.Moment;
     @Input() showWeekend: boolean;
     @Input() showTime: boolean = true;
-    @Input() min: moment.Moment;
+    @Input() showYear: boolean = true;
     @Input() range: boolean;
     @Input() rangeWeeks: boolean;
 
@@ -199,7 +200,7 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     timePickerResult(date: moment.Moment): void {
         this.currentDate = date;
         this.generateCalendar();
-        console.log(moment(date).format('MM-DD-YYYY / HH : mm'));
+        this.onSelectDate.emit([this.currentDate]);
     }
 
     generateCalendar(): void {

@@ -1,15 +1,5 @@
 .time-picker{
-  margin: 9px;
-  width: 270px;
-  height: 330px;
-  position: relative;
-  //overflow: hidden;
-  .time-picker-scaled {
-    transform: scale(.776);
-    position: absolute;
-    top: -50px;
-    left: -14px;
-  }
+  margin: 0 55px 3px 20px;
 }
 
 
@@ -29,10 +19,6 @@
 .teacher {
   display: flex;
   align-items: flex-end;
-}
-
-::ng-deep .owl-dateTime-dialog {
-  width: 200px !important;
 }
 
 .toggle-title {
@@ -60,7 +46,6 @@
 
 .next-button{
   display: flex;
-  margin-top: 20px;
 }
 
 .divider {
@@ -73,7 +58,6 @@
   box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
   position: relative;
   z-index: 10;
-  //background-image: radial-gradient(circle at 98% 97%, #03CF31,#00B476);
   border-top-left-radius: 14px;
   border-top-right-radius: 14px;
   overflow: hidden;
