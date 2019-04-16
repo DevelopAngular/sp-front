@@ -1,0 +1,57 @@
+<div class="wrapper" [ngClass]="{scrollable: openCalendar &&  toggleResult === 'Range'}">
+  <div class="sticky-header">
+    <div class="toggle-header"
+         [style.height]="toggleResult === 'Range' ? '110px' : '70px'"
+    >
+      <div class="toggle-picker">
+        <app-restriction-picker (result)="toggleResult = $event; resetDate()" [selectedChoose]="'Range'" [width]="265" [height]="25" [choices]="['Range', 'Days', 'Weeks']"></app-restriction-picker>
+      </div>
+      <div class="selected-date" *ngIf="toggleResult === 'Range'">
+        {{ selectedDateText }}
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+  </div>
+  <div class="content" [ngSwitch]="toggleResult">
+    <div class="range-options" *ngSwitchCase="'Range'">
+      <app-toggle-options [options]="rangeOptions" (result)="selectedRangeOption($event)"></app-toggle-options>
+      <div class="calendar-picker" *ngIf="openCalendar">
+        <app-calendar-picker (onSelectDate)="calendarResult($event)" [showTime]="false" [range]="true"></app-calendar-picker>
+      </div>
+      <div class="button" *ngIf="selectedDate.start && selectedDate.end && openCalendar">
+        <app-gradient-button
+                [width]="'101px'"
+                [cursor]="'pointer'"
+                [minHeight]="'40px'"
+                (buttonClick)="save()"
+        >Done</app-gradient-button>
+      </div>
+    </div>
+
+    <div class="days-options" *ngSwitchCase="'Days'">
+      <div class="calendar-picker">
+        <app-calendar-picker (onSelectDate)="calendarResult($event)" [showTime]="false"></app-calendar-picker>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="day-options">
+        <app-toggle-options [selectedId]="'days_1'" [options]="daysOptions" (result)="selectedDaysOption($event)"></app-toggle-options>
+      </div>
+      <div class="time-range" *ngIf="openTimeRange">
+        <app-time-picker [currentDate]="selectedDate.start || currentDate" (timeResult)="selectedDate.start = $event"></app-time-picker>
+        <mat-divider [vertical]="true"></mat-divider>
+        <app-time-picker [currentDate]="selectedDate.end || currentDate" (timeResult)="selectedDate.end = $event"></app-time-picker>
+      </div>
+      <div class="button" *ngIf="selectedDay && selectedDate.start && selectedDate.end && openTimeRange">
+        <app-gradient-button
+                [width]="'101px'"
+                [cursor]="'pointer'"
+                [minHeight]="'40px'"
+                (buttonClick)="save()"
+        >Done</app-gradient-button>
+      </div>
+    </div>
+    <div class="weeks" *ngSwitchCase="'Weeks'">
+      <app-calendar-picker [showTime]="false" [rangeWeeks]="true" (onSelectDate)="calendarResult($event)"></app-calendar-picker>
+    </div>
+  </div>
+</div>

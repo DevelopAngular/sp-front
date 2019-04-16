@@ -1,0 +1,9 @@
+<div class="option" *ngFor="let option of options; let i = index" (click)="selectedOptions(option.id)">
+  <div class="option-content">
+    <div class="ds-dialog-heading">{{ option.title }}</div>
+    <div class="icon" *ngIf="selectedId === option.id || option.arrowIcon">
+      <img draggable="false" [src]="(selectedId === option.id ? option.selectedIcon : option.arrowIcon) | resolveAsset" alt="option">
+    </div>
+  </div>
+  <mat-divider *ngIf="i !== options.length - 1"></mat-divider>
+</div>

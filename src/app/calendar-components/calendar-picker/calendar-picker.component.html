@@ -1,0 +1,83 @@
+<div class="calendar" [style.width]="width + 'px'">
+  <div class="calendar-navs">
+
+    <div class="year-nav">
+      <div class="switch-year __left" (click)="prevYear()">
+          <img class="year-icon" [src]="'./assets/Chevron Left (Navy).svg' | resolveAsset" alt="prev">
+      </div>
+      <span class="ds-dialog-subtitle">{{ currentDate.format('YYYY') }}</span>
+      <div class="switch-year __right" (click)="nextYear()">
+          <img class="year-icon" [src]="'./assets/Chevron Right (Navy).svg' | resolveAsset" alt="next">
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+
+    <div class="month-nav">
+      <div class="switch-month __left" (click)="prevMonth()">
+        <img class="month-icon" [src]="'./assets/Chevron Left (Navy).svg' | resolveAsset" alt="prev">
+      </div>
+      <span class="ds-dialog-subtitle">{{ currentDate.format('MMMM') }}</span>
+      <div class="switch-month __right" (click)="nextMonth()">
+        <img class="month-icon" [src]="'./assets/Chevron Right (Navy).svg' | resolveAsset" alt="next">
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+
+  </div>
+  <div class="month-grid">
+   <div class="days">
+    <div class="day-names">
+       <div
+        *ngFor="let name of dayNames"
+         class="day-name"
+         [style.width]="(width / 7) + 'px'"
+         [style.height]="(width / 7 - 9) + 'px'">
+           {{ name }}
+       </div>
+    </div>
+    <div class="divider" [style.width]="width + 'px'">
+        <mat-divider></mat-divider>
+    </div>
+   </div>
+
+    <div class="weeks">
+      <div *ngFor="let week of weeks" class="week">
+        <ng-container *ngFor="let day of week">
+          <div
+            class="week-date disabled"
+            [style.width]="(width / 7) + 'px'"
+            [style.height]="(width / 7 - 9) + 'px'"
+            [ngClass]="{'is-next-month': isNextMonth(day.mDate)}"
+            *ngIf="!isSelectedMonth(day.mDate) && showWeekendDay(day.mDate) || day.disabled">
+            <span class="date-text"
+            >{{ day.mDate.date() }}</span>
+          </div>
+
+          <div class="week-date"
+               [style.width]="(width / 7) + 'px'"
+               [style.height]="(width / 7 - 9) + 'px'"
+               *ngIf="isSelectedMonth(day.mDate) && showWeekendDay(day.mDate) && !day.disabled"
+               (click)="selectDate(day)"
+               (mouseenter)="hoverDates(day.mDate)"
+               (mouseleave)="disabledHovered()"
+               [ngClass]="{
+                    selected: day.selected,
+                    first_last_element_radius: rangeWeeks && day.selected,
+                    today: day.today,
+                    leftBorder: day.selected && hoveredDates.length && isFirstSelectedDay(day.mDate),
+                    rightBorder: (day.selected && hoveredDates.length && isLastSelectedDay(day.mDate)) || (hovered && isLastHoveredDay(day.mDate) && selectedDates.length == 1),
+                    hovered: hovered && !isSelected(day.mDate) && !isRangeHovered(day.mDate),
+                    rangeHovered: isRangeHovered(day.mDate) && !isSelected(day.mDate)
+               }">
+                <span class="date-text">{{ day.mDate.date() }}</span>
+          </div>
+
+        </ng-container>
+      </div>
+    </div>
+  </div>
+    <div class="time-picker" *ngIf="showTime">
+        <mat-divider></mat-divider>
+        <app-time-picker [currentDate]="selectedDates.length ? selectedDates[0] : currentDate" (timeResult)="timePickerResult($event)"></app-time-picker>
+    </div>
+</div>
