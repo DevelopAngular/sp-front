@@ -23,6 +23,9 @@ import { NotificationService } from '../services/notification-service';
 import { TimeService } from '../services/time.service';
 import {ReportSuccessToastComponent} from '../report-success-toast/report-success-toast.component';
 
+declare const window;
+
+
 function isUserStaff(user: User): boolean {
   return user.roles.includes('_profile_teacher');
 }
@@ -307,6 +310,7 @@ export class PassesComponent implements OnInit {
           this.currentRequest$.next((passLike instanceof Request) ? passLike : null);
         });
       });
+    window.appLoaded();
   }
 
   ngOnInit() {

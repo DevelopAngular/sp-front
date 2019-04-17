@@ -20,6 +20,8 @@ import { LocationsService } from '../services/locations.service';
 import * as _ from 'lodash';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 
+declare const window;
+
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
@@ -181,7 +183,8 @@ export class NavbarComponent implements OnInit {
 
   settingsAction(action: string) {
       if (action === 'signout') {
-          this.router.navigate(['sign-out']);
+        window.waitForAppLoaded();
+        this.router.navigate(['sign-out']);
       } else if (action === 'favorite') {
           const favRef = this.dialog.open(FavoriteFormComponent, {
               panelClass: 'form-dialog-container',

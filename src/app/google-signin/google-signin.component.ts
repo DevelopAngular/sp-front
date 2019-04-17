@@ -6,6 +6,9 @@ export enum LoginMethod { OAuth = 1, LocalStrategy = 2}
 import {BehaviorSubject, of, Subject} from 'rxjs';
 import {finalize, tap} from 'rxjs/operators';
 
+declare const window;
+
+
 @Component({
   selector: 'google-signin',
   templateUrl: './google-signin.component.html',
@@ -92,6 +95,8 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     if (this.demoUsername && this.demoPassword) {
       this.loggedWith = LoginMethod.LocalStrategy;
       this.loginService.showLoginError$.next(false);
+      // debugger
+
       of(this.loginService.signInDemoMode(this.demoUsername, this.demoPassword))
       .pipe(
         tap((res) => { console.log(res);}),
@@ -127,5 +132,6 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     document.addEventListener('keydown', this.keyListener, false);
+    window.appLoaded();
   }
 }

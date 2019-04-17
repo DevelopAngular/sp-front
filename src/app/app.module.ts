@@ -48,6 +48,7 @@ import { ToastConnectionComponent } from './toast-connection/toast-connection.co
 import { ResizeInfoDialogComponent } from './resize-info-dialog/resize-info-dialog.component';
 import { SignedOutToastComponent } from './signed-out-toast/signed-out-toast.component';
 
+
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroComponent, data: { hideSchoolToggleBar: true}},
   {path: '', redirectTo: 'admin', pathMatch: 'full'},

@@ -57,6 +57,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   //     }
   // }
 
+  public preloader$;
+
   constructor(
     public darkTheme: DarkThemeSwitch,
     public loginService: GoogleLoginService,
@@ -68,12 +70,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private webConnection: WebConnectionService,
     private dialog: MatDialog,
-    private storageService: StorageService
+    private storageService: StorageService,
   ) {
+    this.preloader$ = this.darkTheme.preloader;
+    this.preloader$.next(true);
   }
 
   ngOnInit() {
-
     this.storageService.detectChanges();
     this.darkTheme.isEnabled$.subscribe((val) => {
       this.darkThemeEnabled = val;
@@ -110,6 +113,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       // console.log('Auth response ===>', t);
       this._zone.run(() => {
         this.showUI.next(true);
+        this.preloader$.next(false);
+
         this.isAuthenticated = t;
       });
     });

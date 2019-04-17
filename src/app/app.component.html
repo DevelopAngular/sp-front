@@ -5,8 +5,12 @@
     [schools]="schools"
   ></app-school-toggle-bar>
 
-  <div class="router-outlet" style="height: 100%;" [style.overflow-y]=" hideScroll ? 'hidden' : 'auto'" [style.display]="isAuthenticated ? 'block' : 'none'">
+  <div class="router-outlet" style="height: 100%;" [style.overflow-y]=" hideScroll ? 'hidden' : 'auto'" *ngIf="isAuthenticated">
     <router-outlet></router-outlet>
   </div>
   <app-login *ngIf="!isAuthenticated"></app-login>
+
 </div>
+<!--<div>-->
+  <!--<app-preloader></app-preloader>-->
+<!--</div>-->

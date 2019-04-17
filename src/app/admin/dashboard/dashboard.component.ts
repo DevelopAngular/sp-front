@@ -15,6 +15,8 @@ import {HallPassesService} from '../../services/hall-passes.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {ThemeService} from 'ng2-charts';
 
+declare const window;
+
 
 @Component({
   selector: 'app-dashboard',
@@ -68,7 +70,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private host: ElementRef,
     public darkTheme: DarkThemeSwitch,
     private chartTheming: ThemeService
-  ) {}
+  ) {
+    // this.darkTheme.preloader.next(true);
+  }
 
   get cardHeaderColor() {
     return this.darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'});
@@ -240,6 +244,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.lineChartData = [{data: dashboard.hall_pass_usage}];
         // }
         this.hiddenChart = false;
+        // this.darkTheme.preloader.next(false);
       });
 
     interval(60000)
@@ -338,6 +343,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       }
     };
+    window.appLoaded();
   }
 
   // onDevicesOrderChanged(event) {

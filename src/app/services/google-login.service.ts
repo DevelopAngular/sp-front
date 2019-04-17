@@ -12,7 +12,11 @@ import AuthResponse = gapi.auth2.AuthResponse;
 import GoogleAuth = gapi.auth2.GoogleAuth;
 import {StorageService} from './storage.service';
 
+declare const window;
+
+
 const STORAGE_KEY = 'google_auth';
+
 
 export interface DemoLogin {
   username: string;
@@ -44,8 +48,7 @@ export class GoogleLoginService {
   ) {
 
     this.authToken$.subscribe(auth => {
-      console.log('Loaded auth response:', auth);
-
+      window.waitForAppLoaded();
       if (auth) {
         this.storage.setItem(STORAGE_KEY, JSON.stringify(auth));
       }
