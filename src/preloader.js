@@ -73,14 +73,14 @@ window.waitForAppLoaded = function() {
   }, 25);
 }
 
-window.appLoaded = function() {
+window.appLoaded = function(timeout = 100) {
   const timerId = setInterval(() => {
 
     if (window.preloader) {
       window.preloader.visibility = false;
       clearInterval(timerId);
     }
-  }, 100);
+  }, timeout);
 };
 
 window.waitForAppLoaded();

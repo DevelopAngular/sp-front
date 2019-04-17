@@ -51,6 +51,7 @@ export class TimePickerComponent implements OnInit, OnDestroy {
       this.timeResult.emit(this.currentDate);
   }
 
-  destroy() {
+  destroy(action, up) {
+    return;
   }
 }

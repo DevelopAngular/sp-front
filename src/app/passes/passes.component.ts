@@ -24,6 +24,7 @@ import { TimeService } from '../services/time.service';
 import {ReportSuccessToastComponent} from '../report-success-toast/report-success-toast.component';
 import * as moment from 'moment';
 import {Invitation} from '../models/Invitation';
+import {DarkThemeSwitch} from '../dark-theme-switch';
 
 declare const window;
 
@@ -245,6 +246,8 @@ export class PassesComponent implements OnInit {
     private createFormService: CreateFormService,
     private notifService: NotificationService,
     private timeService: TimeService,
+    public darkTheme: DarkThemeSwitch
+
   ) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);

@@ -14,6 +14,8 @@ export class AddExistingRoomComponent implements OnInit {
   @Output() back = new EventEmitter();
   @Output() save = new EventEmitter();
 
+  public roomName: string = '';
+
   constructor() { }
 
   ngOnInit() {

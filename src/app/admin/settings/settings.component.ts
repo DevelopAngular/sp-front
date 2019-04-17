@@ -17,6 +17,7 @@ export class SettingsComponent implements OnInit {
 
     hoveredProfile: boolean;
     hoveredTheme: boolean;
+    pressedTheme: boolean;
     hoveredSignout: boolean;
     hovered: boolean;
     hoveredColor: string;
@@ -24,6 +25,12 @@ export class SettingsComponent implements OnInit {
 
 
     public settings = [
+        // {
+        //     'gradient': '#022F68, #2F66AB',
+        //     'icon': 'Moon',
+        //     'action': () => { this.darkTheme.switchTheme(); this.data.darkBackground = !this.data.darkBackground; },
+        //     'title': 'Dark Theme'
+        // },
         {
             'gradient': '#1893E9, #05B5DE',
             'icon': 'Team',
@@ -50,19 +57,29 @@ export class SettingsComponent implements OnInit {
     constructor(
         private router: Router,
         public dialogRef: MatDialogRef<SettingsComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: any[],
+        @Inject(MAT_DIALOG_DATA) public data: any,
         public darkTheme: DarkThemeSwitch,
         private elemRef: ElementRef
     ) {
     }
 
-
+  get _themeBackground() {
+    return this.hoveredTheme
+      ?
+      this.pressedTheme
+        ?
+        'radial-gradient(circle at 73% 71%, #022F68, #2F66AB)'
+          : 'rgb(228, 235, 255)'
+            : 'transparent';
+  }
 
     ngOnInit() {
         this.triggerElementRef = this.data['trigger'];
         this.isSwitchOption = this.data['isSwitch'];
         this.updateCalendarPosition();
     }
+
+
 
     getIcon(iconName: string, setting: any,  hover?: boolean, hoveredColor?: string) {
 
@@ -82,19 +99,21 @@ export class SettingsComponent implements OnInit {
       });
     }
 
-    updateCalendarPosition() {
-        const matDialogConfig: MatDialogConfig = new MatDialogConfig();
-        const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
+    handleAction(setting) {
+      if ( typeof setting.action === 'string' ) {
+        this.dialogRef.close(setting.action);
+      } else {
+        setting.action();
+      }
+    }
 
-        const dialogRect = this.elemRef.nativeElement.getBoundingClientRect();
+    updateCalendarPosition() {
+      const matDialogConfig: MatDialogConfig = new MatDialogConfig();
+      const dialogRect = this.elemRef.nativeElement.getBoundingClientRect();
       console.log(dialogRect);
-      const top = this.isSwitchOption ? 405 : 285;
       console.log(dialogRect.width);
       matDialogConfig.position = {
-          // left: `${rect.left - 170}px`,
           left: `${this.data['possition'].x - 183}px`,
-          // top: `${rect - top}px`,
-          // top: `${this.data['possition'].y - dialogRect.height - 20}px`
           bottom: `${(window.document.body as HTMLElement).clientHeight - this.data['possition'].y + 20}px`
         };
 

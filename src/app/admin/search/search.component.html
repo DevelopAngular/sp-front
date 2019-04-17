@@ -16,7 +16,7 @@
             </div>
             <div class="divider"></div>
             <app-data-table [data]="tableData" *ngIf="tableData.length > 0 && !spinner" (selectedUsers)="selectedReport=$event" (selectedRow)="selectedPass($event)"></app-data-table>
-            <div class="nopass-text" *ngIf="tableData.length === 0 && !spinner">
+            <div class="nopass-text" *ngIf="tableData.length === 0 && !spinner" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
               There are no passes that match the search parameters!
             </div>
             <div class="spinner" *ngIf="spinner">
@@ -45,10 +45,10 @@
                              [minHeight]="'65px'"
                              [width]="'215px'"
                              [cursor]="!isDisabled ? 'pointer' : 'default'"
-                             [textColor]="isDisabled ? 'rgb(120, 140, 165)' : '#134482'"
+                             [textColor]="isDisabled ? 'rgb(120, 140, 165)' : '#1E194F'"
                              [fontSize]="'23px'"
                              [border]="'1px solid 1px solid #eee'"
-                             [leftIcon]="isDisabled ? './assets/Search Eye (Blue-Gray).svg' : './assets/Search Eye (Navy).svg'"
+                             [leftIcon]="isDisabled ? './assets/Search Normal (Blue-Gray).svg' : './assets/Search Normal (Navy).svg'"
                              [leftImageWidth]="'30px'"
                              [leftImageHeight]="'30px'"
                              [disabled]="isDisabled"
@@ -84,7 +84,7 @@
       <div class="search-content" *ngIf="!hasSearched">
 
         <div class="default-message" *ngIf="!spinner">
-          <div class="small-text">
+          <div class="small-text" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
             This is an ultimate search query of everything going on in the school. <br>
             <br>
             You can search for a single item or multiple items within search search field <br>

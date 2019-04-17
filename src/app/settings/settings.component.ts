@@ -9,7 +9,7 @@ import {DarkThemeSwitch} from '../dark-theme-switch';
 export interface Setting {
   gradient: string;
   icon: string;
-  action: string;
+  action: string | Function;
   title: string;
 }
 
@@ -36,7 +36,7 @@ export class SettingsComponent implements OnInit {
 
   constructor(
       public dialog: MatDialog,
-      @Inject(MAT_DIALOG_DATA) public data: any[],
+      @Inject(MAT_DIALOG_DATA) public data: any,
       public dialogRef: MatDialogRef<SettingsComponent>,
       private dataService: DataService,
       private _zone: NgZone,
@@ -55,6 +55,12 @@ export class SettingsComponent implements OnInit {
       'icon': 'Notifications',
       'action': 'notifications',
       'title': 'Notifications'
+    });
+    this.settings.push({
+      'gradient': '#022F68, #2F66AB',
+      'icon': 'Moon',
+      'action': () => { this.darkTheme.switchTheme(); this.data.darkBackground = !this.data.darkBackground; },
+      'title': 'Dark Theme'
     });
     this.settings.push({
       'gradient': '#03CF31, #00B476',
@@ -128,6 +134,14 @@ export class SettingsComponent implements OnInit {
   onHover(color) {
     this.hovered = true;
     this.hoveredColor = color;
+  }
+
+  handleAction(setting) {
+    if ( typeof setting.action === 'string' ) {
+      this.dialogRef.close(setting.action);
+    } else {
+      setting.action();
+    }
   }
 
   updateDialogPosition() {

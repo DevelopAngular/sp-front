@@ -44,7 +44,7 @@
         (reportFromPassCard)="onReportFromPassCard($event)"
       >
       </app-pass-collection>
-      <div *ngIf="!(hasPasses | async) && (passesLoaded | async)">
+      <div *ngIf="!(hasPasses | async) && (passesLoaded | async)" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
         <div class="empty-container" *ngIf="inputValue != ''">
           <img class="empty-svg" [src]="'./assets/emptyStates/emptyHallSearch.svg' | resolveAsset" alt="empty-svg">
           <div class="big-text" [style.margin]="'10px 0'">Nothing to See Here</div>

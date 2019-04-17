@@ -1,4 +1,4 @@
-<div class="settings-wrapper" *ngIf="data" [style.background-color]="darkTheme.getBackground('low')">
+<div class="settings-wrapper" *ngIf="data" [style.background-color]="darkTheme.getBackground('high', true)">
 
     <div class="title" [ngStyle]="{'color': data.darkBackground ? '#FFFFFF' : '#1F195E'}">Settings</div>
     <div class="settings-content">
@@ -7,8 +7,7 @@
              (mouseenter)="hoveredProfile = true"
              (mouseleave)="hoveredProfile = false"
              [style.background-color]="hoveredProfile ? 'rgb(228, 235, 255)' : 'transparent'"
-             (click)="dialogRef.close('switch')"
-        >
+             (click)="dialogRef.close('switch')">
           <img class="switch-icon" [src]="getIcon('Profile Switch', null, hoveredProfile) | resolveAsset">
           <div class="option-title" [style.color]="getColor(null, hoveredProfile)">Teacher View</div>
           <img class="arrow-icon" [src]="getIcon('Chevron Right', null, hoveredProfile) | resolveAsset">
@@ -18,15 +17,21 @@
         <div class="option"
              (mouseenter)="hoveredTheme = true"
              (mouseleave)="hoveredTheme = false"
-             [style.background-color]="hoveredTheme ? 'rgb(228, 235, 255)' : 'transparent'"
+             (mousedown)="pressedTheme = true"
+             (mouseup)="pressedTheme = false"
+             [style.background]="_themeBackground"
              (click)="darkTheme.switchTheme(); data.darkBackground = !data.darkBackground"
         >
 
           <img class="switch-icon" [src]="getIcon('Moon', null, hoveredTheme) | resolveAsset">
           <div class="option-title" [style.color]="getColor(null, hoveredTheme)">
-            <span *ngIf="darkTheme.isEnabled$.value; else dark">Light Theme</span>
+            <div>
+              <span *ngIf="darkTheme.isEnabled$.value; else dark">Light Theme</span>
+            </div>
             <ng-template #dark>
-              <span>Dark Theme</span>
+              <div>
+                <span>Dark Theme</span>
+              </div>
             </ng-template>
           </div>
 
@@ -36,7 +41,7 @@
       <div class="links">
         <div class="link"
              *ngFor="let setting of settings"
-             (click)="dialogRef.close(setting.action)"
+             (click)="handleAction(setting)"
              (mouseenter)="onHover(setting.gradient)"
              (mouseleave)="hovered = false"
              [style.background]="hovered && hoveredColor === setting.gradient ? 'radial-gradient(circle at 73% 71%,' + setting.gradient + ')' : 'none'"
@@ -65,7 +70,7 @@
       </div>
     </div>
     <div class="bottom-arrow-container">
-        <div class="bottom-arrow" [style.background-color]="darkTheme.getBackground('low')"></div>
+        <div class="bottom-arrow" [style.background-color]="darkTheme.getBackground('high', true)"></div>
     </div>
 </div>
 
