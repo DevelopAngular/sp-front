@@ -47,7 +47,7 @@
                (click)="_matDialogRef.close(option.action)">
             <div class="ds-w-100 ds-flex-center-between" *ngIf="isSort; else simpleOptions">
               <span>{{ option.display }}</span>
-              <img width="16" height="16" [src]="darkTheme.getIcon({iconName: 'Check'})" *ngIf="sortMode === option.action" alt="">
+              <img width="16" height="16" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'})" *ngIf="sortMode === option.action" alt="">
             </div>
             <ng-template #simpleOptions>{{ option.display }}</ng-template>
           </div>

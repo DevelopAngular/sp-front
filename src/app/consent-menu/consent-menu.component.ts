@@ -44,7 +44,7 @@ export class ConsentMenuComponent implements OnInit {
     this.options = data['options'];
     this.optionsView = data['optionsView'] || 'inline';
     this.isSort = data['isSort'];
-    this.sortMode = data['sortMode'];
+    this.sortMode = data['sortMode'] || 'expiration_time';
     this._matDialogRef = _matDialogRef;
 
     this.triggerElementRef = data['trigger'];

@@ -201,6 +201,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       { display: 'Student Name', color: this.darkTheme.getColor(), action: 'student_name', toggle: false },
       { display: 'To Location', color: this.darkTheme.getColor(), action: 'destination_name', toggle: false }
     ];
+
     const sortDialog = this.dialog.open(ConsentMenuComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
