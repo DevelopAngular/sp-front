@@ -18,6 +18,8 @@
   font-weight: 900;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
   position: relative;
+  z-index: 10;
+
 }
 
 ::ng-deep .tooltip {
@@ -552,7 +554,7 @@
 
 .sticky {
   position: sticky;
-  z-index: 100;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   top: 0;
