@@ -11,7 +11,7 @@
       <img class="selected-icon" [src]="'./assets/Check (Navy).svg' | resolveAsset" alt="ICON">
     </div>
     <div class="title-bar">
-      <div class="title" [style.font-size]="pinnable.title.length > 13 ? '12px' : '14px'">
+      <div class="title" [style.font-size]="pinnable.title.length > 13 && pinnable.type === 'category' ? '12px' : '14px'">
         {{pinnable.title}}
       </div>
       <img *ngIf="pinnable.type === 'category'" class="category-icon" [src]="'./assets/SP Arrow (White).svg' | resolveAsset" alt="ARROW">

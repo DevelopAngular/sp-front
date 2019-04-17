@@ -22,6 +22,8 @@ import { LoadingService } from '../services/loading.service';
 import { NotificationService } from '../services/notification-service';
 import { TimeService } from '../services/time.service';
 import {ReportSuccessToastComponent} from '../report-success-toast/report-success-toast.component';
+import * as moment from 'moment';
+import {Invitation} from '../models/Invitation';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('_profile_teacher');
@@ -112,7 +114,7 @@ class InboxRequestProvider implements PassLikeProvider {
     }))
       .pipe(map(req => {
         if (this.isStudent) {
-          return req.filter(r => !!r.request_time);
+          return req.filter((r) => !!r.request_time && moment().isSameOrBefore(r.request_time));
         }
         return req;
       }));
@@ -130,7 +132,10 @@ class InboxInvitationProvider implements PassLikeProvider {
     const sortReplay = new ReplaySubject<string>(1);
     sort.subscribe(sortReplay);
 
-    const invitations$ = this.user$.pipe(switchMap(user => this.liveDataService.watchInboxInvitations(user)));
+    const invitations$ = this.user$.pipe(switchMap(user => this.liveDataService.watchInboxInvitations(user)),
+        map(inv => {
+          return inv.filter((i) => !!i.date_choices[0] && moment().isSameOrBefore(i.date_choices[0]));
+        }));
 
     return invitations$;
   }
