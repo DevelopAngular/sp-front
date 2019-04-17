@@ -10,6 +10,7 @@ import { User } from '../models/User';
 import { ReportFormComponent } from '../report-form/report-form.component';
 import {Report} from '../models/Report';
 import { delay, filter, map } from 'rxjs/operators';
+import {DarkThemeSwitch} from '../dark-theme-switch';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('_profile_teacher');
@@ -53,8 +54,14 @@ export class HallMonitorComponent implements OnInit {
 
   hasPasses: Observable<boolean> = of(false);
 
-  constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService,
-              public dialog: MatDialog, private liveDataService: LiveDataService) {
+  constructor(
+    public dataService: DataService,
+    private _zone: NgZone,
+    private loadingService: LoadingService,
+    public dialog: MatDialog,
+    private liveDataService: LiveDataService,
+    public darkTheme: DarkThemeSwitch
+  ) {
     this.activePassProvider = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.searchQuery$));
     // this.activePassProvider = new BasicPassLikeProvider(testPasses);
   }

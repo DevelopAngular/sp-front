@@ -82,12 +82,7 @@ input {
     height: 40px;
 }
 
-.small-text {
-    color: #767676;
-}
-
 .big-text {
-    @extend .small-text;
     font-size: 16pt;
 }
 

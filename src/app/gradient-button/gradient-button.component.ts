@@ -96,8 +96,8 @@ export class GradientButtonComponent implements OnInit {
 
           break;
         case 'xl':
-          this.leftImageHeight = '21px';
-          this.leftImageWidth = '21px';
+          this.leftImageHeight = '34px';
+          this.leftImageWidth = '34px';
           this.minHeight = '100px';
           this.fontSize = '22px';
           this.cornerRadius = '12px';

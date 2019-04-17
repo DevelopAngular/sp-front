@@ -23,7 +23,7 @@
 
         .option-title {
           margin: 0 10px 0 10px;
-          font-size: 17px;
+          font-size: 14px;
           -webkit-user-select: none;
           -moz-user-select: none;
           -ms-user-select: none;
@@ -44,7 +44,7 @@
     }
 
     .links {
-      height: 121px;
+      //height: 121px;
       display: flex;
       flex-direction: column;
 
@@ -61,7 +61,7 @@
         }
         .setting-name {
           margin-left: 15px;
-          font-size: 17px;
+          font-size: 14px;
           color: #7F879D;
         }
       }

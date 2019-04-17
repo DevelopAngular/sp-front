@@ -17,6 +17,8 @@ import { ResizeInfoDialogComponent } from './resize-info-dialog/resize-info-dial
 import {StorageService} from './services/storage.service';
 import {DarkThemeSwitch} from './dark-theme-switch';
 
+declare const window;
+
 /**
  * @title Autocomplete overview
  */
@@ -118,6 +120,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isAuthenticated = t;
       });
     });
+    window.appLoaded(2000);
 
     this.http.schools$.pipe(takeUntil(this.subscriber$))
         .subscribe(schools => {

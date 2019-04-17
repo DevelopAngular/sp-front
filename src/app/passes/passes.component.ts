@@ -22,6 +22,7 @@ import { LoadingService } from '../services/loading.service';
 import { NotificationService } from '../services/notification-service';
 import { TimeService } from '../services/time.service';
 import {ReportSuccessToastComponent} from '../report-success-toast/report-success-toast.component';
+import {DarkThemeSwitch} from '../dark-theme-switch';
 
 declare const window;
 
@@ -102,7 +103,9 @@ class InboxRequestProvider implements PassLikeProvider {
     private liveDataService: LiveDataService,
     private user$: Observable<User>,
     private excluded$: Observable<PassLike[]> = empty(),
-    private dataService: DataService) {
+    private dataService: DataService
+
+  ) {
   }
 
   watch(sort: Observable<string>) {
@@ -240,6 +243,8 @@ export class PassesComponent implements OnInit {
     private createFormService: CreateFormService,
     private notifService: NotificationService,
     private timeService: TimeService,
+    public darkTheme: DarkThemeSwitch
+
   ) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
