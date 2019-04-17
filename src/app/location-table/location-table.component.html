@@ -36,7 +36,7 @@
         <img class="star-icon" [src]="'./assets/Star (Yellow).svg'">
         <div>
           <span class="ds-dialog-bold-text ds-pb-5">No Favorite Rooms</span> <br>
-          <span class="ds-cell-description-text">Add favorites in settings</span>
+          <span class="ds-cell-description-text">Add favorites</span>
         </div>
       </div>
       <div *ngIf="rightHeaderText && !hideFavorites" style="margin-top: 25px" class="fav-header">All Rooms</div>
@@ -57,9 +57,20 @@
       <!--<input *ngIf="horizontalTable" class="input" #searchBox [value]="search" [placeholder]="placeholder" (keyup)="onSearch(searchBox.value)">-->
       <div class="quick-label" *ngIf="staticChoices?.length && !search">Quick Select</div>
       <div class="choices" [style.width]="'190px'" (scroll)="onScroll($event)">
-        <app-location-cell [hasLocks]="hasLocks" [forLater]="forLater" [forStaff]="forStaff" class="choice" *ngFor="let choice of choices" [showStar]="showStars && !noRightStar" [starred]="false"
-                           (onSelect)="choiceSelected($event)" (onStar)="star($event);" [allowOnStar]="allowOnStar"
-                           [value]="choice" [type]="type" [valid]="!invalidLocation || choice.id !== invalidLocation">
+        <app-location-cell
+                *ngFor="let choice of choices"
+                class="choice"
+                [hasLocks]="hasLocks"
+                [forLater]="forLater"
+                [forStaff]="forStaff"
+                [showStar]="showStars && !noRightStar"
+                [starred]="isSelected(choice)"
+                (onSelect)="choiceSelected($event)"
+                (onStar)="star($event)"
+                [allowOnStar]="allowOnStar"
+                [value]="choice"
+                [type]="type"
+                [valid]="!invalidLocation || choice.id !== invalidLocation">
         </app-location-cell>
       </div>
       <!--<div *ngIf="leftShadow" class="shadow"></div>-->

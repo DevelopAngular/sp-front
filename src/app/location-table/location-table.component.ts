@@ -59,7 +59,7 @@ export class LocationTableComponent implements OnInit {
   favoritesLoaded: boolean;
   hideFavorites: boolean;
 
-  locationWithFavorites;
+  selectedLocId: any[] = [];
 
   @HostListener('scroll', ['$event'])
   onScroll(event) {
@@ -146,6 +146,7 @@ export class LocationTableComponent implements OnInit {
     if (this.type==='location'){
       this.locationService.getFavoriteLocations().toPromise().then((stars: any[]) => {
         this.starredChoices = stars.map(val => Location.fromJSON(val));
+        this.choices = [...this.starredChoices, ...this.choices].sort((a, b) => a.id - b.id);
           this.favoritesLoaded = true;
           this.mainContentVisibility = true;
       });
@@ -180,7 +181,6 @@ export class LocationTableComponent implements OnInit {
         .toPromise()
         .then(p => {
           this.hideFavorites = true;
-            console.log(this.starredChoices);
             const filtFevLoc = _.filter(this.starredChoices, (item => {
                 return item.title.toLowerCase().includes(this.search);
             }));
@@ -225,7 +225,7 @@ export class LocationTableComponent implements OnInit {
                         this.choices = this.filterResults(this.staticChoices);
                     } else {
                         this.hideFavorites = false;
-                        this.choices = this.filterResults(p.results);
+                        this.choices = _.uniqBy([...p.results, ...this.starredChoices].sort((a, b) => a.id - b.id), 'id');
                     }
                     this.nextChoices = p.next;
                     this.search = '';
@@ -269,6 +269,10 @@ export class LocationTableComponent implements OnInit {
 
   choiceSelected(choice: any) {
     this.onSelect.emit(choice);
+  }
+
+  isSelected(choice) {
+    return !!this.starredChoices.find(item => item.id === choice.id);
   }
 
   star(event) {
