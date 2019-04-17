@@ -7,6 +7,7 @@ import {StorageService} from './services/storage.service';
 })
 export class DarkThemeSwitch {
 
+  public preloader: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
   public isEnabled$: BehaviorSubject<boolean>;
 
   constructor(

@@ -11,6 +11,8 @@ import {SettingsComponent} from '../settings/settings.component';
 import {map} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 
+declare const window;
+
 @Component({
   selector: 'app-nav',
   templateUrl: './nav.component.html',
@@ -138,7 +140,8 @@ export class NavComponent implements OnInit {
 
     settingsRef.afterClosed().subscribe(action => {
         if (action === 'signout') {
-            this.router.navigate(['sign-out']);
+          window.waitForAppLoaded();
+          this.router.navigate(['sign-out']);
         } else if (action === 'switch') {
           this.router.navigate(['main']);
         } else if (action === 'about') {

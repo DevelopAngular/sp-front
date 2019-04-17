@@ -63,7 +63,6 @@ export class RoundInputComponent implements OnInit {
   ) { }
 
   get labelIcon() {
-    // './assets/Search Eye '+(selected?'(Navy)':'(Blue-Gray)') +'.svg'
     if (this.selected) {
       return this.darkTheme.getIcon(
 
@@ -96,21 +95,11 @@ export class RoundInputComponent implements OnInit {
     if (!this.type.includes('multi') && this.type !== 'text') {
       this.initialValue = '';
     }
-    // if ( this.selections[0] && this.selections[0] instanceof Location) {
-    //   const titleArray = this.selections[0].map((loc) => {
-    //     return `${loc.title}(${loc.room})`;
-    //   });
-    //   this.initialValue = titleArray.join(', ');
-    // }
-
     this.value = this.initialValue;
-    // debugger;
-    console.log(this.value);
     setTimeout(() => {
       if (this.input && this.focused) {
         this.focusAction(true);
         this.focus();
-        // this.changeAction(this.input.nativeElement, true);
       }
     }, 500);
 
