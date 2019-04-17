@@ -30,6 +30,10 @@ if [[ "$CI_ENVIRONMENT_SLUG" = "staging" ]]; then
   config=staging
 fi
 
+if [[ "$CI_ENVIRONMENT_SLUG" = "local" ]]; then
+  config=local
+fi
+
 echo "Using config: $config"
 
 yarn ng-high-memory build -c "$config" --base-href '/app/' # --deploy-url "$deploy_url"
