@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { ColorProfile } from '../../models/ColorProfile';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
-import {BUILD_DATE} from '../../../build-info';
+import {BUILD_DATE, RELEASE_NAME} from '../../../build-info';
 
 @Component({
   selector: 'app-settings',
@@ -23,7 +23,7 @@ export class SettingsComponent implements OnInit {
     hovered: boolean;
     hoveredColor: string;
     version = 'Version 1.2';
-    currentRelease = BUILD_DATE;
+    currentRelease = RELEASE_NAME;
 
 
     public settings = [

@@ -5,7 +5,7 @@ import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
 import { User } from '../models/User';
 import {DarkThemeSwitch} from '../dark-theme-switch';
-import {BUILD_DATE} from '../../build-info';
+import {BUILD_DATE, RELEASE_NAME} from '../../build-info';
 
 export interface Setting {
   gradient: string;
@@ -35,7 +35,7 @@ export class SettingsComponent implements OnInit {
   hovered: boolean;
   hoveredColor: string;
   version = 'Version 1.2';
-  currentRelease = BUILD_DATE;
+  currentRelease = RELEASE_NAME;
 
   constructor(
       public dialog: MatDialog,
