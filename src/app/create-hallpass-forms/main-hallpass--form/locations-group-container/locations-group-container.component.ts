@@ -95,7 +95,14 @@ export class LocationsGroupContainerComponent implements OnInit {
         if (this.FORM_STATE.fromState > 1) {
             this.FORM_STATE.state = this.FORM_STATE.fromState;
         } else {
-            this.FORM_STATE.state = States.toWhere;
+            if (this.FORM_STATE.missedRequest) {
+              this.FORM_STATE.state = States.message;
+              this.FORM_STATE.data.gradient = this.FORM_STATE.data.request.gradient_color;
+              this.FORM_STATE.data.requestTarget = this.FORM_STATE.data.request.issuer;
+              this.FORM_STATE.data.direction.pinnable = this.FORM_STATE.data.request;
+            } else {
+              this.FORM_STATE.state = States.toWhere;
+            }
         }
         this.FORM_STATE.previousState = States.from;
 

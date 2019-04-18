@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Navigation} from '../main-hall-pass-form.component';
-import {Form} from '@angular/forms';
+
 import {CreateFormService} from '../../create-form.service';
 
 @Component({
@@ -40,8 +40,7 @@ export class DateTimeContainerComponent implements OnInit {
       if (this.FORM_STATE.previousStep > 2) {
         this.FORM_STATE.step = this.FORM_STATE.previousStep;
       } else {
-        this.FORM_STATE.step = this.FORM_STATE.forInput ? 3 : 4;
-        // this.FORM_STATE.step = this.FORM_STATE.forInput ? (this.FORM_STATE.formMode.role === 1 ? 2 : 0) : 0;
+        this.FORM_STATE.step = this.FORM_STATE.forInput || this.FORM_STATE.missedRequest ? 3 : 4;
       }
 
       this.FORM_STATE.previousStep = 1;

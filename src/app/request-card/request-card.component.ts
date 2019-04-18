@@ -133,7 +133,8 @@ export class RequestCardComponent implements OnInit {
           'duration' : this.selectedDuration*60,
         };
       this.requestService.createRequest(body).pipe(switchMap(res => {
-          return this.formState.previousStep === 1 ? this.requestService.cancelRequest(this.request.id) : of(null);
+          return this.formState.previousStep === 1 ? this.requestService.cancelRequest(this.request.id) :
+           (this.formState.missedRequest ? this.requestService.cancelInvitation(this.formState.data.request.id, '') : of(null));
       })).subscribe((res) => {
           this.performingAction = true;
           this.dialogRef.close();
@@ -178,31 +179,6 @@ export class RequestCardComponent implements OnInit {
       dateDialog.afterOpen().subscribe( () => {
         this.dateEditOpen = true;
       });
-
-      // dateDialog.afterClosed().pipe(filter(res => !!res)).subscribe(matData => {
-      //   if (this.isSeen) {
-      //     this.request.request_time = matData.data.date ? matData.data.date.date : this.request.request_time;
-      //   } else {
-      //     this.request.request_time = matData.startTime;
-      //   }
-      //   this.dateEditOpen = false;
-      //   console.log('RIGHT REQUEST TIME =====>', this.request.request_time);
-      //   const body: any = {
-      //     'origin' : this.request.origin.id,
-      //     'destination' : this.request.destination.id,
-      //     'attachment_message' : this.request.attachment_message,
-      //     'travel_type' : this.request.travel_type,
-      //     'teacher' : this.request.teacher.id,
-      //     'request_time' :this.request.request_time.toISOString(),
-      //     'duration' : this.request.duration,
-      //   };
-      //
-      //   this.requestService.createRequest(body).subscribe(() => {
-      //     this.requestService.cancelRequest(this.request.id).subscribe(() => {
-      //       this.dialogRef.close();
-      //     });
-      //   });
-      // });
     }
   }
 

@@ -114,6 +114,38 @@
 
         .center-block {
             height: 221px;
+
+            &.center {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .resend-button-content{
+                width: 297px;
+                height: 81px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                user-select: none;
+                cursor: pointer;
+                position: relative;
+                margin: -79px 0 0 0%;
+            }
+
+            .resend-button-content-title{
+                font-size: 22px;
+                color: white;
+                font-weight: bold;
+                padding-bottom: 5px;
+            }
+
+            .resend-button-content-subtitle{
+                font-size: 15px;
+                font-weight: normal;
+                color: white;
+            }
         }
 
         .bottom-block {

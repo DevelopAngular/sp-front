@@ -444,6 +444,7 @@
         <app-add-existing-room
                 *ngIf="overlayType === 'addExisting'"
                 [pinnables]="pinnables$ | async"
+                [roomName]="roomName"
                 [roomsInFolder]="selectedRoomsInFolder"
                 (back)="setLocation('newFolder')"
                 (save)="addToFolder($event)">

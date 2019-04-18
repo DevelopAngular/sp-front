@@ -8,6 +8,8 @@ import { StudentList } from '../../models/StudentList';
 import {NextStep, ScaledCard} from '../../animations';
 import {BehaviorSubject} from 'rxjs';
 import {CreateFormService} from '../create-form.service';
+import {Invitation} from '../../models/Invitation';
+import {PassLike} from '../../models';
 
 export enum Role { Teacher = 1, Student = 2 }
 
@@ -27,7 +29,7 @@ export interface Navigation {
   fromState?: number;
   formMode?: FormMode;
   data?: {
-    request?: Request,
+    request?: any,
     date?: any;
     selectedStudents?: User[];
     selectedGroup?: StudentList;
@@ -44,6 +46,7 @@ export interface Navigation {
   };
   forInput?: boolean;
   forLater?: boolean;
+  missedRequest?: boolean;
 }
 
 
@@ -117,6 +120,9 @@ export class MainHallPassFormComponent implements OnInit {
       case false:
         if (this.dialogData['hasClose']) {
          this.FORM_STATE.data.hasClose = true;
+        }
+        if (this.dialogData['missedRequest']) {
+          this.FORM_STATE.missedRequest = true;
         }
         this.FORM_STATE.formMode.formFactor = FormFactor.Request;
         this.FORM_STATE.formMode.role = this.dialogData['isDeny'] ? Role.Teacher : Role.Student;

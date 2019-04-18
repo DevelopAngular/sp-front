@@ -42,6 +42,7 @@ export class LocationTableComponent implements OnInit {
   @Input() withMergedStars: boolean = true;
   @Input() searchExceptFavourites: boolean = false;
   @Input() allowOnStar: boolean = false;
+  @Input() isFavoriteForm: boolean;
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<string> = new EventEmitter();
@@ -146,7 +147,9 @@ export class LocationTableComponent implements OnInit {
     if (this.type==='location'){
       this.locationService.getFavoriteLocations().toPromise().then((stars: any[]) => {
         this.starredChoices = stars.map(val => Location.fromJSON(val));
-        this.choices = [...this.starredChoices, ...this.choices].sort((a, b) => a.id - b.id);
+        if (this.isFavoriteForm) {
+            this.choices = [...this.starredChoices, ...this.choices].sort((a, b) => a.id - b.id);
+        }
           this.favoritesLoaded = true;
           this.mainContentVisibility = true;
       });

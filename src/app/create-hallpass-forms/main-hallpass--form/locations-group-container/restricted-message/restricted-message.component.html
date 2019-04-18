@@ -7,7 +7,7 @@
     </div>
   </div>
 
-  <div class="selected-teacher-header" *ngIf="formState.forInput">
+  <div class="selected-teacher-header" *ngIf="formState.forInput || formState.missedRequest">
     <span class="ds-dialog-subtitle">Sending Pass Request To:&nbsp; </span>
     <span class="" style="color: #7F879D; font-size: 16px">{{ formState.data.requestTarget.display_name }}</span>
   </div>
@@ -28,7 +28,7 @@
              [style.max-height]="date ? '190px' : '207px'"
      >
     </textarea>
-      <div class="buttons" *ngIf="formState.forInput">
+      <div class="buttons" *ngIf="formState.forInput || formState.missedRequest">
         <app-gradient-button
                              [gradient]="'#00B476, #03CF31'"
                              [hoverColor]="'#04CD33'"
@@ -43,7 +43,7 @@
       </div>
     </div>
   </div>
-  <app-gradient-button *ngIf="!formState.forInput"
+  <app-gradient-button *ngIf="!formState.forInput && !formState.missedRequest"
                        [style.margin-bottom]="'30px'"
                        [gradient]="'#DA2370,#FB434A'"
                        [hoverColor]="'#DA2370'"
@@ -54,5 +54,5 @@
                        (buttonClick)="sendRequest()"
                        class="message-deny-button"
   >Deny Pass Request</app-gradient-button>
-  <app-student-footer *ngIf="formState.forInput" [formState]="formState" [date]="date" (changeAnimationDirectionEvent)="onChangeAnimationDirection($event)"></app-student-footer>
+  <app-student-footer *ngIf="formState.forInput || formState.missedRequest" [formState]="formState" [date]="date" (changeAnimationDirectionEvent)="onChangeAnimationDirection($event)"></app-student-footer>
 </div>

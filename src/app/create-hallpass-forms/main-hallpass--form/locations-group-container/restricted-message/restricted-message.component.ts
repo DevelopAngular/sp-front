@@ -73,7 +73,11 @@ export class RestrictedMessageComponent implements OnInit {
     setTimeout(() => {
 
       if (!this.formState.forInput) {
-        this.formState.step = 0;
+        if (this.formState.missedRequest) {
+          this.formState.state = 1;
+        } else {
+            this.formState.step = 0;
+        }
       } else {
         this.formState.previousState = this.formState.state;
         this.formState.state -= 1;

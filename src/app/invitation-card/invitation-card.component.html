@@ -40,8 +40,14 @@
 
     <div *ngIf="!forStaff" class="student-view">
 
-      <div class="center-block">
-        <app-travel-view *ngIf="!forInput" [forStaff]="forStaff" [pass]='invitation' (locationSelected)="setLocation($event)"></app-travel-view>
+      <div class="center-block" [class.center]="invalidDate">
+        <app-travel-view *ngIf="!forInput && !invalidDate" [forStaff]="forStaff" [pass]='invitation' (locationSelected)="setLocation($event)"></app-travel-view>
+        <app-card-button *ngIf="!forInput && !forStaff && invalidDate" (onClick)="changeDate()" [width]="'297px'" [height]="'81px'" [gradientColor]="invitation.color_profile.gradient_color">
+          <div class="resend-button-content">
+            <div class="resend-button-content-title">Change Date & Time</div>
+            <div class="resend-button-content-subtitle">Resend Pass Request to Teacher</div>
+          </div>
+        </app-card-button>
       </div>
 
       <mat-divider *ngIf="(!selectedOrigin && !forStaff) || (!forInput && forStaff)"></mat-divider>

@@ -10,11 +10,10 @@ export class AddExistingRoomComponent implements OnInit {
 
   @Input() roomsInFolder;
   @Input() pinnables: Pinnable[];
+  @Input() roomName: string;
 
   @Output() back = new EventEmitter();
   @Output() save = new EventEmitter();
-
-  public roomName: string = '';
 
   constructor() { }
 

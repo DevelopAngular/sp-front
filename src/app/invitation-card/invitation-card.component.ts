@@ -11,10 +11,11 @@ import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
 import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
-import { filter } from 'rxjs/operators';
+import {filter, switchMap} from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
-import {RequestsService} from '../services/requests.service';
+import { RequestsService } from '../services/requests.service';
+import {of} from 'rxjs';
 
 @Component({
   selector: 'app-invitation-card',
@@ -41,6 +42,7 @@ export class InvitationCardComponent implements OnInit {
   performingAction: boolean;
   fromHistory;
   fromHistoryIndex;
+  dateEditOpen: boolean;
 
   isModal: boolean;
   isSeen: boolean;
@@ -86,6 +88,10 @@ export class InvitationCardComponent implements OnInit {
 
   get durationPlural(){
     return this.selectedStudents && this.selectedStudents.length > 1;
+  }
+
+  get invalidDate() {
+    return Util.invalidDate(this.invitation.date_choices[0]);
   }
 
   ngOnInit() {
@@ -151,6 +157,34 @@ export class InvitationCardComponent implements OnInit {
       this.dialogRef.close();
     });
   }
+
+    changeDate() {
+      if (!this.dateEditOpen) {
+            this.dialogRef.close();
+            const conf = {
+                panelClass: 'form-dialog-container',
+                backdropClass: 'custom-backdrop',
+                data: {
+                    'entryState': {
+                        step: 1,
+                        state: 1
+                    },
+                    'forInput': false,
+                    'missedRequest': true,
+                    'originalToLocation': this.invitation.destination,
+                    'colorProfile': this.invitation.color_profile,
+                    'request_time': this.invitation.date_choices[0],
+                    'request': this.invitation
+                }
+            };
+
+        const dateDialog = this.dialog.open(CreateHallpassFormsComponent, conf);
+
+        dateDialog.afterOpen().subscribe( () => {
+            this.dateEditOpen = true;
+        });
+    }
+    }
 
   denyInvitation(evt: MouseEvent){
     if(!this.denyOpen){
