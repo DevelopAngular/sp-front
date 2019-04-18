@@ -12,7 +12,7 @@
       </div>
       <img class="pass-card-header-close"
            (click)="cancelRequest($event)"
-           [src]="'./assets/' +((!forStaff && !forInput)?'Delete':(forStaff ? 'Dots' : 'Back Button')) +' (Transparent).svg' | resolveAsset">
+           [src]="'./assets/' +((!forStaff && !forInput && !invalidDate)?'Delete':(forStaff || invalidDate ? 'Dots' : 'Back Button')) +' (Transparent).svg' | resolveAsset">
     </div>
 
     <mat-divider></mat-divider>

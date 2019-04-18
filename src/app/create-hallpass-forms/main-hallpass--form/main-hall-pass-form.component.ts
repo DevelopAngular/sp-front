@@ -47,6 +47,7 @@ export interface Navigation {
   forInput?: boolean;
   forLater?: boolean;
   missedRequest?: boolean;
+  resendRequest?: boolean;
 }
 
 
@@ -123,6 +124,9 @@ export class MainHallPassFormComponent implements OnInit {
         }
         if (this.dialogData['missedRequest']) {
           this.FORM_STATE.missedRequest = true;
+        }
+        if (this.dialogData['resend_request']) {
+          this.FORM_STATE.resendRequest = true;
         }
         this.FORM_STATE.formMode.formFactor = FormFactor.Request;
         this.FORM_STATE.formMode.role = this.dialogData['isDeny'] ? Role.Teacher : Role.Student;

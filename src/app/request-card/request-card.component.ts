@@ -19,6 +19,8 @@ import {RequestsService} from '../services/requests.service';
 import {NextStep} from '../animations';
 import {BehaviorSubject, of} from 'rxjs';
 
+import * as moment from 'moment';
+
 @Component({
   selector: 'app-request-card',
   templateUrl: './request-card.component.html',
@@ -64,6 +66,10 @@ export class RequestCardComponent implements OnInit {
       private loadingService: LoadingService,
       private createFormService: CreateFormService
   ) {}
+
+  get invalidDate() {
+    return Util.invalidDate(this.request.request_time);
+  }
 
   ngOnInit() {
     this.frameMotion$ = this.createFormService.getFrameMotionDirection();
@@ -141,7 +147,7 @@ export class RequestCardComponent implements OnInit {
       });
   }
 
-  changeDate() {
+  changeDate(resend_request?: boolean) {
     if (!this.dateEditOpen) {
        let config;
         if (this.isSeen) {
@@ -158,20 +164,10 @@ export class RequestCardComponent implements OnInit {
                     'originalToLocation': this.request.destination,
                     'colorProfile': this.request.color_profile,
                     'originalFromLocation': this.request.origin,
-                    'request_time': this.request.request_time,
-                    'request': this.request
+                    'request_time': resend_request ? new Date() : this.request.request_time,
+                    'request': this.request,
+                    'resend_request': resend_request
                 }
-            };
-        } else {
-            config = {
-                width: '750px',
-                panelClass: 'form-dialog-container',
-                backdropClass: 'invis-backdrop',
-                data: {'entryState': 'datetime',
-                    'originalToLocation': this.request.destination,
-                    'colorProfile': this.request.color_profile,
-                    'originalFromLocation': this.request.origin,
-                    'requestTime': this.request.request_time}
             };
         }
       const dateDialog = this.dialog.open(CreateHallpassFormsComponent, config);
@@ -179,6 +175,21 @@ export class RequestCardComponent implements OnInit {
       dateDialog.afterOpen().subscribe( () => {
         this.dateEditOpen = true;
       });
+
+      dateDialog.afterClosed().pipe(filter(() => resend_request), switchMap((state) => {
+          const body: any = {
+              'origin' : this.request.origin.id,
+              'destination' : this.request.destination.id,
+              'attachment_message' : this.request.attachment_message,
+              'travel_type' : this.request.travel_type,
+              'teacher' : this.request.teacher.id,
+              'duration' : this.request.duration,
+              'request_time': moment(state.data.date.date).format('YYYY-MM-DDThh:mm')
+          };
+
+         return this.requestService.createRequest(body);
+      }), switchMap(() => this.requestService.cancelRequest(this.request.id)))
+          .subscribe(console.log);
     }
   }
 
@@ -216,6 +227,9 @@ export class RequestCardComponent implements OnInit {
           options.push(this.genOption('Attach Message & Deny','#3D396B','deny_with_message'));
           options.push(this.genOption('Deny Pass Request','#E32C66','deny'));
         } else{
+            if (this.invalidDate) {
+              options.push(this.genOption('Change Date & Time to Resend', '#3D396B', 'change_date'));
+            }
           options.push(this.genOption('Delete Pass Request','#E32C66','delete'));
         }
         header = 'Are you sure you want to ' +(this.forStaff?'deny':'delete') +' this pass request' +(this.forStaff?'':' you sent') +'?';
@@ -282,29 +296,7 @@ export class RequestCardComponent implements OnInit {
         }else if(action.indexOf('deny_with_message') === 0) {
           let denyMessage: string = '';
           if(action.indexOf('Message') > -1) {
-            // if(!this.messageEditOpen) {
-            //   const infoDialog = this.dialog.open(MainHallPassFormComponent, {
-            //     width: '750px',
-            //     panelClass: 'form-dialog-container',
-            //     backdropClass: 'invis-backdrop',
-            //     data: {'entryState': 'restrictedMessage',
-            //           'originalMessage': '',
-            //           'originalToLocation': this.request.destination,
-            //           'colorProfile': this.request.color_profile,
-            //           'originalFromLocation': this.request.origin,
-            //     }
-            //   });
-            //
-            //   infoDialog.afterOpen().subscribe( () => {
-            //     this.messageEditOpen = true;
-            //   });
-            //
-            //   infoDialog.afterClosed().pipe(filter(res => !!res)).subscribe(data => {
-            //     denyMessage = data['message'];
-            //     this.messageEditOpen = false;
-            //     this.denyRequest(denyMessage);
-            //   });
-            // }
+
           } else {
             let config;
             if (this.isSeen) {
@@ -319,20 +311,6 @@ export class RequestCardComponent implements OnInit {
                         'originalToLocation': this.request.destination,
                         'colorProfile': this.request.color_profile,
                         'gradient': this.request.gradient_color,
-                        'originalFromLocation': this.request.origin,
-                        'isDeny': true,
-                        'studentMessage': this.request.attachment_message
-                    }
-                };
-            } else {
-                config =  {
-                    width: '750px',
-                    panelClass: 'form-dialog-container',
-                    backdropClass: 'invis-backdrop',
-                    data: {'entryState': 'restrictedMessage',
-                        'originalMessage': '',
-                        'originalToLocation': this.request.destination,
-                        'colorProfile': this.request.color_profile,
                         'originalFromLocation': this.request.origin,
                         'isDeny': true,
                         'studentMessage': this.request.attachment_message
@@ -373,6 +351,8 @@ export class RequestCardComponent implements OnInit {
             this.requestService.cancelRequest(this.request.id).subscribe(() => {
               this.dialogRef.close();
             });
+        } else if (action === 'change_date') {
+            this.changeDate(true);
         }
       });
     }

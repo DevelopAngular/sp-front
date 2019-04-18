@@ -173,7 +173,6 @@ export class InvitationCardComponent implements OnInit {
                     'missedRequest': true,
                     'originalToLocation': this.invitation.destination,
                     'colorProfile': this.invitation.color_profile,
-                    'request_time': this.invitation.date_choices[0],
                     'request': this.invitation
                 }
             };

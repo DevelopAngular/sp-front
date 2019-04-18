@@ -70,7 +70,7 @@
                       [fontSize]="'14px'"
                       (buttonClick)="next()"
                       [style.margin]="'15px auto'"
-              >Next</app-gradient-button>
+              >{{ (formState.resendRequest ? 'Resend Request' : 'Next') }}</app-gradient-button>
           </div>
       </div>
     </div>
