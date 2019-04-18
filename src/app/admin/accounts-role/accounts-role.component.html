@@ -1,7 +1,7 @@
-<div class="host" appSafariScroll>
+<div class="host" appSafariScroll (scroll)="onScroll($event)">
   <div class="accounts-role-wrapper"  *ngIf="tabVisibility">
     <!--{{initialSearchString}}-->
-    <div class="card ds-flex-start-between"
+    <div class="card card__top-bar ds-flex-start-between"
          [ngClass]="{'card__dark': darkTheme.isEnabled$.value}"
          style="width: 100%">
       <div class="ds-flex-start-start">
@@ -34,10 +34,6 @@
                 <span>Alternative: 23 Accounts</span>
               </div>
             </div>
-            <!--<p class="card_title mr pr">-->
-            <!--<span>{{userAmount| async}} user{{(userAmount | async) > 1 ? 's' : ''}} </span><br>-->
-            <!--An administrator has a high-level look at the school, configures passes, and views/generates reports.-->
-            <!--</p>-->
           </div>
           <div *ngSwitchCase="'_profile_admin'">
             <div class="card_header ds-mb-10">
@@ -49,7 +45,7 @@
               <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Administrators</span>
             </div>
             <p class="card_title mr-20">
-              <span class="bold">{{userAmount| async}} user{{(userAmount | async) > 1 ? 's' : ''}} </span><br>
+              <span class="bold">{{count}} user{{count > 1 ? 's' : ''}} </span><br>
               An administrator has a high-level look at the school, configures passes, and views/generates reports.
             </p>
           </div>
@@ -63,7 +59,7 @@
               <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Teachers</span>
             </div>
             <p class="card_title ds-mr-20">
-              <span class="bold">{{userAmount| async}} user{{(userAmount | async) > 1 ? 's' : ''}} </span><br>
+              <span class="bold">{{count}} user{{count > 1 ? 's' : ''}} </span><br>
               A teacher has a room or multiple rooms where students can create passes to.
               A teacher can manage passes in his/her room and create passes.
             </p>
@@ -78,7 +74,7 @@
               <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Students</span>
             </div>
             <p class="card_title ds-mr-20">
-              <span class="bold">{{userAmount| async}} user{{(userAmount | async) > 1 ? 's' : ''}} </span><br>
+              <span class="bold">{{count}} user{{count > 1 ? 's' : ''}} </span><br>
               A student can create passes, schedule passes for the future,
               and send pass requests to teachers.
             </p>
@@ -93,14 +89,14 @@
               <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Secretaries & Substitutes</span>
             </div>
             <p class="card_title ds-mr-20">
-              <span class="bold">{{userAmount| async}} user{{(userAmount | async) > 1 ? 's' : ''}} </span><br>
+              <span class="bold">{{count}} user{{count > 1 ? 's' : ''}} </span><br>
               A secretary or substitute teacher acts as a certain teacher when they sign-in.
               They can manage passes in his/her room and create passes as that teacher.
             </p>
           </div>
         </div>
       </div>
-      <div class="ds-ml-20">
+      <div class="ds-mx-20 ds-mt-20">
         <div class="ds-flex-start-end">
           <ng-container *ngIf="role === '_all'; else roleProfile">
             <app-gradient-button
@@ -119,7 +115,7 @@
             >
               <div class="ds-flex-center-center ds-mx-20">
                 <div class="ds-mr-15">
-                  <img src="assets/google/google_logo.svg" alt="google-icon" width="31" height="31">
+                  <img src="assets/google/google_logo.svg" alt="google-icon" width="34" height="34">
                 </div>
                 <div>
                   <span>G Suite Settings</span>
@@ -264,6 +260,7 @@
         <app-data-table
           class="ds-my-10"
           [data]="userList"
+          [disallowHover]="role === '_all'"
           [displayedColumns]="dataTableHeadersToDisplay"
           (selectedCell)="findProfileByRole($event)"
           (selectedRow)="showProfileCard($event)"

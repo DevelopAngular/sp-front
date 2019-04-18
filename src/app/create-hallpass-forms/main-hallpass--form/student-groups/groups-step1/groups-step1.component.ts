@@ -39,6 +39,18 @@ export class GroupsStep1Component implements OnInit {
 
   }
 
+  getBackground(item) {
+    if (item.hovered) {
+      if (item.pressed) {
+        return '#E2E7F4';
+      } else {
+        return '#ECF1FF';
+      }
+    } else {
+      return '#FFFFFF';
+    }
+  }
+
   nextStep() {
     // console.log('SLECTED ====>', this.selectedStudents, this.selectedGroup);
     if (this.formState.forLater) {

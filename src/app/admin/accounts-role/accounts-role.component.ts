@@ -34,6 +34,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   private searchChangeObserver$: Subject<string>;
 
   public role: string;
+  public count: number = 0;
   public userAmount: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   public dataTableHeadersToDisplay: string[] = [];
   public userList: any[] = [];
@@ -50,7 +51,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   public accounts$ =
     new BehaviorSubject<any>({
-      total: 0,
+      total_count: 0,
       admin_count: 0,
       student_count: 0,
       teacher_count: 0
@@ -115,7 +116,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         this.selectedUsers = [];
         this.userList = [];
       }),
-
       switchMap(() => {
         return this.route.params.pipe(takeUntil(this.destroy$));
       }),
@@ -144,9 +144,11 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     )
     .subscribe((qp) => {
       // console.log(qp);
-      const {profileName} = qp;
+      const {profileName, count} = qp;
 
-        this.initialSearchString = this.initialSearchString ? this.initialSearchString : profileName;
+      this.count = count ? count : this.count;
+
+      this.initialSearchString = this.initialSearchString ? this.initialSearchString : profileName;
         // console.log(this.initialSearchString);
         this.router.navigate(['admin/accounts', this.role]);
       this.tabVisibility = true;

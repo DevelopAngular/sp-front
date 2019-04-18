@@ -18,6 +18,7 @@ export class DataTableComponent implements OnInit {
       this._data = [...value];
       this.dataSource = new MatTableDataSource(this._data);
   }
+  @Input() disallowHover: boolean = false;
   @Input() backgroundColor: string = 'transparent';
   @Input() textColor: string = 'black';
   @Input() textHeaderColor: string = '#1F195E';
@@ -34,7 +35,7 @@ export class DataTableComponent implements OnInit {
   selection = new SelectionModel<any>(true, []);
 
   hovered: boolean;
-  hoveredCellIndex: number;
+  hoveredRowIndex: number;
   pressed: boolean;
 
 
@@ -106,22 +107,28 @@ export class DataTableComponent implements OnInit {
   }
 
 
-  getBgColor() {
-    if (this.hovered) {
-      if (this.pressed) {
-        return this.darkTheme.isEnabled$.value ? '#09A4F7' : '#E2E7F4';
+  getBgColor(n?) {
+    if (n === this.hoveredRowIndex && !this.disallowHover) {
+      if (this.hovered) {
+        if (this.pressed) {
+          return this.darkTheme.isEnabled$.value ? '#09A4F7' : '#E2E7F4';
+        } else {
+          return this.darkTheme.isEnabled$.value ? '#0991c3' : '#ECF1FF';
+        }
       } else {
-        return this.darkTheme.isEnabled$.value ? '#0991c3' : '#ECF1FF';
-
+        return 'transparent';
       }
-    } else {
-      return 'transparent';
     }
   }
 
-  getCellColor() {
-    if (this.hovered) {
+  getCellColor(n?) {
+    if (n === this.hoveredRowIndex && !this.disallowHover) {
+      if (this.hovered) {
         return this.darkTheme.isEnabled$.value ? '#FFFFFF' : this.textColor;
+      } else {
+        return this.darkTheme.getColor({white: this.textColor, dark: '#767676'});
+      }
+
     } else {
       return this.darkTheme.getColor({white: this.textColor, dark: '#767676'});
     }

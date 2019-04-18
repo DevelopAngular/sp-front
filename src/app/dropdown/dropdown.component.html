@@ -1,7 +1,7 @@
 <div class="pointer-wrapper"><div class="pointer"  [style.background-color]="darkTheme.getBackground('low')"></div></div>
 <div class="consent-wrapper"  [style.background-color]="darkTheme.getBackground('low')">
   <div class="consent-header" [style.color]="'#7F879D'" *ngIf="heading"> {{heading}}</div>
-  <div class="option-divider"></div>
+  <div class="option-divider" *ngIf="heading"></div>
 
   <div class="options-wrapper" *ngIf="locations">
 
@@ -18,7 +18,7 @@
            (mouseup)="_option.style.background = 'transparent'"
            (mouseover)="_option.style.background = this.darkTheme.isEnabled$.value ? '#47447E' : 'rgba(236, 241, 255, 1)'"
            (mouseleave)="_option.style.background = 'transparent'"
-           (click)="_matDialogRef.close(location)">
+           (click)="_matDialogRef.close()">
         <div class="option-data_leftside">
           <span [style.color]="darkTheme.getColor()">All Rooms</span>
         </div>
@@ -60,7 +60,7 @@
     </div>
   </div>
 
-  <div class="options-wrapper" *ngIf="schools">
+  <div class="options-wrapper ds-pt-15" *ngIf="schools">
     <div class="option" *ngFor="let school of schools" (click)="_matDialogRef.close(school)">
       <div class="option-data">
           <div class="option-data_leftside">
