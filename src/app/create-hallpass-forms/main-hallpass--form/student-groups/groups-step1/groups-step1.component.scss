@@ -51,8 +51,6 @@
       }
       &_text {
         padding-left: 12px;
-        font-size: 18px;
-        font-weight: bold;
         padding-bottom: 3px;
       }
     }
@@ -110,6 +108,7 @@
             //color: #767676;
           }
           .group-icon {
+            user-select: none;
             width: 15px;
             height: 15px;
           }

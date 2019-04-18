@@ -2,9 +2,7 @@
      [style.width]="width"
      [style.height]="height"
      [style.overflow]="(height=='none' ? 'none': 'auto')">
-
   <table mat-table matSort [dataSource]="dataSource" [style.background-color]="backgroundColor">
-
     <!-- Checkbox Column -->
     <ng-container matColumnDef="select" *ngIf="isCheckbox">
       <th mat-header-cell *matHeaderCellDef class="sticky-header"
@@ -33,16 +31,17 @@
           [style.text-transform]="'none'"
           [style.background-color]="darkTheme.isEnabled$.value ? '#0F171E' : '#F8FAFF'"
       > {{column}} </th>
-      <td mat-cell #target *matCellDef="let element; let n = index"
+      <td mat-cell *matCellDef="let element; let n = index"
           class="ds-px-10"
-          (mouseenter)="onHover(target)"
-          (mouseleave)="onLeave(target)"
-          (mousedown)="onDown(target)"
-          (mouseup)="onUp(target)"
+          (mouseenter)="hovered = true; hoveredRowIndex = n;"
+          (mouseleave)="hovered = false; hoveredRowIndex = null"
+          (mousedown)="pressed = true"
+          (mouseup)="pressed = false"
 
           [style.user-select]="'none'"
-          [style.cursor]="'pointer'"
-          [style.color]="darkTheme.getColor({white: textColor, dark: '#767676'})">
+          [style.cursor]="disallowHover ? 'default' : 'pointer'"
+          [style.background-color]="getBgColor(n)"
+          [style.color]=" getCellColor(n)">
         <ng-container *ngIf="normalizeCell(element[column]).length; else empty">
           <span *ngFor="let cellElement of normalizeCell(element[column]); let i = index">
             <!--<span *ngIf="normalizeCell(element[column]).length > 1 && i > 0">, </span>-->

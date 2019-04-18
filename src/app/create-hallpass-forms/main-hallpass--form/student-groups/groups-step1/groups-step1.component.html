@@ -27,11 +27,18 @@
             <div *ngIf="groups && groups.length">
               <mat-list>
                 <div *ngFor="let group of groups">
-                  <mat-list-item (click)="selectGroup(group, $event)" class="group"
-                                 [ngClass]="{'group_selected' : ( selectedGroup && (selectedGroup.id === group.id))}">
+                  <mat-list-item #_item
+                    (click)="selectGroup(group, $event)" class="group"
+                    (mouseenter)="_item.hovered = true"
+                    (mouseleave)="_item.hovered = false"
+                    (mousedown)="_item.pressed = true"
+                    (mouseup)="_item.pressed = false"
+                    [style.background-color]="getBackground(_item)"
+                    [ngClass]="{'group_selected' : ( selectedGroup && (selectedGroup.id === group.id))}"
+                  >
                     <div class="group-name">
                       <span>{{group.title}}</span>
-                      <img class="group-icon"
+                      <img class="group-icon" draggable="false"
                            [src]="( selectedGroup && (selectedGroup.id === group.id)
                                     ?
                                     './assets/Chevron Right (Navy).svg'
@@ -61,7 +68,7 @@
             [leftImageHeight]="'13px'"
             [leftImageWidth]="'13px'"
             [cursor]="'pointer'"
-            [subtitle]=" selectedStudents.length ? 'with selected students' : null "
+            [subtitle]=" selectedStudents?.length > 1 ? 'with selected students' : null "
             (buttonClick)="createGroup()"
           >
             <div class="create-button">
