@@ -57,6 +57,10 @@ $primaryFont: "Helvetica Neue", sans-serif;
   @include textSize(15px, bold);
   padding-bottom: 5px;
 }
+.ds-dialog-heading-gray {
+  @include textSize(15px, bold, $blue-gray);
+  padding-bottom: 5px;
+}
 .ds-dialog-bold-text {
   @include textSize(14px, bold, $blue-gray);
 }

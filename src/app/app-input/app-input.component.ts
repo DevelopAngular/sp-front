@@ -48,7 +48,7 @@ export class AppInputComponent implements OnInit {
       }
 
       if (this.rightIcon) {
-        this.rightIconUntouched = this.rightIcon.replace('Blue', 'Grey');
+        this.rightIconUntouched = this.rightIcon.replace('Navy', 'Blue-Gray');
       }
 
       setTimeout(() => {

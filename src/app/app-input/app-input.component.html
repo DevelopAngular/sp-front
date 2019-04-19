@@ -2,8 +2,11 @@
   <div class="InputWrapper">
     <div style="display: flex">
       <label
-        class="ds-dialog-heading"
-        [ngClass]="{clserrorLabel: controlName.invalid && controlName.errors && controlName.touched}"
+        [ngClass]="{
+        'ds-dialog-heading': controlName.valid || controlName.pending,
+        'ds-dialog-heading-gray': controlName.invalid,
+        'clserrorLabel': controlName.invalid && controlName.errors && controlName.touched
+        }"
       >
         {{input_label}}
       </label>
@@ -14,7 +17,7 @@
            (mouseover)="over.emit({event: $event, action: 'timeLimit'})"
            (mouseleave)="leave.emit('timeLimit')"
            class="support-icon"
-           *ngIf="rightIcon" [src]="input_value ? rightIcon : rightIconUntouched | resolveAsset"/>
+           *ngIf="rightIcon" [src]="controlName.valid ? rightIcon : rightIconUntouched | resolveAsset"/>
         <div class="arrow-down-container">
           <div class="arrow-down"></div>
         </div>

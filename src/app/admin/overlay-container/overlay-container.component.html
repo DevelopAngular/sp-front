@@ -169,7 +169,7 @@
       </div>
       <div class="teacher-search" *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'">
           <div class="teacher-title">
-              <span [ngStyle]="{'color': !selectedTeachers.length ? '#999999' : ' #1F195E'}">Teachers in Room</span>
+              <span [ngStyle]="{'color': !selectedTeachers.length ? '#7F879D' : ' #1F195E'}">Teachers in Room</span>
               <div class="tooltip-container">
                   <img
                      [matTooltip]="tooltipText.teachers"
@@ -203,7 +203,7 @@
       >
         <div class="travel-picker">
           <div class="toggle-label">
-            <span [ngStyle]="{'color': !travelType ? '#999999' : ' #1F195E'}">Travel Type</span>
+            <span [ngStyle]="{'color': !travelType ? '#7F879D' : ' #1F195E'}">Travel Type</span>
               <div class="tooltip-container">
                   <img
                     [matTooltip]="tooltipText.travel"
@@ -264,7 +264,7 @@
       >
         <div class="restriction-picker-1">
           <div class="toggle-label">
-            <span [ngStyle]="{'color': nowRestriction === undefined ? '#999999' : ' #1F195E'}">Restriction For Now</span>
+            <span [ngStyle]="{'color': nowRestriction === undefined ? '#7F879D' : ' #1F195E'}">Restriction For Now</span>
               <div class="tooltip-container">
                   <img
                     [matTooltip]="tooltipText.restriction"
@@ -293,7 +293,7 @@
         </div>
         <div class="restriction-picker-2">
             <div class="toggle-label">
-                <span [ngStyle]="{'color': futureRestriction === undefined ? '#999999' : ' #1F195E'}">Restriction For Future</span>
+                <span [ngStyle]="{'color': futureRestriction === undefined ? '#7F879D' : ' #1F195E'}">Restriction For Future</span>
                 <div class="tooltip-container">
                     <img
                       [matTooltip]="tooltipText.scheduling_restricted"
