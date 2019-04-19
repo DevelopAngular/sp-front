@@ -88,7 +88,11 @@ export class PinnableComponent implements OnInit {
 
   getGradient() {
     if (this.buttonDown) {
-      return this.pinnable.color_profile.pressed_color;
+      if (this.pinnable.color_profile.pressed_color) {
+        return this.pinnable.color_profile.pressed_color;
+      } else {
+        return this.pinnable.color_profile.gradient_color.split(',')[0];
+      }
     } else {
       const gradient: string[] = this.pinnable.color_profile.gradient_color.split(',');
       return this.sanitizer.bypassSecurityTrustStyle('radial-gradient(circle at 73% 71%, ' + gradient[0] + ', ' + gradient[1] + ')');

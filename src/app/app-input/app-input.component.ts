@@ -1,5 +1,6 @@
 ﻿import {Component, OnInit, Input, Output, EventEmitter, ViewChild, Renderer2} from '@angular/core';
 import { MatDialog } from '@angular/material';
+import {DomSanitizer} from '@angular/platform-browser';
 
 
 @Component({
@@ -35,7 +36,12 @@ export class AppInputComponent implements OnInit {
 
     public rightIconUntouched: string;
 
-    constructor(public dialog: MatDialog) {
+    public hovered: boolean;
+    public pressed: boolean;
+    constructor(
+      public dialog: MatDialog,
+      private sanitizer: DomSanitizer,
+    ) {
       // this.rightIconUntouched = this.rightIcon.replace('Blue', 'Grey');
     }
 
@@ -59,7 +65,18 @@ export class AppInputComponent implements OnInit {
         });
     }
 
+    // getBackground() {
+    //       if (this.hovered || this.isFocus) {
+    //         return '#EDEDED';          return this.sanitizer.bypassSecurityTrustStyle('#E2E7F4');
+    //
+    //       } else {
+    //         return '#F7F7F7';          return this.sanitizer.bypassSecurityTrustStyle('#E2E7F4');
+    //
+    //       }
+    // }
+
     updateFocus(el) {
       this.isFocus  ? el.focus() : el.blur();
+      // this.hovered = this.hovered ? false : true;
     }
 }

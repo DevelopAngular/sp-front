@@ -36,7 +36,7 @@ export class GradientButtonComponent implements OnInit {
   @Input() hoverColor: string = '#00B476';
   @Input() leftIcon: string;
   @Input() rightIcon: string;
-  @Input() text: string;
+  @Input() text: string = 'PDF';
   @Input() subtitle: string;
   @Input() textColor: string;
   @Input() width: string; // > editable
@@ -51,8 +51,10 @@ export class GradientButtonComponent implements OnInit {
   @Input() cornerRadius: string;
   @Input() padding: string;
   @Input() textWidth: string = '100%';
-  @Input() whiteSpace: string = 'wrap';
+  @Input() whiteSpace: string = 'nowrap';
   @Input() buttonLink: string; // needs for the links so that don't brake an existing markup and the entire button is clickable
+  @Input() linkType: string = '_blank'; // _blank or _self
+  @Input() download: boolean = false;
   @Input() documentType: string; // can be pdf or xslx/csv
   @Output() buttonClick = new EventEmitter<any>();
 

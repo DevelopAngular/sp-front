@@ -4,9 +4,9 @@
     <div class="card card__top-bar ds-flex-start-between"
          [ngClass]="{'card__dark': darkTheme.isEnabled$.value}"
          style="width: 100%">
-      <div class="ds-flex-start-start">
+      <div class="ds-flex-start-start ds-h-100">
 
-        <div class="ds-mt-20 ds-mr-20">
+        <div class="back-button">
           <app-back-button routerLink="/admin/accounts"></app-back-button>
         </div>
         <div class="ds-mt-20 ds-mx-20" [ngSwitch]="role">

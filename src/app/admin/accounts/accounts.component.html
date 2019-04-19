@@ -6,54 +6,50 @@
     <div *ngIf="(accounts$ | async).total">
 
       <div class="card card__top-bar">
-        <div class="accounts ds-flex-center-start">
-          <div class="card_header ds-my-15"
-               [style.margin]="'1em 0'"
-               [style.font-size]="'29px'"
-               [style.font-weight]="'bold'"
-               [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})"
-          >
-            Account & Profile <br>
-            Management
-          </div>
-        </div>
-        <div class="g-suite ds-flex-center-between">
-          <div style="text-align: right; padding-right: 26px;">
-            <div class="card_header"
-                 [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})"
-                 [style.font-size]="'16px'">
-              <span>Total Accounts: {{(accounts$ | async).total_count}} Accounts</span>
-            </div>
-            <div class="card_title">
-              <span>G Suite: 2,237  Accounts</span>
-            </div>
-            <div class="card_title">
-              <span>Alternative: 23 Accounts</span>
-            </div>
-          </div>
+        <div class="card_content ds-flex-center-between">
 
-          <div class="card_manage-users card_manage-users__all"
-               [routerLink]="['/admin/accounts', '_all']"
-               [queryParams]="{count: (accounts$ | async).total_count}"
-               [ngClass]="{'card_manage-users__dark': darkTheme.isEnabled$.value}"
-          >
-            <img draggable="false" width="30" [src]="darkTheme.getIcon({
-                iconName: 'Settings',
-                darkFill: 'White',
-                lightFill: 'Navy'
-              }) | resolveAsset" alt="">
-            <div style="text-align: center;" class="ds-px-10"
+            <div>
+
+              <div class=""
+                   [style.font-size]="'24px'"
+                   [style.font-weight]="'bold'"
+                   [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})"
               >
-              <span>Manage <br> Accounts</span>
+                Accounts
+              </div>
+              <div class="ds-pt-5"
+                   [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})"
+                   [style.font-size]="'14px'"
+                   [style.font-weight]="'bold'"
+              >
+                Total Accounts: {{(accounts$ | async).total_count}} Accounts
+              </div>
             </div>
-            <img draggable="false" width="17" [src]="darkTheme.getIcon({
-                iconName: 'Chevron Right',
-                darkFill: 'White',
-                lightFill: 'Navy'
-              }) | resolveAsset" alt="">
+          <!--<div class="ds-flex-center-between">-->
+          <div style="text-align: right; padding-right: 26px;">
+              <div class="card_title">
+                <span>G Suite: 2,237  Accounts</span>
+              </div>
+              <div class="card_title">
+                <span>Alternative: 23 Accounts</span>
+              </div>
+            </div>
+          <!--</div>-->
+        </div>
+
+        <div class="card_manage-users"
+             [routerLink]="['/admin/accounts', '_all']"
+             [queryParams]="{count: (accounts$ | async).total_count}"
+             [ngClass]="{'card_manage-users__dark': darkTheme.isEnabled$.value}">
+
+          <div style="text-align: center;" class="ds-px-10">
+            <span>Manage All Accounts</span>
           </div>
-
-
+          <img draggable="false" width="17" [src]="darkTheme.getIcon({
+              iconName: 'Chevron Right',
+              darkFill: 'White',
+              lightFill: 'Navy'
+            }) | resolveAsset" alt="">
         </div>
 
       </div>
