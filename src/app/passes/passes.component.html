@@ -6,7 +6,7 @@
         <app-inline-pass-card *ngIf="isActivePass$ | async" [pass]="currentPass$ | async" [isActive]="true"></app-inline-pass-card>
       </div>
       <ng-template #newPass>
-        <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'22px'" [icon]="'./assets/Plus (Navy).svg'">
+        <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'20px'" [icon]="'./assets/Plus (Navy).svg'">
           <div class="pass-buttons">
             <app-gradient-button
               [size]="'editable'"
