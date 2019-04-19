@@ -341,12 +341,10 @@
         <div class="content-buttons-in-folder" *ngIf="readyRoomsToEdit.length > 0 && !selectedRooms.length">
           <div class="button-in-folder" *ngFor="let button of buttonsWithSelectedRooms">
             <app-gradient-button
-                    [minHeight]="'35px'"
                     [hoverColor]="button.hover"
+                    [textColor]="button.textColor"
                     [gradient]="button.color"
-                    [style.width]="button.width"
                     [cursor]="'pointer'"
-                    [fontSize]="'12px'"
                     (buttonClick)="onEditRooms(button.action)"
             >
               {{ button.title }}</app-gradient-button>
@@ -428,6 +426,7 @@
                               [hoverColor]="button.hover"
                               [gradient]="button.color"
                               [style.width]="button.width"
+                              [textColor]="button.textColor"
                               [cursor]="'pointer'"
                               [fontSize]="'12px'"
                               (buttonClick)="onEditRooms(button.action)"
