@@ -161,13 +161,10 @@
         <div class="card-footer">
           <div class="button">
             <app-gradient-button
-              [width]="'150px'"
-              [minHeight]="'35px'"
+              [fontWeight]="'normal'"
               [gradient]="'#001115,#033294'"
               [hoverColor]="'#001115'"
               [textColor]="'#FFFFFF'"
-              [fontSize]="'13px'"
-              [fontWeight]="'normal'"
               [cursor]="'pointer'"
             >
               <span>Disable sign-in</span>
@@ -179,13 +176,10 @@
           <div class="button">
             <div  #target  [style.opacity]="consentMenuOpened ? '.5' : '1'">
               <app-gradient-button
-                [width]="'150px'"
-                [minHeight]="'35px'"
+                [fontWeight]="'normal'"
                 [gradient]="'#DA2370, #FB434A'"
                 [hoverColor]="'#DA2370'"
                 [textColor]="'#FFFFFF'"
-                [fontSize]="'13px'"
-                [fontWeight]="'normal'"
                 (buttonClick)="deleteAccount(target)"
               >
                 <span>Remove from Profile</span>
