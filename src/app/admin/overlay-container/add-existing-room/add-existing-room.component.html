@@ -1,17 +1,23 @@
 <div class="wrapper">
   <div class="existing-room-header">
-    <div class="back-button" (click)="goBack()" *ngIf="!roomsInFolder.length">
+    <div
+      class="back-button"
+      [@pressState]="buttonState"
+      (click)="goBack()"
+      (mousedown)="onPress(true)"
+      (mouseup)="onPress(false)"
+      *ngIf="!roomsInFolder.length"
+    >
       <app-back-button></app-back-button>
     </div>
     <div class="cancel-button" (click)="goBack()" *ngIf="roomsInFolder.length">Cancel</div>
-    <div class="header-title" [style.color]="roomsInFolder.length ? '#1F195E' : '#7F879D'">
+    <div class="header-title" [style.font-weight]="roomsInFolder.length ? 'bold' : 'normal'" [style.color]="roomsInFolder.length ? '#1F195E' : '#7F879D'">
       {{(roomsInFolder.length ? roomsInFolder.length + ' Room' + (roomsInFolder.length > 1 ? 's' : '') : 'Add Existing Room to Folder')}}
     </div>
     <div class="add-button" *ngIf="roomsInFolder.length">
       <app-gradient-button
               [minHeight]="'40px'"
               [cursor]="'pointer'"
-              [fontSize]="'12px'"
               (buttonClick)="addRooms()"
       >
         Add</app-gradient-button>
