@@ -10,6 +10,9 @@ import {BehaviorSubject, fromEvent, Subject} from 'rxjs';
 import {StorageService} from '../services/storage.service';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 
+declare const window;
+
+
 @Component({
   selector: 'app-intro',
   templateUrl: './intro.component.html',
@@ -293,6 +296,7 @@ export class IntroComponent implements OnInit {
             ],
           };
         });
+        window.appLoaded(2000);
       });
       // this.endIntro();
   }

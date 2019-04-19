@@ -82,7 +82,6 @@ export class PinnableComponent implements OnInit {
   }
 
   onSelect() {
-    return;
     if (this.valid && !this.disabled)
       this.onSelectEvent.emit(this.pinnable);
   }

@@ -30,7 +30,7 @@
      [style.box-shadow]="shadow"
      [style.width]="width"
 >
-  <div class="card"
+  <div class="pinnable-card"
        [style.background]="'radial-gradient(circle at 73% 71%,' + mock.gradient + ')'"
        [style.height]="height">
     <img *ngIf="!selected" [style.width]="iconWidth" [style.height]="iconWidth" [src]="mock.content | resolveAsset" alt="ICON">

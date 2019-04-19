@@ -45,18 +45,7 @@ export class DisplayCardComponent implements OnInit {
   }
 
   ngOnInit() {
-    const pattern = /.\/assets\/\w+\(\w+\).svg/;
-    // const pattern = /\^(assets)[A-Z]{1}\w+\b/;
-    const iconName = /[A-Z]{1}[\w\s]+[^( \()]/;
 
-
-    console.log(this.icon.match(iconName), this.icon, this.darkTheme.getIcon({
-      iconName: this.icon,
-      // darkFill: 'Navy',
-      // lightFill: 'White',
-      setting: null
-    }));
-    // console.log('./assets/SP Arrow (Navy).svg'.match(iconName), './assets/SP Arrow (Navy).svg');
   }
 
 }
