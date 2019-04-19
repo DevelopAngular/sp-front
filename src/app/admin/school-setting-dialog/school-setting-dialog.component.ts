@@ -31,8 +31,7 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.http.currentSchool$.pipe(takeUntil(this.destroy$)).subscribe(school => {
       this.currentSchool = school;
-      debugger;
-        this.buildForm();
+      this.buildForm(school);
     });
     this.initialState = this.schoolForm.value;
     this.schoolForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(res => {
@@ -42,7 +41,9 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$),
         switchMap(() => {
           return this.adminService.updateSchoolSettings(this.currentSchool.id, this.schoolForm.value);
-    })).subscribe(console.log);
+    })).subscribe(() => {
+      this.dialogRef.close();
+    });
   }
 
   ngOnDestroy() {
@@ -50,16 +51,20 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  buildForm() {
+  buildForm(school) {
     this.schoolForm = new FormGroup({
-        display_card_room: new FormControl(true),
-        pass_buffer_time: new FormControl(20,
-            [Validators.pattern('^[0-9]*?[0-9]+$'), Validators.max(59), Validators.min(0)])
+        display_card_room: new FormControl(school.display_card_room),
+        pass_buffer_time: new FormControl(school.pass_buffer_time,
+            [
+                Validators.required,
+                Validators.pattern('^[0-9]*?[0-9]+$'),
+                Validators.max(59),
+                Validators.min(0)])
     });
   }
 
   save() {
-    this.changeSettings$.next();
+    this.changeSettings$.next(null);
   }
 
   close() {
