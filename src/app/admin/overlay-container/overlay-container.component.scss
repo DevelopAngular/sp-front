@@ -402,21 +402,24 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
-  .import-rooms-info {
-    color: #7F879D;
-    font-size: 18px;
-    text-align: center;
-    width: 85%;
-    margin-top: 25px;
+  margin: 32px 32px 0 32px;
+  .template-and-info {
+    width: 227px;
+    .import-rooms-info {
+      color: #7F879D;
+      font-size: 14px;
+      text-align: center;
+      //width: 85%;
+      margin-top: 25px;
+    }
   }
 
   .download-template-link {
-    font-size: 18px;
-    margin-top: 30px;
+    //font-size: 18px;
+    //margin-top: 30px;
     font-weight: bolder;
     cursor: pointer;
-    color: #1d1a5e;
+    color: #1E194F;
     text-decoration: none;
     display: inline-block;
   }
@@ -442,6 +445,23 @@
       font-weight: bolder;
       color: #7F879D;
       margin-left: 8px;
+    }
+  }
+  .uploading-area {
+    margin-top: 25px;
+    width: 460px;
+    height: 120px;
+    border: 2px dashed #7F879D;
+    color: #7F879D;
+    font-size: 14px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    .choose-file-inline {
+      text-decoration: underline;
+      cursor: pointer;
     }
   }
 }

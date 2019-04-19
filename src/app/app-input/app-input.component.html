@@ -23,6 +23,7 @@
     <div class="input-container">
       <input
              [attr.disabled]="disabled ? '' : null"
+             [style.background-color]="hovered || isFocus ? '#EDEDED' : '#F7F7F7'"
              [style.width]="width"
              [style.text-align]="textAlign"
              [style.padding]="padding + (textAlign ? ' 16px ' : ' 0px ') + padding + ' 16px'"
@@ -31,6 +32,9 @@
              [type]="input_type"
              [class]="input_class"
              (focus)="updateFocus(inp); controlName.markAsUntouched()"
+             (blur)="hovered = false; isFocus = false;"
+             (mouseover)="hovered = true"
+             (mouseout)="hovered = false"
              (click)="isFocus = true; updateFocus(inp)"
              [placeholder]="(placeholder=='' ? '' : placeholder)"
              [ngClass]="{clserrorInput: controlName.invalid && controlName.errors && controlName.touched }"

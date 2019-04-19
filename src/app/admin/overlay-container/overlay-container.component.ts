@@ -305,16 +305,7 @@ export class OverlayContainerComponent implements OnInit {
           this.overlayType === 'edit';
   }
   ngOnInit() {
-      // disableBodyScroll(this.elRef.nativeElement,
-      //     {
-      //   allowTouchMove: (el) => {
-      //     while (el && el !== this.elRef.nativeElement) {
-      //       el = el.parentNode;
-      //       return true;
-      //     }
-      //   }
-      // }
-      // );
+
       this.buildForm();
 
       this.overlayType = this.dialogData['type'];
@@ -1032,5 +1023,59 @@ export class OverlayContainerComponent implements OnInit {
   closeInfo(action) {
     this.isActiveIcon[action] = false;
   }
+  catchFile(evt: DragEvent) {
+    evt.preventDefault();
+    console.log(this.selectedFile.nativeElement.files);
 
+    of(evt)
+      .pipe(
+        switchMap((dragEvt: DragEvent) => {
+          this.setLocation('settingsRooms');
+
+          const FR = new FileReader();
+          FR.readAsBinaryString(dragEvt.dataTransfer.files[0]);
+          return fromEvent(FR, 'load');
+        }),
+        map(( res: any) => {
+          console.log('Result', res);
+          const raw = XLSX.read(res.target.result, {type: 'binary'});
+          const sn = raw.SheetNames[0];
+          const stringCollection = raw.Sheets[sn];
+          const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
+          const headers = data[0];
+          let rows = data.slice(1);
+          rows = rows.map((row, index) => {
+            console.log('Parsed room ===>', row);
+            const _room: any = {};
+            _room.title = row[0];
+            _room.room = row[1];
+            _room.teachers = <string>row[2] ? row[2].split(', ') : [];
+            console.dir(_room);
+            return _room;
+          });
+          return rows;
+        }),
+        switchMap((_rooms: any[]): Observable<any[]> => {
+          return this.userService.getUsersList('_profile_teacher')
+            .pipe(
+              map((teachers: any[]) => {
+                return _rooms.map((_room) => {
+                  const teachersIdArray = [];
+                  teachers.map((_teacher) => {
+                    if (_room.teachers.includes(_teacher.primary_email)) {
+                      teachersIdArray.push(_teacher.id);
+                    }
+                  });
+                  _room.teachers = teachersIdArray;
+                  return _room;
+                });
+              }));
+        }),
+      )
+      .subscribe((rooms) => {
+        this.importedRooms = rooms;
+      });
+
+
+  }
 }

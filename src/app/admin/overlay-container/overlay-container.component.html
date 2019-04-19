@@ -99,7 +99,7 @@
            *ngIf="overlayType === 'newRoomInFolder' || overlayType === 'importRooms' || overlayType === 'settingsRooms'">
           <div class="new-room-in-folder-header">
             <div class="back-button" *ngIf="!backButtonsStateInFolder" (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : setLocation('newFolder'))">
-                <app-back-button></app-back-button>
+                <app-back-button [allowDarkTheme]="false"></app-back-button>
             </div>
             <div class="cancel-button-in-folder-header"
                  (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : setLocation('newFolder'))"
@@ -449,35 +449,70 @@
                 (back)="setLocation('newFolder')"
                 (save)="addToFolder($event)">
         </app-add-existing-room>
+       <input type="file" formControlName="file" #file style="display: none"/>
+       <div class="import-rooms-content" *ngIf="overlayType === 'importRooms'">
+        <div class="ds-flex-center-between ds-w-100">
+          <div>
+            <img [src]="'./assets/emptyStates/upload-file.svg'" alt="upload-file">
+          </div>
+          <div class="template-and-info">
 
-      <input type="file" formControlName="file" #file style="display: none"/>
-      <div class="import-rooms-content" *ngIf="overlayType === 'importRooms'">
-        <div class="import-rooms-info">
-          Import a list of room names, room numbers, and teacher(s) in room from an Excel spreadsheet.
+            <div class="import-rooms-info">
+              Import a list of room names, room numbers, and teachers in room from an Excel spreadsheet or CSV.
+            </div>
+            <div class="ds-flex-center-center ds-pt-15">
+
+              <app-gradient-button
+                [size]="'small'"
+                [gradient]="'#FFFFFF,#FFFFFF'"
+                [buttonLink]="'./assets/xlsx/Rooms Configuration.xlsx'"
+                [linkType]="'_self'"
+                [download]="true"
+                [hoverColor]="'#FFFFFF'"
+                [textColor]="'#1E194F'"
+                [leftIcon]="'./assets/Download (Navy).svg'"
+                [text]="'Download Template'"
+                [cursor]="'pointer'"
+              >
+              </app-gradient-button>
+            </div>
+          </div>
+
         </div>
         <div>
-          <a class="download-template-link" [href]="'./assets/xlsx/Rooms Configuration.xlsx' | resolveAsset" download>
-            Download Template
-          </a>
         </div>
-          <app-gradient-button
-            style="margin-top: 35px;"
-            [size]="'editable'"
-            [gradient]="'#FFFFFF,#FFFFFF'"
-            [hoverColor]="'#F5F5F5'"
-            [minHeight]="'74px'"
-            [width]="'170px'"
-            [cursor]="'pointer'"
-            [textColor]="'#7f879d'"
-            [fontSize]="'22px'"
-            [border]="'1px solid 1px solid #eee'"
-            (buttonClick)="file.click()"
-            [leftIcon]="'./assets/File (Blue-Gray).svg'"
-            [leftImageWidth]="'30px'"
-            [leftImageHeight]="'30px'"
-          >
-              <span>Upload file</span>
-          </app-gradient-button>
+          <!--<app-gradient-button-->
+            <!--style="margin-top: 35px;"-->
+            <!--[size]="'editable'"-->
+            <!--[gradient]="'#FFFFFF,#FFFFFF'"-->
+            <!--[hoverColor]="'#F5F5F5'"-->
+            <!--[minHeight]="'74px'"-->
+            <!--[width]="'170px'"-->
+            <!--[cursor]="'pointer'"-->
+            <!--[textColor]="'#7f879d'"-->
+            <!--[fontSize]="'22px'"-->
+            <!--[border]="'1px solid 1px solid #eee'"-->
+            <!--(buttonClick)="file.click()"-->
+            <!--[leftIcon]="'./assets/File (Blue-Gray).svg'"-->
+            <!--[leftImageWidth]="'30px'"-->
+            <!--[leftImageHeight]="'30px'"-->
+          <!--&gt;-->
+              <!--<span>Upload file</span>-->
+          <!--</app-gradient-button>-->
+
+        <div class="uploading-area"
+          (dragenter)="$event.preventDefault()"
+          (dragover)="$event.preventDefault()"
+          (dragleave)="$event.preventDefault()"
+          (drop)="catchFile($event)">
+          <span class="ds-pb-10"
+          >Drop spreadsheet here</span>
+
+          <span [style.text-decoration]="'underline'" class="choose-file-inline" (click)="file.click()">Choose file</span>
+
+
+        </div>
+
         <!--<div class="choose-file" (click)="file.click()">-->
             <!--<img draggable="false" class="choose-icon" [src]="'./assets/Spreadsheet (Grey).png' | resolveAsset">-->
             <!--<span class="choose-text">Choose File</span>-->

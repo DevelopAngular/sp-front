@@ -1,11 +1,21 @@
-<div class="back-wrapper"
-     [ngClass]="{
-     'back-wrapper': !darkTheme.isEnabled$.value,
-     'back-wrapper__dark': darkTheme.isEnabled$.value
-     }"
+<div [ngClass]="_class"
+     [style.background-color]="bgColor"
+     (mouseenter)="hovered = true"
+     (mouseleave)="hovered = false"
+     (mousedown)="pressed = true"
+     (mouseup)="pressed = false"
      (click)="click.emit()">
-  <img class="back-image" [src]="darkTheme.getIcon({
-    iconName: 'Chevron Left'
-  }) | resolveAsset">
-  <div class="back-text" [style.color]="darkTheme.getColor()">Back</div>
+  <div class="ds-flex-center-center"
+       [style.padding-top]="'20px'"
+       [style.width]="'75px'">
+      <img class="back-image" [src]="darkTheme.getIcon({
+        iconName: 'Chevron Left',
+        darkFill: (allowDarkTheme ? 'White' : 'Blue-Gray'),
+        lightFill: 'Blue-Gray'
+        }) | resolveAsset">
+      <span class="back-text" [style.color]="darkTheme.getColor({
+        dark: (allowDarkTheme ? '#FFFFFF' : '#7F879D'),
+        white: '#7F879D'
+      })">Back</span>
+  </div>
 </div>
