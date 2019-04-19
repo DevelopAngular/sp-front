@@ -31,6 +31,7 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.http.currentSchool$.pipe(takeUntil(this.destroy$)).subscribe(school => {
       this.currentSchool = school;
+      debugger;
         this.buildForm();
     });
     this.initialState = this.schoolForm.value;

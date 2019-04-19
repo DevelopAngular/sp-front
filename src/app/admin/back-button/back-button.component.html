@@ -5,7 +5,7 @@
      }"
      (click)="click.emit()">
   <img class="back-image" [src]="darkTheme.getIcon({
-    iconName: 'Chevron Left'
+    iconName: 'Chevron Left', lightFill: 'Navy'
   }) | resolveAsset">
   <div class="back-text" [style.color]="darkTheme.getColor()">Back</div>
 </div>
