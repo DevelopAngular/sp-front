@@ -1,12 +1,16 @@
 import { Injectable } from '@angular/core';
-import {Paged} from '../models';
-import {HttpService} from './http-service';
-import {User} from "../models/User";
+import { Paged } from '../models';
+import { HttpService } from './http-service';
+import { User } from '../models/User';
+import { BehaviorSubject } from 'rxjs';
+import { Location } from '../models/Location';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LocationsService {
+
+  myRoomSelectedLocation$: BehaviorSubject<Location> = new BehaviorSubject(null);
 
   constructor(private http: HttpService) { }
 

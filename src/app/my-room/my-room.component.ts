@@ -1,6 +1,6 @@
-import { Component, ElementRef, NgZone, OnInit } from '@angular/core';
+import {Component, ElementRef, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material';
-import { combineLatest, merge, of ,  BehaviorSubject ,  Observable ,  ReplaySubject } from 'rxjs';
+import {combineLatest, merge, of, BehaviorSubject, Observable, ReplaySubject, Subject} from 'rxjs';
 import { Util } from '../../Util';
 import { DataService } from '../services/data-service';
 import { mergeObject } from '../live-data/helpers';
@@ -14,8 +14,10 @@ import { User } from '../models/User';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import { TimeService } from '../services/time.service';
 import {CalendarComponent} from '../admin/calendar/calendar.component';
-import {map, switchMap} from 'rxjs/operators';
+import {filter, map, switchMap, takeUntil} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../dark-theme-switch';
+import {LocationsService} from '../services/locations.service';
+import * as _ from 'lodash';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -70,7 +72,7 @@ class DestinationPassProvider extends RoomPassProvider {
   templateUrl: './my-room.component.html',
   styleUrls: ['./my-room.component.scss']
 })
-export class MyRoomComponent implements OnInit {
+export class MyRoomComponent implements OnInit, OnDestroy {
 
   testPasses: PassLikeProvider;
 
@@ -99,8 +101,18 @@ export class MyRoomComponent implements OnInit {
   hasPasses: Observable<boolean> = of(false);
   passesLoaded: Observable<boolean> = of(false);
 
-  constructor(public dataService: DataService, private _zone: NgZone, private loadingService: LoadingService, public darkTheme: DarkThemeSwitch,
-              public dialog: MatDialog, private liveDataService: LiveDataService, private timeService: TimeService) {
+  destroy$ = new Subject();
+
+  constructor(
+      public dataService: DataService,
+      private _zone: NgZone,
+      private loadingService: LoadingService,
+      public darkTheme: DarkThemeSwitch,
+      public dialog: MatDialog,
+      private liveDataService: LiveDataService,
+      private timeService: TimeService,
+      private locationService: LocationsService,
+  ) {
     this.setSearchDate(this.timeService.nowDate());
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
@@ -157,22 +169,29 @@ export class MyRoomComponent implements OnInit {
 
   ngOnInit() {
     this.dataService.currentUser
-      .pipe(this.loadingService.watchFirst)
+      .pipe(this.loadingService.watchFirst, takeUntil(this.destroy$))
       .subscribe(user => {
         this._zone.run(() => {
           this.user = user;
           this.isStaff = user.isTeacher() || user.isAdmin();
         });
-
-        this.dataService.getLocationsWithTeacher(this.user).subscribe((locations: Location[]) => {
-          this._zone.run(() => {
-            this.roomOptions = locations;
-            // this.selectedLocation = (this.roomOptions.length > 0) ? this.roomOptions[0] : null;
-            this.selectedLocation$.next(locations);
-            this.userLoaded = true;
-          });
-        });
       });
+    combineLatest(
+        this.dataService.getLocationsWithTeacher(this.user),
+        this.locationService.myRoomSelectedLocation$
+    ).pipe(takeUntil(this.destroy$))
+        .subscribe(([locations, selected]: [Location[], Location]) => {
+        this._zone.run(() => {
+            this.roomOptions = locations;
+            if (!selected) {
+              this.selectedLocation$.next(locations);
+            } else {
+              this.selectedLocation = selected;
+              this.selectedLocation$.next([selected]);
+            }
+            this.userLoaded = true;
+        });
+    });
 
       this.hasPasses = combineLatest(
         this.activePasses.length$,
@@ -186,6 +205,12 @@ export class MyRoomComponent implements OnInit {
         this.destinationPasses.loaded$,
         (l1, l2, l3) => l1 && l2 && l3
       );
+  }
+
+  ngOnDestroy() {
+    this.locationService.myRoomSelectedLocation$.next(this.selectedLocation);
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   getIcon(icon) {
@@ -250,10 +275,13 @@ export class MyRoomComponent implements OnInit {
         this.optionsOpen = true;
       });
 
-      optionDialog.afterClosed().subscribe(data => {
+      optionDialog.beforeClose().subscribe(() => {
         this.optionsOpen = false;
-        this.selectedLocation = data;
-        this.selectedLocation$.next(data ? [data] : this.roomOptions);
+      });
+
+      optionDialog.afterClosed().pipe(filter(res => !!res)).subscribe(data => {
+        this.selectedLocation = data === 'all_rooms' ? null : data;
+        this.selectedLocation$.next(data !== 'all_rooms' ? [data] : this.roomOptions);
       });
     }
   }

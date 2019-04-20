@@ -176,7 +176,7 @@ export class RequestCardComponent implements OnInit {
         this.dateEditOpen = true;
       });
 
-      dateDialog.afterClosed().pipe(filter(() => resend_request), switchMap((state) => {
+      dateDialog.afterClosed().pipe(filter((state) => resend_request && state), switchMap((state) => {
           const body: any = {
               'origin' : this.request.origin.id,
               'destination' : this.request.destination.id,

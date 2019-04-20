@@ -4,12 +4,10 @@
   <div class="option-divider" *ngIf="heading"></div>
 
   <div class="options-wrapper" *ngIf="locations">
-
-    <!-- In Process block ---->
     <div class="option">
 
       <div class="option-data"
-           #_option class="option-data"
+           #_option
            [ngClass]="{
                 'option-wrapper': !darkTheme.isEnabled$.value,
                 'option-wrapper__dark': darkTheme.isEnabled$.value
@@ -18,7 +16,7 @@
            (mouseup)="_option.style.background = 'transparent'"
            (mouseover)="_option.style.background = this.darkTheme.isEnabled$.value ? '#47447E' : 'rgba(236, 241, 255, 1)'"
            (mouseleave)="_option.style.background = 'transparent'"
-           (click)="_matDialogRef.close()">
+           (click)="_matDialogRef.close('all_rooms')">
         <div class="option-data_leftside">
           <span [style.color]="darkTheme.getColor()">All Rooms</span>
         </div>
