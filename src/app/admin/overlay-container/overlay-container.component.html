@@ -350,9 +350,9 @@
               {{ button.title }}</app-gradient-button>
           </div>
         </div>
-        <div class="sticky">
+        <div class="sticky" *ngIf="selectedRooms.length">
             <div class="rooms-in-folder-title">
-                <div class="all-rooms-checkbox" *ngIf="selectedRooms.length">
+                <div class="all-rooms-checkbox">
                     <mat-checkbox style="margin-left: 12px; margin-right: 15px"
                                   [checked]="readyRoomsToEdit.length === selectedRooms.length"
                                   [indeterminate]="readyRoomsToEdit.length && readyRoomsToEdit.length < selectedRooms.length"
@@ -368,7 +368,10 @@
         </div>
 
         <div class="rooms-in-folder-content">
-          <div class="not-rooms-in-folder" *ngIf="!selectedRooms.length">To add rooms, enter a folder name and select an appearance</div>
+          <div class="not-rooms-in-folder" *ngIf="!selectedRooms.length">
+              <img [src]="'./assets/emptyStates/undraw_add_file2_gvbb.svg' | resolveAsset" alt="emptyState">
+              <div class="emptyText">Add rooms to the folder.</div>
+          </div>
 
           <div class="rooms-list" #roomList *ngIf="selectedRooms.length > 0">
             <mat-list>
