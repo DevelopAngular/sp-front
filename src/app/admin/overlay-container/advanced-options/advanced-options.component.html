@@ -5,7 +5,7 @@
       Advanced Options
       <img class="open-arrow" [src]="(openedContent ? './assets/Chevron Up (Navy).svg' : './assets/Chevron Down (Navy).svg') | resolveAsset">
     </div>
-    <mat-divider class="divider"></mat-divider>
+    <mat-divider class="divider" *ngIf="!openedContent"></mat-divider>
   </div>
   <div class="options-content" *ngIf="openedContent">
     <div class="content-header">
@@ -154,4 +154,5 @@
     </div>
     </div>
   </div>
+  <mat-divider class="divider"></mat-divider>
 </div>

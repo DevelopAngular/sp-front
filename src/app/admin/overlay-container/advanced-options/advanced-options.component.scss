@@ -48,10 +48,16 @@
 
       .now-block {
         width: 400px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
 
       .future-block {
         width: 400px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
 
       .unrestricted {
@@ -61,12 +67,14 @@
 
       .restriction-toggle {
         margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
 
         .title {
           margin-bottom: 10px;
           color: #1d1a5e;
           font-size: 17px;
-          font-weight: bold;
         }
       }
 
@@ -98,6 +106,9 @@
 
     .future-restriction-toggle {
       margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
 
       .title {
         margin-bottom: 10px;
