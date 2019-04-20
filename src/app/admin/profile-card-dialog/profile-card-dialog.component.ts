@@ -152,6 +152,7 @@ export class ProfileCardDialogComponent implements OnInit {
         .subscribe((result) => {
           console.log(result);
           this.disabledState = false;
+          this.initialState = _.cloneDeep(this.permissionsForm.value);
           this.permissionsChanged = true;
           this.permissionsFormEditState = false;
         });
@@ -162,6 +163,7 @@ export class ProfileCardDialogComponent implements OnInit {
       .createUserRoles(this.profile.id, this.permissionsForm.value)
       .subscribe((result) => {
         console.log(result);
+        this.initialState = _.cloneDeep(this.permissionsForm.value);
         this.disabledState = false;
         this.permissionsChanged = true;
         this.permissionsFormEditState = false;
