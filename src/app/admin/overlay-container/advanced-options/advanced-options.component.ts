@@ -1,5 +1,8 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { User } from '../../../models/User';
+import {bumpIn} from '../../../animations';
+import {DarkThemeSwitch} from '../../../dark-theme-switch';
+import {DomSanitizer} from '@angular/platform-browser';
 
 export interface OptionState {
     now: {
@@ -23,7 +26,8 @@ export interface OptionState {
 @Component({
   selector: 'app-advanced-options',
   templateUrl: './advanced-options.component.html',
-  styleUrls: ['./advanced-options.component.scss']
+  styleUrls: ['./advanced-options.component.scss'],
+  animations: [bumpIn]
 })
 export class AdvancedOptionsComponent implements OnInit {
 
@@ -64,10 +68,27 @@ export class AdvancedOptionsComponent implements OnInit {
       }
   };
 
-  constructor() { }
+  hovered: boolean;
+  pressed: boolean;
 
-  ngOnInit() {
-  }
+  constructor(
+      public darkTheme: DarkThemeSwitch,
+      private sanitizer: DomSanitizer
+  ) { }
+
+  get bgColor() {
+      if (this.hovered) {
+          if (this.pressed) {
+              return this.sanitizer.bypassSecurityTrustStyle('#E2E7F4');
+          } else {
+                return this.sanitizer.bypassSecurityTrustStyle('#ECF1FF');
+          }
+      } else {
+          return this.sanitizer.bypassSecurityTrustStyle('transparent');
+      }
+    }
+
+  ngOnInit() {}
 
   toggleContent() {
     this.openedContent = !this.openedContent;

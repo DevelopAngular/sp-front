@@ -1,6 +1,13 @@
 <div class="options-wrapper">
   <mat-divider class="divider"></mat-divider>
-  <div class="options-header" (click)="toggleContent()">
+  <div class="options-header"
+       (click)="toggleContent()"
+       [style.background-color]="bgColor"
+       (mouseenter)="hovered = true"
+       (mouseleave)="hovered = false"
+       (mousedown)="pressed = true"
+       (mouseup)="pressed = false"
+  >
     <div class="header-text">
       Advanced Options
       <img class="open-arrow" [src]="(openedContent ? './assets/Chevron Up (Navy).svg' : './assets/Chevron Down (Navy).svg') | resolveAsset">
@@ -25,9 +32,9 @@
           <div class="title">Restriction for Now</div>
           <div class="toggle" *ngIf="nowRestricted">
             <app-restriction-picker
-                    [width]="400"
+                    [width]="440"
                     [height]="50"
-                    [padding]="5"
+                    [padding]="10"
                     [fontSize]="15"
                     [selectedChoose]="optionState.now.state"
                     [choices]="toggleChoices"
@@ -91,10 +98,10 @@
         <div class="title">Restriction for Future</div>
         <div class="toggle" *ngIf="futureRestricted">
           <app-restriction-picker
-                  [width]="400"
+                  [width]="440"
                   [height]="50"
                   [fontSize]="15"
-                  [padding]="5"
+                  [padding]="10"
                   [selectedChoose]="optionState.future.state"
                   [choices]="toggleChoices"
                   (result)="optionState.future.state = $event"
