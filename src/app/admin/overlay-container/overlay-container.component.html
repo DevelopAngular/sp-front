@@ -197,7 +197,7 @@
               </app-profiles-search>
           </div>
       </div>
-      <div style="display: flex; margin-top: 16px; margin-bottom: 13px"
+      <div style="display: flex; margin-top: 16px; margin-bottom: 13px; min-height: 103px;"
            *ngIf="(overlayType === 'newRoom'
            || overlayType === 'newRoomInFolder'
            || overlayType === 'settingsRooms'
@@ -541,7 +541,6 @@
 
         <div class="footer-delete-button"
           *ngIf="(overlayType === 'editRoom' || (editRoomInFolder)) && !showSearchTeacherOptions && !hideDeleteButton"
-          [style.justify-content]="!editRoomInFolder ? 'center' : 'safe'"
           [style.margin-top]="overlayType === 'editRoom' ? '90px' : '50px'"
         >
             <app-gradient-button

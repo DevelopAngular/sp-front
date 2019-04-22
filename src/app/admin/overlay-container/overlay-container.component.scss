@@ -150,7 +150,7 @@
   .room-inputs {
     display: flex;
     margin: 20px 25px;
-
+    min-height: 73px;
     .room-number {
       margin-left: 14%;
     }
@@ -187,7 +187,7 @@
 
   .restriction-settings {
     display: flex;
-
+    min-height: 70px;
     .restriction-picker-1 {
       margin: 10px 0 0 25px;
     }
