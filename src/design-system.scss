@@ -103,6 +103,12 @@ $primaryFont: "Helvetica Neue", sans-serif;
 .ds-medium-button-text {
   @include textSize(15px, bold, $applyColor: false);
 }
+.ds-details-text {
+  @include textSize(15px);
+}
+.ds-details-text-bold {
+  @include textSize(15px, bold);
+}
 
 /* === end === */
 

@@ -3,8 +3,9 @@ import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild
 
 
 import { User } from '../models/User';
-import {Subject} from 'rxjs';
+import {of, Subject} from 'rxjs';
 import {UserService} from '../services/user.service';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-student-search',
@@ -18,6 +19,11 @@ export class StudentSearchComponent implements AfterViewInit {
   @Input() focused: boolean = false;
   @Input() showOptions: boolean = true;
   @Input() selectedStudents: User[] = [];
+  @Input() width: string = '100%';
+  @Input() rollUpAfterSelection: boolean = true;
+  @Input() role: string = '_profile_student';
+  @Input() placeholder: string = 'Search students';
+
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
 
   @ViewChild('studentInput') input;
@@ -25,10 +31,37 @@ export class StudentSearchComponent implements AfterViewInit {
   students: Promise<any[]>;
   inputValue$: Subject<string> = new Subject<string>();
   showDummy: boolean = false;
+  hoveredIndex: number;
+  hovered: boolean;
+  pressed: boolean;
 
-  constructor(private userService: UserService) {
+  constructor(
+    private userService: UserService,
+    private sanitizer: DomSanitizer
+  ) {
     // this.onSearch('');
   }
+
+  bgColor(i){
+      if (this.hovered && this.hoveredIndex === i) {
+        if (this.pressed) {
+          return this.sanitizer.bypassSecurityTrustStyle('#E2E7F4');
+        } else {
+          return this.sanitizer.bypassSecurityTrustStyle('#ECF1FF');
+        }
+      } else {
+        return this.sanitizer.bypassSecurityTrustStyle('#FFFFFF');
+      }
+  }
+
+  textColor(i) {
+      if (this.hovered && this.hoveredIndex === i) {
+        return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
+      } else {
+        return this.sanitizer.bypassSecurityTrustStyle('#555558');
+      }
+  }
+
 
   ngAfterViewInit() {
     // this.input.nativeElement.focus();
@@ -42,7 +75,7 @@ export class StudentSearchComponent implements AfterViewInit {
 
   onSearch(search: string) {
     if (search !== '') {
-      this.students = this.userService.searchProfile('hallpass_student', 50, encodeURI(search))
+      this.students = this.userService.searchProfile(this.role, 50, encodeURI(search))
           .toPromise()
           .then((paged: any) => {
             console.log('PAGED RESULT >>>', paged);
@@ -50,12 +83,16 @@ export class StudentSearchComponent implements AfterViewInit {
             return this.removeDuplicateStudents(paged.results);
           });
     } else {
-      this.students = null;
+
+      this.students = this.rollUpAfterSelection ? null : of([]).toPromise();
       this.showDummy = false;
       this.inputValue$.next('');
     }
   }
-
+  onBlur(event) {
+    // console.log(event);
+    // this.students = null;
+  }
   removeStudent(student: User) {
     var index = this.selectedStudents.indexOf(student, 0);
     if (index > -1) {
@@ -68,6 +105,7 @@ export class StudentSearchComponent implements AfterViewInit {
   addStudent(student: User) {
     console.log(student);
     this.input.focus();
+    this.students = of([]).toPromise();
     this.inputValue$.next('');
     this.onSearch('');
     if (!this.selectedStudents.includes(student)) {

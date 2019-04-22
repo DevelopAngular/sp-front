@@ -4,6 +4,7 @@ import { Navigation } from '../../main-hall-pass-form.component';
 import {CreateFormService} from '../../../create-form.service';
 import {BehaviorSubject} from 'rxjs';
 import {States} from '../locations-group-container.component';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-restricted-target',
@@ -51,7 +52,9 @@ export class RestrictedTargetComponent implements OnInit {
 
 
   constructor(
-    private formService: CreateFormService
+    private formService: CreateFormService,
+    public sanitizer: DomSanitizer
+
   ) { }
 
   get headerGradient() {
@@ -63,6 +66,26 @@ export class RestrictedTargetComponent implements OnInit {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.fromLocation = this.formState.data.direction.from;
     this.toLocation = this.formState.data.direction.to;
+  }
+
+  textColor(item) {
+    if (item.hovered) {
+      return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
+    } else {
+      return this.sanitizer.bypassSecurityTrustStyle('#555558');
+    }
+  }
+
+  getBackground(item) {
+    if (item.hovered) {
+      if (item.pressed) {
+        return '#E2E7F4';
+      } else {
+        return '#ECF1FF';
+      }
+    } else {
+      return '#FFFFFF';
+    }
   }
 
   back() {

@@ -5,8 +5,11 @@
   </div>
 
   <!--<div *ngIf="selected" class="inputSelector" [style.width]="width"></div>-->
-  <div class="field-wrapper ds" [style.min-width]="minWidth">
-    <div class="input-focus-wrapper" [ngClass]="{'inputSelector': selected === true}">
+  <div class="field-wrapper" [style.min-width]="minWidth">
+    <div class="input-focus-wrapper"
+         [ngClass]="{'inputSelector': selected === true}"
+         [style.width]="width" [style.min-width]="minWidth"
+    >
       <img *ngIf="fieldIcon && (fieldIconPosition === 'left')" class="field-icon"
            [src]="fieldIcon | resolveAsset"
            alt="icon"
@@ -16,6 +19,7 @@
              [type]="html5type"
              [style.margin]="'0px'"
              [style.width]="width" [style.min-width]="minWidth"
+             [style.box-shadow]="_boxShadow"
              [style.padding]="fieldIconPosition === 'left' ? '0 0 0 45px' : '0 45px 0 15px'"
              [placeholder]="placeholder" [readonly]="type == 'dates'"
              (input)="changeAction(input)" (click)="focusAction(true)" (focusout)="focusAction(false)"
@@ -30,6 +34,7 @@
              [matChipInputAddOnBlur]="true"
              [style.margin]="'0px'"
              [style.width]="width" [style.min-width]="minWidth"
+             [style.box-shadow]="_boxShadow"
              [style.padding]="fieldIconPosition === 'left' ? '0 0 0 45px' : '0 45px 0 15px'"
              [placeholder]="placeholder" [readonly]="type == 'dates'"
              (input)="changeAction(input)" (click)="focusAction(true)" (focusout)="focusAction(false)"
@@ -45,6 +50,7 @@
            (click)="changeAction(input.nativeElement, true)">
 
       <!--{{input | json }}-->
+      <!--<div *ngFor="let option of test"></div>-->
     </div>
   </div>
 </div>

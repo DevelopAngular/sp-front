@@ -1,3 +1,5 @@
+@import "../../../../../sp-colors";
+
 :host {
   .step-1-container {
     $primary-color: #3D396B;
@@ -70,9 +72,9 @@
           align-items: center;
           box-sizing: border-box;
           padding: 30px 0px;
-          min-width: 230px;
-          max-width: 230px;
-          width: 230px;
+          min-width: 220px;
+          max-width: 220px;
+          width: 220px;
           overflow: hidden;
         }
         border-right: 2px solid rgba(0, 0, 0, .1);
@@ -181,7 +183,7 @@
         overflow-y: auto;
         flex: 1 1 auto;
         box-sizing: border-box;
-        padding: 30px 0px;
+        padding: 20px 0px;
         //display: flex;
         //flex-direction: column;
         //justify-content: space-between;
@@ -190,14 +192,41 @@
           justify-content: center;
           //height: 180px;
           //overflow: auto;
-          .seach-wrapper {
-            width: 100%;
+          .search-wrapper {
+            //width: 100%;
+            flex: 1 1 55%;
+            margin: 5px 25px;
+          }
+          .student-list {
+            flex: 1 1 45%;
+            margin-right: 20px;
+            &_header {
+              margin: 30px 0 5px 0;
+              text-align: center;
+            }
+            &_scrollable {
+              max-height: 190px;
+              overflow: auto;
+            }
+            &_item {
+              border-top: 1px solid #D8D8D8;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              padding: 9px 5px;
+              color: #555558;
+              font-size: 14px;
+              cursor: pointer;
+              img {
+                cursor: pointer;
+              }
+            }
           }
         }
         &_next {
           position: absolute;
           bottom: 30px;
-          right: 30px;
+          right: 20px;
           display: flex;
           justify-content: flex-end;
           .button-shadow {

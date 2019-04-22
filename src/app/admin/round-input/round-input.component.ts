@@ -13,6 +13,7 @@ import {TimeService} from '../../services/time.service';
 import {InputHelperDialogComponent} from '../input-helper-dialog/input-helper-dialog.component';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-round-input',
@@ -30,6 +31,7 @@ export class RoundInputComponent implements OnInit {
   @Input() initialValue: string = ''; // Allowed only if type is multi*
   @Input() html5type: string = 'text'; // text, password, number etc.
   @Input() hasTogglePicker: boolean;
+  @Input() boxShadow: boolean = true;
   @Input() width: string;
   @Input() minWidth: string = '300px';
   @Input() fieldIcon: string = './assets/Search Normal (Search-Gray).svg';
@@ -44,6 +46,7 @@ export class RoundInputComponent implements OnInit {
   @Output() ontoggleupdate: EventEmitter<any> = new EventEmitter();
   @Output() onselectionupdate: EventEmitter<any> = new EventEmitter();
   @Output() controlValue = new EventEmitter();
+  @Output() blurEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   closeIconAsset: string = './assets/Cancel (Search-Gray).svg';
   showCloseIcon: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   selected: boolean;
@@ -59,7 +62,8 @@ export class RoundInputComponent implements OnInit {
   constructor (
     public dialog: MatDialog,
     private timeService: TimeService,
-    public darkTheme: DarkThemeSwitch
+    public darkTheme: DarkThemeSwitch,
+    public sanitizer: DomSanitizer
   ) { }
 
   get labelIcon() {
@@ -88,6 +92,10 @@ export class RoundInputComponent implements OnInit {
     } else {
       return '#7F879D';
     }
+  }
+
+  get _boxShadow() {
+    return this.sanitizer.bypassSecurityTrustStyle(this.boxShadow ? '0 0 6px 0 rgba(0, 0, 0, 0.1)' : 'none');
   }
 
   ngOnInit() {
@@ -161,6 +169,8 @@ export class RoundInputComponent implements OnInit {
           this.ontoggleupdate.emit(this.toggleState);
         }
       });
+    } else if (!selected) {
+      this.blurEvent.emit(true);
     }
   }
 
