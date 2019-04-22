@@ -146,8 +146,11 @@ export class HttpService {
         return;
       }
 
-      if (schools.length > 0) {
+      if (schools.length === 1) {
         this.currentSchoolSubject.next(schools[0]);
+        return;
+      } else if (schools.length > 1) {
+        this.currentSchoolSubject.next(schools[1]);
         return;
       }
 
@@ -354,6 +357,9 @@ export class HttpService {
     return this.performRequest(ctx => {
       // Explicitly check for undefined because the caller may want to override with null.
       const school = schoolOverride !== undefined ? schoolOverride : this.getSchool();
+      if (makeUrl(ctx.server, url) === 'https://smartpass.app/api/staging/v1/users/@me') {
+        console.log('SCHOOl ===>>>', school);
+      }
       return this.http.get<T>(makeUrl(ctx.server, url), makeConfig(config, ctx.auth.access_token, school));
     });
   }
