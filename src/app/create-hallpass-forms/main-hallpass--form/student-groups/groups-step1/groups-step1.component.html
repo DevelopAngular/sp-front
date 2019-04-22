@@ -17,12 +17,12 @@
         <div class="content-left_groups" (click)="selectGroup(null, $event)">
           <div  class="goups-container">
             <div class="content-left_placeholder" *ngIf="(isEmptyGroups$ | async) && !groups?.length">
-                <div class="no-groups-dummy-image">
-                    <img  [src]="'./assets/emptyStates/undraw_group_selfie_ijc6.svg'" alt="undraw_group_selfie_ijc6.svg">
-                </div>
-                <div class="no-groups-dummy-text">
-                    <span>No student groups</span>
-                </div>
+              <div class="no-groups-dummy-image">
+                  <img  [src]="'./assets/emptyStates/undraw_group_selfie_ijc6.svg'" alt="undraw_group_selfie_ijc6.svg">
+              </div>
+              <div class="no-groups-dummy-text">
+                  <span>No student groups</span>
+              </div>
             </div>
             <div *ngIf="groups && groups.length">
               <mat-list>
@@ -83,11 +83,37 @@
     </div>
     <div class="content-right">
       <div class="content-right_sudent-search">
-        <div class="seach-wrapper">
+        <div class="search-wrapper">
           <app-student-search
             [focused]="true"
+            [rollUpAfterSelection]="false"
             (onUpdate)="updateInternalData($event)" [selectedStudents]="selectedStudents"
           ></app-student-search>
+        </div>
+        <div class="student-list" *ngIf="selectedStudents.length">
+          <div class="ds-details-text student-list_header">
+            <span>Selected</span>
+          </div>
+          <div class="student-list_scrollable">
+
+            <div *ngFor="let student of selectedStudents; let i = index" #cell class="student-list_item"
+                 (mouseenter)="cell.hovered = true;"
+                 (mouseleave)="cell.hovered = false;"
+                 (mousedown)="cell.pressed = true"
+                 (mouseup)="cell.pressed = false"
+                 [style.background-color]="getBackground(cell)"
+                 [style.color]="textColor(cell)"
+            >
+              <span>
+                {{student.display_name}}
+              </span>
+              <img
+                (mouseover)="fieldIcon.setAttribute('src', './assets/Cancel (Navy).svg')"
+                (mouseleave)="fieldIcon.setAttribute('src', './assets/Mark (Navy).svg')"
+                (click)="selectedStudents.splice(i, 1)"
+                [src]="'./assets/Mark (Navy).svg'" width="15" #fieldIcon alt="Check.svg">
+            </div>
+          </div>
         </div>
       </div>
       <div class="content-right_next" *ngIf="selectedStudents && selectedStudents.length">

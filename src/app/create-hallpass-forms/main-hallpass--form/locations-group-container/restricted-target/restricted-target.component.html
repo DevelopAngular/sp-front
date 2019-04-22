@@ -8,17 +8,54 @@
   </div>
 
   <div class="rest-tar-content" (scroll)="tableScroll($event)">
-    <app-location-table
-       class="center"
-       (onSelect)="updateTarget($event)"
-       [type]="'teachers'"
-       [placeholder]="'Search teachers'"
-       [staticChoices]="toLocation.teachers"
-       [dummyString]="'No teachers found'"
-       [mergedAllRooms]="true"
-       [withMergedStars]="false"
-    >
-    </app-location-table>
+    <!--<app-location-table-->
+       <!--class="center"-->
+       <!--(onSelect)="updateTarget($event)"-->
+       <!--[type]="'teachers'"-->
+       <!--[placeholder]="'Search teachers'"-->
+       <!--[staticChoices]="toLocation.teachers"-->
+       <!--[dummyString]="'No teachers found'"-->
+       <!--[mergedAllRooms]="true"-->
+       <!--[withMergedStars]="false"-->
+    <!--&gt;-->
+    <!--</app-location-table>-->
+    <div class="search-wrapper">
+      <!--<div style="width: 250px; position: absolute;">-->
+
+        <app-student-search
+          [focused]="true"
+          [width]="'100%'"
+          [role]="'_profile_teacher'"
+          [placeholder]="'Search Teachers'"
+          (onUpdate)="updateTarget($event)"
+        ></app-student-search>
+      <!--</div>-->
+    </div>
+    <div class="quick-select" *ngIf="toLocation.teachers.length">
+      <div class="ds-details-text quick-select_header">
+        <span>Quick Select</span>
+      </div>
+      <div class="quick-select_scrollable">
+
+        <div *ngFor="let teacher of toLocation.teachers; let i = index" #cell class="quick-select_item"
+             (mouseenter)="cell.hovered = true;"
+             (mouseleave)="cell.hovered = false;"
+             (mousedown)="cell.pressed = true"
+             (mouseup)="cell.pressed = false"
+             [style.background-color]="getBackground(cell)"
+             [style.color]="textColor(cell)"
+        >
+              <span>
+                {{teacher.display_name}}
+              </span>
+          <img
+            (mouseover)="fieldIcon.setAttribute('src', './assets/Cancel (Navy).svg')"
+            (mouseleave)="fieldIcon.setAttribute('src', './assets/Mark (Navy).svg')"
+            (click)="selectedStudents.splice(i, 1)"
+            [src]="'./assets/Mark (Navy).svg'" width="15" #fieldIcon alt="Check.svg">
+        </div>
+      </div>
+    </div>
   </div>
   <!--<div class="shadow" [style.bottom]="date ? '65px' : '43px'" *ngIf="shadow"></div>-->
   <app-student-footer [formState]="formState" [date]="date" (changeAnimationDirectionEvent)="onChangeAnimationDirection($event)" ></app-student-footer>

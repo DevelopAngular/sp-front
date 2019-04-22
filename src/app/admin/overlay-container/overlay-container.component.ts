@@ -15,6 +15,7 @@ import { UserService } from '../../services/user.service';
 import { disableBodyScroll } from 'body-scroll-lock';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {LocationsService} from '../../services/locations.service';
+import {DomSanitizer} from '@angular/platform-browser';
 
 export interface FormState {
     roomName?: string;
@@ -137,6 +138,7 @@ export class OverlayContainerComponent implements OnInit {
   showDoneSpinner: boolean;
 
   hideDeleteButton: boolean;
+  showProfileSearch: boolean = false;
 
   buttonsInFolder = [
       { title: 'New Room', icon: './assets/Plus (White).svg', location: 'newRoomInFolder'},
@@ -173,7 +175,9 @@ export class OverlayContainerComponent implements OnInit {
       private http: HttpService,
       private locationService: LocationsService,
       private hallPassService: HallPassesService,
-      private elRef: ElementRef
+      private elRef: ElementRef,
+      public sanitizer: DomSanitizer
+
   ) { }
 
   getHeaderData() {
@@ -1081,10 +1085,26 @@ export class OverlayContainerComponent implements OnInit {
       this.changeState();
     }
   }
+  textColor(item) {
+    if (item.hovered) {
+      return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
+    } else {
+      return this.sanitizer.bypassSecurityTrustStyle('#555558');
+    }
+  }
 
+  getBackground(item) {
+    if (item.hovered) {
+        return '#F7F7F7';
+    } else {
+      return '#F7F7F7';
+    }
+  }
   selectTeacherEvent(teachers) {
-    this.selectedTeachers = teachers;
+    console.log(teachers);
+    this.selectedTeachers = this.selectedTeachers.concat(teachers);
     this.isDirtysettings = true;
+    this.showProfileSearch = false;
     this.changeState();
   }
 

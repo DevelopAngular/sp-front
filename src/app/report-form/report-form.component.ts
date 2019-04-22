@@ -6,6 +6,7 @@ import {AdminService} from '../services/admin.service';
 import {showReportDialog} from '@sentry/browser';
 import {NextStep} from '../animations';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-report-form',
@@ -31,7 +32,9 @@ export class ReportFormComponent implements OnInit {
               private adminService: AdminService,
               private dialogRef: MatDialogRef<ReportFormComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any,
-              private createForm: CreateFormService
+              private createForm: CreateFormService,
+              private sanitizer: DomSanitizer
+
   ) {}
 
   ngOnInit() {
@@ -41,6 +44,25 @@ export class ReportFormComponent implements OnInit {
        this.selectedStudents.push(this.data['report']);
          this.showOptions = !this.data['report'];
      }
+  }
+  textColor(item) {
+    if (item.hovered) {
+      return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
+    } else {
+      return this.sanitizer.bypassSecurityTrustStyle('#555558');
+    }
+  }
+
+  getBackground(item) {
+    if (item.hovered) {
+      if (item.pressed) {
+        return '#E2E7F4';
+      } else {
+        return '#ECF1FF';
+      }
+    } else {
+      return '#FFFFFF';
+    }
   }
 
   setFormState(state: string) {

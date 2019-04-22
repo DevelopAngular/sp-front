@@ -5,6 +5,7 @@ import {User} from '../../../../models/User';
 import {UserService} from '../../../../services/user.service';
 import {Observable, of, timer} from 'rxjs';
 import {finalize, publish, publishReplay, refCount, switchMap} from 'rxjs/operators';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-groups-step1',
@@ -27,7 +28,11 @@ export class GroupsStep1Component implements OnInit {
   // public selectedGroup: StudentList;
   // public selectedStudents: User[] = [];
 
-  constructor(private userService: UserService) { }
+  constructor(
+    private userService: UserService,
+    public sanitizer: DomSanitizer
+
+  ) { }
 
   ngOnInit() {
     this.isEmptyGroups$ = timer(500).pipe(switchMap(() => {
@@ -37,6 +42,26 @@ export class GroupsStep1Component implements OnInit {
         this.selectedStudents = this.formState.data.selectedStudents;
     }
 
+  }
+
+  // bgColor(i){
+  //   if (this.hovered && this.hoveredIndex === i) {
+  //     if (this.pressed) {
+  //       return this.sanitizer.bypassSecurityTrustStyle('#E2E7F4');
+  //     } else {
+  //       return this.sanitizer.bypassSecurityTrustStyle('#ECF1FF');
+  //     }
+  //   } else {
+  //     return this.sanitizer.bypassSecurityTrustStyle('#FFFFFF');
+  //   }
+  // }
+  //
+  textColor(item) {
+    if (item.hovered) {
+      return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
+    } else {
+      return this.sanitizer.bypassSecurityTrustStyle('#555558');
+    }
   }
 
   getBackground(item) {

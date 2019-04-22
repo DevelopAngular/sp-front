@@ -1,32 +1,34 @@
 <div class="student-search-wrapper">
   <div class="input">
-    <mat-chip-list #chipList>
-      <div [style.padding-bottom]="'5px'" class="round-input-container">
+    <!--<mat-chip-list #chipList>-->
+      <div class="round-input-container">
         <app-round-input #studentInput
-          [minWidth]="'380px'"
-          [width]="'380px'"
+          [minWidth]="'auto'"
+          [width]="'100%'"
           [type]="'text'"
-          [chipInput]="chipList"
-          [placeholder]="'Search students'"
+          [chipInput]="false"
+          [placeholder]="placeholder"
           [disabled]="disabled"
           [fieldIconPosition]="'left'"
           [closeIcon]="true"
           [focused]="focused"
           [selectReset$]="inputValue$"
+          [boxShadow]="false"
           (ontextupdate)="onSearch($event)"
+          (blurEvent)="onBlur($event)"
         >
         </app-round-input>
       </div>
-      <div *ngIf="selectedStudents && selectedStudents.length">
-      <!--<div *ngIf="selectedStudents && selectedStudents.length; else noStudentsDummy">-->
-        <mat-chip
-          *ngFor="let student of selectedStudents"
-          [removable]="!disabled"
-          (removed)="removeStudent(student)">
-          {{student.display_name + ' (' + student.primary_email.split('@', 1)[0] + ')'}}
-          <mat-icon matChipRemove>cancel</mat-icon>
-        </mat-chip>
-      </div>
+      <!--<div *ngIf="selectedStudents && selectedStudents.length">-->
+      <!--&lt;!&ndash;<div *ngIf="selectedStudents && selectedStudents.length; else noStudentsDummy">&ndash;&gt;-->
+        <!--<mat-chip-->
+          <!--*ngFor="let student of selectedStudents"-->
+          <!--[removable]="!disabled"-->
+          <!--(removed)="removeStudent(student)">-->
+          <!--{{student.display_name + ' (' + student.primary_email.split('@', 1)[0] + ')'}}-->
+          <!--<mat-icon matChipRemove>cancel</mat-icon>-->
+        <!--</mat-chip>-->
+      <!--</div>-->
       <!--<ng-template #noStudentsDummy>-->
         <!--<div class="no-students-dummy">-->
           <!--<div>-->
@@ -50,12 +52,17 @@
         <!--[value]="inputValue"-->
         <!--(input)="onSearch(studentInput.value)"-->
       <!--&gt;-->
-    </mat-chip-list>
-  </div>
-  <div *ngIf="showOptions" [ngClass]="{'options-wrapper': students}">
+    <!--</mat-chip-list>-->
+    <div *ngIf="showOptions" [ngClass]="{'options-wrapper': students}">
       <div *ngIf="!showDummy; else noStudentsDummy">
-        <div *ngFor="let student of students | async" (click)="inputValue$.next(''); addStudent(student)"  class="option-wrapper">
-          <div class="option-content">
+        <div *ngFor="let student of students | async; let i = index"
+             (mouseenter)="hovered = true; hoveredIndex = i"
+             (mouseleave)="hovered = false; hoveredIndex = null"
+             (mousedown)="pressed = true"
+             (mouseup)="pressed = false"
+             [style.background-color]="bgColor(i)"
+             (click)="inputValue$.next(''); addStudent(student)"  class="option-wrapper">
+          <div class="option-content" [style.color]="textColor(i)">
             {{ student.display_name }}
           </div>
           <div class="option-divider"></div>
@@ -70,5 +77,6 @@
           </div>
         </div>
       </ng-template>
+    </div>
   </div>
 </div>
