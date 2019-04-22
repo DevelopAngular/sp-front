@@ -1,3 +1,5 @@
+@import '../../sp-colors';
+
 .notif-wrapper {
   width: 425px;
   height: 500px;
@@ -50,5 +52,31 @@
         }
       }
     }
+  }
+
+  .notif-empty-state {
+    background-color: white;
+    height: 430px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .info {
+      width: 285px;
+      text-align: center;
+      margin-top: 25px;
+      .title {
+        color: $dark-slate-gray;
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .descriptions {
+        color: $dark-slate-gray;
+        font-size: 14px;
+      }
+    }
+
   }
 }

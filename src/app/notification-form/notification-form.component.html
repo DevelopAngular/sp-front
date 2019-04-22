@@ -8,7 +8,7 @@
       </div>
     </div>
   </div>
-  <div class="notif-content">
+  <div class="notif-content" *ngIf="isDisabledNotif">
       <div class="setting" *ngFor="let setting of settings">
         <div class="setting-content">
             <div class="ds-dialog-subtitle" style="margin-bottom: 10px">{{ setting.category_name }}</div>
@@ -31,4 +31,14 @@
         <mat-divider></mat-divider>
       </div>
   </div>
+    <div class="notif-empty-state" *ngIf="!isDisabledNotif">
+        <img [src]="'./assets/emptyStates/notificationsEmpty.svg' | resolveAsset">
+        <div class="info">
+            <div class="title">Notifications Disabled</div>
+            <p class="descriptions">
+                Notifications are currently disabled by your browser settings.
+                If you’d like help on how to enable them, click here.
+            </p>
+        </div>
+    </div>
 </div>

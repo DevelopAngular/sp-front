@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireMessaging } from '@angular/fire/messaging';
 import { Notification as Notif } from '../models/Notification';
 import { HttpService } from './http-service';
-import { from, ReplaySubject } from 'rxjs';
-import has = Reflect.has;
+
 import {switchMap, take} from 'rxjs/operators';
 
 declare var window: any;
