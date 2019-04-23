@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import * as moment from 'moment';
 import * as _ from 'lodash';
+import {bumpIn} from '../../animations';
 
 export interface CalendarDate {
     mDate: moment.Moment;
@@ -12,7 +13,8 @@ export interface CalendarDate {
 @Component({
   selector: 'app-calendar-picker',
   templateUrl: './calendar-picker.component.html',
-  styleUrls: ['./calendar-picker.component.scss']
+  styleUrls: ['./calendar-picker.component.scss'],
+  animations: [bumpIn]
 })
 export class CalendarPickerComponent implements OnInit, OnChanges {
 
@@ -33,9 +35,17 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     sortedDates: CalendarDate[] = [];
 
     public hovered: boolean;
+
+    buttonDown: boolean;
+    monthButtonHovered: boolean;
+
     public hoveredDates: moment.Moment[] = [];
 
     constructor() {}
+
+    get buttonState() {
+        return this.buttonDown ? 'down' : 'up';
+    }
 
     ngOnInit(): void {
         if (this.showWeekend) {
@@ -54,6 +64,17 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
             changes.selectedDates.currentValue.length  > 1) {
             this.sortedDates = _.sortBy(changes.selectedDates.currentValue, (m: CalendarDate) => m);
             this.generateCalendar();
+        }
+    }
+
+    onPress(press: boolean): void {
+        this.buttonDown = press;
+    }
+
+    onHover(hover: boolean): void {
+        this.monthButtonHovered = hover;
+        if (!hover) {
+            this.buttonDown = false;
         }
     }
 
@@ -109,7 +130,7 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
         }) > -1;
     }
 
-    hoverDates(date: moment.Moment) {
+    hoverDates(date: moment.Moment): void {
         this.hovered = true;
         if (this.range && this.selectedDates.length === 1 && !this.hoveredDates.length) {
             const countDiff = date.diff(moment(this.selectedDates[0]), 'days');
@@ -127,7 +148,7 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
         }
     }
 
-    disabledHovered() {
+    disabledHovered(): void {
         this.hovered = false;
         if ((this.range && this.selectedDates.length === 1) || this.rangeWeeks) {
             this.hoveredDates = [];
@@ -175,6 +196,14 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     nextMonth(): void {
         this.currentDate = moment(this.currentDate).add(1, 'months');
         this.generateCalendar();
+    }
+
+    switchMonth(date: moment.Moment): void {
+        if (this.isNextMonth(date)) {
+            this.nextMonth();
+        } else {
+            this.prevMonth();
+        }
     }
 
     firstMonth(): void {

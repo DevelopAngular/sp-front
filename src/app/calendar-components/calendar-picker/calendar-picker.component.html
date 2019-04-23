@@ -13,11 +13,23 @@
     <mat-divider></mat-divider>
 
     <div class="month-nav">
-      <div class="switch-month __left" (click)="prevMonth()">
+      <div
+        class="switch-month __left"
+        (click)="prevMonth()"
+        [@pressState]="buttonState"
+        (mouseenter)="onHover(true)" (mouseleave)="onHover(false)"
+        (mousedown)="onPress(true)" (mouseup)="onPress(false)"
+      >
         <img class="month-icon" [src]="'./assets/Chevron Left (Navy).svg' | resolveAsset" alt="prev">
       </div>
       <span class="ds-dialog-subtitle">{{ currentDate.format('MMMM') }}</span>
-      <div class="switch-month __right" (click)="nextMonth()">
+      <div
+        class="switch-month __right"
+        (click)="nextMonth()"
+        [@pressState]="buttonState"
+        (mouseenter)="onHover(true)" (mouseleave)="onHover(false)"
+        (mousedown)="onPress(true)" (mouseup)="onPress(false)"
+      >
         <img class="month-icon" [src]="'./assets/Chevron Right (Navy).svg' | resolveAsset" alt="next">
       </div>
     </div>
@@ -45,10 +57,12 @@
         <ng-container *ngFor="let day of week">
           <div
             class="week-date disabled"
+            *ngIf="!isSelectedMonth(day.mDate) && showWeekendDay(day.mDate) || day.disabled"
             [style.width]="(width / 7) + 'px'"
             [style.height]="(width / 7 - 9) + 'px'"
             [ngClass]="{'is-next-month': isNextMonth(day.mDate)}"
-            *ngIf="!isSelectedMonth(day.mDate) && showWeekendDay(day.mDate) || day.disabled">
+            (click)="switchMonth(day.mDate)"
+          >
             <span class="date-text"
             >{{ day.mDate.date() }}</span>
           </div>

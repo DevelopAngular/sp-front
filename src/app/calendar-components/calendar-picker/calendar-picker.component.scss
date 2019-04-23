@@ -12,6 +12,7 @@ $base:5px;
   justify-content: center;
   flex-direction: column;
   margin: 0 auto;
+  cursor: default;
 
   * {
     box-sizing: border-box;
@@ -45,8 +46,8 @@ $base:5px;
         left: 0;
       }
       &:hover {
-        background-color: $ultra-light-gray;
-        box-shadow: 0 0 0 5px $ultra-light-gray;
+        background-color: #e4ebff;
+        box-shadow: 0 0 0 5px #e4ebff;
       }
       .month-icon {
         width: 15px;
@@ -78,8 +79,8 @@ $base:5px;
       }
 
       &:hover {
-        background-color: $ultra-light-gray;
-        box-shadow: 0 0 0 5px $ultra-light-gray;
+        background-color: #e4ebff;
+        box-shadow: 0 0 0 5px #e4ebff;
       }
       .year-icon {
         width: 15px;
