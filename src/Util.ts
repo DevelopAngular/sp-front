@@ -17,7 +17,7 @@ export class Util{
     }
 
     static formatDateTime(s: Date, timeOnly?: boolean, utc?: boolean) {
-        const formattedTime = moment(s).format('hh:mm A');
+        const formattedTime = moment(s).format('h:mm A');
         if(timeOnly)
           return formattedTime;
 
