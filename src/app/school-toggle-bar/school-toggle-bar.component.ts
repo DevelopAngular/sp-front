@@ -46,6 +46,7 @@ export class SchoolToggleBarComponent implements OnInit, OnDestroy {
           'alignSelf': true,
           'schools': this.schools,
           'selectedSchool': this.currentSchool,
+          'heading': 'SELECT SCHOOL',
           'trigger': target
         }
       });

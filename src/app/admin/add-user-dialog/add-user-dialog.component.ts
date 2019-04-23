@@ -5,6 +5,7 @@ import {User} from '../../models/User';
 import {PdfGeneratorService} from '../pdf-generator.service';
 import {zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-add-user-dialog',
@@ -16,19 +17,31 @@ export class AddUserDialogComponent implements OnInit {
   public accountTypes: string[] = ['G Suite', 'Alternative'];
   public typeChoosen: string = this.accountTypes[0];
   public newAlternativeAccount: FormGroup;
-  public selectedUsers: User[];
+  public selectedUsers: User[] = [];
   public permissionsForm: FormGroup;
   public permissionsFormEditState: boolean = false;
   public controlsIteratable: any[];
   public permissionsChanged: boolean = false;
 
+  public secretaryOrSubstitute: {
+    user: User,
+    behalfOf: User
+  }
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<AddUserDialogComponent>,
     private pdfService: PdfGeneratorService,
-    private userService: UserService
-  ) {
+    private userService: UserService,
+    private sanitizer: DomSanitizer
 
+  ) {
+    if (this.data.role === 'staff_secretary') {
+      this.secretaryOrSubstitute = {
+        user: null,
+        behalfOf: null
+      };
+    }
   }
 
   ngOnInit() {
@@ -53,6 +66,37 @@ export class AddUserDialogComponent implements OnInit {
       });
     }
   }
+
+  textColor(item) {
+    if (item.hovered) {
+      return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
+    } else {
+      return this.sanitizer.bypassSecurityTrustStyle('#555558');
+    }
+  }
+  showSaveButton() {
+    if (this.typeChoosen === this.accountTypes[0]) {
+      if (this.data.role !== 'staff_secretary') {
+        return this.selectedUsers && this.selectedUsers.length;
+      } else {
+        return this.secretaryOrSubstitute.user && this.secretaryOrSubstitute.behalfOf;
+      }
+    } else {
+      return false;
+    }
+  }
+  getBackground(item) {
+    if (item.hovered) {
+      if (item.pressed) {
+        return '#E2E7F4';
+      } else {
+        return '#ECF1FF';
+      }
+    } else {
+      return '#FFFFFF';
+    }
+  }
+
   addUser() {
     let role: any = this.data.role.split('_');
     role = role[role.length - 1];
@@ -64,8 +108,19 @@ export class AddUserDialogComponent implements OnInit {
       });
   }
   setSelectedUsers(evt) {
+    console.log(evt);
     this.selectedUsers = evt;
   }
+  setSecretary(evtUser, evtBehalfOf) {
+    if (evtUser) {
+      this.secretaryOrSubstitute.user = evtUser[0];
+    }
+    if (evtBehalfOf) {
+      this.secretaryOrSubstitute.behalfOf = evtBehalfOf[0];
+    }
+    console.log(this.secretaryOrSubstitute);
+  }
+
   showInstructions(role) {
     this.pdfService.generateProfileInstruction(this.data.role);
   }

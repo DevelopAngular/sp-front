@@ -75,6 +75,8 @@ export class GradientButtonComponent implements OnInit {
           this.leftImageHeight = '16px';
           this.leftImageWidth = '16px';
           this.minHeight = '40px';
+          // this.width = '';
+          this.minWidth = '100px';
           this.fontSize = '14px';
           this.cornerRadius = '8px';
           this.padding = '0px 16px';

@@ -3,8 +3,11 @@
     <div class="back-button" (click)="back()">
       <img [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg" >
     </div>
-    <div class="ds-dialog-title-white"><span>Add User To Profile</span></div>
-    <div class="save-button" *ngIf="selectedUsers?.length">
+    <div class="ds-dialog-title-white ds-flex-center-center">
+      <img [src]="'./assets/Plus (White).svg'" width="20" height="20" alt="(White).svg" class="ds-mr-10">
+      <span>Add User</span>{{data.role}}
+    </div>
+    <div class="save-button" *ngIf="showSaveButton()">
       <app-gradient-button
         [size]="'small'"
         [gradient]="'#FFFFFF,#FFFFFF'"
@@ -14,18 +17,21 @@
         (buttonClick)="addUser(data.role)"
       >
         <div class="ds-flex-center-start">
-          <span>Add User</span>
+          <span>Add</span>
         </div>
       </app-gradient-button>
     </div>
   </div>
   <div class="content">
     <div class="content_top">
-      <div class="content_top-header ds-dialog-heading"><span>Account Type</span></div>
+      <div class="content_top-header">
+        <span class="ds-dialog-heading">Account Type</span>
+        <span class="ds-mt-5 ds-blue-gray">
+          Learn more <span class="ds-link-text"> here</span>.
+        </span>
+      </div>
       <div class="content_top-body">
-        <p class="title ds-cell-description-text">
-          Select whether the account you will be adding is from your schools’ G Suite or the account will be an alternative sign-in. Learn more here.
-        </p>
+
         <div class="account-type-picker">
           <app-restriction-picker
             [choices]="accountTypes"
@@ -39,30 +45,120 @@
       </div>
     </div>
 
-    <div class="content_rest" *ngIf="typeChoosen === accountTypes[0]">
-      <div class="profile-search">
-        <div class="profile-search_label ds-dialog-heading"><span>G Suite Account to Add</span></div>
-        <app-profiles-search
-          [type]="'gsuite'"
-          [width]="'360px'"
-          (onUpdate)="setSelectedUsers($event)"
-        >
-        </app-profiles-search>
-      </div>
+    <div *ngIf="data.role === 'staff_secretary'">
+      <div class="content_rest" *ngIf="typeChoosen === accountTypes[0]">
 
-      <div class="profile-permissions" [style.width]="'100%'" *ngIf="data.role !== '_profile_student'">
-        <div class="profile-permissions_heading ds-dialog-heading">Permissions</div>
-        <div *ngFor="let control of controlsIteratable">
-          <app-toggle-input
-            [form]="permissionsForm"
-            [delimiter]="false"
-            [controlName]="control.controlName"
-            [controlLabel]="control.controlLabel"
-            [controlSize]="'small'"
-          ></app-toggle-input>
+        <div class="secretary-user ds-w-100">
+          <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': secretaryOrSubstitute.user, 'ds-dialog-heading-gray': !secretaryOrSubstitute.user}">Secretary/Substitute</div>
+          <div class="profile-search" *ngIf="!secretaryOrSubstitute.user; else secretaryUser" >
+            <app-student-search
+              [type]="'alternative'"
+              [role]="''"
+              (onUpdate)="setSecretary($event, null)"
+            ></app-student-search>
+          </div>
+          <ng-template #secretaryUser>
+            <div class="ds-flex-center-between">
+              <div #chip class="user"
+                   (mouseenter)="chip.hovered = true;"
+                   (mouseleave)="chip.hovered = false;">
+
+                <span>{{secretaryOrSubstitute.user.display_name}}</span>
+                <div style="width: 15px; height: 15px; cursor: pointer; margin-left: 10px;">
+
+                  <img *ngIf="chip.hovered"
+                       (click)="secretaryOrSubstitute.user = null"
+                       [src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+        <div class="active-on-user ds-w-100">
+          <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': secretaryOrSubstitute.behalfOf, 'ds-dialog-heading-gray': !secretaryOrSubstitute.behalfOf}">Active on Behalf Of</div>
+          <div class="profile-search" *ngIf="!secretaryOrSubstitute.behalfOf; else secretaryBehalfOf" >
+            <app-student-search
+              [type]="'alternative'"
+              [role]="''"
+              (onUpdate)="setSecretary(null, $event)"
+            ></app-student-search>
+          </div>
+          <ng-template #secretaryBehalfOf>
+            <div class="ds-flex-center-between">
+
+              <div #chip class="user"
+                   (mouseenter)="chip.hovered = true;"
+                   (mouseleave)="chip.hovered = false;">
+                <span>{{secretaryOrSubstitute.behalfOf.display_name}}</span>
+                <div style="width: 15px; height: 15px; cursor: pointer; margin-left: 10px;">
+
+                  <img *ngIf="chip.hovered"
+                       (click)="secretaryOrSubstitute.behalfOf = null"
+                       [src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
+                </div>
+              </div>
+            </div>
+          </ng-template>
         </div>
       </div>
+    </div>
 
+    <div *ngIf="data.role !== 'staff_secretary'">
+
+      <div class="content_rest" *ngIf="typeChoosen === accountTypes[0]">
+            <div class="ds-w-100 ds-flex-start-center" style="position: relative;">
+
+              <div class="profile-search">
+
+                <app-student-search
+                  [selectedStudents]="selectedUsers"
+                  [type]="'alternative'"
+                  [role]="''"
+                  (onUpdate)="setSelectedUsers($event)"
+                ></app-student-search>
+              </div>
+              <div class="user-list" *ngIf="selectedUsers.length">
+                <div class="ds-details-text user-list_header">
+                  <span>Selected</span>
+                </div>
+                <div class="user-list_scrollable">
+
+                  <div *ngFor="let user of selectedUsers; let i = index" #cell class="user-list_item"
+                       (mouseenter)="cell.hovered = true;"
+                       (mouseleave)="cell.hovered = false;"
+                       (mousedown)="cell.pressed = true"
+                       (mouseup)="cell.pressed = false"
+                       [style.background-color]="getBackground(cell)"
+                       [style.color]="textColor(cell)"
+
+                  >
+                <span>
+                  {{user.display_name}}
+                </span>
+                    <img style="cursor: pointer;"
+                         (mouseover)="fieldIcon.setAttribute('src', './assets/Cancel (Navy).svg')"
+                         (mouseleave)="fieldIcon.setAttribute('src', './assets/Mark (Navy).svg')"
+                         (click)="selectedUsers.splice(i, 1)"
+                         [src]="'./assets/Mark (Navy).svg'" width="15" #fieldIcon alt="Check.svg">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+        <!--<div class="profile-permissions" [style.width]="'100%'" *ngIf="data.role !== '_profile_user'">-->
+          <!--<div class="profile-permissions_heading ds-dialog-heading">Permissions</div>-->
+          <!--<div *ngFor="let control of controlsIteratable">-->
+            <!--<app-toggle-input-->
+              <!--[form]="permissionsForm"-->
+              <!--[delimiter]="false"-->
+              <!--[controlName]="control.controlName"-->
+              <!--[controlLabel]="control.controlLabel"-->
+              <!--[controlSize]="'small'"-->
+            <!--&gt;</app-toggle-input>-->
+          <!--</div>-->
+        <!--</div>-->
+
+      </div>
     </div>
 
     <div class="content_rest" *ngIf="typeChoosen === accountTypes[1]">
@@ -75,77 +171,104 @@
             [formGroup]="newAlternativeAccount"
             [input_value]="''"
             [padding]="'1px'"
-            [width]="'267px'"
+            [width]="'222px'"
+            [height]="'30px'"
 
           ></app-input>
         </div>
-        <div style="display: flex; justify-content: space-between; padding-bottom: 5px;">
-          <div style="padding-bottom: 0px;">
-
-            <app-input
-              [disabled]="true"
-              [input_label]="'Username'"
-              [controlName]="newAlternativeAccount.get('username')"
-              [formGroup]="newAlternativeAccount"
-              [input_value]="''"
-              [padding]="'1px'"
-              [width]="'141px'"
-
-            ></app-input>
+        <div class="active-on-user ds-w-100" *ngIf="data.role === 'staff_secretary'">
+          <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': secretaryOrSubstitute.behalfOf, 'ds-dialog-heading-gray': !secretaryOrSubstitute.behalfOf}">Active on Behalf Of</div>
+          <div class="profile-search" *ngIf="!secretaryOrSubstitute.behalfOf; else secretaryBehalfOf" >
+            <app-student-search
+              [type]="'alternative'"
+              [role]="''"
+              (onUpdate)="setSecretary(null, $event)"
+            ></app-student-search>
           </div>
-          <div class="ds-flex-end-between ds-flex-column">
-            <div style="font-weight: bold;"><span>Expiration </span> <span>(Optional)</span></div>
-            <app-gradient-button
-              [size]="'editable'"
-              [width]="'112px'"
-              [minHeight]="'27px'"
-              [gradient]="'#001115,#033294'"
-              [hoverColor]="'#001115'"
-              [textColor]="'#FFFFFF'"
-              [fontSize]="'11px'"
-              [fontWeight]="'bold'"
-              [cursor]="'pointer'"
-            >
-              <span>Set Expiration</span>
-            </app-gradient-button>
+          <ng-template #secretaryBehalfOf>
+            <div class="ds-flex-center-between">
 
-          </div>
-        </div>
-        <div class="ds-flex-center-between">
-          <div style="padding-bottom: 20px;">
+              <div #chip class="user"
+                   (mouseenter)="chip.hovered = true;"
+                   (mouseleave)="chip.hovered = false;">
+                <span>{{secretaryOrSubstitute.behalfOf.display_name}}</span>
+                <div style="width: 15px; height: 15px; cursor: pointer; margin-left: 10px;">
 
-            <app-input
-              [disabled]="true"
-              [input_label]="'Password'"
-              [controlName]="newAlternativeAccount.get('password')"
-              [formGroup]="newAlternativeAccount"
-              [input_value]="''"
-              [padding]="'1px'"
-              [width]="'141px'"
-
-            ></app-input>
-          </div>
-          <div class="ds-flex-center-center ds-flex-column">
-            <app-gradient-button
-              [size]="'editable'"
-              [width]="'112px'"
-              [minHeight]="'40px'"
-              [gradient]="'#FFFFFF,#FFFFFF'"
-              [hoverColor]="'#FFFFFF'"
-              [textColor]="'#7F879D'"
-              [fontSize]="'11px'"
-              [fontWeight]="'bold'"
-              [leftIcon]="'./assets/Print (Blue-Gray).svg'"
-              [leftImageHeight]="'21px'"
-              [leftImageWidth]="'21px'"
-              [cursor]="'pointer'"
-              (buttonClick)="showInstructions(data.role)"
-            >
-              <div class="ds-flex-center-start">
-                <span>Instructions</span>
+                  <img *ngIf="chip.hovered"
+                       (click)="secretaryOrSubstitute.behalfOf = null"
+                       [src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
+                </div>
               </div>
-            </app-gradient-button>
+            </div>
+          </ng-template>
+        </div>
+        <div class="ds-flex-start-start ds-w-100 ds-mt-15" style="height: 170px">
 
+          <div class="ds-flex-center-between ds-flex-column ds-pb-5 ds-h-100">
+            <div style="padding-bottom: 0px;">
+
+              <app-input
+                [disabled]="true"
+                [input_label]="'Username'"
+                [controlName]="newAlternativeAccount.get('username')"
+                [formGroup]="newAlternativeAccount"
+                [input_value]="''"
+                [padding]="'1px'"
+                [width]="'159px'"
+                [height]="'30px'"
+
+              ></app-input>
+            </div>
+            <div style="padding-bottom: 20px;">
+
+              <app-input
+                [disabled]="true"
+                [input_label]="'Password'"
+                [controlName]="newAlternativeAccount.get('password')"
+                [formGroup]="newAlternativeAccount"
+                [input_value]="''"
+                [padding]="'1px'"
+                [width]="'159px'"
+                [height]="'30px'"
+
+              ></app-input>
+            </div>
+
+          </div>
+          <div class="ds-flex-start-between ds-flex-column ds-ml-25 ds-pl-15 ds-h-100">
+            <div class="ds-flex-start-between ds-flex-column ds-mb-25">
+              <div style="font-weight: bold; padding-bottom: 5px; font-size: 15px;"><span>Expiration </span> <span>(Optional)</span></div>
+
+              <div class="expiration-button">
+                <img [src]="'./assets/Plus (Blue-Gray).svg'"
+                     [attr.height]="'12'"
+                     [attr.width]="'12'" class="ds-p-10" alt="Plus (Blue-Gray).svg">
+                <span>Add Expiration</span>
+              </div>
+
+            </div>
+            <div class="ds-flex-start-center ds-flex-column ds-mt-5 ds-mb-20">
+              <app-gradient-button
+                [size]="'editable'"
+                [width]="'141px'"
+                [minHeight]="'40px'"
+                [gradient]="'#FFFFFF,#FFFFFF'"
+                [hoverColor]="'#FFFFFF'"
+                [textColor]="'#7F879D'"
+                [fontSize]="'14px'"
+                [fontWeight]="'bold'"
+                [leftIcon]="'./assets/Print (Blue-Gray).svg'"
+                [leftImageHeight]="'21px'"
+                [leftImageWidth]="'21px'"
+                [cursor]="'pointer'"
+                (buttonClick)="showInstructions(data.role)"
+              >
+                <div class="ds-flex-center-start">
+                  <span>Instructions</span>
+                </div>
+              </app-gradient-button>
+
+            </div>
           </div>
         </div>
 

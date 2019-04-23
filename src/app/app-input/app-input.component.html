@@ -3,8 +3,8 @@
     <div style="display: flex">
       <label
         [ngClass]="{
-        'ds-dialog-heading': controlName.valid || controlName.pending,
-        'ds-dialog-heading-gray': controlName.invalid,
+        'ds-dialog-heading': controlName.valid || controlName.pending || isFocus,
+        'ds-dialog-heading-gray': controlName.invalid || !hovered && !isFocus,
         'clserrorLabel': controlName.invalid && controlName.errors && controlName.touched
         }"
       >
@@ -28,6 +28,7 @@
              [attr.disabled]="disabled ? '' : null"
              [style.background-color]="hovered || isFocus ? '#EDEDED' : '#F7F7F7'"
              [style.width]="width"
+             [style.height]="height"
              [style.text-align]="textAlign"
              [style.padding]="padding + (textAlign ? ' 16px ' : ' 0px ') + padding + ' 16px'"
              [maxlength]="maxLength"

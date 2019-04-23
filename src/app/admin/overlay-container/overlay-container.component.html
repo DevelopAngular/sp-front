@@ -520,7 +520,7 @@
            </div>
            <div>
            </div>
-           <input type="file" formControlName="file"  #file style="display: none"/>
+           <!--<input type="file" formControlName="file"  #file style="display: none"/>-->
            <div #dropArea class="uploading-area" *ngIf="!uploadingProgress.inProgress && !uploadingProgress.completed">
              <span class="ds-pb-10">Drop spreadsheet here</span>
              <span [style.text-decoration]="'underline'" class="choose-file-inline" (click)="file.click()">Choose file</span>
@@ -537,6 +537,7 @@
            </div>
 
          </div>
+         <input type="file" formControlName="file"  #file style="display: none"/>
 
          <div class="issues-screen ds-p-25" *ngIf="getRoomImportScreen() === 2">
 

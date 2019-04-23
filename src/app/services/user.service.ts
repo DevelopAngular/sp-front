@@ -66,8 +66,8 @@ export class UserService {
     return this.http.delete(`v1/users/@me/notification_settings/${id}`);
   }
 
-  searchProfile(role, limit = 5, search) {
-      return this.http.get<Paged<any>>(`v1/users?role=${role}&limit=${limit}&search=${search}`);
+  searchProfile(role?, limit = 5, search?) {
+      return this.http.get<Paged<any>>(`v1/users?${role ? `role=${role}&` : ``}limit=${limit}&search=${search}`);
   }
 
   searchProfileById(id) {

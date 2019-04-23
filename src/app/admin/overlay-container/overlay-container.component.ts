@@ -73,10 +73,100 @@ export class OverlayContainerComponent implements OnInit {
 
   @ViewChild('file') set fileRef(fileRef: ElementRef) {
     // selectedFile
-    this.selectedFile = fileRef;
-    if (this.selectedFile && this.selectedFile.nativeElement) {
+    if (fileRef && fileRef.nativeElement) {
       console.log(this.selectedFile);
+      this.selectedFile = fileRef;
+      fromEvent(this.selectedFile.nativeElement , 'change')
+        .pipe(
+          switchMap((evt: Event) => {
+            // this.setLocation('settingsRooms');
+            this.uploadingProgress.inProgress = true;
 
+            const FR = new FileReader();
+            FR.readAsBinaryString(this.selectedFile.nativeElement.files[0]);
+            return fromEvent(FR, 'load');
+          }),
+          map(( res: any) => {
+            const raw = XLSX.read(res.target.result, {type: 'binary'});
+            const sn = raw.SheetNames[0];
+            const stringCollection = raw.Sheets[sn];
+            const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
+            let rows = data.slice(1);
+            rows = rows.map((row, index) => {
+              const _room: any = {};
+              _room.title = row[0];
+              _room.room = row[1];
+              _room.teachers = <string>row[2] ? row[2].split(', ') : [];
+              return _room;
+            });
+            return rows;
+          }),
+          map((rows) => {
+            rows = rows.map((r: any) => {
+              if (r.title && r.title.length > 16) {
+                r.title = r.title.slice(0, 15);
+              }
+              if (r.room && (r.room + '').length > 8) {
+                r.title = r.title.slice(0, 7);
+              }
+              return r;
+            });
+            const groupedRooms = _.groupBy(rows, (r: any) => r.title);
+            let normalizedRooms = [];
+            console.log(groupedRooms);
+
+            for (const key in groupedRooms) {
+              if (groupedRooms[key].length > 1) {
+                normalizedRooms = normalizedRooms.concat(
+                  groupedRooms[key].map((duplicate: any, index: number) => {
+                    duplicate.title = duplicate.title + ++index;
+                    return duplicate;
+                  })
+                );
+              } else {
+                normalizedRooms = normalizedRooms.concat(groupedRooms[key]);
+              }
+            }
+            console.log(normalizedRooms);
+            return normalizedRooms;
+          }),
+          switchMap((_rooms: any[]): Observable<any[]> => {
+            console.log(_rooms)
+            return this.userService.getUsersList('_profile_teacher')
+              .pipe(
+                map((teachers: any[]) => {
+
+                  return _rooms.map((_room) => {
+                    const teachersIdArray = [];
+                    const unknownArray = [];
+
+                    _room.teachers.forEach((_teacherEmail) => {
+                      const existAndAttached = teachers.find(_teacher =>  _teacher.primary_email === _teacherEmail );
+                      if (existAndAttached) {
+                        teachersIdArray.push(existAndAttached.id);
+                      } else {
+                        this.unknownEmails.push({
+                          room: _room,
+                          email: _teacherEmail
+                        });
+                      }
+                    });
+
+                    _room.teachers = teachersIdArray;
+                    return _room;
+                  });
+                }));
+          }),
+        )
+        .subscribe((rooms) => {
+          console.log(rooms);
+          console.log(this.unknownEmails);
+          setTimeout(() => {
+            this.uploadingProgress.inProgress = false;
+            this.uploadingProgress.completed = true;
+          }, 1500);
+          this.importedRooms = rooms;
+        });
     }
   }
 
@@ -422,78 +512,97 @@ export class OverlayContainerComponent implements OnInit {
 
       this.getHeaderData();
 
-      if (this.selectedFile) {
-
-        fromEvent(this.selectedFile.nativeElement , 'change')
-          .pipe(
-            switchMap((evt: Event) => {
-              this.setLocation('settingsRooms');
-
-              const FR = new FileReader();
-              FR.readAsBinaryString(this.selectedFile.nativeElement.files[0]);
-              return fromEvent(FR, 'load');
-            }),
-            map(( res: any) => {
-              // console.log('Result', res);
-              const raw = XLSX.read(res.target.result, {type: 'binary'});
-              const sn = raw.SheetNames[0];
-              const stringCollection = raw.Sheets[sn];
-              const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
-              const headers = data[0];
-              let rows = data.slice(1);
-              rows = rows.map((row, index) => {
-                // console.log('Parsed room ===>', row);
-                const _room: any = {};
-                _room.title = row[0];
-                _room.room = row[1];
-                _room.teachers = <string>row[2] ? row[2].split(', ') : [];
-                // console.dir(_room);
-                return _room;
-              });
-              return rows;
-            }),
-            switchMap((_rooms: any[]): Observable<any[]> => {
-              return this.userService.getUsersList('_profile_teacher')
-                .pipe(
-                  map((teachers: any[]) => {
-
-                    return _rooms.map((_room) => {
-                      const teachersIdArray = [];
-                      const unknownArray = [];
-
-
-                      _room.teachers.forEach((_teacherEmail) => {
-                        const existAndAttached = teachers.find(_teacher =>  _teacher.primary_email === _teacherEmail );
-                        if (existAndAttached) {
-                          teachersIdArray.push(existAndAttached.id);
-                        } else {
-                          this.unknownEmails.push({
-                            room: _room,
-                            email: _teacherEmail
-                          });
-                        }
-                      });
-
-                      // teachers.map((_teacher) => {
-                      //   if (_room.teachers.includes(_teacher.primary_email)) {
-                      //     teachersIdArray.push(_teacher.id);
-                      //   }
-                      //   _room.teachers.forEach((_email) => {
-                      //     teachers.find((_teacher) => { })
-                      //   });
-                      // });
-                      // this.unknownEmails = unknownArray;
-                      _room.teachers = teachersIdArray;
-                      return _room;
-                    });
-                  }));
-            }),
-          )
-          .subscribe((rooms) => {
-            console.log(rooms);
-            console.log(this.unknownEmails);
-            this.importedRooms = rooms;
-          });
+    if (this.selectedFile) {
+        // fromEvent(this.selectedFile.nativeElement , 'change')
+        //   .pipe(
+        //     switchMap((evt: Event) => {
+        //       this.setLocation('settingsRooms');
+        //
+        //       const FR = new FileReader();
+        //       FR.readAsBinaryString(this.selectedFile.nativeElement.files[0]);
+        //       return fromEvent(FR, 'load');
+        //     }),
+        //     map(( res: any) => {
+        //       const raw = XLSX.read(res.target.result, {type: 'binary'});
+        //       const sn = raw.SheetNames[0];
+        //       const stringCollection = raw.Sheets[sn];
+        //       const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
+        //       let rows = data.slice(1);
+        //       rows = rows.map((row, index) => {
+        //         const _room: any = {};
+        //         _room.title = row[0];
+        //         _room.room = row[1];
+        //         _room.teachers = <string>row[2] ? row[2].split(', ') : [];
+        //         return _room;
+        //       });
+        //       return rows;
+        //     }),
+        //     map((rows) => {
+        //       rows = rows.map((r: any) => {
+        //         if (r.title && r.title.length > 16) {
+        //           r.title = r.title.slice(0, 15);
+        //         }
+        //         if (r.room && (r.room + '').length > 8) {
+        //           r.title = r.title.slice(0, 7);
+        //         }
+        //         return r;
+        //       });
+        //       const groupedRooms = _.groupBy(rows, (r: any) => r.title);
+        //       let normalizedRooms = [];
+        //       console.log(groupedRooms);
+        //
+        //       for (const key in groupedRooms) {
+        //         if (groupedRooms[key].length > 1) {
+        //           normalizedRooms = normalizedRooms.concat(
+        //             groupedRooms[key].map((duplicate: any, index: number) => {
+        //               duplicate.title = duplicate.title + ++index;
+        //               return duplicate;
+        //             })
+        //           );
+        //         } else {
+        //           normalizedRooms = normalizedRooms.concat(groupedRooms[key]);
+        //         }
+        //       }
+        //       console.log(normalizedRooms);
+        //       return normalizedRooms;
+        //     }),
+        //     switchMap((_rooms: any[]): Observable<any[]> => {
+        //       console.log(_rooms)
+        //       return this.userService.getUsersList('_profile_teacher')
+        //         .pipe(
+        //           map((teachers: any[]) => {
+        //
+        //             return _rooms.map((_room) => {
+        //               const teachersIdArray = [];
+        //               const unknownArray = [];
+        //
+        //               _room.teachers.forEach((_teacherEmail) => {
+        //                 const existAndAttached = teachers.find(_teacher =>  _teacher.primary_email === _teacherEmail );
+        //                 if (existAndAttached) {
+        //                   teachersIdArray.push(existAndAttached.id);
+        //                 } else {
+        //                   this.unknownEmails.push({
+        //                     room: _room,
+        //                     email: _teacherEmail
+        //                   });
+        //                 }
+        //               });
+        //
+        //               _room.teachers = teachersIdArray;
+        //               return _room;
+        //             });
+        //           }));
+        //     }),
+        //   )
+        //   .subscribe((rooms) => {
+        //     console.log(rooms);
+        //     console.log(this.unknownEmails);
+        //     setTimeout(() => {
+        //       this.uploadingProgress.inProgress = false;
+        //       this.uploadingProgress.completed = true;
+        //     }, 1500);
+        //     this.importedRooms = rooms;
+        //   });
       }
 
       this.buildInitialState();
@@ -1170,31 +1279,25 @@ export class OverlayContainerComponent implements OnInit {
   catchFile(evt: DragEvent) {
     evt.preventDefault();
     this.uploadingProgress.inProgress = true;
-    // console.log(this.selectedFile.nativeElement.files);
 
     of(evt)
       .pipe(
         switchMap((dragEvt: DragEvent) => {
-
           const FR = new FileReader();
           FR.readAsBinaryString(dragEvt.dataTransfer.files[0]);
           return fromEvent(FR, 'load');
         }),
         map(( res: any) => {
-          // console.log('Result', res);
           const raw = XLSX.read(res.target.result, {type: 'binary'});
           const sn = raw.SheetNames[0];
           const stringCollection = raw.Sheets[sn];
           const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
-          // const headers = data[0];
           let rows = data.slice(1);
           rows = rows.map((row, index) => {
-            // console.log('Parsed room ===>', row);
             const _room: any = {};
             _room.title = row[0];
             _room.room = row[1];
             _room.teachers = <string>row[2] ? row[2].split(', ') : [];
-            // console.dir(_room);
             return _room;
           });
           return rows;
@@ -1259,13 +1362,10 @@ export class OverlayContainerComponent implements OnInit {
       .subscribe((rooms) => {
         console.log(rooms);
         console.log(this.unknownEmails);
-        // setTimeout(() => {
-          // this.uploadingProgress.inProgress = false;
           setTimeout(() => {
             this.uploadingProgress.inProgress = false;
             this.uploadingProgress.completed = true;
           }, 1500);
-        // }, 1000);
         this.importedRooms = rooms;
       });
 

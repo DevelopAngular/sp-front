@@ -44,18 +44,6 @@ export class GroupsStep1Component implements OnInit {
 
   }
 
-  // bgColor(i){
-  //   if (this.hovered && this.hoveredIndex === i) {
-  //     if (this.pressed) {
-  //       return this.sanitizer.bypassSecurityTrustStyle('#E2E7F4');
-  //     } else {
-  //       return this.sanitizer.bypassSecurityTrustStyle('#ECF1FF');
-  //     }
-  //   } else {
-  //     return this.sanitizer.bypassSecurityTrustStyle('#FFFFFF');
-  //   }
-  // }
-  //
   textColor(item) {
     if (item.hovered) {
       return this.sanitizer.bypassSecurityTrustStyle('#1F195E');

@@ -23,6 +23,8 @@ export class StudentSearchComponent implements AfterViewInit {
   @Input() rollUpAfterSelection: boolean = true;
   @Input() role: string = '_profile_student';
   @Input() placeholder: string = 'Search students';
+  @Input() type: string = 'alternative'; // Can be alternative or gsuite, endpoint will depend on that.
+
 
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
 
@@ -39,7 +41,7 @@ export class StudentSearchComponent implements AfterViewInit {
     private userService: UserService,
     private sanitizer: DomSanitizer
   ) {
-    // this.onSearch('');
+
   }
 
   bgColor(i){
@@ -75,13 +77,25 @@ export class StudentSearchComponent implements AfterViewInit {
 
   onSearch(search: string) {
     if (search !== '') {
-      this.students = this.userService.searchProfile(this.role, 50, encodeURI(search))
+      if (this.type === 'alternative') {
+        this.students = this.userService.searchProfile(this.role, 50, encodeURI(search))
           .toPromise()
           .then((paged: any) => {
             console.log('PAGED RESULT >>>', paged);
             this.showDummy = paged.results.length ? false : true;
             return this.removeDuplicateStudents(paged.results);
           });
+      } else if ('gsuite'){
+        this.students = this.userService.searchProfileAll(encodeURI(search), this.type)
+          .toPromise().then((users: User[]) => {
+            console.log(users);
+            if (users.length > 0) {
+              // this.isEmitUsers.emit(true);
+              return this.removeDuplicateStudents(users);
+            }
+          });
+      }
+
     } else {
 
       this.students = this.rollUpAfterSelection ? null : of([]).toPromise();
