@@ -158,7 +158,7 @@ export class InvitationCardComponent implements OnInit {
     });
   }
 
-    changeDate() {
+    changeDate(resend_request?: boolean) {
       if (!this.dateEditOpen) {
             this.dialogRef.close();
             const conf = {
@@ -170,10 +170,12 @@ export class InvitationCardComponent implements OnInit {
                         state: 1
                     },
                     'forInput': false,
-                    'missedRequest': true,
+                    'missedRequest': !this.forStaff,
                     'originalToLocation': this.invitation.destination,
                     'colorProfile': this.invitation.color_profile,
-                    'request': this.invitation
+                    'request': this.invitation,
+                    'request_time': resend_request || this.invalidDate ? new Date() : this.invitation.date_choices[0],
+                    'resend_request': resend_request
                 }
             };
 
@@ -182,6 +184,20 @@ export class InvitationCardComponent implements OnInit {
         dateDialog.afterOpen().subscribe( () => {
             this.dateEditOpen = true;
         });
+
+        dateDialog.afterClosed().pipe(filter(() => resend_request && this.forStaff),
+            switchMap((state) => {
+                const body = {
+                    'students' : this.invitation.student.id,
+                    'default_origin' : this.invitation.default_origin?this.invitation.default_origin.id:null,
+                    'destination' : +this.invitation.destination.id,
+                    'date_choices' : [new Date(state.data.date.date).toISOString()],
+                    'duration' : this.invitation.duration,
+                    'travel_type' : this.invitation.travel_type
+                };
+                return this.requestService.createInvitation(body);
+            }), switchMap(() => this.requestService.cancelInvitation(this.invitation.id, '')))
+            .subscribe(console.log);
     }
     }
 
@@ -233,6 +249,9 @@ export class InvitationCardComponent implements OnInit {
         options.push(this.genOption('Decline Pass Request','#F00','decline'));
         header = 'Are you sure you want to decline this pass request you received?'
       } else {
+        if (this.invalidDate) {
+            options.push(this.genOption('Change Date & Time to Resend', '#3D396B', 'resend'));
+        }
         options.push(this.genOption('Delete Pass Request','#E32C66','delete'));
         header = "Are you sure you want to delete this pass request you sent?";
       }
@@ -246,7 +265,7 @@ export class InvitationCardComponent implements OnInit {
         this.denyOpen = true;
       });
 
-      consentDialog.afterClosed().subscribe(action =>{
+      consentDialog.afterClosed().subscribe(action => {
         this.denyOpen = false;
         if(action === 'cancel'){
           this.dialogRef.close();
@@ -266,6 +285,8 @@ export class InvitationCardComponent implements OnInit {
             console.log('[Invitation Cancelled]: ', httpData);
             this.dialogRef.close();
           });
+        } else if (action === 'resend') {
+            this.changeDate(true);
         }});
     }
   }

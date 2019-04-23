@@ -279,7 +279,7 @@ export class OverlayContainerComponent implements OnInit {
           break;
         case 'newFolder':
             if (!!this.pinnable) {
-                colors = this.pinnable.gradient_color;
+                colors = this.pinnable.color_profile.gradient_color;
                 this.folderName = this.pinnable.title;
                 this.color_profile = this.pinnable.color_profile;
                 this.selectedIcon = this.pinnable.icon;
@@ -290,7 +290,7 @@ export class OverlayContainerComponent implements OnInit {
           this.folderName = 'New Folder';
           break;
         case 'editRoom':
-            colors = this.pinnable.gradient_color;
+            colors = this.pinnable.color_profile.gradient_color;
             this.roomName = this.pinnable.title;
             this.timeLimit = this.pinnable.location.max_allowed_time;
             this.roomNumber = this.pinnable.location.room;

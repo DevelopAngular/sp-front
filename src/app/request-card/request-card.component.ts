@@ -150,7 +150,6 @@ export class RequestCardComponent implements OnInit {
   changeDate(resend_request?: boolean) {
     if (!this.dateEditOpen) {
        let config;
-        if (this.isSeen) {
             this.dialogRef.close();
             config = {
                 panelClass: 'form-dialog-container',
@@ -164,12 +163,11 @@ export class RequestCardComponent implements OnInit {
                     'originalToLocation': this.request.destination,
                     'colorProfile': this.request.color_profile,
                     'originalFromLocation': this.request.origin,
-                    'request_time': resend_request ? new Date() : this.request.request_time,
+                    'request_time': resend_request || this.invalidDate ? new Date() : this.request.request_time,
                     'request': this.request,
                     'resend_request': resend_request
                 }
             };
-        }
       const dateDialog = this.dialog.open(CreateHallpassFormsComponent, config);
 
       dateDialog.afterOpen().subscribe( () => {
