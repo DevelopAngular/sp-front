@@ -1,12 +1,16 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import { User } from '../../../models/User';
 import { DataService } from '../../../services/data-service';
 import { Pinnable } from '../../../models/Pinnable';
 import { Util } from '../../../../Util';
-import {FormFactor, Navigation, Role} from '../main-hall-pass-form.component';
-import {CreateFormService} from '../../create-form.service';
-import {NextStep} from '../../../animations';
+import { FormFactor, Navigation } from '../main-hall-pass-form.component';
+import { CreateFormService } from '../../create-form.service';
+import { NextStep } from '../../../animations';
+import { LocationsService } from '../../../services/locations.service';
+import { map } from 'rxjs/operators';
+
+import *as _ from 'lodash';
 
 export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, message = 5 }
 
@@ -23,13 +27,18 @@ export class LocationsGroupContainerComponent implements OnInit {
   @Output() nextStepEvent: EventEmitter<any> = new EventEmitter<any>();
 
   user$: Observable<User>;
+  user: User;
   isStaff: boolean;
   pinnables: Promise<Pinnable[]>;
   pinnable: Pinnable;
   data: any = {};
   frameMotion$: BehaviorSubject<any>;
 
-  constructor(private dataService: DataService, private formService: CreateFormService) { }
+  constructor(
+      private dataService: DataService,
+      private formService: CreateFormService,
+      private locationsService: LocationsService,
+  ) { }
 
   get showDate() {
       if ( this.FORM_STATE.data.date ) {
@@ -69,7 +78,21 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.pinnables = this.formService.getPinnable();
     this.user$ = this.dataService.currentUser;
     this.pinnable = this.FORM_STATE.data.direction ? this.FORM_STATE.data.direction.pinnable : null;
-    this.user$.subscribe((user: User) => this.isStaff = user.isTeacher() || user.isAdmin());
+    this.user$.subscribe((user: User) => {
+        this.isStaff = user.isTeacher() || user.isAdmin();
+        this.user = user;
+    });
+    combineLatest(this.pinnables, this.locationsService.getLocationsWithTeacher(this.user))
+        .pipe(map(([pinnables, locations]) => {
+            return pinnables.filter(pin => {
+             return locations.find(loc => {
+                 return (loc.category ? loc.category : loc.title) === pin.title;
+             });
+            });
+        }), map((pinnables: Pinnable[]) => {
+            // debugger;   // In process
+            return pinnables;
+        })).subscribe(res => console.log('RR ==>>', res));
   }
 
   fromWhere(location) {
