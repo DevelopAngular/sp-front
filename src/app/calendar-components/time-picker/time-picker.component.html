@@ -8,17 +8,15 @@
         class="arrow"
         #hours
         [style.opacity]="hourHovered ? 1 : 0"
-        (mousedown)="changeTime('hours', 'up')"
-        (mouseup)="destroy('hours', 'up')"
+        (click)="changeTime('hours', 'up')"
         [src]="'./assets/Chevron Up (Blue-Gray).svg' | resolveAsset"
         alt="Icon"
       >
-      <input tabindex="-1" class="timeInput" type="text" maxlength="2" formControlName="hour">
+      <input tabindex="-1" class="timeInput" type="text" maxlength="2" formControlName="hour" (blur)="updateDate()">
       <img
         class="arrow"
         [style.opacity]="hourHovered ? 1 : 0"
         (mousedown)="changeTime('hours', 'down')"
-        (mouseup)="destroy('hours', 'down')"
         [src]="'./assets/Chevron Down (Blue-Gray).svg' | resolveAsset"
         alt="Icon"
       >
@@ -31,17 +29,15 @@
       <img
        class="arrow"
        [style.opacity]="minHovered ? 1 : 0"
-       (mousedown)="changeTime('minutes', 'up')"
-       (mouseup)="destroy('minutes', 'up')"
+       (click)="changeTime('minutes', 'up')"
        [src]="'./assets/Chevron Up (Blue-Gray).svg' | resolveAsset"
        alt="Icon"
       >
-      <input tabindex="-1" class="timeInput" maxlength="2" type="text" formControlName="minute">
+      <input tabindex="-1" class="timeInput" maxlength="2" type="text" formControlName="minute" (blur)="updateDate()">
       <img
        class="arrow"
        [style.opacity]="minHovered ? 1 : 0"
-       (mousedown)="changeTime('minutes', 'down')"
-       (mouseup)="destroy('minutes', 'down')"
+       (click)="changeTime('minutes', 'down')"
        [src]="'./assets/Chevron Down (Blue-Gray).svg' | resolveAsset"
        alt="Icon"
       >

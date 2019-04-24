@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import * as moment from 'moment';
 import {Subject, timer} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
+import {debounceTime, delay, takeUntil} from 'rxjs/operators';
 import {FormControl, FormGroup} from '@angular/forms';
 
 @Component({
@@ -29,6 +29,11 @@ export class TimePickerComponent implements OnInit, OnDestroy {
     timer(50).pipe(takeUntil(this.destroy$)).subscribe(() => {
         this.timeResult.emit(this.currentDate);
     });
+    this.timeForm.valueChanges.pipe(takeUntil(this.destroy$))
+        .subscribe(value => {
+            this.currentDate.set('hour', value.hour);
+            this.currentDate.set('minute', value.minute);
+        });
   }
 
   buildFrom() {
@@ -36,6 +41,12 @@ export class TimePickerComponent implements OnInit, OnDestroy {
           hour: new FormControl(this.currentDate.format('hh')),
           minute: new FormControl(this.currentDate.format('mm'))
       });
+  }
+
+  updateDate() {
+      this.timeForm.get('hour').setValue(this.currentDate.format('hh'));
+      this.timeForm.get('minute').setValue(this.currentDate.format('mm'));
+      this.timeResult.emit(this.currentDate);
   }
 
   ngOnDestroy() {
@@ -63,9 +74,5 @@ export class TimePickerComponent implements OnInit, OnDestroy {
       }
       this.buildFrom();
       this.timeResult.emit(this.currentDate);
-  }
-
-  destroy(action, up) {
-    return;
   }
 }
