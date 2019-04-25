@@ -46,7 +46,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   public initialSearchString: string;
   public tabVisibility: boolean = false;
   public isLoadUsers: boolean = true;
-
+  public user: User;
   private limitCounter: number = 20;
 
   public accounts$ =
@@ -243,7 +243,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           'admin_accounts': {
             controlName: 'admin_accounts',
             // restriction: true,
-            controlLabel: 'Accounts & Profiles Tab Access'
+            controlLabel: 'Accounts & Profiles Tab Access',
           },
           'admin_pass_config': {
             controlName: 'admin_pass_config',
@@ -273,6 +273,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     TABLE_RELOADING_TRIGGER.subscribe((updatedHeaders) => {
       this.dataTableHeaders = updatedHeaders;
       this.getUserList('');
+    });
+    this.userService.userData.subscribe((user) => {
+      this.user = user;
     });
   }
 
@@ -482,6 +485,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   showProfileCard(evt, bulk: boolean = false, gSuite: boolean = false) {
     console.log(evt);
+    if (evt.id === +this.user.id) {
+      debugger;
+      this.profilePermissions['admin_accounts'].disabled = true;
+    } else {
+      this.profilePermissions['admin_accounts'].disabled = false;
+    }
 
     const data = {
       profile: evt,

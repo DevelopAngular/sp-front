@@ -19,6 +19,7 @@ export class LoginComponent implements OnInit {
   public isMobileDevice: boolean = false;
   public trustedBackgroundUrl: SafeUrl;
   public showError = { loggedWith: null, error: null };
+
   constructor(
     private userService: UserService,
     private loginService: GoogleLoginService,

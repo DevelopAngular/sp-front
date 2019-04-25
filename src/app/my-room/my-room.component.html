@@ -1,5 +1,5 @@
-<div *ngIf="userLoaded">
-  <div *ngIf="isStaff && userLoaded" class="my-room-wrapper" [style.width]="calendarToggled?'900px':'550px'">
+<div *ngIf="userLoaded" style="height: 100%">
+  <div *ngIf="isStaff && roomOptions.length" class="my-room-wrapper" [style.width]="calendarToggled?'900px':'550px'">
     <div class="my-room-left">
       <div class="my-room-header">
         <!--<p>{{optionsOpen}} | {{showArrow}}</p>-->
@@ -8,6 +8,7 @@
              [style.color]="myRoomHeaderColor"
         >
           <!--{{ roomOptions?selectedLocation.title:"" }}-->
+          <!--<pre>{{roomOptions[0] | json}}</pre>-->
           {{ selectedLocation ? selectedLocation.title : (roomOptions.length > 1 ? 'All Rooms' : roomOptions[0].title)}}
           <img *ngIf="showArrow" class="disclosure-icon" [src]="getIcon('./assets/Chevron Down (Navy).svg') | resolveAsset">
         </div>
@@ -58,8 +59,9 @@
       <!--<app-date-time-picker [_selectedMoment]="searchDate" [min]="min" [showTime]="false" (onUpdate)="setSearchDate($event)"></app-date-time-picker>-->
     <!--</div>-->
   </div>
-  <div class="no-content-info">
+  <div class="no-content-info" *ngIf="(!isStaff || (isStaff && !roomOptions.length)) && userLoaded">
     <!--<h3 *ngIf="isStaff && !selectedLocation && userLoaded">No rooms</h3>-->
-    <h3 *ngIf="!isStaff && userLoaded">You don't have access to this page</h3>
+    <!--<h3 *ngIf="!isStaff && userLoaded">You don't have access to this page</h3>-->
+    <app-restriction-dummy></app-restriction-dummy>
   </div>
 </div>

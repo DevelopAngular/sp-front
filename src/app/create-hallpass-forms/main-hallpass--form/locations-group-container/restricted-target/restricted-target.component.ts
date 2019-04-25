@@ -112,7 +112,7 @@ export class RestrictedTargetComponent implements OnInit {
     this.formState.previousState = States.restrictedTarget;
 
     setTimeout(() => {
-      this.requestTarget.emit(target);
+      this.requestTarget.emit(target[0]);
     }, 100);
 
   }

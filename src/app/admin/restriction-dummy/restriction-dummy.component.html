@@ -1,7 +1,13 @@
 <div class="dummy-wrapper">
+  <div class="ds-flex-start-center">
+    <img [src]="'./assets/emptyStates/No Access.svg'" alt="">
+  </div>
   <div class="dummy">
-      You do not have permission to view this page.
-      If you think that this is a mistake, please contact the administrator of your school's SmartPass system.
+    <div style="font-size: 17px;"> No Access</div>
+    <p style="font-size: 14px;">
+      You do not have access to this tab. <br>
+      Please contact your school administrator.
+    </p>
   </div>
   <div class="go_back" (click)="goHome()">
     <app-back-button></app-back-button>

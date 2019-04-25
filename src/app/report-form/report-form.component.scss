@@ -67,11 +67,11 @@
     width: 100%;
     justify-content: space-between;
     align-items: center;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  //position: absolute;
+  //top: 0;
+  //bottom: 0;
+  //left: 0;
+  //right: 0;
   //margin: auto;
   flex: 1 1 auto;
   .student-select_button-next {
@@ -79,8 +79,9 @@
     margin-right: 25px;
   }
   .report-content {
-    width: 250px;
-    position: absolute;
+    //width: 100%;
+    //display: flex;
+    //position: absolute;
   }
   .student-list {
     width: 215px;
