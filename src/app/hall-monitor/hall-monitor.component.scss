@@ -25,6 +25,10 @@
     }
 }
 
+:host {
+  flex: 1 1 auto;
+}
+
 .hall-monitor-wrapper{
     margin: 40px auto 0;
     max-width: 600px;
@@ -95,4 +99,15 @@ input {
 .empty-svg {
     margin: 20px 0;
     width: 250px;
+}
+
+.no-content-info {
+  display: flex;
+  justify-content: center;
+  color: #7f879d;
+  //margin-top: 50px;
+  font-size: 16pt;
+  //height: 650px;
+  height: 100%;
+  flex: 1 1 auto;
 }

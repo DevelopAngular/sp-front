@@ -1,4 +1,4 @@
-<div *ngIf="user">
+<div *ngIf="user" style="height: 100%">
   <div *ngIf="canView" class="hall-monitor-wrapper">
     <div class="hall-monitor-top">
       <app-round-input
@@ -63,5 +63,9 @@
       </div>
     </div>
   </div>
-  <h3 *ngIf="!canView">You don't have access to this page.</h3>
+  <div class="no-content-info" *ngIf="!canView">
+    <!--<h3 *ngIf="isStaff && !selectedLocation && userLoaded">No rooms</h3>-->
+    <!--<h3 *ngIf="!isStaff && userLoaded">You don't have access to this page</h3>-->
+    <app-restriction-dummy></app-restriction-dummy>
+  </div>
 </div>

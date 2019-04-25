@@ -1,72 +1,61 @@
-<div class="student-search-wrapper">
+<div class="student-search-wrapper" [style.width]="width">
+
   <div class="input">
-    <!--<mat-chip-list #chipList>-->
-      <div class="round-input-container">
-        <app-round-input #studentInput
-          [minWidth]="'auto'"
-          [width]="'100%'"
-          [type]="'text'"
-          [chipInput]="false"
-          [placeholder]="placeholder"
-          [disabled]="disabled"
-          [fieldIconPosition]="'left'"
-          [closeIcon]="true"
-          [focused]="focused"
-          [selectReset$]="inputValue$"
-          [boxShadow]="false"
-          (ontextupdate)="onSearch($event)"
-          (blurEvent)="onBlur($event)"
-        >
-        </app-round-input>
-      </div>
-      <!--<div *ngIf="selectedStudents && selectedStudents.length">-->
-      <!--&lt;!&ndash;<div *ngIf="selectedStudents && selectedStudents.length; else noStudentsDummy">&ndash;&gt;-->
-        <!--<mat-chip-->
-          <!--*ngFor="let student of selectedStudents"-->
-          <!--[removable]="!disabled"-->
-          <!--(removed)="removeStudent(student)">-->
-          <!--{{student.display_name + ' (' + student.primary_email.split('@', 1)[0] + ')'}}-->
-          <!--<mat-icon matChipRemove>cancel</mat-icon>-->
-        <!--</mat-chip>-->
-      <!--</div>-->
-      <!--<ng-template #noStudentsDummy>-->
-        <!--<div class="no-students-dummy">-->
-          <!--<div>-->
-            <!--<div class="dummy-image"><img width="150" [src]="'./assets/emptyStates/undraw_graduation_9x4i.svg'" alt="undraw_graduation_9x4i.svg"></div>-->
 
-            <!--<div class="dummy-text"><span>No students found</span></div>-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</ng-template>-->
-      <!--<div>-->
-        <!---->
-      <!--</div>-->
-
-    <!--<input-->
-        <!--placeholder="Search students"-->
-        <!--#studentInput-->
-        <!--autofocus-->
-        <!--[disabled]="disabled"-->
-        <!--[matChipInputFor]="chipList"-->
-        <!--[matChipInputAddOnBlur]="true"-->
-        <!--[value]="inputValue"-->
-        <!--(input)="onSearch(studentInput.value)"-->
-      <!--&gt;-->
-    <!--</mat-chip-list>-->
+    <div class="round-input-container">
+      <app-round-input
+        [minWidth]="'auto'"
+        [width]="'100%'"
+        [type]="'text'"
+        [chipInput]="false"
+        [placeholder]="placeholder"
+        [disabled]="disabled"
+        [fieldIconPosition]="'left'"
+        [closeIcon]="true"
+        [focused]="focused"
+        [selectReset$]="inputValue$"
+        [boxShadow]="false"
+        (ontextupdate)="onSearch($event)"
+        (blurEvent)="onBlur($event)"
+        #studentInput
+      >
+      </app-round-input>
+    </div>
     <div *ngIf="showOptions" [ngClass]="{'options-wrapper': students}">
-      <div *ngIf="!showDummy; else noStudentsDummy">
-        <div *ngFor="let student of students | async; let i = index"
-             (mouseenter)="hovered = true; hoveredIndex = i"
-             (mouseleave)="hovered = false; hoveredIndex = null"
-             (mousedown)="pressed = true"
-             (mouseup)="pressed = false"
-             [style.background-color]="bgColor(i)"
-             (click)="inputValue$.next(''); addStudent(student)"  class="option-wrapper">
-          <div class="option-content" [style.color]="textColor(i)">
-            {{ student.display_name }}
+      <div *ngIf="students" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
+      <div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px;">
+        <div class="student-list_scrollable">
+          <div #cell *ngFor="let student of students | async; let i = index" class="student-list_item"
+               (mouseenter)="cell.hovered = true;"
+               (mouseleave)="cell.hovered = false;"
+               (click)="inputValue$.next(''); addStudent(student)"
+               [style.background-color]="getBackground(cell)"
+               [style.color]="textColor(cell)"
+          >
+              <span>
+                {{student.display_name}} ({{student.primary_email.slice(0, student.primary_email.indexOf('@'))}})
+              </span>
+            <!--<img-->
+              <!--(mousedown)="cell.pressed = true"-->
+              <!--(mouseup)="cell.pressed = false"-->
+              <!--(click)="selectedStudents.splice(i, 1)"-->
+              <!--[src]="cell.hovered ? './assets/Mark (Navy).svg' : './assets/Mark (Navy).svg'" width="15" #fieldIcon alt="Check.svg">-->
           </div>
-          <div class="option-divider"></div>
         </div>
+        <!--<div #cell *ngFor="let student of students | async;"-->
+             <!--(mouseenter)="cell.hovered = true;"-->
+             <!--(mouseleave)="cell.hovered = false;"-->
+             <!--(mousedown)="cell.pressed = true"-->
+             <!--(mouseup)="cell.pressed = false"-->
+             <!--[style.background-color]="getBackground(cell)"-->
+             <!--(click)="inputValue$.next(''); addStudent(student)"  class="option-wrapper"-->
+             <!--&gt;-->
+          <!--<div class="option-content" [style.color]="textColor(cell)">-->
+            <!--{{ student.display_name }}-->
+          <!--</div>-->
+          <!--<div class="option-divider"></div>-->
+        <!--</div>-->
+
       </div>
       <ng-template #noStudentsDummy>
         <div class="no-students-dummy">
@@ -78,5 +67,31 @@
         </div>
       </ng-template>
     </div>
+
   </div>
+
+  <div class="student-list" *ngIf="selectedStudents.length">
+    <div class="ds-dialog-heading student-list_header">
+      <span>Selected</span>
+    </div>
+    <div class="student-list_scrollable" [style.max-height]="listMaxHeight">
+      <div #cell *ngFor="let student of selectedStudents; let i = index" class="student-list_item"
+           (mouseenter)="cell.hovered = true;"
+           (mouseleave)="cell.hovered = false;"
+
+           [style.background-color]="getBackground(cell)"
+           [style.color]="textColor(cell)"
+      >
+              <span>
+                {{student.display_name}} ({{student.primary_email.slice(0, student.primary_email.indexOf('@'))}})
+              </span>
+        <img
+          (mousedown)="cell.pressed = true"
+          (mouseup)="cell.pressed = false"
+          (click)="selectedStudents.splice(i, 1)"
+          [src]="cell.hovered ? './assets/Cancel (Navy).svg' : './assets/Mark (Navy).svg'" width="15"alt="Check.svg">
+      </div>
+    </div>
+  </div>
+
 </div>

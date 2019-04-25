@@ -89,8 +89,11 @@ export class NavComponent implements OnInit {
         if (
           ((this.activeRoute.snapshot as any)._routerState.url === `/admin/${button.route}`)
             &&
-          !this.hasRoles(button.requiredRoles)
-        ) {
+          !button.requiredRoles.every((_role) => user.roles.includes(_role))
+      ) {
+          console.log(button);
+          console.log(button.requiredRoles.every((_role) => user.roles.includes(_role)));
+          // debugger;
           this.restrictAccess.emit(true);
           this.fakeMenu.next(true);
         }

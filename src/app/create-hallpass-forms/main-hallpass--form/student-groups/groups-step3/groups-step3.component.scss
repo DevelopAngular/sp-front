@@ -122,16 +122,11 @@
         flex: 1 1 auto;
         box-sizing: border-box;
         padding: 30px 25px 30px 5px;
-        //display: flex;
-        //flex-direction: column;
-        //justify-content: space-between;
         &_sudent-search {
           display: flex;
           justify-content: center;
-          //height: 180px;
-          //overflow: auto;
           .seach-wrapper {
-            width: 90%;
+            //width: 90%;
           }
         }
         &_next {

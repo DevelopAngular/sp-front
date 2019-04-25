@@ -13,7 +13,7 @@ const routes: Routes = [
   {
     path: '', component: AdminPageComponent,
     children: [
-      {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
+      // {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
       {path: 'dashboard', component: DashboardComponent},
       {path: 'hallmonitor', component: HallmonitorComponent},
       {path: 'search', component: SearchComponent},
@@ -23,7 +23,7 @@ const routes: Routes = [
       // {path: 'settings', component: SettingsComponent},
       // {path: 'feedback', component: FeedbackComponent},
       // {path: 'support', component: SupportComponent},
-      {path: '**', redirectTo: 'dashboard', pathMatch: 'full'},
+      {path: '**', redirectTo: '', pathMatch: 'full'},
     ]
   },
 ];

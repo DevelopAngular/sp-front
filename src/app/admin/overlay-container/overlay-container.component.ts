@@ -174,6 +174,7 @@ export class OverlayContainerComponent implements OnInit {
   selectedRooms = [];
   selectedRoomsInFolder: Pinnable[] = [];
   selectedTeachers: User[] = [];
+  selectedTeachersUntouched: User[];
   readyRoomsToEdit: Pinnable[] = [];
   pinnable: Pinnable;
   pinnables$: Observable<Pinnable[]>;
@@ -268,7 +269,11 @@ export class OverlayContainerComponent implements OnInit {
       private elRef: ElementRef,
       public sanitizer: DomSanitizer
 
-  ) { }
+  ) {
+    // this.selectedTeachersUntouched = _.cloneDeep(this.selectedTeachers);
+    // this.selectedTeachersUntouched.splice(0, 1);
+    // console.log(_.isEqual(this.selectedTeachers, this.selectedTeachersUntouched), this.selectedTeachers, this.selectedTeachersUntouched);
+  }
 
   getHeaderData() {
     let colors;
@@ -511,99 +516,6 @@ export class OverlayContainerComponent implements OnInit {
       }
 
       this.getHeaderData();
-
-    if (this.selectedFile) {
-        // fromEvent(this.selectedFile.nativeElement , 'change')
-        //   .pipe(
-        //     switchMap((evt: Event) => {
-        //       this.setLocation('settingsRooms');
-        //
-        //       const FR = new FileReader();
-        //       FR.readAsBinaryString(this.selectedFile.nativeElement.files[0]);
-        //       return fromEvent(FR, 'load');
-        //     }),
-        //     map(( res: any) => {
-        //       const raw = XLSX.read(res.target.result, {type: 'binary'});
-        //       const sn = raw.SheetNames[0];
-        //       const stringCollection = raw.Sheets[sn];
-        //       const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
-        //       let rows = data.slice(1);
-        //       rows = rows.map((row, index) => {
-        //         const _room: any = {};
-        //         _room.title = row[0];
-        //         _room.room = row[1];
-        //         _room.teachers = <string>row[2] ? row[2].split(', ') : [];
-        //         return _room;
-        //       });
-        //       return rows;
-        //     }),
-        //     map((rows) => {
-        //       rows = rows.map((r: any) => {
-        //         if (r.title && r.title.length > 16) {
-        //           r.title = r.title.slice(0, 15);
-        //         }
-        //         if (r.room && (r.room + '').length > 8) {
-        //           r.title = r.title.slice(0, 7);
-        //         }
-        //         return r;
-        //       });
-        //       const groupedRooms = _.groupBy(rows, (r: any) => r.title);
-        //       let normalizedRooms = [];
-        //       console.log(groupedRooms);
-        //
-        //       for (const key in groupedRooms) {
-        //         if (groupedRooms[key].length > 1) {
-        //           normalizedRooms = normalizedRooms.concat(
-        //             groupedRooms[key].map((duplicate: any, index: number) => {
-        //               duplicate.title = duplicate.title + ++index;
-        //               return duplicate;
-        //             })
-        //           );
-        //         } else {
-        //           normalizedRooms = normalizedRooms.concat(groupedRooms[key]);
-        //         }
-        //       }
-        //       console.log(normalizedRooms);
-        //       return normalizedRooms;
-        //     }),
-        //     switchMap((_rooms: any[]): Observable<any[]> => {
-        //       console.log(_rooms)
-        //       return this.userService.getUsersList('_profile_teacher')
-        //         .pipe(
-        //           map((teachers: any[]) => {
-        //
-        //             return _rooms.map((_room) => {
-        //               const teachersIdArray = [];
-        //               const unknownArray = [];
-        //
-        //               _room.teachers.forEach((_teacherEmail) => {
-        //                 const existAndAttached = teachers.find(_teacher =>  _teacher.primary_email === _teacherEmail );
-        //                 if (existAndAttached) {
-        //                   teachersIdArray.push(existAndAttached.id);
-        //                 } else {
-        //                   this.unknownEmails.push({
-        //                     room: _room,
-        //                     email: _teacherEmail
-        //                   });
-        //                 }
-        //               });
-        //
-        //               _room.teachers = teachersIdArray;
-        //               return _room;
-        //             });
-        //           }));
-        //     }),
-        //   )
-        //   .subscribe((rooms) => {
-        //     console.log(rooms);
-        //     console.log(this.unknownEmails);
-        //     setTimeout(() => {
-        //       this.uploadingProgress.inProgress = false;
-        //       this.uploadingProgress.completed = true;
-        //     }, 1500);
-        //     this.importedRooms = rooms;
-        //   });
-      }
 
       this.buildInitialState();
 

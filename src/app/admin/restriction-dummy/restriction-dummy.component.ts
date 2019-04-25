@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 
@@ -8,6 +8,8 @@ import { UserService } from '../../services/user.service';
   styleUrls: ['./restriction-dummy.component.scss']
 })
 export class RestrictionDummyComponent implements OnInit {
+
+  @Output() reloadPage: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor(
     private router: Router,
@@ -27,7 +29,22 @@ export class RestrictionDummyComponent implements OnInit {
         }
 
         if (user.isAdmin()) {
-          this.router.navigate(['/admin']);
+          const availableAccessTo = user.roles.filter((_role) => _role.match('admin_'));
+          let tab;
+          if (availableAccessTo.includes('admin_dashboard')) {
+            tab = 'dasboard';
+          } else if (availableAccessTo.includes('admin_hallmonitor')) {
+            tab = 'hallmonitor';
+          } else if (availableAccessTo.includes('admin_search')) {
+            tab = 'search';
+          } else if (availableAccessTo.includes('admin_pass_config')) {
+            tab = 'passconfig';
+          } else if (availableAccessTo.includes('admin_accounts')) {
+            tab = 'accounts';
+          }
+          this.reloadPage.emit(true);
+          //   console.log(availableAccessTo);
+          this.router.navigate(['/admin', tab]);
           return;
         }
       }

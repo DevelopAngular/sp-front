@@ -186,6 +186,7 @@
                 </div>
               </div>
           </div>
+        {{isFormStateDirty}}
           <div class="assigned-teachers" *ngIf="!showProfileSearch">
             <div *ngFor="let teacher of selectedTeachers; let i = index" #chip class="teacher"
                  (mouseenter)="chip.hovered = true;"
@@ -196,7 +197,7 @@
               <div style="width: 15px; height: 15px; cursor: pointer; margin-left: 10px;">
 
                 <img *ngIf="chip.hovered"
-                     (click)="selectedTeachers.splice(i, 1)"
+                     (click)="selectedTeachers.splice(i, 1); isDirtysettings = true; changeState()"
                      [src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
               </div>
             </div>

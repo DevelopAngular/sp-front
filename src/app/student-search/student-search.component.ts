@@ -19,7 +19,9 @@ export class StudentSearchComponent implements AfterViewInit {
   @Input() focused: boolean = false;
   @Input() showOptions: boolean = true;
   @Input() selectedStudents: User[] = [];
-  @Input() width: string = '100%';
+  @Input() width: string = '280px';
+  @Input() listMaxHeight: string = '220px';
+
   @Input() rollUpAfterSelection: boolean = true;
   @Input() role: string = '_profile_student';
   @Input() placeholder: string = 'Search students';
@@ -44,26 +46,45 @@ export class StudentSearchComponent implements AfterViewInit {
 
   }
 
-  bgColor(i){
-      if (this.hovered && this.hoveredIndex === i) {
-        if (this.pressed) {
-          return this.sanitizer.bypassSecurityTrustStyle('#E2E7F4');
-        } else {
-          return this.sanitizer.bypassSecurityTrustStyle('#ECF1FF');
-        }
-      } else {
-        return this.sanitizer.bypassSecurityTrustStyle('#FFFFFF');
-      }
+  // bgColor(i){
+  //     if (this.hovered && this.hoveredIndex === i) {
+  //       if (this.pressed) {
+  //         return this.sanitizer.bypassSecurityTrustStyle('#E2E7F4');
+  //       } else {
+  //         return this.sanitizer.bypassSecurityTrustStyle('#ECF1FF');
+  //       }
+  //     } else {
+  //       return this.sanitizer.bypassSecurityTrustStyle('#FFFFFF');
+  //     }
+  // }
+  //
+  // textColor(i) {
+  //     if (this.hovered && this.hoveredIndex === i) {
+  //       return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
+  //     } else {
+  //       return this.sanitizer.bypassSecurityTrustStyle('#555558');
+  //     }
+  // }
+
+  textColor(item) {
+    if (item.hovered) {
+      return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
+    } else {
+      return this.sanitizer.bypassSecurityTrustStyle('#555558');
+    }
   }
 
-  textColor(i) {
-      if (this.hovered && this.hoveredIndex === i) {
-        return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
+  getBackground(item) {
+    if (item.hovered) {
+      if (item.pressed) {
+        return '#E2E7F4';
       } else {
-        return this.sanitizer.bypassSecurityTrustStyle('#555558');
+        return '#ECF1FF';
       }
+    } else {
+      return '#FFFFFF';
+    }
   }
-
 
   ngAfterViewInit() {
     // this.input.nativeElement.focus();
