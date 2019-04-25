@@ -62,8 +62,12 @@
     z-index: 1;
     flex: 1 1 auto;
 
-    .pin-collection {
+    .teacher-rooms, .all-rooms {
       margin: 10px;
+    }
+
+    .rooms-title {
+      padding: 5px;
     }
   }
 
@@ -71,7 +75,7 @@
     width: 100%;
     display: flex;
     background-color: white;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 7px 0px 8px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0 7px 0 8px;
     justify-content: center;
     align-items: center;
     z-index: 100;

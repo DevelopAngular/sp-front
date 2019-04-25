@@ -8,7 +8,7 @@ import { FormFactor, Navigation } from '../main-hall-pass-form.component';
 import { CreateFormService } from '../../create-form.service';
 import { NextStep } from '../../../animations';
 import { LocationsService } from '../../../services/locations.service';
-import { map } from 'rxjs/operators';
+import {filter, map} from 'rxjs/operators';
 
 import *as _ from 'lodash';
 
@@ -33,6 +33,8 @@ export class LocationsGroupContainerComponent implements OnInit {
   pinnable: Pinnable;
   data: any = {};
   frameMotion$: BehaviorSubject<any>;
+
+  teacherRooms$: Observable<Pinnable[]>;
 
   constructor(
       private dataService: DataService,
@@ -82,17 +84,27 @@ export class LocationsGroupContainerComponent implements OnInit {
         this.isStaff = user.isTeacher() || user.isAdmin();
         this.user = user;
     });
-    combineLatest(this.pinnables, this.locationsService.getLocationsWithTeacher(this.user))
-        .pipe(map(([pinnables, locations]) => {
-            return pinnables.filter(pin => {
-             return locations.find(loc => {
-                 return (loc.category ? loc.category : loc.title) === pin.title;
-             });
+     combineLatest(
+        this.formService.getPinnable(),
+        this.locationsService.getLocationsWithTeacher(this.user))
+        .pipe(filter(() => this.isStaff),
+            map(([pinnables, locations]) => {
+            const filterPinnables = pinnables.filter(pin => {
+                return locations.find(loc => {
+                    return (loc.category ? loc.category : loc.title) === pin.title;
+                });
             });
-        }), map((pinnables: Pinnable[]) => {
-            // debugger;   // In process
-            return pinnables;
-        })).subscribe(res => console.log('RR ==>>', res));
+            return filterPinnables.map(fpin => {
+               if (fpin.type === 'category') {
+                   const locFromCategory = _.find(locations, ['category', fpin.title]);
+                   fpin.title = locFromCategory.title;
+                   fpin.type = 'location';
+                   fpin.location = locFromCategory;
+                   return fpin;
+               }
+               return fpin;
+            });
+        })).subscribe(rooms => this.FORM_STATE.data.teacherRooms = rooms);
   }
 
   fromWhere(location) {
@@ -140,7 +152,7 @@ export class LocationsGroupContainerComponent implements OnInit {
     };
     this.FORM_STATE.data.gradient = pinnable.gradient_color;
     this.FORM_STATE.data.icon = pinnable.icon;
-    if (pinnable.category) {
+    if (pinnable.type === 'category') {
       this.FORM_STATE.previousState = States.toWhere;
       return this.FORM_STATE.state = States.category;
     } else {

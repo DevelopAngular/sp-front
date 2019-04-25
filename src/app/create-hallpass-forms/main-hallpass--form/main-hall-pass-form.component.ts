@@ -6,7 +6,7 @@ import { Request } from '../../models/Request';
 import { User } from '../../models/User';
 import { StudentList } from '../../models/StudentList';
 import {NextStep, ScaledCard} from '../../animations';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {CreateFormService} from '../create-form.service';
 import {Invitation} from '../../models/Invitation';
 import {PassLike} from '../../models';
@@ -33,6 +33,7 @@ export interface Navigation {
     date?: any;
     selectedStudents?: User[];
     selectedGroup?: StudentList;
+    teacherRooms?: Pinnable[];
     direction?: {
       from?: Location;
       to?: Location;
