@@ -16,6 +16,9 @@
     min-height: 64px;
     box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .back-button {
   width: 28px;
@@ -40,24 +43,10 @@
 }
 
 .divider-text-students, .divider-text-message {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-    color: white;
-    font-family: 'Helvetica Neue', sans-serif;
-    font-size: 16px;
-    font-weight: bold;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: 1.08;
-    letter-spacing: 0.3px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
-
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 0.3px;
 }
 
 .student-select{

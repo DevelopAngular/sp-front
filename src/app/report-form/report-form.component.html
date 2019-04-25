@@ -11,9 +11,9 @@
       <div class="divider-text-message ds-dialog-title-white"> <img class="divider-icon" [src]="'./assets/Message (White).svg' | resolveAsset">Message </div>
     </div>
   </div>
-  <div style="position: relative; flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; background-color: white">
+  <div style="flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; background-color: white">
 
-    <div style="display: flex; flex-direction: column; flex: 1 1 auto" *ngIf="showOptions" [@NextStep]="{ value: '', params: frameMotion$ | async}">
+    <div style="display: flex; position: relative; flex-direction: column; flex: 1 1 auto" *ngIf="showOptions" [@NextStep]="{ value: '', params: frameMotion$ | async}">
       <div class="student-select">
         <div class="report-content">
 
