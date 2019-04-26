@@ -13,15 +13,19 @@ import {DomSanitizer} from '@angular/platform-browser';
   styleUrls: ['./student-search.component.scss']
 })
 
-export class StudentSearchComponent implements AfterViewInit {
+export class StudentSearchComponent implements OnInit {
 
   @Input() disabled: boolean = false;
   @Input() focused: boolean = false;
   @Input() showOptions: boolean = true;
   @Input() selectedStudents: User[] = [];
   @Input() width: string = '280px';
+  @Input() list: boolean = true;
   @Input() listMaxHeight: string = '220px';
 
+  @Input() chipsMode: boolean = false;
+  @Input() inputField: boolean = true;
+  @Input() cancelButton: boolean = false;
   @Input() rollUpAfterSelection: boolean = true;
   @Input() role: string = '_profile_student';
   @Input() placeholder: string = 'Search students';
@@ -86,7 +90,10 @@ export class StudentSearchComponent implements AfterViewInit {
     }
   }
 
-  ngAfterViewInit() {
+  ngOnInit() {
+    if (this.chipsMode) {
+      this.inputField = false;
+    }
     // this.input.nativeElement.focus();
     // if (this.selectedStudents.length) {
     //   setTimeout(() => {
@@ -139,6 +146,9 @@ export class StudentSearchComponent implements AfterViewInit {
 
   addStudent(student: User) {
     console.log(student);
+    if (this.chipsMode) {
+      this.inputField = false;
+    }
     this.input.focus();
     this.students = of([]).toPromise();
     this.inputValue$.next('');
@@ -168,5 +178,12 @@ export class StudentSearchComponent implements AfterViewInit {
     }
 
     return fixedStudents;
+  }
+  cancel(studentInput) {
+    studentInput.input.nativeElement.value = '';
+    studentInput.input.nativeElement.focus();
+    this.students = null;
+    this.inputField = false;
+    this.onUpdate.emit(this.selectedStudents);
   }
 }

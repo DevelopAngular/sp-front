@@ -33,7 +33,7 @@
                     (mouseleave)="_item.hovered = false"
                     (mousedown)="_item.pressed = true"
                     (mouseup)="_item.pressed = false"
-                    [style.background-color]="getBackground(_item)"
+                    [style.background-color]="getBackground(_item, group)"
                     [ngClass]="{'group_selected' : ( selectedGroup && (selectedGroup.id === group.id))}"
                   >
                     <div class="group-name">

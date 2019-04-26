@@ -24,7 +24,11 @@ export class RestrictedMessageComponent implements OnInit {
   @Output() resultMessage: EventEmitter<any> = new EventEmitter<any>();
   @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
 
-  @ViewChild('messageBox') messageBox: ElementRef;
+  messageBox;
+  @ViewChild('messageBox') set content(content: ElementRef) {
+    this.messageBox = content;
+    // this.messageBox.nativeElement.focus();
+  }
 
   fromLocation: Location;
 
@@ -55,9 +59,9 @@ export class RestrictedMessageComponent implements OnInit {
     }
 
     this.frameMotion$ = this.formService.getFrameMotionDirection();
-    setTimeout(() => {
-        this.messageBox.nativeElement.focus();
-    }, 50);
+    // setTimeout(() => {
+    //     this.messageBox.nativeElement.focus();
+    // }, 50);
     this.message = new FormControl(this.formState.data.message);
     this.fromLocation = this.formState.data.direction.from;
     this.toLocation = this.formState.data.direction.to;

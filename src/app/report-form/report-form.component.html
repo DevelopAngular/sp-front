@@ -11,9 +11,9 @@
       <div class="divider-text-message ds-dialog-title-white"> <img class="divider-icon" [src]="'./assets/Message (White).svg' | resolveAsset">Message </div>
     </div>
   </div>
-  <div style="flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; background-color: white">
+  <div style="position: relative; flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; background-color: white">
 
-    <div style="display: flex; position: relative; flex-direction: column; flex: 1 1 auto" *ngIf="showOptions" [@NextStep]="{ value: '', params: frameMotion$ | async}">
+    <div style="display: flex; flex-direction: column; flex: 1 1 auto" *ngIf="showOptions" [@NextStep]="{ value: '', params: frameMotion$ | async}">
       <div class="student-select">
         <div class="report-content">
 
@@ -25,32 +25,6 @@
           </app-student-search>
 
         </div>
-        <!--<div class="student-list" *ngIf="selectedStudents.length">-->
-          <!--<div class="ds-details-text student-list_header">-->
-            <!--<span>Selected</span>-->
-          <!--</div>-->
-          <!--<div class="student-list_scrollable">-->
-
-            <!--<div *ngFor="let student of selectedStudents; let i = index" #cell class="student-list_item"-->
-                 <!--(mouseenter)="cell.hovered = true;"-->
-                 <!--(mouseleave)="cell.hovered = false;"-->
-                 <!--(mousedown)="cell.pressed = true"-->
-                 <!--(mouseup)="cell.pressed = false"-->
-                 <!--[style.background-color]="getBackground(cell)"-->
-                 <!--[style.color]="textColor(cell)"-->
-
-            <!--&gt;-->
-              <!--<span>-->
-                <!--{{student.display_name}}-->
-              <!--</span>-->
-              <!--<img-->
-                <!--(mouseover)="fieldIcon.setAttribute('src', './assets/Cancel (Navy).svg')"-->
-                <!--(mouseleave)="fieldIcon.setAttribute('src', './assets/Mark (Navy).svg')"-->
-                <!--(click)="selectedStudents.splice(i, 1)"-->
-                <!--[src]="'./assets/Mark (Navy).svg'" width="15" #fieldIcon alt="Check.svg">-->
-            <!--</div>-->
-          <!--</div>-->
-        <!--</div>-->
         <div class="student-select_button-next" *ngIf="showOptions && selectedStudents && selectedStudents.length > 0">
           <app-gradient-button
             [gradient]="'#DA2370,#FB434A'"

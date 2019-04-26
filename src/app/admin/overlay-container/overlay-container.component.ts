@@ -1123,7 +1123,7 @@ export class OverlayContainerComponent implements OnInit {
   }
   selectTeacherEvent(teachers) {
     console.log(teachers);
-    this.selectedTeachers = this.selectedTeachers.concat(teachers);
+    this.selectedTeachers = teachers;
     this.isDirtysettings = true;
     this.showProfileSearch = false;
     this.changeState();

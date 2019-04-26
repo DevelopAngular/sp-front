@@ -19,6 +19,7 @@ import {DomSanitizer} from '@angular/platform-browser';
   selector: 'app-round-input',
   templateUrl: './round-input.component.html',
   styleUrls: ['./round-input.component.scss'],
+  exportAs: 'roundInputRef'
 })
 export class RoundInputComponent implements OnInit {
 

@@ -12,6 +12,8 @@
   display: flex;
   flex-direction: row;
   padding: 8px 5px;
+  white-space: nowrap;
+
 }
 
 .divider{
@@ -35,6 +37,7 @@
 }
 
 .room{
+  white-space: nowrap;
   margin-left: auto;
   width: 55px;
   display: flex;
