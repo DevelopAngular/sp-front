@@ -7,6 +7,8 @@ import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-ha
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {BehaviorSubject} from 'rxjs';
 import {filter} from 'rxjs/operators';
+import {HttpService} from '../services/http-service';
+import {School} from '../models/School';
 
 @Component({
   selector: 'app-travel-view',
@@ -25,14 +27,25 @@ export class TravelViewComponent implements OnInit {
   isSeen$: BehaviorSubject<boolean>;
   type: string;
   locationChangeOpen: boolean = false;
+  showRoomNumber: boolean;
 
-  constructor(public dialog: MatDialog, private createFormService: CreateFormService) { }
+  constructor(
+      public dialog: MatDialog,
+      private createFormService: CreateFormService,
+      private http: HttpService
+  ) { }
 
   ngOnInit() {
     this.type = (this.pass instanceof HallPass) ? 'hallpass' :
     (this.pass instanceof Invitation) ? 'invitation' :
       'request';
+    if (this.type === 'invitation') {
+      console.log('PASSSSS', this.pass);
+    }
     this.isSeen$ = this.createFormService.isSeen$;
+    this.http.currentSchool$.subscribe(res => {
+      this.showRoomNumber = res.display_card_room;
+    });
   }
 
   changeLocation(){

@@ -10,7 +10,10 @@
               [fontSize]="'14px'"
               [cursor]="'pointer'"
               (buttonClick)="save()"
-      >Save</app-gradient-button>
+      >
+        <span *ngIf="!showSpinner">Save</span>
+        <mat-spinner *ngIf="showSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
+      </app-gradient-button>
     </div>
   </div>
   <div class="settings-content">
