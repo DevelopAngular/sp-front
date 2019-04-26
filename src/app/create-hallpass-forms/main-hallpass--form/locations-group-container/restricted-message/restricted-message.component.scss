@@ -82,6 +82,8 @@
       .message-box{
         border: 1px solid transparent;
         padding: 10px;
+        //box-sizing: border-box;
+        //height: 90px;
         height: inherit;
         margin-bottom: 15px;
         border-radius: 10px;
@@ -94,7 +96,9 @@
         letter-spacing: 0.3px;
         background: transparent;
         &:focus {
+          border: 1px solid transparent;
           transition: border .3s ease;
+          outline: none;
         }
       }
 

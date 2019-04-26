@@ -486,7 +486,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   showProfileCard(evt, bulk: boolean = false, gSuite: boolean = false) {
     console.log(evt);
     if (evt.id === +this.user.id) {
-      debugger;
       this.profilePermissions['admin_accounts'].disabled = true;
     } else {
       this.profilePermissions['admin_accounts'].disabled = false;

@@ -1,4 +1,14 @@
-<div class="student-search-wrapper" [style.width]="width">
+<div class="student-search-wrapper" *ngIf="chipsMode && !inputField">
+  <div>
+    <app-sp-chips
+      [selectedProfiles]="selectedStudents"
+      (add)="inputField = true"
+      (updateSelectedEvent)="selectedStudents = $event; onUpdate.emit(selectedStudents)"
+    ></app-sp-chips>
+  </div>
+</div>
+
+<div class="student-search-wrapper" [style.width]="width" *ngIf="inputField">
 
   <div class="input">
 
@@ -11,13 +21,13 @@
         [placeholder]="placeholder"
         [disabled]="disabled"
         [fieldIconPosition]="'left'"
-        [closeIcon]="true"
+        [closeIcon]="!cancelButton"
         [focused]="focused"
         [selectReset$]="inputValue$"
         [boxShadow]="false"
         (ontextupdate)="onSearch($event)"
         (blurEvent)="onBlur($event)"
-        #studentInput
+        #studentInput="roundInputRef"
       >
       </app-round-input>
     </div>
@@ -25,7 +35,7 @@
       <div *ngIf="students" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
       <div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px;">
         <div class="student-list_scrollable">
-          <div #cell *ngFor="let student of students | async; let i = index" class="student-list_item"
+          <div #cell *ngFor="let student of students | async" class="student-list_item"
                (mouseenter)="cell.hovered = true;"
                (mouseleave)="cell.hovered = false;"
                (click)="inputValue$.next(''); addStudent(student)"
@@ -35,26 +45,8 @@
               <span>
                 {{student.display_name}} ({{student.primary_email.slice(0, student.primary_email.indexOf('@'))}})
               </span>
-            <!--<img-->
-              <!--(mousedown)="cell.pressed = true"-->
-              <!--(mouseup)="cell.pressed = false"-->
-              <!--(click)="selectedStudents.splice(i, 1)"-->
-              <!--[src]="cell.hovered ? './assets/Mark (Navy).svg' : './assets/Mark (Navy).svg'" width="15" #fieldIcon alt="Check.svg">-->
           </div>
         </div>
-        <!--<div #cell *ngFor="let student of students | async;"-->
-             <!--(mouseenter)="cell.hovered = true;"-->
-             <!--(mouseleave)="cell.hovered = false;"-->
-             <!--(mousedown)="cell.pressed = true"-->
-             <!--(mouseup)="cell.pressed = false"-->
-             <!--[style.background-color]="getBackground(cell)"-->
-             <!--(click)="inputValue$.next(''); addStudent(student)"  class="option-wrapper"-->
-             <!--&gt;-->
-          <!--<div class="option-content" [style.color]="textColor(cell)">-->
-            <!--{{ student.display_name }}-->
-          <!--</div>-->
-          <!--<div class="option-divider"></div>-->
-        <!--</div>-->
 
       </div>
       <ng-template #noStudentsDummy>
@@ -70,7 +62,24 @@
 
   </div>
 
-  <div class="student-list" *ngIf="selectedStudents.length">
+  <div class="cancel-button" *ngIf="cancelButton">
+    <app-gradient-button class="ds-py-5"
+      [size]="'editable'"
+      [width]="'85px'"
+      [fontWeight]="'normal'"
+      [minHeight]="'30px'"
+      [textColor]="'#7F879D'"
+      [gradient]="'#F7F7F7, #F7F7F7'"
+      [hoverColor]="'#F7F7F7'"
+      (buttonClick)="cancel(studentInput)"
+      [leftIcon]="'./assets/Cancel (Blue-Gray).svg'"
+      [leftImageWidth]="'12px'"
+      [leftImageHeight]="'12px'"
+      [fontSize]="'14px'"
+    >Cancel</app-gradient-button>
+  </div>
+
+  <div class="student-list" *ngIf="!chipsMode && list && selectedStudents.length">
     <div class="ds-dialog-heading student-list_header">
       <span>Selected</span>
     </div>
@@ -88,7 +97,7 @@
         <img
           (mousedown)="cell.pressed = true"
           (mouseup)="cell.pressed = false"
-          (click)="selectedStudents.splice(i, 1)"
+          (click)="selectedStudents.splice(i, 1); this.onUpdate.emit(this.selectedStudents)"
           [src]="cell.hovered ? './assets/Cancel (Navy).svg' : './assets/Mark (Navy).svg'" width="15"alt="Check.svg">
       </div>
     </div>

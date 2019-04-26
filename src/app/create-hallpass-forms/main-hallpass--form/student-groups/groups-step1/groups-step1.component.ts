@@ -52,8 +52,8 @@ export class GroupsStep1Component implements OnInit {
     }
   }
 
-  getBackground(item) {
-    if (item.hovered) {
+  getBackground(item, group) {
+    if (item.hovered ||  (this.selectedGroup && (this.selectedGroup.id === group.id))) {
       if (item.pressed) {
         return '#E2E7F4';
       } else {
