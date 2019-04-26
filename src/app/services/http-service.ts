@@ -109,7 +109,7 @@ export class HttpService {
     }),
   );
 
-  private currentSchoolSubject = new BehaviorSubject<School>(null);
+  public currentSchoolSubject = new BehaviorSubject<School>(null);
   public currentSchool$: Observable<School> = this.currentSchoolSubject.asObservable();
 
   public globalReload$ = this.currentSchool$.pipe(
