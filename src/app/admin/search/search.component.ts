@@ -20,6 +20,7 @@ import {DataService} from '../../services/data-service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {FormGroup} from '@angular/forms';
 import {SearchFilterDialogComponent} from "./search-filter-dialog/search-filter-dialog.component";
+import {DateTimeFilterComponent} from "./date-time-filter/date-time-filter.component";
 
 
 @Component({
@@ -233,6 +234,15 @@ export class SearchComponent implements OnInit {
       if (data.action === 'students') {
         this.selectedStudents = data.students;
       }
+    });
+  }
+
+  openTimeFilter(event) {
+    const target = new ElementRef(event.currentTarget);
+    const timeRef = this.dialog.open(DateTimeFilterComponent, {
+        panelClass: 'calendar-dialog-container',
+        backdropClass: 'invis-backdrop',
+        data: { target }
     });
   }
 

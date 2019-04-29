@@ -1,0 +1,41 @@
+.calendar-wrapper{
+  position: relative;
+  background-color: white;
+  border-radius: 15px;
+  .top-arrow-container {
+    position: absolute;
+    top: -50px;
+    right: 0;
+    left: 0;
+    margin: 0 auto;
+    width: 100px;
+    height: 50px;
+    overflow: hidden;
+    .top-arrow {
+      position: absolute;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+      top: 35px;
+      width: 30px;
+      height: 30px;
+      background-color: #fff;
+      transform: rotate(45deg);
+      box-shadow: 0 3px 20px 0px rgba(0, 0, 0, 0.15);
+    }
+  }
+  .date-container {
+    overflow: hidden;
+    border-radius: 15px;
+    box-shadow: 0 3px 20px 0px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.pointer{
+  width: 100px;
+  height: 100px;
+  transform: rotate(45deg);
+  position: relative;
+  top: 21px;
+  background-color: rgba(255, 255, 255, 1);
+}

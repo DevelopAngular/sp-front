@@ -49,7 +49,7 @@
                   Date & Time
               </div>
               <div class="chip" #dchip (mouseenter)="dchip.hovered = true;" (mouseleave)="dchip.hovered = false">
-                <div class="overlay">
+                <div class="overlay" (click)="openTimeFilter($event)">
                   <div class="add-icon" *ngIf="dchip.hovered && !selectedDate">
                     <img [src]="'./assets/Plus (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
                   </div>

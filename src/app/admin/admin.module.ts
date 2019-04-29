@@ -32,7 +32,8 @@ import { ColumnsConfigDialogComponent } from './columns-config-dialog/columns-co
 import { SchoolSettingDialogComponent } from './school-setting-dialog/school-setting-dialog.component';
 import { ProfileCardDialogComponent } from './profile-card-dialog/profile-card-dialog.component';
 import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.component';
-import { SearchFilterDialogComponent } from './search/search-filter-dialog/search-filter-dialog.component';
+import { SearchFilterDialogComponent } from './search/search-filter-dialog/search-filter-dialog.component';;
+import { DateTimeFilterComponent } from './search/date-time-filter/date-time-filter.component'
 
 
 
@@ -70,8 +71,8 @@ import { SearchFilterDialogComponent } from './search/search-filter-dialog/searc
     ProfileCardDialogComponent,
     SchoolSettingDialogComponent,
     AddUserDialogComponent,
-    SearchFilterDialogComponent
-
+    SearchFilterDialogComponent,
+    DateTimeFilterComponent
   ],
   entryComponents: [
     AccountsDialogComponent,
@@ -81,7 +82,8 @@ import { SearchFilterDialogComponent } from './search/search-filter-dialog/searc
     SchoolSettingDialogComponent,
     AddUserDialogComponent,
     SettingsComponent,
-    SearchFilterDialogComponent
+    SearchFilterDialogComponent,
+    DateTimeFilterComponent
 
   ],
   providers: [
