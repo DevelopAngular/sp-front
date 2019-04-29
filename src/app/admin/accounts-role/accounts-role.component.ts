@@ -144,6 +144,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     )
     .subscribe((qp) => {
       // console.log(qp);
+      debugger;
+
       const {profileName, count} = qp;
 
       this.count = count ? count : this.count;
@@ -485,10 +487,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   showProfileCard(evt, bulk: boolean = false, gSuite: boolean = false) {
     console.log(evt);
-    if (evt.id === +this.user.id) {
-      this.profilePermissions['admin_accounts'].disabled = true;
-    } else {
-      this.profilePermissions['admin_accounts'].disabled = false;
+    if (this.role === '_profile_admin') {
+      if ((evt.id === +this.user.id)) {
+        this.profilePermissions['admin_accounts'].disabled = true;
+      } else {
+        this.profilePermissions['admin_accounts'].disabled = false;
+      }
     }
 
     const data = {

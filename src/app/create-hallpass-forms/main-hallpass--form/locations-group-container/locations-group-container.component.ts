@@ -84,27 +84,6 @@ export class LocationsGroupContainerComponent implements OnInit {
         this.isStaff = user.isTeacher() || user.isAdmin();
         this.user = user;
     });
-     combineLatest(
-        this.formService.getPinnable(),
-        this.locationsService.getLocationsWithTeacher(this.user))
-        .pipe(filter(() => this.isStaff),
-            map(([pinnables, locations]) => {
-            const filterPinnables = pinnables.filter(pin => {
-                return locations.find(loc => {
-                    return (loc.category ? loc.category : loc.title) === pin.title;
-                });
-            });
-            return filterPinnables.map(fpin => {
-               if (fpin.type === 'category') {
-                   const locFromCategory = _.find(locations, ['category', fpin.title]);
-                   fpin.title = locFromCategory.title;
-                   fpin.type = 'location';
-                   fpin.location = locFromCategory;
-                   return fpin;
-               }
-               return fpin;
-            });
-        })).subscribe(rooms => this.FORM_STATE.data.teacherRooms = rooms);
   }
 
   fromWhere(location) {

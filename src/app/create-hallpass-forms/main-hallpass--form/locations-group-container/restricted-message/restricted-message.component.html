@@ -17,15 +17,16 @@
      <textarea
              #messageBox
              class="message-box"
-             [rows]="4"
-             [cols]="30"
              pInputTextarea
              [maxlength]="160"
              autoResize="autoResize"
              [placeholder]="'Attach a message'"
              [formControl]="message"
              [style.width]="'350px'"
+             [style.height]="'88px'"
+             [style.min-height]="'88px'"
              [style.max-height]="date ? '190px' : '207px'"
+             autofocus
      >
     </textarea>
       <div class="buttons" *ngIf="formState.forInput || formState.missedRequest">

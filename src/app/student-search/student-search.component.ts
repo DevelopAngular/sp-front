@@ -23,6 +23,8 @@ export class StudentSearchComponent implements OnInit {
   @Input() list: boolean = true;
   @Input() listMaxHeight: string = '220px';
 
+
+  @Input() emitSingleProfile: boolean = false;
   @Input() chipsMode: boolean = false;
   @Input() inputField: boolean = true;
   @Input() cancelButton: boolean = false;
@@ -48,6 +50,14 @@ export class StudentSearchComponent implements OnInit {
     private sanitizer: DomSanitizer
   ) {
 
+  }
+
+  private getEmitedValue() {
+    if (this.emitSingleProfile)  {
+      return this.selectedStudents[0];
+    } else {
+      return this.selectedStudents;
+    }
   }
 
   // bgColor(i){
@@ -140,7 +150,7 @@ export class StudentSearchComponent implements OnInit {
     if (index > -1) {
       this.selectedStudents.splice(index, 1);
     }
-    this.onUpdate.emit(this.selectedStudents);
+    this.onUpdate.emit(this.getEmitedValue());
     this.onSearch('');
   }
 
@@ -155,7 +165,7 @@ export class StudentSearchComponent implements OnInit {
     this.onSearch('');
     if (!this.selectedStudents.includes(student)) {
       this.selectedStudents.push(student);
-      this.onUpdate.emit(this.selectedStudents);
+      this.onUpdate.emit(this.getEmitedValue());
     }
   }
 
@@ -184,6 +194,6 @@ export class StudentSearchComponent implements OnInit {
     studentInput.input.nativeElement.focus();
     this.students = null;
     this.inputField = false;
-    this.onUpdate.emit(this.selectedStudents);
+    this.onUpdate.emit(this.getEmitedValue());
   }
 }

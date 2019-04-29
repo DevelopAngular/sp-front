@@ -6,10 +6,14 @@ import { Request } from '../../models/Request';
 import { User } from '../../models/User';
 import { StudentList } from '../../models/StudentList';
 import {NextStep, ScaledCard} from '../../animations';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable} from "rxjs";
 import {CreateFormService} from '../create-form.service';
 import {Invitation} from '../../models/Invitation';
 import {PassLike} from '../../models';
+import {filter, map} from "rxjs/operators";
+import * as _ from "lodash";
+import {DataService} from "../../services/data-service";
+import {LocationsService} from "../../services/locations.service";
 
 export enum Role { Teacher = 1, Student = 2 }
 
@@ -66,15 +70,20 @@ export class MainHallPassFormComponent implements OnInit {
   public formSize = {
     height: '0px',
     width: '0px'
-  }
+  };
   frameMotion$: BehaviorSubject<any>;
+
+  user;
+  isStaff;
 
   constructor(
     public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     public dialogRef: MatDialogRef<MainHallPassFormComponent>,
     private formService: CreateFormService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private dataService: DataService,
+    private locationsService: LocationsService
   ) {}
 
   ngOnInit() {
@@ -146,6 +155,35 @@ export class MainHallPassFormComponent implements OnInit {
         break;
     }
     this.setFormSize();
+
+      this.dataService.currentUser.subscribe((user: User) => {
+          this.isStaff = user.isTeacher() || user.isAdmin();
+          this.user = user;
+      });
+
+      combineLatest(
+          this.formService.getPinnable(),
+          this.locationsService.getLocationsWithTeacher(this.user))
+          .pipe(filter(() => this.isStaff),
+              map(([pinnables, locations]) => {
+                  const filterPinnables = pinnables.filter(pin => {
+                      return locations.find(loc => {
+                          return (loc.category ? loc.category : loc.title) === pin.title;
+                      });
+                  });
+                  return filterPinnables.map(fpin => {
+                      if (fpin.type === 'category') {
+                          const locFromCategory = _.find(locations, ['category', fpin.title]);
+                          fpin.title = locFromCategory.title;
+                          fpin.type = 'location';
+                          fpin.location = locFromCategory;
+                          return fpin;
+                      }
+                      return fpin;
+                  });
+              })).subscribe(rooms => {
+          this.FORM_STATE.data.teacherRooms = rooms;
+      });
   }
 
   onNextStep(evt) {
