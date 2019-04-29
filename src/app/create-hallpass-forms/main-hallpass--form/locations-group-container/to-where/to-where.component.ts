@@ -24,7 +24,7 @@ export class ToWhereComponent implements OnInit {
 
   public states;
 
-  public teacherRooms: Pinnable[];
+  public teacherRooms: Pinnable[] = [];
 
   constructor(
     private formService: CreateFormService,
