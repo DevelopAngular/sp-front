@@ -103,7 +103,7 @@
     </div>
 
     <div class="teacher-view" *ngIf="forStaff">
-      <div class="pager" style="height: 65%">
+      <div class="pager" style="height: 210px">
         <app-pager *ngIf="!forInput" [arrowPosition]="'-93px'">
           <div class="page-1">
             <app-duration-picker *ngIf="forInput; else noInput;" (onChange)="selectedDuration=$event"  [maxDuration]="(request.destination.max_allowed_time?request.destination.max_allowed_time:15)"></app-duration-picker>

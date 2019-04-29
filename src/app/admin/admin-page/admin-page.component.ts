@@ -56,7 +56,7 @@ export class AdminPageComponent implements OnInit {
         tap((value) => console.log(value)),
         filter((value) => value.length < 2),
         switchMap(() => this.userService.getUserWithTimeout()),
-        filter(user => !!user)
+        filter(user => !!user),
       )
       .subscribe(user => {
         console.log('ROUTER EVTS ===>', user);
@@ -64,7 +64,7 @@ export class AdminPageComponent implements OnInit {
         const availableAccessTo = user.roles.filter((_role) => _role.match('admin_'));
         let tab;
         if (availableAccessTo.includes('admin_dashboard')) {
-          tab = 'dasboard';
+          tab = 'dashboard';
         } else if (availableAccessTo.includes('admin_hallmonitor')) {
           tab = 'hallmonitor';
         } else if (availableAccessTo.includes('admin_search')) {
@@ -74,7 +74,9 @@ export class AdminPageComponent implements OnInit {
         } else if (availableAccessTo.includes('admin_accounts')) {
           tab = 'accounts';
         }
+        console.log(tab, availableAccessTo);
         this.router.navigate(['/admin', tab]);
+
         window.appLoaded();
     });
 

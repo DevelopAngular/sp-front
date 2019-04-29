@@ -19,6 +19,7 @@ import {Location} from '../../models/Location';
 import {DataTableComponent} from '../data-table/data-table.component';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 
+declare const window;
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 
@@ -122,7 +123,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       switchMap((params) => {
         this.role = params.role;
 
-        if (this.role === '_all') {
+        // if (this.role === '_all') {
           return this.adminService.getAdminAccounts()
             .pipe(tap((u_list: any) => {
               console.log('This Accounts ==>>>', u_list);
@@ -131,12 +132,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               } else {
                 u_list.total = Object.values(u_list).reduce((a: number, b: number) => a + b);
               }
-              // console.log(u_list);
+              console.log(u_list);
               this.accounts$.next(u_list);
             }));
-        } else {
-          return of(null);
-        }
+        // } else {
+        //   return of(null);
+        // }
       }),
       switchMap(() => {
         return this.route.queryParams.pipe(takeUntil(this.destroy$));
@@ -144,20 +145,23 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     )
     .subscribe((qp) => {
       // console.log(qp);
-      debugger;
+      // debugger;
 
       const {profileName, count} = qp;
 
       this.count = count ? count : this.count;
 
+
+
       this.initialSearchString = this.initialSearchString ? this.initialSearchString : profileName;
         // console.log(this.initialSearchString);
-        this.router.navigate(['admin/accounts', this.role]);
+      this.router.navigate(['admin/accounts', this.role]);
       this.tabVisibility = true;
       this.getUserList(this.initialSearchString || '');
       // this._zone.run(() => {
         const headers = this.storage.getItem(`${this.role}_columns`);
         if ( headers ) {
+
           this.dataTableHeaders = JSON.parse(headers);
         } else {
           this.dataTableHeaders = {
@@ -526,8 +530,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((userListReloadTrigger: any) => {
       console.log(userListReloadTrigger);
       if (userListReloadTrigger) {
+        window.document.location.reload();
         this.selectedUsers = [];
         this.getUserList();
+
       }
     });
   }

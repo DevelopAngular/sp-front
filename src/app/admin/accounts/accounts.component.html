@@ -39,7 +39,6 @@
 
         <div class="card_manage-users"
              [routerLink]="['/admin/accounts', '_all']"
-             [queryParams]="{count: (accounts$ | async).total_count}"
              [ngClass]="{'card_manage-users__dark': darkTheme.isEnabled$.value}">
 
           <div style="text-align: center;" class="ds-px-10">
@@ -73,7 +72,6 @@
 
             <div class="card_manage-users"
                [routerLink]="['/admin/accounts', '_profile_admin']"
-               [queryParams]="{count: (accounts$ | async).admin_count}"
                [ngClass]="{'card_manage-users__dark': darkTheme.isEnabled$.value}"
             >
               <span>Manage Users</span><img draggable="false" width="20" [src]="darkTheme.getIcon({
@@ -101,7 +99,6 @@
 
             <div class="card_manage-users"
                  [routerLink]="['/admin/accounts', '_profile_student']"
-                 [queryParams]="{count: (accounts$ | async).student_count}"
                  [ngClass]="{'card_manage-users__dark': darkTheme.isEnabled$.value}"
             >
               <span>Manage Users</span> <img draggable="false" width="20" [src]="darkTheme.getIcon({
@@ -131,7 +128,6 @@
 
             <div class="card_manage-users"
                [routerLink]="['/admin/accounts', '_profile_teacher']"
-               [queryParams]="{count: (accounts$ | async).teacher_count}"
                [ngClass]="{'card_manage-users__dark': darkTheme.isEnabled$.value}"
             >
               <span>Manage Users</span> <img draggable="false" width="20" [src]="darkTheme.getIcon({
@@ -159,7 +155,6 @@
 
             <div class="card_manage-users"
                  [routerLink]="['/admin/accounts', 'staff_secretary']"
-                 [queryParams]="{count: (accounts$ | async).secretary_count || 0}"
                  [ngClass]="{'card_manage-users__dark': darkTheme.isEnabled$.value}"
             >
               <span>Manage Users</span> <img draggable="false" width="20" [src]="darkTheme.getIcon({

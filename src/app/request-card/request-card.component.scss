@@ -7,7 +7,8 @@
     flex-direction: column;
     position: relative;
 
-    .pass-card-header {
+
+  .pass-card-header {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -18,6 +19,7 @@
             align-items: center;
             padding: 20px;
             width: 291px;
+
 
             .header-info {
                 display: flex;
@@ -79,6 +81,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        flex: 1 1 auto;
 
         .student-view {
             display: flex;
@@ -162,7 +165,8 @@
         }
 
         .teacher-view {
-            height: 324px;
+            //height: 324px;
+            flex: 1 1 auto;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -397,5 +401,4 @@
     border-radius: 0 0 10px 10px;
     color: white;
     font-size: 13px;
-    font-family: 'Helvetica Neue', sans-serif;
 }

@@ -45,7 +45,7 @@
               <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Administrators</span>
             </div>
             <p class="card_title mr-20">
-              <span class="bold">{{count}} user{{count > 1 ? 's' : ''}} </span><br>
+              <span class="bold">{{(accounts$ | async).admin_count}} user{{(accounts$ | async).admin_count > 1 ? 's' : ''}} </span><br>
               An administrator has a high-level look at the school, configures passes, and views/generates reports.
             </p>
           </div>
@@ -59,7 +59,7 @@
               <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Teachers</span>
             </div>
             <p class="card_title ds-mr-20">
-              <span class="bold">{{count}} user{{count > 1 ? 's' : ''}} </span><br>
+              <span class="bold">{{(accounts$ | async).teacher_count}} user{{(accounts$ | async).teacher_count > 1 ? 's' : ''}} </span><br>
               A teacher has a room or multiple rooms where students can create passes to.
               A teacher can manage passes in his/her room and create passes.
             </p>
@@ -74,7 +74,7 @@
               <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Students</span>
             </div>
             <p class="card_title ds-mr-20">
-              <span class="bold">{{count}} user{{count > 1 ? 's' : ''}} </span><br>
+              <span class="bold">{{(accounts$ | async).student_count}} user{{(accounts$ | async).student_count > 1 ? 's' : ''}} </span><br>
               A student can create passes, schedule passes for the future,
               and send pass requests to teachers.
             </p>
@@ -89,7 +89,7 @@
               <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Secretaries & Substitutes</span>
             </div>
             <p class="card_title ds-mr-20">
-              <span class="bold">{{count}} user{{count > 1 ? 's' : ''}} </span><br>
+              <span class="bold">{{0}} user{{0 > 1 || true ? 's' : ''}} </span><br>
               A secretary or substitute teacher acts as a certain teacher when they sign-in.
               They can manage passes in his/her room and create passes as that teacher.
             </p>
