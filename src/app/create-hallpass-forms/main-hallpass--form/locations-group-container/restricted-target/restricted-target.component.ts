@@ -107,12 +107,12 @@ export class RestrictedTargetComponent implements OnInit {
   }
 
   updateTarget(target) {
-
+    console.log(target);
     this.formService.setFrameMotionDirection('forward');
     this.formState.previousState = States.restrictedTarget;
 
     setTimeout(() => {
-      this.requestTarget.emit(target[0]);
+      this.requestTarget.emit(target);
     }, 100);
 
   }
