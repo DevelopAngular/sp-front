@@ -1,0 +1,22 @@
+<div class="filter-wrapper">
+  <div class="filter-header">
+    <img class="back-button" (click)="dialogRef.close()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" alt="back">
+    <div class="ds-dialog-title filter-title">
+      <img style="width: 21px; margin-right: 12px" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset" alt="icon">
+      Filter {{ state }}
+    </div>
+  </div>
+  <div class="filter-content">
+    <div class="student-filter-content" *ngIf="state === 'Students'">
+      <app-student-search [selectedStudents]="selectedStudents" (onUpdate)="selectedStudents = $event"></app-student-search>
+      <div class="add-button" *ngIf="selectedStudents.length">
+        <app-gradient-button
+           [cursor]="'pointer'"
+           (buttonClick)="addStudents()"
+        >
+          Add ({{ selectedStudents.length }})
+        </app-gradient-button>
+      </div>
+    </div>
+  </div>
+</div>

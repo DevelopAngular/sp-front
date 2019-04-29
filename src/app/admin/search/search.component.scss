@@ -34,14 +34,23 @@
 .chip {
   background-color: #F7F7F7;
   border-radius: 8px;
-  height: 30px;
-  padding: 5px 20px 10px 10px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   margin-right: 17px;
   margin-top: 10px;
   white-space: nowrap;
+  position: relative;
+
+  .overlay {
+    display: flex;
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  &.hovered {
+    background-color: $ultra-light-gray;
+  }
 
   .add-icon {
     width: 15px;
@@ -54,7 +63,8 @@
     width: 15px;
     height: 15px;
     cursor: pointer;
-    margin-left: 10px;
+    position: absolute;
+    right: 10px;
   }
 }
 

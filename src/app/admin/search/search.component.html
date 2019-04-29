@@ -10,13 +10,17 @@
                 <img width="16" [src]="'./assets/Student (Blue-Gray).svg' | resolveAsset" alt="Icon">
                 Students
               </div>
-              <div class="chip" #schip (mouseenter)="schip.hovered = true;" (mouseleave)="schip.hovered = false;">
-                <div class="add-icon">
-                  <img *ngIf="schip.hovered && !selectedStudents.length" [src]="'./assets/Plus (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
+              <div class="chip" [ngClass]="{hovered: schip.hovered && selectedStudents.length}"  #schip (mouseenter)="schip.hovered = true;" (mouseleave)="schip.hovered = false;">
+                <div class="overlay" (click)="openFilters('Students')">
+                  <div class="add-icon" *ngIf="schip.hovered && !selectedStudents.length">
+                    <img [src]="'./assets/Plus (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
+                  </div>
+                  <div *ngIf="!selectedStudents.length">{{ schip.hovered ? 'Filter ' : 'All ' }}Students</div>
+                  <div *ngIf="selectedStudents.length">{{ selectedStudents.length + ' ' + 'student' + (selectedStudents.length > 1 ? 's' : '') }}</div>
                 </div>
-                <div>{{ schip.hovered && !selectedStudents.length ? 'Filter ' : 'All ' }}Students</div>
-                <div class="reset-icon">
-                  <img *ngIf="schip.hovered && selectedStudents.length" [src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
+
+                <div class="reset-icon" *ngIf="schip.hovered && selectedStudents.length">
+                  <img (click)="selectedStudents = []" [src]="'./assets/Cancel (Navy).svg'" width="15" #fieldIcon alt="Check.svg">
                 </div>
               </div>
             </div>
@@ -27,12 +31,14 @@
                   Rooms
               </div>
               <div class="chip" #rchip (mouseenter)="rchip.hovered = true;" (mouseleave)="rchip.hovered = false;">
-                <div class="add-icon">
-                  <img *ngIf="rchip.hovered && !selectedRooms.length" [src]="'./assets/Plus (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
+                <div class="overlay" (click)="openFilters('Rooms')">
+                  <div class="add-icon" *ngIf="rchip.hovered && !selectedRooms.length">
+                    <img [src]="'./assets/Plus (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
+                  </div>
+                  <div>{{ rchip.hovered && !selectedRooms.length ? 'Filter ' : 'All ' }}Rooms</div>
                 </div>
-                <div>{{ rchip.hovered && !selectedRooms.length ? 'Filter ' : 'All ' }}Rooms</div>
-                <div class="reset-icon">
-                  <img *ngIf="rchip.hovered && selectedRooms.length" [src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
+                <div class="reset-icon" *ngIf="rchip.hovered && selectedRooms.length">
+                  <img [src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
                 </div>
               </div>
             </div>
@@ -43,12 +49,14 @@
                   Date & Time
               </div>
               <div class="chip" #dchip (mouseenter)="dchip.hovered = true;" (mouseleave)="dchip.hovered = false">
-                <div class="add-icon">
-                  <img *ngIf="dchip.hovered && !selectedDate" [src]="'./assets/Plus (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
+                <div class="overlay">
+                  <div class="add-icon" *ngIf="dchip.hovered && !selectedDate">
+                    <img [src]="'./assets/Plus (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
+                  </div>
+                  <div>{{ dchip.hovered && !selectedDate ? 'Filter ' : 'All ' }}Time</div>
                 </div>
-                <div>{{ dchip.hovered && !selectedDate ? 'Filter ' : 'All ' }}Time</div>
-                <div class="reset-icon">
-                  <img *ngIf="dchip.hovered && selectedDate" [src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
+                <div class="reset-icon" *ngIf="dchip.hovered && selectedDate">
+                  <img [src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
                 </div>
               </div>
             </div>

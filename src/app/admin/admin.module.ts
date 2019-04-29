@@ -32,6 +32,7 @@ import { ColumnsConfigDialogComponent } from './columns-config-dialog/columns-co
 import { SchoolSettingDialogComponent } from './school-setting-dialog/school-setting-dialog.component';
 import { ProfileCardDialogComponent } from './profile-card-dialog/profile-card-dialog.component';
 import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.component';
+import { SearchFilterDialogComponent } from './search/search-filter-dialog/search-filter-dialog.component';
 
 
 
@@ -69,6 +70,7 @@ import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.compon
     ProfileCardDialogComponent,
     SchoolSettingDialogComponent,
     AddUserDialogComponent,
+    SearchFilterDialogComponent
 
   ],
   entryComponents: [
@@ -79,6 +81,7 @@ import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.compon
     SchoolSettingDialogComponent,
     AddUserDialogComponent,
     SettingsComponent,
+    SearchFilterDialogComponent
 
   ],
   providers: [

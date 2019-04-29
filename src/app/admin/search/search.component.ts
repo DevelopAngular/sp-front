@@ -19,6 +19,7 @@ import {of, Subscription} from 'rxjs';
 import {DataService} from '../../services/data-service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {FormGroup} from '@angular/forms';
+import {SearchFilterDialogComponent} from "./search-filter-dialog/search-filter-dialog.component";
 
 
 @Component({
@@ -219,6 +220,20 @@ export class SearchComponent implements OnInit {
         });
 
     }
+  }
+
+  openFilters(state: string) {
+    const filterRef = this.dialog.open(SearchFilterDialogComponent, {
+        panelClass: 'form-dialog-container',
+        backdropClass: 'custom-backdrop',
+        data: { state, students: this.selectedStudents }
+    });
+
+    filterRef.afterClosed().pipe(filter(data => !!data)).subscribe(data => {
+      if (data.action === 'students') {
+        this.selectedStudents = data.students;
+      }
+    });
   }
 
   dateEmit(date) {
