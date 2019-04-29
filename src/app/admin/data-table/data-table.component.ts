@@ -73,7 +73,6 @@ export class DataTableComponent implements OnInit {
           }
       };
       if (!this.displayedColumns) {
-
         this.displayedColumns = Object.keys(this._data[0]);
       }
       this.columnsToDisplay = this.displayedColumns.slice();

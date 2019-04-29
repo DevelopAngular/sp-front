@@ -27,6 +27,8 @@
           [width]="'100%'"
           [role]="'_profile_teacher'"
           [placeholder]="'Search Teachers'"
+          [list]="false"
+          [emitSingleProfile]="true"
           (onUpdate)="updateTarget($event)"
         ></app-student-search>
       <!--</div>-->
@@ -42,6 +44,7 @@
              (mouseleave)="cell.hovered = false;"
              (mousedown)="cell.pressed = true"
              (mouseup)="cell.pressed = false"
+             (click)="updateTarget(teacher)"
              [style.background-color]="getBackground(cell)"
              [style.color]="textColor(cell)"
         >
