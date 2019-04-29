@@ -52,6 +52,7 @@ import {CalendarPickerComponent} from '../calendar-components/calendar-picker/ca
 import {TimePickerComponent} from '../calendar-components/time-picker/time-picker.component';
 import {AdminCalendarToggleComponent} from '../calendar-components/admin-calendar-toggle/admin-calendar-toggle.component';
 import {ToggleOptionsComponent} from '../calendar-components/admin-calendar-toggle/toggle-options/toggle-options.component';
+import {SpChipsComponent} from '../sp-chips/sp-chips.component';
 
 
 
@@ -117,7 +118,9 @@ import {ToggleOptionsComponent} from '../calendar-components/admin-calendar-togg
       CalendarPickerComponent,
       TimePickerComponent,
       AdminCalendarToggleComponent,
-      ToggleOptionsComponent
+      ToggleOptionsComponent,
+      SpChipsComponent
+
   ],
     entryComponents: [
       PassCardComponent,
@@ -167,7 +170,9 @@ import {ToggleOptionsComponent} from '../calendar-components/admin-calendar-togg
     CalendarPickerComponent,
     TimePickerComponent,
     AdminCalendarToggleComponent,
-    ToggleOptionsComponent
+    ToggleOptionsComponent,
+    SpChipsComponent
+
   ],
 })
 export class SharedModule {

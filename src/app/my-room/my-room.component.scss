@@ -1,3 +1,6 @@
+:host {
+  flex: 1 1 auto;
+}
 .my-room-wrapper{
     margin: 40px auto 0;
     display: flex;
@@ -24,8 +27,11 @@
     display: flex;
     justify-content: center;
     color: #7f879d;
-    margin-top: 50px;
+    //margin-top: 50px;
     font-size: 16pt;
+    //height: 650px;
+    height: 100%;
+    flex: 1 1 auto;
 }
 
 .input {

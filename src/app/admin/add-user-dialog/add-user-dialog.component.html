@@ -5,7 +5,7 @@
     </div>
     <div class="ds-dialog-title-white ds-flex-center-center">
       <img [src]="'./assets/Plus (White).svg'" width="20" height="20" alt="(White).svg" class="ds-mr-10">
-      <span>Add User</span>{{data.role}}
+      <span>Add User</span>
     </div>
     <div class="save-button" *ngIf="showSaveButton()">
       <app-gradient-button
@@ -117,32 +117,32 @@
                   (onUpdate)="setSelectedUsers($event)"
                 ></app-student-search>
               </div>
-              <div class="user-list" *ngIf="selectedUsers.length">
-                <div class="ds-details-text user-list_header">
-                  <span>Selected</span>
-                </div>
-                <div class="user-list_scrollable">
+              <!--<div class="user-list" *ngIf="selectedUsers.length">-->
+                <!--<div class="ds-details-text user-list_header">-->
+                  <!--<span>Selected</span>-->
+                <!--</div>-->
+                <!--<div class="user-list_scrollable">-->
 
-                  <div *ngFor="let user of selectedUsers; let i = index" #cell class="user-list_item"
-                       (mouseenter)="cell.hovered = true;"
-                       (mouseleave)="cell.hovered = false;"
-                       (mousedown)="cell.pressed = true"
-                       (mouseup)="cell.pressed = false"
-                       [style.background-color]="getBackground(cell)"
-                       [style.color]="textColor(cell)"
+                  <!--<div *ngFor="let user of selectedUsers; let i = index" #cell class="user-list_item"-->
+                       <!--(mouseenter)="cell.hovered = true;"-->
+                       <!--(mouseleave)="cell.hovered = false;"-->
+                       <!--(mousedown)="cell.pressed = true"-->
+                       <!--(mouseup)="cell.pressed = false"-->
+                       <!--[style.background-color]="getBackground(cell)"-->
+                       <!--[style.color]="textColor(cell)"-->
 
-                  >
-                <span>
-                  {{user.display_name}}
-                </span>
-                    <img style="cursor: pointer;"
-                         (mouseover)="fieldIcon.setAttribute('src', './assets/Cancel (Navy).svg')"
-                         (mouseleave)="fieldIcon.setAttribute('src', './assets/Mark (Navy).svg')"
-                         (click)="selectedUsers.splice(i, 1)"
-                         [src]="'./assets/Mark (Navy).svg'" width="15" #fieldIcon alt="Check.svg">
-                  </div>
-                </div>
-              </div>
+                  <!--&gt;-->
+                <!--<span>-->
+                  <!--{{user.display_name}}-->
+                <!--</span>-->
+                    <!--<img style="cursor: pointer;"-->
+                         <!--(mouseover)="fieldIcon.setAttribute('src', './assets/Cancel (Navy).svg')"-->
+                         <!--(mouseleave)="fieldIcon.setAttribute('src', './assets/Mark (Navy).svg')"-->
+                         <!--(click)="selectedUsers.splice(i, 1)"-->
+                         <!--[src]="'./assets/Mark (Navy).svg'" width="15" #fieldIcon alt="Check.svg">-->
+                  <!--</div>-->
+                <!--</div>-->
+              <!--</div>-->
             </div>
 
         <!--<div class="profile-permissions" [style.width]="'100%'" *ngIf="data.role !== '_profile_user'">-->

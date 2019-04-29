@@ -186,47 +186,19 @@
                 </div>
               </div>
           </div>
-          <div class="assigned-teachers" *ngIf="!showProfileSearch">
-            <div *ngFor="let teacher of selectedTeachers; let i = index" #chip class="teacher"
-                 (mouseenter)="chip.hovered = true;"
-                 (mouseleave)="chip.hovered = false;"
-                 [style.background-color]="getBackground(chip)"
-                 [style.color]="textColor(chip)">
-              <span>{{teacher.display_name}}</span>
-              <div style="width: 15px; height: 15px; cursor: pointer; margin-left: 10px;">
-
-                <img *ngIf="chip.hovered"
-                     (click)="selectedTeachers.splice(i, 1)"
-                     [src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
-              </div>
-            </div>
-            <app-gradient-button class="ds-py-5"
-                                 [ngClass]="{'ds-mt-10': selectedTeachers.length}"
-                                 [size]="'editable'"
-                                 [width]="'65px'"
-                                 [minHeight]="'30px'"
-                                 [textColor]="'#7F879D'"
-                                 [gradient]="'#F7F7F7, #F7F7F7'"
-                                 [hoverColor]="'#F7F7F7'"
-                                 (buttonClick)="showProfileSearch = true"
-                                 [leftIcon]="'./assets/Plus (Blue-Gray).svg'"
-                                 [leftImageWidth]="'12px'"
-                                 [leftImageHeight]="'12px'"
-                                 [fontSize]="'14px'"
-            >Add</app-gradient-button>
-          </div>
-          <div class="search-field" style="display: flex" *ngIf="showProfileSearch">
-              <div class="ds-w-100" style="position: absolute; width: 430px; z-index: 1000; margin-top: 10px;">
-
+          <div class="search-field" style="display: flex" *ngIf="showProfileSearch || true">
+              <div class="ds-w-100">
                 <app-student-search
+                                     [selectedStudents]="selectedTeachers"
+                                     [chipsMode]="true"
                                      [focused]="true"
-                                     [width]="'100%'"
                                      [role]="'_profile_teacher'"
+                                     [rollUpAfterSelection]="true"
+                                     [cancelButton]="true"
                                      [placeholder]="'Search Teachers'"
                                      (onUpdate)="selectTeacherEvent($event)"
                 ></app-student-search>
               </div>
-
           </div>
       </div>
       <div style="display: flex; margin-top: 16px; margin-bottom: 13px; min-height: 103px;"

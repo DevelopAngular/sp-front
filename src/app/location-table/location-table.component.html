@@ -23,7 +23,6 @@
            dragula="locations"
            [(dragulaModel)]="starredChoices"
            (dragulaModelChange)="updateOrderLocation($event)"
-           [style.width]="'190px'"
            (scroll)="leftScroll($event)">
         <div class="choice" *ngFor="let choice of starredChoices">
           <app-location-cell
@@ -56,7 +55,7 @@
       <!--&gt;</app-round-input>-->
       <!--<input *ngIf="horizontalTable" class="input" #searchBox [value]="search" [placeholder]="placeholder" (keyup)="onSearch(searchBox.value)">-->
       <div class="quick-label" *ngIf="staticChoices?.length && !search">Quick Select</div>
-      <div class="choices" [style.width]="'190px'" (scroll)="onScroll($event)">
+      <div class="choices" (scroll)="onScroll($event)">
         <app-location-cell
                 *ngFor="let choice of choices"
                 class="choice"

@@ -13,13 +13,19 @@ import {DomSanitizer} from '@angular/platform-browser';
   styleUrls: ['./student-search.component.scss']
 })
 
-export class StudentSearchComponent implements AfterViewInit {
+export class StudentSearchComponent implements OnInit {
 
   @Input() disabled: boolean = false;
   @Input() focused: boolean = false;
   @Input() showOptions: boolean = true;
   @Input() selectedStudents: User[] = [];
-  @Input() width: string = '100%';
+  @Input() width: string = '280px';
+  @Input() list: boolean = true;
+  @Input() listMaxHeight: string = '220px';
+
+  @Input() chipsMode: boolean = false;
+  @Input() inputField: boolean = true;
+  @Input() cancelButton: boolean = false;
   @Input() rollUpAfterSelection: boolean = true;
   @Input() role: string = '_profile_student';
   @Input() placeholder: string = 'Search students';
@@ -44,28 +50,50 @@ export class StudentSearchComponent implements AfterViewInit {
 
   }
 
-  bgColor(i){
-      if (this.hovered && this.hoveredIndex === i) {
-        if (this.pressed) {
-          return this.sanitizer.bypassSecurityTrustStyle('#E2E7F4');
-        } else {
-          return this.sanitizer.bypassSecurityTrustStyle('#ECF1FF');
-        }
-      } else {
-        return this.sanitizer.bypassSecurityTrustStyle('#FFFFFF');
-      }
+  // bgColor(i){
+  //     if (this.hovered && this.hoveredIndex === i) {
+  //       if (this.pressed) {
+  //         return this.sanitizer.bypassSecurityTrustStyle('#E2E7F4');
+  //       } else {
+  //         return this.sanitizer.bypassSecurityTrustStyle('#ECF1FF');
+  //       }
+  //     } else {
+  //       return this.sanitizer.bypassSecurityTrustStyle('#FFFFFF');
+  //     }
+  // }
+  //
+  // textColor(i) {
+  //     if (this.hovered && this.hoveredIndex === i) {
+  //       return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
+  //     } else {
+  //       return this.sanitizer.bypassSecurityTrustStyle('#555558');
+  //     }
+  // }
+
+  textColor(item) {
+    if (item.hovered) {
+      return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
+    } else {
+      return this.sanitizer.bypassSecurityTrustStyle('#555558');
+    }
   }
 
-  textColor(i) {
-      if (this.hovered && this.hoveredIndex === i) {
-        return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
+  getBackground(item) {
+    if (item.hovered) {
+      if (item.pressed) {
+        return '#E2E7F4';
       } else {
-        return this.sanitizer.bypassSecurityTrustStyle('#555558');
+        return '#ECF1FF';
       }
+    } else {
+      return '#FFFFFF';
+    }
   }
 
-
-  ngAfterViewInit() {
+  ngOnInit() {
+    if (this.chipsMode) {
+      this.inputField = false;
+    }
     // this.input.nativeElement.focus();
     // if (this.selectedStudents.length) {
     //   setTimeout(() => {
@@ -118,6 +146,9 @@ export class StudentSearchComponent implements AfterViewInit {
 
   addStudent(student: User) {
     console.log(student);
+    if (this.chipsMode) {
+      this.inputField = false;
+    }
     this.input.focus();
     this.students = of([]).toPromise();
     this.inputValue$.next('');
@@ -147,5 +178,12 @@ export class StudentSearchComponent implements AfterViewInit {
     }
 
     return fixedStudents;
+  }
+  cancel(studentInput) {
+    studentInput.input.nativeElement.value = '';
+    studentInput.input.nativeElement.focus();
+    this.students = null;
+    this.inputField = false;
+    this.onUpdate.emit(this.selectedStudents);
   }
 }
