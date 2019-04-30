@@ -33,7 +33,18 @@
       <mat-divider></mat-divider>
     </div>
     <div class="locations">
-      <div class="location" *ngFor="let room of allRooms">
+      <div class="room-container" #loc *ngFor="let room of allRooms"
+           (mouseenter)="loc.hovered = true"
+           (mouseleave)="loc.hovered = false"
+           [style.background-color]="getBackground(loc)"
+           [style.color]="textColor(loc)"
+
+      >
+        <div class="location">
+          <div class="title">{{ room.title }}</div>
+          <div class="subtitle">{{ room.room }}</div>
+        </div>
+        <mat-divider></mat-divider>
       </div>
     </div>
   </div>
