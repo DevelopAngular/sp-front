@@ -3,6 +3,11 @@
     <div class="top-arrow"></div>
   </div>
   <div class="date-container">
-    <app-date-time-picker [default]="default"  [min]="minDate" [showTime]="false" [_selectedMoment]="previousSelectedDate" (onUpdate)="setSearchDate($event)"></app-date-time-picker>
+    <app-calendar-picker
+        [selectedDates]="[previousSelectedDate]"
+        [showYear]="false"
+        [showTime]="false"
+        (onSelectDate)="setSearchDate($event)"
+    ></app-calendar-picker>
   </div>
 </div>
