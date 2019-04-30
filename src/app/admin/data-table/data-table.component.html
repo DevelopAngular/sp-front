@@ -2,8 +2,6 @@
      [style.width]="width"
      [style.height]="height"
      [style.overflow]="(height=='none' ? 'none': 'auto')">
-  <pre>{{displayedColumns | json}}</pre>
-  <pre>{{sort | json}}</pre>
   <table mat-table matSort [dataSource]="dataSource" [style.background-color]="backgroundColor">
     <!-- Checkbox Column -->
     <ng-container matColumnDef="select" *ngIf="isCheckbox">
