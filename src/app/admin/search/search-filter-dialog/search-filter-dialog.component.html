@@ -18,5 +18,8 @@
         </app-gradient-button>
       </div>
     </div>
+    <div class="rooms-filter-content" *ngIf="state === 'Rooms'">
+      <app-rooms-search [placeholder]="'Search rooms and folders'"></app-rooms-search>
+    </div>
   </div>
 </div>

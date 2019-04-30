@@ -53,16 +53,17 @@
                   <div class="add-icon" *ngIf="dchip.hovered && !selectedDate">
                     <img [src]="'./assets/Plus (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
                   </div>
-                  <div>{{ dchip.hovered && !selectedDate ? 'Filter ' : 'All ' }}Time</div>
+                  <div *ngIf="!selectedDate">{{ dchip.hovered && !selectedDate ? 'Filter ' : 'All ' }}Time</div>
+                  <div *ngIf="selectedDate">{{ dateText }}</div>
                 </div>
                 <div class="reset-icon" *ngIf="dchip.hovered && selectedDate">
-                  <img [src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
+                  <img (click)="selectedDate = null" [src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
                 </div>
               </div>
             </div>
         </div>
         <div class="search-button">
-          <app-gradient-button *ngIf="!spinner && !hasSearched"
+          <app-gradient-button
                                [size]="'large'"
                                [ngStyle]="{'opacity': isDisabled? '.5' : '1'}"
                                [style.margin]="'0 20px'"

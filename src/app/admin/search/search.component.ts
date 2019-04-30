@@ -8,7 +8,6 @@ import { disableBodyScroll } from 'body-scroll-lock';
 import * as _ from 'lodash';
 import {PassCardComponent} from '../../pass-card/pass-card.component';
 import {MatDialog} from '@angular/material';
-import { Util } from '../../../Util';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {XlsxGeneratorService} from '../xlsx-generator.service';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -18,9 +17,9 @@ import {Location} from '../../models/Location';
 import {of, Subscription} from 'rxjs';
 import {DataService} from '../../services/data-service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
-import {FormGroup} from '@angular/forms';
-import {SearchFilterDialogComponent} from "./search-filter-dialog/search-filter-dialog.component";
-import {DateTimeFilterComponent} from "./date-time-filter/date-time-filter.component";
+import {SearchFilterDialogComponent} from './search-filter-dialog/search-filter-dialog.component';
+import {DateTimeFilterComponent} from './date-time-filter/date-time-filter.component';
+
 
 
 @Component({
@@ -66,6 +65,11 @@ export class SearchComponent implements OnInit {
 
   get isDisabled() {
     return !this.selectedStudents.length && !this.selectedDate && !this.selectedRooms.length && !this.hasSearched || this.spinner;
+  }
+
+  get dateText() {
+      return this.selectedDate &&
+          this.selectedDate.start.format('MMM D') + ' to ' + this.selectedDate.end.format('MMM D');
   }
 
   ngOnInit() {
@@ -163,12 +167,12 @@ export class SearchComponent implements OnInit {
       if (this.selectedDate) {
         let start;
         let end;
-        if(this.selectedDate['from']){
-          start = this.selectedDate['from'].toISOString();
+        if(this.selectedDate['start']){
+          start = this.selectedDate['start'].toISOString();
           url += (start ? ('created_after=' + start + '&') : '');
         }
-        if(this.selectedDate['to']){
-          end = this.selectedDate['to'].toISOString();
+        if(this.selectedDate['end']){
+          end = this.selectedDate['end'].toISOString();
           url += (end ? ('end_time_before=' + end) : '');
         }
 
@@ -244,6 +248,11 @@ export class SearchComponent implements OnInit {
         backdropClass: 'invis-backdrop',
         data: { target }
     });
+
+    timeRef.afterClosed().pipe(filter(res => !!res))
+        .subscribe(({start, end}) => {
+            this.selectedDate = {start, end};
+        });
   }
 
   dateEmit(date) {

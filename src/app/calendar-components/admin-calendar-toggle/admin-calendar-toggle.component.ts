@@ -93,7 +93,7 @@ export class AdminCalendarToggleComponent implements OnInit {
   }
 
   save() {
-    console.log(this.selectedDate);
+    this.adminCalendarRes.emit(this.selectedDate);
   }
 
 }

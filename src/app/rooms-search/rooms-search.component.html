@@ -1,0 +1,42 @@
+<div class="wrapper">
+  <div class="search-input">
+    <app-round-input
+            [style.margin]="'20px' "
+            [minWidth]="'20px auto 5px auto'"
+            [width]="width"
+            [type]="'text'"
+            [placeholder]="placeholder"
+            [fieldIconPosition]="'left'"
+            [closeIcon]="true"
+            [focused]="true"
+            (ontextupdate)="onSearch($event)"
+    ></app-round-input>
+  </div>
+  <div class="content">
+    <div class="selected-rooms mb-10">
+      <div class="header">
+        <div class="title ds-dialog-subtitle">Selected</div>
+        <mat-divider></mat-divider>
+      </div>
+    </div>
+
+  <div class="folders mb-10">
+    <div class="header">
+      <div class="title">Folders</div>
+      <mat-divider></mat-divider>
+    </div>
+  </div>
+
+  <div class="all-rooms mb-10">
+    <div class="header">
+      <div class="title">All Rooms</div>
+      <mat-divider></mat-divider>
+    </div>
+    <div class="locations">
+      <div class="location" *ngFor="let room of allRooms">
+      </div>
+    </div>
+  </div>
+
+  </div>
+</div>

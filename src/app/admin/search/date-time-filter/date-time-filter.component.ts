@@ -28,4 +28,8 @@ export class DateTimeFilterComponent implements OnInit {
       this._matDialogRef.updatePosition(matDialogConfig.position);
   }
 
+  calendarResult(dates) {
+      this._matDialogRef.close(dates);
+  }
+
 }
