@@ -10,7 +10,7 @@
           <img class="year-icon" [src]="'./assets/Chevron Right (Navy).svg' | resolveAsset" alt="next">
       </div>
     </div>
-    <mat-divider></mat-divider>
+    <mat-divider *ngIf="showYear"></mat-divider>
 
     <div class="month-nav">
       <div
