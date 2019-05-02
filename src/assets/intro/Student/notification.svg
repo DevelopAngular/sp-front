@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="91px" height="88px" viewBox="0 0 91 88" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
+    <title>Group 2</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="81.92" height="81.92" rx="17.92"></rect>
+        <radialGradient cx="69.948114%" cy="62.9590593%" fx="69.948114%" fy="62.9590593%" r="89.8121918%" id="radialGradient-3">
+            <stop stop-color="#03CF31" offset="0%"></stop>
+            <stop stop-color="#00B476" offset="100%"></stop>
+        </radialGradient>
+    </defs>
+    <g id="Web---1.3" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Intro-X" transform="translate(-597.000000, -115.000000)">
+            <g id="Dropdown" transform="translate(430.000000, 75.000000)">
+                <g id="Group-2" transform="translate(167.000000, 40.000000)">
+                    <g id="Icon/App/SmartPass" transform="translate(0.000000, 6.000000)">
+                        <mask id="mask-2" fill="white">
+                            <use xlink:href="#path-1"></use>
+                        </mask>
+                        <rect stroke="#979797" stroke-width="0.5" x="0.25" y="0.25" width="81.42" height="81.42" rx="17.92"></rect>
+                        <g id="Green" stroke-width="1" fill-rule="evenodd" mask="url(#mask-2)">
+                            <rect id="Background" fill="url(#radialGradient-3)" x="0" y="0" width="81.92" height="81.92"></rect>
+                            <g id="Arrow" transform="translate(17.120000, 14.880000)" fill="#FFFFFF">
+                                <g id="Group" transform="translate(0.000000, 7.680000)">
+                                    <path d="M12.9184776,-0.15100864 L12.9184776,-0.15100864 C15.7903583,-0.15100864 18.1184776,2.17711066 18.1184776,5.04899136 L18.1184776,20.8679639 C18.1184776,23.6956618 15.8261756,25.9879639 12.9984776,25.9879639 L7.71847763,25.9879639 L7.71847763,5.04899136 C7.71847763,2.17711066 10.0465969,-0.15100864 12.9184776,-0.15100864 Z" id="Rectangle-2" transform="translate(12.918478, 12.918478) rotate(-45.000000) translate(-12.918478, -12.918478) "></path>
+                                    <path d="M10.9673359,15.7179419 L10.9673359,15.7179419 C13.8392166,15.7179419 16.1673359,18.0460612 16.1673359,20.9179419 L16.1673359,36.3382521 L5.76733585,36.3382521 L5.76733585,20.9179419 C5.76733585,18.0460612 8.09545516,15.7179419 10.9673359,15.7179419 Z" id="Rectangle-2" transform="translate(10.967336, 26.028097) scale(1, -1) rotate(-45.000000) translate(-10.967336, -26.028097) "></path>
+                                </g>
+                                <g id="Group" transform="translate(16.640000, 0.000000)">
+                                    <path d="M16.8,-1.64134485 L16.8,-1.64134485 C19.6718807,-1.64134485 22,0.686774448 22,3.55865515 L22,30.1213449 C22,32.9490428 19.7076979,35.2413449 16.88,35.2413449 L11.6,35.2413449 L11.6,3.55865515 C11.6,0.686774448 13.9281193,-1.64134485 16.8,-1.64134485 Z" id="Rectangle-2" transform="translate(16.800000, 16.800000) rotate(-45.000000) translate(-16.800000, -16.800000) "></path>
+                                    <path d="M13.7473359,24.5127024 L13.7473359,24.5127024 C16.6192166,24.5127024 18.9473359,26.8408217 18.9473359,29.7127024 L18.9473359,52.5434917 L8.54733585,52.5434917 L8.54733585,29.7127024 C8.54733585,26.8408217 10.8754552,24.5127024 13.7473359,24.5127024 Z" id="Rectangle-2" transform="translate(13.747336, 38.528097) scale(1, -1) rotate(-45.000000) translate(-13.747336, -38.528097) "></path>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                    <g id="Notification" transform="translate(64.000000, 0.000000)">
+                        <circle id="Oval" fill="#E32C66" cx="13.5" cy="13.5" r="13.5"></circle>
+                        <text id="1" font-family="Helvetica" font-size="15" font-weight="normal" letter-spacing="-0.360000014" fill="#FFFFFF">
+                            <tspan x="10" y="19">1</tspan>
+                        </text>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

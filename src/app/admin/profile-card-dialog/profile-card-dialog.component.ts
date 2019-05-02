@@ -93,7 +93,7 @@ export class ProfileCardDialogComponent implements OnInit {
       const group: any = {};
       for (const key in permissions) {
         const value = (this.profile._originalUserProfile as User).roles.includes(key);
-        console.log(value);
+        // console.log(value);
         group[key] = new FormControl(value);
       }
       this.permissionsForm = new FormGroup(group);

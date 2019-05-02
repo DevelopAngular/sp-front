@@ -53,7 +53,8 @@
     [style.margin-bottom]="'15px'"
     (ontextupdate)="demoPassword = $event">
   </app-round-input>
-  <app-gradient-button #button
+  <app-gradient-button
+    [size]="'medium'"
     [style.margin-tom]="'15px'"
     [gradient]="'#FFFFFF,#FFFFFF'"
     [cursor]="'pointer'"
@@ -65,6 +66,7 @@
     (buttonClick)="demoLogin()"
     [style.width]="'90px'"
     [style.margin]="'0 auto'"
+     #button
   >
     <div *ngIf="!showSpinner">
       <span>Sign in</span>

@@ -1,19 +1,11 @@
-<div [formGroup]="form" class="layout" [ngClass]="{'delimiter': delimiter}">
+<div *ngIf="!mock" [formGroup]="form" class="layout" [ngClass]="{'delimiter': delimiter}">
   <div [style.padding-top]="'5px'">
     <span class="ds-cell-text-2">{{controlLabel}}</span>
   </div>
   <div style="display: flex; align-items: center;">
     <div  *ngIf="disabled">
       <img [src]="'./assets/Lock (Blue-Gray).svg' | resolveAsset" width="14" height="14" style="margin: 0 10px" alt="Lock (Blue-Gray).svg">
-      <!--{{controlSize}}-->
     </div>
-
-    <!--<div class="future" [ngClass]="sizedLayout">-->
-      <!--<input type="checkbox" name="checkbox1" class="ios-toggle checkbox1"  [formControlName]="controlName" #inp [id]="controlName"/>-->
-      <!--<label [for]="controlName" class="checkbox-label" data-off="off" data-on="on" ></label>-->
-      <!--&lt;!&ndash;<input type="checkbox" [formControlName]="controlName" #inp class="future-checkbox" [id]="controlName">&ndash;&gt;-->
-      <!--&lt;!&ndash;<label class="future-label" [for]="controlName"></label>&ndash;&gt;-->
-    <!--</div>-->
     <div class="checkbox-container" [ngClass]="sizedLayout">
       <input type="checkbox" class="ios-toggle checkbox1" style="display: none;" [formControlName]="controlName" #inp [id]="controlName"/>
       <label [for]="controlName" class="checkbox-label"></label>
@@ -22,5 +14,18 @@
   <div class="user-action-none" *ngIf="disabled">
     <!-- Needs to prevent header editing, but save it's presentation -->
   </div>
-
+</div>
+<div *ngIf="mock" class="layout">
+  <div [style.padding-top]="'5px'">
+    <span class="ds-cell-text-2">{{controlLabel}}</span>
+  </div>
+  <div style="display: flex; align-items: center;">
+    <div class="checkbox-container" [ngClass]="sizedLayout">
+      <input type="checkbox" class="ios-toggle checkbox1" checked style="display: none;" #inp/>
+      <label class="checkbox-label"></label>
+    </div>
+  </div>
+  <div class="user-action-none" *ngIf="disabled">
+    <!-- Needs to prevent header editing, but save it's presentation -->
+  </div>
 </div>

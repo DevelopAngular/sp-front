@@ -47,6 +47,7 @@ import { environment } from '../environments/environment';
 import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
 import { ResizeInfoDialogComponent } from './resize-info-dialog/resize-info-dialog.component';
 import { SignedOutToastComponent } from './signed-out-toast/signed-out-toast.component';
+import {APP_BASE_HREF} from '@angular/common';
 
 
 const appRoutes: Routes = [
@@ -93,7 +94,6 @@ const appRoutes: Routes = [
   },
   {path: '**', redirectTo: 'main/passes', pathMatch: 'full'},
 ];
-
 
 @NgModule({
   declarations: [
@@ -161,6 +161,7 @@ const appRoutes: Routes = [
     GoogleAuthService,
     {provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true},
     {provide: SP_GAPI_CONFIG, useValue: GAPI_CONFIG},
+    {provide: APP_BASE_HREF, useValue: environment.production ? '/' : '/app'},
     provideErrorHandler()
   ],
   bootstrap: [AppComponent]
