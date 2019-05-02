@@ -10,10 +10,11 @@
           <img class="year-icon" [src]="'./assets/Chevron Right (Navy).svg' | resolveAsset" alt="next">
       </div>
     </div>
-    <mat-divider></mat-divider>
+    <mat-divider *ngIf="showYear"></mat-divider>
 
     <div class="month-nav">
       <div
+        *ngIf="!isDisabledSwitchButton"
         class="switch-month __left"
         (click)="prevMonth()"
         [@pressState]="buttonState"
@@ -22,6 +23,11 @@
       >
         <img class="month-icon" [src]="'./assets/Chevron Left (Navy).svg' | resolveAsset" alt="prev">
       </div>
+
+      <div class="switch-month __left disabled" *ngIf="isDisabledSwitchButton">
+          <img style="width: 15px" [src]="'./assets/Chevron Left (Blue-Gray).svg' |resolveAsset">
+      </div>
+
       <span class="ds-dialog-subtitle">{{ currentDate.format('MMMM') }}</span>
       <div
         class="switch-month __right"
@@ -92,6 +98,10 @@
   </div>
     <div class="time-picker" *ngIf="showTime">
         <mat-divider></mat-divider>
-        <app-time-picker [currentDate]="selectedDates.length ? selectedDates[0] : currentDate" (timeResult)="timePickerResult($event)"></app-time-picker>
+        <app-time-picker
+           [currentDate]="selectedDates.length ? selectedDates[0] : currentDate"
+           [min]="min"
+           (timeResult)="timePickerResult($event)"
+        ></app-time-picker>
     </div>
 </div>

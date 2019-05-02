@@ -47,6 +47,10 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
         return this.buttonDown ? 'down' : 'up';
     }
 
+    get isDisabledSwitchButton() {
+        return this.min && moment(this.currentDate).isSameOrBefore(this.min, 'month');
+    }
+
     ngOnInit(): void {
         if (this.showWeekend) {
             this.dayNames.unshift('S');
@@ -201,8 +205,8 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     switchMonth(date: moment.Moment): void {
         if (this.isNextMonth(date)) {
             this.nextMonth();
-        } else {
-            this.prevMonth();
+            this.selectedDates = [date];
+            this.generateCalendar();
         }
     }
 

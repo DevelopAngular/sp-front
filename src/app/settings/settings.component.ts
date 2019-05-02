@@ -63,7 +63,7 @@ export class SettingsComponent implements OnInit {
       'gradient': '#022F68, #2F66AB',
       'icon': 'Moon',
       'action': () => { this.darkTheme.switchTheme(); this.data.darkBackground = !this.data.darkBackground; },
-      'title': 'Dark Theme'
+      'title': (this.darkTheme.isEnabled$.value ? 'Light Theme' : 'Dark Theme')
     });
     this.settings.push({
       'gradient': '#03CF31, #00B476',
