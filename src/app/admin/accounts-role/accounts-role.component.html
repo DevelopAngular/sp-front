@@ -96,7 +96,7 @@
           </div>
         </div>
       </div>
-      <div class="ds-mx-20 ds-mt-20">
+      <div class="ds-mx-20 ds-my-10">
         <div class="ds-flex-start-end">
           <ng-container *ngIf="role === '_all'; else roleProfile">
             <app-gradient-button
@@ -202,9 +202,16 @@
             <!--</app-gradient-button>-->
             <!--</div>-->
 
+            <div class="ds-p-10"  *ngIf="role === '_all'">
+              <app-gradient-button
+                [size]="'small'"
+                [disabled]="!selectedUsers.length"
+                (buttonClick)="false">
+                <span>Export Account Data</span>
+              </app-gradient-button>
+            </div>
 
-
-            <div class="ds-p-10"  *ngIf="role !== '_profile_student'">
+            <div class="ds-p-10"  *ngIf="role === '_profile_admin' || role === '_profile_teacher'">
               <app-gradient-button
                 [size]="'small'"
                 [disabled]="!selectedUsers.length"
@@ -221,7 +228,7 @@
               </app-gradient-button>
             </div>
 
-            <div class="ds-p-10">
+            <div class="ds-p-10" *ngIf="role !== '_all'">
               <app-gradient-button
                 [size]="'small'"
                 [disabled]="!selectedUsers.length"

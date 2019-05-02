@@ -31,6 +31,7 @@ export class AdminPageComponent implements OnInit {
   }
 
   ngOnInit() {
+
     this.showDummySwitcher$.subscribe((v) => {
       if (v) {
         console.log(v);
@@ -49,12 +50,13 @@ export class AdminPageComponent implements OnInit {
       this.outletDummySwitcher$.next(false);
       this.hostVisibility = true;
     });
+
     of(location.pathname.split('/'))
       .pipe(
         map((fragments) => fragments.filter(f => !!f)),
         // filter(value => value instanceof NavigationEnd ),
         tap((value) => console.log(value)),
-        filter((value) => value.length < 2),
+        filter((value) => value.length < 3),
         switchMap(() => this.userService.getUserWithTimeout()),
         filter(user => !!user),
       )

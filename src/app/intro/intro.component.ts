@@ -9,6 +9,7 @@ import {HallPass} from '../models/HallPass';
 import {BehaviorSubject, fromEvent, Subject} from 'rxjs';
 import {StorageService} from '../services/storage.service';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
+import {NotificationService} from '../services/notification-service';
 
 declare const window;
 
@@ -41,20 +42,50 @@ export class IntroComponent implements OnInit {
       private loadingService: LoadingService,
       private router: Router,
       private storage: StorageService,
-      private formService: CreateFormService
+      private formService: CreateFormService,
+      public  notifService: NotificationService
   ) {
     console.log('intro.constructor');
+  }
+
+  get alreadySeen() {
+    if (this.isStaff) {
+      return this.storage.getItem('smartpass_intro_teacher') === 'seen';
+    } else {
+      return this.storage.getItem('smartpass_intro_student') === 'seen';
+    }
   }
 
   ngOnInit() {
     console.log('intro.onInit()');
 
 
-    fromEvent(document, 'keypress').subscribe((evt: KeyboardEvent) => {
-      console.log(evt);
-      if (evt.keyCode === 13) {
-        this.slide();
+    fromEvent(document, 'keydown').subscribe((evt: KeyboardEvent) => {
+
+      // console.log(evt);
+      if (evt.key === 'Tab') {
+        evt.preventDefault();
+        if (this.slideIndex === 5) {
+          return;
+        } else {
+          this.slide('forward');
+        }
       }
+      if (evt.key === 'ArrowRight') {
+        if (this.slideIndex === 5) {
+          return;
+        } else {
+          this.slide('forward');
+        }
+      }
+      if (evt.key === 'ArrowLeft') {
+        if (this.slideIndex === 1) {
+          return;
+        } else {
+          this.slide('back');
+        }
+      }
+
     });
 
 
@@ -301,6 +332,17 @@ export class IntroComponent implements OnInit {
       // this.endIntro();
   }
 
+  allowNotifications() {
+
+    this.notifService.initNotifications(true)
+      .then((hasPerm) => {
+        console.log(`Has permission to show notifications: ${hasPerm}`);
+        if (hasPerm) {
+          this.slide('forward');
+        }
+      });
+  }
+
   endIntro() {
 
     if (this.isStaff) {
@@ -324,11 +366,24 @@ export class IntroComponent implements OnInit {
     switch (direction) {
       case 'forward':
         this.formService.setFrameMotionDirection('forward');
-        setTimeout(() => { this.slideIndex++ }, 100);
+        setTimeout(() => {
+          if (this.alreadySeen &&  this.slideIndex === 3) {
+            this.slideIndex += 2;
+          } else {
+
+            this.slideIndex++;
+          }
+        }, 100);
         break;
       case'back':
         this.formService.setFrameMotionDirection('back');
-        setTimeout(() => { this.slideIndex-- }, 100);
+        setTimeout(() => {
+          if (this.alreadySeen &&  this.slideIndex === 5) {
+            this.slideIndex -= 2;
+          } else {
+            this.slideIndex--;
+          }
+        }, 100);
         break;
     }
   }

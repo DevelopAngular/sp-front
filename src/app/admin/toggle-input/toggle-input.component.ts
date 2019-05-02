@@ -17,28 +17,24 @@ export class ToggleInputComponent implements OnInit {
   @Input() controlSize: string = 'regular'; // Can be small, regular or large ;
   @Input() disabled: boolean = false;
   @Input() delimiter: boolean = true;
+  @Input() mock: boolean = false;
 
-  @ViewChild('inp') inp: ElementRef;
+  @ViewChild('inp') set inputField(inputField: ElementRef) {
+    this.inp = inputField;
+    if (this.inp) {
+      this.e = fromEvent(this.inp.nativeElement, 'change');
+      this.e.subscribe((e: any) => this.pushOut(e.target.checked));
+    }
+  }
 
   @Output() pushOutValue: EventEmitter<boolean> = new EventEmitter<boolean>();
-
+  public inp: ElementRef;
   public e: Observable<Event>;
   sizedLayout: any = {};
 
   constructor(
     private _zone: NgZone
-  ) {
-    // switch (this.controlSize) {
-    //   case 'small':
-    //     this.sizedLayout['future__small'] = true;
-    //     break;
-    //   case 'large':
-    //     this.sizedLayout['future__large'] = true;
-    //     break;
-    //   default:
-    //     this.sizedLayout['future__regular'] = true;
-    // }
-  }
+  ) {}
   ngOnInit() {
 
     this._zone.run(() => {
@@ -52,10 +48,12 @@ export class ToggleInputComponent implements OnInit {
         default:
           this.sizedLayout['checkbox-container__regular'] = true;
       }
-    })
+    });
 
-    this.e = fromEvent(this.inp.nativeElement, 'change');
-    this.e.subscribe((e: any) => this.pushOut(e.target.checked) );
+    // if (!this.mock) {
+    //   this.e = fromEvent(this.inp.nativeElement, 'change');
+    //   this.e.subscribe((e: any) => this.pushOut(e.target.checked) );
+    // }
   }
 
 
