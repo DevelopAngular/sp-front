@@ -1,8 +1,9 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
+
+import { Subject, timer } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment';
-import {Subject, timer} from 'rxjs';
-import {debounceTime, delay, takeUntil} from 'rxjs/operators';
-import {FormControl, FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-time-picker',
@@ -11,7 +12,9 @@ import {FormControl, FormGroup} from '@angular/forms';
 })
 export class TimePickerComponent implements OnInit, OnDestroy {
 
-  @Input() currentDate: moment.Moment = moment();
+  @Input() currentDate: moment.Moment = moment().add(5, 'minutes');
+
+  @Input() min: moment.Moment;
 
   @Output() timeResult: EventEmitter<moment.Moment> = new EventEmitter<moment.Moment>();
 
@@ -24,6 +27,14 @@ export class TimePickerComponent implements OnInit, OnDestroy {
 
   constructor() { }
 
+  get isDisabledSwitchHourButton() {
+    return this.min && moment(this.currentDate).isSameOrBefore(this.min, 'hour');
+  }
+
+  get isDisabledSwitchMinButton() {
+    return this.min && moment(this.currentDate).isSameOrBefore(moment(this.min).add(5, 'minutes'), 'minute');
+  }
+
   ngOnInit() {
     this.buildFrom();
     timer(50).pipe(takeUntil(this.destroy$)).subscribe(() => {
@@ -31,8 +42,15 @@ export class TimePickerComponent implements OnInit, OnDestroy {
     });
     this.timeForm.valueChanges.pipe(takeUntil(this.destroy$))
         .subscribe(value => {
-            this.currentDate.set('hour', value.hour);
-            this.currentDate.set('minute', value.minute);
+            if (this.currentDate.format('A') === 'PM') {
+              this.currentDate = this.currentDate.set('hour', +value.hour + 12);
+            } else {
+              this.currentDate = this.currentDate.set('hour', value.hour);
+            }
+            this.currentDate = this.currentDate.set('minute', value.minute);
+            if (this.currentDate.isBefore(moment().add(5, 'minutes'))) {
+                this.currentDate = moment().add(5, 'minutes');
+            }
         });
   }
 
@@ -55,13 +73,13 @@ export class TimePickerComponent implements OnInit, OnDestroy {
   }
 
   changeTime(action, up) {
-      if (up === 'up') {
-          this.currentDate = moment(this.currentDate).add(1, action);
-      } else if (up === 'down') {
-          this.currentDate = moment(this.currentDate).subtract(1, action);
-      }
-      this.buildFrom();
-      this.timeResult.emit(this.currentDate);
+        if (up === 'up') {
+            this.currentDate = moment(this.currentDate).add(1, action);
+        } else if (up === 'down') {
+            this.currentDate = moment(this.currentDate).subtract(1, action);
+        }
+        this.buildFrom();
+        this.timeResult.emit(this.currentDate);
   }
 
   changeFormat() {

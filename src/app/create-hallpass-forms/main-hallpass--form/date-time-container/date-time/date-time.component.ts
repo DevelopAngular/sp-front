@@ -22,7 +22,7 @@ export class DateTimeComponent implements OnInit {
   @Output() backButton: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
   startTime: moment.Moment = moment(this.timeService.nowDate());
-  requestTime: moment.Moment = moment(this.timeService.nowDate());
+  requestTime: moment.Moment = moment(this.timeService.nowDate()).add(5, 'minutes');
 
   form: FormGroup = new FormGroup({
     declinable: new FormControl(true)
