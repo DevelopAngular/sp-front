@@ -49,6 +49,16 @@ $base:5px;
         background-color: #e4ebff;
         box-shadow: 0 0 0 5px #e4ebff;
       }
+
+      &.disabled {
+        cursor: default;
+
+        &:hover {
+          background-color: transparent;
+          box-shadow: none;
+        }
+      }
+
       .month-icon {
         width: 15px;
       }
@@ -209,6 +219,7 @@ $base:5px;
       }
       &.is-next-month {
         color: $blue-gray;
+        cursor: pointer;
       }
     }
 

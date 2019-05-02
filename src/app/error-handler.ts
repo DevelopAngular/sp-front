@@ -5,6 +5,7 @@ import { BrowserOptions } from '@sentry/browser';
 import { FirebaseError } from 'firebase';
 import { BUILD_INFO_REAL, RELEASE_NAME } from '../build-info';
 import { environment } from '../environments/environment';
+import {APP_BASE_HREF} from '@angular/common';
 
 
 const FIREBASE_ERROR_IGNORE_LIST = ['messaging/unsupported-browser'];
@@ -25,6 +26,7 @@ export function provideErrorHandler(): Provider {
     deps: [],
   };
 }
+
 
 export interface UserContext {
   id: string;
