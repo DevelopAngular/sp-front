@@ -54,6 +54,7 @@ import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hall
 import {FirstSeenFormComponent} from '../create-hallpass-forms/first-seen-form/first-seen-form.component';
 import {NotificationFormComponent} from '../notification-form/notification-form.component';
 import {WhoYouAreComponent} from '../create-hallpass-forms/main-hallpass--form/student-groups/who-you-are/who-you-are.component';
+import {ScreenService} from '../services/screen.service';
 import {KioskModeComponent} from '../kiosk-mode/kiosk-mode.component';
 
 @NgModule({
@@ -130,7 +131,8 @@ import {KioskModeComponent} from '../kiosk-mode/kiosk-mode.component';
 
   ],
   providers: [
-    NavbarDataService
+    NavbarDataService,
+    ScreenService
   ]
 })
 export class MainModule {

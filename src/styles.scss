@@ -5,6 +5,13 @@
 @import "~font-awesome/css/font-awesome.min.css";
 @import "design-system";
 
+@media all and (max-width: 375px) {
+  .student-pass-card-dialog-container .mat-dialog-container {
+    width: 100% !important;
+    margin-top: -70px !important;
+  }
+}
+
 html {
   background-color: #FCFDFF;
   padding: 0 0;

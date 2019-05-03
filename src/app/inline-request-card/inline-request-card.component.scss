@@ -1,5 +1,10 @@
+@media all and (max-width: 375px) {
+  div.header-content {
+    padding: 3% !important;
+  }
+}
+
 .inline-request-card-wrapper {
-    width: 335px;
     border-radius: 14px;
     display: flex;
     flex-direction: column;

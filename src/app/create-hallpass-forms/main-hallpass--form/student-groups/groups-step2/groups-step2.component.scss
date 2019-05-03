@@ -1,10 +1,69 @@
 :host {
+
+  @media all and (max-width: 475px) {
+    .step-1-container div.back-btn-top {
+      display: none;
+    }
+
+    .step-1-container img.back-btn-bottom {
+      display: block;
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .step-1-container div.content-left {
+      border: none;
+      order: 1;
+    }
+
+    .step-1-container div.content {
+      flex: 0 1 auto;
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .step-1-container div.content-left_wrapper {
+      padding: 0;
+      overflow: visible;
+      width: 100%;
+      margin: auto;
+    }
+
+    .step-1-container div.content-right {
+      overflow: visible;
+      padding: 0;
+      flex: 0;
+    }
+
+    .step-1-container div.content-left_groups {
+      margin: 0;
+    }
+
+    .step-1-container div.incomplete {
+      display: none;
+    }
+  }
+
+  @media all and (min-width: 360px) and (max-width: 475px) {
+    img.back-btn-bottom {
+      bottom: -45px;
+    }
+  }
+
+  @media all and (min-width: 320px) and (max-width: 360px) {
+    img.back-btn-bottom {
+      bottom: -32px;
+    }
+  }
+
   .step-1-container {
     $primary-color: #3D396B;
     $secondary-color: #999999;
 
-
-    width: 700px;
     min-height: 400px;
     background-color: #fff;
     //border: 1px solid #777;
@@ -141,4 +200,20 @@
       }
     }
   }
+}
+
+.back-btn-top {
+  display: block;
+}
+
+.back-btn-bottom {
+  display: none;
+}
+
+.incomplete {
+  display: block;
+}
+
+.student-group-name {
+  text-align: center;
 }

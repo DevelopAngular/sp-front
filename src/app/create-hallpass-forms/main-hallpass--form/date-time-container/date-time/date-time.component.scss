@@ -1,10 +1,40 @@
+@media all and (max-width: 475px) {
+  div.date-wrapper {
+    width: 100%;
+  }
+
+  div.decline-content {
+    padding: 0 !important;
+    align-items: center;
+  }
+
+  div.time-picker {
+    margin: 0;
+  }
+
+  div.next-btn {
+    position: absolute;
+    margin: 0;
+    left: 50%;
+    bottom: -11px;
+    transform: translate(-50%);
+  }
+
+  div.info-text-1 {
+    display: none;
+  }
+
+  img.back-button{
+    display: none;
+  }
+}
+
 .time-picker{
   margin: 0 34px 0px 20px;
 }
 
 
 .date-wrapper {
-  width: 425px;
   height: 500px;
   display: flex;
   flex-direction: column;
@@ -94,4 +124,8 @@
   font-stretch: normal;
   line-height: 1.08;
   letter-spacing: 0.3px;
+}
+
+.next-btn {
+  margin-bottom: 30px;
 }
