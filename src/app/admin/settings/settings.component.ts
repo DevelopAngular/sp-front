@@ -68,7 +68,7 @@ export class SettingsComponent implements OnInit {
   get _themeBackground() {
     return this.hoveredTheme
       ?
-      this.pressedTheme
+      !this.darkTheme.isEnabled$.value
         ?
         'radial-gradient(circle at 73% 71%, #022F68, #2F66AB)'
           : 'rgb(228, 235, 255)'

@@ -2,6 +2,8 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { debounceTime, distinctUntilChanged, map, shareReplay } from 'rxjs/operators';
 import { AdminService } from '../../services/admin.service';
 import { Observable } from 'rxjs';
+import {HttpService} from '../../services/http-service';
+import {HttpClient} from '@angular/common/http';
 
 export interface Icon {
     id: string;
@@ -28,6 +30,7 @@ export class IconPickerComponent implements OnInit {
 
   constructor(
     private adminService: AdminService,
+    private http: HttpService,
   ) { }
 
   ngOnInit() {
@@ -70,12 +73,9 @@ export class IconPickerComponent implements OnInit {
   }
 
   search(search) {
-    this.icons$ = this.icons$.pipe(
-        debounceTime(50),
-        distinctUntilChanged(),
-        map(icons => {
-          return icons.filter(icon => icon.id.toLowerCase().includes(search.toLowerCase()));
-    }));
+      this.http.searchIcons(search).subscribe(res => {
+          console.log(res);
+      }, (err) => console.log(err));
 }
 
 }

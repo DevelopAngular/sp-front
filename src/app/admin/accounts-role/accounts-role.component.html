@@ -184,7 +184,6 @@
             <!--[fontSize]="'14px'"-->
             <!--[fontWeight]="400"-->
             <!--[gradient]="'#022F68, #2F66AB'"-->
-            <!--(buttonClick)="openDialog('rooms')">-->
             <!--<span>Add/Modify Rooms</span>-->
             <!--</app-gradient-button>-->
             <!--</div>-->
@@ -197,7 +196,6 @@
             <!--[fontSize]="'14px'"-->
             <!--[fontWeight]="400"-->
             <!--[gradient]="'#0B9FC1, #00C0C7'"-->
-            <!--(buttonClick)="openDialog('restrictions')">-->
             <!--<span>Add/Modify Restrictions</span>-->
             <!--</app-gradient-button>-->
             <!--</div>-->
@@ -255,13 +253,12 @@
                 [fontWeight]="700"
                 [gradient]="'#DA2370, #FB434A'"
                 [hoverColor]="'#DA2370'"
-                (buttonClick)="openDialog('remove', eventTarget)">
+                (buttonClick)="deleteAccountPrompt(eventTarget)">
                 <span>Remove from Profile</span>
               </app-gradient-button>
             </div>
           </div>
         </div>
-        <!--<pre>{{userList| json}}</pre>-->
         <div class="column-settings">
           <img draggable="false" width="20" [src]="darkTheme.getIcon({iconName: 'Options', lightFill: 'Navy'}) | resolveAsset" alt="Options (Navy).svg" (click)="showColumnSettings($event)">
         </div>
@@ -272,7 +269,8 @@
           [displayedColumns]="dataTableHeadersToDisplay"
           (selectedCell)="findProfileByRole($event)"
           (selectedRow)="showProfileCard($event)"
-          (selectedUsers)="showSelected($event)">
+          (selectedUsers)="setSelected($event)"
+          >
         </app-data-table>
       </div>
     </div>

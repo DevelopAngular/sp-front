@@ -334,7 +334,7 @@
         <div class="slide-paginator_item" [style.background-color]="slideIndex === 1 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"></div>
         <div class="slide-paginator_item" [style.background-color]="slideIndex === 2 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"></div>
         <div class="slide-paginator_item" [style.background-color]="slideIndex === 3 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"></div>
-        <div class="slide-paginator_item" [style.background-color]="slideIndex === 4 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"  *ngIf="!alreadySeen"></div>
+        <div class="slide-paginator_item" [style.background-color]="slideIndex === 4 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"  *ngIf="!alreadySeen && !isSafari"></div>
         <div class="slide-paginator_item" [style.background-color]="slideIndex === 5 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"></div>
       </div>
       <!-- It needs in order to all the components will be disabled-->

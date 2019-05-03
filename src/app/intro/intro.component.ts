@@ -10,6 +10,7 @@ import {BehaviorSubject, fromEvent, Subject} from 'rxjs';
 import {StorageService} from '../services/storage.service';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {NotificationService} from '../services/notification-service';
+import {DeviceDetection} from '../device-detection.helper';
 
 declare const window;
 
@@ -48,6 +49,9 @@ export class IntroComponent implements OnInit {
     console.log('intro.constructor');
   }
 
+  get isSafari() {
+    return DeviceDetection.isSafari();
+  }
   get alreadySeen() {
     if (this.isStaff) {
       return this.storage.getItem('smartpass_intro_teacher') === 'seen';
@@ -62,7 +66,6 @@ export class IntroComponent implements OnInit {
 
     fromEvent(document, 'keydown').subscribe((evt: KeyboardEvent) => {
 
-      // console.log(evt);
       if (evt.key === 'Tab') {
         evt.preventDefault();
         if (this.slideIndex === 5) {
@@ -337,9 +340,7 @@ export class IntroComponent implements OnInit {
     this.notifService.initNotifications(true)
       .then((hasPerm) => {
         console.log(`Has permission to show notifications: ${hasPerm}`);
-        if (hasPerm) {
           this.slide('forward');
-        }
       });
   }
 
@@ -367,7 +368,7 @@ export class IntroComponent implements OnInit {
       case 'forward':
         this.formService.setFrameMotionDirection('forward');
         setTimeout(() => {
-          if (this.alreadySeen &&  this.slideIndex === 3) {
+          if ((this.isSafari || this.alreadySeen) && this.slideIndex === 3) {
             this.slideIndex += 2;
           } else {
 
@@ -378,7 +379,7 @@ export class IntroComponent implements OnInit {
       case'back':
         this.formService.setFrameMotionDirection('back');
         setTimeout(() => {
-          if (this.alreadySeen &&  this.slideIndex === 5) {
+          if ((this.isSafari || this.alreadySeen) &&  this.slideIndex === 5) {
             this.slideIndex -= 2;
           } else {
             this.slideIndex--;
