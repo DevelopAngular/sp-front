@@ -1,3 +1,23 @@
+@media screen and (max-width: 475px) {
+  .fixed-card {
+    width: initial !important;
+  }
+
+  .form {
+    width: initial !important;
+  }
+
+  div.pretty-replace-box {
+    overflow: visible !important;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  div.pretty-replace-box {
+    margin-top: -100px;
+  }
+}
+
 .pointer {
   position: absolute;
   left: 50%;
@@ -409,6 +429,8 @@ textarea {
 .onoffswitch-checkbox:checked + .onoffswitch-label:before {
   right: 0px;
 }
+
+
 
 //.state-transition {
 //  animation: stateTransition .5s ease forwards;

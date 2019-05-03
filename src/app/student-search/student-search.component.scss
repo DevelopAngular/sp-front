@@ -3,6 +3,17 @@
   //min-width: 280px;
   //position: relative;
 }
+
+@media all and (max-width: 475px){
+  div.student-search-wrapper{
+    width: 250px !important;
+  }
+
+  div.student-list {
+    width: 100%;
+  }
+}
+
 .student-search-wrapper{
     margin-top: 10px;
     width: 100%;

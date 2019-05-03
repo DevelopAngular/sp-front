@@ -1,5 +1,58 @@
+@media all and (max-width: 475px) {
+  div.to-wrapper {
+    overflow: initial;
+  }
+
+  img.back-btn-top {
+    display: none;
+  }
+
+  img.back-btn-bottom {
+    display: block;
+    position: absolute;
+    width: 28px;
+    height: 29px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  //Scroll hiding
+
+  // in Safari and Chrome
+  div.to-content::-webkit-scrollbar {
+    width: 0 !important
+  }
+
+  //Mozzila
+  div.to-content {
+    overflow: -moz-scrollbars-none;
+  }
+
+  //Internet explorer , Edge
+  div.to-content {
+    -ms-overflow-style: none;
+  }
+}
+
+@media all and (min-width: 360px) and (max-width: 475px) {
+  img.back-btn-bottom {
+    bottom: -40px;
+  }
+}
+
+@media all and (max-width: 360px) {
+  img.back-btn-bottom {
+    bottom: -40px;
+  }
+}
+
+@media all and (max-width: 320px) {
+  img.back-btn-bottom {
+    bottom: -35px;
+  }
+}
+
 .to-wrapper, .to-wrapper-to-date {
-  width: 425px;
   height: 500px;
   display: flex;
   flex-direction: column;
@@ -8,7 +61,6 @@
   position: relative;
   background-color: #ffffff;
   border-radius: 14px;
-  overflow: hidden;
   .to-header, .to-header-back {
     width: 100%;
     height: 70px;
@@ -107,4 +159,12 @@
   mat-grid-tile {
    overflow: inherit !important;
   }
+}
+
+.back-btn-top {
+  display: block;
+}
+
+.back-btn-bottom {
+  display: none;
 }

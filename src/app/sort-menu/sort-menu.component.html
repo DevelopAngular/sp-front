@@ -1,0 +1,11 @@
+<section class="sort-menu">
+  <header class="sort-menu-header">
+    <p class="sort-menu-header-text">sort by</p>
+  </header>
+  <ul class="sort-menu-options">
+    <li *ngFor="let sortByItem of sortByList; let i = index " (click) = selectSortOption(i)>
+      {{ sortByItem.name }}
+      <img *ngIf="sortByItem.isSelected" class="selected-option" src="../../assets/Check%20(Navy).svg" alt="" >
+    </li>
+  </ul>
+</section>

@@ -1,4 +1,4 @@
-import {Component, ElementRef, Inject, OnInit} from '@angular/core';
+import {Component, ElementRef, HostListener, Inject, OnInit} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { Location } from '../../models/Location';
 import { Pinnable } from '../../models/Pinnable';
@@ -11,6 +11,7 @@ import {filter, map} from 'rxjs/operators';
 import * as _ from 'lodash';
 import {DataService} from '../../services/data-service';
 import {LocationsService} from '../../services/locations.service';
+import {ScreenService} from '../../services/screen.service';
 
 export enum Role { Teacher = 1, Student = 2 }
 
@@ -73,6 +74,8 @@ export class MainHallPassFormComponent implements OnInit {
 
   user;
   isStaff;
+  isDeviceMid: boolean;
+  isDeviceLarge: boolean;
 
   constructor(
     public dialog: MatDialog,
@@ -81,10 +84,13 @@ export class MainHallPassFormComponent implements OnInit {
     private formService: CreateFormService,
     private elementRef: ElementRef,
     private dataService: DataService,
-    private locationsService: LocationsService
+    private locationsService: LocationsService,
+    private screenService: ScreenService,
   ) {}
 
   ngOnInit() {
+    this.isDeviceMid = this.screenService.isDeviceMid;
+    this.isDeviceLarge = this.screenService.isDeviceLarge;
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.FORM_STATE = {
       step: null,
@@ -237,5 +243,12 @@ export class MainHallPassFormComponent implements OnInit {
           this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '412px';
           break;
       }
+  }
+
+  @HostListener('window:resize')
+  checkDeviceScreen() {
+    this.isDeviceMid = this.screenService.isDeviceMid;
+    this.isDeviceLarge = this.screenService.isDeviceLarge;
+    this.formSize.width = this.isDeviceLarge ?  '600px' : '700px';
   }
 }

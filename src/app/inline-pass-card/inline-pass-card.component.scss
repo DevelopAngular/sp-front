@@ -1,4 +1,12 @@
+@media all and (max-width: 425px) {
+  div.inline-pass-card-wrapper {
+    width: initial;
+  }
 
+  div.header-content {
+    padding: 3% !important;
+  }
+}
 
 .inline-pass-card-wrapper {
     width: 335px;

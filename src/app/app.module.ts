@@ -55,6 +55,7 @@ import {filter, map, pairwise, tap} from 'rxjs/operators';
 import {ViewportRuler} from '@angular/cdk/overlay';
 import {NotKioskModeGuard} from './not-kiosk-mode.guard';
 import {KioskModeService} from './services/kiosk-mode.service';
+import {SortMenuComponent} from './sort-menu/sort-menu.component';
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroRouteComponent, data: { hideSchoolToggleBar: true}},
@@ -127,6 +128,8 @@ const appRoutes: Routes = [
     ResizeInfoDialogComponent,
     SignedOutToastComponent,
     ErrorComponent,
+    SortMenuComponent,
+    ErrorComponent,
     IntroRouteComponent,
     IntroDialogComponent,
   ],
@@ -139,7 +142,9 @@ const appRoutes: Routes = [
     ToastConnectionComponent,
     ResizeInfoDialogComponent,
     SignedOutToastComponent,
-    IntroDialogComponent
+    IntroDialogComponent,
+    SignedOutToastComponent,
+    SortMenuComponent
   ],
   imports: [
     BrowserModule,
