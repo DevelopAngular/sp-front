@@ -80,6 +80,7 @@ export interface LoginServer {
   client_secret: string;
   domain: string;
   icon_url: string;
+  icon_search_url: string;
   name: string;
   ws_url: string;
 }
@@ -189,6 +190,7 @@ export class HttpService {
       map((servers: LoginServer[]) => {
         // console.log(servers);
         if (servers.length > 0) {
+
           return servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
         } else {
           return null;
@@ -331,7 +333,7 @@ export class HttpService {
             return predicate(ctx);
           }));
       }),
-      first(),);
+      first());
   }
 
   clearInternal() {
@@ -352,14 +354,17 @@ export class HttpService {
     return this.currentSchoolSubject.getValue();
   }
 
+  searchIcons(search: string, config?: Config) {
+    return this.performRequest(ctx => {
+      return this.http.get(`${ctx.server.icon_search_url}?query=${search}`);
+    });
+  }
+
   get<T>(url, config?: Config, schoolOverride?: School): Observable<T> {
     // console.log('Making request: ' + url);
     return this.performRequest(ctx => {
       // Explicitly check for undefined because the caller may want to override with null.
       const school = schoolOverride !== undefined ? schoolOverride : this.getSchool();
-      if (makeUrl(ctx.server, url) === 'https://smartpass.app/api/staging/v1/users/@me') {
-        console.log('SCHOOl ===>>>', school);
-      }
       return this.http.get<T>(makeUrl(ctx.server, url), makeConfig(config, ctx.auth.access_token, school));
     });
   }
