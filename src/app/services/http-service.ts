@@ -302,7 +302,7 @@ export class HttpService {
             }
 
             throw err;
-          }),);
+          }));
 
       }));
   }

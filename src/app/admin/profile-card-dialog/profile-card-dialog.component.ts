@@ -93,7 +93,6 @@ export class ProfileCardDialogComponent implements OnInit {
       const group: any = {};
       for (const key in permissions) {
         const value = (this.profile._originalUserProfile as User).roles.includes(key);
-        // console.log(value);
         group[key] = new FormControl(value);
       }
       this.permissionsForm = new FormGroup(group);
@@ -180,9 +179,7 @@ export class ProfileCardDialogComponent implements OnInit {
             selectedUsers: this.data.profile,
             alignSelf: true,
             header: `Are you sure you want to remove this user?`,
-            // options: [{display: 'Confirm Remove', color: '#FFFFFF', buttonColor: '#DA2370, #FB434A', action: 'confirm'}],
             options: [{display: 'Confirm Delete', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'confirm'}],
-            // optionsView: 'button',
             trigger: new ElementRef(eventTarget)
           },
           panelClass: 'consent-dialog-container',
