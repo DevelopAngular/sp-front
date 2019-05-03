@@ -19,6 +19,7 @@ import { NotificationFormComponent } from '../notification-form/notification-for
 import { LocationsService } from '../services/locations.service';
 import * as _ from 'lodash';
 import {DarkThemeSwitch} from '../dark-theme-switch';
+import {NotificationService} from '../services/notification-service';
 
 declare const window;
 
@@ -65,6 +66,7 @@ export class NavbarComponent implements OnInit {
       private navbarData: NavbarDataService,
       private process: NgProgress,
       private activeRoute: ActivatedRoute,
+      public  notifService: NotificationService,
       public darkTheme: DarkThemeSwitch
   ) {
 
@@ -197,10 +199,23 @@ export class NavbarComponent implements OnInit {
           })).subscribe();
 
       } else if (action === 'notifications') {
-          const notifRef = this.dialog.open(NotificationFormComponent, {
-              panelClass: 'form-dialog-container',
-              backdropClass: 'custom-backdrop',
+        let notifRef;
+        if (NotificationService.hasSupport && NotificationService.canRequestPermission) {
+            this.notifService.initNotifications(true)
+              .then((hasPerm) => {
+                console.log(`Has permission to show notifications: ${hasPerm}`);
+                notifRef = this.dialog.open(NotificationFormComponent, {
+                  panelClass: 'form-dialog-container',
+                  backdropClass: 'custom-backdrop',
+                });
+              });
+
+        } else {
+          notifRef = this.dialog.open(NotificationFormComponent, {
+            panelClass: 'form-dialog-container',
+            backdropClass: 'custom-backdrop',
           });
+        }
       } else if (action === 'intro') {
           this.router.navigate(['main/intro']);
       } else if (action === 'switch') {

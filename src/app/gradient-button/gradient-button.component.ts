@@ -65,7 +65,6 @@ export class GradientButtonComponent implements OnInit {
   constructor(private sanitizer: DomSanitizer) {
   }
   ngOnInit(): void {
-    console.log(this.minHeight);
     // if (this.size && this.size !== 'small' && this.size !== 'medium' && this.size !== 'large' && this.size !== 'xl') {
     //   this.size = 'small';
     // }
@@ -82,6 +81,7 @@ export class GradientButtonComponent implements OnInit {
           this.minHeight = '40px';
           this.minWidth = '100px';
           this.fontSize = '14px';
+          this.fontWeight = 'bold';
           this.cornerRadius = '8px';
           this.padding = '0px 16px';
           break;
@@ -91,6 +91,7 @@ export class GradientButtonComponent implements OnInit {
           this.minHeight = '50px';
           this.minWidth = '100px';
           this.fontSize = '15px';
+          this.fontWeight = 'bold';
           this.cornerRadius = '8px';
           this.padding = '0px 16px';
 
@@ -101,6 +102,7 @@ export class GradientButtonComponent implements OnInit {
           this.minHeight = '75px';
           this.minWidth = '120px';
           this.fontSize = '17px';
+          this.fontWeight = 'bold';
           this.cornerRadius = '10px';
           this.padding = '0px 20px';
 
@@ -111,6 +113,7 @@ export class GradientButtonComponent implements OnInit {
           this.minHeight = '100px';
           this.minWidth = '160px';
           this.fontSize = '22px';
+          this.fontWeight = 'bold';
           this.cornerRadius = '12px';
           this.padding = '0px 20px';
 

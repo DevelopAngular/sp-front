@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { EditRestrictionsDialogComponent } from './accounts-dialog.component';
+import { AccountsDialogComponent } from './accounts-dialog.component';
 
 describe('EditRestrictionsDialogComponent', () => {
-  let component: EditRestrictionsDialogComponent;
-  let fixture: ComponentFixture<EditRestrictionsDialogComponent>;
+  let component: AccountsDialogComponent;
+  let fixture: ComponentFixture<AccountsDialogComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ EditRestrictionsDialogComponent ]
+      declarations: [ AccountsDialogComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(EditRestrictionsDialogComponent);
+    fixture = TestBed.createComponent(AccountsDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -21,7 +21,7 @@ export class StudentSearchComponent implements OnInit {
   @Input() selectedStudents: User[] = [];
   @Input() width: string = '280px';
   @Input() list: boolean = true;
-  @Input() listMaxHeight: string = '220px';
+  @Input() listMaxHeight: string = '210px';
 
 
   @Input() emitSingleProfile: boolean = false;
