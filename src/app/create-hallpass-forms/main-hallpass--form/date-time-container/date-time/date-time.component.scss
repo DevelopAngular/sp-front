@@ -1,3 +1,15 @@
+@media all and (max-width: 475px) {
+  div.date-wrapper {
+    width: 100%;
+  }
+}
+
+@media all and (max-width: 375px) {
+  img.back-button{
+    display: none;
+  }
+}
+
 .time-picker{
   margin: 0 34px 0px 20px;
 }

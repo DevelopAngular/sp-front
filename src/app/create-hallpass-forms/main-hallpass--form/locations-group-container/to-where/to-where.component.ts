@@ -1,10 +1,15 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild,Inject} from '@angular/core';
 import { Pinnable } from '../../../../models/Pinnable';
 import { Navigation } from '../../main-hall-pass-form.component';
 import { CreateFormService } from '../../../create-form.service';
 import { States } from '../locations-group-container.component';
 import {Observable} from 'rxjs';
 import {MAT_DIALOG_DATA} from '@angular/material';
+import {ToWhereGridRestriction} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestriction';
+import {ToWhereGridRestrictionLg} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionLg';
+import {ScreenService} from '../../../../services/screen.service';
+import {ToWhereGridRestrictionSm} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionSm';
+import {ToWhereGridRestrictionMd} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionMd';
 
 @Component({
   selector: 'app-to-where',
@@ -27,9 +32,12 @@ export class ToWhereComponent implements OnInit {
 
   public teacherRooms: Pinnable[] = [];
 
+  public gridRestrictions: ToWhereGridRestriction = new ToWhereGridRestrictionLg();
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     private formService: CreateFormService,
+    private screenService: ScreenService
 
   ) {
     this.states = States;
@@ -37,6 +45,8 @@ export class ToWhereComponent implements OnInit {
 
   ngOnInit() {
     this.location = this.formState.data.direction ? this.formState.data.direction.from : null;
+    this.teacherRooms = this.formState.data.teacherRooms;
+    this.gridRestrictions = this.getViewRestriction();
     if (!this.dialogData['kioskMode']) {
         this.teacherRooms = this.formState.data.teacherRooms;
     }
@@ -78,5 +88,24 @@ export class ToWhereComponent implements OnInit {
       //
       this.backButton.emit(this.formState);
     }, 100);
+  }
+
+  @HostListener('window: resize')
+  changeGridView() {
+    this.gridRestrictions = this.getViewRestriction();
+  }
+
+  private getViewRestriction(): ToWhereGridRestriction {
+    if (this.screenService.isDeviceMid) {
+      console.log('mid device');
+      return new ToWhereGridRestrictionSm();
+    }
+
+    if (this.screenService.isIpadWidth) {
+      console.log('ipad');
+      return new ToWhereGridRestrictionMd();
+    }
+
+    return new ToWhereGridRestrictionLg();
   }
 }

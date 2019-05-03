@@ -1,4 +1,19 @@
-﻿:host {
+/*Small devices breakpoint*/
+@media all and (max-width: 425px) {
+  div.display-card-wrapper{
+    width: 100%;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background-color: #F8FAFF;
+  }
+
+  div.display-card-divider{
+    width: inherit;
+  }
+}
+
+:host {
 
 }
 .display-card-wrapper{

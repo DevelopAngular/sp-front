@@ -1,36 +1,41 @@
 @import '../../sp-colors';
 
-/* Small devices (landscape phones, 576px and up) */
-@media (min-width: 576px) {
-    .container {
-        max-width: 540px;
-    }
+/*Ipad breakpoint*/
+@media all and (max-width: 1024px) {
+  .passes-wrapper {
+    flex-direction: column;
+  }
+
+  div.main-page-left{
+    margin-right: 0;
+  }
+
 }
 
-/* Medium devices (tablets, 768px and up) */
-@media (min-width: 768px) {
-    .container {
-        max-width: 720px;
-    }
-}
+/*Small devices breakpoint*/
+@media all and (max-width: 425px) {
+  div.current-pass,
+  div.future-passes,
+  div.past-passes,
+  div.active-passes {
+    width: 93%;
+  }
 
-/* Large devices (desktops, 992px and up) */
-@media (min-width: 992px) {
-    .container {
-        max-width: 960px;
-    }
-}
+  .pass-buttons{
+      align-self: center;
+  }
 
-/* Extra large devices (large desktops, 1200px and up) */
-@media (min-width: 1200px) {
-    .container {
-        max-width: 1140px;
-    }
+  h1.passes-heading {
+    display: flex;
+    justify-content: center;
+    color: #1F195E;
+    margin-top: -15px;
+  }
+
 }
 
 .passes-wrapper {
     display: flex;
-    flex-direction: row;
     justify-content: center;
 
     margin-left: auto;
@@ -111,4 +116,8 @@
 .empty-passes-svg {
     margin: 20px 0;
     width: 330px;
+}
+
+.passes-heading {
+  display: none;
 }

@@ -1,5 +1,12 @@
 @import '../../design-system';
 
+/*Small devices breakpoint*/
+@media all and (max-width: 425px) {
+  .pass-buttons {
+    align-self: center;
+  }
+}
+
 .intro-wrapper{
     display: flex;
     flex-direction: column;

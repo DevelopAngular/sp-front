@@ -54,6 +54,7 @@ import {AdminCalendarToggleComponent} from '../calendar-components/admin-calenda
 import {ToggleOptionsComponent} from '../calendar-components/admin-calendar-toggle/toggle-options/toggle-options.component';
 import {SpChipsComponent} from '../sp-chips/sp-chips.component';
 import {RoomsSearchComponent} from "../rooms-search/rooms-search.component";
+import {SettingsComponent} from '../settings/settings.component';
 
 
 
@@ -121,15 +122,14 @@ import {RoomsSearchComponent} from "../rooms-search/rooms-search.component";
       AdminCalendarToggleComponent,
       ToggleOptionsComponent,
       SpChipsComponent,
-      RoomsSearchComponent
-
+      RoomsSearchComponent,
   ],
     entryComponents: [
       PassCardComponent,
       DropdownComponent,
       CalendarComponent,
       CalendarComponent,
-      ReportSuccessToastComponent
+      ReportSuccessToastComponent,
     ],
   exports: [
     ReactiveFormsModule,
@@ -174,8 +174,7 @@ import {RoomsSearchComponent} from "../rooms-search/rooms-search.component";
     AdminCalendarToggleComponent,
     ToggleOptionsComponent,
     SpChipsComponent,
-    RoomsSearchComponent
-
+    RoomsSearchComponent,
   ],
 })
 export class SharedModule {

@@ -1,13 +1,13 @@
-import { Component, ElementRef, Inject, NgZone, OnInit } from '@angular/core';
+import {Component, ElementRef, Inject, Input, NgZone, OnInit, Optional} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material';
-import { Router } from '@angular/router';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
 import { User } from '../models/User';
 import {DarkThemeSwitch} from '../dark-theme-switch';
-import {BUILD_DATE, RELEASE_NAME} from '../../build-info';
-import * as _ from 'lodash';
+import {RELEASE_NAME} from '../../build-info';
 import {KioskModeService} from '../services/kiosk-mode.service';
+import {trigger} from '@angular/animations';
+import {SideNavService} from '../services/side-nav.service';
 
 export interface Setting {
   hidden: boolean;
@@ -20,8 +20,9 @@ export interface Setting {
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.scss']
+  styleUrls: ['./settings.component.scss'],
 })
+
 export class SettingsComponent implements OnInit {
 
   targetElementRef: ElementRef;
@@ -39,13 +40,15 @@ export class SettingsComponent implements OnInit {
   hoveredColor: string;
   version = 'Version 1.3';
   currentRelease = RELEASE_NAME;
+  @Input() dataSideNav: any = null;
 
   constructor(
       public dialog: MatDialog,
-      @Inject(MAT_DIALOG_DATA) public data: any,
-      public dialogRef: MatDialogRef<SettingsComponent>,
+      @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
+      @Optional() public dialogRef: MatDialogRef<SettingsComponent>,
       private dataService: DataService,
       private _zone: NgZone,
+      private sideNavService: SideNavService,
       public loadingService: LoadingService,
       public darkTheme: DarkThemeSwitch,
       public kioskMode: KioskModeService
@@ -69,7 +72,16 @@ export class SettingsComponent implements OnInit {
       'hidden': false,
       'gradient': '#022F68, #2F66AB',
       'icon': 'Moon',
-      'action': () => { this.darkTheme.switchTheme(); this.data.darkBackground = !this.data.darkBackground; },
+      'action': () => {
+        this.darkTheme.switchTheme();
+        if (this.data) {
+          this.data.darkBackground = !this.data.darkBackground;
+        }
+
+        if(this.dataSideNav) {
+          this.dataSideNav.darkBackground = !this.dataSideNav.darkBackground;
+        }
+      },
       'title': (this.darkTheme.isEnabled$.value ? 'Light Theme' : 'Dark Theme')
     });
     this.settings.push({
@@ -113,8 +125,17 @@ export class SettingsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.targetElementRef = this.data['trigger'];
-    this.isSwitch = this.data['isSwitch'] && !this.kioskMode.currentRoom$.value;
+    if (this.data) {
+      this.targetElementRef = this.data['trigger'];
+      this.isSwitch = this.data['isSwitch'] && !this.kioskMode.currentRoom$.value;
+    }
+
+    this.sideNavService.sideNavData.subscribe( sideNavData => {
+      if (sideNavData) {
+        this.targetElementRef = sideNavData['trigger'];
+        this.isSwitch = sideNavData['isSwitch'] && !this.kioskMode.currentRoom$.value;
+      }
+    });
 
     this.updateDialogPosition();
     this.dataService.currentUser
@@ -150,18 +171,24 @@ export class SettingsComponent implements OnInit {
   }
 
   handleAction(setting) {
-    if ( typeof setting.action === 'string' ) {
+    if (!this.dialogRef && typeof setting.action === 'string' ) {
+      this.sideNavService.sideNavAction$.next(setting.action);
+      this.sideNavService.toggle$.next(false);
+    } else if (typeof setting.action === 'string' && this.dialogRef) {
       this.dialogRef.close(setting.action);
     } else {
       setting.action();
+      this.sideNavService.toggle$.next(false);
     }
   }
 
   updateDialogPosition() {
       const matDialogConfig: MatDialogConfig = new MatDialogConfig();
+    if (this.targetElementRef) {
       const rect = this.targetElementRef.nativeElement.getBoundingClientRect();
-          matDialogConfig.position = { left: `${rect.left + (rect.width / 2) - 168 }px`, top: `${rect.bottom + 10}px` };
-
+      matDialogConfig.position = { left: `${rect.left + (rect.width / 2) - 168 }px`, top: `${rect.bottom + 10}px` };
       this.dialogRef.updatePosition(matDialogConfig.position);
+    }
+
   }
 }

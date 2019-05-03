@@ -1,3 +1,9 @@
+@media all and (max-width: 475px) {
+  .pass-card-header-close {
+      position: absolute !important;
+      bottom: -60px !important;
+  }
+}
 
 .invitation-card-wrapper {
     width: 335px;

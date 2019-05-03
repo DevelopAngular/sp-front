@@ -2,16 +2,16 @@
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
-    MatChipsModule,
-    MatDialogModule,
-    MatDividerModule,
-    MatGridListModule,
-    MatListModule,
-    MatIconModule,
-    MatProgressBarModule,
-    MatSelectModule,
-    MatSliderModule,
-    MatSlideToggleModule
+  MatChipsModule,
+  MatDialogModule,
+  MatDividerModule,
+  MatGridListModule,
+  MatListModule,
+  MatIconModule,
+  MatProgressBarModule,
+  MatSelectModule,
+  MatSliderModule,
+  MatSlideToggleModule, MatSidenavModule
 } from '@angular/material';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { ContainerCardComponent } from '../container-card/container-card.component';
@@ -54,6 +54,7 @@ import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hall
 import {FirstSeenFormComponent} from '../create-hallpass-forms/first-seen-form/first-seen-form.component';
 import {NotificationFormComponent} from '../notification-form/notification-form.component';
 import {WhoYouAreComponent} from '../create-hallpass-forms/main-hallpass--form/student-groups/who-you-are/who-you-are.component';
+import {ScreenService} from '../services/screen.service';
 import {KioskModeComponent} from '../kiosk-mode/kiosk-mode.component';
 
 @NgModule({
@@ -74,7 +75,8 @@ import {KioskModeComponent} from '../kiosk-mode/kiosk-mode.component';
     MatGridListModule,
     MatDividerModule,
     MatGridListModule,
-    MatListModule
+    MatListModule,
+    MatSidenavModule
   ],
   declarations: [
     HallMonitorComponent,
@@ -130,7 +132,8 @@ import {KioskModeComponent} from '../kiosk-mode/kiosk-mode.component';
 
   ],
   providers: [
-    NavbarDataService
+    NavbarDataService,
+    ScreenService
   ]
 })
 export class MainModule {

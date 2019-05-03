@@ -1,7 +1,14 @@
-  <app-navbar></app-navbar>
-  <ng-container *ngIf="!(shouldShowRouter() | async)">
-    <app-restriction-dummy></app-restriction-dummy>
-  </ng-container>
-  <ng-container *ngIf="shouldShowRouter() | async">
-    <router-outlet></router-outlet>
-  </ng-container>
+<mat-sidenav-container (backdropClick)="fadeClick()">
+  <mat-sidenav mode="over" [opened]="(toggle | async)">
+    <app-settings [dataSideNav]="data"></app-settings>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <app-navbar (settingsClick)="onSettingClick($event)"></app-navbar>
+    <ng-container *ngIf="!(shouldShowRouter() | async)">
+      <app-restriction-dummy></app-restriction-dummy>
+    </ng-container>
+    <ng-container *ngIf="shouldShowRouter() | async">
+      <router-outlet></router-outlet>
+    </ng-container>
+  </mat-sidenav-content>
+</mat-sidenav-container>

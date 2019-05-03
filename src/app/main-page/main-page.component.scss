@@ -3,3 +3,12 @@
   flex-direction: column;
   height: 100%;
 }
+
+.app-settings {
+  padding-top: 100px;
+}
+
+mat-sidenav {
+  border-top-right-radius: 14px;
+  border-bottom-right-radius: 14px;
+}

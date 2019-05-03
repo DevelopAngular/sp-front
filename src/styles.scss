@@ -5,6 +5,13 @@
 @import "~font-awesome/css/font-awesome.min.css";
 @import "design-system";
 
+@media all and (max-width: 375px) {
+  .student-pass-card-dialog-container .mat-dialog-container {
+    width: 100% !important;
+    margin-top: -70px !important;
+  }
+}
+
 html {
   background-color: #FCFDFF;
   padding: 0 0;
@@ -303,5 +310,20 @@ body {
   .mat-list-item {
     font-family: "Helvetica Neue", sans-serif;
   }
+}
+
+
+// Side nav scroll hiding
+.mat-drawer-inner-container::-webkit-scrollbar {
+  width: 0 !important
+}
+
+.mat-drawer-inner-container {
+  overflow: -moz-scrollbars-none;
+  -ms-overflow-style: none;
+}
+
+mat-sidenav-container {
+  height: 100vh;
 }
 /* === end === */
