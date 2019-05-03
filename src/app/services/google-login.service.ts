@@ -1,16 +1,12 @@
-
-import {take, filter, map} from 'rxjs/operators';
 import { Injectable, NgZone } from '@angular/core';
 
 
-
-
-
-import { BehaviorSubject ,  Observable ,  ReplaySubject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
+import { filter, map, take } from 'rxjs/operators';
 import { GoogleAuthService } from './google-auth.service';
+import { StorageService } from './storage.service';
 import AuthResponse = gapi.auth2.AuthResponse;
 import GoogleAuth = gapi.auth2.GoogleAuth;
-import {StorageService} from './storage.service';
 
 declare const window;
 
@@ -42,9 +38,9 @@ export class GoogleLoginService {
   public isAuthenticated$ = new ReplaySubject<boolean>(1);
 
   constructor(
-      private googleAuth: GoogleAuthService,
-      private _zone: NgZone,
-      private storage: StorageService
+    private googleAuth: GoogleAuthService,
+    private _zone: NgZone,
+    private storage: StorageService
   ) {
 
     this.authToken$.subscribe(auth => {
@@ -54,7 +50,27 @@ export class GoogleLoginService {
       }
     });
 
-    this.googleAuth.getAuth().subscribe(auth => this.googleAuthTool.next(auth));
+    this.googleAuth.getAuth().subscribe(auth => this.googleAuthTool.next(auth as any));
+
+    this.googleAuthTool.subscribe(tool =>
+      console.log('google auth tool: ', tool, 'user currently signed in: ', tool ? tool.isSignedIn.get() : null));
+
+    this.googleAuthTool
+      .pipe(
+        filter(e => !!e),
+        take(1)
+      )
+      .subscribe(auth => {
+        if (!auth.isSignedIn.get()) {
+          return;
+        }
+
+        const resp = auth.currentUser.get().getAuthResponse();
+        if (resp.expires_at > Date.now()) {
+          this.updateAuth(resp);
+        }
+      });
+
 
     const savedAuth = this.storage.getItem(STORAGE_KEY);
     if (savedAuth) {
@@ -122,6 +138,7 @@ export class GoogleLoginService {
     }
 
     this.storage.removeItem(STORAGE_KEY);
+    this.logout();
   }
 
   /**
@@ -153,6 +170,19 @@ export class GoogleLoginService {
 
   signInDemoMode(username: string, password: string) {
     this.authToken$.next({username: username, password: password, type: 'demo-login'});
+  }
+
+  logout() {
+    const auth = this.googleAuthTool.getValue();
+    if (auth === null) {
+      return;
+    }
+
+    const user = auth.currentUser.get();
+    if (user) {
+      user.disconnect();
+    }
+
   }
 
 }
