@@ -1,10 +1,15 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Navigation } from '../../main-hall-pass-form.component';
 import { Location } from '../../../../models/Location';
 import { User } from '../../../../models/User';
 import {CreateFormService} from '../../../create-form.service';
 import {BehaviorSubject} from 'rxjs';
+import {MessageBoxViewRestrictionSm} from '../../../../models/message-box-view-restrictions/MessageBoxViewRestrictionSm';
+import {MessageBoxViewRestriction} from '../../../../models/message-box-view-restrictions/MessageBoxViewRestriction';
+import {MessageBoxViewRestrictionLg} from '../../../../models/message-box-view-restrictions/MessageBoxViewRestrictionLg';
+import {MessageBoxViewRestrictionMd} from '../../../../models/message-box-view-restrictions/MessageBoxViewRestrictionMd';
+import {ScreenService} from '../../../../services/screen.service';
 
 @Component({
   selector: 'app-restricted-message',
@@ -43,8 +48,11 @@ export class RestrictedMessageComponent implements OnInit {
     'rest-mes-header_animation-back': false
   };
 
+  messageBoxViewRestriction: MessageBoxViewRestriction = new MessageBoxViewRestrictionLg();
+
   constructor(
-    private formService: CreateFormService
+    private formService: CreateFormService,
+    private screenService: ScreenService
   ) { }
 
   get headerGradient() {
@@ -102,8 +110,7 @@ export class RestrictedMessageComponent implements OnInit {
     this.fromLocation = this.formState.data.direction.from;
     this.toLocation = this.formState.data.direction.to;
     this.teacher = this.formState.data.requestTarget;
-
-      console.log(this.toLocation);
+    this.messageBoxViewRestriction = this.getViewRestriction();
   }
 
   back() {
@@ -150,6 +157,23 @@ export class RestrictedMessageComponent implements OnInit {
     console.log(evt);
     this.headerTransition['rest-mes-header'] = false;
     this.headerTransition['rest-mes-header_animation-back'] = true;
+  }
+
+  @HostListener('window: resize')
+  changeMessageBoxView() {
+    this.messageBoxViewRestriction = this.getViewRestriction();
+  }
+
+  private getViewRestriction(): MessageBoxViewRestriction {
+    if (this.screenService.isDeviceSmall) {
+      return new MessageBoxViewRestrictionSm();
+    }
+
+    if (this.screenService.isDeviceMid) {
+      return new MessageBoxViewRestrictionMd();
+    }
+
+    return new MessageBoxViewRestrictionLg();
   }
 
 }

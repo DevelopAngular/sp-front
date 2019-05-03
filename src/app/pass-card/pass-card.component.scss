@@ -1,3 +1,27 @@
+@media all and (max-width: 475px) {
+  .pass-card-header-close {
+    position: absolute;
+    bottom: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+@media all and (max-width: 375px) {
+  div.pass-card-wrapper {
+    width: 100%;
+  }
+}
+
+@media all and (max-width: 320px) {
+  .header-content {
+    width: initial !important;
+  }
+
+  mat-divider {
+    width: 90% !important;
+  }
+}
 
 .pass-card-wrapper {
     width: 335px;

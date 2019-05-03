@@ -6,7 +6,7 @@
     <div class="heading grow">
       <app-smartpass-logo></app-smartpass-logo>
     </div>
-    <div style="width: 34%" *ngIf="!hideButtons">
+    <div class="nav-buttons-width" *ngIf="!hideButtons">
       <div *ngIf="isStaff && !user.isAssistant()" class="teacherNav">
         <div *ngFor="let button of buttons" class="teacherNav_tab">
           <ng-container *ngIf="hasRoles(button.requiredRoles)">

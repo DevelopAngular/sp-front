@@ -1,5 +1,6 @@
 <div class="rest-mes-wrapper">
   <div [ngClass]="headerTransition" [style.background-image]="headerGradient">
+    <img class="back-button back-button-white back-btn-top" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" (click)="back()">
 
 
     <img class="back-button back-button-white" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" (click)="back()">
@@ -32,29 +33,30 @@
   <div class="content-wrapper">
     <div class="rest-mes-content">
       <div data-grammarly-issue-container [style.width]="'100%'">
-         <textarea
-                 #messageBox
-                 class="message-box"
-                 pInputTextarea
-                 [maxlength]="160"
-                 autoResize="autoResize"
-                 [placeholder]="'Attach a message'"
-                 [formControl]="message"
-                 [style.width]="'350px'"
-                 [style.height]="'88px'"
-                 [style.min-height]="'88px'"
-                 [style.max-height]="date ? '190px' : '207px'"
-         >
-        </textarea>
+      <textarea
+             #messageBox
+             class="message-box"
+             pInputTextarea
+             [maxlength]="160"
+             autoResize="autoResize"
+             [placeholder]="'Attach a message'"
+             [formControl]="message"
+             [style.width]="messageBoxViewRestriction.textAreaWidth"
+             [style.height]="'88px'"
+             [style.min-height]="'88px'"
+             [style.max-height]="date ? '190px' : '207px'"
+             autofocus
+     >
+    </textarea>
       </div>
       <div class="buttons" *ngIf="formState.forInput || formState.missedRequest">
-        <app-gradient-button
+        <app-gradient-button size="editable"
                              [gradient]="'#00B476, #03CF31'"
                              [hoverColor]="'#04CD33'"
                              [cursor]="'pointer'"
-                             [minWidth]="'104px'"
-                             [minHeight]="'34px'"
-                             [fontSize]="'12px'"
+                             [minWidth]="messageBoxViewRestriction.btnWidth"
+                             [minHeight]="messageBoxViewRestriction.btnHeight"
+                             [fontSize]="messageBoxViewRestriction.fontSize"
                              (buttonClick)="sendRequest()"
                              class="message-button">
           {{(message.value ? 'Next' : 'Skip')}}
@@ -74,4 +76,5 @@
                        class="message-deny-button"
   >Deny Pass Request</app-gradient-button>
   <app-student-footer *ngIf="formState.forInput || formState.missedRequest" [formState]="formState" [date]="date" (changeAnimationDirectionEvent)="onChangeAnimationDirection($event)"></app-student-footer>
+  <img class="back-button back-button-whitee back-btn-bottom" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" (click)="back()">
 </div>

@@ -1,8 +1,20 @@
 :host {
+  @media all  and (max-width: 475px) {
+    div.locations-group-wrapper {
+      overflow: initial;
+    }
+
+    div.locations-group-wrapper > .ng-trigger-NextStep {
+      right: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+    }
+  }
+
   .locations-group-wrapper {
     //background-color: #fff;
     position: relative;
-    width: 425px;
     height: 500px;
     border-radius: 15px;
     overflow: hidden;

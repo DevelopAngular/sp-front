@@ -1,5 +1,11 @@
 @import "../../../../../design-system.scss";
 
+@media all and (max-width: 475px) {
+  div.target-shadow {
+    box-shadow: none;
+  }
+}
+
 :host {
   width: 100%;
   position: relative;

@@ -1,3 +1,13 @@
+@media screen and (max-width: 475px) {
+  .fixed-card {
+    width: 100% !important;
+  }
+
+  .form {
+    width: initial !important;
+  }
+}
+
 .pointer {
   position: absolute;
   left: 50%;

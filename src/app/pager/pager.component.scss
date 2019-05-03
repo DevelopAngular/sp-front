@@ -1,3 +1,9 @@
+@media all and (max-width: 375px) {
+  div.pager-wrapper {
+    width: 250px;
+  }
+}
+
 :host {
   height: 100%;
 }

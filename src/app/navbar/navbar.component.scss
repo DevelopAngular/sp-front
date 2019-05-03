@@ -1,3 +1,23 @@
+/* Ipad breakpoint */
+@media all and (max-width: 1024px) {
+  .name,
+  .heading.grow {
+    display: none;
+  }
+
+  div.user-info {
+    padding: 0;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+  }
+
+  div.nav-buttons-width {
+    width: inherit;
+  }
+
+}
+
 :host {
   background-color: transparent;
 }
@@ -196,4 +216,8 @@
   margin: 0 auto;
   height: 1px;
   background-color: #B5B7BA;
+}
+
+.nav-buttons-width {
+  width: 34%;
 }
