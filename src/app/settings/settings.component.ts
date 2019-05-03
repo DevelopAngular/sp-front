@@ -6,6 +6,7 @@ import { LoadingService } from '../services/loading.service';
 import { User } from '../models/User';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {BUILD_DATE, RELEASE_NAME} from '../../build-info';
+import * as _ from 'lodash';
 
 export interface Setting {
   gradient: string;
@@ -117,7 +118,6 @@ export class SettingsComponent implements OnInit {
   }
 
   getIcon(iconName: string, setting: any,  hover?: boolean, hoveredColor?: string) {
-
     return this.darkTheme.getIcon({
       iconName: iconName,
       setting: setting,
