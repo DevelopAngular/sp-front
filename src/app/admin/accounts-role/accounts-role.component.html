@@ -181,12 +181,12 @@
               [fontWeight]="700"
               [gradient]="'#001115, #033294'"
               [hoverColor]="'#022F68'"
-              (buttonClick)="false">
+              (buttonClick)="promptConfirmation($event.target, 'disable_sign_in')">
               <span>Disable sign-in</span>
             </app-gradient-button>
           </div>
 
-          <div class="ds-p-10" #eventTarget  [style.opacity]="consentMenuOpened ? '.5' : '1'">
+          <div class="ds-p-10">
             <app-gradient-button
               [size]="'small'"
               [disabled]="!selectedUsers.length"
@@ -197,7 +197,7 @@
               [fontWeight]="700"
               [gradient]="'#DA2370, #FB434A'"
               [hoverColor]="'#DA2370'"
-              (buttonClick)="deleteAccountPrompt(eventTarget)">
+              (buttonClick)="promptConfirmation($event.target, 'delete_from_profile')">
               <span>Remove from Profile</span>
             </app-gradient-button>
           </div>
@@ -294,9 +294,15 @@
     </div>
 
     <div class="table">
-      <div *ngIf="!userList.length" class="loading-theme spinner ds-flex-center-center">
+      <div *ngIf="!userList.length && !noUsersDummyVisibility" class="loading-theme spinner ds-flex-center-center">
         <mat-spinner *ngIf="!placeholder" [color]="'accent'"></mat-spinner>
         <h1 [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})" *ngIf="placeholder">No matches found.</h1>
+      </div>
+      <div *ngIf="noUsersDummyVisibility" class="ds-flex-center-center ds-flex-column ds-pt-25 ds-mt-25" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
+        <img [src]="'./assets/emptyStates/no-users.svg'" class="ds-pt-25 ds-mt-25" alt="no-users.svg">
+        <h1>No Users</h1>
+        <p>Add users one-by-one above or set up G Suite <br>
+          syncing to automatically add users to this profile.</p>
       </div>
       <div *ngIf="userList.length">
         <div class="column-settings">
