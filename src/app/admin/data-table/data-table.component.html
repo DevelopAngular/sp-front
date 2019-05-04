@@ -2,9 +2,11 @@
      [style.width]="width"
      [style.height]="height"
      [style.overflow]="(height=='none' ? 'none': 'auto')">
+
   <table mat-table matSort [dataSource]="dataSource" [style.background-color]="backgroundColor">
     <!-- Checkbox Column -->
-    <ng-container matColumnDef="select" *ngIf="isCheckbox">
+    <ng-container matColumnDef="select" *ngIf="isCheckbox | async">
+
       <th mat-header-cell *matHeaderCellDef class="sticky-header"
           [ngClass]="{'dark-theme-of-checkbox__primary': darkTheme.isEnabled$.value}"
           [style.background-color]="darkTheme.isEnabled$.value ? '#0F171E' : '#F8FAFF'">

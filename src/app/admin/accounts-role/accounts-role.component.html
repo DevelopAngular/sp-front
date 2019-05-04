@@ -1,9 +1,7 @@
 <div class="host" appSafariScroll (scroll)="onScroll($event)">
   <div class="accounts-role-wrapper"  *ngIf="tabVisibility">
-    <!--{{initialSearchString}}-->
-    <div class="card card__top-bar ds-flex-start-between"
-         [ngClass]="{'card__dark': darkTheme.isEnabled$.value}"
-         style="width: 100%">
+    <div class="card card__top-bar ds-flex-start-between ds-w-100"
+         [ngClass]="{'card__dark': darkTheme.isEnabled$.value}">
       <div class="ds-flex-start-start ds-h-100">
 
         <div class="back-button">
@@ -21,17 +19,24 @@
                 }) | resolveAsset" alt="Settings.svg">
                 <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Accounts</span>
               </div>
-              <div class="card_header" [style.font-size]="'16px'">
-                <span
-                  [style.padding-left]="'0px'"
-                  [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})"
-                >Total Accounts: {{(accounts$ | async).total}} Accounts</span>
+              <!--<div class="card_header" [style.font-size]="'16px'">-->
+                <!--<span-->
+                  <!--[style.padding-left]="'0px'"-->
+                  <!--[style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})"-->
+                <!--&gt;Total Accounts: {{(accounts$ | async).total}} Accounts</span>-->
+              <!--</div>-->
+              <div  *ngIf="!(dataTableEditState | async)" class="card_title tooltip-container">
+                <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset"
+                     [matTooltip]="'All accounts at one place.'"
+                     matTooltipClass="tooltip"
+                     alt="">
+                <span [style.font-weight]="'bold'">{{(accounts$ | async).total }} user{{(accounts$ | async).total > 1 ? 's' : ''}}</span><br>
+                <div class="arrow-down-container">
+                  <div class="arrow-down"></div>
+                </div>
               </div>
-              <div class="card_title">
-                <span>G Suite: 2,237  Accounts</span>
-              </div>
-              <div class="card_title">
-                <span>Alternative: 23 Accounts</span>
+              <div  *ngIf="(dataTableEditState | async)" class="card_title">
+                <span [style.font-weight]="'bold'">{{selectedUsers.length}} Selected</span>
               </div>
             </div>
           </div>
@@ -44,10 +49,20 @@
                 }) | resolveAsset" alt="Settings.svg">
               <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Administrators</span>
             </div>
-            <p class="card_title mr-20">
-              <span class="bold">{{(accounts$ | async).admin_count}} user{{(accounts$ | async).admin_count > 1 ? 's' : ''}} </span><br>
-              An administrator has a high-level look at the school, configures passes, and views/generates reports.
-            </p>
+            <div *ngIf="!(dataTableEditState | async)" class="card_title tooltip-container">
+
+              <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset"
+                   [matTooltip]="'An administrator has a high-level look at the school, configures passes, and views/generates reports.'"
+                   matTooltipClass="tooltip"
+                   alt="">
+              <span [style.font-weight]="'bold'">{{(accounts$ | async).admin_count}} user{{(accounts$ | async).admin_count> 1 ? 's' : ''}}</span><br>
+              <div class="arrow-down-container">
+                <div class="arrow-down"></div>
+              </div>
+            </div>
+            <div  *ngIf="(dataTableEditState | async)" class="card_title">
+              <span [style.font-weight]="'bold'">{{selectedUsers.length}} Selected</span>
+            </div>
           </div>
           <div *ngSwitchCase="'_profile_teacher'">
             <div class="card_header ds-mb-10">
@@ -58,11 +73,20 @@
                 }) | resolveAsset" alt="Settings.svg">
               <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Teachers</span>
             </div>
-            <p class="card_title ds-mr-20">
-              <span class="bold">{{(accounts$ | async).teacher_count}} user{{(accounts$ | async).teacher_count > 1 ? 's' : ''}} </span><br>
-              A teacher has a room or multiple rooms where students can create passes to.
-              A teacher can manage passes in his/her room and create passes.
-            </p>
+            <div *ngIf="!(dataTableEditState | async)" class="card_title tooltip-container">
+              <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset"
+                   [matTooltip]="' A teacher has a room or multiple rooms where students can create passes to.'+
+  '                    A teacher can create passes, view hall monitor activity, and manage passes in his/her room.'"
+                   matTooltipClass="tooltip"
+                   alt="">
+              <span [style.font-weight]="'bold'">{{(accounts$ | async).teacher_count}} user{{(accounts$ | async).teacher_count> 1 ? 's' : ''}}</span><br>
+              <div class="arrow-down-container">
+                <div class="arrow-down"></div>
+              </div>
+            </div>
+            <div  *ngIf="(dataTableEditState | async)" class="card_title">
+              <span [style.font-weight]="'bold'">{{selectedUsers.length}} Selected</span>
+            </div>
           </div>
           <div *ngSwitchCase="'_profile_student'">
             <div class="card_header ds-mb-10">
@@ -73,11 +97,20 @@
                 }) | resolveAsset" alt="Settings.svg">
               <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Students</span>
             </div>
-            <p class="card_title ds-mr-20">
-              <span class="bold">{{(accounts$ | async).student_count}} user{{(accounts$ | async).student_count > 1 ? 's' : ''}} </span><br>
-              A student can create passes, schedule passes for the future,
-              and send pass requests to teachers.
-            </p>
+            <div  *ngIf="!(dataTableEditState | async)" class="card_title tooltip-container">
+              <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset"
+                   [matTooltip]="'A student can create passes, schedule passes for the future,'+
+  '                and send pass requests to teachers.'"
+                   matTooltipClass="tooltip"
+                   alt="">
+              <span [style.font-weight]="'bold'">{{(accounts$ | async).student_count }} user{{(accounts$ | async).student_count > 1 ? 's' : ''}}</span><br>
+              <div class="arrow-down-container">
+                <div class="arrow-down"></div>
+              </div>
+            </div>
+            <div  *ngIf="(dataTableEditState | async)" class="card_title">
+              <span [style.font-weight]="'bold'">{{selectedUsers.length}} Selected</span>
+            </div>
           </div>
           <div *ngSwitchCase="'staff_secretary'">
             <div class="card_header ds-mb-10">
@@ -88,183 +121,197 @@
                 }) | resolveAsset" alt="Settings.svg">
               <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Secretaries & Substitutes</span>
             </div>
-            <p class="card_title ds-mr-20">
-              <span class="bold">{{0}} user{{0 > 1 || true ? 's' : ''}} </span><br>
-              A secretary or substitute teacher acts as a certain teacher when they sign-in.
-              They can manage passes in his/her room and create passes as that teacher.
-            </p>
+            <div *ngIf="!(dataTableEditState | async)" class="card_title tooltip-container">
+              <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset"
+                   [matTooltip]="'A secretary or substitute teacher acts as a certain teacher when they sign-in.' +
+                      'They can manage passes in his/her room and create passes as that teacher.'"
+                   matTooltipClass="tooltip"
+                   alt="">
+              <span [style.font-weight]="'bold'">{{(accounts$ | async).secretary_count || 0}} users</span><br>
+              <div class="arrow-down-container">
+                <div class="arrow-down"></div>
+              </div>
+            </div>
+            <div  *ngIf="(dataTableEditState | async)" class="card_title">
+              <span [style.font-weight]="'bold'">{{selectedUsers.length}} Selected</span>
+            </div>
           </div>
         </div>
       </div>
-      <div class="ds-mx-20 ds-my-10">
-        <div class="ds-flex-start-end">
-          <ng-container *ngIf="role === '_all'; else roleProfile">
+      <div class="tool-panel ds-mx-20 ds-my-10" *ngIf="(dataTableEditState | async)">
+
+        <div class="ds-flex-center-start">
+          <div class="ds-p-10"  *ngIf="role === '_all'">
             <app-gradient-button
-              [size]="'large'"
-              [border]="'1px solid #eee'"
-              [gradient]="'#FFFFFF, #FFFFFF'"
-              [hoverColor]="'#F5F5F5'"
-              [cursor]="'pointer'"
-              [textColor]="'#134482'"
-              [minHeight]="'74px'"
-              [width]="'147px'"
-              [fontWeight]="'900'"
-              [fontSize]="'17px'"
-              [textWidth]="'69%'"
-              (buttonClick)="showProfileCard(null, false, true)"
-            >
-              <div class="ds-flex-center-center ds-mx-20">
-                <div class="ds-mr-15">
-                  <img src="assets/google/google_logo.svg" alt="google-icon" width="34" height="34">
-                </div>
-                <div>
-                  <span>G Suite Settings</span>
-                </div>
-              </div>
+              [gradient]="'#FFFFFF,#FFFFFF'"
+              [hoverColor]="'#FFFFFF'"
+              [textColor]="'#1F194E'"
+              [size]="'small'"
+              [disabled]="!selectedUsers.length"
+              (buttonClick)="false">
+              <span>Export Account Data</span>
             </app-gradient-button>
-          </ng-container>
+          </div>
 
-          <ng-template #roleProfile>
+          <div class="ds-p-10"  *ngIf="role === '_profile_admin' || role === '_profile_teacher'">
+            <app-gradient-button
+              [size]="'small'"
+              [disabled]="!selectedUsers.length"
+              [cursor]="'pointer'"
+              [minHeight]="'32px'"
+              [width]="'215px'"
+              [hoverColor]="'#FFFFFF'"
+              [fontSize]="'14px'"
+              [fontWeight]="700"
+              [gradient]="'#FFFFFF, #FFFFFF'"
+              [textColor]="'#1F195E'"
+              (buttonClick)="showProfileCard(selectedUsers[0], true)">
+              <span>Bulk Permissions</span>
+            </app-gradient-button>
+          </div>
 
+          <div class="ds-p-10" *ngIf="role !== '_all'">
+            <app-gradient-button
+              [size]="'small'"
+              [disabled]="!selectedUsers.length"
+              [cursor]="'pointer'"
+              [minHeight]="'32px'"
+              [width]="'215px'"
+              [fontSize]="'14px'"
+              [fontWeight]="700"
+              [gradient]="'#001115, #033294'"
+              [hoverColor]="'#022F68'"
+              (buttonClick)="promptConfirmation($event.target, 'disable_sign_in')">
+              <span>Disable sign-in</span>
+            </app-gradient-button>
+          </div>
+
+          <div class="ds-p-10">
+            <app-gradient-button
+              [size]="'small'"
+              [disabled]="!selectedUsers.length"
+              [cursor]="'pointer'"
+              [minHeight]="'32px'"
+              [width]="'280px'"
+              [fontSize]="'14px'"
+              [fontWeight]="700"
+              [gradient]="'#DA2370, #FB434A'"
+              [hoverColor]="'#DA2370'"
+              (buttonClick)="promptConfirmation($event.target, 'delete_from_profile')">
+              <span>Remove from Profile</span>
+            </app-gradient-button>
+          </div>
+          <div class="ds-mx-10">
             <app-gradient-button
               [size]="'medium'"
               [cursor]="'pointer'"
-              [leftIcon]="'./assets/Plus (White).svg'"
-              (buttonClick)="addUser()">
+              [gradient]="'#FFFFFF,#FFFFFF'"
+              [hoverColor]="'#FFFFFF'"
+              [textColor]="'#1F194E'"
+              (buttonClick)="dataTableEditState.next(!dataTableEditState.value)">
               <div class="ds-flex-center-center">
-                <span>Add User</span>
+                <span *ngIf="dataTableEditState.value">Done</span>
               </div>
             </app-gradient-button>
-          </ng-template>
+          </div>
         </div>
-        <div class="ds-ml-20 ds-pt-10">
-          <app-round-input
-            [initialValue]="initialSearchString"
-            [minWidth]="'280px'"
-            [type]="'text'"
-            [placeholder]="'Search users'"
-            (ontextupdate)="findRelevantAccounts($event)">
-          </app-round-input>
+      </div>
+      <div class="ds-flex-center-between ds-mx-20 ds-my-10"  *ngIf="!(dataTableEditState | async)">
+        <div class="ds-flex-center-end">
+          <div class="ds-mx-10">
+            <app-round-input
+              [initialValue]="initialSearchString"
+              [minWidth]="'280px'"
+              [type]="'text'"
+              [placeholder]="'Search users'"
+              (ontextupdate)="findRelevantAccounts($event)">
+            </app-round-input>
+          </div>
+          <!--<ng-container *ngIf="role === '_all'; else roleProfile">-->
+            <!--<app-gradient-button-->
+              <!--[size]="'large'"-->
+              <!--[border]="'1px solid #eee'"-->
+              <!--[gradient]="'#FFFFFF, #FFFFFF'"-->
+              <!--[hoverColor]="'#F5F5F5'"-->
+              <!--[cursor]="'pointer'"-->
+              <!--[textColor]="'#134482'"-->
+              <!--[minHeight]="'74px'"-->
+              <!--[width]="'147px'"-->
+              <!--[fontWeight]="'900'"-->
+              <!--[fontSize]="'17px'"-->
+              <!--[textWidth]="'69%'"-->
+              <!--(buttonClick)="showProfileCard(null, false, true)"-->
+            <!--&gt;-->
+              <!--<div class="ds-flex-center-center ds-mx-20">-->
+                <!--<div class="ds-mr-15">-->
+                  <!--<img src="assets/google/google_logo.svg" alt="google-icon" width="34" height="34">-->
+                <!--</div>-->
+                <!--<div>-->
+                  <!--<span>G Suite Settings</span>-->
+                <!--</div>-->
+              <!--</div>-->
+            <!--</app-gradient-button>-->
+          <!--</ng-container>-->
+
+          <!--<ng-template #roleProfile>-->
+            <div class="ds-mx-10" *ngIf="role === '_all'">
+              <div class="card_title">
+                <span>G Suite: 2,237  Accounts</span>
+              </div>
+              <div class="card_title">
+                <span>Alternative: 23 Accounts</span>
+              </div>
+            </div>
+            <div class="ds-mx-10" *ngIf="role !== '_all'">
+
+              <app-gradient-button
+                [size]="'medium'"
+                [cursor]="'pointer'"
+                [leftIcon]="'./assets/Plus (White).svg'"
+                (buttonClick)="addUser()">
+                <div class="ds-flex-center-center">
+                  <span>Add</span>
+                </div>
+              </app-gradient-button>
+            </div>
+            <div class="ds-mx-10">
+
+              <app-gradient-button
+                [size]="'medium'"
+                [cursor]="'pointer'"
+                [gradient]="'#FFFFFF,#FFFFFF'"
+                [hoverColor]="'#FFFFFF'"
+                [textColor]="'#1F194E'"
+                (buttonClick)="dataTableEditState.next(!dataTableEditState.value)">
+                <div class="ds-flex-center-center">
+                  <span *ngIf="!dataTableEditState.value">Edit</span>
+                </div>
+              </app-gradient-button>
+            </div>
+          <!--</ng-template>-->
         </div>
       </div>
     </div>
 
     <div class="table">
-      <div *ngIf="!userList.length" class="loading-theme spinner ds-flex-center-center">
+      <div *ngIf="!userList.length && !noUsersDummyVisibility" class="loading-theme spinner ds-flex-center-center">
         <mat-spinner *ngIf="!placeholder" [color]="'accent'"></mat-spinner>
         <h1 [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})" *ngIf="placeholder">No matches found.</h1>
       </div>
+      <div *ngIf="noUsersDummyVisibility" class="ds-flex-center-center ds-flex-column ds-pt-25 ds-mt-25" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
+        <img [src]="'./assets/emptyStates/no-users.svg'" class="ds-pt-25 ds-mt-25" alt="no-users.svg">
+        <h1>No Users</h1>
+        <p>Add users one-by-one above or set up G Suite <br>
+          syncing to automatically add users to this profile.</p>
+      </div>
       <div *ngIf="userList.length">
-        <div class="tool-panel">
-
-          <div *ngIf="selectedUsers.length" class="ds-flex-center-start">
-            <div class="ds-my-20 ds-px-10" [style.min-width]="'150px'" [style.font-weight]="'bold'" [style.color]="darkTheme.getColor()">
-              <p class="">{{selectedUsers.length}} User<span *ngIf="selectedUsers.length > 1">s</span> Selected:</p>
-            </div>
-            <!--<div class="my py" *ngIf="role === 'staff_secretary'">-->
-            <!--<app-gradient-button-->
-            <!--[disabled]="!selectedUsers.length"-->
-            <!--[cursor]="'pointer'"-->
-            <!--[minHeight]="'32px'"-->
-            <!--[width]="'295px'"-->
-            <!--[fontSize]="'14px'"-->
-            <!--[fontWeight]="400"-->
-            <!--[gradient]="'#13BF9E, #00D99B'"-->
-            <!--(buttonClick)="openDialog('teacher')">-->
-            <!--<span>Add/Modify Acting Teacher Account</span>-->
-            <!--</app-gradient-button>-->
-            <!--</div>-->
-            <!--<div class="m p" *ngIf="role === '_profile_teacher'">-->
-            <!--<app-gradient-button-->
-
-            <!--[disabled]="!selectedUsers.length"-->
-            <!--[cursor]="'pointer'"-->
-            <!--[minHeight]="'32px'"-->
-            <!--[width]="'185px'"-->
-            <!--[fontSize]="'14px'"-->
-            <!--[fontWeight]="400"-->
-            <!--[gradient]="'#022F68, #2F66AB'"-->
-            <!--<span>Add/Modify Rooms</span>-->
-            <!--</app-gradient-button>-->
-            <!--</div>-->
-            <!--<div class="my py"  *ngIf="role !== 'hallpass_student'">-->
-            <!--<app-gradient-button-->
-            <!--[disabled]="!selectedUsers.length"-->
-            <!--[cursor]="'pointer'"-->
-            <!--[minHeight]="'32px'"-->
-            <!--[width]="'215px'"-->
-            <!--[fontSize]="'14px'"-->
-            <!--[fontWeight]="400"-->
-            <!--[gradient]="'#0B9FC1, #00C0C7'"-->
-            <!--<span>Add/Modify Restrictions</span>-->
-            <!--</app-gradient-button>-->
-            <!--</div>-->
-
-            <div class="ds-p-10"  *ngIf="role === '_all'">
-              <app-gradient-button
-                [size]="'small'"
-                [disabled]="!selectedUsers.length"
-                (buttonClick)="false">
-                <span>Export Account Data</span>
-              </app-gradient-button>
-            </div>
-
-            <div class="ds-p-10"  *ngIf="role === '_profile_admin' || role === '_profile_teacher'">
-              <app-gradient-button
-                [size]="'small'"
-                [disabled]="!selectedUsers.length"
-                [cursor]="'pointer'"
-                [minHeight]="'32px'"
-                [width]="'215px'"
-                [hoverColor]="'#FFFFFF'"
-                [fontSize]="'14px'"
-                [fontWeight]="700"
-                [gradient]="'#FFFFFF, #FFFFFF'"
-                [textColor]="'#1F195E'"
-                (buttonClick)="showProfileCard(selectedUsers[0], true)">
-                <span>Bulk Permissions</span>
-              </app-gradient-button>
-            </div>
-
-            <div class="ds-p-10" *ngIf="role !== '_all'">
-              <app-gradient-button
-                [size]="'small'"
-                [disabled]="!selectedUsers.length"
-                [cursor]="'pointer'"
-                [minHeight]="'32px'"
-                [width]="'215px'"
-                [fontSize]="'14px'"
-                [fontWeight]="700"
-                [gradient]="'#001115, #033294'"
-                [hoverColor]="'#022F68'"
-                (buttonClick)="false">
-                <span>Disable sign-in</span>
-              </app-gradient-button>
-            </div>
-
-            <div class="ds-p-10" #eventTarget  [style.opacity]="consentMenuOpened ? '.5' : '1'">
-              <app-gradient-button
-                [size]="'small'"
-                [disabled]="!selectedUsers.length"
-                [cursor]="'pointer'"
-                [minHeight]="'32px'"
-                [width]="'280px'"
-                [fontSize]="'14px'"
-                [fontWeight]="700"
-                [gradient]="'#DA2370, #FB434A'"
-                [hoverColor]="'#DA2370'"
-                (buttonClick)="deleteAccountPrompt(eventTarget)">
-                <span>Remove from Profile</span>
-              </app-gradient-button>
-            </div>
-          </div>
-        </div>
         <div class="column-settings">
           <img draggable="false" width="20" [src]="darkTheme.getIcon({iconName: 'Options', lightFill: 'Navy'}) | resolveAsset" alt="Options (Navy).svg" (click)="showColumnSettings($event)">
         </div>
         <app-data-table
           class="ds-my-10"
           [data]="userList"
+          [isCheckbox]="dataTableEditState"
           [disallowHover]="role === '_all'"
           [displayedColumns]="dataTableHeadersToDisplay"
           (selectedCell)="findProfileByRole($event)"

@@ -167,6 +167,7 @@
               [hoverColor]="'#001115'"
               [textColor]="'#FFFFFF'"
               [cursor]="'pointer'"
+              (buttonClick)="promptConfirmation($event.target, 'disable_sign_in')"
             >
               <span>Disable sign-in</span>
             </app-gradient-button>
@@ -175,12 +176,12 @@
             </div>
           </div>
           <div class="button">
-            <div  #target  [style.opacity]="consentMenuOpened ? '.5' : '1'">
+            <div>
               <app-gradient-button
                 [gradient]="'#DA2370, #FB434A'"
                 [hoverColor]="'#DA2370'"
                 [textColor]="'#FFFFFF'"
-                (buttonClick)="deleteAccount(target)"
+                (buttonClick)="promptConfirmation($event.target, 'delete_from_profile')"
               >
                 <span>Remove from Profile</span>
               </app-gradient-button>

@@ -3,17 +3,18 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { MatSort, MatTableDataSource} from '@angular/material';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {DomSanitizer} from '@angular/platform-browser';
+import {BehaviorSubject} from 'rxjs';
 
 @Component({
   selector: 'app-data-table',
   templateUrl: './data-table.component.html',
-  styleUrls: ['./data-table.component.scss']
+  styleUrls: ['./data-table.component.scss'],
 })
 export class DataTableComponent implements OnInit {
 
   @Input() width: string = '100%';
   @Input() height: string = 'none';
-  @Input() isCheckbox: boolean = true;
+  @Input() isCheckbox: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   @Input() set data(value: any[]) {
       this._data = [...value];
       this.dataSource = new MatTableDataSource(this._data);
@@ -76,9 +77,14 @@ export class DataTableComponent implements OnInit {
         this.displayedColumns = Object.keys(this._data[0]);
       }
       this.columnsToDisplay = this.displayedColumns.slice();
-      if (this.isCheckbox) {
-          this.columnsToDisplay.unshift('select');
+    console.log(this.columnsToDisplay);
+    this.isCheckbox.subscribe((v) => {
+      if (v) {
+        this.columnsToDisplay.unshift('select');
+      } else {
+        this.columnsToDisplay.shift();
       }
+    });
   }
 
   onHover(target: HTMLElement) {
