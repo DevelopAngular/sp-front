@@ -13,12 +13,18 @@
             (ontextupdate)="search($event)"
     ></app-round-input>
   </div>
-  <div class="icon-collection">
-    <div class="icon-container" *ngFor="let icon of icons$ | async" (click)="changeIcon(icon)">
+  <div class="icon-collection" *ngIf="icons.length; else empty">
+    <div class="icon-container" *ngFor="let icon of icons" (click)="changeIcon(icon)">
       <div class="icon-wrapper" matTooltipClass="tooltip" [matTooltip]="icon.id">
         <img class="icon"  [ngStyle]="{'opacity': selectedIconId === icon.id && icon.active ? 1 : 0}" [src]="icon.active_icon">
         <img class="icon greyIcon" [ngStyle]="{'opacity': selectedIconId === icon.id && icon.active ? 0 : 1}" [src]="icon.inactive_icon">
       </div>
     </div>
   </div>
+
+  <ng-template #empty>
+    <div class="empty-state">
+      <img [src]="'./assets/emptyStates/icons-empty.svg'" alt="Empty">
+    </div>
+  </ng-template>
 </div>
