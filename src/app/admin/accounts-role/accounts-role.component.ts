@@ -93,7 +93,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               this.dataTableHeadersToDisplay = [];
               this.userList = this.buildUserListData(userList);
               this.selectedUsers = [];
-              this.dataTable.clearSelection();
+              if (this.dataTable) {
+                this.dataTable.clearSelection();
+              }
         });
     }
   }
@@ -112,6 +114,23 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     public darkTheme: DarkThemeSwitch
 
   ) {}
+
+  get noUsersDummyVisibility() {
+    switch (this.role) {
+      case '_profile_admin':
+        return this.accounts$.value.admin_count === 0;
+        break;
+      case '_profile_teacher':
+        return this.accounts$.value.teacher_count === 0;
+        break;
+      case '_profile_student':
+        return this.accounts$.value.student_count === 0;
+        break;
+      case 'staff_secretary':
+        return (this.accounts$.value.secretary_count || 0) === 0;
+        break;
+    }
+  }
 
   ngOnInit() {
     this.http.globalReload$.pipe(
@@ -326,19 +345,47 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
 
-  deleteAccountPrompt(eventTarget: HTMLElement) {
+  promptConfirmation(eventTarget: HTMLElement, option: string = 'delete') {
 
-      this.consentMenuOpened = true;
+    if (!eventTarget.classList.contains('button')) {
+      (eventTarget as any) = eventTarget.closest('.button');
+    };
+
+    eventTarget.style.opacity = '0.75';
+      // this.consentMenuOpened = true;
+    let header: string;
+    let options: any[];
+    const profile: string =
+      this.role === '_profile_admin' ? 'administrator' :
+      this.role === '_profile_teacher' ? 'teacher' :
+      this.role === '_profile_student' ? 'student' : 'secretary&substitute';
+
+    switch (option) {
+      case 'delete_from_profile':
+        if (this.role === '_all') {
+          header = `Are you sure you want to permanently delete ${this.selectedUsers.length > 1 ? 'these accounts' : 'this account'} and all associated data? This cannot be undone.`;
+        } else {
+          header = `Removing ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} from the ${profile} profile will remove them from this profile, but it will not delete all data associated with the account.`;
+        }
+        options = [{display: 'Confirm Delete', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'confirm_delete'}];
+        break;
+      case 'disable_sign_in':
+        header = `Disable sign-in to prevent ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} from being able to sign in with the ${profile} profile.`;
+        options = [{display: 'Disable sign-in', color: '#001115', buttonColor: '#001115, #033294', action: 'disable_sign_in'}];
+        break;
+      case 'enable_sign_in':
+        header = `Enable sign-in to allow ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} to be able to sign in with the ${profile} profile.`;
+        options = [{display: 'Enable sign-in', color: '#03CF31', buttonColor: '#03CF31, #00B476', action: 'enable_sign_in'}];
+        break;
+    }
       const DR = this.matDialog.open(ConsentMenuComponent,
         {
           data: {
             role: this.role,
             selectedUsers: this.selectedUsers,
             restrictions: this.profilePermissions,
-            header: `Are you sure you want to remove this user${this.selectedUsers.length > 1 ? 's' : ''}?`,
-            // options: [{display: 'Confirm Remove', color: '#FFFFFF', buttonColor: '#DA2370, #FB434A', action: 'confirm'}],
-            options: [{display: 'Confirm Delete', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'confirm'}],
-            // optionsView: 'button',
+            header: header,
+            options: options,
             trigger: new ElementRef(eventTarget)
           },
           panelClass: 'consent-dialog-container',
@@ -348,8 +395,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         .pipe(
           switchMap((action): Observable<any> => {
             // console.log(action);
-            this.consentMenuOpened = false;
-            if (action === 'confirm') {
+            // this.consentMenuOpened = false;
+            eventTarget.style.opacity = '1';
+            if (action === 'confirm_delete') {
               let role: any = this.role.split('_');
                   role = role[role.length - 1];
               return zip(...this.selectedUsers.map((user) => this.userService.deleteUserFromProfile(user['id'], role))).pipe(map(() => true));
