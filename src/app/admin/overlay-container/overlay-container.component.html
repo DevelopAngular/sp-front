@@ -604,7 +604,7 @@
           <app-color-pallet-picker [selectedColorProfile]="color_profile" (selectedEvent)="changeColor($event)"></app-color-pallet-picker>
         </div>
         <div class="icon-picker">
-          <app-icon-picker [selectedIconPicker]="selectedIcon" (selectedEvent)="changeIcon($event);"></app-icon-picker>
+          <app-icon-picker [roomName]="roomName || folderName" [icons$]="icons$" [selectedIconPicker]="selectedIcon" (selectedEvent)="changeIcon($event);"></app-icon-picker>
         </div>
       </div>
 

@@ -1,14 +1,14 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { debounceTime, distinctUntilChanged, map, shareReplay } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { AdminService } from '../../services/admin.service';
 import { Observable } from 'rxjs';
-import {HttpService} from '../../services/http-service';
-import {HttpClient} from '@angular/common/http';
+import { HttpService } from '../../services/http-service';
+import { filter } from 'rxjs/internal/operators';
 
 export interface Icon {
     id: string;
     inactive_icon: string;
-    active: boolean;
+    active?: boolean;
     active_icon: string;
 }
 
@@ -19,9 +19,13 @@ export interface Icon {
 })
 export class IconPickerComponent implements OnInit {
 
-  icons$: Observable<Icon[]>;
+  @Input() icons$: Observable<Icon[]>;
 
   @Input() selectedIconPicker;
+
+  icons: Icon[] = [];
+
+  @Input() roomName: string;
 
   @Output() selectedEvent: EventEmitter<any> = new EventEmitter();
 
@@ -34,22 +38,44 @@ export class IconPickerComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.icons$ = this.adminService.getIcons()
-      .pipe(shareReplay(1),
-      map((icons: any) => {
-        return icons.map((_icon) => {
-            if (this.selectedIconPicker) {
-                if (this.selectedIconPicker === _icon.inactive_icon) {
-                    this.selectedIconId = _icon.id;
-                   _icon.active = true;
-                   return _icon;
-                }
-            }
-            _icon.active = false;
-          return _icon;
-        });
-      })
-    );
+      this.icons$.pipe(
+          map((icons: any) => {
+          return this.normalizeIcons(icons);
+      })).subscribe(res => this.icons = res);
+    //   this.adminService.getIcons()
+    //   .pipe(
+    //   map((icons: any) => {
+    //     return icons.map((_icon) => {
+    //         if (this.selectedIconPicker) {
+    //             if (this.selectedIconPicker === _icon.inactive_icon) {
+    //                 this.selectedIconId = _icon.id;
+    //                _icon.active = true;
+    //                return _icon;
+    //             }
+    //         }
+    //         _icon.active = false;
+    //       return _icon;
+    //     });
+    //   })
+    // ).subscribe(res => this.icons = res);
+  }
+
+  normalizeIcons(icons) {
+      if (icons) {
+          return icons.map((_icon) => {
+              if (this.selectedIconPicker) {
+                  if (this.selectedIconPicker === _icon.inactive_icon) {
+                      this.selectedIconId = _icon.id;
+                      _icon.active = true;
+                      return _icon;
+                  }
+              }
+              _icon.active = false;
+              return _icon;
+          });
+      } else {
+          return [];
+      }
   }
 
   changeIcon(icon) {
@@ -73,9 +99,13 @@ export class IconPickerComponent implements OnInit {
   }
 
   search(search) {
-      this.http.searchIcons(search).subscribe(res => {
-          console.log(res);
-      }, (err) => console.log(err));
+      if (search === '') {
+          search = this.roomName;
+      }
+      this.http.searchIcons(search).pipe(
+          map(icons => this.normalizeIcons(icons))).subscribe(res => {
+              this.icons = res;
+      });
 }
 
 }

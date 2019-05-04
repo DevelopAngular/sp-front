@@ -2,7 +2,7 @@ import {Component, ElementRef, HostListener, Inject, OnInit, ViewChild} from '@a
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 
-import {BehaviorSubject, forkJoin, fromEvent, Observable, of, Subject, zip} from 'rxjs';
+import {BehaviorSubject, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from "rxjs";
 import {delay, map, switchMap, tap} from 'rxjs/operators';
 
 import { Pinnable } from '../../models/Pinnable';
@@ -16,6 +16,7 @@ import { disableBodyScroll } from 'body-scroll-lock';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {LocationsService} from '../../services/locations.service';
 import {DomSanitizer} from '@angular/platform-browser';
+import {debounceTime, distinctUntilChanged, filter} from "rxjs/internal/operators";
 
 export interface FormState {
     roomName?: string;
@@ -197,6 +198,8 @@ export class OverlayContainerComponent implements OnInit {
 
   color_profile;
   selectedIcon;
+
+  icons$: Observable<any>;
 
   titleIcon: string;
 
@@ -467,10 +470,10 @@ export class OverlayContainerComponent implements OnInit {
           if (this.pinnable.type === 'category') {
               this.locationService.getLocationsWithCategory(this.pinnable.category)
                   .subscribe((res: Location[]) => {
-                    this.selectedRooms = res
-                    if (this.dialogData['forceSelectedLocation']) {
-                      this.setToEditRoom(this.dialogData['forceSelectedLocation']);
-                    }
+                      this.selectedRooms = res
+                      if (this.dialogData['forceSelectedLocation']) {
+                          this.setToEditRoom(this.dialogData['forceSelectedLocation']);
+                      }
                   });
           }
       }
@@ -498,12 +501,12 @@ export class OverlayContainerComponent implements OnInit {
               const filterLocations = _.filter<Pinnable>(pinnables, {type: 'location'});
               const locationsIds = filterLocations.map(item => item.location.id);
               const currentLocationsIds = this.selectedRooms.map(room => {
-                if (room.type && room.type === 'location') {
-                    return room.location.id;
-                }
-                if (!room.type) {
-                    return room.id;
-                }
+                  if (room.type && room.type === 'location') {
+                      return room.location.id;
+                  }
+                  if (!room.type) {
+                      return room.id;
+                  }
               });
               return filterLocations.filter(item => {
                   return item.location.id === _.pullAll(locationsIds, currentLocationsIds).find(id => item.location.id === id);
@@ -523,7 +526,7 @@ export class OverlayContainerComponent implements OnInit {
           if (!!res.file || !!res.roomName || !!res.folderName || !!res.roomNumber || !!res.timeLimit) {
               this.changeState();
           } else {
-            this.isChangeState = false;
+              this.isChangeState = false;
           }
           if (!!res.roomName || res.roomNumber || res.timeLimit) {
               this.isChangeStateInFolder = true;
@@ -531,6 +534,10 @@ export class OverlayContainerComponent implements OnInit {
               this.isChangeStateInFolder = false;
           }
       });
+
+     this.icons$ = merge(this.form.get('roomName').valueChanges, this.form.get('folderName').valueChanges)
+          .pipe(filter(value => value !== ''),
+              switchMap((value: string) => this.http.searchIcons(value.toLowerCase())));
   }
 
   buildForm() {

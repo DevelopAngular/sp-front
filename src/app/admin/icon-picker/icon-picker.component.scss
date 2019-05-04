@@ -9,6 +9,12 @@
   flex-wrap: wrap;
 }
 
+.empty-state {
+  display: flex;
+  justify-content: center;
+  height: 78px;
+}
+
 .icon-title {
   font-size: 15px;
   font-weight: bold;
