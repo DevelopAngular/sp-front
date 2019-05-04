@@ -34,8 +34,8 @@
             <app-restriction-picker
                     [width]="440"
                     [height]="50"
-                    [padding]="10"
-                    [fontSize]="15"
+                    [padding]="17"
+                    [fontSize]="13"
                     [selectedChoose]="optionState.now.state"
                     [choices]="toggleChoices"
                     (result)="optionState.now.state = $event"
@@ -54,11 +54,11 @@
             <div style="display: flex; margin-top: 5px">
               <span><strong>Select a Teacher</strong> menu shows teachers assigned to:</span>
               <app-restriction-picker
-                      [width]="190"
+                      [width]="220"
                       [height]="30"
-                      [fontSize]="10.5"
+                      [fontSize]="13"
                       [selectedChoose]="optionState.now.data.any_teach_assign"
-                      [choices]="['origin', 'destination', 'both']"
+                      [choices]="['destination', 'origin', 'both']"
                       (result)="changeState('now_any', $event)"
               ></app-restriction-picker>
             </div>
@@ -66,25 +66,26 @@
           <div class="all-teacher" *ngSwitchCase="toggleChoices[2]">
             <div>Pass requests will automatically get sent to all teachers assigned to:</div>
             <app-restriction-picker
-                    [width]="190"
+                    [width]="220"
                     [height]="30"
-                    [fontSize]="10.5"
+                    [fontSize]="13"
                     [selectedChoose]="optionState.now.data.all_teach_assign "
-                    [choices]="['origin', 'destination', 'both']"
+                    [choices]="['destination', 'origin', 'both']"
                     (result)="changeState('now_all', $event)"
             ></app-restriction-picker>
           </div>
           <div class="certain-teacher" *ngSwitchCase="toggleChoices[3]">
             <div class="title">Pass requests will automatically get sent to:</div>
-            <app-profiles-search
-                    [width]="'400px'"
-                    [placeholder]="'Search Teachers'"
-                    [focused]="false"
-                    [role]="'_profile_teacher'"
+            <app-student-search
                     [selectedStudents]="optionState.now.data.selectedTeachers"
+                    [chipsMode]="true"
+                    [focused]="true"
+                    [role]="'_profile_teacher'"
+                    [rollUpAfterSelection]="true"
+                    [cancelButton]="true"
+                    [placeholder]="'Search Teachers'"
                     (onUpdate)="changeState('now_teacher', $event)"
-                    (isEmitUsers)="hideEmit($event); hideFutureBlock = $event"
-            ></app-profiles-search>
+            ></app-student-search>
           </div>
         </div>
 
@@ -100,8 +101,8 @@
           <app-restriction-picker
                   [width]="440"
                   [height]="50"
-                  [fontSize]="15"
-                  [padding]="10"
+                  [fontSize]="13"
+                  [padding]="17"
                   [selectedChoose]="optionState.future.state"
                   [choices]="toggleChoices"
                   (result)="optionState.future.state = $event"
@@ -121,11 +122,11 @@
           <div style="display: flex; margin-top: 5px">
             <span><strong>Select a Teacher</strong> menu shows teachers assigned to:</span>
             <app-restriction-picker
-                    [width]="190"
+                    [width]="220"
                     [height]="30"
-                    [fontSize]="10.5"
+                    [fontSize]="13"
                     [selectedChoose]="optionState.future.data.any_teach_assign"
-                    [choices]="['origin', 'destination', 'both']"
+                    [choices]="['destination', 'origin',  'both']"
                     (result)="changeState('future_any', $event)"
             ></app-restriction-picker>
           </div>
@@ -133,25 +134,26 @@
         <div class="all-teacher" *ngSwitchCase="toggleChoices[2]">
           <div>Pass requests will automatically get sent to all teachers assigned to:</div>
           <app-restriction-picker
-                  [width]="190"
+                  [width]="220"
                   [height]="30"
-                  [fontSize]="10.5"
+                  [fontSize]="13"
                   [selectedChoose]="optionState.future.data.all_teach_assign"
-                  [choices]="['origin', 'destination', 'both']"
+                  [choices]="['destination', 'origin',  'both']"
                   (result)="changeState('future_all', $event)"
           ></app-restriction-picker>
         </div>
         <div class="certain-teacher" *ngSwitchCase="toggleChoices[3]">
           <div class="title">Pass requests will automatically get sent to:</div>
-          <app-profiles-search
-                  [width]="'400px'"
-                  [placeholder]="'Search Teachers'"
-                  [focused]="false"
-                  [role]="'_profile_teacher'"
+          <app-student-search
                   [selectedStudents]="optionState.future.data.selectedTeachers"
+                  [chipsMode]="true"
+                  [focused]="true"
+                  [role]="'_profile_teacher'"
+                  [rollUpAfterSelection]="true"
+                  [cancelButton]="true"
+                  [placeholder]="'Search Teachers'"
                   (onUpdate)="changeState('future_teacher', $event)"
-                  (isEmitUsers)="hideEmit($event)"
-          ></app-profiles-search>
+          ></app-student-search>
         </div>
       </div>
       <div class="unrestricted" *ngIf="!futureRestricted">

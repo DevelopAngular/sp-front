@@ -46,7 +46,7 @@ export class AdvancedOptionsComponent implements OnInit {
       'Any teacher (default)',
       'Any teachers assigned',
       'All teachers assigned',
-      'Certain teacher(s)'
+      'Certain \n teacher(s)'
   ];
 
   optionState: OptionState = {

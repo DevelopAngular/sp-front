@@ -16,7 +16,7 @@ import { disableBodyScroll } from 'body-scroll-lock';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {LocationsService} from '../../services/locations.service';
 import {DomSanitizer} from '@angular/platform-browser';
-import {debounceTime, distinctUntilChanged, filter} from "rxjs/internal/operators";
+import {filter} from 'rxjs/internal/operators';
 
 export interface FormState {
     roomName?: string;
@@ -736,6 +736,11 @@ export class OverlayContainerComponent implements OnInit {
       const locationsToAdd = rooms.map(room => room.location);
       this.selectedRooms = [...locationsToAdd, ...this.selectedRooms];
       this.setLocation('newFolder');
+  }
+
+  advancedOptions(event) {
+      this.isDirtysettings = true;
+      this.changeState();
   }
 
   back() {

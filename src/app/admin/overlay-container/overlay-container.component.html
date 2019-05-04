@@ -538,12 +538,13 @@
              *ngIf="(overlayType === 'editRoom' ||
              (editRoomInFolder)) &&!showSearchTeacherOptions ||
              overlayType === 'edit' ||
-             (overlayType === 'settingsRooms')">
+             (overlayType === 'settingsRooms') || overlayType === 'newRoom'">
             <app-advanced-options
                     [roomName]="roomName"
                     [nowRestricted]="nowRestriction"
                     [futureRestricted]="futureRestriction"
                     (hideBottomBlock)="hideDeleteButton = $event"
+                    (resultOptions)="advancedOptions($event)"
             ></app-advanced-options>
         </div>
 
