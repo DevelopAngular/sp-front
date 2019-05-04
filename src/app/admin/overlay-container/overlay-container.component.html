@@ -538,12 +538,13 @@
              *ngIf="(overlayType === 'editRoom' ||
              (editRoomInFolder)) &&!showSearchTeacherOptions ||
              overlayType === 'edit' ||
-             (overlayType === 'settingsRooms')">
+             (overlayType === 'settingsRooms') || overlayType === 'newRoom'">
             <app-advanced-options
                     [roomName]="roomName"
                     [nowRestricted]="nowRestriction"
                     [futureRestricted]="futureRestriction"
                     (hideBottomBlock)="hideDeleteButton = $event"
+                    (resultOptions)="advancedOptions($event)"
             ></app-advanced-options>
         </div>
 
@@ -604,7 +605,7 @@
           <app-color-pallet-picker [selectedColorProfile]="color_profile" (selectedEvent)="changeColor($event)"></app-color-pallet-picker>
         </div>
         <div class="icon-picker">
-          <app-icon-picker [selectedIconPicker]="selectedIcon" (selectedEvent)="changeIcon($event);"></app-icon-picker>
+          <app-icon-picker [roomName]="roomName || folderName" [icons$]="icons$" [selectedIconPicker]="selectedIcon" (selectedEvent)="changeIcon($event);"></app-icon-picker>
         </div>
       </div>
 
