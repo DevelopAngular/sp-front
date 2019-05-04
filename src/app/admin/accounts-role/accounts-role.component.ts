@@ -49,6 +49,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   public isLoadUsers: boolean = true;
   public user: User;
   private limitCounter: number = 20;
+  public dataTableEditState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   public accounts$ =
     new BehaviorSubject<any>({
