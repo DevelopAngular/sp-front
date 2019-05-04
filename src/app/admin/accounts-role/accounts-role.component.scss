@@ -53,12 +53,22 @@
       &_title{
         font-size: 14px;
         color: #7F879D;
+        display: flex;
+        align-items: center;
+        img {
+          width: 15px;
+          height: 15px;
+          margin-right: 10px;
+          cursor: pointer;
+        }
       }
       &__top-bar{
-        height: 150px;
+        height: 100px;
         padding: 0px 0px 0px 0px;
         box-sizing: border-box;
         overflow: hidden;
+        display: flex;
+        align-items: center;
       }
       &__role{
         height: 200px;
@@ -102,7 +112,47 @@
       //min-height: 110px;
     }
   }
-.bold {
-  font-weight: bold;
+  .bold {
+    font-weight: bold;
+  }
 }
+
+.tooltip-container {
+  position: relative;
+  height: 100%;
+  .arrow-down-container{
+    opacity: 0;
+    transition: .25s ease;
+    position: absolute;
+    bottom: -8px;
+    width: 25px;
+    height: 10px;
+    margin-left: 5px;
+    overflow: hidden;
+    .arrow-down {
+      position: absolute;
+      width: 25px;
+      height: 25px;
+      top: 4px;
+      background-color: white;
+      box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
+      -webkit-transform: rotate(-45deg);
+      transform: rotate(-45deg);
+    }
+  }
+
+
+}
+
+::ng-deep .tooltip {
+  padding: 15px;
+  color: #7f879d !important;
+  background-color: white;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  border-radius: 10px !important;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
 }
