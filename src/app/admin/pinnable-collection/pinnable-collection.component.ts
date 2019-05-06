@@ -23,7 +23,7 @@ export class PinnableCollectionComponent implements OnInit {
 
   @Input() width: string = '560px';
 
-  @Input() isEmptyState: boolean = true;
+  @Input() isEmptyState: boolean = false;
 
   @Output()
   roomEvent: EventEmitter<any> = new EventEmitter();
@@ -59,9 +59,13 @@ export class PinnableCollectionComponent implements OnInit {
     if (!this.pinnables) {
       this.pinnables = [];
     }
+
       setTimeout(() => {
       this.pinnableIdArranged = this.pinnables.map(pin => pin.id);
       // console.log(this.pinnableIdArranged);
+        if (!this.pinnableIdArranged.length) {
+          this.isEmptyState = true;
+        }
 
     }, 1000);
     if (this.resetBulkSelect$) {

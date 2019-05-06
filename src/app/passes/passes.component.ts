@@ -210,9 +210,9 @@ export class PassesComponent implements OnInit {
 
   isActivePass$: Observable<boolean>;
   isActiveRequest$: Observable<boolean>;
-
+  noRequests: boolean = false;
   // inboxHasItems: Subject<boolean> = new Subject<boolean>();
-  inboxHasItems: Observable<boolean> = of(false);
+  inboxHasItems: Observable<boolean> = of(null);
   passesHaveItems: Observable<boolean> = of(false);
 
   inboxLoaded: Observable<boolean> = of(false);
@@ -332,9 +332,15 @@ export class PassesComponent implements OnInit {
       });
 
     this.inboxHasItems = combineLatest(
-      this.receivedRequests.length$.pipe(startWith(0)),
-      this.sentRequests.length$.pipe(startWith(0)),
-      (l1, l2) => (l1 + l2) > 0
+      this.receivedRequests.length$,
+      this.receivedRequests.loaded$,
+      this.sentRequests.length$,
+      this.sentRequests.loaded$,
+      (length1, loaded1, length2, loaded2) => {
+        if (loaded1 && loaded2) {
+          return (length1 + length2) > 0;
+        }
+      }
     );
 
     this.inboxLoaded = combineLatest(

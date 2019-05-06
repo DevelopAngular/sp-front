@@ -58,8 +58,7 @@
         </div>
         <!--<div *ngIf="">PPC</div>-->
         <!-- No pass requests -->
-
-        <div *ngIf="!(inboxHasItems | async)" class="empty-container" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
+        <div *ngIf="(inboxHasItems | async) === false" class="empty-container" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
           <img class="empty-inbox-svg" [src]="'./assets/emptyStates/emptyInbox.svg' | resolveAsset" alt="empty-svg">
           <div class="big-text" [style.margin]="'10px 0'">All Caught Up</div>
           <div class="text">No pass requests sent or received</div>
