@@ -57,6 +57,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Output() reportFromPassCard = new EventEmitter();
 
   currentPasses$: Observable<PassLike[]>;
+  currentPasses: PassLike[] = [];
 
   timers: number[] = [];
 
@@ -91,7 +92,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       public dialog: MatDialog,
       private dataService: DataService,
       private timeService: TimeService,
-      private darkTheme: DarkThemeSwitch
+      public darkTheme: DarkThemeSwitch
   ) {}
 
   ngOnInit() {
@@ -99,8 +100,11 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
       } else {
         this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
+        this.currentPasses$.subscribe((passes) => {
+            this.currentPasses = passes;
+          });
       }
-        if(this.isActive) {
+        if (this.isActive) {
           this.timers.push(window.setInterval(() => {
             this.timerEvent.next(null);
           }, 1000));
