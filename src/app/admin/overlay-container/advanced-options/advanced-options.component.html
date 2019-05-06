@@ -38,7 +38,7 @@
                     [fontSize]="13"
                     [selectedChoose]="optionState.now.state"
                     [choices]="toggleChoices"
-                    (result)="optionState.now.state = $event"
+                    (result)="changeOptions('now', $event)"
             >
             </app-restriction-picker>
           </div>
@@ -54,7 +54,7 @@
             <div style="display: flex; margin-top: 5px">
               <span><strong>Select a Teacher</strong> menu shows teachers assigned to:</span>
               <app-restriction-picker
-                      [width]="220"
+                      [width]="225"
                       [height]="30"
                       [fontSize]="13"
                       [selectedChoose]="optionState.now.data.any_teach_assign"
@@ -66,7 +66,7 @@
           <div class="all-teacher" *ngSwitchCase="toggleChoices[2]">
             <div>Pass requests will automatically get sent to all teachers assigned to:</div>
             <app-restriction-picker
-                    [width]="220"
+                    [width]="225"
                     [height]="30"
                     [fontSize]="13"
                     [selectedChoose]="optionState.now.data.all_teach_assign "
@@ -105,7 +105,7 @@
                   [padding]="17"
                   [selectedChoose]="optionState.future.state"
                   [choices]="toggleChoices"
-                  (result)="optionState.future.state = $event"
+                  (result)="changeOptions('future', $event)"
           >
           </app-restriction-picker>
         </div>
@@ -122,7 +122,7 @@
           <div style="display: flex; margin-top: 5px">
             <span><strong>Select a Teacher</strong> menu shows teachers assigned to:</span>
             <app-restriction-picker
-                    [width]="220"
+                    [width]="225"
                     [height]="30"
                     [fontSize]="13"
                     [selectedChoose]="optionState.future.data.any_teach_assign"
@@ -134,7 +134,7 @@
         <div class="all-teacher" *ngSwitchCase="toggleChoices[2]">
           <div>Pass requests will automatically get sent to all teachers assigned to:</div>
           <app-restriction-picker
-                  [width]="220"
+                  [width]="225"
                   [height]="30"
                   [fontSize]="13"
                   [selectedChoose]="optionState.future.data.all_teach_assign"

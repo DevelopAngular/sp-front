@@ -146,12 +146,8 @@ export class HttpService {
         this.currentSchoolSubject.next(getSchoolInArray(savedId, schools));
         return;
       }
-
-      if (schools.length === 1) {
+      if (schools.length > 0) {
         this.currentSchoolSubject.next(schools[0]);
-        return;
-      } else if (schools.length > 1) {
-        this.currentSchoolSubject.next(schools[1]);
         return;
       }
 

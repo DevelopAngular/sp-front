@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { User } from '../../../models/User';
-import {bumpIn} from '../../../animations';
-import {DarkThemeSwitch} from '../../../dark-theme-switch';
-import {DomSanitizer} from '@angular/platform-browser';
+import { bumpIn } from '../../../animations';
+import { DarkThemeSwitch } from '../../../dark-theme-switch';
+import { DomSanitizer } from '@angular/platform-browser';
 
 export interface OptionState {
     now: {
@@ -118,8 +118,15 @@ export class AdvancedOptionsComponent implements OnInit {
     this.resultOptions.emit(this.optionState);
   }
 
-  hideEmit(event: boolean) {
-    this.hideBottomBlock.emit(event);
+  changeOptions(action, option) {
+      if (action === 'now') {
+        this.optionState.now.data = {all_teach_assign: null, any_teach_assign: null, selectedTeachers: []};
+        this.optionState.now.state = option;
+      } else if (action === 'future') {
+        this.optionState.future.data = {all_teach_assign: null, any_teach_assign: null, selectedTeachers: []};
+        this.optionState.future.state = option;
+      }
+      this.resultOptions.emit(this.optionState);
   }
 
 }

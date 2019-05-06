@@ -17,6 +17,7 @@ import {HallPassesService} from '../../services/hall-passes.service';
 import {LocationsService} from '../../services/locations.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {filter} from 'rxjs/internal/operators';
+import {OptionState} from './advanced-options/advanced-options.component';
 
 export interface FormState {
     roomName?: string;
@@ -29,6 +30,7 @@ export interface FormState {
     color?: number;
     icon?: string;
     timeLimit: number;
+    advOptState?: OptionState;
 }
 
 @Component({
@@ -213,15 +215,21 @@ export class OverlayContainerComponent implements OnInit {
   isDirtyFutureRestriction: boolean;
   isDirtyColor: boolean;
   isDirtyIcon: boolean;
+  isDirtyAdvancedOpt: boolean;
 
   isChangeState: boolean;
   isChangeStateInFolder: boolean;
 
   isChangeLocations = new BehaviorSubject<boolean>(false);
 
+  advOptValid: boolean;
+
   showSearchTeacherOptions: boolean;
 
   newRoomsInFolder = [];
+
+  folderRoomsLoaded: boolean;
+
   pinnableToDeleteIds: number[] = [];
 
   titleColor: string = 'white';
@@ -233,6 +241,11 @@ export class OverlayContainerComponent implements OnInit {
 
   hideDeleteButton: boolean;
   showProfileSearch: boolean = false;
+
+  advOptState: OptionState = {
+      now: { state: '', data: { selectedTeachers: [], any_teach_assign: null, all_teach_assign: null } },
+      future: { state: '', data: { selectedTeachers: [], any_teach_assign: null, all_teach_assign: null } }
+  };
 
   buttonsInFolder = [
       { title: 'New Room', icon: './assets/Plus (White).svg', location: 'newRoomInFolder'},
@@ -296,6 +309,7 @@ export class OverlayContainerComponent implements OnInit {
             }
           this.titleColor = '#1F195E';
           this.folderName = 'New Folder';
+          this.folderRoomsLoaded = true;
           break;
         case 'editRoom':
             colors = this.pinnable.color_profile.gradient_color;
@@ -338,11 +352,12 @@ export class OverlayContainerComponent implements OnInit {
              this.form.get('timeLimit').valid &&
              this.isDirtyNowRestriction &&
              this.isDirtyFutureRestriction &&
-             !!this.color_profile && !!this.selectedIcon;
+             !!this.color_profile && !!this.selectedIcon &&
+             (this.isDirtyAdvancedOpt ? this.advOptValid : true);
   }
 
   get showPublishEditRoom() {
-     return this.isValidForm && this.isFormStateDirty;
+     return this.isValidForm && this.isFormStateDirty || (this.isDirtyAdvancedOpt && this.advOptValid);
   }
 
   get showPublishNewFolder() {
@@ -470,7 +485,8 @@ export class OverlayContainerComponent implements OnInit {
           if (this.pinnable.type === 'category') {
               this.locationService.getLocationsWithCategory(this.pinnable.category)
                   .subscribe((res: Location[]) => {
-                      this.selectedRooms = res
+                      this.folderRoomsLoaded = true;
+                      this.selectedRooms = res;
                       if (this.dialogData['forceSelectedLocation']) {
                           this.setToEditRoom(this.dialogData['forceSelectedLocation']);
                       }
@@ -608,7 +624,11 @@ export class OverlayContainerComponent implements OnInit {
               teachers: this.selectedTeachers.map(t => +t.id),
               color: this.color_profile.id,
               icon: this.selectedIcon,
-              timeLimit: +this.timeLimit
+              timeLimit: +this.timeLimit,
+              advOptState: {
+                  now: { state: '', data: { selectedTeachers: [], any_teach_assign: null, all_teach_assign: null } },
+                  future: { state: '', data: {selectedTeachers: [], any_teach_assign: null, all_teach_assign: null } }
+              }
           };
       }
       if (this.overlayType === 'newFolder') {
@@ -632,7 +652,8 @@ export class OverlayContainerComponent implements OnInit {
             teachers: this.selectedTeachers.map(t => +t.id),
             color: this.overlayType === 'editRoom' || this.isEditFolder ? this.color_profile.id : null,
             icon: this.overlayType === 'editRoom' || this.isEditFolder ? this.selectedIcon.inactive_icon : null,
-            timeLimit: +this.timeLimit
+            timeLimit: +this.timeLimit,
+            advOptState: this.advOptState
         };
         const status = [];
         status.push(currState.roomName === initState.roomName);
@@ -738,9 +759,23 @@ export class OverlayContainerComponent implements OnInit {
       this.setLocation('newFolder');
   }
 
-  advancedOptions(event) {
-      this.isDirtysettings = true;
-      this.changeState();
+  advancedOptions(event: OptionState) {
+      if (event.now.state === 'Any teacher (default)' && event.future.state === 'Any teacher (default)') {
+          return;
+      }
+     this.isDirtyAdvancedOpt = true;
+     if (
+      event.now.state === 'Certain \n teacher(s)' && event.now.data.selectedTeachers.length ||
+      event.now.state === 'Any teachers assigned' && event.now.data.any_teach_assign ||
+      event.now.state === 'All teachers assigned' && event.now.data.all_teach_assign ||
+         event.future.state === 'Certain \n teacher(s)' && event.future.data.selectedTeachers.length ||
+         event.future.state === 'Any teachers assigned' && event.future.data.any_teach_assign ||
+         event.future.state === 'All teachers assigned' && event.future.data.all_teach_assign
+     ) {
+         this.advOptValid = true;
+     } else {
+         this.advOptValid = false;
+     }
   }
 
   back() {
