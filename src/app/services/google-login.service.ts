@@ -64,7 +64,6 @@ export class GoogleLoginService {
         if (!auth.isSignedIn.get()) {
           return;
         }
-
         const resp = auth.currentUser.get().getAuthResponse();
         if (resp.expires_at > Date.now()) {
           this.updateAuth(resp);
