@@ -329,7 +329,7 @@
         </div>
       </div>
 
-      <div class="rooms-in-folder" *ngIf="overlayType === 'newFolder'">
+      <div class="rooms-in-folder" *ngIf="overlayType === 'newFolder' && folderRoomsLoaded">
         <div class="content-buttons-in-folder" *ngIf="readyRoomsToEdit.length <= 0 && !selectedRooms.length">
           <div class="button-in-folder" *ngFor="let button of buttonsInFolder">
             <app-gradient-button
@@ -375,7 +375,7 @@
         </div>
 
         <div class="rooms-in-folder-content">
-          <div class="not-rooms-in-folder" *ngIf="!selectedRooms.length">
+          <div class="not-rooms-in-folder" *ngIf="!selectedRooms.length && folderRoomsLoaded">
               <img [src]="'./assets/emptyStates/undraw_add_file2_gvbb.svg' | resolveAsset" alt="emptyState">
               <div class="emptyText">Add rooms to the folder.</div>
           </div>
@@ -571,7 +571,7 @@
 
       <div class="footer-delete-button"
            [style.justify-content]="'center'"
-           *ngIf="overlayType === 'newFolder' && isEditFolder"
+           *ngIf="overlayType === 'newFolder' && isEditFolder && folderRoomsLoaded"
            style="margin-top: 40px"
       >
         <app-gradient-button

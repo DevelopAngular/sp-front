@@ -227,6 +227,9 @@ export class OverlayContainerComponent implements OnInit {
   showSearchTeacherOptions: boolean;
 
   newRoomsInFolder = [];
+
+  folderRoomsLoaded: boolean;
+
   pinnableToDeleteIds: number[] = [];
 
   titleColor: string = 'white';
@@ -306,6 +309,7 @@ export class OverlayContainerComponent implements OnInit {
             }
           this.titleColor = '#1F195E';
           this.folderName = 'New Folder';
+          this.folderRoomsLoaded = true;
           break;
         case 'editRoom':
             colors = this.pinnable.color_profile.gradient_color;
@@ -477,12 +481,12 @@ export class OverlayContainerComponent implements OnInit {
       this.overlayType = this.dialogData['type'];
       if (this.dialogData['pinnable']) {
           this.pinnable = this.dialogData['pinnable'];
-          console.log('PINN ===>>', this.pinnable);
 
           if (this.pinnable.type === 'category') {
               this.locationService.getLocationsWithCategory(this.pinnable.category)
                   .subscribe((res: Location[]) => {
-                      this.selectedRooms = res
+                      this.folderRoomsLoaded = true;
+                      this.selectedRooms = res;
                       if (this.dialogData['forceSelectedLocation']) {
                           this.setToEditRoom(this.dialogData['forceSelectedLocation']);
                       }
