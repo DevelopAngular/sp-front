@@ -7,7 +7,7 @@
         <div class="back-button">
           <app-back-button routerLink="/admin/accounts"></app-back-button>
         </div>
-        <div class="ds-mt-20 ds-mx-20" [ngSwitch]="role">
+        <div class="ds-mt-20 ds-mx-5" [ngSwitch]="role">
           <div *ngSwitchCase="'_all'">
             <div class="ds-mr-20">
 
@@ -221,7 +221,8 @@
           <div class="ds-mx-10">
             <app-round-input
               [initialValue]="initialSearchString"
-              [minWidth]="'280px'"
+              [minWidth]="'230px'"
+              [width]="'auto'"
               [type]="'text'"
               [placeholder]="'Search users'"
               (ontextupdate)="findRelevantAccounts($event)">
@@ -294,14 +295,14 @@
     </div>
 
     <div class="table">
-      <div *ngIf="!userList.length && !noUsersDummyVisibility" class="loading-theme spinner ds-flex-center-center">
-        <mat-spinner *ngIf="!placeholder" [color]="'accent'"></mat-spinner>
+      <div *ngIf="!userList.length && !noUsersDummyVisibility" class="loading-theme_blue-gray spinner ds-flex-center-center">
+        <mat-spinner *ngIf="!placeholder" [diameter]="50" [color]="'primary'"></mat-spinner>
         <h1 [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})" *ngIf="placeholder">No matches found.</h1>
       </div>
       <div *ngIf="noUsersDummyVisibility" class="ds-flex-center-center ds-flex-column ds-pt-25 ds-mt-25" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
-        <img [src]="'./assets/emptyStates/no-users.svg'" class="ds-pt-25 ds-mt-25" alt="no-users.svg">
-        <h1>No Users</h1>
-        <p>Add users one-by-one above or set up G Suite <br>
+        <img [src]="'./assets/emptyStates/no-users.svg'" class="ds-py-25 ds-mt-25 ds-mb-10" alt="no-users.svg">
+        <div class="ds-tab-text">No Users</div>
+        <p class="ds-my-10" style="text-align: center; font-size: 15px;">Add users one-by-one above or set up G Suite <br>
           syncing to automatically add users to this profile.</p>
       </div>
       <div *ngIf="userList.length">
