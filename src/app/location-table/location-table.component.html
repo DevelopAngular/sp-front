@@ -35,7 +35,7 @@
         <img class="star-icon" [src]="'./assets/Star (Yellow).svg'">
         <div>
           <span class="ds-dialog-bold-text ds-pb-5">No Favorite Rooms</span> <br>
-          <span class="ds-cell-description-text">Add favorites</span>
+          <span class="ds-cell-description-text">Add favorites {{ !isFavoriteForm ? 'in settings' : '' }}</span>
         </div>
       </div>
       <div *ngIf="rightHeaderText && !hideFavorites" style="margin-top: 25px" class="fav-header">All Rooms</div>
