@@ -7,12 +7,12 @@
     <div class="overlay-header" [ngStyle]="{'background-image': gradientColor}">
     <div class="left-buttons">
       <img class="back-button" draggable="false"
-           *ngIf="backButtonState && !hideHeaderIcon"
+           *ngIf="backButtonState && !hideHeaderIcon && !isDirtyAdvancedOpt"
            alt="Go Back"
            [src]="'./assets/' + (titleColor === 'white' ? 'Back Button (Light-Gray).svg' : 'Back Button (Blue-White).svg') | resolveAsset"
            (click)="back()">
 
-        <div class="cancel-button" [style.color]="titleColor" *ngIf="!backButtonState && !hideHeaderIcon" (click)="back()">Cancel</div>
+        <div class="cancel-button" [style.color]="titleColor" *ngIf="!backButtonState && !hideHeaderIcon || isDirtyAdvancedOpt" (click)="back()">Cancel</div>
     </div>
       <div class="title" [style.color]="titleColor" *ngIf="overlayType === 'newRoom' || overlayType === 'editRoom'">
           <img class="title-icon" *ngIf="titleIcon" [src]="titleIcon | resolveAsset">
@@ -55,7 +55,7 @@
                              (buttonClick)="onPublish()"
         >{{(showPublishSpinner ? null : 'Publish')}}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
         </app-gradient-button>
-        <div *ngIf="!showPublishNewRoom && overlayType === 'newRoom' && isChangeState"
+        <div *ngIf="!showPublishNewRoom && overlayType === 'newRoom' && isChangeState || (isDirtyAdvancedOpt && !advOptValid)"
              [style.color]="titleColor"
         >
             Incomplete

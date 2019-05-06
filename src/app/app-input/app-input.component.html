@@ -26,7 +26,7 @@
     <div class="input-container">
       <input
              [attr.disabled]="disabled ? '' : null"
-             [style.background-color]="hovered || isFocus ? '#FFFFF' : '#F7F7F7'"
+             [style.background-color]="isFocus ? 'white' : (hovered ? '#EDEDED' : '#F7F7F7')"
              [style.width]="width"
              [style.height]="height"
              [style.text-align]="textAlign"
