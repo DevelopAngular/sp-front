@@ -4,7 +4,6 @@
   <app-school-toggle-bar *ngIf="( schools && schools.length > 1 ) && !hideSchoolToggleBar"
     [schools]="schools"
   ></app-school-toggle-bar>
-
   <div class="router-outlet" style="height: 100%;" [style.overflow-y]=" hideScroll ? 'hidden' : 'auto'" *ngIf="isAuthenticated">
     <router-outlet></router-outlet>
   </div>

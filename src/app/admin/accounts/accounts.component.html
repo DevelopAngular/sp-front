@@ -52,6 +52,7 @@
             <div  #roleCard2 class="card card__role"
                   (mousedown)="roleCard2.pressed = true"
                   (mouseup)="roleCard2.pressed = false"
+                  (click)="showSettings()"
                   [@pressState]="roleCard2.pressed ? 'down' : 'up'">
               <div class="card_content">
                 <div class="ds-flex-center-start">

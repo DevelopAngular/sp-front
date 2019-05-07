@@ -23,7 +23,7 @@
              <a routerLink="/admin/hallmonitor" class="label-icon">
                <img draggable="false" [src]="getCardIcon('./assets/Walking (Navy).svg') | resolveAsset" alt="Walking (Navy).svg" width="25">
              </a>
-             <div style="display: block;" [ngStyle]="{'opacity': numActivePasses > 0 ? '1' : '.5'}">
+             <div style="display: block;">
                <app-gradient-button
                  [size]="'medium'"
                  [disabled]="numActivePasses <= 0"

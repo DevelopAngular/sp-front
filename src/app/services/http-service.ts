@@ -1,12 +1,14 @@
 
-import {catchError, tap, first, delay, distinctUntilChanged, filter, flatMap, map, skip, switchMap} from 'rxjs/operators';
+import {catchError, tap, first, delay, distinctUntilChanged, filter, flatMap, map, skip, switchMap, merge} from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { of, throwError ,  BehaviorSubject ,  Observable } from 'rxjs';
+import {of, throwError, BehaviorSubject, Observable, timer, interval} from 'rxjs';
 import { environment } from '../../environments/environment';
 import { GoogleLoginService, isDemoLogin } from './google-login.service';
 import { School } from '../models/School';
 import {StorageService} from './storage.service';
+
+import * as moment from 'moment';
 
 export const SESSION_STORAGE_KEY = 'accessToken';
 
@@ -16,6 +18,7 @@ export interface Config {
 
 export interface ServerAuth {
   access_token: string;
+  refresh_token?: string;
   token_type: string;
   expires_in: number;
   expires: Date;
@@ -155,7 +158,22 @@ export class HttpService {
       return;
     });
 
-
+     //  interval(10000)
+     //    .pipe(
+     //        switchMap(() => of(this.accessTokenSubject.value)),
+     //        switchMap(({auth, server}) => {
+     //            if (moment().isAfter(auth.expires)) {
+     //              // const config = new FormData();
+     //              const user = JSON.parse(this.storage.getItem('google_auth'));
+     //              // config.append('client_id', server.client_id);
+     //              // config.append('grant_type', auth.refresh_token);
+     //              //   config.append('username', user.username);
+     //              //   config.append('password', user.password);
+     //              // return this.http.post(makeUrl(server, 'o/token/'), config);
+     //                return this.fetchServerAuth();
+     //            }
+     //        }),
+     // ).subscribe();
 
   }
 
@@ -217,7 +235,6 @@ export class HttpService {
       config.append('password', password);
 
       // console.log('loginManual()');
-
       return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
         map((data: any) => {
           // console.log('Auth data : ', data);

@@ -44,7 +44,7 @@ export class GoogleLoginService {
   ) {
 
     this.authToken$.subscribe(auth => {
-      window.waitForAppLoaded();
+      // window.waitForAppLoaded();
       if (auth) {
         this.storage.setItem(STORAGE_KEY, JSON.stringify(auth));
       }
@@ -124,6 +124,7 @@ export class GoogleLoginService {
   }
 
   setAuthenticated() {
+      window.waitForAppLoaded()
     // console.log('setAuthenticated()');
     this.isAuthenticated$.next(true);
     this.showLoginError$.next(false);

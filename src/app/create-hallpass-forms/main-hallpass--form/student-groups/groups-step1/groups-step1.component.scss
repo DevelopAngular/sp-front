@@ -132,6 +132,18 @@
             padding: 0px 0px 25px 0px;
             overflow: auto;
             flex: 1 1 auto;
+            .list-of-groups, .content-left_placeholder {
+                opacity: 0;
+                animation: appearing .5s ease .1s forwards;
+            }
+            @keyframes appearing {
+              0% {
+                opacity: 0;
+              }
+              100% {
+                opacity: 1;
+              }
+            }
           }
         }
         &_create-group {
