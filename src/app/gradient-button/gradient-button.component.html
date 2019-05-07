@@ -47,5 +47,7 @@
       <img draggable="false" *ngIf="linkType === '_blank'" [style.width]="leftImageWidth" [style.height]="leftImageHeight" class="icon right-icon" [src]="'./assets/External Link (White).svg' | resolveAsset">
     </a>
   </div>
-  <div class="subtitle" *ngIf="subtitle">{{subtitle}}</div>
+  <div class="subtitle" [style.margin-top]="subtitle ? '0px' : '-12px'" [style.opacity]="subtitle ? '1' : '0'">
+    <span *ngIf="subtitle">{{subtitle}}</span>
+  </div>
 </div>

@@ -295,7 +295,7 @@
     </div>
 
     <div class="table">
-      <div *ngIf="!userList.length && !noUsersDummyVisibility" class="loading-theme_blue-gray spinner ds-flex-center-center">
+      <div *ngIf="!userList.length" class="loading-theme_blue-gray spinner ds-flex-center-center">
         <mat-spinner *ngIf="!placeholder" [diameter]="50" [color]="'primary'"></mat-spinner>
         <h1 [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})" *ngIf="placeholder">No matches found.</h1>
       </div>

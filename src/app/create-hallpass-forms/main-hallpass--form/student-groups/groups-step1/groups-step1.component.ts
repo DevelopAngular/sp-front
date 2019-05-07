@@ -16,7 +16,7 @@ export class GroupsStep1Component implements OnInit {
 
   @Input() selectedGroup: StudentList = null;
   @Input() selectedStudents: User[] = [];
-  @Input() groups: StudentList[] = [];
+  @Input() groups: StudentList[];
   @Input() formState: Navigation;
   @Input() hasBackArrow: boolean = false;
 
@@ -24,6 +24,7 @@ export class GroupsStep1Component implements OnInit {
   @Output() createGroupEmit: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
   isEmptyGroups$: Observable<boolean>;
+  isEmptyGroups: boolean = false;
 
   // public selectedGroup: StudentList;
   // public selectedStudents: User[] = [];
@@ -35,9 +36,12 @@ export class GroupsStep1Component implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.isEmptyGroups$ = timer(500).pipe(switchMap(() => {
-      return of (!this.groups || (this.groups && !this.groups.length));
-    }));
+
+    of(!this.groups || (this.groups && !this.groups.length)).subscribe((v) => {
+      console.log(v);
+      this.isEmptyGroups = v;
+    });
+
     if (this.selectedGroup) {
         this.selectedStudents = this.formState.data.selectedStudents;
     }

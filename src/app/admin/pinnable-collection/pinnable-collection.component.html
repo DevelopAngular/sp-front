@@ -1,4 +1,4 @@
-<div class="collection-wrapper">
+<div class="collection-wrapper" *ngIf="pinnables" [style.min-width]="width">
   <div class="collection-header" *ngIf="header">
 
     <div class="collection-title" [style.color]="darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'})">
@@ -34,14 +34,15 @@
       >
         {{headerButtonText}}</app-gradient-button>
     </div>
-    </div>
+  </div>
 
   <div class="collection-divider" *ngIf="header"></div>
   <div
+    class="pinnables"
    [style.width]="width"
    style="display: flex; flex-wrap: wrap"
    dragula="pinnables"
-   *ngIf="pinnables.length"
+   *ngIf="pinnables?.length"
    [dragulaModel]="pinnables"
    (dragulaModelChange)="onPinablesOrderChanged($event)">
 
@@ -53,7 +54,7 @@
       </div>
     </div>
   </div>
-  <div class="empty-state" style="width: 560px" *ngIf="isEmptyState">
+  <div class="empty-state" style="width: 560px" *ngIf="!pinnables?.length && isEmptyState">
     <img style="width: 575px" [src]="'./assets/emptyStates/No Rooms Pass Config.svg' | resolveAsset">
   </div>
 </div>

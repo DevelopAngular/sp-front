@@ -48,6 +48,7 @@ import { ToastConnectionComponent } from './toast-connection/toast-connection.co
 import { ResizeInfoDialogComponent } from './resize-info-dialog/resize-info-dialog.component';
 import { SignedOutToastComponent } from './signed-out-toast/signed-out-toast.component';
 import {APP_BASE_HREF} from '@angular/common';
+import { ErrorComponent } from './error/error.component';
 
 
 const appRoutes: Routes = [
@@ -55,11 +56,11 @@ const appRoutes: Routes = [
   {path: '', redirectTo: 'admin', pathMatch: 'full'},
   {
     path: '',
-    canActivate: [NotSeenIntroGuard],
+    // canActivate: [NotSeenIntroGuard],
     children: [
       {
         path: 'main',
-        canActivate: [AuthenticatedGuard, IsStudentOrTeacherGuard],
+        canActivate: [NotSeenIntroGuard, AuthenticatedGuard, IsStudentOrTeacherGuard],
         loadChildren: 'app/main/main.module#MainModule'
       },
       {
@@ -90,6 +91,10 @@ const appRoutes: Routes = [
           hideScroll: true
         }
       },
+      {
+        path: 'error',
+        component: ErrorComponent,
+      }
     ]
   },
   {path: '**', redirectTo: 'main/passes', pathMatch: 'full'},
@@ -115,6 +120,7 @@ const appRoutes: Routes = [
     ToastConnectionComponent,
     ResizeInfoDialogComponent,
     SignedOutToastComponent,
+    ErrorComponent
   ],
   entryComponents: [
     ConsentMenuComponent,

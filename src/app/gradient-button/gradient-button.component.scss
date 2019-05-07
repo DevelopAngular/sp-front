@@ -94,8 +94,12 @@
 }
 
 .subtitle {
+  height: 11px;
+  opacity: 0;
+  //overflow: hidden;
   color: #999999;
   font-size: 11px;
+  transition: margin .5s ease, opacity .5s ease;
 }
 
 .card {

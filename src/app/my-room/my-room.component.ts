@@ -120,6 +120,14 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     const selectedLocationArray$ = this.selectedLocation$.pipe(map(location => location));
 
     // Construct the providers we need.
+
+    // this.activePasses = new WrappedProvider(new ActivePassProvider(liveDataService, selectedLocationArray$,
+    //   this.searchDate$, this.searchQuery$));
+    // this.originPasses = new WrappedProvider(new OriginPassProvider(liveDataService, selectedLocationArray$,
+    //   this.searchDate$, this.searchQuery$));
+    // this.destinationPasses = new WrappedProvider(new DestinationPassProvider(liveDataService, selectedLocationArray$,
+    //   this.searchDate$, this.searchQuery$));
+
     this.activePasses = new WrappedProvider(new ActivePassProvider(liveDataService, selectedLocationArray$,
       this.searchDate$, this.searchQuery$));
     this.originPasses = new WrappedProvider(new OriginPassProvider(liveDataService, selectedLocationArray$,
