@@ -326,7 +326,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         .subscribe((userList) => {
           if (userList && userList.length) {
             this.dataTableHeadersToDisplay = [];
-            this.userList = this.buildUserListData(this.userList);
+            this.userList = this.buildUserListData(userList);
           } else {
             this.placeholder = true;
           }

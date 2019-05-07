@@ -56,17 +56,16 @@ export class PinnableCollectionComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (!this.pinnables) {
-      this.pinnables = [];
-    }
+    // if (!this.pinnables) {
+    //   this.pinnables = [];
+    // }
 
-      setTimeout(() => {
+    setTimeout(() => {
       this.pinnableIdArranged = this.pinnables.map(pin => pin.id);
       // console.log(this.pinnableIdArranged);
         if (!this.pinnableIdArranged.length) {
           this.isEmptyState = true;
         }
-
     }, 1000);
     if (this.resetBulkSelect$) {
         this.resetBulkSelect$.subscribe((val: boolean) => {

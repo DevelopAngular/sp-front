@@ -40,7 +40,8 @@ export class HallmonitorComponent implements OnInit {
     rooms: Pinnable[];
 
     selectedStudents: User[] = [];
-    studentreport: Report[]|any[] = [];
+    studentreport: Report[]|any[];
+    pending: boolean = true;
 
     min: Date = new Date('December 17, 1995 03:24:00');
     calendarToggled = false;
@@ -92,10 +93,10 @@ export class HallmonitorComponent implements OnInit {
   }
 
   ngOnInit() {
-      fromEvent(window, 'scroll').subscribe(() => {
-
-      })
-      disableBodyScroll(this.elRef.nativeElement);
+    // fromEvent(window, 'scroll').subscribe(() => {
+    //
+    // })
+      // disableBodyScroll(this.elRef.nativeElement);
     // this.activePassProvider = new ActivePassProvider(this.liveDataService, this.searchQuery$);
     this.http.globalReload$.subscribe(() => {
       this.getReports();
@@ -264,6 +265,8 @@ export class HallmonitorComponent implements OnInit {
       console.log(emit);
   }
   private getReports(date?: Date) {
+    this.pending = true;
+    this.studentreport = [];
     const range = this.liveDataService.getDateRange(date);
     console.log(range);
     const response$ = date ?
@@ -307,6 +310,7 @@ export class HallmonitorComponent implements OnInit {
         toArray()
       )
       .subscribe((list: any[]) => {
+        this.pending = false;
         this.studentreport = list;
       });
   }

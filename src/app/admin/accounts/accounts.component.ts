@@ -8,6 +8,7 @@ import { switchMap } from 'rxjs/operators';
 import { AdminService } from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {bumpIn} from '../../animations';
+import {ProfileCardDialogComponent} from '../profile-card-dialog/profile-card-dialog.component';
 
 @Component({
   selector: 'app-accounts',
@@ -49,15 +50,28 @@ export class AccountsComponent implements OnInit {
     });
   }
 
-  openDialog(mode) {
-    const DR = this.matDialog.open(AccountsDialogComponent,
-      {
-        data: {
-          mode: mode
-        },
-        width: '768px', height: '560px',
-        panelClass: 'accounts-profiles-dialog',
-        backdropClass: 'custom-bd'
-      });
+  showSettings() {
+
+    const data = {
+      bulkPermissions: null,
+      gSuiteSettings: true,
+    }
+
+    const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
+      panelClass: 'overlay-dialog',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '500px',
+      data: data
+    });
+
+    // const DR = this.matDialog.open(AccountsDialogComponent,
+    //   {
+    //     data: {
+    //     },
+    //     width: '768px', height: '560px',
+    //     panelClass: 'accounts-profiles-dialog',
+    //     backdropClass: 'custom-bd'
+    //   });
   }
 }

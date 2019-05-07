@@ -1,8 +1,7 @@
 .collection-wrapper{
-  height: inherit;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 40px;
+
+}
+.pinnables {
   opacity: 0;
   animation: appearing .5s ease .1s forwards;
 }
@@ -21,6 +20,8 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    opacity: 0;
+    animation: appearing .5s ease .1s forwards;
 }
 
 .collection-divider{

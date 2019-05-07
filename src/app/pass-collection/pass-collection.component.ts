@@ -11,7 +11,7 @@ import { PassLike} from '../models';
 import { PassCardComponent } from '../pass-card/pass-card.component';
 import { ReportFormComponent } from '../report-form/report-form.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
-import {mergeAll, shareReplay} from 'rxjs/operators';
+import {delay, map, mergeAll, shareReplay, switchMap, tap} from 'rxjs/operators';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import { TimeService } from '../services/time.service';
 
@@ -100,8 +100,20 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
       } else {
         this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
-        this.currentPasses$.subscribe((passes) => {
-            this.currentPasses = passes;
+        this.currentPasses$
+          .pipe(
+            switchMap((_passes) => {
+              if (_.isEqual(this.currentPasses, _passes)) {
+                return of(_passes);
+              } else {
+                this.currentPasses = [];
+                return of(_passes).pipe(delay(500));
+              }
+            })
+          )
+          .subscribe((passes: any) => {
+            // console.log(passes);
+            this.currentPasses = passes;;
           });
       }
         if (this.isActive) {
@@ -109,10 +121,6 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
             this.timerEvent.next(null);
           }, 1000));
         }
-        // this.currentPasses$.subscribe((data) => {
-        //   console.log(data);
-        //   this.test = data[0];
-        // });
   }
 
   ngOnDestroy() {
