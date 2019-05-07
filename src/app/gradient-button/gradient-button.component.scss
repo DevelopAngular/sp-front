@@ -27,6 +27,10 @@
   user-select: none;
   position: relative;
 
+  &.disabled {
+    opacity: 0.5;
+  }
+
 }
 
 .button-link {

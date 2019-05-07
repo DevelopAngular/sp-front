@@ -198,7 +198,7 @@
               [gradient]="'#DA2370, #FB434A'"
               [hoverColor]="'#DA2370'"
               (buttonClick)="promptConfirmation($event.target, 'delete_from_profile')">
-              <span>Remove from Profile</span>
+              <span>{{ role === '_all' ? 'Delete Account & Data' : 'Remove from Profile' }}</span>
             </app-gradient-button>
           </div>
           <div class="ds-mx-10">
