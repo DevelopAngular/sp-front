@@ -55,10 +55,11 @@ export class Location extends BaseModel {
     for (let i = 0; i < attachmentsJSON.length; i++) {
       required_attachments.push(attachmentsJSON[i]);
     }
-
     const request_teachersJSON = JSON['request_teachers'];
-    for (let i = 0; i < request_teachersJSON .length; i++) {
-        request_teachers.push(request_teachersJSON [i]);
+    if (request_teachersJSON) {
+        for (let i = 0; i < request_teachersJSON .length; i++) {
+            request_teachers.push(request_teachersJSON [i]);
+        }
     }
 
     const travelTypesJSON = JSON['travel_types'];
@@ -67,8 +68,10 @@ export class Location extends BaseModel {
     }
 
     const scheduling_request_teachersJSON = JSON['scheduling_request_teachers'];
-    for (let i = 0; i < scheduling_request_teachersJSON.length; i++) {
-        scheduling_request_teachers.push(scheduling_request_teachersJSON[i]);
+    if (scheduling_request_teachersJSON) {
+        for (let i = 0; i < scheduling_request_teachersJSON.length; i++) {
+            scheduling_request_teachers.push(scheduling_request_teachersJSON[i]);
+        }
     }
 
     const teachersJSON = JSON['teachers'];
