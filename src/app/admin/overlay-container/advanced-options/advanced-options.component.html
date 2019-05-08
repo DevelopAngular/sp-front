@@ -57,7 +57,7 @@
                       [width]="225"
                       [height]="30"
                       [fontSize]="13"
-                      [selectedChoose]="optionState.now.data.any_teach_assign"
+                      [selectedChoose]="selectedOpt.anyNow"
                       [choices]="['destination', 'origin', 'both']"
                       (result)="changeState('now_any', $event)"
               ></app-restriction-picker>
@@ -69,7 +69,7 @@
                     [width]="225"
                     [height]="30"
                     [fontSize]="13"
-                    [selectedChoose]="optionState.now.data.all_teach_assign "
+                    [selectedChoose]="selectedOpt.allNow"
                     [choices]="['destination', 'origin', 'both']"
                     (result)="changeState('now_all', $event)"
             ></app-restriction-picker>
@@ -77,7 +77,7 @@
           <div class="certain-teacher" *ngSwitchCase="toggleChoices[3]">
             <div class="title">Pass requests will automatically get sent to:</div>
             <app-student-search
-                    [selectedStudents]="optionState.now.data.selectedTeachers"
+                    [selectedStudents]="selectedOpt.nowTeachers"
                     [chipsMode]="true"
                     [focused]="true"
                     [role]="'_profile_teacher'"
@@ -125,7 +125,7 @@
                     [width]="225"
                     [height]="30"
                     [fontSize]="13"
-                    [selectedChoose]="optionState.future.data.any_teach_assign"
+                    [selectedChoose]="selectedOpt.anyFut"
                     [choices]="['destination', 'origin',  'both']"
                     (result)="changeState('future_any', $event)"
             ></app-restriction-picker>
@@ -137,7 +137,7 @@
                   [width]="225"
                   [height]="30"
                   [fontSize]="13"
-                  [selectedChoose]="optionState.future.data.all_teach_assign"
+                  [selectedChoose]="selectedOpt.allFut"
                   [choices]="['destination', 'origin',  'both']"
                   (result)="changeState('future_all', $event)"
           ></app-restriction-picker>
@@ -145,7 +145,7 @@
         <div class="certain-teacher" *ngSwitchCase="toggleChoices[3]">
           <div class="title">Pass requests will automatically get sent to:</div>
           <app-student-search
-                  [selectedStudents]="optionState.future.data.selectedTeachers"
+                  [selectedStudents]="selectedOpt.futTeachers"
                   [chipsMode]="true"
                   [focused]="true"
                   [role]="'_profile_teacher'"

@@ -4,6 +4,8 @@ import { bumpIn } from '../../../animations';
 import { DarkThemeSwitch } from '../../../dark-theme-switch';
 import { DomSanitizer } from '@angular/platform-browser';
 
+import * as _ from 'lodash';
+
 export interface OptionState {
     now: {
         state: string;
@@ -35,6 +37,8 @@ export class AdvancedOptionsComponent implements OnInit {
   @Input() nowRestricted: boolean;
   @Input() futureRestricted: boolean;
 
+  @Input() data: OptionState;
+
   @Output() hideBottomBlock: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() resultOptions: EventEmitter<OptionState> = new EventEmitter<OptionState>();
 
@@ -49,24 +53,9 @@ export class AdvancedOptionsComponent implements OnInit {
       'Certain \n teacher(s)'
   ];
 
-  optionState: OptionState = {
-      now: {
-          state: this.toggleChoices[0],
-          data: {
-              selectedTeachers: [],
-              any_teach_assign: null,
-              all_teach_assign: null,
-          }
-      },
-      future: {
-          state: this.toggleChoices[0],
-          data: {
-              selectedTeachers: [],
-              any_teach_assign: null,
-              all_teach_assign: null,
-          }
-      }
-  };
+  optionState: OptionState;
+
+  selectedOpt;
 
   hovered: boolean;
   pressed: boolean;
@@ -88,7 +77,17 @@ export class AdvancedOptionsComponent implements OnInit {
       }
     }
 
-  ngOnInit() {}
+  ngOnInit() {
+          this.optionState = _.cloneDeep(this.data);
+          this.selectedOpt = {
+              anyNow: this.optionState.now.data.any_teach_assign,
+              anyFut: this.optionState.future.data.any_teach_assign,
+              allNow: this.optionState.now.data.all_teach_assign,
+              allFut: this.optionState.future.data.all_teach_assign,
+              nowTeachers: this.optionState.now.data.selectedTeachers,
+              futTeachers: this.optionState.future.data.selectedTeachers,
+          };
+  }
 
   toggleContent() {
     this.openedContent = !this.openedContent;
