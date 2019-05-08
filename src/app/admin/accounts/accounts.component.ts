@@ -20,10 +20,11 @@ export class AccountsComponent implements OnInit {
 
   public accounts$ =
     new BehaviorSubject<any>({
-      total: 0,
-      admin_count: 0,
-      student_count: 0,
-      teacher_count: 0
+      total_count: '-',
+      admin_count: '-',
+      student_count: '-',
+      teacher_count: '-',
+      assistant_count: '-'
     });
 
   constructor(

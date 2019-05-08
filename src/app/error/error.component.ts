@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {User} from '../models/User';
-import {filter, skip} from 'rxjs/operators';
 import {HttpService} from '../services/http-service';
 
 @Component({
@@ -21,7 +20,8 @@ export class ErrorComponent implements OnInit {
 
   ngOnInit() {
     this.http.currentSchool$.subscribe(() => {
-      this.router.navigate(['/']);
+      console.log(this.http.currentSchoolSubject.value);
+      // this.router.navigate(['/']);
     });
   }
 }

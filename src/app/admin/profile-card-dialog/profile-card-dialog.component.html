@@ -161,7 +161,7 @@
       </div>
       <div style="flex: 1 1 132px; display: flex; min-height: 132px;">
         <div class="card-footer">
-          <div class="button">
+          <div class="button" *ngIf="profile._originalUserProfile.active">
             <app-gradient-button
               [gradient]="'#001115,#033294'"
               [hoverColor]="'#001115'"
@@ -170,6 +170,18 @@
               (buttonClick)="promptConfirmation($event.target, 'disable_sign_in')"
             >
               <span>Disable sign-in</span>
+            </app-gradient-button>
+            <div class="button_message">
+              <span>Message</span>
+            </div>
+          </div>
+          <div class="button" *ngIf="!profile._originalUserProfile.active">
+            <app-gradient-button
+              [textColor]="'#FFFFFF'"
+              [cursor]="'pointer'"
+              (buttonClick)="promptConfirmation($event.target, 'enable_sign_in')"
+            >
+              <span>Enable sign-in</span>
             </app-gradient-button>
             <div class="button_message">
               <span>Message</span>

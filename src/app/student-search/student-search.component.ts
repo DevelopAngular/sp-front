@@ -123,7 +123,7 @@ export class StudentSearchComponent implements OnInit {
             this.showDummy = paged.results.length ? false : true;
             return this.removeDuplicateStudents(paged.results);
           });
-      } else if ('gsuite'){
+      } else if ('gsuite') {
         this.students = this.userService.searchProfileAll(encodeURI(search), this.type)
           .toPromise().then((users: User[]) => {
             console.log(users);

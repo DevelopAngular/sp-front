@@ -406,7 +406,7 @@ export class LiveDataService {
         }
       }
     }
-    console.log(date);
+    // console.log(date);
     if (date !== null) {
       const limits = getDateLimits(date);
       queryFilter.start_time_after = limits.start.toISOString();

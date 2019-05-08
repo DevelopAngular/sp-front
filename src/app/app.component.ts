@@ -112,7 +112,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loginService.isAuthenticated$.pipe(takeUntil(this.subscriber$))
         .subscribe(t => {
 
-      console.log('Auth response ===>', t);
+      // console.log('Auth response ===>', t);
       this._zone.run(() => {
         this.showUI.next(true);
         this.preloader$.next(false);
@@ -159,7 +159,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         mergeMap((route) => route.data)
       )
       .subscribe((data) => {
-        console.log(data);
+        // console.log(data);
         if (data.signOut) {
           this.schools = [];
         }

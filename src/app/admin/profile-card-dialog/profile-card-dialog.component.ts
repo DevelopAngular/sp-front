@@ -89,7 +89,8 @@ export class ProfileCardDialogComponent implements OnInit {
 
     if (this.data.role !== '_profile_student' && this.data.role !== '_all') {
       const permissions = this.data.permissions;
-      this.controlsIteratable = Object.values(permissions);
+      this.controlsIteratable = permissions ? Object.values(permissions) : [];
+      console.log(permissions);
       const group: any = {};
       for (const key in permissions) {
         const value = (this.profile._originalUserProfile as User).roles.includes(key);
@@ -170,14 +171,13 @@ export class ProfileCardDialogComponent implements OnInit {
 
   }
 
-  promptConfirmation(eventTarget: HTMLElement, option: string = 'delete') {
+  promptConfirmation(eventTarget: HTMLElement, option: string = '') {
 
     if (!eventTarget.classList.contains('button')) {
       (eventTarget as any) = eventTarget.closest('.button');
     };
 
     eventTarget.style.opacity = '0.75';
-    // this.consentMenuOpened = true;
     let header: string;
     let options: any[];
     const profile: string =
@@ -192,7 +192,7 @@ export class ProfileCardDialogComponent implements OnInit {
         } else {
           header = `Removing this user from the ${profile} profile will remove them from this profile, but it will not delete all data associated with the account.`;
         }
-        options = [{display: 'Confirm Delete', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'confirm_delete'}];
+        options = [{display: 'Confirm Delete', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
         break;
       case 'disable_sign_in':
         header = `Disable sign-in to prevent this user from being able to sign in with the ${profile} profile.`;
@@ -223,6 +223,25 @@ export class ProfileCardDialogComponent implements OnInit {
             eventTarget.style.opacity = '1';
             // console.log(eventTarget.closest('.button'));
             // .style.opacity = '0.75';
+
+
+            switch (option) {
+              case 'delete_from_profile':
+                let role: any = this.data.role.split('_');
+                role = role[role.length - 1];
+                return this.userService.deleteUserFromProfile(this.profile.id, role).pipe(map(() => true));
+                break;
+              case 'disable_sign_in':
+                return this.userService.setUserActivity(this.profile.id, false).pipe(map(() => true));
+                break;
+              case 'enable_sign_in':
+                return this.userService.setUserActivity(this.profile.id, true).pipe(map(() => true));
+                break;
+              default:
+                return of(false);
+                break;
+            }
+
             this.consentMenuOpened = false;
             if (action === 'confirm_delete') {
               let role: any = this.data.role.split('_');

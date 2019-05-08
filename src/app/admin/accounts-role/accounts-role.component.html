@@ -148,7 +148,7 @@
               [textColor]="'#1F194E'"
               [size]="'small'"
               [disabled]="!selectedUsers.length"
-              (buttonClick)="false">
+              (buttonClick)="exportAccountData()">
               <span>Export Account Data</span>
             </app-gradient-button>
           </div>
@@ -172,6 +172,19 @@
 
           <div class="ds-p-10" *ngIf="role !== '_all'">
             <app-gradient-button
+              *ngIf="!bulkSignInStatus"
+              [size]="'small'"
+              [disabled]="!selectedUsers.length"
+              [cursor]="'pointer'"
+              [minHeight]="'32px'"
+              [width]="'215px'"
+              [fontSize]="'14px'"
+              [fontWeight]="700"
+              (buttonClick)="promptConfirmation($event.target, 'enable_sign_in')">
+              <span>Enable sign-in</span>
+            </app-gradient-button>
+            <app-gradient-button
+              *ngIf="bulkSignInStatus"
               [size]="'small'"
               [disabled]="!selectedUsers.length"
               [cursor]="'pointer'"

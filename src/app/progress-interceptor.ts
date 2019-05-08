@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from '@angular/common/http';
-import {Observable, of} from 'rxjs';
+import {Observable, of, throwError} from 'rxjs';
 import { NgProgress } from '@ngx-progressbar/core';
 import {catchError, finalize, tap} from 'rxjs/operators';
 import {Router} from '@angular/router';
@@ -20,11 +20,11 @@ export class ProgressInterceptor implements HttpInterceptor {
                       finalize(() => this.progress.ref().complete()),
                       catchError((error: any) => {
                         // console.log(error);
-                          if (error.status >= 400 && error.status < 600) {
+                          if (error.status >= 400 && error.status < 600 && error.url !== 'https://smartpass.app/api/discovery/find') {
                             this.router.navigate(['error']);
                             // console.log(error.status >= 400 && error.status < 600);
                           }
-                        return of(error);
+                        return throwError(error);
                       })
                     );
     }

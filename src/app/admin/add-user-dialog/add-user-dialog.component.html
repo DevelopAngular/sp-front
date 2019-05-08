@@ -53,7 +53,7 @@
           <div class="profile-search" *ngIf="!secretaryOrSubstitute.user; else secretaryUser" >
             <app-student-search
               [placeholder]="'Search G Suite accounts'"
-              [type]="'alternative'"
+              [type]="'gsuite'"
               [role]="''"
               (onUpdate)="setSecretary($event, null)"
             ></app-student-search>
@@ -80,7 +80,7 @@
           <div class="profile-search" *ngIf="!secretaryOrSubstitute.behalfOf; else secretaryBehalfOf" >
             <app-student-search
               [placeholder]="'Search existing teachers'"
-              [type]="'alternative'"
+              [type]="'gsuite'"
               [role]="''"
               (onUpdate)="setSecretary(null, $event)"
             ></app-student-search>
@@ -115,7 +115,7 @@
                 <app-student-search
                   [selectedStudents]="selectedUsers"
                   [placeholder]="'Search G Suite accounts'"
-                  [type]="'alternative'"
+                  [type]="'gsuite'"
                   [role]="''"
                   (onUpdate)="setSelectedUsers($event)"
                 ></app-student-search>

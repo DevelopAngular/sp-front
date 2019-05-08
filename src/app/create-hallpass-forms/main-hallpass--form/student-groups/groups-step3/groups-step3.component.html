@@ -114,6 +114,7 @@
         <div class="seach-wrapper" *ngIf="editGroup && editGroup.users">
           <app-student-search
             [width]="'280px'"
+            [listMaxHeight]="'unset'"
             (onUpdate)="updateUsers($event)" [focused]="false" [selectedStudents]="editGroup.users"
           ></app-student-search>
         </div>

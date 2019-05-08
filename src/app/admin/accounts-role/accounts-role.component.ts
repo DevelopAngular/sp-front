@@ -132,6 +132,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     }
   }
 
+  get bulkSignInStatus() {
+    return this.selectedUsers.every(profile => profile._originalUserProfile.active);
+  }
+
   ngOnInit() {
     this.http.globalReload$.pipe(
       tap(() => {
@@ -341,11 +345,16 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     // if (e.length) {
       // console.log(e[0]['id']);
     // }
+    console.log(e);
     this.selectedUsers = e;
   }
 
+  exportAccountData() {
+    this.userService.exportUserData(this.selectedUsers[0].id)
+      .subscribe(res => console.log(res));
+  }
 
-  promptConfirmation(eventTarget: HTMLElement, option: string = 'delete') {
+  promptConfirmation(eventTarget: HTMLElement, option: string = '') {
 
     if (!eventTarget.classList.contains('button')) {
       (eventTarget as any) = eventTarget.closest('.button');
@@ -360,6 +369,16 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       this.role === '_profile_teacher' ? 'teacher' :
       this.role === '_profile_student' ? 'student' : 'secretary&substitute';
 
+    const consentMenuObserver = (res) => {
+      console.log(res);
+      if (res) {
+        this.http.setSchool(this.http.getSchool());
+        this.selectedUsers = [];
+        this.getUserList();
+      }
+    }
+
+
     switch (option) {
       case 'delete_from_profile':
         if (this.role === '_all') {
@@ -367,7 +386,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         } else {
           header = `Removing ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} from the ${profile} profile will remove them from this profile, but it will not delete all data associated with the account.`;
         }
-        options = [{display: 'Confirm Delete', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'confirm_delete'}];
+        options = [{display: 'Confirm Delete', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
         break;
       case 'disable_sign_in':
         header = `Disable sign-in to prevent ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} from being able to sign in with the ${profile} profile.`;
@@ -395,26 +414,31 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         .pipe(
           switchMap((action): Observable<any> => {
             // console.log(action);
-            // this.consentMenuOpened = false;
             eventTarget.style.opacity = '1';
-            if (action === 'confirm_delete') {
-              let role: any = this.role.split('_');
-                  role = role[role.length - 1];
-              return zip(...this.selectedUsers.map((user) => this.userService.deleteUserFromProfile(user['id'], role))).pipe(map(() => true));
-            } else {
-              return of(false);
-            }
 
+            switch (option) {
+              case 'delete_from_profile':
+                let role: any = this.role.split('_');
+                    role = role[role.length - 1];
+                    if (role === 'all') {
+                      return zip(...this.selectedUsers.map((user) => this.userService.deleteUser(user['id']))).pipe(map(() => true));
+                    } else {
+                      return zip(...this.selectedUsers.map((user) => this.userService.deleteUserFromProfile(user['id'], role))).pipe(map(() => true));
+                    }
+                break;
+              case 'disable_sign_in':
+                return zip(...this.selectedUsers.map((user) => this.userService.setUserActivity(user['id'], false))).pipe(map(() => true));
+                break;
+              case 'enable_sign_in':
+                return zip(...this.selectedUsers.map((user) => this.userService.setUserActivity(user['id'], true))).pipe(map(() => true));
+                break;
+              default:
+                return of(false);
+                break;
+            }
           }),
         )
-        .subscribe((res) => {
-          console.log(res);
-          if (res) {
-            this.http.setSchool(this.http.getSchool());
-            this.selectedUsers = [];
-            this.getUserList();
-          }
-        });
+        .subscribe(consentMenuObserver);
   }
 
   ngOnDestroy() {
