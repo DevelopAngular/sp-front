@@ -2,8 +2,8 @@ import {Component, ElementRef, HostListener, Inject, OnInit, ViewChild} from '@a
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 
-import {BehaviorSubject, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from "rxjs";
-import {delay, map, switchMap, tap} from 'rxjs/operators';
+import {BehaviorSubject, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 import { Pinnable } from '../../models/Pinnable';
 import * as _ from 'lodash';
@@ -243,8 +243,8 @@ export class OverlayContainerComponent implements OnInit {
   showProfileSearch: boolean = false;
 
   advOptState: OptionState = {
-      now: { state: '', data: { selectedTeachers: [], any_teach_assign: null, all_teach_assign: null } },
-      future: { state: '', data: { selectedTeachers: [], any_teach_assign: null, all_teach_assign: null } }
+      now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
+      future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }
   };
 
   buttonsInFolder = [
@@ -323,6 +323,7 @@ export class OverlayContainerComponent implements OnInit {
             this.selectedIcon = this.pinnable.icon;
             this.travelType = this.pinnable.location.travel_types;
             this.titleIcon = this.pinnable.icon;
+            this.generateAdvOptionsModel(this.pinnable.location);
             break;
         case 'edit':
           // colors = '#606981, #ACB4C1';
@@ -578,6 +579,57 @@ export class OverlayContainerComponent implements OnInit {
     });
   }
 
+  generateAdvOptionsModel(loc: Location) {
+      if (loc.request_mode === 'teacher_in_room' || loc.request_mode === 'all_teachers_in_room') {
+
+          const mode = loc.request_mode === 'teacher_in_room' ? 'any_teach_assign' : 'all_teach_assign';
+
+          if (loc.request_send_destination_teachers && loc.request_send_origin_teachers) {
+              this.advOptState.now.data[mode] = 'both';
+          } else if (loc.request_send_destination_teachers) {
+              this.advOptState.now.data[mode] = 'destination';
+          } else if (loc.request_send_origin_teachers) {
+              this.advOptState.now.data[mode] = 'origin';
+          }
+      } else if (loc.request_mode === 'specific_teachers') {
+          this.advOptState.now.data.selectedTeachers = loc.request_teachers;
+      }
+      if (loc.scheduling_request_mode === 'teacher_in_room' || loc.scheduling_request_mode === 'all_teachers_in_room') {
+
+          const mode = loc.scheduling_request_mode === 'teacher_in_room' ? 'any_teach_assign' : 'all_teach_assign';
+
+          if (loc.scheduling_request_send_destination_teachers && loc.scheduling_request_send_origin_teachers) {
+              this.advOptState.future.data[mode] = 'both';
+          } else if (loc.scheduling_request_send_destination_teachers) {
+              this.advOptState.future.data[mode] = 'destination';
+          } else if (loc.scheduling_request_send_origin_teachers) {
+              this.advOptState.future.data[mode] = 'origin';
+          }
+      } else if (loc.scheduling_request_mode === 'specific_teachers') {
+          this.advOptState.future.data.selectedTeachers = loc.scheduling_request_teachers;
+      }
+
+      if (loc.request_mode === 'any_teacher') {
+          this.advOptState.now.state = 'Any teacher (default)';
+      } else if (loc.request_mode === 'teacher_in_room') {
+          this.advOptState.now.state = 'Any teachers assigned';
+      } else if (loc.request_mode === 'all_teachers_in_room') {
+          this.advOptState.now.state = 'All teachers assigned';
+      } else if (loc.request_mode === 'specific_teachers') {
+          this.advOptState.now.state = 'Certain \n teacher(s)';
+      }
+      if (loc.scheduling_request_mode === 'any_teacher') {
+          this.advOptState.future.state = 'Any teacher (default)';
+      } else if (loc.scheduling_request_mode === 'teacher_in_room') {
+          this.advOptState.future.state = 'Any teachers assigned';
+      } else if (loc.scheduling_request_mode === 'all_teachers_in_room') {
+          this.advOptState.future.state = 'All teachers assigned';
+      } else if (loc.scheduling_request_mode === 'specific_teachers') {
+          this.advOptState.future.state = 'Certain \n teacher(s)';
+      }
+      return this.advOptState;
+  }
+
   uniqueRoomNameValidator(control: AbstractControl) {
       return this.locationService.checkLocationName(control.value)
           .pipe(map((res: any) => {
@@ -625,10 +677,7 @@ export class OverlayContainerComponent implements OnInit {
               color: this.color_profile.id,
               icon: this.selectedIcon,
               timeLimit: +this.timeLimit,
-              advOptState: {
-                  now: { state: '', data: { selectedTeachers: [], any_teach_assign: null, all_teach_assign: null } },
-                  future: { state: '', data: {selectedTeachers: [], any_teach_assign: null, all_teach_assign: null } }
-              }
+              advOptState: this.advOptState
           };
       }
       if (this.overlayType === 'newFolder') {
@@ -675,6 +724,16 @@ export class OverlayContainerComponent implements OnInit {
         }
         if (currState.icon && initState.icon) {
             status.push(currState.icon === initState.icon);
+        }
+        if (currState.advOptState && initState.advOptState) {
+            status.push(currState.advOptState.now.state === initState.advOptState.now.state);
+            status.push(currState.advOptState.future.state === initState.advOptState.future.state);
+            status.push(currState.advOptState.now.data.any_teach_assign === initState.advOptState.now.data.any_teach_assign);
+            status.push(currState.advOptState.now.data.all_teach_assign === initState.advOptState.now.data.all_teach_assign);
+            status.push(_.isEqual(currState.advOptState.now.data.selectedTeachers, initState.advOptState.now.data.selectedTeachers));
+            status.push(currState.advOptState.future.data.any_teach_assign === initState.advOptState.future.data.any_teach_assign);
+            status.push(currState.advOptState.future.data.all_teach_assign === initState.advOptState.future.data.all_teach_assign);
+            status.push(_.isEqual(currState.advOptState.future.data.selectedTeachers, initState.advOptState.future.data.selectedTeachers));
         }
         this.isFormStateDirty = status.includes(false);
     }
@@ -760,23 +819,26 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   advancedOptions(event: OptionState) {
-      if (event.now.state === 'Any teacher (default)' && event.future.state === 'Any teacher (default)') {
-          return;
-      }
-     this.isDirtyAdvancedOpt = true;
-     if (
-      event.now.state === 'Certain \n teacher(s)' && event.now.data.selectedTeachers.length ||
-      event.now.state === 'Any teachers assigned' && event.now.data.any_teach_assign ||
-      event.now.state === 'All teachers assigned' && event.now.data.all_teach_assign ||
-         event.future.state === 'Certain \n teacher(s)' && event.future.data.selectedTeachers.length ||
-         event.future.state === 'Any teachers assigned' && event.future.data.any_teach_assign ||
-         event.future.state === 'All teachers assigned' && event.future.data.all_teach_assign
-     ) {
-         this.advOptValid = true;
-     } else {
-         this.advOptValid = false;
-     }
+      this.advOptState = event;
   }
+
+  // normilizeAdvOptData() {
+  //     const data: {
+  //         request_mode: string,
+  //         request_send_destination_teachers: boolean,
+  //         request_send_origin_teachers: boolean,
+  //         request_teachers: User[],
+  //     } = {};
+  //     if (this.advOptState.now.state === 'Any teacher (default)') {
+  //         data.request_mode = 'any_teacher';
+  //     } else if (this.advOptState.now.state === 'Any teachers assigned') {
+  //         data.request_mode = 'teacher_in_room';
+  //     } else if (this.advOptState.now.state === 'All teachers assigned') {
+  //         data.request_mode = 'all_teachers_in_room';
+  //     } else if (this.advOptState.now.state === 'Certain \n teacher(s)') {
+  //         data.request_mode = 'specific_teachers';
+  //     }
+  // }
 
   back() {
     this.dialogRef.close();

@@ -25,9 +25,6 @@ export class RestrictionPickerComponent implements OnInit {
     if (this.selectedChoose) {
       this.result.emit(this.selectedChoose);
     }
-    if (this.choices.length === 4) {
-
-    }
   }
 
   onClick(choice) {
