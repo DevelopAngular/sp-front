@@ -1,9 +1,9 @@
 <div class="host" appSafariScroll>
   <div class="account-wrapper">
-    <div *ngIf="!(accounts$ | async).total" class="loading-theme spinner ds-h-100 ds-flex-center-center">
-      <mat-spinner [color]="'accent'" [diameter]="'135'"></mat-spinner>
-    </div>
-    <div *ngIf="(accounts$ | async).total">
+    <!--<div *ngIf="!(accounts$ | async)?.total" class="loading-theme spinner ds-h-100 ds-flex-center-center">-->
+      <!--<mat-spinner [color]="'accent'" [diameter]="'135'"></mat-spinner>-->
+    <!--</div>-->
+    <div>
       <div class="card-container">
         <div class="card-container_row ds-mr-25">
           <div class="ds-big-heading">Accounts</div>
@@ -26,7 +26,7 @@
                        [style.font-size]="'16px'"
                        [style.font-weight]="'bold'"
                   >
-                    Total Accounts: {{(accounts$ | async).total_count}} Accounts
+                    Total Accounts: {{(accounts$ | async)?.total_count}} Accounts
                   </div>
                   <div class="ds-pt-10 ds-pr-25 ds-mb-20">
                     <div class="card_title">
@@ -97,7 +97,7 @@
                        [matTooltip]="'An administrator has a high-level look at the school, configures passes, and views/generates reports.'"
                        matTooltipClass="tooltip"
                        alt="">
-                  <span [style.font-weight]="'bold'">{{(accounts$ | async).admin_count}} user{{(accounts$ | async).admin_count> 1 ? 's' : ''}}</span><br>
+                  <span [style.font-weight]="'bold'">{{(accounts$ | async)?.admin_count}} user{{(accounts$ | async)?.admin_count> 1 ? 's' : ''}}</span><br>
                   <div class="arrow-down-container">
                     <div class="arrow-down"></div>
                   </div>
@@ -134,7 +134,7 @@
   '                    A teacher can create passes, view hall monitor activity, and manage passes in his/her room.'"
                        matTooltipClass="tooltip"
                        alt="">
-                  <span [style.font-weight]="'bold'">{{(accounts$ | async).teacher_count}} user{{(accounts$ | async).teacher_count> 1 ? 's' : ''}}</span><br>
+                  <span [style.font-weight]="'bold'">{{(accounts$ | async)?.teacher_count}} user{{(accounts$ | async)?.teacher_count> 1 ? 's' : ''}}</span><br>
                   <div class="arrow-down-container">
                     <div class="arrow-down"></div>
                   </div>
@@ -170,7 +170,7 @@
   '                and send pass requests to teachers.'"
                        matTooltipClass="tooltip"
                        alt="">
-                  <span [style.font-weight]="'bold'">{{(accounts$ | async).student_count }} user{{(accounts$ | async).student_count > 1 ? 's' : ''}}</span><br>
+                  <span [style.font-weight]="'bold'">{{(accounts$ | async)?.student_count }} user{{(accounts$ | async)?.student_count > 1 ? 's' : ''}}</span><br>
                   <div class="arrow-down-container">
                     <div class="arrow-down"></div>
                   </div>
@@ -189,7 +189,7 @@
           <div #roleCard6 class="card card__role"
                (mousedown)="roleCard6.pressed = true"
                (mouseup)="roleCard6.pressed = false"
-               [routerLink]="['/admin/accounts', 'staff_secretary']"
+               [routerLink]="['/admin/accounts', '_profile_assistant']"
                [@pressState]="roleCard6.pressed ? 'down' : 'up'">
             <div class="card_content">
               <div class="card_header"
@@ -205,7 +205,7 @@
                       'They can manage passes in his/her room and create passes as that teacher.'"
                      matTooltipClass="tooltip"
                      alt="">
-                <span [style.font-weight]="'bold'">{{(accounts$ | async).secretary_count || 0}} users</span><br>
+                <span [style.font-weight]="'bold'">{{(accounts$ | async)?.assistant_count}} users</span><br>
                 <div class="arrow-down-container">
                   <div class="arrow-down"></div>
                 </div>

@@ -77,11 +77,11 @@ export class DataTableComponent implements OnInit {
         this.displayedColumns = Object.keys(this._data[0]);
       }
       this.columnsToDisplay = this.displayedColumns.slice();
-    console.log(this.columnsToDisplay);
+    console.log(this.dataSource);
     this.isCheckbox.subscribe((v) => {
       if (v) {
         this.columnsToDisplay.unshift('select');
-      } else {
+      } else if (!v && (this.columnsToDisplay[0] === 'select')) {
         this.columnsToDisplay.shift();
       }
     });

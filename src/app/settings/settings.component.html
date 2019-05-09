@@ -1,6 +1,6 @@
 
 <div class="settings-wrapper" *ngIf="data" [style.background-color]="darkTheme.getBackground('high', true)">
-  <div class="top-arrow-container">
+  <div class="top-arrow-container" (click)="dialogRef.close()">
     <div class="top-arrow" [style.background-color]="darkTheme.getBackground('high', true)"></div>
   </div>
   <div class="title" [ngStyle]="{'color': darkTheme.isEnabled$.value ? '#FFFFFF' : '#1F195E'}">Settings</div>

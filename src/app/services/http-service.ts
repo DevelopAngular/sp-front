@@ -136,7 +136,7 @@ export class HttpService {
     // Then, if there is a school id saved in local storage, try to use that.
     // Last, choose a school arbitrarily.
     this.schools$.subscribe(schools => {
-      console.log('Schools:', schools);
+      // console.log('Schools:', schools);
 
       const lastSchool = this.currentSchoolSubject.getValue();
       if (lastSchool !== null && isSchoolInArray(lastSchool.id, schools)) {

@@ -1,6 +1,4 @@
-<div class="global-container" [ngClass]="{'ds-dark-theme': darkThemeEnabled }" *ngIf="showUI | async" ondragstart="return false">
-  <!--<ng-template appNextRelease></ng-template>-->
-  <!-- Here will be a school toggle bar -->
+<div class="global-container" [ngClass]="{'ds-dark-theme': darkThemeEnabled }" *ngIf="(showUI | async)" ondragstart="return false">
   <app-school-toggle-bar *ngIf="( schools && schools.length > 1 ) && !hideSchoolToggleBar"
     [schools]="schools"
   ></app-school-toggle-bar>

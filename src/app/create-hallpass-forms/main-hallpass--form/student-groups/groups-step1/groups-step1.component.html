@@ -89,12 +89,13 @@
         <div class="search-wrapper">
           <app-student-search
             [width]="'280px'"
+            [listMaxHeight]="'unset'"
             [focused]="true"
             (onUpdate)="updateInternalData($event)" [selectedStudents]="selectedStudents"
           ></app-student-search>
         </div>
       </div>
-      <div class="content-right_next" *ngIf="selectedStudents && selectedStudents.length">
+      <div class="content-right_next" *ngIf="selectedStudents">
         <div *ngIf="selectedGroup" [style.margin-right]="'20px'" class="button-shadow">
           <app-gradient-button
             [width]="'120px'"
@@ -106,7 +107,7 @@
             (buttonClick)="editGroup(selectedGroup)"
           >Edit Group</app-gradient-button>
         </div>
-        <div class="button-shadow">
+        <div class="button-shadow" *ngIf="selectedStudents.length">
           <app-gradient-button
             [width]="'105px'"
             [minHeight]="'35px'"

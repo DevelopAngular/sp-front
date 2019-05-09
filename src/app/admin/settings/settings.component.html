@@ -69,7 +69,7 @@
                (click)="dialogRef.close('privacy')">Privacy & Terms</div>
       </div>
     </div>
-    <div class="bottom-arrow-container">
+    <div class="bottom-arrow-container" (click)="dialogRef.close()">
         <div class="bottom-arrow" [style.background-color]="darkTheme.getBackground('high', true)"></div>
     </div>
 </div>

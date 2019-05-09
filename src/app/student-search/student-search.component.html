@@ -43,7 +43,7 @@
                [style.color]="textColor(cell)"
           >
               <span>
-                {{student.display_name}} ({{student.primary_email.slice(0, student.primary_email.indexOf('@'))}})
+                {{student.display_name}} ({{student.primary_email ? student.primary_email.slice(0, student.primary_email.indexOf('@')) : student.email ? student.email.slice(0, student.email.indexOf('@')) : ''}})
               </span>
           </div>
         </div>
@@ -92,7 +92,7 @@
            [style.color]="textColor(cell)"
       >
               <span>
-                {{student.display_name}} ({{student.primary_email.slice(0, student.primary_email.indexOf('@'))}})
+                {{student.display_name}} ({{student.primary_email ? student.primary_email.slice(0, student.primary_email.indexOf('@')) : student.email ? student.email.slice(0, student.email.indexOf('@')) : ''}})
               </span>
         <img
           (mousedown)="cell.pressed = true"

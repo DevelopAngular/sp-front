@@ -88,6 +88,27 @@ export class UserService {
       }
   }
 
+  setUserActivity(id, activity: boolean) {
+      return this.http.patch(`v1/users/${id}/active`, {active: activity});
+  }
+
+  addAccountToSchool(id, user, userType: string, roles: Array<string>) {
+    if (userType === 'gsuite') {
+
+      return this.http.post(`v1/schools/${id}/add_user`, {
+        type:  'gsuite',
+        email: user.email,
+        profiles: roles
+      });
+    } else {
+
+      return this.http.post(`v1/schools/${id}/add_user`, {
+        type:  'email',
+        email: user.email,
+        profiles: roles
+      });
+    }
+  }
   addUserToProfile(id, role) {
       return this.http.put(`v1/users/${id}/profiles/${role}`);
   }
@@ -96,6 +117,9 @@ export class UserService {
     return this.http.post(`v1/users/${id}/roles`, data);
   }
 
+  deleteUser(id) {
+      return this.http.delete(`v1/users/${id}`);
+  }
   deleteUserFromProfile(id, role) {
       return this.http.delete(`v1/users/${id}/profiles/${role}`);
   }
@@ -139,5 +163,7 @@ export class UserService {
 
     return this.http.get<any>(constructUrl('v1/users', params));
   }
-
+  exportUserData(id) {
+    return this.http.get(`v1/users/${id}/export_data`);
+  }
 }

@@ -6,6 +6,8 @@ import {PdfGeneratorService} from '../pdf-generator.service';
 import {zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
+import {HttpService} from '../../services/http-service';
+import {School} from '../../models/School';
 
 @Component({
   selector: 'app-add-user-dialog',
@@ -14,7 +16,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 })
 export class AddUserDialogComponent implements OnInit {
 
-  public accountTypes: string[] = ['G Suite', 'Alternative'];
+  public accountTypes: string[] = ['gsuite', 'alternative'];
   public typeChoosen: string = this.accountTypes[0];
   public newAlternativeAccount: FormGroup;
   public selectedUsers: User[] = [];
@@ -27,13 +29,15 @@ export class AddUserDialogComponent implements OnInit {
     user: User,
     behalfOf: User
   }
+  public school: School
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<AddUserDialogComponent>,
     private pdfService: PdfGeneratorService,
     private userService: UserService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private http: HttpService
 
   ) {
     if (this.data.role === 'staff_secretary') {
@@ -42,6 +46,7 @@ export class AddUserDialogComponent implements OnInit {
         behalfOf: null
       };
     }
+    this.school = this.http.currentSchoolSubject.value;
   }
 
   ngOnInit() {
@@ -102,7 +107,7 @@ export class AddUserDialogComponent implements OnInit {
     role = role[role.length - 1];
     console.log('======>>>>>', role, this.selectedUsers);
     // return
-    zip(...this.selectedUsers.map((user) => this.userService.addUserToProfile(user.id, role)))
+    zip(...this.selectedUsers.map((user) => this.userService.addAccountToSchool(this.school.id, user, this.typeChoosen, [role])))
       .subscribe((res) => {
           this.dialogRef.close(true);
       });
