@@ -822,23 +822,43 @@ export class OverlayContainerComponent implements OnInit {
       this.advOptState = event;
   }
 
-  // normilizeAdvOptData() {
-  //     const data: {
-  //         request_mode: string,
-  //         request_send_destination_teachers: boolean,
-  //         request_send_origin_teachers: boolean,
-  //         request_teachers: User[],
-  //     } = {};
-  //     if (this.advOptState.now.state === 'Any teacher (default)') {
-  //         data.request_mode = 'any_teacher';
-  //     } else if (this.advOptState.now.state === 'Any teachers assigned') {
-  //         data.request_mode = 'teacher_in_room';
-  //     } else if (this.advOptState.now.state === 'All teachers assigned') {
-  //         data.request_mode = 'all_teachers_in_room';
-  //     } else if (this.advOptState.now.state === 'Certain \n teacher(s)') {
-  //         data.request_mode = 'specific_teachers';
-  //     }
-  // }
+  normilizeAdvOptData() {
+      const data: any = {};
+      if (this.advOptState.now.state === 'Any teacher (default)') {
+          data.request_mode = 'any_teacher';
+      } else if (this.advOptState.now.state === 'Any teachers assigned') {
+          data.request_mode = 'teacher_in_room';
+      } else if (this.advOptState.now.state === 'All teachers assigned') {
+          data.request_mode = 'all_teachers_in_room';
+      } else if (this.advOptState.now.state === 'Certain \n teacher(s)') {
+          data.request_mode = 'specific_teachers';
+      }
+      if (this.advOptState.now.data.any_teach_assign === 'both' || this.advOptState.now.data.all_teach_assign === 'both') {
+          data.request_send_origin_teachers = true;
+          data.request_send_destination_teachers = true;
+      } else if (this.advOptState.now.data.any_teach_assign === 'origin' || this.advOptState.now.data.all_teach_assign === 'origin') {
+          data.request_send_origin_teachers = true;
+          data.request_send_destination_teachers = false;
+      } else if (this.advOptState.now.data.any_teach_assign === 'destination' || this.advOptState.now.data.all_teach_assign === 'destination') {
+          data.request_send_destination_teachers = true;
+          data.request_send_origin_teachers = false;
+      } else if (this.advOptState.now.data.selectedTeachers.length) {
+          data.request_teachers = this.advOptState.now.data.selectedTeachers;
+      }
+      if (this.advOptState.future.data.any_teach_assign === 'both' || this.advOptState.future.data.all_teach_assign === 'both') {
+          data.scheduling_request_send_origin_teachers = true;
+          data.scheduling_request_send_destination_teachers = true;
+      } else if (this.advOptState.future.data.all_teach_assign === 'origin' || this.advOptState.future.data.any_teach_assign === 'origin') {
+          data.scheduling_request_send_origin_teachers = true;
+          data.scheduling_request_send_destination_teachers = false;
+      } else if (this.advOptState.future.data.all_teach_assign === 'destination' || this.advOptState.future.data.any_teach_assign === 'destination') {
+          data.scheduling_request_send_destination_teachers = true;
+          data.scheduling_request_send_origin_teachers = false;
+      } else if (this.advOptState.future.data.selectedTeachers.length) {
+          data.scheduling_request_teachers = this.advOptState.future.data.selectedTeachers;
+      }
+      return data;
+  }
 
   back() {
     this.dialogRef.close();
@@ -963,6 +983,9 @@ export class OverlayContainerComponent implements OnInit {
             travel_types: this.travelType,
             max_allowed_time: +this.timeLimit
         };
+
+        const mergedData = {...location, ...this.normilizeAdvOptData()};
+
         this.locationService.updateLocation(this.pinnable.location.id, location)
             .pipe(switchMap((loc: Location) => {
                 const pinnable = {
