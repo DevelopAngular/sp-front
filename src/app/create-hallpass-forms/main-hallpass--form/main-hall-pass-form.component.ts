@@ -2,18 +2,15 @@ import {Component, ElementRef, Inject, OnInit} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { Location } from '../../models/Location';
 import { Pinnable } from '../../models/Pinnable';
-import { Request } from '../../models/Request';
 import { User } from '../../models/User';
 import { StudentList } from '../../models/StudentList';
-import {NextStep, ScaledCard} from '../../animations';
-import {BehaviorSubject, combineLatest, Observable} from "rxjs";
+import {NextStep} from '../../animations';
+import {BehaviorSubject, combineLatest} from 'rxjs';
 import {CreateFormService} from '../create-form.service';
-import {Invitation} from '../../models/Invitation';
-import {PassLike} from '../../models';
-import {filter, map} from "rxjs/operators";
-import * as _ from "lodash";
-import {DataService} from "../../services/data-service";
-import {LocationsService} from "../../services/locations.service";
+import {filter, map} from 'rxjs/operators';
+import * as _ from 'lodash';
+import {DataService} from '../../services/data-service';
+import {LocationsService} from '../../services/locations.service';
 
 export enum Role { Teacher = 1, Student = 2 }
 
@@ -61,7 +58,7 @@ export interface Navigation {
   selector: 'app-main-hallpass-form',
   templateUrl: './main-hall-pass-form.component.html',
   styleUrls: ['./main-hall-pass-form.component.scss'],
-  animations: [NextStep, ScaledCard]
+  animations: [NextStep]
 
 })
 export class MainHallPassFormComponent implements OnInit {

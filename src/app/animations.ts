@@ -18,11 +18,6 @@ export const NextStep = trigger('NextStep', [                                   
           opacity: 0,
           transform: 'scale(1.2)'
         }),
-        // style({
-        //   opacity: 0.2,
-        //   transform: 'scale(1.1)'
-        //
-        // }),
         style({
           opacity: 1,
           transform: 'scale(1)'
@@ -43,15 +38,9 @@ export const NextStep = trigger('NextStep', [                                   
       `, animate('0.4s 0s ease', keyframes([
           style({
             background: 'transparent',
-            // boxShadow: 'none',
           }),
-          // style({
-          //   background: 'transparent',
-          //   boxShadow: 'none'
-          // }),
           style({
             background: 'transparent',
-            // boxShadow: 'none',
           }),
         ])), {optional: true}
       ),
@@ -76,9 +65,6 @@ export const NextStep = trigger('NextStep', [                                   
           style({
             opacity: 0,
           }),
-          // style({
-          //   opacity: 1.55,
-          // }),
           style({
             opacity: 1,
           })
@@ -105,16 +91,20 @@ export const NextStep = trigger('NextStep', [                                   
       .page-2,
       .page-3,
       .page-4,
-      .slide
+      .slide,
+      .new-room-in-folder-header,
+      .room-name, .folder-name, .room-number,
+      .rooms-in-folder,
+      .teacher-search,
+      .travel-settings,
+      .restriction-settings,
+      .existing-rooms,
+      .import-rooms-content
       `, animate('0.4s 0s ease', keyframes([
           style({
             opacity: 0,
             transform: 'translateX({{from}}px)',
           }),
-          // style({
-          //   opacity: 1.5,
-          //   transform: 'translateX({{halfFrom}}px)',
-          // }),
           style({
             opacity: 1,
             transform: 'translateX(0px)',
@@ -135,10 +125,6 @@ export const NextStep = trigger('NextStep', [                                   
           background: 'transparent',
           boxShadow: 'none',
         }),
-        // style({
-        //   background: 'transparent',
-        //   boxShadow: 'none'
-        // }),
         style({
           background: 'transparent',
           boxShadow: 'none',
@@ -150,11 +136,6 @@ export const NextStep = trigger('NextStep', [                                   
         opacity: 1,
         transform: 'scale(1)'
       }),
-      // style({
-      //   opacity: 0.2,
-      //   transform: 'scale(1.1)'
-      //
-      // }),
       style({
         opacity: 0,
         transform: 'scale(0.8)'
@@ -174,9 +155,6 @@ export const NextStep = trigger('NextStep', [                                   
             boxShadow: 'none',
 
           }),
-          // style({
-          //   'z-index': 9
-          // }),
           style({
             'z-index': 9,
             boxShadow: 'none',
@@ -206,15 +184,29 @@ export const NextStep = trigger('NextStep', [                                   
           style({
             opacity: 1,
           }),
-          // style({
-          //   opacity: 1.55,
-          // }),
           style({
             opacity: 0,
           }),
         ])), {optional: true}
       ),
       query(`
+      .room-name-container
+      `,
+      animate('1.4s 0s ease', keyframes([
+            style({
+              position: 'relative',
+              height: '0px',
+              width: '0px'
+            }),
+            style({
+              position: 'relative',
+              height: '0px',
+              width: '0px'
+            }),
+
+        ])), {optional: true}
+      ),
+    query(`
       .divider-header,
       .from-header-text,
       .to-header-text,
@@ -242,65 +234,17 @@ export const NextStep = trigger('NextStep', [                                   
       `,
       animate('0.4s 0s ease', keyframes([
             style({
+              position: 'absolute',
               opacity: 1,
               transform: 'translateX(0px)',
-              // position: 'absolute'
             }),
-            // style({
-            //   opacity: 1.5,
-            //   transform: 'translateX({{halfTo}}px)',
-            // }),
             style({
               opacity: 0,
               transform: 'translateX({{to}}px)',
-              // position: 'absolute'
             }),
 
         ])), {optional: true}
       )
     ]), { params: { to: -100, halfTo: -50}}
   )
-]);
-
-
-
-
-
-
-
-
-
-
-export const ScaledCard = trigger('ScaledCard', [
-
-  transition(':enter', animate('.5s 0s ease', keyframes([
-    style({
-      opacity: 0,
-      transform: 'scale(1.2)'
-    }),
-    // style({
-    //   opacity: 0.2,
-    //   transform: 'scale(1.1)'
-    //
-    // }),
-    style({
-      opacity: 1,
-      transform: 'scale(1)'
-    })
-  ]))),
-  transition(':leave', animate('.5s 0s ease', keyframes([
-    style({
-      opacity: 1,
-      transform: 'scale(1)'
-    }),
-    // style({
-    //   opacity: 0.2,
-    //   transform: 'scale(0.9)'
-    //
-    // }),
-    style({
-      opacity: 0,
-      transform: 'scale(0.8)'
-    })
-  ])))
 ]);
