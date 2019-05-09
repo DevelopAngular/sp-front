@@ -215,14 +215,15 @@ export class OverlayContainerComponent implements OnInit {
   isDirtyFutureRestriction: boolean;
   isDirtyColor: boolean;
   isDirtyIcon: boolean;
-  isDirtyAdvancedOpt: boolean;
+  isDirtyAdvancedOpt: boolean = false;
 
   isChangeState: boolean;
   isChangeStateInFolder: boolean;
 
   isChangeLocations = new BehaviorSubject<boolean>(false);
 
-  advOptValid: boolean;
+  advOptValid: boolean = false;
+  advOptOpen: boolean;
 
   showSearchTeacherOptions: boolean;
 
@@ -353,7 +354,7 @@ export class OverlayContainerComponent implements OnInit {
              this.form.get('timeLimit').valid &&
              this.isDirtyNowRestriction &&
              this.isDirtyFutureRestriction &&
-             !!this.color_profile && !!this.selectedIcon
+             !!this.color_profile && !!this.selectedIcon;
   }
 
   get showPublishEditRoom() {

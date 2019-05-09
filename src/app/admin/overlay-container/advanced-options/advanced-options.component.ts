@@ -39,7 +39,7 @@ export class AdvancedOptionsComponent implements OnInit {
 
   @Input() data: OptionState;
 
-  @Output() hideBottomBlock: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() openedOptions: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() resultOptions: EventEmitter<OptionState> = new EventEmitter<OptionState>();
 
   openedContent: boolean;
@@ -95,6 +95,7 @@ export class AdvancedOptionsComponent implements OnInit {
 
   toggleContent() {
     this.openedContent = !this.openedContent;
+    this.openedOptions.emit(this.openedContent);
   }
 
   changeState(action, data) {
