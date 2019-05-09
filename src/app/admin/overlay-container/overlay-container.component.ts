@@ -353,12 +353,11 @@ export class OverlayContainerComponent implements OnInit {
              this.form.get('timeLimit').valid &&
              this.isDirtyNowRestriction &&
              this.isDirtyFutureRestriction &&
-             !!this.color_profile && !!this.selectedIcon &&
-             (this.isDirtyAdvancedOpt ? this.advOptValid : true);
+             !!this.color_profile && !!this.selectedIcon
   }
 
   get showPublishEditRoom() {
-     return this.isValidForm && this.isFormStateDirty || (this.isDirtyAdvancedOpt && this.advOptValid);
+     return this.isValidForm && this.isFormStateDirty;
   }
 
   get showPublishNewFolder() {
@@ -725,7 +724,7 @@ export class OverlayContainerComponent implements OnInit {
         if (currState.icon && initState.icon) {
             status.push(currState.icon === initState.icon);
         }
-        if (currState.advOptState && initState.advOptState) {
+        if (currState.advOptState && initState.advOptState && this.advOptValid) {
             status.push(currState.advOptState.now.state === initState.advOptState.now.state);
             status.push(currState.advOptState.future.state === initState.advOptState.future.state);
             status.push(currState.advOptState.now.data.any_teach_assign === initState.advOptState.now.data.any_teach_assign);
@@ -820,18 +819,60 @@ export class OverlayContainerComponent implements OnInit {
 
   advancedOptions(event: OptionState) {
       this.advOptState = event;
+      if (event.now.state === 'Any teacher (default)' && event.future.state === 'Any teacher (default)') {
+          this.advOptValid = true;
+          return;
+      }
+      this.isDirtyAdvancedOpt = true;
+      let nowOptValid = false;
+      if (
+          (event.now.state === 'Any teacher (default)' ||
+          event.now.state === 'Certain \n teacher(s)' && event.now.data.selectedTeachers.length ||
+          event.now.state === 'Any teachers assigned' && event.now.data.any_teach_assign ||
+          event.now.state === 'All teachers assigned' && event.now.data.all_teach_assign) ) {
+          nowOptValid = true;
+      }
+      if (
+          (event.future.state === 'Any teacher (default)' ||
+          event.future.state === 'Certain \n teacher(s)' && event.future.data.selectedTeachers.length ||
+          event.future.state === 'Any teachers assigned' && event.future.data.any_teach_assign ||
+          event.future.state === 'All teachers assigned' && event.future.data.all_teach_assign)
+      ) {
+         this.advOptValid = nowOptValid;
+
+      } else {
+          if (nowOptValid && !this.futureRestriction) {
+              this.advOptValid = true;
+          } else {
+              this.advOptValid = false;
+          }
+      }
+      this.changeState();
   }
 
-  normilizeAdvOptData() {
+  normalizeAdvOptData() {
       const data: any = {};
       if (this.advOptState.now.state === 'Any teacher (default)') {
           data.request_mode = 'any_teacher';
+          data.request_send_origin_teachers = true;
+          data.request_send_destination_teachers = true;
       } else if (this.advOptState.now.state === 'Any teachers assigned') {
           data.request_mode = 'teacher_in_room';
       } else if (this.advOptState.now.state === 'All teachers assigned') {
           data.request_mode = 'all_teachers_in_room';
       } else if (this.advOptState.now.state === 'Certain \n teacher(s)') {
           data.request_mode = 'specific_teachers';
+      }
+      if (this.advOptState.future.state === 'Any teacher (default)') {
+          data.scheduling_request_mode = 'any_teacher';
+          data.scheduling_request_send_origin_teachers = true;
+          data.scheduling_request_send_destination_teachers = true;
+      } else if (this.advOptState.future.state === 'Any teachers assigned') {
+          data.scheduling_request_mode = 'teacher_in_room';
+      } else if (this.advOptState.future.state === 'All teachers assigned') {
+          data.scheduling_request_mode = 'all_teachers_in_room';
+      } else if (this.advOptState.future.state === 'Certain \n teacher(s)') {
+          data.scheduling_request_mode = 'specific_teachers';
       }
       if (this.advOptState.now.data.any_teach_assign === 'both' || this.advOptState.now.data.all_teach_assign === 'both') {
           data.request_send_origin_teachers = true;
@@ -843,7 +884,7 @@ export class OverlayContainerComponent implements OnInit {
           data.request_send_destination_teachers = true;
           data.request_send_origin_teachers = false;
       } else if (this.advOptState.now.data.selectedTeachers.length) {
-          data.request_teachers = this.advOptState.now.data.selectedTeachers;
+          data.request_teachers = this.advOptState.now.data.selectedTeachers.map(t => t.id);
       }
       if (this.advOptState.future.data.any_teach_assign === 'both' || this.advOptState.future.data.all_teach_assign === 'both') {
           data.scheduling_request_send_origin_teachers = true;
@@ -855,7 +896,7 @@ export class OverlayContainerComponent implements OnInit {
           data.scheduling_request_send_destination_teachers = true;
           data.scheduling_request_send_origin_teachers = false;
       } else if (this.advOptState.future.data.selectedTeachers.length) {
-          data.scheduling_request_teachers = this.advOptState.future.data.selectedTeachers;
+          data.scheduling_request_teachers = this.advOptState.future.data.selectedTeachers.map(t => t.id);
       }
       return data;
   }
@@ -905,7 +946,11 @@ export class OverlayContainerComponent implements OnInit {
                 max_allowed_time: +this.timeLimit
         };
        this.locationService.createLocation(location)
-           .pipe(switchMap((loc: Location) => {
+           .pipe(switchMap((locationToUpdate: Location) => {
+               const data = this.normalizeAdvOptData();
+               return this.locationService.updateLocation(locationToUpdate.id, data);
+               }),
+               switchMap((loc: Location) => {
                const pinnable = {
                    title: this.roomName,
                    color_profile: this.color_profile.id,
@@ -984,9 +1029,9 @@ export class OverlayContainerComponent implements OnInit {
             max_allowed_time: +this.timeLimit
         };
 
-        const mergedData = {...location, ...this.normilizeAdvOptData()};
+        const mergedData = {...location, ...this.normalizeAdvOptData()};
 
-        this.locationService.updateLocation(this.pinnable.location.id, location)
+        this.locationService.updateLocation(this.pinnable.location.id, mergedData)
             .pipe(switchMap((loc: Location) => {
                 const pinnable = {
                     title: this.roomName,
