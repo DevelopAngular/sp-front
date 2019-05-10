@@ -13,6 +13,7 @@
     justify-content: center;
     align-items: center;
     box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+    z-index: 10;
 
     .back-button {
       width: 28px;
@@ -29,6 +30,7 @@
 
   .filter-content {
     height: 430px;
+    position: relative;
     .student-filter-content {
       display: flex;
       justify-content: center;
@@ -46,6 +48,56 @@
     .rooms-filter-content {
       height: 430px;
       overflow: auto;
+    }
+
+    .rooms-options-content {
+      overflow: auto;
+      height: 430px;
+      .header {
+        height: 77px;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+
+        .info {
+          font-size: 15px;
+          color: #8E8E93;
+          text-align: center;
+        }
+      }
+
+      .content {
+        padding: 25px;
+
+        .title {
+          margin-bottom: 10px;
+        }
+
+        .rooms {
+
+          .selected {
+
+            .container {
+              padding: 10px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+
+              .name {
+                font-size: 14px;
+                color: #555558;
+                margin-bottom: 8px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .button {
+      position: absolute;
+      right: 15px;
+      bottom: 15px;
     }
   }
 }

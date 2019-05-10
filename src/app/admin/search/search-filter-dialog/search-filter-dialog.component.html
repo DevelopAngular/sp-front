@@ -1,10 +1,11 @@
 <div class="filter-wrapper">
   <div class="filter-header">
-    <img class="back-button" (click)="dialogRef.close()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" alt="back">
-    <div class="ds-dialog-title filter-title">
+    <img class="back-button" (click)="state === 'options' ? state = 'Rooms' : dialogRef.close()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" alt="back">
+    <div class="ds-dialog-title filter-title" *ngIf="state !== 'options'">
       <img style="width: 21px; margin-right: 12px" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset" alt="icon">
       Filter {{ state }}
     </div>
+    <div class="ds-dialog-title filter-title" *ngIf="state === 'options'">Room Options</div>
   </div>
   <div class="filter-content">
     <div class="student-filter-content" *ngIf="state === 'Students'">
@@ -19,7 +20,46 @@
       </div>
     </div>
     <div class="rooms-filter-content" *ngIf="state === 'Rooms'">
-      <app-rooms-search [placeholder]="'Search rooms and folders'"></app-rooms-search>
+      <app-rooms-search [locations]="selectedLocations" [roomsWithFolder]="roomsWithCategories" (result)="addLocations($event)" [placeholder]="'Search rooms and folders'"></app-rooms-search>
+    </div>
+
+    <div class="rooms-options-content" *ngIf="state === 'options'">
+      <div class="header">
+        <div class="info">
+          Choose whether the filter should include passes where the room is the destination, origin, or either.
+        </div>
+      </div>
+      <div class="content">
+        <div class="title ds-dialog-subtitle">Selected</div>
+        <mat-divider></mat-divider>
+
+        <div class="rooms">
+          <div class="selected" *ngFor="let room of roomsWithCategories">
+            <div class="container">
+              <div class="room">
+                <div class="name">{{ room.title + (room.locations ? ' (' + room.locations.length + ')' : '') }}</div>
+                <app-restriction-picker
+                        [width]="265"
+                        [height]="25"
+                        [selectedChoose]="'Destination'"
+                        [choices]="['Destination', 'origin', 'Either']"
+                ></app-restriction-picker>
+              </div>
+              <img [src]="'./assets/Mark (Navy).svg'" width="15" height="15" alt="Check.svg">
+            </div>
+            <mat-divider></mat-divider>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="button" *ngIf="selectedLocations.length">
+      <app-gradient-button
+        (buttonClick)="state === 'options' ? add() : state = 'options'"
+      >
+        {{state === 'options' ? 'Add' : 'Next'}} ({{ selectedLocations.length }})
+      </app-gradient-button>
     </div>
   </div>
 </div>

@@ -46,6 +46,10 @@ export class LocationsService {
         return this.http.get<Paged<any>>(`v1/locations?limit=${limit}${config}`);
     }
 
+    getLocationsWithFilder() {
+      return this.http.get('v1//locations/categorized');
+    }
+
     checkLocationName(value) {
         return this.http.get(`v1/locations/check_fields?title=${value}`);
     }

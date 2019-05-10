@@ -237,6 +237,8 @@ export class SearchComponent implements OnInit {
     filterRef.afterClosed().pipe(filter(data => !!data)).subscribe(data => {
       if (data.action === 'students') {
         this.selectedStudents = data.students;
+      } else if (data.action === 'rooms') {
+        this.selectedRooms = data.locations;
       }
     });
   }

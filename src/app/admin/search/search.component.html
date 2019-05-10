@@ -30,15 +30,16 @@
                   <img width="16" [src]="'./assets/Room (Blue-Gray).svg' | resolveAsset" alt="Icon">
                   Rooms
               </div>
-              <div class="chip" #rchip (mouseenter)="rchip.hovered = true;" (mouseleave)="rchip.hovered = false;">
+              <div class="chip" #rchip [ngClass]="{hovered: rchip.hovered && selectedRooms.length}" (mouseenter)="rchip.hovered = true;" (mouseleave)="rchip.hovered = false;">
                 <div class="overlay" (click)="openFilters('Rooms')">
                   <div class="add-icon" *ngIf="rchip.hovered && !selectedRooms.length">
                     <img [src]="'./assets/Plus (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
                   </div>
-                  <div>{{ rchip.hovered && !selectedRooms.length ? 'Filter ' : 'All ' }}Rooms</div>
+                  <div *ngIf="!selectedRooms.length">{{ rchip.hovered && !selectedRooms.length ? 'Filter ' : 'All ' }}Rooms</div>
+                  <div *ngIf="selectedRooms.length">{{ selectedRooms.length + ' ' + 'room' + (selectedRooms.length > 1 ? 's' : '') }}</div>
                 </div>
                 <div class="reset-icon" *ngIf="rchip.hovered && selectedRooms.length">
-                  <img [src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
+                  <img (click)="selectedRooms = []" [src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
                 </div>
               </div>
             </div>

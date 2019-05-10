@@ -13,17 +13,49 @@
     ></app-round-input>
   </div>
   <div class="content">
-    <div class="selected-rooms mb-10">
+    <div class="selected-rooms mb-10" *ngIf="selectedRooms.length">
       <div class="header">
         <div class="title ds-dialog-subtitle">Selected</div>
         <mat-divider></mat-divider>
       </div>
+      <div class="locations">
+        <div class="room-container" #sel *ngFor="let room of selectedRooms; let i = index"
+             (mouseenter)="sel.hovered = true"
+             (mouseleave)="sel.hovered = false"
+             [style.background-color]="getBackground(sel)"
+             [style.color]="textColor(sel)"
+             (click)="remove(room, room.locations)"
+
+        >
+          <div class="location">
+            <div class="title">{{ room.title }}</div>
+            <img [src]="sel.hovered ? './assets/Cancel (Navy).svg' : './assets/Mark (Navy).svg'" width="15" height="15" alt="Check.svg">
+          </div>
+          <mat-divider></mat-divider>
+        </div>
+      </div>
     </div>
 
-  <div class="folders mb-10">
+  <div class="folders mb-10" *ngIf="categories.length">
     <div class="header">
       <div class="title">Folders</div>
       <mat-divider></mat-divider>
+    </div>
+    <div class="locations">
+      <div class="room-container" #cat *ngFor="let category of categories"
+           (click)="selected(category, true)"
+           (mouseenter)="cat.hovered = true"
+           (mouseleave)="cat.hovered = false"
+           [style.background-color]="getBackground(cat)"
+           [style.color]="textColor(cat)"
+
+      >
+        <div class="location">
+          <div class="title">{{ category.title + ' (' + category.locations.length + ')' }}</div>
+          <img *ngIf="isSelected(category)" [src]="cat.hovered ? './assets/Cancel (Navy).svg' : './assets/Mark (Navy).svg'" width="15" height="15" alt="Check.svg">
+        </div>
+        <mat-divider></mat-divider>
+      </div>
     </div>
   </div>
 
@@ -34,6 +66,7 @@
     </div>
     <div class="locations">
       <div class="room-container" #loc *ngFor="let room of allRooms"
+           (click)="selected(room)"
            (mouseenter)="loc.hovered = true"
            (mouseleave)="loc.hovered = false"
            [style.background-color]="getBackground(loc)"
@@ -42,7 +75,8 @@
       >
         <div class="location">
           <div class="title">{{ room.title }}</div>
-          <div class="subtitle">{{ room.room }}</div>
+          <div class="subtitle" *ngIf="!isSelected(room)">{{ room.room }}</div>
+          <img *ngIf="isSelected(room)" [src]="loc.hovered ? './assets/Cancel (Navy).svg' : './assets/Mark (Navy).svg'" width="15" height="15" alt="Check.svg">
         </div>
         <mat-divider></mat-divider>
       </div>
