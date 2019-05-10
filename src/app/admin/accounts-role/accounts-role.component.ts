@@ -151,13 +151,13 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         // if (this.role === '_all') {
           return this.adminService.getAdminAccounts()
             .pipe(tap((u_list: any) => {
-              console.log('This Accounts ==>>>', u_list);
+              // console.log('This Accounts ==>>>', u_list);
               if (u_list.total_count !== undefined) {
                 u_list.total = u_list.total_count;
               } else {
                 u_list.total = Object.values(u_list).reduce((a: number, b: number) => a + b);
               }
-              console.log(u_list);
+              // console.log(u_list);
               this.accounts$.next(u_list);
             }));
         // } else {
@@ -256,28 +256,28 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         this.role === '_profile_admin'
                    ?
         {
-          'admin_dashboard': {
-            controlName: 'admin_dashboard',
+          'access_admin_dashboard': {
+            controlName: 'access_admin_dashboard',
             controlLabel: 'Dashboard Tab Access',
             // allowed: this.user.roles.includes('admin_dashboard'),
           },
-          'admin_hall_monitor': {
-            controlName: 'admin_hall_monitor',
+          'access_hall_monitor': {
+            controlName: 'access_hall_monitor',
             controlLabel: 'Hall Monitor Tab Access',
             // allowed: this.user.roles.includes('admin_hall_monitor'),
           },
-          'admin_search': {
-            controlName: 'admin_search',
+          'access_admin_search': {
+            controlName: 'access_admin_search',
             controlLabel: 'Search Tab Access',
             // allowed: this.user.roles.includes('admin_search'),
           },
-          'admin_accounts': {
-            controlName: 'admin_accounts',
+          'access_user_config': {
+            controlName: 'access_user_config',
             controlLabel: 'Accounts & Profiles Tab Access',
             // allowed: this.user.roles.includes('admin_accounts'),
           },
-          'admin_pass_config': {
-            controlName: 'admin_pass_config',
+          'access_pass_config': {
+            controlName: 'access_pass_config',
             controlLabel: 'Pass Configuration Tab Access',
             // allowed: this.user.roles.includes('admin_pass_config'),
           },
@@ -291,8 +291,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         this.role === '_profile_teacher'
                    ?
         {
-          'admin_hall_monitor': {
-            controlName: 'admin_hall_monitor',
+          'access_hall_monitor': {
+            controlName: 'access_hall_monitor',
             // allowed: this.user.roles.includes('admin_hall_monitor'),
             controlLabel: 'Access to Hall Monitor'
           },
@@ -367,7 +367,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     const profile: string =
       this.role === '_profile_admin' ? 'administrator' :
       this.role === '_profile_teacher' ? 'teacher' :
-      this.role === '_profile_student' ? 'student' : 'secretary&substitute';
+      this.role === '_profile_student' ? 'student' :
+      this.role === '_profile_assistant' ? 'assistant' : 'unknown';
 
     const consentMenuObserver = (res) => {
       console.log(res);
@@ -386,7 +387,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         } else {
           header = `Removing ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} from the ${profile} profile will remove them from this profile, but it will not delete all data associated with the account.`;
         }
-        options = [{display: 'Confirm Delete', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
+        options = [{display: 'Confirm Remove', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
         break;
       case 'disable_sign_in':
         header = `Disable sign-in to prevent ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} from being able to sign in with the ${profile} profile.`;
@@ -413,10 +414,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       DR.afterClosed()
         .pipe(
           switchMap((action): Observable<any> => {
-            // console.log(action);
+            console.log(action);
             eventTarget.style.opacity = '1';
 
-            switch (option) {
+            switch (action) {
               case 'delete_from_profile':
                 let role: any = this.role.split('_');
                     role = role[role.length - 1];
@@ -504,9 +505,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
     if (this.role === '_profile_admin') {
       if ((evt.id === +this.user.id)) {
-        this.profilePermissions['admin_accounts'].disabled = true;
+        this.profilePermissions['access_user_config'].disabled = true;
       } else {
-        this.profilePermissions['admin_accounts'].disabled = false;
+        this.profilePermissions['access_user_config'].disabled = false;
       }
     }
 
@@ -535,7 +536,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       height: '500px',
       data: data
     });
-
 
     dialogRef.afterClosed().subscribe((userListReloadTrigger: any) => {
       console.log(userListReloadTrigger, data.profile.id, this.user.id);
@@ -600,6 +600,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           const partOf = [];
           if (raw.roles.includes('_profile_student')) partOf.push({title: 'Student', role: '_profile_student'});
           if (raw.roles.includes('_profile_teacher')) partOf.push({title: 'Teacher', role: '_profile_teacher'});
+          if (raw.roles.includes('_profile_assistant')) partOf.push({title: 'Assistant', role: '_profile_assistant'});
           if (raw.roles.includes('_profile_admin')) partOf.push({title: 'Administrator', role: '_profile_admin'});
 
           const rawObj = {

@@ -22,7 +22,7 @@ export class SettingsComponent implements OnInit {
     hoveredSignout: boolean;
     hovered: boolean;
     hoveredColor: string;
-    version = 'Version 1.2';
+    version = 'Version 1.3';
     currentRelease = RELEASE_NAME;
 
 

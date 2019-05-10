@@ -30,6 +30,7 @@ export class StudentSearchComponent implements OnInit {
   @Input() cancelButton: boolean = false;
   @Input() rollUpAfterSelection: boolean = true;
   @Input() role: string = '_profile_student';
+  @Input() dummyRoleText: string = 'students';
   @Input() placeholder: string = 'Search students';
   @Input() type: string = 'alternative'; // Can be alternative or gsuite, endpoint will depend on that.
 

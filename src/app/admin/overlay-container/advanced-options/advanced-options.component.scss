@@ -3,6 +3,7 @@
 .options-wrapper {
 
   .options-header {
+    display: block;
     cursor: pointer;
     .header-text{
       display: flex;
@@ -10,7 +11,7 @@
       font-size: 16px;
       font-weight: bold;
       color: #1F195E;
-      padding: 10px 0px 10px 0px;
+      padding: 20px 0px 20px 0px;
       margin: 0 25px;
 
 

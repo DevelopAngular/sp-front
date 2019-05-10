@@ -114,7 +114,7 @@ export class UserService {
   }
 
   createUserRoles(id, data) {
-    return this.http.post(`v1/users/${id}/roles`, data);
+    return this.http.patch(`v1/users/${id}/roles`, data);
   }
 
   deleteUser(id) {
