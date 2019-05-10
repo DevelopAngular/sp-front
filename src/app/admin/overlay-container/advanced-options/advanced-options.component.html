@@ -12,7 +12,7 @@
       Advanced Options
       <img class="open-arrow" [src]="(openedContent ? './assets/Chevron Up (Navy).svg' : './assets/Chevron Down (Navy).svg') | resolveAsset">
     </div>
-    <mat-divider class="divider" *ngIf="!openedContent"></mat-divider>
+    <!--<mat-divider class="divider" *ngIf="!openedContent"></mat-divider>-->
   </div>
   <div class="options-content" *ngIf="openedContent">
     <div class="content-header">
@@ -52,25 +52,25 @@
           <div class="any-teacher" *ngSwitchCase="toggleChoices[1]">
             <div>Students choose a teacher from the menu who the pass request will get sent to.</div>
             <div style="display: flex; margin-top: 5px">
-              <span><strong>Select a Teacher</strong> menu shows teachers assigned to:</span>
+              <span class="ds-mr-10"><strong>Select a Teacher</strong> menu shows teachers assigned to:</span>
               <app-restriction-picker
-                      [width]="225"
+                      [width]="240"
                       [height]="30"
                       [fontSize]="13"
                       [selectedChoose]="selectedOpt.anyNow"
-                      [choices]="['destination', 'origin', 'both']"
+                      [choices]="['Destination', 'Origin', 'Both']"
                       (result)="changeState('now_any', $event)"
               ></app-restriction-picker>
             </div>
           </div>
           <div class="all-teacher" *ngSwitchCase="toggleChoices[2]">
-            <div>Pass requests will automatically get sent to all teachers assigned to:</div>
+            <div class="ds-mr-10">Pass requests will automatically get sent to all teachers assigned to:</div>
             <app-restriction-picker
-                    [width]="225"
+                    [width]="240"
                     [height]="30"
                     [fontSize]="13"
                     [selectedChoose]="selectedOpt.allNow"
-                    [choices]="['destination', 'origin', 'both']"
+                    [choices]="['Destination', 'Origin', 'Both']"
                     (result)="changeState('now_all', $event)"
             ></app-restriction-picker>
           </div>
@@ -81,6 +81,7 @@
                     [chipsMode]="true"
                     [focused]="true"
                     [role]="'_profile_teacher'"
+                    [dummyRoleText]="'teachers'"
                     [rollUpAfterSelection]="true"
                     [cancelButton]="true"
                     [placeholder]="'Search Teachers'"
@@ -120,25 +121,25 @@
         <div class="any-teacher" *ngSwitchCase="toggleChoices[1]">
           <div>Students choose a teacher from the menu who the pass request will get sent to.</div>
           <div style="display: flex; margin-top: 5px">
-            <span><strong>Select a Teacher</strong> menu shows teachers assigned to:</span>
+            <span class="ds-mr-10"><strong>Select a Teacher</strong> menu shows teachers assigned to:</span>
             <app-restriction-picker
-                    [width]="225"
+                    [width]="240"
                     [height]="30"
                     [fontSize]="13"
                     [selectedChoose]="selectedOpt.anyFut"
-                    [choices]="['destination', 'origin',  'both']"
+                    [choices]="['Destination', 'Origin',  'Both']"
                     (result)="changeState('future_any', $event)"
             ></app-restriction-picker>
           </div>
         </div>
         <div class="all-teacher" *ngSwitchCase="toggleChoices[2]">
-          <div>Pass requests will automatically get sent to all teachers assigned to:</div>
+          <div class="ds-mr-10">Pass requests will automatically get sent to all teachers assigned to:</div>
           <app-restriction-picker
-                  [width]="225"
+                  [width]="240"
                   [height]="30"
                   [fontSize]="13"
                   [selectedChoose]="selectedOpt.allFut"
-                  [choices]="['destination', 'origin',  'both']"
+                  [choices]="['Destination', 'Origin',  'Both']"
                   (result)="changeState('future_all', $event)"
           ></app-restriction-picker>
         </div>
@@ -149,6 +150,7 @@
                   [chipsMode]="true"
                   [focused]="true"
                   [role]="'_profile_teacher'"
+                  [dummyRoleText]="'teachers'"
                   [rollUpAfterSelection]="true"
                   [cancelButton]="true"
                   [placeholder]="'Search Teachers'"

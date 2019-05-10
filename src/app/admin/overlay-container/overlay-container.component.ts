@@ -137,7 +137,6 @@ export class OverlayContainerComponent implements OnInit {
                 map((teachers: any[]) => {
                   return _rooms.map((_room) => {
                     const teachersIdArray = [];
-                    const unknownArray = [];
 
                     _room.teachers.forEach((_teacherEmail) => {
                       const existAndAttached = teachers.find(_teacher =>  _teacher.primary_email === _teacherEmail );
@@ -330,23 +329,40 @@ export class OverlayContainerComponent implements OnInit {
     this.gradientColor = 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
 
+  private oneOf(entity: any, compareWith: any[]) {
+    return compareWith.find(item => entity === item);
+  }
+  private allOf(boolSet: any[]) {
+    return boolSet.every(item => !!item);
+
+  }
+
   get isValidForm() {
-      return this.form.get('roomName').valid &&
-             this.form.get('roomNumber').valid &&
-             this.form.get('timeLimit').valid;
+      return this.allOf([
+                        this.form.get('roomName').valid,
+                        this.form.get('roomNumber').valid,
+                        this.form.get('timeLimit').valid
+      ]);
   }
 
   get showPublishNewRoom() {
-      return this.form.get('roomName').valid &&
-             this.form.get('roomNumber').valid &&
-             this.form.get('timeLimit').valid &&
-             this.isDirtyNowRestriction &&
-             this.isDirtyFutureRestriction &&
-             !!this.color_profile && !!this.selectedIcon;
+      return this.allOf([
+                        this.form.get('roomName').valid,
+                        this.form.get('roomNumber').valid,
+                        this.form.get('timeLimit').valid,
+                        this.isDirtyNowRestriction,
+                        this.isDirtyFutureRestriction,
+                        !!this.color_profile,
+                        !!this.selectedIcon,
+                        (this.isDirtyAdvancedOpt ? this.advOptValid : true)
+      ]);
   }
 
   get showPublishEditRoom() {
-     return this.isValidForm && this.isFormStateDirty;
+     return this.allOf([
+       this.isValidForm,
+       this.isFormStateDirty
+     ]);
   }
 
   get showPublishNewFolder() {
@@ -358,24 +374,35 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   get showPublishEditFolder() {
-      return this.showPublishNewFolder && (this.isFormStateDirty || this.isChangeLocations.value) && this.isEditFolder;
+      return this.allOf([
+                        this.showPublishNewFolder,
+                        this.oneOf( true, [this.isFormStateDirty, this.isChangeLocations.value]),
+                        this.isEditFolder
+      ]);
   }
 
   get showDoneButton() {
-    return (this.isValidForm &&
-        (this.editRoomInFolder ? this.isFormStateDirty : true) &&
-        this.overlayType === 'newRoomInFolder' &&
-        (!this.editRoomInFolder ? (this.isDirtyNowRestriction && this.isDirtyFutureRestriction) : true)) ||
-        (this.form.get('timeLimit').valid && this.overlayType === 'settingsRooms' && this.settingsTouched);
+
+    const boolSet = []
+          boolSet.push(this.allOf([
+                                  this.isValidForm,
+                                  this.oneOf(true, [this.editRoomInFolder, this.isFormStateDirty]),
+                                  this.oneOf(this.overlayType, ['newRoomInFolder']),
+                                  (!this.editRoomInFolder ? this.allOf([this.isDirtyNowRestriction, this.isDirtyFutureRestriction]) : true)
+          ]));
+          boolSet.push(this.allOf([ this.form.get('timeLimit').valid, this.overlayType === 'settingsRooms', this.settingsTouched ]));
+    return this.oneOf(true, boolSet);
   }
 
   get settingsTouched() {
 
     if (this.importedRooms.length) {
-      return this.isDirtyNowRestriction &&
-        this.isDirtyFutureRestriction &&
-        this.isDirtyTravel &&
-        !!this.timeLimit;
+      return this.allOf( [
+        this.isDirtyNowRestriction,
+        this.isDirtyFutureRestriction,
+        this.isDirtyTravel,
+        !!this.timeLimit
+      ])
     } else {
 
      return this.isDirtyNowRestriction ||
@@ -393,19 +420,24 @@ export class OverlayContainerComponent implements OnInit {
 
 
   get showFolderName() {
-    return this.overlayType === 'newFolder'
-       || this.overlayType === 'newRoomInFolder'
-       || this.overlayType === 'addExisting'
-       || this.overlayType === 'importRooms'
-       || this.overlayType === 'settingsRooms'
-       || this.overlayType === 'edit';
-    }
+    return this.oneOf(this.overlayType, [
+      'newFolder',
+      'newRoomInFolder',
+      'addExisting',
+      'importRooms',
+      'settingsRooms',
+      'edit'
+    ]);
+
+  }
 
   get hideHeaderIcon() {
-    return this.overlayType === 'newRoomInFolder' ||
-        this.overlayType === 'importRooms' ||
-        this.overlayType === 'settingsRooms' ||
-        this.overlayType === 'addExisting';
+    return this.oneOf(this.overlayType, [
+      'newRoomInFolder',
+      'importRooms',
+      'settingsRooms',
+      'addExisting'
+    ]);
   }
 
   get backButtonState() {
@@ -818,7 +850,17 @@ export class OverlayContainerComponent implements OnInit {
       this.selectedRooms = [...locationsToAdd, ...this.selectedRooms];
       this.setLocation('newFolder');
   }
+  advancedOptionsOpened(event: boolean, advancedOptionsRef: HTMLElement) {
 
+    this.advOptOpen = event;
+    if (this.advOptOpen) {
+      setTimeout(() => {
+
+      advancedOptionsRef.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'});
+      }, 10);
+    }
+
+  }
   advancedOptions(event: OptionState) {
       this.advOptState = event;
       if (event.now.state === 'Any teacher (default)' && event.future.state === 'Any teacher (default)') {
@@ -1457,7 +1499,6 @@ export class OverlayContainerComponent implements OnInit {
 
                 return _rooms.map((_room) => {
                           const teachersIdArray = [];
-                          const unknownArray = [];
 
                           _room.teachers.forEach((_teacherEmail) => {
                             const existAndAttached = teachers.find(_teacher =>  _teacher.primary_email === _teacherEmail );

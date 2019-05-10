@@ -47,19 +47,6 @@ export class DataTableComponent implements OnInit {
     private sanitizer: DomSanitizer,
 
   ) {}
-  // get cursor(){
-  //   return this.valid?'pointer':'not-allowed';
-  // }
-
-
-  // get textColor() {
-  //
-  //     if (this.hovered) {
-  //       return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
-  //     } else {
-  //       return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
-  //     }
-  // }
 
   ngOnInit() {
       this.dataSource.sort = this.sort;
@@ -77,7 +64,7 @@ export class DataTableComponent implements OnInit {
         this.displayedColumns = Object.keys(this._data[0]);
       }
       this.columnsToDisplay = this.displayedColumns.slice();
-    console.log(this.dataSource);
+    // console.log(this.dataSource);
     this.isCheckbox.subscribe((v) => {
       if (v) {
         this.columnsToDisplay.unshift('select');

@@ -209,6 +209,7 @@
                 [chipsMode]="true"
                 [focused]="true"
                 [role]="'_profile_teacher'"
+                [dummyRoleText]="'teachers'"
                 [rollUpAfterSelection]="true"
                 [cancelButton]="true"
                 [placeholder]="'Search Teachers'"
@@ -561,7 +562,7 @@
 
         </div>
       </div>
-        <div class="advanced-options"
+        <div class="advanced-options" #advancedOptionsRef
              *ngIf="(overlayType === 'editRoom' ||
              (editRoomInFolder)) ||
              overlayType === 'edit' ||
@@ -571,7 +572,7 @@
                     [nowRestricted]="nowRestriction"
                     [futureRestricted]="futureRestriction"
                     [data]="advOptState"
-                    (openedOptions)="advOptOpen"
+                    (openedOptions)="advancedOptionsOpened($event, advancedOptionsRef)"
                     (resultOptions)="advancedOptions($event)"
             ></app-advanced-options>
         </div>
