@@ -32,6 +32,7 @@ export class GradientButtonComponent implements OnInit {
   @Input() size: string = 'small';
 
   @Input() border: string;
+  @Input() withShadow: boolean = true;
   @Input() gradient: string;
   @Input() hoverColor: string = '#00B476';
   @Input() leftIcon: string;
@@ -39,8 +40,8 @@ export class GradientButtonComponent implements OnInit {
   @Input() text: string = 'PDF';
   @Input() subtitle: string;
   @Input() textColor: string;
-  @Input() width: string; // > editable
-  @Input() minWidth: string; // > editable
+  @Input() width: string = 'auto'; // > editable
+  @Input() minWidth: string = 'auto'; // > editable
   @Input() minHeight: string; // > editable
   @Input() disabled: boolean = false;
   @Input() fontSize: string = '20px'; // > editable
@@ -64,6 +65,9 @@ export class GradientButtonComponent implements OnInit {
   constructor(private sanitizer: DomSanitizer) {
   }
   ngOnInit(): void {
+    // if (this.size && this.size !== 'small' && this.size !== 'medium' && this.size !== 'large' && this.size !== 'xl') {
+    //   this.size = 'small';
+    // }
     if (this.size && this.size !== 'editable') {
 
       this.width = 'auto';
@@ -75,9 +79,9 @@ export class GradientButtonComponent implements OnInit {
           this.leftImageHeight = '16px';
           this.leftImageWidth = '16px';
           this.minHeight = '40px';
-          // this.width = '';
           this.minWidth = '100px';
           this.fontSize = '14px';
+          this.fontWeight = 'bold';
           this.cornerRadius = '8px';
           this.padding = '0px 16px';
           break;
@@ -85,7 +89,9 @@ export class GradientButtonComponent implements OnInit {
           this.leftImageHeight = '21px';
           this.leftImageWidth = '21px';
           this.minHeight = '50px';
+          this.minWidth = '100px';
           this.fontSize = '15px';
+          this.fontWeight = 'bold';
           this.cornerRadius = '8px';
           this.padding = '0px 16px';
 
@@ -94,7 +100,9 @@ export class GradientButtonComponent implements OnInit {
           this.leftImageHeight = '21px';
           this.leftImageWidth = '21px';
           this.minHeight = '75px';
+          this.minWidth = '120px';
           this.fontSize = '17px';
+          this.fontWeight = 'bold';
           this.cornerRadius = '10px';
           this.padding = '0px 20px';
 
@@ -103,7 +111,9 @@ export class GradientButtonComponent implements OnInit {
           this.leftImageHeight = '34px';
           this.leftImageWidth = '34px';
           this.minHeight = '100px';
+          this.minWidth = '160px';
           this.fontSize = '22px';
+          this.fontWeight = 'bold';
           this.cornerRadius = '12px';
           this.padding = '0px 20px';
 
@@ -155,8 +165,12 @@ export class GradientButtonComponent implements OnInit {
   }
 
   get shadow() {
-    return this.sanitizer.bypassSecurityTrustStyle(((this.hovered && !this.disabled) ?
-        '0 2px 4px 1px rgba(0, 0, 0, 0.3)' : '0 1px 4px 0px rgba(0, 0, 0, 0.25)'));
+    if (this.withShadow) {
+      return this.sanitizer.bypassSecurityTrustStyle(((this.hovered && !this.disabled) ?
+          '0 2px 4px 1px rgba(0, 0, 0, 0.3)' : '0 1px 4px 0px rgba(0, 0, 0, 0.25)'));
+    } else {
+      return 'none';
+    }
   }
 
   onPress(press: boolean) {

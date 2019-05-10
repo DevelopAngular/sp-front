@@ -6,6 +6,7 @@ import { LoadingService } from '../services/loading.service';
 import { User } from '../models/User';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {BUILD_DATE, RELEASE_NAME} from '../../build-info';
+import * as _ from 'lodash';
 
 export interface Setting {
   gradient: string;
@@ -63,7 +64,7 @@ export class SettingsComponent implements OnInit {
       'gradient': '#022F68, #2F66AB',
       'icon': 'Moon',
       'action': () => { this.darkTheme.switchTheme(); this.data.darkBackground = !this.data.darkBackground; },
-      'title': 'Dark Theme'
+      'title': (this.darkTheme.isEnabled$.value ? 'Light Theme' : 'Dark Theme')
     });
     this.settings.push({
       'gradient': '#03CF31, #00B476',
@@ -117,7 +118,6 @@ export class SettingsComponent implements OnInit {
   }
 
   getIcon(iconName: string, setting: any,  hover?: boolean, hoveredColor?: string) {
-
     return this.darkTheme.getIcon({
       iconName: iconName,
       setting: setting,

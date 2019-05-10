@@ -23,8 +23,8 @@
              (click)="darkTheme.switchTheme(); data.darkBackground = !data.darkBackground"
         >
 
-          <img class="switch-icon" [src]="getIcon('Moon', null, hoveredTheme) | resolveAsset">
-          <div class="option-title" [style.color]="getColor(null, hoveredTheme)">
+          <img class="switch-icon" [src]="!darkTheme.isEnabled$.value && hoveredTheme ? './assets/Moon (White).svg' : getIcon('Moon', null, hoveredTheme) | resolveAsset">
+          <div class="option-title" [style.color]="!darkTheme.isEnabled$.value && hoveredTheme ? 'white' : getColor(null, hoveredTheme)">
             <div>
               <span *ngIf="darkTheme.isEnabled$.value; else dark">Light Theme</span>
             </div>
@@ -69,7 +69,7 @@
                (click)="dialogRef.close('privacy')">Privacy & Terms</div>
       </div>
     </div>
-    <div class="bottom-arrow-container">
+    <div class="bottom-arrow-container" (click)="dialogRef.close()">
         <div class="bottom-arrow" [style.background-color]="darkTheme.getBackground('high', true)"></div>
     </div>
 </div>

@@ -1,4 +1,6 @@
-﻿.InputWrapper {
+﻿@import '../../sp-colors';
+
+.InputWrapper {
   border-radius: 0.5rem;
 }
 
@@ -84,7 +86,7 @@
 }
 
 .InputWrapper input:focus {
-  border: 1px solid #595487;
+  border: 1px solid $navy;
 }
 .clserrorLabel {
   color: red !important;

@@ -1,8 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { User } from '../../../models/User';
-import {bumpIn} from '../../../animations';
-import {DarkThemeSwitch} from '../../../dark-theme-switch';
-import {DomSanitizer} from '@angular/platform-browser';
+import { bumpIn } from '../../../animations';
+import { DarkThemeSwitch } from '../../../dark-theme-switch';
+import { DomSanitizer } from '@angular/platform-browser';
+
+import * as _ from 'lodash';
 
 export interface OptionState {
     now: {
@@ -35,7 +37,9 @@ export class AdvancedOptionsComponent implements OnInit {
   @Input() nowRestricted: boolean;
   @Input() futureRestricted: boolean;
 
-  @Output() hideBottomBlock: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Input() data: OptionState;
+
+  @Output() openedOptions: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() resultOptions: EventEmitter<OptionState> = new EventEmitter<OptionState>();
 
   openedContent: boolean;
@@ -46,27 +50,12 @@ export class AdvancedOptionsComponent implements OnInit {
       'Any teacher (default)',
       'Any teachers assigned',
       'All teachers assigned',
-      'Certain teacher(s)'
+      'Certain \n teacher(s)'
   ];
 
-  optionState: OptionState = {
-      now: {
-          state: this.toggleChoices[0],
-          data: {
-              selectedTeachers: [],
-              any_teach_assign: null,
-              all_teach_assign: null,
-          }
-      },
-      future: {
-          state: this.toggleChoices[0],
-          data: {
-              selectedTeachers: [],
-              any_teach_assign: null,
-              all_teach_assign: null,
-          }
-      }
-  };
+  optionState: OptionState;
+
+  selectedOpt;
 
   hovered: boolean;
   pressed: boolean;
@@ -88,10 +77,25 @@ export class AdvancedOptionsComponent implements OnInit {
       }
     }
 
-  ngOnInit() {}
+  ngOnInit() {
+          this.optionState = _.cloneDeep(this.data);
+          this.buildData();
+  }
+
+  buildData() {
+      this.selectedOpt = {
+          anyNow: this.optionState.now.data.any_teach_assign,
+          anyFut: this.optionState.future.data.any_teach_assign,
+          allNow: this.optionState.now.data.all_teach_assign,
+          allFut: this.optionState.future.data.all_teach_assign,
+          nowTeachers: this.optionState.now.data.selectedTeachers,
+          futTeachers: this.optionState.future.data.selectedTeachers,
+      };
+  }
 
   toggleContent() {
     this.openedContent = !this.openedContent;
+    this.openedOptions.emit(this.openedContent);
   }
 
   changeState(action, data) {
@@ -118,8 +122,17 @@ export class AdvancedOptionsComponent implements OnInit {
     this.resultOptions.emit(this.optionState);
   }
 
-  hideEmit(event: boolean) {
-    this.hideBottomBlock.emit(event);
+  changeOptions(action, option) {
+      if (action === 'now' && this.optionState.now.state !== option) {
+        this.optionState.now.data = {all_teach_assign: null, any_teach_assign: null, selectedTeachers: []};
+        this.optionState.now.state = option;
+      } else if (action === 'future' && this.optionState.future.state !== option) {
+        this.optionState.future.data = {all_teach_assign: null, any_teach_assign: null, selectedTeachers: []};
+        this.optionState.future.state = option;
+      }
+      this.buildData();
+      this.resultOptions.emit(this.optionState);
+
   }
 
 }

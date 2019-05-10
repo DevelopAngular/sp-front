@@ -47,6 +47,8 @@ import { environment } from '../environments/environment';
 import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
 import { ResizeInfoDialogComponent } from './resize-info-dialog/resize-info-dialog.component';
 import { SignedOutToastComponent } from './signed-out-toast/signed-out-toast.component';
+import {APP_BASE_HREF} from '@angular/common';
+import { ErrorComponent } from './error/error.component';
 
 
 const appRoutes: Routes = [
@@ -54,11 +56,11 @@ const appRoutes: Routes = [
   {path: '', redirectTo: 'admin', pathMatch: 'full'},
   {
     path: '',
-    canActivate: [NotSeenIntroGuard],
+    // canActivate: [NotSeenIntroGuard],
     children: [
       {
         path: 'main',
-        canActivate: [AuthenticatedGuard, IsStudentOrTeacherGuard],
+        canActivate: [NotSeenIntroGuard, AuthenticatedGuard, IsStudentOrTeacherGuard],
         loadChildren: 'app/main/main.module#MainModule'
       },
       {
@@ -89,11 +91,14 @@ const appRoutes: Routes = [
           hideScroll: true
         }
       },
+      {
+        path: 'error',
+        component: ErrorComponent,
+      }
     ]
   },
   {path: '**', redirectTo: 'main/passes', pathMatch: 'full'},
 ];
-
 
 @NgModule({
   declarations: [
@@ -115,6 +120,7 @@ const appRoutes: Routes = [
     ToastConnectionComponent,
     ResizeInfoDialogComponent,
     SignedOutToastComponent,
+    ErrorComponent
   ],
   entryComponents: [
     ConsentMenuComponent,
@@ -161,6 +167,7 @@ const appRoutes: Routes = [
     GoogleAuthService,
     {provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true},
     {provide: SP_GAPI_CONFIG, useValue: GAPI_CONFIG},
+    {provide: APP_BASE_HREF, useValue: '/app'},
     provideErrorHandler()
   ],
   bootstrap: [AppComponent]

@@ -1,5 +1,8 @@
 import { Inject, Injectable, InjectionToken } from '@angular/core';
 import { Observable } from 'rxjs';
+import { take } from 'rxjs/operators';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
+import { Subject } from 'rxjs/Subject';
 
 export const SP_GAPI_CONFIG = new InjectionToken('sp-gapi.config');
 
@@ -69,13 +72,30 @@ export class GoogleApiService {
   gapiUrl = 'https://apis.google.com/js/api.js';
   config: GoogleApiConfig;
 
+  onLoad$: Subject<any> = null;
+
   constructor(@Inject(SP_GAPI_CONFIG) config: GapiClientConfig) {
     this.config = new GoogleApiConfig(config);
     this.loadGapi().subscribe();
   }
 
-  onLoad() {
-    return this.loadGapi();
+  onLoad(): Observable<any> {
+    if (this.onLoad$) {
+      return this.onLoad$.pipe(take(1));
+    }
+
+    this.onLoad$ = new ReplaySubject(1);
+
+    const node = document.createElement('script');
+    node.src = this.gapiUrl;
+    node.type = 'text/javascript';
+    node.charset = 'utf-8';
+    document.getElementsByTagName('head')[0].appendChild(node);
+    node.onload = () => {
+      this.onLoad$.next(true);
+    };
+
+    return this.onLoad$.pipe(take(1));
   }
 
   getConfig() {
@@ -83,16 +103,6 @@ export class GoogleApiService {
   }
 
   loadGapi() {
-    return Observable.create(ob => {
-      const node = document.createElement('script');
-      node.src = this.gapiUrl;
-      node.type = 'text/javascript';
-      node.charset = 'utf-8';
-      document.getElementsByTagName('head')[0].appendChild(node);
-      node.onload = function () {
-        ob.next(true);
-        ob.complete();
-      };
-    });
+    return this.onLoad();
   }
 }

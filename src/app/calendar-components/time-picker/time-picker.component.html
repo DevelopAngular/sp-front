@@ -15,8 +15,9 @@
       <input tabindex="-1" class="timeInput" type="text" maxlength="2" formControlName="hour" (blur)="updateDate()">
       <img
         class="arrow"
-        [style.opacity]="hourHovered ? 1 : 0"
-        (mousedown)="changeTime('hours', 'down')"
+        [style.opacity]="hourHovered && !isDisabledSwitchHourButton ? 1 : 0"
+        (click)="!isDisabledSwitchHourButton ? changeTime('hours', 'down') : false"
+        [style.cursor]="!isDisabledSwitchHourButton ? 'pointer' : 'default'"
         [src]="'./assets/Chevron Down (Blue-Gray).svg' | resolveAsset"
         alt="Icon"
       >
@@ -36,8 +37,9 @@
       <input tabindex="-1" class="timeInput" maxlength="2" type="text" formControlName="minute" (blur)="updateDate()">
       <img
        class="arrow"
-       [style.opacity]="minHovered ? 1 : 0"
-       (click)="changeTime('minutes', 'down')"
+       [style.opacity]="minHovered && !isDisabledSwitchMinButton ? 1 : 0"
+       (click)="!isDisabledSwitchMinButton ? changeTime('minutes', 'down') : false"
+       [style.cursor]="!isDisabledSwitchMinButton ? 'pointer' : 'default'"
        [src]="'./assets/Chevron Down (Blue-Gray).svg' | resolveAsset"
        alt="Icon"
       >

@@ -69,6 +69,7 @@ import {AddExistingRoomComponent} from '../overlay-container/add-existing-room/a
   exports: [
       MatChipsModule,
       MatIconModule,
+      MatTooltipModule,
       ColorPalletPickerComponent,
       DataTableComponent,
       DateInputComponent,

@@ -89,11 +89,11 @@ export class ProfileCardDialogComponent implements OnInit {
 
     if (this.data.role !== '_profile_student' && this.data.role !== '_all') {
       const permissions = this.data.permissions;
-      this.controlsIteratable = Object.values(permissions);
+      this.controlsIteratable = permissions ? Object.values(permissions) : [];
+      console.log(permissions);
       const group: any = {};
       for (const key in permissions) {
         const value = (this.profile._originalUserProfile as User).roles.includes(key);
-        console.log(value);
         group[key] = new FormControl(value);
       }
       this.permissionsForm = new FormGroup(group);
@@ -171,29 +171,79 @@ export class ProfileCardDialogComponent implements OnInit {
 
   }
 
-  deleteAccount(eventTarget: HTMLElement) {
-      this.consentMenuOpened = true;
-      const DR = this.matDialog.open(ConsentMenuComponent,
-        {
-          data: {
-            role: this.data.role,
-            selectedUsers: this.data.profile,
-            alignSelf: true,
-            header: `Are you sure you want to remove this user?`,
-            // options: [{display: 'Confirm Remove', color: '#FFFFFF', buttonColor: '#DA2370, #FB434A', action: 'confirm'}],
-            options: [{display: 'Confirm Delete', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'confirm'}],
-            // optionsView: 'button',
-            trigger: new ElementRef(eventTarget)
-          },
-          panelClass: 'consent-dialog-container',
-          backdropClass: 'invis-backdrop',
-        });
+  promptConfirmation(eventTarget: HTMLElement, option: string = '') {
+
+    if (!eventTarget.classList.contains('button')) {
+      (eventTarget as any) = eventTarget.closest('.button');
+    };
+
+    eventTarget.style.opacity = '0.75';
+    let header: string;
+    let options: any[];
+    const profile: string =
+      this.data.role === '_profile_admin' ? 'administrator' :
+        this.data.role === '_profile_teacher' ? 'teacher' :
+          this.data.role === '_profile_student' ? 'student' : 'secretary&substitute';
+
+    switch (option) {
+      case 'delete_from_profile':
+        if (this.data.role === '_all') {
+          header = `Are you sure you want to permanently delete this account and all associated data? This cannot be undone.`;
+        } else {
+          header = `Removing this user from the ${profile} profile will remove them from this profile, but it will not delete all data associated with the account.`;
+        }
+        options = [{display: 'Confirm Delete', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
+        break;
+      case 'disable_sign_in':
+        header = `Disable sign-in to prevent this user from being able to sign in with the ${profile} profile.`;
+        options = [{display: 'Disable sign-in', color: '#001115', buttonColor: '#001115, #033294', action: 'disable_sign_in'}];
+        break;
+      case 'enable_sign_in':
+        header = `Enable sign-in to allow this user to be able to sign in with the ${profile} profile.`;
+        options = [{display: 'Enable sign-in', color: '#03CF31', buttonColor: '#03CF31, #00B476', action: 'enable_sign_in'}];
+        break;
+    }
+    const DR = this.matDialog.open(ConsentMenuComponent,
+      {
+        data: {
+          role: this.data.role,
+          selectedUsers: this.data.selectedUsers,
+          restrictions: this.data.profilePermissions,
+          header: header,
+          options: options,
+          trigger: new ElementRef(eventTarget)
+        },
+        panelClass: 'consent-dialog-container',
+        backdropClass: 'invis-backdrop',
+      });
       DR.afterClosed()
         .pipe(
           switchMap((action): Observable<any> => {
             console.log(action);
+            eventTarget.style.opacity = '1';
+            // console.log(eventTarget.closest('.button'));
+            // .style.opacity = '0.75';
+
+
+            switch (option) {
+              case 'delete_from_profile':
+                let role: any = this.data.role.split('_');
+                role = role[role.length - 1];
+                return this.userService.deleteUserFromProfile(this.profile.id, role).pipe(map(() => true));
+                break;
+              case 'disable_sign_in':
+                return this.userService.setUserActivity(this.profile.id, false).pipe(map(() => true));
+                break;
+              case 'enable_sign_in':
+                return this.userService.setUserActivity(this.profile.id, true).pipe(map(() => true));
+                break;
+              default:
+                return of(false);
+                break;
+            }
+
             this.consentMenuOpened = false;
-            if (action === 'confirm') {
+            if (action === 'confirm_delete') {
               let role: any = this.data.role.split('_');
               role = role[role.length - 1];
               return this.userService.deleteUserFromProfile(this.profile.id, role).pipe(map(() => true));

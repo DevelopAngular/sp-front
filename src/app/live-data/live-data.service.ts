@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { combineLatest, empty, merge, of ,  Observable ,  Subject } from 'rxjs';
+import {combineLatest, empty, merge, of, Observable, Subject, BehaviorSubject, ReplaySubject} from 'rxjs';
 import {map, scan, startWith, switchMap} from 'rxjs/operators';
 import { HttpService } from '../services/http-service';
 import { Paged, PassLike } from '../models';
@@ -406,7 +406,7 @@ export class LiveDataService {
         }
       }
     }
-
+    // console.log(date);
     if (date !== null) {
       const limits = getDateLimits(date);
       queryFilter.start_time_after = limits.start.toISOString();

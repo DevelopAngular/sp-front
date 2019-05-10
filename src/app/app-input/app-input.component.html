@@ -4,7 +4,7 @@
       <label
         [ngClass]="{
         'ds-dialog-heading': controlName.valid || controlName.pending || isFocus,
-        'ds-dialog-heading-gray': controlName.invalid || !hovered && !isFocus,
+        'ds-dialog-heading-gray': controlName.invalid,
         'clserrorLabel': controlName.invalid && controlName.errors && controlName.touched
         }"
       >
@@ -26,7 +26,7 @@
     <div class="input-container">
       <input
              [attr.disabled]="disabled ? '' : null"
-             [style.background-color]="hovered || isFocus ? '#FFFFF' : '#F7F7F7'"
+             [style.background-color]="isFocus ? 'white' : (hovered ? '#EDEDED' : '#F7F7F7')"
              [style.width]="width"
              [style.height]="height"
              [style.text-align]="textAlign"
@@ -38,7 +38,7 @@
              (focus)="updateFocus(inp); controlName.markAsUntouched()"
              (blur)="hovered = false; isFocus = false;"
              (mouseover)="hovered = true"
-             (mouseout)="hovered = false"
+             (mouseleave)="hovered = false"
              (click)="isFocus = true; updateFocus(inp)"
              [placeholder]="(placeholder=='' ? '' : placeholder)"
              [ngClass]="{clserrorInput: controlName.invalid && controlName.errors && controlName.touched }"

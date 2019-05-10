@@ -1,143 +1,196 @@
 <div class="host" appSafariScroll>
   <div class="account-wrapper">
-    <div *ngIf="!(accounts$ | async).total" class="loading-theme spinner ds-h-100 ds-flex-center-center">
-      <mat-spinner [color]="'accent'" [diameter]="'135'"></mat-spinner>
-    </div>
-    <div *ngIf="(accounts$ | async).total">
-
-      <div class="card card__top-bar">
-        <div class="card_content ds-flex-center-between">
-
-            <div>
-
-              <div class=""
-                   [style.font-size]="'24px'"
-                   [style.font-weight]="'bold'"
-                   [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})"
-              >
-                Accounts
-              </div>
-              <div class="ds-pt-5"
-                   [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})"
-                   [style.font-size]="'14px'"
-                   [style.font-weight]="'bold'"
-              >
-                Total Accounts: {{(accounts$ | async).total_count}} Accounts
-              </div>
-            </div>
-          <!--<div class="ds-flex-center-between">-->
-          <div style="text-align: right; padding-right: 26px;">
-              <div class="card_title">
-                <span>G Suite: 2,237  Accounts</span>
-              </div>
-              <div class="card_title">
-                <span>Alternative: 23 Accounts</span>
-              </div>
-            </div>
-          <!--</div>-->
-        </div>
-
-        <div class="card_manage-users"
-             [routerLink]="['/admin/accounts', '_all']"
-             [ngClass]="{'card_manage-users__dark': darkTheme.isEnabled$.value}">
-
-          <div style="text-align: center;" class="ds-px-10">
-            <span>Manage All Accounts</span>
-          </div>
-          <img draggable="false" width="17" [src]="darkTheme.getIcon({
-              iconName: 'Chevron Right',
-              darkFill: 'White',
-              lightFill: 'Navy'
-            }) | resolveAsset" alt="">
-        </div>
-
-      </div>
+    <!--<div *ngIf="!(accounts$ | async)?.total" class="loading-theme spinner ds-h-100 ds-flex-center-center">-->
+      <!--<mat-spinner [color]="'accent'" [diameter]="'135'"></mat-spinner>-->
+    <!--</div>-->
+    <div *ngIf="(accounts$ | async)?.total || true">
       <div class="card-container">
-        <div class="card-container_row ds-mr-10">
-          <div class="card card__role">
-            <div class="card_content">
-              <div class="card_header"
-                   [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})"
-              ><img [src]="darkTheme.getIcon({
-                iconName: 'Admin',
-                darkFill: 'White',
-                lightFill: 'Navy'
-              })  | resolveAsset" alt=""><span>Administrators</span>
+        <div class="card-container_row ds-mr-25">
+          <div class="ds-big-heading">Accounts</div>
+            <div #roleCard1 class="card card__role"
+                 (mousedown)="roleCard1.pressed = true;"
+                 (mouseup)="roleCard1.pressed = false"
+                 [routerLink]="['/admin/accounts', '_all']"
+                 [@pressState]="roleCard1.pressed ? 'down' : 'up'"
+            >
+              <div class="card_content ds-flex-center-between">
+                <div>
+                  <div [style.font-size]="'24px'"
+                       [style.font-weight]="'bold'"
+                       [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})"
+                  >
+                    All Accounts
+                  </div>
+                  <div class="ds-pt-10"
+                       [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})"
+                       [style.font-size]="'16px'"
+                       [style.font-weight]="'bold'"
+                  >
+                    Total Accounts: {{(accounts$ | async)?.total_count}} Accounts
+                  </div>
+                  <div class="ds-pt-10 ds-pr-25 ds-mb-20">
+                    <div class="card_title">
+                      <span>G Suite: 2,237  Accounts</span>
+                    </div>
+                    <div class="card_title">
+                      <span>Alternative: 23 Accounts</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <p class="card_title">
-                <span [style.font-weight]="'bold'">{{(accounts$ | async).admin_count}} user{{(accounts$ | async).admin_count> 1 ? 's' : ''}}</span><br>
-                An administrator has a high-level look at the school, configures passes, and views/generates reports.
-              </p>
-            </div>
+              <div class="card_manage-users"
+                   [ngClass]="{'card_manage-users__dark': darkTheme.isEnabled$.value}">
+                <img draggable="false" width="24" height="24"
+                     [src]="darkTheme.getIcon({
+                        iconName: 'Chevron Right',
+                        darkFill: 'White',
+                        lightFill: 'Blue-Gray'
+                      }) | resolveAsset" alt="">
+              </div>
 
-            <div class="card_manage-users"
-               [routerLink]="['/admin/accounts', '_profile_admin']"
-               [ngClass]="{'card_manage-users__dark': darkTheme.isEnabled$.value}"
-            >
-              <span>Manage Users</span><img draggable="false" width="20" [src]="darkTheme.getIcon({
-                iconName: 'Chevron Right',
-                darkFill: 'White',
-                lightFill: 'Navy'
-              }) | resolveAsset" alt="Chevron Right (Navy).svg">
+            </div>
+            <div  #roleCard2 class="card card__role"
+                  (mousedown)="roleCard2.pressed = true"
+                  (mouseup)="roleCard2.pressed = false"
+                  (click)="showSettings()"
+                  [@pressState]="roleCard2.pressed ? 'down' : 'up'">
+              <div class="card_content">
+                <div class="ds-flex-center-start">
+                  <div class="ds-mr-5">
+                    <img src="assets/google/google_logo.svg" alt="google-icon" width="34" height="34">
+                  </div>
+                  <div class="card_header" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">
+                    <span>G Suite Settings</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card_manage-users"
+                   [ngClass]="{'card_manage-users__dark': darkTheme.isEnabled$.value}">
+                <img draggable="false" width="24" height="24"
+                     [src]="darkTheme.getIcon({
+                        iconName: 'Chevron Right',
+                        darkFill: 'White',
+                        lightFill: 'Blue-Gray'
+                      }) | resolveAsset" alt="">
+              </div>
             </div>
           </div>
-          <div class="card card__role">
-            <div class="card_content">
-              <div class="card_header"
-                   [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})"
-              ><img [src]="darkTheme.getIcon({
-                iconName: 'Student',
-                darkFill: 'White',
-                lightFill: 'Navy'
-              }) | resolveAsset" alt=""><span>Students</span></div>
-              <p class="card_title">
-                <span [style.font-weight]="'bold'">{{(accounts$ | async).student_count }} user{{(accounts$ | async).student_count > 1 ? 's' : ''}}</span><br>
-                A student can create passes, schedule passes for the future,
-                and send pass requests to teachers.
-              </p>
-            </div>
+          <div class="card-container_row ds-ml-25">
+            <div class="ds-big-heading">Profiles</div>
+            <div  #roleCard3 class="card card__role"
+                  (mousedown)="roleCard3.pressed = true"
+                  (mouseup)="roleCard3.pressed = false"
+                  [routerLink]="['/admin/accounts', '_profile_admin']"
+                  [@pressState]="roleCard3.pressed ? 'down' : 'up'">
+              <div class="card_content">
+                <div class="card_header"
+                     [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})"
+                ><img [src]="darkTheme.getIcon({
+                  iconName: 'Admin',
+                  darkFill: 'White',
+                  lightFill: 'Navy'
+                })  | resolveAsset" alt=""><span>Administrators</span>
+                </div>
+                <div class="card_title ds-py-10 tooltip-container">
 
-            <div class="card_manage-users"
-                 [routerLink]="['/admin/accounts', '_profile_student']"
-                 [ngClass]="{'card_manage-users__dark': darkTheme.isEnabled$.value}"
-            >
-              <span>Manage Users</span> <img draggable="false" width="20" [src]="darkTheme.getIcon({
-                iconName: 'Chevron Right',
-                darkFill: 'White',
-                lightFill: 'Navy'
-              }) | resolveAsset" alt="">
+                  <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset"
+                       [matTooltip]="'An administrator has a high-level look at the school, configures passes, and views/generates reports.'"
+                       matTooltipClass="tooltip"
+                       alt="">
+                  <span [style.font-weight]="'bold'">{{(accounts$ | async)?.admin_count}} user{{(accounts$ | async)?.admin_count> 1 ? 's' : ''}}</span><br>
+                  <div class="arrow-down-container">
+                    <div class="arrow-down"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card_manage-users"
+                   [ngClass]="{'card_manage-users__dark': darkTheme.isEnabled$.value}"
+              >
+                <img draggable="false" width="24" height="24" [src]="darkTheme.getIcon({
+                  iconName: 'Chevron Right',
+                  darkFill: 'White',
+                  lightFill: 'Blue-Gray'
+                }) | resolveAsset" alt="Chevron Right (Navy).svg">
+              </div>
+            </div>
+            <div #roleCard4 class="card card__role"
+                 (mousedown)="roleCard4.pressed = true"
+                 (mouseup)="roleCard4.pressed = false"
+                 [routerLink]="['/admin/accounts', '_profile_teacher']"
+                 [@pressState]="roleCard4.pressed ? 'down' : 'up'">
+
+              <div class="card_content">
+                <div class="card_header"
+                     [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})"
+                ><img [src]="darkTheme.getIcon({
+                  iconName: 'Teacher',
+                  darkFill: 'White',
+                  lightFill: 'Navy'
+                }) | resolveAsset" alt=""><span>Teachers</span></div>
+                <div class="card_title ds-py-10 tooltip-container">
+                  <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset"
+                       [matTooltip]="' A teacher has a room or multiple rooms where students can create passes to.'+
+  '                    A teacher can create passes, view hall monitor activity, and manage passes in his/her room.'"
+                       matTooltipClass="tooltip"
+                       alt="">
+                  <span [style.font-weight]="'bold'">{{(accounts$ | async)?.teacher_count}} user{{(accounts$ | async)?.teacher_count> 1 ? 's' : ''}}</span><br>
+                  <div class="arrow-down-container">
+                    <div class="arrow-down"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card_manage-users"
+                   [ngClass]="{'card_manage-users__dark': darkTheme.isEnabled$.value}"
+              >
+                <img draggable="false" width="24" height="24" [src]="darkTheme.getIcon({
+                  iconName: 'Chevron Right',
+                  darkFill: 'White',
+                  lightFill: 'Blue-Gray'
+                }) | resolveAsset" alt="Chevron Right.svg">
+              </div>
+            </div>
+            <div  #roleCard5 class="card card__role"
+                  (mousedown)="roleCard5.pressed = true"
+                  (mouseup)="roleCard5.pressed = false"
+                  [routerLink]="['/admin/accounts', '_profile_student']"
+                  [@pressState]="roleCard5.pressed ? 'down' : 'up'">
+              <div class="card_content">
+                <div class="card_header"
+                     [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})"
+                ><img [src]="darkTheme.getIcon({
+                  iconName: 'Student',
+                  darkFill: 'White',
+                  lightFill: 'Navy'
+                }) | resolveAsset" alt=""><span>Students</span></div>
+                <div class="card_title ds-py-10 tooltip-container">
+                  <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset"
+                       [matTooltip]="'A student can create passes, schedule passes for the future,'+
+  '                and send pass requests to teachers.'"
+                       matTooltipClass="tooltip"
+                       alt="">
+                  <span [style.font-weight]="'bold'">{{(accounts$ | async)?.student_count }} user{{(accounts$ | async)?.student_count > 1 ? 's' : ''}}</span><br>
+                  <div class="arrow-down-container">
+                    <div class="arrow-down"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="card_manage-users"
+                   [ngClass]="{'card_manage-users__dark': darkTheme.isEnabled$.value}"
+              >
+                <img draggable="false" width="24" height="24" [src]="darkTheme.getIcon({
+                  iconName: 'Chevron Right',
+                  darkFill: 'White',
+                  lightFill: 'Blue-Gray'
+                }) | resolveAsset" alt="">
             </div>
           </div>
-        </div>
-        <div class="card-container_row ds-ml-10">
-          <div class="card card__role">
-            <div class="card_content">
-              <div class="card_header"
-                   [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})"
-              ><img [src]="darkTheme.getIcon({
-                iconName: 'Teacher',
-                darkFill: 'White',
-                lightFill: 'Navy'
-              }) | resolveAsset" alt=""><span>Teachers</span></div>
-              <p class="card_title">
-                <span [style.font-weight]="'bold'">{{(accounts$ | async).teacher_count}} user{{(accounts$ | async).teacher_count> 1 ? 's' : ''}}</span><br>
-                A teacher has a room or multiple rooms where students can create passes to.
-                A teacher can create passes, view hall monitor activity, and manage passes in his/her room.
-              </p>
-            </div>
-
-            <div class="card_manage-users"
-               [routerLink]="['/admin/accounts', '_profile_teacher']"
-               [ngClass]="{'card_manage-users__dark': darkTheme.isEnabled$.value}"
-            >
-              <span>Manage Users</span> <img draggable="false" width="20" [src]="darkTheme.getIcon({
-                iconName: 'Chevron Right',
-                darkFill: 'White',
-                lightFill: 'Navy'
-              }) | resolveAsset" alt="Chevron Right.svg">
-            </div>
-          </div>
-          <div class="card card__role">
+          <div #roleCard6 class="card card__role"
+               (mousedown)="roleCard6.pressed = true"
+               (mouseup)="roleCard6.pressed = false"
+               [routerLink]="['/admin/accounts', '_profile_assistant']"
+               [@pressState]="roleCard6.pressed ? 'down' : 'up'">
             <div class="card_content">
               <div class="card_header"
                    [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})"
@@ -146,21 +199,26 @@
                 darkFill: 'White',
                 lightFill: 'Navy'
               }) | resolveAsset" alt=""><span>Secretaries & Substitutes</span></div>
-              <p class="card_title">
-                <span [style.font-weight]="'bold'">{{(accounts$ | async).secretary_count || 0}} users</span><br>
-                A secretary or substitute teacher acts as a certain teacher when they sign-in.
-                They can manage passes in his/her room and create passes as that teacher.
-              </p>
+              <div class="card_title ds-py-10 tooltip-container">
+                <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset"
+                     [matTooltip]="'A secretary or substitute teacher acts as a certain teacher when they sign-in.' +
+                      'They can manage passes in his/her room and create passes as that teacher.'"
+                     matTooltipClass="tooltip"
+                     alt="">
+                <span [style.font-weight]="'bold'">{{(accounts$ | async)?.assistant_count}} users</span><br>
+                <div class="arrow-down-container">
+                  <div class="arrow-down"></div>
+                </div>
+              </div>
             </div>
 
             <div class="card_manage-users"
-                 [routerLink]="['/admin/accounts', 'staff_secretary']"
                  [ngClass]="{'card_manage-users__dark': darkTheme.isEnabled$.value}"
             >
-              <span>Manage Users</span> <img draggable="false" width="20" [src]="darkTheme.getIcon({
+              <img draggable="false" width="24" height="24" [src]="darkTheme.getIcon({
                 iconName: 'Chevron Right',
                 darkFill: 'White',
-                lightFill: 'Navy'
+                lightFill: 'Blue-Gray'
               }) | resolveAsset" alt="Chevron Right">
             </div>
           </div>
@@ -169,4 +227,3 @@
     </div>
   </div>
 </div>
-

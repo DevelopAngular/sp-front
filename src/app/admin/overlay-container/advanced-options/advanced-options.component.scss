@@ -1,12 +1,13 @@
-.options-wrapper {
+@import '../../../../sp-colors';
 
+.options-wrapper {
 
   .options-header {
     cursor: pointer;
     .header-text{
       display: flex;
       justify-content: space-between;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: bold;
       color: #1F195E;
       padding: 10px 0px 10px 0px;
@@ -30,7 +31,7 @@
       align-items: center;
 
       .text {
-        font-size: 14px;
+        font-size: 15px;
         color: #1F195E;
         font-weight: bold;
       }
@@ -52,19 +53,17 @@
         width: 440px;
         display: flex;
         flex-direction: column;
-        align-items: center;
       }
 
       .future-block {
         width: 440px;
         display: flex;
         flex-direction: column;
-        align-items: center;
       }
 
       .unrestricted {
         color: #7F879D;
-        font-size: 15px;
+        font-size: 14px;
       }
 
       .restriction-toggle {
@@ -75,14 +74,14 @@
 
         .title {
           margin-bottom: 10px;
-          color: #1d1a5e;
-          font-size: 17px;
+          color: $navy;
+          font-size: 14px;
         }
       }
 
       .options {
         padding-top: 10px;
-        font-size: 15px;
+        font-size: 14px;
         .default {
           color: #7F879D;
         }
@@ -114,8 +113,8 @@
 
       .title {
         margin-bottom: 10px;
-        color: #1d1a5e;
-        font-size: 17px;
+        color: $navy;
+        font-size: 14px;
       }
     }
   }

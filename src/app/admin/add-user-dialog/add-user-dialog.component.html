@@ -38,7 +38,7 @@
             [selectedChoose]="typeChoosen"
             [height]="25"
             [width]="167"
-            [fontSize]="12"
+            [fontSize]="13"
             (result)="typeChoosen = $event"
           ></app-restriction-picker>
         </div>
@@ -52,7 +52,8 @@
           <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': secretaryOrSubstitute.user, 'ds-dialog-heading-gray': !secretaryOrSubstitute.user}">Secretary/Substitute</div>
           <div class="profile-search" *ngIf="!secretaryOrSubstitute.user; else secretaryUser" >
             <app-student-search
-              [type]="'alternative'"
+              [placeholder]="'Search G Suite accounts'"
+              [type]="'gsuite'"
               [role]="''"
               (onUpdate)="setSecretary($event, null)"
             ></app-student-search>
@@ -78,7 +79,8 @@
           <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': secretaryOrSubstitute.behalfOf, 'ds-dialog-heading-gray': !secretaryOrSubstitute.behalfOf}">Active on Behalf Of</div>
           <div class="profile-search" *ngIf="!secretaryOrSubstitute.behalfOf; else secretaryBehalfOf" >
             <app-student-search
-              [type]="'alternative'"
+              [placeholder]="'Search existing teachers'"
+              [type]="'gsuite'"
               [role]="''"
               (onUpdate)="setSecretary(null, $event)"
             ></app-student-search>
@@ -112,37 +114,12 @@
 
                 <app-student-search
                   [selectedStudents]="selectedUsers"
-                  [type]="'alternative'"
+                  [placeholder]="'Search G Suite accounts'"
+                  [type]="'gsuite'"
                   [role]="''"
                   (onUpdate)="setSelectedUsers($event)"
                 ></app-student-search>
               </div>
-              <!--<div class="user-list" *ngIf="selectedUsers.length">-->
-                <!--<div class="ds-details-text user-list_header">-->
-                  <!--<span>Selected</span>-->
-                <!--</div>-->
-                <!--<div class="user-list_scrollable">-->
-
-                  <!--<div *ngFor="let user of selectedUsers; let i = index" #cell class="user-list_item"-->
-                       <!--(mouseenter)="cell.hovered = true;"-->
-                       <!--(mouseleave)="cell.hovered = false;"-->
-                       <!--(mousedown)="cell.pressed = true"-->
-                       <!--(mouseup)="cell.pressed = false"-->
-                       <!--[style.background-color]="getBackground(cell)"-->
-                       <!--[style.color]="textColor(cell)"-->
-
-                  <!--&gt;-->
-                <!--<span>-->
-                  <!--{{user.display_name}}-->
-                <!--</span>-->
-                    <!--<img style="cursor: pointer;"-->
-                         <!--(mouseover)="fieldIcon.setAttribute('src', './assets/Cancel (Navy).svg')"-->
-                         <!--(mouseleave)="fieldIcon.setAttribute('src', './assets/Mark (Navy).svg')"-->
-                         <!--(click)="selectedUsers.splice(i, 1)"-->
-                         <!--[src]="'./assets/Mark (Navy).svg'" width="15" #fieldIcon alt="Check.svg">-->
-                  <!--</div>-->
-                <!--</div>-->
-              <!--</div>-->
             </div>
 
         <!--<div class="profile-permissions" [style.width]="'100%'" *ngIf="data.role !== '_profile_user'">-->

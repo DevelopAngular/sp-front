@@ -55,7 +55,7 @@
                              (buttonClick)="onPublish()"
         >{{(showPublishSpinner ? null : 'Publish')}}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
         </app-gradient-button>
-        <div *ngIf="!showPublishNewRoom && overlayType === 'newRoom' && isChangeState"
+        <div *ngIf="!showPublishNewRoom && overlayType === 'newRoom' && isChangeState || (isDirtyAdvancedOpt && !advOptValid && !showPublishEditRoom)"
              [style.color]="titleColor"
         >
             Incomplete
@@ -329,7 +329,7 @@
         </div>
       </div>
 
-      <div class="rooms-in-folder" *ngIf="overlayType === 'newFolder'">
+      <div class="rooms-in-folder" *ngIf="overlayType === 'newFolder' && folderRoomsLoaded">
         <div class="content-buttons-in-folder" *ngIf="readyRoomsToEdit.length <= 0 && !selectedRooms.length">
           <div class="button-in-folder" *ngFor="let button of buttonsInFolder">
             <app-gradient-button
@@ -375,7 +375,7 @@
         </div>
 
         <div class="rooms-in-folder-content">
-          <div class="not-rooms-in-folder" *ngIf="!selectedRooms.length">
+          <div class="not-rooms-in-folder" *ngIf="!selectedRooms.length && folderRoomsLoaded">
               <img [src]="'./assets/emptyStates/undraw_add_file2_gvbb.svg' | resolveAsset" alt="emptyState">
               <div class="emptyText">Add rooms to the folder.</div>
           </div>
@@ -538,12 +538,14 @@
              *ngIf="(overlayType === 'editRoom' ||
              (editRoomInFolder)) &&!showSearchTeacherOptions ||
              overlayType === 'edit' ||
-             (overlayType === 'settingsRooms')">
+             (overlayType === 'settingsRooms') || overlayType === 'newRoom'">
             <app-advanced-options
                     [roomName]="roomName"
                     [nowRestricted]="nowRestriction"
                     [futureRestricted]="futureRestriction"
-                    (hideBottomBlock)="hideDeleteButton = $event"
+                    [data]="advOptState"
+                    (openedOptions)="advOptOpen"
+                    (resultOptions)="advancedOptions($event)"
             ></app-advanced-options>
         </div>
 
@@ -570,7 +572,7 @@
 
       <div class="footer-delete-button"
            [style.justify-content]="'center'"
-           *ngIf="overlayType === 'newFolder' && isEditFolder"
+           *ngIf="overlayType === 'newFolder' && isEditFolder && folderRoomsLoaded"
            style="margin-top: 40px"
       >
         <app-gradient-button
@@ -604,7 +606,7 @@
           <app-color-pallet-picker [selectedColorProfile]="color_profile" (selectedEvent)="changeColor($event)"></app-color-pallet-picker>
         </div>
         <div class="icon-picker">
-          <app-icon-picker [selectedIconPicker]="selectedIcon" (selectedEvent)="changeIcon($event);"></app-icon-picker>
+          <app-icon-picker [roomName]="roomName || folderName" [icons$]="icons$" [selectedIconPicker]="selectedIcon" (selectedEvent)="changeIcon($event);"></app-icon-picker>
         </div>
       </div>
 

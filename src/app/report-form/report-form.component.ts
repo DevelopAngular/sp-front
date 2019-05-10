@@ -39,7 +39,7 @@ export class ReportFormComponent implements OnInit {
 
   ngOnInit() {
     this.frameMotion$ = this.createForm.getFrameMotionDirection();
-    this.dialogRef.updatePosition({top: '120px'});
+    // this.dialogRef.updatePosition({top: '120px'});
      if (this.data) {
        this.selectedStudents.push(this.data['report']);
          this.showOptions = !this.data['report'];

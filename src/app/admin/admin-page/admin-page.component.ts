@@ -31,9 +31,9 @@ export class AdminPageComponent implements OnInit {
   }
 
   ngOnInit() {
+
     this.showDummySwitcher$.subscribe((v) => {
       if (v) {
-        console.log(v);
         window.appLoaded();
       }
     });
@@ -45,22 +45,18 @@ export class AdminPageComponent implements OnInit {
       delay(10),
     )
     .subscribe((v) => {
-      console.log('RELOAD SUBSCRIBED');
       this.outletDummySwitcher$.next(false);
       this.hostVisibility = true;
     });
+
     of(location.pathname.split('/'))
       .pipe(
         map((fragments) => fragments.filter(f => !!f)),
-        // filter(value => value instanceof NavigationEnd ),
-        tap((value) => console.log(value)),
-        filter((value) => value.length < 2),
+        filter((value) => value.length < 3),
         switchMap(() => this.userService.getUserWithTimeout()),
         filter(user => !!user),
       )
       .subscribe(user => {
-        console.log('ROUTER EVTS ===>', user);
-
         const availableAccessTo = user.roles.filter((_role) => _role.match('admin_'));
         let tab;
         if (availableAccessTo.includes('admin_dashboard')) {
@@ -74,9 +70,7 @@ export class AdminPageComponent implements OnInit {
         } else if (availableAccessTo.includes('admin_accounts')) {
           tab = 'accounts';
         }
-        console.log(tab, availableAccessTo);
         this.router.navigate(['/admin', tab]);
-
         window.appLoaded();
     });
 

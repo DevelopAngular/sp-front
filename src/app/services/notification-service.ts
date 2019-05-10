@@ -4,6 +4,7 @@ import { Notification as Notif } from '../models/Notification';
 import { HttpService } from './http-service';
 
 import {switchMap, take} from 'rxjs/operators';
+import {DeviceDetection} from '../device-detection.helper';
 
 declare var window: any;
 
@@ -19,7 +20,7 @@ export class NotificationService {
    * @return true if the browser supports notifications.
    */
   static get hasSupport() {
-    return typeof window !== 'undefined' && 'Notification' in window;
+    return typeof window !== 'undefined' && 'Notification' in window && !DeviceDetection.isSafari();
   }
 
   /**

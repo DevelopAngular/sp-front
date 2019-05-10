@@ -36,7 +36,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   public role: string;
   public count: number = 0;
-  public userAmount: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  // public userAmount: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   public dataTableHeadersToDisplay: string[] = [];
   public userList: any[] = [];
   public selectedUsers: any[] = [];
@@ -49,6 +49,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   public isLoadUsers: boolean = true;
   public user: User;
   private limitCounter: number = 20;
+  public dataTableEditState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   public accounts$ =
     new BehaviorSubject<any>({
@@ -92,7 +93,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               this.dataTableHeadersToDisplay = [];
               this.userList = this.buildUserListData(userList);
               this.selectedUsers = [];
-              this.dataTable.clearSelection();
+              if (this.dataTable) {
+                this.dataTable.clearSelection();
+              }
         });
     }
   }
@@ -106,10 +109,32 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     private matDialog: MatDialog,
     private _zone: NgZone,
     private storage: StorageService,
+    private elemRef: ElementRef,
     private dataService: DataService,
     public darkTheme: DarkThemeSwitch
 
   ) {}
+
+  get noUsersDummyVisibility() {
+    switch (this.role) {
+      case '_profile_admin':
+        return this.accounts$.value.admin_count === 0;
+        break;
+      case '_profile_teacher':
+        return this.accounts$.value.teacher_count === 0;
+        break;
+      case '_profile_student':
+        return this.accounts$.value.student_count === 0;
+        break;
+      case 'staff_secretary':
+        return (this.accounts$.value.secretary_count || 0) === 0;
+        break;
+    }
+  }
+
+  get bulkSignInStatus() {
+    return this.selectedUsers.every(profile => profile._originalUserProfile.active);
+  }
 
   ngOnInit() {
     this.http.globalReload$.pipe(
@@ -232,33 +257,33 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
                    ?
         {
           'admin_dashboard': {
-            // restriction: true,
             controlName: 'admin_dashboard',
-            controlLabel: 'Dashboard Tab Access'
+            controlLabel: 'Dashboard Tab Access',
+            // allowed: this.user.roles.includes('admin_dashboard'),
           },
           'admin_hall_monitor': {
             controlName: 'admin_hall_monitor',
-            // restriction: true,
-            controlLabel: 'Hall Monitor Tab Access'
+            controlLabel: 'Hall Monitor Tab Access',
+            // allowed: this.user.roles.includes('admin_hall_monitor'),
           },
           'admin_search': {
             controlName: 'admin_search',
-            // restriction: true,
-            controlLabel: 'Search Tab Access'
+            controlLabel: 'Search Tab Access',
+            // allowed: this.user.roles.includes('admin_search'),
           },
           'admin_accounts': {
             controlName: 'admin_accounts',
-            // restriction: true,
             controlLabel: 'Accounts & Profiles Tab Access',
+            // allowed: this.user.roles.includes('admin_accounts'),
           },
           'admin_pass_config': {
             controlName: 'admin_pass_config',
-            // restriction: true,
-            controlLabel: 'Pass Configuration Tab Access'
+            controlLabel: 'Pass Configuration Tab Access',
+            // allowed: this.user.roles.includes('admin_pass_config'),
           },
           // 'admin_school_settings': {
           //   controlName: 'admin_school_settings',
-          //   restriction: true,
+          //   allowed: true,
           //   controlLabel: 'Access to School Settings'
           // },
         }
@@ -268,7 +293,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         {
           'admin_hall_monitor': {
             controlName: 'admin_hall_monitor',
-            // restriction: true,
+            // allowed: this.user.roles.includes('admin_hall_monitor'),
             controlLabel: 'Access to Hall Monitor'
           },
         }
@@ -305,44 +330,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         .subscribe((userList) => {
           if (userList && userList.length) {
             this.dataTableHeadersToDisplay = [];
-            this.userList = userList.map((raw, index) => {
-
-              const partOf = [];
-                if (raw.roles.includes('_profile_student')) partOf.push('Student');
-                if (raw.roles.includes('_profile_teacher')) partOf.push('Teacher');
-                if (raw.roles.includes('_profile_admin')) partOf.push('Administrator');
-
-              const rawObj = {
-                'Name': raw.display_name,
-                'Email/Username': raw.primary_email,
-                'Rooms': ['Room-1', 'Room-2'].join(','),
-                'Account Type': 'G Suite',
-                'Sign-in status': 'Enabled',
-                'Last sign-in': Util.formatDateTime(new Date(raw.last_updated)),
-                'Permissions': ['create_hallpasses', 'edit_all_hallpass', 'manage_locations'].join(','),
-                'Profile(s)': partOf.join(', ')
-              };
-              for (const key in rawObj) {
-                if (!this.dataTableHeaders[key]) {
-                  delete rawObj[key];
-                }
-                if (index === 0) {
-                  if (this.dataTableHeaders[key] && this.dataTableHeaders[key].value) {
-                    this.dataTableHeadersToDisplay.push(key);
-                  }
-                }
-              }
-              Object.defineProperty(rawObj, 'id', { enumerable: false, value: raw.id});
-              Object.defineProperty(rawObj, '_originalUserProfile', {
-                enumerable: false,
-                configurable: false,
-                writable: false,
-                value: raw
-              });
-              return  rawObj;
-            });
-
-
+            this.userList = this.buildUserListData(userList);
           } else {
             this.placeholder = true;
           }
@@ -352,32 +340,71 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     this.searchChangeObserver$.next(searchValue);
   }
 
-  showSelected(e) {
-    if (e.length) {
+
+  setSelected(e) {
+    // if (e.length) {
       // console.log(e[0]['id']);
-    }
-    // console.log(e);
+    // }
+    console.log(e);
     this.selectedUsers = e;
   }
 
-  openDialog(mode, eventTarget?: HTMLElement) {
+  exportAccountData() {
+    this.userService.exportUserData(this.selectedUsers[0].id)
+      .subscribe(res => console.log(res));
+  }
 
-    // =========== SPA=476 ============> It's temporary. Needs to suggest to leave the dialog as it is. If it will be declined, remove it.
+  promptConfirmation(eventTarget: HTMLElement, option: string = '') {
 
-    if ( mode === 'remove') {
-      this.consentMenuOpened = true;
+    if (!eventTarget.classList.contains('button')) {
+      (eventTarget as any) = eventTarget.closest('.button');
+    };
+
+    eventTarget.style.opacity = '0.75';
+      // this.consentMenuOpened = true;
+    let header: string;
+    let options: any[];
+    const profile: string =
+      this.role === '_profile_admin' ? 'administrator' :
+      this.role === '_profile_teacher' ? 'teacher' :
+      this.role === '_profile_student' ? 'student' : 'secretary&substitute';
+
+    const consentMenuObserver = (res) => {
+      console.log(res);
+      if (res) {
+        this.http.setSchool(this.http.getSchool());
+        this.selectedUsers = [];
+        this.getUserList();
+      }
+    }
+
+
+    switch (option) {
+      case 'delete_from_profile':
+        if (this.role === '_all') {
+          header = `Are you sure you want to permanently delete ${this.selectedUsers.length > 1 ? 'these accounts' : 'this account'} and all associated data? This cannot be undone.`;
+        } else {
+          header = `Removing ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} from the ${profile} profile will remove them from this profile, but it will not delete all data associated with the account.`;
+        }
+        options = [{display: 'Confirm Delete', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
+        break;
+      case 'disable_sign_in':
+        header = `Disable sign-in to prevent ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} from being able to sign in with the ${profile} profile.`;
+        options = [{display: 'Disable sign-in', color: '#001115', buttonColor: '#001115, #033294', action: 'disable_sign_in'}];
+        break;
+      case 'enable_sign_in':
+        header = `Enable sign-in to allow ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} to be able to sign in with the ${profile} profile.`;
+        options = [{display: 'Enable sign-in', color: '#03CF31', buttonColor: '#03CF31, #00B476', action: 'enable_sign_in'}];
+        break;
+    }
       const DR = this.matDialog.open(ConsentMenuComponent,
         {
           data: {
             role: this.role,
             selectedUsers: this.selectedUsers,
-            mode: mode,
             restrictions: this.profilePermissions,
-            alignSelf: true,
-            header: `Are you sure you want to remove this user${this.selectedUsers.length > 1 ? 's' : ''}?`,
-            // options: [{display: 'Confirm Remove', color: '#FFFFFF', buttonColor: '#DA2370, #FB434A', action: 'confirm'}],
-            options: [{display: 'Confirm Delete', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'confirm'}],
-            // optionsView: 'button',
+            header: header,
+            options: options,
             trigger: new ElementRef(eventTarget)
           },
           panelClass: 'consent-dialog-container',
@@ -387,46 +414,31 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         .pipe(
           switchMap((action): Observable<any> => {
             // console.log(action);
-            this.consentMenuOpened = false;
-            if (action === 'confirm') {
-              let role: any = this.role.split('_');
-                  role = role[role.length - 1];
-              return zip(...this.selectedUsers.map((user) => this.userService.deleteUserFromProfile(user['id'], role))).pipe(map(() => true));
-            } else {
-              return of(false);
-            }
+            eventTarget.style.opacity = '1';
 
+            switch (option) {
+              case 'delete_from_profile':
+                let role: any = this.role.split('_');
+                    role = role[role.length - 1];
+                    if (role === 'all') {
+                      return zip(...this.selectedUsers.map((user) => this.userService.deleteUser(user['id']))).pipe(map(() => true));
+                    } else {
+                      return zip(...this.selectedUsers.map((user) => this.userService.deleteUserFromProfile(user['id'], role))).pipe(map(() => true));
+                    }
+                break;
+              case 'disable_sign_in':
+                return zip(...this.selectedUsers.map((user) => this.userService.setUserActivity(user['id'], false))).pipe(map(() => true));
+                break;
+              case 'enable_sign_in':
+                return zip(...this.selectedUsers.map((user) => this.userService.setUserActivity(user['id'], true))).pipe(map(() => true));
+                break;
+              default:
+                return of(false);
+                break;
+            }
           }),
         )
-        .subscribe((res) => {
-          console.log(res);
-          if (res) {
-            this.http.setSchool(this.http.getSchool());
-            this.selectedUsers = [];
-            this.getUserList();
-          }
-        });
-      return;
-    }
-
-    // =========== SPA=476 end ============>
-
-    // const DR = this.matDialog.open(AccountsDialogComponent,
-    //   {
-    //     data: {
-    //       role: this.role,
-    //       selectedUsers: this.selectedUsers,
-    //       mode: mode,
-    //       restrictions: this.profilePermissions
-    //     },
-    //     width: '425px', height: '500px',
-    //     panelClass: 'accounts-profiles-dialog',
-    //     backdropClass: 'custom-bd'
-    //   });
-    // DR.afterClosed().subscribe((v) => {
-    //   // console.log(v);
-    //   this.http.setSchool(this.http.getSchool());
-    // });
+        .subscribe(consentMenuObserver);
   }
 
   ngOnDestroy() {
@@ -470,10 +482,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   findProfileByRole(evt) {
-    console.log(evt);
-    // if (evt instanceof Location) {
-      // this.showProfileCard()
-    // }
+    // console.log(evt);
+
     this.tabVisibility = false;
 
     setTimeout(() => {
@@ -490,7 +500,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   showProfileCard(evt, bulk: boolean = false, gSuite: boolean = false) {
-    console.log(evt);
+    // console.log(evt);
+
     if (this.role === '_profile_admin') {
       if ((evt.id === +this.user.id)) {
         this.profilePermissions['admin_accounts'].disabled = true;
@@ -510,7 +521,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     if (this.selectedUsers.length && !bulk || this.role === '_all' && !gSuite)  {
       return false;
     }
-
     if (bulk && this.selectedUsers.length) {
       data.bulkPermissions = this.selectedUsers.map(user => user.id);
     }
@@ -528,12 +538,13 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
 
     dialogRef.afterClosed().subscribe((userListReloadTrigger: any) => {
-      console.log(userListReloadTrigger);
+      console.log(userListReloadTrigger, data.profile.id, this.user.id);
       if (userListReloadTrigger) {
-        window.document.location.reload();
+        if (data.profile.id === +this.user.id) {
+          window.document.location.reload();
+        }
         this.selectedUsers = [];
         this.getUserList();
-
       }
     });
   }
@@ -565,31 +576,27 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
               }));
           } else {
-            // debugger;
             return of(userList);
           }
         })
       )
       .subscribe((userList: any) => {
-        // console.log(userList);
         if (userList && userList.length) {
           this.placeholder = false;
-
           this.dataTableHeadersToDisplay = [];
-
           this.userList = this.buildUserListData(userList);
-
         } else {
           this.placeholder = true;
         }
       });
   }
 
-  buildUserListData(userList) {
+  private buildUserListData(userList) {
       this.isLoadUsers = this.limitCounter === userList.length;
-      this.userAmount.next(userList.length);
+      // this.userAmount.next(userList.length);
       return userList.map((raw, index) => {
 
+        const permissionsRef: any = this.profilePermissions;
           const partOf = [];
           if (raw.roles.includes('_profile_student')) partOf.push({title: 'Student', role: '_profile_student'});
           if (raw.roles.includes('_profile_teacher')) partOf.push({title: 'Teacher', role: '_profile_teacher'});
@@ -602,8 +609,23 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               'Account Type': 'G Suite',
               'Sign-in status': 'Enabled',
               'Last sign-in': Util.formatDateTime(new Date(raw.last_updated)),
-              'Permissions': ['create_hallpasses', 'edit_all_hallpass', 'manage_locations'].join(','),
-              'Profile(s)': partOf
+              'Profile(s)': partOf,
+              'Permissions': (function() {
+                  const tabs = Object.values(permissionsRef).map((tab: any) => {
+                    tab.allowed = raw.roles.includes(tab.controlName);
+                    return tab;
+                  });
+                  if (tabs.every((item: any): boolean => item.allowed)) {
+                    return 'No restrictions';
+                  } else {
+                    const restrictedTabs = tabs.filter((item: any): boolean => !item.allowed);
+                    if (restrictedTabs.length > 1) {
+                      return `${restrictedTabs.length} tabs restricted`;
+                    } else {
+                      return `${restrictedTabs[0].controlLabel} restricted`;
+                    }
+                  }
+                }())
 
           };
           for (const key in rawObj) {
