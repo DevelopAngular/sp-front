@@ -42,7 +42,7 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
     this.locationService.getLocationsWithFilder()
         .pipe(takeUntil(this.destroy$))
         .subscribe((res: any) => {
-            this.categories = res.categories;
+           this.categories = res.categories;
     });
     if (this.roomsWithFolder) {
         this.selectedRooms = this.roomsWithFolder;

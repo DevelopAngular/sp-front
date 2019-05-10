@@ -15,7 +15,7 @@ export class SearchFilterDialogComponent implements OnInit {
 
   selectedStudents: User[] = [];
   selectedLocations: Location[] = [];
-  roomsWithCategories;
+  roomsWithCategories = [];
 
   constructor(
       public dialogRef: MatDialogRef<SearchFilterDialogComponent>,
