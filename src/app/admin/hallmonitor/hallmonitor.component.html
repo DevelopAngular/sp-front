@@ -42,6 +42,12 @@
     </div>
     <div class="reported-students">
       <div class="reported-students-internal">
+        <div *ngIf="pending" class="loading-theme_blue-gray spinner ds-flex-center-center ds-w-100 ds-h-100"
+
+        >
+          <mat-spinner [diameter]="35" [color]="'primary'"></mat-spinner>
+        </div>
+
         <div class="reported-students-header">
           <div class="report-text">
             <img draggable="false" [src]="'./assets/Report (Red).svg' | resolveAsset" class="report-icon">
@@ -67,9 +73,6 @@
                   [righticon]="'./assets/Print (Blue-Gray).svg'"></app-display-report-cell>
               </div>
             </div>
-          </div>
-          <div *ngIf="pending" class="loading-theme_blue-gray spinner ds-flex-center-center">
-            <mat-spinner [diameter]="50" [color]="'primary'"></mat-spinner>
           </div>
 
           <div *ngIf="studentreport && !studentreport.length && !pending" [style.text-align]="'center'" class="no-reports">

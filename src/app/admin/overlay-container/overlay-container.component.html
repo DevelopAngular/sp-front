@@ -93,9 +93,11 @@
     </div>
 
 <div style="position: relative">
+  <!--{{roomList.topScroll}} {{overlayType}} -->
+  <!--{{roomList.topScroll}}-->
 <!--<div class="inactive" *ngIf="!form.get('isEdit').value"></div>-->
   <div class="overlay-content">
-    <div class="left-content ds-mb-5" (scroll)="onScroll($event)">
+    <div class="left-content ds-mb-5" #leftContent (scroll)="onScroll($event)">
       <div class="edit-rooms-left-content" *ngIf="overlayType === 'edit'">
         <div class="edit-rooms-left-title">Bulk edit the rooms added. Any change will override the previous setting.</div>
       </div>

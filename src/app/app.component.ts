@@ -111,12 +111,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.loginService.isAuthenticated$.pipe(
       takeUntil(this.subscriber$),
-      // catchError((err) => {
-      //   this.loginService.isAuthenticated$.next(false);
-      //   return of(null);
-      // })
     )
-        .subscribe(t => {
+    .subscribe(t => {
 
       // console.log('Auth response ===>', t);
       this._zone.run(() => {
