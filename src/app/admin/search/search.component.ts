@@ -39,6 +39,8 @@ export class SearchComponent implements OnInit {
   selectedReport = [];
   passes: HallPass[];
 
+  selRoomsWithCategories;
+
   spinner: boolean = false;
 
   hasSearched: boolean = false;
@@ -155,7 +157,6 @@ export class SearchComponent implements OnInit {
           });
         }
       }
-      console.log('[Selected Students]:', this.selectedStudents)
       if (this.selectedStudents) {
         let students: any[] = this.selectedStudents.map(s => s['id']);
 
@@ -231,7 +232,12 @@ export class SearchComponent implements OnInit {
     const filterRef = this.dialog.open(SearchFilterDialogComponent, {
         panelClass: 'form-dialog-container',
         backdropClass: 'custom-backdrop',
-        data: { state, students: this.selectedStudents }
+        data: {
+            state,
+            students: this.selectedStudents,
+            rooms: this.selectedRooms,
+            withCategories: this.selRoomsWithCategories
+        }
     });
 
     filterRef.afterClosed().pipe(filter(data => !!data)).subscribe(data => {
@@ -239,6 +245,7 @@ export class SearchComponent implements OnInit {
         this.selectedStudents = data.students;
       } else if (data.action === 'rooms') {
         this.selectedRooms = data.locations;
+        this.selRoomsWithCategories = data.allSelected;
       }
     });
   }

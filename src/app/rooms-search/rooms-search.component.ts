@@ -22,8 +22,12 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
   allRooms: Location[];
   categories = [];
 
+  searchResult: any[] = [];
+
   selectedRooms = [];
   selectedLocations: Location[] = [];
+
+  showSearchResult: boolean;
 
   destroy$ = new Subject();
 
@@ -111,7 +115,15 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
   }
 
   onSearch(search) {
-
+      if (!search) {
+          this.showSearchResult = false;
+      } else {
+          this.locationService.searchLocations(100, `&search=${search}&starred=false`)
+              .subscribe(res => {
+                  this.showSearchResult = true;
+                  this.searchResult = res.results;
+              });
+      }
   }
 
 }

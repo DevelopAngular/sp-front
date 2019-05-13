@@ -2,7 +2,6 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { User } from '../../../models/User';
 import { Location } from '../../../models/Location';
-import * as _ from 'lodash';
 
 @Component({
   selector: 'app-search-filter-dialog',
@@ -27,6 +26,12 @@ export class SearchFilterDialogComponent implements OnInit {
     if (this.data['students']) {
       this.selectedStudents = this.data['students'];
     }
+    if (this.data['rooms']) {
+      this.selectedLocations = this.data['rooms'];
+    }
+    if (this.data['withCategories']) {
+        this.roomsWithCategories = this.data['withCategories'];
+    }
   }
 
   addLocations({locations, rooms}) {
@@ -35,11 +40,17 @@ export class SearchFilterDialogComponent implements OnInit {
   }
 
   add() {
-    this.dialogRef.close({action: 'rooms', locations: this.selectedLocations });
+    this.dialogRef.close({action: 'rooms', locations: this.selectedLocations, allSelected: this.roomsWithCategories});
+  }
+
+  addRoomFilter(filter, room) {
+    room.filter = filter;
   }
 
   addStudents() {
     this.dialogRef.close({action: 'students', students: this.selectedStudents});
   }
+
+
 
 }

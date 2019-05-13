@@ -43,6 +43,7 @@
                         [height]="25"
                         [selectedChoose]="'Destination'"
                         [choices]="['Destination', 'origin', 'Either']"
+                        (result)="addRoomFilter($event, room)"
                 ></app-restriction-picker>
               </div>
               <img [src]="'./assets/Mark (Navy).svg'" width="15" height="15" alt="Check.svg">

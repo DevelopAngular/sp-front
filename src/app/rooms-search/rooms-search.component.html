@@ -19,7 +19,7 @@
         <mat-divider></mat-divider>
       </div>
       <div class="locations">
-        <div class="room-container" #sel *ngFor="let room of selectedRooms; let i = index"
+        <div class="room-container" #sel *ngFor="let room of selectedRooms"
              (mouseenter)="sel.hovered = true"
              (mouseleave)="sel.hovered = false"
              [style.background-color]="getBackground(sel)"
@@ -36,7 +36,26 @@
       </div>
     </div>
 
-  <div class="folders mb-10" *ngIf="!!categories?.length">
+    <div class="search" *ngIf="showSearchResult">
+      <div class="locations">
+        <div class="room-container" #search *ngFor="let room of searchResult"
+             (click)="selected(room, !!room.locations)"
+             (mouseenter)="search.hovered = true"
+             (mouseleave)="search.hovered = false"
+             [style.background-color]="getBackground(search)"
+             [style.color]="textColor(search)"
+
+        >
+          <div class="location">
+            <div class="title">{{ room.title }}</div>
+            <img *ngIf="isSelected(room)" [src]="search.hovered ? './assets/Cancel (Navy).svg' : './assets/Mark (Navy).svg'" width="15" height="15" alt="Check.svg">
+          </div>
+          <mat-divider></mat-divider>
+        </div>
+      </div>
+    </div>
+
+  <div class="folders mb-10" *ngIf="!!categories?.length && !showSearchResult">
     <div class="header">
       <div class="title">Folders</div>
       <mat-divider></mat-divider>
@@ -59,7 +78,7 @@
     </div>
   </div>
 
-  <div class="all-rooms mb-10">
+  <div class="all-rooms mb-10" *ngIf="!showSearchResult">
     <div class="header">
       <div class="title">All Rooms</div>
       <mat-divider></mat-divider>
