@@ -52,6 +52,12 @@ export class RestrictedMessageComponent implements OnInit {
     return 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
 
+  get showTeachersHeader() {
+    return this.toLocation &&
+        ((!this.formState.forLater && this.toLocation.request_teachers.length) ||
+            (this.formState.forLater && this.toLocation.scheduling_request_teachers.length));
+  }
+
   ngOnInit() {
       if (this.formState.previousState > this.formState.state || this.formState.previousStep > this.formState.step) {
       this.headerTransition['rest-mes-header'] = false;
@@ -66,6 +72,8 @@ export class RestrictedMessageComponent implements OnInit {
     this.fromLocation = this.formState.data.direction.from;
     this.toLocation = this.formState.data.direction.to;
     this.teacher = this.formState.data.requestTarget;
+
+      console.log(this.toLocation);
   }
 
   back() {

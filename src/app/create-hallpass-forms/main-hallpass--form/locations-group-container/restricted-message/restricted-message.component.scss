@@ -66,6 +66,11 @@
     box-sizing: border-box;
     padding: 0 37px;
     background-color: #FCFDFF;
+
+    .teachers {
+      display: flex;
+      flex-wrap: wrap;
+    }
   }
 
   .content-wrapper {

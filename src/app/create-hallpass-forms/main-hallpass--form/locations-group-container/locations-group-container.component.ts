@@ -67,6 +67,20 @@ export class LocationsGroupContainerComponent implements OnInit {
    }
   }
 
+  get redirectTo() {
+      const to = this.FORM_STATE.data.direction.to;
+      if (
+          to.request_mode === 'specific_teachers' ||
+          to.request_mode === 'all_teachers_in_room' ||
+          (this.FORM_STATE.forLater && to.scheduling_request_mode === 'specific_teachers') ||
+          (this.FORM_STATE.forLater && to.scheduling_request_mode === 'all_teachers_in_room')
+      ) {
+          return States.message;
+      } else {
+          return States.restrictedTarget;
+      }
+  }
+
   ngOnInit() {
 
     // this.formService.setFrameMotionDirection('disable');
@@ -111,7 +125,7 @@ export class LocationsGroupContainerComponent implements OnInit {
         } else {
             if (this.FORM_STATE.missedRequest) {
               this.FORM_STATE.state = States.message;
-              this.FORM_STATE.data.gradient = this.FORM_STATE.data.request.gradient_color;
+              this.FORM_STATE.data.gradient = this.FORM_STATE.data.request.color_profile.gradient_color;
               this.FORM_STATE.data.requestTarget = this.FORM_STATE.data.request.issuer;
               this.FORM_STATE.data.direction.pinnable = this.FORM_STATE.data.request;
             } else {
@@ -129,7 +143,7 @@ export class LocationsGroupContainerComponent implements OnInit {
         from: this.data.fromLocation,
         pinnable: pinnable
     };
-    this.FORM_STATE.data.gradient = pinnable.gradient_color;
+    this.FORM_STATE.data.gradient = pinnable.color_profile.gradient_color;
     this.FORM_STATE.data.icon = pinnable.icon;
     if (pinnable.type === 'category') {
       this.FORM_STATE.previousState = States.toWhere;
@@ -141,6 +155,7 @@ export class LocationsGroupContainerComponent implements OnInit {
         if (!this.isStaff && restricted && pinnable.location) {
             this.FORM_STATE.previousState = this.FORM_STATE.state;
             return this.FORM_STATE.state = States.restrictedTarget;
+            // return this.FORM_STATE.state = this.redirectTo;
         } else {
            return this.postComposetData();
         }

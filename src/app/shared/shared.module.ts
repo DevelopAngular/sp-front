@@ -53,6 +53,7 @@ import {TimePickerComponent} from '../calendar-components/time-picker/time-picke
 import {AdminCalendarToggleComponent} from '../calendar-components/admin-calendar-toggle/admin-calendar-toggle.component';
 import {ToggleOptionsComponent} from '../calendar-components/admin-calendar-toggle/toggle-options/toggle-options.component';
 import {SpChipsComponent} from '../sp-chips/sp-chips.component';
+import {RoomsSearchComponent} from "../rooms-search/rooms-search.component";
 
 
 
@@ -119,7 +120,8 @@ import {SpChipsComponent} from '../sp-chips/sp-chips.component';
       TimePickerComponent,
       AdminCalendarToggleComponent,
       ToggleOptionsComponent,
-      SpChipsComponent
+      SpChipsComponent,
+      RoomsSearchComponent
 
   ],
     entryComponents: [
@@ -171,7 +173,8 @@ import {SpChipsComponent} from '../sp-chips/sp-chips.component';
     TimePickerComponent,
     AdminCalendarToggleComponent,
     ToggleOptionsComponent,
-    SpChipsComponent
+    SpChipsComponent,
+    RoomsSearchComponent
 
   ],
 })

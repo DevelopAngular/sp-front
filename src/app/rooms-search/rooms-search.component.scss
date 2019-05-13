@@ -1,0 +1,35 @@
+@import "../../sp-colors";
+@import "../../design-system";
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .content {
+    width: 205px;
+    .header {
+      .title {
+        text-align: center;
+        margin-bottom: 5px;
+        font-size: 16px;
+        color: $dark-slate-gray;
+        font-weight: bold;
+      }
+    }
+
+    .locations {
+
+      .location {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 5px 10px 5px;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.mb-10 {
+  margin-bottom: 20px;
+}

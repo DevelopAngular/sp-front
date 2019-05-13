@@ -8,7 +8,6 @@ import { disableBodyScroll } from 'body-scroll-lock';
 import * as _ from 'lodash';
 import {PassCardComponent} from '../../pass-card/pass-card.component';
 import {MatDialog} from '@angular/material';
-import { Util } from '../../../Util';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {XlsxGeneratorService} from '../xlsx-generator.service';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -18,6 +17,9 @@ import {Location} from '../../models/Location';
 import {of, Subscription} from 'rxjs';
 import {DataService} from '../../services/data-service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
+import {SearchFilterDialogComponent} from './search-filter-dialog/search-filter-dialog.component';
+import {DateTimeFilterComponent} from './date-time-filter/date-time-filter.component';
+
 
 
 @Component({
@@ -36,6 +38,8 @@ export class SearchComponent implements OnInit {
   roomSearchType;
   selectedReport = [];
   passes: HallPass[];
+
+  selRoomsWithCategories;
 
   spinner: boolean = false;
 
@@ -63,6 +67,11 @@ export class SearchComponent implements OnInit {
 
   get isDisabled() {
     return !this.selectedStudents.length && !this.selectedDate && !this.selectedRooms.length && !this.hasSearched || this.spinner;
+  }
+
+  get dateText() {
+      return this.selectedDate &&
+          this.selectedDate.start.format('MMM D') + ' to ' + this.selectedDate.end.format('MMM D');
   }
 
   ngOnInit() {
@@ -123,32 +132,44 @@ export class SearchComponent implements OnInit {
       this.selectedReport = [];
       let url = 'v1/hall_passes?' + query;
       if (this.selectedRooms) {
-        console.log('Has rooms\t', this.roomSearchType);
-        if (this.roomSearchType == 'Origin') {
-          let origins: any[] = this.selectedRooms.map(r => r['id']);
-
-          Array.from(Array(origins.length).keys()).map(i => {
-            url += 'origin=' + origins[i] + '&';
-          });
-        }
-
-        if (this.roomSearchType == 'Destination') {
-          let destinations: any[] = this.selectedRooms.map(r => r['id']);
-
-          Array.from(Array(destinations.length).keys()).map(i => {
-            url += 'destination=' + destinations[i] + '&';
-          });
-        }
-
-        if (this.roomSearchType == 'Either') {
-          let locations: any[] = this.selectedRooms.map(r => r['id']);
-
-          Array.from(Array(locations.length).keys()).map(i => {
-            url += 'location=' + locations[i] + '&';
-          });
-        }
+        console.log(this.selectedRooms);
+        this.selectedRooms.forEach(room => {
+          if (room.filter === 'Origin') {
+              url += 'origin=' + room.id + '&';
+          }
+          if (room.filter === 'Destination') {
+              url += 'destination=' + room.id + '&';
+          }
+          if (room.filter === 'Either') {
+              url += 'location=' + room.id + '&';
+          }
+        });
+        console.log('URL ===>>>>', url);
+      //   console.log('Has rooms\t', this.roomSearchType);
+      //   if (this.roomSearchType == 'Origin') {
+      //     let origins: any[] = this.selectedRooms.map(r => r['id']);
+      //
+      //     Array.from(Array(origins.length).keys()).map(i => {
+      //       url += 'origin=' + origins[i] + '&';
+      //     });
+      //   }
+      //
+      //   if (this.roomSearchType == 'Destination') {
+      //     let destinations: any[] = this.selectedRooms.map(r => r['id']);
+      //
+      //     Array.from(Array(destinations.length).keys()).map(i => {
+      //       url += 'destination=' + destinations[i] + '&';
+      //     });
+      //   }
+      //
+      //   if (this.roomSearchType == 'Either') {
+      //     let locations: any[] = this.selectedRooms.map(r => r['id']);
+      //
+      //     Array.from(Array(locations.length).keys()).map(i => {
+      //       url += 'location=' + locations[i] + '&';
+      //     });
+      //   }
       }
-      console.log('[Selected Students]:', this.selectedStudents)
       if (this.selectedStudents) {
         let students: any[] = this.selectedStudents.map(s => s['id']);
 
@@ -160,12 +181,12 @@ export class SearchComponent implements OnInit {
       if (this.selectedDate) {
         let start;
         let end;
-        if(this.selectedDate['from']){
-          start = this.selectedDate['from'].toISOString();
+        if(this.selectedDate['start']){
+          start = this.selectedDate['start'].toISOString();
           url += (start ? ('created_after=' + start + '&') : '');
         }
-        if(this.selectedDate['to']){
-          end = this.selectedDate['to'].toISOString();
+        if(this.selectedDate['end']){
+          end = this.selectedDate['end'].toISOString();
           url += (end ? ('end_time_before=' + end) : '');
         }
 
@@ -218,6 +239,42 @@ export class SearchComponent implements OnInit {
         });
 
     }
+  }
+
+  openFilters(state: string) {
+    const filterRef = this.dialog.open(SearchFilterDialogComponent, {
+        panelClass: 'form-dialog-container',
+        backdropClass: 'custom-backdrop',
+        data: {
+            state,
+            students: this.selectedStudents,
+            rooms: this.selectedRooms,
+            withCategories: this.selRoomsWithCategories
+        }
+    });
+
+    filterRef.afterClosed().pipe(filter(data => !!data)).subscribe(data => {
+      if (data.action === 'students') {
+        this.selectedStudents = data.students;
+      } else if (data.action === 'rooms') {
+        this.selectedRooms = data.locations;
+        this.selRoomsWithCategories = data.allSelected;
+      }
+    });
+  }
+
+  openTimeFilter(event) {
+    const target = new ElementRef(event.currentTarget);
+    const timeRef = this.dialog.open(DateTimeFilterComponent, {
+        panelClass: 'calendar-dialog-container',
+        backdropClass: 'invis-backdrop',
+        data: { target }
+    });
+
+    timeRef.afterClosed().pipe(filter(res => !!res))
+        .subscribe(({start, end}) => {
+            this.selectedDate = {start, end};
+        });
   }
 
   dateEmit(date) {

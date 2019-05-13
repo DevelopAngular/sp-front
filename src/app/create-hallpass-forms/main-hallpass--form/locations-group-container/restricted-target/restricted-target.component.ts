@@ -58,7 +58,7 @@ export class RestrictedTargetComponent implements OnInit {
   ) { }
 
   get headerGradient() {
-    const colors = this.formState.data.direction.pinnable.gradient_color;
+    const colors = this.formState.data.direction.pinnable.color_profile.gradient_color;
     return 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
 

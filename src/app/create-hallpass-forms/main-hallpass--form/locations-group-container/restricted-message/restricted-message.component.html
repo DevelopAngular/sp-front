@@ -1,15 +1,30 @@
 <div class="rest-mes-wrapper">
   <div [ngClass]="headerTransition" [style.background-image]="headerGradient">
-    <img class="back-button back-button-whitee" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" (click)="back()">
+    <img class="back-button back-button-white" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" (click)="back()">
     <div class="rest-mes-header-text">
       <img class="search-icon" [src]="'./assets/Message (White).svg' | resolveAsset">
       <div class="text ds-dialog-title-white">Message</div>
     </div>
   </div>
 
-  <div class="selected-teacher-header" *ngIf="formState.forInput || formState.missedRequest">
-    <span class="ds-dialog-subtitle">Sending Pass Request To:&nbsp; </span>
-    <span class="" style="color: #7F879D; font-size: 16px">{{ formState.data.requestTarget.display_name }}</span>
+  <div class="selected-teacher-header" *ngIf="formState.forInput && formState.forLater && showTeachersHeader || formState.missedRequest">
+    <div class="ds-dialog-subtitle teachers">Sending Pass Request To:&nbsp;
+      <div class="teacher" *ngFor="let teacher of toLocation.scheduling_request_teachers; let i = index">
+        <span class="" style="color: #7F879D; font-size: 16px">
+          {{ teacher.display_name + (toLocation.scheduling_request_teachers.length > 1 && i !== toLocation.scheduling_request_teachers.length - 1 ? ', ' : '') }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="selected-teacher-header" *ngIf="formState.forInput && !formState.forLater && showTeachersHeader">
+    <div class="ds-dialog-subtitle teachers">Sending Pass Request To:&nbsp;
+      <div class="teacher" *ngFor="let teacher of toLocation.request_teachers">
+        <span class="" style="color: #7F879D; font-size: 16px">
+          {{ teacher.display_name + (toLocation.request_teachers.length > 1 && i !== toLocation.request_teachers.length - 1 ? ', ' : '') }}
+        </span>
+      </div>
+    </div>
   </div>
 
   <div class="content-wrapper">
