@@ -21,6 +21,8 @@ export class AccountsComponent implements OnInit {
   public accounts$ =
     new BehaviorSubject<any>({
       total_count: '-',
+      gsuite_count: '-',
+      alternative_count: '-',
       admin_count: '-',
       student_count: '-',
       teacher_count: '-',

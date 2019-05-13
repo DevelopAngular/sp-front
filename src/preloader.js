@@ -83,4 +83,4 @@ window.appLoaded = function(timeout = 100) {
   }, timeout);
 };
 
-window.waitForAppLoaded();
+// window.waitForAppLoaded();

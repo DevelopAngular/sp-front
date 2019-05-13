@@ -73,7 +73,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
                 takeUntil(this.destroy$),
                 map(res => res.results),
                 switchMap((userList) => {
-                if (this.role === '_profile_teacher') {
+                  if (this.role === '_profile_teacher') {
                     return zip(
                         ...userList.map((user: User) => {
                             return this.dataService.getLocationsWithTeacher(user)
@@ -85,10 +85,11 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
                                 );
 
                         }));
-                } else {
-                    return of(userList);
-                }
-            }))
+                  } else {
+                      return of(userList);
+                  }
+                })
+            )
             .subscribe(userList => {
               this.dataTableHeadersToDisplay = [];
               this.userList = this.buildUserListData(userList);
@@ -320,17 +321,39 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         this.searchChangeObserver$ = observer;
       })
         .pipe(
-          debounceTime(300),
+          debounceTime(100),
           distinctUntilChanged(),
           tap(() => {
             this.dataTableHeadersToDisplay = [];
           }),
-          switchMap((value: string) => this.userService.getUsersList(this.role, value))
+          switchMap((value: string) =>
+            this.userService.getUsersList(this.role, value).pipe(
+              takeUntil(this.destroy$),
+              map(res => res),
+              switchMap((userList) => {
+                if (this.role === '_profile_teacher') {
+                  return zip(
+                    ...userList.map((user: User) => {
+                      return this.dataService.getLocationsWithTeacher(user)
+                        .pipe(
+                          switchMap((locs: Location[]) => {
+                            (user as any).assignedTo = locs;
+                            return of(user);
+                          })
+                        );
+                    }));
+                } else {
+                  return of(userList);
+                }
+              })
+          ))
         )
         .subscribe((userList) => {
+          console.log(userList);
           if (userList && userList.length) {
             this.dataTableHeadersToDisplay = [];
             this.userList = this.buildUserListData(userList);
+            console.log(this.userList);
           } else {
             this.placeholder = true;
           }
@@ -585,6 +608,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           this.placeholder = false;
           this.dataTableHeadersToDisplay = [];
           this.userList = this.buildUserListData(userList);
+          console.log(this.userList);
         } else {
           this.placeholder = true;
         }
