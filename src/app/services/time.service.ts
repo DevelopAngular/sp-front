@@ -28,7 +28,7 @@ function computeEstimatedDrift(report: RTTimeReport): DriftEstimate {
   };
 }
 
-function combineDriftEstimates(estimates: DriftEstimate[]) {
+function combineDriftEstimates(estimates: any[]) {
   let numerator = 0;
   let denominator = 0;
 
@@ -79,7 +79,7 @@ export class TimeService {
         repeat(10),
         map(computeEstimatedDrift),
         scan<DriftEstimate>((acc, value) => {
-          const acc2 = [value, ...acc];
+          const acc2: any[] = [value, ...acc];
           // only keep the eight lowest error drift estimates.
           acc2.sort((a, b) => a.error - b.error);
           return acc2.slice(0, 7);
