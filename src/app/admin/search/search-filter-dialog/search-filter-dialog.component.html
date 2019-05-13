@@ -42,7 +42,7 @@
                         [width]="265"
                         [height]="25"
                         [selectedChoose]="'Destination'"
-                        [choices]="['Destination', 'origin', 'Either']"
+                        [choices]="['Destination', 'Origin', 'Either']"
                         (result)="addRoomFilter($event, room)"
                 ></app-restriction-picker>
               </div>
@@ -55,7 +55,7 @@
       </div>
     </div>
 
-    <div class="button" *ngIf="selectedLocations.length">
+    <div class="button" *ngIf="(state === 'Rooms' || state === 'options') && selectedLocations.length">
       <app-gradient-button
         (buttonClick)="state === 'options' ? add() : state = 'options'"
       >

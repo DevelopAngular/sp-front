@@ -39,7 +39,7 @@
                   <div *ngIf="selectedRooms.length">{{ selectedRooms.length + ' ' + 'room' + (selectedRooms.length > 1 ? 's' : '') }}</div>
                 </div>
                 <div class="reset-icon" *ngIf="rchip.hovered && selectedRooms.length">
-                  <img (click)="selectedRooms = []" [src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
+                  <img (click)="selectedRooms = []" [src]="'./assets/Cancel (Navy).svg'" width="15" #fieldIcon alt="Check.svg">
                 </div>
               </div>
             </div>
@@ -49,7 +49,7 @@
                   <img width="16" [src]="'./assets/Calendar (Blue-Gray).svg' | resolveAsset" alt="Icon">
                   Date & Time
               </div>
-              <div class="chip" #dchip (mouseenter)="dchip.hovered = true;" (mouseleave)="dchip.hovered = false">
+              <div class="chip" #dchip [ngClass]="{hovered: dchip.hovered && !!selectedDate}" (mouseenter)="dchip.hovered = true;" (mouseleave)="dchip.hovered = false">
                 <div class="overlay" (click)="openTimeFilter($event)">
                   <div class="add-icon" *ngIf="dchip.hovered && !selectedDate">
                     <img [src]="'./assets/Plus (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
@@ -58,12 +58,12 @@
                   <div *ngIf="selectedDate">{{ dateText }}</div>
                 </div>
                 <div class="reset-icon" *ngIf="dchip.hovered && selectedDate">
-                  <img (click)="selectedDate = null" [src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
+                  <img (click)="selectedDate = null" [src]="'./assets/Cancel (Navy).svg'" width="15" #fieldIcon alt="Check.svg">
                 </div>
               </div>
             </div>
         </div>
-        <div class="search-button">
+        <div class="search-button" *ngIf="!hasSearched && !spinner">
           <app-gradient-button
                                [size]="'large'"
                                [ngStyle]="{'opacity': isDisabled? '.5' : '1'}"
@@ -80,6 +80,27 @@
                                [disabled]="isDisabled"
                                (buttonClick)="search()"
           ><span>Search</span></app-gradient-button>
+        </div>
+        <div class="search-button" *ngIf="spinner || hasSearched">
+
+          <div (click)="previewPDF($event)" draggable="true" [ngStyle]="{'opacity': !selectedReport.length ? '.5' : '1'}">
+            <app-gradient-button  class="report-button"
+                                  [size]="'large'"
+                                  [style.margin]="'0 20px'"
+                                  [gradient]="'#FFFFFF,#FFFFFF'"
+                                  [hoverColor]="'#F5F5F5'"
+                                  [cursor]="'pointer'"
+                                  [textColor]="selectedReport.length === 0 ? 'rgb(120, 140, 165)' : '#134482'"
+                                  [fontSize]="'17px'"
+                                  [border]="'1px solid 1px solid #eee'"
+                                  [disabled]="selectedReport.length === 0">
+              <div [style.text-align]="'center'">
+                <span>Generate Report </span><br/>
+                <span>{{ selectedReport.length }} passes</span>
+              </div>
+            </app-gradient-button>
+            <!--<a #printPdf href="pdf/report" target="_blank"></a>-->
+          </div>
         </div>
         <!--<app-round-input [width]="'260px'" [labelText]="'By Student Name'" [type]="'multiuser'" [placeholder]="'Search Students'" [initialValue]="initialSearchStudentString" [selections]="selectedStudents" (onselectionupdate)="studentsEmit($event)"></app-round-input>-->
         <!--<app-round-input [width]="'260px'" [labelText]="'Date and Time'" [type]="'dates'" [placeholder]="'Search date & time range'" (ontextupdate)="dateEmit($event)"></app-round-input>-->
@@ -137,28 +158,6 @@
 
         <!--</app-gradient-button>-->
       <!--</div>-->
-      <div class="report-button-ground" *ngIf="spinner || hasSearched">
-
-        <div (click)="previewPDF($event)" draggable="true" [ngStyle]="{'opacity': !selectedReport.length ? '.5' : '1'}">
-          <app-gradient-button  class="report-button"
-                                [size]="'xl'"
-                                [gradient]="'#FFFFFF,#FFFFFF'"
-                                [hoverColor]="'#F5F5F5'"
-                                [minHeight]="'65px'"
-                                [width]="'215px'"
-                                [cursor]="'pointer'"
-                                [textColor]="selectedReport.length === 0 ? 'rgb(120, 140, 165)' : '#134482'"
-                                [fontSize]="'17px'"
-                                [border]="'1px solid 1px solid #eee'"
-                                [disabled]="selectedReport.length === 0">
-            <div [style.text-align]="'center'">
-              <span>Generate Report </span><br/>
-              <span>{{ selectedReport.length }} passes selected</span>
-            </div>
-          </app-gradient-button>
-          <!--<a #printPdf href="pdf/report" target="_blank"></a>-->
-        </div>
-      </div>
       <div class="search-content" *ngIf="!hasSearched">
 
         <div class="default-message" *ngIf="!spinner">

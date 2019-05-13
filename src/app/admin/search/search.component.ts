@@ -132,30 +132,43 @@ export class SearchComponent implements OnInit {
       this.selectedReport = [];
       let url = 'v1/hall_passes?' + query;
       if (this.selectedRooms) {
-        console.log('Has rooms\t', this.roomSearchType);
-        if (this.roomSearchType == 'Origin') {
-          let origins: any[] = this.selectedRooms.map(r => r['id']);
-
-          Array.from(Array(origins.length).keys()).map(i => {
-            url += 'origin=' + origins[i] + '&';
-          });
-        }
-
-        if (this.roomSearchType == 'Destination') {
-          let destinations: any[] = this.selectedRooms.map(r => r['id']);
-
-          Array.from(Array(destinations.length).keys()).map(i => {
-            url += 'destination=' + destinations[i] + '&';
-          });
-        }
-
-        if (this.roomSearchType == 'Either') {
-          let locations: any[] = this.selectedRooms.map(r => r['id']);
-
-          Array.from(Array(locations.length).keys()).map(i => {
-            url += 'location=' + locations[i] + '&';
-          });
-        }
+        console.log(this.selectedRooms);
+        this.selectedRooms.forEach(room => {
+          if (room.filter === 'Origin') {
+              url += 'origin=' + room.id + '&';
+          }
+          if (room.filter === 'Destination') {
+              url += 'destination=' + room.id + '&';
+          }
+          if (room.filter === 'Either') {
+              url += 'location=' + room.id + '&';
+          }
+        });
+        console.log('URL ===>>>>', url);
+      //   console.log('Has rooms\t', this.roomSearchType);
+      //   if (this.roomSearchType == 'Origin') {
+      //     let origins: any[] = this.selectedRooms.map(r => r['id']);
+      //
+      //     Array.from(Array(origins.length).keys()).map(i => {
+      //       url += 'origin=' + origins[i] + '&';
+      //     });
+      //   }
+      //
+      //   if (this.roomSearchType == 'Destination') {
+      //     let destinations: any[] = this.selectedRooms.map(r => r['id']);
+      //
+      //     Array.from(Array(destinations.length).keys()).map(i => {
+      //       url += 'destination=' + destinations[i] + '&';
+      //     });
+      //   }
+      //
+      //   if (this.roomSearchType == 'Either') {
+      //     let locations: any[] = this.selectedRooms.map(r => r['id']);
+      //
+      //     Array.from(Array(locations.length).keys()).map(i => {
+      //       url += 'location=' + locations[i] + '&';
+      //     });
+      //   }
       }
       if (this.selectedStudents) {
         let students: any[] = this.selectedStudents.map(s => s['id']);

@@ -44,7 +44,13 @@ export class SearchFilterDialogComponent implements OnInit {
   }
 
   addRoomFilter(filter, room) {
-    room.filter = filter;
+    if (room.locations) {
+      room.locations.forEach(loc => {
+        loc.filter = filter;
+      });
+    } else {
+        room.filter = filter;
+    }
   }
 
   addStudents() {
