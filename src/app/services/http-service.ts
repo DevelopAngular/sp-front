@@ -247,7 +247,12 @@ export class HttpService {
           const auth = data as ServerAuth;
 
           return {auth: auth, server: server} as AuthContext;
-        }));
+        }),
+        catchError((err) => {
+          this.loginService.isAuthenticated$.next(false);
+          return of(null);
+        })
+      );
 
     }));
   }

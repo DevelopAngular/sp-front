@@ -19,10 +19,9 @@ export class ProgressInterceptor implements HttpInterceptor {
                     .pipe(
                       finalize(() => this.progress.ref().complete()),
                       catchError((error: any) => {
-                        // console.log(error);
-                          if (error.status >= 400 && error.status < 600 && error.url !== 'https://smartpass.app/api/discovery/find') {
+                        console.log(error);
+                          if ((error.status >= 400 && error.status < 600 && error.url !== 'https://smartpass.app/api/discovery/find') || error.status === 0) {
                             this.router.navigate(['error']);
-                            // console.log(error.status >= 400 && error.status < 600);
                           }
                         return throwError(error);
                       })

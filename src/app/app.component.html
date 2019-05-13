@@ -6,5 +6,6 @@
     <router-outlet></router-outlet>
   </div>
   <app-login *ngIf="!isAuthenticated"></app-login>
-
 </div>
+
+<app-error *ngIf="!isAuthenticated && !(showUI | async)"></app-error>

@@ -3,6 +3,7 @@
       (dragover)="handleDragEvent($event, '#00B476')"
       (dragleave)="handleDragEvent($event, '#7F879D')"
       (drop)="catchFile($event)">
+  <!--<pre>{{(frameMotion$ | async) | json}}</pre>-->
   <div class="overlay-container">
     <div class="overlay-header" [ngStyle]="{'background-image': gradientColor}">
     <div class="left-buttons">
@@ -98,445 +99,472 @@
       <div class="edit-rooms-left-content" *ngIf="overlayType === 'edit'">
         <div class="edit-rooms-left-title">Bulk edit the rooms added. Any change will override the previous setting.</div>
       </div>
-      <div class="new-room-in-folder"
-           *ngIf="overlayType === 'newRoomInFolder' || overlayType === 'importRooms' || overlayType === 'settingsRooms'">
+      <div class="new-room-in-folder sticky-header" [@NextStep]="{ value: '', params: frameMotion$ | async}"
+         *ngIf="overlayType === 'newRoomInFolder' || overlayType === 'importRooms' || overlayType === 'settingsRooms'">
           <div class="new-room-in-folder-header">
-            <div class="back-button" *ngIf="!backButtonsStateInFolder" (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : setLocation('newFolder')); resetRoomImport()">
-                <app-back-button [allowDarkTheme]="false"></app-back-button>
+            <div class="back-button" *ngIf="!backButtonsStateInFolder" (click)="back(false)">
+              <app-back-button [allowDarkTheme]="false"></app-back-button>
             </div>
             <div class="cancel-button-in-folder-header"
-                 (click)="(overlayType === 'settingsRooms' ? (isEditRooms ? setLocation('newFolder') : setLocation('importRooms')) : overlayType === 'importRooms' && this.unknownEmails.length ? null : setLocation('newFolder')); resetRoomImport()"
+                 (click)="cancel()"
                  *ngIf="backButtonsStateInFolder">
-                Cancel</div>
+              Cancel</div>
             <div [ngClass]="{'room-in-folder-title-inactive': !isValidForm, 'room-in-folder-title-active': isValidForm || (overlayType === 'settingsRooms') || this.importedRooms.length && this.uploadingProgress.completed}">
               {{headerText}}
             </div>
             <div class="header-in-folder-button">
-                <app-gradient-button
-                        *ngIf="showDoneButton"
-                        [minHeight]="'30px'"
-                        [style.width]="'80px'"
-                        [cursor]="'pointer'"
-                        [fontSize]="'12px'"
-                        (buttonClick)="done()"
-                >
-                    {{(showDoneSpinner ? null : 'Add')}}<mat-spinner *ngIf="showDoneSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
-                </app-gradient-button>
-                <div *ngIf="backButtonsStateInFolder && !showDoneButton" [style.color]="'#1F194E'">Incomplete</div>
+              <app-gradient-button
+                *ngIf="showDoneButton"
+                [minHeight]="'30px'"
+                [cursor]="'pointer'"
+                [fontSize]="'12px'"
+                (buttonClick)="done()"
+              >
+                {{(showDoneSpinner ? null : 'Add')}}<mat-spinner *ngIf="showDoneSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
+              </app-gradient-button>
+              <div *ngIf="backButtonsStateInFolder && !showDoneButton" [style.color]="'#1F194E'">Incomplete</div>
             </div>
           </div>
-        <div class="edit-rooms-info" *ngIf="overlayType === 'settingsRooms'">
-            {{ (isEditRooms ? 'Any change will override thi previous setting' :
-            'Bulk edit the rooms added. Each room can be individually customized later.') }}
+          <div class="edit-rooms-info" *ngIf="overlayType === 'settingsRooms'">
+              {{ (isEditRooms ? 'Any change will override thi previous setting' :
+              'Bulk edit the rooms added. Each room can be individually customized later.') }}
+          </div>
+      </div>
+      <div *ngIf="overlayType === 'newRoom' || overlayType === 'newFolder' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'">
+        <div class="room-inputs">
+          <div [@NextStep]="{ value: '', params: frameMotion$ | async}"
+               *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'">
+            <div class="room-name">
+
+              <app-input
+                [width]="'222px'"
+                [maxLength]="15"
+                [input_label]="'Room Name'"
+                [input_value]="(roomName !== 'New Room' ? roomName : '')"
+                (onUpdate)="roomName = $event === '' ? 'New Room': $event;"
+                [formGroup]="form"
+                [controlName]="form.get('roomName')"
+                [isFocus]="overlayType === 'newRoom' || overlayType === 'newRoomInFolder'"
+              >
+              </app-input>
+            </div>
+          </div>
+          <div [@NextStep]="{ value: '', params: frameMotion$ | async}"
+               *ngIf="overlayType === 'newFolder'">
+            <div class="folder-name">
+                <app-input
+                           [width]="'289px'"
+                           [maxLength]="17"
+                           [input_label]="'Folder Name'"
+                           [input_value]="(folderName !== 'New Folder' ? folderName : '')"
+                           (onUpdate)="folderName = $event === '' ? 'New Folder': $event; requireValidator(folderName) ? readyRoomsToEdit=[] : readyRoomsToEdit"
+                           [formGroup]="form"
+                           [isFocus]="overlayType === 'newFolder' && !isEditFolder"
+                           [controlName]="form.get('folderName')"
+                >
+                </app-input>
+            </div>
+          </div>
+          <div [@NextStep]="{ value: '', params: frameMotion$ | async}" style="flex: 1 1 auto;"
+                *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'">
+
+            <div class="room-number">
+              <app-input
+                [width]="'103px'"
+                [maxLength]="5"
+                [input_label]="'Room Number'"
+                [input_value]="roomNumber ? roomNumber : ''"
+                (onUpdate)="roomNumber=$event"
+                [formGroup]="form"
+                [controlName]="form.get('roomNumber')"
+              >
+              </app-input>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="room-inputs" *ngIf="overlayType === 'newRoom' || overlayType === 'newFolder' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'">
-        <div class="room-name">
-          <app-input
-             *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'"
-             [width]="'222px'"
-             [maxLength]="15"
-             [input_label]="'Room Name'"
-             [input_value]="(roomName !== 'New Room' ? roomName : '')"
-             (onUpdate)="roomName = $event === '' ? 'New Room': $event;"
-             [formGroup]="form"
-             [controlName]="form.get('roomName')"
-             [isFocus]="overlayType === 'newRoom' || overlayType === 'newRoomInFolder'"
-          >
-          </app-input>
-          <app-input
-              *ngIf="overlayType === 'newFolder'"
-              [width]="'289px'"
-              [maxLength]="17"
-              [input_label]="'Folder Name'"
-              [input_value]="(folderName !== 'New Folder' ? folderName : '')"
-              (onUpdate)="folderName = $event === '' ? 'New Folder': $event; requireValidator(folderName) ? readyRoomsToEdit=[] : readyRoomsToEdit"
-              [formGroup]="form"
-              [isFocus]="overlayType === 'newFolder' && !isEditFolder"
-              [controlName]="form.get('folderName')"
-          >
-          </app-input>
-        </div>
-        <div class="room-number" *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'">
-          <app-input
-                  [width]="'103px'"
-                  [maxLength]="5"
-                  [input_label]="'Room Number'"
-                  [input_value]="roomNumber ? roomNumber : ''"
-                  (onUpdate)="roomNumber=$event"
-                  [formGroup]="form"
-                  [controlName]="form.get('roomNumber')"
-          >
-          </app-input>
-        </div>
-      </div>
-      <div class="teacher-search" *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'">
+      <div [@NextStep]="{ value: '', params: frameMotion$ | async}"
+           *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'">
+        <div class="teacher-search">
+
           <div class="teacher-title">
-              <span [ngStyle]="{'color': !selectedTeachers.length ? '#7F879D' : ' #1F195E'}">Teachers in Room</span>
-              <div class="tooltip-container">
-                  <img
-                     [matTooltip]="tooltipText.teachers"
-                     matTooltipClass="tooltip"
-                     (mouseover)="openInfo({event: $event, action: 'teachers' })"
-                     (mouseleave)="closeInfo('teachers')"
-                     class="support-icon"
-                     [src]="(!selectedTeachers.length || isActiveIcon.teachers ? './assets/Support (Blue-Gray).svg' : './assets/Support (Navy).svg') | resolveAsset">
-                <div class="arrow-down-container">
-                    <div class="arrow-down"></div>
-                </div>
+            <span [ngStyle]="{'color': !selectedTeachers.length ? '#7F879D' : ' #1F195E'}">Teachers in Room</span>
+            <div class="tooltip-container">
+              <img
+                [matTooltip]="tooltipText.teachers"
+                matTooltipClass="tooltip"
+                (mouseover)="openInfo({event: $event, action: 'teachers' })"
+                (mouseleave)="closeInfo('teachers')"
+                class="support-icon"
+                [src]="(!selectedTeachers.length || isActiveIcon.teachers ? './assets/Support (Blue-Gray).svg' : './assets/Support (Navy).svg') | resolveAsset">
+              <div class="arrow-down-container">
+                <div class="arrow-down"></div>
               </div>
+            </div>
           </div>
-          <div class="search-field" style="display: flex" *ngIf="showProfileSearch || true">
-              <div class="ds-w-100">
-                <app-student-search
-                                     [selectedStudents]="selectedTeachers"
-                                     [chipsMode]="true"
-                                     [focused]="true"
-                                     [role]="'_profile_teacher'"
-                                     [rollUpAfterSelection]="true"
-                                     [cancelButton]="true"
-                                     [placeholder]="'Search Teachers'"
-                                     (onUpdate)="selectTeacherEvent($event)"
-                ></app-student-search>
-              </div>
+          <div class="search-field" style="display: flex">
+            <div class="ds-w-100">
+              <app-student-search
+                [selectedStudents]="selectedTeachers"
+                [chipsMode]="true"
+                [focused]="true"
+                [role]="'_profile_teacher'"
+                [dummyRoleText]="'teachers'"
+                [rollUpAfterSelection]="true"
+                [cancelButton]="true"
+                [placeholder]="'Search Teachers'"
+                (onUpdate)="selectTeacherEvent($event)"
+              ></app-student-search>
+            </div>
           </div>
+        </div>
       </div>
-      <div style="display: flex; margin-top: 16px; margin-bottom: 13px; min-height: 103px;"
+
+      <div [@NextStep]="{ value: '', params: frameMotion$ | async}"
            *ngIf="(overlayType === 'newRoom'
            || overlayType === 'newRoomInFolder'
            || overlayType === 'settingsRooms'
            || overlayType === 'edit'
-           || overlayType === 'editRoom') && !showSearchTeacherOptions"
+           || overlayType === 'editRoom')"
       >
-        <div class="travel-picker">
-          <div class="toggle-label">
-            <span [ngStyle]="{'color': !travelType ? '#7F879D' : ' #1F195E'}">Travel Type</span>
+        <div class="travel-settings">
+
+          <div class="travel-picker">
+            <div class="toggle-label">
+              <span [ngStyle]="{'color': !travelType ? '#7F879D' : ' #1F195E'}">Travel Type</span>
               <div class="tooltip-container">
-                  <img
-                    [matTooltip]="tooltipText.travel"
-                    matTooltipClass="tooltip"
-                    (mouseover)="openInfo({event: $event, action: 'travel' })"
-                    (mouseleave)="closeInfo('travel')"
-                    class="support-icon"
-                    [src]="(!travelType || isActiveIcon.travel ? './assets/Support (Blue-Gray).svg' : './assets/Support (Navy).svg') | resolveAsset">
-                  <div class="arrow-down-container">
-                      <div class="arrow-down"></div>
-                  </div>
+                <img
+                  [matTooltip]="tooltipText.travel"
+                  matTooltipClass="tooltip"
+                  (mouseover)="openInfo({event: $event, action: 'travel' })"
+                  (mouseleave)="closeInfo('travel')"
+                  class="support-icon"
+                  [src]="(!travelType || isActiveIcon.travel ? './assets/Support (Blue-Gray).svg' : './assets/Support (Navy).svg') | resolveAsset">
+                <div class="arrow-down-container">
+                  <div class="arrow-down"></div>
+                </div>
               </div>
-          </div>
+            </div>
             <app-toggle-picker
-                    [fontSize]="'13px'"
-                    (onSelect)="travelUpdate($event)"
-                    (onDirty)="isDirtyTravel=$event"
-                    [noSelected]="inactiveTogglePickerSettings"
-                    [currentChoose]="travelType ? travelType : []"
-                    [choices]="['Round-trip', 'One-way' , 'Both']"
-                    [width]="'280px'"
-                    [height]="'25px'"
-                    [altColor]="'#1f195e'"
-                    [border]="'#1f195e'">
+              [fontSize]="'13px'"
+              (onSelect)="travelUpdate($event)"
+              (onDirty)="isDirtyTravel=$event"
+              [noSelected]="inactiveTogglePickerSettings"
+              [currentChoose]="travelType ? travelType : []"
+              [choices]="['Round-trip', 'One-way' , 'Both']"
+              [width]="'280px'"
+              [height]="'25px'"
+              [altColor]="'#1f195e'"
+              [border]="'#1f195e'">
             </app-toggle-picker>
-        </div>
-        <div class="time-limit"
-             *ngIf="overlayType === 'newRoom'
+          </div>
+          <div class="time-limit"
+               *ngIf="overlayType === 'newRoom'
              || overlayType === 'newRoomInFolder'
              || overlayType === 'settingsRooms'
              || overlayType === 'edit'
              || overlayType === 'editRoom'"
-        >
-          <app-input
-                  [width]="'103px'"
-                  [maxLength]="2"
-                  [tooltipText]="tooltipText.timeLimit"
-                  (over)="openInfo($event)"
-                  (leave)="closeInfo($event)"
-                  [input_label]="'Time Limit'"
-                  [input_value]="timeLimit ? timeLimit : ''"
-                  [placeholder]="'minutes'"
-                  (onUpdate)="onUpdate($event)"
-                  [rightIcon]="(isActiveIcon.timeLimit ? './assets/Support (Blue-Gray).svg' : './assets/Support (Navy).svg')"
-                  [formGroup]="form"
-                  [controlName]="form.get('timeLimit')"
           >
+            <app-input
+              [width]="'103px'"
+              [maxLength]="2"
+              [tooltipText]="tooltipText.timeLimit"
+              (over)="openInfo($event)"
+              (leave)="closeInfo($event)"
+              [input_label]="'Time Limit'"
+              [input_value]="timeLimit ? timeLimit : ''"
+              [placeholder]="'minutes'"
+              (onUpdate)="onUpdate($event)"
+              [rightIcon]="(isActiveIcon.timeLimit ? './assets/Support (Blue-Gray).svg' : './assets/Support (Navy).svg')"
+              [formGroup]="form"
+              [controlName]="form.get('timeLimit')"
+            >
 
-          </app-input>
+            </app-input>
+          </div>
         </div>
       </div>
-      <div class="restriction-settings" [ngStyle]="{'margin-bottom': (overlayType === 'newRoomInFolder' ? '35px' : 'none')}"
+      <div [@NextStep]="{ value: '', params: frameMotion$ | async}"
            *ngIf="(overlayType === 'newRoom'
            || overlayType === 'newRoomInFolder'
            || overlayType === 'settingsRooms'
            || overlayType === 'edit'
-           || overlayType === 'editRoom') && !showSearchTeacherOptions"
-      >
-        <div class="restriction-picker-1">
-          <div class="toggle-label">
-            <span [ngStyle]="{'color': nowRestriction === undefined ? '#7F879D' : ' #1F195E'}">Restriction For Now</span>
-              <div class="tooltip-container">
-                  <img
-                    [matTooltip]="tooltipText.restriction"
-                    matTooltipClass="tooltip"
-                    (mouseover)="openInfo({event: $event, action: 'restriction' })"
-                    (mouseleave)="closeInfo('restriction')"
-                    class="support-icon"
-                    [src]="((nowRestriction === undefined) || isActiveIcon.restriction ? './assets/Support (Blue-Gray).svg' : './assets/Support (Navy).svg') | resolveAsset">
-                  <div class="arrow-down-container">
-                      <div class="arrow-down"></div>
-                  </div>
-              </div>
-          </div>
-            <app-toggle-picker
-                    [fontSize]="'13px'"
-                    (onSelect)="nowRestrictionUpdate($event)"
-                    (onDirty)="isDirtyNowRestriction=$event"
-                    [noSelected]="inactiveTogglePickerSettings"
-                    [currentChoose]="nowRestriction !== undefined ? nowRestriction : undefined"
-                    [choices]="['Unrestricted', 'Restricted']"
-                    [width]="'187px'"
-                    [height]="'25px'"
-                    [altColor]="'#1f195e'"
-                    [border]="'#1f195e'">
-            </app-toggle-picker>
-        </div>
-        <div class="restriction-picker-2">
+           || overlayType === 'editRoom')">
+
+        <div class="restriction-settings" [ngStyle]="{'margin-bottom': (overlayType === 'newRoomInFolder' ? '35px' : 'none')}">
+          <div class="restriction-picker-1">
             <div class="toggle-label">
-                <span [ngStyle]="{'color': futureRestriction === undefined ? '#7F879D' : ' #1F195E'}">Restriction For Future</span>
-                <div class="tooltip-container">
-                    <img
-                      [matTooltip]="tooltipText.scheduling_restricted"
-                      matTooltipClass="tooltip"
-                      (mouseover)="openInfo({event: $event, action: 'scheduling_restricted' })"
-                      (mouseleave)="closeInfo('scheduling_restricted')"
-                      class="support-icon"
-                      [src]="((futureRestriction === undefined) || isActiveIcon.scheduling_restricted ? './assets/Support (Blue-Gray).svg' : './assets/Support (Navy).svg') | resolveAsset">
-                    <div class="arrow-down-container">
-                        <div class="arrow-down"></div>
-                    </div>
+              <span [ngStyle]="{'color': nowRestriction === undefined ? '#7F879D' : ' #1F195E'}">Restriction For Now</span>
+              <div class="tooltip-container">
+                <img
+                  [matTooltip]="tooltipText.restriction"
+                  matTooltipClass="tooltip"
+                  (mouseover)="openInfo({event: $event, action: 'restriction' })"
+                  (mouseleave)="closeInfo('restriction')"
+                  class="support-icon"
+                  [src]="((nowRestriction === undefined) || isActiveIcon.restriction ? './assets/Support (Blue-Gray).svg' : './assets/Support (Navy).svg') | resolveAsset">
+                <div class="arrow-down-container">
+                  <div class="arrow-down"></div>
                 </div>
+              </div>
             </div>
             <app-toggle-picker
-                    [fontSize]="'13px'"
-                    (onSelect)="futureRestrictionUpdate($event)"
-                    (onDirty)="isDirtyFutureRestriction=$event"
-                    [noSelected]="inactiveTogglePickerSettings"
-                    [currentChoose]="futureRestriction !== undefined ? futureRestriction : undefined"
-                    [choices]="['Unrestricted', 'Restricted']"
-                    [width]="'187px'"
-                    [height]="'25px'"
-                    [altColor]="'#1f195e'"
-                    [border]="'#1f195e'">
+              [fontSize]="'13px'"
+              (onSelect)="nowRestrictionUpdate($event)"
+              (onDirty)="isDirtyNowRestriction=$event"
+              [noSelected]="inactiveTogglePickerSettings"
+              [currentChoose]="nowRestriction !== undefined ? nowRestriction : undefined"
+              [choices]="['Unrestricted', 'Restricted']"
+              [width]="'187px'"
+              [height]="'25px'"
+              [altColor]="'#1f195e'"
+              [border]="'#1f195e'">
             </app-toggle-picker>
+          </div>
+          <div class="restriction-picker-2">
+            <div class="toggle-label">
+              <span [ngStyle]="{'color': futureRestriction === undefined ? '#7F879D' : ' #1F195E'}">Restriction For Future</span>
+              <div class="tooltip-container">
+                <img
+                  [matTooltip]="tooltipText.scheduling_restricted"
+                  matTooltipClass="tooltip"
+                  (mouseover)="openInfo({event: $event, action: 'scheduling_restricted' })"
+                  (mouseleave)="closeInfo('scheduling_restricted')"
+                  class="support-icon"
+                  [src]="((futureRestriction === undefined) || isActiveIcon.scheduling_restricted ? './assets/Support (Blue-Gray).svg' : './assets/Support (Navy).svg') | resolveAsset">
+                <div class="arrow-down-container">
+                  <div class="arrow-down"></div>
+                </div>
+              </div>
+            </div>
+            <app-toggle-picker
+              [fontSize]="'13px'"
+              (onSelect)="futureRestrictionUpdate($event)"
+              (onDirty)="isDirtyFutureRestriction=$event"
+              [noSelected]="inactiveTogglePickerSettings"
+              [currentChoose]="futureRestriction !== undefined ? futureRestriction : undefined"
+              [choices]="['Unrestricted', 'Restricted']"
+              [width]="'187px'"
+              [height]="'25px'"
+              [altColor]="'#1f195e'"
+              [border]="'#1f195e'">
+            </app-toggle-picker>
+          </div>
         </div>
       </div>
+      <div *ngIf="overlayType === 'newFolder' && folderRoomsLoaded" [@NextStep]="{ value: '', params: frameMotion$ | async}">
 
-      <div class="rooms-in-folder" *ngIf="overlayType === 'newFolder' && folderRoomsLoaded">
-        <div class="content-buttons-in-folder" *ngIf="readyRoomsToEdit.length <= 0 && !selectedRooms.length">
-          <div class="button-in-folder" *ngFor="let button of buttonsInFolder">
-            <app-gradient-button
-                    [minHeight]="'35px'"
-                    [style.width]="'120px'"
-                    [cursor]="'pointer'"
-                    [fontSize]="'12px'"
-                    (buttonClick)="setLocation(button.location)"
-                    [leftIcon]="button.icon"
-                    [leftImageWidth]="'10px'"
-                    [leftImageHeight]="'10px'"
-            >
-              {{ button.title }}</app-gradient-button>
-          </div>
-        </div>
-        <div class="content-buttons-in-folder" *ngIf="readyRoomsToEdit.length > 0 && !selectedRooms.length">
-          <div class="button-in-folder" *ngFor="let button of buttonsWithSelectedRooms">
-            <app-gradient-button
-                    [hoverColor]="button.hover"
-                    [textColor]="button.textColor"
-                    [gradient]="button.color"
-                    [cursor]="'pointer'"
-                    (buttonClick)="onEditRooms(button.action)"
-            >
-              {{ button.title }}</app-gradient-button>
-          </div>
-        </div>
-        <div class="sticky" *ngIf="selectedRooms.length">
-            <div class="rooms-in-folder-title">
-                <div class="all-rooms-checkbox">
-                    <mat-checkbox style="margin-left: 12px; margin-right: 15px"
-                                  [checked]="readyRoomsToEdit.length === selectedRooms.length"
-                                  [indeterminate]="readyRoomsToEdit.length && readyRoomsToEdit.length < selectedRooms.length"
-                                  (change)="selectedRoomsEvent($event, null, true)"
-                    >
-                    </mat-checkbox>
-                </div>
-                <div class="rooms-length-title">
-                    Rooms in Folder ({{ selectedRooms.length }})
-                </div>
-            </div>
-            <mat-divider style="margin-top: 9px"></mat-divider>
-        </div>
-
-        <div class="rooms-in-folder-content">
-          <div class="not-rooms-in-folder" *ngIf="!selectedRooms.length && folderRoomsLoaded">
-              <img [src]="'./assets/emptyStates/undraw_add_file2_gvbb.svg' | resolveAsset" alt="emptyState">
-              <div class="emptyText">Add rooms to the folder.</div>
-          </div>
-
-          <div class="rooms-list" #roomList *ngIf="selectedRooms.length > 0">
-            <mat-list>
-              <div>
-                <!--<div class="room">-->
-                  <!--<mat-checkbox style="margin-left: 12px"-->
-                                <!--[checked]="readyRoomsToEdit.length === selectedRooms.length"-->
-                                <!--[indeterminate]="readyRoomsToEdit.length && readyRoomsToEdit.length < selectedRooms.length"-->
-                                <!--(change)="selectedRoomsEvent($event, null, true)"-->
-                  <!--&gt;-->
-                  <!--</mat-checkbox>-->
-                  <!--<div class="room-edit">-->
-                    <!--<mat-list-item>All...</mat-list-item>-->
-                  <!--</div>-->
-                <!--</div>-->
-                <!--<mat-divider></mat-divider>-->
-              </div>
-              <div *ngFor="let room of sortSelectedRooms">
-                <div class="room">
-                  <mat-checkbox style="margin-left: 12px" [checked]="isSelected(room)" (change)="selectedRoomsEvent($event, room)">
-                  </mat-checkbox>
-                  <div class="room-edit" (click)="setToEditRoom(room)">
-                    <mat-list-item>{{ room.title }}</mat-list-item>
-                    <img draggable="false" [src]="'./assets/Chevron Right (Blue-Gray).svg' | resolveAsset">
-                  </div>
-                </div>
-                <mat-divider></mat-divider>
-              </div>
-            </mat-list>
-          </div>
-
-
-          <div class="content-buttons-in-folder button-column" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length <= 0 && selectedRooms.length">
-           <div class="sticky-button">
-            <div class="button-in-folder gd-button" *ngFor="let button of buttonsInFolder">
+        <div class="rooms-in-folder">
+          <div class="content-buttons-in-folder" *ngIf="readyRoomsToEdit.length <= 0 && !selectedRooms.length">
+            <div class="button-in-folder" *ngFor="let button of buttonsInFolder">
               <app-gradient-button
-                      [minHeight]="'35px'"
-                      [style.width]="'120px'"
-                      [cursor]="'pointer'"
-                      [fontSize]="'12px'"
-                      (buttonClick)="setLocation(button.location)"
-                      [leftIcon]="button.icon"
-                      [leftImageWidth]="'10px'"
-                      [leftImageHeight]="'10px'"
+                [minHeight]="'35px'"
+                [style.width]="'120px'"
+                [cursor]="'pointer'"
+                [fontSize]="'12px'"
+                (buttonClick)="setLocation(button.location)"
+                [leftIcon]="button.icon"
+                [leftImageWidth]="'10px'"
+                [leftImageHeight]="'10px'"
               >
                 {{ button.title }}</app-gradient-button>
             </div>
           </div>
+          <div class="content-buttons-in-folder" *ngIf="readyRoomsToEdit.length > 0 && !selectedRooms.length">
+            <div class="button-in-folder" *ngFor="let button of buttonsWithSelectedRooms">
+              <app-gradient-button
+                [hoverColor]="button.hover"
+                [textColor]="button.textColor"
+                [gradient]="button.color"
+                [cursor]="'pointer'"
+                (buttonClick)="onEditRooms(button.action)"
+              >
+                {{ button.title }}</app-gradient-button>
+            </div>
           </div>
-          <div class="content-buttons-in-folder button-column" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length > 0 && selectedRooms.length">
-               <div class="sticky-button">
-                    <div class="button-in-folder gd-button" *ngFor="let button of buttonsWithSelectedRooms">
-                      <app-gradient-button
-                              [minHeight]="'35px'"
-                              [hoverColor]="button.hover"
-                              [gradient]="button.color"
-                              [style.width]="button.width"
-                              [textColor]="button.textColor"
-                              [cursor]="'pointer'"
-                              [fontSize]="'12px'"
-                              (buttonClick)="onEditRooms(button.action)"
-                      >
-                        {{ button.title }}</app-gradient-button>
+          <div class="sticky" *ngIf="selectedRooms.length">
+            <div class="rooms-in-folder-title">
+              <div class="all-rooms-checkbox">
+                <mat-checkbox style="margin-left: 12px; margin-right: 15px"
+                              [checked]="readyRoomsToEdit.length === selectedRooms.length"
+                              [indeterminate]="readyRoomsToEdit.length && readyRoomsToEdit.length < selectedRooms.length"
+                              (change)="selectedRoomsEvent($event, null, true)"
+                >
+                </mat-checkbox>
+              </div>
+              <div class="rooms-length-title">
+                Rooms in Folder ({{ selectedRooms.length }})
+              </div>
+            </div>
+            <mat-divider style="margin-top: 9px"></mat-divider>
+          </div>
+
+          <div class="rooms-in-folder-content">
+            <div class="not-rooms-in-folder" *ngIf="!selectedRooms.length && folderRoomsLoaded">
+              <img [src]="'./assets/emptyStates/undraw_add_file2_gvbb.svg' | resolveAsset" alt="emptyState">
+              <div class="emptyText">Add rooms to the folder.</div>
+            </div>
+            <div class="rooms-list" #roomList *ngIf="selectedRooms.length > 0">
+              <mat-list>
+                <div>
+                  <!--<div class="room">-->
+                  <!--<mat-checkbox style="margin-left: 12px"-->
+                  <!--[checked]="readyRoomsToEdit.length === selectedRooms.length"-->
+                  <!--[indeterminate]="readyRoomsToEdit.length && readyRoomsToEdit.length < selectedRooms.length"-->
+                  <!--(change)="selectedRoomsEvent($event, null, true)"-->
+                  <!--&gt;-->
+                  <!--</mat-checkbox>-->
+                  <!--<div class="room-edit">-->
+                  <!--<mat-list-item>All...</mat-list-item>-->
+                  <!--</div>-->
+                  <!--</div>-->
+                  <!--<mat-divider></mat-divider>-->
+                </div>
+                <div *ngFor="let room of sortSelectedRooms">
+                  <div class="room">
+                    <mat-checkbox style="margin-left: 12px" [checked]="isSelected(room)" (change)="selectedRoomsEvent($event, room)">
+                    </mat-checkbox>
+                    <div class="room-edit" (click)="setToEditRoom(room)">
+                      <mat-list-item>{{ room.title }}</mat-list-item>
+                      <img draggable="false" [src]="'./assets/Chevron Right (Blue-Gray).svg' | resolveAsset">
                     </div>
-               </div>
+                  </div>
+                  <mat-divider></mat-divider>
+                </div>
+              </mat-list>
+            </div>
+            <div class="content-buttons-in-folder button-column" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length <= 0 && selectedRooms.length">
+              <div class="sticky-button">
+                <div class="button-in-folder gd-button" *ngFor="let button of buttonsInFolder">
+                  <app-gradient-button
+                    [minHeight]="'35px'"
+                    [style.width]="'120px'"
+                    [cursor]="'pointer'"
+                    [fontSize]="'12px'"
+                    (buttonClick)="stickyButtonClick(setLocation, button.location)"
+                    [leftIcon]="button.icon"
+                    [leftImageWidth]="'10px'"
+                    [leftImageHeight]="'10px'"
+                  >
+                    {{ button.title }}</app-gradient-button>
+                </div>
+              </div>
+            </div>
+            <div class="content-buttons-in-folder button-column" *ngIf="!requireValidator(folderName) && readyRoomsToEdit.length > 0 && selectedRooms.length">
+              <div class="sticky-button">
+                <div class="button-in-folder gd-button" *ngFor="let button of buttonsWithSelectedRooms">
+                  <app-gradient-button
+                    [minHeight]="'35px'"
+                    [hoverColor]="button.hover"
+                    [gradient]="button.color"
+                    [style.width]="button.width"
+                    [textColor]="button.textColor"
+                    [cursor]="'pointer'"
+                    [fontSize]="'12px'"
+                    (buttonClick)="stickyButtonClick(onEditRooms, button.action)"
+                  >
+                    {{ button.title }}
+                  </app-gradient-button>
+                </div>
+              </div>
+            </div>
           </div>
-
-
+        </div>
+      </div>
+      <div [@NextStep]="{ value: '', params: frameMotion$ | async}"
+        *ngIf="overlayType === 'addExisting'">
+        <div class="existing-rooms">
+          <app-add-existing-room
+            [pinnables]="pinnables$ | async"
+            [roomName]="roomName"
+            [roomsInFolder]="selectedRoomsInFolder"
+            (back)="back(false);"
+            (save)="addToFolder($event)">
+          </app-add-existing-room>
         </div>
       </div>
 
-        <app-add-existing-room
-                *ngIf="overlayType === 'addExisting'"
-                [pinnables]="pinnables$ | async"
-                [roomName]="roomName"
-                [roomsInFolder]="selectedRoomsInFolder"
-                (back)="setLocation('newFolder')"
-                (save)="addToFolder($event)">
-        </app-add-existing-room>
+      <div [@NextStep]="{ value: '', params: frameMotion$ | async}"
+           *ngIf="overlayType === 'importRooms'"
+      >
+        <div class="import-rooms-content">
+          <div class="import-screen" *ngIf="getRoomImportScreen() === 1">
+            <div class="ds-w-100" [ngClass]="{'ds-flex-center-between': !uploadingProgress.inProgress && !uploadingProgress.completed}">
+              <div>
+                <img [ngClass]="{'slide-center': uploadingProgress.inProgress || uploadingProgress.completed}" [src]="'./assets/emptyStates/upload-file.svg'" alt="upload-file">
+              </div>
+              <div class="template-and-info" *ngIf="!uploadingProgress.inProgress && !uploadingProgress.completed">
 
+                <div class="import-rooms-info">
+                  Import a list of room names, room numbers, and teachers in room from an Excel spreadsheet or CSV.
+                </div>
+                <div class="ds-flex-center-center ds-pt-15">
 
-       <div class="import-rooms-content" *ngIf="overlayType === 'importRooms'">
-         <div class="import-screen" *ngIf="getRoomImportScreen() === 1">
-           <div class="ds-w-100" [ngClass]="{'ds-flex-center-between': !uploadingProgress.inProgress && !uploadingProgress.completed}">
-             <div>
-               <img [ngClass]="{'slide-center': uploadingProgress.inProgress || uploadingProgress.completed}" [src]="'./assets/emptyStates/upload-file.svg'" alt="upload-file">
-             </div>
-             <div class="template-and-info" *ngIf="!uploadingProgress.inProgress && !uploadingProgress.completed">
+                  <app-gradient-button
+                    [size]="'small'"
+                    [gradient]="'#FFFFFF,#FFFFFF'"
+                    [buttonLink]="'./assets/xlsx/Rooms Configuration.xlsx'"
+                    [linkType]="'_self'"
+                    [download]="true"
+                    [hoverColor]="'#FFFFFF'"
+                    [textColor]="'#1E194F'"
+                    [leftIcon]="'./assets/Download (Navy).svg'"
+                    [text]="'Download Template'"
+                    [cursor]="'pointer'"
+                  >
+                  </app-gradient-button>
+                </div>
+              </div>
 
-               <div class="import-rooms-info">
-                 Import a list of room names, room numbers, and teachers in room from an Excel spreadsheet or CSV.
-               </div>
-               <div class="ds-flex-center-center ds-pt-15">
+            </div>
+            <div>
+            </div>
+            <!--<input type="file" formControlName="file"  #file style="display: none"/>-->
+            <div #dropArea class="uploading-area" *ngIf="!uploadingProgress.inProgress && !uploadingProgress.completed">
+              <span class="ds-pb-10">Drop spreadsheet here</span>
+              <span [style.text-decoration]="'underline'" class="choose-file-inline" (click)="file.click()">Choose file</span>
+            </div>
+            <div class=""  *ngIf="uploadingProgress.inProgress || uploadingProgress.completed">
+              <div class="uploading-progress" #uploadingProgress
+                   [style.background-image]="getProgress(uploadingProgress)">
+                <span>Importing Rooms</span>
+              </div>
+              <div class="ds-flex-column ds-flex-center-center ds-cell-text-2 ds-mt-15">
+                <span class="ds-pb-5">{{importedRooms.length}} Rooms</span>
+                <span>{{unknownEmails.length}} issues</span>
+              </div>
+            </div>
 
-                 <app-gradient-button
-                   [size]="'small'"
-                   [gradient]="'#FFFFFF,#FFFFFF'"
-                   [buttonLink]="'./assets/xlsx/Rooms Configuration.xlsx'"
-                   [linkType]="'_self'"
-                   [download]="true"
-                   [hoverColor]="'#FFFFFF'"
-                   [textColor]="'#1E194F'"
-                   [leftIcon]="'./assets/Download (Navy).svg'"
-                   [text]="'Download Template'"
-                   [cursor]="'pointer'"
-                 >
-                 </app-gradient-button>
-               </div>
-             </div>
+          </div>
+          <input type="file" formControlName="file"  #file style="display: none"/>
 
-           </div>
-           <div>
-           </div>
-           <!--<input type="file" formControlName="file"  #file style="display: none"/>-->
-           <div #dropArea class="uploading-area" *ngIf="!uploadingProgress.inProgress && !uploadingProgress.completed">
-             <span class="ds-pb-10">Drop spreadsheet here</span>
-             <span [style.text-decoration]="'underline'" class="choose-file-inline" (click)="file.click()">Choose file</span>
-           </div>
-           <div class=""  *ngIf="uploadingProgress.inProgress || uploadingProgress.completed">
-             <div class="uploading-progress" #uploadingProgress
-                  [style.background-image]="getProgress(uploadingProgress)">
-               <span>Importing Rooms</span>
-             </div>
-             <div class="ds-flex-column ds-flex-center-center ds-cell-text-2 ds-mt-15">
-               <span class="ds-pb-5">{{importedRooms.length}} Rooms</span>
-               <span>{{unknownEmails.length}} issues</span>
-             </div>
-           </div>
+          <div class="issues-screen ds-p-25" *ngIf="getRoomImportScreen() === 2">
 
-         </div>
-         <input type="file" formControlName="file"  #file style="display: none"/>
+            <div class="issues-container">
+              <div class="ds-dialog-heading ds-pt-10 ds-pb-15">Review Issues ({{unknownEmails.length}})</div>
+              <div *ngFor="let issue of unknownEmails" class="ds-cell-text-2 ds-pb-5">
+                Room: {{issue.room.title}}, could not find teacher with email {{issue.email}}
+              </div>
+            </div>
+            <div class="issues-footer ds-flex-center-between">
 
-         <div class="issues-screen ds-p-25" *ngIf="getRoomImportScreen() === 2">
+              <div>
+                <span class="ds-dialog-bold-text">Need help?</span> <br>
+                <span class="ds-cell-text-2 ds-pt-5">support@smartpass.app</span>
+              </div>
+              <app-gradient-button
+                (buttonClick)="setLocation('settingsRooms')"
+              >
+                Next
+              </app-gradient-button>
+            </div>
+          </div>
 
-           <div class="issues-container">
-             <div class="ds-dialog-heading ds-pt-10 ds-pb-15">Review Issues ({{unknownEmails.length}})</div>
-             <div *ngFor="let issue of unknownEmails" class="ds-cell-text-2 ds-pb-5">
-               Room: {{issue.room.title}}, could not find teacher with email {{issue.email}}
-             </div>
-           </div>
-           <div class="issues-footer ds-flex-center-between">
-
-             <div>
-               <span class="ds-dialog-bold-text">Need help?</span> <br>
-               <span class="ds-cell-text-2 ds-pt-5">support@smartpass.app</span>
-             </div>
-             <app-gradient-button
-               (buttonClick)="setLocation('settingsRooms')"
-             >
-               Next
-             </app-gradient-button>
-           </div>
-         </div>
-
+        </div>
       </div>
-        <div class="advanced-options"
+        <div class="advanced-options" #advancedOptionsRef
              *ngIf="(overlayType === 'editRoom' ||
-             (editRoomInFolder)) &&!showSearchTeacherOptions ||
+             (editRoomInFolder)) ||
              overlayType === 'edit' ||
              (overlayType === 'settingsRooms') || overlayType === 'newRoom'">
             <app-advanced-options
@@ -544,13 +572,13 @@
                     [nowRestricted]="nowRestriction"
                     [futureRestricted]="futureRestriction"
                     [data]="advOptState"
-                    (openedOptions)="advOptOpen"
+                    (openedOptions)="advancedOptionsOpened($event, advancedOptionsRef)"
                     (resultOptions)="advancedOptions($event)"
             ></app-advanced-options>
         </div>
 
         <div class="footer-delete-button"
-          *ngIf="(overlayType === 'editRoom' || (editRoomInFolder)) && !showSearchTeacherOptions && !hideDeleteButton"
+          *ngIf="(overlayType === 'editRoom' || (editRoomInFolder)) && !hideDeleteButton"
           [style.margin-top]="overlayType === 'editRoom' ? '30px' : '50px'"
         >
             <app-gradient-button

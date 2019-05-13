@@ -1,10 +1,8 @@
 import {Component, ElementRef, HostListener, Inject, OnInit, ViewChild} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
-
 import {BehaviorSubject, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-
 import { Pinnable } from '../../models/Pinnable';
 import * as _ from 'lodash';
 import { User } from '../../models/User';
@@ -18,6 +16,8 @@ import {LocationsService} from '../../services/locations.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {filter} from 'rxjs/internal/operators';
 import {OptionState} from './advanced-options/advanced-options.component';
+import {NextStep} from '../../animations';
+import {CreateFormService} from '../../create-hallpass-forms/create-form.service';
 
 export interface FormState {
     roomName?: string;
@@ -37,6 +37,8 @@ export interface FormState {
   selector: 'app-overlay-container',
   templateUrl: './overlay-container.component.html',
   styleUrls: ['./overlay-container.component.scss'],
+  animations: [NextStep]
+
 })
 export class OverlayContainerComponent implements OnInit {
 
@@ -75,14 +77,12 @@ export class OverlayContainerComponent implements OnInit {
   @ViewChild('dropArea') dropArea: ElementRef;
 
   @ViewChild('file') set fileRef(fileRef: ElementRef) {
-    // selectedFile
     if (fileRef && fileRef.nativeElement) {
       console.log(this.selectedFile);
       this.selectedFile = fileRef;
       fromEvent(this.selectedFile.nativeElement , 'change')
         .pipe(
           switchMap((evt: Event) => {
-            // this.setLocation('settingsRooms');
             this.uploadingProgress.inProgress = true;
 
             const FR = new FileReader();
@@ -116,7 +116,6 @@ export class OverlayContainerComponent implements OnInit {
             });
             const groupedRooms = _.groupBy(rows, (r: any) => r.title);
             let normalizedRooms = [];
-            console.log(groupedRooms);
 
             for (const key in groupedRooms) {
               if (groupedRooms[key].length > 1) {
@@ -130,18 +129,14 @@ export class OverlayContainerComponent implements OnInit {
                 normalizedRooms = normalizedRooms.concat(groupedRooms[key]);
               }
             }
-            console.log(normalizedRooms);
             return normalizedRooms;
           }),
           switchMap((_rooms: any[]): Observable<any[]> => {
-            console.log(_rooms)
             return this.userService.getUsersList('_profile_teacher')
               .pipe(
                 map((teachers: any[]) => {
-
                   return _rooms.map((_room) => {
                     const teachersIdArray = [];
-                    const unknownArray = [];
 
                     _room.teachers.forEach((_teacherEmail) => {
                       const existAndAttached = teachers.find(_teacher =>  _teacher.primary_email === _teacherEmail );
@@ -154,7 +149,6 @@ export class OverlayContainerComponent implements OnInit {
                         });
                       }
                     });
-
                     _room.teachers = teachersIdArray;
                     return _room;
                   });
@@ -162,8 +156,6 @@ export class OverlayContainerComponent implements OnInit {
           }),
         )
         .subscribe((rooms) => {
-          console.log(rooms);
-          console.log(this.unknownEmails);
           setTimeout(() => {
             this.uploadingProgress.inProgress = false;
             this.uploadingProgress.completed = true;
@@ -177,7 +169,6 @@ export class OverlayContainerComponent implements OnInit {
   selectedRooms = [];
   selectedRoomsInFolder: Pinnable[] = [];
   selectedTeachers: User[] = [];
-  selectedTeachersUntouched: User[];
   readyRoomsToEdit: Pinnable[] = [];
   pinnable: Pinnable;
   pinnables$: Observable<Pinnable[]>;
@@ -225,8 +216,6 @@ export class OverlayContainerComponent implements OnInit {
   advOptValid: boolean = false;
   advOptOpen: boolean;
 
-  showSearchTeacherOptions: boolean;
-
   newRoomsInFolder = [];
 
   folderRoomsLoaded: boolean;
@@ -268,7 +257,8 @@ export class OverlayContainerComponent implements OnInit {
     inProgress: false,
     completed: false,
     percent: 0
-};
+  };
+  frameMotion$: BehaviorSubject<any>;
 
 
   @HostListener('scroll', ['$event'])
@@ -277,20 +267,17 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   constructor(
-      private dialogRef: MatDialogRef<OverlayContainerComponent>,
       @Inject(MAT_DIALOG_DATA) public dialogData: any,
+      private dialogRef: MatDialogRef<OverlayContainerComponent>,
       private userService: UserService,
       private http: HttpService,
       private locationService: LocationsService,
       private hallPassService: HallPassesService,
-      private elRef: ElementRef,
-      public sanitizer: DomSanitizer
+      private formService: CreateFormService,
+      public sanitizer: DomSanitizer,
 
-  ) {
-    // this.selectedTeachersUntouched = _.cloneDeep(this.selectedTeachers);
-    // this.selectedTeachersUntouched.splice(0, 1);
-    // console.log(_.isEqual(this.selectedTeachers, this.selectedTeachersUntouched), this.selectedTeachers, this.selectedTeachersUntouched);
-  }
+
+  ) {}
 
   getHeaderData() {
     let colors;
@@ -342,23 +329,40 @@ export class OverlayContainerComponent implements OnInit {
     this.gradientColor = 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
 
+  private oneOf(entity: any, compareWith: any[]) {
+    return compareWith.find(item => entity === item);
+  }
+  private allOf(boolSet: any[]) {
+    return boolSet.every(item => !!item);
+
+  }
+
   get isValidForm() {
-      return this.form.get('roomName').valid &&
-             this.form.get('roomNumber').valid &&
-             this.form.get('timeLimit').valid;
+      return this.allOf([
+                        this.form.get('roomName').valid,
+                        this.form.get('roomNumber').valid,
+                        this.form.get('timeLimit').valid
+      ]);
   }
 
   get showPublishNewRoom() {
-      return this.form.get('roomName').valid &&
-             this.form.get('roomNumber').valid &&
-             this.form.get('timeLimit').valid &&
-             this.isDirtyNowRestriction &&
-             this.isDirtyFutureRestriction &&
-             !!this.color_profile && !!this.selectedIcon;
+      return this.allOf([
+                        this.form.get('roomName').valid,
+                        this.form.get('roomNumber').valid,
+                        this.form.get('timeLimit').valid,
+                        this.isDirtyNowRestriction,
+                        this.isDirtyFutureRestriction,
+                        !!this.color_profile,
+                        !!this.selectedIcon,
+                        (this.isDirtyAdvancedOpt ? this.advOptValid : true)
+      ]);
   }
 
   get showPublishEditRoom() {
-     return this.isValidForm && this.isFormStateDirty;
+     return this.allOf([
+       this.isValidForm,
+       this.isFormStateDirty
+     ]);
   }
 
   get showPublishNewFolder() {
@@ -370,24 +374,35 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   get showPublishEditFolder() {
-      return this.showPublishNewFolder && (this.isFormStateDirty || this.isChangeLocations.value) && this.isEditFolder;
+      return this.allOf([
+                        this.showPublishNewFolder,
+                        this.oneOf( true, [this.isFormStateDirty, this.isChangeLocations.value]),
+                        this.isEditFolder
+      ]);
   }
 
   get showDoneButton() {
-    return (this.isValidForm &&
-        (this.editRoomInFolder ? this.isFormStateDirty : true) &&
-        this.overlayType === 'newRoomInFolder' &&
-        (!this.editRoomInFolder ? (this.isDirtyNowRestriction && this.isDirtyFutureRestriction) : true)) ||
-        (this.form.get('timeLimit').valid && this.overlayType === 'settingsRooms' && this.settingsTouched);
+
+    const boolSet = []
+          boolSet.push(this.allOf([
+                                  this.isValidForm,
+                                  this.oneOf(true, [this.editRoomInFolder, this.isFormStateDirty]),
+                                  this.oneOf(this.overlayType, ['newRoomInFolder']),
+                                  (!this.editRoomInFolder ? this.allOf([this.isDirtyNowRestriction, this.isDirtyFutureRestriction]) : true)
+          ]));
+          boolSet.push(this.allOf([ this.form.get('timeLimit').valid, this.overlayType === 'settingsRooms', this.settingsTouched ]));
+    return this.oneOf(true, boolSet);
   }
 
   get settingsTouched() {
 
     if (this.importedRooms.length) {
-      return this.isDirtyNowRestriction &&
-        this.isDirtyFutureRestriction &&
-        this.isDirtyTravel &&
-        !!this.timeLimit;
+      return this.allOf( [
+        this.isDirtyNowRestriction,
+        this.isDirtyFutureRestriction,
+        this.isDirtyTravel,
+        !!this.timeLimit
+      ])
     } else {
 
      return this.isDirtyNowRestriction ||
@@ -405,19 +420,24 @@ export class OverlayContainerComponent implements OnInit {
 
 
   get showFolderName() {
-    return this.overlayType === 'newFolder'
-       || this.overlayType === 'newRoomInFolder'
-       || this.overlayType === 'addExisting'
-       || this.overlayType === 'importRooms'
-       || this.overlayType === 'settingsRooms'
-       || this.overlayType === 'edit';
-    }
+    return this.oneOf(this.overlayType, [
+      'newFolder',
+      'newRoomInFolder',
+      'addExisting',
+      'importRooms',
+      'settingsRooms',
+      'edit'
+    ]);
+
+  }
 
   get hideHeaderIcon() {
-    return this.overlayType === 'newRoomInFolder' ||
-        this.overlayType === 'importRooms' ||
-        this.overlayType === 'settingsRooms' ||
-        this.overlayType === 'addExisting';
+    return this.oneOf(this.overlayType, [
+      'newRoomInFolder',
+      'importRooms',
+      'settingsRooms',
+      'addExisting'
+    ]);
   }
 
   get backButtonState() {
@@ -476,6 +496,10 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.setLocation = this.setLocation.bind(this);
+    this.onEditRooms = this.onEditRooms.bind(this);
+
+    this.frameMotion$ = this.formService.getFrameMotionDirection();
 
       this.buildForm();
 
@@ -553,7 +577,7 @@ export class OverlayContainerComponent implements OnInit {
       });
 
      this.icons$ = merge(this.form.get('roomName').valueChanges, this.form.get('folderName').valueChanges)
-          .pipe(filter(value => value !== ''),
+          .pipe(filter(value => value),
               switchMap((value: string) => this.http.searchIcons(value.toLowerCase())));
   }
 
@@ -739,10 +763,19 @@ export class OverlayContainerComponent implements OnInit {
     }
   }
 
+  stickyButtonClick(cb: Function, arg: any) {
+    this.formService.setFrameMotionDirection('forward');
+    setTimeout(() => {
+      cb(arg);
+    }, 100);
+
+  }
+
   setLocation(location) {
-    let type;
-    let hideAppearance;
-    switch (location) {
+
+      let type;
+      let hideAppearance;
+      switch (location) {
         case 'newRoomInFolder':
           this.roomName = 'New Room';
           hideAppearance = true;
@@ -763,9 +796,9 @@ export class OverlayContainerComponent implements OnInit {
           this.importedRooms = [];
           this.isEditRooms = false;
           this.form.get('timeLimit').setValidators([Validators.required,
-              Validators.pattern('^[0-9]*?[0-9]+$'),
-              Validators.min(1),
-              Validators.max(59)]);
+            Validators.pattern('^[0-9]*?[0-9]+$'),
+            Validators.min(1),
+            Validators.max(59)]);
           this.form.reset();
           this.isDirtysettings = false;
           this.buildInitialState();
@@ -789,10 +822,10 @@ export class OverlayContainerComponent implements OnInit {
           this.editRoomInFolder = true;
           hideAppearance = true;
           type = 'newRoomInFolder';
-    }
-    this.hideAppearance = hideAppearance;
-    this.overlayType = type;
-    return false;
+      }
+      this.hideAppearance = hideAppearance;
+      this.overlayType = type;
+      return false;
   }
 
   changeColor(color) {
@@ -817,7 +850,17 @@ export class OverlayContainerComponent implements OnInit {
       this.selectedRooms = [...locationsToAdd, ...this.selectedRooms];
       this.setLocation('newFolder');
   }
+  advancedOptionsOpened(event: boolean, advancedOptionsRef: HTMLElement) {
 
+    this.advOptOpen = event;
+    if (this.advOptOpen) {
+      setTimeout(() => {
+
+      advancedOptionsRef.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'});
+      }, 10);
+    }
+
+  }
   advancedOptions(event: OptionState) {
       this.advOptState = event;
       if (event.now.state === 'Any teacher (default)' && event.future.state === 'Any teacher (default)') {
@@ -902,11 +945,35 @@ export class OverlayContainerComponent implements OnInit {
       return data;
   }
 
-  back() {
-    this.dialogRef.close();
+  back(closeDialog: boolean = true) {
+    if (closeDialog) {
+
+      this.dialogRef.close();
+    } else {
+      this.formService.setFrameMotionDirection('back');
+      setTimeout(() => {
+        this.resetRoomImport();
+        return (this.overlayType === 'settingsRooms' ? (this.isEditRooms ? this.setLocation('newFolder') : this.setLocation('importRooms')) : this.setLocation('newFolder'));
+      }, 100);
+    }
   }
 
+  cancel() {
+
+    this.formService.setFrameMotionDirection('back');
+    setTimeout(() => {
+      this.resetRoomImport();
+      return (this.overlayType === 'settingsRooms' ? (this.isEditRooms ? this.setLocation('newFolder') : this.setLocation('importRooms')) : this.overlayType === 'importRooms' && this.unknownEmails.length ? null : this.setLocation('newFolder'));
+    }, 100);
+  }
+
+
   setToEditRoom(room) {
+
+    this.formService.setFrameMotionDirection('forward');
+
+    setTimeout(() => {
+
       this.roomToEdit = room;
       this.roomName = room.title;
       this.timeLimit = room.max_allowed_time;
@@ -919,19 +986,22 @@ export class OverlayContainerComponent implements OnInit {
       this.currentLocationInEditRoomFolder = room;
 
       this.initialState = {
-          roomName: room.title,
-          roomNumber: room.room,
-          teachers: room.teachers.map(t => +t.id),
-          restricted: room.restricted,
-          scheduling_restricted: room.scheduling_restricted,
-          travel_type: room.travel_types,
-          timeLimit: room.max_allowed_time
+        roomName: room.title,
+        roomNumber: room.room,
+        teachers: room.teachers.map(t => +t.id),
+        restricted: room.restricted,
+        scheduling_restricted: room.scheduling_restricted,
+        travel_type: room.travel_types,
+        timeLimit: room.max_allowed_time
       };
 
       this.setLocation('editRoomInFolder');
       if (!this.dialogData['forceSelectedLocation']) {
         this.roomList.topScroll = this.roomList.domElement.nativeElement.scrollTop;
       }
+
+    }, 100);
+
   }
 
   onPublish() {
@@ -1172,19 +1242,20 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   selectedRoomsEvent(event, room, all?: boolean) {
-
-    if (all) {
-      if (event.checked) {
-        this.readyRoomsToEdit = this.selectedRooms;
+    this.formService.setFrameMotionDirection('forward');
+    setTimeout(() => {
+      if (all) {
+        if (event.checked) {
+          this.readyRoomsToEdit = this.selectedRooms;
+        } else {
+          this.readyRoomsToEdit = [];
+        }
+      } else if (event.checked) {
+          this.readyRoomsToEdit.push(room);
       } else {
-        this.readyRoomsToEdit = [];
+        this.readyRoomsToEdit = this.readyRoomsToEdit.filter(readyRoom => readyRoom.id !== room.id);
       }
-    } else if (event.checked) {
-        this.readyRoomsToEdit.push(room);
-    } else {
-      this.readyRoomsToEdit = this.readyRoomsToEdit.filter(readyRoom => readyRoom.id !== room.id);
-    }
-
+    }, 100);
   }
 
   isSelected(room) {
@@ -1194,37 +1265,41 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   onEditRooms(action) {
-    if (action === 'edit') {
+    // this.formService.setFrameMotionDirection('forward');
+
+    setTimeout(() => {
+      if (action === 'edit') {
         this.isEditRooms = true;
         this.form.get('timeLimit').clearValidators();
         this.form.get('timeLimit').setValidators([
-            Validators.pattern('^[0-9]*?[0-9]+$'),
-            Validators.min(1),
-            Validators.max(59)]);
+          Validators.pattern('^[0-9]*?[0-9]+$'),
+          Validators.min(1),
+          Validators.max(59)]);
         this.setLocation('settingsRooms');
-    }
-    if (action === 'remove_from_folder') {
+      }
+      if (action === 'remove_from_folder') {
         const currentRoomsIds = this.readyRoomsToEdit.map(item => item.id);
         const allSelectedRoomsIds = this.selectedRooms.map(item => item.id);
         this.selectedRooms = this.selectedRooms.filter(item => {
-            return item.id === _.pullAll(allSelectedRoomsIds, currentRoomsIds).find(id => item.id === id);
+          return item.id === _.pullAll(allSelectedRoomsIds, currentRoomsIds).find(id => item.id === id);
         });
         this.readyRoomsToEdit = [];
-     }
-    if (action === 'delete') {
+      }
+      if (action === 'delete') {
         const roomsToDelete = this.readyRoomsToEdit.map(room => {
-            return this.locationService.deleteLocation(room.id);
+          return this.locationService.deleteLocation(room.id);
         });
         forkJoin(roomsToDelete).subscribe(res => {
-            const currentRoomsIds = this.readyRoomsToEdit.map(item => item.id);
-            const allSelectedRoomsIds = this.selectedRooms.map(item => item.id);
-            this.selectedRooms = this.selectedRooms.filter(item => {
-                return item.id === _.pullAll(allSelectedRoomsIds, currentRoomsIds).find(id => item.id === id);
-            });
-            this.readyRoomsToEdit = [];
-            this.isChangeLocations.next(true);
+          const currentRoomsIds = this.readyRoomsToEdit.map(item => item.id);
+          const allSelectedRoomsIds = this.selectedRooms.map(item => item.id);
+          this.selectedRooms = this.selectedRooms.filter(item => {
+            return item.id === _.pullAll(allSelectedRoomsIds, currentRoomsIds).find(id => item.id === id);
+          });
+          this.readyRoomsToEdit = [];
+          this.isChangeLocations.next(true);
         });
-    }
+      }
+    }, 100);
   }
 
   deleteRoom() {
@@ -1307,10 +1382,6 @@ export class OverlayContainerComponent implements OnInit {
     this.changeState();
   }
 
-  isEmitTeachers(event) {
-     this.showSearchTeacherOptions = event;
-  }
-
   onUpdate(time) {
       this.timeLimit = time;
   }
@@ -1357,7 +1428,6 @@ export class OverlayContainerComponent implements OnInit {
   }
   resetRoomImport() {
     // if (this.overlayType === 'importRooms') {
-
       this.importedRooms = [];
       this.unknownEmails = [];
       this.uploadingProgress.inProgress = false;
@@ -1429,7 +1499,6 @@ export class OverlayContainerComponent implements OnInit {
 
                 return _rooms.map((_room) => {
                           const teachersIdArray = [];
-                          const unknownArray = [];
 
                           _room.teachers.forEach((_teacherEmail) => {
                             const existAndAttached = teachers.find(_teacher =>  _teacher.primary_email === _teacherEmail );

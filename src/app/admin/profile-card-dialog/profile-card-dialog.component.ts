@@ -104,11 +104,6 @@ export class ProfileCardDialogComponent implements OnInit {
       });
     }
 
-
-    // this.testGroup.valueChanges.subscribe((v) => {
-    //   console.log('test Group ==>', v);
-    //   this.permissionsChanged = true;
-    // });
     this.dialogRef.backdropClick().subscribe(() => {
       this.back();
     });
@@ -125,18 +120,8 @@ export class ProfileCardDialogComponent implements OnInit {
     });
   }
   goToPassConfig(location: Location) {
-
-
-    // this.dialogRef.close();
-
     if (location) {
-      // this.router.navigate(['admin/passconfig'], {
-      //   queryParams: {
-      //     locationId: location.id,
-      //   }
-      // });
       window.open(`admin/passconfig?locationId=${location.id}`);
-
     } else {
       this.router.navigate(['admin/passconfig']);
     }
@@ -183,7 +168,8 @@ export class ProfileCardDialogComponent implements OnInit {
     const profile: string =
       this.data.role === '_profile_admin' ? 'administrator' :
         this.data.role === '_profile_teacher' ? 'teacher' :
-          this.data.role === '_profile_student' ? 'student' : 'secretary&substitute';
+          this.data.role === '_profile_student' ? 'student' :
+          this.data.role === '_profile_assistant' ? 'student' : 'assistant';
 
     switch (option) {
       case 'delete_from_profile':
@@ -192,7 +178,7 @@ export class ProfileCardDialogComponent implements OnInit {
         } else {
           header = `Removing this user from the ${profile} profile will remove them from this profile, but it will not delete all data associated with the account.`;
         }
-        options = [{display: 'Confirm Delete', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
+        options = [{display: 'Confirm Remove', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
         break;
       case 'disable_sign_in':
         header = `Disable sign-in to prevent this user from being able to sign in with the ${profile} profile.`;
@@ -221,11 +207,8 @@ export class ProfileCardDialogComponent implements OnInit {
           switchMap((action): Observable<any> => {
             console.log(action);
             eventTarget.style.opacity = '1';
-            // console.log(eventTarget.closest('.button'));
-            // .style.opacity = '0.75';
 
-
-            switch (option) {
+            switch (action) {
               case 'delete_from_profile':
                 let role: any = this.data.role.split('_');
                 role = role[role.length - 1];

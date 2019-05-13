@@ -3,6 +3,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {User} from '../models/User';
 import {HttpService} from '../services/http-service';
 
+declare const window;
+
 @Component({
   selector: 'app-error',
   templateUrl: './error.component.html',
@@ -23,5 +25,7 @@ export class ErrorComponent implements OnInit {
       console.log(this.http.currentSchoolSubject.value);
       // this.router.navigate(['/']);
     });
+    window.appLoaded(2000);
+
   }
 }

@@ -3,8 +3,8 @@ import {User} from '../../../../models/User';
 import {FormGroup} from '@angular/forms';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {UserService} from '../../../../services/user.service';
-import {fromEvent, Observable} from 'rxjs';
-import {map, switchMap} from 'rxjs/operators';
+import {fromEvent, Observable, of, throwError} from 'rxjs';
+import {catchError, map, switchMap} from 'rxjs/operators';
 import * as XLSX from 'xlsx';
 
 @Component({
@@ -24,7 +24,7 @@ export class GroupsStep2Component implements OnInit {
 
   public uploadedStudents: any;
   public loadingIndicator: boolean = false;
-
+  public uploadingError: string;
   constructor(
     private userService: UserService
   ) { }
@@ -74,6 +74,12 @@ export class GroupsStep2Component implements OnInit {
                 return result;
               }));
         }),
+        catchError((err) => {
+          this.loadingIndicator = false;
+          console.log(err.message);
+          this.uploadingError = err.message;
+          return throwError(err);
+        })
       )
       .subscribe((students) => {
         this.loadingIndicator = false;

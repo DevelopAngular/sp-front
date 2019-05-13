@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, HostListener, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
-import { filter, map, mergeMap, takeUntil } from 'rxjs/operators';
-import { BehaviorSubject, Subject } from 'rxjs';
+import {catchError, filter, map, mergeMap, takeUntil} from 'rxjs/operators';
+import {BehaviorSubject, of, Subject} from 'rxjs';
 
 import { DeviceDetection } from './device-detection.helper';
 import { GoogleLoginService } from './services/google-login.service';
@@ -30,7 +30,7 @@ declare const window;
 
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  public isAuthenticated = false;
+  public isAuthenticated = null;
   public hideScroll: boolean = false;
   public hideSchoolToggleBar: boolean = false;
   public showUI: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
@@ -109,7 +109,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             });
     });
 
-    this.loginService.isAuthenticated$.pipe(takeUntil(this.subscriber$))
+    this.loginService.isAuthenticated$.pipe(
+      takeUntil(this.subscriber$),
+      // catchError((err) => {
+      //   this.loginService.isAuthenticated$.next(false);
+      //   return of(null);
+      // })
+    )
         .subscribe(t => {
 
       // console.log('Auth response ===>', t);
