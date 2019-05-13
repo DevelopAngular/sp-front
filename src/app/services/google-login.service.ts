@@ -52,8 +52,8 @@ export class GoogleLoginService {
 
     this.googleAuth.getAuth().subscribe(auth => this.googleAuthTool.next(auth as any));
 
-    this.googleAuthTool.subscribe(tool =>
-      console.log('google auth tool: ', tool, 'user currently signed in: ', tool ? tool.isSignedIn.get() : null));
+    // this.googleAuthTool.subscribe(tool =>
+    //   console.log('google auth tool: ', tool, 'user currently signed in: ', tool ? tool.isSignedIn.get() : null));
 
     this.googleAuthTool
       .pipe(

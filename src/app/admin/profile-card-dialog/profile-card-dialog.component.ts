@@ -6,7 +6,7 @@ import {Router} from '@angular/router';
 import {map, switchMap, tap} from 'rxjs/operators';
 import {DataService} from '../../services/data-service';
 import {FormControl, FormGroup} from '@angular/forms';
-import {Observable, of, zip} from 'rxjs';
+import {empty, Observable, of, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {HttpService} from '../../services/http-service';
@@ -160,49 +160,51 @@ export class ProfileCardDialogComponent implements OnInit {
 
     if (!eventTarget.classList.contains('button')) {
       (eventTarget as any) = eventTarget.closest('.button');
-    };
+    }
 
     eventTarget.style.opacity = '0.75';
-    let header: string;
-    let options: any[];
-    const profile: string =
-      this.data.role === '_profile_admin' ? 'administrator' :
-        this.data.role === '_profile_teacher' ? 'teacher' :
-          this.data.role === '_profile_student' ? 'student' :
-          this.data.role === '_profile_assistant' ? 'student' : 'assistant';
+    // let header: string;
+    // let options: any[];
+    // const profile: string =
+    //   this.data.role === '_profile_admin' ? 'administrator' :
+    //     this.data.role === '_profile_teacher' ? 'teacher' :
+    //       this.data.role === '_profile_student' ? 'student' :
+    //       this.data.role === '_profile_assistant' ? 'student' : 'assistant';
 
-    switch (option) {
-      case 'delete_from_profile':
-        if (this.data.role === '_all') {
-          header = `Are you sure you want to permanently delete this account and all associated data? This cannot be undone.`;
-        } else {
-          header = `Removing this user from the ${profile} profile will remove them from this profile, but it will not delete all data associated with the account.`;
-        }
-        options = [{display: 'Confirm Remove', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
-        break;
-      case 'disable_sign_in':
-        header = `Disable sign-in to prevent this user from being able to sign in with the ${profile} profile.`;
-        options = [{display: 'Disable sign-in', color: '#001115', buttonColor: '#001115, #033294', action: 'disable_sign_in'}];
-        break;
-      case 'enable_sign_in':
-        header = `Enable sign-in to allow this user to be able to sign in with the ${profile} profile.`;
-        options = [{display: 'Enable sign-in', color: '#03CF31', buttonColor: '#03CF31, #00B476', action: 'enable_sign_in'}];
-        break;
-    }
-    const DR = this.matDialog.open(ConsentMenuComponent,
-      {
-        data: {
-          role: this.data.role,
-          selectedUsers: this.data.selectedUsers,
-          restrictions: this.data.profilePermissions,
-          header: header,
-          options: options,
-          trigger: new ElementRef(eventTarget)
-        },
-        panelClass: 'consent-dialog-container',
-        backdropClass: 'invis-backdrop',
-      });
-      DR.afterClosed()
+    // switch (option) {
+    //   case 'delete_from_profile':
+    //     if (this.data.role === '_all') {
+    //       header = `Are you sure you want to permanently delete this account and all associated data? This cannot be undone.`;
+    //     } else {
+    //       header = `Removing this user from the ${profile} profile will remove them from this profile, but it will not delete all data associated with the account.`;
+    //     }
+    //     options = [{display: 'Confirm Remove', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
+    //     break;
+    //   case 'disable_sign_in':
+    //
+    //     header = `Disable sign-in to prevent this user from being able to sign in with the ${profile} profile.`;
+    //     options = [{display: 'Disable sign-in', color: '#001115', buttonColor: '#001115, #033294', action: 'disable_sign_in'}];
+    //     break;
+    //   case 'enable_sign_in':
+    //     header = `Enable sign-in to allow this user to be able to sign in with the ${profile} profile.`;
+    //     options = [{display: 'Enable sign-in', color: '#03CF31', buttonColor: '#03CF31, #00B476', action: 'enable_sign_in'}];
+    //     break;
+    // }
+    // const DR = this.matDialog.open(ConsentMenuComponent,
+    //   {
+    //     data: {
+    //       role: this.data.role,
+    //       selectedUsers: this.data.selectedUsers,
+    //       restrictions: this.data.profilePermissions,
+    //       header: header,
+    //       options: options,
+    //       trigger: new ElementRef(eventTarget)
+    //     },
+    //     panelClass: 'consent-dialog-container',
+    //     backdropClass: 'invis-backdrop',
+    //   });
+      // DR.afterClosed()
+      of(option)
         .pipe(
           switchMap((action): Observable<any> => {
             console.log(action);
@@ -221,18 +223,10 @@ export class ProfileCardDialogComponent implements OnInit {
                 return this.userService.setUserActivity(this.profile.id, true).pipe(map(() => true));
                 break;
               default:
-                return of(false);
+                return of( null);
                 break;
             }
-
             this.consentMenuOpened = false;
-            if (action === 'confirm_delete') {
-              let role: any = this.data.role.split('_');
-              role = role[role.length - 1];
-              return this.userService.deleteUserFromProfile(this.profile.id, role).pipe(map(() => true));
-            } else {
-              return of(null);
-            }
           }),
         )
         .subscribe((res) => {

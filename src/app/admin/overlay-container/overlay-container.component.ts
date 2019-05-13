@@ -2,7 +2,7 @@ import {Component, ElementRef, HostListener, Inject, OnInit, ViewChild} from '@a
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {BehaviorSubject, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import {delay, map, switchMap} from 'rxjs/operators';
 import { Pinnable } from '../../models/Pinnable';
 import * as _ from 'lodash';
 import { User } from '../../models/User';
@@ -68,9 +68,11 @@ export class OverlayContainerComponent implements OnInit {
     scheduling_restricted: 'Does the pass need digital approval from a teacher to become a scheduled pass?'
   };
 
-  @ViewChild('roomList') set content(content: ElementRef) {
+  @ViewChild('leftContent') set content(content: ElementRef) {
     this.roomList.domElement = content;
+    console.log(this.roomList);
     if (this.roomList.domElement) {
+      // debugger
       this.roomList.ready.next(this.roomList.domElement);
     }
   }
@@ -501,6 +503,18 @@ export class OverlayContainerComponent implements OnInit {
 
     this.frameMotion$ = this.formService.getFrameMotionDirection();
 
+      this.roomList.ready.asObservable()
+        .pipe(
+          filter(el => !!el),
+          delay(50)
+        )
+        .subscribe((el: ElementRef) => {
+        // debugger;
+        // el.nativeElement.scrollIntoView(true);
+        if (this.overlayType === 'newFolder' && this.roomList.topScroll) {
+          el.nativeElement.scrollTop = this.roomList.topScroll;
+        }
+      });
       this.buildForm();
 
       this.overlayType = this.dialogData['type'];
@@ -704,11 +718,6 @@ export class OverlayContainerComponent implements OnInit {
               advOptState: this.advOptState
           };
       }
-      if (this.overlayType === 'newFolder') {
-        this.roomList.ready.asObservable().subscribe((el: ElementRef) => {
-          el.nativeElement.scrollTop = this.roomList.topScroll;
-        });
-      }
   }
 
   changeState() {
@@ -772,6 +781,8 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   setLocation(location) {
+// debugger
+    this.roomList.ready.next(this.roomList.domElement);
 
       let type;
       let hideAppearance;
@@ -947,7 +958,6 @@ export class OverlayContainerComponent implements OnInit {
 
   back(closeDialog: boolean = true) {
     if (closeDialog) {
-
       this.dialogRef.close();
     } else {
       this.formService.setFrameMotionDirection('back');
@@ -969,6 +979,11 @@ export class OverlayContainerComponent implements OnInit {
 
 
   setToEditRoom(room) {
+    if (!this.dialogData['forceSelectedLocation']) {
+      // debugger
+      this.roomList.topScroll = this.roomList.domElement.nativeElement.scrollTop;
+      console.log(this.roomList.topScroll);
+    }
 
     this.formService.setFrameMotionDirection('forward');
 
@@ -996,9 +1011,11 @@ export class OverlayContainerComponent implements OnInit {
       };
 
       this.setLocation('editRoomInFolder');
-      if (!this.dialogData['forceSelectedLocation']) {
-        this.roomList.topScroll = this.roomList.domElement.nativeElement.scrollTop;
-      }
+      // if (!this.dialogData['forceSelectedLocation']) {
+      //   // debugger
+      //   console.log(this.roomList.topScroll);
+      //   this.roomList.topScroll = this.roomList.domElement.nativeElement.scrollTop;
+      // }
 
     }, 100);
 

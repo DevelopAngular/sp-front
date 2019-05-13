@@ -50,6 +50,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() maxHeight;
   @Input() showEmptyHeader: boolean;
   @Input() columnViewIcon: boolean = true;
+  @Input() smoothlyUpdating: boolean = false;
 
   @Input() passProvider: PassLikeProvider;
 
@@ -103,7 +104,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
         this.currentPasses$
           .pipe(
             switchMap((_passes) => {
-              if (_.isEqual(this.currentPasses, _passes)) {
+              if (_.isEqual(this.currentPasses, _passes) || !this.smoothlyUpdating) {
                 return of(_passes);
               } else {
                 this.currentPasses = [];
