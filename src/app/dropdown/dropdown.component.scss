@@ -52,10 +52,23 @@
     overflow: auto;
     display: flex;
     flex-direction: column;
+    align-items: center;
   //padding: 0 20px;
   box-sizing: border-box
 }
-
+.assistant-greeting {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  font-size: 14px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #B5B7BA;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  overflow: hidden;
+}
 .option{
     width: inherit;
     height: 55px;
@@ -65,9 +78,6 @@
     text-align: left;
 }
 
-//.option-data:hover{
-//    background-color: rgba(1, 25, 52, .2);
-//}
 
 .option-data{
   height: inherit;
@@ -111,90 +121,3 @@
     height: 1px;
     background-color: #B5B7BA;
 }
-
-
-
-
-
-
-
-// .teacher-drowdown-wrapper{
-//     height: 100%;
-//     padding: 6px 10px;
-//     display: flex;
-//     flex-direction: column;
-//     cursor: pointer;
-//     user-select: none;
-// }
-
-// .wrapper-options{
-//     @extend .teacher-drowdown-wrapper;
-//     background-color: white;
-    // border: 1px solid black;
-    // border-bottom-width: 0;
-//     border-radius: 10px 10px 0 0;
-////     box-shadow: 0 7.5px 13px 0 rgba(0, 0, 0, 0.1);
-// }
-
-// .wrapper-no-options{
-//     @extend .teacher-drowdown-wrapper;
-//     border: 1px solid transparent;
-//     border-bottom-width: 0;
-// }
-
-// .selected-teacher{
-//     color: #3D396B;
-//     font-size: 22pt;
-//     font-weight: bold;
-//     display: flex;
-//     flex-direction: row;
-// }
-
-// .header-divider{
-//     margin: 0 auto;
-//     width: 95%;
-//     height: 1px;
-//     background-color: #B5B7BA;
-// }
-
-// .drop-arrow{
-//     margin-left: 3px;
-//     margin-top: 4px;
-//     width: 10px;
-//     height: 10px;
-// }
-
-// .options{
-//     display: flex;
-//     flex-direction: column;
-//     margin-top: 35px;
-//     position: absolute;
-//     background-color: white;
-    // border: 1px solid black;
-    // border-top-width: 0;
-//     border-radius: 0 0 10px 10px;
-//     padding: 0 20px 6px 0;
-//     margin-left: -11px;
-// }
-
-// .option{
-//     width: inherit;
-//     display: flex;
-//     flex-direction: column;
-//     padding: 0 10px;
-// }
-
-// .option:hover{
-//     background-color: #F1F1F1;
-// }
-
-// .option-data{
-//     color: #767676;
-//     font-size: 18px;
-// }
-
-// .option-divider{
-//     width: inherit;
-//     height: 1px;
-//     background-color: #B5B7BA;
-// }
