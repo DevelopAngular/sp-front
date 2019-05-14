@@ -3,8 +3,8 @@ import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 
-import { ReplaySubject ,  combineLatest } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import {ReplaySubject, combineLatest, of, Subject} from 'rxjs';
+import {switchMap, tap} from 'rxjs/operators';
 
 import { DataService } from '../services/data-service';
 import { GoogleLoginService } from '../services/google-login.service';
@@ -20,8 +20,16 @@ import { LocationsService } from '../services/locations.service';
 import * as _ from 'lodash';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {NotificationService} from '../services/notification-service';
+import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
+import {DropdownComponent} from '../dropdown/dropdown.component';
+import {HttpService} from '../services/http-service';
 
 declare const window;
+
+export interface RepresentedUser {
+  user: User;
+  roles: string[];
+}
 
 @Component({
   selector: 'app-navbar',
@@ -32,10 +40,13 @@ declare const window;
 export class NavbarComponent implements OnInit {
 
   @Input() hasNav = true;
+  private representedUsers$: ReplaySubject<User> = new ReplaySubject(1);
 
   isStaff: boolean;
   showSwitchButton: boolean = false;
   user: User;
+  representedUsers: RepresentedUser[];
+  effectiveUser: RepresentedUser;
   isProcess$ = this.process.ref().state;
   tab: string = 'passes';
   inboxVisibility: boolean = true;
@@ -67,7 +78,8 @@ export class NavbarComponent implements OnInit {
       private process: NgProgress,
       private activeRoute: ActivatedRoute,
       public  notifService: NotificationService,
-      public darkTheme: DarkThemeSwitch
+      public darkTheme: DarkThemeSwitch,
+      private http: HttpService
   ) {
 
     const navbarEnabled$ = combineLatest(
@@ -107,16 +119,35 @@ export class NavbarComponent implements OnInit {
     // console.log('loading navbar');
 
     this.userService.userData
-      .pipe(this.loadingService.watchFirst)
+      .pipe(
+        this.loadingService.watchFirst
+      )
       .subscribe(user => {
         this._zone.run(() => {
           this.user = user;
+          if (user.isAssistant()) {// debugger
+            this.representedUsers$.next(user);
+          }
           // console.log('User =>>>>>', user);
           this.isStaff = user.isAdmin() || user.isTeacher();
           this.showSwitchButton = [user.isAdmin(), user.isTeacher(), user.isStudent()].filter(val => !!val).length > 1;
           this.dataService.updateInbox(this.tab !== 'settings');
         });
       });
+
+    this.representedUsers$.asObservable()
+      .pipe(
+        switchMap((user) => {
+          // return this.userService.getRepresentedUsers(user.id);
+          return this.userService.getUserRepresented();
+        })
+      )
+      .subscribe((u: any) => {
+      this.representedUsers = u;
+      this.effectiveUser = u[0];
+        this.http.effectiveUserId.next(+this.effectiveUser.user.id);
+      })
+
     this.dataService.getLocationsWithTeacher(this.user).subscribe(res => {
       _.remove(this.buttons, (el) => {
         return el.route === 'myroom' && !res.length;
@@ -180,6 +211,24 @@ export class NavbarComponent implements OnInit {
 
     settingRef.afterClosed().subscribe(action => {
       this.settingsAction(action);
+    });
+  }
+
+  showTeaches(target) {
+    const representedUsersDialog = this.dialog.open(DropdownComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {
+        'trigger': target,
+        'teachers': this.representedUsers,
+        'selectedTeacher': this.effectiveUser,
+        'user': this.user
+      }
+    });
+    representedUsersDialog.afterClosed().subscribe((v: RepresentedUser) => {
+      console.log(v);
+      this.effectiveUser = v ? v : this.effectiveUser;
+      this.http.effectiveUserId.next(+this.effectiveUser.user.id);
     });
   }
 

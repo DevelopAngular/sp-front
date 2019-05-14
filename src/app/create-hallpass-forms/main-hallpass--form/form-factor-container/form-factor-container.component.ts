@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TimeService } from '../../../services/time.service';
 
 import { FormFactor, Navigation } from '../main-hall-pass-form.component';
@@ -6,7 +6,7 @@ import { HallPass } from '../../../models/HallPass';
 import { Request } from '../../../models/Request';
 import { Invitation } from '../../../models/Invitation';
 import { DataService } from '../../../services/data-service';
-import {Pinnable} from '../../../models/Pinnable';
+import { Pinnable } from '../../../models/Pinnable';
 
 
 
@@ -30,6 +30,11 @@ export class FormFactorContainerComponent implements OnInit {
     private dataService: DataService,
     private timeService: TimeService,
   ) { }
+
+  get requestTeachers() {
+    const to = this.FORM_STATE.data.direction.to;
+    return;
+  }
 
 
   ngOnInit() {

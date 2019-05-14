@@ -55,7 +55,7 @@ export class ToCategoryComponent implements OnInit {
   ) { }
 
   get headerGradient() {
-     const colors =  this.animationDirection === 'back' ? '#FFFFFF, #FFFFFF' :  this.formState.data.direction.pinnable.gradient_color;
+     const colors =  this.animationDirection === 'back' ? '#FFFFFF, #FFFFFF' :  this.formState.data.direction.pinnable.color_profile.gradient_color;
      return 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
 

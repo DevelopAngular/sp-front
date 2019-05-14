@@ -59,25 +59,6 @@
   </div>
 
   <div class="options-wrapper" *ngIf="schools">
-    <!--<div class="option" *ngFor="let school of schools" (click)="_matDialogRef.close(school)">-->
-      <!--<div class="option-data">-->
-          <!--<div class="option-data_leftside">-->
-            <!--<div>-->
-              <!--<span>{{ school.name }}</span>-->
-            <!--</div>-->
-            <!--<div class="option-roles">-->
-              <!--{{partOfProfile(school)}}-->
-            <!--</div>-->
-          <!--</div>-->
-          <!--<div class="option-data_rightside">-->
-            <!--<div class="marked-room">-->
-              <!--<img *ngIf="school.id === selectedSchool.id && school.name === selectedSchool.name" [style.width]="'20px'" [style.height]="'20px'"  [src]="'./assets/Check (Navy).svg' | resolveAsset" alt="Check (Navy).svg">-->
-            <!--</div>-->
-          <!--</div>-->
-      <!--</div>-->
-
-      <!--<div class="option-divider"></div>-->
-    <!--</div>-->
     <div class="option" *ngFor="let school of schools" (click)="_matDialogRef.close(school)">
       <div #_option class="option-data"
            [ngClass]="{
@@ -99,6 +80,37 @@
         </div>
       </div>
       <div class="option-divider"></div>
+    </div>
+  </div>
+
+  <div class="options-wrapper" *ngIf="teachers && selectedTeacher"  style="padding: 15px 25px 60px 25px;">
+    <div class="option" style="height: 40px;" *ngFor="let teacher of teachers" (click)="_matDialogRef.close(teacher)">
+      <div #_option class="option-data" style="background-clip: border-box; padding: 0;"
+           [ngClass]="{
+                'option-wrapper': !darkTheme.isEnabled$.value,
+                'option-wrapper__dark': darkTheme.isEnabled$.value
+               }"
+           (mousedown)="_option.style.backgroundColor = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : 'rgba(226, 231, 244, 1)'"
+           (mouseup)="_option.style.backgroundColor = 'transparent'"
+           (mouseover)="_option.style.backgroundColor = this.darkTheme.isEnabled$.value ? '#47447E' : 'rgba(236, 241, 255, 1)'"
+           (mouseleave)="_option.style.backgroundColor = 'transparent'"
+      >
+        <div class="option-data_leftside">
+          <span [style.color]="darkTheme.getColor()">{{ teacher.user.display_name }}</span>
+        </div>
+        <div class="option-data_rightside">
+          <div class="marked-room">
+            <img *ngIf="teacher.user.id === selectedTeacher.user.id" [style.width]="'20px'" [style.height]="'20px'"  [src]="'./assets/Check (Navy).svg' | resolveAsset" alt="Check (Navy).svg">
+          </div>
+        </div>
+      </div>
+      <div class="option-divider"></div>
+    </div>
+    <div class="assistant-greeting ds-w-100 ds-pt-10 ds-pb-15"
+         [style.background-color]="'#FCFDFF'"
+         [style.color]="darkTheme.getColor()">
+      <div style="font-weight: bold;">Hi {{user.display_name}}!</div>
+      <div>Create and manage passes for this teacher.</div>
     </div>
   </div>
 </div>

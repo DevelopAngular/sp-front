@@ -52,6 +52,9 @@ export class RequestCardComponent implements OnInit {
 
   isModal: boolean;
 
+  nowTeachers;
+  futureTeachers;
+
   performingAction: boolean;
   frameMotion$: BehaviorSubject<any>;
 
@@ -86,8 +89,7 @@ export class RequestCardComponent implements OnInit {
       this.fromHistoryIndex = this.data['fromHistoryIndex'];
     }
 
-
-    this.dataService.currentUser
+      this.dataService.currentUser
     .pipe(this.loadingService.watchFirst)
     .subscribe(user => {
       this._zone.run(() => {
@@ -114,6 +116,41 @@ export class RequestCardComponent implements OnInit {
     return this.request.status.charAt(0).toUpperCase() + this.request.status.slice(1);
   }
 
+  get isFutureOrNowTeachers() {
+      const to = this.formState.data.direction.to;
+      return to && (!this.formState.forLater && to.request_mode === 'all_teachers_in_room' || to.request_mode === 'specific_teachers') ||
+          (this.formState.forLater && to.scheduling_request_mode === 'all_teachers_in_room' || to.scheduling_request_mode === 'specific_teachers');
+  }
+
+  generateTeachersToRequest() {
+      const to = this.formState.data.direction.to;
+      if (!this.forFuture) {
+          if (to.request_mode === 'all_teachers_in_room') {
+              if (to.request_send_destination_teachers && to.request_send_origin_teachers) {
+                  this.nowTeachers = [...this.formState.data.direction.to.teachers, ...this.formState.data.direction.from.teachers];
+              } else if (to.request_send_destination_teachers) {
+                  this.nowTeachers = this.formState.data.direction.to.teachers;
+              } else if (to.request_send_origin_teachers) {
+                  this.nowTeachers = this.formState.data.direction.from.teachers;
+              }
+          } else if (to.request_mode === 'specific_teachers') {
+              this.nowTeachers = this.formState.data.direction.to.request_teachers;
+          }
+      } else {
+          if (to.scheduling_request_mode === 'all_teachers_in_room') {
+              if (to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
+                  this.futureTeachers = [...this.formState.data.direction.to.teachers, ...this.formState.data.direction.from.teachers];
+              } else if (to.scheduling_request_send_origin_teachers) {
+                  this.futureTeachers = this.formState.data.direction.from.teachers;
+              } else if (to.scheduling_request_send_destination_teachers) {
+                  this.futureTeachers = this.formState.data.direction.to.teachers;
+              }
+          } else if (to.scheduling_request_mode === 'specific_teachers') {
+              this.futureTeachers = this.formState.data.direction.to.scheduling_request_teachers;
+          }
+      }
+  }
+
   formatDateTime(date: Date, timeOnly?: boolean){
     return Util.formatDateTime(date, timeOnly);
   }
@@ -122,22 +159,31 @@ export class RequestCardComponent implements OnInit {
   // }
   newRequest(){
     this.performingAction = true;
-    const body = this.forFuture?{
+    this.generateTeachersToRequest();
+      console.log(this.nowTeachers);
+      let body: any = this.forFuture ? {
           'origin' : this.request.origin.id,
           'destination' : this.request.destination.id,
           'attachment_message' : this.request.attachment_message,
           'travel_type' : this.selectedTravelType,
-          'teacher' : this.request.teacher.id,
-          'request_time' :this.request.request_time.toISOString(),
-          'duration' : this.selectedDuration*60,
+          'request_time' : this.request.request_time.toISOString(),
+          'duration' : this.selectedDuration * 60,
         } : {
           'origin' : this.request.origin.id,
           'destination' : this.request.destination.id,
           'attachment_message' : this.request.attachment_message,
           'travel_type' : this.selectedTravelType,
-          'teacher' : this.request.teacher.id,
           'duration' : this.selectedDuration*60,
         };
+      if (this.isFutureOrNowTeachers) {
+          if (this.forFuture) {
+              body.teachers = this.futureTeachers.map(t => t.id);
+          } else {
+              body.teachers = this.nowTeachers.map(t => t.id);
+          }
+      } else {
+          body.teacher = this.request.teacher.id;
+      }
       this.requestService.createRequest(body).pipe(switchMap(res => {
           return this.formState.previousStep === 1 ? this.requestService.cancelRequest(this.request.id) :
            (this.formState.missedRequest ? this.requestService.cancelInvitation(this.formState.data.request.id, '') : of(null));

@@ -32,6 +32,10 @@ export class ProfileCardDialogComponent implements OnInit {
   public headerIcon: string;
   public layout: string = 'viewProfile';
   private initialState;
+  public secretaryOrSubstitute: {
+    user: User,
+    behalfOf: User[]
+  }
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -41,7 +45,7 @@ export class ProfileCardDialogComponent implements OnInit {
     private dataService: DataService,
     private userService: UserService,
     private http: HttpService
-  ) { }
+  ) {}
 
   ngOnInit() {
 
@@ -58,6 +62,17 @@ export class ProfileCardDialogComponent implements OnInit {
     if (this.data.profile) {
 
       this.profile = this.data.profile;
+      if (this.data.role === '_profile_assistant') {
+        this.userService.getRepresentedUsers(this.profile.id).subscribe((u: any) => {
+          console.log(u);
+          this.secretaryOrSubstitute = {
+            user: this.profile,
+            behalfOf: u.map(i => i.user)
+          };
+        });
+      }
+
+
       this.headerIcon = `./assets/${
                           this.data.role === '_profile_admin'
                           ?
@@ -90,7 +105,7 @@ export class ProfileCardDialogComponent implements OnInit {
     if (this.data.role !== '_profile_student' && this.data.role !== '_all') {
       const permissions = this.data.permissions;
       this.controlsIteratable = permissions ? Object.values(permissions) : [];
-      console.log(permissions);
+      // console.log(permissions);
       const group: any = {};
       for (const key in permissions) {
         const value = (this.profile._originalUserProfile as User).roles.includes(key);

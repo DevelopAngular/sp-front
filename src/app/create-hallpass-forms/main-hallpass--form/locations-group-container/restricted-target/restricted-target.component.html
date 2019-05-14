@@ -8,20 +8,7 @@
   </div>
 
   <div class="rest-tar-content" (scroll)="tableScroll($event)">
-    <!--<app-location-table-->
-       <!--class="center"-->
-       <!--(onSelect)="updateTarget($event)"-->
-       <!--[type]="'teachers'"-->
-       <!--[placeholder]="'Search teachers'"-->
-       <!--[staticChoices]="toLocation.teachers"-->
-       <!--[dummyString]="'No teachers found'"-->
-       <!--[mergedAllRooms]="true"-->
-       <!--[withMergedStars]="false"-->
-    <!--&gt;-->
-    <!--</app-location-table>-->
     <div class="search-wrapper">
-      <!--<div style="width: 250px; position: absolute;">-->
-
         <app-student-search
           [focused]="true"
           [width]="'100%'"
@@ -39,7 +26,7 @@
       </div>
       <div class="quick-select_scrollable">
 
-        <div *ngFor="let teacher of toLocation.teachers; let i = index" #cell class="quick-select_item"
+        <div *ngFor="let teacher of quickSelectedTeachers; let i = index" #cell class="quick-select_item"
              (mouseenter)="cell.hovered = true;"
              (mouseleave)="cell.hovered = false;"
              (mousedown)="cell.pressed = true"
