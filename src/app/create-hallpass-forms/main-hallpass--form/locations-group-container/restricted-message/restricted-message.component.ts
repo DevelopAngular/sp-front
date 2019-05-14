@@ -53,9 +53,38 @@ export class RestrictedMessageComponent implements OnInit {
   }
 
   get showTeachersHeader() {
+    const to = this.formState.data.direction.to;
     return this.toLocation &&
-        ((!this.formState.forLater && this.toLocation.request_teachers.length) ||
-            (this.formState.forLater && this.toLocation.scheduling_request_teachers.length));
+        (this.formState.forLater &&
+            (to.scheduling_request_mode === 'specific_teachers' || to.scheduling_request_mode === 'all_teachers_in_room')) ||
+        (!this.formState.forLater &&
+            (to.request_mode === 'specific_teachers' || to.request_mode === 'all_teachers_in_room'));
+  }
+
+  get teachersNames() {
+    const to = this.formState.data.direction.to;
+    if (!this.formState.forLater && to.request_mode === 'specific_teachers') {
+      return to.request_teachers;
+    } else if (!this.formState.forLater && to.request_mode === 'all_teachers_in_room') {
+        if (to.request_send_origin_teachers && to.request_send_destination_teachers) {
+          return [...this.formState.data.direction.from.teachers, ...this.formState.data.direction.to.teachers];
+        } else if (to.request_send_origin_teachers) {
+          return this.formState.data.direction.from.teachers;
+        } else if (to.request_send_destination_teachers) {
+           return this.formState.data.direction.to.teachers;
+        }
+    }
+    if (this.formState.forLater && to.scheduling_request_mode === 'specific_teachers') {
+      return to.scheduling_request_teachers;
+    } else if (this.formState.forLater && to.scheduling_request_mode === 'all_teachers_in_room') {
+        if (to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
+          return [...this.formState.data.direction.from.teachers, ...this.formState.data.direction.to.teachers];
+        } else if (to.scheduling_request_send_origin_teachers) {
+          return this.formState.data.direction.from.teachers;
+        } else if (to.scheduling_request_send_destination_teachers) {
+          return this.formState.data.direction.to.teachers;
+        }
+    }
   }
 
   ngOnInit() {

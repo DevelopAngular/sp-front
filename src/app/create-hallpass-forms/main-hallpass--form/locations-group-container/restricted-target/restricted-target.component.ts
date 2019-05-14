@@ -55,16 +55,35 @@ export class RestrictedTargetComponent implements OnInit {
     private formService: CreateFormService,
     public sanitizer: DomSanitizer
 
-  ) { }
+  ) {
+  }
 
   get headerGradient() {
     const colors = this.formState.data.direction.pinnable.color_profile.gradient_color;
     return 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
 
-  get selectedTeachers() {
+  get quickSelectedTeachers() {
     const to = this.formState.data.direction.to;
-    return;
+    if (!this.formState.forLater && to.request_mode === 'teacher_in_room') {
+      if (to.request_send_destination_teachers && to.request_send_origin_teachers) {
+        return [...to.teachers, ...this.formState.data.direction.from.teachers];
+      } else if (to.request_send_destination_teachers) {
+        return to.teachers;
+      } else if (to.request_send_origin_teachers) {
+        return this.formState.data.direction.from.teachers;
+      }
+    } else if (this.formState.forLater && to.scheduling_request_mode === 'teacher_in_room') {
+        if (to.scheduling_request_send_destination_teachers && to.scheduling_request_send_origin_teachers) {
+          return [...to.teachers, ...this.formState.data.direction.from.teachers];
+        } else if (to.scheduling_request_send_destination_teachers) {
+          return to.teachers;
+        } else if (to.scheduling_request_send_origin_teachers) {
+          return this.formState.data.direction.from.teachers;
+        }
+    } else {
+      return to.teachers;
+    }
   }
 
   ngOnInit() {
