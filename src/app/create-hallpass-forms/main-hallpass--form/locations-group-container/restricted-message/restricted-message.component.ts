@@ -91,8 +91,13 @@ export class RestrictedMessageComponent implements OnInit {
             this.formState.step = 0;
         }
       } else {
-        this.formState.previousState = this.formState.state;
-        this.formState.state -= 1;
+        if (this.formState.previousState === 2) {
+            this.formState.previousState = this.formState.state;
+            this.formState.state = 2;
+        } else {
+            this.formState.previousState = this.formState.state;
+            this.formState.state -= 1;
+        }
       }
       this.backButton.emit(this.formState);
     }, 100);

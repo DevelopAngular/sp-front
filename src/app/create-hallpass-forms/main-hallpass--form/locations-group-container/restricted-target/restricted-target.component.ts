@@ -62,6 +62,11 @@ export class RestrictedTargetComponent implements OnInit {
     return 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
 
+  get selectedTeachers() {
+    const to = this.formState.data.direction.to;
+    return;
+  }
+
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.fromLocation = this.formState.data.direction.from;
