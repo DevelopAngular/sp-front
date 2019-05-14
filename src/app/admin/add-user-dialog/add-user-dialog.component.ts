@@ -40,7 +40,7 @@ export class AddUserDialogComponent implements OnInit {
     private http: HttpService
 
   ) {
-    if (this.data.role === 'staff_secretary') {
+    if (this.data.role === '_profile_assistant') {
       this.secretaryOrSubstitute = {
         user: null,
         behalfOf: null

@@ -46,7 +46,7 @@ function isSchoolInArray(id: string|number, schools: School[]) {
   return getSchoolInArray(id, schools) !== null;
 }
 
-function makeConfig(config: Config, access_token: string, school: School): Config & { responseType: 'json' } {
+function makeConfig(config: Config, access_token: string, school: School, effectiveUserId): Config & { responseType: 'json' } {
 
   const headers: any = {
     'Authorization': 'Bearer ' + access_token
@@ -54,6 +54,10 @@ function makeConfig(config: Config, access_token: string, school: School): Confi
 
   if (school) {
     headers['X-School-Id'] = '' + school.id;
+  }
+  if (effectiveUserId) {
+    console.log(effectiveUserId);
+    headers['X-Effective-User-Id'] = '' + effectiveUserId;
   }
 
   // console.log('[X-School-Id]: ', headers['X-School-Id'])
@@ -105,14 +109,13 @@ class LoginServerError extends Error {
 export class HttpService {
 
   private accessTokenSubject: BehaviorSubject<AuthContext> = new BehaviorSubject<AuthContext>(null);
-
+  public effectiveUserId: BehaviorSubject<number> = new BehaviorSubject(null);
   public schools$: Observable<School[]> = this.loginService.isAuthenticated$.pipe(
     filter(v => v),
     switchMap(() => {
       return this.get<School[]>('v1/schools', undefined, null);
     }),
   );
-
   public currentSchoolSubject = new BehaviorSubject<School>(null);
   public currentSchool$: Observable<School> = this.currentSchoolSubject.asObservable();
 
@@ -128,7 +131,7 @@ export class HttpService {
   constructor(
       private http: HttpClient,
       private loginService: GoogleLoginService,
-      private storage: StorageService
+      private storage: StorageService,
   ) {
 
     // the school list is loaded when a user authenticates and we need to choose a current school of the school array.
@@ -372,6 +375,10 @@ export class HttpService {
     return this.currentSchoolSubject.getValue();
   }
 
+  getEffectiveUserId() {
+    return this.effectiveUserId.getValue();
+  }
+
   searchIcons(search: string, config?: Config) {
     return this.performRequest(ctx => {
       return this.http.get(`${ctx.server.icon_search_url}?query=${search}`);
@@ -383,7 +390,7 @@ export class HttpService {
     return this.performRequest(ctx => {
       // Explicitly check for undefined because the caller may want to override with null.
       const school = schoolOverride !== undefined ? schoolOverride : this.getSchool();
-      return this.http.get<T>(makeUrl(ctx.server, url), makeConfig(config, ctx.auth.access_token, school));
+      return this.http.get<T>(makeUrl(ctx.server, url), makeConfig(config, ctx.auth.access_token, school, this.getEffectiveUserId()));
     });
   }
 
@@ -403,11 +410,11 @@ export class HttpService {
       }
       body = formData;
     }
-    return this.performRequest(ctx => this.http.post<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.getSchool())));
+    return this.performRequest(ctx => this.http.post<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.getSchool(), this.getEffectiveUserId())));
   }
 
   delete<T>(url, config?: Config): Observable<T> {
-    return this.performRequest(ctx => this.http.delete<T>(makeUrl(ctx.server, url), makeConfig(config, ctx.auth.access_token, this.getSchool())));
+    return this.performRequest(ctx => this.http.delete<T>(makeUrl(ctx.server, url), makeConfig(config, ctx.auth.access_token, this.getSchool(), this.getEffectiveUserId())));
   }
 
   put<T>(url, body?: any, config?: Config): Observable<T> {
@@ -423,7 +430,7 @@ export class HttpService {
         }
       }
     }
-    return this.performRequest(ctx => this.http.put<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.getSchool())));
+    return this.performRequest(ctx => this.http.put<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.getSchool(), this.getEffectiveUserId())));
   }
 
   patch<T>(url, body?: any, config?: Config): Observable<T> {
@@ -439,7 +446,7 @@ export class HttpService {
         }
       }
     }
-    return this.performRequest(ctx => this.http.patch<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.getSchool())));
+    return this.performRequest(ctx => this.http.patch<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.getSchool(), this.getEffectiveUserId())));
   }
 
 }
