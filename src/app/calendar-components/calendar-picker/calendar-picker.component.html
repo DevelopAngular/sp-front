@@ -101,6 +101,7 @@
         <mat-divider></mat-divider>
         <app-time-picker
            [currentDate]="selectedDates.length ? selectedDates[0] : currentDate"
+           [forseDate$]="forseUpdate$"
            [min]="min"
            (timeResult)="timePickerResult($event)"
         ></app-time-picker>
