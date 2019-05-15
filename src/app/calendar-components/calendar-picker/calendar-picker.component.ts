@@ -19,6 +19,7 @@ export interface CalendarDate {
 export class CalendarPickerComponent implements OnInit, OnChanges {
 
     @Input() width: number = 270;
+    @Input() selectedColor: string = '#00B476';
     @Input() selectedDates: moment.Moment[] = [];
     @Input() min: moment.Moment;
     @Input() showWeekend: boolean;

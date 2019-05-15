@@ -80,6 +80,7 @@
                (click)="selectDate(day)"
                (mouseenter)="hoverDates(day.mDate)"
                (mouseleave)="disabledHovered()"
+               [ngStyle]="{'background-color': day.selected ? selectedColor : 'none'}"
                [ngClass]="{
                     selected: day.selected,
                     first_last_element_radius: rangeWeeks && day.selected,

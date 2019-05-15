@@ -39,6 +39,10 @@ export class DateTimeComponent implements OnInit {
     return `radial-gradient(circle at 98% 97%, ${color})`;
   }
 
+  get selectedColor() {
+    return this.colorProfile ? this.colorProfile.solid_color : '#00B476';
+  }
+
   ngOnInit() {
     if (this.mock) {
       this.requestTime = moment(this.timeService.nowDate());

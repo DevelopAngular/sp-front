@@ -28,6 +28,7 @@
                       [width]="240"
                       [min]="startTime"
                       [selectedDates]="[requestTime]"
+                      [selectedColor]="selectedColor"
                       [showYear]="false"
                       (onSelectDate)="calendarResult($event)">
               </app-calendar-picker>
@@ -55,6 +56,7 @@
                 <app-calendar-picker
                         [width]="240"
                         [min]="startTime"
+                        [selectedColor]="selectedColor"
                         [selectedDates]="[requestTime]"
                         [showYear]="false"
                         (onSelectDate)="calendarResult($event)">
