@@ -4,7 +4,12 @@
     <div class="choice" [style.height]="height + 'px'"
          *ngFor="let choice of choices; let i=index;"
          [style.border]="'1px solid ' + selectedColor"
-         [ngClass]="{'left-radius': i === 0, 'right-radius': i === choices.length - 1}"
+         [style.opacity]="isDisabled(choice) ? 0.5 : 1"
+         [style.cursor]="isDisabled(choice) ? 'default' : 'pointer'"
+         [ngClass]="{
+         'left-radius': i === 0,
+         'right-radius': i === choices.length - 1
+         }"
          (click)="onClick(choice)"
          [style.width]="width / choices.length + 'px'"
          [style.color]="selectedChoose === choice ? backgroundColor : selectedColor"

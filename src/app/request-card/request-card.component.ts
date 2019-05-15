@@ -160,7 +160,6 @@ export class RequestCardComponent implements OnInit {
   newRequest(){
     this.performingAction = true;
     this.generateTeachersToRequest();
-      console.log(this.nowTeachers);
       let body: any = this.forFuture ? {
           'origin' : this.request.origin.id,
           'destination' : this.request.destination.id,

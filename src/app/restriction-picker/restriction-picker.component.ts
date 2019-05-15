@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-restriction-picker',
@@ -15,6 +16,7 @@ export class RestrictionPickerComponent implements OnInit {
   @Input() selectedChoose: any;
   @Input() fontSize: number = 13;  // px
   @Input() disabled: boolean;
+  @Input() disabledOptions: string[];
   @Input() padding: number = 5;      // px
 
   @Output() result: EventEmitter<any> = new EventEmitter<any>();
@@ -27,9 +29,17 @@ export class RestrictionPickerComponent implements OnInit {
     }
   }
 
+  isDisabled(option) {
+      return _.findIndex(this.disabledOptions, (opt) => {
+          return option === opt;
+      }) > -1;
+  }
+
   onClick(choice) {
-    this.selectedChoose = choice;
-    this.result.emit(choice);
+    if (!this.isDisabled(choice)) {
+        this.selectedChoose = choice;
+        this.result.emit(choice);
+    }
   }
 
 }
