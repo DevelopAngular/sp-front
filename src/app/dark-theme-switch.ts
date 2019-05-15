@@ -122,14 +122,11 @@ export class DarkThemeSwitch {
   }
 
   getBackground(tone: string, reverce: boolean = false) {
-    // background-color: #134482 !important;    background-color: #0F171E !important;
-
     if (this.isEnabled$.value) {
       switch (tone) {
         case 'low':
           return '#0F171E';
           break;
-
         case 'middle':
           return '#1E194F';
         case 'high':
@@ -149,7 +146,5 @@ export class DarkThemeSwitch {
           break;
       }
     }
-
-
   }
 }

@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges
 import * as moment from 'moment';
 import * as _ from 'lodash';
 import {bumpIn} from '../../animations';
+import {BehaviorSubject, Subject} from 'rxjs';
 
 export interface CalendarDate {
     mDate: moment.Moment;
@@ -19,6 +20,7 @@ export interface CalendarDate {
 export class CalendarPickerComponent implements OnInit, OnChanges {
 
     @Input() width: number = 270;
+    @Input() selectedColor: string = '#00B476';
     @Input() selectedDates: moment.Moment[] = [];
     @Input() min: moment.Moment;
     @Input() showWeekend: boolean;
@@ -41,6 +43,8 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
 
     public hoveredDates: moment.Moment[] = [];
 
+    forseUpdate$ = new BehaviorSubject(moment(this.currentDate).add(5, 'minutes'));
+
     constructor() {}
 
     get buttonState() {
@@ -49,6 +53,10 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
 
     get isDisabledSwitchButton() {
         return this.min && moment(this.currentDate).isSameOrBefore(this.min, 'month');
+    }
+
+    get isValidTime() {
+        return this.min && moment(this.currentDate).isAfter(moment(this.min).add(5, 'minutes'));
     }
 
     ngOnInit(): void {
@@ -186,7 +194,13 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
             this.generateCalendar();
             return;
         } else {
-            this.selectedDates = [fullDate];
+            if (fullDate.isSameOrAfter(moment().add(5, 'minutes'), 'minute')) {
+                this.selectedDates = [fullDate];
+            } else {
+                this.currentDate = moment().add(5, 'minutes');
+                this.selectedDates = [this.currentDate];
+                this.forseUpdate$.next(this.currentDate);
+            }
         }
         this.generateCalendar();
         this.onSelectDate.emit(this.selectedDates);
@@ -231,7 +245,11 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     }
 
     timePickerResult(date: moment.Moment): void {
-        this.currentDate = date;
+        if (this.isValidTime) {
+            this.currentDate = date;
+        } else {
+            this.currentDate = moment().add(5, 'minutes');
+        }
         this.generateCalendar();
         this.onSelectDate.emit([this.currentDate]);
     }

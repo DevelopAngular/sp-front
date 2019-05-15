@@ -18,6 +18,8 @@ import {filter, map, switchMap, takeUntil} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {LocationsService} from '../services/locations.service';
 import * as _ from 'lodash';
+import {RepresentedUser} from '../navbar/navbar.component';
+import {UserService} from '../services/user.service';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -83,6 +85,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   inputValue = '';
   calendarToggled = false;
   user: User;
+  effectiveUser: RepresentedUser;
   isStaff = false;
   min: Date = new Date('December 17, 1995 03:24:00');
   roomOptions: Location[];
@@ -104,14 +107,16 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   destroy$ = new Subject();
 
   constructor(
-      public dataService: DataService,
       private _zone: NgZone,
       private loadingService: LoadingService,
-      public darkTheme: DarkThemeSwitch,
-      public dialog: MatDialog,
       private liveDataService: LiveDataService,
       private timeService: TimeService,
       private locationService: LocationsService,
+
+      public darkTheme: DarkThemeSwitch,
+      public dataService: DataService,
+      public dialog: MatDialog,
+      public userService: UserService,
   ) {
     this.setSearchDate(this.timeService.nowDate());
 
@@ -120,14 +125,6 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     const selectedLocationArray$ = this.selectedLocation$.pipe(map(location => location));
 
     // Construct the providers we need.
-
-    // this.activePasses = new WrappedProvider(new ActivePassProvider(liveDataService, selectedLocationArray$,
-    //   this.searchDate$, this.searchQuery$));
-    // this.originPasses = new WrappedProvider(new OriginPassProvider(liveDataService, selectedLocationArray$,
-    //   this.searchDate$, this.searchQuery$));
-    // this.destinationPasses = new WrappedProvider(new DestinationPassProvider(liveDataService, selectedLocationArray$,
-    //   this.searchDate$, this.searchQuery$));
-
     this.activePasses = new WrappedProvider(new ActivePassProvider(liveDataService, selectedLocationArray$,
       this.searchDate$, this.searchQuery$));
     this.originPasses = new WrappedProvider(new OriginPassProvider(liveDataService, selectedLocationArray$,
@@ -173,32 +170,54 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   get myRoomHeaderColor() {
     return this.darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'});
   }
-
+  get UI() {
+    return this.isStaff && this.roomOptions.length && this.canView;
+  }
+  get error() {
+    return !this.isStaff || (this.isStaff && !this.roomOptions.length) || !this.canView;
+  }
 
   ngOnInit() {
-    this.dataService.currentUser
-      .pipe(this.loadingService.watchFirst, takeUntil(this.destroy$))
-      .subscribe(user => {
-        this._zone.run(() => {
-          this.user = user;
-          this.isStaff = user.isTeacher() || user.isAdmin();
-        });
+
+    combineLatest(
+      this.dataService.currentUser,
+      this.userService.effectiveUser,
+      (cu: User, eu: RepresentedUser) => {
+        return {cu, eu};
+      }
+    )
+    .pipe(this.loadingService.watchFirst)
+    .subscribe((v) => {
+      this._zone.run(() => {
+
+        this.user = v.cu;
+        this.effectiveUser = v.eu;
+        this.isStaff = v.cu.roles.includes('_profile_teacher');
+
+        if (this.effectiveUser) {
+          this.canView = this.effectiveUser.roles.includes('access_teacher_room');
+        } else {
+          this.canView = this.user.roles.includes('access_teacher_room');
+        }
       });
+    })
+
     combineLatest(
         this.dataService.getLocationsWithTeacher(this.user),
         this.locationService.myRoomSelectedLocation$
-    ).pipe(takeUntil(this.destroy$))
-        .subscribe(([locations, selected]: [Location[], Location]) => {
-        this._zone.run(() => {
-            this.roomOptions = locations;
-            if (!selected) {
-              this.selectedLocation$.next(locations);
-            } else {
-              this.selectedLocation = selected;
-              this.selectedLocation$.next([selected]);
-            }
-            this.userLoaded = true;
-        });
+    )
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(([locations, selected]: [Location[], Location]) => {
+      this._zone.run(() => {
+        this.roomOptions = locations;
+        if (!selected) {
+          this.selectedLocation$.next(locations);
+        } else {
+          this.selectedLocation = selected;
+          this.selectedLocation$.next([selected]);
+        }
+        this.userLoaded = true;
+      });
     });
 
       this.hasPasses = combineLatest(

@@ -1,5 +1,5 @@
 <div *ngIf="userLoaded" style="height: 100%">
-  <div *ngIf="isStaff && roomOptions.length" class="my-room-wrapper" [style.width]="calendarToggled?'900px':'550px'">
+  <div *ngIf="UI" class="my-room-wrapper" [style.width]="calendarToggled?'900px':'550px'">
     <div class="my-room-left">
       <div class="my-room-header">
         <!--<p>{{optionsOpen}} | {{showArrow}}</p>-->
@@ -81,9 +81,7 @@
       <!--<app-date-time-picker [_selectedMoment]="searchDate" [min]="min" [showTime]="false" (onUpdate)="setSearchDate($event)"></app-date-time-picker>-->
     <!--</div>-->
   </div>
-  <div class="no-content-info" *ngIf="(!isStaff || (isStaff && !roomOptions.length)) && userLoaded">
-    <!--<h3 *ngIf="isStaff && !selectedLocation && userLoaded">No rooms</h3>-->
-    <!--<h3 *ngIf="!isStaff && userLoaded">You don't have access to this page</h3>-->
+  <div class="no-content-info" *ngIf="error">
     <app-restriction-dummy></app-restriction-dummy>
   </div>
 </div>

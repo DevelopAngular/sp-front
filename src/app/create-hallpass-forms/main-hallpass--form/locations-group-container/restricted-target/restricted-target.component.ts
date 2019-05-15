@@ -1,10 +1,10 @@
-import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { Pinnable } from '../../../../models/Pinnable';
 import { Navigation } from '../../main-hall-pass-form.component';
-import {CreateFormService} from '../../../create-form.service';
-import {BehaviorSubject} from 'rxjs';
-import {States} from '../locations-group-container.component';
-import {DomSanitizer} from '@angular/platform-browser';
+import { CreateFormService } from '../../../create-form.service';
+import { BehaviorSubject } from 'rxjs';
+import { States } from '../locations-group-container.component';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-restricted-target',

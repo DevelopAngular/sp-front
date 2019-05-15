@@ -46,17 +46,10 @@ export class DropdownComponent implements OnInit {
 
   ngOnInit() {
 
-    // this.userService.getUsersList('_profile_teacher', '', 5).subscribe((t) => {
-    //   this.teachers = t.results;
-    //   this.selectedTeacher = t.results[0];
-    // })
-
-    console.log(this.teachers);
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     const rect = this.triggerElementRef.getBoundingClientRect();
     matDialogConfig.width = this.teachers ? '305px' : '350px';
     matDialogConfig.height = this.teachers ? '180px' : '215px';
-    console.log('RECT =====>', rect, matDialogConfig);
     matDialogConfig.position = { left: `${rect.left + (rect.width / 2 - parseInt(matDialogConfig.width, 10) / 2 ) }px`, top: `${rect.bottom + 15}px` };
     this._matDialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);
     this._matDialogRef.updatePosition(matDialogConfig.position);
@@ -77,13 +70,6 @@ export class DropdownComponent implements OnInit {
       if (school.my_roles.includes('_profile_student')) {
         roles.push('Student');
       }
-
     return roles.join(', ');
   }
-
-  getTextWidth(text: string, fontSize: number){
-
-  }
-
-
 }

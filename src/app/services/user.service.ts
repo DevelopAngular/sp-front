@@ -22,6 +22,12 @@ export class UserService {
 
   public userData: ReplaySubject<User> = new ReplaySubject<User>(1);
 
+  /**
+  * Used for acting on behalf of some teacher by his assistant
+  */
+  public effectiveUser: ReplaySubject<RepresentedUser> = new ReplaySubject<RepresentedUser>(1);
+  public representedUsers: ReplaySubject<RepresentedUser[]> = new ReplaySubject<RepresentedUser[]>(1);
+
   constructor(private http: HttpService,
               private pollingService: PollingService,
               private _logging: Logger,
@@ -35,32 +41,34 @@ export class UserService {
     this.http.globalReload$
         .pipe(
           switchMap(() => this.getUser()), map(raw => User.fromJSON(raw)),
-          // switchMap((user: User) => {
-          //   if (user.isAssistant()) {
-          //     return this.getUserRepresented().pipe(map((users: RepresentedUser[]) => {
-          //       if (users && users.length) {
-          //         this.http.effectiveUserId.next(+users[0].user.id);
-          //       }
-          //       return user;
-          //     }));
-          //   } else {
-          //     return of(user);
-          //   }
-          // })
+          switchMap((user: User) => {
+            if (user.isAssistant()) {
+              return this.getUserRepresented().pipe(map((users: RepresentedUser[]) => {
+                if (users && users.length) {
+                  this.representedUsers.next(users);
+                  this.effectiveUser.next(users[0]);
+                  this.http.effectiveUserId.next(+users[0].user.id);
+                }
+                return user;
+              }));
+            } else {
+              return of(user);
+            }
+          })
         )
         .subscribe(user => this.userData.next(user));
 
-          if (errorHandler instanceof SentryErrorHandler) {
-            this.userData.subscribe(user => {
-              errorHandler.setUserContext({
-                id: `${user.id}`,
-                email: user.primary_email,
-                is_student: user.isStudent(),
-                is_teacher: user.isStudent(),
-                is_admin: user.isAdmin(),
-              });
-            });
-          }
+    if (errorHandler instanceof SentryErrorHandler) {
+      this.userData.subscribe(user => {
+        errorHandler.setUserContext({
+          id: `${user.id}`,
+          email: user.primary_email,
+          is_student: user.isStudent(),
+          is_teacher: user.isStudent(),
+          is_admin: user.isAdmin(),
+        });
+      });
+    }
 
     this.pollingService.listen().subscribe(this._logging.debug);
   }
@@ -145,7 +153,12 @@ export class UserService {
   getRepresentedUsers(id) {
     return this.http.get(`v1/users/${id}/represented_users`);
   }
-
+  addRepresentedUser(id: number, repr_user: User) {
+    return this.http.put(`v1/users/${id}/represented_users/${repr_user.id}`);
+  }
+  deleteRepresentedUser(id: number, repr_user: User) {
+    return this.http.delete(`v1/users/${id}/represented_users/${repr_user.id}`);
+  }
   getStudentGroups() {
       return this.http.get('v1/student_lists');
   }

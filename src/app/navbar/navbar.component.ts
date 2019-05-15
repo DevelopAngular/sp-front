@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 
 import {ReplaySubject, combineLatest, of, Subject} from 'rxjs';
-import {switchMap, tap} from 'rxjs/operators';
+import {filter, switchMap, tap} from 'rxjs/operators';
 
 import { DataService } from '../services/data-service';
 import { GoogleLoginService } from '../services/google-login.service';
@@ -20,7 +20,6 @@ import { LocationsService } from '../services/locations.service';
 import * as _ from 'lodash';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {NotificationService} from '../services/notification-service';
-import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {HttpService} from '../services/http-service';
 
@@ -56,12 +55,11 @@ export class NavbarComponent implements OnInit {
   navbarEnabled = false;
 
   buttons = [
-      {title: 'Passes', route: 'passes', imgUrl: 'SP Arrow', requiredRoles: ['_profile_teacher', '_profile_student']},
-      {title: 'Hall Monitor', route: 'hallmonitor', imgUrl: 'Walking', requiredRoles: ['_profile_teacher']},
-      {title: 'My Room', route: 'myroom', imgUrl: 'Room', requiredRoles: ['_profile_teacher']},
+      {title: 'Passes', route: 'passes', imgUrl: 'SP Arrow', requiredRoles: ['_profile_teacher', 'access_passes']},
+      {title: 'Hall Monitor', route: 'hallmonitor', imgUrl: 'Walking', requiredRoles: ['_profile_teacher', 'access_hall_monitor']},
+      {title: 'My Room', route: 'myroom', imgUrl: 'Room', requiredRoles: ['_profile_teacher', 'access_teacher_room']},
   ];
 
-  currentUser;
   fakeMenu: ReplaySubject<boolean> = new ReplaySubject<boolean>();
 
   constructor(
@@ -94,24 +92,24 @@ export class NavbarComponent implements OnInit {
     });
   }
 
-  get optionsOpen(){
-    return this.tab==='settings';
+  get optionsOpen() {
+    return this.tab === 'settings';
   }
 
-  get showNav(){
-    return this.tab!=='intro' && this.hasNav;
+  get showNav() {
+    return this.tab !== 'intro' && this.hasNav;
   }
 
   ngOnInit() {
     let urlSplit: string[] = location.pathname.split('/');
-    this.tab = urlSplit[urlSplit.length-1];
+    this.tab = urlSplit[urlSplit.length - 1];
 
     this.router.events.subscribe(value => {
-      if(value instanceof NavigationEnd){
+      if (value instanceof NavigationEnd) {
         let urlSplit: string[] = value.url.split('/');
-        this.tab = urlSplit[urlSplit.length-1];
-        this.tab = ((this.tab==='' || this.tab==='main')?'passes':this.tab);
-        this.inboxVisibility = this.tab!=='settings';
+        this.tab = urlSplit[urlSplit.length - 1];
+        this.tab = ((this.tab === '' || this.tab === 'main') ? 'passes' : this.tab);
+        this.inboxVisibility = this.tab !== 'settings';
         this.dataService.updateInbox(this.inboxVisibility);
       }
     });
@@ -125,28 +123,38 @@ export class NavbarComponent implements OnInit {
       .subscribe(user => {
         this._zone.run(() => {
           this.user = user;
-          if (user.isAssistant()) {// debugger
+          if (user.isAssistant()) {
             this.representedUsers$.next(user);
           }
-          // console.log('User =>>>>>', user);
           this.isStaff = user.isAdmin() || user.isTeacher();
           this.showSwitchButton = [user.isAdmin(), user.isTeacher(), user.isStudent()].filter(val => !!val).length > 1;
           this.dataService.updateInbox(this.tab !== 'settings');
         });
       });
 
-    this.representedUsers$.asObservable()
+    this.userService.effectiveUser
       .pipe(
-        switchMap((user) => {
-          // return this.userService.getRepresentedUsers(user.id);
-          return this.userService.getUserRepresented();
-        })
+        this.loadingService.watchFirst
       )
-      .subscribe((u: any) => {
-      this.representedUsers = u;
-      this.effectiveUser = u[0];
-        this.http.effectiveUserId.next(+this.effectiveUser.user.id);
+      .subscribe((eu: RepresentedUser) => {
+        this.effectiveUser = eu;
+        this.buttons.forEach((button) => {
+          if (
+            ((this.activeRoute.snapshot as any)._routerState.url === `/main/${button.route}`)
+            &&
+            !this.hasRoles(button.requiredRoles)
+          ) {
+            this.fakeMenu.next(true);
+          }
+        });
       })
+    this.userService.representedUsers
+      .pipe(
+        this.loadingService.watchFirst
+      )
+      .subscribe((ru: RepresentedUser[]) => {
+        this.representedUsers = ru;
+      });
 
     this.dataService.getLocationsWithTeacher(this.user).subscribe(res => {
       _.remove(this.buttons, (el) => {
@@ -154,18 +162,20 @@ export class NavbarComponent implements OnInit {
       });
     });
 
-    this.userService.userData.subscribe(user => {
-
-        this.buttons.forEach((button) => {
-
-            if (
-                ((this.activeRoute.snapshot as any)._routerState.url === `/main/${button.route}`)
-                &&
-                !this.hasRoles(button.requiredRoles)
-            ) {
-                this.fakeMenu.next(true);
-            }
-        });
+    this.userService.userData
+      .pipe(
+        filter(user => !user.isAssistant())
+      )
+      .subscribe(user => {
+      this.buttons.forEach((button) => {
+        if (
+          ((this.activeRoute.snapshot as any)._routerState.url === `/main/${button.route}`)
+          &&
+          !this.hasRoles(button.requiredRoles)
+        ) {
+            this.fakeMenu.next(true);
+          }
+      });
     });
   }
 
@@ -193,7 +203,11 @@ export class NavbarComponent implements OnInit {
   }
 
   hasRoles(roles: string[]) {
-     return roles.every((_role) => this.user.roles.includes(_role));
+    if (this.user.isAssistant()) {
+      return roles.every((_role) => this.effectiveUser.roles.includes(_role));
+    } else {
+      return roles.every((_role) => this.user.roles.includes(_role));
+    }
   }
 
   showOptions(event) {
@@ -226,9 +240,12 @@ export class NavbarComponent implements OnInit {
       }
     });
     representedUsersDialog.afterClosed().subscribe((v: RepresentedUser) => {
-      console.log(v);
-      this.effectiveUser = v ? v : this.effectiveUser;
-      this.http.effectiveUserId.next(+this.effectiveUser.user.id);
+      // console.log(v);
+      // this.effectiveUser = v ? v : this.effectiveUser;
+      if (v) {
+        this.userService.effectiveUser.next(v);
+        this.http.effectiveUserId.next(+v.user.id);
+      }
     });
   }
 
@@ -311,4 +328,6 @@ export class NavbarComponent implements OnInit {
       this.updateTab('passes');
     }
   }
+
+
 }

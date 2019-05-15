@@ -404,7 +404,7 @@ export class OverlayContainerComponent implements OnInit {
         this.isDirtyFutureRestriction,
         this.isDirtyTravel,
         !!this.timeLimit
-      ])
+      ]);
     } else {
 
      return this.isDirtyNowRestriction ||
@@ -495,6 +495,12 @@ export class OverlayContainerComponent implements OnInit {
     } else {
       return 'Import Rooms';
     }
+  }
+
+  get advDisabledOptions() {
+      if (!this.selectedTeachers.length) {
+          return ['Any teachers assigned', 'All teachers assigned'];
+      }
   }
 
   ngOnInit() {
@@ -1392,8 +1398,17 @@ export class OverlayContainerComponent implements OnInit {
     }
   }
   selectTeacherEvent(teachers) {
-    console.log(teachers);
     this.selectedTeachers = teachers;
+    if (!this.selectedTeachers.length) {
+       if (this.advDisabledOptions.indexOf(this.advOptState.now.state) > -1) {
+           this.advOptState.now.state = 'Any teacher (default)';
+           this.isDirtyAdvancedOpt = false;
+       }
+       if (this.advDisabledOptions.indexOf(this.advOptState.future.state) > -1) {
+           this.advOptState.future.state = 'Any teacher (default)';
+           this.isDirtyAdvancedOpt = false;
+       }
+    }
     this.isDirtysettings = true;
     this.showProfileSearch = false;
     this.changeState();

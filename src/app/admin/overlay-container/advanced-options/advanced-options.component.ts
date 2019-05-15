@@ -36,7 +36,7 @@ export class AdvancedOptionsComponent implements OnInit {
   @Input() roomName: string;
   @Input() nowRestricted: boolean;
   @Input() futureRestricted: boolean;
-
+  @Input() disabledOptions: string[];
   @Input() data: OptionState;
 
   @Output() openedOptions: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -75,7 +75,7 @@ export class AdvancedOptionsComponent implements OnInit {
       } else {
           return this.sanitizer.bypassSecurityTrustStyle('transparent');
       }
-    }
+  }
 
   ngOnInit() {
           this.optionState = _.cloneDeep(this.data);
