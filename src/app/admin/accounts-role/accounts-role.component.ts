@@ -18,6 +18,7 @@ import {DataService} from '../../services/data-service';
 import {Location} from '../../models/Location';
 import {DataTableComponent} from '../data-table/data-table.component';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
+import {RepresentedUser} from '../../navbar/navbar.component';
 
 declare const window;
 
@@ -35,13 +36,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   private searchChangeObserver$: Subject<string>;
 
   public role: string;
-  public count: number = 0;
-  // public userAmount: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   public dataTableHeadersToDisplay: string[] = [];
   public userList: any[] = [];
   public selectedUsers: any[] = [];
   public placeholder: boolean;
-  public consentMenuOpened: boolean = false;
   public dataTableHeaders: any;
   public profilePermissions: any;
   public initialSearchString: string;
@@ -56,7 +54,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       total_count: 0,
       admin_count: 0,
       student_count: 0,
-      teacher_count: 0
+      teacher_count: 0,
+      assistant_count: 0
     });
 
   @ViewChild(DataTableComponent) dataTable;
@@ -68,36 +67,35 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     if (event.target.scrollTop === limit && this.isLoadUsers) {
       this.limitCounter += 20;
         this.userService
-            .getUsersList(this.role, '', this.limitCounter)
-            .pipe(
-                takeUntil(this.destroy$),
-                map(res => res.results),
-                switchMap((userList) => {
-                  if (this.role === '_profile_teacher') {
-                    return zip(
-                        ...userList.map((user: User) => {
-                            return this.dataService.getLocationsWithTeacher(user)
-                                .pipe(
-                                    switchMap((locs: Location[]) => {
-                                        (user as any).assignedTo = locs;
-                                        return of(user);
-                                    })
-                                );
-
-                        }));
-                  } else {
-                      return of(userList);
-                  }
-                })
-            )
-            .subscribe(userList => {
-              this.dataTableHeadersToDisplay = [];
-              this.userList = this.buildUserListData(userList);
-              this.selectedUsers = [];
-              if (this.dataTable) {
-                this.dataTable.clearSelection();
+          .getUsersList(this.role, '', this.limitCounter)
+          .pipe(
+            takeUntil(this.destroy$),
+            map(res => res.results),
+            switchMap((userList) => {
+              if (this.role === '_profile_teacher') {
+                return zip(
+                  ...userList.map((user: User) => {
+                    return this.dataService.getLocationsWithTeacher(user)
+                      .pipe(
+                        switchMap((locs: Location[]) => {
+                          (user as any).assignedTo = locs;
+                          return of(user);
+                        })
+                      );
+                  }));
+              } else {
+                return of(userList);
               }
-        });
+            })
+          )
+          .subscribe(userList => {
+            this.dataTableHeadersToDisplay = [];
+            this.userList = this.buildUserListData(userList);
+            this.selectedUsers = [];
+            if (this.dataTable) {
+              this.dataTable.clearSelection();
+            }
+          });
     }
   }
 
@@ -127,8 +125,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       case '_profile_student':
         return this.accounts$.value.student_count === 0;
         break;
-      case 'staff_secretary':
-        return (this.accounts$.value.secretary_count || 0) === 0;
+      case '_profile_assistant':
+        return this.accounts$.value.assistant_count === 0;
         break;
     }
   }
@@ -170,24 +168,13 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       })
     )
     .subscribe((qp) => {
-      // console.log(qp);
-      // debugger;
-
-      const {profileName, count} = qp;
-
-      this.count = count ? count : this.count;
-
-
-
+      const {profileName} = qp;
       this.initialSearchString = this.initialSearchString ? this.initialSearchString : profileName;
-        // console.log(this.initialSearchString);
       this.router.navigate(['admin/accounts', this.role]);
       this.tabVisibility = true;
       this.getUserList(this.initialSearchString || '');
-      // this._zone.run(() => {
         const headers = this.storage.getItem(`${this.role}_columns`);
         if ( headers ) {
-
           this.dataTableHeaders = JSON.parse(headers);
         } else {
           this.dataTableHeaders = {
@@ -234,7 +221,18 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
                 disabled: false
               };
               break;
-
+            case '_profile_assistant':
+              this.dataTableHeaders['Acting on Behalf Of'] = {
+                value: true,
+                label: 'Acting on Behalf Of',
+                disabled: false
+              };
+              this.dataTableHeaders['Permissions'] = {
+                value: false,
+                label: 'Permissions',
+                disabled: false
+              };
+              break;
             case '_profile_admin':
               this.dataTableHeaders['Permissions'] = {
                 value: false,
@@ -251,7 +249,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               };
           }
         }
-      // });
 
       this.profilePermissions =
         this.role === '_profile_admin'
@@ -260,27 +257,22 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           'access_admin_dashboard': {
             controlName: 'access_admin_dashboard',
             controlLabel: 'Dashboard Tab Access',
-            // allowed: this.user.roles.includes('admin_dashboard'),
           },
           'access_hall_monitor': {
             controlName: 'access_hall_monitor',
             controlLabel: 'Hall Monitor Tab Access',
-            // allowed: this.user.roles.includes('admin_hall_monitor'),
           },
           'access_admin_search': {
             controlName: 'access_admin_search',
             controlLabel: 'Search Tab Access',
-            // allowed: this.user.roles.includes('admin_search'),
           },
           'access_user_config': {
             controlName: 'access_user_config',
             controlLabel: 'Accounts & Profiles Tab Access',
-            // allowed: this.user.roles.includes('admin_accounts'),
           },
           'access_pass_config': {
             controlName: 'access_pass_config',
             controlLabel: 'Pass Configuration Tab Access',
-            // allowed: this.user.roles.includes('admin_pass_config'),
           },
           // 'admin_school_settings': {
           //   controlName: 'admin_school_settings',
@@ -296,6 +288,23 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             controlName: 'access_hall_monitor',
             // allowed: this.user.roles.includes('admin_hall_monitor'),
             controlLabel: 'Access to Hall Monitor'
+          },
+        }
+                   :
+        this.role === '_profile_assistant'
+                   ?
+        {
+          'access_hall_monitor': {
+            controlName: 'access_hall_monitor',
+            controlLabel: 'Hall Monitor Tab Access'
+          },
+          'access_passes': {
+            controlName: 'access_passes',
+            controlLabel: 'Passes Tab Access'
+          },
+          'access_teacher_room': {
+            controlName: 'access_teacher_room',
+            controlLabel: 'My Room Tab Access'
           },
         }
                    :
@@ -502,12 +511,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         this.getUserList();
       }
     });
-
   }
 
   findProfileByRole(evt) {
     // console.log(evt);
-
     this.tabVisibility = false;
 
     setTimeout(() => {
@@ -524,7 +531,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   showProfileCard(evt, bulk: boolean = false, gSuite: boolean = false) {
-    // console.log(evt);
+    console.log(evt);
 
     if (this.role === '_profile_admin') {
       if ((evt.id === +this.user.id)) {
@@ -598,6 +605,18 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
                   );
 
               }));
+          } else if (this.role === '_profile_assistant') {
+            return zip(
+              ...userList.map((user: User) => {
+                return this.userService.getRepresentedUsers(user.id)
+                  .pipe(
+                    switchMap((ru: RepresentedUser[]) => {
+                      (user as any).canActingOnBehalfOf = ru;
+                      return of(user);
+                    })
+                  );
+
+              }));
           } else {
             return of(userList);
           }
@@ -619,6 +638,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       this.isLoadUsers = this.limitCounter === userList.length;
       // this.userAmount.next(userList.length);
       return userList.map((raw, index) => {
+        // raw = User.fromJSON(raw);
 
         const permissionsRef: any = this.profilePermissions;
           const partOf = [];
@@ -632,6 +652,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               'Email/Username': raw.primary_email,
               'Rooms': raw.assignedTo,
               'Account Type': 'G Suite',
+              'Acting on Behalf Of': raw.canActingOnBehalfOf ? raw.canActingOnBehalfOf.map((u: RepresentedUser) => {
+                return `${u.user.display_name}(${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
+              }).join(', ') : '',
               'Sign-in status': 'Enabled',
               'Last sign-in': Util.formatDateTime(new Date(raw.last_updated)),
               'Profile(s)': partOf,
