@@ -62,12 +62,15 @@
           </span>
         </ng-container>
         <ng-template #empty>
-          <span *ngIf="column === 'Rooms'; else withoutProfile" style="cursor: not-allowed; color: #AAAAAA;">
+          <span *ngIf="column === 'Rooms'" style="cursor: not-allowed; color: #AAAAAA;">
             Not Assigned Anywhere
           </span>
-          <ng-template #withoutProfile>
-            <span style="cursor: not-allowed; color: #AAAAAA;">Without Profile</span>
-          </ng-template>
+          <span *ngIf="column === 'Acting on Behalf Of'" style="cursor: not-allowed; color: #AAAAAA;">
+            Сan't act on behalf of anyone
+          </span>
+          <!--<ng-template #withoutProfile>-->
+            <!--<span style="cursor: not-allowed; color: #AAAAAA;">Сan't act on behalf of anyone</span>-->
+          <!--</ng-template>-->
         </ng-template>
       </td>
     </ng-container>

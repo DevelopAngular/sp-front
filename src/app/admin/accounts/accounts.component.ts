@@ -68,13 +68,5 @@ export class AccountsComponent implements OnInit {
       data: data
     });
 
-    // const DR = this.matDialog.open(AccountsDialogComponent,
-    //   {
-    //     data: {
-    //     },
-    //     width: '768px', height: '560px',
-    //     panelClass: 'accounts-profiles-dialog',
-    //     backdropClass: 'custom-bd'
-    //   });
   }
 }

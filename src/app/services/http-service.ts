@@ -56,7 +56,7 @@ function makeConfig(config: Config, access_token: string, school: School, effect
     headers['X-School-Id'] = '' + school.id;
   }
   if (effectiveUserId) {
-    console.log(effectiveUserId);
+    // console.log(effectiveUserId);
     headers['X-Effective-User-Id'] = '' + effectiveUserId;
   }
 

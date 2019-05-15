@@ -13,7 +13,7 @@
       <img class="role-icon"  [ngClass]="{'gsuite': this.layout === 'gSuiteSettings'}"  [src]="headerIcon" alt="header-icon">
       <span>{{headerText}}</span>
     </div>
-    <div *ngIf="permissionsFormEditState" class="save-button">
+    <div *ngIf="permissionsFormEditState || assistantForEditState" class="save-button">
       <app-gradient-button
         [minHeight]="'27px'"
         [width]="'72px'"
@@ -70,34 +70,24 @@
               </div>
             </div>
           </div>
-          <div *ngIf="data.role === '_profile_assistant' && secretaryOrSubstitute">
-            <div class="active-on-behalf-user ds-w-100 ds-my-15">
-              <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': secretaryOrSubstitute.behalfOf, 'ds-dialog-heading-gray': !secretaryOrSubstitute.behalfOf}">Active on Behalf Of</div>
-              <!--<div class="profile-search" *ngIf="!secretaryOrSubstitute.behalfOf; else secretaryBehalfOf" >-->
-                <!--<app-student-search-->
-                  <!--[placeholder]="'Search existing teachers'"-->
-                  <!--[type]="'alternative'"-->
-                  <!--[role]="'_profile_teacher'"-->
-                  <!--(onUpdate)="secretaryOrSubstitute.behalfOf = $event[0]"-->
-                <!--&gt;</app-student-search>-->
-              <!--</div>-->
-              <!--<ng-template #secretaryBehalfOf>-->
-                <!--<div class="ds-flex-center-start">-->
-                  <!--<div class="ds-flex-center-between" *ngFor="let chip of secretaryOrSubstitute.behalfOf; let i = index">-->
-                    <!--<div class="user"-->
-                         <!--(mouseenter)="chip.hovered = true;"-->
-                         <!--(mouseleave)="chip.hovered = false;">-->
-                      <!--<span>{{chip.user.display_name}}</span>-->
-                      <!--<div style="width: 15px; height: 15px; cursor: pointer; margin-left: 10px;">-->
-                        <!--<img *ngIf="chip.hovered"-->
-                             <!--(click)="secretaryOrSubstitute.behalfOf.splice(i, 1)"-->
-                             <!--[src]="'./assets/Cancel (Blue-Gray).svg'" width="15" alt="Check.svg">-->
-                      <!--</div>-->
-                    <!--</div>-->
-                  <!--</div>-->
-                <!--</div>-->
-              <!--</ng-template>-->
-              <app-sp-chips [selectedProfiles]="secretaryOrSubstitute.behalfOf"></app-sp-chips>
+          <div *ngIf="data.role === '_profile_assistant' && assistantFor">
+            <div class="active-on-behalf-user ds-w-100 ds-mt-15">
+              <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantFor, 'ds-dialog-heading-gray': !assistantFor}">Active on Behalf Of</div>
+              <!--<app-sp-chips-->
+                <!--[selectedProfiles]="assistantFor"-->
+                <!--(updateSelectedEvent)="assistantForUpdate$.next($event)"-->
+              <!--&gt;</app-sp-chips>-->
+              <app-student-search
+                [selectedStudents]="assistantFor"
+                [chipsMode]="true"
+                [focused]="true"
+                [role]="'_profile_teacher'"
+                [dummyRoleText]="'teachers'"
+                [rollUpAfterSelection]="true"
+                [cancelButton]="true"
+                [placeholder]="'Search Teachers'"
+                (onUpdate)="assistantForUpdate$.next($event)"
+              ></app-student-search>
             </div>
           </div>
         </div>
@@ -168,7 +158,7 @@
             </div>
           </div>
         </div>
-        <div class="card-body_section" *ngIf="data.role === '_profile_teacher' || data.role === '_profile_admin'">
+        <div class="card-body_section" *ngIf="data.role === '_profile_teacher' || data.role === '_profile_assistant' || data.role === '_profile_admin'">
           <div class="section-content">
             <div [style.width]="'100%'">
               <div class="ds-dialog-heading">Permissions</div>
