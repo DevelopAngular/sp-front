@@ -55,7 +55,7 @@
 .hallpass-box {
   display: flex;
   flex-direction: column;
-  width: 55%;
+  width: 45%;
   //min-width: 470px;
   align-items: center;
   margin: 30px 40px 0 0px;
@@ -98,9 +98,8 @@
 
 .reported-students {
   margin: 5px;
-  min-width: 450px;
+  width: 450px;
   height: calc(100% - 10px);
-  width: 40%;
   border-radius: 10px;
   box-shadow: 0 0 2px darkgrey;
   background-color: white;

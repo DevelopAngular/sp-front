@@ -56,8 +56,8 @@
         <ng-container *ngIf="normalizeCell(element[column]).length; else empty">
           <span *ngFor="let cellElement of normalizeCell(element[column]); let i = index">
             <!--<span *ngIf="normalizeCell(element[column]).length > 1 && i > 0">, </span>-->
-            <span [ngClass]="{'multi-cell': cellElement.title}" (click)="selectedCellEmit($event, cellElement, element)">
-              {{displayCell(cellElement) + (normalizeCell(element[column]).length > 1 && i !== normalizeCell(element[column]).length - 1 ? ', ' : '')}}
+            <span [ngClass]="{'multi-cell': cellElement.title}" (click)="selectedCellEmit($event, cellElement, element)" #cell>
+              {{displayCell(cellElement, cell) + (normalizeCell(element[column]).length > 1 && i !== normalizeCell(element[column]).length - 1 ? ', ' : '')}}
             </span>
           </span>
         </ng-container>

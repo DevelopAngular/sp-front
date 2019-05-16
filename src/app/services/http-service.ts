@@ -310,7 +310,10 @@ export class HttpService {
         }
 
         return authContext$.pipe(
-          tap(() => {
+          tap((res) => {
+            if (!res) {
+             throw new LoginServerError('Incorrect Login or password');
+            }
             this.loginService.setAuthenticated();
           }),
           catchError(err => {
