@@ -1,9 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatSort, MatTableDataSource} from '@angular/material';
-import {DarkThemeSwitch} from '../../dark-theme-switch';
-import {DomSanitizer} from '@angular/platform-browser';
-import {BehaviorSubject} from 'rxjs';
+import { DarkThemeSwitch } from '../../dark-theme-switch';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BehaviorSubject } from 'rxjs';
+
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-data-table',
@@ -55,7 +57,7 @@ export class DataTableComponent implements OnInit {
             case 'Name':
               return item[property].split(' ')[1];
             case 'Date & Time':
-                return new Date(item[property]);
+                return moment(new Date(item[property]));
             default:
                 return item[property];
           }
