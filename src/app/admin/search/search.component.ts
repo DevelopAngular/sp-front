@@ -19,6 +19,7 @@ import {DataService} from '../../services/data-service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {SearchFilterDialogComponent} from './search-filter-dialog/search-filter-dialog.component';
 import {DateTimeFilterComponent} from './date-time-filter/date-time-filter.component';
+import {DomSanitizer} from '@angular/platform-browser';
 
 
 
@@ -37,7 +38,7 @@ export class SearchComponent implements OnInit {
   selectedRooms = [];
   roomSearchType;
   selectedReport = [];
-  passes: HallPass[];
+  passes: HallPass[] = [];
 
   selRoomsWithCategories;
 
@@ -60,7 +61,8 @@ export class SearchComponent implements OnInit {
       private router: Router,
       private userService: UserService,
       private dataService: DataService,
-      public darkTheme: DarkThemeSwitch
+      public darkTheme: DarkThemeSwitch,
+      private domSanitazer: DomSanitizer
 
   ) {
   }
@@ -126,7 +128,7 @@ export class SearchComponent implements OnInit {
   }
 
   search(query: string = '') {
-    if (this.selectedStudents.length || this.selectedDate || this.selectedRooms.length || query) {
+    // if (this.selectedStudents.length || this.selectedDate || this.selectedRooms.length || query) {
       this.sortParamsHeader = `All Passes, Searching by ${(this.selectedStudents && this.selectedStudents.length > 0 ? 'Student Name' : '') + (this.selectedDate && this.selectedDate !== '' ? ', Date & Time' : '') + (this.selectedRooms && this.selectedRooms.length > 0 ? ', Room Name' : '')}`;
       this.spinner = true;
       this.selectedReport = [];
@@ -202,13 +204,13 @@ export class SearchComponent implements OnInit {
           this.tableData = data.map(hallPass => {
             let travelType;
             if (hallPass.travel_type === 'one_way') {
-              travelType = 'One Way';
+              travelType = `<img src="./assets/SP Arrow (Blue-Gray).svg" width="15">`;
             }
             if (hallPass.travel_type === 'round_trip') {
-              travelType = 'Round Trip';
+              travelType = `<img src="./assets/SP Arrow Double (Blue-Gray).svg" width="25">`;
             }
             if (hallPass.travel_type === 'both') {
-              travelType = 'Both';
+              travelType = `<img src="./assets/SP Arrow Double (Blue-Gray).svg" width="25">`;
             }
             const reportDate = new Date(hallPass.created);
             const time = reportDate.getHours() <= 12
@@ -226,8 +228,8 @@ export class SearchComponent implements OnInit {
             const passes = {
                 'Student Name': name,
                 'Origin': hallPass.origin.title,
+                'TT': travelType,
                 'Destination': hallPass.destination.title,
-                'Travel Type': travelType,
                 'Date & Time': prettyReportDate,
                 'Duration': duration
             };
@@ -238,13 +240,13 @@ export class SearchComponent implements OnInit {
           this.hasSearched = true;
         });
 
-    }
+    // }
   }
 
   openFilters(state: string) {
     const filterRef = this.dialog.open(SearchFilterDialogComponent, {
-        panelClass: 'form-dialog-container',
-        backdropClass: 'custom-backdrop',
+        panelClass: 'accounts-profiles-dialog',
+        backdropClass: 'custom-bd',
         data: {
             state,
             students: this.selectedStudents,
@@ -321,9 +323,9 @@ export class SearchComponent implements OnInit {
   }
 
   previewPDF(event) {
-    console.log(this.selectedReport);
-    if (this.selectedReport.length > 0) {
-      const _selectedReport = this.selectedReport.map((row) => {
+    const data = this.selectedReport.length ? this.selectedReport : this.tableData;
+    if (data.length > 0) {
+      const _selectedReport = data.map((row) => {
         const _copy = {};
         for (const key in row) {
           if (row.hasOwnProperty(key)) {

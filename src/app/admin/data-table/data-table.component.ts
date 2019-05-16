@@ -151,12 +151,15 @@ export class DataTableComponent implements OnInit {
       return  new Array(cellData);
     }
   }
-  displayCell(cellElement) {
+  displayCell(cellElement, cell?) {
+    let value = '';
     if (typeof cellElement === 'string') {
-      return cellElement;
+      value = cellElement;
     } else {
-      return cellElement.title ? cellElement.title : 'Error!';
+      value = cellElement.title ? cellElement.title : 'Error!';
     }
+
+    cell.innerHTML = value;
   }
 
   selectedCellEmit(event, cellElement, element) {

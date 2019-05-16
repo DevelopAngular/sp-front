@@ -6,8 +6,8 @@
         <div class="title">Search</div>
         <div class="inputs-container">
             <div class="input">
-              <div class="input-title">
-                <img width="16" [src]="'./assets/Student (Blue-Gray).svg' | resolveAsset" alt="Icon">
+              <div class="input-title" [style.color]="selectedStudents.length ? '#1F195E' : '#7E879D'">
+                <img width="16" [src]="'./assets/Student ' + (selectedStudents.length ? '(Navy).svg' : '(Blue-Gray).svg') | resolveAsset" alt="Icon">
                 Students
               </div>
               <div class="chip" [ngClass]="{hovered: schip.hovered && selectedStudents.length}"  #schip (mouseenter)="schip.hovered = true;" (mouseleave)="schip.hovered = false;">
@@ -26,8 +26,8 @@
             </div>
             <mat-divider [vertical]="true"></mat-divider>
             <div class="input">
-              <div class="input-title">
-                  <img width="16" [src]="'./assets/Room (Blue-Gray).svg' | resolveAsset" alt="Icon">
+              <div class="input-title" [style.color]="selectedRooms.length ? '#1F195E' : '#7E879D'">
+                  <img width="16" [src]="'./assets/Room ' + (selectedRooms.length ? '(Navy).svg' : '(Blue-Gray).svg') | resolveAsset" alt="Icon">
                   Rooms
               </div>
               <div class="chip" #rchip [ngClass]="{hovered: rchip.hovered && selectedRooms.length}" (mouseenter)="rchip.hovered = true;" (mouseleave)="rchip.hovered = false;">
@@ -45,8 +45,8 @@
             </div>
             <mat-divider [vertical]="true"></mat-divider>
             <div class="input">
-              <div class="input-title">
-                  <img width="16" [src]="'./assets/Calendar (Blue-Gray).svg' | resolveAsset" alt="Icon">
+              <div class="input-title" [style.color]="selectedDate ? '#1F195E' : '#7E879D'">
+                  <img width="16" [src]="'./assets/Calendar ' + (selectedDate ? '(Navy).svg' : '(Blue-Gray).svg') | resolveAsset" alt="Icon">
                   Date & Time
               </div>
               <div class="chip" #dchip [ngClass]="{hovered: dchip.hovered && !!selectedDate}" (mouseenter)="dchip.hovered = true;" (mouseleave)="dchip.hovered = false">
@@ -65,38 +65,39 @@
         </div>
         <div class="search-button" *ngIf="!hasSearched && !spinner">
           <app-gradient-button
-                               [size]="'large'"
-                               [ngStyle]="{'opacity': isDisabled? '.5' : '1'}"
+                               [size]="'editable'"
                                [style.margin]="'0 20px'"
+                               [width]="'160px'"
+                               [minHeight]="'75px'"
                                [gradient]="'#FFFFFF,#FFFFFF'"
                                [hoverColor]="'#F5F5F5'"
-                               [cursor]="!isDisabled ? 'pointer' : 'default'"
-                               [textColor]="isDisabled ? 'rgb(120, 140, 165)' : '#1E194F'"
-                               [fontSize]="'23px'"
+                               [cursor]="'pointer'"
+                               [textColor]="'#1E194F'"
+                               [fontSize]="'17px'"
                                [border]="'1px solid 1px solid #eee'"
-                               [leftIcon]="isDisabled ? './assets/Search Normal (Blue-Gray).svg' : './assets/Search Normal (Navy).svg'"
+                               [leftIcon]="'./assets/Search Normal (Navy).svg'"
                                [leftImageWidth]="'30px'"
                                [leftImageHeight]="'30px'"
-                               [disabled]="isDisabled"
                                (buttonClick)="search()"
           ><span>Search</span></app-gradient-button>
         </div>
         <div class="search-button" *ngIf="spinner || hasSearched">
 
-          <div (click)="previewPDF($event)" draggable="true" [ngStyle]="{'opacity': !selectedReport.length ? '.5' : '1'}">
+          <div (click)="previewPDF($event)" draggable="true">
             <app-gradient-button  class="report-button"
-                                  [size]="'large'"
+                                  [size]="'editable'"
+                                  [width]="'160px'"
+                                  [minHeight]="'75px'"
                                   [style.margin]="'0 20px'"
                                   [gradient]="'#FFFFFF,#FFFFFF'"
                                   [hoverColor]="'#F5F5F5'"
                                   [cursor]="'pointer'"
-                                  [textColor]="selectedReport.length === 0 ? 'rgb(120, 140, 165)' : '#134482'"
+                                  [textColor]="'#134482'"
                                   [fontSize]="'17px'"
-                                  [border]="'1px solid 1px solid #eee'"
-                                  [disabled]="selectedReport.length === 0">
+                                  [border]="'1px solid 1px solid #eee'">
               <div [style.text-align]="'center'">
                 <span>Generate Report </span><br/>
-                <span>{{ selectedReport.length }} passes</span>
+                <span>{{ (!selectedReport.length ? passes.length + ' passes' : 'Selected Passes') }}</span>
               </div>
             </app-gradient-button>
             <!--<a #printPdf href="pdf/report" target="_blank"></a>-->
@@ -109,12 +110,12 @@
       <div class="content">
         <div class="search-content-table" *ngIf="hasSearched">
           <div class="search-header">
-            <div class="text-header ds-flex-center-start" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#6C6990'})">
-              <img width="18" height="18" class="ds-pr-10" [src]="darkTheme.getIcon({iconName: 'Expired'})" alt="Expired.svg">
-              {{sortParamsHeader}}
-            </div>
-            <div class="divider"></div>
-            <app-data-table [data]="tableData" *ngIf="tableData.length > 0 && !spinner" (selectedUsers)="selectedReport=$event" (selectedRow)="selectedPass($event)"></app-data-table>
+            <!--<div class="text-header ds-flex-center-start" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#6C6990'})">-->
+              <!--<img width="18" height="18" class="ds-pr-10" [src]="darkTheme.getIcon({iconName: 'Expired'})" alt="Expired.svg">-->
+              <!--{{sortParamsHeader}}-->
+            <!--</div>-->
+            <!--<div class="divider"></div>-->
+            <app-data-table [data]="tableData" [textColor]="'#7F879D'" *ngIf="tableData.length > 0 && !spinner" (selectedUsers)="selectedReport=$event" (selectedRow)="selectedPass($event)"></app-data-table>
             <div class="nopass-text" *ngIf="tableData.length === 0 && !spinner" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
               There are no passes that match the search parameters!
             </div>
