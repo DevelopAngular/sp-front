@@ -26,6 +26,7 @@
     position: absolute;
     left: 0;
     right: 0;
+    //transition: height .25s ease;
 
   &:focus {
       outline: none !important;
@@ -57,8 +58,18 @@ mat-input-container.md-input-focused label {
 .options-wrapper{
   margin: 5px auto 0px auto;
   width: 100%;
-  height: 235px;
+  //height: 235px;
   overflow: auto;
+  transition: all .5s ease;
+}
+
+@keyframes appearing {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .no-students-dummy {
@@ -117,6 +128,7 @@ mat-input-container.md-input-focused label {
     overflow: auto;
   }
   &_item {
+    //@extend .appearing;
     border-top: 1px solid #D8D8D8;
     display: flex;
     align-items: center;
@@ -129,4 +141,9 @@ mat-input-container.md-input-focused label {
       cursor: pointer;
     }
   }
+}
+.appearing {
+  -webkit-animation: appearing .5s ease ;
+  -o-animation: appearing .5s ease ;
+  animation: appearing .5s ease ;
 }
