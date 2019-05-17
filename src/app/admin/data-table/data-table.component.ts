@@ -57,7 +57,9 @@ export class DataTableComponent implements OnInit {
             case 'Name':
               return item[property].split(' ')[1];
             case 'Date & Time':
-                return moment(new Date(item[property]));
+                return Math.min(moment().diff(item['date'], 'days'));
+            case 'Duration':
+                return item['sortDuration'].as('milliseconds');
             default:
                 return item[property];
           }
