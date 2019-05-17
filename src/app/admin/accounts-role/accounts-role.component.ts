@@ -318,8 +318,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     this.userService.userData.subscribe((user) => {
       this.user = user;
     });
-
-      console.log('ROLLEE ===>>>>', this.role);
   }
 
   findRelevantAccounts(searchValue) {
@@ -517,6 +515,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   findProfileByRole(evt) {
     // console.log(evt);
+      console.log(evt);
     this.tabVisibility = false;
 
     setTimeout(() => {

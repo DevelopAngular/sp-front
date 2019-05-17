@@ -168,13 +168,14 @@ export class DataTableComponent implements OnInit {
 
   selectedCellEmit(event, cellElement, element) {
     // console.log(element);
-    if (typeof cellElement !== 'string' && !(cellElement instanceof Location)) {
-      event.stopPropagation();
-      cellElement.row = element;
-      this.selectedCell.emit(cellElement);
-    } else {
+    // if (typeof cellElement !== 'string' && !(cellElement instanceof Location)) {
+    //   event.stopPropagation();
+    //   cellElement.row = element;
+    //   this.selectedCell.emit(cellElement);
+    // } else {
+    //   return;
+    // }
       return;
-    }
   }
 
   selectedRowEmit(row) {
