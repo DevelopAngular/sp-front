@@ -161,22 +161,45 @@ export class HttpService {
       return;
     });
 
-     //  interval(10000)
+     //  interval(5000)
      //    .pipe(
      //        switchMap(() => of(this.accessTokenSubject.value)),
+     //        tap(console.log),
+     //        filter(v => !!v),
      //        switchMap(({auth, server}) => {
-     //            if (moment().isAfter(auth.expires)) {
-     //              // const config = new FormData();
+     //          console.log(new Date(auth.expires), new Date(Date.now() - 1000));
+     //
+     //          if (new Date(auth.expires).getTime() < (Date.now() - 10000)) {
+     //              const config = new FormData();
      //              const user = JSON.parse(this.storage.getItem('google_auth'));
-     //              // config.append('client_id', server.client_id);
-     //              // config.append('grant_type', auth.refresh_token);
-     //              //   config.append('username', user.username);
-     //              //   config.append('password', user.password);
-     //              // return this.http.post(makeUrl(server, 'o/token/'), config);
-     //                return this.fetchServerAuth();
+     //              config.append('client_id', server.client_id);
+     //              config.append('grant_type', 'refresh_token');
+     //              config.append('token', auth.refresh_token);
+     //              config.append('username', user.username);
+     //              config.append('password', user.password);
+     //              console.log(new Date(auth.expires));
+     //
+     //            return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
+     //              map((data: any) => {
+     //                // console.log('Auth data : ', data);
+     //                // don't use TimeService for auth because auth is required for time service
+     //                // to be useful
+     //                data['expires'] = new Date(new Date() + data['expires_in']);
+     //
+     //                ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
+     //
+     //                return {auth: data as ServerAuth, server: server} as AuthContext;
+     //              }),
+     //              catchError((err) => {
+     //                this.loginService.isAuthenticated$.next(false);
+     //                return of(null);
+     //              })
+     //            );                    // return this.fetchServerAuth();
+     //            } else {
+     //              return of(null);
      //            }
      //        }),
-     // ).subscribe();
+     // ).subscribe(() => { });
 
   }
 
@@ -296,7 +319,7 @@ export class HttpService {
   }
 
   private fetchServerAuth(retryNum: number = 0): Observable<AuthContext> {
-    // console.log('fetchServerAuth');
+    console.log('fetchServerAuth');
     return this.loginService.getIdToken().pipe(
       switchMap(googleToken => {
         let authContext$: Observable<AuthContext>;
