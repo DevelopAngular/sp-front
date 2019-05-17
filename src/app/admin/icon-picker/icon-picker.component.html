@@ -24,7 +24,7 @@
 
   <ng-template #empty>
     <div class="empty-state">
-      <img [src]="'./assets/emptyStates/icons-empty.svg'" alt="Empty">
+      <img [src]="'./assets/emptyStates/icons-empty.svg' | resolveAsset" alt="Empty">
     </div>
   </ng-template>
 </div>
