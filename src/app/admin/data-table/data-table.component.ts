@@ -57,7 +57,9 @@ export class DataTableComponent implements OnInit {
             case 'Name':
               return item[property].split(' ')[1];
             case 'Date & Time':
-                return moment(new Date(item[property]));
+                return Math.min(moment().diff(item['date'], 'days'));
+            case 'Duration':
+                return item['sortDuration'].as('milliseconds');
             default:
                 return item[property];
           }
@@ -166,13 +168,14 @@ export class DataTableComponent implements OnInit {
 
   selectedCellEmit(event, cellElement, element) {
     // console.log(element);
-    if (typeof cellElement !== 'string' && !(cellElement instanceof Location)) {
-      event.stopPropagation();
-      cellElement.row = element;
-      this.selectedCell.emit(cellElement);
-    } else {
+    // if (typeof cellElement !== 'string' && !(cellElement instanceof Location)) {
+    //   event.stopPropagation();
+    //   cellElement.row = element;
+    //   this.selectedCell.emit(cellElement);
+    // } else {
+    //   return;
+    // }
       return;
-    }
   }
 
   selectedRowEmit(row) {

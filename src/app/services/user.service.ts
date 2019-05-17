@@ -52,6 +52,9 @@ export class UserService {
                 return user;
               }));
             } else {
+                this.representedUsers.next(null);
+                this.effectiveUser.next(null);
+                this.http.effectiveUserId.next(null);
               return of(user);
             }
           })

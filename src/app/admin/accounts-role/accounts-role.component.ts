@@ -515,6 +515,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   findProfileByRole(evt) {
     // console.log(evt);
+      console.log(evt);
     this.tabVisibility = false;
 
     setTimeout(() => {

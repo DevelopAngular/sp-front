@@ -182,17 +182,13 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     combineLatest(
       this.dataService.currentUser,
       this.userService.effectiveUser,
-      (cu: User, eu: RepresentedUser) => {
-        return {cu, eu};
-      }
     )
     .pipe(this.loadingService.watchFirst)
-    .subscribe((v) => {
+    .subscribe(([cu, eu]) => {
       this._zone.run(() => {
-
-        this.user = v.cu;
-        this.effectiveUser = v.eu;
-        this.isStaff = v.cu.roles.includes('_profile_teacher');
+        this.user = cu;
+        this.effectiveUser = eu;
+        this.isStaff = cu.roles.includes('_profile_teacher');
 
         if (this.effectiveUser) {
           this.canView = this.effectiveUser.roles.includes('access_teacher_room');
@@ -200,10 +196,10 @@ export class MyRoomComponent implements OnInit, OnDestroy {
           this.canView = this.user.roles.includes('access_teacher_room');
         }
       });
-    })
+    });
 
     combineLatest(
-        this.dataService.getLocationsWithTeacher(this.user),
+        this.locationService.getLocationsWithTeacher(this.user),
         this.locationService.myRoomSelectedLocation$
     )
     .pipe(takeUntil(this.destroy$))

@@ -21,6 +21,8 @@ import {SearchFilterDialogComponent} from './search-filter-dialog/search-filter-
 import {DateTimeFilterComponent} from './date-time-filter/date-time-filter.component';
 import {DomSanitizer} from '@angular/platform-browser';
 
+import * as moment from 'moment';
+
 
 
 @Component({
@@ -234,6 +236,8 @@ export class SearchComponent implements OnInit {
                 'Duration': duration
             };
             Object.defineProperty(passes, 'id', { enumerable: false, value: hallPass.id});
+            Object.defineProperty(passes, 'date', {enumerable: false, value: moment(hallPass.created) });
+            Object.defineProperty(passes, 'sortDuration', {enumerable: false, value: moment.duration(moment(hallPass.end_time).diff(moment(hallPass.start_time))) });
             return passes;
           });
           this.spinner = false;

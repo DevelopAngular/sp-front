@@ -46,6 +46,7 @@ export class GoogleLoginService {
     this.authToken$.subscribe(auth => {
       // window.waitForAppLoaded();
       if (auth) {
+        // debugger
         this.storage.setItem(STORAGE_KEY, JSON.stringify(auth));
       }
     });

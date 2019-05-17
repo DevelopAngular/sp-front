@@ -12,12 +12,12 @@
             <div class="ds-mr-20">
 
               <div class="card_header ds-mb-10">
-                <img [src]="darkTheme.getIcon({
-                  iconName: 'Settings',
-                  darkFill: 'White',
-                  lightFill: 'Navy'
-                }) | resolveAsset" alt="Settings.svg">
-                <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Accounts</span>
+                <!--<img [src]="darkTheme.getIcon({-->
+                  <!--iconName: 'Settings',-->
+                  <!--darkFill: 'White',-->
+                  <!--lightFill: 'Navy'-->
+                <!--}) | resolveAsset" alt="Settings.svg">-->
+                <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})" [style.padding-left]="0">All Accounts</span>
               </div>
               <!--<div class="card_header" [style.font-size]="'16px'">-->
                 <!--<span-->
@@ -30,7 +30,7 @@
                      [matTooltip]="'All accounts at one place.'"
                      matTooltipClass="tooltip"
                      alt="">
-                <span [style.font-weight]="'bold'">{{(accounts$ | async).total }} user{{(accounts$ | async).total > 1 ? 's' : ''}}</span><br>
+                <span [style.font-weight]="'bold'">{{(accounts$ | async).total }} account{{(accounts$ | async).total > 1 ? 's' : ''}}</span><br>
                 <div class="arrow-down-container">
                   <div class="arrow-down"></div>
                 </div>
@@ -112,14 +112,14 @@
               <span [style.font-weight]="'bold'">{{selectedUsers.length}} Selected</span>
             </div>
           </div>
-          <div *ngSwitchCase="'staff_secretary'">
+          <div *ngSwitchCase="'_profile_assistant'">
             <div class="card_header ds-mb-10">
               <img [src]="darkTheme.getIcon({
                   iconName: 'Secretary',
                   darkFill: 'White',
                   lightFill: 'Navy'
                 }) | resolveAsset" alt="Settings.svg">
-              <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Secretaries & Substitutes</span>
+              <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Assistants</span>
             </div>
             <div *ngIf="!(dataTableEditState | async)" class="card_title tooltip-container">
               <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset"
