@@ -1,11 +1,18 @@
 <div class="global-container" [ngClass]="{'ds-dark-theme': darkThemeEnabled }" *ngIf="(showUI | async)" ondragstart="return false">
+
   <app-school-toggle-bar *ngIf="( schools && schools.length > 1 ) && !hideSchoolToggleBar"
     [schools]="schools"
   ></app-school-toggle-bar>
+
+  <div *ngIf="errorToastTrigger | async">
+    <app-error-toast (closeEvent)="errorToastTrigger.next(false)"></app-error-toast>
+  </div>
+
   <div class="router-outlet" style="height: 100%;" [style.overflow-y]=" hideScroll ? 'hidden' : 'auto'" *ngIf="isAuthenticated">
     <router-outlet></router-outlet>
   </div>
-  <app-login *ngIf="!isAuthenticated"></app-login>
+
+  <app-login *ngIf="!isAuthenticated" (errorEvent)="showError.next($event)"></app-login>
 </div>
 
 <app-error *ngIf="(isAuthenticated === false) && !(showUI | async)"></app-error>

@@ -23,27 +23,27 @@
     </div>
   </div>
   <div class="content">
-    <div class="content_top">
-      <div class="content_top-header">
-        <span class="ds-dialog-heading">Account Type</span>
-        <span class="ds-mt-5 ds-blue-gray">
-          Learn more <span class="ds-link-text"> here</span>.
-        </span>
-      </div>
-      <div class="content_top-body">
+    <!--<div class="content_top">-->
+      <!--<div class="content_top-header">-->
+        <!--<span class="ds-dialog-heading">Account Type</span>-->
+        <!--<span class="ds-mt-5 ds-blue-gray">-->
+          <!--Learn more <span class="ds-link-text"> here</span>.-->
+        <!--</span>-->
+      <!--</div>-->
+      <!--<div class="content_top-body">-->
 
-        <div class="account-type-picker">
-          <app-restriction-picker
-            [choices]="accountTypes"
-            [selectedChoose]="typeChoosen"
-            [height]="25"
-            [width]="167"
-            [fontSize]="13"
-            (result)="typeChoosen = $event"
-          ></app-restriction-picker>
-        </div>
-      </div>
-    </div>
+        <!--<div class="account-type-picker">-->
+          <!--<app-restriction-picker-->
+            <!--[choices]="accountTypes"-->
+            <!--[selectedChoose]="typeChoosen"-->
+            <!--[height]="25"-->
+            <!--[width]="167"-->
+            <!--[fontSize]="13"-->
+            <!--(result)="typeChoosen = $event"-->
+          <!--&gt;</app-restriction-picker>-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</div>-->
 
     <div *ngIf="data.role === '_profile_assistant'">
       <div class="content_rest" *ngIf="typeChoosen === accountTypes[0]">

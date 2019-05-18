@@ -21,10 +21,6 @@ export class ErrorComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.http.currentSchool$.subscribe(() => {
-      console.log(this.http.currentSchoolSubject.value);
-      // this.router.navigate(['/']);
-    });
     window.appLoaded(2000);
 
   }

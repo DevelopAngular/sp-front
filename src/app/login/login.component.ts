@@ -1,4 +1,4 @@
-import { Component, NgZone, OnInit } from '@angular/core';
+import {Component, EventEmitter, NgZone, OnInit, Output} from '@angular/core';
 import { Router } from '@angular/router';
 import { DeviceDetection } from '../device-detection.helper';
 import { GoogleLoginService } from '../services/google-login.service';
@@ -11,6 +11,8 @@ import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
+
+  @Output() errorEvent: EventEmitter<any> = new EventEmitter();
 
   private isIOSMobile: boolean;
   private isAndroid: boolean;
@@ -48,5 +50,8 @@ export class LoginComponent implements OnInit {
     setTimeout(() => {
       this.showError.error = evt;
     }, 400);
+  }
+  onError() {
+    this.router.navigate(['error']);
   }
 }

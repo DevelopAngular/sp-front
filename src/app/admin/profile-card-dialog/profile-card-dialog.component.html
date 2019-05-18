@@ -71,13 +71,14 @@
             </div>
           </div>
           <div *ngIf="data.role === '_profile_assistant' && assistantFor">
-            <div class="active-on-behalf-user ds-w-100 ds-mt-15">
-              <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantFor, 'ds-dialog-heading-gray': !assistantFor}">Active on Behalf Of</div>
+            <div class="acting-on-behalf-user ds-w-100 ds-mt-15">
+              <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantFor, 'ds-dialog-heading-gray': !assistantFor}">Acting on Behalf Of</div>
               <!--<app-sp-chips-->
                 <!--[selectedProfiles]="assistantFor"-->
                 <!--(updateSelectedEvent)="assistantForUpdate$.next($event)"-->
               <!--&gt;</app-sp-chips>-->
               <app-student-search
+                [preventRemovingLast]="data.role === '_profile_assistant'"
                 [selectedStudents]="assistantFor"
                 [chipsMode]="true"
                 [focused]="true"
@@ -246,8 +247,8 @@
               <app-gradient-button
               [size]="'small'"
               [whiteSpace]="'nowrap'"
-              [gradient]="'#13BF9E, #00D99B'"
-              [hoverColor]="'#13BF9E'"
+              [gradient]="'#001115,#033294'"
+              [hoverColor]="'#001115'"
               [cursor]="'pointer'"
               >
                 Manually Sync
@@ -257,26 +258,26 @@
           </div>
 
         </div>
-        <div class="ds-border-box ds-px-25 ds-py-10">
-          <div class="ds-flex-start-between section-content">
-            <div>
-              <div class="ds-w-100 ds-flex-wrap ds-dialog-bold-text">Organization Unit Routing</div>
-              <p class="ds-mr-10">Organizational units through G Suite can be routed to certain SmartPass profiles (Students, Administrators, etc.)</p>
-            </div>
-            <div>
-              <app-gradient-button
-                [size]="'small'"
-                [whiteSpace]="'nowrap'"
-                [gradient]="'#001115,#033294'"
-                [hoverColor]="'#001115'"
-                [rightIcon]="'./assets/Chevron Right (White).svg'"
-                [cursor]="'pointer'"
-              >
-                Edit Routing
-              </app-gradient-button>
-            </div>
-          </div>
-        </div>
+        <!--<div class="ds-border-box ds-px-25 ds-py-10">-->
+          <!--<div class="ds-flex-start-between section-content">-->
+            <!--<div>-->
+              <!--<div class="ds-w-100 ds-flex-wrap ds-dialog-bold-text">Organization Unit Routing</div>-->
+              <!--<p class="ds-mr-10">Organizational units through G Suite can be routed to certain SmartPass profiles (Students, Administrators, etc.)</p>-->
+            <!--</div>-->
+            <!--<div>-->
+              <!--<app-gradient-button-->
+                <!--[size]="'small'"-->
+                <!--[whiteSpace]="'nowrap'"-->
+                <!--[gradient]="'#001115,#033294'"-->
+                <!--[hoverColor]="'#001115'"-->
+                <!--[rightIcon]="'./assets/Chevron Right (White).svg'"-->
+                <!--[cursor]="'pointer'"-->
+              <!--&gt;-->
+                <!--Edit Routing-->
+              <!--</app-gradient-button>-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</div>-->
 
       </div>
     </div>

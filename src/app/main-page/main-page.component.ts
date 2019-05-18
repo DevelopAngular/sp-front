@@ -28,7 +28,7 @@ export class MainPageComponent implements OnInit {
     }
 
   shouldShowRouter() {
-    return this.userService.userData.pipe(map(u => u.isStudent() || u.isTeacher()));
+    return this.userService.userData.pipe(map(u => u.isStudent() || u.isTeacher() || u.isAssistant()));
   }
 
 }

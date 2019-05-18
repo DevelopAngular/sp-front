@@ -1,6 +1,7 @@
 <div class="student-search-wrapper" *ngIf="chipsMode && !inputField">
   <div>
     <app-sp-chips
+      [preventRemovingLast]="preventRemovingLast"
       [selectedProfiles]="selectedStudents"
       (add)="inputField = true"
       (updateSelectedEvent)="selectedStudents = $event; onUpdate.emit(selectedStudents)"
@@ -32,7 +33,6 @@
       </app-round-input>
     </div>
     <div *ngIf="showOptions" [ngClass]="{'options-wrapper': students}" [style.height]="students ? '235px' : '0px'">
-      {{showDummy}}
       <div *ngIf="students" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
       <div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px;">
         <div class="student-list_scrollable" [style.max-height]="listMaxHeight">

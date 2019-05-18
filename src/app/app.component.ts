@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, HostListener, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
-import {catchError, filter, map, mergeMap, takeUntil} from 'rxjs/operators';
-import {BehaviorSubject, of, Subject} from 'rxjs';
+import {catchError, delay, filter, map, mergeMap, takeUntil} from 'rxjs/operators';
+import {BehaviorSubject, of, ReplaySubject, Subject} from 'rxjs';
 
 import { DeviceDetection } from './device-detection.helper';
 import { GoogleLoginService } from './services/google-login.service';
@@ -34,6 +34,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public hideScroll: boolean = false;
   public hideSchoolToggleBar: boolean = false;
   public showUI: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public showError: BehaviorSubject<any> = new BehaviorSubject<boolean>(false);
+  public errorToastTrigger: ReplaySubject<boolean>;
   public schools: School[] = [];
   public darkThemeEnabled: boolean;
   private openedResizeDialog: boolean;
@@ -76,6 +78,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     this.preloader$ = this.darkTheme.preloader;
     this.preloader$.next(true);
+    this.errorToastTrigger = this.http.errorToast$;
   }
 
   ngOnInit() {
@@ -114,13 +117,21 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     )
     .subscribe(t => {
 
-      // console.log('Auth response ===>', t);
+      console.log('Auth response ===>', t);
       this._zone.run(() => {
         this.showUI.next(true);
         this.preloader$.next(false);
 
         this.isAuthenticated = t;
       });
+    });
+    this.showError.pipe(
+      delay(1000)
+    ).subscribe((signInError: any) => {
+      console.log(signInError)
+      if (signInError && signInError.error) {
+        this.showUI.next(false);
+      }
     });
     window.appLoaded(2000);
 

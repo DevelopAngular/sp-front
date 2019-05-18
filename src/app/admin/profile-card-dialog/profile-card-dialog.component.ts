@@ -108,7 +108,7 @@ export class ProfileCardDialogComponent implements OnInit {
                       ?
                       this.profile['Name']
                       :
-                      'Settings';
+                      'G Suite Settings';
 
     if (this.data.role === '_profile_teacher') {
         this.dataService.getLocationsWithTeacher(this.profile._originalUserProfile)

@@ -17,7 +17,7 @@ declare const window;
 
 export class GoogleSigninComponent implements OnInit, OnDestroy {
 
-  // @Output() showError: EventEmitter<{ loggedWith: number, error: boolean} > = new EventEmitter<{loggedWith: number, error: boolean}>();
+  @Output() showError: EventEmitter<{ loggedWith: number, error: boolean} > = new EventEmitter<{loggedWith: number, error: boolean}>();
 
 
   public name = 'Not Logged in!';
@@ -27,10 +27,10 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   public progressType = 'determinate';
   public showSpinner: boolean = false;
   public loggedWith: number;
-  public showError: BehaviorSubject<{ loggedWith: number, error: boolean} > = new BehaviorSubject<{loggedWith: number, error: boolean}>({
-    loggedWith: this.loggedWith,
-    error: false
-  });
+  // public showError: BehaviorSubject<{ loggedWith: number, error: boolean} > = new BehaviorSubject<{loggedWith: number, error: boolean}>({
+  //   loggedWith: this.loggedWith,
+  //   error: false
+  // });
 
   keyListener;
   demoLoginEnabled = false;
@@ -62,21 +62,25 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     });
 
     this.loginService.showLoginError$.subscribe((show: boolean) => {
-      this.showError.next({
+      this.showError.emit({
             loggedWith: this.loggedWith,
             error: show,
           });
+      // this.showError.next({
+      //       loggedWith: this.loggedWith,
+      //       error: show,
+      //     });
       });
   }
-  onClose(evt) {
-    setTimeout(() => {
-      this.showSpinner = false;
-      this.showError.next({
-        loggedWith: this.loggedWith,
-        error: evt
-      });
-    }, 400);
-  }
+  // onClose(evt) {
+  //   setTimeout(() => {
+  //     this.showSpinner = false;
+  //     this.showError.next({
+  //       loggedWith: this.loggedWith,
+  //       error: evt
+  //     });
+  //   }, 400);
+  // }
   updateDemoUsername(event) {
     // console.log('UN ===>', event, this.demoLoginEnabled);
     this.demoUsername = event;

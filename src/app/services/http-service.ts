@@ -2,7 +2,7 @@
 import {catchError, tap, first, delay, distinctUntilChanged, filter, flatMap, map, skip, switchMap, merge, take} from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import {of, throwError, BehaviorSubject, Observable, timer, interval} from 'rxjs';
+import {of, throwError, BehaviorSubject, Observable, timer, interval, ReplaySubject} from 'rxjs';
 import { environment } from '../../environments/environment';
 import { GoogleLoginService, isDemoLogin } from './google-login.service';
 import { School } from '../models/School';
@@ -108,6 +108,8 @@ class LoginServerError extends Error {
 @Injectable()
 export class HttpService {
 
+  public errorToast$: ReplaySubject<boolean> = new ReplaySubject(1);
+
   private accessTokenSubject: BehaviorSubject<AuthContext> = new BehaviorSubject<AuthContext>(null);
   public effectiveUserId: BehaviorSubject<number> = new BehaviorSubject(null);
   public schools$: Observable<School[]> = this.loginService.isAuthenticated$.pipe(
@@ -161,45 +163,45 @@ export class HttpService {
       return;
     });
 
-     //  interval(5000)
-     //    .pipe(
-     //        switchMap(() => of(this.accessTokenSubject.value)),
-     //        tap(console.log),
-     //        filter(v => !!v),
-     //        switchMap(({auth, server}) => {
-     //          console.log(new Date(auth.expires), new Date(Date.now() - 1000));
-     //
-     //          if (new Date(auth.expires).getTime() < (Date.now() - 10000)) {
-     //              const config = new FormData();
-     //              const user = JSON.parse(this.storage.getItem('google_auth'));
-     //              config.append('client_id', server.client_id);
-     //              config.append('grant_type', 'refresh_token');
-     //              config.append('token', auth.refresh_token);
-     //              config.append('username', user.username);
-     //              config.append('password', user.password);
-     //              console.log(new Date(auth.expires));
-     //
-     //            return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
-     //              map((data: any) => {
-     //                // console.log('Auth data : ', data);
-     //                // don't use TimeService for auth because auth is required for time service
-     //                // to be useful
-     //                data['expires'] = new Date(new Date() + data['expires_in']);
-     //
-     //                ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
-     //
-     //                return {auth: data as ServerAuth, server: server} as AuthContext;
-     //              }),
-     //              catchError((err) => {
-     //                this.loginService.isAuthenticated$.next(false);
-     //                return of(null);
-     //              })
-     //            );                    // return this.fetchServerAuth();
-     //            } else {
-     //              return of(null);
-     //            }
-     //        }),
-     // ).subscribe(() => { });
+      interval(10000)
+        .pipe(
+            switchMap(() => of(this.accessTokenSubject.value)),
+            // tap(console.log),
+            filter(v => !!v),
+            switchMap(({auth, server}) => {
+              // console.log((new Date(Date.now() + auth.expires_in)), new Date());
+
+              if ((new Date(auth.expires).getTime() + (auth.expires_in * 1000)) < (Date.now())) {
+                  const config = new FormData();
+                  const user = JSON.parse(this.storage.getItem('google_auth'));
+                  config.append('client_id', server.client_id);
+                  config.append('grant_type', 'refresh_token');
+                  config.append('token', auth.refresh_token);
+                  config.append('username', user.username);
+                  config.append('password', user.password);
+                  console.log(new Date(auth.expires));
+
+                return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
+                  map((data: any) => {
+                    // console.log('Auth data : ', data);
+                    // don't use TimeService for auth because auth is required for time service
+                    // to be useful
+                    data['expires'] = new Date(new Date() + data['expires_in']);
+
+                    ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
+                    const updatedAuthContext: AuthContext = {auth: data as ServerAuth, server: server} as AuthContext;
+                    this.accessTokenSubject.next(updatedAuthContext);
+                  }),
+                  catchError((err) => {
+                    this.loginService.isAuthenticated$.next(false);
+                    return of(null);
+                  })
+                );                    // return this.fetchServerAuth();
+              } else {
+                return of(null);
+              }
+            }),
+     ).subscribe(() => { });
 
   }
 
@@ -263,7 +265,7 @@ export class HttpService {
       // console.log('loginManual()');
       return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
         map((data: any) => {
-          // console.log('Auth data : ', data);
+          console.log('Auth data : ', data);
           // don't use TimeService for auth because auth is required for time service
           // to be useful
           data['expires'] = new Date(new Date() + data['expires_in']);

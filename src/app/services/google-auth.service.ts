@@ -23,6 +23,7 @@ export class GoogleAuthService {
   }
 
   getAuth() {
+
     return this.googleApi.onLoad().pipe(mergeMap(() => {
       return this.loadGapiAuth();
     }));
@@ -39,7 +40,7 @@ export class GoogleAuthService {
       gapi.auth2.init(this.googleApi.getConfig().getClientConfig()).then(auth => {
         this.GoogleAuth = auth;
         this._zone.run(() => {
-          console.log('Google auth api loaded');
+          // console.log('Google auth api loaded', auth);
           this.auth$.next(auth);
         });
       }).catch(e => console.error(e));

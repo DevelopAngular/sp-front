@@ -28,14 +28,14 @@
                   >
                     Total Accounts:  {{(accounts$ | async)?.total_count}} Accounts
                   </div>
-                  <div class="ds-pt-10 ds-pr-25 ds-mb-20">
-                    <div class="card_title">
-                      <span>G Suite:  {{(accounts$ | async)?.gsuite_count}} Account{{(accounts$ | async)?.gsuite_count > 1 ? 's' : ''}}</span>
-                    </div>
-                    <div class="card_title">
-                      <span>Alternative:  {{(accounts$ | async)?.alternative_count}} Account{{(accounts$ | async)?.alternative_count > 1 ? 's' : ''}}</span>
-                    </div>
-                  </div>
+                  <!--<div class="ds-pt-10 ds-pr-25 ds-mb-20">-->
+                    <!--<div class="card_title">-->
+                      <!--<span>G Suite:  {{(accounts$ | async)?.gsuite_count}} Account{{(accounts$ | async)?.gsuite_count !== 1 ? 's' : ''}}</span>-->
+                    <!--</div>-->
+                    <!--<div class="card_title">-->
+                      <!--<span>Alternative:  {{(accounts$ | async)?.alternative_count}} Account{{(accounts$ | async)?.alternative_count !== 1 ? 's' : ''}}</span>-->
+                    <!--</div>-->
+                  <!--</div>-->
                 </div>
               </div>
               <div class="card_manage-users"
@@ -97,7 +97,7 @@
                        [matTooltip]="'An administrator has a high-level look at the school, configures passes, and views/generates reports.'"
                        matTooltipClass="tooltip"
                        alt="">
-                  <span [style.font-weight]="'bold'">{{(accounts$ | async)?.admin_count}} user{{(accounts$ | async)?.admin_count> 1 ? 's' : ''}}</span><br>
+                  <span [style.font-weight]="'bold'">{{(accounts$ | async)?.admin_count}} user{{(accounts$ | async)?.admin_count!== 1 ? 's' : ''}}</span><br>
                   <div class="arrow-down-container">
                     <div class="arrow-down"></div>
                   </div>
@@ -134,7 +134,7 @@
   '                    A teacher can create passes, view hall monitor activity, and manage passes in his/her room.'"
                        matTooltipClass="tooltip"
                        alt="">
-                  <span [style.font-weight]="'bold'">{{(accounts$ | async)?.teacher_count}} user{{(accounts$ | async)?.teacher_count> 1 ? 's' : ''}}</span><br>
+                  <span [style.font-weight]="'bold'">{{(accounts$ | async)?.teacher_count}} user{{(accounts$ | async)?.teacher_count!== 1 ? 's' : ''}}</span><br>
                   <div class="arrow-down-container">
                     <div class="arrow-down"></div>
                   </div>
@@ -170,7 +170,7 @@
   '                and send pass requests to teachers.'"
                        matTooltipClass="tooltip"
                        alt="">
-                  <span [style.font-weight]="'bold'">{{(accounts$ | async)?.student_count }} user{{(accounts$ | async)?.student_count > 1 ? 's' : ''}}</span><br>
+                  <span [style.font-weight]="'bold'">{{(accounts$ | async)?.student_count }} user{{(accounts$ | async)?.student_count !== 1 ? 's' : ''}}</span><br>
                   <div class="arrow-down-container">
                     <div class="arrow-down"></div>
                   </div>
@@ -205,7 +205,7 @@
                       'They can manage passes in his/her room and create passes as that teacher.'"
                      matTooltipClass="tooltip"
                      alt="">
-                <span [style.font-weight]="'bold'">{{(accounts$ | async)?.assistant_count}} user{{(accounts$ | async)?.assistant_count > 1 ? 's' : ''}}</span><br>
+                <span [style.font-weight]="'bold'">{{(accounts$ | async)?.assistant_count}} user{{(accounts$ | async)?.assistant_count !== 1 ? 's' : ''}}</span><br>
                 <div class="arrow-down-container">
                   <div class="arrow-down"></div>
                 </div>

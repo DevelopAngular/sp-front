@@ -1,7 +1,7 @@
 <div class="assigned-teachers">
   <div *ngFor="let teacher of selectedProfiles; let i = index" #chip class="teacher"
-    (mouseenter)="chip.hovered = true;"
-    (mouseleave)="chip.hovered = false;"
+    (mouseenter)="chipHover(chip, true)"
+    (mouseleave)="chipHover(chip, false)"
     [style.background-color]="getBackground(chip)"
     [style.color]="textColor(chip)">
     <span [style.cursor]="'default'" [style.user-select]="'none'">{{teacher.display_name}}</span>

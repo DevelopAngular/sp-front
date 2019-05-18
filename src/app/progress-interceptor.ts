@@ -4,13 +4,15 @@ import {Observable, of, throwError} from 'rxjs';
 import { NgProgress } from '@ngx-progressbar/core';
 import {catchError, finalize, tap} from 'rxjs/operators';
 import {Router} from '@angular/router';
+import {HttpService} from './services/http-service';
 
 @Injectable()
 export class ProgressInterceptor implements HttpInterceptor {
 
   constructor(
     private progress: NgProgress,
-    private router: Router
+    private router: Router,
+    private http: HttpService
   ) {}
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -24,8 +26,9 @@ export class ProgressInterceptor implements HttpInterceptor {
                               (error.status >= 400 &&
                                error.status < 600 &&
                                error.url !== 'https://smartpass.app/api/discovery/find' &&
-                               error.url !== 'https://smartpass.app/api/staging/o/token/') || error.status === 0) {
-                            this.router.navigate(['error']);
+                               error.url !== 'https://smartpass.app/api/staging/o/token/') || error.status === 0)
+                          {
+                            this.http.errorToast$.next(true);
                           }
                         return throwError(error);
                       })
