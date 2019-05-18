@@ -23,7 +23,7 @@ export class StudentSearchComponent implements OnInit {
   @Input() list: boolean = true;
   @Input() listMaxHeight: string = '210px';
 
-
+  @Input() preventRemovingLast: boolean = false;
   @Input() emitSingleProfile: boolean = false;
   @Input() chipsMode: boolean = false;
   @Input() inputField: boolean = true;

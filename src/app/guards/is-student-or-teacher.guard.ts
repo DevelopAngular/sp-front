@@ -36,6 +36,6 @@ export class IsStudentOrTeacherGuard implements CanActivate {
 
         return true;
       })
-      ,tap(v => console.log('canActivate:', v)));
+      , tap(v => console.log('canActivate:', v)));
   }
 }

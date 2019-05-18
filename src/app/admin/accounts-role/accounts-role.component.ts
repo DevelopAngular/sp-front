@@ -71,17 +71,32 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           .pipe(
             takeUntil(this.destroy$),
             map(res => res.results),
-            switchMap((userList) => {
-              if (this.role === '_profile_teacher') {
+            switchMap((userList: User[]) => {
+              if (this.role === '_profile_teacher' && userList.length) {
                 return zip(
                   ...userList.map((user: User) => {
                     return this.dataService.getLocationsWithTeacher(user)
                       .pipe(
                         switchMap((locs: Location[]) => {
-                          (user as any).assignedTo = locs;
+                          (user as any).assignedTo = locs.map((l: Location) => {
+                            return l.title;
+                          }).join(', ');
                           return of(user);
                         })
                       );
+
+                  }));
+              } else if (this.role === '_profile_assistant' && userList.length) {
+                return zip(
+                  ...userList.map((user: User) => {
+                    return this.userService.getRepresentedUsers(user.id)
+                      .pipe(
+                        switchMap((ru: RepresentedUser[]) => {
+                          (user as any).canActingOnBehalfOf = ru;
+                          return of(user);
+                        })
+                      );
+
                   }));
               } else {
                 return of(userList);
@@ -188,11 +203,11 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               label: 'Email/Username',
               disabled: true
             },
-            'Account Type': {
-              value: false,
-              label: 'Account Type',
-              disabled: false
-            }
+            // 'Account Type': {
+            //   value: false,
+            //   label: 'Account Type',
+            //   disabled: false
+            // }
           };
 
           if (this.role !== '_all') {
@@ -241,7 +256,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               };
               break;
             case '_all':
-              this.dataTableHeaders['Account Type'].value = true;
+              // this.dataTableHeaders['Account Type'].value = true;
               this.dataTableHeaders['Profile(s)'] = {
                 value: true,
                 label: 'Profile(s)',
@@ -294,13 +309,13 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         this.role === '_profile_assistant'
                    ?
         {
-          'access_hall_monitor': {
-            controlName: 'access_hall_monitor',
-            controlLabel: 'Hall Monitor Tab Access'
-          },
           'access_passes': {
             controlName: 'access_passes',
             controlLabel: 'Passes Tab Access'
+          },
+          'access_hall_monitor': {
+            controlName: 'access_hall_monitor',
+            controlLabel: 'Hall Monitor Tab Access'
           },
           'access_teacher_room': {
             controlName: 'access_teacher_room',
@@ -339,17 +354,32 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             this.userService.getUsersList(this.role, value).pipe(
               takeUntil(this.destroy$),
               map(res => res),
-              switchMap((userList) => {
-                if (this.role === '_profile_teacher') {
+              switchMap((userList: User[]) => {
+                if (this.role === '_profile_teacher' && userList.length) {
                   return zip(
                     ...userList.map((user: User) => {
                       return this.dataService.getLocationsWithTeacher(user)
                         .pipe(
                           switchMap((locs: Location[]) => {
-                            (user as any).assignedTo = locs;
+                            (user as any).assignedTo = locs.map((l: Location) => {
+                              return l.title;
+                            }).join(', ');
                             return of(user);
                           })
                         );
+
+                    }));
+                } else if (this.role === '_profile_assistant' && userList.length) {
+                  return zip(
+                    ...userList.map((user: User) => {
+                      return this.userService.getRepresentedUsers(user.id)
+                        .pipe(
+                          switchMap((ru: RepresentedUser[]) => {
+                            (user as any).canActingOnBehalfOf = ru;
+                            return of(user);
+                          })
+                        );
+
                     }));
                 } else {
                   return of(userList);
@@ -358,6 +388,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           ))
         )
         .subscribe((userList) => {
+          // debugger
+
           console.log(userList);
           if (userList && userList.length) {
             this.dataTableHeadersToDisplay = [];
@@ -592,7 +624,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         }),
         map(userResult => userResult.results),
         switchMap((userList: User[]) => {
-          if (this.role === '_profile_teacher') {
+          if (this.role === '_profile_teacher' && userList.length) {
             return zip(
               ...userList.map((user: User) => {
                 return this.dataService.getLocationsWithTeacher(user)
@@ -606,7 +638,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
                   );
 
               }));
-          } else if (this.role === '_profile_assistant') {
+          } else if (this.role === '_profile_assistant' && userList.length) {
             return zip(
               ...userList.map((user: User) => {
                 return this.userService.getRepresentedUsers(user.id)
@@ -652,9 +684,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               'Name': raw.display_name,
               'Email/Username': raw.primary_email,
               'Rooms': raw.assignedTo,
-              'Account Type': 'G Suite',
+              // 'Account Type': 'G Suite',
               'Acting on Behalf Of': raw.canActingOnBehalfOf ? raw.canActingOnBehalfOf.map((u: RepresentedUser) => {
-                return `${u.user.display_name}(${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
+                return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
               }).join(', ') : '',
               'Sign-in status': 'Enabled',
               'Last sign-in': Util.formatDateTime(new Date(raw.last_updated)),

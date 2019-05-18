@@ -10,6 +10,7 @@ import {User} from '../models/User';
 export class SpChipsComponent implements OnInit {
 
   @Input() selectedProfiles: User[] = [];
+  @Input() preventRemovingLast: boolean = false;
 
   @Output() add: EventEmitter<boolean> = new EventEmitter();
   @Output() updateSelectedEvent: EventEmitter<User[]> = new EventEmitter();
@@ -35,5 +36,12 @@ export class SpChipsComponent implements OnInit {
     } else {
       return '#F7F7F7';
     }
+  }
+  chipHover(chip: any, hover: boolean ) {
+   if (this.preventRemovingLast && this.selectedProfiles.length === 1) {
+     return;
+   } else {
+     chip.hovered = hover;
+   }
   }
 }

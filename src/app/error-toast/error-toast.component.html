@@ -1,9 +1,14 @@
 <div class="error-toast-container" [ngStyle]="{'opacity': toggleToast ? '1' : '0'}" (click)="close($event)">
   <div class="error-text" [ngStyle]="{'opacity': toggleToast ? '1' : '0', 'right': toggleToast ? '30px' : '-250px'}">
-    <div class="error-text_header">Oops! Sign in error.</div>
-    <div class="error-text_message">
-      {{errorMessages[this.loginMethod]}}
+    <div *ngIf="loginMethod" class="error-text_header">Oops! Sign in error.</div>
+    <div *ngIf="!loginMethod" class="error-text_header">Server Error.</div>
+    <div *ngIf="loginMethod" class="error-text_message">
+      {{errorMessages[loginMethod]}}
     </div>
+    <div *ngIf="!loginMethod" class="error-text_message">
+      Operation could not be completed. We’re working on a solution.
+    </div>
+
     <div class="error-close-btn" (click)="close($event)">
       <img [src]="'./assets/Cancel (Blue-Gray).svg'" alt="Cancel (Blue-Gray).svg">
     </div>

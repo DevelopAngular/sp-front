@@ -10,7 +10,8 @@
   </div>
   <div class="grow" *ngIf="!isMobileDevice"></div>
 
-  <google-signin *ngIf="!isMobileDevice" (showError)="showError = $event"></google-signin>
+  <google-signin *ngIf="!isMobileDevice" (showError)="errorEvent.emit($event)"></google-signin>
+  <!--<google-signin *ngIf="!isMobileDevice" (showError)="showError = $event"></google-signin>-->
 
   <div class="grow"></div>
   <div class="title-text" *ngIf="isMobileDevice">{{titleText}}</div>

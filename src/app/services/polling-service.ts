@@ -52,7 +52,7 @@ export class PollingService {
   private getRawListener(): Observable<RawMessage> {
     return this.http.accessToken.pipe(
       switchMap((ctx: AuthContext) => {
-        console.log('polling listener');
+        console.log('polling listener', ctx);
 
         const url = ctx.server.ws_url;
 
@@ -62,7 +62,6 @@ export class PollingService {
         });
 
         return new Observable<RawMessage>(s => {
-
           let sendMessageSubscription: Subscription = null;
 
           ws.onOpen(() => {
@@ -113,6 +112,7 @@ export class PollingService {
             if (sendMessageSubscription !== null) {
               sendMessageSubscription.unsubscribe();
               sendMessageSubscription = null;
+              // debugger
             }
             this.isConnected$.next(false);
           });
