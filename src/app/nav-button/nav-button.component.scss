@@ -1,3 +1,30 @@
+@media all and (max-width: 1024px) {
+  div.nav-button-wrapper{
+    background-color: transparent !important;
+  }
+
+  img.nav-button-icon {
+    margin-bottom: 5px;
+  }
+}
+
+@media all and (max-width: 475px) {
+  div.nav-button-text{
+    font-size: 10px;
+  }
+
+  div.nav-button-wrapper{
+    background-color: transparent !important;
+    flex-direction: column;
+  }
+}
+
+@media all and (max-width: 375px) {
+  div.nav-button-wrapper{
+    height: 38px;
+  }
+}
+
 .nav-button-wrapper{
     display: flex;
     flex-direction: row;

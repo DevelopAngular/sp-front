@@ -1,4 +1,4 @@
-import {Component, NgZone, OnInit, Input, ElementRef} from '@angular/core';
+import {Component, NgZone, OnInit, Input, ElementRef, HostListener} from '@angular/core';
 import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material';
 import {Router, NavigationEnd, ActivatedRoute, NavigationStart} from '@angular/router';
@@ -21,6 +21,7 @@ import {DarkThemeSwitch} from '../dark-theme-switch';
 import {NotificationService} from '../services/notification-service';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {HttpService} from '../services/http-service';
+import {ScreenService} from '../services/screen.service';
 import {IntroDialogComponent} from '../intro-dialog/intro-dialog.component';
 import {StorageService} from '../services/storage.service';
 import {KioskModeService} from '../services/kiosk-mode.service';
@@ -58,6 +59,12 @@ export class NavbarComponent implements OnInit {
 
   navbarEnabled = false;
 
+  islargeDeviceWidth: boolean;
+
+  isHallMonitorRoute: boolean;
+
+  isMyRoomRoute: boolean;
+
   buttonHash = {
     passes: {title: 'Passes', route: 'passes', imgUrl: 'SP Arrow', requiredRoles: ['_profile_teacher', 'access_passes'], hidden: false},
     hallMonitor: {title: 'Hall Monitor', route: 'hallmonitor', imgUrl: 'Walking', requiredRoles: ['_profile_teacher', 'access_hall_monitor'], hidden: false},
@@ -69,23 +76,24 @@ export class NavbarComponent implements OnInit {
   fakeMenu: ReplaySubject<boolean> = new ReplaySubject<boolean>();
 
   constructor(
-      private dataService: DataService,
-      private userService: UserService,
-      public dialog: MatDialog,
-      public router: Router,
-      private location: Location,
-      public loadingService: LoadingService,
-      public loginService: GoogleLoginService,
-      private locationService: LocationsService,
-      private _zone: NgZone,
-      private navbarData: NavbarDataService,
-      private process: NgProgress,
-      private activeRoute: ActivatedRoute,
-      public  notifService: NotificationService,
-      public darkTheme: DarkThemeSwitch,
-      private http: HttpService,
-      private storage: StorageService,
-      public kioskMode: KioskModeService,
+    private dataService: DataService,
+    private userService: UserService,
+    private screenService: ScreenService,
+    public dialog: MatDialog,
+    public router: Router,
+    private location: Location,
+    public loadingService: LoadingService,
+    public loginService: GoogleLoginService,
+    private locationService: LocationsService,
+    private _zone: NgZone,
+    private navbarData: NavbarDataService,
+    private process: NgProgress,
+    private activeRoute: ActivatedRoute,
+    public  notifService: NotificationService,
+    public darkTheme: DarkThemeSwitch,
+    private http: HttpService,
+    private storage: StorageService,
+    public kioskMode: KioskModeService,
   ) {
 
     const navbarEnabled$ = combineLatest(
@@ -113,7 +121,10 @@ export class NavbarComponent implements OnInit {
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit[urlSplit.length - 1];
 
-    this.router.events.subscribe((value) => {
+    this.isHallMonitorRoute =  this.router.url === '/main/hallmonitor';
+    this.isMyRoomRoute = this.router.url === '/main/myroom';
+
+    this.router.events.subscribe(value => {
       if (value instanceof NavigationEnd) {
         this.hideButtons = value.url === '/main/kioskMode';
         console.log('Hide ===>>', value.url);
@@ -122,6 +133,8 @@ export class NavbarComponent implements OnInit {
         this.tab = ((this.tab === '' || this.tab === 'main') ? 'passes' : this.tab);
         this.inboxVisibility = this.tab !== 'settings';
         this.dataService.updateInbox(this.inboxVisibility);
+        this.isHallMonitorRoute = value.url  === '/main/hallmonitor';
+        this.isMyRoomRoute = value.url === '/main/myroom';
       }
     });
 
@@ -188,8 +201,10 @@ export class NavbarComponent implements OnInit {
         ) {
             this.fakeMenu.next(true);
           }
+        });
       });
-    });
+
+    this.islargeDeviceWidth = this.screenService.isDeviceLargeExtra;
   }
 
   getIcon(iconName: string, darkFill?: string, lightFill?: string) {
@@ -354,5 +369,8 @@ export class NavbarComponent implements OnInit {
     }
   }
 
-
+  @HostListener('window:resize')
+  checkDeviceWidth() {
+    this.islargeDeviceWidth = this.screenService.isDeviceLargeExtra;
+  }
 }

@@ -2,7 +2,8 @@
 
   <div *ngIf="!(isProcess$ | async).active" class="static-loading" #staticLoading><div class="static-loading"></div></div>
   <ng-progress [color]="'#04CD33'" [spinner]="false" [fixed]="true" [speed]="200" [thick]="true"></ng-progress>
-  <div *ngIf="showNav" class="bar">
+  <div *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth" class="bar">
+
     <div class="heading grow">
       <app-smartpass-logo></app-smartpass-logo>
     </div>
@@ -51,7 +52,7 @@
           </span>
         </div>
       </ng-template>
-      <div *ngIf="user && !isStaff" class="inbox-wrapper" (click)="inboxClick()"
+      <div *ngIf="user && !isStaff || islargeDeviceWidth " class="inbox-wrapper" (click)="inboxClick()"
            [style.background-color]="(inboxVisibility?'#E4EBFF':'transparent')"
            [style.background-color]="(inboxVisibility ? darkTheme.isEnabled$.value ? '#134482' : '#E4EBFF' : 'transparent')"
 
@@ -75,6 +76,21 @@
         [style.background-color]="(isOpenSettings ? darkTheme.isEnabled$.value ? '#134482' : '#E4EBFF' : 'transparent')"
       >
         <img class="options" [src]="getIcon('Settings', 'White', 'Navy') | resolveAsset">
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="isStaff" class="teacherNav-mobile">
+    <div class="teacherNav-mobile-wrapper">
+      <div *ngFor="let button of buttons" class="teacherNav_tab">
+        <ng-container *ngIf="isStaff">
+          <app-nav-button
+            [selected]="tab === button.route"
+            [content]="button.title"
+            [icon]="button.imgUrl"
+            (onClick)="updateTab(button.route)">
+          </app-nav-button>
+        </ng-container>
       </div>
     </div>
   </div>

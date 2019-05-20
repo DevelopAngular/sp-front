@@ -1,6 +1,7 @@
-<div *ngIf="user" style="height: 100%">
+<div *ngIf="user" style="height: 100%; position: relative">
   <div *ngIf="canView" class="hall-monitor-wrapper">
     <div class="hall-monitor-top">
+      <ng-container *ngIf="!isDeviceLargeExtra; else hallMontiorTopMobile">
       <app-round-input
         [type]="'text'"
         [minWidth]="'315px'"
@@ -26,12 +27,65 @@
         [minHeight]="'50px'"
         [fontSize]="'14px'"
         [leftIcon]="'./assets/Report (White).svg'"
+        [padding]="'20px'"
         (buttonClick)="openReportForm()"
       >Report Student(s)</app-gradient-button>
+      </ng-container>
+
+      <ng-template #hallMontiorTopMobile>
+        <ng-container>
+          <div class="options-wrapper" (click)="toggleSearchBar()">
+            <img src="./assets/Search Eye (Navy).svg" alt="" class="search-img">
+          </div>
+          <div class="student-search-wrapper" *ngIf="isIpadSearchBar">
+            <div class="student-search ">
+              <app-round-input
+                [type]="'text'"
+                [minWidth]="'100%'"
+                [width]="'100%'"
+                [placeholder]="'Search'"
+                [fieldIconPosition]="'left'"
+                [closeIcon]="true"
+                [style.margin-right]="'40px'"
+                (ontextupdate)="onSearch($event)"
+                [selectReset$] = "resetvalue"
+              ></app-round-input>
+            </div>
+          </div>
+
+          <div class="cancel-wrapper" *ngIf="isIpadSearchBar">
+            <span class="cancel" (click)="cleanSearchValue()">Cancel</span>
+          </div>
+
+          <div class="options-wrapper" *ngIf="!isIpadSearchBar">
+            <img src="./assets/Report (Navy).svg" alt="" class="report-img" (click)="openReportForm()">
+          </div>
+        </ng-container>
+      </ng-template>
     </div>
+
+    <h1 class="hall-monitor-heading" *ngIf="!isIpadSearchBar">Hall Monitor</h1>
+    <ng-container *ngIf="isSearchClicked && !isIpadWidth">
+      <div class="student-search-wrapper ">
+        <div class="student-search ">
+          <app-round-input
+            [type]="'text'"
+            [minWidth]="'100%'"
+            [width]="'100%'"
+            [placeholder]="'Search'"
+            [fieldIconPosition]="'left'"
+            [closeIcon]="true"
+            [style.margin-right]="'40px'"
+            (ontextupdate)="onSearch($event)"
+            [selectReset$] = "resetvalue"
+          ></app-round-input>
+        </div>
+        <span class="cancel" (click)="cleanSearchValue()">Cancel</span>
+      </div>
+    </ng-container>
+
     <div class="hall-monitor-bottom">
       <app-pass-collection
-        [hasSort]="true"
         [isActive]="true"
         [showEmptyHeader]="true"
         [forStaff]="isStaff"
@@ -69,3 +123,15 @@
     <app-restriction-dummy></app-restriction-dummy>
   </div>
 </div>
+
+  <div class="sort-btn" (click)="openSortMenu()" *ngIf="(hasPasses | async) && (passesLoaded | async) && isDeviceLargeExtra ">
+    <app-gradient-button
+      [size] = "'editable'"
+      [gradient]="'#FFF,#FFF'"
+      [cursor]="'pointer'"
+      [hoverColor]="'#DA2370'"
+      [minWidth]="'135px'"
+      [minHeight]="'50px'"
+    ><span class="sort-btn-label">Sort</span> </app-gradient-button>
+  </div>
+

@@ -1,6 +1,6 @@
-import { Component, NgZone, OnInit } from '@angular/core';
+import {Component, HostListener, NgZone, OnInit} from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { merge, of, combineLatest ,  BehaviorSubject ,  Observable } from 'rxjs';
+import {merge, of, combineLatest, BehaviorSubject, Observable, Subject} from 'rxjs';
 import { DataService } from '../services/data-service';
 import { mergeObject } from '../live-data/helpers';
 import { LiveDataService } from '../live-data/live-data.service';
@@ -11,8 +11,9 @@ import { ReportFormComponent } from '../report-form/report-form.component';
 import {Report} from '../models/Report';
 import { delay, filter, map } from 'rxjs/operators';
 import {DarkThemeSwitch} from '../dark-theme-switch';
-import {UserService} from '../services/user.service';
+import {ScreenService} from '../services/screen.service';
 import {RepresentedUser} from '../navbar/navbar.component';
+import {SortMenuComponent} from '../sort-menu/sort-menu.component';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('_profile_teacher');
@@ -57,14 +58,24 @@ export class HallMonitorComponent implements OnInit {
 
   hasPasses: Observable<boolean> = of(false);
 
+  isDeviceLargeExtra: boolean;
+
+  isSearchClicked: boolean;
+
+  resetvalue = new Subject();
+
+  isIpadWidth: boolean;
+
+  isIpadSearchBar: boolean;
+
   constructor(
     public dataService: DataService,
-    public userService: UserService,
     private _zone: NgZone,
     private loadingService: LoadingService,
     public dialog: MatDialog,
     private liveDataService: LiveDataService,
-    public darkTheme: DarkThemeSwitch
+    public darkTheme: DarkThemeSwitch,
+    private screenService: ScreenService,
   ) {
     this.activePassProvider = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.searchQuery$));
     // this.activePassProvider = new BasicPassLikeProvider(testPasses);
@@ -75,30 +86,17 @@ export class HallMonitorComponent implements OnInit {
   }
 
   ngOnInit() {
-
-    combineLatest(
-      this.dataService.currentUser,
-      this.userService.effectiveUser,
-      (cu: User, eu: RepresentedUser) => {
-        return {cu, eu};
-      }
-    )
-    .pipe(this.loadingService.watchFirst)
-    .subscribe((v) => {
-      this._zone.run(() => {
-
-        this.user = v.cu;
-        this.effectiveUser = v.eu;
-        this.isStaff = v.cu.roles.includes('_profile_teacher');
-
-        if (this.effectiveUser) {
-          this.canView = this.effectiveUser.roles.includes('access_hall_monitor') && this.effectiveUser.roles.includes('view_traveling_users');
-        } else {
-          this.canView = this.user.roles.includes('access_hall_monitor') && this.user.roles.includes('view_traveling_users');
-        }
+    this.isIpadWidth = this.screenService.isIpadWidth;
+    this.isDeviceLargeExtra = this.screenService.isDeviceLargeExtra;
+    this.dataService.currentUser
+      .pipe(this.loadingService.watchFirst)
+      .subscribe(user => {
+        this._zone.run(() => {
+          this.user = user;
+          this.isStaff = user.roles.includes('_profile_teacher');
+          this.canView = user.roles.includes('view_traveling_users');
+        });
       });
-    })
-
 
     this.hasPasses = combineLatest(
         this.activePassProvider.length$,
@@ -113,9 +111,7 @@ export class HallMonitorComponent implements OnInit {
 
   openReportForm() {
     const dialogRef = this.dialog.open(ReportFormComponent, {
-      width: '425px',
-      height: '500px',
-      panelClass: 'form-dialog-container',
+      panelClass: ['form-dialog-container', 'report-dialog'],
       backdropClass: 'custom-backdrop',
     });
 
@@ -126,6 +122,33 @@ export class HallMonitorComponent implements OnInit {
     }), delay(3000)).subscribe(() => {
       this.isActiveMessage = false;
     });
+  }
+
+  openSortMenu() {
+    setTimeout( () => {
+
+      const dialogData = {
+        title: 'sort by',
+        list: [
+          {name: 'pass expiration time', isSelected: false, action: 'expiration_time'},
+          {name: 'student name', isSelected: false, action: 'student_name'},
+          {name: 'destination', isSelected: false, action: 'destination_name'},
+        ],
+      };
+
+      const dialogRef = this.dialog.open(SortMenuComponent, {
+        position: { bottom: '1px' },
+        panelClass: 'sort-dialog',
+        data: dialogData
+      });
+
+      dialogRef.componentInstance.onListItemClick.subscribe((index) =>  {
+          const selectedItem = dialogData.list.find((item, i ) => {
+            return i === index;
+          });
+          this.dataService.sort$.next(selectedItem.action);
+      });
+    } , 100);
   }
 
   onReportFromPassCard(studends) {
@@ -143,6 +166,27 @@ export class HallMonitorComponent implements OnInit {
   onSearch(search: string) {
     this.inputValue = search;
     this.searchQuery$.next(search);
+  }
+
+  @HostListener('window:resize')
+  checkDeviceWidth() {
+    this.isIpadWidth = this.screenService.isIpadWidth;
+    this.isDeviceLargeExtra = this.screenService.isDeviceLargeExtra;
+    console.log(this.isDeviceLargeExtra);
+    if (this.screenService.isDeviceMid) {
+      this.isIpadSearchBar = false;
+    }
+  }
+
+  toggleSearchBar() {
+    this.isSearchClicked = !this.isSearchClicked;
+    if (this.screenService.isIpadWidth) {
+      this.isIpadSearchBar = !this.isIpadSearchBar;
+    }
+  }
+
+  cleanSearchValue() {
+    this.resetvalue.next('');
   }
 
 }

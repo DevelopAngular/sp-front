@@ -14,8 +14,9 @@
       <!--<img draggable="false" class="collection-display-toggle global-opacity-icons" [src]="'./assets/' +(displayState==='grid'?'List':'Grid') +' (Navy).svg'| resolveAsset" [style.margin-left]="hasSort?'10px':'auto'">-->
   </div>
   <div class="collection-divider"></div>
-  <div *ngIf="(currentPasses$ | async)">
-    <div *ngIf="currentPasses.length>0; else emptyMessage">
+  <ng-container *ngIf="(currentPasses$ | async)">
+    <ng-container *ngIf="currentPasses.length>0; else emptyMessage">
+
       <div class="collection-grid-wrapper" *ngIf="displayState==='grid'; else list">
         <div class="tile" *ngFor="let pass of currentPasses">
           <app-pass-tile (click)="showPass(pass)" [timerEvent]="timerEvent" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-tile>
@@ -26,13 +27,13 @@
           <app-pass-cell *ngFor="let pass of currentPasses" (click)="showPass(pass)" [timerEvent]="timerEvent" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-cell>
         </div>
       </ng-template>
-    </div>
+    </ng-container>
     <ng-template #emptyMessage>
       <div class="empty-message" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
         {{ getEmptyMessage() }}
       </div>
     </ng-template>
-  </div>
+  </ng-container>
 </div>
 
 <!-- Needs for Intro page -->
@@ -58,5 +59,4 @@
       </div>
     </ng-template>
 </div>
-
 <!-- End -->
