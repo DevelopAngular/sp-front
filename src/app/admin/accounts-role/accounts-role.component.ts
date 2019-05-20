@@ -573,9 +573,14 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         this.profilePermissions['access_user_config'].disabled = false;
       }
     }
-
+    const profileTitle =
+      this.role === '_profile_admin' ? 'administrator' :
+        this.role === '_profile_teacher' ? 'teacher' :
+          this.role === '_profile_student' ? 'student' :
+          this.role === '_profile_assistant' ? 'student' : 'assistant';
     const data = {
       profile: evt,
+      profileTitle: profileTitle,
       bulkPermissions: null,
       gSuiteSettings: gSuite,
       role: this.role,
@@ -597,7 +602,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       backdropClass: 'custom-bd',
       width: '425px',
       height: '500px',
-      data: data
+      data: data,
+      disableClose: true
     });
 
     dialogRef.afterClosed().subscribe((userListReloadTrigger: any) => {
@@ -688,7 +694,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               'Acting on Behalf Of': raw.canActingOnBehalfOf ? raw.canActingOnBehalfOf.map((u: RepresentedUser) => {
                 return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
               }).join(', ') : '',
-              'Sign-in status': 'Enabled',
+              'Sign-in status': raw.active ? 'Enabled' : 'Disabled',
               'Last sign-in': Util.formatDateTime(new Date(raw.last_updated)),
               'Profile(s)': partOf,
               'Permissions': (function() {

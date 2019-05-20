@@ -99,7 +99,8 @@
   <div class="overlay-content">
     <div class="left-content ds-mb-5" #leftContent (scroll)="onScroll($event)">
       <div class="edit-rooms-left-content" *ngIf="overlayType === 'edit'">
-        <div class="edit-rooms-left-title">Bulk edit the rooms added. Any change will override the previous setting.</div>
+        <div class="edit-rooms-left-title">Keep in mind that editing a Folder in this menu will edit all rooms within that folder.</div>
+        <!--Keep in mind that editing a Folder in this menu will edit all rooms within that folder-->
       </div>
       <div class="new-room-in-folder sticky-header" [@NextStep]="{ value: '', params: frameMotion$ | async}"
          *ngIf="overlayType === 'newRoomInFolder' || overlayType === 'importRooms' || overlayType === 'settingsRooms'">
@@ -267,6 +268,17 @@
              || overlayType === 'edit'
              || overlayType === 'editRoom'"
           >
+
+            <!--<app-input-->
+              <!--[width]="'103px'"-->
+              <!--[maxLength]="5"-->
+              <!--[input_label]="'Room Number'"-->
+              <!--[input_value]="roomNumber ? roomNumber : ''"-->
+              <!--(onUpdate)="roomNumber=$event"-->
+              <!--[formGroup]="form"-->
+              <!--[controlName]="form.get('roomNumber')"-->
+            <!--&gt;-->
+            <!--</app-input>-->
             <app-input
               [width]="'103px'"
               [maxLength]="2"
@@ -623,9 +635,9 @@
         </div>
       </div>
 
-        <div class="bulk-warning-text" *ngIf="bulkWarningText">
-            Keep in mind that editing a Folder in this menu will edit all rooms within that folder
-        </div>
+        <!--<div class="bulk-warning-text" *ngIf="bulkWarningText">-->
+            <!--Keep in mind that editing a Folder in this menu will edit all rooms within that folder-->
+        <!--</div>-->
 
     </div>
       <div class="divider"></div>
