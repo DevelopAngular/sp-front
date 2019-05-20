@@ -319,11 +319,6 @@ export class OverlayContainerComponent implements OnInit {
           // colors = '#606981, #ACB4C1';
           this.titleColor = '#1F195E';
           this.folderName = 'Bulk Edit Rooms';
-          this.form.get('timeLimit').clearValidators();
-          this.form.get('timeLimit').setValidators([
-              Validators.pattern('^[0-9]*?[0-9]+$'),
-              Validators.min(1),
-              Validators.max(59)]);
           console.log('BULK SELECTED ROOMS =====>>> \n', this.selectedRooms);
           this.bulkWarningText = !!_.find<Location | Pinnable>(this.selectedRooms, {type: 'category'});
           break;
@@ -1293,11 +1288,6 @@ export class OverlayContainerComponent implements OnInit {
     setTimeout(() => {
       if (action === 'edit') {
         this.isEditRooms = true;
-        this.form.get('timeLimit').clearValidators();
-        this.form.get('timeLimit').setValidators([
-          Validators.pattern('^[0-9]*?[0-9]+$'),
-          Validators.min(1),
-          Validators.max(59)]);
         this.setLocation('settingsRooms');
       }
       if (action === 'remove_from_folder') {

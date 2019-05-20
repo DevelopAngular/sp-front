@@ -11,7 +11,7 @@
       <app-back-button></app-back-button>
     </div>
     <div class="cancel-button" (click)="goBack()" *ngIf="roomsInFolder.length">Cancel</div>
-    <div class="header-title" [style.font-weight]="roomsInFolder.length ? 'bold' : 'normal'" [style.color]="roomsInFolder.length ? '#1F195E' : '#7F879D'">
+    <div class="header-title" [style.font-weight]="'bold'" [style.color]="roomsInFolder.length ? '#1F195E' : '#7F879D'">
       {{(roomsInFolder.length ? roomsInFolder.length + ' Room' + (roomsInFolder.length > 1 ? 's' : '') : 'Add Existing Room to Folder')}}
     </div>
     <div class="add-button" *ngIf="roomsInFolder.length">

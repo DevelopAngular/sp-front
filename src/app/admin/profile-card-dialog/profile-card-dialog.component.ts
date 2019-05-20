@@ -134,7 +134,8 @@ export class ProfileCardDialogComponent implements OnInit {
       });
     }
 
-    this.dialogRef.backdropClick().subscribe(() => {
+    this.dialogRef.backdropClick().subscribe((evt) => {
+      console.log(evt);
       this.back();
     });
   }
@@ -158,7 +159,7 @@ export class ProfileCardDialogComponent implements OnInit {
 
   }
 
-  updateProfilePermissions() {
+  updateProfile(): Observable<any> {
 
     this.disabledState = true;
 
@@ -180,54 +181,55 @@ export class ProfileCardDialogComponent implements OnInit {
 
 
     if ( this.data.bulkPermissions) {
-      zip(...this.data.bulkPermissions.map((userId) => this.userService.createUserRoles(userId, this.permissionsForm.value)))
-        .subscribe((result) => {
-          console.log(result);
-          this.disabledState = false;
-          this.permissionsFormInitialState = _.cloneDeep(this.permissionsForm.value);
-          this.profileTouched = true;
-          this.permissionsFormEditState = false;
-        });
+      return zip(...this.data.bulkPermissions.map((userId) => this.userService.createUserRoles(userId, this.permissionsForm.value)))
+        // .subscribe((result) => {
+        //   console.log(result);
+        //   this.disabledState = false;
+        //   this.permissionsFormInitialState = _.cloneDeep(this.permissionsForm.value);
+        //   this.profileTouched = true;
+        //   this.permissionsFormEditState = false;
+        // });
 
     } else if (this.permissionsFormEditState && this.assistantForEditState) {
-      zip(
+      return zip(
         this.userService.createUserRoles(this.profile.id, this.permissionsForm.value),
         ...assistantForRemove.map((user) => this.userService.deleteRepresentedUser(this.profile.id, user)),
         ...assistantForAdd.map((user) => this.userService.addRepresentedUser(this.profile.id, user))
-      ).subscribe((result) => {
-        console.log(result);
-        this.permissionsFormInitialState = _.cloneDeep(this.permissionsForm.value);
-        this.permissionsFormEditState = false;
-        this.assistantForInitialState = _.cloneDeep(this.assistantFor);
-        this.assistantForEditState = false;
-        this.disabledState = false;
-        this.profileTouched = true;
-      });
+      )
+      //   .subscribe((result) => {
+      //   console.log(result);
+      //   this.permissionsFormInitialState = _.cloneDeep(this.permissionsForm.value);
+      //   this.permissionsFormEditState = false;
+      //   this.assistantForInitialState = _.cloneDeep(this.assistantFor);
+      //   this.assistantForEditState = false;
+      //   this.disabledState = false;
+      //   this.profileTouched = true;
+      // });
     } else {
       if (this.permissionsFormEditState) {
-        this.userService
+        return this.userService
           .createUserRoles(this.profile.id, this.permissionsForm.value)
-          .subscribe((result) => {
-            console.log(result);
-            this.permissionsFormInitialState = _.cloneDeep(this.permissionsForm.value);
-            this.disabledState = false;
-            this.profileTouched = true;
-            this.permissionsFormEditState = false;
-          });
+          // .subscribe((result) => {
+          //   console.log(result);
+          //   this.permissionsFormInitialState = _.cloneDeep(this.permissionsForm.value);
+          //   this.disabledState = false;
+          //   this.profileTouched = true;
+          //   this.permissionsFormEditState = false;
+          // });
       }
       if (this.assistantForEditState) {
 
-        zip(
+        return zip(
           ...assistantForRemove.map((user) => this.userService.deleteRepresentedUser(this.profile.id, user)),
           ...assistantForAdd.map((user) => this.userService.addRepresentedUser(this.profile.id, user))
         )
-        .subscribe((result) => {
-          console.log(result);
-          this.assistantForInitialState = _.cloneDeep(this.assistantFor);
-          this.disabledState = false;
-          this.profileTouched = true;
-          this.assistantForEditState = false;
-        });
+        // .subscribe((result) => {
+        //   console.log(result);
+        //   this.assistantForInitialState = _.cloneDeep(this.assistantFor);
+        //   this.disabledState = false;
+        //   this.profileTouched = true;
+        //   this.assistantForEditState = false;
+        // });
       }
     }
   }
@@ -316,6 +318,13 @@ export class ProfileCardDialogComponent implements OnInit {
   }
 
   back() {
-    this.dialogRef.close(this.profileTouched);
+    if (this.permissionsFormEditState || this.assistantForEditState) {
+      this.updateProfile().subscribe(() => {
+        this.dialogRef.close(true);
+      });
+    } else {
+
+      this.dialogRef.close(false);
+    }
   }
 }

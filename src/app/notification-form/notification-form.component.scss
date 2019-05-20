@@ -75,6 +75,22 @@
       .descriptions {
         color: $dark-slate-gray;
         font-size: 14px;
+        .external-link {
+          text-decoration: none;
+          color: inherit;
+          outline: none;
+          cursor: pointer;
+          font-weight: bold;
+          &:hover {
+            text-decoration: underline;
+          }
+          &:active, &:visited  {
+            text-decoration: inherit;
+            color: inherit;
+            outline: inherit;
+          }
+
+        }
       }
     }
 
