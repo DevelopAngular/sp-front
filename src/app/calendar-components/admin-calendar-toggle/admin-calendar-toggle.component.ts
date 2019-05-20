@@ -63,7 +63,6 @@ export class AdminCalendarToggleComponent implements OnInit {
           if (this.date) {
             if (this.toggleResult === 'Range') {
               this.selectedDate = this.date;
-              this.openCalendar = true;
             } else if (this.toggleResult === 'Days') {
               this.selectedDay = this.selectedDate.start;
             }
