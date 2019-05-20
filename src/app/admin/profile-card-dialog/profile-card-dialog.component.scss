@@ -130,17 +130,21 @@
       }
     }
     .card-footer {
-      display: flex;
+      //display: flex;
       flex-direction: row;
       justify-content: space-around;
       align-items: flex-end;
-      padding: 20px 15px 45px 15px;
+      padding: 20px 24px;
       flex: 1 1 100px;
       .button {
+        margin-bottom: 15px;
         min-height: 50px;
-        text-align: center;
+        //text-align: center;
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: space-between;
         &_message {
-          margin-top: 17px;
+          margin-right: 22px;
         }
       }
     }

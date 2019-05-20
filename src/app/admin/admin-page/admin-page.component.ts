@@ -4,6 +4,7 @@ import {combineLatest, BehaviorSubject, Observable, of} from 'rxjs';
 import { UserService } from '../../services/user.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {delay, filter, map, skip, switchMap, tap} from 'rxjs/operators';
+import {environment} from '../../../environments/environment';
 declare const window;
 @Component({
   selector: 'app-admin-page',
@@ -52,22 +53,28 @@ export class AdminPageComponent implements OnInit {
     of(location.pathname.split('/'))
       .pipe(
         map((fragments) => fragments.filter(f => !!f)),
-        filter((value) => value.length < 3),
+        filter((value) => {
+         if (environment.production) {
+           return  value.length < 3;
+         } else {
+           return  value.length < 2;
+         }
+        }),
         switchMap(() => this.userService.getUserWithTimeout()),
         filter(user => !!user),
       )
       .subscribe(user => {
-        const availableAccessTo = user.roles.filter((_role) => _role.match('admin_'));
+        const availableAccessTo = user.roles.filter((_role) => _role.match('access_'));
         let tab;
-        if (availableAccessTo.includes('admin_dashboard')) {
+        if (availableAccessTo.includes('access_admin_dashboard')) {
           tab = 'dashboard';
-        } else if (availableAccessTo.includes('admin_hallmonitor')) {
+        } else if (availableAccessTo.includes('access_hall_monitor')) {
           tab = 'hallmonitor';
-        } else if (availableAccessTo.includes('admin_search')) {
+        } else if (availableAccessTo.includes('access_admin_search')) {
           tab = 'search';
-        } else if (availableAccessTo.includes('admin_pass_config')) {
+        } else if (availableAccessTo.includes('access_pass_config')) {
           tab = 'passconfig';
-        } else if (availableAccessTo.includes('admin_accounts')) {
+        } else if (availableAccessTo.includes('access_user_config')) {
           tab = 'accounts';
         }
         this.router.navigate(['/admin', tab]);

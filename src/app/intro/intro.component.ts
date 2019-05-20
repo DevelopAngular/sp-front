@@ -98,10 +98,10 @@ export class IntroComponent implements OnInit {
     this.dataService.currentUser
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {
-        console.log('intro.subscribe()');
+        console.log('intro.subscribe()' , user);
         this._zone.run(() => {
           this.user = user;
-          this.isStaff = user.roles.includes('_profile_teacher');
+          this.isStaff = user.isTeacher() || user.isAssistant();
 
           this.slides = {
             '#1': [

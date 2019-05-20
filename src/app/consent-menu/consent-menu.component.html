@@ -40,14 +40,14 @@
                 'option-wrapper': !darkTheme.isEnabled$.value,
                 'option-wrapper__dark': darkTheme.isEnabled$.value
                }"
-               (mousedown)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : 'rgba(226, 231, 244, 1)'"
+               (mousedown)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : 'rgba(226, 231, 244, 1)'; sortMode = option.action"
                (mouseup)="_option.style.background = 'transparent'"
                (mouseover)="_option.style.background = this.darkTheme.isEnabled$.value ? isSort ? '#47447E' : 'rgba(236, 241, 255, .2)' : 'rgba(236, 241, 255, 1)'"
                (mouseleave)="_option.style.background = 'transparent'"
                (click)="_matDialogRef.close(option.action)">
             <div class="ds-w-100 ds-flex-center-between" *ngIf="isSort; else simpleOptions">
               <span>{{ option.display }}</span>
-              <img width="16" height="16" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'})" *ngIf="sortMode === option.action" alt="">
+              <img width="16" height="16" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'})" *ngIf="sortMode === option.action" alt="Check.svg">
             </div>
             <ng-template #simpleOptions>{{ option.display }}</ng-template>
           </div>

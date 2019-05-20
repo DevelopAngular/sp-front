@@ -283,8 +283,17 @@
     <div class="table">
       <div *ngIf="!userList.length && !noUsersDummyVisibility" class="loading-theme_blue-gray spinner ds-flex-center-center">
         <mat-spinner *ngIf="!placeholder" [diameter]="50" [color]="'primary'"></mat-spinner>
-        <h1 [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})" *ngIf="placeholder">No matches found.</h1>
+        <!--<h1 [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})" *ngIf="placeholder">No matches found.</h1>-->
+        <div *ngIf="placeholder" class="ds-flex-center-center ds-flex-column ds-pt-25 ds-mt-25" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
+          <img [src]="'./assets/emptyStates/no-matches-found.svg'" class="ds-py-25 ds-mt-25 ds-mb-10" alt="no-users.svg">
+          <div class="ds-tab-text">No users found</div>
+          <p class="ds-my-10" style="text-align: center; font-size: 15px;">Spellcheck? Wrong profile?</p>
+        </div>
       </div>
+
+
+
+
       <div *ngIf="noUsersDummyVisibility" class="ds-flex-center-center ds-flex-column ds-pt-25 ds-mt-25" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
         <img [src]="'./assets/emptyStates/no-users.svg'" class="ds-py-25 ds-mt-25 ds-mb-10" alt="no-users.svg">
         <div class="ds-tab-text">No Users</div>

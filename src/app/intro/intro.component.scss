@@ -385,6 +385,7 @@
 
 .dismiss-button {
   position: absolute;
+  z-index: 2;
   display: flex;
   align-items: center;
   bottom: 30px;

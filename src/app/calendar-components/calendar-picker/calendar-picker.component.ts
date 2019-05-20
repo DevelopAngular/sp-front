@@ -194,7 +194,7 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
             this.generateCalendar();
             return;
         } else {
-            if (fullDate.isSameOrAfter(moment().add(5, 'minutes'), 'minute')) {
+            if (fullDate.isSameOrAfter(moment().add(5, 'minutes'), 'minute') || !this.showTime) {
                 this.selectedDates = [fullDate];
             } else {
                 this.currentDate = moment().add(5, 'minutes');
