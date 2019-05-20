@@ -13,12 +13,17 @@
     overflow: auto;
   }
 
+  &.days {
+    height: 479px;
+    overflow: auto;
+  }
+
   .sticky-header {
     width: 100%;
     position: sticky;
     top: 0;
-    background-color: $background-white;
-    z-index: 10;
+    background-color: #ffffff;
+    z-index: 100;
     .toggle-header {
       display: flex;
       flex-direction: column;

@@ -1,5 +1,8 @@
 import { Component, ElementRef, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material';
+import {fromEvent} from 'rxjs';
+
+declare const window;
 
 @Component({
   selector: 'app-date-time-filter',
@@ -10,13 +13,29 @@ export class DateTimeFilterComponent implements OnInit {
 
   targetElementRef: ElementRef;
 
+  calendarOptions;
+
+  selectedDate;
+
   constructor(
       @Inject(MAT_DIALOG_DATA) public data: any[],
-      private _matDialogRef: MatDialogRef<DateTimeFilterComponent>) { }
+      private _matDialogRef: MatDialogRef<DateTimeFilterComponent>,
+      private selfRef: ElementRef
+  ) { }
 
   ngOnInit() {
     this.targetElementRef = this.data['target'];
+    this.calendarOptions = this.data['options'];
+    this.selectedDate = this.data['date'];
     this.updateCalendarPosition();
+
+    // fromEvent(window, 'resize').subscribe(() => {
+    //     const  selfRect = (this.selfRef.nativeElement as HTMLElement).getBoundingClientRect();
+    //
+    //     if (window.document.body.clientHeight < (selfRect.top + selfRect.height)) {
+    //         // this.selfRef.nativeElement.style.height = selfRect.height - 50 + 'px';
+    //     }
+    // });
   }
 
   updateCalendarPosition() {

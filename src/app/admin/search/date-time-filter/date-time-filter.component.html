@@ -3,6 +3,6 @@
     <div class="top-arrow"></div>
   </div>
   <div class="date-container">
-    <app-admin-calendar-toggle (adminCalendarRes)="calendarResult($event)"></app-admin-calendar-toggle>
+    <app-admin-calendar-toggle [date]="selectedDate" [selectedOptions]="calendarOptions" (adminCalendarRes)="calendarResult($event)"></app-admin-calendar-toggle>
   </div>
 </div>

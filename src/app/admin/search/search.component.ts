@@ -42,6 +42,8 @@ export class SearchComponent implements OnInit {
   selectedReport = [];
   passes: HallPass[] = [];
 
+  adminCalendarOprions;
+
   selRoomsWithCategories;
 
   spinner: boolean = false;
@@ -74,8 +76,8 @@ export class SearchComponent implements OnInit {
   }
 
   get dateText() {
-      return this.selectedDate &&
-          this.selectedDate.start.format('MMM D') + ' to ' + this.selectedDate.end.format('MMM D');
+     return this.selectedDate &&
+       this.selectedDate.start.format('MMM D') + ' to ' + this.selectedDate.end.format('MMM D');
   }
 
   ngOnInit() {
@@ -274,31 +276,18 @@ export class SearchComponent implements OnInit {
     const timeRef = this.dialog.open(DateTimeFilterComponent, {
         panelClass: 'calendar-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: { target }
+        data: { target, options: this.adminCalendarOprions, date: this.selectedDate }
     });
 
     timeRef.afterClosed().pipe(filter(res => !!res))
-        .subscribe(({start, end}) => {
-            this.selectedDate = {start, end};
+        .subscribe(({date, options}) => {
+            this.adminCalendarOprions = options;
+            if (!date.start) {
+                this.selectedDate = {start: date, end: date};
+            } else {
+                this.selectedDate = {start: date.start, end: date.end};
+            }
         });
-  }
-
-  dateEmit(date) {
-    //console.log('Selected Date:', this.selectedDate, '-> Date:', date, 'Selected Rooms:', this.selectedRooms, 'Selected Students:', this.selectedStudents);
-    console.log(date);
-    this.selectedDate = date?date:this.selectedDate;
-  }
-
-  roomEmit(rooms) {
-    //console.log('Selected Date:', this.selectedDate, 'Selected Rooms:', this.selectedRooms, '-> Rooms:', rooms, 'Selected Students:', this.selectedStudents);
-    console.log(rooms);
-    this.selectedRooms = rooms?rooms:this.selectedRooms;
-  }
-
-  studentsEmit(students) {
-    //console.log('Selected Date:', this.selectedDate, 'Selected Rooms:', this.selectedRooms, 'Selected Students:', this.selectedStudents, '-> Students:', students);
-    console.log(students);
-    this.selectedStudents = students ? students : this.selectedStudents;
   }
 
   selectedPass(pass) {
