@@ -20,6 +20,21 @@ export class DataTableComponent implements OnInit {
   @Input() set data(value: any[]) {
       this._data = [...value];
       this.dataSource = new MatTableDataSource(this._data);
+      this.dataSource.sort = this.sort;
+      this.dataSource.sortingDataAccessor = (item, property) => {
+          switch (property) {
+              case 'Name':
+                  return item[property].split(' ')[1];
+              case 'Date & Time':
+                  return Math.min(moment().diff(item['date'], 'days'));
+              case 'Duration':
+                  return item['sortDuration'].as('milliseconds');
+              case 'Profile(s)':
+                  return item[property].map(i => i.title).join('');
+              default:
+                  return item[property];
+          }
+      };
   }
   @Input() disallowHover: boolean = false;
   @Input() backgroundColor: string = 'transparent';
@@ -53,27 +68,10 @@ export class DataTableComponent implements OnInit {
 
   ngOnInit() {
     console.log(this._data);
-      this.dataSource.sort = this.sort;
-      this.dataSource.sortingDataAccessor = (item, property) => {
-          switch (property) {
-            case 'Name':
-              return item[property].split(' ')[1];
-            case 'Date & Time':
-                return Math.min(moment().diff(item['date'], 'days'));
-            case 'Duration':
-                return item['sortDuration'].as('milliseconds');
-              case 'Profile(s)':
-                console.log(item[property].map(i => i.title).join(''));
-                return item[property].map(i => i.title).join('');
-            default:
-                return item[property];
-          }
-      };
       if (!this.displayedColumns) {
         this.displayedColumns = Object.keys(this._data[0]);
       }
       this.columnsToDisplay = this.displayedColumns.slice();
-    // console.log(this.dataSource);
     this.isCheckbox.subscribe((v) => {
       if (v) {
         this.columnsToDisplay.unshift('select');
@@ -163,24 +161,28 @@ export class DataTableComponent implements OnInit {
   displayCell(cellElement, cell?) {
     let value = '';
     if (typeof cellElement === 'string') {
-      value = cellElement;
+        value = cellElement;
+        if (value.includes('<img')) {
+            cell.innerHTML = value;
+            return;
+        } else {
+            value = cellElement;
+        }
     } else {
       value = cellElement.title ? cellElement.title : 'Error!';
     }
 
-    cell.innerHTML = value;
+    return value;
   }
 
   selectedCellEmit(event, cellElement, element) {
-    // console.log(element);
-    // if (typeof cellElement !== 'string' && !(cellElement instanceof Location)) {
-    //   event.stopPropagation();
-    //   cellElement.row = element;
-    //   this.selectedCell.emit(cellElement);
-    // } else {
-    //   return;
-    // }
+    if (typeof cellElement !== 'string' && !(cellElement instanceof Location)) {
+      event.stopPropagation();
+      cellElement.row = element;
+      this.selectedCell.emit(cellElement);
+    } else {
       return;
+    }
   }
 
   selectedRowEmit(row) {
