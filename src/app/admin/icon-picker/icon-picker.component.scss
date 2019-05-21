@@ -8,11 +8,17 @@
   width: 230px;
   flex-wrap: wrap;
 }
-
+.icon-collection-title {
+  text-align: center;
+  color: rgba(127, 135, 157, .45);
+  font-weight: bold;
+}
 .empty-state {
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  height: 78px;
+  height: 60px;
 }
 
 .icon-title {
@@ -20,12 +26,25 @@
   font-weight: bold;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 
   .search-icon {
     width: 25px;
     height: 25px;
     cursor: pointer;
   }
+  .selected-icon-background {
+    width: 34px;
+    height: 31px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ECF1FF;
+    -webkit-border-radius: 7px;
+    -moz-border-radius: 7px;
+    border-radius: 7px;
+  }
+
 }
 
 .search {
