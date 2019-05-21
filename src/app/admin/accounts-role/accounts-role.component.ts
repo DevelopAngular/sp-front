@@ -696,7 +696,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               }).join(', ') : '',
               'Sign-in status': raw.active ? 'Enabled' : 'Disabled',
               'Last sign-in': Util.formatDateTime(new Date(raw.last_updated)),
-              'Profile(s)': partOf,
+              'Profile(s)': partOf.length ? partOf : 'No profile',
               'Permissions': (function() {
                   const tabs = Object.values(permissionsRef).map((tab: any) => {
                     tab.allowed = raw.roles.includes(tab.controlName);
