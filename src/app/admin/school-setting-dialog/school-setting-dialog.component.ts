@@ -67,7 +67,7 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
             [
                 Validators.required,
                 Validators.pattern('^[0-9]*?[0-9]+$'),
-                Validators.max(59),
+                Validators.max(60),
                 Validators.min(0)])
     });
   }
