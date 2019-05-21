@@ -49,14 +49,13 @@ export class AppInputComponent implements OnInit {
     }
 
     ngOnInit() {
-      console.log('right_icon ===> ', this.rightIcon);
+      // console.log('right_icon ===> ', this.rightIcon);
       // this.rightIconUntouched = this.rightIcon.replace('Blue', 'Grey');
       of(null).pipe(
         delay(1000),
         switchMap(() => {
           return  this.formGroup.valueChanges;
         }),
-        tap(console.log)
       ).subscribe()
       if (this.isFocus) {
         this.updateFocus(this.input.nativeElement);
@@ -68,8 +67,6 @@ export class AppInputComponent implements OnInit {
 
       setTimeout(() => {
             this.controlName.setValue(this.input_value);
-        console.log(this.input_value);
-        console.log(this.controlName);
       }, 50);
         this.controlName.valueChanges.subscribe(res => {
           this.onUpdate.emit(res);

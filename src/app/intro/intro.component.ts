@@ -1,11 +1,9 @@
-import { Component, NgZone, OnInit } from '@angular/core';
+import {Component, EventEmitter, Input, NgZone, OnInit, Output} from '@angular/core';
 import { Router } from '@angular/router';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
 import { User } from '../models/User';
 import {bumpIn, NextStep} from '../animations';
-import {PassLike} from '../models';
-import {HallPass} from '../models/HallPass';
 import {BehaviorSubject, fromEvent, Subject} from 'rxjs';
 import {StorageService} from '../services/storage.service';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
@@ -25,6 +23,9 @@ declare const window;
   ]
 })
 export class IntroComponent implements OnInit {
+
+  @Input() usedAsEntryComponent: boolean = false;
+  @Output() endIntroEvent: EventEmitter<boolean> = new EventEmitter();
 
   user: User;
   isStaff: boolean;
@@ -101,7 +102,7 @@ export class IntroComponent implements OnInit {
         console.log('intro.subscribe()' , user);
         this._zone.run(() => {
           this.user = user;
-          this.isStaff = user.isTeacher() || user.isAssistant();
+          this.isStaff = user.isTeacher() || user.isAssistant() || user.isAdmin();
 
           this.slides = {
             '#1': [
@@ -351,8 +352,13 @@ export class IntroComponent implements OnInit {
     } else {
       this.storage.setItem('smartpass_intro_student', 'seen');
     }
-    this.user.isAdmin() ? this.router.navigate(['/admin']) : this.router.navigate(['/main']);
-    // this.router.navigate(['select-profile']);
+
+    if (this.usedAsEntryComponent) {
+      this.endIntroEvent.emit(true);
+    } else {
+      this.user.isAdmin() ? this.router.navigate(['/admin']) : this.router.navigate(['/main']);
+    }
+      // this.router.navigate(['select-profile']);
   }
 
   onPress(press: boolean, id: string) {

@@ -19,7 +19,7 @@ export class IsAdminGuard implements CanActivate {
     return this.userService.userData
             .pipe(
               map(u => {
-                if (!u.isAdmin() && (u.isStudent() || u.isTeacher() || u.isAssistant())) {
+                if (!u.isAdmin()) {
                   this._zone.run(() => {
                     this.router.navigate(['main/passes']);
                   });
