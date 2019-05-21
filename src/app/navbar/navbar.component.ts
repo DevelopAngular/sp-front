@@ -1,4 +1,4 @@
-import {Component, NgZone, OnInit, Input, ElementRef} from "@angular/core";
+import {Component, NgZone, OnInit, Input, ElementRef} from '@angular/core';
 import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
@@ -22,6 +22,7 @@ import {DarkThemeSwitch} from '../dark-theme-switch';
 import {NotificationService} from '../services/notification-service';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {HttpService} from '../services/http-service';
+import {IntroDialogComponent} from '../intro-dialog/intro-dialog.component';
 
 declare const window;
 
@@ -283,7 +284,17 @@ export class NavbarComponent implements OnInit {
           });
         }
       } else if (action === 'intro') {
-          this.router.navigate(['main/intro']);
+          // this.router.navigate(['main/intro']);
+        this.dialog.open(IntroDialogComponent, {
+          width: '100vw',
+          height: '100vh',
+          maxWidth: 'none',
+          panelClass: 'intro-dialog-container',
+          backdropClass: 'intro-backdrop-container',
+          data: {
+            entry: true
+          }
+        });
       } else if (action === 'switch') {
           this.router.navigate(['admin']);
       } else if (action === 'team') {

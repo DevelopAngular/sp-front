@@ -17,6 +17,8 @@ export class DateTimeFilterComponent implements OnInit {
 
   selectedDate;
 
+  options: any = {};
+
   constructor(
       @Inject(MAT_DIALOG_DATA) public data: any[],
       private _matDialogRef: MatDialogRef<DateTimeFilterComponent>,
@@ -47,8 +49,18 @@ export class DateTimeFilterComponent implements OnInit {
       this._matDialogRef.updatePosition(matDialogConfig.position);
   }
 
+  saveOptions(options) {
+      this.options.toggleResult = options.toggleResult;
+      if (options.rangeId) {
+          this.options.rangeId = options.rangeId;
+      }
+      if (options.dayOptId) {
+          this.options.dayOptId = options.dayOptId;
+      }
+  }
+
   calendarResult(dates) {
-      this._matDialogRef.close(dates);
+      this._matDialogRef.close({ date: dates, options: this.options });
   }
 
 }

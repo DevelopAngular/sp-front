@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import * as moment from 'moment';
 
 @Component({
@@ -15,6 +15,7 @@ export class AdminCalendarToggleComponent implements OnInit {
 
   @Input() date;
 
+  @Output() settingsRes: EventEmitter<any> = new EventEmitter<any>();
   @Output() adminCalendarRes: EventEmitter<any> = new EventEmitter<any>();
 
   public rangeOptions = [
@@ -35,6 +36,11 @@ export class AdminCalendarToggleComponent implements OnInit {
   public toggleResult: string;
 
   public selectedRangeId: string;
+  public selectedDayId: string;
+
+  public exportDates: moment.Moment[] = [];
+  public exportDate = [];
+  public exportHoveredDates: moment.Moment[] = [];
 
   public currentDate: moment.Moment = moment();
   public selectedDate: {
@@ -46,25 +52,47 @@ export class AdminCalendarToggleComponent implements OnInit {
 
   constructor(private cdr: ChangeDetectorRef) { }
 
-  get selectedDateText() {
-    return this.selectedDate.start && this.selectedDate.end &&
-        this.selectedDate.start.format('MMM D') + ' to ' + this.selectedDate.end.format('MMM D');
-  }
-
   ngOnInit() {
     console.log(this.selectedOptions);
     if (this.selectedOptions) {
       setTimeout(() => {
           this.toggleResult = this.selectedOptions.toggleResult;
-          // this.selectedDate = this.selectedOptions.date;
           if (this.selectedOptions.rangeId) {
             this.selectedRangeId = this.selectedOptions.rangeId;
           }
           if (this.date) {
             if (this.toggleResult === 'Range') {
               this.selectedDate = this.date;
+              if (this.selectedRangeId === 'range_4') {
+                  this.openCalendar = true;
+                  this.exportDates = [this.selectedDate.start, this.selectedDate.end];
+                  const countDiff = this.selectedDate.end.diff(moment(this.selectedDate.start), 'days');
+                  for (let i = 0; i <= countDiff; i++) {
+                      const hoveredDate = moment(this.selectedDate.start).add(i, 'days');
+                      this.exportHoveredDates.push(hoveredDate);
+                      this.exportHoveredDates.push(this.selectedDate.end);
+                  }
+                  this.cdr.detectChanges();
+                  if (this.selectedDate.start && this.selectedDate.end) {
+                      this.elem.nativeElement.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'});
+                  }
+              }
             } else if (this.toggleResult === 'Days') {
-              this.selectedDay = this.selectedDate.start;
+              this.selectedDayId = this.selectedOptions.dayOptId;
+              this.exportDate = [this.date.start];
+              this.selectedDay = this.date.start;
+              this.selectedDate = this.date;
+              if (this.selectedOptions.dayOptId === 'days_2') {
+                  this.selectedDaysOption('days_2');
+              }
+            } else if (this.toggleResult === 'Weeks') {
+                this.selectedDate = this.date;
+                const countDiff = this.selectedDate.end.diff(moment(this.selectedDate.start), 'days');
+                for (let i = 0; i <= countDiff; i++) {
+                    const hoveredDate = moment(this.selectedDate.start).add(i, 'days');
+                    this.exportHoveredDates.push(hoveredDate);
+                    this.exportHoveredDates.push(this.selectedDate.end);
+                }
             }
           }
       }, 10);
@@ -84,16 +112,18 @@ export class AdminCalendarToggleComponent implements OnInit {
         this.selectedDate.start = moment().subtract(90, 'days');
     } else if (id === 'range_4') {
       this.openCalendar = true;
+      this.settingsRes.emit({ toggleResult: this.toggleResult, rangeId: id });
       // this.selectedDate = { start: null, end: null };
-        console.log('DAte ==>>', this.selectedDate);
         return false;
     }
-    this.adminCalendarRes.emit({date: this.selectedDate, options: { toggleResult: this.toggleResult, rangeId: id }});
+    this.settingsRes.emit({ toggleResult: this.toggleResult, rangeId: id });
+    this.adminCalendarRes.emit(this.selectedDate);
   }
 
   selectedDaysOption(id) {
       this.openTimeRange = id === 'days_2';
       if (this.openTimeRange) {
+          this.settingsRes.emit({toggleResult: this.toggleResult, dayOptId: id});
           this.cdr.detectChanges();
           this.day.nativeElement.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'});
       }
@@ -121,10 +151,12 @@ export class AdminCalendarToggleComponent implements OnInit {
           this.cdr.detectChanges();
           this.dayButton.nativeElement.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'});
       } else {
-        this.adminCalendarRes.emit({date: this.selectedDay, options: {toggleResult: this.toggleResult}});
+            this.settingsRes.emit({toggleResult: this.toggleResult});
+            this.adminCalendarRes.emit(this.selectedDay);
       }
     } else if (this.toggleResult === 'Weeks') {
-      this.adminCalendarRes.emit({date: {start: selectedDates[0], end: selectedDates[1]}, options: {toggleResult: this.toggleResult}});
+        this.settingsRes.emit({toggleResult: this.toggleResult});
+        this.adminCalendarRes.emit({start: selectedDates[0], end: selectedDates[1]});
     }
   }
 
@@ -133,7 +165,8 @@ export class AdminCalendarToggleComponent implements OnInit {
   }
 
   save() {
-    this.adminCalendarRes.emit({date: this.selectedDate, options: {toggleResult: this.toggleResult}});
+    this.settingsRes.emit({toggleResult: this.toggleResult});
+    this.adminCalendarRes.emit(this.selectedDate);
   }
 
 }

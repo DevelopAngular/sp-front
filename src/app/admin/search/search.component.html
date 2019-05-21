@@ -39,7 +39,7 @@
                   <div *ngIf="selectedRooms.length">{{ selectedRooms.length + ' ' + 'room' + (selectedRooms.length > 1 ? 's' : '') }}</div>
                 </div>
                 <div class="reset-icon" *ngIf="rchip.hovered && selectedRooms.length">
-                  <img (click)="selectedRooms = []" [src]="'./assets/Cancel (Navy).svg'" width="15" #fieldIcon alt="Check.svg">
+                  <img (click)="selectedRooms = []; selRoomsWithCategories = null" [src]="'./assets/Cancel (Navy).svg'" width="15" #fieldIcon alt="Check.svg">
                 </div>
               </div>
             </div>
@@ -58,7 +58,7 @@
                   <div *ngIf="selectedDate">{{ dateText }}</div>
                 </div>
                 <div class="reset-icon" *ngIf="dchip.hovered && selectedDate">
-                  <img (click)="selectedDate = null" [src]="'./assets/Cancel (Navy).svg'" width="15" #fieldIcon alt="Check.svg">
+                  <img (click)="selectedDate = null; adminCalendarOprions = null" [src]="'./assets/Cancel (Navy).svg'" width="15" #fieldIcon alt="Check.svg">
                 </div>
               </div>
             </div>
@@ -115,7 +115,14 @@
               <!--{{sortParamsHeader}}-->
             <!--</div>-->
             <!--<div class="divider"></div>-->
-            <app-data-table [data]="tableData" [textColor]="'#7F879D'" *ngIf="tableData.length > 0 && !spinner" (selectedUsers)="selectedReport=$event" (selectedRow)="selectedPass($event)"></app-data-table>
+            <app-data-table
+                    [data]="tableData"
+                    [textColor]="'#7F879D'"
+                    [textHeaderColor]="'#7F879D'"
+                    *ngIf="tableData.length > 0 && !spinner"
+                    (selectedUsers)="selectedReport=$event"
+                    (selectedRow)="selectedPass($event)"
+            ></app-data-table>
             <div class="nopass-text" *ngIf="tableData.length === 0 && !spinner" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
               There are no passes that match the search parameters!
             </div>

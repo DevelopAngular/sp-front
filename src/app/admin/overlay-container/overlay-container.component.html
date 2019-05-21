@@ -116,6 +116,7 @@
               {{headerText}}
             </div>
             <div class="header-in-folder-button">
+              <!--{{isEditRooms}} {{isEditFolder}}-->
               <app-gradient-button
                 *ngIf="showDoneButton"
                 [minHeight]="'30px'"
@@ -123,7 +124,7 @@
                 [fontSize]="'12px'"
                 (buttonClick)="done()"
               >
-                {{(showDoneSpinner ? null : 'Add')}}<mat-spinner *ngIf="showDoneSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
+                {{(showDoneSpinner ? null : editRoomInFolder ? 'Done' : 'Add')}}<mat-spinner *ngIf="showDoneSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
               </app-gradient-button>
               <div *ngIf="backButtonsStateInFolder && !showDoneButton" [style.color]="'#1F194E'">Incomplete</div>
             </div>
@@ -138,7 +139,6 @@
           <div [@NextStep]="{ value: '', params: frameMotion$ | async}"
                *ngIf="overlayType === 'newRoom' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'">
             <div class="room-name">
-
               <app-input
                 [width]="'222px'"
                 [maxLength]="15"
@@ -147,7 +147,7 @@
                 (onUpdate)="roomName = $event === '' ? 'New Room': $event;"
                 [formGroup]="form"
                 [controlName]="form.get('roomName')"
-                [isFocus]="overlayType === 'newRoom' || overlayType === 'newRoomInFolder'"
+                [isFocus]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && roomName !== '' && roomName === 'New Room')"
               >
               </app-input>
             </div>
@@ -580,7 +580,7 @@
              *ngIf="(overlayType === 'editRoom' ||
              (editRoomInFolder)) ||
              overlayType === 'edit' ||
-             (overlayType === 'settingsRooms') || overlayType === 'newRoom'">
+             (overlayType === 'settingsRooms') || overlayType === 'newRoom'|| overlayType === 'newRoomInFolder'">
             <app-advanced-options
                     [roomName]="roomName"
                     [nowRestricted]="nowRestriction"

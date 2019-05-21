@@ -47,7 +47,7 @@ export class LocationsService {
     }
 
     getLocationsWithFilder() {
-      return this.http.get('v1//locations/categorized');
+      return this.http.get('v1/locations/categorized');
     }
 
     checkLocationName(value) {

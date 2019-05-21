@@ -1,6 +1,6 @@
 <div *ngIf="user" class="intro-wrapper">
 
-  <div class="navbar" [style.border-bottom]="isStaff ? '1px solid  #7F879D' : 'unset'">
+  <div *ngIf="!usedAsEntryComponent" class="navbar" [style.border-bottom]="isStaff ? '1px solid  #7F879D' : 'unset'">
     <div class="logo ds-flex-center-center">
       <app-smartpass-logo></app-smartpass-logo>
     </div>
@@ -346,8 +346,8 @@
     </div>
   </div>
   <!-- It needs in order to all the components will be disabled-->
-  <div class="anti-click"></div>
+  <!--<div class="anti-click"></div>-->
   <!-- End -->
-  <div *ngIf="alreadySeen" class="dismiss-button" (click)="endIntro()">Dismiss</div>
+  <div *ngIf="usedAsEntryComponent" class="dismiss-button" (click)="endIntro()">Dismiss</div>
 
 </div>

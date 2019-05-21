@@ -1,7 +1,12 @@
 <div class="icon-picker-wrapper">
   <div class="icon-title" [ngStyle]="{'color': selectedIconId ? '#1F195E' : '#8e8e93'}">
-    Icon
-    <!--<img class="search-icon" (click)="openSearchInput()" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset" alt="">-->
+    <div>
+      <span>Icon</span>
+    </div>
+    <div class="selected-icon-background">
+      <!--{{selectedIconPicker | json}}-->
+      <img *ngIf="selectedIconLocalUrl" class="search-icon" (click)="unselectIcon()" [src]="selectedIconLocalUrl | resolveAsset" alt="">
+    </div>
   </div>
   <div class="search">
     <app-round-input
@@ -13,7 +18,8 @@
             (ontextupdate)="search($event)"
     ></app-round-input>
   </div>
-  <div class="icon-collection" *ngIf="icons.length; else empty">
+  <div class="ds-mt-15 icon-collection-title">{{iconCollectionTitle}}</div>
+  <div class="icon-collection ds-mt-5" *ngIf="icons.length; else empty">
     <div class="icon-container" *ngFor="let icon of icons" (click)="changeIcon(icon)">
       <div class="icon-wrapper" matTooltipClass="tooltip" [matTooltip]="icon.id">
         <img class="icon"  [ngStyle]="{'opacity': selectedIconId === icon.id && icon.active ? 1 : 0}" [src]="icon.active_icon">

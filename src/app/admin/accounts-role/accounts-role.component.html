@@ -128,7 +128,7 @@
                       'They can manage passes in his/her room and create passes as that teacher.'"
                    matTooltipClass="tooltip"
                    alt="">
-              <span [style.font-weight]="'bold'">{{(accounts$ | async).secretary_count || 0}} users</span><br>
+              <span [style.font-weight]="'bold'">{{(accounts$ | async).assistant_count || 0}} users</span><br>
               <div class="arrow-down-container">
                 <div class="arrow-down"></div>
               </div>
@@ -308,6 +308,8 @@
           class="ds-my-10"
           [data]="userList"
           [isCheckbox]="dataTableEditState"
+          [textColor]="'#7E879D'"
+          [textHeaderColor]="'#7E879D'"
           [disallowHover]="role === '_all'"
           [displayedColumns]="dataTableHeadersToDisplay"
           (selectedCell)="findProfileByRole($event)"

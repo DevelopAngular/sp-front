@@ -2,7 +2,7 @@ import {Component, ElementRef, HostListener, Inject, OnInit, ViewChild} from '@a
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {BehaviorSubject, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
-import {delay, map, switchMap} from 'rxjs/operators';
+import {delay, map, startWith, switchMap} from 'rxjs/operators';
 import { Pinnable } from '../../models/Pinnable';
 import * as _ from 'lodash';
 import { User } from '../../models/User';
@@ -326,40 +326,32 @@ export class OverlayContainerComponent implements OnInit {
     this.gradientColor = 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
 
-  private oneOf(entity: any, compareWith: any[]) {
-    return compareWith.find(item => entity === item);
-  }
-  private allOf(boolSet: any[]) {
-    return boolSet.every(item => !!item);
-
-  }
+  // private oneOf(entity: any, compareWith: any[]) {
+  //   return compareWith.find(item => entity === item);
+  // }
+  // private allOf(boolSet: any[]) {
+  //   return boolSet.every(item => !!item);
+  //
+  // }
 
   get isValidForm() {
-      return this.allOf([
-                        this.form.get('roomName').valid,
-                        this.form.get('roomNumber').valid,
-                        this.form.get('timeLimit').valid
-      ]);
+    return this.form.get('roomName').valid &&
+      this.form.get('roomNumber').valid &&
+      this.form.get('timeLimit').valid;
+
   }
 
   get showPublishNewRoom() {
-      return this.allOf([
-                        this.form.get('roomName').valid,
-                        this.form.get('roomNumber').valid,
-                        this.form.get('timeLimit').valid,
-                        this.isDirtyNowRestriction,
-                        this.isDirtyFutureRestriction,
-                        !!this.color_profile,
-                        !!this.selectedIcon,
-                        (this.isDirtyAdvancedOpt ? this.advOptValid : true)
-      ]);
+    return this.form.get('roomName').valid &&
+      this.form.get('roomNumber').valid &&
+      this.form.get('timeLimit').valid &&
+      this.isDirtyNowRestriction &&
+      this.isDirtyFutureRestriction &&
+      !!this.color_profile && !!this.selectedIcon;
   }
 
   get showPublishEditRoom() {
-     return this.allOf([
-       this.isValidForm,
-       this.isFormStateDirty
-     ]);
+    return this.isValidForm && this.isFormStateDirty;
   }
 
   get showPublishNewFolder() {
@@ -371,35 +363,24 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   get showPublishEditFolder() {
-      return this.allOf([
-                        this.showPublishNewFolder,
-                        this.oneOf( true, [this.isFormStateDirty, this.isChangeLocations.value]),
-                        this.isEditFolder
-      ]);
+    return this.showPublishNewFolder && (this.isFormStateDirty || this.isChangeLocations.value) && this.isEditFolder;
   }
 
   get showDoneButton() {
-
-    const boolSet = []
-          boolSet.push(this.allOf([
-                                  this.isValidForm,
-                                  this.oneOf(true, [this.editRoomInFolder, this.isFormStateDirty]),
-                                  this.oneOf(this.overlayType, ['newRoomInFolder']),
-                                  (!this.editRoomInFolder ? this.allOf([this.isDirtyNowRestriction, this.isDirtyFutureRestriction]) : true)
-          ]));
-          boolSet.push(this.allOf([ this.form.get('timeLimit').valid, this.overlayType === 'settingsRooms', this.settingsTouched ]));
-    return this.oneOf(true, boolSet);
+    return (this.isValidForm &&
+      (this.editRoomInFolder ? this.isFormStateDirty : true) &&
+      this.overlayType === 'newRoomInFolder' &&
+      (!this.editRoomInFolder ? (this.isDirtyNowRestriction && this.isDirtyFutureRestriction) : true)) ||
+      (this.form.get('timeLimit').valid && this.overlayType === 'settingsRooms' && this.settingsTouched);
   }
 
   get settingsTouched() {
 
     if (this.importedRooms.length) {
-      return this.allOf( [
-        this.isDirtyNowRestriction,
-        this.isDirtyFutureRestriction,
-        this.isDirtyTravel,
-        !!this.timeLimit
-      ]);
+      return this.isDirtyNowRestriction &&
+        this.isDirtyFutureRestriction &&
+        this.isDirtyTravel &&
+        !!this.timeLimit;
     } else {
 
      return this.isDirtyNowRestriction ||
@@ -417,24 +398,21 @@ export class OverlayContainerComponent implements OnInit {
 
 
   get showFolderName() {
-    return this.oneOf(this.overlayType, [
-      'newFolder',
-      'newRoomInFolder',
-      'addExisting',
-      'importRooms',
-      'settingsRooms',
-      'edit'
-    ]);
+    return this.overlayType === 'newFolder'
+      || this.overlayType === 'newRoomInFolder'
+      || this.overlayType === 'addExisting'
+      || this.overlayType === 'importRooms'
+      || this.overlayType === 'settingsRooms'
+      || this.overlayType === 'edit';
+
 
   }
 
   get hideHeaderIcon() {
-    return this.oneOf(this.overlayType, [
-      'newRoomInFolder',
-      'importRooms',
-      'settingsRooms',
-      'addExisting'
-    ]);
+    return this.overlayType === 'newRoomInFolder' ||
+      this.overlayType === 'importRooms' ||
+      this.overlayType === 'settingsRooms' ||
+      this.overlayType === 'addExisting';
   }
 
   get backButtonState() {
@@ -591,9 +569,14 @@ export class OverlayContainerComponent implements OnInit {
           }
       });
 
-     this.icons$ = merge(this.form.get('roomName').valueChanges, this.form.get('folderName').valueChanges)
-          .pipe(filter(value => value),
-              switchMap((value: string) => this.http.searchIcons(value.toLowerCase())));
+      this.icons$ = merge(
+        this.form.get('roomName').valueChanges.pipe(startWith(this.form.get('roomName').value)),
+        this.form.get('folderName').valueChanges.pipe(startWith(this.form.get('folderName').value))
+      )
+      .pipe(
+        filter(value => value),
+        switchMap((value: string) => this.http.searchIcons(value.toLowerCase()))
+      );
   }
 
   buildForm() {
@@ -849,7 +832,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   changeIcon(icon) {
-    this.selectedIcon = icon;
+    this.selectedIcon = icon.active_icon;
     this.titleIcon = icon.inactive_icon;
     this.isDirtyIcon = true;
     this.changeState();

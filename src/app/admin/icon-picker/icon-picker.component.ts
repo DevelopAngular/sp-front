@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { map } from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 import { AdminService } from '../../services/admin.service';
 import { Observable } from 'rxjs';
 import { HttpService } from '../../services/http-service';
@@ -23,6 +23,8 @@ export class IconPickerComponent implements OnInit {
 
   @Input() selectedIconPicker;
 
+  public selectedIconLocalUrl: string;
+
   icons: Icon[] = [];
 
   @Input() roomName: string;
@@ -31,6 +33,7 @@ export class IconPickerComponent implements OnInit {
 
   public selectedIconId;
   public showSearchInput: boolean;
+  public iconCollectionTitle: string = 'Search icons';
 
   constructor(
     private adminService: AdminService,
@@ -38,10 +41,22 @@ export class IconPickerComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-      this.icons$.pipe(
-          map((icons: any) => {
-          return this.normalizeIcons(icons);
-      })).subscribe(res => this.icons = res);
+    console.log(this.selectedIconPicker);
+    this.icons$
+      .pipe(
+        map((icons: any) => {
+         return this.normalizeIcons(icons);
+        }),
+        tap(console.log)
+      )
+      .subscribe(res => {
+          this.icons = res;
+          console.log(this.selectedIconPicker.search('FFFFFF'));
+          if (!res.length || this.selectedIconLocalUrl) {
+            this.selectedIconLocalUrl = this.selectedIconPicker.replace('FFFFFF', '1F195E');
+          }
+      });
+
     //   this.adminService.getIcons()
     //   .pipe(
     //   map((icons: any) => {
@@ -62,10 +77,12 @@ export class IconPickerComponent implements OnInit {
 
   normalizeIcons(icons) {
       if (icons) {
-          return icons.map((_icon) => {
+        this.iconCollectionTitle = 'Suggested';
+        return icons.map((_icon) => {
               if (this.selectedIconPicker) {
                   if (this.selectedIconPicker === _icon.inactive_icon) {
                       this.selectedIconId = _icon.id;
+                      this.selectedIconLocalUrl = _icon.active_icon;
                       _icon.active = true;
                       return _icon;
                   }
@@ -74,6 +91,8 @@ export class IconPickerComponent implements OnInit {
               return _icon;
           });
       } else {
+        // this.iconCollectionTitle = 'No results';
+        this.iconCollectionTitle = 'Search icons';
           return [];
       }
   }
@@ -90,8 +109,16 @@ export class IconPickerComponent implements OnInit {
       } else {
           icon.active = true;
       }
-      this.selectedIconId = icon.id;
+    console.log(icon);
+    this.selectedIconPicker = icon.inactive_icon;
+    this.selectedIconLocalUrl = icon.active_icon;
+    this.selectedIconId = icon.id;
       this.selectedEvent.emit(icon);
+  }
+
+  unselectIcon() {
+    this.selectedIconLocalUrl = null;
+    this.selectedIconId = null;
   }
 
   openSearchInput() {

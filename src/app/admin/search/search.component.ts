@@ -76,8 +76,10 @@ export class SearchComponent implements OnInit {
   }
 
   get dateText() {
-     return this.selectedDate &&
-       this.selectedDate.start.format('MMM D') + ' to ' + this.selectedDate.end.format('MMM D');
+      if (this.selectedDate.start && this.selectedDate.end) {
+          return this.selectedDate &&
+              this.selectedDate.start.format('MMM D') + ' to ' + this.selectedDate.end.format('MMM D');
+      }
   }
 
   ngOnInit() {

@@ -26,6 +26,13 @@ body {
   min-width: 20px;
 }
 
+.intro-dialog-container .mat-dialog-container {
+  background-color: transparent;
+  box-shadow: none;
+}
+.intro-backdrop-container {
+  background: rgba(255, 255, 255, .5);
+}
 .custom-dialog-container .mat-dialog-container {
   padding: 0px;
 }
