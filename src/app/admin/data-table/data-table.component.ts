@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatSort, MatTableDataSource} from '@angular/material';
 import { DarkThemeSwitch } from '../../dark-theme-switch';
@@ -47,10 +47,12 @@ export class DataTableComponent implements OnInit {
   constructor(
     public darkTheme: DarkThemeSwitch,
     private sanitizer: DomSanitizer,
+    private cdr: ChangeDetectorRef
 
   ) {}
 
   ngOnInit() {
+    console.log(this._data);
       this.dataSource.sort = this.sort;
       this.dataSource.sortingDataAccessor = (item, property) => {
           switch (property) {
@@ -60,6 +62,9 @@ export class DataTableComponent implements OnInit {
                 return Math.min(moment().diff(item['date'], 'days'));
             case 'Duration':
                 return item['sortDuration'].as('milliseconds');
+              case 'Profile(s)':
+                console.log(item[property].map(i => i.title).join(''));
+                return item[property].map(i => i.title).join('');
             default:
                 return item[property];
           }
