@@ -115,7 +115,14 @@
               <!--{{sortParamsHeader}}-->
             <!--</div>-->
             <!--<div class="divider"></div>-->
-            <app-data-table [data]="tableData" [textColor]="'#7F879D'" *ngIf="tableData.length > 0 && !spinner" (selectedUsers)="selectedReport=$event" (selectedRow)="selectedPass($event)"></app-data-table>
+            <app-data-table
+                    [data]="tableData"
+                    [textColor]="'#7F879D'"
+                    [textHeaderColor]="'#7F879D'"
+                    *ngIf="tableData.length > 0 && !spinner"
+                    (selectedUsers)="selectedReport=$event"
+                    (selectedRow)="selectedPass($event)"
+            ></app-data-table>
             <div class="nopass-text" *ngIf="tableData.length === 0 && !spinner" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
               There are no passes that match the search parameters!
             </div>

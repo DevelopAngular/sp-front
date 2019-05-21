@@ -308,6 +308,8 @@
           class="ds-my-10"
           [data]="userList"
           [isCheckbox]="dataTableEditState"
+          [textColor]="'#7E879D'"
+          [textHeaderColor]="'#7E879D'"
           [disallowHover]="role === '_all'"
           [displayedColumns]="dataTableHeadersToDisplay"
           (selectedCell)="findProfileByRole($event)"
