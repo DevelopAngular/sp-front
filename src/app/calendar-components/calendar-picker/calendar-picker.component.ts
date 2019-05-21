@@ -29,6 +29,8 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     @Input() range: boolean;
     @Input() rangeWeeks: boolean;
 
+    @Input() hoveredDates: moment.Moment[] = [];
+
     @Output() onSelectDate = new EventEmitter<moment.Moment[]>();
 
     currentDate = moment();
@@ -40,8 +42,6 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
 
     buttonDown: boolean;
     monthButtonHovered: boolean;
-
-    public hoveredDates: moment.Moment[] = [];
 
     forseUpdate$ = new BehaviorSubject(moment(this.currentDate).add(5, 'minutes'));
 

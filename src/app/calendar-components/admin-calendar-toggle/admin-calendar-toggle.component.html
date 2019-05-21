@@ -16,7 +16,7 @@
     <div class="range-options"  *ngSwitchCase="'Range'">
       <app-toggle-options [options]="rangeOptions" [selectedId]="selectedRangeId" (result)="selectedRangeOption($event)"></app-toggle-options>
       <div class="calendar-picker" *ngIf="openCalendar">
-        <app-calendar-picker (onSelectDate)="calendarResult($event)" [showYear]="false" [showTime]="false" [range]="true"></app-calendar-picker>
+        <app-calendar-picker [selectedDates]="exportDates" [hoveredDates]="exportHoveredDates" (onSelectDate)="calendarResult($event)" [showYear]="false" [showTime]="false" [range]="true"></app-calendar-picker>
       </div>
       <div class="button" #elem *ngIf="selectedDate.start && selectedDate.end && openCalendar">
         <app-gradient-button
@@ -30,11 +30,11 @@
 
     <div class="days-options" *ngSwitchCase="'Days'">
       <div class="calendar-picker">
-        <app-calendar-picker [selectedDates]="[selectedDay]" (onSelectDate)="calendarResult($event)" [showYear]="false" [showTime]="false"></app-calendar-picker>
+        <app-calendar-picker [selectedDates]="exportDate" (onSelectDate)="calendarResult($event)" [showYear]="false" [showTime]="false"></app-calendar-picker>
       </div>
       <mat-divider></mat-divider>
       <div class="day-options">
-        <app-toggle-options [selectedId]="'days_1'" [options]="daysOptions" (result)="selectedDaysOption($event)"></app-toggle-options>
+        <app-toggle-options [selectedId]="selectedDayId || 'days_1'" [options]="daysOptions" (result)="selectedDaysOption($event)"></app-toggle-options>
       </div>
       <div class="time-range" #day *ngIf="openTimeRange">
         <app-time-picker [currentDate]="selectedDate.start || currentDate" (timeResult)="selectedDate.start = $event"></app-time-picker>
@@ -51,7 +51,7 @@
       </div>
     </div>
     <div class="weeks" *ngSwitchCase="'Weeks'">
-      <app-calendar-picker [showTime]="false" [showYear]="false" [rangeWeeks]="true" (onSelectDate)="calendarResult($event)"></app-calendar-picker>
+      <app-calendar-picker [selectedDates]="exportHoveredDates" [showTime]="false" [showYear]="false" [rangeWeeks]="true" (onSelectDate)="calendarResult($event)"></app-calendar-picker>
     </div>
   </div>
 </div>

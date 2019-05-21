@@ -67,6 +67,8 @@
             [style.width]="(width / 7) + 'px'"
             [style.height]="(width / 7 - 9) + 'px'"
             [ngClass]="{
+            selected: day.selected,
+            first_last_element_radius: rangeWeeks && day.selected,
             'is-next-month': isNextMonth(day.mDate),
             rangeHovered: isRangeHovered(day.mDate) && !isSelected(day.mDate)
             }"
