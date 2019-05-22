@@ -13,7 +13,7 @@ export class Util{
                         'Oct', 'Nov', 'Dec'];
 
     static invalidDate(date) {
-        return moment().isSameOrAfter(date) || !date;
+        return moment().isSameOrAfter(date);
     }
 
     static formatDateTime(s: Date, timeOnly?: boolean, utc?: boolean) {

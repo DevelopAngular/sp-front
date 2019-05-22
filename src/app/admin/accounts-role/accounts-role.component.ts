@@ -333,6 +333,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     this.userService.userData.subscribe((user) => {
       this.user = user;
     });
+    // this.route.data.subscribe((v) => {
+    //   console.log(v);
+    //   console.log(this.route.snapshot.data);
+    // });
   }
 
   findRelevantAccounts(searchValue) {

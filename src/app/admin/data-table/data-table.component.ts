@@ -106,14 +106,16 @@ export class DataTableComponent implements OnInit {
   }
 
 
-  getBgColor(n?) {
-    if (n === this.hoveredRowIndex && !this.disallowHover) {
-      if (this.hovered) {
-        if (this.pressed) {
+  getBgColor(elem?) { //can being as a cell as also an entire row
+    if (!this.disallowHover) {
+      if (elem.hovered) {
+        if (elem.pressed) {
           return this.darkTheme.isEnabled$.value ? '#09A4F7' : '#E2E7F4';
         } else {
           return this.darkTheme.isEnabled$.value ? '#0991c3' : '#ECF1FF';
         }
+      } else if (this.isCheckbox.value && elem.pressed) {
+          return this.darkTheme.isEnabled$.value ? '#09A4F7' : '#E2E7F4';
       } else {
         return 'transparent';
       }
@@ -135,17 +137,23 @@ export class DataTableComponent implements OnInit {
 
 
   isAllSelected() {
-      const numSelected = this.selection.selected.length;
-      const numRows = this._data.length;
-      return numSelected === numRows;
+    const numSelected = this.selection.selected.length;
+    const numRows = this._data.length;
+    return numSelected === numRows;
   }
 
   masterToggle() {
-      this.isAllSelected() ?
-          this.selection.clear() :
-          this._data.forEach(row => {
-              this.selection.select(row);
-          });
+    if (this.isAllSelected() )  {
+      this.selection.clear();
+      this._data.forEach(row => {
+        row.pressed = false;
+      });
+    } else {
+      this._data.forEach(row => {
+        this.selection.select(row);
+        row.pressed = true;
+      });
+    }
   }
 
   normalizeCell(cellData) {
@@ -176,7 +184,8 @@ export class DataTableComponent implements OnInit {
   }
 
   selectedCellEmit(event, cellElement, element) {
-    if (typeof cellElement !== 'string' && !(cellElement instanceof Location)) {
+
+    if (typeof cellElement !== 'string' && !(cellElement instanceof Location) && !this.isCheckbox.value) {
       event.stopPropagation();
       cellElement.row = element;
       this.selectedCell.emit(cellElement);
@@ -186,7 +195,14 @@ export class DataTableComponent implements OnInit {
   }
 
   selectedRowEmit(row) {
-    this.selectedRow.emit(row);
+    if (this.isCheckbox.value) {
+      this.selection.toggle(row);
+      row.pressed = this.selection.isSelected(row) ? true : false;
+      this.pushOutSelected();
+    } else {
+      this.selectedRow.emit(row);
+    }
+
   }
 
   pushOutSelected() {

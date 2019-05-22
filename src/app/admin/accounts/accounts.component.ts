@@ -10,6 +10,8 @@ import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {bumpIn} from '../../animations';
 import {ProfileCardDialogComponent} from '../profile-card-dialog/profile-card-dialog.component';
 
+declare const history: History;
+
 @Component({
   selector: 'app-accounts',
   templateUrl: './accounts.component.html',
@@ -34,7 +36,8 @@ export class AccountsComponent implements OnInit {
     private userService: UserService,
     private http: HttpService,
     private adminService: AdminService,
-    public darkTheme: DarkThemeSwitch
+    public darkTheme: DarkThemeSwitch,
+    // private history: History
   ) { }
 
   ngOnInit() {

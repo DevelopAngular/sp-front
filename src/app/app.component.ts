@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, HostListener, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
-import {catchError, delay, filter, map, mergeMap, takeUntil} from 'rxjs/operators';
-import {BehaviorSubject, of, ReplaySubject, Subject} from 'rxjs';
+import {delay, filter, map, mergeMap, takeUntil, tap, withLatestFrom} from 'rxjs/operators';
+import { BehaviorSubject, ReplaySubject, Subject } from 'rxjs';
 
 import { DeviceDetection } from './device-detection.helper';
 import { GoogleLoginService } from './services/google-login.service';
@@ -14,8 +14,10 @@ import { AdminService } from './services/admin.service';
 import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
 import { WebConnectionService } from './services/web-connection.service';
 import { ResizeInfoDialogComponent } from './resize-info-dialog/resize-info-dialog.component';
-import {StorageService} from './services/storage.service';
-import {DarkThemeSwitch} from './dark-theme-switch';
+import { StorageService } from './services/storage.service';
+import { DarkThemeSwitch } from './dark-theme-switch';
+
+import * as _ from 'lodash';
 
 declare const window;
 
@@ -121,7 +123,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       this._zone.run(() => {
         this.showUI.next(true);
         this.preloader$.next(false);
-
         this.isAuthenticated = t;
       });
     });
@@ -135,9 +136,15 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     window.appLoaded(2000);
 
-    this.http.schools$.pipe(takeUntil(this.subscriber$))
-        .subscribe(schools => {
-      this.schools = schools;
+    this.http.schools$.pipe(
+        map(schools => _.filter(schools, (school => school.my_roles.length > 0))),
+        withLatestFrom(this.http.currentSchool$),
+        takeUntil(this.subscriber$))
+        .subscribe(([schools, currentSchool]) => {
+          this.schools = schools;
+          if (!_.find(schools, {id: currentSchool.id})) {
+            this.http.setSchool(schools[0]);
+          }
     });
 
     // ============== SPA-407 ====================> Needs to be uncommented when the backend logic will completed
