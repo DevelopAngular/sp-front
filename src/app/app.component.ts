@@ -136,9 +136,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     window.appLoaded(2000);
 
-    this.http.schools$.pipe(takeUntil(this.subscriber$),
+    this.http.schools$.pipe(
         map(schools => _.filter(schools, (school => school.my_roles.length > 0))),
-        withLatestFrom(this.http.currentSchool$))
+        withLatestFrom(this.http.currentSchool$),
+        takeUntil(this.subscriber$))
         .subscribe(([schools, currentSchool]) => {
           this.schools = schools;
           if (!_.find(schools, {id: currentSchool.id})) {

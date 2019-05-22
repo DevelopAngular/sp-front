@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 
-import { Subject, timer } from 'rxjs';
+import { merge, Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment';
 
@@ -28,10 +28,11 @@ export class TimePickerComponent implements OnInit, OnDestroy {
   _currentDate: moment.Moment;
 
   timeForm: FormGroup;
+  changeEmit$: Subject<{hour: string, minute: string}> = new Subject<{hour: string, minute: string}>();
 
   destroy$ = new Subject();
 
-  constructor() { }
+  constructor(private cdr: ChangeDetectorRef) { }
 
   get isDisabledSwitchHourButton() {
     return this.min && moment(this._currentDate).isSameOrBefore(this.min, 'hour');
@@ -42,8 +43,9 @@ export class TimePickerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+      // console.log('Timeee ===>>>', this._currentDate.format('DD hh:mm A'));
     if (this.forseDate$) {
-        this.forseDate$.subscribe(date => {
+        this.forseDate$.pipe(takeUntil(this.destroy$)).subscribe(date => {
             this._currentDate = date;
             this.buildFrom();
         });
@@ -52,7 +54,7 @@ export class TimePickerComponent implements OnInit, OnDestroy {
     timer(50).pipe(takeUntil(this.destroy$)).subscribe(() => {
         this.timeResult.emit(this._currentDate);
     });
-    this.timeForm.valueChanges.pipe(takeUntil(this.destroy$))
+    merge(this.timeForm.valueChanges, this.changeEmit$).pipe(takeUntil(this.destroy$))
         .subscribe(value => {
             if (this._currentDate.format('A') === 'PM') {
               this._currentDate = this._currentDate.set('hour', +value.hour + 12);
@@ -79,6 +81,10 @@ export class TimePickerComponent implements OnInit, OnDestroy {
       this.timeResult.emit(this._currentDate);
   }
 
+  change() {
+      this.changeEmit$.next(this.timeForm.value);
+  }
+
   ngOnDestroy() {
       this.destroy$.next();
       this.destroy$.complete();
@@ -86,9 +92,9 @@ export class TimePickerComponent implements OnInit, OnDestroy {
 
   changeTime(action, up) {
         if (up === 'up') {
-            this._currentDate = moment(this._currentDate).add(1, action);
+            this._currentDate.add(1, action);
         } else if (up === 'down') {
-            this._currentDate = moment(this._currentDate).subtract(1, action);
+            this._currentDate.subtract(1, action);
         }
         this.buildFrom();
         this.timeResult.emit(this._currentDate);

@@ -12,7 +12,7 @@
         [src]="'./assets/Chevron Up (Blue-Gray).svg' | resolveAsset"
         alt="Icon"
       >
-      <input tabindex="-1" class="timeInput" type="text" maxlength="2" formControlName="hour" (blur)="updateDate()">
+      <input tabindex="-1" class="timeInput" (keyup)="change()" type="text" maxlength="2" formControlName="hour" (blur)="updateDate()">
       <img
         class="arrow"
         [style.opacity]="hourHovered && !isDisabledSwitchHourButton ? 1 : 0"
@@ -34,7 +34,7 @@
        [src]="'./assets/Chevron Up (Blue-Gray).svg' | resolveAsset"
        alt="Icon"
       >
-      <input tabindex="-1" class="timeInput" maxlength="2" type="text" formControlName="minute" (blur)="updateDate()">
+      <input tabindex="-1" class="timeInput" (keyup)="change()" maxlength="2" type="text" formControlName="minute" (blur)="updateDate()">
       <img
        class="arrow"
        [style.opacity]="minHovered && !isDisabledSwitchMinButton ? 1 : 0"
