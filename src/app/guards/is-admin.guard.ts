@@ -2,7 +2,7 @@ import { Injectable, NgZone } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { UserService } from '../services/user.service';
-import {map} from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +15,7 @@ export class IsAdminGuard implements CanActivate {
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-
-    return this.userService.userData
+      return this.userService.userData
             .pipe(
               map(u => {
                 if (!u.isAdmin()) {
