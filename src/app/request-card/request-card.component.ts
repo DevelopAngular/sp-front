@@ -227,7 +227,7 @@ export class RequestCardComponent implements OnInit {
               'travel_type' : this.request.travel_type,
               'teacher' : this.request.teacher.id,
               'duration' : this.request.duration,
-              'request_time': moment(state.data.date.date).format('YYYY-MM-DDThh:mm')
+              'request_time': moment(state.data.date.date).toISOString()
           };
 
          return this.requestService.createRequest(body);
