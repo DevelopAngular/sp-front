@@ -49,7 +49,7 @@
       <div class="content_rest" *ngIf="typeChoosen === accountTypes[0]">
 
         <div class="secretary-user ds-w-100">
-          <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': secretaryOrSubstitute.user, 'ds-dialog-heading-gray': !secretaryOrSubstitute.user}">Secretary/Substitute</div>
+          <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': secretaryOrSubstitute.user, 'ds-dialog-heading-gray': !secretaryOrSubstitute.user}">Assistant</div>
           <div class="profile-search" *ngIf="!secretaryOrSubstitute.user; else secretaryUser" >
             <app-student-search
               [placeholder]="'Search G Suite accounts'"
@@ -80,8 +80,8 @@
           <div class="profile-search" *ngIf="!secretaryOrSubstitute.behalfOf; else secretaryBehalfOf" >
             <app-student-search
               [placeholder]="'Search existing teachers'"
-              [type]="'gsuite'"
-              [role]="''"
+              [type]="'alternative'"
+              [role]="'_profile_teacher'"
               (onUpdate)="setSecretary(null, $event)"
             ></app-student-search>
           </div>

@@ -7,7 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterModule, Routes } from '@angular/router';
+import {ActivatedRoute, NavigationEnd, NavigationStart, Router, RouterModule, Routes, Scroll} from '@angular/router';
 import { AppComponent } from './app.component';
 import { GAPI_CONFIG } from './config';
 import { ConsentMenuComponent } from './consent-menu/consent-menu.component';
@@ -47,10 +47,12 @@ import { environment } from '../environments/environment';
 import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
 import { ResizeInfoDialogComponent } from './resize-info-dialog/resize-info-dialog.component';
 import { SignedOutToastComponent } from './signed-out-toast/signed-out-toast.component';
-import {APP_BASE_HREF} from '@angular/common';
+import {APP_BASE_HREF, ViewportScroller} from '@angular/common';
 import { ErrorComponent } from './error/error.component';
 import { IntroRouteComponent } from './intro-route/intro-route.component';
 import { IntroDialogComponent } from './intro-dialog/intro-dialog.component';
+import {filter, map, pairwise, tap} from 'rxjs/operators';
+import {ViewportRuler} from '@angular/cdk/overlay';
 
 
 const appRoutes: Routes = [
@@ -76,6 +78,7 @@ const appRoutes: Routes = [
         path: 'admin',
         canActivate: [AuthenticatedGuard, IsAdminGuard],
         loadChildren: 'app/admin/admin.module#AdminModule',
+        resolve: {currentUser: CurrentUserResolver},
         data: {
           hideScroll: true
         }
@@ -154,7 +157,11 @@ const appRoutes: Routes = [
     MatSlideToggleModule,
 
     RouterModule.forRoot(
-      appRoutes, {enableTracing: false}
+      appRoutes,
+      {
+        enableTracing: false,
+        // scrollPositionRestoration: 'enabled'
+      }
     ),
     AngularFireModule.initializeApp(environment.firebase, 'notifyhallpass'),
     AngularFireMessagingModule
@@ -177,5 +184,60 @@ const appRoutes: Routes = [
   bootstrap: [AppComponent]
 })
 export class AppModule {
+  constructor(
+    // router: Router,
+    // activatedRoute: ActivatedRoute,
+    // vs: ViewportScroller,
+    // vr: ViewportRuler
+  ) {
 
+  //   router.events.pipe(
+  //     filter((e: any): e is NavigationStart => e instanceof NavigationStart),
+  //     // tap(console.log),
+  //     map(e => activatedRoute),
+  //     map(route => {
+  //       while (route.firstChild) {
+  //         route = route.firstChild;
+  //       }
+  //       return route;
+  //     }),
+  //     filter((route) => route.outlet === 'primary')
+  //   ).subscribe((e: any) => {
+  //     // e.data.test = 'west';
+  //     console.log(e);
+  //     // console.log(e.data);
+  //       // console.log(e);
+  //   })
+  //
+  //   router.events.pipe(
+  //     // filter((e: any): e is Scroll => e instanceof Scroll)
+  //     filter((e: any): e is NavigationEnd => e instanceof NavigationEnd),
+  //     // tap(console.log),
+  //     map(e => activatedRoute),
+  //     map(route => {
+  //       while (route.firstChild) {
+  //         route = route.firstChild;
+  //       }
+  //       return route;
+  //     }),
+  //     filter((route) => route.outlet === 'primary')
+  //     // filter(ar => )
+  //   ).subscribe((e: any) => {
+  //     e.data.test = 'west';
+  //     console.log(e);;
+  //
+  //     // console.log(e);
+  //     // if (e.position) {
+  //     //   backward navigation
+  //       // vs.scrollToPosition(e.position);
+  //     // } else if (e.anchor) {
+  //     //   anchor navigation
+  //       // vs.scrollToAnchor(e.anchor);
+  //     // } else {
+  //     //   forward navigation
+  //       // vs.scrollToPosition([0, 0]);
+  //     // }
+  //   });
+  //
+  }
 }

@@ -28,7 +28,7 @@ export class SelectProfileComponent implements OnInit {
   ngOnInit() {
     this.route.data.subscribe((_resolved: any) => {
       this.currentUser = _resolved.currentUser;
-
+      console.log(_resolved);
       const userRoles = {
         admin: {
           value: this.currentUser.isAdmin(),
