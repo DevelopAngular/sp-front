@@ -246,7 +246,7 @@ export class OverlayContainerComponent implements OnInit {
   ];
   buttonsWithSelectedRooms = [
       { title: 'Bulk Edit Rooms', action: 'edit', color: '#FFFFFF, #FFFFFF', textColor: '#1F195E', hover: '#FFFFFF'},
-      { title: 'Remove From Folder', action: 'remove_from_folder', textColor: '#1F195E', color: '#FFFFFF, #FFFFFF', hover: '#FFFFFF'},
+      // { title: 'Remove From Folder', action: 'remove_from_folder', textColor: '#1F195E', color: '#FFFFFF, #FFFFFF', hover: '#FFFFFF'},
       { title: 'Delete Rooms', action: 'delete', textColor: '#FFFFFF', color: '#DA2370,#FB434A', hover: '#DA2370'}
   ];
 
