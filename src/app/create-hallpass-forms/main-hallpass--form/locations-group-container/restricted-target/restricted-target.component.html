@@ -21,7 +21,7 @@
       <!--</div>-->
     </div>
     <div class="quick-select" *ngIf="toLocation.teachers.length">
-      <div class="ds-details-text quick-select_header">
+      <div class="quick-select_header">
         <span>Quick Select</span>
       </div>
       <div class="quick-select_scrollable">
@@ -38,11 +38,11 @@
               <span>
                 {{teacher.display_name}}
               </span>
-          <img
-            (mouseover)="fieldIcon.setAttribute('src', './assets/Cancel (Navy).svg')"
-            (mouseleave)="fieldIcon.setAttribute('src', './assets/Mark (Navy).svg')"
-            (click)="selectedStudents.splice(i, 1)"
-            [src]="'./assets/Mark (Navy).svg'" width="15" #fieldIcon alt="Check.svg">
+          <!--<img-->
+            <!--(mouseover)="fieldIcon.setAttribute('src', './assets/Cancel (Navy).svg')"-->
+            <!--(mouseleave)="fieldIcon.setAttribute('src', './assets/Mark (Navy).svg')"-->
+            <!--(click)="selectedStudents.splice(i, 1)"-->
+            <!--[src]="'./assets/Mark (Navy).svg'" width="15" #fieldIcon alt="Check.svg">-->
         </div>
       </div>
     </div>

@@ -85,6 +85,7 @@ export class RestrictedMessageComponent implements OnInit {
           return this.formState.data.direction.to.teachers;
         }
     }
+    return [this.teacher];
   }
 
   ngOnInit() {
