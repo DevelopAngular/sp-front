@@ -74,6 +74,23 @@ export class RequestCardComponent implements OnInit {
     return Util.invalidDate(this.request.request_time);
   }
 
+  get teacherNames() {
+      const destination = this.request.destination;
+      const origin = this.request.origin;
+      if (destination.scheduling_request_mode === 'specific_teachers') {
+          return destination.scheduling_request_teachers;
+      } else if (destination.scheduling_request_mode === 'all_teachers_in_room') {
+          if (destination.scheduling_request_send_origin_teachers && destination.scheduling_request_send_destination_teachers) {
+              return [...destination.teachers, ...origin.teachers];
+          } else if (destination.scheduling_request_send_origin_teachers) {
+              return origin.teachers;
+          } else if (destination.scheduling_request_send_destination_teachers) {
+              return destination.teachers;
+          }
+      }
+      return [this.request.teacher];
+  }
+
   ngOnInit() {
     this.frameMotion$ = this.createFormService.getFrameMotionDirection();
 

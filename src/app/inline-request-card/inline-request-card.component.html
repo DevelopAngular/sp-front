@@ -55,7 +55,10 @@
             <div class="request-description" *ngIf="hasDivider">
                 <img class="request-description-icon" [src]="'./assets/Lock (White).svg' | resolveAsset">
                 <div class="request-description-text">
-                    Pass Request Sent <br>to {{ request?.teacher.last_name }}
+                    Pass Request Sent to: <br>
+                    <span style="font-size: 17px" *ngFor="let teacher of teacherNames; let i = index">
+                        {{ teacher.display_name + (i === teacherNames.length - 1 ? '' : ', ') }}
+                    </span>
                 </div>
             </div>
 

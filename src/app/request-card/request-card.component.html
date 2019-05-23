@@ -73,11 +73,14 @@
       <mat-divider *ngIf="((request.status==='pending' || request.status==='accepted') && !forInput && !forStaff) || (request.status!=='pending' && forStaff)"></mat-divider>
 
       <div class="bottom-block">
-        <div *ngIf="request.status==='pending';">
+        <div *ngIf="request.status==='pending'">
           <div class="request-description">
             <img class="request-description-icon" [src]="'./assets/Lock (White).svg' | resolveAsset">
             <div class="request-description-text">
-              Pass Request sent to {{ request.teacher.last_name }}
+              Pass Request sent to: <br>
+              <span style="font-size: 17px" *ngFor="let teacher of teacherNames; let i = index">
+                {{ teacher.display_name + (i === teacherNames.length - 1 ? '' : ', ') }}
+              </span>
             </div>
           </div>
         </div>

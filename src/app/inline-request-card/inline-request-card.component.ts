@@ -37,6 +37,23 @@ export class InlineRequestCardComponent implements OnInit {
       return 'radial-gradient(circle at 73% 71%, ' + this.request.color_profile.gradient_color + ')';
   }
 
+  get teacherNames() {
+      const destination = this.request.destination;
+      const origin = this.request.origin;
+      if (destination.request_mode === 'specific_teachers') {
+          return destination.request_teachers;
+      } else if (destination.request_mode === 'all_teachers_in_room') {
+          if (destination.request_send_origin_teachers && destination.request_send_destination_teachers) {
+              return [...destination.teachers, ...origin.teachers];
+          } else if (destination.request_send_origin_teachers) {
+              return origin.teachers;
+          } else if (destination.request_send_destination_teachers) {
+              return destination.teachers;
+          }
+      }
+      return [this.request.teacher];
+  }
+
   ngOnInit() {
   }
 
