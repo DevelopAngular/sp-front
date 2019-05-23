@@ -850,7 +850,7 @@ export class OverlayContainerComponent implements OnInit {
     this.advOptOpen = event;
     if (this.advOptOpen) {
       setTimeout(() => {
-
+          this.checkAdvancedOptions();
       advancedOptionsRef.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'});
       }, 10);
     }
@@ -1372,19 +1372,23 @@ export class OverlayContainerComponent implements OnInit {
   }
   selectTeacherEvent(teachers) {
     this.selectedTeachers = teachers;
-    if (!this.selectedTeachers.length) {
-       if (this.advDisabledOptions.indexOf(this.advOptState.now.state) > -1) {
-           this.advOptState.now.state = 'Any teacher (default)';
-           this.isDirtyAdvancedOpt = false;
-       }
-       if (this.advDisabledOptions.indexOf(this.advOptState.future.state) > -1) {
-           this.advOptState.future.state = 'Any teacher (default)';
-           this.isDirtyAdvancedOpt = false;
-       }
-    }
+    this.checkAdvancedOptions();
     this.isDirtysettings = true;
     this.showProfileSearch = false;
     this.changeState();
+  }
+
+  checkAdvancedOptions() {
+      if (!this.selectedTeachers.length) {
+          if (this.advDisabledOptions.indexOf(this.advOptState.now.state) > -1) {
+              this.advOptState.now.state = 'Any teacher (default)';
+              this.isDirtyAdvancedOpt = false;
+          }
+          if (this.advDisabledOptions.indexOf(this.advOptState.future.state) > -1) {
+              this.advOptState.future.state = 'Any teacher (default)';
+              this.isDirtyAdvancedOpt = false;
+          }
+      }
   }
 
   onUpdate(time) {

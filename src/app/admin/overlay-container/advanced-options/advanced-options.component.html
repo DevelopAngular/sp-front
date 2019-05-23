@@ -37,7 +37,7 @@
                     [padding]="17"
                     [fontSize]="13"
                     [disabledOptions]="disabledOptions"
-                    [selectedChoose]="optionState.now.state"
+                    [selectedChoose]="optionState.now.state || 'Any teacher (default)'"
                     [choices]="toggleChoices"
                     (result)="changeOptions('now', $event)"
             >
@@ -106,7 +106,7 @@
                   [fontSize]="13"
                   [padding]="17"
                   [disabledOptions]="disabledOptions"
-                  [selectedChoose]="optionState.future.state"
+                  [selectedChoose]="optionState.future.state || 'Any teacher (default)'"
                   [choices]="toggleChoices"
                   (result)="changeOptions('future', $event)"
           >
