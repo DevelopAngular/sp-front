@@ -3,11 +3,12 @@ import {StudentList} from '../../../../models/StudentList';
 import {HttpService} from '../../../../services/http-service';
 import {FormGroup} from '@angular/forms';
 import {Navigation} from '../../main-hall-pass-form.component';
-import { map, skip, switchMap} from 'rxjs/internal/operators';
+import {catchError, map, skip, switchMap} from 'rxjs/operators';
 import {UserService} from '../../../../services/user.service';
-import {fromEvent, Observable} from 'rxjs';
+import {fromEvent, Observable, throwError} from 'rxjs';
 import * as XLSX from 'xlsx';
 import {User} from '../../../../models/User';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-groups-step3',
@@ -35,6 +36,7 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit() {
+    console.log(this.editGroup);
     this.form.get('title').setValue(this.editGroup.title);
     this.form.get('users').setValue(this.editGroup.users);
     this.form.valueChanges
@@ -54,6 +56,7 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
           return fromEvent(FR, 'load');
         }),
         map(( res: any) => {
+
           console.log('Result', res);
           const raw = XLSX.read(res.target.result, {type: 'binary'});
           const sn = raw.SheetNames[0];
@@ -61,10 +64,10 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
           const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
           const headers = data[0];
           console.log(data);
+
           return data.slice(1).map(item => item[0]);
         }),
         switchMap((_emails: string[]): Observable<any> => {
-
           console.log(_emails);
 
           return this.userService.getUsersList('_profile_student')
@@ -88,13 +91,26 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
                 return result;
               }));
           // }));
-        }))
+        }),
+        catchError((err) => {
+          this.loadingIndicator = false;
+          console.log(err.message);
+          // this.uploadingError = err.message;
+          return throwError(err);
+        })
+      )
       .subscribe((students) => {
         this.loadingIndicator = false;
         console.log(students);
         this.uploadedStudents = students;
-        this.editGroup.users = this.editGroup.users.concat(students.existingStudents);
+        this.editGroup.users = _.uniqBy(this.editGroup.users.concat(students.existingStudents), 'id');
         this.updateUsers(this.editGroup.users);
+
+        // this.loadingIndicator = false;
+        // console.log(students);
+        // this.uploadedStudents = students;
+        // this.selectedStudents = _.uniqBy(this.selectedStudents.concat(students.existingStudents), 'id');
+        // this.form.get('users').setValue(this.selectedStudents);
 
       });
 
@@ -118,7 +134,8 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
           if (dto.users.length) {
             this.userService.updateStudentGroup(this.editGroup.id, dto)
               .subscribe((group: StudentList) => {
-                  for ( const control in this.form.controls) {
+                console.log(group);
+                for ( const control in this.form.controls) {
                   this.form.controls[control].setValue(null);
                 }
                 this.back(group);
@@ -139,15 +156,16 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
       });
   }
   back(updatedGroup: StudentList) {
-    this.form.get('title').reset();
-    this.form.get('users').reset();
-      this.stateChangeEvent.emit({
+    // this.form.get('title').reset();
+    // this.form.get('users').reset();
+
+    this.stateChangeEvent.emit({
       step: 2,
       state: 1,
       fromState: 3,
       data: {
         selectedGroup: updatedGroup,
-        selectedStudents: this.editGroup.users
+        selectedStudents: updatedGroup.users
       }
     });
   }

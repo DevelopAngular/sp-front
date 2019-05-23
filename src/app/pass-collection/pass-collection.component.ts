@@ -114,7 +114,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
           )
           .subscribe((passes: any) => {
             // console.log(passes);
-            this.currentPasses = passes;;
+            this.currentPasses = passes;
           });
       }
         if (this.isActive) {

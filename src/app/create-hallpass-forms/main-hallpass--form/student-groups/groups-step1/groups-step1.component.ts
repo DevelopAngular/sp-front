@@ -36,16 +36,12 @@ export class GroupsStep1Component implements OnInit {
   ) { }
 
   ngOnInit() {
-
     of(!this.groups || (this.groups && !this.groups.length)).subscribe((v) => {
-      console.log(v);
       this.isEmptyGroups = v;
     });
-
     if (this.selectedGroup) {
-        this.selectedStudents = this.formState.data.selectedStudents;
+      this.selectedStudents = this.formState.data.selectedStudents;
     }
-
   }
 
   textColor(item) {
@@ -88,8 +84,6 @@ export class GroupsStep1Component implements OnInit {
       this.formState.data.selectedStudents = this.selectedStudents;
     }
 
-
-
     this.stateChangeEvent.emit(this.formState);
   }
 
@@ -118,7 +112,7 @@ export class GroupsStep1Component implements OnInit {
 
   editGroup(group) {
 
-    console.log(' GROUP ==================>', group);
+    // console.log(' GROUP ==================>', group);
     this.createGroupEmit.emit({
       step: 2,
       state: 3,

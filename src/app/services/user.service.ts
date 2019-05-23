@@ -103,7 +103,7 @@ export class UserService {
       return this.http.get<User>(`v1/users/${id}`);
   }
 
-  searchProfileAll(search, type: string = 'alternative') {
+  searchProfileAll(search, type: string = 'alternative', excludeProfile?: string) {
       switch (type) {
         case 'alternative':
           return this.http.get(`v1/users?search=${search}`);

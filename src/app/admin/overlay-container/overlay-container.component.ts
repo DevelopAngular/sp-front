@@ -832,7 +832,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   changeIcon(icon) {
-    this.selectedIcon = icon.active_icon;
+    this.selectedIcon = icon;
     this.titleIcon = icon.inactive_icon;
     this.isDirtyIcon = true;
     this.changeState();
