@@ -76,9 +76,11 @@ export class SearchComponent implements OnInit {
   }
 
   get dateText() {
-      if (this.selectedDate.start && this.selectedDate.end) {
+      const start = this.selectedDate.start;
+      const end = this.selectedDate.end;
+      if (start && end) {
           return this.selectedDate &&
-              this.selectedDate.start.format('MMM D') + ' to ' + this.selectedDate.end.format('MMM D');
+              start.isSame(end, 'day') ? start.format('MMM D') : start.format('MMM D') + ' to ' + end.format('MMM D');
       }
   }
 
