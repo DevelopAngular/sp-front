@@ -124,7 +124,7 @@
                 [fontSize]="'12px'"
                 (buttonClick)="done()"
               >
-                {{(showDoneSpinner ? null : editRoomInFolder ? 'Done' : 'Add')}}<mat-spinner *ngIf="showDoneSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
+                {{(showDoneSpinner ? null : 'Add')}}<mat-spinner *ngIf="showDoneSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
               </app-gradient-button>
               <div *ngIf="backButtonsStateInFolder && !showDoneButton" [style.color]="'#1F194E'">Incomplete</div>
             </div>
