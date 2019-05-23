@@ -95,9 +95,11 @@
                                   [textColor]="'#134482'"
                                   [fontSize]="'17px'"
                                   [border]="'1px solid 1px solid #eee'">
-              <div [style.text-align]="'center'">
-                <span>Generate Report </span><br/>
-                <span>{{ (!selectedReport.length ? passes.length + ' passes' : 'Selected Passes') }}</span>
+              <div style="display: flex; flex-direction: column" [style.text-align]="'center'">
+                <span>Generate Report </span>
+                <span style="color: #7F879D; font-weight: normal; margin-top: 5px">
+                  {{ (!selectedReport.length ? passes.length + ' pass' + (passes.length > 1 ? 'es': '') : 'Selected Passes') }}
+                </span>
               </div>
             </app-gradient-button>
             <!--<a #printPdf href="pdf/report" target="_blank"></a>-->
