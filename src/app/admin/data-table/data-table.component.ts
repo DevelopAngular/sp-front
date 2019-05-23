@@ -185,7 +185,7 @@ export class DataTableComponent implements OnInit {
 
   selectedCellEmit(event, cellElement, element) {
 
-    if (typeof cellElement !== 'string' && !(cellElement instanceof Location) && !this.isCheckbox.value) {
+    if (typeof cellElement !== 'string' && cellElement.title !== 'No profile' && !(cellElement instanceof Location) && !this.isCheckbox.value) {
       event.stopPropagation();
       cellElement.row = element;
       this.selectedCell.emit(cellElement);

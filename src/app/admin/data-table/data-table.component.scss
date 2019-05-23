@@ -13,10 +13,15 @@
 }
 
 .multi-cell {
+  text-decoration: underline;
+  cursor: pointer;
   &:hover {
     //text-decoration: underline;
     //text-shadow: #999999 0 0 3px;
   }
+}
+.not-allowed {
+  cursor: not-allowed;
 }
 
 table {

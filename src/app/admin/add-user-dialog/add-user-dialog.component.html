@@ -54,7 +54,7 @@
             <app-student-search
               [placeholder]="'Search G Suite accounts'"
               [type]="'gsuite'"
-              [role]="''"
+              [role]="data.role"
               (onUpdate)="setSecretary($event, null)"
             ></app-student-search>
           </div>
@@ -116,7 +116,7 @@
                   [selectedStudents]="selectedUsers"
                   [placeholder]="'Search G Suite accounts'"
                   [type]="'gsuite'"
-                  [role]="''"
+                  [role]="data.role"
                   (onUpdate)="setSelectedUsers($event)"
                 ></app-student-search>
               </div>
@@ -153,7 +153,7 @@
 
           ></app-input>
         </div>
-        <div class="active-on-user ds-w-100" *ngIf="data.role === 'staff_secretary'">
+        <div class="active-on-user ds-w-100" *ngIf="data.role === '_profile_assistant'">
           <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': secretaryOrSubstitute.behalfOf, 'ds-dialog-heading-gray': !secretaryOrSubstitute.behalfOf}">Active on Behalf Of</div>
           <div class="profile-search" *ngIf="!secretaryOrSubstitute.behalfOf; else secretaryBehalfOf" >
             <app-student-search

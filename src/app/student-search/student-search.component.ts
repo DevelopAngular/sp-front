@@ -125,11 +125,9 @@ export class StudentSearchComponent implements OnInit {
             return this.removeDuplicateStudents(paged.results);
           });
       } else if ('gsuite') {
-        this.students = this.userService.searchProfileAll(encodeURI(search), this.type)
+        this.students = this.userService.searchProfileAll(encodeURI(search), this.type, this.role.split('_')[this.role.split('_').length - 1])
           .toPromise().then((users: User[]) => {
-            console.log(users);
             if (users.length > 0) {
-              // this.isEmitUsers.emit(true);
               return this.removeDuplicateStudents(users);
             }
           });

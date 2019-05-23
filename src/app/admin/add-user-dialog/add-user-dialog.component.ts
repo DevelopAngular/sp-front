@@ -81,7 +81,7 @@ export class AddUserDialogComponent implements OnInit {
   }
   showSaveButton() {
     if (this.typeChoosen === this.accountTypes[0]) {
-      if (this.data.role !== 'staff_secretary') {
+      if (this.data.role !== '_profile_assistant') {
         return this.selectedUsers && this.selectedUsers.length;
       } else {
         return this.secretaryOrSubstitute.user && this.secretaryOrSubstitute.behalfOf;

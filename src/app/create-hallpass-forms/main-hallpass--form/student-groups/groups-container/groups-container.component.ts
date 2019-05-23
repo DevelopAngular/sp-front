@@ -2,10 +2,10 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {User} from '../../../../models/User';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {StudentList} from '../../../../models/StudentList';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, of} from 'rxjs';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {UserService} from '../../../../services/user.service';
-import {switchMap} from 'rxjs/operators';
+import {delay, filter, map, switchMap} from 'rxjs/operators';
 
 export enum States {
   SelectStudents = 1,
@@ -24,7 +24,7 @@ export class GroupsContainerComponent implements OnInit {
   @Input() FORM_STATE: Navigation;
   @Output() nextStepEvent: EventEmitter<Navigation | { action: string, data: any }> = new EventEmitter<Navigation | { action: string, data: any } >();
 
-  updateData$: BehaviorSubject<null> = new BehaviorSubject<null>(null);
+  updateData$: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   states;
   currentState: number = 1;
   selectedGroup: StudentList = null;
@@ -46,11 +46,26 @@ export class GroupsContainerComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.updateData$.pipe(switchMap(() => {
-      return this.userService.getStudentGroups();
-    }))
-    .subscribe((groups: StudentList[]) => {
-      this.groups = groups;
+    this.updateData$.pipe(
+      switchMap((evt) => {
+        return this.userService.getStudentGroups().pipe(
+          map((groups: StudentList[]) => {
+          this.groups = groups;
+          return evt;
+          })
+        );
+      }),
+      filter(evt => evt)
+    )
+    .subscribe((evt: any) => {
+      if (evt.fromState === 3 && evt.data.selectedGroup) {
+        this.FORM_STATE.data.selectedGroup = this.groups.find(group => group.id === evt.data.selectedGroup.id);
+        this.FORM_STATE.data.selectedStudents = evt.data.selectedGroup.users;
+        this.groupDTO.get('users').setValue(evt.data.selectedGroup.users);
+        this.selectedGroup = evt.data.selectedGroup;
+      } else {
+        this.selectedStudents = evt.data.selectedStudents;
+      }
     });
   }
 
@@ -80,25 +95,21 @@ export class GroupsContainerComponent implements OnInit {
   }
 
   groupNextStep(evt) {
-    switch (evt.state) {
-        case 3:
-            this.selectedGroup = evt.data.selectedGroup;
-            break;
 
-        case 2:
-            this.selectedStudents = evt.data.selectedStudents;
-            this.groupDTO.get('users').setValue(evt.data.selectedStudents);
-            break;
-        case 1:
-            if (evt.fromState === 3 && evt.data.selectedGroup) {
-                this.FORM_STATE.data.selectedGroup = this.groups.find(group => group.id === evt.data.selectedGroup.id);
-                this.FORM_STATE.data.selectedStudents = evt.data.selectedStudents;
-            } else {
-                this.selectedStudents = evt.data.selectedStudents;
-            }
-            break;
+    switch (evt.state) {
+      case 3:
+        this.selectedGroup = evt.data.selectedGroup;
+        break;
+
+      case 2:
+        this.selectedStudents = evt.data.selectedStudents;
+        this.groupDTO.get('users').setValue(evt.data.selectedStudents);
+        break;
+      case 1:
+        this.updateData$.next(evt);
+        break;
     }
     this.currentState = evt.state;
-    this.updateData$.next(null);
+
   }
 }

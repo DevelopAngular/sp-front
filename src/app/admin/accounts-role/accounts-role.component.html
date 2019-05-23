@@ -230,13 +230,13 @@
           </div>
         </div>
       </div>
-      <div class="ds-flex-center-between ds-mx-20 ds-my-10"  *ngIf="!(dataTableEditState | async)">
-        <div class="ds-flex-center-end">
+      <div class="ds-flex-center-between ds-mr-20 ds-my-10" style="flex: 1 1 auto" *ngIf="!(dataTableEditState | async)">
+        <div class="ds-flex-center-end ds-w-100">
           <div class="ds-mx-10">
             <app-round-input
               [initialValue]="initialSearchString"
               [minWidth]="'230px'"
-              [width]="'auto'"
+              [width]="'230px'"
               [type]="'text'"
               [placeholder]="'Search'"
               (ontextupdate)="findRelevantAccounts($event)">
@@ -309,7 +309,6 @@
           [data]="userList"
           [isCheckbox]="dataTableEditState"
           [textColor]="'#7E879D'"
-          [textHeaderColor]="'#7E879D'"
           [disallowHover]="role === '_all'"
           [displayedColumns]="dataTableHeadersToDisplay"
           (selectedCell)="findProfileByRole($event)"

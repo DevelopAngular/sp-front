@@ -6,6 +6,8 @@ import {UserService} from '../../../../services/user.service';
 import {fromEvent, Observable, of, throwError} from 'rxjs';
 import {catchError, map, switchMap} from 'rxjs/operators';
 import * as XLSX from 'xlsx';
+import * as _ from 'lodash';
+
 
 @Component({
   selector: 'app-groups-step2',
@@ -40,6 +42,7 @@ export class GroupsStep2Component implements OnInit {
           return fromEvent(FR, 'load');
         }),
         map(( res: any) => {
+          debugger
           console.log('Result', res);
           const raw = XLSX.read(res.target.result, {type: 'binary'});
           const sn = raw.SheetNames[0];
@@ -56,7 +59,7 @@ export class GroupsStep2Component implements OnInit {
           return this.userService.getUsersList('_profile_student')
             .pipe(
               map((students: User[]) => {
-
+                // console.log(students);
                 const result = {
                   existingStudents: [],
                   unknown: []
@@ -64,7 +67,9 @@ export class GroupsStep2Component implements OnInit {
 
                 students.forEach((student) => {
                   const founded = _emails.findIndex(email => student.primary_email === email);
+
                   if (founded !== -1) {
+
                     result.existingStudents.push(student);
                     _emails.splice(founded, 1);
                   }
@@ -85,15 +90,21 @@ export class GroupsStep2Component implements OnInit {
         this.loadingIndicator = false;
         console.log(students);
         this.uploadedStudents = students;
-        this.selectedStudents = this.selectedStudents.concat(students.existingStudents);
-
+        this.selectedStudents = _.uniqBy(this.selectedStudents.concat(students.existingStudents), 'id');
+        this.form.get('users').setValue(this.selectedStudents);
+        this.test();
       });
 
+  }
+
+  test() {
+    console.log(this.selectedStudents, this.form.value);
   }
 
   nextStep() {
     const dto = this.form.value;
           dto.users = dto.users.map(user => user.id);
+    console.log(dto);
     this.userService.createStudentGroup(dto)
       .subscribe((group) => {
         for ( const control in this.form.controls) {
