@@ -104,14 +104,18 @@ export class UserService {
   }
 
   searchProfileAll(search, type: string = 'alternative', excludeProfile?: string) {
+
       switch (type) {
         case 'alternative':
-          return this.http.get(`v1/users?search=${search}`);
+          return this.http.get(constructUrl(`v1/users`, {search: search}), );
         case 'gsuite':
           return this.http.currentSchool$.pipe(
             take(1),
             switchMap((currentSchool: School) => {
-              return this.http.get(`v1/schools/${currentSchool.id}/gsuite_users${search ? `?search=${search}` : ''}${excludeProfile ? `&profile=${excludeProfile}` : ''}`);
+              return this.http.get(constructUrl(`v1/schools/${currentSchool.id}/gsuite_users`, {
+                search: search,
+                profile: excludeProfile
+              }));
             })
           );
       }
