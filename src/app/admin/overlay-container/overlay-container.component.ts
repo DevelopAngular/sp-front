@@ -1389,6 +1389,8 @@ export class OverlayContainerComponent implements OnInit {
               this.isDirtyAdvancedOpt = false;
           }
       }
+      this.locationService.updateLocation(this.pinnable.location.id, this.normalizeAdvOptData())
+          .subscribe();
   }
 
   onUpdate(time) {

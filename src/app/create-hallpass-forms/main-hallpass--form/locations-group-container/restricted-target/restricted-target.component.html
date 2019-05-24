@@ -8,7 +8,7 @@
   </div>
 
   <div class="rest-tar-content" (scroll)="tableScroll($event)">
-    <div class="search-wrapper">
+    <div class="search-wrapper" *ngIf="!hideSearchTeacher">
         <app-student-search
           [focused]="true"
           [width]="'100%'"
@@ -20,13 +20,13 @@
         ></app-student-search>
       <!--</div>-->
     </div>
-    <div class="quick-select" *ngIf="toLocation.teachers.length">
+    <div class="quick-select" [style.margin-top]="hideSearchTeacher ? '10px' : '70px'" *ngIf="toLocation.teachers.length">
       <div class="quick-select_header">
         <span>Quick Select</span>
       </div>
       <div class="quick-select_scrollable">
 
-        <div *ngFor="let teacher of quickSelectedTeachers; let i = index" #cell class="quick-select_item"
+        <div *ngFor="let teacher of filteredTeachers; let i = index" #cell class="quick-select_item"
              (mouseenter)="cell.hovered = true;"
              (mouseleave)="cell.hovered = false;"
              (mousedown)="cell.pressed = true"

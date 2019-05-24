@@ -6,6 +6,8 @@ import { BehaviorSubject } from 'rxjs';
 import { States } from '../locations-group-container.component';
 import { DomSanitizer } from '@angular/platform-browser';
 
+import * as _ from 'lodash';
+
 @Component({
   selector: 'app-restricted-target',
   templateUrl: './restricted-target.component.html',
@@ -63,6 +65,11 @@ export class RestrictedTargetComponent implements OnInit {
     return 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
 
+  get hideSearchTeacher() {
+    return (this.formState.forLater && this.formState.data.direction.to.scheduling_request_mode === 'teacher_in_room') ||
+        (!this.formState.forLater && this.formState.data.direction.to.request_mode === 'teacher_in_room');
+  }
+
   get quickSelectedTeachers() {
     const to = this.formState.data.direction.to;
     if (!this.formState.forLater && to.request_mode === 'teacher_in_room') {
@@ -84,6 +91,10 @@ export class RestrictedTargetComponent implements OnInit {
     } else {
       return to.teachers;
     }
+  }
+
+  get filteredTeachers() {
+    return _.uniqBy(this.quickSelectedTeachers, 'id');
   }
 
   ngOnInit() {
