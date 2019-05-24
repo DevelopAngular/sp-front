@@ -609,7 +609,7 @@ export class OverlayContainerComponent implements OnInit {
           if (loc.request_send_destination_teachers && loc.request_send_origin_teachers) {
               this.advOptState.now.data[mode] = 'Both';
           } else if (loc.request_send_destination_teachers) {
-              this.advOptState.now.data[mode] = 'Destination';
+              this.advOptState.now.data[mode] = 'This Room';
           } else if (loc.request_send_origin_teachers) {
               this.advOptState.now.data[mode] = 'Origin';
           }
@@ -623,7 +623,7 @@ export class OverlayContainerComponent implements OnInit {
           if (loc.scheduling_request_send_destination_teachers && loc.scheduling_request_send_origin_teachers) {
               this.advOptState.future.data[mode] = 'Both';
           } else if (loc.scheduling_request_send_destination_teachers) {
-              this.advOptState.future.data[mode] = 'Destination';
+              this.advOptState.future.data[mode] = 'This Room';
           } else if (loc.scheduling_request_send_origin_teachers) {
               this.advOptState.future.data[mode] = 'Origin';
           }
@@ -919,7 +919,7 @@ export class OverlayContainerComponent implements OnInit {
       } else if (this.advOptState.now.data.any_teach_assign === 'Origin' || this.advOptState.now.data.all_teach_assign === 'Origin') {
           data.request_send_origin_teachers = true;
           data.request_send_destination_teachers = false;
-      } else if (this.advOptState.now.data.any_teach_assign === 'Destination' || this.advOptState.now.data.all_teach_assign === 'Destination') {
+      } else if (this.advOptState.now.data.any_teach_assign === 'This Room' || this.advOptState.now.data.all_teach_assign === 'This Room') {
           data.request_send_destination_teachers = true;
           data.request_send_origin_teachers = false;
       } else if (this.advOptState.now.data.selectedTeachers.length) {
@@ -931,7 +931,7 @@ export class OverlayContainerComponent implements OnInit {
       } else if (this.advOptState.future.data.all_teach_assign === 'Origin' || this.advOptState.future.data.any_teach_assign === 'Origin') {
           data.scheduling_request_send_origin_teachers = true;
           data.scheduling_request_send_destination_teachers = false;
-      } else if (this.advOptState.future.data.all_teach_assign === 'Destination' || this.advOptState.future.data.any_teach_assign === 'Destination') {
+      } else if (this.advOptState.future.data.all_teach_assign === 'This Room' || this.advOptState.future.data.any_teach_assign === 'This Room') {
           data.scheduling_request_send_destination_teachers = true;
           data.scheduling_request_send_origin_teachers = false;
       } else if (this.advOptState.future.data.selectedTeachers.length) {

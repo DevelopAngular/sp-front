@@ -59,7 +59,7 @@
                       [height]="30"
                       [fontSize]="13"
                       [selectedChoose]="selectedOpt.anyNow"
-                      [choices]="['Destination', 'Origin', 'Both']"
+                      [choices]="['This Room', 'Origin', 'Both']"
                       (result)="changeState('now_any', $event)"
               ></app-restriction-picker>
             </div>
@@ -71,7 +71,7 @@
                     [height]="30"
                     [fontSize]="13"
                     [selectedChoose]="selectedOpt.allNow"
-                    [choices]="['Destination', 'Origin', 'Both']"
+                    [choices]="['This Room', 'Origin', 'Both']"
                     (result)="changeState('now_all', $event)"
             ></app-restriction-picker>
           </div>
@@ -129,7 +129,7 @@
                     [height]="30"
                     [fontSize]="13"
                     [selectedChoose]="selectedOpt.anyFut"
-                    [choices]="['Destination', 'Origin',  'Both']"
+                    [choices]="['This Room', 'Origin',  'Both']"
                     (result)="changeState('future_any', $event)"
             ></app-restriction-picker>
           </div>
@@ -141,7 +141,7 @@
                   [height]="30"
                   [fontSize]="13"
                   [selectedChoose]="selectedOpt.allFut"
-                  [choices]="['Destination', 'Origin',  'Both']"
+                  [choices]="['This Room', 'Origin',  'Both']"
                   (result)="changeState('future_all', $event)"
           ></app-restriction-picker>
         </div>
