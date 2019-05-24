@@ -197,7 +197,6 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
             if (fullDate.isSameOrAfter(moment().add(5, 'minutes'), 'minute') || !this.showTime) {
                 this.selectedDates = [fullDate];
                 this.currentDate = fullDate;
-
             } else {
                 this.currentDate = moment().add(5, 'minutes');
                 this.selectedDates = [this.currentDate];
@@ -221,7 +220,13 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     switchMonth(date: moment.Moment): void {
         if (this.isNextMonth(date)) {
             this.nextMonth();
-            this.selectedDates = [date];
+            const setHour = moment(date).set('hour', this.currentDate.hour());
+            const fullDate = moment(setHour).set('minute', this.currentDate.minutes());
+            this.selectedDates = [fullDate];
+            console.log(this.selectedDates[0].format('DD hh:mm A'));
+            console.log(this.currentDate.format('DD hh:mm A'));
+
+
             this.generateCalendar();
         }
     }

@@ -91,6 +91,7 @@ export class TimePickerComponent implements OnInit, OnDestroy {
   }
 
   changeTime(action, up) {
+      // console.log(this._currentDate.format('DD hh:mm A'));
         if (up === 'up') {
             this._currentDate.add(1, action);
         } else if (up === 'down') {
