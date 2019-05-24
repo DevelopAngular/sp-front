@@ -17,6 +17,7 @@ export class DataTableComponent implements OnInit {
   @Input() width: string = '100%';
   @Input() height: string = 'none';
   @Input() isCheckbox: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+  @Input() isAllowedSelectRow: boolean = false;
   @Input() set data(value: any[]) {
       this._data = [...value];
       this.dataSource = new MatTableDataSource(this._data);
@@ -195,7 +196,7 @@ export class DataTableComponent implements OnInit {
   }
 
   selectedRowEmit(row) {
-    if (this.isCheckbox.value) {
+    if (this.isCheckbox.value && !this.isAllowedSelectRow) {
       this.selection.toggle(row);
       row.pressed = this.selection.isSelected(row) ? true : false;
       this.pushOutSelected();

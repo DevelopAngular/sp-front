@@ -120,6 +120,7 @@
             <app-data-table
                     [data]="tableData"
                     [textColor]="'#7F879D'"
+                    [isAllowedSelectRow]="true"
                     [textHeaderColor]="'#7F879D'"
                     *ngIf="tableData.length > 0 && !spinner"
                     (selectedUsers)="selectedReport=$event"

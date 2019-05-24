@@ -14,7 +14,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {UserService} from '../../services/user.service';
 import {User} from '../../models/User';
 import {Location} from '../../models/Location';
-import {of, Subscription} from 'rxjs';
+import {BehaviorSubject, of, Subscription} from 'rxjs';
 import {DataService} from '../../services/data-service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {SearchFilterDialogComponent} from './search-filter-dialog/search-filter-dialog.component';
