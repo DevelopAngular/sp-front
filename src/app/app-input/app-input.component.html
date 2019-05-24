@@ -36,7 +36,7 @@
              [type]="input_type"
              [class]="input_class"
              (focus)="updateFocus(inp); controlName.markAsUntouched()"
-             (blur)="hovered = false; isFocus = false;"
+             (blur)=" onBlur(inp.value)"
              (mouseover)="hovered = true"
              (mouseleave)="hovered = false"
              (click)="isFocus = true; updateFocus(inp)"

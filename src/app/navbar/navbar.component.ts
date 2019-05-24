@@ -241,7 +241,7 @@ export class NavbarComponent implements OnInit {
       }
     });
     representedUsersDialog.afterClosed().subscribe((v: RepresentedUser) => {
-      // console.log(v);
+      console.log(v);
       // this.effectiveUser = v ? v : this.effectiveUser;
       if (v) {
         this.userService.effectiveUser.next(v);

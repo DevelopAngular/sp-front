@@ -2,7 +2,7 @@ import {Component, ElementRef, HostListener, Inject, OnInit, ViewChild} from '@a
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {BehaviorSubject, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
-import {delay, map, startWith, switchMap} from 'rxjs/operators';
+import {delay, map, startWith, switchMap, tap} from 'rxjs/operators';
 import { Pinnable } from '../../models/Pinnable';
 import * as _ from 'lodash';
 import { User } from '../../models/User';
@@ -195,6 +195,8 @@ export class OverlayContainerComponent implements OnInit {
   selectedIcon;
 
   icons$: Observable<any>;
+  roomNameBlur$: Subject<string> = new Subject();
+  folderNameBlur$: Subject<string> = new Subject();
 
   titleIcon: string;
 
@@ -568,15 +570,26 @@ export class OverlayContainerComponent implements OnInit {
               this.isChangeStateInFolder = false;
           }
       });
+      if ( this.isEditFolder || (this.overlayType === 'editRoom') || (this.editRoomInFolder)) {
+        this.icons$ = merge(
+          this.form.get('roomName').valueChanges.pipe(startWith(this.form.get('roomName').value)),
+          this.form.get('folderName').valueChanges.pipe(startWith(this.form.get('folderName').value))
+        )
+        .pipe(
+          filter(value => value),
+          switchMap((value: string) => this.http.searchIcons(value.toLowerCase()))
+        );
+      } else {
+        this.icons$ = merge(
+          this.roomNameBlur$,
+          this.folderNameBlur$
+        ).pipe(
+          filter(value => !!value),
+          switchMap((value: string) => this.http.searchIcons(value.toLowerCase()))
+        );
+      }
 
-      this.icons$ = merge(
-        this.form.get('roomName').valueChanges.pipe(startWith(this.form.get('roomName').value)),
-        this.form.get('folderName').valueChanges.pipe(startWith(this.form.get('folderName').value))
-      )
-      .pipe(
-        filter(value => value),
-        switchMap((value: string) => this.http.searchIcons(value.toLowerCase()))
-      );
+
   }
 
   buildForm() {

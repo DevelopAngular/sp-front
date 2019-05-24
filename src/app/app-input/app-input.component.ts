@@ -34,8 +34,11 @@ export class AppInputComponent implements OnInit {
     @Output() onUpdate = new EventEmitter<string | number>();
     @Output() over = new EventEmitter();
     @Output() leave = new EventEmitter();
+    @Output() blurEvent = new EventEmitter();
 
     @ViewChild('inp') input;
+
+    private initialValue: string | number;
 
     public rightIconUntouched: string;
 
@@ -84,7 +87,21 @@ export class AppInputComponent implements OnInit {
     // }
 
     updateFocus(el) {
-      this.isFocus  ? el.focus() : el.blur();
+
+      this.initialValue = this.input_value;
+
+      if (this.isFocus) {
+        el.focus();
+      } else {
+        el.blur();
+      }
       // this.hovered = this.hovered ? false : true;
     }
-}
+    onBlur(value) {
+      this.hovered = false;
+      this.isFocus = false;
+      if (!this.initialValue || (value !== this.initialValue)) {
+        this.blurEvent.emit(value);
+      }
+    }
+ }

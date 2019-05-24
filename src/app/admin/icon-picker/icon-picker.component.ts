@@ -41,7 +41,7 @@ export class IconPickerComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.selectedIconPicker);
+
     this.icons$
       .pipe(
         map((icons: any) => {
@@ -51,9 +51,8 @@ export class IconPickerComponent implements OnInit {
       )
       .subscribe(res => {
           this.icons = res;
-          console.log(this.selectedIconPicker.search('FFFFFF'));
           if (!res.length || this.selectedIconLocalUrl) {
-            this.selectedIconLocalUrl = this.selectedIconPicker.replace('FFFFFF', '1F195E');
+            this.selectedIconLocalUrl = this.selectedIconPicker ? this.selectedIconPicker.replace('FFFFFF', '1F195E') : '';
           }
       });
 
@@ -133,6 +132,6 @@ export class IconPickerComponent implements OnInit {
           map(icons => this.normalizeIcons(icons))).subscribe(res => {
               this.icons = res;
       });
-}
+  }
 
 }
