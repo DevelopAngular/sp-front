@@ -20,7 +20,7 @@
         ></app-student-search>
       <!--</div>-->
     </div>
-    <div class="quick-select" [style.margin-top]="hideSearchTeacher ? '10px' : '70px'" *ngIf="toLocation.teachers.length">
+    <div class="quick-select" [style.margin-top]="hideSearchTeacher ? '10px' : '70px'" *ngIf="filteredTeachers.length">
       <div class="quick-select_header">
         <span>Quick Select</span>
       </div>

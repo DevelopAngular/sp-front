@@ -89,7 +89,7 @@ export class RestrictedTargetComponent implements OnInit {
           return this.formState.data.direction.from.teachers;
         }
     } else {
-      return to.teachers;
+      return [...to.teachers, ...this.formState.data.direction.from.teachers];
     }
   }
 
