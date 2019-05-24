@@ -117,11 +117,7 @@
 
     .nopass-text {
         display: flex;
-        justify-content: center;
-        margin-top: 50px;
-        margin-bottom: 39%;
-        font-size: 20px;
-        color: #7f879d;
+        flex: 1 1 auto;
     }
 }
 
@@ -176,29 +172,29 @@
     margin-top: 15%;
 }
 
+.text {
+  text-align: center;
+  width: 392px;
+
+  .text-title {
+    font-size: 17px;
+    font-weight: bold;
+    color: $dark-slate-gray;
+    margin: 30px 0 15px 0;
+  }
+
+  .info {
+    font-size: 15px;
+    font-weight: normal;
+    color: $dark-slate-gray;
+    text-align: center;
+  }
+}
+
 .default-message{
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  .text {
-    text-align: center;
-    width: 392px;
-
-    .text-title {
-      font-size: 17px;
-      font-weight: bold;
-      color: $dark-slate-gray;
-      margin: 30px 0 15px 0;
-    }
-
-    .info {
-      font-size: 15px;
-      font-weight: normal;
-      color: $dark-slate-gray;
-      text-align: center;
-    }
-  }
 }
 
 .title-text{
