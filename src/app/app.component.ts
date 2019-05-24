@@ -141,9 +141,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         withLatestFrom(this.http.currentSchool$),
         takeUntil(this.subscriber$))
         .subscribe(([schools, currentSchool]) => {
-            console.log('Current School --->', currentSchool);
             this.schools = schools;
-          if (!_.find(schools, {id: currentSchool.id})) {
+          if (currentSchool && !_.find(schools, {id: currentSchool.id})) {
             this.http.setSchool(schools[0]);
           }
     });

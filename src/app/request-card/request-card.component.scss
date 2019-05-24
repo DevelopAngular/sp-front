@@ -117,16 +117,18 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            overflow: auto;
 
             .request-description {
                 display: flex;
                 align-items: center;
-                padding: 0 45px;
+                padding: 0 30px;
                 .request-description-icon {
                     width: 29px;
                 }
                 .request-description-text {
                     text-align: left;
+                    max-height: 102px;
                 }
             }
         }

@@ -73,6 +73,8 @@
         .bottom-block {
             height: 102px;
             color: white;
+            padding-top: 5px;
+            overflow: auto;
             text-align: center;
             position: relative;
             display: flex;
@@ -144,7 +146,7 @@
 .request-description{
     font-size: 21px;
     font-weight: bold;
-    padding: 0 40px;
+    padding: 0 30px;
     text-align: left;
     display: flex;
     align-items: center;
@@ -153,6 +155,10 @@
 .request-description-icon{
     width: 29px;
     margin-right: 10px;
+}
+
+.request-description-text {
+    max-height: 102px;
 }
 
 .request-button-content{

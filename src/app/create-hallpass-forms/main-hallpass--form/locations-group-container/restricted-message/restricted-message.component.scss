@@ -61,6 +61,7 @@
     height: 54px;
     display: flex;
     align-items: center;
+    overflow: auto;
     //justify-content: center;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
@@ -70,6 +71,7 @@
     .teachers {
       display: flex;
       flex-wrap: wrap;
+      max-height: 54px;
     }
   }
 
