@@ -111,7 +111,7 @@ export class UserService {
           return this.http.currentSchool$.pipe(
             take(1),
             switchMap((currentSchool: School) => {
-              return this.http.get(`v1/schools/${currentSchool.id}/gsuite_users${search ? `?search=${search}` : ''}`);
+              return this.http.get(`v1/schools/${currentSchool.id}/gsuite_users${search ? `?search=${search}` : ''}${excludeProfile ? `&profile=${excludeProfile}` : ''}`);
             })
           );
       }
@@ -123,7 +123,6 @@ export class UserService {
 
   addAccountToSchool(id, user, userType: string, roles: Array<string>) {
     if (userType === 'gsuite') {
-
       return this.http.post(`v1/schools/${id}/add_user`, {
         type:  'gsuite',
         email: user.email,

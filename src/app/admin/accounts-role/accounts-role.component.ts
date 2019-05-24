@@ -455,7 +455,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         } else {
           header = `Removing ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} from the ${profile} profile will remove them from this profile, but it will not delete all data associated with the account.`;
         }
-        options = [{display: 'Confirm Remove', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
+        options = [{display: `Confirm  ${this.role === '_all' ? 'Delete' : 'Remove'}`, color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
         break;
       case 'disable_sign_in':
         header = `Disable sign-in to prevent ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} from being able to sign in with the ${profile} profile.`;

@@ -144,10 +144,11 @@
                 [maxLength]="15"
                 [input_label]="'Room Name'"
                 [input_value]="(roomName !== 'New Room' ? roomName : '')"
-                (onUpdate)="roomName = $event === '' ? 'New Room': $event;"
                 [formGroup]="form"
                 [controlName]="form.get('roomName')"
                 [isFocus]="overlayType === 'newRoom' || (overlayType === 'newRoomInFolder' && roomName !== '' && roomName === 'New Room')"
+                (onUpdate)="roomName = $event === '' ? 'New Room': $event;"
+                (blurEvent)="roomNameBlur$.next($event)"
               >
               </app-input>
             </div>
@@ -164,6 +165,7 @@
                            [formGroup]="form"
                            [isFocus]="overlayType === 'newFolder' && !isEditFolder"
                            [controlName]="form.get('folderName')"
+                           (blurEvent)="roomNameBlur$.next($event)"
                 >
                 </app-input>
             </div>

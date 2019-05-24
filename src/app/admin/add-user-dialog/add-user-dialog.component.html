@@ -14,7 +14,7 @@
         [hoverColor]="'#FCFDFF'"
         [textColor]="'#04CD33'"
         [cursor]="'pointer'"
-        (buttonClick)="addUser(data.role)"
+        (buttonClick)="addUser()"
       >
         <div class="ds-flex-center-start">
           <span>Add</span>
@@ -49,8 +49,8 @@
       <div class="content_rest" *ngIf="typeChoosen === accountTypes[0]">
 
         <div class="secretary-user ds-w-100">
-          <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': secretaryOrSubstitute.user, 'ds-dialog-heading-gray': !secretaryOrSubstitute.user}">Assistant</div>
-          <div class="profile-search" *ngIf="!secretaryOrSubstitute.user; else secretaryUser" >
+          <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.user, 'ds-dialog-heading-gray': !assistantLike.user}">Assistant</div>
+          <div class="profile-search" *ngIf="!assistantLike.user; else secretaryUser" >
             <app-student-search
               [placeholder]="'Search G Suite accounts'"
               [type]="'gsuite'"
@@ -64,11 +64,11 @@
                    (mouseenter)="chip.hovered = true;"
                    (mouseleave)="chip.hovered = false;">
 
-                <span>{{secretaryOrSubstitute.user.display_name}}</span>
+                <span>{{assistantLike.user.display_name}}</span>
                 <div style="width: 15px; height: 15px; cursor: pointer; margin-left: 10px;">
 
                   <img *ngIf="chip.hovered"
-                       (click)="secretaryOrSubstitute.user = null"
+                       (click)="assistantLike.user = null"
                        [src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
                 </div>
               </div>
@@ -76,31 +76,33 @@
           </ng-template>
         </div>
         <div class="active-on-user ds-w-100">
-          <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': secretaryOrSubstitute.behalfOf, 'ds-dialog-heading-gray': !secretaryOrSubstitute.behalfOf}">Active on Behalf Of</div>
-          <div class="profile-search" *ngIf="!secretaryOrSubstitute.behalfOf; else secretaryBehalfOf" >
+          <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.behalfOf, 'ds-dialog-heading-gray': !assistantLike.behalfOf}">Act on Behalf Of</div>
+          <div class="profile-search"  >
             <app-student-search
+              [chipsMode]="true"
               [placeholder]="'Search existing teachers'"
+              [dummyRoleText]="'teachers'"
               [type]="'alternative'"
               [role]="'_profile_teacher'"
               (onUpdate)="setSecretary(null, $event)"
             ></app-student-search>
           </div>
-          <ng-template #secretaryBehalfOf>
-            <div class="ds-flex-center-between">
+          <!--<ng-template #secretaryBehalfOf>-->
+            <!--<div class="ds-flex-center-between">-->
 
-              <div #chip class="user"
-                   (mouseenter)="chip.hovered = true;"
-                   (mouseleave)="chip.hovered = false;">
-                <span>{{secretaryOrSubstitute.behalfOf.display_name}}</span>
-                <div style="width: 15px; height: 15px; cursor: pointer; margin-left: 10px;">
+              <!--<div #chip class="user"-->
+                   <!--(mouseenter)="chip.hovered = true;"-->
+                   <!--(mouseleave)="chip.hovered = false;">-->
+                <!--<span>{{assistantLike.behalfOf.display_name}}</span>-->
+                <!--<div style="width: 15px; height: 15px; cursor: pointer; margin-left: 10px;">-->
 
-                  <img *ngIf="chip.hovered"
-                       (click)="secretaryOrSubstitute.behalfOf = null"
-                       [src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
-                </div>
-              </div>
-            </div>
-          </ng-template>
+                  <!--<img *ngIf="chip.hovered"-->
+                       <!--(click)="assistantLike.behalfOf = null"-->
+                       <!--[src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">-->
+                <!--</div>-->
+              <!--</div>-->
+            <!--</div>-->
+          <!--</ng-template>-->
         </div>
       </div>
     </div>
@@ -154,8 +156,8 @@
           ></app-input>
         </div>
         <div class="active-on-user ds-w-100" *ngIf="data.role === '_profile_assistant'">
-          <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': secretaryOrSubstitute.behalfOf, 'ds-dialog-heading-gray': !secretaryOrSubstitute.behalfOf}">Active on Behalf Of</div>
-          <div class="profile-search" *ngIf="!secretaryOrSubstitute.behalfOf; else secretaryBehalfOf" >
+          <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.behalfOf, 'ds-dialog-heading-gray': !assistantLike.behalfOf}">Active on Behalf Of</div>
+          <div class="profile-search" *ngIf="!assistantLike.behalfOf; else secretaryBehalfOf" >
             <app-student-search
               [type]="'alternative'"
               [role]="''"
@@ -168,11 +170,11 @@
               <div #chip class="user"
                    (mouseenter)="chip.hovered = true;"
                    (mouseleave)="chip.hovered = false;">
-                <span>{{secretaryOrSubstitute.behalfOf.display_name}}</span>
+                <span>{{assistantLike.behalfOf.display_name}}</span>
                 <div style="width: 15px; height: 15px; cursor: pointer; margin-left: 10px;">
 
                   <img *ngIf="chip.hovered"
-                       (click)="secretaryOrSubstitute.behalfOf = null"
+                       (click)="assistantLike.behalfOf = null"
                        [src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
                 </div>
               </div>

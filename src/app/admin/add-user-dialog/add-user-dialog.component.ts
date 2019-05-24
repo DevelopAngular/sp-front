@@ -8,6 +8,7 @@ import {UserService} from '../../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
 import {School} from '../../models/School';
+import {filter, switchMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-add-user-dialog',
@@ -25,9 +26,9 @@ export class AddUserDialogComponent implements OnInit {
   public controlsIteratable: any[];
   public permissionsChanged: boolean = false;
 
-  public secretaryOrSubstitute: {
+  public assistantLike: {
     user: User,
-    behalfOf: User
+    behalfOf: User[]
   }
   public school: School
 
@@ -41,7 +42,7 @@ export class AddUserDialogComponent implements OnInit {
 
   ) {
     if (this.data.role === '_profile_assistant') {
-      this.secretaryOrSubstitute = {
+      this.assistantLike = {
         user: null,
         behalfOf: null
       };
@@ -84,7 +85,7 @@ export class AddUserDialogComponent implements OnInit {
       if (this.data.role !== '_profile_assistant') {
         return this.selectedUsers && this.selectedUsers.length;
       } else {
-        return this.secretaryOrSubstitute.user && this.secretaryOrSubstitute.behalfOf;
+        return this.assistantLike.user && this.assistantLike.behalfOf;
       }
     } else {
       return false;
@@ -105,12 +106,37 @@ export class AddUserDialogComponent implements OnInit {
   addUser() {
     let role: any = this.data.role.split('_');
     role = role[role.length - 1];
-    console.log('======>>>>>', role, this.selectedUsers);
+    console.log('======>>>>>', role, this.selectedUsers, this.assistantLike);
+    // /users/{patchell.id}/represented_users/{orrell.id}
     // return
-    zip(...this.selectedUsers.map((user) => this.userService.addAccountToSchool(this.school.id, user, this.typeChoosen, [role])))
-      .subscribe((res) => {
+
+    if (role === 'assistant') {
+      this.userService
+        .addAccountToSchool(this.school.id, this.assistantLike.user, this.typeChoosen, [role])
+        .pipe(
+          switchMap(
+            (assistant: User) => {
+              return zip(
+                ...this.assistantLike.behalfOf.map((teacher: User) => {
+
+                  return this.userService.addRepresentedUser(+assistant.id, teacher);
+                })
+              );
+            }
+          ),
+        )
+        .subscribe((res) => {
           this.dialogRef.close(true);
+        });
+    } else {
+      zip(
+        ...this.selectedUsers.map((user) => this.userService.addAccountToSchool(this.school.id, user, this.typeChoosen, [role]))
+      )
+      .subscribe((res) => {
+        this.dialogRef.close(true);
       });
+    }
+
   }
   setSelectedUsers(evt) {
     console.log(evt);
@@ -118,12 +144,12 @@ export class AddUserDialogComponent implements OnInit {
   }
   setSecretary(evtUser, evtBehalfOf) {
     if (evtUser) {
-      this.secretaryOrSubstitute.user = evtUser[0];
+      this.assistantLike.user = evtUser[0];
     }
     if (evtBehalfOf) {
-      this.secretaryOrSubstitute.behalfOf = evtBehalfOf[0];
+      this.assistantLike.behalfOf = evtBehalfOf;
     }
-    console.log(this.secretaryOrSubstitute);
+    console.log(this.assistantLike);
   }
 
   showInstructions(role) {
