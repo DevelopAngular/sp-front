@@ -15,8 +15,8 @@
                   <div class="add-icon" *ngIf="schip.hovered && !selectedStudents.length">
                     <img [src]="'./assets/Plus (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
                   </div>
-                  <div *ngIf="!selectedStudents.length">{{ schip.hovered ? 'Filter ' : 'All ' }}Students</div>
-                  <div *ngIf="selectedStudents.length">{{ selectedStudents.length + ' ' + 'student' + (selectedStudents.length > 1 ? 's' : '') }}</div>
+                  <div style="color: #7F879D" *ngIf="!selectedStudents.length">{{ schip.hovered ? 'Filter ' : 'All ' }}Students</div>
+                  <div style="color: #7F879D" *ngIf="selectedStudents.length">{{ selectedStudents.length + ' ' + 'student' + (selectedStudents.length > 1 ? 's' : '') }}</div>
                 </div>
 
                 <div class="reset-icon" *ngIf="schip.hovered && selectedStudents.length">
@@ -35,8 +35,8 @@
                   <div class="add-icon" *ngIf="rchip.hovered && !selectedRooms.length">
                     <img [src]="'./assets/Plus (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
                   </div>
-                  <div *ngIf="!selectedRooms.length">{{ rchip.hovered && !selectedRooms.length ? 'Filter ' : 'All ' }}Rooms</div>
-                  <div *ngIf="selectedRooms.length">{{ selectedRooms.length + ' ' + 'room' + (selectedRooms.length > 1 ? 's' : '') }}</div>
+                  <div style="color: #7F879D"  *ngIf="!selectedRooms.length">{{ rchip.hovered && !selectedRooms.length ? 'Filter ' : 'All ' }}Rooms</div>
+                  <div style="color: #7F879D" *ngIf="selectedRooms.length">{{ selectedRooms.length + ' ' + 'room' + (selectedRooms.length > 1 ? 's' : '') }}</div>
                 </div>
                 <div class="reset-icon" *ngIf="rchip.hovered && selectedRooms.length">
                   <img (click)="selectedRooms = []; selRoomsWithCategories = null" [src]="'./assets/Cancel (Navy).svg'" width="15" #fieldIcon alt="Check.svg">
@@ -54,8 +54,8 @@
                   <div class="add-icon" *ngIf="dchip.hovered && !selectedDate">
                     <img [src]="'./assets/Plus (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
                   </div>
-                  <div *ngIf="!selectedDate">{{ dchip.hovered && !selectedDate ? 'Filter ' : 'All ' }}Time</div>
-                  <div *ngIf="selectedDate">{{ dateText }}</div>
+                  <div style="color: #7F879D"  *ngIf="!selectedDate">{{ dchip.hovered && !selectedDate ? 'Filter ' : 'All ' }}Time</div>
+                  <div style="color: #7F879D" *ngIf="selectedDate">{{ dateText }}</div>
                 </div>
                 <div class="reset-icon" *ngIf="dchip.hovered && selectedDate">
                   <img (click)="selectedDate = null; adminCalendarOprions = null" [src]="'./assets/Cancel (Navy).svg'" width="15" #fieldIcon alt="Check.svg">
