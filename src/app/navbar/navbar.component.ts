@@ -40,7 +40,7 @@ export interface RepresentedUser {
 export class NavbarComponent implements OnInit {
 
   @Input() hasNav = true;
-  private representedUsers$: ReplaySubject<User> = new ReplaySubject(1);
+  // private representedUsers$: ReplaySubject<User> = new ReplaySubject(1);
 
   isStaff: boolean;
   showSwitchButton: boolean = false;
@@ -55,11 +55,13 @@ export class NavbarComponent implements OnInit {
 
   navbarEnabled = false;
 
-  buttons = [
-      {title: 'Passes', route: 'passes', imgUrl: 'SP Arrow', requiredRoles: ['_profile_teacher', 'access_passes']},
-      {title: 'Hall Monitor', route: 'hallmonitor', imgUrl: 'Walking', requiredRoles: ['_profile_teacher', 'access_hall_monitor']},
-      {title: 'My Room', route: 'myroom', imgUrl: 'Room', requiredRoles: ['_profile_teacher', 'access_teacher_room']},
-  ];
+  buttonHash = {
+    passes: {title: 'Passes', route: 'passes', imgUrl: 'SP Arrow', requiredRoles: ['_profile_teacher', 'access_passes'], hidden: false},
+    hallMonitor: {title: 'Hall Monitor', route: 'hallmonitor', imgUrl: 'Walking', requiredRoles: ['_profile_teacher', 'access_hall_monitor'], hidden: false},
+    myRoom: {title: 'My Room', route: 'myroom', imgUrl: 'Room', requiredRoles: ['_profile_teacher', 'access_teacher_room'], hidden: true},
+  };
+
+  buttons = Object.values(this.buttonHash);
 
   fakeMenu: ReplaySubject<boolean> = new ReplaySubject<boolean>();
 
@@ -115,8 +117,6 @@ export class NavbarComponent implements OnInit {
       }
     });
 
-    // console.log('loading navbar');
-
     this.userService.userData
       .pipe(
         this.loadingService.watchFirst
@@ -124,9 +124,6 @@ export class NavbarComponent implements OnInit {
       .subscribe(user => {
         this._zone.run(() => {
           this.user = user;
-          if (user.isAssistant()) {
-            this.representedUsers$.next(user);
-          }
           this.isStaff = user.isAdmin() || user.isTeacher();
           this.showSwitchButton = [user.isAdmin(), user.isTeacher(), user.isStudent()].filter(val => !!val).length > 1;
           this.dataService.updateInbox(this.tab !== 'settings');
@@ -135,19 +132,28 @@ export class NavbarComponent implements OnInit {
 
     this.userService.effectiveUser
       .pipe(
-        this.loadingService.watchFirst
+        this.loadingService.watchFirst,
+        filter(eu => !!eu),
+        switchMap((eu: RepresentedUser) => {
+          this.effectiveUser = eu;
+          this.buttons.forEach((button) => {
+            if (
+              ((this.activeRoute.snapshot as any)._routerState.url === `/main/${button.route}`)
+              &&
+              !this.hasRoles(button.requiredRoles)
+            ) {
+              this.fakeMenu.next(true);
+            }
+          });
+          return this.dataService.getLocationsWithTeacher(this.effectiveUser.user);
+        })
       )
-      .subscribe((eu: RepresentedUser) => {
-        this.effectiveUser = eu;
-        this.buttons.forEach((button) => {
-          if (
-            ((this.activeRoute.snapshot as any)._routerState.url === `/main/${button.route}`)
-            &&
-            !this.hasRoles(button.requiredRoles)
-          ) {
-            this.fakeMenu.next(true);
-          }
-        });
+      .subscribe((locs): void => {
+        if (!locs || (locs && !locs.length)) {
+          this.buttonHash.myRoom.hidden = true;
+        } else {
+          this.buttonHash.myRoom.hidden = false;
+        }
       })
     this.userService.representedUsers
       .pipe(
@@ -156,12 +162,6 @@ export class NavbarComponent implements OnInit {
       .subscribe((ru: RepresentedUser[]) => {
         this.representedUsers = ru;
       });
-
-    this.dataService.getLocationsWithTeacher(this.user).subscribe(res => {
-      _.remove(this.buttons, (el) => {
-        return el.route === 'myroom' && !res.length;
-      });
-    });
 
     this.userService.userData
       .pipe(
@@ -210,7 +210,9 @@ export class NavbarComponent implements OnInit {
       return roles.every((_role) => this.user.roles.includes(_role));
     }
   }
-
+  buttonVisibility(button) {
+    return this.hasRoles(button.requiredRoles) && !button.hidden;
+  }
   showOptions(event) {
     this.isOpenSettings = true;
     const target = new ElementRef(event.currentTarget);

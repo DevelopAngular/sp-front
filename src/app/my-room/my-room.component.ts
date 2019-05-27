@@ -14,7 +14,7 @@ import { User } from '../models/User';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import { TimeService } from '../services/time.service';
 import {CalendarComponent} from '../admin/calendar/calendar.component';
-import {filter, map, switchMap, takeUntil} from 'rxjs/operators';
+import {filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {LocationsService} from '../services/locations.service';
 import * as _ from 'lodash';
@@ -183,26 +183,30 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       this.dataService.currentUser,
       this.userService.effectiveUser,
     )
-    .pipe(this.loadingService.watchFirst)
-    .subscribe(([cu, eu]) => {
-      this._zone.run(() => {
-        this.user = cu;
-        this.effectiveUser = eu;
-        this.isStaff = cu.roles.includes('_profile_teacher');
+    .pipe(
+      this.loadingService.watchFirst,
+      tap(([cu, eu]) => {
+        this._zone.run(() => {
 
-        if (this.effectiveUser) {
-          this.canView = this.effectiveUser.roles.includes('access_teacher_room');
-        } else {
-          this.canView = this.user.roles.includes('access_teacher_room');
-        }
-      });
-    });
+          this.user = cu;
+          this.effectiveUser = eu;
+          this.isStaff = cu.isAssistant() ? eu.roles.includes('_profile_teacher') : cu.roles.includes('_profile_teacher');
 
-    combineLatest(
-        this.locationService.getLocationsWithTeacher(this.user),
-        this.locationService.myRoomSelectedLocation$
+          if (this.user.isAssistant() && this.effectiveUser) {
+            this.canView = this.effectiveUser.roles.includes('access_teacher_room');
+          } else {
+            this.canView = this.user.roles.includes('access_teacher_room');
+          }
+        });
+      }),
+      switchMap(([cu, eu]) => {
+        return combineLatest(
+          this.locationService.getLocationsWithTeacher(this.user.isAssistant() ? this.effectiveUser.user : this.user ),
+          this.locationService.myRoomSelectedLocation$
+        );
+      }),
+      takeUntil(this.destroy$)
     )
-    .pipe(takeUntil(this.destroy$))
     .subscribe(([locations, selected]: [Location[], Location]) => {
       this._zone.run(() => {
         this.roomOptions = locations;
@@ -216,18 +220,18 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       });
     });
 
-      this.hasPasses = combineLatest(
-        this.activePasses.length$,
-        this.originPasses.length$,
-        this.destinationPasses.length$,
-        (l1, l2, l3) => l1 + l2 + l3 > 0
-      );
-      this.passesLoaded = combineLatest(
-        this.activePasses.loaded$,
-        this.originPasses.loaded$,
-        this.destinationPasses.loaded$,
-        (l1, l2, l3) => l1 && l2 && l3
-      );
+    this.hasPasses = combineLatest(
+      this.activePasses.length$,
+      this.originPasses.length$,
+      this.destinationPasses.length$,
+      (l1, l2, l3) => l1 + l2 + l3 > 0
+    );
+    this.passesLoaded = combineLatest(
+      this.activePasses.loaded$,
+      this.originPasses.loaded$,
+      this.destinationPasses.loaded$,
+      (l1, l2, l3) => l1 && l2 && l3
+    );
   }
 
   ngOnDestroy() {
