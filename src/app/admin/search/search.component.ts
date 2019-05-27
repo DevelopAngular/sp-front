@@ -287,7 +287,7 @@ export class SearchComponent implements OnInit {
         .subscribe(({date, options}) => {
             this.adminCalendarOprions = options;
             if (!date.start) {
-                this.selectedDate = {start: date, end: date};
+                this.selectedDate = {start: moment(date).add(6, 'minutes'), end: moment(date).add(6, 'minutes')};
             } else {
                 this.selectedDate = {start: date.start, end: date.end};
             }
