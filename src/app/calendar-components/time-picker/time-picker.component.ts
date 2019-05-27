@@ -25,6 +25,9 @@ export class TimePickerComponent implements OnInit, OnDestroy {
   public hourHovered: boolean;
   public minHovered: boolean;
 
+  upInterval;
+  downInterval;
+
   _currentDate: moment.Moment;
 
   timeForm: FormGroup;
@@ -90,15 +93,42 @@ export class TimePickerComponent implements OnInit, OnDestroy {
       this.destroy$.complete();
   }
 
+  clickChangeTime(action, state) {
+      if (state === 'up') {
+          this._currentDate.add(1, action);
+      } else if (state === 'down') {
+          this._currentDate.subtract(1, action);
+      }
+      this.buildFrom();
+      this.timeResult.emit(this._currentDate);
+  }
+
   changeTime(action, up) {
-      // console.log(this._currentDate.format('DD hh:mm A'));
-        if (up === 'up') {
-            this._currentDate.add(1, action);
-        } else if (up === 'down') {
-            this._currentDate.subtract(1, action);
-        }
-        this.buildFrom();
-        this.timeResult.emit(this._currentDate);
+          if (up === 'up') {
+              this.upInterval = setInterval(() => {
+                  this._currentDate.add(1, action);
+                  this.buildFrom();
+                  this.timeResult.emit(this._currentDate);
+              }, 200);
+          } else if (up === 'down') {
+              this.downInterval = setInterval(() => {
+                  if ((action === 'hours' && this.isDisabledSwitchHourButton) || (action === 'minutes' && this.isDisabledSwitchMinButton)) {
+                      this.destroyInterval(action, up);
+                      return;
+                  }
+                  this._currentDate.subtract(1, action);
+                  this.buildFrom();
+                  this.timeResult.emit(this._currentDate);
+              }, 200);
+          }
+  }
+
+  destroyInterval(action, up) {
+    if (up === 'up') {
+        clearInterval(this.upInterval);
+    } else if (up === 'down') {
+        clearInterval(this.downInterval);
+    }
   }
 
   changeFormat() {

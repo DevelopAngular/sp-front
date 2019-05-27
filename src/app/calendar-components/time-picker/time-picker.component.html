@@ -8,7 +8,10 @@
         class="arrow"
         #hours
         [style.opacity]="hourHovered ? 1 : 0"
-        (click)="changeTime('hours', 'up')"
+        (mousedown)="changeTime('hours', 'up')"
+        (mouseup)="destroyInterval('hours', 'up')"
+        (mouseleave)="destroyInterval('hours', 'up')"
+        (click)="clickChangeTime('hours', 'up')"
         [src]="'./assets/Chevron Up (Blue-Gray).svg' | resolveAsset"
         alt="Icon"
       >
@@ -16,7 +19,10 @@
       <img
         class="arrow"
         [style.opacity]="hourHovered && !isDisabledSwitchHourButton ? 1 : 0"
-        (click)="!isDisabledSwitchHourButton ? changeTime('hours', 'down') : false"
+        (mousedown)="!isDisabledSwitchHourButton ? changeTime('hours', 'down') : false"
+        (mouseup)="destroyInterval('hours', 'down')"
+        (mouseleave)="destroyInterval('hours', 'down')"
+        (click)="!isDisabledSwitchHourButton ? clickChangeTime('hours', 'down') : false"
         [style.cursor]="!isDisabledSwitchHourButton ? 'pointer' : 'default'"
         [src]="'./assets/Chevron Down (Blue-Gray).svg' | resolveAsset"
         alt="Icon"
@@ -30,7 +36,10 @@
       <img
        class="arrow"
        [style.opacity]="minHovered ? 1 : 0"
-       (click)="changeTime('minutes', 'up')"
+       (mousedown)="changeTime('minutes', 'up')"
+       (mouseup)="destroyInterval('minutes', 'up')"
+       (mouseleave)="destroyInterval('minutes', 'up')"
+       (click)="clickChangeTime('minutes', 'up')"
        [src]="'./assets/Chevron Up (Blue-Gray).svg' | resolveAsset"
        alt="Icon"
       >
@@ -38,7 +47,10 @@
       <img
        class="arrow"
        [style.opacity]="minHovered && !isDisabledSwitchMinButton ? 1 : 0"
-       (click)="!isDisabledSwitchMinButton ? changeTime('minutes', 'down') : false"
+       (mousedown)="!isDisabledSwitchMinButton ? changeTime('minutes', 'down') : false"
+       (mouseup)="destroyInterval('minutes', 'down')"
+       (mouseleave)="destroyInterval('minutes', 'down')"
+       (click)="!isDisabledSwitchMinButton ? clickChangeTime('minutes', 'down') : false"
        [style.cursor]="!isDisabledSwitchMinButton ? 'pointer' : 'default'"
        [src]="'./assets/Chevron Down (Blue-Gray).svg' | resolveAsset"
        alt="Icon"
