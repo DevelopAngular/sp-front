@@ -94,11 +94,15 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   get studentText() {
-    return (this.selectedStudents ?
-        (this.selectedStudents.length > 2 ?
-            this.selectedStudents[0].display_name + ' and ' + (this.selectedStudents.length - 1) + ' more' :
-            this.selectedStudents[0].display_name + (this.selectedStudents.length > 1 ?
-            ' and ' + this.selectedStudents[1].display_name : '')) : this.pass.student.display_name + ` (${this.studentEmail})`);
+      if (this.formState.data.selectedGroup) {
+          return this.formState.data.selectedGroup.title;
+      } else {
+          return (this.selectedStudents ?
+              (this.selectedStudents.length > 2 ?
+                  this.selectedStudents[0].display_name + ' and ' + (this.selectedStudents.length - 1) + ' more' :
+                  this.selectedStudents[0].display_name + (this.selectedStudents.length > 1 ?
+                  ' and ' + this.selectedStudents[1].display_name : '')) : this.pass.student.display_name + ` (${this.studentEmail})`);
+      }
   }
 
   get studentEmail() {
