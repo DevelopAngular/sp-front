@@ -250,7 +250,7 @@ export class InvitationCardComponent implements OnInit {
         }
           return false;
       } else if (!this.forStaff) {
-        options.push(this.genOption('Decline Pass Request','#F00','decline'));
+        options.push(this.genOption('Decline Pass Request','#E32C66','decline'));
         header = 'Are you sure you want to decline this pass request you received?'
       } else {
         if (this.invalidDate) {
