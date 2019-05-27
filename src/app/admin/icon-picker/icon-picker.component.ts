@@ -40,6 +40,8 @@ export class IconPickerComponent implements OnInit {
     private http: HttpService,
   ) { }
 
+
+
   ngOnInit() {
 
     this.icons$
@@ -94,6 +96,13 @@ export class IconPickerComponent implements OnInit {
         this.iconCollectionTitle = 'Search icons';
           return [];
       }
+  }
+
+  iconTooltipText(icon: Icon) {
+    return icon.id.split('_').map((i: string) => {
+      i = i[0].toUpperCase() + i.slice(1);
+      return i;
+    }).join(' ');
   }
 
   changeIcon(icon) {

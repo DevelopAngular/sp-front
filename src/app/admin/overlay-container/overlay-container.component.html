@@ -28,7 +28,7 @@
           {{ folderName }}
       </div>
       <div *ngIf="(overlayType === 'newRoom') || overlayType === 'edit' || overlayType === 'editRoom' || overlayType === 'newFolder' || overlayType === 'newRoomInFolder' || overlayType === 'addExisting'" style="position: absolute; right: 16px; font-size: 15px">
-        <app-gradient-button *ngIf="form.get('timeLimit').valid && overlayType === 'edit' && settingsTouched"
+        <app-gradient-button *ngIf="overlayType === 'edit' && (form.get('timeLimit').valid || settingsTouched)"
                              [minHeight]="'40px'"
                              [style.width]="'120px'"
                              [cursor]="'pointer'"
@@ -130,7 +130,7 @@
             </div>
           </div>
           <div class="edit-rooms-info" *ngIf="overlayType === 'settingsRooms'">
-              {{ (isEditRooms ? 'Any change will override thi previous setting' :
+              {{ (isEditRooms ? 'Any change will override the previous setting.' :
               'Bulk edit the rooms added. Each room can be individually customized later.') }}
           </div>
       </div>
