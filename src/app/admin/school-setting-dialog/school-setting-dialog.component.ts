@@ -63,7 +63,7 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
   buildForm(school) {
     this.schoolForm = new FormGroup({
         display_card_room: new FormControl(school.display_card_room),
-        pass_buffer_time: new FormControl(school.pass_buffer_time || 20,
+        pass_buffer_time: new FormControl(school.pass_buffer_time || 0,
             [
                 Validators.required,
                 Validators.pattern('^[0-9]*?[0-9]+$'),
