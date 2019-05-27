@@ -335,8 +335,8 @@ export class SearchComponent implements OnInit {
       let prettyFrom = '';
       let prettyTo = '';
       if (this.selectedDate) {
-        prettyFrom = DatePrettyHelper.transform(this.selectedDate.from);
-        prettyTo = DatePrettyHelper.transform(this.selectedDate.to);
+        prettyFrom = DatePrettyHelper.transform(this.selectedDate.start.toDate());
+        prettyTo = DatePrettyHelper.transform(this.selectedDate.end.toDate());
       }
       let rooms = '';
       if (this.selectedRooms) {
