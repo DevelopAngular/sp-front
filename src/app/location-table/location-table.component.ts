@@ -120,7 +120,7 @@ export class LocationTableComponent implements OnInit {
         if (this.mergedAllRooms) {
             this.mergeLocations(url, this.withMergedStars)
                 .subscribe(res => {
-                    this.choices = res.sort((a, b) => a.id - b.id);
+                    this.choices = res
                   if (!this.choices.length) {
                     this.noChoices = true;
                   } else {
@@ -212,7 +212,7 @@ export class LocationTableComponent implements OnInit {
           if (this.mergedAllRooms) {
             this.mergeLocations(url, this.withMergedStars)
                 .subscribe(res => {
-                  this.choices = res.sort((a, b) => a.id - b.id);
+                  this.choices = res;
                   this.hideFavorites = false;
                   if (!this.choices.length) {
                     this.noChoices = true;
@@ -228,7 +228,7 @@ export class LocationTableComponent implements OnInit {
                         this.choices = this.filterResults(this.staticChoices);
                     } else {
                         this.hideFavorites = false;
-                        this.choices = _.uniqBy([...p.results, ...this.starredChoices].sort((a, b) => a.id - b.id), 'id');
+                        this.choices = _.uniqBy([...p.results, ...this.starredChoices], 'id');
                     }
                     this.nextChoices = p.next;
                     this.search = '';
@@ -255,7 +255,9 @@ export class LocationTableComponent implements OnInit {
         .pipe(
             map(([rooms, favorites]: [any, any[]]) => {
               if (withStars) {
-                return [...rooms.results, ...favorites];
+                return _.sortBy([...rooms.results, ...favorites], (item) => {
+                    return item.title.toLowerCase();
+                });
               } else {
                 return [...rooms.results];
               }
