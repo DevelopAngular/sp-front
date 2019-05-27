@@ -6,6 +6,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { BehaviorSubject } from 'rxjs';
 
 import * as moment from 'moment';
+import {SP_ARROW_BLUE_GRAY, SP_ARROW_DOUBLE_BLUE_GRAY} from '../pdf-generator.service';
 
 @Component({
   selector: 'app-data-table',
@@ -167,12 +168,17 @@ export class DataTableComponent implements OnInit {
       return  new Array(cellData);
     }
   }
-  displayCell(cellElement, cell?) {
+  displayCell(cellElement, cell?, column?) {
     let value = '';
     if (typeof cellElement === 'string') {
-        value = cellElement;
-        if (value.includes('<img')) {
-            cell.innerHTML = value;
+        if (column === 'TT') {
+          if (cellElement === 'one_way') {
+            value = SP_ARROW_BLUE_GRAY;
+          }
+          if (cellElement === 'round_trip' || cellElement === 'both') {
+            value = SP_ARROW_DOUBLE_BLUE_GRAY;
+          }
+          cell.innerHTML = value;
             return;
         } else {
             value = cellElement;

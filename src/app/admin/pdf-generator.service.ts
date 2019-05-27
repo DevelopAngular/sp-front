@@ -13,11 +13,36 @@ import {StorageService} from '../services/storage.service';
 declare const jsPDF;
 declare const window;
 
+
+  export const SP_ARROW_BLUE_GRAY = `<svg width="15px" height="15px" viewBox="0 0 160 140">
+                                      <title>SP Arrow (Blue-Gray)</title>
+                                      <desc>Created with Sketch.</desc>
+                                      <g id="SP-Arrow-(Blue-Gray)" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                        <g id="Logo" transform="translate(3.000000, 0.000000)" fill="#7F879D" fill-rule="nonzero">
+                                          <path d="M127.685045,98.1464997 L80.6403711,145.191173 C74.2538542,151.57769 63.9281157,151.606542 57.5771895,145.255616 C51.226263,138.904689 51.2551148,128.578951 57.6416316,122.192434 L104.686305,75.1477605 L57.3461108,27.8075658 C50.9595937,21.4210488 50.9307419,11.0953107 57.2816684,4.74438419 C63.6325949,-1.60654219 73.9583331,-1.57769053 80.34485,4.80882648 L139.415225,63.8792012 C145.703488,70.1674642 145.731895,80.3343446 139.478676,86.5875648 L127.802392,98.2638476 L127.685045,98.1464997 Z M51.229003,99.7185895 L27.7048949,123.242698 C21.3326816,129.614911 11.0584973,129.672126 4.7568622,123.370491 C-1.54477286,117.068856 -1.48755764,106.794672 4.88465572,100.422458 L28.4087639,76.8983503 L4.81684319,53.3064295 C-1.55537032,46.934216 -1.61258544,36.6600316 4.68904964,30.3583967 C10.9906847,24.0567616 21.2648689,24.1139768 27.6370822,30.4861904 L62.7366843,65.5857925 C69.0108639,71.859972 69.0671988,81.9760916 62.862512,88.1807786 L51.2768521,99.7664383 L51.229003,99.7185895 Z" id="Arrow"></path>
+                                        </g>
+                                      </g>
+                                    </svg>`;
+  export const SP_ARROW_DOUBLE_BLUE_GRAY = `<svg width="23px" height="11px" viewBox="0 50 150 50">
+                                              <title>SP Arrow Double (Blue-Gray)</title>
+                                              <desc>Created with Sketch.</desc>
+                                              <g id="SP-Arrow-Double-(Blue-Gray)" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                <g id="Logo" transform="translate(88.000000, 43.000000)" fill="#7F879D" fill-rule="nonzero">
+                                                  <path d="M54.9182725,41.8758399 L34.6840139,61.948234 C31.9371262,64.6731479 27.4959505,64.685458 24.7643707,61.9757295 C22.0327907,59.2660009 22.0452001,54.8603525 24.7920877,52.1354387 L45.0263463,32.0630445 L24.6649821,11.8645614 C21.9180943,9.1396475 21.9056849,4.73399923 24.6372649,2.02427059 C27.3688449,-0.685458001 31.8100205,-0.673147961 34.5569081,2.05176596 L59.9635087,27.2551259 C62.6681366,29.9381181 62.680355,34.275987 59.9907994,36.9440276 L54.9687445,41.9259083 L54.9182725,41.8758399 Z M22.0339692,42.5465982 L11.9160781,52.583551 C9.1753425,55.302362 4.75634063,55.3267739 2.04596125,52.6380763 C-0.664418119,49.9493786 -0.639809431,45.5657266 2.10092618,42.8469156 L12.2188173,32.8099628 L2.07175952,22.7440766 C-0.668976163,20.0252655 -0.693584805,15.6416135 2.01679457,12.9529159 C4.72717394,10.2642183 9.14617576,10.2886301 11.8869114,13.0074412 L26.9835072,27.9832715 C29.6820777,30.6602547 29.7063078,34.9764657 27.0376266,37.6237989 L22.0545494,42.5670137 L22.0339692,42.5465982 Z" id="Arrow"></path>
+                                                </g>
+                                                <g id="Logo" transform="translate(31.000000, 75.000000) scale(-1, 1) translate(-31.000000, -75.000000) translate(0.000000, 43.000000)" fill="#7F879D" fill-rule="nonzero">
+                                                  <path d="M54.9182725,41.8758399 L34.6840139,61.948234 C31.9371262,64.6731479 27.4959505,64.685458 24.7643707,61.9757295 C22.0327907,59.2660009 22.0452001,54.8603525 24.7920877,52.1354387 L45.0263463,32.0630445 L24.6649821,11.8645614 C21.9180943,9.1396475 21.9056849,4.73399923 24.6372649,2.02427059 C27.3688449,-0.685458001 31.8100205,-0.673147961 34.5569081,2.05176596 L59.9635087,27.2551259 C62.6681366,29.9381181 62.680355,34.275987 59.9907994,36.9440276 L54.9687445,41.9259083 L54.9182725,41.8758399 Z M22.0339692,42.5465982 L11.9160781,52.583551 C9.1753425,55.302362 4.75634063,55.3267739 2.04596125,52.6380763 C-0.664418119,49.9493786 -0.639809431,45.5657266 2.10092618,42.8469156 L12.2188173,32.8099628 L2.07175952,22.7440766 C-0.668976163,20.0252655 -0.693584805,15.6416135 2.01679457,12.9529159 C4.72717394,10.2642183 9.14617576,10.2886301 11.8869114,13.0074412 L26.9835072,27.9832715 C29.6820777,30.6602547 29.7063078,34.9764657 27.0376266,37.6237989 L22.0545494,42.5670137 L22.0339692,42.5465982 Z" id="Arrow"></path>
+                                                </g>
+                                              </g>
+                                            </svg>`;
+
 @Injectable()
 export class PdfGeneratorService {
 
   private LOGO_IMG: string;
   private REPORT_IMG: string;
+  private ARROW_IMG: string;
+  private ARROW_DOUBLE_IMG: string;
   private A4: any;
 
   constructor(
@@ -39,6 +64,9 @@ export class PdfGeneratorService {
                   tap((res) => {
                     this.LOGO_IMG = (res[0].srcElement as any).result;
                     this.REPORT_IMG = (res[1].srcElement as any).result;
+                    this.ARROW_IMG = (res[2].srcElement as any).result;
+                    this.ARROW_DOUBLE_IMG = (res[3].srcElement as any).result;
+
                     this.A4 = this.setOrientationAndSize(_orientation);
                   }),
                   switchMap(() => {
@@ -58,8 +86,12 @@ export class PdfGeneratorService {
 
     const logoPath = this.locationService.prepareExternalUrl('/assets/Legacy/Arrow%20(Green).png');
     const reportPath = this.locationService.prepareExternalUrl('/assets/Legacy/Report%20(Red).png');
+    const ArrowPath = this.locationService.prepareExternalUrl('/assets/Legacy/SP%20Arrow%20(Blue-Gray).png');
+    const ArrowDoublePath = this.locationService.prepareExternalUrl('/assets/Legacy/SP%20Arrow%20Double%20(Blue-Gray).png');
     const imgLogo = new FileReader();
     const reportLogo = new FileReader();
+    const Arrow = new FileReader();
+    const ArrowDouble = new FileReader();
 
     return zip(
       this.httpService
@@ -81,6 +113,26 @@ export class PdfGeneratorService {
           switchMap((blob) => {
             return fromEvent(reportLogo, 'load');
           }),
+        ),
+      this.httpService
+        .get(ArrowPath, {responseType: 'blob'})
+        .pipe(
+          tap((src) => {
+            Arrow.readAsDataURL(src);
+          }),
+          switchMap((blob) => {
+            return fromEvent(Arrow, 'load');
+          }),
+        ),
+      this.httpService
+        .get(ArrowDoublePath, {responseType: 'blob'})
+        .pipe(
+          tap((src) => {
+            ArrowDouble.readAsDataURL(src);
+          }),
+          switchMap((blob) => {
+            return fromEvent(ArrowDouble, 'load');
+          }),
         )
     );
   }
@@ -97,6 +149,7 @@ export class PdfGeneratorService {
     doc.setFontStyle('normal');
 
   }
+
   drawLink (doc) {
     const linkPlaceholder = 'View more information at smartpass.app/app';
     const link = 'https://smartpass.app/app';
@@ -144,7 +197,6 @@ export class PdfGeneratorService {
         const doc = res;
         this.drawDocHeader(doc, 'SmartPass Instructions');
         this.drawLogo(doc);
-
         doc.line(this.A4.width / 2, 72, this.A4.width / 2, 72 + 334);
 
         const teacherLeftSide = `<div style="color: #484747;">
@@ -305,7 +357,7 @@ export class PdfGeneratorService {
           drawHeaders: (__headers: string[]) => {
 
             doc.setFontSize(12);
-            doc.setTextColor('#3D396B');
+            doc.setTextColor('#1F194E');
             doc.setFontStyle('bold');
 
             __headers.forEach((header, n) => {
@@ -318,6 +370,17 @@ export class PdfGeneratorService {
 
             doc.setLineWidth(1.5);
             doc.line(table.left, table.top + 6, this.A4.width - table.right, table.top + 6);
+          },
+          drawCellWithImg: (imgCell, headerIndex, rowIndex ) => {
+            const cell = imgCell;
+            const i = headerIndex;
+            const n = rowIndex;
+
+            if (cell['TT'] === 'one_way') {
+              doc.addImage(this.ARROW_IMG, 'PNG', table.left + (table.sp * i), table.top - 14 + table.lh * (n + 1), 15, 15);
+            } else {
+              doc.addImage(this.ARROW_DOUBLE_IMG, 'PNG', table.left + (table.sp * i), table.top - 11 + table.lh * (n + 1), 23, 11);
+            }
           },
           drawRows: (__data) => {
 
@@ -332,7 +395,7 @@ export class PdfGeneratorService {
             const ctx = this;
 
             function __internalIteration(d) {
-              // const ctx = PdfGeneratorService.prototype;
+
               let breakLoop: boolean = false;
               let cell, n;
               if (d && d.length) {
@@ -341,10 +404,34 @@ export class PdfGeneratorService {
                   n = j;
                   if ((table.top + table.lh * (n + 1)) < (ctx.A4.height - 50)) {
                     _headers.forEach((header, i) => {
+                      // console.log(header);
                       if (i === 1) {
-                        doc.text(table.left + (table.sp * i) + 25, table.top + table.lh * (n + 1), cell[_headers[i]]);
+                        if (header === 'TT') {
+                          table.drawCellWithImg(cell, i, n);
+                                      // if (cell['TT'] === 'one_way') {
+                                      //   doc.addImage(ctx.ARROW_IMG, 'PNG', table.left + (table.sp * i) + 25, table.top + table.lh * (n + 1), 15, 15);
+                                      // } else {
+                                      //   doc.addImage(ctx.ARROW_DOUBLE_IMG, 'PNG', table.left + (table.sp * i) + 25, table.top + table.lh * (n + 1), 15, 15);
+                                      // }
+                        } else {
+                          doc.text(table.left + (table.sp * i) + 25, table.top + table.lh * (n + 1), cell[_headers[i]]);
+                        }
                       } else {
-                        doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1), cell[_headers[i]]);
+                        if (header === 'TT') {
+                          table.drawCellWithImg(cell, i, n);
+                                      // if (cell['TT'] === 'one_way') {
+                                      //   doc.addImage(ctx.ARROW_IMG, 'PNG', table.left + (table.sp * i) + 25, table.top + table.lh * (n + 1), 15, 15);
+                                      // } else {
+                                      //   doc.addImage(ctx.ARROW_DOUBLE_IMG, 'PNG', table.left + (table.sp * i) + 25, table.top + table.lh * (n + 1), 15, 15);
+                                      // }
+                        } else {
+                          try {
+                            doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1), cell[_headers[i]]);
+                          } catch (e) {
+                            console.log(e);
+                            doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1), 'error Блядь!!!');
+                          }
+                        }
                       }
                     });
                     doc.line(table.left, table.top + table.lh * (n + 1) + 8, ctx.A4.width - table.right, table.top + table.lh * (n + 1) + 8);
