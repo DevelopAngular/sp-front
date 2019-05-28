@@ -10,10 +10,16 @@
          [ngClass]="{'inputSelector': selected === true}"
          [style.width]="width" [style.min-width]="minWidth"
     >
-      <img *ngIf="fieldIcon && (fieldIconPosition === 'left')" class="field-icon"
-           [src]="fieldIcon | resolveAsset"
-           alt="icon"
-           draggable="false">
+      <div *ngIf="fieldIcon && (fieldIconPosition === 'left')" class="field-icon">
+
+        <img  *ngIf="!(pending$ | async)"
+              [src]="fieldIcon | resolveAsset"
+              alt="icon"
+              draggable="false">
+        <div *ngIf="pending$ | async" class="loading-theme_blue-gray">
+          <mat-spinner [color]="'primary'" [diameter]="18"></mat-spinner>
+        </div>
+      </div>
       <input *ngIf="!chipInput" #input class="input"
              spellcheck="false"
              [type]="html5type"

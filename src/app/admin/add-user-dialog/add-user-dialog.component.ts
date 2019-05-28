@@ -8,7 +8,7 @@ import {UserService} from '../../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
 import {School} from '../../models/School';
-import {filter, switchMap} from 'rxjs/operators';
+import {filter, switchMap, tap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-add-user-dialog',
@@ -107,8 +107,6 @@ export class AddUserDialogComponent implements OnInit {
     let role: any = this.data.role.split('_');
     role = role[role.length - 1];
     console.log('======>>>>>', role, this.selectedUsers, this.assistantLike);
-    // /users/{patchell.id}/represented_users/{orrell.id}
-    // return
 
     if (role === 'assistant') {
       this.userService
@@ -116,10 +114,12 @@ export class AddUserDialogComponent implements OnInit {
         .pipe(
           switchMap(
             (assistant: User) => {
+              console.log(assistant);
+              debugger
               return zip(
                 ...this.assistantLike.behalfOf.map((teacher: User) => {
 
-                  return this.userService.addRepresentedUser(+assistant.id, teacher);
+                  return this.userService.addRepresentedUser(+assistant.id, teacher).pipe(tap(console.log));
                 })
               );
             }

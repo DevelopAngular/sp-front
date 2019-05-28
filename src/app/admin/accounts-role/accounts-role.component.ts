@@ -84,7 +84,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
                           return of(user);
                         })
                       );
-
                   }));
               } else if (this.role === '_profile_assistant' && userList.length) {
                 return zip(

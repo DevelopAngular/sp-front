@@ -490,10 +490,12 @@ export class OverlayContainerComponent implements OnInit {
           delay(50)
         )
         .subscribe((el: ElementRef) => {
-        // debugger;
         // el.nativeElement.scrollIntoView(true);
         if (this.overlayType === 'newFolder' && this.roomList.topScroll) {
+          // debugger;
           el.nativeElement.scrollTop = this.roomList.topScroll;
+        } else {
+          el.nativeElement.scrollTop = 0;
         }
       });
       this.buildForm();
@@ -1256,6 +1258,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   selectedRoomsEvent(event, room, all?: boolean) {
+
     this.formService.setFrameMotionDirection('forward');
     setTimeout(() => {
       if (all) {
@@ -1402,8 +1405,24 @@ export class OverlayContainerComponent implements OnInit {
               this.isDirtyAdvancedOpt = false;
           }
       }
-      this.locationService.updateLocation(this.pinnable.location.id, this.normalizeAdvOptData())
-          .subscribe();
+      if (this.pinnable.type === 'location') {
+        this.locationService.updateLocation(this.pinnable.location.id, this.normalizeAdvOptData())
+            .subscribe();
+      }
+
+      /**
+       * TODO TOMORROW
+       * Smooth scroll into view for advanced options for some reason
+       * doesn't work for category.
+       * If you can see this comment and today is grater than 05.29.2019
+       * Please ping Den with that, probably he forgot it.
+       */
+
+
+      // else if (this.pinnable.type === 'category') {
+      //   this.locationService.updateLocation(this.roomToEdit.id, this.normalizeAdvOptData())
+      //     .subscribe();
+      // }
   }
 
   onUpdate(time) {

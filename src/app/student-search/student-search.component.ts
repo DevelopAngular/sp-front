@@ -39,6 +39,7 @@ export class StudentSearchComponent implements OnInit {
 
   @ViewChild('studentInput') input;
 
+  pending$: Subject<boolean> = new Subject();
   students: Promise<any[]>;
   inputValue$: Subject<string> = new Subject<string>();
   showDummy: boolean = false;
@@ -120,15 +121,20 @@ export class StudentSearchComponent implements OnInit {
         this.students = this.userService.searchProfile(this.role, 50, encodeURI(search))
           .toPromise()
           .then((paged: any) => {
-            console.log('PAGED RESULT >>>', paged);
-            this.showDummy = paged.results.length ? false : true;
+            // console.log('PAGED RESULT >>>', paged);
+            this.showDummy = !!paged.results.length;
             return this.removeDuplicateStudents(paged.results);
           });
       } else if ('gsuite') {
+        this.pending$.next(true);
         this.students = this.userService.searchProfileAll(search, this.type, this.role.split('_')[this.role.split('_').length - 1])
           .toPromise().then((users: User[]) => {
+            this.pending$.next(false);
             if (users.length > 0) {
+              this.showDummy = false;
               return this.removeDuplicateStudents(users);
+            } else {
+              this.showDummy = true;
             }
           });
       }

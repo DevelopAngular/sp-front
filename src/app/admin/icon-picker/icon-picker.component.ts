@@ -49,31 +49,14 @@ export class IconPickerComponent implements OnInit {
         map((icons: any) => {
          return this.normalizeIcons(icons);
         }),
-        tap(console.log)
       )
       .subscribe(res => {
-          this.icons = res;
-          if (!res.length || this.selectedIconLocalUrl) {
+        console.log(res, this.selectedIconLocalUrl);
+        this.icons = res;
+          if (!res.length || !this.selectedIconLocalUrl) {
             this.selectedIconLocalUrl = this.selectedIconPicker ? this.selectedIconPicker.replace('FFFFFF', '1F195E') : '';
           }
       });
-
-    //   this.adminService.getIcons()
-    //   .pipe(
-    //   map((icons: any) => {
-    //     return icons.map((_icon) => {
-    //         if (this.selectedIconPicker) {
-    //             if (this.selectedIconPicker === _icon.inactive_icon) {
-    //                 this.selectedIconId = _icon.id;
-    //                _icon.active = true;
-    //                return _icon;
-    //             }
-    //         }
-    //         _icon.active = false;
-    //       return _icon;
-    //     });
-    //   })
-    // ).subscribe(res => this.icons = res);
   }
 
   normalizeIcons(icons) {
@@ -100,7 +83,11 @@ export class IconPickerComponent implements OnInit {
 
   iconTooltipText(icon: Icon) {
     return icon.id.split('_').map((i: string) => {
-      i = i[0].toUpperCase() + i.slice(1);
+      if (i) {
+        i = i[0].toUpperCase() + i.slice(1);
+      } else {
+        i = '';
+      }
       return i;
     }).join(' ');
   }
