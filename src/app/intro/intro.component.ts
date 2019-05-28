@@ -356,7 +356,7 @@ export class IntroComponent implements OnInit {
     if (this.usedAsEntryComponent) {
       this.endIntroEvent.emit(true);
     } else {
-      this.user.isAdmin() ? this.router.navigate(['/admin']) : this.router.navigate(['/main']);
+      this.user.isAdmin() && !this.user.isTeacher() ? this.router.navigate(['/admin']) : this.router.navigate(['/main']);
     }
       // this.router.navigate(['select-profile']);
   }
