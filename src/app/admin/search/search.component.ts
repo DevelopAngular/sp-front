@@ -187,7 +187,7 @@ export class SearchComponent implements OnInit {
           this.passes = data;
           this.tableData = data.map(hallPass => {
 
-            const duration = moment.duration(moment(hallPass.end_time).diff(moment(hallPass.start_time))).asMinutes();
+            const duration = moment.duration(moment(hallPass.end_time).diff(moment(hallPass.start_time)));
 
             const name = hallPass.student.first_name + ' ' + hallPass.student.last_name +
                 ` (${hallPass.student.primary_email.split('@', 1)[0]})`;
@@ -197,11 +197,11 @@ export class SearchComponent implements OnInit {
                 'TT': hallPass.travel_type,
                 'Destination': hallPass.destination.title,
                 'Date & Time': moment(hallPass.created).format('M/DD h:mm A'),
-                'Duration': (Number.isInteger(duration) ? duration : duration.toFixed(2)) + ' min'
+                'Duration': (Number.isInteger(duration.asMinutes()) ? duration.asMinutes() : duration.asMinutes().toFixed(2)) + ' min'
             };
             Object.defineProperty(passes, 'id', { enumerable: false, value: hallPass.id});
             Object.defineProperty(passes, 'date', {enumerable: false, value: moment(hallPass.created) });
-            Object.defineProperty(passes, 'sortDuration', {enumerable: false, value: moment.duration(moment(hallPass.end_time).diff(moment(hallPass.start_time))) });
+            Object.defineProperty(passes, 'sortDuration', {enumerable: false, value: duration });
             return passes;
           });
           this.spinner = false;

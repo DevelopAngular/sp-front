@@ -35,17 +35,37 @@ export class TravelViewComponent implements OnInit {
       private http: HttpService
   ) { }
 
+  get originRoomName() {
+    if (this.showRoomNumber) {
+      if (this.pass instanceof Invitation) {
+          return this.pass.default_origin ? this.pass.default_origin.title + `${this.pass.default_origin.room}` : 'Origin';
+      } else {
+        return this.pass.origin.title + ` (${this.pass.origin.room})`;
+      }
+    } else {
+      if (this.pass instanceof Invitation) {
+        return this.pass.default_origin ? this.pass.default_origin.title : 'Origin';
+      } else {
+        return this.pass.origin.title;
+      }
+    }
+  }
+
+  get destinationRoomName() {
+     return this.showRoomNumber ? this.pass.destination.title + ` (${this.pass.destination.room})` : this.pass.destination.title;
+  }
+
   ngOnInit() {
+    console.log(this.destinationRoomName);
     this.type = (this.pass instanceof HallPass) ? 'hallpass' :
     (this.pass instanceof Invitation) ? 'invitation' :
       'request';
-    if (this.type === 'invitation') {
-      console.log('PASSSSS', this.pass);
-    }
+
     this.isSeen$ = this.createFormService.isSeen$;
     this.http.currentSchool$.subscribe(res => {
       this.showRoomNumber = res.display_card_room;
     });
+      console.log(this.pass);
   }
 
   changeLocation(){

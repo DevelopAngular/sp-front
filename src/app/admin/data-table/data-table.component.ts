@@ -42,6 +42,7 @@ export class DataTableComponent implements OnInit {
   @Input() backgroundColor: string = 'transparent';
   @Input() textColor: string = 'black';
   @Input() textHeaderColor: string = '#1F195E';
+  @Input() marginTopStickyHeader: string = '-40px';
 
   @Output() selectedUsers: EventEmitter<any[]> = new EventEmitter();
   @Output() selectedRow: EventEmitter<any> = new EventEmitter<any>();
