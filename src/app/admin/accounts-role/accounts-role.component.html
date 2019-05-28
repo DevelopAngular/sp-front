@@ -142,17 +142,17 @@
       <div class="tool-panel ds-mx-20 ds-my-10" *ngIf="(dataTableEditState | async)">
 
         <div class="ds-flex-center-start">
-          <div class="ds-p-10"  *ngIf="role === '_all'">
-            <app-gradient-button
-              [gradient]="'#FFFFFF,#FFFFFF'"
-              [hoverColor]="'#FFFFFF'"
-              [textColor]="'#1F194E'"
-              [size]="'small'"
-              [disabled]="!selectedUsers.length"
-              (buttonClick)="exportAccountData()">
-              <span>Export Account Data</span>
-            </app-gradient-button>
-          </div>
+          <!--<div class="ds-p-10"  *ngIf="role === '_all'">-->
+            <!--<app-gradient-button-->
+              <!--[gradient]="'#FFFFFF,#FFFFFF'"-->
+              <!--[hoverColor]="'#FFFFFF'"-->
+              <!--[textColor]="'#1F194E'"-->
+              <!--[size]="'small'"-->
+              <!--[disabled]="!selectedUsers.length"-->
+              <!--(buttonClick)="exportAccountData()">-->
+              <!--<span>Export Account Data</span>-->
+            <!--</app-gradient-button>-->
+          <!--</div>-->
 
           <div class="ds-p-10"  *ngIf="role === '_profile_admin' || role === '_profile_teacher'">
             <app-gradient-button
