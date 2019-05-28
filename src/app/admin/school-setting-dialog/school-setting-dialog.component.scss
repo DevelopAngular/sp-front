@@ -62,6 +62,10 @@
       .buffer-time-control {
         display: flex;
         justify-content: space-between;
+
+        .control-input {
+          margin-right: 14px;
+        }
       }
     }
 

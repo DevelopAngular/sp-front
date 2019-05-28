@@ -44,11 +44,17 @@ export class AppInputComponent implements OnInit {
 
     public hovered: boolean;
     public pressed: boolean;
+
+
     constructor(
       public dialog: MatDialog,
       private sanitizer: DomSanitizer,
     ) {
       // this.rightIconUntouched = this.rightIcon.replace('Blue', 'Grey');
+    }
+
+    get containerWidth() {
+        return this.width ? parseFloat(this.width) + 16 + 'px' : 0;
     }
 
     ngOnInit() {
