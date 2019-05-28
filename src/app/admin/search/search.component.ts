@@ -64,7 +64,7 @@ export class SearchComponent implements OnInit {
       private activatedRoute: ActivatedRoute,
       private router: Router,
       private userService: UserService,
-      private dataService: DataService,
+      public dataService: DataService,
       public darkTheme: DarkThemeSwitch,
       private domSanitazer: DomSanitizer
 

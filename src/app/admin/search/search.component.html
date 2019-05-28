@@ -2,12 +2,16 @@
   <div class="search-wrapper" *ngIf="inputPanelVisibility">
     <div class="w-100">
 
-      <div class="input-header" (click)="resetSearchState()">
-        <div class="title">Search</div>
+      <div class="input-header" [style.background-color]="darkTheme.getBackground('high', true)" (click)="resetSearchState()">
+        <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Search</div>
         <div class="inputs-container">
             <div class="input">
-              <div class="input-title" [style.color]="selectedStudents.length ? '#1F195E' : '#7E879D'">
-                <img width="16" [src]="'./assets/Student ' + (selectedStudents.length ? '(Navy).svg' : '(Blue-Gray).svg') | resolveAsset" alt="Icon">
+              <div class="input-title" [style.color]="selectedStudents.length ? darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'}) : '#7E879D'">
+                <img width="16" [src]="(selectedStudents.length ? darkTheme.getIcon({
+              iconName: './assets/Student (Navy).svg',
+              darkFill: 'White',
+              lightFill: 'Navy'
+            }) : './assets/Student (Blue-Gray).svg') | resolveAsset" alt="Icon">
                 Students
               </div>
               <div class="chip" [ngClass]="{hovered: schip.hovered && selectedStudents.length}"  #schip (mouseenter)="schip.hovered = true;" (mouseleave)="schip.hovered = false;">
@@ -26,8 +30,11 @@
             </div>
             <mat-divider [vertical]="true"></mat-divider>
             <div class="input">
-              <div class="input-title" [style.color]="selectedRooms.length ? '#1F195E' : '#7E879D'">
-                  <img width="16" [src]="'./assets/Room ' + (selectedRooms.length ? '(Navy).svg' : '(Blue-Gray).svg') | resolveAsset" alt="Icon">
+              <div class="input-title" [style.color]="selectedRooms.length ? darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'}) : '#7E879D'">
+                  <img width="16" [src]="(selectedRooms.length ? darkTheme.getIcon({
+                  iconName: './assets/Room (Navy).svg',
+                  darkFill: 'White',
+                  lightFill: 'Navy'}) : './assets/Room (Blue-Gray).svg') | resolveAsset" alt="Icon">
                   Rooms
               </div>
               <div class="chip" #rchip [ngClass]="{hovered: rchip.hovered && selectedRooms.length}" (mouseenter)="rchip.hovered = true;" (mouseleave)="rchip.hovered = false;">
@@ -45,8 +52,11 @@
             </div>
             <mat-divider [vertical]="true"></mat-divider>
             <div class="input">
-              <div class="input-title" [style.color]="selectedDate ? '#1F195E' : '#7E879D'">
-                  <img width="16" [src]="'./assets/Calendar ' + (selectedDate ? '(Navy).svg' : '(Blue-Gray).svg') | resolveAsset" alt="Icon">
+              <div class="input-title" [style.color]="selectedDate ? darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'}) : '#7E879D'">
+                  <img width="16" [src]="(selectedDate ? darkTheme.getIcon({
+                  iconName: './assets/Calendar (Navy).svg',
+                  darkFill: 'White',
+                  lightFill: 'Navy'}) : './assets/Calendar (Blue-Gray).svg') | resolveAsset" alt="Icon">
                   Date & Time
               </div>
               <div class="chip" #dchip [ngClass]="{hovered: dchip.hovered && !!selectedDate}" (mouseenter)="dchip.hovered = true;" (mouseleave)="dchip.hovered = false">
