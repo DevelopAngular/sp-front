@@ -53,6 +53,7 @@
           <div class="profile-search" *ngIf="!assistantLike.user; else secretaryUser" >
             <app-student-search
               [placeholder]="'Search G Suite accounts'"
+              [dummyRoleText]="'users'"
               [type]="'gsuite'"
               [role]="data.role"
               (onUpdate)="setSecretary($event, null)"
@@ -117,6 +118,7 @@
                 <app-student-search
                   [selectedStudents]="selectedUsers"
                   [placeholder]="'Search G Suite accounts'"
+                  [dummyRoleText]="'users'"
                   [type]="'gsuite'"
                   [role]="data.role"
                   (onUpdate)="setSelectedUsers($event)"

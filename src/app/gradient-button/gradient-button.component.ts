@@ -15,6 +15,13 @@ const cssGradientRegexp = new RegExp(`^(${CSS_COLOR_REGEXP}), *(${CSS_COLOR_REGE
 
 const cssColorRegexp = new RegExp(`^(${CSS_COLOR_REGEXP})$`, 'i');
 
+
+type buttonSize = 'small' | 'medium' | 'large' | 'xl' | 'editable';
+
+type docType = 'pdf' | 'xslx' | 'csv';
+
+type linkType = '_blank' | '_self';
+
 @Component({
   selector: 'app-gradient-button',
   templateUrl: './gradient-button.component.html',
@@ -25,11 +32,12 @@ const cssColorRegexp = new RegExp(`^(${CSS_COLOR_REGEXP})$`, 'i');
 })
 export class GradientButtonComponent implements OnInit {
 
+
   /*
   * @Input 'size' can be small, medium, large, xl or editable.
   * If editable, all inputs marked as ' > editable' below can be provided, otherwise they will be overridden
   */
-  @Input() size: string = 'small';
+  @Input() size: buttonSize = 'small';
 
   @Input() border: string;
   @Input() withShadow: boolean = true;
@@ -40,10 +48,10 @@ export class GradientButtonComponent implements OnInit {
   @Input() text: string = 'PDF';
   @Input() subtitle: string;
   @Input() textColor: string;
+  @Input() disabled: boolean = false;
   @Input() width: string = 'auto'; // > editable
   @Input() minWidth: string = 'auto'; // > editable
   @Input() minHeight: string; // > editable
-  @Input() disabled: boolean = false;
   @Input() fontSize: string = '20px'; // > editable
   @Input() fontWeight: string = 'bold'; // > editable
   @Input() leftImageWidth: string; // > editable
@@ -54,9 +62,9 @@ export class GradientButtonComponent implements OnInit {
   @Input() textWidth: string = '100%';
   @Input() whiteSpace: string = 'nowrap';
   @Input() buttonLink: string; // needs for the links so that don't brake an existing markup and the entire button is clickable
-  @Input() linkType: string = '_blank'; // _blank or _self
+  @Input() linkType: linkType = '_blank';
   @Input() download: boolean = false;
-  @Input() documentType: string; // can be pdf or xslx/csv
+  @Input() documentType: docType;
   @Output() buttonClick = new EventEmitter<any>();
 
   buttonDown = false;

@@ -31,6 +31,7 @@ export class LocationsService {
     }
 
     updateLocation(id, data) {
+    // debugger
         return this.http.patch(`v1/locations/${id}`, data);
     }
 

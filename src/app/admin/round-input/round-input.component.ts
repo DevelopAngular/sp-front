@@ -41,6 +41,7 @@ export class RoundInputComponent implements OnInit {
   @Input() disabled: boolean = false;
   @Input() focused: boolean = false;
   @Input() chipInput: ElementRef = null;
+  @Input() pending$: Subject<boolean>;
   @Input() selectReset$: Subject<string>;
   @Input() selections: any[] = [];
   @Output() ontextupdate: EventEmitter<any> = new EventEmitter();

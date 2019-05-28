@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/materia
 import { TimeService } from '../../services/time.service';
 
 import * as moment from 'moment';
+import {Moment} from 'moment';
 
 @Component({
   selector: 'app-calendar',
@@ -36,6 +37,11 @@ export class CalendarComponent implements OnInit {
     this.triggerElementRef = this.data['trigger'];
     this.previousSelectedDate = moment(this.data['previousSelectedDate']);
     this.updateCalendarPosition();
+    this._matDialogRef
+      .backdropClick()
+      .subscribe(() => {
+        this._matDialogRef.close({date: this.data['previousSelectedDate']});
+    });
   }
 
   updateCalendarPosition() {
@@ -52,8 +58,9 @@ export class CalendarComponent implements OnInit {
   }
 
   setSearchDate(date) {
+    // debugger;
      let _date;
-     if (date) {
+     if (date && !((date[0] as Moment).isSame(this.previousSelectedDate, 'day'))) {
        _date = date[0].toDate();
      } else {
        _date = '';

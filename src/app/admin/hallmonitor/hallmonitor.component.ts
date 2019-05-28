@@ -136,7 +136,7 @@ export class HallmonitorComponent implements OnInit {
       .subscribe((data) => {
         this.activeCalendar = false;
 
-      console.log('82 Date ===> :', data.date);
+      // console.log('82 Date ===> :', data.date);
         if (data.date) {
           this.inactiveIcon = data.date.getDay() === new Date().getDay();
           if ( !this.reportsDate || (this.reportsDate && this.reportsDate.getTime() !== data.date.getTime()) ) {
@@ -144,6 +144,9 @@ export class HallmonitorComponent implements OnInit {
             console.log(this.reportsDate);
             this.getReports(this.reportsDate);
           }
+        } else {
+          this.reportsDate = null;
+          this.getReports();
         }
       }
     );

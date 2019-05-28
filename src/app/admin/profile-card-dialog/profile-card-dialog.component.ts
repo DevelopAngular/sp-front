@@ -150,7 +150,7 @@ export class ProfileCardDialogComponent implements OnInit {
       }
     });
   }
-  goToPassConfig(location: Location) {
+  goToPassConfig(location?: Location) {
     if (location) {
       window.open(`admin/passconfig?locationId=${location.id}`);
     } else {

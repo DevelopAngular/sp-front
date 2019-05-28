@@ -93,14 +93,13 @@
     </div>
 
 <div style="position: relative">
-  <!--{{roomList.topScroll}} {{overlayType}} -->
+  <!--{{roomList.topScroll}} {{overlayType}}-->
   <!--{{roomList.topScroll}}-->
 <!--<div class="inactive" *ngIf="!form.get('isEdit').value"></div>-->
   <div class="overlay-content">
     <div class="left-content ds-mb-5" #leftContent (scroll)="onScroll($event)">
       <div class="edit-rooms-left-content" *ngIf="overlayType === 'edit'">
         <div class="edit-rooms-left-title">Keep in mind that editing a Folder in this menu will edit all rooms within that folder.</div>
-        <!--Keep in mind that editing a Folder in this menu will edit all rooms within that folder-->
       </div>
       <div class="new-room-in-folder sticky-header" [@NextStep]="{ value: '', params: frameMotion$ | async}"
          *ngIf="overlayType === 'newRoomInFolder' || overlayType === 'importRooms' || overlayType === 'settingsRooms'">
@@ -129,10 +128,10 @@
               <div *ngIf="backButtonsStateInFolder && !showDoneButton" [style.color]="'#1F194E'">Incomplete</div>
             </div>
           </div>
-          <div class="edit-rooms-info" *ngIf="overlayType === 'settingsRooms'">
-              {{ (isEditRooms ? 'Any change will override the previous setting.' :
-              'Bulk edit the rooms added. Each room can be individually customized later.') }}
-          </div>
+      </div>
+      <div class="edit-rooms-info" *ngIf="overlayType === 'settingsRooms'">
+        {{ (isEditRooms ? 'Any change will override the previous setting.' :
+        'Bulk edit the rooms added. Each room can be individually customized later.') }}
       </div>
       <div *ngIf="overlayType === 'newRoom' || overlayType === 'newFolder' || overlayType === 'newRoomInFolder' || overlayType === 'editRoom'">
         <div class="room-inputs">

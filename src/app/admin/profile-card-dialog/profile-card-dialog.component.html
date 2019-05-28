@@ -113,14 +113,15 @@
             </div>
             <div [style.padding-left]="'10px'">
               <app-gradient-button
-                [size]="'small'"
+                [size]="'editable'"
                 [width]="'141px'"
-                [minHeight]="'52px'"
+                [minHeight]="'40px'"
                 [gradient]="'#FFFFFF,#FFFFFF'"
                 [hoverColor]="'#FFFFFF'"
                 [textColor]="'#1F195E'"
                 [fontSize]="'13px'"
                 [cursor]="'pointer'"
+                [cornerRadius]="'10px'"
                 (buttonClick)="goToPassConfig()"
 
               >
@@ -141,14 +142,15 @@
             </div>
             <div *ngIf="data.role !== '_profile_admin'">
               <app-gradient-button
-                [size]="'small'"
+                [size]="'editable'"
                 [width]="'141px'"
-                [minHeight]="'35px'"
+                [minHeight]="'40px'"
                 [gradient]="'#FFFFFF,#FFFFFF'"
                 [hoverColor]="'#FFFFFF'"
                 [textColor]="'#1F195E'"
                 [fontSize]="'13px'"
                 [cursor]="'pointer'"
+                [cornerRadius]="'10px'"
                 (buttonClick)="goToSearch()"
 
               >
