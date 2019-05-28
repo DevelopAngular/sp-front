@@ -70,9 +70,9 @@ export class AppInputComponent implements OnInit {
         this.updateFocus(this.input.nativeElement);
       }
 
-      if (this.rightIcon) {
-        this.rightIconUntouched = this.rightIcon.replace('Navy', 'Blue-Gray');
-      }
+      // if (this.rightIcon) {
+      //   this.rightIconUntouched = this.rightIcon.replace('Navy', 'Blue-Gray');
+      // }
 
       setTimeout(() => {
             this.controlName.setValue(this.input_value);

@@ -201,7 +201,7 @@
                 (mouseover)="openInfo({event: $event, action: 'teachers' })"
                 (mouseleave)="closeInfo('teachers')"
                 class="support-icon"
-                [src]="(!selectedTeachers.length || isActiveIcon.teachers ? './assets/Support (Blue-Gray).svg' : './assets/Support (Navy).svg') | resolveAsset">
+                [src]="'./assets/Support (Blue-Gray).svg' | resolveAsset">
               <div class="arrow-down-container">
                 <div class="arrow-down"></div>
               </div>
@@ -244,7 +244,7 @@
                   (mouseover)="openInfo({event: $event, action: 'travel' })"
                   (mouseleave)="closeInfo('travel')"
                   class="support-icon"
-                  [src]="(!travelType || isActiveIcon.travel ? './assets/Support (Blue-Gray).svg' : './assets/Support (Navy).svg') | resolveAsset">
+                  [src]="'./assets/Support (Blue-Gray).svg' | resolveAsset">
                 <div class="arrow-down-container">
                   <div class="arrow-down"></div>
                 </div>
@@ -291,7 +291,7 @@
               [input_value]="timeLimit ? timeLimit : ''"
               [placeholder]="'minutes'"
               (onUpdate)="onUpdate($event)"
-              [rightIcon]="(isActiveIcon.timeLimit ? './assets/Support (Blue-Gray).svg' : './assets/Support (Navy).svg')"
+              [rightIcon]="'./assets/Support (Blue-Gray).svg'"
               [formGroup]="form"
               [controlName]="form.get('timeLimit')"
             >
@@ -318,7 +318,7 @@
                   (mouseover)="openInfo({event: $event, action: 'restriction' })"
                   (mouseleave)="closeInfo('restriction')"
                   class="support-icon"
-                  [src]="((nowRestriction === undefined) || isActiveIcon.restriction ? './assets/Support (Blue-Gray).svg' : './assets/Support (Navy).svg') | resolveAsset">
+                  [src]="'./assets/Support (Blue-Gray).svg' | resolveAsset">
                 <div class="arrow-down-container">
                   <div class="arrow-down"></div>
                 </div>
@@ -347,7 +347,7 @@
                   (mouseover)="openInfo({event: $event, action: 'scheduling_restricted' })"
                   (mouseleave)="closeInfo('scheduling_restricted')"
                   class="support-icon"
-                  [src]="((futureRestriction === undefined) || isActiveIcon.scheduling_restricted ? './assets/Support (Blue-Gray).svg' : './assets/Support (Navy).svg') | resolveAsset">
+                  [src]="'./assets/Support (Blue-Gray).svg' | resolveAsset">
                 <div class="arrow-down-container">
                   <div class="arrow-down"></div>
                 </div>
