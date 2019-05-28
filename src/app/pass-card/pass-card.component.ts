@@ -94,7 +94,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   get studentText() {
-      if (this.formState.data.selectedGroup) {
+      if (this.formState && this.formState.data.selectedGroup) {
           return this.formState.data.selectedGroup.title;
       } else {
           return (this.selectedStudents ?

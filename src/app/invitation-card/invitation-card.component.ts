@@ -71,7 +71,7 @@ export class InvitationCardComponent implements OnInit {
     }
 
     get studentText() {
-        if (this.formState.data.selectedGroup) {
+        if (this.formState && this.formState.data.selectedGroup) {
             return this.formState.data.selectedGroup.title;
         } else {
             return (this.selectedStudents ?
