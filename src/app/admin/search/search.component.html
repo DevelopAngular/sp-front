@@ -108,7 +108,7 @@
               <div style="display: flex; flex-direction: column" [style.text-align]="'center'">
                 <span>Generate Report </span>
                 <span style="color: #7F879D; font-weight: normal; margin-top: 5px">
-                  {{ (!selectedReport.length ? passes.length + ' pass' + (passes.length > 1 ? 'es': '') : 'Selected Passes') }}
+                  {{ (!selectedReport.length ? passes.length + ' pass' + (passes.length > 1 || !passes.length ? 'es': '') : 'Selected Passes') }}
                 </span>
               </div>
             </app-gradient-button>
