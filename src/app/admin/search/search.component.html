@@ -2,7 +2,7 @@
   <div class="search-wrapper" *ngIf="inputPanelVisibility">
     <div class="w-100">
 
-      <div class="input-header" [style.background-color]="darkTheme.getBackground('high', true)" (click)="resetSearchState()">
+      <div class="input-header" [style.background-color]="darkTheme.getBackground('high', true)">
         <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Search</div>
         <div class="inputs-container">
             <div class="input">
@@ -24,7 +24,7 @@
                 </div>
 
                 <div class="reset-icon" *ngIf="schip.hovered && selectedStudents.length">
-                  <img (click)="selectedStudents = []" [src]="'./assets/Cancel (Navy).svg'" width="15" #fieldIcon alt="Check.svg">
+                  <img (click)="resetSearchState(); selectedStudents = []" [src]="'./assets/Cancel (Navy).svg'" width="15" #fieldIcon alt="Check.svg">
                 </div>
               </div>
             </div>
@@ -46,7 +46,7 @@
                   <div style="color: #7F879D" *ngIf="selectedRooms.length">{{ selectedRooms.length + ' ' + 'room' + (selectedRooms.length > 1 ? 's' : '') }}</div>
                 </div>
                 <div class="reset-icon" *ngIf="rchip.hovered && selectedRooms.length">
-                  <img (click)="selectedRooms = []; selRoomsWithCategories = null" [src]="'./assets/Cancel (Navy).svg'" width="15" #fieldIcon alt="Check.svg">
+                  <img (click)="resetSearchState(); selectedRooms = []; selRoomsWithCategories = null" [src]="'./assets/Cancel (Navy).svg'" width="15" #fieldIcon alt="Check.svg">
                 </div>
               </div>
             </div>
@@ -68,7 +68,7 @@
                   <div style="color: #7F879D" *ngIf="selectedDate">{{ dateText }}</div>
                 </div>
                 <div class="reset-icon" *ngIf="dchip.hovered && selectedDate">
-                  <img (click)="selectedDate = null; adminCalendarOprions = null" [src]="'./assets/Cancel (Navy).svg'" width="15" #fieldIcon alt="Check.svg">
+                  <img (click)="resetSearchState(); selectedDate = null; adminCalendarOprions = null" [src]="'./assets/Cancel (Navy).svg'" width="15" #fieldIcon alt="Check.svg">
                 </div>
               </div>
             </div>
