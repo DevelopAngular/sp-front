@@ -8,7 +8,7 @@
     </div>
     <div *ngIf="isStaff && !user.isAssistant()" class="teacherNav">
       <div *ngFor="let button of buttons" class="teacherNav_tab">
-        <ng-container *ngIf="hasRoles(button.requiredRoles)">
+        <ng-container *ngIf="hasRoles(button.requiredRoles) && buttonVisibility(button)">
           <app-nav-button
             [selected]="tab === button.route"
             [content]="button.title"

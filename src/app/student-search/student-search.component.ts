@@ -116,35 +116,32 @@ export class StudentSearchComponent implements OnInit {
   }
 
   onSearch(search: string) {
-    if (search !== '') {
-      if (this.type === 'alternative') {
-        this.students = this.userService.searchProfile(this.role, 50, encodeURI(search))
-          .toPromise()
-          .then((paged: any) => {
-            // console.log('PAGED RESULT >>>', paged);
-            this.showDummy = !!paged.results.length;
-            return this.removeDuplicateStudents(paged.results);
-          });
-      } else if ('gsuite') {
-        this.pending$.next(true);
-        this.students = this.userService.searchProfileAll(search, this.type, this.role.split('_')[this.role.split('_').length - 1])
-          .toPromise().then((users: User[]) => {
-            this.pending$.next(false);
-            if (users.length > 0) {
-              this.showDummy = false;
-              return this.removeDuplicateStudents(users);
-            } else {
-              this.showDummy = true;
-            }
-          });
+      if (search !== '') {
+          if (this.type === 'alternative') {
+              this.students = this.userService.searchProfile(this.role, 50, encodeURI(search))
+                  .toPromise()
+                  .then((paged: any) => {
+                      // console.log(‘PAGED RESULT >>>’, paged);
+                      this.showDummy = !paged.results.length;
+                      return this.removeDuplicateStudents(paged.results);
+                  });
+          } else if (this.type === 'gsuite') {
+              this.pending$.next(true);
+              this.students = this.userService.searchProfileAll(search, this.type, this.role.split('_')[this.role.split('_').length - 1])
+                .toPromise()
+                .then((users: User[]) => {
+                  this.pending$.next(false);
+                  this.showDummy = !users.length;
+                  return this.removeDuplicateStudents(users);
+              });
+          }
+
+      } else {
+
+          this.students = this.rollUpAfterSelection ? null : of([]).toPromise();
+          this.showDummy = false;
+          this.inputValue$.next('');
       }
-
-    } else {
-
-      this.students = this.rollUpAfterSelection ? null : of([]).toPromise();
-      this.showDummy = false;
-      this.inputValue$.next('');
-    }
   }
   onBlur(event) {
     // console.log(event);

@@ -133,19 +133,23 @@ export class NavbarComponent implements OnInit {
     this.userService.effectiveUser
       .pipe(
         this.loadingService.watchFirst,
-        filter(eu => !!eu),
+        // filter(eu => !!eu),
         switchMap((eu: RepresentedUser) => {
-          this.effectiveUser = eu;
-          this.buttons.forEach((button) => {
-            if (
-              ((this.activeRoute.snapshot as any)._routerState.url === `/main/${button.route}`)
-              &&
-              !this.hasRoles(button.requiredRoles)
-            ) {
-              this.fakeMenu.next(true);
-            }
-          });
-          return this.dataService.getLocationsWithTeacher(this.effectiveUser.user);
+          if (eu) {
+              this.effectiveUser = eu;
+              this.buttons.forEach((button) => {
+                  if (
+                      ((this.activeRoute.snapshot as any)._routerState.url === `/main/${button.route}`)
+                      &&
+                      !this.hasRoles(button.requiredRoles)
+                  ) {
+                      this.fakeMenu.next(true);
+                  }
+              });
+              return this.dataService.getLocationsWithTeacher(this.effectiveUser.user);
+          } else {
+            return this.dataService.getLocationsWithTeacher(this.user);
+          }
         })
       )
       .subscribe((locs): void => {
@@ -154,7 +158,8 @@ export class NavbarComponent implements OnInit {
         } else {
           this.buttonHash.myRoom.hidden = false;
         }
-      })
+      });
+
     this.userService.representedUsers
       .pipe(
         this.loadingService.watchFirst
