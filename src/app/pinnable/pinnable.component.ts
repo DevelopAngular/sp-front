@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { bumpIn } from '../animations';
 import { Pinnable } from '../models/Pinnable';
 import { DomSanitizer } from '../../../node_modules/@angular/platform-browser';
+import {interval} from 'rxjs';
 
 @Component({
   selector: 'app-pinnable',
@@ -50,9 +51,12 @@ export class PinnableComponent implements OnInit {
   @Output()
   onSelectEvent: EventEmitter<Pinnable> = new EventEmitter();
 
+  @Output() clampedEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
+
   restricted: boolean = false;
   buttonDown = false;
   hovered: boolean;
+  intervalId;
 
   constructor(private sanitizer: DomSanitizer) {
 
@@ -102,6 +106,19 @@ export class PinnableComponent implements OnInit {
   onPress(press: boolean) {
     if (!this.disabled) {
       this.buttonDown = press;
+      let count = 100;
+      if (press) {
+        this.intervalId = setInterval(() => {
+          if (count <= 1000) {
+              count += 100;
+          } else {
+            this.clampedEvent.emit(true);
+            clearInterval(this.intervalId);
+          }
+        }, 100);
+      } else {
+        clearInterval(this.intervalId);
+      }
     }
   }
 
