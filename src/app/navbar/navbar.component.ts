@@ -17,12 +17,12 @@ import { SettingsComponent } from '../settings/settings.component';
 import { FavoriteFormComponent } from '../favorite-form/favorite-form.component';
 import { NotificationFormComponent } from '../notification-form/notification-form.component';
 import { LocationsService } from '../services/locations.service';
-import * as _ from 'lodash';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {NotificationService} from '../services/notification-service';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {HttpService} from '../services/http-service';
 import {IntroDialogComponent} from '../intro-dialog/intro-dialog.component';
+import {StorageService} from '../services/storage.service';
 
 declare const window;
 
@@ -49,7 +49,7 @@ export class NavbarComponent implements OnInit {
   effectiveUser: RepresentedUser;
   isProcess$ = this.process.ref().state;
   tab: string = 'passes';
-  inboxVisibility: boolean = true;
+  inboxVisibility: boolean = JSON.parse(this.storage.getItem('showInbox'));
 
   isOpenSettings: boolean;
 
@@ -80,7 +80,8 @@ export class NavbarComponent implements OnInit {
       private activeRoute: ActivatedRoute,
       public  notifService: NotificationService,
       public darkTheme: DarkThemeSwitch,
-      private http: HttpService
+      private http: HttpService,
+      private storage: StorageService
   ) {
 
     const navbarEnabled$ = combineLatest(
@@ -126,7 +127,6 @@ export class NavbarComponent implements OnInit {
           this.user = user;
           this.isStaff = user.isAdmin() || user.isTeacher();
           this.showSwitchButton = [user.isAdmin(), user.isTeacher(), user.isStudent()].filter(val => !!val).length > 1;
-          this.dataService.updateInbox(this.tab !== 'settings');
         });
       });
 
@@ -339,8 +339,8 @@ export class NavbarComponent implements OnInit {
   }
 
   inboxClick() {
-    console.log('[Nav Inbox Toggle]', this.inboxVisibility);
     this.inboxVisibility = !this.inboxVisibility;
+    this.storage.setItem('showInbox', this.inboxVisibility);
     this.dataService.updateInbox(this.inboxVisibility);
     if(this.tab!=='passes'){
       this.updateTab('passes');
