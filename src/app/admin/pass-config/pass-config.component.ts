@@ -88,15 +88,16 @@ export class PassConfigComponent implements OnInit, OnDestroy {
         switchMap((location: Location) => {
           return zip(this.pinnables$, of(location));
         })
-      ).subscribe((result) => {
-        console.log(result);
-
-
-        const [pinnables, location] = result;
-        this.forceSelectedLocation = location;
-        this.pinnable = pinnables.find((pnbl: Pinnable) => pnbl.category === location.category);
-
+      ).subscribe(([pinnables, location]) => {
         console.log(pinnables, location);
+        this.forceSelectedLocation = location;
+        this.pinnable = pinnables.find((pnbl: Pinnable) => {
+            if (pnbl.type === 'location') {
+                return pnbl.location.id === location.id;
+            } else {
+                return pnbl.category === location.category;
+            }
+        });
 
         this.selectPinnable({ action: 'room/folder_edit', selection: this.pinnable });
 
