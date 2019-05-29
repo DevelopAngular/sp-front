@@ -1,7 +1,12 @@
-import {Component, OnInit, Input, ViewChild, ElementRef} from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import {Component, OnInit, Input, ViewChild, ElementRef, HostListener} from '@angular/core';
+import {BehaviorSubject, fromEvent} from 'rxjs';
 import {NextStep} from '../animations';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
+
+export enum KEY_CODE {
+    RIGHT_ARROW = 39,
+    LEFT_ARROW = 37
+}
 
 @Component({
   selector: 'app-pager',
@@ -12,11 +17,21 @@ import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 export class PagerComponent implements OnInit {
 
   @ViewChild('pageContent') pageContent: ElementRef;
+  @ViewChild('left') left: ElementRef;
 
   @Input() page = 1;
   @Input() pages = 2;
 
   @Input() arrowPosition: string = '-27px';
+
+  @HostListener('window:keyup', ['$event'])
+    onKeyUp(event: KeyboardEvent) {
+      if (event.keyCode === KEY_CODE.LEFT_ARROW && this.hideLeftButton.value) {
+        this.leftPaginator();
+      } else if (event.keyCode === KEY_CODE.RIGHT_ARROW && this.hideRightButton.value) {
+        this.RightPaginator();
+      }
+    }
 
   hideRightButton = new BehaviorSubject(false);
   hideLeftButton = new BehaviorSubject(true);
@@ -31,8 +46,6 @@ export class PagerComponent implements OnInit {
   }
 
   ngOnInit() {
-
-
 
     this.frameMotion$ = this.formService.getFrameMotionDirection();
 

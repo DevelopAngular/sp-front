@@ -21,7 +21,7 @@
     </div>
   </div>
   <div class="paginator-container">
-    <div class="paginator-button paginator-button__left" [style.top]="arrowPosition" (click)="leftPaginator()" ><img *ngIf="hideLeftButton.value" class="button-image" [src]="'./assets/Chevron Left (White).svg' | resolveAsset"></div>
+    <div class="paginator-button paginator-button__left" [style.top]="arrowPosition" (click)="leftPaginator()"><img *ngIf="hideLeftButton.value" class="button-image" [src]="'./assets/Chevron Left (White).svg' | resolveAsset"></div>
     <div *ngIf="pages > 1" class="paginator-wrapper">
         <div *ngFor="let $page of $pages" class="pager-page-selector" (click)="DotPagination($page)" [style.background-color]="page===$page?'#FFF':'rgba(255,255,255,0.3)'"></div>
     </div>
