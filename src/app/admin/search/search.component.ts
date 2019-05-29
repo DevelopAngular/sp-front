@@ -265,8 +265,8 @@ export class SearchComponent implements OnInit {
           forStaff: true,
       };
       const dialogRef = this.dialog.open(PassCardComponent, {
-          panelClass: 'teacher-pass-card-dialog-container',
-          backdropClass: 'custom-backdrop',
+          panelClass: 'search-pass-card-dialog-container',
+          backdropClass: 'custom-bd',
           data: data,
       });
   }

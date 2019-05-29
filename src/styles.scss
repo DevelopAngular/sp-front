@@ -101,6 +101,18 @@ body {
   height: 412px;
 }
 
+.search-pass-card-dialog-container .mat-dialog-container {
+  border-radius: 14px;
+  overflow: visible;
+  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  padding: 0;
+  width: 334px;
+  height: 451px;
+  margin-left: 302px !important;
+
+}
+
 .accounts-profiles-dialog{
   margin-left: 302px !important;
 }
