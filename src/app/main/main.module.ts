@@ -53,6 +53,7 @@ import {StudentFooterComponent} from '../create-hallpass-forms/main-hallpass--fo
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {FirstSeenFormComponent} from '../create-hallpass-forms/first-seen-form/first-seen-form.component';
 import {NotificationFormComponent} from '../notification-form/notification-form.component';
+import {WhoYouAreComponent} from '../create-hallpass-forms/main-hallpass--form/student-groups/who-you-are/who-you-are.component';
 
 @NgModule({
   imports: [
@@ -106,6 +107,7 @@ import {NotificationFormComponent} from '../notification-form/notification-form.
     GroupsStep1Component,
     GroupsStep2Component,
     GroupsStep3Component,
+    WhoYouAreComponent,
     DateTimeContainerComponent,
     FormFactorContainerComponent,
     CreateHallpassFormsComponent,

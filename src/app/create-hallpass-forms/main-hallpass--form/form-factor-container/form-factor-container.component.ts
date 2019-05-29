@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import { TimeService } from '../../../services/time.service';
 
 import { FormFactor, Navigation } from '../main-hall-pass-form.component';
@@ -7,6 +7,7 @@ import { Request } from '../../../models/Request';
 import { Invitation } from '../../../models/Invitation';
 import { DataService } from '../../../services/data-service';
 import { Pinnable } from '../../../models/Pinnable';
+import {MAT_DIALOG_DATA} from '@angular/material';
 
 
 
@@ -29,6 +30,7 @@ export class FormFactorContainerComponent implements OnInit {
   constructor(
     private dataService: DataService,
     private timeService: TimeService,
+    @Inject(MAT_DIALOG_DATA) public dialogData: any,
   ) { }
 
   get requestTeachers() {

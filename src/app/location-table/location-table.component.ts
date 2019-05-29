@@ -22,6 +22,7 @@ export interface Paged<T> {
 export class LocationTableComponent implements OnInit {
 
   @Input() category: string;
+  @Input() forKioskMode: boolean = false;
   @Input() placeholder: string;
   @Input() type: string;
   @Input() showStars: string;
@@ -119,6 +120,15 @@ export class LocationTableComponent implements OnInit {
             +((this.type==='location' && this.showFavorites)?'&starred=false':'');
         if (this.mergedAllRooms) {
             this.mergeLocations(url, this.withMergedStars)
+                .pipe(
+                  map((locs: Location[]) => {
+                    if (this.forKioskMode) {
+                      return locs.filter(loc => !loc.restricted);
+                    } else {
+                      return locs;
+                    }
+                  })
+                )
                 .subscribe(res => {
                     this.choices = res
                   if (!this.choices.length) {
@@ -264,7 +274,7 @@ export class LocationTableComponent implements OnInit {
             }));
   }
 
-  filterResults(results: any[]){
+  filterResults(results: any[]) {
     return results.filter(felement => {
       return this.starredChoices.findIndex((ielement) => {
         return ielement.id === felement.id;

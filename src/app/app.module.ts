@@ -53,7 +53,7 @@ import { IntroRouteComponent } from './intro-route/intro-route.component';
 import { IntroDialogComponent } from './intro-dialog/intro-dialog.component';
 import {filter, map, pairwise, tap} from 'rxjs/operators';
 import {ViewportRuler} from '@angular/cdk/overlay';
-
+import {NotKioskModeGuard} from './not-kiosk-mode.guard';
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroRouteComponent, data: { hideSchoolToggleBar: true}},
@@ -76,7 +76,7 @@ const appRoutes: Routes = [
       },
       {
         path: 'admin',
-        canActivate: [AuthenticatedGuard, IsAdminGuard],
+        canActivate: [AuthenticatedGuard, NotKioskModeGuard, IsAdminGuard],
         loadChildren: 'app/admin/admin.module#AdminModule',
         resolve: {currentUser: CurrentUserResolver},
         data: {
@@ -127,7 +127,7 @@ const appRoutes: Routes = [
     SignedOutToastComponent,
     ErrorComponent,
     IntroRouteComponent,
-    IntroDialogComponent
+    IntroDialogComponent,
   ],
   entryComponents: [
     ConsentMenuComponent,

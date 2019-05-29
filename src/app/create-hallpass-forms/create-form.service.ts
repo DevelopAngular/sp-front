@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Pinnable } from '../models/Pinnable';
 import { BehaviorSubject } from 'rxjs';
 import { HallPassesService } from '../services/hall-passes.service';
+import {map} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -23,10 +24,19 @@ export class CreateFormService {
     this.frameMotionDirection$ = new BehaviorSubject(this.transition);
   }
 
-  getPinnable() {
+  getPinnable(filter?: boolean) {
     return this.hallPassService.getPinnables()
-        .toPromise()
-        .then(json => json.map(raw => Pinnable.fromJSON(raw)));
+      .pipe(
+        map((pins) => {
+          if (filter) {
+            return pins.filter((p: Pinnable) => (p.type === 'location' && !p.location.restricted) || p.type === 'category');
+          } else {
+            return pins;
+          }
+        })
+      )
+      .toPromise()
+      .then(json => json.map(raw => Pinnable.fromJSON(raw)));
   }
 
   seen() {

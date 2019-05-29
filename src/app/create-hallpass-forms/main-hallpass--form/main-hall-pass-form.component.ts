@@ -97,7 +97,9 @@ export class MainHallPassFormComponent implements OnInit {
       data: {
         selectedGroup: null,
         selectedStudents: [],
-        direction: {},
+        direction: {
+          from: this.dialogData['kioskModeRoom'] || null
+        },
       },
       forInput: this.dialogData['forInput'] || false,
       forLater: this.dialogData['forLater']
@@ -108,18 +110,18 @@ export class MainHallPassFormComponent implements OnInit {
         if (this.dialogData['forLater']) {
           if (this.dialogData['forStaff']) {
             this.FORM_STATE.step = 2;
-          } else {
-            this.FORM_STATE.step = 1;
-          }
-          if ( this.dialogData['forStaff'] ) {
+            this.FORM_STATE.state = this.dialogData['kioskModeRoom'] ? 4 : 1;
             this.FORM_STATE.formMode.formFactor = FormFactor.Invitation;
           } else {
+            this.FORM_STATE.step = 1;
             this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
           }
         } else {
           this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
           if ( this.dialogData['forStaff'] ) {
+            // debugger
             this.FORM_STATE.step = 2;
+            this.FORM_STATE.state = this.dialogData['kioskModeRoom'] ? 4 : 1;
           } else {
             this.FORM_STATE.step = 3;
           }
@@ -208,8 +210,13 @@ export class MainHallPassFormComponent implements OnInit {
           this.formSize.height =  `500px`;
           break;
         case 2:
-          this.formSize.width =  `700px`;
-          this.formSize.height =  `400px`;
+          if (this.dialogData['kioskModeRoom']) {
+            this.formSize.width =  `425px`;
+            this.formSize.height =  `500px`;
+          } else {
+            this.formSize.width =  `700px`;
+            this.formSize.height =  `400px`;
+          }
           break;
         case 3:
           this.formSize.width =  `425px`;

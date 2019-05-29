@@ -1,6 +1,6 @@
 <div *ngIf="userLoaded" style="height: 100%">
   <div *ngIf="UI" class="my-room-wrapper" [style.width]="calendarToggled?'900px':'550px'">
-    <div class="my-room-left">
+    <div class="my-room-left" *ngIf="!(kioskMode.currentRoom$ | async)">
       <div class="my-room-header">
         <!--<p>{{optionsOpen}} | {{showArrow}}</p>-->
         <div class="selected-teacher"
@@ -35,6 +35,20 @@
           <img class="calendar-icon" [src]="getIcon('./assets/Calendar (Navy).svg') | resolveAsset">
         </div>
         <div class="date-display" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ dateDisplay }}</div>
+      </div>
+
+      <div class="kiosk-mode-button"
+           *ngIf="selectedLocation"
+           [style.background-color]="darkTheme.getBackground('high', true)"
+           (click)="kioskMode.currentRoom$.next(selectedLocation)"
+      >
+        <div class="ds-flex-center-center" [style.color]="darkTheme.getColor()">
+          <img width="20" height="20" class="ds-mr-10" [src]="darkTheme.getIcon({iconName: 'Tablet', darkFill: 'White', lightFill: 'Navy'})" alt="Tablet.svg">
+          <span>Enter Kiosk Mode</span>
+        </div>
+        <div class="kiosk-chevron">
+          <img width="20" height="20" [src]="darkTheme.getIcon({iconName: 'Chevron Right'})" alt="Chevron Right.svg">
+        </div>
       </div>
       <div class="my-room-body">
         <app-pass-collection
@@ -75,6 +89,51 @@
             <div class="small-text">There aren't any passes here</div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div class="kiosk-mode-container" *ngIf="(kioskMode.currentRoom$ | async)">
+      <div class="current-pass ds-mb-25">
+        <div *ngIf="(isActivePass$ | async) || (isActiveRequest$ | async); else newPass;" class="center">
+          <app-inline-request-card *ngIf="(isActiveRequest$ | async) && !(isActivePass$ | async)" [request]="currentRequest$ | async"></app-inline-request-card>
+          <app-inline-pass-card *ngIf="isActivePass$ | async" [pass]="currentPass$ | async" [isActive]="true"></app-inline-pass-card>
+        </div>
+        <ng-template #newPass>
+          <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'20px'" [icon]="'./assets/Plus (Navy).svg'">
+            <div class="pass-buttons">
+              <app-gradient-button
+                [size]="'editable'"
+                [minWidth]="'121px'"
+                [minHeight]="'74px'"
+                [hoverColor]="'#00b476'"
+                [fontSize]="'18px'"
+                [cursor]="'pointer'"
+                (click)="showMainForm(false)">Now
+              </app-gradient-button>
+              <app-gradient-button
+                [size]="'editable'"
+                [minWidth]="'121px'"
+                [minHeight]="'74px'"
+                [hoverColor]="'#00b476'"
+                [fontSize]="'18px'"
+                [cursor]="'pointer'"
+                (click)="showMainForm(true)">Future
+              </app-gradient-button>
+            </div>
+          </app-display-card>
+        </ng-template>
+      </div>
+      <div class="active-passes">
+        <app-pass-collection
+          [smoothlyUpdating]="true"
+          [isActive]="true"
+          [forStaff]="isStaff"
+          [style.width]="'550px'"
+          [passProvider]="activePasses"
+          [title]="'Active Passes'"
+          [icon]="'./assets/Walking (Navy).svg'"
+          [columns]="4"></app-pass-collection>
+        <!--<app-pass-collection *ngIf="isStaff" [isActive]="true" [forStaff]="isStaff" [style.width]="'400px'" [passProvider]="activePasses" [title]="'Active Passes'" [icon]="'./assets/Walking (Navy).svg'" [columns]="3" (reportFromPassCard)="onReportFromPassCard($event)"></app-pass-collection>-->
       </div>
     </div>
     <!--<div *ngIf="calendarToggled" class="my-room-right">-->

@@ -16,6 +16,7 @@
         [hasLocks]="true"
         [inputWidth]="'240px'"
         [category]="pinnable.category"
+        [forKioskMode]="!!dialogData.kioskModeRoom"
         [invalidLocation]="(fromLocation ? +fromLocation.id : '')"
         [type]="'location'"
         [placeholder]="'Search ' + pinnable.category"

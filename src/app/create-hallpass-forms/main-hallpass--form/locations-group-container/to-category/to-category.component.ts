@@ -1,9 +1,10 @@
-import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, HostListener, Inject, Input, OnInit, Output} from '@angular/core';
 
 import { Navigation } from '../../main-hall-pass-form.component';
 import { Pinnable } from '../../../../models/Pinnable';
 import {CreateFormService} from '../../../create-form.service';
 import {BehaviorSubject} from 'rxjs';
+import {MAT_DIALOG_DATA} from '@angular/material';
 
 @Component({
   selector: 'app-to-category',
@@ -51,7 +52,9 @@ export class ToCategoryComponent implements OnInit {
   }
 
   constructor(
-    private formService: CreateFormService
+    private formService: CreateFormService,
+    @Inject(MAT_DIALOG_DATA) public dialogData: any,
+
   ) { }
 
   get headerGradient() {

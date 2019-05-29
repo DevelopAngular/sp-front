@@ -23,6 +23,7 @@ import {DropdownComponent} from '../dropdown/dropdown.component';
 import {HttpService} from '../services/http-service';
 import {IntroDialogComponent} from '../intro-dialog/intro-dialog.component';
 import {StorageService} from '../services/storage.service';
+import {KioskModeService} from '../services/kiosk-mode.service';
 
 declare const window;
 
@@ -81,7 +82,8 @@ export class NavbarComponent implements OnInit {
       public  notifService: NotificationService,
       public darkTheme: DarkThemeSwitch,
       private http: HttpService,
-      private storage: StorageService
+      private storage: StorageService,
+      public kioskMode: KioskModeService,
   ) {
 
     const navbarEnabled$ = combineLatest(

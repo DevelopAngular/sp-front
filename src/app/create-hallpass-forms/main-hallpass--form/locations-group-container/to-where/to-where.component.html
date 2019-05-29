@@ -31,7 +31,7 @@
           <mat-grid-tile *ngFor="let pinnable of pinnables | async">
             <app-pinnable
                     [valid]="(pinnable.location && location ? pinnable.location.id != location.id : true)"
-                    [forStaff]="isStaff"
+                    [forStaff]="isStaff && !dialogData.kioskModeRoom"
                     [forLater]="!!date"
                     [pinnable]="pinnable"
                     (onSelectEvent)="pinnableSelected($event)"
