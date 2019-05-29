@@ -55,12 +55,14 @@
   }
 
   .to-content {
-    //height: 363px;
     overflow: auto;
     position: relative;
     z-index: 1;
     flex: 1 1 auto;
-
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
     .teacher-rooms, .all-rooms {
       margin: 10px;
     }

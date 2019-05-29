@@ -89,7 +89,6 @@ export class PassConfigComponent implements OnInit, OnDestroy {
           return zip(this.pinnables$, of(location));
         })
       ).subscribe(([pinnables, location]) => {
-        console.log(pinnables, location);
         this.forceSelectedLocation = location;
         this.pinnable = pinnables.find((pnbl: Pinnable) => {
             if (pnbl.type === 'location') {
