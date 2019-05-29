@@ -25,7 +25,7 @@
     <div *ngIf="!showSpinner">
       <span>Sign in with Google</span>
     </div>
-    <div  *ngIf="showSpinner" class="loading-theme_white">
+    <div style="width: 240px; display: flex; justify-content: center" *ngIf="showSpinner" class="loading-theme_white">
       <mat-spinner [diameter]="35"></mat-spinner>
     </div>
   </app-gradient-button>
