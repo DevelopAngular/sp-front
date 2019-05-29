@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import { Pinnable } from '../../../../models/Pinnable';
 import { Navigation } from '../../main-hall-pass-form.component';
 import { CreateFormService } from '../../../create-form.service';
 import { States } from '../locations-group-container.component';
 import {Observable} from 'rxjs';
+import {MAT_DIALOG_DATA} from '@angular/material';
 
 @Component({
   selector: 'app-to-where',
@@ -27,6 +28,7 @@ export class ToWhereComponent implements OnInit {
   public teacherRooms: Pinnable[] = [];
 
   constructor(
+    @Inject(MAT_DIALOG_DATA) public dialogData: any,
     private formService: CreateFormService,
 
   ) {

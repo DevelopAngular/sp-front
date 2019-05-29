@@ -2,6 +2,24 @@ import {BehaviorSubject} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {StorageService} from './services/storage.service';
 
+export type Tone = 'low' | 'middle' | 'high';
+export interface ColorConfig {
+  setting?: any;
+  hover?: boolean;
+  hoveredColor?: string;
+  dark?: string;
+  white?: string;
+}
+export interface IconConfig {
+  iconName?: string;
+  darkFill?: string;
+  lightFill?: string;
+  setting?: any;
+  hover?: boolean;
+  hoveredColor?: string;
+  static?: boolean;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -27,16 +45,7 @@ export class DarkThemeSwitch {
     this.isEnabled$.next(!isDarkTheme);
   }
 
-  getIcon(config: {
-            iconName?: string;
-            darkFill?: string;
-            lightFill?: string;
-            setting?: any;
-            hover?: boolean;
-            hoveredColor?: string;
-            static?: boolean;
-
-  } = {
+  getIcon(config: IconConfig  = {
     darkFill: 'White',
     lightFill: 'Navy'
   }) {
@@ -78,13 +87,7 @@ export class DarkThemeSwitch {
     return `./assets/${config.iconName} (${fill}).svg`;
   }
 
-  getColor(config: {
-    setting?: any;
-    hover?: boolean;
-    hoveredColor?: string;
-    dark?: string;
-    white?: string;
-  } = {
+  getColor(config: ColorConfig = {
     dark: '#FFFFFF',
     white: '#1E194F'
   }) {
@@ -121,7 +124,7 @@ export class DarkThemeSwitch {
 
   }
 
-  getBackground(tone: string, reverce: boolean = false) {
+  getBackground(tone: Tone, reverse: boolean = false) {
     if (this.isEnabled$.value) {
       switch (tone) {
         case 'low':
@@ -136,13 +139,13 @@ export class DarkThemeSwitch {
     } else {
       switch (tone) {
         case 'low':
-          return reverce ? '#7F879D' : '#FFFFFF';
+          return reverse ? '#7F879D' : '#FFFFFF';
           break;
         case 'middle':
-          return reverce ? '#FFFFFF' : '#7F879D';
+          return reverse ? '#FFFFFF' : '#7F879D';
           break;
         case 'high':
-          return reverce ? '#FFFFFF' : '#7F879D';
+          return reverse ? '#FFFFFF' : '#7F879D';
           break;
       }
     }

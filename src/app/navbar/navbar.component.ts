@@ -23,6 +23,7 @@ import {NotificationService} from '../services/notification-service';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {HttpService} from '../services/http-service';
 import {IntroDialogComponent} from '../intro-dialog/intro-dialog.component';
+import {KioskModeService} from '../services/kiosk-mode.service';
 
 declare const window;
 
@@ -80,6 +81,7 @@ export class NavbarComponent implements OnInit {
       private activeRoute: ActivatedRoute,
       public  notifService: NotificationService,
       public darkTheme: DarkThemeSwitch,
+      public kioskMode: KioskModeService,
       private http: HttpService
   ) {
 

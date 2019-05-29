@@ -27,4 +27,11 @@
       (stateChangeEvent)="groupNextStep($event)">
     </app-groups-step3>
   </div>
+
+  <div class="state-transition-none"  *ngIf="currentState === states.WhoAreYou">
+    <app-who-you-are
+      [formState]="FORM_STATE"
+      (stateChangeEvent)="groupNextStep($event)">
+    </app-who-you-are>
+  </div>
 </div>

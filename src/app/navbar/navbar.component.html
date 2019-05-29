@@ -6,32 +6,37 @@
     <div class="heading grow">
       <app-smartpass-logo></app-smartpass-logo>
     </div>
-    <div *ngIf="isStaff && !user.isAssistant()" class="teacherNav">
-      <div *ngFor="let button of buttons" class="teacherNav_tab">
-        <ng-container *ngIf="hasRoles(button.requiredRoles)">
-          <app-nav-button
-            [selected]="tab === button.route"
-            [content]="button.title"
-            [icon]="button.imgUrl"
-            (onClick)="updateTab(button.route)">
-          </app-nav-button>
-        </ng-container>
+    <div style="width: 34%" *ngIf="!(kioskMode.currentRoom$ | async)">
+      <div *ngIf="isStaff && !user.isAssistant()" class="teacherNav">
+        <div *ngFor="let button of buttons" class="teacherNav_tab">
+          <ng-container *ngIf="hasRoles(button.requiredRoles)">
+            <app-nav-button
+              [selected]="tab === button.route"
+              [content]="button.title"
+              [icon]="button.imgUrl"
+              (onClick)="updateTab(button.route)">
+            </app-nav-button>
+          </ng-container>
+        </div>
       </div>
+
+      <div *ngIf="user.isAssistant() && effectiveUser?.roles" class="teacherNav">
+        <!--{{buttons.length}}-->
+        <div *ngFor="let button of buttons" class="teacherNav_tab">
+          <ng-container *ngIf="buttonVisibility(button)">
+            <app-nav-button
+              [selected]="tab === button.route"
+              [content]="button.title"
+              [icon]="button.imgUrl"
+              (onClick)="updateTab(button.route)">
+            </app-nav-button>
+          </ng-container>
+        </div>
+      </div>
+
     </div>
+
     <!--<pre>{{effectiveUser | json}}</pre>-->
-    <div *ngIf="user.isAssistant() && effectiveUser?.roles" class="teacherNav">
-      <!--{{buttons.length}}-->
-      <div *ngFor="let button of buttons" class="teacherNav_tab">
-        <ng-container *ngIf="buttonVisibility(button)">
-          <app-nav-button
-            [selected]="tab === button.route"
-            [content]="button.title"
-            [icon]="button.imgUrl"
-            (onClick)="updateTab(button.route)">
-          </app-nav-button>
-        </ng-container>
-      </div>
-    </div>
     <div class="user-info">
       <div class="ds-mx-10" style="cursor: pointer;" *ngIf="user.isAssistant(); else notAssistant" #target (click)="showTeaches(target)">
         <div class="acting-behalf" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})">Acting on Behalf Of:</div>

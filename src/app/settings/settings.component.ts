@@ -7,8 +7,10 @@ import { User } from '../models/User';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {BUILD_DATE, RELEASE_NAME} from '../../build-info';
 import * as _ from 'lodash';
+import {KioskModeService} from '../services/kiosk-mode.service';
 
 export interface Setting {
+  hidden: boolean;
   gradient: string;
   icon: string;
   action: string | Function;
@@ -29,7 +31,7 @@ export class SettingsComponent implements OnInit {
 
   isSwitch: boolean;
 
-  hoveredProfile: boolean;
+  hoveredMasterOption: boolean;
   hoveredTheme: boolean;
   pressedTheme: boolean;
   hoveredSignout: boolean;
@@ -46,45 +48,53 @@ export class SettingsComponent implements OnInit {
       private _zone: NgZone,
       public loadingService: LoadingService,
       public darkTheme: DarkThemeSwitch,
+      public kioskMode: KioskModeService
 
   ) {
     this.settings.push({
+      'hidden': !!this.kioskMode.currentRoom$.value,
       'gradient': '#E7A700, #EFCE00',
       'icon': 'Star',
       'action': 'favorite',
       'title': 'Favorites'
     });
     this.settings.push({
+      'hidden': !!this.kioskMode.currentRoom$.value,
       'gradient': '#DA2370, #FB434A',
       'icon': 'Notifications',
       'action': 'notifications',
       'title': 'Notifications'
     });
     this.settings.push({
+      'hidden': false,
       'gradient': '#022F68, #2F66AB',
       'icon': 'Moon',
       'action': () => { this.darkTheme.switchTheme(); this.data.darkBackground = !this.data.darkBackground; },
       'title': (this.darkTheme.isEnabled$.value ? 'Light Theme' : 'Dark Theme')
     });
     this.settings.push({
+      'hidden': !!this.kioskMode.currentRoom$.value,
       'gradient': '#03CF31, #00B476',
       'icon': 'Info',
       'action': 'intro',
       'title': 'View Intro'
     });
     this.settings.push({
+      'hidden': false,
       'gradient': '#0B9FC1, #00C0C7',
       'icon': 'Team',
       'action': 'about',
       'title': 'About'
     });
     this.settings.push({
+      'hidden': false,
         'gradient': '#5E4FED, #7D57FF',
         'icon': 'Feedback',
         'action': 'feedback',
         'title': 'Feedback'
     });
     this.settings.push({
+      'hidden': false,
       'gradient': '#F52B4F, #F37426',
       'icon': 'Support',
       'action': 'support',
@@ -104,7 +114,7 @@ export class SettingsComponent implements OnInit {
 
   ngOnInit() {
     this.targetElementRef = this.data['trigger'];
-    this.isSwitch = this.data['isSwitch'];
+    this.isSwitch = this.data['isSwitch'] && !this.kioskMode.currentRoom$.value;
 
     this.updateDialogPosition();
     this.dataService.currentUser

@@ -10,7 +10,8 @@ import {delay, filter, map, switchMap} from 'rxjs/operators';
 export enum States {
   SelectStudents = 1,
   CreateGroup = 2,
-  EditGroup = 3
+  EditGroup = 3,
+  WhoAreYou = 4,
 }
 
 @Component({
@@ -22,11 +23,12 @@ export enum States {
 export class GroupsContainerComponent implements OnInit {
 
   @Input() FORM_STATE: Navigation;
+
   @Output() nextStepEvent: EventEmitter<Navigation | { action: string, data: any }> = new EventEmitter<Navigation | { action: string, data: any } >();
 
   updateData$: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   states;
-  currentState: number = 1;
+  currentState: number;
   selectedGroup: StudentList = null;
   groups: StudentList[];
   selectedStudents: User[] = [];
@@ -38,14 +40,18 @@ export class GroupsContainerComponent implements OnInit {
   ) {
 
     this.states = States;
-
     this.groupDTO = new FormGroup({
       title: new FormControl('', {updateOn: 'change'}),
       users: new FormControl(this.selectedStudents, {updateOn: 'change'}),
     });
   }
 
+
   ngOnInit() {
+    if (this.FORM_STATE) {
+
+      this.currentState = this.FORM_STATE.state || 1;
+    }
     this.updateData$.pipe(
       switchMap((evt) => {
         return this.userService.getStudentGroups().pipe(
@@ -100,7 +106,6 @@ export class GroupsContainerComponent implements OnInit {
       case 3:
         this.selectedGroup = evt.data.selectedGroup;
         break;
-
       case 2:
         this.selectedStudents = evt.data.selectedStudents;
         this.groupDTO.get('users').setValue(evt.data.selectedStudents);
@@ -112,4 +117,5 @@ export class GroupsContainerComponent implements OnInit {
     this.currentState = evt.state;
 
   }
+
 }

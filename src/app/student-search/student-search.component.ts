@@ -122,20 +122,16 @@ export class StudentSearchComponent implements OnInit {
           .toPromise()
           .then((paged: any) => {
             // console.log('PAGED RESULT >>>', paged);
-            this.showDummy = !!paged.results.length;
+            this.showDummy = !paged.results.length;
             return this.removeDuplicateStudents(paged.results);
           });
-      } else if ('gsuite') {
+      } else if (this.type === 'gsuite') {
         this.pending$.next(true);
         this.students = this.userService.searchProfileAll(search, this.type, this.role.split('_')[this.role.split('_').length - 1])
           .toPromise().then((users: User[]) => {
             this.pending$.next(false);
-            if (users.length > 0) {
-              this.showDummy = false;
+              this.showDummy = !users.length;
               return this.removeDuplicateStudents(users);
-            } else {
-              this.showDummy = true;
-            }
           });
       }
 

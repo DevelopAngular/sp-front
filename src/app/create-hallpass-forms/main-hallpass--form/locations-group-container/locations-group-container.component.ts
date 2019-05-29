@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import { User } from '../../../models/User';
 import { DataService } from '../../../services/data-service';
@@ -11,6 +11,7 @@ import { LocationsService } from '../../../services/locations.service';
 import {filter, map} from 'rxjs/operators';
 
 import *as _ from 'lodash';
+import {MAT_DIALOG_DATA} from '@angular/material';
 
 export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, message = 5 }
 
@@ -37,9 +38,11 @@ export class LocationsGroupContainerComponent implements OnInit {
   teacherRooms$: Observable<Pinnable[]>;
 
   constructor(
-      private dataService: DataService,
-      private formService: CreateFormService,
-      private locationsService: LocationsService,
+    @Inject(MAT_DIALOG_DATA) public dialogData: any,
+    private dataService: DataService,
+    private formService: CreateFormService,
+    private locationsService: LocationsService,
+
   ) { }
 
   get showDate() {
@@ -91,7 +94,7 @@ export class LocationsGroupContainerComponent implements OnInit {
     // this.FORM_STATE.previousState = 0;
     this.data.fromLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.from ? this.FORM_STATE.data.direction.from : null;
     this.data.toLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.to ? this.FORM_STATE.data.direction.to : null;
-    this.pinnables = this.formService.getPinnable();
+    this.pinnables = this.formService.getPinnable(!!this.dialogData['kioskModeRoom']);
     this.user$ = this.dataService.currentUser;
     this.pinnable = this.FORM_STATE.data.direction ? this.FORM_STATE.data.direction.pinnable : null;
     this.user$.subscribe((user: User) => {

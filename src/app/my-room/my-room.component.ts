@@ -20,6 +20,8 @@ import {LocationsService} from '../services/locations.service';
 import * as _ from 'lodash';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {UserService} from '../services/user.service';
+import {KioskModeService} from '../services/kiosk-mode.service';
+import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -117,9 +119,10 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       public dataService: DataService,
       public dialog: MatDialog,
       public userService: UserService,
+      public kioskMode: KioskModeService
   ) {
     this.setSearchDate(this.timeService.nowDate());
-
+    console.log(this.kioskMode);
     this.testPasses = new BasicPassLikeProvider(testPasses);
 
     const selectedLocationArray$ = this.selectedLocation$.pipe(map(location => location));
@@ -190,7 +193,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
           this.user = cu;
           this.effectiveUser = eu;
-          this.isStaff = cu.isAssistant() ? eu.roles.includes('_profile_teacher') : cu.roles.includes('_profile_teacher');
+          this.isStaff = cu.isAssistant() ? eu.roles.includes('_profile_assistant') : cu.roles.includes('_profile_teacher');
 
           if (this.user.isAssistant() && this.effectiveUser) {
             this.canView = this.effectiveUser.roles.includes('access_teacher_room');
@@ -311,5 +314,18 @@ export class MyRoomComponent implements OnInit, OnDestroy {
         this.selectedLocation$.next(data !== 'all_rooms' ? [data] : this.roomOptions);
       });
     }
+  }
+
+  showMainForm(forLater: boolean): void {
+    const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
+      panelClass: 'main-form-dialog-container',
+      backdropClass: 'custom-backdrop',
+      data: {
+        'forLater': forLater,
+        'forStaff': this.isStaff,
+        'forInput': true,
+        'kioskModeRoom': this.selectedLocation
+      }
+    });
   }
 }
