@@ -50,16 +50,20 @@
     margin-bottom: 40px;
 }
 
+.inbox-content {
+  width: 306px;
+}
+
 .pass-buttons{
     display: flex;
     flex-direction: row;
     //margin-left: 25px;
     justify-content: space-between;
-    width: 258px;
+    width: 301px;
 }
 
 .future-passes, .past-passes, .active-passes {
-    width: 400px;
+    width: 460px;
     //margin-bottom: 40px;
 }
 .requests-or-invitations {
@@ -82,7 +86,7 @@
     transform: translateX(50px);
   }
   100% {
-    width: 312px;
+    width: 351px;
     opacity: 1;
     transform: translateX(0px);
   }
