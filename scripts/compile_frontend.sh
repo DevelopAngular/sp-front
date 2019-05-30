@@ -9,6 +9,7 @@ set -e
 #  yarn install --cache-folder /persistent_volume/yarn_cache
 #else
   echo "Using fresh yarn install"
+  yarn import
   yarn install
 #fi
 
