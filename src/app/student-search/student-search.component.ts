@@ -117,7 +117,7 @@ export class StudentSearchComponent implements OnInit {
   onSearch(search: string) {
     if (search !== '') {
       if (this.type === 'alternative') {
-        this.students = this.userService.searchProfile(this.role, 50, encodeURI(search))
+        this.students = this.userService.searchProfile(this.role, 50, search)
           .toPromise()
           .then((paged: any) => {
             console.log('PAGED RESULT >>>', paged);

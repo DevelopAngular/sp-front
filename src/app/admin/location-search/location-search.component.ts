@@ -30,12 +30,12 @@ export class LocationSearchComponent implements OnInit {
   }
 
   onSearch(search: string) {
-    if(search !=='' )
-      this.locations = this.locationService.searchLocations(5, '&search=' + encodeURI(search)).toPromise().then((paged: Paged<any>) => this.removeDuplicateLocations(paged.results));
-      // this.locations = this.http.get<Paged<any>>('v1/locations?limit=5' + (search === '' ? '' : '&search=' + encodeURI(search))).toPromise().then(paged => this.removeDuplicateLocations(paged.results));
-    else
-      this.locations = null;
-      this.inputValue = '';
+    if (search !== '' ) {
+        this.locations = this.locationService.searchLocations(5, '&search=' + encodeURIComponent(search)).toPromise().then((paged: Paged<any>) => this.removeDuplicateLocations(paged.results));
+    } else {
+        this.locations = null;
+        this.inputValue = '';
+    }
   }
 
   removeLocation(location: Location) {

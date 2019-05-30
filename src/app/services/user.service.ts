@@ -96,6 +96,7 @@ export class UserService {
   }
 
   searchProfile(role?, limit = 5, search?) {
+    search = encodeURIComponent(search);
       return this.http.get<Paged<any>>(`v1/users?${role ? `role=${role}&` : ``}limit=${limit}&search=${search}`);
   }
 
