@@ -11,6 +11,7 @@ set -e
   echo "Using fresh yarn install"
   yarn import
   yarn install --production=false
+  yarn add @angular/cli
 #fi
 
 export PATH="$PATH:$(pwd)/node_modules/.bin"
