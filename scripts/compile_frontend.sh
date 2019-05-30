@@ -8,8 +8,9 @@ set -e
 #
 #  yarn install --cache-folder /persistent_volume/yarn_cache
 #else
-  echo "Using fresh yarn install"
-  yarn install
+  # echo "Using fresh yarn install"
+  # yarn install
+  npm install
 #fi
 
 export PATH="$PATH:$(pwd)/node_modules/.bin"
