@@ -25,6 +25,7 @@
       align-items: center;
       color: $primary-color;
       position: relative;
+      z-index: 10;
       &_title {
         display: flex;
         flex-direction: column;
