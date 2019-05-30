@@ -24,7 +24,7 @@ export class FavoriteFormComponent implements OnInit, OnDestroy {
         this.starChangesIds = stars.map(star => star.id);
       });
 
-    this.dialogRef.updatePosition({top: '120px'});
+    // this.dialogRef.updatePosition({top: '120px'});
   }
 
   ngOnDestroy() {
@@ -38,7 +38,7 @@ export class FavoriteFormComponent implements OnInit, OnDestroy {
   }
 
   onStar(loc: any){
-    console.log(loc.starred, this.starChanges)
+    console.log(loc, this.starChanges)
     if(loc.starred)
       this.addLoc(loc, this.starChanges);
     else

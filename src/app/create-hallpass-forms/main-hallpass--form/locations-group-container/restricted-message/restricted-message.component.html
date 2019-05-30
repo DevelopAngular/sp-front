@@ -1,28 +1,53 @@
 <div class="rest-mes-wrapper">
   <div [ngClass]="headerTransition" [style.background-image]="headerGradient">
-    <img class="back-button back-button-white" [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
+
+
+    <img class="back-button back-button-white" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" (click)="back()">
     <div class="rest-mes-header-text">
-      <img class="search-icon" [src]="'./assets/Message (White).png' | resolveAsset">
-      <div class="text">Message</div>
+      <img class="search-icon" [src]="'./assets/Message (White).svg' | resolveAsset">
+      <div class="text ds-dialog-title-white">Message</div>
     </div>
   </div>
+
+  <div class="selected-teacher-header" *ngIf="formState.forInput || formState.missedRequest">
+    <div class="ds-dialog-subtitle teachers">Sending Pass Request To:&nbsp;
+      <div class="teacher" *ngFor="let teacher of teachersNames; let i = index">
+        <span class="" style="color: #7F879D; font-size: 16px; font-weight: normal; margin-right: 3px">
+          {{ teacher.display_name + (teachersNames.length > 1 && i !== teachersNames.length - 1 ? ', ' : '') + ' ' }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!--<div class="selected-teacher-header" *ngIf="formState.forInput && !formState.forLater && showTeachersHeader">-->
+    <!--<div class="ds-dialog-subtitle teachers">Sending Pass Request To:&nbsp;-->
+      <!--<div class="teacher" *ngFor="let teacher of toLocation.request_teachers">-->
+        <!--<span class="" style="color: #7F879D; font-size: 16px">-->
+          <!--{{ teacher.display_name + (toLocation.request_teachers.length > 1 && i !== toLocation.request_teachers.length - 1 ? ', ' : '') }}-->
+        <!--</span>-->
+      <!--</div>-->
+    <!--</div>-->
+  <!--</div>-->
+
   <div class="content-wrapper">
     <div class="rest-mes-content">
      <textarea
              #messageBox
              class="message-box"
-             [rows]="4"
-             [cols]="30"
              pInputTextarea
+             [maxlength]="160"
              autoResize="autoResize"
-             [placeholder]="'Attach a message for ' + (teacher ? teacher.last_name : '')"
+             [placeholder]="'Attach a message'"
              [formControl]="message"
              [style.width]="'350px'"
-             [style.max-height]="date ? '250px' : '270px'"
+             [style.height]="'88px'"
+             [style.min-height]="'88px'"
+             [style.max-height]="date ? '190px' : '207px'"
+             autofocus
      >
     </textarea>
-      <div class="buttons">
-        <app-gradient-button *ngIf="true"
+      <div class="buttons" *ngIf="formState.forInput || formState.missedRequest">
+        <app-gradient-button
                              [gradient]="'#00B476, #03CF31'"
                              [hoverColor]="'#04CD33'"
                              [cursor]="'pointer'"
@@ -31,21 +56,21 @@
                              [fontSize]="'12px'"
                              (buttonClick)="sendRequest()"
                              class="message-button">
-          {{(message.value ? 'Add Message' : 'Skip')}}
+          {{(message.value ? 'Next' : 'Skip')}}
         </app-gradient-button>
-        <app-gradient-button *ngIf="false"
-                             [gradient]="'#DA2370,#FB434A'"
-                             [hoverColor]="'#DA2370'"
-                             [cursor]="'pointer'"
-                             [minWidth]="'185px'"
-                             [minHeight]="'35px'"
-                             [fontSize]="'14px'"
-                             (buttonClick)="sendRequest()"
-                             class="message-deny-button"
-        >Deny Pass Request</app-gradient-button>
       </div>
     </div>
   </div>
-
-  <app-student-footer [formState]="formState" [date]="date" (changeAnimationDirectionEvent)="onChangeAnimationDirection($event)"></app-student-footer>
+  <app-gradient-button *ngIf="!formState.forInput && !formState.missedRequest"
+                       [style.margin-bottom]="'30px'"
+                       [gradient]="'#DA2370,#FB434A'"
+                       [hoverColor]="'#DA2370'"
+                       [cursor]="'pointer'"
+                       [minWidth]="'181px'"
+                       [minHeight]="'50px'"
+                       [fontSize]="'14px'"
+                       (buttonClick)="sendRequest()"
+                       class="message-deny-button"
+  >Deny Pass Request</app-gradient-button>
+  <app-student-footer *ngIf="formState.forInput || formState.missedRequest" [formState]="formState" [date]="date" (changeAnimationDirectionEvent)="onChangeAnimationDirection($event)"></app-student-footer>
 </div>

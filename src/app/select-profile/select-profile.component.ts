@@ -1,7 +1,7 @@
-import {Component,  OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {User} from '../models/User';
-import {BehaviorSubject} from 'rxjs';
+import { Component, OnInit} from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { User } from '../models/User';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-select-profile',
@@ -26,27 +26,26 @@ export class SelectProfileComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-
     this.route.data.subscribe((_resolved: any) => {
       this.currentUser = _resolved.currentUser;
-
+      console.log(_resolved);
       const userRoles = {
         admin: {
           value: this.currentUser.isAdmin(),
           redirectPath: 'admin',
-          icon: './assets/Gear (Blue).png',
+          icon: './assets/Admin (Navy).svg',
           title: 'Administrator',
         },
         teacher: {
           value: this.currentUser.isTeacher(),
           redirectPath: 'main',
-          icon: './assets/My Room (Blue).png',
+          icon: './assets/Teacher (Navy).svg',
           title: 'Teacher'
         },
         student: {
           value: this.currentUser.isStudent(),
           redirectPath: 'main',
-          icon: './assets/Hallway (Blue).png',
+          icon: './assets/Student (Navy).svg',
           title: 'Student'
         }
       };

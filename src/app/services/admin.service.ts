@@ -30,6 +30,10 @@ export class AdminService {
     return this.http.get('v1/admin/accounts');
   }
 
+  getAccountsWithLimit() {
+    return this.http.get('v1/admin/accounts');
+  }
+
   getDashboardData() {
     return this.http.get('v1/admin/dashboard');
   }
@@ -53,5 +57,9 @@ export class AdminService {
   //// Schools
   getSchools(): Observable<School[]> {
     return this.http.get('v1/schools');
+  }
+
+  updateSchoolSettings(id, settings) {
+    return this.http.patch(`v1/schools/${id}`, settings);
   }
 }

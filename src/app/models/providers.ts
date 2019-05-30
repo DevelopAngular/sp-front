@@ -1,7 +1,6 @@
-import { of } from 'rxjs';
-import { BehaviorSubject } from 'rxjs';
-import { Observable } from 'rxjs';
+import { of ,  BehaviorSubject ,  Observable } from 'rxjs';
 import { PassLike } from './index';
+import {tap} from 'rxjs/operators';
 
 /**
  * Provides an Observable that emits arrays of PassLike objects. This is primarily used
@@ -40,11 +39,13 @@ export class WrappedProvider implements PassLikeProvider {
 
   watch(sort: Observable<string>) {
 
-    return this.parent.watch(sort).do(passes => {
-      if(this.loaded$.value === false)
-        this.loaded$.next(true);
-      this.length$.next(passes.length);
-    });
+    return this.parent.watch(sort)
+      .pipe(
+        tap(passes => {
+          if(this.loaded$.value === false)
+            this.loaded$.next(true);
+          this.length$.next(passes.length);
+      }));
   }
 
 }

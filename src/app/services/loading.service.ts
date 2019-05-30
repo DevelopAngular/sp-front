@@ -1,10 +1,7 @@
-import { Injectable } from '@angular/core';
-import { concat, EMPTY } from 'rxjs';
 
-import 'rxjs/add/operator/scan';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { ReplaySubject } from 'rxjs';
+import {map, scan, tap} from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { concat, EMPTY ,  Observable ,  ReplaySubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +10,7 @@ export class LoadingService {
 
   private changes: ReplaySubject<number> = new ReplaySubject<number>();
 
-  isLoading$ = this.changes.scan((acc, value) => acc + value, 0).map(num => num > 0);
+  isLoading$ = this.changes.pipe(scan((acc, value) => acc + value, 0), map(num => num > 0));
 
   constructor() {
   }

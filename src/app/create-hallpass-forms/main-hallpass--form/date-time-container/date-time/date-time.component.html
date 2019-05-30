@@ -1,67 +1,78 @@
 <div class="date-wrapper">
-    <div class="divider">
-        <img class="back-button" [src]="'./assets/Back Button (Transparent).png' | resolveAsset" (click)="back()">
-        <div class="divider-header">
-            <img class="divider-icon" [src]="'./assets/Scheduled Pass (White).png' | resolveAsset">
-            <div class="divider-text">Select Date & Time</div>
+    <div class="divider" [style.background-image]="gradient">
+        <img class="back-button" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
+        <div class="divider-header"  [ngClass]="{'divider-header':!mock, 'divider-header-mock': mock}">
+            <img class="divider-icon" [src]="'./assets/Future (White).svg' | resolveAsset">
+            <div class="divider-text ds-dialog-title-white">{{ (formState?.forInput ? 'Select': 'Change') }} Date & Time</div>
         </div>
     </div>
-    <div class="date-content">
+    <div class="date-contentt" [ngClass]="{'date-content':!mock, 'date-content-mock': mock}">
         <div class="decline-content" *ngIf="isStaff">
             <div class="toggle-text">
               <div class="toggle-title">Declinable</div>
               <div class="info-text-1">
-                <span>{{'The student ' + (declinable.value ? 'has the option to ' : ' cannot ') + 'decline the pass.'}}</span><br/>
-                <span *ngIf="!declinable.value">You must also select from where the student will be traveling.</span>
-                <span *ngIf="declinable.value">You do not need to know the location from where the student will be traveling.</span>
+                <span>{{'The student ' + (form.get('declinable').value ? 'has the option to ' : ' cannot ') + 'decline the pass.'}}</span><br/>
+                <span *ngIf="!form.get('declinable').value">You must also select from where the student will be traveling.</span>
+                <span *ngIf="form.get('declinable').value">You do not need to know the location from where the student will be traveling.</span>
               </div>
             </div>
                 <div class="toggle">
-                  <div class="onoffswitch">
-                    <input type="checkbox" name="onoffswitch" [formControl]="declinable" class="onoffswitch-checkbox" id="myonoffswitch" checked>
-                    <label class="onoffswitch-label" for="myonoffswitch"></label>
-                  </div>
+                    <app-toggle-input [form]="form" [delimiter]="false" [controlName]="'declinable'" [controlSize]="'small'"></app-toggle-input>
                 </div>
         </div>
         <mat-divider *ngIf="isStaff"></mat-divider>
       <div class="teacher" *ngIf="isStaff">
           <div class="time-picker">
             <div class="time-picker-scaled">
-              <app-date-time-picker [min]="startTime" [_selectedMoment]="requestTime" (onUpdate)="requestTime=$event"></app-date-time-picker>
+              <app-calendar-picker
+                      [width]="240"
+                      [min]="startTime"
+                      [selectedDates]="[requestTime]"
+                      [selectedColor]="selectedColor"
+                      [showYear]="false"
+                      (onSelectDate)="calendarResult($event)">
+              </app-calendar-picker>
+              <!--<app-date-time-picker-->
+                      <!--[min]="startTime"-->
+                      <!--[_selectedMoment]="requestTime"-->
+                      <!--(onUpdate)="requestTime=$event">-->
+              <!--</app-date-time-picker>-->
             </div>
           </div>
-          <div class="next-button">
+          <div style="margin-bottom: 13px">
               <app-gradient-button
                       [gradient]="'#03CF31,#00B476'"
                       [cursor]="'pointer'"
                       [hoverColor]="'#00B476'"
-                      [minWidth]="'104px'"
-                      [minHeight]="'35px'"
+                      [minWidth]="'101px'"
+                      [minHeight]="'40px'"
                       [fontSize]="'14px'"
                       (buttonClick)="next()"
-                      [style.width]="'90px'"
                       [style.margin]="'15px auto'"
               >Next</app-gradient-button>
           </div>
       </div>
       <div class="student" *ngIf="!isStaff">
-          <div class="time-picker">
-            <div class="time-picker-scaled">
-              <app-date-time-picker [min]="startTime" [_selectedMoment]="requestTime" (onUpdate)="requestTime=$event"></app-date-time-picker>
-            </div>
-          </div>
+                <app-calendar-picker
+                        [width]="240"
+                        [min]="startTime"
+                        [selectedColor]="selectedColor"
+                        [selectedDates]="[requestTime]"
+                        [showYear]="false"
+                        (onSelectDate)="calendarResult($event)">
+                </app-calendar-picker>
+              <!--<app-date-time-picker [min]="startTime" [_selectedMoment]="requestTime" (onUpdate)="requestTime=$event"></app-date-time-picker>-->
           <div class="next-button">
               <app-gradient-button
-                      [gradient]="'#03CF31,#00B476'"
+                      [gradient]="colorProfile ? colorProfile.gradient_color : '#03CF31,#00B476'"
                       [cursor]="'pointer'"
-                      [hoverColor]="'#00B476'"
-                      [minWidth]="'104px'"
-                      [minHeight]="'35px'"
+                      [hoverColor]="(colorProfile ? colorProfile.solid_color : '#00B476')"
+                      [minWidth]="'101px'"
+                      [minHeight]="'40px'"
                       [fontSize]="'14px'"
                       (buttonClick)="next()"
-                      [style.width]="'90px'"
                       [style.margin]="'15px auto'"
-              >Next</app-gradient-button>
+              >{{ (formState.resendRequest ? 'Resend Request' : 'Next') }}</app-gradient-button>
           </div>
       </div>
     </div>

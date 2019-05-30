@@ -12,10 +12,12 @@ export class Util{
                         'July', 'Aug', 'Sept',
                         'Oct', 'Nov', 'Dec'];
 
+    static invalidDate(date) {
+        return moment().isSameOrAfter(date);
+    }
+
     static formatDateTime(s: Date, timeOnly?: boolean, utc?: boolean) {
-        let hours = utc ? s.getUTCHours() : s.getHours();
-        // let formattedTime:string = ((hours > 12) ? hours - 12 : hours === 0 ? 12 : hours) + ':' + ((s.getMinutes() < 10) ? '0' : '') + s.getMinutes() + ((hours > 12) ? ' PM' : ' AM');
-        const formattedTime = moment(s).format('hh:mm A');
+        const formattedTime = moment(s).format('h:mm A');
         if(timeOnly)
           return formattedTime;
 

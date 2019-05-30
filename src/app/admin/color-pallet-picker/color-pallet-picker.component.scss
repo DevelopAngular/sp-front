@@ -1,21 +1,21 @@
 .colors {
-  width: 294px;
+  width: 230px;
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
 }
 
 .color-title {
-  font-size: 20px;
-  font-weight: bolder;
+  font-size: 15px;
+  font-weight: bold;
   margin-bottom: 10px;
 }
 
 .pick-color {
   &:nth-child(1) {
-    margin-left: 40px;
+    margin-left: 17px;
   }
   &:nth-child(4) {
-    margin-right: 40px;
+    margin-right: 17px;
   }
 }

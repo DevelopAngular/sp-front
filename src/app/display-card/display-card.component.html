@@ -1,18 +1,18 @@
 ﻿<div class="display-card-wrapper" [style.min-height]="(inbox?'500px':'')" [style.background-color]="backgroundColor">
   <div class="display-card-header justify-content"  [style.margin-bottom]="headerBottomSpace">
     <div class="flexCls">
-      <img *ngIf="!!icon && !inbox" class="display-card-header-icon" [src]="icon | resolveAsset" [style.height]="iconSize" [style.width]="iconSize">
+      <img *ngIf="!!icon && !inbox" class="display-card-header-icon" [src]="getIcon(icon) | resolveAsset" [style.height]="iconSize" [style.width]="iconSize">
 
       <div *ngIf="(!!icon && inbox) || mock" class="inbox-wrapper">
-        <img class="inbox-icon" [src]="'./assets/Inbox Full (Blue).png' | resolveAsset">
+        <img class="inbox-icon" [src]="getIcon('./assets/Inbox (Navy).svg') | resolveAsset">
         <div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0 || mock">
-          <img class="inbox-badge" [src]="'./assets/Inbox Number.png' | resolveAsset">
+          <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">
           <div class="inbox-number">{{ (notificationBadge$ | async) || mock }}</div>
-          <img class="inbox-front" [src]="'./assets/Inbox Front (Blue).png' | resolveAsset">
+          <img class="inbox-front" [src]="getIcon('./assets/Inbox Bottom (Navy).svg') | resolveAsset">
         </div>
       </div>
 
-      <div class="display-card-header-title" [style.font-size]="fontSize">
+      <div class="display-card-header-title" [style.font-size]="fontSize" [style.color]="titleColor">
         {{title}}
       </div>
     </div>
@@ -22,7 +22,7 @@
 
 
   </div>
-  <div [style.background-color]="(hasDivider?'#B5B7BA':'#FFF')" class="display-card-divider"></div>
+  <div [style.background-color]="(hasDivider? '#B5B7BA':'transparent')" class="display-card-divider"></div>
   <div *ngIf="subtitle!=null" [style.font-size]="subtitle_fontSize" class="subtitlecls">
       {{subtitle}}
   </div>

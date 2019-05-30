@@ -1,13 +1,14 @@
-<div class="travel-view-wrapper" [style.justify-content]="(shrink?'unset':'space-around')">
+<div class="travel-view-wrapper" [style.height]="height">
   <div *ngIf="(!(type==='invitation') || forStaff); else originButton;">
-    {{ ((type==='invitation')?(pass?.default_origin?pass?.default_origin.title:"Their Location"):pass?.origin.title) }}
+    {{ showRoomNumber ? ((type==='invitation')?(pass?.default_origin?pass?.default_origin.nameRoom:"Origin") : pass?.origin.nameRoom) :
+    ((type==='invitation')?(pass?.default_origin?pass?.default_origin.title:"Origin"):pass?.origin.title) }}
   </div>
   <ng-template #originButton>
-    <app-card-button (onClick)="changeLocation()" [width]="'130px'" [height]="'68px'" [gradientColor]="pass?.color_profile.gradient_color">
+    <app-card-button (onClick)="changeLocation()" [width]="'135px'" [height]="'65px'" [gradientColor]="pass?.color_profile.gradient_color">
       <div class="origin-button-content" *ngIf="!pass?.default_origin; else hasOrigin;">
-        <img class="origin-button-content-icon" [src]="'./assets/Search (White).png' | resolveAsset">
+        <img class="origin-button-content-icon" [src]="'./assets/Search Normal (White).svg' | resolveAsset">
         <div class="origin-button-content-text">
-          From
+          Origin
         </div>
       </div>
       <ng-template #hasOrigin>
@@ -19,10 +20,10 @@
       </ng-template>
     </app-card-button>
   </ng-template>
-  <img [src]="'./assets/' +(pass?.travel_type==='one_way'?'Arrow':'Arrows Round Trip') +' (White).png' | resolveAsset"
-      [style.height]="(pass?.travel_type==='one_way'?'65px':'65px')" [style.width]="(pass?.travel_type==='one_way'?'66px':'155px')"
-      [style.margin]="(shrink?'15px 0':'-40px')">
+  <img class="arrow" [src]="'./assets/' +(pass?.travel_type==='one_way'?'SP Arrow':'SP Arrow Double') +' (White).svg' | resolveAsset"
+      [style.height]="'55px'" [style.width]="(pass?.travel_type==='one_way'?'56px':'125px')"
+      >
   <div>
-    {{ pass?.destination.title }}
+    {{ showRoomNumber ? pass.destination.nameRoom : pass?.destination.title }}
   </div>
 </div>

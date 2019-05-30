@@ -1,24 +1,29 @@
-<div class="input-wrapper" click="clickAction()" xmlns="http://www.w3.org/1999/html">
+<div class="input-wrapper">
   <div *ngIf="labelText" class="label-wrapper">
-    <img draggable="false" class="label-icon" [src]="'./assets/Search '+(selected?'(Blue)':'(Grey)') +'.png' | resolveAsset">
-    <div class="label-text" [style.color]="(selected?'#1D1A5E':'#7F879D')">{{ labelText }}</div>
+    <img draggable="false" class="label-icon" [src]="labelIcon | resolveAsset">
+    <div class="label-text" [style.color]="labelColor">{{ labelText }}</div>
   </div>
 
   <!--<div *ngIf="selected" class="inputSelector" [style.width]="width"></div>-->
   <div class="field-wrapper" [style.min-width]="minWidth">
-    <div class="input-focus-wrapper" [ngClass]="{'inputSelector': selected === true}">
+    <div class="input-focus-wrapper"
+         [ngClass]="{'inputSelector': selected === true}"
+         [style.width]="width" [style.min-width]="minWidth"
+    >
       <img *ngIf="fieldIcon && (fieldIconPosition === 'left')" class="field-icon"
            [src]="fieldIcon | resolveAsset"
            alt="icon"
            draggable="false">
       <input *ngIf="!chipInput" #input class="input"
+             spellcheck="false"
              [type]="html5type"
              [style.margin]="'0px'"
              [style.width]="width" [style.min-width]="minWidth"
+             [style.box-shadow]="_boxShadow"
              [style.padding]="fieldIconPosition === 'left' ? '0 0 0 45px' : '0 45px 0 15px'"
              [placeholder]="placeholder" [readonly]="type == 'dates'"
              (input)="changeAction(input)" (click)="focusAction(true)" (focusout)="focusAction(false)"
-             [(ngModel)]="value" >
+             [(ngModel)]="value">
 
       <!-- Needs for the cases when this component is used as Chips input-->
 
@@ -29,6 +34,7 @@
              [matChipInputAddOnBlur]="true"
              [style.margin]="'0px'"
              [style.width]="width" [style.min-width]="minWidth"
+             [style.box-shadow]="_boxShadow"
              [style.padding]="fieldIconPosition === 'left' ? '0 0 0 45px' : '0 45px 0 15px'"
              [placeholder]="placeholder" [readonly]="type == 'dates'"
              (input)="changeAction(input)" (click)="focusAction(true)" (focusout)="focusAction(false)"
@@ -44,6 +50,7 @@
            (click)="changeAction(input.nativeElement, true)">
 
       <!--{{input | json }}-->
+      <!--<div *ngFor="let option of test"></div>-->
     </div>
   </div>
 </div>

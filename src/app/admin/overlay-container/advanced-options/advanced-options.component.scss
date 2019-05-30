@@ -1,0 +1,122 @@
+@import '../../../../sp-colors';
+
+.options-wrapper {
+
+  .options-header {
+    display: block;
+    cursor: pointer;
+    .header-text{
+      display: flex;
+      justify-content: space-between;
+      font-size: 16px;
+      font-weight: bold;
+      color: #1F195E;
+      padding: 20px 0px 20px 0px;
+      margin: 0 25px;
+
+
+      .open-arrow {
+        width: 20px;
+        height: 20px;
+        margin-left: 15px;
+      }
+    }
+  }
+
+  .options-content {
+    padding: 10px;
+    margin: 0 25px;
+
+    .content-header {
+      display: flex;
+      align-items: center;
+
+      .text {
+        font-size: 15px;
+        color: #1F195E;
+        font-weight: bold;
+      }
+
+      .support-icon {
+        width: 20px;
+        height: 20px;
+        cursor: help;
+        margin-left: 7px;
+      }
+    }
+
+    .content-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .now-block {
+        width: 440px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .future-block {
+        width: 440px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .unrestricted {
+        color: #7F879D;
+        font-size: 14px;
+      }
+
+      .restriction-toggle {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .title {
+          margin-bottom: 10px;
+          color: $navy;
+          font-size: 14px;
+        }
+      }
+
+      .options {
+        padding-top: 10px;
+        font-size: 14px;
+        .default {
+          color: #7F879D;
+        }
+
+        .any-teacher {
+          color: #7F879D;
+        }
+
+        .all-teacher {
+          display: flex;
+          align-items: center;
+          color: #7F879D;
+        }
+
+        .certain-teacher {
+          .title {
+            color: #7F879D;
+            margin-bottom: 10px;
+          }
+        }
+      }
+    }
+
+    .future-restriction-toggle {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .title {
+        margin-bottom: 10px;
+        color: $navy;
+        font-size: 14px;
+      }
+    }
+  }
+}

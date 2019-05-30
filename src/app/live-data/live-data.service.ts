@@ -1,12 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import { combineLatest, empty, merge, of } from 'rxjs';
-import 'rxjs/add/observable/empty';
-
-import 'rxjs/add/operator/startWith';
-import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import {combineLatest, empty, merge, of, Observable, Subject, BehaviorSubject, ReplaySubject} from 'rxjs';
+import {map, scan, startWith, switchMap} from 'rxjs/operators';
 import { HttpService } from '../services/http-service';
 import { Paged, PassLike } from '../models';
 import { BaseModel } from '../models/base';
@@ -158,7 +153,7 @@ function mergeFilters<T>(filters: FilterFunc<T>[]): FilterFunc<T> {
 /**
  * Types of filters for hall passes.
  */
-export type PassFilterType = { type: 'issuer', value: User } | { type: 'student', value: User } | { type: 'location', value: Location };
+export type PassFilterType = { type: 'issuer', value: User } | { type: 'student', value: User } | { type: 'location', value: Location | Location[] };
 
 export type RequestFilterType =
   { type: 'issuer', value: User }
@@ -203,8 +198,9 @@ export class LiveDataService {
     Observable<ModelType[]> {
 
     // Wrap external events in an object so that we can distinguish event types after they are merged.
-    const wrappedExternalEvents: Observable<ExternalEvent<ExternalEventType>> = config.externalEvents
-      .map(event => (<ExternalEvent<ExternalEventType>>{type: 'external-event', event: event}));
+    const wrappedExternalEvents: Observable<ExternalEvent<ExternalEventType>> = config.externalEvents.pipe(
+      map(event => (<ExternalEvent<ExternalEventType>>{type: 'external-event', event: event}))
+    );
 
     // A subject for loopback events. These are events usually triggered by the postDelayed() function after a delay.
     const loopbackEvents = new Subject<TransformFunc<ModelType>>();
@@ -232,7 +228,7 @@ export class LiveDataService {
       };
     }
 
-    const passEvents: Observable<PollingEventContext<ModelType>> = this.polling.listen().map(wrapPollingEvent);
+    const passEvents: Observable<PollingEventContext<ModelType>> = this.polling.listen().pipe(map(wrapPollingEvent));
 
     /* A merged observable of all event sources and an initial event 'reload' that is
      * used to run the accumulator() function and thereby set `filtered_passes`.
@@ -272,7 +268,7 @@ export class LiveDataService {
     const fullReload$ = merge(
       of('invalidate'),
       this.polling.listen('invalidate'),
-      this.globalReload$.map(() => 'invalidate')
+      this.globalReload$.pipe(map(() => 'invalidate'))
     );
 
     /**
@@ -285,7 +281,7 @@ export class LiveDataService {
       .pipe(
         switchMap(() => this.http.get<Paged<any>>(config.initialUrl)),
         map(rawDecoder),
-        switchMap(items => events.scan<Action<ModelType, ExternalEventType>, State<ModelType>>(accumulator, new State(items))),
+        switchMap(items => events.pipe(scan<Action<ModelType, ExternalEventType>, State<ModelType>>(accumulator, new State(items)))),
         map(state => state.filtered_passes)
       );
   }
@@ -294,14 +290,16 @@ export class LiveDataService {
     return getDateLimits(date);
   }
 
-  watchHallPassesFromLocation(sortingEvents: Observable<HallPassFilter>, filter: Location, date: Date = null): Observable<HallPass[]> {
+  watchHallPassesFromLocation(sortingEvents: Observable<HallPassFilter>, filter: Location[], date: Date = null): Observable<HallPass[]> {
+    const filterIds = filter.map(l => l.id);
+
     const queryFilter: QueryParams = {
       limit: 20,
-      origin: filter.id
+      origin: filterIds
     };
     const filters: FilterFunc<HallPass>[] = [
       makeSchoolFilter(this.http),
-      pass => pass.origin.id === filter.id
+      pass => filterIds.indexOf(pass.origin.id) >= 0
     ];
 
     if (date !== null) {
@@ -335,14 +333,16 @@ export class LiveDataService {
     );
   }
 
-  watchHallPassesToLocation(sortingEvents: Observable<HallPassFilter>, filter: Location, date: Date = null): Observable<HallPass[]> {
+  watchHallPassesToLocation(sortingEvents: Observable<HallPassFilter>, filter: Location[], date: Date = null): Observable<HallPass[]> {
+    const filterIds = filter.map(l => l.id);
+
     const queryFilter: QueryParams = {
       limit: 20,
-      destination: filter.id
+      destination: filterIds
     };
     const filters: FilterFunc<HallPass>[] = [
       makeSchoolFilter(this.http),
-      pass => pass.destination.id === filter.id
+      pass => filterIds.indexOf(pass.destination.id) >= 0
     ];
 
     if (date !== null) {
@@ -395,11 +395,18 @@ export class LiveDataService {
         filters.push(pass => pass.student.id === filter.value.id);
       }
       if (filter.type === 'location') {
-        queryFilter.location = filter.value.id;
-        filters.push(pass => pass.origin.id === filter.value.id || pass.destination.id === filter.value.id);
+        if (Array.isArray(filter.value)) {
+          const locationIds = filter.value.map(l => l.id);
+          queryFilter.location = locationIds;
+          filters.push((pass: HallPass) => (locationIds.indexOf(pass.origin.id) >= 0) || (locationIds.indexOf(pass.destination.id) >= 0));
+        } else {
+          const locationId = filter.value.id;
+          queryFilter.location = locationId;
+          filters.push((pass: HallPass) => pass.origin.id === locationId || pass.destination.id === locationId);
+        }
       }
     }
-
+    // console.log(date);
     if (date !== null) {
       const limits = getDateLimits(date);
       queryFilter.start_time_after = limits.start.toISOString();
@@ -446,9 +453,17 @@ export class LiveDataService {
 
       }
       if (filter.type === 'location') {
-        queryFilter = `&location=${filter.value.id}`;
-        filters.push((pass: HallPass) => pass.origin.id === filter.value.id || pass.destination.id === filter.value.id);
-
+        if (Array.isArray(filter.value)) {
+          const locationIds = filter.value.map(l => l.id);
+          for (const id of locationIds) {
+            queryFilter += `&location=${id}`;
+          }
+          filters.push((pass: HallPass) => (locationIds.indexOf(pass.origin.id) >= 0) || (locationIds.indexOf(pass.destination.id) >= 0));
+        } else {
+          const locationId = filter.value.id;
+          queryFilter = `&location=${locationId}`;
+          filters.push((pass: HallPass) => pass.origin.id === locationId || pass.destination.id === locationId);
+        }
       }
     }
 
@@ -488,9 +503,17 @@ export class LiveDataService {
 
       }
       if (filter.type === 'location') {
-        queryFilter = `&location=${filter.value.id}`;
-        filters.push((pass: HallPass) => pass.origin.id === filter.value.id || pass.destination.id === filter.value.id);
-
+        if (Array.isArray(filter.value)) {
+          const locationIds = filter.value.map(l => l.id);
+          for (const id of locationIds) {
+            queryFilter += `&location=${id}`;
+          }
+          filters.push((pass: HallPass) => (locationIds.indexOf(pass.origin.id) >= 0) || (locationIds.indexOf(pass.destination.id) >= 0));
+        } else {
+          const locationId = filter.value.id;
+          queryFilter = `&location=${locationId}`;
+          filters.push((pass: HallPass) => pass.origin.id === locationId || pass.destination.id === locationId);
+        }
       }
     }
 
@@ -611,9 +634,12 @@ export class LiveDataService {
     }));
 
     const merged$ = combineLatest(
-      passes$.map(passes => passes.length ? passes[0] : null).startWith(null),
-      requests$.map(requests => requests.length ? requests[0] : null).startWith(null),
-      (pass, request) => ({pass: pass, request: request}));
+      passes$
+        .pipe(map(passes => passes.length ? passes[0] : null), startWith(null)),
+      requests$
+        .pipe(map(requests => requests.length ? requests[0] : null), startWith(null)),
+      (pass, request) => ({pass: pass, request: request})
+    );
 
     return merged$.pipe(map(m => {
       if (m.pass) {

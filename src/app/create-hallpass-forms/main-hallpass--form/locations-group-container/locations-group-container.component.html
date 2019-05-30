@@ -59,7 +59,7 @@
       [gradient]="FORM_STATE.data.gradient"
       [teacher]="data.requestTarget"
       [date]="showDate"
-      (resultMessage)="resultMessage($event, !FORM_STATE.forInput)"
+      (resultMessage)="resultMessage($event, !FORM_STATE.forInput && !FORM_STATE.missedRequest)"
     ></app-restricted-message>
   </div>
 

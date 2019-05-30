@@ -1,7 +1,7 @@
-﻿import { Component, OnInit, ElementRef} from '@angular/core';
+import {Component, OnInit, ElementRef, ViewChild} from '@angular/core';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
 import { MatDialog } from '@angular/material';
-import { BehaviorSubject } from 'rxjs';
+import {BehaviorSubject, fromEvent, combineLatest, Observable, of} from 'rxjs';
 import { User } from '../../models/User';
 import { Report } from '../../models/Report';
 import { Pinnable } from '../../models/Pinnable';
@@ -15,7 +15,7 @@ import {Util} from '../../../Util';
 import {map, switchMap, toArray} from 'rxjs/operators';
 import { disableBodyScroll } from 'body-scroll-lock';
 import {AdminService} from '../../services/admin.service';
-import {combineLatest, Observable, of} from 'rxjs';
+import {DarkThemeSwitch} from '../../dark-theme-switch';
 
 
 
@@ -26,6 +26,7 @@ import {combineLatest, Observable, of} from 'rxjs';
 })
 export class HallmonitorComponent implements OnInit {
 
+    @ViewChild('bottomShadow') bottomShadow;
     activePassProvider: WrappedProvider;
     searchQuery$ = new BehaviorSubject('');
     minDate: Date;
@@ -39,7 +40,8 @@ export class HallmonitorComponent implements OnInit {
     rooms: Pinnable[];
 
     selectedStudents: User[] = [];
-    studentreport: Report[]|any[] = [];
+    studentreport: Report[]|any[];
+    pending: boolean = true;
 
     min: Date = new Date('December 17, 1995 03:24:00');
     calendarToggled = false;
@@ -53,6 +55,8 @@ export class HallmonitorComponent implements OnInit {
 
     hasPasses: Observable<boolean> = of(false);
 
+    inactiveIcon: boolean = true;
+
     public reportsDate: Date;
 
     constructor(
@@ -62,15 +66,37 @@ export class HallmonitorComponent implements OnInit {
         private adminService: AdminService,
         private elRef: ElementRef,
         private timeService: TimeService,
+        public darkTheme: DarkThemeSwitch
 
     ) {
       this.activePassProvider = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.searchQuery$));
       this.minDate = this.timeService.nowDate();
       //this.studentreport[0]['id'] = '1';
     }
+  get calendarIcon() {
+
+
+
+    if (this.inactiveIcon) {
+      return this.darkTheme.getIcon({
+        iconName: 'Calendar',
+        lightFill: 'Navy',
+        darkFill: 'White',
+      });
+
+
+    } else {
+      return './assets/Calendar (Blue).svg';
+    }
+//
+//     ( !this.chartsDate ? './assets/Calendar (Navy).svg' : './assets/Calendar (Blue).svg')
+  }
 
   ngOnInit() {
-      disableBodyScroll(this.elRef.nativeElement);
+    // fromEvent(window, 'scroll').subscribe(() => {
+    //
+    // })
+      // disableBodyScroll(this.elRef.nativeElement);
     // this.activePassProvider = new ActivePassProvider(this.liveDataService, this.searchQuery$);
     this.http.globalReload$.subscribe(() => {
       this.getReports();
@@ -109,8 +135,10 @@ export class HallmonitorComponent implements OnInit {
     DR.afterClosed()
       .subscribe((data) => {
         this.activeCalendar = false;
+
       console.log('82 Date ===> :', data.date);
         if (data.date) {
+          this.inactiveIcon = data.date.getDay() === new Date().getDay();
           if ( !this.reportsDate || (this.reportsDate && this.reportsDate.getTime() !== data.date.getTime()) ) {
             this.reportsDate = new Date(data.date);
             console.log(this.reportsDate);
@@ -237,12 +265,15 @@ export class HallmonitorComponent implements OnInit {
       console.log(emit);
   }
   private getReports(date?: Date) {
+    this.pending = true;
+    this.studentreport = [];
     const range = this.liveDataService.getDateRange(date);
     console.log(range);
-    date ? this.adminService.searchReports(range.end.toISOString(), range.start.toISOString()) : this.adminService.getReports()
-      .pipe(
+    const response$ = date ?
+        this.adminService.searchReports(range.end.toISOString(), range.start.toISOString()) :
+        this.adminService.getReports();
+    response$.pipe(
         map((list: any[]) => {
-
           return list.map((report, index) => {
             return {
               student_name: report.student.display_name + ` (${report.student.primary_email.split('@', 1)[0]})`,
@@ -279,6 +310,7 @@ export class HallmonitorComponent implements OnInit {
         toArray()
       )
       .subscribe((list: any[]) => {
+        this.pending = false;
         this.studentreport = list;
       });
   }

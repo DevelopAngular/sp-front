@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { AngularFireMessaging } from '@angular/fire/messaging';
 import { Notification as Notif } from '../models/Notification';
 import { HttpService } from './http-service';
-import { from, ReplaySubject } from 'rxjs';
-import has = Reflect.has;
+
+import {switchMap, take} from 'rxjs/operators';
+import {DeviceDetection} from '../device-detection.helper';
 
 declare var window: any;
 
@@ -19,7 +20,7 @@ export class NotificationService {
    * @return true if the browser supports notifications.
    */
   static get hasSupport() {
-    return typeof window !== 'undefined' && 'Notification' in window;
+    return typeof window !== 'undefined' && 'Notification' in window && !DeviceDetection.isSafari();
   }
 
   /**
@@ -82,8 +83,10 @@ export class NotificationService {
 
   registerNotificationAuth() {
     this.getFireToken()
-      .take(1)
-      .switchMap(token => this.registerToken(token))
+      .pipe(
+        take(1),
+        switchMap(token => this.registerToken(token))
+      )
       .subscribe(registration => {
         this.registration = registration;
         this.listen(true);

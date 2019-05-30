@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { UserService } from '../services/user.service';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-main-page',
@@ -27,7 +28,7 @@ export class MainPageComponent implements OnInit {
     }
 
   shouldShowRouter() {
-    return this.userService.userData.map(u => u.isStudent() || u.isTeacher());
+    return this.userService.userData.pipe(map(u => u.isStudent() || u.isTeacher() || u.isAssistant()));
   }
 
 }

@@ -1,7 +1,9 @@
 :host {
   .date-time-wrapper {
     background-color: #fff;
-    border-radius: 10px;
+    border-radius: 15px;
     overflow: hidden;
+    position: relative;
+    z-index: 5;
   }
 }

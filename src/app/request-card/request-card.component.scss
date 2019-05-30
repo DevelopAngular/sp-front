@@ -1,18 +1,226 @@
-.page-2-wrapper{
-    height: 122px;
+
+
+.request-card-wrapper {
+    width: 335px;
+    border-radius: 14px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: left;
-    scrollbar-face-color: #D6D6D6;
-    scrollbar-track-color: white;
-    overflow: auto;
+    position: relative;
+
+
+  .pass-card-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            width: 291px;
+
+
+            .header-info {
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        .pass-card-header-icon {
+            width: 34px;
+            height: 34px;
+        }
+
+        .pass-card-header-text {
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+            margin-left: 15px;
+
+            .card-subtitle {
+                font-size: 15px;
+                font-weight: normal;
+            }
+        }
+
+        .pass-card-header-close {
+            width: 29px;
+            height: 29px;
+            cursor: pointer;
+        }
+    }
+
+    .request-card-content {
+        height: 325px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+
+        .duration-picker {
+            height: 175px;
+            display: flex;
+            position: relative;
+            flex-direction: column;
+            justify-content: flex-end
+        }
+
+        .button {
+
+            .request-pass-content-text {
+                color: white;
+                font-size: 22px;
+                font-weight: bold;
+            }
+        }
+
+    }
+
+    .request-card-content-modal {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1 1 auto;
+
+        .student-view {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .center-block {
+            display: flex;
+            align-items: center;
+            height: 221px;
+          //position: relative;
+
+            .page-1 {
+                height: 174px;
+                display: flex;
+                align-items: center;
+            }
+            //.page-1, .page-2 {
+            //  position: absolute;
+            //  top: 0;
+            //  left: 0;
+            //  right: 0;
+            //  bottom: 0;
+            //}
+        }
+
+        .bottom-block {
+            height: 102px;
+            color: white;
+            text-align: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: auto;
+
+            .request-description {
+                display: flex;
+                align-items: center;
+                padding: 0 30px;
+                .request-description-icon {
+                    width: 29px;
+                }
+                .request-description-text {
+                    text-align: left;
+                    max-height: 102px;
+                }
+            }
+        }
+
+        .request-card-footer {
+            position: relative;
+            height: 51px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .student-footer {
+                background: rgba(200,200,200,.7);
+                mix-blend-mode: soft-light;
+                border-bottom-left-radius: 15px;
+                border-bottom-right-radius: 15px;
+                overflow: hidden;
+                width: 100%;
+                height: 100%;
+            }
+
+            .student-text {
+                position: absolute;
+                z-index: 10;
+                top: 0;
+                bottom: 0;
+                right: 0;
+                left: 0;
+                color: white;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 17px;
+            }
+        }
+
+        .teacher-view {
+            //height: 324px;
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+
+    mat-divider {
+        background-color: white;
+        width: 291px;
+        opacity: 0.4;
+    }
+
 }
 
-.page-2 {
-    width: 250px;
-}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//.page-2-wrapper{
+//    height: 122px;
+//    display: flex;
+//    flex-direction: column;
+//    align-items: center;
+//    text-align: left;
+//    scrollbar-face-color: #D6D6D6;
+//    scrollbar-track-color: white;
+//    overflow: auto;
+//}
+//
+//.page-2 {
+//    width: 250px;
+//}
+//
 .button-content{
     width: 110px;
     height: 35px;
@@ -25,7 +233,7 @@
     position: relative;
     margin: -35px 0 0 0%;
     font-weight: bold;
-    font-size: 10pt;
+    font-size: 22px;
 }
 
 .request-card-container {
@@ -47,21 +255,12 @@
 }
 
 .request-description{
-    width: 215px;
-    height: inherit;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    position: relative;
-    left: 15px;
-    margin-top: 5px;
     font-weight: bold;
+    font-size: 20px;
 }
 
 .request-description-icon{
-    width: 25px;
-    height: auto;
-    margin-right: 7px;
+    margin-right: 10px;
 }
 
 .request-button-content{
@@ -79,10 +278,10 @@
 }
 
 .button-icon-right{
-    width: 17px;
-    height: 17px;
+    width: 30px;
+    height: 30px;
     position: absolute;
-    right: 10px;
+    right: 20px;
 }
 
 .button-icon-left{
@@ -106,22 +305,26 @@
 }
 
 .resend-button-content-title{
-    font-size: 11pt;
+    font-size: 22px;
+    color: white;
     font-weight: bold;
     padding-bottom: 5px;
 }
 
 .resend-button-content-subtitle{
-    font-size: 10pt;
-    font-weight: 400;
+    font-size: 15px;
+    font-weight: normal;
+    color: white;
 }
 
 .message{
-    font-size: 14px;
-    height: 110px;
-    max-height: 110px;
-    width: 100%;
-    overflow-y: auto;
+    font-size: 16px;
+    width: 225px;
+    text-align: left;
+    padding-top: 20px;
+    overflow: auto;
+    overflow-wrap: break-word;
+
 }
 
 .student-with-edit{
@@ -148,23 +351,23 @@
     background: white;
     border-radius: 2px;
 }
- 
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: #D6D6D6; 
+    background: #D6D6D6;
     border-radius: 2px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-    background: #B6B6B6; 
+    background: #B6B6B6;
 }
 
 .teacher-details{
     width: 100%;
     align-items: center;
     justify-content: center;
-    text-align: center;  
+    text-align: center;
     padding-bottom: 20px;
     margin-top: 70px;
 }
@@ -200,5 +403,4 @@
     border-radius: 0 0 10px 10px;
     color: white;
     font-size: 13px;
-    font-family: 'Helvetica Neue', sans-serif;
 }

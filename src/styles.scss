@@ -3,6 +3,7 @@
 @import "picker.min.css";
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons&style=outline");
 @import "~font-awesome/css/font-awesome.min.css";
+@import "design-system";
 
 html {
   background-color: #FCFDFF;
@@ -12,59 +13,58 @@ html {
 body {
   padding: 0 0;
   margin: 0 0;
-  font-family: "Helvetica Neue", sans-serif;
+  font-family: $primaryFont;
   width: 100%;
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
   box-sizing: content-box !important;
   -webkit-overflow-scrolling: touch;
 }
 
-.header h1 {
-  padding: 0 0;
-  margin: 0 0;
-}
-
-.header {
-  margin: 0 0;
-  font-family: Roboto, sans-serif;
-  color: white;
-  background-color: #252525;
-  text-align: left;
-}
 
 .validationIcon {
   min-width: 20px;
 }
 
+.intro-dialog-container .mat-dialog-container {
+  background-color: transparent;
+  box-shadow: none;
+}
+.intro-backdrop-container {
+  background: rgba(255, 255, 255, .5);
+}
 .custom-dialog-container .mat-dialog-container {
   padding: 0px;
 }
 
 .form-dialog-container .mat-dialog-container {
-  border-radius: 15px;
+  border-radius: 14px;
   overflow: hidden;
   box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
   margin: 0;
   padding: 0;
   scrollbar-face-color: #D6D6D6;
   scrollbar-track-color: white;
+  background-color: transparent;
+}
+
+.form-dialog-container-white .mat-dialog-container {
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  padding: 0;
+  scrollbar-face-color: #D6D6D6;
+  scrollbar-track-color: white;
+  background-color: white;
 }
 
 .main-form-dialog-container .mat-dialog-container {
-  border-radius: 15px;
+  border-radius: 14px;
   background-color: transparent;
   overflow: visible;
-  //box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
-  //width: 100vw !important;
-  //height: 100vh !important;
-  //position: fixed;
-  //top: 0;
-  //left: 0;
-  //display: flex;
-  //align-items: center;
-  //justify-content: center;
-  box-shadow: none;
+  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.5);
+  //box-shadow: none;
   margin: 0;
   padding: 0;
   scrollbar-face-color: #D6D6D6;
@@ -82,7 +82,7 @@ body {
 }
 
 .teacher-pass-card-dialog-container .mat-dialog-container {
-  border-radius: 15px;
+  border-radius: 14px;
   overflow: visible;
   box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
   margin: 0;
@@ -92,7 +92,7 @@ body {
 }
 
 .student-pass-card-dialog-container .mat-dialog-container {
-  border-radius: 15px;
+  border-radius: 14px;
   overflow: visible;
   box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
   margin: 0;
@@ -107,7 +107,7 @@ body {
 .accounts-profiles-dialog .mat-dialog-container{
   border-radius: 10px;
   box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
-  margin: 10px;
+  //margin: 10px;
   padding: 0;
 }
 
@@ -116,11 +116,13 @@ body {
 
 }
 
+
+
 .overlay-dialog .mat-dialog-container{
-  border-radius: 10px;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
   overflow: hidden;
-  margin: 10px;
+  //margin: 10px;
   padding: 0;
 }
 
@@ -166,13 +168,24 @@ body {
 
 .consent-dialog-container .mat-dialog-container {
   @extend .editor-dialog;
-  background-color: rgba(255, 255, 255, 1);
   overflow: visible;
-  text-align: center;
+  padding: 0;
+  background-color: transparent;
+  //text-align: center;
+}
+
+.toasr .mat-dialog-container {
+  padding: 0;
+  border-radius: 9px;
 }
 
 .calendar-dialog-container .mat-dialog-container {
   padding: 0;
+  overflow: visible;
+  box-shadow: 0 3px 20px 0px rgba(0, 0, 0, 0.15);
+  border-radius: 15px;
+  //background-color: red;
+
 }
 
 input:focus{
@@ -215,12 +228,16 @@ textarea:focus {
   background-color: rgba(0, 0, 0, 0);
 }
 
+.white-backdrop {
+  background: rgba(255, 255, 255, 0.5);
+}
+
 .custom-bd {
   background-image: linear-gradient(to right, transparent 302px,rgba(0, 0, 0, 0.3) 0);
 }
 html, body {
   max-width: 100%;
-  overflow-x: hidden;
+  //overflow-x: hidden;
 }
 [routerLink], [routerLink]:focus, [routerLinkActive] {
   outline: none;
@@ -258,9 +275,18 @@ html, body {
 }
 /* added to the source element while its mirror is dragged */
 .gu-transit {
-  opacity: 0.2;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
-  filter: alpha(opacity=20);
+  opacity: 0.0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
 }
 
 //////////////// End Dragula Styles /////////////////
+
+
+/* === Material Overrides === */
+body {
+  .mat-list-item {
+    font-family: "Helvetica Neue", sans-serif;
+  }
+}
+/* === end === */

@@ -1,24 +1,40 @@
+:host {
+  //width: 100%;
+  //min-width: 280px;
+  //position: relative;
+}
 .student-search-wrapper{
+    margin-top: 10px;
     width: 100%;
     position: relative;
-    //height: 200px;
-    //overflow-y: scroll;
-    //padding: 10px;
+    z-index: 1;
+    min-height: 50px;
+}
+
+.cancel-button {
+  position: absolute;
+  left: 105%;
 }
 
 .input {
-    //margin-top: 20px;
-    margin: 5px 25px;
     display: flex;
     justify-content: center;
-    &:focus {
+    flex-direction: column;
+    box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    border-radius: 20px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    //transition: height .25s ease;
+
+  &:focus {
       outline: none !important;
     }
 }
 
 .round-input-container {
   width: 100%;
-  padding-bottom: 5px;
 }
 
 
@@ -26,7 +42,6 @@ input {
     border-radius: 20px;
     border: 1px solid transparent;
     padding: 0 0 0 15px;
-    font-family: 'Helvetica Neue', sans-serif;
     font-size: 16px;
     height: 40px;
     box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.3);
@@ -41,25 +56,34 @@ mat-input-container.md-input-focused label {
 }
 
 .options-wrapper{
-  position: absolute;
-  top: 40px;
-  left: 0;
-  right: 0;
-    margin: 5px auto 0px auto;
-    //width: 180px;
-    height: 250px;
-    overflow: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  margin: 5px auto 0px auto;
+  width: 100%;
+  //height: 235px;
+  overflow: auto;
+  transition: all .5s ease;
 }
 
-.option-wrapper {
-  width: 180px;
-  padding-top: 10px;
-    cursor: pointer;
-    background-color: #FFFFFF;
+@keyframes appearing {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 
+.no-students-dummy {
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: center;
+  color: #999999;
+  .dummy-image {
+    margin: 15px auto;
+  }
+  .dummy-text {
+    margin: 15px auto;
+    font-size: 17px;
+  }
 }
 
 .option-wrapper:hover {
@@ -68,15 +92,15 @@ mat-input-container.md-input-focused label {
 }
 
 .option-content {
-    font-family: 'Helvetica Neue', sans-serif;
     font-size: 14px;
     font-style: normal;
     font-stretch: normal;
-    line-height: 1.08;
+    line-height: 1.3;
     letter-spacing: 0.3px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    box-sizing: border-box;
     padding: 0 5px 0 5px;
     color: #767676;
 }
@@ -85,6 +109,41 @@ mat-input-container.md-input-focused label {
     width: 100%;
     height: 1px;
     transform: scale(1, 0.5);
-    background-color: #767676;
+    background-color: #D8D8D8;
     margin-top: 10px;
+}
+
+.student-list {
+  width: 250px;
+  margin: 0 auto;
+  padding-top: 60px;
+  &_header {
+    //margin-top: 60px;
+    text-align: center;
+  }
+  &_scrollable {
+    box-sizing: border-box;
+    padding: 0 10px;
+    //max-height: 220px;
+    overflow: auto;
+  }
+  &_item {
+    //@extend .appearing;
+    border-top: 1px solid #D8D8D8;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 5px;
+    color: #555558;
+    font-size: 14px;
+    cursor: pointer;
+    img {
+      cursor: pointer;
+    }
+  }
+}
+.appearing {
+  -webkit-animation: appearing .5s ease ;
+  -o-animation: appearing .5s ease ;
+  animation: appearing .5s ease ;
 }

@@ -1,9 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 
 import { Navigation } from '../../main-hall-pass-form.component';
 import { Pinnable } from '../../../../models/Pinnable';
 import {CreateFormService} from '../../../create-form.service';
-import {BodyShowingUp, HeaderShowingUp} from '../../../../animations';
 import {BehaviorSubject} from 'rxjs';
 
 @Component({
@@ -35,6 +34,20 @@ export class ToCategoryComponent implements OnInit {
   headerTransition = {
     'category-header': false,
     'category-header_animation-back': true
+  };
+
+  shadow: boolean = true;
+
+  @HostListener('scroll', ['$event'])
+  tableScroll(event) {
+      const tracker = event.target;
+      const limit = tracker.scrollHeight - tracker.clientHeight;
+      if (event.target.scrollTop < limit) {
+          this.shadow = true;
+      }
+      if (event.target.scrollTop === limit) {
+          this.shadow = false;
+      }
   }
 
   constructor(
@@ -42,7 +55,7 @@ export class ToCategoryComponent implements OnInit {
   ) { }
 
   get headerGradient() {
-     const colors =  this.animationDirection === 'back' ? '#FFFFFF, #FFFFFF' :  this.formState.data.direction.pinnable.gradient_color;
+     const colors =  this.animationDirection === 'back' ? '#FFFFFF, #FFFFFF' :  this.formState.data.direction.pinnable.color_profile.gradient_color;
      return 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
 

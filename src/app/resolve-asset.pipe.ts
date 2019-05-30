@@ -12,7 +12,7 @@ function joinPaths(paths: string[]): string {
 }
 
 @Pipe({
-  name: 'resolveAsset'
+  name: 'resolveAsset',
 })
 export class ResolveAssetPipe implements PipeTransform {
 

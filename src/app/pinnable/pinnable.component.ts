@@ -45,6 +45,8 @@ export class PinnableComponent implements OnInit {
   @Input()
   selected: boolean = false;
 
+  @Input() disabled: boolean = false;
+
   @Output()
   onSelectEvent: EventEmitter<Pinnable> = new EventEmitter();
 
@@ -57,7 +59,7 @@ export class PinnableComponent implements OnInit {
   }
 
   get shadow(){
-    if(this.hovered && this.valid)
+    if(this.hovered && this.valid && !this.disabled)
       return this.sanitizer.bypassSecurityTrustStyle('0 2px 4px 1px rgba(0, 0, 0, 0.3)');
     else
       return this.sanitizer.bypassSecurityTrustStyle('0 2px 4px 0px rgba(0, 0, 0, 0.1)');
@@ -76,26 +78,31 @@ export class PinnableComponent implements OnInit {
   }
 
   get buttonState() {
-    return this.valid?this.buttonDown ? 'down' : 'up':'up';
+    return this.valid && !this.disabled ? this.buttonDown ? 'down' : 'up' : 'up';
   }
 
   onSelect() {
-    if(this.valid)
+    if (this.valid && !this.disabled)
       this.onSelectEvent.emit(this.pinnable);
   }
 
   getGradient() {
-    if(this.valid){
-      let gradient: string[] = this.pinnable.color_profile.gradient_color.split(',');
+    if (this.buttonDown) {
+      if (this.pinnable.color_profile.pressed_color) {
+        return this.pinnable.color_profile.pressed_color;
+      } else {
+        return this.pinnable.color_profile.gradient_color.split(',')[0];
+      }
+    } else {
+      const gradient: string[] = this.pinnable.color_profile.gradient_color.split(',');
       return this.sanitizer.bypassSecurityTrustStyle('radial-gradient(circle at 73% 71%, ' + gradient[0] + ', ' + gradient[1] + ')');
-    } else{
-      return this.sanitizer.bypassSecurityTrustStyle('radial-gradient(circle at 73% 71%, rgb(203, 213, 229), rgb(203, 213, 229))');
     }
   }
 
   onPress(press: boolean) {
-    this.buttonDown = press;
-    //console.log("[Button State]: ", "The button is " +this.buttonState);
+    if (!this.disabled) {
+      this.buttonDown = press;
+    }
   }
 
 }

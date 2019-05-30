@@ -25,9 +25,13 @@
     }
 }
 
+:host {
+  flex: 1 1 auto;
+}
+
 .hall-monitor-wrapper{
     margin: 40px auto 0;
-    max-width: 600px;
+    max-width: 655px;
 }
 
 .hall-monitor-top{
@@ -71,7 +75,6 @@
     min-height: 40px;
     border-radius: 20px;
     box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
-    font-family: 'Helvetica Neue', sans-serif;
     font-size: 16px;
     padding-left: 15px;
 }
@@ -82,12 +85,7 @@ input {
     height: 40px;
 }
 
-.small-text {
-    color: #767676;
-}
-
 .big-text {
-    @extend .small-text;
     font-size: 16pt;
 }
 
@@ -100,4 +98,15 @@ input {
 .empty-svg {
     margin: 20px 0;
     width: 250px;
+}
+
+.no-content-info {
+  display: flex;
+  justify-content: center;
+  color: #7f879d;
+  //margin-top: 50px;
+  font-size: 16pt;
+  //height: 650px;
+  height: 100%;
+  flex: 1 1 auto;
 }

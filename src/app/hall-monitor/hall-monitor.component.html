@@ -1,4 +1,4 @@
-<div *ngIf="user">
+<div *ngIf="user" style="height: 100%">
   <div *ngIf="canView" class="hall-monitor-wrapper">
     <div class="hall-monitor-top">
       <app-round-input
@@ -25,7 +25,7 @@
         [minWidth]="'185px'"
         [minHeight]="'50px'"
         [fontSize]="'14px'"
-        [leftIcon]="'./assets/Report (White).png'"
+        [leftIcon]="'./assets/Report (White).svg'"
         (buttonClick)="openReportForm()"
       >Report Student(s)</app-gradient-button>
     </div>
@@ -33,17 +33,17 @@
       <app-pass-collection
         [hasSort]="true"
         [isActive]="true"
+        [showEmptyHeader]="true"
         [forStaff]="isStaff"
         [forMonitor]="true"
-        [style.width]="'600px'"
         [passProvider]="activePassProvider"
         [title]="'Active Passes'"
-        [icon]="'./assets/Hallway (Blue).png'"
+        [icon]="'./assets/Walking (Navy).svg'"
         [columns]="4"
         (reportFromPassCard)="onReportFromPassCard($event)"
       >
       </app-pass-collection>
-      <div *ngIf="!(hasPasses | async) && (passesLoaded | async)">
+      <div *ngIf="!(hasPasses | async) && (passesLoaded | async)" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
         <div class="empty-container" *ngIf="inputValue != ''">
           <img class="empty-svg" [src]="'./assets/emptyStates/emptyHallSearch.svg' | resolveAsset" alt="empty-svg">
           <div class="big-text" [style.margin]="'10px 0'">Nothing to See Here</div>
@@ -62,5 +62,9 @@
       </div>
     </div>
   </div>
-  <h3 *ngIf="!canView">You don't have access to this page.</h3>
+  <div class="no-content-info" *ngIf="!canView">
+    <!--<h3 *ngIf="isStaff && !selectedLocation && userLoaded">No rooms</h3>-->
+    <!--<h3 *ngIf="!isStaff && userLoaded">You don't have access to this page</h3>-->
+    <app-restriction-dummy></app-restriction-dummy>
+  </div>
 </div>

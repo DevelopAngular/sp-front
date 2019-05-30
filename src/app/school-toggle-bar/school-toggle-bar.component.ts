@@ -1,20 +1,24 @@
-import {Component, ElementRef, Input, OnInit} from '@angular/core';
+import {Component, ElementRef, Input, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {School} from '../models/School';
 import {HttpService} from '../services/http-service';
 import {StorageService} from '../services/storage.service';
+import {filter, takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-school-toggle-bar',
   templateUrl: './school-toggle-bar.component.html',
   styleUrls: ['./school-toggle-bar.component.scss']
 })
-export class SchoolToggleBarComponent implements OnInit {
+export class SchoolToggleBarComponent implements OnInit, OnDestroy {
 
   @Input() schools: School[];
 
   public currentSchool: School;
+
+  private subscriber$ = new Subject();
 
   constructor(
     private dialog: MatDialog,
@@ -22,9 +26,14 @@ export class SchoolToggleBarComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.http.currentSchool$.subscribe(school => {
+    this.http.currentSchool$.pipe(takeUntil(this.subscriber$), filter(res => !!res)).subscribe(school => {
       this.currentSchool = school;
     });
+  }
+
+  ngOnDestroy() {
+    this.subscriber$.next(null);
+    this.subscriber$.complete();
   }
 
   showOptions(target: HTMLElement) {
@@ -37,6 +46,7 @@ export class SchoolToggleBarComponent implements OnInit {
           'alignSelf': true,
           'schools': this.schools,
           'selectedSchool': this.currentSchool,
+          'heading': 'SELECT SCHOOL',
           'trigger': target
         }
       });

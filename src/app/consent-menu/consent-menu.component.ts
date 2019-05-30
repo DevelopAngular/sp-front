@@ -2,6 +2,7 @@
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef  } from '@angular/material';
 import { DomSanitizer } from '../../../node_modules/@angular/platform-browser';
 import {DataService} from '../services/data-service';
+import {DarkThemeSwitch} from '../dark-theme-switch';
 
 
 type optionsView = 'inline' | 'button';
@@ -25,6 +26,7 @@ export class ConsentMenuComponent implements OnInit {
   ConsentButtonColor: string;
 
   isSort = false;
+  sortMode;
 
   @HostListener('window:resize', ['$event.target'])
     onResize() {
@@ -36,11 +38,13 @@ export class ConsentMenuComponent implements OnInit {
       _matDialogRef: MatDialogRef<ConsentMenuComponent>,
       private sanitizer: DomSanitizer,
       private dataService: DataService,
+      public darkTheme: DarkThemeSwitch
   ) {
     this.header = data['header'];
     this.options = data['options'];
     this.optionsView = data['optionsView'] || 'inline';
-
+    this.isSort = data['isSort'];
+    this.sortMode = data['sortMode'] || 'expiration_time';
     this._matDialogRef = _matDialogRef;
 
     this.triggerElementRef = data['trigger'];
@@ -63,7 +67,7 @@ export class ConsentMenuComponent implements OnInit {
       this._matDialogRef.updatePosition(matDialogConfig.position);
   }
 
-  getColor(option){
+  getColor(option) {
     return this.sanitizer.bypassSecurityTrustStyle(option.color);
   }
 

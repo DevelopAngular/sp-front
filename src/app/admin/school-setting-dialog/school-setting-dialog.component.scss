@@ -1,0 +1,84 @@
+.settings-wrapper {
+  width: 425px;
+  height: 500px;
+
+  .settings-header {
+    height: 70px;
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+
+    .back-button {
+      width: 28px;
+      cursor: pointer;
+      position: absolute;
+      font-size: 15px;
+      font-weight: bold;
+      color: #1F195E;
+      left: 15px;
+
+    }
+
+    .save-button {
+      width: 85px;
+      position: absolute;
+      right: 27px;
+    }
+
+    .settings-header-text {
+      color: #1F195E;
+      font-size: 17px;
+    }
+  }
+
+  .settings-content {
+    height: 370px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .controls-block {
+
+      .control-text {
+        color: #7F879D;
+        font-size: 15px;
+
+        .control-subtext {
+          color: #D3D6DE;
+          font-size: 13px;
+        }
+      }
+
+      .display-room-control {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+
+      .buffer-time-control {
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+
+    .bottom-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #7F879D;
+      font-size: 14px;
+
+      .ask {
+        font-weight: bold;
+      }
+      .support-email {
+
+      }
+    }
+  }
+}

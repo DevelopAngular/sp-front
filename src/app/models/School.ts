@@ -1,7 +1,17 @@
 import { BaseModel } from './base';
 
 export class School extends BaseModel {
-    constructor(public id: string, public  name: string, public my_roles: string[]) {
+    constructor(
+        public display_card_room: boolean,
+        public id: string,
+        public  name: string,
+        public my_roles: string[],
+        public pass_buffer_time: number,
+        public earliest_pass_time?: string,
+        public gsuite_config?: any,
+        public gsuite_hosted_domain?: string,
+        public latest_pass_time?: string
+    ) {
         super();
     }
 
@@ -12,9 +22,23 @@ export class School extends BaseModel {
 
         // console.log(JSON);
         const id: string = '' +JSON['id'],
+            display_card_room: boolean = JSON['display_card_room'],
             name: string = '' +JSON['name'],
-        my_roles: string[] = JSON['my_roles'];
+            my_roles: string[] = JSON['my_roles'],
+            pass_buffer_time: number = JSON['pass_buffer_time'],
+            earliest_pass_time: string = JSON['earliest_pass_time'],
+            gsuite_config: any = JSON['gsuite_config'],
+            gsuite_hosted_domain: string = JSON['gsuite_hosted_domain'],
+            latest_pass_time: string = JSON['latest_pass_time'];
 
-        return new School(id, name, my_roles);
+        return new School(
+            display_card_room,
+            id, name, my_roles,
+            pass_buffer_time,
+            earliest_pass_time,
+            gsuite_config,
+            gsuite_hosted_domain,
+            latest_pass_time
+        );
     }
 }

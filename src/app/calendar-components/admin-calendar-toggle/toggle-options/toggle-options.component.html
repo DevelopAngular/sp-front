@@ -1,0 +1,16 @@
+<div class="option" #cell *ngFor="let option of options; let i = index" (click)="selectedOptions(option.id)"
+     (mouseenter)="cell.hovered = true;"
+     (mouseleave)="cell.hovered = false;"
+     (mousedown)="cell.pressed = true"
+     (mouseup)="cell.pressed = false"
+     [style.background-color]="getBackground(cell)"
+     [style.color]="textColor(cell)"
+>
+  <div class="option-content">
+    <div class="ds-dialog-heading">{{ option.title }}</div>
+    <div class="icon" *ngIf="selectedId === option.id || option.arrowIcon">
+      <img draggable="false" [src]="(selectedId === option.id ? option.selectedIcon : option.arrowIcon) | resolveAsset" alt="option">
+    </div>
+  </div>
+  <mat-divider *ngIf="i !== options.length - 1"></mat-divider>
+</div>

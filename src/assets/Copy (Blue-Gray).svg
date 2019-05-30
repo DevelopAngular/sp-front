@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="150px" height="150px" viewBox="0 0 150 150" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
+    <title>Copy (Blue-Gray)</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Copy-(Blue-Gray)" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icons8-copy" transform="translate(9.000000, 0.000000)" fill="#7F879D" fill-rule="nonzero">
+            <path d="M42,0 C35.37,0 30,5.37 30,12 L30,108 C30,114.63 35.37,120 42,120 L120,120 C126.63,120 132,114.63 132,108 L132,39 C132,37.41 131.370186,35.8858122 130.242186,34.7578128 L97.242186,1.7578128 C96.114186,0.6298122 94.59,0 93,0 L42,0 Z M90,11.4257814 L120.574218,42 L96,42 C92.688,42 90,39.312 90,36 L90,11.4257814 Z M12,30 C5.37,30 0,35.37 0,42 L0,138 C0,144.63 5.37,150 12,150 L90,150 C96.63,150 102,144.63 102,138 L102,132 L42,132 C28.764,132 18,121.236 18,108 L18,30 L12,30 Z" id="Shape"></path>
+        </g>
+    </g>
+</svg>

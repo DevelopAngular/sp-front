@@ -4,7 +4,7 @@
 .nav-wrapper{
     display: flex;
     flex-direction: column;
-    background: white;
+    background-color: white;
     height: 100%;
     width: 303px;
     white-space: nowrap;
@@ -37,7 +37,7 @@
     align-items: center;
     justify-content: space-between;
     background-color: #FFFFFF;
-    box-shadow: -12px -15px 20px 3px #ffF;
+    box-shadow: -12px -15px 20px 3px #FFFFFF;
     right: 15px;
 }
 
@@ -52,13 +52,27 @@
     background-color: rgb(228, 235, 255);
     border-radius: 50%;
     animation: active-route .2s ease forwards;
+    &__dark {
+      background-color: rgb(19, 155, 235);
+      animation: active-route__dark .2s ease forwards;
+    }
 }
+
 @keyframes active-route{
     0%{
       box-shadow: 0 0 0 0px rgb(228, 235, 255);
     }
     100%{
       box-shadow: 0 0 0 10px rgb(228, 235, 255);
+    }
+}
+
+@keyframes active-route__dark{
+    0%{
+      box-shadow: 0 0 0 0px rgb(228, 235, 255);
+    }
+    100%{
+      box-shadow: 0 0 0 10px rgb(19, 155, 235);
     }
 }
 

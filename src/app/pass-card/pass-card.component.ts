@@ -63,6 +63,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   activePage;
 
   performingAction: boolean;
+  isModal: boolean;
 
   isSeen: boolean;
 
@@ -88,6 +89,26 @@ export class PassCardComponent implements OnInit, OnDestroy {
     }
   }
 
+  get gradient() {
+      return 'radial-gradient(circle at 73% 71%, ' + this.pass.color_profile.gradient_color + ')';
+  }
+
+  get studentText() {
+      if (this.formState && this.formState.data.selectedGroup) {
+          return this.formState.data.selectedGroup.title;
+      } else {
+          return (this.selectedStudents ?
+              (this.selectedStudents.length > 2 ?
+                  this.selectedStudents[0].display_name + ' and ' + (this.selectedStudents.length - 1) + ' more' :
+                  this.selectedStudents[0].display_name + (this.selectedStudents.length > 1 ?
+                  ' and ' + this.selectedStudents[1].display_name : '')) : this.pass.student.display_name + ` (${this.studentEmail})`);
+      }
+  }
+
+  get studentEmail() {
+    return this.pass.student.primary_email.split('@', 1)[0];
+  }
+
   get startTime(){
     let s:Date = this.pass['start_time'];
     return Util.formatDateTime(s);
@@ -95,9 +116,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   get closeIcon(){
     if(((this.isActive && this.forStaff) || this.forMonitor)){
-      return './assets/Three dots (Transparent).png';
+      return './assets/Dots (Transparent).svg';
     } else{
-      return './assets/'+(this.forInput?'Back Button ': 'Trash ') + '(Transparent).png';
+      return './assets/'+(this.forInput?'Back Button ': 'Delete ') + '(Transparent).svg';
     }
   }
 
@@ -121,7 +142,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-      if (this.data['pass']) {
+    if (this.data['pass']) {
+      this.isModal = true;
       this.pass = this.data['pass'];
       this.forInput = this.data['forInput'];
       this.isActive = this.data['isActive'];
@@ -136,9 +158,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
       this.selectedStudents = this.students;
     }
 
-
-
-    this.dataService.currentUser
+      this.dataService.currentUser
         .pipe(this.loadingService.watchFirst)
         .subscribe(user => {
           this._zone.run(() => {
@@ -200,7 +220,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
       this.buildPage('Pass Request Sent', 'by ' +this.getUserName(this.pass.student), this.formatDateTime(this.pass.flow_start), (this.pagerPages+1));
       this.buildPage('Pass Request Accepted', 'by ' +this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), (this.pagerPages+1));
     } else if(this.forFuture && this.pass.issuer ) {
-      this.buildPage('Pass Sent', 'by ' +this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), (this.pagerPages+1));
+       this.buildPage('Pass Created', 'by ' +this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), (this.pagerPages+1));
     } else if (this.pass.issuer) {
       this.buildPage('Pass Created', 'by ' +this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), (this.pagerPages+1));
     }
@@ -273,11 +293,12 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
       if((this.isActive && this.forStaff) || this.forMonitor){
 
-        if (!this.user.isAdmin()) {
-          options.push(this.genOption('Report Student','#3D396B','report'));
+        if (this.user.isTeacher()) {
+          options.push(this.genOption('Report Student', '#E32C66', 'report'));
         }
-        options.push(this.genOption('End Pass','#E32C66','end'));
-        header = 'What would you like to do with this pass?';
+        options.push(this.genOption('End Pass', '#E32C66', 'end'));
+        // header = 'What would you like to do with this pass?';
+        header = '';
       } else{
         if (this.forInput) {
           if (this.isSeen) {
@@ -343,7 +364,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
             this.dialogRef.close();
           });
         } else if(action === 'report') {
-          this.dialogRef.close({'report':this.pass.student});
+          this.dialogRef.close({'report': this.pass.student });
         } else if(action === 'end') {
           this.hallPassService.endPass(this.pass.id).subscribe(() => {
             this.dialogRef.close();

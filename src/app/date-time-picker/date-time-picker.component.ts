@@ -46,19 +46,23 @@ export class DateTimePickerComponent implements OnInit, OnDestroy{
     newMoment.setSeconds(0);
     let nhrs = newMoment.getHours();
     let nmins = newMoment.getMinutes();
-    let ohrs = this.default.getHours();
-    let omins = this.default.getMinutes();
-
     let invalid = false;
-    if (this.min) {
-      if (newMoment.getDate() == this.min.getDate() && newMoment.getMonth() == this.min.getMonth()) {
-          invalid = (nhrs < ohrs) || (nhrs == ohrs && nmins < omins);
-      }
+    if (this.default) {
+        let ohrs = this.default.getHours();
+        let omins = this.default.getMinutes();
+
+        if (this.min) {
+            if (newMoment.getDate() == this.min.getDate() && newMoment.getMonth() == this.min.getMonth()) {
+                invalid = (nhrs < ohrs) || (nhrs == ohrs && nmins < omins);
+            }
+        }
     }
 
 
     if (invalid) {
-      this._selectedMoment = this.default;
+      if (this.default) {
+        this._selectedMoment = this.default;
+      }
       console.log('Time Invalid');
     } else{
       this._selectedMoment = newMoment;
@@ -110,9 +114,11 @@ export class DateTimePickerComponent implements OnInit, OnDestroy{
     // this.onUpdate.emit(this._selectedMoment);
 
     console.log('[Date-Time Debug]: ', this._selectedMoment);
-    this._selectedMoment_2ndCal.setMinutes(this._selectedMoment_2ndCal.getMinutes() + 1);
-    this.min_2ndCal.setMinutes(this.min_2ndCal.getMinutes() + 1);
-    this.onUpdate_2ndCal.emit(this._selectedMoment_2ndCal);
+    if (this._selectedMoment_2ndCal && this.min_2ndCal) {
+      this._selectedMoment_2ndCal.setMinutes(this._selectedMoment_2ndCal.getMinutes() + 1);
+      this.min_2ndCal.setMinutes(this.min_2ndCal.getMinutes() + 1);
+      this.onUpdate_2ndCal.emit(this._selectedMoment_2ndCal);
+    }
   }
   ngOnDestroy() {
     this.onUpdate.emit(this._selectedMoment);

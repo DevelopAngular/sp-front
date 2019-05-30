@@ -8,7 +8,6 @@ import { NavButtonComponent } from '../nav-button/nav-button.component';
 import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
 import { PinnableCollectionComponent } from '../pinnable-collection/pinnable-collection.component';
 import { SharedModule } from '../../shared/shared.module';
-// import { AppInputComponent } from '../../app-input/app-input.component';
 import { FormsModule } from '@angular/forms';
 import {
   MatCheckboxModule,
@@ -25,12 +24,13 @@ import {
 import { IconPickerComponent } from '../icon-picker/icon-picker.component';
 import { ColorPalletPickerComponent } from '../color-pallet-picker/color-pallet-picker.component';
 import { TogglePickerComponent } from '../toggle-picker/toggle-picker.component';
-import {ToggleInputComponent} from '../toggle-input/toggle-input.component';
-import {AccountsDialogComponent} from '../accounts-dialog/accounts-dialog.component';
-import {ProfilesSearchComponent} from '../profiles-search/profiles-search.component';
+import { AccountsDialogComponent } from '../accounts-dialog/accounts-dialog.component';
+import { ProfilesSearchComponent } from '../profiles-search/profiles-search.component';
 import { InputHelperDialogComponent } from '../input-helper-dialog/input-helper-dialog.component';
 import { LocationSearchComponent } from '../location-search/location-search.component';
 import { ColorComponent } from '../color-pallet-picker/color/color.component';
+import { AdvancedOptionsComponent } from '../overlay-container/advanced-options/advanced-options.component';
+import {AddExistingRoomComponent} from '../overlay-container/add-existing-room/add-existing-room.component';
 
 @NgModule({
   imports: [
@@ -49,7 +49,6 @@ import { ColorComponent } from '../color-pallet-picker/color/color.component';
     MatTooltipModule,
   ],
   declarations: [
-      ToggleInputComponent,
       ColorPalletPickerComponent,
       DataTableComponent,
       DateInputComponent,
@@ -59,17 +58,18 @@ import { ColorComponent } from '../color-pallet-picker/color/color.component';
       NavButtonComponent,
       OverlayContainerComponent,
       PinnableCollectionComponent,
-      // RoundInputComponent,
       TogglePickerComponent,
-      // AppInputComponent,
       ProfilesSearchComponent,
       LocationSearchComponent,
-      ColorComponent
+      ColorComponent,
+      AdvancedOptionsComponent,
+      AddExistingRoomComponent,
+
   ],
   exports: [
       MatChipsModule,
       MatIconModule,
-      ToggleInputComponent,
+      MatTooltipModule,
       ColorPalletPickerComponent,
       DataTableComponent,
       DateInputComponent,
@@ -79,16 +79,14 @@ import { ColorComponent } from '../color-pallet-picker/color/color.component';
       NavButtonComponent,
       OverlayContainerComponent,
       PinnableCollectionComponent,
-      // RoundInputComponent,
       TogglePickerComponent,
-      // AppInputComponent,
       ProfilesSearchComponent,
       LocationSearchComponent,
-      ColorComponent
+      ColorComponent,
+      AddExistingRoomComponent,
   ],
   entryComponents: [
       AccountsDialogComponent,
-      // AppInputComponent,
       OverlayContainerComponent,
       DateInputComponent,
       InputHelperDialogComponent

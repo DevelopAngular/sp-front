@@ -1,7 +1,27 @@
+.collection-wrapper{
+
+}
+.pinnables {
+  opacity: 0;
+  animation: appearing .5s ease .1s forwards;
+}
+@keyframes appearing {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+
 .collection-header{
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
+    opacity: 0;
+    animation: appearing .5s ease .1s forwards;
 }
 
 .collection-divider{

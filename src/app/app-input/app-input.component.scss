@@ -1,6 +1,7 @@
-﻿.InputWrapper {
+﻿@import '../../sp-colors';
+
+.InputWrapper {
   border-radius: 0.5rem;
-  position: relative;
 }
 
 .InputWrapper label{
@@ -8,23 +9,16 @@
   font-weight:bold;
 }
 
-//.InputWrapper img.ng-star-inserted {
-//  width: 26px;
-//  height: 26px;
-//  margin-left: 1rem;
-//  position: absolute;
-//  top: 35px;
-//  right: 1px;
-//}
-
-
-.success-icon {
-  width: 26px;
-  height: 26px;
-  margin-left: 1rem;
-  position: absolute;
-  top: 35px;
-  right: 1px;
+.input-container {
+  position: relative;
+  .success-icon {
+    width: 26px;
+    height: 26px;
+    position: absolute;
+    top: 8px;
+    bottom: 0;
+    right: 10px;
+  }
 }
 
 .support-icon {
@@ -35,17 +29,17 @@
 }
 
 .tooltip-container {
-  position: relative;
+  //position: relative;
   &__inline {
-    position: absolute;
-    top: 35px;
-    right: 1px;
-    .success-icon {
-      top: 0;
-      left: 0;
-      position: unset;
-      margin-left: 5px;
-    }
+    //position: absolute;
+    //top: 35px;
+    //right: 1px;
+    //.success-icon {
+    //  top: 0;
+    //  left: 0;
+    //  position: unset;
+    //  margin-left: 5px;
+    //}
     .success-icon:hover + .arrow-down-container {
       opacity: 1;
     }
@@ -80,22 +74,19 @@
 
 .InputWrapper input {
   border: 1px solid transparent;
-  background-color: #F8F8F8;
   display: block;
   width: 95%;
-  //padding: .5rem 0;
-  //padding-left: 16px;
   font-size: 1rem;
   line-height: 1.5;
   color: #1D1A5E;
   background-clip: padding-box;
   border-radius: .5rem;
-  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+  transition: border-color .25s ease-in-out, box-shadow .25s ease-in-out, background-color .25s ease-in-out;
   margin-top: 0.5rem;
 }
 
 .InputWrapper input:focus {
-  border: 1px solid #595487;
+  border: 1px solid $navy;
 }
 .clserrorLabel {
   color: red !important;

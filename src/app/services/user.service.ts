@@ -1,13 +1,10 @@
 import { ErrorHandler, Injectable } from '@angular/core';
 
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/publishReplay';
-import { interval } from 'rxjs/observable/interval';
-import { race } from 'rxjs';
-import { Observable } from 'rxjs/Observable';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
+
+
+
+
+import {interval, race, Observable, ReplaySubject, of} from 'rxjs';
 import { SentryErrorHandler } from '../error-handler';
 import { HttpService } from './http-service';
 import { constructUrl } from '../live-data/helpers';
@@ -15,13 +12,21 @@ import { Logger } from './logger.service';
 import { User } from '../models/User';
 import { PollingService } from './polling-service';
 import {AdminService} from './admin.service';
-import {map, switchMap} from 'rxjs/operators';
+import {map, switchMap, take, tap} from 'rxjs/operators';
 import {Paged} from '../models';
+import {School} from '../models/School';
+import {RepresentedUser} from '../navbar/navbar.component';
 
 @Injectable()
 export class UserService {
 
   public userData: ReplaySubject<User> = new ReplaySubject<User>(1);
+
+  /**
+  * Used for acting on behalf of some teacher by his assistant
+  */
+  public effectiveUser: ReplaySubject<RepresentedUser> = new ReplaySubject<RepresentedUser>(1);
+  public representedUsers: ReplaySubject<RepresentedUser[]> = new ReplaySubject<RepresentedUser[]>(1);
 
   constructor(private http: HttpService,
               private pollingService: PollingService,
@@ -34,8 +39,27 @@ export class UserService {
     //   () => console.log('userData complete'));
 
     this.http.globalReload$
-        .pipe(switchMap(() => this.getUser()), map(raw => User.fromJSON(raw)))
-      .subscribe(user => this.userData.next(user));
+        .pipe(
+          switchMap(() => this.getUser()), map(raw => User.fromJSON(raw)),
+          switchMap((user: User) => {
+            if (user.isAssistant()) {
+              return this.getUserRepresented().pipe(map((users: RepresentedUser[]) => {
+                if (users && users.length) {
+                  this.representedUsers.next(users);
+                  this.effectiveUser.next(users[0]);
+                  this.http.effectiveUserId.next(+users[0].user.id);
+                }
+                return user;
+              }));
+            } else {
+                this.representedUsers.next(null);
+                this.effectiveUser.next(null);
+                this.http.effectiveUserId.next(null);
+              return of(user);
+            }
+          })
+        )
+        .subscribe(user => this.userData.next(user));
 
     if (errorHandler instanceof SentryErrorHandler) {
       this.userData.subscribe(user => {
@@ -55,27 +79,92 @@ export class UserService {
   getUser() {
      return this.http.get<User>('v1/users/@me');
   }
-
-  searchProfile(role, limit = 5, search) {
-      return this.http.get<Paged<any>>(`v1/users?role=${role}&limit=${limit}&search=${search}`);
+  getUserRepresented() {
+     return this.http.get<RepresentedUser[]>('v1/users/@me/represented_users');
   }
 
-  searchProfileAll(search) {
-      return this.http.get(`v1/users?search=${search}`);
+  getUserNotification() {
+    return this.http.get('v1/users/@me/notification_settings');
   }
 
+  enableNotification(id) {
+    return this.http.put(`v1/users/@me/notification_settings/${id}`);
+  }
+
+  disableNotification(id) {
+    return this.http.delete(`v1/users/@me/notification_settings/${id}`);
+  }
+
+  searchProfile(role?, limit = 5, search?) {
+      return this.http.get<Paged<any>>(`v1/users?${role ? `role=${role}&` : ``}limit=${limit}&search=${search}`);
+  }
+
+  searchProfileById(id) {
+      return this.http.get<User>(`v1/users/${id}`);
+  }
+
+  searchProfileAll(search, type: string = 'alternative', excludeProfile?: string) {
+
+      switch (type) {
+        case 'alternative':
+          return this.http.get(constructUrl(`v1/users`, {search: search}), );
+        case 'gsuite':
+          return this.http.currentSchool$.pipe(
+            take(1),
+            switchMap((currentSchool: School) => {
+              return this.http.get(constructUrl(`v1/schools/${currentSchool.id}/gsuite_users`, {
+                search: search,
+                profile: excludeProfile
+              }));
+            })
+          );
+      }
+  }
+
+  setUserActivity(id, activity: boolean) {
+      return this.http.patch(`v1/users/${id}/active`, {active: activity});
+  }
+
+  addAccountToSchool(id, user, userType: string, roles: Array<string>) {
+    if (userType === 'gsuite') {
+      return this.http.post(`v1/schools/${id}/add_user`, {
+        type:  'gsuite',
+        email: user.email,
+        profiles: roles
+      });
+    } else {
+
+      return this.http.post(`v1/schools/${id}/add_user`, {
+        type:  'email',
+        email: user.email,
+        profiles: roles
+      });
+    }
+  }
   addUserToProfile(id, role) {
       return this.http.put(`v1/users/${id}/profiles/${role}`);
   }
 
   createUserRoles(id, data) {
-    return this.http.post(`v1/users/${id}/roles`, data);
+    return this.http.patch(`v1/users/${id}/roles`, data);
   }
 
+  deleteUser(id) {
+      return this.http.delete(`v1/users/${id}`);
+  }
   deleteUserFromProfile(id, role) {
       return this.http.delete(`v1/users/${id}/profiles/${role}`);
   }
 
+  getRepresentedUsers(id) {
+    return this.http.get(`v1/users/${id}/represented_users`);
+  }
+  addRepresentedUser(id: number, repr_user: User) {
+    return this.http.put(`v1/users/${id}/represented_users/${repr_user.id}`);
+  }
+  deleteRepresentedUser(id: number, repr_user: User) {
+    return this.http.delete(`v1/users/${id}/represented_users/${repr_user.id}`);
+  }
   getStudentGroups() {
       return this.http.get('v1/student_lists');
   }
@@ -95,22 +184,27 @@ export class UserService {
   getUserWithTimeout(max: number = 10000): Observable<User | null> {
     return race<User | null>(
       this.userData,
-      interval(max).map(() => null)
-    ).take(1);
+      interval(max).pipe(map(() => null))
+    ).pipe(take(1));
   }
 
-  getUsersList(role: string = '', search: string = '') {
+  getUsersList(role: string = '', search: string = '', limit: number = 0) {
 
     const params: any = {};
-    if (role !== '') {
+    if (role !== '' && role !== '_all') {
       params.role = role;
     }
 
     if (search !== '') {
       params.search = search;
     }
+    if (limit) {
+      params.limit = limit;
+    }
 
     return this.http.get<any>(constructUrl('v1/users', params));
   }
-
+  exportUserData(id) {
+    return this.http.get(`v1/users/${id}/export_data`);
+  }
 }

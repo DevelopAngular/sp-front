@@ -1,4 +1,4 @@
-﻿.display-card-wrapper {
+﻿.display-report-cell-wrapper {
   min-width: 308px;
   padding-bottom: 15px;
   border-radius: 10px;
@@ -26,7 +26,6 @@
 
 .display-card-header-title {
   color: #E32C66;
-  font-family: 'Helvetica Neue', sans-serif;
   font-weight: bold;
   margin-right: 20px;
 }
@@ -48,14 +47,14 @@
 
 .righticon {
   white-space: nowrap;
-  color: #767676;
+  //color: #767676;
   //padding: 0 16px 20px 0;
   margin-right: 0;
   //float: right;
 }
 
 .subtitlecls {
-  color: #767676;
+  //color: #767676;
   //padding-left: 16px;
 }
 

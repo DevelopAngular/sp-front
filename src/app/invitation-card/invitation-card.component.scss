@@ -1,5 +1,175 @@
+
+.invitation-card-wrapper {
+    width: 335px;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    .pass-card-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            width: 291px;
+
+            .header-info {
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        .pass-card-header-icon {
+            width: 34px;
+            height: 34px;
+        }
+
+        .pass-card-header-text {
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+            margin-left: 15px;
+
+            .card-subtitle {
+                font-size: 15px;
+                font-weight: normal;
+            }
+        }
+
+        .pass-card-header-close {
+            width: 29px;
+            height: 29px;
+            cursor: pointer;
+        }
+    }
+
+
+    .invitation-card-content {
+        height: 325px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+
+        .duration-picker {
+            height: 175px;
+            display: flex;
+            position: relative;
+            flex-direction: column;
+            justify-content: flex-end
+        }
+
+        .button {
+
+            .button-content-text {
+                color: white;
+                font-size: 22px;
+                font-weight: bold;
+            }
+        }
+
+    }
+
+    .invitation-card-footer {
+        position: relative;
+        height: 51px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .student-footer {
+            background: rgba(200,200,200,.7);
+            mix-blend-mode: soft-light;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+        }
+
+        .student-text {
+            position: absolute;
+            z-index: 10;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 17px;
+        }
+    }
+
+    .invitation-card-content-modal {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .center-block {
+            height: 221px;
+
+            &.center {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .resend-button-content{
+                width: 297px;
+                height: 81px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                user-select: none;
+                cursor: pointer;
+                position: relative;
+                margin: -79px 0 0 0%;
+            }
+
+            .resend-button-content-title{
+                font-size: 22px;
+                color: white;
+                font-weight: bold;
+                padding-bottom: 5px;
+            }
+
+            .resend-button-content-subtitle{
+                font-size: 15px;
+                font-weight: normal;
+                color: white;
+            }
+        }
+
+        .bottom-block {
+            height: 102px;
+            color: white;
+            text-align: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+
+    mat-divider {
+        background-color: white;
+        width: 291px;
+        opacity: 0.4;
+    }
+}
+
+
 .button-content{
-    width: 269px;
+    width: 288px;
     height: 81px;
     display: flex;
     flex-direction: row;
@@ -18,10 +188,14 @@
 }
 
 .button-icon-right{
-    width: 17px;
-    height: 17px;
-    position: absolute;
-    right: 10px;
+    width: 30px;
+    height: 30px;
+    margin-left: 10px;
+}
+
+.get-pass-content-text {
+    font-size: 22px;
+    margin-left: 50px;
 }
 
 .card-body-right{
@@ -34,7 +208,7 @@
 }
 
 .invitation-description{
-    width: 190px;
+    width: 235px;
     display: flex;
     align-items: center;
     position: relative;
@@ -43,21 +217,20 @@
 }
 
 .invitation-description-icon{
-    width: 25px;
-    height: auto;
-    margin-right: 7px;
+    width: 35px;
+    margin-right: 10px;
 }
 
 .invitation-description-text{
     text-align: left;
+    font-size: 20px;
 }
 
 .button-content{
-    width: 269px;
+    width: 288px;
     height: 81px;
     display: flex;
     flex-direction: row;
-    justify-content: center;
     align-items: center;
     user-select: none;
     cursor: pointer;
@@ -70,17 +243,16 @@
     width: 100%;
     align-items: center;
     justify-content: center;
-    text-align: center;  
+    text-align: center;
     padding-bottom: 20px;
     //margin-top: 22px;
 }
 
 .bold{
+    font-size: 22px;
     font-weight: bold;
-    font-size: 19px;
 }
 
 .smaller{
-    font-weight: 400;
-    font-size: 17px;
+    font-size: 16px;
 }

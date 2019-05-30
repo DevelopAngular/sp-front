@@ -2,8 +2,9 @@ import { Component, OnInit, Input, Output, EventEmitter, ElementRef } from '@ang
 import { Pinnable } from '../../models/Pinnable';
 import { MatDialog } from '@angular/material';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
-import {BehaviorSubject, forkJoin, Subject} from 'rxjs';
-import {HallPassesService} from '../../services/hall-passes.service';
+import { BehaviorSubject, forkJoin } from 'rxjs';
+import { HallPassesService } from '../../services/hall-passes.service';
+import {DarkThemeSwitch} from '../../dark-theme-switch';
 
 @Component({
   selector: 'app-pinnable-collection',
@@ -19,6 +20,10 @@ export class PinnableCollectionComponent implements OnInit {
   header: boolean = true;
 
   @Input() resetBulkSelect$: BehaviorSubject<boolean>;
+
+  @Input() width: string = '560px';
+
+  @Input() isEmptyState: boolean = false;
 
   @Output()
   roomEvent: EventEmitter<any> = new EventEmitter();
@@ -36,12 +41,14 @@ export class PinnableCollectionComponent implements OnInit {
   }
 
   get headerButtonIcon(){
-    return (this.selectedPinnables.length < 1 || !this.bulkSelect?'./assets/Create (White).png':null);
+    return (this.selectedPinnables.length < 1 || !this.bulkSelect?'./assets/Plus (White).svg':null);
   }
 
   constructor(
     public dialog: MatDialog,
-    private hallPassService: HallPassesService
+    private hallPassService: HallPassesService,
+    public darkTheme: DarkThemeSwitch
+
   ) {
     // dragulaService.createGroup('pins', {
     //   removeOnSpill: true
@@ -49,10 +56,16 @@ export class PinnableCollectionComponent implements OnInit {
   }
 
   ngOnInit() {
+    // if (!this.pinnables) {
+    //   this.pinnables = [];
+    // }
+
     setTimeout(() => {
       this.pinnableIdArranged = this.pinnables.map(pin => pin.id);
       // console.log(this.pinnableIdArranged);
-
+        if (!this.pinnableIdArranged.length) {
+          this.isEmptyState = true;
+        }
     }, 1000);
     if (this.resetBulkSelect$) {
         this.resetBulkSelect$.subscribe((val: boolean) => {
@@ -103,12 +116,12 @@ export class PinnableCollectionComponent implements OnInit {
       let options = [];
 
       if(this.selectedPinnables.length > 0 && this.bulkSelect){
-        options.push(this.genOption('Bulk Edit Selection','#3D396B','edit'));
-        options.push(this.genOption('New Folder with Selection','#3D396B','newFolder'));
+        options.push(this.genOption('Bulk Edit Selection', this.darkTheme.getColor(), 'edit'));
+        options.push(this.genOption('New Folder with Selection', this.darkTheme.getColor(), 'newFolder'));
         // options.push(this.genOption('Delete Selection','#E32C66','delete'));
       } else{
-        options.push(this.genOption('New Room','#3D396B','newRoom'));
-        options.push(this.genOption('New Folder','#3D396B','newFolder'));
+        options.push(this.genOption('New Room', this.darkTheme.getColor(), 'newRoom'));
+        options.push(this.genOption('New Folder', this.darkTheme.getColor(), 'newFolder'));
       }
 
       const cancelDialog = this.dialog.open(ConsentMenuComponent, {

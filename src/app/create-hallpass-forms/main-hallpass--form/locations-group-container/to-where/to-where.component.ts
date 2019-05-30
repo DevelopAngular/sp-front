@@ -1,7 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Pinnable } from '../../../../models/Pinnable';
 import { Navigation } from '../../main-hall-pass-form.component';
-import {CreateFormService} from '../../../create-form.service';
+import { CreateFormService } from '../../../create-form.service';
+import { States } from '../locations-group-container.component';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-to-where',
@@ -16,15 +18,24 @@ export class ToWhereComponent implements OnInit {
   @Input() isStaff: boolean;
   @Input() date;
   @Input() studentText;
+
   @Output() selectedPinnable: EventEmitter<any> = new EventEmitter<any>();
   @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
 
+  public states;
+
+  public teacherRooms: Pinnable[] = [];
+
   constructor(
-    private formService: CreateFormService
-  ) { }
+    private formService: CreateFormService,
+
+  ) {
+    this.states = States;
+  }
 
   ngOnInit() {
     this.location = this.formState.data.direction ? this.formState.data.direction.from : null;
+    this.teacherRooms = this.formState.data.teacherRooms;
   }
 
   pinnableSelected(pinnable) {
@@ -52,6 +63,8 @@ export class ToWhereComponent implements OnInit {
           this.formState.state -= 1;
         }
       }
+      this.formState.previousState = this.formState.state;
+
       //
       this.backButton.emit(this.formState);
     }, 100);

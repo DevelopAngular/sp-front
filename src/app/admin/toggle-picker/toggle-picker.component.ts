@@ -45,7 +45,7 @@ export class TogglePickerComponent implements OnInit {
       }
 
       switch (typeof this.currentChoose) {
-        case ('object'): {
+        case 'object':
           if (this.currentChoose.includes('round_trip')) {
             this.selectedChoice = 'Round-trip';
           }
@@ -56,8 +56,7 @@ export class TogglePickerComponent implements OnInit {
             this.selectedChoice = 'Both';
           }
           break;
-        }
-        case ('boolean'): {
+        case 'boolean':
           if (this.currentChoose) {
             this.selectedChoice = 'Restricted';
           } else {
@@ -67,7 +66,6 @@ export class TogglePickerComponent implements OnInit {
               this.selectedChoice = this.selectedChoice ? this.selectedChoice : this.choice1;
             }
           }
-        }
       }
 
       if (this.selectedChoice !== undefined) {

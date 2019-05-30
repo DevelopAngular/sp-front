@@ -1,5 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {MatDialog, MatDialogRef} from '@angular/material';
+import {EMPTY, of} from 'rxjs';
+import {delay} from 'rxjs/operators';
 
 @Component({
   selector: 'app-error-toast',
@@ -24,9 +26,14 @@ export class ErrorToastComponent implements OnInit {
   ngOnInit() {
     setTimeout(() => { this.toggleToast = true; }, 250);
   }
-  close() {
+  close(evt: Event) {
     // this.dialogRef.close();
+    evt.stopPropagation();
     this.toggleToast = false;
-    this.closeEvent.emit(false);
+    of(null).pipe(
+      delay(1000)
+    ).subscribe(() => {
+      this.closeEvent.emit(false);
+    });
   }
 }

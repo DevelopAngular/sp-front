@@ -1,28 +1,30 @@
-.to-wrapper {
+.to-wrapper, .to-wrapper-to-date {
   width: 425px;
   height: 500px;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   align-items: center;
   position: relative;
   background-color: #ffffff;
-  border-radius: 15px;
+  border-radius: 14px;
   overflow: hidden;
-  .to-header {
+  .to-header, .to-header-back {
     width: 100%;
-    height: 64px;
+    height: 70px;
+    min-height: 70px;
     display: flex;
     z-index: 10;
     align-items: center;
     position: relative;
     box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
     overflow: hidden;
 
     .back-button {
-      width: 26px;
-      height: 26px;
+      width: 28px;
+      height: 28px;
       margin-left: 20px;
       position: absolute;
       user-select: none;
@@ -35,14 +37,13 @@
       margin: 0 auto;
 
       .search-icon {
-        width: 25px;
-        height: 25px;
-        margin-right: 10px;
+        width: 21px;
+        height: 21px;
+        margin-right: 12px;
       }
 
       .text {
         color: #1F195E;
-        font-family: 'Helvetica Neue', sans-serif;
         font-size: 16px;
         font-weight: bold;
         font-style: normal;
@@ -54,13 +55,18 @@
   }
 
   .to-content {
-    height: 363px;
+    //height: 363px;
     overflow: auto;
     position: relative;
     z-index: 1;
+    flex: 1 1 auto;
 
-    .pin-collection {
-      margin-top: 10px;
+    .teacher-rooms, .all-rooms {
+      margin: 10px;
+    }
+
+    .rooms-title {
+      padding: 5px;
     }
   }
 
@@ -68,7 +74,7 @@
     width: 100%;
     display: flex;
     background-color: white;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 7px 0px 8px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0 7px 0 8px;
     justify-content: center;
     align-items: center;
     z-index: 100;

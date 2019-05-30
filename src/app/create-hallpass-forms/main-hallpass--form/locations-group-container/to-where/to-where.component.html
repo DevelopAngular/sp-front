@@ -1,19 +1,44 @@
-<div class="to-wrapper">
-  <div class="to-header" [style.background-image]="'radial-gradient(circle at 98% 97%, #FFFFFF, #FFFFFF)'">
-    <img class="back-button back-button-grey" [src]="'./assets/Combined Shape.svg' | resolveAsset" (click)="back()">
+<div style="opacity: 1" [ngClass]="{ 'to-wrapper-to-date': formState.forLater && formState.formMode.role === 1, 'to-wrapper': !formState.forLater || formState.formMode.role !== 1}">
+  <div class="" [ngClass]="{'to-header': formState.previousState === states.from || formState.previousStep <= formState.step, 'to-header-back': formState.previousState === states.category || formState.previousStep === 4 }" [style.background-image]="'radial-gradient(circle at 98% 97%, #FFFFFF, #FFFFFF)'">
+    <img class="back-button back-button-grey" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
     <div class="to-header-text">
-      <img class="search-icon" [src]="'./assets/Search (Blue).png' | resolveAsset">
-      <div class="text">To where?</div>
+      <img class="search-icon" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset">
+      <div class="text ds-dialog-title">To where?</div>
     </div>
   </div>
 
   <div class="to-content">
-    <div class="pin-collection">
-      <mat-grid-list class="grid center" cols="3" rowHeight="75px" gutterSize="10px" [style.width]="'395px'">
-        <mat-grid-tile *ngFor="let pinnable of pinnables | async">
-          <app-pinnable [valid]="(pinnable.location && location ? pinnable.location.id != location.id : true)" [forStaff]="isStaff" [forLater]="!!date" [pinnable]="pinnable" (onSelectEvent)="pinnableSelected($event)"></app-pinnable>
-        </mat-grid-tile>
-      </mat-grid-list>
+    <div class="teacher-rooms" *ngIf="isStaff && teacherRooms.length">
+      <div class="rooms-title ds-dialog-subtitle">My Rooms</div>
+      <div class="rooms">
+        <mat-grid-list class="grid center" cols="3" rowHeight="75px" gutterSize="10px" [style.width]="'395px'">
+          <mat-grid-tile *ngFor="let room of teacherRooms">
+            <app-pinnable
+                    [valid]="(room.location && location ? room.location.id != location.id : true)"
+                    [forStaff]="isStaff"
+                    [forLater]="!!date"
+                    [pinnable]="room"
+                    (onSelectEvent)="pinnableSelected($event)"
+            ></app-pinnable>
+          </mat-grid-tile>
+        </mat-grid-list>
+      </div>
+    </div>
+    <div class="all-rooms">
+      <div class="rooms-title ds-dialog-subtitle" *ngIf="isStaff && teacherRooms.length">All Rooms</div>
+      <div class="pin-collection">
+        <mat-grid-list class="grid center" cols="3" rowHeight="75px" gutterSize="10px" [style.width]="'395px'">
+          <mat-grid-tile *ngFor="let pinnable of pinnables | async">
+            <app-pinnable
+                    [valid]="(pinnable.location && location ? pinnable.location.id != location.id : true)"
+                    [forStaff]="isStaff"
+                    [forLater]="!!date"
+                    [pinnable]="pinnable"
+                    (onSelectEvent)="pinnableSelected($event)"
+            ></app-pinnable>
+          </mat-grid-tile>
+        </mat-grid-list>
+      </div>
     </div>
   </div>
 

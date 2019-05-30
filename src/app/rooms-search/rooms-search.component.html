@@ -1,0 +1,106 @@
+<div class="wrapper">
+  <div class="search-input">
+    <app-round-input
+            [style.margin]="'20px' "
+            [minWidth]="'20px auto 5px auto'"
+            [width]="width"
+            [type]="'text'"
+            [placeholder]="placeholder"
+            [fieldIconPosition]="'left'"
+            [closeIcon]="true"
+            [focused]="true"
+            (ontextupdate)="onSearch($event)"
+    ></app-round-input>
+  </div>
+  <div class="content">
+    <div class="selected-rooms mb-10" *ngIf="selectedRooms.length">
+      <div class="header">
+        <div class="title ds-dialog-subtitle">Selected</div>
+        <mat-divider></mat-divider>
+      </div>
+      <div class="locations">
+        <div class="room-container" #sel *ngFor="let room of selectedRooms"
+             (mouseenter)="sel.hovered = true"
+             (mouseleave)="sel.hovered = false"
+             [style.background-color]="getBackground(sel)"
+             [style.color]="textColor(sel)"
+             (click)="remove(room, room.locations)"
+
+        >
+          <div class="location">
+            <div class="title">{{ room.title }}</div>
+            <img [src]="sel.hovered ? './assets/Cancel (Navy).svg' : './assets/Mark (Navy).svg'" width="15" height="15" alt="Check.svg">
+          </div>
+          <mat-divider></mat-divider>
+        </div>
+      </div>
+    </div>
+
+    <div class="search" *ngIf="showSearchResult">
+      <div class="locations">
+        <div class="room-container" #search *ngFor="let room of searchResult"
+             (click)="selected(room, !!room.locations)"
+             (mouseenter)="search.hovered = true"
+             (mouseleave)="search.hovered = false"
+             [style.background-color]="getBackground(search)"
+             [style.color]="textColor(search)"
+
+        >
+          <div class="location">
+            <div class="title">{{ room.title }}</div>
+            <img *ngIf="isSelected(room)" [src]="search.hovered ? './assets/Cancel (Navy).svg' : './assets/Mark (Navy).svg'" width="15" height="15" alt="Check.svg">
+          </div>
+          <mat-divider></mat-divider>
+        </div>
+      </div>
+    </div>
+
+  <div class="folders mb-10" *ngIf="!!categories?.length && !showSearchResult">
+    <div class="header">
+      <div class="title">Folders</div>
+      <mat-divider></mat-divider>
+    </div>
+    <div class="locations">
+      <div class="room-container" #cat *ngFor="let category of categories"
+           (click)="selected(category, true)"
+           (mouseenter)="cat.hovered = true"
+           (mouseleave)="cat.hovered = false"
+           [style.background-color]="getBackground(cat)"
+           [style.color]="textColor(cat)"
+
+      >
+        <div class="location">
+          <div class="title">{{ category.title + ' (' + category.locations.length + ')' }}</div>
+          <img *ngIf="isSelected(category)" [src]="cat.hovered ? './assets/Cancel (Navy).svg' : './assets/Mark (Navy).svg'" width="15" height="15" alt="Check.svg">
+        </div>
+        <mat-divider></mat-divider>
+      </div>
+    </div>
+  </div>
+
+  <div class="all-rooms mb-10" *ngIf="!showSearchResult">
+    <div class="header">
+      <div class="title">All Rooms</div>
+      <mat-divider></mat-divider>
+    </div>
+    <div class="locations">
+      <div class="room-container" #loc *ngFor="let room of allRooms"
+           (click)="selected(room)"
+           (mouseenter)="loc.hovered = true"
+           (mouseleave)="loc.hovered = false"
+           [style.background-color]="getBackground(loc)"
+           [style.color]="textColor(loc)"
+
+      >
+        <div class="location">
+          <div class="title">{{ room.title }}</div>
+          <div class="subtitle" *ngIf="!isSelected(room)">{{ room.room }}</div>
+          <img *ngIf="isSelected(room)" [src]="loc.hovered ? './assets/Cancel (Navy).svg' : './assets/Mark (Navy).svg'" width="15" height="15" alt="Check.svg">
+        </div>
+        <mat-divider></mat-divider>
+      </div>
+    </div>
+  </div>
+
+  </div>
+</div>

@@ -32,11 +32,11 @@
     height: 40px;
     box-sizing: border-box;
     border-radius: 20px;
-    box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
-    font-family: 'Helvetica Neue', sans-serif;
+    //box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
     font-size: 16px;
     color: #134482;
     caret-color: auto;
+    display: block;
     &::placeholder {
       color: #999999;
   }

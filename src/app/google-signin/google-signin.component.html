@@ -4,8 +4,10 @@
     <!--<app-error-toast (closeEvent)="onClose($event)"></app-error-toast>-->
   <!--</div>-->
 
+
   <app-gradient-button
     class="login-button"
+    [size]="'xl'"
     [gradient]="'#FFFFFF,#FFFFFF'"
     [cursor]="'pointer'"
     [hoverColor]="'#F1F1F1'"
@@ -35,7 +37,8 @@
     [width]="'260px'"
     [placeholder]="'Username'"
     [type]="'text'"
-    [fieldIcon]="'./assets/User Login (Grey).png'"
+    (keyup.enter)="demoLogin()"
+    [fieldIcon]="'./assets/Username (Search-Gray).svg'"
     [style.margin-bottom]="'15px'"
     (ontextupdate)="updateDemoUsername($event)">
   </app-round-input>
@@ -44,12 +47,14 @@
     [width]="'260px'"
     [placeholder]="'Password'"
     [type]="'text'"
-    [fieldIcon]="'./assets/Lock (Grey).png'"
+    (keyup.enter)="demoLogin()"
+    [fieldIcon]="'./assets/Lock (Search-Gray).svg'"
     [html5type]="'password'"
     [style.margin-bottom]="'15px'"
     (ontextupdate)="demoPassword = $event">
   </app-round-input>
   <app-gradient-button
+    [size]="'medium'"
     [style.margin-tom]="'15px'"
     [gradient]="'#FFFFFF,#FFFFFF'"
     [cursor]="'pointer'"
@@ -61,6 +66,7 @@
     (buttonClick)="demoLogin()"
     [style.width]="'90px'"
     [style.margin]="'0 auto'"
+     #button
   >
     <div *ngIf="!showSpinner">
       <span>Sign in</span>
@@ -70,6 +76,9 @@
     </div>
   </app-gradient-button>
 </form>
+<!--<div *ngIf="(showError | async).error">-->
+  <!--<app-error-toast [loginMethod]="(showError | async)?.loggedWith" (closeEvent)="onClose($event)"></app-error-toast>-->
+<!--</div>-->
 
-<div class="demo-text-wrapper" (click)="toggleDemoLogin()"><div class="demo-text">{{demoLoginEnabled?'Sign in with Google':'Alternative Sign in'}}</div></div>
+<div class="demo-text-wrapper" (click)="toggleDemoLogin()"><div class="demo-text">{{demoLoginEnabled?'Sign in with Google':'Alternative sign-in'}}</div></div>
 

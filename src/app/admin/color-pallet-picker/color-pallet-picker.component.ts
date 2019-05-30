@@ -26,7 +26,8 @@ export class ColorPalletPickerComponent implements OnInit {
       this.colors$ = this.apiService.getColors().pipe(
           shareReplay(1),
           map((colors: any[]) => {
-          return colors.filter(color => color.id !== 1 && color.id !== 6);
+            // console.log(colors);
+            return colors.filter(color => color.id !== 1 && color.id !== 6);
       }));
       if (this.selectedColorProfile) {
           this.selectedId = this.selectedColorProfile.id;

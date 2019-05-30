@@ -1,7 +1,15 @@
 <form [formGroup]="formGroup">
   <div class="InputWrapper">
     <div style="display: flex">
-      <label [ngClass]="{clserrorLabel: controlName.invalid && controlName.errors && controlName.touched}" [ngStyle]="{'color': input_value ? ' #1F195E' : '#999999'}">{{input_label}}</label>
+      <label
+        [ngClass]="{
+        'ds-dialog-heading': controlName.valid || controlName.pending || isFocus,
+        'ds-dialog-heading-gray': controlName.invalid,
+        'clserrorLabel': controlName.invalid && controlName.errors && controlName.touched
+        }"
+      >
+        {{input_label}}
+      </label>
       <div class="tooltip-container">
         <img
            [matTooltip]="tooltipText"
@@ -9,46 +17,56 @@
            (mouseover)="over.emit({event: $event, action: 'timeLimit'})"
            (mouseleave)="leave.emit('timeLimit')"
            class="support-icon"
-           *ngIf="rightIcon" [src]="input_value ? rightIcon : rightIconUntouched | resolveAsset"/>
+           *ngIf="rightIcon" [src]="controlName.valid ? rightIcon : rightIconUntouched | resolveAsset"/>
         <div class="arrow-down-container">
           <div class="arrow-down"></div>
         </div>
       </div>
     </div>
-    <input #inp
-       [style.width]="width"
-       [style.padding]="padding + ' 0px ' + padding + ' 16px'"
-       [maxlength]="maxLength"
-       [formControl]="controlName"
-       [type]="input_type"
-       [class]="input_class"
-       (focus)="updateFocus(inp); controlName.markAsUntouched()"
-       (click)="isFocus = true; updateFocus(inp)"
-       [placeholder]="(placeholder=='' ? '' : placeholder)"
-       [ngClass]="{clserrorInput: controlName.invalid && controlName.errors && controlName.touched }"
-        spellcheck="true"/>
-    <!--<img *ngIf='controlName.valid' class="success-icon" [src]="'./assets/Check (Blue).png' | resolveAsset"/>-->
-    <div class="tooltip-container tooltip-container__inline "
-         *ngIf='controlName.invalid
-          &&
-          controlName.touched
-          &&
-          (controlName.errors.room_name || controlName.errors.folder_name || controlName.errors.room_number)'>
-      <img
-        [matTooltip]="
-          controlName.errors.folder_name ? 'Folder name already used' :
-          controlName.errors.room_name ? 'Room name already used' :
-          controlName.errors.room_number ? 'Room number already used' : null
-        "
-        matTooltipClass="tooltip"
-        class="success-icon"
-        [src]="'./assets/Report (Red).png' | resolveAsset">
-      <div class="arrow-down-container">
-        <div class="arrow-down">x</div>
+    <div class="input-container">
+      <input
+             [attr.disabled]="disabled ? '' : null"
+             [style.background-color]="isFocus ? 'white' : (hovered ? '#EDEDED' : '#F7F7F7')"
+             [style.width]="width"
+             [style.height]="height"
+             [style.text-align]="textAlign"
+             [style.padding]="padding + (textAlign ? ' 16px ' : ' 0px ') + padding + ' 16px'"
+             [maxlength]="maxLength"
+             [formControl]="controlName"
+             [type]="input_type"
+             [class]="input_class"
+             (focus)="updateFocus(inp); controlName.markAsUntouched()"
+             (blur)=" onBlur(inp.value)"
+             (mouseover)="hovered = true"
+             (mouseleave)="hovered = false"
+             (click)="isFocus = true; updateFocus(inp)"
+             [placeholder]="(placeholder=='' ? '' : placeholder)"
+             [ngClass]="{clserrorInput: controlName.invalid && controlName.errors && controlName.touched }"
+             spellcheck="true" #inp />
+      <!--<img *ngIf='controlName.valid' class="success-icon" [src]="'./assets/Check (Blue).png' | resolveAsset"/>-->
+      <div class="tooltip-container tooltip-container__inline "
+           *ngIf='controlName.invalid
+            &&
+            controlName.touched
+            &&
+            (controlName.errors.room_name || controlName.errors.folder_name || controlName.errors.room_number)'>
+        <img
+          [matTooltip]="
+            controlName.errors.folder_name ? 'Folder name already used' :
+            controlName.errors.room_name ? 'Room name already used' :
+            controlName.errors.room_number ? 'Room number already used' : null
+          "
+          matTooltipClass="tooltip"
+          class="success-icon"
+          [src]="'./assets/Report (Red).svg' | resolveAsset">
+        <div class="arrow-down-container">
+          <div class="arrow-down">x</div>
+        </div>
       </div>
+      <img *ngIf='isErrorIcon && controlName.invalid && controlName.errors && controlName.touched && (!controlName.errors.room_name && !controlName.errors.folder_name && !controlName.errors.room_number)'
+           class="success-icon" [src]="'./assets/Report (Red).svg' | resolveAsset"/>
+      <div class="disabled"></div>
     </div>
-    <img *ngIf='controlName.invalid && controlName.errors && controlName.touched && (!controlName.errors.room_name && !controlName.errors.folder_name && !controlName.errors.room_number)'
-         class="success-icon" [src]="'./assets/Report (Red).png' | resolveAsset"/>
     <!--<p style="color: red" *ngIf="controlName.errors?.title">Bad name!</p>-->
     <!--<pre>{{controlName.errors | json}}</pre>-->
   </div>

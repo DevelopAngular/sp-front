@@ -6,27 +6,38 @@ import { UserService } from '../../services/user.service';
 import { BehaviorSubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { AdminService } from '../../services/admin.service';
+import {DarkThemeSwitch} from '../../dark-theme-switch';
+import {bumpIn} from '../../animations';
+import {ProfileCardDialogComponent} from '../profile-card-dialog/profile-card-dialog.component';
+
+declare const history: History;
 
 @Component({
   selector: 'app-accounts',
   templateUrl: './accounts.component.html',
-  styleUrls: ['./accounts.component.scss']
+  styleUrls: ['./accounts.component.scss'],
+  animations: [bumpIn]
 })
 export class AccountsComponent implements OnInit {
 
   public accounts$ =
     new BehaviorSubject<any>({
-      total: 0,
-      admin_count: 0,
-      student_count: 0,
-      teacher_count: 0
+      total_count: '-',
+      gsuite_count: '-',
+      alternative_count: '-',
+      admin_count: '-',
+      student_count: '-',
+      teacher_count: '-',
+      assistant_count: '-'
     });
 
   constructor(
     public matDialog: MatDialog,
     private userService: UserService,
     private http: HttpService,
-    private adminService: AdminService
+    private adminService: AdminService,
+    public darkTheme: DarkThemeSwitch,
+    // private history: History
   ) { }
 
   ngOnInit() {
@@ -35,7 +46,6 @@ export class AccountsComponent implements OnInit {
       switchMap(() => this.adminService.getAdminAccounts())
     )
     .subscribe((u_list: any) => {
-      console.log(u_list, Object.values(u_list));
       if (u_list.total_count !== undefined) {
         u_list.total = u_list.total_count;
       } else {
@@ -46,15 +56,20 @@ export class AccountsComponent implements OnInit {
     });
   }
 
-  openDialog(mode) {
-    const DR = this.matDialog.open(AccountsDialogComponent,
-      {
-        data: {
-          mode: mode
-        },
-        width: '768px', height: '560px',
-        panelClass: 'accounts-profiles-dialog',
-        backdropClass: 'custom-bd'
-      });
+  showSettings() {
+
+    const data = {
+      bulkPermissions: null,
+      gSuiteSettings: true,
+    }
+
+    const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
+      panelClass: 'overlay-dialog',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '500px',
+      data: data
+    });
+
   }
 }

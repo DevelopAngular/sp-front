@@ -4,6 +4,8 @@ import { HallPass } from '../models/HallPass';
 import { Invitation } from '../models/Invitation';
 import { Request } from '../models/Request';
 
+import * as moment from 'moment';
+
 
 export function getFormattedPassDate(pass: PassLike) {
   let date: Date;
@@ -22,7 +24,11 @@ export function getFormattedPassDate(pass: PassLike) {
     throw Error('Unknown PassLike object: ' + pass);
   }
 
-  return date ? Util.formatDateTime(date) : '[null date]';
+  if ((pass instanceof Invitation || pass instanceof Request) && Util.invalidDate(date)) {
+      return 'Missed Request';
+  } else {
+      return date ? Util.formatDateTime(date) : '[null date]';
+  }
 }
 
 export function getInnerPassContent(pass: PassLike, now?: boolean) {
@@ -32,7 +38,7 @@ export function getInnerPassContent(pass: PassLike, now?: boolean) {
 
   if (!(pass instanceof HallPass)) {
     if (pass.status === 'declined') {
-      return 'DENIED';
+      return 'Declined';
     }
   }
   return getFormattedPassDate(pass);

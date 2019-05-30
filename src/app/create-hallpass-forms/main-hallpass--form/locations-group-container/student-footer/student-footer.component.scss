@@ -1,36 +1,54 @@
+@import "../../../../../design-system.scss";
+
+:host {
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
 .target-footer {
+  font-size: 15px;
+  color: $navy;
   width: 100%;
   display: flex;
   background-color: white;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 7px 0px 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
   justify-content: center;
   align-items: center;
-  z-index: 100;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  overflow: hidden;
 
   .footer-from-text {
     display: flex;
     align-items: center;
     flex-direction: column;
-
-    .footer-text {
-      color: #1F195E;
-    }
   }
 
   .footer-icon {
-    height: 13px;
-    padding: 0 15px 0 15px;
+    height: 30px;
+    flex: 1 1 10%;
   }
+}
+
+.target-shadow {
+  box-shadow: -50px 0px 35px 25px rgba(255, 255, 255, 1);
 }
 
 .center-text {
   display: flex;
   align-items: center;
-  padding: 7px;
+  justify-content: center;
+  width: 425px;
+
+  .footer-left-text {
+    flex: 1 1 40%;
+    text-align: right;
+  }
+
+  .footer-right-text {
+    flex: 1 1 40%;
+  }
 }
 
 .cursor {

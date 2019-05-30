@@ -43,6 +43,17 @@ import {DropdownComponent} from '../dropdown/dropdown.component';
 import {AppInputComponent} from '../app-input/app-input.component';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import {DateTimeComponent} from '../create-hallpass-forms/main-hallpass--form/date-time-container/date-time/date-time.component';
+import {CalendarComponent} from '../admin/calendar/calendar.component';
+import {RestrictionPickerComponent} from '../restriction-picker/restriction-picker.component';
+import {SafariScrollDirective} from '../safari-scroll.directive';
+import { ReportSuccessToastComponent } from '../report-success-toast/report-success-toast.component';
+import {ToggleInputComponent} from '../admin/toggle-input/toggle-input.component';
+import {CalendarPickerComponent} from '../calendar-components/calendar-picker/calendar-picker.component';
+import {TimePickerComponent} from '../calendar-components/time-picker/time-picker.component';
+import {AdminCalendarToggleComponent} from '../calendar-components/admin-calendar-toggle/admin-calendar-toggle.component';
+import {ToggleOptionsComponent} from '../calendar-components/admin-calendar-toggle/toggle-options/toggle-options.component';
+import {SpChipsComponent} from '../sp-chips/sp-chips.component';
+import {RoomsSearchComponent} from "../rooms-search/rooms-search.component";
 
 
 
@@ -69,7 +80,8 @@ import {DateTimeComponent} from '../create-hallpass-forms/main-hallpass--form/da
       MatCardModule,
       MatDividerModule,
       InputTextareaModule,
-    NgProgressModule.forRoot(),
+    // NgProgressModule.forRoot(),
+    NgProgressModule.withConfig({}),
     DragulaModule.forRoot()
   ],
   declarations: [
@@ -98,11 +110,26 @@ import {DateTimeComponent} from '../create-hallpass-forms/main-hallpass--form/da
       CardButtonComponent,
       PagerComponent,
       RoundInputComponent,
-      AppInputComponent
+      AppInputComponent,
+      CalendarComponent,
+      RestrictionPickerComponent,
+      SafariScrollDirective,
+      ReportSuccessToastComponent,
+      ToggleInputComponent,
+      CalendarPickerComponent,
+      TimePickerComponent,
+      AdminCalendarToggleComponent,
+      ToggleOptionsComponent,
+      SpChipsComponent,
+      RoomsSearchComponent
+
   ],
     entryComponents: [
       PassCardComponent,
       DropdownComponent,
+      CalendarComponent,
+      CalendarComponent,
+      ReportSuccessToastComponent
     ],
   exports: [
     ReactiveFormsModule,
@@ -137,6 +164,17 @@ import {DateTimeComponent} from '../create-hallpass-forms/main-hallpass--form/da
     PassCardComponent,
     InputTextareaModule,
     DateTimeComponent,
+    CalendarComponent,
+    RestrictionPickerComponent,
+    SafariScrollDirective,
+    ReportSuccessToastComponent,
+    ToggleInputComponent,
+    CalendarPickerComponent,
+    TimePickerComponent,
+    AdminCalendarToggleComponent,
+    ToggleOptionsComponent,
+    SpChipsComponent,
+    RoomsSearchComponent
 
   ],
 })

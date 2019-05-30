@@ -3,12 +3,13 @@ import { Subject } from 'rxjs';
 import { bumpIn } from '../animations';
 import { PassLike } from '../models';
 import { TimeService } from '../services/time.service';
-import { getInnerPassContent, getInnerPassName, isBadgeVisible } from './pass-display-util';
+import {getFormattedPassDate, getInnerPassContent, getInnerPassName, isBadgeVisible} from './pass-display-util';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Request } from '../models/Request';
 import { Invitation } from '../models/Invitation';
 import { Util } from '../../Util';
 import {filter} from 'rxjs/operators';
+import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 
 @Component({
   selector: 'app-pass-tile',
@@ -35,6 +36,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
   valid: boolean = true;
   hovered: boolean;
   timers: number[] = [];
+
   //
   // mockData = {
   //   headers: [
@@ -64,7 +66,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
     } else {
       return this.pass instanceof Request ?
           ((this.pass.request_time && this.forFuture) ?
-            (!this.forStaff ? getInnerPassContent(this.pass) : Util.formatDateTime(this.pass.request_time)) : (this.forStaff ? 'Pass for Now' : '')) :
+            (!this.forStaff ? getInnerPassContent(this.pass) : getFormattedPassDate(this.pass)) : (this.forStaff ? 'Pass for Now' : '')) :
           getInnerPassContent(this.pass, (!this.pass['request_time'] && this.pass instanceof Request) ||
               !(this.pass instanceof Invitation));
     }

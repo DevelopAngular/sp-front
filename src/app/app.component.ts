@@ -1,17 +1,25 @@
-import {AfterViewInit, Component, NgZone, OnInit} from '@angular/core';
-import { Location } from '@angular/common';
+import { AfterViewInit, Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+
+import {delay, filter, map, mergeMap, takeUntil, tap, withLatestFrom} from 'rxjs/operators';
+import { BehaviorSubject, ReplaySubject, Subject } from 'rxjs';
+
+import { DeviceDetection } from './device-detection.helper';
 import { GoogleLoginService } from './services/google-login.service';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {delay, filter, map, mergeMap, timeout} from 'rxjs/operators';
-import {DeviceDetection} from './device-detection.helper';
-import {BehaviorSubject, empty, of} from 'rxjs';
-import {HttpService} from './services/http-service';
-import {School} from './models/School';
-import {MatDialog} from '@angular/material';
-import {NextReleaseComponent} from './next-release/next-release.component';
-import {UserService} from './services/user.service';
-import {StorageService} from './services/storage.service';
-import {AdminService} from './services/admin.service';
+import { HttpService } from './services/http-service';
+import { School } from './models/School';
+import { MatDialog } from '@angular/material';
+import { UserService } from './services/user.service';
+import { AdminService } from './services/admin.service';
+import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
+import { WebConnectionService } from './services/web-connection.service';
+import { ResizeInfoDialogComponent } from './resize-info-dialog/resize-info-dialog.component';
+import { StorageService } from './services/storage.service';
+import { DarkThemeSwitch } from './dark-theme-switch';
+
+import * as _ from 'lodash';
+
+declare const window;
 
 /**
  * @title Autocomplete overview
@@ -22,16 +30,43 @@ import {AdminService} from './services/admin.service';
   styleUrls: ['./app.component.scss']
 })
 
-export class AppComponent implements OnInit, AfterViewInit {
+export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  public isAuthenticated = false;
+  public isAuthenticated = null;
   public hideScroll: boolean = false;
   public hideSchoolToggleBar: boolean = false;
   public showUI: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public showError: BehaviorSubject<any> = new BehaviorSubject<boolean>(false);
+  public errorToastTrigger: ReplaySubject<boolean>;
   public schools: School[] = [];
-  // public schoolIdSubject: BehaviorSubject<School>;
+  public darkThemeEnabled: boolean;
+  private openedResizeDialog: boolean;
+  private openConnectionDialog: boolean;
+
+  private subscriber$ = new Subject();
+
+  // @HostListener('window:resize', ['$event.target'])
+  // onResize(target) {
+  //     if ((target.innerWidth < 900 || target.innerHeight < 500) && !this.openedResizeDialog) {
+  //       this.openedResizeDialog = true;
+  //       setTimeout(() => {
+  //           this.dialog.open(ResizeInfoDialogComponent, {
+  //               id: 'ResizeDialog',
+  //               panelClass: 'toasr',
+  //               backdropClass: 'white-backdrop',
+  //               disableClose: true
+  //           });
+  //       }, 50);
+  //     } else if ((target.innerWidth >= 900 && target.innerHeight >= 500) && this.openedResizeDialog) {
+  //         this.openedResizeDialog = false;
+  //         this.dialog.getDialogById('ResizeDialog').close();
+  //     }
+  // }
+
+  public preloader$;
 
   constructor(
+    public darkTheme: DarkThemeSwitch,
     public loginService: GoogleLoginService,
     private http: HttpService,
     private adminService: AdminService,
@@ -39,12 +74,21 @@ export class AppComponent implements OnInit, AfterViewInit {
     private _zone: NgZone,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private storage: StorageService
+    private webConnection: WebConnectionService,
+    private dialog: MatDialog,
+    private storageService: StorageService,
   ) {
-    // this.schoolIdSubject = this.http.schoolIdSubject;
+    this.preloader$ = this.darkTheme.preloader;
+    this.preloader$.next(true);
+    this.errorToastTrigger = this.http.errorToast$;
   }
 
   ngOnInit() {
+    this.storageService.detectChanges();
+    this.darkTheme.isEnabled$.subscribe((val) => {
+      this.darkThemeEnabled = val;
+    });
+
     if ( !DeviceDetection.isIOSTablet() && !DeviceDetection.isMacOS() ) {
       const link = document.createElement('link');
             link.setAttribute('rel', 'stylesheet');
@@ -52,17 +96,55 @@ export class AppComponent implements OnInit, AfterViewInit {
             document.head.appendChild(link);
     }
 
-    this.loginService.isAuthenticated$.subscribe(t => {
+    this.webConnection.checkConnection().pipe(takeUntil(this.subscriber$),
+        filter(res => !res && !this.openConnectionDialog))
+        .subscribe(() => {
+            const toastDialog = this.dialog.open(ToastConnectionComponent, {
+              panelClass: 'toasr',
+              backdropClass: 'white-backdrop',
+              disableClose: true
+            });
 
-      // console.log('Auth response ===>', t);
+            toastDialog.afterOpened().subscribe(() => {
+                this.openConnectionDialog = true;
+            });
+
+            toastDialog.afterClosed().subscribe(() => {
+                this.openConnectionDialog = false;
+            });
+    });
+
+    this.loginService.isAuthenticated$.pipe(
+      takeUntil(this.subscriber$),
+    )
+    .subscribe(t => {
+
+      console.log('Auth response ===>', t);
       this._zone.run(() => {
         this.showUI.next(true);
+        this.preloader$.next(false);
         this.isAuthenticated = t;
       });
     });
+    this.showError.pipe(
+      delay(1000)
+    ).subscribe((signInError: any) => {
+      console.log(signInError)
+      if (signInError && signInError.error) {
+        this.showUI.next(false);
+      }
+    });
+    window.appLoaded(2000);
 
-    this.http.schools$.subscribe(schools => {
-      this.schools = schools;
+    this.http.schools$.pipe(
+        map(schools => _.filter(schools, (school => school.my_roles.length > 0))),
+        withLatestFrom(this.http.currentSchool$),
+        takeUntil(this.subscriber$))
+        .subscribe(([schools, currentSchool]) => {
+            this.schools = schools;
+          if (currentSchool && !_.find(schools, {id: currentSchool.id})) {
+            this.http.setSchool(schools[0]);
+          }
     });
 
     // ============== SPA-407 ====================> Needs to be uncommented when the backend logic will completed
@@ -79,13 +161,15 @@ export class AppComponent implements OnInit, AfterViewInit {
     //   });
     // ============== SPA-407 ===================> End
 
-    this.http.currentSchool$.subscribe((value => {
+    this.http.currentSchool$.pipe(takeUntil(this.subscriber$))
+        .subscribe((value => {
       if (!value) {
         this.schools = [];
       }
     }));
     this.router.events
       .pipe(
+        takeUntil(this.subscriber$),
         filter(event => event instanceof NavigationEnd),
         map(() => this.activatedRoute),
         map((route) => {
@@ -107,6 +191,12 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.hideScroll = data.hideScroll;
       });
   }
+
+  ngOnDestroy() {
+    this.subscriber$.next(null);
+    this.subscriber$.complete();
+  }
+
   ngAfterViewInit() {
     // setTimeout(() => {
     //   this.matDialog.open(NextReleaseComponent, {
@@ -114,5 +204,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     //   });
     // }, 1000);
   }
+
 
 }

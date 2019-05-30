@@ -1,6 +1,7 @@
 ﻿import { Component, OnInit, Input } from '@angular/core';
 import { Report } from '../models/Report';
 import { PdfGeneratorService } from '../admin/pdf-generator.service';
+import {DarkThemeSwitch} from '../dark-theme-switch';
 
 @Component({
   selector: 'app-display-report-cell',
@@ -20,8 +21,20 @@ export class DisplayReportCellComponent implements OnInit {
     private data: any;
 
   constructor(
-    private pdf: PdfGeneratorService
+    private pdf: PdfGeneratorService,
+    public darkTheme: DarkThemeSwitch
   ) { }
+
+  get color() {
+    return this.darkTheme.getColor({white: '#767676', dark: '#FFFFFF'});
+  }
+  get icon() {
+    return this.darkTheme.getIcon({
+      iconName: this.righticon,
+      darkFill: 'White',
+      lightFill: 'Blue-Gray'
+    });
+  }
 
   ngOnInit() {
 
@@ -44,7 +57,7 @@ export class DisplayReportCellComponent implements OnInit {
   printReport(e) {
     // e.preventDefault();
 
-    this.pdf.generate(this.data, 'p', 'hallmonitor');
+    this.pdf.generateReport(this.data, 'p', 'hallmonitor');
 
   }
 }

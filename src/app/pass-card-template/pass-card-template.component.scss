@@ -3,7 +3,6 @@
   border-radius: 15px;
   color: white;
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
-  font-family: 'Helvetica Neue', sans-serif;
   padding: 15px 15px 0 15px;
 }
 
@@ -75,6 +74,7 @@
   align-items: center;
   margin-bottom: 26px;
   height: 100%;
+  position: relative;
   justify-content: center;
 }
 
@@ -115,5 +115,4 @@
   border-radius: 0 0 10px 10px;
   color: white;
   font-size: 13px;
-  font-family: 'Helvetica Neue', sans-serif;
 }

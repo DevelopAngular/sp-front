@@ -1,57 +1,67 @@
-﻿<div class="hallmonitor-wrapper">
-    <div class="left-content">
+﻿<div class="host" appSafariScroll>
+  <div class="hallmonitor-wrapper">
+    <div class="hallpass-box">
       <div class="hall-monitor-top">
-          <app-round-input
-             [type]="'text'"
-             [width]="'260px'"
-             [placeholder]="'Search'"
-             (ontextupdate)="onSearch($event)">
+        <app-round-input
+          [type]="'text'"
+          [width]="'260px'"
+          [placeholder]="'Search'"
+          [closeIcon]="true"
+          (ontextupdate)="onSearch($event)">
 
-          </app-round-input>
+        </app-round-input>
       </div>
       <div class="hall-monitor-bottom">
         <app-pass-collection
-           [hasSort]="true"
-           [isActive]="true"
-           [forStaff]="true"
-           [forMonitor]="true"
-           [style.width]="'600px'"
-           [passProvider]="activePassProvider"
-           [title]="'Active Passes'"
-           [icon]="'./assets/Hallway (Blue).png'"
-           [columns]="4">
+          [hasSort]="true"
+          [isActive]="true"
+          [showEmptyHeader]="true"
+          [columnViewIcon]="false"
+          [forStaff]="true"
+          [forMonitor]="true"
+          [style.width]="'600px'"
+          [passProvider]="activePassProvider"
+          [title]="'Active Passes'"
+          [icon]="'./assets/Walking (Navy).svg'"
+          [columns]="4">
         </app-pass-collection>
-        <div *ngIf="!(hasPasses | async) && (passesLoaded | async)">
+        <div *ngIf="!(hasPasses | async) && (passesLoaded | async)"
+             [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
           <div class="empty-container" *ngIf="searchQuery$.value != ''">
             <img class="empty-svg" [src]="'./assets/emptyStates/emptyHallSearch.svg' | resolveAsset" alt="empty-svg">
             <div class="big-text" [style.margin]="'10px 0'">Nothing to See Here</div>
-            <div class="small-text">Search again or click the report button</div>
+            <div>Search again or click the report button</div>
           </div>
-          <div class="empty-container" *ngIf="searchQuery$.value == ''">
+          <div class="empty-container" *ngIf="searchQuery$.value == ''" >
             <img class="empty-svg" [src]="'./assets/emptyStates/emptyHall.svg' | resolveAsset" alt="empty-svg">
-            <div class="big-text" [style.margin]="'10px 0'">Take the Day Off</div>
-            <div class="small-text">There aren't any active passes now</div>
+            <div class="big-text">Take the Day Off</div>
+            <div>There aren't any active passes now</div>
           </div>
         </div>
       </div>
     </div>
-    <div class="right-content">
-      <div class="right-content-internal">
-        <div class="right-content-header">
+    <div class="reported-students">
+      <div class="reported-students-internal">
+        <div *ngIf="pending" class="loading-theme_blue-gray spinner ds-flex-center-center ds-w-100 ds-h-100"
+
+        >
+          <mat-spinner [diameter]="35" [color]="'primary'"></mat-spinner>
+        </div>
+
+        <div class="reported-students-header">
           <div class="report-text">
-            <img draggable="false" [src]="'./assets/Report (Red).png' | resolveAsset" class="report-icon">
-            <div class="text">Reported Students</div>
+            <img draggable="false" [src]="'./assets/Report (Red).svg' | resolveAsset" class="report-icon">
+            <div class="text" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Reported Students</div>
           </div>
           <div class="calendar-icon-container" [ngClass]="{'active-calendar-icon': activeCalendar}">
-            <img draggable="false" [src]="( !reportsDate ? './assets/Calendar (Blue).png' : './assets/Calendar (Light Blue).png') | resolveAsset" class="calendar-icon" (click)="openDateDialog($event)">
+            <img draggable="false" [src]="calendarIcon | resolveAsset" class="calendar-icon" (click)="openDateDialog($event)">
           </div>
         </div>
-        <h3 style="text-align: center; margin: 15px; color: #134482" *ngIf="!studentreport.length">{{reportsDate | date : 'MMM. d' }}</h3>
+        <!--<h3 style="text-align: center; margin: 15px; color: #134482" *ngIf="!studentreport?.length">{{reportsDate | date : 'MMM. d' }}</h3>-->
         <div class="reports">
-          <div *ngIf="studentreport.length">
-
-            <div *ngFor="let reportGroup of studentreport">
-              <h3 style="text-align: center; margin: 15px; color: #1F195E" *ngIf="reportGroup.date">{{reportGroup.date}}</h3>
+          <div *ngIf="studentreport?.length">
+            <div *ngFor="let reportGroup of studentreport" class="report-group">
+              <h3 class="report-group-header" *ngIf="reportGroup.date" [style.color]="darkTheme.getColor({white: '#767676', dark: '#FFFFFF'})">{{reportGroup.date}}</h3>
               <div *ngFor="let report of reportGroup.reports">
                 <div class="divider"></div>
                 <app-display-report-cell
@@ -60,119 +70,25 @@
                   [created]="report.created"
                   [message]="report.message || 'empty'"
                   [hasDivider]="true"
-                  [righticon]="'./assets/Print (Grey).png'"></app-display-report-cell>
+                  [righticon]="'./assets/Print (Blue-Gray).svg'"></app-display-report-cell>
               </div>
             </div>
           </div>
-          <div *ngIf="!studentreport.length" >
-            <div class="divider"></div>
-            <p [style.color]="'#666666'" [style.text-align]="'center'">
-              No Reported Students for the selected date
-            </p>
+
+          <div *ngIf="studentreport && !studentreport.length && !pending" [style.text-align]="'center'" class="no-reports">
+            <!--<div class="divider"></div>-->
+            <img [src]="'./assets/emptyStates/no-reported.svg' | resolveAsset" alt="" class="ds-my-25 ds-py-10">
+            <div [style.color]="darkTheme.getColor({white: '#7F879D', dark: '#FFFFFF'})" [style.text-align]="'center'">
+              <div class="ds-tab-text">No Reported Students</div>
+              <div class="ds-pt-10">No students misbehaving in the halls? <br>
+                    That’s a miracle.</div>
+
+            </div>
           </div>
         </div>
       </div>
+      <div class="bottom-shadow" #bottomShadow></div>
     </div>
 
+  </div>
 </div>
-
-
-
-
-
-
-
-<!--<div class="hallmoniter">-->
-    <!--<div class="main-page-left">-->
-      <!--<div class="current-pass">-->
-        <!--<app-gradient-button [minWidth]="'300px'"-->
-                             <!--[minHeight]="'40px'"-->
-                             <!--[hoverColor]="'#00b476'"-->
-                             <!--[fontSize]="'15px'"-->
-                             <!--[cursor]="'pointer'"-->
-                             <!--(click)="TooltipPlainText($event)">-->
-          <!--ToolTip - Support With Plain Text-->
-        <!--</app-gradient-button>-->
-      <!--</div>-->
-      <!--<div class="current-pass">-->
-        <!--<app-gradient-button [minWidth]="'300px'"-->
-                             <!--[minHeight]="'40px'"-->
-                             <!--[hoverColor]="'#00b476'"-->
-                             <!--[fontSize]="'15px'"-->
-                             <!--[cursor]="'pointer'"-->
-                             <!--(click)="TooltipConfirmation($event)">-->
-          <!--ToolTip - Supports Consent-->
-        <!--</app-gradient-button>-->
-      <!--</div>-->
-      <!--<div class="current-pass">-->
-        <!--<app-gradient-button [minWidth]="'300px'"-->
-                             <!--[minHeight]="'40px'"-->
-                             <!--[hoverColor]="'#00b476'"-->
-                             <!--[fontSize]="'15px'"-->
-                             <!--[cursor]="'pointer'"-->
-                             <!--(click)="TooltipOptions($event)">-->
-          <!--ToolTip - Support list of options-->
-        <!--</app-gradient-button>-->
-      <!--</div>-->
-
-
-      <!--<app-input  [input_label]="'Room Name'" (onUpdate)="input_value1=$event" [Success]="Input1Validataion()"></app-input>-->
-
-      <!--<br />-->
-      <!--Input 1 Text : {{input_value1}} <br/>-->
-      <!--Input 1 Sucess Status : {{Input1Validataion()}}  <br />-->
-      <!--Valid Inputs: 'Bathroom,Staffroom'-->
-      <!--<br />-->
-      <!--<br /> <br />-->
-
-      <!--<app-input [input_label]="'Search By Date & Time'" [IsDate]="true" (onUpdateDateRange)="input_DateRange=$event" ></app-input>-->
-
-      <!--<br/>-->
-      <!--<br/>-->
-      <!--Searching by Date & Time : {{input_DateRange}}-->
-
-      <!--<app-student-search [style.width]="'75%'" (onUpdate)="selectedStudents=$event" [selectedStudents]="selectedStudents"></app-student-search>-->
-      <!--&lt;!&ndash;<app-gradient-button *ngIf="selectedStudents && selectedStudents.length > 0"-->
-                           <!--[gradient]="'#03CF31,#00B476'"-->
-                           <!--[hoverColor]="'#00B476'"-->
-                           <!--[minWidth]="'90px'"-->
-                           <!--[minHeight]="'30px'"-->
-                           <!--[fontSize]="'14px'"-->
-                           <!--[disabled]="selectedStudents.length<1"-->
-                           <!--[style.width]="'90px'">-->
-        <!--Done ({{ selectedStudents.length }})-->
-      <!--</app-gradient-button>&ndash;&gt;&lt;!&ndash;(buttonClick)="setFormState(((forLater&&isDeclinable)?'to-pinnables':'from'))"&ndash;&gt;-->
-       <!--&lt;!&ndash;{{selectedtoggleValue}}&ndash;&gt;-->
-      <!--&lt;!&ndash;<app-location-table *ngIf="type==='location'" (onSelect)="closeDialog($event)" [type]="'location'" [placeholder]="'Search rooms'" (onSelected)="closeDialog($event)"></app-location-table>&ndash;&gt;-->
-
-      <!--<br />-->
-      <!--<br />-->
-
-      <!--<app-display-report-cell [student_name]="'testStudent'" [issuer]="'testTeacher'" [created]="'Today 09:32 PM'" [message]="'caught without pass'" [hasDivider]="true" [righticon]="'./assets/Print (Grey).png'"></app-display-report-cell>-->
-
-      <!--<br />-->
-      <!--<br />-->
-
-    <!--</div>-->
-
-    <!--<div class="main-page-right">-->
-      <!--<app-display-card [title]="'Reported Students'" [hasDivider]="false" [fontSize]="'15pt'" [icon]="'./assets/Report (Red).png'" [subtitle_fontSize]="'10pt'" [subtitle]="'5 Reported Student Today'" [righttext]="'ab'" [righticon]="'./assets/Hallway (Blue).png'">-->
-        <!--<div style="padding-left:16px;padding-top:16px;">-->
-          <!--Data Comes here later on...-->
-        <!--</div>-->
-      <!--</app-display-card>-->
-
-      <!--<div style="margin-top:20px;">-->
-        <!--<app-input  [input_label]="'Room Number (Required)'" (onUpdate)="input_value2=$event" [Success]="Input2Validataion()" [input_type]="'text'" [IsRequired]="true"></app-input>-->
-
-        <!--<br />-->
-        <!--Input 2 Text : {{input_value2}} <br />-->
-        <!--Input 2 Sucess Status : {{Input2Validataion()}}<br />-->
-        <!--Valid Inputs: 'AR,BR'-->
-
-      <!--</div>-->
-
-
-    <!--</div>-->
-
-<!--</div>-->

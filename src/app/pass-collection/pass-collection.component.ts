@@ -1,9 +1,6 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, OnDestroy} from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { BehaviorSubject } from 'rxjs';
-import { Observable } from 'rxjs';
-import { ReplaySubject } from 'rxjs';
-import { Subject } from 'rxjs';
+import {BehaviorSubject, merge, of, zip,  Observable ,  ReplaySubject ,  Subject } from 'rxjs';
 import { DataService } from '../services/data-service';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
 import { HallPass } from '../models/HallPass';
@@ -14,9 +11,12 @@ import { PassLike} from '../models';
 import { PassCardComponent } from '../pass-card/pass-card.component';
 import { ReportFormComponent } from '../report-form/report-form.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
-import { shareReplay } from 'rxjs/operators';
+import {delay, map, mergeAll, shareReplay, switchMap, tap} from 'rxjs/operators';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import { TimeService } from '../services/time.service';
+
+import * as _ from 'lodash';
+import {DarkThemeSwitch} from '../dark-theme-switch';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -48,6 +48,9 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() forMonitor = false;
   @Input() hasSort = false;
   @Input() maxHeight;
+  @Input() showEmptyHeader: boolean;
+  @Input() columnViewIcon: boolean = true;
+  @Input() smoothlyUpdating: boolean = false;
 
   @Input() passProvider: PassLikeProvider;
 
@@ -55,16 +58,17 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Output() reportFromPassCard = new EventEmitter();
 
   currentPasses$: Observable<PassLike[]>;
+  currentPasses: PassLike[] = [];
 
   timers: number[] = [];
 
   timerEvent: Subject<void> = new BehaviorSubject(null);
 
-  sortOptions = [
-      { display: 'Pass Expiration Time', color: 'darkBlue', action: 'expiration_time', toggle: false },
-      { display: 'Student Name', color: 'darkBlue', action: 'student_name', toggle: false },
-      { display: 'To Location', color: 'darkBlue', action: 'destination_name', toggle: false }
-  ];
+  // sortOptions = [
+  //     { display: 'Pass Expiration Time', color: this.darkTheme.getColor(), action: 'expiration_time', toggle: false },
+  //     { display: 'Student Name', color: this.darkTheme.getColor(), action: 'student_name', toggle: false },
+  //     { display: 'To Location', color: this.darkTheme.getColor(), action: 'destination_name', toggle: false }
+  // ];
 
   sort$ = this.dataService.sort$;
   test: any;
@@ -89,6 +93,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       public dialog: MatDialog,
       private dataService: DataService,
       private timeService: TimeService,
+      public darkTheme: DarkThemeSwitch
   ) {}
 
   ngOnInit() {
@@ -96,17 +101,27 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
       } else {
         this.currentPasses$ = this.passProvider.watch(this.sort$.asObservable()).pipe(shareReplay(1));
-
-        if(this.isActive){
+        this.currentPasses$
+          .pipe(
+            switchMap((_passes) => {
+              if (_.isEqual(this.currentPasses, _passes) || !this.smoothlyUpdating) {
+                return of(_passes);
+              } else {
+                this.currentPasses = [];
+                return of(_passes).pipe(delay(500));
+              }
+            })
+          )
+          .subscribe((passes: any) => {
+            // console.log(passes);
+            this.currentPasses = passes;
+          });
+      }
+        if (this.isActive) {
           this.timers.push(window.setInterval(() => {
             this.timerEvent.next(null);
           }, 1000));
         }
-        // this.currentPasses$.subscribe((data) => {
-        //   console.log(data);
-        //   this.test = data[0];
-        // });
-      }
   }
 
   ngOnDestroy() {
@@ -117,6 +132,18 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
     this.timers = [];
   }
 
+  get _icon() {
+    return this.darkTheme.getIcon({
+      iconName: this.icon,
+      darkFill: 'White',
+      lightFill: 'Navy',
+      setting: null
+    });
+  }
+  get _color() {
+    return this.darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'});
+
+  }
   getEmptyMessage() {
     return this.emptyMessage;
   }
@@ -166,7 +193,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       console.log('Closed with ===>', dialogData);
       if (dialogData && dialogData['report']) {
         const reportRef = this.dialog.open(ReportFormComponent, {
-          width: '750px',
+          width: '425px',
+          height: '500px',
           panelClass: 'form-dialog-container',
           backdropClass: 'custom-backdrop',
           data: {'report': dialogData['report']}
@@ -179,14 +207,23 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   }
 
   openSortDialog(event) {
+
+    // this.sortOptions.forEach((opt) => opt.color = this.darkTheme.getColor());
+    const sortOptions = [
+      { display: 'Pass Expiration Time', color: this.darkTheme.getColor(), action: 'expiration_time', toggle: false },
+      { display: 'Student Name', color: this.darkTheme.getColor(), action: 'student_name', toggle: false },
+      { display: 'To Location', color: this.darkTheme.getColor(), action: 'destination_name', toggle: false }
+    ];
+
     const sortDialog = this.dialog.open(ConsentMenuComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {
           'header': 'SORT BY',
-          'options': this.sortOptions,
+          'options': sortOptions,
           'trigger': new ElementRef(event.currentTarget),
           'isSort': true,
+          'sortMode': this.dataService.sort$.value
         }
     });
 

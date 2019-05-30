@@ -1,0 +1,236 @@
+@import '../../../sp-colors';
+@import '../../../design-system';
+
+
+$dayBase: 39px;
+$base:5px;
+
+
+.calendar {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin: 0 auto;
+  cursor: default;
+
+  * {
+    box-sizing: border-box;
+  }
+
+  .calendar-navs {
+    width: 100%;
+  }
+
+  .month-nav {
+    height: 50px;
+    padding: 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    .switch-month {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      border-radius: 50%;
+      cursor: pointer;
+
+      &.__right {
+        right: 0;
+      }
+      &.__left {
+        left: 0;
+      }
+      &:hover {
+        background-color: #e4ebff;
+        box-shadow: 0 0 0 5px #e4ebff;
+      }
+
+      &.disabled {
+        cursor: default;
+
+        &:hover {
+          background-color: transparent;
+          box-shadow: none;
+        }
+      }
+
+      .month-icon {
+        width: 15px;
+      }
+    }
+
+  }
+
+  .year-nav {
+    padding: 10px 5px 10px 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    position: relative;
+
+    .switch-year {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      border-radius: 50%;
+      cursor: pointer;
+
+      &.__right {
+        right: 0;
+      }
+      &.__left {
+        left: 0;
+      }
+
+      &:hover {
+        background-color: #e4ebff;
+        box-shadow: 0 0 0 5px #e4ebff;
+      }
+      .year-icon {
+        width: 15px;
+      }
+    }
+  }
+
+  .month-grid {
+    .days{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .day-names {
+      display: flex;
+      flex-direction: row;
+      color: $navy;
+      font-size: 10px;
+      font-weight: bold;
+      border-bottom-right-radius: 3px;
+      border-bottom-left-radius: 3px;
+      width: 100%;
+    }
+    .weeks {
+      display: flex;
+      flex-direction: column;
+      margin-top: 5px;
+    }
+    .week {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      margin: 3px 0 3px 0;
+    }
+    .week-date,
+    .day-name {
+      text-align: center;
+      padding: 8px 5px 8px 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex: 1 1 auto;
+    }
+
+    .week-date {
+      position: relative;
+      color: $navy;
+      //height: 30px;
+      //width: $dayBase;
+      &__begin {
+        box-shadow: 12px 0 0 0 rgba(0, 180, 118, .5);
+      }
+      .date-text {
+        z-index: 10;
+        font-size: 14px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        &.selected {
+          color: $background-white;
+          //background-color: $jade;
+          border-radius: 6px;
+          cursor: pointer;
+        }
+      }
+
+      &::after {
+        content: '';
+        height: 25px;
+        width: 45px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 6px;
+        transition: background-color 150ms linear, color 150ms linear;
+        z-index: 1;
+      }
+
+      &.hovered {
+        cursor: pointer;
+        color: $navy;
+        &:hover {
+          &:after {
+            background-color: $off-white;
+          }
+        }
+      }
+      &.selected {
+        color: $background-white;
+        background-color: $jade;
+        font-weight: bold;
+        border-radius: 5px;
+        cursor: pointer;
+
+
+        &.first_last_element_radius {
+          border-radius: 0;
+
+          &:nth-child(1) {
+            border-radius: 5px 0 0 5px;
+          }
+          &:nth-child(5) {
+            border-radius: 0 5px 5px 0;
+          }
+        }
+      }
+
+      &.rangeHovered {
+        background-color: $jade;
+        color: $background-white;
+        cursor: pointer;
+        opacity: 0.5;
+      }
+
+      &.leftBorder {
+        border-radius: 5px 0 0 5px;
+      }
+
+      &.rightBorder {
+        border-radius: 0 5px 5px 0;
+      }
+
+      &.disabled {
+        color: $light-gray;
+      }
+      &.is-next-month {
+        color: $blue-gray;
+        cursor: pointer;
+      }
+    }
+
+    .today {
+      font-weight: bold;
+    }
+  }
+
+  .time-picker {
+    margin-top: 5px;
+    width: 100%;
+
+  }
+}

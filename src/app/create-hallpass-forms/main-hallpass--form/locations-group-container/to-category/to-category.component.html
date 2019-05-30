@@ -1,13 +1,13 @@
 <div class="category-wrapper">
   <div [ngClass]="headerTransition" [style.background-image]="headerGradient">
-    <img class="back-button back-button-whitee" [src]="'./assets/Back Button (White).png' | resolveAsset" (click)="back()">
+    <img class="back-button back-button-whitee" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" (click)="back()">
     <div class="category-header-text">
       <img class="search-icon" [src]="pinnable.icon | resolveAsset">
-      <div class="text">{{pinnable.category}}</div>
+      <div class="text ds-dialog-title-white">{{pinnable.category}}</div>
     </div>
   </div>
 
-    <div class="category-content" [style.height]="date ? '74%' : '78%'">
+    <div class="category-content" [style.height]="date ? '74%' : '78%'" (scroll)="tableScroll($event)">
       <app-location-table
         class="center"
         (onSelect)="locationChosen($event)"
@@ -18,10 +18,13 @@
         [category]="pinnable.category"
         [invalidLocation]="(fromLocation ? +fromLocation.id : '')"
         [type]="'location'"
-        [placeholder]="'Search ' + pinnable.category" >
+        [placeholder]="'Search ' + pinnable.category"
+        [dummyString]="'No rooms found'"
+        >
+
       </app-location-table>
     </div>
-    <div class="shadow"></div>
+    <!--<div class="shadow" [style.bottom]="date ? '65px' : '43px'" *ngIf="shadow"></div>-->
     <app-student-footer *ngIf="!isStaff" [formState]="formState" [state]="'category'" [date]="date"></app-student-footer>
     <app-teacher-footer [fromLocation]="fromLocation" [formState]="formState" *ngIf="isStaff" [state]="'category'" [date]="date" [studentText]="studentText"></app-teacher-footer>
 </div>

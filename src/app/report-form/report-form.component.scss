@@ -1,50 +1,120 @@
+:host {
+  height: 100%;
+}
+
 .report-form-wrapper{
     width: inherit;
     height: inherit;
+    display: flex;
+    flex-direction: column;
+
 }
 
 .divider {
     width: 100%;
-    height: 50px;
-    //margin: 0 0 10px 0;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+    height: 70px;
+    min-height: 64px;
+    box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 1;
 }
-
+.back-button {
+  width: 28px;
+  display: flex;
+  align-items: center;
+  height: 28px;
+  position: absolute;
+  z-index: 1;
+  left: 20px;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  font-size: 1em;
+  font-weight: bold;
+  color: #999999;
+  cursor: pointer;
+}
 .divider-icon{
-    margin-right: 10px;
-    width: 25px;
-    height: 25px;
+    margin-right: 12px;
+    width: 21px;
+    height: 21px;
 }
 
-.divider-text{
+.divider-text-students, .divider-text-message {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
     color: white;
-    font-family: 'Helvetica Neue', sans-serif;
     font-size: 16px;
     font-weight: bold;
     font-style: normal;
     font-stretch: normal;
     line-height: 1.08;
     letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+
 }
 
 .student-select{
-    margin-top: 10px;
+    margin: 20px 0px 25px 0px;
     display: flex;
     flex-direction: column;
     width: 100%;
-    min-height: 300px;
-    height: auto;
     justify-content: space-between;
     align-items: center;
+    padding: 15px 0px  25px 0px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    flex: 1 1 auto;
+  .student-select_button-next {
+    align-self: flex-end;
+    margin-right: 25px;
+  }
+  .report-content {
+    //width: 100%;
+    //display: flex;
+    //position: absolute;
+  }
+  .student-list {
+    width: 215px;
+    margin-top: 35px;
+    &_header {
+      margin: 30px 0 5px 0;
+      text-align: center;
+    }
+    &_scrollable {
+      max-height: 190px;
+      overflow: auto;
+    }
+    &_item {
+      border-top: 1px solid #D8D8D8;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 5px;
+      color: #555558;
+      font-size: 14px;
+      cursor: pointer;
+      img {
+        cursor: pointer;
+      }
+    }
+  }
 }
 
 textarea{
     resize: none;
     border: 0px;
+    box-sizing: border-box;
     padding: 10px 10px 0 10px;
     outline: none;
 }
@@ -54,18 +124,24 @@ textarea{
 .message-entry{
     width: 350px !important;
     overflow: visible !important;
-    height: 175px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 0 auto;
+    flex: 1 1 auto;
+    justify-content: space-between;
+    padding: 25px 0px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
   .message-box{
     width: 100%;
-    height: 75px;
-    margin: 15px auto;
+    height: 100px;
+    //margin: 15px auto;
     border-radius: 10px;
     box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
-    font-family: 'Helvetica Neue', sans-serif;
     font-size: 16px;
     font-style: normal;
     font-stretch: normal;

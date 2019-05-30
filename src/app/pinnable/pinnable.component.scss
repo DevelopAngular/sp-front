@@ -1,9 +1,8 @@
-.card {
+.pinnable-card {
   width: inherit;
   //height: 70px;
   border-radius: 7px;
   color: white;
-  font-family: 'Helvetica Neue', sans-serif;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -32,6 +31,7 @@
   font-stretch: normal;
   line-height: 1.08;
   letter-spacing: 0.3px;
+  font-size: 12px;
 }
 
 .category-icon{
@@ -67,7 +67,7 @@
 .clickRipple {
   //width: 120px;
   border-radius: 7px;
-  cursor: pointer;
+  //cursor: pointer;
   user-select: none;
   transition: box-shadow .3s ease;
 }

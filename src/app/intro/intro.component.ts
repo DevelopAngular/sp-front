@@ -1,23 +1,31 @@
-import { Component, NgZone, OnInit } from '@angular/core';
+import {Component, EventEmitter, Input, NgZone, OnInit, Output} from '@angular/core';
 import { Router } from '@angular/router';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
 import { User } from '../models/User';
-import { bumpIn } from '../animations';
-import {PassLike} from '../models';
-import {HallPass} from '../models/HallPass';
-import {Subject} from 'rxjs';
+import {bumpIn, NextStep} from '../animations';
+import {BehaviorSubject, fromEvent, Subject} from 'rxjs';
 import {StorageService} from '../services/storage.service';
+import {CreateFormService} from '../create-hallpass-forms/create-form.service';
+import {NotificationService} from '../services/notification-service';
+import {DeviceDetection} from '../device-detection.helper';
+
+declare const window;
+
 
 @Component({
   selector: 'app-intro',
   templateUrl: './intro.component.html',
   styleUrls: ['./intro.component.scss'],
   animations: [
-    bumpIn
+    bumpIn,
+    NextStep
   ]
 })
 export class IntroComponent implements OnInit {
+
+  @Input() usedAsEntryComponent: boolean = false;
+  @Output() endIntroEvent: EventEmitter<boolean> = new EventEmitter();
 
   user: User;
   isStaff: boolean;
@@ -25,25 +33,76 @@ export class IntroComponent implements OnInit {
   buttons = {'left': false, 'right': false};
   slides;
 
+  frameMotion$: BehaviorSubject<any>;
+
+  enterTick: Subject<KeyboardEvent> = new Subject<KeyboardEvent>();
+
+
   constructor(
       public dataService: DataService,
       private _zone: NgZone,
       private loadingService: LoadingService,
       private router: Router,
-      private storage: StorageService
+      private storage: StorageService,
+      private formService: CreateFormService,
+      public  notifService: NotificationService
   ) {
     console.log('intro.constructor');
   }
 
+  get isSafari() {
+    return DeviceDetection.isSafari();
+  }
+  get alreadySeen() {
+    if (this.isStaff) {
+      return this.storage.getItem('smartpass_intro_teacher') === 'seen';
+    } else {
+      return this.storage.getItem('smartpass_intro_student') === 'seen';
+    }
+  }
+
   ngOnInit() {
     console.log('intro.onInit()');
+
+
+    fromEvent(document, 'keydown').subscribe((evt: KeyboardEvent) => {
+
+      if (evt.key === 'Tab') {
+        evt.preventDefault();
+        if (this.slideIndex === 5) {
+          return;
+        } else {
+          this.slide('forward');
+        }
+      }
+      if (evt.key === 'ArrowRight') {
+        if (this.slideIndex === 5) {
+          return;
+        } else {
+          this.slide('forward');
+        }
+      }
+      if (evt.key === 'ArrowLeft') {
+        if (this.slideIndex === 1) {
+          return;
+        } else {
+          this.slide('back');
+        }
+      }
+
+    });
+
+
+    this.frameMotion$ = this.formService.getFrameMotionDirection();
+
+
     this.dataService.currentUser
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {
-        console.log('intro.subscribe()');
+        console.log('intro.subscribe()' , user);
         this._zone.run(() => {
           this.user = user;
-          this.isStaff = user.roles.includes('_profile_teacher');
+          this.isStaff = user.isTeacher() || user.isAssistant() || user.isAdmin();
 
           this.slides = {
             '#1': [
@@ -213,7 +272,11 @@ export class IntroComponent implements OnInit {
                 header: 'Nurse',
                 gradient: '#DA2370,#FB434A',
                 content: 'https://storage.googleapis.com/courier-static/release-icons/Nurse%20(White).png'
-              },
+              },        {
+                header: 'Cafeteria',
+                gradient: '#022F68,#2F66AB',
+                content: 'https://storage.googleapis.com/courier-static/release-icons/Cafeteria%20(White).png'
+              }
             ],
             '#5': [
               {
@@ -268,8 +331,18 @@ export class IntroComponent implements OnInit {
             ],
           };
         });
+        window.appLoaded(2000);
       });
       // this.endIntro();
+  }
+
+  allowNotifications() {
+
+    this.notifService.initNotifications(true)
+      .then((hasPerm) => {
+        console.log(`Has permission to show notifications: ${hasPerm}`);
+          this.slide('forward');
+      });
   }
 
   endIntro() {
@@ -279,7 +352,13 @@ export class IntroComponent implements OnInit {
     } else {
       this.storage.setItem('smartpass_intro_student', 'seen');
     }
-    this.router.navigate(['select-profile']);
+
+    if (this.usedAsEntryComponent) {
+      this.endIntroEvent.emit(true);
+    } else {
+      this.user.isAdmin() ? this.router.navigate(['/admin']) : this.router.navigate(['/main']);
+    }
+      // this.router.navigate(['select-profile']);
   }
 
   onPress(press: boolean, id: string) {
@@ -290,4 +369,29 @@ export class IntroComponent implements OnInit {
     return (this.buttons[id] ? 'down' : 'up');
   }
 
+  slide(direction: string = 'forward') {
+    switch (direction) {
+      case 'forward':
+        this.formService.setFrameMotionDirection('forward');
+        setTimeout(() => {
+          if ((this.isSafari || this.alreadySeen) && this.slideIndex === 3) {
+            this.slideIndex += 2;
+          } else {
+
+            this.slideIndex++;
+          }
+        }, 100);
+        break;
+      case'back':
+        this.formService.setFrameMotionDirection('back');
+        setTimeout(() => {
+          if ((this.isSafari || this.alreadySeen) &&  this.slideIndex === 5) {
+            this.slideIndex -= 2;
+          } else {
+            this.slideIndex--;
+          }
+        }, 100);
+        break;
+    }
+  }
 }

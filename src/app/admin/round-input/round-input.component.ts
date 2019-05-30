@@ -1,18 +1,25 @@
-import {Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef} from '@angular/core';
-import {MatChipList, MatDialog} from '@angular/material';
-import { TimeService } from '../../services/time.service';
-import { DateInputComponent } from '../date-input/date-input.component';
-import { Paged } from '../../location-table/location-table.component';
-import { HttpService } from '../../services/http-service';
-import { InputHelperDialogComponent } from '../input-helper-dialog/input-helper-dialog.component';
-import {FormGroup} from '@angular/forms';
-import {BehaviorSubject, fromEvent, Observable, Subject} from 'rxjs';
-import {User} from '../../models/User';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
+import {MatDialog} from '@angular/material';
+import {TimeService} from '../../services/time.service';
+import {InputHelperDialogComponent} from '../input-helper-dialog/input-helper-dialog.component';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {DarkThemeSwitch} from '../../dark-theme-switch';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-round-input',
   templateUrl: './round-input.component.html',
-  styleUrls: ['./round-input.component.scss']
+  styleUrls: ['./round-input.component.scss'],
+  exportAs: 'roundInputRef'
 })
 export class RoundInputComponent implements OnInit {
 
@@ -22,43 +29,86 @@ export class RoundInputComponent implements OnInit {
   @Input() placeholder: string;
   @Input() type: string;
   //Can be 'text', 'multilocation', 'multiuser', or 'dates'  There may be some places where multiuser may need to be split into student and teacher. I tried finding a better way to do this, but this is just short term.
+  @Input() initialValue: string = ''; // Allowed only if type is multi*
   @Input() html5type: string = 'text'; // text, password, number etc.
   @Input() hasTogglePicker: boolean;
+  @Input() boxShadow: boolean = true;
   @Input() width: string;
   @Input() minWidth: string = '300px';
-  @Input() fieldIcon: string = './assets/Search Input (Blue).png';
+  @Input() fieldIcon: string = './assets/Search Normal (Search-Gray).svg';
   @Input() fieldIconPosition: string = 'left'; // Can be 'right' or 'left'
   @Input() closeIcon: boolean = false;
   @Input() disabled: boolean = false;
   @Input() focused: boolean = false;
   @Input() chipInput: ElementRef = null;
   @Input() selectReset$: Subject<string>;
+  @Input() selections: any[] = [];
   @Output() ontextupdate: EventEmitter<any> = new EventEmitter();
   @Output() ontoggleupdate: EventEmitter<any> = new EventEmitter();
   @Output() onselectionupdate: EventEmitter<any> = new EventEmitter();
   @Output() controlValue = new EventEmitter();
-  closeIconAsset: string = './assets/Close Input (Grey).svg';
+  @Output() blurEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
+  closeIconAsset: string = './assets/Cancel (Search-Gray).svg';
   showCloseIcon: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   selected: boolean;
   value: string;
   toDate: Date;
   fromDate: Date;
   searchOptions: Promise<any[]>;
-  selections: any[] = [];
   chipListHeight: string = '40px';
   toggleState: string = 'Either';
 
   public e: Observable<Event>;
 
-  constructor(public dialog: MatDialog, private timeService: TimeService) { }
+  constructor (
+    public dialog: MatDialog,
+    private timeService: TimeService,
+    public darkTheme: DarkThemeSwitch,
+    public sanitizer: DomSanitizer
+  ) { }
+
+  get labelIcon() {
+    if (this.selected) {
+      return this.darkTheme.getIcon(
+
+        {
+          iconName: 'Search Eye',
+          darkFill: 'White',
+          lightFill: 'Navy'
+        }
+      );
+
+    } else {
+      return './assets/Search Eye (Blue-Gray).svg';
+    }
+  }
+
+  get labelColor() {
+    // (selected?'#1D1A5E':'#7F879D')
+    if (this.selected) {
+      return this.darkTheme.getColor({
+        white: '#1D1A5E',
+        dark: '#FFFFFF'
+      });
+    } else {
+      return '#7F879D';
+    }
+  }
+
+  get _boxShadow() {
+    return this.sanitizer.bypassSecurityTrustStyle(this.boxShadow ? '0 0 6px 0 rgba(0, 0, 0, 0.1)' : 'none');
+  }
 
   ngOnInit() {
 
+    if (!this.type.includes('multi') && this.type !== 'text') {
+      this.initialValue = '';
+    }
+    this.value = this.initialValue;
     setTimeout(() => {
       if (this.input && this.focused) {
         this.focusAction(true);
         this.focus();
-        // this.changeAction(this.input.nativeElement, true);
       }
     }, 500);
 
@@ -102,7 +152,8 @@ export class RoundInputComponent implements OnInit {
     } else if (selected && this.type.includes('multi')) {
       console.log(this.type.substring(5))
       const dateDialog = this.dialog.open(InputHelperDialogComponent, {
-        width: '900px',
+        width: '1018px',
+        height: '560px',
         panelClass: 'accounts-profiles-dialog',
         backdropClass: 'custom-bd',
         data: {'type': this.type.substring(5), 'selections': this.selections, 'toggleState': this.toggleState}
@@ -119,6 +170,8 @@ export class RoundInputComponent implements OnInit {
           this.ontoggleupdate.emit(this.toggleState);
         }
       });
+    } else if (!selected) {
+      this.blurEvent.emit(true);
     }
   }
 

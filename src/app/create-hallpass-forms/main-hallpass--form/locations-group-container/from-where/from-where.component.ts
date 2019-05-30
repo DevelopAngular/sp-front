@@ -1,6 +1,7 @@
-import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {CreateFormService} from '../../../create-form.service';
+import {BehaviorSubject} from 'rxjs';
 
 @Component({
   selector: 'app-from-where',
@@ -20,20 +21,18 @@ export class FromWhereComponent implements OnInit {
   @Output() selectedLocation: EventEmitter<any> = new EventEmitter<any>();
   @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
 
-  shadow: boolean = true;
-
-    @HostListener('scroll', ['$event'])
-    tableScroll(event) {
-        const tracker = event.target;
-        const limit = tracker.scrollHeight - tracker.clientHeight;
-        if (event.target.scrollTop < limit) {
-            this.shadow = true;
-        }
-        if (event.target.scrollTop === limit) {
-            this.shadow = false;
-        }
+  shadow: boolean;
+  @HostListener('scroll', ['$event'])
+  tableScroll(event) {
+    const tracker = event.target;
+    const limit = tracker.scrollHeight - tracker.clientHeight;
+    if (event.target.scrollTop < limit) {
+      this.shadow = true;
     }
-
+    if (event.target.scrollTop === limit) {
+      this.shadow = false;
+    }
+  }
   constructor(
     private formService: CreateFormService
   ) { }
@@ -60,18 +59,17 @@ export class FromWhereComponent implements OnInit {
 
 
     setTimeout(() => {
-      if (this.formState.forLater) {
+      if (this.formState.forLater || this.formState.missedRequest) {
         this.formState.previousState = 1;
+        this.formState.previousStep = 3;
         this.formState.step = 1;
         this.formState.state = 1;
         this.formState.previousStep = 3;
-        // this.formState.quickNavigator = true;
       } else if (!!this.studentText && this.formState.state === 1) {
         this.formState.previousState = 1;
         this.formState.step = 2;
         this.formState.state = 1;
         this.formState.previousStep = 3;
-        // this.formState.quickNavigator = true;
       } else {
         this.formState.step = 0;
       }

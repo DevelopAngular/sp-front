@@ -11,10 +11,11 @@ import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
 import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
-import { filter } from 'rxjs/operators';
+import {filter, switchMap} from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
-import {RequestsService} from '../services/requests.service';
+import { RequestsService } from '../services/requests.service';
+import {of} from 'rxjs';
 
 @Component({
   selector: 'app-invitation-card',
@@ -41,6 +42,9 @@ export class InvitationCardComponent implements OnInit {
   performingAction: boolean;
   fromHistory;
   fromHistoryIndex;
+  dateEditOpen: boolean;
+
+  isModal: boolean;
   isSeen: boolean;
 
   constructor(
@@ -62,6 +66,26 @@ export class InvitationCardComponent implements OnInit {
     return this.invitation.issuer.isSameObject(this.user)?'Me':this.invitation.issuer.first_name.substr(0, 1) +'. ' +this.invitation.issuer.last_name;
   }
 
+    get gradient() {
+        return 'radial-gradient(circle at 73% 71%, ' + this.invitation.color_profile.gradient_color + ')';
+    }
+
+    get studentText() {
+        if (this.formState && this.formState.data.selectedGroup) {
+            return this.formState.data.selectedGroup.title;
+        } else {
+            return (this.selectedStudents ?
+                (this.selectedStudents.length > 2 ?
+                    this.selectedStudents[0].display_name + ' and ' + (this.selectedStudents.length - 1) + ' more' :
+                    this.selectedStudents[0].display_name + (this.selectedStudents.length > 1 ?
+                    ' and ' + this.selectedStudents[1].display_name : '')) : this.invitation.student.display_name + ` (${this.studentEmail})`);
+        }
+    }
+
+    get studentEmail() {
+        return this.invitation.student.primary_email.split('@', 1)[0];
+    }
+
   get status(){
     return this.invitation.status.charAt(0).toUpperCase() + this.invitation.status.slice(1);
   }
@@ -70,9 +94,14 @@ export class InvitationCardComponent implements OnInit {
     return this.selectedStudents && this.selectedStudents.length > 1;
   }
 
+  get invalidDate() {
+    return Util.invalidDate(this.invitation.date_choices[0]);
+  }
+
   ngOnInit() {
 
     if (this.data['pass']) {
+      this.isModal = true;
       this.invitation = this.data['pass'];
       this.forFuture = this.data['forFuture'];
       this.fromPast = this.data['fromPast'];
@@ -133,6 +162,49 @@ export class InvitationCardComponent implements OnInit {
     });
   }
 
+    changeDate(resend_request?: boolean) {
+      if (!this.dateEditOpen) {
+            this.dialogRef.close();
+            const conf = {
+                panelClass: 'form-dialog-container',
+                backdropClass: 'custom-backdrop',
+                data: {
+                    'entryState': {
+                        step: 1,
+                        state: 1
+                    },
+                    'forInput': false,
+                    'missedRequest': !this.forStaff,
+                    'originalToLocation': this.invitation.destination,
+                    'colorProfile': this.invitation.color_profile,
+                    'request': this.invitation,
+                    'request_time': resend_request || this.invalidDate ? new Date() : this.invitation.date_choices[0],
+                    'resend_request': resend_request
+                }
+            };
+
+        const dateDialog = this.dialog.open(CreateHallpassFormsComponent, conf);
+
+        dateDialog.afterOpen().subscribe( () => {
+            this.dateEditOpen = true;
+        });
+
+        dateDialog.afterClosed().pipe(filter(() => resend_request && this.forStaff),
+            switchMap((state) => {
+                const body = {
+                    'students' : this.invitation.student.id,
+                    'default_origin' : this.invitation.default_origin?this.invitation.default_origin.id:null,
+                    'destination' : +this.invitation.destination.id,
+                    'date_choices' : [new Date(state.data.date.date).toISOString()],
+                    'duration' : this.invitation.duration,
+                    'travel_type' : this.invitation.travel_type
+                };
+                return this.requestService.createInvitation(body);
+            }), switchMap(() => this.requestService.cancelInvitation(this.invitation.id, '')))
+            .subscribe(console.log);
+    }
+    }
+
   denyInvitation(evt: MouseEvent){
     if(!this.denyOpen){
       const target = new ElementRef(evt.currentTarget);
@@ -178,9 +250,12 @@ export class InvitationCardComponent implements OnInit {
         }
           return false;
       } else if (!this.forStaff) {
-        options.push(this.genOption('Decline Pass Request','#F00','decline'));
+        options.push(this.genOption('Decline Pass Request','#E32C66','decline'));
         header = 'Are you sure you want to decline this pass request you received?'
       } else {
+        if (this.invalidDate) {
+            options.push(this.genOption('Change Date & Time to Resend', '#3D396B', 'resend'));
+        }
         options.push(this.genOption('Delete Pass Request','#E32C66','delete'));
         header = "Are you sure you want to delete this pass request you sent?";
       }
@@ -194,7 +269,7 @@ export class InvitationCardComponent implements OnInit {
         this.denyOpen = true;
       });
 
-      consentDialog.afterClosed().subscribe(action =>{
+      consentDialog.afterClosed().subscribe(action => {
         this.denyOpen = false;
         if(action === 'cancel'){
           this.dialogRef.close();
@@ -214,6 +289,8 @@ export class InvitationCardComponent implements OnInit {
             console.log('[Invitation Cancelled]: ', httpData);
             this.dialogRef.close();
           });
+        } else if (action === 'resend') {
+            this.changeDate(true);
         }});
     }
   }

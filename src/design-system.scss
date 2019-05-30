@@ -1,0 +1,500 @@
+@import 'sp-colors';
+
+/* === SmartPass Primary Font === */
+
+$primaryFont: "Helvetica Neue", "Arial", "Arimo", sans-serif;
+
+/* === end ===*/
+
+/* === SmartPass Color Palette === */
+
+//$green: #04CD33;
+//$jade: #00B476;
+//$navy: #1F195E;
+//$blue-gray: #7F879D;
+//$background-white: #FCFDFF;
+//$card-white: #FFFFFF;
+//$off-white: #ECF1FF;
+//$light-gray: #D3D6DE;
+//$ultra-light-gray: #B3B7C1;
+//$dark-gray: #555558;
+//$search-gray: #B3B3B3;
+
+/* === end ===*/
+
+@mixin textColor($color) {
+  color: $color;
+}
+
+.ds-navy {
+  @include textColor($navy);
+}
+.ds-blue-gray {
+  @include textColor($blue-gray);
+}
+.ds-green {
+  @include textColor($green);
+}
+.ds-jade {
+  @include textColor($jade);
+  color: $jade;
+}
+.ds-background-white {
+  @include textColor($background-white);
+}
+.ds-card-white {
+  @include textColor($card-white);
+}
+.ds-off-white {
+  @include textColor($off-white);
+}
+.ds-light-gray {
+  @include textColor($light-gray);
+}
+.ds-ultra-light-gray {
+  @include textColor($ultra-light-gray);
+}
+.ds-dark-gray {
+  @include textColor($dark-gray);
+}
+.ds-search-gray {
+  @include textColor($search-gray);
+}
+
+/* === Common Text Options === */
+
+@mixin textSize ($px, $fw: normal, $color: $navy, $applyColor: true) {
+  font-size: $px !important;
+  font-weight: $fw !important;
+  @if $applyColor {
+    color: $color !important;
+  }
+}
+
+.ds-big-title {
+  @include textSize(29px, bold);
+}
+.ds-big-heading {
+  @include textSize(24px, bold);
+}
+.ds-section-header {
+  @include textSize(18px, bold);
+}
+.ds-tab-text {
+  @include textSize(17px, bold, $color: $blue-gray);
+}
+.ds-dialog-title {
+  @include textSize(17px, bold);
+}
+.ds-dialog-title-white {
+  @include textSize(17px, bold, $card-white);
+}
+.ds-dialog-subtitle {
+  @include textSize(16px, bold);
+}
+.ds-dialog-heading {
+  @include textSize(15px, bold);
+  padding-bottom: 5px;
+}
+.ds-dialog-heading-gray {
+  @include textSize(15px, bold, $blue-gray);
+  padding-bottom: 5px;
+}
+.ds-dialog-bold-text {
+  @include textSize(14px, bold, $blue-gray);
+}
+.ds-dialog-normal-text {
+  @include textSize(14px, normal, $blue-gray);
+}
+.ds-small-link-text {
+  @include textSize(12px, $color: $blue-gray);
+  &:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  &:focus {
+    outline: none;
+  }
+}
+.ds-link-text {
+  @include textSize(14px, $color: $blue-gray);
+  &:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  &:focus {
+    outline: none;
+  }
+}
+.ds-segment-control {
+  @include textSize(13px);
+}
+.ds-cell-text {
+  @include textSize(14px, $color: $dark-gray);
+}
+.ds-cell-text-2 {
+  @include textSize(14px, $color: $blue-gray);
+}
+.ds-cell-description-text {
+  @include textSize(13px, $color: $ultra-light-gray);
+}
+.ds-pass-tile-title {
+  @include textSize(14px, bold, $card-white);
+}
+.ds-pass-tile-subtitle {
+  @include textSize(12px, $color: $card-white);
+}
+.ds-pass-tile-title {
+  @include textSize(14px, $color: $card-white);
+}
+.ds-small-button-text {
+  @include textSize(14px, bold, $applyColor: false);
+}
+.ds-medium-button-text {
+  @include textSize(15px, bold, $applyColor: false);
+}
+.ds-details-text {
+  @include textSize(15px);
+}
+.ds-details-text-bold {
+  @include textSize(15px, bold);
+}
+
+/* === end === */
+
+/* === Common Flex Layout === */
+
+@mixin flexLayout($align, $justify) {
+  display: flex;
+  align-items: $align;
+  justify-content: $justify;
+}
+
+.ds-flex-start-between{
+  @include flexLayout(flex-start, space-between);
+}
+.ds-flex-start-around{
+  @include flexLayout(flex-start, space-around);
+}
+.ds-flex-start-start{
+  @include flexLayout(flex-start, flex-start);
+}
+.ds-flex-start-center{
+  @include flexLayout(flex-start, center);
+}
+.ds-flex-start-end{
+  @include flexLayout(flex-start, flex-end);
+}
+
+
+.ds-flex-center-between{
+  @include flexLayout(center, space-between);
+}
+.ds-flex-ceter-around{
+  @include flexLayout(center, space-around);
+}
+.ds-flex-center-start{
+  @include flexLayout(center, flex-start);
+}
+.ds-flex-center-center{
+  @include flexLayout(center, center);
+}
+.ds-flex-center-end{
+  @include flexLayout(center, flex-end);
+}
+
+
+.ds-flex-end-between{
+  @include flexLayout(flex-end, space-between);
+}
+.ds-flex-end-around{
+  @include flexLayout(flex-end, space-around);
+}
+.ds-flex-end-start{
+  @include flexLayout(flex-end, flex-start);
+}
+.ds-flex-end-center{
+  @include flexLayout(flex-end, center);
+}
+.ds-flex-end-end{
+  @include flexLayout(flex-end, flex-end);
+}
+
+
+.ds-flex-wrap{
+  flex-wrap: wrap;
+}
+.ds-flex-nowrap{
+  flex-wrap: nowrap;
+}
+.ds-flex-column{
+  flex-direction: column;
+}
+
+/* === Common Parent > Child Sizing === */
+
+.ds-w-100{
+  width: 100%;
+}
+.ds-h-100{
+  height: 100%;
+}
+
+/* === end === */
+
+/* === Common Box Sizing === */
+
+.ds-border-box {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.ds-content-box {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+}
+
+/* === end === */
+
+/* === Common Box Spaces ===*/
+
+@mixin margin($space, $side) {
+  @if $side == all {
+    margin: $space;
+  }
+  @if $side == x {
+    margin-left: $space;
+    margin-right: $space;
+  }
+  @if $side == y {
+    margin-top: $space;
+    margin-bottom: $space;
+  }
+  @if $side == top {
+    margin-top: $space;
+  }
+  @if $side == left {
+    margin-left: $space;
+  }
+  @if $side == bottom {
+    margin-bottom: $space;
+  }
+  @if $side == right {
+    margin-right: $space;
+  }
+}
+
+@mixin padding($space, $side) {
+  @if $side == all {
+    padding: $space;
+  }
+  @if $side == x {
+    padding-left: $space;
+    padding-right: $space;
+  }
+  @if $side == y {
+    padding-top: $space;
+    padding-bottom: $space;
+  }
+  @if $side == top {
+    padding-top: $space;
+  }
+  @if $side == left {
+    padding-left: $space;
+  }
+  @if $side == bottom {
+    padding-bottom: $space;
+  }
+  @if $side == right {
+    padding-right: $space;
+  }
+}
+
+
+
+.ds-m-5 { @include margin(5px, all)}
+.ds-m-10 { @include margin(10px, all)}
+.ds-m-15 { @include margin(15px, all)}
+.ds-m-20 { @include margin(20px, all)}
+.ds-m-25 { @include margin(25px, all)}
+
+.ds-mx-5 { @include margin(5px, x)}
+.ds-mx-10 { @include margin(10px, x)}
+.ds-mx-15 { @include margin(15px, x)}
+.ds-mx-20 { @include margin(20px, x)}
+.ds-mx-25 { @include margin(25px, x)}
+
+.ds-my-5 { @include margin(5px, y)}
+.ds-my-10 { @include margin(10px, y)}
+.ds-my-15 { @include margin(15px, y)}
+.ds-my-20 { @include margin(20px, y)}
+.ds-my-25 { @include margin(25px, y)}
+
+.ds-mt-5 { @include margin(5px, top)}
+.ds-mt-10 { @include margin(10px, top)}
+.ds-mt-15 { @include margin(15px, top)}
+.ds-mt-20 { @include margin(20px, top)}
+.ds-mt-25 { @include margin(25px, top)}
+
+.ds-ml-5 { @include margin(5px, left)}
+.ds-ml-10 { @include margin(10px, left)}
+.ds-ml-15 { @include margin(15px, left)}
+.ds-ml-20 { @include margin(20px, left)}
+.ds-ml-25 { @include margin(25px, left)}
+
+.ds-mb-5 { @include margin(5px, bottom)}
+.ds-mb-10 { @include margin(10px, bottom)}
+.ds-mb-15 { @include margin(15px, bottom)}
+.ds-mb-20 { @include margin(20px, bottom)}
+.ds-mb-25 { @include margin(25px, bottom)}
+
+.ds-mr-5 { @include margin(5px, right)}
+.ds-mr-10 { @include margin(10px, right)}
+.ds-mr-15 { @include margin(15px, right)}
+.ds-mr-20 { @include margin(20px, right)}
+.ds-mr-25 { @include margin(25px, right)}
+
+
+
+.ds-p-5 { @include padding(5px, all)}
+.ds-p-10 { @include padding(10px, all)}
+.ds-p-15 { @include padding(15px, all)}
+.ds-p-20 { @include padding(20px, all)}
+.ds-p-25 { @include padding(25px, all)}
+
+.ds-px-5 { @include padding(5px, x)}
+.ds-px-10 { @include padding(10px, x)}
+.ds-px-15 { @include padding(15px, x)}
+.ds-px-20 { @include padding(20px, x)}
+.ds-px-25 { @include padding(25px, x)}
+
+.ds-py-5 { @include padding(5px, y)}
+.ds-py-10 { @include padding(10px, y)}
+.ds-py-15 { @include padding(15px, y)}
+.ds-py-20 { @include padding(20px, y)}
+.ds-py-25 { @include padding(25px, y)}
+
+.ds-pt-5 { @include padding(5px, top)}
+.ds-pt-10 { @include padding(10px, top)}
+.ds-pt-15 { @include padding(15px, top)}
+.ds-pt-20 { @include padding(20px, top)}
+.ds-pt-25 { @include padding(25px, top)}
+
+.ds-pl-5 { @include padding(5px, left)}
+.ds-pl-10 { @include padding(10px, left)}
+.ds-pl-15 { @include padding(15px, left)}
+.ds-pl-20 { @include padding(20px, left)}
+.ds-pl-25 { @include padding(25px, left)}
+
+.ds-pb-5 { @include padding(5px, bottom)}
+.ds-pb-10 { @include padding(10px, bottom)}
+.ds-pb-15 { @include padding(15px, bottom)}
+.ds-pb-20 { @include padding(20px, bottom)}
+.ds-pb-25 { @include padding(25px, bottom)}
+
+.ds-pr-5 { @include padding(5px, right)}
+.ds-pr-10 { @include padding(10px, right)}
+.ds-pr-15 { @include padding(15px, right)}
+.ds-pr-20 { @include padding(20px, right)}
+.ds-pr-25 { @include padding(25px, right)}
+
+/* === end === */
+
+
+/* === Dark Theme === */
+
+.sticky-header,
+.router-outlet,
+.bar,
+.passes-wrapper,
+.my-room-wrapper,
+.hall-monitor-wrapper,
+.global-container,
+.settings-wrapper,
+.host,
+.display-card-wrapper,
+.host .card,
+.nav-wrapper,
+.nav-footer,
+.reported-students,
+.report-group-header,
+.bottom-shadow,
+.nav-footer,
+.report-group-header,
+.bottom-shadow,
+.school-toggle-bar-wrapper,
+.settings-wrapper {
+
+  transition: all .2s ease-in;
+}
+
+.ds-dark-theme {
+
+  @mixin veryDark {
+    background-color: #0F171E !important;
+    -webkit-background-clip: padding-box !important;
+    -moz-background-clip: padding !important;
+    background-clip: border-box !important;
+    color: #FFFFFF !important;
+
+  }
+
+  @mixin bitDark {
+    background-color: #134482 !important;
+    -webkit-background-clip: padding-box !important;
+    -moz-background-clip: padding !important;
+    background-clip: border-box !important;
+    color: #FFFFFF !important;
+
+  }
+
+  @mixin bitDarkShadow {
+    box-shadow: -12px -15px 20px 3px #134482 !important;
+  }
+  .router-outlet,
+  .passes-wrapper,
+  .my-room-wrapper,
+  .hall-monitor-wrapper,
+  .global-container,
+  .settings-wrapper,
+  .host {
+
+    @include veryDark;
+  }
+
+  .display-card-wrapper,
+  .host .card,
+  .nav-wrapper,
+  .nav-footer,
+  .reported-students,
+  .report-group-header,
+  .bottom-shadow {
+    @include bitDark;
+  }
+
+  .nav-footer,
+  .report-group-header,
+  .bottom-shadow {
+
+    @include bitDarkShadow;
+  }
+
+  .school-toggle-bar-wrapper {
+    background-color: #C5D5FF !important;
+  }
+  //.nav-wrapper {
+  //  .nav-footer {
+  //    .footer-text {
+  //      color: #FFFFFF;
+  //    }
+  //  }
+  //}
+  //.dashboard-wrapper {
+  //  .card-header {
+  //    color: #FFFFFF !important;
+  //  }
+  //}
+}
+
+/* === end === */

@@ -1,5 +1,6 @@
 ﻿import { Component, OnInit, Input } from '@angular/core';
 import { NavbarDataService } from '../main/navbar-data.service';
+import {DarkThemeSwitch} from '../dark-theme-switch';
 
 @Component({
   selector: 'app-display-card',
@@ -17,18 +18,34 @@ export class DisplayCardComponent implements OnInit {
   @Input() iconSize: string = '20px';
   @Input() fontSize: string;
   @Input() righticon: string;
-  @Input() subtitle: string
+  @Input() subtitle: string;
   @Input() subtitle_fontSize: string;
-  @Input() righttext:string
+  @Input() righttext:string;
 
 
-  constructor(private navbarData: NavbarDataService) { }
+  constructor(
+    private navbarData: NavbarDataService,
+    public darkTheme: DarkThemeSwitch
+  ) { }
 
   get notificationBadge$() {
     return this.navbarData.notificationBadge$;
   }
 
+  getIcon(icon) {
+    return this.darkTheme.getIcon({
+      iconName: icon,
+      darkFill: 'White',
+      lightFill: 'Navy',
+      setting: null
+    });
+  }
+  get titleColor () {
+    return this.darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'});
+  }
+
   ngOnInit() {
+
   }
 
 }

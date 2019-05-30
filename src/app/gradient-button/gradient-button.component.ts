@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { bumpIn } from '../animations';
 
@@ -23,33 +23,103 @@ const cssColorRegexp = new RegExp(`^(${CSS_COLOR_REGEXP})$`, 'i');
     bumpIn
   ]
 })
-export class GradientButtonComponent {
+export class GradientButtonComponent implements OnInit {
+
+  /*
+  * @Input 'size' can be small, medium, large, xl or editable.
+  * If editable, all inputs marked as ' > editable' below can be provided, otherwise they will be overridden
+  */
+  @Input() size: string = 'small';
 
   @Input() border: string;
+  @Input() withShadow: boolean = true;
   @Input() gradient: string;
-  @Input() hoverColor: string;
+  @Input() hoverColor: string = '#00B476';
   @Input() leftIcon: string;
   @Input() rightIcon: string;
-  @Input() text: string;
+  @Input() text: string = 'PDF';
   @Input() subtitle: string;
   @Input() textColor: string;
-  @Input() width: number;
-  @Input() minWidth: number;
-  @Input() minHeight: number;
+  @Input() width: string = 'auto'; // > editable
+  @Input() minWidth: string = 'auto'; // > editable
+  @Input() minHeight: string; // > editable
   @Input() disabled: boolean = false;
-  @Input() fontSize: string = '20px';
-  @Input() fontWeight: string|number;
-  @Input() leftImageWidth: string;
-  @Input() leftImageHeight: string;
-  @Input() cursor: string;
+  @Input() fontSize: string = '20px'; // > editable
+  @Input() fontWeight: string = 'bold'; // > editable
+  @Input() leftImageWidth: string; // > editable
+  @Input() leftImageHeight: string; // > editable
+  @Input() cursor: string = 'pointer';
+  @Input() cornerRadius: string;
+  @Input() padding: string;
   @Input() textWidth: string = '100%';
+  @Input() whiteSpace: string = 'nowrap';
   @Input() buttonLink: string; // needs for the links so that don't brake an existing markup and the entire button is clickable
+  @Input() linkType: string = '_blank'; // _blank or _self
+  @Input() download: boolean = false;
+  @Input() documentType: string; // can be pdf or xslx/csv
   @Output() buttonClick = new EventEmitter<any>();
 
   buttonDown = false;
   hovered: boolean = false;
 
   constructor(private sanitizer: DomSanitizer) {
+  }
+  ngOnInit(): void {
+    // if (this.size && this.size !== 'small' && this.size !== 'medium' && this.size !== 'large' && this.size !== 'xl') {
+    //   this.size = 'small';
+    // }
+    if (this.size && this.size !== 'editable') {
+
+      this.width = 'auto';
+      this.minWidth = this.width;
+
+
+      switch (this.size) {
+        case 'small':
+          this.leftImageHeight = '16px';
+          this.leftImageWidth = '16px';
+          this.minHeight = '40px';
+          this.minWidth = '100px';
+          this.fontSize = '14px';
+          this.fontWeight = 'bold';
+          this.cornerRadius = '8px';
+          this.padding = '0px 16px';
+          break;
+        case 'medium':
+          this.leftImageHeight = '21px';
+          this.leftImageWidth = '21px';
+          this.minHeight = '50px';
+          this.minWidth = '100px';
+          this.fontSize = '15px';
+          this.fontWeight = 'bold';
+          this.cornerRadius = '8px';
+          this.padding = '0px 16px';
+
+          break;
+        case 'large':
+          this.leftImageHeight = '21px';
+          this.leftImageWidth = '21px';
+          this.minHeight = '75px';
+          this.minWidth = '120px';
+          this.fontSize = '17px';
+          this.fontWeight = 'bold';
+          this.cornerRadius = '10px';
+          this.padding = '0px 20px';
+
+          break;
+        case 'xl':
+          this.leftImageHeight = '34px';
+          this.leftImageWidth = '34px';
+          this.minHeight = '100px';
+          this.minWidth = '160px';
+          this.fontSize = '22px';
+          this.fontWeight = 'bold';
+          this.cornerRadius = '12px';
+          this.padding = '0px 20px';
+
+          break;
+      }
+    }
   }
 
   get buttonState() {
@@ -95,8 +165,12 @@ export class GradientButtonComponent {
   }
 
   get shadow() {
-    return this.sanitizer.bypassSecurityTrustStyle(((this.hovered && !this.disabled) ?
-        '0 2px 4px 1px rgba(0, 0, 0, 0.3)' : '0 1px 4px 0px rgba(0, 0, 0, 0.25)'));
+    if (this.withShadow) {
+      return this.sanitizer.bypassSecurityTrustStyle(((this.hovered && !this.disabled) ?
+          '0 2px 4px 1px rgba(0, 0, 0, 0.3)' : '0 1px 4px 0px rgba(0, 0, 0, 0.25)'));
+    } else {
+      return 'none';
+    }
   }
 
   onPress(press: boolean) {

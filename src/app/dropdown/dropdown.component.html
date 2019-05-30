@@ -1,62 +1,117 @@
-<div class="pointer-wrapper"><div class="pointer"></div></div>
-<div class="consent-wrapper">
-  <div class="consent-header" *ngIf="heading"> {{heading}}</div>
-  <div class="divider"></div>
+<div class="pointer-wrapper"><div class="pointer"  [style.background-color]="darkTheme.getBackground('low')"></div></div>
+<div class="consent-wrapper"  [style.background-color]="darkTheme.getBackground('low')">
+  <div class="consent-header" [style.color]="'#7F879D'" *ngIf="heading"> {{heading}}</div>
+  <div class="option-divider" *ngIf="heading"></div>
+
   <div class="options-wrapper" *ngIf="locations">
-    <div class="option" *ngFor="let location of locations" (click)="_matDialogRef.close(location)">
-      <div class="option-data">
+    <div class="option">
+
+      <div class="option-data"
+           #_option
+           [ngClass]="{
+                'option-wrapper': !darkTheme.isEnabled$.value,
+                'option-wrapper__dark': darkTheme.isEnabled$.value
+               }"
+           (mousedown)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : 'rgba(226, 231, 244, 1)'"
+           (mouseup)="_option.style.background = 'transparent'"
+           (mouseover)="_option.style.background = this.darkTheme.isEnabled$.value ? '#47447E' : 'rgba(236, 241, 255, 1)'"
+           (mouseleave)="_option.style.background = 'transparent'"
+           (click)="_matDialogRef.close('all_rooms')">
         <div class="option-data_leftside">
-          <span>{{ location.title }}</span>
+          <span [style.color]="darkTheme.getColor()">All Rooms</span>
         </div>
         <div class="option-data_rightside">
-          <div>{{location.room}}</div>
           <div class="marked-room">
-            <img *ngIf="location.room === selectedLocation.room && location.title === selectedLocation.title" [style.width]="'20px'" [style.height]="'20px'" [src]="'./assets/Check (Blue).png' | resolveAsset" alt="Check (Blue).png">
+            <img *ngIf="!selectedLocation" [style.width]="'20px'" [style.height]="'20px'" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'}) | resolveAsset" alt="Check (Navy).svg">
+          </div>
+        </div>
+      </div>
+
+      <div class="option-divider"></div>
+    </div>
+
+    <div class="option" *ngFor="let location of locations" (click)="_matDialogRef.close(location)">
+      <div #_option class="option-data"
+           [ngClass]="{
+                'option-wrapper': !darkTheme.isEnabled$.value,
+                'option-wrapper__dark': darkTheme.isEnabled$.value
+               }"
+           (mousedown)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : 'rgba(226, 231, 244, 1)'"
+           (mouseup)="_option.style.background = 'transparent'"
+           (mouseover)="_option.style.background = this.darkTheme.isEnabled$.value ? '#47447E' : 'rgba(236, 241, 255, 1)'"
+           (mouseleave)="_option.style.background = 'transparent'"
+      >
+        <div class="option-data_leftside">
+          <span [style.color]="darkTheme.getColor()">{{ location.title }}</span>
+        </div>
+        <div class="option-data_rightside">
+          <div [style.color]="'#7F879D'"
+          >{{location.room}}</div>
+          <div class="marked-room">
+            <img *ngIf="selectedLocation ? (location.room === selectedLocation.room && location.title === selectedLocation.title) : false"
+                 [style.width]="'20px'" [style.height]="'20px'"
+                 [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'}) | resolveAsset" alt="Check (Navy).svg">
           </div>
         </div>
       </div>
       <div class="option-divider"></div>
     </div>
   </div>
+
   <div class="options-wrapper" *ngIf="schools">
     <div class="option" *ngFor="let school of schools" (click)="_matDialogRef.close(school)">
-      <div class="option-data">
-          <div class="option-data_leftside">
-            <div>
-              <span>{{ school.name }}</span>
-            </div>
-            <div class="option-roles">
-              {{partOfProfile(school)}}
-            </div>
+      <div #_option class="option-data"
+           [ngClass]="{
+                'option-wrapper': !darkTheme.isEnabled$.value,
+                'option-wrapper__dark': darkTheme.isEnabled$.value
+               }"
+           (mousedown)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : 'rgba(226, 231, 244, 1)'"
+           (mouseup)="_option.style.background = 'transparent'"
+           (mouseover)="_option.style.background = this.darkTheme.isEnabled$.value ? '#47447E' : 'rgba(236, 241, 255, 1)'"
+           (mouseleave)="_option.style.background = 'transparent'"
+      >
+        <div class="option-data_leftside">
+          <span [style.color]="darkTheme.getColor()">{{ school.name }}</span>
+        </div>
+        <div class="option-data_rightside">
+          <div class="marked-room">
+            <img *ngIf="school.id === selectedSchool.id && school.name === selectedSchool.name" [style.width]="'20px'" [style.height]="'20px'"  [src]="'./assets/Check (Navy).svg' | resolveAsset" alt="Check (Navy).svg">
           </div>
-          <div class="option-data_rightside">
-            <div class="marked-room">
-              <img *ngIf="school.id === selectedSchool.id && school.name === selectedSchool.name" [style.width]="'20px'" [style.height]="'20px'" [src]="'./assets/Check (Blue).png' | resolveAsset" alt="Check (Blue).png">
-            </div>
-          </div>
+        </div>
       </div>
-      <!--<div class="option-roles">-->
-        <!--<span *ngIf="school.my_roles.includes('_profile_admin')">Administrator</span>-->
-        <!--<span *ngIf="school.my_roles.includes('_profile_teacher')">Teacher</span>-->
-        <!--<span *ngIf="school.my_roles.includes('_profile_student')">Student</span>-->
-      <!--</div>-->
       <div class="option-divider"></div>
+    </div>
+  </div>
+
+  <div class="options-wrapper" *ngIf="teachers && selectedTeacher"  style="padding: 15px 25px 60px 25px;">
+    <div class="option" style="height: 40px;" *ngFor="let teacher of teachers" (click)="_matDialogRef.close(teacher)">
+      <div #_option class="option-data" style="background-clip: border-box; padding: 0;"
+           [ngClass]="{
+                'option-wrapper': !darkTheme.isEnabled$.value,
+                'option-wrapper__dark': darkTheme.isEnabled$.value
+               }"
+           (mousedown)="_option.style.backgroundColor = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : 'rgba(226, 231, 244, 1)'"
+           (mouseup)="_option.style.backgroundColor = 'transparent'"
+           (mouseover)="_option.style.backgroundColor = this.darkTheme.isEnabled$.value ? '#47447E' : 'rgba(236, 241, 255, 1)'"
+           (mouseleave)="_option.style.backgroundColor = 'transparent'"
+      >
+        <div class="option-data_leftside">
+          <span [style.color]="darkTheme.getColor()">{{ teacher.user.display_name }}</span>
+        </div>
+        <div class="option-data_rightside">
+          <div class="marked-room">
+            <img *ngIf="teacher.user.id === selectedTeacher.user.id" [style.width]="'20px'" [style.height]="'20px'"  [src]="'./assets/Check (Navy).svg' | resolveAsset" alt="Check (Navy).svg">
+          </div>
+        </div>
+      </div>
+      <div class="option-divider"></div>
+    </div>
+    <div class="assistant-greeting ds-w-100 ds-pt-10 ds-pb-15"
+         [style.background-color]="'#FCFDFF'"
+         [style.color]="darkTheme.getColor()">
+      <div style="font-weight: bold;">Hi {{user.display_name}}!</div>
+      <div>Create and manage passes for this teacher.</div>
     </div>
   </div>
 </div>
 
-<!-- <div [style.width]="elementWidth" [ngClass]="{'wrapper-no-options': !showOptions, 'wrapper-options': showOptions}">
-  <div class="selected-teacher" (click)="showOptions = !showOptions && showArrow">
-    {{ options?options[selectedIndex].title:"" }}
-    <mat-icon *ngIf="!showOptions && showArrow" class="drop-arrow">arrow_drop_down</mat-icon>
-    <mat-icon *ngIf="showOptions && showArrow" class="drop-arrow">arrow_drop_up</mat-icon>
-  </div>
-  <div class="options" [style.width]="elementWidth" *ngIf="showOptions">
-    <div class="option" *ngFor="let choice of choices" (click)="select(choice)">
-      <div class="option-data">
-        {{ choice.title }}
-      </div> -->
-      <!-- <div class="option-divider"></div>      -->
-    <!-- </div>
-  </div>
-</div> -->

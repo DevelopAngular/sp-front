@@ -1,10 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import {XlsxGeneratorService} from '../xlsx-generator.service';
 
 export interface LinkGeneratedDialogData {
   name: string;
-  link: string;
+  selectedReports: any[];
+  pdfLink: string;
 }
 
 @Component({
@@ -15,13 +17,14 @@ export interface LinkGeneratedDialogData {
 export class LinkGeneratedDialogComponent implements OnInit {
 
   name: string;
-  link: string | SafeUrl;
-
-  static createDialog(dialog: MatDialog, name: string, link: string) {
+  // selectedReports: any[];
+  pdflink: string | SafeUrl;
+  // xlsxDoc: boolean = true;
+  static createDialog(dialog: MatDialog, name: string, pdfLink: string, selectedReports?: any) {
     return dialog.open(LinkGeneratedDialogComponent, {
       panelClass: 'accounts-profiles-dialog',
       backdropClass: 'custom-bd',
-      data: {name, link}
+      data: {name, pdfLink, selectedReports }
     });
   }
 
@@ -29,12 +32,17 @@ export class LinkGeneratedDialogComponent implements OnInit {
       private sanitizer: DomSanitizer,
       @Inject(MAT_DIALOG_DATA) public data: LinkGeneratedDialogData,
       public dialogRef: MatDialogRef<LinkGeneratedDialogComponent>,
+      public xlsx: XlsxGeneratorService
       ) {
     this.name = data.name;
-    this.link = this.sanitizer.bypassSecurityTrustUrl(data.link);
+    this.pdflink = this.sanitizer.bypassSecurityTrustUrl(data.pdfLink);
   }
 
   ngOnInit() {
+  }
+
+  downloadXlsxFile() {
+    this.xlsx.generate(this.data.selectedReports);
   }
 
 }

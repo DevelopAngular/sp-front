@@ -3,6 +3,9 @@ import {Navigation} from '../../main-hall-pass-form.component';
 import {StudentList} from '../../../../models/StudentList';
 import {User} from '../../../../models/User';
 import {UserService} from '../../../../services/user.service';
+import {Observable, of, timer} from 'rxjs';
+import {finalize, publish, publishReplay, refCount, switchMap} from 'rxjs/operators';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-groups-step1',
@@ -13,24 +16,52 @@ export class GroupsStep1Component implements OnInit {
 
   @Input() selectedGroup: StudentList = null;
   @Input() selectedStudents: User[] = [];
-  @Input() groups: StudentList[] = [];
+  @Input() groups: StudentList[];
   @Input() formState: Navigation;
   @Input() hasBackArrow: boolean = false;
 
   @Output() stateChangeEvent: EventEmitter<Navigation | string> = new EventEmitter<Navigation | string>();
   @Output() createGroupEmit: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
+  isEmptyGroups$: Observable<boolean>;
+  isEmptyGroups: boolean = false;
+
   // public selectedGroup: StudentList;
   // public selectedStudents: User[] = [];
 
-  constructor(private userService: UserService) { }
+  constructor(
+    private userService: UserService,
+    public sanitizer: DomSanitizer
+
+  ) { }
 
   ngOnInit() {
-
+    of(!this.groups || (this.groups && !this.groups.length)).subscribe((v) => {
+      this.isEmptyGroups = v;
+    });
     if (this.selectedGroup) {
-      this.selectedStudents = this.selectedGroup.users;
+      this.selectedStudents = this.formState.data.selectedStudents;
     }
+  }
 
+  textColor(item) {
+    if (item.hovered) {
+      return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
+    } else {
+      return this.sanitizer.bypassSecurityTrustStyle('#555558');
+    }
+  }
+
+  getBackground(item, group) {
+    if (item.hovered ||  (this.selectedGroup && (this.selectedGroup.id === group.id))) {
+      if (item.pressed) {
+        return '#E2E7F4';
+      } else {
+        return '#ECF1FF';
+      }
+    } else {
+      return '#FFFFFF';
+    }
   }
 
   nextStep() {
@@ -52,8 +83,6 @@ export class GroupsStep1Component implements OnInit {
       this.formState.data.selectedGroup = null;
       this.formState.data.selectedStudents = this.selectedStudents;
     }
-
-
 
     this.stateChangeEvent.emit(this.formState);
   }
@@ -83,14 +112,13 @@ export class GroupsStep1Component implements OnInit {
 
   editGroup(group) {
 
-    console.log(' GROUP ==================>', group);
-
+    // console.log(' GROUP ==================>', group);
     this.createGroupEmit.emit({
       step: 2,
       state: 3,
       fromState: 1,
       data: {
-        selectedGroup: group
+        selectedGroup: group,
       }
     });
   }

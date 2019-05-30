@@ -1,74 +1,126 @@
-.settings-menu-wrapper{
-    display: flex;
-    flex-direction: row;
-    margin: 40px auto 0;
-    width: 586px;
-    padding-right:90px;
-    height: 85%;
-}
 
-.settings-wrapper{
-    display: flex;
-    flex-direction: column;
-    width: 400px;
-    height: 100%;
-}
+.settings-wrapper {
+    width: 244px;
+    //height: 382px;
+    position: relative;
+    border-radius: 10px;
 
-.settings-header{
-    font-family: 'Helvetica Neue', sans-serif;
-    color: #3D396B;
-    font-size: 25px;
-    font-weight: bold;
-    padding-left: 10px;
-    margin-bottom: 15px;
-}
-
-.back-wrapper{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    max-height: 30px;
-    width: 96px;
-    padding: 5px 10px;
-    border-radius: 15px;
-    margin-top: -5px;
-    cursor: pointer;
-    user-select: none;
-}
-
-.back-wrapper:hover{
-    background-color: #F1F1F1;
-}
-
-.back-image{
-    height: 25px;
-    width: auto;
-    margin-right: 5px;
-}
-
-.back-text{
-    font-family: 'Helvetica Neue', sans-serif;
-    color: #3D396B;
-    font-size: 18px;
-}
-
-.footer-links {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    font-size: 18px;
-    height: 100%;
-    flex-direction: column;
-    margin-bottom: 30px;
-
-    a {
-        color: #7f879d;
+    .top-arrow-container {
+        position: absolute;
+        top: -50px;
+        right: 26px;
+        margin: 0 auto;
+        width: 100px;
+        height: 50px;
+        overflow: hidden;
+        cursor: pointer;
+        .top-arrow {
+            position: absolute;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            top: 35px;
+            width: 30px;
+            height: 30px;
+            background-color: #fff;
+            transform: rotate(45deg);
+            box-shadow: 0 3px 20px 0 rgba(0, 0, 0, 0.15);
+            cursor: default;
+        }
     }
-    .version-text {
-        color: #7f879d;
-        padding: 5px;
+
+    .title {
+        padding: 20px 0 15px 25px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #1F195E;
     }
-}
-.links {
-    display: flex;
+
+    .settings-content {
+
+        .divider {
+          margin: 7px 0 7px 0;
+        }
+
+        .profile-switch {
+            .option {
+                display: flex;
+                align-items: center;
+                padding: 12px 0 12px 25px;
+                cursor: pointer;
+                position: relative;
+
+                .option-title {
+                    margin: 0 12px 0 12px;
+                    font-size: 14px;
+                  -webkit-user-select: none;
+                  -moz-user-select: none;
+                  -ms-user-select: none;
+                  user-select: none;
+                }
+
+                .switch-icon {
+                    width: 20px;
+                    height: 20px;
+                }
+                .arrow-icon {
+                    width: 9px;
+                    height: 15px;
+                    position: absolute;
+                    right: 15px;
+                }
+            }
+        }
+        .setting {
+            .content {
+                display: flex;
+                align-items: center;
+                padding: 12px 0 12px 0;
+                cursor: pointer;
+            }
+            .setting-icon {
+                width: 20px;
+                height: 20px;
+                margin-left: 25px;
+            }
+            .setting-title {
+                font-size: 15px;
+                margin-left: 15px;
+            }
+        }
+
+    }
+
+    .footer {
+        display: flex;
+        flex-direction: column;
+        height: 76px;
+        justify-content: space-between;
+
+        .sign-out {
+            padding: 12px 0 12px 25px;
+            color: #7F879D;
+            font-size: 15px;
+            cursor: pointer;
+
+            &:hover {
+                background-color: rgb(228, 235, 255);
+                color: #1F195E;
+            }
+        }
+        .options {
+            display: flex;
+            color: #7F879D;
+            font-size: 12px;
+            justify-content: center;
+            margin-bottom: 12px;
+            .privacy {
+                margin-left: 10px;
+                cursor: pointer;
+                &:hover {
+                  text-decoration: underline;
+                }
+            }
+        }
+    }
 }

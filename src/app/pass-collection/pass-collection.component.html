@@ -1,30 +1,31 @@
-<div class="collection-wrapper" *ngIf="!mock && (currentPasses$ | async) && (currentPasses$ | async).length>0 || emptyMessage">
+<div class="collection-wrapper" *ngIf="!mock && (currentPasses$ | async) && (currentPasses$ | async).length> 0 || showEmptyHeader; else emptyMessage">
   <!--<pre>{{test | json}}</pre>-->
   <div class="collection-header">
-      <img draggable="false" class="collection-icon" [src]="icon | resolveAsset">
-      <div class="collection-title">
+      <img draggable="false" class="collection-icon" [src]="_icon | resolveAsset">
+      <div class="collection-title" [style.color]="_color">
         {{title}}
       </div>
       <div class="sort-label global-opacity-icons" *ngIf="hasSort" (click)="openSortDialog($event)">Sort</div>
       <!--<app-dropdown *ngIf="hasSort" class="sort-selector" (onSelect)="onSortSelected($event)" [options]="sortOptions"></app-dropdown>-->
-      <img draggable="false" class="collection-display-toggle global-opacity-icons" [src]="'./assets/' +(displayState==='grid'?'List':'Grid') +' (Blue).png'| resolveAsset" (click)="displayState=(displayState==='list'?'grid':'list')" [style.margin-left]="hasSort?'10px':'auto'">
+    <!--(click)="displayState=(displayState==='list'?'grid':'list')"-->
+      <!--<img draggable="false" class="collection-display-toggle global-opacity-icons" [src]="'./assets/' +(displayState==='grid'?'List':'Grid') +' (Navy).svg'| resolveAsset" [style.margin-left]="hasSort?'10px':'auto'">-->
   </div>
   <div class="collection-divider"></div>
   <div *ngIf="(currentPasses$ | async)">
-    <div *ngIf="(currentPasses$ | async).length>0; else emptyMessage">
+    <div *ngIf="currentPasses.length>0; else emptyMessage">
       <div class="collection-grid-wrapper" *ngIf="displayState==='grid'; else list">
-        <div class="tile" *ngFor="let pass of (currentPasses$ | async)">
+        <div class="tile" *ngFor="let pass of currentPasses">
           <app-pass-tile (click)="showPass(pass)" [timerEvent]="timerEvent" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-tile>
         </div>
       </div>
       <ng-template #list>
         <div class="collection-list-wrapper" [style.max-height]="maxHeight?maxHeight:''">
-          <app-pass-cell *ngFor="let pass of (currentPasses$ | async)" (click)="showPass(pass)" [timerEvent]="timerEvent" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-cell>
+          <app-pass-cell *ngFor="let pass of currentPasses" (click)="showPass(pass)" [timerEvent]="timerEvent" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-cell>
         </div>
       </ng-template>
     </div>
     <ng-template #emptyMessage>
-      <div class="empty-message">
+      <div class="empty-message" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
         {{ getEmptyMessage() }}
       </div>
     </ng-template>
@@ -40,7 +41,7 @@
     <div class="collection-title">
       {{title}}
     </div>
-    <img draggable="false" class="collection-display-toggle global-opacity-icons" [src]="'./assets/' +(displayState==='grid'?'List':'Grid') +' (Blue).png'| resolveAsset" [style.margin-left]="hasSort?'10px':'auto'">
+    <img draggable="false" class="collection-display-toggle global-opacity-icons" [src]="'./assets/' +(displayState==='grid'?'List':'Grid') +' (Navy).svg'| resolveAsset" [style.margin-left]="hasSort?'10px':'auto'">
   </div>
   <div class="collection-divider"></div>
     <div class="collection-grid-wrapper" *ngIf="displayState==='grid'; else list">

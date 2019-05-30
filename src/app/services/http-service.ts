@@ -1,19 +1,14 @@
+
+import {catchError, tap, first, delay, distinctUntilChanged, filter, flatMap, map, skip, switchMap, merge, take} from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { of, throwError } from 'rxjs';
-
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/first';
-import 'rxjs/add/operator/switchMap';
-import { BehaviorSubject } from 'rxjs';
-import { Observable } from 'rxjs';
-import { delay, distinctUntilChanged, filter, flatMap, map, switchMap } from 'rxjs/operators';
+import {of, throwError, BehaviorSubject, Observable, timer, interval, ReplaySubject} from 'rxjs';
 import { environment } from '../../environments/environment';
 import { GoogleLoginService, isDemoLogin } from './google-login.service';
 import { School } from '../models/School';
 import {StorageService} from './storage.service';
+
+import * as moment from 'moment';
 
 export const SESSION_STORAGE_KEY = 'accessToken';
 
@@ -23,6 +18,7 @@ export interface Config {
 
 export interface ServerAuth {
   access_token: string;
+  refresh_token?: string;
   token_type: string;
   expires_in: number;
   expires: Date;
@@ -50,7 +46,7 @@ function isSchoolInArray(id: string|number, schools: School[]) {
   return getSchoolInArray(id, schools) !== null;
 }
 
-function makeConfig(config: Config, access_token: string, school: School): Config & { responseType: 'json' } {
+function makeConfig(config: Config, access_token: string, school: School, effectiveUserId): Config & { responseType: 'json' } {
 
   const headers: any = {
     'Authorization': 'Bearer ' + access_token
@@ -58,6 +54,10 @@ function makeConfig(config: Config, access_token: string, school: School): Confi
 
   if (school) {
     headers['X-School-Id'] = '' + school.id;
+  }
+  if (effectiveUserId) {
+    // console.log(effectiveUserId);
+    headers['X-Effective-User-Id'] = '' + effectiveUserId;
   }
 
   // console.log('[X-School-Id]: ', headers['X-School-Id'])
@@ -87,6 +87,7 @@ export interface LoginServer {
   client_secret: string;
   domain: string;
   icon_url: string;
+  icon_search_url: string;
   name: string;
   ws_url: string;
 }
@@ -107,19 +108,21 @@ class LoginServerError extends Error {
 @Injectable()
 export class HttpService {
 
-  private accessTokenSubject: BehaviorSubject<AuthContext> = new BehaviorSubject<AuthContext>(null);
+  public errorToast$: ReplaySubject<boolean> = new ReplaySubject(1);
 
+  private accessTokenSubject: BehaviorSubject<AuthContext> = new BehaviorSubject<AuthContext>(null);
+  public effectiveUserId: BehaviorSubject<number> = new BehaviorSubject(null);
   public schools$: Observable<School[]> = this.loginService.isAuthenticated$.pipe(
     filter(v => v),
     switchMap(() => {
-      return this.get('v1/schools', undefined, null);
+      return this.get<School[]>('v1/schools', undefined, null);
     }),
   );
-
-  private currentSchoolSubject = new BehaviorSubject<School>(null);
+  public currentSchoolSubject = new BehaviorSubject<School>(null);
   public currentSchool$: Observable<School> = this.currentSchoolSubject.asObservable();
 
   public globalReload$ = this.currentSchool$.pipe(
+    filter(school => !!school),
     map(school => school ? school.id : null),
     distinctUntilChanged(),
     delay(5)
@@ -130,7 +133,7 @@ export class HttpService {
   constructor(
       private http: HttpClient,
       private loginService: GoogleLoginService,
-      private storage: StorageService
+      private storage: StorageService,
   ) {
 
     // the school list is loaded when a user authenticates and we need to choose a current school of the school array.
@@ -138,7 +141,7 @@ export class HttpService {
     // Then, if there is a school id saved in local storage, try to use that.
     // Last, choose a school arbitrarily.
     this.schools$.subscribe(schools => {
-      console.log('Schools:', schools);
+      // console.log('Schools:', schools);
 
       const lastSchool = this.currentSchoolSubject.getValue();
       if (lastSchool !== null && isSchoolInArray(lastSchool.id, schools)) {
@@ -151,7 +154,6 @@ export class HttpService {
         this.currentSchoolSubject.next(getSchoolInArray(savedId, schools));
         return;
       }
-
       if (schools.length > 0) {
         this.currentSchoolSubject.next(schools[0]);
         return;
@@ -161,7 +163,45 @@ export class HttpService {
       return;
     });
 
+      interval(10000)
+        .pipe(
+            switchMap(() => of(this.accessTokenSubject.value)),
+            // tap(console.log),
+            filter(v => !!v),
+            switchMap(({auth, server}) => {
+              // console.log((new Date(Date.now() + auth.expires_in)), new Date());
 
+              if ((new Date(auth.expires).getTime() + (auth.expires_in * 1000)) < (Date.now())) {
+                  const config = new FormData();
+                  const user = JSON.parse(this.storage.getItem('google_auth'));
+                  config.append('client_id', server.client_id);
+                  config.append('grant_type', 'refresh_token');
+                  config.append('token', auth.refresh_token);
+                  config.append('username', user.username);
+                  config.append('password', user.password);
+                  console.log(new Date(auth.expires));
+
+                return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
+                  map((data: any) => {
+                    // console.log('Auth data : ', data);
+                    // don't use TimeService for auth because auth is required for time service
+                    // to be useful
+                    data['expires'] = new Date(new Date() + data['expires_in']);
+
+                    ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
+                    const updatedAuthContext: AuthContext = {auth: data as ServerAuth, server: server} as AuthContext;
+                    this.accessTokenSubject.next(updatedAuthContext);
+                  }),
+                  catchError((err) => {
+                    this.loginService.isAuthenticated$.next(false);
+                    return of(null);
+                  })
+                );                    // return this.fetchServerAuth();
+              } else {
+                return of(null);
+              }
+            }),
+     ).subscribe(() => { });
 
   }
 
@@ -178,7 +218,7 @@ export class HttpService {
       this.hasRequestedToken = true;
     }
 
-    return this.accessTokenSubject.filter(e => !!e);
+    return this.accessTokenSubject.pipe(filter(e => !!e));
   }
 
   private getLoginServers(data: FormData): Observable<LoginServer> {
@@ -188,15 +228,16 @@ export class HttpService {
       return of(preferredEnvironment as LoginServer);
     }
 
-    return this.http.post('https://smartpass.app/api/discovery/find', data)
-      .map((servers: LoginServer[]) => {
+    return this.http.post('https://smartpass.app/api/discovery/find', data).pipe(
+      map((servers: LoginServer[]) => {
         // console.log(servers);
         if (servers.length > 0) {
+
           return servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
         } else {
           return null;
         }
-      });
+      }));
   }
 
   private loginManual(username: string, password: string): Observable<AuthContext> {
@@ -212,7 +253,7 @@ export class HttpService {
         return throwError(new LoginServerError('No login server!'));
       }
 
-      // console.log(`Chosen server: ${server.name}`);
+      // console.log(`Chosen server: ${server.name}`, server);
 
       const config = new FormData();
 
@@ -222,9 +263,9 @@ export class HttpService {
       config.append('password', password);
 
       // console.log('loginManual()');
-
-      return this.http.post(makeUrl(server, 'o/token/'), config)
-        .map((data: any) => {
+      return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
+        map((data: any) => {
+          console.log('Auth data : ', data);
           // don't use TimeService for auth because auth is required for time service
           // to be useful
           data['expires'] = new Date(new Date() + data['expires_in']);
@@ -234,7 +275,12 @@ export class HttpService {
           const auth = data as ServerAuth;
 
           return {auth: auth, server: server} as AuthContext;
-        });
+        }),
+        catchError((err) => {
+          this.loginService.isAuthenticated$.next(false);
+          return of(null);
+        })
+      );
 
     }));
   }
@@ -258,8 +304,8 @@ export class HttpService {
       config.append('provider', 'google-auth-token');
       config.append('token', googleToken);
 
-      return this.http.post(makeUrl(server, 'auth/by-token'), config)
-        .map((data: any) => {
+      return this.http.post(makeUrl(server, 'auth/by-token'), config).pipe(
+        map((data: any) => {
           // don't use TimeService for auth because auth is required for time service
           // to be useful
           data['expires'] = new Date(new Date() + data['expires_in']);
@@ -269,15 +315,15 @@ export class HttpService {
           const auth = data as ServerAuth;
 
           return {auth: auth, server: server} as AuthContext;
-        });
+        }));
 
     }));
   }
 
   private fetchServerAuth(retryNum: number = 0): Observable<AuthContext> {
     // console.log('fetchServerAuth');
-    return this.loginService.getIdToken()
-      .switchMap(googleToken => {
+    return this.loginService.getIdToken().pipe(
+      switchMap(googleToken => {
         let authContext$: Observable<AuthContext>;
 
         // console.log('getIdToken');
@@ -288,12 +334,15 @@ export class HttpService {
           authContext$ = this.loginGoogleAuth(googleToken);
         }
 
-        return authContext$
-          .do(() => {
+        return authContext$.pipe(
+          tap((res) => {
+            if (!res) {
+             throw new LoginServerError('Incorrect Login or password');
+            }
             this.loginService.setAuthenticated();
-          })
-          .catch(err => {
-            if (err instanceof LoginServerError || err.status === 401) {
+          }),
+          catchError(err => {
+            if (err instanceof LoginServerError || err.status === 401 || err.status === 400) {
               if (isDemoLogin(googleToken)) {
                 googleToken.invalid = true;
               }
@@ -304,18 +353,18 @@ export class HttpService {
             }
 
             throw err;
-          });
+          }));
 
-      });
+      }));
   }
 
   private performRequest<T>(predicate: (ctx: AuthContext) => Observable<T>): Observable<T> {
-    return this.accessToken
-      .switchMap(ctx => {
-        console.log('performRequest');
+    return this.accessToken.pipe(
+      switchMap(ctx => {
+        // console.log('performRequest');
         return predicate(ctx);
-      })
-      .catch(err => {
+      }),
+      catchError(err => {
         if (err.status !== 401) {
           throw err;
         }
@@ -326,14 +375,14 @@ export class HttpService {
         this.accessTokenSubject.next(null);
 
         // const google_token = localStorage.getItem(SESSION_STORAGE_KEY); // TODO something more robust
-        return this.fetchServerAuth()
-          .switchMap((ctx: AuthContext) => {
+        return this.fetchServerAuth().pipe(
+          switchMap((ctx: AuthContext) => {
             console.log('auth:', ctx);
             this.accessTokenSubject.next(ctx);
             return predicate(ctx);
-          });
-      })
-      .first();
+          }));
+      }),
+      first());
   }
 
   clearInternal() {
@@ -354,12 +403,22 @@ export class HttpService {
     return this.currentSchoolSubject.getValue();
   }
 
+  getEffectiveUserId() {
+    return this.effectiveUserId.getValue();
+  }
+
+  searchIcons(search: string, config?: Config) {
+    return this.performRequest(ctx => {
+      return this.http.get(`${ctx.server.icon_search_url}?query=${search}`);
+    });
+  }
+
   get<T>(url, config?: Config, schoolOverride?: School): Observable<T> {
     // console.log('Making request: ' + url);
     return this.performRequest(ctx => {
       // Explicitly check for undefined because the caller may want to override with null.
       const school = schoolOverride !== undefined ? schoolOverride : this.getSchool();
-      return this.http.get<T>(makeUrl(ctx.server, url), makeConfig(config, ctx.auth.access_token, school));
+      return this.http.get<T>(makeUrl(ctx.server, url), makeConfig(config, ctx.auth.access_token, school, this.getEffectiveUserId()));
     });
   }
 
@@ -379,11 +438,11 @@ export class HttpService {
       }
       body = formData;
     }
-    return this.performRequest(ctx => this.http.post<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.getSchool())));
+    return this.performRequest(ctx => this.http.post<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.getSchool(), this.getEffectiveUserId())));
   }
 
   delete<T>(url, config?: Config): Observable<T> {
-    return this.performRequest(ctx => this.http.delete<T>(makeUrl(ctx.server, url), makeConfig(config, ctx.auth.access_token, this.getSchool())));
+    return this.performRequest(ctx => this.http.delete<T>(makeUrl(ctx.server, url), makeConfig(config, ctx.auth.access_token, this.getSchool(), this.getEffectiveUserId())));
   }
 
   put<T>(url, body?: any, config?: Config): Observable<T> {
@@ -399,7 +458,7 @@ export class HttpService {
         }
       }
     }
-    return this.performRequest(ctx => this.http.put<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.getSchool())));
+    return this.performRequest(ctx => this.http.put<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.getSchool(), this.getEffectiveUserId())));
   }
 
   patch<T>(url, body?: any, config?: Config): Observable<T> {
@@ -415,7 +474,7 @@ export class HttpService {
         }
       }
     }
-    return this.performRequest(ctx => this.http.patch<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.getSchool())));
+    return this.performRequest(ctx => this.http.patch<T>(makeUrl(ctx.server, url), body, makeConfig(config, ctx.auth.access_token, this.getSchool(), this.getEffectiveUserId())));
   }
 
 }

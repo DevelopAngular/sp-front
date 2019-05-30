@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 
-import 'rxjs/add/observable/merge';
-import 'rxjs/add/operator/scan';
-import { BehaviorSubject } from 'rxjs';
-import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+
+
+import { BehaviorSubject ,  Observable , ReplaySubject, Subject} from 'rxjs';
+import {map, shareReplay, switchMap} from 'rxjs/operators';
 import { HttpService } from './http-service';
 import { PassLike } from '../models/index';
 import { Invitation } from '../models/Invitation';
@@ -13,7 +12,6 @@ import { Request } from '../models/Request';
 import { User } from '../models/User';
 import { PollingService } from './polling-service';
 import { UserService } from './user.service';
-import {ReplaySubject, Subject} from 'rxjs';
 import { HallPass } from '../models/HallPass';
 
 export type Partial<T> = {
@@ -50,7 +48,7 @@ function constructUrl(base: string, obj: Partial<QueryParams>): string {
 @Injectable()
 export class DataService {
   private inboxSource = new BehaviorSubject<boolean>(false);
-  public sort$ = new Subject<string>();
+  public sort$ = new BehaviorSubject<string>(null);
   inboxState = this.inboxSource.asObservable();
 
   updateInbox(state: boolean) {
@@ -94,7 +92,9 @@ export class DataService {
 
   getLocationsWithTeacher(teacher: User) {
     return this.http.get<any[]>(`v1/locations?teacher_id=${teacher.id}`)
-      .map(json => json.map(raw => Location.fromJSON(raw)));
+      .pipe(
+        map(json => json.map(raw => Location.fromJSON(raw)))
+      );
   }
 
   markRead(pass: PassLike): Observable<any> {

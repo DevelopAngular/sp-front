@@ -51,18 +51,14 @@ export class TraveltypePickerComponent implements OnInit {
 
   travelValue(travelType: string) {
       switch (travelType) {
-          case 'Round-trip': {
+          case 'Round-trip':
               return 'round_trip';
-          }
-          case 'One-way': {
+          case 'One-way':
               return 'one_way';
-          }
-          case 'Unrestricted': {
+          case 'Unrestricted':
               return 'unrestricted';
-          }
-          case 'Restricted': {
+          case 'Restricted':
               return 'restricted';
-          }
       }
   }
 

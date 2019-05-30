@@ -1,10 +1,16 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, ElementRef, Inject, OnInit} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { Location } from '../../models/Location';
 import { Pinnable } from '../../models/Pinnable';
 import { User } from '../../models/User';
 import { StudentList } from '../../models/StudentList';
-import {NextStep, NextStepColored, ScaledCard} from '../../animations';
+import {NextStep} from '../../animations';
+import {BehaviorSubject, combineLatest} from 'rxjs';
+import {CreateFormService} from '../create-form.service';
+import {filter, map} from 'rxjs/operators';
+import * as _ from 'lodash';
+import {DataService} from '../../services/data-service';
+import {LocationsService} from '../../services/locations.service';
 
 export enum Role { Teacher = 1, Student = 2 }
 
@@ -24,9 +30,11 @@ export interface Navigation {
   fromState?: number;
   formMode?: FormMode;
   data?: {
+    request?: any,
     date?: any;
     selectedStudents?: User[];
     selectedGroup?: StudentList;
+    teacherRooms?: Pinnable[];
     direction?: {
       from?: Location;
       to?: Location;
@@ -40,6 +48,8 @@ export interface Navigation {
   };
   forInput?: boolean;
   forLater?: boolean;
+  missedRequest?: boolean;
+  resendRequest?: boolean;
 }
 
 
@@ -48,7 +58,7 @@ export interface Navigation {
   selector: 'app-main-hallpass-form',
   templateUrl: './main-hall-pass-form.component.html',
   styleUrls: ['./main-hall-pass-form.component.scss'],
-  animations: [NextStep, NextStepColored, ScaledCard]
+  animations: [NextStep]
 
 })
 export class MainHallPassFormComponent implements OnInit {
@@ -57,15 +67,24 @@ export class MainHallPassFormComponent implements OnInit {
   public formSize = {
     height: '0px',
     width: '0px'
-  }
+  };
+  frameMotion$: BehaviorSubject<any>;
+
+  user;
+  isStaff;
 
   constructor(
     public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     public dialogRef: MatDialogRef<MainHallPassFormComponent>,
+    private formService: CreateFormService,
+    private elementRef: ElementRef,
+    private dataService: DataService,
+    private locationsService: LocationsService
   ) {}
 
   ngOnInit() {
+    this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.FORM_STATE = {
       step: null,
       previousStep: 0,
@@ -79,13 +98,12 @@ export class MainHallPassFormComponent implements OnInit {
         selectedGroup: null,
         selectedStudents: [],
         direction: {},
-
       },
       forInput: this.dialogData['forInput'] || false,
       forLater: this.dialogData['forLater']
     };
     switch (this.dialogData['forInput']) {
-      case (true): {
+      case true:
         this.FORM_STATE.formMode.role = this.dialogData['forStaff'] ? Role.Teacher : Role.Student;
         if (this.dialogData['forLater']) {
           if (this.dialogData['forStaff']) {
@@ -102,17 +120,20 @@ export class MainHallPassFormComponent implements OnInit {
           this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
           if ( this.dialogData['forStaff'] ) {
             this.FORM_STATE.step = 2;
-            // this.FORM_STATE.state = 1;
           } else {
             this.FORM_STATE.step = 3;
-            // this.FORM_STATE.state = 1;
           }
         }
         break;
-      }
-      case (false): {
+      case false:
         if (this.dialogData['hasClose']) {
          this.FORM_STATE.data.hasClose = true;
+        }
+        if (this.dialogData['missedRequest']) {
+          this.FORM_STATE.missedRequest = true;
+        }
+        if (this.dialogData['resend_request']) {
+          this.FORM_STATE.resendRequest = true;
         }
         this.FORM_STATE.formMode.formFactor = FormFactor.Request;
         this.FORM_STATE.formMode.role = this.dialogData['isDeny'] ? Role.Teacher : Role.Student;
@@ -121,27 +142,54 @@ export class MainHallPassFormComponent implements OnInit {
         this.FORM_STATE.data.date = {
           date: this.dialogData['request_time']
         };
+        this.FORM_STATE.data.request = this.dialogData['request'];
         this.FORM_STATE.data.requestTarget = this.dialogData['teacher'];
         this.FORM_STATE.data.gradient = this.dialogData['gradient'];
         this.FORM_STATE.data.direction = {
           from: this.dialogData['originalFromLocation'],
           to: this.dialogData['originalToLocation']
         };
-
         break;
-      }
     }
     this.setFormSize();
+
+      this.dataService.currentUser.subscribe((user: User) => {
+          this.isStaff = user.isTeacher() || user.isAdmin();
+          this.user = user;
+      });
+
+      combineLatest(
+          this.formService.getPinnable(),
+          this.locationsService.getLocationsWithTeacher(this.user))
+          .pipe(filter(() => this.isStaff),
+              map(([pinnables, locations]) => {
+                  const filterPinnables = pinnables.filter(pin => {
+                      return locations.find(loc => {
+                          return (loc.category ? loc.category : loc.title) === pin.title;
+                      });
+                  });
+                  return filterPinnables.map(fpin => {
+                      if (fpin.type === 'category') {
+                          const locFromCategory = _.find(locations, ['category', fpin.title]);
+                          fpin.title = locFromCategory.title;
+                          fpin.type = 'location';
+                          fpin.location = locFromCategory;
+                          return fpin;
+                      }
+                      return fpin;
+                  });
+              })).subscribe(rooms => {
+          this.FORM_STATE.data.teacherRooms = rooms;
+      });
   }
 
   onNextStep(evt) {
-    // this.setFormSize();
+
     if (evt.step === 0 || evt.action === 'exit') {
-      console.log('EXIT ===>', evt);
       this.dialogRef.close(evt);
       return;
     } else {
-      console.log('STEP EVENT ===== ===>', evt);
+      console.log('STEP EVENT ===>', evt);
 
       this.FORM_STATE = evt;
     }
@@ -149,32 +197,31 @@ export class MainHallPassFormComponent implements OnInit {
   }
 
   setFormSize() {
+    const form = this.elementRef.nativeElement.closest('.mat-dialog-container');
+          if (form && this.FORM_STATE.step !== 4) {
+            form.style.boxShadow = '0 2px 4px 0px rgba(0, 0, 0, 0.5)';
+          }
 
-      switch (this.FORM_STATE.step) {
-        case (1): {
+    switch (this.FORM_STATE.step) {
+        case 1:
           this.formSize.width =  `425px`;
           this.formSize.height =  `500px`;
           break;
-        }
-        case (2): {
+        case 2:
           this.formSize.width =  `700px`;
           this.formSize.height =  `400px`;
           break;
-        }
-        case (3): {
+        case 3:
           this.formSize.width =  `425px`;
           this.formSize.height =  `500px`;
           break;
-        }
-        case (4): {
+        case 4:
+          if (form) {
+            form.style.boxShadow = 'none';
+          }
           this.formSize.width =  `425px`;
           this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '412px';
           break;
-          // this.formSize.width =  `334px`;
-          // this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '412px';
-          // break;
-        }
       }
-      // console.log(this.formSize);
   }
 }

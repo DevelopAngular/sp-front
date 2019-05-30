@@ -1,7 +1,11 @@
 import { Component, OnInit, Input, Output, EventEmitter, ElementRef, Inject } from '@angular/core';
 import { Location } from '../models/Location';
 import { MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '../../../node_modules/@angular/material';
-import {School} from '../models/School';
+import { School } from '../models/School';
+import {DarkThemeSwitch} from '../dark-theme-switch';
+import {User} from '../models/User';
+import {UserService} from '../services/user.service';
+import {RepresentedUser} from '../navbar/navbar.component';
 
 @Component({
   selector: 'app-dropdown',
@@ -10,24 +14,33 @@ import {School} from '../models/School';
 })
 export class DropdownComponent implements OnInit {
 
-  alignSelf: boolean;
+  user: User;
   heading: string = '';
   locations: Location[];
   schools: School[];
-  selectedLocation: Location
+  teachers: RepresentedUser[];
+  selectedLocation: Location;
   selectedSchool: School;
+  selectedTeacher: RepresentedUser;
   _matDialogRef: MatDialogRef<DropdownComponent>;
   triggerElementRef: HTMLElement;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any[], _matDialogRef: MatDialogRef<DropdownComponent>) {
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any[],
+    _matDialogRef: MatDialogRef<DropdownComponent>,
+    public  darkTheme: DarkThemeSwitch,
+    private userService: UserService
+  ) {
     this._matDialogRef = _matDialogRef;
     this.triggerElementRef = data['trigger'];
     this.heading = data['heading'];
     this.locations = data['locations'];
     this.schools = data['schools'];
+    this.teachers = data['teachers'];
     this.selectedLocation = data['selectedLocation'];
     this.selectedSchool = data['selectedSchool'];
-    this.alignSelf = data['alignSelf'];
+    this.selectedTeacher = data['selectedTeacher'];
+    this.user = data['user'];
 
   }
 
@@ -35,12 +48,14 @@ export class DropdownComponent implements OnInit {
 
     const matDialogConfig: MatDialogConfig = new MatDialogConfig();
     const rect = this.triggerElementRef.getBoundingClientRect();
-    matDialogConfig.width = '350px';
-    matDialogConfig.height = '200px';
-    console.log('RECT =====>', rect, matDialogConfig);
+    matDialogConfig.width = this.teachers ? '305px' : '350px';
+    matDialogConfig.height = this.teachers ? '180px' : '215px';
     matDialogConfig.position = { left: `${rect.left + (rect.width / 2 - parseInt(matDialogConfig.width, 10) / 2 ) }px`, top: `${rect.bottom + 15}px` };
     this._matDialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);
     this._matDialogRef.updatePosition(matDialogConfig.position);
+    this._matDialogRef.backdropClick().subscribe(() => {
+      this._matDialogRef.close(this.selectedTeacher);
+    });
   }
 
   partOfProfile(school) {
@@ -55,12 +70,6 @@ export class DropdownComponent implements OnInit {
       if (school.my_roles.includes('_profile_student')) {
         roles.push('Student');
       }
-
     return roles.join(', ');
   }
-
-  getTextWidth(text: string, fontSize: number){
-
-  }
-
 }

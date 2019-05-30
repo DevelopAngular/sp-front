@@ -1,31 +1,36 @@
+@import '../../../../../sp-colors';
+
 .rest-tar-wrapper {
   width: 425px;
   height: 500px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
   position: relative;
   background-color: #ffffff;
-  border-radius: 15px;
+  border-radius: 14px;
   overflow: hidden;
   .rest-tar-header, .rest-tar-header_animation-back {
 
     width: 100%;
-    height: 64px;
+    height: 70px;
+    min-height: 70px;
     display: flex;
     z-index: 10;
     align-items: center;
     position: relative;
     box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
     overflow: hidden;
 
     .back-button {
-      width: 26px;
-      height: 26px;
+      width: 28px;
+      height: 28px;
       margin-left: 20px;
       position: absolute;
+      z-index: 11;
       user-select: none;
       cursor: pointer;
     }
@@ -36,14 +41,13 @@
       margin: 0 auto;
 
       .search-icon{
-        width: 25px;
-        height: 25px;
-        margin-right: 10px;
+        width: 21px;
+        height: 21px;
+        margin-right: 12px;
       }
 
       .text {
         color: white;
-        font-family: 'Helvetica Neue', sans-serif;
         font-size: 16px;
         font-weight: bold;
         font-style: normal;
@@ -58,7 +62,45 @@
     overflow: auto;
     width: 100%;
     position: relative;
-    z-index: 1;
+    padding-bottom: 25px;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    //z-index: 1;
+    .search-wrapper {
+      margin-top: 25px;
+      width: 250px;
+      position: absolute;
+    }
+    .quick-select {
+      width: 205px;
+      //margin-top: 70px;
+      &_header {
+        margin: 30px 0 10px 0;
+        text-align: center;
+        font-weight: bold;
+        font-size: 15px;
+        color: $navy;
+      }
+      &_scrollable {
+        max-height: 185px;
+        overflow: auto;
+      }
+      &_item {
+        border-top: 1px solid #D8D8D8;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 9px 5px;
+        color: #555558;
+        font-size: 14px;
+        cursor: pointer;
+        img {
+          cursor: pointer;
+        }
+      }
+    }
   }
   .target-footer {
     width: 100%;

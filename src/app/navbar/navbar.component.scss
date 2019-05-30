@@ -1,3 +1,6 @@
+:host {
+  background-color: transparent;
+}
 .bar {
   height: 68px;
   /* background-image: radial-gradient(circle at 43% 66%, #03cf31, rgba(1, 129, 85, 0.7)); */
@@ -6,7 +9,8 @@
   flex-direction: row;
   align-items: center;
   user-select: none;
-  margin-top: 15px;
+  padding-top: 15px;
+  padding-bottom: 5px;
 }
 
 .grow {
@@ -24,7 +28,6 @@
 .heading .title {
   width: 112px;
   height: 27px;
-  font-family: 'Helvetica Neue', sans-serif;
   font-size: 28px;
   font-weight: bold;
   font-style: normal;
@@ -36,7 +39,6 @@
 }
 
 .heading .small, .navButton {
-  font-family: 'Helvetica Neue', sans-serif;
   font-size: 14px;
   font-weight: bold;
   font-style: normal;
@@ -89,19 +91,21 @@
 .user-info {
   display: flex;
   flex-direction: row;
-  justify-content: right;
+  justify-content: flex-end;
   align-items: center;
-
+  padding-right: 10%;
   width: 0;
   min-width: 200px;
-
   flex-grow: 1;
+  .acting-behalf {
+    font-size: 12px;
+  }
 }
 
 .user-info .name {
   margin: auto 0 auto auto;
-
-  font-family: 'Helvetica Neue', sans-serif;
+  padding-right: 15px;
+  white-space: nowrap;
   font-size: 16px;
   font-weight: 600;
   font-style: normal;
@@ -109,10 +113,6 @@
   line-height: normal;
   letter-spacing: normal;
   color: #1F195E;
-}
-
-.name{
-  padding-right: 15px;
 }
 
 .static-loading{
@@ -129,13 +129,9 @@
   height: 5px !important;
 }
 
-.user-info{
-  padding-right: 10%;
-}
-
 .options, .inbox-icon, .support, .admin-view{
   width: auto;
-  height: 24px;
+  height: 30px;
   cursor: pointer;
 }
 
@@ -172,30 +168,29 @@
 }
 
 .inbox-badge{
-  width: 19px;
-  height: 20px;
+  width: 23px;
+  height: 23px;
   position: absolute;
-  top: 6px;
+  top: 5px;
 }
 
 .inbox-number{
   color: white;
-  font-family: 'Helvetica Neue', sans-serif;
   font-size: 12px;
   position: absolute;
   top: 9px;
 }
 
 .inbox-front{
-  width: 20px;
-  height: 10px;
+  //width: 20px;
+  height: 25px;
   position: absolute;
-  top: 22px;
+  //top: 22px;
 }
 
 .divider{
   width: 90%;
-  margin: 5px auto 0 auto;
+  margin: 0 auto;
   height: 1px;
   background-color: #B5B7BA;
 }

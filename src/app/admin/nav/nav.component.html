@@ -32,10 +32,15 @@
     </div>
   </div>
   <div class="nav-footer">
-    <div class="footer-text">{{(user?user.display_name : '')}}</div>
+    <div class="footer-text" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{(user?user.display_name : '')}}</div>
     <div [style.display]="'flex'">
-      <img draggable="false" (click)="router.navigateByUrl('/select-profile')" class="footer-settings global-opacity-icons" [src]="'./assets/Switch Account (Blue).png' | resolveAsset" alt="" *ngIf="showButton">
-      <img draggable="false" (click)="router.navigateByUrl('/admin/settings')" [ngClass]="{'active-route': isSelected('settings')}" class="footer-settings global-opacity-icons" [src]="'./assets/Gear (Blue).png' | resolveAsset" alt="">
+      <!--<img draggable="false" (click)="router.navigateByUrl('/select-profile')" class="footer-settings global-opacity-icons" [src]="'./assets/Switch Account (Blue).png' | resolveAsset" alt="" *ngIf="showButton">-->
+      <!--{{darkTheme.isEnabled$.value}}-->
+      <img draggable="false" class="footer-settings global-opacity-icons"
+           [ngClass]="{'active-route': selectedSettings , 'active-route__dark': selectedSettings && darkTheme.isEnabled$.value}"
+           [src]="settingsIcon | resolveAsset" alt="Settings icon"
+           (click)="openSettings($event)"
+      >
     </div>
   </div>
 </div>

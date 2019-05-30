@@ -1,35 +1,60 @@
-<div class="collection-wrapper">
+<div class="collection-wrapper" *ngIf="pinnables" [style.min-width]="width">
   <div class="collection-header" *ngIf="header">
-    <div class="collection-title">
+
+    <div class="collection-title" [style.color]="darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'})">
       {{ selectedPinnables.length ? selectedPinnables.length + ' Selected' : 'Rooms' }}
     </div>
-    <div class="selected-counter global-opacity-icons" (click)="toggleBulk()" [ngStyle]="{'font-weight': bulkSelect ? 'bold' : 'normal'}">
-      {{ (bulkSelect?('Done'):'Bulk Select')}}
+    <!--<div class="selected-counter global-opacity-icons" (click)="toggleBulk()" [ngStyle]="{'font-weight': bulkSelect ? 'bold' : 'normal'}">-->
+      <!--{{ (bulkSelect?('Done'):'Bulk Select')}}-->
+    <!--</div>-->
+    <div class="buttons" style="display: flex">
+      <app-gradient-button
+              (click)="toggleBulk()"
+              [style.margin-right]="'12px'"
+              [cursor]="'pointer'"
+              [gradient]="'#FFFFFF, #FFFFFF'"
+              [hoverColor]="'#F5F5F5'"
+              [textColor]="'#1F195E'"
+      >
+        {{ (bulkSelect?('Done'):'Bulk Select')}}
+      </app-gradient-button>
+
+      <app-gradient-button
+              [ngStyle]="{'opacity': bulkSelect && !selectedPinnables.length ? '.5' : '1'}"
+              [minHeight]="'25px'"
+              [width]="'120px'"
+              [hoverColor]="'#00B476'"
+              [cursor]="!bulkSelect || selectedPinnables.length ? 'pointer' : 'default'"
+              [fontSize]="'12px'"
+              (buttonClick)="buttonClicked($event)"
+              [leftIcon]="headerButtonIcon"
+              [leftImageWidth]="'10px'"
+              [leftImageHeight]="'10px'"
+              [disabled]="bulkSelect && !selectedPinnables.length"
+      >
+        {{headerButtonText}}</app-gradient-button>
     </div>
-    <app-gradient-button
-      [ngStyle]="{'opacity': bulkSelect && !selectedPinnables.length ? '.5' : '1'}"
-      [minHeight]="'25px'"
-      [width]="'120px'"
-      [hoverColor]="'#00B476'"
-      [cursor]="!bulkSelect || selectedPinnables.length ? 'pointer' : 'default'"
-      [fontSize]="'12px'"
-      (buttonClick)="buttonClicked($event)"
-      [leftIcon]="headerButtonIcon"
-      [leftImageWidth]="'10px'"
-      [leftImageHeight]="'10px'"
-      [disabled]="bulkSelect && !selectedPinnables.length"
-    >
-    {{headerButtonText}}</app-gradient-button>
   </div>
+
   <div class="collection-divider" *ngIf="header"></div>
-  <div [style.width]="'560px'" style="display: flex; flex-wrap: wrap" dragula="pinnables" [dragulaModel]="pinnables" (dragulaModelChange)="onPinablesOrderChanged($event)">
+  <div
+    class="pinnables"
+   [style.width]="width"
+   style="display: flex; flex-wrap: wrap"
+   dragula="pinnables"
+   *ngIf="pinnables?.length"
+   [dragulaModel]="pinnables"
+   (dragulaModelChange)="onPinablesOrderChanged($event)">
 
     <div *ngFor="let pinnable of pinnables; let i = index" style="padding: 10px">
       <div class="pinnable-item-container" >
-        <div [ngClass]="{'pinnable-item': this.bulkSelect && !isSelected(pinnable)}" [style.animation-delay]="(i * .1) + 's'">
+        <div [ngClass]="{'pinnable-item': this.bulkSelect}" [style.animation-delay]="(i * .1) + 's'">
           <app-pinnable [forStaff]="true" [selected]="selectedPinnables.indexOf(pinnable) != -1" [forBulk]="bulkSelect" [forCollection]="true" [pinnable]="pinnable" (onSelectEvent)="updatePinnables($event)"></app-pinnable>
         </div>
       </div>
     </div>
+  </div>
+  <div class="empty-state" style="width: 560px" *ngIf="!pinnables?.length && isEmptyState">
+    <img style="width: 575px" [src]="'./assets/emptyStates/No Rooms Pass Config.svg' | resolveAsset">
   </div>
 </div>

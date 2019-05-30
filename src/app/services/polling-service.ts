@@ -52,7 +52,7 @@ export class PollingService {
   private getRawListener(): Observable<RawMessage> {
     return this.http.accessToken.pipe(
       switchMap((ctx: AuthContext) => {
-        console.log('polling listener');
+        console.log('polling listener', ctx);
 
         const url = ctx.server.ws_url;
 
@@ -61,8 +61,7 @@ export class PollingService {
           reconnectIfNotNormalClose: true,
         });
 
-        return new Observable(s => {
-
+        return new Observable<RawMessage>(s => {
           let sendMessageSubscription: Subscription = null;
 
           ws.onOpen(() => {
@@ -103,7 +102,6 @@ export class PollingService {
               data: event,
             });
           });
-
           // we can't use .onClose() because onClose is triggered whenever the internal connection closes
           // even if a reconnect will be attempted.
           ws.getDataStream().subscribe(() => null, () => null, () => {
@@ -114,6 +112,7 @@ export class PollingService {
             if (sendMessageSubscription !== null) {
               sendMessageSubscription.unsubscribe();
               sendMessageSubscription = null;
+              // debugger
             }
             this.isConnected$.next(false);
           });

@@ -11,30 +11,40 @@ export const bumpIn = trigger('pressState', [
   transition('down => up', animate('100ms ease-in'))
 ]);
 
-export const NextStep = trigger('NextStep', [
+export const NextStep = trigger('NextStep', [                                                        // :ENTER PSEUDOSTATE
   transition(':enter', group([
+      query(`.form-factor, .locations-scaled, .scaled-card`, animate('0.4s 0s ease', keyframes([
+        style({
+          opacity: 0,
+          transform: 'scale(1.2)'
+        }),
+        style({
+          opacity: 1,
+          transform: 'scale(1)'
+        })
+      ])), {optional: true}),
       query(`
+      .from-wrapper-to-date,
+      .to-wrapper-to-datee,
       .from-header,
       .to-header,
+      .category-header_animation-back
       .category-header,
       .rest-tar-header,
-      .rest-mes-header
-      `, animate('0.5s 0s ease', keyframes([
+      .rest-mes-header,
+      .date-picker,
+      .student-groups,
+      .locations
+      `, animate('0.4s 0s ease', keyframes([
           style({
             background: 'transparent',
-            boxShadow: 'none',
           }),
-          // style({
-          //   background: 'transparent',
-          //   boxShadow: 'none'
-          // }),
           style({
             background: 'transparent',
-            boxShadow: 'none',
           }),
         ])), {optional: true}
       ),
-      query(`.back-button-white`, animate('0.5s 0s ease', keyframes([
+      query(`.back-button-white`, animate('0.4s 0s ease', keyframes([
           style({
             opacity: 0,
           }),
@@ -45,28 +55,25 @@ export const NextStep = trigger('NextStep', [
         ])), {optional: true}
       ),
       query(`
-      .from-header-textt,
-      .to-header-textt,
+      .divider,
       .category-header_animation-back,
-      .category-header-textt,
-      .rest-tar-header-textt,
-      .rest-mes-header-textt
-      `, animate('0.5s 0s ease', keyframes([
+      .date-picker,
+      .student-groups,
+      .target-footer,
+      .from-footer
+      `, animate('0.4s 0s ease', keyframes([
           style({
             opacity: 0,
           }),
-          // style({
-          //   opacity: 0.55,
-          // }),
           style({
             opacity: 1,
           })
         ])), {optional: true}
       ),
       query(`
+      .divider-header,
       .from-header-text,
       .to-header-text,
-      .category-header_animation-backk,
       .category-header-text,
       .rest-tar-header-text,
       .rest-mes-header-text,
@@ -74,16 +81,30 @@ export const NextStep = trigger('NextStep', [
       .to-content,
       .category-content,
       .rest-tar-content,
-      .rest-mes-content
-      `, animate('0.5s 0s ease', keyframes([
+      .rest-mes-content,
+      .date-content,
+      .student-select,
+      .message-entry,
+      .divider-text-message,
+      .divider-text-students,
+      .page-1,
+      .page-2,
+      .page-3,
+      .page-4,
+      .slide,
+      .new-room-in-folder-header,
+      .room-name, .folder-name, .room-number,
+      .rooms-in-folder,
+      .teacher-search,
+      .travel-settings,
+      .restriction-settings,
+      .existing-rooms,
+      .import-rooms-content
+      `, animate('0.4s 0s ease', keyframes([
           style({
             opacity: 0,
             transform: 'translateX({{from}}px)',
           }),
-          // style({
-          //   opacity: 0.5,
-          //   transform: 'translateX({{halfFrom}}px)',
-          // }),
           style({
             opacity: 1,
             transform: 'translateX(0px)',
@@ -92,31 +113,55 @@ export const NextStep = trigger('NextStep', [
       )
     ]), { params: { from: 100, halfFrom: 50}}
   ),
-  transition(':leave', group([
+  transition(':leave', group([                                                              // :LEAVE PSEUDOSTATE
+    query(`
+      .from-wrapper-to-date,
+      .to-wrapper-to-date,
+      .date-picker,
+      .student-groups,
+      .locations
+      `, animate('0.4s 0s ease', keyframes([
+        style({
+          background: 'transparent',
+          boxShadow: 'none',
+        }),
+        style({
+          background: 'transparent',
+          boxShadow: 'none',
+        }),
+      ])), {optional: true}
+    ),
+    query(`.form-factor, .locations-scaled, .scaled-card`, animate('0.4s 0s ease', keyframes([
+      style({
+        opacity: 1,
+        transform: 'scale(1)'
+      }),
+      style({
+        opacity: 0,
+        transform: 'scale(0.8)'
+      })
+    ])), {optional: true}),
       query(`
       .from-header,
       .to-header,
+      .to-header-back,
       .category-header,
       .rest-tar-header,
       .rest-mes-header
       `,
-      animate('0.5s 0s ease', keyframes([
+      animate('0.4s 0s ease', keyframes([
           style({
             'z-index': 9,
-            // 'border-top-left-radius': '15px',
-            // 'border-top-right-radius': '15px'
+            boxShadow: 'none',
+
           }),
-          // style({
-          //   'z-index': 9
-          // }),
           style({
             'z-index': 9,
-            // 'border-top-left-radius': '15px',
-            // 'border-top-right-radius': '15px'
+            boxShadow: 'none',
           }),
         ])), {optional: true}
       ),
-    query(`.back-button-grey`, animate('0.5s 0s ease', keyframes([
+    query(`.back-button-grey`, animate('0.4s 0s ease', keyframes([
         style({
           opacity: 0,
         }),
@@ -127,31 +172,44 @@ export const NextStep = trigger('NextStep', [
       ])), {optional: true}
     ),
       query(`
-      .from-header-textt,
-      .to-header-textt,
+      .divider,
       .category-header_animation-back,
-      .rest-tar-header_animation-backk,
-      .rest-mes-header_animation-backk,
-      .category-header-textt,
-      .rest-tar-header-textt,
-      .rest-mes-header-textt
+      .date-picker,
+      .student-groups,
+      .locations,
+      .target-footer,
+      .from-footer
       `,
-      animate('0.5s 0s ease', keyframes([
+      animate('0.4s 0s ease', keyframes([
           style({
             opacity: 1,
           }),
-          // style({
-          //   opacity: 0.55,
-          // }),
           style({
             opacity: 0,
           }),
         ])), {optional: true}
       ),
       query(`
+      .room-name-container
+      `,
+      animate('1.4s 0s ease', keyframes([
+            style({
+              position: 'relative',
+              height: '0px',
+              width: '0px'
+            }),
+            style({
+              position: 'relative',
+              height: '0px',
+              width: '0px'
+            }),
+
+        ])), {optional: true}
+      ),
+    query(`
+      .divider-header,
       .from-header-text,
       .to-header-text,
-      .category-header_animation-backk,
       .rest-tar-header_animation-back,
       .rest-mes-header_animation-back,
       .category-header-text,
@@ -161,17 +219,25 @@ export const NextStep = trigger('NextStep', [
       .to-content,
       .category-content,
       .rest-tar-content,
-      .rest-mes-content
+      .rest-mes-content,
+      .date-content,
+      .from-content-to-date,
+      .student-select,
+      .message-entry,
+      .divider-text-message,
+      .divider-text-students,
+      .page-1,
+      .page-2,
+      .page-3,
+      .page-4,
+      .slide
       `,
-      animate('0.5s 0s ease', keyframes([
+      animate('0.4s 0s ease', keyframes([
             style({
+              position: 'absolute',
               opacity: 1,
               transform: 'translateX(0px)',
             }),
-            // style({
-            //   opacity: 0.5,
-            //   transform: 'translateX({{halfTo}}px)',
-            // }),
             style({
               opacity: 0,
               transform: 'translateX({{to}}px)',
@@ -181,144 +247,4 @@ export const NextStep = trigger('NextStep', [
       )
     ]), { params: { to: -100, halfTo: -50}}
   )
-]);
-
-export const NextStepColored = trigger('NextStepColored', [
-  transition(':enter', animate('0.5s 0s ease', keyframes([
-      style({
-        opacity: 0,
-        // transform: 'translateX({{from}}px)',
-      }),
-      style({
-        opacity: 0.2,
-        // transform: 'translateX({{halfFrom}}px)',
-      }),
-      style({
-        opacity: 0.3,
-        // transform: 'translateX({{halfFrom}}px)',
-      }),
-      style({
-        opacity: 1,
-        // transform: 'translateX(0px)',
-      })
-    ])),
-    // { params: { from: 100, halfFrom: 50}}
-  ),
-  transition(':leave', animate('0.5s 0s ease', keyframes([
-      style({
-        opacity: 1,
-        // transform: 'translateX(0px)',
-      }),
-      style({
-        opacity: 0.3,
-        // transform: 'translateX({{halfTo}}px)',
-      }),
-      style({
-        opacity: 0.2,
-        // transform: 'translateX({{halfTo}}px)',
-      }),
-      style({
-        opacity: 0,
-        // transform: 'translateX({{to}}px)',
-      }),
-    ])),
-    // { params: { to: -100, halfTo: -50}}
-  )
-]);
-
-
-
-export const HeaderShowingUp = trigger('HeaderShowingUp', [
-
-  transition(':enter', animate('0.5s 0s ease', keyframes([
-    style({
-      opacity: 0
-    }),
-    style({
-      opacity: 0
-    }),
-    style({
-      opacity: 1
-    })
-  ]))),
-  transition(':leave', animate('0.5s 0s ease', keyframes([
-    style({
-      opacity: 1
-    }),
-    style({
-      opacity: 0
-    }),
-    style({
-      opacity: 0
-    })
-  ])))
-]);
-
-export const BodyShowingUp = trigger('BodyShowingUp', [
-  transition(':enter', animate('0.5s 0s ease', keyframes([
-    style({
-      opacity: 0,
-      transform: 'translateX({{from}}px)',
-    }),
-    style({
-      opacity: 0,
-      transform: 'translateX({{halfFrom}}px)',
-    }),
-    style({
-      opacity: 1,
-      transform: 'translateX(0px)',
-    })
-  ])),
-    { params: { from: 100, halfFrom: 50}}
-  ),
-  transition(':leave', animate('0.5s 0s ease', keyframes([
-    style({
-      opacity: 1,
-      transform: 'translateX(0px)',
-    }),
-    style({
-      opacity: 0,
-      transform: 'translateX({{halfTo}}px)',
-    }),
-    style({
-      opacity: 0,
-      transform: 'translateX({{to}}px)',
-    })
-  ])),
-    { params: { to: -100, halfTo: -50}}
-  ),
-]);
-
-export const ScaledCard = trigger('ScaledCard', [
-
-  transition(':enter', animate('.5s 0s ease', keyframes([
-    style({
-      opacity: 0,
-      transform: 'scale(1.2)'
-    }),
-    // style({
-    //   opacity: 0.2,
-    //   transform: 'scale(1.1)'
-    //
-    // }),
-    style({
-      opacity: 1,
-      transform: 'scale(1)'
-    })
-  ]))),
-  transition(':leave', animate('.5s 0s ease', keyframes([
-    style({
-      opacity: 1,
-      transform: 'scale(1)'
-    }),
-    // style({
-    //   opacity: 0.2,
-    //   transform: 'scale(0.9)'
-    //
-    // }),
-    style({
-      opacity: 0,
-      transform: 'scale(0.8)'
-    })
-  ])))
 ]);

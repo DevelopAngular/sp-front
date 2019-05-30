@@ -3,6 +3,19 @@
     display: flex;
     flex-direction: column;
     margin-bottom: 40px;
+
+}
+.collection-wrapper, .collection-grid-wrapper, .collection-list-wrapper {
+  opacity: 0;
+  animation: appearing .5s ease .1s forwards;
+}
+@keyframes appearing {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .collection-header{
@@ -14,7 +27,7 @@
 
 .collection-icon{
     margin-right: 9px;
-    width: 22px;
+    width: 20px;
     height: auto;
 }
 
@@ -27,8 +40,7 @@
 
 .collection-title{
     color: #1F195E;
-    font-family: 'Helvetica Neue', sans-serif;
-    font-size: 15pt;
+    font-size: 20px;
     font-weight: bold;
 }
 
@@ -56,7 +68,7 @@
 
 .sort-label{
     margin-left: auto;
-    font-family: 'Helvetica Neue', sans-serif;
+    margin-right: 15px;
     font-size: 12pt;
     cursor: pointer;
     font-weight: bold;
@@ -67,7 +79,6 @@
 }
 
 .empty-message{
-    font-family: 'Helvetica Neue', sans-serif;
     font-size: 16pt;
     text-align: center;
     color: rgb(126, 135, 157);

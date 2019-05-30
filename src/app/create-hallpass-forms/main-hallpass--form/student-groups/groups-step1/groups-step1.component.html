@@ -1,39 +1,53 @@
 <div class="step-1-container">
   <div class="header">
     <div class="header_back-button" (click)="back()">
-      <img class="header_back-button" [src]="'./assets/Back Button (Grey).png' | resolveAsset">
+      <img class="header_back-button-icon" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
     </div>
     <div class="header_title">
-      <img class="header_icon" [src]="'./assets/Search (Blue).png' | resolveAsset">
-      <div class="header_text">Select students(s)</div>
+      <img class="header_icon" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset">
+      <div class="header_text ds-dialog-title">Select students(s)</div>
     </div>
   </div>
   <div class="content">
     <div class="content-left">
       <div class="content-left_wrapper">
         <div>
-          <div class="content-left_header">Student Groups</div>
+          <div class="ds-dialog-subtitle">Student Groups</div>
         </div>
         <div class="content-left_groups" (click)="selectGroup(null, $event)">
           <div  class="goups-container">
-            <div class="content-left_placeholder" *ngIf="!groups || (groups && !groups.length)">
-              <span>No student groups</span>
+            <div *ngIf="!groups" class="loading-theme_blue-gray spinner ds-flex-center-center">
+              <mat-spinner [diameter]="50" [color]="'primary'"></mat-spinner>
             </div>
-            <div *ngIf="groups && groups.length">
+            <div class="content-left_placeholder" *ngIf="groups && !groups.length">
+              <div class="no-groups-dummy-image">
+                  <img  [src]="'./assets/emptyStates/undraw_group_selfie_ijc6.svg'" alt="undraw_group_selfie_ijc6.svg">
+              </div>
+              <div class="no-groups-dummy-text">
+                  <span>No student groups</span>
+              </div>
+            </div>
+            <div *ngIf="groups?.length" class="list-of-groups">
               <mat-list>
                 <div *ngFor="let group of groups">
-                  <mat-list-item (click)="selectGroup(group, $event)" class="group"
-                                 [ngClass]="{'group_selected' : ( selectedGroup && (selectedGroup.id === group.id))}">
+                  <mat-list-item #_item
+                    (click)="selectGroup(group, $event)" class="group"
+                    (mouseenter)="_item.hovered = true"
+                    (mouseleave)="_item.hovered = false"
+                    (mousedown)="_item.pressed = true"
+                    (mouseup)="_item.pressed = false"
+                    [style.background-color]="getBackground(_item, group)"
+                    [ngClass]="{'group_selected' : ( selectedGroup && (selectedGroup.id === group.id))}"
+                  >
                     <div class="group-name">
                       <span>{{group.title}}</span>
-                      <img class="group-icon"
-                           [style.transform]="selectedGroup && (selectedGroup.id === group.id) ? 'rotate(-90deg)' : 'none'"
+                      <img class="group-icon" draggable="false"
                            [src]="( selectedGroup && (selectedGroup.id === group.id)
                                     ?
-                                    './assets/Disclosure Indicator (Blue).png'
+                                    './assets/Chevron Right (Navy).svg'
                                     :
-                                    './assets/Disclosure Indicator (Grey).png') | resolveAsset"
-                           alt="Disclosure Indicator (Grey).png">
+                                    './assets/Chevron Right (Blue-Gray).svg') | resolveAsset"
+                           alt="Chevron Right.svg">
                     </div>
                   </mat-list-item>
                   <mat-divider></mat-divider>
@@ -53,11 +67,11 @@
             [hoverColor]="'#FFFFFF'"
             [gradient]="'#FFFFFF,#FFFFFF'"
             [textColor]="'#1F195E'"
-            [leftIcon]="'./assets/Create (Blue).png'"
+            [leftIcon]="'./assets/Plus (Navy).svg'"
             [leftImageHeight]="'13px'"
             [leftImageWidth]="'13px'"
             [cursor]="'pointer'"
-            [subtitle]=" selectedStudents.length ? 'with selected students' : null "
+            [subtitle]=" selectedStudents?.length > 1 ? 'with selected students' : null "
             (buttonClick)="createGroup()"
           >
             <div class="create-button">
@@ -72,15 +86,17 @@
     </div>
     <div class="content-right">
       <div class="content-right_sudent-search">
-        <div class="seach-wrapper">
+        <div class="search-wrapper">
           <app-student-search
+            [width]="'280px'"
+            [listMaxHeight]="'unset'"
             [focused]="true"
             (onUpdate)="updateInternalData($event)" [selectedStudents]="selectedStudents"
           ></app-student-search>
         </div>
       </div>
-      <div class="content-right_next" *ngIf="selectedStudents && selectedStudents.length">
-        <div *ngIf="selectedGroup" [style.padding-right]="'20px'" class="button-shadow">
+      <div class="content-right_next" *ngIf="selectedStudents">
+        <div *ngIf="selectedGroup" [style.margin-right]="'20px'" class="button-shadow">
           <app-gradient-button
             [width]="'120px'"
             [minHeight]="'35px'"
@@ -91,7 +107,7 @@
             (buttonClick)="editGroup(selectedGroup)"
           >Edit Group</app-gradient-button>
         </div>
-        <div class="button-shadow">
+        <div class="button-shadow" *ngIf="selectedStudents.length">
           <app-gradient-button
             [width]="'105px'"
             [minHeight]="'35px'"

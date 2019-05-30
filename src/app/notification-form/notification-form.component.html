@@ -1,0 +1,47 @@
+<div class="notif-wrapper">
+  <div class="notif-header" [style.background-image]="'radial-gradient(circle at 73% 71%, #DA2370,#FB434A)'">
+    <img class="back-button" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" alt="Notification" (click)="dialogRef.close()">
+    <div class="header-title">
+        <img class="header-icon" [src]="'./assets/Notifications (White).svg' | resolveAsset">
+      <div class="ds-dialog-title-white">
+        Notifications
+      </div>
+    </div>
+  </div>
+  <div class="notif-content" *ngIf="isDisabledNotif">
+      <div class="setting" *ngFor="let setting of settings">
+        <div class="setting-content">
+            <div class="ds-dialog-subtitle" style="margin-bottom: 10px">{{ setting.category_name }}</div>
+            <div class="controls" *ngFor="let notification of setting.notifications">
+                <div class="control-title ds-cell-text-2">
+                  {{ notification.name }} <br>
+                  <!--<span class="control-subtitle ds-cell-description-text" *ngIf="control.controlSubtitle"> {{ control.controlSubtitle }} </span>-->
+                </div>
+                <div class="control-toggle">
+                  <app-toggle-input
+                     [delimiter]="false"
+                     [controlSize]="'small'"
+                     [form]="notifForm"
+                     [controlName]="notification.id"
+                     (pushOutValue)="changeForm({value: $event, id: notification.id})"
+                  ></app-toggle-input>
+                </div>
+            </div>
+        </div>
+        <mat-divider></mat-divider>
+      </div>
+  </div>
+    <div class="notif-empty-state" *ngIf="!isDisabledNotif">
+        <img [src]="'./assets/emptyStates/notificationsEmpty.svg' | resolveAsset">
+        <div class="info">
+            <div class="title">Notifications Disabled</div>
+            <p class="descriptions">
+                Notifications are currently disabled by your browser settings.
+                If you’d like help on how to enable them, click
+              <a *ngIf="user.isStudent()" class="external-link" href="https://www.smartpass.app/documentation/student-notifications" target="_blank">here</a>
+              <a *ngIf="user.isTeacher()" class="external-link" href="https://www.smartpass.app/documentation/teacher-notifications" target="_blank">here</a>
+              .
+            </p>
+        </div>
+    </div>
+</div>
