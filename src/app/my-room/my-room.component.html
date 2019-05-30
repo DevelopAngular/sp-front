@@ -40,7 +40,7 @@
       <div class="kiosk-mode-button"
            *ngIf="selectedLocation"
            [style.background-color]="darkTheme.getBackground('high', true)"
-           (click)="kioskMode.currentRoom$.next(selectedLocation)"
+           (click)="setRoomToKioskMode()"
       >
         <div class="ds-flex-center-center" [style.color]="darkTheme.getColor()">
           <img width="20" height="20" class="ds-mr-10" [src]="darkTheme.getIcon({iconName: 'Tablet', darkFill: 'White', lightFill: 'Navy'})" alt="Tablet.svg">
@@ -108,7 +108,7 @@
                 [hoverColor]="'#00b476'"
                 [fontSize]="'18px'"
                 [cursor]="'pointer'"
-                (click)="showMainForm(false)">Now
+                (buttonClick)="showMainForm(false)">Now
               </app-gradient-button>
               <app-gradient-button
                 [size]="'editable'"
@@ -116,23 +116,36 @@
                 [minHeight]="'74px'"
                 [hoverColor]="'#00b476'"
                 [fontSize]="'18px'"
-                [cursor]="'pointer'"
-                (click)="showMainForm(true)">Future
+                [cursor]="'default'"
+                [disabled]="true"
+                (buttonClick)="showMainForm(true)">Future
               </app-gradient-button>
             </div>
           </app-display-card>
         </ng-template>
       </div>
       <div class="active-passes">
-        <app-pass-collection
-          [smoothlyUpdating]="true"
-          [isActive]="true"
-          [forStaff]="isStaff"
-          [style.width]="'550px'"
-          [passProvider]="activePasses"
-          [title]="'Active Passes'"
-          [icon]="'./assets/Walking (Navy).svg'"
-          [columns]="4"></app-pass-collection>
+        <div class="active-passes">
+          <app-pass-collection
+            *ngIf="isStaff"
+            [isActive]="true"
+            [forStaff]="isStaff"
+            [style.width]="'400px'"
+            [passProvider]="activePassesKiosk"
+            [title]="'Active Passes'"
+            [icon]="'./assets/Walking (Navy).svg'"
+            [columns]="3"
+            (reportFromPassCard)="false"></app-pass-collection>
+        </div>
+        <!--<app-pass-collection-->
+          <!--[smoothlyUpdating]="true"-->
+          <!--[isActive]="true"-->
+          <!--[forStaff]="isStaff"-->
+          <!--[style.width]="'550px'"-->
+          <!--[passProvider]="activePasses"-->
+          <!--[title]="'Active Passes'"-->
+          <!--[icon]="'./assets/Walking (Navy).svg'"-->
+          <!--[columns]="4"></app-pass-collection>-->
         <!--<app-pass-collection *ngIf="isStaff" [isActive]="true" [forStaff]="isStaff" [style.width]="'400px'" [passProvider]="activePasses" [title]="'Active Passes'" [icon]="'./assets/Walking (Navy).svg'" [columns]="3" (reportFromPassCard)="onReportFromPassCard($event)"></app-pass-collection>-->
       </div>
     </div>

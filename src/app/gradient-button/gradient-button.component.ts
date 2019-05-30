@@ -188,8 +188,10 @@ export class GradientButtonComponent implements OnInit {
   }
 
   onClick(event){
-    if(!this.disabled)
+    if(!this.disabled) {
+
       this.buttonClick.emit(event)
+    }
   }
 
   onHover(hover: boolean){

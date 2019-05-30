@@ -17,6 +17,7 @@ import { TimeService } from '../services/time.service';
 
 import * as _ from 'lodash';
 import {DarkThemeSwitch} from '../dark-theme-switch';
+import {KioskModeService} from '../services/kiosk-mode.service';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -93,7 +94,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       public dialog: MatDialog,
       private dataService: DataService,
       private timeService: TimeService,
-      public darkTheme: DarkThemeSwitch
+      public darkTheme: DarkThemeSwitch,
+      private kioskMode: KioskModeService
   ) {}
 
   ngOnInit() {
@@ -170,7 +172,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
         fromPast: pass['end_time'] < now,
         forFuture: pass['start_time'] > now,
         forMonitor: this.forMonitor,
-        forStaff: this.forStaff,
+        forStaff: this.forStaff && !this.kioskMode.currentRoom$.value,
+        kioskMode: !!this.kioskMode.currentRoom$.value
       };
       data.isActive = !data.fromPast && !data.forFuture;
     } else {

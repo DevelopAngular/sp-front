@@ -8,7 +8,7 @@
   </div>
 
   <div class="to-content">
-    <div class="teacher-rooms" *ngIf="isStaff && teacherRooms.length">
+    <div class="teacher-rooms" *ngIf="isStaff && teacherRooms.length && !dialogData.kioskModeRoom">
       <div class="rooms-title ds-dialog-subtitle">My Rooms</div>
       <div class="rooms">
         <mat-grid-list class="grid center" cols="3" rowHeight="75px" gutterSize="10px" [style.width]="'395px'">
@@ -25,7 +25,7 @@
       </div>
     </div>
     <div class="all-rooms">
-      <div class="rooms-title ds-dialog-subtitle" *ngIf="isStaff && teacherRooms.length">All Rooms</div>
+      <div class="rooms-title ds-dialog-subtitle" *ngIf="isStaff && teacherRooms.length && !dialogData.kioskModeRoom">All Rooms</div>
       <div class="pin-collection">
         <mat-grid-list class="grid center" cols="3" rowHeight="75px" gutterSize="10px" [style.width]="'395px'">
           <mat-grid-tile *ngFor="let pinnable of pinnables | async">

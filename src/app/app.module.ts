@@ -54,6 +54,7 @@ import { IntroDialogComponent } from './intro-dialog/intro-dialog.component';
 import {filter, map, pairwise, tap} from 'rxjs/operators';
 import {ViewportRuler} from '@angular/cdk/overlay';
 import {NotKioskModeGuard} from './not-kiosk-mode.guard';
+import {KioskModeService} from './services/kiosk-mode.service';
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroRouteComponent, data: { hideSchoolToggleBar: true}},
@@ -170,6 +171,7 @@ const appRoutes: Routes = [
     DataService,
     HttpService,
     UserService,
+    KioskModeService,
     NotificationService,
     GoogleLoginService,
     LoadingService,

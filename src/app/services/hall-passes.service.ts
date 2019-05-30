@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Pinnable } from '../models/Pinnable';
 import { HttpService } from './http-service';
+import {constructUrl} from '../live-data/helpers';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class HallPassesService {
     }
 
     createPass(data) {
-        return this.http.post('v1/hall_passes', data);
+        return this.http.post(`v1/hall_passes`, data);
     }
 
     bulkCreatePass(data) {

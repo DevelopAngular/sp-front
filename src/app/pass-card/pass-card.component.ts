@@ -32,6 +32,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   @Input() isActive: boolean = false;
   @Input() forStaff: boolean = false;
   @Input() forMonitor: boolean = false;
+  @Input() forKioskMode: boolean = false;
   @Input() formState: Navigation;
   @Input() students: User[] = [];
 
@@ -278,6 +279,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
     if (this.forFuture) {
         body['start_time'] = this.pass.start_time.toISOString();
     }
+    if (this.forKioskMode) {
+        body['self_issued'] = true;
+    }
      const getRequest$ = this.forStaff ? this.hallPassService.bulkCreatePass(body) : this.hallPassService.createPass(body);
       getRequest$.subscribe((data) => {
         this.performingAction = true;
@@ -366,12 +370,16 @@ export class PassCardComponent implements OnInit, OnDestroy {
         } else if(action === 'report') {
           this.dialogRef.close({'report': this.pass.student });
         } else if(action === 'end') {
-          this.hallPassService.endPass(this.pass.id).subscribe(() => {
-            this.dialogRef.close();
-          });
+          this.endPass();
         }
       });
     }
+  }
+
+  endPass() {
+    this.hallPassService.endPass(this.pass.id).subscribe(() => {
+      this.dialogRef.close();
+    });
   }
 
   genOption(display, color, action){
