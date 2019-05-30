@@ -141,8 +141,17 @@ export class LocationTableComponent implements OnInit {
                 });
         } else {
             this.locationService.searchLocationsWithConfig(url)
+                .pipe(
+                  map((locs: any) => {
+                    if (this.forKioskMode) {
+                      return locs.results.filter(loc => !loc.restricted);
+                    } else {
+                      return locs.results;
+                    }
+                  })
+                )
                 .toPromise().then(p => {
-                  this.choices = p.results;
+                  this.choices = p;
                   // this.choices = p.results.concat(p.results,p.results,p.results,p.results);
                   this.nextChoices = p.next;
               if (!this.choices.length) {
@@ -159,6 +168,9 @@ export class LocationTableComponent implements OnInit {
         this.starredChoices = stars.map(val => Location.fromJSON(val));
         if (this.isFavoriteForm) {
             this.choices = [...this.starredChoices, ...this.choices].sort((a, b) => a.id - b.id);
+        }
+        if (this.forKioskMode) {
+          this.choices = this.choices.filter(loc => !loc.restricted);
         }
           this.favoritesLoaded = true;
           this.mainContentVisibility = true;
@@ -191,17 +203,26 @@ export class LocationTableComponent implements OnInit {
             +((this.type==='location' && this.showFavorites)?'&starred=false':'');
 
         this.locationService.searchLocationsWithConfig(url)
-        .toPromise()
-        .then(p => {
-          this.hideFavorites = true;
-            const filtFevLoc = _.filter(this.starredChoices, (item => {
-                return item.title.toLowerCase().includes(this.search);
-            }));
-          // this.staticChoices = null;
-          this.choices = this.searchExceptFavourites
-                          ? [...this.filterResults(p.results)]
-                          : [...filtFevLoc, ...this.filterResults(p.results)];
-        })
+          .pipe(
+            map((locs: any) => {
+              if (this.forKioskMode) {
+                return locs.results.filter(loc => !loc.restricted);
+              } else {
+                return locs.results;
+              }
+            })
+          )
+          .toPromise()
+          .then(p => {
+            this.hideFavorites = true;
+              const filtFevLoc = _.filter(this.starredChoices, (item => {
+                  return item.title.toLowerCase().includes(this.search);
+              }));
+            // this.staticChoices = null;
+            this.choices = this.searchExceptFavourites
+                            ? [...this.filterResults(p.results)]
+                            : [...filtFevLoc, ...this.filterResults(p.results)];
+          })
           .then(() => {
             if (!this.choices.length) {
               this.noChoices = true;
@@ -221,6 +242,15 @@ export class LocationTableComponent implements OnInit {
               +(this.type==='location'?'&starred=false':'');
           if (this.mergedAllRooms) {
             this.mergeLocations(url, this.withMergedStars)
+                .pipe(
+                  map((locs: any) => {
+                    if (this.forKioskMode) {
+                      return locs.results.filter(loc => !loc.restricted);
+                    } else {
+                      return locs.results;
+                    }
+                  })
+                )
                 .subscribe(res => {
                   this.choices = res;
                   this.hideFavorites = false;
@@ -232,6 +262,15 @@ export class LocationTableComponent implements OnInit {
                 });
           } else {
               this.locationService.searchLocationsWithConfig(url)
+                .pipe(
+                  map((locs: any) => {
+                    if (this.forKioskMode) {
+                      return locs.results.filter(loc => !loc.restricted);
+                    } else {
+                      return locs.results;
+                    }
+                  })
+                )
                 .toPromise()
                 .then(p => {
                     if (this.staticChoices) {

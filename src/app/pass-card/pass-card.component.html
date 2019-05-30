@@ -1,4 +1,4 @@
-<div class="pass-card-wrapper" [style.background-image]="gradient" [style.height]="forStaff ? '451px' : '412px'" ondragstart="return false">
+<div class="pass-card-wrapper" [style.background-image]="gradient" [style.height]="forStaff || data.kioskMode ? '451px' : '412px'" ondragstart="return false">
   <div class="pass-card-header">
       <div class="header-content">
         <div class="header-info">
@@ -37,12 +37,12 @@
       <app-travel-view [pass]="pass"></app-travel-view>
     </div>
 
-    <mat-divider></mat-divider>
+    <mat-divider *ngIf="!data.kioskMode"></mat-divider>
 
-    <div class="top-block">
+    <div class="top-block" [style.justify-content]="data.kioskMode ? 'flex-start' : 'center'">
 
       <div *ngIf="isActive && !forStaff">
-        <app-card-button *ngIf="!(forStaff || forMonitor)" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'"  [gradientColor]="pass.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">
+        <app-card-button *ngIf="!(forStaff || forMonitor)" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'"  [gradientColor]="pass.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid" (click)="endPass()">
           <div class="end-pass-content">
             {{ timeLeft +(timeLeft===''?'':' -')}} End Pass
           </div>
@@ -69,7 +69,7 @@
     </div>
   </div>
 
-  <div class="pass-card-footer" *ngIf="forStaff">
+  <div class="pass-card-footer" *ngIf="forStaff || data.kioskMode">
     <div class="student-footer"></div>
     <div class="student-text"> {{ studentText }} </div>
   </div>

@@ -1,12 +1,12 @@
 import {Component, ElementRef, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material';
-import {combineLatest, merge, of, BehaviorSubject, Observable, ReplaySubject, Subject} from 'rxjs';
+import {combineLatest, merge, of, BehaviorSubject, Observable, ReplaySubject, Subject, empty} from 'rxjs';
 import { Util } from '../../Util';
 import { DataService } from '../services/data-service';
 import { mergeObject } from '../live-data/helpers';
 import { HallPassFilter, LiveDataService } from '../live-data/live-data.service';
 import { LoadingService } from '../services/loading.service';
-import { PassLike } from '../models';
+import {exceptPasses, PassLike} from '../models';
 import { Location } from '../models/Location';
 import { testPasses } from '../models/mock_data';
 import { BasicPassLikeProvider, PassLikeProvider, WrappedProvider } from '../models/providers';
@@ -14,7 +14,7 @@ import { User } from '../models/User';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import { TimeService } from '../services/time.service';
 import {CalendarComponent} from '../admin/calendar/calendar.component';
-import {filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, startWith, switchMap, takeUntil, tap, withLatestFrom} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {LocationsService} from '../services/locations.service';
 import * as _ from 'lodash';
@@ -71,6 +71,36 @@ class DestinationPassProvider extends RoomPassProvider {
 }
 
 
+class ActivePassProviderKiosk implements PassLikeProvider {
+  constructor(private liveDataService: LiveDataService, private user$: Observable<User>,
+              private excluded$: Observable<PassLike[]> = empty(), private timeService: TimeService) {
+  }
+
+  watch(sort: Observable<string>) {
+
+    const sort$ = sort.pipe(map(s => ({sort: s})));
+    const merged$ = mergeObject({sort: '-created', search_query: ''}, merge(sort$));
+
+    const mergedReplay = new ReplaySubject<HallPassFilter>(1);
+    merged$.subscribe(mergedReplay);
+
+    const passes$ = this.user$.pipe(
+      switchMap(user => this.liveDataService.watchActiveHallPasses(mergedReplay,
+        user.roles.includes('hallpass_student')
+          ? {type: 'student', value: user}
+          : {type: 'issuer', value: user})),
+      withLatestFrom(this.timeService.now$), map(([passes, now]) => {
+        return passes.filter(pass => new Date(pass.start_time).getTime() <= now.getTime());
+      })
+    );
+
+    const excluded$ = this.excluded$.pipe(startWith([]));
+
+    return combineLatest(passes$, excluded$, (passes, excluded) => exceptPasses(passes, excluded));
+  }
+}
+
+
 @Component({
   selector: 'app-my-room',
   templateUrl: './my-room.component.html',
@@ -80,6 +110,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   testPasses: PassLikeProvider;
 
+  activePassesKiosk: WrappedProvider;
   activePasses: WrappedProvider;
   originPasses: WrappedProvider;
   destinationPasses: WrappedProvider;
@@ -281,6 +312,16 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     });
   }
 
+  setRoomToKioskMode() {
+
+    const kioskRoom = Object.assign({}, this.selectedLocation);
+    this.kioskMode.currentRoom$.next(kioskRoom);
+    this.selectedLocation = null;
+    this.locationService.myRoomSelectedLocation$.next(this.selectedLocation);
+    this.selectedLocation$.next(this.roomOptions);
+    this.activePassesKiosk = new WrappedProvider(new ActivePassProviderKiosk(this.liveDataService, this.dataService.currentUser, empty(), this.timeService));
+
+  }
 
   onSearch(search: string) {
     this.inputValue = search;
@@ -324,7 +365,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
         'forLater': forLater,
         'forStaff': this.isStaff,
         'forInput': true,
-        'kioskModeRoom': this.selectedLocation
+        'kioskModeRoom': this.kioskMode.currentRoom$.value
       }
     });
   }
