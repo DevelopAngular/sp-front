@@ -35,7 +35,7 @@ export class StudentPickerComponent implements OnDestroy {
       takeUntil(this._onDestroy),
         switchMap(query => {
         if (query !== '') {
-          return this.userService.searchProfile('hallpass_student', 10, encodeURI(query))
+          return this.userService.searchProfile('hallpass_student', 10, query)
             .pipe(
               map(json => json.results)
             );

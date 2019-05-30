@@ -154,7 +154,7 @@ class InboxInvitationProvider implements PassLikeProvider {
     trigger('OpenOrCloseRequests', [
         state('Opened', style({
           display: 'block',
-          width: '312px',
+          width: '351px',
           opacity: 1,
           // transform: 'translateX(0px)',
           'margin-right': '0px',
@@ -162,18 +162,18 @@ class InboxInvitationProvider implements PassLikeProvider {
         })),
         state('Closed', style({
           display: 'none',
-          width: '312px',
+          width: '351px',
           opacity: 0,
-          'margin-right': '-312px'
+          'margin-right': '-351px'
           // transform: 'translateX(50px)',
         })),
 
         transition('Opened => Closed', [
           animate('.5s 0s ease',  style({
-            width: '312px',
+            width: '351px',
             opacity: 0,
             // transform: 'translateX(50px)',
-            'margin-right': '-312px',
+            'margin-right': '-351px',
             display: 'none',
           }))]),
         transition('Closed => Opened', [
@@ -182,7 +182,7 @@ class InboxInvitationProvider implements PassLikeProvider {
           }),
           animate('.5s 0s ease',  style({
             display: 'block',
-            width: '312px',
+            width: '351px',
             opacity: 1,
             'margin-right': '0px',
 
