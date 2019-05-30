@@ -84,7 +84,7 @@ export class ProfilesSearchComponent implements OnInit {
   onSearch(search: string) {
     this.isEmitUsers.emit(false);
     if (search !== '') {
-      this.students = this.userService.searchProfileAll(encodeURI(search), this.type)
+      this.students = this.userService.searchProfileAll(search, this.type)
           .toPromise().then((users: User[]) => {
             console.log(users);
             if (users.length > 0) {
