@@ -9,9 +9,7 @@ set -e
 #  yarn install --cache-folder /persistent_volume/yarn_cache
 #else
   echo "Using fresh yarn install"
-  # yarn import
-  yarn install --production=false
-  # yarn add @angular/cli
+  yarn install
 #fi
 
 export PATH="$PATH:$(pwd)/node_modules/.bin"
