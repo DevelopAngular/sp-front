@@ -44,11 +44,20 @@ export class FormFactorContainerComponent implements OnInit {
 
       this.dataService.currentUser
       .subscribe((_user) => {
+
+        let user = null;
+
+        if ( this.FORM_STATE.formMode.role === 2) {
+          user = _user;
+        } else if (this.FORM_STATE.formMode.role === 1 && this.dialogData['kioskModeRoom']) {
+          user = this.FORM_STATE.data.selectedStudents[0];
+        }
+
         switch (this.FORM_STATE.formMode.formFactor) {
           case this.states.HallPass:
             this.template = new HallPass(
               'template',
-              _user,
+              user,
               null,
               null,
               null,

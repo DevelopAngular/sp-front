@@ -6,13 +6,13 @@
     <!--HAL-->
     <app-pass-card
       [pass]="template"
-      [forStaff]="FORM_STATE.formMode.role === 1"
+      [forStaff]="FORM_STATE.formMode.role === 1 && !dialogData.kioskModeRoom"
       [forInput]="true"
+      [forKioskMode]="!!dialogData.kioskModeRoom"
       [formState]="FORM_STATE"
       [forFuture]="FORM_STATE.data.date ? true : false"
-      [students]="FORM_STATE.formMode.role === 1 ? FORM_STATE.data.selectedStudents : []"
+      [students]="FORM_STATE.formMode.role === 1 && !dialogData.kioskModeRoom ? FORM_STATE.data.selectedStudents : []"
       (cardEvent)="onNextStep($event)">
-
     </app-pass-card>
   </div>
   <div [style.height]="FORM_STATE.formMode.role === 1 ? '451px' : '412px'"

@@ -177,8 +177,8 @@ export class HttpService {
                   config.append('client_id', server.client_id);
                   config.append('grant_type', 'refresh_token');
                   config.append('token', auth.refresh_token);
-                  config.append('username', user.username);
-                  config.append('password', user.password);
+                  // config.append('username', user.username);
+                  // config.append('password', user.password);
                   console.log(new Date(auth.expires));
 
                 return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
