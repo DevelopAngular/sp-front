@@ -27,6 +27,8 @@ export class IconPickerComponent implements OnInit {
 
   icons: Icon[] = [];
 
+  isSearching: boolean;
+
   @Input() roomName: string;
 
   @Output() selectedEvent: EventEmitter<any> = new EventEmitter();
@@ -47,7 +49,7 @@ export class IconPickerComponent implements OnInit {
     this.icons$
       .pipe(
         map((icons: any) => {
-         return this.normalizeIcons(icons);
+         return this.normalizeIcons(icons, false);
         }),
       )
       .subscribe(res => {
@@ -59,9 +61,13 @@ export class IconPickerComponent implements OnInit {
       });
   }
 
-  normalizeIcons(icons) {
+  normalizeIcons(icons, isSearchInput) {
       if (icons) {
-        this.iconCollectionTitle = 'Suggested';
+          if (isSearchInput) {
+              this.iconCollectionTitle = null;
+          } else {
+              this.iconCollectionTitle = 'Suggested';
+          }
         return icons.map((_icon) => {
               if (this.selectedIconPicker) {
                   if (this.selectedIconPicker === _icon.inactive_icon) {
@@ -75,8 +81,7 @@ export class IconPickerComponent implements OnInit {
               return _icon;
           });
       } else {
-        // this.iconCollectionTitle = 'No results';
-        this.iconCollectionTitle = 'Search icons';
+              this.iconCollectionTitle = 'Search icons';
           return [];
       }
   }
@@ -121,11 +126,17 @@ export class IconPickerComponent implements OnInit {
   }
 
   search(search) {
+      let isSearch: boolean = true;
       if (search === '') {
           search = this.roomName;
+          isSearch = false;
       }
+
       this.http.searchIcons(search).pipe(
-          map(icons => this.normalizeIcons(icons))).subscribe(res => {
+          map(icons => this.normalizeIcons(icons, isSearch))).subscribe((res: any[]) => {
+              if (!res.length) {
+                  this.iconCollectionTitle = 'No results';
+              }
               this.icons = res;
       });
   }
