@@ -1,15 +1,15 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { DeviceDetectionService } from './device-detection.helper';
+import { DeviceDetection } from './device-detection.helper';
 
 describe('DeviceDetectionService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [DeviceDetectionService]
+      providers: [DeviceDetection]
     });
   });
 
-  it('should be created', inject([DeviceDetectionService], (service: DeviceDetectionService) => {
+  it('should be created', inject([DeviceDetection], (service: DeviceDetection) => {
     expect(service).toBeTruthy();
   }));
 });

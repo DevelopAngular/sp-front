@@ -3,8 +3,7 @@
     <div class="header_back-button" (click)="back(editGroup)">
       <img  *ngIf="!form.get('title').dirty && !form.get('users').dirty"
             class="header_back-button-icon" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
-      <span class="header_back-button"
-            *ngIf="form.get('title').dirty || form.get('users').dirty">Cancel</span>
+      <span *ngIf="form.get('title').dirty || form.get('users').dirty">Cancel</span>
     </div>
     <div class="header_title">
       <!--<img class="header_icon" [src]="'./assets/Search (Blue).png' | resolveAsset">-->
