@@ -309,7 +309,7 @@
           [data]="userList"
           [isCheckbox]="dataTableEditState"
           [textColor]="'#7E879D'"
-          [disallowHover]="role === '_all'"
+          [disallowHover]="role === '_all' && !(dataTableEditState | async)"
           [displayedColumns]="dataTableHeadersToDisplay"
           (selectedCell)="findProfileByRole($event)"
           (selectedRow)="showProfileCard($event)"

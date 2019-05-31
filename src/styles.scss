@@ -125,10 +125,13 @@ body {
 
 .overlay-dialog {
   margin-left: 302px !important;
-
 }
 
-
+@media all and (max-width: 1110px) {
+  .overlay-dialog {
+    margin-left: 0 !important;
+  }
+}
 
 .overlay-dialog .mat-dialog-container{
   border-radius: 16px;

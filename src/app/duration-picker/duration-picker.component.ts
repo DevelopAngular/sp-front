@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output , Input} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output, Input, HostListener} from '@angular/core';
 
 @Component({
   selector: 'app-duration-picker',
@@ -21,6 +21,17 @@ export class DurationPickerComponent implements OnInit {
   plural: boolean;
 
   @Output() onChange: EventEmitter<any> = new EventEmitter();
+
+  @HostListener('window:wheel', ['$event'])
+    onWheel(e) {
+      const delta = e.deltaY || e.detail;
+      if (delta < 0 && this.selectedDuration < this.maxDuration) {
+        this.selectedDuration += 1;
+      } else if (delta > 0 && this.selectedDuration > this.minDuration) {
+        this.selectedDuration -= 1;
+      }
+      this.onChange.emit(this.selectedDuration);
+    }
 
   public selectedDuration: number = 5;
 
