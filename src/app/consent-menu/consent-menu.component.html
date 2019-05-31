@@ -19,7 +19,7 @@
     </div>
 
     <div  class="ds-w-100 options-container">
-      <div *ngFor="let option of options">
+      <div *ngFor="let option of options; let i = index">
         <div *ngIf="optionsView === 'button'; else stringOptionsView" class="ds-w-100">
           <app-gradient-button
             [cursor]="'pointer'"
@@ -52,7 +52,7 @@
             <ng-template #simpleOptions>{{ option.display }}</ng-template>
           </div>
         </ng-template>
-        <div class="option-divider"></div>
+        <div class="option-divider" *ngIf="i !== options.length - 1"></div>
       </div>
     </div>
   </div>
