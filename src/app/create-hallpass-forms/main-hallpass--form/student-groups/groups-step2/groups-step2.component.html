@@ -3,8 +3,7 @@
     <div class="header_back-button" (click)="back()">
       <img  *ngIf="!form.get('title').value && !selectedStudents.length"
             class="header_back-button-icon" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
-      <span class="header_back-button"
-            *ngIf="form.get('title').value || selectedStudents.length">Cancel</span>
+      <span *ngIf="form.get('title').value || selectedStudents.length">Cancel</span>
     </div>
     <div class="header_title">
       <div class="header_text ds-dialog-title">{{form.get('title').value || 'New Student Group'}} </div>

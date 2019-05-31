@@ -17,6 +17,8 @@
     box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
     position: relative;
     z-index: 1;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
 }
 .back-button {
   width: 28px;

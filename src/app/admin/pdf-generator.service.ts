@@ -408,22 +408,12 @@ export class PdfGeneratorService {
                       if (i === 1) {
                         if (header === 'TT') {
                           table.drawCellWithImg(cell, i, n);
-                                      // if (cell['TT'] === 'one_way') {
-                                      //   doc.addImage(ctx.ARROW_IMG, 'PNG', table.left + (table.sp * i) + 25, table.top + table.lh * (n + 1), 15, 15);
-                                      // } else {
-                                      //   doc.addImage(ctx.ARROW_DOUBLE_IMG, 'PNG', table.left + (table.sp * i) + 25, table.top + table.lh * (n + 1), 15, 15);
-                                      // }
                         } else {
                           doc.text(table.left + (table.sp * i) + 25, table.top + table.lh * (n + 1), cell[_headers[i]]);
                         }
                       } else {
                         if (header === 'TT') {
                           table.drawCellWithImg(cell, i, n);
-                                      // if (cell['TT'] === 'one_way') {
-                                      //   doc.addImage(ctx.ARROW_IMG, 'PNG', table.left + (table.sp * i) + 25, table.top + table.lh * (n + 1), 15, 15);
-                                      // } else {
-                                      //   doc.addImage(ctx.ARROW_DOUBLE_IMG, 'PNG', table.left + (table.sp * i) + 25, table.top + table.lh * (n + 1), 15, 15);
-                                      // }
                         } else {
                           try {
                             doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1), cell[_headers[i]]);
