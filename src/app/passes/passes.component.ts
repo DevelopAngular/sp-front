@@ -369,7 +369,7 @@ export class PassesComponent implements OnInit {
       this.activePasses.loaded$,
       this.futurePasses.loaded$,
       this.pastPasses.loaded$,
-    ).pipe(map(con => !!con), debounceTime(150));
+    ).pipe(map(con => !!con), delay(150));
 
     this.isSeen$ = this.createFormService.isSeen$;
     //
