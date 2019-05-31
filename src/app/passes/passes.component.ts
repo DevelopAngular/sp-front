@@ -2,7 +2,17 @@ import { animate, state, style, transition, trigger, } from '@angular/animations
 import { Component, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { BehaviorSubject, combineLatest, empty, merge, Observable, of, ReplaySubject } from 'rxjs';
-import {filter, map, publishReplay, refCount, startWith, switchMap, withLatestFrom} from 'rxjs/operators';
+import {
+    debounceTime,
+    delay,
+    filter,
+    map,
+    publishReplay,
+    refCount,
+    startWith,
+    switchMap,
+    withLatestFrom
+} from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
@@ -349,19 +359,18 @@ export class PassesComponent implements OnInit {
       (l1, l2) => l1 && l2
     );
 
-    this.passesHaveItems = combineLatest(
-      this.activePasses.length$.pipe(startWith(0)),
-      this.futurePasses.length$.pipe(startWith(0)),
-      this.pastPasses.length$.pipe(startWith(0)),
-      (l1, l2, l3) => (l1 + l2 + l3) > 0
-    );
+    this.passesHaveItems = merge(
+      this.activePasses.length$,
+      this.futurePasses.length$,
+      this.pastPasses.length$,
+    ).pipe(map(con => !!con));
 
-    this.passesLoaded = combineLatest(
+    this.passesLoaded = merge(
       this.activePasses.loaded$,
       this.futurePasses.loaded$,
       this.pastPasses.loaded$,
-      (l1, l2, l3) => l1 && l2 && l3
-    );
+    ).pipe(map(con => !!con), debounceTime(150));
+
     this.isSeen$ = this.createFormService.isSeen$;
     //
     // this.notifService.initNotifications(true)
