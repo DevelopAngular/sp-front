@@ -1,5 +1,6 @@
 <div *ngIf="user" style="height: 100%">
   <div *ngIf="canView" class="hall-monitor-wrapper">
+    <img (click)="back()" *ngIf="this.isReportFormOpened" class="back-button-bottom"  [src]="'./assets/Back Button (White).svg' | resolveAsset" >
     <div class="hall-monitor-top">
       <app-round-input
         [type]="'text'"

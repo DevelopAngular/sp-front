@@ -1,7 +1,8 @@
+<div>
 <div class="locations-group-wrapper">
   <!--<pre>  {{FORM_STATE.state}} {{FORM_STATE.previousState}} {{ FORM_STATE.state > FORM_STATE.previousState}}</pre>-->
   <!--<pre>{{frameMotion$| async | json}}</pre>-->
-  <div *ngIf="FORM_STATE.state === 1" style="position: absolute" [@NextStep]="{ value: '', params: frameMotion$ | async}">
+  <div *ngIf="FORM_STATE.state === 1" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async}">
 
     <app-from-where
       [studentText]="studentText"
@@ -12,7 +13,7 @@
       (selectedLocation)="fromWhere($event)"
     ></app-from-where>
   </div>
-  <div *ngIf="FORM_STATE.state === 2" style="position: absolute" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
+  <div *ngIf="FORM_STATE.state === 2" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
 
     <app-to-where
       [studentText]="studentText"
@@ -26,7 +27,7 @@
     ></app-to-where>
   </div>
   <!--<div *ngIf="FORM_STATE.state === 3" style="position: absolute">-->
-  <div *ngIf="FORM_STATE.state === 3" style="position: absolute" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
+  <div *ngIf="FORM_STATE.state === 3" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
 
     <app-to-category
       [studentText]="studentText"
@@ -39,7 +40,7 @@
     ></app-to-category>
   </div>
   <!--<div *ngIf="FORM_STATE.state === 4" style="position: absolute">-->
-  <div *ngIf="FORM_STATE.state === 4" style="position: absolute" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
+  <div *ngIf="FORM_STATE.state === 4" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
 
     <app-restricted-target
       [formState]="FORM_STATE"
@@ -51,7 +52,7 @@
   </div>
 
   <!--<div *ngIf="FORM_STATE.state === 5" style="position: absolute">-->
-  <div *ngIf="FORM_STATE.state === 5" style="position: absolute" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
+  <div *ngIf="FORM_STATE.state === 5" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
 
     <app-restricted-message
       [formState]="FORM_STATE"
@@ -63,4 +64,6 @@
     ></app-restricted-message>
   </div>
 
+</div>
+  <img class="back-button back-button-grey back-btn-bottom" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="stepBack()">
 </div>

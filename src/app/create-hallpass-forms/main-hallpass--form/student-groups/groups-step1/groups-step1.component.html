@@ -1,7 +1,7 @@
 <div class="step-1-container">
   <div class="header">
-    <div class="header_back-button" (click)="back()">
-      <img class="header_back-button-icon" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
+    <div class="header_back-button " (click)="back()">
+      <img class="header_back-button-icon back-btn-top" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
     </div>
     <div class="header_title">
       <img class="header_icon" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset">
@@ -11,8 +11,8 @@
   <div class="content">
     <div class="content-left">
       <div class="content-left_wrapper">
-        <div>
-          <div class="ds-dialog-subtitle">Student Groups</div>
+        <div class="student-group-name-wrapper">
+          <div class="ds-dialog-subtitle student-group-name">Student Groups</div>
         </div>
         <div class="content-left_groups" (click)="selectGroup(null, $event)">
           <div  class="goups-container">
@@ -60,27 +60,29 @@
           </div>
         </div>
         <div class="content-left_create-group" *ngIf="!selectedGroup">
-          <app-gradient-button
-            [minHeight]="'45px'"
-            [fontSize]="'14px'"
-            [width]="'180px'"
-            [hoverColor]="'#FFFFFF'"
-            [gradient]="'#FFFFFF,#FFFFFF'"
-            [textColor]="'#1F195E'"
-            [leftIcon]="'./assets/Plus (Navy).svg'"
-            [leftImageHeight]="'13px'"
-            [leftImageWidth]="'13px'"
-            [cursor]="'pointer'"
-            [subtitle]=" selectedStudents?.length > 1 ? 'with selected students' : null "
-            (buttonClick)="createGroup()"
-          >
-            <div class="create-button">
-              <div>
+          <div class="new-student-group-btn">
+            <app-gradient-button
+              [minHeight]="'45px'"
+              [fontSize]="'14px'"
+              [width]="'180px'"
+              [hoverColor]="'#FFFFFF'"
+              [gradient]="'#FFFFFF,#FFFFFF'"
+              [textColor]="'#1F195E'"
+              [leftIcon]="'./assets/Plus (Navy).svg'"
+              [leftImageHeight]="'13px'"
+              [leftImageWidth]="'13px'"
+              [cursor]="'pointer'"
+              [subtitle]=" selectedStudents?.length > 1 ? 'with selected students' : null "
+              (buttonClick)="createGroup()"
+            >
+              <div class="create-button">
+                <div>
 
-                <span class="create-button_title">New Student Group</span>
+                  <span class="create-button_title">New Student Group</span>
+                </div>
               </div>
-            </div>
-          </app-gradient-button>
+            </app-gradient-button>
+          </div>
         </div>
       </div>
     </div>
@@ -96,7 +98,7 @@
         </div>
       </div>
       <div class="content-right_next" *ngIf="selectedStudents">
-        <div *ngIf="selectedGroup" [style.margin-right]="'20px'" class="button-shadow">
+        <div *ngIf="selectedGroup" [style.margin-right]="'20px'" class="button-shadow edit-group-btn">
           <app-gradient-button
             [width]="'120px'"
             [minHeight]="'35px'"
@@ -107,7 +109,7 @@
             (buttonClick)="editGroup(selectedGroup)"
           >Edit Group</app-gradient-button>
         </div>
-        <div class="button-shadow" *ngIf="selectedStudents.length">
+        <div class="button-shadow next-btn-desktop" *ngIf="selectedStudents.length">
           <app-gradient-button
             [width]="'105px'"
             [minHeight]="'35px'"
@@ -118,6 +120,18 @@
         </div>
       </div>
     </div>
+  </div>
+  <img  class="back-btn-bottom" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
+
+
+  <div class="button-shadow next-btn-mobile" *ngIf="selectedStudents.length">
+    <app-gradient-button
+      [width]="'105px'"
+      [minHeight]="'35px'"
+      [fontSize]="'14px'"
+      [cursor]="'pointer'"
+      (buttonClick)="nextStep()"
+    >Next ({{selectedStudents.length}})</app-gradient-button>
   </div>
 </div>
 <!--<pre>{{selectedGroup | json}}</pre>-->

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, forwardRef, Inject, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import { User } from '../../../models/User';
 import { DataService } from '../../../services/data-service';
@@ -12,6 +12,12 @@ import {filter, map} from 'rxjs/operators';
 
 import *as _ from 'lodash';
 import {MAT_DIALOG_DATA} from '@angular/material';
+import {FromWhereComponent} from './from-where/from-where.component';
+import {ToCategoryComponent} from './to-category/to-category.component';
+import {RestrictedTargetComponent} from './restricted-target/restricted-target.component';
+import {RestrictedMessageComponent} from './restricted-message/restricted-message.component';
+import {ToWhereComponent} from './to-where/to-where.component';
+import {ScreenService} from '../../../services/screen.service';
 
 export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, message = 5 }
 
@@ -26,6 +32,13 @@ export class LocationsGroupContainerComponent implements OnInit {
   @Input() FORM_STATE: Navigation;
 
   @Output() nextStepEvent: EventEmitter<any> = new EventEmitter<any>();
+
+  @ViewChild(FromWhereComponent) fromWhereComp;
+  @ViewChild(forwardRef( () => ToWhereComponent) ) toWhereComp;
+  @ViewChild(ToCategoryComponent) toCategoryComp;
+  @ViewChild(RestrictedTargetComponent) restTargetComp;
+  @ViewChild(RestrictedMessageComponent) restMessageComp;
+
 
   user$: Observable<User>;
   user: User;
@@ -42,6 +55,7 @@ export class LocationsGroupContainerComponent implements OnInit {
     private dataService: DataService,
     private formService: CreateFormService,
     private locationsService: LocationsService,
+    private screenService: ScreenService,
 
   ) { }
 
@@ -229,5 +243,27 @@ export class LocationsGroupContainerComponent implements OnInit {
 
       this.nextStepEvent.emit(this.FORM_STATE);
     // }, 100);
+  }
+
+  stepBack() {
+    switch (this.FORM_STATE.state) {
+      case 1:
+        this.fromWhereComp.back();
+        this.nextStepEvent.emit(this.FORM_STATE);
+        break;
+      case 2:
+        if (this.toWhereComp) {
+          this.toWhereComp.back();
+        }
+        break;
+      case 4:
+        if (this.restTargetComp) {
+          this.restTargetComp.back();
+        }
+        break;
+      case 5:
+        this.restMessageComp.back();
+        break;
+    }
   }
 }

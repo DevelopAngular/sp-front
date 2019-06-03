@@ -256,3 +256,13 @@
   margin-top: 25px;
   width:150%
 }
+
+.back-button-bottom {
+  display: block;
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -40px;
+}

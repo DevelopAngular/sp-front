@@ -56,6 +56,8 @@ export class HallMonitorComponent implements OnInit {
   passesLoaded: Observable<boolean> = of(false);
 
   hasPasses: Observable<boolean> = of(false);
+  isReportFormOpened: boolean;
+  reportFormInstance: ReportFormComponent;
 
   constructor(
     public dataService: DataService,
@@ -109,13 +111,20 @@ export class HallMonitorComponent implements OnInit {
         this.activePassProvider.loaded$,
         (l1) => l1
       );
+
+      this.dialog.afterOpened.subscribe( () => {
+        this.isReportFormOpened = true;
+      });
+
+      this.dialog.afterAllClosed.subscribe( () => {
+        this.isReportFormOpened = false;
+      });
   }
 
   openReportForm() {
+
     const dialogRef = this.dialog.open(ReportFormComponent, {
-      width: '425px',
-      height: '500px',
-      panelClass: 'form-dialog-container',
+      panelClass: ['form-dialog-container', 'report-dialog'],
       backdropClass: 'custom-backdrop',
     });
 
@@ -126,6 +135,8 @@ export class HallMonitorComponent implements OnInit {
     }), delay(3000)).subscribe(() => {
       this.isActiveMessage = false;
     });
+
+    this.reportFormInstance = dialogRef.componentInstance;
   }
 
   onReportFromPassCard(studends) {
@@ -145,4 +156,7 @@ export class HallMonitorComponent implements OnInit {
     this.searchQuery$.next(search);
   }
 
+  back() {
+    this.reportFormInstance.back();
+  }
 }
