@@ -517,6 +517,7 @@ export class OverlayContainerComponent implements OnInit {
       }
       if (this.dialogData['rooms']) {
           if (this.overlayType === 'newFolder') {
+              this.pinnableToDeleteIds = this.dialogData['rooms'].map(pin => +pin.id);
               this.dialogData['rooms'].forEach((room: Pinnable) => {
                   if (room.type === 'category') {
                       this.locationService.getLocationsWithCategory(room.category)
