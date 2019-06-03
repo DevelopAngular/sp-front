@@ -1,3 +1,4 @@
+@import '../../../sp-colors';
 .input-wrapper {
     border-radius: 0.5rem;
     position: relative;
@@ -34,7 +35,7 @@
     border-radius: 20px;
     //box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
     font-size: 16px;
-    color: #134482;
+    color: $navy;
     caret-color: auto;
     display: block;
     &::placeholder {
