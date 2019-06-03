@@ -5,7 +5,10 @@
       <div class="collection-title" [style.color]="_color">
         {{title}}
       </div>
-      <div class="sort-label global-opacity-icons" *ngIf="hasSort" (click)="openSortDialog($event)">Sort</div>
+
+      <div class="sort-label global-opacity-icons" *ngIf="hasSort" (click)="openSortDialog($event)">
+        <img width="20" height="20" [src]="'./assets/Sort (Navy).svg' | resolveAsset">
+      </div>
       <!--<app-dropdown *ngIf="hasSort" class="sort-selector" (onSelect)="onSortSelected($event)" [options]="sortOptions"></app-dropdown>-->
     <!--(click)="displayState=(displayState==='list'?'grid':'list')"-->
       <!--<img draggable="false" class="collection-display-toggle global-opacity-icons" [src]="'./assets/' +(displayState==='grid'?'List':'Grid') +' (Navy).svg'| resolveAsset" [style.margin-left]="hasSort?'10px':'auto'">-->

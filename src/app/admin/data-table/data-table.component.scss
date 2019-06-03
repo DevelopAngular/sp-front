@@ -12,6 +12,10 @@
   }
 }
 
+::ng-deep .mat-sort-header-container {
+  padding-left: 8px;
+}
+
 .multi-cell {
   text-decoration: underline;
   cursor: pointer;

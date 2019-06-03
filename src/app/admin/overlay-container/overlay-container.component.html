@@ -2,7 +2,8 @@
       (dragenter)="handleDragEvent($event, '#00B476')"
       (dragover)="handleDragEvent($event, '#00B476')"
       (dragleave)="handleDragEvent($event, '#7F879D')"
-      (drop)="catchFile($event)">
+      (drop)="catchFile($event)"
+>
   <!--<pre>{{(frameMotion$ | async) | json}}</pre>-->
   <div class="overlay-container">
     <div class="overlay-header" [ngStyle]="{'background-image': gradientColor}">
@@ -176,6 +177,7 @@
               <app-input
                 [width]="'103px'"
                 [maxLength]="5"
+                [isFocus]="form.touched"
                 [input_label]="'Room Number'"
                 [input_value]="roomNumber ? roomNumber : ''"
                 (onUpdate)="roomNumber=$event"
@@ -287,6 +289,7 @@
               (over)="openInfo($event)"
               (leave)="closeInfo($event)"
               [input_label]="'Time Limit'"
+              [isFocus]="form.touched"
               [input_value]="timeLimit ? timeLimit : ''"
               [placeholder]="'minutes'"
               (onUpdate)="onUpdate($event)"

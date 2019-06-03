@@ -131,6 +131,12 @@
   justify-content: center;
 }
 
+.pass-buttons {
+  display: flex;
+  justify-content: space-between;
+  width: 301px;
+}
+
 .slide {
   position: absolute;
   font-size: 16px;
@@ -173,10 +179,6 @@
       align-items: center;
       .title {
         padding: 50px 0 35px 0;
-      }
-      .pass-buttons {
-        display: flex;
-        justify-content: space-around;
       }
     }
     .for-staff_2 {

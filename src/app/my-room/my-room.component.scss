@@ -156,9 +156,8 @@ input {
   .pass-buttons{
     display: flex;
     flex-direction: row;
-    //margin-left: 25px;
     justify-content: space-between;
-    width: 258px;
+    width: 301px;
   }
 
   .future-passes, .past-passes, .active-passes {
