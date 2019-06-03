@@ -769,6 +769,11 @@ export class OverlayContainerComponent implements OnInit {
             status.push(_.isEqual(currState.advOptState.future.data.selectedTeachers, initState.advOptState.future.data.selectedTeachers));
         }
         this.isFormStateDirty = status.includes(false);
+        if (!this.isFormStateDirty) {
+            this.dialogRef.disableClose = false;
+        } else {
+            this.dialogRef.disableClose = true;
+        }
     }
   }
 
