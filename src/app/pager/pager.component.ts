@@ -63,7 +63,7 @@ export class PagerComponent implements OnInit {
 
     this.formService.setFrameMotionDirection('back');
 
-    setTimeout(() => {
+    // setTimeout(() => {
 
       this.hideRightButton.next(true);
       if (this.page === 2) {
@@ -73,13 +73,13 @@ export class PagerComponent implements OnInit {
         this.page -= 1;
       }
 
-    }, 100);
+    // }, 100);
   }
 
   RightPaginator() {
     this.formService.setFrameMotionDirection('forward');
 
-    setTimeout(() => {
+    // setTimeout(() => {
 
       this.hideLeftButton.next(true);
       if (this.page === 1 && this.pages === 2
@@ -88,8 +88,8 @@ export class PagerComponent implements OnInit {
         this.hideRightButton.next(false);
       }
       this.page += 1;
-
-    }, 100);
+    //
+    // }, 100);
 
 
   }
