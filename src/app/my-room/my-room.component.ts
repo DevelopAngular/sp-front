@@ -25,6 +25,7 @@ import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hall
 import {bumpIn} from '../animations';
 import {DomSanitizer} from '@angular/platform-browser';
 import {ActivePassProvider as activeKioskPasses} from '../hall-monitor/hall-monitor.component';
+import {Router} from '@angular/router';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -157,7 +158,8 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       public dialog: MatDialog,
       public userService: UserService,
       public kioskMode: KioskModeService,
-      private sanitizer: DomSanitizer
+      private sanitizer: DomSanitizer,
+      public router: Router
   ) {
     this.setSearchDate(this.timeService.nowDate());
     console.log(this.kioskMode);
@@ -351,10 +353,11 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       kioskRoom = Object.assign({}, this.selectedLocation);
     }
     this.kioskMode.currentRoom$.next(kioskRoom);
-    this.selectedLocation = null;
-    this.locationService.myRoomSelectedLocation$.next(this.selectedLocation);
-    this.selectedLocation$.next(this.roomOptions);
-    this.activePassesKiosk = new WrappedProvider(new activeKioskPasses(this.liveDataService, this.searchQuery$));
+    this.router.navigate(['main/kioskMode']);
+    // this.selectedLocation = null;
+    // this.locationService.myRoomSelectedLocation$.next(this.selectedLocation);
+    // this.selectedLocation$.next(this.roomOptions);
+    // this.activePassesKiosk = new WrappedProvider(new activeKioskPasses(this.liveDataService, this.searchQuery$));
     // this.activePassesKiosk = new WrappedProvider(new passProvider(this.liveDataService, this.dataService.currentUser, empty(), this.timeService));
 
   }
