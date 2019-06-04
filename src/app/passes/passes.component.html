@@ -38,7 +38,16 @@
       <div class="text">The hallway will never be the same</div>
     </div>
     <div class="active-passes">
-      <app-pass-collection *ngIf="isStaff" [isActive]="true" [forStaff]="isStaff" [style.width]="'460px'" [passProvider]="activePasses" [title]="'Active Passes'" [icon]="'./assets/Walking (Navy).svg'" [columns]="3" (reportFromPassCard)="onReportFromPassCard($event)"></app-pass-collection>
+      <app-pass-collection
+              *ngIf="isStaff"
+              [isActive]="true"
+              [forStaff]="isStaff"
+              [style.width]="'460px'"
+              [passProvider]="activePasses"
+              [title]="'Active Passes'"
+              [icon]="'./assets/Walking (Navy).svg'"
+              [columns]="3"
+              (reportFromPassCard)="onReportFromPassCard($event)"></app-pass-collection>
     </div>
     <div class="future-passes">
       <app-pass-collection [forFuture]="true" [forStaff]="isStaff" [style.width]="'460px'" [passProvider]="futurePasses" [title]="'Scheduled Passes'" [icon]="'./assets/Future (Navy).svg'" [columns]="3"></app-pass-collection>

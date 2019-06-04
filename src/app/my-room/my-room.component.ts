@@ -22,6 +22,9 @@ import {RepresentedUser} from '../navbar/navbar.component';
 import {UserService} from '../services/user.service';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
+import {bumpIn} from '../animations';
+import {DomSanitizer} from '@angular/platform-browser';
+import {ActivePassProvider as activeKioskPasses} from '../hall-monitor/hall-monitor.component';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -71,40 +74,43 @@ class DestinationPassProvider extends RoomPassProvider {
 }
 
 
-class ActivePassProviderKiosk implements PassLikeProvider {
-  constructor(private liveDataService: LiveDataService, private user$: Observable<User>,
-              private excluded$: Observable<PassLike[]> = empty(), private timeService: TimeService) {
-  }
-
-  watch(sort: Observable<string>) {
-
-    const sort$ = sort.pipe(map(s => ({sort: s})));
-    const merged$ = mergeObject({sort: '-created', search_query: ''}, merge(sort$));
-
-    const mergedReplay = new ReplaySubject<HallPassFilter>(1);
-    merged$.subscribe(mergedReplay);
-
-    const passes$ = this.user$.pipe(
-      switchMap(user => this.liveDataService.watchActiveHallPasses(mergedReplay,
-        user.roles.includes('hallpass_student')
-          ? {type: 'student', value: user}
-          : {type: 'issuer', value: user})),
-      withLatestFrom(this.timeService.now$), map(([passes, now]) => {
-        return passes.filter(pass => new Date(pass.start_time).getTime() <= now.getTime());
-      })
-    );
-
-    const excluded$ = this.excluded$.pipe(startWith([]));
-
-    return combineLatest(passes$, excluded$, (passes, excluded) => exceptPasses(passes, excluded));
-  }
-}
+// class ActivePassProviderKiosk implements PassLikeProvider {
+//   constructor(private liveDataService: LiveDataService, private user$: Observable<User>,
+//               private excluded$: Observable<PassLike[]> = empty(), private timeService: TimeService) {
+//   }
+//
+//   watch(sort: Observable<string>) {
+//
+//     const sort$ = sort.pipe(map(s => ({sort: s})));
+//     const merged$ = mergeObject({sort: '-created', search_query: ''}, merge(sort$));
+//
+//     const mergedReplay = new ReplaySubject<HallPassFilter>(1);
+//     merged$.subscribe(mergedReplay);
+//
+//     const passes$ = this.user$.pipe(
+//       switchMap(user => this.liveDataService.watchActiveHallPasses(mergedReplay,
+//         user.roles.includes('hallpass_student')
+//           ? {type: 'student', value: user}
+//           : {type: 'issuer', value: user})),
+//       withLatestFrom(this.timeService.now$), map(([passes, now]) => {
+//         return passes.filter(pass => new Date(pass.start_time).getTime() <= now.getTime());
+//       })
+//     );
+//
+//     const excluded$ = this.excluded$.pipe(startWith([]));
+//
+//     return combineLatest(passes$, excluded$, (passes, excluded) => exceptPasses(passes, excluded));
+//   }
+// }
 
 
 @Component({
   selector: 'app-my-room',
   templateUrl: './my-room.component.html',
-  styleUrls: ['./my-room.component.scss']
+  styleUrls: ['./my-room.component.scss'],
+  animations: [
+      bumpIn
+  ]
 })
 export class MyRoomComponent implements OnInit, OnDestroy {
 
@@ -127,8 +133,8 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   canView = false;
   userLoaded = false;
 
-  mergedOriginPassesPasses = [];
-  mergedDestinationPasses = [];
+  buttonDown: boolean;
+  hovered: boolean;
 
   searchQuery$ = new BehaviorSubject('');
   searchDate$ = new BehaviorSubject<Date>(null);
@@ -150,7 +156,8 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       public dataService: DataService,
       public dialog: MatDialog,
       public userService: UserService,
-      public kioskMode: KioskModeService
+      public kioskMode: KioskModeService,
+      private sanitizer: DomSanitizer
   ) {
     this.setSearchDate(this.timeService.nowDate());
     console.log(this.kioskMode);
@@ -175,8 +182,16 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     this.searchDate$.next(date);
   }
 
+  get buttonState() {
+      return this.buttonDown ? 'down' : 'up';
+  }
+
   get searchDate() {
     return this.searchDate$.value;
+  }
+
+  get showKioskModeButton() {
+    return this.selectedLocation || this.roomOptions.length === 1;
   }
 
   get dateDisplay() {
@@ -209,6 +224,11 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
   get error() {
     return !this.isStaff || (this.isStaff && !this.roomOptions.length) || !this.canView;
+  }
+
+  get shadow() {
+      return this.sanitizer.bypassSecurityTrustStyle((this.hovered ?
+          '0 2px 4px 1px rgba(0, 0, 0, 0.3)' : '0 1px 4px 0px rgba(0, 0, 0, 0.25)'));
   }
 
   ngOnInit() {
@@ -274,6 +294,17 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  onPress(press: boolean) {
+      this.buttonDown = press;
+  }
+
+  onHover(hover: boolean){
+      this.hovered = hover;
+      if (!hover) {
+          this.buttonDown = false;
+      }
+  }
+
   getIcon(icon) {
     return this.darkTheme.getIcon({
       iconName: icon,
@@ -313,13 +344,18 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   setRoomToKioskMode() {
-
-    const kioskRoom = Object.assign({}, this.selectedLocation);
+    let kioskRoom;
+    if (this.roomOptions.length === 1) {
+        kioskRoom = this.roomOptions[0];
+    } else {
+      kioskRoom = Object.assign({}, this.selectedLocation);
+    }
     this.kioskMode.currentRoom$.next(kioskRoom);
     this.selectedLocation = null;
     this.locationService.myRoomSelectedLocation$.next(this.selectedLocation);
     this.selectedLocation$.next(this.roomOptions);
-    this.activePassesKiosk = new WrappedProvider(new ActivePassProviderKiosk(this.liveDataService, this.dataService.currentUser, empty(), this.timeService));
+    this.activePassesKiosk = new WrappedProvider(new activeKioskPasses(this.liveDataService, this.searchQuery$));
+    // this.activePassesKiosk = new WrappedProvider(new passProvider(this.liveDataService, this.dataService.currentUser, empty(), this.timeService));
 
   }
 
@@ -365,6 +401,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
         'forLater': forLater,
         'forStaff': this.isStaff,
         'forInput': true,
+        'kioskMode': true,
         'kioskModeRoom': this.kioskMode.currentRoom$.value
       }
     });

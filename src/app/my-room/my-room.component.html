@@ -2,23 +2,13 @@
   <div *ngIf="UI" class="my-room-wrapper" [style.width]="calendarToggled?'900px':'550px'">
     <div class="my-room-left" *ngIf="!(kioskMode.currentRoom$ | async)">
       <div class="my-room-header">
-        <!--<p>{{optionsOpen}} | {{showArrow}}</p>-->
         <div class="selected-teacher"
              [style.cursor]="roomOptions.length > 1 ? 'pointer' : 'default'" #target (click)="showOptions(target)"
              [style.color]="myRoomHeaderColor"
         >
-          <!--{{ roomOptions?selectedLocation.title:"" }}-->
-          <!--<pre>{{roomOptions[0] | json}}</pre>-->
           {{ selectedLocation ? selectedLocation.title : (roomOptions.length > 1 ? 'All Rooms' : roomOptions[0].title)}}
           <img *ngIf="showArrow" class="disclosure-icon" [src]="getIcon('./assets/Chevron Down (Navy).svg') | resolveAsset">
         </div>
-        <!--<input-->
-          <!--class="input"-->
-          <!--[placeholder]="'Search'"-->
-          <!--#searchInput-->
-          <!--[value]="inputValue"-->
-          <!--(input)="onSearch(searchInput.value)"-->
-        <!--&gt;-->
         <div [style.margin-left]="'auto'"
              [style.margin-right]="'10px'">
           <app-round-input
@@ -38,7 +28,11 @@
       </div>
 
       <div class="kiosk-mode-button"
-           *ngIf="selectedLocation"
+           *ngIf="showKioskModeButton"
+           [style.box-shadow]="shadow"
+           (mouseenter)="onHover(true)" (mouseleave)="onHover(false)"
+           (mousedown)="onPress(true)" (mouseup)="onPress(false)"
+           [@pressState]="buttonState"
            [style.background-color]="darkTheme.getBackground('high', true)"
            (click)="setRoomToKioskMode()"
       >
