@@ -1,10 +1,5 @@
 <div class="kiosk-mode-container">
   <div class="current-pass ds-mb-25">
-    <div *ngIf="(isActivePass$ | async) || (isActiveRequest$ | async); else newPass;" class="center">
-      <app-inline-request-card *ngIf="(isActiveRequest$ | async) && !(isActivePass$ | async)" [request]="currentRequest$ | async"></app-inline-request-card>
-      <app-inline-pass-card *ngIf="isActivePass$ | async" [pass]="currentPass$ | async" [isActive]="true"></app-inline-pass-card>
-    </div>
-    <ng-template #newPass>
       <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'20px'" [icon]="'./assets/Plus (Navy).svg'">
         <div class="pass-buttons">
           <app-gradient-button
@@ -30,7 +25,6 @@
           </app-gradient-button>
         </div>
       </app-display-card>
-    </ng-template>
   </div>
   <div class="active-passes">
     <div class="active-passes">
