@@ -8,6 +8,7 @@ import { SettingsComponent } from '../settings/settings.component';
 import {AuthenticatedGuard} from '../guards/authenticated.guard';
 import {NotKioskModeGuard} from '../not-kiosk-mode.guard';
 import {IsAdminGuard} from '../guards/is-admin.guard';
+import {KioskModeComponent} from '../kiosk-mode/kiosk-mode.component';
 
 const routes: Routes = [
   {
@@ -15,7 +16,8 @@ const routes: Routes = [
       {path: '', redirectTo: 'passes', pathMatch: 'full'},
       {path: 'passes', component: PassesComponent, canActivate: [NotKioskModeGuard]},
       {path: 'hallmonitor', component: HallMonitorComponent, canActivate: [NotKioskModeGuard]},
-      {path: 'myroom', component: MyRoomComponent},
+      {path: 'myroom', component: MyRoomComponent, canActivate: [NotKioskModeGuard]},
+      {path: 'kioskMode', component: KioskModeComponent},
       {path: 'settings', component: SettingsComponent },
     ]
   },

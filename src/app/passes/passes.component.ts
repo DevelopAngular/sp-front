@@ -58,7 +58,7 @@ class FuturePassProvider implements PassLikeProvider {
   }
 }
 
-class ActivePassProvider implements PassLikeProvider {
+export class ActivePassProvider implements PassLikeProvider {
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>,
               private excluded$: Observable<PassLike[]> = empty(), private timeService: TimeService) {
   }

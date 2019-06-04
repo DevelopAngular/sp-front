@@ -48,7 +48,8 @@
 
     <div *ngFor="let pinnable of pinnables; let i = index" style="padding: 10px">
       <div class="pinnable-item-container" >
-        <div [ngClass]="{'pinnable-item': this.bulkSelect}" [style.animation-delay]="(i * .1) + 's'">
+        <!--[style.animation-delay]="(i * .1) + 's'"-->
+        <div [ngClass]="{'pinnable-item': this.bulkSelect}">
           <app-pinnable [forStaff]="true" [selected]="selectedPinnables.indexOf(pinnable) != -1" [forBulk]="bulkSelect" [forCollection]="true" [pinnable]="pinnable" (clampedEvent)="bulkSelect = $event" (onSelectEvent)="updatePinnables($event)"></app-pinnable>
         </div>
       </div>

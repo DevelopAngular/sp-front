@@ -50,6 +50,7 @@ export interface Navigation {
   forLater?: boolean;
   missedRequest?: boolean;
   resendRequest?: boolean;
+  kioskMode?: boolean;
 }
 
 
@@ -102,7 +103,8 @@ export class MainHallPassFormComponent implements OnInit {
         },
       },
       forInput: this.dialogData['forInput'] || false,
-      forLater: this.dialogData['forLater']
+      forLater: this.dialogData['forLater'],
+      kioskMode: this.dialogData['kioskMode'] || false
     };
     switch (this.dialogData['forInput']) {
       case true:

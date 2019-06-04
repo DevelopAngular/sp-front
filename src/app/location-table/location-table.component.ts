@@ -103,7 +103,7 @@ export class LocationTableComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.staticChoices && this.staticChoices.length) {
+      if (this.staticChoices && this.staticChoices.length) {
       this.choices = this.staticChoices;
         if (!this.choices.length) {
           this.noChoices = true;
@@ -120,15 +120,6 @@ export class LocationTableComponent implements OnInit {
             +((this.type==='location' && this.showFavorites)?'&starred=false':'');
         if (this.mergedAllRooms) {
             this.mergeLocations(url, this.withMergedStars)
-                .pipe(
-                  map((locs: Location[]) => {
-                    if (this.forKioskMode) {
-                      return locs.filter(loc => !loc.restricted);
-                    } else {
-                      return locs;
-                    }
-                  })
-                )
                 .subscribe(res => {
                     this.choices = res
                   if (!this.choices.length) {
@@ -139,19 +130,15 @@ export class LocationTableComponent implements OnInit {
                   this.mainContentVisibility = true;
 
                 });
+        } else if (this.forKioskMode) {
+            this.locationService.searchLocationsWithConfig(url)
+                .toPromise().then(res => {
+                    this.choices = res.results.filter(loc => !loc.restricted);
+            });
         } else {
             this.locationService.searchLocationsWithConfig(url)
-                .pipe(
-                  map((locs: any) => {
-                    if (this.forKioskMode) {
-                      return locs.results.filter(loc => !loc.restricted);
-                    } else {
-                      return locs.results;
-                    }
-                  })
-                )
                 .toPromise().then(p => {
-                  this.choices = p;
+                  this.choices = p.results;
                   // this.choices = p.results.concat(p.results,p.results,p.results,p.results);
                   this.nextChoices = p.next;
               if (!this.choices.length) {
@@ -206,9 +193,9 @@ export class LocationTableComponent implements OnInit {
           .pipe(
             map((locs: any) => {
               if (this.forKioskMode) {
-                return locs.results.filter(loc => !loc.restricted);
+                return {results: locs.results.filter(loc => !loc.restricted)};
               } else {
-                return locs.results;
+                return locs;
               }
             })
           )
@@ -219,7 +206,7 @@ export class LocationTableComponent implements OnInit {
                   return item.title.toLowerCase().includes(this.search);
               }));
             // this.staticChoices = null;
-            this.choices = this.searchExceptFavourites
+            this.choices = this.searchExceptFavourites && !this.forKioskMode
                             ? [...this.filterResults(p.results)]
                             : [...filtFevLoc, ...this.filterResults(p.results)];
           })
@@ -245,9 +232,9 @@ export class LocationTableComponent implements OnInit {
                 .pipe(
                   map((locs: any) => {
                     if (this.forKioskMode) {
-                      return locs.results.filter(loc => !loc.restricted);
+                      return {results: locs.results.filter(loc => !loc.restricted)};
                     } else {
-                      return locs.results;
+                      return locs;
                     }
                   })
                 )
@@ -265,9 +252,9 @@ export class LocationTableComponent implements OnInit {
                 .pipe(
                   map((locs: any) => {
                     if (this.forKioskMode) {
-                      return locs.results.filter(loc => !loc.restricted);
+                      return {results: locs.results.filter(loc => !loc.restricted)};
                     } else {
-                      return locs.results;
+                      return locs;
                     }
                   })
                 )

@@ -1,7 +1,7 @@
 import {Component, NgZone, OnInit, Input, ElementRef} from '@angular/core';
 import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material';
-import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
+import {Router, NavigationEnd, ActivatedRoute, NavigationStart} from '@angular/router';
 
 import {ReplaySubject, combineLatest, of, Subject} from 'rxjs';
 import {filter, switchMap, tap} from 'rxjs/operators';
@@ -53,6 +53,8 @@ export class NavbarComponent implements OnInit {
   inboxVisibility: boolean = JSON.parse(this.storage.getItem('showInbox'));
 
   isOpenSettings: boolean;
+
+  hideButtons: boolean;
 
   navbarEnabled = false;
 
@@ -107,11 +109,14 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.hideButtons = this.router.url === '/main/kioskMode';
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit[urlSplit.length - 1];
 
-    this.router.events.subscribe(value => {
+    this.router.events.subscribe((value) => {
       if (value instanceof NavigationEnd) {
+        this.hideButtons = value.url === '/main/kioskMode';
+        console.log('Hide ===>>', value.url);
         let urlSplit: string[] = value.url.split('/');
         this.tab = urlSplit[urlSplit.length - 1];
         this.tab = ((this.tab === '' || this.tab === 'main') ? 'passes' : this.tab);

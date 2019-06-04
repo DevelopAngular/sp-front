@@ -22,7 +22,7 @@
           </div>
           <img class="arrow-icon" [src]="'./assets/Chevron Down (Navy).svg' | resolveAsset">
         </div>
-        <div class="cursor" (click)="goToStudents($event)" *ngIf="showFullFooter && studentText">
+        <div [ngClass]="{cursor: studentsCursor}" (click)="goToStudents($event)" *ngIf="showFullFooter && studentText">
           {{ studentText }}
         </div>
       </div>

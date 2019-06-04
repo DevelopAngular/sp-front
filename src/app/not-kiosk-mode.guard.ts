@@ -16,9 +16,9 @@ export class NotKioskModeGuard implements CanActivate {
     state: RouterStateSnapshot
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     // return true;
-    if (!!this.kioskMode.currentRoom$.value) {
-      this.router.navigate(['main', 'myroom']);
-    }
+    // if (!!this.kioskMode.currentRoom$.value) {
+    //   this.router.navigate(['main', 'myroom']);
+    // }
     return !this.kioskMode.currentRoom$.value;
   }
 }

@@ -344,7 +344,7 @@
       </div>
 
     </div>
-    <div *ngIf="slideIndex!==5" class="button-right" (click)="slide('forward')"
+    <div *ngIf="slideIndex !==4 && slideIndex!==5" class="button-right" (click)="slide('forward')"
          [@pressState]="getButtonState('right')" (mousedown)="onPress(true, 'right')" (mouseup)="onPress(false, 'right')">
       <img class="button-icon" [src]="'./assets/Chevron Right (Blue-Gray).svg' | resolveAsset">
     </div>

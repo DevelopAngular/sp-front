@@ -49,6 +49,7 @@
 
   &.hovered {
     background-color: $ultra-light-gray;
+    transition: background-color .3s ease;
   }
 
   .add-icon {
