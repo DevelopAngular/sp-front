@@ -42,7 +42,7 @@
              (click)="isFocus = true; updateFocus(inp)"
              [placeholder]="(placeholder=='' ? '' : placeholder)"
              [ngClass]="{clserrorInput: controlName.invalid && controlName.errors && controlName.touched }"
-             spellcheck="true" #inp />
+             spellcheck="false" #inp />
       <!--<img *ngIf='controlName.valid' class="success-icon" [src]="'./assets/Check (Blue).png' | resolveAsset"/>-->
       <div class="tooltip-container tooltip-container__inline "
            *ngIf='controlName.invalid
