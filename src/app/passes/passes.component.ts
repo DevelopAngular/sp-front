@@ -1,16 +1,29 @@
 import { animate, state, style, transition, trigger, } from '@angular/animations';
 import { Component, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { BehaviorSubject, combineLatest, empty, merge, Observable, of, ReplaySubject } from 'rxjs';
 import {
+    BehaviorSubject,
+    combineLatest,
+    ConnectableObservable,
+    empty,
+    forkJoin,
+    interval,
+    merge,
+    Observable,
+    of,
+    ReplaySubject,
+    zip
+} from 'rxjs';
+import {
+    audit, auditTime,
     debounceTime,
-    delay,
-    filter,
-    map,
+    delay, distinct, distinctUntilChanged,
+    filter, finalize,
+    map, publish, publishBehavior, publishLast,
     publishReplay,
-    refCount,
+    refCount, sampleTime, skip, skipLast, skipUntil,
     startWith,
-    switchMap,
+    switchMap, take, takeLast, tap,
     withLatestFrom
 } from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
@@ -228,6 +241,8 @@ export class PassesComponent implements OnInit {
   inboxLoaded: Observable<boolean> = of(false);
   passesLoaded: Observable<boolean> = of(false);
 
+  showEmptyState: Observable<boolean>;
+
   user: User;
   isStaff = false;
   isSeen$: BehaviorSubject<boolean>;
@@ -362,17 +377,21 @@ export class PassesComponent implements OnInit {
       (l1, l2) => l1 && l2
     );
 
-    this.passesHaveItems = merge(
+    this.passesHaveItems = combineLatest(
       this.activePasses.length$,
       this.futurePasses.length$,
       this.pastPasses.length$,
-    ).pipe(map(con => !!con));
+    ).pipe(map(([con1, con2, con3]) => !con1 && !con2 && !con3));
 
-    this.passesLoaded = merge(
+    this.passesLoaded = combineLatest(
       this.activePasses.loaded$,
       this.futurePasses.loaded$,
       this.pastPasses.loaded$,
-    ).pipe(map(con => !!con), delay(150));
+    ).pipe(map(([con1, con2, con3]) => con1 && con2 && con3));
+
+    this.showEmptyState = combineLatest(this.passesHaveItems, this.passesLoaded)
+        .pipe(map(([items, loaded]) => items && loaded), publishBehavior(true));
+    (this.showEmptyState as ConnectableObservable<boolean>).connect();
 
     this.isSeen$ = this.createFormService.isSeen$;
     //

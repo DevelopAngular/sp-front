@@ -42,9 +42,8 @@ export class WrappedProvider implements PassLikeProvider {
     return this.parent.watch(sort)
       .pipe(
         tap(passes => {
-          if(this.loaded$.value === false)
-            this.loaded$.next(true);
-          this.length$.next(passes.length);
+              this.loaded$.next(true);
+              this.length$.next(passes.length);
       }));
   }
 

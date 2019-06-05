@@ -32,7 +32,7 @@
         </app-display-card>
       </ng-template>
     </div>
-    <div *ngIf="!(passesHaveItems | async) && (passesLoaded | async)" class="empty-container">
+    <div *ngIf="(showEmptyState | async)" class="empty-container">
       <img class="empty-passes-svg" [src]="'./assets/emptyStates/emptyPasses.svg' | resolveAsset" alt="empty-svg">
       <div class="big-text" [style.margin]="'10px 0'">Jump Right In</div>
       <div class="text">The hallway will never be the same</div>
