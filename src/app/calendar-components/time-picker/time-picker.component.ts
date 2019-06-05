@@ -35,7 +35,11 @@ export class TimePickerComponent implements OnInit, OnDestroy {
 
   destroy$ = new Subject();
 
-  constructor(private cdr: ChangeDetectorRef) { }
+  constructor() { }
+
+  get invalidTime() {
+      return this._currentDate.isBefore(moment().add(5, 'minutes'));
+  }
 
   get isDisabledSwitchHourButton() {
     return this.min && moment(this._currentDate).isSameOrBefore(this.min, 'hour');
@@ -45,8 +49,12 @@ export class TimePickerComponent implements OnInit, OnDestroy {
     return this.min && moment(this._currentDate).isSameOrBefore(moment(this.min).add(5, 'minutes'), 'minute');
   }
 
+  get isDisabledSwitchFormat() {
+      const removeTime = moment(this._currentDate).subtract(12, 'hour');
+      return removeTime.isSameOrBefore(moment().add(5, 'minutes'), 'day');
+  }
+
   ngOnInit() {
-      // console.log('Timeee ===>>>', this._currentDate.format('DD hh:mm A'));
     if (this.forseDate$) {
         this.forseDate$.pipe(takeUntil(this.destroy$)).subscribe(date => {
             this._currentDate = date;
@@ -63,9 +71,14 @@ export class TimePickerComponent implements OnInit, OnDestroy {
               this._currentDate = this._currentDate.set('hour', +value.hour + 12);
             } else {
               this._currentDate = this._currentDate.set('hour', value.hour);
+              if (this.invalidTime) {
+                  this._currentDate = this._currentDate.set('hour', +value.hour + 12);
+                  console.log('Current Time ==>>', this._currentDate.format('DD hh:mm A'));
+              }
             }
             this._currentDate = this._currentDate.set('minute', value.minute);
-            if (this._currentDate.isBefore(moment().add(5, 'minutes'))) {
+            if (this.invalidTime) {
+                console.log('Current Time ==>>', this._currentDate.format('DD hh:mm A'));
                 this._currentDate = moment().add(5, 'minutes');
             }
         });
@@ -132,7 +145,7 @@ export class TimePickerComponent implements OnInit, OnDestroy {
   }
 
   changeFormat() {
-      if (!this.isDisabledSwitchHourButton) {
+      if (!this.isDisabledSwitchHourButton && !this.isDisabledSwitchFormat) {
           const addTime = moment(this._currentDate).add(12, 'hour');
           const removeTime = moment(this._currentDate).subtract(12, 'hour');
           if (this._currentDate.isSame(addTime, 'day')) {
