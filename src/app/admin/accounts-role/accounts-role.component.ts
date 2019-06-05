@@ -678,10 +678,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   private buildUserListData(userList) {
       this.isLoadUsers = this.limitCounter === userList.length;
+      console.log('ME ===>>>>>>', this.user);
       // this.userAmount.next(userList.length);
       return userList.map((raw, index) => {
         // raw = User.fromJSON(raw);
-
         const permissionsRef: any = this.profilePermissions;
           const partOf = [];
           if (raw.roles.includes('_profile_student')) partOf.push({title: 'Student', role: '_profile_student'});
@@ -690,7 +690,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           if (raw.roles.includes('_profile_admin')) partOf.push({title: 'Administrator', role: '_profile_admin'});
 
           const rawObj = {
-              'Name': raw.display_name,
+              'Name': +raw.id === +this.user.id ? raw.display_name + ' (Me)' : raw.display_name,
               'Email/Username': raw.primary_email,
               'Rooms': raw.assignedTo,
               // 'Account Type': 'G Suite',
