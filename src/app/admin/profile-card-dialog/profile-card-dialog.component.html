@@ -101,8 +101,8 @@
                 <div style="display: inline">
                   <span class="ds-dialog-bold-text">Assigned to: </span>
                 </div>
-                <div style="display: inline" class="room-link" *ngFor="let loc of teacherAssignedTo; let i = index" (click)="goToPassConfig(loc)">
-                  <span *ngIf="i > 0">,</span> <span> {{loc.title}}</span>
+                <div style="display: inline" *ngFor="let loc of teacherAssignedTo; let i = index" (click)="goToPassConfig(loc)">
+                  <span *ngIf="i > 0">, </span><span class="room-link"> {{loc.title}}</span>
                 </div>
                 <div style="display: inline">
                   <span *ngIf="!teacherAssignedTo.length"> &mdash; </span>
