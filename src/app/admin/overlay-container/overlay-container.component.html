@@ -439,7 +439,16 @@
                   <!--<mat-divider></mat-divider>-->
                 </div>
                 <div *ngFor="let room of sortSelectedRooms">
-                  <div class="room">
+                  <div
+                    class="room"
+                    #cell
+                    (mouseenter)="cell.hovered = true;"
+                    (mouseleave)="cell.hovered = false;"
+                    (mousedown)="cell.pressed = true"
+                    (mouseup)="cell.pressed = false"
+                    [style.background-color]="getBackgroundColor(cell)"
+                    [style.color]="textColor(cell)"
+                  >
                     <mat-checkbox style="margin-left: 12px" [checked]="isSelected(room)" (change)="selectedRoomsEvent($event, room)">
                     </mat-checkbox>
                     <div class="room-edit" (click)="setToEditRoom(room)">

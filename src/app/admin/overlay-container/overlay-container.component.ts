@@ -1392,6 +1392,19 @@ export class OverlayContainerComponent implements OnInit {
       return '#F7F7F7';
     }
   }
+
+  getBackgroundColor(item) {
+    if (item.hovered) {
+      if (item.pressed) {
+        return '#E2E7F4';
+      } else {
+        return '#ECF1FF';
+      }
+    } else {
+       return '#FFFFFF';
+    }
+  }
+
   selectTeacherEvent(teachers) {
     this.selectedTeachers = teachers;
     this.checkAdvancedOptions();
