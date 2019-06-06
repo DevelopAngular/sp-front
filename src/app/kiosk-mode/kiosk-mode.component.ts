@@ -8,6 +8,9 @@ import {LiveDataService} from '../live-data/live-data.service';
 import {combineLatest, of} from 'rxjs';
 import {UserService} from '../services/user.service';
 import {User} from '../models/User';
+import {HallPassesService} from '../services/hall-passes.service';
+import {HallPass} from '../models/HallPass';
+import {map, switchMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-kiosk-mode',
@@ -28,7 +31,8 @@ export class KioskModeComponent implements OnInit, OnDestroy {
       private dialog: MatDialog,
       private kioskMode: KioskModeService,
       private liveDataService: LiveDataService,
-      private userService: UserService
+      private userService: UserService,
+      private passesService: HallPassesService
   ) { }
 
   ngOnInit() {
@@ -41,12 +45,22 @@ export class KioskModeComponent implements OnInit, OnDestroy {
   cardReader(event: KeyboardEvent) {
       this.cardReaderValue = ';236=7';
       if (event.keyCode === 13 && (this.cardReaderValue[0] === ';' || this.cardReaderValue[0] === '%')) {
-           this.userService.searchUserByCardId(this.cardReaderValue)
-               .subscribe((user: User[]) => {
-               if (user.length) {
-                   this.showMainForm(false, user);
-               }
-           });
+          combineLatest(
+              this.userService.searchUserByCardId(this.cardReaderValue),
+              this.passesService.getActivePassesKioskMode(this.kioskMode.currentRoom$.value.id)
+          ).pipe(
+              switchMap(([user, passes]: [User[], HallPass[]]) => {
+                  if (user.length) {
+                      const myPass = (passes as HallPass[]).find(pass => pass.issuer.id === user[0].id);
+                      if (myPass) {
+                          return this.passesService.endPass(myPass.id);
+                      } else {
+                          this.showMainForm(false, user);
+                          return of(null);
+                      }
+                  }
+              })
+          ).subscribe();
       }
   }
 

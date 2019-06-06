@@ -15,6 +15,10 @@ export class HallPassesService {
         return this.http.get('v1/hall_passes?active=true');
     }
 
+    getActivePassesKioskMode(locId) {
+      return this.http.get(`v1/hall_passes?active=true&location=${locId}`);
+    }
+
     createPass(data) {
         return this.http.post(`v1/hall_passes`, data);
     }

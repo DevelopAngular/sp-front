@@ -79,6 +79,11 @@ export class UserService {
   getUser() {
      return this.http.get<User>('v1/users/@me');
   }
+
+  getIntros() {
+    return this.http.get('v1/intros');
+  }
+
   getUserRepresented() {
      return this.http.get<RepresentedUser[]>('v1/users/@me/represented_users');
   }
@@ -104,7 +109,7 @@ export class UserService {
       return this.http.get<User>(`v1/users/${id}`);
   }
 
-  searchUserByCardId(id) {
+  searchUserByCardId(id): Observable<User[]> {
     return this.http.get(constructUrl('v1/users', {search: id}));
   }
 
