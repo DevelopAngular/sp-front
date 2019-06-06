@@ -112,7 +112,7 @@ export class MainHallPassFormComponent implements OnInit {
         if (this.dialogData['forLater']) {
           if (this.dialogData['forStaff']) {
             this.FORM_STATE.step = 2;
-            this.FORM_STATE.state = this.dialogData['kioskModeRoom'] ? 4 : 1;
+            this.FORM_STATE.state = this.dialogData['kioskMode'] ? 4 : 1;
             this.FORM_STATE.formMode.formFactor = FormFactor.Invitation;
           } else {
             this.FORM_STATE.step = 1;
@@ -121,9 +121,14 @@ export class MainHallPassFormComponent implements OnInit {
         } else {
           this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
           if ( this.dialogData['forStaff'] ) {
-            // debugger
-            this.FORM_STATE.step = 2;
-            this.FORM_STATE.state = this.dialogData['kioskModeRoom'] ? 4 : 1;
+            if (this.dialogData['kioskMode'] && this.dialogData['kioskModeSelectedUser']) {
+              this.FORM_STATE.data.selectedStudents = this.dialogData['kioskModeSelectedUser'];
+                this.FORM_STATE.step = 3;
+                this.FORM_STATE.state = 2;
+            } else {
+                this.FORM_STATE.step = 2;
+                this.FORM_STATE.state = this.dialogData['kioskMode'] ? 4 : 1;
+            }
           } else {
             this.FORM_STATE.step = 3;
           }

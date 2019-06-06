@@ -36,7 +36,18 @@
               [title]="'Active Passes'"
               [icon]="'./assets/Walking (Navy).svg'"
               [columns]="3"
-              (reportFromPassCard)="false"></app-pass-collection>
+      >
+      </app-pass-collection>
     </div>
   </div>
 </div>
+<input
+    [hidden]="hideInput"
+    type="text"
+    autofocus
+    #input
+    [(ngModel)]="cardReaderValue"
+    (keyup)="cardReader($event)"
+    (blur)="input.focus()"
+    [style.opacity]="0"
+>

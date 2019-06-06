@@ -104,6 +104,10 @@ export class UserService {
       return this.http.get<User>(`v1/users/${id}`);
   }
 
+  searchUserByCardId(id) {
+    return this.http.get(constructUrl('v1/users', {search: id}));
+  }
+
   searchProfileAll(search, type: string = 'alternative', excludeProfile?: string) {
 
       switch (type) {

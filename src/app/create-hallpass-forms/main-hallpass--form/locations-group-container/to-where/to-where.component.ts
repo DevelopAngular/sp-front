@@ -37,7 +37,9 @@ export class ToWhereComponent implements OnInit {
 
   ngOnInit() {
     this.location = this.formState.data.direction ? this.formState.data.direction.from : null;
-    this.teacherRooms = this.formState.data.teacherRooms;
+    if (!this.dialogData['kioskMode']) {
+        this.teacherRooms = this.formState.data.teacherRooms;
+    }
       console.log('STAte ==>>>', this.formState);
   }
 
