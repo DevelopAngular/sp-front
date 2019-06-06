@@ -2,7 +2,7 @@ import { ErrorHandler, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { UserService } from '../services/user.service';
-import { map, tap } from 'rxjs/operators';
+import {combineLatest, map, tap} from 'rxjs/operators';
 import { User } from '../models/User';
 import {StorageService} from '../services/storage.service';
 
@@ -28,7 +28,9 @@ export class NotSeenIntroGuard implements CanActivate {
     return this.userService.getUser()
       .pipe(
         map(raw => User.fromJSON(raw)),
-        map((user) => {
+        combineLatest(this.userService.getIntros()),
+        map(([user, intros]) => {
+            console.log('Intro ===>>>', intros);
           if (!user) {
             return false;
           }

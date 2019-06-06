@@ -43,8 +43,8 @@ export class KioskModeComponent implements OnInit, OnDestroy {
   }
 
   cardReader(event: KeyboardEvent) {
-      this.cardReaderValue = ';236=7';
-      if (event.keyCode === 13 && (this.cardReaderValue[0] === ';' || this.cardReaderValue[0] === '%')) {
+      // this.cardReaderValue = ';236=7';
+      if (event.keyCode === 13 && this.cardReaderValue && (this.cardReaderValue[0] === ';' || this.cardReaderValue[0] === '%')) {
           combineLatest(
               this.userService.searchUserByCardId(this.cardReaderValue),
               this.passesService.getActivePassesKioskMode(this.kioskMode.currentRoom$.value.id)

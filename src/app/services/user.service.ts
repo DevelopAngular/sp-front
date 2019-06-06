@@ -84,6 +84,10 @@ export class UserService {
     return this.http.get('v1/intros');
   }
 
+  updateIntros(device, version) {
+    return this.http.patch('v1/intros/main_intro', {device, version});
+  }
+
   getUserRepresented() {
      return this.http.get<RepresentedUser[]>('v1/users/@me/represented_users');
   }
