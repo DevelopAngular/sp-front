@@ -698,7 +698,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
                 return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
               }).join(', ') : '',
               'Sign-in status': raw.active ? 'Enabled' : 'Disabled',
-              'Last sign-in': Util.formatDateTime(new Date(raw.last_updated)),
+              'Last sign-in': raw.last_login ? Util.formatDateTime(new Date(raw.last_login)) : 'Not login',
               'Profile(s)': partOf.length ? partOf : [{title: 'No profile'}],
               'Permissions': (function() {
                   const tabs = Object.values(permissionsRef).map((tab: any) => {
