@@ -6,7 +6,7 @@
 >
      <div *ngIf="selected" class="selected-overlay"></div>
   <div class="pinnable-card" [style.background]="getGradient()" [style.cursor]="valid ? (disabled ? 'default' : 'pointer') : 'not-allowed'" [style.opacity]="valid ? 1 : 0.5" [style.height]="height">
-    <img *ngIf="!selected" [style.width]="iconWidth" [style.height]="iconWidth" [src]="pinnable.icon | resolveAsset" alt="ICON">
+    <img draggable="false" *ngIf="!selected" [style.width]="iconWidth" [style.height]="iconWidth" [src]="pinnable.icon | resolveAsset" alt="ICON">
     <div *ngIf="selected" class="selected-icon-wrapper">
       <img class="selected-icon" [src]="'./assets/Check (Navy).svg' | resolveAsset" alt="ICON">
     </div>
@@ -38,11 +38,11 @@
       <div class="title">
         {{mock.header}}
       </div>
-      <img *ngIf="mock.arrow === true" class="category-icon" [src]="'./assets/SP Arrow (White).svg' | resolveAsset" alt="ARROW">
+      <img draggable="false" *ngIf="mock.arrow === true" class="category-icon" [src]="'./assets/SP Arrow (White).svg' | resolveAsset" alt="ARROW">
     </div>
     <div *ngIf="mock.restricted" class="overlay-container">
       <div class="overlay"></div>
-      <img class="lock" [src]="'./assets/Lock (White).svg' | resolveAsset" alt="LOCK">
+      <img draggable="false" class="lock" [src]="'./assets/Lock (White).svg' | resolveAsset" alt="LOCK">
     </div>
   </div>
 </div>

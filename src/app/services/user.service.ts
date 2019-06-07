@@ -88,6 +88,10 @@ export class UserService {
     return this.http.patch('v1/intros/main_intro', {device, version});
   }
 
+  saveKioskModeLocation(locId) {
+    return this.http.post('v1/auth/kiosk', {location: locId});
+  }
+
   getUserRepresented() {
      return this.http.get<RepresentedUser[]>('v1/users/@me/represented_users');
   }

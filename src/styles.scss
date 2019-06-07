@@ -21,6 +21,12 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
+img {
+  user-drag: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+}
+
 
 .validationIcon {
   min-width: 20px;

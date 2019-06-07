@@ -9,6 +9,8 @@ import {StorageService} from '../services/storage.service';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {NotificationService} from '../services/notification-service';
 import {DeviceDetection} from '../device-detection.helper';
+import {UserService} from '../services/user.service';
+import {switchMap} from 'rxjs/operators';
 
 declare const window;
 
@@ -35,6 +37,8 @@ export class IntroComponent implements OnInit {
 
   frameMotion$: BehaviorSubject<any>;
 
+  introVersion = '23.46.2';
+
   enterTick: Subject<KeyboardEvent> = new Subject<KeyboardEvent>();
 
 
@@ -45,6 +49,8 @@ export class IntroComponent implements OnInit {
       private router: Router,
       private storage: StorageService,
       private formService: CreateFormService,
+      private userService: UserService,
+      private deviceDetection: DeviceDetection,
       public  notifService: NotificationService
   ) {
     console.log('intro.constructor');
@@ -333,7 +339,11 @@ export class IntroComponent implements OnInit {
         });
         window.appLoaded(2000);
       });
-      // this.endIntro();
+      // this.saveIntrosEmit$.pipe(
+      //     switchMap(() => {
+      //       if (DeviceDetection.is)
+      //     })
+      // )
   }
 
   allowNotifications() {
@@ -346,18 +356,27 @@ export class IntroComponent implements OnInit {
   }
 
   endIntro() {
-
-    if (this.isStaff) {
-      this.storage.setItem('smartpass_intro_teacher', 'seen');
+    let device;
+    if (DeviceDetection.isAndroid()) {
+      device = 'android';
+    } else if (DeviceDetection.isIOSMobile()) {
+      device = 'ios';
     } else {
-      this.storage.setItem('smartpass_intro_student', 'seen');
+      device = 'web';
     }
-
-    if (this.usedAsEntryComponent) {
-      this.endIntroEvent.emit(true);
-    } else {
-      this.user.isAdmin() && !this.user.isTeacher() ? this.router.navigate(['/admin']) : this.router.navigate(['/main']);
-    }
+    this.userService.updateIntros(device, this.introVersion)
+        .subscribe(res => {
+            if (this.usedAsEntryComponent) {
+                this.endIntroEvent.emit(true);
+            } else {
+                this.user.isAdmin() && !this.user.isTeacher() ? this.router.navigate(['/admin']) : this.router.navigate(['/main']);
+            }
+        });
+    // if (this.isStaff) {
+    //   this.storage.setItem('smartpass_intro_teacher', 'seen');
+    // } else {
+    //   this.storage.setItem('smartpass_intro_student', 'seen');
+    // }
       // this.router.navigate(['select-profile']);
   }
 

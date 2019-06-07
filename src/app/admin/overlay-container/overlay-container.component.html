@@ -17,7 +17,7 @@
         <div class="cancel-button" [style.color]="titleColor" *ngIf="!backButtonState && !hideHeaderIcon" (click)="back()">Cancel</div>
     </div>
       <div class="title" [style.color]="titleColor" *ngIf="overlayType === 'newRoom' || overlayType === 'editRoom'">
-          <img class="title-icon" *ngIf="titleIcon" [src]="titleIcon | resolveAsset">
+          <img draggable="false" class="title-icon" *ngIf="titleIcon" [src]="titleIcon | resolveAsset">
           {{ roomName }}
       </div>
       <div
@@ -25,7 +25,7 @@
         [style.color]="titleColor"
         *ngIf="showFolderName"
       >
-          <img class="title-icon" *ngIf="titleIcon" [src]="titleIcon | resolveAsset">
+          <img draggable="false" class="title-icon" *ngIf="titleIcon" [src]="titleIcon | resolveAsset">
           {{ folderName }}
       </div>
       <div *ngIf="(overlayType === 'newRoom') || overlayType === 'edit' || overlayType === 'editRoom' || overlayType === 'newFolder' || overlayType === 'newRoomInFolder' || overlayType === 'addExisting'" style="position: absolute; right: 16px; font-size: 15px">

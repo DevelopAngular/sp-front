@@ -1,8 +1,8 @@
 <div class="notif-wrapper">
   <div class="notif-header" [style.background-image]="'radial-gradient(circle at 73% 71%, #DA2370,#FB434A)'">
-    <img class="back-button" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" alt="Notification" (click)="dialogRef.close()">
+    <img draggable="false" class="back-button" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" alt="Notification" (click)="dialogRef.close()">
     <div class="header-title">
-        <img class="header-icon" [src]="'./assets/Notifications (White).svg' | resolveAsset">
+        <img draggable="false" class="header-icon" [src]="'./assets/Notifications (White).svg' | resolveAsset">
       <div class="ds-dialog-title-white">
         Notifications
       </div>
@@ -32,7 +32,7 @@
       </div>
   </div>
     <div class="notif-empty-state" *ngIf="!isDisabledNotif">
-        <img [src]="'./assets/emptyStates/notificationsEmpty.svg' | resolveAsset">
+        <img draggable="false" [src]="'./assets/emptyStates/notificationsEmpty.svg' | resolveAsset">
         <div class="info">
             <div class="title">Notifications Disabled</div>
             <p class="descriptions">

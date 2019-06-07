@@ -5,6 +5,7 @@ import { UserService } from '../services/user.service';
 import {combineLatest, map, tap} from 'rxjs/operators';
 import { User } from '../models/User';
 import {StorageService} from '../services/storage.service';
+import { DeviceDetection } from '../device-detection.helper';
 
 @Injectable({
   providedIn: 'root'
@@ -29,17 +30,25 @@ export class NotSeenIntroGuard implements CanActivate {
       .pipe(
         map(raw => User.fromJSON(raw)),
         combineLatest(this.userService.getIntros()),
-        map(([user, intros]) => {
+        map(([user, intros]: [any, any]) => {
             console.log('Intro ===>>>', intros);
           if (!user) {
             return false;
           }
+          let isSaveOnServer;
+          if (DeviceDetection.isAndroid() && intros.main_intro.android.seen_version) {
+              isSaveOnServer = true;
+          } else if (DeviceDetection.isIOSMobile() && intros.main_intro.ios.seen_version) {
+              isSaveOnServer = true;
+          } else if (intros.main_intro.web.seen_version) {
+              isSaveOnServer = true;
+            }
           if (user.isStudent()) {
-            if (this.storage.getItem('smartpass_intro_student') !== 'seen') {
+            if (this.storage.getItem('smartpass_intro_student') !== 'seen' && !isSaveOnServer) {
               this.router.navigateByUrl('/main/intro').catch(e => this.errorHandler.handleError(e));
             }
           } else if (user.isTeacher()) {
-            if (this.storage.getItem('smartpass_intro_teacher') !== 'seen') {
+            if (this.storage.getItem('smartpass_intro_teacher') !== 'seen' && !isSaveOnServer) {
               this.router.navigateByUrl('/main/intro').catch(e => this.errorHandler.handleError(e));
             }
           }
