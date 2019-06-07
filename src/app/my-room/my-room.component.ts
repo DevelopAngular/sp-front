@@ -27,6 +27,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {ActivePassProvider as activeKioskPasses} from '../hall-monitor/hall-monitor.component';
 import {Router} from '@angular/router';
 import {StorageService} from '../services/storage.service';
+import {HttpService} from '../services/http-service';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -161,6 +162,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       public kioskMode: KioskModeService,
       private sanitizer: DomSanitizer,
       private storage: StorageService,
+      private http: HttpService,
       public router: Router
   ) {
     this.setSearchDate(this.timeService.nowDate());
@@ -356,7 +358,8 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     }
     this.kioskMode.currentRoom$.next(kioskRoom);
     this.userService.saveKioskModeLocation(kioskRoom.id).subscribe(res => {
-        debugger;
+      debugger;
+        this.http.kioskTokenSubject$.next(res);
     });
     this.router.navigate(['main/kioskMode']);
 

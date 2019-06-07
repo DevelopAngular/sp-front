@@ -89,7 +89,7 @@ export class UserService {
   }
 
   saveKioskModeLocation(locId) {
-    return this.http.post('v1/auth/kiosk', {location: locId});
+    return this.http.post('auth/kiosk', {location: locId});
   }
 
   getUserRepresented() {

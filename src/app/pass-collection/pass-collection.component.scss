@@ -57,13 +57,19 @@
 }
 
 .collection-grid-wrapper{
-    margin-top: 10px;
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(143px, .3fr));
+    justify-content: space-between;
+    margin-top: 15px;
+    //justify-content: space-between;
 }
+//.collection-grid-wrapper::after {
+//    content: '';
+//    flex: auto;
+//}
 
 .tile{
-  padding: 5px;
+  padding-bottom: 15px;
 }
 
 .sort-label{

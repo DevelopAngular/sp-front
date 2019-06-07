@@ -82,7 +82,8 @@ export class PassTileComponent implements OnInit, OnDestroy {
   }
 
   get boxShadow(){
-    return this.sanitizer.bypassSecurityTrustStyle(this.hovered?'0 2px 4px 1px rgba(0, 0, 0, 0.3)':'0 2px 4px 0px rgba(0, 0, 0, 0.1)');
+    return this.sanitizer.bypassSecurityTrustStyle(this.hovered && !this.buttonDown ?
+        '0px 3px 10px rgba(0, 0, 0, 0.2)' : '0px 3px 5px rgba(0, 0, 0, 0.1)');
   }
 
   constructor(private sanitizer: DomSanitizer, private timeService: TimeService) {

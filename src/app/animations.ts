@@ -2,7 +2,7 @@ import {animate, group, keyframes, query, state, style, transition, trigger} fro
 
 export const bumpIn = trigger('pressState', [
   state('down', style({
-    transform: 'scale(0.95)'
+    transform: 'scale(0.97)'
   })),
   state('up', style({
     transform: 'scale(1)'

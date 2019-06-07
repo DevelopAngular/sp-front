@@ -1,8 +1,22 @@
 
-import {catchError, tap, first, delay, distinctUntilChanged, filter, flatMap, map, skip, switchMap, merge, take} from 'rxjs/operators';
+import {
+    catchError,
+    tap,
+    first,
+    delay,
+    distinctUntilChanged,
+    filter,
+    flatMap,
+    map,
+    skip,
+    switchMap,
+    merge,
+    take,
+    withLatestFrom
+} from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import {of, throwError, BehaviorSubject, Observable, timer, interval, ReplaySubject} from 'rxjs';
+import {of, throwError, BehaviorSubject, Observable, timer, interval, ReplaySubject, Subject} from 'rxjs';
 import { environment } from '../../environments/environment';
 import { GoogleLoginService, isDemoLogin } from './google-login.service';
 import { School } from '../models/School';
@@ -120,6 +134,7 @@ export class HttpService {
   );
   public currentSchoolSubject = new BehaviorSubject<School>(null);
   public currentSchool$: Observable<School> = this.currentSchoolSubject.asObservable();
+  public kioskTokenSubject$ = new Subject();
 
   public globalReload$ = this.currentSchool$.pipe(
     filter(school => !!school),
@@ -202,6 +217,22 @@ export class HttpService {
               }
             }),
      ).subscribe(() => { });
+
+      this.kioskTokenSubject$.pipe(map(newToken => {
+        newToken['expires'] = new Date(new Date() + newToken['expires_in']);
+        return { auth: newToken, server: this.accessTokenSubject.value.server};
+      })).subscribe(res => {
+        this.accessTokenSubject.next(res as AuthContext);
+      });
+
+    // this.accessTokenSubject.pipe(withLatestFrom(this.kioskTokenSubject$),
+    //     map(([{auth, server}, newToken]) => {
+    //       return {auth: newToken, server};
+    //     }))
+    //     .subscribe((updatedContext: AuthContext) => {
+    //       debugger;
+    //       this.accessTokenSubject.next(updatedContext);
+    //     });
 
   }
 
