@@ -11,6 +11,10 @@ import {User} from '../models/User';
 import {HallPassesService} from '../services/hall-passes.service';
 import {HallPass} from '../models/HallPass';
 import {map, switchMap} from 'rxjs/operators';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import {StorageService} from '../services/storage.service';
+import {DataService} from '../services/data-service';
+import {LocationsService} from '../services/locations.service';
 
 @Component({
   selector: 'app-kiosk-mode',
@@ -25,18 +29,42 @@ export class KioskModeComponent implements OnInit, OnDestroy {
 
   hideInput: boolean;
 
+  userData: {
+      email: string
+      exp: number
+      kiosk_location_id: number
+      kiosk_mode: boolean
+      school_ids: number[]
+      secret_id: string
+      user_id: number
+  };
+
   @ViewChild('input', { read: ElementRef }) input: ElementRef;
 
   constructor(
       private dialog: MatDialog,
       private kioskMode: KioskModeService,
+      private dataService: DataService,
+      private locationService: LocationsService,
       private liveDataService: LiveDataService,
       private userService: UserService,
-      private passesService: HallPassesService
+      private passesService: HallPassesService,
+      private storage: StorageService,
   ) { }
 
   ngOnInit() {
       this.activePassesKiosk = new WrappedProvider(new ActivePassProvider(this.liveDataService, of('')));
+      this.dataService.currentUser.pipe(
+          switchMap(user => {
+              return this.locationService.getLocationsWithTeacher(user);
+          }))
+          .subscribe(locations => {
+          const kioskJwtToken = this.storage.getItem('kioskToken');
+          const jwtHelper = new JwtHelperService();
+          this.userData = jwtHelper.decodeToken(kioskJwtToken);
+          const kioskLocation = locations.find(loc => loc.id === this.userData.kiosk_location_id);
+          this.kioskMode.currentRoom$.next(kioskLocation);
+      });
   }
 
   ngOnDestroy() {
