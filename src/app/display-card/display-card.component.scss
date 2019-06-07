@@ -13,7 +13,7 @@
     background-color: #fff;
 
     &.inbox {
-        height: 611px;
+        height: calc(100vh - 190px);;
         overflow: auto;
     }
 
@@ -22,8 +22,9 @@
         bottom: 0px;
         height: 16px;
         width: 100%;
+        border-radius: 12px;
         background-color: #ffffFF;
-        box-shadow: 0px -5px 25px 10px rgba(255, 255, 255, 1);
+        box-shadow: 0px -3px 30px 16px rgba(255, 255, 255, 1);
     }
 }
 
