@@ -2,9 +2,28 @@
   div.date-wrapper {
     width: 100%;
   }
-}
 
-@media all and (max-width: 375px) {
+  div.decline-content {
+    padding: 0 !important;
+    align-items: center;
+  }
+
+  div.time-picker {
+    margin: 0;
+  }
+
+  div.next-btn {
+    position: absolute;
+    margin: 0;
+    left: 50%;
+    bottom: -11px;
+    transform: translate(-50%);
+  }
+
+  div.info-text-1 {
+    display: none;
+  }
+
   img.back-button{
     display: none;
   }
@@ -16,7 +35,6 @@
 
 
 .date-wrapper {
-  width: 425px;
   height: 500px;
   display: flex;
   flex-direction: column;
@@ -106,4 +124,8 @@
   font-stretch: normal;
   line-height: 1.08;
   letter-spacing: 0.3px;
+}
+
+.next-btn {
+  margin-bottom: 30px;
 }

@@ -4,6 +4,7 @@
 @media all and (max-width: 1024px) {
   .passes-wrapper {
     flex-direction: column;
+    position: relative;
   }
 
   div.main-page-left{
@@ -30,6 +31,10 @@
     justify-content: center;
     color: #1F195E;
     margin-top: -15px;
+  }
+
+  div.paginator-button__left {
+    display: none;
   }
 
 }
@@ -119,5 +124,9 @@
 }
 
 .passes-heading {
+  display: none;
+}
+
+.teacher-nav-bottom {
   display: none;
 }

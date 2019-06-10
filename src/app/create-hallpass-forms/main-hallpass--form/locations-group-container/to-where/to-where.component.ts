@@ -1,15 +1,20 @@
-import {Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild,Inject} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild, Inject} from '@angular/core';
 import { Pinnable } from '../../../../models/Pinnable';
 import { Navigation } from '../../main-hall-pass-form.component';
 import { CreateFormService } from '../../../create-form.service';
 import { States } from '../locations-group-container.component';
 import {Observable} from 'rxjs';
-import {MAT_DIALOG_DATA} from '@angular/material';
+import {log} from 'util';
+import {MessageBoxViewRestriction} from '../../../../models/message-box-view-restrictions/MessageBoxViewRestriction';
+import {MessageBoxViewRestrictionSm} from '../../../../models/message-box-view-restrictions/MessageBoxViewRestrictionSm';
+import {MessageBoxViewRestrictionMd} from '../../../../models/message-box-view-restrictions/MessageBoxViewRestrictionMd';
+import {MessageBoxViewRestrictionLg} from '../../../../models/message-box-view-restrictions/MessageBoxViewRestrictionLg';
+import {ScreenService} from '../../../../services/screen.service';
 import {ToWhereGridRestriction} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestriction';
 import {ToWhereGridRestrictionLg} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionLg';
-import {ScreenService} from '../../../../services/screen.service';
 import {ToWhereGridRestrictionSm} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionSm';
 import {ToWhereGridRestrictionMd} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionMd';
+import {MAT_DIALOG_DATA} from '@angular/material';
 
 @Component({
   selector: 'app-to-where',
@@ -97,12 +102,10 @@ export class ToWhereComponent implements OnInit {
 
   private getViewRestriction(): ToWhereGridRestriction {
     if (this.screenService.isDeviceMid) {
-      console.log('mid device');
       return new ToWhereGridRestrictionSm();
     }
 
     if (this.screenService.isIpadWidth) {
-      console.log('ipad');
       return new ToWhereGridRestrictionMd();
     }
 

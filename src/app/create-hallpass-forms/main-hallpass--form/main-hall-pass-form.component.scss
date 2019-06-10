@@ -1,10 +1,14 @@
 @media screen and (max-width: 475px) {
   .fixed-card {
-    width: 100% !important;
+    width: initial !important;
   }
 
   .form {
     width: initial !important;
+  }
+
+  div.pretty-replace-box {
+    overflow: visible !important;
   }
 }
 
@@ -419,6 +423,8 @@ textarea {
 .onoffswitch-checkbox:checked + .onoffswitch-label:before {
   right: 0px;
 }
+
+
 
 //.state-transition {
 //  animation: stateTransition .5s ease forwards;

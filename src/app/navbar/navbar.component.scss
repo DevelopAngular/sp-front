@@ -12,6 +12,45 @@
     flex-direction: row-reverse;
   }
 
+  div.teacherNav {
+    display: none;
+  }
+
+  div.teacherNav-mobile {
+    display: flex;
+
+    &-wrapper {
+      display: flex;
+      width: 450px;
+    }
+  }
+
+  div.divider {
+    display: none;
+  }
+
+  div.nav-buttons-width {
+    width: inherit;
+  }
+
+}
+
+@media all and (max-width: 320px) {
+    div.teacherNav-mobile {
+      height: 45px;
+    }
+}
+
+@media all and (max-width: 475px) {
+  div.teacherNav-mobile {
+    display: flex;
+
+    &-wrapper {
+      display: flex;
+      width: 100%;
+    }
+  }
+
   div.nav-buttons-width {
     width: inherit;
   }
@@ -158,11 +197,18 @@
   cursor: pointer;
 }
 
+.options-wrapper, .support-wrapper, .admin-view-wrapper {
+  display: flex;
+}
+
+.inbox-wrapper {
+  display: flex;
+}
+
 .inbox-wrapper, .options-wrapper, .support-wrapper, .admin-view-wrapper{
   width: 50px;
   height: 50px;
   border-radius: 25px;
-  display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
@@ -217,6 +263,24 @@
   height: 1px;
   background-color: #B5B7BA;
 }
+
+.teacherNav-mobile {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #fbfbfb;
+  border-top: 1px solid #1F195E;
+  height: 68px;
+  align-items: center;
+  z-index: 1;
+  justify-content: center;
+  &-wrapper {
+    display: flex;
+    width: 100%;
+  }
+}
+
 
 .nav-buttons-width {
   width: 34%;

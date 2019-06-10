@@ -11,9 +11,7 @@
     <div class="teacher-rooms" *ngIf="isStaff && teacherRooms.length">
       <div class="rooms-title ds-dialog-subtitle">My Rooms</div>
       <div class="rooms">
-        <mat-grid-list class="grid center" [cols]="gridRestrictions.colsAmount" rowHeight="75px"
-                       [gutterSize]="gridRestrictions.gutterSize"
-                       [style.width]="gridRestrictions.gridWidth">
+        <mat-grid-list class="grid center" [cols]="gridRestrictions.colsAmount" rowHeight="75px" [gutterSize]="gridRestrictions.gutterSize" [style.width]="gridRestrictions.gridWidth">
           <mat-grid-tile *ngFor="let room of teacherRooms">
             <app-pinnable
                     [width]="gridRestrictions.pileWidth"
@@ -30,9 +28,7 @@
     <div class="all-rooms">
       <div class="rooms-title ds-dialog-subtitle" *ngIf="isStaff && teacherRooms.length && !dialogData.kioskModeRoom">All Rooms</div>
       <div class="pin-collection">
-        <mat-grid-list class="grid center" [cols]="gridRestrictions.colsAmount" rowHeight="75px"
-                       [gutterSize]="gridRestrictions.gutterSize"
-                       [style.width]="gridRestrictions.gridWidth">
+        <mat-grid-list class="grid center" [cols]="gridRestrictions.colsAmount" rowHeight="75px" [gutterSize]="gridRestrictions.gutterSize" [style.width]="gridRestrictions.gridWidth">
           <mat-grid-tile *ngFor="let pinnable of pinnables | async">
             <app-pinnable
                     [width]="gridRestrictions.pileWidth"
@@ -48,7 +44,8 @@
     </div>
   </div>
 
+  <img class="back-button back-button-grey back-btn-bottom" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
   <app-student-footer *ngIf="!isStaff" [formState]="formState" [state]="'to'" [date]="date"></app-student-footer>
   <app-teacher-footer *ngIf="isStaff" [fromLocation]="location" [formState]="formState" [state]="'to'" [studentText]="studentText" [date]="date"></app-teacher-footer>
-  <img class="back-button back-button-grey back-btn-bottom" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
+
 </div>

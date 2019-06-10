@@ -1,4 +1,4 @@
-import {Component, NgZone, OnInit, Input, ElementRef} from '@angular/core';
+import {Component, NgZone, OnInit, Input, ElementRef, HostListener} from '@angular/core';
 import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material';
 import {Router, NavigationEnd, ActivatedRoute, NavigationStart} from '@angular/router';
@@ -21,6 +21,7 @@ import {DarkThemeSwitch} from '../dark-theme-switch';
 import {NotificationService} from '../services/notification-service';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {HttpService} from '../services/http-service';
+import {ScreenService} from '../services/screen.service';
 import {IntroDialogComponent} from '../intro-dialog/intro-dialog.component';
 import {StorageService} from '../services/storage.service';
 import {KioskModeService} from '../services/kiosk-mode.service';
@@ -58,6 +59,9 @@ export class NavbarComponent implements OnInit {
 
   navbarEnabled = false;
 
+  islargeDeviceWidth: boolean;
+
+
   buttonHash = {
     passes: {title: 'Passes', route: 'passes', imgUrl: 'SP Arrow', requiredRoles: ['_profile_teacher', 'access_passes'], hidden: false},
     hallMonitor: {title: 'Hall Monitor', route: 'hallmonitor', imgUrl: 'Walking', requiredRoles: ['_profile_teacher', 'access_hall_monitor'], hidden: false},
@@ -71,6 +75,7 @@ export class NavbarComponent implements OnInit {
   constructor(
       private dataService: DataService,
       private userService: UserService,
+      private screenService: ScreenService,
       public dialog: MatDialog,
       public router: Router,
       private location: Location,
@@ -190,6 +195,8 @@ export class NavbarComponent implements OnInit {
           }
       });
     });
+
+    this.islargeDeviceWidth = this.screenService.isDeviceLargeExtra;
   }
 
   getIcon(iconName: string, darkFill?: string, lightFill?: string) {
@@ -355,4 +362,9 @@ export class NavbarComponent implements OnInit {
   }
 
 
+
+  @HostListener('window:resize')
+  checkDeviceWidth() {
+    this.islargeDeviceWidth = this.screenService.isDeviceLargeExtra;
+  }
 }

@@ -1,6 +1,6 @@
 <div class="step-1-container">
   <div class="header">
-    <div class="header_back-button" (click)="back(editGroup)">
+    <div class="header_back-button back-btn-top" (click)="back(editGroup)">
       <img  *ngIf="!form.get('title').dirty && !form.get('users').dirty"
             class="header_back-button-icon" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
       <span *ngIf="form.get('title').dirty || form.get('users').dirty">Cancel</span>
@@ -20,7 +20,7 @@
           (buttonClick)="updateGroup()"
         >Save</app-gradient-button>
       </div>
-      <div *ngIf="(form.get('title').value || (editGroup.users.length)) && !(form.get('title').value && (editGroup.users.length))">
+      <div *ngIf="(form.get('title').value || (editGroup.users.length)) && !(form.get('title').value && (editGroup.users.length))" class="incomplete">
         <span [style.user-select]="'none'">Incomplete</span>
       </div>
     </div>
@@ -32,8 +32,7 @@
       <div class="content-left_wrapper">
         <div>
           <div>
-
-            <div class="ds-dialog-subtitle">Student Group Name</div>
+            <div class="ds-dialog-subtitle student-group-name ">Student Group Name</div>
             <app-input
               [controlName]="form.get('title')"
               [formGroup]="form"
@@ -121,4 +120,5 @@
 
     </div>
   </div>
+  <img  (click)="back(editGroup)" class="header_back-button-icon back-btn-bottom" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
 </div>
