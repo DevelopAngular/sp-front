@@ -56,12 +56,17 @@
           [style.background-color]="getBgColor(element)"
           [style.color]=" getCellColor(n)">
         <ng-container *ngIf="normalizeCell(element[column]).length; else empty">
-          <span *ngFor="let cellElement of normalizeCell(element[column]); let i = index">
+          <span *ngFor="let cellElement of normalizeCell(element[column]); let i = index" style="white-space: nowrap;display: inline-block;">
             <!--<span *ngIf="normalizeCell(element[column]).length > 1 && i > 0">, </span>-->
             <span [ngClass]="{'multi-cell': column === 'Profile(s)' && cellElement.title && cellElement.title !== 'No profile', 'not-allowed': cellElement.title === 'No profile'}" (click)="selectedCellEmit($event, cellElement, element)" #cell>
               {{displayCell(cellElement, cell, column)}}
             </span>
             <span>{{(normalizeCell(element[column]).length > 1 && i !== normalizeCell(element[column]).length - 1 ? ', ' : '')}}</span>
+            <span style="display: inline-block;width: 50px;height: 20px;background-color: rgba(0, 180, 118, .6);color: #ffffff; text-align: center; vertical-align: middle;line-height: 20px; border-radius: 4px"
+              *ngIf="column === 'Name' && element.me"
+            >
+              Me
+            </span>
           </span>
         </ng-container>
         <ng-template #empty>

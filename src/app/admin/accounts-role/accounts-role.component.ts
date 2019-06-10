@@ -690,7 +690,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           if (raw.roles.includes('_profile_admin')) partOf.push({title: 'Administrator', role: '_profile_admin'});
 
           const rawObj = {
-              'Name': +raw.id === +this.user.id ? raw.display_name + ' (Me)' : raw.display_name,
+              // 'Name': +raw.id === +this.user.id ? raw.display_name + ' (Me)' : raw.display_name,
+              'Name': raw.display_name,
               'Email/Username': raw.primary_email,
               'Rooms': raw.assignedTo,
               // 'Account Type': 'G Suite',
@@ -728,7 +729,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
                   }
               }
           }
-          Object.defineProperty(rawObj, 'id', { enumerable: false, value: raw.id});
+          Object.defineProperty(rawObj, 'id', { enumerable: false, value: raw.id });
+          Object.defineProperty(rawObj, 'me', { enumerable: false, value: +raw.id === +this.user.id });
           Object.defineProperty(rawObj, '_originalUserProfile', {
               enumerable: false,
               configurable: false,
