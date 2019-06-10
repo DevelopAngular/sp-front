@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { KioskModeService } from '../services/kiosk-mode.service';
 import { MatDialog } from '@angular/material';
@@ -10,7 +10,7 @@ import {UserService} from '../services/user.service';
 import {User} from '../models/User';
 import {HallPassesService} from '../services/hall-passes.service';
 import {HallPass} from '../models/HallPass';
-import {map, switchMap} from 'rxjs/operators';
+import {switchMap} from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import {StorageService} from '../services/storage.service';
 import {DataService} from '../services/data-service';
@@ -41,6 +41,13 @@ export class KioskModeComponent implements OnInit, OnDestroy {
 
   @ViewChild('input', { read: ElementRef }) input: ElementRef;
 
+  @HostListener('window:onkeuup', ['$event'])
+    setFocus() {
+      debugger;
+      setTimeout(() => {
+          this.input.nativeElement.focus();
+      }, 50);
+  }
   constructor(
       private dialog: MatDialog,
       private kioskMode: KioskModeService,
@@ -72,12 +79,22 @@ export class KioskModeComponent implements OnInit, OnDestroy {
 
   cardReader(event: KeyboardEvent) {
       // this.cardReaderValue = ';236=7';
+      // if (event.keyCode === 37) {
+      //     this.cardReaderValue = ';236=7';
+      // } else if (event.keyCode === 38) {
+      //     this.cardReaderValue = ';234=7';
+      // } else if (event.keyCode === 39) {
+      //     this.cardReaderValue = ';654=7';
+      // } else if (event.keyCode === 40) {
+      //     this.cardReaderValue = '%234=2?';
+      // }
       if (event.keyCode === 13 && this.cardReaderValue && (this.cardReaderValue[0] === ';' || this.cardReaderValue[0] === '%')) {
           combineLatest(
               this.userService.searchUserByCardId(this.cardReaderValue),
               this.passesService.getActivePassesKioskMode(this.kioskMode.currentRoom$.value.id)
           ).pipe(
               switchMap(([user, passes]: [User[], HallPass[]]) => {
+                  this.cardReaderValue = '';
                   if (user.length) {
                       const myPass = (passes as HallPass[]).find(pass => pass.issuer.id === user[0].id);
                       if (myPass) {
