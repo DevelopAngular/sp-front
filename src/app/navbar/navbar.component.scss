@@ -1,8 +1,10 @@
+@import "../../sp-colors";
+
 :host {
   background-color: transparent;
 }
 .bar {
-  height: 68px;
+  height: 58px;
   /* background-image: radial-gradient(circle at 43% 66%, #03cf31, rgba(1, 129, 85, 0.7)); */
   position: relative;
   display: flex;
@@ -109,13 +111,13 @@
   margin: auto 0 auto auto;
   padding-right: 15px;
   white-space: nowrap;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
   font-style: normal;
   font-stretch: normal;
   line-height: normal;
   letter-spacing: normal;
-  color: #1F195E;
+  color: $blue-gray;
 }
 
 .static-loading{
