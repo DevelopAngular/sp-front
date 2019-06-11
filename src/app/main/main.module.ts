@@ -2,16 +2,17 @@
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
-    MatChipsModule,
-    MatDialogModule,
-    MatDividerModule,
-    MatGridListModule,
-    MatListModule,
-    MatIconModule,
-    MatProgressBarModule,
-    MatSelectModule,
-    MatSliderModule,
-    MatSlideToggleModule
+  MatChipsModule,
+  MatDialogModule,
+  MatDividerModule,
+  MatGridListModule,
+  MatListModule,
+  MatIconModule,
+  MatProgressBarModule,
+  MatSelectModule,
+  MatSliderModule,
+  MatSlideToggleModule,
+  MatSidenavModule
 } from '@angular/material';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { ContainerCardComponent } from '../container-card/container-card.component';
@@ -76,6 +77,7 @@ import {KioskModeComponent} from '../kiosk-mode/kiosk-mode.component';
     MatDividerModule,
     MatGridListModule,
     MatListModule,
+    MatSidenavModule
   ],
   declarations: [
     HallMonitorComponent,

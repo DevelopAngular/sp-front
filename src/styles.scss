@@ -316,4 +316,19 @@ body {
     font-family: "Helvetica Neue", sans-serif;
   }
 }
+
+
+// Side nav scroll hiding
+.mat-drawer-inner-container::-webkit-scrollbar {
+  width: 0 !important
+}
+
+.mat-drawer-inner-container {
+  overflow: -moz-scrollbars-none;
+  -ms-overflow-style: none;
+}
+
+mat-sidenav-container {
+  height: 100vh;
+}
 /* === end === */

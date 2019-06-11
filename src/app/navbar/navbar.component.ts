@@ -1,10 +1,10 @@
-import {Component, NgZone, OnInit, Input, ElementRef, HostListener} from '@angular/core';
+import {Component, NgZone, OnInit, Input, ElementRef, EventEmitter, Output} from '@angular/core';
 import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material';
 import {Router, NavigationEnd, ActivatedRoute, NavigationStart} from '@angular/router';
 
 import {ReplaySubject, combineLatest, of, Subject} from 'rxjs';
-import {filter, switchMap, tap} from 'rxjs/operators';
+import {filter, switchMap, takeUntil, tap} from 'rxjs/operators';
 
 import { DataService } from '../services/data-service';
 import { GoogleLoginService } from '../services/google-login.service';
@@ -25,6 +25,8 @@ import {ScreenService} from '../services/screen.service';
 import {IntroDialogComponent} from '../intro-dialog/intro-dialog.component';
 import {StorageService} from '../services/storage.service';
 import {KioskModeService} from '../services/kiosk-mode.service';
+import {ScreenService} from '../services/screen.service';
+import {SideNavService} from '../services/side-nav.service';
 
 declare const window;
 
@@ -75,25 +77,29 @@ export class NavbarComponent implements OnInit {
 
   fakeMenu: ReplaySubject<boolean> = new ReplaySubject<boolean>();
 
+  sideNavClosed: boolean;
+  @Output() settingsClick: EventEmitter<any> = new EventEmitter<any>();
+
   constructor(
-    private dataService: DataService,
-    private userService: UserService,
-    private screenService: ScreenService,
-    public dialog: MatDialog,
-    public router: Router,
-    private location: Location,
-    public loadingService: LoadingService,
-    public loginService: GoogleLoginService,
-    private locationService: LocationsService,
-    private _zone: NgZone,
-    private navbarData: NavbarDataService,
-    private process: NgProgress,
-    private activeRoute: ActivatedRoute,
-    public  notifService: NotificationService,
-    public darkTheme: DarkThemeSwitch,
-    private http: HttpService,
-    private storage: StorageService,
-    public kioskMode: KioskModeService,
+      private dataService: DataService,
+      private userService: UserService,
+      public dialog: MatDialog,
+      public router: Router,
+      private location: Location,
+      public loadingService: LoadingService,
+      public loginService: GoogleLoginService,
+      private locationService: LocationsService,
+      private _zone: NgZone,
+      private navbarData: NavbarDataService,
+      private process: NgProgress,
+      private activeRoute: ActivatedRoute,
+      public  notifService: NotificationService,
+      public darkTheme: DarkThemeSwitch,
+      private http: HttpService,
+      private storage: StorageService,
+      public kioskMode: KioskModeService,
+      private screenService: ScreenService,
+      private sideNavService: SideNavService,
   ) {
 
     const navbarEnabled$ = combineLatest(
@@ -201,6 +207,13 @@ export class NavbarComponent implements OnInit {
         ) {
             this.fakeMenu.next(true);
           }
+      });
+    });
+
+    this.sideNavService.sideNavAction
+      .subscribe(action => {
+        this.settingsAction(action);
+      });
         });
       });
 
@@ -237,25 +250,37 @@ export class NavbarComponent implements OnInit {
       return roles.every((_role) => this.user.roles.includes(_role));
     }
   }
+
   buttonVisibility(button) {
     return this.hasRoles(button.requiredRoles) && !button.hidden;
   }
+
   showOptions(event) {
-    this.isOpenSettings = true;
+    if (this.screenService.isDeviceLargeExtra) {
+      this.sideNavService.toggle$.next(true);
+    }
+
     const target = new ElementRef(event.currentTarget);
-    const settingRef = this.dialog.open(SettingsComponent, {
-        panelClass: 'calendar-dialog-container',
+    if (!this.screenService.isDeviceLargeExtra) {
+      this.isOpenSettings = true;
+      const settingRef = this.dialog.open(SettingsComponent, {
+        panelClass: ['calendar-dialog-container', 'animation'],
         backdropClass: 'invis-backdrop',
         data: { 'trigger': target, 'isSwitch': this.showSwitchButton }
-    });
+      });
 
-    settingRef.beforeClose().subscribe(() => {
+      settingRef.beforeClose().subscribe(() => {
         this.isOpenSettings = false;
-    });
+      });
 
-    settingRef.afterClosed().subscribe(action => {
-      this.settingsAction(action);
-    });
+      settingRef.afterClosed().subscribe(action => {
+        this.settingsAction(action);
+      });
+    }
+
+    this.settingsClick.emit({ 'trigger': target, 'isSwitch': this.showSwitchButton });
+
+    this.sideNavService.sideNavData$.next({ 'trigger': target, 'isSwitch': this.showSwitchButton });
   }
 
   showTeaches(target) {
