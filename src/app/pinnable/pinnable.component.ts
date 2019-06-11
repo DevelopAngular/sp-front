@@ -20,10 +20,10 @@ export class PinnableComponent implements OnInit {
   pinnable: Pinnable;
 
   @Input()
-  width: string = '143px';
+  width: string = '120px';
 
   @Input()
-  height: string = '86.5px';
+  height: string = '70px';
 
   @Input()
   iconWidth: string = '30px';

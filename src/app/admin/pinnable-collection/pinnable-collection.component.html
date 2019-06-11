@@ -50,7 +50,17 @@
       <div class="pinnable-item-container" >
         <!--[style.animation-delay]="(i * .1) + 's'"-->
         <div [ngClass]="{'pinnable-item': this.bulkSelect}">
-          <app-pinnable [forStaff]="true" [selected]="selectedPinnables.indexOf(pinnable) != -1" [forBulk]="bulkSelect" [forCollection]="true" [pinnable]="pinnable" (clampedEvent)="toggleBulk()" (onSelectEvent)="updatePinnables($event)"></app-pinnable>
+          <app-pinnable
+                  [forStaff]="true"
+                  [width]="'143px'"
+                  [height]="'86.5px'"
+                  [selected]="selectedPinnables.indexOf(pinnable) != -1"
+                  [forBulk]="bulkSelect"
+                  [forCollection]="true"
+                  [pinnable]="pinnable"
+                  (clampedEvent)="toggleBulk()"
+                  (onSelectEvent)="updatePinnables($event)"
+          ></app-pinnable>
         </div>
       </div>
     </div>
