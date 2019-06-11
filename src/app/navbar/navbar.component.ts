@@ -1,4 +1,4 @@
-import {Component, NgZone, OnInit, Input, ElementRef, EventEmitter, Output} from '@angular/core';
+import {Component, NgZone, OnInit, Input, ElementRef, EventEmitter, Output, HostListener} from '@angular/core';
 import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material';
 import {Router, NavigationEnd, ActivatedRoute, NavigationStart} from '@angular/router';
@@ -25,7 +25,6 @@ import {ScreenService} from '../services/screen.service';
 import {IntroDialogComponent} from '../intro-dialog/intro-dialog.component';
 import {StorageService} from '../services/storage.service';
 import {KioskModeService} from '../services/kiosk-mode.service';
-import {ScreenService} from '../services/screen.service';
 import {SideNavService} from '../services/side-nav.service';
 
 declare const window;
@@ -213,8 +212,6 @@ export class NavbarComponent implements OnInit {
     this.sideNavService.sideNavAction
       .subscribe(action => {
         this.settingsAction(action);
-      });
-        });
       });
 
     this.islargeDeviceWidth = this.screenService.isDeviceLargeExtra;
