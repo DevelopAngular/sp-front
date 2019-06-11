@@ -22,7 +22,7 @@
         </div>
         <div class="option-data_rightside">
           <div class="marked-room">
-            <img *ngIf="!selectedLocation" [style.width]="'20px'" [style.height]="'20px'" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'}) | resolveAsset" alt="Check (Navy).svg">
+            <img *ngIf="!selectedLocation" [style.width]="'20px'" [style.height]="'20px'" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'})" alt="Check (Navy).svg">
           </div>
         </div>
       </div>
@@ -36,9 +36,9 @@
                 'option-wrapper': !darkTheme.isEnabled$.value,
                 'option-wrapper__dark': darkTheme.isEnabled$.value
                }"
-           (mousedown)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : 'rgba(226, 231, 244, 1)'"
+           (mousedown)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : '#E2E7F4'"
            (mouseup)="_option.style.background = 'transparent'"
-           (mouseover)="_option.style.background = this.darkTheme.isEnabled$.value ? '#47447E' : 'rgba(236, 241, 255, 1)'"
+           (mouseover)="_option.style.background = this.darkTheme.isEnabled$.value ? '#47447E' : '#ECF1FF'"
            (mouseleave)="_option.style.background = 'transparent'"
       >
         <div class="option-data_leftside">
@@ -75,7 +75,7 @@
         </div>
         <div class="option-data_rightside">
           <div class="marked-room">
-            <img *ngIf="school.id === selectedSchool.id && school.name === selectedSchool.name" [style.width]="'20px'" [style.height]="'20px'"  [src]="'./assets/Check (Navy).svg' | resolveAsset" alt="Check (Navy).svg">
+            <img *ngIf="school.id === selectedSchool.id && school.name === selectedSchool.name" [style.width]="'20px'" [style.height]="'20px'"  [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'}) | resolveAsset" alt="Check (Navy).svg">
           </div>
         </div>
       </div>
@@ -100,7 +100,7 @@
         </div>
         <div class="option-data_rightside">
           <div class="marked-room">
-            <img *ngIf="teacher.user.id === selectedTeacher.user.id" [style.width]="'20px'" [style.height]="'20px'"  [src]="'./assets/Check (Navy).svg' | resolveAsset" alt="Check (Navy).svg">
+            <img *ngIf="teacher.user.id === selectedTeacher.user.id" [style.width]="'20px'" [style.height]="'20px'"  [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'}) | resolveAsset" alt="Check (Navy).svg">
           </div>
         </div>
       </div>
