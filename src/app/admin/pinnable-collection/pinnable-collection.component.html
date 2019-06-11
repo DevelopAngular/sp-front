@@ -1,42 +1,42 @@
 <div class="collection-wrapper" *ngIf="pinnables" [style.min-width]="width">
-  <div class="collection-header" *ngIf="header">
+  <!--<div class="collection-header" *ngIf="header">-->
 
-    <div class="collection-title" [style.color]="darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'})">
-      {{ selectedPinnables.length ? selectedPinnables.length + ' Selected' : 'Rooms' }}
-    </div>
-    <!--<div class="selected-counter global-opacity-icons" (click)="toggleBulk()" [ngStyle]="{'font-weight': bulkSelect ? 'bold' : 'normal'}">-->
-      <!--{{ (bulkSelect?('Done'):'Bulk Select')}}-->
+    <!--<div class="collection-title" [style.color]="darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'})">-->
+      <!--{{ selectedPinnables.length ? selectedPinnables.length + ' Selected' : 'Rooms' }}-->
     <!--</div>-->
-    <div class="buttons" style="display: flex">
-      <app-gradient-button
-              (click)="toggleBulk()"
-              [style.margin-right]="'12px'"
-              [cursor]="'pointer'"
-              [gradient]="'#FFFFFF, #FFFFFF'"
-              [hoverColor]="'#F5F5F5'"
-              [textColor]="'#1F195E'"
-      >
-        {{ (bulkSelect?('Done'):'Bulk Select')}}
-      </app-gradient-button>
+    <!--&lt;!&ndash;<div class="selected-counter global-opacity-icons" (click)="toggleBulk()" [ngStyle]="{'font-weight': bulkSelect ? 'bold' : 'normal'}">&ndash;&gt;-->
+      <!--&lt;!&ndash;{{ (bulkSelect?('Done'):'Bulk Select')}}&ndash;&gt;-->
+    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+    <!--<div class="buttons" style="display: flex">-->
+      <!--<app-gradient-button-->
+              <!--(click)="toggleBulk()"-->
+              <!--[style.margin-right]="'12px'"-->
+              <!--[cursor]="'pointer'"-->
+              <!--[gradient]="'#FFFFFF, #FFFFFF'"-->
+              <!--[hoverColor]="'#F5F5F5'"-->
+              <!--[textColor]="'#1F195E'"-->
+      <!--&gt;-->
+        <!--{{ (bulkSelect?('Done'):'Bulk Select')}}-->
+      <!--</app-gradient-button>-->
 
-      <app-gradient-button
-              [ngStyle]="{'opacity': bulkSelect && !selectedPinnables.length ? '.5' : '1'}"
-              [minHeight]="'25px'"
-              [width]="'120px'"
-              [hoverColor]="'#00B476'"
-              [cursor]="!bulkSelect || selectedPinnables.length ? 'pointer' : 'default'"
-              [fontSize]="'12px'"
-              (buttonClick)="buttonClicked($event)"
-              [leftIcon]="headerButtonIcon"
-              [leftImageWidth]="'10px'"
-              [leftImageHeight]="'10px'"
-              [disabled]="bulkSelect && !selectedPinnables.length"
-      >
-        {{headerButtonText}}</app-gradient-button>
-    </div>
-  </div>
+      <!--<app-gradient-button-->
+              <!--[ngStyle]="{'opacity': bulkSelect && !selectedPinnables.length ? '.5' : '1'}"-->
+              <!--[minHeight]="'25px'"-->
+              <!--[width]="'120px'"-->
+              <!--[hoverColor]="'#00B476'"-->
+              <!--[cursor]="!bulkSelect || selectedPinnables.length ? 'pointer' : 'default'"-->
+              <!--[fontSize]="'12px'"-->
+              <!--(buttonClick)="buttonClicked($event)"-->
+              <!--[leftIcon]="headerButtonIcon"-->
+              <!--[leftImageWidth]="'10px'"-->
+              <!--[leftImageHeight]="'10px'"-->
+              <!--[disabled]="bulkSelect && !selectedPinnables.length"-->
+      <!--&gt;-->
+        <!--{{headerButtonText}}</app-gradient-button>-->
+    <!--</div>-->
+  <!--</div>-->
 
-  <div class="collection-divider" *ngIf="header"></div>
+  <!--<div class="collection-divider" *ngIf="header"></div>-->
   <div
     class="pinnables"
    [style.width]="width"
@@ -46,11 +46,11 @@
    [dragulaModel]="pinnables"
    (dragulaModelChange)="onPinablesOrderChanged($event)">
 
-    <div *ngFor="let pinnable of pinnables; let i = index" style="padding: 10px">
+    <div *ngFor="let pinnable of pinnables; let i = index" style="padding: 7.5px">
       <div class="pinnable-item-container" >
         <!--[style.animation-delay]="(i * .1) + 's'"-->
         <div [ngClass]="{'pinnable-item': this.bulkSelect}">
-          <app-pinnable [forStaff]="true" [selected]="selectedPinnables.indexOf(pinnable) != -1" [forBulk]="bulkSelect" [forCollection]="true" [pinnable]="pinnable" (clampedEvent)="bulkSelect = $event" (onSelectEvent)="updatePinnables($event)"></app-pinnable>
+          <app-pinnable [forStaff]="true" [selected]="selectedPinnables.indexOf(pinnable) != -1" [forBulk]="bulkSelect" [forCollection]="true" [pinnable]="pinnable" (clampedEvent)="toggleBulk()" (onSelectEvent)="updatePinnables($event)"></app-pinnable>
         </div>
       </div>
     </div>

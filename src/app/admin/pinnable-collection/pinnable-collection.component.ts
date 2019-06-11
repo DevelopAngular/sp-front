@@ -21,26 +21,29 @@ export class PinnableCollectionComponent implements OnInit {
 
   @Input() resetBulkSelect$: BehaviorSubject<boolean>;
 
-  @Input() width: string = '560px';
+  @Input() width: string = '635px';
 
   @Input() isEmptyState: boolean = false;
+
+  @Input() bulkSelect: boolean  = false;
 
   @Output()
   roomEvent: EventEmitter<any> = new EventEmitter();
   @Output()
   orderChangedEvent: EventEmitter<number[]> = new EventEmitter<number[]>();
 
+  @Output() bulkSelectEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
+
   selectedPinnables: Pinnable[] = [];
   buttonMenuOpen: boolean = false;
-  bulkSelect: boolean  = false;
 
   pinnableIdArranged = [];
 
-  get headerButtonText(){
+  get headerButtonText() {
     return (this.selectedPinnables.length < 1 || !this.bulkSelect?'New':'Bulk Edit Rooms');
   }
 
-  get headerButtonIcon(){
+  get headerButtonIcon() {
     return (this.selectedPinnables.length < 1 || !this.bulkSelect?'./assets/Plus (White).svg':null);
   }
 
@@ -89,6 +92,7 @@ export class PinnableCollectionComponent implements OnInit {
   toggleBulk(){
     this.bulkSelect = !this.bulkSelect;
     this.selectedPinnables = [];
+    this.bulkSelectEmit.emit(this.bulkSelect);
   }
 
   isSelected(pinnable: Pinnable): boolean {
@@ -99,63 +103,67 @@ export class PinnableCollectionComponent implements OnInit {
     if (!!this.selectedPinnables.find(pin => pin.id === pinnable.id)) {
      return this.selectedPinnables.splice(this.selectedPinnables.indexOf(pinnable), 1);
     } else {
-      if (this.bulkSelect)
-        return this.selectedPinnables.push(pinnable);
+      if (this.bulkSelect) {
+          this.selectedPinnables.push(pinnable);
+          this.roomEvent.emit({ action: 'simple', selection: this.selectedPinnables });
+          return;
+      }
+        // this.roomEvent.emit(this.selectedPinnables);
     }
       if (!this.header) {
         this.selectedPinnables.push(pinnable);
         this.roomEvent.emit(this.selectedPinnables);
-      } else{
+      } else {
         this.roomEvent.emit({ action: 'room/folder_edit', selection: pinnable });
       }
   }
 
-  buttonClicked(evnt: MouseEvent){
-    if(!this.buttonMenuOpen){
-      const target = new ElementRef(evnt.currentTarget);
-      let options = [];
-
-      if(this.selectedPinnables.length > 0 && this.bulkSelect){
-        options.push(this.genOption('Bulk Edit Selection', this.darkTheme.getColor(), 'edit'));
-        options.push(this.genOption('New Folder with Selection', this.darkTheme.getColor(), 'newFolder'));
-        // options.push(this.genOption('Delete Selection','#E32C66','delete'));
-      } else{
-        options.push(this.genOption('New Room', this.darkTheme.getColor(), 'newRoom'));
-        options.push(this.genOption('New Folder', this.darkTheme.getColor(), 'newFolder'));
-      }
-
-      const cancelDialog = this.dialog.open(ConsentMenuComponent, {
-        panelClass: 'consent-dialog-container',
-        backdropClass: 'invis-backdrop',
-        data: {'header': '', 'options': options, 'trigger': target}
-      });
-
-      cancelDialog.afterOpen().subscribe( () =>{
-        this.buttonMenuOpen = true;
-      });
-
-      cancelDialog.afterClosed().subscribe(action =>{
-        this.buttonMenuOpen = false;
-        if (action === 'delete') {
-          const currentPinIds = this.selectedPinnables.map(pinnable => pinnable.id);
-          this.pinnables = this.pinnables.filter(pinnable => pinnable.id !== currentPinIds.find(id => id === pinnable.id));
-            const pinnableToDelete = this.selectedPinnables.map(pinnable => {
-                return this.hallPassService.deletePinnable(pinnable.id);
-            });
-            return forkJoin(pinnableToDelete).subscribe(() => this.toggleBulk());
-        } else {
-            if (action) {
-                console.log('[Pinnable Collection, Dialog]:', action, ' --- ', this.selectedPinnables);
-                this.roomEvent.emit({'action': action, 'selection': this.selectedPinnables});
-            }
-        }
-      });
-
-    }
-  }
-
-  genOption(display, color, action) {
-    return {display: display, color: color, action: action};
-  }
+  // buttonClicked(evnt: MouseEvent) {
+  //   if(!this.buttonMenuOpen){
+  //     const target = new ElementRef(evnt.currentTarget);
+  //     let options = [];
+  //
+  //     if(this.selectedPinnables.length > 0 && this.bulkSelect){
+  //       options.push(this.genOption('Bulk Edit Selection', this.darkTheme.getColor(), 'edit'));
+  //       options.push(this.genOption('New Folder with Selection', this.darkTheme.getColor(), 'newFolder'));
+  //       // options.push(this.genOption('Delete Selection','#E32C66','delete'));
+  //     } else{
+  //       options.push(this.genOption('New Room', this.darkTheme.getColor(), 'newRoom'));
+  //       options.push(this.genOption('New Folder', this.darkTheme.getColor(), 'newFolder'));
+  //     }
+  //
+  //     const cancelDialog = this.dialog.open(ConsentMenuComponent, {
+  //       panelClass: 'consent-dialog-container',
+  //       backdropClass: 'invis-backdrop',
+  //       data: {'header': '', 'options': options, 'trigger': target}
+  //     });
+  //
+  //     cancelDialog.afterOpen().subscribe( () => {
+  //       this.buttonMenuOpen = true;
+  //     });
+  //
+  //     cancelDialog.afterClosed().subscribe(action => {
+  //       this.buttonMenuOpen = false;
+  //       if (action === 'delete') {
+  //         const currentPinIds = this.selectedPinnables.map(pinnable => pinnable.id);
+  //         this.pinnables = this.pinnables.filter(pinnable => pinnable.id !== currentPinIds.find(id => id === pinnable.id));
+  //           const pinnableToDelete = this.selectedPinnables.map(pinnable => {
+  //               return this.hallPassService.deletePinnable(pinnable.id);
+  //           });
+  //           return forkJoin(pinnableToDelete).subscribe(() => this.toggleBulk());
+  //       } else {
+  //           if (action) {
+  //               console.log('[Pinnable Collection, Dialog]:', action, ' --- ', this.selectedPinnables);
+  //               this.roomEvent.emit({'action': action, 'selection': this.selectedPinnables});
+  //           }
+  //       }
+  //     });
+  //
+  //   }
+  // }
+  //
+  // genOption(display, color, action) {
+  //   return {display: display, color: color, action: action};
+  // }
 
 }

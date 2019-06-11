@@ -20,10 +20,10 @@ export class PinnableComponent implements OnInit {
   pinnable: Pinnable;
 
   @Input()
-  width: string = '120px';
+  width: string = '143px';
 
   @Input()
-  height: string = '70px';
+  height: string = '86.5px';
 
   @Input()
   iconWidth: string = '30px';
@@ -64,9 +64,9 @@ export class PinnableComponent implements OnInit {
 
   get shadow(){
     if(this.hovered && this.valid && !this.disabled)
-      return this.sanitizer.bypassSecurityTrustStyle('0 2px 4px 1px rgba(0, 0, 0, 0.3)');
+      return this.sanitizer.bypassSecurityTrustStyle('0px 3px 10px rgba(218, 56, 157, 0.2)');
     else
-      return this.sanitizer.bypassSecurityTrustStyle('0 2px 4px 0px rgba(0, 0, 0, 0.1)');
+      return this.sanitizer.bypassSecurityTrustStyle(' 0px 3px 5px rgba(0, 0, 0, 0.1)');
   }
 
   ngOnInit() {
