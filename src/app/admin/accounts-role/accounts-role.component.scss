@@ -27,13 +27,13 @@
       border-radius: 10px;
       font-size: 17px;
       color: #1F195E;
-      -webkit-box-shadow: 0px 0px 5px 1px #ddd;
-      -moz-box-shadow:  0px 0px 5px 1px #ddd;
-      box-shadow:  0px 0px 5px 1px #ddd;
+      -webkit-box-shadow: 0px 5px 20px 5px rgba(0, 0, 0, .6);
+      -moz-box-shadow: 0px 5px 20px 5px rgba(0, 0, 0, .6);
+      box-shadow: 0px 5px 20px 5px rgba(0, 0, 0, .6);
       &__dark {
-        -webkit-box-shadow: 0px 0px 5px 1px #0b72eb;
-        -moz-box-shadow:  0px 0px 5px 1px #0b72eb;
-        box-shadow:  0px 0px 5px 1px #0b72eb;
+        -webkit-box-shadow: 0px 5px 20px 5px #0b72eb;
+        -moz-box-shadow:  0px 5px 20px 5px #0b72eb;
+        box-shadow:  0px 5px 20px 5px #0b72eb;
       }
       &_header{
         display: flex;

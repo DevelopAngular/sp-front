@@ -41,7 +41,7 @@ export class DataTableComponent implements OnInit {
   @Input() disallowHover: boolean = false;
   @Input() backgroundColor: string = 'transparent';
   @Input() textColor: string = 'black';
-  @Input() textHeaderColor: string = '#1F195E';
+  @Input() textHeaderColor: string = '#7F879D';
   @Input() marginTopStickyHeader: string = '-40px';
 
   @Output() selectedUsers: EventEmitter<any[]> = new EventEmitter();

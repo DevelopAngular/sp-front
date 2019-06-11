@@ -126,14 +126,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isAuthenticated = t;
       });
     });
-    this.showError.pipe(
-      delay(1000)
-    ).subscribe((signInError: any) => {
-      console.log(signInError)
-      if (signInError && signInError.error) {
-        this.showUI.next(false);
-      }
-    });
+    // this.showError.pipe(
+    //   delay(1000)
+    // ).subscribe((signInError: any) => {
+    //   console.log(signInError)
+    //   if (signInError && signInError.error) {
+    //     this.showUI.next(false);
+    //   }
+    // });
     window.appLoaded(2000);
 
     this.http.schools$.pipe(

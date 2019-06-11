@@ -21,20 +21,23 @@ declare const window;
 export class NavComponent implements OnInit {
 
   @ViewChild('navMain') navMain: ElementRef;
+  @ViewChild('navButtonsContainter') navButtonsContainterRef: ElementRef;
+  @ViewChild('tabRef') tabRef: ElementRef;
   @Output('restrictAccess') restrictAccess: EventEmitter<boolean> = new EventEmitter();
 
   buttons = [
-    {title: 'Dashboard', route : 'dashboard', type: 'routerLink', imgUrl : './assets/Dashboard', requiredRoles: ['_profile_admin', 'access_admin_dashboard']},
-    {title: 'Hall Monitor', route : 'hallmonitor', type: 'routerLink', imgUrl : './assets/Walking', requiredRoles: ['_profile_admin', 'access_hall_monitor']},
-    {title: 'Search', route : 'search', type: 'routerLink', imgUrl : './assets/Search Eye', requiredRoles: ['_profile_admin', 'access_admin_search']},
-    {title: 'Pass Configuration', route : 'passconfig', type: 'routerLink', imgUrl : './assets/SP Arrow', requiredRoles: ['_profile_admin', 'access_pass_config']},
-    {title: 'Accounts & Profiles', route : 'accounts', type: 'routerLink', imgUrl : './assets/Users', requiredRoles: ['_profile_admin', 'access_user_config']},
+    {title: 'Dashboard', route : 'dashboard', type: 'routerLink', imgUrl : 'Dashboard', requiredRoles: ['_profile_admin', 'access_admin_dashboard']},
+    {title: 'Hall Monitor', route : 'hallmonitor', type: 'routerLink', imgUrl : 'Walking', requiredRoles: ['_profile_admin', 'access_hall_monitor']},
+    {title: 'Search', route : 'search', type: 'routerLink', imgUrl : 'SearchEye', requiredRoles: ['_profile_admin', 'access_admin_search']},
+    {title: 'Rooms', route : 'passconfig', type: 'routerLink', imgUrl : 'Rooms', requiredRoles: ['_profile_admin', 'access_pass_config']},
+    {title: 'Accounts', route : 'accounts', type: 'routerLink', imgUrl : 'Users', requiredRoles: ['_profile_admin', 'access_user_config']},
+    {title: 'My School', route : 'myschool', type: 'routerLink', imgUrl : 'School', requiredRoles: ['_profile_admin']},
     // {title: 'Feedback', link : 'https://www.smartpass.app/feedback', type: 'staticButton', externalApp: 'mailto:feedback@smartpass.app', imgUrl : './assets/Feedback', requiredRoles: ['_profile_admin']},
     // {title: 'Support', link : 'https://www.smartpass.app/support', type: 'staticButton', imgUrl : './assets/Support', requiredRoles: ['_profile_admin']},
   ];
   fakeMenu = new BehaviorSubject<boolean>(false);
   tab: string[] = ['dashboard'];
-
+  private pts: string;
     constructor(
         public router: Router,
         private activeRoute: ActivatedRoute,
@@ -53,12 +56,19 @@ export class NavComponent implements OnInit {
   selectedSettings: boolean;
 
   get settingsIcon () {
-    return `./assets/Settings (${this.darkTheme.isEnabled$.value ? 'White' : 'Navy'}).svg`;
+    return `./assets/Settings (${this.darkTheme.isEnabled$.value ? 'White' : 'Blue-Gray'}).svg`;
+  }
+  get pointerTopSpace() {
+    return this.pts;
   }
 
   ngOnInit() {
 
     disableBodyScroll(this.navMain.nativeElement);
+
+    // setTimeout(() => {
+    //   this.tabRef.nativeElement.click();
+    // } , 250);
 
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit.slice(1);
@@ -157,6 +167,12 @@ export class NavComponent implements OnInit {
           window.open('https://www.smartpass.app/legal');
         }
     });
+  }
+
+  selectTab(evt: HTMLElement, container: HTMLElement) {
+    const containerRect = container.getBoundingClientRect();
+    const selectedTabRect = (evt as HTMLElement ).getBoundingClientRect();
+    this.pts = Math.round(selectedTabRect.top - containerRect.top) + 'px';
   }
 
   isSelected(route: string) {

@@ -21,13 +21,14 @@ export class ProgressInterceptor implements HttpInterceptor {
                     .pipe(
                       finalize(() => this.progress.ref().complete()),
                       catchError((error: any) => {
-                        console.log(error);
+                        // console.log(error);
                           if (
                               (error.status >= 400 &&
                                error.status < 600 &&
-                               error.url !== 'https://smartpass.app/api/discovery/find' &&
-                               error.url !== 'https://smartpass.app/api/staging/o/token/') || error.status === 0)
+                               !error.url.search('/discovery/find') &&
+                                !error.url.search('/o/token/')) || error.status === 0)
                           {
+                            console.log(error);
                             this.http.errorToast$.next(true);
                           }
                         return throwError(error);

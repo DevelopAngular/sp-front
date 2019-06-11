@@ -1,30 +1,48 @@
+@import "../../../sp-colors";
+
 :host {
-    max-width: 303px;
+    //max-width: 219px;
+    width: 219px;
 }
 .nav-wrapper{
     display: flex;
     flex-direction: column;
     background-color: white;
     height: 100%;
-    width: 303px;
+    width: 219px;
     white-space: nowrap;
     position: relative;
     overflow-x: hidden;
+  -webkit-box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, .07);
+  -moz-box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, .07);
+  box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, .07);
 }
 .nav-main {
   overflow-y: scroll;
-  padding: 0 30px 85px 30px;
+  padding: 0 0px 85px 29px;
 }
 .nav-header{
     display: flex;
     flex-direction: row;
-    justify-content: center;
-    margin: 20px 0;
+    //justify-content: center;
+    margin: 26px 0px;
 }
 
 .nav-buttons{
     display: flex;
     flex-direction: column;
+  margin-top: 3px;
+  position: relative;
+  .selected-tab-pointer {
+    transition: all 0.4s ease;
+    position: absolute;
+    right: 0px;
+    height: 50px;
+    width: 5px;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    background-color: $jade;
+  }
 }
 
 .nav-footer{
@@ -49,7 +67,7 @@
 }
 
 .active-route {
-    background-color: rgb(228, 235, 255);
+    background-color: rgb(244, 244, 244);
     border-radius: 50%;
     animation: active-route .2s ease forwards;
     &__dark {
@@ -60,10 +78,10 @@
 
 @keyframes active-route{
     0%{
-      box-shadow: 0 0 0 0px rgb(228, 235, 255);
+      box-shadow: 0 0 0 0px rgb(244, 244, 244);
     }
     100%{
-      box-shadow: 0 0 0 10px rgb(228, 235, 255);
+      box-shadow: 0 0 0 10px rgb(244, 244, 244);
     }
 }
 
@@ -79,7 +97,7 @@
 .footer-text {
     font-size: 14pt;
     margin-left: 30px;
-    font-weight: bold;
+    //font-weight: bold;
     padding-left: 15px;
     color: #3d396b;
     white-space: normal;

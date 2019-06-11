@@ -8,6 +8,7 @@ import { PassConfigComponent } from './pass-config/pass-config.component';
 import {AccountsComponent} from './accounts/accounts.component';
 import {AccountsRoleComponent} from './accounts-role/accounts-role.component';
 import {SettingsComponent} from './settings/settings.component';
+import {MySchoolComponent} from './my-school/my-school.component';
 
 const routes: Routes = [
   {
@@ -20,6 +21,7 @@ const routes: Routes = [
       {path: 'accounts', component: AccountsComponent},
       {path: 'accounts/:role', component: AccountsRoleComponent},
       {path: 'passconfig', component: PassConfigComponent},
+      {path: 'myschool', component: MySchoolComponent},
       // {path: 'settings', component: SettingsComponent},
       // {path: 'feedback', component: FeedbackComponent},
       // {path: 'support', component: SupportComponent},
