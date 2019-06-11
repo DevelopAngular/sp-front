@@ -1,4 +1,4 @@
-import {Component, OnInit, Inject, ViewChild, ElementRef} from '@angular/core';
+import {Component, OnInit, Inject, ViewChild, ElementRef, HostListener} from '@angular/core';
 import { User } from '../models/User';
 import { HttpService } from '../services/http-service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '../../../node_modules/@angular/material';
@@ -7,6 +7,7 @@ import {showReportDialog} from '@sentry/browser';
 import {NextStep} from '../animations';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {DomSanitizer} from '@angular/platform-browser';
+import {ScreenService} from '../services/screen.service';
 
 @Component({
   selector: 'app-report-form',
@@ -23,18 +24,18 @@ export class ReportFormComponent implements OnInit {
   }
 
   frameMotion$;
-  formState: string = 'studentSelect';
+  formState = 'studentSelect';
   selectedStudents: User[] = [];
-  showOptions: boolean = true;
-  reportMessage: string = '';
+  showOptions = true;
+  reportMessage = '';
+
 
   constructor(private http: HttpService,
               private adminService: AdminService,
               private dialogRef: MatDialogRef<ReportFormComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any,
               private createForm: CreateFormService,
-              private sanitizer: DomSanitizer
-
+              private sanitizer: DomSanitizer,
   ) {}
 
   ngOnInit() {
@@ -99,4 +100,5 @@ export class ReportFormComponent implements OnInit {
     }, 100);
 
   }
+
 }

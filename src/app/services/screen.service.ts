@@ -41,7 +41,7 @@ export class ScreenService {
   }
 
   get isIpadWidth() {
-    return this.largeDevicesBreakPoint >= this.windowWidth && this.windowWidth > this.midDevicesBreakPoint;
+    return this.extraLargeDeviceBreakPoint >= this.windowWidth  && this.midDevicesBreakPoint <= this.windowWidth;
   }
 
   private get windowWidth() {

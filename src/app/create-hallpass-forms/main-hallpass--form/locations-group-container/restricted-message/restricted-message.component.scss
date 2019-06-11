@@ -35,13 +35,19 @@
 
 @media all and (min-width: 360px) and (max-width: 475px) {
   img.back-btn-bottom {
-    bottom: -45px;
+    bottom: -40px;
   }
 }
 
-@media all and (min-width: 320px) and (max-width: 360px) {
+@media all and (max-width: 360px) {
   img.back-btn-bottom {
-    bottom: -32px;
+    bottom: -40px;
+  }
+}
+
+@media all and (max-width: 320px) {
+  img.back-btn-bottom {
+    bottom: -35px;
   }
 }
 
@@ -150,7 +156,6 @@
         line-height: 1.08;
         letter-spacing: 0.3px;
         background: transparent;
-        width: 350px;
         &:focus {
           border: 1px solid transparent;
           transition: border .3s ease;

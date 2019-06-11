@@ -29,6 +29,17 @@
   img.back-btn-bottom {
     bottom: -32px;
   }
+
+@media all and (max-width: 360px) {
+  img.back-btn-bottom {
+    bottom: -40px;
+  }
+}
+
+@media all and (max-width: 320px) {
+  img.back-btn-bottom {
+    bottom: -35px;
+  }
 }
 
 .rest-tar-wrapper {

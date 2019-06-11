@@ -29,6 +29,18 @@
   }
 }
 
+@media all and (max-width: 360px) {
+  img.back-btn-bottom {
+    bottom: -40px;
+  }
+}
+
+@media all and (max-width: 320px) {
+  img.back-btn-bottom {
+    bottom: -35px;
+  }
+}
+
 .category-wrapper {
   height: 500px;
   display: flex;

@@ -90,6 +90,18 @@
     }
   }
 
+  @media all and (max-width: 360px) {
+    img.back-btn-bottom {
+      bottom: -40px;
+    }
+  }
+
+  @media all and (max-width: 320px) {
+    img.back-btn-bottom {
+      bottom: -35px;
+    }
+  }
+
   .step-1-container {
     $primary-color: #3D396B;
     $secondary-color: #999999;

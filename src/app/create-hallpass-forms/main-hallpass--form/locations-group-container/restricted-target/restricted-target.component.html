@@ -1,6 +1,8 @@
 <div class="rest-tar-wrapper">
   <div [ngClass]="headerTransition" [style.background-image]="headerGradient">
-    <img class="back-button back-button-white back-btn-top" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" (click)="back()">
+    <div (click)="back()">
+      <img class="back-button back-button-white back-btn-top" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset">
+    </div>
     <div class="rest-tar-header-text">
       <img class="search-icon" [src]="'./assets/Lock (White).svg' | resolveAsset">
       <div class="text ds-dialog-title-white">Send Pass Request To?</div>

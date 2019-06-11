@@ -16,6 +16,7 @@ import {DataService} from "../../services/data-service";
 import {LocationsService} from "../../services/locations.service";
 import {ScreenService} from '../../services/screen.service';
 
+
 export enum Role { Teacher = 1, Student = 2 }
 
 export enum FormFactor { HallPass = 1, Request = 2, Invitation = 3 }
@@ -94,8 +95,6 @@ export class MainHallPassFormComponent implements OnInit {
   ngOnInit() {
     this.isDeviceMid = this.screenService.isDeviceMid;
     this.isDeviceLarge = this.screenService.isDeviceLarge;
-    // console.log(this.isDeviceSmall);
-    // debugger;
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.FORM_STATE = {
       step: null,

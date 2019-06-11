@@ -61,6 +61,7 @@ export class NavbarComponent implements OnInit {
 
   islargeDeviceWidth: boolean;
 
+  isHallMonitorRoute: boolean;
 
   buttonHash = {
     passes: {title: 'Passes', route: 'passes', imgUrl: 'SP Arrow', requiredRoles: ['_profile_teacher', 'access_passes'], hidden: false},
@@ -73,24 +74,24 @@ export class NavbarComponent implements OnInit {
   fakeMenu: ReplaySubject<boolean> = new ReplaySubject<boolean>();
 
   constructor(
-      private dataService: DataService,
-      private userService: UserService,
-      private screenService: ScreenService,
-      public dialog: MatDialog,
-      public router: Router,
-      private location: Location,
-      public loadingService: LoadingService,
-      public loginService: GoogleLoginService,
-      private locationService: LocationsService,
-      private _zone: NgZone,
-      private navbarData: NavbarDataService,
-      private process: NgProgress,
-      private activeRoute: ActivatedRoute,
-      public  notifService: NotificationService,
-      public darkTheme: DarkThemeSwitch,
-      private http: HttpService,
-      private storage: StorageService,
-      public kioskMode: KioskModeService,
+    private dataService: DataService,
+    private userService: UserService,
+    private screenService: ScreenService,
+    public dialog: MatDialog,
+    public router: Router,
+    private location: Location,
+    public loadingService: LoadingService,
+    public loginService: GoogleLoginService,
+    private locationService: LocationsService,
+    private _zone: NgZone,
+    private navbarData: NavbarDataService,
+    private process: NgProgress,
+    private activeRoute: ActivatedRoute,
+    public  notifService: NotificationService,
+    public darkTheme: DarkThemeSwitch,
+    private http: HttpService,
+    private storage: StorageService,
+    public kioskMode: KioskModeService,
   ) {
 
     const navbarEnabled$ = combineLatest(
@@ -117,8 +118,8 @@ export class NavbarComponent implements OnInit {
     this.hideButtons = this.router.url === '/main/kioskMode';
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit[urlSplit.length - 1];
-
-    this.router.events.subscribe((value) => {
+    this.isHallMonitorRoute = this.router.url === '/main/hallmonitor';
+    this.router.events.subscribe(value => {
       if (value instanceof NavigationEnd) {
         this.hideButtons = value.url === '/main/kioskMode';
         console.log('Hide ===>>', value.url);
@@ -127,6 +128,7 @@ export class NavbarComponent implements OnInit {
         this.tab = ((this.tab === '' || this.tab === 'main') ? 'passes' : this.tab);
         this.inboxVisibility = this.tab !== 'settings';
         this.dataService.updateInbox(this.inboxVisibility);
+        this.isHallMonitorRoute = this.router.url === '/main/hallmonitor';
       }
     });
 
@@ -193,8 +195,8 @@ export class NavbarComponent implements OnInit {
         ) {
             this.fakeMenu.next(true);
           }
+        });
       });
-    });
 
     this.islargeDeviceWidth = this.screenService.isDeviceLargeExtra;
   }

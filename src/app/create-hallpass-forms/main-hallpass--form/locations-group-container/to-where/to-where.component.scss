@@ -46,6 +46,18 @@
   }
 }
 
+@media all and (max-width: 360px) {
+  img.back-btn-bottom {
+    bottom: -40px;
+  }
+}
+
+@media all and (max-width: 320px) {
+  img.back-btn-bottom {
+    bottom: -35px;
+  }
+}
+
 .to-wrapper, .to-wrapper-to-date {
   height: 500px;
   display: flex;
