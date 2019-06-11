@@ -1,7 +1,35 @@
 <div *ngIf="userLoaded" style="height: 100%">
+  <div class="my-room-options-mobile-wrapper">
+    <div class="my-room-options-mobile">
+      <div class="option-wrapper">
+        <img class="search-icon"(click)="toggleSearchBar()" [src]="getIcon('./assets/Search Eye (Navy).svg') | resolveAsset">
+      </div>
+      <div  *ngIf="isSearchBarClicked" class="search-wrapper">
+        <app-round-input
+          [minWidth]="'100%'"
+          [width]="'100%'"
+          [type]="'text'"
+          [placeholder]="'Search'"
+          [fieldIconPosition]="'left'"
+          [closeIcon]="true"
+          (ontextupdate)="onSearch($event)"
+          [selectReset$] = "resetValue"
+        ></app-round-input>
+      </div>
+      <div class="cancel-wrapper"*ngIf="isSearchBarClicked" (click)="cleanSearchValue()">
+        <span class="cancel">Cancel</span>
+      </div>
+      <div class="option-wrapper option-wrapper-calendar" (click)="calendarClick()">
+        <img [@calendarIconTrigger]='calendarIconState' *ngIf="!isCalendarShowed; else blueCalendarIcon" class="calendar-icon"  [src]="getIcon('./assets/Calendar (Navy).svg') | resolveAsset">
+        <ng-template #blueCalendarIcon>
+          <img [@calendarIconTrigger]='calendarIconState' class="calendar-icon"  src = "../../assets/Calendar%20(Blue).svg">
+        </ng-template>
+      </div>
+    </div>
+  </div>
   <div *ngIf="UI" class="my-room-wrapper" [style.width]="calendarToggled?'900px':'550px'">
     <div class="my-room-left" *ngIf="!(kioskMode.currentRoom$ | async)">
-      <div class="my-room-header">
+      <div class="my-room-header" [@headerTrigger]="headerState">
         <div class="selected-teacher"
              [style.cursor]="roomOptions.length > 1 ? 'pointer' : 'default'" #target (click)="showOptions(target)"
              [style.color]="myRoomHeaderColor"
@@ -11,20 +39,33 @@
         </div>
         <div [style.margin-left]="'auto'"
              [style.margin-right]="'10px'">
-          <app-round-input
-            [minWidth]="'215px'"
-            [width]="'215px'"
-            [type]="'text'"
-            [placeholder]="'Search'"
-            [fieldIconPosition]="'left'"
-            [closeIcon]="true"
-            (ontextupdate)="onSearch($event)"
-          ></app-round-input>
+          <div class="search">
+            <app-round-input
+              [minWidth]="'215px'"
+              [width]="'215px'"
+              [type]="'text'"
+              [placeholder]="'Search'"
+              [fieldIconPosition]="'left'"
+              [closeIcon]="true"
+              (ontextupdate)="onSearch($event)"
+            ></app-round-input>
+          </div>
         </div>
         <div class="calendar-wrapper" (click)="chooseDate($event)" [style.background-color]="(calendarToggled?'#E4EBFF':'transparent')">
           <img class="calendar-icon" [src]="getIcon('./assets/Calendar (Navy).svg') | resolveAsset">
         </div>
         <div class="date-display" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ dateDisplay }}</div>
+        <div class="date-display-mobile" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ dateDisplay }}</div>
+      </div>
+
+      <div [@calendarSlide] = "calendarSlideState('topBottom')" *ngIf="!this.screenService.isIpadWidth && !this.screenService.isDesktopWidth" class="calendar-card-wrapper">
+        <mat-card class="calendar-card">
+          <app-calendar-picker
+            [showTime]="false"
+            [showYear]="false"
+            (onSelectDate)="onDate($event)"
+          ></app-calendar-picker>
+        </mat-card>
       </div>
 
       <div class="kiosk-mode-button"
@@ -44,47 +85,55 @@
           <img width="20" height="20" [src]="darkTheme.getIcon({iconName: 'Chevron Right'})" alt="Chevron Right.svg">
         </div>
       </div>
-      <div class="my-room-body">
-        <app-pass-collection
-          [smoothlyUpdating]="true"
-          [isActive]="true"
-          [forStaff]="isStaff"
-          [style.width]="'617px'"
-          [passProvider]="activePasses"
-          [title]="'Active Passes'"
-          [icon]="'./assets/Walking (Navy).svg'"
-          [columns]="4"></app-pass-collection>
-        <app-pass-collection
-          [smoothlyUpdating]="true"
-          [forStaff]="isStaff"
-          [style.width]="'617px'"
-          [passProvider]="originPasses"
-          [title]="'Passes from ' + (selectedLocation ? selectedLocation.title : 'All Rooms')"
-          [icon]="'./assets/SP Arrow Reverse (Navy).svg'"
-          [columns]="4"></app-pass-collection>
-        <app-pass-collection
-          [smoothlyUpdating]="true"
-          [forStaff]="isStaff"
-          [style.width]="'617px'"
-          [passProvider]="destinationPasses"
-          [title]="'Passes to ' + (selectedLocation ? selectedLocation.title : 'All Rooms')"
-          [icon]="'./assets/SP Arrow (Navy).svg'"
-          [columns]="4"></app-pass-collection>
 
-        <div *ngIf="!(hasPasses | async) && (passesLoaded | async)">
-          <div class="empty-container" *ngIf="inputValue != ''">
-            <img class="empty-svg" [src]="'./assets/emptyStates/emptyRoomSearch.svg' | resolveAsset" alt="empty-svg">
-            <div class="big-text" [style.margin]="'10px 0'">No Results</div>
-            <div class="small-text">Search again or change the date</div>
-          </div>
-          <div class="empty-container" *ngIf="inputValue==''">
-            <img class="empty-svg" [src]="'./assets/emptyStates/emptyRoom.svg' | resolveAsset" alt="empty-svg">
-            <div class="big-text" [style.margin]="'10px 0'">It's Blank</div>
-            <div class="small-text">There aren't any passes here</div>
+      <div class="my-room-body" [@collectionsTrigger] = 'collectionsSlideState'>
+        <div class="my-room-body-collections">
+          <app-pass-collection
+            [smoothlyUpdating]="true"
+            [isActive]="true"
+            [forStaff]="isStaff"
+            [passProvider]="activePasses"
+            [title]="'Active Passes'"
+            [icon]="'./assets/Walking (Navy).svg'"
+            [columns]="4"></app-pass-collection>
+          <app-pass-collection
+            [smoothlyUpdating]="true"
+            [forStaff]="isStaff"
+            [passProvider]="originPasses"
+            [title]="'Passes from ' + (selectedLocation ? selectedLocation.title : 'All Rooms')"
+            [icon]="'./assets/SP Arrow Reverse (Navy).svg'"
+            [columns]="4"></app-pass-collection>
+          <app-pass-collection
+            [smoothlyUpdating]="true"
+            [forStaff]="isStaff"
+            [passProvider]="destinationPasses"
+            [title]="'Passes to ' + (selectedLocation ? selectedLocation.title : 'All Rooms')"
+            [icon]="'./assets/SP Arrow (Navy).svg'"
+            [columns]="4"></app-pass-collection>
+
+          <div *ngIf="!(hasPasses | async) && (passesLoaded | async)">
+            <div class="empty-container" *ngIf="inputValue != ''">
+              <img class="empty-svg" [src]="'./assets/emptyStates/emptyRoomSearch.svg' | resolveAsset" alt="empty-svg">
+              <div class="big-text" [style.margin]="'10px 0'">No Results</div>
+              <div class="small-text">Search again or change the date</div>
+            </div>
+            <div class="empty-container" *ngIf="inputValue==''">
+              <img class="empty-svg" [src]="'./assets/emptyStates/emptyRoom.svg' | resolveAsset" alt="empty-svg">
+              <div class="big-text" [style.margin]="'10px 0'">It's Blank</div>
+              <div class="small-text">There aren't any passes here</div>
+            </div>
           </div>
         </div>
+        <div [@calendarSlide] = "calendarSlideState('leftRight')" *ngIf="this.screenService.isIpadWidth" class="calendar-card-wrapper-right">
+          <mat-card class="calendar-card">
+            <app-calendar-picker
+              [showTime]="false"
+              [showYear]="false"
+              (onSelectDate)="onDate($event)"
+            ></app-calendar-picker>
+          </mat-card>
+        </div>
       </div>
-    </div>
 
     <!--<div class="kiosk-mode-container" *ngIf="(kioskMode.currentRoom$ | async)">-->
       <!--<div class="current-pass ds-mb-25">-->
@@ -147,9 +196,10 @@
     <!--</div>-->
     <!--<div *ngIf="calendarToggled" class="my-room-right">-->
       <!--<app-date-time-picker [_selectedMoment]="searchDate" [min]="min" [showTime]="false" (onUpdate)="setSearchDate($event)"></app-date-time-picker>-->
-    <!--</div>-->
-  </div>
-  <div class="no-content-info" *ngIf="error">
-    <app-restriction-dummy></app-restriction-dummy>
+      <!--</div>-->
+    </div>
+    <div class="no-content-info" *ngIf="error">
+      <app-restriction-dummy></app-restriction-dummy>
+    </div>
   </div>
 </div>

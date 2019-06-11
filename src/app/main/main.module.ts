@@ -75,7 +75,7 @@ import {KioskModeComponent} from '../kiosk-mode/kiosk-mode.component';
     MatGridListModule,
     MatDividerModule,
     MatGridListModule,
-    MatListModule
+    MatListModule,
   ],
   declarations: [
     HallMonitorComponent,

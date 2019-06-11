@@ -13,6 +13,7 @@ import { delay, filter, map } from 'rxjs/operators';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {ScreenService} from '../services/screen.service';
 import {RepresentedUser} from '../navbar/navbar.component';
+import {SortMenuComponent} from '../sort-menu/sort-menu.component';
 import {ButtonRestriction} from '../models/button-restrictions/ButtonRestriction';
 import {ReportButtonRestriction} from '../models/button-restrictions/ReportButtonRestriction';
 import {SortBtnRestriction} from '../models/button-restrictions/SortBtnRestriction';
@@ -21,7 +22,6 @@ import {InputResctrictionXl} from '../models/input-restrictions/InputResctrictio
 import {InputRestriciontSm} from '../models/input-restrictions/InputRestriciontSm';
 import {CollectionRestriction} from '../models/collection-restrictions/CollectionRestriction';
 import {HallMonitorCollectionRestriction} from '../models/collection-restrictions/HallMonitorCollectionRestriction';
-import {SortMenuComponent} from '../sort-menu/sort-menu.component';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('_profile_teacher');
@@ -106,14 +106,26 @@ export class HallMonitorComponent implements OnInit {
   ngOnInit() {
     this.isIpadWidth = this.screenService.isIpadWidth;
     this.isDeviceLargeExtra = this.screenService.isDeviceLargeExtra;
-    this.dataService.currentUser
-      .pipe(this.loadingService.watchFirst)
-      .subscribe(user => {
-        this._zone.run(() => {
-          this.user = user;
-          this.hallMonitorCollection.forStaff = user.roles.includes('_profile_teacher');
-          this.canView = user.roles.includes('view_traveling_users');
-        });
+    combineLatest(
+      this.dataService.currentUser,
+      this.userService.effectiveUser,
+      (cu: User, eu: RepresentedUser) => {
+        return {cu, eu};
+      }
+    )
+    .pipe(this.loadingService.watchFirst)
+    .subscribe((v) => {
+      this._zone.run(() => {
+
+        this.user = v.cu;
+        this.effectiveUser = v.eu;
+        this.isStaff = v.cu.roles.includes('_profile_teacher');
+
+        if (this.effectiveUser) {
+          this.canView = this.effectiveUser.roles.includes('access_hall_monitor') && this.effectiveUser.roles.includes('view_traveling_users');
+        } else {
+          this.canView = this.user.roles.includes('access_hall_monitor') && this.user.roles.includes('view_traveling_users');
+        }
       });
 
     this.hasPasses = combineLatest(
@@ -144,12 +156,29 @@ export class HallMonitorComponent implements OnInit {
 
   openSortMenu() {
     setTimeout( () => {
+
+      const dialogData = {
+        title: 'sort by',
+        list: [
+          {name: 'pass expiration time', isSelected: false, action: 'expiration_time'},
+          {name: 'student name', isSelected: false, action: 'student_name'},
+          {name: 'destination', isSelected: false, action: 'destination_name'},
+        ],
+      };
+
       const dialogRef = this.dialog.open(SortMenuComponent, {
         position: { bottom: '1px' },
-        panelClass: 'sort-dialog'
+        panelClass: 'sort-dialog',
+        data: dialogData
+      });
+
+      dialogRef.componentInstance.onListItemClick.subscribe((index) =>  {
+          const selectedItem = dialogData.list.find((item, i ) => {
+            return i === index;
+          });
+          this.dataService.sort$.next(selectedItem.action);
       });
     } , 100);
-
   }
 
   onReportFromPassCard(studends) {
@@ -173,6 +202,7 @@ export class HallMonitorComponent implements OnInit {
   checkDeviceWidth() {
     this.isIpadWidth = this.screenService.isIpadWidth;
     this.isDeviceLargeExtra = this.screenService.isDeviceLargeExtra;
+    console.log(this.isDeviceLargeExtra);
     if (this.screenService.isDeviceMid) {
       this.isIpadSearchBar = false;
     }

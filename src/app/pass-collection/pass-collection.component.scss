@@ -39,6 +39,7 @@
     margin-bottom: 40px;
 
 }
+
 .collection-wrapper, .collection-grid-wrapper, .collection-list-wrapper {
   opacity: 0;
   animation: appearing .5s ease .1s forwards;
@@ -103,7 +104,7 @@
 //}
 
 .tile{
-  padding-bottom: 15px;
+  padding: 5px;
 }
 
 .sort-label{

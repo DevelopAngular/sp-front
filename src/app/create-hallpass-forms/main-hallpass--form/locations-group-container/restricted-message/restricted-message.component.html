@@ -1,8 +1,7 @@
 <div class="rest-mes-wrapper">
   <div [ngClass]="headerTransition" [style.background-image]="headerGradient">
-    <div (click)="back()">
-      <img class="back-button back-button-white back-btn-top" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset">
-    </div>
+
+    <img class="back-button back-button-white back-btn-top" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" (click)="back()">
     <div class="rest-mes-header-text">
       <img class="search-icon" [src]="'./assets/Message (White).svg' | resolveAsset">
       <div class="text ds-dialog-title-white">Message</div>

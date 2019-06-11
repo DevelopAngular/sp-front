@@ -63,6 +63,8 @@ export class NavbarComponent implements OnInit {
 
   isHallMonitorRoute: boolean;
 
+  isMyRoomRoute: boolean;
+
   buttonHash = {
     passes: {title: 'Passes', route: 'passes', imgUrl: 'SP Arrow', requiredRoles: ['_profile_teacher', 'access_passes'], hidden: false},
     hallMonitor: {title: 'Hall Monitor', route: 'hallmonitor', imgUrl: 'Walking', requiredRoles: ['_profile_teacher', 'access_hall_monitor'], hidden: false},
@@ -118,7 +120,10 @@ export class NavbarComponent implements OnInit {
     this.hideButtons = this.router.url === '/main/kioskMode';
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit[urlSplit.length - 1];
-    this.isHallMonitorRoute = this.router.url === '/main/hallmonitor';
+
+    this.isHallMonitorRoute =  this.router.url === '/main/hallmonitor';
+    this.isMyRoomRoute = this.router.url === '/main/myroom';
+
     this.router.events.subscribe(value => {
       if (value instanceof NavigationEnd) {
         this.hideButtons = value.url === '/main/kioskMode';
@@ -128,7 +133,8 @@ export class NavbarComponent implements OnInit {
         this.tab = ((this.tab === '' || this.tab === 'main') ? 'passes' : this.tab);
         this.inboxVisibility = this.tab !== 'settings';
         this.dataService.updateInbox(this.inboxVisibility);
-        this.isHallMonitorRoute = this.router.url === '/main/hallmonitor';
+        this.isHallMonitorRoute = value.url  === '/main/hallmonitor';
+        this.isMyRoomRoute = value.url === '/main/myroom';
       }
     });
 
@@ -362,8 +368,6 @@ export class NavbarComponent implements OnInit {
       this.updateTab('passes');
     }
   }
-
-
 
   @HostListener('window:resize')
   checkDeviceWidth() {

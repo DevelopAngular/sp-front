@@ -232,6 +232,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
     sortDialog.afterClosed().subscribe(sortMode => {
       this.onSortSelected(sortMode);
+      console.log(sortMode);
     });
   }
 

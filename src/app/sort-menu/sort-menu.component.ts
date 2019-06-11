@@ -1,7 +1,8 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnDestroy, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
 import {SortByItem} from '../models/SortByItem';
 import {DataService} from '../services/data-service';
+import {MAT_DIALOG_DATA} from '@angular/material';
 
 @Component({
   selector: 'app-sort-menu',
@@ -13,20 +14,16 @@ export class SortMenuComponent implements OnInit, OnDestroy {
   private animState: string;
 
   constructor(
+    @Inject(MAT_DIALOG_DATA) public data: {
+      title: string,
+      list: Array<SortByItem>
+    },
     public dialogRef: MatDialogRef<SortMenuComponent>,
-    private  dataService: DataService,
   ) {}
 
-  sortByList: Array<SortByItem> = [
-    {name: 'pass expiration time', isSelected: false, action: 'expiration_time'},
-    {name: 'student name', isSelected: false, action: 'student_name'},
-    {name: 'destination', isSelected: false, action: 'destination_name'},
-  ];
+  onListItemClick = new EventEmitter();
 
-  selectedAction: string;
-
-  sort$ = this.dataService.sort$;
-
+  isSelected: boolean;
 
   ngOnInit() {
   }
@@ -35,14 +32,9 @@ export class SortMenuComponent implements OnInit, OnDestroy {
   }
 
   selectSortOption(index): void {
-    this.sortByList.forEach( (sortByItem, i) => {
-        sortByItem.isSelected = i === index;
+    this.data.list.forEach( (sortByItem, i) => {
+      sortByItem.isSelected = i === index;
     });
-
-    this.selectedAction = this.sortByList.find(sortByItem => {
-      return sortByItem.isSelected === true;
-    }).action;
-
-    this.sort$.next(this.selectedAction);
+    this.onListItemClick.emit(index);
   }
 }

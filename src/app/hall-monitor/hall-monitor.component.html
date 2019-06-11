@@ -1,4 +1,4 @@
-<div *ngIf="user" class="hall-monitor">
+<div *ngIf="user" style="height: 100%; position: relative">
   <div *ngIf="canView" class="hall-monitor-wrapper">
     <div class="hall-monitor-top">
       <ng-container *ngIf="!isDeviceLargeExtra; else hallMontiorTopMobile">
@@ -135,3 +135,4 @@
       [minHeight]="sortBtn.minHeight"
     ><span class="sort-btn-label">Sort</span> </app-gradient-button>
   </div>
+

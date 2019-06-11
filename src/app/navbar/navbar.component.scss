@@ -273,14 +273,13 @@
   border-top: 1px solid #1F195E;
   height: 68px;
   align-items: center;
-  z-index: 1;
+  z-index: 11;
   justify-content: center;
   &-wrapper {
     display: flex;
     width: 100%;
   }
 }
-
 
 .nav-buttons-width {
   width: 34%;
