@@ -31,7 +31,6 @@
   }
 }
 
-
 @media all and (max-width: 360px) {
   img.back-btn-bottom {
     bottom: -40px;
@@ -69,10 +68,12 @@
     overflow: hidden;
 
     .back-button {
+      &-wrapper {
+        position: absolute;
+      }
       width: 28px;
       height: 28px;
       margin-left: 20px;
-      position: absolute;
       z-index: 11;
       user-select: none;
       cursor: pointer;

@@ -1,3 +1,4 @@
+<div>
 <div class="from-wrapper"  [ngClass]="{ 'from-wrapper-to-date': formState.forLater, 'from-wrapper': !formState.forLater}">
   <div class="from-header" [style.background-image]="'radial-gradient(circle at 98% 97%, #FFFFFF, #FFFFFF)'">
     <img class="back-button back-button-grey back-btn-top" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
@@ -31,5 +32,5 @@
   <!--<div class="shadow" [style.bottom]="date ? '65px' : '43px'" *ngIf="shadow"></div>-->
   <app-student-footer [date]="date" [formState]="formState" [state]="'from'" *ngIf="!isStaff"></app-student-footer>
   <app-teacher-footer *ngIf="isStaff" [formState]="formState" [date]="date" [studentText]="studentText" [state]="'from'"></app-teacher-footer>
-  <img class="back-button back-button-grey back-btn-bottom" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
+</div>
 </div>

@@ -50,6 +50,17 @@
 }
 
 @media all and (max-width: 425px) {
+  img.back-button-bottom {
+    display: block;
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 50px;
+    z-index: 9999;
+  }
+
   div.student-search {
     width: 76%;
     margin-right: 10px;
@@ -68,6 +79,7 @@
   ::ng-deep div.sort-dialog {
       max-width: 100% !important;
   }
+
 }
 
 @media all and (max-width: 1024px) and (min-width: 768px ) {
@@ -102,50 +114,14 @@
   }
 }
 
-@media all and (max-width: 425px) {
-  div.student-search {
-    width: 76%;
-    margin-right: 10px;
+@media all and (max-width: 320px) {
+  .form-dialog-container {
+    height: 300px !important;
   }
 
-  div.student-search-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  img.back-button-bottom {
+    bottom: 30px;
   }
-
-  ::ng-deep .report-dialog {
-    height: 409px !important;
-  }
-
-  ::ng-deep div.sort-dialog {
-      max-width: 100% !important;
-  }
-}
-
-@media all and (max-width: 1024px) and (min-width: 768px ) {
-  div.student-search {
-    width: 379px;
-    margin-right: 10px;
-  }
-
-  div.student-search-wrapper {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 45px;
-  }
-
-  div.cancel-wrapper {
-    width: 60px;
-  }
-
-  ::ng-deep div.sort-dialog {
-    max-width: 375px !important;
-    margin-bottom: 70px !important;
-    width: 100%;
-  }
-
 }
 
 :host {
@@ -302,5 +278,11 @@ input {
     animation: menu-close 1s ease;
 }
 
+.back-button-bottom {
+  display: none;
+}
 
-
+::ng-deep .report-dialog {
+  height: 500px;
+  width: 425px;
+}

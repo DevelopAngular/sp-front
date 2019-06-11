@@ -11,6 +11,7 @@ import { ReportFormComponent } from '../report-form/report-form.component';
 import {Report} from '../models/Report';
 import { delay, filter, map } from 'rxjs/operators';
 import {DarkThemeSwitch} from '../dark-theme-switch';
+import {UserService} from '../services/user.service';
 import {ScreenService} from '../services/screen.service';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {SortMenuComponent} from '../sort-menu/sort-menu.component';
@@ -22,7 +23,6 @@ import {InputResctrictionXl} from '../models/input-restrictions/InputResctrictio
 import {InputRestriciontSm} from '../models/input-restrictions/InputRestriciontSm';
 import {CollectionRestriction} from '../models/collection-restrictions/CollectionRestriction';
 import {HallMonitorCollectionRestriction} from '../models/collection-restrictions/HallMonitorCollectionRestriction';
-import {UserService} from '../services/user.service';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('_profile_teacher');
@@ -66,6 +66,10 @@ export class HallMonitorComponent implements OnInit {
   passesLoaded: Observable<boolean> = of(false);
 
   hasPasses: Observable<boolean> = of(false);
+
+  isReportFormOpened: boolean;
+
+  reportFormInstance: ReportFormComponent;
 
   isDeviceLargeExtra: boolean;
 
@@ -129,6 +133,8 @@ export class HallMonitorComponent implements OnInit {
           this.canView = this.user.roles.includes('access_hall_monitor') && this.user.roles.includes('view_traveling_users');
         }
       });
+    })
+
 
     this.hasPasses = combineLatest(
         this.activePassProvider.length$,
@@ -139,10 +145,18 @@ export class HallMonitorComponent implements OnInit {
         this.activePassProvider.loaded$,
         (l1) => l1
       );
-  });
+
+      this.dialog.afterOpened.subscribe( () => {
+        this.isReportFormOpened = true;
+      });
+
+      this.dialog.afterAllClosed.subscribe( () => {
+        this.isReportFormOpened = false;
+      });
   }
 
   openReportForm() {
+
     const dialogRef = this.dialog.open(ReportFormComponent, {
       panelClass: ['form-dialog-container', 'report-dialog'],
       backdropClass: 'custom-backdrop',
@@ -155,6 +169,8 @@ export class HallMonitorComponent implements OnInit {
     }), delay(3000)).subscribe(() => {
       this.isActiveMessage = false;
     });
+
+    this.reportFormInstance = dialogRef.componentInstance;
   }
 
   openSortMenu() {
@@ -199,6 +215,10 @@ export class HallMonitorComponent implements OnInit {
   onSearch(search: string) {
     this.inputValue = search;
     this.searchQuery$.next(search);
+  }
+
+  back() {
+    this.reportFormInstance.back();
   }
 
   @HostListener('window:resize')

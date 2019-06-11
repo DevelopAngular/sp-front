@@ -165,15 +165,10 @@ export class RestrictedMessageComponent implements OnInit {
   }
 
   private getViewRestriction(): MessageBoxViewRestriction {
-    if (this.screenService.isDeviceSmall) {
+    if (this.screenService.isDeviceSmall || this.screenService.isDeviceMid) {
       return new MessageBoxViewRestrictionSm();
-    }
-
-    if (this.screenService.isDeviceMid) {
-      return new MessageBoxViewRestrictionMd();
     }
 
     return new MessageBoxViewRestrictionLg();
   }
-
 }

@@ -171,7 +171,7 @@ export class MainHallPassFormComponent implements OnInit {
         break;
     }
     this.setFormSize();
-
+    this.checkDeviceScreen();
       this.dataService.currentUser.subscribe((user: User) => {
           this.isStaff = user.isTeacher() || user.isAdmin();
           this.user = user;
@@ -232,7 +232,7 @@ export class MainHallPassFormComponent implements OnInit {
             this.formSize.width =  `425px`;
             this.formSize.height =  `500px`;
           } else {
-            this.formSize.width =  `700px`;
+            this.formSize.width =  this.isDeviceLarge ?  `600px` : `700px`;
             this.formSize.height =  `400px`;
           }
           break;
@@ -254,6 +254,8 @@ export class MainHallPassFormComponent implements OnInit {
   checkDeviceScreen() {
     this.isDeviceMid = this.screenService.isDeviceMid;
     this.isDeviceLarge = this.screenService.isDeviceLarge;
-    this.formSize.width = this.isDeviceLarge ?  '600px' : '700px';
+    if (this.isStaff) {
+      this.formSize.width = this.isDeviceLarge ?  '600px' : '700px';
+    }
   }
 }

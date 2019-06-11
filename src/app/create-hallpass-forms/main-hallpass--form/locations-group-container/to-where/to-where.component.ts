@@ -1,4 +1,4 @@
-import {Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild, Inject} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output, Inject} from '@angular/core';
 import { Pinnable } from '../../../../models/Pinnable';
 import { Navigation } from '../../main-hall-pass-form.component';
 import { CreateFormService } from '../../../create-form.service';

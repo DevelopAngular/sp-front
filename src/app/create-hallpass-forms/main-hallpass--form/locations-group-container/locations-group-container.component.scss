@@ -1,7 +1,16 @@
 :host {
   @media all  and (max-width: 475px) {
-    div.locations-group-wrapper {
-      overflow: initial;
+    img.back-btn-top {
+      display: none;
+    }
+
+    img.back-btn-bottom {
+      display: block;
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      left: 50%;
+      transform: translateX(-50%);
     }
 
     div.ng-trigger-NextStep {
@@ -11,6 +20,19 @@
       width: 100% !important;
     }
   }
+
+  @media all and (min-width: 360px) and (max-width: 475px) {
+    img.back-btn-bottom {
+      bottom: -60px;
+    }
+  }
+
+  @media all and (min-width: 320px) and (max-width: 360px) {
+    img.back-btn-bottom {
+      bottom: -32px;
+    }
+  }
+
 
   .locations-group-wrapper {
     //background-color: #fff;
@@ -24,5 +46,17 @@
   .next-step {
     width: 100%;
     position: absolute;
+  }
+
+  .back-button {
+    width: 28px;
+    height: 28px;
+    position: absolute;
+    user-select: none;
+    cursor: pointer;
+  }
+
+  .back-btn-bottom {
+    display: none;
   }
 }

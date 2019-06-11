@@ -1,7 +1,8 @@
 <div class="rest-mes-wrapper">
   <div [ngClass]="headerTransition" [style.background-image]="headerGradient">
-
-    <img class="back-button back-button-white back-btn-top" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" (click)="back()">
+    <div class="back-button-wrapper" (click)="back()">
+      <img class="back-button back-button-white back-btn-top" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset">
+    </div>
     <div class="rest-mes-header-text">
       <img class="search-icon" [src]="'./assets/Message (White).svg' | resolveAsset">
       <div class="text ds-dialog-title-white">Message</div>
@@ -74,5 +75,4 @@
                        class="message-deny-button"
   >Deny Pass Request</app-gradient-button>
   <app-student-footer *ngIf="formState.forInput || formState.missedRequest" [formState]="formState" [date]="date" (changeAnimationDirectionEvent)="onChangeAnimationDirection($event)"></app-student-footer>
-  <img class="back-button back-button-whitee back-btn-bottom" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" (click)="back()">
 </div>
