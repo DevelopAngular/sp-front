@@ -22,6 +22,7 @@ import {InputResctrictionXl} from '../models/input-restrictions/InputResctrictio
 import {InputRestriciontSm} from '../models/input-restrictions/InputRestriciontSm';
 import {CollectionRestriction} from '../models/collection-restrictions/CollectionRestriction';
 import {HallMonitorCollectionRestriction} from '../models/collection-restrictions/HallMonitorCollectionRestriction';
+import {UserService} from '../services/user.service';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('_profile_teacher');
@@ -87,6 +88,7 @@ export class HallMonitorComponent implements OnInit {
   hallMonitorCollection: CollectionRestriction = new HallMonitorCollectionRestriction();
 
   constructor(
+    private userService: UserService,
     public dataService: DataService,
     private _zone: NgZone,
     private loadingService: LoadingService,
@@ -137,6 +139,7 @@ export class HallMonitorComponent implements OnInit {
         this.activePassProvider.loaded$,
         (l1) => l1
       );
+  });
   }
 
   openReportForm() {
