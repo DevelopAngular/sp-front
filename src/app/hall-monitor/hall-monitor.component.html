@@ -1,6 +1,5 @@
 <div *ngIf="user" style="height: 100%; position: relative">
   <div *ngIf="canView" class="hall-monitor-wrapper">
-    <img (click)="back()" *ngIf="this.isReportFormOpened" class="back-button-bottom"  [src]="'./assets/Back Button (White).svg' | resolveAsset" >
     <div class="hall-monitor-top">
       <ng-container *ngIf="!isDeviceLargeExtra; else hallMontiorTopMobile">
       <app-round-input
@@ -123,6 +122,7 @@
     <!--<h3 *ngIf="!isStaff && userLoaded">You don't have access to this page</h3>-->
     <app-restriction-dummy></app-restriction-dummy>
   </div>
+  <img (click)="back()" *ngIf="this.isReportFormOpened" class="back-button-bottom"  [src]="'./assets/Back Button (White).svg' | resolveAsset" >
 </div>
 
   <div class="sort-btn" (click)="openSortMenu()" *ngIf="(hasPasses | async) && (passesLoaded | async) && isDeviceLargeExtra ">

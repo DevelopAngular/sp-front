@@ -52,13 +52,6 @@
 @media all and (max-width: 425px) {
   img.back-button-bottom {
     display: block;
-    position: absolute;
-    width: 28px;
-    height: 28px;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 50px;
-    z-index: 9999;
   }
 
   div.student-search {
@@ -103,14 +96,6 @@
     width: 100%;
     max-width: 375px !important;
     margin-bottom: 70px !important;
-  }
-}
-
-@media all and (max-width: 768px ) {
-  div.hall-monitor-bottom {
-    padding-top: 25px;
-    width: 90%;
-    margin: auto;
   }
 }
 
@@ -279,7 +264,13 @@ input {
 }
 
 .back-button-bottom {
-  display: none;
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 100px;
+  z-index: 9999;
 }
 
 ::ng-deep .report-dialog {

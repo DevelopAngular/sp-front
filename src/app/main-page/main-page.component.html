@@ -5,7 +5,6 @@
   </mat-sidenav>
 
   <mat-sidenav class="requests-side-nav" position="end" mode="push" [opened]="(toggleRight | async)">
-
     <mat-card class="request-card"  [style.background-color]="darkTheme.getBackground('high', true)">
       <div class="request-title" [style.color]="titleColor">Requests</div>
       <div class="requests-or-invitations">
@@ -34,4 +33,5 @@
       <router-outlet></router-outlet>
     </ng-container>
   </mat-sidenav-content>
+
 </mat-sidenav-container>

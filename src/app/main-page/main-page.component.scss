@@ -61,3 +61,8 @@
   margin: 20px 0;
   width: 330px;
 }
+
+mat-sidenav-container,
+mat-sidenav-content {
+  z-index: unset;
+}
