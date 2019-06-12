@@ -37,7 +37,7 @@ export class SettingsComponent implements OnInit {
   hoveredSignout: boolean;
   hovered: boolean;
   hoveredColor: string;
-  version = 'Version 1.3';
+  version = 'Version 1.5';
   currentRelease = RELEASE_NAME;
 
   constructor(
