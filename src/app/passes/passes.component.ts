@@ -241,7 +241,7 @@ export class PassesComponent implements OnInit {
     private notifService: NotificationService,
     private timeService: TimeService,
     private navbarService: NavbarDataService,
-    private screenService: ScreenService,
+    public screenService: ScreenService,
     public darkTheme: DarkThemeSwitch,
 
   ) {

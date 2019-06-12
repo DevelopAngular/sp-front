@@ -20,7 +20,7 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
   @Output() clickEvent: EventEmitter<boolean> = new EventEmitter();
 
   hovered: boolean = false;
-  down: false;
+  down: boolean = false;
 
   private destroyer$: Subject<any> = new Subject();
 
