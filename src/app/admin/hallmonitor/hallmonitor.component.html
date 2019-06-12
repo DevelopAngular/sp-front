@@ -42,7 +42,7 @@
       </div>
     </div>
     <div class="reported-students">
-      <div class="reported-students-internal">
+      <div class="reported-students-internal" #reportBox (scroll)="onScroll($event)">
         <div *ngIf="pending" class="loading-theme_blue-gray spinner ds-flex-center-center ds-w-100 ds-h-100"
 
         >

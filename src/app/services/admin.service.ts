@@ -13,8 +13,8 @@ export class AdminService {
   constructor(private http: HttpService) { }
 
   /// Reports
-  getReports() {
-    return this.http.get('v1/event_reports');
+  getReports(limit = 10) {
+    return this.http.get(`v1/event_reports?limit=${limit}`);
   }
 
   sendReport(data) {

@@ -4,7 +4,7 @@
 
 .overlay {
   position: relative;
-  box-shadow: 0px 3px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
   border-radius: 12px;
 }
 
@@ -47,11 +47,10 @@
 .bottom-shadow {
     position: absolute;
     bottom: 0px;
-    height: 16px;
+    //height: 16px;
     width: 100%;
     border-radius: 12px;
     background-color: #ffffFF;
-    //box-shadow: 0px -3px 30px 16px red;
     box-shadow: 0px -3px 30px 16px rgba(255, 255, 255, 1);
 }
 

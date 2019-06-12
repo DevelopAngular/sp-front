@@ -1,5 +1,4 @@
-import {Component, OnInit, ElementRef, ViewChild} from '@angular/core';
-import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
+import {Component, OnInit, ElementRef, ViewChild, HostListener} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import {BehaviorSubject, fromEvent, combineLatest, Observable, of} from 'rxjs';
 import { User } from '../../models/User';
@@ -7,15 +6,15 @@ import { Report } from '../../models/Report';
 import { Pinnable } from '../../models/Pinnable';
 import { ActivePassProvider } from '../../hall-monitor/hall-monitor.component';
 import { LiveDataService } from '../../live-data/live-data.service';
-import {PassLikeProvider, WrappedProvider} from '../../models/providers';
+import {WrappedProvider} from '../../models/providers';
 import { TimeService } from '../../services/time.service';
 import {CalendarComponent} from '../calendar/calendar.component';
 import {HttpService} from '../../services/http-service';
 import {Util} from '../../../Util';
 import {map, switchMap, toArray} from 'rxjs/operators';
-import { disableBodyScroll } from 'body-scroll-lock';
 import {AdminService} from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
+import * as _ from 'lodash';
 
 
 
@@ -27,29 +26,21 @@ import {DarkThemeSwitch} from '../../dark-theme-switch';
 export class HallmonitorComponent implements OnInit {
 
     @ViewChild('bottomShadow') bottomShadow;
+    @ViewChild('reportBox') reportBox: ElementRef;
+
     activePassProvider: WrappedProvider;
     searchQuery$ = new BehaviorSubject('');
     minDate: Date;
-    input_value1: string;
-    input_value2: string;
-    input_DateRange: string;
     activeCalendar: boolean;
     choices = ['Origin', 'Destination', 'Both'];
-    selectedtoggleValue: string = this.choices[0];
 
     rooms: Pinnable[];
 
     selectedStudents: User[] = [];
-    studentreport: Report[]|any[];
+    studentreport: Report[] | any[] = [];
     pending: boolean = true;
 
     min: Date = new Date('December 17, 1995 03:24:00');
-    calendarToggled = false;
-    searchDate$ = new BehaviorSubject<Date>(null);
-
-    calendarToggled_2nd = false;
-    searchDate_1st$ = new BehaviorSubject<Date>(null);
-    searchDate_2nd$ = new BehaviorSubject<Date>(null);
 
     passesLoaded: Observable<boolean> = of(false);
 
@@ -57,7 +48,20 @@ export class HallmonitorComponent implements OnInit {
 
     inactiveIcon: boolean = true;
 
+    reportsLimit: number = 10;
+    counter: number = 0;
+
     public reportsDate: Date;
+
+    @HostListener('scroll', ['$event'])
+    onScroll(event) {
+        const tracker = event.target;
+        const limit = tracker.scrollHeight - tracker.clientHeight;
+        if (event.target.scrollTop === limit && !this.pending && (this.reportsLimit === this.counter)) {
+            this.reportsLimit += 10;
+                this.getReports();
+        }
+    }
 
     constructor(
         public dialog: MatDialog,
@@ -71,12 +75,8 @@ export class HallmonitorComponent implements OnInit {
     ) {
       this.activePassProvider = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.searchQuery$));
       this.minDate = this.timeService.nowDate();
-      //this.studentreport[0]['id'] = '1';
     }
   get calendarIcon() {
-
-
-
     if (this.inactiveIcon) {
       return this.darkTheme.getIcon({
         iconName: 'Calendar',
@@ -88,16 +88,9 @@ export class HallmonitorComponent implements OnInit {
     } else {
       return './assets/Calendar (Blue).svg';
     }
-//
-//     ( !this.chartsDate ? './assets/Calendar (Navy).svg' : './assets/Calendar (Blue).svg')
   }
 
   ngOnInit() {
-    // fromEvent(window, 'scroll').subscribe(() => {
-    //
-    // })
-      // disableBodyScroll(this.elRef.nativeElement);
-    // this.activePassProvider = new ActivePassProvider(this.liveDataService, this.searchQuery$);
     this.http.globalReload$.subscribe(() => {
       this.getReports();
     });
@@ -141,7 +134,6 @@ export class HallmonitorComponent implements OnInit {
           this.inactiveIcon = data.date.getDay() === new Date().getDay();
           if ( !this.reportsDate || (this.reportsDate && this.reportsDate.getTime() !== data.date.getTime()) ) {
             this.reportsDate = new Date(data.date);
-            console.log(this.reportsDate);
             this.getReports(this.reportsDate);
           }
         } else {
@@ -152,132 +144,18 @@ export class HallmonitorComponent implements OnInit {
     );
   }
 
-  genOption(display, color, action) {
-      return { display: display, color: color, action: action }
-  }
-
-  TooltipPlainText(evt: MouseEvent) {
-      const target = new ElementRef(evt.currentTarget);
-      let options = [];
-      let header = '';
-
-      header = 'This is simple plain text.';
-
-      this.dialog.open(ConsentMenuComponent, {
-          panelClass: 'consent-dialog-container',
-          backdropClass: 'invis-backdrop',
-          data: { 'header': header, 'trigger': target }
-      });
-  }
-
-  TooltipConfirmation(evt: MouseEvent) {
-      const target = new ElementRef(evt.currentTarget);
-      let options = [];
-      let header = '';
-      let ConsentText = '';
-      let ConsentYesText = '';
-      let ConsentNoText = '';
-      let ConsentButtonColor = 'green';
-
-
-      header = 'This is sample of Consent';
-      ConsentText = 'Are you sure you want to do this process ?'
-      ConsentYesText = 'Ok';
-      ConsentNoText = 'No Thanks';
-
-
-  const ConfirmationDialog = this.dialog.open(ConsentMenuComponent, {
-          panelClass: 'consent-dialog-container',
-          backdropClass: 'invis-backdrop',
-          data: { 'header': header, 'trigger': target, 'ConsentText': ConsentText, 'ConsentYesText': ConsentYesText, 'ConsentNoText': ConsentNoText, 'ConsentButtonColor': ConsentButtonColor}
-      });
-
-
-      ConfirmationDialog.afterClosed().subscribe(action => {
-          if (action == 'doProcess') {
-              alert('Process Perfomed Successfully');
-          }
-      });
-  }
-
-
-  TooltipOptions(evt: MouseEvent) {
-      const target = new ElementRef(evt.currentTarget);
-      let options = [];
-      let header = '';
-
-
-
-      header = 'This is sample of list options';
-
-      options.push(this.genOption('Option 1', 'Orange', 'Opt1'));
-      options.push(this.genOption('Option 2', 'Black', 'Opt2'));
-      options.push(this.genOption('Option 3', 'Green', 'Opt3'));
-
-
-
-      const OptionsDialog = this.dialog.open(ConsentMenuComponent, {
-          panelClass: 'consent-dialog-container',
-          backdropClass: 'invis-backdrop',
-          data: { 'header': header, 'trigger': target, 'options': options}
-      });
-
-
-      OptionsDialog.afterClosed().subscribe(action => {
-          if (action == 'Opt1') {
-              alert('Option1 Perfomed Successfully');
-          }
-          else if (action == 'Opt2') {
-                  alert('Option2 Perfomed Successfully');
-          }
-          else if (action == 'Opt3') {
-              alert('Option3 Perfomed Successfully');
-          }
-      });
-  }
-
-  Input1Validataion()
-  {
-      //Set your own logic as per requriement and return true or false vaule
-      if (this.input_value1 == null || this.input_value1 == undefined || this.input_value1.length == 0)
-      {
-          return true;
-      }
-      else if (this.input_value1 == 'Bathroom' || this.input_value1 == 'Staffroom' || this.input_value1 == 'bathroom' || this.input_value1 == 'staffroom')
-      {
-          return true;
-      }
-
-      return false;
-  }
-
-
-  Input2Validataion() {
-      //Set your own logic as per requriement and return true or false vaule
-      if (this.input_value2 == null || this.input_value2 == undefined) {
-          return null;
-      }
-      else if (this.input_value2 == 'BR' || this.input_value2 == 'AR' || this.input_value2 == 'br' || this.input_value2 == 'ar') {
-          return true;
-      }
-      return false;
-  }
-
-  getChoiceValue(emit) {
-      this.selectedtoggleValue = emit;
-      console.log(emit);
-  }
   private getReports(date?: Date) {
     this.pending = true;
-    this.studentreport = [];
+    // this.studentreport = [];
     const range = this.liveDataService.getDateRange(date);
-    console.log(range);
     const response$ = date ?
         this.adminService.searchReports(range.end.toISOString(), range.start.toISOString()) :
-        this.adminService.getReports();
+        this.adminService.getReports(this.reportsLimit);
     response$.pipe(
-        map((list: any[]) => {
-          return list.map((report, index) => {
+        map((list: any) => {
+          const data  = date ? list : list.results;
+            this.counter = data.length;
+          return data.map((report, index) => {
             return {
               student_name: report.student.display_name + ` (${report.student.primary_email.split('@', 1)[0]})`,
               issuer: report.issuer.display_name,
@@ -314,7 +192,11 @@ export class HallmonitorComponent implements OnInit {
       )
       .subscribe((list: any[]) => {
         this.pending = false;
-        this.studentreport = list;
+        if (date) {
+            this.studentreport = list;
+        } else {
+            this.studentreport.push(..._.takeRight(list, 10));
+        }
       });
   }
 }

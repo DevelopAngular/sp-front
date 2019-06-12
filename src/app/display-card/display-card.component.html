@@ -19,7 +19,7 @@
         <img *ngIf="!!righticon" class="display-card-header-icon righticon" [src]="righticon | resolveAsset"  [style.height]="iconSize" [style.width]="iconSize">
         <div *ngIf="!!righttext && !righticon" class="display-card-header-icon righticon" >{{righttext}}</div>
       </div>
-      <div [style.background-color]="(hasDivider? '#B5B7BA':'transparent')" class="display-card-divider"></div>
+      <!--<div [style.background-color]="(hasDivider? '#B5B7BA':'transparent')" class="display-card-divider"></div>-->
       <div *ngIf="subtitle!=null" [style.font-size]="subtitle_fontSize" class="subtitlecls">
         {{subtitle}}
       </div>
