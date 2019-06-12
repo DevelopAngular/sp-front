@@ -1,0 +1,27 @@
+:host {
+  .icon-button-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 50%;
+    background-color: rgba(244, 244, 244, 1);
+
+    //.active-route {
+    //  background-color: rgba(244, 244, 244, .75);
+    //  border-radius: 50%;
+    //  animation: active-route .2s ease forwards;
+    //  &__dark {
+    //    background-color: rgb(19, 155, 235);
+    //    animation: active-route__dark .2s ease forwards;
+    //  }
+      //&:hover {
+      //  opacity: .8;
+      //}
+    //}
+    //.icon {
+    //  display: inline-block;
+    //  position: relative;
+    //};
+  }
+}

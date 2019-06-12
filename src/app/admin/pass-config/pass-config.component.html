@@ -12,7 +12,10 @@
               <!--darkFill: 'White',-->
               <!--lightFill: 'Navy'-->
             <!--}) | resolveAsset">-->
-            <div class="school-name" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Rooms</div>
+            <div *ngIf="bulkSelect; else staticHeader" class="school-name" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{selectedPinnables.length}} Selected</div>
+            <ng-template #staticHeader>
+              <div class="school-name" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Rooms</div>
+            </ng-template>
           </div>
 
           <div class="header-settings">
@@ -38,13 +41,14 @@
               {{ (bulkSelect ? 'Done' : 'Edit') }}
             </app-gradient-button>
             <app-gradient-button
-                    (click)="openSettings()"
+                    (onClick)="openSettings()"
                     [cursor]="'pointer'"
                     [gradient]="'#F4F4F4, #F4F4F4'"
                     [hoverColor]="'#F5F5F5'"
                     [textColor]="'#1F195E'"
                     [size]="'medium'"
                     [leftIcon]="'./assets/Options (Navy).svg'"
+                    [disabled]="bulkSelect"
             >
             Options
             </app-gradient-button>
@@ -55,15 +59,21 @@
     </div>
     <div class="pass-config-content">
       <div class="pinnables">
-        <app-pinnable-collection
-                [pinnables]="pinnables"
-                [bulkSelect]="bulkSelect"
-                [resetBulkSelect$]="pinnableCollectionBlurEvent$"
-                (orderChangedEvent)="updatePinnablesOrder($event)"
-                (roomEvent)="selectPinnable($event)"
-                (bulkSelectEmit)="bulkSelect = $event"
-        >
-        </app-pinnable-collection>
+        <div *ngIf="!pinnables?.length; else pinnableCollection" class="spinner loading-theme_blue-gray">
+          <mat-spinner [diameter]="35" [color]="'accent'"></mat-spinner>
+        </div>
+        <ng-template #pinnableCollection>
+          <app-pinnable-collection
+            [selectedPinnables]="selectedPinnables"
+            [pinnables]="pinnables"
+            [bulkSelect]="bulkSelect"
+            [resetBulkSelect$]="pinnableCollectionBlurEvent$"
+            (orderChangedEvent)="updatePinnablesOrder($event)"
+            (roomEvent)="selectPinnable($event)"
+            (bulkSelectEmit)="bulkSelect = $event"
+          >
+          </app-pinnable-collection>
+        </ng-template>
       </div>
     </div>
   </div>

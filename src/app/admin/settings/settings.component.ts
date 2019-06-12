@@ -115,7 +115,7 @@ export class SettingsComponent implements OnInit {
       console.log(dialogRect);
       console.log(dialogRect.width);
       matDialogConfig.position = {
-          left: `${this.data['possition'].x - 183}px`,
+          left: `${this.data['possition'].x - 148}px`,
           bottom: `${(window.document.body as HTMLElement).clientHeight - this.data['possition'].y + 20}px`
         };
 
