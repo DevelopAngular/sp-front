@@ -35,7 +35,12 @@
       justify-content: space-between;
     }
   }
-
+  .pass-config-content {
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
   .changes-log {
     display: flex;
     justify-content: space-between;

@@ -187,10 +187,12 @@ export class GradientButtonComponent implements OnInit {
     //console.log("[Button State]: ", "The button is " +this.buttonState);
   }
 
-  onClick(event){
+  onClick(event) {
     if(!this.disabled) {
 
       this.buttonClick.emit(event)
+    } else {
+      return;
     }
   }
 
