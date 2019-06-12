@@ -7,34 +7,63 @@
 
         <div class="school-logo">
           <div class="school-title">
-            <img class="school-icon" [src]="darkTheme.getIcon({
-              iconName: './assets/School (Navy).svg',
-              darkFill: 'White',
-              lightFill: 'Navy'
-            }) | resolveAsset">
-            <div class="school-name" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ schoolName }}</div>
+            <!--<img class="school-icon" [src]="darkTheme.getIcon({-->
+              <!--iconName: './assets/School (Navy).svg',-->
+              <!--darkFill: 'White',-->
+              <!--lightFill: 'Navy'-->
+            <!--}) | resolveAsset">-->
+            <div class="school-name" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Rooms</div>
           </div>
 
           <div class="header-settings">
             <app-gradient-button
-              [size]="'large'"
-              [leftIcon]="'./assets/Settings (Navy).svg'"
-              [gradient]="'#FFFFFF, #FFFFFF'"
-              [textColor]="'#1F195E'"
-              [hoverColor]="'#F5F5F5'"
-              (click)="openSettings()"
+                    [ngStyle]="{'opacity': bulkSelect && !selectedPinnables.length ? '.5' : '1'}"
+                    [size]="'medium'"
+                    [hoverColor]="'#00B476'"
+                    [cursor]="!bulkSelect || selectedPinnables.length ? 'pointer' : 'default'"
+                    (buttonClick)="buttonClicked($event)"
+                    [leftIcon]="headerButtonIcon"
+                    [disabled]="bulkSelect && !selectedPinnables.length">
+              {{headerButtonText}}
+            </app-gradient-button>
+            <app-gradient-button
+                    (click)="toggleBulk()"
+                    [style.margin]="'0 15px 0 15px'"
+                    [cursor]="'pointer'"
+                    [gradient]="'#F4F4F4, #F4F4F4'"
+                    [hoverColor]="'#F5F5F5'"
+                    [textColor]="'#1F195E'"
+                    [size]="'medium'"
             >
-              <div>School <br> Settings</div>
+              {{ (bulkSelect ? 'Done' : 'Edit') }}
+            </app-gradient-button>
+            <app-gradient-button
+                    (click)="openSettings()"
+                    [cursor]="'pointer'"
+                    [gradient]="'#F4F4F4, #F4F4F4'"
+                    [hoverColor]="'#F5F5F5'"
+                    [textColor]="'#1F195E'"
+                    [size]="'medium'"
+                    [leftIcon]="'./assets/Options (Navy).svg'"
+            >
+            Options
             </app-gradient-button>
           </div>
-
 
         </div>
       </div>
     </div>
     <div class="pass-config-content">
       <div class="pinnables">
-        <app-pinnable-collection [pinnables]="pinnables" [resetBulkSelect$]="pinnableCollectionBlurEvent$" (orderChangedEvent)="updatePinnablesOrder($event)" (roomEvent)="selectPinnable($event)"></app-pinnable-collection>
+        <app-pinnable-collection
+                [pinnables]="pinnables"
+                [bulkSelect]="bulkSelect"
+                [resetBulkSelect$]="pinnableCollectionBlurEvent$"
+                (orderChangedEvent)="updatePinnablesOrder($event)"
+                (roomEvent)="selectPinnable($event)"
+                (bulkSelectEmit)="bulkSelect = $event"
+        >
+        </app-pinnable-collection>
       </div>
     </div>
   </div>

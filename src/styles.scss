@@ -34,6 +34,16 @@ img {
   -webkit-user-drag: none;
 }
 
+div {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none;   /* Chrome/Safari/Opera */
+    -khtml-user-select: none;    /* Konqueror */
+    -moz-user-select: none;      /* Firefox */
+    -ms-user-select: none;       /* Internet Explorer/Edge */
+    user-select: none;           /* Non-prefixed version, currently
+                                  not supported by any browser */
+}
+
 
 .validationIcon {
   min-width: 20px;
@@ -121,12 +131,12 @@ img {
   padding: 0;
   width: 334px;
   height: 451px;
-  margin-left: 302px !important;
+  margin-left: 219px !important;
 
 }
 
 .accounts-profiles-dialog{
-  margin-left: 302px !important;
+  margin-left: 219px !important;
 }
 .accounts-profiles-dialog .mat-dialog-container{
   border-radius: 10px;
@@ -136,7 +146,7 @@ img {
 }
 
 .overlay-dialog {
-  margin-left: 302px !important;
+  margin-left: 219px !important;
 }
 
 @media all and (max-width: 1110px) {
@@ -260,7 +270,7 @@ textarea:focus {
 }
 
 .custom-bd {
-  background-image: linear-gradient(to right, transparent 302px,rgba(0, 0, 0, 0.3) 0);
+  background-image: linear-gradient(to right, transparent 219px,rgba(0, 0, 0, 0.3) 0);
 }
 html, body {
   max-width: 100%;

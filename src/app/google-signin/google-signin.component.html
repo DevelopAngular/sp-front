@@ -1,3 +1,8 @@
+
+<div *ngIf="showError.error">
+  <app-error-toast [loginMethod]="showError.loggedWith" (closeEvent)="onClose($event)"></app-error-toast>
+</div>
+
 <div class="wrapper" *ngIf="!demoLoginEnabled">
 
   <!--<div *ngIf="!showError">-->
@@ -32,6 +37,7 @@
 </div>
 
 <form class="login-form" *ngIf="demoLoginEnabled" onsubmit="return false;">
+  <!--{{showError | json}}-->
   <app-round-input
     [minWidth]="'260px'"
     [width]="'260px'"

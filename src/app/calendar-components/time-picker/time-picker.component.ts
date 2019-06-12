@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 
 import { merge, Subject, timer } from 'rxjs';
@@ -19,6 +19,8 @@ export class TimePickerComponent implements OnInit, OnDestroy {
   @Input() min: moment.Moment;
 
   @Input() forseDate$: Subject<moment.Moment>;
+
+  @ViewChild('hourInp') hourInput: ElementRef;
 
   @Output() timeResult: EventEmitter<moment.Moment> = new EventEmitter<moment.Moment>();
 

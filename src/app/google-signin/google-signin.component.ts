@@ -17,7 +17,7 @@ declare const window;
 
 export class GoogleSigninComponent implements OnInit, OnDestroy {
 
-  @Output() showError: EventEmitter<{ loggedWith: number, error: boolean} > = new EventEmitter<{loggedWith: number, error: boolean}>();
+  // @Output() showError: EventEmitter<{ loggedWith: number, error: boolean} > = new EventEmitter<{loggedWith: number, error: boolean}>();
 
 
   public name = 'Not Logged in!';
@@ -31,6 +31,10 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   //   loggedWith: this.loggedWith,
   //   error: false
   // });
+  public showError = {
+      loggedWith: null,
+      error: null
+  };
 
   keyListener;
   demoLoginEnabled = false;
@@ -62,25 +66,25 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     });
 
     this.loginService.showLoginError$.subscribe((show: boolean) => {
-      this.showError.emit({
-            loggedWith: this.loggedWith,
-            error: show,
-          });
+      // this.showError.emit({
+      //       //       loggedWith: this.loggedWith,
+      //       //       error: show,
+      //       //     });
       // this.showError.next({
       //       loggedWith: this.loggedWith,
       //       error: show,
       //     });
+      console.log(show);
+      this.showError.loggedWith = this.loggedWith;
+      this.showError.error = show;
       });
   }
-  // onClose(evt) {
-  //   setTimeout(() => {
-  //     this.showSpinner = false;
-  //     this.showError.next({
-  //       loggedWith: this.loggedWith,
-  //       error: evt
-  //     });
-  //   }, 400);
-  // }
+  onClose(evt) {
+    setTimeout(() => {
+      this.showSpinner = false;
+      this.showError.error = evt;
+    }, 300);
+  }
   updateDemoUsername(event) {
     // console.log('UN ===>', event, this.demoLoginEnabled);
     this.demoUsername = event;

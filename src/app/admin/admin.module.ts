@@ -33,7 +33,8 @@ import { SchoolSettingDialogComponent } from './school-setting-dialog/school-set
 import { ProfileCardDialogComponent } from './profile-card-dialog/profile-card-dialog.component';
 import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.component';
 import { SearchFilterDialogComponent } from './search/search-filter-dialog/search-filter-dialog.component';;
-import { DateTimeFilterComponent } from './search/date-time-filter/date-time-filter.component';
+import { DateTimeFilterComponent } from './search/date-time-filter/date-time-filter.component';;
+import { MySchoolComponent } from './my-school/my-school.component'
 
 @NgModule({
   imports: [
@@ -71,7 +72,8 @@ import { DateTimeFilterComponent } from './search/date-time-filter/date-time-fil
     AddUserDialogComponent,
     SearchFilterDialogComponent,
     DateTimeFilterComponent
- ],
+,
+    MySchoolComponent ],
   entryComponents: [
     AccountsDialogComponent,
     LinkGeneratedDialogComponent,

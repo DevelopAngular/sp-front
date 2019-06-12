@@ -3,6 +3,7 @@
 .data-table-wrapper {
   .sticky-header {
     position: sticky;
+    //text-transform: uppercase;
     //top: -40px;
     border-bottom: 2px solid #878787;
     z-index: 100;
@@ -47,9 +48,9 @@ table {
   box-sizing: border-box;
 }
 ::ng-deep .mat-sort-header-button {
-  font-size: 15px !important;
-  //text-transform: capitalize;
-  font-weight: bolder !important;
+  font-size: 14px !important;
+  text-transform: uppercase;
+  //font-weight: bolder !important;
 }
 
 .dark-theme-of-checkbox {

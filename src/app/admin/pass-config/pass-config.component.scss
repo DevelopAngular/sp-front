@@ -10,7 +10,7 @@
   padding: 40px;
   box-sizing: border-box;
   overflow: scroll;
-  background-color: #f8faff;
+  background-color: #F2F2F2;
 
   .pass-config-wrapper {
     display: flex;
@@ -77,14 +77,11 @@
   }
 
   .pass-config-header {
-    //width: 910px;
-    height: 150px;
-    padding: 0px 0px 0px 30px;
+    height: 99px;
+    padding: 0 0 0 30px;
     box-sizing: border-box;
-    border-radius: 10px;
-    //margin-top: 30px;
-    //margin-bottom: 30px;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, .2);
+    border-radius: 12px;
+    box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.0616259);
     background-color: #FFFFFF;
     display: flex;
     align-items: center;
@@ -99,7 +96,7 @@
 
   .school-name {
     margin-left: 20px;
-    font-weight: bolder;
+    font-weight: bold;
     color: #3d396b;
     font-size: 24px;
   }

@@ -175,7 +175,7 @@ export class GradientButtonComponent implements OnInit {
   get shadow() {
     if (this.withShadow) {
       return this.sanitizer.bypassSecurityTrustStyle(((this.hovered && !this.disabled && !this.buttonDown) ?
-          '0px 3px 10px rgba(0, 0, 0, 0.2)' : '0px 3px 5px rgba(0, 0, 0, 0.1)'));
+          '0px 3px 10px rgba(228, 140, 21, 0.2)' : '0px 3px 5px rgba(0, 0, 0, 0.1)'));
     } else {
       return 'none';
     }

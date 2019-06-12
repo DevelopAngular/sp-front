@@ -80,6 +80,7 @@ export class DateTimeComponent implements OnInit {
 
     setTimeout(() => {
       if (this.isStaff) {
+        this.formState.state = 1;
         this.formState.step = 2;
       } else {
         this.formState.step = 0;

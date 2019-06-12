@@ -2,7 +2,7 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { MatDialog } from '@angular/material';
 import { FormControl, FormGroup } from '@angular/forms';
 
-import {BehaviorSubject, Observable, of, Subscription, zip} from 'rxjs';
+import {BehaviorSubject, forkJoin, Observable, of, Subscription, zip} from 'rxjs';
 import {filter, switchMap, tap} from 'rxjs/operators';
 
 import { HttpService } from '../../services/http-service';
@@ -18,6 +18,7 @@ import {Location} from '../../models/Location';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LocationsService} from '../../services/locations.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
+import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 
 @Component({
   selector: 'app-pass-congif',
@@ -32,13 +33,14 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     public pinnableCollectionBlurEvent$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
     settingsForm: FormGroup;
-    selectedPinnables: Pinnable[];
+    selectedPinnables: Pinnable[] = [];
     pinnable: Pinnable;
     pinnables$: Observable<Pinnable[]>;
     pinnables: Pinnable[];
     schools$;
 
-    dataChanges: any[] = [];
+    buttonMenuOpen: boolean;
+    bulkSelect: boolean;
 
     // Needs for OverlayContainer opening if an admin comes from teachers profile card on Accounts&Profiles tab
     private forceSelectedLocation: Location;
@@ -59,6 +61,14 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   get schoolName() {
     const school = this.httpService.getSchool();
     return school != null ? school.name : '';
+  }
+
+  get headerButtonText() {
+    return (this.selectedPinnables.length < 1 || !this.bulkSelect ? 'Add' : 'Bulk Edit Rooms');
+  }
+
+  get headerButtonIcon() {
+    return (this.selectedPinnables.length < 1 || !this.bulkSelect ? './assets/Plus (White).svg' : null);
   }
 
   ngOnInit() {
@@ -146,14 +156,70 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     });
   }
 
+    toggleBulk() {
+        this.bulkSelect = !this.bulkSelect;
+        this.selectedPinnables = [];
+    }
+
+    buttonClicked(evnt: MouseEvent) {
+        if (!this.buttonMenuOpen) {
+            const target = new ElementRef(evnt.currentTarget);
+            let options = [];
+
+            if(this.selectedPinnables.length > 0 && this.bulkSelect){
+                options.push(this.genOption('Bulk Edit Selection', this.darkTheme.getColor(), 'edit'));
+                options.push(this.genOption('New Folder with Selection', this.darkTheme.getColor(), 'newFolder'));
+                // options.push(this.genOption('Delete Selection','#E32C66','delete'));
+            } else{
+                options.push(this.genOption('New Room', this.darkTheme.getColor(), 'newRoom'));
+                options.push(this.genOption('New Folder', this.darkTheme.getColor(), 'newFolder'));
+            }
+
+            const cancelDialog = this.dialog.open(ConsentMenuComponent, {
+                panelClass: 'consent-dialog-container',
+                backdropClass: 'invis-backdrop',
+                data: {'header': '', 'options': options, 'trigger': target}
+            });
+
+            cancelDialog.afterOpen().subscribe( () => {
+                this.buttonMenuOpen = true;
+            });
+
+            cancelDialog.afterClosed().subscribe(action => {
+                this.buttonMenuOpen = false;
+                if (action === 'delete') {
+                    // const currentPinIds = this.selectedPinnables.map(pinnable => pinnable.id);
+                    // this.pinnables = this.pinnables.filter(pinnable => pinnable.id !== currentPinIds.find(id => id === pinnable.id));
+                    // const pinnableToDelete = this.selectedPinnables.map(pinnable => {
+                    //     return this.hallPassService.deletePinnable(pinnable.id);
+                    // });
+                    // return forkJoin(pinnableToDelete).subscribe(() => this.toggleBulk());
+                } else {
+                    if (action) {
+                        console.log('[Pinnable Collection, Dialog]:', action, ' --- ', this.selectedPinnables);
+                        this.selectPinnable({action, selection: this.selectedPinnables});
+                        // this.roomEvent.emit({'action': action, 'selection': this.selectedPinnables});
+                    }
+                }
+            });
+
+        }
+    }
+
+    genOption(display, color, action) {
+        return {display: display, color: color, action: action};
+    }
+
   selectPinnable({action, selection}) {
-    console.log('Pinnable data ====>', action, selection);
       if (action === 'room/folder_edit' && !_.isArray(selection)) {
           this.pinnable = selection;
         return this.buildData(this.pinnable.type === 'location' ? 'editRoom' : 'editFolder');
+      } else if (action === 'simple') {
+          this.selectedPinnables = selection;
+      } else {
+          this.selectedPinnables = selection;
+          this.buildData(action);
       }
-      this.selectedPinnables = selection;
-      this.buildData(action);
   }
 
   buildData(action) {
@@ -245,7 +311,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
          .pipe(switchMap(() => this.hallPassService.getPinnables())).subscribe(res => {
              this.pinnables = res;
              this.selectedPinnables = [];
-             this.pinColComponent.clearSelected();
+             this.bulkSelect = false;
      });
   }
 }

@@ -75,6 +75,7 @@
   display: flex;
   justify-content: space-between;
   height: 430px;
+  overflow: hidden;
 }
 
 .room-edit {
@@ -148,6 +149,8 @@
   position: relative;
   height: 100%;
   width: 614px;
+  margin: 0;
+  -webkit-overflow-scrolling: touch;
   .room-inputs {
     display: flex;
     margin: 20px 25px;
@@ -381,8 +384,13 @@
   align-items: center;
   flex-direction: column;
   background-color: #FCFDFF;
-  //position: relative;
+  top: 0;
+  position: absolute;
+  width: 528px;
   min-height: 78px;
+  overflow: hidden;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+
   //height: 78px;
   //width: 100%;
 
