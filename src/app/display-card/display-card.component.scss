@@ -1,8 +1,11 @@
 ﻿:host {
 
 }
+
 .overlay {
-  position: relative; box-shadow: 0px 3px 20px rgba(0, 0, 0, 0.1);border-radius: 12px;
+  position: relative;
+  box-shadow: 0px 3px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
 }
 
 @media all and (max-width: 425px) {
@@ -16,6 +19,11 @@
 
   div.display-card-divider{
     width: inherit;
+  }
+
+  div.overlay {
+    box-shadow: none;
+    border-radius: 0;
   }
 }
 
