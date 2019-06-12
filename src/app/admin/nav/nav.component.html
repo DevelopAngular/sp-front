@@ -11,7 +11,12 @@
         <div class="selected-tab-pointer" [style.margin-top]="pointerTopSpace">
           <!-- Just a shape -->
         </div>
-        <div *ngFor="let button of buttons" #tabRef (click)="selectTab(tabRef, navButtonsContainter)">
+        <div *ngFor="let button of buttons"
+             [style.transition]="'transform .4s ease'"
+             (mousedown)="tabRef.style.transform = 'scale(.96)'"
+             (mouseup)="tabRef.style.transform = 'unset'"
+             (click)="selectTab(tabRef, navButtonsContainter)"
+             #tabRef>
           <ng-container *ngIf="hasRoles(button.requiredRoles) | async">
             <app-nav-button
               [style.margin-bottom]="'15px'"
