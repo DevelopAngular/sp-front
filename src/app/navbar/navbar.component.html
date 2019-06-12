@@ -52,7 +52,7 @@
         </div>
       </ng-template>
 
-      <div *ngIf="user && !isStaff && islargeDeviceWidth " class="inbox-wrapper" (click)="inboxClick()"
+      <div *ngIf="user && islargeDeviceWidth" class="inbox-wrapper" (click)="inboxClick()"
            [style.background-color]="(inboxVisibility && !islargeDeviceWidth?'#E4EBFF':'transparent')"
            [style.background-color]="(inboxVisibility && !islargeDeviceWidth ? darkTheme.isEnabled$.value && !islargeDeviceWidth ? '#134482' : '#E4EBFF' : 'transparent')"
 

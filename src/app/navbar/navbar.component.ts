@@ -417,7 +417,15 @@ export class NavbarComponent implements OnInit {
 
     if (this.islargeDeviceWidth) {
       this.inboxVisibility = false;
-      this.dataService.updateInbox(this.inboxVisibility);
+
     }
+
+    if (this.screenService.isDesktopWidth) {
+      this.inboxVisibility = true;
+      this.navbarData.inboxClick$.next(false);
+      this.isInboxClicked = false;
+    }
+
+    this.dataService.updateInbox(this.inboxVisibility);
   }
 }
