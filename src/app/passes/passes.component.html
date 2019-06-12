@@ -60,11 +60,29 @@
       <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'29px'" [icon]="(isStaff?'./assets/Inbox (Navy).svg':'')" [inbox]="true">
         <div class="inbox-content">
           <div class="requests-or-invitations">
-            <app-pass-collection [forStaff]="isStaff" [forFuture]="true" [isActive]="false" [style.width]="'306px'" [passProvider]="isStaff?receivedRequests:sentRequests" [title]="isStaff?'Received':'Sent'" [icon]="'./assets/' +(isStaff?'Received':'Lock') +' (Navy).svg'" [columns]="2"></app-pass-collection>
+            <app-pass-collection
+                    [forStaff]="isStaff"
+                    [forFuture]="true"
+                    [isActive]="false"
+                    [style.width]="'301px'"
+                    [passProvider]="isStaff?receivedRequests:sentRequests"
+                    [title]="isStaff?'Received':'Sent'"
+                    [icon]="'./assets/' +(isStaff?'Received':'Lock') +' (Navy).svg'"
+                    [columns]="2"
+            ></app-pass-collection>
             <!--<div *ngIf="isStaff ? (receivedRequests.length$ | async) : (sentRequests.length$ | async)" class="text">No requests sent or received</div>-->
           </div>
           <div class="requests-or-invitations">
-            <app-pass-collection [forStaff]="isStaff" [forFuture]="true" [isActive]="false" [style.width]="'306px'" [passProvider]="isStaff?sentRequests:receivedRequests" [title]="isStaff?'Sent':'Received'" [icon]="'./assets/' +(isStaff?'Lock':'Received') +' (Navy).svg'" [columns]="2"></app-pass-collection>
+            <app-pass-collection
+                    [forStaff]="isStaff"
+                    [forFuture]="true"
+                    [isActive]="false"
+                    [style.width]="'301px'"
+                    [passProvider]="isStaff?sentRequests:receivedRequests"
+                    [title]="isStaff?'Sent':'Received'"
+                    [icon]="'./assets/' +(isStaff?'Lock':'Received') +' (Navy).svg'"
+                    [columns]="2"
+            ></app-pass-collection>
             <!--<div *ngIf="isStaff ? (sentRequests.length$ | async) : (receivedRequests.length$ | async)" class="text">No requests sent or received</div>-->
           </div>
           <!--<div *ngIf="">PPC</div>-->

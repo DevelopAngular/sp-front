@@ -22,7 +22,6 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin-bottom: 5px;
 }
 
 .collection-icon{
@@ -58,7 +57,7 @@
 
 .collection-grid-wrapper{
     display: grid;
-    grid-template-columns: repeat(auto-fill,minmax(143px, .3fr));
+    //grid-template-columns: repeat(auto-fill, minmax(143px, .3fr));
     justify-content: space-between;
     margin-top: 15px;
     //justify-content: space-between;

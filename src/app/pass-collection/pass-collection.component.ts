@@ -18,6 +18,7 @@ import { TimeService } from '../services/time.service';
 import * as _ from 'lodash';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {KioskModeService} from '../services/kiosk-mode.service';
+import {DomSanitizer} from '@angular/platform-browser';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -52,6 +53,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() showEmptyHeader: boolean;
   @Input() columnViewIcon: boolean = true;
   @Input() smoothlyUpdating: boolean = false;
+  @Input() grid_template_columns: string = '143px';
 
   @Input() passProvider: PassLikeProvider;
 
@@ -95,8 +97,13 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       private dataService: DataService,
       private timeService: TimeService,
       public darkTheme: DarkThemeSwitch,
-      private kioskMode: KioskModeService
+      private kioskMode: KioskModeService,
+      private sanitizer: DomSanitizer,
   ) {}
+
+  get gridTemplate() {
+    return this.sanitizer.bypassSecurityTrustStyle(`repeat(auto-fill, minmax(${this.grid_template_columns}, .3fr))`);
+  }
 
   ngOnInit() {
       if (this.mock) {
