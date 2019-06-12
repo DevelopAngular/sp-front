@@ -14,5 +14,5 @@
 
   <app-login *ngIf="!isAuthenticated" (errorEvent)="showError.next($event)"></app-login>
 </div>
-<span style="position: fixed;">{{(showUI | async)}}</span>
+<!--<span style="position: fixed;">{{(showUI | async)}}</span>-->
 <app-error *ngIf="(isAuthenticated === false) && !(showUI | async)"></app-error>

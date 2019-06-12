@@ -300,7 +300,7 @@
         <p class="ds-my-10" style="text-align: center; font-size: 15px;">Add users one-by-one above or set up G Suite <br>
           syncing to automatically add users to this profile.</p>
       </div>
-      <div *ngIf="userList.length">
+      <div *ngIf="userList.length" class="ds-mt-15">
         <div class="column-settings">
           <img draggable="false" width="20" [src]="darkTheme.getIcon({iconName: 'Options', lightFill: 'Blue-Gray'}) | resolveAsset" alt="Options (Navy).svg" (click)="showColumnSettings($event)">
         </div>

@@ -9,7 +9,7 @@
 
       <th mat-header-cell *matHeaderCellDef class="sticky-header"
           [ngClass]="{'dark-theme-of-checkbox__primary': darkTheme.isEnabled$.value}"
-          [style.background-color]="darkTheme.isEnabled$.value ? '#0F171E' : '#F8FAFF'"
+          [style.background-color]="darkTheme.isEnabled$.value ? '#0F171E' : '#FBFEFF'"
           [style.top]="marginTopStickyHeader"
           [style.padding]="'0px'"
           [style.text-align]="'center'"
@@ -41,7 +41,7 @@
       <th mat-header-cell *matHeaderCellDef mat-sort-header class="sticky-header"
           [style.color]="darkTheme.getColor({white: textHeaderColor, dark: '#FFFFFF'})"
           [style.text-transform]="'none'"
-          [style.background-color]="darkTheme.isEnabled$.value ? '#0F171E' : '#F8FAFF'"
+          [style.background-color]="darkTheme.isEnabled$.value ? '#0F171E' : '#FBFEFF'"
           [style.top]="marginTopStickyHeader"
       > {{column}} </th>
       <td mat-cell *matCellDef="let element; let n = index"

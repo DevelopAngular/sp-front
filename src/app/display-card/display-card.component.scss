@@ -1,6 +1,9 @@
 ﻿:host {
 
 }
+.overlay {
+  position: relative; box-shadow: 0px 3px 20px rgba(0, 0, 0, 0.1);border-radius: 12px;
+}
 .display-card-wrapper{
     width: 351px;
     padding: 25px 22px;
@@ -9,7 +12,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    box-shadow: 0px 3px 20px rgba(0, 0, 0, 0.1);
+    //box-shadow: 0px 3px 20px rgba(0, 0, 0, 0.1);
     background-color: #fff;
 
     &.inbox {
@@ -17,15 +20,16 @@
         overflow: auto;
     }
 
-    .bottom-shadow {
-        position: absolute;
-        bottom: 0px;
-        height: 16px;
-        width: 100%;
-        border-radius: 12px;
-        background-color: #ffffFF;
-        box-shadow: 0px -3px 30px 16px rgba(255, 255, 255, 1);
-    }
+}
+.bottom-shadow {
+    position: absolute;
+    bottom: 0px;
+    height: 16px;
+    width: 100%;
+    border-radius: 12px;
+    background-color: #ffffFF;
+    //box-shadow: 0px -3px 30px 16px red;
+    box-shadow: 0px -3px 30px 16px rgba(255, 255, 255, 1);
 }
 
 .display-card-header{
