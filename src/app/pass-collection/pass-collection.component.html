@@ -26,13 +26,11 @@
           <app-pass-cell *ngFor="let pass of currentPasses" (click)="showPass(pass)" [timerEvent]="timerEvent" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-cell>
         </div>
       </ng-template>
-    </ng-container>
     <ng-template #emptyMessage>
       <div class="empty-message" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
         {{ getEmptyMessage() }}
       </div>
     </ng-template>
-  </ng-container>
 </div>
 
 <!-- Needs for Intro page -->
@@ -58,4 +56,7 @@
       </div>
     </ng-template>
 </div>
+  </div>
+</div>
 <!-- End -->
+
