@@ -53,12 +53,24 @@
         </div>
       </ng-template>
       <div *ngIf="user && !isStaff || islargeDeviceWidth " class="inbox-wrapper" (click)="inboxClick()"
-           [style.background-color]="(inboxVisibility?'#E4EBFF':'transparent')"
-           [style.background-color]="(inboxVisibility ? darkTheme.isEnabled$.value ? '#134482' : '#E4EBFF' : 'transparent')"
+           [style.background-color]="(inboxVisibility && !islargeDeviceWidth?'#E4EBFF':'transparent')"
+           [style.background-color]="(inboxVisibility && !islargeDeviceWidth ? darkTheme.isEnabled$.value && !islargeDeviceWidth ? '#134482' : '#E4EBFF' : 'transparent')"
 
       >
         <img class="inbox-icon" [src]="darkTheme.getIcon({iconName: 'Inbox', darkFill: 'White', lightFill: 'Navy'}) | resolveAsset">
         <div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0">
+          <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">
+          <div class="inbox-number">{{ notificationBadge$ | async }}</div>
+          <img class="inbox-front" [src]="darkTheme.getIcon({iconName: 'Inbox Bottom', darkFill: 'White', lightFill: 'Navy'}) | resolveAsset">
+        </div>
+      </div>
+
+
+
+      <div *ngIf="user && !isStaff || islargeDeviceWidth" class="inbox-wrapper-sm" (click)="inboxClick()">
+        <img [@inboxAppearance] *ngIf="!isInboxClicked" class="inbox-icon" [src]="darkTheme.getIcon({iconName: 'Inbox', darkFill: 'White', lightFill: 'Navy'}) | resolveAsset">
+        <img [@arrowAppearance] *ngIf="isInboxClicked" class="inbox-icon inbox-icon-arrow" [src]="darkTheme.getIcon({iconName: 'SP Arrow', darkFill: 'White', lightFill: 'Navy'}) | resolveAsset">
+        <div  [@inboxAppearance] class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0 && !isInboxClicked">
           <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">
           <div class="inbox-number">{{ notificationBadge$ | async }}</div>
           <img class="inbox-front" [src]="darkTheme.getIcon({iconName: 'Inbox Bottom', darkFill: 'White', lightFill: 'Navy'}) | resolveAsset">

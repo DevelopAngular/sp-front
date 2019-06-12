@@ -40,6 +40,7 @@ export class DisplayCardComponent implements OnInit {
       setting: null
     });
   }
+
   get titleColor () {
     return this.darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'});
   }

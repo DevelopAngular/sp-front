@@ -1,3 +1,5 @@
+@import '../../sp-colors';
+
 :host {
   display: flex;
   flex-direction: column;
@@ -8,7 +10,54 @@
   padding-top: 100px;
 }
 
-mat-sidenav {
+.settings-side-nav {
   border-top-right-radius: 14px;
   border-bottom-right-radius: 14px;
+}
+
+.requests-side-nav {
+  width: 405px;
+  border-top-left-radius: 14px;
+  border-bottom-left-radius: 14px;
+}
+
+.request-card {
+  height: 100%;
+}
+
+.request-title {
+  font-size: 29px;
+  color: #1F195E;
+  font-weight: bold;
+  min-height: 35px;
+  margin-bottom: 51px;
+  padding-top: 104px;
+}
+
+.requests-or-invitations {
+  width: 351px;
+}
+
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: $blue-gray;
+}
+
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: $blue-gray;
+}
+
+.empty-inbox-svg {
+  margin: 20px 0;
+  width: 200px;
+}
+
+.empty-passes-svg {
+  margin: 20px 0;
+  width: 330px;
 }

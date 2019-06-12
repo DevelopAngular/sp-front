@@ -1,10 +1,10 @@
-import {Component, NgZone, OnInit, Input, ElementRef, EventEmitter, Output, HostListener} from '@angular/core';
+import {Component, NgZone, OnInit, Input, ElementRef, HostListener, EventEmitter, Output} from '@angular/core';
 import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material';
 import {Router, NavigationEnd, ActivatedRoute, NavigationStart} from '@angular/router';
 
-import {ReplaySubject, combineLatest, of, Subject} from 'rxjs';
-import {filter, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {ReplaySubject, combineLatest, of, Subject, Observable} from 'rxjs';
+import {filter, switchMap, tap} from 'rxjs/operators';
 
 import { DataService } from '../services/data-service';
 import { GoogleLoginService } from '../services/google-login.service';
@@ -21,8 +21,9 @@ import {DarkThemeSwitch} from '../dark-theme-switch';
 import {NotificationService} from '../services/notification-service';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {HttpService} from '../services/http-service';
-import {ScreenService} from '../services/screen.service';
 import {IntroDialogComponent} from '../intro-dialog/intro-dialog.component';
+import {ScreenService} from '../services/screen.service';
+import {NavbarAnimations} from './navbar.animations';
 import {StorageService} from '../services/storage.service';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {SideNavService} from '../services/side-nav.service';
@@ -37,7 +38,11 @@ export interface RepresentedUser {
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.scss']
+  styleUrls: ['./navbar.component.scss'],
+  animations: [
+    NavbarAnimations.inboxAppearance,
+    NavbarAnimations.arrowAppearance
+  ]
 })
 
 export class NavbarComponent implements OnInit {
@@ -76,7 +81,10 @@ export class NavbarComponent implements OnInit {
 
   fakeMenu: ReplaySubject<boolean> = new ReplaySubject<boolean>();
 
-  sideNavClosed: boolean;
+  isInboxClicked: boolean;
+
+  fadeClick: boolean;
+
   @Output() settingsClick: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(
@@ -215,6 +223,9 @@ export class NavbarComponent implements OnInit {
       });
 
     this.islargeDeviceWidth = this.screenService.isDeviceLargeExtra;
+
+    this.sideNavService.fadeClick.subscribe(click =>  this.fadeClick = click);
+
   }
 
   getIcon(iconName: string, darkFill?: string, lightFill?: string) {
@@ -255,6 +266,7 @@ export class NavbarComponent implements OnInit {
   showOptions(event) {
     if (this.screenService.isDeviceLargeExtra) {
       this.sideNavService.toggle$.next(true);
+      this.sideNavService.toggleLeft$.next(true);
     }
 
     const target = new ElementRef(event.currentTarget);
@@ -278,6 +290,8 @@ export class NavbarComponent implements OnInit {
     this.settingsClick.emit({ 'trigger': target, 'isSwitch': this.showSwitchButton });
 
     this.sideNavService.sideNavData$.next({ 'trigger': target, 'isSwitch': this.showSwitchButton });
+
+    this.sideNavService.sideNavType$.next('left');
   }
 
   showTeaches(target) {
@@ -389,10 +403,21 @@ export class NavbarComponent implements OnInit {
     if(this.tab!=='passes'){
       this.updateTab('passes');
     }
+
+    this.navbarData.inboxClick$.next(this.isInboxClicked = !this.isInboxClicked);
+
+    if (this.screenService.isDeviceLarge && !this.screenService.isDeviceMid) {
+      this.sideNavService.toggleRight$.next(true);
+    }
   }
 
   @HostListener('window:resize')
   checkDeviceWidth() {
     this.islargeDeviceWidth = this.screenService.isDeviceLargeExtra;
+
+    if (this.islargeDeviceWidth) {
+      this.inboxVisibility = false;
+      this.dataService.updateInbox(this.inboxVisibility);
+    }
   }
 }

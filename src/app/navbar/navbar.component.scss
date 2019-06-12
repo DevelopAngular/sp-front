@@ -57,6 +57,17 @@
 
 }
 
+@media all and (max-width: 700px) {
+  div.inbox-wrapper {
+    display: none;
+  }
+
+  div.inbox-wrapper-sm {
+    display: flex;
+    position: relative;
+  }
+}
+
 :host {
   background-color: transparent;
 }
@@ -127,7 +138,7 @@
 }
 
 .teacherNav {
-  width: 100%;
+  width: 34%;
   flex-direction: row;
   justify-content: space-between;
   &_tab {
@@ -197,22 +208,29 @@
   cursor: pointer;
 }
 
-.options-wrapper, .support-wrapper, .admin-view-wrapper {
-  display: flex;
+.inbox-icon-arrow {
+  transform: rotateZ(90deg);
 }
 
-.inbox-wrapper {
-  display: flex;
+.inbox-icon {
+  position: absolute;
 }
 
-.inbox-wrapper, .options-wrapper, .support-wrapper, .admin-view-wrapper{
+.inbox-wrapper, .inbox-wrapper-sm, .options-wrapper, .support-wrapper, .admin-view-wrapper{
   width: 50px;
   height: 50px;
   border-radius: 25px;
+  display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
   user-select: none;
+  position: relative;
+  z-index: 10;
+}
+
+.inbox-wrapper-sm {
+  display: none;
 }
 
 @keyframes requestsInMotion {
