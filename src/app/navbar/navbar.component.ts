@@ -86,6 +86,7 @@ export class NavbarComponent implements OnInit {
   fadeClick: boolean;
 
   @Output() settingsClick: EventEmitter<any> = new EventEmitter<any>();
+  private pts;
 
   constructor(
       private dataService: DataService,
@@ -127,6 +128,10 @@ export class NavbarComponent implements OnInit {
 
   get showNav() {
     return this.tab !== 'intro' && this.hasNav;
+  }
+
+  get pointerTopSpace() {
+      return this.pts;
   }
 
   ngOnInit() {
@@ -249,6 +254,12 @@ export class NavbarComponent implements OnInit {
 
   get notificationBadge$() {
     return this.navbarData.notificationBadge$;
+  }
+
+  selectTab(evt: HTMLElement, container: HTMLElement) {
+      const containerRect = container.getBoundingClientRect();
+      const selectedTabRect = (evt as HTMLElement ).getBoundingClientRect();
+      this.pts = Math.round((selectedTabRect.left - containerRect.left) + 85) + 'px';
   }
 
   hasRoles(roles: string[]) {
