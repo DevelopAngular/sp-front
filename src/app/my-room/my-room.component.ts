@@ -1,36 +1,36 @@
-import {Component, ElementRef, NgZone, OnDestroy, OnInit} from '@angular/core';
-import {MatDialog} from '@angular/material';
-import {combineLatest, merge, of, BehaviorSubject, Observable, ReplaySubject, Subject, empty, Subscription} from 'rxjs';
+import { Component, ElementRef, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog} from '@angular/material';
+import { combineLatest, merge, of, BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
 import { Util } from '../../Util';
 import { DataService } from '../services/data-service';
 import { mergeObject } from '../live-data/helpers';
 import { HallPassFilter, LiveDataService } from '../live-data/live-data.service';
 import { LoadingService } from '../services/loading.service';
-import {exceptPasses, PassLike} from '../models';
+import { PassLike } from '../models';
 import { Location } from '../models/Location';
 import { testPasses } from '../models/mock_data';
 import { BasicPassLikeProvider, PassLikeProvider, WrappedProvider } from '../models/providers';
 import { User } from '../models/User';
-import {DropdownComponent} from '../dropdown/dropdown.component';
+import { DropdownComponent } from '../dropdown/dropdown.component';
 import { TimeService } from '../services/time.service';
-import {CalendarComponent} from '../admin/calendar/calendar.component';
-import {filter, map, startWith, switchMap, takeUntil, tap, withLatestFrom} from 'rxjs/operators';
-import {DarkThemeSwitch} from '../dark-theme-switch';
-import {LocationsService} from '../services/locations.service';
-import * as _ from 'lodash';
-import {RepresentedUser} from '../navbar/navbar.component';
-import {UserService} from '../services/user.service';
-import {ScreenService} from '../services/screen.service';
-import {SortMenuComponent} from '../sort-menu/sort-menu.component';
-import {MyRoomAnimations} from './my-room.animations';
-import {KioskModeService} from '../services/kiosk-mode.service';
-import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
-import {bumpIn} from '../animations';
-import {DomSanitizer} from '@angular/platform-browser';
-import {ActivePassProvider as activeKioskPasses} from '../hall-monitor/hall-monitor.component';
-import {Router} from '@angular/router';
-import {StorageService} from '../services/storage.service';
-import {HttpService} from '../services/http-service';
+import { CalendarComponent } from '../admin/calendar/calendar.component';
+import { filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { DarkThemeSwitch } from '../dark-theme-switch';
+import { LocationsService } from '../services/locations.service';
+import { RepresentedUser } from '../navbar/navbar.component';
+import { UserService } from '../services/user.service';
+import { ScreenService } from '../services/screen.service';
+import { SortMenuComponent } from '../sort-menu/sort-menu.component';
+import { MyRoomAnimations } from './my-room.animations';
+import { KioskModeService } from '../services/kiosk-mode.service';
+import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
+import { bumpIn } from '../animations';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
+import { StorageService } from '../services/storage.service';
+import { HttpService } from '../services/http-service';
+
+import * as moment from 'moment';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -69,45 +69,17 @@ class ActivePassProvider extends RoomPassProvider {
 
 class OriginPassProvider extends RoomPassProvider {
   protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
-    return this.liveDataService.watchHallPassesFromLocation(sortingEvents, locations, date);
+    return this.liveDataService.watchHallPassesFromLocation(sortingEvents, locations, date)
+        .pipe(map(passes => passes.filter(pass => moment().isSameOrAfter(moment(pass.end_time)))));
   }
 }
 
 class DestinationPassProvider extends RoomPassProvider {
   protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
-    return this.liveDataService.watchHallPassesToLocation(sortingEvents, locations, date);
+    return this.liveDataService.watchHallPassesToLocation(sortingEvents, locations, date)
+        .pipe(map(passes => passes.filter(pass => moment().isSameOrAfter(moment(pass.end_time)))));
   }
 }
-
-
-// class ActivePassProviderKiosk implements PassLikeProvider {
-//   constructor(private liveDataService: LiveDataService, private user$: Observable<User>,
-//               private excluded$: Observable<PassLike[]> = empty(), private timeService: TimeService) {
-//   }
-//
-//   watch(sort: Observable<string>) {
-//
-//     const sort$ = sort.pipe(map(s => ({sort: s})));
-//     const merged$ = mergeObject({sort: '-created', search_query: ''}, merge(sort$));
-//
-//     const mergedReplay = new ReplaySubject<HallPassFilter>(1);
-//     merged$.subscribe(mergedReplay);
-//
-//     const passes$ = this.user$.pipe(
-//       switchMap(user => this.liveDataService.watchActiveHallPasses(mergedReplay,
-//         user.roles.includes('hallpass_student')
-//           ? {type: 'student', value: user}
-//           : {type: 'issuer', value: user})),
-//       withLatestFrom(this.timeService.now$), map(([passes, now]) => {
-//         return passes.filter(pass => new Date(pass.start_time).getTime() <= now.getTime());
-//       })
-//     );
-//
-//     const excluded$ = this.excluded$.pipe(startWith([]));
-//
-//     return combineLatest(passes$, excluded$, (passes, excluded) => exceptPasses(passes, excluded));
-//   }
-// }
 
 
 @Component({
