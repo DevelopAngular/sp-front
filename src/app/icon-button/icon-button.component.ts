@@ -17,7 +17,7 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() onDarkShade: boolean = false;
   @Input() srcString: string = '';
   @Input() pressed: boolean = false;
-  @Output() clickEvent: EventEmitter<boolean> = new EventEmitter();
+  @Output() clickEvent: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
 
   hovered: boolean = false;
   down: boolean = false;
@@ -43,19 +43,54 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
 
     }
 
-    // if (this.srcString) {
-      return this.darkTheme.getIcon({
-        iconName: this.srcString,
-        darkFill: 'White',
-        lightFill: lightFill
-      });
-    // } else {
-    //   return '';
-    // }
+    return this.darkTheme.getIcon({
+      iconName: this.srcString,
+      darkFill: 'White',
+      lightFill: lightFill
+    });
+  }
+
+  get opacity() {
+    let opacity;
+    if (this.onDarkShade) {
+      if (this.hovered || this.pressed) {
+        opacity = '.8';
+      } else {
+        opacity = '1';
+      }
+    } else {
+      if (this.hovered && !this.down) {
+        opacity = '.8';
+      } else {
+        opacity = '1';
+      }
+    }
+    return this.sanitizer.bypassSecurityTrustStyle(`${opacity}`);
   }
 
   get bgc() {
-    return this.sanitizer.bypassSecurityTrustStyle('rgba(244, 244, 244,' + (this.down ? '1' : ' .7)'));
+    let alphaChannel: number;
+    let rgb: string;
+    if (this.onDarkShade) {
+      alphaChannel = .5;
+      if (this.hovered && !this.down) {
+        alphaChannel = .5;
+      } else {
+        alphaChannel = .25;
+      }
+      rgb = '247, 247, 247, ';
+
+    } else {
+
+      if (this.hovered && !this.down) {
+        alphaChannel = .75;
+      } else {
+        alphaChannel = .5;
+      }
+      rgb = '244, 244, 244, ';
+
+    }
+    return this.sanitizer.bypassSecurityTrustStyle(`rgba(${rgb}${alphaChannel}`);
   }
 
   ngOnInit() {

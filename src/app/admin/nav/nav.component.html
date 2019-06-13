@@ -3,7 +3,7 @@
   <div class="nav-main" #navMain>
     <div class="nav-header ds-pr-10">
       <app-smartpass-logo></app-smartpass-logo>
-      <app-icon-button  [srcString]="'Settings'" [size]="20"></app-icon-button>
+      <!--<app-icon-button  [srcString]="'Settings'" [size]="20"></app-icon-button>-->
     </div>
 
     <!--<div class="divider"></div>-->
@@ -45,11 +45,12 @@
     <div [style.display]="'flex'">
       <!--<img draggable="false" (click)="router.navigateByUrl('/select-profile')" class="footer-settings global-opacity-icons" [src]="'./assets/Switch Account (Blue).png' | resolveAsset" alt="" *ngIf="showButton">-->
       <!--{{darkTheme.isEnabled$.value}}-->
-      <img draggable="false" class="footer-settings global-opacity-icons"
-           [ngClass]="{'active-route': selectedSettings , 'active-route__dark': selectedSettings && darkTheme.isEnabled$.value}"
-           [src]="settingsIcon | resolveAsset" alt="Settings icon"
-           (click)="openSettings($event)"
-      >
+      <!--<img draggable="false" class="footer-settings global-opacity-icons"-->
+           <!--[ngClass]="{'active-route': selectedSettings , 'active-route__dark': selectedSettings && darkTheme.isEnabled$.value}"-->
+           <!--[src]="settingsIcon | resolveAsset" alt="Settings icon"-->
+           <!--(click)="openSettings($event)"-->
+      <!--&gt;-->
+      <app-icon-button  [srcString]="'Settings'" [size]="20" (clickEvent)="openSettings($event)"></app-icon-button>
     </div>
   </div>
 </div>

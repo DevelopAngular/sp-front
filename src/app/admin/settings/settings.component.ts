@@ -118,8 +118,8 @@ export class SettingsComponent implements OnInit {
           left: `${this.data['possition'].x - 148}px`,
           bottom: `${(window.document.body as HTMLElement).clientHeight - this.data['possition'].y + 20}px`
         };
-
-        this.dialogRef.updatePosition(matDialogConfig.position);
+      // console.log(matDialogConfig.position);
+      this.dialogRef.updatePosition(matDialogConfig.position);
     }
 
     onHover(color) {

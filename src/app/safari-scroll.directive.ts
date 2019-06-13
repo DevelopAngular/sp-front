@@ -32,7 +32,6 @@ export class SafariScrollDirective {
     if (DeviceDetection.isSafari() || true) {
       const unregister = this.renderer.listen(event.target, 'scroll', () => {
         // console.log(event.target.scrollLeft, event.target.clientWidth, event.target.scrollWidth, 'works');
-        console.log('isSafari', DeviceDetection.isSafari(), event.target.scrollTop, event.target.style.position, event);
 
         if (event.target.scrollLeft < 0) {
           event.target.scrollLeft = 0;

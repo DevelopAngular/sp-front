@@ -2,12 +2,12 @@ import {Component, EventEmitter, NgZone, OnDestroy, OnInit, Output} from '@angul
 import { GoogleLoginService } from '../services/google-login.service';
 import {MatDialog} from '@angular/material';
 
-export enum LoginMethod { OAuth = 1, LocalStrategy = 2}
 import {BehaviorSubject, of, Subject} from 'rxjs';
 import {finalize, tap} from 'rxjs/operators';
 
 declare const window;
 
+export enum LoginMethod { OAuth = 1, LocalStrategy = 2}
 
 @Component({
   selector: 'google-signin',

@@ -97,11 +97,10 @@
       <!--</div>-->
 
       <div
-        (click)="showOptions($event)"
-        class="options-wrapper global-opacity-icons"
-        [style.background-color]="(isOpenSettings ? darkTheme.isEnabled$.value ? '#134482' : '#E4EBFF' : 'transparent')"
       >
-        <img class="options" [src]="getIcon('Settings', 'White', 'Blue-Gray') | resolveAsset">
+        <app-icon-button  [srcString]="'Settings'" [size]="20" (clickEvent)="showOptions($event)"></app-icon-button>
+
+        <!--<img class="options" [src]="getIcon('Settings', 'White', 'Blue-Gray') | resolveAsset">-->
       </div>
     </div>
   </div>

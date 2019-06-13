@@ -10,7 +10,9 @@
             </div>
           </div>
         </div>
-        <img *ngIf="hasClose" (click)="cancelEdit($event)" class="pass-card-header-close" [src]="closeIcon | resolveAsset">
+        <app-icon-button *ngIf="hasClose" [srcString]="closeIcon" [onDarkShade]="true" [size]="20" (clickEvent)="cancelEdit($event)"></app-icon-button>
+
+        <!--<img *ngIf="hasClose" (click)="cancelEdit($event)" class="pass-card-header-close" [src]="closeIcon | resolveAsset">-->
       </div>
     <mat-divider></mat-divider>
   </div>

@@ -119,7 +119,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
     if(((this.isActive && this.forStaff) || this.forMonitor)){
       return './assets/Dots (Transparent).svg';
     } else{
-      return './assets/'+(this.forInput?'Back Button ': 'Delete ') + '(Transparent).svg';
+      return './assets/'+(this.forInput?'Chevron Left ': 'Delete ') + '(Transparent).svg';
     }
   }
 
