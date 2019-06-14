@@ -46,8 +46,10 @@
       </div>
     </div>
   </div>
-  <app-student-footer *ngIf="!isStaff" [formState]="formState" [state]="'to'" [date]="date"></app-student-footer>
-  <app-teacher-footer *ngIf="isStaff" [fromLocation]="location" [formState]="formState" [state]="'to'" [studentText]="studentText" [date]="date"></app-teacher-footer>
+  <ng-container *ngIf="!displayFooters">
+    <app-student-footer *ngIf="!isStaff" [formState]="formState" [state]="'to'" [date]="date"></app-student-footer>
+    <app-teacher-footer *ngIf="isStaff" [fromLocation]="location" [formState]="formState" [state]="'to'" [studentText]="studentText" [date]="date"></app-teacher-footer>
+  </ng-container>
 </div>
   <img class="back-button back-button-grey back-btn-bottom" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
 </div>

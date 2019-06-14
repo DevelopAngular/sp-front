@@ -6,7 +6,7 @@
   <div class="pretty-replace-box"
        [style.backgroundColor]="FORM_STATE.step < 4 && FORM_STATE.previousStep < 4 ? 'rgba(255, 255, 255, .95)' : 'transparent'"
        [style.overflow]="FORM_STATE.step === 2 || FORM_STATE.previousStep === 2 ? 'hidden' : 'visible'">
-    <div style="transition: width .5s ease, height .5s ease; position: relative" [style.width]="isDeviceMid ? '256px' : formSize.width" [style.height]="formSize.height">
+    <div class="fixed-card-wrapper" style="" [style.width]="formSize.width" [style.height]="formSize.height">
       <div class="fixed-card"  [style.width]="formSize.width" [style.height]="formSize.height" *ngIf="FORM_STATE.step === 1" [@NextStep]="{ value: '', params: frameMotion$ | async}" (@NextStep.start)="setFormSize()">
         <div [ngClass]="{'date-picker': FORM_STATE.formMode.role === 1 || FORM_STATE.data.request }" class="">
           <app-date-time-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)" ></app-date-time-container>

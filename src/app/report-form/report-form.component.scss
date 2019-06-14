@@ -1,28 +1,17 @@
-@media all and (max-width: 768px) {
+@media all and (max-width: 1024px) {
   div.student-select .student-select_button-next {
     margin-right: 0;
     align-self: center;
   }
 
-  img.back-button-top {
-     display: none;
-  }
-
-  img.back-button-bottom {
-    display: block;
-    position: absolute;
-    width: 28px;
-    height: 28px;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: -40px;
+  img.back-button {
+    display: none;
   }
 }
 
 @media all  and (max-width: 425px) {
   div.message-entry {
     width: initial;
-
   }
 
   div.message-wrapper {
@@ -31,22 +20,12 @@
 }
 
 @media all  and (max-width: 375px) {
-  img.back-button-bottom {
-    bottom: -40px;
-  }
-
   div.message-entry .message-box{
     height: 100%;
   }
 
   div.message-entry .message-wrapper {
     height: 203px;
-  }
-}
-
-@media all  and (max-width: 320px) {
-  div.teacherNav-mobile {
-    height: 45px;
   }
 }
 
@@ -203,14 +182,6 @@ textarea{
     letter-spacing: 0.3px;
     background-color: transparent;
   }
-}
-
-.back-button-top {
-  display: block;
-}
-
-.back-button-bottom {
-  display: none;
 }
 
 .message-wrapper {
