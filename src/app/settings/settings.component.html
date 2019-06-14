@@ -45,7 +45,7 @@
                [src]="i === 2 ? (darkTheme.isEnabled$.value && (hovered && hoveredColor === setting.gradient) ? './assets/Moon (Navy).svg' : getIcon(setting.icon, setting, hovered, hoveredColor)) : (getIcon(setting.icon, setting, hovered, hoveredColor)) | resolveAsset" alt="SET">
           <div class="setting-title"
                [style.color]="i === 2 ? (darkTheme.isEnabled$.value && (hovered && hoveredColor === setting.gradient) ? '#1F195E' : getColor(setting, hovered, hoveredColor)) : (getColor(setting, hovered, hoveredColor))"
-          > {{(i === 2 ? (darkTheme.isEnabled$.value ? 'Light Theme' : 'Dark Theme') : setting.title)}} </div>
+          > {{(i === 2 ? (darkTheme.isEnabled$.value ? 'Light Mode' : 'Dark Mode') : setting.title)}} </div>
         </div>
         <mat-divider class="divider"
                      [style.border-top-color]="darkTheme.isEnabled$.value ? 'rgba(255, 255, 255, .12)' : 'rgba(0, 0, 0, .12)'"

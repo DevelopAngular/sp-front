@@ -26,11 +26,11 @@
           <img class="switch-icon" [src]="!darkTheme.isEnabled$.value && hoveredTheme ? './assets/Moon (White).svg' : getIcon('Moon', null, hoveredTheme) | resolveAsset">
           <div class="option-title" [style.color]="!darkTheme.isEnabled$.value && hoveredTheme ? 'white' : getColor(null, hoveredTheme)">
             <div>
-              <span *ngIf="darkTheme.isEnabled$.value; else dark">Light Theme</span>
+              <span *ngIf="darkTheme.isEnabled$.value; else dark">Light Mode</span>
             </div>
             <ng-template #dark>
               <div>
-                <span>Dark Theme</span>
+                <span>Dark Mode</span>
               </div>
             </ng-template>
           </div>
