@@ -27,7 +27,7 @@ export class RoundInputComponent implements OnInit {
 
   @Input() labelText: string;
   @Input() placeholder: string;
-  @Input() type: string;
+  @Input() type: string = 'text';
   //Can be 'text', 'multilocation', 'multiuser', or 'dates'  There may be some places where multiuser may need to be split into student and teacher. I tried finding a better way to do this, but this is just short term.
   @Input() initialValue: string = ''; // Allowed only if type is multi*
   @Input() html5type: string = 'text'; // text, password, number etc.
