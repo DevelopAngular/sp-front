@@ -4,7 +4,11 @@
       [@pressState]="buttonState" (click)="onClick($event)"
       (mouseenter)="hovered = true"
       (mouseleave)="buttonDown = false; hovered = false"
-      (mousedown)="onPress(true)" (mouseup)="onPress(false)">
+      (mousedown)="onPress(true, $event)"
+      (mouseup)="onPress(false, $event)"
+      (touchstart)="onTap(true)"
+      (touchend)="onTap(false)"
+      >
     <div class="tile-title" [style.margin-top]="forStaff?'12px':'0px'" >{{ pass.destination.title }}</div>
     <div class="tile-content">{{ tileContent }}</div>
   <img [style.width]="'13px'" [style.height]="'15px'" *ngIf="pass.travel_type == 'one_way' && !forStaff" [src]="'./assets/SP Arrow (White).svg' | resolveAsset" class="tile-type">

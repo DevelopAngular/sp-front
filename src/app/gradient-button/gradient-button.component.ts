@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { bumpIn } from '../animations';
+import {ScreenService} from '../services/screen.service';
 
 export interface ClickEvent {
   clicked: boolean;
@@ -70,7 +71,7 @@ export class GradientButtonComponent implements OnInit {
   buttonDown = false;
   hovered: boolean = false;
 
-  constructor(private sanitizer: DomSanitizer) {
+  constructor(private sanitizer: DomSanitizer, private screenService: ScreenService) {
   }
   ngOnInit(): void {
     // if (this.size && this.size !== 'small' && this.size !== 'medium' && this.size !== 'large' && this.size !== 'xl') {
@@ -181,10 +182,18 @@ export class GradientButtonComponent implements OnInit {
     }
   }
 
-  onPress(press: boolean) {
+  onPress(press: boolean, event) {
+    if (this.screenService.isDeviceLargeExtra) event.preventDefault();
     if(!this.disabled)
       this.buttonDown = press;
     //console.log("[Button State]: ", "The button is " +this.buttonState);
+  }
+
+  onTap(tap: boolean) {
+    // if(!this.disabled)
+      this.buttonDown = tap;
+
+    // console.log(this.buttonDown);
   }
 
   onClick(event) {

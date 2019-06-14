@@ -10,7 +10,9 @@
      [style.border-radius]="cornerRadius"
      (click)="onClick($event)"
      (mouseenter)="onHover(true)" (mouseleave)="onHover(false)"
-     (mousedown)="onPress(true)" (mouseup)="onPress(false)"
+     (mousedown)="onPress(true, $event)" (mouseup)="onPress(false, $event)"
+     (touchstart)="onTap(true)"
+     (touchend)="onTap(false)"
      [@pressState]="buttonState"
      [ngClass]="{'center': !(leftIcon || rightIcon), 'disabled': disabled}">
     <!--<span style="position: absolute; top: 0; left: 3px; font-size: 10px;">{{size}}</span>-->

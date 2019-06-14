@@ -1,5 +1,5 @@
 import { animate, state, style, transition, trigger, } from '@angular/animations';
-import { Component, NgZone, OnInit } from '@angular/core';
+import {Component, HostListener, NgZone, OnInit} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import {
   BehaviorSubject,
@@ -216,6 +216,8 @@ export class PassesComponent implements OnInit {
 
   isInboxClicked: boolean;
 
+  cursor = 'pointer';
+
   showInboxAnimated() {
     return this.dataService.inboxState;
   }
@@ -372,6 +374,10 @@ export class PassesComponent implements OnInit {
     //
     // this.notifService.initNotifications(true)
     //   .then(hasPerm => console.log(`Has permission to show notifications: ${hasPerm}`));
+
+    if (this.screenService.isDeviceLargeExtra) {
+      this.cursor = 'default';
+    }
   }
 
   showMainForm(forLater: boolean): void {
@@ -441,13 +447,10 @@ export class PassesComponent implements OnInit {
     }
   }
 
-  get passesSectionFromTop() {
-    if ( this.isInboxClicked && this.screenService.isDeviceLarge) {
-      return 'slideTop';
-    }
-
-    if (!this.isInboxClicked && this.screenService.isDeviceLarge) {
-      return  'slideBottom';
+  @HostListener('window:resize')
+  checkDeviceWidth() {
+    if (this.screenService.isDeviceLargeExtra) {
+      this.cursor = 'default';
     }
   }
 }

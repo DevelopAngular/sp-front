@@ -10,6 +10,7 @@ import { Invitation } from '../models/Invitation';
 import { Util } from '../../Util';
 import {filter} from 'rxjs/operators';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
+import {ScreenService} from '../services/screen.service';
 
 @Component({
   selector: 'app-pass-tile',
@@ -95,7 +96,7 @@ export class PassTileComponent implements OnInit, OnDestroy {
             this.buttonDown ? `0px 3px 5px rgba(${rgbString}, 0.15)` : '0px 3px 5px rgba(0, 0, 0, 0.1)');
     }
 
-  constructor(private sanitizer: DomSanitizer, private timeService: TimeService) {
+  constructor(private sanitizer: DomSanitizer, private timeService: TimeService, private screenService: ScreenService) {
   }
 
   ngOnInit() {
@@ -139,9 +140,14 @@ export class PassTileComponent implements OnInit, OnDestroy {
     }
   }
 
-  onPress(press: boolean) {
+  onPress(press: boolean, event) {
+    if (this.screenService.isDeviceLargeExtra) event.preventDefault();
     this.buttonDown = press;
     // console.log("[Button State]: ", "The button is " +this.buttonState);
+  }
+
+  onTap(state: boolean) {
+    this.buttonDown = state;
   }
 
   onClick(event) {

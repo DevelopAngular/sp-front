@@ -18,9 +18,16 @@
   <!--<div class="collection-divider"></div>-->
   <div *ngIf="(currentPasses$ | async)">
     <div *ngIf="currentPasses.length>0; else emptyMessage">
-      <div class="collection-grid-wrapper" [style.grid-template-columns]="gridTemplate" *ngIf="displayState==='grid'; else list">
+      <div class="collection-grid-wrapper" [style.grid-template-columns]="gridTemplate" [style.grid-gap]="gridGap" *ngIf="displayState==='grid'; else list">
         <div class="tile" *ngFor="let pass of currentPasses">
-          <app-pass-tile (click)="showPass(pass)" [timerEvent]="timerEvent" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-tile>
+          <app-pass-tile (click)="showPass(pass)"
+                         [timerEvent]="timerEvent"
+                         [fromPast]="fromPast"
+                         [forFuture]="forFuture"
+                         [isActive]="isActive"
+                         [forStaff]="forStaff"
+                         [pass]="pass"
+          ></app-pass-tile>
         </div>
       </div>
       <ng-template #list>

@@ -54,11 +54,11 @@ export const PassesAnimations =  {
 
   RequestCardSlideInOut: trigger('RequestCardSlideInOut', [
     transition(':enter', [
-      style({'margin-top': '-611px'}),
+      style({'margin-top': '-568px'}),
       animate( '.2s linear', style({'margin-top': '0'}))
     ]),
     transition(':leave', [
-      animate( '.2s linear', style({'margin-top': '-611px'}))
+      animate( '.2s linear', style({'margin-top': '-568px'}))
     ]),
   ]),
 
