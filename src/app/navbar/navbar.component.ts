@@ -1,4 +1,16 @@
-import {Component, NgZone, OnInit, Input, ElementRef, HostListener, EventEmitter, Output} from '@angular/core';
+import {
+    Component,
+    NgZone,
+    OnInit,
+    Input,
+    ElementRef,
+    HostListener,
+    EventEmitter,
+    Output,
+    ViewChild,
+    AfterContentInit,
+    AfterViewInit, ViewChildren, QueryList, ChangeDetectorRef
+} from '@angular/core';
 import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material';
 import {Router, NavigationEnd, ActivatedRoute, NavigationStart} from '@angular/router';
@@ -27,6 +39,7 @@ import {NavbarAnimations} from './navbar.animations';
 import {StorageService} from '../services/storage.service';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {SideNavService} from '../services/side-nav.service';
+import {NavButtonComponent} from '../nav-button/nav-button.component';
 
 declare const window;
 
@@ -45,9 +58,11 @@ export interface RepresentedUser {
   ]
 })
 
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements AfterViewInit, OnInit {
 
   @Input() hasNav = true;
+  @ViewChild('navButtonsContainer') navButtonsContainer;
+  @ViewChildren('tabRef') tabRefs: QueryList<ElementRef>;
   // private representedUsers$: ReplaySubject<User> = new ReplaySubject(1);
 
   isStaff: boolean;
@@ -86,6 +101,7 @@ export class NavbarComponent implements OnInit {
   fadeClick: boolean;
 
   @Output() settingsClick: EventEmitter<any> = new EventEmitter<any>();
+
   private pts;
 
   constructor(
@@ -135,7 +151,7 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.hideButtons = this.router.url === '/main/kioskMode';
+      this.hideButtons = this.router.url === '/main/kioskMode';
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit[urlSplit.length - 1];
 
@@ -230,7 +246,14 @@ export class NavbarComponent implements OnInit {
     this.islargeDeviceWidth = this.screenService.isDeviceLargeExtra;
 
     this.sideNavService.fadeClick.subscribe(click =>  this.fadeClick = click);
+  }
 
+  ngAfterViewInit(): void {
+      setTimeout(() => {
+          const tabRefsArray = this.tabRefs.toArray();
+          const selectedTabRef = this.buttons.findIndex((button) => button.route === this.tab);
+          this.selectTab(tabRefsArray[selectedTabRef].nativeElement, this.navButtonsContainer.nativeElement);
+      }, 50);
   }
 
   getIcon(iconName: string, darkFill?: string, lightFill?: string) {
@@ -251,15 +274,10 @@ export class NavbarComponent implements OnInit {
     });
   }
 
-
-  get notificationBadge$() {
-    return this.navbarData.notificationBadge$;
-  }
-
-  selectTab(evt: HTMLElement, container: HTMLElement) {
+  selectTab(event: HTMLElement, container: HTMLElement) {
       const containerRect = container.getBoundingClientRect();
-      const selectedTabRect = (evt as HTMLElement ).getBoundingClientRect();
-      this.pts = Math.round((selectedTabRect.left - containerRect.left) + 85) + 'px';
+      const selectedTabRect = event.getBoundingClientRect();
+      this.pts = Math.round((selectedTabRect.left - containerRect.left) + 35) + 'px';
   }
 
   hasRoles(roles: string[]) {

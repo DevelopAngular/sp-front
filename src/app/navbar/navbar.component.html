@@ -1,32 +1,30 @@
-<div class="host">
+<div class="host" (scroll)="onScroll()">
   <!--<div *ngIf="!(isProcess$ | async).active" class="static-loading" #staticLoading><div class="static-loading"></div></div>-->
   <!--<ng-progress [color]="'#04CD33'" [spinner]="false" [fixed]="true" [speed]="200" [thick]="true"></ng-progress>-->
   <div *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth" class="bar">
     <div class="heading grow">
       <app-smartpass-logo></app-smartpass-logo>
     </div>
-    <div class="nav-buttons" *ngIf="!hideButtons" #navButtonsContainter>
-
-      <div class="selected-tab-pointer" [style.left]="pointerTopSpace"></div>
+    <div #navButtonsContainer class="nav-buttons" *ngIf="!hideButtons">
 
       <div *ngIf="isStaff && !user.isAssistant()" class="teacherNav">
-        <div *ngFor="let button of buttons"
-             class="teacherNav_tab"
-             #tabRef
-             [style.transition]="'transform .4s ease'"
-             (mousedown)="tabRef.style.transform = 'scale(.96)'"
-             (mouseup)="tabRef.style.transform = 'unset'"
-             (click)="selectTab(tabRef, navButtonsContainter)"
-        >
+        <div *ngFor="let button of buttons" class="teacherNav_tab">
           <ng-container *ngIf="hasRoles(button.requiredRoles)">
-            <app-nav-button
-              [selected]="tab === button.route"
-              [content]="button.title"
-              [icon]="button.imgUrl"
-              (onClick)="updateTab(button.route); selectTab(tabRef, navButtonsContainter)">
-            </app-nav-button>
+            <div
+                 #tabRef
+                 [style.transition]="'transform .4s ease'"
+                 (mousedown)="tabRef.style.transform = 'scale(.96)'"
+                 (mouseup)="tabRef.style.transform = 'unset'">
+              <app-nav-button
+                      [selected]="tab === button.route"
+                      [content]="button.title"
+                      [icon]="button.imgUrl"
+                      (onClick)="selectTab(tabRef, navButtonsContainer); updateTab(button.route)">
+              </app-nav-button>
+            </div>
           </ng-container>
         </div>
+        <div class="selected-tab-pointer" [style.left]="pointerTopSpace"></div>
       </div>
 
       <div *ngIf="user.isAssistant() && effectiveUser?.roles" class="teacherNav">
