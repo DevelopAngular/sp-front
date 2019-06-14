@@ -107,10 +107,11 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
 
       of(this.loginService.signInDemoMode(this.demoUsername, this.demoPassword))
       .pipe(
-        tap((res) => { console.log(res);}),
+        tap((res) => { console.log(res); }),
         finalize(() => {
           this.showSpinner = false;
-      }));
+        })
+      );
     }
   }
 

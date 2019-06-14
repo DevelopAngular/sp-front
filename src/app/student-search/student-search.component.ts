@@ -6,6 +6,9 @@ import { User } from '../models/User';
 import {of, Subject} from 'rxjs';
 import {UserService} from '../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
+import {HttpService} from '../services/http-service';
+
+export type SearchEntity = 'schools' | 'users';
 
 @Component({
   selector: 'app-student-search',
@@ -14,6 +17,9 @@ import {DomSanitizer} from '@angular/platform-browser';
 })
 
 export class StudentSearchComponent implements OnInit {
+
+
+  @Input() searchTarget: SearchEntity = 'users';
 
   @Input() disabled: boolean = false;
   @Input() focused: boolean = false;
@@ -39,6 +45,8 @@ export class StudentSearchComponent implements OnInit {
 
   @ViewChild('studentInput') input;
 
+  schools: any;
+
   pending$: Subject<boolean> = new Subject();
   students: Promise<any[]>;
   inputValue$: Subject<string> = new Subject<string>();
@@ -49,7 +57,8 @@ export class StudentSearchComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private http: HttpService
   ) {
 
   }
@@ -116,31 +125,51 @@ export class StudentSearchComponent implements OnInit {
   }
 
   onSearch(search: string) {
-    if (search !== '') {
-      if (this.type === 'alternative') {
-        this.students = this.userService.searchProfile(this.role, 50, search)
-          .toPromise()
-          .then((paged: any) => {
-            // console.log('PAGED RESULT >>>', paged);
-            this.showDummy = !paged.results.length;
-            return this.removeDuplicateStudents(paged.results);
-          });
-      } else if (this.type === 'gsuite') {
-        this.pending$.next(true);
-        this.students = this.userService.searchProfileAll(search, this.type, this.role.split('_')[this.role.split('_').length - 1])
-          .toPromise().then((users: User[]) => {
+
+    switch (this.searchTarget) {
+      case 'users':
+          if (search !== '') {
+            if (this.type === 'alternative') {
+              this.students = this.userService.searchProfile(this.role, 50, search)
+                .toPromise()
+                .then((paged: any) => {
+                  // console.log('PAGED RESULT >>>', paged);
+                  this.showDummy = !paged.results.length;
+                  return this.removeDuplicateStudents(paged.results);
+                });
+            } else if (this.type === 'gsuite') {
+              this.pending$.next(true);
+              this.students = this.userService.searchProfileAll(search, this.type, this.role.split('_')[this.role.split('_').length - 1])
+                .toPromise().then((users: User[]) => {
+                  this.pending$.next(false);
+                  this.showDummy = !users.length;
+                  return this.removeDuplicateStudents(users);
+                });
+            }
+
+          } else {
+
+            this.students = this.rollUpAfterSelection ? null : of([]).toPromise();
+            this.showDummy = false;
+            this.inputValue$.next('');
+          }
+        break;
+      case 'schools':
+        if (search !== '') {
+          this.schools = this.http.get('v1/onboard/schools').toPromise().then((schools: any) => {
+            debugger
+
             this.pending$.next(false);
-              this.showDummy = !users.length;
-              return this.removeDuplicateStudents(users);
+            this.showDummy = !schools.length;
+            return this.removeDuplicateStudents(schools);
           });
-      }
-
-      } else {
-
+        } else {
           this.students = this.rollUpAfterSelection ? null : of([]).toPromise();
           this.showDummy = false;
           this.inputValue$.next('');
-      }
+        }
+          break;
+    }
   }
   onBlur(event) {
     // console.log(event);

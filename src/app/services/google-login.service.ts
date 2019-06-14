@@ -47,7 +47,8 @@ export class GoogleLoginService {
       // window.waitForAppLoaded();
       if (auth) {
         // debugger
-        this.storage.setItem(STORAGE_KEY, JSON.stringify(auth));
+        this.storage.setItem(STORAGE_KEY, JSON.stringify({username: (auth as DemoLogin).username, type: (auth as DemoLogin).type}));
+        // this.storage.setItem(STORAGE_KEY, JSON.stringify((auth as DemoLogin).username));
       }
     });
 
@@ -117,7 +118,8 @@ export class GoogleLoginService {
     return this.authToken$.pipe(
       filter(t => !!t && (!isDemoLogin(t) || !t.invalid)),
       take(1),
-      map(a => isDemoLogin(a) ? a : a.id_token),);
+      map(a => isDemoLogin(a) ? a : a.id_token)
+    );
   }
 
   private updateAuth(auth: AuthResponse | DemoLogin) {
@@ -139,6 +141,7 @@ export class GoogleLoginService {
     }
 
     this.storage.removeItem(STORAGE_KEY);
+    this.storage.removeItem('refresh_token');
     this.logout();
   }
 
