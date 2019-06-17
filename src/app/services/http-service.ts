@@ -219,7 +219,6 @@ export class HttpService {
      ).subscribe(() => { });
 
       this.kioskTokenSubject$.pipe(map(newToken => {
-        debugger
         newToken['expires'] = new Date(new Date() + newToken['expires_in']);
         return { auth: newToken, server: this.accessTokenSubject.value.server};
 

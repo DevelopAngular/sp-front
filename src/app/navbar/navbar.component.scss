@@ -72,8 +72,8 @@
 
 .host {
   background-color: #FBFEFF;
-  position: fixed;
-  top: 50px;
+  //position: fixed;
+  //top: 50px;
   width: 100%;
   z-index: 10;
 }
@@ -303,8 +303,8 @@
 }
 
 .nav-buttons {
-  width: 45%;
   position: relative;
+  flex-grow: 1;
   .selected-tab-pointer {
     transition: all 0.4s ease;
     position: absolute;
