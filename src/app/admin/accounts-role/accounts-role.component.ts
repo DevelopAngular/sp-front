@@ -19,6 +19,7 @@ import {Location} from '../../models/Location';
 import {DataTableComponent} from '../data-table/data-table.component';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {RepresentedUser} from '../../navbar/navbar.component';
+import {LocationsService} from '../../services/locations.service';
 
 declare const window;
 
@@ -73,18 +74,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             map(res => res.results),
             switchMap((userList: User[]) => {
               if (this.role === '_profile_teacher' && userList.length) {
-                return zip(
-                  ...userList.map((user: User) => {
-                    return this.dataService.getLocationsWithTeacher(user)
-                      .pipe(
-                        switchMap((locs: Location[]) => {
-                          (user as any).assignedTo = locs.map((l: Location) => {
-                            return l.title;
-                          }).join(', ');
-                          return of(user);
-                        })
-                      );
-                  }));
+
+                return this.addUserLocations(userList);
+
               } else if (this.role === '_profile_assistant' && userList.length) {
                 return zip(
                   ...userList.map((user: User) => {
@@ -124,7 +116,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     private storage: StorageService,
     private elemRef: ElementRef,
     private dataService: DataService,
-    public darkTheme: DarkThemeSwitch
+    public darkTheme: DarkThemeSwitch,
+    private locService: LocationsService
 
   ) {}
 
@@ -359,19 +352,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               map(res => res),
               switchMap((userList: User[]) => {
                 if (this.role === '_profile_teacher' && userList.length) {
-                  return zip(
-                    ...userList.map((user: User) => {
-                      return this.dataService.getLocationsWithTeacher(user)
-                        .pipe(
-                          switchMap((locs: Location[]) => {
-                            (user as any).assignedTo = locs.map((l: Location) => {
-                              return l.title;
-                            }).join(', ');
-                            return of(user);
-                          })
-                        );
 
-                    }));
+                  return this.addUserLocations(userList);
+
                 } else if (this.role === '_profile_assistant' && userList.length) {
                   return zip(
                     ...userList.map((user: User) => {
@@ -634,19 +617,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         map(userResult => userResult.results),
         switchMap((userList: User[]) => {
           if (this.role === '_profile_teacher' && userList.length) {
-            return zip(
-              ...userList.map((user: User) => {
-                return this.dataService.getLocationsWithTeacher(user)
-                  .pipe(
-                    switchMap((locs: Location[]) => {
-                      (user as any).assignedTo = locs.map((l: Location) => {
-                        return l.title;
-                      }).join(', ');
-                      return of(user);
-                    })
-                  );
 
-              }));
+            return this.addUserLocations(userList);
+
           } else if (this.role === '_profile_assistant' && userList.length) {
             return zip(
               ...userList.map((user: User) => {
@@ -674,6 +647,16 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           this.placeholder = true;
         }
       });
+  }
+
+  private addUserLocations(users) {
+    return this.locService.getLocatopnsWithManyTeachers(users)
+        .pipe(map((locs: Location[]) => {
+            users.forEach(user => {
+                (user as any).assignedTo = locs.filter(loc => loc.teachers.find(teacher => teacher.id === user.id));
+            });
+            return users;
+        }));
   }
 
   private buildUserListData(userList) {
