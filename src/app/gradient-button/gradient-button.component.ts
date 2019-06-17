@@ -166,7 +166,7 @@ export class GradientButtonComponent implements OnInit {
       } else {
         const lastEqualSignIndex = this.gradient.lastIndexOf(',');
         const gg = this.gradient.substr(lastEqualSignIndex + 1);
-        console.log(gg);
+        // console.log(gg);
         return gg;
       }
     }
