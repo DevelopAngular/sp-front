@@ -65,6 +65,7 @@ export class GradientButtonComponent implements OnInit {
   @Input() linkType: linkType = '_blank';
   @Input() download: boolean = false;
   @Input() documentType: docType;
+  @Input() isGradient: boolean;
   @Output() buttonClick = new EventEmitter<any>();
 
   buttonDown = false;
@@ -136,26 +137,37 @@ export class GradientButtonComponent implements OnInit {
 
   get styleGradient() {
     // We're fine using arbitrary styles here because they must match a very strict regex.
-    if (this.buttonDown) {
-      // console.log("[Hover State]: ", "Using hover styles");
-      const color = this.hoverColor;
-      if (cssColorRegexp.test(color)) {
-        // console.log("[Color Sanitizer]: ", "Color passed");
-        return this.sanitizer.bypassSecurityTrustStyle(color);
-      } else {
-        // console.log("[Color Sanitizer]: ", "Color did not pass");
-        return this.sanitizer.bypassSecurityTrustStyle(DEFAULT_GRADIENT);
-      }
-    } else {
-      // console.log("[Hover State]: ", "Using gradient styles");
-      const gradient = this.gradient ? this.gradient.trim() : '';
+    if (this.isGradient) {
+        if (this.buttonDown) {
+            // console.log("[Hover State]: ", "Using hover styles");
+            const color = this.hoverColor;
+            if (cssColorRegexp.test(color)) {
+                // console.log("[Color Sanitizer]: ", "Color passed");
+                return this.sanitizer.bypassSecurityTrustStyle(color);
+            } else {
+                // console.log("[Color Sanitizer]: ", "Color did not pass");
+                return this.sanitizer.bypassSecurityTrustStyle(DEFAULT_GRADIENT);
+            }
+        } else {
+            // console.log("[Hover State]: ", "Using gradient styles");
+            const gradient = this.gradient ? this.gradient.trim() : '';
 
-      if (cssGradientRegexp.test(gradient)) {
-        // console.log("[Gradient Sanitizer]: ", "Gradient passed");
-        return this.sanitizer.bypassSecurityTrustStyle('radial-gradient(circle at 73% 71%, ' + gradient + ')');
+            if (cssGradientRegexp.test(gradient)) {
+                // console.log("[Gradient Sanitizer]: ", "Gradient passed");
+                return this.sanitizer.bypassSecurityTrustStyle('radial-gradient(circle at 73% 71%, ' + gradient + ')');
+            } else {
+                // console.log("[Gradient Sanitizer]: ", "Gradient did not pass");
+                return this.sanitizer.bypassSecurityTrustStyle(DEFAULT_GRADIENT);
+            }
+        }
+    } else {
+      if (!this.gradient) {
+          return this.sanitizer.bypassSecurityTrustStyle('#00B476');
       } else {
-        // console.log("[Gradient Sanitizer]: ", "Gradient did not pass");
-        return this.sanitizer.bypassSecurityTrustStyle(DEFAULT_GRADIENT);
+        const lastEqualSignIndex = this.gradient.lastIndexOf(',');
+        const gg = this.gradient.substr(lastEqualSignIndex + 1);
+        console.log(gg);
+        return gg;
       }
     }
   }
