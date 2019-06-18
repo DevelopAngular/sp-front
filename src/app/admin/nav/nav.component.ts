@@ -37,7 +37,7 @@ export class NavComponent implements OnInit {
   ];
   fakeMenu = new BehaviorSubject<boolean>(false);
   tab: string[] = ['dashboard'];
-  private pts: string;
+  public pts: string;
     constructor(
         public router: Router,
         private activeRoute: ActivatedRoute,
@@ -72,12 +72,15 @@ export class NavComponent implements OnInit {
 
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit.slice(1);
+    if (this.isSelected('takeTour')) {
+      this.pts = '-63px';
+    }
 
     this.router.events.subscribe(value => {
       if ( value instanceof NavigationEnd ) {
         let urlSplit: string[] = value.url.split('/');
         this.tab = urlSplit.slice(1);
-        console.log(this.tab, value.url);
+        // console.log(this.tab, value.url);
         this.tab = ( (this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab );
       }
     });
@@ -168,6 +171,10 @@ export class NavComponent implements OnInit {
         }
     });
   }
+
+  // tourRedirect() {
+  //   this.router.navigate(['admin/takeTour']);
+  // }
 
   selectTab(evt: HTMLElement, container: HTMLElement) {
     const containerRect = container.getBoundingClientRect();

@@ -40,6 +40,8 @@ import {StorageService} from '../services/storage.service';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {SideNavService} from '../services/side-nav.service';
 import {NavButtonComponent} from '../nav-button/nav-button.component';
+import {Schedule} from 'primeng/primeng';
+import {School} from '../models/School';
 
 declare const window;
 
@@ -63,7 +65,9 @@ export class NavbarComponent implements AfterViewInit, OnInit {
   @Input() hasNav = true;
   @ViewChild('navButtonsContainer') navButtonsContainer;
   @ViewChildren('tabRef') tabRefs: QueryList<ElementRef>;
-  // private representedUsers$: ReplaySubject<User> = new ReplaySubject(1);
+
+  @Output() settingsClick: EventEmitter<any> = new EventEmitter<any>();
+
 
   isStaff: boolean;
   showSwitchButton: boolean = false;
@@ -86,6 +90,8 @@ export class NavbarComponent implements AfterViewInit, OnInit {
 
   isMyRoomRoute: boolean;
 
+  schools: School[] = [];
+
   buttonHash = {
     passes: {title: 'Passes', route: 'passes', imgUrl: 'SP Arrow', requiredRoles: ['_profile_teacher', 'access_passes'], hidden: false},
     hallMonitor: {title: 'Hall Monitor', route: 'hallmonitor', imgUrl: 'Walking', requiredRoles: ['_profile_teacher', 'access_hall_monitor'], hidden: false},
@@ -100,9 +106,26 @@ export class NavbarComponent implements AfterViewInit, OnInit {
 
   fadeClick: boolean;
 
-  @Output() settingsClick: EventEmitter<any> = new EventEmitter<any>();
-
   private pts;
+
+  @HostListener('window:resize')
+    checkDeviceWidth() {
+      this.underlinePosition();
+        this.islargeDeviceWidth = this.screenService.isDeviceLargeExtra;
+
+        if (this.islargeDeviceWidth) {
+            this.inboxVisibility = false;
+
+        }
+
+        if (this.screenService.isDesktopWidth) {
+            this.inboxVisibility = true;
+            this.navbarData.inboxClick$.next(false);
+            this.isInboxClicked = false;
+        }
+
+    this.dataService.updateInbox(this.inboxVisibility);
+    }
 
   constructor(
       private dataService: DataService,
@@ -151,7 +174,7 @@ export class NavbarComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit() {
-      this.hideButtons = this.router.url === '/main/kioskMode';
+    this.hideButtons = this.router.url === '/main/kioskMode';
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit[urlSplit.length - 1];
 
@@ -246,14 +269,24 @@ export class NavbarComponent implements AfterViewInit, OnInit {
     this.islargeDeviceWidth = this.screenService.isDeviceLargeExtra;
 
     this.sideNavService.fadeClick.subscribe(click =>  this.fadeClick = click);
+
+    this.http.schools$.subscribe(schools => {
+        this.schools = schools;
+    });
   }
 
   ngAfterViewInit(): void {
-      setTimeout(() => {
-          const tabRefsArray = this.tabRefs.toArray();
-          const selectedTabRef = this.buttons.findIndex((button) => button.route === this.tab);
-          this.selectTab(tabRefsArray[selectedTabRef].nativeElement, this.navButtonsContainer.nativeElement);
-      }, 50);
+      this.underlinePosition();
+  }
+
+  underlinePosition() {
+      if (this.isStaff && this.navButtonsContainer && this.tabRefs && this.screenService.isDesktopWidth) {
+          setTimeout(() => {
+              const tabRefsArray = this.tabRefs.toArray();
+              const selectedTabRef = this.buttons.findIndex((button) => button.route === this.tab);
+              this.selectTab(tabRefsArray[selectedTabRef].nativeElement, this.navButtonsContainer.nativeElement);
+          }, 50);
+      }
   }
 
   getIcon(iconName: string, darkFill?: string, lightFill?: string) {
@@ -408,14 +441,6 @@ export class NavbarComponent implements AfterViewInit, OnInit {
       }
   }
 
-  openSupport(){
-    window.open('https://smartpass.app/support');
-  }
-
-  getNavElementBg(index: number, type: string) {
-    //return type == 'btn' ? (index == this.tabIndex ? 'rgba(165, 165, 165, 0.3)' : '') : (index == this.tabIndex ? 'rgba(0, 255, 0, 1)' : 'rgba(255, 255, 255, 0)');
-  }
-
   updateTab(route: string) {
     this.tab = route;
     if (this.tab === 'hallmonitor') {
@@ -438,23 +463,5 @@ export class NavbarComponent implements AfterViewInit, OnInit {
     if (this.screenService.isDeviceLarge && !this.screenService.isDeviceMid) {
       this.sideNavService.toggleRight$.next(true);
     }
-  }
-
-  @HostListener('window:resize')
-  checkDeviceWidth() {
-    this.islargeDeviceWidth = this.screenService.isDeviceLargeExtra;
-
-    if (this.islargeDeviceWidth) {
-      this.inboxVisibility = false;
-
-    }
-
-    if (this.screenService.isDesktopWidth) {
-      this.inboxVisibility = true;
-      this.navbarData.inboxClick$.next(false);
-      this.isInboxClicked = false;
-    }
-
-    this.dataService.updateInbox(this.inboxVisibility);
   }
 }

@@ -19,6 +19,7 @@ import * as _ from 'lodash';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {DomSanitizer} from '@angular/platform-browser';
+import {ScreenService} from '../services/screen.service';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -54,6 +55,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() columnViewIcon: boolean = true;
   @Input() smoothlyUpdating: boolean = false;
   @Input() grid_template_columns: string = '143px';
+  @Input() grid_gap: string = '15px';
 
   @Input() passProvider: PassLikeProvider;
 
@@ -99,10 +101,15 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       public darkTheme: DarkThemeSwitch,
       private kioskMode: KioskModeService,
       private sanitizer: DomSanitizer,
+      private screenService: ScreenService,
   ) {}
 
   get gridTemplate() {
     return this.sanitizer.bypassSecurityTrustStyle(`repeat(auto-fill, minmax(${this.grid_template_columns}, .3fr))`);
+  }
+
+  get gridGap() {
+    return this.grid_gap;
   }
 
   ngOnInit() {
@@ -122,7 +129,6 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
             })
           )
           .subscribe((passes: any) => {
-            // console.log(passes);
             this.currentPasses = passes;
           });
       }
@@ -131,6 +137,10 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
             this.timerEvent.next(null);
           }, 1000));
         }
+
+    // if (this.screenService.isDeviceSmall) {
+    //   this.grid_gap = '4px';
+    // }
   }
 
   ngOnDestroy() {

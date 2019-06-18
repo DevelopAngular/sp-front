@@ -6,11 +6,14 @@
      [style.min-height]="minHeight"
      [style.height]="minHeight"
      [style.box-shadow]="shadow"
+     [style.opacity]="hovered && !buttonDown && !disabled ? 0.85 : (buttonDown && !disabled ? 0.7 : (disabled ? 0.5 : 1))"
      [style.cursor]="cursor"
      [style.border-radius]="cornerRadius"
      (click)="onClick($event)"
      (mouseenter)="onHover(true)" (mouseleave)="onHover(false)"
-     (mousedown)="onPress(true)" (mouseup)="onPress(false)"
+     (mousedown)="onPress(true, $event)" (mouseup)="onPress(false, $event)"
+     (touchstart)="onTap(true)"
+     (touchend)="onTap(false)"
      [@pressState]="buttonState"
      [ngClass]="{'center': !(leftIcon || rightIcon), 'disabled': disabled}">
     <!--<span style="position: absolute; top: 0; left: 3px; font-size: 10px;">{{size}}</span>-->

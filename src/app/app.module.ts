@@ -7,6 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AgmCoreModule } from '@agm/core';
 import {ActivatedRoute, NavigationEnd, NavigationStart, Router, RouterModule, Routes, Scroll} from '@angular/router';
 import { AppComponent } from './app.component';
 import { GAPI_CONFIG } from './config';
@@ -166,7 +167,11 @@ const appRoutes: Routes = [
       }
     ),
     AngularFireModule.initializeApp(environment.firebase, 'notifyhallpass'),
-    AngularFireMessagingModule
+    AngularFireMessagingModule,
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyB-PvmYU5y4GQXh1aummcUI__LNhCtI68o',
+      libraries: ['places']
+    })
   ],
   providers: [
     DataService,

@@ -55,6 +55,7 @@ import {ToggleOptionsComponent} from '../calendar-components/admin-calendar-togg
 import {SpChipsComponent} from '../sp-chips/sp-chips.component';
 import { IconButtonComponent } from '../icon-button/icon-button.component';
 import {RoomsSearchComponent} from '../rooms-search/rooms-search.component';
+import {XsButtonComponent} from '../xs-button/xs-button.component';
 
 
 
@@ -123,7 +124,8 @@ import {RoomsSearchComponent} from '../rooms-search/rooms-search.component';
       ToggleOptionsComponent,
       SpChipsComponent,
       RoomsSearchComponent,
-      IconButtonComponent
+      IconButtonComponent,
+      XsButtonComponent
   ],
     entryComponents: [
       PassCardComponent,
@@ -176,9 +178,8 @@ import {RoomsSearchComponent} from '../rooms-search/rooms-search.component';
     ToggleOptionsComponent,
     SpChipsComponent,
     RoomsSearchComponent,
-    IconButtonComponent
-
-
+    IconButtonComponent,
+    XsButtonComponent
   ],
 })
 export class SharedModule {

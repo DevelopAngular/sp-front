@@ -219,7 +219,6 @@ export class HttpService {
      ).subscribe(() => { });
 
       this.kioskTokenSubject$.pipe(map(newToken => {
-        debugger
         newToken['expires'] = new Date(new Date() + newToken['expires_in']);
         return { auth: newToken, server: this.accessTokenSubject.value.server};
 
@@ -373,10 +372,11 @@ export class HttpService {
 
         // console.log('getIdToken');
 
-        if (isDemoLogin(googleToken) || true) {
+        if (isDemoLogin(googleToken)) {
           // debugger
           authContext$ = this.loginManual(googleToken.username, googleToken.password);
         } else {
+          // console.log(googleToken);
           authContext$ = this.loginGoogleAuth(googleToken);
         }
 
@@ -405,6 +405,7 @@ export class HttpService {
   }
 
   private performRequest<T>(predicate: (ctx: AuthContext) => Observable<T>): Observable<T> {
+    // debugger
     return this.accessToken.pipe(
       switchMap(ctx => {
         // console.log('performRequest');

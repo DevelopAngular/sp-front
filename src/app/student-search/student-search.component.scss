@@ -96,6 +96,17 @@ mat-input-container.md-input-focused label {
     font-size: 17px;
   }
 }
+.no-schools-dummy {
+  text-align: center;
+  margin-top: 65px;
+  .dummy-title {
+    font-weight: bold;
+  }
+  .dummy-text {
+    margin: 15px auto;
+    font-size: 17px;
+  }
+}
 
 .option-wrapper:hover {
     cursor: pointer;

@@ -30,7 +30,6 @@ export class NotSeenIntroGuard implements CanActivate {
         map(raw => User.fromJSON(raw)),
         combineLatest(this.userService.getIntros()),
         map(([user, intros]: [any, any]) => {
-            console.log('Intro ===>>>', intros);
           if (!user) {
             return false;
           }

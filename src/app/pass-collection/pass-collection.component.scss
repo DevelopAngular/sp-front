@@ -9,6 +9,10 @@
     display: initial !important;
   }
 
+  .collection-header{
+    width: 93%;
+    margin: 0 auto;
+  }
 }
 
 @media all and  (max-width: 375px) {
@@ -19,7 +23,6 @@
   :host {
     display: initial !important;
   }
-
 }
 
 @media all and  (max-width: 1024px) {
@@ -93,7 +96,6 @@
 .collection-grid-wrapper{
     display: grid;
     //grid-template-columns: repeat(auto-fill, minmax(143px, .3fr));
-    justify-content: space-between;
     margin-top: 15px;
     //justify-content: space-between;
 }
@@ -103,7 +105,7 @@
 //}
 
 .tile{
-  padding-bottom: 15px;
+  padding: 0;
 }
 
 .sort-label{
