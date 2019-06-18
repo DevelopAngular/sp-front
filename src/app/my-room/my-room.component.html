@@ -16,7 +16,7 @@
           [selectReset$] = "resetValue"
         ></app-round-input>
       </div>
-      <div class="cancel-wrapper"*ngIf="isSearchBarClicked" (click)="cleanSearchValue()">
+      <div class="cancel-wrapper" *ngIf="isSearchBarClicked" (click)="cleanSearchValue()">
         <span class="cancel">Cancel</span>
       </div>
       <div class="option-wrapper option-wrapper-calendar" (click)="calendarClick()">
@@ -54,7 +54,7 @@
         <div class="calendar-wrapper" (click)="chooseDate($event)" [style.background-color]="(calendarToggled?'#E4EBFF':'transparent')">
           <img class="calendar-icon" [src]="getIcon('./assets/Calendar (Navy).svg') | resolveAsset">
         </div>
-        <div class="date-display" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ dateDisplay }}</div>
+        <!--<div class="date-display" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ dateDisplay }}</div>-->
         <div class="date-display-mobile" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ dateDisplay }}</div>
       </div>
 

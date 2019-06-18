@@ -22,6 +22,15 @@ export class LocationsService {
         return this.http.get<any[]>(`v1/locations?teacher_id=${teacher.id}`);
     }
 
+    getLocatopnsWithManyTeachers(teachers: User[]) {
+        let url: string = '';
+        teachers.forEach(teacher => {
+            url += `teacher_id=${teacher.id}&`;
+        });
+        console.log('URL ==>>', url);
+        return this.http.get(`v1/locations?${url}`);
+    }
+
     getLocation(id) {
         return this.http.get(`v1/locations/${id}`);
     }

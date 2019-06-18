@@ -70,19 +70,24 @@
   }
 }
 
-:host {
-  background-color: transparent;
+.host {
+  background-color: #FBFEFF;
+  //position: fixed;
+  //top: 50px;
+  width: 100%;
+  z-index: 10;
 }
 .bar {
-  height: 58px;
+  height: 63px;
   /* background-image: radial-gradient(circle at 43% 66%, #03cf31, rgba(1, 129, 85, 0.7)); */
-  position: relative;
+  //position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;
   user-select: none;
   padding-top: 15px;
-  padding-bottom: 5px;
+  //padding-bottom: 5px;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.07);
 }
 
 .grow {
@@ -134,14 +139,14 @@
 
 .teacherNav, .navButton {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: inherit;
+  justify-content: space-between;
+
 }
 
 .teacherNav {
+  height: 63px;
+  align-items: center;
   &_tab {
-    flex: 1 1 auto;
     display: flex;
     justify-content: center;
   }
@@ -298,8 +303,8 @@
 }
 
 .nav-buttons {
-  width: 45%;
   position: relative;
+  flex-grow: 1;
   .selected-tab-pointer {
     transition: all 0.4s ease;
     position: absolute;

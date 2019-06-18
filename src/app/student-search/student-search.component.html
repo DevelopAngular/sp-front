@@ -33,9 +33,9 @@
       >
       </app-round-input>
     </div>
-    <div *ngIf="showOptions" [ngClass]="{'options-wrapper': students}" [style.height]="students ? '235px' : '0px'">
+    <div *ngIf="showOptions" [ngClass]="{'options-wrapper': students || schools}" [style.height]="students ? '235px' : '0px'">
       <div *ngIf="students" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
-      <div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px;">
+      <div *ngIf="!showDummy && students; else noStudentsDummy" style="margin-top: -1px;">
         <div class="student-list_scrollable" [style.max-height]="listMaxHeight">
           <div #cell *ngFor="let student of students | async" class="student-list_item"
                (mouseenter)="cell.hovered = true;"
@@ -46,6 +46,22 @@
           >
               <span>
                 {{student.display_name}} ({{student.primary_email ? student.primary_email.slice(0, student.primary_email.indexOf('@')) : student.email ? student.email.slice(0, student.email.indexOf('@')) : ''}})
+              </span>
+          </div>
+        </div>
+
+      </div>
+      <div *ngIf="!showDummy && schools; else noStudentsDummy" style="margin-top: -1px;">
+        <div class="student-list_scrollable" [style.max-height]="listMaxHeight">
+          <div #cell *ngFor="let school of schools | async" class="student-list_item"
+               (mouseenter)="cell.hovered = true;"
+               (mouseleave)="cell.hovered = false;"
+               (click)="inputValue$.next(''); addStudent(null)"
+               [style.background-color]="getBackground(cell)"
+               [style.color]="textColor(cell)"
+          >
+              <span>
+                {{school.name}} ({{school.city}}}) ({{school.state}}) ({{school.student_count}})
               </span>
           </div>
         </div>

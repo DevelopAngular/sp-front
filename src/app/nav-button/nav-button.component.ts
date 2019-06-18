@@ -1,4 +1,15 @@
-import {Component, OnInit, Input, Output, EventEmitter, AfterViewInit} from '@angular/core';
+import {
+    Component,
+    OnInit,
+    Input,
+    Output,
+    EventEmitter,
+    AfterViewInit,
+    ViewChild,
+    ElementRef,
+    AfterContentInit,
+    AfterViewChecked
+} from '@angular/core';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 
 @Component({
@@ -13,29 +24,22 @@ export class NavButtonComponent implements OnInit, AfterViewInit {
   @Input() selected: boolean = false;
 
   @Output() onClick: EventEmitter<any> = new EventEmitter();
-  iconId;
+
+  iconId: string;
 
   constructor(
     private darkTheme: DarkThemeSwitch
   ) { }
 
 
-  get textColor(){
+  get textColor() {
       return this.selected ? '#00B476' : this.darkTheme.isEnabled$.value ? '#FFFFFF' : ' #7E879D';
   }
 
-  // get backgroundColor(){
-  //   return this.selected?'#E4EBFF':'none';
-  // }
-
-  // get _icon(){
-  //   return this.darkTheme.getIcon({iconName: this.icon, setting: null, hover: this.selected});
-  // }
-
   ngAfterViewInit() {
-      if (this.selected) {
-          this.doClick();
-      }
+      // if (this.selected) {
+      //     this.doClick();
+      // }
   }
 
 
@@ -43,7 +47,7 @@ export class NavButtonComponent implements OnInit, AfterViewInit {
       this.iconId = `#${this.icon}`;
   }
 
-  doClick(){
+  doClick() {
     this.onClick.emit(this.selected);
   }
 

@@ -30,7 +30,8 @@
   flex-direction: row;
   border-radius: 10px;
   height: 45px;
-  padding: 5px 15px;
+  width: 135px;
+  justify-content: center;
   cursor: pointer;
   user-select: none;
   align-items: center;
@@ -45,4 +46,5 @@
 .nav-button-text{
   font-size: 17px;
   margin-left: 11px;
+  font-weight: 500;
 }

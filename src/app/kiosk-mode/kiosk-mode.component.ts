@@ -43,7 +43,6 @@ export class KioskModeComponent implements OnInit, OnDestroy {
 
   @HostListener('window:onkeuup', ['$event'])
     setFocus() {
-      debugger;
       setTimeout(() => {
           this.input.nativeElement.focus();
       }, 50);

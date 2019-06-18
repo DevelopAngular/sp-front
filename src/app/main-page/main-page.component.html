@@ -25,7 +25,9 @@
   </mat-sidenav>
 
   <mat-sidenav-content>
-    <app-navbar (settingsClick)="onSettingClick($event)"></app-navbar>
+    <div class="sticky">
+      <app-navbar (settingsClick)="onSettingClick($event)"></app-navbar>
+    </div>
     <ng-container *ngIf="!(shouldShowRouter() | async)">
       <app-restriction-dummy></app-restriction-dummy>
     </ng-container>

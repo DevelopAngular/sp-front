@@ -351,7 +351,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     this.kioskMode.currentRoom$.next(kioskRoom);
     this.userService.saveKioskModeLocation(kioskRoom.id).subscribe((res: any) => {
         this.storage.setItem('kioskToken', res.access_token);
-        // this.http.kioskTokenSubject$.next(res);
+        this.http.kioskTokenSubject$.next(res);
         this.router.navigate(['main/kioskMode']);
     });
 

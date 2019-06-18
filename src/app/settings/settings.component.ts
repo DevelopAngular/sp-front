@@ -82,7 +82,7 @@ export class SettingsComponent implements OnInit {
           this.dataSideNav.darkBackground = !this.dataSideNav.darkBackground;
         }
       },
-      'title': (this.darkTheme.isEnabled$.value ? 'Light Theme' : 'Dark Theme')
+      'title': (this.darkTheme.isEnabled$.value ? 'Light Mode' : 'Dark Mode')
     });
     this.settings.push({
       'hidden': !!this.kioskMode.currentRoom$.value,

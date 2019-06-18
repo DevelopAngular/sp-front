@@ -83,31 +83,33 @@ export class PassTileComponent implements OnInit, OnDestroy {
   }
 
     get boxShadow() {
-        let i = 0;
-        const hexColors = [];
-        const rawHex = this.pass.color_profile.solid_color.slice(1);
-        do {
-            hexColors.push(rawHex.slice(i, i + 2));
-            i += 2;
-        } while (i < rawHex.length);
-        const rgbString = hexColors.map(color => parseInt(color, 16)).join(', ');
-        return this.sanitizer.bypassSecurityTrustStyle(this.hovered ?
-            `0px 3px 10px rgba(${rgbString}, 0.3)` :
-            this.buttonDown ? `0px 3px 5px rgba(${rgbString}, 0.15)` : '0px 3px 5px rgba(0, 0, 0, 0.1)');
+      if (!this.mock) {
+          let i = 0;
+          const hexColors = [];
+          const rawHex = this.pass.color_profile.solid_color.slice(1);
+          do {
+              hexColors.push(rawHex.slice(i, i + 2));
+              i += 2;
+          } while (i < rawHex.length);
+          const rgbString = hexColors.map(color => parseInt(color, 16)).join(', ');
+          return this.sanitizer.bypassSecurityTrustStyle(this.hovered ?
+              `0px 3px 10px rgba(${rgbString}, 0.3)` :
+              this.buttonDown ? `0px 3px 5px rgba(${rgbString}, 0.15)` : '0px 3px 5px rgba(0, 0, 0, 0.1)');
+      }
     }
 
   constructor(private sanitizer: DomSanitizer, private timeService: TimeService, private screenService: ScreenService) {
   }
 
   ngOnInit() {
-      if (this.mock) {
+      // if (this.mock) {
       // this.pass = null;
       // this.fromPast = false;
       // this.forFuture = true;
       // this.isActive = false;
       // this.forStaff = false;
       // this.timerEvent = new Subject<any>();
-    }
+    // }
 
     this.valid = this.isActive;
     if (this.timerEvent) {
