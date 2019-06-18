@@ -165,10 +165,10 @@ export class GradientButtonComponent implements OnInit {
       if (!this.gradient) {
           return this.sanitizer.bypassSecurityTrustStyle('#00B476');
       } else {
-        const lastEqualSignIndex = this.gradient.lastIndexOf(',');
-        const gg = this.gradient.substr(lastEqualSignIndex + 1);
-        // console.log(gg);
-        return gg;
+        const lastIndex = this.gradient.lastIndexOf(',');
+        const color = this.gradient.substr(lastIndex + 1);
+        // console.log(color);
+        return color;
       }
     }
   }
@@ -187,8 +187,11 @@ export class GradientButtonComponent implements OnInit {
 
   get shadow() {
     if (this.withShadow) {
-      return this.sanitizer.bypassSecurityTrustStyle(((this.hovered && !this.disabled && !this.buttonDown) ?
-          '0px 3px 10px rgba(228, 140, 21, 0.2)' : '0px 3px 5px rgba(0, 0, 0, 0.1)'));
+      if (this.hovered && !this.disabled) {
+        return this.sanitizer.bypassSecurityTrustStyle(' 0px 1px 10px rgba(0, 180, 118, 0.2)');
+      } else if (this.buttonDown && !this.disabled) {
+        return this.sanitizer.bypassSecurityTrustStyle('0px 1px 10px rgba(0, 180, 118, 0.19758)')
+      }
     } else {
       return 'none';
     }
