@@ -33,9 +33,9 @@
       >
       </app-round-input>
     </div>
-    <div *ngIf="showOptions" [ngClass]="{'options-wrapper': students || schools}" [style.height]="students ? '235px' : '0px'">
+    <div *ngIf="showOptions && searchTarget === 'users'" [ngClass]="{'options-wrapper': students}" [style.height]="students ? '235px' : '0px'">
       <div *ngIf="students" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
-      <div *ngIf="!showDummy && students; else noStudentsDummy" style="margin-top: -1px;">
+      <div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px;">
         <div class="student-list_scrollable" [style.max-height]="listMaxHeight">
           <div #cell *ngFor="let student of students | async" class="student-list_item"
                (mouseenter)="cell.hovered = true;"
@@ -44,25 +44,9 @@
                [style.background-color]="getBackground(cell)"
                [style.color]="textColor(cell)"
           >
-              <span>
-                {{student.display_name}} ({{student.primary_email ? student.primary_email.slice(0, student.primary_email.indexOf('@')) : student.email ? student.email.slice(0, student.email.indexOf('@')) : ''}})
-              </span>
-          </div>
-        </div>
-
-      </div>
-      <div *ngIf="!showDummy && schools; else noStudentsDummy" style="margin-top: -1px;">
-        <div class="student-list_scrollable" [style.max-height]="listMaxHeight">
-          <div #cell *ngFor="let school of schools | async" class="student-list_item"
-               (mouseenter)="cell.hovered = true;"
-               (mouseleave)="cell.hovered = false;"
-               (click)="inputValue$.next(''); addStudent(null)"
-               [style.background-color]="getBackground(cell)"
-               [style.color]="textColor(cell)"
-          >
-              <span>
-                {{school.name}} ({{school.city}}}) ({{school.state}}) ({{school.student_count}})
-              </span>
+            <span>
+              {{student.display_name}} ({{student.primary_email ? student.primary_email.slice(0, student.primary_email.indexOf('@')) : student.email ? student.email.slice(0, student.email.indexOf('@')) : ''}})
+            </span>
           </div>
         </div>
 
@@ -73,6 +57,42 @@
             <div class="dummy-image"><img width="150" [src]="'./assets/emptyStates/undraw_graduation_9x4i.svg'" alt="undraw_graduation_9x4i.svg"></div>
 
             <div class="dummy-text"><span>No {{dummyRoleText}} found</span></div>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+    <!--<pre>{{schools | async | json}}</pre>-->
+    <div *ngIf="showOptions && searchTarget === 'schools'" [ngClass]="{'options-wrapper': (schools | async) !== null}" [style.height]="(schools | async) !== null ? '235px' : '0px'">
+      <div *ngIf="(schools | async)?.length" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
+      <div *ngIf="!showDummy; else noSchoolsDummy" style="margin-top: -1px;">
+        <div class="student-list_scrollable" [style.max-height]="listMaxHeight">
+          <div #cell *ngFor="let school of schools | async" class="student-list_item"
+               (mouseenter)="cell.hovered = true;"
+               (mouseleave)="cell.hovered = false;"
+               (click)="inputValue$.next(''); selectSchool(school)"
+               [style.background-color]="getBackground(cell)"
+               [style.color]="textColor(cell)"
+          >
+            <div>
+              <div style="text-transform: capitalize; color: #00B476">
+                {{school.structured_formatting.main_text}}
+              </div>
+              <div style="color: #1F194E">
+                {{school.structured_formatting.secondary_text}}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <ng-template #noSchoolsDummy>
+        <div class="no-schools-dummy">
+          <div>
+            <div class="dummy-text dummy-title"><span>No schools found</span></div>
+            <div class="dummy-text">
+              Need help? Contact
+              <a href="mailto:hello@smartpass.app" class="ds-link-text" style="font-size: 17px !important;">hello@smartpass.app</a>
+            </div>
           </div>
         </div>
       </ng-template>

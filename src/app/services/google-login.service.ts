@@ -88,6 +88,18 @@ export class GoogleLoginService {
 
   }
 
+  public get GoogleOauth() {
+
+    const auth = this.googleAuthTool.value;
+
+    if (!auth) {
+      console.error('Auth not loaded!');
+      return;
+    } else {
+      return auth;
+    }
+  }
+
   isAuthLoaded(): Observable<boolean> {
     return this.googleAuthTool.pipe(map(tool => tool !== null));
   }
@@ -122,7 +134,7 @@ export class GoogleLoginService {
     );
   }
 
-  private updateAuth(auth: AuthResponse | DemoLogin) {
+  public updateAuth(auth: AuthResponse | DemoLogin) {
     this.authToken$.next(auth);
   }
 
@@ -153,8 +165,9 @@ export class GoogleLoginService {
    * to use RxJS' subscribe() behavior and is the reason for some of the weirder construction of this
    * method.
    */
+
   public signIn() {
-    const auth = this.googleAuthTool.value;
+    const auth = this.GoogleOauth;
 
     if (!auth) {
       console.error('Auth not loaded!');
@@ -165,7 +178,7 @@ export class GoogleLoginService {
 
     return auth.signIn().then(user => {
       this._zone.run(() => {
-        console.log(user);
+        console.log(user.getAuthResponse());
         this.updateAuth(user.getAuthResponse());
       });
     });

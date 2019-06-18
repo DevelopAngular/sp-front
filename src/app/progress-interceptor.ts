@@ -23,11 +23,12 @@ export class ProgressInterceptor implements HttpInterceptor {
                       catchError((error: any) => {
                         // console.log(error);
                           if (
-                              (error.status >= 400 &&
-                               error.status < 600 &&
-                               !error.url.search('/discovery/find') &&
+                              ( error.status >= 400 &&
+                                error.status < 600 &&
+                                !error.url.search('/discovery/find') &&
+                                !error.url.search('/auth/by-token') &&
                                 !error.url.search('/o/token/')) || error.status === 0)
-                          {
+                        {
                             console.log(error);
                             this.http.errorToast$.next(true);
                           }

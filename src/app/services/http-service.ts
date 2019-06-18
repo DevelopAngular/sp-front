@@ -373,10 +373,11 @@ export class HttpService {
 
         // console.log('getIdToken');
 
-        if (isDemoLogin(googleToken) || true) {
+        if (isDemoLogin(googleToken)) {
           // debugger
           authContext$ = this.loginManual(googleToken.username, googleToken.password);
         } else {
+          // console.log(googleToken);
           authContext$ = this.loginGoogleAuth(googleToken);
         }
 
@@ -405,6 +406,7 @@ export class HttpService {
   }
 
   private performRequest<T>(predicate: (ctx: AuthContext) => Observable<T>): Observable<T> {
+    // debugger
     return this.accessToken.pipe(
       switchMap(ctx => {
         // console.log('performRequest');
