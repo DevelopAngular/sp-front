@@ -324,6 +324,10 @@ body {
   .mat-list-item {
     font-family: "Helvetica Neue", sans-serif;
   }
+
+  .mat-drawer-backdrop {
+    z-index: 99;
+  }
 }
 
 

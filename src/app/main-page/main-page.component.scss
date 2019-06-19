@@ -66,11 +66,14 @@
 
 .sticky {
   width: 100%;
-  height: 78px;
 }
 
 mat-sidenav-container,
 mat-sidenav-content {
   z-index: unset;
   background-color: #FBFEFF;
+}
+
+mat-sidenav {
+  z-index: 99;
 }
