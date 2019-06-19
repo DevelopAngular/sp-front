@@ -1,4 +1,12 @@
-import {Component, OnInit, Input, Output, EventEmitter, AfterViewInit} from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectorRef,
+  OnChanges
+} from '@angular/core';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 
 @Component({
@@ -6,7 +14,7 @@ import {DarkThemeSwitch} from '../../dark-theme-switch';
   templateUrl: './nav-button.component.html',
   styleUrls: ['./nav-button.component.scss']
 })
-export class NavButtonComponent implements OnInit, AfterViewInit {
+export class NavButtonComponent implements OnInit, OnChanges {
 
   @Input() icon: string;
   @Input() content: string;
@@ -37,20 +45,25 @@ export class NavButtonComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
-    private darkTheme: DarkThemeSwitch
+    private darkTheme: DarkThemeSwitch,
+    private cd: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
     this.iconId = `#${this.icon}`;
+    // if (this.selected) {
+    //   this.doClick();
+    // }
   }
 
-  ngAfterViewInit() {
+  ngOnChanges() {
     if (this.selected) {
       this.doClick();
+      console.log(true);
     }
   }
 
-  doClick(){
+  doClick() {
     this.onClick.emit(this.selected);
   }
 

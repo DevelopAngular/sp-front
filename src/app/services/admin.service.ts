@@ -38,6 +38,11 @@ export class AdminService {
     return this.http.get('v1/admin/dashboard');
   }
 
+  getOnboardProgress() {
+    return this.http.get('v1/admin/onboard_progess');
+
+  }
+
   getFilteredDashboardData(date: Date) {
     // create a date in format YYYY-MM-DD
     const dateStr = date.toISOString().substring(0, 10);

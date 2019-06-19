@@ -7,7 +7,7 @@
           <div *ngIf="(!!icon && inbox) || mock" class="inbox-wrapper">
             <img class="inbox-icon" [src]="getIcon('./assets/Inbox (Navy).svg') | resolveAsset">
             <div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0 || mock">
-              <img class="inbox-badge" [src]="'./as sets/Inbox Notification (Red).svg' | resolveAsset">
+              <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">
               <div class="inbox-number">{{ (notificationBadge$ | async) || mock }}</div>
               <img class="inbox-front" [src]="getIcon('./assets/Inbox Bottom (Navy).svg') | resolveAsset">
             </div>
