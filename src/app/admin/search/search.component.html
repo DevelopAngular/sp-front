@@ -14,19 +14,13 @@
             }) : './assets/Student (Blue-Gray).svg') | resolveAsset" alt="Icon">
                 Students
               </div>
-              <div class="chip" [ngClass]="{hovered: schip.hovered && selectedStudents.length}"  #schip (mouseenter)="schip.hovered = true;" (mouseleave)="schip.hovered = false;">
-                <div class="overlay" (click)="openFilters('Students')">
-                  <div class="add-icon" *ngIf="schip.hovered && !selectedStudents.length">
-                    <img [src]="'./assets/Plus (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
-                  </div>
-                  <div style="color: #7F879D" *ngIf="!selectedStudents.length">{{ schip.hovered ? 'Filter ' : 'All ' }}Students</div>
-                  <div style="color: #7F879D" *ngIf="selectedStudents.length">{{ selectedStudents.length + ' ' + 'student' + (selectedStudents.length > 1 ? 's' : '') }}</div>
-                </div>
-
-                <div class="reset-icon" *ngIf="schip.hovered && selectedStudents.length">
-                  <img (click)="resetSearchState(); selectedStudents = []" [src]="'./assets/Cancel (Navy).svg'" width="15" #fieldIcon alt="Check.svg">
-                </div>
-              </div>
+              <app-xs-button
+                      [placeholder]="'Students'"
+                      [length]="selectedStudents.length"
+                      [selectedText]="'student'"
+                      (open)="openFilters($event)"
+                      (reset)="resetSearchState(); selectedStudents = []"
+              ></app-xs-button>
             </div>
             <mat-divider [vertical]="true"></mat-divider>
             <div class="input">
@@ -37,18 +31,13 @@
                   lightFill: 'Navy'}) : './assets/Room (Blue-Gray).svg') | resolveAsset" alt="Icon">
                   Rooms
               </div>
-              <div class="chip" #rchip [ngClass]="{hovered: rchip.hovered && selectedRooms.length}" (mouseenter)="rchip.hovered = true;" (mouseleave)="rchip.hovered = false;">
-                <div class="overlay" (click)="openFilters('Rooms')">
-                  <div class="add-icon" *ngIf="rchip.hovered && !selectedRooms.length">
-                    <img [src]="'./assets/Plus (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
-                  </div>
-                  <div style="color: #7F879D"  *ngIf="!selectedRooms.length">{{ rchip.hovered && !selectedRooms.length ? 'Filter ' : 'All ' }}Rooms</div>
-                  <div style="color: #7F879D" *ngIf="selectedRooms.length">{{ selectedRooms.length + ' ' + 'room' + (selectedRooms.length > 1 ? 's' : '') }}</div>
-                </div>
-                <div class="reset-icon" *ngIf="rchip.hovered && selectedRooms.length">
-                  <img (click)="resetSearchState(); selectedRooms = []; selRoomsWithCategories = null" [src]="'./assets/Cancel (Navy).svg'" width="15" #fieldIcon alt="Check.svg">
-                </div>
-              </div>
+              <app-xs-button
+                      [placeholder]="'Rooms'"
+                      [length]="selectedRooms.length"
+                      [selectedText]="'room'"
+                      (open)="openFilters($event)"
+                      (reset)="resetSearchState(); selectedRooms = []"
+              ></app-xs-button>
             </div>
             <mat-divider [vertical]="true"></mat-divider>
             <div class="input">
@@ -59,16 +48,24 @@
                   lightFill: 'Navy'}) : './assets/Calendar (Blue-Gray).svg') | resolveAsset" alt="Icon">
                   Date & Time
               </div>
-              <div class="chip" #dchip [ngClass]="{hovered: dchip.hovered && !!selectedDate}" (mouseenter)="dchip.hovered = true;" (mouseleave)="dchip.hovered = false">
+              <div class="chip"
+                   #dchip [ngClass]="{hovered: dchip.hovered && !!selectedDate}"
+                   (mouseenter)="dchip.hovered = true;"
+                   (mouseleave)="dchip.hovered = false"
+                   [style.opacity]="dchip.hovered && !buttonDown ? 0.85 : (buttonDown ? 0.7 :  1)"
+                   (mousedown)="onPress(true)"
+                   (mouseup)="onPress(false)"
+                   [@pressState]="buttonState"
+              >
                 <div class="overlay" (click)="openTimeFilter($event)">
                   <div class="add-icon" *ngIf="dchip.hovered && !selectedDate">
-                    <img [src]="'./assets/Plus (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
+                    <img [src]="'./assets/Plus (Blue-Gray).svg'" width="16" #fieldIcon alt="Check.svg">
                   </div>
-                  <div style="color: #7F879D"  *ngIf="!selectedDate">{{ dchip.hovered && !selectedDate ? 'Filter ' : 'All ' }}Time</div>
-                  <div style="color: #7F879D" *ngIf="selectedDate">{{ dateText }}</div>
+                  <div class="all-text" *ngIf="!selectedDate">{{ dchip.hovered && !selectedDate ? 'Filter ' : 'All ' }}Time</div>
+                  <div class="selected-text" *ngIf="selectedDate">{{ dateText }}</div>
                 </div>
                 <div class="reset-icon" *ngIf="dchip.hovered && selectedDate">
-                  <img (click)="resetSearchState(); selectedDate = null; adminCalendarOprions = null" [src]="'./assets/Cancel (Navy).svg'" width="15" #fieldIcon alt="Check.svg">
+                  <img (click)="resetSearchState(); selectedDate = null; adminCalendarOprions = null" [src]="'./assets/Cancel (Navy).svg'" width="16" #fieldIcon alt="Check.svg">
                 </div>
               </div>
             </div>

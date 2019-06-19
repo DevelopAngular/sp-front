@@ -1,13 +1,19 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import { MapsAPILoader } from '@agm/core';
+
 
 
 
 import { User } from '../models/User';
-import {of, Subject} from 'rxjs';
+import {BehaviorSubject, of, pipe, Subject} from 'rxjs';
 import {UserService} from '../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../services/http-service';
+import {HttpClient} from '@angular/common/http';
+import {combineLatest, filter, map, mergeMap, startWith, tap} from 'rxjs/operators';
+import {constructUrl} from '../live-data/helpers';
 
+declare const window;
 export type SearchEntity = 'schools' | 'users';
 
 @Component({
@@ -24,7 +30,7 @@ export class StudentSearchComponent implements OnInit {
   @Input() disabled: boolean = false;
   @Input() focused: boolean = false;
   @Input() showOptions: boolean = true;
-  @Input() selectedStudents: User[] = [];
+  @Input() selectedStudents: User[];
   @Input() width: string = '280px';
   @Input() list: boolean = true;
   @Input() listMaxHeight: string = '210px';
@@ -45,7 +51,12 @@ export class StudentSearchComponent implements OnInit {
 
   @ViewChild('studentInput') input;
 
-  schools: any;
+  private placePredictionService;
+  private currentPosition;
+
+  query = new BehaviorSubject<any[]>(null);
+  schools: BehaviorSubject<any[]> = new BehaviorSubject(null);
+  selectedSchool;
 
   pending$: Subject<boolean> = new Subject();
   students: Promise<any[]>;
@@ -58,7 +69,9 @@ export class StudentSearchComponent implements OnInit {
   constructor(
     private userService: UserService,
     private sanitizer: DomSanitizer,
-    private http: HttpService
+    private http: HttpClient,
+    private mapsApi: MapsAPILoader,
+
   ) {
 
   }
@@ -121,7 +134,49 @@ export class StudentSearchComponent implements OnInit {
     //     this.focused = true;
     //   }, 50);
     // }
+    const selfRef = this;
 
+    if (this.searchTarget === 'schools') {
+      this.mapsApi.load().then((resource) => {
+        if (window.navigator.geolocation) {
+          window.navigator.geolocation.getCurrentPosition(function(position) {
+            selfRef.currentPosition =  new window.google.maps.LatLng({
+              lat: 	40.730610,
+              lng: -73.935242
+            });
+          });
+        } else {
+          this.currentPosition = {
+            lat: 0,
+            lng: 0
+          };
+        }
+
+        this.placePredictionService = new window.google.maps.places.AutocompleteService();
+
+        // console.log(this.placePredictionService);
+      });
+
+      this.query
+        // .pipe(
+          // filter(schools => !!schools)
+        // )
+        .subscribe(
+          (v1: any[]) => {
+            console.log(v1);
+
+            this.schools.next(v1);
+            this.pending$.next(false);
+            this.showDummy = v1 && !v1.length;
+            // .then(schools => {
+            // this.pending$.next(false);
+            // this.showDummy = !schools.length;
+            //
+            // return schools.filter(school => school.types.includes('school'));
+            // });
+          })
+
+    }
   }
 
   onSearch(search: string) {
@@ -155,28 +210,68 @@ export class StudentSearchComponent implements OnInit {
           }
         break;
       case 'schools':
-        if (search !== '') {
-          this.schools = this.http.get('v1/onboard/schools').toPromise().then((schools: any) => {
-            debugger
 
-            this.pending$.next(false);
-            this.showDummy = !schools.length;
-            return this.removeDuplicateStudents(schools);
-          });
+        if (search !== '') {
+
+          // const querySchool = new Subject();
+          // const queryHigh = new Subject();
+          // const queryElementary = new Subject();
+          // const queryHighSchool = new Subject();
+          // const queryElementarySchool = new Subject();
+
+
+
+          this.pending$.next(true);
+          let predictionsAll = [];
+          let pointer = 0;
+          const keyWords = ['', 'school',  'elementary', 'elementary school', 'high', 'high school'];
+                keyWords.forEach((kw: string, index) => {
+                  this.placePredictionService.getPlacePredictions({
+                    location: this.currentPosition,
+                    input: search + ' ' + kw,
+                    radius: 100000,
+                    // types: ['establishment']
+                  }, (predictions, status) => {
+                    pointer += index;
+                    // console.log(predictions);
+                    // return of(predictions).toPromise();
+                    // this.showDummy = status !== 'OK';
+                    if (predictions) {
+                      predictionsAll = predictionsAll.concat(predictions.filter(school => school.types.includes('school')));
+                    }
+                    if (pointer === 15) {
+                      this.query.next(predictionsAll);
+                    }
+                  });
+                });
+
+            // this.schools = of(predictions).toPromise().then(schools => {
+            //   this.pending$.next(false);
+            //   this.showDummy = status !== 'OK';
+            //
+            //   return schools;
+            // });
         } else {
-          this.students = this.rollUpAfterSelection ? null : of([]).toPromise();
+          // debugger
+
+          this.query.next(null);
           this.showDummy = false;
           this.inputValue$.next('');
         }
           break;
     }
   }
+  selectSchool(school) {
+    this.selectedSchool = school;
+    this.onUpdate.emit(school.place_id);
+    this.schools = null;
+  }
   onBlur(event) {
     // console.log(event);
     // this.students = null;
   }
   removeStudent(student: User) {
-    var index = this.selectedStudents.indexOf(student, 0);
+    const index = this.selectedStudents.indexOf(student, 0);
     if (index > -1) {
       this.selectedStudents.splice(index, 1);
     }

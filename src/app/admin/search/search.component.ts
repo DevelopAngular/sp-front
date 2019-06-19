@@ -22,13 +22,15 @@ import {DateTimeFilterComponent} from './date-time-filter/date-time-filter.compo
 import {DomSanitizer} from '@angular/platform-browser';
 
 import * as moment from 'moment';
+import {bumpIn} from '../../animations';
 
 
 
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
-  styleUrls: ['./search.component.scss']
+  styleUrls: ['./search.component.scss'],
+  animations: [bumpIn]
 })
 export class SearchComponent implements OnInit {
 
@@ -54,6 +56,8 @@ export class SearchComponent implements OnInit {
   initialSearchLocationString: string = '';
   inputPanelVisibility: boolean = true;
 
+  buttonDown: boolean;
+
   constructor(
       private httpService: HttpService,
       private hallPassService: HallPassesService,
@@ -69,6 +73,10 @@ export class SearchComponent implements OnInit {
       private domSanitazer: DomSanitizer
 
   ) {
+  }
+
+  get buttonState() {
+     return this.buttonDown ? 'down' : 'up';
   }
 
   get isDisabled() {
@@ -133,6 +141,10 @@ export class SearchComponent implements OnInit {
       forceSearch.unsubscribe();
     });
 
+  }
+
+  onPress(press: boolean) {
+    this.buttonDown = press;
   }
 
   search(query: string = '') {

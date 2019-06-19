@@ -3,7 +3,16 @@
   <div class="nav-main" #navMain>
     <div class="nav-header ds-pr-10">
       <app-smartpass-logo></app-smartpass-logo>
-      <!--<app-icon-button  [srcString]="'Settings'" [size]="20"></app-icon-button>-->
+      <img
+        #tour
+        (click)="route({type: 'routerLink', route: 'takeTour'}); pts = '-63px'"
+        [src]="'./assets/lamp (' + (isSelected('takeTour') ? 'Jade' : 'Blue-Gray') + ').svg' | resolveAsset"
+        [style.transition]="'transform .4s ease'"
+        [style.cursor]="'pointer'"
+        (mousedown)="tour.style.transform = 'scale(.96)'"
+        (mouseup)="tour.style.transform = 'unset'"
+        alt="lamp"
+      >
     </div>
 
     <!--<div class="divider"></div>-->
@@ -16,7 +25,7 @@
              [style.transition]="'transform .4s ease'"
              (mousedown)="tabRef.style.transform = 'scale(.96)'"
              (mouseup)="tabRef.style.transform = 'unset'"
-             (click)="selectTab(tabRef, navButtonsContainter)"
+             (click)="selectTab(tabRef, navButtonsContainter);"
              #tabRef>
           <ng-container *ngIf="hasRoles(button.requiredRoles) | async">
             <app-nav-button
@@ -24,7 +33,7 @@
               [selected]="isSelected(button.route)"
               [content]="button.title"
               [icon]="button.imgUrl"
-              (onClick)="route(button); selectTab(tabRef, navButtonsContainter)">
+              (onClick)="route(button); selectTab(tabRef, navButtonsContainter);">
             </app-nav-button>
           </ng-container>
         </div>

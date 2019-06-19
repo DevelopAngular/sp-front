@@ -1,0 +1,50 @@
+@import "../../sp-colors";
+
+.chip {
+  background-color: #F4F4F4;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 17px;
+  margin-top: 10px;
+  white-space: nowrap;
+  position: relative;
+  min-width: 100px;
+  .overlay {
+    display: flex;
+    padding: 10px;
+    cursor: pointer;
+
+    .all-text {
+      color: #7F879D;
+      font-size: 14px;
+    }
+    .selected-text {
+      color: $navy;
+      font-size: 14px;
+    }
+  }
+
+  &.hovered {
+    box-shadow: 0 1px 3px #F8F8F8;
+    transition: box-shadow .25s ease;
+  }
+
+  .add-icon {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+
+  .reset-icon {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    background-color: #F8F8F8;
+    box-shadow: -6px 1px 6px #F8F8F8;
+  }
+}

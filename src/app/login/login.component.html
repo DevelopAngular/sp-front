@@ -1,56 +1,93 @@
 <div class="container">
-  <!--<div *ngIf="showError.error">-->
-    <!--<app-error-toast [loginMethod]="showError.loggedWith" (closeEvent)="onClose($event)"></app-error-toast>-->
-  <!--</div>-->
-  <div class="background" [style.background-image]="trustedBackgroundUrl | resolveAsset"></div>
-  <div style="flex-grow: 0.5;"></div>
-
-  <div class="brand">
-    <app-smartpass-logo [scale]="1.5" [logoAsset]="'./assets/Logo (White).svg'"></app-smartpass-logo>
+  <div *ngIf="showError.error">
+    <app-error-toast [loginMethod]="showError.loggedWith" (closeEvent)="onClose($event)"></app-error-toast>
   </div>
-  <div class="grow" *ngIf="!isMobileDevice || true"></div>
+  <div *ngIf="loginState === 'profile'" class="ds-w-100 ds-h-100 ds-flex-center-between ds-flex-column">
 
-  <google-signin *ngIf="!isMobileDevice || true" (showError)="errorEvent.emit($event)"></google-signin>
-  <!--<google-signin *ngIf="!isMobileDevice" (showError)="showError = $event"></google-signin>-->
+    <div class="background" [style.background-image]="trustedBackgroundUrl | resolveAsset"></div>
+    <div style="flex-grow: 0.5;"></div>
 
-  <div class="grow"></div>
-  <!--<div class="title-text" *ngIf="isMobileDevice">{{titleText}}</div>-->
-  <!--<a [href]="appLink" *ngIf="isMobileDevice">-->
-    <!--<app-gradient-button [width]="'266px'" [minHeight]="'80px'" [fontSize]="'28px'">Get SmartPass</app-gradient-button>-->
-  <!--</a>-->
+    <div class="brand">
+      <app-smartpass-logo [scale]="1.5" [logoAsset]="'./assets/Logo (White).svg'"></app-smartpass-logo>
+    </div>
+    <div class="grow" *ngIf="!isMobileDevice || true"></div>
 
-  <div class="passes" *ngIf="!isMobileDevice || true">
-    <img height="173" [src]="'./assets/intro/Pass Tile 1.svg' | resolveAsset">
-    <img height="173" [src]="'./assets/intro/Pass Tile 2.svg' | resolveAsset">
-    <img height="173" [src]="'./assets/intro/Pass Tile 3.svg' | resolveAsset">
+    <google-signin *ngIf="!isMobileDevice || true" (showError)="showError = $event"></google-signin>
+    <!--<google-signin *ngIf="!isMobileDevice" (showError)="showError = $event"></google-signin>-->
+
+    <div class="grow"></div>
+    <!--<div class="title-text" *ngIf="isMobileDevice">{{titleText}}</div>-->
+    <!--<a [href]="appLink" *ngIf="isMobileDevice">-->
+      <!--<app-gradient-button [width]="'266px'" [minHeight]="'80px'" [fontSize]="'28px'">Get SmartPass</app-gradient-button>-->
+    <!--</a>-->
+
+    <div class="passes" *ngIf="!isMobileDevice || true">
+      <img height="173" [src]="'./assets/intro/Pass Tile 1.svg' | resolveAsset">
+      <img height="173" [src]="'./assets/intro/Pass Tile 2.svg' | resolveAsset">
+      <img height="173" [src]="'./assets/intro/Pass Tile 3.svg' | resolveAsset">
+    </div>
+
+      <div style="flex-grow: 0.5;"></div>
   </div>
+  <div class="school-signin" *ngIf="loginState === 'school'">
+    <div [style.margin-right]="'80px'">
+      <img [src]="'./assets/School-sign-in.svg'" alt="School-sign-in.svg">
+    </div>
+    <div [style.min-width]="'550px'" [style.padding-right]="'100px'">
+      <div>
 
-  <div style="flex-grow: 0.5;"></div>
-
-  <!--<div>-->
-    <!--<img [src]="'./assets/School-sign-in.svg'" alt="School-sign-in.svg">-->
-  <!--</div>-->
-  <!--<div>-->
-    <!--<div class="ds-big-title">-->
-      <!--Sign up your school in minutes-->
-    <!--</div>-->
-    <!--<div #field>-->
-      <!--<div class="ds-w-100">-->
-        <!--<app-student-search-->
-          <!--[searchTarget]="'schools'"-->
-          <!--[selectedStudents]="[]"-->
-          <!--[chipsMode]="false"-->
-          <!--[focused]="true"-->
-          <!--[role]="'_profile_teacher'"-->
-          <!--[dummyRoleText]="'teachers'"-->
-          <!--[rollUpAfterSelection]="true"-->
-          <!--[cancelButton]="false"-->
-          <!--[placeholder]="'Search Teachers'"-->
-          <!--(onUpdate)="null"-->
-        <!--&gt;</app-student-search>-->
-      <!--</div>-->
-    <!--</div>-->
-  <!--</div>-->
+        <div class="school-signin_big-title">
+          Sign up your school <br>
+          in minutes
+        </div>
+        <div class="school-input">
+          <div class="school-input_step-number">
+            1
+          </div>
+          <div class="ds-w-100 ds-ml-15 school-input_field">
+            <div>
+              <span class="school-input_title">
+                Select your school
+              </span>
+            </div>
+            <app-student-search
+              [style.transform]="'scale(1.1)'"
+              [searchTarget]="'schools'"
+              [selectedStudents]="[]"
+              [chipsMode]="false"
+              [focused]="true"
+              [role]="'_profile_teacher'"
+              [dummyRoleText]="'teachers'"
+              [rollUpAfterSelection]="true"
+              [cancelButton]="false"
+              [placeholder]="'Search schools'"
+              (onUpdate)="checkSchool($event)"
+            ></app-student-search>
+            <!--<app-round-input-->
+              <!--(ontextupdate)="search($event)"-->
+            <!--&gt;</app-round-input>-->
+            <!--<input #place type="text" (input)="search($event)">-->
+          </div>
+        </div>
+        <div class="school-input">
+          <div class="school-input_step-number">
+            2
+          </div>
+          <div class="ds-w-100 ds-ml-15 school-input_field">
+            <div>
+              <span class="school-input_title">
+                Sign up with Google
+              </span>
+            </div>
+            <div class="ds-mt-15" style="white-space: nowrap">
+              This just creates your individual administrator account. We’ll add <br>
+              the rest of your school’s accounts through G Suite Sync later.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </div>
 

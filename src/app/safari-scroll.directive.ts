@@ -29,7 +29,7 @@ export class SafariScrollDirective {
   @HostListener('scroll', ['$event'])
   onScroll(event) {
     // console.log('isSafari', DeviceDetection.isSafari());
-    if (DeviceDetection.isSafari() || true) {
+    if (DeviceDetection.isSafari()) {
       const unregister = this.renderer.listen(event.target, 'scroll', () => {
         // console.log(event.target.scrollLeft, event.target.clientWidth, event.target.scrollWidth, 'works');
 
