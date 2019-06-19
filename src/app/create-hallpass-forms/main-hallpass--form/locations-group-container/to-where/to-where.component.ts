@@ -95,14 +95,14 @@ export class ToWhereComponent implements OnInit {
   }
 
   private getViewRestriction(): ToWhereGridRestriction {
-    if (this.screenService.isDeviceMid) {
+    if (this.screenService.isDeviceMid || this.screenService.isDeviceLargeExtra) {
       return new ToWhereGridRestrictionSm();
     }
 
-    if (this.screenService.isIpadWidth) {
-      return new ToWhereGridRestrictionMd();
-    }
-
     return new ToWhereGridRestrictionLg();
+  }
+
+  get displayFooters() {
+    return this.screenService.isDeviceLargeExtra;
   }
 }

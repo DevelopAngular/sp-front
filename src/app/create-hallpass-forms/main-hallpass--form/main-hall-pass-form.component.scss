@@ -1,5 +1,18 @@
-@media screen and (max-width: 475px) {
+@media screen and (max-width: 335px) {
+  div.fixed-card {
+    width: 256px !important;
+  }
+}
+
+@media screen and (max-width: 1024px) {
   .fixed-card {
+    width: 335px !important;
+    height: 500px !important;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .fixed-card-wrapper {
     width: initial !important;
   }
 
@@ -39,6 +52,11 @@
   bottom: 0;
   margin: auto;
 
+}
+
+.fixed-card-wrapper {
+  transition: width .5s ease, height .5s ease;
+  position: relative
 }
 
 .form-stepper {

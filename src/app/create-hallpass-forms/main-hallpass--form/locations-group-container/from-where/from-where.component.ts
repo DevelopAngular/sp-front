@@ -2,6 +2,7 @@ import {Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild}
 import {Navigation} from '../../main-hall-pass-form.component';
 import {CreateFormService} from '../../../create-form.service';
 import {BehaviorSubject} from 'rxjs';
+import {ScreenService} from '../../../../services/screen.service';
 
 @Component({
   selector: 'app-from-where',
@@ -34,7 +35,8 @@ export class FromWhereComponent implements OnInit {
     }
   }
   constructor(
-    private formService: CreateFormService
+    private formService: CreateFormService,
+    private screenService: ScreenService
   ) { }
 
   ngOnInit() {
@@ -75,5 +77,9 @@ export class FromWhereComponent implements OnInit {
       }
       this.backButton.emit(this.formState);
     }, 100);
+  }
+
+  get displayFooters() {
+    return this.screenService.isDeviceLargeExtra;
   }
 }

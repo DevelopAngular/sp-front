@@ -232,8 +232,8 @@ export class MainHallPassFormComponent implements OnInit {
             this.formSize.width =  `425px`;
             this.formSize.height =  `500px`;
           } else {
-            this.formSize.width =  this.isDeviceLarge ?  `600px` : `700px`;
-            this.formSize.height =  `400px`;
+            this.formSize.width =  this.isDeviceLarge ?  `335px` : `700px`;
+            this.formSize.height = `400px`;
           }
           break;
         case 3:
@@ -253,9 +253,6 @@ export class MainHallPassFormComponent implements OnInit {
   @HostListener('window:resize')
   checkDeviceScreen() {
     this.isDeviceMid = this.screenService.isDeviceMid;
-    this.isDeviceLarge = this.screenService.isDeviceLarge;
-    if (this.isStaff) {
-      this.formSize.width = this.isDeviceLarge ?  '600px' : '700px';
-    }
+    this.isDeviceLarge = this.screenService.isDeviceLargeExtra;
   }
 }
