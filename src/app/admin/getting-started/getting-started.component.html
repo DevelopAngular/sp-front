@@ -45,7 +45,7 @@
 
         </div>
 
-        <div class="card card__tour-item">
+        <div class="card card__tour-item" (click)="router.navigate(['admin', 'passconfig'])">
           <div class="card_header">
             <img class="tour-item_image" [src]="'./assets/Room (Purple).svg' | resolveAsset" alt="">
             <span>Accounts Set-up</span>

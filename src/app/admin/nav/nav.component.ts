@@ -82,6 +82,7 @@ export class NavComponent implements OnInit {
         this.tab = urlSplit.slice(1);
         // console.log(this.tab, value.url);
         this.tab = ( (this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab );
+        // this.selectTab(this.tabRef.nativeElement, this.navButtonsContainterRef.nativeElement);
       }
     });
 

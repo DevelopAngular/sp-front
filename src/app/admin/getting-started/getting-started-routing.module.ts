@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import {GettingStartedComponent} from './getting-started.component';
-import {TakeTourComponent} from './take-tour/take-tour.component';
+import { GettingStartedComponent } from './getting-started.component';
+import { TakeTourComponent } from './take-tour/take-tour.component';
 
 const routes: Routes = [
   {

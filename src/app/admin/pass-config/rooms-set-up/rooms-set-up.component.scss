@@ -1,0 +1,92 @@
+@import "../../../../sp-colors";
+
+:host {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.host {
+  width: 100%;
+  //height: 100%;
+  box-sizing: border-box;
+  padding: 40px;
+  background-color: #FBFEFF;
+  overflow-y: scroll;
+  .wrapper {
+    min-width: 830px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .info-block {
+      display: flex;
+      width: 670px;
+      align-items: center;
+      margin-top: 40px;
+      .info {
+        margin-left: 41px;
+        .title {
+          font-weight: bold;
+          font-size: 55px;
+          line-height: 66px;
+          color: $navy;
+          margin-bottom: 10px;
+        }
+        .small-text {
+          font-size: 17px;
+          color: $blue-gray;
+        }
+      }
+    }
+
+    .buttons-block {
+      display: flex;
+      width: 100%;
+      margin-top: 95px;
+      justify-content: space-around;
+      align-items: center;
+      .started-pack {
+        width: 461px;
+        height: 269px;
+        border-radius: 16px;
+        background-color: #F4F4F4;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 29px;
+
+        .collection {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
+          margin-top: 17px;
+          .pinnable {
+            width: 143px;
+            height: 86.5px;
+            border-radius: 12.75px;
+          }
+        }
+      }
+
+      .started-scratch {
+        width: 344px;
+        height: 269px;
+        border-radius: 16px;
+        background-color: #F4F4F4;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .title {
+        font-size: 17px;
+        color: $blue-gray;
+        margin-left: 7.5px;
+      }
+    }
+  }
+}
