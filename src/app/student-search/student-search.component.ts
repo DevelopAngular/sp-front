@@ -225,7 +225,7 @@ export class StudentSearchComponent implements OnInit {
           let predictionsAll = [];
           let pointer = 0;
           const keyWords = ['', 'school',  'elementary', 'elementary school', 'high', 'high school'];
-                keyWords.forEach((kw: string, index) => {
+            keyWords.forEach((kw: string, index) => {
                   this.placePredictionService.getPlacePredictions({
                     location: this.currentPosition,
                     input: search + ' ' + kw,
