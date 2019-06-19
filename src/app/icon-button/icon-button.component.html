@@ -6,7 +6,7 @@
      (mouseleave)="hovered = false;"
      (mousedown)="down = true"
      (mouseup)="down = false"
-     (click)="pressed = !pressed; $event.stopPropagation(); clickEvent.emit($event)" #iconButtonRef >
+     (click)="onClick($event)" #iconButtonRef >
     <img [src]="src | resolveAsset"
          [attr.width]="size"
          [attr.height]="size"

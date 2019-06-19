@@ -17,6 +17,7 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() onDarkShade: boolean = false;
   @Input() srcString: string = '';
   @Input() pressed: boolean = false;
+  @Input() eventBubbling = false;
   @Output() clickEvent: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
 
   hovered: boolean = false;
@@ -107,6 +108,15 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
   }
+
+  onClick(evt) {
+    this.pressed = !this.pressed;
+    if (!this.eventBubbling) {
+      evt.stopPropagation();
+    }
+    this.clickEvent.emit(evt);
+  }
+
   ngOnDestroy(): void {
     this.destroyer$.next();
     this.destroyer$.complete();
