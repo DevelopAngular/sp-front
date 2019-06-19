@@ -126,7 +126,7 @@ export class MainPageComponent implements OnInit {
   }
 
   onSettingClick($event) {
-    if (this.screenService.isDeviceLarge) {
+    if (this.screenService.isDeviceLargeExtra) {
       this.data = $event;
       this.sideNavService.toggle$.next(true);
     }
@@ -150,14 +150,16 @@ export class MainPageComponent implements OnInit {
 
   @HostListener('window:resize')
   checkWidth() {
-    if (!this.screenService.isDeviceLarge) {
+    if (!this.screenService.isDeviceLargeExtra) {
       this.sideNavService.toggleLeft$.next(false);
       this.sideNavService.toggleRight$.next(false);
     }
 
-    if (!this.screenService.isDeviceLarge && this.screenService.isDeviceMid) {
+    if (!this.screenService.isDeviceLargeExtra && this.screenService.isDeviceMid) {
       this.sideNavService.toggleRight$.next(false);
     }
+
+    this.navbarHeight = this.currentNavbarHeight;
   }
 
 }

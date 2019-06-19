@@ -19,6 +19,7 @@
 
   div.my-room-header {
     flex-direction: column;
+    padding: 0;
   }
 
   div.my-room-options-mobile {
@@ -30,7 +31,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 105px;
+    height: 90px;
     position: relative;
   }
 
@@ -41,11 +42,19 @@
   div.calendar-card {
     display: block;
   }
+
+  div.my-room-wrapper {
+    justify-content: unset;
+  }
+
+  div.my-room-left {
+    width: initial;
+    margin: 0;
+  }
 }
 
 @media all and (max-width: 475px) {
   div.my-room-wrapper {
-    width: 93% !important;
     margin: auto;
     flex-direction: column;
   }
@@ -61,6 +70,10 @@
   div.my-room-body-collections {
     width: 100%;
   }
+
+  div.my-room-wrapper{
+    height: initial;
+  }
 }
 
 @media all and (max-width: 375px) {
@@ -73,7 +86,7 @@
   ::ng-deep div.options-dialog {
     width: 100%;
     max-width: 375px !important;
-    margin-bottom: 70px !important;
+    margin-bottom: 69px !important;
   }
 
   div.my-room-wrapper {
@@ -82,7 +95,7 @@
     flex-direction: column;
   }
 
-  .my-room-body-collections {
+  div.my-room-body-collections {
     display: flex;
     flex-direction: column;
     width: 52%;
@@ -92,16 +105,19 @@
 :host {
   flex: 1 1 auto;
 }
+
 .my-room-wrapper{
-  margin: 40px auto 0;
   display: flex;
+  justify-content: center;
+  height: 100vh;
 }
 
 .my-room-header{
   display: flex;
   flex-direction: row;
-  margin-bottom: 50px;
+  margin-bottom: 60px;
   align-items: center;
+  padding-top: 40px;
 }
 
 .my-room-body{
@@ -113,10 +129,18 @@
 .my-room-body-collections {
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .my-room-right{
   margin-left: 50px;
+}
+
+.my-room-left {
+  display: flex;
+  flex-direction: column;
+  width: 533px;
+  margin: 0 auto;
 }
 
 .no-content-info {
@@ -265,6 +289,7 @@ input {
   max-width: 335px;
   margin: auto;
   border-radius: 14px;
+  z-index: 0;
 }
 
 .display-block {
@@ -329,10 +354,11 @@ input {
   animation: menu-appearance .2s ease;
   transition: none;
   .mat-dialog-container {
-    height: 341px;
-    background-color: #ffff;
+    max-height: 341px;
+    background-color: transparent;
     border-radius: 14px 14px 0 0;
     overflow-y: auto;
+    padding: 0;
   }
 }
 

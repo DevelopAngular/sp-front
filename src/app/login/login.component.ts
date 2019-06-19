@@ -39,7 +39,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   public isMobileDevice: boolean = false;
   public trustedBackgroundUrl: SafeUrl;
   public showError = { loggedWith: null, error: null };
-  public loginState: LoginState = 'school';
+  public loginState: LoginState = 'profile';
   private jwt: JwtHelperService;
 
 
