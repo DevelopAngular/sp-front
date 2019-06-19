@@ -191,7 +191,7 @@ $primaryFont: "Inter", "Arial", "Arimo", sans-serif;
 .ds-flex-center-between{
   @include flexLayout(center, space-between);
 }
-.ds-flex-ceter-around{
+.ds-flex-center-around{
   @include flexLayout(center, space-around);
 }
 .ds-flex-center-start{
@@ -230,6 +230,9 @@ $primaryFont: "Inter", "Arial", "Arimo", sans-serif;
 }
 .ds-flex-column{
   flex-direction: column;
+}
+.ds-flex-row{
+  flex-direction: row;
 }
 
 /* === Common Parent > Child Sizing === */

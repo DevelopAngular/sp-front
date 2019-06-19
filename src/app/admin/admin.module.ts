@@ -35,7 +35,7 @@ import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.compon
 import { SearchFilterDialogComponent } from './search/search-filter-dialog/search-filter-dialog.component';
 import { DateTimeFilterComponent } from './search/date-time-filter/date-time-filter.component';
 import { MySchoolComponent } from './my-school/my-school.component';
-import { TakeTourComponent } from './take-tour/take-tour.component';
+// import { TakeTourComponent } from './getting-started/take-tour/take-tour.component';;
 
 @NgModule({
   imports: [
@@ -74,7 +74,7 @@ import { TakeTourComponent } from './take-tour/take-tour.component';
     SearchFilterDialogComponent,
     DateTimeFilterComponent,
     MySchoolComponent,
-    TakeTourComponent
+    // TakeTourComponent
   ],
   entryComponents: [
     AccountsDialogComponent,
