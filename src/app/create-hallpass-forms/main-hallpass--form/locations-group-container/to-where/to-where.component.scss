@@ -1,4 +1,4 @@
-@media all and (max-width: 475px) {
+@media all and (max-width: 1024px) {
   img.back-btn-top {
     display: none;
   }
@@ -27,30 +27,6 @@
   //Internet explorer , Edge
   div.to-content {
     -ms-overflow-style: none;
-  }
-}
-
-@media all and (min-width: 360px) and (max-width: 475px) {
-  img.back-btn-bottom {
-    bottom: -45px;
-  }
-}
-
-@media all and (min-width: 300px) and (max-width: 360px) {
-  img.back-btn-bottom {
-    bottom: -32px;
-  }
-}
-
-@media all and (max-width: 360px) {
-  img.back-btn-bottom {
-    bottom: -40px;
-  }
-}
-
-@media all and (max-width: 320px) {
-  img.back-btn-bottom {
-    bottom: -35px;
   }
 }
 

@@ -39,7 +39,6 @@ export class LocationsGroupContainerComponent implements OnInit {
   @ViewChild(RestrictedTargetComponent) restTargetComp;
   @ViewChild(RestrictedMessageComponent) restMessageComp;
 
-
   user$: Observable<User>;
   user: User;
   isStaff: boolean;
@@ -254,6 +253,11 @@ export class LocationsGroupContainerComponent implements OnInit {
       case 2:
         if (this.toWhereComp) {
           this.toWhereComp.back();
+        }
+        break;
+      case 3:
+        if (this.toCategoryComp) {
+          this.toCategoryComp.back();
         }
         break;
       case 4:
