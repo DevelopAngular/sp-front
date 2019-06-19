@@ -60,11 +60,6 @@
     width: 90%;
     margin: auto;
   }
-
-  img.back-button-bottom {
-    bottom: 32.5%;
-  }
-
 }
 
 @media all and (max-width: 425px) {
@@ -81,10 +76,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-
-  img.back-button-bottom {
-    bottom: 24.5%;
   }
 }
 
@@ -116,9 +107,11 @@
   .form-dialog-container {
     height: 300px !important;
   }
+}
 
+@media all and (max-width: 320px) {
   img.back-button-bottom {
-    bottom: 20.5%;
+    bottom: 5.5%;
   }
 }
 
@@ -283,7 +276,7 @@ input {
   height: 28px;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 24.5%;
+  bottom: 8%;
   z-index: 9999;
 }
 
