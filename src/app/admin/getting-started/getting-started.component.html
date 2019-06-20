@@ -5,7 +5,7 @@
         <div class="ds-big-heading">Getting Started</div>
         <div class="ds-flex-center-center">
           <div class="ds-mr-25">
-            <span>{{progress}}</span><span (click)="increase()">% Completed</span>
+            <span>{{onboardProgress.progress}}</span><span (click)="increase()">% Completed</span>
           </div>
 
           <div style="position: relative; width: 50px;height: 50px; transform: rotate(-90deg)">
@@ -23,7 +23,7 @@
               viewBox="0 0 50 50"
               stroke-dasharray="140"
               class="progress">
-              <circle r="20" cx="25" cy="25" stroke="#00B476" stroke-width="5" [attr.stroke-dashoffset]="offset">
+              <circle r="20" cx="25" cy="25" stroke="#00B476" stroke-width="5" [attr.stroke-dashoffset]="onboardProgress.offset">
 
               </circle>
             </svg>
@@ -32,7 +32,7 @@
         </div>
       </div>
     </div>
-    <div class="ds-flex-center-around" style="margin-top: 40px;">
+    <div class="ds-flex-center-around gs-banner" style="margin-top: 40px;">
       <div style="color: #1F195E; font-size: 55px; font-weight: bold; white-space: nowrap">
         <span>
           The hallway will <br>
@@ -66,12 +66,17 @@
                         <!--darkFill: 'White',-->
                         <!--lightFill: 'Blue-Gray'-->
                       <!--}) | resolveAsset" alt="">-->
-            <app-icon-button
-              [size]="20"
-              [srcString]="'Chevron Right'"
-              [eventBubbling]="true"
-            >
-            </app-icon-button>
+            <div class="go">
+              <app-icon-button
+                [size]="20"
+                [srcString]="'Chevron Right'"
+                [eventBubbling]="true"
+              >
+              </app-icon-button>
+            </div>
+            <div class="passed">
+              <img width="35" *ngIf="onboardProgress?.take_a_tour?.start && onboardProgress?.take_a_tour?.end" [src]="'./assets/Check (Jade).svg'" alt="Check (Jade).svg">
+            </div>
           </div>
 
         </div>
@@ -86,17 +91,22 @@
           </div>
           <div class="card_manage-users">
             <!--<img draggable="false" width="24" height="24"-->
-                 <!--[src]="darkTheme.getIcon({-->
-                        <!--iconName: 'Chevron Right',-->
-                        <!--darkFill: 'White',-->
-                        <!--lightFill: 'Blue-Gray'-->
-                      <!--}) | resolveAsset" alt="">-->
-            <app-icon-button
-              [size]="20"
-              [srcString]="'Chevron Right'"
-              [eventBubbling]="true"
-            >
-            </app-icon-button>
+            <!--[src]="darkTheme.getIcon({-->
+            <!--iconName: 'Chevron Right',-->
+            <!--darkFill: 'White',-->
+            <!--lightFill: 'Blue-Gray'-->
+            <!--}) | resolveAsset" alt="">-->
+            <div class="go">
+              <app-icon-button
+                [size]="20"
+                [srcString]="'Chevron Right'"
+                [eventBubbling]="true"
+              >
+              </app-icon-button>
+            </div>
+            <div class="passed">
+              <img width="35" *ngIf="onboardProgress?.setup_rooms?.start && onboardProgress?.setup_rooms?.end" [src]="'./assets/Check (Jade).svg'" alt="Check (Jade).svg">
+            </div>
           </div>
 
         </div>
@@ -113,17 +123,22 @@
           </div>
           <div class="card_manage-users">
             <!--<img draggable="false" width="24" height="24"-->
-                 <!--[src]="darkTheme.getIcon({-->
-                        <!--iconName: 'Chevron Right',-->
-                        <!--darkFill: 'White',-->
-                        <!--lightFill: 'Blue-Gray'-->
-                      <!--}) | resolveAsset" alt="">-->
-            <app-icon-button
-              [size]="20"
-              [srcString]="'Chevron Right'"
-              [eventBubbling]="true"
-            >
-            </app-icon-button>
+            <!--[src]="darkTheme.getIcon({-->
+            <!--iconName: 'Chevron Right',-->
+            <!--darkFill: 'White',-->
+            <!--lightFill: 'Blue-Gray'-->
+            <!--}) | resolveAsset" alt="">-->
+            <div class="go">
+              <app-icon-button
+                [size]="20"
+                [srcString]="'Chevron Right'"
+                [eventBubbling]="true"
+              >
+              </app-icon-button>
+            </div>
+            <div class="passed">
+              <img width="35" *ngIf="onboardProgress?.setup_accounts?.start && onboardProgress?.setup_accounts?.end" [src]="'./assets/Check (Jade).svg'" alt="Check (Jade).svg">
+            </div>
           </div>
 
         </div>
@@ -137,17 +152,22 @@
           </div>
           <div class="card_manage-users">
             <!--<img draggable="false" width="24" height="24"-->
-                 <!--[src]="darkTheme.getIcon({-->
-                        <!--iconName: 'Chevron Right',-->
-                        <!--darkFill: 'White',-->
-                        <!--lightFill: 'Blue-Gray'-->
-                      <!--}) | resolveAsset" alt="">-->
-            <app-icon-button
-              [size]="20"
-              [srcString]="'Chevron Right'"
-              [eventBubbling]="true"
-            >
-            </app-icon-button>
+            <!--[src]="darkTheme.getIcon({-->
+            <!--iconName: 'Chevron Right',-->
+            <!--darkFill: 'White',-->
+            <!--lightFill: 'Blue-Gray'-->
+            <!--}) | resolveAsset" alt="">-->
+            <div class="go">
+              <app-icon-button
+                [size]="20"
+                [srcString]="'Chevron Right'"
+                [eventBubbling]="true"
+              >
+              </app-icon-button>
+            </div>
+            <div class="passed">
+              <img width="35" *ngIf="onboardProgress?.launch_day_prep?.start && onboardProgress?.launch_day_prep?.end" [src]="'./assets/Check (Jade).svg'" alt="Check (Jade).svg">
+            </div>
           </div>
 
         </div>

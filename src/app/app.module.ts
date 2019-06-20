@@ -54,7 +54,8 @@ import { ErrorComponent } from './error/error.component';
 import { IntroRouteComponent } from './intro-route/intro-route.component';
 import { IntroDialogComponent } from './intro-dialog/intro-dialog.component';
 import {NotKioskModeGuard} from './not-kiosk-mode.guard';
-import {KioskModeService} from './services/kiosk-mode.service';
+import {KioskModeService} from './services/kiosk-mode.service';;
+import { SchoolSignUpComponent } from './school-sign-up/school-sign-up.component'
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroRouteComponent, data: { hideSchoolToggleBar: true}},
@@ -130,6 +131,7 @@ const appRoutes: Routes = [
     SortMenuComponent,
     IntroRouteComponent,
     IntroDialogComponent,
+    SchoolSignUpComponent
   ],
   entryComponents: [
     ConsentMenuComponent,

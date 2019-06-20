@@ -11,7 +11,7 @@
   <div class="router-outlet" style="height: 100%;" [style.overflow-y]=" hideScroll ? 'hidden' : 'auto'" *ngIf="isAuthenticated">
     <router-outlet></router-outlet>
   </div>
-
+  <!--<app-school-sign-up></app-school-sign-up>-->
   <app-login *ngIf="!isAuthenticated" (errorEvent)="showError.next($event)"></app-login>
 </div>
 <!--<span style="position: fixed;">{{(showUI | async)}}</span>-->

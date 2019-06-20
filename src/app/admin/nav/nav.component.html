@@ -8,7 +8,7 @@
       <app-smartpass-logo></app-smartpass-logo>
       <div style="display: flex;align-items: center;">
 
-        <div [style.color]="isSelected(gettingStarted.route) ? '#00B476' : '#7F879D'" *ngIf="!isSelected(gettingStarted.route) && progress < 100 || true">
+        <div [style.color]="isSelected(gettingStarted.route) ? '#00B476' : '#7F879D'" *ngIf="!isSelected(gettingStarted.route) && progress < 100">
           <span>{{progress}}</span>
           <span>%</span>
         </div>

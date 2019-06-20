@@ -28,8 +28,13 @@ export enum Progress {
 })
 export class GettingStartedComponent implements OnInit {
 
-  progress = 10;
-  offset = 120;
+  // progress = 10;
+  // offset = 120;
+
+  onboardProgress = {
+    progress: 10,
+    offset: 120
+  }
 
   constructor(
     public router: Router,
@@ -41,17 +46,22 @@ export class GettingStartedComponent implements OnInit {
     this.adminService.getOnboardProgress().subscribe((data: Array<OnboardItem>) => {
       console.log(data);
 
-
-
       data.forEach((item: OnboardItem ) => {
+        const ticket = item.name.split(':');
+        if (!this.onboardProgress[ticket[0]]) {
+          this.onboardProgress[ticket[0]] = {};
+        }
+        this.onboardProgress[ticket[0]][ticket[1]] = item.done;
         if (item.done) {
-          this.progress += Progress[item.name];
+          this.onboardProgress.progress += Progress[item.name];
+          this.onboardProgress.offset -= Progress[item.name];
+          console.log(this.onboardProgress.progress, Progress[item.name]);
         }
       });
-
+      console.log(this.onboardProgress);
     });
   }
   increase() {
-    this.offset -= 20;
+    this.onboardProgress.offset -= 20;
   }
 }
