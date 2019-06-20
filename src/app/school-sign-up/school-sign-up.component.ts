@@ -1,4 +1,4 @@
-import {Component, NgZone, OnInit} from '@angular/core';
+import {Component, EventEmitter, NgZone, OnInit, Output} from '@angular/core';
 import {constructUrl} from '../live-data/helpers';
 import {catchError, map, switchMap, tap} from 'rxjs/operators';
 import {from, Observable, of, throwError} from 'rxjs';
@@ -20,6 +20,8 @@ import {DomSanitizer} from '@angular/platform-browser';
 })
 export class SchoolSignUpComponent implements OnInit {
 
+  @Output() schoolCreatedEvent: EventEmitter<boolean> = new EventEmitter();
+  private AuthToken: string;
   private jwt: JwtHelperService;
   public showError = { loggedWith: null, error: null };
 
@@ -40,6 +42,8 @@ export class SchoolSignUpComponent implements OnInit {
   }
 
   ngOnInit() {
+    const qp = new URLSearchParams(window.location.search);
+    this.AuthToken = qp.get('key');
   }
 
 
@@ -54,7 +58,7 @@ export class SchoolSignUpComponent implements OnInit {
   checkSchool(placeId: string) {
     this.http.get(constructUrl('https://smartpass.app/api/staging/onboard/schools/check_school', {place_id: placeId}), {
       headers: {
-        'Authorization': 'Bearer ' + 'test' // it's temporary
+        'Authorization': 'Bearer ' + this.AuthToken // it's temporary
       }})
       .pipe(
         switchMap((onboard: any): Observable<any> => {
@@ -74,7 +78,7 @@ export class SchoolSignUpComponent implements OnInit {
                     this.loginService.showLoginError$.next(false);
                     this.showError.loggedWith = LoginMethod.OAuth;
                     this.showError.error = true;
-                    return of(null);
+                    return of(false);
                   } else {
 
                     return this.http.post('https://smartpass.app/api/staging/onboard/schools', {
@@ -82,7 +86,7 @@ export class SchoolSignUpComponent implements OnInit {
                       google_place_id: placeId
                     }, {
                       headers: {
-                        'Authorization': 'Bearer ' + 'test' // it's temporary
+                        'Authorization': 'Bearer ' + this.AuthToken // it's temporary
                       }
                     }).pipe(
                       map((res: any) => {
@@ -91,6 +95,7 @@ export class SchoolSignUpComponent implements OnInit {
                           this.googleLogin.updateAuth(auth);
                           this.storage.setItem('last_school_id', res.school.id);
                         });
+                        return true;
                       })
                     );
 
@@ -109,12 +114,14 @@ export class SchoolSignUpComponent implements OnInit {
               );
           } else {
             // this.loginState = 'profile';
-            return of(placeId);
+
+            return of(false);
           }
         })
       )
       .subscribe((res) => {
         console.log(res);
+        this.schoolCreatedEvent.emit(res);
       });
   }
   onClose(evt) {

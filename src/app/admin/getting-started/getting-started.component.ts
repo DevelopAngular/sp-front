@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {Router} from '@angular/router';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {AdminService} from '../../services/admin.service';
+import {HttpService} from '../../services/http-service';
+import {switchMap} from 'rxjs/operators';
 
 export interface OnboardItem {
   done: string;
@@ -32,20 +34,27 @@ export class GettingStartedComponent implements OnInit {
   // offset = 120;
 
   onboardProgress = {
-    progress: 10,
+    progress: 0,
     offset: 120
   }
 
   constructor(
     public router: Router,
     public darkTheme: DarkThemeSwitch,
-    private adminService: AdminService
+    private adminService: AdminService,
+    private httpService: HttpService
   ) { }
 
   ngOnInit() {
-    this.adminService.getOnboardProgress().subscribe((data: Array<OnboardItem>) => {
+    this.httpService.globalReload$.pipe(
+      switchMap(() => {
+        return this.adminService.getOnboardProgress();
+      })
+    )
+    .subscribe((data: Array<OnboardItem>) => {
       console.log(data);
-
+      this.onboardProgress.progress = 10;
+      this.onboardProgress.offset = 120;
       data.forEach((item: OnboardItem ) => {
         const ticket = item.name.split(':');
         if (!this.onboardProgress[ticket[0]]) {

@@ -54,11 +54,12 @@ import { ErrorComponent } from './error/error.component';
 import { IntroRouteComponent } from './intro-route/intro-route.component';
 import { IntroDialogComponent } from './intro-dialog/intro-dialog.component';
 import {NotKioskModeGuard} from './not-kiosk-mode.guard';
-import {KioskModeService} from './services/kiosk-mode.service';;
-import { SchoolSignUpComponent } from './school-sign-up/school-sign-up.component'
+import {KioskModeService} from './services/kiosk-mode.service';
+import { SchoolSignUpComponent } from './school-sign-up/school-sign-up.component';
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroRouteComponent, data: { hideSchoolToggleBar: true}},
+  // {path: 'school_signup', component: SchoolSignUpComponent, pathMatch: 'full'},
   {path: '', redirectTo: 'admin', pathMatch: 'full'},
   {
     path: '',
@@ -69,13 +70,13 @@ const appRoutes: Routes = [
         canActivate: [NotSeenIntroGuard, AuthenticatedGuard, IsStudentOrTeacherGuard],
         loadChildren: 'app/main/main.module#MainModule'
       },
-      {
-        path: 'select-profile',
-        component: SelectProfileComponent,
-        resolve: {
-          currentUser: CurrentUserResolver
-        }
-      },
+      // {
+      //   path: 'select-profile',
+      //   component: SelectProfileComponent,
+      //   resolve: {
+      //     currentUser: CurrentUserResolver
+      //   }
+      // },
       {
         path: 'admin',
         canActivate: [AuthenticatedGuard, NotKioskModeGuard, IsAdminGuard],
@@ -89,15 +90,15 @@ const appRoutes: Routes = [
         path: 'sign-out',
         component: SignOutComponent,
       },
-      {
-        // path: 'pdf/:source',
-        path: 'pdf/report',
-        canActivate: [AuthenticatedGuard],
-        component: PdfComponent,
-        data: {
-          hideScroll: true
-        }
-      },
+      // {
+      //   // path: 'pdf/:source',
+      //   path: 'pdf/report',
+      //   canActivate: [AuthenticatedGuard],
+      //   component: PdfComponent,
+      //   data: {
+      //     hideScroll: true
+      //   }
+      // },
       {
         path: 'error',
         component: ErrorComponent,
@@ -194,60 +195,5 @@ const appRoutes: Routes = [
   bootstrap: [AppComponent]
 })
 export class AppModule {
-  constructor(
-    // router: Router,
-    // activatedRoute: ActivatedRoute,
-    // vs: ViewportScroller,
-    // vr: ViewportRuler
-  ) {
-
-  //   router.events.pipe(
-  //     filter((e: any): e is NavigationStart => e instanceof NavigationStart),
-  //     // tap(console.log),
-  //     map(e => activatedRoute),
-  //     map(route => {
-  //       while (route.firstChild) {
-  //         route = route.firstChild;
-  //       }
-  //       return route;
-  //     }),
-  //     filter((route) => route.outlet === 'primary')
-  //   ).subscribe((e: any) => {
-  //     // e.data.test = 'west';
-  //     console.log(e);
-  //     // console.log(e.data);
-  //       // console.log(e);
-  //   })
-  //
-  //   router.events.pipe(
-  //     // filter((e: any): e is Scroll => e instanceof Scroll)
-  //     filter((e: any): e is NavigationEnd => e instanceof NavigationEnd),
-  //     // tap(console.log),
-  //     map(e => activatedRoute),
-  //     map(route => {
-  //       while (route.firstChild) {
-  //         route = route.firstChild;
-  //       }
-  //       return route;
-  //     }),
-  //     filter((route) => route.outlet === 'primary')
-  //     // filter(ar => )
-  //   ).subscribe((e: any) => {
-  //     e.data.test = 'west';
-  //     console.log(e);;
-  //
-  //     // console.log(e);
-  //     // if (e.position) {
-  //     //   backward navigation
-  //       // vs.scrollToPosition(e.position);
-  //     // } else if (e.anchor) {
-  //     //   anchor navigation
-  //       // vs.scrollToAnchor(e.anchor);
-  //     // } else {
-  //     //   forward navigation
-  //       // vs.scrollToPosition([0, 0]);
-  //     // }
-  //   });
-  //
-  }
+  constructor() {}
 }
