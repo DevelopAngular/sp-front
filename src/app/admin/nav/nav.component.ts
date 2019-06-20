@@ -5,7 +5,6 @@ import { LoadingService } from '../../services/loading.service';
 import { DataService } from '../../services/data-service';
 import { User } from '../../models/User';
 import { UserService } from '../../services/user.service';
-import { disableBodyScroll } from 'body-scroll-lock';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {SettingsComponent} from '../settings/settings.component';
 import {map, switchMap} from 'rxjs/operators';

@@ -35,7 +35,8 @@ import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.compon
 import { SearchFilterDialogComponent } from './search/search-filter-dialog/search-filter-dialog.component';
 import { DateTimeFilterComponent } from './search/date-time-filter/date-time-filter.component';
 import { MySchoolComponent } from './my-school/my-school.component';
-import { RoomsSetUpComponent } from './pass-config/rooms-set-up/rooms-set-up.component';
+import { RoomsSetUpComponent } from './pass-config/rooms-set-up/rooms-set-up.component';;
+import { SchoolButtonComponent } from './my-school/school-button/school-button.component'
 
 @NgModule({
   imports: [
@@ -75,7 +76,8 @@ import { RoomsSetUpComponent } from './pass-config/rooms-set-up/rooms-set-up.com
     DateTimeFilterComponent,
     MySchoolComponent,
     RoomsSetUpComponent
-  ],
+,
+    SchoolButtonComponent  ],
   entryComponents: [
     AccountsDialogComponent,
     LinkGeneratedDialogComponent,
