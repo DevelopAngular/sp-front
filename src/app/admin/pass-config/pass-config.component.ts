@@ -1,24 +1,23 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 
 import {BehaviorSubject, forkJoin, Observable, of, Subscription, zip} from 'rxjs';
-import {filter, switchMap, tap} from 'rxjs/operators';
+import {filter, finalize, mapTo, switchMap} from 'rxjs/operators';
 
 import { HttpService } from '../../services/http-service';
 import { Pinnable } from '../../models/Pinnable';
 import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
 import { PinnableCollectionComponent } from '../pinnable-collection/pinnable-collection.component';
 import * as _ from 'lodash';
-import { disableBodyScroll } from 'body-scroll-lock';
 import { HallPassesService } from '../../services/hall-passes.service';
 import {SchoolSettingDialogComponent} from '../school-setting-dialog/school-setting-dialog.component';
-import {User} from '../../models/User';
 import {Location} from '../../models/Location';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LocationsService} from '../../services/locations.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
+import {AdminService} from '../../services/admin.service';
 
 @Component({
   selector: 'app-pass-congif',
@@ -36,7 +35,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     selectedPinnables: Pinnable[] = [];
     pinnable: Pinnable;
     pinnables$: Observable<Pinnable[]>;
-    pinnables: Pinnable[];
+    pinnables: Pinnable[] = [];
     schools$;
 
     buttonMenuOpen: boolean;
@@ -44,6 +43,9 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 
     // Needs for OverlayContainer opening if an admin comes from teachers profile card on Accounts&Profiles tab
     private forceSelectedLocation: Location;
+
+    showRooms: boolean;
+    onboardLoaded: boolean;
 
   constructor(
       private dialog: MatDialog,
@@ -53,7 +55,8 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       private activatedRoute: ActivatedRoute,
       private locationsService: LocationsService,
       private router: Router,
-      public darkTheme: DarkThemeSwitch
+      public darkTheme: DarkThemeSwitch,
+      private adminService: AdminService,
 
 
   ) { }
@@ -72,13 +75,13 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    disableBodyScroll(this.elRef.nativeElement);
-
-
-
+    this.adminService.getOnboardProgress().subscribe((onboard: any[]) => {
+        console.log('Onboard ==>>>>', onboard);
+        const end = onboard.find(item => item.name === 'setup_rooms:end');
+        this.showRooms = end.done;
+        this.onboardLoaded = true;
+    });
     this.pinnables$ = this.hallPassService.getPinnables();
-    // this.schools$ = this.httpService.get('v1/schools');
-    // this.schools$.subscribe(res => this.schoolName =  res[0].name);
     this.pinnables$.subscribe(res => this.pinnables = res);
 
     this.httpService.globalReload$.subscribe(() => {
@@ -112,9 +115,6 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 
         forceSelectPinnable.unsubscribe();
       });
-
-
-
     });
 
   }
@@ -313,5 +313,41 @@ export class PassConfigComponent implements OnInit, OnDestroy {
              this.selectedPinnables = [];
              this.bulkSelect = false;
      });
+  }
+
+  onboard({createPack, pinnables}) {
+      if (createPack) {
+          const requests$ = pinnables.map(pin => {
+                  const location =  {
+                      title: pin.title,
+                      room: pin.room,
+                      restricted: pin.restricted,
+                      scheduling_restricted: pin.scheduling_restricted,
+                      travel_types: pin.travel_types,
+                      max_allowed_time: pin.max_allowed_time
+                  };
+                  return this.locationsService.createLocation(location)
+                      .pipe(switchMap((loc: Location) => {
+                          const pinnable = {
+                              title: pin.title,
+                              color_profile: pin.color_profile_id,
+                              icon: pin.icon,
+                              location: loc.id,
+                          };
+                          return this.hallPassService.createPinnable(pinnable);
+                      }));
+          });
+
+          forkJoin(requests$)
+              .pipe(switchMap((res) => {
+                    return this.adminService.updateOnboardProgress('setup_rooms:end').pipe(mapTo(res));
+                }))
+              .subscribe((res: Pinnable[]) => {
+              this.pinnables.push(...res);
+              this.showRooms = true;
+          });
+      } else {
+          this.showRooms = true;
+      }
   }
 }

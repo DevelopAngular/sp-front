@@ -5,11 +5,13 @@ import { LoadingService } from '../../services/loading.service';
 import { DataService } from '../../services/data-service';
 import { User } from '../../models/User';
 import { UserService } from '../../services/user.service';
-import { disableBodyScroll } from 'body-scroll-lock';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {SettingsComponent} from '../settings/settings.component';
-import {map} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
+import {AdminService} from '../../services/admin.service';
+import {OnboardItem, Progress} from '../getting-started/getting-started.component';
+import {HttpService} from '../../services/http-service';
 
 declare const window;
 
@@ -18,7 +20,7 @@ declare const window;
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.scss']
 })
-export class NavComponent implements OnInit, AfterViewInit {
+export class NavComponent implements OnInit {
 
   // @ViewChild('navMain') navMain: ElementRef;
   @ViewChild('navButtonsContainter') navButtonsContainterRef: ElementRef;
@@ -35,6 +37,9 @@ export class NavComponent implements OnInit, AfterViewInit {
     // {title: 'Feedback', link : 'https://www.smartpass.app/feedback', type: 'staticButton', externalApp: 'mailto:feedback@smartpass.app', imgUrl : './assets/Feedback', requiredRoles: ['_profile_admin']},
     // {title: 'Support', link : 'https://www.smartpass.app/support', type: 'staticButton', imgUrl : './assets/Support', requiredRoles: ['_profile_admin']},
   ];
+
+  progress = 0;
+
   fakeMenu = new BehaviorSubject<boolean>(false);
   tab: string[] = ['dashboard'];
   public pts: string;
@@ -47,7 +52,9 @@ export class NavComponent implements OnInit, AfterViewInit {
         private dialog: MatDialog,
         private _zone: NgZone,
         public darkTheme: DarkThemeSwitch,
-        private cd: ChangeDetectorRef
+        private adminService: AdminService,
+        private httpService: HttpService
+
     ) { }
 
   console = console;
@@ -61,9 +68,6 @@ export class NavComponent implements OnInit, AfterViewInit {
   get pointerTopSpace() {
     return this.pts;
   }
-  ngAfterViewInit(): void {
-    // this.cd.detectChanges();
-  }
 
   ngOnInit() {
 
@@ -74,13 +78,28 @@ export class NavComponent implements OnInit, AfterViewInit {
     // if (this.isSelected('takeTour')) {
     //   this.pts = '-63px';
     // }
-
+    this.httpService.globalReload$.pipe(
+      switchMap(() => {
+        return this.adminService.getOnboardProgress()
+      })
+    )
+    .subscribe((data: OnboardItem[]) => {
+      console.log(data);
+      this.progress = 10;
+      data.forEach((item: OnboardItem ): void => {
+        if (item.done) {
+          console.log(this.progress, Progress[item.name]);
+          this.progress +=  Progress[item.name];
+        }
+      });
+    });
     this.router.events.subscribe(value => {
       if ( value instanceof NavigationEnd ) {
         let urlSplit: string[] = value.url.split('/');
         this.tab = urlSplit.slice(1);
         // console.log(this.tab, value.url);
         this.tab = ( (this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab );
+        // this.selectTab(this.tabRef.nativeElement, this.navButtonsContainterRef.nativeElement);
       }
     });
 
@@ -90,7 +109,9 @@ export class NavComponent implements OnInit, AfterViewInit {
 
         this._zone.run(() => {
           this.user = user;
-          this.showButton = user.roles.includes('_profile_admin') && ( user.roles.includes('_profile_teacher') || user.roles.includes('_profile_student') );
+          this.showButton = user.roles.includes('_profile_admin') &&
+                          ( user.roles.includes('_profile_teacher') ||
+                            user.roles.includes('_profile_student') );
           this.dataService.updateInbox(!this.tab.includes('settings'));
         });
       });

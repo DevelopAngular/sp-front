@@ -1,0 +1,13 @@
+<div
+  class="button"
+  #but
+  [@pressState]="buttonState"
+  (mousedown)="onPress(true)"
+  (mouseup)="onPress(false)"
+  (mouseenter)="but.hover = true" (mouseleave)="but.hover = false"
+  [style.opacity]="but.hover && !buttonDown ? 0.85 : (buttonDown ? 0.7 : 1)"
+  (click)="result.emit(button)"
+>
+  <div class="button-title">{{ button.title }}</div>
+  <div class="description">{{ button.description }}</div>
+</div>

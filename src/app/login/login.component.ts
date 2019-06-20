@@ -39,7 +39,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   public isMobileDevice: boolean = false;
   public trustedBackgroundUrl: SafeUrl;
   public showError = { loggedWith: null, error: null };
-  public loginState: LoginState = 'school';
+  public loginState: LoginState = 'profile';
   private jwt: JwtHelperService;
 
 
@@ -81,120 +81,77 @@ export class LoginComponent implements OnInit, AfterViewInit {
       this.titleText = 'Download SmartPass on the Google Play Store to start making passes.';
     }
   }
-  initLogin() {
-
-
-    return this.googleLogin.GoogleOauth.signIn()
-            .then((auth) => {
-              return auth.getAuthResponse();
-            });
-
-            // .catch((err) => {
-            //       console.log('Error occured =====>', err);
-            //
-            //       if (err && err.error !== 'popup_closed_by_user') {
-            //         console.log('Erro should be shown ====>')
-            //         this.loginService.showLoginError$.next(true);
-            //       }
-            //       // this.showSpinner = false;
-            //     });
-
-
-
-    // this.loggedWith = LoginMethod.OAuth;
-    // this.showSpinner = true;
-    // this.loginService.showLoginError$.next(false);
-
-
-
-
-
-    // await this.loginService
-    //   .signIn()
-    //   .catch((err) => {
-    //     console.log('Error occured =====>', err);
-    //
-    //     if (err && err.error !== 'popup_closed_by_user') {
-    //       console.log('Erro should be shown ====>')
-    //       this.loginService.showLoginError$.next(true);
-    //     }
-    //     // this.showSpinner = false;
-    //   });
-  }
-  checkSchool(placeId: string) {
-    this.http.get(constructUrl('https://smartpass.app/api/staging/onboard/schools/check_school', {place_id: placeId}), {
-      headers: {
-        'Authorization': 'Bearer ' + 'test' // it's temporary
-      }})
-      .pipe(
-        switchMap((onboard: any): Observable<any> => {
-          if (!onboard.school_registered) {
-           return from(this.initLogin())
-             .pipe(
-               tap(p => console.log(p)),
-                switchMap((auth: any) => {
-                  console.log(auth);
-
-                  const hd = this.jwt.decodeToken(auth.id_token)['hd'];
-
-                  // debugger
-
-                  if (!hd || hd === 'gmail.com') {
-                    // this.loginState = 'profile';
-                    this.loginService.showLoginError$.next(false);
-                    this.showError.loggedWith = LoginMethod.OAuth;
-                    this.showError.error = true;
-                    return of(null);
-                  } else {
-
-                    return this.http.post('https://smartpass.app/api/staging/onboard/schools', {
-                      user_token: auth.id_token,
-                      google_place_id: placeId
-                    }, {
-                      headers: {
-                        'Authorization': 'Bearer ' + 'test' // it's temporary
-                      }
-                    }).pipe(
-                      map((res: any) => {
-                        this._zone.run(() => {
-                          console.log(res);
-                          this.googleLogin.updateAuth(auth);
-                          this.storage.setItem('last_school_id', res.school.id);
-                        });
-                      })
-                    );
-
-                  }
-                }),
-               catchError((err) => {
-                 console.log('Error occured =====>', err);
-
-                 if (err && err.error !== 'popup_closed_by_user') {
-                   console.log('Erro should be shown ====>')
-                   this.loginService.showLoginError$.next(true);
-                 }
-                 return throwError(err);
-
-               })
-           );
-          } else {
-            this.loginState = 'profile';
-            return of(placeId);
-          }
-        })
-      )
-      .subscribe((res) => {
-        console.log(res);
-    });
-  }
-  // search(query: string) {
-  //   console.log(query);
-  //   this.placePredictionService.getQueryPredictions({
-  //     location: this.currentPosition,
-  //     input: query,
-  //     radius: 1000000
-  //   }, (predictions, status) => {
-  //     console.log(predictions, status, window.google.maps.places.PlacesServiceStatus.OK);
+  // initLogin() {
+  //   return this.googleLogin.GoogleOauth.signIn()
+  //           .then((auth) => {
+  //             return auth.getAuthResponse();
+  //           });
+  //
+  // }
+  // checkSchool(placeId: string) {
+  //   this.http.get(constructUrl('https://smartpass.app/api/staging/onboard/schools/check_school', {place_id: placeId}), {
+  //     headers: {
+  //       'Authorization': 'Bearer ' + 'test' // it's temporary
+  //     }})
+  //     .pipe(
+  //       switchMap((onboard: any): Observable<any> => {
+  //         if (!onboard.school_registered) {
+  //          return from(this.initLogin())
+  //            .pipe(
+  //              tap(p => console.log(p)),
+  //               switchMap((auth: any) => {
+  //                 console.log(auth);
+  //
+  //                 const hd = this.jwt.decodeToken(auth.id_token)['hd'];
+  //
+  //                 // debugger
+  //
+  //                 if (!hd || hd === 'gmail.com') {
+  //                   // this.loginState = 'profile';
+  //                   this.loginService.showLoginError$.next(false);
+  //                   this.showError.loggedWith = LoginMethod.OAuth;
+  //                   this.showError.error = true;
+  //                   return of(null);
+  //                 } else {
+  //
+  //                   return this.http.post('https://smartpass.app/api/staging/onboard/schools', {
+  //                     user_token: auth.id_token,
+  //                     google_place_id: placeId
+  //                   }, {
+  //                     headers: {
+  //                       'Authorization': 'Bearer ' + 'test' // it's temporary
+  //                     }
+  //                   }).pipe(
+  //                     map((res: any) => {
+  //                       this._zone.run(() => {
+  //                         console.log(res);
+  //                         this.googleLogin.updateAuth(auth);
+  //                         this.storage.setItem('last_school_id', res.school.id);
+  //                       });
+  //                     })
+  //                   );
+  //
+  //                 }
+  //               }),
+  //              catchError((err) => {
+  //                console.log('Error occured =====>', err);
+  //
+  //                if (err && err.error !== 'popup_closed_by_user') {
+  //                  console.log('Erro should be shown ====>')
+  //                  this.loginService.showLoginError$.next(true);
+  //                }
+  //                return throwError(err);
+  //
+  //              })
+  //          );
+  //         } else {
+  //           this.loginState = 'profile';
+  //           return of(placeId);
+  //         }
+  //       })
+  //     )
+  //     .subscribe((res) => {
+  //       console.log(res);
   //   });
   // }
   onClose(evt) {
@@ -204,6 +161,8 @@ export class LoginComponent implements OnInit, AfterViewInit {
       this.loginState = 'profile';
     }, 400);
   }
+
+
   onError() {
     this.router.navigate(['error']);
   }

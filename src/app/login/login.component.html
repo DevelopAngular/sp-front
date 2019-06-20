@@ -29,65 +29,65 @@
 
       <div style="flex-grow: 0.5;"></div>
   </div>
-  <div class="school-signin" *ngIf="loginState === 'school'">
-    <div [style.margin-right]="'80px'">
-      <img [src]="'./assets/School-sign-in.svg'" alt="School-sign-in.svg">
-    </div>
-    <div [style.min-width]="'550px'" [style.padding-right]="'100px'">
-      <div>
+  <!--<div class="school-signin" *ngIf="loginState === 'school'">-->
+    <!--<div [style.margin-right]="'80px'">-->
+      <!--<img [src]="'./assets/School-sign-in.svg'" alt="School-sign-in.svg">-->
+    <!--</div>-->
+    <!--<div [style.min-width]="'550px'" [style.padding-right]="'100px'">-->
+      <!--<div>-->
 
-        <div class="school-signin_big-title">
-          Sign up your school <br>
-          in minutes
-        </div>
-        <div class="school-input">
-          <div class="school-input_step-number">
-            1
-          </div>
-          <div class="ds-w-100 ds-ml-15 school-input_field">
-            <div>
-              <span class="school-input_title">
-                Select your school
-              </span>
-            </div>
-            <app-student-search
-              [style.transform]="'scale(1.1)'"
-              [searchTarget]="'schools'"
-              [selectedStudents]="[]"
-              [chipsMode]="false"
-              [focused]="true"
-              [role]="'_profile_teacher'"
-              [dummyRoleText]="'teachers'"
-              [rollUpAfterSelection]="true"
-              [cancelButton]="false"
-              [placeholder]="'Search schools'"
-              (onUpdate)="checkSchool($event)"
-            ></app-student-search>
-            <!--<app-round-input-->
-              <!--(ontextupdate)="search($event)"-->
-            <!--&gt;</app-round-input>-->
-            <!--<input #place type="text" (input)="search($event)">-->
-          </div>
-        </div>
-        <div class="school-input">
-          <div class="school-input_step-number">
-            2
-          </div>
-          <div class="ds-w-100 ds-ml-15 school-input_field">
-            <div>
-              <span class="school-input_title">
-                Sign up with Google
-              </span>
-            </div>
-            <div class="ds-mt-15" style="white-space: nowrap">
-              This just creates your individual administrator account. We’ll add <br>
-              the rest of your school’s accounts through G Suite Sync later.
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+        <!--<div class="school-signin_big-title">-->
+          <!--Sign up your school <br>-->
+          <!--in minutes-->
+        <!--</div>-->
+        <!--<div class="school-input">-->
+          <!--<div class="school-input_step-number">-->
+            <!--1-->
+          <!--</div>-->
+          <!--<div class="ds-w-100 ds-ml-15 school-input_field">-->
+            <!--<div>-->
+              <!--<span class="school-input_title">-->
+                <!--Select your school-->
+              <!--</span>-->
+            <!--</div>-->
+            <!--<app-student-search-->
+              <!--[style.transform]="'scale(1.1)'"-->
+              <!--[searchTarget]="'schools'"-->
+              <!--[selectedStudents]="[]"-->
+              <!--[chipsMode]="false"-->
+              <!--[focused]="true"-->
+              <!--[role]="'_profile_teacher'"-->
+              <!--[dummyRoleText]="'teachers'"-->
+              <!--[rollUpAfterSelection]="true"-->
+              <!--[cancelButton]="false"-->
+              <!--[placeholder]="'Search schools'"-->
+              <!--(onUpdate)="checkSchool($event)"-->
+            <!--&gt;</app-student-search>-->
+            <!--&lt;!&ndash;<app-round-input&ndash;&gt;-->
+              <!--&lt;!&ndash;(ontextupdate)="search($event)"&ndash;&gt;-->
+            <!--&lt;!&ndash;&gt;</app-round-input>&ndash;&gt;-->
+            <!--&lt;!&ndash;<input #place type="text" (input)="search($event)">&ndash;&gt;-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<div class="school-input">-->
+          <!--<div class="school-input_step-number">-->
+            <!--2-->
+          <!--</div>-->
+          <!--<div class="ds-w-100 ds-ml-15 school-input_field">-->
+            <!--<div>-->
+              <!--<span class="school-input_title">-->
+                <!--Sign up with Google-->
+              <!--</span>-->
+            <!--</div>-->
+            <!--<div class="ds-mt-15" style="white-space: nowrap">-->
+              <!--This just creates your individual administrator account. We’ll add <br>-->
+              <!--the rest of your school’s accounts through G Suite Sync later.-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</div>-->
+  <!--</div>-->
 
 </div>
 

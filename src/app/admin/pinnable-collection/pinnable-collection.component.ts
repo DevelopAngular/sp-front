@@ -101,6 +101,7 @@ export class PinnableCollectionComponent implements OnInit {
   }
 
   updatePinnables(pinnable: Pinnable) {
+    console.log(pinnable);
     if (!!this.selectedPinnables.find(pin => pin.id === pinnable.id)) {
      return this.selectedPinnables.splice(this.selectedPinnables.indexOf(pinnable), 1);
     } else {

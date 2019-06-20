@@ -1,80 +1,83 @@
-<div class="host" appSafariScroll>
-  <div class="pass-config-wrapper">
+<app-rooms-set-up *ngIf="!showRooms && onboardLoaded" (setUpResult)="onboard($event)"></app-rooms-set-up>
 
-    <div class="pass-config-container">
+<div class="host" appSafariScroll *ngIf="showRooms && onboardLoaded">
+    <div class="pass-config-wrapper">
+        <div class="pass-config-container">
+            <div class="pass-config-header" [style.background-color]="darkTheme.getBackground('high', true)">
+                <div class="school-logo">
+                    <div class="school-title">
+                        <div *ngIf="bulkSelect; else staticHeader" class="school-name" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{selectedPinnables.length}} Selected</div>
+                        <ng-template #staticHeader>
+                            <div class="school-name" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Rooms</div>
+                        </ng-template>
+                    </div>
 
-      <div class="pass-config-header" [style.background-color]="darkTheme.getBackground('high', true)">
+                    <div class="header-settings">
+                        <app-gradient-button
+                                [ngStyle]="{'opacity': bulkSelect && !selectedPinnables.length ? '.5' : '1'}"
+                                [size]="'medium'"
+                                [hoverColor]="'#00B476'"
+                                [cursor]="!bulkSelect || selectedPinnables.length ? 'pointer' : 'default'"
+                                (buttonClick)="buttonClicked($event)"
+                                [leftIcon]="headerButtonIcon"
+                                [disabled]="bulkSelect && !selectedPinnables.length">
+                            {{headerButtonText}}
+                        </app-gradient-button>
+                        <app-gradient-button
+                                (click)="toggleBulk()"
+                                [style.margin]="'0 15px 0 15px'"
+                                [cursor]="'pointer'"
+                                [gradient]="'#F4F4F4, #F4F4F4'"
+                                [hoverColor]="'#F5F5F5'"
+                                [textColor]="'#1F195E'"
+                                [size]="'medium'"
+                        >
+                            {{ (bulkSelect ? 'Done' : 'Edit') }}
+                        </app-gradient-button>
+                        <app-gradient-button
+                                (click)="openSettings()"
+                                [cursor]="'pointer'"
+                                [gradient]="'#F4F4F4, #F4F4F4'"
+                                [hoverColor]="'#F5F5F5'"
+                                [textColor]="'#1F195E'"
+                                [size]="'medium'"
+                                [leftIcon]="'./assets/Options (Navy).svg'"
+                                [disabled]="bulkSelect"
+                        >
+                            Options
+                        </app-gradient-button>
+                    </div>
 
-        <div class="school-logo">
-          <div class="school-title">
-            <!--<img class="school-icon" [src]="darkTheme.getIcon({-->
-              <!--iconName: './assets/School (Navy).svg',-->
-              <!--darkFill: 'White',-->
-              <!--lightFill: 'Navy'-->
-            <!--}) | resolveAsset">-->
-            <div *ngIf="bulkSelect; else staticHeader" class="school-name" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{selectedPinnables.length}} Selected</div>
-            <ng-template #staticHeader>
-              <div class="school-name" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Rooms</div>
-            </ng-template>
-          </div>
-
-          <div class="header-settings">
-            <app-gradient-button
-                    [ngStyle]="{'opacity': bulkSelect && !selectedPinnables.length ? '.5' : '1'}"
-                    [size]="'medium'"
-                    [hoverColor]="'#00B476'"
-                    [cursor]="!bulkSelect || selectedPinnables.length ? 'pointer' : 'default'"
-                    (buttonClick)="buttonClicked($event)"
-                    [leftIcon]="headerButtonIcon"
-                    [disabled]="bulkSelect && !selectedPinnables.length">
-              {{headerButtonText}}
-            </app-gradient-button>
-            <app-gradient-button
-                    (click)="toggleBulk()"
-                    [style.margin]="'0 15px 0 15px'"
-                    [cursor]="'pointer'"
-                    [gradient]="'#F4F4F4, #F4F4F4'"
-                    [hoverColor]="'#F5F5F5'"
-                    [textColor]="'#1F195E'"
-                    [size]="'medium'"
-            >
-              {{ (bulkSelect ? 'Done' : 'Edit') }}
-            </app-gradient-button>
-            <app-gradient-button
-                    (click)="openSettings()"
-                    [cursor]="'pointer'"
-                    [gradient]="'#F4F4F4, #F4F4F4'"
-                    [hoverColor]="'#F5F5F5'"
-                    [textColor]="'#1F195E'"
-                    [size]="'medium'"
-                    [leftIcon]="'./assets/Options (Navy).svg'"
-                    [disabled]="bulkSelect"
-            >
-            Options
-            </app-gradient-button>
-          </div>
-
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-    <div class="pass-config-content">
-      <div class="pinnables">
-        <div *ngIf="!pinnables?.length; else pinnableCollection" class="spinner loading-theme_blue-gray">
-          <mat-spinner [diameter]="35" [color]="'accent'"></mat-spinner>
+        <div class="pass-config-content">
+            <div class="pinnables" *ngIf="pinnables.length">
+                <!--<div *ngIf="!pinnables?.length" class="spinner loading-theme_blue-gray">-->
+                    <!--<mat-spinner [diameter]="35" [color]="'accent'"></mat-spinner>-->
+                <!--</div>-->
+                    <app-pinnable-collection
+                            [selectedPinnables]="selectedPinnables"
+                            [pinnables]="pinnables"
+                            [bulkSelect]="bulkSelect"
+                            [resetBulkSelect$]="pinnableCollectionBlurEvent$"
+                            (orderChangedEvent)="updatePinnablesOrder($event)"
+                            (roomEvent)="selectPinnable($event)"
+                            (bulkSelectEmit)="bulkSelect = $event"
+                    >
+                    </app-pinnable-collection>
+            </div>
+            <div class="empty-state" *ngIf="!pinnables.length">
+                <img [src]="'./assets/emptyStates/Rooms empty.svg' |resolveAsset" alt="empty">
+                <div class="empty-text">
+                    <div class="title">No Rooms</div>
+                    <div class="small-text">
+                        Add rooms above. Need help? <br/>
+                        Contact us at hello@smartpass.app
+                    </div>
+                </div>
+            </div>
         </div>
-        <ng-template #pinnableCollection>
-          <app-pinnable-collection
-            [selectedPinnables]="selectedPinnables"
-            [pinnables]="pinnables"
-            [bulkSelect]="bulkSelect"
-            [resetBulkSelect$]="pinnableCollectionBlurEvent$"
-            (orderChangedEvent)="updatePinnablesOrder($event)"
-            (roomEvent)="selectPinnable($event)"
-            (bulkSelectEmit)="bulkSelect = $event"
-          >
-          </app-pinnable-collection>
-        </ng-template>
-      </div>
     </div>
-  </div>
 </div>
+

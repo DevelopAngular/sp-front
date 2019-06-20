@@ -32,6 +32,8 @@ declare const window;
 
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
+  schoolSignUp: boolean;
+
   public isAuthenticated = null;
   public hideScroll: boolean = false;
   public hideSchoolToggleBar: boolean = false;
@@ -84,6 +86,16 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+
+    let test = new URLSearchParams(window.location.href);
+    console.log(test);
+
+    const qp = new URLSearchParams(window.location.search);
+
+
+    this.schoolSignUp = window.location.href.includes('school_signup') && !!qp.get('key');
+      // ?key=test
+
     this.storageService.detectChanges();
     this.darkTheme.isEnabled$.subscribe((val) => {
       this.darkThemeEnabled = val;
@@ -190,7 +202,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.hideScroll = data.hideScroll;
       });
   }
-
+  onSchoolCreated(evt: boolean) {
+    this.schoolSignUp = false;
+    if (evt) {
+      this.router.navigate(['admin', 'gettingstarted']);
+    } else {
+      this.router.navigate(['']);
+    }
+  }
   ngOnDestroy() {
     this.subscriber$.next(null);
     this.subscriber$.complete();
