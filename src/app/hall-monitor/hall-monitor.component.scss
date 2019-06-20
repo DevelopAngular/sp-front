@@ -20,10 +20,10 @@
   div.hall-monitor-top{
     justify-content: space-between;
     margin-bottom: 15px;
+    height: 90px;
   }
 
   div.hall-monitor-wrapper{
-    margin: 25px auto 0;
     max-width: 100%;
   }
 
@@ -44,6 +44,10 @@
     display: block;
   }
 
+  div.hall-monitor-top{
+      padding: 0;
+  }
+
   ::ng-deep .report-dialog {
     height: 500px !important;
     width: 335px !important;
@@ -57,14 +61,9 @@
 @media all and (max-width: 768px ) {
   div.hall-monitor-bottom {
     padding-top: 25px;
-    width: 90%;
+    width: 100%;
     margin: auto;
   }
-
-  img.back-button-bottom {
-    bottom: 32.5%;
-  }
-
 }
 
 @media all and (max-width: 425px) {
@@ -83,9 +82,10 @@
     align-items: center;
   }
 
-  img.back-button-bottom {
-    bottom: 24.5%;
+  .hall-monitor-wrapper{
+    height: unset;
   }
+
 }
 
 @media all and (max-width: 1024px) and (min-width: 768px ) {
@@ -116,9 +116,11 @@
   .form-dialog-container {
     height: 300px !important;
   }
+}
 
+@media all and (max-width: 320px) {
   img.back-button-bottom {
-    bottom: 20.5%;
+    bottom: 5.5%;
   }
 }
 
@@ -132,9 +134,8 @@
 }
 
 .hall-monitor-wrapper{
-    margin: 40px auto 0;
-    max-width: 655px;
     position: relative;
+    height: 100%;
 }
 
 .hall-monitor-top{
@@ -143,6 +144,7 @@
     align-items: center;
     justify-content: center;
     margin-bottom: 60px;
+    padding-top: 40px;
 }
 
 .hall-monitor-bottom{
@@ -151,6 +153,8 @@
     align-content: center;
     justify-content: center;
     position: relative;
+    max-width: 655px;
+    margin: auto;
 }
 
 .footer-message {
@@ -267,7 +271,8 @@ input {
   .mat-dialog-container {
     height: 341px;
     overflow: hidden;
-    background-color: #ffff;
+    background-color: transparent;
+    padding: 0;
     border-radius: 14px 14px 0 0;
   }
 }
@@ -283,7 +288,7 @@ input {
   height: 28px;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 24.5%;
+  bottom: 8%;
   z-index: 9999;
 }
 

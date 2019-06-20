@@ -12,6 +12,7 @@
     display: flex;
     justify-content: space-between;
     flex-direction: row-reverse;
+    width: 100%;
   }
 
   div.teacherNav {
@@ -38,9 +39,7 @@
 }
 
 @media all and (max-width: 320px) {
-    div.teacherNav-mobile {
-      height: 45px;
-    }
+
 }
 
 @media all and (max-width: 475px) {
@@ -49,7 +48,7 @@
 
     &-wrapper {
       display: flex;
-      width: 100%;
+      width: unset;
     }
   }
 

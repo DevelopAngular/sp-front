@@ -1,4 +1,4 @@
-<div *ngIf="user" style="height: 100%; position: relative">
+<div *ngIf="user" style="position: relative">
   <div *ngIf="canView" class="hall-monitor-wrapper">
     <div class="hall-monitor-top">
       <ng-container *ngIf="!isDeviceLargeExtra; else hallMontiorTopMobile">
@@ -35,7 +35,8 @@
       <ng-template #hallMontiorTopMobile>
         <ng-container>
           <div class="options-wrapper" (click)="toggleSearchBar()">
-            <img src="./assets/Search Eye (Navy).svg" alt="" class="search-img">
+<!--            <img src="./assets/Search Eye (Navy).svg" alt="" class="search-img">-->
+            <app-icon-button [srcString]="'Search Eye'" (clickEvent)="toggleSearchBar()" [size]="20"> </app-icon-button>
           </div>
           <div class="student-search-wrapper" *ngIf="isIpadSearchBar">
             <div class="student-search ">
@@ -58,13 +59,13 @@
           </div>
 
           <div class="options-wrapper" *ngIf="!isIpadSearchBar">
-            <img src="./assets/Report (Navy).svg" alt="" class="report-img" (click)="openReportForm()">
+            <app-icon-button [srcString]="'Report'" (clickEvent)="openReportForm()" [size]="20"> </app-icon-button>
           </div>
         </ng-container>
       </ng-template>
     </div>
 
-    <h1 class="hall-monitor-heading" *ngIf="!isIpadSearchBar">Hall Monitor</h1>
+    <h1 class="hall-monitor-heading" *ngIf="!isIpadSearchBar" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">Hall Monitor</h1>
     <ng-container *ngIf="isSearchClicked && !isIpadWidth">
       <div class="student-search-wrapper ">
         <div class="student-search ">
