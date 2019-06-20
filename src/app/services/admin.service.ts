@@ -39,8 +39,7 @@ export class AdminService {
   }
 
   getOnboardProgress() {
-    return this.http.get('v1/admin/onboard_progess');
-
+    return this.http.get('v1/admin/onboard_progress');
   }
 
   getFilteredDashboardData(date: Date) {

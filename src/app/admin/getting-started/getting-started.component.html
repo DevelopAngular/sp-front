@@ -4,7 +4,9 @@
       <div class="ds-flex-center-between ds-w-100 ds-h-100">
         <div class="ds-big-heading">Getting Started</div>
         <div class="ds-flex-center-center">
-          <span class="ds-mr-25" (click)="increase()">10% Completed</span>
+          <div class="ds-mr-25">
+            <span>{{progress}}</span><span (click)="increase()">% Completed</span>
+          </div>
 
           <div style="position: relative; width: 50px;height: 50px; transform: rotate(-90deg)">
 
