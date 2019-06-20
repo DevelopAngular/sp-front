@@ -9,19 +9,35 @@
     </div>
 
     <div class="buttons-block">
-      <div class="started-pack">
+      <div
+        class="started-pack"
+        (mousedown)="onPress(true, 'pack')"
+        (mouseup)="onPress(false, 'pack')"
+        [@pressState]="buttonStatePack"
+      >
         <div class="title">Add Starter Pack</div>
         <div class="collection">
           <div class="pinnable"
                *ngFor="let pinnable of mockPinnables; let i = index"
                [style.background]="'radial-gradient(circle at 73% 71%, ' + pinnable.gradient + ')'"
                [style.margin-bottom]="i !== 3 && i !== 4 && i !== 5 ? '15px' : 0"
-          ></div>
+          >
+            <img width="30" height="30" [src]="pinnable.icon" alt="Icon">
+            <div class="pinnable-title">{{ pinnable.title }}</div>
+          </div>
         </div>
       </div>
       <div class="title">OR</div>
-      <div class="started-scratch">
-        <div class="title">Start from scratch</div>
+      <div
+         class="started-scratch"
+         (mousedown)="onPress(true, 'scratch')"
+         (mouseup)="onPress(false, 'scratch')"
+         [@pressState]="buttonStateScratch"
+      >
+        <div class="started-scratch-title">Start from scratch</div>
+        <div class="img">
+          <img width="185" height="144" [src]="'./assets/emptyStates/Rooms empty.svg'" alt="">
+        </div>
       </div>
     </div>
   </div>

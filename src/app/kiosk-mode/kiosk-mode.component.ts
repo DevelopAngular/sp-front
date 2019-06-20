@@ -41,12 +41,13 @@ export class KioskModeComponent implements OnInit, OnDestroy {
 
   @ViewChild('input', { read: ElementRef }) input: ElementRef;
 
-  @HostListener('window:onkeuup', ['$event'])
+  @HostListener('window:keyup', ['$event'])
     setFocus() {
       setTimeout(() => {
           this.input.nativeElement.focus();
       }, 50);
   }
+
   constructor(
       private dialog: MatDialog,
       private kioskMode: KioskModeService,

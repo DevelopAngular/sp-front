@@ -67,6 +67,16 @@
             width: 143px;
             height: 86.5px;
             border-radius: 12.75px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            .pinnable-title {
+              color: white;
+              font-size: 16px;
+              font-weight: bold;
+              margin-top: 5px;
+            }
           }
         }
       }
@@ -77,15 +87,27 @@
         border-radius: 16px;
         background-color: #F4F4F4;
         cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
+
+        .started-scratch-title {
+          margin: 25px;
+          font-size: 17px;
+          color: $blue-gray;
+          font-weight: bold;
+        }
+
+        .img {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          margin-top: 25px;
+        }
       }
 
       .title {
         font-size: 17px;
         color: $blue-gray;
-        margin-left: 7.5px;
+        //margin-left: 7.5px;
+        font-weight: bold;
       }
     }
   }
