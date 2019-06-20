@@ -3,6 +3,7 @@ import {MatDialogRef} from '@angular/material';
 import {SortByItem} from '../models/SortByItem';
 import {DataService} from '../services/data-service';
 import {MAT_DIALOG_DATA} from '@angular/material';
+import {DarkThemeSwitch} from '../dark-theme-switch';
 
 @Component({
   selector: 'app-sort-menu',
@@ -19,6 +20,7 @@ export class SortMenuComponent implements OnInit, OnDestroy {
       list: Array<SortByItem>
     },
     public dialogRef: MatDialogRef<SortMenuComponent>,
+    private darkTheme: DarkThemeSwitch,
   ) {}
 
   onListItemClick = new EventEmitter();

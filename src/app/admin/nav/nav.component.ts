@@ -8,9 +8,11 @@ import { UserService } from '../../services/user.service';
 import { disableBodyScroll } from 'body-scroll-lock';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {SettingsComponent} from '../settings/settings.component';
-import {map} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {AdminService} from '../../services/admin.service';
+import {OnboardItem, Progress} from '../getting-started/getting-started.component';
+import {HttpService} from '../../services/http-service';
 
 declare const window;
 
@@ -51,7 +53,9 @@ export class NavComponent implements OnInit {
         private dialog: MatDialog,
         private _zone: NgZone,
         public darkTheme: DarkThemeSwitch,
-        private adminService: AdminService
+        private adminService: AdminService,
+        private httpService: HttpService
+
     ) { }
 
   console = console;
@@ -75,8 +79,20 @@ export class NavComponent implements OnInit {
     // if (this.isSelected('takeTour')) {
     //   this.pts = '-63px';
     // }
-    this.adminService.getOnboardProgress().subscribe((data) => {
+    this.httpService.globalReload$.pipe(
+      switchMap(() => {
+        return this.adminService.getOnboardProgress()
+      })
+    )
+    .subscribe((data: OnboardItem[]) => {
       console.log(data);
+      this.progress = 10;
+      data.forEach((item: OnboardItem ): void => {
+        if (item.done) {
+          console.log(this.progress, Progress[item.name]);
+          this.progress +=  Progress[item.name];
+        }
+      });
     });
     this.router.events.subscribe(value => {
       if ( value instanceof NavigationEnd ) {
@@ -94,7 +110,9 @@ export class NavComponent implements OnInit {
 
         this._zone.run(() => {
           this.user = user;
-          this.showButton = user.roles.includes('_profile_admin') && ( user.roles.includes('_profile_teacher') || user.roles.includes('_profile_student') );
+          this.showButton = user.roles.includes('_profile_admin') &&
+                          ( user.roles.includes('_profile_teacher') ||
+                            user.roles.includes('_profile_student') );
           this.dataService.updateInbox(!this.tab.includes('settings'));
         });
       });

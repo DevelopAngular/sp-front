@@ -146,8 +146,10 @@ export class HallMonitorComponent implements OnInit {
         (l1) => l1
       );
 
-      this.dialog.afterOpened.subscribe( () => {
-        this.isReportFormOpened = true;
+      this.dialog.afterOpened.subscribe( (dialog) => {
+        if (dialog.componentInstance instanceof ReportFormComponent) {
+          this.isReportFormOpened = true;
+        }
       });
 
       this.dialog.afterAllClosed.subscribe( () => {
@@ -162,12 +164,17 @@ export class HallMonitorComponent implements OnInit {
       backdropClass: 'custom-backdrop',
     });
 
+    dialogRef.afterOpened().subscribe( () => {
+
+    });
+
     dialogRef.afterClosed().pipe(filter(res => !!res), map(res => {
         this.sendReports = res;
         this.isActiveMessage = true;
         return res;
-    }), delay(3000)).subscribe(() => {
+    }), delay(3000)).subscribe((dialog) => {
       this.isActiveMessage = false;
+      this.isReportFormOpened = false;
     });
 
     this.reportFormInstance = dialogRef.componentInstance;
@@ -225,7 +232,6 @@ export class HallMonitorComponent implements OnInit {
   checkDeviceWidth() {
     this.isIpadWidth = this.screenService.isIpadWidth;
     this.isDeviceLargeExtra = this.screenService.isDeviceLargeExtra;
-    console.log(this.isDeviceLargeExtra);
     if (this.screenService.isDeviceMid) {
       this.isIpadSearchBar = false;
     }

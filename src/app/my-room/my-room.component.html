@@ -1,8 +1,9 @@
 <div *ngIf="userLoaded" style="height: 100%">
-  <div class="my-room-options-mobile-wrapper">
+  <div class="my-room-options-mobile-wrapper"  [style.background-color]="darkTheme.getBackground('default', false)">
     <div class="my-room-options-mobile">
       <div class="option-wrapper">
-        <img class="search-icon" (click)="toggleSearchBar()" [src]="getIcon('./assets/Search Eye (Navy).svg') | resolveAsset">
+<!--        <img class="search-icon" (click)="toggleSearchBar()" [src]="getIcon('./assets/Search Eye (Navy).svg') | resolveAsset">-->
+        <app-icon-button [srcString]="'Search Eye'" (clickEvent)="toggleSearchBar()" [size]="20"></app-icon-button>
       </div>
       <div  *ngIf="isSearchBarClicked" class="search-wrapper">
         <app-round-input
@@ -20,14 +21,15 @@
         <span class="cancel">Cancel</span>
       </div>
       <div class="option-wrapper option-wrapper-calendar" (click)="calendarClick()">
-        <img [@calendarIconTrigger]='calendarIconState' *ngIf="!isCalendarShowed; else blueCalendarIcon" class="calendar-icon"  [src]="getIcon('./assets/Calendar (Navy).svg') | resolveAsset">
-        <ng-template #blueCalendarIcon>
-          <img [@calendarIconTrigger]='calendarIconState' class="calendar-icon"  src = "../../assets/Calendar%20(Blue).svg">
-        </ng-template>
+        <!-- <img [@calendarIconTrigger]='calendarIconState' *ngIf="!isCalendarShowed; else blueCalendarIcon" class="calendar-icon"  [src]="getIcon('./assets/Calendar (Navy).svg') | resolveAsset">-->
+        <app-icon-button [@calendarIconTrigger]='calendarIconState' [srcString]="'Calendar'" [size]="20" (clickEvent)="calendarClick()"></app-icon-button>
+<!--        <ng-template #blueCalendarIcon>-->
+<!--          <img [@calendarIconTrigger]='calendarIconState' class="calendar-icon"  src = "../../assets/Calendar%20(Blue).svg">-->
+<!--        </ng-template>-->
       </div>
     </div>
   </div>
-  <div *ngIf="UI" class="my-room-wrapper" [style.width]="calendarToggled?'900px':'550px'">
+  <div *ngIf="UI" class="my-room-wrapper">
     <div class="my-room-left" *ngIf="!(kioskMode.currentRoom$ | async)">
       <div class="my-room-header" [@headerTrigger]="headerState">
         <div class="selected-teacher"
@@ -61,6 +63,7 @@
       <div [@calendarSlide] = "calendarSlideState('topBottom')" *ngIf="!this.screenService.isIpadWidth && !this.screenService.isDesktopWidth" class="calendar-card-wrapper">
         <mat-card class="calendar-card">
           <app-calendar-picker
+            [style.z-index]="0"
             [showTime]="false"
             [showYear]="false"
             (onSelectDate)="onDate($event)"
@@ -90,7 +93,6 @@
         <div class="my-room-body-collections">
           <app-pass-collection
             [smoothlyUpdating]="true"
-            [style.width]="'635px'"
             [isActive]="true"
             [forStaff]="isStaff"
             [passProvider]="activePasses"
@@ -100,7 +102,6 @@
           </app-pass-collection>
           <app-pass-collection
             [smoothlyUpdating]="true"
-            [style.width]="'635px'"
             [forStaff]="isStaff"
             [passProvider]="originPasses"
             [title]="'Passes from ' + (selectedLocation ? selectedLocation.title : 'All Rooms')"
@@ -109,7 +110,6 @@
           </app-pass-collection>
           <app-pass-collection
             [smoothlyUpdating]="true"
-            [style.width]="'635px'"
             [forStaff]="isStaff"
             [passProvider]="destinationPasses"
             [title]="'Passes to ' + (selectedLocation ? selectedLocation.title : 'All Rooms')"

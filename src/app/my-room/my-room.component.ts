@@ -458,7 +458,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       });
 
       const dialogRef = this.dialog.open(SortMenuComponent, {
-        position: {bottom: '1px'},
+        position: {bottom: '0'},
         panelClass: 'options-dialog',
         data: dialogData
       });

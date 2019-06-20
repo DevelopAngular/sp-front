@@ -1,7 +1,7 @@
 <div  [@RequestCardSlideInOut] *ngIf="isInboxClicked && this.screenService.isDeviceMid">
-  <app-display-card [hasDivider]="false" [fontSize]="'29px'" [icon]="(isStaff?'./assets/Inbox (Navy).svg':'')" [inbox]="true">
+  <app-display-card [hasDivider]="false" [fontSize]="'29px'" [inbox]="true" >
     <div class="inbox-content">
-      <h1 class="requests-title">Requests</h1>
+      <h1 class="requests-title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">Requests</h1>
       <div class="requests-or-invitations">
         <app-pass-collection [forStaff]="isStaff" [forFuture]="true" [isActive]="false" [passProvider]="isStaff?receivedRequests:sentRequests" [title]="isStaff?'Received':'Sent'" [icon]="'./assets/' +(isStaff?'Received':'Lock') +' (Navy).svg'" [columns]="2"></app-pass-collection>
         <!--<div *ngIf="isStaff ? (receivedRequests.length$ | async) : (sentRequests.length$ | async)" class="text">No requests sent or received</div>-->
@@ -23,7 +23,7 @@
 </div>
 
 <div class="passes-wrapper" [@PassesSlideTopBottom] *ngIf="!isInboxClicked && user && this.screenService.isDeviceMid">
-  <h1 class="passes-heading">Passes</h1>
+  <h1 class="passes-heading" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">Passes</h1>
   <div class="main-page-left">
     <div class="current-pass">
       <div *ngIf="(isActivePass$ | async) || (isActiveRequest$ | async); else newPass;" class="center">
