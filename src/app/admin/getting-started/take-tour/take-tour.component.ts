@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {Router} from '@angular/router';
+import {AdminService} from '../../../services/admin.service';
 
 @Component({
   selector: 'app-take-tour',
@@ -9,7 +10,8 @@ import {Router} from '@angular/router';
 export class TakeTourComponent implements OnInit {
 
   constructor(
-    public router: Router
+    public router: Router,
+    private adminService: AdminService
   ) { }
 
   ngOnInit() {

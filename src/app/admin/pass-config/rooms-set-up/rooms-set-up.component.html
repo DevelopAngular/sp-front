@@ -14,6 +14,7 @@
         (mousedown)="onPress(true, 'pack')"
         (mouseup)="onPress(false, 'pack')"
         [@pressState]="buttonStatePack"
+        (click)="onClick(true)"
       >
         <div class="title">Add Starter Pack</div>
         <div class="collection">
@@ -33,6 +34,7 @@
          (mousedown)="onPress(true, 'scratch')"
          (mouseup)="onPress(false, 'scratch')"
          [@pressState]="buttonStateScratch"
+         (click)="onClick(false)"
       >
         <div class="started-scratch-title">Start from scratch</div>
         <div class="img">
