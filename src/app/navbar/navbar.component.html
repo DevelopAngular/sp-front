@@ -1,4 +1,4 @@
-<div class="host" (scroll)="onScroll()" [style.position]="isStaff ? 'fixed' : 'static'" [style.top]="schools.length > 1 ? '50px' : 0">
+<div class="host" [style.position]="isStaff ? 'fixed' : 'static'" [style.top]="schools.length > 1 ? '50px' : 0">
   <!--<div *ngIf="!(isProcess$ | async).active" class="static-loading" #staticLoading><div class="static-loading"></div></div>-->
   <!--<ng-progress [color]="'#04CD33'" [spinner]="false" [fixed]="true" [speed]="200" [thick]="true"></ng-progress>-->
   <div *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth" class="bar">

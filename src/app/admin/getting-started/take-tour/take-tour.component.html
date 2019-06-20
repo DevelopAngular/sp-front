@@ -1,0 +1,81 @@
+<div class="host" appSafariScroll>
+  <div class="take-tour-wrapper">
+    <div class="header">
+      <img class="close-icon" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" alt="Cmb" (click)="router.navigate(['admin', 'gettingstarted'])">
+      <div class="header-content">
+        <img [src]="'./assets/Video (Red).svg' | resolveAsset" alt="">
+        <div class="text">Take a Tour</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="top">
+        <div class="info-block">
+          <img [src]="'./assets/admin-images/take-a-tour.svg' | resolveAsset" alt="">
+          <div class="info-text">
+            <div class="text-header">Easy as π</div>
+            <div class="small-text">You’ll be a SmartPass pro in no time.</div>
+          </div>
+        </div>
+
+        <div class="video-block">
+          <div class="video-header">Watch Intro Video</div>
+          <div class="video"></div>
+        </div>
+      </div>
+
+      <div class="bottom">
+        <div class="user-block">
+          <div class="user-title">Student</div>
+          <div class="user-info">
+            <div class="name">
+              <span class="info-name">Name:</span>
+              <span class="info-value">Demo Student</span>
+            </div>
+            <div class="name">
+              <span class="info-name">Username:</span>
+              <span class="info-value">demostudent423</span>
+            </div>
+            <div class="name">
+              <span class="info-name">Password:</span>
+              <span class="info-value">sdfjeip</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="user-block">
+          <div class="user-title">Teacher</div>
+          <div class="user-info">
+            <div class="name">
+              <span class="info-name">Name:</span>
+              <span class="info-value">Demo Teacher</span>
+            </div>
+            <div class="name">
+              <span class="info-name">Username:</span>
+              <span class="info-value">demoteacher323</span>
+            </div>
+            <div class="name">
+              <span class="info-name">Password:</span>
+              <span class="info-value">f344dw</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bottom-info">
+          <div class="info">
+            <img width="28" height="28" [src]="'./assets/Star (Yellow).svg' | resolveAsset" alt="Star">
+            <div class="text">
+              We created demo student and teacher sign-ins for you so you can get started right away.
+
+              <div class="buttons">
+                <img style="cursor: pointer" [src]="'./assets/admin-images/App-Store-download.svg' | resolveAsset" alt="AS">
+                <img style="margin-left: 5px; cursor: pointer" [src]="'./assets/admin-images/Google-Play-download.svg' | resolveAsset" alt="GP">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

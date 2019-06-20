@@ -1,4 +1,4 @@
-import {Component, OnInit, NgZone, Output, EventEmitter, ViewChild, ElementRef} from '@angular/core';
+import {Component, OnInit, NgZone, Output, EventEmitter, ViewChild, ElementRef, AfterViewInit, ChangeDetectorRef} from '@angular/core';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { BehaviorSubject ,  Observable } from 'rxjs';
 import { LoadingService } from '../../services/loading.service';
@@ -18,13 +18,13 @@ declare const window;
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.scss']
 })
-export class NavComponent implements OnInit {
+export class NavComponent implements OnInit, AfterViewInit {
 
-  @ViewChild('navMain') navMain: ElementRef;
+  // @ViewChild('navMain') navMain: ElementRef;
   @ViewChild('navButtonsContainter') navButtonsContainterRef: ElementRef;
   @ViewChild('tabRef') tabRef: ElementRef;
   @Output('restrictAccess') restrictAccess: EventEmitter<boolean> = new EventEmitter();
-
+  gettingStarted = {title: '', route : 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']};
   buttons = [
     {title: 'Dashboard', route : 'dashboard', type: 'routerLink', imgUrl : 'Dashboard', requiredRoles: ['_profile_admin', 'access_admin_dashboard']},
     {title: 'Hall Monitor', route : 'hallmonitor', type: 'routerLink', imgUrl : 'Walking', requiredRoles: ['_profile_admin', 'access_hall_monitor']},
@@ -46,12 +46,12 @@ export class NavComponent implements OnInit {
         public loadingService: LoadingService,
         private dialog: MatDialog,
         private _zone: NgZone,
-        public darkTheme: DarkThemeSwitch
+        public darkTheme: DarkThemeSwitch,
+        private cd: ChangeDetectorRef
     ) { }
 
   console = console;
     user: User;
-
   showButton: boolean;
   selectedSettings: boolean;
 
@@ -61,20 +61,19 @@ export class NavComponent implements OnInit {
   get pointerTopSpace() {
     return this.pts;
   }
+  ngAfterViewInit(): void {
+    // this.cd.detectChanges();
+  }
 
   ngOnInit() {
 
-    disableBodyScroll(this.navMain.nativeElement);
-
-    // setTimeout(() => {
-    //   this.tabRef.nativeElement.click();
-    // } , 250);
-
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit.slice(1);
-    if (this.isSelected('takeTour')) {
-      this.pts = '-63px';
-    }
+    this.tab = ( (this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab );
+    console.log(this.tab);
+    // if (this.isSelected('takeTour')) {
+    //   this.pts = '-63px';
+    // }
 
     this.router.events.subscribe(value => {
       if ( value instanceof NavigationEnd ) {
@@ -106,7 +105,6 @@ export class NavComponent implements OnInit {
       ) {
           console.log(button);
           console.log(button.requiredRoles.every((_role) => user.roles.includes(_role)));
-          // debugger;
           this.restrictAccess.emit(true);
           this.fakeMenu.next(true);
         }
@@ -115,6 +113,7 @@ export class NavComponent implements OnInit {
   }
 
   route( button: any) {
+    // debugger
     switch (button.type) {
       case 'routerLink':
         this.tab = ['admin', button.route];
@@ -172,11 +171,8 @@ export class NavComponent implements OnInit {
     });
   }
 
-  // tourRedirect() {
-  //   this.router.navigate(['admin/takeTour']);
-  // }
-
   selectTab(evt: HTMLElement, container: HTMLElement) {
+    // debugger
     const containerRect = container.getBoundingClientRect();
     const selectedTabRect = (evt as HTMLElement ).getBoundingClientRect();
     this.pts = Math.round(selectedTabRect.top - containerRect.top) + 'px';
@@ -186,23 +182,7 @@ export class NavComponent implements OnInit {
     return this.tab.includes(route);
   }
   hasRoles(roles: string[]): Observable<boolean> {
-    // const mockRoles = [
-    //  '_profile_admin',
-    //  'admin_accounts',
-    //  'admin_dashboard',
-    //  'admin_hall_monitor',
-    //  'admin_pass_config',
-    //  'admin_search',
-    //  'create_report',
-    //  'edit_all_hallpass',
-    //  'flag_hallpass',
-    //  'manage_alerts',
-    //  'manage_locations',
-    //  'manage_pinnables',
-    //  'manage_school',
-    //  'view_reports',
-    //  'view_traveling_users',
-    // ]
+
     return this.userService.userData
       .pipe(
         map(u => roles.every((_role) => u.roles.includes(_role)))
