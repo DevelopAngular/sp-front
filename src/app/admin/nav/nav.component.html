@@ -1,26 +1,36 @@
 <div class="nav-wrapper">
 
-  <div class="nav-main" #navMain>
+  <div class="nav-main" #navButtonsContainter>
+    <div class="selected-tab-pointer" [style.margin-top]="pointerTopSpace">
+      <!-- Just a shape -->
+    </div>
     <div class="nav-header ds-pr-10">
       <app-smartpass-logo></app-smartpass-logo>
-      <img
-        #tour
-        (click)="route({type: 'routerLink', route: 'gettingstarted'}); pts = '-63px'"
-        [src]="'./assets/lamp (' + (isSelected('takeTour') ? 'Jade' : 'Blue-Gray') + ').svg' | resolveAsset"
-        [style.transition]="'transform .4s ease'"
-        [style.cursor]="'pointer'"
-        (mousedown)="tour.style.transform = 'scale(.96)'"
-        (mouseup)="tour.style.transform = 'unset'"
-        alt="lamp"
-      >
+      <div style="display: flex;align-items: center;">
+
+        <div [style.color]="isSelected(gettingStarted.route) ? '#00B476' : '#7F879D'" *ngIf="!isSelected(gettingStarted.route) && progress < 100 || true">
+          <span>{{progress}}</span>
+          <span>%</span>
+        </div>
+        <div>
+          <div (click)="selectTab(tabRef, navButtonsContainter);" #tabRef>
+            <ng-container *ngIf="hasRoles(gettingStarted.requiredRoles) | async">
+              <app-nav-button
+                [style.margin-bottom]="'15px'"
+                [selected]="isSelected(gettingStarted.route)"
+                [content]="gettingStarted.title"
+                [icon]="gettingStarted.imgUrl"
+                (onClick)="route(gettingStarted); selectTab(tabRef, navButtonsContainter);">
+              </app-nav-button>
+            </ng-container>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!--<div class="divider"></div>-->
-    <div class="nav-buttons" #navButtonsContainter>
+    <div class="nav-buttons">
       <div *ngIf="!(fakeMenu | async)">
-        <div class="selected-tab-pointer" [style.margin-top]="pointerTopSpace">
-          <!-- Just a shape -->
-        </div>
         <div *ngFor="let button of buttons"
              [style.transition]="'transform .4s ease'"
              (mousedown)="tabRef.style.transform = 'scale(.96)'"
@@ -71,8 +81,16 @@
 
 <!-- SVG sprite for admin panel's navbar. Created so that tab's image could change it's fill color smoothly in cognuntion with the text and pointer -->
 
+
 <svg style="display: none;">
   <defs>
+    <symbol id="Lamp">
+      <g stroke="none"  fill="currentColor" fill-rule="evenodd">
+        <g id="Getting-Started" transform="translate(-169.000000, -25.000000)" fill-rule="nonzero">
+          <path d="M195.130559,25.0006698 C193.573266,24.9801024 192.07367,25.5795004 190.972657,26.6626096 C188.720213,28.8778595 188.720213,32.468987 190.972657,34.684237 C193.225582,36.8990134 196.877784,36.8990134 199.130709,34.684237 C201.383152,32.468987 201.383152,28.8778595 199.130709,26.6626096 C198.068348,25.6175044 196.633186,25.0212384 195.130559,25.0006698 Z M293.038462,25.0006698 C291.477279,24.9770947 289.973043,25.5767225 288.869292,26.6626096 C286.616849,28.8778595 286.616849,32.468987 288.869292,34.684237 C291.122217,36.8990119 294.774418,36.8990119 297.027342,34.684237 C299.279786,32.468987 299.279786,28.8778595 297.027342,26.6626096 C295.967765,25.6201559 294.537169,25.0241078 293.038462,25.0006698 Z M244,27.7484098 C215.321154,27.7484098 192.076923,50.6039335 192.076923,78.803191 C192.076923,107.166958 215.153846,118.512465 226.692308,141.203479 L261.307692,141.203479 C272.846154,118.512465 295.923077,107.166958 295.923077,78.803191 C295.923077,50.6039335 272.678846,27.7484098 244,27.7484098 Z M244,44.7666702 L244,73.1304375 L267.076923,73.1304375 L244,112.839712 L244,84.4759445 L220.923077,84.4759445 L244,44.7666702 Z M174.769231,73.1304375 C171.582973,73.1304375 169,75.6702158 169,78.803191 C169,81.9361662 171.582973,84.4759445 174.769231,84.4759445 C177.955489,84.4759445 180.538462,81.9361662 180.538462,78.803191 C180.538462,75.6702158 177.955489,73.1304375 174.769231,73.1304375 Z M313.230769,73.1304375 C310.044511,73.1304375 307.461538,75.6702158 307.461538,78.803191 C307.461538,81.9361662 310.044511,84.4759445 313.230769,84.4759445 C316.417027,84.4759445 319,81.9361662 319,78.803191 C319,75.6702158 316.417027,73.1304375 313.230769,73.1304375 Z M195.130559,121.260205 C193.569376,121.23663 192.065139,121.836258 190.961388,122.922146 C188.708946,125.137396 188.708946,128.728522 190.961388,130.943771 C192.043749,132.010749 193.513404,132.6104 195.046048,132.6104 C196.578693,132.6104 198.048348,132.010749 199.130709,130.943771 C201.383151,128.728522 201.383151,125.137396 199.130709,122.922146 C198.068348,121.877041 196.633186,121.280774 195.130559,121.260205 Z M293.027194,121.271284 C291.471538,121.247786 289.972174,121.843097 288.869292,122.922146 C287.784169,123.986406 287.174321,125.431485 287.174321,126.938498 C287.174321,128.445512 287.784169,129.89059 288.869292,130.95485 C291.122217,133.169625 294.774418,133.169625 297.027342,130.95485 C298.112465,129.89059 298.722314,128.445512 298.722314,126.938498 C298.722314,125.431485 298.112465,123.986406 297.027342,122.922146 C295.963166,121.881104 294.528226,121.288904 293.027194,121.271284 Z M226.692308,152.548986 L226.692308,158.22174 C226.692308,164.490132 231.855769,169.567247 238.230769,169.567247 C238.230769,172.700222 240.813742,175.24 244,175.24 C247.186258,175.24 249.769231,172.700222 249.769231,169.567247 C256.144231,169.567247 261.307692,164.490132 261.307692,158.22174 L261.307692,152.548986 L226.692308,152.548986 Z" id="Shape"></path>
+        </g>
+      </g>
+    </symbol>
     <symbol id="Dashboard">
       <g stroke-width="1" fill="currentColor" fill-rule="evenodd">
         <g id="icons8-dashboard" fill-rule="nonzero">
