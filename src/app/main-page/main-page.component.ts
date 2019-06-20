@@ -13,6 +13,7 @@ import {Request} from '../models/Request';
 import {User} from '../models/User';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {InboxInvitationProvider, InboxRequestProvider} from '../passes/passes.component';
+import {NavigationEnd, Router} from '@angular/router';
 
 @Component({
   selector: 'app-main-page',
@@ -32,6 +33,7 @@ export class MainPageComponent implements OnInit {
     private loadingService: LoadingService,
     private liveDataService: LiveDataService,
     private _zone: NgZone,
+    private router: Router,
   ) {
 
     const excludedRequests = this.currentRequest$.pipe(map(r => r !== null ? [r] : []));
@@ -71,6 +73,7 @@ export class MainPageComponent implements OnInit {
   receivedRequests: WrappedProvider;
   isStaff: boolean;
   data: any;
+  navbarHeight: string = '78px';
 
   ngOnInit() {
     this.createFormService.seen();
@@ -94,6 +97,12 @@ export class MainPageComponent implements OnInit {
         }
       }
     );
+
+    this.navbarHeight = this.currentNavbarHeight;
+
+    this.router.events.subscribe( event => {
+        if ( event instanceof NavigationEnd) this.navbarHeight = this.currentNavbarHeight;
+    });
   }
 
   get showInbox() {
@@ -117,7 +126,7 @@ export class MainPageComponent implements OnInit {
   }
 
   onSettingClick($event) {
-    if (this.screenService.isDeviceLarge) {
+    if (this.screenService.isDeviceLargeExtra) {
       this.data = $event;
       this.sideNavService.toggle$.next(true);
     }
@@ -134,16 +143,23 @@ export class MainPageComponent implements OnInit {
     return this.darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'});
   }
 
+  get currentNavbarHeight() {
+    return this.router.url === '/main/hallmonitor' && this.screenService.isDeviceLargeExtra ||
+    this.router.url === '/main/myroom' && this.screenService.isDeviceLargeExtra ? '0px' : '78px' ;
+  }
+
   @HostListener('window:resize')
   checkWidth() {
-    if (!this.screenService.isDeviceLarge) {
+    if (!this.screenService.isDeviceLargeExtra) {
       this.sideNavService.toggleLeft$.next(false);
       this.sideNavService.toggleRight$.next(false);
     }
 
-    if (!this.screenService.isDeviceLarge && this.screenService.isDeviceMid) {
+    if (!this.screenService.isDeviceLargeExtra && this.screenService.isDeviceMid) {
       this.sideNavService.toggleRight$.next(false);
     }
+
+    this.navbarHeight = this.currentNavbarHeight;
   }
 
 }
