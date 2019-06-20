@@ -152,8 +152,8 @@ export class HallMonitorComponent implements OnInit {
         }
       });
 
-      this.dialog.afterAllClosed.subscribe( (dialog) => {
-        console.log('dialog' , dialog);
+      this.dialog.afterAllClosed.subscribe( () => {
+        this.isReportFormOpened = false;
       });
   }
 
