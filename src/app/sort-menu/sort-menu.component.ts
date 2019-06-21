@@ -20,7 +20,7 @@ export class SortMenuComponent implements OnInit, OnDestroy {
       list: Array<SortByItem>
     },
     public dialogRef: MatDialogRef<SortMenuComponent>,
-    private darkTheme: DarkThemeSwitch,
+    public darkTheme: DarkThemeSwitch,
   ) {}
 
   onListItemClick = new EventEmitter();
