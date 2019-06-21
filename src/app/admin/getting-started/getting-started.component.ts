@@ -33,10 +33,17 @@ export class GettingStartedComponent implements OnInit {
   // progress = 10;
   // offset = 120;
 
-  onboardProgress = {
-    progress: 0,
-    offset: 120
-  }
+  onboardProgress: {
+    progress: number,
+    offset: number
+    take_a_tour?: any,
+    launch_day_prep?:any,
+      setup_rooms?: any,
+      setup_accounts?:any,
+  } = {
+      progress: 0,
+      offset: 120
+  };
 
   constructor(
     public router: Router,
