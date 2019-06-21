@@ -1,0 +1,19 @@
+<div
+     class="wrapper"
+     #wrap
+     (mouseenter)="wrap.hovered = true"
+     (mouseleave)="wrap.hovered = false"
+     (click)="onClick.emit()"
+>
+    <div class="left-content">
+        <img *ngIf="leftIcon" width="50" height="50" [src]="leftIcon" alt="Icon">
+        <div class="text">
+            <div class="title">{{ title }}</div>
+            <div class="subtitle">
+                <img *ngIf="subtitleIcon" width="15" height="15" [style.margin-right]="'6px'" [src]="subtitleIcon">
+                {{ subtitle }}
+            </div>
+        </div>
+    </div>
+    <img *ngIf="wrap.hovered && !integrations" width="24" height="24" [src]="'./assets/Chevron Right (Blue-Gray).svg' | resolveAsset">
+</div>

@@ -1,3 +1,5 @@
+@import "../../../sp-colors";
+
 :host {
   width: 100%;
   height: 100%;
@@ -15,6 +17,118 @@
     min-width: 830px;
     width: 100%;
     height: 100%;
+    .accounts-header {
+      height: 99px;
+      padding: 0 30px 0 30px;
+      box-sizing: border-box;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+      background-color: #FFFFFF;
+      display: flex;
+      align-items: center;
+
+      .header-content {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        .header-title {
+          color: $navy;
+          font-size: 24px;
+          font-weight: bold;
+
+          .count {
+            display: flex;
+            align-items: center;
+            margin-top: 7px;
+            .text {
+              font-size: 16px;
+              color: $blue-gray;
+              font-weight: normal;
+              margin-left: 7px;
+            }
+          }
+        }
+
+        .header-buttons {
+          display: flex;
+          align-items: center;
+          .go-accounts {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background-color: #F4F4F4;
+            display: flex;
+            outline: none;
+            justify-content: center;
+            align-items: center;
+            margin-left: 22px;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+
+    .accounts-content {
+
+      .content-wrapper {
+        width: 820px;
+      }
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      .top-buttons {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      .groups {
+        width: 100%;
+        margin-top: 48px;
+        .title {
+          color: $navy;
+          font-weight: bold;
+          font-size: 24px;
+          line-height: 29px;
+        }
+
+        .groups-buttons {
+          width: 100%;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
+          margin-top: 16px;
+        }
+      }
+    }
+
+    .user-table {
+      margin-top: 24px;
+      .column-settings {
+        position: relative;
+        display: flex;
+        justify-content: flex-end;
+        .options-icon {
+          position: absolute;
+          z-index: 1000;
+          right: 3px;
+          cursor: pointer;
+        }
+      }
+    }
+
+
+
+
+
+
+
+
+
+
+
     .accounts{
       div:first-child{
         flex-basis: 30%
