@@ -343,7 +343,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       }
     };
-    window.appLoaded();
+    // window.appLoaded();
   }
 
   // onDevicesOrderChanged(event) {

@@ -93,7 +93,7 @@
     </div>
   </div>
 
-  <div *ngIf="isStaff" class="teacherNav-mobile" [style.background-color]="darkTheme.getBackground('low', false)">
+  <div *ngIf="isStaff && !isAdminRoute" class="teacherNav-mobile" [style.background-color]="darkTheme.getBackground('low', false)">
     <div class="teacherNav-mobile-wrapper">
       <div *ngFor="let button of buttons" class="teacherNav_tab">
         <ng-container *ngIf="isStaff">

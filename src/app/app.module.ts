@@ -55,56 +55,82 @@ import { IntroRouteComponent } from './intro-route/intro-route.component';
 import { IntroDialogComponent } from './intro-dialog/intro-dialog.component';
 import {NotKioskModeGuard} from './not-kiosk-mode.guard';
 import {KioskModeService} from './services/kiosk-mode.service';
-import { SchoolSignUpComponent } from './school-sign-up/school-sign-up.component';
+import { SchoolSignUpComponent } from './school-sign-up/school-sign-up.component';;
+import { AccountsSetupComponent } from './accounts-setup/accounts-setup.component'
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroRouteComponent, data: { hideSchoolToggleBar: true}},
-  // {path: 'school_signup', component: SchoolSignUpComponent, pathMatch: 'full'},
-  {path: '', redirectTo: 'admin', pathMatch: 'full'},
+  {path: 'school_signup', component: SchoolSignUpComponent, pathMatch: 'full'},
+  {path: 'accounts_setup', component: AccountsSetupComponent, pathMatch: 'full'},
+  // {path: '', redirectTo: 'admin', pathMatch: 'full'},
   {
     path: '',
+    component: LoginComponent,
     // canActivate: [NotSeenIntroGuard],
-    children: [
-      {
-        path: 'main',
-        canActivate: [NotSeenIntroGuard, AuthenticatedGuard, IsStudentOrTeacherGuard],
-        loadChildren: 'app/main/main.module#MainModule'
-      },
-      // {
-      //   path: 'select-profile',
-      //   component: SelectProfileComponent,
-      //   resolve: {
-      //     currentUser: CurrentUserResolver
-      //   }
-      // },
-      {
-        path: 'admin',
-        canActivate: [AuthenticatedGuard, NotKioskModeGuard, IsAdminGuard],
-        loadChildren: 'app/admin/admin.module#AdminModule',
-        resolve: {currentUser: CurrentUserResolver},
-        data: {
-          hideScroll: true
-        }
-      },
-      {
-        path: 'sign-out',
-        component: SignOutComponent,
-      },
-      // {
-      //   // path: 'pdf/:source',
-      //   path: 'pdf/report',
-      //   canActivate: [AuthenticatedGuard],
-      //   component: PdfComponent,
-      //   data: {
-      //     hideScroll: true
-      //   }
-      // },
-      {
-        path: 'error',
-        component: ErrorComponent,
-      }
-    ]
+    // children: [
+    //   {
+    //     path: 'main',
+    //     canActivate: [NotSeenIntroGuard, AuthenticatedGuard, IsStudentOrTeacherGuard],
+    //     loadChildren: 'app/main/main.module#MainModule'
+    //   },
+    //   // {
+    //   //   path: 'select-profile',
+    //   //   component: SelectProfileComponent,
+    //   //   resolve: {
+    //   //     currentUser: CurrentUserResolver
+    //   //   }
+    //   // },
+    //   {
+    //     path: 'admin',
+    //     canActivate: [AuthenticatedGuard, NotKioskModeGuard, IsAdminGuard],
+    //     loadChildren: 'app/admin/admin.module#AdminModule',
+    //     resolve: {currentUser: CurrentUserResolver},
+    //     data: {
+    //       hideScroll: true
+    //     }
+    //   },
+    //   {
+    //     path: 'sign-out',
+    //     component: SignOutComponent,
+    //   },
+    //   // {
+    //   //   // path: 'pdf/:source',
+    //   //   path: 'pdf/report',
+    //   //   canActivate: [AuthenticatedGuard],
+    //   //   component: PdfComponent,
+    //   //   data: {
+    //   //     hideScroll: true
+    //   //   }
+    //   // },
+    //   {
+    //     path: 'error',
+    //     component: ErrorComponent,
+    //   }
+    // ]
   },
+  {
+    path: 'main',
+    canActivate: [NotSeenIntroGuard, AuthenticatedGuard, IsStudentOrTeacherGuard],
+    loadChildren: 'app/main/main.module#MainModule'
+  },
+  {
+    path: 'admin',
+    canActivate: [AuthenticatedGuard, NotKioskModeGuard, IsAdminGuard],
+    loadChildren: 'app/admin/admin.module#AdminModule',
+    resolve: {currentUser: CurrentUserResolver},
+    data: {
+      hideScroll: true
+    }
+  },
+  {
+    path: 'sign-out',
+    component: SignOutComponent,
+  },
+  {
+    path: 'error',
+    component: ErrorComponent,
+  },
+
   {path: '**', redirectTo: 'main/passes', pathMatch: 'full'},
 ];
 
@@ -132,7 +158,8 @@ const appRoutes: Routes = [
     SortMenuComponent,
     IntroRouteComponent,
     IntroDialogComponent,
-    SchoolSignUpComponent
+    SchoolSignUpComponent,
+    AccountsSetupComponent
   ],
   entryComponents: [
     ConsentMenuComponent,

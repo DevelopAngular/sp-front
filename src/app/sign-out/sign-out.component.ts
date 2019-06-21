@@ -2,6 +2,7 @@ import { AfterContentInit, Component } from '@angular/core';
 import { GoogleLoginService } from '../services/google-login.service';
 import { HttpService } from '../services/http-service';
 import {environment} from '../../environments/environment';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-sign-out',
@@ -10,7 +11,7 @@ import {environment} from '../../environments/environment';
 })
 export class SignOutComponent implements AfterContentInit {
 
-  constructor(private http: HttpService, private loginService: GoogleLoginService) {
+  constructor(private http: HttpService, private loginService: GoogleLoginService, private router: Router) {
     this.http.setSchool(null);
   }
 
@@ -19,8 +20,8 @@ export class SignOutComponent implements AfterContentInit {
     setTimeout(() => {
       this.http.clearInternal();
       this.loginService.clearInternal(true);
-
-      location.href = environment.production ? '/app' : '/';
+      this.router.navigate(['']);
+      // location.href = environment.production ? '/app' : '/';
     }, 500);
   }
 
