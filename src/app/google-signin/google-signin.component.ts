@@ -95,7 +95,9 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   }
 
   demoLogin() {
+    // window.waitForAppLoaded();
     this.showSpinner = true;
+    // return
     if (this.demoUsername && this.demoPassword) {
       this.loggedWith = LoginMethod.LocalStrategy;
       this.loginService.showLoginError$.next(false);
@@ -137,6 +139,6 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     document.addEventListener('keydown', this.keyListener, false);
-    window.appLoaded();
+    // window.appLoaded();
   }
 }

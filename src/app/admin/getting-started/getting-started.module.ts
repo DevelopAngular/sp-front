@@ -5,6 +5,7 @@ import { GettingStartedRoutingModule } from './getting-started-routing.module';
 import { SharedModule } from '../../shared/shared.module';
 import { TakeTourComponent } from './take-tour/take-tour.component';
 import { GettingStartedComponent } from './getting-started.component';
+import {AdminSharedModule} from '../shared/admin-shared.module';
 
 @NgModule({
   declarations: [
@@ -12,8 +13,9 @@ import { GettingStartedComponent } from './getting-started.component';
     TakeTourComponent,
   ],
   imports: [
-    SharedModule,
     CommonModule,
+    SharedModule,
+    AdminSharedModule,
     GettingStartedRoutingModule
   ]
 })

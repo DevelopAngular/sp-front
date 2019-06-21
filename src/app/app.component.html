@@ -1,8 +1,8 @@
 <div class="global-container" [ngClass]="{'ds-dark-theme': darkThemeEnabled }" *ngIf="(showUI | async)" ondragstart="return false">
-  <div *ngIf="schoolSignUp" class="global-container">
-    <app-school-sign-up (schoolCreatedEvent)="onSchoolCreated($event)"></app-school-sign-up>
-  </div>
-  <div *ngIf="!schoolSignUp" class="global-container">
+  <!--<div *ngIf="schoolSignUp" class="global-container">-->
+    <!--<app-school-sign-up (schoolCreatedEvent)="onSchoolCreated($event)"></app-school-sign-up>-->
+  <!--</div>-->
+  <!--<div *ngIf="!schoolSignUp" class="global-container">-->
     <app-school-toggle-bar *ngIf="( schools && schools.length > 1 ) && !hideSchoolToggleBar"
                            [schools]="schools"
     ></app-school-toggle-bar>
@@ -11,11 +11,11 @@
       <app-error-toast (closeEvent)="errorToastTrigger.next(false)"></app-error-toast>
     </div>
 
-    <div class="router-outlet" style="height: 100%;" [style.overflow-y]=" hideScroll ? 'hidden' : 'auto'" *ngIf="isAuthenticated">
+    <div class="router-outlet" style="height: 100%;" [style.overflow-y]=" hideScroll ? 'hidden' : 'auto'" *ngIf="isAuthenticated || true">
       <router-outlet></router-outlet>
     </div>
-    <app-login *ngIf="!isAuthenticated" (errorEvent)="showError.next($event)"></app-login>
-  </div>
+    <!--<app-login *ngIf="!isAuthenticated" (errorEvent)="showError.next($event)"></app-login>-->
+  <!--</div>-->
 </div>
 <!--<span style="position: fixed;">{{(showUI | async)}}</span>-->
 <app-error *ngIf="(isAuthenticated === false) && !(showUI | async)"></app-error>

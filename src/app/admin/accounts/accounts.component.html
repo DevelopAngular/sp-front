@@ -1,5 +1,109 @@
 <div class="host" appSafariScroll>
-  <div class="account-wrapper">
+  <div class="accounts-wrapper" *ngIf="splash">
+    <div class="accounts-setup">
+      <div class="left-side">
+        <div class="left-side_header">Accounts set-up</div>
+        <div class="left-side_title">Set up all of your SmartPass accounts with G Suite syncing.</div>
+        <div class="accounts-setup_options">
+          <div class="option">
+            <div class="option-number">
+              <span>1</span>
+            </div>
+            <div class="option-content">
+              <div class="option-content_header">
+                Connect G Suite
+              </div>
+              <div class="option-content_description">
+                <div class="ds-py-10">You’ll need to be a G Suite administrator to sync users.</div>
+                <div>
+                  This lets SmartPass see: <br>
+                  a) Your email address and domain <br>
+                  b) Organizational units on your domain <br>
+                  c) Users on your domain
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="option">
+            <div class="option-number">
+              <span>2</span>
+            </div>
+            <div class="option-content">
+              <div class="option-content_header">
+                Select Users for Sync
+              </div>
+              <div class="option-content_description ds-pt-10">
+                Choose which G Suite users you want to sync to SmartPass  <br>
+                Groups. When new accounts are created in your G Suite we’ll  <br>
+                automatically sync them to a specific SmartPass Group. <br>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="accounts-setup_buttons">
+          <app-gradient-button
+            [size]="'medium'"
+            [gradient]="'#FFFFFF,#139BE6'"
+            [fontWeight]="'normal'"
+            (buttonClick)="goToAccountsSetup()"
+          >
+              <span style="font-weight: normal;">
+                I’m a G Suite Admin
+              </span>
+          </app-gradient-button>
+
+          <div class="ds-mx-25" style="font-size: 17px;">
+            <span>OR</span>
+          </div>
+
+          <app-gradient-button
+            [size]="'medium'"
+            [gradient]="'#FFFFFF,#00B476'"
+            [fontWeight]="'normal'"
+            [rightIcon]="'./assets/Chevron Right (White).svg'"
+            (buttonClick)="showAccountsSetupLink()"
+          >
+              <span style="font-weight: normal;">
+                Send them the link
+              </span>
+          </app-gradient-button>
+        </div>
+      </div>
+      <div class="right-side">
+        <div class="privacy-card">
+          <div class="privacy-card_header">
+            <img class="privacy-card_header-image" [src]="'./assets/Shield (Blue-Gray).svg'" alt="Shield (Blue-Gray).svg"><span>Student Privacy</span>
+          </div>
+          <div class="privacy-card_content">
+            <div class="ds-mt-15">
+              We take student privacy very seriously, <br>
+              continuously working with schools to make sure <br>
+              student data is kept safe and secure.
+            </div>
+            <div class="ds-mt-15">
+              SmartPass only sees a user’s name, email <br>
+              address, and their organizational unit in G Suite.
+            </div>
+            <div class="ds-mt-15">
+              <app-gradient-button
+                [gradient]="'#FFFFFF,#7F879D'"
+                [linkType]="'_self'"
+                [buttonLink]="'https://www.smartpass.app/privacy'"
+                [text]="'Learn more'"
+              >
+              </app-gradient-button>
+            </div>
+          </div>
+        </div>
+        <div class="setup-guy">
+          <img [src]="'./assets/accounts-setup-guy.svg'" alt="accounts-setup-guy.svg">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="account-wrapper" *ngIf="!splash">
 
     <div class="accounts-header">
       <div class="header-content">

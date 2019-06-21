@@ -186,6 +186,7 @@ export class GoogleLoginService {
   }
 
   signInDemoMode(username: string, password: string) {
+    window.waitForAppLoaded();
     this.authToken$.next({username: username, password: password, type: 'demo-login'});
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {HttpService} from '../../services/http-service';
 import {Observable, of} from 'rxjs';
 import {School} from '../../models/School';
@@ -12,7 +12,7 @@ declare const window;
   templateUrl: './my-school.component.html',
   styleUrls: ['./my-school.component.scss']
 })
-export class MySchoolComponent implements OnInit {
+export class MySchoolComponent implements OnInit, AfterViewInit {
 
   currentSchool$: Observable<School>;
 
@@ -48,6 +48,9 @@ export class MySchoolComponent implements OnInit {
         })).subscribe(() => {
 
       });
+  }
+  ngAfterViewInit(): void {
+    // window.appLoaded();
   }
 
   redirect(button) {

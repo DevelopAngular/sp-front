@@ -1,19 +1,17 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, NgZone, OnInit, Output, ViewChild} from '@angular/core';
 import { Router } from '@angular/router';
-// import { MapsAPILoader } from '@agm/core';
 import { DeviceDetection } from '../device-detection.helper';
 import { GoogleLoginService } from '../services/google-login.service';
 import { UserService } from '../services/user.service';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {HttpClient} from '@angular/common/http';
-import {constructUrl} from '../live-data/helpers';
-import {catchError, flatMap, map, mergeMap, switchMap, tap} from 'rxjs/operators';
-import {BehaviorSubject, from, Observable, of, throwError} from 'rxjs';
+import {catchError, filter, flatMap, map, mergeMap, switchMap, tap} from 'rxjs/operators';
 import {AuthContext, HttpService} from '../services/http-service';
-import {LoginMethod} from '../google-signin/google-signin.component';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {GoogleAuthService} from '../services/google-auth.service';
 import {StorageService} from '../services/storage.service';
+import {User} from '../models/User';
+import {ReplaySubject} from 'rxjs';
 
 declare const window;
 
@@ -29,9 +27,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
   @ViewChild('place') place: ElementRef;
   @Output() errorEvent: EventEmitter<any> = new EventEmitter();
 
-  private placePredictionService;
-  private currentPosition;
-
   private isIOSMobile: boolean;
   private isAndroid: boolean;
   public appLink: string;
@@ -43,7 +38,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
   private jwt: JwtHelperService;
 
 
-
   constructor(
     private googleAuth: GoogleAuthService,
     private http: HttpClient,
@@ -51,20 +45,24 @@ export class LoginComponent implements OnInit, AfterViewInit {
     private googleLogin: GoogleLoginService,
     private userService: UserService,
     private loginService: GoogleLoginService,
-    // private mapsApi: MapsAPILoader,
     private storage: StorageService,
     private router: Router,
     private sanitizer: DomSanitizer,
-    private _zone: NgZone,
   ) {
     this.jwt = new JwtHelperService();
   }
 
-  ngAfterViewInit(): void {
-
-  }
-
   ngOnInit() {
+
+    this.loginService.isAuthenticated$.pipe(
+      filter(v => v),
+      switchMap((): ReplaySubject<User> => {
+        return this.userService.userData;
+      })
+    ).subscribe((currentUser: User) => {
+      const loadView = [currentUser.isAdmin() ? 'admin' : 'main'];
+      this.router.navigate(loadView);
+    });
 
     this.trustedBackgroundUrl = this.sanitizer.bypassSecurityTrustStyle('url(\'./assets/Login Background.svg\')');
 
@@ -81,79 +79,9 @@ export class LoginComponent implements OnInit, AfterViewInit {
       this.titleText = 'Download SmartPass on the Google Play Store to start making passes.';
     }
   }
-  // initLogin() {
-  //   return this.googleLogin.GoogleOauth.signIn()
-  //           .then((auth) => {
-  //             return auth.getAuthResponse();
-  //           });
-  //
-  // }
-  // checkSchool(placeId: string) {
-  //   this.http.get(constructUrl('https://smartpass.app/api/staging/onboard/schools/check_school', {place_id: placeId}), {
-  //     headers: {
-  //       'Authorization': 'Bearer ' + 'test' // it's temporary
-  //     }})
-  //     .pipe(
-  //       switchMap((onboard: any): Observable<any> => {
-  //         if (!onboard.school_registered) {
-  //          return from(this.initLogin())
-  //            .pipe(
-  //              tap(p => console.log(p)),
-  //               switchMap((auth: any) => {
-  //                 console.log(auth);
-  //
-  //                 const hd = this.jwt.decodeToken(auth.id_token)['hd'];
-  //
-  //                 // debugger
-  //
-  //                 if (!hd || hd === 'gmail.com') {
-  //                   // this.loginState = 'profile';
-  //                   this.loginService.showLoginError$.next(false);
-  //                   this.showError.loggedWith = LoginMethod.OAuth;
-  //                   this.showError.error = true;
-  //                   return of(null);
-  //                 } else {
-  //
-  //                   return this.http.post('https://smartpass.app/api/staging/onboard/schools', {
-  //                     user_token: auth.id_token,
-  //                     google_place_id: placeId
-  //                   }, {
-  //                     headers: {
-  //                       'Authorization': 'Bearer ' + 'test' // it's temporary
-  //                     }
-  //                   }).pipe(
-  //                     map((res: any) => {
-  //                       this._zone.run(() => {
-  //                         console.log(res);
-  //                         this.googleLogin.updateAuth(auth);
-  //                         this.storage.setItem('last_school_id', res.school.id);
-  //                       });
-  //                     })
-  //                   );
-  //
-  //                 }
-  //               }),
-  //              catchError((err) => {
-  //                console.log('Error occured =====>', err);
-  //
-  //                if (err && err.error !== 'popup_closed_by_user') {
-  //                  console.log('Erro should be shown ====>')
-  //                  this.loginService.showLoginError$.next(true);
-  //                }
-  //                return throwError(err);
-  //
-  //              })
-  //          );
-  //         } else {
-  //           this.loginState = 'profile';
-  //           return of(placeId);
-  //         }
-  //       })
-  //     )
-  //     .subscribe((res) => {
-  //       console.log(res);
-  //   });
-  // }
+  ngAfterViewInit() {
+    window.appLoaded();
+  }
   onClose(evt) {
     setTimeout(() => {
       this.loginService.showLoginError$.next(false);
@@ -161,8 +89,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
       this.loginState = 'profile';
     }, 400);
   }
-
-
   onError() {
     this.router.navigate(['error']);
   }

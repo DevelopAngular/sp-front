@@ -24,13 +24,13 @@ import {
 import { IconPickerComponent } from '../icon-picker/icon-picker.component';
 import { ColorPalletPickerComponent } from '../color-pallet-picker/color-pallet-picker.component';
 import { TogglePickerComponent } from '../toggle-picker/toggle-picker.component';
-import { AccountsDialogComponent } from '../accounts-dialog/accounts-dialog.component';
 import { ProfilesSearchComponent } from '../profiles-search/profiles-search.component';
 import { InputHelperDialogComponent } from '../input-helper-dialog/input-helper-dialog.component';
 import { LocationSearchComponent } from '../location-search/location-search.component';
 import { ColorComponent } from '../color-pallet-picker/color/color.component';
 import { AdvancedOptionsComponent } from '../overlay-container/advanced-options/advanced-options.component';
 import {AddExistingRoomComponent} from '../overlay-container/add-existing-room/add-existing-room.component';
+import {GettingStartedProgressService} from '../getting-started-progress.service';
 
 @NgModule({
   imports: [
@@ -86,10 +86,12 @@ import {AddExistingRoomComponent} from '../overlay-container/add-existing-room/a
       AddExistingRoomComponent,
   ],
   entryComponents: [
-      AccountsDialogComponent,
       OverlayContainerComponent,
       DateInputComponent,
-      InputHelperDialogComponent
+      InputHelperDialogComponent,
+  ],
+  providers: [
+    GettingStartedProgressService
   ]
 })
 export class AdminSharedModule { }

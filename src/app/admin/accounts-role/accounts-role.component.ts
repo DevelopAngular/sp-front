@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, HostListener, Input, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material';
 import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
@@ -36,7 +36,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   private destroy$: Subject<any> = new Subject();
   private searchChangeObserver$: Subject<string>;
 
-  public role: string;
+  @Input() public role: string;
   public dataTableHeadersToDisplay: string[] = [];
   public userList: any[] = [];
   public selectedUsers: any[] = [];
@@ -152,7 +152,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         return this.route.params.pipe(takeUntil(this.destroy$));
       }),
       switchMap((params) => {
-        this.role = params.role;
+        this.role = params.role || this.role;
 
         // if (this.role === '_all') {
           return this.adminService.getAdminAccounts()
@@ -655,67 +655,67 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   private buildUserListData(userList) {
-      this.isLoadUsers = this.limitCounter === userList.length;
-      console.log('ME ===>>>>>>', this.user);
-      // this.userAmount.next(userList.length);
-      return userList.map((raw, index) => {
-        // raw = User.fromJSON(raw);
-        const permissionsRef: any = this.profilePermissions;
-          const partOf = [];
-          if (raw.roles.includes('_profile_student')) partOf.push({title: 'Student', role: '_profile_student'});
-          if (raw.roles.includes('_profile_teacher')) partOf.push({title: 'Teacher', role: '_profile_teacher'});
-          if (raw.roles.includes('_profile_assistant')) partOf.push({title: 'Assistant', role: '_profile_assistant'});
-          if (raw.roles.includes('_profile_admin')) partOf.push({title: 'Administrator', role: '_profile_admin'});
+    this.isLoadUsers = this.limitCounter === userList.length;
+    console.log('ME ===>>>>>>', this.user);
+    // this.userAmount.next(userList.length);
+    return userList.map((raw, index) => {
+      // raw = User.fromJSON(raw);
+      const permissionsRef: any = this.profilePermissions;
+        const partOf = [];
+        if (raw.roles.includes('_profile_student')) partOf.push({title: 'Student', role: '_profile_student'});
+        if (raw.roles.includes('_profile_teacher')) partOf.push({title: 'Teacher', role: '_profile_teacher'});
+        if (raw.roles.includes('_profile_assistant')) partOf.push({title: 'Assistant', role: '_profile_assistant'});
+        if (raw.roles.includes('_profile_admin')) partOf.push({title: 'Administrator', role: '_profile_admin'});
 
-          const rawObj = {
-              // 'Name': +raw.id === +this.user.id ? raw.display_name + ' (Me)' : raw.display_name,
-              'Name': raw.display_name,
-              'Email/Username': raw.primary_email,
-              'Rooms': raw.assignedTo,
-              // 'Account Type': 'G Suite',
-              'Acting on Behalf Of': raw.canActingOnBehalfOf ? raw.canActingOnBehalfOf.map((u: RepresentedUser) => {
-                return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
-              }).join(', ') : '',
-              'Sign-in status': raw.active ? 'Enabled' : 'Disabled',
-              'Last sign-in': raw.last_login ? Util.formatDateTime(new Date(raw.last_login)) : 'Not login',
-              'Profile(s)': partOf.length ? partOf : [{title: 'No profile'}],
-              'Permissions': (function() {
-                  const tabs = Object.values(permissionsRef).map((tab: any) => {
-                    tab.allowed = raw.roles.includes(tab.controlName);
-                    return tab;
-                  });
-                  if (tabs.every((item: any): boolean => item.allowed)) {
-                    return 'No restrictions';
+        const rawObj = {
+            // 'Name': +raw.id === +this.user.id ? raw.display_name + ' (Me)' : raw.display_name,
+            'Name': raw.display_name,
+            'Email/Username': raw.primary_email,
+            'Rooms': raw.assignedTo,
+            // 'Account Type': 'G Suite',
+            'Acting on Behalf Of': raw.canActingOnBehalfOf ? raw.canActingOnBehalfOf.map((u: RepresentedUser) => {
+              return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
+            }).join(', ') : '',
+            'Sign-in status': raw.active ? 'Enabled' : 'Disabled',
+            'Last sign-in': raw.last_login ? Util.formatDateTime(new Date(raw.last_login)) : 'Not login',
+            'Profile(s)': partOf.length ? partOf : [{title: 'No profile'}],
+            'Permissions': (function() {
+                const tabs = Object.values(permissionsRef).map((tab: any) => {
+                  tab.allowed = raw.roles.includes(tab.controlName);
+                  return tab;
+                });
+                if (tabs.every((item: any): boolean => item.allowed)) {
+                  return 'No restrictions';
+                } else {
+                  const restrictedTabs = tabs.filter((item: any): boolean => !item.allowed);
+                  if (restrictedTabs.length > 1) {
+                    return `${restrictedTabs.length} tabs restricted`;
                   } else {
-                    const restrictedTabs = tabs.filter((item: any): boolean => !item.allowed);
-                    if (restrictedTabs.length > 1) {
-                      return `${restrictedTabs.length} tabs restricted`;
-                    } else {
-                      return `${restrictedTabs[0].controlLabel} restricted`;
-                    }
+                    return `${restrictedTabs[0].controlLabel} restricted`;
                   }
-                }())
+                }
+              }())
 
-          };
-          for (const key in rawObj) {
-              if (!this.dataTableHeaders[key]) {
-                  delete rawObj[key];
-              }
-              if (index === 0) {
-                  if (this.dataTableHeaders[key] && this.dataTableHeaders[key].value) {
-                      this.dataTableHeadersToDisplay.push(key);
-                  }
-              }
-          }
-          Object.defineProperty(rawObj, 'id', { enumerable: false, value: raw.id });
-          Object.defineProperty(rawObj, 'me', { enumerable: false, value: +raw.id === +this.user.id });
-          Object.defineProperty(rawObj, '_originalUserProfile', {
-              enumerable: false,
-              configurable: false,
-              writable: false,
-              value: raw
-          });
-          return  rawObj;
-      });
+        };
+        for (const key in rawObj) {
+            if (!this.dataTableHeaders[key]) {
+                delete rawObj[key];
+            }
+            if (index === 0) {
+                if (this.dataTableHeaders[key] && this.dataTableHeaders[key].value) {
+                    this.dataTableHeadersToDisplay.push(key);
+                }
+            }
+        }
+        Object.defineProperty(rawObj, 'id', { enumerable: false, value: raw.id });
+        Object.defineProperty(rawObj, 'me', { enumerable: false, value: +raw.id === +this.user.id });
+        Object.defineProperty(rawObj, '_originalUserProfile', {
+            enumerable: false,
+            configurable: false,
+            writable: false,
+            value: raw
+        });
+        return  rawObj;
+    });
   }
 }
