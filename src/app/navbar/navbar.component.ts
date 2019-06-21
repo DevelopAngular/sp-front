@@ -108,6 +108,8 @@ export class NavbarComponent implements AfterViewInit, OnInit {
 
   private pts;
 
+  isAdminRoute: boolean;
+
   @HostListener('window:resize')
     checkDeviceWidth() {
       this.underlinePosition();
@@ -180,7 +182,7 @@ export class NavbarComponent implements AfterViewInit, OnInit {
 
     this.isHallMonitorRoute =  this.router.url === '/main/hallmonitor';
     this.isMyRoomRoute = this.router.url === '/main/myroom';
-
+    this.isAdminRoute = this.router.url.includes('/admin')
     this.router.events.subscribe(value => {
       if (value instanceof NavigationEnd) {
         this.hideButtons = value.url === '/main/kioskMode';
@@ -192,6 +194,7 @@ export class NavbarComponent implements AfterViewInit, OnInit {
         this.dataService.updateInbox(this.inboxVisibility);
         this.isHallMonitorRoute = value.url  === '/main/hallmonitor';
         this.isMyRoomRoute = value.url === '/main/myroom';
+        this.isAdminRoute = value.url.includes('/admin');
       }
     });
 
