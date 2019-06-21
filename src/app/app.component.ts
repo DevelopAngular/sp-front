@@ -87,14 +87,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
 
-    let test = new URLSearchParams(window.location.href);
-    console.log(test);
-
-    const qp = new URLSearchParams(window.location.search);
-
-
-    this.schoolSignUp = window.location.href.includes('school_signup') && !!qp.get('key');
-      // ?key=test
+    // const qp = new URLSearchParams(window.location.search);
+    //
+    //
+    // this.schoolSignUp = window.location.href.includes('school_signup') && !!qp.get('key');
 
     this.storageService.detectChanges();
     this.darkTheme.isEnabled$.subscribe((val) => {
@@ -145,7 +141,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     //     this.showUI.next(false);
     //   }
     // });
-    window.appLoaded(2000);
+    // window.appLoaded(2000);
 
     this.http.schools$.pipe(
         map(schools => _.filter(schools, (school => school.my_roles.length > 0))),

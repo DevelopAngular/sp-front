@@ -1,5 +1,5 @@
-import {Component, EventEmitter, NgZone, OnInit, Output} from '@angular/core';
-import {constructUrl} from '../live-data/helpers';
+import {AfterViewInit, Component, EventEmitter, NgZone, OnInit, Output} from '@angular/core';
+import {constructUrl, QueryParams} from '../live-data/helpers';
 import {catchError, map, switchMap, tap} from 'rxjs/operators';
 import {from, Observable, of, throwError} from 'rxjs';
 import {LoginMethod} from '../google-signin/google-signin.component';
@@ -10,15 +10,17 @@ import {JwtHelperService} from '@auth0/angular-jwt';
 import {GoogleLoginService} from '../services/google-login.service';
 import {UserService} from '../services/user.service';
 import {StorageService} from '../services/storage.service';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {DomSanitizer} from '@angular/platform-browser';
+
+declare const window;
 
 @Component({
   selector: 'app-school-sign-up',
   templateUrl: './school-sign-up.component.html',
   styleUrls: ['./school-sign-up.component.scss']
 })
-export class SchoolSignUpComponent implements OnInit {
+export class SchoolSignUpComponent implements OnInit, AfterViewInit {
 
   @Output() schoolCreatedEvent: EventEmitter<boolean> = new EventEmitter();
   private AuthToken: string;
@@ -32,9 +34,9 @@ export class SchoolSignUpComponent implements OnInit {
     private googleLogin: GoogleLoginService,
     private userService: UserService,
     private loginService: GoogleLoginService,
-    // private mapsApi: MapsAPILoader,
     private storage: StorageService,
     private router: Router,
+    private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private _zone: NgZone,
   ) {
@@ -42,10 +44,19 @@ export class SchoolSignUpComponent implements OnInit {
   }
 
   ngOnInit() {
-    const qp = new URLSearchParams(window.location.search);
-    this.AuthToken = qp.get('key');
-  }
 
+    this.route.queryParams.subscribe((qp: QueryParams) => {
+      if (!qp.key) {
+          this.router.navigate(['']);
+      } else {
+        this.AuthToken = qp.key as string;
+      }
+      console.log(this.AuthToken);
+    });
+  }
+  ngAfterViewInit() {
+    window.appLoaded();
+  }
 
   initLogin() {
     return this.googleLogin.GoogleOauth.signIn()
@@ -121,7 +132,16 @@ export class SchoolSignUpComponent implements OnInit {
       )
       .subscribe((res) => {
         console.log(res);
-        this.schoolCreatedEvent.emit(res);
+        // this.schoolCreatedEvent.emit(res);
+        // onSchoolCreated(evt: boolean) {
+        //   this.schoolSignUp = false;
+          if (res) {
+            // window.waitForAppLoaded();
+            this.router.navigate(['admin', 'gettingstarted']);
+          } else {
+            this.router.navigate(['']);
+          }
+        // }
       });
   }
   onClose(evt) {

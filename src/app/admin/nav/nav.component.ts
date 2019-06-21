@@ -10,8 +10,8 @@ import {SettingsComponent} from '../settings/settings.component';
 import {map, switchMap} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {AdminService} from '../../services/admin.service';
-import {OnboardItem, Progress} from '../getting-started/getting-started.component';
 import {HttpService} from '../../services/http-service';
+import {GettingStartedProgressService} from '../getting-started-progress.service';
 
 declare const window;
 
@@ -38,7 +38,7 @@ export class NavComponent implements OnInit {
     // {title: 'Support', link : 'https://www.smartpass.app/support', type: 'staticButton', imgUrl : './assets/Support', requiredRoles: ['_profile_admin']},
   ];
 
-  progress = 0;
+  // progress = 0;
 
   fakeMenu = new BehaviorSubject<boolean>(false);
   tab: string[] = ['dashboard'];
@@ -53,7 +53,8 @@ export class NavComponent implements OnInit {
         private _zone: NgZone,
         public darkTheme: DarkThemeSwitch,
         private adminService: AdminService,
-        private httpService: HttpService
+        private httpService: HttpService,
+        public gsProgress: GettingStartedProgressService
 
     ) { }
 
@@ -78,21 +79,21 @@ export class NavComponent implements OnInit {
     // if (this.isSelected('takeTour')) {
     //   this.pts = '-63px';
     // }
-    this.httpService.globalReload$.pipe(
-      switchMap(() => {
-        return this.adminService.getOnboardProgress()
-      })
-    )
-    .subscribe((data: OnboardItem[]) => {
-      console.log(data);
-      this.progress = 10;
-      data.forEach((item: OnboardItem ): void => {
-        if (item.done) {
-          console.log(this.progress, Progress[item.name]);
-          this.progress +=  Progress[item.name];
-        }
-      });
-    });
+    // this.httpService.globalReload$.pipe(
+    //   switchMap(() => {
+    //     return this.adminService.getOnboardProgress()
+    //   })
+    // )
+    // .subscribe((data: OnboardItem[]) => {
+    //   console.log(data);
+    //   this.progress = 10;
+    //   data.forEach((item: OnboardItem ): void => {
+    //     if (item.done) {
+    //       console.log(this.progress, Progress[item.name]);
+    //       this.progress +=  Progress[item.name];
+    //     }
+    //   });
+    // });
     this.router.events.subscribe(value => {
       if ( value instanceof NavigationEnd ) {
         let urlSplit: string[] = value.url.split('/');
