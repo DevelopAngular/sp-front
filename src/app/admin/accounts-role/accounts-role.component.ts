@@ -195,11 +195,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               label: 'Email/Username',
               disabled: true
             },
-            // 'Account Type': {
-            //   value: false,
-            //   label: 'Account Type',
-            //   disabled: false
-            // }
           };
 
           if (this.role !== '_all') {
