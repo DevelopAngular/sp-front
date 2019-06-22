@@ -4,7 +4,7 @@
          [ngClass]="{'card__dark': darkTheme.isEnabled$.value}">
       <div class="ds-flex-start-start ds-h-100">
 
-        <div class="back-button" *ngIf="!(dataTableEditState | async)">
+        <div class="back-button" *ngIf="!(dataTableEditState | async) && role !== 'g_suite'">
           <app-back-button routerLink="/admin/accounts"></app-back-button>
         </div>
         <div class="ds-h-100 ds-mx-10" *ngIf="(dataTableEditState | async)"></div>
@@ -13,19 +13,8 @@
             <div class="ds-mr-20">
 
               <div class="card_header ds-mb-10">
-                <!--<img [src]="darkTheme.getIcon({-->
-                  <!--iconName: 'Settings',-->
-                  <!--darkFill: 'White',-->
-                  <!--lightFill: 'Navy'-->
-                <!--}) | resolveAsset" alt="Settings.svg">-->
                 <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})" [style.padding-left]="0">All Accounts</span>
               </div>
-              <!--<div class="card_header" [style.font-size]="'16px'">-->
-                <!--<span-->
-                  <!--[style.padding-left]="'0px'"-->
-                  <!--[style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})"-->
-                <!--&gt;Total Accounts: {{(accounts$ | async).total}} Accounts</span>-->
-              <!--</div>-->
               <div  *ngIf="!(dataTableEditState | async)" class="card_title tooltip-container">
                 <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset"
                      [matTooltip]="'All accounts at one place.'"
@@ -230,7 +219,7 @@
           </div>
         </div>
       </div>
-      <div class="ds-flex-center-between ds-mr-20 ds-my-10" style="flex: 1 1 auto" *ngIf="!(dataTableEditState | async)">
+      <div class="ds-flex-center-between ds-mr-20 ds-my-10" style="flex: 1 1 auto" *ngIf="!(dataTableEditState | async) && role !== 'g_suite'">
         <div class="ds-flex-center-end ds-w-100">
           <div class="ds-mx-10">
             <app-round-input
@@ -279,7 +268,7 @@
         </div>
       </div>
     </div>
-    <div class="table">
+    <div class="table" *ngIf="role !== 'g_suite'">
       <div *ngIf="!userList.length && !noUsersDummyVisibility" class="loading-theme_blue-gray spinner ds-flex-center-center">
         <mat-spinner *ngIf="!placeholder" [diameter]="50" [color]="'primary'"></mat-spinner>
         <!--<h1 [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})" *ngIf="placeholder">No matches found.</h1>-->
@@ -317,6 +306,82 @@
           >
         </app-data-table>
       </div>
+    </div>
+  </div>
+
+  <div class="gsuite-wrapper">
+    <div class="gsuite-header">
+      <div class="header-content">
+        <div class="left-block">
+          <div class="back-button" routerLink="/admin/accounts">
+            <img width="16" height="16" [src]="'./assets/Chevron Left (Blue-Gray).svg' | resolveAsset" alt="">
+          </div>
+          <div class="title-content">
+            <img width="50" height="50" [src]="'./assets/google/google_logo.svg' | resolveAsset" alt="">
+            <div class="title">
+              G Suite
+              <div class="small-text">{{ sync.last }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="right-block">
+          <div class="count-accounts">{{ countAccounts + ' accounts' }}</div>
+          <div class="text">syncing from G Suite</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gsuite-content">
+      <div class="content-wrapper">
+
+        <div class="left-side">
+          <div class="sync">
+            <div class="title">Sync</div>
+            <div class="subtitle">
+              <div>{{ sync.last }}</div>
+              <div>Next scheduled sync: {{ sync.next }}</div>
+            </div>
+
+            <div class="info">
+              Syncs happen automatically every four hours, but you can also sync manually now.
+            </div>
+            <app-gradient-button
+                    [size]="'small'"
+                    [gradient]="'#022F68,#2F66AB'"
+                    [hoverColor]="'#022F68'"
+                    [fontSize]="'13px'"
+                    [cursor]="'pointer'"
+            >
+              <div *ngIf="false" class="loading-theme_white spinner flex-center-left pt">
+                <mat-spinner [color]="'white'" [diameter]="'25'"></mat-spinner>
+              </div>
+              <span *ngIf="true" >
+                Sync Now
+              </span>
+            </app-gradient-button>
+          </div>
+
+          <div class="about-sync">
+            <div class="about-title">About G Suite Sync</div>
+            <div class="about-content">
+              When a new account is created in G Suite,
+              if they are added to a syncing organizational unit they will automatically be added to the specified SmartPass Group.
+              <br/><br/>
+              Sync automatically updates existing user details.
+            </div>
+          </div>
+
+          <app-privacy-card></app-privacy-card>
+
+        </div>
+
+        <div class="right-side">
+          <app-account-groups></app-account-groups>
+        </div>
+      </div>
+
+      <div class="footer"></div>
     </div>
   </div>
 </div>

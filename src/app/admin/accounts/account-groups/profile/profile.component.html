@@ -1,0 +1,20 @@
+<div class="wrapper" [style.width]="width - 30 + 'px'" (click)="selected()">
+  <div class="content">
+    <div class="title">
+      <img width="28" height="28" [src]="'./assets/Admin (' + (openInfo ? 'Navy' : 'Blue-Gray') + ').svg' | resolveAsset" alt="">
+      <div class="text" [style.color]="openInfo ? '#1F195E' : '#7F879D'">{{ title }}</div>
+    </div>
+
+    <img width="16" height="16" *ngIf="openInfo" [src]="'./assets/Mark (Jade).svg' | resolveAsset" alt="">
+    <img width="16" height="16" *ngIf="plusIcon && !openInfo" [src]="'./assets/Plus (Blue-Gray).svg' | resolveAsset" alt="">
+  </div>
+  <div class="info" *ngIf="openInfo">
+    <mat-divider [style.margin]="'9px 0'"></mat-divider>
+
+    <div class="items">
+      <div class="item" *ngFor="let item of mockInfo">
+        {{ item.info }}
+      </div>
+    </div>
+  </div>
+</div>

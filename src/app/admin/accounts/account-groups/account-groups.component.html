@@ -1,0 +1,15 @@
+<div class="group-wrapper">
+    <div class="content">
+        <div class="title">Groups</div>
+        <div class="profiles">
+            <app-profile *ngFor="let account of accounts" (select)="account.selected = $event" [title]="account.title"></app-profile>
+        </div>
+    </div>
+    <div>
+        <app-gradient-button *ngIf="showButton"
+                             [size]="'small'"
+                             [cursor]="'pointer'"
+        >Save Group Sync</app-gradient-button>
+    </div>
+
+</div>
