@@ -36,7 +36,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   private destroy$: Subject<any> = new Subject();
   private searchChangeObserver$: Subject<string>;
 
-  @Input() public role: string;
+  public role: string;
   public dataTableHeadersToDisplay: string[] = [];
   public userList: any[] = [];
   public selectedUsers: any[] = [];
@@ -58,6 +58,14 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       teacher_count: 0,
       assistant_count: 0
     });
+
+    ////// G_Suite
+
+  public sync = {
+    last: 'Last sync: Today, 9:23 AM',
+    next: 'Today 1:23 PM'
+  };
+  public countAccounts = 2500;
 
   @ViewChild(DataTableComponent) dataTable;
 
@@ -152,7 +160,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         return this.route.params.pipe(takeUntil(this.destroy$));
       }),
       switchMap((params) => {
-        this.role = params.role || this.role;
+        this.role = params.role;
 
         // if (this.role === '_all') {
           return this.adminService.getAdminAccounts()
@@ -172,12 +180,13 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       }),
       switchMap(() => {
         return this.route.queryParams.pipe(takeUntil(this.destroy$));
-      })
+      }),
+      tap(() => this.router.navigate(['admin/accounts', this.role])),
+      filter(() => this.role !== 'g_suite'),
     )
     .subscribe((qp) => {
       const {profileName} = qp;
       this.initialSearchString = this.initialSearchString ? this.initialSearchString : profileName;
-      this.router.navigate(['admin/accounts', this.role]);
       this.tabVisibility = true;
       this.getUserList(this.initialSearchString || '');
         const headers = this.storage.getItem(`${this.role}_columns`);
