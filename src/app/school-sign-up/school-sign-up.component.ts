@@ -31,7 +31,6 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
     private googleAuth: GoogleAuthService,
     private http: HttpClient,
     private httpService: HttpService,
-    private googleLogin: GoogleLoginService,
     private userService: UserService,
     private loginService: GoogleLoginService,
     private storage: StorageService,
@@ -59,7 +58,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
   }
 
   initLogin() {
-    return this.googleLogin.GoogleOauth.signIn()
+    return this.loginService.GoogleOauth.signIn()
       .then((auth) => {
         return auth.getAuthResponse();
       });
@@ -103,7 +102,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
                       map((res: any) => {
                         this._zone.run(() => {
                           console.log(res);
-                          this.googleLogin.updateAuth(auth);
+                          this.loginService.updateAuth(auth);
                           this.storage.setItem('last_school_id', res.school.id);
                         });
                         return true;

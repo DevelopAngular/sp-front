@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
-import {FormControl, FormGroup} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {User} from '../../models/User';
 import {PdfGeneratorService} from '../pdf-generator.service';
 import {zip} from 'rxjs';
@@ -10,6 +10,8 @@ import {HttpService} from '../../services/http-service';
 import {School} from '../../models/School';
 import {filter, switchMap, tap} from 'rxjs/operators';
 
+import * as _ from 'lodash';
+
 @Component({
   selector: 'app-add-user-dialog',
   templateUrl: './add-user-dialog.component.html',
@@ -17,7 +19,7 @@ import {filter, switchMap, tap} from 'rxjs/operators';
 })
 export class AddUserDialogComponent implements OnInit {
 
-  public accountTypes: string[] = ['gsuite', 'alternative'];
+  public accountTypes: string[] = ['G Suite', 'Standard'];
   public typeChoosen: string = this.accountTypes[0];
   public newAlternativeAccount: FormGroup;
   public selectedUsers: User[] = [];
@@ -29,8 +31,17 @@ export class AddUserDialogComponent implements OnInit {
   public assistantLike: {
     user: User,
     behalfOf: User[]
-  }
-  public school: School
+  };
+  public school: School;
+
+  public state: string;
+
+  public accounts = [
+      { title: 'Admins', selected: false, role: '_profile_admin' },
+      { title: 'Teachers', selected: false, role: '_profile_teacher' },
+      { title: 'Assistants', selected: false, role: '_profile_assistant' },
+      { title: 'Students', selected: false, role: '_profile_student' }
+  ];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -50,14 +61,23 @@ export class AddUserDialogComponent implements OnInit {
     this.school = this.http.currentSchoolSubject.value;
   }
 
+  get selectedRoles() {
+    return _.filter(this.accounts, ['selected', true]);
+  }
+
+  get showNextButton() {
+    return (this.data.role === '_profile_assistant' && ((this.assistantLike.user || this.newAlternativeAccount.valid) && !this.assistantLike.behalfOf)) ||
+        (this.data.role === '_all' && this.newAlternativeAccount.valid && !this.selectedRoles.length);
+  }
+
   ngOnInit() {
     this.newAlternativeAccount = new FormGroup({
-      name: new FormControl(''),
-      username: new FormControl(''),
-      password: new FormControl(''),
+      name: new FormControl('', [Validators.required]),
+      username: new FormControl('', [Validators.required]),
+      password: new FormControl('', [Validators.required]),
     });
 
-    if (this.data.role !== '_profile_student') {
+    if (this.data.role !== '_profile_student' && this.data.role !== '_all') {
       const permissions = this.data.permissions;
       this.controlsIteratable = Object.values(permissions);
       const group: any = {};
@@ -85,12 +105,19 @@ export class AddUserDialogComponent implements OnInit {
       if (this.data.role !== '_profile_assistant') {
         return this.selectedUsers && this.selectedUsers.length;
       } else {
-        return this.assistantLike.user && this.assistantLike.behalfOf;
+        return this.assistantLike.user;
       }
-    } else {
-      return false;
+    } else if (this.typeChoosen === this.accountTypes[1]) {
+      return this.newAlternativeAccount.valid;
     }
   }
+
+  showIncomplete() {
+    if (this.typeChoosen === this.accountTypes[1]) {
+      return this.newAlternativeAccount.dirty && !this.showSaveButton();
+    }
+  }
+
   getBackground(item) {
     if (item.hovered) {
       if (item.pressed) {
@@ -103,31 +130,38 @@ export class AddUserDialogComponent implements OnInit {
     }
   }
 
+  next() {
+    if (this.data.role === '_profile_assistant') {
+      this.state = 'assistant';
+    } else if (this.data.role === '_all') {
+      this.state = 'selectRole';
+    }
+  }
+
   addUser() {
     let role: any = this.data.role.split('_');
     role = role[role.length - 1];
     console.log('======>>>>>', role, this.selectedUsers, this.assistantLike);
 
     if (role === 'assistant') {
-      this.userService
-        .addAccountToSchool(this.school.id, this.assistantLike.user, this.typeChoosen, [role])
-        .pipe(
-          switchMap(
-            (assistant: User) => {
-              console.log(assistant);
-              debugger
-              return zip(
-                ...this.assistantLike.behalfOf.map((teacher: User) => {
+          this.userService
+              .addAccountToSchool(this.school.id, this.assistantLike.user, this.typeChoosen, [role])
+              .pipe(
+                  switchMap(
+                      (assistant: User) => {
+                          console.log(assistant);
+                          return zip(
+                              ...this.assistantLike.behalfOf.map((teacher: User) => {
 
-                  return this.userService.addRepresentedUser(+assistant.id, teacher).pipe(tap(console.log));
-                })
-              );
-            }
-          ),
-        )
-        .subscribe((res) => {
-          this.dialogRef.close(true);
-        });
+                                  return this.userService.addRepresentedUser(+assistant.id, teacher).pipe(tap(console.log));
+                              })
+                          );
+                      }
+                  ),
+              )
+              .subscribe((res) => {
+                  this.dialogRef.close(true);
+              });
     } else {
       zip(
         ...this.selectedUsers.map((user) => this.userService.addAccountToSchool(this.school.id, user, this.typeChoosen, [role]))
@@ -138,9 +172,14 @@ export class AddUserDialogComponent implements OnInit {
     }
 
   }
+
   setSelectedUsers(evt) {
+    if (this.data.role === '_profile_assistant') {
+        this.assistantLike.user = evt[0];
+    } else {
+        this.selectedUsers = evt;
+    }
     console.log(evt);
-    this.selectedUsers = evt;
   }
   setSecretary(evtUser, evtBehalfOf) {
     if (evtUser) {
@@ -159,3 +198,7 @@ export class AddUserDialogComponent implements OnInit {
     this.dialogRef.close();
   }
 }
+
+// myFiel.valueChanges.pipe(map(value) => {myField: value})
+//
+// {keyFiled: valu}

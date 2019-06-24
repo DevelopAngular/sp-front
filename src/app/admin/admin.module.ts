@@ -38,9 +38,6 @@ import { MySchoolComponent } from './my-school/my-school.component';
 import { RoomsSetUpComponent } from './pass-config/rooms-set-up/rooms-set-up.component';
 import { SchoolButtonComponent } from './my-school/school-button/school-button.component';
 import { AdminCardButtonComponent } from './accounts/admin-card-button/admin-card-button.component';
-import { AccountGroupsComponent } from './accounts/account-groups/account-groups.component';
-import { ProfileComponent } from './accounts/account-groups/profile/profile.component';;
-import { PrivacyCardComponent } from './accounts/privacy-card/privacy-card.component'
 
 
 @NgModule({
@@ -83,10 +80,7 @@ import { PrivacyCardComponent } from './accounts/privacy-card/privacy-card.compo
     RoomsSetUpComponent,
     SchoolButtonComponent,
     AdminCardButtonComponent,
-    AccountGroupsComponent,
-    ProfileComponent
-,
-    PrivacyCardComponent  ],
+  ],
   entryComponents: [
     AccountsDialogComponent,
     LinkGeneratedDialogComponent,

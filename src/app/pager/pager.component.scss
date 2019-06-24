@@ -1,3 +1,9 @@
+@media all and (max-width:320px) {
+  div.swiper {
+    width: 300px;
+  }
+}
+
 @media all and (max-width: 375px) {
   div.pager-wrapper {
     width: 250px;
@@ -109,3 +115,15 @@
     //justify-content: center;
     //display: flex;
 }
+
+.swiper {
+  display: flex;
+  position: relative;
+  width: 335px;
+  color: #FFF;
+  flex-direction: column;
+  top: 50%;
+  transform: translateY(-50%);
+  overflow: hidden;
+}
+

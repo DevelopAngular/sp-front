@@ -30,7 +30,7 @@ export class StudentSearchComponent implements OnInit {
   @Input() disabled: boolean = false;
   @Input() focused: boolean = false;
   @Input() showOptions: boolean = true;
-  @Input() selectedStudents: User[];
+  @Input() selectedStudents: User[] = [];
   @Input() width: string = '280px';
   @Input() list: boolean = true;
   @Input() listMaxHeight: string = '210px';
@@ -138,23 +138,11 @@ export class StudentSearchComponent implements OnInit {
 
     if (this.searchTarget === 'schools') {
       this.mapsApi.load().then((resource) => {
-        if (window.navigator.geolocation) {
-          window.navigator.geolocation.getCurrentPosition(function(position) {
-            selfRef.currentPosition =  new window.google.maps.LatLng({
-              lat: 	40.730610,
-              lng: -73.935242
-            });
-          });
-        } else {
-          this.currentPosition = {
-            lat: 0,
-            lng: 0
-          };
-        }
-
+        selfRef.currentPosition =  new window.google.maps.LatLng({
+          lat: 	40.730610,
+          lng: -73.935242
+        });
         this.placePredictionService = new window.google.maps.places.AutocompleteService();
-
-        // console.log(this.placePredictionService);
       });
 
       this.query
@@ -213,50 +201,38 @@ export class StudentSearchComponent implements OnInit {
 
         if (search !== '') {
 
-          // const querySchool = new Subject();
-          // const queryHigh = new Subject();
-          // const queryElementary = new Subject();
-          // const queryHighSchool = new Subject();
-          // const queryElementarySchool = new Subject();
-
-
-
           this.pending$.next(true);
-          let predictionsAll = [];
-          let pointer = 0;
-          const keyWords = ['', 'school',  'elementary', 'elementary school', 'high', 'high school'];
-            keyWords.forEach((kw: string, index) => {
+          // let predictionsAll = [];
+          // let pointer = 0;
+          // const keyWords = ['', 'school',  'elementary', 'elementary school', 'high', 'high school'];
+          //   keyWords.forEach((kw: string, index) => {
                   this.placePredictionService.getPlacePredictions({
                     location: this.currentPosition,
-                    input: search + ' ' + kw,
+                    // input: search + ' ' + kw,
+                    input: search,
                     radius: 100000,
-                    // types: ['establishment']
+                    types: ['establishment']
                   }, (predictions, status) => {
-                    pointer += index;
-                    // console.log(predictions);
-                    // return of(predictions).toPromise();
-                    // this.showDummy = status !== 'OK';
-                    if (predictions) {
-                      predictionsAll = predictionsAll.concat(predictions.filter(school => school.types.includes('school')));
-                    }
-                    if (pointer === 15) {
-                      this.query.next(predictionsAll);
-                    }
-                  });
-                });
+                    // pointer += index;
 
-            // this.schools = of(predictions).toPromise().then(schools => {
-            //   this.pending$.next(false);
-            //   this.showDummy = status !== 'OK';
-            //
-            //   return schools;
-            // });
+                    // if (predictions) {
+                    //   predictionsAll = predictionsAll.concat(predictions.filter(school => school.types.includes('school')));
+                    // }
+                    // if (pointer === 15) {
+                    //   this.query.next(predictionsAll);
+                    this.query.next(predictions ? predictions : []);
+                    // }
+                  });
+                // });
+
         } else {
           // debugger
 
           this.query.next(null);
           this.showDummy = false;
           this.inputValue$.next('');
+          this.pending$.next(false);
+
         }
           break;
     }

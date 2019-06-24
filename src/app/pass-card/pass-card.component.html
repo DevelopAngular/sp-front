@@ -10,7 +10,11 @@
             </div>
           </div>
         </div>
-        <app-icon-button *ngIf="hasClose" [srcString]="closeIcon" [onDarkShade]="true" [size]="20" (clickEvent)="cancelEdit($event)"></app-icon-button>
+
+          <div [class]="iconClass">
+            <app-icon-button *ngIf="hasClose" [srcString]="closeIcon" [onDarkShade]="true" [size]="20" (clickEvent)="cancelEdit($event)"></app-icon-button>
+          </div>
+
 
         <!--<img *ngIf="hasClose" (click)="cancelEdit($event)" class="pass-card-header-close" [src]="closeIcon | resolveAsset">-->
       </div>
@@ -54,17 +58,30 @@
         <span style="font-size: 20px; font-weight: bold; color: white">{{ forFuture?'Pass Auto Starts': getDuration() +' - Total Time' }}</span>
       </div>
 
-      <app-pager [pages]="pagerPages" [page]="pagerPages" *ngIf="forStaff">
-        <div class="page-1 teacher-details">
+      <app-pager [pages]="pagerPages" [page]="pagerPages" *ngIf="forStaff ">
+        <div class="page-1 teacher-details" *ngIf="p1Title">
           <span class="bold">{{ (activePage==1?(timeLeft +(timeLeft===''?'':' - ')):'') +p1Title }}</span><span class="smaller"><br>{{ p1Subtitle }} <span *ngIf="p1Subtitle">-</span> {{ p1Stamp }}</span>
         </div>
-        <div class="page-2 teacher-details">
+        <div class="page-2 teacher-details" *ngIf="p2Title">
           <span class="bold">{{ (activePage==2?(timeLeft +(timeLeft===''?'':' - ')):'') +p2Title }}</span><span class="smaller"><br>{{ p2Subtitle +  (p2Subtitle===''?'':' - ') }}  {{ p2Stamp }}</span>
         </div>
-        <div class="page-3 teacher-details">
+        <div class="page-3 teacher-details" *ngIf="p3Title">
           <span class="bold">{{ (activePage==3?(timeLeft +(timeLeft===''?'':' - ')):'') +p3Title }}</span><span class="smaller"><br>{{ p3Subtitle }}  {{ p3Stamp }}</span>
         </div>
-        <div class="page-4 teacher-details">
+        <div class="page-4 teacher-details" *ngIf="p4Title">
+          <span class="bold">{{ (activePage==4?(timeLeft +(timeLeft===''?'':' - ')):'') +p4Title }}</span><span class="smaller"><br>{{ p4Subtitle }}  {{ p4Stamp }}</span>
+        </div>
+
+        <div class="page-5 teacher-details" *ngIf="p1Title">
+          <span class="bold">{{ (activePage==1?(timeLeft +(timeLeft===''?'':' - ')):'') +p1Title }}</span><span class="smaller"><br>{{ p1Subtitle }} <span *ngIf="p1Subtitle">-</span> {{ p1Stamp }}</span>
+        </div>
+        <div class="page-6 teacher-details" *ngIf="p2Title">
+          <span class="bold">{{ (activePage==2?(timeLeft +(timeLeft===''?'':' - ')):'') +p2Title }}</span><span class="smaller"><br>{{ p2Subtitle +  (p2Subtitle===''?'':' - ') }}  {{ p2Stamp }}</span>
+        </div>
+        <div class="page-7 teacher-details" *ngIf="p3Title">
+          <span class="bold">{{ (activePage==3?(timeLeft +(timeLeft===''?'':' - ')):'') +p3Title }}</span><span class="smaller"><br>{{ p3Subtitle }}  {{ p3Stamp }}</span>
+        </div>
+        <div class="page-8 teacher-details" *ngIf="p4Title">
           <span class="bold">{{ (activePage==4?(timeLeft +(timeLeft===''?'':' - ')):'') +p4Title }}</span><span class="smaller"><br>{{ p4Subtitle }}  {{ p4Stamp }}</span>
         </div>
       </app-pager>

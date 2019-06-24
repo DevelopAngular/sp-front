@@ -11,7 +11,6 @@
       <app-smartpass-logo [scale]="1.5" [logoAsset]="'./assets/Logo (White).svg'"></app-smartpass-logo>
     </div>
     <div class="grow" *ngIf="!isMobileDevice || true"></div>
-
     <google-signin *ngIf="!isMobileDevice || true" (showError)="showError = $event"></google-signin>
     <!--<google-signin *ngIf="!isMobileDevice" (showError)="showError = $event"></google-signin>-->
 
@@ -26,6 +25,7 @@
       <img height="173" [src]="'./assets/intro/Pass Tile 2.svg' | resolveAsset">
       <img height="173" [src]="'./assets/intro/Pass Tile 3.svg' | resolveAsset">
     </div>
+    <!--<pre style="position: relative;z-index: 1000000;">{{test | json}}</pre>-->
 
       <div style="flex-grow: 0.5;"></div>
   </div>

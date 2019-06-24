@@ -1,3 +1,5 @@
+@import "../../../sp-colors";
+
 :host {
   $primary: #1F195E;
   $secondary: #7F879D;
@@ -42,6 +44,12 @@
           width: 28px;
           height: 28px;
         }
+
+        .cancel {
+          color: white;
+          font-size: 15px;
+          font-weight: bold;
+        }
       }
       .save-button {
         position: absolute;
@@ -51,6 +59,12 @@
         margin: auto 0px;
         display: flex;
         align-items: center;
+
+        .incomplete {
+          color: white;
+          font-size: 15px;
+          font-weight: bold;
+        }
       }
     }
     .content {
@@ -213,6 +227,32 @@
             cursor: pointer;
           }
         }
+      }
+    }
+
+    .assistant-content {
+      padding: 15px 25px;
+
+      .info {
+        font-size: 14px;
+        color: $blue-gray;
+        margin-bottom: 15px;
+      }
+    }
+
+    .select-role {
+      padding: 15px 25px;
+
+      .info {
+        font-size: 14px;
+        color: $blue-gray;
+        margin-bottom: 15px;
+      }
+
+      .groups {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
       }
     }
   }

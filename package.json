@@ -56,6 +56,7 @@
     "ngx-chips": "^1.9.2",
     "ngx-infinite-scroll": "^6.0.0",
     "ngx-mat-select-search": "^1.7.2",
+    "ngx-swiper-wrapper": "^8.0.0",
     "node-sass": "^4.12.0",
     "npm": "^6.9.0",
     "oboe": "^2.1.5",

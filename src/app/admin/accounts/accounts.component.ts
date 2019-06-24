@@ -17,6 +17,7 @@ import {ColumnsConfigDialogComponent} from '../columns-config-dialog/columns-con
 import {TABLE_RELOADING_TRIGGER} from '../accounts-role/accounts-role.component';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {GettingStartedProgressService} from '../getting-started-progress.service';
+import {AddUserDialogComponent} from '../add-user-dialog/add-user-dialog.component';
 
 declare const history: History;
 
@@ -63,14 +64,13 @@ export class AccountsComponent implements OnInit {
     private userService: UserService,
     private http: HttpService,
     private adminService: AdminService,
-    private router: Router,
+    public router: Router,
     public darkTheme: DarkThemeSwitch,
     private storage: StorageService,
     public matDialog: MatDialog,
     private gsProgress: GettingStartedProgressService
   ) {
     // this.splash = this.gsProgress.onboardProgress.setup_accounts && (!this.gsProgress.onboardProgress.setup_accounts.start || !this.gsProgress.onboardProgress.setup_accounts.end);
-    this.splash = this.gsProgress.onboardProgress.setup_accounts && (!this.gsProgress.onboardProgress.setup_accounts.start);
     console.log(this.splash);
   }
 
@@ -79,6 +79,7 @@ export class AccountsComponent implements OnInit {
       switchMap(() => this.adminService.getAdminAccounts())
     )
     .subscribe((u_list: any) => {
+      this.splash = this.gsProgress.onboardProgress.setup_accounts && (!this.gsProgress.onboardProgress.setup_accounts.start);
       if (u_list.total_count !== undefined) {
         u_list.total = u_list.total_count;
       } else {
@@ -120,6 +121,18 @@ export class AccountsComponent implements OnInit {
           this.dataTableHeaders = updatedHeaders;
           this.dataTableHeadersToDisplay = [];
           this.getUserList();
+      });
+  }
+
+  addUser() {
+      const DR = this.matDialog.open(AddUserDialogComponent,
+          {
+              width: '425px', height: '500px',
+              panelClass: 'accounts-profiles-dialog',
+              backdropClass: 'custom-bd',
+              data: {
+                  role: '_all',
+              }
       });
   }
 

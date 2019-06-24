@@ -1,3 +1,36 @@
+@media all and (max-width: 320px){
+  div.favorite-form-wrapper {
+    width: 256px !important;
+  }
+
+  div.back-button-wrapper {
+    margin-top: 5px !important;
+  }
+}
+
+@media all and (max-width: 1024px){
+  div.favorite-form-wrapper {
+    width: 335px;
+  }
+
+  div.back-button-wrapper {
+    display: block;
+    margin-top: 20px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  img.back-button-bottom {
+    width: 28px;
+    height: 28px;
+  }
+
+  img.back-button {
+    display: none;
+  }
+}
+
 .favorite-form-wrapper{
     width: 425px;
     height: 500px;
@@ -64,4 +97,8 @@
   position: absolute;
   bottom: 0;
   box-shadow: -35px -5px 25px 18px rgba(255, 255, 255, 1);
+}
+
+.back-button-wrapper {
+  display: none;
 }
