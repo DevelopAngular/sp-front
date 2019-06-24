@@ -59,7 +59,9 @@ export class UserService {
             }
           })
         )
-        .subscribe(user => this.userData.next(user));
+        .subscribe(user => {
+          this.userData.next(user);
+        });
 
     if (errorHandler instanceof SentryErrorHandler) {
       this.userData.subscribe(user => {

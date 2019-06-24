@@ -40,15 +40,17 @@ export class GoogleLoginService {
   constructor(
     private googleAuth: GoogleAuthService,
     private _zone: NgZone,
-    private storage: StorageService
+    private storage: StorageService,
   ) {
 
     this.authToken$.subscribe(auth => {
       // window.waitForAppLoaded();
       if (auth) {
-        // debugger
-        this.storage.setItem(STORAGE_KEY, JSON.stringify({username: (auth as DemoLogin).username, type: (auth as DemoLogin).type}));
-        // this.storage.setItem(STORAGE_KEY, JSON.stringify((auth as DemoLogin).username));
+        const storageKey = isDemoLogin(auth)
+                           ? JSON.stringify({username: (auth as DemoLogin).username, type: (auth as DemoLogin).type})
+                           :
+                           JSON.stringify(auth);
+        this.storage.setItem(STORAGE_KEY, storageKey);
       }
     });
 
@@ -139,7 +141,7 @@ export class GoogleLoginService {
   }
 
   setAuthenticated() {
-      window.waitForAppLoaded();
+      // window.waitForAppLoaded();
     // console.log('setAuthenticated()');
     this.isAuthenticated$.next(true);
     this.showLoginError$.next(false);
@@ -199,6 +201,7 @@ export class GoogleLoginService {
     const user = auth.currentUser.get();
     if (user) {
       user.disconnect();
+      auth.signOut();
     }
 
   }

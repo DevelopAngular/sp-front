@@ -33,7 +33,7 @@ export class NavComponent implements OnInit {
     {title: 'Search', route : 'search', type: 'routerLink', imgUrl : 'SearchEye', requiredRoles: ['_profile_admin', 'access_admin_search']},
     {title: 'Rooms', route : 'passconfig', type: 'routerLink', imgUrl : 'Rooms', requiredRoles: ['_profile_admin', 'access_pass_config']},
     {title: 'Accounts', route : 'accounts', type: 'routerLink', imgUrl : 'Users', requiredRoles: ['_profile_admin', 'access_user_config']},
-    {title: 'My School', route : 'myschool', type: 'routerLink', imgUrl : 'School', requiredRoles: ['_profile_admin']},
+    {title: 'My School', route : 'myschool', type: 'routerLink', imgUrl : 'School', requiredRoles: ['_profile_admin', 'manage_school']},
     // {title: 'Feedback', link : 'https://www.smartpass.app/feedback', type: 'staticButton', externalApp: 'mailto:feedback@smartpass.app', imgUrl : './assets/Feedback', requiredRoles: ['_profile_admin']},
     // {title: 'Support', link : 'https://www.smartpass.app/support', type: 'staticButton', imgUrl : './assets/Support', requiredRoles: ['_profile_admin']},
   ];
@@ -177,7 +177,7 @@ export class NavComponent implements OnInit {
 
     settingsRef.afterClosed().subscribe(action => {
         if (action === 'signout') {
-          window.waitForAppLoaded();
+          // window.waitForAppLoaded();
           this.router.navigate(['sign-out']);
         } else if (action === 'switch') {
           this.router.navigate(['main']);

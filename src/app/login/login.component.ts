@@ -1,17 +1,17 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, NgZone, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, NgZone, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import { Router } from '@angular/router';
 import { DeviceDetection } from '../device-detection.helper';
 import { GoogleLoginService } from '../services/google-login.service';
 import { UserService } from '../services/user.service';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {HttpClient} from '@angular/common/http';
-import {catchError, filter, flatMap, map, mergeMap, switchMap, tap} from 'rxjs/operators';
+import {catchError, filter, flatMap, map, mergeMap, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {AuthContext, HttpService} from '../services/http-service';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {GoogleAuthService} from '../services/google-auth.service';
 import {StorageService} from '../services/storage.service';
 import {User} from '../models/User';
-import {ReplaySubject} from 'rxjs';
+import {ReplaySubject, Subject} from 'rxjs';
 
 declare const window;
 
@@ -22,7 +22,7 @@ export type LoginState = 'school' | 'profile';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit, AfterViewInit {
+export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('place') place: ElementRef;
   @Output() errorEvent: EventEmitter<any> = new EventEmitter();
@@ -36,8 +36,8 @@ export class LoginComponent implements OnInit, AfterViewInit {
   public showError = { loggedWith: null, error: null };
   public loginState: LoginState = 'profile';
   private jwt: JwtHelperService;
-
-
+  test;
+  private destroyer$ = new Subject<any>();
   constructor(
     private googleAuth: GoogleAuthService,
     private http: HttpClient,
@@ -58,8 +58,11 @@ export class LoginComponent implements OnInit, AfterViewInit {
       filter(v => v),
       switchMap((): ReplaySubject<User> => {
         return this.userService.userData;
-      })
+      }),
+      takeUntil(this.destroyer$)
     ).subscribe((currentUser: User) => {
+      // debugger
+      this.test = currentUser;
       const loadView = [currentUser.isAdmin() ? 'admin' : 'main'];
       this.router.navigate(loadView);
     });
@@ -82,6 +85,10 @@ export class LoginComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     window.appLoaded();
   }
+  ngOnDestroy() {
+    this.destroyer$.next(null);
+    this.destroyer$.complete();
+  }
   onClose(evt) {
     setTimeout(() => {
       this.loginService.showLoginError$.next(false);
@@ -92,4 +99,5 @@ export class LoginComponent implements OnInit, AfterViewInit {
   onError() {
     this.router.navigate(['error']);
   }
+
 }
