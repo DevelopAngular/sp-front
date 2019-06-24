@@ -53,11 +53,13 @@ import {TimePickerComponent} from '../calendar-components/time-picker/time-picke
 import {AdminCalendarToggleComponent} from '../calendar-components/admin-calendar-toggle/admin-calendar-toggle.component';
 import {ToggleOptionsComponent} from '../calendar-components/admin-calendar-toggle/toggle-options/toggle-options.component';
 import {SpChipsComponent} from '../sp-chips/sp-chips.component';
-import {SettingsComponent} from '../settings/settings.component';
 import {SWIPER_CONFIG, SwiperConfigInterface, SwiperModule} from 'ngx-swiper-wrapper';
 import { IconButtonComponent } from '../icon-button/icon-button.component';
 import {RoomsSearchComponent} from '../rooms-search/rooms-search.component';
 import {XsButtonComponent} from '../xs-button/xs-button.component';
+import {AccountGroupsComponent} from '../admin/accounts/account-groups/account-groups.component';
+import {PrivacyCardComponent} from '../admin/accounts/privacy-card/privacy-card.component';
+import {ProfileComponent} from '../admin/accounts/account-groups/profile/profile.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -131,7 +133,10 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
       SpChipsComponent,
       RoomsSearchComponent,
       IconButtonComponent,
-      XsButtonComponent
+      XsButtonComponent,
+      AccountGroupsComponent,
+      PrivacyCardComponent,
+      ProfileComponent,
   ],
     entryComponents: [
       PassCardComponent,
@@ -146,6 +151,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     MatProgressSpinnerModule,
     MatCardModule,
     MatCheckboxModule,
+    MatDividerModule,
     DragulaModule,
     GradientButtonComponent,
     ResolveAssetPipe,
@@ -185,7 +191,10 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     SpChipsComponent,
     RoomsSearchComponent,
     IconButtonComponent,
-    XsButtonComponent
+    XsButtonComponent,
+    AccountGroupsComponent,
+    PrivacyCardComponent,
+    ProfileComponent,
   ],
   providers: [
     {

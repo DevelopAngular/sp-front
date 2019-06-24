@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 
 @Component({
   selector: 'app-account-groups',
@@ -6,6 +6,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./account-groups.component.scss']
 })
 export class AccountGroupsComponent implements OnInit {
+
+  @Output() accountsToSync = new EventEmitter();
 
   accounts = [
       { title: 'Admins', selected: false },
@@ -22,5 +24,7 @@ export class AccountGroupsComponent implements OnInit {
 
   ngOnInit() {
   }
-
+  provideSelected() {
+    this.accountsToSync.emit(this.accounts.filter(acc => acc.selected));
+  }
 }

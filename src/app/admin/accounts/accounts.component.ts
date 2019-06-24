@@ -63,14 +63,13 @@ export class AccountsComponent implements OnInit {
     private userService: UserService,
     private http: HttpService,
     private adminService: AdminService,
-    private router: Router,
+    public router: Router,
     public darkTheme: DarkThemeSwitch,
     private storage: StorageService,
     public matDialog: MatDialog,
     private gsProgress: GettingStartedProgressService
   ) {
     // this.splash = this.gsProgress.onboardProgress.setup_accounts && (!this.gsProgress.onboardProgress.setup_accounts.start || !this.gsProgress.onboardProgress.setup_accounts.end);
-    this.splash = this.gsProgress.onboardProgress.setup_accounts && (!this.gsProgress.onboardProgress.setup_accounts.start);
     console.log(this.splash);
   }
 
@@ -79,6 +78,7 @@ export class AccountsComponent implements OnInit {
       switchMap(() => this.adminService.getAdminAccounts())
     )
     .subscribe((u_list: any) => {
+      this.splash = this.gsProgress.onboardProgress.setup_accounts && (!this.gsProgress.onboardProgress.setup_accounts.start);
       if (u_list.total_count !== undefined) {
         u_list.total = u_list.total_count;
       } else {

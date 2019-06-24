@@ -205,7 +205,7 @@ export class NavbarComponent implements AfterViewInit, OnInit {
       .subscribe(user => {
         this._zone.run(() => {
           this.user = user;
-          this.isStaff = user.isAdmin() || user.isTeacher();
+          this.isStaff = user.isTeacher();
           this.showSwitchButton = [user.isAdmin(), user.isTeacher(), user.isStudent()].filter(val => !!val).length > 1;
         });
       });

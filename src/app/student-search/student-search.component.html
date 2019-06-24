@@ -65,12 +65,13 @@
       <div *ngIf="(schools | async)?.length" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
       <div *ngIf="!showDummy; else noSchoolsDummy" style="margin-top: -1px;">
         <div class="student-list_scrollable" [style.max-height]="listMaxHeight">
-          <div #cell *ngFor="let school of schools | async" class="student-list_item"
+          <div *ngFor="let school of schools | async" class="student-list_item"
                (mouseenter)="cell.hovered = true;"
                (mouseleave)="cell.hovered = false;"
                (click)="inputValue$.next(''); selectSchool(school)"
                [style.background-color]="getBackground(cell)"
                [style.color]="textColor(cell)"
+               #cell
           >
             <div>
               <div style="text-transform: capitalize; color: #00B476">

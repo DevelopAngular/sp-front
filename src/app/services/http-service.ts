@@ -139,7 +139,7 @@ export class HttpService {
   public globalReload$ = this.currentSchool$.pipe(
     filter(school => !!school),
     map(school => school ? school.id : null),
-    distinctUntilChanged(),
+    // distinctUntilChanged(),
     delay(5)
   );
 

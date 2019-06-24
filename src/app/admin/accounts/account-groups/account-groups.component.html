@@ -9,6 +9,7 @@
         <app-gradient-button *ngIf="showButton"
                              [size]="'small'"
                              [cursor]="'pointer'"
+                             (buttonClick)="provideSelected()"
         >Save Group Sync</app-gradient-button>
     </div>
 
