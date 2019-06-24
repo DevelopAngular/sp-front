@@ -17,6 +17,7 @@ import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {HallPassesService} from '../services/hall-passes.service';
 import { TimeService } from '../services/time.service';
+import {ScreenService} from '../services/screen.service';
 
 @Component({
   selector: 'app-pass-card',
@@ -80,6 +81,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
       private loadingService: LoadingService,
       private createFormService: CreateFormService,
       private timeService: TimeService,
+      public screenService: ScreenService
   ) {}
 
   getUserName(user: any) {

@@ -53,11 +53,16 @@ import {TimePickerComponent} from '../calendar-components/time-picker/time-picke
 import {AdminCalendarToggleComponent} from '../calendar-components/admin-calendar-toggle/admin-calendar-toggle.component';
 import {ToggleOptionsComponent} from '../calendar-components/admin-calendar-toggle/toggle-options/toggle-options.component';
 import {SpChipsComponent} from '../sp-chips/sp-chips.component';
+import {SettingsComponent} from '../settings/settings.component';
+import {SWIPER_CONFIG, SwiperConfigInterface, SwiperModule} from 'ngx-swiper-wrapper';
 import { IconButtonComponent } from '../icon-button/icon-button.component';
 import {RoomsSearchComponent} from '../rooms-search/rooms-search.component';
 import {XsButtonComponent} from '../xs-button/xs-button.component';
 
-
+const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
+  direction: 'horizontal',
+  slidesPerView: 'auto'
+};
 
 @NgModule({
   imports: [
@@ -84,7 +89,8 @@ import {XsButtonComponent} from '../xs-button/xs-button.component';
       InputTextareaModule,
     // NgProgressModule.forRoot(),
     NgProgressModule.withConfig({}),
-    DragulaModule.forRoot()
+    DragulaModule.forRoot(),
+    SwiperModule
   ],
   declarations: [
     DropdownComponent,
@@ -181,6 +187,12 @@ import {XsButtonComponent} from '../xs-button/xs-button.component';
     IconButtonComponent,
     XsButtonComponent
   ],
+  providers: [
+    {
+      provide: SWIPER_CONFIG,
+      useValue: DEFAULT_SWIPER_CONFIG
+    }
+  ]
 })
 export class SharedModule {
 }

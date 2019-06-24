@@ -17,19 +17,14 @@
     bottom: -40px !important;
   }
 }
-@media all and (max-width: 375px) {
-  div.pass-card-wrapper {
-    width: 100%;
-  }
-}
 
 @media all and (max-width: 320px) {
-  .header-content {
-    width: initial !important;
-  }
-
   mat-divider {
     width: 90% !important;
+  }
+
+  div.pass-card-wrapper {
+    width: 300px;
   }
 }
 
