@@ -26,6 +26,7 @@ export class AppInputComponent implements OnInit {
     @Input() textAlign: string;
     @Input() isErrorIcon: boolean = true;
     @Input() isFocus: boolean;
+    @Input() errorIconTop: number = 8;
     @Input() disabled: boolean = false;
 
     @Input() formGroup;

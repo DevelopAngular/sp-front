@@ -30,7 +30,7 @@ export class StudentSearchComponent implements OnInit {
   @Input() disabled: boolean = false;
   @Input() focused: boolean = false;
   @Input() showOptions: boolean = true;
-  @Input() selectedStudents: User[];
+  @Input() selectedStudents: User[] = [];
   @Input() width: string = '280px';
   @Input() list: boolean = true;
   @Input() listMaxHeight: string = '210px';
