@@ -324,6 +324,12 @@ body {
   }
 }
 
+@media all and (max-width: 320px) {
+  .teacher-pass-card-dialog-container .mat-dialog-container,
+  .student-pass-card-dialog-container .mat-dialog-container {
+    width: 100% !important;
+  }
+}
 
 @media all and (max-width: 475px) {
   .student-pass-card-dialog-container,

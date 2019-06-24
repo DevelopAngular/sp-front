@@ -458,4 +458,8 @@ export class RequestCardComponent implements OnInit {
       this.dialogRef.close();
     });
   }
+
+  get iconClass() {
+   return  this.forStaff || this.invalidDate || !this.forStaff && !this.forInput && !this.invalidDate ? '' : 'icon-button';
+  }
 }
