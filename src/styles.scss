@@ -332,6 +332,12 @@ body {
   }
 }
 
+@media all and (max-width: 475px) {
+  .form-dialog-container {
+    max-width: unset !important;
+  }
+}
+
 // Side nav scroll hiding
 .mat-drawer-inner-container::-webkit-scrollbar {
   width: 0 !important

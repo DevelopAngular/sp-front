@@ -78,7 +78,7 @@ export class SettingsComponent implements OnInit {
           this.data.darkBackground = !this.data.darkBackground;
         }
 
-        if(this.dataSideNav) {
+        if (this.dataSideNav) {
           this.dataSideNav.darkBackground = !this.dataSideNav.darkBackground;
         }
       },

@@ -1,5 +1,38 @@
 @import '../../sp-colors';
 
+@media all and (max-width: 320px) {
+  div.notif-wrapper {
+    width: 256px !important;
+  }
+
+  div.back-button-wrapper {
+    margin-top: 5px !important;
+  }
+}
+
+@media all and (max-width: 1024px) {
+  div.notif-wrapper {
+    width: 335px;
+  }
+
+  img.back-button {
+    display: none;
+  }
+
+  div.back-button-wrapper {
+    display: block;
+    margin-top: 20px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  img.back-button-bottom {
+    width: 28px;
+    height: 28px;
+  }
+}
+
 .notif-wrapper {
   width: 425px;
   height: 500px;
@@ -95,4 +128,8 @@
     }
 
   }
+}
+
+.back-button-wrapper {
+  display: none;
 }
