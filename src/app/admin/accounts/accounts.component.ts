@@ -17,6 +17,7 @@ import {ColumnsConfigDialogComponent} from '../columns-config-dialog/columns-con
 import {TABLE_RELOADING_TRIGGER} from '../accounts-role/accounts-role.component';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {GettingStartedProgressService} from '../getting-started-progress.service';
+import {AddUserDialogComponent} from '../add-user-dialog/add-user-dialog.component';
 
 declare const history: History;
 
@@ -120,6 +121,18 @@ export class AccountsComponent implements OnInit {
           this.dataTableHeaders = updatedHeaders;
           this.dataTableHeadersToDisplay = [];
           this.getUserList();
+      });
+  }
+
+  addUser() {
+      const DR = this.matDialog.open(AddUserDialogComponent,
+          {
+              width: '425px', height: '500px',
+              panelClass: 'accounts-profiles-dialog',
+              backdropClass: 'custom-bd',
+              data: {
+                  role: '_all',
+              }
       });
   }
 

@@ -143,7 +143,9 @@
                   [size]="'medium'"
                   [hoverColor]="'#00B476'"
                   [cursor]="'pointer'"
-                  [leftIcon]="'./assets/Plus (White).svg'">
+                  [leftIcon]="'./assets/Plus (White).svg'"
+                  (buttonClick)="addUser()"
+          >
             Add
           </app-gradient-button>
           <app-gradient-button *ngIf="openTable"

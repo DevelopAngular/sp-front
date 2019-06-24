@@ -56,7 +56,4 @@ export class SearchFilterDialogComponent implements OnInit {
   addStudents() {
     this.dialogRef.close({action: 'students', students: this.selectedStudents});
   }
-
-
-
 }

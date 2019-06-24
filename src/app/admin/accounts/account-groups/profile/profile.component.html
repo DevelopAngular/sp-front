@@ -8,7 +8,7 @@
     <img width="16" height="16" *ngIf="openInfo" [src]="'./assets/Mark (Jade).svg' | resolveAsset" alt="">
     <img width="16" height="16" *ngIf="plusIcon && !openInfo" [src]="'./assets/Plus (Blue-Gray).svg' | resolveAsset" alt="">
   </div>
-  <div class="info" *ngIf="openInfo">
+  <div class="info" *ngIf="openInfo && plusIcon">
     <mat-divider [style.margin]="'9px 0'"></mat-divider>
 
     <div class="items">
