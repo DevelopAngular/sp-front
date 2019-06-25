@@ -72,6 +72,7 @@ mat-sidenav-container,
 mat-sidenav-content {
   z-index: unset;
   background-color: transparent;
+  overflow: hidden;
 }
 
 mat-sidenav {

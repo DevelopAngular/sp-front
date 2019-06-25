@@ -8,8 +8,8 @@
     <div #navButtonsContainer class="nav-buttons" *ngIf="!hideButtons">
 
       <div *ngIf="isStaff && !user.isAssistant()" class="teacherNav">
-        <div *ngFor="let button of buttons" class="teacherNav_tab">
-          <ng-container *ngIf="hasRoles(button.requiredRoles)">
+        <div *ngFor="let button of buttons; let i = index" class="teacherNav_tab">
+          <ng-container *ngIf="buttonVisibility(button)">
             <div
                  #tabRef
                  [style.transition]="'transform .4s ease'"
@@ -21,7 +21,7 @@
                       [selected]="tab === button.route"
                       [content]="button.title"
                       [icon]="button.imgUrl"
-                      (onClick)="selectTab(tabRef, navButtonsContainer); updateTab(button.route)">
+                      (onClick)="updateTab(button.route); selectTab(tabRef, navButtonsContainer)">
               </app-nav-button>
             </div>
           </ng-container>
@@ -96,7 +96,7 @@
   <div *ngIf="isStaff && !isAdminRoute" class="teacherNav-mobile" [style.background-color]="darkTheme.getBackground('low', false)">
     <div class="teacherNav-mobile-wrapper">
       <div *ngFor="let button of buttons" class="teacherNav_tab">
-        <ng-container *ngIf="isStaff">
+        <ng-container *ngIf="isStaff && buttonVisibility(button)">
           <app-nav-button
             [selected]="tab === button.route"
             [content]="button.title"
