@@ -190,7 +190,9 @@ export class GradientButtonComponent implements OnInit {
       if (this.hovered && !this.disabled) {
         return this.sanitizer.bypassSecurityTrustStyle(' 0px 1px 10px rgba(0, 180, 118, 0.2)');
       } else if (this.buttonDown && !this.disabled) {
-        return this.sanitizer.bypassSecurityTrustStyle('0px 1px 10px rgba(0, 180, 118, 0.19758)')
+        return this.sanitizer.bypassSecurityTrustStyle('0px 1px 10px rgba(0, 180, 118, 0.19758)');
+      } else {
+        return this.sanitizer.bypassSecurityTrustStyle('0px 1px 10px rgba(0, 180, 118, 0.1)');
       }
     } else {
       return 'none';

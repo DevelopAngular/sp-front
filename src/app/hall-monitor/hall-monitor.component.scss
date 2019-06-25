@@ -25,6 +25,8 @@
 
   div.hall-monitor-wrapper{
     max-width: 100%;
+    height: calc(100% - 78px);
+    overflow: auto;
   }
 
   div.hall-monitor-bottom {

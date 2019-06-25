@@ -239,7 +239,7 @@ export class StudentSearchComponent implements OnInit {
   }
   selectSchool(school) {
     this.selectedSchool = school;
-    this.onUpdate.emit(school.place_id);
+    this.onUpdate.emit(school);
     this.schools = null;
   }
   onBlur(event) {

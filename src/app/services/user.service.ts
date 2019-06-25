@@ -134,7 +134,7 @@ export class UserService {
             switchMap((currentSchool: School) => {
               return this.http.get(constructUrl(`v1/schools/${currentSchool.id}/gsuite_users`, {
                 search: search,
-                profile: excludeProfile
+                // profile: excludeProfile
               }));
             })
           );

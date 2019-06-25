@@ -1,14 +1,14 @@
 import {
-    Component,
-    OnInit,
-    Input,
-    Output,
-    EventEmitter,
-    AfterViewInit,
-    ViewChild,
-    ElementRef,
-    AfterContentInit,
-    AfterViewChecked
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  AfterViewInit,
+  ViewChild,
+  ElementRef,
+  AfterContentInit,
+  AfterViewChecked, OnChanges
 } from '@angular/core';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 
@@ -17,7 +17,7 @@ import {DarkThemeSwitch} from '../dark-theme-switch';
   templateUrl: './nav-button.component.html',
   styleUrls: ['./nav-button.component.scss']
 })
-export class NavButtonComponent implements OnInit, AfterViewInit {
+export class NavButtonComponent implements OnInit, AfterViewInit, OnChanges {
 
   @Input() icon: string;
   @Input() content: string;
@@ -40,6 +40,13 @@ export class NavButtonComponent implements OnInit, AfterViewInit {
       // if (this.selected) {
       //     this.doClick();
       // }
+  }
+  ngOnChanges() {
+    if (this.selected) {
+      setTimeout(() => {
+        this.doClick();
+      }, 500);
+    }
   }
 
 
