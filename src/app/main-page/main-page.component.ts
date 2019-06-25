@@ -1,4 +1,4 @@
-import {Component, HostListener, NgZone, OnInit} from '@angular/core';
+import {AfterViewInit, Component, HostListener, NgZone, OnInit} from '@angular/core';
 import {UserService} from '../services/user.service';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {map, switchMap} from 'rxjs/operators';
@@ -15,13 +15,15 @@ import {DarkThemeSwitch} from '../dark-theme-switch';
 import {InboxInvitationProvider, InboxRequestProvider} from '../passes/passes.component';
 import {NavigationEnd, Router} from '@angular/router';
 
+declare const window;
+
 @Component({
   selector: 'app-main-page',
   templateUrl: './main-page.component.html',
   styleUrls: ['./main-page.component.scss']
 })
 
-export class MainPageComponent implements OnInit {
+export class MainPageComponent implements OnInit, AfterViewInit {
 
   constructor(
     public userService: UserService,
@@ -103,6 +105,9 @@ export class MainPageComponent implements OnInit {
     this.router.events.subscribe( event => {
         if ( event instanceof NavigationEnd) this.navbarHeight = this.currentNavbarHeight;
     });
+  }
+  ngAfterViewInit(): void {
+    window.appLoaded(1000);
   }
 
   get showInbox() {

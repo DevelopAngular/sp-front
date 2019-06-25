@@ -8,7 +8,7 @@ import {UserService} from '../../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
 import {School} from '../../models/School';
-import {filter, switchMap, tap} from 'rxjs/operators';
+import { switchMap, tap} from 'rxjs/operators';
 
 import * as _ from 'lodash';
 
@@ -37,10 +37,10 @@ export class AddUserDialogComponent implements OnInit {
   public state: string;
 
   public accounts = [
-      { title: 'Admins', selected: false, role: '_profile_admin' },
-      { title: 'Teachers', selected: false, role: '_profile_teacher' },
-      { title: 'Assistants', selected: false, role: '_profile_assistant' },
-      { title: 'Students', selected: false, role: '_profile_student' }
+      { title: 'Admins', selected: false, role: '_profile_admin', disabled: false},
+      { title: 'Teachers', selected: false, role: '_profile_teacher', disabled: false },
+      { title: 'Assistants', selected: false, role: '_profile_assistant', disabled: false },
+      { title: 'Students', selected: false, role: '_profile_student', disabled: false }
   ];
 
   constructor(
@@ -52,10 +52,10 @@ export class AddUserDialogComponent implements OnInit {
     private http: HttpService
 
   ) {
-    if (this.data.role === '_profile_assistant') {
+    if (this.data.role === '_profile_assistant' || this.data.role === '_all') {
       this.assistantLike = {
         user: null,
-        behalfOf: null
+        behalfOf: []
       };
     }
     this.school = this.http.currentSchoolSubject.value;
@@ -66,13 +66,23 @@ export class AddUserDialogComponent implements OnInit {
   }
 
   get showNextButton() {
-    return (this.data.role === '_profile_assistant' && ((this.assistantLike.user || this.newAlternativeAccount.valid) && !this.assistantLike.behalfOf)) ||
-        (this.data.role === '_all' && this.newAlternativeAccount.valid && !this.selectedRoles.length);
+    if (this.typeChoosen === this.accountTypes[0] && !this.state) {
+        return (this.data.role === '_profile_assistant' && ((this.assistantLike.user || this.newAlternativeAccount.valid))) ||
+            (this.data.role === '_all' && (this.newAlternativeAccount.valid || this.selectedUsers.length));
+    } else if (this.data.role === '_profile_assistant' && this.typeChoosen === this.accountTypes[1] && !this.state) {
+      return this.newAlternativeAccount.valid;
+    } else if (this.data.role === '_all' && !this.state) {
+      return this.newAlternativeAccount.valid;
+    } else {
+      return false;
+    }
   }
 
   ngOnInit() {
     this.newAlternativeAccount = new FormGroup({
-      name: new FormControl('', [Validators.required]),
+      name: new FormControl('', [
+          Validators.required,
+      ]),
       username: new FormControl('', [Validators.required]),
       password: new FormControl('', [Validators.required]),
     });
@@ -100,15 +110,49 @@ export class AddUserDialogComponent implements OnInit {
       return this.sanitizer.bypassSecurityTrustStyle('#555558');
     }
   }
+
   showSaveButton() {
     if (this.typeChoosen === this.accountTypes[0]) {
-      if (this.data.role !== '_profile_assistant') {
-        return this.selectedUsers && this.selectedUsers.length;
+      if (this.data.role === '_profile_assistant' && this.state) {
+          return this.assistantLike.user && this.assistantLike.behalfOf.length;
+      } else if (this.data.role === '_all' && this.state) {
+        if (this.selectedRoles.length && this.selectedRoles.find(acc => acc.role === '_profile_assistant')) {
+          return this.assistantLike.behalfOf.length;
+        } else {
+            return this.selectedUsers && this.selectedUsers.length && this.selectedRoles.length;
+        }
       } else {
-        return this.assistantLike.user;
+          return this.selectedUsers && this.selectedUsers.length;
       }
     } else if (this.typeChoosen === this.accountTypes[1]) {
-      return this.newAlternativeAccount.valid;
+      if (this.data.role !== '_profile_assistant' && this.data.role !== '_all') {
+          return this.newAlternativeAccount.valid;
+      } else {
+        if (this.data.role !== '_all') {
+            return this.newAlternativeAccount.valid && this.assistantLike.behalfOf.length;
+        } else {
+          if (this.selectedRoles.length && this.selectedRoles.find(acc => acc.role === '_profile_assistant')) {
+            return this.assistantLike.behalfOf.length;
+          } else {
+              return this.selectedRoles.length;
+          }
+        }
+      }
+    }
+  }
+
+  isDisabled(role) {
+    if ((role === '_profile_assistant' || role === '_profile_student') &&
+        this.selectedRoles.find(account => account.role === '_profile_admin' || account.role === '_profile_teacher')) {
+      return true;
+    } else if ((role === '_profile_admin' || role === '_profile_teacher' || role === '_profile_student') &&
+        this.selectedRoles.find(account => account.role === '_profile_assistant')) {
+      return true;
+    } else if ((role === '_profile_admin' || role === '_profile_teacher' || role === '_profile_assistant') &&
+        this.selectedRoles.find(account => account.role === '_profile_student')) {
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -141,12 +185,31 @@ export class AddUserDialogComponent implements OnInit {
   addUser() {
     let role: any = this.data.role.split('_');
     role = role[role.length - 1];
-    console.log('======>>>>>', role, this.selectedUsers, this.assistantLike);
 
-    if (role === 'assistant') {
-          this.userService
-              .addAccountToSchool(this.school.id, this.assistantLike.user, this.typeChoosen, [role])
-              .pipe(
+    const selectedRoles = this.selectedRoles.map(acc => {
+      const oneRole = acc.role.split('_');
+      return oneRole[oneRole.length - 1];
+    });
+
+    const rolesToDb = role === 'all' ? selectedRoles : [role];
+    if (this.typeChoosen === this.accountTypes[0]) {
+        zip(
+            ...this.selectedUsers.map((user) => this.userService.addAccountToSchool(this.school.id, user, 'gsuite', rolesToDb))
+        )
+            .subscribe((res) => {
+                this.dialogRef.close(true);
+            });
+
+    } else if (this.typeChoosen === this.accountTypes[1]) {
+      const regexpUsername = new RegExp('^[a-zA-Z0-9_-]{6}[a-zA-Z0-9_-]*$', 'i');
+      const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
+      if (regexpUsername.test(this.newAlternativeAccount.get('username').value)) {
+        if (role !== 'assistant') {
+            this.userService.addAccountToSchool(this.school.id, this.newAlternativeAccount.value, 'username', rolesToDb)
+                .subscribe(res => console.log('NewUser ===>>>>>', res));
+        } else {
+            this.userService.addAccountToSchool(this.school.id, this.newAlternativeAccount.value, 'username', rolesToDb)
+                .pipe(
                   switchMap(
                       (assistant: User) => {
                           console.log(assistant);
@@ -158,19 +221,44 @@ export class AddUserDialogComponent implements OnInit {
                           );
                       }
                   ),
-              )
-              .subscribe((res) => {
-                  this.dialogRef.close(true);
-              });
-    } else {
-      zip(
-        ...this.selectedUsers.map((user) => this.userService.addAccountToSchool(this.school.id, user, this.typeChoosen, [role]))
-      )
-      .subscribe((res) => {
-        this.dialogRef.close(true);
-      });
-    }
+              ).subscribe(res => this.dialogRef.close(true));
+        }
+      } else {
+          if (regexpEmail.test(this.newAlternativeAccount.get('username').value)) {
+              const data = this.buildUserDataToDB(this.newAlternativeAccount.value);
+              if (role !== 'assistant') {
+                  this.userService.addAccountToSchool(this.school.id, data, 'email', rolesToDb)
+                      .subscribe(res => console.log('Yesssss', res));
+              } else {
+                  this.userService.addAccountToSchool(this.school.id, data, 'email', rolesToDb)
+                      .pipe(
+                          switchMap(
+                              (assistant: User) => {
+                                  console.log(assistant);
+                                  return zip(
+                                      ...this.assistantLike.behalfOf.map((teacher: User) => {
 
+                                          return this.userService.addRepresentedUser(+assistant.id, teacher).pipe(tap(console.log));
+                                      })
+                                  );
+                              }
+                          ),
+                      ).subscribe(res => this.dialogRef.close(true));
+              }
+          } else {
+          }
+      }
+    }
+  }
+
+  buildUserDataToDB(control) {
+    return {
+      email: control.username,
+      password: control.password,
+      first_name: control.name.split(' ')[0],
+      last_name: control.name.split(' ')[1],
+      display_name: control.name
+    }
   }
 
   setSelectedUsers(evt) {

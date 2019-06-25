@@ -132,10 +132,16 @@ export class UserService {
           return this.http.currentSchool$.pipe(
             take(1),
             switchMap((currentSchool: School) => {
-              return this.http.get(constructUrl(`v1/schools/${currentSchool.id}/gsuite_users`, {
-                search: search,
-                profile: excludeProfile
-              }));
+              if (excludeProfile) {
+                  return this.http.get(constructUrl(`v1/schools/${currentSchool.id}/gsuite_users`, {
+                      search: search,
+                      profile: excludeProfile
+                  }));
+              } else {
+                  return this.http.get(constructUrl(`v1/schools/${currentSchool.id}/gsuite_users`, {
+                      search: search
+                  }));
+              }
             })
           );
       }
@@ -152,13 +158,23 @@ export class UserService {
         email: user.email,
         profiles: roles
       });
-    } else {
-
+    } else if (userType === 'email') {
       return this.http.post(`v1/schools/${id}/add_user`, {
         type:  'email',
         email: user.email,
+        password: user.password,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        display_name: user.display_name,
         profiles: roles
       });
+    } else if (userType === 'username') {
+        return this.http.post(`v1/schools/${id}/add_user`, {
+            type:  'username',
+            username: user.username,
+            password: user.password,
+            profiles: roles
+        });
     }
   }
   addUserToProfile(id, role) {

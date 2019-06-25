@@ -41,8 +41,9 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     buttonMenuOpen: boolean;
     bulkSelect: boolean;
 
-    // Needs for OverlayContainer opening if an admin comes from teachers profile card on Accounts&Profiles tab
+    // // Needs for OverlayContainer opening if an admin comes from teachers profile card on Accounts&Profiles tab
     private forceSelectedLocation: Location;
+
 
     showRooms: boolean;
     onboardLoaded: boolean;
@@ -76,10 +77,15 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.adminService.getOnboardProgress().subscribe((onboard: any[]) => {
+      if (onboard && onboard.length) {
         console.log('Onboard ==>>>>', onboard);
         const end = onboard.find(item => item.name === 'setup_rooms:end');
+        // const end = onboard.find(item => item.name === 'setup_rooms:start');
         this.showRooms = end.done;
-        this.onboardLoaded = true;
+      } else {
+        this.showRooms = true;
+      }
+      this.onboardLoaded = true;
     });
     this.pinnables$ = this.hallPassService.getPinnables();
     this.pinnables$.subscribe(res => this.pinnables = res);
