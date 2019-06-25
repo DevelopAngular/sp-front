@@ -181,7 +181,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       switchMap(() => {
         return this.route.queryParams.pipe(takeUntil(this.destroy$));
       }),
-      tap(() => this.router.navigate(['admin/accounts', this.role])),
+      // tap(() => this.router.navigate(['admin/accounts', this.role])),
       filter(() => this.role !== 'g_suite'),
     )
     .subscribe((qp) => {

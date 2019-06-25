@@ -128,7 +128,9 @@ export class StudentSearchComponent implements OnInit {
     if (this.chipsMode) {
       this.inputField = false;
     }
-    // this.input.nativeElement.focus();
+
+      console.log('ROLEE ==>>', this.role);
+      // this.input.nativeElement.focus();
     // if (this.selectedStudents.length) {
     //   setTimeout(() => {
     //     this.focused = true;
@@ -182,7 +184,13 @@ export class StudentSearchComponent implements OnInit {
                 });
             } else if (this.type === 'gsuite') {
               this.pending$.next(true);
-              this.students = this.userService.searchProfileAll(search, this.type, this.role.split('_')[this.role.split('_').length - 1])
+              let request$;
+              if (this.role !== '_all') {
+                request$ = this.userService.searchProfileAll(search, this.type, this.role.split('_')[this.role.split('_').length - 1]);
+              } else {
+                  request$ = this.userService.searchProfileAll(search, this.type);
+              }
+              this.students = request$
                 .toPromise().then((users: User[]) => {
                   this.pending$.next(false);
                   this.showDummy = !users.length;

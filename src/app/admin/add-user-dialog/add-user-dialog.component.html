@@ -14,7 +14,7 @@
       <span>Add User</span>
     </div>
     <div class="save-button">
-      <app-gradient-button *ngIf="showSaveButton() && !showNextButton"
+      <app-gradient-button *ngIf="showSaveButton()"
         [size]="'small'"
         [gradient]="'#FFFFFF,#FFFFFF'"
         [hoverColor]="'#FCFDFF'"
@@ -66,68 +66,68 @@
       </div>
     </div>
 
-    <div *ngIf="false">
-      <div class="content_rest" *ngIf="typeChoosen === accountTypes[0]">
+    <!--<div *ngIf="false">-->
+      <!--<div class="content_rest" *ngIf="typeChoosen === accountTypes[0]">-->
 
-        <div class="secretary-user ds-w-100">
-          <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.user, 'ds-dialog-heading-gray': !assistantLike.user}">Assistant</div>
-          <div class="profile-search" *ngIf="!assistantLike.user; else secretaryUser" >
-            <app-student-search
-              [placeholder]="'Search G Suite accounts'"
-              [dummyRoleText]="'users'"
-              [type]="'gsuite'"
-              [role]="data.role"
-              (onUpdate)="setSecretary($event, null)"
-            ></app-student-search>
-          </div>
-          <ng-template #secretaryUser>
-            <div class="ds-flex-center-between">
-              <div #chip class="user"
-                   (mouseenter)="chip.hovered = true;"
-                   (mouseleave)="chip.hovered = false;">
+        <!--<div class="secretary-user ds-w-100">-->
+          <!--<div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.user, 'ds-dialog-heading-gray': !assistantLike.user}">Assistant</div>-->
+          <!--<div class="profile-search" *ngIf="!assistantLike.user; else secretaryUser" >-->
+            <!--<app-student-search-->
+              <!--[placeholder]="'Search G Suite accounts'"-->
+              <!--[dummyRoleText]="'users'"-->
+              <!--[type]="'gsuite'"-->
+              <!--[role]="data.role"-->
+              <!--(onUpdate)="setSecretary($event, null)"-->
+            <!--&gt;</app-student-search>-->
+          <!--</div>-->
+          <!--<ng-template #secretaryUser>-->
+            <!--<div class="ds-flex-center-between">-->
+              <!--<div #chip class="user"-->
+                   <!--(mouseenter)="chip.hovered = true;"-->
+                   <!--(mouseleave)="chip.hovered = false;">-->
 
-                <span>{{assistantLike.user.display_name}}</span>
-                <div style="width: 15px; height: 15px; cursor: pointer; margin-left: 10px;">
+                <!--<span>{{assistantLike.user.display_name}}</span>-->
+                <!--<div style="width: 15px; height: 15px; cursor: pointer; margin-left: 10px;">-->
 
-                  <img *ngIf="chip.hovered"
-                       (click)="assistantLike.user = null"
-                       [src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
-                </div>
-              </div>
-            </div>
-          </ng-template>
-        </div>
-        <div class="active-on-user ds-w-100">
-          <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.behalfOf, 'ds-dialog-heading-gray': !assistantLike.behalfOf}">Act on Behalf Of</div>
-          <div class="profile-search"  >
-            <app-student-search
-              [chipsMode]="true"
-              [placeholder]="'Search existing teachers'"
-              [dummyRoleText]="'teachers'"
-              [type]="'alternative'"
-              [role]="'_profile_teacher'"
-              (onUpdate)="setSecretary(null, $event)"
-            ></app-student-search>
-          </div>
-          <ng-template #secretaryBehalfOf>
-            <div class="ds-flex-center-between">
+                  <!--<img *ngIf="chip.hovered"-->
+                       <!--(click)="assistantLike.user = null"-->
+                       <!--[src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">-->
+                <!--</div>-->
+              <!--</div>-->
+            <!--</div>-->
+          <!--</ng-template>-->
+        <!--</div>-->
+        <!--<div class="active-on-user ds-w-100">-->
+          <!--<div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.behalfOf, 'ds-dialog-heading-gray': !assistantLike.behalfOf}">Act on Behalf Of</div>-->
+          <!--<div class="profile-search"  >-->
+            <!--<app-student-search-->
+              <!--[chipsMode]="true"-->
+              <!--[placeholder]="'Search existing teachers'"-->
+              <!--[dummyRoleText]="'teachers'"-->
+              <!--[type]="'alternative'"-->
+              <!--[role]="'_profile_teacher'"-->
+              <!--(onUpdate)="setSecretary(null, $event)"-->
+            <!--&gt;</app-student-search>-->
+          <!--</div>-->
+          <!--<ng-template #secretaryBehalfOf>-->
+            <!--<div class="ds-flex-center-between">-->
 
-              <div #chip class="user"
-                   (mouseenter)="chip.hovered = true;"
-                   (mouseleave)="chip.hovered = false;">
-                <span>{{assistantLike.behalfOf.display_name}}</span>
-                <div style="width: 15px; height: 15px; cursor: pointer; margin-left: 10px;">
+              <!--<div #chip class="user"-->
+                   <!--(mouseenter)="chip.hovered = true;"-->
+                   <!--(mouseleave)="chip.hovered = false;">-->
+                <!--<span>{{assistantLike.behalfOf.display_name}}</span>-->
+                <!--<div style="width: 15px; height: 15px; cursor: pointer; margin-left: 10px;">-->
 
-                  <img *ngIf="chip.hovered"
-                       (click)="assistantLike.behalfOf = null"
-                       [src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
-                </div>
-              </div>
-            </div>
-          </ng-template>
-        </div>
-      </div>
-    </div>
+                  <!--<img *ngIf="chip.hovered"-->
+                       <!--(click)="assistantLike.behalfOf = null"-->
+                       <!--[src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">-->
+                <!--</div>-->
+              <!--</div>-->
+            <!--</div>-->
+          <!--</ng-template>-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</div>-->
 
     <div>
 
@@ -288,11 +288,12 @@
   <div class="assistant-content" *ngIf="state === 'assistant'">
     <div class="info">As an assistant, choose from existing teacher(s) so this user can act on behalf of the specified accounts.</div>
     <div class="active-on-user ds-w-100" *ngIf="data.role === '_profile_assistant'">
-      <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.behalfOf, 'ds-dialog-heading-gray': !assistantLike.behalfOf}">Active on Behalf Of</div>
+      <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.behalfOf.length, 'ds-dialog-heading-gray': !assistantLike.behalfOf.length}">Active on Behalf Of</div>
       <div class="profile-search">
         <app-student-search
                 [placeholder]="'Search existing teachers'"
                 [dummyRoleText]="'teachers'"
+                [selectedStudents]="assistantLike.behalfOf"
                 [type]="'alternative'"
                 [role]="'_profile_teacher'"
                 (onUpdate)="setSecretary(null, $event)"
@@ -309,8 +310,26 @@
                 [title]="account.title"
                 [width]="178"
                 [plusIcon]="false"
+                [isSelected]="account.selected"
+                [disabled]="isDisabled(account.role)"
                 (select)="account.selected = $event"
         ></app-profile>
+      </div>
+    </div>
+
+    <div class="inp" *ngIf="accounts[2].selected">
+      <div class="active-on-user ds-w-100">
+        <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.behalfOf.length, 'ds-dialog-heading-gray': !assistantLike.behalfOf.length}">Active on Behalf Of</div>
+        <div class="profile-search">
+          <app-student-search
+                  [placeholder]="'Search existing teachers'"
+                  [dummyRoleText]="'teachers'"
+                  [selectedStudents]="assistantLike.behalfOf"
+                  [type]="'alternative'"
+                  [role]="'_profile_teacher'"
+                  (onUpdate)="setSecretary(null, $event)"
+          ></app-student-search>
+        </div>
       </div>
     </div>
   </div>

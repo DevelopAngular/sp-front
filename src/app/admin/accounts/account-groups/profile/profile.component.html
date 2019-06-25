@@ -1,4 +1,5 @@
 <div class="wrapper" [style.width]="width - 30 + 'px'" (click)="selected()">
+  <div class="disabled-content" *ngIf="disabled"></div>
   <div class="content">
     <div class="title">
       <img width="28" height="28" [src]="'./assets/Admin (' + (openInfo ? 'Navy' : 'Blue-Gray') + ').svg' | resolveAsset" alt="">
