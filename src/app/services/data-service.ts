@@ -89,7 +89,7 @@ export class DataService {
       let test = this.storage.getItem('showInbox');
           test = JSON.parse(test);
       if (typeof test === 'boolean') {
-          this.inboxSource = new BehaviorSubject<boolean>(test);
+          this.inboxSource = new BehaviorSubject<boolean>(true);
       } else {
           this.inboxSource = new BehaviorSubject<boolean>(true);
       }
