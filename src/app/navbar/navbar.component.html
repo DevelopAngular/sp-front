@@ -1,7 +1,7 @@
 <div class="host" [style.position]="isStaff ? 'fixed' : 'static'" [style.top]="schools.length > 1 ? '50px' : 0">
   <!--<div *ngIf="!(isProcess$ | async).active" class="static-loading" #staticLoading><div class="static-loading"></div></div>-->
   <!--<ng-progress [color]="'#04CD33'" [spinner]="false" [fixed]="true" [speed]="200" [thick]="true"></ng-progress>-->
-  <div *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth" class="bar">
+  <div [style.box-shadow]="isStaff ? '2px 0 6px rgba(0, 0, 0, 0.07)' : 'none'" *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth" class="bar">
     <div class="heading grow">
       <app-smartpass-logo></app-smartpass-logo>
     </div>
