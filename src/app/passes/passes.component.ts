@@ -316,7 +316,7 @@ export class PassesComponent implements OnInit {
           this.currentRequest$.next((passLike instanceof Request) ? passLike : null);
         });
       });
-    window.appLoaded();
+    // window.appLoaded();
   }
 
   ngOnInit() {

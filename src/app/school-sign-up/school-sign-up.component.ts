@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, EventEmitter, NgZone, OnInit, Output} from '@angular/core';
 import {constructUrl, QueryParams} from '../live-data/helpers';
-import {catchError, map, switchMap, tap} from 'rxjs/operators';
+import {catchError, delay, map, switchMap, tap} from 'rxjs/operators';
 import {from, Observable, of, throwError} from 'rxjs';
 import {LoginMethod} from '../google-signin/google-signin.component';
 import {GoogleAuthService} from '../services/google-auth.service';
@@ -26,6 +26,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
   private AuthToken: string;
   private jwt: JwtHelperService;
   public showError = { loggedWith: null, error: null };
+  public school: any;
 
   constructor(
     private googleAuth: GoogleAuthService,
@@ -64,83 +65,81 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
       });
 
   }
+  createSchool() {
+        return from(this.initLogin())
+          .pipe(
+            tap(p => console.log(p)),
+            switchMap((auth: any) => {
+              console.log(auth);
 
-  checkSchool(placeId: string) {
-    this.http.get(constructUrl('https://smartpass.app/api/staging/onboard/schools/check_school', {place_id: placeId}), {
+              const hd = this.jwt.decodeToken(auth.id_token)['hd'];
+
+              // debugger
+
+              if (!hd || hd === 'gmail.com') {
+                // this.loginState = 'profile';
+                this.loginService.showLoginError$.next(false);
+                this.showError.loggedWith = LoginMethod.OAuth;
+                this.showError.error = true;
+                return of(false);
+              } else {
+
+                return this.http.post('https://smartpass.app/api/staging/onboard/schools', {
+                  user_token: auth.id_token,
+                  google_place_id: this.school.place_id
+                }, {
+                  headers: {
+                    'Authorization': 'Bearer ' + this.AuthToken // it's temporary
+                  }
+                }).pipe(
+                  map((res: any) => {
+                    this._zone.run(() => {
+                      console.log(res);
+                      this.loginService.updateAuth(auth);
+                      this.storage.setItem('last_school_id', res.school.id);
+                    });
+                    return true;
+                  }),
+                );
+
+              }
+            }),
+            delay(1000),
+            switchMap(() => {
+              return this.loginService.isAuthenticated$;
+            }),
+            catchError((err) => {
+              console.log('Error occured =====>', err);
+
+              if (err && err.error !== 'popup_closed_by_user') {
+                console.log('Erro should be shown ====>')
+                this.loginService.showLoginError$.next(true);
+              }
+              return throwError(err);
+
+            })
+          ).subscribe((res) => {
+            if (res) {
+              this._zone.run(() => {
+                this.router.navigate(['admin', 'gettingstarted']);
+              });
+            }
+          });
+  }
+
+  checkSchool(school: any) {
+    // debugger
+    this.http.get(constructUrl('https://smartpass.app/api/staging/onboard/schools/check_school', {place_id: school.place_id}), {
       headers: {
         'Authorization': 'Bearer ' + this.AuthToken // it's temporary
       }})
-      .pipe(
-        switchMap((onboard: any): Observable<any> => {
-          if (!onboard.school_registered) {
-            return from(this.initLogin())
-              .pipe(
-                tap(p => console.log(p)),
-                switchMap((auth: any) => {
-                  console.log(auth);
+      .subscribe((onboard: any) => {
 
-                  const hd = this.jwt.decodeToken(auth.id_token)['hd'];
-
-                  // debugger
-
-                  if (!hd || hd === 'gmail.com') {
-                    // this.loginState = 'profile';
-                    this.loginService.showLoginError$.next(false);
-                    this.showError.loggedWith = LoginMethod.OAuth;
-                    this.showError.error = true;
-                    return of(false);
-                  } else {
-
-                    return this.http.post('https://smartpass.app/api/staging/onboard/schools', {
-                      user_token: auth.id_token,
-                      google_place_id: placeId
-                    }, {
-                      headers: {
-                        'Authorization': 'Bearer ' + this.AuthToken // it's temporary
-                      }
-                    }).pipe(
-                      map((res: any) => {
-                        this._zone.run(() => {
-                          console.log(res);
-                          this.loginService.updateAuth(auth);
-                          this.storage.setItem('last_school_id', res.school.id);
-                        });
-                        return true;
-                      })
-                    );
-
-                  }
-                }),
-                catchError((err) => {
-                  console.log('Error occured =====>', err);
-
-                  if (err && err.error !== 'popup_closed_by_user') {
-                    console.log('Erro should be shown ====>')
-                    this.loginService.showLoginError$.next(true);
-                  }
-                  return throwError(err);
-
-                })
-              );
-          } else {
-            // this.loginState = 'profile';
-
-            return of(false);
-          }
-        })
-      )
-      .subscribe((res) => {
-        console.log(res);
-        // this.schoolCreatedEvent.emit(res);
-        // onSchoolCreated(evt: boolean) {
-        //   this.schoolSignUp = false;
-          if (res) {
-            // window.waitForAppLoaded();
-            this.router.navigate(['admin', 'gettingstarted']);
-          } else {
+          if (onboard.school_registered) {
             this.router.navigate(['']);
+          } else {
+            this.school = school;
           }
-        // }
       });
   }
   onClose(evt) {
