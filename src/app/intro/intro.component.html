@@ -2,7 +2,8 @@
 
   <div *ngIf="!usedAsEntryComponent" class="navbar" [style.border-bottom]="isStaff ? '1px solid  #7F879D' : 'unset'">
     <div class="logo ds-flex-center-center">
-      <app-smartpass-logo></app-smartpass-logo>
+      <img width="225" [src]="'./assets/intro/Logo Green.png' | resolveAsset">
+      <!--<app-smartpass-logo [introLogo]="true"></app-smartpass-logo>-->
     </div>
     <div *ngIf="isStaff" class="navbar-tabs">
       <div class="tab"><img width="25" height="25" style="margin-right: 5px;" [src]="'./assets/SP Arrow (Navy).svg'" alt="SP Arrow (Navy).svg"><span>Passes</span></div>
@@ -42,7 +43,8 @@
         <div class="slide slide_5">
 
           <div class="logo ds-flex-center-center">
-            <app-smartpass-logo [scale]="1.25"></app-smartpass-logo>
+            <img width="225" [src]="'./assets/intro/Logo Green.png' | resolveAsset">
+            <!--<app-smartpass-logo [introLogo]="true" [scale]="1.25"></app-smartpass-logo>-->
           </div>
           <div class="end">
             <span>You're all set!</span>
@@ -311,7 +313,8 @@
         <div class="slide slide_1">
 
           <div class="logo">
-            <app-smartpass-logo [scale]="1.25"></app-smartpass-logo>
+            <img width="225" [src]="'./assets/intro/Logo Green.png' | resolveAsset">
+            <!--<app-smartpass-logo [introLogo]="true" [scale]="1.25"></app-smartpass-logo>-->
           </div>
           <div class="greeting">
             <div>

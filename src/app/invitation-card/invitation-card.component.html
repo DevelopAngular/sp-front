@@ -11,7 +11,8 @@
           </div>
         </div>
       </div>
-      <img class="pass-card-header-close" (click)="denyInvitation($event)" [src]="'./assets/' +(forStaff && !invalidDate ? (forInput?'Back Button': 'Delete') :'Dots') +' (Transparent).svg' | resolveAsset">
+      <app-icon-button [srcString]="'./assets/' +(forStaff && !invalidDate ? (forInput?'Back Button': 'Delete') :'Dots') +' (Transparent).svg'" [size]="20" [onDarkShade]="true" (clickEvent)="denyInvitation($event)"></app-icon-button>
+      <!--<img class="pass-card-header-close" (click)="denyInvitation($event)" [src]="'./assets/' +(forStaff && !invalidDate ? (forInput?'Back Button': 'Delete') :'Dots') +' (Transparent).svg' | resolveAsset">-->
     </div>
     <mat-divider></mat-divider>
   </div>
