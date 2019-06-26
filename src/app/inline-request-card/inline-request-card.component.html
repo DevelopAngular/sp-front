@@ -12,7 +12,8 @@
                     </div>
                 </div>
             </div>
-<!--            <img class="pass-card-header-close" (click)="cancelRequest($event)" [src]="'./assets/Delete (Transparent).svg' | resolveAsset">-->
+            <app-icon-button [size]="20" [onDarkShade]="true" [srcString]="'./assets/Delete (Transparent).svg'" (clickEvent)="cancelRequest($event)"></app-icon-button>
+            <!--<img class="pass-card-header-close" (click)="cancelRequest($event)" [src]="'./assets/Delete (Transparent).svg' | resolveAsset">-->
         </div>
         <mat-divider></mat-divider>
     </div>

@@ -157,7 +157,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
       this.forFuture = this.data['forFuture'];
       this.fromPast = this.data['fromPast'];
       this.forStaff = this.data['forStaff'];
-      debugger;
       this.selectedStudents = this.data['selectedStudents'];
       this.forMonitor = this.data['forMonitor'];
       this.fromHistory = this.data['fromHistory'];
