@@ -27,8 +27,8 @@ export class SignOutComponent implements AfterContentInit {
       // debugger
       // this.router.navigate(['']);
 
-      window.location.href = '/';
-      // location.href = environment.production ? '/app' : '/';
+      // window.location.href = '/';
+      window.location.href = environment.production ? '/app' : '/';
     }, 500);
   }
 

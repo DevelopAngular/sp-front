@@ -170,8 +170,8 @@ export class LocationsGroupContainerComponent implements OnInit {
         const restricted = ((this.pinnable.location.restricted && !this.showDate) || (this.pinnable.location.scheduling_restricted && !!this.showDate));
         if (!this.isStaff && restricted && pinnable.location) {
             this.FORM_STATE.previousState = this.FORM_STATE.state;
-            // return this.FORM_STATE.state = States.restrictedTarget;
-            return this.FORM_STATE.state = this.redirectTo;
+            return this.FORM_STATE.state = States.restrictedTarget;
+            // return this.FORM_STATE.state = this.redirectTo;
         } else {
            return this.postComposetData();
         }
