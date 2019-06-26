@@ -99,6 +99,13 @@
           <div class="page-2">
             <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{studentName + ' - ' + formatDateTime(invitation.last_updated)}}</span>
           </div>
+
+          <div class="page-5">
+            <span class="bold">Pass Request Sent</span><span class="smaller"><br>by {{issuerName + ' - ' + formatDateTime(invitation.created)}}</span>
+          </div>
+          <div class="page-6">
+            <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{studentName + ' - ' + formatDateTime(invitation.last_updated)}}</span>
+          </div>
         </app-pager>
         <ng-template #pending>
           <div>
