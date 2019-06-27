@@ -152,7 +152,7 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
         for ( const control in this.form.controls) {
           this.form.controls[control].setValue(null);
         }
-        this.back(group);
+        this.back(null);
       });
   }
   back(updatedGroup: StudentList) {
@@ -164,8 +164,8 @@ export class GroupsStep3Component implements OnInit, AfterViewInit {
       state: 1,
       fromState: 3,
       data: {
-        selectedGroup: updatedGroup,
-        selectedStudents: updatedGroup.users
+        selectedGroup: updatedGroup ? updatedGroup : null,
+        selectedStudents: updatedGroup ? updatedGroup.users : []
       }
     });
   }

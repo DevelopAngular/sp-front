@@ -12,6 +12,7 @@ import {UserService} from '../services/user.service';
 import {StorageService} from '../services/storage.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DomSanitizer} from '@angular/platform-browser';
+import {GettingStartedProgressService} from '../admin/getting-started-progress.service';
 
 declare const window;
 
@@ -39,6 +40,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private _zone: NgZone,
+    private gsProgress: GettingStartedProgressService
   ) {
     this.jwt = new JwtHelperService();
   }
@@ -84,6 +86,8 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
                 return of(false);
               } else {
 
+                this.gsProgress.updateProgress('create_school:start');
+
                 return this.http.post('https://smartpass.app/api/staging/onboard/schools', {
                   user_token: auth.id_token,
                   google_place_id: this.school.place_id
@@ -92,6 +96,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
                     'Authorization': 'Bearer ' + this.AuthToken // it's temporary
                   }
                 }).pipe(
+                  tap(() => this.gsProgress.updateProgress('create_school:end')),
                   map((res: any) => {
                     this._zone.run(() => {
                       console.log(res);
@@ -138,6 +143,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
           if (onboard.school_registered) {
             this.router.navigate(['']);
           } else {
+
             this.school = school;
           }
       });

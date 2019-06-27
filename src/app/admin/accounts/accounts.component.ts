@@ -2,7 +2,7 @@ import {Component, ElementRef, OnInit} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { HttpService } from '../../services/http-service';
 import { UserService } from '../../services/user.service';
-import {BehaviorSubject, Observable, of, zip} from 'rxjs';
+import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
 import {map, mapTo, switchMap} from 'rxjs/operators';
 import { AdminService } from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
@@ -52,6 +52,8 @@ export class AccountsComponent implements OnInit {
   dataTableHeaders;
   dataTableHeadersToDisplay: any[] = [];
   public dataTableEditState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public pending$: Subject<boolean> = new Subject<boolean>();
+
 
   public accountsButtons = [
       { title: 'Admins', param: '_profile_admin',  leftIcon: './assets/Admin (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'admin' },
@@ -222,11 +224,14 @@ export class AccountsComponent implements OnInit {
 
     private getUserList(search = '') {
         this.http.globalReload$.pipe(switchMap(() => {
-            return this.userService.getUsersList('', search);
+          this.pending$.next(true);
+          return this.userService.getUsersList('', search);
         }))
             .subscribe(users => {
               this.dataTableHeadersToDisplay = [];
                 this.userList = this.buildUserListData(users);
+              this.pending$.next(false);
+
             });
     }
 

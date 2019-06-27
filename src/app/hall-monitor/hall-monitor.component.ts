@@ -9,7 +9,7 @@ import { PassLikeProvider, WrappedProvider } from '../models/providers';
 import { User } from '../models/User';
 import { ReportFormComponent } from '../report-form/report-form.component';
 import {Report} from '../models/Report';
-import { delay, filter, map } from 'rxjs/operators';
+import {delay, filter, map, tap} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {UserService} from '../services/user.service';
 import {ScreenService} from '../services/screen.service';
@@ -66,6 +66,8 @@ export class HallMonitorComponent implements OnInit {
   passesLoaded: Observable<boolean> = of(false);
 
   hasPasses: Observable<boolean> = of(false);
+
+  searchPending$: Subject<boolean> = new Subject<boolean>();
 
   isReportFormOpened: boolean;
 
@@ -144,6 +146,10 @@ export class HallMonitorComponent implements OnInit {
       this.passesLoaded = combineLatest(
         this.activePassProvider.loaded$,
         (l1) => l1
+      ).pipe(
+        filter(v => v),
+        delay(250),
+        tap((res) => this.searchPending$.next(!res))
       );
 
       this.dialog.afterOpened.subscribe( (dialog) => {
@@ -221,6 +227,7 @@ export class HallMonitorComponent implements OnInit {
 
   onSearch(search: string) {
     this.inputValue = search;
+    this.searchPending$.next(true);
     this.searchQuery$.next(search);
   }
 

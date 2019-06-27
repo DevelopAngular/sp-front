@@ -61,6 +61,8 @@ import {AccountGroupsComponent} from '../admin/accounts/account-groups/account-g
 import {PrivacyCardComponent} from '../admin/accounts/privacy-card/privacy-card.component';
 import {ProfileComponent} from '../admin/accounts/account-groups/profile/profile.component';
 import {ConsentMenuMobileComponent} from '../consent-menu-mobile/consent-menu-mobile.component';
+import {GettingStartedProgressService} from '../admin/getting-started-progress.service';
+
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -203,7 +205,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     {
       provide: SWIPER_CONFIG,
       useValue: DEFAULT_SWIPER_CONFIG
-    }
+    },
+    GettingStartedProgressService
   ]
 })
 export class SharedModule {

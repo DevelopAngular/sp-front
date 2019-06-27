@@ -29,6 +29,8 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
 
   showSearchResult: boolean;
 
+  pending$: Subject<boolean> = new Subject();
+
   destroy$ = new Subject();
 
   constructor(
@@ -115,13 +117,17 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
   }
 
   onSearch(search) {
-      if (!search) {
+    this.pending$.next(true);
+    if (!search) {
           this.showSearchResult = false;
-      } else {
+      this.pending$.next(false);
+
+    } else {
           this.locationService.searchLocations(100, `&search=${search}&starred=false`)
               .subscribe(res => {
                   this.showSearchResult = true;
                   this.searchResult = res.results;
+                this.pending$.next(false);
               });
       }
   }

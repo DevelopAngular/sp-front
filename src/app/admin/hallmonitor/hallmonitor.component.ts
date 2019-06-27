@@ -11,7 +11,7 @@ import { TimeService } from '../../services/time.service';
 import {CalendarComponent} from '../calendar/calendar.component';
 import {HttpService} from '../../services/http-service';
 import {Util} from '../../../Util';
-import {delay, filter, map, switchMap, toArray} from 'rxjs/operators';
+import {delay, filter, map, switchMap, tap, toArray} from 'rxjs/operators';
 import {AdminService} from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import * as _ from 'lodash';
@@ -111,16 +111,11 @@ export class HallmonitorComponent implements OnInit {
     this.passesLoaded = combineLatest(
       this.activePassProvider.loaded$,
       (l1) => l1
+    ).pipe(
+      filter(v => v),
+      delay(250),
+      tap((res) => this.searchPending$.next(!res))
     );
-    this.passesLoaded
-      .pipe(
-        filter(v => v),
-        delay(250)
-      )
-      .subscribe((res) => {
-      this.searchPending$.next(!res);
-      console.log(res);
-    });
   }
 
   onSearch(searchValue) {

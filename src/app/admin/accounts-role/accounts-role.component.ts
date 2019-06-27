@@ -49,6 +49,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   public user: User;
   private limitCounter: number = 20;
   public dataTableEditState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public pending$: Subject<boolean> = new Subject<boolean>();
 
   public accounts$ =
     new BehaviorSubject<any>({
@@ -339,6 +340,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     // console.log(searchValue);
     this.placeholder = false;
     this.userList = [];
+    this.pending$.next(true);
 
     if (!this.searchChangeObserver$) {
       Observable.create(observer => {
@@ -388,6 +390,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           } else {
             this.placeholder = true;
           }
+          this.pending$.next(false);
+
         });
     }
 
