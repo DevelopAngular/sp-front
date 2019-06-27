@@ -191,9 +191,6 @@ export class GradientButtonComponent implements OnInit {
         let i = 0;
         const hexColors = [];
         const gradient = this.gradient ? this.gradient : '#04CD33, #04CD33';
-        if (this.gradient) {
-          console.log('Gradient --->>>', this.gradient);
-        }
         const lastIndex = gradient.lastIndexOf(' ');
         const color = gradient.substr(lastIndex + 1);
         const rawHex = color.slice(1);
