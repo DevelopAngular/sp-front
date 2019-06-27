@@ -3,53 +3,56 @@
 <div class="host" appSafariScroll *ngIf="showRooms && onboardLoaded">
     <div class="pass-config-wrapper">
         <div class="pass-config-container">
-            <div class="pass-config-header" [style.background-color]="darkTheme.getBackground('high', true)">
-                <div class="school-logo">
-                    <div class="school-title">
-                        <div *ngIf="bulkSelect; else staticHeader" class="school-name" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{selectedPinnables.length}} Selected</div>
-                        <ng-template #staticHeader>
-                            <div class="school-name" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Rooms</div>
-                        </ng-template>
-                    </div>
+            <!--<div class="header-wrapper">-->
+                <div class="pass-config-header" [style.background-color]="darkTheme.getBackground('high', true)">
+                    <div class="school-logo">
+                        <div class="school-title">
+                            <div *ngIf="bulkSelect; else staticHeader" class="school-name" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{selectedPinnables.length}} Selected</div>
+                            <ng-template #staticHeader>
+                                <div class="school-name" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Rooms</div>
+                            </ng-template>
+                        </div>
 
-                    <div class="header-settings">
-                        <app-gradient-button
-                                [ngStyle]="{'opacity': bulkSelect && !selectedPinnables.length ? '.5' : '1'}"
-                                [size]="'medium'"
-                                [hoverColor]="'#00B476'"
-                                [cursor]="!bulkSelect || selectedPinnables.length ? 'pointer' : 'default'"
-                                (buttonClick)="buttonClicked($event)"
-                                [leftIcon]="headerButtonIcon"
-                                [disabled]="bulkSelect && !selectedPinnables.length">
-                            {{headerButtonText}}
-                        </app-gradient-button>
-                        <app-gradient-button
-                                (click)="toggleBulk()"
-                                [style.margin]="'0 15px 0 15px'"
-                                [cursor]="'pointer'"
-                                [gradient]="'#F4F4F4, #F4F4F4'"
-                                [hoverColor]="'#F5F5F5'"
-                                [textColor]="'#1F195E'"
-                                [size]="'medium'"
-                        >
-                            {{ (bulkSelect ? 'Done' : 'Edit') }}
-                        </app-gradient-button>
-                        <app-gradient-button
-                                (click)="openSettings()"
-                                [cursor]="'pointer'"
-                                [gradient]="'#F4F4F4, #F4F4F4'"
-                                [hoverColor]="'#F5F5F5'"
-                                [textColor]="'#1F195E'"
-                                [size]="'medium'"
-                                [leftIcon]="'./assets/Options (Navy).svg'"
-                                [disabled]="bulkSelect"
-                        >
-                            Options
-                        </app-gradient-button>
-                    </div>
+                        <div class="header-settings">
+                            <app-gradient-button
+                                    [ngStyle]="{'opacity': bulkSelect && !selectedPinnables.length ? '.5' : '1'}"
+                                    [size]="'medium'"
+                                    [hoverColor]="'#00B476'"
+                                    [cursor]="!bulkSelect || selectedPinnables.length ? 'pointer' : 'default'"
+                                    (buttonClick)="buttonClicked($event)"
+                                    [leftIcon]="headerButtonIcon"
+                                    [disabled]="bulkSelect && !selectedPinnables.length">
+                                {{headerButtonText}}
+                            </app-gradient-button>
+                            <app-gradient-button
+                                    (click)="toggleBulk()"
+                                    [style.margin]="'0 15px 0 15px'"
+                                    [cursor]="'pointer'"
+                                    [gradient]="'#F4F4F4, #F4F4F4'"
+                                    [hoverColor]="'#F5F5F5'"
+                                    [textColor]="'#1F195E'"
+                                    [size]="'medium'"
+                            >
+                                {{ (bulkSelect ? 'Done' : 'Edit') }}
+                            </app-gradient-button>
+                            <app-gradient-button
+                                    (click)="openSettings()"
+                                    [cursor]="'pointer'"
+                                    [gradient]="'#F4F4F4, #F4F4F4'"
+                                    [hoverColor]="'#F5F5F5'"
+                                    [textColor]="'#1F195E'"
+                                    [size]="'medium'"
+                                    [leftIcon]="'./assets/Options (Navy).svg'"
+                                    [disabled]="bulkSelect"
+                            >
+                                Options
+                            </app-gradient-button>
+                        </div>
 
+                    </div>
                 </div>
-            </div>
+            <!--</div>-->
+
         </div>
         <div class="pass-config-content">
             <div class="pinnables" *ngIf="pinnables.length">

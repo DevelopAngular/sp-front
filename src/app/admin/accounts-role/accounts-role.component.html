@@ -1,26 +1,124 @@
 <div class="host" appSafariScroll (scroll)="onScroll($event)">
   <div class="accounts-role-wrapper"  *ngIf="tabVisibility">
-    <div class="card card__top-bar ds-flex-start-between ds-w-100"
-         [ngClass]="{'card__dark': darkTheme.isEnabled$.value}">
-      <div class="ds-flex-start-start ds-h-100">
+    <div class="header-wrapper">
+      <div class="card card__top-bar ds-flex-start-between ds-w-100"
+           [ngClass]="{'card__dark': darkTheme.isEnabled$.value}">
+        <div class="ds-flex-start-start ds-h-100">
 
-        <div class="back-button" *ngIf="!(dataTableEditState | async) && role !== 'g_suite'">
-          <app-back-button routerLink="/admin/accounts"></app-back-button>
-        </div>
-        <div class="ds-h-100 ds-mx-10" *ngIf="(dataTableEditState | async)"></div>
-        <div class="ds-mt-20 ds-mx-5" [ngSwitch]="role">
-          <div *ngSwitchCase="'_all'">
-            <div class="ds-mr-20">
+          <div class="back-button" *ngIf="!(dataTableEditState | async) && role !== 'g_suite'">
+            <app-back-button routerLink="/admin/accounts"></app-back-button>
+          </div>
+          <div class="ds-h-100 ds-mx-10" *ngIf="(dataTableEditState | async)"></div>
+          <div class="ds-mt-20 ds-mx-5" [ngSwitch]="role">
+            <div *ngSwitchCase="'_all'">
+              <div class="ds-mr-20">
 
+                <div class="card_header ds-mb-10">
+                  <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})" [style.padding-left]="0">All Accounts</span>
+                </div>
+                <div  *ngIf="!(dataTableEditState | async)" class="card_title tooltip-container">
+                  <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset"
+                       [matTooltip]="'All accounts at one place.'"
+                       matTooltipClass="tooltip"
+                       alt="">
+                  <span [style.font-weight]="'bold'">{{(accounts$ | async).total }} account{{(accounts$ | async).total > 1 ? 's' : ''}}</span><br>
+                  <div class="arrow-down-container">
+                    <div class="arrow-down"></div>
+                  </div>
+                </div>
+                <div  *ngIf="(dataTableEditState | async)" class="card_title">
+                  <span [style.font-weight]="'bold'">{{selectedUsers.length}} Selected</span>
+                </div>
+              </div>
+            </div>
+            <div *ngSwitchCase="'_profile_admin'">
               <div class="card_header ds-mb-10">
-                <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})" [style.padding-left]="0">All Accounts</span>
+                <img [src]="darkTheme.getIcon({
+                  iconName: 'Admin',
+                  darkFill: 'White',
+                  lightFill: 'Navy'
+                }) | resolveAsset" alt="Settings.svg">
+                <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Administrators</span>
+              </div>
+              <div *ngIf="!(dataTableEditState | async)" class="card_title tooltip-container">
+
+                <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset"
+                     [matTooltip]="'An administrator has a high-level look at the school, configures passes, and views/generates reports.'"
+                     matTooltipClass="tooltip"
+                     alt="">
+                <span [style.font-weight]="'bold'">{{(accounts$ | async).admin_count}} user{{(accounts$ | async).admin_count> 1 ? 's' : ''}}</span><br>
+                <div class="arrow-down-container">
+                  <div class="arrow-down"></div>
+                </div>
+              </div>
+              <div  *ngIf="(dataTableEditState | async)" class="card_title">
+                <span [style.font-weight]="'bold'">{{selectedUsers.length}} Selected</span>
+              </div>
+            </div>
+            <div *ngSwitchCase="'_profile_teacher'">
+              <div class="card_header ds-mb-10">
+                <img [src]="darkTheme.getIcon({
+                  iconName: 'Teacher',
+                  darkFill: 'White',
+                  lightFill: 'Navy'
+                }) | resolveAsset" alt="Settings.svg">
+                <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Teachers</span>
+              </div>
+              <div *ngIf="!(dataTableEditState | async)" class="card_title tooltip-container">
+                <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset"
+                     [matTooltip]="' A teacher has a room or multiple rooms where students can create passes to.'+
+  '                    A teacher can create passes, view hall monitor activity, and manage passes in his/her room.'"
+                     matTooltipClass="tooltip"
+                     alt="">
+                <span [style.font-weight]="'bold'">{{(accounts$ | async).teacher_count}} user{{(accounts$ | async).teacher_count> 1 ? 's' : ''}}</span><br>
+                <div class="arrow-down-container">
+                  <div class="arrow-down"></div>
+                </div>
+              </div>
+              <div  *ngIf="(dataTableEditState | async)" class="card_title">
+                <span [style.font-weight]="'bold'">{{selectedUsers.length}} Selected</span>
+              </div>
+            </div>
+            <div *ngSwitchCase="'_profile_student'">
+              <div class="card_header ds-mb-10">
+                <img [src]="darkTheme.getIcon({
+                  iconName: 'Student',
+                  darkFill: 'White',
+                  lightFill: 'Navy'
+                }) | resolveAsset" alt="Settings.svg">
+                <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Students</span>
               </div>
               <div  *ngIf="!(dataTableEditState | async)" class="card_title tooltip-container">
                 <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset"
-                     [matTooltip]="'All accounts at one place.'"
+                     [matTooltip]="'A student can create passes, schedule passes for the future,'+
+  '                and send pass requests to teachers.'"
                      matTooltipClass="tooltip"
                      alt="">
-                <span [style.font-weight]="'bold'">{{(accounts$ | async).total }} account{{(accounts$ | async).total > 1 ? 's' : ''}}</span><br>
+                <span [style.font-weight]="'bold'">{{(accounts$ | async).student_count }} user{{(accounts$ | async).student_count > 1 ? 's' : ''}}</span><br>
+                <div class="arrow-down-container">
+                  <div class="arrow-down"></div>
+                </div>
+              </div>
+              <div  *ngIf="(dataTableEditState | async)" class="card_title">
+                <span [style.font-weight]="'bold'">{{selectedUsers.length}} Selected</span>
+              </div>
+            </div>
+            <div *ngSwitchCase="'_profile_assistant'">
+              <div class="card_header ds-mb-10">
+                <img [src]="darkTheme.getIcon({
+                  iconName: 'Secretary',
+                  darkFill: 'White',
+                  lightFill: 'Navy'
+                }) | resolveAsset" alt="Settings.svg">
+                <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Assistants</span>
+              </div>
+              <div *ngIf="!(dataTableEditState | async)" class="card_title tooltip-container">
+                <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset"
+                     [matTooltip]="'A secretary or substitute teacher acts as a certain teacher when they sign-in.' +
+                      'They can manage passes in his/her room and create passes as that teacher.'"
+                     matTooltipClass="tooltip"
+                     alt="">
+                <span [style.font-weight]="'bold'">{{(accounts$ | async).assistant_count || 0}} users</span><br>
                 <div class="arrow-down-container">
                   <div class="arrow-down"></div>
                 </div>
@@ -30,222 +128,125 @@
               </div>
             </div>
           </div>
-          <div *ngSwitchCase="'_profile_admin'">
-            <div class="card_header ds-mb-10">
-              <img [src]="darkTheme.getIcon({
-                  iconName: 'Admin',
-                  darkFill: 'White',
-                  lightFill: 'Navy'
-                }) | resolveAsset" alt="Settings.svg">
-              <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Administrators</span>
-            </div>
-            <div *ngIf="!(dataTableEditState | async)" class="card_title tooltip-container">
-
-              <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset"
-                   [matTooltip]="'An administrator has a high-level look at the school, configures passes, and views/generates reports.'"
-                   matTooltipClass="tooltip"
-                   alt="">
-              <span [style.font-weight]="'bold'">{{(accounts$ | async).admin_count}} user{{(accounts$ | async).admin_count> 1 ? 's' : ''}}</span><br>
-              <div class="arrow-down-container">
-                <div class="arrow-down"></div>
-              </div>
-            </div>
-            <div  *ngIf="(dataTableEditState | async)" class="card_title">
-              <span [style.font-weight]="'bold'">{{selectedUsers.length}} Selected</span>
-            </div>
-          </div>
-          <div *ngSwitchCase="'_profile_teacher'">
-            <div class="card_header ds-mb-10">
-              <img [src]="darkTheme.getIcon({
-                  iconName: 'Teacher',
-                  darkFill: 'White',
-                  lightFill: 'Navy'
-                }) | resolveAsset" alt="Settings.svg">
-              <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Teachers</span>
-            </div>
-            <div *ngIf="!(dataTableEditState | async)" class="card_title tooltip-container">
-              <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset"
-                   [matTooltip]="' A teacher has a room or multiple rooms where students can create passes to.'+
-  '                    A teacher can create passes, view hall monitor activity, and manage passes in his/her room.'"
-                   matTooltipClass="tooltip"
-                   alt="">
-              <span [style.font-weight]="'bold'">{{(accounts$ | async).teacher_count}} user{{(accounts$ | async).teacher_count> 1 ? 's' : ''}}</span><br>
-              <div class="arrow-down-container">
-                <div class="arrow-down"></div>
-              </div>
-            </div>
-            <div  *ngIf="(dataTableEditState | async)" class="card_title">
-              <span [style.font-weight]="'bold'">{{selectedUsers.length}} Selected</span>
-            </div>
-          </div>
-          <div *ngSwitchCase="'_profile_student'">
-            <div class="card_header ds-mb-10">
-              <img [src]="darkTheme.getIcon({
-                  iconName: 'Student',
-                  darkFill: 'White',
-                  lightFill: 'Navy'
-                }) | resolveAsset" alt="Settings.svg">
-              <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Students</span>
-            </div>
-            <div  *ngIf="!(dataTableEditState | async)" class="card_title tooltip-container">
-              <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset"
-                   [matTooltip]="'A student can create passes, schedule passes for the future,'+
-  '                and send pass requests to teachers.'"
-                   matTooltipClass="tooltip"
-                   alt="">
-              <span [style.font-weight]="'bold'">{{(accounts$ | async).student_count }} user{{(accounts$ | async).student_count > 1 ? 's' : ''}}</span><br>
-              <div class="arrow-down-container">
-                <div class="arrow-down"></div>
-              </div>
-            </div>
-            <div  *ngIf="(dataTableEditState | async)" class="card_title">
-              <span [style.font-weight]="'bold'">{{selectedUsers.length}} Selected</span>
-            </div>
-          </div>
-          <div *ngSwitchCase="'_profile_assistant'">
-            <div class="card_header ds-mb-10">
-              <img [src]="darkTheme.getIcon({
-                  iconName: 'Secretary',
-                  darkFill: 'White',
-                  lightFill: 'Navy'
-                }) | resolveAsset" alt="Settings.svg">
-              <span [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Assistants</span>
-            </div>
-            <div *ngIf="!(dataTableEditState | async)" class="card_title tooltip-container">
-              <img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset"
-                   [matTooltip]="'A secretary or substitute teacher acts as a certain teacher when they sign-in.' +
-                      'They can manage passes in his/her room and create passes as that teacher.'"
-                   matTooltipClass="tooltip"
-                   alt="">
-              <span [style.font-weight]="'bold'">{{(accounts$ | async).assistant_count || 0}} users</span><br>
-              <div class="arrow-down-container">
-                <div class="arrow-down"></div>
-              </div>
-            </div>
-            <div  *ngIf="(dataTableEditState | async)" class="card_title">
-              <span [style.font-weight]="'bold'">{{selectedUsers.length}} Selected</span>
-            </div>
-          </div>
         </div>
-      </div>
-      <div class="tool-panel ds-mx-20 ds-my-10" *ngIf="(dataTableEditState | async)">
+        <div class="tool-panel ds-mx-20 ds-my-10" *ngIf="(dataTableEditState | async)">
 
-        <div class="ds-flex-center-start">
-          <!--<div class="ds-p-10"  *ngIf="role === '_all'">-->
+          <div class="ds-flex-center-start">
+            <!--<div class="ds-p-10"  *ngIf="role === '_all'">-->
             <!--<app-gradient-button-->
-              <!--[gradient]="'#FFFFFF,#FFFFFF'"-->
-              <!--[hoverColor]="'#FFFFFF'"-->
-              <!--[textColor]="'#1F194E'"-->
-              <!--[size]="'small'"-->
-              <!--[disabled]="!selectedUsers.length"-->
-              <!--(buttonClick)="exportAccountData()">-->
-              <!--<span>Export Account Data</span>-->
+            <!--[gradient]="'#FFFFFF,#FFFFFF'"-->
+            <!--[hoverColor]="'#FFFFFF'"-->
+            <!--[textColor]="'#1F194E'"-->
+            <!--[size]="'small'"-->
+            <!--[disabled]="!selectedUsers.length"-->
+            <!--(buttonClick)="exportAccountData()">-->
+            <!--<span>Export Account Data</span>-->
             <!--</app-gradient-button>-->
-          <!--</div>-->
+            <!--</div>-->
 
-          <div class="ds-p-10"  *ngIf="role === '_profile_admin' || role === '_profile_teacher'">
-            <app-gradient-button
-              [size]="'small'"
-              [disabled]="!selectedUsers.length"
-              [cursor]="'pointer'"
-              [minHeight]="'32px'"
-              [width]="'215px'"
-              [hoverColor]="'#FFFFFF'"
-              [fontSize]="'14px'"
-              [fontWeight]="700"
-              [gradient]="'#FFFFFF, #FFFFFF'"
-              [textColor]="'#1F195E'"
-              (buttonClick)="showProfileCard(selectedUsers[0], true)">
-              <span>Bulk Permissions</span>
-            </app-gradient-button>
-          </div>
+            <div class="ds-p-10"  *ngIf="role === '_profile_admin' || role === '_profile_teacher'">
+              <app-gradient-button
+                      [size]="'small'"
+                      [disabled]="!selectedUsers.length"
+                      [cursor]="'pointer'"
+                      [minHeight]="'32px'"
+                      [width]="'215px'"
+                      [hoverColor]="'#FFFFFF'"
+                      [fontSize]="'14px'"
+                      [fontWeight]="700"
+                      [gradient]="'#FFFFFF, #FFFFFF'"
+                      [textColor]="'#1F195E'"
+                      (buttonClick)="showProfileCard(selectedUsers[0], true)">
+                <span>Bulk Permissions</span>
+              </app-gradient-button>
+            </div>
 
-          <div class="ds-p-10" *ngIf="role !== '_all'">
-            <app-gradient-button
-              *ngIf="!bulkSignInStatus"
-              [size]="'small'"
-              [disabled]="!selectedUsers.length"
-              [cursor]="'pointer'"
-              [minHeight]="'32px'"
-              [width]="'215px'"
-              [fontSize]="'14px'"
-              [fontWeight]="700"
-              (buttonClick)="promptConfirmation($event.target, 'enable_sign_in')">
-              <span>Enable sign-in</span>
-            </app-gradient-button>
-            <app-gradient-button
-              *ngIf="bulkSignInStatus"
-              [size]="'small'"
-              [disabled]="!selectedUsers.length"
-              [cursor]="'pointer'"
-              [minHeight]="'32px'"
-              [width]="'215px'"
-              [fontSize]="'14px'"
-              [fontWeight]="700"
-              [gradient]="'#001115, #033294'"
-              [hoverColor]="'#022F68'"
-              (buttonClick)="promptConfirmation($event.target, 'disable_sign_in')">
-              <span>Disable sign-in</span>
-            </app-gradient-button>
-          </div>
+            <div class="ds-p-10" *ngIf="role !== '_all'">
+              <app-gradient-button
+                      *ngIf="!bulkSignInStatus"
+                      [size]="'small'"
+                      [disabled]="!selectedUsers.length"
+                      [cursor]="'pointer'"
+                      [minHeight]="'32px'"
+                      [width]="'215px'"
+                      [fontSize]="'14px'"
+                      [fontWeight]="700"
+                      (buttonClick)="promptConfirmation($event.target, 'enable_sign_in')">
+                <span>Enable sign-in</span>
+              </app-gradient-button>
+              <app-gradient-button
+                      *ngIf="bulkSignInStatus"
+                      [size]="'small'"
+                      [disabled]="!selectedUsers.length"
+                      [cursor]="'pointer'"
+                      [minHeight]="'32px'"
+                      [width]="'215px'"
+                      [fontSize]="'14px'"
+                      [fontWeight]="700"
+                      [gradient]="'#001115, #033294'"
+                      [hoverColor]="'#022F68'"
+                      (buttonClick)="promptConfirmation($event.target, 'disable_sign_in')">
+                <span>Disable sign-in</span>
+              </app-gradient-button>
+            </div>
 
-          <div class="ds-p-10">
-            <app-gradient-button
-              [size]="'small'"
-              [disabled]="!selectedUsers.length"
-              [cursor]="'pointer'"
-              [minHeight]="'32px'"
-              [width]="'280px'"
-              [fontSize]="'14px'"
-              [fontWeight]="700"
-              [gradient]="'#DA2370, #FB434A'"
-              [hoverColor]="'#DA2370'"
-              (buttonClick)="promptConfirmation($event.target, 'delete_from_profile')">
-              <span>{{ role === '_all' ? 'Delete Account & Data' : 'Remove from Profile' }}</span>
-            </app-gradient-button>
-          </div>
-          <div class="ds-mx-10">
-            <app-gradient-button
-              [size]="'medium'"
-              [cursor]="'pointer'"
-              [gradient]="'#FFFFFF,#FFFFFF'"
-              [hoverColor]="'#FFFFFF'"
-              [textColor]="'#1F194E'"
-              (buttonClick)="dataTableEditState.next(!dataTableEditState.value)">
-              <div class="ds-flex-center-center">
-                <span *ngIf="dataTableEditState.value">Done</span>
-              </div>
-            </app-gradient-button>
+            <div class="ds-p-10">
+              <app-gradient-button
+                      [size]="'small'"
+                      [disabled]="!selectedUsers.length"
+                      [cursor]="'pointer'"
+                      [minHeight]="'32px'"
+                      [width]="'280px'"
+                      [fontSize]="'14px'"
+                      [fontWeight]="700"
+                      [gradient]="'#DA2370, #FB434A'"
+                      [hoverColor]="'#DA2370'"
+                      (buttonClick)="promptConfirmation($event.target, 'delete_from_profile')">
+                <span>{{ role === '_all' ? 'Delete Account & Data' : 'Remove from Profile' }}</span>
+              </app-gradient-button>
+            </div>
+            <div class="ds-mx-10">
+              <app-gradient-button
+                      [size]="'medium'"
+                      [cursor]="'pointer'"
+                      [gradient]="'#FFFFFF,#FFFFFF'"
+                      [hoverColor]="'#FFFFFF'"
+                      [textColor]="'#1F194E'"
+                      (buttonClick)="dataTableEditState.next(!dataTableEditState.value)">
+                <div class="ds-flex-center-center">
+                  <span *ngIf="dataTableEditState.value">Done</span>
+                </div>
+              </app-gradient-button>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="ds-flex-center-between ds-mr-20 ds-my-10" style="flex: 1 1 auto" *ngIf="!(dataTableEditState | async) && role !== 'g_suite'">
-        <div class="ds-flex-center-end ds-w-100">
-          <div class="ds-mx-10">
-            <app-round-input
-              [minWidth]="'230px'"
-              [width]="'230px'"
-              [type]="'text'"
-              [placeholder]="'Search'"
-              (ontextupdate)="findRelevantAccounts($event)">
-            </app-round-input>
-          </div>
+        <div class="ds-flex-center-between ds-mr-20 ds-my-10" style="flex: 1 1 auto" *ngIf="!(dataTableEditState | async) && role !== 'g_suite'">
+          <div class="ds-flex-center-end ds-w-100">
+            <div class="ds-mx-10">
+              <app-round-input
+                      [minWidth]="'230px'"
+                      [width]="'230px'"
+                      [type]="'text'"
+                      [placeholder]="'Search'"
+                      (ontextupdate)="findRelevantAccounts($event)">
+              </app-round-input>
+            </div>
 
             <!--<div class="ds-mx-10" *ngIf="role === '_all'">-->
-              <!--<div class="card_title">-->
-                <!--<span>G Suite: 2,237  Accounts</span>-->
-              <!--</div>-->
-              <!--<div class="card_title">-->
-                <!--<span>Alternative: 23 Accounts</span>-->
-              <!--</div>-->
+            <!--<div class="card_title">-->
+            <!--<span>G Suite: 2,237  Accounts</span>-->
+            <!--</div>-->
+            <!--<div class="card_title">-->
+            <!--<span>Alternative: 23 Accounts</span>-->
+            <!--</div>-->
             <!--</div>-->
             <div class="ds-mx-10" *ngIf="role !== '_all'">
 
               <app-gradient-button
-                [size]="'medium'"
-                [cursor]="'pointer'"
-                [leftIcon]="'./assets/Plus (White).svg'"
-                (buttonClick)="addUser()">
+                      [size]="'medium'"
+                      [cursor]="'pointer'"
+                      [leftIcon]="'./assets/Plus (White).svg'"
+                      (buttonClick)="addUser()">
                 <div class="ds-flex-center-center">
                   <span>Add</span>
                 </div>
@@ -254,20 +255,22 @@
             <div class="ds-mx-10">
 
               <app-gradient-button
-                [size]="'medium'"
-                [cursor]="'pointer'"
-                [gradient]="'#FFFFFF,#FFFFFF'"
-                [hoverColor]="'#FFFFFF'"
-                [textColor]="'#1F194E'"
-                (buttonClick)="dataTableEditState.next(!dataTableEditState.value)">
+                      [size]="'medium'"
+                      [cursor]="'pointer'"
+                      [gradient]="'#FFFFFF,#FFFFFF'"
+                      [hoverColor]="'#FFFFFF'"
+                      [textColor]="'#1F194E'"
+                      (buttonClick)="dataTableEditState.next(!dataTableEditState.value)">
                 <div class="ds-flex-center-center">
                   <span *ngIf="!dataTableEditState.value">Edit</span>
                 </div>
               </app-gradient-button>
             </div>
+          </div>
         </div>
       </div>
     </div>
+
     <div class="table" *ngIf="role !== 'g_suite'">
       <div *ngIf="!userList.length && !noUsersDummyVisibility" class="loading-theme_blue-gray spinner ds-flex-center-center">
         <mat-spinner *ngIf="!placeholder" [diameter]="50" [color]="'primary'"></mat-spinner>
@@ -297,6 +300,7 @@
           class="ds-my-10"
           [data]="userList"
           [isCheckbox]="dataTableEditState"
+          [marginTopStickyHeader]="'130px'"
           [textColor]="'#7E879D'"
           [disallowHover]="role === '_all' && !(dataTableEditState | async)"
           [displayedColumns]="dataTableHeadersToDisplay"
