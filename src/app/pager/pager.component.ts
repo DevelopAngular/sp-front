@@ -21,7 +21,7 @@ export class PagerComponent implements OnInit, AfterViewInit {
   @ViewChild('pageContent') pageContent: ElementRef;
   @ViewChild('left') left: ElementRef;
 
-  @Input() page: number;
+  @Input() page: number = 1;
   @Input() pages = 2;
 
   @Input() arrowPosition: string = '-27px';

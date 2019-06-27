@@ -138,9 +138,6 @@ export class RestrictedMessageComponent implements OnInit {
       }
       this.backButton.emit(this.formState);
     }, 100);
-
-
-
   }
 
   sendRequest() {
@@ -165,7 +162,7 @@ export class RestrictedMessageComponent implements OnInit {
   }
 
   private getViewRestriction(): MessageBoxViewRestriction {
-    if (this.screenService.isDeviceSmall || this.screenService.isDeviceMid) {
+    if (this.screenService.isDeviceLargeExtra) {
       return new MessageBoxViewRestrictionSm();
     }
 

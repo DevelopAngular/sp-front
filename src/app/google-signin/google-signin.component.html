@@ -41,14 +41,14 @@
   <app-round-input
     [minWidth]="'260px'"
     [width]="'260px'"
-    [placeholder]="'Username'"
+    [placeholder]="'Email or Username'"
     [type]="'text'"
     (keyup.enter)="demoLogin()"
     [fieldIcon]="'./assets/Username (Search-Gray).svg'"
     [style.margin-bottom]="'15px'"
     (ontextupdate)="updateDemoUsername($event)">
   </app-round-input>
-  <app-round-input
+  <app-round-input *ngIf="!false"
     [minWidth]="'260px'"
     [width]="'260px'"
     [placeholder]="'Password'"
@@ -75,7 +75,8 @@
      #button
   >
     <div *ngIf="!showSpinner">
-      <span>Sign in</span>
+      <span *ngIf="!true">Next</span>
+      <span *ngIf="!false">Sign in</span>
     </div>
     <div  *ngIf="showSpinner" class="loading-theme_white">
       <mat-spinner [diameter]="25"></mat-spinner>

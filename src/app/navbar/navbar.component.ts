@@ -279,7 +279,7 @@ export class NavbarComponent implements AfterViewInit, OnInit {
   }
 
   ngAfterViewInit(): void {
-      // this.underlinePosition();x
+      this.underlinePosition();
   }
 
   underlinePosition() {
@@ -447,9 +447,6 @@ export class NavbarComponent implements AfterViewInit, OnInit {
 
   updateTab(route: string) {
     this.tab = route;
-    if (this.tab === 'hallmonitor') {
-
-    }
     console.log('[updateTab()]: ', this.tab);
     this.router.navigateByUrl('/main/' + this.tab);
   }

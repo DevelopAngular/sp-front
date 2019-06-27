@@ -35,8 +35,13 @@ export class DateTimeComponent implements OnInit {
   }
 
   get gradient() {
-    const color = this.colorProfile ? this.colorProfile.gradient_color : '#03CF31,#00B476';
-    return `radial-gradient(circle at 98% 97%, ${color})`;
+    if (this.colorProfile) {
+        return `radial-gradient(circle at 98% 97%, ${this.colorProfile.gradient_color})`;
+    } else {
+      return '#00B476';
+    }
+    // const color = this.colorProfile ? this.colorProfile.gradient_color : '#00B476,#04CD33';
+    // return `radial-gradient(circle at 98% 97%, ${color})`;
   }
 
   get selectedColor() {
