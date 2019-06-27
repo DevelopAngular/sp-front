@@ -1,4 +1,4 @@
-@media screen and (max-width: 475px) {
+@media screen and (max-width: 1024px) {
   div.rest-mes-wrapper {
     overflow: initial;
   }
@@ -30,24 +30,6 @@
     height: 28px;
     left: 50%;
     transform: translateX(-50%);
-  }
-}
-
-@media all and (min-width: 360px) and (max-width: 475px) {
-  img.back-btn-bottom {
-    bottom: -40px;
-  }
-}
-
-@media all and (max-width: 360px) {
-  img.back-btn-bottom {
-    bottom: -40px;
-  }
-}
-
-@media all and (max-width: 320px) {
-  img.back-btn-bottom {
-    bottom: -35px;
   }
 }
 

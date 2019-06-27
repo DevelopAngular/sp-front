@@ -60,6 +60,7 @@ import {XsButtonComponent} from '../xs-button/xs-button.component';
 import {AccountGroupsComponent} from '../admin/accounts/account-groups/account-groups.component';
 import {PrivacyCardComponent} from '../admin/accounts/privacy-card/privacy-card.component';
 import {ProfileComponent} from '../admin/accounts/account-groups/profile/profile.component';
+import {ConsentMenuMobileComponent} from '../consent-menu-mobile/consent-menu-mobile.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -92,7 +93,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     // NgProgressModule.forRoot(),
     NgProgressModule.withConfig({}),
     DragulaModule.forRoot(),
-    SwiperModule
+    SwiperModule,
   ],
   declarations: [
     DropdownComponent,
@@ -137,6 +138,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
       AccountGroupsComponent,
       PrivacyCardComponent,
       ProfileComponent,
+      ConsentMenuMobileComponent
   ],
     entryComponents: [
       PassCardComponent,
@@ -195,6 +197,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     AccountGroupsComponent,
     PrivacyCardComponent,
     ProfileComponent,
+    ConsentMenuMobileComponent
   ],
   providers: [
     {
