@@ -151,10 +151,10 @@
                       [cursor]="'pointer'"
                       [minHeight]="'32px'"
                       [width]="'215px'"
-                      [hoverColor]="'#FFFFFF'"
+                      [hoverColor]="'#F4F4F4'"
                       [fontSize]="'14px'"
                       [fontWeight]="700"
-                      [gradient]="'#FFFFFF, #FFFFFF'"
+                      [gradient]="'#F4F4F4, #F4F4F4'"
                       [textColor]="'#1F195E'"
                       (buttonClick)="showProfileCard(selectedUsers[0], true)">
                 <span>Bulk Permissions</span>
@@ -209,8 +209,8 @@
               <app-gradient-button
                       [size]="'medium'"
                       [cursor]="'pointer'"
-                      [gradient]="'#FFFFFF,#FFFFFF'"
-                      [hoverColor]="'#FFFFFF'"
+                      [gradient]="'#F4F4F4,#F4F4F4'"
+                      [hoverColor]="'#F4F4F4'"
                       [textColor]="'#1F194E'"
                       (buttonClick)="dataTableEditState.next(!dataTableEditState.value)">
                 <div class="ds-flex-center-center">
@@ -257,8 +257,8 @@
               <app-gradient-button
                       [size]="'medium'"
                       [cursor]="'pointer'"
-                      [gradient]="'#FFFFFF,#FFFFFF'"
-                      [hoverColor]="'#FFFFFF'"
+                      [gradient]="'#F4F4F4,#F4F4F4'"
+                      [hoverColor]="'#F4F4F4'"
                       [textColor]="'#1F194E'"
                       (buttonClick)="dataTableEditState.next(!dataTableEditState.value)">
                 <div class="ds-flex-center-center">
@@ -385,7 +385,24 @@
         </div>
       </div>
 
-      <div class="footer"></div>
+      <div class="footer">
+        <div class="text">
+          <div class="title">Disconnect G Suite</div>
+          <div class="info">
+            When you disconnect your account, we’ll stop syncing your accounts with G Suite.
+            No account data will be erased, but users will no longer be able to sign in to SmartPass.<br/>
+            <strong>Only origindaladmin@example.com is able to perform this action since their account will not lose access.</strong>
+          </div>
+        </div>
+        <div class="button">
+          <app-gradient-button
+                  [gradient]="'#DA2370, #FB434A'"
+                  [hoverColor]="'#DA2370'"
+                  [size]="'small'"
+          >Disconnect G Suite
+          </app-gradient-button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

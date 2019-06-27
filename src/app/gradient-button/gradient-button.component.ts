@@ -75,6 +75,7 @@ export class GradientButtonComponent implements OnInit {
   constructor(private sanitizer: DomSanitizer, private screenService: ScreenService) {
   }
   ngOnInit(): void {
+    console.log('Gradient ==>>>', this.gradient);
     // if (this.size && this.size !== 'small' && this.size !== 'medium' && this.size !== 'large' && this.size !== 'xl') {
     //   this.size = 'small';
     // }
@@ -187,13 +188,30 @@ export class GradientButtonComponent implements OnInit {
 
   get shadow() {
     if (this.withShadow) {
-      if (this.hovered && !this.disabled) {
-        return this.sanitizer.bypassSecurityTrustStyle(' 0px 1px 10px rgba(0, 180, 118, 0.2)');
-      } else if (this.buttonDown && !this.disabled) {
-        return this.sanitizer.bypassSecurityTrustStyle('0px 1px 10px rgba(0, 180, 118, 0.19758)');
-      } else {
-        return this.sanitizer.bypassSecurityTrustStyle('0px 1px 10px rgba(0, 180, 118, 0.1)');
-      }
+        let i = 0;
+        const hexColors = [];
+        const gradient = this.gradient ? this.gradient : '#04CD33, #04CD33';
+        if (this.gradient) {
+          console.log('Gradient --->>>', this.gradient);
+        }
+        const lastIndex = gradient.lastIndexOf(' ');
+        const color = gradient.substr(lastIndex + 1);
+        const rawHex = color.slice(1);
+        do {
+            hexColors.push(rawHex.slice(i, i + 2));
+            i += 2;
+        } while (i < rawHex.length);
+        const rgbString = hexColors.map(c => parseInt(c, 16)).join(', ');
+        return this.sanitizer.bypassSecurityTrustStyle(this.hovered ?
+            `0px 1px 10px rgba(${rgbString}, 0.2)` : `0px 1px 10px rgba(${rgbString}, 0.1)`);
+
+      // if (this.hovered && !this.disabled) {
+      //   return this.sanitizer.bypassSecurityTrustStyle(' 0px 1px 10px rgba(0, 180, 118, 0.2)');
+      // } else if (this.buttonDown && !this.disabled) {
+      //   return this.sanitizer.bypassSecurityTrustStyle('0px 1px 10px rgba(0, 180, 118, 0.19758)');
+      // } else {
+      //   return this.sanitizer.bypassSecurityTrustStyle('0px 1px 10px rgba(0, 180, 118, 0.1)');
+      // }
     } else {
       return 'none';
     }
