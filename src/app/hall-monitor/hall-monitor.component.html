@@ -10,6 +10,7 @@
         [fieldIconPosition]="inputRestrictionXl.fieldIconPosition"
         [closeIcon]="inputRestrictionXl.closeIcon"
         [style.margin-right]="'40px'"
+        [pending$]="searchPending$"
         (ontextupdate)="onSearch($event)"
       ></app-round-input>
       <!--<input-->

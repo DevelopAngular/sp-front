@@ -32,7 +32,7 @@
         </div>
       </div>
     </div>
-    <div class="gs-banner" #gsBanner>
+    <div *ngIf="bannerVisibility" class="gs-banner" #gsBanner>
       <div style="color: #1F195E; font-size: 55px; font-weight: bold; white-space: nowrap">
         <span>
           The hallway will <br>
@@ -41,7 +41,7 @@
       </div>
       <div><img [src]="'./assets/SP Hero.svg' | resolveAsset" alt="SP Hero.svg"></div>
     </div>
-    <div class="tour-items ds-flex-start-center">
+    <div class="tour-items ds-flex-start-center ds-mt-25">
       <div class="ds-flex-start-start ds-flex-column ds-mr-10">
 
         <div class="card card__tour-item" (click)="router.navigate(['admin', 'gettingstarted', 'takeTour'])">

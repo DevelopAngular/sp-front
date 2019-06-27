@@ -30,7 +30,6 @@ import { LocationSearchComponent } from '../location-search/location-search.comp
 import { ColorComponent } from '../color-pallet-picker/color/color.component';
 import { AdvancedOptionsComponent } from '../overlay-container/advanced-options/advanced-options.component';
 import {AddExistingRoomComponent} from '../overlay-container/add-existing-room/add-existing-room.component';
-import {GettingStartedProgressService} from '../getting-started-progress.service';
 
 @NgModule({
   imports: [
@@ -90,8 +89,5 @@ import {GettingStartedProgressService} from '../getting-started-progress.service
       DateInputComponent,
       InputHelperDialogComponent,
   ],
-  providers: [
-    GettingStartedProgressService
-  ]
 })
 export class AdminSharedModule { }

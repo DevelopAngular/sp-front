@@ -14,7 +14,7 @@ import { User } from '../models/User';
 import { DropdownComponent } from '../dropdown/dropdown.component';
 import { TimeService } from '../services/time.service';
 import { CalendarComponent } from '../admin/calendar/calendar.component';
-import { filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import {delay, filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import { DarkThemeSwitch } from '../dark-theme-switch';
 import { LocationsService } from '../services/locations.service';
 import { RepresentedUser } from '../navbar/navbar.component';
@@ -121,6 +121,8 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   searchQuery$ = new BehaviorSubject('');
   searchDate$ = new BehaviorSubject<Date>(null);
   selectedLocation$ = new ReplaySubject<Location[]>(1);
+
+  searchPending$: Subject<boolean> = new Subject<boolean>();
 
   hasPasses: Observable<boolean> = of(false);
   passesLoaded: Observable<boolean> = of(false);
@@ -283,6 +285,11 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       this.originPasses.loaded$,
       this.destinationPasses.loaded$,
       (l1, l2, l3) => l1 && l2 && l3
+    ).pipe(
+      filter(v => v),
+      delay(250),
+      tap(console.log),
+      tap((res) => this.searchPending$.next(!res))
     );
   }
 
@@ -359,6 +366,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   onSearch(search: string) {
     this.inputValue = search;
+    this.searchPending$.next(true)
     this.searchQuery$.next(search);
   }
 
