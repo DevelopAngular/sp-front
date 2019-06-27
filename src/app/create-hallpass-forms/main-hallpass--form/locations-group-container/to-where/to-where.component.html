@@ -1,6 +1,3 @@
-<div>
-
-
 <div style="opacity: 1" [ngClass]="{ 'to-wrapper-to-date': formState.forLater && formState.formMode.role === 1, 'to-wrapper': !formState.forLater || formState.formMode.role !== 1}">
   <div class="" [ngClass]="{'to-header': formState.previousState === states.from || formState.previousStep <= formState.step, 'to-header-back': formState.previousState === states.category || formState.previousStep === 4 }" [style.background-image]="'radial-gradient(circle at 98% 97%, #FFFFFF, #FFFFFF)'">
     <img class="back-button back-button-grey back-btn-top" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
@@ -50,6 +47,4 @@
     <app-student-footer *ngIf="!isStaff" [formState]="formState" [state]="'to'" [date]="date"></app-student-footer>
     <app-teacher-footer *ngIf="isStaff" [fromLocation]="location" [formState]="formState" [state]="'to'" [studentText]="studentText" [date]="date"></app-teacher-footer>
   </ng-container>
-</div>
-  <img class="back-button back-button-grey back-btn-bottom" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
 </div>
