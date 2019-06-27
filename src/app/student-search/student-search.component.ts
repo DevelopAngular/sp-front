@@ -170,20 +170,23 @@ export class StudentSearchComponent implements OnInit {
   }
 
   onSearch(search: string) {
-
+// debugger
     switch (this.searchTarget) {
       case 'users':
           if (search !== '') {
+            this.pending$.next(true);
+
             if (this.type === 'alternative') {
               this.students = this.userService.searchProfile(this.role, 50, search)
                 .toPromise()
                 .then((paged: any) => {
                   // console.log('PAGED RESULT >>>', paged);
+                  this.pending$.next(false);
                   this.showDummy = !paged.results.length;
                   return this.removeDuplicateStudents(paged.results);
                 });
             } else if (this.type === 'gsuite') {
-              this.pending$.next(true);
+              // this.pending$.next(true);
               let request$;
               if (this.role !== '_all') {
                 request$ = this.userService.searchProfileAll(search, this.type, this.role.split('_')[this.role.split('_').length - 1]);

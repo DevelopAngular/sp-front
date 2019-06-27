@@ -329,20 +329,12 @@ body {
   .student-pass-card-dialog-container .mat-dialog-container {
     width: 100% !important;
   }
-
-  .form-dialog-container {
-    max-width: 300px !important;
-  }
 }
 
 @media all and (max-width: 475px) {
   .student-pass-card-dialog-container,
   .teacher-pass-card-dialog-container {
     max-width: unset !important;
-  }
-
-  .main-form-dialog-container {
-    max-width: 100% !important;
   }
 }
 
@@ -352,17 +344,12 @@ body {
   }
 }
 
-@media all and (max-width: 1024px) {
-  .options-dialog {
-    overflow-y: scroll;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    &::-webkit-scrollbar {
-      width: 0;
-      height: 0;
-    }
+@media all and (max-width: 320px) {
+  .form-dialog-container {
+    max-width: 300px !important;
   }
 }
+
 
 // Side nav scroll hiding
 .mat-drawer-inner-container::-webkit-scrollbar {

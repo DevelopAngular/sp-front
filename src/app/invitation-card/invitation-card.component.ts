@@ -16,6 +16,7 @@ import { CreateFormService } from '../create-hallpass-forms/create-form.service'
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { RequestsService } from '../services/requests.service';
 import {of} from 'rxjs';
+import {ScreenService} from '../services/screen.service';
 
 @Component({
   selector: 'app-invitation-card',
@@ -46,6 +47,9 @@ export class InvitationCardComponent implements OnInit {
 
   isModal: boolean;
   isSeen: boolean;
+  cancelEditClick: boolean;
+  header: string;
+  options: any = [];
 
   constructor(
       public dialogRef: MatDialogRef<InvitationCardComponent>,
@@ -55,7 +59,8 @@ export class InvitationCardComponent implements OnInit {
       public dataService: DataService,
       private _zone: NgZone,
       private loadingService: LoadingService,
-      private createFormService: CreateFormService
+      private createFormService: CreateFormService,
+      private screenService: ScreenService,
   ) {}
 
   get studentName(){
@@ -206,10 +211,14 @@ export class InvitationCardComponent implements OnInit {
     }
 
   denyInvitation(evt: MouseEvent){
+    if (this.screenService.isDeviceMid) {
+      this.cancelEditClick = !this.cancelEditClick;
+    }
+
     if(!this.denyOpen){
       const target = new ElementRef(evt.currentTarget);
-      let options = [];
-      let header = '';
+      this.options = [];
+      this.header = '';
       if (this.forInput) {
         if (this.isSeen) {
             this.formState.step = 3;
@@ -250,48 +259,57 @@ export class InvitationCardComponent implements OnInit {
         }
           return false;
       } else if (!this.forStaff) {
-        options.push(this.genOption('Decline Pass Request','#E32C66','decline'));
-        header = 'Are you sure you want to decline this pass request you received?'
+        this.options.push(this.genOption('Decline Pass Request','#E32C66','decline'));
+        this.header = 'Are you sure you want to decline this pass request you received?'
       } else {
         if (this.invalidDate) {
-            options.push(this.genOption('Change Date & Time to Resend', '#3D396B', 'resend'));
+            this.options.push(this.genOption('Change Date & Time to Resend', '#3D396B', 'resend'));
         }
-        options.push(this.genOption('Delete Pass Request','#E32C66','delete'));
-        header = "Are you sure you want to delete this pass request you sent?";
+        this.options.push(this.genOption('Delete Pass Request','#E32C66','delete'));
+        this.header = "Are you sure you want to delete this pass request you sent?";
       }
-      const consentDialog = this.dialog.open(ConsentMenuComponent, {
-        panelClass: 'consent-dialog-container',
-        backdropClass: 'invis-backdrop',
-        data: {'header': header, 'options': options, 'trigger': target}
-      });
 
-      consentDialog.afterOpen().subscribe( () =>{
-        this.denyOpen = true;
-      });
+      if (!this.screenService.isDeviceMid) {
+        const consentDialog = this.dialog.open(ConsentMenuComponent, {
+          panelClass: 'consent-dialog-container',
+          backdropClass: 'invis-backdrop',
+          data: {'header': this.header, 'options': this.options, 'trigger': target}
+        });
 
-      consentDialog.afterClosed().subscribe(action => {
-        this.denyOpen = false;
-        if(action === 'cancel'){
-          this.dialogRef.close();
-        } else if(action === 'decline'){
-          const body = {
-            'message' : ''
-          };
-          this.requestService.denyInvitation(this.invitation.id, body).subscribe((httpData) => {
-            console.log('[Invitation Denied]: ', httpData);
-            this.dialogRef.close();
-          });
-        } else if(action === 'delete') {
-          const body = {
-            'message' : ''
-          };
-          this.requestService.cancelInvitation(this.invitation.id, body).subscribe((httpData) => {
-            console.log('[Invitation Cancelled]: ', httpData);
-            this.dialogRef.close();
-          });
-        } else if (action === 'resend') {
-            this.changeDate(true);
-        }});
+        consentDialog.afterOpen().subscribe( () =>{
+          this.denyOpen = true;
+        });
+
+        consentDialog.afterClosed().subscribe(action => {
+          this.chooseAction(action);
+        });
+      }
+
+    }
+  }
+
+  chooseAction(action) {
+    this.denyOpen = false;
+    if(action === 'cancel'){
+      this.dialogRef.close();
+    } else if(action === 'decline'){
+      const body = {
+        'message' : ''
+      };
+      this.requestService.denyInvitation(this.invitation.id, body).subscribe((httpData) => {
+        console.log('[Invitation Denied]: ', httpData);
+        this.dialogRef.close();
+      });
+    } else if(action === 'delete') {
+      const body = {
+        'message' : ''
+      };
+      this.requestService.cancelInvitation(this.invitation.id, body).subscribe((httpData) => {
+        console.log('[Invitation Cancelled]: ', httpData);
+        this.dialogRef.close();
+      });
+    } else if (action === 'resend') {
+      this.changeDate(true);
     }
   }
 
@@ -317,4 +335,16 @@ export class InvitationCardComponent implements OnInit {
             data: data
         });
     }
+
+  cancelClick() {
+    this.cancelEditClick = false;
+  }
+
+  backdropClick() {
+    this.cancelEditClick = false;
+  }
+
+  receiveOption(action: any) {
+    this.chooseAction(action);
+  }
 }

@@ -5,7 +5,7 @@ import {DataService} from '../services/data-service';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 
 
-type optionsView = 'inline' | 'button';
+export type optionsView = 'inline' | 'button';
 
 @Component({
   selector: 'app-consent-menu',

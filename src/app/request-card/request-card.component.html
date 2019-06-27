@@ -59,11 +59,11 @@
           <div class="page-2">
             <div class="page-2-wrapper">
               <div class="message" [style.height]="(forInput?'70px':'155px')">
-                <span [style.font-weight]="'bold'">{{(forStaff?'Message from ' +studentName +':':'Your message:')}}</span><br>
+                <span [style.font-weight]="'bold'">{{ (forStaff?'Message from ' +studentName +':':'Your message:') }}</span><br>
                 {{ (request.attachment_message===''?'No message':request.attachment_message) }}
                 <div *ngIf="request.status==='declined'">
                   <br>
-                  <span [style.font-weight]="'bold'">Message from {{request.teacher.last_name}}:</span><br>
+                  <span [style.font-weight]="'bold'">Message from {{ request.teacher.last_name }}:</span><br>
                   {{ (request.declined_message===''?'No message':request.declined_message) }} <!-- deny_message -->
                 </div>
               </div>
@@ -147,11 +147,11 @@
           <div class="page-2">
             <div class="page-2-wrapper">
               <div class="message" [style.height]="(forInput?'70px':'164px')">
-                <span [style.font-weight]="'bold'">{{(forStaff?'Message from ' +studentName +':':'Your message:')}}</span><br>
+                <span [style.font-weight]="'bold'">{{ (forStaff?'Message from ' +studentName +':':'Your message:') }}</span><br>
                 {{ (request.attachment_message===''?'No message':request.attachment_message) }}
                 <div *ngIf="request.status==='declined'">
                   <br>
-                  <span [style.font-weight]="'bold'">Message from {{request.teacher.last_name}}:</span><br>
+                  <span [style.font-weight]="'bold'">Message from {{ request.teacher.last_name }}:</span><br>
                   {{ (request.declined_message===''?'No message':request.declined_message) }} <!-- deny_message -->
                 </div>
               </div>
@@ -201,7 +201,7 @@
               <div class="resend-button-content">
                 <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="'35'"></mat-spinner>
                 <div *ngIf="!performingAction" class="resend-button-content-title">Approve Pass Request</div>
-                <div class="resend-button-content-subtitle">{{(request.duration/60) +' min - Received ' +formatDateTime(request.created, true)}}</div>
+                <div class="resend-button-content-subtitle">{{ (request.duration/60) +' min - Received ' +formatDateTime(request.created, true) }}</div>
               </div>
             </app-card-button>
             <ng-template #CDate>
@@ -217,10 +217,10 @@
             <div>
               <app-pager [page]="2">
                 <div class="page-1 teacher-details">
-                  <span class="bold">Pass Request Sent</span><span class="smaller"><br>to {{studentName}}<br><br>{{formatDateTime(request.created)}}</span>
+                  <span class="bold">Pass Request Sent</span><span class="smaller"><br>to {{ studentName }}<br><br>{{ formatDateTime(request.created) }}</span>
                 </div>
                 <div class="page-2 teacher-details">
-                  <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{teacherName}}<br><br>{{formatDateTime(request.last_updated)}}</span>
+                  <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{ teacherName }}<br><br>{{ formatDateTime(request.last_updated) }}</span>
                 </div>
 
                 <div class="page-5 teacher-details">
@@ -239,7 +239,14 @@
       <div class="student-footer"></div>
       <div class="student-text"> {{ request.student.display_name }} </div>
     </div>
-
-
   </div>
 </div>
+
+<app-consent-menu-mobile
+  [display]="cancelEditClick"
+  [header]="header"
+  [options]="options"
+  (cancelClick)="cancelClick()"
+  (backDropClick)="backdropClick()"
+  (receiveOption)="receiveOption($event)"
+></app-consent-menu-mobile>
