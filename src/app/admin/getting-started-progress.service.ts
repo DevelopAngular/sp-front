@@ -11,6 +11,8 @@ export interface OnboardItem {
 }
 
 export enum Progress {
+  'create_school:start' = 5,
+  'create_school:end' = 5,
   'take_a_tour:start' = 15,
   'take_a_tour:end' = 15,
   'setup_rooms:start' = 10,
@@ -21,6 +23,8 @@ export enum Progress {
   'launch_day_prep:end' = 5,
 }
 export interface ProgressInterface {
+  'create_school:start': 5;
+  'create_school:end': 5;
   'take_a_tour:start': 15;
   'take_a_tour:end': 15;
   'setup_rooms:start': 10;
@@ -42,6 +46,7 @@ export class GettingStartedProgressService {
     launch_day_prep?: any,
     setup_rooms?: any,
     setup_accounts?: any,
+    create_school?: any
   } = {
     progress: 0,
     offset: 120

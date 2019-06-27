@@ -12,7 +12,18 @@ import {fromEvent} from 'rxjs';
 export class GettingStartedComponent implements OnInit {
 
 
-  @ViewChild('gsBanner') banner: ElementRef<HTMLDivElement>
+  @ViewChild('gsBanner') set bannerRef(v: ElementRef<HTMLDivElement>) {
+    this.banner = v;
+    if (this.banner) {
+       fromEvent(this.banner.nativeElement, 'animationend')
+        .subscribe((evt: AnimationEvent) => {
+          console.log(evt);
+          (evt.currentTarget as HTMLDivElement).style.display = 'none';
+        });
+    }
+  }
+
+  banner: ElementRef<HTMLDivElement>;
 
   constructor(
     public router: Router,
@@ -20,10 +31,11 @@ export class GettingStartedComponent implements OnInit {
     public gsProgress: GettingStartedProgressService
   ) { }
 
+  get bannerVisibility() {
+    return this.gsProgress.onboardProgress.create_school && (!this.gsProgress.onboardProgress.create_school.start || !this.gsProgress.onboardProgress.create_school.end);
+  }
+
   ngOnInit() {
-    fromEvent(this.banner.nativeElement, 'animationend')
-      .subscribe((evt: AnimationEvent) => {
-        (evt.currentTarget as HTMLDivElement).style.display = 'none';
-      });
+
   }
 }

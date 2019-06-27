@@ -13,27 +13,34 @@
       flex-direction: column;
       align-items: center;
       min-width: 800px;
-      padding: 40px 0;
+      padding: 25px 0;
       height: 100vh;
-      .school-header {
-        height: 99px;
-        padding: 0 0 0 40px;
-        box-sizing: border-box;
-        border-radius: 12px;
+      .header-container {
         width: 100%;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
-        background-color: #FFFFFF;
-        display: flex;
-        align-items: center;
-        max-width: 94%;
+        .header-wrapper {
+          padding: 0 25px;
+          .school-header {
+            height: 99px;
+            padding: 0 0 0 40px;
+            box-sizing: border-box;
+            border-radius: 12px;
+            width: 100%;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+            background-color: #FFFFFF;
+            display: flex;
+            align-items: center;
 
-        .school-title {
-          font-weight: bold;
-          font-size: 24px;
-          line-height: 29px;
-          color: $navy;
+            .school-title {
+              font-weight: bold;
+              font-size: 24px;
+              line-height: 29px;
+              color: $navy;
+            }
+          }
         }
       }
+
+
 
       .content {
         width: 100%;

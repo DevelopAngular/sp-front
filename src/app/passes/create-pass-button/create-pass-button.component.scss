@@ -15,6 +15,11 @@
   cursor: pointer;
   position: relative;
 
+  &.disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
   .title {
     line-height: 1;
     white-space: nowrap;

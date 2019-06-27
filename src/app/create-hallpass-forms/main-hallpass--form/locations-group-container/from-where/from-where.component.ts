@@ -36,7 +36,7 @@ export class FromWhereComponent implements OnInit {
   }
   constructor(
     private formService: CreateFormService,
-    private screenService: ScreenService
+    public screenService: ScreenService
   ) { }
 
   ngOnInit() {

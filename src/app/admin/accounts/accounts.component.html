@@ -105,74 +105,77 @@
   </div>
 
   <div class="accounts-wrapper" *ngIf="!splash">
-
-    <div class="accounts-header">
-      <div class="header-content">
-        <div class="header-title">
-          Accounts
-          <div class="count">
-            <img width="15" height="15" [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset" alt="">
-            <div class="text">{{(accounts$ | async)?.total_count}} accounts</div>
-          </div>
-        </div>
-
-        <div class="header-buttons">
-          <div class="ds-mx-10" *ngIf="openTable && !dataTableEditState.value">
-            <app-round-input
-                    [initialValue]="initialSearchString"
-                    [minWidth]="'230px'"
-                    [width]="'230px'"
-                    [type]="'text'"
-                    [placeholder]="'Search'"
-                    (ontextupdate)="findRelevantAccounts($event)">
-            </app-round-input>
-          </div>
-          <app-gradient-button *ngIf="openTable && dataTableEditState.value"
-                  [size]="'small'"
-                  [disabled]="!selectedUsers.length"
-                  [cursor]="'pointer'"
-                  [fontSize]="'14px'"
-                  [fontWeight]="700"
-                  [minHeight]="'50px'"
-                  [gradient]="'#DA2370, #FB434A'"
-                  [hoverColor]="'#DA2370'"
-                  (buttonClick)="promptConfirmation($event.target, 'delete_from_profile')">
-            <span>Delete Account & Data</span>
-          </app-gradient-button>
-          <app-gradient-button
-                  [style.margin-left]="'15px'"
-                  [size]="'medium'"
-                  [hoverColor]="'#00B476'"
-                  [cursor]="'pointer'"
-                  [leftIcon]="'./assets/Plus (White).svg'"
-                  (buttonClick)="addUser()"
-          >
-            Add
-          </app-gradient-button>
-          <app-gradient-button *ngIf="openTable"
-                  [style.margin-left]="'15px'"
-                  [size]="'medium'"
-                  [cursor]="'pointer'"
-                  [gradient]="'#F4F4F4,#F4F4F4'"
-                  [hoverColor]="'#F4F4F4'"
-                  [textColor]="'#1F194E'"
-                  (buttonClick)="dataTableEditState.next(!dataTableEditState.value)">
-            <div class="ds-flex-center-center">
-              <span>{{(!dataTableEditState.value ? 'Edit' : 'Done' )}}</span>
+      <div class="header-wrapper">
+        <div class="accounts-header">
+          <div class="header-content">
+            <div class="header-title">
+              Accounts
+              <div class="count">
+                <img width="15" height="15" [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset" alt="">
+                <div class="text">{{(accounts$ | async)?.total_count}} accounts</div>
+              </div>
             </div>
-          </app-gradient-button>
-          <div class="go-accounts" (click)="openTable = !openTable">
-            <img
-              draggable="false"
-              width="16"
-              height="16"
-              [src]="(openTable ? './assets/Chevron Down (Jade).svg' : './assets/Chevron Right (Blue-Gray).svg')"
-              alt="Chevron"
-            >
+
+            <div class="header-buttons">
+              <div class="ds-mx-10" *ngIf="openTable && !dataTableEditState.value">
+                <app-round-input
+                        [initialValue]="initialSearchString"
+                        [minWidth]="'230px'"
+                        [width]="'230px'"
+                        [type]="'text'"
+                        [pending$]="pending$"
+                        [placeholder]="'Search'"
+                        (ontextupdate)="findRelevantAccounts($event)">
+                </app-round-input>
+              </div>
+              <app-gradient-button *ngIf="openTable && dataTableEditState.value"
+                                   [size]="'small'"
+                                   [disabled]="!selectedUsers.length"
+                                   [cursor]="'pointer'"
+                                   [fontSize]="'14px'"
+                                   [fontWeight]="700"
+                                   [minHeight]="'50px'"
+                                   [gradient]="'#DA2370, #FB434A'"
+                                   [hoverColor]="'#DA2370'"
+                                   (buttonClick)="promptConfirmation($event.target, 'delete_from_profile')">
+                <span>Delete Account & Data</span>
+              </app-gradient-button>
+              <app-gradient-button
+                      [style.margin-left]="'15px'"
+                      [size]="'medium'"
+                      [hoverColor]="'#00B476'"
+                      [cursor]="'pointer'"
+                      [leftIcon]="'./assets/Plus (White).svg'"
+                      (buttonClick)="addUser()"
+              >
+                Add
+              </app-gradient-button>
+              <app-gradient-button *ngIf="openTable"
+                                   [style.margin-left]="'15px'"
+                                   [size]="'medium'"
+                                   [cursor]="'pointer'"
+                                   [gradient]="'#F4F4F4,#F4F4F4'"
+                                   [hoverColor]="'#F4F4F4'"
+                                   [textColor]="'#1F194E'"
+                                   (buttonClick)="dataTableEditState.next(!dataTableEditState.value)">
+                <div class="ds-flex-center-center">
+                  <span>{{(!dataTableEditState.value ? 'Edit' : 'Done' )}}</span>
+                </div>
+              </app-gradient-button>
+              <div class="go-accounts" (click)="openTable = !openTable">
+                <img
+                        draggable="false"
+                        width="16"
+                        height="16"
+                        [src]="(openTable ? './assets/Chevron Down (Jade).svg' : './assets/Chevron Right (Blue-Gray).svg')"
+                        alt="Chevron"
+                >
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
 
     <div class="accounts-content" *ngIf="!openTable">
       <div class="content-wrapper">
@@ -217,6 +220,7 @@
               [data]="userList"
               [isCheckbox]="dataTableEditState"
               [textColor]="'#7E879D'"
+              [marginTopStickyHeader]="'130px'"
               [disallowHover]="!(dataTableEditState | async)"
               [displayedColumns]="dataTableHeadersToDisplay"
               (selectedCell)="findProfileByRole($event)"
