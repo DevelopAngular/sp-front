@@ -166,6 +166,10 @@
 }
 
 .gs-banner {
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
   height: 190px;
   transition: all 1s ease;
   -webkit-animation: gsBanner 1s ease 2.5s 1 forwards;
@@ -176,18 +180,22 @@
 @keyframes gsBanner {
   0% {
     opacity: 1;
+    display: flex;
+
   }
   50% {
     opacity: 0;
+    display: flex;
   }
   75% {
     opacity: 0;
     height: 0px;
+    display: flex;
   }
   100% {
+    margin-top: 0;
     opacity: 0;
     height: 0px;
-    display: none;
   }
 }
 
