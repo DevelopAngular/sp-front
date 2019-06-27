@@ -42,11 +42,11 @@ export class NavButtonComponent implements OnInit, AfterViewInit, OnChanges {
       // }
   }
   ngOnChanges() {
-    if (this.selected) {
-      setTimeout(() => {
-        this.doClick();
-      }, 500);
-    }
+
+      // setTimeout(() => {
+      //   this.doClick();
+      // }, 1000);
+
   }
 
 

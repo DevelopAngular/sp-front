@@ -5,6 +5,10 @@
     left: 50%;
     transform: translateX(-50%);
   }
+
+  div.message{
+    margin-left: 50px;
+  }
 }
 
 @media all and (max-width: 320px){

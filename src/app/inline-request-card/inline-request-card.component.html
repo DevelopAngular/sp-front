@@ -12,7 +12,8 @@
                     </div>
                 </div>
             </div>
-<!--            <img class="pass-card-header-close" (click)="cancelRequest($event)" [src]="'./assets/Delete (Transparent).svg' | resolveAsset">-->
+            <app-icon-button [size]="20" [onDarkShade]="true" [srcString]="'./assets/Delete (Transparent).svg'" (clickEvent)="cancelRequest($event)"></app-icon-button>
+            <!--<img class="pass-card-header-close" (click)="cancelRequest($event)" [src]="'./assets/Delete (Transparent).svg' | resolveAsset">-->
         </div>
         <mat-divider></mat-divider>
     </div>
@@ -45,6 +46,31 @@
                         </app-card-button>
                     </div>
                 </div>
+
+              <div class="page-5">
+                <app-traveltype-picker *ngIf="forInput" (onSelect)="selectedTravelType=$event" [choices]="request?.destination.travel_types" [altColor]="request?.color_profile.solid_color"></app-traveltype-picker>
+
+                <app-duration-picker *ngIf="forInput; else noInput;" (onChange)="selectedDuration=$event"  [maxDuration]="(request?.destination.max_allowed_time?request?.destination.max_allowed_time:15)"></app-duration-picker>
+                <ng-template #noInput>
+                  <app-travel-view [height]="'174px'" [pass]="request" [shrink]="true"></app-travel-view>
+                </ng-template>
+              </div>
+              <div class="page-6">
+                <div class="page-2-wrapper">
+                  <div class="message" [style.height]="(forInput?'70px':'155px')" [style.margin-bottom]="(forInput?'4px':'0px')">
+                    <span [style.font-weight]="'bold'">Your message:</span><br>
+                    {{ (request?.attachment_message===''?'No message':request?.attachment_message) }}
+                    <div *ngIf="request?.status==='declined'">
+                      <br>
+                      <span [style.font-weight]="'bold'">Message from {{request?.teacher.last_name}}:</span><br>
+                      {{ (request?.declined_message===''?'No message':request?.declined_message) }} <!-- deny_message -->
+                    </div>
+                  </div>
+                  <app-card-button *ngIf="forInput" class="edit-button" [width]="'130px'" [height]="'px'" [gradientColor]="request?.color_profile.gradient_color">
+                    <div class="button-content">Edit Message</div>
+                  </app-card-button>
+                </div>
+              </div>
             </app-pager>
 
         </div>
