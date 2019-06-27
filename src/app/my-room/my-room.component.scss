@@ -1,4 +1,8 @@
 @media all and (max-width: 1024px) {
+  ::ng-deep div.options-dialog {
+    height: 341px;
+  }
+
   div.search {
     display: none;
     margin-left: auto;
@@ -64,6 +68,7 @@
   }
 
   ::ng-deep div.options-dialog {
+    height: 341px;
     max-width: 100% !important;
   }
 
@@ -359,8 +364,14 @@ input {
     max-height: 341px;
     background-color: transparent;
     border-radius: 14px 14px 0 0;
-    overflow-y: auto;
     padding: 0;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+    }
   }
 }
 
