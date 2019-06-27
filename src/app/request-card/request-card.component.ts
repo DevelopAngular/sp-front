@@ -20,6 +20,7 @@ import {NextStep} from '../animations';
 import {BehaviorSubject, of} from 'rxjs';
 
 import * as moment from 'moment';
+import {ScreenService} from '../services/screen.service';
 
 @Component({
   selector: 'app-request-card',
@@ -57,6 +58,9 @@ export class RequestCardComponent implements OnInit {
 
   performingAction: boolean;
   frameMotion$: BehaviorSubject<any>;
+  options: any[];
+  header: string;
+  cancelEditClick: boolean;
 
 
   constructor(
@@ -67,7 +71,8 @@ export class RequestCardComponent implements OnInit {
       public dataService: DataService,
       private _zone: NgZone,
       private loadingService: LoadingService,
-      private createFormService: CreateFormService
+      private createFormService: CreateFormService,
+      private screenService: ScreenService
   ) {}
 
   get invalidDate() {
@@ -277,144 +282,150 @@ export class RequestCardComponent implements OnInit {
     }
   }
 
-  cancelRequest(evt: MouseEvent){
-    if(!this.cancelOpen){
+  cancelRequest(evt: MouseEvent) {
+    if (this.screenService.isDeviceMid) {
+      this.cancelEditClick = !this.cancelEditClick;
+    }
+
+    if(!this.cancelOpen) {
       const target = new ElementRef(evt.currentTarget);
-      let options = [];
-      let header = '';
-      if(!this.forInput){
-        if(this.forStaff){
-          options.push(this.genOption('Attach Message & Deny','#3D396B','deny_with_message'));
-          options.push(this.genOption('Deny Pass Request','#E32C66','deny'));
-        } else{
-            if (this.invalidDate) {
-              options.push(this.genOption('Change Date & Time to Resend', '#3D396B', 'change_date'));
-            }
-          options.push(this.genOption('Delete Pass Request','#E32C66','delete'));
-        }
-        header = 'Are you sure you want to ' +(this.forStaff?'deny':'delete') +' this pass request' +(this.forStaff?'':' you sent') +'?';
-      } else{
-          if (!this.pinnableOpen) {
-            if (this.isSeen) {
-                this.formState.step = this.formState.previousStep === 1 ? 1 : 3;
-                this.formState.previousStep = 4;
-                this.cardEvent.emit(this.formState);
-            } else {
-                this.dialogRef.close();
-                  const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
-                      width: '750px',
-                      panelClass: 'form-dialog-container',
-                      backdropClass: 'custom-backdrop',
-                      data: {
-                          'fromLocation': this.request.origin,
-                          'fromHistory': this.fromHistory,
-                          'fromHistoryIndex': this.fromHistoryIndex,
-                          'colorProfile': this.request.color_profile,
-                          'forLater': this.forFuture,
-                          'forStaff': this.forStaff,
-                          'selectedStudents': this.selectedStudents,
-                          'toLocation': this.request.destination,
-                          'requestTarget': this.request.teacher,
-                          'toIcon': this.request.icon
-                      }
-                  });
-                  dialogRef.afterClosed().pipe(filter(res => !!res)).subscribe((result: Object) => {
-                     this.openInputCard(result['templatePass'],
-                        result['forLater'],
-                        result['forStaff'],
-                        result['selectedStudents'],
-                        (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent)),
-                        result['fromHistory'],
-                        result['fromHistoryIndex']
-                  );
-              });
-            }
+      this.options = [];
+      this.header = '';
+      if (!this.forInput) {
+        if (this.forStaff) {
+          this.options.push(this.genOption('Attach Message & Deny', '#3D396B', 'deny_with_message'));
+          this.options.push(this.genOption('Deny Pass Request', '#E32C66', 'deny'));
+        } else {
+          if (this.invalidDate) {
+            this.options.push(this.genOption('Change Date & Time to Resend', '#3D396B', 'change_date'));
           }
-          return false;
+          this.options.push(this.genOption('Delete Pass Request', '#E32C66', 'delete'));
+        }
+        this.header = 'Are you sure you want to ' + (this.forStaff ? 'deny' : 'delete') + ' this pass request' + (this.forStaff ? '' : ' you sent') + '?';
+      } else {
+        if (!this.pinnableOpen) {
+          if (this.isSeen) {
+            this.formState.step = this.formState.previousStep === 1 ? 1 : 3;
+            this.formState.previousStep = 4;
+            this.cardEvent.emit(this.formState);
+          } else {
+            this.dialogRef.close();
+            const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
+              width: '750px',
+              panelClass: 'form-dialog-container',
+              backdropClass: 'custom-backdrop',
+              data: {
+                'fromLocation': this.request.origin,
+                'fromHistory': this.fromHistory,
+                'fromHistoryIndex': this.fromHistoryIndex,
+                'colorProfile': this.request.color_profile,
+                'forLater': this.forFuture,
+                'forStaff': this.forStaff,
+                'selectedStudents': this.selectedStudents,
+                'toLocation': this.request.destination,
+                'requestTarget': this.request.teacher,
+                'toIcon': this.request.icon
+              }
+            });
+            dialogRef.afterClosed().pipe(filter(res => !!res)).subscribe((result: Object) => {
+              this.openInputCard(result['templatePass'],
+                result['forLater'],
+                result['forStaff'],
+                result['selectedStudents'],
+                (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent)),
+                result['fromHistory'],
+                result['fromHistoryIndex']
+              );
+            });
+          }
+        }
+        return false;
       }
+
+      if (!this.screenService.isDeviceMid) {
       const cancelDialog = this.dialog.open(ConsentMenuComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: {'header': header, 'options': options, 'trigger': target}
+        data: {'header': this.header, 'options': this.options, 'trigger': target}
       });
 
-      cancelDialog.afterOpen().subscribe( () =>{
+      cancelDialog.afterOpen().subscribe(() => {
         this.cancelOpen = true;
       });
 
       cancelDialog.afterClosed()
-          .subscribe(action => {
-            this.cancelOpen = false;
-            if (!action) {
-              return false;
+        .subscribe(action => {
+          this.chooseAction(action);
+        });
+    }
+
+    }
+  }
+
+  chooseAction(action) {
+    this.cancelOpen = false;
+    if (action === 'cancel' || action === 'stop') {
+      this.dialogRef.close();
+    } else if (action === 'editMessage') {
+      this.editMessage();
+    } else if (action === 'deny_with_message') {
+      let denyMessage: string = '';
+      if (action.indexOf('Message') > -1) {
+
+      } else {
+        let config;
+        if (this.isSeen) {
+          config = {
+            panelClass: 'form-dialog-container',
+            backdropClass: 'invis-backdrop',
+            data: {
+              'forInput': false,
+              'entryState': {step: 3, state: 5},
+              'teacher': this.request.teacher,
+              'originalMessage': '',
+              'originalToLocation': this.request.destination,
+              'colorProfile': this.request.color_profile,
+              'gradient': this.request.gradient_color,
+              'originalFromLocation': this.request.origin,
+              'isDeny': true,
+              'studentMessage': this.request.attachment_message
             }
-        console.log('DENIED with message ===>', action);
-        if(action === 'cancel' || action === 'stop'){
-          this.dialogRef.close();
-        } else if(action === 'editMessage'){
-          this.editMessage();
-        }else if(action.indexOf('deny_with_message') === 0) {
-          let denyMessage: string = '';
-          if(action.indexOf('Message') > -1) {
-
-          } else {
-            let config;
-            if (this.isSeen) {
-                config = {
-                    panelClass: 'form-dialog-container',
-                    backdropClass: 'invis-backdrop',
-                    data: {
-                        'forInput': false,
-                        'entryState': { step: 3, state: 5 },
-                        'teacher': this.request.teacher,
-                        'originalMessage': '',
-                        'originalToLocation': this.request.destination,
-                        'colorProfile': this.request.color_profile,
-                        'gradient': this.request.gradient_color,
-                        'originalFromLocation': this.request.origin,
-                        'isDeny': true,
-                        'studentMessage': this.request.attachment_message
-                    }
-                };
-            }
-            const messageDialog = this.dialog.open(CreateHallpassFormsComponent, config);
-
-              messageDialog.afterOpen().subscribe( () => {
-                  this.messageEditOpen = true;
-              });
-
-              messageDialog.afterClosed().pipe(filter(res => !!res)).subscribe(matData => {
-                  // denyMessage = data['message'];
-                  if (_.isNull(matData.data.message)) {
-                      this.messageEditOpen = false;
-                      return;
-                  }
-                  if (matData.data && matData.data.message) {
-                    denyMessage = matData.data.message;
-                    this.messageEditOpen = false;
-                    console.log('DENIED =====>', matData, action);
-                    // debugger;
-                    this.denyRequest(denyMessage);
-                  } else {
-                      denyMessage = matData.message;
-                      this.messageEditOpen = false;
-                      this.denyRequest(denyMessage);
-                  }
-              });
-              return;
-          }
-        } else if (action === 'deny') {
-
-          this.denyRequest('No message');
-
-        } else if (action === 'delete') {
-            this.requestService.cancelRequest(this.request.id).subscribe(() => {
-              this.dialogRef.close();
-            });
-        } else if (action === 'change_date') {
-            this.changeDate(true);
+          };
         }
+        const messageDialog = this.dialog.open(CreateHallpassFormsComponent, config);
+
+        messageDialog.afterOpen().subscribe(() => {
+          this.messageEditOpen = true;
+        });
+
+        messageDialog.afterClosed().pipe(filter(res => !!res)).subscribe(matData => {
+          // denyMessage = data['message'];
+          if (_.isNull(matData.data.message)) {
+            this.messageEditOpen = false;
+            return;
+          }
+          if (matData.data && matData.data.message) {
+            denyMessage = matData.data.message;
+            this.messageEditOpen = false;
+            console.log('DENIED =====>', matData, action);
+            this.denyRequest(denyMessage);
+          } else {
+            denyMessage = matData.message;
+            this.messageEditOpen = false;
+            this.denyRequest(denyMessage);
+          }
+        });
+        return;
+      }
+    } else if (action === 'deny') {
+      this.denyRequest('No message');
+
+    } else if (action === 'delete') {
+      this.requestService.cancelRequest(this.request.id).subscribe(() => {
+        this.dialogRef.close();
       });
+    } else if (action === 'change_date') {
+      this.changeDate(true);
     }
   }
 
@@ -461,5 +472,18 @@ export class RequestCardComponent implements OnInit {
 
   get iconClass() {
    return  this.forStaff || this.invalidDate || !this.forStaff && !this.forInput && !this.invalidDate ? '' : 'icon-button';
+  }
+
+  cancelClick() {
+    this.cancelEditClick = false;
+  }
+
+  backdropClick() {
+    this.cancelEditClick = false;
+  }
+
+  receiveOption(action) {
+    this.chooseAction(action);
+    this.dialogRef.close();
   }
 }

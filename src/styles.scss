@@ -340,9 +340,16 @@ body {
 
 @media all and (max-width: 475px) {
   .form-dialog-container {
-    max-width: unset !important;
+    max-width: 335px !important;
   }
 }
+
+@media all and (max-width: 320px) {
+  .form-dialog-container {
+    max-width: 300px !important;
+  }
+}
+
 
 // Side nav scroll hiding
 .mat-drawer-inner-container::-webkit-scrollbar {
