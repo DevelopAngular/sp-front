@@ -1,6 +1,6 @@
 import {Component, OnInit, ElementRef, ViewChild, HostListener} from '@angular/core';
 import { MatDialog } from '@angular/material';
-import {BehaviorSubject, fromEvent, combineLatest, Observable, of} from 'rxjs';
+import {BehaviorSubject, fromEvent, combineLatest, Observable, of, Subject} from 'rxjs';
 import { User } from '../../models/User';
 import { Report } from '../../models/Report';
 import { Pinnable } from '../../models/Pinnable';
@@ -11,7 +11,7 @@ import { TimeService } from '../../services/time.service';
 import {CalendarComponent} from '../calendar/calendar.component';
 import {HttpService} from '../../services/http-service';
 import {Util} from '../../../Util';
-import {map, switchMap, toArray} from 'rxjs/operators';
+import {delay, filter, map, switchMap, toArray} from 'rxjs/operators';
 import {AdminService} from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import * as _ from 'lodash';
@@ -39,6 +39,7 @@ export class HallmonitorComponent implements OnInit {
     selectedStudents: User[] = [];
     studentreport: Report[] | any[] = [];
     pending: boolean = true;
+    searchPending$: Subject<boolean> = new Subject<boolean>();
 
     min: Date = new Date('December 17, 1995 03:24:00');
 
@@ -94,7 +95,14 @@ export class HallmonitorComponent implements OnInit {
     this.http.globalReload$.subscribe(() => {
       this.getReports();
     });
-
+    // this.activePassProvider.loaded$
+    //   .pipe(
+    //     filter(v => v),
+    //   )
+    //   .subscribe((res) => {
+    //     this.searchPending$.next(!res);
+    //     console.log(res);
+    //   });
     this.hasPasses = combineLatest(
       this.activePassProvider.length$,
       (l1) => l1 > 0
@@ -104,11 +112,20 @@ export class HallmonitorComponent implements OnInit {
       this.activePassProvider.loaded$,
       (l1) => l1
     );
-
+    this.passesLoaded
+      .pipe(
+        filter(v => v),
+        delay(250)
+      )
+      .subscribe((res) => {
+      this.searchPending$.next(!res);
+      console.log(res);
+    });
   }
 
   onSearch(searchValue) {
       console.log('It emits here!', searchValue);
+    this.searchPending$.next(true);
      this.searchQuery$.next(searchValue);
   }
 
