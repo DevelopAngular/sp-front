@@ -36,7 +36,7 @@ export class ToWhereComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     private formService: CreateFormService,
-    private screenService: ScreenService
+    public screenService: ScreenService
 
   ) {
     this.states = States;
