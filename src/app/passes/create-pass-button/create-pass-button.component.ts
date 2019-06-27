@@ -12,6 +12,7 @@ export class CreatePassButtonComponent implements OnInit {
 
   @Input() title: string;
   @Input() gradient: string;
+  @Input() disabled: boolean;
 
   @Output() onClick: EventEmitter<any> = new EventEmitter();
 
@@ -23,7 +24,7 @@ export class CreatePassButtonComponent implements OnInit {
   constructor(private sanitizer: DomSanitizer) { }
 
   get buttonState() {
-      return this.buttonDown ? 'down' : 'up';
+      return this.buttonDown && !this.disabled ? 'down' : 'up';
   }
 
   get boxShadow() {
@@ -44,7 +45,7 @@ export class CreatePassButtonComponent implements OnInit {
   }
 
   backgroundGradient() {
-      if (this.buttonDown) {
+      if (this.buttonDown && !this.disabled) {
           return this.solid_color;
       } else {
           return 'radial-gradient(circle at 73% 71%, #03cf31, #00b476)';
@@ -52,7 +53,9 @@ export class CreatePassButtonComponent implements OnInit {
   }
 
   buttonClick() {
-    this.onClick.emit();
+      if (!this.disabled) {
+          this.onClick.emit();
+      }
   }
 
 }

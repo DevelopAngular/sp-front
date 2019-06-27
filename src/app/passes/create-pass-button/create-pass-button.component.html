@@ -8,6 +8,7 @@
     (mouseleave)="buttonDown = false; hovered = false"
     (mousedown)="buttonDown = true"
     (mouseup)="buttonDown = false"
+    [ngClass]="{'disabled': disabled}"
 >
   <div class="title">{{ title }}</div>
 </div>
