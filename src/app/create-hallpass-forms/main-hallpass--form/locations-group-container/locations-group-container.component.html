@@ -1,6 +1,6 @@
 <div>
 <div class="locations-group-wrapper">
-  <pre>  {{FORM_STATE.state}} {{FORM_STATE.previousState}} {{ FORM_STATE.state > FORM_STATE.previousState}}</pre>
+<!--  <pre>  {{FORM_STATE.state}} {{FORM_STATE.previousState}} {{ FORM_STATE.state > FORM_STATE.previousState}}</pre>-->
   <!--<pre>{{frameMotion$| async | json}}</pre>-->
   <div *ngIf="FORM_STATE.state === 1" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async}">
 
@@ -14,7 +14,6 @@
     ></app-from-where>
   </div>
   <div *ngIf="FORM_STATE.state === 2" class="next-step" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
-<pre>{{FORM_STATE.state}}</pre>
     <app-to-where
       [studentText]="studentText"
       [formState]="FORM_STATE"
