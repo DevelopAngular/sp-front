@@ -253,6 +253,8 @@ export class HallMonitorComponent implements OnInit {
 
   cleanSearchValue() {
     this.resetvalue.next('');
+    this.inputValue = '';
+    this.isIpadSearchBar = false;
   }
 
 }

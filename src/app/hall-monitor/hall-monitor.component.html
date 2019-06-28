@@ -56,7 +56,7 @@
           </div>
 
           <div class="cancel-wrapper" *ngIf="isIpadSearchBar">
-            <span class="cancel" (click)="cleanSearchValue()">Cancel</span>
+            <span class="cancel" (click)="cleanSearchValue();">Cancel</span>
           </div>
 
           <div class="options-wrapper" *ngIf="!isIpadSearchBar">
@@ -66,25 +66,25 @@
       </ng-template>
     </div>
 
-    <h1 class="hall-monitor-heading" *ngIf="!isIpadSearchBar" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">Hall Monitor</h1>
-    <ng-container *ngIf="isSearchClicked && !isIpadWidth">
-      <div class="student-search-wrapper ">
-        <div class="student-search ">
-          <app-round-input
-            [type]="inputRestrictionSm.type"
-            [minWidth]="inputRestrictionSm.minWidth"
-            [width]="inputRestrictionSm.width"
-            [placeholder]="inputRestrictionSm.placeholder"
-            [fieldIconPosition]="inputRestrictionSm.fieldIconPosition"
-            [closeIcon]="inputRestrictionSm.closeIcon"
-            [style.margin-right]="'40px'"
-            (ontextupdate)="onSearch($event)"
-            [selectReset$] = "resetvalue"
-          ></app-round-input>
-        </div>
-        <span class="cancel" (click)="cleanSearchValue()">Cancel</span>
-      </div>
-    </ng-container>
+    <!--<h1 class="hall-monitor-heading" *ngIf="!isIpadSearchBar" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">Hall Monitor</h1>-->
+    <!--<ng-container *ngIf="isSearchClicked && !isIpadWidth && !isDeviceLargeExtra">-->
+      <!--<div class="student-search-wrapper ">-->
+        <!--<div class="student-search ">-->
+          <!--<app-round-input-->
+            <!--[type]="inputRestrictionSm.type"-->
+            <!--[minWidth]="inputRestrictionSm.minWidth"-->
+            <!--[width]="inputRestrictionSm.width"-->
+            <!--[placeholder]="inputRestrictionSm.placeholder"-->
+            <!--[fieldIconPosition]="inputRestrictionSm.fieldIconPosition"-->
+            <!--[closeIcon]="inputRestrictionSm.closeIcon"-->
+            <!--[style.margin-right]="'40px'"-->
+            <!--(ontextupdate)="onSearch($event)"-->
+            <!--[selectReset$] = "resetvalue"-->
+          <!--&gt;</app-round-input>-->
+        <!--</div>-->
+        <!--<span class="cancel" (click)="cleanSearchValue()">Cancel</span>-->
+      <!--</div>-->
+    <!--</ng-container>-->
 
     <div class="hall-monitor-bottom">
       <app-pass-collection

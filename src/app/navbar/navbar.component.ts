@@ -285,10 +285,11 @@ export class NavbarComponent implements AfterViewInit, OnInit {
   underlinePosition() {
       if (this.isStaff && this.navButtonsContainer && this.tabRefs && this.screenService.isDesktopWidth) {
           setTimeout(() => {
-            console.log(this.tabRefs);
             const tabRefsArray = this.tabRefs.toArray();
               const selectedTabRef = this.buttons.findIndex((button) => button.route === this.tab);
-              this.selectTab(tabRefsArray[selectedTabRef].nativeElement, this.navButtonsContainer.nativeElement);
+              if (tabRefsArray[selectedTabRef]) {
+                  this.selectTab(tabRefsArray[selectedTabRef].nativeElement, this.navButtonsContainer.nativeElement);
+              }
           }, 550);
       }
   }
