@@ -60,7 +60,7 @@
          [style.color]="getColor(null, hoveredSignout)"
          (mouseenter)="hoveredSignout = true"
          (mouseleave)="hoveredSignout = false"
-         (click)="dialogRef.close('signout')">Sign out</div>
+         (click)="signOutAction()">Sign out</div>
     <div class="options" [style.color]="getColor(null, null)">
       <span class="version" [style.cursor]="'pointer'">{{version}}</span>
       <span class="privacy" (click)="dialogRef.close('privacy')">Privacy & Terms</span>

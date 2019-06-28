@@ -189,6 +189,13 @@ export class SettingsComponent implements OnInit {
       matDialogConfig.position = { left: `${rect.left + (rect.width / 2) - 168 }px`, top: `${rect.bottom + 10}px` };
       this.dialogRef.updatePosition(matDialogConfig.position);
     }
+  }
 
+  signOutAction() {
+    if (this.dialogRef) {
+        this.dialogRef.close('signout');
+    } else {
+        this.sideNavService.sideNavAction$.next('signout');
+    }
   }
 }
