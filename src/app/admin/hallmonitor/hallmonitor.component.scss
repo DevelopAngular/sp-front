@@ -51,14 +51,18 @@
   padding: 25px;
   box-sizing: border-box;
 }
-
+.collection-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
 .hallpass-box {
   display: flex;
   flex-direction: column;
-  width: 45%;
+  width: 500px;
   //min-width: 470px;
   align-items: center;
-  margin: 30px 40px 0 0px;
+  margin-top: 30px;
 
   .hall-monitor-bottom {
     width: 100%;
