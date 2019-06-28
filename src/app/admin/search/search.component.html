@@ -37,7 +37,7 @@
                 [length]="selectedRooms.length"
                 [selectedText]="'room'"
                 (open)="openFilters($event)"
-                (reset)="resetSearchState(); selectedRooms = []"
+                (reset)="resetSearchState(); selectedRooms = []; selRoomsWithCategories = []"
               ></app-xs-button>
             </div>
             <mat-divider [vertical]="true"></mat-divider>

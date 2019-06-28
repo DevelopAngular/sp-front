@@ -242,6 +242,7 @@ export class SearchComponent implements OnInit {
         this.selectedRooms = data.locations;
         this.selRoomsWithCategories = data.allSelected;
       }
+      this.hasSearched = false;
     });
   }
 
@@ -261,6 +262,7 @@ export class SearchComponent implements OnInit {
             } else {
                 this.selectedDate = {start: date.start, end: date.end};
             }
+            this.hasSearched = false;
         });
   }
 
