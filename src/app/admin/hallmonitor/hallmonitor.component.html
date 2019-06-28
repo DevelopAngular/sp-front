@@ -59,7 +59,8 @@
             <div class="text" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Reported Students</div>
           </div>
           <div class="calendar-icon-container" [ngClass]="{'active-calendar-icon': activeCalendar}">
-            <img draggable="false" [src]="calendarIcon | resolveAsset" class="calendar-icon" (click)="openDateDialog($event)">
+            <app-icon-button [srcString]="'Calendar'" [size]="25" (clickEvent)="openDateDialog($event)"></app-icon-button>
+            <!--<img draggable="false" [src]="calendarIcon | resolveAsset" class="calendar-icon" (click)="openDateDialog($event)">-->
           </div>
         </div>
         <!--<h3 style="text-align: center; margin: 15px; color: #134482" *ngIf="!studentreport?.length">{{reportsDate | date : 'MMM. d' }}</h3>-->
