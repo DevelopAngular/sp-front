@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { AfterContentInit, AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { KioskModeService } from '../services/kiosk-mode.service';
 import { MatDialog } from '@angular/material';
@@ -21,7 +21,7 @@ import {LocationsService} from '../services/locations.service';
   templateUrl: './kiosk-mode.component.html',
   styleUrls: ['./kiosk-mode.component.scss']
 })
-export class KioskModeComponent implements OnInit, OnDestroy {
+export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   activePassesKiosk: WrappedProvider;
 
@@ -38,6 +38,8 @@ export class KioskModeComponent implements OnInit, OnDestroy {
       secret_id: string
       user_id: number
   };
+
+
 
   @ViewChild('input', { read: ElementRef }) input: ElementRef;
 
@@ -72,6 +74,12 @@ export class KioskModeComponent implements OnInit, OnDestroy {
           const kioskLocation = locations.find(loc => loc.id === this.userData.kiosk_location_id);
           this.kioskMode.currentRoom$.next(kioskLocation);
       });
+  }
+
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.input.nativeElement.focus();
+    }, 50);
   }
 
   ngOnDestroy() {
@@ -109,6 +117,11 @@ export class KioskModeComponent implements OnInit, OnDestroy {
       }
   }
 
+  onCardReaderBlur() {
+    setTimeout(() => {
+      this.input.nativeElement.focus();
+    }, 1);
+  }
 
   showMainForm(forLater: boolean, student?): void {
       const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {

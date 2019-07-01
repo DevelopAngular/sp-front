@@ -49,6 +49,6 @@
     #input
     [(ngModel)]="cardReaderValue"
     (keyup)="cardReader($event)"
-    (blur)="input.focus()"
-    [style.opacity]="1"
+    (blur)="onCardReaderBlur()"
+    [style.opacity]="0"
 >
