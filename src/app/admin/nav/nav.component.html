@@ -20,6 +20,7 @@
                 [selected]="isSelected(gettingStarted.route)"
                 [content]="gettingStarted.title"
                 [icon]="gettingStarted.imgUrl"
+                (selectedButton)="selectTab(tabRef, navButtonsContainter);"
                 (onClick)="route(gettingStarted); selectTab(tabRef, navButtonsContainter);">
               </app-nav-button>
             </ng-container>
@@ -43,6 +44,7 @@
               [selected]="isSelected(button.route)"
               [content]="button.title"
               [icon]="button.imgUrl"
+              (selectedButton)="selectTab(tabRef, navButtonsContainter);"
               (onClick)="route(button); selectTab(tabRef, navButtonsContainter);">
             </app-nav-button>
           </ng-container>

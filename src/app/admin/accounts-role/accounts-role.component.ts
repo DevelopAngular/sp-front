@@ -154,6 +154,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.http.globalReload$.pipe(
       tap(() => {
+        this.role = null;
         this.selectedUsers = [];
         this.userList = [];
       }),
@@ -182,8 +183,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       switchMap(() => {
         return this.route.queryParams.pipe(takeUntil(this.destroy$));
       }),
-      // tap(() => this.router.navigate(['admin/accounts', this.role])),
+      tap(() => this.router.navigate(['admin/accounts', this.role])),
       filter(() => this.role !== 'g_suite'),
+      takeUntil(this.destroy$)
     )
     .subscribe((qp) => {
       const {profileName} = qp;
@@ -669,7 +671,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   private buildUserListData(userList) {
     this.isLoadUsers = this.limitCounter === userList.length;
-    console.log('ME ===>>>>>>', this.user);
+    // console.log('ME ===>>>>>>', this.user);
     // this.userAmount.next(userList.length);
     return userList.map((raw, index) => {
       // raw = User.fromJSON(raw);
@@ -683,7 +685,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         const rawObj = {
             // 'Name': +raw.id === +this.user.id ? raw.display_name + ' (Me)' : raw.display_name,
             'Name': raw.display_name,
-            'Email/Username': raw.primary_email,
+            'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
             'Rooms': raw.assignedTo,
             // 'Account Type': 'G Suite',
             'Acting on Behalf Of': raw.canActingOnBehalfOf ? raw.canActingOnBehalfOf.map((u: RepresentedUser) => {

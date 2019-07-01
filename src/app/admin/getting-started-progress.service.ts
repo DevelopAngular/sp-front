@@ -63,8 +63,7 @@ export class GettingStartedProgressService {
         })
       )
       .subscribe((data: Array<OnboardItem>) => {
-        console.log(data);
-        this.onboardProgress.progress = 10;
+        this.onboardProgress.progress = 0;
         this.onboardProgress.offset = 120;
         data.forEach((item: OnboardItem ) => {
           const ticket = item.name.split(':');
@@ -75,10 +74,9 @@ export class GettingStartedProgressService {
           if (item.done) {
             this.onboardProgress.progress += Progress[item.name];
             this.onboardProgress.offset -= Progress[item.name];
-            console.log(this.onboardProgress.progress, Progress[item.name]);
           }
         });
-        console.log(this.onboardProgress);
+        // console.log(this.onboardProgress);
       });
   }
 

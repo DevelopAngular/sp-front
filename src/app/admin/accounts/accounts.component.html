@@ -1,7 +1,7 @@
 <div class="host" appSafariScroll>
 
-  <div class="accounts-wrapper" *ngIf="splash">
-    <div class="accounts-setup">
+  <div class="accounts-wrapper" *ngIf="splash !== undefined && splash">
+    <div class="accounts-setup ds-pt-25">
       <div class="left-side">
         <div class="left-side_header">Accounts set-up</div>
         <div class="left-side_title">Set up all of your SmartPass accounts with G Suite syncing.</div>
@@ -72,31 +72,7 @@
         </div>
       </div>
       <div class="right-side">
-        <div class="privacy-card">
-          <div class="privacy-card_header">
-            <img class="privacy-card_header-image" [src]="'./assets/Shield (Blue-Gray).svg'" alt="Shield (Blue-Gray).svg"><span>Student Privacy</span>
-          </div>
-          <div class="privacy-card_content">
-            <div class="ds-mt-15">
-              We take student privacy very seriously, <br>
-              continuously working with schools to make sure <br>
-              student data is kept safe and secure.
-            </div>
-            <div class="ds-mt-15">
-              SmartPass only sees a user’s name, email <br>
-              address, and their organizational unit in G Suite.
-            </div>
-            <div class="ds-mt-15">
-              <app-gradient-button
-                [gradient]="'#FFFFFF,#7F879D'"
-                [linkType]="'_self'"
-                [buttonLink]="'https://www.smartpass.app/privacy'"
-                [text]="'Learn more'"
-              >
-              </app-gradient-button>
-            </div>
-          </div>
-        </div>
+        <app-privacy-card></app-privacy-card>
         <div class="setup-guy">
           <img [src]="'./assets/accounts-setup-guy.svg'" alt="accounts-setup-guy.svg">
         </div>
@@ -104,7 +80,7 @@
     </div>
   </div>
 
-  <div class="accounts-wrapper" *ngIf="!splash">
+  <div class="accounts-wrapper" *ngIf="splash !== undefined && !splash">
       <div class="header-wrapper">
         <div class="accounts-header">
           <div class="header-content">
@@ -119,7 +95,6 @@
             <div class="header-buttons">
               <div class="ds-mx-10" *ngIf="openTable && !dataTableEditState.value">
                 <app-round-input
-                        [initialValue]="initialSearchString"
                         [minWidth]="'230px'"
                         [width]="'230px'"
                         [type]="'text'"
