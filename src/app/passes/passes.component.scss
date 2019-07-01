@@ -28,6 +28,14 @@
   img.empty-passes-svg {
     width: 100%;
   }
+
+  div.passes-wrapper {
+    height: unset;
+  }
+
+  div.passes-wrapper {
+    flex-direction: column;
+  }
 }
 
 @media all and (max-width: 768px){
@@ -35,12 +43,18 @@
     margin-right: 0;
   }
 
-  div.passes-wrapper {
-    flex-direction: column;
-  }
-
   div.main-page-right {
     display: none !important;
+  }
+
+
+}
+
+@media all and (max-width: 1024px){
+  .pass-collection {
+    &:last-child {
+      padding-bottom: 50px;
+    }
   }
 }
 

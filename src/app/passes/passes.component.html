@@ -51,13 +51,13 @@
       <div class="big-text" [style.margin]="'10px 0'">Jump Right In</div>
       <div class="text">The hallway will never be the same</div>
     </div>
-    <div class="active-passes">
+    <div class="active-passes pass-collection">
       <app-pass-collection *ngIf="isStaff" [isActive]="true" [forStaff]="isStaff" [style.width]="'400px'" [passProvider]="activePasses" [title]="'Active Passes'" [icon]="'./assets/Walking (Navy).svg'" [columns]="3" (reportFromPassCard)="onReportFromPassCard($event)"></app-pass-collection>
     </div>
-    <div class="future-passes">
+    <div class="future-passes pass-collection">
       <app-pass-collection [forFuture]="true" [forStaff]="isStaff" [style.width]="'400px'" [passProvider]="futurePasses" [title]="'Scheduled Passes'" [icon]="'./assets/Future (Navy).svg'" [columns]="3"></app-pass-collection>
     </div>
-    <div class="past-passes">
+    <div class="past-passes pass-collection">
       <app-pass-collection [maxHeight]="'100%'" [fromPast]="true" [forStaff]="isStaff" [style.width]="'400px'" [passProvider]="pastPasses" [title]="'Expired Passes'" [icon]="'./assets/Expired (Navy).svg'" [columns]="3"></app-pass-collection>
     </div>
   </div>
@@ -117,7 +117,7 @@
       <div class="big-text" [style.margin]="'10px 0'">Jump Right In</div>
       <div class="text">The hallway will never be the same</div>
     </div>
-    <div class="active-passes">
+    <div class="active-passes pass-collection">
       <app-pass-collection
         *ngIf="isStaff"
         [isActive]="true"
@@ -129,10 +129,10 @@
         [columns]="3"
         (reportFromPassCard)="onReportFromPassCard($event)"></app-pass-collection>
     </div>
-    <div class="future-passes">
+    <div class="future-passes pass-collection">
       <app-pass-collection [forFuture]="true" [forStaff]="isStaff" [style.width]="'460px'" [passProvider]="futurePasses" [title]="'Scheduled Passes'" [icon]="'./assets/Future (Navy).svg'" [columns]="3"></app-pass-collection>
     </div>
-    <div class="past-passes">
+    <div class="past-passes pass-collection">
       <app-pass-collection [maxHeight]="'100%'" [fromPast]="true" [forStaff]="isStaff" [style.width]="'460px'" [passProvider]="pastPasses" [title]="'Expired Passes'" [icon]="'./assets/Expired (Navy).svg'" [columns]="3"></app-pass-collection>
     </div>
   </div>
