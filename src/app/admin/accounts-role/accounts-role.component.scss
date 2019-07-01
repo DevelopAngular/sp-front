@@ -18,9 +18,12 @@
     min-width: 850px;
     width: 100%;
     .back-button {
-      min-width: 125px;
-      width: 125px;
+      min-width: 90px;
+      width: 90px;
       height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
     .header-wrapper {
       background-color: #FBFEFF;
@@ -130,9 +133,11 @@
 
   .gsuite-wrapper {
     min-width: 850px;
+    margin-top: 25px;
     .gsuite-header {
       height: 99px;
       padding: 0 30px 0 30px;
+      background-color: white;
       box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.06);
       border-radius: 10px;
       display: flex;
@@ -189,6 +194,7 @@
     .gsuite-content {
       margin-top: 30px;
       display: flex;
+      align-items: center;
       justify-content: center;
       flex-direction: column;
 

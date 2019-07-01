@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { HttpService } from './http-service';
 import { School } from '../models/School';
 import { Observable } from 'rxjs';
+import {GSuiteOrgs} from '../models/GSuiteOrgs';
+import {switchMap} from 'rxjs/operators';
 
 
 @Injectable({
@@ -40,6 +42,16 @@ export class AdminService {
 
   getOnboardProgress() {
     return this.http.get('v1/admin/onboard_progress');
+  }
+
+  getGSuiteOrgs(): Observable<GSuiteOrgs> {
+      return this.http.currentSchool$.pipe(
+          switchMap(school => this.http.get(`v1/schools/${school.id}/syncing/gsuite/status`)));
+  }
+
+  syncNow() {
+    return this.http.currentSchool$.pipe(
+          switchMap(school => this.http.post(`v1/schools/${school.id}/syncing/manual_sync`)));
   }
 
   updateOnboardProgress(name) {
