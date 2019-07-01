@@ -44,7 +44,7 @@
     <div class="tour-items ds-flex-start-center ds-mt-25">
       <div class="ds-flex-start-start ds-flex-column ds-mr-10">
 
-        <div class="card card__tour-item" (click)="router.navigate(['admin', 'gettingstarted', 'takeTour'])">
+        <div class="card card__tour-item"  (click)="markItem(['admin', 'gettingstarted', 'takeTour'], 'take_a_tour:start')">
 
           <div class="card_header">
             <img class="tour-item_image" [src]="'./assets/Video (Red).svg' | resolveAsset" alt="">
@@ -81,7 +81,7 @@
 
         </div>
 
-        <div class="card card__tour-item"  (click)="router.navigate(['admin', 'passconfig'])">
+        <div class="card card__tour-item" (click)="markItem(['admin', 'passconfig'], 'setup_rooms:start')">
           <div class="card_header">
             <img class="tour-item_image" [src]="'./assets/Room (Purple).svg' | resolveAsset" alt="">
             <span>Rooms Set-up</span>
@@ -113,7 +113,7 @@
 
       </div>
       <div class="ds-flex-start-start ds-flex-column  ds-ml-10">
-        <div class="card card__tour-item" (click)="router.navigate(['admin', 'accounts'])">
+        <div class="card card__tour-item" (click)="markItem(['admin', 'accounts'], 'setup_accounts:start')">
           <div class="card_header">
             <img class="tour-item_image" [src]="'./assets/Users (Blue).svg' | resolveAsset" alt="">
             <span>Accounts Set-up</span>
@@ -142,7 +142,7 @@
           </div>
 
         </div>
-        <div class="card card__tour-item" (click)="router.navigate(['admin', 'myschool'])">
+        <div class="card card__tour-item" (click)="markItem(['admin', 'myschool'], 'launch_day_prep:start')">
           <div class="card_header">
             <img class="tour-item_image" [src]="'./assets/Launch (Pink).svg' | resolveAsset" alt="">
             <span>Launch Day Prep</span>

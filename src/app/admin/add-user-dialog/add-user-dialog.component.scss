@@ -24,7 +24,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: radial-gradient(circle at 80% 67%, #03cf31, #00b476);
+      //background: radial-gradient(circle at 80% 67%, #03cf31, #00b476);
+      background: $jade;
       color: #FFFFFF;
       font-size: 17px;
       font-weight: bold;

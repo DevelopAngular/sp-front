@@ -20,6 +20,7 @@ export class NavButtonComponent implements OnInit, OnChanges {
   @Input() content: string;
   @Input() selected: boolean = false;
 
+  @Output() selectedButton: EventEmitter<any> = new EventEmitter();
   @Output() onClick: EventEmitter<any> = new EventEmitter();
 
   public iconId: string;
@@ -58,7 +59,8 @@ export class NavButtonComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     if (this.selected) {
-      this.doClick();
+      // this.doClick();
+      this.selectedButton.emit(this.selected);
       console.log(true);
     }
   }

@@ -60,30 +60,32 @@
           </div>
         </div>
         <div *ngIf="school" class="ds-flex-center-center ds-flex-column">
-          <app-gradient-button
-            class="login-button ds-my-25 ds-py-25"
-            [size]="'xl'"
-            [gradient]="'#FFFFFF,#FFFFFF'"
-            [withShadow]="true"
-            [cursor]="'pointer'"
-            [hoverColor]="'#F1F1F1'"
-            [minWidth]="'300px'"
-            [minHeight]="'100px'"
-            [fontSize]="'22px'"
-            (buttonClick)="createSchool()"
-            [style.margin]="'50px auto 100px auto'"
-            [leftIcon]="'./assets/google/google_logo.svg'"
-            [textColor]="'#666666'"
-            [leftImageWidth]="'40px'"
-            [leftImageHeight]="'40px'"
-          >
-            <div *ngIf="true">
-              <span>Sign in with Google</span>
+          <div class="login-button" [style.margin]="'50px auto 100px auto'">
+            <div style="border-radius: 6px; box-shadow: 0 0 5px 2px rgba(0, 0, 0, .05)">
+              <app-gradient-button
+                [size]="'xl'"
+                [gradient]="'#FFFFFF,#FFFFFF'"
+                [withShadow]="true"
+                [cursor]="'pointer'"
+                [hoverColor]="'#F1F1F1'"
+                [minWidth]="'300px'"
+                [minHeight]="'100px'"
+                [fontSize]="'22px'"
+                (buttonClick)="createSchool()"
+                [leftIcon]="'./assets/google/google_logo.svg'"
+                [textColor]="'#666666'"
+                [leftImageWidth]="'40px'"
+                [leftImageHeight]="'40px'"
+              >
+                <div *ngIf="true">
+                  <span>Sign in with Google</span>
+                </div>
+                <!--<div style="width: 240px; display: flex; justify-content: center" *ngIf="showSpinner" class="loading-theme_white">-->
+                <!--<mat-spinner [diameter]="35"></mat-spinner>-->
+                <!--</div>-->
+              </app-gradient-button>
             </div>
-            <!--<div style="width: 240px; display: flex; justify-content: center" *ngIf="showSpinner" class="loading-theme_white">-->
-              <!--<mat-spinner [diameter]="35"></mat-spinner>-->
-            <!--</div>-->
-          </app-gradient-button>
+          </div>
           <div class="ds-flex-center-center ds-my-15" style="color: #E32C66;" *ngIf="showError.error">
             <div style="text-align: center;">
               <span>Oops! Please make sure to you are a G Suite</span><br>
