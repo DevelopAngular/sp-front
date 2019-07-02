@@ -4,6 +4,8 @@ import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {GettingStartedProgressService} from '../getting-started-progress.service';
 import {fromEvent} from 'rxjs';
 
+declare const window;
+
 @Component({
   selector: 'app-getting-started',
   templateUrl: './getting-started.component.html',
@@ -37,5 +39,10 @@ export class GettingStartedComponent implements OnInit {
 
   ngOnInit() {
 
+  }
+
+  goMeetting(event) {
+      event.stopPropagation();
+    window.open('https://www.smartpass.app/meeting');
   }
 }
