@@ -32,9 +32,10 @@
   </div>
 
   <div style="position: absolute; top: 0; bottom: 0; display: flex; align-items: center;">
-    <div *ngIf="slideIndex!==1" class="button-left" (click)="slide('back')"
+    <div *ngIf="slideIndex!==1" class="button-left"
          [@pressState]="getButtonState('left')" (mousedown)="onPress(true, 'left')" (mouseup)="onPress(false, 'left')">
-      <img class="button-icon" [src]="'./assets/Chevron Left (Blue-Gray).svg' | resolveAsset">
+      <app-icon-button [switchColor]="false" [srcString]="'Chevron Left'" (clickEvent)="slide('back')"></app-icon-button>
+      <!--<img class="button-icon" [src]="'./assets/Chevron Left (Blue-Gray).svg' | resolveAsset">-->
     </div>
     <div class="box" >
 
@@ -129,26 +130,8 @@
 
                 <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Plus (Navy).svg'">
                   <div class="pass-buttons">
-                    <app-gradient-button
-                            [size]="'editable'"
-                            [minWidth]="'143px'"
-                            [minHeight]="'86.5px'"
-                            [cornerRadius]="'12.75px'"
-                            [hoverColor]="'#00b476'"
-                            [fontSize]="'18px'"
-                            [cursor]="'pointer'"
-                    >Now
-                    </app-gradient-button>
-                    <app-gradient-button
-                            [size]="'editable'"
-                            [minWidth]="'143px'"
-                            [minHeight]="'86.5px'"
-                            [hoverColor]="'#00b476'"
-                            [cornerRadius]="'12.75px'"
-                            [fontSize]="'18px'"
-                            [cursor]="'pointer'"
-                    >Future
-                    </app-gradient-button>
+                    <app-create-pass-button [title]="'Now'"></app-create-pass-button>
+                    <app-create-pass-button [title]="'Future'"></app-create-pass-button>
                   </div>
                 </app-display-card>
               </div>
@@ -271,26 +254,8 @@
               </div>
               <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Plus (Navy).svg'">
                 <div class="pass-buttons">
-                  <app-gradient-button
-                          [size]="'editable'"
-                          [minWidth]="'143px'"
-                          [minHeight]="'86.5px'"
-                          [cornerRadius]="'12.75px'"
-                          [hoverColor]="'#00b476'"
-                          [fontSize]="'18px'"
-                          [cursor]="'pointer'"
-                  >Now
-                  </app-gradient-button>
-                  <app-gradient-button
-                          [size]="'editable'"
-                          [minWidth]="'143px'"
-                          [minHeight]="'86.5px'"
-                          [cornerRadius]="'12.75px'"
-                          [hoverColor]="'#00b476'"
-                          [fontSize]="'18px'"
-                          [cursor]="'pointer'"
-                  >Future
-                  </app-gradient-button>
+                  <app-create-pass-button [title]="'Now'"></app-create-pass-button>
+                  <app-create-pass-button [title]="'Future'"></app-create-pass-button>
                 </div>
               </app-display-card>
               <div class="ds-flex-center-between ds-mt-25 ds-pt-15">
@@ -347,9 +312,10 @@
       </div>
 
     </div>
-    <div *ngIf="slideIndex !==4 && slideIndex!==5" class="button-right" (click)="slide('forward')"
+    <div *ngIf="slideIndex !==4 && slideIndex!==5" class="button-right"
          [@pressState]="getButtonState('right')" (mousedown)="onPress(true, 'right')" (mouseup)="onPress(false, 'right')">
-      <img class="button-icon" [src]="'./assets/Chevron Right (Blue-Gray).svg' | resolveAsset">
+      <!--<img class="button-icon" [src]="'./assets/Chevron Right (Blue-Gray).svg' | resolveAsset">-->
+      <app-icon-button [switchColor]="false" [srcString]="'Chevron Right'" (clickEvent)="slide('forward')"></app-icon-button>
     </div>
   </div>
   <!-- It needs in order to all the components will be disabled-->

@@ -62,6 +62,7 @@ import {PrivacyCardComponent} from '../admin/accounts/privacy-card/privacy-card.
 import {ProfileComponent} from '../admin/accounts/account-groups/profile/profile.component';
 import {ConsentMenuMobileComponent} from '../consent-menu-mobile/consent-menu-mobile.component';
 import {GettingStartedProgressService} from '../admin/getting-started-progress.service';
+import {CreatePassButtonComponent} from '../passes/create-pass-button/create-pass-button.component';
 
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
@@ -140,7 +141,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
       AccountGroupsComponent,
       PrivacyCardComponent,
       ProfileComponent,
-      ConsentMenuMobileComponent
+      ConsentMenuMobileComponent,
+      CreatePassButtonComponent
   ],
     entryComponents: [
       PassCardComponent,
@@ -199,7 +201,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     AccountGroupsComponent,
     PrivacyCardComponent,
     ProfileComponent,
-    ConsentMenuMobileComponent
+    ConsentMenuMobileComponent,
+      CreatePassButtonComponent
   ],
   providers: [
     {
