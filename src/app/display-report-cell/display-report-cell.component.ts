@@ -26,7 +26,7 @@ export class DisplayReportCellComponent implements OnInit {
   ) { }
 
   get color() {
-    return this.darkTheme.getColor({white: '#767676', dark: '#FFFFFF'});
+    return this.darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'});
   }
   get icon() {
     return this.darkTheme.getIcon({

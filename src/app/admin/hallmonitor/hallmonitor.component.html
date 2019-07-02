@@ -67,7 +67,7 @@
         <div class="reports">
           <div *ngIf="studentreport?.length">
             <div *ngFor="let reportGroup of studentreport" class="report-group">
-              <h3 class="report-group-header" *ngIf="reportGroup.date" [style.color]="darkTheme.getColor({white: '#767676', dark: '#FFFFFF'})">{{reportGroup.date}}</h3>
+              <h3 class="report-group-header" *ngIf="reportGroup.date" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">{{reportGroup.date}}</h3>
               <div *ngFor="let report of reportGroup.reports">
                 <div class="divider"></div>
                 <app-display-report-cell
