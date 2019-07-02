@@ -2,15 +2,23 @@
     <div class="content">
         <div class="title">Groups</div>
         <div class="profiles">
-            <app-profile *ngFor="let account of accounts" (select)="account.selected = $event" [title]="account.title"></app-profile>
+            <app-profile
+                *ngFor="let account of accounts"
+                (select)="account.selected = $event"
+                [title]="account.title"
+                [icon]="account.icon"
+            >
+            </app-profile>
         </div>
     </div>
     <div>
-        <app-gradient-button *ngIf="showButton"
-                             [size]="'small'"
-                             [cursor]="'pointer'"
-                             (buttonClick)="provideSelected()"
-        >Save Group Sync</app-gradient-button>
+        <app-gradient-button
+            *ngIf="showButton"
+             [size]="'small'"
+             [cursor]="'pointer'"
+             (buttonClick)="provideSelected()"
+        >Save Group Sync
+        </app-gradient-button>
     </div>
 
 </div>
