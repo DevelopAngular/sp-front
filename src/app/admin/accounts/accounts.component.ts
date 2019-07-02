@@ -128,7 +128,7 @@ export class AccountsComponent implements OnInit {
 
       TABLE_RELOADING_TRIGGER.subscribe((updatedHeaders) => {
           this.dataTableHeaders = updatedHeaders;
-          this.dataTableHeadersToDisplay = [];
+          // this.dataTableHeadersToDisplay = [];
           this.getUserList();
       });
   }
@@ -230,16 +230,17 @@ export class AccountsComponent implements OnInit {
     }
 
     private getUserList(search = '') {
-        this.http.globalReload$.pipe(switchMap(() => {
-          this.pending$.next(true);
-          return this.userService.getUsersList('', search);
-        }))
-            .subscribe(users => {
-              this.dataTableHeadersToDisplay = [];
-                this.userList = this.buildUserListData(users);
-              this.pending$.next(false);
+      this.userList = [];
+      this.http.globalReload$.pipe(switchMap(() => {
+        this.pending$.next(true);
+        return this.userService.getUsersList('', search);
+      }))
+          .subscribe(users => {
+            this.dataTableHeadersToDisplay = [];
+              this.userList = this.buildUserListData(users);
+            this.pending$.next(false);
 
-            });
+          });
     }
 
     private buildUserListData(userList) {

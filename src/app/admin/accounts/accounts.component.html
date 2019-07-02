@@ -186,7 +186,7 @@
       </div>
     </div>
 
-    <div class="user-table" style="position: relative" *ngIf="openTable">
+    <div class="user-table" style="position: relative" *ngIf="openTable && userList.length && !(pending$ | async)">
       <div class="column-settings">
         <app-icon-button class="options-icon" [srcString]="'Options'" [size]="16" (clickEvent)="showColumnSettings($event)"></app-icon-button>
       </div>
@@ -203,5 +203,9 @@
       >
       </app-data-table>
     </div>
+    <div class="ds-w-100 ds-h-100 ds-flex-center-center"  *ngIf="pending$ | async">
+      <div class="loading-theme_blue-gray spinner ds-flex-center-center">
+        <mat-spinner [diameter]="50" [color]="'primary'"></mat-spinner>
+      </div>
   </div>
 </div>
