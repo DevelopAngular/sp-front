@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
-import {GettingStartedProgressService} from '../getting-started-progress.service';
+import {GettingStartedProgressService, ProgressInterface} from '../getting-started-progress.service';
 import {fromEvent} from 'rxjs';
 
 declare const window;
@@ -44,5 +44,10 @@ export class GettingStartedComponent implements OnInit {
   goMeetting(event) {
       event.stopPropagation();
     window.open('https://www.smartpass.app/meeting');
+  }
+
+  markItem(route: string[], ticket: keyof ProgressInterface) {
+    this.gsProgress.updateProgress(ticket);
+    this.router.navigate(route);
   }
 }

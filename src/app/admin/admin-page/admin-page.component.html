@@ -1,4 +1,3 @@
-<app-navbar [hasNav]="false"></app-navbar>
 <div class="admin-wrapper" *ngIf="hostVisibility">
   <app-nav (restrictAccess)="hideOutlet($event)"></app-nav>
   <ng-container *ngIf="showDummySwitcher$ | async">

@@ -7,28 +7,21 @@
           <div class="ds-mr-25">
             <span>{{gsProgress.onboardProgress.progress}}</span><span>% Completed</span>
           </div>
-
           <div style="position: relative; width: 50px;height: 50px; transform: rotate(-90deg)">
-
             <svg
               id="TourProgressSvg"
               viewBox="0 0 50 50"
               class="progress">
-              <circle class="circle" r="20" cx="25" cy="25" stroke-width="5" stroke="rgba(127, 135, 157, .3)">
-
-              </circle>
+              <circle class="circle" r="20" cx="25" cy="25" stroke-width="5" stroke="rgba(127, 135, 157, .3)"></circle>
             </svg>
             <svg
               id="TourProgressSvg"
               viewBox="0 0 50 50"
               stroke-dasharray="140"
               class="progress">
-              <circle r="20" cx="25" cy="25" stroke="#00B476" stroke-width="5" [attr.stroke-dashoffset]="gsProgress.onboardProgress.offset">
-
-              </circle>
+              <circle r="20" cx="25" cy="25" stroke="#00B476" stroke-width="5" [attr.stroke-dashoffset]="gsProgress.onboardProgress.offset"></circle>
             </svg>
           </div>
-
         </div>
       </div>
     </div>
@@ -39,13 +32,14 @@
           never be the same
         </span>
       </div>
-      <div><img [src]="'./assets/SP Hero.svg' | resolveAsset" alt="SP Hero.svg"></div>
+      <div>
+        <img [src]="'./assets/SP Hero.svg' | resolveAsset" alt="SP Hero.svg">
+      </div>
     </div>
     <div class="tour-items ds-flex-start-center ds-mt-25">
       <div class="ds-flex-start-start ds-flex-column ds-mr-10">
 
-        <div class="card card__tour-item" (click)="router.navigate(['admin', 'gettingstarted', 'takeTour'])">
-
+        <div class="card card__tour-item">
           <div class="card_header">
             <img class="tour-item_image" [src]="'./assets/Video (Red).svg' | resolveAsset" alt="">
             <span>Take a tour</span>
@@ -59,13 +53,7 @@
             </span>
             <img width="12" height="15" [src]="'./assets/External Link (Blue-Gray).svg' | resolveAsset" alt="">
           </div>
-          <div class="card_manage-users">
-            <!--<img draggable="false" width="24" height="24"-->
-                 <!--[src]="darkTheme.getIcon({-->
-                        <!--iconName: 'Chevron Right',-->
-                        <!--darkFill: 'White',-->
-                        <!--lightFill: 'Blue-Gray'-->
-                      <!--}) | resolveAsset" alt="">-->
+          <div class="card_explore-item" (click)="markItem(['admin', 'gettingstarted', 'takeTour'], 'take_a_tour:start')">
             <div class="go">
               <app-icon-button
                 [size]="20"
@@ -78,10 +66,9 @@
               <img width="35" *ngIf="gsProgress.onboardProgress?.take_a_tour?.start && gsProgress.onboardProgress?.take_a_tour?.end" [src]="'./assets/Check (Jade).svg'" alt="Check (Jade).svg">
             </div>
           </div>
-
         </div>
 
-        <div class="card card__tour-item"  (click)="router.navigate(['admin', 'passconfig'])">
+        <div class="card card__tour-item">
           <div class="card_header">
             <img class="tour-item_image" [src]="'./assets/Room (Purple).svg' | resolveAsset" alt="">
             <span>Rooms Set-up</span>
@@ -89,13 +76,7 @@
           <div class="ds-mt-15 ds-mr-25 ds-pr-15">
             Set up the rooms in your school with all of the options your heart desires.
           </div>
-          <div class="card_manage-users">
-            <!--<img draggable="false" width="24" height="24"-->
-            <!--[src]="darkTheme.getIcon({-->
-            <!--iconName: 'Chevron Right',-->
-            <!--darkFill: 'White',-->
-            <!--lightFill: 'Blue-Gray'-->
-            <!--}) | resolveAsset" alt="">-->
+          <div class="card_explore-item" (click)="markItem(['admin', 'passconfig'], 'setup_rooms:start')">
             <div class="go">
               <app-icon-button
                 [size]="20"
@@ -113,7 +94,7 @@
 
       </div>
       <div class="ds-flex-start-start ds-flex-column  ds-ml-10">
-        <div class="card card__tour-item" (click)="router.navigate(['admin', 'accounts'])">
+        <div class="card card__tour-item">
           <div class="card_header">
             <img class="tour-item_image" [src]="'./assets/Users (Blue).svg' | resolveAsset" alt="">
             <span>Accounts Set-up</span>
@@ -121,13 +102,7 @@
           <div class="ds-mt-15 ds-mr-25 ds-pr-15">
             Set up your admin, teacher, and student accounts with G Suite syncing.
           </div>
-          <div class="card_manage-users">
-            <!--<img draggable="false" width="24" height="24"-->
-            <!--[src]="darkTheme.getIcon({-->
-            <!--iconName: 'Chevron Right',-->
-            <!--darkFill: 'White',-->
-            <!--lightFill: 'Blue-Gray'-->
-            <!--}) | resolveAsset" alt="">-->
+          <div class="card_explore-item" (click)="markItem(['admin', 'accounts'], 'setup_accounts:start')">
             <div class="go">
               <app-icon-button
                 [size]="20"
@@ -142,7 +117,7 @@
           </div>
 
         </div>
-        <div class="card card__tour-item" (click)="router.navigate(['admin', 'myschool'])">
+        <div class="card card__tour-item">
           <div class="card_header">
             <img class="tour-item_image" [src]="'./assets/Launch (Pink).svg' | resolveAsset" alt="">
             <span>Launch Day Prep</span>
@@ -150,13 +125,7 @@
           <div class="ds-mt-15 ds-mr-25 ds-pr-10">
             Launch checklists, poster print-outs, community letters, and more.
           </div>
-          <div class="card_manage-users">
-            <!--<img draggable="false" width="24" height="24"-->
-            <!--[src]="darkTheme.getIcon({-->
-            <!--iconName: 'Chevron Right',-->
-            <!--darkFill: 'White',-->
-            <!--lightFill: 'Blue-Gray'-->
-            <!--}) | resolveAsset" alt="">-->
+          <div class="card_explore-item" (click)="markItem(['admin', 'myschool'], 'launch_day_prep:start')">
             <div class="go">
               <app-icon-button
                 [size]="20"

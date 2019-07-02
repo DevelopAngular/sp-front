@@ -88,7 +88,7 @@ export class AccountsComponent implements OnInit {
       switchMap(() => this.adminService.getAdminAccounts())
     )
     .subscribe((u_list: any) => {
-      this.splash = this.gsProgress.onboardProgress.setup_accounts && (!this.gsProgress.onboardProgress.setup_accounts.start);
+      this.splash = this.gsProgress.onboardProgress.setup_accounts && !(!this.gsProgress.onboardProgress.setup_accounts.start || !this.gsProgress.onboardProgress.setup_accounts.end);
       if (u_list.total_count !== undefined) {
         u_list.total = u_list.total_count;
       } else {
@@ -128,7 +128,7 @@ export class AccountsComponent implements OnInit {
 
       TABLE_RELOADING_TRIGGER.subscribe((updatedHeaders) => {
           this.dataTableHeaders = updatedHeaders;
-          this.dataTableHeadersToDisplay = [];
+          // this.dataTableHeadersToDisplay = [];
           this.getUserList();
       });
   }
@@ -230,16 +230,17 @@ export class AccountsComponent implements OnInit {
     }
 
     private getUserList(search = '') {
-        this.http.globalReload$.pipe(switchMap(() => {
-          this.pending$.next(true);
-          return this.userService.getUsersList('', search);
-        }))
-            .subscribe(users => {
-              this.dataTableHeadersToDisplay = [];
-                this.userList = this.buildUserListData(users);
-              this.pending$.next(false);
+      this.userList = [];
+      this.http.globalReload$.pipe(switchMap(() => {
+        this.pending$.next(true);
+        return this.userService.getUsersList('', search);
+      }))
+          .subscribe(users => {
+            this.dataTableHeadersToDisplay = [];
+              this.userList = this.buildUserListData(users);
+            this.pending$.next(false);
 
-            });
+          });
     }
 
     private buildUserListData(userList) {
@@ -253,7 +254,7 @@ export class AccountsComponent implements OnInit {
             const rawObj = {
                 // 'Name': +raw.id === +this.user.id ? raw.display_name + ' (Me)' : raw.display_name,
                 'Name': raw.display_name,
-                'Email/Username': raw.primary_email,
+                'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
                 'Rooms': raw.assignedTo,
                 'Last sign-in': raw.last_login ? Util.formatDateTime(new Date(raw.last_login)) : 'Not login',
                 'Profile(s)': partOf.length ? partOf : [{title: 'No profile'}],
@@ -294,8 +295,14 @@ export class AccountsComponent implements OnInit {
   }
 
   goToAccountsSetup() {
-    this.router.navigate(['accounts_setup']);
     this.updateAcoountsOnboardProgress('start');
+    this.adminService
+      .getAccountSyncLink(+this.http.getSchool().id)
+      .subscribe((link: {authorization_url: string}) => {
+
+        this.router.navigate(['accounts_setup'], { queryParams: { googleAuth: link.authorization_url } });
+      });
+
   }
 
   showAccountsSetupLink() {

@@ -12,9 +12,12 @@ import {switchMap} from 'rxjs/operators';
 })
 export class AdminService {
 
-  constructor(private http: HttpService) { }
+  constructor(private http: HttpService) {
+
+  }
 
   /// Reports
+
   getReports(limit = 10) {
     return this.http.get(`v1/event_reports?limit=${limit}`);
   }
@@ -28,6 +31,11 @@ export class AdminService {
   }
 
   //// Admin
+
+  getAccountSyncLink(schoolId: number) {
+    return this.http.post(`v1/schools/${schoolId}/syncing/authorize`);
+  }
+
   getAdminAccounts() {
     return this.http.get('v1/admin/accounts');
   }

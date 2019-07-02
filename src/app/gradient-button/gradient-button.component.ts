@@ -75,7 +75,7 @@ export class GradientButtonComponent implements OnInit {
   constructor(private sanitizer: DomSanitizer, private screenService: ScreenService) {
   }
   ngOnInit(): void {
-    console.log('Gradient ==>>>', this.gradient);
+    // console.log('Gradient ==>>>', this.gradient);
     // if (this.size && this.size !== 'small' && this.size !== 'medium' && this.size !== 'large' && this.size !== 'xl') {
     //   this.size = 'small';
     // }
@@ -130,6 +130,9 @@ export class GradientButtonComponent implements OnInit {
 
           break;
       }
+    }
+    if (this.buttonLink) {
+      this.rightIcon = this.rightIcon || './assets/External Link (White).svg';
     }
   }
 
@@ -216,7 +219,7 @@ export class GradientButtonComponent implements OnInit {
 
   onPress(press: boolean, event) {
     if (this.screenService.isDeviceLargeExtra) event.preventDefault();
-    if(!this.disabled)
+    if (!this.disabled)
       this.buttonDown = press;
     //console.log("[Button State]: ", "The button is " +this.buttonState);
   }
