@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
@@ -15,6 +16,7 @@ import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
 import {constructUrl} from '../../live-data/helpers';
+import {LocationsService} from '../../services/locations.service';
 
 export type RoundInputType = 'text' | 'multilocation' | 'multiuser' |  'dates';
 
@@ -24,7 +26,7 @@ export type RoundInputType = 'text' | 'multilocation' | 'multiuser' |  'dates';
   styleUrls: ['./round-input.component.scss'],
   exportAs: 'roundInputRef'
 })
-export class RoundInputComponent implements OnInit {
+export class RoundInputComponent implements OnInit, AfterViewInit {
 
   @ViewChild('input') input: ElementRef;
 
@@ -78,7 +80,8 @@ export class RoundInputComponent implements OnInit {
     public dialog: MatDialog,
     private timeService: TimeService,
     public darkTheme: DarkThemeSwitch,
-    public sanitizer: DomSanitizer
+    public sanitizer: DomSanitizer,
+    public locationsService: LocationsService,
   ) { }
 
   get labelIcon() {
@@ -124,18 +127,23 @@ export class RoundInputComponent implements OnInit {
       this.initialValue = '';
     }
     this.value = this.initialValue;
-    setTimeout(() => {
-      if (this.input && this.focused) {
-        this.focusAction(true);
-        this.focus();
-      }
-    }, 500);
+
+    // setTimeout(() => {
+    //   if (this.input && this.focused) {
+    //     this.focusAction(true);
+    //     this.focus();
+    //   }
+    // }, 500);
 
     if (this.selectReset$) {
       this.selectReset$.subscribe((_value: string) => {
         this.value = _value;
       });
     }
+  }
+
+  ngAfterViewInit() {
+    this.focus();
   }
 
   handleError() {
@@ -145,7 +153,14 @@ export class RoundInputComponent implements OnInit {
   }
 
   focus() {
-    this.input.nativeElement.focus();
+    this.locationsService.isFocused.subscribe( focused => {
+      if (focused) {
+        this.input.nativeElement.focus();
+      } else {
+        this.input.nativeElement.blur();
+      }
+    });
+
   }
 
   focusAction(selected: boolean) {

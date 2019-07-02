@@ -12,6 +12,7 @@ export class LocationsService {
 
   myRoomSelectedLocation$: BehaviorSubject<Location> = new BehaviorSubject(null);
 
+  focused: BehaviorSubject<boolean> = new BehaviorSubject(true);
   constructor(private http: HttpService) { }
 
     getLocationsWithCategory(category: string) {
@@ -74,5 +75,9 @@ export class LocationsService {
 
     updateFavoriteLocations(body) {
         return this.http.put('v1/users/@me/starred', body);
+    }
+
+    get isFocused() {
+      return this.focused.asObservable();
     }
 }

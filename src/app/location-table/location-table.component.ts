@@ -63,6 +63,8 @@ export class LocationTableComponent implements OnInit {
 
   selectedLocId: any[] = [];
 
+  isFocused: boolean;
+
   @HostListener('scroll', ['$event'])
   onScroll(event) {
     let tracker = event.target;
@@ -103,7 +105,11 @@ export class LocationTableComponent implements OnInit {
   }
 
   ngOnInit() {
-      if (this.staticChoices && this.staticChoices.length) {
+    if (!this.locationService.focused.value) {
+      this.locationService.focused.next(true);
+    }
+
+    if (this.staticChoices && this.staticChoices.length) {
       this.choices = this.staticChoices;
         if (!this.choices.length) {
           this.noChoices = true;
@@ -149,6 +155,8 @@ export class LocationTableComponent implements OnInit {
               this.mainContentVisibility = true;
             });
         }
+
+        this.isFocused = this.locationService.focused.value;
     }
     if (this.type==='location'){
       this.locationService.getFavoriteLocations().toPromise().then((stars: any[]) => {
@@ -309,6 +317,7 @@ export class LocationTableComponent implements OnInit {
   }
 
   choiceSelected(choice: any) {
+    this.locationService.focused.next(false);
     this.onSelect.emit(choice);
   }
 
