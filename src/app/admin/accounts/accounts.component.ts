@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material';
 import { HttpService } from '../../services/http-service';
 import { UserService } from '../../services/user.service';
 import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
-import {map, mapTo, switchMap} from 'rxjs/operators';
+import {mapTo, switchMap} from 'rxjs/operators';
 import { AdminService } from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {bumpIn} from '../../animations';
@@ -88,7 +88,7 @@ export class AccountsComponent implements OnInit {
       switchMap(() => this.adminService.getAdminAccounts())
     )
     .subscribe((u_list: any) => {
-      this.splash = this.gsProgress.onboardProgress.setup_accounts && !(!this.gsProgress.onboardProgress.setup_accounts.start || !this.gsProgress.onboardProgress.setup_accounts.end);
+      this.splash = this.gsProgress.onboardProgress.setup_accounts && (!this.gsProgress.onboardProgress.setup_accounts.start || !this.gsProgress.onboardProgress.setup_accounts.end);
       if (u_list.total_count !== undefined) {
         u_list.total = u_list.total_count;
       } else {
@@ -104,6 +104,13 @@ export class AccountsComponent implements OnInit {
       const headers = this.storage.getItem(`_all_columns`);
       if ( headers ) {
           this.dataTableHeaders = JSON.parse(headers);
+          if (!this.dataTableHeaders['Account Type']) {
+            this.dataTableHeaders['Account Type'] = {
+              value: true,
+                label: 'Account Type',
+                disabled: false
+            };
+          }
       } else {
           this.dataTableHeaders = {
               'Name': {
@@ -115,6 +122,11 @@ export class AccountsComponent implements OnInit {
                   value: true,
                   label: 'Email/Username',
                   disabled: true
+              },
+              'Account Type': {
+                  value: true,
+                  label: 'Account Type',
+                  disabled: false
               },
               'Profile(s)': {
                   value: true,
@@ -128,7 +140,6 @@ export class AccountsComponent implements OnInit {
 
       TABLE_RELOADING_TRIGGER.subscribe((updatedHeaders) => {
           this.dataTableHeaders = updatedHeaders;
-          // this.dataTableHeadersToDisplay = [];
           this.getUserList();
       });
   }
@@ -252,11 +263,9 @@ export class AccountsComponent implements OnInit {
             if (raw.roles.includes('_profile_admin')) partOf.push({title: 'Administrator', role: '_profile_admin'});
 
             const rawObj = {
-                // 'Name': +raw.id === +this.user.id ? raw.display_name + ' (Me)' : raw.display_name,
                 'Name': raw.display_name,
                 'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
-                'Rooms': raw.assignedTo,
-                'Last sign-in': raw.last_login ? Util.formatDateTime(new Date(raw.last_login)) : 'Not login',
+                'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : 'Alternative',
                 'Profile(s)': partOf.length ? partOf : [{title: 'No profile'}],
 
             };

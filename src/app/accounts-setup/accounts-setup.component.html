@@ -86,9 +86,7 @@
             [gradient]="'#FFFFFF,#00B476'"
             [fontWeight]="'normal'"
             [rightIcon]="'./assets/Chevron Right (White).svg'"
-            [buttonLink]="googleAuth"
-            [linkType]="'_blank'"
-            [text]="'Connect G Suite'"
+            (buttonClick)="initLogin(true)"
           >
             <span style="font-weight: normal;">
               Connect G Suite
