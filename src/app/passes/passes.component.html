@@ -86,7 +86,7 @@
 </div>
 
 
-<div class="passes-wrapper" *ngIf="(user && !this.screenService.isDeviceSmall && !this.screenService.isDeviceMid)
+<div class="passes-wrapper" [ngClass]="{'scroll': isStaff}" *ngIf="(user && !this.screenService.isDeviceSmall && !this.screenService.isDeviceMid)
 || (user && this.screenService.isIpadWidth)">
   <h1 class="passes-heading">Passes</h1>
   <div class="main-page-left">

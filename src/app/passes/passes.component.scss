@@ -66,8 +66,12 @@
   margin-right: auto;
 
   padding-top: 25px;
-  height: calc(100% - 78px);
-  overflow: auto;
+
+  &.scroll {
+    overflow: auto;
+    height: calc(100% - 78px);
+  }
+
 }
 
 .main-page-left{
