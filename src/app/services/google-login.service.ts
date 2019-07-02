@@ -141,7 +141,7 @@ export class GoogleLoginService {
   }
 
   setAuthenticated() {
-      // window.waitForAppLoaded();
+      window.waitForAppLoaded();
     // console.log('setAuthenticated()');
     this.isAuthenticated$.next(true);
     this.showLoginError$.next(false);
@@ -188,7 +188,7 @@ export class GoogleLoginService {
   }
 
   signInDemoMode(username: string, password: string) {
-    window.waitForAppLoaded();
+    // window.waitForAppLoaded();
     this.authToken$.next({username: username, password: password, type: 'demo-login'});
   }
 
