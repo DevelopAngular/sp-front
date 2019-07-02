@@ -103,15 +103,9 @@ export class HallmonitorComponent implements OnInit {
     //     this.searchPending$.next(!res);
     //     console.log(res);
     //   });
-    this.hasPasses = combineLatest(
-      this.activePassProvider.length$,
-      (l1) => l1 > 0
-    );
+    this.hasPasses = this.activePassProvider.length$.asObservable().pipe(map(l => l > 0));
 
-    this.passesLoaded = combineLatest(
-      this.activePassProvider.loaded$,
-      (l1) => l1
-    ).pipe(
+    this.passesLoaded = this.activePassProvider.loaded$.pipe(
       filter(v => v),
       delay(250),
       tap((res) => this.searchPending$.next(!res))
@@ -150,13 +144,13 @@ export class HallmonitorComponent implements OnInit {
           }
         } else {
           this.reportsDate = null;
-          this.getReports();
+          this.getReports(null, true);
         }
       }
     );
   }
 
-  private getReports(date?: Date) {
+  private getReports(date?: Date, afterCalendar = false) {
     this.pending = true;
     // this.studentreport = [];
     const range = this.liveDataService.getDateRange(date);
@@ -204,7 +198,7 @@ export class HallmonitorComponent implements OnInit {
       )
       .subscribe((list: any[]) => {
         this.pending = false;
-        if (date) {
+        if (date || afterCalendar) {
             this.studentreport = list;
         } else {
             this.studentreport.push(..._.takeRight(list, 10));
