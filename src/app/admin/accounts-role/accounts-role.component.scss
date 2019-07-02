@@ -133,61 +133,68 @@
 
   .gsuite-wrapper {
     min-width: 850px;
-    margin-top: 25px;
-    .gsuite-header {
-      height: 99px;
-      padding: 0 30px 0 30px;
-      background-color: white;
-      box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.06);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-
-      .header-content {
-        width: 100%;
+    .header-wrapper {
+      padding-top: 25px;
+      background-color: #FBFEFF;
+      background-clip: padding-box;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      .gsuite-header {
+        height: 99px;
+        padding: 0 30px 0 30px;
+        background-color: white;
+        box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.06);
+        border-radius: 10px;
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        .left-block {
+
+        .header-content {
+          width: 100%;
           display: flex;
+          justify-content: space-between;
           align-items: center;
-          .back-button {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background-color: #F4F4F4;
+          .left-block {
             display: flex;
-            justify-content: center;
             align-items: center;
-            cursor: pointer;
-          }
+            .back-button {
+              width: 34px;
+              height: 34px;
+              border-radius: 50%;
+              background-color: #F4F4F4;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              cursor: pointer;
+            }
 
-          .title-content {
-            margin-left: 20px;
-            display: flex;
-            align-items: center;
-            .title {
-              color: $navy;
-              font-size: 20px;
-              line-height: 24px;
-              font-weight: bold;
+            .title-content {
               margin-left: 20px;
+              display: flex;
+              align-items: center;
+              .title {
+                color: $navy;
+                font-size: 20px;
+                line-height: 24px;
+                font-weight: bold;
+                margin-left: 20px;
 
-              .small-text {
-                color: $blue-gray;
-                font-weight: normal;
-                font-size: 16px;
-                margin-top: 5px;
+                .small-text {
+                  color: $blue-gray;
+                  font-weight: normal;
+                  font-size: 16px;
+                  margin-top: 5px;
+                }
               }
             }
           }
-        }
 
-        .right-block {
-          font-size: 16px;
-          line-height: 19px;
-          text-align: right;
-          color: $blue-gray;
+          .right-block {
+            font-size: 16px;
+            line-height: 19px;
+            text-align: right;
+            color: $blue-gray;
+          }
         }
       }
     }
