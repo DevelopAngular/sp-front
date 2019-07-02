@@ -16,6 +16,6 @@ export class WebConnectionService {
   constructor(private connectionService: ConnectionService, private pollingService: PollingService) { }
 
   checkConnection(): Observable<boolean> {
-    return merge(this.isWebConnection).pipe(skip(1));
+    return merge(this.isWebConnection, this.isSocketConnection).pipe(skip(1));
   }
 }
