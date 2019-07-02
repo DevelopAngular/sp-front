@@ -4,7 +4,7 @@ import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {AccountsDialogComponent} from '../accounts-dialog/accounts-dialog.component';
 import {ActivatedRoute, Router} from '@angular/router';
-import {debounceTime, distinctUntilChanged, filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, filter, map, share, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {Util} from '../../../Util';
 import {HttpService} from '../../services/http-service';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
@@ -20,6 +20,7 @@ import {DataTableComponent} from '../data-table/data-table.component';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {RepresentedUser} from '../../navbar/navbar.component';
 import {LocationsService} from '../../services/locations.service';
+import {GSuiteOrgs} from '../../models/GSuiteOrgs';
 
 declare const window;
 
@@ -66,6 +67,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     last: 'Last sync: Today, 9:23 AM',
     next: 'Today 1:23 PM'
   };
+
+  public GSuiteOrgs$: Observable<GSuiteOrgs>;
+
   public countAccounts = 2500;
 
   @ViewChild(DataTableComponent) dataTable;
@@ -115,7 +119,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    private router: Router,
+    public router: Router,
     private route: ActivatedRoute,
     private userService: UserService,
     private http: HttpService,
@@ -151,7 +155,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     return this.selectedUsers.every(profile => profile._originalUserProfile.active);
   }
 
+  formatDate(date) {
+    return Util.formatDateTime(new Date(date));
+  }
+
   ngOnInit() {
+    this.GSuiteOrgs$ = this.adminService.getGSuiteOrgs().pipe(share(), tap(console.log));
     this.http.globalReload$.pipe(
       tap(() => {
         this.role = null;
@@ -657,6 +666,11 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           this.placeholder = true;
         }
       });
+  }
+
+  syncNow() {
+    this.adminService.syncNow().subscribe();
+      this.GSuiteOrgs$ = this.adminService.getGSuiteOrgs().pipe(share());
   }
 
   private addUserLocations(users) {

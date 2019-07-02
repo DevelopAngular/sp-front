@@ -158,7 +158,7 @@
           <app-admin-card-button
                   [leftIcon]="'./assets/google/google_logo.svg'"
                   [title]="'G Suite'"
-                  [subtitle]="'Last Sync: Today, 9:34 AM'"
+                  [subtitle]="'Last Sync: ' + formatDate((gSuiteOrgs$ | async)?.last_successful_sync)"
                   (onClick)="router.navigate(['/admin/accounts', 'g_suite'])"
           ></app-admin-card-button>
 
@@ -176,7 +176,7 @@
                     *ngFor="let button of accountsButtons"
                     [title]="button.title"
                     [leftIcon]="button.leftIcon"
-                    [subtitle]="getCountRole(button.role) + (getCountRole(button.role) > 1 ? ' users' : 'user')"
+                    [subtitle]="getCountRole(button.role) + (getCountRole(button.role) > 1 || getCountRole(button.role) === 0 ? ' users' : ' user')"
                     [subtitleIcon]="button.subIcon"
                     (onClick)="router.navigate(['/admin/accounts', button.param])"
             >

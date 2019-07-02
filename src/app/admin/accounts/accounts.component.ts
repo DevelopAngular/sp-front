@@ -9,7 +9,6 @@ import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {bumpIn} from '../../animations';
 import {ProfileCardDialogComponent} from '../profile-card-dialog/profile-card-dialog.component';
 import {Router} from '@angular/router';
-import {RepresentedUser} from '../../navbar/navbar.component';
 import {Util} from '../../../Util';
 import {User} from '../../models/User';
 import {StorageService} from '../../services/storage.service';
@@ -18,6 +17,7 @@ import {TABLE_RELOADING_TRIGGER} from '../accounts-role/accounts-role.component'
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {GettingStartedProgressService} from '../getting-started-progress.service';
 import {AddUserDialogComponent} from '../add-user-dialog/add-user-dialog.component';
+import {GSuiteOrgs} from '../../models/GSuiteOrgs';
 
 declare const history: History;
 
@@ -49,6 +49,8 @@ export class AccountsComponent implements OnInit {
   userList;
   selectedUsers = [];
 
+  gSuiteOrgs$: Observable<GSuiteOrgs>;
+
   dataTableHeaders;
   dataTableHeadersToDisplay: any[] = [];
   public dataTableEditState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
@@ -70,13 +72,18 @@ export class AccountsComponent implements OnInit {
     public darkTheme: DarkThemeSwitch,
     private storage: StorageService,
     public matDialog: MatDialog,
-    private gsProgress: GettingStartedProgressService
+    private gsProgress: GettingStartedProgressService,
   ) {
     // this.splash = this.gsProgress.onboardProgress.setup_accounts && (!this.gsProgress.onboardProgress.setup_accounts.start || !this.gsProgress.onboardProgress.setup_accounts.end);
     console.log(this.splash);
   }
 
+  formatDate(date) {
+    return Util.formatDateTime(new Date(date));
+  }
+
   ngOnInit() {
+   this.gSuiteOrgs$ = this.adminService.getGSuiteOrgs();
     this.http.globalReload$.pipe(
       switchMap(() => this.adminService.getAdminAccounts())
     )

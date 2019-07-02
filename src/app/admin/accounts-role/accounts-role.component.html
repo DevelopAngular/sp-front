@@ -6,7 +6,8 @@
         <div class="ds-flex-start-start ds-h-100">
 
           <div class="back-button" *ngIf="!(dataTableEditState | async) && role !== 'g_suite'">
-            <app-back-button routerLink="/admin/accounts"></app-back-button>
+            <!--<app-back-button routerLink="/admin/accounts"></app-back-button>-->
+            <app-icon-button [size]="17" [srcString]="'Chevron Left'" (clickEvent)="router.navigate(['/admin/accounts'])"></app-icon-button>
           </div>
           <div class="ds-h-100 ds-mx-10" *ngIf="(dataTableEditState | async)"></div>
           <div class="ds-mt-20 ds-mx-5" [ngSwitch]="role">
@@ -320,19 +321,19 @@
       <div class="header-content">
         <div class="left-block">
           <div class="back-button" routerLink="/admin/accounts">
-            <img width="16" height="16" [src]="'./assets/Chevron Left (Blue-Gray).svg' | resolveAsset" alt="">
+            <app-icon-button [size]="17" [srcString]="'Chevron Left'" (clickEvent)="router.navigate(['/admin/accounts'])"></app-icon-button>
           </div>
           <div class="title-content">
             <img width="50" height="50" [src]="'./assets/google/google_logo.svg' | resolveAsset" alt="">
             <div class="title">
               G Suite
-              <div class="small-text">{{ sync.last }}</div>
+              <div class="small-text">{{ 'Last sync: ' + formatDate((GSuiteOrgs$ | async)?.last_successful_sync) }}</div>
             </div>
           </div>
         </div>
 
         <div class="right-block">
-          <div class="count-accounts">{{ countAccounts + ' accounts' }}</div>
+          <div class="count-accounts">{{ (GSuiteOrgs$ | async)?.num_accounts + ' accounts' }}</div>
           <div class="text">syncing from G Suite</div>
         </div>
       </div>
@@ -345,8 +346,8 @@
           <div class="sync">
             <div class="title">Sync</div>
             <div class="subtitle">
-              <div>{{ sync.last }}</div>
-              <div>Next scheduled sync: {{ sync.next }}</div>
+              <div>{{ 'Last sync: ' + formatDate((GSuiteOrgs$ | async)?.last_successful_sync) }}</div>
+              <div>Next scheduled sync: {{ formatDate((GSuiteOrgs$ | async)?.next_sync) }}</div>
             </div>
 
             <div class="info">
@@ -358,11 +359,9 @@
                     [hoverColor]="'#022F68'"
                     [fontSize]="'13px'"
                     [cursor]="'pointer'"
+                    (buttonClick)="syncNow()"
             >
-              <div *ngIf="false" class="loading-theme_white spinner flex-center-left pt">
-                <mat-spinner [color]="'white'" [diameter]="'25'"></mat-spinner>
-              </div>
-              <span *ngIf="true" >
+              <span>
                 Sync Now
               </span>
             </app-gradient-button>
