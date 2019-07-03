@@ -46,14 +46,23 @@
   div.main-page-right {
     display: none !important;
   }
-
-
 }
 
 @media all and (max-width: 1024px){
-  .pass-collection {
+  .pass-collection  {
     &:last-child {
-      padding-bottom: 50px;
+      padding-bottom: 60px;
+    }
+  }
+}
+
+// queries for safari
+@media not all and (min-resolution:.001dpcm) {
+  @supports (-webkit-appearance:none) {
+    @media all and (max-width: 425px) {
+      .passes-wrapper {
+        margin-top: 140px;
+      }
     }
   }
 }
