@@ -1,12 +1,12 @@
 <div *ngIf="user" class="intro-wrapper">
 
-  <div *ngIf="!usedAsEntryComponent" class="navbar" [style.border-bottom]="isStaff ? '1px solid  #7F879D' : 'unset'">
+  <div *ngIf="!usedAsEntryComponent" class="navbar" [ngClass]="{shadow: isStaff}">
     <div class="logo ds-flex-center-center">
-      <img width="225" [src]="'./assets/intro/Logo Green.png' | resolveAsset">
-      <!--<app-smartpass-logo [introLogo]="true"></app-smartpass-logo>-->
+      <!--<img width="225" [src]="'./assets/intro/Logo Green.png' | resolveAsset">-->
+      <app-smartpass-logo></app-smartpass-logo>
     </div>
     <div *ngIf="isStaff" class="navbar-tabs">
-      <div class="tab"><img width="25" height="25" style="margin-right: 5px;" [src]="'./assets/SP Arrow (Navy).svg'" alt="SP Arrow (Navy).svg"><span>Passes</span></div>
+      <div class="tab"><img width="25" height="25" style="margin-right: 5px;" [src]="'./assets/Passes (Blue-Gray).svg'" alt="SP Arrow (Navy).svg"><span>Passes</span></div>
       <div class="tab"><img width="25" height="25" style="margin-right: 5px;" [src]="'./assets/Walking (Navy).svg'" alt="Walking (Navy).svg"><span>Hall Monitor</span></div>
       <div class="tab"><img width="25" height="25" style="margin-right: 5px;" [src]="'./assets/Room (Navy).svg'" alt="Room (Navy).svg"><span>My Room</span></div>
     </div>
@@ -14,19 +14,17 @@
       <div class="user-name">
         <span>{{user.display_name}}</span>
       </div>
-      <div *ngIf="!isStaff" style="position: relative; width: 50px;height: 50px;">
-        <div class="inbox-modifiers"
-        >
-          <img class="inbox-icon" [src]="'./assets/Inbox (Navy).svg' | resolveAsset">
-          <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">
-          <div class="inbox-number">2</div>
-          <img class="inbox-front" [src]="'./assets/Inbox Bottom (Navy).svg' | resolveAsset">
-        </div>
-      </div>
-      <div
-        class="options-wrapper ds-ml-15"
-      >
-        <img class="options" [src]="'./assets/Settings (Navy).svg' | resolveAsset">
+      <!--<div *ngIf="!isStaff" style="position: relative; width: 50px;height: 50px;">-->
+        <!--<div class="inbox-modifiers"-->
+        <!--&gt;-->
+          <!--<img class="inbox-icon" [src]="'./assets/Inbox (Navy).svg' | resolveAsset">-->
+          <!--<img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">-->
+          <!--<div class="inbox-number">2</div>-->
+          <!--<img class="inbox-front" [src]="'./assets/Inbox Bottom (Navy).svg' | resolveAsset">-->
+        <!--</div>-->
+      <!--</div>-->
+      <div class="options-wrapper">
+        <app-icon-button  [srcString]="'Settings'" [size]="20"></app-icon-button>
       </div>
     </div>
   </div>
