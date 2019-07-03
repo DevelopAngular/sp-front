@@ -18,7 +18,7 @@
 @media all and (max-width: 475px) {
   mat-sidenav-container,
   mat-sidenav-content {
-    overflow: auto !important;
+    overflow-y: auto !important;
   }
 }
 

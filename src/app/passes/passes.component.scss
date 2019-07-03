@@ -1,6 +1,11 @@
 @import '../../sp-colors';
 
-/*Small devices breakpoint*/
+@media all and (max-width: 320px){
+  div.current-pass-card {
+    max-width: 300px;
+  }
+}
+
 @media all and (max-width: 425px) {
   div.current-pass,
   div.future-passes,
@@ -53,6 +58,11 @@
     &:last-child {
       padding-bottom: 60px;
     }
+  }
+
+  div.current-pass-card {
+    max-width: 335px;
+    margin: 0 auto;
   }
 }
 
