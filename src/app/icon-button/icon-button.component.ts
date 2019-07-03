@@ -17,6 +17,7 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() onDarkShade: boolean = false;
   @Input() srcString: string = '';
   @Input() pressed: boolean = false;
+  @Input() switchColor: boolean = true;
   @Input() eventBubbling = false;
   @Output() clickEvent: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
 
@@ -36,7 +37,7 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.onDarkShade) {
       lightFill = 'White';
     } else {
-      if (this.pressed) {
+      if (this.pressed && this.switchColor) {
         lightFill = 'Jade';
       } else {
         lightFill = 'Blue-Gray';

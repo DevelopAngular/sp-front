@@ -37,10 +37,10 @@ export class AddUserDialogComponent implements OnInit {
   public state: string;
 
   public accounts = [
-      { title: 'Admins', selected: false, role: '_profile_admin', disabled: false},
-      { title: 'Teachers', selected: false, role: '_profile_teacher', disabled: false },
-      { title: 'Assistants', selected: false, role: '_profile_assistant', disabled: false },
-      { title: 'Students', selected: false, role: '_profile_student', disabled: false }
+      { title: 'Admins', icon: 'Admin', selected: false, role: '_profile_admin', disabled: false},
+      { title: 'Teachers', icon: 'Teacher', selected: false, role: '_profile_teacher', disabled: false },
+      { title: 'Assistants', icon: 'Secretary', selected: false, role: '_profile_assistant', disabled: false },
+      { title: 'Students', icon: 'Student', selected: false, role: '_profile_student', disabled: false }
   ];
 
   constructor(
@@ -158,7 +158,7 @@ export class AddUserDialogComponent implements OnInit {
 
   showIncomplete() {
     if (this.typeChoosen === this.accountTypes[1]) {
-      return this.newAlternativeAccount.dirty && !this.showSaveButton();
+      return this.newAlternativeAccount.dirty && !this.showSaveButton() && !this.showNextButton;
     }
   }
 

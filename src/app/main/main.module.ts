@@ -57,7 +57,6 @@ import {NotificationFormComponent} from '../notification-form/notification-form.
 import {WhoYouAreComponent} from '../create-hallpass-forms/main-hallpass--form/student-groups/who-you-are/who-you-are.component';
 import {ScreenService} from '../services/screen.service';
 import {KioskModeComponent} from '../kiosk-mode/kiosk-mode.component';
-import {CreatePassButtonComponent} from '../passes/create-pass-button/create-pass-button.component';
 
 @NgModule({
   imports: [
@@ -119,7 +118,6 @@ import {CreatePassButtonComponent} from '../passes/create-pass-button/create-pas
     FirstSeenFormComponent,
     NotificationFormComponent,
     KioskModeComponent,
-    CreatePassButtonComponent
   ],
   entryComponents: [
     CreateHallpassFormsComponent,

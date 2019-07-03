@@ -36,7 +36,7 @@ export class AccountsSetupComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    const test = 'https://smartpass.app/api/staging/v1/schools/2/syncing/oauth_trampoline?state=%7B%22nonce%22:%22DBHQ4xBq1pEJlL0mfdmxKdpNpRTY7C1DXZ00GoQYJY3XHWinirDXCNCC0TGzRfGb%22,%22trampoline_uri%22:%22https://smartpass.app/api/staging/v1/schools/2/syncing/oauth_trampoline%22%7D&code=4/eQFYM21MWgv1Nd8H3MKblHr6pBYN5AmsS2166bx2MM7BPAEgyhW-SNBfzHoGDT7aspsqi0EnLd8znzV0XKInQ0s&scope=https://www.googleapis.com/auth/admin.directory.user.readonly%20https://www.googleapis.com/auth/admin.directory.orgunit.readonly%20https://www.googleapis.com/auth/admin.directory.group.readonly%20https://www.googleapis.com/auth/admin.directory.domain.readonly';
+    // const test = 'https://smartpass.app/api/staging/v1/schools/2/syncing/oauth_trampoline?state=%7B%22nonce%22:%22DBHQ4xBq1pEJlL0mfdmxKdpNpRTY7C1DXZ00GoQYJY3XHWinirDXCNCC0TGzRfGb%22,%22trampoline_uri%22:%22https://smartpass.app/api/staging/v1/schools/2/syncing/oauth_trampoline%22%7D&code=4/eQFYM21MWgv1Nd8H3MKblHr6pBYN5AmsS2166bx2MM7BPAEgyhW-SNBfzHoGDT7aspsqi0EnLd8znzV0XKInQ0s&scope=https://www.googleapis.com/auth/admin.directory.user.readonly%20https://www.googleapis.com/auth/admin.directory.orgunit.readonly%20https://www.googleapis.com/auth/admin.directory.group.readonly%20https://www.googleapis.com/auth/admin.directory.domain.readonly';
     this.route.queryParams
       .pipe(takeUntil(this.destroyer$))
       .subscribe((qp: any) => {
@@ -61,11 +61,26 @@ export class AccountsSetupComponent implements OnInit, AfterViewInit {
     this.router.navigate(['']);
   }
 
-  initLogin() {
-    return this.loginService.GoogleOauth.signIn()
-      .then((auth) => {
-        return auth.getAuthResponse();
-      });
+  initLogin(popup?: boolean) {
+
+    if (popup) {
+      window.returnAuthToken = function(token) {
+        if (token) {
+          console.log('OK');
+        } else {
+          console.error('Failed!');
+        }
+      }
+      window.open(this.googleAuth);
+
+    } else {
+
+      return this.loginService.GoogleOauth.signIn()
+        .then((auth) => {
+          return auth.getAuthResponse();
+        });
+    }
+
 
   }
 

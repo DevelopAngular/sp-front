@@ -58,16 +58,16 @@
             <img draggable="false" [src]="'./assets/Report (Red).svg' | resolveAsset" class="report-icon">
             <div class="text" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Reported Students</div>
           </div>
-          <div class="calendar-icon-container" [ngClass]="{'active-calendar-icon': activeCalendar}">
+          <!--<div class="calendar-icon-container" [ngClass]="{'active-calendar-icon': activeCalendar}">-->
             <app-icon-button [srcString]="'Calendar'" [size]="25" (clickEvent)="openDateDialog($event)"></app-icon-button>
             <!--<img draggable="false" [src]="calendarIcon | resolveAsset" class="calendar-icon" (click)="openDateDialog($event)">-->
-          </div>
+          <!--</div>-->
         </div>
         <!--<h3 style="text-align: center; margin: 15px; color: #134482" *ngIf="!studentreport?.length">{{reportsDate | date : 'MMM. d' }}</h3>-->
         <div class="reports">
           <div *ngIf="studentreport?.length">
             <div *ngFor="let reportGroup of studentreport" class="report-group">
-              <h3 class="report-group-header" *ngIf="reportGroup.date" [style.color]="darkTheme.getColor({white: '#767676', dark: '#FFFFFF'})">{{reportGroup.date}}</h3>
+              <h3 class="report-group-header" *ngIf="reportGroup.date" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">{{reportGroup.date}}</h3>
               <div *ngFor="let report of reportGroup.reports">
                 <div class="divider"></div>
                 <app-display-report-cell

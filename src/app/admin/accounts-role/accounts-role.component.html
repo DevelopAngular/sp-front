@@ -317,24 +317,26 @@
   </div>
 
   <div class="gsuite-wrapper" *ngIf="role === 'g_suite'">
-    <div class="gsuite-header">
-      <div class="header-content">
-        <div class="left-block">
-          <div class="back-button" routerLink="/admin/accounts">
-            <app-icon-button [size]="17" [srcString]="'Chevron Left'" (clickEvent)="router.navigate(['/admin/accounts'])"></app-icon-button>
-          </div>
-          <div class="title-content">
-            <img width="50" height="50" [src]="'./assets/google/google_logo.svg' | resolveAsset" alt="">
-            <div class="title">
-              G Suite
-              <div class="small-text">{{ 'Last sync: ' + formatDate((GSuiteOrgs$ | async)?.last_successful_sync) }}</div>
+    <div class="header-wrapper">
+      <div class="gsuite-header">
+        <div class="header-content">
+          <div class="left-block">
+            <div class="back-button" routerLink="/admin/accounts">
+              <app-icon-button [size]="17" [srcString]="'Chevron Left'" (clickEvent)="router.navigate(['/admin/accounts'])"></app-icon-button>
+            </div>
+            <div class="title-content">
+              <img width="50" height="50" [src]="'./assets/google/google_logo.svg' | resolveAsset" alt="">
+              <div class="title">
+                G Suite
+                <div class="small-text">{{ 'Last sync: ' + formatDate((GSuiteOrgs$ | async)?.last_successful_sync) }}</div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="right-block">
-          <div class="count-accounts">{{ (GSuiteOrgs$ | async)?.num_accounts + ' accounts' }}</div>
-          <div class="text">syncing from G Suite</div>
+          <div class="right-block">
+            <div class="count-accounts">{{ (GSuiteOrgs$ | async)?.num_accounts + ' accounts' }}</div>
+            <div class="text">syncing from G Suite</div>
+          </div>
         </div>
       </div>
     </div>

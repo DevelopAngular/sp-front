@@ -13,6 +13,7 @@ export class ProfileComponent implements OnInit {
   @Input() infoData: any;
   @Input() isSelected: boolean;
   @Input() disabled: boolean;
+  @Input() icon: string;
 
   @Output() select: EventEmitter<boolean> = new EventEmitter<boolean>();
 

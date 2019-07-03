@@ -172,8 +172,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       }),
       switchMap((params) => {
         this.role = params.role;
-
-        // if (this.role === '_all') {
           return this.adminService.getAdminAccounts()
             .pipe(tap((u_list: any) => {
               // console.log('This Accounts ==>>>', u_list);
@@ -185,9 +183,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               // console.log(u_list);
               this.accounts$.next(u_list);
             }));
-        // } else {
-        //   return of(null);
-        // }
       }),
       switchMap(() => {
         return this.route.queryParams.pipe(takeUntil(this.destroy$));
@@ -204,6 +199,13 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         const headers = this.storage.getItem(`${this.role}_columns`);
         if ( headers ) {
           this.dataTableHeaders = JSON.parse(headers);
+          if (!this.dataTableHeaders['Account Type']) {
+            this.dataTableHeaders['Account Type'] = {
+              value: true,
+              label: 'Account Type',
+              disabled: false
+            };
+          }
         } else {
           this.dataTableHeaders = {
             'Name': {
@@ -215,6 +217,11 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               value: true,
               label: 'Email/Username',
               disabled: true
+            },
+            'Account Type': {
+              value: true,
+              label: 'Account Type',
+              disabled: false
             },
           };
 
@@ -341,10 +348,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     this.userService.userData.subscribe((user) => {
       this.user = user;
     });
-    // this.route.data.subscribe((v) => {
-    //   console.log(v);
-    //   console.log(this.route.snapshot.data);
-    // });
   }
 
   findRelevantAccounts(searchValue) {
@@ -411,9 +414,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
 
   setSelected(e) {
-    // if (e.length) {
-      // console.log(e[0]['id']);
-    // }
     console.log(e);
     this.selectedUsers = e;
   }
@@ -427,7 +427,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
     if (!eventTarget.classList.contains('button')) {
       (eventTarget as any) = eventTarget.closest('.button');
-    };
+    }
 
     eventTarget.style.opacity = '0.75';
       // this.consentMenuOpened = true;
@@ -685,10 +685,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   private buildUserListData(userList) {
     this.isLoadUsers = this.limitCounter === userList.length;
-    // console.log('ME ===>>>>>>', this.user);
-    // this.userAmount.next(userList.length);
     return userList.map((raw, index) => {
-      // raw = User.fromJSON(raw);
       const permissionsRef: any = this.profilePermissions;
         const partOf = [];
         if (raw.roles.includes('_profile_student')) partOf.push({title: 'Student', role: '_profile_student'});
@@ -701,7 +698,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             'Name': raw.display_name,
             'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
             'Rooms': raw.assignedTo,
-            // 'Account Type': 'G Suite',
+            'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : 'Alternative',
             'Acting on Behalf Of': raw.canActingOnBehalfOf ? raw.canActingOnBehalfOf.map((u: RepresentedUser) => {
               return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
             }).join(', ') : '',

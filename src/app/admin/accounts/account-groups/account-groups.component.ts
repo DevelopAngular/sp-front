@@ -10,10 +10,10 @@ export class AccountGroupsComponent implements OnInit {
   @Output() accountsToSync = new EventEmitter();
 
   accounts = [
-      { title: 'Admins', selected: false },
-      { title: 'Teachers', selected: false },
-      { title: 'Assistants', selected: false },
-      { title: 'Students', selected: false }
+      { title: 'Admins', icon: 'Admin', selected: false },
+      { title: 'Teachers', icon: 'Teacher', selected: false },
+      { title: 'Assistants', icon: 'Secretary', selected: false },
+      { title: 'Students', icon: 'Student', selected: false }
   ];
 
   get showButton() {
