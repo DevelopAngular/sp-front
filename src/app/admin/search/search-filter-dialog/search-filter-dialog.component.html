@@ -1,5 +1,5 @@
 <div class="filter-wrapper">
-  <div class="filter-header">
+  <div class="filter-header" #header>
     <img class="back-button" (click)="state === 'options' ? state = 'Rooms' : dialogRef.close()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" alt="back">
     <div class="ds-dialog-title filter-title" *ngIf="state !== 'options'">
       <img style="width: 21px; margin-right: 12px" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset" alt="icon">
@@ -9,7 +9,7 @@
   </div>
   <div class="filter-content">
     <div class="student-filter-content" *ngIf="state === 'Students'">
-      <app-student-search [selectedStudents]="selectedStudents" (onUpdate)="selectedStudents = $event"></app-student-search>
+      <app-sp-search [selectedStudents]="selectedStudents" (onUpdate)="selectedStudents = $event"></app-sp-search>
       <div class="add-button" *ngIf="selectedStudents.length">
         <app-gradient-button
            [cursor]="'pointer'"
@@ -19,7 +19,7 @@
         </app-gradient-button>
       </div>
     </div>
-    <div class="rooms-filter-content" *ngIf="state === 'Rooms'">
+    <div class="rooms-filter-content" *ngIf="state === 'Rooms'" #rc>
       <app-rooms-search [locations]="selectedLocations" [roomsWithFolder]="roomsWithCategories" (result)="addLocations($event)" [placeholder]="'Search rooms and folders'"></app-rooms-search>
     </div>
 

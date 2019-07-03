@@ -77,7 +77,7 @@
           </div>
           <div class="certain-teacher" *ngSwitchCase="toggleChoices[3]">
             <div class="title">Pass requests will automatically get sent to:</div>
-            <app-student-search
+            <app-sp-search
                     [selectedStudents]="selectedOpt.nowTeachers"
                     [chipsMode]="true"
                     [focused]="true"
@@ -87,7 +87,7 @@
                     [cancelButton]="true"
                     [placeholder]="'Search Teachers'"
                     (onUpdate)="changeState('now_teacher', $event)"
-            ></app-student-search>
+            ></app-sp-search>
           </div>
         </div>
 
@@ -147,7 +147,7 @@
         </div>
         <div class="certain-teacher" *ngSwitchCase="toggleChoices[3]">
           <div class="title">Pass requests will automatically get sent to:</div>
-          <app-student-search
+          <app-sp-search
                   [selectedStudents]="selectedOpt.futTeachers"
                   [chipsMode]="true"
                   [focused]="true"
@@ -157,7 +157,7 @@
                   [cancelButton]="true"
                   [placeholder]="'Search Teachers'"
                   (onUpdate)="changeState('future_teacher', $event)"
-          ></app-student-search>
+          ></app-sp-search>
         </div>
       </div>
       <div class="unrestricted" *ngIf="!futureRestricted">

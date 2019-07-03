@@ -27,7 +27,10 @@ export class AdminPageComponent implements OnInit, AfterViewInit {
     this.showDummySwitcher$ = combineLatest(
       this.userService.userData,
       this.outletDummySwitcher$,
-      (u, d) => d || !u.isAdmin()
+      (u, d) =>  {
+        console.log(u, d);
+        return d || (u && !u.isAdmin());
+      }
     );
   }
 

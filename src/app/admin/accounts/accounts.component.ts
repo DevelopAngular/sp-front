@@ -73,10 +73,7 @@ export class AccountsComponent implements OnInit {
     private storage: StorageService,
     public matDialog: MatDialog,
     private gsProgress: GettingStartedProgressService,
-  ) {
-    // this.splash = this.gsProgress.onboardProgress.setup_accounts && (!this.gsProgress.onboardProgress.setup_accounts.start || !this.gsProgress.onboardProgress.setup_accounts.end);
-    console.log(this.splash);
-  }
+  ) {}
 
   formatDate(date) {
     return Util.formatDateTime(new Date(date));
@@ -265,7 +262,7 @@ export class AccountsComponent implements OnInit {
             const rawObj = {
                 'Name': raw.display_name,
                 'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
-                'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : 'Alternative',
+                'Account Type': raw.sync_types[0] === 'google' ? 'Standart' : 'Alternative',
                 'Profile(s)': partOf.length ? partOf : [{title: 'No profile'}],
 
             };

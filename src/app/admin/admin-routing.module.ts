@@ -14,9 +14,7 @@ const routes: Routes = [
   {
     path: '', component: AdminPageComponent,
     children: [
-      // {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
-      { path: 'gettingstarted', loadChildren: 'app/admin/getting-started/getting-started.module#GettingStartedModule'},
-      // { path: 'takeTour', component: TakeTourComponent},
+      {path: 'gettingstarted', loadChildren: 'app/admin/getting-started/getting-started.module#GettingStartedModule'},
       {path: 'dashboard', component: DashboardComponent},
       {path: 'hallmonitor', component: HallmonitorComponent},
       {path: 'search', component: SearchComponent},
@@ -24,9 +22,6 @@ const routes: Routes = [
       {path: 'accounts/:role', component: AccountsRoleComponent},
       {path: 'passconfig', component: PassConfigComponent},
       {path: 'myschool', component: MySchoolComponent},
-      // {path: 'settings', component: SettingsComponent},
-      // {path: 'feedback', component: FeedbackComponent},
-      // {path: 'support', component: SupportComponent},
       {path: '**', redirectTo: '', pathMatch: 'full'},
     ]
   },

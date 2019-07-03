@@ -110,6 +110,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     // console.log(this.draggableContainer.nativeElement.childNodes);
 
+    window.postMessage({
+      status: 'OK',
+      message: 'Everything works fine!'
+    }, 'http://localhost:4200/accounts_setup');
 
     this.drawChartXaxis();
     this.darkTheme.isEnabled$.subscribe(() => {

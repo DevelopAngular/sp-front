@@ -1,8 +1,6 @@
 <div class="container">
-  <div *ngIf="showError.error">
-    <app-error-toast [loginMethod]="showError.loggedWith" (closeEvent)="onClose($event)"></app-error-toast>
-  </div>
-  <div *ngIf="loginState === 'profile'" class="ds-w-100 ds-h-100 ds-flex-center-between ds-flex-column">
+
+  <div class="ds-w-100 ds-h-100 ds-flex-center-between ds-flex-column">
 
     <div class="background" [style.background-image]="trustedBackgroundUrl | resolveAsset"></div>
     <div style="flex-grow: 0.5;"></div>
@@ -10,11 +8,13 @@
     <div class="brand">
       <app-smartpass-logo [scale]="1.5" [logoAsset]="'./assets/Logo (White).svg'"></app-smartpass-logo>
     </div>
+
     <div class="grow" *ngIf="!isMobileDevice || true"></div>
-    <google-signin *ngIf="!isMobileDevice || true" (showError)="showError = $event"></google-signin>
-    <!--<google-signin *ngIf="!isMobileDevice" (showError)="showError = $event"></google-signin>-->
+
+    <google-signin *ngIf="!isMobileDevice || true"></google-signin>
 
     <div class="grow"></div>
+
     <!--<div class="title-text" *ngIf="isMobileDevice">{{titleText}}</div>-->
     <!--<a [href]="appLink" *ngIf="isMobileDevice">-->
       <!--<app-gradient-button [width]="'266px'" [minHeight]="'80px'" [fontSize]="'28px'">Get SmartPass</app-gradient-button>-->
@@ -25,9 +25,8 @@
       <img height="173" [src]="'./assets/intro/Pass Tile 2.svg' | resolveAsset">
       <img height="173" [src]="'./assets/intro/Pass Tile 3.svg' | resolveAsset">
     </div>
-    <!--<pre style="position: relative;z-index: 1000000;">{{test | json}}</pre>-->
 
-      <div style="flex-grow: 0.5;"></div>
+    <div style="flex-grow: 0.5;"></div>
   </div>
 
 </div>

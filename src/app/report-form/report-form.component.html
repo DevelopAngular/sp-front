@@ -16,12 +16,12 @@
       <div class="student-select">
         <div class="report-content">
 
-          <app-student-search
+          <app-sp-search
             [selectedStudents]="selectedStudents"
             [showOptions]="showOptions"
             (onUpdate)="selectedStudents=$event"
             (click)="showOptions=true">
-          </app-student-search>
+          </app-sp-search>
 
         </div>
         <div class="student-select_button-next" *ngIf="showOptions && selectedStudents && selectedStudents.length > 0">

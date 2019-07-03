@@ -6,7 +6,7 @@ import { BehaviorSubject, ReplaySubject, Subject } from 'rxjs';
 
 import { DeviceDetection } from './device-detection.helper';
 import { GoogleLoginService } from './services/google-login.service';
-import { HttpService } from './services/http-service';
+import {HttpService, SPError} from './services/http-service';
 import { School } from './models/School';
 import { MatDialog } from '@angular/material';
 import { UserService } from './services/user.service';
@@ -39,7 +39,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public hideSchoolToggleBar: boolean = false;
   public showUI: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public showError: BehaviorSubject<any> = new BehaviorSubject<boolean>(false);
-  public errorToastTrigger: ReplaySubject<boolean>;
+  public errorToastTrigger: ReplaySubject<SPError>;
   public schools: School[] = [];
   public darkThemeEnabled: boolean;
   private openedResizeDialog: boolean;

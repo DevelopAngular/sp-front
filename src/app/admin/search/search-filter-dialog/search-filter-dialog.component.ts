@@ -1,7 +1,8 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { User } from '../../../models/User';
 import { Location } from '../../../models/Location';
+import {fromEvent} from 'rxjs';
 
 @Component({
   selector: 'app-search-filter-dialog',
@@ -9,6 +10,17 @@ import { Location } from '../../../models/Location';
   styleUrls: ['./search-filter-dialog.component.scss']
 })
 export class SearchFilterDialogComponent implements OnInit {
+
+  @ViewChild('header') header: ElementRef<HTMLDivElement>;
+  @ViewChild('rc') set rc(rc: ElementRef<HTMLDivElement> ) {
+    fromEvent( rc.nativeElement, 'scroll').subscribe((evt: Event) => {
+      if ((evt.target as HTMLDivElement).scrollTop > 430) {
+        this.header.nativeElement.style.boxShadow = '0 1px 35px 10px rgba(0,0,0,.2)';
+      } else {
+        this.header.nativeElement.style.boxShadow = '0 1px 5px 0px rgba(0,0,0,.2)';
+      }
+    });
+  }
 
   state: string;
 
