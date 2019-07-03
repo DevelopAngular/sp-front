@@ -23,6 +23,7 @@
     background-color: #FFFFFF;
     display: flex;
     align-items: center;
+    min-width: 970px;
 
     .close-icon {
       width: 34px;
@@ -78,6 +79,7 @@
         flex-direction: column;
         justify-content: space-evenly;
         align-items: center;
+        background-color: white;
 
         .video-header {
           color: $navy;
@@ -106,6 +108,7 @@
         flex-direction: column;
         justify-content: center;
         padding: 0 36px;
+        background-color: white;
 
         .user-title {
           font-weight: bold;
@@ -144,6 +147,7 @@
             margin-left: 5px;
             .buttons {
               display: flex;
+              align-items: center;
               margin-top: 15px;
             }
           }

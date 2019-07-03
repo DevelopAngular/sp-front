@@ -186,7 +186,7 @@
       </div>
     </div>
 
-    <div class="user-table" style="position: relative" *ngIf="openTable && userList.length && !(pending$ | async)">
+    <div class="user-table" *ngIf="openTable && userList.length && !(pending$ | async)">
       <div class="column-settings">
         <app-icon-button class="options-icon" [srcString]="'Options'" [size]="16" (clickEvent)="showColumnSettings($event)"></app-icon-button>
       </div>
@@ -195,7 +195,7 @@
               [data]="userList"
               [isCheckbox]="dataTableEditState"
               [textColor]="'#7E879D'"
-              [marginTopStickyHeader]="'130px'"
+              [marginTopStickyHeader]="'147px'"
               [disallowHover]="!(dataTableEditState | async)"
               [displayedColumns]="dataTableHeadersToDisplay"
               (selectedCell)="findProfileByRole($event)"

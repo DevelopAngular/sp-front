@@ -88,7 +88,7 @@ export class AccountsComponent implements OnInit {
       switchMap(() => this.adminService.getAdminAccounts())
     )
     .subscribe((u_list: any) => {
-      this.splash = this.gsProgress.onboardProgress.setup_accounts && (!this.gsProgress.onboardProgress.setup_accounts.start || !this.gsProgress.onboardProgress.setup_accounts.end);
+      this.splash = this.gsProgress.onboardProgress.setup_accounts && !(!this.gsProgress.onboardProgress.setup_accounts.start || !this.gsProgress.onboardProgress.setup_accounts.end);
       if (u_list.total_count !== undefined) {
         u_list.total = u_list.total_count;
       } else {

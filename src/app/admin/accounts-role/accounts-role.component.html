@@ -294,7 +294,7 @@
         <p class="ds-my-10" style="text-align: center; font-size: 15px;">Add users one-by-one above or set up G Suite <br>
           syncing to automatically add users to this profile.</p>
       </div>
-      <div *ngIf="userList.length" class="ds-mt-15">
+      <div *ngIf="userList.length">
         <div class="column-settings">
           <app-icon-button class="options-icon" [srcString]="'Options'" [size]="16" (clickEvent)="showColumnSettings($event)"></app-icon-button>
           <!--<img draggable="false" width="20" [src]="darkTheme.getIcon({iconName: 'Options', lightFill: 'Blue-Gray'}) | resolveAsset" alt="Options (Navy).svg" (click)="showColumnSettings($event)">-->
@@ -303,7 +303,7 @@
           class="ds-my-10"
           [data]="userList"
           [isCheckbox]="dataTableEditState"
-          [marginTopStickyHeader]="'130px'"
+          [marginTopStickyHeader]="'147px'"
           [textColor]="'#7E879D'"
           [disallowHover]="role === '_all' && !(dataTableEditState | async)"
           [displayedColumns]="dataTableHeadersToDisplay"

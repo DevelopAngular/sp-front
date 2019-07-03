@@ -17,18 +17,18 @@
   display: flex;
   flex-direction: column;
   .accounts-wrapper{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 830px;
-    width: 100%;
-    flex: 1 1 auto;
+    //display: flex;
+    //flex-direction: column;
+    //align-items: center;
+    //min-width: 830px;
+    //width: 100%;
+    //flex: 1 1 auto;
     .header-wrapper {
       background-color: #FBFEFF;
       background-clip: padding-box;
       position: sticky;
       top: 0px;
-      padding: 25px 0 10px 0;
+      padding: 25px 0 23px 0;
       z-index: 1;
       width: 100%;
 
@@ -124,13 +124,13 @@
     .user-table {
       width: 100%;
       .column-settings {
-        position: relative;
+        //position: relative;
         display: flex;
         justify-content: flex-end;
         .options-icon {
           position: absolute;
           z-index: 1000;
-          right: 3px;
+          right: 34px;
           cursor: pointer;
         }
       }

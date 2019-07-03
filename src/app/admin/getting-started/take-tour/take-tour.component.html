@@ -1,7 +1,8 @@
 <div class="host" appSafariScroll>
   <div class="take-tour-wrapper">
     <div class="header">
-      <img class="close-icon" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" alt="Cmb" (click)="router.navigate(['admin', 'gettingstarted'])">
+      <app-icon-button [size]="17" [srcString]="'Chevron Left'" (clickEvent)="router.navigate(['admin', 'gettingstarted'])"></app-icon-button>
+      <!--<img class="close-icon" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" alt="Cmb" (click)="router.navigate(['admin', 'gettingstarted'])">-->
       <div class="header-content">
         <img [src]="'./assets/Video (Red).svg' | resolveAsset" alt="">
         <div class="text">Take a Tour</div>
@@ -68,8 +69,8 @@
               We created demo student and teacher sign-ins for you so you can get started right away.
 
               <div class="buttons">
-                <img style="cursor: pointer" [src]="'./assets/admin-images/App-Store-download.svg' | resolveAsset" alt="AS">
-                <img style="margin-left: 5px; cursor: pointer" [src]="'./assets/admin-images/Google-Play-download.svg' | resolveAsset" alt="GP">
+                <img style="cursor: pointer" width="107" height="32" (click)="openUrl('https://apps.apple.com/us/app/smartpass-mobile/id1387337686')" [src]="'./assets/admin-images/download-app-store-apple.svg' | resolveAsset" alt="AS">
+                <img style="margin-left: 5px; cursor: pointer" width="121" height="46.5" (click)="openUrl('https://play.google.com/store/apps/details?id=app.smartpass.smartpass')" [src]="'./assets/admin-images/google-play-badge.png' | resolveAsset" alt="GP">
               </div>
             </div>
           </div>

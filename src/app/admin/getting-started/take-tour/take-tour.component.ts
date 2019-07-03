@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {Router} from '@angular/router';
 import {AdminService} from '../../../services/admin.service';
 
+declare const window;
+
 @Component({
   selector: 'app-take-tour',
   templateUrl: './take-tour.component.html',
@@ -15,6 +17,10 @@ export class TakeTourComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+  }
+
+  openUrl(url) {
+    window.open(url);
   }
 
 }
