@@ -111,6 +111,11 @@ export interface AuthContext {
   auth: ServerAuth;
 }
 
+export interface SPError {
+  header: string;
+  message: string;
+}
+
 class LoginServerError extends Error {
   constructor(msg: string) {
     super(msg);
@@ -122,7 +127,7 @@ class LoginServerError extends Error {
 @Injectable()
 export class HttpService {
 
-  public errorToast$: ReplaySubject<boolean> = new ReplaySubject(1);
+  public errorToast$: ReplaySubject<SPError> = new ReplaySubject(1);
 
   private accessTokenSubject: BehaviorSubject<AuthContext> = new BehaviorSubject<AuthContext>(null);
   public effectiveUserId: BehaviorSubject<number> = new BehaviorSubject(null);

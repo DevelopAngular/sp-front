@@ -2,7 +2,6 @@ import {Component, ElementRef, HostListener, Input, NgZone, OnDestroy, OnInit, V
 import {MatDialog} from '@angular/material';
 import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
-import {AccountsDialogComponent} from '../accounts-dialog/accounts-dialog.component';
 import {ActivatedRoute, Router} from '@angular/router';
 import {debounceTime, distinctUntilChanged, filter, map, share, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {Util} from '../../../Util';
@@ -87,9 +86,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             map(res => res.results),
             switchMap((userList: User[]) => {
               if (this.role === '_profile_teacher' && userList.length) {
-
                 return this.addUserLocations(userList);
-
               } else if (this.role === '_profile_assistant' && userList.length) {
                 return zip(
                   ...userList.map((user: User) => {
@@ -100,7 +97,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
                           return of(user);
                         })
                       );
-
                   }));
               } else {
                 return of(userList);
@@ -372,9 +368,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               map(res => res),
               switchMap((userList: User[]) => {
                 if (this.role === '_profile_teacher' && userList.length) {
-
                   return this.addUserLocations(userList);
-
                 } else if (this.role === '_profile_assistant' && userList.length) {
                   return zip(
                     ...userList.map((user: User) => {
@@ -385,7 +379,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
                             return of(user);
                           })
                         );
-
                     }));
                 } else {
                   return of(userList);
@@ -394,9 +387,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           ))
         )
         .subscribe((userList) => {
-          // debugger
-
-          console.log(userList);
+          // console.log(userList);
           if (userList && userList.length) {
             this.dataTableHeadersToDisplay = [];
             this.userList = this.buildUserListData(userList);
@@ -615,7 +606,15 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       console.log(userListReloadTrigger, data.profile.id, this.user.id);
       if (userListReloadTrigger) {
         if (data.profile.id === +this.user.id) {
-          window.document.location.reload();
+          // window.document.location.reload();
+          this.userService.getUser()
+            .pipe(
+              map(raw => User.fromJSON(raw))
+            )
+            .subscribe((user) => {
+            this.userService.userData.next(user);
+          });
+
         }
         this.selectedUsers = [];
         this.getUserList();
@@ -698,7 +697,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             'Name': raw.display_name,
             'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
             'Rooms': raw.assignedTo,
-            'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : 'Alternative',
+            'Account Type': raw.sync_types[0] === 'google' ? 'Standart' : 'Alternative',
             'Acting on Behalf Of': raw.canActingOnBehalfOf ? raw.canActingOnBehalfOf.map((u: RepresentedUser) => {
               return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
             }).join(', ') : '',

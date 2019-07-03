@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {MatDialog, MatDialogRef} from '@angular/material';
-import {EMPTY, of} from 'rxjs';
+import {of} from 'rxjs';
 import {delay} from 'rxjs/operators';
 
 @Component({
@@ -10,24 +9,19 @@ import {delay} from 'rxjs/operators';
 })
 export class ErrorToastComponent implements OnInit {
 
-  @Input() loginMethod: number;
+  @Input() errorHeader: string = 'Server Error.';
+  @Input() errorMessage: string = 'Operation could not be completed. We’re working on a solution.';
 
   @Output() closeEvent = new EventEmitter<boolean>();
 
-  public errorMessages = {
-    1: 'Please sign in with your school account or contact your school administrator.',
-    2: 'Please check your username and password or contact your school administrator',
-  }
   public toggleToast: boolean;
-  constructor(
-    // private dialogRef: MatDialogRef<ErrorToastComponent>
-  ) { }
+
+  constructor() { }
 
   ngOnInit() {
     setTimeout(() => { this.toggleToast = true; }, 250);
   }
   close(evt: Event) {
-    // this.dialogRef.close();
     evt.stopPropagation();
     this.toggleToast = false;
     of(null).pipe(

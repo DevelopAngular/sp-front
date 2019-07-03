@@ -64,13 +64,17 @@ export class AccountsSetupComponent implements OnInit, AfterViewInit {
   initLogin(popup?: boolean) {
 
     if (popup) {
-      window.returnAuthToken = function(token) {
-        if (token) {
-          console.log('OK');
-        } else {
-          console.error('Failed!');
-        }
+      // window.returnAuthToken = function(token) {
+      //   if (token) {
+      //     console.log('OK');
+      //   } else {
+      //     console.error('Failed!');
+      //   }
+      // }
+      window.onmessage = function (message) {
+        console.log(message);
       }
+      // window.open('http://localhost:4200/admin/dasboard');
       window.open(this.googleAuth);
 
     } else {

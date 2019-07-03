@@ -1,4 +1,3 @@
-import { animate, state, style, transition, trigger, } from '@angular/animations';
 import {Component, HostListener, NgZone, OnInit} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import {
@@ -6,29 +5,21 @@ import {
   combineLatest,
   ConnectableObservable,
   empty,
-  forkJoin,
-  interval,
   merge,
   Observable,
   of,
   ReplaySubject,
-  zip
 } from 'rxjs';
 import {
-  audit, auditTime,
-  debounceTime,
-  delay, distinct, distinctUntilChanged,
-  filter, finalize,
-  map, publish, publishBehavior, publishLast,
+  map, publishBehavior,
   publishReplay,
-  refCount, sampleTime, skip, skipLast, skipUntil,
+  refCount,
   startWith,
-  switchMap, take, takeLast, tap,
+  switchMap,
   withLatestFrom
 } from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
-import { InvitationCardComponent } from '../invitation-card/invitation-card.component';
 import { mergeObject } from '../live-data/helpers';
 import { HallPassFilter, LiveDataService } from '../live-data/live-data.service';
 import { exceptPasses, PassLike } from '../models';
@@ -37,27 +28,15 @@ import { testInvitations, testPasses, testRequests } from '../models/mock_data';
 import { BasicPassLikeProvider, PassLikeProvider, WrappedProvider } from '../models/providers';
 import { Request } from '../models/Request';
 import { User } from '../models/User';
-import { PassCardComponent } from '../pass-card/pass-card.component';
-import { RequestCardComponent } from '../request-card/request-card.component';
-
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
 import { NotificationService } from '../services/notification-service';
 import { TimeService } from '../services/time.service';
 import {ReportSuccessToastComponent} from '../report-success-toast/report-success-toast.component';
-import * as moment from 'moment';
-import {Invitation} from '../models/Invitation';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {NavbarDataService} from '../main/navbar-data.service';
 import {PassesAnimations} from './passes.animations';
 import {ScreenService} from '../services/screen.service';
-
-declare const window;
-
-
-function isUserStaff(user: User): boolean {
-  return user.roles.includes('_profile_teacher');
-}
 
 export class FuturePassProvider implements PassLikeProvider {
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
@@ -200,8 +179,6 @@ export class PassesComponent implements OnInit {
 
   isActivePass$: Observable<boolean>;
   isActiveRequest$: Observable<boolean>;
-  noRequests: boolean = false;
-  // inboxHasItems: Subject<boolean> = new Subject<boolean>();
   inboxHasItems: Observable<boolean> = of(null);
   passesHaveItems: Observable<boolean> = of(false);
 
@@ -273,25 +250,6 @@ export class PassesComponent implements OnInit {
           excludedRequests, this.dataService));
         this.sentRequests = new WrappedProvider(new InboxInvitationProvider(this.liveDataService, this.dataService.currentUser));
       }
-
-      // zip(
-      //   this.receivedRequests.length$.asObservable(),
-      //   this.sentRequests.length$.asObservable()
-      // ).pipe(
-      //   skip(2)
-      // ).subscribe((val) => {
-      //   this.inboxHasItems.next(!val.reduce((a, b) => a + b));
-      //   // console.log('==============================================>', val);
-      // });
-
-      // this.inboxHasItems = combineLatest(
-      //   this.receivedRequests.length$.startWith(0),
-      //   this.sentRequests.length$.startWith(0),
-      //   (l1, l2) => l1 > 0 || l2 > 0
-      // );
-      //   this.receivedRequests.length$
-
-
     });
 
     this.isActivePass$ = combineLatest(this.currentPass$, this.timeService.now$, (pass, now) => {
@@ -316,7 +274,6 @@ export class PassesComponent implements OnInit {
           this.currentRequest$.next((passLike instanceof Request) ? passLike : null);
         });
       });
-    // window.appLoaded();
   }
 
   ngOnInit() {
@@ -392,50 +349,8 @@ export class PassesComponent implements OnInit {
     });
   }
 
-  showFirstSeenForm(forLater: boolean): void {
-    const dialogRef = this.dialog.open(CreateHallpassFormsComponent, {
-      width: '750px',
-      panelClass: 'form-dialog-container',
-      backdropClass: 'custom-backdrop',
-      data: {'forLater': forLater, 'forStaff': this.isStaff}
-    });
-
-    dialogRef.afterClosed()
-      .pipe(filter(res => !!res)).subscribe((result: Object) => {
-      this.openInputCard(result['templatePass'],
-        result['forLater'],
-        result['forStaff'],
-        result['selectedStudents'],
-        (result['type'] === 'hallpass' ? PassCardComponent : (result['type'] === 'request' ? RequestCardComponent : InvitationCardComponent)),
-        result['fromHistory'],
-        result['fromHistoryIndex']
-      );
-    });
-  }
-
-  openInputCard(templatePass, forLater, forStaff, selectedStudents, component, fromHistory, fromHistoryIndex) {
-    const data = {
-      'pass': templatePass,
-      'fromPast': false,
-      'fromHistory': fromHistory,
-      'fromHistoryIndex': fromHistoryIndex,
-      'forFuture': forLater,
-      'forInput': true,
-      'forStaff': forStaff,
-      'selectedStudents': selectedStudents,
-    };
-
-    this.dialog.open(component, {
-      panelClass: (this.isStaff ? 'teacher-' : 'student-') + 'pass-card-dialog-container',
-      backdropClass: 'custom-backdrop',
-      disableClose: true,
-      data: data
-    });
-  }
   onReportFromPassCard(evt) {
-
     console.log(evt);
-
     if (evt) {
       this.dialog.open(ReportSuccessToastComponent, {
         backdropClass: 'invisible-backdrop',
