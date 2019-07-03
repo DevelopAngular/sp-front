@@ -1,14 +1,15 @@
-<div class="privacy-card">
+<div class="privacy-card" [style.background-color]="darkTheme.getBackground('high', true)">
   <div class="privacy-card_header">
-    <img class="privacy-card_header-image" [src]="'./assets/Shield (Blue-Gray).svg'" alt="Shield (Blue-Gray).svg"><span>Student Privacy</span>
+    <img class="privacy-card_header-image" [src]="'./assets/Shield (Blue-Gray).svg'" alt="Shield (Blue-Gray).svg">
+    <span [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Student Privacy</span>
   </div>
   <div class="privacy-card_content">
-    <div class="ds-mt-15">
+    <div class="ds-mt-15" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">
       We take student privacy very seriously, <br>
       continuously working with schools to make sure <br>
       student data is kept safe and secure.
     </div>
-    <div class="ds-mt-15">
+    <div class="ds-mt-15" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">
       SmartPass only sees a user’s name, email <br>
       address, and their organizational unit in G Suite.
     </div>

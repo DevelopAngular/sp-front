@@ -3,12 +3,13 @@
      #wrap
      (mouseenter)="wrap.hovered = true"
      (mouseleave)="wrap.hovered = false"
+     [style.background-color]="darkTheme.getBackground('high', true)"
 >
     <div class="left-content">
-        <img *ngIf="leftIcon" width="50" height="50" [src]="leftIcon" alt="Icon">
+        <img *ngIf="leftIcon" width="50" height="50" [src]="getCardIcon(leftIcon) | resolveAsset" alt="Icon">
         <div class="text">
-            <div class="title">{{ title }}</div>
-            <div class="subtitle">
+            <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ title }}</div>
+            <div class="subtitle" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">
                 <img *ngIf="subtitleIcon" width="15" height="15" [style.margin-right]="'6px'" [src]="subtitleIcon">
                 {{ subtitle }}
             </div>

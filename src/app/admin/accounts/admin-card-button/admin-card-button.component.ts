@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {DarkThemeSwitch} from '../../../dark-theme-switch';
 
 @Component({
   selector: 'app-admin-card-button',
@@ -19,9 +20,21 @@ export class AdminCardButtonComponent implements OnInit {
 
   ];
 
-  constructor() { }
+  constructor(public darkTheme: DarkThemeSwitch) { }
 
   ngOnInit() {
+  }
+
+  getCardIcon(icon: string) {
+    if (icon.includes('(')) {
+        return this.darkTheme.getIcon({
+            iconName: icon,
+            darkFill: 'White',
+            lightFill: 'Navy'
+        });
+    } else {
+      return icon;
+    }
   }
 
 }

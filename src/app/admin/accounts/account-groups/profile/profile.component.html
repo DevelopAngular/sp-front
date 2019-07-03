@@ -1,7 +1,7 @@
-<div class="wrapper" [style.width]="width - 30 + 'px'" (click)="selected()">
+<div class="wrapper" [style.width]="width - 30 + 'px'" (click)="selected()" [style.background-color]="darkTheme.getBackground('high', true)">
   <div class="disabled-content" *ngIf="disabled"></div>
   <div class="content">
-    <div class="title">
+    <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">
       <img width="28" height="28" [src]="'./assets/' + icon + ' (' + (openInfo ? 'Navy' : 'Blue-Gray') + ').svg' | resolveAsset" alt="">
       <div class="text" [style.color]="openInfo ? '#1F195E' : '#7F879D'">{{ title }}</div>
     </div>

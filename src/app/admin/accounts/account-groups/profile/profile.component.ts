@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {DarkThemeSwitch} from '../../../../dark-theme-switch';
 
 @Component({
   selector: 'app-profile',
@@ -24,7 +25,7 @@ export class ProfileComponent implements OnInit {
       { info: 'Class of 2019 (67 accounts)' }
   ];
 
-  constructor() { }
+  constructor(public darkTheme: DarkThemeSwitch) { }
 
   ngOnInit() {
     if (this.isSelected) {
