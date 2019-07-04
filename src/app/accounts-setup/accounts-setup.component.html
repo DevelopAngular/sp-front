@@ -70,28 +70,28 @@
           </div>
         </div>
         <div class="accounts-setup_buttons" *ngIf="!gSuiteConnected">
-<!--          <app-gradient-button-->
-<!--            [size]="'medium'"-->
-<!--            [gradient]="'#FFFFFF,#00B476'"-->
-<!--            [fontWeight]="'normal'"-->
-<!--            [rightIcon]="'./assets/Chevron Right (White).svg'"-->
-<!--            (buttonClick)="connectGSuite()"-->
-<!--          >-->
-<!--            <span style="font-weight: normal;">-->
-<!--              Connect G Suite-->
-<!--            </span>-->
-<!--          </app-gradient-button>-->
           <app-gradient-button
             [size]="'medium'"
             [gradient]="'#FFFFFF,#00B476'"
             [fontWeight]="'normal'"
             [rightIcon]="'./assets/Chevron Right (White).svg'"
-            (buttonClick)="initLogin(true)"
+            (buttonClick)="connectGSuite()"
           >
             <span style="font-weight: normal;">
               Connect G Suite
             </span>
           </app-gradient-button>
+<!--          <app-gradient-button-->
+<!--            [size]="'medium'"-->
+<!--            [gradient]="'#FFFFFF,#00B476'"-->
+<!--            [fontWeight]="'normal'"-->
+<!--            [rightIcon]="'./assets/Chevron Right (White).svg'"-->
+<!--            (buttonClick)="initLogin(true)"-->
+<!--          >-->
+<!--            <span style="font-weight: normal;">-->
+<!--              Connect G Suite-->
+<!--            </span>-->
+<!--          </app-gradient-button>-->
         </div>
         <div class="accounts-setup_buttons" *ngIf="gSuiteConnected && usersForSyncSelected">
           <app-gradient-button

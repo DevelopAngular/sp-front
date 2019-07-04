@@ -28,7 +28,6 @@ export class AdminPageComponent implements OnInit, AfterViewInit {
       this.userService.userData,
       this.outletDummySwitcher$,
       (u, d) =>  {
-        console.log(u, d);
         return d || (u && !u.isAdmin());
       }
     );

@@ -16,17 +16,22 @@ export class SearchFilterDialogComponent implements OnInit {
   @ViewChild('rc') set rc(rc: ElementRef<HTMLDivElement> ) {
     if (rc) {
       fromEvent( rc.nativeElement, 'scroll').subscribe((evt: Event) => {
-        if ((evt.target as HTMLDivElement).scrollTop > 430) {
-          this.header.nativeElement.style.boxShadow = '0 1px 35px 10px rgba(0,0,0,.2)';
+        let blur: number;
+
+        if ((evt.target as HTMLDivElement).scrollTop < 100) {
+          blur = 5;
+        } else if ((evt.target as HTMLDivElement).scrollTop > 100 && (evt.target as HTMLDivElement).scrollTop < 400) {
+          blur = (evt.target as HTMLDivElement).scrollTop / 20;
         } else {
-          this.header.nativeElement.style.boxShadow = '0 1px 5px 0px rgba(0,0,0,.2)';
+          blur = 20;
         }
+
+        this.header.nativeElement.style.boxShadow = `0 1px ${blur}px 0px rgba(0,0,0,.2)`;
       });
     }
   }
 
   state: string;
-  // addButtonVisibility: boolean = false;
   selectedStudents: User[] = [];
   selectedLocations: Location[] = [];
   roomsWithCategories = [];
