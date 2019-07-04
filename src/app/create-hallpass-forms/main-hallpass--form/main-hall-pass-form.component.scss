@@ -1,19 +1,27 @@
-@media screen and (max-width: 335px) {
+@media screen and (max-width: 320px) {
   div.fixed-card-wrapper {
+    width: 300px !important;
+  }
+
+  div.fixed-card {
     width: 300px !important;
   }
 }
 
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 1024px) and (min-width: 335px)  {
   div.fixed-card {
     width: 335px !important;
-    height: 500px !important;
-    left: 50%;
-    transform: translateX(-50%);
   }
 
   .fixed-card-wrapper {
     width: 335px !important;
+  }
+}
+
+@media screen and (max-width: 1024px)  {
+  div.fixed-card {
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   .form {
