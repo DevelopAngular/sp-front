@@ -6,11 +6,6 @@
           <img *ngIf="!!icon && !inbox" class="display-card-header-icon" [src]="getIcon(icon) | resolveAsset" [style.height]="iconSize" [style.width]="iconSize">
           <div *ngIf="(!!icon && inbox) || mock" class="inbox-wrapper">
             <img class="inbox-icon" [src]="getIcon('./assets/Inbox (Navy).svg') | resolveAsset">
-            <div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0 || mock">
-              <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">
-              <div class="inbox-number">{{ (notificationBadge$ | async) || mock }}</div>
-              <img class="inbox-front" [src]="getIcon('./assets/Inbox Bottom (Navy).svg') | resolveAsset">
-            </div>
           </div>
           <div class="display-card-header-title" [style.font-size]="fontSize" [style.color]="titleColor">
             {{title}}
