@@ -176,7 +176,7 @@ export class NavbarComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit() {
-    this.hideButtons = this.router.url === '/main/kioskMode';
+    this.hideButtons = this.router.url.includes('kioskMode');
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit[urlSplit.length - 1];
 
@@ -185,7 +185,7 @@ export class NavbarComponent implements AfterViewInit, OnInit {
     this.isAdminRoute = this.router.url.includes('/admin')
     this.router.events.subscribe(value => {
       if (value instanceof NavigationEnd) {
-        this.hideButtons = value.url === '/main/kioskMode';
+        this.hideButtons = this.router.url.includes('kioskMode');
         console.log('Hide ===>>', value.url);
         let urlSplit: string[] = value.url.split('/');
         this.tab = urlSplit[urlSplit.length - 1];
