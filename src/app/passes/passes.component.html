@@ -22,7 +22,7 @@
   </app-display-card>
 </div>
 
-<div class="passes-wrapper" [@PassesSlideTopBottom] *ngIf="!isInboxClicked && user && this.screenService.isDeviceMid">
+<div class="passes-wrapper" [ngClass]="isStaff ? 'passes-wrapper-margin-top' : '' " [@PassesSlideTopBottom] *ngIf="!isInboxClicked && user && this.screenService.isDeviceMid">
   <h1 class="passes-heading" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">Passes</h1>
   <div class="main-page-left">
     <div class="current-pass">
