@@ -36,6 +36,9 @@
     width: inherit;
   }
 
+  div.selected-tab-pointer {
+    top: -13px;
+  }
 }
 
 @media all and (max-width: 475px) {
@@ -293,7 +296,6 @@
   bottom: 0;
   width: 100%;
   background-color: #fbfbfb;
-  border-top: 1px solid #1F195E;
   height: 68px;
   align-items: center;
   z-index: 11;
@@ -301,19 +303,21 @@
   &-wrapper {
     display: flex;
     width: 100%;
+    position: relative;
   }
 }
 
 .nav-buttons {
   position: relative;
   flex-grow: 1;
-  .selected-tab-pointer {
-    transition: all 0.4s ease;
-    position: absolute;
-    bottom: 0;
-    height: 5px;
-    width: 70px;
-    border-radius: 4px;
-    background-color: $jade;
-  }
+}
+
+.selected-tab-pointer {
+  transition: all 0.4s ease;
+  position: absolute;
+  bottom: 0;
+  height: 5px;
+  width: 70px;
+  border-radius: 4px;
+  background-color: $jade;
 }

@@ -15,7 +15,7 @@ import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material';
 import {Router, NavigationEnd, ActivatedRoute, NavigationStart} from '@angular/router';
 
-import {ReplaySubject, combineLatest, of, Subject, Observable} from 'rxjs';
+import {ReplaySubject, combineLatest, of, Subject, Observable, BehaviorSubject} from 'rxjs';
 import {filter, switchMap, tap} from 'rxjs/operators';
 
 import { DataService } from '../services/data-service';
@@ -63,8 +63,11 @@ export interface RepresentedUser {
 export class NavbarComponent implements AfterViewInit, OnInit {
 
   @Input() hasNav = true;
-  @ViewChild('navButtonsContainer') navButtonsContainer;
+  @ViewChild('navButtonsContainer') navButtonsContainer: ElementRef;
   @ViewChildren('tabRef') tabRefs: QueryList<ElementRef>;
+
+  @ViewChild('navButtonsContainerMobile') navButtonsContainerMobile: ElementRef;
+  @ViewChildren('tabRefMobile') tabRefsMobile: QueryList<ElementRef>;
 
   @Output() settingsClick: EventEmitter<any> = new EventEmitter<any>();
 
@@ -112,7 +115,7 @@ export class NavbarComponent implements AfterViewInit, OnInit {
 
   @HostListener('window:resize')
     checkDeviceWidth() {
-      this.underlinePosition();
+        this.underlinePosition();
         this.islargeDeviceWidth = this.screenService.isDeviceLargeExtra;
 
         if (this.islargeDeviceWidth) {
@@ -125,8 +128,7 @@ export class NavbarComponent implements AfterViewInit, OnInit {
             this.navbarData.inboxClick$.next(false);
             this.isInboxClicked = false;
         }
-
-    this.dataService.updateInbox(this.inboxVisibility);
+        this.dataService.updateInbox(this.inboxVisibility);
     }
 
   constructor(
@@ -149,6 +151,7 @@ export class NavbarComponent implements AfterViewInit, OnInit {
       public kioskMode: KioskModeService,
       private screenService: ScreenService,
       private sideNavService: SideNavService,
+      private cdr : ChangeDetectorRef
   ) {
 
     const navbarEnabled$ = combineLatest(
@@ -172,7 +175,7 @@ export class NavbarComponent implements AfterViewInit, OnInit {
   }
 
   get pointerTopSpace() {
-      return this.pts;
+    return this.pts;
   }
 
   ngOnInit() {
@@ -283,15 +286,27 @@ export class NavbarComponent implements AfterViewInit, OnInit {
   }
 
   underlinePosition() {
-      if (this.isStaff && this.navButtonsContainer && this.tabRefs && this.screenService.isDesktopWidth) {
-          setTimeout(() => {
-            const tabRefsArray = this.tabRefs.toArray();
-              const selectedTabRef = this.buttons.findIndex((button) => button.route === this.tab);
-              if (tabRefsArray[selectedTabRef]) {
-                  this.selectTab(tabRefsArray[selectedTabRef].nativeElement, this.navButtonsContainer.nativeElement);
-              }
-          }, 550);
-      }
+    if (this.screenService.isDesktopWidth) {
+      setTimeout( () => {
+        this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainer);
+      });
+    }
+
+    if (this.screenService.isDeviceLargeExtra) {
+      this.setCurrentUnderlinePos(this.tabRefsMobile, this.navButtonsContainerMobile);
+    }
+  }
+
+  setCurrentUnderlinePos(refsArray: QueryList<ElementRef>, buttonsContainer: ElementRef) {
+    if (this.isStaff && buttonsContainer && this.tabRefs) {
+      setTimeout(() => {
+        const tabRefsArray = refsArray.toArray();
+        const selectedTabRef = this.buttons.findIndex((button) => button.route === this.tab);
+        if (tabRefsArray[selectedTabRef]) {
+          this.selectTab(tabRefsArray[selectedTabRef].nativeElement, buttonsContainer.nativeElement);
+        }
+      }, 550);
+    }
   }
 
   getIcon(iconName: string, darkFill?: string, lightFill?: string) {

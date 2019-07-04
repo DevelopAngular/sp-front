@@ -94,20 +94,28 @@
   </div>
 
   <div *ngIf="isStaff && !isAdminRoute && !hideButtons" class="teacherNav-mobile" [style.background-color]="darkTheme.getBackground('low', false)">
-    <div class="teacherNav-mobile-wrapper">
+    <div class="teacherNav-mobile-wrapper" #navButtonsContainerMobile>
       <div *ngFor="let button of buttons" class="teacherNav_tab">
         <ng-container *ngIf="isStaff && buttonVisibility(button)">
-          <app-nav-button
-            [selected]="tab === button.route"
-            [content]="button.title"
-            [icon]="button.imgUrl"
-            (onClick)="updateTab(button.route)">
-          </app-nav-button>
+          <div
+            #tabRefMobile
+            [style.transition]="'transform .4s ease'"
+            (mousedown)="tabRefMobile.style.transform = 'scale(.96)'"
+            (mouseup)="tabRefMobile.style.transform = 'unset'">
+            <div>
+            </div>
+            <app-nav-button
+              [selected]="tab === button.route"
+              [content]="button.title"
+              [icon]="button.imgUrl"
+              (onClick)="updateTab(button.route); selectTab(tabRefMobile, navButtonsContainerMobile)">
+            </app-nav-button>
+          </div>
         </ng-container>
       </div>
+      <div class="selected-tab-pointer" [style.left]="pointerTopSpace"></div>
     </div>
   </div>
-  <!--<div [style.display]="(isStaff && showNav)?'':'none'" class="divider"></div>-->
 </div>
 
 
