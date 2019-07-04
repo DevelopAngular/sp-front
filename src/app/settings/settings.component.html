@@ -9,7 +9,7 @@
            (mouseenter)="hoveredMasterOption = true"
            (mouseleave)="hoveredMasterOption = false"
            [style.background-color]="hoveredMasterOption ? 'rgb(228, 235, 255)' : 'transparent'"
-           (click)="dialogRef.close('signout')">
+           (click)="signOutAction()">
         <img class="switch-icon" [src]="getIcon('Tablet', null,  hoveredMasterOption) | resolveAsset">
         <div class="option-title" [style.color]="getColor(null, hoveredMasterOption)">Exit Kiosk Mode</div>
         <img class="arrow-icon" [src]="getIcon('Chevron Right', null,  hoveredMasterOption) | resolveAsset">
