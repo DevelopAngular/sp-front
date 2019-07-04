@@ -67,9 +67,9 @@ export class AppInputComponent implements OnInit {
           return  this.formGroup.valueChanges;
         }),
       ).subscribe()
-      if (this.isFocus) {
-        this.updateFocus(this.input.nativeElement);
-      }
+      // if (this.isFocus) {
+      //   this.updateFocus(this.input.nativeElement);
+      // }
 
       // if (this.rightIcon) {
       //   this.rightIconUntouched = this.rightIcon.replace('Navy', 'Blue-Gray');

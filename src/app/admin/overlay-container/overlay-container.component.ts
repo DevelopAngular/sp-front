@@ -1012,7 +1012,8 @@ export class OverlayContainerComponent implements OnInit {
         restricted: room.restricted,
         scheduling_restricted: room.scheduling_restricted,
         travel_type: room.travel_types,
-        timeLimit: room.max_allowed_time
+        timeLimit: room.max_allowed_time,
+        advOptState: this.advOptState
       };
 
       this.setLocation('editRoomInFolder');
