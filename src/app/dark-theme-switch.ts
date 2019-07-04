@@ -2,7 +2,7 @@ import {BehaviorSubject} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {StorageService} from './services/storage.service';
 
-export type Tone = 'low' | 'middle' | 'high' | 'default';
+export type Tone = 'low' | 'middle' | 'high' | 'default' | 'extra';
 export interface ColorConfig {
   setting?: any;
   hover?: boolean;
@@ -128,7 +128,8 @@ export class DarkThemeSwitch {
     if (this.isEnabled$.value) {
       switch (tone) {
         case 'low':
-          return '#0F171E';
+          case 'extra':
+            return '#0F171E';
           break;
         case 'default':
           return '#0F171E';
@@ -138,6 +139,9 @@ export class DarkThemeSwitch {
         case 'high':
           return '#134482';
           break;
+        // case 'extra':
+        //   return '#0F171E';
+        //   break;
       }
     } else {
       switch (tone) {
@@ -149,6 +153,9 @@ export class DarkThemeSwitch {
           break;
         case 'high':
           return reverse ? '#FFFFFF' : '#7F879D';
+          break;
+        case 'extra':
+          return reverse ? '#7F879D' : '#F4F4F4';
           break;
         case 'default':
           return reverse ? '#7F879D' : '#FBFEFF';

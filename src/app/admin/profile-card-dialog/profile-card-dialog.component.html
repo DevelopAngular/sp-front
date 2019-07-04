@@ -82,17 +82,17 @@
               <div>
                 <div class="ds-dialog-heading">Account Info</div>
                 <span class="ds-dialog-bold-text">Name: </span> <span>{{profile['Name']}}</span><br>
-                <span class="ds-dialog-bold-text">Email: </span> <span>{{profile['Email/Username']}}</span><br>
+                <span class="ds-dialog-bold-text">Username/Email: </span> <span>{{profile['Email/Username']}}</span><br>
                 <span class="ds-dialog-bold-text">Account Type: </span> <span>{{profile['Account Type']}}</span><br>
               </div>
-              <div [style.text-align]="'right'">
-                <div>
-                  <img [src]="'./assets/google/google_logo.svg'" alt="google_logo.svg">
-                </div>
-                <div class="learn-more">
-                  <a class="ds-small-link-text" target="_blank" href="https://www.smartpass.app/documentation/administrator-accounts-profiles">Learn more</a>
-                </div>
-              </div>
+<!--              <div [style.text-align]="'right'">-->
+<!--                <div>-->
+<!--                  <img [src]="'./assets/google/google_logo.svg'" alt="google_logo.svg">-->
+<!--                </div>-->
+<!--                <div class="learn-more">-->
+<!--                  <a class="ds-small-link-text" target="_blank" href="https://www.smartpass.app/documentation/administrator-accounts-profiles">Learn more</a>-->
+<!--                </div>-->
+<!--              </div>-->
             </div>
             <div *ngIf="data.role === '_profile_assistant' && assistantFor">
               <div class="acting-on-behalf-user ds-w-100 ds-mt-15">
@@ -101,7 +101,7 @@
                 <!--[selectedProfiles]="assistantFor"-->
                 <!--(updateSelectedEvent)="assistantForUpdate$.next($event)"-->
                 <!--&gt;</app-sp-chips>-->
-                <app-student-search
+                <app-sp-search
                   [preventRemovingLast]="data.role === '_profile_assistant'"
                   [selectedStudents]="assistantFor"
                   [chipsMode]="true"
@@ -112,7 +112,7 @@
                   [cancelButton]="true"
                   [placeholder]="'Search Teachers'"
                   (onUpdate)="assistantForUpdate$.next($event)"
-                ></app-student-search>
+                ></app-sp-search>
               </div>
             </div>
           </div>

@@ -213,7 +213,7 @@
           </div>
           <div class="search-field" style="display: flex">
             <div class="ds-w-100">
-              <app-student-search
+              <app-sp-search
                 [selectedStudents]="selectedTeachers"
                 [chipsMode]="true"
                 [focused]="true"
@@ -223,7 +223,7 @@
                 [cancelButton]="true"
                 [placeholder]="'Search Teachers'"
                 (onUpdate)="selectTeacherEvent($event)"
-              ></app-student-search>
+              ></app-sp-search>
             </div>
           </div>
         </div>

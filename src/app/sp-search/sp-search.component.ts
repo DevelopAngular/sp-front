@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import { MapsAPILoader } from '@agm/core';
 
 
@@ -8,21 +8,18 @@ import { User } from '../models/User';
 import {BehaviorSubject, of, pipe, Subject} from 'rxjs';
 import {UserService} from '../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
-import {HttpService} from '../services/http-service';
 import {HttpClient} from '@angular/common/http';
-import {combineLatest, filter, map, mergeMap, startWith, tap} from 'rxjs/operators';
-import {constructUrl} from '../live-data/helpers';
 
 declare const window;
 export type SearchEntity = 'schools' | 'users';
 
 @Component({
-  selector: 'app-student-search',
-  templateUrl: './student-search.component.html',
-  styleUrls: ['./student-search.component.scss']
+  selector: 'app-sp-search',
+  templateUrl: './sp-search.component.html',
+  styleUrls: ['./sp-search.component.scss']
 })
 
-export class StudentSearchComponent implements OnInit {
+export class SPSearchComponent implements OnInit {
 
 
   @Input() searchTarget: SearchEntity = 'users';
@@ -251,7 +248,7 @@ export class StudentSearchComponent implements OnInit {
   selectSchool(school) {
     this.selectedSchool = school;
     this.onUpdate.emit(school);
-    this.schools = null;
+    this.schools.next(null);
   }
   onBlur(event) {
     // console.log(event);

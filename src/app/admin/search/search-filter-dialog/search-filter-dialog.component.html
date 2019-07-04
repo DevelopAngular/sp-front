@@ -1,5 +1,5 @@
 <div class="filter-wrapper">
-  <div class="filter-header">
+  <div class="filter-header" #header>
     <img class="back-button" (click)="state === 'options' ? state = 'Rooms' : dialogRef.close()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" alt="back">
     <div class="ds-dialog-title filter-title" *ngIf="state !== 'options'">
       <img style="width: 21px; margin-right: 12px" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset" alt="icon">
@@ -8,9 +8,9 @@
     <div class="ds-dialog-title filter-title" *ngIf="state === 'options'">Room Options</div>
   </div>
   <div class="filter-content">
-    <div class="student-filter-content" *ngIf="state === 'Students'">
-      <app-student-search [selectedStudents]="selectedStudents" (onUpdate)="selectedStudents = $event"></app-student-search>
-      <div class="add-button" *ngIf="selectedStudents.length">
+    <div class="student-filter-content" *ngIf="state === 'Students'" #rc>
+      <app-sp-search [selectedStudents]="selectedStudents" (onUpdate)="selectedStudents = $event"></app-sp-search>
+      <div class="add-button" *ngIf="selectedStudents.length && addButtonVisibility('students')">
         <app-gradient-button
            [cursor]="'pointer'"
            (buttonClick)="addStudents()"
@@ -19,11 +19,11 @@
         </app-gradient-button>
       </div>
     </div>
-    <div class="rooms-filter-content" *ngIf="state === 'Rooms'">
+    <div class="rooms-filter-content" *ngIf="state === 'Rooms'" #rc>
       <app-rooms-search [locations]="selectedLocations" [roomsWithFolder]="roomsWithCategories" (result)="addLocations($event)" [placeholder]="'Search rooms and folders'"></app-rooms-search>
     </div>
 
-    <div class="rooms-options-content" *ngIf="state === 'options'">
+    <div class="rooms-options-content" *ngIf="state === 'options'" #rc>
       <div class="header">
         <div class="info">
           Choose whether the filter should include passes where the room is the destination, origin, or either.
@@ -55,7 +55,7 @@
       </div>
     </div>
 
-    <div class="button" *ngIf="(state === 'Rooms' || state === 'options') && selectedLocations.length">
+    <div class="button" *ngIf="(state === 'Rooms' || state === 'options') && selectedLocations.length && addButtonVisibility('rooms')">
       <app-gradient-button
         (buttonClick)="state === 'options' ? add() : state = 'options'"
       >
