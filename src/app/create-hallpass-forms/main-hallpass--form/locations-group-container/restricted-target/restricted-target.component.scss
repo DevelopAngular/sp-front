@@ -1,6 +1,6 @@
 @import '../../../../../sp-colors';
 
-@media all and (max-width: 475px) {
+@media all and (max-width: 1024px) {
   div.rest-tar-wrapper {
     overflow: initial;
   }
@@ -9,39 +9,11 @@
     display: none;
   }
 
-  img.back-btn-bottom {
-    display: block;
-    position: absolute;
-    width: 28px;
-    height: 29px;
-    left: 50%;
-    transform: translateX(-50%);
+  div.back-button-wrapper {
+    display: none;
   }
 }
 
-@media all and (min-width: 360px) and (max-width: 475px) {
-  img.back-btn-bottom {
-    bottom: -45px;
-  }
-}
-
-@media all and (min-width: 320px) and (max-width: 360px) {
-  img.back-btn-bottom {
-    bottom: -32px;
-  }
-}
-
-@media all and (max-width: 360px) {
-  img.back-btn-bottom {
-    bottom: -40px;
-  }
-}
-
-@media all and (max-width: 320px) {
-  img.back-btn-bottom {
-    bottom: -35px;
-  }
-}
 
 .rest-tar-wrapper {
   height: 500px;

@@ -8,7 +8,7 @@
     [placeholder]="placeholder"
     [fieldIconPosition]="'left'"
     [closeIcon]="true"
-    [focused]="true"
+    [focused]="isFocused"
     (ontextupdate)="onSearch($event)"
   ></app-round-input>
   <div class="main-content" *ngIf=" type === 'location' ? ( mainContentVisibility && favoritesLoaded ) : mainContentVisibility ">

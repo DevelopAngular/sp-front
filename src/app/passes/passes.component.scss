@@ -1,6 +1,11 @@
 @import '../../sp-colors';
 
-/*Small devices breakpoint*/
+@media all and (max-width: 320px){
+  div.current-pass-card {
+    max-width: 300px;
+  }
+}
+
 @media all and (max-width: 425px) {
   div.current-pass,
   div.future-passes,
@@ -46,14 +51,28 @@
   div.main-page-right {
     display: none !important;
   }
-
-
 }
 
 @media all and (max-width: 1024px){
-  .pass-collection {
+  .pass-collection  {
     &:last-child {
-      padding-bottom: 50px;
+      padding-bottom: 60px;
+    }
+  }
+
+  div.current-pass-card {
+    max-width: 335px;
+    margin: 0 auto;
+  }
+}
+
+// queries for safari
+@media not all and (min-resolution:.001dpcm) {
+  @supports (-webkit-appearance:none) {
+    @media all and (max-width: 425px) {
+      .passes-wrapper-margin-top {
+        margin-top: 140px;
+      }
     }
   }
 }

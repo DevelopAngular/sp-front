@@ -330,6 +330,10 @@ body {
   .student-pass-card-dialog-container .mat-dialog-container {
     width: 100% !important;
   }
+
+  .form-dialog-container {
+    max-width: 300px !important;
+  }
 }
 
 @media all and (max-width: 475px) {
@@ -337,20 +341,12 @@ body {
   .teacher-pass-card-dialog-container {
     max-width: unset !important;
   }
-}
 
-@media all and (max-width: 475px) {
+  .main-form-dialog-container,
   .form-dialog-container {
     max-width: 335px !important;
   }
 }
-
-@media all and (max-width: 320px) {
-  .form-dialog-container {
-    max-width: 300px !important;
-  }
-}
-
 
 // Side nav scroll hiding
 .mat-drawer-inner-container::-webkit-scrollbar {
