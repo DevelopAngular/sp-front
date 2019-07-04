@@ -2,7 +2,7 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { MatDialog } from '@angular/material';
 import { FormGroup } from '@angular/forms';
 
-import {BehaviorSubject, forkJoin, Observable, of, Subscription, zip} from 'rxjs';
+import {BehaviorSubject, combineLatest, forkJoin, Observable, of, Subject, Subscription, zip} from 'rxjs';
 import {filter, finalize, mapTo, switchMap} from 'rxjs/operators';
 
 import { HttpService } from '../../services/http-service';
@@ -44,6 +44,8 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     // // Needs for OverlayContainer opening if an admin comes from teachers profile card on Accounts&Profiles tab
     private forceSelectedLocation: Location;
 
+    private onboardUpdate$ = new Subject();
+
 
     showRooms: boolean;
     onboardLoaded: boolean;
@@ -76,17 +78,30 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.adminService.getOnboardProgress().subscribe((onboard: any[]) => {
-      if (onboard && onboard.length) {
+    combineLatest(this.adminService.getOnboardProgress(), this.hallPassService.getPinnables())
+    .subscribe(([onboard, pinnables]) => {
         console.log('Onboard ==>>>>', onboard);
-        const end = onboard.find(item => item.name === 'setup_rooms:end');
-        // const end = onboard.find(item => item.name === 'setup_rooms:start');
+      if (onboard && (onboard as any[]).length && !pinnables.length) {
+        const end = (onboard as any[]).find(item => item.name === 'setup_rooms:end');
         this.showRooms = end.done;
       } else {
-        this.showRooms = true;
+          const start = (onboard as any[]).find(item => item.name === 'setup_rooms:start');
+          const end = (onboard as any[]).find(item => item.name === 'setup_rooms:end');
+          if (!start.done) {
+              this.onboardUpdate$.next('setup_rooms:start');
+          }
+          if (!end.done) {
+              this.onboardUpdate$.next('setup_rooms:end');
+          }
+          this.showRooms = true;
       }
       this.onboardLoaded = true;
     });
+
+    this.onboardUpdate$.pipe(switchMap((action) => {
+        return this.adminService.updateOnboardProgress(action);
+    })).subscribe();
+
     this.pinnables$ = this.hallPassService.getPinnables();
     this.pinnables$.subscribe(res => this.pinnables = res);
 
