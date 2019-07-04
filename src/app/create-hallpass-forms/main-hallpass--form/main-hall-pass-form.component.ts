@@ -254,5 +254,6 @@ export class MainHallPassFormComponent implements OnInit {
   checkDeviceScreen() {
     this.isDeviceMid = this.screenService.isDeviceMid;
     this.isDeviceLarge = this.screenService.isDeviceLargeExtra;
+    this.setFormSize();
   }
 }
