@@ -466,4 +466,9 @@ export class NavbarComponent implements AfterViewInit, OnInit {
       this.sideNavService.toggleRight$.next(true);
     }
   }
+
+  get notificationBadge$() {
+    return this.navbarData.notificationBadge$;
+  }
+
 }
