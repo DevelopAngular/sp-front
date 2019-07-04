@@ -72,13 +72,13 @@
         <!--<div class="secretary-user ds-w-100">-->
           <!--<div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.user, 'ds-dialog-heading-gray': !assistantLike.user}">Assistant</div>-->
           <!--<div class="profile-search" *ngIf="!assistantLike.user; else secretaryUser" >-->
-            <!--<app-student-search-->
+            <!--<app-sp-search-->
               <!--[placeholder]="'Search G Suite accounts'"-->
               <!--[dummyRoleText]="'users'"-->
               <!--[type]="'gsuite'"-->
               <!--[role]="data.role"-->
               <!--(onUpdate)="setSecretary($event, null)"-->
-            <!--&gt;</app-student-search>-->
+            <!--&gt;</app-sp-search>-->
           <!--</div>-->
           <!--<ng-template #secretaryUser>-->
             <!--<div class="ds-flex-center-between">-->
@@ -100,14 +100,14 @@
         <!--<div class="active-on-user ds-w-100">-->
           <!--<div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.behalfOf, 'ds-dialog-heading-gray': !assistantLike.behalfOf}">Act on Behalf Of</div>-->
           <!--<div class="profile-search"  >-->
-            <!--<app-student-search-->
+            <!--<app-sp-search-->
               <!--[chipsMode]="true"-->
               <!--[placeholder]="'Search existing teachers'"-->
               <!--[dummyRoleText]="'teachers'"-->
               <!--[type]="'alternative'"-->
               <!--[role]="'_profile_teacher'"-->
               <!--(onUpdate)="setSecretary(null, $event)"-->
-            <!--&gt;</app-student-search>-->
+            <!--&gt;</app-sp-search>-->
           <!--</div>-->
           <!--<ng-template #secretaryBehalfOf>-->
             <!--<div class="ds-flex-center-between">-->
@@ -136,14 +136,14 @@
 
               <div class="profile-search">
 
-                <app-student-search
+                <app-sp-search
                   [selectedStudents]="selectedUsers"
                   [placeholder]="'Search G Suite accounts'"
                   [dummyRoleText]="'users'"
                   [type]="'gsuite'"
                   [role]="data.role"
                   (onUpdate)="setSelectedUsers($event)"
-                ></app-student-search>
+                ></app-sp-search>
               </div>
             </div>
 
@@ -182,11 +182,11 @@
         <!--<div class="active-on-user ds-w-100" *ngIf="data.role === '_profile_assistant'">-->
           <!--<div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.behalfOf, 'ds-dialog-heading-gray': !assistantLike.behalfOf}">Active on Behalf Of</div>-->
           <!--<div class="profile-search" *ngIf="!assistantLike.behalfOf; else secretaryBehalfOf" >-->
-            <!--<app-student-search-->
+            <!--<app-sp-search-->
               <!--[type]="'alternative'"-->
               <!--[role]="''"-->
               <!--(onUpdate)="setSecretary(null, $event)"-->
-            <!--&gt;</app-student-search>-->
+            <!--&gt;</app-sp-search>-->
           <!--</div>-->
           <!--&lt;!&ndash;<ng-template #secretaryBehalfOf>&ndash;&gt;-->
             <!--&lt;!&ndash;<div class="ds-flex-center-between">&ndash;&gt;-->
@@ -292,14 +292,14 @@
     <div class="active-on-user ds-w-100" *ngIf="data.role === '_profile_assistant'">
       <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.behalfOf.length, 'ds-dialog-heading-gray': !assistantLike.behalfOf.length}">Active on Behalf Of</div>
       <div class="profile-search">
-        <app-student-search
+        <app-sp-search
                 [placeholder]="'Search existing teachers'"
                 [dummyRoleText]="'teachers'"
                 [selectedStudents]="assistantLike.behalfOf"
                 [type]="'alternative'"
                 [role]="'_profile_teacher'"
                 (onUpdate)="setSecretary(null, $event)"
-        ></app-student-search>
+        ></app-sp-search>
       </div>
     </div>
   </div>
@@ -324,14 +324,14 @@
       <div class="active-on-user ds-w-100">
         <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.behalfOf.length, 'ds-dialog-heading-gray': !assistantLike.behalfOf.length}">Active on Behalf Of</div>
         <div class="profile-search">
-          <app-student-search
+          <app-sp-search
                   [placeholder]="'Search existing teachers'"
                   [dummyRoleText]="'teachers'"
                   [selectedStudents]="assistantLike.behalfOf"
                   [type]="'alternative'"
                   [role]="'_profile_teacher'"
                   (onUpdate)="setSecretary(null, $event)"
-          ></app-student-search>
+          ></app-sp-search>
         </div>
       </div>
     </div>

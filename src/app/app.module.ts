@@ -27,7 +27,6 @@ import { IntroComponent } from './intro/intro.component';
 import { LoadingService } from './services/loading.service';
 import { LoginComponent } from './login/login.component';
 import { OptionsComponent } from './options/options.component';
-import { PdfComponent } from './pdf/pdf.component';
 import { ProgressInterceptor } from './progress-interceptor';
 import { GoogleApiService, SP_GAPI_CONFIG } from './services/google-api.service';
 import { GoogleAuthService } from './services/google-auth.service';
@@ -35,7 +34,6 @@ import { SharedModule } from './shared/shared.module';
 import { SignOutComponent } from './sign-out/sign-out.component';
 import { UserService } from './services/user.service';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
-import { SelectProfileComponent } from './select-profile/select-profile.component';
 import { ErrorToastComponent } from './error-toast/error-toast.component';
 import { SchoolToggleBarComponent } from './school-toggle-bar/school-toggle-bar.component';
 import { ItemListComponent } from './item-list/item-list.component';
@@ -62,7 +60,6 @@ const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroRouteComponent, data: { hideSchoolToggleBar: true}},
   {path: 'school_signup', component: SchoolSignUpComponent, pathMatch: 'full'},
   {path: 'accounts_setup', component: AccountsSetupComponent, pathMatch: 'full'},
-  // {path: '', redirectTo: 'admin', pathMatch: 'full'},
   {
     path: '',
     component: LoginComponent,
@@ -103,8 +100,6 @@ const appRoutes: Routes = [
     IntroComponent,
     LoginComponent,
     HallDateTimePickerComponent,
-    PdfComponent,
-    SelectProfileComponent,
     ErrorToastComponent,
     SchoolToggleBarComponent,
     ItemListComponent,

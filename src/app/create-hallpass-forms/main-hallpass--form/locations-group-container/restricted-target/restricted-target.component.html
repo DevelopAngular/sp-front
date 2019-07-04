@@ -11,7 +11,7 @@
 
   <div class="rest-tar-content" (scroll)="tableScroll($event)">
     <div class="search-wrapper" *ngIf="!hideSearchTeacher">
-        <app-student-search
+        <app-sp-search
           [focused]="true"
           [width]="'100%'"
           [role]="'_profile_teacher'"
@@ -19,7 +19,7 @@
           [list]="false"
           [emitSingleProfile]="true"
           (onUpdate)="updateTarget($event)"
-        ></app-student-search>
+        ></app-sp-search>
       <!--</div>-->
     </div>
     <div class="quick-select" [style.margin-top]="hideSearchTeacher ? '10px' : '70px'" *ngIf="filteredTeachers.length">

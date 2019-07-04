@@ -1,7 +1,9 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { User } from '../../../models/User';
 import { Location } from '../../../models/Location';
+import {fromEvent} from 'rxjs';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-search-filter-dialog',
@@ -10,8 +12,21 @@ import { Location } from '../../../models/Location';
 })
 export class SearchFilterDialogComponent implements OnInit {
 
-  state: string;
+  @ViewChild('header') header: ElementRef<HTMLDivElement>;
+  @ViewChild('rc') set rc(rc: ElementRef<HTMLDivElement> ) {
+    if (rc) {
+      fromEvent( rc.nativeElement, 'scroll').subscribe((evt: Event) => {
+        if ((evt.target as HTMLDivElement).scrollTop > 430) {
+          this.header.nativeElement.style.boxShadow = '0 1px 35px 10px rgba(0,0,0,.2)';
+        } else {
+          this.header.nativeElement.style.boxShadow = '0 1px 5px 0px rgba(0,0,0,.2)';
+        }
+      });
+    }
+  }
 
+  state: string;
+  // addButtonVisibility: boolean = false;
   selectedStudents: User[] = [];
   selectedLocations: Location[] = [];
   roomsWithCategories = [];
@@ -21,16 +36,28 @@ export class SearchFilterDialogComponent implements OnInit {
       @Inject(MAT_DIALOG_DATA) public data: any,
       ) { }
 
+  addButtonVisibility(entity: 'students' | 'rooms' | 'withCategories') {
+    if (entity === 'students') {
+      return !_.isEqual(this.selectedStudents, this.data['students']);
+    }
+    if (entity === 'rooms') {
+      return !_.isEqual(this.selectedLocations, this.data['rooms']);
+    }
+    if (entity === 'withCategories') {
+      return !_.isEqual(this.roomsWithCategories, this.data['withCategories']);
+    }
+  }
+
   ngOnInit() {
     this.state = this.data['state'];
     if (this.data['students']) {
-      this.selectedStudents = this.data['students'];
+      this.selectedStudents = _.cloneDeep<User[]>(this.data['students']);
     }
     if (this.data['rooms']) {
-      this.selectedLocations = this.data['rooms'];
+      this.selectedLocations =  _.cloneDeep<Location[]>(this.data['rooms']);
     }
     if (this.data['withCategories']) {
-        this.roomsWithCategories = this.data['withCategories'];
+        this.roomsWithCategories = _.cloneDeep<any[]>(this.data['withCategories']);
     }
   }
 

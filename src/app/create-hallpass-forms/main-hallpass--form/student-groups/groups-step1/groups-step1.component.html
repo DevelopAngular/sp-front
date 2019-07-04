@@ -89,12 +89,12 @@
     <div class="content-right">
       <div class="content-right_sudent-search">
         <div class="search-wrapper">
-          <app-student-search
+          <app-sp-search
             [width]="'280px'"
             [listMaxHeight]="'unset'"
             [focused]="true"
             (onUpdate)="updateInternalData($event)" [selectedStudents]="selectedStudents"
-          ></app-student-search>
+          ></app-sp-search>
         </div>
       </div>
       <div class="content-right_next" *ngIf="selectedStudents">

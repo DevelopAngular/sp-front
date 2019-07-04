@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, EventEmitter, NgZone, OnInit, Output} from '@angular/core';
 import {constructUrl, QueryParams} from '../live-data/helpers';
 import {catchError, delay, map, switchMap, tap} from 'rxjs/operators';
-import {from, Observable, of, throwError} from 'rxjs';
+import {from, of, throwError} from 'rxjs';
 import {LoginMethod} from '../google-signin/google-signin.component';
 import {GoogleAuthService} from '../services/google-auth.service';
 import {HttpClient} from '@angular/common/http';
@@ -28,7 +28,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
   private jwt: JwtHelperService;
   public showError = { loggedWith: null, error: null };
   public school: any;
-
+  public errorToast;
   constructor(
     private googleAuth: GoogleAuthService,
     private http: HttpClient,
@@ -43,6 +43,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
     private gsProgress: GettingStartedProgressService
   ) {
     this.jwt = new JwtHelperService();
+    this.errorToast = this.httpService.errorToast$;
   }
 
   ngOnInit() {
@@ -72,22 +73,16 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
           .pipe(
             tap(p => console.log(p)),
             switchMap((auth: any) => {
-              console.log(auth);
 
               const hd = this.jwt.decodeToken(auth.id_token)['hd'];
 
-              // debugger
-
               if (!hd || hd === 'gmail.com') {
-                // this.loginState = 'profile';
                 this.loginService.showLoginError$.next(false);
                 this.showError.loggedWith = LoginMethod.OAuth;
                 this.showError.error = true;
                 return of(false);
               } else {
-
                 this.gsProgress.updateProgress('create_school:start');
-
                 return this.http.post('https://smartpass.app/api/staging/onboard/schools', {
                   user_token: auth.id_token,
                   google_place_id: this.school.place_id
@@ -99,14 +94,12 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
                   tap(() => this.gsProgress.updateProgress('create_school:end')),
                   map((res: any) => {
                     this._zone.run(() => {
-                      console.log(res);
                       this.loginService.updateAuth(auth);
                       this.storage.setItem('last_school_id', res.school.id);
                     });
                     return true;
                   }),
                 );
-
               }
             }),
             delay(1000),
@@ -114,14 +107,10 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
               return this.loginService.isAuthenticated$;
             }),
             catchError((err) => {
-              console.log('Error occured =====>', err);
-
               if (err && err.error !== 'popup_closed_by_user') {
-                console.log('Erro should be shown ====>')
                 this.loginService.showLoginError$.next(true);
               }
               return throwError(err);
-
             })
           ).subscribe((res) => {
             if (res) {
@@ -133,30 +122,28 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
   }
 
   checkSchool(school: any) {
-    // debugger
     this.http.get(constructUrl('https://smartpass.app/api/staging/onboard/schools/check_school', {place_id: school.place_id}), {
       headers: {
         'Authorization': 'Bearer ' + this.AuthToken // it's temporary
       }})
-      .subscribe((onboard: any) => {
-
-          if (onboard.school_registered) {
-            this.router.navigate(['']);
-          } else {
-
-            this.school = school;
+      .pipe(
+        catchError((err) => {
+          if (err.status === 401) {
+            this.httpService.errorToast$.next({
+              header: 'Key invalid.',
+              message: 'Please contact us at support@smartpass.app'
+            });
           }
+          return throwError(err);
+        })
+      )
+      .subscribe((onboard: any) => {
+        if (onboard.school_registered) {
+          this.router.navigate(['']);
+        } else {
+          this.school = school;
+        }
       });
   }
-  onClose(evt) {
-    setTimeout(() => {
-      this.loginService.showLoginError$.next(false);
-      this.showError.error = evt;
-      // this.loginState = 'profile';
-    }, 400);
-  }
-
-
-
 
 }

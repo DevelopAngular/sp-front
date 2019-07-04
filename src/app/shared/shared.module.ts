@@ -24,7 +24,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgProgressModule } from '@ngx-progressbar/core';
 import { PinnableComponent } from '../pinnable/pinnable.component';
 import { TraveltypePickerComponent } from '../traveltype-picker/traveltype-picker.component';
-import { StudentSearchComponent } from '../student-search/student-search.component';
+import { SPSearchComponent } from '../sp-search/sp-search.component';
 import { DisplayReportCellComponent } from '../display-report-cell/display-report-cell.component';
 import {PassCollectionComponent} from '../pass-collection/pass-collection.component';
 import {PassTileComponent} from '../pass-tile/pass-tile.component';
@@ -32,7 +32,6 @@ import {PassCellComponent} from '../pass-cell/pass-cell.component';
 import { RestrictionDummyComponent } from '../admin/restriction-dummy/restriction-dummy.component';
 import {BackButtonComponent} from '../admin/back-button/back-button.component';
 import {PassCardComponent} from '../pass-card/pass-card.component';
-import {PassCardTemplateComponent} from '../pass-card-template/pass-card-template.component';
 import {TravelViewComponent} from '../travel-view/travel-view.component';
 import {DurationPickerComponent} from '../duration-picker/duration-picker.component';
 import {CardButtonComponent} from '../card-button/card-button.component';
@@ -110,7 +109,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     DateTimeComponent,
     PinnableComponent,
       TraveltypePickerComponent,
-      StudentSearchComponent,
+      SPSearchComponent,
       DisplayReportCellComponent,
       PassCollectionComponent,
       PassTileComponent,
@@ -118,7 +117,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
       RestrictionDummyComponent,
       BackButtonComponent,
       PassCardComponent,
-      PassCardTemplateComponent,
       TravelViewComponent,
       DurationPickerComponent,
       CardButtonComponent,
@@ -168,14 +166,13 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     PinnableComponent,
     DropdownComponent,
     TraveltypePickerComponent,
-    StudentSearchComponent,
+    SPSearchComponent,
     DisplayReportCellComponent,
     PassCollectionComponent,
     PassTileComponent,
     PassCellComponent,
     RestrictionDummyComponent,
     BackButtonComponent,
-    PassCardTemplateComponent,
     TravelViewComponent,
     DurationPickerComponent,
     CardButtonComponent,

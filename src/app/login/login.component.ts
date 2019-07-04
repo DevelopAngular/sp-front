@@ -5,8 +5,8 @@ import { GoogleLoginService } from '../services/google-login.service';
 import { UserService } from '../services/user.service';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {HttpClient} from '@angular/common/http';
-import {catchError, filter, flatMap, map, mergeMap, switchMap, takeUntil, tap} from 'rxjs/operators';
-import {AuthContext, HttpService} from '../services/http-service';
+import {filter, switchMap, takeUntil} from 'rxjs/operators';
+import {HttpService} from '../services/http-service';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {GoogleAuthService} from '../services/google-auth.service';
 import {StorageService} from '../services/storage.service';
@@ -14,8 +14,6 @@ import {User} from '../models/User';
 import {ReplaySubject, Subject} from 'rxjs';
 
 declare const window;
-
-export type LoginState = 'school' | 'profile';
 
 @Component({
   selector: 'app-login',
@@ -25,19 +23,20 @@ export type LoginState = 'school' | 'profile';
 export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('place') place: ElementRef;
+
   @Output() errorEvent: EventEmitter<any> = new EventEmitter();
 
-  private isIOSMobile: boolean;
-  private isAndroid: boolean;
   public appLink: string;
   public titleText: string;
   public isMobileDevice: boolean = false;
   public trustedBackgroundUrl: SafeUrl;
   public showError = { loggedWith: null, error: null };
-  public loginState: LoginState = 'profile';
+
+  private isIOSMobile: boolean = DeviceDetection.isIOSMobile();
+  private isAndroid: boolean = DeviceDetection.isAndroid();
   private jwt: JwtHelperService;
-  test;
   private destroyer$ = new Subject<any>();
+
   constructor(
     private googleAuth: GoogleAuthService,
     private http: HttpClient,
@@ -53,7 +52,6 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-
     this.loginService.isAuthenticated$.pipe(
       filter(v => v),
       switchMap((): ReplaySubject<User> => {
@@ -61,16 +59,11 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
       }),
       takeUntil(this.destroyer$)
     ).subscribe((currentUser: User) => {
-      // debugger
-      this.test = currentUser;
       const loadView = [currentUser.isAdmin() ? 'admin' : 'main'];
       this.router.navigate(loadView);
     });
 
     this.trustedBackgroundUrl = this.sanitizer.bypassSecurityTrustStyle('url(\'./assets/Login Background.svg\')');
-
-    this.isIOSMobile = DeviceDetection.isIOSMobile();
-    this.isAndroid = DeviceDetection.isAndroid();
 
     if (this.isIOSMobile) {
       this.isMobileDevice = true;
@@ -89,15 +82,4 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     this.destroyer$.next(null);
     this.destroyer$.complete();
   }
-  onClose(evt) {
-    setTimeout(() => {
-      this.loginService.showLoginError$.next(false);
-      this.showError.error = evt;
-      this.loginState = 'profile';
-    }, 400);
-  }
-  onError() {
-    this.router.navigate(['error']);
-  }
-
 }
