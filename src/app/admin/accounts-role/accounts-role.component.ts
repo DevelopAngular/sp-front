@@ -697,7 +697,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             'Name': raw.display_name,
             'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
             'Rooms': raw.assignedTo,
-            'Account Type': raw.sync_types[0] === 'google' ? 'Standart' : 'Alternative',
+            'Account Type': raw.sync_types[0] === 'google' ? 'Standard' : 'Alternative',
             'Acting on Behalf Of': raw.canActingOnBehalfOf ? raw.canActingOnBehalfOf.map((u: RepresentedUser) => {
               return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
             }).join(', ') : '',

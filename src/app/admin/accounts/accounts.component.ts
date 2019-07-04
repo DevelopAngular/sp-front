@@ -85,7 +85,7 @@ export class AccountsComponent implements OnInit {
       switchMap(() => this.adminService.getAdminAccounts())
     )
     .subscribe((u_list: any) => {
-      this.splash = this.gsProgress.onboardProgress.setup_accounts && !(!this.gsProgress.onboardProgress.setup_accounts.start || !this.gsProgress.onboardProgress.setup_accounts.end);
+      this.splash = this.gsProgress.onboardProgress.setup_accounts && (!this.gsProgress.onboardProgress.setup_accounts.start || !this.gsProgress.onboardProgress.setup_accounts.end);
       if (u_list.total_count !== undefined) {
         u_list.total = u_list.total_count;
       } else {
@@ -262,7 +262,7 @@ export class AccountsComponent implements OnInit {
             const rawObj = {
                 'Name': raw.display_name,
                 'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
-                'Account Type': raw.sync_types[0] === 'google' ? 'Standart' : 'Alternative',
+                'Account Type': raw.sync_types[0] === 'google' ? 'Standard' : 'Alternative',
                 'Profile(s)': partOf.length ? partOf : [{title: 'No profile'}],
 
             };

@@ -120,7 +120,7 @@
                 [fontSize]="'12px'"
                 (buttonClick)="done()"
               >
-                {{(showDoneSpinner ? null : 'Add')}}<mat-spinner *ngIf="showDoneSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
+                {{(showDoneSpinner ? null : editRoomInFolder ? 'Save' : 'Add')}}<mat-spinner *ngIf="showDoneSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
               </app-gradient-button>
               <div *ngIf="backButtonsStateInFolder && !showDoneButton" [style.color]="'#1F194E'">Incomplete</div>
             </div>
@@ -423,7 +423,7 @@
           <div class="rooms-in-folder-content">
             <div class="not-rooms-in-folder" *ngIf="!selectedRooms.length && folderRoomsLoaded">
               <img [src]="'./assets/emptyStates/undraw_add_file2_gvbb.svg' | resolveAsset" alt="emptyState">
-              <div class="emptyText">Add rooms to the folder.</div>
+              <div class="emptyText editRoomInFolder ? 'Save' :">Add rooms to the folder.</div>
             </div>
             <div class="rooms-list" #roomList *ngIf="selectedRooms.length > 0">
               <mat-list>
