@@ -70,7 +70,7 @@
 @media not all and (min-resolution:.001dpcm) {
   @supports (-webkit-appearance:none) {
     @media all and (max-width: 425px) {
-      .passes-wrapper {
+      .passes-wrapper-margin-top {
         margin-top: 140px;
       }
     }
