@@ -81,14 +81,14 @@
   </div>
 
   <div class="accounts-wrapper" *ngIf="splash !== undefined && !splash">
-      <div class="header-wrapper">
-        <div class="accounts-header">
+      <div class="header-wrapper" [style.background-color]="darkTheme.getBackground('default')">
+        <div class="accounts-header" [style.background-color]="darkTheme.getBackground('high', true)">
           <div class="header-content">
-            <div class="header-title">
+            <div class="header-title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">
               Accounts
               <div class="count">
                 <img width="15" height="15" [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset" alt="">
-                <div class="text">{{(accounts$ | async)?.total_count}} accounts</div>
+                <div class="text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">{{(accounts$ | async)?.total_count}} accounts</div>
               </div>
             </div>
 
@@ -170,7 +170,7 @@
         </div>
 
         <div class="groups">
-          <div class="title">Groups</div>
+          <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Groups</div>
           <div class="groups-buttons">
             <app-admin-card-button
                     *ngFor="let button of accountsButtons"
@@ -186,7 +186,7 @@
       </div>
     </div>
 
-    <div class="user-table" style="position: relative" *ngIf="openTable && userList.length && !(pending$ | async)">
+    <div class="user-table" *ngIf="openTable && userList.length && !(pending$ | async)">
       <div class="column-settings">
         <app-icon-button class="options-icon" [srcString]="'Options'" [size]="16" (clickEvent)="showColumnSettings($event)"></app-icon-button>
       </div>
@@ -195,7 +195,7 @@
               [data]="userList"
               [isCheckbox]="dataTableEditState"
               [textColor]="'#7E879D'"
-              [marginTopStickyHeader]="'130px'"
+              [marginTopStickyHeader]="'147px'"
               [disallowHover]="!(dataTableEditState | async)"
               [displayedColumns]="dataTableHeadersToDisplay"
               (selectedCell)="findProfileByRole($event)"

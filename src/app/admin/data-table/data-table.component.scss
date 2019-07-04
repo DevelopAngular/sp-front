@@ -1,11 +1,12 @@
 @import "../../../design-system";
+@import "../../../sp-colors";
 
 .data-table-wrapper {
   .sticky-header {
     position: sticky;
     //text-transform: uppercase;
     //top: -40px;
-    border-bottom: 2px solid #878787;
+    border-bottom: 2px solid $blue-gray;
     z-index: 100;
     background-color: #F8FAFF;
     font-family: $primaryFont;

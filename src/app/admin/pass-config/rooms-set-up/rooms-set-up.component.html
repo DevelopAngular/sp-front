@@ -3,20 +3,21 @@
     <div class="info-block">
       <img [src]="'./assets/admin-images/Rooms-set-up.svg' | resolveAsset" alt="RST">
       <div class="info">
-        <div class="title">Rooms set-up</div>
-        <div class="small-text">Paper to digital is seamless. Add a starter pack of rooms or start from scratch.</div>
+        <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Rooms set-up</div>
+        <div class="small-text" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">Paper to digital is seamless. Add a starter pack of rooms or start from scratch.</div>
       </div>
     </div>
 
     <div class="buttons-block">
       <div
         class="started-pack"
+        [style.background-color]="darkTheme.getBackground('high', true)"
         (mousedown)="onPress(true, 'pack')"
         (mouseup)="onPress(false, 'pack')"
         [@pressState]="buttonStatePack"
         (click)="onClick(true)"
       >
-        <div class="title">Add Starter Pack</div>
+        <div class="title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">Add Starter Pack</div>
         <div class="collection">
           <div class="pinnable"
                *ngFor="let pinnable of mockPinnables; let i = index"
@@ -28,15 +29,16 @@
           </div>
         </div>
       </div>
-      <div class="title">OR</div>
+      <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">OR</div>
       <div
          class="started-scratch"
+         [style.background-color]="darkTheme.getBackground('high', true)"
          (mousedown)="onPress(true, 'scratch')"
          (mouseup)="onPress(false, 'scratch')"
          [@pressState]="buttonStateScratch"
          (click)="onClick(false)"
       >
-        <div class="started-scratch-title">Start from scratch</div>
+        <div class="started-scratch-title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">Start from scratch</div>
         <div class="img">
           <img width="185" height="144" [src]="'./assets/emptyStates/Rooms empty.svg'" alt="">
         </div>

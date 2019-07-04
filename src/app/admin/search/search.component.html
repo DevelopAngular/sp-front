@@ -1,7 +1,7 @@
 <div class="host" appSafariScroll>
   <div class="search-wrapper" *ngIf="inputPanelVisibility">
     <div class="w-100">
-      <div class="input-header-wrapper">
+      <div class="input-header-wrapper" [style.background-color]="darkTheme.getBackground('default')">
 
         <div class="input-header" [style.background-color]="darkTheme.getBackground('high', true)">
           <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Search</div>

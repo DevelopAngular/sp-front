@@ -1,8 +1,7 @@
 <div class="host" appSafariScroll (scroll)="onScroll($event)">
   <div class="accounts-role-wrapper"  *ngIf="tabVisibility">
-    <div class="header-wrapper">
-      <div class="card card__top-bar ds-flex-start-between ds-w-100"
-           [ngClass]="{'card__dark': darkTheme.isEnabled$.value}">
+    <div class="header-wrapper" [style.background-color]="darkTheme.getBackground('default')">
+      <div class="card card__top-bar ds-flex-start-between ds-w-100">
         <div class="ds-flex-start-start ds-h-100">
 
           <div class="back-button" *ngIf="!(dataTableEditState | async) && role !== 'g_suite'">
@@ -294,7 +293,7 @@
         <p class="ds-my-10" style="text-align: center; font-size: 15px;">Add users one-by-one above or set up G Suite <br>
           syncing to automatically add users to this profile.</p>
       </div>
-      <div *ngIf="userList.length" class="ds-mt-15">
+      <div *ngIf="userList.length">
         <div class="column-settings">
           <app-icon-button class="options-icon" [srcString]="'Options'" [size]="16" (clickEvent)="showColumnSettings($event)"></app-icon-button>
           <!--<img draggable="false" width="20" [src]="darkTheme.getIcon({iconName: 'Options', lightFill: 'Blue-Gray'}) | resolveAsset" alt="Options (Navy).svg" (click)="showColumnSettings($event)">-->
@@ -303,7 +302,7 @@
           class="ds-my-10"
           [data]="userList"
           [isCheckbox]="dataTableEditState"
-          [marginTopStickyHeader]="'130px'"
+          [marginTopStickyHeader]="'147px'"
           [textColor]="'#7E879D'"
           [disallowHover]="role === '_all' && !(dataTableEditState | async)"
           [displayedColumns]="dataTableHeadersToDisplay"
@@ -317,8 +316,8 @@
   </div>
 
   <div class="gsuite-wrapper" *ngIf="role === 'g_suite'">
-    <div class="header-wrapper">
-      <div class="gsuite-header">
+    <div class="header-wrapper" [style.background-color]="darkTheme.getBackground('default')">
+      <div class="gsuite-header" [style.background-color]="darkTheme.getBackground('high', true)">
         <div class="header-content">
           <div class="left-block">
             <div class="back-button" routerLink="/admin/accounts">
@@ -326,14 +325,14 @@
             </div>
             <div class="title-content">
               <img width="50" height="50" [src]="'./assets/google/google_logo.svg' | resolveAsset" alt="">
-              <div class="title">
+              <div class="title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">
                 G Suite
-                <div class="small-text">{{ 'Last sync: ' + formatDate((GSuiteOrgs$ | async)?.last_successful_sync) }}</div>
+                <div class="small-text" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">{{ 'Last sync: ' + formatDate((GSuiteOrgs$ | async)?.last_successful_sync) }}</div>
               </div>
             </div>
           </div>
 
-          <div class="right-block">
+          <div class="right-block" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">
             <div class="count-accounts">{{ (GSuiteOrgs$ | async)?.num_accounts + ' accounts' }}</div>
             <div class="text">syncing from G Suite</div>
           </div>
@@ -346,13 +345,13 @@
 
         <div class="left-side">
           <div class="sync">
-            <div class="title">Sync</div>
-            <div class="subtitle">
+            <div class="title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Sync</div>
+            <div class="subtitle" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">
               <div>{{ 'Last sync: ' + formatDate((GSuiteOrgs$ | async)?.last_successful_sync) }}</div>
               <div>Next scheduled sync: {{ formatDate((GSuiteOrgs$ | async)?.next_sync) }}</div>
             </div>
 
-            <div class="info">
+            <div class="info" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">
               Syncs happen automatically every four hours, but you can also sync manually now.
             </div>
             <app-gradient-button
@@ -370,8 +369,8 @@
           </div>
 
           <div class="about-sync">
-            <div class="about-title">About G Suite Sync</div>
-            <div class="about-content">
+            <div class="about-title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">About G Suite Sync</div>
+            <div class="about-content" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">
               When a new account is created in G Suite,
               if they are added to a syncing organizational unit they will automatically be added to the specified SmartPass Group.
               <br/><br/>
@@ -390,8 +389,8 @@
 
       <div class="footer">
         <div class="text">
-          <div class="title">Disconnect G Suite</div>
-          <div class="info">
+          <div class="title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Disconnect G Suite</div>
+          <div class="info" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">
             When you disconnect your account, we’ll stop syncing your accounts with G Suite.
             No account data will be erased, but users will no longer be able to sign in to SmartPass.<br/>
             <strong>Only origindaladmin@example.com is able to perform this action since their account will not lose access.</strong>

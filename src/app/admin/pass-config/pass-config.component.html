@@ -2,7 +2,7 @@
 
 <div class="host" appSafariScroll *ngIf="showRooms && onboardLoaded">
     <div class="pass-config-wrapper">
-        <div class="pass-config-container">
+        <div class="pass-config-container" [style.background-color]="darkTheme.getBackground('default')">
             <!--<div class="header-wrapper">-->
                 <div class="pass-config-header" [style.background-color]="darkTheme.getBackground('high', true)">
                     <div class="school-logo">

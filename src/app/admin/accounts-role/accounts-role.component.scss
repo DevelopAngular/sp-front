@@ -30,7 +30,7 @@
       background-clip: padding-box;
       position: sticky;
       top: 0px;
-      padding: 25px 0 10px 0;
+      padding: 25px 0 23px 0;
       z-index: 1;
       width: 100%;
       .card{
@@ -104,19 +104,19 @@
     }
 
     .table{
-      padding-top: 20px;
+      //padding-top: 20px;
       .spinner{
         height: 568px;
       }
       .column-settings {
-        position: relative;
+        //position: relative;
         display: flex;
         justify-content: flex-end;
         .options-icon {
           position: absolute;
           z-index: 1000;
           //top: 10px;
-          right: 3px;
+          right: 34px;
           cursor: pointer;
         }
       }
@@ -161,7 +161,7 @@
               width: 34px;
               height: 34px;
               border-radius: 50%;
-              background-color: #F4F4F4;
+              //background-color: #F4F4F4;
               display: flex;
               justify-content: center;
               align-items: center;

@@ -2,8 +2,8 @@
   <div class="wrapper">
     <div class="header-container">
       <div class="header-wrapper">
-        <div class="school-header">
-          <div class="school-title">{{ (currentSchool$ | async).name }}</div>
+        <div class="school-header" [style.background-color]="darkTheme.getBackground('high', true)">
+          <div class="school-title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ (currentSchool$ | async).name }}</div>
         </div>
 
       </div>
@@ -12,7 +12,7 @@
 
     <div class="content">
       <div class="left-block">
-        <div class="title">Launch Day Prep Materials</div>
+        <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Launch Day Prep Materials</div>
         <div class="download-button">
           <app-gradient-button
                   [size]="'small'"

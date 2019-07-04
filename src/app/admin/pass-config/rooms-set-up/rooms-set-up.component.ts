@@ -1,5 +1,6 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import { bumpIn } from '../../../animations';
+import {DarkThemeSwitch} from '../../../dark-theme-switch';
 
 @Component({
   selector: 'app-rooms-set-up',
@@ -16,7 +17,7 @@ export class RoomsSetUpComponent implements OnInit {
   buttonDownScratch: boolean;
   buttonDownPack: boolean;
 
-  constructor() { }
+  constructor(public darkTheme: DarkThemeSwitch) { }
 
   get buttonStatePack() {
      return this.buttonDownPack ? 'down' : 'up';

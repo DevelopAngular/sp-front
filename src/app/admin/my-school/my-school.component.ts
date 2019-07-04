@@ -4,6 +4,7 @@ import {Observable, of} from 'rxjs';
 import {School} from '../../models/School';
 import {AdminService} from '../../services/admin.service';
 import {mapTo, switchMap} from 'rxjs/operators';
+import {DarkThemeSwitch} from '../../dark-theme-switch';
 
 declare const window;
 
@@ -26,7 +27,11 @@ export class MySchoolComponent implements OnInit, AfterViewInit {
 
   buttonDown: boolean;
 
-  constructor(private http: HttpService, private adminService: AdminService) { }
+  constructor(
+      private http: HttpService,
+      private adminService: AdminService,
+      public darkTheme: DarkThemeSwitch,
+  ) { }
 
   ngOnInit() {
     this.currentSchool$ = this.http.currentSchool$;

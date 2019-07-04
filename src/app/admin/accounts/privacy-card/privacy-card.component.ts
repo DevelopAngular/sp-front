@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {DarkThemeSwitch} from '../../../dark-theme-switch';
 
 @Component({
   selector: 'app-privacy-card',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PrivacyCardComponent implements OnInit {
 
-  constructor() { }
+  constructor(public darkTheme: DarkThemeSwitch) { }
 
   ngOnInit() {
   }

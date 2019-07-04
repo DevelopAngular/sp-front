@@ -1,6 +1,6 @@
 <div class="group-wrapper">
     <div class="content">
-        <div class="title">Groups</div>
+        <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Groups</div>
         <div class="profiles">
             <app-profile
                 *ngFor="let account of accounts"

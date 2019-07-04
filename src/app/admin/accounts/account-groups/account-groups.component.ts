@@ -1,4 +1,5 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {DarkThemeSwitch} from '../../../dark-theme-switch';
 
 @Component({
   selector: 'app-account-groups',
@@ -20,7 +21,7 @@ export class AccountGroupsComponent implements OnInit {
     return this.accounts.find(item => item.selected);
   }
 
-  constructor() { }
+  constructor(public darkTheme: DarkThemeSwitch) { }
 
   ngOnInit() {
   }
