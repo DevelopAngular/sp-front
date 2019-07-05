@@ -60,69 +60,53 @@ export class AccountsSetupComponent implements OnInit, AfterViewInit {
     this.router.navigate(['']);
   }
 
-  initLogin(popup?: boolean) {
+  initLogin() {
 
-    // if (popup) {
-      const left = (window.innerWidth - 600) / 2
-      const wRef = window.open(this.googleAuth, 'windowName', `width=600,height=840,left=${left},top=50`);
+    const left = (window.innerWidth - 600) / 2
+    const wRef = window.open(this.googleAuth, 'windowName', `width=600,height=840,left=${left},top=50`);
 
-      return fromEvent(window, 'message')
-              .pipe(
-                map((message: any) => {
-                console.log(message);
-                wRef.close()
-                  return message.data.token;
-                })
-              );
-        // .subscribe((res) => {
-        //   console.log(res);
-        // });
-    // } else {
-    //   return this.loginService.GoogleOauth.signIn()
-    //     .then((auth) => {
-    //       return auth.getAuthResponse();
-    //     });
-    // }
-
-
+    return fromEvent(window, 'message')
+            .pipe(
+              map((message: any) => {
+              console.log(message);
+              wRef.close()
+                return message.data.token;
+              })
+            );
   }
 
   connectGSuite() {
-      if (this.gSuiteConnected && this.usersForSyncSelected) {
-        this.router.navigate(['admin', 'accounts']);
-      } else {
+    if (this.gSuiteConnected && this.usersForSyncSelected) {
+      this.router.navigate(['admin', 'accounts']);
+    } else {
 
-        this.initLogin()
-          .pipe(
-            switchMap((auth: any) => {
-              console.log(auth);
+      this.initLogin()
+        .pipe(
+          switchMap((auth: any) => {
+            console.log(auth);
 
-              const hd = this.jwt.decodeToken(auth.access_token)['hd'];
+            if (auth && auth.access_token) {
+              this.gSuiteConnected = true;
+              return  of(true);
+            } else {
+              this.loginService.showLoginError$.next(false);
+              this.showError.loggedWith = LoginMethod.OAuth;
+              this.showError.error = true;
+              return of(false);
+            }
+          }),
+          catchError((err) => {
+            console.log('Error occured =====>', err);
 
-              if (!hd || hd === 'gmail.com') {
-                this.loginService.showLoginError$.next(false);
-                this.showError.loggedWith = LoginMethod.OAuth;
-                this.showError.error = true;
+            if (err && err.error !== 'popup_closed_by_user') {
+              console.log('Erro should be shown ====>')
+              this.loginService.showLoginError$.next(true);
+            }
+            return throwError(err);
 
-                return of(false);
-              } else {
-                this.gSuiteConnected = true;
-                return  of(true);
-              }
-            }),
-            catchError((err) => {
-              console.log('Error occured =====>', err);
-
-              if (err && err.error !== 'popup_closed_by_user') {
-                console.log('Erro should be shown ====>')
-                this.loginService.showLoginError$.next(true);
-              }
-              return throwError(err);
-
-            })
-          )
-          .subscribe();
-      }
-
+          })
+        )
+        .subscribe();
+    }
   }
 }
