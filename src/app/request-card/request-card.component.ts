@@ -205,13 +205,33 @@ export class RequestCardComponent implements OnInit {
       } else {
           body.teacher = this.request.teacher.id;
       }
-      this.requestService.createRequest(body).pipe(switchMap(res => {
-          return this.formState.previousStep === 1 ? this.requestService.cancelRequest(this.request.id) :
-           (this.formState.missedRequest ? this.requestService.cancelInvitation(this.formState.data.request.id, '') : of(null));
-      })).subscribe((res) => {
+
+      if (this.forStaff) {
+         const invitation = {
+              'students' : this.request.student.id,
+              'default_origin' : this.request.origin.id,
+              'destination' : +this.request.destination.id,
+              'date_choices' : [new Date(this.formState.data.date.date).toISOString()],
+              'duration' : this.request.duration,
+              'travel_type' : this.request.travel_type
+          };
+         console.log('this invitation =>', invitation);
+          this.requestService.createInvitation(invitation).pipe(switchMap(() => {
+              return this.requestService.cancelRequest(this.request.id);
+          })).subscribe(res => {
+              this.performingAction = true;
+              this.dialogRef.close();
+          });
+      } else {
+      this.requestService.createRequest(body).pipe(
+          switchMap(res => {
+              return this.formState.previousStep === 1 ? this.requestService.cancelRequest(this.request.id) :
+                  (this.formState.missedRequest ? this.requestService.cancelInvitation(this.formState.data.request.id, '') : of(null));
+          })).subscribe((res) => {
           this.performingAction = true;
           this.dialogRef.close();
       });
+      }
   }
 
   changeDate(resend_request?: boolean) {
