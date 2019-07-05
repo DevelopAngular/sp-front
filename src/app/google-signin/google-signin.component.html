@@ -28,6 +28,7 @@
 
 <form class="login-form" *ngIf="demoLoginEnabled" onsubmit="return false;">
   <app-round-input
+    [focused]="true"
     [minWidth]="'260px'"
     [width]="'260px'"
     [placeholder]="'Email or Username'"
