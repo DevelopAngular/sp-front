@@ -1,11 +1,12 @@
 import {
+  AfterContentInit,
   AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
-  Input,
+  Input, OnChanges,
   OnInit,
-  Output,
+  Output, SimpleChanges,
   ViewChild
 } from '@angular/core';
 import {MatDialog} from '@angular/material';
@@ -27,7 +28,7 @@ export type RoundInputType = 'text' | 'multilocation' | 'multiuser' |  'dates';
   styleUrls: ['./round-input.component.scss'],
   exportAs: 'roundInputRef'
 })
-export class RoundInputComponent implements OnInit, AfterViewInit {
+export class RoundInputComponent implements OnInit, OnChanges {
 
   @ViewChild('input') input: ElementRef;
 
@@ -118,12 +119,7 @@ export class RoundInputComponent implements OnInit, AfterViewInit {
     }
     this.value = this.initialValue;
 
-    // setTimeout(() => {
-    //   if (this.input && this.focused) {
-    //     this.focusAction(true);
-    //     this.focus();
-    //   }
-    // }, 500);
+
 
     if (this.selectReset$) {
       this.selectReset$.subscribe((_value: string) => {
@@ -132,8 +128,11 @@ export class RoundInputComponent implements OnInit, AfterViewInit {
     }
   }
 
-  ngAfterViewInit() {
-    this.focus();
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.input && this.focused) {
+      this.focusAction(true);
+      this.focus();
+    }
   }
 
   handleError() {
