@@ -9,9 +9,11 @@ import {BehaviorSubject, of, pipe, Subject} from 'rxjs';
 import {UserService} from '../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpClient} from '@angular/common/http';
+import {AdminService} from '../services/admin.service';
+import {HttpService} from '../services/http-service';
 
 declare const window;
-export type SearchEntity = 'schools' | 'users';
+export type SearchEntity = 'schools' | 'users' | 'orgunits';
 
 @Component({
   selector: 'app-sp-search',
@@ -28,6 +30,7 @@ export class SPSearchComponent implements OnInit {
   @Input() focused: boolean = false;
   @Input() showOptions: boolean = true;
   @Input() selectedStudents: User[] = [];
+  @Input() selectedOrgUnits: any[] = [];
   @Input() width: string = '280px';
   @Input() list: boolean = true;
   @Input() listMaxHeight: string = '210px';
@@ -54,22 +57,24 @@ export class SPSearchComponent implements OnInit {
   query = new BehaviorSubject<any[]>(null);
   schools: BehaviorSubject<any[]> = new BehaviorSubject(null);
   selectedSchool;
+  orgunits: BehaviorSubject<any[]> = new BehaviorSubject(null);
 
   pending$: Subject<boolean> = new Subject();
   students: Promise<any[]>;
   inputValue$: Subject<string> = new Subject<string>();
   showDummy: boolean = false;
-  hoveredIndex: number;
   hovered: boolean;
   pressed: boolean;
 
   constructor(
+    // private adminService: AdminService,
     private userService: UserService,
     private sanitizer: DomSanitizer,
+    private httpService: HttpService,
     private http: HttpClient,
     private mapsApi: MapsAPILoader,
-
   ) {
+
 
   }
 
@@ -80,26 +85,6 @@ export class SPSearchComponent implements OnInit {
       return this.selectedStudents;
     }
   }
-
-  // bgColor(i){
-  //     if (this.hovered && this.hoveredIndex === i) {
-  //       if (this.pressed) {
-  //         return this.sanitizer.bypassSecurityTrustStyle('#E2E7F4');
-  //       } else {
-  //         return this.sanitizer.bypassSecurityTrustStyle('#ECF1FF');
-  //       }
-  //     } else {
-  //       return this.sanitizer.bypassSecurityTrustStyle('#FFFFFF');
-  //     }
-  // }
-  //
-  // textColor(i) {
-  //     if (this.hovered && this.hoveredIndex === i) {
-  //       return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
-  //     } else {
-  //       return this.sanitizer.bypassSecurityTrustStyle('#555558');
-  //     }
-  // }
 
   textColor(item) {
     if (item.hovered) {
@@ -126,13 +111,6 @@ export class SPSearchComponent implements OnInit {
       this.inputField = false;
     }
 
-      console.log('ROLEE ==>>', this.role);
-      // this.input.nativeElement.focus();
-    // if (this.selectedStudents.length) {
-    //   setTimeout(() => {
-    //     this.focused = true;
-    //   }, 50);
-    // }
     const selfRef = this;
 
     if (this.searchTarget === 'schools') {
@@ -145,9 +123,6 @@ export class SPSearchComponent implements OnInit {
       });
 
       this.query
-        // .pipe(
-          // filter(schools => !!schools)
-        // )
         .subscribe(
           (v1: any[]) => {
             console.log(v1);
@@ -155,14 +130,7 @@ export class SPSearchComponent implements OnInit {
             this.schools.next(v1);
             this.pending$.next(false);
             this.showDummy = v1 && !v1.length;
-            // .then(schools => {
-            // this.pending$.next(false);
-            // this.showDummy = !schools.length;
-            //
-            // return schools.filter(school => school.types.includes('school'));
-            // });
-          })
-
+          });
     }
   }
 
@@ -177,13 +145,11 @@ export class SPSearchComponent implements OnInit {
               this.students = this.userService.searchProfile(this.role, 50, search)
                 .toPromise()
                 .then((paged: any) => {
-                  // console.log('PAGED RESULT >>>', paged);
                   this.pending$.next(false);
                   this.showDummy = !paged.results.length;
                   return this.removeDuplicateStudents(paged.results);
                 });
             } else if (this.type === 'gsuite') {
-              // this.pending$.next(true);
               let request$;
               if (this.role !== '_all') {
                 request$ = this.userService.searchProfileAll(search, this.type, this.role.split('_')[this.role.split('_').length - 1]);
@@ -210,31 +176,16 @@ export class SPSearchComponent implements OnInit {
         if (search !== '') {
 
           this.pending$.next(true);
-          // let predictionsAll = [];
-          // let pointer = 0;
-          // const keyWords = ['', 'school',  'elementary', 'elementary school', 'high', 'high school'];
-          //   keyWords.forEach((kw: string, index) => {
                   this.placePredictionService.getPlacePredictions({
                     location: this.currentPosition,
-                    // input: search + ' ' + kw,
                     input: search,
                     radius: 100000,
                     types: ['establishment']
                   }, (predictions, status) => {
-                    // pointer += index;
-
-                    // if (predictions) {
-                    //   predictionsAll = predictionsAll.concat(predictions.filter(school => school.types.includes('school')));
-                    // }
-                    // if (pointer === 15) {
-                    //   this.query.next(predictionsAll);
                     this.query.next(predictions ? predictions : []);
-                    // }
                   });
-                // });
 
         } else {
-          // debugger
 
           this.query.next(null);
           this.showDummy = false;
@@ -243,6 +194,30 @@ export class SPSearchComponent implements OnInit {
 
         }
           break;
+      case 'orgunits':
+
+        if (search !== '') {
+          // {            headers: {
+          //   'Authorization': `Bearer ${token}`,
+          //     'X-School-Id': `${schoolId}`
+          // }
+          // }
+
+
+          this.httpService.get('v1/schools/1/gsuite/org_units')
+            .subscribe((res) => {
+              console.log(res);
+            });
+
+        } else {
+
+          this.query.next(null);
+          this.showDummy = false;
+          this.inputValue$.next('');
+          this.pending$.next(false);
+
+        }
+        break;
     }
   }
   selectSchool(school) {

@@ -175,6 +175,7 @@ export class LocationTableComponent implements OnInit {
   }
 
   updateOrderLocation(locations) {
+    return;
     const body = {'locations': locations.map(loc => loc.id)};
     this.locationService.updateFavoriteLocations(body).subscribe((res: number[]) => {
       this.onUpdate.emit(res);

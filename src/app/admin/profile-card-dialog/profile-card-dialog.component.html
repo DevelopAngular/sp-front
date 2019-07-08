@@ -1,4 +1,4 @@
-<div class="profile-card-dialog-container" *ngIf="data.setupLink else profileCard">
+<div class="profile-card-dialog-container" *ngIf="data['setupLink'] else profileCard">
   <div class="card-header" [style.background-color]="'#00B476'">
     <div class="back-button ds-flex-center-center" (click)="back()">
       <img [src]="'./assets/Back Button (Blue-White).svg'" alt="Back Button (Blue-White).svg">
@@ -14,8 +14,7 @@
       Send a G Suite Admin this link
     </div>
     <div class="ds-navy setup-link">
-      htpps://www.smartpass.app/app/<br>
-      authorizontation/sgdoiwreklj
+      {{data['setupLink']}}
     </div>
   </div>
 
@@ -52,6 +51,21 @@
     </div>
 
     <ng-container [ngSwitch]="layout">
+
+      <div class="content-scrollable-box" *ngSwitchCase="'GSuiteOrgUnits'">
+        <div class="card-body">
+          <div class="card-body_section">
+            <div class="section-content">
+              <div>
+                <app-sp-search
+                  [searchTarget]="'orgunits'"
+                  [
+                ></app-sp-search>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div class="content-scrollable-box" *ngSwitchCase="'bulkPermissions'">
         <div class="card-body">

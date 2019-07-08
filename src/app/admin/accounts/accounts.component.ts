@@ -85,7 +85,7 @@ export class AccountsComponent implements OnInit {
       switchMap(() => this.adminService.getAdminAccounts())
     )
     .subscribe((u_list: any) => {
-      this.splash = this.gsProgress.onboardProgress.setup_accounts && !(!this.gsProgress.onboardProgress.setup_accounts.start || !this.gsProgress.onboardProgress.setup_accounts.end);
+      this.splash = this.gsProgress.onboardProgress.setup_accounts && (!this.gsProgress.onboardProgress.setup_accounts.start || !this.gsProgress.onboardProgress.setup_accounts.end);
       if (u_list.total_count !== undefined) {
         u_list.total = u_list.total_count;
       } else {
@@ -313,15 +313,21 @@ export class AccountsComponent implements OnInit {
 
   showAccountsSetupLink() {
     this.updateAcoountsOnboardProgress('start');
-    const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
-      panelClass: 'overlay-dialog',
-      backdropClass: 'custom-bd',
-      width: '425px',
-      height: '500px',
-      data: {
-        setupLink: true
-      }
-    });
+    this.adminService
+      .getAccountSyncLink(+this.http.getSchool().id)
+      .subscribe((link: {authorization_url: string}) => {
+
+        const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
+          panelClass: 'overlay-dialog',
+          backdropClass: 'custom-bd',
+          width: '425px',
+          height: '500px',
+          data: {
+            setupLink: link.authorization_url
+          }
+        });
+      });
+
   }
   private updateAcoountsOnboardProgress(ticket: 'start' | 'end') {
     if (ticket === 'start') {

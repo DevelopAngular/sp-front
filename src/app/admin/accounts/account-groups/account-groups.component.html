@@ -5,8 +5,11 @@
             <app-profile
                 *ngFor="let account of accounts"
                 (select)="account.selected = $event"
-                [title]="account.title"
-                [icon]="account.icon"
+                [isSelected]="account.selected"
+                [disabled]="account.disabled"
+                [title]="account.title + 's'"
+                [icon]="account.title"
+                [infoData]="account.path"
             >
             </app-profile>
         </div>

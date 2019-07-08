@@ -69,15 +69,15 @@ class ActivePassProvider extends RoomPassProvider {
 
 class OriginPassProvider extends RoomPassProvider {
   protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
-    return this.liveDataService.watchHallPassesFromLocation(sortingEvents, locations, date)
-        .pipe(map(passes => passes.filter(pass => moment().isSameOrAfter(moment(pass.end_time)))));
+    return this.liveDataService.watchHallPassesFromLocation(sortingEvents, locations, date);
+        // .pipe(map(passes => passes.filter(pass => moment().isSameOrAfter(moment(pass.end_time)))));
   }
 }
 
 class DestinationPassProvider extends RoomPassProvider {
   protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
-    return this.liveDataService.watchHallPassesToLocation(sortingEvents, locations, date)
-        .pipe(map(passes => passes.filter(pass => moment().isSameOrAfter(moment(pass.end_time)))));
+    return this.liveDataService.watchHallPassesToLocation(sortingEvents, locations, date);
+        // .pipe(map(passes => passes.filter(pass => moment().isSameOrAfter(moment(pass.end_time)))));
   }
 }
 
