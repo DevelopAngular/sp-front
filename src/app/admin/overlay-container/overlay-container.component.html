@@ -101,8 +101,9 @@
       <div class="new-room-in-folder sticky-header" [@NextStep]="{ value: '', params: frameMotion$ | async}"
          *ngIf="overlayType === 'newRoomInFolder' || overlayType === 'importRooms' || overlayType === 'settingsRooms'">
           <div class="new-room-in-folder-header">
-            <div class="back-button" *ngIf="!backButtonsStateInFolder" (click)="back(false)">
-              <app-back-button [allowDarkTheme]="false"></app-back-button>
+            <div class="back-button" *ngIf="!backButtonsStateInFolder">
+              <!--<app-back-button [allowDarkTheme]="false"></app-back-button>-->
+              <app-icon-button [size]="20" [srcString]="'Chevron Left'" (clickEvent)="back(false)"></app-icon-button>
             </div>
             <div class="cancel-button-in-folder-header"
                  (click)="cancel()"
