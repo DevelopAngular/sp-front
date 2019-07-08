@@ -311,7 +311,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
       if((this.isActive && this.forStaff) || this.forMonitor){
 
-        if (this.user.isTeacher()) {
+        if (this.user.isTeacher() && !this.data['hideReport']) {
           this.options.push(this.genOption('Report Student', '#E32C66', 'report'));
         }
         this.options.push(this.genOption('End Pass', '#E32C66', 'end'));

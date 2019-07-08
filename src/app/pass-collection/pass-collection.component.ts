@@ -56,6 +56,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() smoothlyUpdating: boolean = false;
   @Input() grid_template_columns: string = '143px';
   @Input() grid_gap: string = '15px';
+  @Input() isAdminPage: boolean;
 
   @Input() passProvider: PassLikeProvider;
 
@@ -190,7 +191,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
         forFuture: pass['start_time'] > now,
         forMonitor: this.forMonitor,
         forStaff: this.forStaff && !this.kioskMode.currentRoom$.value,
-        kioskMode: !!this.kioskMode.currentRoom$.value
+        kioskMode: !!this.kioskMode.currentRoom$.value,
+        hideReport: this.isAdminPage
       };
       data.isActive = !data.fromPast && !data.forFuture;
     } else {
