@@ -10,7 +10,6 @@ import { HttpService } from '../../services/http-service';
 import { Location } from '../../models/Location';
 import * as XLSX from 'xlsx';
 import { UserService } from '../../services/user.service';
-import { disableBodyScroll } from 'body-scroll-lock';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {LocationsService} from '../../services/locations.service';
 import {DomSanitizer} from '@angular/platform-browser';

@@ -59,17 +59,17 @@ export class AppInputComponent implements OnInit {
     }
 
     ngOnInit() {
-      // console.log('right_icon ===> ', this.rightIcon);
+      console.log('right_icon ===> ', this.isFocus);
       // this.rightIconUntouched = this.rightIcon.replace('Blue', 'Grey');
       of(null).pipe(
         delay(1000),
         switchMap(() => {
           return  this.formGroup.valueChanges;
         }),
-      ).subscribe()
-      // if (this.isFocus) {
-      //   this.updateFocus(this.input.nativeElement);
-      // }
+      ).subscribe();
+      if (this.isFocus) {
+          this.input.nativeElement.focus();
+      }
 
       // if (this.rightIcon) {
       //   this.rightIconUntouched = this.rightIcon.replace('Navy', 'Blue-Gray');
