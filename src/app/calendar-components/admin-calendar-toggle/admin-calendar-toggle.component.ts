@@ -103,13 +103,13 @@ export class AdminCalendarToggleComponent implements OnInit {
     this.openCalendar = false;
     this.selectedDate.end = this.currentDate;
     if (id === 'range_0') {
-      this.selectedDate.start = this.currentDate;
+      this.selectedDate.start = moment(this.currentDate).startOf('day');
     } else if (id === 'range_1') {
-      this.selectedDate.start = moment().subtract(7, 'days');
+      this.selectedDate.start = moment().subtract(7, 'days').startOf('day');
     } else if (id === 'range_2') {
-        this.selectedDate.start = moment().subtract(30, 'days');
+        this.selectedDate.start = moment().subtract(30, 'days').startOf('day');
     } else if (id === 'range_3') {
-        this.selectedDate.start = moment().subtract(90, 'days');
+        this.selectedDate.start = moment().subtract(90, 'days').startOf('day');
     } else if (id === 'range_4') {
       this.openCalendar = true;
       this.settingsRes.emit({ toggleResult: this.toggleResult, rangeId: id });
@@ -152,7 +152,8 @@ export class AdminCalendarToggleComponent implements OnInit {
           this.dayButton.nativeElement.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'});
       } else {
             this.settingsRes.emit({toggleResult: this.toggleResult});
-            this.adminCalendarRes.emit(this.selectedDay);
+          this.adminCalendarRes.emit({start: moment(this.selectedDay).startOf('day'), end: moment(this.selectedDay)});
+            // this.adminCalendarRes.emit(moment(this.selectedDay));
       }
     } else if (this.toggleResult === 'Weeks') {
         this.settingsRes.emit({toggleResult: this.toggleResult});
