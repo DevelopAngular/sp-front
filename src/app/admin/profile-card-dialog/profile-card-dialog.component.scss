@@ -129,8 +129,9 @@
         }
       }
       .setup-link {
+        word-break: break-all;
         width: 376px;
-        height: 77px;
+        min-height: 77px;
         border-radius: 6px;
         background-color: #F7F7F7;
         padding: 8px 14px;

@@ -40,10 +40,6 @@ export class AdminService {
     return this.http.get('v1/admin/accounts');
   }
 
-  getAccountsWithLimit() {
-    return this.http.get('v1/admin/accounts');
-  }
-
   getDashboardData() {
     return this.http.get('v1/admin/dashboard');
   }
@@ -72,11 +68,6 @@ export class AdminService {
     return this.http.get(`v1/admin/dashboard?start=${dateStr}`);
   }
 
-  //// Icons
-  getIcons() {
-    return this.http.get('v1/room_icons');
-  }
-
   //// Color Profile
   getColors() {
     return this.http.get('v1/color_profiles');
@@ -85,6 +76,10 @@ export class AdminService {
   //// Schools
   getSchools(): Observable<School[]> {
     return this.http.get('v1/schools');
+  }
+
+  getSchoolById(id: number): Observable<School> {
+    return this.http.get(`v1/schools/${id}`);
   }
 
   updateSchoolSettings(id, settings) {

@@ -57,14 +57,18 @@ export class ProfileCardDialogComponent implements OnInit {
 
     console.log(this.data);
 
+    if (this.data.unit) {
+      this.layout = 'orgunits';
+      this.headerIcon = `./assets/${this.data.unit} (Navy).svg`;
+    }
     if (this.data.gSuiteSettings) {
       this.layout = 'gSuiteSettings';
       this.headerIcon = './assets/google/google_logo.svg';
     }
     if (this.data.bulkPermissions) {
       this.layout = 'bulkPermissions';
-
     }
+
     if (this.data.profile) {
 
       this.profile = this.data.profile;

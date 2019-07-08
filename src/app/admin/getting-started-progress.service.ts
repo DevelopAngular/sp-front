@@ -13,8 +13,9 @@ export interface OnboardItem {
 export enum Progress {
   'create_school:start' = 5,
   'create_school:end' = 5,
-  'take_a_tour:start' = 15,
-  'take_a_tour:end' = 15,
+  'take_a_tour:start' = 10,
+  'take_a_tour:create_accounts' = 10,
+  'take_a_tour:end' = 10,
   'setup_rooms:start' = 10,
   'setup_rooms:end' = 10,
   'setup_accounts:start' = 15,
@@ -25,8 +26,9 @@ export enum Progress {
 export interface ProgressInterface {
   'create_school:start': 5;
   'create_school:end': 5;
-  'take_a_tour:start': 15;
-  'take_a_tour:end': 15;
+  'take_a_tour:start': 10;
+  'take_a_tour:create_accounts': 10;
+  'take_a_tour:end': 10;
   'setup_rooms:start': 10;
   'setup_rooms:end': 10;
   'setup_accounts:start': 15;

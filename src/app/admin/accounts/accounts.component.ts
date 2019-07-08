@@ -313,15 +313,21 @@ export class AccountsComponent implements OnInit {
 
   showAccountsSetupLink() {
     this.updateAcoountsOnboardProgress('start');
-    const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
-      panelClass: 'overlay-dialog',
-      backdropClass: 'custom-bd',
-      width: '425px',
-      height: '500px',
-      data: {
-        setupLink: true
-      }
-    });
+    this.adminService
+      .getAccountSyncLink(+this.http.getSchool().id)
+      .subscribe((link: {authorization_url: string}) => {
+
+        const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
+          panelClass: 'overlay-dialog',
+          backdropClass: 'custom-bd',
+          width: '425px',
+          height: '500px',
+          data: {
+            setupLink: link.authorization_url
+          }
+        });
+      });
+
   }
   private updateAcoountsOnboardProgress(ticket: 'start' | 'end') {
     if (ticket === 'start') {

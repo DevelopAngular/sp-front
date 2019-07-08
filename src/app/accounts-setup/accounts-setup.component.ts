@@ -2,12 +2,16 @@ import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {LoginMethod} from '../google-signin/google-signin.component';
 import {GoogleLoginService} from '../services/google-login.service';
 import {UserService} from '../services/user.service';
-import {catchError, filter, map, switchMap, takeUntil} from 'rxjs/operators';
+import {catchError, delay, filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {User} from '../models/User';
 import {from, fromEvent, Observable, of, Subject, throwError} from 'rxjs';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {HttpClient} from '@angular/common/http';
+import AuthResponse = gapi.auth2.AuthResponse;
+import {AdminService} from '../services/admin.service';
+import {School} from '../models/School';
+import {HttpService} from '../services/http-service';
 
 declare const window;
 
@@ -17,18 +21,23 @@ declare const window;
   styleUrls: ['./accounts-setup.component.scss']
 })
 export class AccountsSetupComponent implements OnInit, AfterViewInit {
-  CloseButton$: Observable<User>;
-  private jwt: JwtHelperService;
+
+  public CloseButton$: Observable<User>;
   public showError = { loggedWith: null, error: null };
   public gSuiteConnected: boolean = false;
   public usersForSyncSelected: boolean = false;
-  private destroyer$ = new Subject();
+  public orgUnits: any[];
   public googleAuth: string;
+
+  private destroyer$ = new Subject();
+  private jwt: JwtHelperService;
 
   constructor(
     private http: HttpClient,
+    private httpService: HttpService,
     private loginService: GoogleLoginService,
     private userService: UserService,
+    private adminService: AdminService,
     private router: Router,
     private route: ActivatedRoute
   ) {
@@ -60,69 +69,93 @@ export class AccountsSetupComponent implements OnInit, AfterViewInit {
     this.router.navigate(['']);
   }
 
-  initLogin(popup?: boolean) {
+  initLogin() {
 
-    // if (popup) {
-      const left = (window.innerWidth - 600) / 2
-      const wRef = window.open(this.googleAuth, 'windowName', `width=600,height=840,left=${left},top=50`);
+    const left = (window.innerWidth - 600) / 2
+    const wRef = window.open(this.googleAuth, 'windowName', `width=600,height=840,left=${left},top=50`);
 
-      return fromEvent(window, 'message')
-              .pipe(
-                map((message: any) => {
+    return fromEvent(window, 'message')
+            .pipe(
+              map((message: any) => {
+
                 console.log(message);
-                wRef.close()
-                  return message.data.token;
-                })
-              );
-        // .subscribe((res) => {
-        //   console.log(res);
-        // });
-    // } else {
-    //   return this.loginService.GoogleOauth.signIn()
-    //     .then((auth) => {
-    //       return auth.getAuthResponse();
-    //     });
-    // }
+                wRef.close();
 
+                message.data.token['expires'] = new Date(new Date() + message.data.token['expires_in']);
 
+                this.loginService.updateAuth(message.data.token as AuthResponse);
+                this.loginService.isAuthenticated$.next(true);
+                // return {schoolId: message.data.school_id, authContext: message.data.token};
+                return message.data.school_id;
+              }),
+              delay(1000),
+              switchMap((schoolId) => {
+                return this.adminService.getSchoolById(schoolId);
+              }),
+              switchMap((school: School) => {
+                this.httpService.setSchool(school);
+                return of(true);
+              }),
+              takeUntil(this.destroyer$)
+            );
   }
 
   connectGSuite() {
-      if (this.gSuiteConnected && this.usersForSyncSelected) {
-        this.router.navigate(['admin', 'accounts']);
-      } else {
+    if (this.gSuiteConnected && this.usersForSyncSelected) {
+      this.router.navigate(['admin', 'accounts']);
+    } else {
 
-        this.initLogin()
-          .pipe(
-            switchMap((auth: any) => {
-              console.log(auth);
+      this.initLogin()
+        .pipe(
+          // switchMap((res: boolean) => {
+            // console.log(authContext);
 
-              const hd = this.jwt.decodeToken(auth.access_token)['hd'];
 
-              if (!hd || hd === 'gmail.com') {
-                this.loginService.showLoginError$.next(false);
-                this.showError.loggedWith = LoginMethod.OAuth;
-                this.showError.error = true;
 
-                return of(false);
-              } else {
-                this.gSuiteConnected = true;
-                return  of(true);
-              }
-            }),
-            catchError((err) => {
-              console.log('Error occured =====>', err);
+            // if (res) {
+            //   this.gSuiteConnected = true;
+            //   return  of({token: authContext.access_token, schoolId: schoolId});
+            // } else {
+            //   this.loginService.showLoginError$.next(false);
+            //   this.showError.loggedWith = LoginMethod.OAuth;
+            //   this.showError.error = true;
+            //   return of(false);
+            // }
+          // }),
+          switchMap((res: boolean) => {
+            // console.log(token, schoolId);
+            if (res) {
+              // return this.http.get('https://smartpass.app/api/staging/v1/schools/1/syncing/gsuite/status', {
+              //   headers: {
+              //     'Authorization': `Bearer ${token}`,
+              //     'X-School-Id': `${schoolId}`
+              //   }
+              // });
+              return this.httpService.get('v1/schools/1/syncing/gsuite/status');
+            } else {
+              return of(null);
+            }
+          }),
+          catchError((err) => {
+            console.log('Error occured =====>', err);
 
-              if (err && err.error !== 'popup_closed_by_user') {
-                console.log('Erro should be shown ====>')
-                this.loginService.showLoginError$.next(true);
-              }
-              return throwError(err);
+            if (err && err.error !== 'popup_closed_by_user') {
+              console.log('Erro should be shown ====>')
+              this.loginService.showLoginError$.next(true);
+            }
+            return throwError(err);
 
-            })
-          )
-          .subscribe();
-      }
-
+          })
+        )
+        .subscribe((res) => {
+          if (res) {
+            console.log(res);
+            this.gSuiteConnected = true;
+            this.orgUnits = res.selectors;
+            this.destroyer$.next();
+            this.destroyer$.complete();
+          }
+        });
+    }
   }
 }

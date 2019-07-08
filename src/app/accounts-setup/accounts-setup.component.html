@@ -81,17 +81,6 @@
               Connect G Suite
             </span>
           </app-gradient-button>
-<!--          <app-gradient-button-->
-<!--            [size]="'medium'"-->
-<!--            [gradient]="'#FFFFFF,#00B476'"-->
-<!--            [fontWeight]="'normal'"-->
-<!--            [rightIcon]="'./assets/Chevron Right (White).svg'"-->
-<!--            (buttonClick)="initLogin(true)"-->
-<!--          >-->
-<!--            <span style="font-weight: normal;">-->
-<!--              Connect G Suite-->
-<!--            </span>-->
-<!--          </app-gradient-button>-->
         </div>
         <div class="accounts-setup_buttons" *ngIf="gSuiteConnected && usersForSyncSelected">
           <app-gradient-button
@@ -127,7 +116,10 @@
       </div>
       <div *ngIf="gSuiteConnected && !usersForSyncSelected" class="right-side">
         <div>
-          <app-account-groups (accountsToSync)="usersForSyncSelected = !!$event"></app-account-groups>
+          <app-account-groups
+            [orgUnits]="orgUnits"
+            (accountsToSync)="usersForSyncSelected = !!$event">
+          </app-account-groups>
         </div>
       </div>
       <div *ngIf="gSuiteConnected && usersForSyncSelected" class="right-side" style="min-width: 500px">
@@ -138,6 +130,3 @@
     </div>
   </div>
 </div>
-
-<app-privacy-card></app-privacy-card>
-<app-account-groups></app-account-groups>
