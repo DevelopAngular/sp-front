@@ -8,7 +8,7 @@
 
       <div class="sort-label global-opacity-icons" *ngIf="hasSort" (click)="openSortDialog($event)">
         <!--<img width="20" height="20" [src]="'./assets/Sort (Navy).svg' | resolveAsset">-->
-        <app-icon-button  [srcString]="'Sort'" [size]="20" (clickEvent)="openSortDialog($event)"></app-icon-button>
+        <app-icon-button [srcString]="'Sort'" [size]="20" (clickEvent)="openSortDialog($event)"></app-icon-button>
 
       </div>
       <!--<app-dropdown *ngIf="hasSort" class="sort-selector" (onSelect)="onSortSelected($event)" [options]="sortOptions"></app-dropdown>-->
