@@ -1,5 +1,68 @@
 <div class="host" appSafariScroll>
-  <div class="wrapper">
+  <div class="set-day-wrapper" *ngIf="!openSchoolPage">
+    <div class="set-day-header">
+      <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Prepare for Launch</div>
+      <div class="subtitle" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">Get your school using SmartPass on day one.</div>
+    </div>
+
+    <div class="set-day-content">
+      <div class="left-block">
+        <div>
+          <div class="selected-date">
+            <div class="label" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Set a launch day</div>
+
+            <div class="chip"
+                 #dchip [ngClass]="{hovered: dchip.hovered && !!selectedDate}"
+                 (mouseenter)="dchip.hovered = true;"
+                 (mouseleave)="dchip.hovered = false"
+                 [style.opacity]="dchip.hovered && !buttonDown ? 0.85 : (buttonDown ? 0.7 :  1)"
+                 (mousedown)="buttonDown = true"
+                 (mouseup)="buttonDown = false"
+                 [@pressState]="buttonDown ? 'down' : 'up'"
+            >
+              <div class="overlay" (click)="openCalendar($event)">
+                <div class="add-icon" *ngIf="!selectedDate">
+                  <img [src]="'./assets/Calendar (Navy).svg'" width="16" #fieldIcon alt="Check.svg">
+                </div>
+                <div class="all-text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})" *ngIf="!selectedDate">
+                  Select a date
+                </div>
+                <div class="selected-text" *ngIf="selectedDate">{{ selectedDate.format('MMMM DD') }}</div>
+              </div>
+              <div class="reset-icon" *ngIf="dchip.hovered && selectedDate">
+                <img (click)="selectedDate = null;" [src]="'./assets/Cancel (Navy).svg'" width="16" #fieldIcon alt="Check.svg">
+              </div>
+            </div>
+
+          </div>
+
+          <div class="info-text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">
+            The day your school will start using SmartPass. <br><br>
+            Students won’t be able to sign in until launch day, but staff can! The 60 day free trial starts on launch day.
+          </div>
+        </div>
+
+        <div class="button" *ngIf="selectedDate">
+          <app-gradient-button
+                  [cursor]="'pointer'"
+                  [rightIcon]="'./assets/Chevron Right (White).svg'"
+                  [size]="'medium'"
+                  (buttonClick)="openSchoolPage = true"
+          >
+            Continue
+          </app-gradient-button>
+        </div>
+        <div class="footer-text" *ngIf="!selectedDate" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">
+          Don’t know your launch date yet? Skip for now.
+          Launch dates can always be changed later.
+        </div>
+      </div>
+      <div class="image">
+        <img [src]="'./assets/admin-images/My-School.svg' | resolveAsset" alt="My_school">
+      </div>
+    </div>
+  </div>
+  <div class="wrapper" *ngIf="openSchoolPage">
     <div class="header-container">
       <div class="header-wrapper">
         <div class="school-header" [style.background-color]="darkTheme.getBackground('high', true)">
