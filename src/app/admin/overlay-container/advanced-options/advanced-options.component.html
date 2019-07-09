@@ -78,7 +78,7 @@
           <div class="certain-teacher" *ngSwitchCase="toggleChoices[3]">
             <div class="title">Pass requests will automatically get sent to:</div>
             <app-sp-search
-                    [selectedStudents]="selectedOpt.nowTeachers"
+                    [selectedOptions]="selectedOpt.nowTeachers"
                     [chipsMode]="true"
                     [focused]="true"
                     [role]="'_profile_teacher'"
@@ -148,7 +148,7 @@
         <div class="certain-teacher" *ngSwitchCase="toggleChoices[3]">
           <div class="title">Pass requests will automatically get sent to:</div>
           <app-sp-search
-                  [selectedStudents]="selectedOpt.futTeachers"
+                  [selectedOptions]="selectedOpt.futTeachers"
                   [chipsMode]="true"
                   [focused]="true"
                   [role]="'_profile_teacher'"

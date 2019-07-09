@@ -57,6 +57,10 @@ export class AdminService {
     return this.http.currentSchool$.pipe(
           switchMap(school => this.http.post(`v1/schools/${school.id}/syncing/manual_sync`)));
   }
+  updateGSuiteOrgs(body) {
+    return this.http.currentSchool$.pipe(
+          switchMap(school => this.http.patch(`v1/schools/${school.id}/syncing`, body)));
+  }
 
   updateOnboardProgress(name) {
     return this.http.put(`v1/admin/onboard_progress/${name}`);

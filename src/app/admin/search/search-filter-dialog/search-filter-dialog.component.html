@@ -9,7 +9,7 @@
   </div>
   <div class="filter-content">
     <div class="student-filter-content" *ngIf="state === 'Students'" #rc>
-      <app-sp-search [selectedStudents]="selectedStudents" (onUpdate)="selectedStudents = $event"></app-sp-search>
+      <app-sp-search [selectedOptions]="selectedStudents" (onUpdate)="selectedStudents = $event"></app-sp-search>
       <div class="add-button" *ngIf="selectedStudents.length && addButtonVisibility('students')">
         <app-gradient-button
            [cursor]="'pointer'"

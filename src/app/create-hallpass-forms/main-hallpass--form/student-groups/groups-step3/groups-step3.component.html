@@ -113,7 +113,8 @@
           <app-sp-search
             [width]="'280px'"
             [listMaxHeight]="'unset'"
-            (onUpdate)="updateUsers($event)" [focused]="false" [selectedStudents]="editGroup.users"
+            [selectedOptions]="editGroup.users"
+            (onUpdate)="updateUsers($event)" [focused]="false"
           ></app-sp-search>
         </div>
       </div>

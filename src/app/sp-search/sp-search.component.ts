@@ -1,9 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import { MapsAPILoader } from '@agm/core';
-
-
-
-
 import { User } from '../models/User';
 import {BehaviorSubject, of, pipe, Subject} from 'rxjs';
 import {UserService} from '../services/user.service';
@@ -11,9 +7,90 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {HttpClient} from '@angular/common/http';
 import {AdminService} from '../services/admin.service';
 import {HttpService} from '../services/http-service';
+import {School} from '../models/School';
+import {map} from 'rxjs/operators';
 
 declare const window;
+
 export type SearchEntity = 'schools' | 'users' | 'orgunits';
+
+export type selectorIndicator = '+' | '-';
+
+export type UnitId = 'admin' | 'teacher' | 'assistant' | 'student';
+
+export class GSuiteSelector {
+
+  public path: string;
+  private applicationIndicator: boolean = false;
+  private readonly customSelector: boolean = false;
+
+  constructor (
+    path: string,
+  ) {
+
+    const indicator = path[0];
+
+    if (indicator === '+') {
+      this.applicationIndicator = true;
+      this.path = path.slice(1);
+    } else if (indicator === '-') {
+      this.applicationIndicator = false;
+      this.path = path.slice(1);
+    } else {
+      this.customSelector = true;
+      this.path = 'Custom selector applied';
+    }
+
+  }
+
+  private ai(flag) {
+    if (!this.customSelector) {
+      this.applicationIndicator = flag;
+    }
+  }
+
+  get as() {
+    if (this.customSelector) {
+     return this.path;
+    } else {
+      return (this.applicationIndicator ? '+' : '-').concat(this.path);
+    }
+  }
+
+  updateAplicatinIndicator(arg: boolean) {
+    this.ai(arg);
+  }
+
+
+}
+
+// export interface OrgUnit {
+//   unitId: UnitId;
+//   title: string;
+//   selector: GSuiteSelector[];
+//   selected: boolean;
+// }
+
+export class OrgUnit {
+
+  unitId: UnitId;
+  title: string;
+  selector: GSuiteSelector[];
+  selected: boolean;
+
+  constructor (
+    unitId: UnitId,
+    title: string,
+    selector: GSuiteSelector[],
+    selected: boolean
+  ) {
+    this.unitId = unitId;
+    this.title = title;
+    this.selector = selector;
+    this.selected = selected;
+  }
+}
+
 
 @Component({
   selector: 'app-sp-search',
@@ -29,7 +106,7 @@ export class SPSearchComponent implements OnInit {
   @Input() disabled: boolean = false;
   @Input() focused: boolean = false;
   @Input() showOptions: boolean = true;
-  @Input() selectedStudents: User[] = [];
+  @Input() selectedOptions: Array<User | School | GSuiteSelector> = [];
   @Input() selectedOrgUnits: any[] = [];
   @Input() width: string = '280px';
   @Input() list: boolean = true;
@@ -80,9 +157,9 @@ export class SPSearchComponent implements OnInit {
 
   private getEmitedValue() {
     if (this.emitSingleProfile)  {
-      return this.selectedStudents[0];
+      return this.selectedOptions[0];
     } else {
-      return this.selectedStudents;
+      return this.selectedOptions;
     }
   }
 
@@ -197,25 +274,24 @@ export class SPSearchComponent implements OnInit {
       case 'orgunits':
 
         if (search !== '') {
-          // {            headers: {
-          //   'Authorization': `Bearer ${token}`,
-          //     'X-School-Id': `${schoolId}`
-          // }
-          // }
-
-
-          this.httpService.get('v1/schools/1/gsuite/org_units')
-            .subscribe((res) => {
-              console.log(res);
+          this.httpService.get(`v1/schools/1/gsuite/org_units`)
+            .pipe(
+              map((gss: any[]) => {
+                return gss
+                  .filter((gs) => gs.path.search(search) !== -1)
+                  .map((gs: {path: string}) => new GSuiteSelector('+' + gs.path));
+              })
+            )
+            .subscribe((res: any[]) => {
+              console.log(res, this.removeDuplicateStudents(res));
+              this.showDummy = !this.removeDuplicateStudents(res).length;
+              this.orgunits.next(this.removeDuplicateStudents(res));
             });
-
         } else {
-
-          this.query.next(null);
           this.showDummy = false;
           this.inputValue$.next('');
           this.pending$.next(false);
-
+          this.orgunits.next(null);
         }
         break;
     }
@@ -225,17 +301,16 @@ export class SPSearchComponent implements OnInit {
     this.onUpdate.emit(school);
     this.schools.next(null);
   }
+
+  addUnit(unit) {
+    this.selectedOptions.push(unit);
+    this.orgunits.next(null);
+    this.onUpdate.emit(this.selectedOptions);
+  }
+
   onBlur(event) {
     // console.log(event);
     // this.students = null;
-  }
-  removeStudent(student: User) {
-    const index = this.selectedStudents.indexOf(student, 0);
-    if (index > -1) {
-      this.selectedStudents.splice(index, 1);
-    }
-    this.onUpdate.emit(this.getEmitedValue());
-    this.onSearch('');
   }
 
   addStudent(student: User) {
@@ -247,31 +322,44 @@ export class SPSearchComponent implements OnInit {
     this.students = of([]).toPromise();
     this.inputValue$.next('');
     this.onSearch('');
-    if (!this.selectedStudents.includes(student)) {
-      this.selectedStudents.push(student);
+    if (!this.selectedOptions.includes(student)) {
+      this.selectedOptions.push(student);
       this.onUpdate.emit(this.getEmitedValue());
     }
   }
 
-  removeDuplicateStudents(students): User[] {
-    let fixedStudents: User[] = students;
-    let studentsToRemove: User[] = [];
-    for (let selectedStudent of this.selectedStudents) {
-      for (let student of fixedStudents) {
-        if (selectedStudent.id === student.id) {
-          studentsToRemove.push(student);
+  removeDuplicateStudents(students: User[] |GSuiteSelector[]): User[] | GSuiteSelector[] {
+    if (!students.length) {
+      return [];
+    }
+    if (students[0] instanceof User) {
+      let fixedStudents: User[] = <User[]>students;
+      let studentsToRemove: User[] = [];
+      for (let selectedStudent of <Array<User>>this.selectedOptions) {
+        for (let student of fixedStudents) {
+          if (selectedStudent.id === student.id) {
+            studentsToRemove.push(student);
+          }
         }
       }
-    }
 
-    for (let studentToRemove of studentsToRemove) {
-      var index = fixedStudents.indexOf(studentToRemove, 0);
-      if (index > -1) {
-        fixedStudents.splice(index, 1);
+      for (let studentToRemove of studentsToRemove) {
+        var index = fixedStudents.indexOf(studentToRemove, 0);
+        if (index > -1) {
+          fixedStudents.splice(index, 1);
+        }
       }
-    }
+      return fixedStudents;
 
-    return fixedStudents;
+    }
+    if (students[0] instanceof GSuiteSelector) {
+      return (<GSuiteSelector[]>students).filter((gs: GSuiteSelector) => {
+        if ( this.selectedOptions.findIndex((_gs: GSuiteSelector) => _gs.path === gs.path) === -1) {
+          return gs;
+        }
+      });
+
+    }
   }
   cancel(studentInput) {
     studentInput.input.nativeElement.value = '';

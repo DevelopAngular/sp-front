@@ -3,13 +3,9 @@
         <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Groups</div>
         <div class="profiles">
             <app-profile
-                *ngFor="let account of accounts"
-                (select)="account.selected = $event"
-                [isSelected]="account.selected"
-                [disabled]="account.disabled"
-                [title]="account.title + 's'"
-                [icon]="account.title"
-                [infoData]="account.path"
+                *ngFor="let account of (orgUnits$ | async); let i = index"
+                (select)="onSelect($event, i)"
+                [profile]="account"
             >
             </app-profile>
         </div>

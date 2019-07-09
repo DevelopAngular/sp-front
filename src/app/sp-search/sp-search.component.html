@@ -2,9 +2,9 @@
   <div>
     <app-sp-chips
       [preventRemovingLast]="preventRemovingLast"
-      [selectedProfiles]="selectedStudents"
+      [selectedProfiles]="selectedOptions"
       (add)="inputField = true"
-      (updateSelectedEvent)="selectedStudents = $event; onUpdate.emit(selectedStudents)"
+      (updateSelectedEvent)="selectedOptions = $event; onUpdate.emit(selectedOptions)"
     ></app-sp-chips>
   </div>
 </div>
@@ -64,14 +64,14 @@
 
 
 
-    <div *ngIf="showOptions && searchTarget === 'orgunits'" [ngClass]="{'options-wrapper': orgunits}" [style.height]="orgunits ? '235px' : '0px'">
-      <div *ngIf="students" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
+    <div *ngIf="showOptions && searchTarget === 'orgunits'" [ngClass]="{'options-wrapper': ( orgunits | async)}" [style.height]="( orgunits | async) ? '235px' : '0px'">
+      <div *ngIf="( orgunits | async)" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
       <div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px;">
         <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
-          <div #cell *ngFor="let unit of orgunits | async" class="option-list_item"
+          <div #cell *ngFor="let unit of ( orgunits | async)" class="option-list_item"
                (mouseenter)="cell.hovered = true;"
                (mouseleave)="cell.hovered = false;"
-               (click)="inputValue$.next(''); addStudent(student)"
+               (click)="inputValue$.next(''); addUnit(unit)"
                [style.background-color]="getBackground(cell)"
                [style.color]="textColor(cell)"
           >
@@ -125,7 +125,7 @@
             <div class="dummy-text dummy-title"><span>No schools found</span></div>
             <div class="dummy-text">
               Need help? Contact
-              <a href="mailto:hello@smartpass.app" class="ds-link-text" style="font-size: 17px !important;">hello@smartpass.app</a>
+              <a href="mailto:help@smartpass.app" class="ds-link-text" style="font-size: 17px !important;">help@smartpass.app</a>
             </div>
           </div>
         </div>
@@ -153,25 +153,29 @@
     >Cancel</app-gradient-button>
   </div>
 
-  <div class="option-list" *ngIf="!chipsMode && list && selectedStudents.length">
+  <div class="option-list" *ngIf="!chipsMode && list && selectedOptions.length">
     <div class="ds-dialog-heading option-list_header">
       <span>Selected</span>
     </div>
     <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
-      <div #cell *ngFor="let student of selectedStudents; let i = index" class="option-list_item"
+      <div #cell *ngFor="let selectedOption of selectedOptions; let i = index" class="option-list_item"
            (mouseenter)="cell.hovered = true;"
            (mouseleave)="cell.hovered = false;"
 
            [style.background-color]="getBackground(cell)"
            [style.color]="textColor(cell)"
       >
-              <span>
-                {{student.display_name}} ({{student.primary_email ? student.primary_email.slice(0, student.primary_email.indexOf('@')) : student.email ? student.email.slice(0, student.email.indexOf('@')) : ''}})
-              </span>
+        <span *ngIf="this.searchTarget === 'users'">
+          {{selectedOption.display_name}} ({{selectedOption.primary_email ? selectedOption.primary_email.slice(0, selectedOption.primary_email.indexOf('@')) : selectedOption.email ? selectedOption.email.slice(0, selectedOption.email.indexOf('@')) : ''}})
+        </span>
+        <span *ngIf="this.searchTarget === 'orgunits'">
+          {{selectedOption.path}}
+        </span>
+
         <img
           (mousedown)="cell.pressed = true"
           (mouseup)="cell.pressed = false"
-          (click)="selectedStudents.splice(i, 1); this.onUpdate.emit(this.selectedStudents)"
+          (click)="selectedOptions.splice(i, 1); this.onUpdate.emit(this.selectedOptions)"
           [src]="cell.hovered ? './assets/Cancel (Navy).svg' : './assets/Mark (Navy).svg'" width="15"alt="Check.svg">
       </div>
     </div>

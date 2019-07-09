@@ -35,6 +35,7 @@
       <div class="ds-flex-center-center ds-dialog-title">
         <img class="role-icon"  [ngClass]="{'gsuite': this.layout === 'gSuiteSettings'}"  [src]="headerIcon" alt="header-icon">
         <span>{{headerText}}</span>
+
       </div>
       <!--<div *ngIf="permissionsFormEditState || assistantForEditState" class="save-button">-->
       <!--<app-gradient-button-->
@@ -51,21 +52,6 @@
     </div>
 
     <ng-container [ngSwitch]="layout">
-
-      <div class="content-scrollable-box" *ngSwitchCase="'GSuiteOrgUnits'">
-        <div class="card-body">
-          <div class="card-body_section">
-            <div class="section-content">
-              <div>
-                <app-sp-search
-                  [searchTarget]="'orgunits'"
-                  [
-                ></app-sp-search>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <div class="content-scrollable-box" *ngSwitchCase="'bulkPermissions'">
         <div class="card-body">
@@ -117,7 +103,7 @@
                 <!--&gt;</app-sp-chips>-->
                 <app-sp-search
                   [preventRemovingLast]="data.role === '_profile_assistant'"
-                  [selectedStudents]="assistantFor"
+                  [selectedOptions]="assistantFor"
                   [chipsMode]="true"
                   [focused]="true"
                   [role]="'_profile_teacher'"
@@ -284,56 +270,27 @@
 
       <div class="content-scrollable-box" *ngSwitchCase="'gSuiteSettings'">
         <div class="card-body">
-
-          <div class=" ds-my-20 ds-mx-25">
-            <div class="ds-dialog-heading">Last Sync: Today, 9:34 AM</div>
-          </div>
-
-          <div class="ds-border-box ds-px-25 ds-py-10">
-            <div class="ds-flex-start-between section-content">
-              <div>
-
-                <div class="ds-w-100 ds-flex-wrap ds-dialog-bold-text">
-                  Manually Sync User Details
-                </div>
-                <p class="ds-mr-10">Update your imported users' details in G Suite - we'll sync these changes for you on our end every 4 hours or manually sync here.</p>
-              </div>
-              <div>
-                <app-gradient-button
-                  [size]="'small'"
-                  [whiteSpace]="'nowrap'"
-                  [gradient]="'#001115,#033294'"
-                  [hoverColor]="'#001115'"
-                  [cursor]="'pointer'"
-                >
-                  Manually Sync
-                </app-gradient-button>
-              </div>
-
+          <div class="ds-w-100 ds-flex-center-center">
+            <div class="ds-mt-25">
+              <app-sp-search
+                [searchTarget]="'orgunits'"
+                [selectedOptions]="orgUnitSelector"
+                [focused]="true"
+                [dummyRoleText]="'org units'"
+                [rollUpAfterSelection]="true"
+                [placeholder]="'Search Org Units'"
+                (onUpdate)="checkSelectorForUpdating$.next($event)"
+              ></app-sp-search>
             </div>
-
+            <div style="position: absolute; right: 25px; bottom: 25px;" *ngIf="this.orgUnitSelectorEditState">
+              <app-gradient-button
+                [size]="'small'"
+                (buttonClick)="dialogRef.close(this.orgUnitSelector)"
+              >
+                <span>Done</span>
+              </app-gradient-button>
+            </div>
           </div>
-          <!--<div class="ds-border-box ds-px-25 ds-py-10">-->
-          <!--<div class="ds-flex-start-between section-content">-->
-          <!--<div>-->
-          <!--<div class="ds-w-100 ds-flex-wrap ds-dialog-bold-text">Organization Unit Routing</div>-->
-          <!--<p class="ds-mr-10">Organizational units through G Suite can be routed to certain SmartPass profiles (Students, Administrators, etc.)</p>-->
-          <!--</div>-->
-          <!--<div>-->
-          <!--<app-gradient-button-->
-          <!--[size]="'small'"-->
-          <!--[whiteSpace]="'nowrap'"-->
-          <!--[gradient]="'#001115,#033294'"-->
-          <!--[hoverColor]="'#001115'"-->
-          <!--[rightIcon]="'./assets/Chevron Right (White).svg'"-->
-          <!--[cursor]="'pointer'"-->
-          <!--&gt;-->
-          <!--Edit Routing-->
-          <!--</app-gradient-button>-->
-          <!--</div>-->
-          <!--</div>-->
-          <!--</div>-->
-
         </div>
       </div>
 
