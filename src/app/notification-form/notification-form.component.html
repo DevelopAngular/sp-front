@@ -34,8 +34,8 @@
     <div class="notif-empty-state" *ngIf="!isDisabledNotif">
         <img draggable="false" [src]="'./assets/emptyStates/notificationsEmpty.svg' | resolveAsset">
         <div class="info">
-            <div class="title">Notifications Disabled</div>
-            <p class="descriptions">
+            <div class="title ds-empty-text-title">Notifications Disabled</div>
+            <p class="descriptions ds-empty-text-info">
                 Notifications are currently disabled by your browser settings.
                 If you’d like help on how to enable them, click
               <a *ngIf="user.isStudent()" class="external-link" href="https://www.smartpass.app/documentation/student-notifications" target="_blank">here</a>

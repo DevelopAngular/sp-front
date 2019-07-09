@@ -103,13 +103,13 @@
       <div *ngIf="!(hasPasses | async) && (passesLoaded | async)" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
         <div class="empty-container" *ngIf="inputValue != ''">
           <img class="empty-svg" [src]="'./assets/emptyStates/emptyHallSearch.svg' | resolveAsset" alt="empty-svg">
-          <div class="big-text" [style.margin]="'10px 0'">Nothing to See Here</div>
-          <div class="small-text">Search again or click the report button</div>
+          <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">Nothing to See Here</div>
+          <div class="small-text ds-empty-text-info">Search again or click the report button</div>
         </div>
         <div class="empty-container" *ngIf="inputValue==''">
           <img class="empty-svg" [src]="'./assets/emptyStates/emptyHall.svg' | resolveAsset" alt="empty-svg">
-          <div class="big-text" [style.margin]="'10px 0'">Take the Day Off</div>
-          <div class="small-text">There aren't any active passes now</div>
+          <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">Take the Day Off</div>
+          <div class="small-text ds-empty-text-info">There aren't any active passes now</div>
         </div>
       </div>
     </div>

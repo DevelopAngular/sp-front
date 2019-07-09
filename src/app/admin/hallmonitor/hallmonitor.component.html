@@ -33,13 +33,13 @@
                [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
             <div class="empty-container" *ngIf="searchQuery$.value != ''">
               <img class="empty-svg" [src]="'./assets/emptyStates/emptyHallSearch.svg' | resolveAsset" alt="empty-svg">
-              <div class="big-text" [style.margin]="'10px 0'">Nothing to See Here</div>
-              <div>Search again or click the report button</div>
+              <div class="ds-empty-text-title" [style.margin]="'10px 0'">Nothing to See Here</div>
+              <div class="ds-pt-10 ds-empty-text-info">Search again or click the report button</div>
             </div>
             <div class="empty-container" *ngIf="searchQuery$.value == ''" >
               <img class="empty-svg" [src]="'./assets/emptyStates/emptyHall.svg' | resolveAsset" alt="empty-svg">
-              <div class="big-text">Take the Day Off</div>
-              <div>There aren't any active passes now</div>
+              <div class="ds-empty-text-title">Take the Day Off</div>
+              <div class="ds-pt-10 ds-empty-text-info">There aren't any active passes now</div>
             </div>
           </div>
         </div>
@@ -86,9 +86,10 @@
             <!--<div class="divider"></div>-->
             <img [src]="'./assets/emptyStates/no-reported.svg' | resolveAsset" alt="" class="ds-my-25 ds-py-10">
             <div [style.color]="darkTheme.getColor({white: '#7F879D', dark: '#FFFFFF'})" [style.text-align]="'center'">
-              <div class="ds-tab-text">No Reported Students</div>
-              <div class="ds-pt-10">No students misbehaving in the halls? <br>
-                    That’s a miracle.</div>
+              <div class="ds-empty-text-title">No Reported Students</div>
+              <div class="ds-pt-10 ds-empty-text-info">No students misbehaving in the halls? <br>
+                    That’s a miracle.
+              </div>
 
             </div>
           </div>

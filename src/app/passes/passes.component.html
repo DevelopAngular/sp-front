@@ -14,8 +14,8 @@
       <!-- No pass requests -->
       <div *ngIf="(inboxHasItems | async) === false" class="empty-container" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
         <img class="empty-inbox-svg" [src]="'./assets/emptyStates/emptyInbox.svg' | resolveAsset" alt="empty-svg">
-        <div class="big-text" [style.margin]="'10px 0'">All Caught Up</div>
-        <div class="text">No pass requests sent or received</div>
+        <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">All Caught Up</div>
+        <div class="text ds-empty-text-info">No pass requests sent or received</div>
       </div>
       <!--<pre>{{!(inboxHasItems | async) | json}}</pre>-->
     </div>
@@ -48,8 +48,8 @@
     </div>
     <div *ngIf="!(passesHaveItems | async) && (passesLoaded | async) && (showEmptyState | async)" class="empty-container">
       <img class="empty-passes-svg" [src]="'./assets/emptyStates/emptyPasses.svg' | resolveAsset" alt="empty-svg">
-      <div class="big-text" [style.margin]="'10px 0'">Jump Right In</div>
-      <div class="text">The hallway will never be the same</div>
+      <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">Jump Right In</div>
+      <div class="text ds-empty-text-info">The hallway will never be the same</div>
     </div>
     <div class="active-passes pass-collection">
       <app-pass-collection *ngIf="isStaff" [isActive]="true" [forStaff]="isStaff" [style.width]="'400px'" [passProvider]="activePasses" [title]="'Active Passes'" [icon]="'./assets/Walking (Navy).svg'" [columns]="3" (reportFromPassCard)="onReportFromPassCard($event)"></app-pass-collection>
@@ -76,8 +76,8 @@
         <!-- No pass requests -->
         <div *ngIf="(inboxHasItems | async) === false" class="empty-container" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
           <img class="empty-inbox-svg" [src]="'./assets/emptyStates/emptyInbox.svg' | resolveAsset" alt="empty-svg">
-          <div class="big-text" [style.margin]="'10px 0'">All Caught Up</div>
-          <div class="text">No pass requests sent or received</div>
+          <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">All Caught Up</div>
+          <div class="text ds-empty-text-info">No pass requests sent or received</div>
         </div>
         <!--<pre>{{!(inboxHasItems | async) | json}}</pre>-->
       </div>
@@ -114,8 +114,8 @@
     </div>
     <div *ngIf="(showEmptyState | async)" class="empty-container">
       <img class="empty-passes-svg" [src]="'./assets/emptyStates/emptyPasses.svg' | resolveAsset" alt="empty-svg">
-      <div class="big-text" [style.margin]="'10px 0'">Jump Right In</div>
-      <div class="text">The hallway will never be the same</div>
+      <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">Jump Right In</div>
+      <div class="text ds-empty-text-info">The hallway will never be the same</div>
     </div>
     <div class="active-passes pass-collection">
       <app-pass-collection
@@ -169,8 +169,8 @@
           <!-- No pass requests -->
           <div *ngIf="(inboxHasItems | async) === false" class="empty-container" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
             <img class="empty-inbox-svg" [src]="'./assets/emptyStates/emptyInbox.svg' | resolveAsset" alt="empty-svg">
-            <div class="big-text" [style.margin]="'10px 0'">All Caught Up</div>
-            <div class="text">No pass requests sent or received</div>
+            <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">All Caught Up</div>
+            <div class="text ds-empty-text-info">No pass requests sent or received</div>
           </div>
           <!--<pre>{{!(inboxHasItems | async) | json}}</pre>-->
         </div>

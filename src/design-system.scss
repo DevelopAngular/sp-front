@@ -161,6 +161,14 @@ $primaryFont: "Inter", "Arial", "Arimo", sans-serif;
   @include textSize(15px, bold);
 }
 
+.ds-empty-text-title {
+  @include textSize(17px, 800, $blue-gray)
+}
+
+.ds-empty-text-info {
+  @include textSize(15px, normal, $blue-gray)
+}
+
 /* === end === */
 
 /* === Common Flex Layout === */

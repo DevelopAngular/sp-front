@@ -60,7 +60,7 @@ export class AccountsComponent implements OnInit {
   public accountsButtons = [
       { title: 'Admins', param: '_profile_admin',  leftIcon: './assets/Admin (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'admin' },
       { title: 'Teachers', param: '_profile_teacher', leftIcon: './assets/Teacher (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'teacher' },
-      { title: 'Assistants', param: '_profile_assistant', leftIcon: './assets/Secretary (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'assistant' },
+      { title: 'Assistants', param: '_profile_assistant', leftIcon: './assets/Assistant (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'assistant' },
       { title: 'Students', param: '_profile_student', leftIcon: './assets/Student (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'student' }
   ];
 

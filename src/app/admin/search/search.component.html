@@ -141,8 +141,8 @@
         <div class="nopass-text" *ngIf="tableData.length === 0 && !spinner && hasSearched" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
             <img width="400" height="250" [src]="'./assets/emptyStates/no-matches-found.svg' | resolveAsset">
             <div class="text">
-                <div class="text-title">No Passes Found</div>
-                <div class="info">
+                <div class="text-title ds-empty-text-title">No Passes Found</div>
+                <div class="info ds-empty-text-info">
                     There were no passes found with the filters you applied.<br/>
                     Try searching again with different filters
                 </div>
@@ -158,8 +158,8 @@
         <div class="default-message" *ngIf="!spinner">
           <img width="400" [src]="'./assets/emptyStates/searchEmpty.svg' | resolveAsset">
           <div class="text">
-            <div class="text-title">Start Searching Instantly</div>
-            <div class="info">
+            <div class="text-title ds-empty-text-title">Start Searching Instantly</div>
+            <div class="info ds-empty-text-info">
               Search and filter by students, rooms, and time to quickly see insights into pass activity and generate reports.
             </div>
           </div>
