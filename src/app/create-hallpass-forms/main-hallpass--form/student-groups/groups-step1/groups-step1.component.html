@@ -93,7 +93,8 @@
             [width]="'280px'"
             [listMaxHeight]="'unset'"
             [focused]="true"
-            (onUpdate)="updateInternalData($event)" [selectedStudents]="selectedStudents"
+            [selectedOptions]="selectedStudents"
+            (onUpdate)="updateInternalData($event)"
           ></app-sp-search>
         </div>
       </div>

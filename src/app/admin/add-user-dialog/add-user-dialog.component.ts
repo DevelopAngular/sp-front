@@ -39,7 +39,7 @@ export class AddUserDialogComponent implements OnInit {
   public accounts = [
       { title: 'Admins', icon: 'Admin', selected: false, role: '_profile_admin', disabled: false},
       { title: 'Teachers', icon: 'Teacher', selected: false, role: '_profile_teacher', disabled: false },
-      { title: 'Assistants', icon: 'Secretary', selected: false, role: '_profile_assistant', disabled: false },
+      { title: 'Assistants', icon: 'Assistant', selected: false, role: '_profile_assistant', disabled: false },
       { title: 'Students', icon: 'Student', selected: false, role: '_profile_student', disabled: false }
   ];
 

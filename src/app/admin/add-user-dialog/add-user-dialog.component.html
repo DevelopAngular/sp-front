@@ -137,7 +137,7 @@
               <div class="profile-search">
 
                 <app-sp-search
-                  [selectedStudents]="selectedUsers"
+                  [selectedOptions]="selectedUsers"
                   [placeholder]="'Search G Suite accounts'"
                   [dummyRoleText]="'users'"
                   [type]="'gsuite'"
@@ -295,7 +295,7 @@
         <app-sp-search
                 [placeholder]="'Search existing teachers'"
                 [dummyRoleText]="'teachers'"
-                [selectedStudents]="assistantLike.behalfOf"
+                [selectedOptions]="assistantLike.behalfOf"
                 [type]="'alternative'"
                 [role]="'_profile_teacher'"
                 (onUpdate)="setSecretary(null, $event)"
@@ -327,7 +327,7 @@
           <app-sp-search
                   [placeholder]="'Search existing teachers'"
                   [dummyRoleText]="'teachers'"
-                  [selectedStudents]="assistantLike.behalfOf"
+                  [selectedOptions]="assistantLike.behalfOf"
                   [type]="'alternative'"
                   [role]="'_profile_teacher'"
                   (onUpdate)="setSecretary(null, $event)"

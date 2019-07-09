@@ -12,6 +12,7 @@ import AuthResponse = gapi.auth2.AuthResponse;
 import {AdminService} from '../services/admin.service';
 import {School} from '../models/School';
 import {HttpService} from '../services/http-service';
+import {GSuiteSelector, OrgUnit} from '../sp-search/sp-search.component';
 
 declare const window;
 
@@ -28,6 +29,7 @@ export class AccountsSetupComponent implements OnInit, AfterViewInit {
   public usersForSyncSelected: boolean = false;
   public orgUnits: any[];
   public googleAuth: string;
+  public syncBody: {};
 
   private destroyer$ = new Subject();
   private jwt: JwtHelperService;
@@ -71,7 +73,7 @@ export class AccountsSetupComponent implements OnInit, AfterViewInit {
 
   initLogin() {
 
-    const left = (window.innerWidth - 600) / 2
+    const left = (window.innerWidth - 600) / 2;
     const wRef = window.open(this.googleAuth, 'windowName', `width=600,height=840,left=${left},top=50`);
 
     return fromEvent(window, 'message')
@@ -80,21 +82,29 @@ export class AccountsSetupComponent implements OnInit, AfterViewInit {
 
                 console.log(message);
                 wRef.close();
-
                 message.data.token['expires'] = new Date(new Date() + message.data.token['expires_in']);
 
                 this.loginService.updateAuth(message.data.token as AuthResponse);
                 this.loginService.isAuthenticated$.next(true);
-                // return {schoolId: message.data.school_id, authContext: message.data.token};
                 return message.data.school_id;
               }),
-              delay(1000),
+              delay(100),
               switchMap((schoolId) => {
                 return this.adminService.getSchoolById(schoolId);
               }),
               switchMap((school: School) => {
-                this.httpService.setSchool(school);
-                return of(true);
+                if (school && school.id) {
+                  this.httpService.setSchool(school);
+                  return of(true);
+                } else {
+                  return of(false);
+                }
+              }),
+              catchError((err) => {
+                if (err && err.error !== 'popup_closed_by_user') {
+                  this.loginService.showLoginError$.next(true);
+                }
+                return throwError(err);
               }),
               takeUntil(this.destroyer$)
             );
@@ -102,60 +112,46 @@ export class AccountsSetupComponent implements OnInit, AfterViewInit {
 
   connectGSuite() {
     if (this.gSuiteConnected && this.usersForSyncSelected) {
-      this.router.navigate(['admin', 'accounts']);
+      this.adminService.updateGSuiteOrgs(this.syncBody)
+        .subscribe((res) => {
+          console.log(res);
+          // this.destroyer$.next();
+          // this.destroyer$.complete();
+          // this.router.navigate(['admin', 'accounts']);
+        });
     } else {
 
       this.initLogin()
-        .pipe(
-          // switchMap((res: boolean) => {
-            // console.log(authContext);
-
-
-
-            // if (res) {
-            //   this.gSuiteConnected = true;
-            //   return  of({token: authContext.access_token, schoolId: schoolId});
-            // } else {
-            //   this.loginService.showLoginError$.next(false);
-            //   this.showError.loggedWith = LoginMethod.OAuth;
-            //   this.showError.error = true;
-            //   return of(false);
-            // }
-          // }),
-          switchMap((res: boolean) => {
-            // console.log(token, schoolId);
-            if (res) {
-              // return this.http.get('https://smartpass.app/api/staging/v1/schools/1/syncing/gsuite/status', {
-              //   headers: {
-              //     'Authorization': `Bearer ${token}`,
-              //     'X-School-Id': `${schoolId}`
-              //   }
-              // });
-              return this.httpService.get('v1/schools/1/syncing/gsuite/status');
-            } else {
-              return of(null);
-            }
-          }),
-          catchError((err) => {
-            console.log('Error occured =====>', err);
-
-            if (err && err.error !== 'popup_closed_by_user') {
-              console.log('Erro should be shown ====>')
-              this.loginService.showLoginError$.next(true);
-            }
-            return throwError(err);
-
-          })
-        )
         .subscribe((res) => {
           if (res) {
             console.log(res);
             this.gSuiteConnected = true;
-            this.orgUnits = res.selectors;
             this.destroyer$.next();
             this.destroyer$.complete();
           }
         });
     }
+  }
+
+  prepareDataToSync(evt: OrgUnit[]) {
+    this.usersForSyncSelected = !!evt;
+    this.syncBody = {};
+    this.syncBody['is_enabled'] = true;
+
+    evt.forEach((item: OrgUnit) => {
+      this.syncBody[`selector_${item.unitId}s`] = item.selector.map((s: GSuiteSelector) => s.as);
+    });
+    console.log(this.syncBody);
+
+
+    // const test =  {
+    //   'selector_students': '',
+    //   'selector_teachers': '',
+    //   'selector_assistants': '',
+    //   'selector_admins': ''
+    // }
+    // const syncBody = evt.
+
+
   }
 }

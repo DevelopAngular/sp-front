@@ -117,8 +117,8 @@
       <div *ngIf="gSuiteConnected && !usersForSyncSelected" class="right-side">
         <div>
           <app-account-groups
-            [orgUnits]="orgUnits"
-            (accountsToSync)="usersForSyncSelected = !!$event">
+            (accountsToSync)="prepareDataToSync($event)"
+          >
           </app-account-groups>
         </div>
       </div>

@@ -12,6 +12,7 @@ import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {HttpService} from '../../services/http-service';
 
 import * as _ from 'lodash';
+import {GSuiteSelector} from '../../sp-search/sp-search.component';
 
 @Component({
   selector: 'app-profile-card-dialog',
@@ -42,6 +43,10 @@ export class ProfileCardDialogComponent implements OnInit {
   public headerIcon: string;
   public layout: string = 'viewProfile';
 
+  public orgUnitSelector: GSuiteSelector[];
+  public orgUnitSelectorInitialState: GSuiteSelector;
+  public orgUnitSelectorEditState: boolean;
+  public checkSelectorForUpdating$:  Subject<GSuiteSelector[]> = new Subject();
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -57,13 +62,16 @@ export class ProfileCardDialogComponent implements OnInit {
 
     console.log(this.data);
 
-    if (this.data.unit) {
-      this.layout = 'orgunits';
-      this.headerIcon = `./assets/${this.data.unit} (Navy).svg`;
-    }
-    if (this.data.gSuiteSettings) {
+    if (this.data.orgUnit) {
       this.layout = 'gSuiteSettings';
-      this.headerIcon = './assets/google/google_logo.svg';
+      this.headerIcon = `./assets/${this.data.orgUnit.title} (Navy).svg`;
+
+      this.orgUnitSelector = _.cloneDeep(this.data.orgUnit.selector);
+
+      this.checkSelectorForUpdating$.subscribe((updatedSelector: GSuiteSelector[]) => {
+        this.orgUnitSelector = updatedSelector;
+        this.orgUnitSelectorEditState = !_.isEqual(this.orgUnitSelectorInitialState, updatedSelector);
+      });
     }
     if (this.data.bulkPermissions) {
       this.layout = 'bulkPermissions';
@@ -89,17 +97,17 @@ export class ProfileCardDialogComponent implements OnInit {
 
 
       this.headerIcon = `./assets/${
-                          this.data.role === '_profile_admin'
+                          this.data.role === '_profile_admin' && this.data.orgUnit === 'admin'
                           ?
                           'Admin'
                           :
-                          this.data.role === '_profile_teacher'
+                          this.data.role === '_profile_teacher' && this.data.orgUnit === 'teacher'
                           ?
                           'Teacher'
                           :
-                          this.data.role === '_profile_assistant'
+                          this.data.role === '_profile_assistant' && this.data.orgUnit === 'assistant'
                           ?
-                          'Secretary'
+                          'Assistant'
                           :
                           'Student'} (Navy).svg`;
     }
@@ -112,7 +120,8 @@ export class ProfileCardDialogComponent implements OnInit {
                       ?
                       this.profile['Name']
                       :
-                      'G Suite Settings';
+                      `${this.data.orgUnit.title}s Group Syncing`;
+                      // 'G Suite Settings';
 
     if (this.data.role === '_profile_teacher') {
         this.dataService.getLocationsWithTeacher(this.profile._originalUserProfile)
@@ -185,55 +194,26 @@ export class ProfileCardDialogComponent implements OnInit {
 
 
     if ( this.data.bulkPermissions) {
-      return zip(...this.data.bulkPermissions.map((userId) => this.userService.createUserRoles(userId, this.permissionsForm.value)))
-        // .subscribe((result) => {
-        //   console.log(result);
-        //   this.disabledState = false;
-        //   this.permissionsFormInitialState = _.cloneDeep(this.permissionsForm.value);
-        //   this.profileTouched = true;
-        //   this.permissionsFormEditState = false;
-        // });
-
+      return zip(
+        ...this.data.bulkPermissions.map((userId) => this.userService.createUserRoles(userId, this.permissionsForm.value))
+      );
     } else if (this.permissionsFormEditState && this.assistantForEditState) {
       return zip(
         this.userService.createUserRoles(this.profile.id, this.permissionsForm.value),
         ...assistantForRemove.map((user) => this.userService.deleteRepresentedUser(this.profile.id, user)),
         ...assistantForAdd.map((user) => this.userService.addRepresentedUser(this.profile.id, user))
-      )
-      //   .subscribe((result) => {
-      //   console.log(result);
-      //   this.permissionsFormInitialState = _.cloneDeep(this.permissionsForm.value);
-      //   this.permissionsFormEditState = false;
-      //   this.assistantForInitialState = _.cloneDeep(this.assistantFor);
-      //   this.assistantForEditState = false;
-      //   this.disabledState = false;
-      //   this.profileTouched = true;
-      // });
+      );
     } else {
       if (this.permissionsFormEditState) {
         return this.userService
-          .createUserRoles(this.profile.id, this.permissionsForm.value)
-          // .subscribe((result) => {
-          //   console.log(result);
-          //   this.permissionsFormInitialState = _.cloneDeep(this.permissionsForm.value);
-          //   this.disabledState = false;
-          //   this.profileTouched = true;
-          //   this.permissionsFormEditState = false;
-          // });
+          .createUserRoles(this.profile.id, this.permissionsForm.value);
       }
       if (this.assistantForEditState) {
 
         return zip(
           ...assistantForRemove.map((user) => this.userService.deleteRepresentedUser(this.profile.id, user)),
           ...assistantForAdd.map((user) => this.userService.addRepresentedUser(this.profile.id, user))
-        )
-        // .subscribe((result) => {
-        //   console.log(result);
-        //   this.assistantForInitialState = _.cloneDeep(this.assistantFor);
-        //   this.disabledState = false;
-        //   this.profileTouched = true;
-        //   this.assistantForEditState = false;
-        // });
+        );
       }
     }
   }
@@ -245,47 +225,7 @@ export class ProfileCardDialogComponent implements OnInit {
     }
 
     eventTarget.style.opacity = '0.75';
-    // let header: string;
-    // let options: any[];
-    // const profile: string =
-    //   this.data.role === '_profile_admin' ? 'administrator' :
-    //     this.data.role === '_profile_teacher' ? 'teacher' :
-    //       this.data.role === '_profile_student' ? 'student' :
-    //       this.data.role === '_profile_assistant' ? 'student' : 'assistant';
 
-    // switch (option) {
-    //   case 'delete_from_profile':
-    //     if (this.data.role === '_all') {
-    //       header = `Are you sure you want to permanently delete this account and all associated data? This cannot be undone.`;
-    //     } else {
-    //       header = `Removing this user from the ${profile} profile will remove them from this profile, but it will not delete all data associated with the account.`;
-    //     }
-    //     options = [{display: 'Confirm Remove', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
-    //     break;
-    //   case 'disable_sign_in':
-    //
-    //     header = `Disable sign-in to prevent this user from being able to sign in with the ${profile} profile.`;
-    //     options = [{display: 'Disable sign-in', color: '#001115', buttonColor: '#001115, #033294', action: 'disable_sign_in'}];
-    //     break;
-    //   case 'enable_sign_in':
-    //     header = `Enable sign-in to allow this user to be able to sign in with the ${profile} profile.`;
-    //     options = [{display: 'Enable sign-in', color: '#03CF31', buttonColor: '#03CF31, #00B476', action: 'enable_sign_in'}];
-    //     break;
-    // }
-    // const DR = this.matDialog.open(ConsentMenuComponent,
-    //   {
-    //     data: {
-    //       role: this.data.role,
-    //       selectedUsers: this.data.selectedUsers,
-    //       restrictions: this.data.profilePermissions,
-    //       header: header,
-    //       options: options,
-    //       trigger: new ElementRef(eventTarget)
-    //     },
-    //     panelClass: 'consent-dialog-container',
-    //     backdropClass: 'invis-backdrop',
-    //   });
-      // DR.afterClosed()
       of(option)
         .pipe(
           switchMap((action): Observable<any> => {
