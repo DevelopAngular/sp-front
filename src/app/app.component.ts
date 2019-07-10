@@ -2,7 +2,7 @@ import { AfterViewInit, Component, NgZone, OnDestroy, OnInit } from '@angular/co
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
 import {delay, filter, map, mergeMap, takeUntil, tap, withLatestFrom} from 'rxjs/operators';
-import { BehaviorSubject, ReplaySubject, Subject } from 'rxjs';
+import {BehaviorSubject, interval, Observable, of, ReplaySubject, Subject} from 'rxjs';
 
 import { DeviceDetection } from './device-detection.helper';
 import { GoogleLoginService } from './services/google-login.service';
@@ -18,6 +18,7 @@ import { StorageService } from './services/storage.service';
 import { DarkThemeSwitch } from './dark-theme-switch';
 
 import * as _ from 'lodash';
+import {KioskModeService} from './services/kiosk-mode.service';
 
 declare const window;
 
@@ -37,7 +38,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public isAuthenticated = null;
   public hideScroll: boolean = false;
   public hideSchoolToggleBar: boolean = false;
-  public showUI: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public showUISubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public showUI = this.showUISubject.asObservable();
   public showError: BehaviorSubject<any> = new BehaviorSubject<boolean>(false);
   public errorToastTrigger: ReplaySubject<SPError>;
   public schools: School[] = [];
@@ -65,8 +67,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   //     }
   // }
 
-  public preloader$;
-
   constructor(
     public darkTheme: DarkThemeSwitch,
     public loginService: GoogleLoginService,
@@ -79,18 +79,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private webConnection: WebConnectionService,
     private dialog: MatDialog,
     private storageService: StorageService,
+    private kms: KioskModeService
   ) {
-    this.preloader$ = this.darkTheme.preloader;
-    this.preloader$.next(true);
     this.errorToastTrigger = this.http.errorToast$;
   }
 
   ngOnInit() {
-
-    // const qp = new URLSearchParams(window.location.search);
-    //
-    //
-    // this.schoolSignUp = window.location.href.includes('school_signup') && !!qp.get('key');
 
     this.storageService.detectChanges();
     this.darkTheme.isEnabled$.subscribe((val) => {
@@ -128,8 +122,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     .subscribe(t => {
       console.log('Auth response ===>', t);
       this._zone.run(() => {
-        this.showUI.next(true);
-        this.preloader$.next(false);
+        this.showUISubject.next(true);
         this.isAuthenticated = t;
       });
     });
@@ -186,9 +179,27 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         mergeMap((route) => route.data)
       )
       .subscribe((data) => {
+
         // console.log(data);
-        if (data.signOut) {
-          this.schools = [];
+        const existingHub: any = document.querySelector('#hubspot-messages-iframe-container');
+        let newHub: any;
+
+        if (!existingHub) {
+          newHub = document.createElement('script');
+                newHub.type = 'text/javascript';
+                newHub.id = 'hs-script-loader';
+                newHub.src = '//js.hs-scripts.com/5943240.js';
+        }
+        if (data.hubspot && !data.currentUser.isStudent() && !this.http.kioskTokenSubject$.value && !this.kms.currentRoom$.value) {
+          if (!existingHub) {
+            document.body.appendChild(newHub);
+          } else {
+            (existingHub as HTMLElement).setAttribute('style', 'display: block !important;width: 276px;height: 234px');
+          }
+        } else {
+          if (existingHub) {
+            (existingHub as HTMLElement).setAttribute('style', 'display: none !important');
+          }
         }
         if (data.hideSchoolToggleBar) {
           this.hideSchoolToggleBar = true;
@@ -198,26 +209,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.hideScroll = data.hideScroll;
       });
   }
-  onSchoolCreated(evt: boolean) {
-    this.schoolSignUp = false;
-    if (evt) {
-      this.router.navigate(['admin', 'gettingstarted']);
-    } else {
-      this.router.navigate(['']);
-    }
-  }
   ngOnDestroy() {
     this.subscriber$.next(null);
     this.subscriber$.complete();
   }
 
-  ngAfterViewInit() {
-    // setTimeout(() => {
-    //   this.matDialog.open(NextReleaseComponent, {
-    //     panelClass: 'form-dialog-container'
-    //   });
-    // }, 1000);
-  }
+  ngAfterViewInit() {}
 
 
 }

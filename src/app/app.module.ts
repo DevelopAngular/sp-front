@@ -67,7 +67,11 @@ const appRoutes: Routes = [
   {
     path: 'main',
     canActivate: [NotSeenIntroGuard, AuthenticatedGuard, IsStudentOrTeacherGuard],
-    loadChildren: 'app/main/main.module#MainModule'
+    loadChildren: 'app/main/main.module#MainModule',
+    resolve: {currentUser: CurrentUserResolver},
+    data: {
+      hubspot: true
+    }
   },
   {
     path: 'admin',
@@ -75,7 +79,8 @@ const appRoutes: Routes = [
     loadChildren: 'app/admin/admin.module#AdminModule',
     resolve: {currentUser: CurrentUserResolver},
     data: {
-      hideScroll: true
+      hideScroll: true,
+      hubspot: true
     }
   },
   {

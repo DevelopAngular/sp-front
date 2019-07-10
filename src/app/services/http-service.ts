@@ -139,7 +139,7 @@ export class HttpService {
   );
   public currentSchoolSubject = new BehaviorSubject<School>(null);
   public currentSchool$: Observable<School> = this.currentSchoolSubject.asObservable();
-  public kioskTokenSubject$ = new Subject();
+  public kioskTokenSubject$ = new BehaviorSubject<any>(null);
 
   public globalReload$ = this.currentSchool$.pipe(
     filter(school => !!school),
@@ -223,7 +223,9 @@ export class HttpService {
             }),
      ).subscribe(() => { });
 
-      this.kioskTokenSubject$.pipe(map(newToken => {
+      this.kioskTokenSubject$.pipe(
+        filter(v => !!v),
+        map(newToken => {
         newToken['expires'] = new Date(new Date() + newToken['expires_in']);
         return { auth: newToken, server: this.accessTokenSubject.value.server};
 

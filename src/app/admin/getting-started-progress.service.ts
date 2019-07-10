@@ -81,7 +81,7 @@ export class GettingStartedProgressService {
         if (this.onboardProgress.progress === 100) {
           this.onboardProgress.offset = 0;
         }
-        console.log(this.onboardProgress);
+        // console.log(this.onboardProgress);
       });
   }
 

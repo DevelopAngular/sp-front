@@ -19,7 +19,6 @@ export class GettingStartedComponent implements OnInit {
     if (this.banner) {
        fromEvent(this.banner.nativeElement, 'animationend')
         .subscribe((evt: AnimationEvent) => {
-          console.log(evt);
           (evt.currentTarget as HTMLDivElement).style.display = 'none';
         });
     }
