@@ -120,8 +120,10 @@ export class ProfileCardDialogComponent implements OnInit {
                       ?
                       this.profile['Name']
                       :
-                      `${this.data.orgUnit.title}s Group Syncing`;
-                      // 'G Suite Settings';
+                      this.data.orgUnit
+                      ?
+                      `${this.data.orgUnit.title}s Group Syncing`
+                      : '';
 
     if (this.data.role === '_profile_teacher') {
         this.dataService.getLocationsWithTeacher(this.profile._originalUserProfile)

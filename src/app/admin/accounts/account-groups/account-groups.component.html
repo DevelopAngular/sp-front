@@ -1,23 +1,30 @@
 <div class="group-wrapper" [style.background-color]="darkTheme.getBackground('high', true)">
-    <div class="content">
-        <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Groups</div>
-        <div class="profiles">
-            <app-profile
-                *ngFor="let account of (orgUnits$ | async); let i = index"
-                (select)="onSelect($event, i)"
-                [profile]="account"
-            >
-            </app-profile>
-        </div>
+  <div class="content">
+    <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Groups</div>
+    <div class="profiles">
+      <app-profile
+          *ngFor="let account of (orgUnits$ | async); let i = index"
+          (select)="onSelect($event, i)"
+          [profile]="account"
+      >
+      </app-profile>
     </div>
-    <div>
-        <app-gradient-button
-            *ngIf="showButton"
-             [size]="'small'"
-             [cursor]="'pointer'"
-             (buttonClick)="provideSelected()"
-        >Save Group Sync
-        </app-gradient-button>
-    </div>
-
+  </div>
+  <div style="margin-top: 70px;">
+    <app-gradient-button
+      *ngIf="showButton"
+      [size]="'small'"
+      [cursor]="'pointer'"
+      (buttonClick)="provideSelected()"
+    >Save Group Sync
+    </app-gradient-button>
+    <app-gradient-button
+      *ngIf="!showButton"
+        [gradient]="'#7F879D,#7F879D'"
+        [size]="'small'"
+        [cursor]="'pointer'"
+        (buttonClick)="provideSelected()"
+      >Skip Group Sync
+      </app-gradient-button>
+  </div>
 </div>

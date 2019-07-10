@@ -51,7 +51,7 @@ export class GettingStartedProgressService {
     create_school?: any
   } = {
     progress: 0,
-    offset: 120
+    offset: 130
   };
 
   constructor(
@@ -66,7 +66,7 @@ export class GettingStartedProgressService {
       )
       .subscribe((data: Array<OnboardItem>) => {
         this.onboardProgress.progress = 0;
-        this.onboardProgress.offset = 120;
+        this.onboardProgress.offset = 130;
         data.forEach((item: OnboardItem ) => {
           const ticket = item.name.split(':');
           if (!this.onboardProgress[ticket[0]]) {
@@ -78,7 +78,10 @@ export class GettingStartedProgressService {
             this.onboardProgress.offset -= Progress[item.name];
           }
         });
-        // console.log(this.onboardProgress);
+        if (this.onboardProgress.progress === 100) {
+          this.onboardProgress.offset = 0;
+        }
+        console.log(this.onboardProgress);
       });
   }
 

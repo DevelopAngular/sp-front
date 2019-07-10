@@ -141,7 +141,6 @@ export class GoogleLoginService {
   }
 
   setAuthenticated() {
-      window.waitForAppLoaded();
     // console.log('setAuthenticated()');
     this.isAuthenticated$.next(true);
     this.showLoginError$.next(false);

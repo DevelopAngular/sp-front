@@ -18,6 +18,7 @@ import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {GettingStartedProgressService} from '../getting-started-progress.service';
 import {AddUserDialogComponent} from '../add-user-dialog/add-user-dialog.component';
 import {GSuiteOrgs} from '../../models/GSuiteOrgs';
+import {encode} from 'punycode';
 
 declare const history: History;
 
@@ -80,6 +81,7 @@ export class AccountsComponent implements OnInit {
   }
 
   ngOnInit() {
+
    this.gSuiteOrgs$ = this.adminService.getGSuiteOrgs();
     this.http.globalReload$.pipe(
       switchMap(() => this.adminService.getAdminAccounts())
@@ -94,51 +96,55 @@ export class AccountsComponent implements OnInit {
       console.log(u_list);
       this.accounts$.next(u_list);
     });
-      this.userService.userData.subscribe((user) => {
-          this.user = user;
-      });
 
-      const headers = this.storage.getItem(`_all_columns`);
-      if ( headers ) {
-          this.dataTableHeaders = JSON.parse(headers);
-          if (!this.dataTableHeaders['Account Type']) {
-            this.dataTableHeaders['Account Type'] = {
-              value: true,
-                label: 'Account Type',
-                disabled: false
-            };
-          }
-      } else {
-          this.dataTableHeaders = {
-              'Name': {
-                  value: true,
-                  label: 'Name',
-                  disabled: true
-              },
-              'Email/Username': {
-                  value: true,
-                  label: 'Email/Username',
-                  disabled: true
-              },
-              'Account Type': {
-                  value: true,
-                  label: 'Account Type',
-                  disabled: false
-              },
-              'Profile(s)': {
-                  value: true,
-                  label: 'Profile(s)',
-                  disabled: false
-              }
-          };
+    this.splash = this.gsProgress.onboardProgress.setup_accounts && (!this.gsProgress.onboardProgress.setup_accounts.start || !this.gsProgress.onboardProgress.setup_accounts.end);
+
+
+    this.userService.userData.subscribe((user) => {
+      this.user = user;
+    });
+
+    const headers = this.storage.getItem(`_all_columns`);
+    if ( headers ) {
+      this.dataTableHeaders = JSON.parse(headers);
+      if (!this.dataTableHeaders['Account Type']) {
+        this.dataTableHeaders['Account Type'] = {
+          value: true,
+            label: 'Account Type',
+            disabled: false
+        };
       }
+    } else {
+      this.dataTableHeaders = {
+        'Name': {
+          value: true,
+          label: 'Name',
+          disabled: true
+        },
+        'Email/Username': {
+          value: true,
+          label: 'Email/Username',
+          disabled: true
+        },
+        'Account Type': {
+          value: true,
+          label: 'Account Type',
+          disabled: false
+        },
+        'Profile(s)': {
+          value: true,
+          label: 'Profile(s)',
+          disabled: false
+        }
+      };
+    }
 
-      this.getUserList();
+    this.getUserList();
 
-      TABLE_RELOADING_TRIGGER.subscribe((updatedHeaders) => {
-          this.dataTableHeaders = updatedHeaders;
-          this.getUserList();
-      });
+    TABLE_RELOADING_TRIGGER.subscribe((updatedHeaders) => {
+        this.dataTableHeaders = updatedHeaders;
+        this.getUserList();
+    });
   }
 
   addUser() {
@@ -323,7 +329,7 @@ export class AccountsComponent implements OnInit {
           width: '425px',
           height: '500px',
           data: {
-            setupLink: link.authorization_url
+            setupLink: `${window.location.origin}/accounts_setup?googleAuth=${encodeURIComponent(link.authorization_url)}`,
           }
         });
       });

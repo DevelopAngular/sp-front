@@ -65,9 +65,13 @@ export class AccountsSetupComponent implements OnInit, AfterViewInit {
     window.appLoaded();
   }
   close() {
+    this.destroyer$.next();
+    this.destroyer$.complete();
     this.router.navigate(['admin']);
   }
   goToLogin() {
+    this.destroyer$.next();
+    this.destroyer$.complete();
     this.router.navigate(['']);
   }
 
@@ -82,15 +86,18 @@ export class AccountsSetupComponent implements OnInit, AfterViewInit {
 
                 console.log(message);
                 wRef.close();
-                message.data.token['expires'] = new Date(new Date() + message.data.token['expires_in']);
-
-                this.loginService.updateAuth(message.data.token as AuthResponse);
-                this.loginService.isAuthenticated$.next(true);
-                return message.data.school_id;
+                if (message && message.data.token) {
+                  message.data.token['expires'] = new Date(new Date() + message.data.token['expires_in']);
+                  this.loginService.updateAuth(message.data.token as AuthResponse);
+                  this.loginService.isAuthenticated$.next(true);
+                  return message.data.school_id;
+                }
               }),
               delay(100),
               switchMap((schoolId) => {
-                return this.adminService.getSchoolById(schoolId);
+                if (schoolId) {
+                  return this.adminService.getSchoolById(schoolId);
+                }
               }),
               switchMap((school: School) => {
                 if (school && school.id) {
@@ -101,6 +108,7 @@ export class AccountsSetupComponent implements OnInit, AfterViewInit {
                 }
               }),
               catchError((err) => {
+                console.log(err);
                 if (err && err.error !== 'popup_closed_by_user') {
                   this.loginService.showLoginError$.next(true);
                 }
@@ -113,15 +121,23 @@ export class AccountsSetupComponent implements OnInit, AfterViewInit {
   connectGSuite() {
     if (this.gSuiteConnected && this.usersForSyncSelected) {
       this.adminService.updateGSuiteOrgs(this.syncBody)
+        .pipe(
+          switchMap(() => {
+            return this.adminService.updateOnboardProgress('setup_accounts:end');
+          })
+        )
         .subscribe((res) => {
           console.log(res);
-          // this.destroyer$.next();
-          // this.destroyer$.complete();
-          // this.router.navigate(['admin', 'accounts']);
+          this.destroyer$.next();
+          this.destroyer$.complete();
+          this.router.navigate(['admin', 'accounts']);
         });
     } else {
 
       this.initLogin()
+        .pipe(
+          tap(() => window.appLoaded(1000))
+        )
         .subscribe((res) => {
           if (res) {
             console.log(res);
@@ -142,16 +158,6 @@ export class AccountsSetupComponent implements OnInit, AfterViewInit {
       this.syncBody[`selector_${item.unitId}s`] = item.selector.map((s: GSuiteSelector) => s.as);
     });
     console.log(this.syncBody);
-
-
-    // const test =  {
-    //   'selector_students': '',
-    //   'selector_teachers': '',
-    //   'selector_assistants': '',
-    //   'selector_admins': ''
-    // }
-    // const syncBody = evt.
-
 
   }
 }

@@ -5,6 +5,8 @@ import {of} from 'rxjs';
 import {finalize, tap} from 'rxjs/operators';
 import {HttpService} from '../services/http-service';
 
+declare const window;
+
 export enum LoginMethod { OAuth = 1, LocalStrategy = 2}
 
 @Component({
@@ -63,6 +65,7 @@ export class GoogleSigninComponent implements OnInit {
     if (this.demoUsername && this.demoPassword) {
       this.loggedWith = LoginMethod.LocalStrategy;
       this.loginService.showLoginError$.next(false);
+      window.waitForAppLoaded();
       of(this.loginService.signInDemoMode(this.demoUsername, this.demoPassword))
       .pipe(
         tap((res) => { console.log(res); }),
@@ -82,6 +85,7 @@ export class GoogleSigninComponent implements OnInit {
       .signIn()
       .then(() => {
         this.showSpinner = false;
+        window.waitForAppLoaded();
       })
       .catch((err) => {
         if (err && err.error !== 'popup_closed_by_user') {

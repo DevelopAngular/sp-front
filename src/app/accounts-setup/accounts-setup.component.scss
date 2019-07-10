@@ -9,7 +9,7 @@
     width: 100%;
     height: 100%;
     box-sizing: border-box;
-    padding: 40px;
+    padding: 25px;
     background-color: #FBFEFF;
     overflow-y: scroll;
     position: relative;
@@ -82,6 +82,9 @@
           //flex: 1 1 40%;
           position: relative;
           margin: 0 30px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
           .privacy-card {
             width: 403px;
             height: 266px;
@@ -108,9 +111,11 @@
             }
           }
           .setup-guy {
-            position: absolute;
-            left: 0;
-            bottom: -45px;
+            margin-top: 30px;
+            margin-left: 10px;
+            //position: absolute;
+            //left: 0;
+            //bottom: -45px;
           }
           .setup-laptop {
             margin: auto  0;
