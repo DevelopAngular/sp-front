@@ -37,7 +37,7 @@ fi
 
 echo "Using config: $config"
 
-yarn ng-high-memory build -c "$config" --base-href '/app/' # --deploy-url "$deploy_url"
+yarn ng-ci-memory build -c "$config" --base-href '/app/' # --deploy-url "$deploy_url"
 
 echo 'Uploading sourcemaps to Sentry'
 
