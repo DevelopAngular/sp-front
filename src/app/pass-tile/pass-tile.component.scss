@@ -4,6 +4,22 @@
   }
 }
 
+@media all and (max-width: 425px) and (min-width: 360px) {
+  div.tile-wrapper {
+    cursor: default;
+  }
+
+  div.tile-wrapper{
+    width: 157px;
+    height: 95px;
+  }
+
+  div.names-overlay{
+    width: 100%;
+  }
+
+}
+
 .tile-wrapper{
     width: 143px;
     height: 86.5px;

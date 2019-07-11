@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, OnDestroy} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, OnDestroy, HostListener} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import {BehaviorSubject, merge, of, zip,  Observable ,  ReplaySubject ,  Subject } from 'rxjs';
 import { DataService } from '../services/data-service';
@@ -106,6 +106,9 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   ) {}
 
   get gridTemplate() {
+    if (this.screenService.isDeviceMid && !this.screenService.isDeviceSmallExtra) {
+      this.grid_template_columns = '157px';
+    }
     return this.sanitizer.bypassSecurityTrustStyle(`repeat(auto-fill, minmax(${this.grid_template_columns}, .3fr))`);
   }
 
@@ -255,4 +258,14 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
     });
   }
 
+  @HostListener('window:resize')
+  checkDeviceWidth() {
+    if (this.screenService.isDeviceSmallExtra) {
+      this.grid_template_columns = '143px';
+    }
+
+    if (!this.screenService.isDeviceSmallExtra && this.screenService.isDeviceMid) {
+      this.grid_template_columns = '157px';
+    }
+  }
 }

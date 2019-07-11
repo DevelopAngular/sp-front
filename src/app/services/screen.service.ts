@@ -7,10 +7,15 @@ export class ScreenService {
 
   constructor() { }
 
+  private extraSmallDeviceBreakPoint = 320;
   private smallDevicesBreakPoint = 375;
   private midDevicesBreakPoint = 475;
   private largeDevicesBreakPoint = 768;
   private  extraLargeDeviceBreakPoint = 1024;
+
+  get smallDeviceExtra() {
+    return this.extraSmallDeviceBreakPoint;
+  }
 
   get smallDevice() {
     return this.smallDevicesBreakPoint;
@@ -22,6 +27,10 @@ export class ScreenService {
 
   get largeDevice() {
     return this.largeDevicesBreakPoint;
+  }
+
+  get isDeviceSmallExtra() {
+    return this.windowWidth <= this.smallDeviceExtra;
   }
 
   get isDeviceSmall() {
