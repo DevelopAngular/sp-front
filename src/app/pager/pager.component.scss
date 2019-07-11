@@ -13,6 +13,11 @@
 :host {
   height: 100%;
 }
+
+.pager-page {
+  margin: 10px 0;
+}
+
 .pager-wrapper{
     width: 320px;
     height: 100%;
@@ -32,7 +37,7 @@
 }
 
 .page-content{
-    width: inherit;
+  width: inherit;
   top: 13px;
   left: 0;
   right: 0;
@@ -112,4 +117,3 @@
   flex-direction: column;
   overflow: hidden;
 }
-

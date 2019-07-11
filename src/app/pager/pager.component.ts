@@ -4,6 +4,7 @@ import {NextStep} from '../animations';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {SwiperConfigInterface} from 'ngx-swiper-wrapper';
 import {ScreenService} from '../services/screen.service';
+import {MobileDeviceService} from '../services/mobile-device.service';
 
 export enum KEY_CODE {
     RIGHT_ARROW = 39,
@@ -47,6 +48,7 @@ export class PagerComponent implements OnInit, AfterViewInit {
     private formService: CreateFormService,
     private cdr: ChangeDetectorRef,
     public screenService: ScreenService,
+    public mobileDevice: MobileDeviceService,
   ) {
     console.log(this.page);
   }
@@ -56,9 +58,7 @@ export class PagerComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-
     this.frameMotion$ = this.formService.getFrameMotionDirection();
-
 
     if (this.page === 1 && this.pages === 1) {
           this.hideLeftButton.next(false);

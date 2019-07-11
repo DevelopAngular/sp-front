@@ -1,4 +1,4 @@
-<div class="pager-wrapper" *ngIf="!screenService.isDeviceLargeExtra">
+<div class="pager-wrapper" *ngIf="!screenService.isDeviceLargeExtra || !mobileDevice.IsMobileDevice">
   <!--<pre>{{frameMotion$ | async | json}}</pre>-->
   <div *ngIf="page==1" [@NextStep]="{ value: '', params: frameMotion$ | async}">
     <div class="page-content" [style.align-items]="pages > 1 ? 'stretch' : 'center'">
@@ -29,7 +29,7 @@
   </div>
 </div>
 
-<div class="swiper" *ngIf="screenService.isDeviceLargeExtra">
+<div class="swiper" *ngIf="screenService.isDeviceLargeExtra && mobileDevice.IsMobileDevice">
   <swiper [config]="config" [index]="page - 1" (indexChange)="onSlideChange($event)" (init)="swiperInit($event)">
     <ng-content select=".page-5"></ng-content>
     <ng-content select=".page-6"></ng-content>
