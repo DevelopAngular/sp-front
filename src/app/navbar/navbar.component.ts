@@ -63,6 +63,7 @@ export interface RepresentedUser {
 export class NavbarComponent implements AfterViewInit, OnInit {
 
   @Input() hasNav = true;
+  @ViewChild('tabPointer') tabPointer: ElementRef;
   @ViewChild('navButtonsContainer') navButtonsContainer: ElementRef;
   @ViewChildren('tabRef') tabRefs: QueryList<ElementRef>;
 
@@ -149,9 +150,9 @@ export class NavbarComponent implements AfterViewInit, OnInit {
       private http: HttpService,
       private storage: StorageService,
       public kioskMode: KioskModeService,
-      private screenService: ScreenService,
+      public screenService: ScreenService,
       private sideNavService: SideNavService,
-      private cdr : ChangeDetectorRef
+      private cdr: ChangeDetectorRef,
   ) {
 
     const navbarEnabled$ = combineLatest(
@@ -185,7 +186,7 @@ export class NavbarComponent implements AfterViewInit, OnInit {
 
     this.isHallMonitorRoute =  this.router.url === '/main/hallmonitor';
     this.isMyRoomRoute = this.router.url === '/main/myroom';
-    this.isAdminRoute = this.router.url.includes('/admin')
+    this.isAdminRoute = this.router.url.includes('/admin');
     this.router.events.subscribe(value => {
       if (value instanceof NavigationEnd) {
         this.hideButtons = this.router.url.includes('kioskMode');
@@ -328,9 +329,16 @@ export class NavbarComponent implements AfterViewInit, OnInit {
   }
 
   selectTab(event: HTMLElement, container: HTMLElement) {
-      const containerRect = container.getBoundingClientRect();
-      const selectedTabRect = event.getBoundingClientRect();
-      this.pts = Math.round((selectedTabRect.left - containerRect.left) + 35) + 'px';
+    const containerRect = container.getBoundingClientRect();
+    const selectedTabRect = event.getBoundingClientRect();
+    const tabPointerHalfWidth = this.tabPointer.nativeElement.getBoundingClientRect().width / 2;
+
+    if (this.screenService.isDeviceLargeExtra) {
+      this.pts = (( event.offsetLeft + event.offsetWidth / 2) - tabPointerHalfWidth) + 'px';
+    } else {
+      this.pts = Math.round((selectedTabRect.left - containerRect.left) + tabPointerHalfWidth) + 'px';
+    }
+
   }
 
   hasRoles(roles: string[]) {
@@ -485,5 +493,6 @@ export class NavbarComponent implements AfterViewInit, OnInit {
   get notificationBadge$() {
     return this.navbarData.notificationBadge$;
   }
+
 
 }

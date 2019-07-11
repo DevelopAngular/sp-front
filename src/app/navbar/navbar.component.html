@@ -7,7 +7,7 @@
     </div>
     <div #navButtonsContainer class="nav-buttons" *ngIf="!hideButtons">
 
-      <div *ngIf="isStaff && !user.isAssistant()" class="teacherNav">
+      <div *ngIf="isStaff && !user.isAssistant() && !this.screenService.isDeviceLargeExtra" class="teacherNav">
         <div *ngFor="let button of buttons; let i = index" class="teacherNav_tab">
           <ng-container *ngIf="buttonVisibility(button)">
             <div
@@ -26,7 +26,7 @@
             </div>
           </ng-container>
         </div>
-        <div class="selected-tab-pointer" [style.left]="pointerTopSpace"></div>
+        <div class="selected-tab-pointer" #tabPointer [style.left]="pointerTopSpace"></div>
       </div>
 
       <div *ngIf="user.isAssistant() && effectiveUser?.roles" class="teacherNav">
@@ -93,15 +93,15 @@
     </div>
   </div>
 
-  <div *ngIf="isStaff && !isAdminRoute && !hideButtons" class="teacherNav-mobile" [style.background-color]="darkTheme.getBackground('low', false)">
+  <div *ngIf="isStaff && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra" class="teacherNav-mobile" [style.background-color]="darkTheme.getBackground('low', false)">
     <div class="teacherNav-mobile-wrapper" #navButtonsContainerMobile>
       <div *ngFor="let button of buttons" class="teacherNav_tab">
         <ng-container *ngIf="isStaff && buttonVisibility(button)">
           <div
             #tabRefMobile
-            [style.transition]="'transform .4s ease'"
-            (mousedown)="tabRefMobile.style.transform = 'scale(.96)'"
-            (mouseup)="tabRefMobile.style.transform = 'unset'">
+            [style.transition]="'transform .1s ease'"
+            (touchstart)="tabRefMobile.style.transform = 'scale(.96)'"
+            (touchend)="tabRefMobile.style.transform = 'unset'">
             <div>
             </div>
             <app-nav-button
@@ -113,7 +113,7 @@
           </div>
         </ng-container>
       </div>
-      <div class="selected-tab-pointer" [style.left]="pointerTopSpace"></div>
+      <div class="selected-tab-pointer" #tabPointer [style.left]="pointerTopSpace" [style.width]="'58px'"></div>
     </div>
   </div>
 </div>

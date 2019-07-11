@@ -15,10 +15,6 @@
     width: 100%;
   }
 
-  div.teacherNav {
-    display: none;
-  }
-
   div.teacherNav-mobile {
     display: flex;
 
@@ -38,6 +34,9 @@
 
   div.selected-tab-pointer {
     top: -13px;
+    border-radius: 0 0 4px 4px;
+    width: 58px;
+    height: 6px;
   }
 }
 
@@ -291,7 +290,6 @@
 }
 
 .teacherNav-mobile {
-  display: none;
   position: fixed;
   bottom: 0;
   width: 100%;
