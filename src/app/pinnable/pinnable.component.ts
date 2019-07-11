@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { bumpIn } from '../animations';
 import { Pinnable } from '../models/Pinnable';
-import { DomSanitizer } from '../../../node_modules/@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import {interval} from 'rxjs';
 
 @Component({

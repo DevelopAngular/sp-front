@@ -1,7 +1,7 @@
 import {Component, OnInit, Inject, ViewChild, ElementRef, HostListener} from '@angular/core';
 import { User } from '../models/User';
 import { HttpService } from '../services/http-service';
-import { MatDialogRef, MAT_DIALOG_DATA } from '../../../node_modules/@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import {AdminService} from '../services/admin.service';
 import {showReportDialog} from '@sentry/browser';
 import {NextStep} from '../animations';

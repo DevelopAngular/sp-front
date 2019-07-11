@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Location } from '../models/Location';
 import { HttpService } from '../services/http-service';
-import { DomSanitizer } from '../../../node_modules/@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 
 @Component({
