@@ -52,10 +52,13 @@ export class CreatePassButtonComponent implements OnInit {
       }
   }
 
-  buttonClick() {
-      if (!this.disabled) {
+  buttonClick(event?) {
+    if (!this.disabled) {
           this.onClick.emit();
       }
+    if (event) {
+      event.preventDefault();
+    }
   }
 
 }
