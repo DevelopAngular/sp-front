@@ -55,7 +55,9 @@
             ></app-round-input>
           </div>
         </div>
-        <app-icon-button [size]="25" [srcString]="'Calendar'" (clickEvent)="chooseDate($event)"></app-icon-button>
+        <div class="calendar-wrapper">
+          <app-icon-button [size]="25" [srcString]="'Calendar'" (clickEvent)="chooseDate($event)"></app-icon-button>
+        </div>
         <!--<div class="calendar-wrapper" (click)="chooseDate($event)" [style.background-color]="(calendarToggled?'#E4EBFF':'transparent')">-->
           <!--<img class="calendar-icon" [src]="getIcon('./assets/Calendar (Navy).svg') | resolveAsset">-->
         <!--</div>-->
