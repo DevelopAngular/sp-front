@@ -1,9 +1,9 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {User} from '../../models/User';
 import {PdfGeneratorService} from '../pdf-generator.service';
-import {zip} from 'rxjs';
+import {fromEvent, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
@@ -18,7 +18,24 @@ import * as _ from 'lodash';
   styleUrls: ['./add-user-dialog.component.scss']
 })
 export class AddUserDialogComponent implements OnInit {
+  @ViewChild('header') header: ElementRef<HTMLDivElement>;
+  @ViewChild('rc') set rc(rc: ElementRef<HTMLDivElement> ) {
+    if (rc) {
+      fromEvent( rc.nativeElement, 'scroll').subscribe((evt: Event) => {
+        let blur: number;
 
+        if ((evt.target as HTMLDivElement).scrollTop < 100) {
+          blur = 5;
+        } else if ((evt.target as HTMLDivElement).scrollTop > 100 && (evt.target as HTMLDivElement).scrollTop < 400) {
+          blur = (evt.target as HTMLDivElement).scrollTop / 20;
+        } else {
+          blur = 20;
+        }
+
+        this.header.nativeElement.style.boxShadow = `0 1px ${blur}px 0px rgba(0,0,0,.2)`;
+      });
+    }
+  }
   public accountTypes: string[] = ['G Suite', 'Standard'];
   public typeChoosen: string = this.accountTypes[0];
   public newAlternativeAccount: FormGroup;

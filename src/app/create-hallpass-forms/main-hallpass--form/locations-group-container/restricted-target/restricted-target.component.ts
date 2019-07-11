@@ -1,8 +1,8 @@
-import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
+import {Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild} from '@angular/core';
 import { Pinnable } from '../../../../models/Pinnable';
 import { Navigation } from '../../main-hall-pass-form.component';
 import { CreateFormService } from '../../../create-form.service';
-import { BehaviorSubject } from 'rxjs';
+import {BehaviorSubject, fromEvent} from 'rxjs';
 import { States } from '../locations-group-container.component';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -15,7 +15,24 @@ import * as _ from 'lodash';
 
 })
 export class RestrictedTargetComponent implements OnInit {
+  @ViewChild('header') header: ElementRef<HTMLDivElement>;
+  @ViewChild('rc') set rc(rc: ElementRef<HTMLDivElement> ) {
+    if (rc) {
+      fromEvent( rc.nativeElement, 'scroll').subscribe((evt: Event) => {
+        let blur: number;
 
+        if ((evt.target as HTMLDivElement).scrollTop < 100) {
+          blur = 5;
+        } else if ((evt.target as HTMLDivElement).scrollTop > 100 && (evt.target as HTMLDivElement).scrollTop < 400) {
+          blur = (evt.target as HTMLDivElement).scrollTop / 20;
+        } else {
+          blur = 20;
+        }
+
+        this.header.nativeElement.style.boxShadow = `0 1px ${blur}px 0px rgba(0,0,0,.2)`;
+      });
+    }
+  }
   @Input() pinnable: Pinnable;
 
   @Input() formState: Navigation;

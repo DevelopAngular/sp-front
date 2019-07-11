@@ -57,7 +57,7 @@ div {
 .form-dialog-container .mat-dialog-container {
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
   margin: 0;
   padding: 0;
   scrollbar-face-color: #D6D6D6;
@@ -68,7 +68,7 @@ div {
 .form-dialog-container-white .mat-dialog-container {
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
   margin: 0;
   padding: 0;
   scrollbar-face-color: #D6D6D6;
@@ -80,7 +80,7 @@ div {
   border-radius: 14px;
   background-color: transparent;
   overflow: visible;
-  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
   //box-shadow: none;
   margin: 0;
   padding: 0;
@@ -91,7 +91,7 @@ div {
 .pass-card-dialog-container .mat-dialog-container {
   border-radius: 10px;
   overflow: visible;
-  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
   margin: 0;
   padding: 0;
   width: 262px;
@@ -101,7 +101,7 @@ div {
 .teacher-pass-card-dialog-container .mat-dialog-container {
   border-radius: 14px;
   overflow: visible;
-  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
   margin: 0;
   padding: 0;
   height: 451px;
@@ -110,7 +110,7 @@ div {
 .student-pass-card-dialog-container .mat-dialog-container {
   border-radius: 14px;
   overflow: visible;
-  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
   margin: 0;
   padding: 0;
   width: 334px;
@@ -151,7 +151,7 @@ div {
 
 .overlay-dialog .mat-dialog-container{
   border-radius: 16px;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
   overflow: hidden;
   //margin: 10px;
   padding: 0;
@@ -160,7 +160,7 @@ div {
 .editor-dialog{
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 3px 20px 0px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
   margin: 0;
   padding: 10px;
   background-color: rgba(1, 25, 52, 0.7);

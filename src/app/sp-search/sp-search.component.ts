@@ -332,7 +332,7 @@ export class SPSearchComponent implements OnInit {
     if (!students.length) {
       return [];
     }
-    if (students[0] instanceof User) {
+    if (students[0] instanceof User || this.searchTarget === 'users') {
       let fixedStudents: User[] = <User[]>students;
       let studentsToRemove: User[] = [];
       for (let selectedStudent of <Array<User>>this.selectedOptions) {
@@ -352,7 +352,7 @@ export class SPSearchComponent implements OnInit {
       return fixedStudents;
 
     }
-    if (students[0] instanceof GSuiteSelector) {
+    if (students[0] instanceof GSuiteSelector || this.searchTarget === 'orgunits') {
       return (<GSuiteSelector[]>students).filter((gs: GSuiteSelector) => {
         if ( this.selectedOptions.findIndex((_gs: GSuiteSelector) => _gs.path === gs.path) === -1) {
           return gs;

@@ -1,5 +1,5 @@
 <div class="host" appSafariScroll (scroll)="onScroll($event)">
-  <div class="accounts-role-wrapper"  *ngIf="tabVisibility">
+  <div class="accounts-role-wrapper"  *ngIf="role !== 'g_suite'">
     <div class="header-wrapper" [style.background-color]="darkTheme.getBackground('default')">
       <div class="card card__top-bar ds-flex-start-between ds-w-100">
         <div class="ds-flex-start-start ds-h-100">

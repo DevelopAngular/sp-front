@@ -35,7 +35,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     selectedPinnables: Pinnable[] = [];
     pinnable: Pinnable;
     pinnables$: Observable<Pinnable[]>;
-    pinnables: Pinnable[] = [];
+    pinnables: Pinnable[];
     schools$;
 
     buttonMenuOpen: boolean;

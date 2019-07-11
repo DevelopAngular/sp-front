@@ -63,6 +63,7 @@ import {ConsentMenuMobileComponent} from '../consent-menu-mobile/consent-menu-mo
 import {GettingStartedProgressService} from '../admin/getting-started-progress.service';
 import {CreatePassButtonComponent} from '../passes/create-pass-button/create-pass-button.component';
 import {ProfileCardDialogComponent} from '../admin/profile-card-dialog/profile-card-dialog.component';
+import {SpDialogBoxComponent} from '../sp-dialog-box/sp-dialog-box.component';
 
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
@@ -142,7 +143,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
       ProfileComponent,
       ConsentMenuMobileComponent,
       CreatePassButtonComponent,
-      ProfileCardDialogComponent
+      ProfileCardDialogComponent,
+      SpDialogBoxComponent
   ],
     entryComponents: [
       PassCardComponent,
@@ -150,8 +152,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
       CalendarComponent,
       CalendarComponent,
       ReportSuccessToastComponent,
-      ProfileCardDialogComponent
-
+      ProfileCardDialogComponent,
     ],
   exports: [
     ReactiveFormsModule,
@@ -204,7 +205,9 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ProfileComponent,
     ConsentMenuMobileComponent,
     CreatePassButtonComponent,
-    ProfileCardDialogComponent
+    ProfileCardDialogComponent,
+    SpDialogBoxComponent
+
 
   ],
   providers: [

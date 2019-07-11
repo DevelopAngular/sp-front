@@ -219,7 +219,7 @@ export class MainHallPassFormComponent implements OnInit {
   setFormSize() {
     const form = this.elementRef.nativeElement.closest('.mat-dialog-container');
           if (form && this.FORM_STATE.step !== 4) {
-            form.style.boxShadow = '0 2px 4px 0px rgba(0, 0, 0, 0.5)';
+            form.style.boxShadow = '0 2px 26px 0px rgba(0, 0, 0, 0.15)';
           }
 
     switch (this.FORM_STATE.step) {

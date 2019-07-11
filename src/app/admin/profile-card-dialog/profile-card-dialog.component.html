@@ -27,7 +27,7 @@
       <mat-spinner [diameter]="'150'" [color]="'accent'"></mat-spinner>
     </div>
     <!-- end -->
-    <div class="card-header">
+    <div class="card-header" #header>
       <div class="back-button ds-flex-center-center" (click)="back()">
         <img [src]="'./assets/Back Button (Blue-White).svg'" alt="Back Button (Blue-White).svg">
         <!--<span *ngIf="permissionsFormEditState">Cancel</span>-->
@@ -53,7 +53,7 @@
 
     <ng-container [ngSwitch]="layout">
 
-      <div class="content-scrollable-box" *ngSwitchCase="'bulkPermissions'">
+      <div class="content-scrollable-box" *ngSwitchCase="'bulkPermissions'" #rc>
         <div class="card-body">
 
           <div class="card-body_section" *ngIf="data.role === '_profile_teacher' || data.role === '_profile_admin'">
@@ -75,7 +75,7 @@
         </div>
       </div>
 
-      <div class="content-scrollable-box" *ngSwitchCase="'viewProfile'">
+      <div class="content-scrollable-box" *ngSwitchCase="'viewProfile'" #rc>
         <div class="card-body">
           <div class="card-body_section">
             <div class="section-content">
@@ -268,7 +268,7 @@
         <!--</div>-->
       </div>
 
-      <div class="content-scrollable-box" *ngSwitchCase="'gSuiteSettings'">
+      <div class="content-scrollable-box" *ngSwitchCase="'gSuiteSettings'" #rc>
         <div class="card-body">
           <div class="ds-w-100 ds-flex-center-center">
             <div class="ds-mt-25">

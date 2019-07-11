@@ -41,6 +41,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   public userList: any[] = [];
   public selectedUsers: any[] = [];
   public placeholder: boolean;
+  public loaded: boolean = false;
   public dataTableHeaders: any;
   public profilePermissions: any;
   public initialSearchString: string;
@@ -133,16 +134,16 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   get noUsersDummyVisibility() {
     switch (this.role) {
       case '_profile_admin':
-        return this.accounts$.value.admin_count === 0;
+        return this.accounts$.value.admin_count === 0 && this.loaded;
         break;
       case '_profile_teacher':
-        return this.accounts$.value.teacher_count === 0;
+        return this.accounts$.value.teacher_count === 0 && this.loaded;
         break;
       case '_profile_student':
-        return this.accounts$.value.student_count === 0;
+        return this.accounts$.value.student_count === 0 && this.loaded;
         break;
       case '_profile_assistant':
-        return this.accounts$.value.assistant_count === 0;
+        return this.accounts$.value.assistant_count === 0 && this.loaded;
         break;
     }
   }
@@ -623,7 +624,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   private getUserList(query: string = '') {
-
+    this.loaded = false;
     this.placeholder = false;
     this.userList = [];
     this.userService
@@ -702,7 +703,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
             }).join(', ') : '',
             'Sign-in status': raw.active ? 'Enabled' : 'Disabled',
-            'Last sign-in': raw.last_login ? Util.formatDateTime(new Date(raw.last_login)) : 'Not login',
+            'Last sign-in': raw.last_login ? Util.formatDateTime(new Date(raw.last_login)) : 'Never signed in',
             'Profile(s)': partOf.length ? partOf : [{title: 'No profile'}],
             'Permissions': (function() {
                 const tabs = Object.values(permissionsRef).map((tab: any) => {
@@ -740,6 +741,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             writable: false,
             value: raw
         });
+        this.loaded = true;
         return  rawObj;
     });
   }

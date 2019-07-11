@@ -19,6 +19,7 @@ import { DarkThemeSwitch } from './dark-theme-switch';
 
 import * as _ from 'lodash';
 import {KioskModeService} from './services/kiosk-mode.service';
+import {HttpClient} from '@angular/common/http';
 
 declare const window;
 
@@ -71,6 +72,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     public darkTheme: DarkThemeSwitch,
     public loginService: GoogleLoginService,
     private http: HttpService,
+    private httpNative: HttpClient,
     private adminService: AdminService,
     private userService: UserService,
     private _zone: NgZone,
@@ -186,21 +188,49 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
         if (!existingHub) {
           newHub = document.createElement('script');
-                newHub.type = 'text/javascript';
-                newHub.id = 'hs-script-loader';
-                newHub.src = '//js.hs-scripts.com/5943240.js';
+          newHub.type = 'text/javascript';
+          newHub.id = 'hs-script-loader';
+          newHub.src = '//js.hs-scripts.com/5943240.js';
         }
-        if (data.hubspot && !data.currentUser.isStudent() && !this.http.kioskTokenSubject$.value && !this.kms.currentRoom$.value) {
-          if (!existingHub) {
-            document.body.appendChild(newHub);
+
+        if (data.currentUser) {
+          if (!window.user) {
+            window.user =  Object.freeze({
+              id: data.currentUser.id,
+              email: data.currentUser.primary_email,
+              firstName: data.currentUser.first_name,
+              lastName: data.currentUser.last_name
+            });
+          }
+          this.hubSpotSettings();
+        }
+
+        if (data.hubspot && (data.authFree || (!data.currentUser.isStudent() && !this.http.kioskTokenSubject$.value && !this.kms.currentRoom$.value)) ) {
+            if (!existingHub) {
+              document.body.appendChild(newHub);
+              const dst = new Subject<any>();
+              interval(100)
+                .pipe(
+                  takeUntil(dst)
+                ).subscribe(() => {
+                  if (window._hsq) {
+                    dst.next();
+                    dst.complete();
+                  }
+              });
+            } else {
+              (existingHub as HTMLElement).setAttribute('style', 'display: block !important;width: 276px;height: 234px');
+            }
           } else {
-            (existingHub as HTMLElement).setAttribute('style', 'display: block !important;width: 276px;height: 234px');
+            if (existingHub) {
+              (existingHub as HTMLElement).setAttribute('style', 'display: none !important');
+            }
           }
-        } else {
-          if (existingHub) {
-            (existingHub as HTMLElement).setAttribute('style', 'display: none !important');
-          }
-        }
+
+
+
+
+
         if (data.hideSchoolToggleBar) {
           this.hideSchoolToggleBar = true;
         } else {
@@ -209,6 +239,44 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.hideScroll = data.hideScroll;
       });
   }
+  hubSpotSettings() {
+    console.log(window._hsq, window.user);
+
+    const _hsq = window._hsq = window._hsq || [];
+
+    _hsq.push(['identify', {
+      id: window.user.id,
+      email: window.user.email,
+      firstName: window.user.firstName,
+      lastName: window.user.lastName,
+    }]);
+
+    _hsq.push(['setPath', '/admin/dashboard']);
+    _hsq.push(['trackPageView']);
+
+  }
+  hubSpot() {
+    const body = {
+      properties: [
+        {
+          property: 'firstname',
+          value: window.user.firstName
+        },
+        {
+          property: 'lastname',
+          value: window.user.lastName
+        }
+      ]
+    };
+    const apiKey = 'c168a518-0e3b-4d8a-a1cb-bf20270ef958';
+    const email = window.user.email;
+
+    this.httpNative.post(`https://api.hubapi.com/contacts/v1/contact/createOrUpdate/email/${email}/?hapikey=${apiKey}`, body)
+      .subscribe((res) => {
+        console.log(res);
+      });
+  }
+
   ngOnDestroy() {
     this.subscriber$.next(null);
     this.subscriber$.complete();
