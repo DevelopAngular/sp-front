@@ -1,4 +1,4 @@
-import {Component, ElementRef, Inject, OnInit} from '@angular/core';
+import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 import {User} from '../../models/User';
 import {Location} from '../../models/Location';
@@ -6,7 +6,7 @@ import {Router} from '@angular/router';
 import {map, switchMap, tap} from 'rxjs/operators';
 import {DataService} from '../../services/data-service';
 import {FormControl, FormGroup} from '@angular/forms';
-import {empty, forkJoin, Observable, of, Subject, zip} from 'rxjs';
+import {empty, forkJoin, fromEvent, Observable, of, Subject, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {HttpService} from '../../services/http-service';
@@ -20,7 +20,24 @@ import {GSuiteSelector} from '../../sp-search/sp-search.component';
   styleUrls: ['./profile-card-dialog.component.scss']
 })
 export class ProfileCardDialogComponent implements OnInit {
+  @ViewChild('header') header: ElementRef<HTMLDivElement>;
+  @ViewChild('rc') set rc(rc: ElementRef<HTMLDivElement> ) {
+    if (rc) {
+      fromEvent( rc.nativeElement, 'scroll').subscribe((evt: Event) => {
+        let blur: number;
 
+        if ((evt.target as HTMLDivElement).scrollTop < 100) {
+          blur = 5;
+        } else if ((evt.target as HTMLDivElement).scrollTop > 100 && (evt.target as HTMLDivElement).scrollTop < 400) {
+          blur = (evt.target as HTMLDivElement).scrollTop / 20;
+        } else {
+          blur = 20;
+        }
+
+        this.header.nativeElement.style.boxShadow = `0 1px ${blur}px 0px rgba(0,0,0,.2)`;
+      });
+    }
+  }
   public profile: any;
   public teacherAssignedTo: Location[] = [];
 

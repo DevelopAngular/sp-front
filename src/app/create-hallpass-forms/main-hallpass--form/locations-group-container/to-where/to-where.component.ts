@@ -1,4 +1,4 @@
-import {Component, EventEmitter, HostListener, Input, OnInit, Output, Inject} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output, Inject, ViewChild, ElementRef} from '@angular/core';
 import { Pinnable } from '../../../../models/Pinnable';
 import { Navigation } from '../../main-hall-pass-form.component';
 import { CreateFormService } from '../../../create-form.service';
@@ -9,6 +9,7 @@ import {ToWhereGridRestrictionLg} from '../../../../models/to-where-grid-restric
 import {ToWhereGridRestrictionSm} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionSm';
 import {ToWhereGridRestrictionMd} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionMd';
 import {MAT_DIALOG_DATA} from '@angular/material';
+import {fromEvent} from 'rxjs';
 
 @Component({
   selector: 'app-to-where',
@@ -16,7 +17,24 @@ import {MAT_DIALOG_DATA} from '@angular/material';
   styleUrls: ['./to-where.component.scss']
 })
 export class ToWhereComponent implements OnInit {
+  @ViewChild('header') header: ElementRef<HTMLDivElement>;
+  @ViewChild('rc') set rc(rc: ElementRef<HTMLDivElement> ) {
+    if (rc) {
+      fromEvent( rc.nativeElement, 'scroll').subscribe((evt: Event) => {
+        let blur: number;
 
+        if ((evt.target as HTMLDivElement).scrollTop < 100) {
+          blur = 5;
+        } else if ((evt.target as HTMLDivElement).scrollTop > 100 && (evt.target as HTMLDivElement).scrollTop < 400) {
+          blur = (evt.target as HTMLDivElement).scrollTop / 20;
+        } else {
+          blur = 20;
+        }
+
+        this.header.nativeElement.style.boxShadow = `0 1px ${blur}px 0px rgba(0,0,0,.2)`;
+      });
+    }
+  }
   @Input() location;
   @Input() formState: Navigation;
   @Input() pinnables: Promise<Pinnable[]>;

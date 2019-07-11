@@ -92,9 +92,13 @@
 
 <!-- Tracking subsequent page views -->
 <!--<script>-->
-<!--  var _hsq = window._hsq = window._hsq || [];-->
-<!--  _hsq.push(['setPath', '/main/passes']);-->
-<!--  _hsq.push(['trackPageView']);-->
+<!--  const _hsq = window._hsq = window._hsq || [];-->
+<!--  _hsq.push(['identify', {-->
+<!--    id: window.user.id,-->
+<!--    email: window.user.email,-->
+<!--    firstName: window.user.firstName,-->
+<!--    lastName: window.user.lastName,-->
+<!--  }]);-->
 <!--</script>-->
 
 

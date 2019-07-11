@@ -1,5 +1,5 @@
 <div class="category-wrapper">
-  <div [ngClass]="headerTransition" [style.background-image]="headerGradient">
+  <div [ngClass]="headerTransition" [style.background-image]="headerGradient" #header>
     <img class="back-button back-button-whitee back-btn-top" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" (click)="back()">
     <div class="category-header-text">
       <img class="search-icon" [src]="pinnable.icon | resolveAsset">
@@ -7,7 +7,7 @@
     </div>
   </div>
 
-    <div class="category-content" [style.height]="date ? '74%' : '78%'" (scroll)="tableScroll($event)">
+    <div class="category-content" [style.height]="date ? '74%' : '78%'" (scroll)="tableScroll($event)" #rc>
       <app-location-table
         class="center"
         (onSelect)="locationChosen($event)"

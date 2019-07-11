@@ -55,10 +55,11 @@ import {NotKioskModeGuard} from './not-kiosk-mode.guard';
 import {KioskModeService} from './services/kiosk-mode.service';
 import { SchoolSignUpComponent } from './school-sign-up/school-sign-up.component';
 import { AccountsSetupComponent } from './accounts-setup/accounts-setup.component';
+import { SpDialogBoxComponent } from './sp-dialog-box/sp-dialog-box.component'
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroRouteComponent, data: { hideSchoolToggleBar: true}},
-  {path: 'school_signup', component: SchoolSignUpComponent, pathMatch: 'full'},
+  {path: 'school_signup', component: SchoolSignUpComponent, data: {hubspot: true, authFree: true}, pathMatch: 'full'},
   {path: 'accounts_setup', component: AccountsSetupComponent, pathMatch: 'full'},
   {
     path: '',
@@ -70,7 +71,9 @@ const appRoutes: Routes = [
     loadChildren: 'app/main/main.module#MainModule',
     resolve: {currentUser: CurrentUserResolver},
     data: {
-      hubspot: true
+      hubspot: true,
+      authFree: false
+
     }
   },
   {
@@ -80,7 +83,8 @@ const appRoutes: Routes = [
     resolve: {currentUser: CurrentUserResolver},
     data: {
       hideScroll: true,
-      hubspot: true
+      hubspot: true,
+      authFree: false
     }
   },
   {
@@ -119,6 +123,7 @@ const appRoutes: Routes = [
     IntroDialogComponent,
     SchoolSignUpComponent,
     AccountsSetupComponent,
+    // SpDialogBoxComponent
   ],
   entryComponents: [
     ConsentMenuComponent,
@@ -178,6 +183,9 @@ const appRoutes: Routes = [
     {provide: SP_GAPI_CONFIG, useValue: GAPI_CONFIG},
     {provide: APP_BASE_HREF, useValue: environment.production ? '/app' : '/'},
     provideErrorHandler()
+  ],
+  exports: [
+    SpDialogBoxComponent
   ],
   bootstrap: [AppComponent]
 })

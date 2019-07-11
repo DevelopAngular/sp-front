@@ -1,5 +1,5 @@
 <div class="add-user-dialog-container">
-  <div class="heading">
+  <div class="heading" #header>
     <div class="back-button" (click)="back()" *ngIf="!state">
       <img *ngIf="!selectedUsers.length && (!showIncomplete() && !showSaveButton()); else cancel" [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">
       <ng-template #cancel>
@@ -43,7 +43,7 @@
       </app-gradient-button>
     </div>
   </div>
-  <div class="content" *ngIf="!state">
+  <div class="content" *ngIf="!state" #rc>
     <div class="content_top">
       <div class="content_top-header">
         <span class="ds-dialog-heading">Account Type</span>
@@ -287,7 +287,7 @@
 
   </div>
 
-  <div class="assistant-content" *ngIf="state === 'assistant'">
+  <div class="assistant-content" *ngIf="state === 'assistant'" #rc>
     <div class="info">As an assistant, choose from existing teacher(s) so this user can act on behalf of the specified accounts.</div>
     <div class="active-on-user ds-w-100" *ngIf="data.role === '_profile_assistant'">
       <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.behalfOf.length, 'ds-dialog-heading-gray': !assistantLike.behalfOf.length}">Active on Behalf Of</div>
@@ -304,7 +304,7 @@
     </div>
   </div>
 
-  <div class="select-role" *ngIf="state === 'selectRole'">
+  <div class="select-role" *ngIf="state === 'selectRole'" #rc>
     <div class="info">Choose which SmartPass Group(s) this user should be added to.</div>
     <div class="groups">
       <div class="group" *ngFor="let account of accounts">
