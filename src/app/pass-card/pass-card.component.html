@@ -11,9 +11,8 @@
           </div>
         </div>
 
-          <div [class]="iconClass">
-            <app-icon-button *ngIf="hasClose" [srcString]="closeIcon" [onDarkShade]="true" [size]="20" (clickEvent)="cancelEdit($event)"></app-icon-button>
-          </div>
+        <app-icon-button *ngIf="hasClose" [srcString]="closeIcon" [onDarkShade]="true" [size]="20" (clickEvent)="cancelEdit($event)"></app-icon-button>
+
 
 
         <!--<img *ngIf="hasClose" (click)="cancelEdit($event)" class="pass-card-header-close" [src]="closeIcon | resolveAsset">-->
