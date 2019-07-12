@@ -877,7 +877,8 @@ export class OverlayContainerComponent implements OnInit {
 
   }
   advancedOptions(event: OptionState) {
-      this.advOptState = event;
+    console.log(event);
+    this.advOptState = event;
       if (event.now.state === 'Any teacher (default)' && event.future.state === 'Any teacher (default)') {
           this.advOptValid = true;
           return;
@@ -1138,6 +1139,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   done() {
+    // debugger
       this.showDoneSpinner = true;
       if (this.overlayType === 'newRoomInFolder') {
           const location = {
@@ -1147,10 +1149,11 @@ export class OverlayContainerComponent implements OnInit {
                   scheduling_restricted: this.futureRestriction,
                   teachers: this.selectedTeachers.map(teacher => teacher.id),
                   travel_types: this.travelType,
-                  max_allowed_time: +this.timeLimit
+                  max_allowed_time: +this.timeLimit,
             };
-          if (this.editRoomInFolder) {
-              this.locationService.updateLocation(this.roomToEdit.id, location)
+
+        if (this.editRoomInFolder) {
+              this.locationService.updateLocation(this.roomToEdit.id, {...location, ...this.normalizeAdvOptData()})
               .subscribe((res: Location) => {
                   const newCollection = this.selectedRooms.filter(room => room.id !== this.roomToEdit.id);
                   this.selectedRooms = [res, ...newCollection];

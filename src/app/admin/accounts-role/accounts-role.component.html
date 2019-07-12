@@ -327,13 +327,18 @@
               <img width="50" height="50" [src]="'./assets/google/google_logo.svg' | resolveAsset" alt="">
               <div class="title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">
                 G Suite
-                <div class="small-text" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">{{ 'Last sync: ' + formatDate((GSuiteOrgs$ | async)?.last_successful_sync) }}</div>
+                <div *ngIf="GSuiteOrgs.last_successful_sync" class="small-text" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">{{ 'Last sync: ' + formatDate(GSuiteOrgs.last_successful_sync) }}</div>
+                <div *ngIf="!GSuiteOrgs.last_successful_sync" class="small-text" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">Last sync: - </div>
               </div>
             </div>
           </div>
 
           <div class="right-block" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">
-            <div class="count-accounts">{{ (GSuiteOrgs$ | async)?.num_accounts + ' accounts' }}</div>
+<!--            <div class="count-accounts">{{ GSuiteOrgs.num_accounts + ' accounts' }}</div>-->
+            <div class="count-accounts">
+              <span *ngIf="GSuiteOrgs.num_accounts">{{ GSuiteOrgs.num_accounts }} </span>
+              <span *ngIf="!GSuiteOrgs.num_accounts">-</span>
+              <span> accounts</span></div>
             <div class="text">syncing from G Suite</div>
           </div>
         </div>
@@ -346,11 +351,16 @@
         <div class="left-side">
           <div class="sync">
             <div class="title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Sync</div>
-            <div class="subtitle" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">
-              <div>{{ 'Last sync: ' + formatDate((GSuiteOrgs$ | async)?.last_successful_sync) }}</div>
-              <div>Next scheduled sync: {{ formatDate((GSuiteOrgs$ | async)?.next_sync) }}</div>
+            <div *ngIf="GSuiteOrgs.last_successful_sync && GSuiteOrgs.next_sync; else empty" class="subtitle" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">
+              <div>{{ 'Last sync: ' + formatDate(GSuiteOrgs.last_successful_sync) }}</div>
+              <div>Next scheduled sync: {{ formatDate(GSuiteOrgs.next_sync) }}</div>
             </div>
-
+            <ng-template #empty>
+              <div class="subtitle" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">
+                <div>Last sync: -</div>
+                <div>Next scheduled sync: -</div>
+              </div>
+            </ng-template>
             <div class="info" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">
               Syncs happen automatically every four hours, but you can also sync manually now.
             </div>

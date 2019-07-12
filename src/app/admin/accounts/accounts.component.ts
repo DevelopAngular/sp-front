@@ -50,7 +50,7 @@ export class AccountsComponent implements OnInit {
   userList;
   selectedUsers = [];
 
-  gSuiteOrgs$: Observable<GSuiteOrgs>;
+  gSuiteOrgs: GSuiteOrgs = <GSuiteOrgs>{};
 
   dataTableHeaders;
   dataTableHeadersToDisplay: any[] = [];
@@ -82,7 +82,7 @@ export class AccountsComponent implements OnInit {
 
   ngOnInit() {
 
-   this.gSuiteOrgs$ = this.adminService.getGSuiteOrgs();
+   this.adminService.getGSuiteOrgs().subscribe(res => this.gSuiteOrgs = res);
     this.http.globalReload$.pipe(
       switchMap(() => this.adminService.getAdminAccounts())
     )
@@ -268,7 +268,7 @@ export class AccountsComponent implements OnInit {
             const rawObj = {
                 'Name': raw.display_name,
                 'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
-                'Account Type': raw.sync_types[0] === 'google' ? 'Standard' : 'Alternative',
+              'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : 'Standard',
                 'Profile(s)': partOf.length ? partOf : [{title: 'No profile'}],
 
             };
