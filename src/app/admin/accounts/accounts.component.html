@@ -161,7 +161,7 @@
           <app-admin-card-button
                   [leftIcon]="'./assets/google/google_logo.svg'"
                   [title]="'G Suite'"
-                  [subtitle]="'Last Sync: ' + formatDate((gSuiteOrgs$ | async)?.last_successful_sync)"
+                  [subtitle]=" gSuiteOrgs.last_successful_sync ? 'Last Sync: ' + formatDate(gSuiteOrgs.last_successful_sync) : '-'"
                   (onClick)="router.navigate(['/admin/accounts', 'g_suite'])"
           ></app-admin-card-button>
 

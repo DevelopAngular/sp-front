@@ -1,13 +1,18 @@
 <div class="group-wrapper" [style.background-color]="darkTheme.getBackground('high', true)">
   <div class="content">
-    <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Groups</div>
-    <div class="profiles">
-      <app-profile
+    <div *ngIf="!(orgUnits$ | async)" class="loading-theme_blue-gray spinner ds-h-100 ds-flex-center-center">
+      <mat-spinner [diameter]="50" [color]="'primary'"></mat-spinner>
+    </div>
+    <div *ngIf="(orgUnits$ | async)">
+      <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Groups</div>
+      <div class="profiles">
+        <app-profile
           *ngFor="let account of (orgUnits$ | async); let i = index"
           (select)="onSelect($event, i)"
           [profile]="account"
-      >
-      </app-profile>
+        >
+        </app-profile>
+      </div>
     </div>
   </div>
   <div style="margin-top: 70px;">
