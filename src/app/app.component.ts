@@ -1,25 +1,25 @@
+import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
-import {delay, filter, map, mergeMap, takeUntil, tap, withLatestFrom} from 'rxjs/operators';
-import {BehaviorSubject, interval, Observable, of, ReplaySubject, Subject} from 'rxjs';
+import * as _ from 'lodash';
+import { BehaviorSubject, interval, ReplaySubject, Subject } from 'rxjs';
 
-import { DeviceDetection } from './device-detection.helper';
-import { GoogleLoginService } from './services/google-login.service';
-import {HttpService, SPError} from './services/http-service';
-import { School } from './models/School';
-import { MatDialog } from '@angular/material';
-import { UserService } from './services/user.service';
-import { AdminService } from './services/admin.service';
-import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
-import { WebConnectionService } from './services/web-connection.service';
-import { ResizeInfoDialogComponent } from './resize-info-dialog/resize-info-dialog.component';
-import { StorageService } from './services/storage.service';
+import { filter, map, mergeMap, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { BUILD_INFO_REAL } from '../build-info';
 import { DarkThemeSwitch } from './dark-theme-switch';
 
-import * as _ from 'lodash';
-import {KioskModeService} from './services/kiosk-mode.service';
-import {HttpClient} from '@angular/common/http';
+import { DeviceDetection } from './device-detection.helper';
+import { School } from './models/School';
+import { AdminService } from './services/admin.service';
+import { GoogleLoginService } from './services/google-login.service';
+import { HttpService, SPError } from './services/http-service';
+import { KioskModeService } from './services/kiosk-mode.service';
+import { StorageService } from './services/storage.service';
+import { UserService } from './services/user.service';
+import { WebConnectionService } from './services/web-connection.service';
+import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
 
 declare const window;
 
@@ -93,41 +93,41 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       this.darkThemeEnabled = val;
     });
 
-    if ( !DeviceDetection.isIOSTablet() && !DeviceDetection.isMacOS() ) {
+    if (!DeviceDetection.isIOSTablet() && !DeviceDetection.isMacOS()) {
       const link = document.createElement('link');
-            link.setAttribute('rel', 'stylesheet');
-            link.setAttribute('href', './assets/css/custom_scrollbar.css');
-            document.head.appendChild(link);
+      link.setAttribute('rel', 'stylesheet');
+      link.setAttribute('href', './assets/css/custom_scrollbar.css');
+      document.head.appendChild(link);
     }
 
     this.webConnection.checkConnection().pipe(takeUntil(this.subscriber$),
-        filter(res => !res && !this.openConnectionDialog))
-        .subscribe(() => {
-            const toastDialog = this.dialog.open(ToastConnectionComponent, {
-              panelClass: 'toasr',
-              backdropClass: 'white-backdrop',
-              disableClose: true
-            });
+      filter(res => !res && !this.openConnectionDialog))
+      .subscribe(() => {
+        const toastDialog = this.dialog.open(ToastConnectionComponent, {
+          panelClass: 'toasr',
+          backdropClass: 'white-backdrop',
+          disableClose: true
+        });
 
-            toastDialog.afterOpened().subscribe(() => {
-                this.openConnectionDialog = true;
-            });
+        toastDialog.afterOpened().subscribe(() => {
+          this.openConnectionDialog = true;
+        });
 
-            toastDialog.afterClosed().subscribe(() => {
-                this.openConnectionDialog = false;
-            });
-    });
+        toastDialog.afterClosed().subscribe(() => {
+          this.openConnectionDialog = false;
+        });
+      });
 
     this.loginService.isAuthenticated$.pipe(
       takeUntil(this.subscriber$),
     )
-    .subscribe(t => {
-      console.log('Auth response ===>', t);
-      this._zone.run(() => {
-        this.showUISubject.next(true);
-        this.isAuthenticated = t;
+      .subscribe(t => {
+        console.log('Auth response ===>', t);
+        this._zone.run(() => {
+          this.showUISubject.next(true);
+          this.isAuthenticated = t;
+        });
       });
-    });
     // this.showError.pipe(
     //   delay(1000)
     // ).subscribe((signInError: any) => {
@@ -139,15 +139,15 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     // window.appLoaded(2000);
 
     this.http.schools$.pipe(
-        map(schools => _.filter(schools, (school => school.my_roles.length > 0))),
-        withLatestFrom(this.http.currentSchool$),
-        takeUntil(this.subscriber$))
-        .subscribe(([schools, currentSchool]) => {
-            this.schools = schools;
-          if (currentSchool && !_.find(schools, {id: currentSchool.id})) {
-            this.http.setSchool(schools[0]);
-          }
-    });
+      map(schools => _.filter(schools, (school => school.my_roles.length > 0))),
+      withLatestFrom(this.http.currentSchool$),
+      takeUntil(this.subscriber$))
+      .subscribe(([schools, currentSchool]) => {
+        this.schools = schools;
+        if (currentSchool && !_.find(schools, {id: currentSchool.id})) {
+          this.http.setSchool(schools[0]);
+        }
+      });
 
     // ============== SPA-407 ====================> Needs to be uncommented when the backend logic will completed
     // this.userService
@@ -164,18 +164,20 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     // ============== SPA-407 ===================> End
 
     this.http.currentSchool$.pipe(takeUntil(this.subscriber$))
-        .subscribe((value => {
-      if (!value) {
-        this.schools = [];
-      }
-    }));
+      .subscribe((value => {
+        if (!value) {
+          this.schools = [];
+        }
+      }));
     this.router.events
       .pipe(
         takeUntil(this.subscriber$),
         filter(event => event instanceof NavigationEnd),
         map(() => this.activatedRoute),
         map((route) => {
-          if (route.firstChild) { route = route.firstChild; }
+          if (route.firstChild) {
+            route = route.firstChild;
+          }
           return route;
         }),
         mergeMap((route) => route.data)
@@ -183,52 +185,50 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((data) => {
 
         // console.log(data);
-        const existingHub: any = document.querySelector('#hubspot-messages-iframe-container');
+        const existingHub: any = document.querySelector('#hs-script-loader');
         let newHub: any;
 
         if (!existingHub) {
           newHub = document.createElement('script');
           newHub.type = 'text/javascript';
           newHub.id = 'hs-script-loader';
+          newHub.setAttribute('id', 'hs-script-loader');
           newHub.src = '//js.hs-scripts.com/5943240.js';
         }
 
         if (data.currentUser) {
-          if (!window.user) {
-            window.user =  Object.freeze({
-              id: data.currentUser.id,
-              email: data.currentUser.primary_email,
-              firstName: data.currentUser.first_name,
-              lastName: data.currentUser.last_name
-            });
-          }
-          this.hubSpotSettings();
+          // if (!window.user) {
+          //   window.user = Object.freeze({
+          //     id: data.currentUser.id,
+          //     email: data.currentUser.primary_email,
+          //     firstName: data.currentUser.first_name,
+          //     lastName: data.currentUser.last_name
+          //   });
+          // }
+          this.hubSpotSettings(data.currentUser);
         }
 
-        if (data.hubspot && (data.authFree || (!data.currentUser.isStudent() && !this.http.kioskTokenSubject$.value && !this.kms.currentRoom$.value)) ) {
-            if (!existingHub) {
-              document.body.appendChild(newHub);
-              const dst = new Subject<any>();
-              interval(100)
-                .pipe(
-                  takeUntil(dst)
-                ).subscribe(() => {
-                  if (window._hsq) {
-                    dst.next();
-                    dst.complete();
-                  }
-              });
-            } else {
-              (existingHub as HTMLElement).setAttribute('style', 'display: block !important;width: 276px;height: 234px');
-            }
+        if (data.hubspot && (data.authFree || (!data.currentUser.isStudent() && !this.http.kioskTokenSubject$.value && !this.kms.currentRoom$.value))) {
+          if (!existingHub) {
+            document.body.appendChild(newHub);
+            const dst = new Subject<any>();
+            interval(100)
+              .pipe(
+                takeUntil(dst)
+              ).subscribe(() => {
+              if (window._hsq) {
+                dst.next();
+                dst.complete();
+              }
+            });
           } else {
-            if (existingHub) {
-              (existingHub as HTMLElement).setAttribute('style', 'display: none !important');
-            }
+            (existingHub as HTMLElement).setAttribute('style', 'display: block !important;width: 276px;height: 234px');
           }
-
-
-
+        } else {
+          if (existingHub) {
+            (existingHub as HTMLElement).setAttribute('style', 'display: none !important');
+          }
+        }
 
 
         if (data.hideSchoolToggleBar) {
@@ -239,42 +239,27 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.hideScroll = data.hideScroll;
       });
   }
-  hubSpotSettings() {
-    console.log(window._hsq, window.user);
 
+  hubSpotSettings(user) {
     const _hsq = window._hsq = window._hsq || [];
 
-    _hsq.push(['identify', {
-      id: window.user.id,
-      email: window.user.email,
-      firstName: window.user.firstName,
-      lastName: window.user.lastName,
+    const myPush = function (a) {
+      if (!BUILD_INFO_REAL) {
+        console.log('Pushed:', a);
+      }
+      _hsq.push(a);
+    };
+
+
+    myPush(['identify', {
+      email: user.primary_email,
+      firstname: user.first_name,
+      lastname: user.last_name,
     }]);
 
-    _hsq.push(['setPath', '/admin/dashboard']);
-    _hsq.push(['trackPageView']);
+    myPush(['setPath', '/admin/dashboard']);
+    myPush(['trackPageView']);
 
-  }
-  hubSpot() {
-    const body = {
-      properties: [
-        {
-          property: 'firstname',
-          value: window.user.firstName
-        },
-        {
-          property: 'lastname',
-          value: window.user.lastName
-        }
-      ]
-    };
-    const apiKey = 'c168a518-0e3b-4d8a-a1cb-bf20270ef958';
-    const email = window.user.email;
-
-    this.httpNative.post(`https://api.hubapi.com/contacts/v1/contact/createOrUpdate/email/${email}/?hapikey=${apiKey}`, body)
-      .subscribe((res) => {
-        console.log(res);
-      });
   }
 
   ngOnDestroy() {
@@ -282,7 +267,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscriber$.complete();
   }
 
-  ngAfterViewInit() {}
+  ngAfterViewInit() {
+  }
 
 
 }
