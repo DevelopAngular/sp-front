@@ -168,6 +168,7 @@ export class OverlayContainerComponent implements OnInit {
 
   selectedFile: ElementRef;
   selectedRooms = [];
+  selectedRoomsEditable = {};
   selectedRoomsInFolder: Pinnable[] = [];
   selectedTeachers: User[] = [];
   readyRoomsToEdit: Pinnable[] = [];
@@ -183,9 +184,9 @@ export class OverlayContainerComponent implements OnInit {
   nowRestriction: boolean;
   futureRestriction: boolean;
   gradientColor: string;
-  hideAppearance: boolean = false;
-  isEditRooms: boolean = false;
-  isEditFolder: boolean = false;
+  hideAppearance = false;
+  isEditRooms = false;
+  isEditFolder = false;
   editRoomInFolder: boolean;
   roomToEdit: Location;
   importedRooms: any[] = [];
@@ -209,14 +210,14 @@ export class OverlayContainerComponent implements OnInit {
   isDirtyFutureRestriction: boolean;
   isDirtyColor: boolean;
   isDirtyIcon: boolean;
-  isDirtyAdvancedOpt: boolean = false;
+  isDirtyAdvancedOpt = false;
 
   isChangeState: boolean;
   isChangeStateInFolder: boolean;
 
   isChangeLocations = new BehaviorSubject<boolean>(false);
 
-  advOptValid: boolean = false;
+  advOptValid = false;
   advOptOpen: boolean;
 
   newRoomsInFolder = [];
@@ -225,7 +226,7 @@ export class OverlayContainerComponent implements OnInit {
 
   pinnableToDeleteIds: number[] = [];
 
-  titleColor: string = 'white';
+  titleColor = 'white';
 
   form: FormGroup;
 
@@ -233,7 +234,7 @@ export class OverlayContainerComponent implements OnInit {
   showDoneSpinner: boolean;
 
   hideDeleteButton: boolean;
-  showProfileSearch: boolean = false;
+  showProfileSearch = false;
 
   advOptState: OptionState = {
       now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
@@ -283,6 +284,7 @@ export class OverlayContainerComponent implements OnInit {
   ) {}
 
   getHeaderData() {
+    // debugger
     let colors;
     switch (this.overlayType) {
         case 'newRoom':
@@ -501,35 +503,36 @@ export class OverlayContainerComponent implements OnInit {
 
       this.overlayType = this.dialogData['type'];
       if (this.dialogData['pinnable']) {
-          this.pinnable = this.dialogData['pinnable'];
+        this.pinnable = this.dialogData['pinnable'];
 
-          if (this.pinnable.type === 'category') {
-              this.locationService.getLocationsWithCategory(this.pinnable.category)
-                  .subscribe((res: Location[]) => {
-                      this.folderRoomsLoaded = true;
-                      this.selectedRooms = res;
-                      if (this.dialogData['forceSelectedLocation']) {
-                          this.setToEditRoom(this.dialogData['forceSelectedLocation']);
-                      }
-                  });
-          }
+        if (this.pinnable.type === 'category') {
+          this.locationService.getLocationsWithCategory(this.pinnable.category)
+            .subscribe((res: Location[]) => {
+              this.folderRoomsLoaded = true;
+              this.selectedRooms = res;
+              // this.selectedRooms = _.cloneDeep(res);
+              if (this.dialogData['forceSelectedLocation']) {
+                this.setToEditRoom(this.dialogData['forceSelectedLocation']);
+              }
+            });
+        }
       }
       if (this.dialogData['rooms']) {
-          if (this.overlayType === 'newFolder') {
-              this.pinnableToDeleteIds = this.dialogData['rooms'].map(pin => +pin.id);
-              this.dialogData['rooms'].forEach((room: Pinnable) => {
-                  if (room.type === 'category') {
-                      this.locationService.getLocationsWithCategory(room.category)
-                          .subscribe((res: Location[]) => {
-                              this.selectedRooms = [...this.selectedRooms, ...res];
-                          });
-                  } else {
-                      this.selectedRooms.push(room.location);
-                  }
-              });
-          } else {
-              this.selectedRooms = this.dialogData['rooms'];
-          }
+        if (this.overlayType === 'newFolder') {
+          this.pinnableToDeleteIds = this.dialogData['rooms'].map(pin => +pin.id);
+          this.dialogData['rooms'].forEach((room: Pinnable) => {
+            if (room.type === 'category') {
+              this.locationService.getLocationsWithCategory(room.category)
+                .subscribe((res: Location[]) => {
+                  this.selectedRooms = [...this.selectedRooms, ...res];
+                });
+            } else {
+                this.selectedRooms.push(room.location);
+            }
+          });
+        } else {
+          this.selectedRooms = this.dialogData['rooms'];
+        }
       }
 
       if (this.dialogData['pinnables$']) {
@@ -590,8 +593,6 @@ export class OverlayContainerComponent implements OnInit {
           switchMap((value: string) => this.http.searchIcons(value.toLowerCase()))
         );
       }
-
-
   }
 
   buildForm() {
@@ -983,7 +984,11 @@ export class OverlayContainerComponent implements OnInit {
   }
 
 
-  setToEditRoom(room) {
+  setToEditRoom(_room) {
+
+    // const room = this.selectedRoomsEditable.find(r => r.id === _room.id) || _room;
+    const room = this.selectedRoomsEditable[ _room.id] || _room;
+
     if (!this.dialogData['forceSelectedLocation']) {
       // debugger
       this.roomList.topScroll = this.roomList.domElement.nativeElement.scrollTop;
@@ -993,6 +998,7 @@ export class OverlayContainerComponent implements OnInit {
     this.formService.setFrameMotionDirection('forward');
 
     setTimeout(() => {
+      this.generateAdvOptionsModel(room);
 
       this.roomToEdit = room;
       this.roomName = room.title;
@@ -1028,6 +1034,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   onPublish() {
+    // debugger;
     this.showPublishSpinner = true;
     if (this.overlayType === 'newRoom') {
        const location = {
@@ -1066,7 +1073,7 @@ export class OverlayContainerComponent implements OnInit {
             this.hallPassService.updatePinnable(this.pinnable.id, newFolder)
             .subscribe(res => this.dialogRef.close());
         }
-        const locationsToUpdate$ = this.selectedRooms.map(location => {
+        const locationsToUpdate$ = Object.values(this.selectedRoomsEditable).map((location: any) => {
             let id;
             let data;
             if (location.location) {
@@ -1139,7 +1146,7 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   done() {
-    // debugger
+    // debugger;
       this.showDoneSpinner = true;
       if (this.overlayType === 'newRoomInFolder') {
           const location = {
@@ -1147,27 +1154,29 @@ export class OverlayContainerComponent implements OnInit {
                   room: this.roomNumber,
                   restricted: this.nowRestriction,
                   scheduling_restricted: this.futureRestriction,
-                  teachers: this.selectedTeachers.map(teacher => teacher.id),
+                  // teachers: this.selectedTeachers.map(teacher => teacher.id),
+                  teachers: this.selectedTeachers,
                   travel_types: this.travelType,
                   max_allowed_time: +this.timeLimit,
             };
 
         if (this.editRoomInFolder) {
-              this.locationService.updateLocation(this.roomToEdit.id, {...location, ...this.normalizeAdvOptData()})
-              .subscribe((res: Location) => {
-                  const newCollection = this.selectedRooms.filter(room => room.id !== this.roomToEdit.id);
-                  this.selectedRooms = [res, ...newCollection];
-                  this.setLocation('newFolder');
-                  this.isChangeLocations.next(true);
-              });
-          } else {
-              this.locationService.createLocation(location)
-              .subscribe(loc => {
-                  this.newRoomsInFolder.push(loc);
-                  this.selectedRooms.push(loc);
-                  this.setLocation('newFolder');
-                  this.isChangeLocations.next(true);
-              });
+            // this.locationService.updateLocation(this.roomToEdit.id, {...location, ...this.normalizeAdvOptData()})
+            // .subscribe((res: Location) => {
+            //     const newCollection = this.selectedRooms.filter(room => room.id !== this.roomToEdit.id);
+            //     this.selectedRooms = [res, ...newCollection];
+                this.selectedRoomsEditable[this.roomToEdit.id] = ({id : this.roomToEdit.id, ...location, ...this.normalizeAdvOptData()});
+                this.setLocation('newFolder');
+                this.isChangeLocations.next(true);
+            // });
+        } else {
+            this.locationService.createLocation(location)
+            .subscribe(loc => {
+                this.newRoomsInFolder.push(loc);
+                this.selectedRooms.push(loc);
+                this.setLocation('newFolder');
+                this.isChangeLocations.next(true);
+            });
           }
       }
       if (this.overlayType === 'settingsRooms') {
@@ -1461,9 +1470,7 @@ export class OverlayContainerComponent implements OnInit {
     } else if (this.importedRooms.length && !this.unknownEmails.length) {
       // return 3;
       this.setLocation('settingsRooms');
-
     }
-
   }
 
   getProgress(progress: HTMLElement) {
@@ -1543,7 +1550,7 @@ export class OverlayContainerComponent implements OnInit {
           return normalizedRooms;
         }),
         switchMap((_rooms: any[]): Observable<any[]> => {
-            console.log(_rooms)
+            console.log(_rooms);
           return this.userService.getUsersList('_profile_teacher')
             .pipe(
               map((teachers: any[]) => {

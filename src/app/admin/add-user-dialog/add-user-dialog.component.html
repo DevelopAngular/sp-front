@@ -315,7 +315,7 @@
                 [icon]="account.icon"
                 [isSelected]="account.selected"
                 [disabled]="isDisabled(account.role)"
-                (select)="account.selected = $event"
+                (select)="account.selected = !!$event"
         ></app-profile>
       </div>
     </div>

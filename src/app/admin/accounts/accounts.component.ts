@@ -19,6 +19,7 @@ import {GettingStartedProgressService} from '../getting-started-progress.service
 import {AddUserDialogComponent} from '../add-user-dialog/add-user-dialog.component';
 import {GSuiteOrgs} from '../../models/GSuiteOrgs';
 import {encode} from 'punycode';
+import {environment} from '../../../environments/environment';
 
 declare const history: History;
 
@@ -268,7 +269,7 @@ export class AccountsComponent implements OnInit {
             const rawObj = {
                 'Name': raw.display_name,
                 'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
-              'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : 'Standard',
+                'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : 'Standard',
                 'Profile(s)': partOf.length ? partOf : [{title: 'No profile'}],
 
             };
@@ -329,7 +330,7 @@ export class AccountsComponent implements OnInit {
           width: '425px',
           height: '500px',
           data: {
-            setupLink: `${window.location.origin}/accounts_setup?googleAuth=${encodeURIComponent(link.authorization_url)}`,
+            setupLink: `${window.location.origin}/${environment.production ? 'app/' : ''}accounts_setup?googleAuth=${encodeURIComponent(link.authorization_url)}`,
           }
         });
       });

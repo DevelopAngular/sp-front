@@ -3,6 +3,7 @@ import {Router} from '@angular/router';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {GettingStartedProgressService, ProgressInterface} from '../getting-started-progress.service';
 import {fromEvent} from 'rxjs';
+import {tap} from 'rxjs/operators';
 
 declare const window;
 
@@ -37,6 +38,12 @@ export class GettingStartedComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (!this.gsProgress.onboardProgress.create_school.start) {
+      this.gsProgress.updateProgress('create_school:start');
+    }
+    if (!this.gsProgress.onboardProgress.create_school.end) {
+      this.gsProgress.updateProgress('create_school:end');
+    }
 
   }
 

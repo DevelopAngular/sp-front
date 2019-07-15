@@ -185,7 +185,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((data) => {
 
         // console.log(data);
-        const existingHub: any = document.querySelector('#hs-script-loader');
+        const existingHub: any = document.querySelector('#hubspot-messages-iframe-container');
         let newHub: any;
 
         if (!existingHub) {
