@@ -24,7 +24,7 @@ export class ProfileComponent implements OnInit, OnChanges {
   @Input() isSelected: boolean;
   @Input() icon: string;
 
-  @Output() select: EventEmitter<OrgUnit> = new EventEmitter<OrgUnit>();
+  @Output() select: EventEmitter<OrgUnit | boolean> = new EventEmitter<OrgUnit | boolean>();
 
   openInfo: boolean;
 
@@ -43,63 +43,71 @@ export class ProfileComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.profile.selected) {
-      this.openInfo = true;
-    }
     if (this.profile) {
+      if (this.profile.selected) {
+        this.openInfo = true;
+      }
+      this.title = this.profile.title;
+      this.icon = this.profile.title;
       this.orgUnitCopy = _.cloneDeep(this.profile);
       this.selector$.next(this.profile.selector);
-
     }
   }
 
   ngOnInit() {
-    if (this.profile.selected) {
-      this.openInfo = true;
+    if (this.profile) {
+      if (this.profile.selected) {
+        this.openInfo = true;
+      }
+      this.title = this.profile.title;
+      this.selector$.subscribe(res => console.log(res));
     }
-    // this.selector$.next(this.profile.selector);
-    this.selector$.subscribe(res => console.log(res));
-
   }
 
   selected() {
     if (!this.disabled) {
-        // this.openInfo = !this.openInfo;
-        // this.select.emit(this.openInfo);
-      const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
-        panelClass: 'main-form-dialog-container',
-        width: '425px',
-        height: '500px',
-        data: {
-          orgUnit: this.profile,
-        }
-      });
-      dialogRef.afterClosed()
-        .pipe(
-          filter((res) => res && res.length)
-        )
-        .subscribe((res: GSuiteSelector[]) => {
 
-          console.log(this.orgUnitCopy.selector, res);
-
-          this.orgUnitCopy.selector.forEach((item: GSuiteSelector) => {
-            if (res.findIndex((upItem: GSuiteSelector) => upItem.as === item.as) === -1) {
-              item.updateAplicatinIndicator(false);
-            }
-          });
-          res.forEach((upItem: GSuiteSelector) => {
-            if (this.orgUnitCopy.selector.findIndex((item: GSuiteSelector) =>  upItem.path === item.path) === -1) {
-              this.orgUnitCopy.selector.push(upItem);
-            }
-          });
-          this.orgUnitCopy.selected = !!this.orgUnitCopy.selector.length;
-
-          this.selector$.next(this.orgUnitCopy.selector);
-          this.profile = this.orgUnitCopy;
-          this.orgUnitCopy = _.cloneDeep(this.orgUnitCopy);
-          this.select.emit(this.profile);
-
+      if (this.profile) {
+        const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
+          panelClass: 'main-form-dialog-container',
+          width: '425px',
+          height: '500px',
+          data: {
+            orgUnit: this.profile,
+          }
         });
+        dialogRef.afterClosed()
+          .pipe(
+            filter((res) => res && res.length)
+          )
+          .subscribe((res: GSuiteSelector[]) => {
+
+            console.log(this.orgUnitCopy.selector, res);
+
+            this.orgUnitCopy.selector.forEach((item: GSuiteSelector) => {
+              if (res.findIndex((upItem: GSuiteSelector) => upItem.as === item.as) === -1) {
+                item.updateAplicatinIndicator(false);
+              }
+            });
+            res.forEach((upItem: GSuiteSelector) => {
+              if (this.orgUnitCopy.selector.findIndex((item: GSuiteSelector) =>  upItem.path === item.path) === -1) {
+                this.orgUnitCopy.selector.push(upItem);
+              }
+            });
+            this.orgUnitCopy.selected = !!this.orgUnitCopy.selector.length;
+
+            this.selector$.next(this.orgUnitCopy.selector);
+            this.profile = this.orgUnitCopy;
+            this.orgUnitCopy = _.cloneDeep(this.orgUnitCopy);
+            this.select.emit(this.profile);
+
+          });
+      } else {
+        this.isSelected = !this.isSelected;
+        this.select.emit(this.isSelected);
+      }
+
+
     }
   }
 

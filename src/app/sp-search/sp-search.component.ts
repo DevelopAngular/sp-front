@@ -8,7 +8,7 @@ import {HttpClient} from '@angular/common/http';
 import {AdminService} from '../services/admin.service';
 import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
-import {map} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 
 declare const window;
 
@@ -134,6 +134,7 @@ export class SPSearchComponent implements OnInit {
   query = new BehaviorSubject<any[]>(null);
   schools: BehaviorSubject<any[]> = new BehaviorSubject(null);
   selectedSchool;
+  orgunitsCollection: GSuiteSelector[];
   orgunits: BehaviorSubject<any[]> = new BehaviorSubject(null);
 
   pending$: Subject<boolean> = new Subject();
@@ -208,6 +209,27 @@ export class SPSearchComponent implements OnInit {
             this.pending$.next(false);
             this.showDummy = v1 && !v1.length;
           });
+    } else if (this.searchTarget === 'orgunits') {
+      this.httpService.currentSchool$.pipe(
+        map((school: School) => {
+          return `${school.id}`;
+        }),
+        switchMap((schoolId: string) => {
+          return this.httpService.get(`v1/schools/${schoolId}/gsuite/org_units`);
+
+        }),
+        map((gss: any[]) => {
+          return gss
+            // .filter((gs) => gs.path.search(search) !== -1)
+            .map((gs: {path: string}) => new GSuiteSelector('+' + gs.path));
+        })
+      )
+      .subscribe((res: GSuiteSelector[]) => {
+        console.log(res);
+        this.orgunitsCollection = <GSuiteSelector[]>this.removeDuplicateStudents(res);
+        this.showDummy = !this.removeDuplicateStudents(res).length;
+        this.orgunits.next(this.removeDuplicateStudents(res));
+      });
     }
   }
 
@@ -274,19 +296,10 @@ export class SPSearchComponent implements OnInit {
       case 'orgunits':
 
         if (search !== '') {
-          this.httpService.get(`v1/schools/1/gsuite/org_units`)
-            .pipe(
-              map((gss: any[]) => {
-                return gss
-                  .filter((gs) => gs.path.search(search) !== -1)
-                  .map((gs: {path: string}) => new GSuiteSelector('+' + gs.path));
-              })
-            )
-            .subscribe((res: any[]) => {
-              console.log(res, this.removeDuplicateStudents(res));
-              this.showDummy = !this.removeDuplicateStudents(res).length;
-              this.orgunits.next(this.removeDuplicateStudents(res));
-            });
+          const regexp = new RegExp(search, 'i');
+          const res = this.orgunitsCollection.filter((gs) => gs.path.search(regexp) !== -1 );
+          this.orgunits.next(this.removeDuplicateStudents(res));
+
         } else {
           this.showDummy = false;
           this.inputValue$.next('');
@@ -328,7 +341,7 @@ export class SPSearchComponent implements OnInit {
     }
   }
 
-  removeDuplicateStudents(students: User[] |GSuiteSelector[]): User[] | GSuiteSelector[] {
+  removeDuplicateStudents(students: User[] | GSuiteSelector[]): User[] | GSuiteSelector[] {
     if (!students.length) {
       return [];
     }

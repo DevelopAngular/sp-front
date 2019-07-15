@@ -35,7 +35,7 @@
                              [cursor]="'pointer'"
                              [fontSize]="'14px'"
                              (buttonClick)="done()"
-        >{{(showPublishSpinner ? null : 'Publish')}}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
+        >{{ (showPublishSpinner ? null : 'Publish') }}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
         </app-gradient-button>
         <app-gradient-button *ngIf="showPublishEditRoom && overlayType === 'editRoom'"
                                  [minHeight]="'40px'"
@@ -45,7 +45,7 @@
                                  [hoverColor]="color_profile.overlay_color"
                                  [fontSize]="'14px'"
                                  (buttonClick)="onPublish()"
-            >{{(showPublishSpinner ? null : 'Publish')}}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
+            >{{ (showPublishSpinner ? null : 'Publish') }}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
             </app-gradient-button>
         <app-gradient-button *ngIf="showPublishNewRoom && overlayType === 'newRoom'"
                              [minHeight]="'40px'"
@@ -55,7 +55,7 @@
                              [hoverColor]="color_profile.overlay_color"
                              [fontSize]="'14px'"
                              (buttonClick)="onPublish()"
-        >{{(showPublishSpinner ? null : 'Publish')}}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
+        >{{ (showPublishSpinner ? null : 'Publish') }}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
         </app-gradient-button>
         <div *ngIf="!showPublishNewRoom && overlayType === 'newRoom' && isChangeState || (isDirtyAdvancedOpt && !advOptValid && !showPublishEditRoom)"
              [style.color]="titleColor"
@@ -71,7 +71,7 @@
              [hoverColor]="color_profile.overlay_color"
              [fontSize]="'14px'"
              (buttonClick)="onPublish()"
-          >{{(showPublishSpinner ? null : 'Publish')}}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
+          >{{ (showPublishSpinner ? null : 'Publish') }}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
         </app-gradient-button>
         <div
           *ngIf="!showPublishNewFolder && overlayType === 'newFolder' && !isEditFolder && isChangeState"
@@ -88,7 +88,7 @@
              [hoverColor]="color_profile.overlay_color"
              [fontSize]="'14px'"
              (buttonClick)="onPublish()"
-          >{{(showPublishSpinner ? null : 'Publish')}}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
+          >{{ (showPublishSpinner ? null : 'Publish') }}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
         </app-gradient-button>
       </div>
     </div>
@@ -110,7 +110,7 @@
                  *ngIf="backButtonsStateInFolder">
               Cancel</div>
             <div [ngClass]="{'room-in-folder-title-inactive': !isValidForm, 'room-in-folder-title-active': isValidForm || (overlayType === 'settingsRooms') || this.importedRooms.length && this.uploadingProgress.completed}">
-              {{headerText}}
+              {{ headerText }}
             </div>
             <div class="header-in-folder-button">
               <!--{{isEditRooms}} {{isEditFolder}}-->
@@ -121,7 +121,7 @@
                 [fontSize]="'12px'"
                 (buttonClick)="done()"
               >
-                {{(showDoneSpinner ? null : editRoomInFolder ? 'Save' : 'Add')}}<mat-spinner *ngIf="showDoneSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
+                {{ (showDoneSpinner ? null : editRoomInFolder ? 'Save' : 'Add') }}<mat-spinner *ngIf="showDoneSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
               </app-gradient-button>
               <div *ngIf="backButtonsStateInFolder && !showDoneButton" [style.color]="'#1F194E'">Incomplete</div>
             </div>
@@ -561,8 +561,8 @@
                 <span>Importing Rooms</span>
               </div>
               <div class="ds-flex-column ds-flex-center-center ds-cell-text-2 ds-mt-15">
-                <span class="ds-pb-5">{{importedRooms.length}} Rooms</span>
-                <span>{{unknownEmails.length}} issues</span>
+                <span class="ds-pb-5">{{ importedRooms.length }} Rooms</span>
+                <span>{{ unknownEmails.length }} issues</span>
               </div>
             </div>
 
@@ -572,9 +572,9 @@
           <div class="issues-screen ds-p-25" *ngIf="getRoomImportScreen() === 2">
 
             <div class="issues-container">
-              <div class="ds-dialog-heading ds-pt-10 ds-pb-15">Review Issues ({{unknownEmails.length}})</div>
+              <div class="ds-dialog-heading ds-pt-10 ds-pb-15">Review Issues ({{ unknownEmails.length }})</div>
               <div *ngFor="let issue of unknownEmails" class="ds-cell-text-2 ds-pb-5">
-                Room: {{issue.room.title}}, could not find teacher with email {{issue.email}}
+                Room: {{ issue.room.title }}, could not find teacher with email {{ issue.email }}
               </div>
             </div>
             <div class="issues-footer ds-flex-center-between">

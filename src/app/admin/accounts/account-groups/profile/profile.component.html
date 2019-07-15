@@ -2,8 +2,8 @@
   <div class="disabled-content" *ngIf="disabled"></div>
   <div class="content">
     <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">
-      <img width="28" height="28" [src]="openInfo ? darkTheme.getIcon({iconName: profile.title, lightFill: 'Navy', darkFill: 'White'}) : darkTheme.getIcon({iconName: profile.title, lightFill: 'Blue-Gray', darkFill: 'White'}) " alt="">
-      <div class="text" [style.color]="openInfo ? darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'}) : darkTheme.getColor({white: '#7F879D', dark: '#FFFFFF'}) ">{{ profile.title + 's' }}</div>
+      <img width="28" height="28" [src]="openInfo ? darkTheme.getIcon({iconName: icon, lightFill: 'Navy', darkFill: 'White'}) : darkTheme.getIcon({iconName: icon, lightFill: 'Blue-Gray', darkFill: 'White'}) " alt="">
+      <div class="text" [style.color]="openInfo ? darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'}) : darkTheme.getColor({white: '#7F879D', dark: '#FFFFFF'}) ">{{ title + 's' }}</div>
     </div>
 
     <img width="16" height="16" *ngIf="openInfo" [src]="'./assets/Mark (Jade).svg' | resolveAsset" alt="">

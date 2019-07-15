@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, EventEmitter, NgZone, OnInit, Output} from '@angular/core';
 import {constructUrl, QueryParams} from '../live-data/helpers';
 import {catchError, delay, map, switchMap, tap} from 'rxjs/operators';
-import {from, of, throwError} from 'rxjs';
+import {BehaviorSubject, from, Observable, of, throwError} from 'rxjs';
 import {LoginMethod} from '../google-signin/google-signin.component';
 import {GoogleAuthService} from '../services/google-auth.service';
 import {HttpClient} from '@angular/common/http';
@@ -24,6 +24,8 @@ declare const window;
 export class SchoolSignUpComponent implements OnInit, AfterViewInit {
 
   @Output() schoolCreatedEvent: EventEmitter<boolean> = new EventEmitter();
+  private pending: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public pending$: Observable<boolean> = this.pending.asObservable();
   private AuthToken: string;
   private jwt: JwtHelperService;
   public showError = { loggedWith: null, error: null };
@@ -70,6 +72,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
 
   }
   createSchool() {
+    this.pending.next(true);
         return from(this.initLogin())
           .pipe(
             tap(p => console.log(p)),
@@ -92,7 +95,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
                     'Authorization': 'Bearer ' + this.AuthToken // it's temporary
                   }
                 }).pipe(
-                  tap(() => this.gsProgress.updateProgress('create_school:end')),
+                  // tap(() => this.gsProgress.updateProgress('create_school:end')),
                   map((res: any) => {
                     this._zone.run(() => {
                       this.loginService.updateAuth(auth);
@@ -111,9 +114,11 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
               if (err && err.error !== 'popup_closed_by_user') {
                 this.loginService.showLoginError$.next(true);
               }
+              this.pending.next(false);
               return throwError(err);
             })
           ).subscribe((res) => {
+            this.pending.next(false);
             if (res) {
               this._zone.run(() => {
                 this.router.navigate(['admin', 'gettingstarted']);
@@ -123,6 +128,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
   }
 
   checkSchool(school: any) {
+    this.pending.next(true);
     this.http.get(constructUrl('https://smartpass.app/api/staging/onboard/schools/check_school', {place_id: school.place_id}), {
       headers: {
         'Authorization': 'Bearer ' + this.AuthToken // it's temporary
@@ -144,6 +150,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
         } else {
           this.school = school;
         }
+        this.pending.next(false);
       });
   }
 
