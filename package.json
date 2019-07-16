@@ -12,7 +12,7 @@
     "build-stats": "ng build --prod --stats-json",
     "bundle-report": "webpack-bundle-analyzer dist/stats.json",
     "ng-high-memory": "node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng",
-    "ng-ci-memory": "node --max_old_space_size=32768 ./node_modules/@angular/cli/bin/ng"
+    "ng-ci-memory": "node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng"
   },
   "private": true,
   "dependencies": {
