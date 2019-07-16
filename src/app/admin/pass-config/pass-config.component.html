@@ -1,10 +1,10 @@
 <!--<div *ngIf="!showRooms && !onboardLoaded" class="loading-theme_blue-gray spinner ds-w-100 ds-h-100 ds-flex-center-center">-->
 <!--  <mat-spinner [diameter]="35" [color]="'accent'"></mat-spinner>-->
 <!--</div>-->
+<!--{{ ' rooms = ' + showRooms}}  {{'onboard = ' + onboardLoaded}}-->
+<app-rooms-set-up *ngIf="!showRooms && onboardLoaded" (setUpResult)="onboard($event)"></app-rooms-set-up>
 
-<app-rooms-set-up *ngIf="showRooms === false && onboardLoaded" (setUpResult)="onboard($event)"></app-rooms-set-up>
-
-<div class="host" appSafariScroll *ngIf="showRooms === true && onboardLoaded">
+<div class="host" appSafariScroll *ngIf="showRooms && onboardLoaded">
     <div class="pass-config-wrapper">
         <div class="pass-config-container" [style.background-color]="darkTheme.getBackground('default')">
             <!--<div class="header-wrapper">-->

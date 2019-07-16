@@ -80,10 +80,10 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   ngOnInit() {
     combineLatest(this.adminService.getOnboardProgress(), this.hallPassService.getPinnables())
     .subscribe(([onboard, pinnables]) => {
-        console.log('Onboard ==>>>>', onboard);
+        console.log('Onboard ==>>>>', onboard, pinnables);
       if (onboard && (onboard as any[]).length && !pinnables.length) {
         const end = (onboard as any[]).find(item => item.name === 'setup_rooms:end');
-        this.showRooms = end.done;
+        this.showRooms = !!end.done;
       } else {
           const start = (onboard as any[]).find(item => item.name === 'setup_rooms:start');
           const end = (onboard as any[]).find(item => item.name === 'setup_rooms:end');
@@ -314,61 +314,69 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   }
 
   dialogContainer(data, component) {
-     const overlayDialog =  this.dialog.open(component, {
-          panelClass: 'overlay-dialog',
-          backdropClass: 'custom-bd',
-          disableClose: true,
-          minWidth: '800px',
-          maxWidth: '100vw',
-          width: '800px',
-          height: '500px',
-          data: data
-      });
+    const overlayDialog =  this.dialog.open(component, {
+      panelClass: 'overlay-dialog',
+      backdropClass: 'custom-bd',
+      disableClose: true,
+      minWidth: '800px',
+      maxWidth: '100vw',
+      width: '800px',
+      height: '500px',
+      data: data
+    });
 
-     overlayDialog.afterOpen().subscribe(() => {
-       this.forceSelectedLocation = null;
-     });
-     overlayDialog.afterClosed()
-         .pipe(switchMap(() => this.hallPassService.getPinnables())).subscribe(res => {
-             this.pinnables = res;
-             this.selectedPinnables = [];
-             this.bulkSelect = false;
-     });
+    overlayDialog.afterOpen().subscribe(() => {
+     this.forceSelectedLocation = null;
+    });
+    overlayDialog.afterClosed()
+     .pipe(switchMap(() => this.hallPassService.getPinnables())).subscribe(res => {
+       this.pinnables = res;
+       this.selectedPinnables = [];
+       this.bulkSelect = false;
+    });
   }
 
   onboard({createPack, pinnables}) {
-      if (createPack) {
-          const requests$ = pinnables.map(pin => {
-                  const location =  {
-                      title: pin.title,
-                      room: pin.room,
-                      restricted: pin.restricted,
-                      scheduling_restricted: pin.scheduling_restricted,
-                      travel_types: pin.travel_types,
-                      max_allowed_time: pin.max_allowed_time
-                  };
-                  return this.locationsService.createLocation(location)
-                      .pipe(switchMap((loc: Location) => {
-                          const pinnable = {
-                              title: pin.title,
-                              color_profile: pin.color_profile_id,
-                              icon: pin.icon,
-                              location: loc.id,
-                          };
-                          return this.hallPassService.createPinnable(pinnable);
-                      }));
-          });
+    console.log(createPack, pinnables);
+    if (createPack) {
+      const requests$ = pinnables.map(pin => {
+        const location =  {
+          title: pin.title,
+          room: pin.room,
+          restricted: pin.restricted,
+          scheduling_restricted: pin.scheduling_restricted,
+          travel_types: pin.travel_types,
+          max_allowed_time: pin.max_allowed_time
+        };
+        return this.locationsService.createLocation(location)
+          .pipe(switchMap((loc: Location) => {
+            const pinnable = {
+              title: pin.title,
+              color_profile: pin.color_profile_id,
+              icon: pin.icon,
+              location: loc.id,
+            };
+            return this.hallPassService.createPinnable(pinnable);
+          }));
+      });
 
-          forkJoin(requests$)
-              .pipe(switchMap((res) => {
-                    return this.adminService.updateOnboardProgress('setup_rooms:end').pipe(mapTo(res));
-                }))
-              .subscribe((res: Pinnable[]) => {
-              this.pinnables.push(...res);
-              this.showRooms = true;
-          });
-      } else {
+      forkJoin(requests$)
+        .pipe(
+          switchMap((res) => {
+            return this.adminService.updateOnboardProgress('setup_rooms:end').pipe(mapTo(res));
+          })
+        )
+        .subscribe((res: Pinnable[]) => {
+          this.pinnables.push(...res);
           this.showRooms = true;
+        });
+      } else {
+        this.adminService.updateOnboardProgress('setup_rooms:end')
+          .subscribe(() => {
+
+            this.showRooms = true;
+
+          });
       }
   }
 }

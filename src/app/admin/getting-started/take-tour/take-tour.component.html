@@ -19,9 +19,26 @@
           </div>
         </div>
 
-        <div class="video-block" [style.background-color]="darkTheme.getBackground('high', true)">
-          <div class="video-header" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Watch Intro Video</div>
-          <div class="video"></div>
+<!--        <div class="video-block" [style.background-color]="darkTheme.getBackground('high', true)">-->
+<!--          <div class="video-header" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Watch Intro Video</div>-->
+<!--          <div class="video"></div>-->
+<!--        </div>-->
+        <div class="call-block" [style.background-color]="darkTheme.getBackground('high', true)">
+          <div class="ds-w-100 call-header" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Schedule a call</div>
+          <div class="ds-mt-15 ds-mb-25">
+            Schedule a personalized call with us to walk you through set-up.
+            We’ll explain to you how SmartPass features can work best for your school.
+          </div>
+          <div class="ds-flex-center-center">
+            <app-gradient-button
+              [size]="'medium'"
+              [padding]="'15px 40px'"
+              [buttonLink]="'https://www.smartpass.app/meeting'"
+              [linkType]="'_blank'"
+              [text]="'Find a time'"
+            >
+            </app-gradient-button>
+          </div>
         </div>
       </div>
 

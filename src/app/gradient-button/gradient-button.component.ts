@@ -132,7 +132,7 @@ export class GradientButtonComponent implements OnInit {
       }
     }
     if (this.buttonLink) {
-      this.rightIcon = this.rightIcon || './assets/External Link (White).svg';
+      this.rightIcon = this.rightIcon === null ? './assets/External Link (White).svg' : this.rightIcon;
     }
   }
 

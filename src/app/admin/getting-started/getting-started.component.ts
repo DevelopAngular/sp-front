@@ -38,10 +38,10 @@ export class GettingStartedComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (!this.gsProgress.onboardProgress.create_school.start) {
+    if (this.gsProgress.onboardProgress.create_school && !this.gsProgress.onboardProgress.create_school.start) {
       this.gsProgress.updateProgress('create_school:start');
     }
-    if (!this.gsProgress.onboardProgress.create_school.end) {
+    if (this.gsProgress.onboardProgress.create_school && !this.gsProgress.onboardProgress.create_school.end) {
       this.gsProgress.updateProgress('create_school:end');
     }
 

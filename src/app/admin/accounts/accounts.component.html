@@ -68,9 +68,14 @@
             [rightIcon]="'./assets/Chevron Right (White).svg'"
             (buttonClick)="showAccountsSetupLink()"
           >
-              <span style="font-weight: normal;">
+            <div style="width: 140px;">
+              <span *ngIf="!(pending$ | async)" style="font-weight: normal;">
                 Send them the link
               </span>
+              <div *ngIf="(pending$ | async)" class="loading-theme_white spinner ds-w-100 ds-h-100 ds-flex-center-center">
+                <mat-spinner [diameter]="25" [color]="'accent'"></mat-spinner>
+              </div>
+            </div>
           </app-gradient-button>
         </div>
       </div>

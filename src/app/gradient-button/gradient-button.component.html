@@ -34,10 +34,6 @@
     </div>
   </div>
   <div *ngIf="buttonLink" class="wrapper-container button-link">
-    <!--<a *ngIf="documentType === 'xlsx'" class="link" [href]="buttonLink" target="_blank" name="test">-->
-      <!--<span>XLSX</span>-->
-      <!--<img [src]="'./assets/Download (White).svg' | resolveAsset" alt="External Link (White).png">-->
-    <!--</a>-->
     <a class="link" [href]="buttonLink" [attr.target]="linkType" name="link" [attr.draggable]="download">
       <img draggable="false" *ngIf="leftIcon" [style.width]="leftImageWidth" [style.height]="leftImageHeight" class="icon left-icon" [src]="leftIcon | resolveAsset">
 
@@ -47,7 +43,7 @@
         [style.font-size]="fontSize">
         <span>{{text}}</span>
       </div>
-      <img draggable="false" *ngIf="linkType === '_blank' || true" [style.width]="leftImageWidth" [style.height]="leftImageHeight" class="icon right-icon" [src]="rightIcon | resolveAsset">
+      <img draggable="false" *ngIf="linkType === '_blank' && rightIcon" [style.width]="leftImageWidth" [style.height]="leftImageHeight" class="icon right-icon" [src]="rightIcon | resolveAsset">
     </a>
   </div>
   <div class="subtitle" [style.margin-top]="subtitle ? '0px' : '-12px'" [style.opacity]="subtitle ? '1' : '0'">
