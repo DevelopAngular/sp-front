@@ -233,7 +233,7 @@ export class MainHallPassFormComponent implements OnInit {
             this.formSize.height =  `500px`;
           } else {
             this.formSize.width =  this.isDeviceLarge ?  `335px` : `700px`;
-            this.formSize.height = `500px`;
+            this.formSize.height = this.isDeviceLarge ?  `500px` : `400px`;
           }
           break;
         case 3:
