@@ -46,6 +46,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
   ) {
     this.jwt = new JwtHelperService();
     this.errorToast = this.httpService.errorToast$;
+    window.appLoaded(0);
   }
 
   ngOnInit() {

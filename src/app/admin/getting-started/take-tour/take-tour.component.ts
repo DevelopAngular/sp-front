@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Router} from '@angular/router';
 import {AdminService} from '../../../services/admin.service';
 import {DarkThemeSwitch} from '../../../dark-theme-switch';
 import {switchMap} from 'rxjs/operators';
-import {of} from 'rxjs';
+import {forkJoin, of} from 'rxjs';
+import {GettingStartedProgressService} from '../../getting-started-progress.service';
 
 declare const window;
 
@@ -21,18 +22,19 @@ export class TakeTourComponent implements OnInit {
     public router: Router,
     private adminService: AdminService,
     public darkTheme: DarkThemeSwitch,
+    private gpProgress: GettingStartedProgressService
   ) { }
 
   ngOnInit() {
-    this.adminService.getOnboardProgress().pipe(switchMap((onboard: any[]) => {
-      const end = onboard.find(item => item.name === 'take_a_tour:end');
-
-      if (!end.done) {
-        return this.adminService.updateOnboardProgress('take_a_tour:end');
-      } else {
-          return of(null);
+    if (this.gpProgress.onboardProgress.take_a_tour) {
+      // console.log(this.gpProgress.onboardProgress);
+      if (!this.gpProgress.onboardProgress.take_a_tour.create_accounts) {
+        this.adminService.updateOnboardProgress('take_a_tour:create_accounts').subscribe();
       }
-    })).subscribe();
+      if (!this.gpProgress.onboardProgress.take_a_tour.end) {
+        this.adminService.updateOnboardProgress('take_a_tour:end').subscribe();
+      }
+    }
   }
 
   openUrl(url) {

@@ -93,6 +93,22 @@
           background-color: #7b7df1;
         }
       }
+      .call-block {
+        width: 350px;
+        height: 255px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.0616259);
+        border-radius: 12px;
+        background-color: white;
+        color: $blue-gray;
+        font-size: 15px;
+        box-sizing: border-box;
+        padding: 35px;
+        .call-header {
+          color: $navy;
+          font-size: 24px;
+          font-weight: bold;
+        }
+      }
     }
 
     .bottom {

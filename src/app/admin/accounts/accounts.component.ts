@@ -246,11 +246,11 @@ export class AccountsComponent implements OnInit {
 
     private getUserList(search = '') {
       this.userList = [];
-      this.http.globalReload$.pipe(switchMap(() => {
         this.pending$.next(true);
-        return this.userService.getUsersList('', search);
-      }))
-          .subscribe(users => {
+      // this.http.globalReload$.pipe(switchMap(() => {
+      //   return this.userService.getUsersList('', search);
+      // }))
+      this.userService.getUsersList('', search).subscribe(users => {
             this.dataTableHeadersToDisplay = [];
               this.userList = this.buildUserListData(users);
             this.pending$.next(false);
@@ -320,19 +320,25 @@ export class AccountsComponent implements OnInit {
 
   showAccountsSetupLink() {
     this.updateAcoountsOnboardProgress('start');
+    this.pending$.next(true);
     this.adminService
       .getAccountSyncLink(+this.http.getSchool().id)
-      .subscribe((link: {authorization_url: string}) => {
-
-        const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
-          panelClass: 'overlay-dialog',
-          backdropClass: 'custom-bd',
-          width: '425px',
-          height: '500px',
-          data: {
-            setupLink: `${window.location.origin}/${environment.production ? 'app/' : ''}accounts_setup?googleAuth=${encodeURIComponent(link.authorization_url)}`,
-          }
-        });
+      .pipe(
+        switchMap((link: {authorization_url: string}) => {
+          const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
+            panelClass: 'overlay-dialog',
+            backdropClass: 'custom-bd',
+            width: '425px',
+            height: '500px',
+            data: {
+              setupLink: `${window.location.origin}/${environment.production ? 'app/' : ''}accounts_setup?googleAuth=${encodeURIComponent(link.authorization_url)}`,
+            }
+          });
+          return dialogRef.afterClosed();
+        })
+      )
+      .subscribe(() => {
+        this.pending$.next(false);
       });
 
   }

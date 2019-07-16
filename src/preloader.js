@@ -1,5 +1,17 @@
 window.waitForAppLoaded = function() {
 
+  var urlBLackList = [
+    'school_signup',
+  ];
+
+  var allowPreloader = urlBLackList.every(function(item) {
+    return window.location.pathname.search(new RegExp(item, 'i')) === -1;
+  })
+
+  if (!allowPreloader) {
+    return false;
+  }
+
   if (!window.preloader) {
     Object.defineProperty(window, 'preloader', { value: {
         visibility: true,
