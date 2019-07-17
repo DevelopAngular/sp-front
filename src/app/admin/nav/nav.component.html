@@ -8,8 +8,8 @@
       <app-smartpass-logo></app-smartpass-logo>
       <div style="display: flex;align-items: center;">
 
-        <div [style.color]="isSelected(gettingStarted.route) ? '#00B476' : darkTheme.getColor({white: '#7F879D', dark: '#FFFFFF'})" *ngIf="!isSelected(gettingStarted.route) && gsProgress.onboardProgress.progress < 100">
-          <span>{{gsProgress.onboardProgress.progress}}</span>
+        <div [style.color]="isSelected(gettingStarted.route) ? '#00B476' : darkTheme.getColor({white: '#7F879D', dark: '#FFFFFF'})" *ngIf="!isSelected(gettingStarted.route) && (gsProgress.onboardProgress$ | async).progress < 100">
+          <span>{{(gsProgress.onboardProgress$ | async).progress}}</span>
           <span>%</span>
         </div>
         <div>
