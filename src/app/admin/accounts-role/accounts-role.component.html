@@ -284,9 +284,6 @@
         </div>
       </div>
 
-
-
-
       <div *ngIf="noUsersDummyVisibility" class="ds-flex-center-center ds-flex-column ds-pt-25 ds-mt-25" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
         <img [src]="'./assets/emptyStates/no-users.svg'" class="ds-py-25 ds-mt-25 ds-mb-10" alt="no-users.svg">
         <div class="ds-empty-text-title">No Users</div>
@@ -327,7 +324,9 @@
               <img width="50" height="50" [src]="'./assets/google/google_logo.svg' | resolveAsset" alt="">
               <div class="title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">
                 G Suite
-                <div *ngIf="GSuiteOrgs.last_successful_sync" class="small-text" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">{{ 'Last sync: ' + formatDate(GSuiteOrgs.last_successful_sync) }}</div>
+
+
+                <div *ngIf="GSuiteOrgs.last_successful_sync" class="small-text" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">Last sync: {{syncing.enabled ? 'Syncing' + syncing.syncingDots: formatDate(GSuiteOrgs.last_successful_sync) }}</div>
                 <div *ngIf="!GSuiteOrgs.last_successful_sync" class="small-text" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">Last sync: - </div>
               </div>
             </div>
@@ -352,8 +351,8 @@
           <div class="sync">
             <div class="title" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1E194F'})">Sync</div>
             <div *ngIf="GSuiteOrgs.last_successful_sync && GSuiteOrgs.next_sync; else empty" class="subtitle" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">
-              <div>{{ 'Last sync: ' + formatDate(GSuiteOrgs.last_successful_sync) }}</div>
-              <div>Next scheduled sync: {{ formatDate(GSuiteOrgs.next_sync) }}</div>
+              <div>Last sync: {{syncing.enabled ? 'Syncing' + syncing.syncingDots: formatDate(GSuiteOrgs.last_successful_sync) }}</div>
+              <div>Next scheduled sync: {{ syncing.enabled ? 'Syncing' + syncing.syncingDots: formatDate(GSuiteOrgs.next_sync) }}</div>
             </div>
             <ng-template #empty>
               <div class="subtitle" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import {publish, share, switchMap} from 'rxjs/operators';
+import {map, mapTo, publish, share, switchMap} from 'rxjs/operators';
 import {AdminService} from '../services/admin.service';
 import {HttpService} from '../services/http-service';
+import {BehaviorSubject, Observable} from 'rxjs';
 
 export interface OnboardItem {
   done: string;
@@ -41,7 +42,7 @@ export interface ProgressInterface {
 @Injectable()
 export class GettingStartedProgressService {
 
-  public onboardProgress: {
+  private onboardProgress: {
     progress: number,
     offset: number
     take_a_tour?: any,
@@ -52,7 +53,19 @@ export class GettingStartedProgressService {
   } = {
     progress: 0,
     offset: 130
-  };
+  }
+
+  private onboardProgressSubject: BehaviorSubject<{
+    progress: number,
+    offset: number
+    take_a_tour?: any,
+    launch_day_prep?: any,
+    setup_rooms?: any,
+    setup_accounts?: any,
+    create_school?: any
+  }> = new BehaviorSubject(this.onboardProgress);
+
+  public onboardProgress$ = this.onboardProgressSubject.asObservable();
 
   constructor(
     private adminService: AdminService,
@@ -64,24 +77,30 @@ export class GettingStartedProgressService {
           return this.adminService.getOnboardProgress();
         })
       )
-      .subscribe((data: Array<OnboardItem>) => {
-        this.onboardProgress.progress = 0;
-        this.onboardProgress.offset = 130;
-        data.forEach((item: OnboardItem ) => {
-          const ticket = item.name.split(':');
-          if (!this.onboardProgress[ticket[0]]) {
-            this.onboardProgress[ticket[0]] = {};
+      .pipe(
+        map((data: Array<OnboardItem>) => {
+          this.onboardProgress.progress = 0;
+          this.onboardProgress.offset = 130;
+          data.forEach((item: OnboardItem ) => {
+            const ticket = item.name.split(':');
+            if (!this.onboardProgress[ticket[0]]) {
+              this.onboardProgress[ticket[0]] = {};
+            }
+            this.onboardProgress[ticket[0]][ticket[1]] = item.done;
+            if (item.done) {
+              this.onboardProgress.progress += Progress[item.name];
+              this.onboardProgress.offset -= Progress[item.name];
+            }
+          });
+          if (this.onboardProgress.progress === 100) {
+            this.onboardProgress.offset = 0;
           }
-          this.onboardProgress[ticket[0]][ticket[1]] = item.done;
-          if (item.done) {
-            this.onboardProgress.progress += Progress[item.name];
-            this.onboardProgress.offset -= Progress[item.name];
-          }
-        });
-        if (this.onboardProgress.progress === 100) {
-          this.onboardProgress.offset = 0;
-        }
-        // console.log(this.onboardProgress);
+          // console.log(this.onboardProgress);
+          return this.onboardProgress;
+        })
+      )
+      .subscribe((op) => {
+        this.onboardProgressSubject.next(op as any);
       });
   }
 

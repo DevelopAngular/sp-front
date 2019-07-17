@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material';
 import { HttpService } from '../../services/http-service';
 import { UserService } from '../../services/user.service';
 import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
-import {mapTo, switchMap} from 'rxjs/operators';
+import {map, mapTo, switchMap} from 'rxjs/operators';
 import { AdminService } from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {bumpIn} from '../../animations';
@@ -85,20 +85,25 @@ export class AccountsComponent implements OnInit {
 
    this.adminService.getGSuiteOrgs().subscribe(res => this.gSuiteOrgs = res);
     this.http.globalReload$.pipe(
-      switchMap(() => this.adminService.getAdminAccounts())
+      switchMap(() => this.adminService.getAdminAccounts()),
+      switchMap((u_list: any) => {
+        if (u_list.total_count !== undefined) {
+          u_list.total = u_list.total_count;
+        } else {
+          u_list.total = Object.values(u_list).reduce((a: number, b: number) => a + b);
+        }
+        console.log(u_list);
+        this.accounts$.next(u_list);
+        return this.gsProgress.onboardProgress$;
+      })
     )
-    .subscribe((u_list: any) => {
-      this.splash = this.gsProgress.onboardProgress.setup_accounts && (!this.gsProgress.onboardProgress.setup_accounts.start || !this.gsProgress.onboardProgress.setup_accounts.end);
-      if (u_list.total_count !== undefined) {
-        u_list.total = u_list.total_count;
-      } else {
-        u_list.total = Object.values(u_list).reduce((a: number, b: number) => a + b);
-      }
-      console.log(u_list);
-      this.accounts$.next(u_list);
+    .subscribe((op: any) => {
+      console.log(op);
+      this.splash = op.setup_accounts && (!op.setup_accounts.start || !op.setup_accounts.end);
+
     });
 
-    this.splash = this.gsProgress.onboardProgress.setup_accounts && (!this.gsProgress.onboardProgress.setup_accounts.start || !this.gsProgress.onboardProgress.setup_accounts.end);
+    // this.splash = op.setup_accounts && (!op.setup_accounts.start || !op.setup_accounts.end);
 
 
     this.userService.userData.subscribe((user) => {

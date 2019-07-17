@@ -25,7 +25,9 @@ export class GettingStartedComponent implements OnInit {
     }
   }
 
-  banner: ElementRef<HTMLDivElement>;
+  public banner: ElementRef<HTMLDivElement>;
+
+  private bannerVissible: boolean;
 
   constructor(
     public router: Router,
@@ -34,16 +36,19 @@ export class GettingStartedComponent implements OnInit {
   ) { }
 
   get bannerVisibility() {
-    return this.gsProgress.onboardProgress.create_school && (!this.gsProgress.onboardProgress.create_school.start || !this.gsProgress.onboardProgress.create_school.end);
+    return this.bannerVissible;
   }
 
   ngOnInit() {
-    if (this.gsProgress.onboardProgress.create_school && !this.gsProgress.onboardProgress.create_school.start) {
-      this.gsProgress.updateProgress('create_school:start');
-    }
-    if (this.gsProgress.onboardProgress.create_school && !this.gsProgress.onboardProgress.create_school.end) {
-      this.gsProgress.updateProgress('create_school:end');
-    }
+    this.gsProgress.onboardProgress$.subscribe((op: any) => {
+      if (op.create_school && !op.create_school.start) {
+        this.gsProgress.updateProgress('create_school:start');
+      }
+      if (op.create_school && !op.create_school.end) {
+        this.gsProgress.updateProgress('create_school:end');
+      }
+      this.bannerVissible = op.create_school && (!op.create_school.start || !op.create_school.end);
+    });
 
   }
 
