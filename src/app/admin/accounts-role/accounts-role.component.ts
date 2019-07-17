@@ -1,6 +1,6 @@
 import {Component, ElementRef, HostListener, Input, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material';
-import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
+import {BehaviorSubject, interval, Observable, of, Subject, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {debounceTime, distinctUntilChanged, filter, map, share, startWith, switchMap, takeUntil, tap} from 'rxjs/operators';
@@ -52,20 +52,69 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   public dataTableEditState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public pending$: Subject<boolean> = new Subject<boolean>();
 
+  public syncingDots: string;
+
   public accounts$ =
     new BehaviorSubject<any>({
-      total_count: 0,
-      admin_count: 0,
-      student_count: 0,
-      teacher_count: 0,
-      assistant_count: 0
+      total_count: null,
+      admin_count: null,
+      student_count: null,
+      teacher_count: null,
+      assistant_count: null
     });
 
     ////// G_Suite
 
-  public sync = {
-    last: 'Last sync: Today, 9:23 AM',
-    next: 'Today 1:23 PM'
+  public syncing = {
+    intervalId: null,
+    enabled: false,
+    syncingDots: '',
+    // destroyer$: new Subject<any>(),
+    start() {
+      if (this.enabled) {
+        return;
+      }
+      this.enabled = true;
+      let dot = 0;
+      this.intervalId = interval(250)
+        .pipe(
+          map(() => {
+            dot += 1;
+            if (dot > 3) {
+              dot = 0;
+            }
+            return dot;
+          }),
+          // takeUntil(this.destroyer$)
+        )
+        .subscribe((res) => {
+          // console.log(res);
+          switch (res) {
+            case 0:
+              this.syncingDots = '';
+              break;
+            case 1:
+              this.syncingDots = '.';
+              break;
+            case 2:
+              this.syncingDots = '..';
+              break;
+            case 3:
+              this.syncingDots = '...';
+              break;
+          }
+        });
+    },
+    end() {
+      if (!this.enabled) {
+        return;
+      }
+      this.enabled = false;
+      this.syncingDots = '';
+      this.intervalId.unsubscribe();
+      // this.destroyer$.next();
+      // this.destroyer$.complete();
+    }
   };
 
   public GSuiteOrgs: GSuiteOrgs = <GSuiteOrgs>{};
@@ -134,16 +183,16 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   get noUsersDummyVisibility() {
     switch (this.role) {
       case '_profile_admin':
-        return this.accounts$.value.admin_count === 0 && this.loaded;
+        return this.accounts$.value.admin_count === 0 && !this.loaded;
         break;
       case '_profile_teacher':
-        return this.accounts$.value.teacher_count === 0 && this.loaded;
+        return this.accounts$.value.teacher_count === 0 && !this.loaded;
         break;
       case '_profile_student':
-        return this.accounts$.value.student_count === 0 && this.loaded;
+        return this.accounts$.value.student_count === 0 && !this.loaded;
         break;
       case '_profile_assistant':
-        return this.accounts$.value.assistant_count === 0 && this.loaded;
+        return this.accounts$.value.assistant_count === 0 && !this.loaded;
         break;
     }
   }
@@ -157,10 +206,29 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.adminService.getGSuiteOrgs().pipe(startWith({}), tap(console.log))
-      .subscribe((res) => {
-        this.GSuiteOrgs = res;
+    // this.syncing.start();
+
+    interval(1758)
+      .pipe(
+        switchMap((res) => {
+          return this.adminService.getGSuiteOrgs();
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((res: any) => {
+        if (res.is_syncing) {
+          this.syncing.start();
+          // console.log(res);
+        } else if (!res.is_syncing) {
+          this.syncing.end();
+        }
+        for (const key in res) {
+          if (this.GSuiteOrgs[key] !== res[key]) {
+            this.GSuiteOrgs[key] = res[key];
+          }
+        }
       });
+
     this.http.globalReload$.pipe(
       tap(() => {
         this.role = null;

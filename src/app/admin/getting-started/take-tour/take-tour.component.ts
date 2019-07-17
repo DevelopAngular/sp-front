@@ -22,19 +22,21 @@ export class TakeTourComponent implements OnInit {
     public router: Router,
     private adminService: AdminService,
     public darkTheme: DarkThemeSwitch,
-    private gpProgress: GettingStartedProgressService
+    private gsProgress: GettingStartedProgressService
   ) { }
 
   ngOnInit() {
-    if (this.gpProgress.onboardProgress.take_a_tour) {
-      // console.log(this.gpProgress.onboardProgress);
-      if (!this.gpProgress.onboardProgress.take_a_tour.create_accounts) {
-        this.adminService.updateOnboardProgress('take_a_tour:create_accounts').subscribe();
+    this.gsProgress.onboardProgress$.subscribe((op: any) => {
+      if (op.take_a_tour) {
+        if (!op.take_a_tour.create_accounts) {
+          this.adminService.updateOnboardProgress('take_a_tour:create_accounts').subscribe();
+        }
+        if (!op.take_a_tour.end) {
+          this.adminService.updateOnboardProgress('take_a_tour:end').subscribe();
+        }
       }
-      if (!this.gpProgress.onboardProgress.take_a_tour.end) {
-        this.adminService.updateOnboardProgress('take_a_tour:end').subscribe();
-      }
-    }
+    });
+
   }
 
   openUrl(url) {

@@ -6,7 +6,7 @@
       <div class="text" [style.color]="openInfo ? darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'}) : darkTheme.getColor({white: '#7F879D', dark: '#FFFFFF'}) ">{{ title + 's' }}</div>
     </div>
 
-    <img width="16" height="16" *ngIf="openInfo" [src]="'./assets/Mark (Jade).svg' | resolveAsset" alt="">
+    <img width="16" height="16" *ngIf="openInfo || isSelected" [src]="'./assets/Mark (Jade).svg' | resolveAsset" alt="">
     <img width="16" height="16" *ngIf="plusIcon && !openInfo" [src]="openInfo ? darkTheme.getIcon({iconName: 'Plus', lightFill: 'Navy', darkFill: 'White'}) : darkTheme.getIcon({iconName: 'Plus', lightFill: 'Blue-Gray', darkFill: 'White'}) " alt="">
   </div>
   <div class="info" *ngIf="openInfo && plusIcon">

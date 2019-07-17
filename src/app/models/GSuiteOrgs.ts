@@ -4,6 +4,7 @@ export interface GSuiteOrgs {
     next_sync?: string;
     num_accounts?: number;
     selectors?: any;
+    is_syncing?: boolean;
     is_enabled?: boolean;
     is_authorized?: boolean;
     wants_authorization?: boolean;

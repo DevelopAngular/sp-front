@@ -1,4 +1,9 @@
 <div class="add-user-dialog-container">
+  <!-- Disables card when some async stuffs occur-->
+  <div class="disabled-state loading-theme_light-gray spinner" *ngIf="(pending$ | async)">
+    <mat-spinner [diameter]="'100'" [color]="'accent'"></mat-spinner>
+  </div>
+  <!-- end -->
   <div class="heading" #header>
     <div class="back-button" (click)="back()" *ngIf="!state">
       <img *ngIf="!selectedUsers.length && (!showIncomplete() && !showSaveButton()); else cancel" [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">
@@ -66,100 +71,22 @@
       </div>
     </div>
 
-    <!--<div *ngIf="false">-->
-      <!--<div class="content_rest" *ngIf="typeChoosen === accountTypes[0]">-->
-
-        <!--<div class="secretary-user ds-w-100">-->
-          <!--<div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.user, 'ds-dialog-heading-gray': !assistantLike.user}">Assistant</div>-->
-          <!--<div class="profile-search" *ngIf="!assistantLike.user; else secretaryUser" >-->
-            <!--<app-sp-search-->
-              <!--[placeholder]="'Search G Suite accounts'"-->
-              <!--[dummyRoleText]="'users'"-->
-              <!--[type]="'gsuite'"-->
-              <!--[role]="data.role"-->
-              <!--(onUpdate)="setSecretary($event, null)"-->
-            <!--&gt;</app-sp-search>-->
-          <!--</div>-->
-          <!--<ng-template #secretaryUser>-->
-            <!--<div class="ds-flex-center-between">-->
-              <!--<div #chip class="user"-->
-                   <!--(mouseenter)="chip.hovered = true;"-->
-                   <!--(mouseleave)="chip.hovered = false;">-->
-
-                <!--<span>{{assistantLike.user.display_name}}</span>-->
-                <!--<div style="width: 15px; height: 15px; cursor: pointer; margin-left: 10px;">-->
-
-                  <!--<img *ngIf="chip.hovered"-->
-                       <!--(click)="assistantLike.user = null"-->
-                       <!--[src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">-->
-                <!--</div>-->
-              <!--</div>-->
-            <!--</div>-->
-          <!--</ng-template>-->
-        <!--</div>-->
-        <!--<div class="active-on-user ds-w-100">-->
-          <!--<div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.behalfOf, 'ds-dialog-heading-gray': !assistantLike.behalfOf}">Act on Behalf Of</div>-->
-          <!--<div class="profile-search"  >-->
-            <!--<app-sp-search-->
-              <!--[chipsMode]="true"-->
-              <!--[placeholder]="'Search existing teachers'"-->
-              <!--[dummyRoleText]="'teachers'"-->
-              <!--[type]="'alternative'"-->
-              <!--[role]="'_profile_teacher'"-->
-              <!--(onUpdate)="setSecretary(null, $event)"-->
-            <!--&gt;</app-sp-search>-->
-          <!--</div>-->
-          <!--<ng-template #secretaryBehalfOf>-->
-            <!--<div class="ds-flex-center-between">-->
-
-              <!--<div #chip class="user"-->
-                   <!--(mouseenter)="chip.hovered = true;"-->
-                   <!--(mouseleave)="chip.hovered = false;">-->
-                <!--<span>{{assistantLike.behalfOf.display_name}}</span>-->
-                <!--<div style="width: 15px; height: 15px; cursor: pointer; margin-left: 10px;">-->
-
-                  <!--<img *ngIf="chip.hovered"-->
-                       <!--(click)="assistantLike.behalfOf = null"-->
-                       <!--[src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">-->
-                <!--</div>-->
-              <!--</div>-->
-            <!--</div>-->
-          <!--</ng-template>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</div>-->
-
     <div>
-
       <div class="content_rest" *ngIf="typeChoosen === accountTypes[0]">
-            <div class="ds-w-100 ds-flex-start-center" style="position: relative;">
+        <div class="ds-w-100 ds-flex-start-center" style="position: relative;">
 
-              <div class="profile-search">
+          <div class="profile-search">
 
-                <app-sp-search
-                  [selectedOptions]="selectedUsers"
-                  [placeholder]="'Search G Suite accounts'"
-                  [dummyRoleText]="'users'"
-                  [type]="'gsuite'"
-                  [role]="data.role"
-                  (onUpdate)="setSelectedUsers($event)"
-                ></app-sp-search>
-              </div>
-            </div>
-
-        <!--<div class="profile-permissions" [style.width]="'100%'" *ngIf="data.role !== '_profile_user'">-->
-          <!--<div class="profile-permissions_heading ds-dialog-heading">Permissions</div>-->
-          <!--<div *ngFor="let control of controlsIteratable">-->
-            <!--<app-toggle-input-->
-              <!--[form]="permissionsForm"-->
-              <!--[delimiter]="false"-->
-              <!--[controlName]="control.controlName"-->
-              <!--[controlLabel]="control.controlLabel"-->
-              <!--[controlSize]="'small'"-->
-            <!--&gt;</app-toggle-input>-->
-          <!--</div>-->
-        <!--</div>-->
-
+            <app-sp-search
+              [selectedOptions]="selectedUsers"
+              [placeholder]="'Search G Suite accounts'"
+              [dummyRoleText]="'users'"
+              [type]="'gsuite'"
+              [role]="data.role"
+              (onUpdate)="setSelectedUsers($event)"
+            ></app-sp-search>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -179,32 +106,6 @@
 
           ></app-input>
         </div>
-        <!--<div class="active-on-user ds-w-100" *ngIf="data.role === '_profile_assistant'">-->
-          <!--<div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.behalfOf, 'ds-dialog-heading-gray': !assistantLike.behalfOf}">Active on Behalf Of</div>-->
-          <!--<div class="profile-search" *ngIf="!assistantLike.behalfOf; else secretaryBehalfOf" >-->
-            <!--<app-sp-search-->
-              <!--[type]="'alternative'"-->
-              <!--[role]="''"-->
-              <!--(onUpdate)="setSecretary(null, $event)"-->
-            <!--&gt;</app-sp-search>-->
-          <!--</div>-->
-          <!--&lt;!&ndash;<ng-template #secretaryBehalfOf>&ndash;&gt;-->
-            <!--&lt;!&ndash;<div class="ds-flex-center-between">&ndash;&gt;-->
-
-              <!--&lt;!&ndash;<div #chip class="user"&ndash;&gt;-->
-                   <!--&lt;!&ndash;(mouseenter)="chip.hovered = true;"&ndash;&gt;-->
-                   <!--&lt;!&ndash;(mouseleave)="chip.hovered = false;">&ndash;&gt;-->
-                <!--&lt;!&ndash;<span>{{assistantLike.behalfOf.display_name}}</span>&ndash;&gt;-->
-                <!--&lt;!&ndash;<div style="width: 15px; height: 15px; cursor: pointer; margin-left: 10px;">&ndash;&gt;-->
-
-                  <!--&lt;!&ndash;<img *ngIf="chip.hovered"&ndash;&gt;-->
-                       <!--&lt;!&ndash;(click)="assistantLike.behalfOf = null"&ndash;&gt;-->
-                       <!--&lt;!&ndash;[src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">&ndash;&gt;-->
-                <!--&lt;!&ndash;</div>&ndash;&gt;-->
-              <!--&lt;!&ndash;</div>&ndash;&gt;-->
-            <!--&lt;!&ndash;</div>&ndash;&gt;-->
-          <!--&lt;!&ndash;</ng-template>&ndash;&gt;-->
-        <!--</div>-->
         <div class="ds-flex-start-start ds-w-100 ds-mt-10" style="height: 170px">
 
           <div class="ds-flex-center-between ds-flex-column ds-pb-5 ds-h-100">
@@ -240,41 +141,6 @@
             </div>
 
           </div>
-          <!--<div class="ds-flex-start-between ds-flex-column ds-ml-25 ds-pl-15 ds-h-100">-->
-            <!--<div class="ds-flex-start-between ds-flex-column ds-mb-25">-->
-              <!--<div style="font-weight: bold; padding-bottom: 5px; font-size: 15px;"><span>Expiration </span> <span>(Optional)</span></div>-->
-
-              <!--<div class="expiration-button">-->
-                <!--<img [src]="'./assets/Plus (Blue-Gray).svg'"-->
-                     <!--[attr.height]="'12'"-->
-                     <!--[attr.width]="'12'" class="ds-p-10" alt="Plus (Blue-Gray).svg">-->
-                <!--<span>Add Expiration</span>-->
-              <!--</div>-->
-
-            <!--</div>-->
-            <!--<div class="ds-flex-start-center ds-flex-column ds-mt-5 ds-mb-20">-->
-              <!--<app-gradient-button-->
-                <!--[size]="'editable'"-->
-                <!--[width]="'141px'"-->
-                <!--[minHeight]="'40px'"-->
-                <!--[gradient]="'#FFFFFF,#FFFFFF'"-->
-                <!--[hoverColor]="'#FFFFFF'"-->
-                <!--[textColor]="'#7F879D'"-->
-                <!--[fontSize]="'14px'"-->
-                <!--[fontWeight]="'bold'"-->
-                <!--[leftIcon]="'./assets/Print (Blue-Gray).svg'"-->
-                <!--[leftImageHeight]="'21px'"-->
-                <!--[leftImageWidth]="'21px'"-->
-                <!--[cursor]="'pointer'"-->
-                <!--(buttonClick)="showInstructions(data.role)"-->
-              <!--&gt;-->
-                <!--<div class="ds-flex-center-start">-->
-                  <!--<span>Instructions</span>-->
-                <!--</div>-->
-              <!--</app-gradient-button>-->
-
-            <!--</div>-->
-          <!--</div>-->
         </div>
 
       </form>
