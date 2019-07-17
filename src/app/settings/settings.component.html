@@ -23,7 +23,7 @@
            (mouseenter)="hoveredMasterOption = true"
            (mouseleave)="hoveredMasterOption = false"
            [style.background-color]="hoveredMasterOption ? 'rgb(228, 235, 255)' : 'transparent'"
-           (click)="dialogRef.close('switch')">
+           (click)="switchAction()">
         <img class="switch-icon" [src]="getIcon('Profile Switch', null,  hoveredMasterOption) | resolveAsset">
         <div class="option-title" [style.color]="getColor(null, hoveredMasterOption)">Admin View</div>
         <img class="arrow-icon" [src]="getIcon('Chevron Right', null,  hoveredMasterOption) | resolveAsset">

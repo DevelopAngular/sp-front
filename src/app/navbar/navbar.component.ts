@@ -1,22 +1,22 @@
 import {
-    Component,
-    NgZone,
-    OnInit,
-    Input,
-    ElementRef,
-    HostListener,
-    EventEmitter,
-    Output,
-    ViewChild,
-    AfterContentInit,
-    AfterViewInit, ViewChildren, QueryList, ChangeDetectorRef
+  Component,
+  NgZone,
+  OnInit,
+  Input,
+  ElementRef,
+  HostListener,
+  EventEmitter,
+  Output,
+  ViewChild,
+  AfterContentInit,
+  AfterViewInit, ViewChildren, QueryList, ChangeDetectorRef, OnDestroy
 } from '@angular/core';
 import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material';
 import {Router, NavigationEnd, ActivatedRoute, NavigationStart} from '@angular/router';
 
 import {ReplaySubject, combineLatest, of, Subject, Observable, BehaviorSubject} from 'rxjs';
-import {filter, switchMap, tap} from 'rxjs/operators';
+import {filter, switchMap, takeUntil, tap} from 'rxjs/operators';
 
 import { DataService } from '../services/data-service';
 import { GoogleLoginService } from '../services/google-login.service';
@@ -60,7 +60,7 @@ export interface RepresentedUser {
   ]
 })
 
-export class NavbarComponent implements AfterViewInit, OnInit {
+export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   @Input() hasNav = true;
   @ViewChild('tabPointer') tabPointer: ElementRef;
@@ -72,6 +72,7 @@ export class NavbarComponent implements AfterViewInit, OnInit {
 
   @Output() settingsClick: EventEmitter<any> = new EventEmitter<any>();
 
+  private destroyer$ = new Subject<any>();
 
   isStaff: boolean;
   showSwitchButton: boolean = false;
@@ -268,7 +269,11 @@ export class NavbarComponent implements AfterViewInit, OnInit {
       });
     });
 
+
     this.sideNavService.sideNavAction
+      .pipe(
+        takeUntil(this.destroyer$)
+      )
       .subscribe(action => {
         this.settingsAction(action);
       });
@@ -451,6 +456,7 @@ export class NavbarComponent implements AfterViewInit, OnInit {
           }
         });
       } else if (action === 'switch') {
+        debugger
           this.router.navigate(['admin']);
       } else if (action === 'team') {
           window.open('https://smartpass.app/team.html');
@@ -494,5 +500,8 @@ export class NavbarComponent implements AfterViewInit, OnInit {
     return this.navbarData.notificationBadge$;
   }
 
-
+  ngOnDestroy(): void {
+    this.destroyer$.next();
+    this.destroyer$.complete();
+  }
 }
