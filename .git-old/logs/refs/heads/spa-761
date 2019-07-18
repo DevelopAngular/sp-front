@@ -1,7 +1,0 @@
-0000000000000000000000000000000000000000 dc657537deade002aaa96a445ceab11e5ab59c73 Vadym <vadymlazariev@gmail.com> 1559723813 +0300	branch: Created from HEAD
-dc657537deade002aaa96a445ceab11e5ab59c73 39757354ff52a820f0a9d33611a66f37a16e98bc Vadym <vadymlazariev@gmail.com> 1559723820 +0300	cherry-pick: SPA-754: Student version Home screen layout
-39757354ff52a820f0a9d33611a66f37a16e98bc ac41f6d5233916dc79943ebf5383cbb4b945200b Vadym <vadymlazariev@gmail.com> 1559801986 +0300	rebase finished: refs/heads/spa-761 onto 7feb80aead4742ab22c965cda7863c519d071722
-ac41f6d5233916dc79943ebf5383cbb4b945200b 318a9ae5953ad6690ee397ca79cd0bb0bc3f97ab Vadym <vadymlazariev@gmail.com> 1559823839 +0300	commit: SPA-761: Settings Page
-318a9ae5953ad6690ee397ca79cd0bb0bc3f97ab b116bacba5a9f78aa99498bba893550d1c5f274b Vadym <vadymlazariev@gmail.com> 1559888664 +0300	rebase finished: refs/heads/spa-761 onto fea6adf43a8fc7ac142460d4733de872f40ec994
-b116bacba5a9f78aa99498bba893550d1c5f274b bfac30096cbf236f82f64bebb987e4882b4eb6b4 Vadym <vadymlazariev@gmail.com> 1559888715 +0300	rebase -i (finish): refs/heads/spa-761 onto fea6adf43a8fc7ac142460d4733de872f40ec994
-bfac30096cbf236f82f64bebb987e4882b4eb6b4 fff284c0d0abe9a51116b335f6e84a3200a368db Vadym <vadymlazariev@gmail.com> 1559888727 +0300	commit (amend): SPA-761: Settings page

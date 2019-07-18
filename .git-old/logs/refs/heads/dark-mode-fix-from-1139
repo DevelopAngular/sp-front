@@ -1,8 +1,0 @@
-0000000000000000000000000000000000000000 7e0e52ee1cb6a7b2ffa15e53ae1feedffb884a11 Vadym <vadymlazariev@gmail.com> 1561015654 +0300	branch: Created from HEAD
-7e0e52ee1cb6a7b2ffa15e53ae1feedffb884a11 6dfdb826c02679862e39f4b3d3caee893e708c51 Vadym <vadymlazariev@gmail.com> 1561015759 +0300	commit (cherry-pick): wip
-6dfdb826c02679862e39f4b3d3caee893e708c51 7e0e52ee1cb6a7b2ffa15e53ae1feedffb884a11 Vadym <vadymlazariev@gmail.com> 1561016008 +0300	reset: moving to HEAD^
-7e0e52ee1cb6a7b2ffa15e53ae1feedffb884a11 24f6d56f0edf794f709fa3bde120901b46e26921 Vadym <vadymlazariev@gmail.com> 1561016291 +0300	commit (cherry-pick): resolved conflicts
-24f6d56f0edf794f709fa3bde120901b46e26921 3def6bbd3e3caa40347a3fb283fee17b7edba786 Vadym <vadymlazariev@gmail.com> 1561016299 +0300	cherry-pick: wip
-3def6bbd3e3caa40347a3fb283fee17b7edba786 3a8d23b5c6da48a21e7dd481e7adfe0f3463594f Vadym <vadymlazariev@gmail.com> 1561016311 +0300	cherry-pick: wip
-3a8d23b5c6da48a21e7dd481e7adfe0f3463594f 0cadf714824ba2d65eedb4fc67bc48e4a1340cc8 Vadym <vadymlazariev@gmail.com> 1561016604 +0300	cherry-pick: navbar fix
-0cadf714824ba2d65eedb4fc67bc48e4a1340cc8 07a2ddd3a9e70efbeb49d6508e7eba4333da7075 Vadym <vadymlazariev@gmail.com> 1561019516 +0300	commit: wip

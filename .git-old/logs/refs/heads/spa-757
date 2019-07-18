@@ -1,8 +1,0 @@
-0000000000000000000000000000000000000000 9293fa171e29f1ce9bd950992c7403a50357ed9a Vadym <vadymlazariev@gmail.com> 1557906780 +0300	branch: Created from HEAD
-9543750ab0d3b73f918acc1f166bdf37b9183feb cfdac4b6fa1e5463bb367e4bb97d5dd809c4a901 Vadym <vadymlazariev@gmail.com> 1559715507 +0300	rebase finished: refs/heads/spa-757 onto dc657537deade002aaa96a445ceab11e5ab59c73
-cfdac4b6fa1e5463bb367e4bb97d5dd809c4a901 131e8757e1d01ec92b32456882117a0d39cc5387 Vadym <vadymlazariev@gmail.com> 1559720934 +0300	commit: SPA-757: hallmonitor fix
-131e8757e1d01ec92b32456882117a0d39cc5387 8dbcb08e3600439253c527d1257f029d32646b67 Vadym <vadymlazariev@gmail.com> 1559720992 +0300	commit (cherry-pick): SPA-745: navbar-width fix
-8dbcb08e3600439253c527d1257f029d32646b67 5476ead3feecaceb0d2611b6f102bdcd842d0e5a Vadym <vadymlazariev@gmail.com> 1559721044 +0300	rebase -i (finish): refs/heads/spa-757 onto dc657537deade002aaa96a445ceab11e5ab59c73
-5476ead3feecaceb0d2611b6f102bdcd842d0e5a cf0f55fe65e79326015fd9c50d8c8994241a41ee Vadym <vadymlazariev@gmail.com> 1559801961 +0300	rebase finished: refs/heads/spa-757 onto 7feb80aead4742ab22c965cda7863c519d071722
-cf0f55fe65e79326015fd9c50d8c8994241a41ee 9286e805ad2176eb9803cf6cc2ef3eee4eb7dfd9 Vadym <vadymlazariev@gmail.com> 1559888285 +0300	rebase finished: refs/heads/spa-757 onto fea6adf43a8fc7ac142460d4733de872f40ec994
-9286e805ad2176eb9803cf6cc2ef3eee4eb7dfd9 5fbbb4dac7de437ad4d3d5b5a3a36b288995c5ec Vadym <vadymlazariev@gmail.com> 1560166778 +0300	rebase finished: refs/heads/spa-757 onto b36732eead1cb8b9e33f45a25dc85b2b41234af5

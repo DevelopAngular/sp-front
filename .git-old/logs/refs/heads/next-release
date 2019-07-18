@@ -1,6 +1,0 @@
-0000000000000000000000000000000000000000 ce0fa054c24fec76422cce4dd7533a5c77097785 Vadym <vadymlazariev@gmail.com> 1560504817 +0300	branch: Created from refs/remotes/origin/next-release
-ce0fa054c24fec76422cce4dd7533a5c77097785 a6adb97cdfdebb727c906884408c30931d787749 Vadym <vadymlazariev@gmail.com> 1560504832 +0300	merge dev: Fast-forward
-a6adb97cdfdebb727c906884408c30931d787749 f718212234d196b791462668ce682d1ecf21ce40 Vadym <vadymlazariev@gmail.com> 1560504854 +0300	reset: moving to HEAD^
-f718212234d196b791462668ce682d1ecf21ce40 54ae021528d32988156b8285f8bbb09650ab8173 Vadym <vadymlazariev@gmail.com> 1560843704 +0300	merge dev: Fast-forward
-54ae021528d32988156b8285f8bbb09650ab8173 a6adb97cdfdebb727c906884408c30931d787749 Vadym <vadymlazariev@gmail.com> 1560843728 +0300	reset: moving to HEAD^
-a6adb97cdfdebb727c906884408c30931d787749 debba7ac4b8e61997f6aab47b2da74aa8e9bb74c Vadym <vadymlazariev@gmail.com> 1560925466 +0300	pull origin next-release: Fast-forward

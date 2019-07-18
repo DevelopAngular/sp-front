@@ -1,9 +1,0 @@
-0000000000000000000000000000000000000000 30576e891e40146da660995009ffdf45c86d7809 Vadym <vadymlazariev@gmail.com> 1560410536 +0300	branch: Created from HEAD
-30576e891e40146da660995009ffdf45c86d7809 8cd7a83d368dcc2eac4302eace380fc9026ba263 Vadym <vadymlazariev@gmail.com> 1560423926 +0300	commit: pass-tile-fixes wip
-8cd7a83d368dcc2eac4302eace380fc9026ba263 30576e891e40146da660995009ffdf45c86d7809 Vadym <vadymlazariev@gmail.com> 1560424434 +0300	reset: moving to 30576e891e40146da660995009ffdf45c86d7809
-30576e891e40146da660995009ffdf45c86d7809 04cbbaa7b86c5a552ca3f780c6c8eca3680dc878 Vadym <vadymlazariev@gmail.com> 1560498743 +0300	commit: pass-tile-fixes wip
-04cbbaa7b86c5a552ca3f780c6c8eca3680dc878 30576e891e40146da660995009ffdf45c86d7809 Vadym <vadymlazariev@gmail.com> 1560498815 +0300	reset: moving to HEAD^
-30576e891e40146da660995009ffdf45c86d7809 f620c3d72746fb60dd9ccc363fed1587decbc45d Vadym <vadymlazariev@gmail.com> 1560503424 +0300	commit: pass-tiles-fix
-f620c3d72746fb60dd9ccc363fed1587decbc45d 08aba358e2c820c8cfc017253fb28183ecf5f9d8 Vadym <vadymlazariev@gmail.com> 1560503549 +0300	rebase finished: refs/heads/pass-tile-fixes onto f718212234d196b791462668ce682d1ecf21ce40
-08aba358e2c820c8cfc017253fb28183ecf5f9d8 f718212234d196b791462668ce682d1ecf21ce40 Vadym <vadymlazariev@gmail.com> 1560504635 +0300	reset: moving to HEAD^
-f718212234d196b791462668ce682d1ecf21ce40 a6adb97cdfdebb727c906884408c30931d787749 Vadym <vadymlazariev@gmail.com> 1560504750 +0300	commit: pass-tiles-fix
