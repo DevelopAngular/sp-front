@@ -121,22 +121,17 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loginService.isAuthenticated$.pipe(
       takeUntil(this.subscriber$),
     )
-      .subscribe(t => {
-        console.log('Auth response ===>', t);
-        this._zone.run(() => {
-          this.showUISubject.next(true);
-          this.isAuthenticated = t;
-        });
+    .subscribe(t => {
+      console.log('Auth response ===>', t);
+      // debugger
+      this._zone.run(() => {
+        this.showUISubject.next(true);
+        this.isAuthenticated = t;
+        if (!t) {
+          this.router.navigate(['']);
+        }
       });
-    // this.showError.pipe(
-    //   delay(1000)
-    // ).subscribe((signInError: any) => {
-    //   console.log(signInError)
-    //   if (signInError && signInError.error) {
-    //     this.showUI.next(false);
-    //   }
-    // });
-    // window.appLoaded(2000);
+    });
 
     this.http.schools$.pipe(
       map(schools => _.filter(schools, (school => school.my_roles.length > 0))),

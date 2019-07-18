@@ -37,12 +37,13 @@
   box-sizing: border-box;
   //padding: 25px;
   background-color: #FBFEFF;
-  //overflow-y: scroll;
+  overflow-y: scroll;
 }
 
 .hallmonitor-wrapper {
   height: 100%;
   width: 100%;
+  min-width: 1030px;
   display: flex;
   justify-content: space-between;
   flex-wrap: nowrap;

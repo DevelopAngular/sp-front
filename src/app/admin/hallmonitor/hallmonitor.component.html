@@ -1,5 +1,4 @@
-﻿
-<div class="host" appSafariScroll>
+﻿<div class="host" appSafariScroll>
   <div class="hallmonitor-wrapper">
     <div class="collection-container">
       <div class="hallpass-box">
@@ -34,7 +33,7 @@
             <div class="empty-container" *ngIf="searchQuery$.value != ''">
               <img class="empty-svg" [src]="'./assets/emptyStates/emptyHallSearch.svg' | resolveAsset" alt="empty-svg">
               <div class="ds-empty-text-title" [style.margin]="'10px 0'">Nothing to See Here</div>
-              <div class="ds-pt-10 ds-empty-text-info">Search again or click the report button</div>
+              <div class="ds-pt-10 ds-empty-text-info">Try searching again.</div>
             </div>
             <div class="empty-container" *ngIf="searchQuery$.value == ''" >
               <img class="empty-svg" [src]="'./assets/emptyStates/emptyHall.svg' | resolveAsset" alt="empty-svg">

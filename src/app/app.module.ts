@@ -55,7 +55,7 @@ import {NotKioskModeGuard} from './not-kiosk-mode.guard';
 import {KioskModeService} from './services/kiosk-mode.service';
 import { SchoolSignUpComponent } from './school-sign-up/school-sign-up.component';
 import { AccountsSetupComponent } from './accounts-setup/accounts-setup.component';
-import { SpDialogBoxComponent } from './sp-dialog-box/sp-dialog-box.component'
+import { SpDialogBoxComponent } from './sp-dialog-box/sp-dialog-box.component';
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroRouteComponent, data: { hideSchoolToggleBar: true}},

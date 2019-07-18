@@ -53,7 +53,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.loginService.isAuthenticated$.pipe(
-      filter(v => v),
+      // filter(v => v),
       switchMap((): ReplaySubject<User> => {
         return this.userService.userData;
       }),
