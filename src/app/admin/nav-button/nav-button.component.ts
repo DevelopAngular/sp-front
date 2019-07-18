@@ -25,24 +25,12 @@ export class NavButtonComponent implements OnInit, OnChanges {
 
   public iconId: string;
 
-  get textColor(){
-    // return this.selected?'#3D396B':'#7E879D';
-    // return this.selected?'#3D396B': this.darkTheme.isEnabled$.value ? '#FFFFFF' : ' #7E879D';
-  // #00B476
+  get textColor() {
     return this.selected ? '#00B476' : this.darkTheme.isEnabled$.value ? '#FFFFFF' : ' #7E879D';
-
   }
 
   get backgroundColor() {
-
-    // return this.selected?'#E4EBFF':'none';
     return 'none';
-  }
-
-  get _icon() {
-
-    // return this.darkTheme.getIcon({iconName: 'Navy', setting: null, hover: this.selected});
-    return this.icon +(this.selected?' (Navy)': this.darkTheme.isEnabled$.value ? ' (White)' : ' (Blue-Gray)') + '.svg';
   }
 
   constructor(
@@ -52,16 +40,12 @@ export class NavButtonComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.iconId = `#${this.icon}`;
-    // if (this.selected) {
-    //   this.doClick();
-    // }
   }
 
   ngOnChanges() {
     if (this.selected) {
-      // this.doClick();
       this.selectedButton.emit(this.selected);
-      console.log(true);
+      // console.log(true);
     }
   }
 

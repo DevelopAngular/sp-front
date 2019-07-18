@@ -64,6 +64,7 @@ const appRoutes: Routes = [
   {
     path: '',
     component: LoginComponent,
+    data: { hideSchoolToggleBar: true}
   },
   {
     path: 'main',
@@ -73,7 +74,6 @@ const appRoutes: Routes = [
     data: {
       hubspot: true,
       authFree: false
-
     }
   },
   {

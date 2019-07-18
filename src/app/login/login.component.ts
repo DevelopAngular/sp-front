@@ -5,13 +5,14 @@ import { GoogleLoginService } from '../services/google-login.service';
 import { UserService } from '../services/user.service';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {HttpClient} from '@angular/common/http';
-import {filter, switchMap, takeUntil} from 'rxjs/operators';
+import {filter, map, switchMap, takeUntil} from 'rxjs/operators';
 import {HttpService} from '../services/http-service';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {GoogleAuthService} from '../services/google-auth.service';
 import {StorageService} from '../services/storage.service';
 import {User} from '../models/User';
-import {ReplaySubject, Subject} from 'rxjs';
+import {forkJoin, Observable, ReplaySubject, Subject, zip} from 'rxjs';
+import {INITIAL_LOCATION_PATHNAME} from '../app.component';
 
 declare const window;
 
@@ -30,8 +31,9 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   public titleText: string;
   public isMobileDevice: boolean = false;
   public trustedBackgroundUrl: SafeUrl;
-  public showError = { loggedWith: null, error: null };
+  public pending$: Observable<boolean>;
 
+  private pendingSubject = new ReplaySubject<boolean>(1);
   private isIOSMobile: boolean = DeviceDetection.isIOSMobile();
   private isAndroid: boolean = DeviceDetection.isAndroid();
   private jwt: JwtHelperService;
@@ -49,18 +51,30 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     private sanitizer: DomSanitizer,
   ) {
     this.jwt = new JwtHelperService();
+    this.pending$ = this.pendingSubject.asObservable();
   }
 
   ngOnInit() {
+
     this.loginService.isAuthenticated$.pipe(
-      // filter(v => v),
-      switchMap((): ReplaySubject<User> => {
-        return this.userService.userData;
+      filter(v => v),
+      switchMap((): Observable<[User, Array<string>]> => {
+        return zip(
+          this.userService.userData.asObservable(),
+          INITIAL_LOCATION_PATHNAME.asObservable().pipe(map(p => p.split('/').slice(1)))
+        );
       }),
       takeUntil(this.destroyer$)
-    ).subscribe((currentUser: User) => {
-      const loadView = [currentUser.isAdmin() ? 'admin' : 'main'];
-      this.router.navigate(loadView);
+    ).subscribe(([currentUser, path]) => {
+      // console.log(currentUser, path);
+
+      const loadView = currentUser.isAdmin() ? 'admin' : 'main';
+
+      if (path.includes(loadView)) {
+        this.router.navigate(path);
+      } else {
+        this.router.navigate([loadView]);
+      }
     });
 
     this.trustedBackgroundUrl = this.sanitizer.bypassSecurityTrustStyle('url(\'./assets/Login Background.svg\')');
@@ -76,7 +90,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
   ngAfterViewInit() {
-    window.appLoaded();
+    // window.appLoaded();
   }
   ngOnDestroy() {
     this.destroyer$.next(null);
