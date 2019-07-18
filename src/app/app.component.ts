@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
 import * as _ from 'lodash';
-import { BehaviorSubject, interval, ReplaySubject, Subject } from 'rxjs';
+import {BehaviorSubject, interval, Observable, ReplaySubject, Subject} from 'rxjs';
 
 import { filter, map, mergeMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { BUILD_INFO_REAL } from '../build-info';
@@ -23,6 +23,9 @@ import { ToastConnectionComponent } from './toast-connection/toast-connection.co
 
 declare const window;
 
+export const INITIAL_LOCATION_PATHNAME =  new ReplaySubject<string>(1);
+
+
 /**
  * @title Autocomplete overview
  */
@@ -34,13 +37,11 @@ declare const window;
 
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  schoolSignUp: boolean;
-
   public isAuthenticated = null;
   public hideScroll: boolean = false;
   public hideSchoolToggleBar: boolean = false;
   public showUISubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  public showUI = this.showUISubject.asObservable();
+  public showUI: Observable<boolean> = this.showUISubject.asObservable();
   public showError: BehaviorSubject<any> = new BehaviorSubject<boolean>(false);
   public errorToastTrigger: ReplaySubject<SPError>;
   public schools: School[] = [];
@@ -87,6 +88,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    console.log('Initial location path ===>', );
+
+    INITIAL_LOCATION_PATHNAME.next(window.location.pathname);
 
     this.storageService.detectChanges();
     this.darkTheme.isEnabled$.subscribe((val) => {
@@ -121,22 +125,19 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loginService.isAuthenticated$.pipe(
       takeUntil(this.subscriber$),
     )
-      .subscribe(t => {
-        console.log('Auth response ===>', t);
-        this._zone.run(() => {
-          this.showUISubject.next(true);
-          this.isAuthenticated = t;
-        });
+    .subscribe(t => {
+      console.log('Auth response ===>', t, window.location.pathname);
+      // debugger
+      this._zone.run(() => {
+        this.showUISubject.next(true);
+        this.isAuthenticated = t;
+        const path = window.location.pathname;
+        if (!t && (path !== '/' || path.includes('admin') ||  path.includes('main'))) {
+          // debugger
+          this.router.navigate(['/']);
+        }
       });
-    // this.showError.pipe(
-    //   delay(1000)
-    // ).subscribe((signInError: any) => {
-    //   console.log(signInError)
-    //   if (signInError && signInError.error) {
-    //     this.showUI.next(false);
-    //   }
-    // });
-    // window.appLoaded(2000);
+    });
 
     this.http.schools$.pipe(
       map(schools => _.filter(schools, (school => school.my_roles.length > 0))),
@@ -148,20 +149,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           this.http.setSchool(schools[0]);
         }
       });
-
-    // ============== SPA-407 ====================> Needs to be uncommented when the backend logic will completed
-    // this.userService
-    //   .getUserWithTimeout()
-    //   .subscribe((user) => {
-    //     this.matDialog.open(NextReleaseComponent, {
-    //       panelClass: 'form-dialog-container',
-    //       data: {
-    //         'isTeacher': user.isTeacher(),
-    //         'isStudent': user.isStudent()
-    //       }
-    //     });
-    //   });
-    // ============== SPA-407 ===================> End
 
     this.http.currentSchool$.pipe(takeUntil(this.subscriber$))
       .subscribe((value => {
@@ -197,14 +184,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         }
 
         if (data.currentUser) {
-          // if (!window.user) {
-          //   window.user = Object.freeze({
-          //     id: data.currentUser.id,
-          //     email: data.currentUser.primary_email,
-          //     firstName: data.currentUser.first_name,
-          //     lastName: data.currentUser.last_name
-          //   });
-          // }
           this.hubSpotSettings(data.currentUser);
         }
 
@@ -229,7 +208,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             (existingHub as HTMLElement).setAttribute('style', 'display: none !important');
           }
         }
-
 
         if (data.hideSchoolToggleBar) {
           this.hideSchoolToggleBar = true;

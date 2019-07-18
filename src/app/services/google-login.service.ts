@@ -35,7 +35,8 @@ export class GoogleLoginService {
   private authToken$ = new BehaviorSubject<AuthObject>(null);
 
   public showLoginError$ = new BehaviorSubject(false);
-  public isAuthenticated$ = new ReplaySubject<boolean>(1);
+  // public isAuthenticated$ = new ReplaySubject<boolean>(1);
+  public isAuthenticated$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     private googleAuth: GoogleAuthService,

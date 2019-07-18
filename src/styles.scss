@@ -173,12 +173,6 @@ div {
   background: transparent;
 }
 
-//.next-release-dialog-container .mat-dialog-container {
-//  width: auto;
-//  height: auto;
-//  padding: 0;
-//  background: transparent;
-//}
 .message-dialog-container .mat-dialog-container {
   @extend .editor-dialog;
   width: 300px;
@@ -215,8 +209,6 @@ div {
   overflow: visible;
   box-shadow: 0 3px 20px 0px rgba(0, 0, 0, 0.15);
   border-radius: 15px;
-  //background-color: red;
-
 }
 
 input:focus{
@@ -233,22 +225,6 @@ textarea:focus {
   outline: none;
   transition: border .2s ease;
 }
-
-// .mat-chip-list-wrapper{
-//   height: 40px;
-//   border-radius: 20px;
-//   box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
-//   background-color: white;
-
-// }
-
-// .mat-chip-list-wrapper .mat-standard-chip, .mat-chip-list-wrapper input.mat-input-element{
-//   margin-top: 0px !important;
-// }
-
-/* :host /deep/ .mat-button-focus-overlay {
-    background-color: rgba(0, 0, 0, 0);
-} */
 
 .custom-backdrop {
   /* z-index: 0; */
@@ -322,6 +298,9 @@ body {
 
   .mat-drawer-backdrop {
     z-index: 99;
+  }
+  .mat-table {
+    font-family: $primaryFont
   }
 }
 
