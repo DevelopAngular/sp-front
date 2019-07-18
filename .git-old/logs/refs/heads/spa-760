@@ -1,0 +1,29 @@
+0000000000000000000000000000000000000000 7dc1086032530686bb10282d6f0d1af4c95ad2d5 Vadym <vadymlazariev@gmail.com> 1560342306 +0300	branch: Created from HEAD
+7dc1086032530686bb10282d6f0d1af4c95ad2d5 9ea4e2cf8d8fd6177e6b219b9857ee22dbc79f37 Vadym <vadymlazariev@gmail.com> 1560408938 +0300	commit: spa-760: wip
+9ea4e2cf8d8fd6177e6b219b9857ee22dbc79f37 945346f644c30e004cad91ce2ecb4b47a09e5ae9 Vadym <vadymlazariev@gmail.com> 1560516742 +0300	rebase finished: refs/heads/spa-760 onto a6adb97cdfdebb727c906884408c30931d787749
+945346f644c30e004cad91ce2ecb4b47a09e5ae9 a6adb97cdfdebb727c906884408c30931d787749 Vadym <vadymlazariev@gmail.com> 1560516770 +0300	reset: moving to HEAD^
+a6adb97cdfdebb727c906884408c30931d787749 92a48df85c2d733729c77b4a6bd85a6038aeede1 Vadym <vadymlazariev@gmail.com> 1560839227 +0300	commit: spa-760: wip
+92a48df85c2d733729c77b4a6bd85a6038aeede1 9ce04747784f889c6ed24120f77c050e859f5835 Vadym <vadymlazariev@gmail.com> 1560843782 +0300	rebase finished: refs/heads/spa-760 onto 54ae021528d32988156b8285f8bbb09650ab8173
+9ce04747784f889c6ed24120f77c050e859f5835 54ae021528d32988156b8285f8bbb09650ab8173 Vadym <vadymlazariev@gmail.com> 1560844127 +0300	reset: moving to 54ae021528d32988156b8285f8bbb09650ab8173
+54ae021528d32988156b8285f8bbb09650ab8173 b26838d8e9d32fe530ce9c42e0600f8ff07a4ff8 Vadym <vadymlazariev@gmail.com> 1560925631 +0300	rebase finished: refs/heads/spa-760 onto b26838d8e9d32fe530ce9c42e0600f8ff07a4ff8
+b26838d8e9d32fe530ce9c42e0600f8ff07a4ff8 9b2480720c201e9366298a0a6a4b3eebdb9fcd80 Vadym <vadymlazariev@gmail.com> 1561040171 +0300	commit: spa-760 work in progress
+9b2480720c201e9366298a0a6a4b3eebdb9fcd80 973ec04e55b2d05b3dbc196028917b0dcf6b3e0c Vadym <vadymlazariev@gmail.com> 1561098405 +0300	rebase finished: refs/heads/spa-760 onto 2d1e605a1725aeb4c62542e6fece00ebd54202a0
+973ec04e55b2d05b3dbc196028917b0dcf6b3e0c 2d1e605a1725aeb4c62542e6fece00ebd54202a0 Vadym <vadymlazariev@gmail.com> 1561098976 +0300	reset: moving to HEAD^
+2d1e605a1725aeb4c62542e6fece00ebd54202a0 20b9dc9dd217037416801dbbae9c75a2002e9936 Vadym <vadymlazariev@gmail.com> 1561102443 +0300	commit: spa-760 work in progress
+20b9dc9dd217037416801dbbae9c75a2002e9936 2d1e605a1725aeb4c62542e6fece00ebd54202a0 Vadym <vadymlazariev@gmail.com> 1561102573 +0300	reset: moving to HEAD^
+2d1e605a1725aeb4c62542e6fece00ebd54202a0 b4a6ce6ab80121717c7cbea3d169f29f28294461 Vadym <vadymlazariev@gmail.com> 1561103650 +0300	commit: spa-760 work in progress
+b4a6ce6ab80121717c7cbea3d169f29f28294461 2d1e605a1725aeb4c62542e6fece00ebd54202a0 Vadym <vadymlazariev@gmail.com> 1561105666 +0300	reset: moving to HEAD^
+2d1e605a1725aeb4c62542e6fece00ebd54202a0 d3d844760154d7f1d5c2364bf94c24b722dfc5d0 Vadym <vadymlazariev@gmail.com> 1561105791 +0300	rebase finished: refs/heads/spa-760 onto d3d844760154d7f1d5c2364bf94c24b722dfc5d0
+d3d844760154d7f1d5c2364bf94c24b722dfc5d0 e6239820c712e851288b181468cc6f10ac8025c1 Vadym <vadymlazariev@gmail.com> 1561110742 +0300	commit: spa-760 work in progress
+e6239820c712e851288b181468cc6f10ac8025c1 d3d844760154d7f1d5c2364bf94c24b722dfc5d0 Vadym <vadymlazariev@gmail.com> 1561113552 +0300	reset: moving to HEAD^
+d3d844760154d7f1d5c2364bf94c24b722dfc5d0 70c325fea6a4b86de50506dae4475e2739bda118 Vadym <vadymlazariev@gmail.com> 1561113566 +0300	rebase finished: refs/heads/spa-760 onto 70c325fea6a4b86de50506dae4475e2739bda118
+70c325fea6a4b86de50506dae4475e2739bda118 cf12e9e574ed1e4029648d0d6237d652e715ceb9 Vadym <vadymlazariev@gmail.com> 1561118986 +0300	commit: spa-760 wip
+cf12e9e574ed1e4029648d0d6237d652e715ceb9 70c325fea6a4b86de50506dae4475e2739bda118 Vadym <vadymlazariev@gmail.com> 1561119924 +0300	reset: moving to HEAD^
+70c325fea6a4b86de50506dae4475e2739bda118 e5dec277ee4139a8cbdc1abd3c015a77f5f345f1 Vadym <vadymlazariev@gmail.com> 1561357439 +0300	commit: Big Pass Card
+e5dec277ee4139a8cbdc1abd3c015a77f5f345f1 9efba20d80cea0bcd478693ff1c51fea30502e87 Vadym <vadymlazariev@gmail.com> 1561357471 +0300	rebase finished: refs/heads/spa-760 onto 56e96f711e159b8ed998c30a8c5cb820bc4cf9a8
+9efba20d80cea0bcd478693ff1c51fea30502e87 f50a06e7162354e327a664f580334d2453482b52 Vadym <vadymlazariev@gmail.com> 1561369391 +0300	commit: pass card back button fix
+f50a06e7162354e327a664f580334d2453482b52 9366787cd5b8e4bff0edcbcefdbdfca889466d03 Vadym <vadymlazariev@gmail.com> 1561369395 +0300	rebase finished: refs/heads/spa-760 onto c0b2455b5f602ab0d267f14caa73922cda5a8cf6
+9366787cd5b8e4bff0edcbcefdbdfca889466d03 5ec6d337a3b0c7276e235290b688d0d420304841 Vadym <vadymlazariev@gmail.com> 1561377709 +0300	commit: pass card back button fix
+5ec6d337a3b0c7276e235290b688d0d420304841 dc058e5358a5ec3405905bdbab24d6a6b8e717ed Vadym <vadymlazariev@gmail.com> 1561378528 +0300	commit (amend): icon buttons fix
+dc058e5358a5ec3405905bdbab24d6a6b8e717ed 5ec6d337a3b0c7276e235290b688d0d420304841 Vadym <vadymlazariev@gmail.com> 1561384709 +0300	rebase -i (abort): updating HEAD
+5ec6d337a3b0c7276e235290b688d0d420304841 54c8d150689b96d0718a5ee7a634b336f6a94f61 Vadym <vadymlazariev@gmail.com> 1561530664 +0300	rebase finished: refs/heads/spa-760 onto 54c8d150689b96d0718a5ee7a634b336f6a94f61

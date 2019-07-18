@@ -1,0 +1,21 @@
+0000000000000000000000000000000000000000 edef9775856b23d45b4c8d5243fc675069162397 Vadym <vadymlazariev@gmail.com> 1560508800 +0300	branch: Created from HEAD
+edef9775856b23d45b4c8d5243fc675069162397 d983e850589172a4465ff1ccafaa2977e322dd4f Vadym <vadymlazariev@gmail.com> 1560516368 +0300	commit: dialog-fix
+d983e850589172a4465ff1ccafaa2977e322dd4f d2523374e6a738cdb892999e5af6c575a6a7c08a Vadym <vadymlazariev@gmail.com> 1560852833 +0300	rebase finished: refs/heads/dialogs-fix onto 54ae021528d32988156b8285f8bbb09650ab8173
+d2523374e6a738cdb892999e5af6c575a6a7c08a e1c4bfd9e3d603c20b358d0e68c10aecc7753a0c Vadym <vadymlazariev@gmail.com> 1560866080 +0300	commit: dialog fix
+e1c4bfd9e3d603c20b358d0e68c10aecc7753a0c 09558d0d2996c0106e17f72dbe9921b52fd5f393 Vadym <vadymlazariev@gmail.com> 1560866104 +0300	rebase -i (finish): refs/heads/dialogs-fix onto 54ae021528d32988156b8285f8bbb09650ab8173
+09558d0d2996c0106e17f72dbe9921b52fd5f393 9c5d4d1e46059a276455a4bd2d6a482f9671ad88 Vadym <vadymlazariev@gmail.com> 1560927519 +0300	commit: dialog fix
+9c5d4d1e46059a276455a4bd2d6a482f9671ad88 f6ab2d6989e0ee3feefaa0084854a37ea21d5b57 Vadym <vadymlazariev@gmail.com> 1560927544 +0300	rebase -i (finish): refs/heads/dialogs-fix onto b26838d8e9d32fe530ce9c42e0600f8ff07a4ff8
+f6ab2d6989e0ee3feefaa0084854a37ea21d5b57 bbdf295f92c4941590b506b439cd607dbab84811 Vadym <vadymlazariev@gmail.com> 1560931974 +0300	rebase finished: refs/heads/dialogs-fix onto bbdf295f92c4941590b506b439cd607dbab84811
+bbdf295f92c4941590b506b439cd607dbab84811 91d58e7c58472e34128fc518ec750d3ae7673307 Vadym <vadymlazariev@gmail.com> 1560934271 +0300	commit: report dialog fix
+91d58e7c58472e34128fc518ec750d3ae7673307 fbc3591e93985b3e91279f336d21d74c7acbb971 Vadym <vadymlazariev@gmail.com> 1561031516 +0300	rebase finished: refs/heads/dialogs-fix onto fbc3591e93985b3e91279f336d21d74c7acbb971
+fbc3591e93985b3e91279f336d21d74c7acbb971 2e9cbd15f2d9b5d6f00609ebfa612e5e64a5ed0f Vadym <vadymlazariev@gmail.com> 1561035055 +0300	cherry-pick: back button fix
+2e9cbd15f2d9b5d6f00609ebfa612e5e64a5ed0f 9efba20d80cea0bcd478693ff1c51fea30502e87 Vadym <vadymlazariev@gmail.com> 1561358235 +0300	rebase finished: refs/heads/dialogs-fix onto 9efba20d80cea0bcd478693ff1c51fea30502e87
+9efba20d80cea0bcd478693ff1c51fea30502e87 c0b2455b5f602ab0d267f14caa73922cda5a8cf6 Vadym <vadymlazariev@gmail.com> 1561366295 +0300	commit: Settings dialogs fix
+c0b2455b5f602ab0d267f14caa73922cda5a8cf6 7081ca02866e12be88ba1c8d3ddaeef360fc07c9 Vadym <vadymlazariev@gmail.com> 1562069416 +0300	rebase finished: refs/heads/dialogs-fix onto 7081ca02866e12be88ba1c8d3ddaeef360fc07c9
+7081ca02866e12be88ba1c8d3ddaeef360fc07c9 fb1593fecb6a986ef21419d8c644cd3f7a8dcbbd Vadym <vadymlazariev@gmail.com> 1562069493 +0300	commit: fix for form-dialog-container
+fb1593fecb6a986ef21419d8c644cd3f7a8dcbbd b0e8217ecf2602718c5826d108df965cd3f6a57c Vadym <vadymlazariev@gmail.com> 1562313946 +0300	rebase finished: refs/heads/dialogs-fix onto b0e8217ecf2602718c5826d108df965cd3f6a57c
+b0e8217ecf2602718c5826d108df965cd3f6a57c 92b192ddb826aee0de5db54ce4e79cb398d3d3ad Vadym <vadymlazariev@gmail.com> 1562316366 +0300	commit: login error fix
+92b192ddb826aee0de5db54ce4e79cb398d3d3ad b0e8217ecf2602718c5826d108df965cd3f6a57c Vadym <vadymlazariev@gmail.com> 1562316987 +0300	reset: moving to HEAD^
+b0e8217ecf2602718c5826d108df965cd3f6a57c 3e0176712aff719336a1d1a7e9d939f10fb06f6a Vadym <vadymlazariev@gmail.com> 1562316994 +0300	rebase finished: refs/heads/dialogs-fix onto 3e0176712aff719336a1d1a7e9d939f10fb06f6a
+3e0176712aff719336a1d1a7e9d939f10fb06f6a 942d504a3cd4afa884fb09c849f0f13eecbc05e2 Vadym <vadymlazariev@gmail.com> 1562918485 +0300	rebase finished: refs/heads/dialogs-fix onto 942d504a3cd4afa884fb09c849f0f13eecbc05e2
+942d504a3cd4afa884fb09c849f0f13eecbc05e2 94eb3c2fdd399b8c002108edc0d09cda443ba2db Vadym <vadymlazariev@gmail.com> 1562920848 +0300	commit: teacher dialog fix. Back button fix. Pass card back button fix.

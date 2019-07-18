@@ -1,0 +1,9 @@
+0000000000000000000000000000000000000000 7081ca02866e12be88ba1c8d3ddaeef360fc07c9 Vadym <vadymlazariev@gmail.com> 1562058678 +0300	branch: Created from HEAD
+7081ca02866e12be88ba1c8d3ddaeef360fc07c9 13270834e9e2dc42551771a974f485a5646a778b Vadym <vadymlazariev@gmail.com> 1562058709 +0300	commit (amend): Merge branch 'fix/1-07' into dev
+13270834e9e2dc42551771a974f485a5646a778b 6ad2a5cb606228b78518a5b85107d42a2a2e6821 Vadym <vadymlazariev@gmail.com> 1562075536 +0300	rebase finished: refs/heads/spa-1195 onto 6ad2a5cb606228b78518a5b85107d42a2a2e6821
+6ad2a5cb606228b78518a5b85107d42a2a2e6821 f8ff59e9d2441e4fcb80f230528c5286af956bf5 Vadym <vadymlazariev@gmail.com> 1562083801 +0300	commit: spa-1195 wip
+f8ff59e9d2441e4fcb80f230528c5286af956bf5 3fec81ce6b5345a9e741b8f033e141ba71e45925 Vadym <vadymlazariev@gmail.com> 1562135694 +0300	rebase finished: refs/heads/spa-1195 onto d24ab2db6171bf1214938e13d94648a1cb784f52
+3fec81ce6b5345a9e741b8f033e141ba71e45925 6c5be3213f41f96a673a3afdbde4396ca5630900 Vadym <vadymlazariev@gmail.com> 1562148285 +0300	commit: SPA-1195: auto focus for keyboard popup. Focused input bug fix
+6c5be3213f41f96a673a3afdbde4396ca5630900 4afee18aea9260c51da8620bbdca1bda01885704 Vadym <vadymlazariev@gmail.com> 1562158666 +0300	rebase finished: refs/heads/spa-1195 onto 29501cfdaf4220750bf9dca6b3dc4bab824256ab
+4afee18aea9260c51da8620bbdca1bda01885704 ef720c486ab11d3dacb59ad0bf66712d796f48c7 Vadym <vadymlazariev@gmail.com> 1562160334 +0300	rebase -i (finish): refs/heads/spa-1195 onto 29501cfdaf4220750bf9dca6b3dc4bab824256ab
+ef720c486ab11d3dacb59ad0bf66712d796f48c7 756f7e1e9b885bfd2394bbd53356d5551c5af969 Vadym <vadymlazariev@gmail.com> 1562160346 +0300	commit (amend): SPA-1195: auto focus for keyboard popup. Focused input bug fix

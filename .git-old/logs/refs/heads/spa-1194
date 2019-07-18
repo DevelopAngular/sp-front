@@ -1,0 +1,9 @@
+0000000000000000000000000000000000000000 1accf3788b464d6aa9c68dbd99e171baad67bd9d Vadym <vadymlazariev@gmail.com> 1561980807 +0300	branch: Created from HEAD
+1accf3788b464d6aa9c68dbd99e171baad67bd9d 0131383ac63f9810e8d1e525bcf65f81e1fa235d Vadym <vadymlazariev@gmail.com> 1561985818 +0300	commit: SPA-1194. Mobile Safari bottom navigation fix
+0131383ac63f9810e8d1e525bcf65f81e1fa235d 5db967174615cc33fd11db14893d5c36384ea4a2 Vadym <vadymlazariev@gmail.com> 1561988020 +0300	pull origin spa-1194: Fast-forward
+5db967174615cc33fd11db14893d5c36384ea4a2 bd3c7312f61fb3aa88e6c1e67d4d80ff8679c20a Vadym <vadymlazariev@gmail.com> 1561988058 +0300	rebase -i (finish): refs/heads/spa-1194 onto 1accf3788b464d6aa9c68dbd99e171baad67bd9d
+bd3c7312f61fb3aa88e6c1e67d4d80ff8679c20a d24ab2db6171bf1214938e13d94648a1cb784f52 Vadym <vadymlazariev@gmail.com> 1562148369 +0300	rebase finished: refs/heads/spa-1194 onto d24ab2db6171bf1214938e13d94648a1cb784f52
+d24ab2db6171bf1214938e13d94648a1cb784f52 0850cd645cb37246dce304649e12d45af31f4f31 Vadym <vadymlazariev@gmail.com> 1562158331 +0300	commit: SPA-1194: Fix for ios safari
+0850cd645cb37246dce304649e12d45af31f4f31 d24ab2db6171bf1214938e13d94648a1cb784f52 Vadym <vadymlazariev@gmail.com> 1562158572 +0300	reset: moving to HEAD^
+d24ab2db6171bf1214938e13d94648a1cb784f52 29501cfdaf4220750bf9dca6b3dc4bab824256ab Vadym <vadymlazariev@gmail.com> 1562158589 +0300	commit: SPA-1194: Fix for ios safari
+29501cfdaf4220750bf9dca6b3dc4bab824256ab a1e0366557db1aa03229457695ee632e896e99ee Vadym <vadymlazariev@gmail.com> 1562223597 +0300	cherry-pick: spa-1194: margin-top fix

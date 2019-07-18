@@ -1,0 +1,13 @@
+0000000000000000000000000000000000000000 30576e891e40146da660995009ffdf45c86d7809 Vadym <vadymlazariev@gmail.com> 1560423952 +0300	branch: Created from HEAD
+30576e891e40146da660995009ffdf45c86d7809 91d58e7c58472e34128fc518ec750d3ae7673307 Vadym <vadymlazariev@gmail.com> 1560934530 +0300	rebase finished: refs/heads/dark-mode-fix onto 91d58e7c58472e34128fc518ec750d3ae7673307
+91d58e7c58472e34128fc518ec750d3ae7673307 786fc4bd82c8f62f12a1ffc2df209b305aa9cf0d Vadym <vadymlazariev@gmail.com> 1560950369 +0300	commit: wip
+786fc4bd82c8f62f12a1ffc2df209b305aa9cf0d cd603c1ee3bb45165d684d6d08752f12a330bc1e Vadym <vadymlazariev@gmail.com> 1560951093 +0300	commit: wip
+cd603c1ee3bb45165d684d6d08752f12a330bc1e a21186f7175017acbed4b0c0a85db87f356f3e4e Vadym <vadymlazariev@gmail.com> 1561011903 +0300	commit: wip
+a21186f7175017acbed4b0c0a85db87f356f3e4e f95ed136c8343c869fa9b74416c12af834f9dbaa Vadym <vadymlazariev@gmail.com> 1561026568 +0300	commit: wip
+f95ed136c8343c869fa9b74416c12af834f9dbaa a21186f7175017acbed4b0c0a85db87f356f3e4e Vadym <vadymlazariev@gmail.com> 1561026692 +0300	reset: moving to a21186f7175017acbed4b0c0a85db87f356f3e4e
+a21186f7175017acbed4b0c0a85db87f356f3e4e 3bf9812bed1d69696c3f89896313d3899fc5cce8 Vadym <vadymlazariev@gmail.com> 1561030472 +0300	commit: dark-mode-fix
+3bf9812bed1d69696c3f89896313d3899fc5cce8 a5443729b1c062df086b9d49d2a07fc3d840eec7 Vadym <vadymlazariev@gmail.com> 1561030488 +0300	rebase -i (finish): refs/heads/dark-mode-fix onto 2532871aae7154108342fe4a284bc0fe7b52a2e6
+a5443729b1c062df086b9d49d2a07fc3d840eec7 43e95f4886c6fa8d737e5917dff801203209f801 Vadym <vadymlazariev@gmail.com> 1561030533 +0300	commit (amend): dark-mode fix
+43e95f4886c6fa8d737e5917dff801203209f801 fbc3591e93985b3e91279f336d21d74c7acbb971 Vadym <vadymlazariev@gmail.com> 1561030701 +0300	commit (amend): dark-mode fix (in process)
+fbc3591e93985b3e91279f336d21d74c7acbb971 25f079a543e5a3acc572305c060d1099cf7d9756 Vadym <vadymlazariev@gmail.com> 1561035004 +0300	commit: back button fix
+25f079a543e5a3acc572305c060d1099cf7d9756 fbc3591e93985b3e91279f336d21d74c7acbb971 Vadym <vadymlazariev@gmail.com> 1561035064 +0300	reset: moving to HEAD^

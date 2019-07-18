@@ -3,6 +3,19 @@
 :host {
   height: 100%;
 }
+
+// queries for safari
+@media not all and (min-resolution:.001dpcm) {
+  @supports (-webkit-appearance:none) {
+    @media all and (max-width: 425px) {
+      div.container {
+        height: 100vh;
+      }
+    }
+  }
+}
+
+
 .container {
   height: 100%;
   display: flex;

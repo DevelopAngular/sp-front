@@ -1,0 +1,91 @@
+0000000000000000000000000000000000000000 f99ae1908369dd96cb1d82a74f6ecffefbba7e3c Vadym <vadymlazariev@gmail.com> 1556866752 +0300	WIP on master: 9a6824fe Fixed SPB-202
+f99ae1908369dd96cb1d82a74f6ecffefbba7e3c d8fa5969c0b2c918cb7b08a127d2817c8dedf3f0 Vadym <vadymlazariev@gmail.com> 1556886985 +0300	WIP on spa-756: 58e72328 SPA-756: Teacher version Home screen layout
+d8fa5969c0b2c918cb7b08a127d2817c8dedf3f0 f996e8af3eb1c86313b58f583c9967123979fb2d Vadym <vadymlazariev@gmail.com> 1557123466 +0300	WIP on spa-754: dca60ef0 SPA-754: Student version Home screen layout
+f996e8af3eb1c86313b58f583c9967123979fb2d ccc8171ad14e845c1dc703ab94270abf633a7f85 Vadym <vadymlazariev@gmail.com> 1557123882 +0300	WIP on spa-757: bd095cfd Merge branch 'denis_bochar' into dev
+ccc8171ad14e845c1dc703ab94270abf633a7f85 c75e338d0c11103484332b153af08f38bcf39b33 Vadym <vadymlazariev@gmail.com> 1557124149 +0300	WIP on spa-754: dca60ef0 SPA-754: Student version Home screen layout
+c75e338d0c11103484332b153af08f38bcf39b33 d53de639138b4e02a5cfe6e2f63ccbc76a8bcbff Vadym <vadymlazariev@gmail.com> 1557142630 +0300	WIP on spa-754: 3ee0fbd2 SPA-754: Student version Home screen layout
+d53de639138b4e02a5cfe6e2f63ccbc76a8bcbff 6476d90903b52f0b7126100dde103639d149053f Vadym <vadymlazariev@gmail.com> 1557210321 +0300	WIP on spa-754: 3ee0fbd2 SPA-754: Student version Home screen layout
+6476d90903b52f0b7126100dde103639d149053f 473149270c9ddaaa1d8f234f943820d672d7c48d Vadym <vadymlazariev@gmail.com> 1557295952 +0300	WIP on spa-754: 3ee0fbd2 SPA-754: Student version Home screen layout
+473149270c9ddaaa1d8f234f943820d672d7c48d 0a342bab60af5560ff57c4206f875de2b03e7a00 Vadym <vadymlazariev@gmail.com> 1557476606 +0300	WIP on spa-756: 564f13d1 SPA-756: WIP: responsive passes, loader
+0a342bab60af5560ff57c4206f875de2b03e7a00 67f66eca59d70841bbd4116ed5ae64509f3157b9 Vadym <vadymlazariev@gmail.com> 1557481203 +0300	WIP on spa-756: 564f13d1 SPA-756: WIP: responsive passes, loader
+67f66eca59d70841bbd4116ed5ae64509f3157b9 5c2cb53d60aeac749bb22da68d265db09d4f8f1b Vadym <vadymlazariev@gmail.com> 1557484156 +0300	WIP on spa-756: 564f13d1 SPA-756: WIP: responsive passes, loader
+5c2cb53d60aeac749bb22da68d265db09d4f8f1b 3940fcde5e50a478c9aa78f7c47016164c90b69d Vadym <vadymlazariev@gmail.com> 1557496643 +0300	WIP on spa-756: 564f13d1 SPA-756: WIP: responsive passes, loader
+3940fcde5e50a478c9aa78f7c47016164c90b69d c7dfcf7c4de4edbfa065a115aebe8500c6e1cd99 Vadym <vadymlazariev@gmail.com> 1557728206 +0300	WIP on spa-756: 564f13d1 SPA-756: WIP: responsive passes, loader
+c7dfcf7c4de4edbfa065a115aebe8500c6e1cd99 eb7a17a2e517551466fe06a56da39f49154942e5 Vadym <vadymlazariev@gmail.com> 1557728496 +0300	WIP on spa-756: 103bb2d7 SPA-756: WIP: responsive passes, loader
+eb7a17a2e517551466fe06a56da39f49154942e5 daf07f8a952e86809b8c4e8b0841f430e54b5d2c Vadym <vadymlazariev@gmail.com> 1557754928 +0300	WIP on spa-756: 103bb2d7 SPA-756: WIP: responsive passes, loader
+daf07f8a952e86809b8c4e8b0841f430e54b5d2c 57f918ef4999a0de65df7b156f0420fa0c45b0e1 Vadym <vadymlazariev@gmail.com> 1557816939 +0300	WIP on dev: 4dfe7cf9 Merge branch 'denis_bochar' into dev
+57f918ef4999a0de65df7b156f0420fa0c45b0e1 6584860285c91beb000cb062509dd01d21ab76e7 Vadym <vadymlazariev@gmail.com> 1557833296 +0300	WIP on spa-754: 0168d172 SPA-754: student home screen
+6584860285c91beb000cb062509dd01d21ab76e7 39433e4f7051dd5145b691c11b9d8f6d7e0dfbd8 Vadym <vadymlazariev@gmail.com> 1557900994 +0300	WIP on spa-755: d6199fd5 SPA-754: Student version Home screen layout
+39433e4f7051dd5145b691c11b9d8f6d7e0dfbd8 125cc0c1bb19f467b87f20f025ec778c712eac57 Vadym <vadymlazariev@gmail.com> 1557906692 +0300	WIP on spa-755: 2355340a SPA-754: Student version Home screen layout
+125cc0c1bb19f467b87f20f025ec778c712eac57 2934ef3a397167242c953e5d4618cf7a27995b10 Vadym <vadymlazariev@gmail.com> 1557926955 +0300	WIP on spa-757: faf28185 SPA-756: Teacher version Home screen layout
+2934ef3a397167242c953e5d4618cf7a27995b10 4c249b7372570f2f8a4df62a9411042155007f7d Vadym <vadymlazariev@gmail.com> 1557987386 +0300	WIP on spa-757: faf28185 SPA-756: Teacher version Home screen layout
+4c249b7372570f2f8a4df62a9411042155007f7d 40258194ad64ceb10debb7ddddd950d9747989da Vadym <vadymlazariev@gmail.com> 1557988140 +0300	WIP on spa-757: 808bb188 SPA-756: Teacher version Home screen layout
+40258194ad64ceb10debb7ddddd950d9747989da 3470cf03975218c3ac7c8ec5da83f0758c2a596f Vadym <vadymlazariev@gmail.com> 1557989835 +0300	WIP on spa-757: 808bb188 SPA-756: Teacher version Home screen layout
+3470cf03975218c3ac7c8ec5da83f0758c2a596f a5f9a3ccb743eb5166fab04e44942cc12efad796 Vadym <vadymlazariev@gmail.com> 1558074595 +0300	WIP on spa-757: 8628f49e SPA-756: back button position fix
+a5f9a3ccb743eb5166fab04e44942cc12efad796 b7b449b361690ee72cfa4c100668ddc28cac849b Vadym <vadymlazariev@gmail.com> 1558333429 +0300	WIP on (no branch): 26320ebb fixed sign-in errors (SPA-948, 962)
+b7b449b361690ee72cfa4c100668ddc28cac849b c5c55d95885c151955a9609e3c0adef60e41451f Vadym <vadymlazariev@gmail.com> 1558334163 +0300	WIP on spa-757: 8628f49e SPA-756: back button position fix
+c5c55d95885c151955a9609e3c0adef60e41451f 6117691a0c43b0eaf3322b566b6ef317352481ab Vadym <vadymlazariev@gmail.com> 1558334510 +0300	WIP on spa-757: ba410b00 SPA-756: back button position fix
+6117691a0c43b0eaf3322b566b6ef317352481ab 93f0da8ff21863dc106ea895bd2a56288ac5e311 Vadym <vadymlazariev@gmail.com> 1558335009 +0300	WIP on spa-757: b0e5bdf9 SPA-756: back button position fix
+93f0da8ff21863dc106ea895bd2a56288ac5e311 b1ebc625a73a4f2e3a1fc20207229444521f6caa Vadym <vadymlazariev@gmail.com> 1558421491 +0300	WIP on spa-757: 735b74ff SPA-7567: WIP Teacher hall monitor screen
+b1ebc625a73a4f2e3a1fc20207229444521f6caa d045dd01538e20b0d604642fd130f2bd89688d2d Vadym <vadymlazariev@gmail.com> 1558432450 +0300	WIP on spa-758: 68373dbc SPA-757: WIP Teacher hall monitor screen
+d045dd01538e20b0d604642fd130f2bd89688d2d 99923bc56c3085568f04055b471f3dc6a57ef05b Vadym <vadymlazariev@gmail.com> 1558440902 +0300	WIP on spa-758: 68373dbc SPA-757: WIP Teacher hall monitor screen
+99923bc56c3085568f04055b471f3dc6a57ef05b 8edffa83c44d28bd87d4829f518f1900c985f141 Vadym <vadymlazariev@gmail.com> 1558441977 +0300	WIP on spa-758: 68373dbc SPA-757: WIP Teacher hall monitor screen
+8edffa83c44d28bd87d4829f518f1900c985f141 ac1b7ce24a8174b1346c948e8c9fb78a416989ca Vadym <vadymlazariev@gmail.com> 1558444911 +0300	WIP on spa-758: 68373dbc SPA-757: WIP Teacher hall monitor screen
+ac1b7ce24a8174b1346c948e8c9fb78a416989ca a24afbe39930cd21fed8830ae66972a2bcb0631b Vadym <vadymlazariev@gmail.com> 1558505967 +0300	WIP on spa-758: 68373dbc SPA-757: WIP Teacher hall monitor screen
+a24afbe39930cd21fed8830ae66972a2bcb0631b 7dbbec715b77e50ea4525116cfa84745eb3fdbb9 Vadym <vadymlazariev@gmail.com> 1558511496 +0300	WIP on spa-758: 68373dbc SPA-757: WIP Teacher hall monitor screen
+7dbbec715b77e50ea4525116cfa84745eb3fdbb9 d8a13f882b0330c780e62d58c528c54046ab397a Vadym <vadymlazariev@gmail.com> 1558599291 +0300	WIP on spa-758: 7bd96f72 SPA-758: WIP Teacher version - my room tab
+d8a13f882b0330c780e62d58c528c54046ab397a e78402a8ac2cc8a5c39c3a99e78cf296ed4e97d4 Vadym <vadymlazariev@gmail.com> 1558599726 +0300	WIP on spa-758: f6c4a1de SPA-758: WIP Teacher version - my room tab
+e78402a8ac2cc8a5c39c3a99e78cf296ed4e97d4 89890fb7475ef550ccb2e4697aadd829d9b36641 Vadym <vadymlazariev@gmail.com> 1558610192 +0300	WIP on spa-758: f6c4a1de SPA-758: WIP Teacher version - my room tab
+89890fb7475ef550ccb2e4697aadd829d9b36641 ca624bbc4eb272fd551d44828849a6f9231af576 Vadym <vadymlazariev@gmail.com> 1558679232 +0300	WIP on spa-758: f6c4a1de SPA-758: WIP Teacher version - my room tab
+ca624bbc4eb272fd551d44828849a6f9231af576 9c50e6f328febe8a6e80ebe6106039638843739f Vadym <vadymlazariev@gmail.com> 1559029969 +0300	WIP on spa-755: fc83eae3 SPA-756: Teacher version Home screen layout
+9c50e6f328febe8a6e80ebe6106039638843739f 3583e4960ee769bce19b8b8c70b272190954d2eb Vadym <vadymlazariev@gmail.com> 1559031742 +0300	WIP on spa-755: fc83eae3 SPA-756: Teacher version Home screen layout
+3583e4960ee769bce19b8b8c70b272190954d2eb 59bab9c31767e5f46d1fb2f4eefb02311d0dcfe3 Vadym <vadymlazariev@gmail.com> 1559197539 +0300	WIP on spa-755: 5d957e91 SPA-755: WIP request section
+59bab9c31767e5f46d1fb2f4eefb02311d0dcfe3 b401befee2ec733e86157a4d539560c3700f509c Vadym <vadymlazariev@gmail.com> 1559202577 +0300	WIP on spa-758: ab58d4aa SPA-758: WIP Teacher version - my room tab
+b401befee2ec733e86157a4d539560c3700f509c a0ee59449fa666e7b75fd7d8536f6f9ff3a1dd7e Vadym <vadymlazariev@gmail.com> 1559299081 +0300	WIP on spa-755: ee0287cd SPA-755: work in progress
+a0ee59449fa666e7b75fd7d8536f6f9ff3a1dd7e aa7c7e56c0f3ed15e38ecd89c54dfd2165fe5c64 Vadym <vadymlazariev@gmail.com> 1559312860 +0300	WIP on spa-755: 60e3931a SPA-755: wip
+aa7c7e56c0f3ed15e38ecd89c54dfd2165fe5c64 59addf823aea912e6c494a37532ae650f27a9ad3 Vadym <vadymlazariev@gmail.com> 1559314159 +0300	WIP on spa-755: 60e3931a SPA-755: wip
+59addf823aea912e6c494a37532ae650f27a9ad3 9d8eb2128c61e2db0e6c1d08f3e63b856ee3805e Vadym <vadymlazariev@gmail.com> 1559314922 +0300	WIP on spa-755: 60e3931a SPA-755: wip
+9d8eb2128c61e2db0e6c1d08f3e63b856ee3805e e2357d7968511ffdfafb55cc0125ea3a178b392d Vadym <vadymlazariev@gmail.com> 1559545004 +0300	WIP on spa-759: e8202a01 Merge branch 'dev' of gitlab.com:notify-messenger/hall-pass-web into dev
+e2357d7968511ffdfafb55cc0125ea3a178b392d 0b2db3002193477f57930a5cf4ddd8b2c853b7e5 Vadym <vadymlazariev@gmail.com> 1559546366 +0300	WIP on spa-759: e8202a01 Merge branch 'dev' of gitlab.com:notify-messenger/hall-pass-web into dev
+0b2db3002193477f57930a5cf4ddd8b2c853b7e5 02edd288dd4f57f9584b0ab2ecec0d8be215f540 Vadym <vadymlazariev@gmail.com> 1559547605 +0300	WIP on spa-759: e8202a01 Merge branch 'dev' of gitlab.com:notify-messenger/hall-pass-web into dev
+02edd288dd4f57f9584b0ab2ecec0d8be215f540 be241ce02d7608ea0a7197235cd1ed51f5bd389c Vadym <vadymlazariev@gmail.com> 1559549413 +0300	WIP on spa-759: e8202a01 Merge branch 'dev' of gitlab.com:notify-messenger/hall-pass-web into dev
+be241ce02d7608ea0a7197235cd1ed51f5bd389c 9f3a33820c03fcb29b5695928126d2dee014516e Vadym <vadymlazariev@gmail.com> 1559549990 +0300	WIP on spa-759: e8202a01 Merge branch 'dev' of gitlab.com:notify-messenger/hall-pass-web into dev
+9f3a33820c03fcb29b5695928126d2dee014516e 9cfa28f5b3f18a7c6f15e1b02bd56476de770fb7 Vadym <vadymlazariev@gmail.com> 1559553071 +0300	WIP on spa-759: 3e3e8a5e SPA-759: WIP
+9cfa28f5b3f18a7c6f15e1b02bd56476de770fb7 d9908ab41f3e473aefcf1dbe2db6e966319a8295 Vadym <vadymlazariev@gmail.com> 1559563069 +0300	WIP on spa-759: 3e3e8a5e SPA-759: WIP
+d9908ab41f3e473aefcf1dbe2db6e966319a8295 40d03336a6e6428878206e97eb45527fa56012fe Vadym <vadymlazariev@gmail.com> 1559563422 +0300	WIP on spa-759: 3e3e8a5e SPA-759: WIP
+40d03336a6e6428878206e97eb45527fa56012fe 12d238735c669f7e2ddb3fc5e5e76658ddecb455 Vadym <vadymlazariev@gmail.com> 1559628805 +0300	WIP on spa-759: 3e3e8a5e SPA-759: WIP
+12d238735c669f7e2ddb3fc5e5e76658ddecb455 524fc830015d5d1c970c4a8fcaed7d559a762a05 Vadym <vadymlazariev@gmail.com> 1559719086 +0300	WIP on spa-757: cfdac4b6 SPA-757: Teacher version Hall monitor tab
+524fc830015d5d1c970c4a8fcaed7d559a762a05 678f8e337fd321297ce26d93cf764ee5735b50db Vadym <vadymlazariev@gmail.com> 1559720872 +0300	WIP on spa-757: cfdac4b6 SPA-757: Teacher version Hall monitor tab
+678f8e337fd321297ce26d93cf764ee5735b50db 29979ae6b8512b07614cdb1d26a276467f9f3428 Vadym <vadymlazariev@gmail.com> 1559727954 +0300	WIP on spa-761: 39757354 SPA-754: Student version Home screen layout
+29979ae6b8512b07614cdb1d26a276467f9f3428 b15b6e08e34f6c22f14a801a86f412ee0d9c33da Vadym <vadymlazariev@gmail.com> 1559732329 +0300	WIP on spa-761: 39757354 SPA-754: Student version Home screen layout
+b15b6e08e34f6c22f14a801a86f412ee0d9c33da 56cc4a595e9315223ec487f7856c4c0c6aa0f12e Vadym <vadymlazariev@gmail.com> 1559801854 +0300	WIP on spa-761: 39757354 SPA-754: Student version Home screen layout
+56cc4a595e9315223ec487f7856c4c0c6aa0f12e 1486dc526e5eafbb0339ff2835dae46e33b17bfe Vadym <vadymlazariev@gmail.com> 1559909648 +0300	WIP on spa-625: 238f9989 SPA-756: Teacher version Home screen layout
+1486dc526e5eafbb0339ff2835dae46e33b17bfe 8a5bc102067566fc3ef879f39c9de1fe1e9e6db3 Vadym <vadymlazariev@gmail.com> 1560166496 +0300	WIP on spa-625: 238f9989 SPA-756: Teacher version Home screen layout
+8a5bc102067566fc3ef879f39c9de1fe1e9e6db3 c5e2f05127d07efb6c642fa59ee59fd1dc939774 Vadym <vadymlazariev@gmail.com> 1560174756 +0300	WIP on dev: 724000ea Merge branch 'spa-755' into dev
+c5e2f05127d07efb6c642fa59ee59fd1dc939774 5489aa9b8f408c5ddf9521fc72a867d23f1a2e13 Vadym <vadymlazariev@gmail.com> 1560175684 +0300	WIP on dev: 724000ea Merge branch 'spa-755' into dev
+5489aa9b8f408c5ddf9521fc72a867d23f1a2e13 4321d846c589988bae2af5f4ec9c22d90fe3d3cf Vadym <vadymlazariev@gmail.com> 1560176427 +0300	WIP on dev: 724000ea Merge branch 'spa-755' into dev
+4321d846c589988bae2af5f4ec9c22d90fe3d3cf 325c5af439b8ea5010a8fa973894ea8ba42bc524 Vadym <vadymlazariev@gmail.com> 1560497703 +0300	WIP on pass-tile-fixes: 30576e89 Fixed build issue
+325c5af439b8ea5010a8fa973894ea8ba42bc524 4f78f086e5223100e5aa89780d1b4ed8288637aa Vadym <vadymlazariev@gmail.com> 1560511937 +0300	WIP on dialogs-fix: edef9775 dialog-fix
+4f78f086e5223100e5aa89780d1b4ed8288637aa c7f0afcf07a38629c4ca78c99d81aae77b567449 Vadym <vadymlazariev@gmail.com> 1560935963 +0300	WIP on dark-mode-fix: 91d58e7c report dialog fix
+c7f0afcf07a38629c4ca78c99d81aae77b567449 ad07832b67c59196ec5c5fad05deb8cff836886d Vadym <vadymlazariev@gmail.com> 1561028265 +0300	WIP on dark-mode-fix: a21186f7 wip
+ad07832b67c59196ec5c5fad05deb8cff836886d 8aed31acb8e640944e1ed3b3d236dd65b63a4fca Vadym <vadymlazariev@gmail.com> 1561105787 +0300	WIP on spa-760: 2d1e605a my school page (SPA-1141)
+8aed31acb8e640944e1ed3b3d236dd65b63a4fca e670f5324c4b9117ef0d4b29d220291e26484ab2 Vadym <vadymlazariev@gmail.com> 1561113563 +0300	WIP on spa-760: d3d84476 fix build
+e670f5324c4b9117ef0d4b29d220291e26484ab2 250d839056674d017b6fbb721f56b128302e0032 Vadym <vadymlazariev@gmail.com> 1561367423 +0300	WIP on dev: c0b2455b Settings dialogs fix
+250d839056674d017b6fbb721f56b128302e0032 38df8e60b43ccdcdff34f289177584b667b9097f Vadym <vadymlazariev@gmail.com> 1561971033 +0300	WIP on dev: 9ddd3340 Merge branch 'spa-762' into dev
+38df8e60b43ccdcdff34f289177584b667b9097f 488c0c1b9db805d42b5fa47dec119405b72be208 Vadym <vadymlazariev@gmail.com> 1561976256 +0300	WIP on dev: 1accf378 reports icons (SPA-1177, 1182)
+488c0c1b9db805d42b5fa47dec119405b72be208 e084214e7a068a0e24166112cdb4c8e57446018a Vadym <vadymlazariev@gmail.com> 1562070329 +0300	WIP on spa-625: 7081ca02 Merge branch 'fix/1-07' into dev
+e084214e7a068a0e24166112cdb4c8e57446018a 5b38fd32de5b3ac30922c296c0f11e6fc4d3ca5a Vadym <vadymlazariev@gmail.com> 1562083712 +0300	WIP on dev: 6ad2a5cb from-container fix
+5b38fd32de5b3ac30922c296c0f11e6fc4d3ca5a 965d78e955c78c330cf6553b74104803360db2e0 Vadym <vadymlazariev@gmail.com> 1562234092 +0300	WIP on spa-625: f6c2f16c Merge branch 'spa-1233' into dev
+965d78e955c78c330cf6553b74104803360db2e0 266db12bc9eb6f4f4048b9611a9606696c915b65 Vadym <vadymlazariev@gmail.com> 1562245144 +0300	WIP on spa-625: f6c2f16c Merge branch 'spa-1233' into dev
+266db12bc9eb6f4f4048b9611a9606696c915b65 8ac5cdb0f71843a6fe747558b4b7f2ec5f781fa8 Vadym <vadymlazariev@gmail.com> 1562653235 +0300	WIP on pwa: 3e017671 login error fix
+8ac5cdb0f71843a6fe747558b4b7f2ec5f781fa8 1ab3b7bee9bd588291b5b31a1a3e4a80e90b708d Vadym <vadymlazariev@gmail.com> 1562653425 +0300	WIP on pwa: f8bec0b1 Resolved merge conflict
+1ab3b7bee9bd588291b5b31a1a3e4a80e90b708d b62df85f9b3ace654d72d12d4e0fddb9092414f4 Vadym <vadymlazariev@gmail.com> 1562673383 +0300	WIP on spa-1123: f8bec0b1 Resolved merge conflict
+b62df85f9b3ace654d72d12d4e0fddb9092414f4 3294b8e022d82016a6791ee6307bbe5bc07c5175 Vadym <vadymlazariev@gmail.com> 1562932705 +0300	WIP on spa-1247: 39a58659 SPA-1247. WIP
+3294b8e022d82016a6791ee6307bbe5bc07c5175 267639d776ab3e40fc1366b2ac00c7c43fd68623 Vadym <vadymlazariev@gmail.com> 1563258127 +0300	WIP on spa-1123: 32e0695f SPA-1247. Tab Bar fixes
+267639d776ab3e40fc1366b2ac00c7c43fd68623 444d27fb3336f5dd2c2e999ba1b5770972443848 Vadym <vadymlazariev@gmail.com> 1563266617 +0300	WIP on spa-1123: 32e0695f SPA-1247. Tab Bar fixes
+444d27fb3336f5dd2c2e999ba1b5770972443848 01d7826fe8d473e259bcafc8fa6eaf7bdd778c12 Vadym <vadymlazariev@gmail.com> 1563346867 +0300	WIP on spa-1280: bb3ec2d6 spa-1282 Select Students page scaling
+01d7826fe8d473e259bcafc8fa6eaf7bdd778c12 3435436fc025d0b00f04429505475191ec8bae8f Vadym <vadymlazariev@gmail.com> 1563347548 +0300	WIP on spa-1280: bb3ec2d6 spa-1282 Select Students page scaling
+3435436fc025d0b00f04429505475191ec8bae8f 0ff8abe74ad6f1f94ab7d7135b926d6ec189fde6 Vadym <vadymlazariev@gmail.com> 1563349548 +0300	WIP on spa-1280: bb3ec2d6 spa-1282 Select Students page scaling
+0ff8abe74ad6f1f94ab7d7135b926d6ec189fde6 8970fcdc9f15f3950ec817608d6f16fd9100f390 Vadym <vadymlazariev@gmail.com> 1563371367 +0300	WIP on spa-1123: 0010abb8 spa-1280. Profile switch
+8970fcdc9f15f3950ec817608d6f16fd9100f390 10f58f6df4983112ddc6714eba3ec023c9556117 Vadym <vadymlazariev@gmail.com> 1563441418 +0300	WIP on spa-1247: 5ca6b984 Fixed build issue
+10f58f6df4983112ddc6714eba3ec023c9556117 72fb58ebb853327dfdf119514b9c2f226859c991 Vadym <vadymlazariev@gmail.com> 1563446244 +0300	WIP on spa-1247: 5ca6b984 Fixed build issue

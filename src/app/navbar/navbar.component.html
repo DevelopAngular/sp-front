@@ -92,6 +92,7 @@
       </div>
     </div>
   </div>
+</div>
 
   <div *ngIf="isStaff && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra" class="teacherNav-mobile" [style.background-color]="darkTheme.getBackground('low', false)">
     <div class="teacherNav-mobile-wrapper" #navButtonsContainerMobile>
@@ -116,9 +117,6 @@
       <div class="selected-tab-pointer" #tabPointer [style.left]="pointerTopSpace" [style.width]="'58px'"></div>
     </div>
   </div>
-</div>
-
-
 
 <svg style="display: none;">
   <defs>
@@ -144,3 +142,5 @@
     </symbol>
   </defs>
 </svg>
+
+

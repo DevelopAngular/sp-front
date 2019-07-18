@@ -1,0 +1,20 @@
+0000000000000000000000000000000000000000 7feb80aead4742ab22c965cda7863c519d071722 Vadym <vadymlazariev@gmail.com> 1559828610 +0300	branch: Created from HEAD
+7feb80aead4742ab22c965cda7863c519d071722 76f13785d15d31db2b0981354d4dece87466c4d6 Vadym <vadymlazariev@gmail.com> 1561385007 +0300	rebase finished: refs/heads/spa-762 onto 76f13785d15d31db2b0981354d4dece87466c4d6
+76f13785d15d31db2b0981354d4dece87466c4d6 b8cb13beda2171560af4327ea487aa65a70619d4 Vadym <vadymlazariev@gmail.com> 1561444346 +0300	rebase finished: refs/heads/spa-762 onto b8cb13beda2171560af4327ea487aa65a70619d4
+b8cb13beda2171560af4327ea487aa65a70619d4 3b61744955f8239b9f6e87bf1d6cfda23c7d3516 Vadym <vadymlazariev@gmail.com> 1561530634 +0300	commit: spa-760 wip
+3b61744955f8239b9f6e87bf1d6cfda23c7d3516 ed2e0d1ef62aa4ef5be938a03f986c033e4d69ab Vadym <vadymlazariev@gmail.com> 1561530852 +0300	rebase finished: refs/heads/spa-762 onto 54c8d150689b96d0718a5ee7a634b336f6a94f61
+ed2e0d1ef62aa4ef5be938a03f986c033e4d69ab 54c8d150689b96d0718a5ee7a634b336f6a94f61 Vadym <vadymlazariev@gmail.com> 1561530861 +0300	reset: moving to HEAD^
+54c8d150689b96d0718a5ee7a634b336f6a94f61 cdc88ded16ede5e91d777cf589ff02601b9c05bb Vadym <vadymlazariev@gmail.com> 1561543854 +0300	commit: spa-762 wip
+cdc88ded16ede5e91d777cf589ff02601b9c05bb 0cabbbec0eb7f7bb9c5d6598a424ff7553dd403c Vadym <vadymlazariev@gmail.com> 1561547160 +0300	commit: spa-762 wip
+0cabbbec0eb7f7bb9c5d6598a424ff7553dd403c 2bde51548a04d25508a6ac2ec63877ca8b8a613e Vadym <vadymlazariev@gmail.com> 1561554259 +0300	rebase finished: refs/heads/spa-762 onto e9e882350a880afb91ef5978b17d5dbf6a3394cc
+2bde51548a04d25508a6ac2ec63877ca8b8a613e bddf2509c0d5623082ba12478b390972b97aaff9 Vadym <vadymlazariev@gmail.com> 1561617012 +0300	commit: spa-762 wip
+bddf2509c0d5623082ba12478b390972b97aaff9 4ed5135f7b749fa9118802d8c23a5f5a958a0fe3 Vadym <vadymlazariev@gmail.com> 1561617102 +0300	rebase finished: refs/heads/spa-762 onto 0be6e6082980fb81a7caa3000048df6ddcc1c649
+4ed5135f7b749fa9118802d8c23a5f5a958a0fe3 1d91e9575182a2bdbe00f5443a1c20b5ef4fbb82 Vadym <vadymlazariev@gmail.com> 1561622588 +0300	commit: spa-762 wip
+1d91e9575182a2bdbe00f5443a1c20b5ef4fbb82 4b84f059be122f933c77b3e3c7ca14c51dbe1776 Vadym <vadymlazariev@gmail.com> 1561622608 +0300	rebase -i (finish): refs/heads/spa-762 onto 0be6e6082980fb81a7caa3000048df6ddcc1c649
+4b84f059be122f933c77b3e3c7ca14c51dbe1776 0be6e6082980fb81a7caa3000048df6ddcc1c649 Vadym <vadymlazariev@gmail.com> 1561622636 +0300	reset: moving to HEAD^
+0be6e6082980fb81a7caa3000048df6ddcc1c649 367abd77b1edc9e3ef0f4790ab14707d4f5cf7fa Vadym <vadymlazariev@gmail.com> 1561630706 +0300	commit: spa-762 wip
+367abd77b1edc9e3ef0f4790ab14707d4f5cf7fa 0be6e6082980fb81a7caa3000048df6ddcc1c649 Vadym <vadymlazariev@gmail.com> 1561631323 +0300	reset: moving to HEAD^
+0be6e6082980fb81a7caa3000048df6ddcc1c649 7573629a9a8d72e11b0ff8ddd6f5530dbc5abcb4 Vadym <vadymlazariev@gmail.com> 1561631372 +0300	commit: spa-762 wip
+7573629a9a8d72e11b0ff8ddd6f5530dbc5abcb4 3ffcec5c3a934b1026c36650856227a64f7223f5 Vadym <vadymlazariev@gmail.com> 1561632875 +0300	commit: spa-762 wip
+3ffcec5c3a934b1026c36650856227a64f7223f5 2e1f80c6e2ef3fab97f6d4ea19665258806bf8b0 Vadym <vadymlazariev@gmail.com> 1561635431 +0300	commit (merge): Merge branch 'spa-762' of gitlab.com:notify-messenger/hall-pass-web into spa-762
+2e1f80c6e2ef3fab97f6d4ea19665258806bf8b0 45a41626b65f81aaea5afe7ee0b44dda81ebcfeb Vadym <vadymlazariev@gmail.com> 1561635506 +0300	rebase -i (finish): refs/heads/spa-762 onto 0be6e6082980fb81a7caa3000048df6ddcc1c649

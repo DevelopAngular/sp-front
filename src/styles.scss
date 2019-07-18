@@ -15,7 +15,7 @@ body {
   margin: 0 0;
   font-family: $primaryFont;
   width: 100%;
-  height: 100%;
+  height: 100vh;
   overflow: hidden;
   box-sizing: content-box !important;
   -webkit-overflow-scrolling: touch;
@@ -366,4 +366,17 @@ mat-sidenav-container {
 /* === Swiper Overrides === */
 .swiper-slide {
   margin: 10px 0;
+}
+
+
+// queries for safari
+@media not all and (min-resolution:.001dpcm) {
+  @supports (-webkit-appearance:none) {
+    @media all and (max-width: 425px) {
+      body,
+      mat-sidenav-container {
+        height: inherit;
+      }
+    }
+  }
 }
