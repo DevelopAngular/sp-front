@@ -8,6 +8,7 @@ import {RELEASE_NAME} from '../../build-info';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {trigger} from '@angular/animations';
 import {SideNavService} from '../services/side-nav.service';
+import {Router} from '@angular/router';
 
 export interface Setting {
   hidden: boolean;
@@ -51,7 +52,8 @@ export class SettingsComponent implements OnInit {
       private sideNavService: SideNavService,
       public loadingService: LoadingService,
       public darkTheme: DarkThemeSwitch,
-      public kioskMode: KioskModeService
+      public kioskMode: KioskModeService,
+      private router: Router
 
   ) {
     this.settings.push({
@@ -184,7 +186,7 @@ export class SettingsComponent implements OnInit {
 
   updateDialogPosition() {
       const matDialogConfig: MatDialogConfig = new MatDialogConfig();
-    if (this.targetElementRef) {
+    if (this.targetElementRef && this.dialogRef) {
       const rect = this.targetElementRef.nativeElement.getBoundingClientRect();
       matDialogConfig.position = { left: `${rect.left + (rect.width / 2) - 168 }px`, top: `${rect.bottom + 10}px` };
       this.dialogRef.updatePosition(matDialogConfig.position);
@@ -198,4 +200,16 @@ export class SettingsComponent implements OnInit {
         this.sideNavService.sideNavAction$.next('signout');
     }
   }
+
+  switchAction() {
+    if (this.dialogRef) {
+      this.dialogRef.close('switch');
+    } else {
+      this.router.navigate(['admin']);
+      this.sideNavService.toggleLeft$.next(false);
+      this.sideNavService.sideNavAction$.next('');
+      this.sideNavService.fadeClick$.next(true);
+    }
+  }
+
 }

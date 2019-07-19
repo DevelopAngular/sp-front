@@ -52,7 +52,6 @@ export class CalendarComponent implements OnInit {
   }
 
   setSearchDate(date) {
-    // debugger;
      let _date;
      if (date && !((date[0] as Moment).isSame(this.previousSelectedDate, 'day'))) {
        _date = date[0].toDate();
