@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { HttpService } from './http-service';
 import { School } from '../models/School';
 import { Observable } from 'rxjs';
+import {GSuiteOrgs} from '../models/GSuiteOrgs';
+import {switchMap} from 'rxjs/operators';
 
 
 @Injectable({
@@ -10,11 +12,14 @@ import { Observable } from 'rxjs';
 })
 export class AdminService {
 
-  constructor(private http: HttpService) { }
+  constructor(private http: HttpService) {
+
+  }
 
   /// Reports
-  getReports() {
-    return this.http.get('v1/event_reports');
+
+  getReports(limit = 10) {
+    return this.http.get(`v1/event_reports?limit=${limit}`);
   }
 
   sendReport(data) {
@@ -26,11 +31,12 @@ export class AdminService {
   }
 
   //// Admin
-  getAdminAccounts() {
-    return this.http.get('v1/admin/accounts');
+
+  getAccountSyncLink(schoolId: number) {
+    return this.http.post(`v1/schools/${schoolId}/syncing/authorize`);
   }
 
-  getAccountsWithLimit() {
+  getAdminAccounts() {
     return this.http.get('v1/admin/accounts');
   }
 
@@ -38,15 +44,32 @@ export class AdminService {
     return this.http.get('v1/admin/dashboard');
   }
 
+  getOnboardProgress() {
+    return this.http.get('v1/admin/onboard_progress');
+  }
+
+  getGSuiteOrgs(): Observable<GSuiteOrgs> {
+      return this.http.currentSchool$.pipe(
+          switchMap(school => this.http.get(`v1/schools/${school.id}/syncing/gsuite/status`)));
+  }
+
+  syncNow() {
+    return this.http.currentSchool$.pipe(
+          switchMap(school => this.http.post(`v1/schools/${school.id}/syncing/manual_sync`)));
+  }
+  updateGSuiteOrgs(body) {
+    return this.http.currentSchool$.pipe(
+          switchMap(school => this.http.patch(`v1/schools/${school.id}/syncing`, body)));
+  }
+
+  updateOnboardProgress(name) {
+    return this.http.put(`v1/admin/onboard_progress/${name}`);
+  }
+
   getFilteredDashboardData(date: Date) {
     // create a date in format YYYY-MM-DD
     const dateStr = date.toISOString().substring(0, 10);
     return this.http.get(`v1/admin/dashboard?start=${dateStr}`);
-  }
-
-  //// Icons
-  getIcons() {
-    return this.http.get('v1/room_icons');
   }
 
   //// Color Profile
@@ -57,6 +80,10 @@ export class AdminService {
   //// Schools
   getSchools(): Observable<School[]> {
     return this.http.get('v1/schools');
+  }
+
+  getSchoolById(id: number): Observable<School> {
+    return this.http.get(`v1/schools/${id}`);
   }
 
   updateSchoolSettings(id, settings) {

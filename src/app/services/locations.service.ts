@@ -12,6 +12,7 @@ export class LocationsService {
 
   myRoomSelectedLocation$: BehaviorSubject<Location> = new BehaviorSubject(null);
 
+  focused: BehaviorSubject<boolean> = new BehaviorSubject(true);
   constructor(private http: HttpService) { }
 
     getLocationsWithCategory(category: string) {
@@ -20,6 +21,15 @@ export class LocationsService {
 
     getLocationsWithTeacher(teacher: User) {
         return this.http.get<any[]>(`v1/locations?teacher_id=${teacher.id}`);
+    }
+
+    getLocatopnsWithManyTeachers(teachers: User[]) {
+        let url: string = '';
+        teachers.forEach(teacher => {
+            url += `teacher_id=${teacher.id}&`;
+        });
+        console.log('URL ==>>', url);
+        return this.http.get(`v1/locations?${url}`);
     }
 
     getLocation(id) {
@@ -31,7 +41,8 @@ export class LocationsService {
     }
 
     updateLocation(id, data) {
-        return this.http.patch(`v1/locations/${id}`, data);
+      console.log(data);
+      return this.http.patch(`v1/locations/${id}`, data);
     }
 
     deleteLocation(id) {
@@ -65,5 +76,9 @@ export class LocationsService {
 
     updateFavoriteLocations(body) {
         return this.http.put('v1/users/@me/starred', body);
+    }
+
+    get isFocused() {
+      return this.focused.asObservable();
     }
 }

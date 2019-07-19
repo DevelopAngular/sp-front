@@ -23,6 +23,8 @@ export class NavbarDataService {
 
   notificationBadge$ = new BehaviorSubject(0);
 
+  public inboxClick$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
   constructor(private userService: UserService, private dataService: DataService, private liveData: LiveDataService) {
 
 
@@ -44,5 +46,9 @@ export class NavbarDataService {
     badgeCount$.subscribe(this.notificationBadge$);
 
 
+  }
+
+  get inboxClick() {
+    return this.inboxClick$.asObservable();
   }
 }

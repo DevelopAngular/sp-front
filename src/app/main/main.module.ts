@@ -2,16 +2,17 @@
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
-    MatChipsModule,
-    MatDialogModule,
-    MatDividerModule,
-    MatGridListModule,
-    MatListModule,
-    MatIconModule,
-    MatProgressBarModule,
-    MatSelectModule,
-    MatSliderModule,
-    MatSlideToggleModule
+  MatChipsModule,
+  MatDialogModule,
+  MatDividerModule,
+  MatGridListModule,
+  MatListModule,
+  MatIconModule,
+  MatProgressBarModule,
+  MatSelectModule,
+  MatSliderModule,
+  MatSlideToggleModule,
+  MatSidenavModule
 } from '@angular/material';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { ContainerCardComponent } from '../container-card/container-card.component';
@@ -33,7 +34,6 @@ import { RequestAcceptComponent } from '../request-accept/request-accept.compone
 import { RequestCardComponent } from '../request-card/request-card.component';
 import { SettingsComponent } from '../settings/settings.component';
 import { SharedModule } from '../shared/shared.module';
-import { StudentPickerComponent } from '../student-picker/student-picker.component';
 import { MainRoutingModule } from './main-routing.module';
 import { NavbarDataService } from './navbar-data.service';
 import { FromWhereComponent } from '../create-hallpass-forms/main-hallpass--form/locations-group-container/from-where/from-where.component';
@@ -51,9 +51,9 @@ import { DateTimeContainerComponent } from '../create-hallpass-forms/main-hallpa
 import { FormFactorContainerComponent } from '../create-hallpass-forms/main-hallpass--form/form-factor-container/form-factor-container.component';
 import {StudentFooterComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/student-footer/student-footer.component';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
-import {FirstSeenFormComponent} from '../create-hallpass-forms/first-seen-form/first-seen-form.component';
 import {NotificationFormComponent} from '../notification-form/notification-form.component';
 import {WhoYouAreComponent} from '../create-hallpass-forms/main-hallpass--form/student-groups/who-you-are/who-you-are.component';
+import {ScreenService} from '../services/screen.service';
 import {KioskModeComponent} from '../kiosk-mode/kiosk-mode.component';
 
 @NgModule({
@@ -74,7 +74,8 @@ import {KioskModeComponent} from '../kiosk-mode/kiosk-mode.component';
     MatGridListModule,
     MatDividerModule,
     MatGridListModule,
-    MatListModule
+    MatListModule,
+    MatSidenavModule
   ],
   declarations: [
     HallMonitorComponent,
@@ -88,7 +89,6 @@ import {KioskModeComponent} from '../kiosk-mode/kiosk-mode.component';
     InlinePassCardComponent,
     LocationTableComponent,
     FavoriteFormComponent,
-    StudentPickerComponent,
     ReportFormComponent,
     RequestCardComponent,
     InvitationCardComponent,
@@ -112,9 +112,8 @@ import {KioskModeComponent} from '../kiosk-mode/kiosk-mode.component';
     DateTimeContainerComponent,
     FormFactorContainerComponent,
     CreateHallpassFormsComponent,
-    FirstSeenFormComponent,
     NotificationFormComponent,
-    KioskModeComponent
+    KioskModeComponent,
   ],
   entryComponents: [
     CreateHallpassFormsComponent,
@@ -130,7 +129,8 @@ import {KioskModeComponent} from '../kiosk-mode/kiosk-mode.component';
 
   ],
   providers: [
-    NavbarDataService
+    NavbarDataService,
+    ScreenService
   ]
 })
 export class MainModule {

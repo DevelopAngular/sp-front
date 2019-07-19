@@ -75,6 +75,7 @@
   display: flex;
   justify-content: space-between;
   height: 430px;
+  overflow: hidden;
 }
 
 .room-edit {
@@ -148,6 +149,8 @@
   position: relative;
   height: 100%;
   width: 614px;
+  margin: 0;
+  -webkit-overflow-scrolling: touch;
   .room-inputs {
     display: flex;
     margin: 20px 25px;
@@ -381,8 +384,13 @@
   align-items: center;
   flex-direction: column;
   background-color: #FCFDFF;
-  //position: relative;
+  top: 0;
+  position: absolute;
+  width: 528px;
   min-height: 78px;
+  overflow: hidden;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+
   //height: 78px;
   //width: 100%;
 
@@ -426,10 +434,6 @@
       cursor: pointer;
       position: absolute;
       left: 0;
-
-      &:hover {
-        background-color: #ECF1FF;
-      }
     }
 
     .cancel-button-in-folder-header {
@@ -560,9 +564,10 @@
 }
 
 .edit-rooms-info {
+  text-align: center;
   font-size: 14px;
   color: #7F879D;
-  margin: 20px 30px 0 30px;
+  margin: 20px 25px 0 25px;
 }
 
 .edit-right-content {

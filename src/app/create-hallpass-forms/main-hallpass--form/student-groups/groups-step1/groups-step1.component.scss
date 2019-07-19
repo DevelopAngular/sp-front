@@ -1,12 +1,103 @@
 @import "../../../../../sp-colors";
 
 :host {
+
+  @media all and (max-width: 1024px) {
+    div.step-1-container {
+      min-height: 500px;
+    }
+
+    img.back-btn-top {
+      display: none;
+    }
+
+    img.back-btn-bottom {
+      display: block;
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .step-1-container div.content-left {
+      border: none;
+      order: 1;
+    }
+
+    .step-1-container div.content {
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .step-1-container div.content-left_wrapper {
+      padding: 0;
+      overflow: visible;
+      width: 100%;
+      margin: auto;
+    }
+
+    .step-1-container div.content-right {
+      overflow: visible;
+      padding: 0;
+      flex: 0;
+    }
+
+    .step-1-container div.content-left_groups {
+      margin: 0;
+    }
+
+    .step-1-container div.content-right_next {
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 5px;
+      right: inherit;
+    }
+
+    .step-1-container div.button-shadow.next-btn-desktop {
+      display: none;
+    }
+
+    .step-1-container div.button-shadow.next-btn-mobile {
+      display: block;
+      position: absolute;
+      bottom: 21px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+
+    .step-1-container div.incomplete {
+      display: none;
+    }
+
+    .step-1-container div.new-student-group-btn {
+      display: none;
+    }
+
+    .step-1-container div.edit-group-btn {
+      display: none;
+    }
+  }
+
+  @media all and (min-width: 360px) and (max-width: 1024px) {
+    img.back-btn-bottom {
+      bottom: -45px;
+    }
+  }
+
+  @media all and (max-width: 320px) {
+    img.back-btn-bottom {
+      bottom: -35px;
+    }
+  }
+
   .step-1-container {
     $primary-color: #3D396B;
     $secondary-color: #999999;
 
 
-    width: 700px;
     min-height: 400px;
     background-color: #fff;
     //border: 1px solid #777;
@@ -248,4 +339,33 @@
       }
     }
   }
+}
+
+.edit-group-btn,
+.next-btn-desktop,
+.back-btn-top {
+  display: block;
+}
+
+.next-btn-mobile,
+.back-btn-bottom {
+  display: none;
+}
+
+.student-group-name-wrapper {
+  width: 100%;
+}
+
+.student-group-name {
+  text-align: center;
+  padding: 8px 0;
+  border-bottom: 1.5px solid rgba(0,0,0,.1);
+}
+
+.incomplete {
+  display: block;
+}
+
+.new-student-group-btn {
+  display: block;
 }

@@ -53,7 +53,7 @@ export class TimePickerComponent implements OnInit, OnDestroy {
 
   get isDisabledSwitchFormat() {
       const removeTime = moment(this._currentDate).subtract(12, 'hour');
-      return removeTime.isSameOrBefore(moment().add(5, 'minutes'), 'day');
+      return removeTime.isBefore(moment().add(5, 'minutes'), 'day');
   }
 
   ngOnInit() {
@@ -157,6 +157,8 @@ export class TimePickerComponent implements OnInit, OnDestroy {
           }
           this.buildFrom();
           this.timeResult.emit(this._currentDate);
+      } else {
+          console.log('this invalid Time ====>>>', this._currentDate.format('DD hh:mm A'));
       }
   }
 }

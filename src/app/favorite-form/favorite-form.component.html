@@ -1,38 +1,43 @@
-<div class="favorite-form-wrapper">
 
-  <div class="divider" [style.background-image]="'radial-gradient(circle at 73% 71%, #E7A700,#EFCE00)'">
-    <img class="back-button" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" (click)="back()">
-    <div class="center">
-      <img draggable="false" class="divider-icon" [src]="'./assets/Star (White).svg' | resolveAsset">
-      <div class="ds-dialog-title-white">Favorites</div>
+  <div class="favorite-form-wrapper">
+    <div class="divider" [style.background-image]="'radial-gradient(circle at 73% 71%, #E7A700,#EFCE00)'">
+      <img class="back-button" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" (click)="back()">
+      <div class="center">
+        <img draggable="false" class="divider-icon" [src]="'./assets/Star (White).svg' | resolveAsset">
+        <div class="ds-dialog-title-white">Favorites</div>
+      </div>
+    </div>
+    <div class="content">
+      <app-location-table class="locations"
+                          [rightHeaderText]="true"
+                          [isEdit]="true"
+                          (onStar)="onStar($event)"
+                          [showFavorites]="true"
+                          (onUpdate)="starChangesIds = $event"
+                          [type]="'location'"
+                          [allowOnStar]="true"
+                          [placeholder]="'Search rooms'"
+                          [isFavoriteForm]="true"
+                          [searchExceptFavourites]="true"
+                          [showStars]="true">
+      </app-location-table>
+      <!--<div class="save-button">-->
+      <!--<app-gradient-button-->
+      <!--[gradient]="'#E7A700,#EFCE00'"-->
+      <!--[hoverColor]="'#E7A700'"-->
+      <!--[minWidth]="'90px'"-->
+      <!--[minHeight]="'30px'"-->
+      <!--[fontSize]="'14px'"-->
+      <!--(buttonClick)="closeDialog()"-->
+      <!--[style.width]="'90px'"-->
+      <!--[style.margin-bottom]="'14px'"-->
+      <!--&gt;Save</app-gradient-button>-->
+      <!--</div>-->
+      <div class="bottom-shadow-hint"></div>
     </div>
   </div>
-  <div class="content">
-    <app-location-table class="locations"
-                        [rightHeaderText]="true"
-                        [isEdit]="true"
-                        (onStar)="onStar($event)"
-                        [showFavorites]="true"
-                        (onUpdate)="starChangesIds = $event"
-                        [type]="'location'"
-                        [allowOnStar]="true"
-                        [placeholder]="'Search rooms'"
-                        [isFavoriteForm]="true"
-                        [searchExceptFavourites]="true"
-                        [showStars]="true">
-    </app-location-table>
-  <!--<div class="save-button">-->
-    <!--<app-gradient-button-->
-            <!--[gradient]="'#E7A700,#EFCE00'"-->
-            <!--[hoverColor]="'#E7A700'"-->
-            <!--[minWidth]="'90px'"-->
-            <!--[minHeight]="'30px'"-->
-            <!--[fontSize]="'14px'"-->
-            <!--(buttonClick)="closeDialog()"-->
-            <!--[style.width]="'90px'"-->
-            <!--[style.margin-bottom]="'14px'"-->
-    <!--&gt;Save</app-gradient-button>-->
-  <!--</div>-->
-    <div class="bottom-shadow-hint"></div>
-  </div>
+
+<div class="back-button-wrapper" (click)="back()">
+  <img class="back-button-bottom" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset">
 </div>
+

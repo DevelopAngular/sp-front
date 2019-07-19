@@ -1,5 +1,4 @@
-
-<div class="settings-wrapper" *ngIf="data" [style.background-color]="darkTheme.getBackground('high', true)">
+<div class="settings-wrapper"  *ngIf="data || dataSideNav" [style.background-color]="darkTheme.getBackground('high', true)">
   <div class="top-arrow-container" (click)="dialogRef.close()">
     <div class="top-arrow" [style.background-color]="darkTheme.getBackground('high', true)"></div>
   </div>
@@ -10,7 +9,7 @@
            (mouseenter)="hoveredMasterOption = true"
            (mouseleave)="hoveredMasterOption = false"
            [style.background-color]="hoveredMasterOption ? 'rgb(228, 235, 255)' : 'transparent'"
-           (click)="dialogRef.close('signout')">
+           (click)="signOutAction()">
         <img class="switch-icon" [src]="getIcon('Tablet', null,  hoveredMasterOption) | resolveAsset">
         <div class="option-title" [style.color]="getColor(null, hoveredMasterOption)">Exit Kiosk Mode</div>
         <img class="arrow-icon" [src]="getIcon('Chevron Right', null,  hoveredMasterOption) | resolveAsset">
@@ -24,9 +23,9 @@
            (mouseenter)="hoveredMasterOption = true"
            (mouseleave)="hoveredMasterOption = false"
            [style.background-color]="hoveredMasterOption ? 'rgb(228, 235, 255)' : 'transparent'"
-           (click)="dialogRef.close('switch')">
+           (click)="switchAction()">
         <img class="switch-icon" [src]="getIcon('Profile Switch', null,  hoveredMasterOption) | resolveAsset">
-        <div class="option-title" [style.color]="getColor(null, hoveredMasterOption)">Administrator View</div>
+        <div class="option-title" [style.color]="getColor(null, hoveredMasterOption)">Admin View</div>
         <img class="arrow-icon" [src]="getIcon('Chevron Right', null,  hoveredMasterOption) | resolveAsset">
       </div>
 
@@ -46,7 +45,7 @@
                [src]="i === 2 ? (darkTheme.isEnabled$.value && (hovered && hoveredColor === setting.gradient) ? './assets/Moon (Navy).svg' : getIcon(setting.icon, setting, hovered, hoveredColor)) : (getIcon(setting.icon, setting, hovered, hoveredColor)) | resolveAsset" alt="SET">
           <div class="setting-title"
                [style.color]="i === 2 ? (darkTheme.isEnabled$.value && (hovered && hoveredColor === setting.gradient) ? '#1F195E' : getColor(setting, hovered, hoveredColor)) : (getColor(setting, hovered, hoveredColor))"
-          > {{(i === 2 ? (darkTheme.isEnabled$.value ? 'Light Theme' : 'Dark Theme') : setting.title)}} </div>
+          > {{(i === 2 ? (darkTheme.isEnabled$.value ? 'Light Mode' : 'Dark Mode') : setting.title)}} </div>
         </div>
         <mat-divider class="divider"
                      [style.border-top-color]="darkTheme.isEnabled$.value ? 'rgba(255, 255, 255, .12)' : 'rgba(0, 0, 0, .12)'"
@@ -61,7 +60,7 @@
          [style.color]="getColor(null, hoveredSignout)"
          (mouseenter)="hoveredSignout = true"
          (mouseleave)="hoveredSignout = false"
-         (click)="dialogRef.close('signout')">Sign out</div>
+         (click)="signOutAction()">Sign out</div>
     <div class="options" [style.color]="getColor(null, null)">
       <span class="version" [style.cursor]="'pointer'">{{version}}</span>
       <span class="privacy" (click)="dialogRef.close('privacy')">Privacy & Terms</span>

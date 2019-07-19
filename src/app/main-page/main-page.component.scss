@@ -1,5 +1,101 @@
+@import '../../sp-colors';
+
+@media all and (max-width: 425px) {
+  mat-sidenav-container,
+  mat-sidenav-content {
+    background-color: unset;
+  }
+}
+
+@media all and (min-width: 1024px) {
+  mat-sidenav-container,
+  mat-sidenav-content {
+    z-index: unset;
+    overflow: hidden;
+  }
+}
+
+@media all and (max-width: 475px) {
+  mat-sidenav-container,
+  mat-sidenav-content {
+    overflow-y: auto !important;
+  }
+}
+
 :host {
   display: flex;
   flex-direction: column;
   height: 100%;
+}
+
+.app-settings {
+  padding-top: 100px;
+}
+
+.settings-side-nav {
+  border-top-right-radius: 14px;
+  border-bottom-right-radius: 14px;
+}
+
+.requests-side-nav {
+  width: 405px;
+  border-top-left-radius: 14px;
+  border-bottom-left-radius: 14px;
+}
+
+.request-card {
+  height: 100%;
+}
+
+.request-title {
+  font-size: 29px;
+  color: #1F195E;
+  font-weight: bold;
+  min-height: 35px;
+  margin-bottom: 51px;
+  padding-top: 104px;
+  margin-left: 10px;
+}
+
+.requests-or-invitations {
+  width: 351px;
+  margin: 0 auto;
+}
+
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: $blue-gray;
+}
+
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: $blue-gray;
+}
+
+.empty-inbox-svg {
+  margin: 20px 0;
+  width: 200px;
+}
+
+.empty-passes-svg {
+  margin: 20px 0;
+  width: 330px;
+}
+
+.sticky {
+  width: 100%;
+}
+
+mat-sidenav-container,
+mat-sidenav-content {
+  z-index: unset;
+  background-color: transparent;
+}
+
+mat-sidenav {
+  z-index: 99;
 }

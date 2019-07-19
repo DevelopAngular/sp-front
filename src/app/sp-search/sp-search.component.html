@@ -1,0 +1,184 @@
+<div class="sp-search-wrapper" *ngIf="chipsMode && !inputField">
+  <div>
+    <app-sp-chips
+      [preventRemovingLast]="preventRemovingLast"
+      [selectedProfiles]="selectedOptions"
+      (add)="inputField = true"
+      (updateSelectedEvent)="selectedOptions = $event; onUpdate.emit(selectedOptions)"
+    ></app-sp-chips>
+  </div>
+</div>
+<div class="sp-search-wrapper" [style.width]="width" *ngIf="inputField">
+
+  <div class="input">
+
+    <div class="round-input-container">
+      <app-round-input
+        [minWidth]="'auto'"
+        [width]="'100%'"
+        [placeholder]="placeholder"
+        [disabled]="disabled"
+        [fieldIconPosition]="'left'"
+        [closeIcon]="!cancelButton"
+        [focused]="false"
+        [selectReset$]="inputValue$"
+        [boxShadow]="false"
+        [pending$]="pending$"
+        (ontextupdate)="onSearch($event)"
+        (blurEvent)="onBlur($event)"
+        #studentInput="roundInputRef"
+      >
+      </app-round-input>
+    </div>
+
+
+
+    <div *ngIf="showOptions && searchTarget === 'users'" [ngClass]="{'options-wrapper': students}" [style.height]="students ? '235px' : '0px'">
+      <div *ngIf="students" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
+      <div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px;">
+        <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
+          <div #cell *ngFor="let student of students | async" class="option-list_item"
+               (mouseenter)="cell.hovered = true;"
+               (mouseleave)="cell.hovered = false;"
+               (click)="inputValue$.next(''); addStudent(student)"
+               [style.background-color]="getBackground(cell)"
+               [style.color]="textColor(cell)"
+          >
+            <span>
+              {{student.display_name}} ({{student.primary_email ? student.primary_email.slice(0, student.primary_email.indexOf('@')) : student.email ? student.email.slice(0, student.email.indexOf('@')) : ''}})
+            </span>
+          </div>
+        </div>
+
+      </div>
+      <ng-template #noStudentsDummy>
+        <div class="no-students-dummy">
+          <div>
+            <div class="dummy-image"><img width="150" [src]="'./assets/emptyStates/undraw_graduation_9x4i.svg'" alt="undraw_graduation_9x4i.svg"></div>
+
+            <div class="dummy-text"><span>No {{dummyRoleText}} found</span></div>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+
+
+
+    <div *ngIf="showOptions && searchTarget === 'orgunits'" [ngClass]="{'options-wrapper': ( orgunits | async)}" [style.height]="( orgunits | async) ? '235px' : '0px'">
+      <div *ngIf="( orgunits | async)" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
+      <div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px;">
+        <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
+          <div #cell *ngFor="let unit of ( orgunits | async)" class="option-list_item"
+               (mouseenter)="cell.hovered = true;"
+               (mouseleave)="cell.hovered = false;"
+               (click)="inputValue$.next(''); addUnit(unit)"
+               [style.background-color]="getBackground(cell)"
+               [style.color]="textColor(cell)"
+          >
+            <span>
+              {{unit.path}}
+            </span>
+          </div>
+        </div>
+
+      </div>
+      <ng-template #noStudentsDummy>
+        <div class="no-students-dummy">
+          <div>
+            <div class="dummy-image"><img width="150" [src]="'./assets/emptyStates/undraw_graduation_9x4i.svg'" alt="undraw_graduation_9x4i.svg"></div>
+
+            <div class="dummy-text"><span>No {{dummyRoleText}} found</span></div>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+
+
+    <!--<pre>{{schools | async | json}}</pre>-->
+    <div *ngIf="showOptions && searchTarget === 'schools'" [ngClass]="{'options-wrapper': (schools | async) !== null}" [style.height]="(schools | async) !== null ? '235px' : '0px'">
+      <div *ngIf="(schools | async)?.length" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
+      <div *ngIf="!showDummy; else noSchoolsDummy" style="margin-top: -1px;">
+        <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
+          <div *ngFor="let school of schools | async" class="option-list_item"
+               (mouseenter)="cell.hovered = true;"
+               (mouseleave)="cell.hovered = false;"
+               (click)="inputValue$.next(''); selectSchool(school)"
+               [style.background-color]="getBackground(cell)"
+               [style.color]="textColor(cell)"
+               #cell
+          >
+            <div>
+              <div style="text-transform: capitalize; color: #00B476">
+                {{school.structured_formatting.main_text}}
+              </div>
+              <div style="color: #1F194E">
+                {{school.structured_formatting.secondary_text}}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <ng-template #noSchoolsDummy>
+        <div class="no-schools-dummy">
+          <div>
+            <div class="dummy-text dummy-title"><span>No schools found</span></div>
+            <div class="dummy-text">
+              Need help? Contact
+              <a href="mailto:help@smartpass.app" class="ds-link-text" style="font-size: 17px !important;">help@smartpass.app</a>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+
+
+
+  </div>
+
+  <div class="cancel-button" *ngIf="cancelButton">
+    <app-gradient-button class="ds-py-5"
+      [size]="'editable'"
+      [width]="'85px'"
+      [fontWeight]="'normal'"
+      [minHeight]="'30px'"
+      [textColor]="'#7F879D'"
+      [gradient]="'#F7F7F7, #F7F7F7'"
+      [hoverColor]="'#F7F7F7'"
+      (buttonClick)="cancel(studentInput)"
+      [leftIcon]="'./assets/Cancel (Blue-Gray).svg'"
+      [leftImageWidth]="'12px'"
+      [leftImageHeight]="'12px'"
+      [fontSize]="'14px'"
+    >Cancel</app-gradient-button>
+  </div>
+
+  <div class="option-list" *ngIf="!chipsMode && list && selectedOptions.length">
+    <div class="ds-dialog-heading option-list_header">
+      <span>Selected</span>
+    </div>
+    <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
+      <div #cell *ngFor="let selectedOption of selectedOptions; let i = index" class="option-list_item"
+           (mouseenter)="cell.hovered = true;"
+           (mouseleave)="cell.hovered = false;"
+
+           [style.background-color]="getBackground(cell)"
+           [style.color]="textColor(cell)"
+      >
+        <span *ngIf="this.searchTarget === 'users'">
+          {{selectedOption.display_name}} ({{selectedOption.primary_email ? selectedOption.primary_email.slice(0, selectedOption.primary_email.indexOf('@')) : selectedOption.email ? selectedOption.email.slice(0, selectedOption.email.indexOf('@')) : ''}})
+        </span>
+        <span *ngIf="this.searchTarget === 'orgunits'">
+          {{selectedOption.path}}
+        </span>
+
+        <img
+          (mousedown)="cell.pressed = true"
+          (mouseup)="cell.pressed = false"
+          (click)="selectedOptions.splice(i, 1); this.onUpdate.emit(this.selectedOptions)"
+          [src]="cell.hovered ? './assets/Cancel (Navy).svg' : './assets/Mark (Navy).svg'" width="15"alt="Check.svg">
+      </div>
+    </div>
+  </div>
+
+</div>

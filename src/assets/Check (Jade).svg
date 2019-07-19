@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="150px" height="150px" viewBox="0 0 150 150" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
+    <title>Check (Jade)</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Check-(Jade)" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icons8-ok" fill="#00B476" fill-rule="nonzero">
+            <path d="M75,0 C33.58125,0 0,33.58125 0,75 C0,116.41875 33.58125,150 75,150 C116.41875,150 150,116.41875 150,75 C150,33.58125 116.41875,0 75,0 Z M116.91875,60.66875 L69.66875,107.91875 C68.49375,109.09375 66.90625,109.75 65.25,109.75 C63.59375,109.75 62,109.09375 60.83125,107.91875 L39.25,86.3375 C36.80625,83.89375 36.80625,79.94375 39.25,77.5 C41.69375,75.05625 45.64375,75.05625 48.0875,77.5 L65.25,94.6625 L108.08125,51.83125 C110.525,49.3875 114.475,49.3875 116.91875,51.83125 C119.3625,54.275 119.3625,58.225 116.91875,60.66875 Z" id="Shape"></path>
+        </g>
+    </g>
+</svg>

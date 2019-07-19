@@ -1,0 +1,17 @@
+<div class="icon-button-container"
+     [style.width]="size * 2 + 'px'"
+     [style.height]="size * 2 + 'px'"
+     [style.background-color]="bgc"
+     (mouseover)="hovered = true;"
+     (mouseleave)="hovered = false;"
+     (mousedown)="down = true"
+     (mouseup)="down = false"
+     (click)="onClick($event)" #iconButtonRef >
+    <img [src]="src | resolveAsset"
+         [attr.width]="size"
+         [attr.height]="size"
+         [style.opacity]="opacity"
+         draggable="false"
+         class="icon"
+         alt="img" #imgRef>
+</div>

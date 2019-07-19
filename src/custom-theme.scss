@@ -96,7 +96,7 @@ $sp-blue-grey: (
 
 
 
-$loading-theme-white-primary: mat-palette($mat-blue-grey);
+$loading-theme-white-primary: mat-palette($mat-white);
 $loading-theme-white-accent: mat-palette($mat-blue-grey);
 $loading-theme-white: mat-light-theme($loading-theme-white-accent, $loading-theme-white-primary);
 
@@ -109,6 +109,9 @@ $loading-theme-blue-gray: mat-dark-theme($loading-theme-blue-gray-accent, $loadi
     @include angular-material-theme($loading-theme);
   &_white {
     @include angular-material-theme($loading-theme-white);
+  }
+  &_light-gray {
+    @include angular-material-theme($loading-theme-blue-gray);
   }
   &_blue-gray {
     @include angular-material-theme($loading-theme-blue-gray);

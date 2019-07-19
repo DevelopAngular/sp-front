@@ -1,7 +1,21 @@
 @import '../../../../../sp-colors';
 
+@media all and (max-width: 1024px) {
+  div.rest-tar-wrapper {
+    overflow: initial;
+  }
+
+  img.back-btn-top {
+    display: none;
+  }
+
+  div.back-button-wrapper {
+    display: none;
+  }
+}
+
+
 .rest-tar-wrapper {
-  width: 425px;
   height: 500px;
   display: flex;
   flex-direction: column;
@@ -26,10 +40,12 @@
     overflow: hidden;
 
     .back-button {
+      &-wrapper {
+        position: absolute;
+      }
       width: 28px;
       height: 28px;
       margin-left: 20px;
-      position: absolute;
       z-index: 11;
       user-select: none;
       cursor: pointer;
@@ -145,4 +161,12 @@
   height: 3px;
   background: white;
   box-shadow: white 0 0 0 13px;
+}
+
+.back-btn-top {
+  display: block;
+}
+
+.back-btn-bottom {
+  display: none;
 }

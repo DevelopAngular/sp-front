@@ -12,7 +12,7 @@
   justify-content: flex-start;
   width: 100%;
   height: 100%;
-  background-color: #F8FAFF;
+  background-color: #FBFEFF;
   //background-color: #a8a8a8;
   .dashboard-wrapper{
     display: flex;
@@ -41,10 +41,11 @@
 .card{
   box-sizing: border-box;
   padding: 28px 38px 37px 31px ;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 17px;
   color: #1F195E;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, .2);
+  //box-shadow: 0 1px 5px rgba(0, 0, 0, .2);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
   background-color: #FFFFFF;
   &_header{
     font-size: 24px;

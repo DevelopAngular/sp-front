@@ -1,3 +1,17 @@
+@media all and (max-width: 1024px) {
+  img.pass-card-header-close {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: -45px;
+  }
+}
+
+@media all and (max-width: 320px) {
+  div.invitation-card-wrapper {
+    width: 300px;
+  }
+}
 
 .invitation-card-wrapper {
     width: 335px;

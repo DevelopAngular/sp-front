@@ -1,4 +1,42 @@
 :host {
+  @media all and (min-width: 320px) {
+    div.wya-container {
+      width: 100%;
+      max-width: 300px;
+    }
+
+    img.back-button-bottom {
+      bottom: -35px !important;
+    }
+
+  }
+
+  @media all and (max-width: 1024px) and (min-width: 335px) {
+    div.wya-container {
+      width: 100%;
+      max-width: 335px;
+    }
+  }
+
+  @media all and (max-width: 1024px) {
+    div.wya-container {
+      width: 100%;
+    }
+
+    img.back-button-top {
+      display: none;
+    }
+
+    img.back-button-bottom {
+      display: block;
+      position: absolute;
+      height: 28px;
+      width: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: -45px;
+    }
+  }
   .wya-container {
     width: 425px;
     height: 500px;
@@ -65,4 +103,8 @@
       }
     }
   }
+}
+
+.back-button-bottom {
+  display: none;
 }

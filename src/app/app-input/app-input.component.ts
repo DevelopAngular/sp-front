@@ -26,6 +26,7 @@ export class AppInputComponent implements OnInit {
     @Input() textAlign: string;
     @Input() isErrorIcon: boolean = true;
     @Input() isFocus: boolean;
+    @Input() errorIconTop: number = 8;
     @Input() disabled: boolean = false;
 
     @Input() formGroup;
@@ -58,16 +59,16 @@ export class AppInputComponent implements OnInit {
     }
 
     ngOnInit() {
-      // console.log('right_icon ===> ', this.rightIcon);
+      console.log('right_icon ===> ', this.isFocus);
       // this.rightIconUntouched = this.rightIcon.replace('Blue', 'Grey');
       of(null).pipe(
         delay(1000),
         switchMap(() => {
           return  this.formGroup.valueChanges;
         }),
-      ).subscribe()
+      ).subscribe();
       if (this.isFocus) {
-        this.updateFocus(this.input.nativeElement);
+          this.input.nativeElement.focus();
       }
 
       // if (this.rightIcon) {

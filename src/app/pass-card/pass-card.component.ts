@@ -17,6 +17,7 @@ import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {HallPassesService} from '../services/hall-passes.service';
 import { TimeService } from '../services/time.service';
+import {ScreenService} from '../services/screen.service';
 
 @Component({
   selector: 'app-pass-card',
@@ -70,6 +71,10 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   subscribers$: Subscription;
 
+  header: string;
+  options: any = [];
+  cancelEditClick: boolean;
+
   constructor(
       public dialogRef: MatDialogRef<PassCardComponent>,
       @Inject(MAT_DIALOG_DATA) public data: any,
@@ -80,6 +85,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
       private loadingService: LoadingService,
       private createFormService: CreateFormService,
       private timeService: TimeService,
+      public screenService: ScreenService
   ) {}
 
   getUserName(user: any) {
@@ -119,7 +125,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
     if(((this.isActive && this.forStaff) || this.forMonitor)){
       return './assets/Dots (Transparent).svg';
     } else{
-      return './assets/'+(this.forInput?'Back Button ': 'Delete ') + '(Transparent).svg';
+      return './assets/'+(this.forInput?'Chevron Left ': 'Delete ') + '(Transparent).svg';
     }
   }
 
@@ -289,20 +295,24 @@ export class PassCardComponent implements OnInit, OnDestroy {
       });
   }
 
-  cancelEdit(evt: MouseEvent){
+  cancelEdit(evt: MouseEvent) {
+    if (this.screenService.isDeviceMid) {
+      this.cancelEditClick = !this.cancelEditClick;
+    }
+
     if(!this.cancelOpen){
       const target = new ElementRef(evt.currentTarget);
-      let options = [];
-      let header = '';
+      this.options = [];
+      this.header = '';
 
       if((this.isActive && this.forStaff) || this.forMonitor){
 
-        if (this.user.isTeacher()) {
-          options.push(this.genOption('Report Student', '#E32C66', 'report'));
+        if (this.user.isTeacher() && !this.data['hideReport']) {
+          this.options.push(this.genOption('Report Student', '#E32C66', 'report'));
         }
-        options.push(this.genOption('End Pass', '#E32C66', 'end'));
+        this.options.push(this.genOption('End Pass', '#E32C66', 'end'));
         // header = 'What would you like to do with this pass?';
-        header = '';
+        this.header = '';
       } else{
         if (this.forInput) {
           if (this.isSeen) {
@@ -344,35 +354,42 @@ export class PassCardComponent implements OnInit, OnDestroy {
           }
             return false;
         } else if(this.forFuture){
-          options.push(this.genOption('Delete Scheduled Pass','#E32C66','delete'));
-          header = 'Are you sure you want to delete this scheduled pass?';
+          this.options.push(this.genOption('Delete Scheduled Pass','#E32C66','delete'));
+          this.header = 'Are you sure you want to delete this scheduled pass?';
         }
       }
 
-      const cancelDialog = this.dialog.open(ConsentMenuComponent, {
-        panelClass: 'consent-dialog-container',
-        backdropClass: 'invis-backdrop',
-        data: {'header': header, 'options': options, 'trigger': target}
-      });
+      if (!this.screenService.isDeviceMid) {
+        const cancelDialog = this.dialog.open(ConsentMenuComponent, {
+          panelClass: 'consent-dialog-container',
+          backdropClass: 'invis-backdrop',
+          data: {'header': this.header, 'options': this.options, 'trigger': target}
+        });
 
-      cancelDialog.afterOpen().subscribe( () => {
-        this.cancelOpen = true;
-      });
+        cancelDialog.afterOpen().subscribe( () => {
+          this.cancelOpen = true;
+        });
 
-      cancelDialog.afterClosed().subscribe(action => {
-          this.cancelOpen = false;
-      if(action === 'delete'){
-          let body = {};
-          this.hallPassService.cancelPass(this.pass.id, body).subscribe((httpData) => {
-            console.log('[Future Pass Cancelled]: ', httpData);
-            this.dialogRef.close();
-          });
-        } else if(action === 'report') {
-          this.dialogRef.close({'report': this.pass.student });
-        } else if(action === 'end') {
-          this.endPass();
-        }
+        cancelDialog.afterClosed().subscribe(action => {
+          this.chooseAction(action);
+        });
+      }
+
+    }
+  }
+
+  chooseAction(action) {
+    this.cancelOpen = false;
+    if(action === 'delete'){
+      let body = {};
+      this.hallPassService.cancelPass(this.pass.id, body).subscribe((httpData) => {
+        console.log('[Future Pass Cancelled]: ', httpData);
+        this.dialogRef.close();
       });
+    } else if(action === 'report') {
+      this.dialogRef.close({'report': this.pass.student });
+    } else if(action === 'end') {
+      this.endPass();
     }
   }
 
@@ -385,7 +402,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
   genOption(display, color, action){
     return {display: display, color: color, action: action}
   }
-
 
     openInputCard(templatePass, forLater, forStaff, selectedStudents, component, fromHistory, fromHistoryIndex) {
         let data = {
@@ -405,4 +421,16 @@ export class PassCardComponent implements OnInit, OnDestroy {
             data: data
         });
     }
+
+  cancelClick() {
+    this.cancelEditClick = false;
+  }
+
+  backdropClick() {
+    this.cancelEditClick = false;
+  }
+
+  receiveOption(action) {
+    this.chooseAction(action);
+  }
 }

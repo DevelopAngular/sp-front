@@ -1,0 +1,22 @@
+<div class="chip"
+     [ngClass]="{hovered: schip.hovered && length}"
+     #schip
+     [style.opacity]="schip.hovered && !buttonDown ? 0.85 : (buttonDown ? 0.7 :  1)"
+     (mouseenter)="schip.hovered = true;"
+     (mouseleave)="schip.hovered = false;"
+     (mousedown)="onPress(true)"
+     (mouseup)="onPress(false)"
+     [@pressState]="buttonState"
+>
+  <div class="overlay" (click)="openEmit()">
+    <div class="add-icon" *ngIf="schip.hovered && !length">
+      <img [src]="'./assets/Plus (Blue-Gray).svg'" width="16" height="16" #fieldIcon alt="Check.svg">
+    </div>
+    <div class="all-text" *ngIf="!length">{{ (schip.hovered ? 'Filter ' : 'All ') + placeholder }}</div>
+    <div class="selected-text" *ngIf="length">{{ length + ' ' + selectedText + (length > 1 ? 's' : '') }}</div>
+  </div>
+
+  <div class="reset-icon" *ngIf="schip.hovered && length">
+    <img (click)="resetEmit();" [src]="'./assets/Cancel (Navy).svg'" width="16" #fieldIcon alt="Check.svg">
+  </div>
+</div>

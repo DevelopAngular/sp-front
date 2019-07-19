@@ -35,7 +35,7 @@
                              [cursor]="'pointer'"
                              [fontSize]="'14px'"
                              (buttonClick)="done()"
-        >{{(showPublishSpinner ? null : 'Publish')}}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
+        >{{ (showPublishSpinner ? null : 'Publish') }}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
         </app-gradient-button>
         <app-gradient-button *ngIf="showPublishEditRoom && overlayType === 'editRoom'"
                                  [minHeight]="'40px'"
@@ -45,7 +45,7 @@
                                  [hoverColor]="color_profile.overlay_color"
                                  [fontSize]="'14px'"
                                  (buttonClick)="onPublish()"
-            >{{(showPublishSpinner ? null : 'Publish')}}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
+            >{{ (showPublishSpinner ? null : 'Publish') }}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
             </app-gradient-button>
         <app-gradient-button *ngIf="showPublishNewRoom && overlayType === 'newRoom'"
                              [minHeight]="'40px'"
@@ -55,7 +55,7 @@
                              [hoverColor]="color_profile.overlay_color"
                              [fontSize]="'14px'"
                              (buttonClick)="onPublish()"
-        >{{(showPublishSpinner ? null : 'Publish')}}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
+        >{{ (showPublishSpinner ? null : 'Publish') }}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
         </app-gradient-button>
         <div *ngIf="!showPublishNewRoom && overlayType === 'newRoom' && isChangeState || (isDirtyAdvancedOpt && !advOptValid && !showPublishEditRoom)"
              [style.color]="titleColor"
@@ -71,7 +71,7 @@
              [hoverColor]="color_profile.overlay_color"
              [fontSize]="'14px'"
              (buttonClick)="onPublish()"
-          >{{(showPublishSpinner ? null : 'Publish')}}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
+          >{{ (showPublishSpinner ? null : 'Publish') }}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
         </app-gradient-button>
         <div
           *ngIf="!showPublishNewFolder && overlayType === 'newFolder' && !isEditFolder && isChangeState"
@@ -88,7 +88,7 @@
              [hoverColor]="color_profile.overlay_color"
              [fontSize]="'14px'"
              (buttonClick)="onPublish()"
-          >{{(showPublishSpinner ? null : 'Publish')}}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
+          >{{ (showPublishSpinner ? null : 'Publish') }}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
         </app-gradient-button>
       </div>
     </div>
@@ -98,22 +98,19 @@
   <!--{{roomList.topScroll}}-->
 <!--<div class="inactive" *ngIf="!form.get('isEdit').value"></div>-->
   <div class="overlay-content">
-    <div class="left-content ds-mb-5" #leftContent (scroll)="onScroll($event)">
-      <div class="edit-rooms-left-content" *ngIf="overlayType === 'edit'">
-        <div class="edit-rooms-left-title">Keep in mind that editing a Folder in this menu will edit all rooms within that folder.</div>
-      </div>
       <div class="new-room-in-folder sticky-header" [@NextStep]="{ value: '', params: frameMotion$ | async}"
          *ngIf="overlayType === 'newRoomInFolder' || overlayType === 'importRooms' || overlayType === 'settingsRooms'">
           <div class="new-room-in-folder-header">
-            <div class="back-button" *ngIf="!backButtonsStateInFolder" (click)="back(false)">
-              <app-back-button [allowDarkTheme]="false"></app-back-button>
+            <div class="back-button" *ngIf="!backButtonsStateInFolder">
+              <!--<app-back-button [allowDarkTheme]="false"></app-back-button>-->
+              <app-icon-button [size]="20" [srcString]="'Chevron Left'" (clickEvent)="back(false)"></app-icon-button>
             </div>
             <div class="cancel-button-in-folder-header"
                  (click)="cancel()"
                  *ngIf="backButtonsStateInFolder">
               Cancel</div>
             <div [ngClass]="{'room-in-folder-title-inactive': !isValidForm, 'room-in-folder-title-active': isValidForm || (overlayType === 'settingsRooms') || this.importedRooms.length && this.uploadingProgress.completed}">
-              {{headerText}}
+              {{ headerText }}
             </div>
             <div class="header-in-folder-button">
               <!--{{isEditRooms}} {{isEditFolder}}-->
@@ -124,11 +121,18 @@
                 [fontSize]="'12px'"
                 (buttonClick)="done()"
               >
-                {{(showDoneSpinner ? null : 'Add')}}<mat-spinner *ngIf="showDoneSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
+                {{ (showDoneSpinner ? null : editRoomInFolder ? 'Save' : 'Add') }}<mat-spinner *ngIf="showDoneSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
               </app-gradient-button>
               <div *ngIf="backButtonsStateInFolder && !showDoneButton" [style.color]="'#1F194E'">Incomplete</div>
             </div>
           </div>
+      </div>
+    <div class="left-content ds-mb-5" #leftContent (scroll)="onScroll($event)">
+      <div *ngIf="overlayType === 'newRoomInFolder' || overlayType === 'importRooms' || overlayType === 'settingsRooms'" style="min-height: 78px; height: 78px; width: 100%;">
+        <!-- In Safari, elastic scrolling does not need to subtitle beyond scrollable part. Just a placeholder-->
+      </div>
+      <div class="edit-rooms-left-content" *ngIf="overlayType === 'edit'">
+        <div class="edit-rooms-left-title">Keep in mind that editing a Folder in this menu will edit all rooms within that folder.</div>
       </div>
       <div class="edit-rooms-info" *ngIf="overlayType === 'settingsRooms'">
         {{ (isEditRooms ? 'Any change will override the previous setting.' :
@@ -210,8 +214,8 @@
           </div>
           <div class="search-field" style="display: flex">
             <div class="ds-w-100">
-              <app-student-search
-                [selectedStudents]="selectedTeachers"
+              <app-sp-search
+                [selectedOptions]="selectedTeachers"
                 [chipsMode]="true"
                 [focused]="true"
                 [role]="'_profile_teacher'"
@@ -220,7 +224,7 @@
                 [cancelButton]="true"
                 [placeholder]="'Search Teachers'"
                 (onUpdate)="selectTeacherEvent($event)"
-              ></app-student-search>
+              ></app-sp-search>
             </div>
           </div>
         </div>
@@ -420,7 +424,7 @@
           <div class="rooms-in-folder-content">
             <div class="not-rooms-in-folder" *ngIf="!selectedRooms.length && folderRoomsLoaded">
               <img [src]="'./assets/emptyStates/undraw_add_file2_gvbb.svg' | resolveAsset" alt="emptyState">
-              <div class="emptyText">Add rooms to the folder.</div>
+              <div class="emptyText editRoomInFolder ? 'Save' :">Add rooms to the folder.</div>
             </div>
             <div class="rooms-list" #roomList *ngIf="selectedRooms.length > 0">
               <mat-list>
@@ -557,8 +561,8 @@
                 <span>Importing Rooms</span>
               </div>
               <div class="ds-flex-column ds-flex-center-center ds-cell-text-2 ds-mt-15">
-                <span class="ds-pb-5">{{importedRooms.length}} Rooms</span>
-                <span>{{unknownEmails.length}} issues</span>
+                <span class="ds-pb-5">{{ importedRooms.length }} Rooms</span>
+                <span>{{ unknownEmails.length }} issues</span>
               </div>
             </div>
 
@@ -568,9 +572,9 @@
           <div class="issues-screen ds-p-25" *ngIf="getRoomImportScreen() === 2">
 
             <div class="issues-container">
-              <div class="ds-dialog-heading ds-pt-10 ds-pb-15">Review Issues ({{unknownEmails.length}})</div>
+              <div class="ds-dialog-heading ds-pt-10 ds-pb-15">Review Issues ({{ unknownEmails.length }})</div>
               <div *ngFor="let issue of unknownEmails" class="ds-cell-text-2 ds-pb-5">
-                Room: {{issue.room.title}}, could not find teacher with email {{issue.email}}
+                Room: {{ issue.room.title }}, could not find teacher with email {{ issue.email }}
               </div>
             </div>
             <div class="issues-footer ds-flex-center-between">
@@ -647,10 +651,6 @@
           This <b style="color: gray">will not</b> erase any expired passes to or from any rooms in this folder.
         </div>
       </div>
-
-        <!--<div class="bulk-warning-text" *ngIf="bulkWarningText">-->
-            <!--Keep in mind that editing a Folder in this menu will edit all rooms within that folder-->
-        <!--</div>-->
 
     </div>
       <div class="divider"></div>

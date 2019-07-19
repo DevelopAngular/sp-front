@@ -1,19 +1,20 @@
 <div style="opacity: 1" [ngClass]="{ 'to-wrapper-to-date': formState.forLater && formState.formMode.role === 1, 'to-wrapper': !formState.forLater || formState.formMode.role !== 1}">
-  <div class="" [ngClass]="{'to-header': formState.previousState === states.from || formState.previousStep <= formState.step, 'to-header-back': formState.previousState === states.category || formState.previousStep === 4 }" [style.background-image]="'radial-gradient(circle at 98% 97%, #FFFFFF, #FFFFFF)'">
-    <img class="back-button back-button-grey" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
+  <div class="" [ngClass]="{'to-header': formState.previousState === states.from || formState.previousStep <= formState.step, 'to-header-back': formState.previousState === states.category || formState.previousStep === 4 }" [style.background-image]="'radial-gradient(circle at 98% 97%, #FFFFFF, #FFFFFF)'" #header>
+    <img *ngIf="!screenService.isDeviceLargeExtra" class="back-button back-button-grey" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
     <div class="to-header-text">
       <img class="search-icon" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset">
       <div class="text ds-dialog-title">To where?</div>
     </div>
   </div>
 
-  <div class="to-content">
+  <div class="to-content" #rc>
     <div class="teacher-rooms" *ngIf="isStaff && teacherRooms.length">
       <div class="rooms-title ds-dialog-subtitle">My Rooms</div>
       <div class="rooms">
-        <mat-grid-list class="grid center" cols="3" rowHeight="75px" gutterSize="10px" [style.width]="'395px'">
+        <mat-grid-list class="grid center" [cols]="gridRestrictions.colsAmount" rowHeight="75px" [gutterSize]="gridRestrictions.gutterSize" [style.width]="gridRestrictions.gridWidth">
           <mat-grid-tile *ngFor="let room of teacherRooms">
             <app-pinnable
+                    [width]="gridRestrictions.pileWidth"
                     [valid]="(room.location && location ? room.location.id != location.id : true)"
                     [forStaff]="isStaff"
                     [forLater]="!!date"
@@ -27,9 +28,10 @@
     <div class="all-rooms">
       <div class="rooms-title ds-dialog-subtitle" *ngIf="isStaff && teacherRooms.length && !dialogData.kioskModeRoom">All Rooms</div>
       <div class="pin-collection">
-        <mat-grid-list class="grid center" cols="3" rowHeight="75px" gutterSize="10px" [style.width]="'395px'">
+        <mat-grid-list class="grid center" [cols]="gridRestrictions.colsAmount" rowHeight="75px" [gutterSize]="gridRestrictions.gutterSize" [style.width]="gridRestrictions.gridWidth">
           <mat-grid-tile *ngFor="let pinnable of pinnables | async">
             <app-pinnable
+                    [width]="gridRestrictions.pileWidth"
                     [valid]="(pinnable.location && location ? pinnable.location.id != location.id : true)"
                     [forStaff]="isStaff && !dialogData.kioskModeRoom"
                     [forLater]="!!date"
@@ -41,8 +43,8 @@
       </div>
     </div>
   </div>
-
-  <app-student-footer *ngIf="!isStaff" [formState]="formState" [state]="'to'" [date]="date"></app-student-footer>
-  <app-teacher-footer *ngIf="isStaff" [fromLocation]="location" [formState]="formState" [state]="'to'" [studentText]="studentText" [date]="date"></app-teacher-footer>
-
+  <ng-container *ngIf="!displayFooters">
+    <app-student-footer *ngIf="!isStaff" [formState]="formState" [state]="'to'" [date]="date"></app-student-footer>
+    <app-teacher-footer *ngIf="isStaff" [fromLocation]="location" [formState]="formState" [state]="'to'" [studentText]="studentText" [date]="date"></app-teacher-footer>
+  </ng-container>
 </div>

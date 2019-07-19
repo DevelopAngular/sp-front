@@ -111,6 +111,11 @@ export interface AuthContext {
   auth: ServerAuth;
 }
 
+export interface SPError {
+  header: string;
+  message: string;
+}
+
 class LoginServerError extends Error {
   constructor(msg: string) {
     super(msg);
@@ -122,7 +127,7 @@ class LoginServerError extends Error {
 @Injectable()
 export class HttpService {
 
-  public errorToast$: ReplaySubject<boolean> = new ReplaySubject(1);
+  public errorToast$: ReplaySubject<SPError> = new ReplaySubject(1);
 
   private accessTokenSubject: BehaviorSubject<AuthContext> = new BehaviorSubject<AuthContext>(null);
   public effectiveUserId: BehaviorSubject<number> = new BehaviorSubject(null);
@@ -134,12 +139,12 @@ export class HttpService {
   );
   public currentSchoolSubject = new BehaviorSubject<School>(null);
   public currentSchool$: Observable<School> = this.currentSchoolSubject.asObservable();
-  public kioskTokenSubject$ = new Subject();
+  public kioskTokenSubject$ = new BehaviorSubject<any>(null);
 
   public globalReload$ = this.currentSchool$.pipe(
     filter(school => !!school),
     map(school => school ? school.id : null),
-    distinctUntilChanged(),
+    // distinctUntilChanged(),
     delay(5)
   );
 
@@ -218,10 +223,14 @@ export class HttpService {
             }),
      ).subscribe(() => { });
 
-      this.kioskTokenSubject$.pipe(map(newToken => {
+      this.kioskTokenSubject$.pipe(
+        filter(v => !!v),
+        map(newToken => {
         newToken['expires'] = new Date(new Date() + newToken['expires_in']);
         return { auth: newToken, server: this.accessTokenSubject.value.server};
+
       })).subscribe(res => {
+        console.log(res);
         this.accessTokenSubject.next(res as AuthContext);
       });
 
@@ -238,8 +247,8 @@ export class HttpService {
 
   get accessToken(): Observable<AuthContext> {
 
-    // console.log('get accessToken');
-
+    // console.log('get accessToken', this.hasRequestedToken, this.accessTokenSubject.value);
+// debugger
     if (!this.hasRequestedToken) {
       this.fetchServerAuth()
         .subscribe((auth: AuthContext) => {
@@ -274,7 +283,7 @@ export class HttpService {
   private loginManual(username: string, password: string): Observable<AuthContext> {
 
     // console.log('loginManual()');
-
+// debugger
     const c = new FormData();
     c.append('email', username);
     c.append('platform_type', 'web');
@@ -287,16 +296,27 @@ export class HttpService {
       // console.log(`Chosen server: ${server.name}`, server);
 
       const config = new FormData();
+      const refreshToken = this.storage.getItem('refresh_token');
 
       config.append('client_id', server.client_id);
-      config.append('grant_type', 'password');
-      config.append('username', username);
-      config.append('password', password);
+
+      if (refreshToken) {
+        config.append('grant_type', 'refresh_token');
+        config.append('token', refreshToken);
+      } else {
+        config.append('grant_type', 'password');
+        config.append('username', username);
+        config.append('password', password);
+      }
+
 
       // console.log('loginManual()');
       return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
         map((data: any) => {
-          console.log('Auth data : ', data);
+
+          this.storage.setItem('refresh_token', data.refresh_token);
+
+          // console.log('Auth data : ', data);
           // don't use TimeService for auth because auth is required for time service
           // to be useful
           data['expires'] = new Date(new Date() + data['expires_in']);
@@ -354,14 +374,16 @@ export class HttpService {
   private fetchServerAuth(retryNum: number = 0): Observable<AuthContext> {
     // console.log('fetchServerAuth');
     return this.loginService.getIdToken().pipe(
-      switchMap(googleToken => {
+      switchMap((googleToken: any) => {
         let authContext$: Observable<AuthContext>;
 
         // console.log('getIdToken');
 
         if (isDemoLogin(googleToken)) {
+          // debugger
           authContext$ = this.loginManual(googleToken.username, googleToken.password);
         } else {
+          // console.log(googleToken);
           authContext$ = this.loginGoogleAuth(googleToken);
         }
 
@@ -390,6 +412,7 @@ export class HttpService {
   }
 
   private performRequest<T>(predicate: (ctx: AuthContext) => Observable<T>): Observable<T> {
+    // debugger
     return this.accessToken.pipe(
       switchMap(ctx => {
         // console.log('performRequest');

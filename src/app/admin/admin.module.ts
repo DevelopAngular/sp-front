@@ -12,14 +12,12 @@ import {
 } from '@angular/material';
 import { ChartsModule } from 'ng2-charts';
 import { SharedModule } from '../shared/shared.module';
-import { AccountsDialogComponent } from './accounts-dialog/accounts-dialog.component';
 import { AccountsRoleComponent } from './accounts-role/accounts-role.component';
 import { AccountsComponent } from './accounts/accounts.component';
 import { AdminPageComponent } from './admin-page/admin-page.component';
 import { AdminRoutingModule } from './admin-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { DatePrettyHelper } from './date-pretty.helper';
-import { FeedbackComponent } from './feedback/feedback.component';
 import { HallmonitorComponent } from './hallmonitor/hallmonitor.component';
 import { LinkGeneratedDialogComponent } from './link-generated-dialog/link-generated-dialog.component';
 import { PassConfigComponent } from './pass-config/pass-config.component';
@@ -27,13 +25,17 @@ import { PdfGeneratorService } from './pdf-generator.service';
 import { SearchComponent } from './search/search.component';
 import { SettingsComponent } from './settings/settings.component';
 import { AdminSharedModule } from './shared/admin-shared.module';
-import { SupportComponent } from './support/support.component';
 import { ColumnsConfigDialogComponent } from './columns-config-dialog/columns-config-dialog.component';
 import { SchoolSettingDialogComponent } from './school-setting-dialog/school-setting-dialog.component';
-import { ProfileCardDialogComponent } from './profile-card-dialog/profile-card-dialog.component';
+// import { ProfileCardDialogComponent } from './profile-card-dialog/profile-card-dialog.component';
 import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.component';
-import { SearchFilterDialogComponent } from './search/search-filter-dialog/search-filter-dialog.component';;
+import { SearchFilterDialogComponent } from './search/search-filter-dialog/search-filter-dialog.component';
 import { DateTimeFilterComponent } from './search/date-time-filter/date-time-filter.component';
+import { MySchoolComponent } from './my-school/my-school.component';
+import { RoomsSetUpComponent } from './pass-config/rooms-set-up/rooms-set-up.component';
+import { SchoolButtonComponent } from './my-school/school-button/school-button.component';
+import { AdminCardButtonComponent } from './accounts/admin-card-button/admin-card-button.component';
+
 
 @NgModule({
   imports: [
@@ -58,25 +60,25 @@ import { DateTimeFilterComponent } from './search/date-time-filter/date-time-fil
     HallmonitorComponent,
     SearchComponent,
     PassConfigComponent,
-    FeedbackComponent,
-    SupportComponent,
-    AccountsDialogComponent,
     AccountsComponent,
     AccountsRoleComponent,
     SettingsComponent,
     LinkGeneratedDialogComponent,
     ColumnsConfigDialogComponent,
-    ProfileCardDialogComponent,
+    // ProfileCardDialogComponent,
     SchoolSettingDialogComponent,
     AddUserDialogComponent,
     SearchFilterDialogComponent,
-    DateTimeFilterComponent
- ],
+    DateTimeFilterComponent,
+    MySchoolComponent,
+    RoomsSetUpComponent,
+    SchoolButtonComponent,
+    AdminCardButtonComponent,
+  ],
   entryComponents: [
-    AccountsDialogComponent,
     LinkGeneratedDialogComponent,
     ColumnsConfigDialogComponent,
-    ProfileCardDialogComponent,
+    // ProfileCardDialogComponent,
     SchoolSettingDialogComponent,
     AddUserDialogComponent,
     SettingsComponent,

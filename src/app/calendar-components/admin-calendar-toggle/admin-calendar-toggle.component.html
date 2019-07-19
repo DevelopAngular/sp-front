@@ -30,7 +30,7 @@
 
     <div class="days-options" *ngSwitchCase="'Days'">
       <div class="calendar-picker">
-        <app-calendar-picker [selectedDates]="exportDate" (onSelectDate)="calendarResult($event)" [showYear]="false" [showTime]="false"></app-calendar-picker>
+        <app-calendar-picker [selectedDates]="[selectedDay]" (onSelectDate)="calendarResult($event)" [showYear]="false" [showTime]="false"></app-calendar-picker>
       </div>
       <mat-divider></mat-divider>
       <div class="day-options">

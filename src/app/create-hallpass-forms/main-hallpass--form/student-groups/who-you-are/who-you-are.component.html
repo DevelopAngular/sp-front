@@ -1,20 +1,23 @@
-<div class="wya-container">
-  <div class="wya-header" [style.background]="'#FFFFFF'">
-    <img class="back-button back-button-white" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
-    <div class="wya-header-text">
-      <img class="search-icon" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset">
-      <div class="text ds-dialog-title">Who are you?</div>
+<div style="position: relative;">
+  <div class="wya-container">
+    <div class="wya-header" [style.background]="'#FFFFFF'">
+      <img class="back-button back-button-top back-button-white" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
+      <div class="wya-header-text">
+        <img class="search-icon" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset">
+        <div class="text ds-dialog-title">Who are you?</div>
+      </div>
+    </div>
+    <div class="wya-content ds-mt-25">
+      <app-sp-search
+        [focused]="true"
+        [width]="'280px'"
+        [role]="'_profile_student'"
+        [placeholder]="'Search students'"
+        [list]="false"
+        [emitSingleProfile]="false"
+        (onUpdate)="setSelectedStudents($event)"
+      ></app-sp-search>
     </div>
   </div>
-  <div class="wya-content ds-mt-25">
-    <app-student-search
-      [focused]="true"
-      [width]="'280px'"
-      [role]="'_profile_student'"
-      [placeholder]="'Search students'"
-      [list]="false"
-      [emitSingleProfile]="false"
-      (onUpdate)="setSelectedStudents($event)"
-    ></app-student-search>
-  </div>
+  <img class="back-button-bottom" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
 </div>

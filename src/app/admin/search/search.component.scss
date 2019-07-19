@@ -11,9 +11,8 @@
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  padding: 25px 0;
   overflow: auto;
-  background-color: #f8faff;
+  background-color: #FBFEFF;
 }
 
 .inputs-container {
@@ -31,7 +30,7 @@
 }
 
 .chip {
-  background-color: #F7F7F7;
+  background-color: #F4F4F4;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -40,36 +39,47 @@
   margin-top: 10px;
   white-space: nowrap;
   position: relative;
-
+  min-width: 100px;
   .overlay {
     display: flex;
     padding: 10px;
     cursor: pointer;
+
+    .all-text {
+      color: #7F879D;
+      font-size: 14px;
+    }
+    .selected-text {
+      color: $navy;
+      font-size: 14px;
+    }
   }
 
   &.hovered {
-    background-color: $ultra-light-gray;
-    transition: background-color .3s ease;
+    box-shadow: 0 1px 3px #F8F8F8;
+    transition: box-shadow .25s ease;
   }
 
   .add-icon {
-    width: 15px;
-    height: 15px;
+    width: 16px;
+    height: 16px;
     cursor: pointer;
     margin-right: 10px;
   }
 
   .reset-icon {
-    width: 15px;
-    height: 15px;
+    width: 16px;
+    height: 16px;
     cursor: pointer;
     position: absolute;
     right: 10px;
+    background-color: #F8F8F8;
+    box-shadow: -6px 1px 6px #F8F8F8;
   }
 }
 
 .search-wrapper{
-  min-width: 975px;
+  min-width: 1030px;
   width: 100%;
   padding: 0 25px;
   box-sizing: border-box;
@@ -122,27 +132,37 @@
     }
 }
 
-.input-header{
+.input-header-wrapper {
+  padding: 25px 0 10px 0;
+  //background-color: #FBFEFF;
+  background-clip: padding-box;
+  position: sticky;
+  top: 0px;
+  z-index: 1;
+  .input-header{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    height: 98px;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, .2);
-    border-radius: 10px;
+    height: 99px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+    border-radius: 12px;
     margin: 0 auto;
     background-color: white;
 
-  .title {
-    font-size: 24px;
-    color: $navy;
-    font-weight: bold;
-    margin-left: 50px;
-    letter-spacing: 1px;
-  }
 
-  .input-title {
 
+    .title {
+      font-size: 24px;
+      color: $navy;
+      font-weight: bold;
+      margin-left: 50px;
+      letter-spacing: 1px;
+    }
+
+    .input-title {
+
+    }
   }
 }
 
@@ -175,19 +195,13 @@
 
 .text {
   text-align: center;
-  width: 392px;
+  width: 400px;
 
   .text-title {
-    font-size: 17px;
-    font-weight: bold;
-    color: $dark-slate-gray;
-    margin: 30px 0 15px 0;
+    margin: 30px 0 10px 0;
   }
 
   .info {
-    font-size: 15px;
-    font-weight: normal;
-    color: $dark-slate-gray;
     text-align: center;
   }
 }
@@ -220,5 +234,6 @@
     margin-right: 5px;
 }
 .w-100 {
+  position: relative;
   width: 100%;
 }

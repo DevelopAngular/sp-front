@@ -2,6 +2,7 @@
   <div *ngFor="let teacher of selectedProfiles; let i = index" #chip class="teacher"
     (mouseenter)="chipHover(chip, true)"
     (mouseleave)="chipHover(chip, false)"
+    [style.opacity]="chip.hovered && !buttonDown ? 0.85 : (buttonDown ? 0.7 :  1)"
     [style.background-color]="getBackground(chip)"
     [style.color]="textColor(chip)">
     <span [style.cursor]="'default'" [style.user-select]="'none'">{{teacher.display_name}}</span>
@@ -9,19 +10,19 @@
 
       <img
         (click)="selectedProfiles.splice(i, 1); updateSelectedEvent.emit(this.selectedProfiles)"
-        [src]="'./assets/Cancel (Navy).svg'" width="15" alt="Check.svg">
+        [src]="'./assets/Cancel (Navy).svg'" width="16" alt="Check.svg">
     </div>
   </div>
   <app-gradient-button class=""
     [size]="'editable'"
-    [width]="'65px'"
+    [width]="'100px'"
     [minHeight]="'31px'"
     [textColor]="'#7F879D'"
-    [gradient]="'#F7F7F7, #F7F7F7'"
-    [hoverColor]="'#F7F7F7'"
+    [gradient]="'#F4F4F4, #F4F4F4'"
+    [hoverColor]="'#F4F4F4'"
     [leftIcon]="'./assets/Plus (Blue-Gray).svg'"
-    [leftImageWidth]="'12px'"
-    [leftImageHeight]="'12px'"
+    [leftImageWidth]="'16px'"
+    [leftImageHeight]="'16px'"
     [withShadow]="false"
     [fontSize]="'14px'"
     (buttonClick)="add.emit(true)"

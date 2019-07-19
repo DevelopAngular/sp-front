@@ -1,6 +1,6 @@
 <div class="step-1-container">
   <div class="header">
-    <div class="header_back-button" (click)="back(editGroup)">
+    <div class="header_back-button back-btn-top" (click)="back(editGroup)">
       <img  *ngIf="!form.get('title').dirty && !form.get('users').dirty"
             class="header_back-button-icon" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
       <span *ngIf="form.get('title').dirty || form.get('users').dirty">Cancel</span>
@@ -20,7 +20,7 @@
           (buttonClick)="updateGroup()"
         >Save</app-gradient-button>
       </div>
-      <div *ngIf="(form.get('title').value || (editGroup.users.length)) && !(form.get('title').value && (editGroup.users.length))">
+      <div *ngIf="(form.get('title').value || (editGroup.users.length)) && !(form.get('title').value && (editGroup.users.length))" class="incomplete">
         <span [style.user-select]="'none'">Incomplete</span>
       </div>
     </div>
@@ -32,8 +32,7 @@
       <div class="content-left_wrapper">
         <div>
           <div>
-
-            <div class="ds-dialog-subtitle">Student Group Name</div>
+            <div class="ds-dialog-subtitle student-group-name ">Student Group Name</div>
             <app-input
               [controlName]="form.get('title')"
               [formGroup]="form"
@@ -82,7 +81,7 @@
         <div *ngIf="!uploadedStudents" class="content-left_groups">
           <div>
             <div class="content-left_placeholder">
-              Upload an Exel spreadsheet of student <strong>email address</strong>
+              Upload an Excel spreadsheet of student <strong>email address</strong>
               to quickly select students.
             </div>
           </div>
@@ -111,11 +110,12 @@
     <div class="content-right">
       <div class="content-right_sudent-search">
         <div class="seach-wrapper" *ngIf="editGroup && editGroup.users">
-          <app-student-search
+          <app-sp-search
             [width]="'280px'"
             [listMaxHeight]="'unset'"
-            (onUpdate)="updateUsers($event)" [focused]="false" [selectedStudents]="editGroup.users"
-          ></app-student-search>
+            [selectedOptions]="editGroup.users"
+            (onUpdate)="updateUsers($event)" [focused]="false"
+          ></app-sp-search>
         </div>
       </div>
 

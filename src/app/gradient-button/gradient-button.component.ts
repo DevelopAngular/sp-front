@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { bumpIn } from '../animations';
+import {ScreenService} from '../services/screen.service';
 
 export interface ClickEvent {
   clicked: boolean;
@@ -65,14 +66,16 @@ export class GradientButtonComponent implements OnInit {
   @Input() linkType: linkType = '_blank';
   @Input() download: boolean = false;
   @Input() documentType: docType;
+  @Input() isGradient: boolean;
   @Output() buttonClick = new EventEmitter<any>();
 
   buttonDown = false;
   hovered: boolean = false;
 
-  constructor(private sanitizer: DomSanitizer) {
+  constructor(private sanitizer: DomSanitizer, private screenService: ScreenService) {
   }
   ngOnInit(): void {
+    // console.log('Gradient ==>>>', this.gradient);
     // if (this.size && this.size !== 'small' && this.size !== 'medium' && this.size !== 'large' && this.size !== 'xl') {
     //   this.size = 'small';
     // }
@@ -128,6 +131,9 @@ export class GradientButtonComponent implements OnInit {
           break;
       }
     }
+    if (this.buttonLink) {
+      this.rightIcon = this.rightIcon === null ? './assets/External Link (White).svg' : this.rightIcon;
+    }
   }
 
   get buttonState() {
@@ -136,26 +142,37 @@ export class GradientButtonComponent implements OnInit {
 
   get styleGradient() {
     // We're fine using arbitrary styles here because they must match a very strict regex.
-    if (this.buttonDown) {
-      // console.log("[Hover State]: ", "Using hover styles");
-      const color = this.hoverColor;
-      if (cssColorRegexp.test(color)) {
-        // console.log("[Color Sanitizer]: ", "Color passed");
-        return this.sanitizer.bypassSecurityTrustStyle(color);
-      } else {
-        // console.log("[Color Sanitizer]: ", "Color did not pass");
-        return this.sanitizer.bypassSecurityTrustStyle(DEFAULT_GRADIENT);
-      }
-    } else {
-      // console.log("[Hover State]: ", "Using gradient styles");
-      const gradient = this.gradient ? this.gradient.trim() : '';
+    if (this.isGradient) {
+        if (this.buttonDown) {
+            // console.log("[Hover State]: ", "Using hover styles");
+            const color = this.hoverColor;
+            if (cssColorRegexp.test(color)) {
+                // console.log("[Color Sanitizer]: ", "Color passed");
+                return this.sanitizer.bypassSecurityTrustStyle(color);
+            } else {
+                // console.log("[Color Sanitizer]: ", "Color did not pass");
+                return this.sanitizer.bypassSecurityTrustStyle(DEFAULT_GRADIENT);
+            }
+        } else {
+            // console.log("[Hover State]: ", "Using gradient styles");
+            const gradient = this.gradient ? this.gradient.trim() : '';
 
-      if (cssGradientRegexp.test(gradient)) {
-        // console.log("[Gradient Sanitizer]: ", "Gradient passed");
-        return this.sanitizer.bypassSecurityTrustStyle('radial-gradient(circle at 73% 71%, ' + gradient + ')');
+            if (cssGradientRegexp.test(gradient)) {
+                // console.log("[Gradient Sanitizer]: ", "Gradient passed");
+                return this.sanitizer.bypassSecurityTrustStyle('radial-gradient(circle at 73% 71%, ' + gradient + ')');
+            } else {
+                // console.log("[Gradient Sanitizer]: ", "Gradient did not pass");
+                return this.sanitizer.bypassSecurityTrustStyle(DEFAULT_GRADIENT);
+            }
+        }
+    } else {
+      if (!this.gradient) {
+          return this.sanitizer.bypassSecurityTrustStyle('#00B476');
       } else {
-        // console.log("[Gradient Sanitizer]: ", "Gradient did not pass");
-        return this.sanitizer.bypassSecurityTrustStyle(DEFAULT_GRADIENT);
+        const lastIndex = this.gradient.lastIndexOf(',');
+        const color = this.gradient.substr(lastIndex + 1);
+        // console.log(color);
+        return color;
       }
     }
   }
@@ -174,23 +191,52 @@ export class GradientButtonComponent implements OnInit {
 
   get shadow() {
     if (this.withShadow) {
-      return this.sanitizer.bypassSecurityTrustStyle(((this.hovered && !this.disabled && !this.buttonDown) ?
-          '0px 3px 10px rgba(0, 0, 0, 0.2)' : '0px 3px 5px rgba(0, 0, 0, 0.1)'));
+        let i = 0;
+        const hexColors = [];
+        const gradient = this.gradient ? this.gradient : '#04CD33, #04CD33';
+        const lastIndex = gradient.lastIndexOf(' ');
+        const color = gradient.substr(lastIndex + 1);
+        const rawHex = color.slice(1);
+        do {
+            hexColors.push(rawHex.slice(i, i + 2));
+            i += 2;
+        } while (i < rawHex.length);
+        const rgbString = hexColors.map(c => parseInt(c, 16)).join(', ');
+        return this.sanitizer.bypassSecurityTrustStyle(this.hovered ?
+            `0px 1px 10px rgba(${rgbString}, 0.2)` : `0px 1px 10px rgba(${rgbString}, 0.1)`);
+
+      // if (this.hovered && !this.disabled) {
+      //   return this.sanitizer.bypassSecurityTrustStyle(' 0px 1px 10px rgba(0, 180, 118, 0.2)');
+      // } else if (this.buttonDown && !this.disabled) {
+      //   return this.sanitizer.bypassSecurityTrustStyle('0px 1px 10px rgba(0, 180, 118, 0.19758)');
+      // } else {
+      //   return this.sanitizer.bypassSecurityTrustStyle('0px 1px 10px rgba(0, 180, 118, 0.1)');
+      // }
     } else {
       return 'none';
     }
   }
 
-  onPress(press: boolean) {
-    if(!this.disabled)
+  onPress(press: boolean, event) {
+    if (this.screenService.isDeviceLargeExtra) event.preventDefault();
+    if (!this.disabled)
       this.buttonDown = press;
     //console.log("[Button State]: ", "The button is " +this.buttonState);
   }
 
-  onClick(event){
+  onTap(tap: boolean) {
+    // if(!this.disabled)
+      this.buttonDown = tap;
+
+    // console.log(this.buttonDown);
+  }
+
+  onClick(event) {
     if(!this.disabled) {
 
       this.buttonClick.emit(event)
+    } else {
+      return;
     }
   }
 

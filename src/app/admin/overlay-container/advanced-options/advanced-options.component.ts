@@ -79,7 +79,8 @@ export class AdvancedOptionsComponent implements OnInit {
 
   ngOnInit() {
           this.optionState = _.cloneDeep(this.data);
-          this.buildData();
+    console.log(this.optionState);
+    this.buildData();
   }
 
   buildData() {

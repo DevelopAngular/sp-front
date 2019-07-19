@@ -21,15 +21,21 @@ export class ProgressInterceptor implements HttpInterceptor {
                     .pipe(
                       finalize(() => this.progress.ref().complete()),
                       catchError((error: any) => {
-                        console.log(error);
-                          if (
-                              (error.status >= 400 &&
-                               error.status < 600 &&
-                               error.url !== 'https://smartpass.app/api/discovery/find' &&
-                               error.url !== 'https://smartpass.app/api/staging/o/token/') || error.status === 0)
-                          {
-                            this.http.errorToast$.next(true);
-                          }
+
+                        const exeptedUrls = [
+                          'onboard/schools/check_school',
+                          'discovery/find',
+                          'auth/by-token',
+                          'o/token'
+                        ].every(_url => error.url.search(_url) < 0);
+
+                        if ( error.status === 0 || ( error.status >= 400 && error.status < 600 && exeptedUrls) ) {
+                          console.log(error);
+                          this.http.errorToast$.next({
+                            header: 'Server Error.',
+                            message: 'Operation could not be completed. We’re working on a solution.'
+                          });
+                        }
                         return throwError(error);
                       })
                     );

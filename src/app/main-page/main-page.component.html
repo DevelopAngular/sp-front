@@ -1,7 +1,39 @@
-  <app-navbar></app-navbar>
-  <ng-container *ngIf="!(shouldShowRouter() | async)">
-    <app-restriction-dummy></app-restriction-dummy>
-  </ng-container>
-  <ng-container *ngIf="shouldShowRouter() | async">
-    <router-outlet></router-outlet>
-  </ng-container>
+<mat-sidenav-container (backdropClick)="fadeClick()">
+
+  <mat-sidenav class="settings-side-nav" mode="over" [opened]="(toggleLeft | async)">
+    <app-settings [dataSideNav]="data"></app-settings>
+  </mat-sidenav>
+
+  <mat-sidenav class="requests-side-nav" position="end" mode="push" [opened]="(toggleRight | async)">
+    <mat-card class="request-card"  [style.background-color]="darkTheme.getBackground('high', true)">
+      <div class="request-title" [style.color]="titleColor">Requests</div>
+      <div class="requests-or-invitations">
+        <app-pass-collection [forStaff]="isStaff" [forFuture]="true" [isActive]="false" [style.width]="'100%'" [passProvider]="isStaff ? receivedRequests : sentRequests" [title]="isStaff?'Received':'Sent'" [icon]="'./assets/' +(isStaff?'Received':'Lock') +' (Navy).svg'" [columns]="2"></app-pass-collection>
+        <!--<div *ngIf="isStaff ? (receivedRequests.length$ | async) : (sentRequests.length$ | async)" class="text">No requests sent or received</div>-->
+      </div>
+      <div class="requests-or-invitations">
+        <app-pass-collection [forStaff]="isStaff" [forFuture]="true" [isActive]="false" [style.width]="'100%'" [passProvider]="isStaff ? sentRequests : receivedRequests" [title]="isStaff?'Sent':'Received'" [icon]="'./assets/' +(isStaff?'Lock':'Received') +' (Navy).svg'" [columns]="2"></app-pass-collection>
+        <!--<div *ngIf="isStaff ? (sentRequests.length$ | async) : (receivedRequests.length$ | async)" class="text">No requests sent or received</div>-->
+      </div>
+
+      <div *ngIf="(inboxHasItems | async) === false" class="empty-container" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
+        <img class="empty-inbox-svg" [src]="'./assets/emptyStates/emptyInbox.svg' | resolveAsset" alt="empty-svg">
+        <div class="big-text" [style.margin]="'10px 0'">All Caught Up</div>
+        <div class="text">No pass requests sent or received</div>
+      </div>
+    </mat-card>
+  </mat-sidenav>
+
+  <mat-sidenav-content [style.overflow]="isStaff ? 'hidden' : 'auto'">
+    <div class="sticky" [style.height]="navbarHeight">
+      <app-navbar (settingsClick)="onSettingClick($event)"></app-navbar>
+    </div>
+    <ng-container *ngIf="!(shouldShowRouter() | async)">
+      <app-restriction-dummy></app-restriction-dummy>
+    </ng-container>
+    <ng-container *ngIf="shouldShowRouter() | async">
+      <router-outlet></router-outlet>
+    </ng-container>
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

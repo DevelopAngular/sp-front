@@ -1,0 +1,14 @@
+:host {
+  .icon-button-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 50%;
+    background-color: rgba(244, 244, 244, .75);
+    transition: background-color .2s ease;
+    .icon {
+      transition: opacity .2s ease;
+    };
+  }
+}

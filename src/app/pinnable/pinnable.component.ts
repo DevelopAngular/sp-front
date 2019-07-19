@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { bumpIn } from '../animations';
 import { Pinnable } from '../models/Pinnable';
-import { DomSanitizer } from '../../../node_modules/@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import {interval} from 'rxjs';
 
 @Component({
@@ -62,11 +62,22 @@ export class PinnableComponent implements OnInit {
 
   }
 
-  get shadow(){
-    if(this.hovered && this.valid && !this.disabled)
-      return this.sanitizer.bypassSecurityTrustStyle('0 2px 4px 1px rgba(0, 0, 0, 0.3)');
-    else
-      return this.sanitizer.bypassSecurityTrustStyle('0 2px 4px 0px rgba(0, 0, 0, 0.1)');
+  get shadow() {
+
+    let i = 0;
+    const hexColors = [];
+    const rawHex = this.pinnable.color_profile.solid_color.slice(1);
+    do {
+      hexColors.push(rawHex.slice(i, i + 2));
+      i += 2;
+    } while (i < rawHex.length);
+    const rgbString = hexColors.map(color => parseInt(color, 16)).join(', ');
+
+    if (this.hovered && this.valid && !this.disabled) {
+      return this.sanitizer.bypassSecurityTrustStyle(`0px 3px 10px rgba(${rgbString}, 0.2)`);
+    } else {
+      return this.sanitizer.bypassSecurityTrustStyle(' 0px 3px 5px rgba(0, 0, 0, 0.1)');
+    }
   }
 
   ngOnInit() {

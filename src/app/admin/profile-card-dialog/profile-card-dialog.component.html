@@ -1,188 +1,212 @@
-<div class="profile-card-dialog-container">
-  <!-- Disables card when some async stuffs occur-->
-  <div class="disabled-state loading-theme spinner" *ngIf="disabledState">
-    <mat-spinner [diameter]="'150'" [color]="'accent'"></mat-spinner>
-  </div>
-  <!-- end -->
-  <div class="card-header">
+<div class="profile-card-dialog-container" *ngIf="data['setupLink'] else profileCard">
+  <div class="card-header" [style.background-color]="'#00B476'">
     <div class="back-button ds-flex-center-center" (click)="back()">
       <img [src]="'./assets/Back Button (Blue-White).svg'" alt="Back Button (Blue-White).svg">
       <!--<span *ngIf="permissionsFormEditState">Cancel</span>-->
     </div>
-    <div class="ds-flex-center-center ds-dialog-title">
-      <img class="role-icon"  [ngClass]="{'gsuite': this.layout === 'gSuiteSettings'}"  [src]="headerIcon" alt="header-icon">
-      <span>{{headerText}}</span>
+    <div class="ds-flex-center-center ds-dialog-title-white">
+      <img class="role-icon"  [ngClass]="{'gsuite': this.layout === 'gSuiteSettings'}"  [src]="'./assets/Chain (White).svg'" alt="header-icon">
+      <span>Accounts Set-up Link</span>
     </div>
-    <!--<div *ngIf="permissionsFormEditState || assistantForEditState" class="save-button">-->
-      <!--<app-gradient-button-->
-        <!--[minHeight]="'27px'"-->
-        <!--[width]="'72px'"-->
-        <!--[fontSize]="'11px'"-->
-        <!--[fontWeight]="'bold'"-->
-        <!--[cursor]="'pointer'"-->
-        <!--(buttonClick)="updateProfile()"-->
-      <!--&gt;-->
-        <!--Save-->
-      <!--</app-gradient-button>-->
-    <!--</div>-->
+  </div>
+  <div class="card-body ds-px-20">
+    <div class="ds-blue-gray ds-mt-25 ds-mb-10 ds-pt-5">
+      Send a G Suite Admin this link
+    </div>
+    <div class="ds-navy setup-link">
+      {{data['setupLink']}}
+    </div>
   </div>
 
-  <ng-container [ngSwitch]="layout">
+</div>
 
-    <div class="content-scrollable-box" *ngSwitchCase="'bulkPermissions'">
-      <div class="card-body">
-
-        <div class="card-body_section" *ngIf="data.role === '_profile_teacher' || data.role === '_profile_admin'">
-          <div class="section-content">
-            <div [style.width]="'100%'">
-              <div class="ds-dialog-heading">Bulk Permissions</div>
-              <div *ngFor="let control of controlsIteratable">
-                <app-toggle-input
-                  [form]="permissionsForm"
-                  [delimiter]="false"
-                  [controlName]="control.controlName"
-                  [controlLabel]="control.controlLabel"
-                  [controlSize]="'small'"
-                ></app-toggle-input>
-              </div>
-            </div>
-          </div>
-        </div>
+<ng-template #profileCard>
+  <div class="profile-card-dialog-container">
+    <!-- Disables card when some async stuffs occur-->
+    <div class="disabled-state loading-theme_light-gray spinner" *ngIf="disabledState">
+      <mat-spinner [diameter]="'100'" [color]="'accent'"></mat-spinner>
+    </div>
+    <!-- end -->
+    <div class="card-header" #header>
+      <div class="back-button ds-flex-center-center" (click)="back()">
+        <img [src]="'./assets/Back Button (Blue-White).svg'" alt="Back Button (Blue-White).svg">
+        <!--<span *ngIf="permissionsFormEditState">Cancel</span>-->
       </div>
+      <div class="ds-flex-center-center ds-dialog-title">
+        <img class="role-icon"  [ngClass]="{'gsuite': this.layout === 'gSuiteSettings'}"  [src]="headerIcon" alt="header-icon">
+        <span>{{headerText}}</span>
+
+      </div>
+      <!--<div *ngIf="permissionsFormEditState || assistantForEditState" class="save-button">-->
+      <!--<app-gradient-button-->
+      <!--[minHeight]="'27px'"-->
+      <!--[width]="'72px'"-->
+      <!--[fontSize]="'11px'"-->
+      <!--[fontWeight]="'bold'"-->
+      <!--[cursor]="'pointer'"-->
+      <!--(buttonClick)="updateProfile()"-->
+      <!--&gt;-->
+      <!--Save-->
+      <!--</app-gradient-button>-->
+      <!--</div>-->
     </div>
 
-    <div class="content-scrollable-box" *ngSwitchCase="'viewProfile'">
-      <div class="card-body">
-        <div class="card-body_section">
-          <div class="section-content">
-            <div>
-              <div class="ds-dialog-heading">Account Info</div>
-              <span class="ds-dialog-bold-text">Name: </span> <span>{{profile['Name']}}</span><br>
-              <span class="ds-dialog-bold-text">Email: </span> <span>{{profile['Email/Username']}}</span><br>
-              <span class="ds-dialog-bold-text">Account Type: </span> <span>{{profile['Account Type']}}</span><br>
-            </div>
-            <div [style.text-align]="'right'">
-              <div>
-                <img [src]="'./assets/google/google_logo.svg'" alt="google_logo.svg">
-              </div>
-              <div class="learn-more">
-                <a class="ds-small-link-text" target="_blank" href="https://www.smartpass.app/documentation/administrator-accounts-profiles">Learn more</a>
+    <ng-container [ngSwitch]="layout">
+
+      <div class="content-scrollable-box" *ngSwitchCase="'bulkPermissions'" #rc>
+        <div class="card-body">
+
+          <div class="card-body_section" *ngIf="data.role === '_profile_teacher' || data.role === '_profile_admin'">
+            <div class="section-content">
+              <div [style.width]="'100%'">
+                <div class="ds-dialog-heading">Bulk Permissions</div>
+                <div *ngFor="let control of controlsIteratable">
+                  <app-toggle-input
+                    [form]="permissionsForm"
+                    [delimiter]="false"
+                    [controlName]="control.controlName"
+                    [controlLabel]="control.controlLabel"
+                    [controlSize]="'small'"
+                  ></app-toggle-input>
+                </div>
               </div>
             </div>
           </div>
-          <div *ngIf="data.role === '_profile_assistant' && assistantFor">
-            <div class="acting-on-behalf-user ds-w-100 ds-mt-15">
-              <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantFor, 'ds-dialog-heading-gray': !assistantFor}">Acting on Behalf Of</div>
-              <!--<app-sp-chips-->
+        </div>
+      </div>
+
+      <div class="content-scrollable-box" *ngSwitchCase="'viewProfile'" #rc>
+        <div class="card-body">
+          <div class="card-body_section">
+            <div class="section-content">
+              <div>
+                <div class="ds-dialog-heading">Account Info</div>
+                <span class="ds-dialog-bold-text">Name: </span> <span>{{profile['Name']}}</span><br>
+                <span class="ds-dialog-bold-text">Username/Email: </span> <span>{{profile['Email/Username']}}</span><br>
+                <span class="ds-dialog-bold-text">Account Type: </span> <span>{{profile['Account Type']}}</span><br>
+              </div>
+<!--              <div [style.text-align]="'right'">-->
+<!--                <div>-->
+<!--                  <img [src]="'./assets/google/google_logo.svg'" alt="google_logo.svg">-->
+<!--                </div>-->
+<!--                <div class="learn-more">-->
+<!--                  <a class="ds-small-link-text" target="_blank" href="https://www.smartpass.app/documentation/administrator-accounts-profiles">Learn more</a>-->
+<!--                </div>-->
+<!--              </div>-->
+            </div>
+            <div *ngIf="data.role === '_profile_assistant' && assistantFor">
+              <div class="acting-on-behalf-user ds-w-100 ds-mt-15">
+                <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantFor, 'ds-dialog-heading-gray': !assistantFor}">Acting on Behalf Of</div>
+                <!--<app-sp-chips-->
                 <!--[selectedProfiles]="assistantFor"-->
                 <!--(updateSelectedEvent)="assistantForUpdate$.next($event)"-->
-              <!--&gt;</app-sp-chips>-->
-              <app-student-search
-                [preventRemovingLast]="data.role === '_profile_assistant'"
-                [selectedStudents]="assistantFor"
-                [chipsMode]="true"
-                [focused]="true"
-                [role]="'_profile_teacher'"
-                [dummyRoleText]="'teachers'"
-                [rollUpAfterSelection]="true"
-                [cancelButton]="true"
-                [placeholder]="'Search Teachers'"
-                (onUpdate)="assistantForUpdate$.next($event)"
-              ></app-student-search>
+                <!--&gt;</app-sp-chips>-->
+                <app-sp-search
+                  [preventRemovingLast]="data.role === '_profile_assistant'"
+                  [selectedOptions]="assistantFor"
+                  [chipsMode]="true"
+                  [focused]="true"
+                  [role]="'_profile_teacher'"
+                  [dummyRoleText]="'teachers'"
+                  [rollUpAfterSelection]="true"
+                  [cancelButton]="true"
+                  [placeholder]="'Search Teachers'"
+                  (onUpdate)="assistantForUpdate$.next($event)"
+                ></app-sp-search>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="card-body_section" *ngIf="data.role === '_profile_teacher'">
-          <div class="section-content">
-            <div>
-              <div class="ds-dialog-heading">Rooms</div>
+          <div class="card-body_section" *ngIf="data.role === '_profile_teacher'">
+            <div class="section-content">
               <div>
+                <div class="ds-dialog-heading">Rooms</div>
+                <div>
 
-                <div style="display: inline">
-                  <span class="ds-dialog-bold-text">Assigned to: </span>
-                </div>
-                <div style="display: inline" *ngFor="let loc of teacherAssignedTo; let i = index" (click)="goToPassConfig(loc)">
-                  <span *ngIf="i > 0">, </span><span class="room-link"> {{loc.title}}</span>
-                </div>
-                <div style="display: inline">
-                  <span *ngIf="!teacherAssignedTo.length"> &mdash; </span>
-                </div>
+                  <div style="display: inline">
+                    <span class="ds-dialog-bold-text">Assigned to: </span>
+                  </div>
+                  <div style="display: inline" *ngFor="let loc of teacherAssignedTo; let i = index" (click)="goToPassConfig(loc)">
+                    <span *ngIf="i > 0">, </span><span class="room-link"> {{loc.title}}</span>
+                  </div>
+                  <div style="display: inline">
+                    <span *ngIf="!teacherAssignedTo.length"> &mdash; </span>
+                  </div>
 
 
+                </div>
               </div>
-            </div>
-            <div [style.padding-left]="'10px'">
-              <app-gradient-button
-                [size]="'editable'"
-                [width]="'141px'"
-                [minHeight]="'40px'"
-                [gradient]="'#FFFFFF,#FFFFFF'"
-                [hoverColor]="'#FFFFFF'"
-                [textColor]="'#1F195E'"
-                [fontSize]="'13px'"
-                [cursor]="'pointer'"
-                [cornerRadius]="'10px'"
-                (buttonClick)="goToPassConfig()"
+              <div [style.padding-left]="'10px'">
+                <app-gradient-button
+                  [size]="'editable'"
+                  [width]="'141px'"
+                  [minHeight]="'40px'"
+                  [hoverColor]="'#F4F4F4'"
+                  [gradient]="'#F4F4F4,#F4F4F4'"
+                  [textColor]="'#1F195E'"
+                  [fontSize]="'13px'"
+                  [cursor]="'pointer'"
+                  [cornerRadius]="'10px'"
+                  (buttonClick)="goToPassConfig()"
 
-              >
-                <div class="search-button">
-                  <span>Go to Pass <br> Configuration</span><img width="16px" height="16px" [src]="'./assets/External Link (Navy).svg'" alt="Object.svg">
-                </div>
-              </app-gradient-button>
-            </div>
-          </div>
-        </div>
-
-        <div class="card-body_section">
-          <div class="section-content">
-            <div [style.padding-right]="'10px'">
-              <div class="ds-dialog-heading">Activity</div>
-              <span class="ds-dialog-bold-text">Sign-in status: </span> <span>{{profile['Sign-in status']}}</span><br>
-              <span class="ds-dialog-bold-text">Last sign-in: </span> <span>{{profile['Last sign-in']}}</span><br>
-            </div>
-            <div *ngIf="data.role !== '_profile_admin'">
-              <app-gradient-button
-                [size]="'editable'"
-                [width]="'141px'"
-                [minHeight]="'40px'"
-                [gradient]="'#FFFFFF,#FFFFFF'"
-                [hoverColor]="'#FFFFFF'"
-                [textColor]="'#1F195E'"
-                [fontSize]="'13px'"
-                [cursor]="'pointer'"
-                [cornerRadius]="'10px'"
-                (buttonClick)="goToSearch()"
-
-              >
-                <div class="search-button">
-                  <span style="">Go to search</span><img width="16px" height="16px" [src]="'./assets/External Link (Navy).svg'" alt="">
-                </div>
-              </app-gradient-button>
-            </div>
-          </div>
-        </div>
-        <div class="card-body_section" *ngIf="data.role === '_profile_teacher' || data.role === '_profile_assistant' || data.role === '_profile_admin'">
-          <div class="section-content">
-            <div [style.width]="'100%'">
-              <div class="ds-dialog-heading">Permissions</div>
-              <div *ngFor="let control of controlsIteratable">
-                <app-toggle-input
-                  [form]="permissionsForm"
-                  [delimiter]="false"
-                  [controlName]="control.controlName"
-                  [controlLabel]="control.controlLabel"
-                  [controlSize]="'small'"
-                  [disabled]="control.disabled"
-
-                ></app-toggle-input>
+                >
+                  <div class="search-button">
+                    <span>Go to Pass <br> Configuration</span><img width="16px" height="16px" [src]="'./assets/External Link (Navy).svg'" alt="Object.svg">
+                  </div>
+                </app-gradient-button>
               </div>
             </div>
           </div>
+
+          <div class="card-body_section">
+            <div class="section-content">
+              <div [style.padding-right]="'10px'">
+                <div class="ds-dialog-heading">Activity</div>
+                <span class="ds-dialog-bold-text">Sign-in status: </span> <span>{{profile['Sign-in status']}}</span><br>
+                <span class="ds-dialog-bold-text">Last sign-in: </span> <span>{{profile['Last sign-in']}}</span><br>
+              </div>
+              <div *ngIf="data.role !== '_profile_admin'">
+                <app-gradient-button
+                  [size]="'editable'"
+                  [width]="'141px'"
+                  [minHeight]="'40px'"
+                  [hoverColor]="'#F4F4F4'"
+                  [gradient]="'#F4F4F4,#F4F4F4'"
+                  [textColor]="'#1F195E'"
+                  [fontSize]="'13px'"
+                  [cursor]="'pointer'"
+                  [cornerRadius]="'10px'"
+                  (buttonClick)="goToSearch()"
+
+                >
+                  <div class="search-button">
+                    <span style="">Go to search</span><img width="16px" height="16px" [src]="'./assets/External Link (Navy).svg'" alt="">
+                  </div>
+                </app-gradient-button>
+              </div>
+            </div>
+          </div>
+          <div class="card-body_section" *ngIf="data.role === '_profile_teacher' || data.role === '_profile_assistant' || data.role === '_profile_admin'">
+            <div class="section-content">
+              <div [style.width]="'100%'">
+                <div class="ds-dialog-heading">Permissions</div>
+                <div *ngFor="let control of controlsIteratable">
+                  <app-toggle-input
+                    [form]="permissionsForm"
+                    [delimiter]="false"
+                    [controlName]="control.controlName"
+                    [controlLabel]="control.controlLabel"
+                    [controlSize]="'small'"
+                    [disabled]="control.disabled"
+
+                  ></app-toggle-input>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
         </div>
-
-
-      </div>
-      <!--<div style="flex: 1 1 132px; display: flex;">-->
+        <!--<div style="flex: 1 1 132px; display: flex;">-->
         <div class="card-footer">
           <div class="button" *ngIf="profile._originalUserProfile.active">
             <app-gradient-button
@@ -200,7 +224,7 @@
               <span>Disable sign-in</span>
             </app-gradient-button>
             <div class="button_message">
-              <span>Disable sign-in to prevent this user from being able to sign in with the {{data.profileTitle}} profile.</span>
+              <span>Disable sign-in to prevent this user from being able to sign in with the {{data.profileTitle}} group.</span>
             </div>
           </div>
           <div class="button" *ngIf="!profile._originalUserProfile.active">
@@ -217,7 +241,7 @@
               <span>Enable sign-in</span>
             </app-gradient-button>
             <div class="button_message">
-              <span>Enable sign-in to allow this user to be able to sign in with the {{data.profileTitle}} profile.</span>
+              <span>Enable sign-in to allow this user to be able to sign in with the {{data.profileTitle}} group.</span>
             </div>
           </div>
           <div class="button">
@@ -233,72 +257,44 @@
                 [textColor]="'#FFFFFF'"
                 (buttonClick)="promptConfirmation($event.target, 'delete_from_profile')"
               >
-                <span>Remove from Profile</span>
+                <span>Remove from Group</span>
               </app-gradient-button>
             </div>
             <div class="button_message">
-              <span>Removing this user from the {{data.profileTitle}} profile will remove them from this profile, but it <strong>will not</strong> delete all data associated with the account.</span>
+              <span>Removing this user from the {{data.profileTitle}} group will remove them from this group, but it <strong>will not</strong> delete all data associated with the account.</span>
             </div>
           </div>
         </div>
-      <!--</div>-->
-    </div>
+        <!--</div>-->
+      </div>
 
-    <div class="content-scrollable-box" *ngSwitchCase="'gSuiteSettings'">
-      <div class="card-body">
-
-        <div class=" ds-my-20 ds-mx-25">
-          <div class="ds-dialog-heading">Last Sync: Today, 9:34 AM</div>
-        </div>
-
-        <div class="ds-border-box ds-px-25 ds-py-10">
-          <div class="ds-flex-start-between section-content">
-            <div>
-
-              <div class="ds-w-100 ds-flex-wrap ds-dialog-bold-text">
-                Manually Sync User Details
-              </div>
-              <p class="ds-mr-10">Update your imported users' details in G Suite - we'll sync these changes for you on our end every 4 hours or manually sync here.</p>
+      <div class="content-scrollable-box" *ngSwitchCase="'gSuiteSettings'" #rc>
+        <div class="card-body">
+          <div class="ds-w-100 ds-flex-center-center">
+            <div class="ds-mt-25">
+              <app-sp-search
+                [searchTarget]="'orgunits'"
+                [selectedOptions]="orgUnitSelector"
+                [focused]="true"
+                [dummyRoleText]="'org units'"
+                [rollUpAfterSelection]="true"
+                [placeholder]="'Search Org Units'"
+                (onUpdate)="checkSelectorForUpdating$.next($event)"
+              ></app-sp-search>
             </div>
-            <div>
+            <div style="position: absolute; right: 25px; bottom: 25px;" *ngIf="this.orgUnitSelectorEditState">
               <app-gradient-button
-              [size]="'small'"
-              [whiteSpace]="'nowrap'"
-              [gradient]="'#001115,#033294'"
-              [hoverColor]="'#001115'"
-              [cursor]="'pointer'"
+                [size]="'small'"
+                (buttonClick)="dialogRef.close(this.orgUnitSelector)"
               >
-                Manually Sync
+                <span>Done</span>
               </app-gradient-button>
             </div>
-
           </div>
-
         </div>
-        <!--<div class="ds-border-box ds-px-25 ds-py-10">-->
-          <!--<div class="ds-flex-start-between section-content">-->
-            <!--<div>-->
-              <!--<div class="ds-w-100 ds-flex-wrap ds-dialog-bold-text">Organization Unit Routing</div>-->
-              <!--<p class="ds-mr-10">Organizational units through G Suite can be routed to certain SmartPass profiles (Students, Administrators, etc.)</p>-->
-            <!--</div>-->
-            <!--<div>-->
-              <!--<app-gradient-button-->
-                <!--[size]="'small'"-->
-                <!--[whiteSpace]="'nowrap'"-->
-                <!--[gradient]="'#001115,#033294'"-->
-                <!--[hoverColor]="'#001115'"-->
-                <!--[rightIcon]="'./assets/Chevron Right (White).svg'"-->
-                <!--[cursor]="'pointer'"-->
-              <!--&gt;-->
-                <!--Edit Routing-->
-              <!--</app-gradient-button>-->
-            <!--</div>-->
-          <!--</div>-->
-        <!--</div>-->
-
       </div>
-    </div>
 
-  </ng-container>
-  <!--<pre>{{profile | json}}</pre>-->
-</div>
+    </ng-container>
+    <!--<pre>{{profile | json}}</pre>-->
+  </div>
+</ng-template>

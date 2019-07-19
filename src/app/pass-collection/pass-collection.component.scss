@@ -1,3 +1,40 @@
+@media all and  (max-width: 425px) {
+  div.collection-grid-wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(152px, .3fr));
+    justify-content: center;
+  }
+
+  :host {
+    display: initial !important;
+  }
+
+  .collection-header{
+    width: 93%;
+    margin: 0 auto;
+  }
+}
+
+@media all and  (max-width: 375px) {
+  div.collection-grid-wrapper {
+    grid-template-columns: repeat(auto-fill,minmax(145px, .3fr));
+  }
+
+  :host {
+    display: initial !important;
+  }
+}
+
+@media all and  (max-width: 1024px) {
+  div.collection-wrapper {
+    width: 100%;
+  }
+}
+
+:host {
+
+}
+
 .collection-wrapper{
     height: inherit;
     display: flex;
@@ -5,6 +42,7 @@
     margin-bottom: 40px;
 
 }
+
 .collection-wrapper, .collection-grid-wrapper, .collection-list-wrapper {
   opacity: 0;
   animation: appearing .5s ease .1s forwards;
@@ -22,7 +60,6 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin-bottom: 5px;
 }
 
 .collection-icon{
@@ -58,8 +95,7 @@
 
 .collection-grid-wrapper{
     display: grid;
-    grid-template-columns: repeat(auto-fill,minmax(143px, .3fr));
-    justify-content: space-between;
+    //grid-template-columns: repeat(auto-fill, minmax(143px, .3fr));
     margin-top: 15px;
     //justify-content: space-between;
 }
@@ -69,7 +105,7 @@
 //}
 
 .tile{
-  padding-bottom: 15px;
+  padding: 0;
 }
 
 .sort-label{

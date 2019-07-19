@@ -1,3 +1,40 @@
+@media screen and (max-width: 320px) {
+  div.fixed-card-wrapper {
+    width: 300px !important;
+  }
+
+  .form,
+  div.fixed-card {
+    width: 300px !important;
+  }
+}
+
+@media screen and (max-width: 1024px) and (min-width: 335px)  {
+  div.fixed-card {
+    width: 335px !important;
+  }
+
+  .form,
+  .fixed-card-wrapper {
+    width: 335px !important;
+  }
+}
+
+@media screen and (max-width: 1024px)  {
+  div.fixed-card {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .form {
+    width: initial !important;
+  }
+
+  div.pretty-replace-box {
+    overflow: visible !important;
+  }
+}
+
 .pointer {
   position: absolute;
   left: 50%;
@@ -25,6 +62,11 @@
   bottom: 0;
   margin: auto;
 
+}
+
+.fixed-card-wrapper {
+  transition: width .5s ease, height .5s ease;
+  position: relative
 }
 
 .form-stepper {
@@ -409,6 +451,8 @@ textarea {
 .onoffswitch-checkbox:checked + .onoffswitch-label:before {
   right: 0px;
 }
+
+
 
 //.state-transition {
 //  animation: stateTransition .5s ease forwards;

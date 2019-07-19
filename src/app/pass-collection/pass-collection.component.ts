@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, OnDestroy} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, OnDestroy, HostListener} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import {BehaviorSubject, merge, of, zip,  Observable ,  ReplaySubject ,  Subject } from 'rxjs';
 import { DataService } from '../services/data-service';
@@ -18,6 +18,8 @@ import { TimeService } from '../services/time.service';
 import * as _ from 'lodash';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {KioskModeService} from '../services/kiosk-mode.service';
+import {DomSanitizer} from '@angular/platform-browser';
+import {ScreenService} from '../services/screen.service';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -52,6 +54,9 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() showEmptyHeader: boolean;
   @Input() columnViewIcon: boolean = true;
   @Input() smoothlyUpdating: boolean = false;
+  @Input() grid_template_columns: string = '143px';
+  @Input() grid_gap: string = '15px';
+  @Input() isAdminPage: boolean;
 
   @Input() passProvider: PassLikeProvider;
 
@@ -95,8 +100,21 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       private dataService: DataService,
       private timeService: TimeService,
       public darkTheme: DarkThemeSwitch,
-      private kioskMode: KioskModeService
+      private kioskMode: KioskModeService,
+      private sanitizer: DomSanitizer,
+      private screenService: ScreenService,
   ) {}
+
+  get gridTemplate() {
+    if (this.screenService.isDeviceMid && !this.screenService.isDeviceSmallExtra) {
+      this.grid_template_columns = '157px';
+    }
+    return this.sanitizer.bypassSecurityTrustStyle(`repeat(auto-fill, minmax(${this.grid_template_columns}, .3fr))`);
+  }
+
+  get gridGap() {
+    return this.grid_gap;
+  }
 
   ngOnInit() {
       if (this.mock) {
@@ -115,7 +133,6 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
             })
           )
           .subscribe((passes: any) => {
-            // console.log(passes);
             this.currentPasses = passes;
           });
       }
@@ -124,6 +141,10 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
             this.timerEvent.next(null);
           }, 1000));
         }
+
+    // if (this.screenService.isDeviceSmall) {
+    //   this.grid_gap = '4px';
+    // }
   }
 
   ngOnDestroy() {
@@ -173,7 +194,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
         forFuture: pass['start_time'] > now,
         forMonitor: this.forMonitor,
         forStaff: this.forStaff && !this.kioskMode.currentRoom$.value,
-        kioskMode: !!this.kioskMode.currentRoom$.value
+        kioskMode: !!this.kioskMode.currentRoom$.value,
+        hideReport: this.isAdminPage
       };
       data.isActive = !data.fromPast && !data.forFuture;
     } else {
@@ -232,7 +254,18 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
     sortDialog.afterClosed().subscribe(sortMode => {
       this.onSortSelected(sortMode);
+      console.log(sortMode);
     });
   }
 
+  @HostListener('window:resize')
+  checkDeviceWidth() {
+    if (this.screenService.isDeviceSmallExtra) {
+      this.grid_template_columns = '143px';
+    }
+
+    if (!this.screenService.isDeviceSmallExtra && this.screenService.isDeviceMid) {
+      this.grid_template_columns = '157px';
+    }
+  }
 }

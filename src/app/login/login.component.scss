@@ -1,6 +1,21 @@
+@import "../../sp-colors";
+
 :host {
   height: 100%;
 }
+
+// queries for safari
+@media not all and (min-resolution:.001dpcm) {
+  @supports (-webkit-appearance:none) {
+    @media all and (max-width: 425px) {
+      div.container {
+        height: 100vh;
+      }
+    }
+  }
+}
+
+
 .container {
   height: 100%;
   display: flex;
@@ -15,6 +30,15 @@
     background-repeat: no-repeat;
     background-position: 50% 100%;
     background-size: cover;
+  }
+  .spinner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    background-color: rgba(100, 100, 100, .3);
   }
 }
 

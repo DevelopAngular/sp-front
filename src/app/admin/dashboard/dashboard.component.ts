@@ -105,31 +105,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // const _devices = this.draggableContainer.nativeElement.childNodes;
-    // this.devices = Array.from(Array(_devices.length).keys()).map(index => _devices[index]);
-
-    // console.log(this.draggableContainer.nativeElement.childNodes);
-
 
     this.drawChartXaxis();
     this.darkTheme.isEnabled$.subscribe(() => {
-      // this.lineChartOptions.scales.xAxes[0].tiks.fontColor = this.darkTheme.getColor({white: '#777777', dark: '#FFFFFF'});
-      //   [{
-      //   ticks: {
-      //     fontColor: this.darkTheme.getColor({white: '#999999', dark: '#FFFFFF'})
-      //   },
-      //   gridLines: {
-      //     display: false,
-      //   },
-      //   scaleLabel: {
-      //     display: true,
-      //     fontColor: '#134482',
-      //     fontSize: 14,
-      //     labelString: 'Time',
-      //     padding: 10,
-      //   },
-      // }]
-      // debugger
       this.chartTheming.setColorschemesOptions({
         scales: {
           yAxes: [{
@@ -343,12 +321,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       }
     };
-    window.appLoaded();
   }
-
-  // onDevicesOrderChanged(event) {
-  //   console.log(event);
-  // }
 
   private drawChartXaxis() {
     let hour = 8;
@@ -370,15 +343,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
       _minute_iterator++;
       this.lineChartLabels.push(time);
     }
-    // console.log(this.lineChartLabels);
-    // this.lineChartLabels = this.lineChartLabels.slice(0, this.lineChartLabels.length - 1);
-
   }
 
   previewPDF() {
 
     const data = this.hallPassService.getActivePasses();
-
 
     data
       .pipe(
@@ -444,13 +413,5 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.shareChartData$.next();
     this.shareChartData$.complete();
-  }
-
-  public chartClicked(e: any): void {
-    console.log(e);
-  }
-
-  public chartHovered(e: any): void {
-    console.log(e);
   }
 }

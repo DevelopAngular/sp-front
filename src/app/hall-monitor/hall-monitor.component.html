@@ -1,14 +1,16 @@
-<div *ngIf="user" style="height: 100%">
+<div *ngIf="user" style="position: relative">
   <div *ngIf="canView" class="hall-monitor-wrapper">
     <div class="hall-monitor-top">
+      <ng-container *ngIf="!isDeviceLargeExtra; else hallMontiorTopMobile">
       <app-round-input
-        [type]="'text'"
-        [minWidth]="'315px'"
-        [width]="'315px'"
-        [placeholder]="'Search'"
-        [fieldIconPosition]="'left'"
-        [closeIcon]="true"
+        [type]="inputRestrictionXl.type"
+        [minWidth]="inputRestrictionXl.minWidth"
+        [width]="inputRestrictionXl.width"
+        [placeholder]="inputRestrictionXl.placeholder"
+        [fieldIconPosition]="inputRestrictionXl.fieldIconPosition"
+        [closeIcon]="inputRestrictionXl.closeIcon"
         [style.margin-right]="'40px'"
+        [pending$]="searchPending$"
         (ontextupdate)="onSearch($event)"
       ></app-round-input>
       <!--<input-->
@@ -19,41 +21,95 @@
         <!--(input)="onSearch(searchInput.value)"-->
       <!--&gt;-->
       <app-gradient-button
-        [gradient]="'#DA2370,#FB434A'"
-        [cursor]="'pointer'"
-        [hoverColor]="'#DA2370'"
-        [minWidth]="'185px'"
-        [minHeight]="'50px'"
-        [fontSize]="'14px'"
-        [leftIcon]="'./assets/Report (White).svg'"
+        [gradient]="reportBtn.gradient"
+        [cursor]="reportBtn.cursor"
+        [hoverColor]="reportBtn.hoverColor"
+        [minWidth]="reportBtn.minWidth"
+        [minHeight]="reportBtn.minHeight"
+        [fontSize]="reportBtn.fontSize"
+        [leftIcon]="reportBtn.leftIcon"
+        [padding]="reportBtn.padding"
         (buttonClick)="openReportForm()"
       >Report Student(s)</app-gradient-button>
+      </ng-container>
+
+      <ng-template #hallMontiorTopMobile>
+        <ng-container>
+          <div class="options-wrapper" (click)="toggleSearchBar()">
+<!--            <img src="./assets/Search Eye (Navy).svg" alt="" class="search-img">-->
+            <app-icon-button [srcString]="'Search Eye'" (clickEvent)="toggleSearchBar()" [size]="20"> </app-icon-button>
+          </div>
+          <div class="student-search-wrapper" *ngIf="isIpadSearchBar">
+            <div class="student-search ">
+              <app-round-input
+                [type]="inputRestrictionSm.type"
+                [minWidth]="inputRestrictionSm.minWidth"
+                [width]="inputRestrictionSm.width"
+                [placeholder]="inputRestrictionSm.placeholder"
+                [fieldIconPosition]="inputRestrictionSm.fieldIconPosition"
+                [closeIcon]="inputRestrictionSm.closeIcon"
+                [style.margin-right]="'40px'"
+                (ontextupdate)="onSearch($event)"
+                [selectReset$] = "resetvalue"
+              ></app-round-input>
+            </div>
+          </div>
+
+          <div class="cancel-wrapper" *ngIf="isIpadSearchBar">
+            <span class="cancel" (click)="cleanSearchValue();">Cancel</span>
+          </div>
+
+          <div class="options-wrapper" *ngIf="!isIpadSearchBar">
+            <app-icon-button [srcString]="'Report'" (clickEvent)="openReportForm()" [size]="20"> </app-icon-button>
+          </div>
+        </ng-container>
+      </ng-template>
     </div>
+
+    <!--<h1 class="hall-monitor-heading" *ngIf="!isIpadSearchBar" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">Hall Monitor</h1>-->
+    <!--<ng-container *ngIf="isSearchClicked && !isIpadWidth && !isDeviceLargeExtra">-->
+      <!--<div class="sp-search-wrapper ">-->
+        <!--<div class="sp-search ">-->
+          <!--<app-round-input-->
+            <!--[type]="inputRestrictionSm.type"-->
+            <!--[minWidth]="inputRestrictionSm.minWidth"-->
+            <!--[width]="inputRestrictionSm.width"-->
+            <!--[placeholder]="inputRestrictionSm.placeholder"-->
+            <!--[fieldIconPosition]="inputRestrictionSm.fieldIconPosition"-->
+            <!--[closeIcon]="inputRestrictionSm.closeIcon"-->
+            <!--[style.margin-right]="'40px'"-->
+            <!--(ontextupdate)="onSearch($event)"-->
+            <!--[selectReset$] = "resetvalue"-->
+          <!--&gt;</app-round-input>-->
+        <!--</div>-->
+        <!--<span class="cancel" (click)="cleanSearchValue()">Cancel</span>-->
+      <!--</div>-->
+    <!--</ng-container>-->
+
     <div class="hall-monitor-bottom">
       <app-pass-collection
-        [hasSort]="true"
-        [isActive]="true"
-        [showEmptyHeader]="true"
-        [forStaff]="isStaff"
-        [style.width]="'617px'"
-        [forMonitor]="true"
+        [hasSort]="hallMonitorCollection.hasSort"
+        [isActive]="hallMonitorCollection.isActive"
+        [showEmptyHeader]="hallMonitorCollection.showEmptyHeader"
+        [forStaff]="hallMonitorCollection.forStaff"
+        [forMonitor]="hallMonitorCollection.forMonitor"
         [passProvider]="activePassProvider"
-        [title]="'Active Passes'"
-        [icon]="'./assets/Walking (Navy).svg'"
-        [columns]="4"
+        [title]="hallMonitorCollection.title"
+        [icon]="hallMonitorCollection.icon"
+        [columns]="hallMonitorCollection.columns"
         (reportFromPassCard)="onReportFromPassCard($event)"
       >
       </app-pass-collection>
       <div *ngIf="!(hasPasses | async) && (passesLoaded | async)" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
         <div class="empty-container" *ngIf="inputValue != ''">
           <img class="empty-svg" [src]="'./assets/emptyStates/emptyHallSearch.svg' | resolveAsset" alt="empty-svg">
-          <div class="big-text" [style.margin]="'10px 0'">Nothing to See Here</div>
-          <div class="small-text">Search again or click the report button</div>
+          <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">Nothing to See Here</div>
+          <div class="small-text ds-empty-text-info">Search again or click the report button</div>
         </div>
         <div class="empty-container" *ngIf="inputValue==''">
           <img class="empty-svg" [src]="'./assets/emptyStates/emptyHall.svg' | resolveAsset" alt="empty-svg">
-          <div class="big-text" [style.margin]="'10px 0'">Take the Day Off</div>
-          <div class="small-text">There aren't any active passes now</div>
+          <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">Take the Day Off</div>
+          <div class="small-text ds-empty-text-info">There aren't any active passes now</div>
         </div>
       </div>
     </div>
@@ -69,3 +125,17 @@
     <app-restriction-dummy></app-restriction-dummy>
   </div>
 </div>
+
+  <div class="sort-btn" (click)="openSortMenu()" *ngIf="(hasPasses | async) && (passesLoaded | async) && isDeviceLargeExtra ">
+    <app-gradient-button
+      [size] = "sortBtn.size"
+      [gradient]="sortBtn.gradient"
+      [cursor]="sortBtn.cursor"
+      [hoverColor]="sortBtn.hoverColor"
+      [minWidth]="sortBtn.minWidth"
+      [minHeight]="sortBtn.minHeight"
+    ><span class="sort-btn-label">Sort</span> </app-gradient-button>
+  </div>
+
+
+<img (click)="back()" *ngIf="this.isReportFormOpened" class="back-button-bottom"  [src]="'./assets/Back Button (White).svg' | resolveAsset" >

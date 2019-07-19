@@ -2,27 +2,36 @@
   <div class="current-pass ds-mb-25">
       <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'20px'" [icon]="'./assets/Plus (Navy).svg'">
         <div class="pass-buttons">
-          <app-gradient-button
-                  [size]="'editable'"
-                  [minWidth]="'143px'"
-                  [minHeight]="'86.5px'"
-                  [cornerRadius]="'12.75px'"
-                  [hoverColor]="'#00b476'"
-                  [fontSize]="'18px'"
-                  [cursor]="'pointer'"
-                  (buttonClick)="showMainForm(false)">Now
-          </app-gradient-button>
-          <app-gradient-button
-                  [size]="'editable'"
-                  [minWidth]="'143px'"
-                  [minHeight]="'86.5px'"
-                  [cornerRadius]="'12.75px'"
-                  [hoverColor]="'#00b476'"
-                  [fontSize]="'18px'"
-                  [cursor]="'default'"
+          <app-create-pass-button
+                  [title]="'Now'"
+                  (onClick)="showMainForm(false)"
+          ></app-create-pass-button>
+          <!--<app-gradient-button-->
+                  <!--[size]="'editable'"-->
+                  <!--[minWidth]="'143px'"-->
+                  <!--[minHeight]="'86.5px'"-->
+                  <!--[cornerRadius]="'12.75px'"-->
+                  <!--[hoverColor]="'#00b476'"-->
+                  <!--[fontSize]="'18px'"-->
+                  <!--[cursor]="'pointer'"-->
+                  <!--(buttonClick)="showMainForm(false)">Now-->
+          <!--</app-gradient-button>-->
+          <app-create-pass-button
+                  [title]="'Future'"
                   [disabled]="true"
-                  (buttonClick)="showMainForm(true)">Future
-          </app-gradient-button>
+                  (onClick)="showMainForm(true)"
+          ></app-create-pass-button>
+          <!--<app-gradient-button-->
+                  <!--[size]="'editable'"-->
+                  <!--[minWidth]="'143px'"-->
+                  <!--[minHeight]="'86.5px'"-->
+                  <!--[cornerRadius]="'12.75px'"-->
+                  <!--[hoverColor]="'#00b476'"-->
+                  <!--[fontSize]="'18px'"-->
+                  <!--[cursor]="'default'"-->
+                  <!--[disabled]="true"-->
+                  <!--(buttonClick)="showMainForm(true)">Future-->
+          <!--</app-gradient-button>-->
         </div>
       </app-display-card>
   </div>

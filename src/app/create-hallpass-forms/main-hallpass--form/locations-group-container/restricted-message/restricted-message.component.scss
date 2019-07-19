@@ -1,5 +1,39 @@
+@media screen and (max-width: 1024px) {
+  div.rest-mes-wrapper {
+    overflow: initial;
+  }
+
+  .selected-teacher-header {
+    display: none !important;
+  }
+
+  .message-box {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .buttons {
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  img.back-btn-top {
+    display: none;
+  }
+
+  img.back-btn-bottom {
+    display: block;
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
 .rest-mes-wrapper {
-  width: 425px;
   height: 500px;
   display: flex;
   flex-direction: column;
@@ -24,11 +58,13 @@
     overflow: hidden;
 
     .back-button {
+      &-wrapper {
+        position: absolute;
+      }
       width: 28px;
       height: 28px;
       margin-left: 20px;
       user-select: none;
-      position: absolute;
       z-index: 11;
       cursor: pointer;
     }
@@ -104,6 +140,7 @@
         line-height: 1.08;
         letter-spacing: 0.3px;
         background: transparent;
+        width: 350px;
         &:focus {
           border: 1px solid transparent;
           transition: border .3s ease;
@@ -150,4 +187,12 @@
     align-items: center;
     padding: 7px;
   }
+}
+
+.back-btn-top {
+  display: block;
+}
+
+.back-btn-bottom {
+  display: none;
 }

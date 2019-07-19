@@ -1,10 +1,9 @@
-import { Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, HostListener, Input, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material';
-import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
+import {BehaviorSubject, interval, Observable, of, Subject, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
-import {AccountsDialogComponent} from '../accounts-dialog/accounts-dialog.component';
 import {ActivatedRoute, Router} from '@angular/router';
-import {debounceTime, distinctUntilChanged, filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, filter, map, share, startWith, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {Util} from '../../../Util';
 import {HttpService} from '../../services/http-service';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
@@ -19,6 +18,8 @@ import {Location} from '../../models/Location';
 import {DataTableComponent} from '../data-table/data-table.component';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {RepresentedUser} from '../../navbar/navbar.component';
+import {LocationsService} from '../../services/locations.service';
+import {GSuiteOrgs} from '../../models/GSuiteOrgs';
 
 declare const window;
 
@@ -40,6 +41,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   public userList: any[] = [];
   public selectedUsers: any[] = [];
   public placeholder: boolean;
+  public loaded: boolean = false;
   public dataTableHeaders: any;
   public profilePermissions: any;
   public initialSearchString: string;
@@ -48,15 +50,76 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   public user: User;
   private limitCounter: number = 20;
   public dataTableEditState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public pending$: Subject<boolean> = new Subject<boolean>();
+
+  public syncingDots: string;
 
   public accounts$ =
     new BehaviorSubject<any>({
-      total_count: 0,
-      admin_count: 0,
-      student_count: 0,
-      teacher_count: 0,
-      assistant_count: 0
+      total_count: null,
+      admin_count: null,
+      student_count: null,
+      teacher_count: null,
+      assistant_count: null
     });
+
+    ////// G_Suite
+
+  public syncing = {
+    intervalId: null,
+    enabled: false,
+    syncingDots: '',
+    // destroyer$: new Subject<any>(),
+    start() {
+      if (this.enabled) {
+        return;
+      }
+      this.enabled = true;
+      let dot = 0;
+      this.intervalId = interval(250)
+        .pipe(
+          map(() => {
+            dot += 1;
+            if (dot > 3) {
+              dot = 0;
+            }
+            return dot;
+          }),
+          // takeUntil(this.destroyer$)
+        )
+        .subscribe((res) => {
+          // console.log(res);
+          switch (res) {
+            case 0:
+              this.syncingDots = '';
+              break;
+            case 1:
+              this.syncingDots = '.';
+              break;
+            case 2:
+              this.syncingDots = '..';
+              break;
+            case 3:
+              this.syncingDots = '...';
+              break;
+          }
+        });
+    },
+    end() {
+      if (!this.enabled) {
+        return;
+      }
+      this.enabled = false;
+      this.syncingDots = '';
+      this.intervalId.unsubscribe();
+      // this.destroyer$.next();
+      // this.destroyer$.complete();
+    }
+  };
+
+  public GSuiteOrgs: GSuiteOrgs = <GSuiteOrgs>{};
+
+  public countAccounts = 2500;
 
   @ViewChild(DataTableComponent) dataTable;
 
@@ -73,18 +136,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             map(res => res.results),
             switchMap((userList: User[]) => {
               if (this.role === '_profile_teacher' && userList.length) {
-                return zip(
-                  ...userList.map((user: User) => {
-                    return this.dataService.getLocationsWithTeacher(user)
-                      .pipe(
-                        switchMap((locs: Location[]) => {
-                          (user as any).assignedTo = locs.map((l: Location) => {
-                            return l.title;
-                          }).join(', ');
-                          return of(user);
-                        })
-                      );
-                  }));
+                return this.addUserLocations(userList);
               } else if (this.role === '_profile_assistant' && userList.length) {
                 return zip(
                   ...userList.map((user: User) => {
@@ -95,7 +147,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
                           return of(user);
                         })
                       );
-
                   }));
               } else {
                 return of(userList);
@@ -114,7 +165,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    private router: Router,
+    public router: Router,
     private route: ActivatedRoute,
     private userService: UserService,
     private http: HttpService,
@@ -124,23 +175,24 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     private storage: StorageService,
     private elemRef: ElementRef,
     private dataService: DataService,
-    public darkTheme: DarkThemeSwitch
+    public darkTheme: DarkThemeSwitch,
+    private locService: LocationsService
 
   ) {}
 
   get noUsersDummyVisibility() {
     switch (this.role) {
       case '_profile_admin':
-        return this.accounts$.value.admin_count === 0;
+        return this.accounts$.value.admin_count === 0 && !this.loaded;
         break;
       case '_profile_teacher':
-        return this.accounts$.value.teacher_count === 0;
+        return this.accounts$.value.teacher_count === 0 && !this.loaded;
         break;
       case '_profile_student':
-        return this.accounts$.value.student_count === 0;
+        return this.accounts$.value.student_count === 0 && !this.loaded;
         break;
       case '_profile_assistant':
-        return this.accounts$.value.assistant_count === 0;
+        return this.accounts$.value.assistant_count === 0 && !this.loaded;
         break;
     }
   }
@@ -149,9 +201,37 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     return this.selectedUsers.every(profile => profile._originalUserProfile.active);
   }
 
+  formatDate(date) {
+    return Util.formatDateTime(new Date(date));
+  }
+
   ngOnInit() {
+    // this.syncing.start();
+
+    interval(1758)
+      .pipe(
+        switchMap((res) => {
+          return this.adminService.getGSuiteOrgs();
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((res: any) => {
+        if (res.is_syncing) {
+          this.syncing.start();
+          // console.log(res);
+        } else if (!res.is_syncing) {
+          this.syncing.end();
+        }
+        for (const key in res) {
+          if (this.GSuiteOrgs[key] !== res[key]) {
+            this.GSuiteOrgs[key] = res[key];
+          }
+        }
+      });
+
     this.http.globalReload$.pipe(
       tap(() => {
+        this.role = null;
         this.selectedUsers = [];
         this.userList = [];
       }),
@@ -160,8 +240,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       }),
       switchMap((params) => {
         this.role = params.role;
-
-        // if (this.role === '_all') {
           return this.adminService.getAdminAccounts()
             .pipe(tap((u_list: any) => {
               // console.log('This Accounts ==>>>', u_list);
@@ -173,23 +251,29 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               // console.log(u_list);
               this.accounts$.next(u_list);
             }));
-        // } else {
-        //   return of(null);
-        // }
       }),
       switchMap(() => {
         return this.route.queryParams.pipe(takeUntil(this.destroy$));
-      })
+      }),
+      tap(() => this.router.navigate(['admin/accounts', this.role])),
+      filter(() => this.role !== 'g_suite'),
+      takeUntil(this.destroy$)
     )
     .subscribe((qp) => {
       const {profileName} = qp;
       this.initialSearchString = this.initialSearchString ? this.initialSearchString : profileName;
-      this.router.navigate(['admin/accounts', this.role]);
       this.tabVisibility = true;
       this.getUserList(this.initialSearchString || '');
         const headers = this.storage.getItem(`${this.role}_columns`);
         if ( headers ) {
           this.dataTableHeaders = JSON.parse(headers);
+          if (!this.dataTableHeaders['Account Type']) {
+            this.dataTableHeaders['Account Type'] = {
+              value: true,
+              label: 'Account Type',
+              disabled: false
+            };
+          }
         } else {
           this.dataTableHeaders = {
             'Name': {
@@ -202,11 +286,11 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               label: 'Email/Username',
               disabled: true
             },
-            // 'Account Type': {
-            //   value: false,
-            //   label: 'Account Type',
-            //   disabled: false
-            // }
+            'Account Type': {
+              value: true,
+              label: 'Account Type',
+              disabled: false
+            },
           };
 
           if (this.role !== '_all') {
@@ -332,16 +416,13 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     this.userService.userData.subscribe((user) => {
       this.user = user;
     });
-    // this.route.data.subscribe((v) => {
-    //   console.log(v);
-    //   console.log(this.route.snapshot.data);
-    // });
   }
 
   findRelevantAccounts(searchValue) {
     // console.log(searchValue);
     this.placeholder = false;
     this.userList = [];
+    this.pending$.next(true);
 
     if (!this.searchChangeObserver$) {
       Observable.create(observer => {
@@ -359,19 +440,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
               map(res => res),
               switchMap((userList: User[]) => {
                 if (this.role === '_profile_teacher' && userList.length) {
-                  return zip(
-                    ...userList.map((user: User) => {
-                      return this.dataService.getLocationsWithTeacher(user)
-                        .pipe(
-                          switchMap((locs: Location[]) => {
-                            (user as any).assignedTo = locs.map((l: Location) => {
-                              return l.title;
-                            }).join(', ');
-                            return of(user);
-                          })
-                        );
-
-                    }));
+                  return this.addUserLocations(userList);
                 } else if (this.role === '_profile_assistant' && userList.length) {
                   return zip(
                     ...userList.map((user: User) => {
@@ -382,7 +451,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
                             return of(user);
                           })
                         );
-
                     }));
                 } else {
                   return of(userList);
@@ -391,9 +459,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           ))
         )
         .subscribe((userList) => {
-          // debugger
-
-          console.log(userList);
+          // console.log(userList);
           if (userList && userList.length) {
             this.dataTableHeadersToDisplay = [];
             this.userList = this.buildUserListData(userList);
@@ -401,6 +467,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           } else {
             this.placeholder = true;
           }
+          this.pending$.next(false);
+
         });
     }
 
@@ -409,9 +477,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
 
   setSelected(e) {
-    // if (e.length) {
-      // console.log(e[0]['id']);
-    // }
     console.log(e);
     this.selectedUsers = e;
   }
@@ -425,7 +490,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
     if (!eventTarget.classList.contains('button')) {
       (eventTarget as any) = eventTarget.closest('.button');
-    };
+    }
 
     eventTarget.style.opacity = '0.75';
       // this.consentMenuOpened = true;
@@ -452,16 +517,16 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         if (this.role === '_all') {
           header = `Are you sure you want to permanently delete ${this.selectedUsers.length > 1 ? 'these accounts' : 'this account'} and all associated data? This cannot be undone.`;
         } else {
-          header = `Removing ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} from the ${profile} profile will remove them from this profile, but it will not delete all data associated with the account.`;
+          header = `Removing ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} from the ${profile} group will remove them from this group, but it will not delete all data associated with the account.`;
         }
         options = [{display: `Confirm  ${this.role === '_all' ? 'Delete' : 'Remove'}`, color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
         break;
       case 'disable_sign_in':
-        header = `Disable sign-in to prevent ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} from being able to sign in with the ${profile} profile.`;
+        header = `Disable sign-in to prevent ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} from being able to sign in with the ${profile} group.`;
         options = [{display: 'Disable sign-in', color: '#001115', buttonColor: '#001115, #033294', action: 'disable_sign_in'}];
         break;
       case 'enable_sign_in':
-        header = `Enable sign-in to allow ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} to be able to sign in with the ${profile} profile.`;
+        header = `Enable sign-in to allow ${this.selectedUsers.length > 1 ? 'these users' : 'this user'} to be able to sign in with the ${profile} group.`;
         options = [{display: 'Enable sign-in', color: '#03CF31', buttonColor: '#03CF31, #00B476', action: 'enable_sign_in'}];
         break;
     }
@@ -613,7 +678,15 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       console.log(userListReloadTrigger, data.profile.id, this.user.id);
       if (userListReloadTrigger) {
         if (data.profile.id === +this.user.id) {
-          window.document.location.reload();
+          // window.document.location.reload();
+          this.userService.getUser()
+            .pipe(
+              map(raw => User.fromJSON(raw))
+            )
+            .subscribe((user) => {
+            this.userService.userData.next(user);
+          });
+
         }
         this.selectedUsers = [];
         this.getUserList();
@@ -622,7 +695,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   private getUserList(query: string = '') {
-
+    this.loaded = false;
     this.placeholder = false;
     this.userList = [];
     this.userService
@@ -634,19 +707,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         map(userResult => userResult.results),
         switchMap((userList: User[]) => {
           if (this.role === '_profile_teacher' && userList.length) {
-            return zip(
-              ...userList.map((user: User) => {
-                return this.dataService.getLocationsWithTeacher(user)
-                  .pipe(
-                    switchMap((locs: Location[]) => {
-                      (user as any).assignedTo = locs.map((l: Location) => {
-                        return l.title;
-                      }).join(', ');
-                      return of(user);
-                    })
-                  );
 
-              }));
+            return this.addUserLocations(userList);
+
           } else if (this.role === '_profile_assistant' && userList.length) {
             return zip(
               ...userList.map((user: User) => {
@@ -676,66 +739,79 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       });
   }
 
+  syncNow() {
+    this.adminService.syncNow().subscribe();
+        this.adminService.getGSuiteOrgs().subscribe(res => this.GSuiteOrgs = res);
+  }
+
+  private addUserLocations(users) {
+    return this.locService.getLocatopnsWithManyTeachers(users)
+      .pipe(map((locs: Location[]) => {
+        users.forEach(user => {
+          (user as any).assignedTo = locs.filter(loc => loc.teachers.find(teacher => teacher.id === user.id));
+        });
+        return users;
+      }));
+  }
+
   private buildUserListData(userList) {
-      this.isLoadUsers = this.limitCounter === userList.length;
-      console.log('ME ===>>>>>>', this.user);
-      // this.userAmount.next(userList.length);
-      return userList.map((raw, index) => {
-        // raw = User.fromJSON(raw);
-        const permissionsRef: any = this.profilePermissions;
-          const partOf = [];
-          if (raw.roles.includes('_profile_student')) partOf.push({title: 'Student', role: '_profile_student'});
-          if (raw.roles.includes('_profile_teacher')) partOf.push({title: 'Teacher', role: '_profile_teacher'});
-          if (raw.roles.includes('_profile_assistant')) partOf.push({title: 'Assistant', role: '_profile_assistant'});
-          if (raw.roles.includes('_profile_admin')) partOf.push({title: 'Administrator', role: '_profile_admin'});
+    this.isLoadUsers = this.limitCounter === userList.length;
+    return userList.map((raw, index) => {
+      const permissionsRef: any = this.profilePermissions;
+        const partOf = [];
+        if (raw.roles.includes('_profile_student')) partOf.push({title: 'Student', role: '_profile_student'});
+        if (raw.roles.includes('_profile_teacher')) partOf.push({title: 'Teacher', role: '_profile_teacher'});
+        if (raw.roles.includes('_profile_assistant')) partOf.push({title: 'Assistant', role: '_profile_assistant'});
+        if (raw.roles.includes('_profile_admin')) partOf.push({title: 'Administrator', role: '_profile_admin'});
 
-          const rawObj = {
-              'Name': +raw.id === +this.user.id ? raw.display_name + ' (Me)' : raw.display_name,
-              'Email/Username': raw.primary_email,
-              'Rooms': raw.assignedTo,
-              // 'Account Type': 'G Suite',
-              'Acting on Behalf Of': raw.canActingOnBehalfOf ? raw.canActingOnBehalfOf.map((u: RepresentedUser) => {
-                return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
-              }).join(', ') : '',
-              'Sign-in status': raw.active ? 'Enabled' : 'Disabled',
-              'Last sign-in': raw.last_login ? Util.formatDateTime(new Date(raw.last_login)) : 'Not login',
-              'Profile(s)': partOf.length ? partOf : [{title: 'No profile'}],
-              'Permissions': (function() {
-                  const tabs = Object.values(permissionsRef).map((tab: any) => {
-                    tab.allowed = raw.roles.includes(tab.controlName);
-                    return tab;
-                  });
-                  if (tabs.every((item: any): boolean => item.allowed)) {
-                    return 'No restrictions';
-                  } else {
-                    const restrictedTabs = tabs.filter((item: any): boolean => !item.allowed);
-                    if (restrictedTabs.length > 1) {
-                      return `${restrictedTabs.length} tabs restricted`;
-                    } else {
-                      return `${restrictedTabs[0].controlLabel} restricted`;
-                    }
-                  }
-                }())
-
-          };
-          for (const key in rawObj) {
-              if (!this.dataTableHeaders[key]) {
-                  delete rawObj[key];
+        const rawObj = {
+          'Name': raw.display_name,
+          'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
+          'Rooms': raw.assignedTo,
+          'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : 'Standard',
+          'Acting on Behalf Of': raw.canActingOnBehalfOf ? raw.canActingOnBehalfOf.map((u: RepresentedUser) => {
+            return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
+          }).join(', ') : '',
+          'Sign-in status': raw.active ? 'Enabled' : 'Disabled',
+          'Last sign-in': raw.last_login ? Util.formatDateTime(new Date(raw.last_login)) : 'Never signed in',
+          'Profile(s)': partOf.length ? partOf : [{title: 'No profile'}],
+          'Permissions': (function() {
+            const tabs = Object.values(permissionsRef).map((tab: any) => {
+              tab.allowed = raw.roles.includes(tab.controlName);
+              return tab;
+            });
+            if (tabs.every((item: any): boolean => item.allowed)) {
+              return 'No restrictions';
+            } else {
+              const restrictedTabs = tabs.filter((item: any): boolean => !item.allowed);
+              if (restrictedTabs.length > 1) {
+                return `${restrictedTabs.length} tabs restricted`;
+              } else {
+                return `${restrictedTabs[0].controlLabel} restricted`;
               }
-              if (index === 0) {
-                  if (this.dataTableHeaders[key] && this.dataTableHeaders[key].value) {
-                      this.dataTableHeadersToDisplay.push(key);
-                  }
-              }
+            }
+          }())
+        };
+        for (const key in rawObj) {
+          if (!this.dataTableHeaders[key]) {
+            delete rawObj[key];
           }
-          Object.defineProperty(rawObj, 'id', { enumerable: false, value: raw.id});
-          Object.defineProperty(rawObj, '_originalUserProfile', {
-              enumerable: false,
-              configurable: false,
-              writable: false,
-              value: raw
-          });
-          return  rawObj;
-      });
+          if (index === 0) {
+            if (this.dataTableHeaders[key] && this.dataTableHeaders[key].value) {
+              this.dataTableHeadersToDisplay.push(key);
+            }
+          }
+        }
+        Object.defineProperty(rawObj, 'id', { enumerable: false, value: raw.id });
+        Object.defineProperty(rawObj, 'me', { enumerable: false, value: +raw.id === +this.user.id });
+        Object.defineProperty(rawObj, '_originalUserProfile', {
+          enumerable: false,
+          configurable: false,
+          writable: false,
+          value: raw
+        });
+        this.loaded = true;
+        return  rawObj;
+    });
   }
 }

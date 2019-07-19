@@ -1,34 +1,25 @@
-﻿<div class="overlay" style="position: relative">
-  <div class="display-card-wrapper" [ngClass]="{'inbox': inbox}" [style.background-color]="backgroundColor">
-    <div class="display-card-header justify-content" [style.min-height]="(inbox ? '35px' : '')"  [style.margin-bottom]="headerBottomSpace">
-      <div class="flexCls">
-        <img *ngIf="!!icon && !inbox" class="display-card-header-icon" [src]="getIcon(icon) | resolveAsset" [style.height]="iconSize" [style.width]="iconSize">
-
-        <div *ngIf="(!!icon && inbox) || mock" class="inbox-wrapper">
-          <img class="inbox-icon" [src]="getIcon('./assets/Inbox (Navy).svg') | resolveAsset">
-          <div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0 || mock">
-            <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">
-            <div class="inbox-number">{{ (notificationBadge$ | async) || mock }}</div>
-            <img class="inbox-front" [src]="getIcon('./assets/Inbox Bottom (Navy).svg') | resolveAsset">
+﻿<div class="overlay">
+  <div style="position: relative;overflow: hidden;border-radius: 12px">
+    <div class="display-card-wrapper" [ngClass]="{'inbox': inbox}" [style.background-color]="backgroundColor">
+      <div class="display-card-header justify-content" [style.min-height]="(inbox ? '35px' : '')"  [style.margin-bottom]="headerBottomSpace">
+        <div class="flexCls">
+          <img *ngIf="!!icon && !inbox" class="display-card-header-icon" [src]="getIcon(icon) | resolveAsset" [style.height]="iconSize" [style.width]="iconSize">
+          <div *ngIf="(!!icon && inbox) || mock" class="inbox-wrapper">
+            <img class="inbox-icon" [src]="getIcon('./assets/Inbox (Navy).svg') | resolveAsset">
+          </div>
+          <div class="display-card-header-title" [style.font-size]="fontSize" [style.color]="titleColor">
+            {{title}}
           </div>
         </div>
-
-        <div class="display-card-header-title" [style.font-size]="fontSize" [style.color]="titleColor">
-          {{title}}
-        </div>
+        <img *ngIf="!!righticon" class="display-card-header-icon righticon" [src]="righticon | resolveAsset"  [style.height]="iconSize" [style.width]="iconSize">
+        <div *ngIf="!!righttext && !righticon" class="display-card-header-icon righticon" >{{righttext}}</div>
       </div>
-
-      <img *ngIf="!!righticon" class="display-card-header-icon righticon" [src]="righticon | resolveAsset"  [style.height]="iconSize" [style.width]="iconSize">
-      <div *ngIf="!!righttext && !righticon" class="display-card-header-icon righticon" >{{righttext}}</div>
-
-
+      <!--<div [style.background-color]="(hasDivider? '#B5B7BA':'transparent')" class="display-card-divider"></div>-->
+      <div *ngIf="subtitle!=null" [style.font-size]="subtitle_fontSize" class="subtitlecls">
+        {{subtitle}}
+      </div>
+      <ng-content [style.left]="'35px'" [style.position]="'relative'"></ng-content>
     </div>
-    <div [style.background-color]="(hasDivider? '#B5B7BA':'transparent')" class="display-card-divider"></div>
-    <div *ngIf="subtitle!=null" [style.font-size]="subtitle_fontSize" class="subtitlecls">
-      {{subtitle}}
-    </div>
-    <ng-content [style.left]="'35px'" [style.position]="'relative'"></ng-content>
     <div *ngIf="inbox" class="bottom-shadow"></div>
   </div>
 </div>
-

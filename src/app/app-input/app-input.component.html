@@ -17,7 +17,7 @@
            (mouseover)="over.emit({event: $event, action: 'timeLimit'})"
            (mouseleave)="leave.emit('timeLimit')"
            class="support-icon"
-           *ngIf="rightIcon" [src]="controlName.valid ? rightIcon : rightIconUntouched | resolveAsset"/>
+           *ngIf="rightIcon" [src]="rightIcon | resolveAsset"/>
         <div class="arrow-down-container">
           <div class="arrow-down"></div>
         </div>
@@ -64,7 +64,7 @@
         </div>
       </div>
       <img *ngIf='isErrorIcon && controlName.invalid && controlName.errors && controlName.touched && (!controlName.errors.room_name && !controlName.errors.folder_name && !controlName.errors.room_number)'
-           class="success-icon" [src]="'./assets/Report (Red).svg' | resolveAsset"/>
+           class="success-icon" [style.top]="errorIconTop + 'px'" [src]="'./assets/Report (Red).svg' | resolveAsset"/>
       <div class="disabled"></div>
     </div>
     <!--<p style="color: red" *ngIf="controlName.errors?.title">Bad name!</p>-->

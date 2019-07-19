@@ -1,33 +1,36 @@
-import {Component, ElementRef, NgZone, OnDestroy, OnInit} from '@angular/core';
-import {MatDialog} from '@angular/material';
-import {combineLatest, merge, of, BehaviorSubject, Observable, ReplaySubject, Subject, empty} from 'rxjs';
+import { Component, ElementRef, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog} from '@angular/material';
+import { combineLatest, merge, of, BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
 import { Util } from '../../Util';
 import { DataService } from '../services/data-service';
 import { mergeObject } from '../live-data/helpers';
 import { HallPassFilter, LiveDataService } from '../live-data/live-data.service';
 import { LoadingService } from '../services/loading.service';
-import {exceptPasses, PassLike} from '../models';
+import { PassLike } from '../models';
 import { Location } from '../models/Location';
 import { testPasses } from '../models/mock_data';
 import { BasicPassLikeProvider, PassLikeProvider, WrappedProvider } from '../models/providers';
 import { User } from '../models/User';
-import {DropdownComponent} from '../dropdown/dropdown.component';
+import { DropdownComponent } from '../dropdown/dropdown.component';
 import { TimeService } from '../services/time.service';
-import {CalendarComponent} from '../admin/calendar/calendar.component';
-import {filter, map, startWith, switchMap, takeUntil, tap, withLatestFrom} from 'rxjs/operators';
-import {DarkThemeSwitch} from '../dark-theme-switch';
-import {LocationsService} from '../services/locations.service';
-import * as _ from 'lodash';
-import {RepresentedUser} from '../navbar/navbar.component';
-import {UserService} from '../services/user.service';
-import {KioskModeService} from '../services/kiosk-mode.service';
-import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
-import {bumpIn} from '../animations';
-import {DomSanitizer} from '@angular/platform-browser';
-import {ActivePassProvider as activeKioskPasses} from '../hall-monitor/hall-monitor.component';
-import {Router} from '@angular/router';
-import {StorageService} from '../services/storage.service';
-import {HttpService} from '../services/http-service';
+import { CalendarComponent } from '../admin/calendar/calendar.component';
+import {delay, filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
+import { DarkThemeSwitch } from '../dark-theme-switch';
+import { LocationsService } from '../services/locations.service';
+import { RepresentedUser } from '../navbar/navbar.component';
+import { UserService } from '../services/user.service';
+import { ScreenService } from '../services/screen.service';
+import { SortMenuComponent } from '../sort-menu/sort-menu.component';
+import { MyRoomAnimations } from './my-room.animations';
+import { KioskModeService } from '../services/kiosk-mode.service';
+import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
+import { bumpIn } from '../animations';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
+import { StorageService } from '../services/storage.service';
+import { HttpService } from '../services/http-service';
+
+import * as moment from 'moment';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -67,44 +70,16 @@ class ActivePassProvider extends RoomPassProvider {
 class OriginPassProvider extends RoomPassProvider {
   protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
     return this.liveDataService.watchHallPassesFromLocation(sortingEvents, locations, date);
+        // .pipe(map(passes => passes.filter(pass => moment().isSameOrAfter(moment(pass.end_time)))));
   }
 }
 
 class DestinationPassProvider extends RoomPassProvider {
   protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
     return this.liveDataService.watchHallPassesToLocation(sortingEvents, locations, date);
+        // .pipe(map(passes => passes.filter(pass => moment().isSameOrAfter(moment(pass.end_time)))));
   }
 }
-
-
-// class ActivePassProviderKiosk implements PassLikeProvider {
-//   constructor(private liveDataService: LiveDataService, private user$: Observable<User>,
-//               private excluded$: Observable<PassLike[]> = empty(), private timeService: TimeService) {
-//   }
-//
-//   watch(sort: Observable<string>) {
-//
-//     const sort$ = sort.pipe(map(s => ({sort: s})));
-//     const merged$ = mergeObject({sort: '-created', search_query: ''}, merge(sort$));
-//
-//     const mergedReplay = new ReplaySubject<HallPassFilter>(1);
-//     merged$.subscribe(mergedReplay);
-//
-//     const passes$ = this.user$.pipe(
-//       switchMap(user => this.liveDataService.watchActiveHallPasses(mergedReplay,
-//         user.roles.includes('hallpass_student')
-//           ? {type: 'student', value: user}
-//           : {type: 'issuer', value: user})),
-//       withLatestFrom(this.timeService.now$), map(([passes, now]) => {
-//         return passes.filter(pass => new Date(pass.start_time).getTime() <= now.getTime());
-//       })
-//     );
-//
-//     const excluded$ = this.excluded$.pipe(startWith([]));
-//
-//     return combineLatest(passes$, excluded$, (passes, excluded) => exceptPasses(passes, excluded));
-//   }
-// }
 
 
 @Component({
@@ -112,8 +87,12 @@ class DestinationPassProvider extends RoomPassProvider {
   templateUrl: './my-room.component.html',
   styleUrls: ['./my-room.component.scss'],
   animations: [
-      bumpIn
-  ]
+    MyRoomAnimations.calendarTrigger,
+    MyRoomAnimations.collectionsBlockTrigger,
+    MyRoomAnimations.headerTrigger,
+    MyRoomAnimations.calendarIconTrigger,
+    bumpIn
+  ],
 })
 export class MyRoomComponent implements OnInit, OnDestroy {
 
@@ -143,10 +122,24 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   searchDate$ = new BehaviorSubject<Date>(null);
   selectedLocation$ = new ReplaySubject<Location[]>(1);
 
+  searchPending$: Subject<boolean> = new Subject<boolean>();
+
   hasPasses: Observable<boolean> = of(false);
   passesLoaded: Observable<boolean> = of(false);
 
   destroy$ = new Subject();
+
+  optionsClick: boolean;
+
+  isCalendarShowed: boolean;
+
+  isCalendarClick: boolean;
+
+  isCalendarSlide: boolean;
+
+  isSearchBarClicked: boolean;
+
+  resetValue = new Subject();
 
   constructor(
       private _zone: NgZone,
@@ -163,6 +156,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       private sanitizer: DomSanitizer,
       private storage: StorageService,
       private http: HttpService,
+      private screenService: ScreenService,
       public router: Router
   ) {
     this.setSearchDate(this.timeService.nowDate());
@@ -250,7 +244,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
           this.user = cu;
           this.effectiveUser = eu;
-          this.isStaff = cu.isAssistant() ? eu.roles.includes('_profile_assistant') : cu.roles.includes('_profile_teacher');
+          this.isStaff = cu.isAssistant() ? eu.roles.includes('_profile_teacher') : cu.roles.includes('_profile_teacher');
 
           if (this.user.isAssistant() && this.effectiveUser) {
             this.canView = this.effectiveUser.roles.includes('access_teacher_room');
@@ -291,6 +285,11 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       this.originPasses.loaded$,
       this.destinationPasses.loaded$,
       (l1, l2, l3) => l1 && l2 && l3
+    ).pipe(
+      filter(v => v),
+      delay(250),
+      tap(console.log),
+      tap((res) => this.searchPending$.next(!res))
     );
   }
 
@@ -359,7 +358,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     this.kioskMode.currentRoom$.next(kioskRoom);
     this.userService.saveKioskModeLocation(kioskRoom.id).subscribe((res: any) => {
         this.storage.setItem('kioskToken', res.access_token);
-        // this.http.kioskTokenSubject$.next(res);
+        this.http.kioskTokenSubject$.next(res);
         this.router.navigate(['main/kioskMode']);
     });
 
@@ -367,13 +366,15 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   onSearch(search: string) {
     this.inputValue = search;
+    this.searchPending$.next(true)
     this.searchQuery$.next(search);
   }
 
-  showOptions(target: HTMLElement) {
+
+  displayOptionsPopover(target: HTMLElement) {
     if (!this.optionsOpen && this.roomOptions && this.roomOptions.length > 1) {
       // const target = new ElementRef(evt.currentTarget);
-        const optionDialog = this.dialog.open(DropdownComponent, {
+      const optionDialog = this.dialog.open(DropdownComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {
@@ -411,5 +412,98 @@ export class MyRoomComponent implements OnInit, OnDestroy {
         'kioskModeRoom': this.kioskMode.currentRoom$.value
       }
     });
+  }
+
+  showOptions(target: HTMLElement) {
+    this.optionsClick = !this.optionsClick;
+    if (this.screenService.isDeviceMid || this.screenService.isIpadWidth) {
+      this.openOptionsMenu();
+    } else {
+      this.displayOptionsPopover(target);
+    }
+  }
+
+  calendarClick() {
+    this.isCalendarShowed = !this.isCalendarShowed;
+    this.isCalendarClick = !this.isCalendarClick;
+  }
+
+  toggleSearchBar() {
+    this.isSearchBarClicked = !this.isSearchBarClicked;
+  }
+
+  cleanSearchValue() {
+    this.resetValue.next('');
+  }
+
+  onDate(event) {
+    this.setSearchDate(event[0]._d);
+  }
+
+  openOptionsMenu() {
+    setTimeout(() => {
+      const dialogData = {
+        title: 'change room',
+        list: [{name: 'all rooms', isSelected: true, selectedItem: null}],
+      };
+
+      if (this.selectedLocation) {
+        dialogData.list[0].isSelected = false;
+      }
+
+      this.choices.forEach((choice) => {
+        let isItemSelected: boolean;
+
+        if (this.selectedLocation && (this.selectedLocation.title === choice.title)) {
+          isItemSelected = true;
+        }
+
+        dialogData.list.push({
+          name: choice.title,
+          isSelected: isItemSelected,
+          selectedItem: choice,
+        });
+      });
+
+      const dialogRef = this.dialog.open(SortMenuComponent, {
+        position: {bottom: '0'},
+        panelClass: 'options-dialog',
+        data: dialogData
+      });
+
+      dialogRef.componentInstance.onListItemClick.subscribe((index) => {
+        this.selectedLocation = dialogData.list.find((option, i) => {
+          return i === index;
+        }).selectedItem;
+        this.selectedLocation$.next(this.selectedLocation !== null ? [this.selectedLocation] : this.roomOptions);
+      });
+    }, 100);
+  }
+
+  calendarSlideState(stateName: string): string {
+    switch (stateName) {
+      case  'leftRight':
+        return this.isCalendarClick ? 'slideLeft' : 'slideRight';
+      case 'topBottom':
+        return this.isCalendarClick ? 'slideTop' : 'slideBottom';
+    }
+  }
+
+  get collectionsSlideState() {
+    if (!this.screenService.isIpadWidth && this.isCalendarClick && !this.isSearchBarClicked) {
+      return 'collectionsTop';
+    }
+
+    if (!this.screenService.isIpadWidth && !this.isCalendarClick && !this.isSearchBarClicked) {
+      return 'collectionsBottom';
+    }
+  }
+
+  get headerState() {
+    return this.isSearchBarClicked ? 'headerTop' : 'headerBottom';
+  }
+
+  get calendarIconState() {
+    return this.isSearchBarClicked ? 'calendarIconLeft' : 'calendarIconRight';
   }
 }

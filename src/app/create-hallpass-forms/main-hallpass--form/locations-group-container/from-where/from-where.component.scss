@@ -1,5 +1,5 @@
 .from-wrapper, .from-wrapper-to-date {
-  width: 425px;
+  caret-color: transparent;
   height: 500px;
   display: flex;
   flex-direction: column;
@@ -124,4 +124,12 @@
   height: 3px;
   background: white;
   box-shadow: white 0 0 0 13px;
+}
+
+.back-btn-top {
+  display: block;
+}
+
+.back-btn-bottom {
+  display: none;
 }

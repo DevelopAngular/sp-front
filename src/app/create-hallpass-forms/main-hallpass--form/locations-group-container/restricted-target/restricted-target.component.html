@@ -1,15 +1,17 @@
 <div class="rest-tar-wrapper">
-  <div [ngClass]="headerTransition" [style.background-image]="headerGradient">
-    <img class="back-button back-button-white" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" (click)="back()">
+  <div [ngClass]="headerTransition" [style.background-image]="headerGradient" #headeer>
+    <div class="back-button-wrapper" (click)="back()">
+      <img class="back-button back-button-white back-btn-top" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset">
+    </div>
     <div class="rest-tar-header-text">
       <img class="search-icon" [src]="'./assets/Lock (White).svg' | resolveAsset">
       <div class="text ds-dialog-title-white">Send Pass Request To?</div>
     </div>
   </div>
 
-  <div class="rest-tar-content" (scroll)="tableScroll($event)">
+  <div class="rest-tar-content" (scroll)="tableScroll($event)" #rc>
     <div class="search-wrapper" *ngIf="!hideSearchTeacher">
-        <app-student-search
+        <app-sp-search
           [focused]="true"
           [width]="'100%'"
           [role]="'_profile_teacher'"
@@ -17,7 +19,7 @@
           [list]="false"
           [emitSingleProfile]="true"
           (onUpdate)="updateTarget($event)"
-        ></app-student-search>
+        ></app-sp-search>
       <!--</div>-->
     </div>
     <div class="quick-select" [style.margin-top]="hideSearchTeacher ? '10px' : '70px'" *ngIf="filteredTeachers.length">
@@ -49,5 +51,4 @@
   </div>
   <!--<div class="shadow" [style.bottom]="date ? '65px' : '43px'" *ngIf="shadow"></div>-->
   <app-student-footer [formState]="formState" [date]="date" (changeAnimationDirectionEvent)="onChangeAnimationDirection($event)" ></app-student-footer>
-
 </div>

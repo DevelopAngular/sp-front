@@ -12,7 +12,9 @@ export const GAPI_CONFIG: NgGapiClientConfig | { [key: string]: string } = {
     'email',
     // 'https://www.googleapis.com/auth/plus.me',
     // 'https://www.googleapis.com/auth/contacts.readonly',
-    // 'https://www.googleapis.com/auth/admin.directory.user.readonly'
+    // 'https://www.googleapis.com/auth/admin.directory.user.readonly',
+    // 'https://www.googleapis.com/auth/admin.directory.domain.readonly',
+    // 'https://www.googleapis.com/auth/admin.directory.group.readonly',
   ].join(' '),
   prompt: 'consent',
   discoveryDocs: [

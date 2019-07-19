@@ -35,19 +35,23 @@ export class GoogleLoginService {
   private authToken$ = new BehaviorSubject<AuthObject>(null);
 
   public showLoginError$ = new BehaviorSubject(false);
-  public isAuthenticated$ = new ReplaySubject<boolean>(1);
+  // public isAuthenticated$ = new ReplaySubject<boolean>(1);
+  public isAuthenticated$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     private googleAuth: GoogleAuthService,
     private _zone: NgZone,
-    private storage: StorageService
+    private storage: StorageService,
   ) {
 
     this.authToken$.subscribe(auth => {
       // window.waitForAppLoaded();
       if (auth) {
-        // debugger
-        this.storage.setItem(STORAGE_KEY, JSON.stringify(auth));
+        const storageKey = isDemoLogin(auth)
+                           ? JSON.stringify({username: (auth as DemoLogin).username, type: (auth as DemoLogin).type})
+                           :
+                           JSON.stringify(auth);
+        this.storage.setItem(STORAGE_KEY, storageKey);
       }
     });
 
@@ -87,6 +91,18 @@ export class GoogleLoginService {
 
   }
 
+  public get GoogleOauth() {
+
+    const auth = this.googleAuthTool.value;
+
+    if (!auth) {
+      console.error('Auth not loaded!');
+      return;
+    } else {
+      return auth;
+    }
+  }
+
   isAuthLoaded(): Observable<boolean> {
     return this.googleAuthTool.pipe(map(tool => tool !== null));
   }
@@ -117,15 +133,15 @@ export class GoogleLoginService {
     return this.authToken$.pipe(
       filter(t => !!t && (!isDemoLogin(t) || !t.invalid)),
       take(1),
-      map(a => isDemoLogin(a) ? a : a.id_token),);
+      map(a => isDemoLogin(a) ? a : a.id_token)
+    );
   }
 
-  private updateAuth(auth: AuthResponse | DemoLogin) {
+  public updateAuth(auth: AuthResponse | DemoLogin) {
     this.authToken$.next(auth);
   }
 
   setAuthenticated() {
-      window.waitForAppLoaded();
     // console.log('setAuthenticated()');
     this.isAuthenticated$.next(true);
     this.showLoginError$.next(false);
@@ -139,6 +155,7 @@ export class GoogleLoginService {
     }
 
     this.storage.removeItem(STORAGE_KEY);
+    this.storage.removeItem('refresh_token');
     this.logout();
   }
 
@@ -150,8 +167,9 @@ export class GoogleLoginService {
    * to use RxJS' subscribe() behavior and is the reason for some of the weirder construction of this
    * method.
    */
+
   public signIn() {
-    const auth = this.googleAuthTool.value;
+    const auth = this.GoogleOauth;
 
     if (!auth) {
       console.error('Auth not loaded!');
@@ -162,7 +180,7 @@ export class GoogleLoginService {
 
     return auth.signIn().then(user => {
       this._zone.run(() => {
-        console.log(user);
+        console.log(user.getAuthResponse());
         this.updateAuth(user.getAuthResponse());
       });
     });
@@ -170,6 +188,7 @@ export class GoogleLoginService {
   }
 
   signInDemoMode(username: string, password: string) {
+    // window.waitForAppLoaded();
     this.authToken$.next({username: username, password: password, type: 'demo-login'});
   }
 
@@ -182,6 +201,7 @@ export class GoogleLoginService {
     const user = auth.currentUser.get();
     if (user) {
       user.disconnect();
+      auth.signOut();
     }
 
   }

@@ -7,22 +7,21 @@ import { SearchComponent } from './search/search.component';
 import { PassConfigComponent } from './pass-config/pass-config.component';
 import {AccountsComponent} from './accounts/accounts.component';
 import {AccountsRoleComponent} from './accounts-role/accounts-role.component';
-import {SettingsComponent} from './settings/settings.component';
+import {MySchoolComponent} from './my-school/my-school.component';
+// import {TakeTourComponent} from './getting-started/take-tour/take-tour.component';
 
 const routes: Routes = [
   {
     path: '', component: AdminPageComponent,
     children: [
-      // {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
+      {path: 'gettingstarted', loadChildren: 'app/admin/getting-started/getting-started.module#GettingStartedModule'},
       {path: 'dashboard', component: DashboardComponent},
       {path: 'hallmonitor', component: HallmonitorComponent},
       {path: 'search', component: SearchComponent},
       {path: 'accounts', component: AccountsComponent},
       {path: 'accounts/:role', component: AccountsRoleComponent},
       {path: 'passconfig', component: PassConfigComponent},
-      // {path: 'settings', component: SettingsComponent},
-      // {path: 'feedback', component: FeedbackComponent},
-      // {path: 'support', component: SupportComponent},
+      {path: 'myschool', component: MySchoolComponent},
       {path: '**', redirectTo: '', pathMatch: 'full'},
     ]
   },

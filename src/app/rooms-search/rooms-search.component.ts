@@ -29,6 +29,8 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
 
   showSearchResult: boolean;
 
+  pending$: Subject<boolean> = new Subject();
+
   destroy$ = new Subject();
 
   constructor(
@@ -40,7 +42,7 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
     this.locationService.searchLocationsWithConfig('v1/locations?limit=1000&starred=false')
         .pipe(takeUntil(this.destroy$))
         .subscribe(res => {
-          this.allRooms = res.results;
+          this.allRooms = res.results.concat(res.results,res.results,res.results);
         });
 
     this.locationService.getLocationsWithFilder()
@@ -49,10 +51,10 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
            this.categories = res.categories;
     });
     if (this.roomsWithFolder) {
-        this.selectedRooms = this.roomsWithFolder;
+        this.selectedRooms = this.roomsWithFolder.concat(this.roomsWithFolder, this.roomsWithFolder);
     }
     if (this.locations) {
-        this.selectedLocations = this.locations;
+        this.selectedLocations = this.locations.concat(this.locations,this.locations,this.locations);
     }
   }
 
@@ -115,13 +117,17 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
   }
 
   onSearch(search) {
-      if (!search) {
+    this.pending$.next(true);
+    if (!search) {
           this.showSearchResult = false;
-      } else {
+      this.pending$.next(false);
+
+    } else {
           this.locationService.searchLocations(100, `&search=${search}&starred=false`)
               .subscribe(res => {
                   this.showSearchResult = true;
                   this.searchResult = res.results;
+                this.pending$.next(false);
               });
       }
   }

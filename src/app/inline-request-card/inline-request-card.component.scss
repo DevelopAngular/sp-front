@@ -1,5 +1,30 @@
+@media all and (max-width: 375px) {
+  div.header-content {
+    padding: 3% !important;
+  }
+}
+
+@media all and (max-width: 320px) {
+  div.inline-request-card-wrapper {
+    max-width: 300px;
+    margin: auto;
+  }
+}
+
+@media all and (max-width: 1024px) and (min-width: 335px) {
+    div.inline-request-card-wrapper {
+      max-width: 335px;
+      margin: auto;
+    }
+}
+
+@media all and (max-width: 1024px) {
+  div.message {
+    margin-left: 50px;
+  }
+}
+
 .inline-request-card-wrapper {
-    width: 335px;
     border-radius: 14px;
     display: flex;
     flex-direction: column;

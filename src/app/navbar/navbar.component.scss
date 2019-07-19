@@ -1,16 +1,94 @@
-:host {
-  background-color: transparent;
+@import "../../sp-colors";
+
+/* Ipad breakpoint */
+@media all and (max-width: 1024px) {
+  .name,
+  .heading.grow {
+    display: none;
+  }
+
+  div.user-info {
+    padding: 0;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+    width: 100%;
+  }
+
+  div.teacherNav-mobile {
+    display: flex;
+
+    &-wrapper {
+      display: flex;
+      width: 450px;
+    }
+  }
+
+  div.divider {
+    display: none;
+  }
+
+  div.nav-buttons-width {
+    width: inherit;
+  }
+
+  div.selected-tab-pointer {
+    top: -13px;
+    border-radius: 0 0 4px 4px;
+    width: 58px;
+    height: 6px;
+  }
+}
+
+@media all and (max-width: 475px) {
+  div.teacherNav-mobile {
+    display: flex;
+
+    &-wrapper {
+      display: flex;
+      width: unset;
+    }
+  }
+
+  div.nav-buttons-width {
+    width: inherit;
+  }
+
+}
+
+@media all and (max-width: 700px) {
+  div.inbox-wrapper {
+    display: none;
+  }
+
+  div.inbox-wrapper-sm {
+    display: flex;
+    position: relative;
+  }
+}
+
+.host {
+  //background-color: #FBFEFF;
+  //position: fixed;
+  //top: 50px;
+  width: 100%;
+  z-index: 10;
 }
 .bar {
-  height: 68px;
+  height: 78px;
   /* background-image: radial-gradient(circle at 43% 66%, #03cf31, rgba(1, 129, 85, 0.7)); */
-  position: relative;
+  //position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;
   user-select: none;
-  padding-top: 15px;
-  padding-bottom: 5px;
+  //padding-top: 15px;
+  //padding-bottom: 5px;
+  //
+
+  &.shadow {
+    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.07);
+  }
 }
 
 .grow {
@@ -60,21 +138,21 @@
   margin: 3px 0 0 3px;
 }
 
-.teacherNav, .navButton {
+.navButton {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: inherit;
+  justify-content: space-between;
+
 }
 
 .teacherNav {
-  width: 100%;
-  flex-direction: row;
-  justify-content: space-between;
+  height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
   &_tab {
-    flex: 1 1 auto;
     display: flex;
     justify-content: center;
+    margin: 0 10px;
   }
 }
 
@@ -109,13 +187,13 @@
   margin: auto 0 auto auto;
   padding-right: 15px;
   white-space: nowrap;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
   font-style: normal;
   font-stretch: normal;
   line-height: normal;
   letter-spacing: normal;
-  color: #1F195E;
+  color: $blue-gray;
 }
 
 .static-loading{
@@ -138,7 +216,15 @@
   cursor: pointer;
 }
 
-.inbox-wrapper, .options-wrapper, .support-wrapper, .admin-view-wrapper{
+.inbox-icon-arrow {
+  transform: rotateZ(90deg);
+}
+
+.inbox-icon {
+  position: absolute;
+}
+
+.inbox-wrapper, .inbox-wrapper-sm, .options-wrapper, .support-wrapper, .admin-view-wrapper{
   width: 50px;
   height: 50px;
   border-radius: 25px;
@@ -147,6 +233,11 @@
   align-items: center;
   cursor: pointer;
   user-select: none;
+  position: relative;
+}
+
+.inbox-wrapper-sm {
+  display: none;
 }
 
 @keyframes requestsInMotion {
@@ -196,4 +287,35 @@
   margin: 0 auto;
   height: 1px;
   background-color: #B5B7BA;
+}
+
+.teacherNav-mobile {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #fbfbfb;
+  height: 68px;
+  align-items: center;
+  z-index: 11;
+  justify-content: center;
+  &-wrapper {
+    display: flex;
+    width: 100%;
+    position: relative;
+  }
+}
+
+.nav-buttons {
+  position: relative;
+  flex-grow: 1;
+}
+
+.selected-tab-pointer {
+  transition: all 0.4s ease;
+  position: absolute;
+  bottom: 0;
+  height: 5px;
+  width: 70px;
+  border-radius: 4px 4px 0 0;
+  background-color: $jade;
 }

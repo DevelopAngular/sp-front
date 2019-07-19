@@ -1,5 +1,5 @@
 <div class="date-wrapper">
-    <div class="divider" [style.background-image]="gradient">
+    <div class="divider" [style.background]="gradient">
         <img class="back-button" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
         <div class="divider-header"  [ngClass]="{'divider-header':!mock, 'divider-header-mock': mock}">
             <img class="divider-icon" [src]="'./assets/Future (White).svg' | resolveAsset">
@@ -39,7 +39,7 @@
               <!--</app-date-time-picker>-->
             </div>
           </div>
-          <div style="margin-bottom: 13px">
+          <div class="next-btn">
               <app-gradient-button
                       [gradient]="'#03CF31,#00B476'"
                       [cursor]="'pointer'"
