@@ -200,7 +200,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               }
             });
           } else {
-            (existingHub as HTMLElement).setAttribute('style', 'display: block !important;width: 276px;height: 234px');
+            (existingHub as HTMLElement).setAttribute('style', 'display: block !important;width: 100px;height: 100px');
           }
         } else {
           if (existingHub) {
