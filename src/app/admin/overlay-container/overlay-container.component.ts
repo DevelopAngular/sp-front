@@ -168,7 +168,9 @@ export class OverlayContainerComponent implements OnInit {
 
   selectedFile: ElementRef;
   selectedRooms = [];
+
   selectedRoomsEditable = {};
+
   selectedRoomsInFolder: Pinnable[] = [];
   selectedTeachers: User[] = [];
   readyRoomsToEdit: Pinnable[] = [];
@@ -219,8 +221,6 @@ export class OverlayContainerComponent implements OnInit {
 
   advOptValid = false;
   advOptOpen: boolean;
-
-  newRoomsInFolder = [];
 
   folderRoomsLoaded: boolean;
 
@@ -328,14 +328,6 @@ export class OverlayContainerComponent implements OnInit {
     }
     this.gradientColor = 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
-
-  // private oneOf(entity: any, compareWith: any[]) {
-  //   return compareWith.find(item => entity === item);
-  // }
-  // private allOf(boolSet: any[]) {
-  //   return boolSet.every(item => !!item);
-  //
-  // }
 
   get isValidForm() {
     return this.form.get('roomName').valid &&
@@ -510,7 +502,6 @@ export class OverlayContainerComponent implements OnInit {
             .subscribe((res: Location[]) => {
               this.folderRoomsLoaded = true;
               this.selectedRooms = res;
-              // this.selectedRooms = _.cloneDeep(res);
               if (this.dialogData['forceSelectedLocation']) {
                 this.setToEditRoom(this.dialogData['forceSelectedLocation']);
               }
@@ -985,8 +976,6 @@ export class OverlayContainerComponent implements OnInit {
 
 
   setToEditRoom(_room) {
-
-    // const room = this.selectedRoomsEditable.find(r => r.id === _room.id) || _room;
     const room = this.selectedRoomsEditable[ _room.id] || _room;
 
     if (!this.dialogData['forceSelectedLocation']) {
@@ -1063,6 +1052,7 @@ export class OverlayContainerComponent implements OnInit {
     }
 
     if (this.overlayType === 'newFolder' || this.overlayType === 'newRoomInFolder') {
+
         if (this.selectedRooms.length < 1) {
             const newFolder = {
                 title: this.folderName,
@@ -1073,23 +1063,31 @@ export class OverlayContainerComponent implements OnInit {
             this.hallPassService.updatePinnable(this.pinnable.id, newFolder)
             .subscribe(res => this.dialogRef.close());
         }
-        const locationsToUpdate$ = Object.values(this.selectedRoomsEditable).map((location: any) => {
+        const selRooms = this.isEditFolder ? Object.values(this.selectedRoomsEditable) : this.selectedRooms;
+        const locationsToUpdate$ = selRooms.map((location: any) => {
             let id;
             let data;
+            if (!location.id) {
+                location.category = this.folderName;
+                return this.locationService.createLocation(location).pipe(switchMap((loc: Location) => {
+                    return this.locationService.updateLocation(loc.id, location);
+                }));
+            }
             if (location.location) {
                 id = location.location.id;
                 data = location.location;
                 data.category = this.folderName;
-                data.teachers = data.teachers.map(t => t.id);
+                data.teachers = data.teachers.map(t => +t.id);
             }
             if (!location.location) {
                 id = location.id;
                 data = location;
                 data.category = this.folderName;
                 if (data.teachers) {
-                    data.teachers = data.teachers.map(teacher => teacher.id);
+                    data.teachers = data.teachers.map(teacher => +teacher.id);
                 }
             }
+
             return this.locationService.updateLocation(id, data);
         });
         forkJoin(locationsToUpdate$).pipe(switchMap(locations => {
@@ -1165,18 +1163,19 @@ export class OverlayContainerComponent implements OnInit {
             // .subscribe((res: Location) => {
             //     const newCollection = this.selectedRooms.filter(room => room.id !== this.roomToEdit.id);
             //     this.selectedRooms = [res, ...newCollection];
+            // this.selectedRooms = this.selectedRooms.filter(r => this.roomToEdit.id !== r.id);
+            // this.selectedRooms.push({...location, ...this.normalizeAdvOptData()});
+                const currentRoom = this.selectedRooms.find(room => room.id === this.roomToEdit.id);
+                currentRoom.title = location.title;
                 this.selectedRoomsEditable[this.roomToEdit.id] = ({id : this.roomToEdit.id, ...location, ...this.normalizeAdvOptData()});
                 this.setLocation('newFolder');
                 this.isChangeLocations.next(true);
             // });
         } else {
-            this.locationService.createLocation(location)
-            .subscribe(loc => {
-                this.newRoomsInFolder.push(loc);
-                this.selectedRooms.push(loc);
-                this.setLocation('newFolder');
-                this.isChangeLocations.next(true);
-            });
+            this.selectedRoomsEditable[location.title] = ({id : null, ...location, ...this.normalizeAdvOptData()});
+            this.selectedRooms.push({...location, ...this.normalizeAdvOptData()});
+            this.setLocation('newFolder');
+            this.isChangeLocations.next(true);
           }
       }
       if (this.overlayType === 'settingsRooms') {
