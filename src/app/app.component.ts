@@ -132,8 +132,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.showUISubject.next(true);
         this.isAuthenticated = t;
         const path = window.location.pathname;
-        if (!t && (path !== '/' || path.includes('admin') ||  path.includes('main'))) {
-          // debugger
+        if (!t && (path.includes('admin') ||  path.includes('main'))) {
           this.router.navigate(['/']);
         }
       });
@@ -201,7 +200,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               }
             });
           } else {
-            (existingHub as HTMLElement).setAttribute('style', 'display: block !important;width: 276px;height: 234px');
+            (existingHub as HTMLElement).setAttribute('style', 'display: block !important;width: 100px;height: 100px');
           }
         } else {
           if (existingHub) {

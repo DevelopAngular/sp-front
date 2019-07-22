@@ -74,7 +74,7 @@
           >{{ (showPublishSpinner ? null : 'Publish') }}<mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
         </app-gradient-button>
         <div
-          *ngIf="!showPublishNewFolder && overlayType === 'newFolder' && !isEditFolder && isChangeState"
+          *ngIf="!showPublishNewFolder && !showPublishEditFolder && overlayType === 'newFolder' && !isEditFolder && isChangeState"
           [style.color]="titleColor"
         >
             Incomplete
