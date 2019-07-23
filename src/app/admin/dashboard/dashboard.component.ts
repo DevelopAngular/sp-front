@@ -33,7 +33,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
 
   private shareChartData$: Subject<any> = new Subject();
-  public lineChartData: Array<any> = [{data: Array.from(Array(24).keys()).map(() => 0)}];
+  public lineChartData: Array<any> = [{data: Array.from(Array(9).keys()).map(() => 0)}];
 
   public lineChartLabels: Array<any> = [];
 
@@ -80,8 +80,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   get calendarIcon() {
 
-
-
     if (!this.chartsDate) {
       return this.darkTheme.getIcon({
         iconName: 'Calendar',
@@ -93,7 +91,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     } else {
       return './assets/Calendar (Blue).svg';
     }
-//
 //     ( !this.chartsDate ? './assets/Calendar (Navy).svg' : './assets/Calendar (Blue).svg')
   }
   getCardIcon(icon) {
@@ -217,9 +214,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.reports = eventReports;
         delete this.lineChartTicks.stepSize;
         // if (environment.funData) {
-        //   this.lineChartData = [{data: dashboard.hall_pass_usage.map(numb => numb +  Math.ceil((Math.random() * Math.random() * 300)))}];
+        //   this.lineChartData = [{data: dashboard.hall_pass_usage.slice(7, 16).map(numb => numb +  Math.ceil((Math.random() * Math.random() * 300)))}];
         // } else {
-        this.lineChartData = [{data: dashboard.hall_pass_usage}];
+        this.lineChartData = [{data: dashboard.hall_pass_usage.slice(7, 16)}];
         // }
         this.hiddenChart = false;
         // this.darkTheme.preloader.next(false);
@@ -233,7 +230,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .subscribe((result: any) => {
         this.lineChartData = [{
           // data: result.hall_pass_usage.map(numb => numb + Math.ceil((Math.random() * Math.random() * 30)))
-          data: result.hall_pass_usage
+          data: result.hall_pass_usage.slice(7, 16)
         }];
       });
 
@@ -325,22 +322,24 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private drawChartXaxis() {
     let hour = 8;
-    let _minute_iterator = 0;
-    const _quater_hour = 15;
-    while (hour < 16) {
-      let minutes = _minute_iterator * _quater_hour;
+    // let _minute_iterator = 0;
+    // const _quater_hour = 15;
+    while (hour <= 16) {
+      // let minutes = _minute_iterator * _quater_hour;
       let time;
-      if (_minute_iterator === 4) {
-        _minute_iterator = 0;
-        minutes = 0;
-        hour++;
-      }
+      // if (_minute_iterator === 4) {
+      //   _minute_iterator = 0;
+      //   minutes = 0;
+      //   hour++;
+      // }
       if ((hour) <= 12) {
-        time = `${hour}:${minutes !== 0 ? minutes : minutes + '0'} ${hour < 12 ? 'AM' : 'PM'}`;
+        // time = `${hour}:${minutes !== 0 ? minutes : minutes + '0'} ${hour < 12 ? 'AM' : 'PM'}`;
+        time = `${hour}:00 ${hour < 12 ? 'AM' : 'PM'}`;
       } else {
-        time = `${(hour - 12)}:${minutes !== 0 ? minutes : minutes + '0'} PM`;
+        time = `${(hour - 12)}:00 PM`;
       }
-      _minute_iterator++;
+        hour++;
+      // _minute_iterator++;
       this.lineChartLabels.push(time);
     }
   }
@@ -393,21 +392,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     DR.afterClosed()
       .subscribe((data) => {
-          this.activeCalendar = false;
-          console.log('82 Date ===> :', data.date);
-          if (data.date) {
-            if ( !this.chartsDate || (this.chartsDate && this.chartsDate.getTime() !== data.date.getTime()) ) {
-              this.chartsDate = new Date(data.date);
-              console.log(this.chartsDate);
-              // this.getReports(this.chartsDate);
-              this.adminService.getFilteredDashboardData(this.chartsDate)
-                .subscribe((dashboard: any) => {
-                  this.lineChartData = [{data: dashboard.hall_pass_usage}];
-                });
-            }
+        this.activeCalendar = false;
+        console.log('82 Date ===> :', data.date);
+        if (data.date) {
+          if ( !this.chartsDate || (this.chartsDate && this.chartsDate.getTime() !== data.date.getTime()) ) {
+            this.chartsDate = new Date(data.date);
+            console.log(this.chartsDate);
+            // this.getReports(this.chartsDate);
+            this.adminService.getFilteredDashboardData(this.chartsDate)
+              .subscribe((dashboard: any) => {
+                this.lineChartData = [{data: dashboard.hall_pass_usage.slice(7, 16)}];
+              });
           }
         }
-      );
+      }
+    );
   }
 
   ngOnDestroy() {
