@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 
 import { merge, Subject, timer } from 'rxjs';
@@ -69,13 +69,13 @@ export class TimePickerComponent implements OnInit, OnDestroy {
     });
     merge(this.timeForm.valueChanges, this.changeEmit$).pipe(takeUntil(this.destroy$))
         .subscribe(value => {
-            if (this._currentDate.format('A') === 'PM') {
-              this._currentDate = this._currentDate.set('hour', +value.hour + 12);
+            if (this._currentDate.format('A') === 'PM' && this._currentDate.hour() !== 12) {
+                this._currentDate = this._currentDate.set('hour', +value.hour + 12);
             } else {
               this._currentDate = this._currentDate.set('hour', value.hour);
-              if (this.invalidTime) {
-                  this._currentDate = this._currentDate.set('hour', +value.hour + 12);
-                  console.log('Current Time ==>>', this._currentDate.format('DD hh:mm A'));
+              if (this.invalidTime && this._currentDate.hour() !== 12) {
+                this._currentDate = this._currentDate.set('hour', +value.hour + 12);
+                console.log('Current Time ==>>', this._currentDate.format('DD hh:mm A'));
               }
             }
             this._currentDate = this._currentDate.set('minute', value.minute);
@@ -113,6 +113,9 @@ export class TimePickerComponent implements OnInit, OnDestroy {
           this._currentDate.add(1, action);
       } else if (state === 'down') {
           this._currentDate.subtract(1, action);
+          if (this.invalidTime) {
+              this._currentDate = moment().add(5, 'minutes');
+          }
       }
       this.buildFrom();
       this.timeResult.emit(this._currentDate);
