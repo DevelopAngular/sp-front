@@ -66,8 +66,10 @@ table {
 }
 
 
-//.mat-row:hover {
+.mat-row:hover {
+  background-color: #ECF1FF;
+  color: #000;
   //cursor: pointer;
   //transition: opacity .3s ease;
   //opacity: 1;
-//}
+}

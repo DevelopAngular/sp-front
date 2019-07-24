@@ -1228,43 +1228,43 @@ export class OverlayContainerComponent implements OnInit {
           }
        }
 
-       if (this.overlayType === 'edit') {
-         this.showPublishSpinner = true;
-         const selectedLocations = _.filter<Location | Pinnable>(this.selectedRooms, {type: 'location'}).map((res: any) => res.location);
-          const locationsFromFolder = _.filter<Location | Pinnable>(this.selectedRooms, {type: 'category'}).map((folder: any) => {
-              return this.locationService.getLocationsWithCategory(folder.category);
-          });
-          if (locationsFromFolder.length) {
-              forkJoin(locationsFromFolder).pipe(switchMap((res) => {
-                  const mergeLocations = _.concat(selectedLocations, ...res);
-                  const locationsToEdit = mergeLocations.map((room: any) => {
-                      const data: any = {
-                          restricted: this.nowRestriction,
-                          scheduling_restricted: this.futureRestriction,
-                          travel_types: this.travelType
-                      };
-                      if (this.timeLimit) {
-                          data.max_allowed_time =  +this.timeLimit;
-                      }
-                      return this.locationService.updateLocation(room.id, data);
-                  });
-                  return forkJoin(locationsToEdit);
-              })).subscribe(() => this.dialogRef.close());
-          } else {
-              const locationsToEdit = selectedLocations.map((room: any) => {
-                  const data: any = {
-                      restricted: this.nowRestriction,
-                      scheduling_restricted: this.futureRestriction,
-                      travel_types: this.travelType
-                  };
-                  if (this.timeLimit) {
-                      data.max_allowed_time =  +this.timeLimit;
-                  }
-                  return this.locationService.updateLocation(room.id, data);
-              });
-              forkJoin(locationsToEdit).subscribe(() => this.dialogRef.close());
-          }
-       }
+     if (this.overlayType === 'edit') {
+       this.showPublishSpinner = true;
+       const selectedLocations = _.filter<Location | Pinnable>(this.selectedRooms, {type: 'location'}).map((res: any) => res.location);
+        const locationsFromFolder = _.filter<Location | Pinnable>(this.selectedRooms, {type: 'category'}).map((folder: any) => {
+            return this.locationService.getLocationsWithCategory(folder.category);
+        });
+        if (locationsFromFolder.length) {
+            forkJoin(locationsFromFolder).pipe(switchMap((res) => {
+                const mergeLocations = _.concat(selectedLocations, ...res);
+                const locationsToEdit = mergeLocations.map((room: any) => {
+                    const data: any = {
+                        restricted: this.nowRestriction,
+                        scheduling_restricted: this.futureRestriction,
+                        travel_types: this.travelType
+                    };
+                    if (this.timeLimit) {
+                        data.max_allowed_time =  +this.timeLimit;
+                    }
+                    return this.locationService.updateLocation(room.id, data);
+                });
+                return forkJoin(locationsToEdit);
+            })).subscribe(() => this.dialogRef.close());
+        } else {
+            const locationsToEdit = selectedLocations.map((room: any) => {
+                const data: any = {
+                    restricted: this.nowRestriction,
+                    scheduling_restricted: this.futureRestriction,
+                    travel_types: this.travelType
+                };
+                if (this.timeLimit) {
+                    data.max_allowed_time =  +this.timeLimit;
+                }
+                return this.locationService.updateLocation(room.id, data);
+            });
+            forkJoin(locationsToEdit).subscribe(() => this.dialogRef.close());
+        }
+     }
   }
 
   requireValidator(value) {
