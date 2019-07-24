@@ -1,0 +1,140 @@
+<div class="wrapper">
+  <div class="content">
+    <form [formGroup]="form">
+      <div class="room-inputs">
+          <app-input
+                  [width]="'222px'"
+                  [maxLength]="15"
+                  [input_label]="'Room Name'"
+                  [input_value]="''"
+                  [formGroup]="form"
+                  [controlName]="form.get('roomName')"
+                  [isFocus]="currentPage === 1"
+                  (blurEvent)="overlayService.roomNameBlur$.next($event)"
+          >
+          </app-input>
+
+          <app-input
+                  [width]="'103px'"
+                  [maxLength]="5"
+                  [isFocus]="form.touched"
+                  [input_label]="'Room Number'"
+                  [input_value]="''"
+                  [formGroup]="form"
+                  [controlName]="form.get('roomNumber')"
+          >
+          </app-input>
+      </div>
+
+      <div class="teacher-search">
+
+        <div class="teacher-title">
+          <span [ngStyle]="{'color': !roomData.selectedTeachers.length ? '#7F879D' : ' #1F195E'}">Teachers in Room</span>
+          <div class="tooltip-container">
+            <img
+              [matTooltip]="tooltipText.teachers"
+              matTooltipClass="tooltip"
+              class="support-icon"
+              [src]="'./assets/Support (Blue-Gray).svg' | resolveAsset"
+            >
+            <div class="arrow-down-container">
+              <div class="arrow-down"></div>
+            </div>
+          </div>
+        </div>
+        <div class="search-field" style="display: flex">
+          <div class="ds-w-100">
+            <app-sp-search
+                    [selectedOptions]="roomData.selectedTeachers"
+                    [chipsMode]="true"
+                    [focused]="true"
+                    [role]="'_profile_teacher'"
+                    [dummyRoleText]="'teachers'"
+                    [rollUpAfterSelection]="true"
+                    [cancelButton]="true"
+                    [placeholder]="'Search Teachers'"
+                    (onUpdate)="selectTeacherEvent($event)"
+            ></app-sp-search>
+          </div>
+        </div>
+      </div>
+
+      <div class="travel-settings">
+        <div class="travel-picker">
+          <div class="toggle-label">
+            <span [ngStyle]="{'color': !roomData.travelType.length ? '#7F879D' : ' #1F195E'}">Travel Type</span>
+            <div class="tooltip-container">
+              <img
+                  [matTooltip]="tooltipText.travel"
+                  matTooltipClass="tooltip"
+                  class="support-icon"
+                  [src]="'./assets/Support (Blue-Gray).svg' | resolveAsset">
+              <div class="arrow-down-container">
+                <div class="arrow-down"></div>
+              </div>
+            </div>
+          </div>
+          <app-restriction-picker
+              [width]="276"
+              [height]="25"
+              [choices]="['Round-trip', 'One-way' , 'Both']">
+          </app-restriction-picker>
+        </div>
+        <div class="time-limit">
+          <app-input
+                  [width]="'103px'"
+                  [maxLength]="2"
+                  [tooltipText]="tooltipText.timeLimit"
+                  [input_label]="'Time Limit'"
+                  [isFocus]="form.touched"
+                  [input_value]="''"
+                  [placeholder]="'minutes'"
+                  [rightIcon]="'./assets/Support (Blue-Gray).svg'"
+                  [formGroup]="form"
+                  [controlName]="form.get('timeLimit')">
+          </app-input>
+        </div>
+      </div>
+
+      <div class="restriction-settings">
+        <div class="restriction-picker-1">
+          <div class="toggle-label">
+            <span [ngStyle]="{'color': !roomData.restricted ? '#7F879D' : ' #1F195E'}">Restriction For Now</span>
+            <div class="tooltip-container">
+              <img
+                      [matTooltip]="tooltipText.restriction"
+                      matTooltipClass="tooltip"
+                      class="support-icon"
+                      [src]="'./assets/Support (Blue-Gray).svg' | resolveAsset">
+            </div>
+          </div>
+          <app-restriction-picker
+                  [width]="187"
+                  [height]="25"
+                  [choices]="['Unrestricted', 'Restricted']">
+          </app-restriction-picker>
+        </div>
+        <div class="restriction-picker-2">
+          <div class="toggle-label">
+            <span [ngStyle]="{'color': !roomData.scheduling_restricted ? '#7F879D' : ' #1F195E'}">Restriction For Future</span>
+            <div class="tooltip-container">
+              <img
+                      [matTooltip]="tooltipText.scheduling_restricted"
+                      matTooltipClass="tooltip"
+                      class="support-icon"
+                      [src]="'./assets/Support (Blue-Gray).svg' | resolveAsset">
+              <div class="arrow-down-container">
+                <div class="arrow-down"></div>
+              </div>
+            </div>
+          </div>
+          <app-restriction-picker
+                  [width]="187"
+                  [height]="25"
+                  [choices]="['Unrestricted', 'Restricted']">
+          </app-restriction-picker>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

@@ -17,6 +17,7 @@ import {filter} from 'rxjs/internal/operators';
 import {OptionState} from './advanced-options/advanced-options.component';
 import {NextStep} from '../../animations';
 import {CreateFormService} from '../../create-hallpass-forms/create-form.service';
+import {OverlayDataService} from './overlay-data.service';
 
 export interface FormState {
     roomName?: string;
@@ -32,6 +33,19 @@ export interface FormState {
     advOptState?: OptionState;
 }
 
+export enum Pages {
+    NewRoom = 1,
+    EditRoom = 2,
+    NewFolder = 3,
+    EditFolder = 4,
+    NewRoomInFolder = 5,
+    EditRoomInFolder = 6,
+    ImportRooms = 7,
+    AddExistingRooms = 8,
+    BulkEditRooms = 9,
+    SettingRooms = 10
+}
+
 @Component({
   selector: 'app-overlay-container',
   templateUrl: './overlay-container.component.html',
@@ -40,6 +54,8 @@ export interface FormState {
 
 })
 export class OverlayContainerComponent implements OnInit {
+
+  currentPage: number;
 
   public roomList: {
     domElement: ElementRef,
@@ -57,14 +73,6 @@ export class OverlayContainerComponent implements OnInit {
     timeLimit: false,
     restriction: false,
     scheduling_restricted: false
-  };
-
-  public tooltipText = {
-    teachers: 'Which teachers should see pass activity in this room?',
-    travel: 'Will the the room will be available to make only round-trip passes, only one-way passes, or both?',
-    timeLimit: 'What is the maximum time limit that a student can make the pass for themselves?',
-    restriction: 'Does the pass need digital approval from a teacher to become an active pass?',
-    scheduling_restricted: 'Does the pass need digital approval from a teacher to become a scheduled pass?'
   };
 
   @ViewChild('leftContent') set content(content: ElementRef) {
@@ -279,19 +287,21 @@ export class OverlayContainerComponent implements OnInit {
       private hallPassService: HallPassesService,
       private formService: CreateFormService,
       public sanitizer: DomSanitizer,
+      public overlayService: OverlayDataService,
 
 
   ) {}
 
   getHeaderData() {
-    // debugger
     let colors;
     switch (this.overlayType) {
         case 'newRoom':
+          this.overlayService.changePage(Pages.NewRoom, 0);
           this.titleColor = '#1F195E';
           this.roomName = 'New Room';
           break;
         case 'newFolder':
+            this.overlayService.changePage(Pages.NewFolder, 0);
             if (!!this.pinnable) {
                 colors = this.pinnable.color_profile.gradient_color;
                 this.folderName = this.pinnable.title;
@@ -305,6 +315,7 @@ export class OverlayContainerComponent implements OnInit {
           this.folderRoomsLoaded = true;
           break;
         case 'editRoom':
+            this.overlayService.changePage(Pages.EditRoom, 0);
             colors = this.pinnable.color_profile.gradient_color;
             this.roomName = this.pinnable.title;
             this.timeLimit = this.pinnable.location.max_allowed_time;
@@ -319,14 +330,15 @@ export class OverlayContainerComponent implements OnInit {
             this.generateAdvOptionsModel(this.pinnable.location);
             break;
         case 'edit':
-          // colors = '#606981, #ACB4C1';
+          this.overlayService.changePage(Pages.BulkEditRooms, 0);
           this.titleColor = '#1F195E';
           this.folderName = 'Bulk Edit Rooms';
           console.log('BULK SELECTED ROOMS =====>>> \n', this.selectedRooms);
           this.bulkWarningText = !!_.find<Location | Pinnable>(this.selectedRooms, {type: 'category'});
           break;
     }
-    this.gradientColor = 'radial-gradient(circle at 98% 97%,' + colors + ')';
+    this.currentPage = this.overlayService.pageState.currentPage;
+      this.gradientColor = 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
 
   get isValidForm() {
@@ -483,9 +495,7 @@ export class OverlayContainerComponent implements OnInit {
           delay(50)
         )
         .subscribe((el: ElementRef) => {
-        // el.nativeElement.scrollIntoView(true);
         if (this.overlayType === 'newFolder' && this.roomList.topScroll) {
-          // debugger;
           el.nativeElement.scrollTop = this.roomList.topScroll;
         } else {
           el.nativeElement.scrollTop = 0;
@@ -1467,7 +1477,6 @@ export class OverlayContainerComponent implements OnInit {
     } else if (this.importedRooms.length && this.unknownEmails.length && this.uploadingProgress.completed) {
       return 2;
     } else if (this.importedRooms.length && !this.unknownEmails.length) {
-      // return 3;
       this.setLocation('settingsRooms');
     }
   }
@@ -1584,7 +1593,5 @@ export class OverlayContainerComponent implements OnInit {
           }, 1500);
         this.importedRooms = rooms;
       });
-
-
   }
 }

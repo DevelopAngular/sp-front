@@ -27,7 +27,6 @@ import { SettingsComponent } from './settings/settings.component';
 import { AdminSharedModule } from './shared/admin-shared.module';
 import { ColumnsConfigDialogComponent } from './columns-config-dialog/columns-config-dialog.component';
 import { SchoolSettingDialogComponent } from './school-setting-dialog/school-setting-dialog.component';
-// import { ProfileCardDialogComponent } from './profile-card-dialog/profile-card-dialog.component';
 import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.component';
 import { SearchFilterDialogComponent } from './search/search-filter-dialog/search-filter-dialog.component';
 import { DateTimeFilterComponent } from './search/date-time-filter/date-time-filter.component';
@@ -65,7 +64,6 @@ import { AdminCardButtonComponent } from './accounts/admin-card-button/admin-car
     SettingsComponent,
     LinkGeneratedDialogComponent,
     ColumnsConfigDialogComponent,
-    // ProfileCardDialogComponent,
     SchoolSettingDialogComponent,
     AddUserDialogComponent,
     SearchFilterDialogComponent,
@@ -78,7 +76,6 @@ import { AdminCardButtonComponent } from './accounts/admin-card-button/admin-car
   entryComponents: [
     LinkGeneratedDialogComponent,
     ColumnsConfigDialogComponent,
-    // ProfileCardDialogComponent,
     SchoolSettingDialogComponent,
     AddUserDialogComponent,
     SettingsComponent,
