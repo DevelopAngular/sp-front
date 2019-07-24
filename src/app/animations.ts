@@ -13,7 +13,7 @@ export const bumpIn = trigger('pressState', [
 
 export const NextStep = trigger('NextStep', [                                                        // :ENTER PSEUDOSTATE
   transition(':enter', group([
-      query(`.form-factor, .locations-scaled, .scaled-card`, animate('0.4s 0s ease', keyframes([
+      query(`.form-factor, .locations-scaled, .scaled-card`, animate('2.4s 0s ease', keyframes([
         style({
           opacity: 0,
           transform: 'scale(1.2)'
@@ -35,7 +35,7 @@ export const NextStep = trigger('NextStep', [                                   
       .date-picker,
       .student-groups,
       .locations
-      `, animate('0.4s 0s ease', keyframes([
+      `, animate('2.4s 0s ease', keyframes([
           style({
             background: 'transparent',
           }),
@@ -44,7 +44,7 @@ export const NextStep = trigger('NextStep', [                                   
           }),
         ])), {optional: true}
       ),
-      query(`.back-button-white`, animate('0.4s 0s ease', keyframes([
+      query(`.back-button-white`, animate('2.4s 0s ease', keyframes([
           style({
             opacity: 0,
           }),
@@ -61,7 +61,7 @@ export const NextStep = trigger('NextStep', [                                   
       .student-groups,
       .target-footer,
       .from-footer
-      `, animate('0.4s 0s ease', keyframes([
+      `, animate('2.4s 0s ease', keyframes([
           style({
             opacity: 0,
           }),
@@ -100,7 +100,7 @@ export const NextStep = trigger('NextStep', [                                   
       .restriction-settings,
       .existing-rooms,
       .import-rooms-content
-      `, animate('0.4s 0s ease', keyframes([
+      `, animate('2.4s 0s ease', keyframes([
           style({
             opacity: 0,
             transform: 'translateX({{from}}px)',
@@ -120,7 +120,7 @@ export const NextStep = trigger('NextStep', [                                   
       .date-picker,
       .student-groups,
       .locations
-      `, animate('0.4s 0s ease', keyframes([
+      `, animate('2.4s 0s ease', keyframes([
         style({
           background: 'transparent',
           boxShadow: 'none',
@@ -131,7 +131,7 @@ export const NextStep = trigger('NextStep', [                                   
         }),
       ])), {optional: true}
     ),
-    query(`.form-factor, .locations-scaled, .scaled-card`, animate('0.4s 0s ease', keyframes([
+    query(`.form-factor, .locations-scaled, .scaled-card`, animate('2.4s 0s ease', keyframes([
       style({
         opacity: 1,
         transform: 'scale(1)'
@@ -149,7 +149,7 @@ export const NextStep = trigger('NextStep', [                                   
       .rest-tar-header,
       .rest-mes-header
       `,
-      animate('0.4s 0s ease', keyframes([
+      animate('2.4s 0s ease', keyframes([
           style({
             'z-index': 9,
             boxShadow: 'none',
@@ -161,7 +161,7 @@ export const NextStep = trigger('NextStep', [                                   
           }),
         ])), {optional: true}
       ),
-    query(`.back-button-grey`, animate('0.4s 0s ease', keyframes([
+    query(`.back-button-grey`, animate('2.4s 0s ease', keyframes([
         style({
           opacity: 0,
         }),
@@ -180,7 +180,7 @@ export const NextStep = trigger('NextStep', [                                   
       .target-footer,
       .from-footer
       `,
-      animate('0.4s 0s ease', keyframes([
+      animate('2.4s 0s ease', keyframes([
           style({
             opacity: 1,
           }),
@@ -232,7 +232,7 @@ export const NextStep = trigger('NextStep', [                                   
       .page-4,
       .slide
       `,
-      animate('0.4s 0s ease', keyframes([
+      animate('2.4s 0s ease', keyframes([
             style({
               position: 'absolute',
               opacity: 1,
