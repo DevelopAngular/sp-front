@@ -306,7 +306,6 @@ export class OverlayContainerComponent implements OnInit {
                 colors = this.pinnable.color_profile.gradient_color;
                 this.overlayService.changePage(Pages.EditFolder, 0, {
                     pinnable: this.pinnable,
-                    roomsInFolder: this.selectedRooms
                 });
                 this.folderName = this.pinnable.title;
                 this.color_profile = this.pinnable.color_profile;
@@ -325,16 +324,16 @@ export class OverlayContainerComponent implements OnInit {
                 advancedOptions: this.generateAdvOptionsModel(this.pinnable.location)
             });
             colors = this.pinnable.color_profile.gradient_color;
-            this.roomName = this.pinnable.title;
-            this.timeLimit = this.pinnable.location.max_allowed_time;
-            this.roomNumber = this.pinnable.location.room;
-            this.selectedTeachers = this.pinnable.location.teachers;
-            this.nowRestriction = this.pinnable.location.restricted;
-            this.futureRestriction = this.pinnable.location.scheduling_restricted;
-            this.color_profile = this.pinnable.color_profile;
-            this.selectedIcon = this.pinnable.icon;
-            this.travelType = this.pinnable.location.travel_types;
-            this.titleIcon = this.pinnable.icon;
+            // this.roomName = this.pinnable.title;
+            // this.timeLimit = this.pinnable.location.max_allowed_time;
+            // this.roomNumber = this.pinnable.location.room;
+            // this.selectedTeachers = this.pinnable.location.teachers;
+            // this.nowRestriction = this.pinnable.location.restricted;
+            // this.futureRestriction = this.pinnable.location.scheduling_restricted;
+            // this.color_profile = this.pinnable.color_profile;
+            // this.selectedIcon = this.pinnable.icon;
+            // this.travelType = this.pinnable.location.travel_types;
+            // this.titleIcon = this.pinnable.icon;
             // this.generateAdvOptionsModel(this.pinnable.location);
             break;
         case 'edit':

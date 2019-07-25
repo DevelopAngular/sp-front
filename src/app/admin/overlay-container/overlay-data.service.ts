@@ -12,7 +12,6 @@ export interface PageState {
     previousPage: number;
     data: {
       pinnable: Pinnable,
-      roomsInFolder: Location[],
       advancedOptions: OptionState
     };
 }
@@ -26,6 +25,10 @@ export interface RoomData {
     restricted: boolean;
     scheduling_restricted: boolean;
     advOptState: OptionState;
+}
+
+export interface FolderData {
+    folderName: string;
 }
 
 @Injectable({

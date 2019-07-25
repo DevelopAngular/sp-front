@@ -40,6 +40,7 @@
   <div class="content">
     <div class="left-block">
       <app-room [form]="form" *ngIf="currentPage === 1 || currentPage === 2" (roomDataResult)="roomResult($event)"></app-room>
+      <app-folder *ngIf="currentPage === 3 || currentPage === 4" [form]="form"></app-folder>
     </div>
 
     <mat-divider [vertical]="true"></mat-divider>
@@ -502,20 +503,6 @@
             <!--</div>-->
             <!--<div class="rooms-list" #roomList *ngIf="selectedRooms.length > 0">-->
               <!--<mat-list>-->
-                <!--<div>-->
-                  <!--&lt;!&ndash;<div class="room">&ndash;&gt;-->
-                  <!--&lt;!&ndash;<mat-checkbox style="margin-left: 12px"&ndash;&gt;-->
-                  <!--&lt;!&ndash;[checked]="readyRoomsToEdit.length === selectedRooms.length"&ndash;&gt;-->
-                  <!--&lt;!&ndash;[indeterminate]="readyRoomsToEdit.length && readyRoomsToEdit.length < selectedRooms.length"&ndash;&gt;-->
-                  <!--&lt;!&ndash;(change)="selectedRoomsEvent($event, null, true)"&ndash;&gt;-->
-                  <!--&lt;!&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;</mat-checkbox>&ndash;&gt;-->
-                  <!--&lt;!&ndash;<div class="room-edit">&ndash;&gt;-->
-                  <!--&lt;!&ndash;<mat-list-item>All...</mat-list-item>&ndash;&gt;-->
-                  <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                  <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                  <!--&lt;!&ndash;<mat-divider></mat-divider>&ndash;&gt;-->
-                <!--</div>-->
                 <!--<div *ngFor="let room of sortSelectedRooms">-->
                   <!--<div-->
                     <!--class="room"-->

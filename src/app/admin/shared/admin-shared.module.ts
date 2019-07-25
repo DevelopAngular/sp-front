@@ -26,6 +26,7 @@ import { ColorComponent } from '../color-pallet-picker/color/color.component';
 import { AdvancedOptionsComponent } from '../overlay-container/advanced-options/advanced-options.component';
 import { AddExistingRoomComponent } from '../overlay-container/add-existing-room/add-existing-room.component';
 import { RoomComponent } from '../overlay-container/room/room.component';
+import { FolderComponent } from '../overlay-container/folder/folder.component';
 
 @NgModule({
   imports: [
@@ -55,7 +56,8 @@ import { RoomComponent } from '../overlay-container/room/room.component';
       ColorComponent,
       AdvancedOptionsComponent,
       AddExistingRoomComponent,
-      RoomComponent
+      RoomComponent,
+      FolderComponent
 
   ],
   exports: [
@@ -72,7 +74,8 @@ import { RoomComponent } from '../overlay-container/room/room.component';
       TogglePickerComponent,
       ColorComponent,
       AddExistingRoomComponent,
-      RoomComponent
+      RoomComponent,
+      FolderComponent
   ],
   entryComponents: [
       OverlayContainerComponent,
