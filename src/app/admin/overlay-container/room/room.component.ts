@@ -1,9 +1,15 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { merge, Subject } from 'rxjs';
+import { MatDialogRef } from '@angular/material';
+
+import { merge, Subject, zip } from 'rxjs';
 
 import { OverlayDataService, RoomData } from '../overlay-data.service';
 import { OptionState } from '../advanced-options/advanced-options.component';
+
+import { HallPassesService } from '../../../services/hall-passes.service';
+import { LocationsService } from '../../../services/locations.service';
+import { OverlayContainerComponent } from '../overlay-container.component';
 
 import * as _ from 'lodash';
 
@@ -39,7 +45,12 @@ export class RoomComponent implements OnInit {
 
   change$: Subject<any> = new Subject();
 
-  constructor(public overlayService: OverlayDataService) {
+  constructor(
+      private dialogRef: MatDialogRef<OverlayContainerComponent>,
+      public overlayService: OverlayDataService,
+      private hallPassService: HallPassesService,
+      private locationService: LocationsService,
+  ) {
   }
 
   get travelTypes() {
@@ -144,5 +155,20 @@ export class RoomComponent implements OnInit {
   advancedOptions(options: OptionState) {
       this.data.advOptState = options;
       this.change$.next();
+  }
+
+  deleteRoom() {
+      const pinnable = this.overlayService.pageState.getValue().data.pinnable;
+      const deletions = [
+          this.hallPassService.deletePinnable(pinnable.id)
+      ];
+
+      if (pinnable.location) {
+          deletions.push(this.locationService.deleteLocation(pinnable.location.id));
+      }
+
+      zip(...deletions).subscribe(res => {
+          this.dialogRef.close();
+      });
   }
 }
