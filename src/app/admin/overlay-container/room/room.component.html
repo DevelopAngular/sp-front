@@ -6,9 +6,10 @@
                   [width]="'222px'"
                   [maxLength]="15"
                   [input_label]="'Room Name'"
-                  [input_value]="''"
+                  [input_value]="data && data.roomName ? data.roomName : ''"
                   [formGroup]="form"
                   [controlName]="form.get('roomName')"
+                  (onUpdate)="data.roomName = $event === '' ? 'New Room': $event;"
                   [isFocus]="currentPage === 1"
                   (blurEvent)="overlayService.roomNameBlur$.next($event)"
           >
@@ -19,7 +20,8 @@
                   [maxLength]="5"
                   [isFocus]="form.touched"
                   [input_label]="'Room Number'"
-                  [input_value]="''"
+                  [input_value]="data && data.roomNumber ? data.roomNumber : ''"
+                  (onUpdate)="data.roomNumber = $event"
                   [formGroup]="form"
                   [controlName]="form.get('roomNumber')"
           >
@@ -29,7 +31,7 @@
       <div class="teacher-search">
 
         <div class="teacher-title">
-          <span [ngStyle]="{'color': !roomData.selectedTeachers.length ? '#7F879D' : ' #1F195E'}">Teachers in Room</span>
+          <span [ngStyle]="{'color': !data?.selectedTeachers.length ? '#7F879D' : ' #1F195E'}">Teachers in Room</span>
           <div class="tooltip-container">
             <img
               [matTooltip]="tooltipText.teachers"
@@ -45,7 +47,7 @@
         <div class="search-field" style="display: flex">
           <div class="ds-w-100">
             <app-sp-search
-                    [selectedOptions]="roomData.selectedTeachers"
+                    [selectedOptions]="data && data.selectedTeachers ? data.selectedTeachers : []"
                     [chipsMode]="true"
                     [focused]="true"
                     [role]="'_profile_teacher'"
@@ -62,7 +64,7 @@
       <div class="travel-settings">
         <div class="travel-picker">
           <div class="toggle-label">
-            <span [ngStyle]="{'color': !roomData.travelType.length ? '#7F879D' : ' #1F195E'}">Travel Type</span>
+            <span [ngStyle]="{'color': !data?.travelType.length ? '#7F879D' : ' #1F195E'}">Travel Type</span>
             <div class="tooltip-container">
               <img
                   [matTooltip]="tooltipText.travel"
@@ -77,7 +79,10 @@
           <app-restriction-picker
               [width]="276"
               [height]="25"
-              [choices]="['Round-trip', 'One-way' , 'Both']">
+              [choices]="['Round-trip', 'One-way' , 'Both']"
+              [selectedChoose]="travelTypes"
+              (result)="travelUpdate($event)"
+          >
           </app-restriction-picker>
         </div>
         <div class="time-limit">
@@ -87,8 +92,9 @@
                   [tooltipText]="tooltipText.timeLimit"
                   [input_label]="'Time Limit'"
                   [isFocus]="form.touched"
-                  [input_value]="''"
+                  [input_value]="data && data.timeLimit ? data.timeLimit : ''"
                   [placeholder]="'minutes'"
+                  (onUpdate)="data.timeLimit = $event"
                   [rightIcon]="'./assets/Support (Blue-Gray).svg'"
                   [formGroup]="form"
                   [controlName]="form.get('timeLimit')">
@@ -99,30 +105,32 @@
       <div class="restriction-settings">
         <div class="restriction-picker-1">
           <div class="toggle-label">
-            <span [ngStyle]="{'color': !roomData.restricted ? '#7F879D' : ' #1F195E'}">Restriction For Now</span>
+            <span [ngStyle]="{'color': !restricted ? '#7F879D' : ' #1F195E'}">Restriction For Now</span>
             <div class="tooltip-container">
               <img
-                      [matTooltip]="tooltipText.restriction"
-                      matTooltipClass="tooltip"
-                      class="support-icon"
-                      [src]="'./assets/Support (Blue-Gray).svg' | resolveAsset">
+                [matTooltip]="tooltipText.restriction"
+                matTooltipClass="tooltip"
+                class="support-icon"
+                [src]="'./assets/Support (Blue-Gray).svg' | resolveAsset">
             </div>
           </div>
           <app-restriction-picker
                   [width]="187"
                   [height]="25"
-                  [choices]="['Unrestricted', 'Restricted']">
+                  [choices]="['Unrestricted', 'Restricted']"
+                  [selectedChoose]="restricted"
+                  (result)="restrictedEvent($event)">
           </app-restriction-picker>
         </div>
         <div class="restriction-picker-2">
           <div class="toggle-label">
-            <span [ngStyle]="{'color': !roomData.scheduling_restricted ? '#7F879D' : ' #1F195E'}">Restriction For Future</span>
+            <span [ngStyle]="{'color': !schedulingRestricted ? '#7F879D' : ' #1F195E'}">Restriction For Future</span>
             <div class="tooltip-container">
               <img
-                      [matTooltip]="tooltipText.scheduling_restricted"
-                      matTooltipClass="tooltip"
-                      class="support-icon"
-                      [src]="'./assets/Support (Blue-Gray).svg' | resolveAsset">
+                [matTooltip]="tooltipText.scheduling_restricted"
+                matTooltipClass="tooltip"
+                class="support-icon"
+                [src]="'./assets/Support (Blue-Gray).svg' | resolveAsset">
               <div class="arrow-down-container">
                 <div class="arrow-down"></div>
               </div>
@@ -131,10 +139,24 @@
           <app-restriction-picker
                   [width]="187"
                   [height]="25"
-                  [choices]="['Unrestricted', 'Restricted']">
+                  [choices]="['Unrestricted', 'Restricted']"
+                  [selectedChoose]="schedulingRestricted"
+                  (result)="schedulingRestrictedEvent($event)">
           </app-restriction-picker>
         </div>
       </div>
     </form>
+  </div>
+
+  <div class="advanced-options" #advancedOptionsRef>
+    <app-advanced-options
+            [roomName]="data.roomName"
+            [nowRestricted]="data.restricted"
+            [futureRestricted]="data.scheduling_restricted"
+            [data]="data.advOptState"
+            [disabledOptions]="advDisabledOptions"
+            (openedOptions)="advancedOptionsOpened($event, advancedOptionsRef)"
+            (resultOptions)="advancedOptions($event)"
+    ></app-advanced-options>
   </div>
 </div>

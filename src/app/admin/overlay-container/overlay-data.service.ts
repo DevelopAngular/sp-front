@@ -1,21 +1,31 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+
+import { BehaviorSubject, Subject } from 'rxjs';
+
 import { User } from '../../models/User';
+import { Pinnable } from '../../models/Pinnable';
+import { Location } from '../../models/Location';
+import { OptionState } from './advanced-options/advanced-options.component';
 
 export interface PageState {
     currentPage: number;
     previousPage: number;
+    data: {
+      pinnable: Pinnable,
+      roomsInFolder: Location[],
+      advancedOptions: OptionState
+    };
 }
 
 export interface RoomData {
     roomName: string;
-    roomNumber: string | number;
-    roomIcon: string;
-    roomTeachers: User[];
+    roomNumber: string;
+    timeLimit: number | string;
+    selectedTeachers: User[];
     travelType: string[];
-    timeLimit: number;
     restricted: boolean;
     scheduling_restricted: boolean;
+    advOptState: OptionState;
 }
 
 @Injectable({
@@ -23,7 +33,7 @@ export interface RoomData {
 })
 export class OverlayDataService {
 
-  pageState: PageState;
+  pageState: BehaviorSubject<PageState> = new BehaviorSubject<PageState>(null);
 
   roomNameBlur$: Subject<any> = new Subject();
 
@@ -35,15 +45,14 @@ export class OverlayDataService {
       scheduling_restricted: 'Does the pass need digital approval from a teacher to become a scheduled pass?'
   };
 
-  data: RoomData;
-
   constructor() {
   }
 
-  changePage(next, previous) {
-      this.pageState = {
+  changePage(next, previous, data) {
+      this.pageState.next({
           currentPage: next,
-          previousPage: previous
-      };
+          previousPage: previous,
+          data: data
+      });
   }
 }
