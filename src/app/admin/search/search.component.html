@@ -1,4 +1,4 @@
-<div class="host" appSafariScroll>
+<div class="host" appSafariScroll (scroll)="onScroll($event)">
   <div class="search-wrapper" *ngIf="inputPanelVisibility">
     <div class="w-100">
       <div class="input-header-wrapper" [style.background-color]="darkTheme.getBackground('default')">
@@ -114,6 +114,7 @@
           </div>
         </div>
       </div>
+
       <div class="content">
         <div class="search-content-table" *ngIf="hasSearched">
           <div class="search-header">
@@ -134,8 +135,8 @@
             </div>
           </div>
         </div>
-
       </div>
+
     </div>
     <div class="search-main">
         <div class="nopass-text" *ngIf="tableData.length === 0 && !spinner && hasSearched" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">

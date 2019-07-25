@@ -234,7 +234,6 @@ export const NextStep = trigger('NextStep', [                                   
       `,
       animate('0.4s 0s ease', keyframes([
             style({
-              position: 'absolute',
               opacity: 1,
               transform: 'translateX(0px)',
             }),

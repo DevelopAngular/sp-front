@@ -1,12 +1,24 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ContentChild,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output, QueryList,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
-import { MatSort, MatTableDataSource} from '@angular/material';
+import {MatRow, MatSort, MatTableDataSource} from '@angular/material';
 import { DarkThemeSwitch } from '../../dark-theme-switch';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BehaviorSubject } from 'rxjs';
 
 import * as moment from 'moment';
 import {SP_ARROW_BLUE_GRAY, SP_ARROW_DOUBLE_BLUE_GRAY} from '../pdf-generator.service';
+import {test} from '@angular-devkit/core/src/virtual-fs/host';
 
 @Component({
   selector: 'app-data-table',
@@ -84,17 +96,20 @@ export class DataTableComponent implements OnInit {
     });
   }
 
-  onHover(target: HTMLElement) {
-
+  onHover(evt: MouseEvent) {
+    const target = (evt.target as HTMLElement).closest('.mat-row') as HTMLElement ;
     this.hovered = true;
-    target.style.backgroundColor = this.getBgColor();
-    target.style.color = this.getCellColor();
+    target.style.backgroundColor = this.getBgColor({hovered: true});
+    target.style.color = this.getCellColor({hovered: true});
+    target.style.userSelect = 'none';
+    target.style.cursor = this.disallowHover ? 'default' : 'pointer';
   }
-  onLeave(target: HTMLElement) {
+  onLeave(evt: MouseEvent) {
+    const target = (evt.target as HTMLElement).closest('.mat-row') as HTMLElement ;
 
     this.hovered = false;
-    target.style.color = this.getCellColor();
-    target.style.backgroundColor = 'transparent';
+    target.style.color = this.getCellColor({hovered: false});
+    target.style.backgroundColor = this.getBgColor({hovered: false});
   }
   onDown(target: HTMLElement) {
 
