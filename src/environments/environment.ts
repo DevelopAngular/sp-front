@@ -3,10 +3,14 @@
 // `ng build --env=prod` then `environment.prod.ts` will be used instead.
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 
+// This is the default environment if you don't use the -c flag
+// and this file is used during TypeScript type checking.
+
 export const environment = {
   production: false,
   buildType: 'default',
   preferEnvironment: ('Staging' as null|string|any),
+  schoolOnboardApiRoot: 'https://smartpass.app/api/staging',
   funData: true,
   firebase: {
     apiKey: "AIzaSyDKAexSUkOIj63hP9MkLi22CHpykkh_4Bs",

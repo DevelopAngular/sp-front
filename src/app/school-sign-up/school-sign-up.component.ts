@@ -1,4 +1,5 @@
 import {AfterViewInit, Component, EventEmitter, NgZone, OnInit, Output} from '@angular/core';
+import { environment } from '../../environments/environment';
 import {constructUrl, QueryParams} from '../live-data/helpers';
 import {catchError, delay, map, switchMap, tap} from 'rxjs/operators';
 import {BehaviorSubject, from, Observable, of, throwError} from 'rxjs';
@@ -88,7 +89,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
                 return of(false);
               } else {
                 this.gsProgress.updateProgress('create_school:start');
-                return this.http.post('https://smartpass.app/api/staging/onboard/schools', {
+                return this.http.post(environment.schoolOnboardApiRoot + '/onboard/schools', {
                   user_token: auth.id_token,
                   google_place_id: this.school.place_id
                 }, {
@@ -130,7 +131,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
 
   checkSchool(school: any) {
     this.pending.next(true);
-    this.http.get(constructUrl('https://smartpass.app/api/staging/onboard/schools/check_school', {place_id: school.place_id}), {
+    this.http.get(constructUrl(environment.schoolOnboardApiRoot + '/onboard/schools/check_school', {place_id: school.place_id}), {
       headers: {
         'Authorization': 'Bearer ' + this.AuthToken // it's temporary
       }})
