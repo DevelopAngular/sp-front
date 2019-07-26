@@ -2,21 +2,28 @@
      [style.width]="width"
      [style.height]="height"
      [style.overflow]="(height=='none' ? 'none': 'auto')">
+    <cdk-virtual-scroll-viewport style="height: calc(100vh - 148px); position: relative;">
 
-  <table mat-table matSort [dataSource]="dataSource" [style.background-color]="backgroundColor">
+  <table mat-table matSort
+         [ngClass]="{
+           'light-mode': !(darkMode$ | async),
+           'dark-mode': (darkMode$ | async)
+         }"
+         [dataSource]="dataSource" [style.background-color]="backgroundColor">
     <!-- Checkbox Column -->
     <ng-container matColumnDef="select" *ngIf="isCheckbox | async">
 
-      <th mat-header-cell *matHeaderCellDef class="sticky-header"
-          [ngClass]="{'dark-theme-of-checkbox__primary': darkTheme.isEnabled$.value}"
-          [style.background-color]="darkTheme.isEnabled$.value ? '#0F171E' : '#FBFEFF'"
+      <th mat-header-cell *matHeaderCellDef class="sticky-headerrr"
+          [style.background-color]="(darkMode$ | async) ? '#0F171E' : '#FBFEFF'"
           [style.top]="marginTopStickyHeader"
           [style.padding]="'0px'"
           [style.text-align]="'center'"
       >
+<!--        {{darkMode$ | async) () | async}}-->
         <mat-checkbox (change)="$event ? masterToggle() : null; pushOutSelected()"
                       [checked]="selection.hasValue() && isAllSelected()"
                       [indeterminate]="selection.hasValue() && !isAllSelected()"
+                      class="master-checkbox"
         >
         </mat-checkbox>
       </th>
@@ -24,7 +31,6 @@
           (click)="$event.stopPropagation()"
           [style.padding]="'0px'"
           [style.text-align]="'center'"
-          [ngClass]="{'dark-theme-of-checkbox': darkTheme.isEnabled$.value}"
       >
         <!--<pre style="font-size: 10px">{{row | json}}</pre>-->
         <mat-checkbox (click)="$event.stopPropagation()"
@@ -38,19 +44,26 @@
 
     <!-- Columns -->
     <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header class="sticky-header"
+      <th mat-header-cell *matHeaderCellDef mat-sort-header class="sticky-headerr"
           [style.color]="darkTheme.getColor({white: textHeaderColor, dark: '#FFFFFF'})"
           [style.text-transform]="'none'"
-          [style.background-color]="darkTheme.isEnabled$.value ? '#0F171E' : '#FBFEFF'"
+          [style.background-color]="(darkMode$ | async) ? '#0F171E' : '#FBFEFF'"
           [style.top]="marginTopStickyHeader"
       > {{column}} </th>
       <td mat-cell *matCellDef="let element; let n = index"
           class="ds-px-10"
           >
+<!--          (mouseenter)="onHover($event)"-->
         <ng-container *ngIf="normalizeCell(element[column]).length; else empty">
           <span *ngFor="let cellElement of normalizeCell(element[column]); let i = index" style="white-space: nowrap;display: inline-block;">
             <!--<span *ngIf="normalizeCell(element[column]).length > 1 && i > 0">, </span>-->
-            <span [ngClass]="{'multi-cell': column === 'Profile(s)' && cellElement.title && cellElement.title !== 'No profile', 'not-allowed': cellElement.title === 'No profile'}" (click)="selectedCellEmit($event, cellElement, element)" #cell>
+            <span
+              [ngClass]="{
+                'multi-cell': column === 'Profile(s)' && cellElement.title && cellElement.title !== 'No profile',
+                'not-allowed': cellElement.title === 'No profile'
+              }"
+              (click)="selectedCellEmit($event, cellElement, element)" #cell
+            >
               {{displayCell(cellElement, cell, column)}}
             </span>
             <span>{{(normalizeCell(element[column]).length > 1 && i !== normalizeCell(element[column]).length - 1 ? ', ' : '')}}</span>
@@ -72,9 +85,130 @@
       </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="columnsToDisplay" style="height: 38px"></tr>
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
+
+    <tr [style.height.px]="placeholderHeight" mat-row *matRowDef="let row; let index = index; columns: []; when: placeholderWhen"></tr>
+
     <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"
         (click)="selectedRowEmit(row);" style="height: 38px;">
     </tr>
   </table>
+      </cdk-virtual-scroll-viewport>
 </div>
+
+
+
+<!--<div class="data-table-wrapper"-->
+<!--     [style.width]="width"-->
+<!--     [style.height]="height"-->
+<!--     [style.overflow]="(height=='none' ? 'none': 'auto')">-->
+<!--  <cdk-virtual-scroll-viewport style="height: calc(100vh - 148px); position: relative;" itemSize="38"  maxBufferPx="600" minBufferPx="500">-->
+
+<!--  <table-->
+<!--         [ngClass]="{-->
+<!--           'light-mode': !(darkMode$ | async),-->
+<!--           'dark-mode': (darkMode$ | async)-->
+<!--         }"-->
+<!--         [style.background-color]="backgroundColor">-->
+
+<!--    <thead>-->
+<!--    <tr style="height: 38px;">-->
+
+<!--      <ng-container *ngIf="isCheckbox | async">-->
+<!--        <th class="sticky-header"  [style.top]="stickyOffset$ | async"-->
+<!--            [style.background-color]="(darkMode$ | async) ? '#0F171E' : '#FBFEFF'"-->
+<!--            [style.top]="'0px'"-->
+<!--            [style.padding]="'0px'"-->
+<!--            [style.text-align]="'center'"-->
+<!--            #stickyHeader-->
+<!--        >-->
+<!--          <mat-checkbox (change)="$event ? masterToggle() : null; pushOutSelected()"-->
+<!--                        [checked]="selection.hasValue() && isAllSelected()"-->
+<!--                        [indeterminate]="selection.hasValue() && !isAllSelected()"-->
+<!--                        class="master-checkbox"-->
+<!--          >-->
+<!--          </mat-checkbox>-->
+<!--&lt;!&ndash;          {{stickyOffset$ | async}}&ndash;&gt;-->
+<!--        </th>-->
+<!--      </ng-container>-->
+<!--      <th *ngFor="let column of displayedColumns" class="sticky-header" [style.top]="stickyOffset$ | async"-->
+<!--          [style.color]="darkTheme.getColor({white: textHeaderColor, dark: '#FFFFFF'})"-->
+<!--          [style.text-transform]="'none'"-->
+<!--          [style.background-color]="(darkMode$ | async) ? '#0F171E' : '#FBFEFF'"-->
+<!--          [style.top]="'0px'"-->
+<!--          [style.text-align]="'left'"-->
+<!--          #stickyHeader-->
+<!--      > {{column}} </th>-->
+<!--    </tr>-->
+<!--    </thead>-->
+
+
+
+<!--      <tbody>-->
+
+<!--        <ng-container *cdkVirtualFor="let dataRow of _data">-->
+<!--          <tr style="height: 38px; border-bottom: 1px solid #7E879D;">-->
+<!--            <ng-container *ngIf="isCheckbox | async">-->
+
+<!--              <td-->
+<!--                (click)="$event.stopPropagation()"-->
+<!--                [style.padding]="'0px'"-->
+<!--                [style.text-align]="'center'"-->
+<!--              >-->
+<!--                <mat-checkbox (click)="$event.stopPropagation()"-->
+<!--                              (change)="$event ? selection.toggle(dataRow) : null; dataRow.pressed = selection.isSelected(dataRow); pushOutSelected()"-->
+<!--                              [checked]="selection.isSelected(dataRow)"-->
+<!--                              [aria-labelledby]="'label'"-->
+<!--                >-->
+<!--                </mat-checkbox>-->
+<!--              </td>-->
+<!--            </ng-container>-->
+<!--            <td  *ngFor="let column of displayedColumns"-->
+<!--                 class="ds-px-10"-->
+<!--            >-->
+<!--              <ng-container *ngIf="normalizeCell(dataRow[column]).length; else empty">-->
+<!--            <span *ngFor="let cellElement of normalizeCell(dataRow[column]); let i = index" style="white-space: nowrap;display: inline-block;">-->
+<!--              <span-->
+<!--                [ngClass]="{-->
+<!--                  'multi-cell': column === 'Profile(s)' && cellElement.title && cellElement.title !== 'No profile',-->
+<!--                  'not-allowed': cellElement.title === 'No profile'-->
+<!--                }"-->
+<!--                (click)="selectedCellEmit($event, cellElement, dataRow)" #cell-->
+<!--              >-->
+<!--                {{displayCell(cellElement, cell, column)}}-->
+<!--              </span>-->
+<!--              <span>{{(normalizeCell(dataRow[column]).length > 1 && i !== normalizeCell(dataRow[column]).length - 1 ? ', ' : '')}}</span>-->
+<!--              <span style="display: inline-block;width: 50px;height: 20px;background-color: rgba(0, 180, 118, .6);color: #ffffff; text-align: center; vertical-align: middle;line-height: 20px; border-radius: 4px"-->
+<!--                    *ngIf="column === 'Name' && dataRow.me"-->
+<!--              >-->
+<!--                Me-->
+<!--              </span>-->
+<!--            </span>-->
+<!--              </ng-container>-->
+<!--              <ng-template #empty>-->
+<!--            <span *ngIf="column === 'Rooms'" style="cursor: not-allowed; color: #AAAAAA;">-->
+<!--              No rooms assigned-->
+<!--            </span>-->
+<!--                <span *ngIf="column === 'Acting on Behalf Of'" style="cursor: not-allowed; color: #AAAAAA;">-->
+<!--              Сan't act on behalf of anyone-->
+<!--            </span>-->
+<!--              </ng-template>-->
+<!--            </td>-->
+<!--          </tr>-->
+<!--        </ng-container>-->
+<!--      </tbody>-->
+
+
+
+<!--    </table>-->
+<!--    </cdk-virtual-scroll-viewport>-->
+<!--</div>-->
+
+
+
+
+<!--<cdk-virtual-scroll-viewport  style="height: 500px" itemSize="90" >-->
+<!--  <ng-container *cdkVirtualFor="let n of numbers">-->
+<!--    <li> {{n}} </li>-->
+<!--  </ng-container>-->
+<!--</cdk-virtual-scroll-viewport>-->

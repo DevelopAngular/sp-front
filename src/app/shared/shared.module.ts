@@ -64,6 +64,7 @@ import {GettingStartedProgressService} from '../admin/getting-started-progress.s
 import {CreatePassButtonComponent} from '../passes/create-pass-button/create-pass-button.component';
 import {ProfileCardDialogComponent} from '../admin/profile-card-dialog/profile-card-dialog.component';
 import {SpDialogBoxComponent} from '../sp-dialog-box/sp-dialog-box.component';
+import {ScrollingModule} from '@angular/cdk/scrolling';
 
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
@@ -74,6 +75,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
 @NgModule({
   imports: [
     CommonModule,
+    ScrollingModule,
     MatProgressBarModule,
     OwlDateTimeModule,
     OwlNativeDateTimeModule,
@@ -156,6 +158,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ],
   exports: [
     ReactiveFormsModule,
+    ScrollingModule,
     MatTableModule,
     MatProgressSpinnerModule,
     MatCardModule,

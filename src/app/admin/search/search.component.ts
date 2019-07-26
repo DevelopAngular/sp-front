@@ -61,28 +61,28 @@ export class SearchComponent implements OnInit {
 
   buttonDown: boolean;
 
-  private dataPagination: any = {
-    first: 0,
-    last: 50,
-    range: 50,
-    nextPage() {
-      this.first += this.range;
-      this.last += this.range;
-
-    }
-  }
-
-  @HostListener('scroll', ['$event'])
-  onScroll(event) {
-    const tracker = event.target;
-    const limit = tracker.scrollHeight - tracker.clientHeight;
-    // if (event.target.scrollTop === limit && !this.pending && (this.reportsLimit === this.counter)) {
-    if (event.target.scrollTop === limit) {
-      this.dataPagination.nextPage();
-      // this.reportsLimit += 10;
-      // this.getReports();
-    }
-  }
+  // private dataPagination: any = {
+  //   first: 0,
+  //   last: 50,
+  //   range: 50,
+  //   nextPage() {
+  //     this.first += this.range;
+  //     this.last += this.range;
+  //
+  //   }
+  // }
+  //
+  // @HostListener('scroll', ['$event'])
+  // onScroll(event) {
+  //   const tracker = event.target;
+  //   const limit = tracker.scrollHeight - tracker.clientHeight;
+  //   // if (event.target.scrollTop === limit && !this.pending && (this.reportsLimit === this.counter)) {
+  //   if (event.target.scrollTop === limit) {
+  //     this.dataPagination.nextPage();
+  //     // this.reportsLimit += 10;
+  //     // this.getReports();
+  //   }
+  // }
 
   constructor(
       private httpService: HttpService,
@@ -177,12 +177,12 @@ export class SearchComponent implements OnInit {
 
   }
 
-  search(query: string = '') {
+  search() {
 
       this.spinner = true;
       this.selectedReport = [];
 
-      let url = 'v1/hall_passes?' + query;
+      let url = 'v1/hall_passes?';
       if (this.selectedRooms) {
         console.log(this.selectedRooms);
         this.selectedRooms.forEach(room => {
