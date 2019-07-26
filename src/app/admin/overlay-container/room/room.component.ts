@@ -4,7 +4,7 @@ import { MatDialogRef } from '@angular/material';
 
 import { merge, Subject, zip } from 'rxjs';
 
-import { OverlayDataService, RoomData } from '../overlay-data.service';
+import {OverlayDataService, Pages, RoomData} from '../overlay-data.service';
 import { OptionState } from '../advanced-options/advanced-options.component';
 
 import { HallPassesService } from '../../../services/hall-passes.service';
@@ -95,17 +95,19 @@ export class RoomComponent implements OnInit {
       this.currentPage = this.overlayService.pageState.getValue().currentPage;
 
       if (this.overlayService.pageState.getValue().data) {
-          const pinnable = this.overlayService.pageState.getValue().data.pinnable;
-          this.data = {
-              roomName: pinnable.location.title,
-              roomNumber: pinnable.location.room,
-              travelType: pinnable.location.travel_types,
-              selectedTeachers: pinnable.location.teachers,
-              restricted: pinnable.location.restricted,
-              scheduling_restricted: pinnable.location.scheduling_restricted,
-              timeLimit: pinnable.location.max_allowed_time,
-              advOptState: this.overlayService.pageState.getValue().data.advancedOptions
-          };
+          if (this.currentPage === Pages.EditRoom) {
+              const pinnable = this.overlayService.pageState.getValue().data.pinnable;
+              this.data = {
+                  roomName: pinnable.location.title,
+                  roomNumber: pinnable.location.room,
+                  travelType: pinnable.location.travel_types,
+                  selectedTeachers: pinnable.location.teachers,
+                  restricted: pinnable.location.restricted,
+                  scheduling_restricted: pinnable.location.scheduling_restricted,
+                  timeLimit: pinnable.location.max_allowed_time,
+                  advOptState: this.overlayService.pageState.getValue().data.advancedOptions
+              };
+          }
       }
       this.initialData = _.cloneDeep(this.data);
       merge(this.form.valueChanges, this.change$).subscribe(() => {

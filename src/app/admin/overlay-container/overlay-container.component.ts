@@ -1,23 +1,25 @@
-import {Component, ElementRef, HostListener, Inject, OnInit, ViewChild} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
-import {BehaviorSubject, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
-import {delay, map, startWith, switchMap, tap} from 'rxjs/operators';
-import { Pinnable } from '../../models/Pinnable';
-import * as _ from 'lodash';
+import { Component, ElementRef, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { DomSanitizer } from '@angular/platform-browser';
+
+import { BehaviorSubject, forkJoin, fromEvent, merge, Observable, of, Subject, zip } from 'rxjs';
+import { delay, map, startWith, switchMap, filter } from 'rxjs/operators';
+
+import { NextStep } from '../../animations';
 import { User } from '../../models/User';
-import { HttpService } from '../../services/http-service';
+import { Pinnable } from '../../models/Pinnable';
 import { Location } from '../../models/Location';
-import * as XLSX from 'xlsx';
+import { HttpService } from '../../services/http-service';
 import { UserService } from '../../services/user.service';
-import {HallPassesService} from '../../services/hall-passes.service';
-import {LocationsService} from '../../services/locations.service';
-import {DomSanitizer} from '@angular/platform-browser';
-import {filter} from 'rxjs/internal/operators';
-import {OptionState} from './advanced-options/advanced-options.component';
-import {NextStep} from '../../animations';
-import {CreateFormService} from '../../create-hallpass-forms/create-form.service';
-import {OverlayDataService, RoomData} from './overlay-data.service';
+import { HallPassesService } from '../../services/hall-passes.service';
+import { LocationsService } from '../../services/locations.service';
+import { OptionState } from './advanced-options/advanced-options.component';
+import { CreateFormService } from '../../create-hallpass-forms/create-form.service';
+import { FolderData, OverlayDataService, Pages, RoomData } from './overlay-data.service';
+
+import * as XLSX from 'xlsx';
+import * as _ from 'lodash';
 
 export interface FormState {
     roomName?: string;
@@ -33,19 +35,6 @@ export interface FormState {
     advOptState?: OptionState;
 }
 
-export enum Pages {
-    NewRoom = 1,
-    EditRoom = 2,
-    NewFolder = 3,
-    EditFolder = 4,
-    NewRoomInFolder = 5,
-    EditRoomInFolder = 6,
-    ImportRooms = 7,
-    AddExistingRooms = 8,
-    BulkEditRooms = 9,
-    SettingRooms = 10
-}
-
 @Component({
   selector: 'app-overlay-container',
   templateUrl: './overlay-container.component.html',
@@ -57,6 +46,7 @@ export class OverlayContainerComponent implements OnInit {
 
   currentPage: number;
   roomData: RoomData;
+  folderData: FolderData;
 
   public roomList: {
     domElement: ElementRef,
@@ -874,8 +864,10 @@ export class OverlayContainerComponent implements OnInit {
       this.isChangeLocations.next(true);
       this.pinnableToDeleteIds = rooms.map(pin => +pin.id);
       const locationsToAdd = rooms.map(room => room.location);
-      this.selectedRooms = [...locationsToAdd, ...this.selectedRooms];
-      this.setLocation('newFolder');
+      this.folderData.roomsInFolder = [...locationsToAdd, ...this.folderData.roomsInFolder];
+      this.overlayService.back(this.folderData);
+      // this.selectedRooms = [...locationsToAdd, ...this.selectedRooms];
+      // this.setLocation('newFolder');
   }
   // advancedOptionsOpened(event: boolean, advancedOptionsRef: HTMLElement) {
   //
@@ -980,7 +972,8 @@ export class OverlayContainerComponent implements OnInit {
       this.formService.setFrameMotionDirection('back');
       setTimeout(() => {
         this.resetRoomImport();
-        return (this.overlayType === 'settingsRooms' ? (this.isEditRooms ? this.setLocation('newFolder') : this.setLocation('importRooms')) : this.setLocation('newFolder'));
+        this.overlayService.back(this.folderData);
+        // return (this.overlayType === 'settingsRooms' ? (this.isEditRooms ? this.setLocation('newFolder') : this.setLocation('importRooms')) : this.setLocation('newFolder'));
       }, 100);
     }
   }
@@ -1503,6 +1496,10 @@ export class OverlayContainerComponent implements OnInit {
 
   roomResult(data) {
       this.roomData = data;
+  }
+
+  folderResult(data) {
+      this.folderData = data;
   }
 
   catchFile(evt: DragEvent) {

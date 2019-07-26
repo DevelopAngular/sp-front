@@ -1,6 +1,9 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Pinnable} from '../../../models/Pinnable';
-import {bumpIn} from '../../../animations';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Pinnable } from '../../../models/Pinnable';
+import { bumpIn } from '../../../animations';
+import { FolderData } from '../overlay-data.service';
+
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-add-existing-room',
@@ -11,13 +14,16 @@ import {bumpIn} from '../../../animations';
 export class AddExistingRoomComponent implements OnInit {
 
   @Input() roomsInFolder;
-  @Input() pinnables: Pinnable[];
+  @Input() set data(items: Pinnable[]) {
+    this.pinnables = items;
+  }
   @Input() roomName: string;
 
   @Output() back = new EventEmitter();
   @Output() save = new EventEmitter();
 
   buttonDown: boolean;
+  pinnables: Pinnable[];
 
   constructor() { }
 

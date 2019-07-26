@@ -123,7 +123,6 @@ const appRoutes: Routes = [
     IntroDialogComponent,
     SchoolSignUpComponent,
     AccountsSetupComponent,
-    // SpDialogBoxComponent
   ],
   entryComponents: [
     ConsentMenuComponent,

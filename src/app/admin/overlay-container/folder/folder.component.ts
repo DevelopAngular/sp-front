@@ -1,15 +1,19 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
-import { FolderData, OverlayDataService } from '../overlay-data.service';
+import { merge, Subject, zip } from 'rxjs';
+
+import { Location } from '../../../models/Location';
+import { Pinnable } from '../../../models/Pinnable';
+import { LocationsService } from '../../../services/locations.service';
 import { OverlayContainerComponent } from '../overlay-container.component';
 import { HallPassesService } from '../../../services/hall-passes.service';
-import { Location } from '../../../models/Location';
-import { LocationsService } from '../../../services/locations.service';
-import {Pinnable} from '../../../models/Pinnable';
+import { FolderData, OverlayDataService, Pages } from '../overlay-data.service';
+import { CreateFormService } from '../../../create-hallpass-forms/create-form.service';
+
 import * as _ from 'lodash';
-import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-folder',
@@ -20,18 +24,32 @@ export class FolderComponent implements OnInit {
 
   @Input() form: FormGroup;
 
+  @Output() folderDataResult: EventEmitter<FolderData> = new EventEmitter<FolderData>();
+
   currentPage: number;
 
   pinnable: Pinnable;
 
   roomsImFolder: Location[] = [];
-  selectedRooms = []
+  selectedRooms = [];
+  selectedRoomToEdit;
 
-  folderData: FolderData = {
-    folderName: '',
-  };
+  folderName: string = '';
+
+  buttonsInFolder = [
+    { title: 'New Room', icon: './assets/Plus (White).svg', page: Pages.NewRoomInFolder },
+    { title: 'Import Rooms', icon: null, page: Pages.ImportRooms },
+    { title: 'Add Existing', icon: null, page: Pages.AddExistingRooms }
+  ];
+
+  buttonsWithSelectedRooms = [
+    { title: 'Bulk Edit Rooms', action: Pages.BulkEditRoomsInFolder, color: '#FFFFFF, #FFFFFF', textColor: '#1F195E', hover: '#FFFFFF'},
+    { title: 'Delete Rooms', action: 'delete', textColor: '#FFFFFF', color: '#DA2370,#FB434A', hover: '#DA2370'}
+  ];
 
   folderRoomsLoaded: boolean;
+
+  change$: Subject<any> = new Subject<any>();
 
   constructor(
       @Inject(MAT_DIALOG_DATA) public dialogData: any,
@@ -40,6 +58,7 @@ export class FolderComponent implements OnInit {
       private hallPassService: HallPassesService,
       private locationService: LocationsService,
       private sanitizer: DomSanitizer,
+      private formService: CreateFormService,
   ) { }
 
   get sortSelectedRooms() {
@@ -48,35 +67,68 @@ export class FolderComponent implements OnInit {
 
   ngOnInit() {
     this.currentPage = this.overlayService.pageState.getValue().currentPage;
+    const data = this.overlayService.pageState.getValue().data;
 
-    if (this.overlayService.pageState.getValue().data) {
-      this.pinnable = this.overlayService.pageState.getValue().data.pinnable;
-        this.folderData = {
-            folderName: this.pinnable.title
-        };
-        this.locationService.getLocationsWithCategory(this.pinnable.category)
-            .subscribe((res: Location[]) => {
-              this.roomsImFolder = res;
-              this.folderRoomsLoaded = true;
-                // this.folderRoomsLoaded = true;
-                // this.selectedRooms = res;
-                // if (this.dialogData['forceSelectedLocation']) {
-                //     this.setToEditRoom(this.dialogData['forceSelectedLocation']);
-                // }
-                console.log('My Data ===>>>>', this.folderData);
-            });
+    if (data) {
+        if (data.roomsInFolderLoaded) {
+            this.folderName = data.folderName;
+            this.roomsImFolder = data.roomsInFolder;
+            this.folderRoomsLoaded = true;
+        } else {
+            this.pinnable = data.pinnable;
+            this.folderName = this.pinnable.title;
+            this.locationService.getLocationsWithCategory(this.pinnable.category)
+                .subscribe((res: Location[]) => {
+                    this.roomsImFolder = res;
+                    this.folderRoomsLoaded = true;
+                    // if (this.dialogData['forceSelectedLocation']) {
+                    //     this.setToEditRoom(this.dialogData['forceSelectedLocation']);
+                    // }
+                });
+        }
+    } else {
+        this.folderRoomsLoaded = true;
     }
+
+    merge(this.form.get('folderName').valueChanges, this.change$)
+        .subscribe(() => {
+            this.folderDataResult.emit({
+                folderName: this.form.get('folderName').value === '' ? 'New Folder' : this.form.get('folderName').value,
+                roomsInFolder: this.roomsImFolder,
+                selectedRoomsInFolder: this.selectedRooms,
+                roomsInFolderLoaded: true,
+                selectedRoomToEdit: this.selectedRoomToEdit
+            });
+        });
+  }
+
+  stickyButtonClick(page) {
+      this.formService.setFrameMotionDirection('forward');
+      setTimeout(() => {
+          if (page === 'delete') {
+              console.log('DELETE');
+          } else {
+              this.overlayService.changePage(page, this.currentPage, {
+                  selectedRoomsInFolder: this.selectedRooms
+              });
+          }
+          this.change$.next();
+      }, 100);
   }
 
   isSelected(room) {
-      return this.roomsImFolder.find((item) => {
+      return this.selectedRooms.find((item) => {
           return room.id === item.id;
       });
   }
 
-  selectedRoomsEvent(event, room, all?: boolean) {
+  setToEditRoom(room) {
+      this.selectedRoomToEdit = room;
+      this.change$.next();
+  }
 
-      // this.formService.setFrameMotionDirection('forward');
+  selectedRoomsEvent(event, room, all?: boolean) {
+      this.formService.setFrameMotionDirection('forward');
       setTimeout(() => {
           if (all) {
               if (event.checked) {
@@ -110,6 +162,21 @@ export class FolderComponent implements OnInit {
       } else {
           return '#FFFFFF';
       }
+  }
+
+  deleteRoom() {
+    const pinnable = this.overlayService.pageState.getValue().data.pinnable;
+    const deletions = [
+        this.hallPassService.deletePinnable(pinnable.id)
+    ];
+
+    if (pinnable.location) {
+        deletions.push(this.locationService.deleteLocation(pinnable.location.id));
+    }
+
+    zip(...deletions).subscribe(res => {
+        this.dialogRef.close();
+    });
   }
 
 }

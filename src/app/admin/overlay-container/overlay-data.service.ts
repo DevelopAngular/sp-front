@@ -4,7 +4,6 @@ import { BehaviorSubject, Subject } from 'rxjs';
 
 import { User } from '../../models/User';
 import { Pinnable } from '../../models/Pinnable';
-import { Location } from '../../models/Location';
 import { OptionState } from './advanced-options/advanced-options.component';
 
 export interface PageState {
@@ -12,9 +11,27 @@ export interface PageState {
     previousPage: number;
     data: {
       pinnable: Pinnable,
-      advancedOptions: OptionState
+      advancedOptions: OptionState,
+      roomsInFolder;
+      selectedRoomsInFolder;
+      roomsInFolderLoaded: boolean;
+      folderName: string;
     };
 }
+
+export enum Pages {
+    NewRoom = 1,
+    EditRoom = 2,
+    NewFolder = 3,
+    EditFolder = 4,
+    NewRoomInFolder = 5,
+    EditRoomInFolder = 6,
+    ImportRooms = 7,
+    AddExistingRooms = 8,
+    BulkEditRooms = 9,
+    BulkEditRoomsInFolder = 10
+}
+
 
 export interface RoomData {
     roomName: string;
@@ -29,6 +46,10 @@ export interface RoomData {
 
 export interface FolderData {
     folderName: string;
+    roomsInFolder: any[];
+    selectedRoomsInFolder: any[];
+    roomsInFolderLoaded: boolean;
+    selectedRoomToEdit: any;
 }
 
 @Injectable({
@@ -57,5 +78,9 @@ export class OverlayDataService {
           previousPage: previous,
           data: data
       });
+  }
+
+  back(data) {
+      this.changePage(this.pageState.getValue().previousPage, this.pageState.getValue().currentPage, data);
   }
 }

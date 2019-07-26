@@ -27,6 +27,8 @@ import { AdvancedOptionsComponent } from '../overlay-container/advanced-options/
 import { AddExistingRoomComponent } from '../overlay-container/add-existing-room/add-existing-room.component';
 import { RoomComponent } from '../overlay-container/room/room.component';
 import { FolderComponent } from '../overlay-container/folder/folder.component';
+import { NewRoomInFolderComponent } from '../overlay-container/new-room-in-folder/new-room-in-folder.component';
+import { EditRoomInFolderComponent } from '../overlay-container/edit-room-in-folder/edit-room-in-folder.component';
 
 @NgModule({
   imports: [
@@ -57,7 +59,9 @@ import { FolderComponent } from '../overlay-container/folder/folder.component';
       AdvancedOptionsComponent,
       AddExistingRoomComponent,
       RoomComponent,
-      FolderComponent
+      FolderComponent,
+      NewRoomInFolderComponent,
+      EditRoomInFolderComponent
 
   ],
   exports: [
@@ -75,7 +79,9 @@ import { FolderComponent } from '../overlay-container/folder/folder.component';
       ColorComponent,
       AddExistingRoomComponent,
       RoomComponent,
-      FolderComponent
+      FolderComponent,
+      NewRoomInFolderComponent,
+      EditRoomInFolderComponent
   ],
   entryComponents: [
       OverlayContainerComponent,
