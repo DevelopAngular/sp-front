@@ -4,92 +4,27 @@ import {
   Component,
   ElementRef,
   EventEmitter,
-  Input, NgZone,
+  Input,
   OnInit,
-  Output,
-  ViewChild
+  Output, QueryList,
+  ViewChild,
+  ViewChildren
 } from '@angular/core';
-import {DataSource, SelectionModel} from '@angular/cdk/collections';
-import {MatSort, MatTableDataSource} from '@angular/material';
-import {DarkThemeSwitch} from '../../dark-theme-switch';
-import {DomSanitizer} from '@angular/platform-browser';
+import { SelectionModel } from '@angular/cdk/collections';
+import {MatRow, MatSort, MatTableDataSource} from '@angular/material';
+import { DarkThemeSwitch } from '../../dark-theme-switch';
+import { DomSanitizer } from '@angular/platform-browser';
 import {BehaviorSubject, Observable} from 'rxjs';
 
 import * as moment from 'moment';
 import {SP_ARROW_BLUE_GRAY, SP_ARROW_DOUBLE_BLUE_GRAY} from '../pdf-generator.service';
-import {CdkScrollable, ScrollDispatcher} from '@angular/cdk/overlay';
-import {CdkVirtualScrollViewport, FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';
-import {map} from 'rxjs/operators';
-
-const PAGESIZE = 20;
-const ROW_HEIGHT = 48;
-
-export class GridTableDataSource extends DataSource<any> {
-  private _data: any[];
-
-  get allData(): any[] {
-    return this._data.slice();
-  }
-
-  set allData(data: any[]) {
-    this._data = data;
-    this.viewport.scrollToOffset(0);
-    this.viewport.setTotalContentSize(this.itemSize * data.length);
-    this.visibleData.next(this._data.slice(0, PAGESIZE));
-  }
-
-  sort: MatSort | null;
-
-  offset = 0;
-  offsetChange = new BehaviorSubject(0);
-  constructor(initialData: any[], private viewport: CdkVirtualScrollViewport, private itemSize: number, sorting: MatSort) {
-    super();
-    this._data = initialData;
-    this.sort = sorting;
-    this.viewport.elementScrolled().subscribe((ev: any) => {
-      const start = Math.floor(ev.currentTarget.scrollTop / ROW_HEIGHT);
-      const prevExtraData = start > 5 ? 5 : 0;
-      // const prevExtraData = 0;
-      const slicedData = this._data.slice(start - prevExtraData, start + (PAGESIZE - prevExtraData));
-      this.offset = ROW_HEIGHT * (start - prevExtraData);
-      this.viewport.setRenderedContentOffset(this.offset);
-      this.offsetChange.next(this.offset)
-      this.visibleData.next(slicedData);
-    });
-  }
-
-  private readonly visibleData: BehaviorSubject<any[]> = new BehaviorSubject([]);
-
-  connect(collectionViewer: import('@angular/cdk/collections').CollectionViewer): Observable<any[] | ReadonlyArray<any>> {
-    return this.visibleData;
-  }
-
-  disconnect(collectionViewer: import('@angular/cdk/collections').CollectionViewer): void {
-  }
-}
-
-/**
- * Virtual Scroll Strategy
- */
-export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy {
-  constructor() {
-    super(ROW_HEIGHT, 1000, 2000);
-  }
-
-  attach(viewport: CdkVirtualScrollViewport): void {
-    this.onDataLengthChanged();
-  }
-}
-
-
+import {test} from '@angular-devkit/core/src/virtual-fs/host';
 
 @Component({
   selector: 'app-data-table',
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [{provide: VIRTUAL_SCROLL_STRATEGY, useClass: CustomVirtualScrollStrategy}],
-
 })
 export class DataTableComponent implements OnInit {
 
@@ -98,28 +33,23 @@ export class DataTableComponent implements OnInit {
   @Input() isCheckbox: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   @Input() isAllowedSelectRow: boolean = false;
   @Input() set data(value: any[]) {
-    this._data = [...value];
-      this.dataSource = new GridTableDataSource(this._data, this.viewport, 38, this.sort);
-    this.dataSource.offsetChange.subscribe(offset => {
-      this.placeholderHeight = offset;
-    })
-    this.dataSource.allData = this._data;
-      // this.dataSource = new MatTableDataSource(this._data);
-      // this.dataSource.sort = this.sort;
-      // this.dataSource.sortingDataAccessor = (item, property) => {
-      //     switch (property) {
-      //         case 'Name':
-      //             return item[property].split(' ')[1];
-      //         case 'Date & Time':
-      //             return Math.min(moment().diff(item['date'], 'days'));
-      //         case 'Duration':
-      //             return item['sortDuration'].as('milliseconds');
-      //         case 'Profile(s)':
-      //             return item[property].map(i => i.title).join('');
-      //         default:
-      //             return item[property];
-      //     }
-      // };
+      this._data = [...value];
+      this.dataSource = new MatTableDataSource(this._data);
+      this.dataSource.sort = this.sort;
+      this.dataSource.sortingDataAccessor = (item, property) => {
+          switch (property) {
+              case 'Name':
+                  return item[property].split(' ')[1];
+              case 'Date & Time':
+                  return Math.min(moment().diff(item['date'], 'days'));
+              case 'Duration':
+                  return item['sortDuration'].as('milliseconds');
+              case 'Profile(s)':
+                  return item[property].map(i => i.title).join('');
+              default:
+                  return item[property];
+          }
+      };
   }
   @Input() disallowHover: boolean = false;
   @Input() backgroundColor: string = 'transparent';
@@ -132,15 +62,10 @@ export class DataTableComponent implements OnInit {
   @Output() selectedCell: EventEmitter<any> = new EventEmitter<any>();
 
   @ViewChild(MatSort) sort: MatSort;
-  @ViewChild('stickyHeader') stickyHeader: ElementRef;
-  @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport;
-
 
   @Input() displayedColumns: string[];
   columnsToDisplay: string[];
-  // dataSource: MatTableDataSource<any[]>;
-  // dataSource: any[];
-  dataSource: GridTableDataSource;
+  dataSource: MatTableDataSource<any[]>;
   selection = new SelectionModel<any>(true, []);
 
   hovered: boolean;
@@ -149,40 +74,16 @@ export class DataTableComponent implements OnInit {
 
   darkMode$: Observable<boolean>;
 
-  stickyOffsetSubject = new BehaviorSubject<string>('');
-  stickyOffset$: Observable<string> = this.stickyOffsetSubject.asObservable();
-
-  public _data: any[] = [];
-
-
-  placeholderHeight = 0;
-
+  private _data: any[] = [];
 
   constructor(
-    private _ngZone: NgZone,
     private darkTheme: DarkThemeSwitch,
-    public scrollDispatcher: ScrollDispatcher) {
+  ) {
     this.darkMode$ = this.darkTheme.isEnabled$.asObservable();
   }
 
   ngOnInit() {
     console.log(this._data);
-    this.marginTopStickyHeader = '0px';
-    // this
-    //   .table
-    //   .elementScrolled()
-    //   .subscribe(data => {
-    //       console.log(this.table.getOffsetToRenderedContentStart());
-    //       this._ngZone.run(() => {
-    //         const offset = this.table.getOffsetToRenderedContentStart();
-    //         this.stickyOffsetSubject.next(`-${offset}px`);
-    //       });
-    //     }
-    //   );
-    // this.stickyOffset$.subscribe((res) => {
-    //   console.log(res);
-    //   this.stickyHeader.nativeElement.style.transform = res;
-    // })
       if (!this.displayedColumns) {
         this.displayedColumns = Object.keys(this._data[0]);
       }
@@ -195,9 +96,7 @@ export class DataTableComponent implements OnInit {
       }
     });
   }
-  placeholderWhen(index: number, _: any) {
-    return index == 0;
-  }
+
   // onHover(evt: MouseEvent) {
   //   console.log((evt.target as HTMLElement).dataset);
     // const target = (evt.target as HTMLElement).closest('.mat-row') as HTMLElement ;
