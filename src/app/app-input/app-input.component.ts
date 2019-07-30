@@ -55,7 +55,7 @@ export class AppInputComponent implements OnInit {
     }
 
     ngOnInit() {
-      console.log('right_icon ===> ', this.isFocus);
+      // console.log('right_icon ===> ', this.isFocus);
       of(null).pipe(
         delay(1000),
         switchMap(() => {

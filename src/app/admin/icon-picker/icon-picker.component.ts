@@ -53,7 +53,7 @@ export class IconPickerComponent implements OnInit {
         }),
       )
       .subscribe(res => {
-        console.log(res, this.selectedIconLocalUrl);
+        // console.log(res, this.selectedIconLocalUrl);
         this.icons = res;
           if (!res.length || !this.selectedIconLocalUrl) {
             this.selectedIconLocalUrl = this.selectedIconPicker ? this.selectedIconPicker.replace('FFFFFF', '1F195E') : '';

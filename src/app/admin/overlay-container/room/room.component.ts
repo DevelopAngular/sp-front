@@ -5,7 +5,7 @@ import { MatDialogRef } from '@angular/material';
 import { merge, Subject, zip } from 'rxjs';
 
 import {OverlayDataService, Pages, RoomData} from '../overlay-data.service';
-import { OptionState } from '../advanced-options/advanced-options.component';
+import {OptionState, ValidButtons} from '../advanced-options/advanced-options.component';
 
 import { HallPassesService } from '../../../services/hall-passes.service';
 import { LocationsService } from '../../../services/locations.service';
@@ -26,9 +26,9 @@ export class RoomComponent implements OnInit {
   @Output() roomDataResult: EventEmitter<RoomData> = new EventEmitter<RoomData>();
 
   data: RoomData = {
-      roomName: '',
+      roomName: 'New Room',
       roomNumber: '',
-      timeLimit: '',
+      timeLimit: 0,
       selectedTeachers: [],
       travelType: [],
       restricted: null,
@@ -43,6 +43,10 @@ export class RoomComponent implements OnInit {
 
   currentPage: number;
   tooltipText;
+
+  advOptionsValidButtons: ValidButtons;
+
+  roomValidButtons: ValidButtons;
 
   change$: Subject<any> = new Subject();
 
@@ -124,12 +128,49 @@ export class RoomComponent implements OnInit {
       }
       this.initialData = _.cloneDeep(this.data);
       merge(this.form.valueChanges, this.change$).subscribe(() => {
+          // console.log('Initial', this.initialData);
+          // console.log('Current', this.data);
+          this.checkValidRoomOptions();
 
-          console.log('Lodash Result ===>>>', _.isEqual(this.initialData, this.data));
+          // console.log('Lodash Result ===>>>', _.isEqual(_.omit(this.initialData, 'advOptState'), _.omit(this.data, 'advOptState')));
           setTimeout(() => {
               this.roomDataResult.emit(this.data);
           }, 10);
       });
+  }
+
+  checkValidRoomOptions() {
+      if ( _.isEqual(_.omit(this.initialData, 'advOptState'), _.omit(this.data, 'advOptState'))) {
+          if (this.form.valid) {
+              this.roomValidButtons = {
+                  publish: false,
+                  incomplete: false,
+                  cancel: false
+              };
+          } else {
+              this.roomValidButtons = {
+                  publish: false,
+                  incomplete: true,
+                  cancel: false
+              };
+          }
+      } else {
+        if (this.form.valid) {
+            this.roomValidButtons = {
+                publish: true,
+                incomplete: false,
+                cancel: true
+            };
+        } else {
+            this.roomValidButtons = {
+                publish: false,
+                incomplete: true,
+                cancel: true
+            };
+        }
+      }
+
+      console.log('Rooms Predicate ==>>', this.roomValidButtons);
   }
 
   selectTeacherEvent(teachers) {
@@ -168,8 +209,10 @@ export class RoomComponent implements OnInit {
     }
   }
 
-  advancedOptions(options: OptionState) {
+  advancedOptions({options, validButtons}) {
       this.data.advOptState = options;
+      // console.log('Buttons ===>>', validButtons);
+      this.advOptionsValidButtons = validButtons;
       this.change$.next();
   }
 
