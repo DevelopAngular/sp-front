@@ -16,9 +16,9 @@
       <div class="cancel-button" [style.color]="titleColor" *ngIf="!backButtonState && !hideHeaderIcon" (click)="back()">Cancel</div>
     </div>
 
-    <div class="title" [style.color]="titleColor" *ngIf="overlayType === 'newRoom' || overlayType === 'editRoom'">
+    <div class="title" [style.color]="titleColor">
       <img draggable="false" class="title-icon" *ngIf="titleIcon" [src]="titleIcon | resolveAsset">
-      {{ roomName }}
+      {{ roomTitle }}
     </div>
 
     <div class="right-button">
@@ -50,6 +50,10 @@
         <app-new-room-in-folder [form]="form" (back)="back(false)"></app-new-room-in-folder>
       </div>
 
+      <div [@NextStep]="{ value: '', params: frameMotion$ | async}" *ngIf="currentPage === 6">
+        <app-edit-room-in-folder [form]="form" (back)="back(false)"></app-edit-room-in-folder>
+      </div>
+
       <div [@NextStep]="{ value: '', params: frameMotion$ | async}" *ngIf="currentPage === 8">
         <div class="existing-rooms">
           <app-add-existing-room
@@ -62,6 +66,14 @@
         </div>
       </div>
 
+      <div [@NextStep]="{ value: '', params: frameMotion$ | async}" *ngIf="currentPage === 9">
+        <app-bulk-edit-rooms [form]="form"></app-bulk-edit-rooms>
+      </div>
+
+      <div [@NextStep]="{ value: '', params: frameMotion$ | async}" *ngIf="currentPage === 10">
+        <app-bulk-edit-rooms-in-folder [form]="form" (back)="back(false)"></app-bulk-edit-rooms-in-folder>
+      </div>
+
     </div>
 
     <mat-divider [vertical]="true"></mat-divider>
@@ -69,7 +81,7 @@
     <div class="right-block">
       <div class="right-content">
         <div class="appearance-content" *ngIf="currentPage !== 9">
-          <div class="inactive" *ngIf="hideAppearance"></div>
+          <div class="inactive" *ngIf="disabledRightBlock"></div>
           <div class="right-content-title" [ngStyle]="{'color':  color_profile && selectedIcon ? '#1F195E' : '#8e8e93' }">Appearance</div>
           <div class="color-picker">
             <app-color-pallet-picker [selectedColorProfile]="color_profile" (selectedEvent)="changeColor($event)"></app-color-pallet-picker>

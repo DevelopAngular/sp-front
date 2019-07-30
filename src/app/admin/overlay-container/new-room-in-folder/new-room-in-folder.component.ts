@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import {RoomData} from '../overlay-data.service';
+import { RoomData } from '../overlay-data.service';
 
 @Component({
   selector: 'app-new-room-in-folder',

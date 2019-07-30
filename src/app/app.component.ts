@@ -88,7 +88,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log('Initial location path ===>', );
+    // console.log('Initial location path ===>', );
 
     INITIAL_LOCATION_PATHNAME.next(window.location.pathname);
 

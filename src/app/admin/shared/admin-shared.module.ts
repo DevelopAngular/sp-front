@@ -29,6 +29,8 @@ import { RoomComponent } from '../overlay-container/room/room.component';
 import { FolderComponent } from '../overlay-container/folder/folder.component';
 import { NewRoomInFolderComponent } from '../overlay-container/new-room-in-folder/new-room-in-folder.component';
 import { EditRoomInFolderComponent } from '../overlay-container/edit-room-in-folder/edit-room-in-folder.component';
+import { BulkEditRoomsComponent } from '../overlay-container/bulk-edit-rooms/bulk-edit-rooms.component';
+import { BulkEditRoomsInFolderComponent } from '../overlay-container/bulk-edit-rooms-in-folder/bulk-edit-rooms-in-folder.component';
 
 @NgModule({
   imports: [
@@ -61,7 +63,9 @@ import { EditRoomInFolderComponent } from '../overlay-container/edit-room-in-fol
       RoomComponent,
       FolderComponent,
       NewRoomInFolderComponent,
-      EditRoomInFolderComponent
+      EditRoomInFolderComponent,
+      BulkEditRoomsComponent,
+      BulkEditRoomsInFolderComponent
 
   ],
   exports: [
@@ -81,7 +85,9 @@ import { EditRoomInFolderComponent } from '../overlay-container/edit-room-in-fol
       RoomComponent,
       FolderComponent,
       NewRoomInFolderComponent,
-      EditRoomInFolderComponent
+      EditRoomInFolderComponent,
+      BulkEditRoomsComponent,
+      BulkEditRoomsInFolderComponent
   ],
   entryComponents: [
       OverlayContainerComponent,

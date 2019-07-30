@@ -12,6 +12,7 @@ import { LocationsService } from '../../../services/locations.service';
 import { OverlayContainerComponent } from '../overlay-container.component';
 
 import * as _ from 'lodash';
+import {Location} from '../../../models/Location';
 
 @Component({
   selector: 'app-room',
@@ -107,14 +108,27 @@ export class RoomComponent implements OnInit {
                   timeLimit: pinnable.location.max_allowed_time,
                   advOptState: this.overlayService.pageState.getValue().data.advancedOptions
               };
+          } else if (this.currentPage === Pages.EditRoomInFolder) {
+              const data: Location = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0];
+              this.data = {
+                  roomName: data.title,
+                  roomNumber: data.room,
+                  timeLimit: data.max_allowed_time,
+                  selectedTeachers: data.teachers,
+                  travelType: data.travel_types,
+                  restricted: data.restricted,
+                  scheduling_restricted: data.scheduling_restricted,
+                  advOptState: this.overlayService.pageState.getValue().data.advancedOptions
+              };
           }
       }
       this.initialData = _.cloneDeep(this.data);
       merge(this.form.valueChanges, this.change$).subscribe(() => {
 
           console.log('Lodash Result ===>>>', _.isEqual(this.initialData, this.data));
-
-          this.roomDataResult.emit(this.data);
+          setTimeout(() => {
+              this.roomDataResult.emit(this.data);
+          }, 10);
       });
   }
 

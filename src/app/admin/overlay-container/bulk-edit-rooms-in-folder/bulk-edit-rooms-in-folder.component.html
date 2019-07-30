@@ -2,14 +2,14 @@
   <div class="new-room-in-folder sticky-header">
     <div class="new-room-in-folder-header">
       <div class="back-button">
-        <app-icon-button [size]="20" [srcString]="'Chevron Left'" (clickEvent)="goBack(false)"></app-icon-button>
+        <app-icon-button [size]="20" [srcString]="'Chevron Left'" (clickEvent)="goBack()"></app-icon-button>
       </div>
       <div class="cancel-button-in-folder-header"
            (click)="cancel()"
            *ngIf="false">
         Cancel</div>
       <div class="room-in-folder-title-inactive">
-        {{ roomInFolderData.roomName }}
+        Editing {{ selectedRoomsInFolder.length }} Rooms
       </div>
       <div class="header-in-folder-button">
         <app-gradient-button
@@ -26,7 +26,12 @@
       </div>
     </div>
   </div>
+
+  <div class="info-text">
+    Any change will override the previous setting.
+  </div>
+
   <div class="content">
-    <app-room [form]="form" (roomDataResult)="roomResult($event)"></app-room>
+    <app-room [form]="form"></app-room>
   </div>
 </div>

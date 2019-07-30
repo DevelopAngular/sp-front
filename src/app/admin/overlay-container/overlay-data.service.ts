@@ -13,7 +13,7 @@ export interface PageState {
       pinnable: Pinnable,
       advancedOptions: OptionState,
       roomsInFolder;
-      selectedRoomsInFolder;
+      selectedRoomsInFolder: any[];
       roomsInFolderLoaded: boolean;
       folderName: string;
     };

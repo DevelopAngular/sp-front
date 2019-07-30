@@ -1,0 +1,85 @@
+@import '../../../../sp-colors';
+
+.wrapper {
+  position: relative;
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  .slide {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .new-room-in-folder {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    background-color: #FCFDFF;
+    min-height: 78px;
+    overflow: hidden;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+
+    .new-room-in-folder-header {
+      display: flex;
+      justify-content: center;
+      box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+      align-items: center;
+      height: 78px;
+      width: 100%;
+      position: relative;
+
+      .room-in-folder-title-inactive {
+        font-weight: bold;
+        font-size: 16px;
+        color: #7F879D;
+      }
+
+      .room-in-folder-title-active {
+        font-weight: bold;
+        font-size: 16px;
+        color: $navy;
+      }
+
+      .header-in-folder-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 41px;
+        position: absolute;
+        right: 20px;
+      }
+
+      .back-button {
+        width: 123px;
+        height: 78px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        position: absolute;
+        left: 0;
+      }
+
+      .cancel-button-in-folder-header {
+        font-weight: bold;
+        cursor: pointer;
+        color: $navy;
+        position: absolute;
+        left: 25px;
+      }
+
+    }
+  }
+
+  .info-text {
+    color: $blue-gray;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 20px;
+  }
+}

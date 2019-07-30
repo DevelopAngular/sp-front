@@ -240,17 +240,6 @@ export class OverlayContainerComponent implements OnInit {
       future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }
   };
 
-  buttonsInFolder = [
-      { title: 'New Room', icon: './assets/Plus (White).svg', location: 'newRoomInFolder'},
-      { title: 'Import Rooms', icon: null, location: 'importRooms'},
-      { title: 'Add Existing', icon: null, location: 'addExisting'}
-  ];
-  buttonsWithSelectedRooms = [
-      { title: 'Bulk Edit Rooms', action: 'edit', color: '#FFFFFF, #FFFFFF', textColor: '#1F195E', hover: '#FFFFFF'},
-      // { title: 'Remove From Folder', action: 'remove_from_folder', textColor: '#1F195E', color: '#FFFFFF, #FFFFFF', hover: '#FFFFFF'},
-      { title: 'Delete Rooms', action: 'delete', textColor: '#FFFFFF', color: '#DA2370,#FB434A', hover: '#DA2370'}
-  ];
-
   unknownEmails: any[] = [];
   uploadingProgress: {
     inProgress: boolean,
@@ -262,12 +251,6 @@ export class OverlayContainerComponent implements OnInit {
     percent: 0
   };
   frameMotion$: BehaviorSubject<any>;
-
-
-  @HostListener('scroll', ['$event'])
-  onScroll(event) {
-      // console.log(event.target.scrollTop);
-  }
 
   constructor(
       @Inject(MAT_DIALOG_DATA) public dialogData: any,
@@ -289,7 +272,6 @@ export class OverlayContainerComponent implements OnInit {
         case 'newRoom':
           this.overlayService.changePage(Pages.NewRoom, 0, null);
           this.titleColor = '#1F195E';
-          this.roomName = 'New Room';
           break;
         case 'newFolder':
             if (!!this.pinnable) {
@@ -297,7 +279,6 @@ export class OverlayContainerComponent implements OnInit {
                 this.overlayService.changePage(Pages.EditFolder, 0, {
                     pinnable: this.pinnable,
                 });
-                this.folderName = this.pinnable.title;
                 this.color_profile = this.pinnable.color_profile;
                 this.selectedIcon = this.pinnable.icon;
                 this.titleIcon = this.pinnable.icon;
@@ -305,7 +286,6 @@ export class OverlayContainerComponent implements OnInit {
             }
           this.overlayService.changePage(Pages.NewFolder, 0, null);
           this.titleColor = '#1F195E';
-          this.folderName = 'New Folder';
           this.folderRoomsLoaded = true;
           break;
         case 'editRoom':
@@ -314,23 +294,10 @@ export class OverlayContainerComponent implements OnInit {
                 advancedOptions: this.generateAdvOptionsModel(this.pinnable.location)
             });
             colors = this.pinnable.color_profile.gradient_color;
-            // this.roomName = this.pinnable.title;
-            // this.timeLimit = this.pinnable.location.max_allowed_time;
-            // this.roomNumber = this.pinnable.location.room;
-            // this.selectedTeachers = this.pinnable.location.teachers;
-            // this.nowRestriction = this.pinnable.location.restricted;
-            // this.futureRestriction = this.pinnable.location.scheduling_restricted;
-            // this.color_profile = this.pinnable.color_profile;
-            // this.selectedIcon = this.pinnable.icon;
-            // this.travelType = this.pinnable.location.travel_types;
-            // this.titleIcon = this.pinnable.icon;
-            // this.generateAdvOptionsModel(this.pinnable.location);
             break;
         case 'edit':
           this.overlayService.changePage(Pages.BulkEditRooms, 0, null);
           this.titleColor = '#1F195E';
-          this.folderName = 'Bulk Edit Rooms';
-          this.bulkWarningText = !!_.find<Location | Pinnable>(this.selectedRooms, {type: 'category'});
           break;
     }
     this.currentPage = this.overlayService.pageState.getValue().currentPage;
@@ -342,6 +309,27 @@ export class OverlayContainerComponent implements OnInit {
       this.form.get('roomNumber').valid &&
       this.form.get('timeLimit').valid;
 
+  }
+
+  get roomTitle() {
+      if (this.currentPage === Pages.NewRoom ||
+          this.currentPage === Pages.EditRoom) {
+          return this.roomData ? this.roomData.roomName : null;
+      } else {
+          if (this.currentPage === Pages.BulkEditRooms) {
+              return 'Bulk Edit Rooms';
+          } else {
+              return this.folderData ? this.folderData.folderName : null;
+          }
+      }
+  }
+
+  get disabledRightBlock() {
+      return this.currentPage === Pages.NewRoomInFolder ||
+          this.currentPage === Pages.EditRoomInFolder ||
+          this.currentPage === Pages.ImportRooms ||
+          this.currentPage === Pages.BulkEditRoomsInFolder ||
+          this.currentPage === Pages.AddExistingRooms;
   }
 
   get showPublishNewRoom() {
@@ -562,7 +550,26 @@ export class OverlayContainerComponent implements OnInit {
 
       this.getHeaderData();
 
-      this.buildInitialState();
+      if (this.currentPage === Pages.EditFolder || this.currentPage === Pages.EditRoom || this.currentPage === Pages.EditRoomInFolder) {
+          this.icons$ = merge(
+              this.form.get('roomName').valueChanges.pipe(startWith(this.form.get('roomName').value)),
+              this.form.get('folderName').valueChanges.pipe(startWith(this.form.get('folderName').value))
+          )
+              .pipe(
+                  filter(value => value),
+                  switchMap((value: string) => this.http.searchIcons(value.toLowerCase()))
+              );
+      } else {
+          this.icons$ = merge(
+              this.roomNameBlur$,
+              this.folderNameBlur$
+          ).pipe(
+              filter(value => !!value),
+              switchMap((value: string) => this.http.searchIcons(value.toLowerCase()))
+          );
+      }
+
+      // this.buildInitialState();
 
       this.form.valueChanges.subscribe(res => {
           if (!!res.file || !!res.roomName || !!res.folderName || !!res.roomNumber || !!res.timeLimit) {
@@ -576,30 +583,10 @@ export class OverlayContainerComponent implements OnInit {
               this.isChangeStateInFolder = false;
           }
       });
-      if ( this.isEditFolder || (this.overlayType === 'editRoom') || (this.editRoomInFolder)) {
-        this.icons$ = merge(
-          this.form.get('roomName').valueChanges.pipe(startWith(this.form.get('roomName').value)),
-          this.form.get('folderName').valueChanges.pipe(startWith(this.form.get('folderName').value))
-        )
-        .pipe(
-          filter(value => value),
-          switchMap((value: string) => this.http.searchIcons(value.toLowerCase()))
-        );
-      } else {
-        this.icons$ = merge(
-          this.roomNameBlur$,
-          this.folderNameBlur$
-        ).pipe(
-          filter(value => !!value),
-          switchMap((value: string) => this.http.searchIcons(value.toLowerCase()))
-        );
-      }
   }
 
   buildForm() {
     this.form = new FormGroup({
-        // isEdit: new FormControl(true),
-        // file: new FormControl(),
         roomName: new FormControl('',
             [Validators.required, Validators.maxLength(15)],
             this.uniqueRoomNameValidator.bind(this)),
@@ -672,26 +659,26 @@ export class OverlayContainerComponent implements OnInit {
   uniqueRoomNameValidator(control: AbstractControl) {
       return this.locationService.checkLocationName(control.value)
           .pipe(map((res: any) => {
-              if (this.overlayType === 'newRoom' || (this.overlayType === 'newRoomInFolder' && !this.editRoomInFolder)) {
+              if (this.currentPage === Pages.NewRoom || Pages.NewRoomInFolder) {
                   return res.title_used ? { room_name: true } : null;
               }
               return res.title_used &&
-              (this.editRoomInFolder ?
-                  this.currentLocationInEditRoomFolder.title : this.pinnable.location.title) !== this.roomName ? { room_name: true } : null;
+              (this.currentPage === Pages.EditRoomInFolder ?
+                  this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0].title : this.pinnable.location.title) !== this.roomData.roomName ? { room_name: true } : null;
           }));
   }
 
-  uniqueRoomNumberValidator(control: AbstractControl) {
-      return this.locationService.checkLocationNumber(control.value)
-          .pipe(map((res: any) => {
-              if (this.overlayType === 'newRoom' || (this.overlayType === 'newRoomInFolder' && !this.editRoomInFolder)) {
-                  return res.title_used ? { room_number: true } : null;
-              }
-              return res.title_used &&
-              (this.editRoomInFolder ?
-                  this.currentLocationInEditRoomFolder.room : this.pinnable.location.room) !== this.roomNumber ? { room_number: true } : null;
-          }));
-  }
+  // uniqueRoomNumberValidator(control: AbstractControl) {
+  //     return this.locationService.checkLocationNumber(control.value)
+  //         .pipe(map((res: any) => {
+  //             if (this.overlayType === 'newRoom' || (this.overlayType === 'newRoomInFolder' && !this.editRoomInFolder)) {
+  //                 return res.title_used ? { room_number: true } : null;
+  //             }
+  //             return res.title_used &&
+  //             (this.editRoomInFolder ?
+  //                 this.currentLocationInEditRoomFolder.room : this.pinnable.location.room) !== this.roomNumber ? { room_number: true } : null;
+  //         }));
+  // }
 
   uniqueFolderNameValidator(control: AbstractControl) {
       return this.hallPassService.checkPinnableName(control.value)
@@ -722,60 +709,60 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   changeState() {
-    this.isChangeState = true;
-    if (this.overlayType === 'editRoom' || (this.isEditFolder && this.overlayType !== 'newRoomInFolder') || this.editRoomInFolder) {
-        const initState = this.initialState;
-        const currState: FormState = {
-            roomName: this.roomName,
-            folderName: this.folderName,
-            roomNumber: this.roomNumber,
-            restricted: this.nowRestriction,
-            scheduling_restricted: this.futureRestriction,
-            travel_type: this.travelType,
-            teachers: this.selectedTeachers.map(t => +t.id),
-            color: this.overlayType === 'editRoom' || this.isEditFolder ? this.color_profile.id : null,
-            icon: this.overlayType === 'editRoom' || this.isEditFolder ? this.selectedIcon.inactive_icon : null,
-            timeLimit: +this.timeLimit,
-            advOptState: this.advOptState
-        };
-        const status = [];
-        status.push(currState.roomName === initState.roomName);
-        status.push(currState.roomNumber === initState.roomNumber);
-        status.push(currState.restricted === initState.restricted);
-        status.push(currState.scheduling_restricted === initState.scheduling_restricted);
-        status.push(_.isEqual(currState.teachers, initState.teachers));
-        if (currState.folderName && initState.folderName) {
-            status.push(currState.folderName === initState.folderName);
-        }
-        if (currState.color && initState.color) {
-            status.push(currState.color === initState.color);
-        }
-        if (currState.timeLimit && initState.timeLimit) {
-            status.push(currState.timeLimit === initState.timeLimit);
-        }
-        if (currState.travel_type && initState.travel_type) {
-            status.push(_.isEqual(currState.travel_type.sort(), initState.travel_type.sort()));
-        }
-        if (currState.icon && initState.icon) {
-            status.push(currState.icon === initState.icon);
-        }
-        if (currState.advOptState && initState.advOptState && this.advOptValid) {
-            status.push(currState.advOptState.now.state === initState.advOptState.now.state);
-            status.push(currState.advOptState.future.state === initState.advOptState.future.state);
-            status.push(currState.advOptState.now.data.any_teach_assign === initState.advOptState.now.data.any_teach_assign);
-            status.push(currState.advOptState.now.data.all_teach_assign === initState.advOptState.now.data.all_teach_assign);
-            status.push(_.isEqual(currState.advOptState.now.data.selectedTeachers, initState.advOptState.now.data.selectedTeachers));
-            status.push(currState.advOptState.future.data.any_teach_assign === initState.advOptState.future.data.any_teach_assign);
-            status.push(currState.advOptState.future.data.all_teach_assign === initState.advOptState.future.data.all_teach_assign);
-            status.push(_.isEqual(currState.advOptState.future.data.selectedTeachers, initState.advOptState.future.data.selectedTeachers));
-        }
-        this.isFormStateDirty = status.includes(false);
-        if (!this.isFormStateDirty) {
-            this.dialogRef.disableClose = false;
-        } else {
-            this.dialogRef.disableClose = true;
-        }
-    }
+    // this.isChangeState = true;
+    // if (this.overlayType === 'editRoom' || (this.isEditFolder && this.overlayType !== 'newRoomInFolder') || this.editRoomInFolder) {
+    //     const initState = this.initialState;
+    //     const currState: FormState = {
+    //         roomName: this.roomName,
+    //         folderName: this.folderName,
+    //         roomNumber: this.roomNumber,
+    //         restricted: this.nowRestriction,
+    //         scheduling_restricted: this.futureRestriction,
+    //         travel_type: this.travelType,
+    //         teachers: this.selectedTeachers.map(t => +t.id),
+    //         color: this.overlayType === 'editRoom' || this.isEditFolder ? this.color_profile.id : null,
+    //         icon: this.overlayType === 'editRoom' || this.isEditFolder ? this.selectedIcon.inactive_icon : null,
+    //         timeLimit: +this.timeLimit,
+    //         advOptState: this.advOptState
+    //     };
+    //     const status = [];
+    //     status.push(currState.roomName === initState.roomName);
+    //     status.push(currState.roomNumber === initState.roomNumber);
+    //     status.push(currState.restricted === initState.restricted);
+    //     status.push(currState.scheduling_restricted === initState.scheduling_restricted);
+    //     status.push(_.isEqual(currState.teachers, initState.teachers));
+    //     if (currState.folderName && initState.folderName) {
+    //         status.push(currState.folderName === initState.folderName);
+    //     }
+    //     if (currState.color && initState.color) {
+    //         status.push(currState.color === initState.color);
+    //     }
+    //     if (currState.timeLimit && initState.timeLimit) {
+    //         status.push(currState.timeLimit === initState.timeLimit);
+    //     }
+    //     if (currState.travel_type && initState.travel_type) {
+    //         status.push(_.isEqual(currState.travel_type.sort(), initState.travel_type.sort()));
+    //     }
+    //     if (currState.icon && initState.icon) {
+    //         status.push(currState.icon === initState.icon);
+    //     }
+    //     if (currState.advOptState && initState.advOptState && this.advOptValid) {
+    //         status.push(currState.advOptState.now.state === initState.advOptState.now.state);
+    //         status.push(currState.advOptState.future.state === initState.advOptState.future.state);
+    //         status.push(currState.advOptState.now.data.any_teach_assign === initState.advOptState.now.data.any_teach_assign);
+    //         status.push(currState.advOptState.now.data.all_teach_assign === initState.advOptState.now.data.all_teach_assign);
+    //         status.push(_.isEqual(currState.advOptState.now.data.selectedTeachers, initState.advOptState.now.data.selectedTeachers));
+    //         status.push(currState.advOptState.future.data.any_teach_assign === initState.advOptState.future.data.any_teach_assign);
+    //         status.push(currState.advOptState.future.data.all_teach_assign === initState.advOptState.future.data.all_teach_assign);
+    //         status.push(_.isEqual(currState.advOptState.future.data.selectedTeachers, initState.advOptState.future.data.selectedTeachers));
+    //     }
+    //     this.isFormStateDirty = status.includes(false);
+    //     if (!this.isFormStateDirty) {
+    //         this.dialogRef.disableClose = false;
+    //     } else {
+    //         this.dialogRef.disableClose = true;
+    //     }
+    // }
   }
 
   stickyButtonClick(cb: Function, arg: any) {

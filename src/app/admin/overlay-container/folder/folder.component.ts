@@ -14,6 +14,7 @@ import { FolderData, OverlayDataService, Pages } from '../overlay-data.service';
 import { CreateFormService } from '../../../create-hallpass-forms/create-form.service';
 
 import * as _ from 'lodash';
+import {OptionState} from '../advanced-options/advanced-options.component';
 
 @Component({
   selector: 'app-folder',
@@ -29,6 +30,11 @@ export class FolderComponent implements OnInit {
   currentPage: number;
 
   pinnable: Pinnable;
+
+  advOptState: OptionState = {
+    now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
+    future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }
+  };
 
   roomsImFolder: Location[] = [];
   selectedRooms = [];
@@ -113,7 +119,7 @@ export class FolderComponent implements OnInit {
               });
           }
           this.change$.next();
-      }, 100);
+      }, 50);
   }
 
   isSelected(room) {
@@ -124,7 +130,12 @@ export class FolderComponent implements OnInit {
 
   setToEditRoom(room) {
       this.selectedRoomToEdit = room;
+      this.generateAdvOptionsModel(room);
       this.change$.next();
+      this.overlayService.changePage(Pages.EditRoomInFolder, this.currentPage, {
+          advancedOptions: this.advOptState,
+          selectedRoomsInFolder: [room]
+      });
   }
 
   selectedRoomsEvent(event, room, all?: boolean) {
@@ -178,5 +189,56 @@ export class FolderComponent implements OnInit {
         this.dialogRef.close();
     });
   }
+
+    generateAdvOptionsModel(loc: Location) {
+        if (loc.request_mode === 'teacher_in_room' || loc.request_mode === 'all_teachers_in_room') {
+
+            const mode = loc.request_mode === 'teacher_in_room' ? 'any_teach_assign' : 'all_teach_assign';
+
+            if (loc.request_send_destination_teachers && loc.request_send_origin_teachers) {
+                this.advOptState.now.data[mode] = 'Both';
+            } else if (loc.request_send_destination_teachers) {
+                this.advOptState.now.data[mode] = 'This Room';
+            } else if (loc.request_send_origin_teachers) {
+                this.advOptState.now.data[mode] = 'Origin';
+            }
+        } else if (loc.request_mode === 'specific_teachers') {
+            this.advOptState.now.data.selectedTeachers = loc.request_teachers;
+        }
+        if (loc.scheduling_request_mode === 'teacher_in_room' || loc.scheduling_request_mode === 'all_teachers_in_room') {
+
+            const mode = loc.scheduling_request_mode === 'teacher_in_room' ? 'any_teach_assign' : 'all_teach_assign';
+
+            if (loc.scheduling_request_send_destination_teachers && loc.scheduling_request_send_origin_teachers) {
+                this.advOptState.future.data[mode] = 'Both';
+            } else if (loc.scheduling_request_send_destination_teachers) {
+                this.advOptState.future.data[mode] = 'This Room';
+            } else if (loc.scheduling_request_send_origin_teachers) {
+                this.advOptState.future.data[mode] = 'Origin';
+            }
+        } else if (loc.scheduling_request_mode === 'specific_teachers') {
+            this.advOptState.future.data.selectedTeachers = loc.scheduling_request_teachers;
+        }
+
+        if (loc.request_mode === 'any_teacher') {
+            this.advOptState.now.state = 'Any teacher (default)';
+        } else if (loc.request_mode === 'teacher_in_room') {
+            this.advOptState.now.state = 'Any teachers assigned';
+        } else if (loc.request_mode === 'all_teachers_in_room') {
+            this.advOptState.now.state = 'All teachers assigned';
+        } else if (loc.request_mode === 'specific_teachers') {
+            this.advOptState.now.state = 'Certain \n teacher(s)';
+        }
+        if (loc.scheduling_request_mode === 'any_teacher') {
+            this.advOptState.future.state = 'Any teacher (default)';
+        } else if (loc.scheduling_request_mode === 'teacher_in_room') {
+            this.advOptState.future.state = 'Any teachers assigned';
+        } else if (loc.scheduling_request_mode === 'all_teachers_in_room') {
+            this.advOptState.future.state = 'All teachers assigned';
+        } else if (loc.scheduling_request_mode === 'specific_teachers') {
+            this.advOptState.future.state = 'Certain \n teacher(s)';
+        }
+        return this.advOptState;
+    }
 
 }
