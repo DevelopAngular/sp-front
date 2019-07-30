@@ -43,6 +43,7 @@
    style="display: flex; flex-wrap: wrap"
    dragula="pinnables"
    *ngIf="pinnables?.length"
+   [dragula]="'pinnables'"
    [dragulaModel]="pinnables"
    (dragulaModelChange)="onPinablesOrderChanged($event)">
 

@@ -41,8 +41,6 @@ export class AppInputComponent implements OnInit {
 
     private initialValue: string | number;
 
-    public rightIconUntouched: string;
-
     public hovered: boolean;
     public pressed: boolean;
 
@@ -50,9 +48,7 @@ export class AppInputComponent implements OnInit {
     constructor(
       public dialog: MatDialog,
       private sanitizer: DomSanitizer,
-    ) {
-      // this.rightIconUntouched = this.rightIcon.replace('Blue', 'Grey');
-    }
+    ) {}
 
     get containerWidth() {
         return this.width ? parseFloat(this.width) + 16 + 'px' : 0;
@@ -60,7 +56,6 @@ export class AppInputComponent implements OnInit {
 
     ngOnInit() {
       console.log('right_icon ===> ', this.isFocus);
-      // this.rightIconUntouched = this.rightIcon.replace('Blue', 'Grey');
       of(null).pipe(
         delay(1000),
         switchMap(() => {
@@ -71,10 +66,6 @@ export class AppInputComponent implements OnInit {
           this.input.nativeElement.focus();
       }
 
-      // if (this.rightIcon) {
-      //   this.rightIconUntouched = this.rightIcon.replace('Navy', 'Blue-Gray');
-      // }
-
       setTimeout(() => {
             this.controlName.setValue(this.input_value);
       }, 50);
@@ -82,16 +73,6 @@ export class AppInputComponent implements OnInit {
           this.onUpdate.emit(res);
         });
     }
-
-    // getBackground() {
-    //       if (this.hovered || this.isFocus) {
-    //         return '#EDEDED';          return this.sanitizer.bypassSecurityTrustStyle('#E2E7F4');
-    //
-    //       } else {
-    //         return '#F7F7F7';          return this.sanitizer.bypassSecurityTrustStyle('#E2E7F4');
-    //
-    //       }
-    // }
 
     updateFocus(el) {
 
@@ -102,7 +83,6 @@ export class AppInputComponent implements OnInit {
       } else {
         el.blur();
       }
-      // this.hovered = this.hovered ? false : true;
     }
     onBlur(value) {
       this.hovered = false;

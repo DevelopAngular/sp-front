@@ -3,20 +3,26 @@
      [style.height]="height"
      [style.overflow]="(height=='none' ? 'none': 'auto')">
 
-  <table mat-table matSort [dataSource]="dataSource" [style.background-color]="backgroundColor">
+  <table mat-table matSort
+         [ngClass]="{
+           'light-mode': !(darkMode$ | async),
+           'dark-mode': (darkMode$ | async)
+         }"
+         [dataSource]="dataSource" [style.background-color]="backgroundColor">
     <!-- Checkbox Column -->
     <ng-container matColumnDef="select" *ngIf="isCheckbox | async">
 
       <th mat-header-cell *matHeaderCellDef class="sticky-header"
-          [ngClass]="{'dark-theme-of-checkbox__primary': darkTheme.isEnabled$.value}"
-          [style.background-color]="darkTheme.isEnabled$.value ? '#0F171E' : '#FBFEFF'"
+          [style.background-color]="(darkMode$ | async) ? '#0F171E' : '#FBFEFF'"
           [style.top]="marginTopStickyHeader"
           [style.padding]="'0px'"
           [style.text-align]="'center'"
       >
+<!--        {{darkMode$ | async) () | async}}-->
         <mat-checkbox (change)="$event ? masterToggle() : null; pushOutSelected()"
                       [checked]="selection.hasValue() && isAllSelected()"
                       [indeterminate]="selection.hasValue() && !isAllSelected()"
+                      class="master-checkbox"
         >
         </mat-checkbox>
       </th>
@@ -24,7 +30,6 @@
           (click)="$event.stopPropagation()"
           [style.padding]="'0px'"
           [style.text-align]="'center'"
-          [ngClass]="{'dark-theme-of-checkbox': darkTheme.isEnabled$.value}"
       >
         <!--<pre style="font-size: 10px">{{row | json}}</pre>-->
         <mat-checkbox (click)="$event.stopPropagation()"
@@ -41,24 +46,23 @@
       <th mat-header-cell *matHeaderCellDef mat-sort-header class="sticky-header"
           [style.color]="darkTheme.getColor({white: textHeaderColor, dark: '#FFFFFF'})"
           [style.text-transform]="'none'"
-          [style.background-color]="darkTheme.isEnabled$.value ? '#0F171E' : '#FBFEFF'"
+          [style.background-color]="(darkMode$ | async) ? '#0F171E' : '#FBFEFF'"
           [style.top]="marginTopStickyHeader"
       > {{column}} </th>
       <td mat-cell *matCellDef="let element; let n = index"
           class="ds-px-10"
-          (mouseenter)="element.hovered = true;"
-          (mouseleave)="element.hovered = false;"
-          (mousedown)="element.pressed = true"
-          (mouseup)="element.pressed = false"
-
-          [style.user-select]="'none'"
-          [style.cursor]="disallowHover ? 'default' : 'pointer'"
-          [style.background-color]="getBgColor(element)"
-          [style.color]=" getCellColor(n)">
+          >
+<!--          (mouseenter)="onHover($event)"-->
         <ng-container *ngIf="normalizeCell(element[column]).length; else empty">
           <span *ngFor="let cellElement of normalizeCell(element[column]); let i = index" style="white-space: nowrap;display: inline-block;">
             <!--<span *ngIf="normalizeCell(element[column]).length > 1 && i > 0">, </span>-->
-            <span [ngClass]="{'multi-cell': column === 'Profile(s)' && cellElement.title && cellElement.title !== 'No profile', 'not-allowed': cellElement.title === 'No profile'}" (click)="selectedCellEmit($event, cellElement, element)" #cell>
+            <span
+              [ngClass]="{
+                'multi-cell': column === 'Profile(s)' && cellElement.title && cellElement.title !== 'No profile',
+                'not-allowed': cellElement.title === 'No profile'
+              }"
+              (click)="selectedCellEmit($event, cellElement, element)" #cell
+            >
               {{displayCell(cellElement, cell, column)}}
             </span>
             <span>{{(normalizeCell(element[column]).length > 1 && i !== normalizeCell(element[column]).length - 1 ? ', ' : '')}}</span>
@@ -76,16 +80,13 @@
           <span *ngIf="column === 'Acting on Behalf Of'" style="cursor: not-allowed; color: #AAAAAA;">
             Сan't act on behalf of anyone
           </span>
-          <!--<ng-template #withoutProfile>-->
-            <!--<span style="cursor: not-allowed; color: #AAAAAA;">Сan't act on behalf of anyone</span>-->
-          <!--</ng-template>-->
         </ng-template>
       </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="columnsToDisplay" style="height: 38px"></tr>
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay;" style="height: 38px"></tr>
+
     <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"
-        [style.background-color]="getBgColor(row)"
         (click)="selectedRowEmit(row);" style="height: 38px;">
     </tr>
   </table>

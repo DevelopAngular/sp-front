@@ -61,6 +61,8 @@ export class PinnableCollectionComponent implements OnInit {
   }
 
   onPinablesOrderChanged(newOrder) {
+    // console.log(newOrder.map(i => i.id));
+    this.pinnables = newOrder;
     this.orderChangedEvent.emit(newOrder);
   }
 

@@ -114,6 +114,7 @@
           </div>
         </div>
       </div>
+
       <div class="content">
         <div class="search-content-table" *ngIf="hasSearched">
           <div class="search-header">
@@ -134,8 +135,8 @@
             </div>
           </div>
         </div>
-
       </div>
+
     </div>
     <div class="search-main">
         <div class="nopass-text" *ngIf="tableData.length === 0 && !spinner && hasSearched" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">

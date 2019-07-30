@@ -1,17 +1,30 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output, QueryList,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
-import { MatSort, MatTableDataSource} from '@angular/material';
+import {MatRow, MatSort, MatTableDataSource} from '@angular/material';
 import { DarkThemeSwitch } from '../../dark-theme-switch';
 import { DomSanitizer } from '@angular/platform-browser';
-import { BehaviorSubject } from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 
 import * as moment from 'moment';
 import {SP_ARROW_BLUE_GRAY, SP_ARROW_DOUBLE_BLUE_GRAY} from '../pdf-generator.service';
+import {test} from '@angular-devkit/core/src/virtual-fs/host';
 
 @Component({
   selector: 'app-data-table',
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DataTableComponent implements OnInit {
 
@@ -59,15 +72,15 @@ export class DataTableComponent implements OnInit {
   hoveredRowIndex: number;
   pressed: boolean;
 
+  darkMode$: Observable<boolean>;
 
   private _data: any[] = [];
 
   constructor(
-    public darkTheme: DarkThemeSwitch,
-    private sanitizer: DomSanitizer,
-    private cdr: ChangeDetectorRef
-
-  ) {}
+    private darkTheme: DarkThemeSwitch,
+  ) {
+    this.darkMode$ = this.darkTheme.isEnabled$.asObservable();
+  }
 
   ngOnInit() {
     console.log(this._data);
@@ -84,29 +97,33 @@ export class DataTableComponent implements OnInit {
     });
   }
 
-  onHover(target: HTMLElement) {
-
-    this.hovered = true;
-    target.style.backgroundColor = this.getBgColor();
-    target.style.color = this.getCellColor();
-  }
-  onLeave(target: HTMLElement) {
-
-    this.hovered = false;
-    target.style.color = this.getCellColor();
-    target.style.backgroundColor = 'transparent';
-  }
-  onDown(target: HTMLElement) {
-
-    this.pressed = true;
-    target.style.backgroundColor = this.getBgColor();
-  }
-
-  onUp(target: HTMLElement) {
-
-    this.pressed = false;
-    target.style.backgroundColor = this.getBgColor();
-  }
+  // onHover(evt: MouseEvent) {
+  //   console.log((evt.target as HTMLElement).dataset);
+    // const target = (evt.target as HTMLElement).closest('.mat-row') as HTMLElement ;
+    // this.hovered = true;
+    // target.style.backgroundColor = this.getBgColor({hovered: true});
+    // target.style.color = this.getCellColor({hovered: true});
+    // target.style.userSelect = 'none';
+    // target.style.cursor = this.disallowHover ? 'default' : 'pointer';
+  // }
+  // onLeave(evt: MouseEvent) {
+  //   const target = (evt.target as HTMLElement).closest('.mat-row') as HTMLElement ;
+  //
+  //   this.hovered = false;
+  //   target.style.color = this.getCellColor({hovered: false});
+  //   target.style.backgroundColor = this.getBgColor({hovered: false});
+  // }
+  // onDown(target: HTMLElement) {
+  //
+  //   this.pressed = true;
+  //   target.style.backgroundColor = this.getBgColor();
+  // }
+  //
+  // onUp(target: HTMLElement) {
+  //
+  //   this.pressed = false;
+  //   target.style.backgroundColor = this.getBgColor();
+  // }
 
 
   getBgColor(elem?) { //can being as a cell as also an entire row

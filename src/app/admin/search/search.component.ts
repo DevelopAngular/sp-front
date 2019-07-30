@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 import {filter, switchMap, tap} from 'rxjs/operators';
 import { HttpService } from '../../services/http-service';
 import { HallPass } from '../../models/HallPass';
@@ -34,6 +34,9 @@ import {bumpIn} from '../../animations';
 })
 export class SearchComponent implements OnInit {
 
+
+
+
   @ViewChild('printPdf') printPdf: ElementRef;
 
   tableData = [];
@@ -57,6 +60,29 @@ export class SearchComponent implements OnInit {
   inputPanelVisibility: boolean = true;
 
   buttonDown: boolean;
+
+  // private dataPagination: any = {
+  //   first: 0,
+  //   last: 50,
+  //   range: 50,
+  //   nextPage() {
+  //     this.first += this.range;
+  //     this.last += this.range;
+  //
+  //   }
+  // }
+  //
+  // @HostListener('scroll', ['$event'])
+  // onScroll(event) {
+  //   const tracker = event.target;
+  //   const limit = tracker.scrollHeight - tracker.clientHeight;
+  //   // if (event.target.scrollTop === limit && !this.pending && (this.reportsLimit === this.counter)) {
+  //   if (event.target.scrollTop === limit) {
+  //     this.dataPagination.nextPage();
+  //     // this.reportsLimit += 10;
+  //     // this.getReports();
+  //   }
+  // }
 
   constructor(
       private httpService: HttpService,
@@ -147,12 +173,16 @@ export class SearchComponent implements OnInit {
     this.buttonDown = press;
   }
 
-  search(query: string = '') {
-    // if (this.selectedStudents.length || this.selectedDate || this.selectedRooms.length || query) {
-    //   this.sortParamsHeader = `All Passes, Searching by ${(this.selectedStudents && this.selectedStudents.length > 0 ? 'Student Name' : '') + (this.selectedDate && this.selectedDate !== '' ? ', Date & Time' : '') + (this.selectedRooms && this.selectedRooms.length > 0 ? ', Room Name' : '')}`;
+  normalizeDataForTable() {
+
+  }
+
+  search() {
+
       this.spinner = true;
       this.selectedReport = [];
-      let url = 'v1/hall_passes?' + query;
+
+      let url = 'v1/hall_passes?';
       if (this.selectedRooms) {
         console.log(this.selectedRooms);
         this.selectedRooms.forEach(room => {
@@ -169,8 +199,7 @@ export class SearchComponent implements OnInit {
 
       }
       if (this.selectedStudents) {
-        let students: any[] = this.selectedStudents.map(s => s['id']);
-
+        const students: any[] = this.selectedStudents.map(s => s['id']);
         Array.from(Array(students.length).keys()).map(i => {
           url += 'student=' + students[i] + '&';
         });
@@ -179,20 +208,20 @@ export class SearchComponent implements OnInit {
       if (this.selectedDate) {
         let start;
         let end;
-        if(this.selectedDate['start']){
+        if (this.selectedDate['start']) {
           start = this.selectedDate['start'].toISOString();
           url += (start ? ('created_after=' + start + '&') : '');
         }
-        if(this.selectedDate['end']){
+        if (this.selectedDate['end']) {
           end = this.selectedDate['end'].toISOString();
           url += (end ? ('end_time_before=' + end) : '');
         }
-
         console.log('Start: ', start, '\nEnd: ', end);
-
       }
 
-      this.hallPassService.searchPasses(url).pipe(filter(res => !!res))
+      this.hallPassService
+        .searchPasses(url)
+        .pipe(filter(res => !!res))
         .subscribe((data: HallPass[]) => {
 
           console.log('DATA', data);
