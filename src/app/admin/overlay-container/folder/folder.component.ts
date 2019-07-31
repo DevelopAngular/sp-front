@@ -93,6 +93,19 @@ export class FolderComponent implements OnInit {
                 });
         }
     } else {
+      if (this.dialogData['rooms']) {
+          this.dialogData['rooms'].forEach((room: Pinnable) => {
+            if (room.type === 'category') {
+              this.locationService.getLocationsWithCategory(room.category)
+                .subscribe((res: Location[]) => {
+                  this.roomsImFolder = [...this.roomsImFolder, ...res];
+                  this.folderRoomsLoaded = true;
+                });
+            } else {
+              this.roomsImFolder.push(room.location);
+            }
+          });
+        }
         this.folderRoomsLoaded = true;
     }
 
