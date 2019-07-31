@@ -123,46 +123,46 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   @ViewChild(DataTableComponent) dataTable;
 
-  @HostListener('scroll', ['$event'])
-  onScroll(event) {
-    const target = event.target;
-    const limit = target.scrollHeight - target.clientHeight;
-    if (event.target.scrollTop === limit && this.isLoadUsers) {
-      this.limitCounter += 20;
-        this.userService
-          .getUsersList(this.role, '', this.limitCounter)
-          .pipe(
-            takeUntil(this.destroy$),
-            map(res => res.results),
-            switchMap((userList: User[]) => {
-              if (this.role === '_profile_teacher' && userList.length) {
-                return this.addUserLocations(userList);
-              } else if (this.role === '_profile_assistant' && userList.length) {
-                return zip(
-                  ...userList.map((user: User) => {
-                    return this.userService.getRepresentedUsers(user.id)
-                      .pipe(
-                        switchMap((ru: RepresentedUser[]) => {
-                          (user as any).canActingOnBehalfOf = ru;
-                          return of(user);
-                        })
-                      );
-                  }));
-              } else {
-                return of(userList);
-              }
-            })
-          )
-          .subscribe(userList => {
-            this.dataTableHeadersToDisplay = [];
-            this.userList = this.buildUserListData(userList);
-            this.selectedUsers = [];
-            if (this.dataTable) {
-              this.dataTable.clearSelection();
-            }
-          });
-    }
-  }
+  // @HostListener('scroll', ['$event'])
+  // onScroll(event) {
+  //   const target = event.target;
+  //   const limit = target.scrollHeight - target.clientHeight;
+  //   if (event.target.scrollTop === limit && this.isLoadUsers) {
+  //     this.limitCounter += 20;
+  //       this.userService
+  //         .getUsersList(this.role, '', this.limitCounter)
+  //         .pipe(
+  //           takeUntil(this.destroy$),
+  //           map(res => res.results),
+  //           switchMap((userList: User[]) => {
+  //             if (this.role === '_profile_teacher' && userList.length) {
+  //               return this.addUserLocations(userList);
+  //             } else if (this.role === '_profile_assistant' && userList.length) {
+  //               return zip(
+  //                 ...userList.map((user: User) => {
+  //                   return this.userService.getRepresentedUsers(user.id)
+  //                     .pipe(
+  //                       switchMap((ru: RepresentedUser[]) => {
+  //                         (user as any).canActingOnBehalfOf = ru;
+  //                         return of(user);
+  //                       })
+  //                     );
+  //                 }));
+  //             } else {
+  //               return of(userList);
+  //             }
+  //           })
+  //         )
+  //         .subscribe(userList => {
+  //           this.dataTableHeadersToDisplay = [];
+  //           this.userList = this.buildUserListData(userList);
+  //           this.selectedUsers = [];
+  //           if (this.dataTable) {
+  //             this.dataTable.clearSelection();
+  //           }
+  //         });
+  //   }
+  // }
 
   constructor(
     public router: Router,
@@ -699,7 +699,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     this.placeholder = false;
     this.userList = [];
     this.userService
-      .getUsersList(this.role, query, 20)
+      .getUsersList(this.role, query, 100000)
       .pipe(
         tap(() => {
           this.dataTableHeadersToDisplay = [];
@@ -767,7 +767,16 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         const rawObj = {
           'Name': raw.display_name,
           'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
-          'Rooms': raw.assignedTo,
+          'Rooms': (function() {
+            if (raw.assignedTo.length) {
+              return raw.assignedTo.map((room) => {
+                 return `<span>${room.title}</span>`;
+              }).join(raw.assignedTo.length > 1 ? ', ' : '');
+            } else {
+              return `<span>No rooms assigned</span>`;
+            }
+
+          }()),
           'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : 'Standard',
           'Acting on Behalf Of': raw.canActingOnBehalfOf ? raw.canActingOnBehalfOf.map((u: RepresentedUser) => {
             return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;

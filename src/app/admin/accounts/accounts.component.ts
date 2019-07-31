@@ -20,6 +20,7 @@ import {AddUserDialogComponent} from '../add-user-dialog/add-user-dialog.compone
 import {GSuiteOrgs} from '../../models/GSuiteOrgs';
 import {encode} from 'punycode';
 import {environment} from '../../../environments/environment';
+import {DomSanitizer} from '@angular/platform-browser';
 
 declare const history: History;
 
@@ -75,6 +76,7 @@ export class AccountsComponent implements OnInit {
     private storage: StorageService,
     public matDialog: MatDialog,
     private gsProgress: GettingStartedProgressService,
+    private domSanitizer: DomSanitizer
   ) {}
 
   formatDate(date) {
@@ -251,16 +253,13 @@ export class AccountsComponent implements OnInit {
 
     private getUserList(search = '') {
       this.userList = [];
-        this.pending$.next(true);
-      // this.http.globalReload$.pipe(switchMap(() => {
-      //   return this.userService.getUsersList('', search);
-      // }))
+      this.pending$.next(true);
       this.userService.getUsersList('', search).subscribe(users => {
-            this.dataTableHeadersToDisplay = [];
-              this.userList = this.buildUserListData(users);
-            this.pending$.next(false);
+        this.dataTableHeadersToDisplay = [];
+          this.userList = this.buildUserListData(users);
+        this.pending$.next(false);
 
-          });
+      });
     }
 
     private buildUserListData(userList) {
@@ -271,12 +270,15 @@ export class AccountsComponent implements OnInit {
             if (raw.roles.includes('_profile_assistant')) partOf.push({title: 'Assistant', role: '_profile_assistant'});
             if (raw.roles.includes('_profile_admin')) partOf.push({title: 'Administrator', role: '_profile_admin'});
 
+            const profiles = partOf.map(part => {
+              return `<span (click)="selectedCellEmit($event, cellElement, element)" #cell>${part.title}</span>`;
+            }).join(partOf.length > 1 ? ', ' : '');
+            // `<span></span>`
             const rawObj = {
-                'Name': raw.display_name,
-                'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
-                'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : 'Standard',
-                'Profile(s)': partOf.length ? partOf : [{title: 'No profile'}],
-
+                'Name': `<span>${raw.display_name}</span>`,
+                'Email/Username': `<span>${(/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email}</span>`,
+                'Account Type': `<span>${raw.sync_types[0] === 'google' ? 'G Suite' : 'Standard'}</span>`,
+                'Profile(s)': `<span>${this.domSanitizer.bypassSecurityTrustHtml(profiles)}</span>`,
             };
             for (const key in rawObj) {
                 if (!this.dataTableHeaders[key]) {

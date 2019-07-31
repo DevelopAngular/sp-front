@@ -1,8 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
-  ElementRef,
   EventEmitter,
   Input, NgZone,
   OnInit,
@@ -10,21 +8,23 @@ import {
   ViewChild
 } from '@angular/core';
 import {DataSource, SelectionModel} from '@angular/cdk/collections';
-import {MatSort, MatTableDataSource} from '@angular/material';
+import {MatSort, Sort} from '@angular/material';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
-import {DomSanitizer} from '@angular/platform-browser';
 import {BehaviorSubject, Observable} from 'rxjs';
-
-import * as moment from 'moment';
 import {SP_ARROW_BLUE_GRAY, SP_ARROW_DOUBLE_BLUE_GRAY} from '../pdf-generator.service';
-import {CdkScrollable, ScrollDispatcher} from '@angular/cdk/overlay';
 import {CdkVirtualScrollViewport, FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';
-import {map} from 'rxjs/operators';
+import * as moment from 'moment';
 
-const PAGESIZE = 20;
-const ROW_HEIGHT = 48;
+const PAGESIZE = 50;
+const ROW_HEIGHT = 38;
 
 export class GridTableDataSource extends DataSource<any> {
+
+  public  stickySpace: boolean;
+  public _fixedColumnsPlaceholder: any = {
+    placeholder: true
+  };
+
   private _data: any[];
 
   get allData(): any[] {
@@ -35,26 +35,47 @@ export class GridTableDataSource extends DataSource<any> {
     this._data = data;
     this.viewport.scrollToOffset(0);
     this.viewport.setTotalContentSize(this.itemSize * data.length);
-    this.visibleData.next(this._data.slice(0, PAGESIZE));
+    this.visibleData.next(this._data.slice(0, PAGESIZE).concat(this._fixedColumnsPlaceholder));
   }
 
   sort: MatSort | null;
 
   offset = 0;
   offsetChange = new BehaviorSubject(0);
-  constructor(initialData: any[], private viewport: CdkVirtualScrollViewport, private itemSize: number, sorting: MatSort) {
+
+  constructor(initialData: any[], private viewport: CdkVirtualScrollViewport, private itemSize: number, sorting: MatSort, stickySpace: boolean) {
     super();
     this._data = initialData;
     this.sort = sorting;
+    this.stickySpace = stickySpace;
+
+    this._data.forEach((item, index) => {
+      for (const key in item._data) {
+        if (!this._fixedColumnsPlaceholder[key] || item._data[key].length > this._fixedColumnsPlaceholder[key].length) {
+          this._fixedColumnsPlaceholder[key] = item._data[key];
+        }
+      }
+    });
+
+    for (const key in this._fixedColumnsPlaceholder) {
+      if (key !== 'TT') {
+        this._fixedColumnsPlaceholder[key] = '.' + this._fixedColumnsPlaceholder[key] + '.';
+      }
+    }
+
+
+
     this.viewport.elementScrolled().subscribe((ev: any) => {
-      const start = Math.floor(ev.currentTarget.scrollTop / ROW_HEIGHT);
-      const prevExtraData = start > 5 ? 5 : 0;
-      // const prevExtraData = 0;
-      const slicedData = this._data.slice(start - prevExtraData, start + (PAGESIZE - prevExtraData));
+
+      const start = Math.floor((ev.currentTarget.scrollTop >= 0 ? ev.currentTarget.scrollTop : 0) / ROW_HEIGHT);
+      const prevExtraData = start > 0 && start <= 12 && this.stickySpace ? 1 : start > 12 ? 12 : 0;
+      const slicedData = this._data.slice(start - prevExtraData, start + (PAGESIZE - prevExtraData)).concat(this._fixedColumnsPlaceholder);
+
       this.offset = ROW_HEIGHT * (start - prevExtraData);
       this.viewport.setRenderedContentOffset(this.offset);
       this.offsetChange.next(this.offset)
       this.visibleData.next(slicedData);
+      console.log(this.offset);
     });
   }
 
@@ -97,30 +118,8 @@ export class DataTableComponent implements OnInit {
   @Input() height: string = 'none';
   @Input() isCheckbox: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   @Input() isAllowedSelectRow: boolean = false;
-  @Input() set data(value: any[]) {
-    this._data = [...value];
-      this.dataSource = new GridTableDataSource(this._data, this.viewport, 38, this.sort);
-    this.dataSource.offsetChange.subscribe(offset => {
-      this.placeholderHeight = offset;
-    })
-    this.dataSource.allData = this._data;
-      // this.dataSource = new MatTableDataSource(this._data);
-      // this.dataSource.sort = this.sort;
-      // this.dataSource.sortingDataAccessor = (item, property) => {
-      //     switch (property) {
-      //         case 'Name':
-      //             return item[property].split(' ')[1];
-      //         case 'Date & Time':
-      //             return Math.min(moment().diff(item['date'], 'days'));
-      //         case 'Duration':
-      //             return item['sortDuration'].as('milliseconds');
-      //         case 'Profile(s)':
-      //             return item[property].map(i => i.title).join('');
-      //         default:
-      //             return item[property];
-      //     }
-      // };
-  }
+
+  @Input() stickySpace: boolean = false;
   @Input() disallowHover: boolean = false;
   @Input() backgroundColor: string = 'transparent';
   @Input() textColor: string = 'black';
@@ -132,57 +131,88 @@ export class DataTableComponent implements OnInit {
   @Output() selectedCell: EventEmitter<any> = new EventEmitter<any>();
 
   @ViewChild(MatSort) sort: MatSort;
-  @ViewChild('stickyHeader') stickyHeader: ElementRef;
   @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport;
 
 
   @Input() displayedColumns: string[];
+
+  @Input() set data(value: any[]) {
+    this._data = [...value];
+    this.dataSource = new GridTableDataSource(this._data, this.viewport, ROW_HEIGHT, this.sort, this.stickySpace);
+    this.dataSource.offsetChange
+      .subscribe(offset => {
+        this.placeholderHeight = offset;
+    })
+    this.dataSource.allData = this._data;
+    // this.dataSource = new MatTableDataSource(this._data);
+    // this.dataSource.sort = this.sort;
+    this.dataSource.sort.sortChange.subscribe((sort: Sort) => {
+      // console.log(sort);
+      const data = this.dataSource.allData;
+      if (!sort.active || sort.direction === '') {
+        this.dataSource.allData = data;
+        return;
+      }
+
+      this.dataSource.allData = data.sort((a, b) => {
+        const isAsc = sort.direction === 'asc';
+        const {_data: _a} = a;
+        const {_data: _b} = b;
+        // compare(sortingDataAccessor(_a, sort.active), sortingDataAccessor(_b, sort.active), isAsc);
+        // return 0;
+
+
+        return compare(sortingDataAccessor(_a, sort.active), sortingDataAccessor(_b, sort.active), isAsc);
+
+      });
+      // console.log(this.dataSource.allData);
+
+    });
+
+    function compare(a: number | string, b: number | string, isAsc: boolean) {
+      // console.log(a, b);
+      return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+    }
+    function sortingDataAccessor(item, property) {
+      // console.log(item, property);
+
+      switch (property) {
+            case 'Name':
+                return item[property].split(' ')[1];
+            case 'Date & Time':
+                return Math.min(moment().diff(item['date'], 'days'));
+            case 'Duration':
+                return item['sortDuration'].as('milliseconds');
+            case 'Profile(s)':
+                return item[property].map(i => i.title).join('');
+            default:
+                return item[property];
+        }
+    }
+  }
+
+  itemSize = ROW_HEIGHT;
+
   columnsToDisplay: string[];
-  // dataSource: MatTableDataSource<any[]>;
-  // dataSource: any[];
   dataSource: GridTableDataSource;
   selection = new SelectionModel<any>(true, []);
 
-  hovered: boolean;
-  hoveredRowIndex: number;
-  pressed: boolean;
-
   darkMode$: Observable<boolean>;
-
-  stickyOffsetSubject = new BehaviorSubject<string>('');
-  stickyOffset$: Observable<string> = this.stickyOffsetSubject.asObservable();
-
-  public _data: any[] = [];
-
-
   placeholderHeight = 0;
 
+  private _data: any[] = [];
 
   constructor(
     private _ngZone: NgZone,
     private darkTheme: DarkThemeSwitch,
-    public scrollDispatcher: ScrollDispatcher) {
+  ) {
     this.darkMode$ = this.darkTheme.isEnabled$.asObservable();
   }
 
   ngOnInit() {
-    console.log(this._data);
+    // console.log(this._data);
+
     this.marginTopStickyHeader = '0px';
-    // this
-    //   .table
-    //   .elementScrolled()
-    //   .subscribe(data => {
-    //       console.log(this.table.getOffsetToRenderedContentStart());
-    //       this._ngZone.run(() => {
-    //         const offset = this.table.getOffsetToRenderedContentStart();
-    //         this.stickyOffsetSubject.next(`-${offset}px`);
-    //       });
-    //     }
-    //   );
-    // this.stickyOffset$.subscribe((res) => {
-    //   console.log(res);
-    //   this.stickyHeader.nativeElement.style.transform = res;
-    // })
       if (!this.displayedColumns) {
         this.displayedColumns = Object.keys(this._data[0]);
       }
@@ -195,67 +225,18 @@ export class DataTableComponent implements OnInit {
       }
     });
   }
+
+  // normalizeHeader(header) {
+  //   // this.dataSource._fixedColumnsPlaceholder
+  //   const _header = header.padEnd(this.dataSource._fixedColumnsPlaceholder[header].length);
+  //   console.log(_header, _header.length);
+  //   // return header;
+  //   return _header;
+  // }
+
   placeholderWhen(index: number, _: any) {
-    return index == 0;
+    return index === 0;
   }
-  // onHover(evt: MouseEvent) {
-  //   console.log((evt.target as HTMLElement).dataset);
-    // const target = (evt.target as HTMLElement).closest('.mat-row') as HTMLElement ;
-    // this.hovered = true;
-    // target.style.backgroundColor = this.getBgColor({hovered: true});
-    // target.style.color = this.getCellColor({hovered: true});
-    // target.style.userSelect = 'none';
-    // target.style.cursor = this.disallowHover ? 'default' : 'pointer';
-  // }
-  // onLeave(evt: MouseEvent) {
-  //   const target = (evt.target as HTMLElement).closest('.mat-row') as HTMLElement ;
-  //
-  //   this.hovered = false;
-  //   target.style.color = this.getCellColor({hovered: false});
-  //   target.style.backgroundColor = this.getBgColor({hovered: false});
-  // }
-  // onDown(target: HTMLElement) {
-  //
-  //   this.pressed = true;
-  //   target.style.backgroundColor = this.getBgColor();
-  // }
-  //
-  // onUp(target: HTMLElement) {
-  //
-  //   this.pressed = false;
-  //   target.style.backgroundColor = this.getBgColor();
-  // }
-
-
-  getBgColor(elem?) { //can being as a cell as also an entire row
-    if (!this.disallowHover) {
-      if (elem.hovered) {
-        if (elem.pressed) {
-          return this.darkTheme.isEnabled$.value ? '#09A4F7' : '#E2E7F4';
-        } else {
-          return this.darkTheme.isEnabled$.value ? '#0991c3' : '#ECF1FF';
-        }
-      } else if (this.isCheckbox.value && elem.pressed) {
-          return this.darkTheme.isEnabled$.value ? '#09A4F7' : '#E2E7F4';
-      } else {
-        return 'transparent';
-      }
-    }
-  }
-
-  getCellColor(n?) {
-    if (n === this.hoveredRowIndex && !this.disallowHover) {
-      if (this.hovered) {
-        return this.darkTheme.isEnabled$.value ? '#FFFFFF' : this.textColor;
-      } else {
-        return this.darkTheme.getColor({white: this.textColor, dark: '#767676'});
-      }
-
-    } else {
-      return this.darkTheme.getColor({white: this.textColor, dark: '#767676'});
-    }
-  }
-
 
   isAllSelected() {
     const numSelected = this.selection.selected.length;
@@ -331,7 +312,7 @@ export class DataTableComponent implements OnInit {
   }
 
   pushOutSelected() {
-    this.selectedUsers.emit(this.selection.selected);
+    this.selectedUsers.emit(this.selection.selected.map(i => i._data));
   }
 
   clearSelection() {
