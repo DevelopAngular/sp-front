@@ -8,12 +8,12 @@
   <div class="header" [ngStyle]="{'background-image': gradientColor}">
     <div class="left-button">
       <img class="back-button" draggable="false"
-           *ngIf="backButtonState && !hideHeaderIcon"
+           *ngIf="!showCancelButton"
            alt="Go Back"
            [src]="'./assets/' + (titleColor === 'white' ? 'Back Button (Light-Gray).svg' : 'Back Button (Blue-White).svg') | resolveAsset"
            (click)="back()"
       >
-      <div class="cancel-button" [style.color]="titleColor" *ngIf="!backButtonState && !hideHeaderIcon" (click)="back()">Cancel</div>
+      <div class="cancel-button" [style.color]="titleColor" *ngIf="showCancelButton" (click)="back()">Cancel</div>
     </div>
 
     <div class="title" [style.color]="titleColor">
@@ -22,7 +22,7 @@
     </div>
 
     <div class="right-button">
-      <app-gradient-button *ngIf="true"
+      <app-gradient-button *ngIf="showPublishButton"
                            [minHeight]="'40px'"
                            [style.width]="'120px'"
                            [cursor]="'pointer'"
@@ -32,7 +32,7 @@
         <mat-spinner *ngIf="showPublishSpinner" [color]="'accent'" [diameter]="'30'"></mat-spinner>
       </app-gradient-button>
 
-      <div *ngIf="false" [style.color]="titleColor">Incomplete</div>
+      <div *ngIf="showIncompleteButton" [style.color]="titleColor">Incomplete</div>
 
     </div>
   </div>
@@ -47,11 +47,11 @@
       </div>
 
       <div [@NextStep]="{ value: '', params: frameMotion$ | async}" *ngIf="currentPage === 5">
-        <app-new-room-in-folder [form]="form" (back)="back(false)"></app-new-room-in-folder>
+        <app-new-room-in-folder [form]="form" (add)="newRoomInFolder($event)" (back)="back(false)"></app-new-room-in-folder>
       </div>
 
       <div [@NextStep]="{ value: '', params: frameMotion$ | async}" *ngIf="currentPage === 6">
-        <app-edit-room-in-folder [form]="form" (back)="back(false)"></app-edit-room-in-folder>
+        <app-edit-room-in-folder [form]="form" (save)="editRoomFolder($event)" (back)="back(false)"></app-edit-room-in-folder>
       </div>
 
       <div [@NextStep]="{ value: '', params: frameMotion$ | async}" *ngIf="currentPage === 8">

@@ -14,7 +14,7 @@ import { HttpService } from '../../services/http-service';
 import { UserService } from '../../services/user.service';
 import { HallPassesService } from '../../services/hall-passes.service';
 import { LocationsService } from '../../services/locations.service';
-import { OptionState } from './advanced-options/advanced-options.component';
+import {OptionState, ValidButtons} from './advanced-options/advanced-options.component';
 import { CreateFormService } from '../../create-hallpass-forms/create-form.service';
 import { FolderData, OverlayDataService, Pages, RoomData } from './overlay-data.service';
 
@@ -47,6 +47,12 @@ export class OverlayContainerComponent implements OnInit {
   currentPage: number;
   roomData: RoomData;
   folderData: FolderData;
+
+  roomValidButtons = new BehaviorSubject<ValidButtons>({
+      publish: false,
+      incomplete: false,
+      cancel: false
+  });
 
   public roomList: {
     domElement: ElementRef,
@@ -294,6 +300,9 @@ export class OverlayContainerComponent implements OnInit {
                 advancedOptions: this.generateAdvOptionsModel(this.pinnable.location)
             });
             colors = this.pinnable.color_profile.gradient_color;
+            this.selectedIcon = this.pinnable.icon;
+            this.titleIcon = this.pinnable.icon;
+            this.color_profile = this.pinnable.color_profile;
             break;
         case 'edit':
           this.overlayService.changePage(Pages.BulkEditRooms, 0, null);
@@ -332,13 +341,16 @@ export class OverlayContainerComponent implements OnInit {
           this.currentPage === Pages.AddExistingRooms;
   }
 
-  get showPublishNewRoom() {
-    return this.form.get('roomName').valid &&
-      this.form.get('roomNumber').valid &&
-      this.form.get('timeLimit').valid &&
-      this.isDirtyNowRestriction &&
-      this.isDirtyFutureRestriction &&
-      !!this.color_profile && !!this.selectedIcon;
+  get showPublishButton() {
+    return this.roomValidButtons.getValue().publish && !!this.selectedIcon && !!this.color_profile;
+  }
+
+  get showIncompleteButton() {
+      return this.roomValidButtons.getValue().incomplete;
+  }
+
+  get showCancelButton() {
+      return this.roomValidButtons.getValue().cancel;
   }
 
   get showPublishEditRoom() {
@@ -905,52 +917,52 @@ export class OverlayContainerComponent implements OnInit {
   //     this.changeState();
   // }
 
-  normalizeAdvOptData() {
+  normalizeAdvOptData(roomData = this.roomData) {
       const data: any = {};
-      if (this.roomData.advOptState.now.state === 'Any teacher (default)') {
+      if (roomData.advOptState.now.state === 'Any teacher (default)') {
           data.request_mode = 'any_teacher';
           data.request_send_origin_teachers = true;
           data.request_send_destination_teachers = true;
-      } else if (this.roomData.advOptState.now.state === 'Any teachers assigned') {
+      } else if (roomData.advOptState.now.state === 'Any teachers assigned') {
           data.request_mode = 'teacher_in_room';
-      } else if (this.roomData.advOptState.now.state === 'All teachers assigned') {
+      } else if (roomData.advOptState.now.state === 'All teachers assigned') {
           data.request_mode = 'all_teachers_in_room';
-      } else if (this.roomData.advOptState.now.state === 'Certain \n teacher(s)') {
+      } else if (roomData.advOptState.now.state === 'Certain \n teacher(s)') {
           data.request_mode = 'specific_teachers';
       }
-      if (this.roomData.advOptState.future.state === 'Any teacher (default)') {
+      if (roomData.advOptState.future.state === 'Any teacher (default)') {
           data.scheduling_request_mode = 'any_teacher';
           data.scheduling_request_send_origin_teachers = true;
           data.scheduling_request_send_destination_teachers = true;
-      } else if (this.roomData.advOptState.future.state === 'Any teachers assigned') {
+      } else if (roomData.advOptState.future.state === 'Any teachers assigned') {
           data.scheduling_request_mode = 'teacher_in_room';
-      } else if (this.roomData.advOptState.future.state === 'All teachers assigned') {
+      } else if (roomData.advOptState.future.state === 'All teachers assigned') {
           data.scheduling_request_mode = 'all_teachers_in_room';
-      } else if (this.roomData.advOptState.future.state === 'Certain \n teacher(s)') {
+      } else if (roomData.advOptState.future.state === 'Certain \n teacher(s)') {
           data.scheduling_request_mode = 'specific_teachers';
       }
-      if (this.roomData.advOptState.now.data.any_teach_assign === 'Both' || this.roomData.advOptState.now.data.all_teach_assign === 'Both') {
+      if (roomData.advOptState.now.data.any_teach_assign === 'Both' || roomData.advOptState.now.data.all_teach_assign === 'Both') {
           data.request_send_origin_teachers = true;
           data.request_send_destination_teachers = true;
-      } else if (this.roomData.advOptState.now.data.any_teach_assign === 'Origin' || this.roomData.advOptState.now.data.all_teach_assign === 'Origin') {
+      } else if (roomData.advOptState.now.data.any_teach_assign === 'Origin' || roomData.advOptState.now.data.all_teach_assign === 'Origin') {
           data.request_send_origin_teachers = true;
           data.request_send_destination_teachers = false;
-      } else if (this.roomData.advOptState.now.data.any_teach_assign === 'This Room' || this.roomData.advOptState.now.data.all_teach_assign === 'This Room') {
+      } else if (roomData.advOptState.now.data.any_teach_assign === 'This Room' || roomData.advOptState.now.data.all_teach_assign === 'This Room') {
           data.request_send_destination_teachers = true;
           data.request_send_origin_teachers = false;
-      } else if (this.roomData.advOptState.now.data.selectedTeachers.length) {
-          data.request_teachers = this.roomData.advOptState.now.data.selectedTeachers.map(t => t.id);
+      } else if (roomData.advOptState.now.data.selectedTeachers.length) {
+          data.request_teachers = roomData.advOptState.now.data.selectedTeachers.map(t => t.id);
       }
-      if (this.roomData.advOptState.future.data.any_teach_assign === 'Both' || this.roomData.advOptState.future.data.all_teach_assign === 'Both') {
+      if (roomData.advOptState.future.data.any_teach_assign === 'Both' || roomData.advOptState.future.data.all_teach_assign === 'Both') {
           data.scheduling_request_send_origin_teachers = true;
           data.scheduling_request_send_destination_teachers = true;
-      } else if (this.roomData.advOptState.future.data.all_teach_assign === 'Origin' || this.roomData.advOptState.future.data.any_teach_assign === 'Origin') {
+      } else if (roomData.advOptState.future.data.all_teach_assign === 'Origin' || roomData.advOptState.future.data.any_teach_assign === 'Origin') {
           data.scheduling_request_send_origin_teachers = true;
           data.scheduling_request_send_destination_teachers = false;
-      } else if (this.roomData.advOptState.future.data.all_teach_assign === 'This Room' || this.roomData.advOptState.future.data.any_teach_assign === 'This Room') {
+      } else if (roomData.advOptState.future.data.all_teach_assign === 'This Room' || roomData.advOptState.future.data.any_teach_assign === 'This Room') {
           data.scheduling_request_send_destination_teachers = true;
           data.scheduling_request_send_origin_teachers = false;
-      } else if (this.roomData.advOptState.future.data.selectedTeachers.length) {
+      } else if (roomData.advOptState.future.data.selectedTeachers.length) {
           data.scheduling_request_teachers = this.roomData.advOptState.future.data.selectedTeachers.map(t => t.id);
       }
       return data;
@@ -1148,8 +1160,8 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   done() {
-    // debugger;
       this.showDoneSpinner = true;
+
       if (this.overlayType === 'newRoomInFolder') {
           const location = {
                   title: this.roomName,
@@ -1413,12 +1425,36 @@ export class OverlayContainerComponent implements OnInit {
     // }
   }
 
-  roomResult(data) {
+  roomResult({data, buttonState}) {
       this.roomData = data;
+      this.roomValidButtons.next(buttonState);
   }
 
   folderResult(data) {
       this.folderData = data;
+  }
+
+  newRoomInFolder(room: RoomData) {
+      this.folderData.roomsInFolder.push({...this.normalizeRoomData(room), ...this.normalizeAdvOptData(room)});
+      this.overlayService.back(this.folderData);
+  }
+
+  editRoomFolder(room: RoomData) {
+    this.folderData.roomsInFolder = this.folderData.roomsInFolder.filter(r => r.title !== room.roomName);
+    this.folderData.roomsInFolder.push({...this.normalizeRoomData(room), ...this.normalizeAdvOptData(room)});
+    this.overlayService.back(this.folderData);
+  }
+
+  normalizeRoomData(room) {
+    return {
+      title: room.roomName,
+      room: room.roomNumber,
+      restricted: room.restricted,
+      scheduling_restricted: room.scheduling_restricted,
+      teachers: room.selectedTeachers,
+      travel_types: room.travelType,
+      max_allowed_time: +room.timeLimit,
+    };
   }
 
   catchFile(evt: DragEvent) {

@@ -1,6 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+
+import { BehaviorSubject } from 'rxjs';
+
 import { RoomData } from '../overlay-data.service';
+import { ValidButtons } from '../advanced-options/advanced-options.component';
 
 @Component({
   selector: 'app-edit-room-in-folder',
@@ -12,6 +16,14 @@ export class EditRoomInFolderComponent implements OnInit {
     @Input() form: FormGroup;
 
     @Output() back = new EventEmitter();
+
+    @Output() save: EventEmitter<RoomData> = new EventEmitter<RoomData>();
+
+    roomValidButtons = new BehaviorSubject<ValidButtons>({
+        publish: false,
+        incomplete: false,
+        cancel: false
+    });
 
     roomInFolderData: RoomData = {
         roomName: '',
@@ -29,6 +41,18 @@ export class EditRoomInFolderComponent implements OnInit {
 
     constructor() { }
 
+    get showSave() {
+        return this.roomValidButtons.getValue().publish;
+    }
+
+    get showIncomplete() {
+        return this.roomValidButtons.getValue().incomplete;
+    }
+
+    get showCancel() {
+        return this.roomValidButtons.getValue().cancel;
+    }
+
     ngOnInit() {
     }
 
@@ -36,8 +60,13 @@ export class EditRoomInFolderComponent implements OnInit {
         this.back.emit();
     }
 
-    roomResult(data) {
+  saveInFolder() {
+     this.save.emit(this.roomInFolderData);
+  }
+
+    roomResult({data, buttonState}) {
         this.roomInFolderData = data;
+        this.roomValidButtons.next(buttonState);
     }
 
 }

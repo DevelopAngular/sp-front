@@ -3,16 +3,17 @@ import { FormGroup } from '@angular/forms';
 import { MatDialogRef } from '@angular/material';
 
 import { merge, Subject, zip } from 'rxjs';
+import { delay } from 'rxjs/operators';
 
-import {OverlayDataService, Pages, RoomData} from '../overlay-data.service';
-import {OptionState, ValidButtons} from '../advanced-options/advanced-options.component';
+import { OverlayDataService, Pages, RoomData } from '../overlay-data.service';
+import { ValidButtons } from '../advanced-options/advanced-options.component';
 
+import { Location } from '../../../models/Location';
 import { HallPassesService } from '../../../services/hall-passes.service';
 import { LocationsService } from '../../../services/locations.service';
 import { OverlayContainerComponent } from '../overlay-container.component';
 
 import * as _ from 'lodash';
-import {Location} from '../../../models/Location';
 
 @Component({
   selector: 'app-room',
@@ -23,7 +24,7 @@ export class RoomComponent implements OnInit {
 
   @Input() form: FormGroup;
 
-  @Output() roomDataResult: EventEmitter<RoomData> = new EventEmitter<RoomData>();
+  @Output() roomDataResult: EventEmitter<{data: RoomData, buttonState: ValidButtons}> = new EventEmitter<{data: RoomData, buttonState: ValidButtons}>();
 
   data: RoomData = {
       roomName: 'New Room',
@@ -95,6 +96,14 @@ export class RoomComponent implements OnInit {
      }
   }
 
+  get validForm() {
+      return this.form.get('roomName').valid && this.form.get('roomNumber').valid && this.form.get('timeLimit').valid;
+  }
+
+  get isValidRestrictions() {
+      return !_.isNull(this.data.restricted) && !_.isNull(this.data.scheduling_restricted);
+  }
+
   ngOnInit() {
       this.tooltipText = this.overlayService.tooltipText;
       this.currentPage = this.overlayService.pageState.getValue().currentPage;
@@ -127,21 +136,15 @@ export class RoomComponent implements OnInit {
           }
       }
       this.initialData = _.cloneDeep(this.data);
-      merge(this.form.valueChanges, this.change$).subscribe(() => {
-          // console.log('Initial', this.initialData);
-          // console.log('Current', this.data);
-          this.checkValidRoomOptions();
+      merge(this.form.valueChanges, this.change$).pipe(delay(350)).subscribe(() => {
 
-          // console.log('Lodash Result ===>>>', _.isEqual(_.omit(this.initialData, 'advOptState'), _.omit(this.data, 'advOptState')));
-          setTimeout(() => {
-              this.roomDataResult.emit(this.data);
-          }, 10);
+          this.checkValidRoomOptions();
       });
   }
 
   checkValidRoomOptions() {
       if ( _.isEqual(_.omit(this.initialData, 'advOptState'), _.omit(this.data, 'advOptState'))) {
-          if (this.form.valid) {
+          if (this.validForm && this.isValidRestrictions) {
               this.roomValidButtons = {
                   publish: false,
                   incomplete: false,
@@ -150,12 +153,14 @@ export class RoomComponent implements OnInit {
           } else {
               this.roomValidButtons = {
                   publish: false,
-                  incomplete: true,
+                  incomplete: false,
                   cancel: false
               };
           }
       } else {
-        if (this.form.valid) {
+          // console.log(_.omit(this.initialData, 'advOptState'), _.omit(this.data, 'advOptState'));
+        if (this.validForm && this.isValidRestrictions) {
+            // console.log(_.omit(this.initialData, 'advOptState'), _.omit(this.data, 'advOptState'));
             this.roomValidButtons = {
                 publish: true,
                 incomplete: false,
@@ -169,8 +174,26 @@ export class RoomComponent implements OnInit {
             };
         }
       }
-
-      console.log('Rooms Predicate ==>>', this.roomValidButtons);
+      let buttonsResult: ValidButtons = {
+          publish: false,
+          incomplete: false,
+          cancel: false
+      };
+      if (!this.advOptionsValidButtons) {
+          buttonsResult = this.roomValidButtons;
+      } else {
+          if (this.roomValidButtons.publish && this.advOptionsValidButtons.publish) {
+              buttonsResult.publish = true;
+          }
+          if (this.roomValidButtons.cancel || this.advOptionsValidButtons.cancel) {
+              buttonsResult.cancel = true;
+          }
+          if (this.roomValidButtons.incomplete || this.advOptionsValidButtons.incomplete) {
+              buttonsResult.incomplete = true;
+          }
+      }
+      // console.log(buttonsResult);
+      this.roomDataResult.emit({data: this.data, buttonState: buttonsResult});
   }
 
   selectTeacherEvent(teachers) {
@@ -185,7 +208,7 @@ export class RoomComponent implements OnInit {
     } else if (type === 'One-way') {
         travelType = ['one_way'];
     } else if (type === 'Both') {
-        travelType = ['one_way', 'round_trip'];
+        travelType = ['round_trip', 'one_way'];
     }
     this.data.travelType = travelType;
     this.change$.next();
