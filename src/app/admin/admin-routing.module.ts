@@ -8,6 +8,7 @@ import { PassConfigComponent } from './pass-config/pass-config.component';
 import {AccountsComponent} from './accounts/accounts.component';
 import {AccountsRoleComponent} from './accounts-role/accounts-role.component';
 import {MySchoolComponent} from './my-school/my-school.component';
+import {VirtualScrollComponent} from './virtual-scroll/virtual-scroll.component';
 // import {TakeTourComponent} from './getting-started/take-tour/take-tour.component';
 
 const routes: Routes = [
@@ -22,6 +23,7 @@ const routes: Routes = [
       {path: 'accounts/:role', component: AccountsRoleComponent},
       {path: 'passconfig', component: PassConfigComponent},
       {path: 'myschool', component: MySchoolComponent},
+      {path: 'vs', component: VirtualScrollComponent},
       {path: '**', redirectTo: '', pathMatch: 'full'},
     ]
   },
