@@ -20,6 +20,9 @@ import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {RepresentedUser} from '../../navbar/navbar.component';
 import {LocationsService} from '../../services/locations.service';
 import {GSuiteOrgs} from '../../models/GSuiteOrgs';
+import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
+import {bind} from '@angular/core/src/render3';
+import {wrapToHtml} from '../helpers';
 
 declare const window;
 
@@ -121,48 +124,54 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   public countAccounts = 2500;
 
-  @ViewChild(DataTableComponent) dataTable;
+  dataTable;
 
-  @HostListener('scroll', ['$event'])
-  onScroll(event) {
-    const target = event.target;
-    const limit = target.scrollHeight - target.clientHeight;
-    if (event.target.scrollTop === limit && this.isLoadUsers) {
-      this.limitCounter += 20;
-        this.userService
-          .getUsersList(this.role, '', this.limitCounter)
-          .pipe(
-            takeUntil(this.destroy$),
-            map(res => res.results),
-            switchMap((userList: User[]) => {
-              if (this.role === '_profile_teacher' && userList.length) {
-                return this.addUserLocations(userList);
-              } else if (this.role === '_profile_assistant' && userList.length) {
-                return zip(
-                  ...userList.map((user: User) => {
-                    return this.userService.getRepresentedUsers(user.id)
-                      .pipe(
-                        switchMap((ru: RepresentedUser[]) => {
-                          (user as any).canActingOnBehalfOf = ru;
-                          return of(user);
-                        })
-                      );
-                  }));
-              } else {
-                return of(userList);
-              }
-            })
-          )
-          .subscribe(userList => {
-            this.dataTableHeadersToDisplay = [];
-            this.userList = this.buildUserListData(userList);
-            this.selectedUsers = [];
-            if (this.dataTable) {
-              this.dataTable.clearSelection();
-            }
-          });
+  @ViewChild(DataTableComponent) set dtRef(dtRef: ElementRef) {
+    if (dtRef) {
+      this.dataTable = dtRef.nativeElement;
     }
   }
+
+  // @HostListener('scroll', ['$event'])
+  // onScroll(event) {
+  //   const target = event.target;
+  //   const limit = target.scrollHeight - target.clientHeight;
+  //   if (event.target.scrollTop === limit && this.isLoadUsers) {
+  //     this.limitCounter += 20;
+  //       this.userService
+  //         .getUsersList(this.role, '', this.limitCounter)
+  //         .pipe(
+  //           takeUntil(this.destroy$),
+  //           map(res => res.results),
+  //           switchMap((userList: User[]) => {
+  //             if (this.role === '_profile_teacher' && userList.length) {
+  //               return this.addUserLocations(userList);
+  //             } else if (this.role === '_profile_assistant' && userList.length) {
+  //               return zip(
+  //                 ...userList.map((user: User) => {
+  //                   return this.userService.getRepresentedUsers(user.id)
+  //                     .pipe(
+  //                       switchMap((ru: RepresentedUser[]) => {
+  //                         (user as any).canActingOnBehalfOf = ru;
+  //                         return of(user);
+  //                       })
+  //                     );
+  //                 }));
+  //             } else {
+  //               return of(userList);
+  //             }
+  //           })
+  //         )
+  //         .subscribe(userList => {
+  //           this.dataTableHeadersToDisplay = [];
+  //           this.userList = this.buildUserListData(userList);
+  //           this.selectedUsers = [];
+  //           if (this.dataTable) {
+  //             this.dataTable.clearSelection();
+  //           }
+  //         });
+  //   }
+  // }
 
   constructor(
     public router: Router,
@@ -176,7 +185,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     private elemRef: ElementRef,
     private dataService: DataService,
     public darkTheme: DarkThemeSwitch,
-    private locService: LocationsService
+    private locService: LocationsService,
+    private domSanitizer: DomSanitizer,
 
   ) {}
 
@@ -478,6 +488,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   setSelected(e) {
     console.log(e);
+    // debugger;
     this.selectedUsers = e;
   }
 
@@ -699,7 +710,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     this.placeholder = false;
     this.userList = [];
     this.userService
-      .getUsersList(this.role, query, 20)
+      .getUsersList(this.role, query, 100000)
       .pipe(
         tap(() => {
           this.dataTableHeadersToDisplay = [];
@@ -741,7 +752,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   syncNow() {
     this.adminService.syncNow().subscribe();
-        this.adminService.getGSuiteOrgs().subscribe(res => this.GSuiteOrgs = res);
+      this.adminService.getGSuiteOrgs().subscribe(res => this.GSuiteOrgs = res);
   }
 
   private addUserLocations(users) {
@@ -753,10 +764,36 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         return users;
       }));
   }
+  wrapToHtml(data, htmlTag, dataIndex) {
+    const wrapper =  wrapToHtml.bind(this);
+    return wrapper(data, htmlTag, dataIndex);
+  }
+  // wrapToHtml(data: {[key: string]: string | string[]} | string, htmlTag: 'span' | 'div', index: number): {[key: string]: SafeHtml; _data: any} | SafeHtml {
+  //   if (typeof data === 'string') {
+  //     return this.domSanitizer.bypassSecurityTrustHtml(`<${htmlTag} >${data}</${htmlTag}>`) as SafeHtml;
+  //   } else if (typeof data === 'object' && !Array.isArray(data)) {
+  //     const wrappedData = {};
+  //     for (const key in data) {
+  //       if (typeof data[key] === 'string') {
+  //         const keyStringLike = <string>(data[key]);
+  //         wrappedData[key] = this.domSanitizer.bypassSecurityTrustHtml(`<${htmlTag}>${keyStringLike}</${htmlTag}>`);
+  //       }
+  //       if (Array.isArray(data[key]) && (<Array<string>>(data[key])).every(i => typeof i === 'string')) {
+  //         const keyArrayLike = <Array<string>>(data[key]);
+  //         wrappedData[key] = this.domSanitizer.bypassSecurityTrustHtml(keyArrayLike.map(str => `<${htmlTag} data-position="${index}" data-name="Dale Flinn" data-profile="_profile_teacher">${str}</${htmlTag}>`).join(keyArrayLike.length > 1 ? ', ' : ''));
+  //       }
+  //     }
+  //     return wrappedData as {[key: string]: SafeHtml; _data: any};
+  //   } else {
+  //     return this.domSanitizer.bypassSecurityTrustHtml(`<${htmlTag} >Not allowed type</${htmlTag}>`) as SafeHtml;
+  //   }
+  // }
 
   private buildUserListData(userList) {
     this.isLoadUsers = this.limitCounter === userList.length;
     return userList.map((raw, index) => {
+
+
       const permissionsRef: any = this.profilePermissions;
         const partOf = [];
         if (raw.roles.includes('_profile_student')) partOf.push({title: 'Student', role: '_profile_student'});
@@ -767,7 +804,16 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         const rawObj = {
           'Name': raw.display_name,
           'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
-          'Rooms': raw.assignedTo,
+          'Rooms': (function() {
+            if (raw.assignedTo && raw.assignedTo.length) {
+              return raw.assignedTo.map((room) => {
+                 return `${room.title}`;
+              });
+            } else {
+              return `<span>No rooms assigned</span>`;
+            }
+
+          }()),
           'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : 'Standard',
           'Acting on Behalf Of': raw.canActingOnBehalfOf ? raw.canActingOnBehalfOf.map((u: RepresentedUser) => {
             return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
@@ -802,6 +848,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             }
           }
         }
+
+        const record = this.wrapToHtml(rawObj, 'span', index) as {[key: string]: SafeHtml; _data: any};
+
         Object.defineProperty(rawObj, 'id', { enumerable: false, value: raw.id });
         Object.defineProperty(rawObj, 'me', { enumerable: false, value: +raw.id === +this.user.id });
         Object.defineProperty(rawObj, '_originalUserProfile', {
@@ -810,8 +859,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           writable: false,
           value: raw
         });
+        Object.defineProperty(record, '_data', { enumerable: false, value: rawObj });
+
         this.loaded = true;
-        return  rawObj;
+
+        return record;
     });
+
   }
 }

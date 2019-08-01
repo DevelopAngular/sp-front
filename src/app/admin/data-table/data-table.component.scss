@@ -1,19 +1,26 @@
 @import "../../../design-system";
 @import "../../../sp-colors";
 
+:host {
+  @extend .ds-flex-center-center, .ds-flex-column, .ds-w-100;
+  flex: 1 1 auto;
+}
+
 .data-table-wrapper {
+  @extend .ds-flex-center-center, .ds-flex-column;
   position: relative;
+  height: 100%;
+  flex: 1 1 auto;
+  .scrollable-area {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    flex: 1 1 auto;
+  }
 }
 .sticky-header {
-  position: sticky;
-  //text-transform: uppercase;
-  //top: -40px;
-  top: 0;
   border-bottom: 2px solid $blue-gray;
-  z-index: 100;
-  background-color: #F8FAFF;
-  font-family: $primaryFont;
-  //transition: all .2s ease;
+  transition: all .2s ease;
 }
 
 ::ng-deep .mat-sort-header-container {
@@ -32,29 +39,6 @@
   cursor: not-allowed;
 }
 
-//.example-viewport {
-//  height: 300px;
-//  width: 100%;
-//  border: 1px solid black;
-//}
-//
-//.table {
-//  width: 100%;
-//}
-//
-//::ng-deep .cdk-virtual-scroll-content-wrapper {
-//  transform: translateY(0px) !important;
-//  width: 100%;
-//}
-
-table {
-  width: 100%;
-  //position: relative;
-}
-//.cdk-column-Rooms {
-//  text-decoration: underline;
-//}
-
 ::ng-deep .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background, .mat-checkbox-checked.mat-accent .mat-checkbox-background {
   background-color: #7E879D;
 }
@@ -69,7 +53,25 @@ table {
 ::ng-deep .mat-sort-header-button {
   font-size: 14px !important;
   text-transform: uppercase;
-  //font-weight: bolder !important;
+}
+
+::ng-deep .cdk-virtual-scroll-content-wrapper {
+  transform: translateY(0px) !important;
+}
+
+.row-placeholder {
+  visibility: collapse;
+  height: 0px !important;
+  td {
+    visibility: collapse;
+    height: 0px !important;
+    position: sticky;
+    top: -16px;
+  }
+}
+
+.dark-mode, .light-mode {
+  width: 100%;
 }
 
 .dark-mode {

@@ -2,8 +2,7 @@ import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/c
 import {filter, switchMap, tap} from 'rxjs/operators';
 import { HttpService } from '../../services/http-service';
 import { HallPass } from '../../models/HallPass';
-import { DatePrettyHelper } from '../date-pretty.helper';
-import { PdfGeneratorService } from '../pdf-generator.service';
+import {PdfGeneratorService, SP_ARROW_BLUE_GRAY, SP_ARROW_DOUBLE_BLUE_GRAY} from '../pdf-generator.service';
 import { disableBodyScroll } from 'body-scroll-lock';
 import * as _ from 'lodash';
 import {PassCardComponent} from '../../pass-card/pass-card.component';
@@ -23,6 +22,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 
 import * as moment from 'moment';
 import {bumpIn} from '../../animations';
+import {prettyDate} from '../helpers';
 
 
 
@@ -222,28 +222,41 @@ export class SearchComponent implements OnInit {
       this.hallPassService
         .searchPasses(url)
         .pipe(filter(res => !!res))
-        .subscribe((data: HallPass[]) => {
+        .subscribe((passes: HallPass[]) => {
 
-          console.log('DATA', data);
-          this.passes = data;
-          this.tableData = data.map(hallPass => {
+          console.log('DATA', passes);
+          this.passes = passes;
+          this.tableData = passes.map((hallPass, i) => {
 
             const duration = moment.duration(moment(hallPass.end_time).diff(moment(hallPass.start_time)));
 
             const name = hallPass.student.first_name + ' ' + hallPass.student.last_name +
                 ` (${hallPass.student.primary_email.split('@', 1)[0]})`;
-            const passes = {
+
+
+            const passTemplate = {
+              'Student Name': `<span>${name}</span>`,
+              'Origin': `<span>${hallPass.origin.title}</span>`,
+              'TT': this.domSanitazer.bypassSecurityTrustHtml(hallPass.travel_type === 'one_way' ? SP_ARROW_BLUE_GRAY : SP_ARROW_DOUBLE_BLUE_GRAY),
+              'Destination': `<span>${hallPass.destination.title}</span>`,
+              'Date & Time': `<span>${moment(hallPass.created).format('M/DD h:mm A')}</span>`,
+              'Duration': `<span>${(Number.isInteger(duration.asMinutes()) ? duration.asMinutes() : duration.asMinutes().toFixed(2)) + ' min'}</span>`
+            };
+
+            const _data = {
                 'Student Name': name,
                 'Origin': hallPass.origin.title,
-                'TT': hallPass.travel_type,
+                'TT': this.domSanitazer.bypassSecurityTrustHtml(hallPass.travel_type === 'one_way' ? SP_ARROW_BLUE_GRAY : SP_ARROW_DOUBLE_BLUE_GRAY),
                 'Destination': hallPass.destination.title,
                 'Date & Time': moment(hallPass.created).format('M/DD h:mm A'),
                 'Duration': (Number.isInteger(duration.asMinutes()) ? duration.asMinutes() : duration.asMinutes().toFixed(2)) + ' min'
             };
-            Object.defineProperty(passes, 'id', { enumerable: false, value: hallPass.id});
-            Object.defineProperty(passes, 'date', {enumerable: false, value: moment(hallPass.created) });
-            Object.defineProperty(passes, 'sortDuration', {enumerable: false, value: duration });
-            return passes;
+            Object.defineProperty(passTemplate, 'id', { enumerable: false, value: hallPass.id});
+            Object.defineProperty(passTemplate, 'date', {enumerable: false, value: moment(hallPass.created) });
+            Object.defineProperty(passTemplate, 'sortDuration', {enumerable: false, value: duration });
+            Object.defineProperty(_data, 'sortDuration', {enumerable: false, value: duration });
+            Object.defineProperty(passTemplate, '_data', {enumerable: false, value: _data });
+            return passTemplate;
           });
           this.spinner = false;
           this.hasSearched = true;
@@ -336,8 +349,8 @@ export class SearchComponent implements OnInit {
       let prettyFrom = '';
       let prettyTo = '';
       if (this.selectedDate) {
-        prettyFrom = DatePrettyHelper.transform(this.selectedDate.start.toDate());
-        prettyTo = DatePrettyHelper.transform(this.selectedDate.end.toDate());
+        prettyFrom = prettyDate(this.selectedDate.start.toDate());
+        prettyTo = prettyDate(this.selectedDate.end.toDate());
       }
       let rooms = '';
       if (this.selectedRooms) {

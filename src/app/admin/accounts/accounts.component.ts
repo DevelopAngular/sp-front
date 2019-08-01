@@ -20,6 +20,8 @@ import {AddUserDialogComponent} from '../add-user-dialog/add-user-dialog.compone
 import {GSuiteOrgs} from '../../models/GSuiteOrgs';
 import {encode} from 'punycode';
 import {environment} from '../../../environments/environment';
+import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
+import {wrapToHtml} from '../helpers';
 
 declare const history: History;
 
@@ -75,6 +77,7 @@ export class AccountsComponent implements OnInit {
     private storage: StorageService,
     public matDialog: MatDialog,
     private gsProgress: GettingStartedProgressService,
+    private domSanitizer: DomSanitizer
   ) {}
 
   formatDate(date) {
@@ -178,9 +181,11 @@ export class AccountsComponent implements OnInit {
   }
 
     findProfileByRole(evt) {
-      setTimeout(() => {
-         this.router.navigate(['admin/accounts', evt.role], {queryParams: {profileName: evt.row['Name']}});
-      }, 250);
+      if (evt.name && evt.role) {
+        setTimeout(() => {
+           this.router.navigate(['admin/accounts', evt.role], {queryParams: {profileName: evt.name}});
+        }, 250);
+      }
     }
 
     setSelected(e) {
@@ -251,18 +256,18 @@ export class AccountsComponent implements OnInit {
 
     private getUserList(search = '') {
       this.userList = [];
-        this.pending$.next(true);
-      // this.http.globalReload$.pipe(switchMap(() => {
-      //   return this.userService.getUsersList('', search);
-      // }))
+      this.pending$.next(true);
       this.userService.getUsersList('', search).subscribe(users => {
-            this.dataTableHeadersToDisplay = [];
-              this.userList = this.buildUserListData(users);
-            this.pending$.next(false);
+        this.dataTableHeadersToDisplay = [];
+          this.userList = this.buildUserListData(users);
+        this.pending$.next(false);
 
-          });
+      });
     }
-
+    private wrapToHtml(data, htmlTag, dataSet) {
+      const wrapper =  wrapToHtml.bind(this);
+      return wrapper(data, htmlTag, dataSet);
+    }
     private buildUserListData(userList) {
         return userList.map((raw, index) => {
             const partOf = [];
@@ -271,23 +276,36 @@ export class AccountsComponent implements OnInit {
             if (raw.roles.includes('_profile_assistant')) partOf.push({title: 'Assistant', role: '_profile_assistant'});
             if (raw.roles.includes('_profile_admin')) partOf.push({title: 'Administrator', role: '_profile_admin'});
 
+            // const profiles = partOf;
+            // `<span></span>`
+            // const rawObj = {
+            //     'Name': `<span>${raw.display_name}</span>`,
+            //     'Email/Username': `<span>${(/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email}</span>`,
+            //     'Account Type': `<span>${raw.sync_types[0] === 'google' ? 'G Suite' : 'Standard'}</span>`,
+            //     'Profile(s)': `<span>${this.domSanitizer.bypassSecurityTrustHtml(profiles)}</span>`,
+            // };
             const rawObj = {
                 'Name': raw.display_name,
                 'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
                 'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : 'Standard',
-                'Profile(s)': partOf.length ? partOf : [{title: 'No profile'}],
-
+                'Profile(s)': partOf,
             };
             for (const key in rawObj) {
-                if (!this.dataTableHeaders[key]) {
-                    delete rawObj[key];
+              if (!this.dataTableHeaders[key]) {
+                delete rawObj[key];
+              }
+              if (index === 0) {
+                if (this.dataTableHeaders[key] && this.dataTableHeaders[key].value) {
+                  this.dataTableHeadersToDisplay.push(key);
                 }
-                if (index === 0) {
-                    if (this.dataTableHeaders[key] && this.dataTableHeaders[key].value) {
-                        this.dataTableHeadersToDisplay.push(key);
-                    }
-                }
+              }
             }
+
+            const dataSet = {
+              dataIndex: index,
+            }
+            const record = this.wrapToHtml(rawObj, 'span', index) as {[key: string]: SafeHtml; _data: any};
+
             Object.defineProperty(rawObj, 'id', { enumerable: false, value: raw.id });
             Object.defineProperty(rawObj, 'me', { enumerable: false, value: +raw.id === +this.user.id });
             Object.defineProperty(rawObj, '_originalUserProfile', {
@@ -296,7 +314,10 @@ export class AccountsComponent implements OnInit {
                 writable: false,
                 value: raw
             });
-            return  rawObj;
+
+            Object.defineProperty(record, '_data', { enumerable: false, value: rawObj });
+
+          return record;
         });
     }
 
