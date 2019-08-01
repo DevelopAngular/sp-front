@@ -291,6 +291,7 @@ export class DataTableComponent implements OnInit {
   }
 
   selectedCellEmit(event, cellElement, element) {
+    // debugger
     if (typeof cellElement !== 'string' && cellElement.title !== 'No profile' && !(cellElement instanceof Location) && !this.isCheckbox.value) {
       event.stopPropagation();
       cellElement.row = element;
@@ -300,11 +301,24 @@ export class DataTableComponent implements OnInit {
     }
   }
 
-  selectedRowEmit(row) {
+  selectedRowEmit(evt, {_data: row}) {
+    console.log(evt)
+    // debugger
+
+
+    const target = evt.target as HTMLElement;
+
+
     if (this.isCheckbox.value && !this.isAllowedSelectRow) {
       this.selection.toggle(row);
       row.pressed = this.selection.isSelected(row);
       this.pushOutSelected();
+    } else if (target.dataset && target.dataset.profile) {
+
+      this.selectedCell.emit({
+        name: target.dataset.name,
+        role: target.dataset.profile
+      });
     } else {
       this.selectedRow.emit(row);
     }

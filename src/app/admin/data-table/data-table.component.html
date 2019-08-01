@@ -66,12 +66,18 @@
       <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true" [style.height.px]="itemSize"></tr>
       <tr mat-row [style.height.px]="placeholderHeight" *matRowDef="let row; let index = index; columns: []; when: placeholderWhen"></tr>
       <tr mat-row *matRowDef="let row; columns: columnsToDisplay;" [style.height.px]="itemSize" [ngClass]="{'row-placeholder': row.placeholder}"
-          (click)="selectedRowEmit(row);">
+          (click)="selectedRowEmit($event, row);">
       </tr>
 
     </table>
   </cdk-virtual-scroll-viewport>
 </div>
+
+
+
+
+
+
 
 
       <td mat-cell *matCellDef="let element" style="display: none"

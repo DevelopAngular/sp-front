@@ -2,7 +2,6 @@ import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/c
 import {filter, switchMap, tap} from 'rxjs/operators';
 import { HttpService } from '../../services/http-service';
 import { HallPass } from '../../models/HallPass';
-import { DatePrettyHelper } from '../date-pretty.helper';
 import {PdfGeneratorService, SP_ARROW_BLUE_GRAY, SP_ARROW_DOUBLE_BLUE_GRAY} from '../pdf-generator.service';
 import { disableBodyScroll } from 'body-scroll-lock';
 import * as _ from 'lodash';
@@ -23,6 +22,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 
 import * as moment from 'moment';
 import {bumpIn} from '../../animations';
+import {prettyDate} from '../helpers';
 
 
 
@@ -349,8 +349,8 @@ export class SearchComponent implements OnInit {
       let prettyFrom = '';
       let prettyTo = '';
       if (this.selectedDate) {
-        prettyFrom = DatePrettyHelper.transform(this.selectedDate.start.toDate());
-        prettyTo = DatePrettyHelper.transform(this.selectedDate.end.toDate());
+        prettyFrom = prettyDate(this.selectedDate.start.toDate());
+        prettyTo = prettyDate(this.selectedDate.end.toDate());
       }
       let rooms = '';
       if (this.selectedRooms) {

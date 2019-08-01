@@ -17,7 +17,6 @@ import { AccountsComponent } from './accounts/accounts.component';
 import { AdminPageComponent } from './admin-page/admin-page.component';
 import { AdminRoutingModule } from './admin-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { DatePrettyHelper } from './date-pretty.helper';
 import { HallmonitorComponent } from './hallmonitor/hallmonitor.component';
 import { LinkGeneratedDialogComponent } from './link-generated-dialog/link-generated-dialog.component';
 import { PassConfigComponent } from './pass-config/pass-config.component';
@@ -91,7 +90,6 @@ import { VirtualScrollComponent } from './virtual-scroll/virtual-scroll.componen
   providers: [
     [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],
     PdfGeneratorService,
-    DatePrettyHelper
   ],
 })
 export class AdminModule {
