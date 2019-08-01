@@ -1,11 +1,15 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material';
+
+import { BehaviorSubject } from 'rxjs';
 
 import { Pinnable } from '../../../models/Pinnable';
 import { Location } from '../../../models/Location';
 import { LocationsService } from '../../../services/locations.service';
 import { RoomData } from '../overlay-data.service';
+import { ValidButtons } from '../advanced-options/advanced-options.component';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-bulk-edit-rooms',
@@ -15,7 +19,23 @@ import { RoomData } from '../overlay-data.service';
 export class BulkEditRoomsComponent implements OnInit {
 
   @Input() form: FormGroup;
+
+  @Output()
+  bulkEditResult: EventEmitter<{
+    rooms: Location[],
+    roomData: RoomData,
+    buttonState: ValidButtons
+  }> = new EventEmitter<{rooms: Location[], roomData: RoomData, buttonState: ValidButtons}>();
+
   selectedRooms: Location[] = [];
+
+  advOptionsButtons: ValidButtons;
+
+  roomsValidButtons: ValidButtons = {
+    publish: false,
+    incomplete: false,
+    cancel: false
+  };
 
   roomData: RoomData;
 
@@ -39,9 +59,38 @@ export class BulkEditRoomsComponent implements OnInit {
     }
   }
 
-  roomResult({data, buttonState}) {
-    console.log(data);
-    console.log(buttonState);
+  roomResult({data, buttonState, advOptButtons}) {
+    this.roomData = data;
+    this.advOptionsButtons = advOptButtons;
+    this.checkValidForm();
+  }
+
+  checkValidForm() {
+    if (
+      (this.roomData.travelType.length ||
+        !_.isNull(this.roomData.restricted) ||
+        !_.isNull(this.roomData.scheduling_restricted) ||
+        this.roomData.timeLimit) && !this.advOptionsButtons
+    ) {
+      this.roomsValidButtons = {publish: true, incomplete: false, cancel: true};
+    } else if (
+      (this.roomData.travelType.length ||
+        !_.isNull(this.roomData.restricted) ||
+        !_.isNull(this.roomData.scheduling_restricted) ||
+        this.roomData.timeLimit) && this.advOptionsButtons
+    ) {
+      if (this.advOptionsButtons.incomplete) {
+        this.roomsValidButtons = {publish: false, incomplete: true, cancel: true};
+      } else {
+        this.roomsValidButtons = {publish: true, incomplete: false, cancel: true};
+      }
+    }
+
+    this.bulkEditResult.emit({
+      roomData: this.roomData,
+      rooms: this.selectedRooms,
+      buttonState: this.roomsValidButtons
+    });
   }
 
 }

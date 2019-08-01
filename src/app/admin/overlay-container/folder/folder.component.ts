@@ -12,9 +12,9 @@ import { OverlayContainerComponent } from '../overlay-container.component';
 import { HallPassesService } from '../../../services/hall-passes.service';
 import { FolderData, OverlayDataService, Pages } from '../overlay-data.service';
 import { CreateFormService } from '../../../create-hallpass-forms/create-form.service';
+import {OptionState, ValidButtons} from '../advanced-options/advanced-options.component';
 
 import * as _ from 'lodash';
-import {OptionState} from '../advanced-options/advanced-options.component';
 
 @Component({
   selector: 'app-folder',
@@ -25,9 +25,16 @@ export class FolderComponent implements OnInit {
 
   @Input() form: FormGroup;
 
-  @Output() folderDataResult: EventEmitter<FolderData> = new EventEmitter<FolderData>();
+  @Output() folderDataResult: EventEmitter<{data: FolderData, buttonState: ValidButtons}> = new EventEmitter<{data: FolderData, buttonState: ValidButtons}>();
 
   currentPage: number;
+
+  initialFolderData: {
+    folderName: string,
+    roomsInFolder: any[]
+  } = {folderName: null, roomsInFolder: []};
+
+  folderValidButtons: ValidButtons;
 
   pinnable: Pinnable;
 
@@ -77,6 +84,7 @@ export class FolderComponent implements OnInit {
 
     if (data) {
         if (data.roomsInFolderLoaded) {
+            this.initialFolderData = data.oldFolderData;
             this.folderName = data.folderName;
             this.roomsImFolder = data.roomsInFolder;
             this.folderRoomsLoaded = true;
@@ -86,6 +94,10 @@ export class FolderComponent implements OnInit {
             this.locationService.getLocationsWithCategory(this.pinnable.category)
                 .subscribe((res: Location[]) => {
                     this.roomsImFolder = res;
+                    this.initialFolderData = {
+                      folderName: _.cloneDeep(this.folderName),
+                      roomsInFolder: _.cloneDeep(this.roomsImFolder)
+                    };
                     this.folderRoomsLoaded = true;
                     // if (this.dialogData['forceSelectedLocation']) {
                     //     this.setToEditRoom(this.dialogData['forceSelectedLocation']);
@@ -106,19 +118,51 @@ export class FolderComponent implements OnInit {
             }
           });
         }
+        this.initialFolderData = {
+          folderName: 'New Folder',
+          roomsInFolder: _.cloneDeep(this.roomsImFolder)
+        };
         this.folderRoomsLoaded = true;
     }
 
     merge(this.form.get('folderName').valueChanges, this.change$)
         .subscribe(() => {
+          this.changeFolderData();
             this.folderDataResult.emit({
+              data: {
                 folderName: this.form.get('folderName').value === '' ? 'New Folder' : this.form.get('folderName').value,
                 roomsInFolder: this.roomsImFolder,
                 selectedRoomsInFolder: this.selectedRooms,
                 roomsInFolderLoaded: true,
                 selectedRoomToEdit: this.selectedRoomToEdit
+              },
+              buttonState: this.folderValidButtons
             });
         });
+  }
+
+  changeFolderData() {
+    console.log(this.initialFolderData);
+    if (
+        !_.isEqual(this.initialFolderData.roomsInFolder, this.roomsImFolder) ||
+        this.initialFolderData.folderName && this.initialFolderData.folderName !== this.form.get('folderName').value
+      ) {
+        if (this.form.get('folderName').invalid) {
+          if (this.form.get('folderName').touched) {
+            this.folderValidButtons = {publish: false, incomplete: true, cancel: true};
+          } else {
+            this.folderValidButtons = {publish: false, incomplete: false, cancel: false};
+          }
+        } else {
+          if (this.roomsImFolder.length) {
+            this.folderValidButtons = {publish: true, incomplete: false, cancel: true};
+          } else {
+              this.folderValidButtons = {publish: false, incomplete: true, cancel: true};
+          }
+        }
+      } else {
+        this.folderValidButtons = {publish: false, incomplete: false, cancel: false};
+      }
   }
 
   stickyButtonClick(page) {

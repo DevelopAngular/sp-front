@@ -67,7 +67,7 @@
       </div>
 
       <div [@NextStep]="{ value: '', params: frameMotion$ | async}" *ngIf="currentPage === 9">
-        <app-bulk-edit-rooms [form]="form"></app-bulk-edit-rooms>
+        <app-bulk-edit-rooms (bulkEditResult)="bulkEditResult($event)" [form]="form"></app-bulk-edit-rooms>
       </div>
 
       <div [@NextStep]="{ value: '', params: frameMotion$ | async}" *ngIf="currentPage === 10">

@@ -24,7 +24,8 @@ export class RoomComponent implements OnInit {
 
   @Input() form: FormGroup;
 
-  @Output() roomDataResult: EventEmitter<{data: RoomData, buttonState: ValidButtons}> = new EventEmitter<{data: RoomData, buttonState: ValidButtons}>();
+  @Output()
+  roomDataResult: EventEmitter<{data: RoomData, buttonState: ValidButtons, advOptButtons: ValidButtons}> = new EventEmitter<{data: RoomData, buttonState: ValidButtons, advOptButtons: ValidButtons}>();
 
   data: RoomData = {
       roomName: 'New Room',
@@ -193,7 +194,7 @@ export class RoomComponent implements OnInit {
           }
       }
       // console.log(buttonsResult);
-      this.roomDataResult.emit({data: this.data, buttonState: buttonsResult});
+      this.roomDataResult.emit({data: this.data, buttonState: buttonsResult, advOptButtons: this.advOptionsValidButtons});
   }
 
   selectTeacherEvent(teachers) {

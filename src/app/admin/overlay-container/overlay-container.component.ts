@@ -21,20 +21,6 @@ import { FolderData, OverlayDataService, Pages, RoomData } from './overlay-data.
 import * as XLSX from 'xlsx';
 import * as _ from 'lodash';
 
-export interface FormState {
-    roomName?: string;
-    folderName?: string;
-    roomNumber: string | number;
-    restricted: boolean;
-    scheduling_restricted: boolean;
-    travel_type: string[];
-    teachers: number[];
-    color?: number;
-    icon?: string;
-    timeLimit: number;
-    advOptState?: OptionState;
-}
-
 @Component({
   selector: 'app-overlay-container',
   templateUrl: './overlay-container.component.html',
@@ -47,6 +33,13 @@ export class OverlayContainerComponent implements OnInit {
   currentPage: number;
   roomData: RoomData;
   folderData: FolderData;
+
+  oldFolderData: FolderData;
+
+  bulkEditData: {
+    roomData: RoomData,
+    rooms: Location[]
+  };
 
   initialSettings = {
     icon: null,
@@ -336,11 +329,15 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   get showPublishButton() {
-    return this.roomValidButtons.getValue().publish &&
-      !!this.selectedIcon &&
-      !!this.color_profile ||
-      this.isDirtyIcon ||
-      this.isDirtyColor;
+    if (this.currentPage === Pages.EditRoom || this.currentPage === Pages.NewRoom  || this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder) {
+      return this.roomValidButtons.getValue().publish &&
+        !!this.selectedIcon &&
+        !!this.color_profile ||
+        this.isDirtyIcon ||
+        this.isDirtyColor;
+    } else if (this.currentPage === Pages.BulkEditRooms) {
+      return this.roomValidButtons.getValue().publish;
+    }
   }
 
   get showIncompleteButton() {
@@ -592,16 +589,6 @@ export class OverlayContainerComponent implements OnInit {
     this.titleIcon = icon.inactive_icon;
   }
 
-  addToFolder(rooms: any[]) {
-      this.isChangeLocations.next(true);
-      this.pinnableToDeleteIds = rooms.map(pin => +pin.id);
-      const locationsToAdd = rooms.map(room => room.location);
-      this.folderData.roomsInFolder = [...locationsToAdd, ...this.folderData.roomsInFolder];
-      this.overlayService.back(this.folderData);
-      // this.selectedRooms = [...locationsToAdd, ...this.selectedRooms];
-      // this.setLocation('newFolder');
-  }
-
   normalizeAdvOptData(roomData = this.roomData) {
       const data: any = {};
       if (roomData.advOptState.now.state === 'Any teacher (default)') {
@@ -660,7 +647,9 @@ export class OverlayContainerComponent implements OnInit {
       this.formService.setFrameMotionDirection('back');
       setTimeout(() => {
         // this.resetRoomImport();
-        this.overlayService.back(this.folderData);
+        const oldFolderData = this.oldFolderData ? this.oldFolderData : this.folderData;
+
+        this.overlayService.back({...this.folderData, oldFolderData});
         // return (this.overlayType === 'settingsRooms' ? (this.isEditRooms ? this.setLocation('newFolder') : this.setLocation('importRooms')) : this.setLocation('newFolder'));
       }, 100);
     }
@@ -698,7 +687,12 @@ export class OverlayContainerComponent implements OnInit {
 
     ////// End Refactor //////
 
+    if (this.currentPage === Pages.NewFolder) {
+      console.log(this.folderData);
+    }
+
     if (this.overlayType === 'newFolder' || this.overlayType === 'newRoomInFolder') {
+      return false;
 
         if (this.selectedRooms.length < 1) {
             const newFolder = {
@@ -981,38 +975,9 @@ export class OverlayContainerComponent implements OnInit {
       return '#F7F7F7';
     }
   }
-  //
-  // selectTeacherEvent(teachers) {
-  //   this.selectedTeachers = teachers;
-  //   this.checkAdvancedOptions();
-  //   this.isDirtysettings = true;
-  //   this.showProfileSearch = false;
-  //   this.changeState();
-  // }
-  //
-  // checkAdvancedOptions() {
-  //     if (!this.selectedTeachers.length) {
-  //         if (this.advDisabledOptions.indexOf(this.advOptState.now.state) > -1) {
-  //             this.advOptState.now.state = 'Any teacher (default)';
-  //             this.isDirtyAdvancedOpt = false;
-  //         }
-  //         if (this.advDisabledOptions.indexOf(this.advOptState.future.state) > -1) {
-  //             this.advOptState.future.state = 'Any teacher (default)';
-  //             this.isDirtyAdvancedOpt = false;
-  //         }
-  //     }
-  // }
 
   onUpdate(time) {
       this.timeLimit = time;
-  }
-
-  openInfo({event, action}) {
-    this.isActiveIcon[action] = true;
-  }
-
-  closeInfo(action) {
-    this.isActiveIcon[action] = false;
   }
 
   handleDragEvent( evt: DragEvent, dropAreaColor: string) {
@@ -1058,19 +1023,36 @@ export class OverlayContainerComponent implements OnInit {
       this.roomValidButtons.next(buttonState);
   }
 
-  folderResult(data) {
+  folderResult({data, buttonState}) {
       this.folderData = data;
+      this.roomValidButtons.next(buttonState);
+      // debugger;
   }
 
   newRoomInFolder(room: RoomData) {
+      this.oldFolderData = _.cloneDeep(this.folderData);
       this.folderData.roomsInFolder.push({...this.normalizeRoomData(room), ...this.normalizeAdvOptData(room)});
-      this.overlayService.back(this.folderData);
+      this.overlayService.back({...this.folderData, oldFolderData: this.oldFolderData});
   }
 
   editRoomFolder(room: RoomData) {
+    this.oldFolderData = _.cloneDeep(this.folderData);
     this.folderData.roomsInFolder = this.folderData.roomsInFolder.filter(r => r.title !== room.roomName);
     this.folderData.roomsInFolder.push({...this.normalizeRoomData(room), ...this.normalizeAdvOptData(room)});
-    this.overlayService.back(this.folderData);
+    this.overlayService.back({...this.folderData, oldFolderData: this.oldFolderData});
+  }
+
+  addToFolder(rooms: any[]) {
+    this.oldFolderData = _.cloneDeep(this.folderData);
+    this.pinnableToDeleteIds = rooms.map(pin => +pin.id);
+    const locationsToAdd = rooms.map(room => room.location);
+    this.folderData.roomsInFolder = [...locationsToAdd, ...this.folderData.roomsInFolder];
+    this.overlayService.back({...this.folderData, oldFolderData: this.oldFolderData});
+  }
+
+  bulkEditResult({roomData, rooms, buttonState}) {
+    this.bulkEditData = {roomData, rooms};
+    this.roomValidButtons.next(buttonState);
   }
 
   normalizeRoomData(room) {
