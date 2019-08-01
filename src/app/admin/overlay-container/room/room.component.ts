@@ -125,6 +125,7 @@ export class RoomComponent implements OnInit {
           } else if (this.currentPage === Pages.EditRoomInFolder) {
               const data: Location = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0];
               this.data = {
+                  id: data.id,
                   roomName: data.title,
                   roomNumber: data.room,
                   timeLimit: data.max_allowed_time,

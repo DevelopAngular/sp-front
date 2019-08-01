@@ -35,6 +35,7 @@ export enum Pages {
 
 
 export interface RoomData {
+    id?: string;
     roomName: string;
     roomNumber: string;
     timeLimit: number | string;

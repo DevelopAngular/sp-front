@@ -635,7 +635,7 @@ export class OverlayContainerComponent implements OnInit {
           data.scheduling_request_send_destination_teachers = true;
           data.scheduling_request_send_origin_teachers = false;
       } else if (roomData.advOptState.future.data.selectedTeachers.length) {
-          data.scheduling_request_teachers = this.roomData.advOptState.future.data.selectedTeachers.map(t => t.id);
+          data.scheduling_request_teachers = data.advOptState.future.data.selectedTeachers.map(t => t.id);
       }
       return data;
   }
@@ -657,8 +657,6 @@ export class OverlayContainerComponent implements OnInit {
 
   onPublish() {
     this.showPublishSpinner = true;
-
-    /// Todo refactor done
     if (this.currentPage === Pages.NewRoom) {
        const location = {
                 title: this.roomData.roomName,
@@ -685,81 +683,61 @@ export class OverlayContainerComponent implements OnInit {
            })).subscribe(response => this.dialogRef.close());
     }
 
-    ////// End Refactor //////
-
-    if (this.currentPage === Pages.NewFolder) {
-      console.log(this.folderData);
-    }
-
-    if (this.overlayType === 'newFolder' || this.overlayType === 'newRoomInFolder') {
-      return false;
-
-        if (this.selectedRooms.length < 1) {
-            const newFolder = {
-                title: this.folderName,
-                color_profile: this.color_profile.id,
-                icon: this.selectedIcon.inactive_icon,
-                category: this.folderName
-            };
-            this.hallPassService.updatePinnable(this.pinnable.id, newFolder)
-            .subscribe(res => this.dialogRef.close());
+    if (this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder) {
+      const locationsToDb$ = this.folderData.roomsInFolder.map(location => {
+        let id;
+        let data;
+        if (_.isString(location.id)) {
+          location.category = this.folderData.folderName;
+          location.teachers = location.teachers.map(t => t.id);
+          return this.locationService.createLocation(location).pipe(switchMap((loc: Location) => {
+            return this.locationService.updateLocation(loc.id, location);
+          }));
+        } else {
+          id = location.id;
+          data = location;
+          data.category = this.folderData.folderName;
+          if (data.teachers) {
+            data.teachers = data.teachers.map(teacher => +teacher.id);
+          }
+          return this.locationService.updateLocation(id, data);
         }
-        const selRooms = this.isEditFolder ? Object.values(this.selectedRoomsEditable) : this.selectedRooms;
-        const locationsToUpdate$ = selRooms.map((location: any) => {
-            let id;
-            let data;
-            if (!location.id) {
-                location.category = this.folderName;
-                return this.locationService.createLocation(location).pipe(switchMap((loc: Location) => {
-                    return this.locationService.updateLocation(loc.id, location);
-                }));
-            }
-            if (location.location) {
-                id = location.location.id;
-                data = location.location;
-                data.category = this.folderName;
-                data.teachers = data.teachers.map(t => +t.id);
-            }
-            if (!location.location) {
-                id = location.id;
-                data = location;
-                data.category = this.folderName;
-                if (data.teachers) {
-                    data.teachers = data.teachers.map(teacher => +teacher.id);
-                }
-            }
+      });
 
-            return this.locationService.updateLocation(id, data);
-        });
-        forkJoin(locationsToUpdate$).pipe(switchMap(locations => {
-            const newFolder = {
-                title: this.folderName,
-                color_profile: this.color_profile.id,
-                icon: this.selectedIcon.inactive_icon,
-                category: this.folderName
-            };
-        return this.isEditFolder
-                ?
-               this.hallPassService.updatePinnable(this.pinnable.id, newFolder)
-                :
+      forkJoin(locationsToDb$).pipe(switchMap(locations => {
+        const newFolder = {
+          title: this.folderData.folderName,
+          color_profile: this.color_profile.id,
+          icon: this.selectedIcon.inactive_icon,
+          category: this.folderData.folderName
+        };
+        return this.currentPage === Pages.EditFolder
+          ?
+          this.hallPassService.updatePinnable(this.pinnable.id, newFolder)
+          :
           zip(
             this.hallPassService.getArrangedPinnables(),
             this.hallPassService.createPinnable(newFolder)
           ).pipe(
-             switchMap((result: any[]) => {
-               const arrengedSequence = result[0].map(item => item.id);
-                     arrengedSequence.push(result[1].id);
-               return this.hallPassService.createArrangedPinnable( { order: arrengedSequence.join(',')});
-             })
+            switchMap((result: any[]) => {
+              const arrengedSequence = result[0].map(item => item.id);
+              arrengedSequence.push(result[1].id);
+              return this.hallPassService.createArrangedPinnable( { order: arrengedSequence.join(',')});
+            })
           );
-        })).subscribe(() => !this.pinnableToDeleteIds.length ? this.dialogRef.close() : false);
-        if (this.pinnableToDeleteIds.length) {
-          const deleteRequests = this.pinnableToDeleteIds.map(id => this.hallPassService.deletePinnable(id));
-          zip(...deleteRequests).subscribe(() => this.dialogRef.close());
-        }
+      }),
+        switchMap(() => {
+          if (this.pinnableToDeleteIds.length) {
+            const deleteRequests = this.pinnableToDeleteIds.map(id => this.hallPassService.deletePinnable(id));
+            return zip(...deleteRequests);
+          } else {
+            return of(null);
+          }
+        })
+      )
+      .subscribe(() => this.dialogRef.close());
     }
 
-    //// Todo refactor done
     if (this.currentPage === Pages.EditRoom) {
         const location = {
             title: this.roomData.roomName,
@@ -784,8 +762,6 @@ export class OverlayContainerComponent implements OnInit {
                 return this.hallPassService.updatePinnable(this.pinnable.id, pinnable);
             })).subscribe(response => this.dialogRef.close());
     }
-
-    /////// End refactor ////////
   }
 
   done() {
@@ -1026,7 +1002,6 @@ export class OverlayContainerComponent implements OnInit {
   folderResult({data, buttonState}) {
       this.folderData = data;
       this.roomValidButtons.next(buttonState);
-      // debugger;
   }
 
   newRoomInFolder(room: RoomData) {
@@ -1037,7 +1012,7 @@ export class OverlayContainerComponent implements OnInit {
 
   editRoomFolder(room: RoomData) {
     this.oldFolderData = _.cloneDeep(this.folderData);
-    this.folderData.roomsInFolder = this.folderData.roomsInFolder.filter(r => r.title !== room.roomName);
+    this.folderData.roomsInFolder = this.folderData.roomsInFolder.filter(r => r.id !== room.id);
     this.folderData.roomsInFolder.push({...this.normalizeRoomData(room), ...this.normalizeAdvOptData(room)});
     this.overlayService.back({...this.folderData, oldFolderData: this.oldFolderData});
   }
@@ -1057,6 +1032,7 @@ export class OverlayContainerComponent implements OnInit {
 
   normalizeRoomData(room) {
     return {
+      id: room.id,
       title: room.roomName,
       room: room.roomNumber,
       restricted: room.restricted,

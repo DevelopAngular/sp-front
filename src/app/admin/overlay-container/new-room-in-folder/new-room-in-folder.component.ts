@@ -24,6 +24,7 @@ export class NewRoomInFolderComponent implements OnInit {
   });
 
   roomInFolderData: RoomData = {
+      id: '',
       roomName: '',
       roomNumber: '',
       timeLimit: '',
@@ -64,6 +65,8 @@ export class NewRoomInFolderComponent implements OnInit {
 
   roomResult({data, buttonState}) {
     this.roomInFolderData = data;
+    const randomNumber = Math.floor(Math.random() * (1 - 1000)) + 1000;
+    this.roomInFolderData.id = `Fake ${randomNumber}`;
     this.roomValidButtons.next(buttonState);
   }
 

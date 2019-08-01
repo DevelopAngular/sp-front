@@ -142,7 +142,6 @@ export class FolderComponent implements OnInit {
   }
 
   changeFolderData() {
-    console.log(this.initialFolderData);
     if (
         !_.isEqual(this.initialFolderData.roomsInFolder, this.roomsImFolder) ||
         this.initialFolderData.folderName && this.initialFolderData.folderName !== this.form.get('folderName').value
