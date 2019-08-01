@@ -96,8 +96,7 @@ const appRoutes: Routes = [
     component: ErrorComponent,
   },
 
-  // {path: '', redirectTo: 'app/main/passes', pathMatch: 'full'},
-  {path: '**', redirectTo: '/app', pathMatch: 'full'},
+  {path: '**', redirectTo: 'main/passes', pathMatch: 'full'},
 ];
 
 @NgModule({
