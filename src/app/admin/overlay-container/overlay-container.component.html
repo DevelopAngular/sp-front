@@ -71,7 +71,7 @@
       </div>
 
       <div [@NextStep]="{ value: '', params: frameMotion$ | async}" *ngIf="currentPage === 10">
-        <app-bulk-edit-rooms-in-folder [form]="form" (back)="back(false)"></app-bulk-edit-rooms-in-folder>
+        <app-bulk-edit-rooms-in-folder [form]="form" (bulkEditResult)="bulkEditInFolder($event)" (back)="back(false)"></app-bulk-edit-rooms-in-folder>
       </div>
 
     </div>

@@ -38,7 +38,7 @@ export class OverlayContainerComponent implements OnInit {
 
   bulkEditData: {
     roomData: RoomData,
-    rooms: Location[]
+    rooms: Location[] | any[]
   };
 
   initialSettings = {
@@ -1022,6 +1022,12 @@ export class OverlayContainerComponent implements OnInit {
     this.pinnableToDeleteIds = rooms.map(pin => +pin.id);
     const locationsToAdd = rooms.map(room => room.location);
     this.folderData.roomsInFolder = [...locationsToAdd, ...this.folderData.roomsInFolder];
+    this.overlayService.back({...this.folderData, oldFolderData: this.oldFolderData});
+  }
+
+  bulkEditInFolder({roomData, rooms}) {
+    this.oldFolderData = _.cloneDeep(this.folderData);
+    // this.folderData.roomsInFolder = this.folderData.roomsInFolder.filter(r => r.id !== room.id);
     this.overlayService.back({...this.folderData, oldFolderData: this.oldFolderData});
   }
 
