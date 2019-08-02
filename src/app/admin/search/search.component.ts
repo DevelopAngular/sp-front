@@ -18,11 +18,11 @@ import {DataService} from '../../services/data-service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {SearchFilterDialogComponent} from './search-filter-dialog/search-filter-dialog.component';
 import {DateTimeFilterComponent} from './date-time-filter/date-time-filter.component';
-import {DomSanitizer} from '@angular/platform-browser';
+import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 
 import * as moment from 'moment';
 import {bumpIn} from '../../animations';
-import {prettyDate} from '../helpers';
+import {prettyDate, wrapToHtml} from '../helpers';
 
 
 
@@ -96,7 +96,8 @@ export class SearchComponent implements OnInit {
       private userService: UserService,
       public dataService: DataService,
       public darkTheme: DarkThemeSwitch,
-      private domSanitazer: DomSanitizer
+      private domSanitizer: DomSanitizer
+
 
   ) {
   }
@@ -177,6 +178,11 @@ export class SearchComponent implements OnInit {
 
   }
 
+  private wrapToHtml(data, htmlTag, dataSet?) {
+    const wrapper =  wrapToHtml.bind(this);
+    return wrapper(data, htmlTag, dataSet);
+  }
+
   search() {
 
       this.spinner = true;
@@ -224,7 +230,7 @@ export class SearchComponent implements OnInit {
         .pipe(filter(res => !!res))
         .subscribe((passes: HallPass[]) => {
 
-          console.log('DATA', passes);
+          // console.log('DATA', passes);
           this.passes = passes;
           this.tableData = passes.map((hallPass, i) => {
 
@@ -234,29 +240,33 @@ export class SearchComponent implements OnInit {
                 ` (${hallPass.student.primary_email.split('@', 1)[0]})`;
 
 
-            const passTemplate = {
-              'Student Name': `<span>${name}</span>`,
-              'Origin': `<span>${hallPass.origin.title}</span>`,
-              'TT': this.domSanitazer.bypassSecurityTrustHtml(hallPass.travel_type === 'one_way' ? SP_ARROW_BLUE_GRAY : SP_ARROW_DOUBLE_BLUE_GRAY),
-              'Destination': `<span>${hallPass.destination.title}</span>`,
-              'Date & Time': `<span>${moment(hallPass.created).format('M/DD h:mm A')}</span>`,
-              'Duration': `<span>${(Number.isInteger(duration.asMinutes()) ? duration.asMinutes() : duration.asMinutes().toFixed(2)) + ' min'}</span>`
-            };
+            // const passTemplate = {
+            //   'Student Name': `<span>${name}</span>`,
+            //   'Origin': `<span>${hallPass.origin.title}</span>`,
+            //   'TT': this.domSanitizer.bypassSecurityTrustHtml(hallPass.travel_type === 'one_way' ? SP_ARROW_BLUE_GRAY : SP_ARROW_DOUBLE_BLUE_GRAY),
+            //   'Destination': `<span>${hallPass.destination.title}</span>`,
+            //   'Date & Time': `<span>${moment(hallPass.created).format('M/DD h:mm A')}</span>`,
+            //   'Duration': `<span>${(Number.isInteger(duration.asMinutes()) ? duration.asMinutes() : duration.asMinutes().toFixed(2)) + ' min'}</span>`
+            // };
 
-            const _data = {
+            const rawObj = {
                 'Student Name': name,
                 'Origin': hallPass.origin.title,
-                'TT': this.domSanitazer.bypassSecurityTrustHtml(hallPass.travel_type === 'one_way' ? SP_ARROW_BLUE_GRAY : SP_ARROW_DOUBLE_BLUE_GRAY),
+                'TT': hallPass.travel_type === 'one_way' ? SP_ARROW_BLUE_GRAY : SP_ARROW_DOUBLE_BLUE_GRAY,
                 'Destination': hallPass.destination.title,
                 'Date & Time': moment(hallPass.created).format('M/DD h:mm A'),
                 'Duration': (Number.isInteger(duration.asMinutes()) ? duration.asMinutes() : duration.asMinutes().toFixed(2)) + ' min'
             };
-            Object.defineProperty(passTemplate, 'id', { enumerable: false, value: hallPass.id});
-            Object.defineProperty(passTemplate, 'date', {enumerable: false, value: moment(hallPass.created) });
-            Object.defineProperty(passTemplate, 'sortDuration', {enumerable: false, value: duration });
-            Object.defineProperty(_data, 'sortDuration', {enumerable: false, value: duration });
-            Object.defineProperty(passTemplate, '_data', {enumerable: false, value: _data });
-            return passTemplate;
+
+            const record = this.wrapToHtml(rawObj, 'span') as {[key: string]: SafeHtml; _data: any};
+
+
+            Object.defineProperty(rawObj, 'id', { enumerable: false, value: hallPass.id});
+            Object.defineProperty(rawObj, 'date', {enumerable: false, value: moment(hallPass.created) });
+            Object.defineProperty(rawObj, 'sortDuration', {enumerable: false, value: duration });
+            Object.defineProperty(rawObj, 'sortDuration', {enumerable: false, value: duration });
+            Object.defineProperty(record, '_data', {enumerable: false, value: rawObj });
+            return record;
           });
           this.spinner = false;
           this.hasSearched = true;
