@@ -24,10 +24,13 @@ export class RoomComponent implements OnInit {
 
   @Input() form: FormGroup;
 
+  @Output() back = new EventEmitter();
+
   @Output()
   roomDataResult: EventEmitter<{data: RoomData, buttonState: ValidButtons, advOptButtons: ValidButtons}> = new EventEmitter<{data: RoomData, buttonState: ValidButtons, advOptButtons: ValidButtons}>();
 
   data: RoomData = {
+      id: `Fake ${Math.floor(Math.random() * (1 - 1000)) + 1000}`,
       roomName: 'New Room',
       roomNumber: '',
       timeLimit: 0,
@@ -137,9 +140,10 @@ export class RoomComponent implements OnInit {
               };
           }
       }
-      this.initialData = _.cloneDeep(this.data);
-      merge(this.form.valueChanges, this.change$).pipe(delay(350)).subscribe(() => {
 
+      this.initialData = _.cloneDeep(this.data);
+
+      merge(this.form.valueChanges, this.change$).pipe(delay(350)).subscribe(() => {
           this.checkValidRoomOptions();
       });
   }
@@ -160,9 +164,7 @@ export class RoomComponent implements OnInit {
               };
           }
       } else {
-          // console.log(_.omit(this.initialData, 'advOptState'), _.omit(this.data, 'advOptState'));
         if (this.validForm && this.isValidRestrictions) {
-            // console.log(_.omit(this.initialData, 'advOptState'), _.omit(this.data, 'advOptState'));
             this.roomValidButtons = {
                 publish: true,
                 incomplete: false,
@@ -194,7 +196,6 @@ export class RoomComponent implements OnInit {
               buttonsResult.incomplete = true;
           }
       }
-      // console.log(buttonsResult);
       this.roomDataResult.emit({data: this.data, buttonState: buttonsResult, advOptButtons: this.advOptionsValidButtons});
   }
 
@@ -236,23 +237,20 @@ export class RoomComponent implements OnInit {
 
   advancedOptions({options, validButtons}) {
       this.data.advOptState = options;
-      // console.log('Buttons ===>>', validButtons);
       this.advOptionsValidButtons = validButtons;
       this.change$.next();
   }
 
   deleteRoom() {
-      const pinnable = this.overlayService.pageState.getValue().data.pinnable;
-      const deletions = [
-          this.hallPassService.deletePinnable(pinnable.id)
-      ];
-
-      if (pinnable.location) {
-          deletions.push(this.locationService.deleteLocation(pinnable.location.id));
-      }
-
-      zip(...deletions).subscribe(res => {
-          this.dialogRef.close();
+    const pinnable = this.overlayService.pageState.getValue().data.pinnable;
+    if (this.currentPage === Pages.EditRoom) {
+      this.hallPassService.deletePinnable(pinnable.id).subscribe(res => {
+        this.dialogRef.close();
       });
+    } else if (this.currentPage === Pages.EditRoomInFolder) {
+      this.locationService.deleteLocation(this.data.id).subscribe(res => {
+        this.back.emit();
+      });
+    }
   }
 }

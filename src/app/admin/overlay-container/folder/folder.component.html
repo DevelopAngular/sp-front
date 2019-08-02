@@ -14,7 +14,8 @@
       >
       </app-input>
     </div>
-    <div class="rooms-wrapper">
+    <div *ngIf="folderRoomsLoaded" [@NextStep]="{ value: '', params: frameMotion$ | async}">
+    <div class="rooms-wrapper rooms-in-folder">
       <div class="sticky" *ngIf="roomsImFolder.length">
         <div class="rooms-in-folder-title">
           <div class="all-rooms-checkbox">
@@ -104,8 +105,9 @@
       </div>
 
     </div>
+    </div>
 
-    <div class="delete-button" *ngIf="currentPage === 4">
+    <div class="delete-button" *ngIf="currentPage === 4 && folderRoomsLoaded">
       <app-gradient-button
               [hoverColor]="'#DA2370'"
               [gradient]="'#DA2370,#FB434A'"

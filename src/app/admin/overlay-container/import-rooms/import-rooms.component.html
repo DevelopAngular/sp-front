@@ -12,16 +12,6 @@
         {{ (showIncomplete ? 'Adding ' + importedRooms.length + ' Rooms' : 'Import Rooms')  }}
       </div>
       <div class="header-in-folder-button">
-        <!--<app-gradient-button-->
-                <!--*ngIf="showPubish"-->
-                <!--[minHeight]="'30px'"-->
-                <!--[cursor]="'pointer'"-->
-                <!--[fontSize]="'12px'"-->
-                <!--(buttonClick)="addInFolder()"-->
-        <!--&gt;-->
-          <!--Add-->
-          <!--<mat-spinner *ngIf="false" [color]="'accent'" [diameter]="'30'"></mat-spinner>-->
-        <!--</app-gradient-button>-->
         <div *ngIf="showIncomplete" [style.color]="'#1F194E'">Incomplete</div>
       </div>
     </div>

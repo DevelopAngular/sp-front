@@ -5,6 +5,7 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { User } from '../../models/User';
 import { Pinnable } from '../../models/Pinnable';
 import { OptionState } from './advanced-options/advanced-options.component';
+import {CreateFormService} from '../../create-hallpass-forms/create-form.service';
 
 export interface PageState {
     currentPage: number;
@@ -74,7 +75,7 @@ export class OverlayDataService {
       scheduling_restricted: 'Does the pass need digital approval from a teacher to become a scheduled pass?'
   };
 
-  constructor() {
+  constructor(private formService: CreateFormService,) {
   }
 
   changePage(next, previous, data) {

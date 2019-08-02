@@ -458,7 +458,15 @@ export class OverlayContainerComponent implements OnInit {
       this.formService.setFrameMotionDirection('back');
       setTimeout(() => {
         const oldFolderData = this.oldFolderData ? this.oldFolderData : this.folderData;
+        if (this.overlayService.pageState.getValue().previousPage === Pages.BulkEditRoomsInFolder) {
+          if (!!this.pinnable) {
+            this.overlayService.changePage(Pages.EditFolder, this.currentPage, {...this.folderData, oldFolderData});
+          } else {
+            this.overlayService.changePage(Pages.NewFolder, this.currentPage, {...this.folderData, oldFolderData});
+          }
+        } else {
           this.overlayService.back({...this.folderData, oldFolderData});
+        }
       }, 100);
     }
   }
@@ -492,6 +500,16 @@ export class OverlayContainerComponent implements OnInit {
     }
 
     if (this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder) {
+      if (!this.folderData.roomsInFolder.length) {
+        const newFolder = {
+          title: this.folderData.folderName,
+          color_profile: this.color_profile.id,
+          icon: this.selectedIcon.inactive_icon,
+          category: this.folderData.folderName
+        };
+        this.hallPassService.updatePinnable(this.pinnable.id, newFolder)
+          .subscribe(res => this.dialogRef.close());
+      }
       const locationsToDb$ = this.folderData.roomsInFolder.map(location => {
         let id;
         let data;
@@ -639,7 +657,15 @@ export class OverlayContainerComponent implements OnInit {
     this.folderData.roomsInFolder = _.differenceBy(this.folderData.roomsInFolder, rooms, 'id');
     this.editRooms(roomData, rooms);
     this.folderData.roomsInFolder = [...rooms, ...this.folderData.roomsInFolder];
-    this.overlayService.back({...this.folderData, oldFolderData: this.oldFolderData});
+    if (this.overlayService.pageState.getValue().previousPage === Pages.ImportRooms) {
+      if (!!this.pinnable) {
+        this.overlayService.changePage(Pages.EditFolder, this.currentPage, {...this.folderData, oldFolderData: this.oldFolderData});
+      } else {
+        this.overlayService.changePage(Pages.NewFolder, this.currentPage, {...this.folderData, oldFolderData: this.oldFolderData});
+      }
+    } else {
+      this.overlayService.back({...this.folderData, oldFolderData: this.oldFolderData});
+    }
   }
 
   bulkEditResult({roomData, rooms, buttonState}) {

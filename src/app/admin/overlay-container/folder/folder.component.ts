@@ -3,7 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
-import { merge, Subject, zip } from 'rxjs';
+import {BehaviorSubject, merge, Subject, zip} from 'rxjs';
 
 import { Location } from '../../../models/Location';
 import { Pinnable } from '../../../models/Pinnable';
@@ -15,11 +15,13 @@ import { CreateFormService } from '../../../create-hallpass-forms/create-form.se
 import { OptionState, ValidButtons } from '../advanced-options/advanced-options.component';
 
 import * as _ from 'lodash';
+import {NextStep} from '../../../animations';
 
 @Component({
   selector: 'app-folder',
   templateUrl: './folder.component.html',
-  styleUrls: ['./folder.component.scss']
+  styleUrls: ['./folder.component.scss'],
+  animations: [NextStep]
 })
 export class FolderComponent implements OnInit {
 
@@ -64,6 +66,8 @@ export class FolderComponent implements OnInit {
 
   change$: Subject<any> = new Subject<any>();
 
+  frameMotion$: BehaviorSubject<any>;
+
   constructor(
       @Inject(MAT_DIALOG_DATA) public dialogData: any,
       public overlayService: OverlayDataService,
@@ -79,6 +83,7 @@ export class FolderComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.currentPage = this.overlayService.pageState.getValue().currentPage;
     const data = this.overlayService.pageState.getValue().data;
 
