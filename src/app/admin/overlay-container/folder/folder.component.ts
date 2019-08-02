@@ -12,7 +12,7 @@ import { OverlayContainerComponent } from '../overlay-container.component';
 import { HallPassesService } from '../../../services/hall-passes.service';
 import { FolderData, OverlayDataService, Pages } from '../overlay-data.service';
 import { CreateFormService } from '../../../create-hallpass-forms/create-form.service';
-import {OptionState, ValidButtons} from '../advanced-options/advanced-options.component';
+import { OptionState, ValidButtons } from '../advanced-options/advanced-options.component';
 
 import * as _ from 'lodash';
 

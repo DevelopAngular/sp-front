@@ -31,6 +31,7 @@ import { NewRoomInFolderComponent } from '../overlay-container/new-room-in-folde
 import { EditRoomInFolderComponent } from '../overlay-container/edit-room-in-folder/edit-room-in-folder.component';
 import { BulkEditRoomsComponent } from '../overlay-container/bulk-edit-rooms/bulk-edit-rooms.component';
 import { BulkEditRoomsInFolderComponent } from '../overlay-container/bulk-edit-rooms-in-folder/bulk-edit-rooms-in-folder.component';
+import {ImportRoomsComponent} from '../overlay-container/import-rooms/import-rooms.component';
 
 @NgModule({
   imports: [
@@ -65,8 +66,8 @@ import { BulkEditRoomsInFolderComponent } from '../overlay-container/bulk-edit-r
       NewRoomInFolderComponent,
       EditRoomInFolderComponent,
       BulkEditRoomsComponent,
-      BulkEditRoomsInFolderComponent
-
+      BulkEditRoomsInFolderComponent,
+      ImportRoomsComponent
   ],
   exports: [
       MatChipsModule,
@@ -87,7 +88,8 @@ import { BulkEditRoomsInFolderComponent } from '../overlay-container/bulk-edit-r
       NewRoomInFolderComponent,
       EditRoomInFolderComponent,
       BulkEditRoomsComponent,
-      BulkEditRoomsInFolderComponent
+      BulkEditRoomsInFolderComponent,
+      ImportRoomsComponent
   ],
   entryComponents: [
       OverlayContainerComponent,

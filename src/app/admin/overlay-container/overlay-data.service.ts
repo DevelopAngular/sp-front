@@ -63,6 +63,9 @@ export class OverlayDataService {
 
   roomNameBlur$: Subject<any> = new Subject();
 
+  dropEvent$ = new Subject();
+  dragEvent$ = new Subject();
+
   public tooltipText = {
       teachers: 'Which teachers should see pass activity in this room?',
       travel: 'Will the the room will be available to make only round-trip passes, only one-way passes, or both?',

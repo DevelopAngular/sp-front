@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Pinnable } from '../../../models/Pinnable';
 import { bumpIn } from '../../../animations';
-import { FolderData } from '../overlay-data.service';
 
 import * as _ from 'lodash';
 

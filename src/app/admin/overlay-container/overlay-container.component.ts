@@ -80,94 +80,94 @@ export class OverlayContainerComponent implements OnInit {
   }
   @ViewChild('dropArea') dropArea: ElementRef;
 
-  @ViewChild('file') set fileRef(fileRef: ElementRef) {
-    if (fileRef && fileRef.nativeElement) {
-      console.log(this.selectedFile);
-      this.selectedFile = fileRef;
-      fromEvent(this.selectedFile.nativeElement , 'change')
-        .pipe(
-          switchMap((evt: Event) => {
-            this.uploadingProgress.inProgress = true;
-
-            const FR = new FileReader();
-            FR.readAsBinaryString(this.selectedFile.nativeElement.files[0]);
-            return fromEvent(FR, 'load');
-          }),
-          map(( res: any) => {
-            const raw = XLSX.read(res.target.result, {type: 'binary'});
-            const sn = raw.SheetNames[0];
-            const stringCollection = raw.Sheets[sn];
-            const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
-            let rows = data.slice(1);
-            rows = rows.map((row, index) => {
-              const _room: any = {};
-              _room.title = row[0];
-              _room.room = row[1];
-              _room.teachers = <string>row[2] ? row[2].split(', ') : [];
-              return _room;
-            });
-            return rows;
-          }),
-          map((rows) => {
-            rows = rows.map((r: any) => {
-              if (r.title && r.title.length > 16) {
-                r.title = r.title.slice(0, 15);
-              }
-              if (r.room && (r.room + '').length > 8) {
-                r.title = r.title.slice(0, 7);
-              }
-              return r;
-            });
-            const groupedRooms = _.groupBy(rows, (r: any) => r.title);
-            let normalizedRooms = [];
-
-            for (const key in groupedRooms) {
-              if (groupedRooms[key].length > 1) {
-                normalizedRooms = normalizedRooms.concat(
-                  groupedRooms[key].map((duplicate: any, index: number) => {
-                    duplicate.title = duplicate.title + ++index;
-                    return duplicate;
-                  })
-                );
-              } else {
-                normalizedRooms = normalizedRooms.concat(groupedRooms[key]);
-              }
-            }
-            return normalizedRooms;
-          }),
-          switchMap((_rooms: any[]): Observable<any[]> => {
-            return this.userService.getUsersList('_profile_teacher')
-              .pipe(
-                map((teachers: any[]) => {
-                  return _rooms.map((_room) => {
-                    const teachersIdArray = [];
-
-                    _room.teachers.forEach((_teacherEmail) => {
-                      const existAndAttached = teachers.find(_teacher =>  _teacher.primary_email === _teacherEmail );
-                      if (existAndAttached) {
-                        teachersIdArray.push(existAndAttached.id);
-                      } else {
-                        this.unknownEmails.push({
-                          room: _room,
-                          email: _teacherEmail
-                        });
-                      }
-                    });
-                    _room.teachers = teachersIdArray;
-                    return _room;
-                  });
-                }));
-          }),
-        )
-        .subscribe((rooms) => {
-          setTimeout(() => {
-            this.uploadingProgress.inProgress = false;
-            this.uploadingProgress.completed = true;
-          }, 1500);
-          this.importedRooms = rooms;
-        });
-    }
-  }
+  // @ViewChild('file') set fileRef(fileRef: ElementRef) {
+  //   if (fileRef && fileRef.nativeElement) {
+  //     console.log(this.selectedFile);
+  //     this.selectedFile = fileRef;
+  //     fromEvent(this.selectedFile.nativeElement , 'change')
+  //       .pipe(
+  //         switchMap((evt: Event) => {
+  //           this.uploadingProgress.inProgress = true;
+  //
+  //           const FR = new FileReader();
+  //           FR.readAsBinaryString(this.selectedFile.nativeElement.files[0]);
+  //           return fromEvent(FR, 'load');
+  //         }),
+  //         map(( res: any) => {
+  //           const raw = XLSX.read(res.target.result, {type: 'binary'});
+  //           const sn = raw.SheetNames[0];
+  //           const stringCollection = raw.Sheets[sn];
+  //           const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
+  //           let rows = data.slice(1);
+  //           rows = rows.map((row, index) => {
+  //             const _room: any = {};
+  //             _room.title = row[0];
+  //             _room.room = row[1];
+  //             _room.teachers = <string>row[2] ? row[2].split(', ') : [];
+  //             return _room;
+  //           });
+  //           return rows;
+  //         }),
+  //         map((rows) => {
+  //           rows = rows.map((r: any) => {
+  //             if (r.title && r.title.length > 16) {
+  //               r.title = r.title.slice(0, 15);
+  //             }
+  //             if (r.room && (r.room + '').length > 8) {
+  //               r.title = r.title.slice(0, 7);
+  //             }
+  //             return r;
+  //           });
+  //           const groupedRooms = _.groupBy(rows, (r: any) => r.title);
+  //           let normalizedRooms = [];
+  //
+  //           for (const key in groupedRooms) {
+  //             if (groupedRooms[key].length > 1) {
+  //               normalizedRooms = normalizedRooms.concat(
+  //                 groupedRooms[key].map((duplicate: any, index: number) => {
+  //                   duplicate.title = duplicate.title + ++index;
+  //                   return duplicate;
+  //                 })
+  //               );
+  //             } else {
+  //               normalizedRooms = normalizedRooms.concat(groupedRooms[key]);
+  //             }
+  //           }
+  //           return normalizedRooms;
+  //         }),
+  //         switchMap((_rooms: any[]): Observable<any[]> => {
+  //           return this.userService.getUsersList('_profile_teacher')
+  //             .pipe(
+  //               map((teachers: any[]) => {
+  //                 return _rooms.map((_room) => {
+  //                   const teachersIdArray = [];
+  //
+  //                   _room.teachers.forEach((_teacherEmail) => {
+  //                     const existAndAttached = teachers.find(_teacher =>  _teacher.primary_email === _teacherEmail );
+  //                     if (existAndAttached) {
+  //                       teachersIdArray.push(existAndAttached.id);
+  //                     } else {
+  //                       this.unknownEmails.push({
+  //                         room: _room,
+  //                         email: _teacherEmail
+  //                       });
+  //                     }
+  //                   });
+  //                   _room.teachers = teachersIdArray;
+  //                   return _room;
+  //                 });
+  //               }));
+  //         }),
+  //       )
+  //       .subscribe((rooms) => {
+  //         setTimeout(() => {
+  //           this.uploadingProgress.inProgress = false;
+  //           this.uploadingProgress.completed = true;
+  //         }, 1500);
+  //         this.importedRooms = rooms;
+  //       });
+  //   }
+  // }
 
   selectedFile: ElementRef;
   selectedRooms = [];
@@ -334,18 +334,18 @@ export class OverlayContainerComponent implements OnInit {
         !!this.selectedIcon &&
         !!this.color_profile ||
         this.isDirtyIcon ||
-        this.isDirtyColor;
+        this.isDirtyColor && !this.disabledRightBlock;
     } else if (this.currentPage === Pages.BulkEditRooms) {
       return this.roomValidButtons.getValue().publish;
     }
   }
 
   get showIncompleteButton() {
-      return this.roomValidButtons.getValue().incomplete;
+      return this.roomValidButtons.getValue().incomplete && !this.disabledRightBlock;
   }
 
   get showCancelButton() {
-      return this.roomValidButtons.getValue().cancel || this.isDirtyIcon || this.isDirtyColor;
+      return (this.roomValidButtons.getValue().cancel || this.isDirtyIcon || this.isDirtyColor) && !this.disabledRightBlock;
   }
 
   ngOnInit() {
@@ -372,35 +372,10 @@ export class OverlayContainerComponent implements OnInit {
       this.overlayType = this.dialogData['type'];
       if (this.dialogData['pinnable']) {
         this.pinnable = this.dialogData['pinnable'];
-
-        // if (this.pinnable.type === 'category') {
-        //   this.locationService.getLocationsWithCategory(this.pinnable.category)
-        //     .subscribe((res: Location[]) => {
-        //       this.folderRoomsLoaded = true;
-        //       this.selectedRooms = res;
-        //       if (this.dialogData['forceSelectedLocation']) {
-        //         this.setToEditRoom(this.dialogData['forceSelectedLocation']);
-        //       }
-        //     });
-        // }
       }
       if (this.dialogData['rooms']) {
         this.pinnableToDeleteIds = this.dialogData['rooms'].map(pin => +pin.id);
         this.selectedRooms = this.dialogData['rooms'];
-        // if (this.overlayType === 'newFolder') {
-        //   this.dialogData['rooms'].forEach((room: Pinnable) => {
-        //     if (room.type === 'category') {
-        //       this.locationService.getLocationsWithCategory(room.category)
-        //         .subscribe((res: Location[]) => {
-        //           this.selectedRooms = [...this.selectedRooms, ...res];
-        //         });
-        //     } else {
-        //         this.selectedRooms.push(room.location);
-        //     }
-        //   });
-        // } else {
-        //   this.selectedRooms = this.dialogData['rooms'];
-        // }
       }
 
       if (this.dialogData['pinnables$']) {
@@ -448,8 +423,6 @@ export class OverlayContainerComponent implements OnInit {
           );
       }
 
-      // this.buildInitialState();
-
       this.form.valueChanges.subscribe(res => {
           if (!!res.file || !!res.roomName || !!res.folderName || !!res.roomNumber || !!res.timeLimit) {
           } else {
@@ -465,6 +438,7 @@ export class OverlayContainerComponent implements OnInit {
 
   buildForm() {
     this.form = new FormGroup({
+        file: new FormControl(),
         roomName: new FormControl('',
             [Validators.required, Validators.maxLength(15)],
             this.uniqueRoomNameValidator.bind(this)),
@@ -550,26 +524,18 @@ export class OverlayContainerComponent implements OnInit {
       }
   }
 
-  // uniqueRoomNumberValidator(control: AbstractControl) {
-  //     return this.locationService.checkLocationNumber(control.value)
-  //         .pipe(map((res: any) => {
-  //             if (this.overlayType === 'newRoom' || (this.overlayType === 'newRoomInFolder' && !this.editRoomInFolder)) {
-  //                 return res.title_used ? { room_number: true } : null;
-  //             }
-  //             return res.title_used &&
-  //             (this.editRoomInFolder ?
-  //                 this.currentLocationInEditRoomFolder.room : this.pinnable.location.room) !== this.roomNumber ? { room_number: true } : null;
-  //         }));
-  // }
-
   uniqueFolderNameValidator(control: AbstractControl) {
+    if (control.dirty) {
       return this.hallPassService.checkPinnableName(control.value)
-          .pipe(map((res: any) => {
-              if (this.overlayType === 'newFolder' && !this.isEditFolder) {
-                  return res.title_used ? { folder_name: true } : null;
-              }
-              return res.title_used && this.pinnable.title !== this.folderName ? { folder_name: true } : null;
-          }));
+        .pipe(map((res: any) => {
+          if (this.currentPage === Pages.NewFolder) {
+            return res.title_used ? { folder_name: true } : null;
+          }
+          return res.title_used && this.pinnable.title !== this.folderName ? { folder_name: true } : null;
+        }));
+    } else {
+      return of(null);
+    }
   }
 
   changeColor(color) {
@@ -635,7 +601,7 @@ export class OverlayContainerComponent implements OnInit {
           data.scheduling_request_send_destination_teachers = true;
           data.scheduling_request_send_origin_teachers = false;
       } else if (roomData.advOptState.future.data.selectedTeachers.length) {
-          data.scheduling_request_teachers = data.advOptState.future.data.selectedTeachers.map(t => t.id);
+          data.scheduling_request_teachers = roomData.advOptState.future.data.selectedTeachers.map(t => t.id);
       }
       return data;
   }
@@ -762,179 +728,189 @@ export class OverlayContainerComponent implements OnInit {
                 return this.hallPassService.updatePinnable(this.pinnable.id, pinnable);
             })).subscribe(response => this.dialogRef.close());
     }
-  }
 
-  done() {
-      this.showDoneSpinner = true;
+    if (this.currentPage === Pages.BulkEditRooms) {
+      const patchRequests$ = (this.bulkEditData.rooms as Location[]).map(room => {
+        return this.locationService.updateLocation(room.id, room);
+      });
 
-      if (this.overlayType === 'newRoomInFolder') {
-          const location = {
-                  title: this.roomName,
-                  room: this.roomNumber,
-                  restricted: this.nowRestriction,
-                  scheduling_restricted: this.futureRestriction,
-                  // teachers: this.selectedTeachers.map(teacher => teacher.id),
-                  teachers: this.selectedTeachers,
-                  travel_types: this.travelType,
-                  max_allowed_time: +this.timeLimit,
-            };
-
-        if (this.editRoomInFolder) {
-                const currentRoom = this.selectedRooms.find(room => room.id === this.roomToEdit.id);
-                currentRoom.title = location.title;
-                this.selectedRoomsEditable[this.roomToEdit.id] = ({id : this.roomToEdit.id, ...location, ...this.normalizeAdvOptData()});
-                this.isChangeLocations.next(true);
-        } else {
-            this.selectedRoomsEditable[location.title] = ({id : null, ...location, ...this.normalizeAdvOptData()});
-            this.selectedRooms.push({...location, ...this.normalizeAdvOptData()});
-            this.isChangeLocations.next(true);
-          }
-      }
-      if (this.overlayType === 'settingsRooms') {
-          if (this.importedRooms.length) {
-              this.importedRooms = this.importedRooms.map((_room, index) => {
-                  _room.restricted = this.nowRestriction;
-                  _room.scheduling_restricted = this.futureRestriction;
-                  _room.max_allowed_time = +this.timeLimit;
-                  _room.travel_types = this.travelType;
-                  // setTimeout(() => {}, 100);
-                  return this.locationService.createLocation(_room);
-              });
-              zip(...this.importedRooms).subscribe((result) => {
-                  this.selectedRooms = [...result, ...this.selectedRooms];
-                  this.isChangeLocations.next(true);
-              });
-
-          } else if (this.readyRoomsToEdit.length) {
-              const locationsToEdit = this.readyRoomsToEdit.map(room => {
-                  if (room.location) {
-                      const data: any = {
-                          restricted: this.nowRestriction,
-                          scheduling_restricted: this.futureRestriction,
-                          travel_types: this.travelType
-                      };
-                      if (this.timeLimit) {
-                          data.max_allowed_time =  +this.timeLimit;
-                      }
-                      return this.locationService.updateLocation(room.location.id, data);
-                  } else {
-                      const data: any = {
-                          restricted: this.nowRestriction,
-                          scheduling_restricted: this.futureRestriction,
-                          travel_types: this.travelType
-                      };
-                      if (this.timeLimit) {
-                          data.max_allowed_time =  +this.timeLimit;
-                      }
-                      return this.locationService.updateLocation(room.id, data);
-                  }
-              });
-              forkJoin(locationsToEdit).subscribe(res => {
-                  const locIds = res.map((loc: Location) => loc.id);
-                  const newCollection = this.selectedRooms.filter(room => room.id !== locIds.find(id => id === room.id));
-                  this.selectedRooms = [...res, ...newCollection];
-                  this.isChangeLocations.next(true);
-              });
-          }
-       }
-
-     if (this.overlayType === 'edit') {
-       this.showPublishSpinner = true;
-       const selectedLocations = _.filter<Location | Pinnable>(this.selectedRooms, {type: 'location'}).map((res: any) => res.location);
-        const locationsFromFolder = _.filter<Location | Pinnable>(this.selectedRooms, {type: 'category'}).map((folder: any) => {
-            return this.locationService.getLocationsWithCategory(folder.category);
-        });
-        if (locationsFromFolder.length) {
-            forkJoin(locationsFromFolder).pipe(switchMap((res) => {
-                const mergeLocations = _.concat(selectedLocations, ...res);
-                const locationsToEdit = mergeLocations.map((room: any) => {
-                    const data: any = {
-                        restricted: this.nowRestriction,
-                        scheduling_restricted: this.futureRestriction,
-                        travel_types: this.travelType
-                    };
-                    if (this.timeLimit) {
-                        data.max_allowed_time =  +this.timeLimit;
-                    }
-                    return this.locationService.updateLocation(room.id, data);
-                });
-                return forkJoin(locationsToEdit);
-            })).subscribe(() => this.dialogRef.close());
-        } else {
-            const locationsToEdit = selectedLocations.map((room: any) => {
-                const data: any = {
-                    restricted: this.nowRestriction,
-                    scheduling_restricted: this.futureRestriction,
-                    travel_types: this.travelType
-                };
-                if (this.timeLimit) {
-                    data.max_allowed_time =  +this.timeLimit;
-                }
-                return this.locationService.updateLocation(room.id, data);
-            });
-            forkJoin(locationsToEdit).subscribe(() => this.dialogRef.close());
-        }
-     }
-  }
-
-  onEditRooms(action) {
-    // this.formService.setFrameMotionDirection('forward');
-
-    setTimeout(() => {
-      if (action === 'edit') {
-        this.isEditRooms = true;
-      }
-      if (action === 'remove_from_folder') {
-        const currentRoomsIds = this.readyRoomsToEdit.map(item => item.id);
-        const allSelectedRoomsIds = this.selectedRooms.map(item => item.id);
-        this.selectedRooms = this.selectedRooms.filter(item => {
-          return item.id === _.pullAll(allSelectedRoomsIds, currentRoomsIds).find(id => item.id === id);
-        });
-        this.readyRoomsToEdit = [];
-      }
-      if (action === 'delete') {
-        const roomsToDelete = this.readyRoomsToEdit.map(room => {
-          return this.locationService.deleteLocation(room.id);
-        });
-        forkJoin(roomsToDelete).subscribe(res => {
-          const currentRoomsIds = this.readyRoomsToEdit.map(item => item.id);
-          const allSelectedRoomsIds = this.selectedRooms.map(item => item.id);
-          this.selectedRooms = this.selectedRooms.filter(item => {
-            return item.id === _.pullAll(allSelectedRoomsIds, currentRoomsIds).find(id => item.id === id);
-          });
-          this.readyRoomsToEdit = [];
-          this.isChangeLocations.next(true);
-        });
-      }
-    }, 100);
-  }
-
-  deleteRoom() {
-    if (this.overlayType === 'editRoom' || (this.isEditFolder && this.overlayType === 'newFolder')) {
-
-      const deletions = [
-        this.hallPassService.deletePinnable(this.pinnable.id)
-      ];
-
-      if (this.pinnable.location) {
-        deletions.push(this.locationService.deleteLocation(this.pinnable.location.id));
-      }
-
-      zip(...deletions).subscribe(res => {
-        console.log(res);
+      forkJoin(patchRequests$).subscribe(res => {
         this.dialogRef.close();
       });
     }
-
-    if (this.editRoomInFolder) {
-        this.locationService.deleteLocation(this.currentLocationInEditRoomFolder.id)
-        .subscribe((res: Location) => {
-            this.selectedRooms = this.selectedRooms.filter(room => room.id !== this.currentLocationInEditRoomFolder.id);
-            this.isChangeLocations.next(true);
-        });
-    }
-
   }
+
+  // done() {
+  //     this.showDoneSpinner = true;
+  //
+  //     if (this.overlayType === 'newRoomInFolder') {
+  //         const location = {
+  //                 title: this.roomName,
+  //                 room: this.roomNumber,
+  //                 restricted: this.nowRestriction,
+  //                 scheduling_restricted: this.futureRestriction,
+  //                 // teachers: this.selectedTeachers.map(teacher => teacher.id),
+  //                 teachers: this.selectedTeachers,
+  //                 travel_types: this.travelType,
+  //                 max_allowed_time: +this.timeLimit,
+  //           };
+  //
+  //       if (this.editRoomInFolder) {
+  //               const currentRoom = this.selectedRooms.find(room => room.id === this.roomToEdit.id);
+  //               currentRoom.title = location.title;
+  //               this.selectedRoomsEditable[this.roomToEdit.id] = ({id : this.roomToEdit.id, ...location, ...this.normalizeAdvOptData()});
+  //               this.isChangeLocations.next(true);
+  //       } else {
+  //           this.selectedRoomsEditable[location.title] = ({id : null, ...location, ...this.normalizeAdvOptData()});
+  //           this.selectedRooms.push({...location, ...this.normalizeAdvOptData()});
+  //           this.isChangeLocations.next(true);
+  //         }
+  //     }
+  //     if (this.overlayType === 'settingsRooms') {
+  //         if (this.importedRooms.length) {
+  //             this.importedRooms = this.importedRooms.map((_room, index) => {
+  //                 _room.restricted = this.nowRestriction;
+  //                 _room.scheduling_restricted = this.futureRestriction;
+  //                 _room.max_allowed_time = +this.timeLimit;
+  //                 _room.travel_types = this.travelType;
+  //                 // setTimeout(() => {}, 100);
+  //                 return this.locationService.createLocation(_room);
+  //             });
+  //             zip(...this.importedRooms).subscribe((result) => {
+  //                 this.selectedRooms = [...result, ...this.selectedRooms];
+  //                 this.isChangeLocations.next(true);
+  //             });
+  //
+  //         } else if (this.readyRoomsToEdit.length) {
+  //             const locationsToEdit = this.readyRoomsToEdit.map(room => {
+  //                 if (room.location) {
+  //                     const data: any = {
+  //                         restricted: this.nowRestriction,
+  //                         scheduling_restricted: this.futureRestriction,
+  //                         travel_types: this.travelType
+  //                     };
+  //                     if (this.timeLimit) {
+  //                         data.max_allowed_time =  +this.timeLimit;
+  //                     }
+  //                     return this.locationService.updateLocation(room.location.id, data);
+  //                 } else {
+  //                     const data: any = {
+  //                         restricted: this.nowRestriction,
+  //                         scheduling_restricted: this.futureRestriction,
+  //                         travel_types: this.travelType
+  //                     };
+  //                     if (this.timeLimit) {
+  //                         data.max_allowed_time =  +this.timeLimit;
+  //                     }
+  //                     return this.locationService.updateLocation(room.id, data);
+  //                 }
+  //             });
+  //             forkJoin(locationsToEdit).subscribe(res => {
+  //                 const locIds = res.map((loc: Location) => loc.id);
+  //                 const newCollection = this.selectedRooms.filter(room => room.id !== locIds.find(id => id === room.id));
+  //                 this.selectedRooms = [...res, ...newCollection];
+  //                 this.isChangeLocations.next(true);
+  //             });
+  //         }
+  //      }
+  //
+  //    if (this.overlayType === 'edit') {
+  //      this.showPublishSpinner = true;
+  //      const selectedLocations = _.filter<Location | Pinnable>(this.selectedRooms, {type: 'location'}).map((res: any) => res.location);
+  //       const locationsFromFolder = _.filter<Location | Pinnable>(this.selectedRooms, {type: 'category'}).map((folder: any) => {
+  //           return this.locationService.getLocationsWithCategory(folder.category);
+  //       });
+  //       if (locationsFromFolder.length) {
+  //           forkJoin(locationsFromFolder).pipe(switchMap((res) => {
+  //               const mergeLocations = _.concat(selectedLocations, ...res);
+  //               const locationsToEdit = mergeLocations.map((room: any) => {
+  //                   const data: any = {
+  //                       restricted: this.nowRestriction,
+  //                       scheduling_restricted: this.futureRestriction,
+  //                       travel_types: this.travelType
+  //                   };
+  //                   if (this.timeLimit) {
+  //                       data.max_allowed_time =  +this.timeLimit;
+  //                   }
+  //                   return this.locationService.updateLocation(room.id, data);
+  //               });
+  //               return forkJoin(locationsToEdit);
+  //           })).subscribe(() => this.dialogRef.close());
+  //       } else {
+  //           const locationsToEdit = selectedLocations.map((room: any) => {
+  //               const data: any = {
+  //                   restricted: this.nowRestriction,
+  //                   scheduling_restricted: this.futureRestriction,
+  //                   travel_types: this.travelType
+  //               };
+  //               if (this.timeLimit) {
+  //                   data.max_allowed_time =  +this.timeLimit;
+  //               }
+  //               return this.locationService.updateLocation(room.id, data);
+  //           });
+  //           forkJoin(locationsToEdit).subscribe(() => this.dialogRef.close());
+  //       }
+  //    }
+  // }
+
+  // onEditRooms(action) {
+  //   // this.formService.setFrameMotionDirection('forward');
+  //
+  //   setTimeout(() => {
+  //     if (action === 'edit') {
+  //       this.isEditRooms = true;
+  //     }
+  //     if (action === 'remove_from_folder') {
+  //       const currentRoomsIds = this.readyRoomsToEdit.map(item => item.id);
+  //       const allSelectedRoomsIds = this.selectedRooms.map(item => item.id);
+  //       this.selectedRooms = this.selectedRooms.filter(item => {
+  //         return item.id === _.pullAll(allSelectedRoomsIds, currentRoomsIds).find(id => item.id === id);
+  //       });
+  //       this.readyRoomsToEdit = [];
+  //     }
+  //     if (action === 'delete') {
+  //       const roomsToDelete = this.readyRoomsToEdit.map(room => {
+  //         return this.locationService.deleteLocation(room.id);
+  //       });
+  //       forkJoin(roomsToDelete).subscribe(res => {
+  //         const currentRoomsIds = this.readyRoomsToEdit.map(item => item.id);
+  //         const allSelectedRoomsIds = this.selectedRooms.map(item => item.id);
+  //         this.selectedRooms = this.selectedRooms.filter(item => {
+  //           return item.id === _.pullAll(allSelectedRoomsIds, currentRoomsIds).find(id => item.id === id);
+  //         });
+  //         this.readyRoomsToEdit = [];
+  //         this.isChangeLocations.next(true);
+  //       });
+  //     }
+  //   }, 100);
+  // }
+
+  // deleteRoom() {
+  //   if (this.overlayType === 'editRoom' || (this.isEditFolder && this.overlayType === 'newFolder')) {
+  //
+  //     const deletions = [
+  //       this.hallPassService.deletePinnable(this.pinnable.id)
+  //     ];
+  //
+  //     if (this.pinnable.location) {
+  //       deletions.push(this.locationService.deleteLocation(this.pinnable.location.id));
+  //     }
+  //
+  //     zip(...deletions).subscribe(res => {
+  //       console.log(res);
+  //       this.dialogRef.close();
+  //     });
+  //   }
+  //
+  //   if (this.editRoomInFolder) {
+  //       this.locationService.deleteLocation(this.currentLocationInEditRoomFolder.id)
+  //       .subscribe((res: Location) => {
+  //           this.selectedRooms = this.selectedRooms.filter(room => room.id !== this.currentLocationInEditRoomFolder.id);
+  //           this.isChangeLocations.next(true);
+  //       });
+  //   }
+  //
+  // }
 
   textColor(item) {
     if (item.hovered) {
@@ -958,10 +934,11 @@ export class OverlayContainerComponent implements OnInit {
 
   handleDragEvent( evt: DragEvent, dropAreaColor: string) {
     evt.preventDefault();
-    if (this.dropArea && this.dropArea.nativeElement && this.getRoomImportScreen() === 1) {
-
-      this.dropArea.nativeElement.style.borderColor = dropAreaColor;
-    }
+    this.overlayService.dragEvent$.next(dropAreaColor);
+    // if (this.dropArea && this.dropArea.nativeElement && this.getRoomImportScreen() === 1) {
+    //
+    //   this.dropArea.nativeElement.style.borderColor = dropAreaColor;
+    // }
   }
 
   getRoomImportScreen() {
@@ -1027,13 +1004,33 @@ export class OverlayContainerComponent implements OnInit {
 
   bulkEditInFolder({roomData, rooms}) {
     this.oldFolderData = _.cloneDeep(this.folderData);
-    // this.folderData.roomsInFolder = this.folderData.roomsInFolder.filter(r => r.id !== room.id);
+    this.folderData.roomsInFolder = _.differenceBy(this.folderData.roomsInFolder, rooms, 'id');
+    this.editRooms(roomData, rooms);
+    this.folderData.roomsInFolder = [...rooms, ...this.folderData.roomsInFolder];
     this.overlayService.back({...this.folderData, oldFolderData: this.oldFolderData});
   }
 
   bulkEditResult({roomData, rooms, buttonState}) {
+    this.editRooms(roomData, rooms);
     this.bulkEditData = {roomData, rooms};
     this.roomValidButtons.next(buttonState);
+  }
+
+  editRooms(roomData, rooms) {
+    rooms.forEach(room => {
+      if (!_.isNull(roomData.restricted)) {
+        room.restricted = roomData.restricted;
+      }
+      if (!_.isNull(roomData.scheduling_restricted)) {
+        room.scheduling_restricted = roomData.scheduling_restricted;
+      }
+      if (!_.isNull(roomData.travelType.length)) {
+        room.travel_types = roomData.travelType;
+      }
+      if (roomData.timeLimit) {
+        room.max_allowed_time = roomData.timeLimit;
+      }
+    });
   }
 
   normalizeRoomData(room) {
@@ -1052,93 +1049,94 @@ export class OverlayContainerComponent implements OnInit {
   catchFile(evt: DragEvent) {
     evt.preventDefault();
     this.uploadingProgress.inProgress = true;
+    this.overlayService.dropEvent$.next(evt);
 
-    of(evt)
-      .pipe(
-        switchMap((dragEvt: DragEvent) => {
-          const FR = new FileReader();
-          FR.readAsBinaryString(dragEvt.dataTransfer.files[0]);
-          return fromEvent(FR, 'load');
-        }),
-        map(( res: any) => {
-          const raw = XLSX.read(res.target.result, {type: 'binary'});
-          const sn = raw.SheetNames[0];
-          const stringCollection = raw.Sheets[sn];
-          const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
-          let rows = data.slice(1);
-          rows = rows.map((row, index) => {
-            const _room: any = {};
-            _room.title = row[0];
-            _room.room = row[1];
-            _room.teachers = <string>row[2] ? row[2].split(', ') : [];
-            return _room;
-          });
-          return rows;
-        }),
-        map((rows) => {
-          rows = rows.map((r: any) => {
-            if (r.title && r.title.length > 16) {
-              r.title = r.title.slice(0, 15);
-            }
-            if (r.room && (r.room + '').length > 8) {
-              r.title = r.title.slice(0, 7);
-            }
-            return r;
-          });
-          const groupedRooms = _.groupBy(rows, (r: any) => r.title);
-          let normalizedRooms = [];
-          console.log(groupedRooms);
-
-          for (const key in groupedRooms) {
-            if (groupedRooms[key].length > 1) {
-              normalizedRooms = normalizedRooms.concat(
-                groupedRooms[key].map((duplicate: any, index: number) => {
-                  duplicate.title = duplicate.title + ++index;
-                  return duplicate;
-                })
-              );
-            } else {
-              normalizedRooms = normalizedRooms.concat(groupedRooms[key]);
-            }
-          }
-          console.log(normalizedRooms);
-          return normalizedRooms;
-        }),
-        switchMap((_rooms: any[]): Observable<any[]> => {
-            console.log(_rooms);
-          return this.userService.getUsersList('_profile_teacher')
-            .pipe(
-              map((teachers: any[]) => {
-
-                return _rooms.map((_room) => {
-                          const teachersIdArray = [];
-
-                          _room.teachers.forEach((_teacherEmail) => {
-                            const existAndAttached = teachers.find(_teacher =>  _teacher.primary_email === _teacherEmail );
-                            if (existAndAttached) {
-                              teachersIdArray.push(existAndAttached.id);
-                            } else {
-                              this.unknownEmails.push({
-                                room: _room,
-                                email: _teacherEmail
-                              });
-                            }
-                          });
-
-                          _room.teachers = teachersIdArray;
-                          return _room;
-                      });
-              }));
-        }),
-      )
-      .subscribe((rooms) => {
-        console.log(rooms);
-        console.log(this.unknownEmails);
-          setTimeout(() => {
-            this.uploadingProgress.inProgress = false;
-            this.uploadingProgress.completed = true;
-          }, 1500);
-        this.importedRooms = rooms;
-      });
+    // of(evt)
+    //   .pipe(
+    //     switchMap((dragEvt: DragEvent) => {
+    //       const FR = new FileReader();
+    //       FR.readAsBinaryString(dragEvt.dataTransfer.files[0]);
+    //       return fromEvent(FR, 'load');
+    //     }),
+    //     map(( res: any) => {
+    //       const raw = XLSX.read(res.target.result, {type: 'binary'});
+    //       const sn = raw.SheetNames[0];
+    //       const stringCollection = raw.Sheets[sn];
+    //       const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
+    //       let rows = data.slice(1);
+    //       rows = rows.map((row, index) => {
+    //         const _room: any = {};
+    //         _room.title = row[0];
+    //         _room.room = row[1];
+    //         _room.teachers = <string>row[2] ? row[2].split(', ') : [];
+    //         return _room;
+    //       });
+    //       return rows;
+    //     }),
+    //     map((rows) => {
+    //       rows = rows.map((r: any) => {
+    //         if (r.title && r.title.length > 16) {
+    //           r.title = r.title.slice(0, 15);
+    //         }
+    //         if (r.room && (r.room + '').length > 8) {
+    //           r.title = r.title.slice(0, 7);
+    //         }
+    //         return r;
+    //       });
+    //       const groupedRooms = _.groupBy(rows, (r: any) => r.title);
+    //       let normalizedRooms = [];
+    //       console.log(groupedRooms);
+    //
+    //       for (const key in groupedRooms) {
+    //         if (groupedRooms[key].length > 1) {
+    //           normalizedRooms = normalizedRooms.concat(
+    //             groupedRooms[key].map((duplicate: any, index: number) => {
+    //               duplicate.title = duplicate.title + ++index;
+    //               return duplicate;
+    //             })
+    //           );
+    //         } else {
+    //           normalizedRooms = normalizedRooms.concat(groupedRooms[key]);
+    //         }
+    //       }
+    //       console.log(normalizedRooms);
+    //       return normalizedRooms;
+    //     }),
+    //     switchMap((_rooms: any[]): Observable<any[]> => {
+    //         console.log(_rooms);
+    //       return this.userService.getUsersList('_profile_teacher')
+    //         .pipe(
+    //           map((teachers: any[]) => {
+    //
+    //             return _rooms.map((_room) => {
+    //                       const teachersIdArray = [];
+    //
+    //                       _room.teachers.forEach((_teacherEmail) => {
+    //                         const existAndAttached = teachers.find(_teacher =>  _teacher.primary_email === _teacherEmail );
+    //                         if (existAndAttached) {
+    //                           teachersIdArray.push(existAndAttached.id);
+    //                         } else {
+    //                           this.unknownEmails.push({
+    //                             room: _room,
+    //                             email: _teacherEmail
+    //                           });
+    //                         }
+    //                       });
+    //
+    //                       _room.teachers = teachersIdArray;
+    //                       return _room;
+    //                   });
+    //           }));
+    //     }),
+    //   )
+    //   .subscribe((rooms) => {
+    //     console.log(rooms);
+    //     console.log(this.unknownEmails);
+    //       setTimeout(() => {
+    //         this.uploadingProgress.inProgress = false;
+    //         this.uploadingProgress.completed = true;
+    //       }, 1500);
+    //     this.importedRooms = rooms;
+    //   });
   }
 }

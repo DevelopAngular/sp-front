@@ -8,7 +8,7 @@
   <div class="header" [ngStyle]="{'background-image': gradientColor}">
     <div class="left-button">
       <img class="back-button" draggable="false"
-           *ngIf="!showCancelButton"
+           *ngIf="!showCancelButton && !disabledRightBlock"
            alt="Go Back"
            [src]="'./assets/' + (titleColor === 'white' ? 'Back Button (Light-Gray).svg' : 'Back Button (Blue-White).svg') | resolveAsset"
            (click)="back()"
@@ -73,6 +73,87 @@
       <div [@NextStep]="{ value: '', params: frameMotion$ | async}" *ngIf="currentPage === 10">
         <app-bulk-edit-rooms-in-folder [form]="form" (bulkEditResult)="bulkEditInFolder($event)" (back)="back(false)"></app-bulk-edit-rooms-in-folder>
       </div>
+
+
+      <div [@NextStep]="{ value: '', params: frameMotion$ | async}" *ngIf="currentPage === 7">
+        <app-import-rooms [form]="form" [importedRooms]="importedRooms" [unknownEmails]="unknownEmails"></app-import-rooms>
+        <!--<div class="import-rooms-content">-->
+          <!--<div class="import-screen" *ngIf="getRoomImportScreen() === 1">-->
+            <!--<div class="ds-w-100" [ngClass]="{'ds-flex-center-between': !uploadingProgress.inProgress && !uploadingProgress.completed}">-->
+              <!--<div>-->
+                <!--<img [ngClass]="{'slide-center': uploadingProgress.inProgress || uploadingProgress.completed}" [src]="'./assets/emptyStates/upload-file.svg'" alt="upload-file">-->
+              <!--</div>-->
+              <!--<div class="template-and-info" *ngIf="!uploadingProgress.inProgress && !uploadingProgress.completed">-->
+
+                <!--<div class="import-rooms-info">-->
+                  <!--Import a list of room names, room numbers, and teachers in room from an Excel spreadsheet or CSV.-->
+                <!--</div>-->
+                <!--<div class="ds-flex-center-center ds-pt-15">-->
+
+                  <!--<app-gradient-button-->
+                          <!--[size]="'small'"-->
+                          <!--[gradient]="'#FFFFFF,#FFFFFF'"-->
+                          <!--[buttonLink]="'./assets/xlsx/Rooms Configuration.xlsx'"-->
+                          <!--[linkType]="'_self'"-->
+                          <!--[download]="true"-->
+                          <!--[hoverColor]="'#FFFFFF'"-->
+                          <!--[textColor]="'#1E194F'"-->
+                          <!--[leftIcon]="'./assets/Download (Navy).svg'"-->
+                          <!--[text]="'Download Template'"-->
+                          <!--[cursor]="'pointer'"-->
+                  <!--&gt;-->
+                  <!--</app-gradient-button>-->
+                <!--</div>-->
+              <!--</div>-->
+
+            <!--</div>-->
+            <!--<div>-->
+            <!--</div>-->
+            <!--<div #dropArea class="uploading-area" *ngIf="!uploadingProgress.inProgress && !uploadingProgress.completed">-->
+              <!--<span class="ds-pb-10">Drop spreadsheet here</span>-->
+              <!--<span [style.text-decoration]="'underline'" class="choose-file-inline" (click)="file.click()">Choose file</span>-->
+            <!--</div>-->
+            <!--<div class=""  *ngIf="uploadingProgress.inProgress || uploadingProgress.completed">-->
+              <!--<div class="uploading-progress" #uploadingProgress-->
+                   <!--[style.background-image]="getProgress(uploadingProgress)">-->
+                <!--<span>Importing Rooms</span>-->
+              <!--</div>-->
+              <!--<div class="ds-flex-column ds-flex-center-center ds-cell-text-2 ds-mt-15">-->
+                <!--<span class="ds-pb-5">{{ importedRooms.length }} Rooms</span>-->
+                <!--<span>{{ unknownEmails.length }} issues</span>-->
+              <!--</div>-->
+            <!--</div>-->
+
+          <!--</div>-->
+          <!--<input type="file" formControlName="file"  #file style="display: none"/>-->
+
+          <!--<div class="issues-screen ds-p-25" *ngIf="getRoomImportScreen() === 2">-->
+
+            <!--<div class="issues-container">-->
+              <!--<div class="ds-dialog-heading ds-pt-10 ds-pb-15">Review Issues ({{ unknownEmails.length }})</div>-->
+              <!--<div *ngFor="let issue of unknownEmails" class="ds-cell-text-2 ds-pb-5">-->
+                <!--Room: {{ issue.room.title }}, could not find teacher with email {{ issue.email }}-->
+              <!--</div>-->
+            <!--</div>-->
+            <!--<div class="issues-footer ds-flex-center-between">-->
+
+              <!--<div>-->
+                <!--<span class="ds-dialog-bold-text">Need help?</span> <br>-->
+                <!--<span class="ds-cell-text-2 ds-pt-5">support@smartpass.app</span>-->
+              <!--</div>-->
+              <!--<app-gradient-button-->
+                      <!--(buttonClick)="setLocation('settingsRooms')"-->
+              <!--&gt;-->
+                <!--Next-->
+              <!--</app-gradient-button>-->
+            <!--</div>-->
+          <!--</div>-->
+
+        <!--</div>-->
+      </div>
+
+
+
 
     </div>
 
@@ -687,6 +768,12 @@
 
         <!--</div>-->
       <!--</div>-->
+      <!---->
+      <!---->
+      <!---->
+      <!---->
+      <!---->
+      <!---->
         <!--<div class="advanced-options" #advancedOptionsRef-->
              <!--*ngIf="(overlayType === 'editRoom' ||-->
              <!--(editRoomInFolder)) ||-->
