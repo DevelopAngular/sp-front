@@ -264,9 +264,9 @@ export class AccountsComponent implements OnInit {
 
       });
     }
-    private wrapToHtml(data, htmlTag, dataSet) {
+    private wrapToHtml(data, htmlTag, dataSet?) {
       const wrapper =  wrapToHtml.bind(this);
-      return wrapper(data, htmlTag, dataSet);
+      return wrapper(data, htmlTag, dataSet || null);
     }
     private buildUserListData(userList) {
         return userList.map((raw, index) => {
@@ -304,7 +304,7 @@ export class AccountsComponent implements OnInit {
             const dataSet = {
               dataIndex: index,
             }
-            const record = this.wrapToHtml(rawObj, 'span', index) as {[key: string]: SafeHtml; _data: any};
+            const record = this.wrapToHtml(rawObj, 'span') as {[key: string]: SafeHtml; _data: any};
 
             Object.defineProperty(rawObj, 'id', { enumerable: false, value: raw.id });
             Object.defineProperty(rawObj, 'me', { enumerable: false, value: +raw.id === +this.user.id });

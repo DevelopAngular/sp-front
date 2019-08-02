@@ -14,9 +14,16 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {SP_ARROW_BLUE_GRAY, SP_ARROW_DOUBLE_BLUE_GRAY} from '../pdf-generator.service';
 import {CdkVirtualScrollViewport, FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';
 import * as moment from 'moment';
+import {DomSanitizer} from '@angular/platform-browser';
 
 const PAGESIZE = 50;
 const ROW_HEIGHT = 38;
+
+// export class tableSanitizer extends DomSanitizer {
+//   constructor() {
+//     super()
+//   }
+// }
 
 export class GridTableDataSource extends DataSource<any> {
 
@@ -43,8 +50,16 @@ export class GridTableDataSource extends DataSource<any> {
   offset = 0;
   offsetChange = new BehaviorSubject(0);
 
-  constructor(initialData: any[], private viewport: CdkVirtualScrollViewport, private itemSize: number, sorting: MatSort, stickySpace: boolean) {
+  constructor(
+    initialData: any[],
+    private viewport: CdkVirtualScrollViewport,
+    private itemSize: number, sorting: MatSort,
+    stickySpace: boolean, private domSanitizer: DomSanitizer
+  ) {
     super();
+
+    this.domSanitizer = domSanitizer;
+
     this._data = initialData;
     this.sort = sorting;
     this.stickySpace = stickySpace;
@@ -61,9 +76,12 @@ export class GridTableDataSource extends DataSource<any> {
       if (key !== 'TT') {
         this._fixedColumnsPlaceholder[key] = '.' + this._fixedColumnsPlaceholder[key] + '.';
       }
+      else {
+        this._fixedColumnsPlaceholder[key] = this.domSanitizer.bypassSecurityTrustHtml(this._fixedColumnsPlaceholder[key]);
+      }
     }
 
-
+    console.log(this._fixedColumnsPlaceholder);
 
     this.viewport.elementScrolled().subscribe((ev: any) => {
 
@@ -73,13 +91,33 @@ export class GridTableDataSource extends DataSource<any> {
 
       this.offset = ROW_HEIGHT * (start - prevExtraData);
       this.viewport.setRenderedContentOffset(this.offset);
-      this.offsetChange.next(this.offset)
+      this.offsetChange.next(this.offset);
       this.visibleData.next(slicedData);
-      console.log(this.offset);
+      // console.log(this.offset);
     });
   }
 
   private readonly visibleData: BehaviorSubject<any[]> = new BehaviorSubject([]);
+
+
+  compare(a: number | string, b: number | string, isAsc: boolean) {
+    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+  }
+
+  sortingDataAccessor(item, property) {
+    switch (property) {
+      case 'Name':
+        return item[property].split(' ')[1];
+      case 'Date & Time':
+        return Math.min(moment().diff(item['date'], 'days'));
+      case 'Duration':
+        return item['sortDuration'].as('milliseconds');
+      case 'Profile(s)':
+        return item[property].map(i => i.title).join('');
+      default:
+        return item[property];
+    }
+  }
 
   connect(collectionViewer: import('@angular/cdk/collections').CollectionViewer): Observable<any[] | ReadonlyArray<any>> {
     return this.visibleData;
@@ -125,6 +163,7 @@ export class DataTableComponent implements OnInit {
   @Input() textColor: string = 'black';
   @Input() textHeaderColor: string = '#7F879D';
   @Input() marginTopStickyHeader: string = '-40px';
+  @Input() displayedColumns: string[];
 
   @Output() selectedUsers: EventEmitter<any[]> = new EventEmitter();
   @Output() selectedRow: EventEmitter<any> = new EventEmitter<any>();
@@ -134,20 +173,15 @@ export class DataTableComponent implements OnInit {
   @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport;
 
 
-  @Input() displayedColumns: string[];
-
   @Input() set data(value: any[]) {
     this._data = [...value];
-    this.dataSource = new GridTableDataSource(this._data, this.viewport, ROW_HEIGHT, this.sort, this.stickySpace);
+    this.dataSource = new GridTableDataSource(this._data, this.viewport, ROW_HEIGHT, this.sort, this.stickySpace, this.domSanitizer);
     this.dataSource.offsetChange
       .subscribe(offset => {
         this.placeholderHeight = offset;
     })
     this.dataSource.allData = this._data;
-    // this.dataSource = new MatTableDataSource(this._data);
-    // this.dataSource.sort = this.sort;
     this.dataSource.sort.sortChange.subscribe((sort: Sort) => {
-      // console.log(sort);
       const data = this.dataSource.allData;
       if (!sort.active || sort.direction === '') {
         this.dataSource.allData = data;
@@ -158,45 +192,21 @@ export class DataTableComponent implements OnInit {
         const isAsc = sort.direction === 'asc';
         const {_data: _a} = a;
         const {_data: _b} = b;
-        // compare(sortingDataAccessor(_a, sort.active), sortingDataAccessor(_b, sort.active), isAsc);
-        // return 0;
 
-
-        return compare(sortingDataAccessor(_a, sort.active), sortingDataAccessor(_b, sort.active), isAsc);
+        return this.dataSource.compare(
+          this.dataSource.sortingDataAccessor(_a, sort.active),
+          this.dataSource.sortingDataAccessor(_b, sort.active),
+          isAsc
+        );
 
       });
-      // console.log(this.dataSource.allData);
-
     });
-
-    function compare(a: number | string, b: number | string, isAsc: boolean) {
-      // console.log(a, b);
-      return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
-    }
-    function sortingDataAccessor(item, property) {
-      // console.log(item, property);
-
-      switch (property) {
-            case 'Name':
-                return item[property].split(' ')[1];
-            case 'Date & Time':
-                return Math.min(moment().diff(item['date'], 'days'));
-            case 'Duration':
-                return item['sortDuration'].as('milliseconds');
-            case 'Profile(s)':
-                return item[property].map(i => i.title).join('');
-            default:
-                return item[property];
-        }
-    }
   }
 
   itemSize = ROW_HEIGHT;
-
   columnsToDisplay: string[];
   dataSource: GridTableDataSource;
   selection = new SelectionModel<any>(true, []);
-
   darkMode$: Observable<boolean>;
   placeholderHeight = 0;
 
@@ -205,6 +215,7 @@ export class DataTableComponent implements OnInit {
   constructor(
     private _ngZone: NgZone,
     private darkTheme: DarkThemeSwitch,
+    private domSanitizer: DomSanitizer
   ) {
     this.darkMode$ = this.darkTheme.isEnabled$.asObservable();
   }
@@ -225,14 +236,6 @@ export class DataTableComponent implements OnInit {
       }
     });
   }
-
-  // normalizeHeader(header) {
-  //   // this.dataSource._fixedColumnsPlaceholder
-  //   const _header = header.padEnd(this.dataSource._fixedColumnsPlaceholder[header].length);
-  //   console.log(_header, _header.length);
-  //   // return header;
-  //   return _header;
-  // }
 
   placeholderWhen(index: number, _: any) {
     return index === 0;
@@ -268,25 +271,25 @@ export class DataTableComponent implements OnInit {
       return  new Array(cellData);
     }
   }
+
   displayCell(cellElement, cell?, column?) {
     let value = '';
     if (typeof cellElement === 'string') {
-        if (column === 'TT') {
-          if (cellElement === 'one_way') {
-            value = SP_ARROW_BLUE_GRAY;
-          }
-          if (cellElement === 'round_trip' || cellElement === 'both') {
-            value = SP_ARROW_DOUBLE_BLUE_GRAY;
-          }
-          cell.innerHTML = value;
-            return;
-        } else {
-            value = cellElement;
+      if (column === 'TT') {
+        if (cellElement === 'one_way') {
+          value = SP_ARROW_BLUE_GRAY;
         }
+        if (cellElement === 'round_trip' || cellElement === 'both') {
+          value = SP_ARROW_DOUBLE_BLUE_GRAY;
+        }
+        cell.innerHTML = value;
+          return;
+      } else {
+          value = cellElement;
+      }
     } else {
       value = cellElement.title ? cellElement.title : 'Error!';
     }
-
     return value;
   }
 
@@ -304,11 +307,7 @@ export class DataTableComponent implements OnInit {
   selectedRowEmit(evt, {_data: row}) {
     console.log(evt)
     // debugger
-
-
     const target = evt.target as HTMLElement;
-
-
     if (this.isCheckbox.value && !this.isAllowedSelectRow) {
       this.selection.toggle(row);
       row.pressed = this.selection.isSelected(row);
@@ -322,7 +321,6 @@ export class DataTableComponent implements OnInit {
     } else {
       this.selectedRow.emit(row);
     }
-
   }
 
   pushOutSelected() {
