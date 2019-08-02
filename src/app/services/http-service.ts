@@ -163,8 +163,8 @@ export class HttpService {
       private pwaStorage: LocalStorage
   ) {
 
-    // this.pwaStorage.getItem('servers').subscribe( servers => this.servers = servers);
-    // this.pwaStorage.getItem('authData').subscribe( data => this.authData = data);
+    this.pwaStorage.getItem('servers').subscribe( servers => this.servers = servers);
+    this.pwaStorage.getItem('authData').subscribe( data => this.authData = data);
 
     // the school list is loaded when a user authenticates and we need to choose a current school of the school array.
     // First, if there is a current school loaded, try to use that one.
@@ -276,7 +276,6 @@ export class HttpService {
     }
 
     if (!navigator.onLine) {
-      console.log('SERVERS OFFLINE');
       return  this.pwaStorage.getItem('servers').pipe(
         map((servers: LoginServer[]) => {
           if (servers.length > 0) {
@@ -329,6 +328,7 @@ export class HttpService {
         config.append('username', username);
         config.append('password', password);
       }
+
 
       if (!navigator.onLine) {
         console.log('AUTHDATA OFFLINE');
