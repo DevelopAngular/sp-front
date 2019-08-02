@@ -99,9 +99,6 @@ export class FolderComponent implements OnInit {
                       roomsInFolder: _.cloneDeep(this.roomsImFolder)
                     };
                     this.folderRoomsLoaded = true;
-                    // if (this.dialogData['forceSelectedLocation']) {
-                    //     this.setToEditRoom(this.dialogData['forceSelectedLocation']);
-                    // }
                 });
         }
     } else {

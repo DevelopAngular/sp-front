@@ -1,13 +1,12 @@
-import { Component, ElementRef, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { BehaviorSubject, forkJoin, fromEvent, merge, Observable, of, Subject, zip } from 'rxjs';
+import { BehaviorSubject, forkJoin, merge, Observable, of, Subject, zip } from 'rxjs';
 import { delay, map, startWith, switchMap, filter } from 'rxjs/operators';
 
 import { NextStep } from '../../animations';
-import { User } from '../../models/User';
 import { Pinnable } from '../../models/Pinnable';
 import { Location } from '../../models/Location';
 import { HttpService } from '../../services/http-service';
@@ -28,6 +27,13 @@ import * as _ from 'lodash';
 
 })
 export class OverlayContainerComponent implements OnInit {
+
+  @ViewChild('leftContent') set content(content: ElementRef) {
+    this.roomList.domElement = content;
+    if (this.roomList.domElement) {
+      this.roomList.ready.next(this.roomList.domElement);
+    }
+  }
 
   currentPage: number;
   roomData: RoomData;
@@ -61,45 +67,11 @@ export class OverlayContainerComponent implements OnInit {
     topScroll: 0
   };
 
-  public isActiveIcon = {
-    teachers: false,
-    travel: false,
-    timeLimit: false,
-    restriction: false,
-    scheduling_restricted: false
-  };
-
-  @ViewChild('leftContent') set content(content: ElementRef) {
-    this.roomList.domElement = content;
-    // console.log(this.roomList);
-    if (this.roomList.domElement) {
-      // debugger
-      this.roomList.ready.next(this.roomList.domElement);
-    }
-  }
-
   selectedRooms = [];
-
-  selectedRoomsEditable = {};
-  selectedTeachers: User[] = [];
-  readyRoomsToEdit: Pinnable[] = [];
   pinnable: Pinnable;
   pinnables$: Observable<Pinnable[]>;
-  currentLocationInEditRoomFolder;
   overlayType: string;
-  roomName: string;
-  folderName: string;
-  roomNumber: string | number;
-  timeLimit: string | number;
-  travelType: string[];
-  nowRestriction: boolean;
-  futureRestriction: boolean;
   gradientColor: string;
-  isEditRooms = false;
-  isEditFolder = false;
-  editRoomInFolder: boolean;
-  roomToEdit: Location;
-  importedRooms: any[] = [];
 
   color_profile;
   selectedIcon;
@@ -112,11 +84,6 @@ export class OverlayContainerComponent implements OnInit {
   isDirtyColor: boolean;
   isDirtyIcon: boolean;
 
-  isChangeState: boolean;
-  isChangeStateInFolder: boolean;
-
-  isChangeLocations = new BehaviorSubject<boolean>(false);
-
   folderRoomsLoaded: boolean;
 
   pinnableToDeleteIds: number[] = [];
@@ -126,7 +93,6 @@ export class OverlayContainerComponent implements OnInit {
   form: FormGroup;
 
   showPublishSpinner: boolean;
-  showDoneSpinner: boolean;
 
   advOptState: OptionState = {
       now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
@@ -268,6 +234,10 @@ export class OverlayContainerComponent implements OnInit {
         this.selectedRooms = this.dialogData['rooms'];
       }
 
+    if (this.dialogData['forceSelectedLocation']) {
+      this.setToEditRoom(this.dialogData['forceSelectedLocation']);
+    }
+
       if (this.dialogData['pinnables$']) {
           this.pinnables$ = this.dialogData['pinnables$'];
 
@@ -406,7 +376,7 @@ export class OverlayContainerComponent implements OnInit {
           if (this.currentPage === Pages.NewFolder) {
             return res.title_used ? { folder_name: true } : null;
           }
-          return res.title_used && this.pinnable.title !== this.folderName ? { folder_name: true } : null;
+          return res.title_used && this.pinnable.title !== this.folderData.folderName ? { folder_name: true } : null;
         }));
     } else {
       return of(null);
@@ -628,10 +598,6 @@ export class OverlayContainerComponent implements OnInit {
     }
   }
 
-  onUpdate(time) {
-      this.timeLimit = time;
-  }
-
   handleDragEvent( evt: DragEvent, dropAreaColor: string) {
     evt.preventDefault();
     this.overlayService.dragEvent$.next(dropAreaColor);
@@ -715,5 +681,18 @@ export class OverlayContainerComponent implements OnInit {
   catchFile(evt: DragEvent) {
     evt.preventDefault();
     this.overlayService.dropEvent$.next(evt);
+  }
+
+  setToEditRoom(_room) {
+    this.overlayService.changePage(Pages.EditRoomInFolder, this.currentPage, {
+      selectedRoomsInFolder: [_room]
+    });
+
+    if (!this.dialogData['forceSelectedLocation']) {
+      this.roomList.topScroll = this.roomList.domElement.nativeElement.scrollTop;
+      console.log(this.roomList.topScroll);
+    }
+
+    this.formService.setFrameMotionDirection('forward');
   }
 }
