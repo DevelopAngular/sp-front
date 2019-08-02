@@ -20,6 +20,7 @@ import {DarkThemeSwitch} from '../dark-theme-switch';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {ScreenService} from '../services/screen.service';
+import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -239,7 +240,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       { display: 'Student Name', color: this.darkTheme.getColor(), action: 'student_name', toggle: false },
       { display: 'To Location', color: this.darkTheme.getColor(), action: 'destination_name', toggle: false }
     ];
-
+    UNANIMATED_CONTAINER.next(true);
     const sortDialog = this.dialog.open(ConsentMenuComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
@@ -252,10 +253,14 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
         }
     });
 
-    sortDialog.afterClosed().subscribe(sortMode => {
-      this.onSortSelected(sortMode);
-      console.log(sortMode);
-    });
+    sortDialog.afterClosed()
+      .pipe(
+        tap(() => UNANIMATED_CONTAINER.next(false))
+      )
+      .subscribe(sortMode => {
+        this.onSortSelected(sortMode);
+        console.log(sortMode);
+      });
   }
 
   @HostListener('window:resize')

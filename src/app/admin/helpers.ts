@@ -19,7 +19,7 @@ export function wrapToHtml(
       }
       if (Array.isArray(dataObj[key])) {
         const keyArrayLike = <Array<any>>(dataObj[key]);
-        console.log(keyArrayLike);
+        // console.log(keyArrayLike);
         wrappedData[key] = this.domSanitizer.bypassSecurityTrustHtml(keyArrayLike.map(str =>  typeof str === 'string' ? `<${htmlTag}>${str}</${htmlTag}>` : `<${htmlTag} data-name="${dataObj['Name']}" data-profile="${str.role }">${str.title}</${htmlTag}>`).join(keyArrayLike.length > 1 ? ', ' : ''));
       }
     }

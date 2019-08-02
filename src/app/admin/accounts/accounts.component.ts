@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material';
 import { HttpService } from '../../services/http-service';
 import { UserService } from '../../services/user.service';
 import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
-import {map, mapTo, switchMap} from 'rxjs/operators';
+import {map, mapTo, switchMap, tap} from 'rxjs/operators';
 import { AdminService } from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {bumpIn} from '../../animations';
@@ -22,6 +22,7 @@ import {encode} from 'punycode';
 import {environment} from '../../../environments/environment';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {wrapToHtml} from '../helpers';
+import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 
 declare const history: History;
 
@@ -222,7 +223,9 @@ export class AccountsComponent implements OnInit {
                 options = [{display: `Confirm Delete`, color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
                 break;
         }
-        const DR = this.matDialog.open(ConsentMenuComponent,
+      UNANIMATED_CONTAINER.next(true);
+
+      const DR = this.matDialog.open(ConsentMenuComponent,
             {
                 data: {
                     role: '_all',
@@ -250,6 +253,7 @@ export class AccountsComponent implements OnInit {
                             break;
                     }
                 }),
+                tap(() => UNANIMATED_CONTAINER.next(false))
             )
             .subscribe(consentMenuObserver);
     }

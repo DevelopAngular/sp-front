@@ -23,6 +23,7 @@ import {GSuiteOrgs} from '../../models/GSuiteOrgs';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {bind} from '@angular/core/src/render3';
 import {wrapToHtml} from '../helpers';
+import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 
 declare const window;
 
@@ -541,6 +542,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         options = [{display: 'Enable sign-in', color: '#03CF31', buttonColor: '#03CF31, #00B476', action: 'enable_sign_in'}];
         break;
     }
+    UNANIMATED_CONTAINER.next(true);
       const DR = this.matDialog.open(ConsentMenuComponent,
         {
           data: {
@@ -581,6 +583,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
                 break;
             }
           }),
+          tap(() => UNANIMATED_CONTAINER.next(false))
         )
         .subscribe(consentMenuObserver);
   }

@@ -19,3 +19,4 @@
 </div>
 
 <app-error *ngIf="(isAuthenticated === false) && !(showUI | async)"></app-error>
+<div #dialogContainer [@.disabled]="true"></div>

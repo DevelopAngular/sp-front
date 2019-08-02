@@ -264,7 +264,7 @@ export class SearchComponent implements OnInit {
             Object.defineProperty(rawObj, 'id', { enumerable: false, value: hallPass.id});
             Object.defineProperty(rawObj, 'date', {enumerable: false, value: moment(hallPass.created) });
             Object.defineProperty(rawObj, 'sortDuration', {enumerable: false, value: duration });
-            Object.defineProperty(rawObj, 'sortDuration', {enumerable: false, value: duration });
+
             Object.defineProperty(record, '_data', {enumerable: false, value: rawObj });
             return record;
           });
