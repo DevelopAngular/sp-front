@@ -4,37 +4,28 @@ export function wrapToHtml(
 
   dataObj: {[key: string]: string | string[]} | string,
   htmlTag: 'span' | 'div',
-  dataset: {[key: string]: any}
+
 
   ): {[key: string]: SafeHtml; _data: any} | SafeHtml {
-
   if (typeof dataObj === 'string') {
-
     return this.domSanitizer.bypassSecurityTrustHtml(`<${htmlTag} >${dataObj}</${htmlTag}>`) as SafeHtml;
-
   } else if (typeof dataObj === 'object' && !Array.isArray(dataObj)) {
-
     const wrappedData = {};
-
     for (const key in dataObj) {
+      // debugger
       if (typeof dataObj[key] === 'string') {
         const keyStringLike = <string>(dataObj[key]);
         wrappedData[key] = this.domSanitizer.bypassSecurityTrustHtml(`<${htmlTag}>${keyStringLike}</${htmlTag}>`);
       }
       if (Array.isArray(dataObj[key])) {
         const keyArrayLike = <Array<any>>(dataObj[key]);
-        // if (dataset.profile) {
-          wrappedData[key] = this.domSanitizer.bypassSecurityTrustHtml(keyArrayLike.map(str => `<${htmlTag} data-data_index="${dataset.index}" data-name="${dataObj['Name']}" data-profile="${str.role }">${str.title}</${htmlTag}>`).join(keyArrayLike.length > 1 ? ', ' : ''));
-        // }
+        console.log(keyArrayLike);
+        wrappedData[key] = this.domSanitizer.bypassSecurityTrustHtml(keyArrayLike.map(str =>  typeof str === 'string' ? `<${htmlTag}>${str}</${htmlTag}>` : `<${htmlTag} data-name="${dataObj['Name']}" data-profile="${str.role }">${str.title}</${htmlTag}>`).join(keyArrayLike.length > 1 ? ', ' : ''));
       }
     }
-
     return wrappedData as {[key: string]: SafeHtml; _data: any};
-
   } else {
-
     return this.domSanitizer.bypassSecurityTrustHtml(`<${htmlTag} >Not allowed type</${htmlTag}>`) as SafeHtml;
-
   }
 }
 

@@ -764,30 +764,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         return users;
       }));
   }
-  wrapToHtml(data, htmlTag, dataIndex) {
+  private wrapToHtml(data, htmlTag, dataIndex?) {
     const wrapper =  wrapToHtml.bind(this);
     return wrapper(data, htmlTag, dataIndex);
   }
-  // wrapToHtml(data: {[key: string]: string | string[]} | string, htmlTag: 'span' | 'div', index: number): {[key: string]: SafeHtml; _data: any} | SafeHtml {
-  //   if (typeof data === 'string') {
-  //     return this.domSanitizer.bypassSecurityTrustHtml(`<${htmlTag} >${data}</${htmlTag}>`) as SafeHtml;
-  //   } else if (typeof data === 'object' && !Array.isArray(data)) {
-  //     const wrappedData = {};
-  //     for (const key in data) {
-  //       if (typeof data[key] === 'string') {
-  //         const keyStringLike = <string>(data[key]);
-  //         wrappedData[key] = this.domSanitizer.bypassSecurityTrustHtml(`<${htmlTag}>${keyStringLike}</${htmlTag}>`);
-  //       }
-  //       if (Array.isArray(data[key]) && (<Array<string>>(data[key])).every(i => typeof i === 'string')) {
-  //         const keyArrayLike = <Array<string>>(data[key]);
-  //         wrappedData[key] = this.domSanitizer.bypassSecurityTrustHtml(keyArrayLike.map(str => `<${htmlTag} data-position="${index}" data-name="Dale Flinn" data-profile="_profile_teacher">${str}</${htmlTag}>`).join(keyArrayLike.length > 1 ? ', ' : ''));
-  //       }
-  //     }
-  //     return wrappedData as {[key: string]: SafeHtml; _data: any};
-  //   } else {
-  //     return this.domSanitizer.bypassSecurityTrustHtml(`<${htmlTag} >Not allowed type</${htmlTag}>`) as SafeHtml;
-  //   }
-  // }
 
   private buildUserListData(userList) {
     this.isLoadUsers = this.limitCounter === userList.length;
@@ -849,7 +829,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           }
         }
 
-        const record = this.wrapToHtml(rawObj, 'span', index) as {[key: string]: SafeHtml; _data: any};
+        const record = this.wrapToHtml(rawObj, 'span',) as {[key: string]: SafeHtml; _data: any};
 
         Object.defineProperty(rawObj, 'id', { enumerable: false, value: raw.id });
         Object.defineProperty(rawObj, 'me', { enumerable: false, value: +raw.id === +this.user.id });
