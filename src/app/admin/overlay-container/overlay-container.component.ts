@@ -18,7 +18,6 @@ import {OptionState, ValidButtons} from './advanced-options/advanced-options.com
 import { CreateFormService } from '../../create-hallpass-forms/create-form.service';
 import { FolderData, OverlayDataService, Pages, RoomData } from './overlay-data.service';
 
-import * as XLSX from 'xlsx';
 import * as _ from 'lodash';
 
 @Component({
@@ -78,98 +77,7 @@ export class OverlayContainerComponent implements OnInit {
       this.roomList.ready.next(this.roomList.domElement);
     }
   }
-  @ViewChild('dropArea') dropArea: ElementRef;
 
-  // @ViewChild('file') set fileRef(fileRef: ElementRef) {
-  //   if (fileRef && fileRef.nativeElement) {
-  //     console.log(this.selectedFile);
-  //     this.selectedFile = fileRef;
-  //     fromEvent(this.selectedFile.nativeElement , 'change')
-  //       .pipe(
-  //         switchMap((evt: Event) => {
-  //           this.uploadingProgress.inProgress = true;
-  //
-  //           const FR = new FileReader();
-  //           FR.readAsBinaryString(this.selectedFile.nativeElement.files[0]);
-  //           return fromEvent(FR, 'load');
-  //         }),
-  //         map(( res: any) => {
-  //           const raw = XLSX.read(res.target.result, {type: 'binary'});
-  //           const sn = raw.SheetNames[0];
-  //           const stringCollection = raw.Sheets[sn];
-  //           const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
-  //           let rows = data.slice(1);
-  //           rows = rows.map((row, index) => {
-  //             const _room: any = {};
-  //             _room.title = row[0];
-  //             _room.room = row[1];
-  //             _room.teachers = <string>row[2] ? row[2].split(', ') : [];
-  //             return _room;
-  //           });
-  //           return rows;
-  //         }),
-  //         map((rows) => {
-  //           rows = rows.map((r: any) => {
-  //             if (r.title && r.title.length > 16) {
-  //               r.title = r.title.slice(0, 15);
-  //             }
-  //             if (r.room && (r.room + '').length > 8) {
-  //               r.title = r.title.slice(0, 7);
-  //             }
-  //             return r;
-  //           });
-  //           const groupedRooms = _.groupBy(rows, (r: any) => r.title);
-  //           let normalizedRooms = [];
-  //
-  //           for (const key in groupedRooms) {
-  //             if (groupedRooms[key].length > 1) {
-  //               normalizedRooms = normalizedRooms.concat(
-  //                 groupedRooms[key].map((duplicate: any, index: number) => {
-  //                   duplicate.title = duplicate.title + ++index;
-  //                   return duplicate;
-  //                 })
-  //               );
-  //             } else {
-  //               normalizedRooms = normalizedRooms.concat(groupedRooms[key]);
-  //             }
-  //           }
-  //           return normalizedRooms;
-  //         }),
-  //         switchMap((_rooms: any[]): Observable<any[]> => {
-  //           return this.userService.getUsersList('_profile_teacher')
-  //             .pipe(
-  //               map((teachers: any[]) => {
-  //                 return _rooms.map((_room) => {
-  //                   const teachersIdArray = [];
-  //
-  //                   _room.teachers.forEach((_teacherEmail) => {
-  //                     const existAndAttached = teachers.find(_teacher =>  _teacher.primary_email === _teacherEmail );
-  //                     if (existAndAttached) {
-  //                       teachersIdArray.push(existAndAttached.id);
-  //                     } else {
-  //                       this.unknownEmails.push({
-  //                         room: _room,
-  //                         email: _teacherEmail
-  //                       });
-  //                     }
-  //                   });
-  //                   _room.teachers = teachersIdArray;
-  //                   return _room;
-  //                 });
-  //               }));
-  //         }),
-  //       )
-  //       .subscribe((rooms) => {
-  //         setTimeout(() => {
-  //           this.uploadingProgress.inProgress = false;
-  //           this.uploadingProgress.completed = true;
-  //         }, 1500);
-  //         this.importedRooms = rooms;
-  //       });
-  //   }
-  // }
-
-  selectedFile: ElementRef;
   selectedRooms = [];
 
   selectedRoomsEditable = {};
@@ -223,17 +131,6 @@ export class OverlayContainerComponent implements OnInit {
   advOptState: OptionState = {
       now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
       future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }
-  };
-
-  unknownEmails: any[] = [];
-  uploadingProgress: {
-    inProgress: boolean,
-    completed: boolean,
-    percent: number
-  } = {
-    inProgress: false,
-    completed: false,
-    percent: 0
   };
   frameMotion$: BehaviorSubject<any>;
 
@@ -298,13 +195,6 @@ export class OverlayContainerComponent implements OnInit {
     }
     this.currentPage = this.overlayService.pageState.getValue().currentPage;
       this.gradientColor = 'radial-gradient(circle at 98% 97%,' + colors + ')';
-  }
-
-  get isValidForm() {
-    return this.form.get('roomName').valid &&
-      this.form.get('roomNumber').valid &&
-      this.form.get('timeLimit').valid;
-
   }
 
   get roomTitle() {
@@ -398,9 +288,6 @@ export class OverlayContainerComponent implements OnInit {
           }));
 
       }
-      if (this.dialogData['isEditFolder']) {
-          this.isEditFolder = true;
-      }
 
       this.getHeaderData();
 
@@ -422,18 +309,6 @@ export class OverlayContainerComponent implements OnInit {
               switchMap((value: string) => this.http.searchIcons(value.toLowerCase()))
           );
       }
-
-      this.form.valueChanges.subscribe(res => {
-          if (!!res.file || !!res.roomName || !!res.folderName || !!res.roomNumber || !!res.timeLimit) {
-          } else {
-              this.isChangeState = false;
-          }
-          if (!!res.roomName || res.roomNumber || res.timeLimit) {
-              this.isChangeStateInFolder = true;
-          } else {
-              this.isChangeStateInFolder = false;
-          }
-      });
   }
 
   buildForm() {
@@ -612,11 +487,8 @@ export class OverlayContainerComponent implements OnInit {
     } else {
       this.formService.setFrameMotionDirection('back');
       setTimeout(() => {
-        // this.resetRoomImport();
         const oldFolderData = this.oldFolderData ? this.oldFolderData : this.folderData;
-
-        this.overlayService.back({...this.folderData, oldFolderData});
-        // return (this.overlayType === 'settingsRooms' ? (this.isEditRooms ? this.setLocation('newFolder') : this.setLocation('importRooms')) : this.setLocation('newFolder'));
+          this.overlayService.back({...this.folderData, oldFolderData});
       }, 100);
     }
   }
@@ -740,178 +612,6 @@ export class OverlayContainerComponent implements OnInit {
     }
   }
 
-  // done() {
-  //     this.showDoneSpinner = true;
-  //
-  //     if (this.overlayType === 'newRoomInFolder') {
-  //         const location = {
-  //                 title: this.roomName,
-  //                 room: this.roomNumber,
-  //                 restricted: this.nowRestriction,
-  //                 scheduling_restricted: this.futureRestriction,
-  //                 // teachers: this.selectedTeachers.map(teacher => teacher.id),
-  //                 teachers: this.selectedTeachers,
-  //                 travel_types: this.travelType,
-  //                 max_allowed_time: +this.timeLimit,
-  //           };
-  //
-  //       if (this.editRoomInFolder) {
-  //               const currentRoom = this.selectedRooms.find(room => room.id === this.roomToEdit.id);
-  //               currentRoom.title = location.title;
-  //               this.selectedRoomsEditable[this.roomToEdit.id] = ({id : this.roomToEdit.id, ...location, ...this.normalizeAdvOptData()});
-  //               this.isChangeLocations.next(true);
-  //       } else {
-  //           this.selectedRoomsEditable[location.title] = ({id : null, ...location, ...this.normalizeAdvOptData()});
-  //           this.selectedRooms.push({...location, ...this.normalizeAdvOptData()});
-  //           this.isChangeLocations.next(true);
-  //         }
-  //     }
-  //     if (this.overlayType === 'settingsRooms') {
-  //         if (this.importedRooms.length) {
-  //             this.importedRooms = this.importedRooms.map((_room, index) => {
-  //                 _room.restricted = this.nowRestriction;
-  //                 _room.scheduling_restricted = this.futureRestriction;
-  //                 _room.max_allowed_time = +this.timeLimit;
-  //                 _room.travel_types = this.travelType;
-  //                 // setTimeout(() => {}, 100);
-  //                 return this.locationService.createLocation(_room);
-  //             });
-  //             zip(...this.importedRooms).subscribe((result) => {
-  //                 this.selectedRooms = [...result, ...this.selectedRooms];
-  //                 this.isChangeLocations.next(true);
-  //             });
-  //
-  //         } else if (this.readyRoomsToEdit.length) {
-  //             const locationsToEdit = this.readyRoomsToEdit.map(room => {
-  //                 if (room.location) {
-  //                     const data: any = {
-  //                         restricted: this.nowRestriction,
-  //                         scheduling_restricted: this.futureRestriction,
-  //                         travel_types: this.travelType
-  //                     };
-  //                     if (this.timeLimit) {
-  //                         data.max_allowed_time =  +this.timeLimit;
-  //                     }
-  //                     return this.locationService.updateLocation(room.location.id, data);
-  //                 } else {
-  //                     const data: any = {
-  //                         restricted: this.nowRestriction,
-  //                         scheduling_restricted: this.futureRestriction,
-  //                         travel_types: this.travelType
-  //                     };
-  //                     if (this.timeLimit) {
-  //                         data.max_allowed_time =  +this.timeLimit;
-  //                     }
-  //                     return this.locationService.updateLocation(room.id, data);
-  //                 }
-  //             });
-  //             forkJoin(locationsToEdit).subscribe(res => {
-  //                 const locIds = res.map((loc: Location) => loc.id);
-  //                 const newCollection = this.selectedRooms.filter(room => room.id !== locIds.find(id => id === room.id));
-  //                 this.selectedRooms = [...res, ...newCollection];
-  //                 this.isChangeLocations.next(true);
-  //             });
-  //         }
-  //      }
-  //
-  //    if (this.overlayType === 'edit') {
-  //      this.showPublishSpinner = true;
-  //      const selectedLocations = _.filter<Location | Pinnable>(this.selectedRooms, {type: 'location'}).map((res: any) => res.location);
-  //       const locationsFromFolder = _.filter<Location | Pinnable>(this.selectedRooms, {type: 'category'}).map((folder: any) => {
-  //           return this.locationService.getLocationsWithCategory(folder.category);
-  //       });
-  //       if (locationsFromFolder.length) {
-  //           forkJoin(locationsFromFolder).pipe(switchMap((res) => {
-  //               const mergeLocations = _.concat(selectedLocations, ...res);
-  //               const locationsToEdit = mergeLocations.map((room: any) => {
-  //                   const data: any = {
-  //                       restricted: this.nowRestriction,
-  //                       scheduling_restricted: this.futureRestriction,
-  //                       travel_types: this.travelType
-  //                   };
-  //                   if (this.timeLimit) {
-  //                       data.max_allowed_time =  +this.timeLimit;
-  //                   }
-  //                   return this.locationService.updateLocation(room.id, data);
-  //               });
-  //               return forkJoin(locationsToEdit);
-  //           })).subscribe(() => this.dialogRef.close());
-  //       } else {
-  //           const locationsToEdit = selectedLocations.map((room: any) => {
-  //               const data: any = {
-  //                   restricted: this.nowRestriction,
-  //                   scheduling_restricted: this.futureRestriction,
-  //                   travel_types: this.travelType
-  //               };
-  //               if (this.timeLimit) {
-  //                   data.max_allowed_time =  +this.timeLimit;
-  //               }
-  //               return this.locationService.updateLocation(room.id, data);
-  //           });
-  //           forkJoin(locationsToEdit).subscribe(() => this.dialogRef.close());
-  //       }
-  //    }
-  // }
-
-  // onEditRooms(action) {
-  //   // this.formService.setFrameMotionDirection('forward');
-  //
-  //   setTimeout(() => {
-  //     if (action === 'edit') {
-  //       this.isEditRooms = true;
-  //     }
-  //     if (action === 'remove_from_folder') {
-  //       const currentRoomsIds = this.readyRoomsToEdit.map(item => item.id);
-  //       const allSelectedRoomsIds = this.selectedRooms.map(item => item.id);
-  //       this.selectedRooms = this.selectedRooms.filter(item => {
-  //         return item.id === _.pullAll(allSelectedRoomsIds, currentRoomsIds).find(id => item.id === id);
-  //       });
-  //       this.readyRoomsToEdit = [];
-  //     }
-  //     if (action === 'delete') {
-  //       const roomsToDelete = this.readyRoomsToEdit.map(room => {
-  //         return this.locationService.deleteLocation(room.id);
-  //       });
-  //       forkJoin(roomsToDelete).subscribe(res => {
-  //         const currentRoomsIds = this.readyRoomsToEdit.map(item => item.id);
-  //         const allSelectedRoomsIds = this.selectedRooms.map(item => item.id);
-  //         this.selectedRooms = this.selectedRooms.filter(item => {
-  //           return item.id === _.pullAll(allSelectedRoomsIds, currentRoomsIds).find(id => item.id === id);
-  //         });
-  //         this.readyRoomsToEdit = [];
-  //         this.isChangeLocations.next(true);
-  //       });
-  //     }
-  //   }, 100);
-  // }
-
-  // deleteRoom() {
-  //   if (this.overlayType === 'editRoom' || (this.isEditFolder && this.overlayType === 'newFolder')) {
-  //
-  //     const deletions = [
-  //       this.hallPassService.deletePinnable(this.pinnable.id)
-  //     ];
-  //
-  //     if (this.pinnable.location) {
-  //       deletions.push(this.locationService.deleteLocation(this.pinnable.location.id));
-  //     }
-  //
-  //     zip(...deletions).subscribe(res => {
-  //       console.log(res);
-  //       this.dialogRef.close();
-  //     });
-  //   }
-  //
-  //   if (this.editRoomInFolder) {
-  //       this.locationService.deleteLocation(this.currentLocationInEditRoomFolder.id)
-  //       .subscribe((res: Location) => {
-  //           this.selectedRooms = this.selectedRooms.filter(room => room.id !== this.currentLocationInEditRoomFolder.id);
-  //           this.isChangeLocations.next(true);
-  //       });
-  //   }
-  //
-  // }
-
   textColor(item) {
     if (item.hovered) {
       return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
@@ -935,40 +635,6 @@ export class OverlayContainerComponent implements OnInit {
   handleDragEvent( evt: DragEvent, dropAreaColor: string) {
     evt.preventDefault();
     this.overlayService.dragEvent$.next(dropAreaColor);
-    // if (this.dropArea && this.dropArea.nativeElement && this.getRoomImportScreen() === 1) {
-    //
-    //   this.dropArea.nativeElement.style.borderColor = dropAreaColor;
-    // }
-  }
-
-  getRoomImportScreen() {
-    if (!this.importedRooms.length || !this.uploadingProgress.completed) {
-      return 1;
-    } else if (this.importedRooms.length && this.unknownEmails.length && this.uploadingProgress.completed) {
-      return 2;
-    } else if (this.importedRooms.length && !this.unknownEmails.length) {
-    }
-  }
-
-  getProgress(progress: HTMLElement) {
-    const timerId = setInterval(() => {
-      if (this.uploadingProgress.percent < 100) {
-        progress.style.backgroundImage = `linear-gradient(to right, #ECF1FF ${this.uploadingProgress.percent}%, transparent 0)`;
-        this.uploadingProgress.percent += 1;
-      } else {
-        progress.style.backgroundImage = `linear-gradient(to right, #ECF1FF 100%, transparent 0)`;
-        clearInterval(timerId);
-      }
-    }, 500);
-  }
-  resetRoomImport() {
-    // if (this.overlayType === 'importRooms') {
-      this.importedRooms = [];
-      this.unknownEmails = [];
-      this.uploadingProgress.inProgress = false;
-      this.uploadingProgress.completed = false;
-      this.uploadingProgress.percent = 0;
-    // }
   }
 
   roomResult({data, buttonState}) {
@@ -1048,95 +714,6 @@ export class OverlayContainerComponent implements OnInit {
 
   catchFile(evt: DragEvent) {
     evt.preventDefault();
-    this.uploadingProgress.inProgress = true;
     this.overlayService.dropEvent$.next(evt);
-
-    // of(evt)
-    //   .pipe(
-    //     switchMap((dragEvt: DragEvent) => {
-    //       const FR = new FileReader();
-    //       FR.readAsBinaryString(dragEvt.dataTransfer.files[0]);
-    //       return fromEvent(FR, 'load');
-    //     }),
-    //     map(( res: any) => {
-    //       const raw = XLSX.read(res.target.result, {type: 'binary'});
-    //       const sn = raw.SheetNames[0];
-    //       const stringCollection = raw.Sheets[sn];
-    //       const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
-    //       let rows = data.slice(1);
-    //       rows = rows.map((row, index) => {
-    //         const _room: any = {};
-    //         _room.title = row[0];
-    //         _room.room = row[1];
-    //         _room.teachers = <string>row[2] ? row[2].split(', ') : [];
-    //         return _room;
-    //       });
-    //       return rows;
-    //     }),
-    //     map((rows) => {
-    //       rows = rows.map((r: any) => {
-    //         if (r.title && r.title.length > 16) {
-    //           r.title = r.title.slice(0, 15);
-    //         }
-    //         if (r.room && (r.room + '').length > 8) {
-    //           r.title = r.title.slice(0, 7);
-    //         }
-    //         return r;
-    //       });
-    //       const groupedRooms = _.groupBy(rows, (r: any) => r.title);
-    //       let normalizedRooms = [];
-    //       console.log(groupedRooms);
-    //
-    //       for (const key in groupedRooms) {
-    //         if (groupedRooms[key].length > 1) {
-    //           normalizedRooms = normalizedRooms.concat(
-    //             groupedRooms[key].map((duplicate: any, index: number) => {
-    //               duplicate.title = duplicate.title + ++index;
-    //               return duplicate;
-    //             })
-    //           );
-    //         } else {
-    //           normalizedRooms = normalizedRooms.concat(groupedRooms[key]);
-    //         }
-    //       }
-    //       console.log(normalizedRooms);
-    //       return normalizedRooms;
-    //     }),
-    //     switchMap((_rooms: any[]): Observable<any[]> => {
-    //         console.log(_rooms);
-    //       return this.userService.getUsersList('_profile_teacher')
-    //         .pipe(
-    //           map((teachers: any[]) => {
-    //
-    //             return _rooms.map((_room) => {
-    //                       const teachersIdArray = [];
-    //
-    //                       _room.teachers.forEach((_teacherEmail) => {
-    //                         const existAndAttached = teachers.find(_teacher =>  _teacher.primary_email === _teacherEmail );
-    //                         if (existAndAttached) {
-    //                           teachersIdArray.push(existAndAttached.id);
-    //                         } else {
-    //                           this.unknownEmails.push({
-    //                             room: _room,
-    //                             email: _teacherEmail
-    //                           });
-    //                         }
-    //                       });
-    //
-    //                       _room.teachers = teachersIdArray;
-    //                       return _room;
-    //                   });
-    //           }));
-    //     }),
-    //   )
-    //   .subscribe((rooms) => {
-    //     console.log(rooms);
-    //     console.log(this.unknownEmails);
-    //       setTimeout(() => {
-    //         this.uploadingProgress.inProgress = false;
-    //         this.uploadingProgress.completed = true;
-    //       }, 1500);
-    //     this.importedRooms = rooms;
-    //   });
   }
 }

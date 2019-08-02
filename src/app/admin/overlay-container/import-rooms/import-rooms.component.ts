@@ -1,11 +1,11 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 import { fromEvent, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import {UserService} from '../../../services/user.service';
-import {OverlayDataService} from '../overlay-data.service';
+import {OverlayDataService, Pages} from '../overlay-data.service';
 
 import * as _ from 'lodash';
 import * as XLSX from 'xlsx';
@@ -19,9 +19,7 @@ export class ImportRoomsComponent implements OnInit {
 
   @Input() form: FormGroup;
 
-  @Input() unknownEmails: any[];
-
-  @Input() importedRooms: any[];
+  @Output() back = new EventEmitter();
 
   @ViewChild('dropArea') dropArea: ElementRef;
 
@@ -114,6 +112,10 @@ export class ImportRoomsComponent implements OnInit {
     }
   }
 
+  unknownEmails: any[] = [];
+
+  importedRooms: any[] = [];
+
   uploadingProgress: {
     inProgress: boolean,
     completed: boolean,
@@ -128,11 +130,20 @@ export class ImportRoomsComponent implements OnInit {
 
   constructor(private userService: UserService, private overlay: OverlayDataService) { }
 
+  get showCancel() {
+    return this.importedRooms.length && this.uploadingProgress.completed;
+  }
+
+  get showIncomplete() {
+    return this.importedRooms.length && this.uploadingProgress.completed;
+  }
+
   ngOnInit() {
 
     this.overlay.dropEvent$
       .pipe(
         switchMap((dragEvt: DragEvent) => {
+          this.uploadingProgress.inProgress = true;
           const FR = new FileReader();
           FR.readAsBinaryString(dragEvt.dataTransfer.files[0]);
           return fromEvent(FR, 'load');
@@ -226,6 +237,10 @@ export class ImportRoomsComponent implements OnInit {
     });
   }
 
+  goBack() {
+    this.back.emit();
+  }
+
   getProgress(progress: HTMLElement) {
     const timerId = setInterval(() => {
       if (this.uploadingProgress.percent < 100) {
@@ -244,7 +259,14 @@ export class ImportRoomsComponent implements OnInit {
     } else if (this.importedRooms.length && this.unknownEmails.length && this.uploadingProgress.completed) {
       return 2;
     } else if (this.importedRooms.length && !this.unknownEmails.length) {
+      this.redirect();
     }
+  }
+
+  redirect() {
+    this.overlay.changePage(Pages.BulkEditRoomsInFolder, Pages.ImportRooms, {
+      selectedRoomsInFolder: this.importedRooms
+    });
   }
 
 }
