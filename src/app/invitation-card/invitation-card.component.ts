@@ -11,12 +11,13 @@ import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
 import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
-import {filter, switchMap} from 'rxjs/operators';
+import {filter, switchMap, tap} from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { RequestsService } from '../services/requests.service';
 import {of} from 'rxjs';
 import {ScreenService} from '../services/screen.service';
+import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 
 @Component({
   selector: 'app-invitation-card',
@@ -270,6 +271,7 @@ export class InvitationCardComponent implements OnInit {
       }
 
       if (!this.screenService.isDeviceMid) {
+        UNANIMATED_CONTAINER.next(true);
         const consentDialog = this.dialog.open(ConsentMenuComponent, {
           panelClass: 'consent-dialog-container',
           backdropClass: 'invis-backdrop',
@@ -280,7 +282,11 @@ export class InvitationCardComponent implements OnInit {
           this.denyOpen = true;
         });
 
-        consentDialog.afterClosed().subscribe(action => {
+        consentDialog.afterClosed()
+          .pipe(
+            tap(() => UNANIMATED_CONTAINER.next(true))
+          )
+          .subscribe(action => {
           this.chooseAction(action);
         });
       }

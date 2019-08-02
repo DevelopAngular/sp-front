@@ -56,6 +56,8 @@ import {KioskModeService} from './services/kiosk-mode.service';
 import { SchoolSignUpComponent } from './school-sign-up/school-sign-up.component';
 import { AccountsSetupComponent } from './accounts-setup/accounts-setup.component';
 import { SpDialogBoxComponent } from './sp-dialog-box/sp-dialog-box.component';
+import {OverlayContainer} from '@angular/cdk/overlay';
+import {InitOverlay} from './consent-menu-overlay';
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroRouteComponent, data: { hideSchoolToggleBar: true}},
@@ -178,6 +180,7 @@ const appRoutes: Routes = [
     CurrentUserResolver,
     GoogleApiService,
     GoogleAuthService,
+    {provide: OverlayContainer, useFactory: InitOverlay},
     {provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true},
     {provide: SP_GAPI_CONFIG, useValue: GAPI_CONFIG},
     {provide: APP_BASE_HREF, useValue: environment.production ? '/app' : '/'},

@@ -18,6 +18,7 @@ import {LocationsService} from '../../services/locations.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {AdminService} from '../../services/admin.service';
+import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 
 @Component({
   selector: 'app-pass-congif',
@@ -213,6 +214,8 @@ export class PassConfigComponent implements OnInit, OnDestroy {
                 options.push(this.genOption('New Folder', this.darkTheme.getColor(), 'newFolder'));
             }
 
+            UNANIMATED_CONTAINER.next(true);
+
             const cancelDialog = this.dialog.open(ConsentMenuComponent, {
                 panelClass: 'consent-dialog-container',
                 backdropClass: 'invis-backdrop',
@@ -223,7 +226,9 @@ export class PassConfigComponent implements OnInit, OnDestroy {
                 this.buttonMenuOpen = true;
             });
 
-            cancelDialog.afterClosed().subscribe(action => {
+            cancelDialog.afterClosed()
+              .pipe(tap(() => UNANIMATED_CONTAINER.next(false)))
+              .subscribe(action => {
                 this.buttonMenuOpen = false;
                 if (action === 'delete') {
                     // const currentPinIds = this.selectedPinnables.map(pinnable => pinnable.id);

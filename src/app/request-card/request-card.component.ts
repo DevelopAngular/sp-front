@@ -21,6 +21,7 @@ import {BehaviorSubject, of} from 'rxjs';
 
 import * as moment from 'moment';
 import {ScreenService} from '../services/screen.service';
+import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 
 @Component({
   selector: 'app-request-card',
@@ -363,6 +364,7 @@ export class RequestCardComponent implements OnInit {
       }
 
       if (!this.screenService.isDeviceMid) {
+      UNANIMATED_CONTAINER.next(true);
       const cancelDialog = this.dialog.open(ConsentMenuComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
@@ -374,6 +376,9 @@ export class RequestCardComponent implements OnInit {
       });
 
       cancelDialog.afterClosed()
+        .pipe(
+          tap(() => UNANIMATED_CONTAINER.next(false))
+        )
         .subscribe(action => {
           this.chooseAction(action);
         });

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { AfterViewInit, Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import {AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
@@ -20,6 +20,8 @@ import { StorageService } from './services/storage.service';
 import { UserService } from './services/user.service';
 import { WebConnectionService } from './services/web-connection.service';
 import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
+import {OverlayContainer} from '@angular/cdk/overlay';
+import {APPLY_ANIMATED_CONTAINER, ConsentMenuOverlay} from './consent-menu-overlay';
 
 declare const window;
 
@@ -36,6 +38,8 @@ export const INITIAL_LOCATION_PATHNAME =  new ReplaySubject<string>(1);
 })
 
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  @ViewChild( 'dialogContainer' ) dialogContainer: ElementRef;
 
   public isAuthenticated = null;
   public hideScroll: boolean = false;
@@ -81,6 +85,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private webConnection: WebConnectionService,
     private dialog: MatDialog,
+    private overlayContainer: OverlayContainer,
     private storageService: StorageService,
     private kms: KioskModeService
   ) {
@@ -245,6 +250,15 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
+    APPLY_ANIMATED_CONTAINER
+      .subscribe((v: boolean) => {
+        if (v) {
+          (this.overlayContainer as ConsentMenuOverlay).setContainer(this.dialogContainer.nativeElement);
+        } else {
+          (this.overlayContainer as ConsentMenuOverlay).restoreContainer();
+        }
+      })
+
   }
 
 
