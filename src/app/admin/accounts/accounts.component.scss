@@ -11,7 +11,7 @@
   -webkit-overflow-scrolling: touch;
   width: 100%;
   height: 100%;
-  padding: 0 25px;
+  //padding: 0 25px;
   box-sizing: border-box;
   //overflow: auto;
   background-color: #FBFEFF;
@@ -28,7 +28,8 @@
       background-clip: padding-box;
       position: sticky;
       top: 0px;
-      padding: 25px 0 23px 0;
+      padding: 25px;
+      box-sizing: border-box;
       z-index: 1;
       width: 100%;
 
