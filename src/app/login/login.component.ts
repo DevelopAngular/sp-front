@@ -55,6 +55,9 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    if (this.isIOSMobile || this.isAndroid) {
+      window.waitForAppLoaded();
+    }
 
     this.loginService.isAuthenticated$.pipe(
       filter(v => v),
@@ -88,9 +91,13 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
       this.titleText = 'Download SmartPass on the Google Play Store to start making passes.';
     }
   }
+
   ngAfterViewInit() {
-    // window.appLoaded();
+    if (this.isIOSMobile || this.isAndroid) {
+      window.appLoaded();
+    }
   }
+
   ngOnDestroy() {
     this.destroyer$.next(null);
     this.destroyer$.complete();
