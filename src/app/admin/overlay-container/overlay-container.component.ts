@@ -510,6 +510,13 @@ export class OverlayContainerComponent implements OnInit {
         this.hallPassService.updatePinnable(this.pinnable.id, newFolder)
           .subscribe(res => this.dialogRef.close());
       }
+      if (this.folderData.roomsToDelete.length) {
+        const deleteRequest$ = this.folderData.roomsToDelete.map(room => {
+          return this.locationService.deleteLocation(room.id);
+        });
+
+        forkJoin(deleteRequest$).subscribe();
+      }
       const locationsToDb$ = this.folderData.roomsInFolder.map(location => {
         let id;
         let data;

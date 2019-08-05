@@ -143,7 +143,7 @@ export class AccountsComponent implements OnInit {
         },
         'Profile(s)': {
           value: true,
-          label: 'Profile(s)',
+          label: 'Group(s)',
           disabled: false
         }
       };
@@ -292,7 +292,7 @@ export class AccountsComponent implements OnInit {
                 'Name': raw.display_name,
                 'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
                 'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : 'Standard',
-                'Profile(s)': partOf,
+                'Group(s)': partOf,
             };
             for (const key in rawObj) {
               if (!this.dataTableHeaders[key]) {
