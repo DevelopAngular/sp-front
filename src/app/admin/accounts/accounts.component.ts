@@ -141,7 +141,7 @@ export class AccountsComponent implements OnInit {
           label: 'Account Type',
           disabled: false
         },
-        'Profile(s)': {
+        'Group(s)': {
           value: true,
           label: 'Group(s)',
           disabled: false

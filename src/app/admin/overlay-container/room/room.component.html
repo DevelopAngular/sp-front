@@ -10,7 +10,7 @@
                   [formGroup]="form"
                   [controlName]="form.get('roomName')"
                   (onUpdate)="data.roomName = $event === '' ? 'New Room': $event;"
-                  [isFocus]="currentPage === 1"
+                  [isFocus]="currentPage === 1 || currentPage === 5"
                   (blurEvent)="overlayService.roomNameBlur$.next($event)"
           >
           </app-input>
