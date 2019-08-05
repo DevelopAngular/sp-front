@@ -61,12 +61,12 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
       switchMap((): Observable<[User, Array<string>]> => {
         return zip(
           this.userService.userData.asObservable(),
-          INITIAL_LOCATION_PATHNAME.asObservable().pipe(map(p => p.split('/').filter(v => v)))
+          INITIAL_LOCATION_PATHNAME.asObservable().pipe(map(p => p.split('/').filter(v => v && v !== 'app')))
         );
       }),
       takeUntil(this.destroyer$)
     ).subscribe(([currentUser, path]) => {
-      // console.log(currentUser, path);
+      console.log(path);
 
       const loadView = currentUser.isAdmin() ? 'admin' : 'main';
       if (path.length) {
