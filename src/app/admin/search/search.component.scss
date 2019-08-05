@@ -90,7 +90,7 @@
 .search-wrapper{
   min-width: 1030px;
   width: 100%;
-  padding: 0 25px;
+  //padding: 0 25px;
   box-sizing: border-box;
   height: 100%;
   display: flex;
@@ -144,7 +144,10 @@
 }
 
 .input-header-wrapper {
-  padding: 25px 0 10px 0;
+  padding: 25px 25px 10px ;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
   //background-color: #FBFEFF;
   width: 100%;
   background-clip: padding-box;
