@@ -217,7 +217,7 @@ export class OverlayContainerComponent implements OnInit {
           delay(50)
         )
         .subscribe((el: ElementRef) => {
-        if (this.overlayType === 'newFolder' && this.roomList.topScroll) {
+        if (this.currentPage === Pages.EditRoomInFolder || this.currentPage === Pages.NewFolder && this.roomList.topScroll) {
           el.nativeElement.scrollTop = this.roomList.topScroll;
         } else {
           el.nativeElement.scrollTop = 0;
@@ -679,6 +679,13 @@ export class OverlayContainerComponent implements OnInit {
     this.editRooms(roomData, rooms);
     this.bulkEditData = {roomData, rooms};
     this.roomValidButtons.next(buttonState);
+  }
+
+  deleteRoomInFolder(room) {
+    this.oldFolderData = _.cloneDeep(this.folderData);
+    this.folderData.roomsToDelete.push(room);
+    this.folderData.roomsInFolder = this.folderData.roomsInFolder.filter(r => r.id !== room.id);
+    this.overlayService.back({...this.folderData, oldFolderData: this.oldFolderData});
   }
 
   editRooms(roomData, rooms) {

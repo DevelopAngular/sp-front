@@ -5,6 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 
 import { RoomData } from '../overlay-data.service';
 import { ValidButtons } from '../advanced-options/advanced-options.component';
+import {LocationsService} from '../../../services/locations.service';
 
 @Component({
   selector: 'app-edit-room-in-folder',
@@ -16,6 +17,7 @@ export class EditRoomInFolderComponent implements OnInit {
     @Input() form: FormGroup;
 
     @Output() back = new EventEmitter();
+    @Output() deleteRoom = new EventEmitter();
 
     @Output() save: EventEmitter<RoomData> = new EventEmitter<RoomData>();
 
@@ -39,7 +41,7 @@ export class EditRoomInFolderComponent implements OnInit {
         }
     };
 
-    constructor() { }
+    constructor(private locationService: LocationsService) { }
 
     get showSave() {
         return this.roomValidButtons.getValue().publish;
@@ -53,20 +55,24 @@ export class EditRoomInFolderComponent implements OnInit {
         return this.roomValidButtons.getValue().cancel;
     }
 
-    ngOnInit() {
-    }
+  ngOnInit() {
+  }
 
-    goBack() {
-        this.back.emit();
-    }
+  goBack() {
+    this.back.emit();
+  }
 
   saveInFolder() {
      this.save.emit(this.roomInFolderData);
   }
 
-    roomResult({data, buttonState}) {
-        this.roomInFolderData = data;
-        this.roomValidButtons.next(buttonState);
-    }
+  roomResult({data, buttonState}) {
+    this.roomInFolderData = data;
+    this.roomValidButtons.next(buttonState);
+  }
+
+  deleteRoomEvent() {
+    this.deleteRoom.emit(this.roomInFolderData);
+  }
 
 }

@@ -17,7 +17,8 @@ export interface PageState {
       selectedRoomsInFolder: any[];
       roomsInFolderLoaded: boolean;
       folderName: string;
-      oldFolderData: FolderData
+      oldFolderData: FolderData,
+      roomsToDelete?: any[]
     };
 }
 

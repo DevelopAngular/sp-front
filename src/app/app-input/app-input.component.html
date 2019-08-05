@@ -53,9 +53,9 @@
         <img
           [matTooltip]="
             controlName.errors.folder_name ? 'Folder name already used' :
-            controlName.errors.room_name ? 'Room name already used' :
-            controlName.errors.room_number ? 'Room number already used' : null
+            controlName.errors.room_name ? 'Room name already used' : null
           "
+          [style.top]="errorIconTop + 'px'"
           matTooltipClass="tooltip"
           class="success-icon"
           [src]="'./assets/Report (Red).svg' | resolveAsset">
@@ -67,7 +67,5 @@
            class="success-icon" [style.top]="errorIconTop + 'px'" [src]="'./assets/Report (Red).svg' | resolveAsset"/>
       <div class="disabled"></div>
     </div>
-    <!--<p style="color: red" *ngIf="controlName.errors?.title">Bad name!</p>-->
-    <!--<pre>{{controlName.errors | json}}</pre>-->
   </div>
 </form>

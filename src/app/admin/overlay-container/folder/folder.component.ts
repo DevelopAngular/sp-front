@@ -94,6 +94,7 @@ export class FolderComponent implements OnInit {
             this.initialFolderData = data.oldFolderData;
             this.folderName = data.folderName;
             this.roomsImFolder = data.roomsInFolder;
+            this.roomsToDelete = data.roomsToDelete;
             this.folderRoomsLoaded = true;
         } else {
             this.pinnable = data.pinnable;
