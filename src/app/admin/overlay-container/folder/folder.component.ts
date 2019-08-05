@@ -31,6 +31,8 @@ export class FolderComponent implements OnInit {
 
   currentPage: number;
 
+  roomsToDelete = [];
+
   initialFolderData: {
     folderName: string,
     roomsInFolder: any[]
@@ -92,6 +94,7 @@ export class FolderComponent implements OnInit {
             this.initialFolderData = data.oldFolderData;
             this.folderName = data.folderName;
             this.roomsImFolder = data.roomsInFolder;
+            this.roomsToDelete = data.roomsToDelete;
             this.folderRoomsLoaded = true;
         } else {
             this.pinnable = data.pinnable;
@@ -136,7 +139,8 @@ export class FolderComponent implements OnInit {
                 roomsInFolder: this.roomsImFolder,
                 selectedRoomsInFolder: this.selectedRooms,
                 roomsInFolderLoaded: true,
-                selectedRoomToEdit: this.selectedRoomToEdit
+                selectedRoomToEdit: this.selectedRoomToEdit,
+                roomsToDelete: this.roomsToDelete
               },
               buttonState: this.folderValidButtons
             });
@@ -170,7 +174,9 @@ export class FolderComponent implements OnInit {
       this.formService.setFrameMotionDirection('forward');
       setTimeout(() => {
           if (page === 'delete') {
-              console.log('DELETE');
+              this.roomsImFolder = _.differenceBy(this.roomsImFolder, this.selectedRooms, 'id');
+              this.roomsToDelete = _.cloneDeep(this.selectedRooms);
+              this.selectedRooms = [];
           } else {
               this.overlayService.changePage(page, this.currentPage, {
                   selectedRoomsInFolder: this.selectedRooms

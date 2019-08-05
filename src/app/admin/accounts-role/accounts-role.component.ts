@@ -377,11 +377,11 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           },
           'access_user_config': {
             controlName: 'access_user_config',
-            controlLabel: 'Accounts & Profiles Tab Access',
+            controlLabel: 'Accounts Tab Access',
           },
           'access_pass_config': {
             controlName: 'access_pass_config',
-            controlLabel: 'Pass Configuration Tab Access',
+            controlLabel: 'Rooms Tab Access',
           },
           // 'admin_school_settings': {
           //   controlName: 'admin_school_settings',
@@ -803,7 +803,7 @@ z
           }).join(', ') : '',
           'Sign-in status': raw.active ? 'Enabled' : 'Disabled',
           'Last sign-in': raw.last_login ? Util.formatDateTime(new Date(raw.last_login)) : 'Never signed in',
-          'Profile(s)': partOf.length ? partOf : [{title: 'No profile'}],
+          'Group(s)': partOf.length ? partOf : [{title: 'No profile'}],
           'Permissions': (function() {
             const tabs = Object.values(permissionsRef).map((tab: any) => {
               tab.allowed = raw.roles.includes(tab.controlName);

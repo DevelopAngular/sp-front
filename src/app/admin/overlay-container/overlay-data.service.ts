@@ -17,7 +17,8 @@ export interface PageState {
       selectedRoomsInFolder: any[];
       roomsInFolderLoaded: boolean;
       folderName: string;
-      oldFolderData: FolderData
+      oldFolderData: FolderData,
+      roomsToDelete?: any[]
     };
 }
 
@@ -53,6 +54,7 @@ export interface FolderData {
     selectedRoomsInFolder: any[];
     roomsInFolderLoaded: boolean;
     selectedRoomToEdit: any;
+    roomsToDelete: any[]
 }
 
 @Injectable({
