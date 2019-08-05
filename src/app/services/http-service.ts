@@ -142,11 +142,6 @@ export class HttpService {
   public currentSchool$: Observable<School> = this.currentSchoolSubject.asObservable();
   public kioskTokenSubject$ = new BehaviorSubject<any>(null);
 
-
-  public servers: LoginServer[] ;
-  public authData: any[];
-
-
   public globalReload$ = this.currentSchool$.pipe(
     filter(school => !!school),
     map(school => school ? school.id : null),
@@ -163,8 +158,6 @@ export class HttpService {
       private pwaStorage: LocalStorage
   ) {
 
-    this.pwaStorage.getItem('servers').subscribe( servers => this.servers = servers);
-    this.pwaStorage.getItem('authData').subscribe( data => this.authData = data);
 
     // the school list is loaded when a user authenticates and we need to choose a current school of the school array.
     // First, if there is a current school loaded, try to use that one.
@@ -245,7 +238,7 @@ export class HttpService {
       });
 
     // this.accessTokenSubject.pipe(withLatestFrom(this.kioskTokenSubject$),
-    //     map(([{auth, server}, newToken]) => {
+    //     map(([{auth, server}, newToken]) => {ы
     //       return {auth: newToken, server};
     //     }))
     //     .subscribe((updatedContext: AuthContext) => {
@@ -278,7 +271,7 @@ export class HttpService {
     if (!navigator.onLine) {
       return  this.pwaStorage.getItem('servers').pipe(
         map((servers: LoginServer[]) => {
-          if (servers.length > 0) {
+          if (servers) {
             return servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
           } else {
             return null;
@@ -290,9 +283,6 @@ export class HttpService {
       map((servers: LoginServer[]) => {
         if (servers.length > 0) {
           this.pwaStorage.setItem('servers', servers).subscribe(() => {});
-        }
-
-        if (servers.length > 0) {
           return servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
         } else {
           return null;
@@ -329,19 +319,21 @@ export class HttpService {
         config.append('password', password);
       }
 
-
       if (!navigator.onLine) {
         console.log('AUTHDATA OFFLINE');
         return this.pwaStorage.getItem('authData').pipe(
           map((data: any) => {
-            data['expires'] = new Date(new Date() + data['expires_in']);
+            if (data) {
+              data['expires'] = new Date(new Date() + data['expires_in']);
 
-            ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
+              ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
 
-            const auth = data as ServerAuth;
+              const auth = data as ServerAuth;
 
-            return {auth: auth, server: server} as AuthContext;
+              return {auth: auth, server: server} as AuthContext;
+            }
           }),
+
           catchError((err) => {
             this.loginService.isAuthenticated$.next(false);
             return of(null);

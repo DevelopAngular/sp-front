@@ -22,6 +22,7 @@ import { WebConnectionService } from './services/web-connection.service';
 import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
 import {OverlayContainer} from '@angular/cdk/overlay';
 import {APPLY_ANIMATED_CONTAINER, ConsentMenuOverlay} from './consent-menu-overlay';
+import {Meta} from '@angular/platform-browser';
 
 declare const window;
 
@@ -87,7 +88,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialog: MatDialog,
     private overlayContainer: OverlayContainer,
     private storageService: StorageService,
-    private kms: KioskModeService
+    private kms: KioskModeService,
+    private meta: Meta
   ) {
     this.errorToastTrigger = this.http.errorToast$;
   }
@@ -100,6 +102,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.storageService.detectChanges();
     this.darkTheme.isEnabled$.subscribe((val) => {
       this.darkThemeEnabled = val;
+      this.meta.removeTag('name="apple-mobile-web-app-status-bar-style"');
+      this.meta.addTag({name: 'apple-mobile-web-app-status-bar-style', content: val ? 'black' : 'default' } );
     });
 
     if (!DeviceDetection.isIOSTablet() && !DeviceDetection.isMacOS()) {
@@ -109,23 +113,23 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       document.head.appendChild(link);
     }
 
-    // this.webConnection.checkConnection().pipe(takeUntil(this.subscriber$),
-    //   filter(res => !res && !this.openConnectionDialog))
-    //   .subscribe(() => {
-    //     const toastDialog = this.dialog.open(ToastConnectionComponent, {
-    //       panelClass: 'toasr',
-    //       backdropClass: 'white-backdrop',
-    //       disableClose: true
-    //     });
-    //
-    //     toastDialog.afterOpened().subscribe(() => {
-    //       this.openConnectionDialog = true;
-    //     });
-    //
-    //     toastDialog.afterClosed().subscribe(() => {
-    //       this.openConnectionDialog = false;
-    //     });
-    //   });
+    this.webConnection.checkConnection().pipe(takeUntil(this.subscriber$),
+      filter(res => !res && !this.openConnectionDialog))
+      .subscribe(() => {
+        const toastDialog = this.dialog.open(ToastConnectionComponent, {
+          panelClass: 'toasr',
+          hasBackdrop: false,
+          disableClose: true
+        });
+
+        toastDialog.afterOpened().subscribe(() => {
+          this.openConnectionDialog = true;
+        });
+
+        toastDialog.afterClosed().subscribe(() => {
+          this.openConnectionDialog = false;
+        });
+      });
 
     this.loginService.isAuthenticated$.pipe(
       takeUntil(this.subscriber$),
