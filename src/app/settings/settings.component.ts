@@ -9,6 +9,7 @@ import {KioskModeService} from '../services/kiosk-mode.service';
 import {trigger} from '@angular/animations';
 import {SideNavService} from '../services/side-nav.service';
 import {Router} from '@angular/router';
+import {LocalStorage} from '@ngx-pwa/local-storage';
 
 export interface Setting {
   hidden: boolean;
@@ -53,7 +54,8 @@ export class SettingsComponent implements OnInit {
       public loadingService: LoadingService,
       public darkTheme: DarkThemeSwitch,
       public kioskMode: KioskModeService,
-      private router: Router
+      private router: Router,
+      private pwaStorage: LocalStorage,
 
   ) {
     this.settings.push({
@@ -199,6 +201,7 @@ export class SettingsComponent implements OnInit {
     } else {
         this.sideNavService.sideNavAction$.next('signout');
     }
+    this.removeOfflineAuthData();
   }
 
   switchAction() {
@@ -212,4 +215,8 @@ export class SettingsComponent implements OnInit {
     }
   }
 
+  removeOfflineAuthData() {
+    this.pwaStorage.removeItem('servers').subscribe(() => {});
+    this.pwaStorage.removeItem('authData').subscribe(() => {});
+  }
 }
