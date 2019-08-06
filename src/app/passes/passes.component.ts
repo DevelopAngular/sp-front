@@ -1,21 +1,23 @@
-import {Component, HostListener, NgZone, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import {
   BehaviorSubject,
   combineLatest,
   ConnectableObservable,
-  empty,
+  empty, fromEvent, interval,
   merge,
   Observable,
-  of,
-  ReplaySubject,
+  of, pipe,
+  ReplaySubject, Subject,
 } from 'rxjs';
 import {
+  delay,
+  filter,
   map, publishBehavior,
   publishReplay,
   refCount,
   startWith,
-  switchMap,
+  switchMap, takeUntil,
   withLatestFrom
 } from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
@@ -37,6 +39,8 @@ import {DarkThemeSwitch} from '../dark-theme-switch';
 import {NavbarDataService} from '../main/navbar-data.service';
 import {PassesAnimations} from './passes.animations';
 import {ScreenService} from '../services/screen.service';
+import {ScrollPositionService} from '../scroll-position.service';
+import {init} from '@sentry/browser';
 
 export class FuturePassProvider implements PassLikeProvider {
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
@@ -161,7 +165,50 @@ export class InboxInvitationProvider implements PassLikeProvider {
     PassesAnimations.RequestCardSlideInOut,
   ],
 })
-export class PassesComponent implements OnInit {
+export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  private scrollableAreaName = 'Passes';
+  private scrollableArea: HTMLElement;
+
+  @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
+    if (scrollable) {
+      this.scrollableArea = scrollable.nativeElement;
+
+      const updatePosition = function () {
+
+        const scrollObserver = new Subject();
+        const initialHeight = this.scrollableArea.scrollHeight;
+        const scrollOffset = this.scrollPosition.getComponentScroll(this.scrollableAreaName);
+
+        /**
+         * If the scrollable area has static height, call `scrollTo` immediately,
+         * otherwise additional subscription will perform once if the height changes
+         */
+
+        if (scrollOffset) {
+          this.scrollableArea.scrollTo({top: scrollOffset});
+        }
+
+        interval(50)
+          .pipe(
+            filter(() => {
+              return initialHeight < ((scrollable.nativeElement as HTMLElement).scrollHeight) && scrollOffset;
+            }),
+            takeUntil(scrollObserver)
+          )
+          .subscribe((v) => {
+            console.log(scrollOffset);
+            if (v) {
+              this.scrollableArea.scrollTo({top: scrollOffset});
+              scrollObserver.next();
+              scrollObserver.complete();
+              updatePosition();
+            }
+          });
+      }.bind(this);
+      updatePosition();
+    }
+  }
 
   testPasses: PassLikeProvider;
   testRequests: PassLikeProvider;
@@ -222,6 +269,7 @@ export class PassesComponent implements OnInit {
     private navbarService: NavbarDataService,
     public screenService: ScreenService,
     public darkTheme: DarkThemeSwitch,
+    private scrollPosition: ScrollPositionService
 
   ) {
 
@@ -280,7 +328,6 @@ export class PassesComponent implements OnInit {
     this.navbarService.inboxClick.subscribe(inboxClick => {
       this.isInboxClicked = inboxClick;
     });
-
     this.dataService.currentUser
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {
@@ -335,6 +382,14 @@ export class PassesComponent implements OnInit {
     if (this.screenService.isDeviceLargeExtra) {
       this.cursor = 'default';
     }
+  }
+  ngAfterViewInit(): void {
+  //   console.log(this.scrollPosition.getComponentScroll(this.scrollableAreaName));
+  //   this.scrollableArea.scrollTo({top: this.scrollPosition.getComponentScroll(this.scrollableAreaName), behavior: 'smooth'});
+  }
+
+  ngOnDestroy(): void {
+    this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
   }
 
   showMainForm(forLater: boolean): void {
