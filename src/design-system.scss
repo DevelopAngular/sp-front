@@ -436,9 +436,11 @@ $primaryFont: "Inter", "Arial", "Arimo", sans-serif;
 .report-group-header,
 .bottom-shadow,
 .school-toggle-bar-wrapper,
-.settings-wrapper {
+.settings-wrapper,
+.input-header,
+.input-header-wrapper{
 
-  transition: all .2s ease-in;
+  transition: background-color .2s ease-in, color .2s ease-in, opacity .2s ease-in;
 }
 
 .ds-dark-theme {

@@ -1,160 +1,151 @@
 <div class="host" appSafariScroll>
   <div class="search-wrapper" *ngIf="inputPanelVisibility">
-    <div class="w-100">
-      <div class="input-header-wrapper" [style.background-color]="darkTheme.getBackground('default')">
 
-        <div class="input-header" [style.background-color]="darkTheme.getBackground('high', true)">
-          <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Search</div>
-          <div class="inputs-container">
-            <div class="input">
-              <div class="input-title" [style.color]="selectedStudents.length ? darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'}) : '#7E879D'">
-                <img width="16" [src]="(selectedStudents.length ? darkTheme.getIcon({
-              iconName: './assets/Student (Navy).svg',
-              darkFill: 'White',
-              lightFill: 'Navy'
-            }) : './assets/Student (Blue-Gray).svg') | resolveAsset" alt="Icon">
-                Students
-              </div>
-              <app-xs-button
-                [placeholder]="'Students'"
-                [length]="selectedStudents.length"
-                [selectedText]="'student'"
-                (open)="openFilters($event)"
-                (reset)="resetSearchState(); selectedStudents = []"
-              ></app-xs-button>
+    <div class="input-header-wrapper" [style.background-color]="darkTheme.getBackground('default')">
+      <div class="input-header" [style.background-color]="darkTheme.getBackground('high', true)">
+        <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Search</div>
+        <div class="inputs-container">
+          <div class="input">
+            <div class="input-title" [style.color]="selectedStudents.length ? darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'}) : '#7E879D'">
+              <img width="16" [src]="(selectedStudents.length ? darkTheme.getIcon({
+            iconName: './assets/Student (Navy).svg',
+            darkFill: 'White',
+            lightFill: 'Navy'
+          }) : './assets/Student (Blue-Gray).svg') | resolveAsset" alt="Icon">
+              Students
             </div>
-            <mat-divider [vertical]="true"></mat-divider>
-            <div class="input">
-              <div class="input-title" [style.color]="selectedRooms.length ? darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'}) : '#7E879D'">
-                <img width="16" [src]="(selectedRooms.length ? darkTheme.getIcon({
-                  iconName: './assets/Room (Navy).svg',
-                  darkFill: 'White',
-                  lightFill: 'Navy'}) : './assets/Room (Blue-Gray).svg') | resolveAsset" alt="Icon">
-                Rooms
-              </div>
-              <app-xs-button
-                [placeholder]="'Rooms'"
-                [length]="selectedRooms.length"
-                [selectedText]="'room'"
-                (open)="openFilters($event)"
-                (reset)="resetSearchState(); selectedRooms = []; selRoomsWithCategories = []"
-              ></app-xs-button>
+            <app-xs-button
+              [placeholder]="'Students'"
+              [length]="selectedStudents.length"
+              [selectedText]="'student'"
+              (open)="openFilters($event)"
+              (reset)="resetSearchState(); selectedStudents = []"
+            ></app-xs-button>
+          </div>
+          <mat-divider [vertical]="true"></mat-divider>
+          <div class="input">
+            <div class="input-title" [style.color]="selectedRooms.length ? darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'}) : '#7E879D'">
+              <img width="16" [src]="(selectedRooms.length ? darkTheme.getIcon({
+                iconName: './assets/Room (Navy).svg',
+                darkFill: 'White',
+                lightFill: 'Navy'}) : './assets/Room (Blue-Gray).svg') | resolveAsset" alt="Icon">
+              Rooms
             </div>
-            <mat-divider [vertical]="true"></mat-divider>
-            <div class="input">
-              <div class="input-title" [style.color]="selectedDate ? darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'}) : '#7E879D'">
-                <img width="16" [src]="(selectedDate ? darkTheme.getIcon({
-                  iconName: './assets/Calendar (Navy).svg',
-                  darkFill: 'White',
-                  lightFill: 'Navy'}) : './assets/Calendar (Blue-Gray).svg') | resolveAsset" alt="Icon">
-                Date & Time
+            <app-xs-button
+              [placeholder]="'Rooms'"
+              [length]="selectedRooms.length"
+              [selectedText]="'room'"
+              (open)="openFilters($event)"
+              (reset)="resetSearchState(); selectedRooms = []; selRoomsWithCategories = []"
+            ></app-xs-button>
+          </div>
+          <mat-divider [vertical]="true"></mat-divider>
+          <div class="input">
+            <div class="input-title" [style.color]="selectedDate ? darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'}) : '#7E879D'">
+              <img width="16" [src]="(selectedDate ? darkTheme.getIcon({
+                iconName: './assets/Calendar (Navy).svg',
+                darkFill: 'White',
+                lightFill: 'Navy'}) : './assets/Calendar (Blue-Gray).svg') | resolveAsset" alt="Icon">
+              Date & Time
+            </div>
+            <div class="chip"
+                 #dchip [ngClass]="{hovered: dchip.hovered && !!selectedDate}"
+                 (mouseenter)="dchip.hovered = true;"
+                 (mouseleave)="dchip.hovered = false"
+                 [style.opacity]="dchip.hovered && !buttonDown ? 0.85 : (buttonDown ? 0.7 :  1)"
+                 (mousedown)="onPress(true)"
+                 (mouseup)="onPress(false)"
+                 [@pressState]="buttonState"
+            >
+              <div class="overlay" (click)="openTimeFilter($event)">
+                <div class="add-icon" *ngIf="dchip.hovered && !selectedDate">
+                  <img [src]="'./assets/Plus (Blue-Gray).svg'"  alt="Check.svg">
+                </div>
+                <div class="all-text" *ngIf="!selectedDate">{{ dchip.hovered && !selectedDate ? 'Filter ' : 'All ' }}Time</div>
+                <div class="selected-text" *ngIf="selectedDate">{{ dateText }}</div>
               </div>
-              <div class="chip"
-                   #dchip [ngClass]="{hovered: dchip.hovered && !!selectedDate}"
-                   (mouseenter)="dchip.hovered = true;"
-                   (mouseleave)="dchip.hovered = false"
-                   [style.opacity]="dchip.hovered && !buttonDown ? 0.85 : (buttonDown ? 0.7 :  1)"
-                   (mousedown)="onPress(true)"
-                   (mouseup)="onPress(false)"
-                   [@pressState]="buttonState"
-              >
-                <div class="overlay" (click)="openTimeFilter($event)">
-                  <div class="add-icon" *ngIf="dchip.hovered && !selectedDate">
-                    <img [src]="'./assets/Plus (Blue-Gray).svg'" width="16" #fieldIcon alt="Check.svg">
-                  </div>
-                  <div class="all-text" *ngIf="!selectedDate">{{ dchip.hovered && !selectedDate ? 'Filter ' : 'All ' }}Time</div>
-                  <div class="selected-text" *ngIf="selectedDate">{{ dateText }}</div>
-                </div>
-                <div class="reset-icon" *ngIf="dchip.hovered && selectedDate">
-                  <img (click)="resetSearchState(); selectedDate = null; adminCalendarOprions = null" [src]="'./assets/Cancel (Navy).svg'" width="16" #fieldIcon alt="Check.svg">
-                </div>
+              <div class="reset-icon" *ngIf="dchip.hovered && selectedDate">
+                <img (click)="resetSearchState(); selectedDate = null; adminCalendarOprions = null" [src]="'./assets/Cancel (Navy).svg'" alt="Check.svg">
               </div>
             </div>
           </div>
-          <div class="search-button" *ngIf="!hasSearched && !spinner">
+        </div>
+        <div class="search-button" *ngIf="!hasSearched && !spinner">
+          <app-gradient-button
+            [size]="'editable'"
+            [style.margin]="'0 20px'"
+            [width]="'160px'"
+            [minHeight]="'75px'"
+            [gradient]="'#F4F4F4, #F4F4F4'"
+            [hoverColor]="'#F4F4F4'"
+            [cursor]="'pointer'"
+            [textColor]="'#1E194F'"
+            [fontSize]="'17px'"
+            [border]="'1px solid 1px solid #eee'"
+            [leftIcon]="'./assets/Search Normal (Navy).svg'"
+            [leftImageWidth]="'30px'"
+            [leftImageHeight]="'30px'"
+            (buttonClick)="search()"
+          ><span>Search</span></app-gradient-button>
+        </div>
+        <div class="search-button" *ngIf="spinner || hasSearched">
+
+          <div (click)="previewPDF($event)" draggable="true">
             <app-gradient-button
+              class="report-button"
               [size]="'editable'"
-              [style.margin]="'0 20px'"
               [width]="'160px'"
               [minHeight]="'75px'"
+              [style.margin]="'0 20px'"
               [gradient]="'#F4F4F4, #F4F4F4'"
               [hoverColor]="'#F4F4F4'"
               [cursor]="'pointer'"
-              [textColor]="'#1E194F'"
+              [textColor]="'#1F195E'"
               [fontSize]="'17px'"
-              [border]="'1px solid 1px solid #eee'"
-              [leftIcon]="'./assets/Search Normal (Navy).svg'"
-              [leftImageWidth]="'30px'"
-              [leftImageHeight]="'30px'"
-              (buttonClick)="search()"
-            ><span>Search</span></app-gradient-button>
-          </div>
-          <div class="search-button" *ngIf="spinner || hasSearched">
-
-            <div (click)="previewPDF($event)" draggable="true">
-              <app-gradient-button  class="report-button"
-                                    [size]="'editable'"
-                                    [width]="'160px'"
-                                    [minHeight]="'75px'"
-                                    [style.margin]="'0 20px'"
-                                    [gradient]="'#F4F4F4, #F4F4F4'"
-                                    [hoverColor]="'#F4F4F4'"
-                                    [cursor]="'pointer'"
-                                    [textColor]="'#1F195E'"
-                                    [fontSize]="'17px'"
-                                    [border]="'1px solid 1px solid #eee'">
-                <div style="display: flex; flex-direction: column" [style.text-align]="'center'">
-                  <span>Generate Report </span>
-                  <span style="color: #7F879D; font-weight: normal; margin-top: 5px">
-                  {{ (!selectedReport.length ? passes.length + ' pass' + (passes.length > 1 || !passes.length ? 'es': '') : 'Selected Passes') }}
-                </span>
-                </div>
-              </app-gradient-button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="content">
-        <div class="search-content-table" *ngIf="hasSearched">
-          <div class="search-header">
-            <app-data-table
-                    [data]="tableData"
-                    [textColor]="'#7F879D'"
-                    [isAllowedSelectRow]="true"
-                    [marginTopStickyHeader]="'132px'"
-                    [textHeaderColor]="'#7F879D'"
-                    *ngIf="tableData.length > 0 && !spinner"
-                    (selectedUsers)="selectedReport=$event"
-                    (selectedRow)="selectedPass($event)"
-            ></app-data-table>
-            <div class="spinner" *ngIf="spinner">
-              <div class="loading-theme_blue-gray"  style="display: flex; justify-content: center; align-items: center; margin-bottom: 25%">
-                <mat-spinner [color]="'accent'" [diameter]="'60'"></mat-spinner>
+              [border]="'1px solid 1px solid #eee'">
+              <div style="display: flex; flex-direction: column" [style.text-align]="'center'">
+                <span>Generate Report </span>
+                <span style="color: #7F879D; font-weight: normal; margin-top: 5px">
+                {{ (!selectedReport.length ? passes.length + ' pass' + (passes.length > 1 || !passes.length ? 'es': '') : 'Selected Passes') }}
+              </span>
               </div>
-            </div>
+            </app-gradient-button>
           </div>
         </div>
-
       </div>
     </div>
-    <div class="search-main">
-        <div class="nopass-text" *ngIf="tableData.length === 0 && !spinner && hasSearched" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
-            <img width="400" height="250" [src]="'./assets/emptyStates/no-matches-found.svg' | resolveAsset">
-            <div class="text">
-                <div class="text-title ds-empty-text-title">No Passes Found</div>
-                <div class="info ds-empty-text-info">
-                    There were no passes found with the filters you applied.<br/>
-                    Try searching again with different filters
-                </div>
-            </div>
+
+    <div class="content">
+      <div class="search-content-table" *ngIf="hasSearched && tableData.length && !spinner">
+        <app-data-table
+          [height]="'100%'"
+          [stickySpace]="true"
+          [data]="tableData"
+          [textColor]="'#7F879D'"
+          [isAllowedSelectRow]="true"
+          [marginTopStickyHeader]="'132px'"
+          [textHeaderColor]="'#7F879D'"
+          *ngIf="tableData.length > 0 && !spinner"
+          (selectedUsers)="selectedReport=$event"
+          (selectedRow)="selectedPass($event)"
+        ></app-data-table>
+      </div>
+      <div class="nopass-text" *ngIf="tableData.length === 0 && !spinner && hasSearched" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
+        <img width="400" height="250" [src]="'./assets/emptyStates/no-matches-found.svg' | resolveAsset">
+        <div class="text">
+          <div class="text-title ds-empty-text-title">No Passes Found</div>
+          <div class="info ds-empty-text-info">
+            There were no passes found with the filters you applied.<br/>
+            Try searching again with different filters
+          </div>
         </div>
+      </div>
       <div class="spinner" *ngIf="spinner && !hasSearched">
         <div class="loading-theme_blue-gray"  style="display: flex; justify-content: center; align-items: center; margin-top: 150px; margin-bottom: 200px">
           <mat-spinner [color]="'accent'" [diameter]="'60'"></mat-spinner>
         </div>
       </div>
       <div class="search-content" *ngIf="!hasSearched">
-
         <div class="default-message" *ngIf="!spinner">
           <img width="400" [src]="'./assets/emptyStates/searchEmpty.svg' | resolveAsset">
           <div class="text">
@@ -164,9 +155,7 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
-
   </div>
 </div>

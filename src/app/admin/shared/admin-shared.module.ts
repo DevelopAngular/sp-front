@@ -24,7 +24,14 @@ import { ColorPalletPickerComponent } from '../color-pallet-picker/color-pallet-
 import { TogglePickerComponent } from '../toggle-picker/toggle-picker.component';
 import { ColorComponent } from '../color-pallet-picker/color/color.component';
 import { AdvancedOptionsComponent } from '../overlay-container/advanced-options/advanced-options.component';
-import {AddExistingRoomComponent} from '../overlay-container/add-existing-room/add-existing-room.component';
+import { AddExistingRoomComponent } from '../overlay-container/add-existing-room/add-existing-room.component';
+import { RoomComponent } from '../overlay-container/room/room.component';
+import { FolderComponent } from '../overlay-container/folder/folder.component';
+import { NewRoomInFolderComponent } from '../overlay-container/new-room-in-folder/new-room-in-folder.component';
+import { EditRoomInFolderComponent } from '../overlay-container/edit-room-in-folder/edit-room-in-folder.component';
+import { BulkEditRoomsComponent } from '../overlay-container/bulk-edit-rooms/bulk-edit-rooms.component';
+import { BulkEditRoomsInFolderComponent } from '../overlay-container/bulk-edit-rooms-in-folder/bulk-edit-rooms-in-folder.component';
+import {ImportRoomsComponent} from '../overlay-container/import-rooms/import-rooms.component';
 
 @NgModule({
   imports: [
@@ -54,7 +61,13 @@ import {AddExistingRoomComponent} from '../overlay-container/add-existing-room/a
       ColorComponent,
       AdvancedOptionsComponent,
       AddExistingRoomComponent,
-
+      RoomComponent,
+      FolderComponent,
+      NewRoomInFolderComponent,
+      EditRoomInFolderComponent,
+      BulkEditRoomsComponent,
+      BulkEditRoomsInFolderComponent,
+      ImportRoomsComponent
   ],
   exports: [
       MatChipsModule,
@@ -70,6 +83,13 @@ import {AddExistingRoomComponent} from '../overlay-container/add-existing-room/a
       TogglePickerComponent,
       ColorComponent,
       AddExistingRoomComponent,
+      RoomComponent,
+      FolderComponent,
+      NewRoomInFolderComponent,
+      EditRoomInFolderComponent,
+      BulkEditRoomsComponent,
+      BulkEditRoomsInFolderComponent,
+      ImportRoomsComponent
   ],
   entryComponents: [
       OverlayContainerComponent,

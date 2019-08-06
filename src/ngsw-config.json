@@ -1,0 +1,43 @@
+{
+  "index": "/index.html",
+
+  "dataGroups": [{
+    "name": "api-performance",
+    "urls": [
+      "https://smartpass.app/api/**",
+      "https://smartpass.app/api/prod-us-central/v1/**",
+      "https://smartpass.app/api/staging/v1/**"
+    ],
+    "cacheConfig": {
+      "strategy": "performance",
+      "maxSize": 100,
+      "maxAge": "3d"
+    }
+  }
+  ],
+
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "resources"  : {
+        "files": [
+          "/favicon.ico",
+          "/index.html",
+          "/*.css",
+          "/*.js"
+        ]
+      }
+    }, {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "./assets/**",
+          "/*.(eot|svg|cur|jpg|png|webp|gif|otf|ttf|woff|woff2|ani)"
+        ]
+      }
+    }
+  ]
+}

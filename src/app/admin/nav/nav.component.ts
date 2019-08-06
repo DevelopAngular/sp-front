@@ -135,7 +135,6 @@ export class NavComponent implements OnInit {
   }
 
   route( button: any) {
-    // debugger
     switch (button.type) {
       case 'routerLink':
         this.tab = ['admin', button.route];
@@ -194,7 +193,6 @@ export class NavComponent implements OnInit {
   }
 
   selectTab(evt: HTMLElement, container: HTMLElement) {
-    // debugger
     const containerRect = container.getBoundingClientRect();
     const selectedTabRect = (evt as HTMLElement ).getBoundingClientRect();
     this.pts = Math.round(selectedTabRect.top - containerRect.top) + 'px';

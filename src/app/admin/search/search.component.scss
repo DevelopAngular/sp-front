@@ -1,3 +1,4 @@
+@import '../../../design-system';
 @import '../../../sp-colors';
 
 :host {
@@ -65,6 +66,10 @@
     height: 16px;
     cursor: pointer;
     margin-right: 10px;
+    img {
+      width: inherit;
+      height: inherit;
+    }
   }
 
   .reset-icon {
@@ -75,19 +80,24 @@
     right: 10px;
     background-color: #F8F8F8;
     box-shadow: -6px 1px 6px #F8F8F8;
+    img {
+      width: inherit;
+      height: inherit;
+    }
   }
 }
 
 .search-wrapper{
   min-width: 1030px;
   width: 100%;
-  padding: 0 25px;
+  //padding: 0 25px;
   box-sizing: border-box;
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  position: relative;
 }
 
 .divider {
@@ -115,9 +125,10 @@
 }
 
 .search-content-table {
-    width: 95%;
-    margin-top: 30px;
-    //margin-bottom: 30px;
+  @extend .ds-flex-center-center, .ds-flex-column, .ds-w-100;
+    flex: 1 1 auto;
+    width: 100%;
+    height: 100%;
 
     .text-header {
         font-size: 20px;
@@ -133,8 +144,12 @@
 }
 
 .input-header-wrapper {
-  padding: 25px 0 10px 0;
+  padding: 25px 25px 10px ;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
   //background-color: #FBFEFF;
+  width: 100%;
   background-clip: padding-box;
   position: sticky;
   top: 0px;
@@ -167,19 +182,18 @@
 }
 
 .content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    width: 100%;
+  @extend .ds-flex-center-center, .ds-flex-column;
+  flex: 1 1 auto;
+  width: 100%;
+    padding-bottom: 0px
 }
 
 .search-content {
-    //margin-top: 350px;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    //flex: 2 1 auto;
+    justify-content: center;
     .search-button {
         display: flex;
         justify-content: center;
@@ -190,7 +204,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 15%;
+    margin-bottom: 15%;
 }
 
 .text {
@@ -232,8 +246,4 @@
     width: 25px;
     height: 25px;
     margin-right: 5px;
-}
-.w-100 {
-  position: relative;
-  width: 100%;
 }

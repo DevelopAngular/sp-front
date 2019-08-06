@@ -55,22 +55,24 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    if (this.isIOSMobile || this.isAndroid) {
+      window.waitForAppLoaded();
+    }
 
     this.loginService.isAuthenticated$.pipe(
       filter(v => v),
       switchMap((): Observable<[User, Array<string>]> => {
         return zip(
           this.userService.userData.asObservable(),
-          INITIAL_LOCATION_PATHNAME.asObservable().pipe(map(p => p.split('/').slice(1)))
+          INITIAL_LOCATION_PATHNAME.asObservable().pipe(map(p => p.split('/').filter(v => v && v !== 'app')))
         );
       }),
       takeUntil(this.destroyer$)
     ).subscribe(([currentUser, path]) => {
-      // console.log(currentUser, path);
+      console.log(path);
 
       const loadView = currentUser.isAdmin() ? 'admin' : 'main';
-
-      if (path.includes(loadView)) {
+      if (path.length) {
         this.router.navigate(path);
       } else {
         this.router.navigate([loadView]);
@@ -89,9 +91,13 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
       this.titleText = 'Download SmartPass on the Google Play Store to start making passes.';
     }
   }
+
   ngAfterViewInit() {
-    // window.appLoaded();
+    if (this.isIOSMobile || this.isAndroid) {
+      window.appLoaded();
+    }
   }
+
   ngOnDestroy() {
     this.destroyer$.next(null);
     this.destroyer$.complete();

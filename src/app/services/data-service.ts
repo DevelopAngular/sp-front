@@ -84,7 +84,7 @@ export class DataService {
     this.polling.listen('pass_invitation')
       .subscribe((pollingEvent) => {
         // this.updateInvitations.next(null);
-        console.log('[Invitation Poll]', pollingEvent);
+        // console.log('[Invitation Poll]', pollingEvent);
       });
       let test = this.storage.getItem('showInbox');
           test = JSON.parse(test);

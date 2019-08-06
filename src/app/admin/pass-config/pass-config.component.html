@@ -62,6 +62,9 @@
           <div *ngIf="!pinnables" class="loading-theme_blue-gray spinner ds-w-100 ds-h-100 ds-flex-center-center">
             <mat-spinner [diameter]="35" [color]="'accent'"></mat-spinner>
           </div>
+          <div class="prevent-dragula-action" *ngIf="pending$ | async">
+            <!-- Needs so that user can't drag pinnables until an order updating request is going -->
+          </div>
             <div class="pinnables" *ngIf="pinnables && pinnables.length">
                 <!--<div *ngIf="!pinnables?.length" class="spinner loading-theme_blue-gray">-->
                     <!--<mat-spinner [diameter]="35" [color]="'accent'"></mat-spinner>-->
@@ -71,7 +74,7 @@
                             [pinnables]="pinnables"
                             [bulkSelect]="bulkSelect"
                             [resetBulkSelect$]="pinnableCollectionBlurEvent$"
-                            (orderChangedEvent)="updatePinnablesOrder($event)"
+                            (orderChangedEvent)="setNewArrangedOrder($event)"
                             (roomEvent)="selectPinnable($event)"
                             (bulkSelectEmit)="bulkSelect = $event"
                     >

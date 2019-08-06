@@ -20,7 +20,6 @@ export class SpChipsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.selectedProfiles);
   }
   textColor(item) {
     if (item.hovered) {

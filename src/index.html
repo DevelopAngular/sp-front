@@ -2,44 +2,53 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-
-  <!-- <script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
-  <script>
-    // Initialize Firebase
-    var config = {
-      apiKey: "AIzaSyDKAexSUkOIj63hP9MkLi22CHpykkh_4Bs",
-      authDomain: "notifyhallpass.firebaseapp.com",
-      databaseURL: "https://notifyhallpass.firebaseio.com",
-      projectId: "notifyhallpass",
-      storageBucket: "",
-      messagingSenderId: "625620388494"
-    };
-    firebase.initializeApp(config);
-  </script> -->
-  <!-- <script src="https://letterday.info:56321/vorlon.js"></script> -->
   <title>SmartPass</title>
   <base href="/">
-
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="./assets/icons/favicon-16x16.png">
-  <link rel="stylesheet" type="text/css" href="./assets/css/preloader.css">
-  <link rel="manifest" href="./assets/icons/site.webmanifest">
-  <link rel="mask-icon" href="./assets/icons/safari-pinned-tab.svg" color="#5bbad5">
-  <link rel="shortcut icon" href="./assets/icons/favicon.ico">
+
+  <meta name="viewport" content="initial-scale=1.0, maximum-scales=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Smartpass">
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="SmartPass" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#1976d2">
   <meta name="msapplication-TileColor" content="#00a300">
   <meta name="msapplication-config" content="./assets/icons/browserconfig.xml">
   <meta name="theme-color" content="#ffffff">
+
+  <link rel="manifest" crossorigin="use-credentials" href="./assets/manifest.json">
+  <link rel="mask-icon" href="./assets/icons/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="apple-touch-icon" sizes="152x152" href="./assets/icons/apple-touch-icon-ipad.png" type="image/png">
+  <link rel="apple-touch-icon" sizes="167x167" href="./assets/icons/apple-touch-icon-ipad-retina.png" type="image/png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/apple-touch-icon-iphone-retina.png" type="image/png">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/icons/favicon-16x16.png">
+  <link rel="stylesheet" type="text/css" href="./assets/css/preloader.css">
+
+  <link href="./assets/splashscreens-ios/iphone5_splash.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+  <link href="./assets/splashscreens-ios/iphone6_splash.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+  <link href="./assets/splashscreens-ios/iphoneplus_splash.png" media="(device-width: 621px) and (device-height: 1104px) and (-webkit-device-pixel-ratio: 3)" rel="apple-touch-startup-image" />
+  <link href="./assets/splashscreens-ios/iphonex_splash.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" rel="apple-touch-startup-image" />
+  <link href="./assets/splashscreens-ios/iphonexr_splash.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+  <link href="./assets/splashscreens-ios/iphonexsmax_splash.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" rel="apple-touch-startup-image" />
+  <link href="./assets/splashscreens-ios/ipad_splash.png" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+  <link href="./assets/splashscreens-ios/ipadpro1_splash.png" media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+  <link href="./assets/splashscreens-ios/ipadpro3_splash.png" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+  <link href="./assets/splashscreens-ios/ipadpro2_splash.png" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+
+  <link rel="shortcut icon" href="./assets/icons/favicon.ico">
   <link href="https://fonts.googleapis.com/css?family=Arimo:400,700" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 </head>
 <body>
 <div id="preloaderRef"
      class="preloader-container"
      style="display: none;">
   <div>
-    <!--<script>debugger</script>-->
     <svg
       id="preloaderSvg"
       viewBox="0 0 100 100"
@@ -75,33 +84,9 @@
   </div>
 </div>
 
-
 <app-root></app-root>
 
 <script type="text/javascript" src="preloader.js"></script>
-<!-- Set up the path for the initial page view -->
-<!--<script>-->
-<!--  var _hsq = window._hsq = window._hsq || [];-->
-<!--  _hsq.push(['setPath', '/']);-->
-<!--</script>-->
-
-<!-- Load the HubSpot tracking code -->
-<!-- Start of HubSpot Embed Code -->
-<!--<script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/5943240.js"></script>-->
-<!-- End of HubSpot Embed Code -->
-
-<!-- Tracking subsequent page views -->
-<!--<script>-->
-<!--  const _hsq = window._hsq = window._hsq || [];-->
-<!--  _hsq.push(['identify', {-->
-<!--    id: window.user.id,-->
-<!--    email: window.user.email,-->
-<!--    firstName: window.user.firstName,-->
-<!--    lastName: window.user.lastName,-->
-<!--  }]);-->
-<!--</script>-->
-
-
-<!--<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyASl2aSi3TG0J1cWZAynZWA89VYfT898ZA&libraries=places"></script>-->
+<noscript>Please enable JavaScript to continue using this application.</noscript>
 </body>
 </html>

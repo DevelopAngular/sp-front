@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { AfterViewInit, Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import {AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
@@ -20,6 +20,9 @@ import { StorageService } from './services/storage.service';
 import { UserService } from './services/user.service';
 import { WebConnectionService } from './services/web-connection.service';
 import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
+import {OverlayContainer} from '@angular/cdk/overlay';
+import {APPLY_ANIMATED_CONTAINER, ConsentMenuOverlay} from './consent-menu-overlay';
+import {Meta} from '@angular/platform-browser';
 
 declare const window;
 
@@ -36,6 +39,8 @@ export const INITIAL_LOCATION_PATHNAME =  new ReplaySubject<string>(1);
 })
 
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  @ViewChild( 'dialogContainer' ) dialogContainer: ElementRef;
 
   public isAuthenticated = null;
   public hideScroll: boolean = false;
@@ -81,20 +86,24 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private webConnection: WebConnectionService,
     private dialog: MatDialog,
+    private overlayContainer: OverlayContainer,
     private storageService: StorageService,
-    private kms: KioskModeService
+    private kms: KioskModeService,
+    private meta: Meta
   ) {
     this.errorToastTrigger = this.http.errorToast$;
   }
 
   ngOnInit() {
-    console.log('Initial location path ===>', );
+    // console.log('Initial location path ===>', );
 
     INITIAL_LOCATION_PATHNAME.next(window.location.pathname);
 
     this.storageService.detectChanges();
     this.darkTheme.isEnabled$.subscribe((val) => {
       this.darkThemeEnabled = val;
+      this.meta.removeTag('name="apple-mobile-web-app-status-bar-style"');
+      this.meta.addTag({name: 'apple-mobile-web-app-status-bar-style', content: val ? 'black' : 'default' } );
     });
 
     if (!DeviceDetection.isIOSTablet() && !DeviceDetection.isMacOS()) {
@@ -109,7 +118,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(() => {
         const toastDialog = this.dialog.open(ToastConnectionComponent, {
           panelClass: 'toasr',
-          backdropClass: 'white-backdrop',
+          hasBackdrop: false,
           disableClose: true
         });
 
@@ -132,8 +141,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.showUISubject.next(true);
         this.isAuthenticated = t;
         const path = window.location.pathname;
-        if (!t && (path !== '/' || path.includes('admin') ||  path.includes('main'))) {
-          // debugger
+        if (!t && (path.includes('admin') ||  path.includes('main'))) {
           this.router.navigate(['/']);
         }
       });
@@ -201,7 +209,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               }
             });
           } else {
-            (existingHub as HTMLElement).setAttribute('style', 'display: block !important;width: 276px;height: 234px');
+            (existingHub as HTMLElement).setAttribute('style', 'display: block !important;width: 100px;height: 100px');
           }
         } else {
           if (existingHub) {
@@ -246,6 +254,15 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
+    APPLY_ANIMATED_CONTAINER
+      .subscribe((v: boolean) => {
+        if (v) {
+          (this.overlayContainer as ConsentMenuOverlay).setContainer(this.dialogContainer.nativeElement);
+        } else {
+          (this.overlayContainer as ConsentMenuOverlay).restoreContainer();
+        }
+      })
+
   }
 
 

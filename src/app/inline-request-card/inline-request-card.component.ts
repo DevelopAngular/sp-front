@@ -5,6 +5,8 @@ import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { MatDialog } from '@angular/material';
 import {DataService} from '../services/data-service';
 import {RequestsService} from '../services/requests.service';
+import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
+import {tap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-inline-request-card',
@@ -70,25 +72,29 @@ export class InlineRequestCardComponent implements OnInit {
 
       options.push(this.genOption('Delete Pass Request','#E32C66','delete'));
       header = 'Are you sure you want to delete this pass request you sent?';
-
+      UNANIMATED_CONTAINER.next(true)
       const cancelDialog = this.dialog.open(ConsentMenuComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {'header': header, 'options': options, 'trigger': target}
       });
 
-      cancelDialog.afterOpen().subscribe( () =>{
+      cancelDialog.afterOpen().subscribe( () => {
         this.cancelOpen = true;
       });
 
-      cancelDialog.afterClosed().subscribe(action => {
+      cancelDialog.afterClosed()
+        .pipe(
+          tap(() => UNANIMATED_CONTAINER.next(false))
+        )
+        .subscribe(action => {
         this.cancelOpen = false;
-        if (action === 'delete') {
-            this.requestService.cancelRequest(this.request.id).subscribe((data) => {
-                console.log('[Request Canceled]: ', data);
-            });
-        }
-      });
+          if (action === 'delete') {
+              this.requestService.cancelRequest(this.request.id).subscribe((data) => {
+                  console.log('[Request Canceled]: ', data);
+              });
+          }
+        });
     }
   }
 

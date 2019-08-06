@@ -1,4 +1,4 @@
-<div class="host" appSafariScroll (scroll)="onScroll($event)">
+<div class="host" appSafariScroll>
   <div class="accounts-role-wrapper"  *ngIf="role !== 'g_suite'">
     <div class="header-wrapper" [style.background-color]="darkTheme.getBackground('default')">
       <div class="card card__top-bar ds-flex-start-between ds-w-100">
@@ -290,7 +290,7 @@
         <p class="ds-my-10 ds-empty-text-info" style="text-align: center;">Add users one-by-one above or set up G Suite <br>
           syncing to automatically add users to this profile.</p>
       </div>
-      <div *ngIf="userList.length">
+      <div *ngIf="userList.length" style="display: flex; flex-direction: column; flex: 1 1 auto; width: 100%;">
         <div class="column-settings">
           <app-icon-button class="options-icon" [srcString]="'Options'" [size]="16" (clickEvent)="showColumnSettings($event)"></app-icon-button>
           <!--<img draggable="false" width="20" [src]="darkTheme.getIcon({iconName: 'Options', lightFill: 'Blue-Gray'}) | resolveAsset" alt="Options (Navy).svg" (click)="showColumnSettings($event)">-->

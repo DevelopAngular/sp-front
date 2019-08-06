@@ -17,7 +17,6 @@ import { AccountsComponent } from './accounts/accounts.component';
 import { AdminPageComponent } from './admin-page/admin-page.component';
 import { AdminRoutingModule } from './admin-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { DatePrettyHelper } from './date-pretty.helper';
 import { HallmonitorComponent } from './hallmonitor/hallmonitor.component';
 import { LinkGeneratedDialogComponent } from './link-generated-dialog/link-generated-dialog.component';
 import { PassConfigComponent } from './pass-config/pass-config.component';
@@ -27,7 +26,6 @@ import { SettingsComponent } from './settings/settings.component';
 import { AdminSharedModule } from './shared/admin-shared.module';
 import { ColumnsConfigDialogComponent } from './columns-config-dialog/columns-config-dialog.component';
 import { SchoolSettingDialogComponent } from './school-setting-dialog/school-setting-dialog.component';
-// import { ProfileCardDialogComponent } from './profile-card-dialog/profile-card-dialog.component';
 import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.component';
 import { SearchFilterDialogComponent } from './search/search-filter-dialog/search-filter-dialog.component';
 import { DateTimeFilterComponent } from './search/date-time-filter/date-time-filter.component';
@@ -35,6 +33,7 @@ import { MySchoolComponent } from './my-school/my-school.component';
 import { RoomsSetUpComponent } from './pass-config/rooms-set-up/rooms-set-up.component';
 import { SchoolButtonComponent } from './my-school/school-button/school-button.component';
 import { AdminCardButtonComponent } from './accounts/admin-card-button/admin-card-button.component';
+import { VirtualScrollComponent } from './virtual-scroll/virtual-scroll.component';
 
 
 @NgModule({
@@ -65,7 +64,6 @@ import { AdminCardButtonComponent } from './accounts/admin-card-button/admin-car
     SettingsComponent,
     LinkGeneratedDialogComponent,
     ColumnsConfigDialogComponent,
-    // ProfileCardDialogComponent,
     SchoolSettingDialogComponent,
     AddUserDialogComponent,
     SearchFilterDialogComponent,
@@ -74,11 +72,11 @@ import { AdminCardButtonComponent } from './accounts/admin-card-button/admin-car
     RoomsSetUpComponent,
     SchoolButtonComponent,
     AdminCardButtonComponent,
+    VirtualScrollComponent
   ],
   entryComponents: [
     LinkGeneratedDialogComponent,
     ColumnsConfigDialogComponent,
-    // ProfileCardDialogComponent,
     SchoolSettingDialogComponent,
     AddUserDialogComponent,
     SettingsComponent,
@@ -89,7 +87,6 @@ import { AdminCardButtonComponent } from './accounts/admin-card-button/admin-car
   providers: [
     [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],
     PdfGeneratorService,
-    DatePrettyHelper
   ],
 })
 export class AdminModule {

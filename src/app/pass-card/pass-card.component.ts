@@ -9,7 +9,7 @@ import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
 import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
-import {filter, map} from 'rxjs/operators';
+import {filter, map, tap} from 'rxjs/operators';
 import {RequestCardComponent} from '../request-card/request-card.component';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
 import {BehaviorSubject, interval, merge, of, Subscription} from 'rxjs';
@@ -18,6 +18,7 @@ import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hall
 import {HallPassesService} from '../services/hall-passes.service';
 import { TimeService } from '../services/time.service';
 import {ScreenService} from '../services/screen.service';
+import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 
 @Component({
   selector: 'app-pass-card',
@@ -360,6 +361,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
       }
 
       if (!this.screenService.isDeviceMid) {
+        UNANIMATED_CONTAINER.next(true)
         const cancelDialog = this.dialog.open(ConsentMenuComponent, {
           panelClass: 'consent-dialog-container',
           backdropClass: 'invis-backdrop',
@@ -370,7 +372,11 @@ export class PassCardComponent implements OnInit, OnDestroy {
           this.cancelOpen = true;
         });
 
-        cancelDialog.afterClosed().subscribe(action => {
+        cancelDialog.afterClosed()
+          .pipe(
+            tap(() => UNANIMATED_CONTAINER.next(false))
+          )
+          .subscribe(action => {
           this.chooseAction(action);
         });
       }

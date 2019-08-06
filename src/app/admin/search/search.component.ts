@@ -1,9 +1,8 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 import {filter, switchMap, tap} from 'rxjs/operators';
 import { HttpService } from '../../services/http-service';
 import { HallPass } from '../../models/HallPass';
-import { DatePrettyHelper } from '../date-pretty.helper';
-import { PdfGeneratorService } from '../pdf-generator.service';
+import {PdfGeneratorService, SP_ARROW_BLUE_GRAY, SP_ARROW_DOUBLE_BLUE_GRAY} from '../pdf-generator.service';
 import { disableBodyScroll } from 'body-scroll-lock';
 import * as _ from 'lodash';
 import {PassCardComponent} from '../../pass-card/pass-card.component';
@@ -19,10 +18,11 @@ import {DataService} from '../../services/data-service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {SearchFilterDialogComponent} from './search-filter-dialog/search-filter-dialog.component';
 import {DateTimeFilterComponent} from './date-time-filter/date-time-filter.component';
-import {DomSanitizer} from '@angular/platform-browser';
+import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 
 import * as moment from 'moment';
 import {bumpIn} from '../../animations';
+import {prettyDate, wrapToHtml} from '../helpers';
 
 
 
@@ -33,6 +33,9 @@ import {bumpIn} from '../../animations';
   animations: [bumpIn]
 })
 export class SearchComponent implements OnInit {
+
+
+
 
   @ViewChild('printPdf') printPdf: ElementRef;
 
@@ -58,6 +61,29 @@ export class SearchComponent implements OnInit {
 
   buttonDown: boolean;
 
+  // private dataPagination: any = {
+  //   first: 0,
+  //   last: 50,
+  //   range: 50,
+  //   nextPage() {
+  //     this.first += this.range;
+  //     this.last += this.range;
+  //
+  //   }
+  // }
+  //
+  // @HostListener('scroll', ['$event'])
+  // onScroll(event) {
+  //   const tracker = event.target;
+  //   const limit = tracker.scrollHeight - tracker.clientHeight;
+  //   // if (event.target.scrollTop === limit && !this.pending && (this.reportsLimit === this.counter)) {
+  //   if (event.target.scrollTop === limit) {
+  //     this.dataPagination.nextPage();
+  //     // this.reportsLimit += 10;
+  //     // this.getReports();
+  //   }
+  // }
+
   constructor(
       private httpService: HttpService,
       private hallPassService: HallPassesService,
@@ -70,7 +96,8 @@ export class SearchComponent implements OnInit {
       private userService: UserService,
       public dataService: DataService,
       public darkTheme: DarkThemeSwitch,
-      private domSanitazer: DomSanitizer
+      private domSanitizer: DomSanitizer
+
 
   ) {
   }
@@ -147,12 +174,21 @@ export class SearchComponent implements OnInit {
     this.buttonDown = press;
   }
 
-  search(query: string = '') {
-    // if (this.selectedStudents.length || this.selectedDate || this.selectedRooms.length || query) {
-    //   this.sortParamsHeader = `All Passes, Searching by ${(this.selectedStudents && this.selectedStudents.length > 0 ? 'Student Name' : '') + (this.selectedDate && this.selectedDate !== '' ? ', Date & Time' : '') + (this.selectedRooms && this.selectedRooms.length > 0 ? ', Room Name' : '')}`;
+  normalizeDataForTable() {
+
+  }
+
+  private wrapToHtml(data, htmlTag, dataSet?) {
+    const wrapper =  wrapToHtml.bind(this);
+    return wrapper(data, htmlTag, dataSet);
+  }
+
+  search() {
+
       this.spinner = true;
       this.selectedReport = [];
-      let url = 'v1/hall_passes?' + query;
+
+      let url = 'v1/hall_passes?';
       if (this.selectedRooms) {
         console.log(this.selectedRooms);
         this.selectedRooms.forEach(room => {
@@ -169,8 +205,7 @@ export class SearchComponent implements OnInit {
 
       }
       if (this.selectedStudents) {
-        let students: any[] = this.selectedStudents.map(s => s['id']);
-
+        const students: any[] = this.selectedStudents.map(s => s['id']);
         Array.from(Array(students.length).keys()).map(i => {
           url += 'student=' + students[i] + '&';
         });
@@ -179,42 +214,59 @@ export class SearchComponent implements OnInit {
       if (this.selectedDate) {
         let start;
         let end;
-        if(this.selectedDate['start']){
+        if (this.selectedDate['start']) {
           start = this.selectedDate['start'].toISOString();
           url += (start ? ('created_after=' + start + '&') : '');
         }
-        if(this.selectedDate['end']){
+        if (this.selectedDate['end']) {
           end = this.selectedDate['end'].toISOString();
           url += (end ? ('end_time_before=' + end) : '');
         }
-
         console.log('Start: ', start, '\nEnd: ', end);
-
       }
 
-      this.hallPassService.searchPasses(url).pipe(filter(res => !!res))
-        .subscribe((data: HallPass[]) => {
+      this.hallPassService
+        .searchPasses(url)
+        .pipe(filter(res => !!res))
+        .subscribe((passes: HallPass[]) => {
 
-          console.log('DATA', data);
-          this.passes = data;
-          this.tableData = data.map(hallPass => {
+          // console.log('DATA', passes);
+          this.passes = passes;
+          this.tableData = passes.map((hallPass, i) => {
 
             const duration = moment.duration(moment(hallPass.end_time).diff(moment(hallPass.start_time)));
 
             const name = hallPass.student.first_name + ' ' + hallPass.student.last_name +
                 ` (${hallPass.student.primary_email.split('@', 1)[0]})`;
-            const passes = {
+
+
+            // const passTemplate = {
+            //   'Student Name': `<span>${name}</span>`,
+            //   'Origin': `<span>${hallPass.origin.title}</span>`,
+            //   'TT': this.domSanitizer.bypassSecurityTrustHtml(hallPass.travel_type === 'one_way' ? SP_ARROW_BLUE_GRAY : SP_ARROW_DOUBLE_BLUE_GRAY),
+            //   'Destination': `<span>${hallPass.destination.title}</span>`,
+            //   'Date & Time': `<span>${moment(hallPass.created).format('M/DD h:mm A')}</span>`,
+            //   'Duration': `<span>${(Number.isInteger(duration.asMinutes()) ? duration.asMinutes() : duration.asMinutes().toFixed(2)) + ' min'}</span>`
+            // };
+
+            const rawObj = {
                 'Student Name': name,
                 'Origin': hallPass.origin.title,
-                'TT': hallPass.travel_type,
+                'TT': hallPass.travel_type === 'one_way' ? SP_ARROW_BLUE_GRAY : SP_ARROW_DOUBLE_BLUE_GRAY,
                 'Destination': hallPass.destination.title,
                 'Date & Time': moment(hallPass.created).format('M/DD h:mm A'),
                 'Duration': (Number.isInteger(duration.asMinutes()) ? duration.asMinutes() : duration.asMinutes().toFixed(2)) + ' min'
             };
-            Object.defineProperty(passes, 'id', { enumerable: false, value: hallPass.id});
-            Object.defineProperty(passes, 'date', {enumerable: false, value: moment(hallPass.created) });
-            Object.defineProperty(passes, 'sortDuration', {enumerable: false, value: duration });
-            return passes;
+
+            const record = this.wrapToHtml(rawObj, 'span') as {[key: string]: SafeHtml; _data: any};
+
+
+            Object.defineProperty(rawObj, 'id', { enumerable: false, value: hallPass.id});
+            Object.defineProperty(rawObj, 'date', {enumerable: false, value: moment(hallPass.created) });
+            Object.defineProperty(rawObj, 'sortDuration', {enumerable: false, value: duration });
+
+            Object.defineProperty(record, '_data', {enumerable: false, value: rawObj });
+            return record;
           });
           this.spinner = false;
           this.hasSearched = true;
@@ -307,8 +359,8 @@ export class SearchComponent implements OnInit {
       let prettyFrom = '';
       let prettyTo = '';
       if (this.selectedDate) {
-        prettyFrom = DatePrettyHelper.transform(this.selectedDate.start.toDate());
-        prettyTo = DatePrettyHelper.transform(this.selectedDate.end.toDate());
+        prettyFrom = prettyDate(this.selectedDate.start.toDate());
+        prettyTo = prettyDate(this.selectedDate.end.toDate());
       }
       let rooms = '';
       if (this.selectedRooms) {

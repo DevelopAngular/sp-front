@@ -19,9 +19,8 @@
             "showCircularDependencies": false,
             "assets": [
               "src/assets",
-              "src/firebase-messaging-sw.js",
               "src/preloader.js",
-              "src/manifest.json"
+              "src/assets/manifest.json"
             ],
             "styles": [
               "src/styles.scss",
@@ -76,7 +75,9 @@
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.prod.ts"
                 }
-              ]
+              ],
+              "serviceWorker": true,
+              "ngswConfigPath": "./src/ngsw-config.json"
             }
           }
         },
@@ -120,8 +121,7 @@
             "assets": [
               "src/assets",
               "src/favicon.ico",
-              "src/firebase-messaging-sw.js",
-              "src/manifest.json"
+              "src/assets/manifest.json"
             ]
           }
         },

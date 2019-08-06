@@ -1,0 +1,128 @@
+<div class="wrapper">
+  <div class="content">
+    <div class="folder-name">
+      <app-input
+              [width]="'289px'"
+              [maxLength]="17"
+              [input_label]="'Folder Name'"
+              [input_value]="(folderName !== 'New Folder' ? folderName : '')"
+              (onUpdate)="folderName = $event === '' ? 'New Folder': $event;"
+              [formGroup]="form"
+              [isFocus]="currentPage === 3"
+              [controlName]="form.get('folderName')"
+              (blurEvent)="overlayService.roomNameBlur$.next($event)"
+      >
+      </app-input>
+    </div>
+    <div *ngIf="folderRoomsLoaded" [@NextStep]="{ value: '', params: frameMotion$ | async}">
+    <div class="rooms-wrapper rooms-in-folder">
+      <div class="sticky" *ngIf="roomsImFolder.length">
+        <div class="rooms-in-folder-title">
+          <div class="all-rooms-checkbox">
+            <mat-checkbox style="margin-left: 12px; margin-right: 15px"
+                          [checked]="roomsImFolder.length === selectedRooms.length"
+                          [indeterminate]="roomsImFolder.length && roomsImFolder.length < selectedRooms.length"
+                          (change)="selectedRoomsEvent($event, null, true)"
+            >
+            </mat-checkbox>
+          </div>
+          <div class="rooms-length-title">
+            Rooms in Folder ({{ roomsImFolder.length }})
+          </div>
+        </div>
+        <mat-divider style="margin-top: 9px"></mat-divider>
+      </div>
+      <div class="rooms-in-folder-content">
+        <div class="rooms-list" #roomList *ngIf="roomsImFolder.length > 0">
+          <mat-list>
+            <div *ngFor="let room of sortSelectedRooms">
+              <div
+                      class="room"
+                      #cell
+                      (mouseenter)="cell.hovered = true;"
+                      (mouseleave)="cell.hovered = false;"
+                      (mousedown)="cell.pressed = true"
+                      (mouseup)="cell.pressed = false"
+                      [style.background-color]="getBackgroundColor(cell)"
+                      [style.color]="textColor(cell)"
+              >
+                <mat-checkbox style="margin-left: 12px" [checked]="isSelected(room)" (change)="selectedRoomsEvent($event, room)">
+                </mat-checkbox>
+                <div class="room-edit" (click)="setToEditRoom(room)">
+                  <mat-list-item>{{ room.title }}</mat-list-item>
+                  <img style="margin-right: 10px" draggable="false" width="22" height="25" [src]="'./assets/Chevron Right (Blue-Gray).svg' | resolveAsset">
+                </div>
+              </div>
+              <mat-divider></mat-divider>
+            </div>
+          </mat-list>
+        </div>
+
+        <div class="content-buttons-in-folder button-column">
+          <div class="sticky-button"
+               [ngClass]="{ 'sticky-button': roomsImFolder.length }"
+               [style.display]="roomsImFolder.length ? 'block' : 'flex'"
+               *ngIf="!selectedRooms.length; else selectedButtons"
+          >
+            <div class="button-in-folder gd-button" *ngFor="let button of buttonsInFolder">
+              <app-gradient-button
+                      [minHeight]="'35px'"
+                      [style.width]="'120px'"
+                      [cursor]="'pointer'"
+                      [fontSize]="'12px'"
+                      (buttonClick)="stickyButtonClick(button.page)"
+                      [leftIcon]="button.icon"
+                      [leftImageWidth]="'10px'"
+                      [leftImageHeight]="'10px'"
+              >
+                {{ button.title }}
+              </app-gradient-button>
+            </div>
+          </div>
+          <ng-template #selectedButtons>
+            <div class="sticky-button">
+              <div class="button-in-folder gd-button" *ngFor="let button of buttonsWithSelectedRooms">
+                <app-gradient-button
+                        [minHeight]="'35px'"
+                        [hoverColor]="button.hover"
+                        [gradient]="button.color"
+                        [style.width]="button.width"
+                        [textColor]="button.textColor"
+                        [cursor]="'pointer'"
+                        [fontSize]="'12px'"
+                        (buttonClick)="stickyButtonClick(button.action)"
+                >
+                  {{ button.title }}
+                </app-gradient-button>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+      <div class="not-rooms-in-folder" *ngIf="!roomsImFolder.length && folderRoomsLoaded">
+        <img [src]="'./assets/emptyStates/undraw_add_file2_gvbb.svg' | resolveAsset" alt="emptyState">
+        <div class="emptyText">Add rooms to the folder.</div>
+      </div>
+
+    </div>
+    </div>
+
+    <div class="delete-button" *ngIf="currentPage === 4 && folderRoomsLoaded">
+      <app-gradient-button
+              [hoverColor]="'#DA2370'"
+              [gradient]="'#DA2370,#FB434A'"
+              [minHeight]="'40px'"
+              [style.width]="'140px'"
+              [cursor]="'pointer'"
+              [fontSize]="'14px'"
+              (buttonClick)="deleteRoom()"
+      >
+        Delete Folder</app-gradient-button>
+
+      <div class="delete-info-text">
+        This <b style="color: gray">will</b> erase all active and scheduled passes to and from all rooms in this folder.<br/>
+        This <b style="color: gray">will not</b> erase any expired passes to or from any rooms in this folder.
+      </div>
+    </div>
+  </div>
+</div>

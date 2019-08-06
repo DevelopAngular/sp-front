@@ -7,9 +7,7 @@ import {getFormattedPassDate, getInnerPassContent, getInnerPassName, isBadgeVisi
 import { DomSanitizer } from '@angular/platform-browser';
 import { Request } from '../models/Request';
 import { Invitation } from '../models/Invitation';
-import { Util } from '../../Util';
 import {filter} from 'rxjs/operators';
-import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {ScreenService} from '../services/screen.service';
 
 @Component({

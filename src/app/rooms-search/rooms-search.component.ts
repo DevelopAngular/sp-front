@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 import { takeUntil } from 'rxjs/operators';
 import * as _ from 'lodash';
+import {Location} from '../models/Location';
 
 @Component({
   selector: 'app-rooms-search',
@@ -42,7 +43,7 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
     this.locationService.searchLocationsWithConfig('v1/locations?limit=1000&starred=false')
         .pipe(takeUntil(this.destroy$))
         .subscribe(res => {
-          this.allRooms = res.results.concat(res.results,res.results,res.results);
+          this.allRooms = res.results;
         });
 
     this.locationService.getLocationsWithFilder()
@@ -51,10 +52,10 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
            this.categories = res.categories;
     });
     if (this.roomsWithFolder) {
-        this.selectedRooms = this.roomsWithFolder.concat(this.roomsWithFolder, this.roomsWithFolder);
+        this.selectedRooms = this.roomsWithFolder;
     }
     if (this.locations) {
-        this.selectedLocations = this.locations.concat(this.locations,this.locations,this.locations);
+        this.selectedLocations = this.locations;
     }
   }
 
@@ -108,7 +109,7 @@ export class RoomsSearchComponent implements OnInit, OnDestroy {
       this.selectedRooms = this.selectedRooms.filter(selRoom => selRoom.title !== room.title);
       this.selectedLocations = this.selectedLocations.filter((loc: any) => {
           if (isCategory) {
-              return loc.id !== room.locations.find(r => r.id === loc.id);
+              return !room.locations.find(r => r.id === loc.id);
           } else {
               return loc.id !== room.id;
           }

@@ -1,0 +1,181 @@
+@import '../../../../sp-colors';
+
+.wrapper {
+  position: relative;
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  .slide {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .new-room-in-folder {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    background-color: #FCFDFF;
+    min-height: 78px;
+    overflow: hidden;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+
+    .new-room-in-folder-header {
+      display: flex;
+      justify-content: center;
+      box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+      align-items: center;
+      height: 78px;
+      width: 100%;
+      position: relative;
+
+      .room-in-folder-title-inactive {
+        font-weight: bold;
+        font-size: 16px;
+        color: #7F879D;
+      }
+
+      .room-in-folder-title-active {
+        font-weight: bold;
+        font-size: 16px;
+        color: $navy;
+      }
+
+      .header-in-folder-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 41px;
+        position: absolute;
+        right: 20px;
+      }
+
+      .back-button {
+        width: 123px;
+        height: 78px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        position: absolute;
+        left: 0;
+      }
+
+      .cancel-button-in-folder-header {
+        font-weight: bold;
+        cursor: pointer;
+        color: $navy;
+        position: absolute;
+        left: 25px;
+      }
+
+    }
+  }
+
+  .import-rooms-content {
+  }
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  .import-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 32px 32px 0 32px;
+    .template-and-info {
+      width: 227px;
+      .import-rooms-info {
+        color: #7F879D;
+        font-size: 14px;
+        text-align: center;
+        //width: 85%;
+        margin-top: 25px;
+      }
+    }
+
+    .download-template-link {
+      //font-size: 18px;
+      //margin-top: 30px;
+      font-weight: bolder;
+      cursor: pointer;
+      color: #1E194F;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .choose-file {
+      display: flex;
+      width: 285px;
+      height: 110px;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 10px darkgrey;
+      border-radius: 20px;
+      margin-top: 46px;
+      cursor: pointer;
+
+      .choose-icon {
+        width: 50px;
+        height: 50px;
+      }
+
+      .choose-text {
+        font-size: 22px;
+        font-weight: bolder;
+        color: #7F879D;
+        margin-left: 8px;
+      }
+    }
+    .uploading-area {
+      margin-top: 25px;
+      width: 460px;
+      height: 120px;
+      border: 2px dashed #7F879D;
+      color: #7F879D;
+      font-size: 14px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      .choose-file-inline {
+        text-decoration: underline;
+        cursor: pointer;
+      }
+    }
+    .uploading-progress {
+      width: 206px;
+      height: 50px;
+      color: #1F194E;
+      font-weight: bold;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 20px 2px rgba(0, 0, 0, .2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 38px;
+    }
+  }
+  .slide-center {
+    transition: all .75s ease;
+    position: relative;
+    margin-left: calc(50% - 84px);
+  }
+  .issues-screen {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    .issues-container {
+      overflow: auto;
+      flex: 1 1 70%;
+      max-height: 70%;
+    }
+  }
+}

@@ -2,8 +2,8 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { MatDialog } from '@angular/material';
 import { FormGroup } from '@angular/forms';
 
-import {BehaviorSubject, combineLatest, forkJoin, Observable, of, Subject, Subscription, zip} from 'rxjs';
-import {filter, finalize, mapTo, switchMap} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, forkJoin, Observable, of, ReplaySubject, Subject, Subscription, zip} from 'rxjs';
+import {delay, filter, finalize, mapTo, switchMap, tap} from 'rxjs/operators';
 
 import { HttpService } from '../../services/http-service';
 import { Pinnable } from '../../models/Pinnable';
@@ -18,6 +18,7 @@ import {LocationsService} from '../../services/locations.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {AdminService} from '../../services/admin.service';
+import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 
 @Component({
   selector: 'app-pass-congif',
@@ -31,12 +32,17 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 
     public pinnableCollectionBlurEvent$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
+    private pendingSubject = new ReplaySubject<boolean>(1);
+    public pending$ = this.pendingSubject.asObservable();
+
     settingsForm: FormGroup;
     selectedPinnables: Pinnable[] = [];
     pinnable: Pinnable;
     pinnables$: Observable<Pinnable[]>;
     pinnables: Pinnable[];
     schools$;
+
+    arrangedOrderForUpdating: number[];
 
     buttonMenuOpen: boolean;
     bulkSelect: boolean;
@@ -80,7 +86,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   ngOnInit() {
     combineLatest(this.adminService.getOnboardProgress(), this.hallPassService.getPinnables())
     .subscribe(([onboard, pinnables]) => {
-        console.log('Onboard ==>>>>', onboard, pinnables);
+        console.log('Onboard ==>>>>', pinnables);
       if (onboard && (onboard as any[]).length && !pinnables.length) {
         const end = (onboard as any[]).find(item => item.name === 'setup_rooms:end');
         this.showRooms = !!end.done;
@@ -141,7 +147,19 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.dialog.closeAll();
+
+    of(null)
+      .pipe(
+        switchMap(() => {
+          if (this.arrangedOrderForUpdating && this.arrangedOrderForUpdating.length) {
+            return this.updatePinnablesOrder();
+          }
+          return this.hallPassService.getPinnables();
+        })
+      )
+      .subscribe(res => {
+        this.dialog.closeAll();
+      });
   }
 
   onPinnnableBlur(evt) {
@@ -154,20 +172,20 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     }
   }
 
-  updatePinnablesOrder(newOrder) {
+  setNewArrangedOrder(newOrder) {
+    this.arrangedOrderForUpdating = newOrder.map(pin => pin.id);
+    // console.log(this.arrangedOrderForUpdating);
+  }
 
-    const pinnableIdArranged = newOrder.map(pin => pin.id);
-
-    this.hallPassService.createArrangedPinnable({order: pinnableIdArranged.join(',')})
+  private updatePinnablesOrder() {
+    return this.hallPassService
+      .createArrangedPinnable({order: this.arrangedOrderForUpdating.join(',')})
       .pipe(
+        tap(() => this.arrangedOrderForUpdating = null),
         switchMap((): Observable<Pinnable[]> => {
           return this.hallPassService.getPinnables();
         })
-      )
-      .subscribe((res) => {
-        this.pinnables = res;
-        console.log(res.map(i => i.id));
-      });
+      );
   }
 
   openSettings() {
@@ -196,6 +214,8 @@ export class PassConfigComponent implements OnInit, OnDestroy {
                 options.push(this.genOption('New Folder', this.darkTheme.getColor(), 'newFolder'));
             }
 
+            UNANIMATED_CONTAINER.next(true);
+
             const cancelDialog = this.dialog.open(ConsentMenuComponent, {
                 panelClass: 'consent-dialog-container',
                 backdropClass: 'invis-backdrop',
@@ -206,7 +226,9 @@ export class PassConfigComponent implements OnInit, OnDestroy {
                 this.buttonMenuOpen = true;
             });
 
-            cancelDialog.afterClosed().subscribe(action => {
+            cancelDialog.afterClosed()
+              .pipe(tap(() => UNANIMATED_CONTAINER.next(false)))
+              .subscribe(action => {
                 this.buttonMenuOpen = false;
                 if (action === 'delete') {
                     // const currentPinIds = this.selectedPinnables.map(pinnable => pinnable.id);
@@ -329,11 +351,22 @@ export class PassConfigComponent implements OnInit, OnDestroy {
      this.forceSelectedLocation = null;
     });
     overlayDialog.afterClosed()
-     .pipe(switchMap(() => this.hallPassService.getPinnables())).subscribe(res => {
+     .pipe(
+       switchMap(() => {
+         this.pendingSubject.next(true);
+         if (this.arrangedOrderForUpdating && this.arrangedOrderForUpdating.length) {
+           return this.updatePinnablesOrder();
+         }
+         return this.hallPassService.getPinnables();
+       })
+     )
+     .subscribe(res => {
+       console.log(res.map(i => i.id));
        this.pinnables = res;
        this.selectedPinnables = [];
        this.bulkSelect = false;
-    });
+       this.pendingSubject.next(false);
+     });
   }
 
   onboard({createPack, pinnables}) {

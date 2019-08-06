@@ -21,6 +21,7 @@ import { environment } from '../../environments/environment';
 import { GoogleLoginService, isDemoLogin } from './google-login.service';
 import { School } from '../models/School';
 import {StorageService} from './storage.service';
+import { LocalStorage } from '@ngx-pwa/local-storage';
 
 import * as moment from 'moment';
 
@@ -154,7 +155,9 @@ export class HttpService {
       private http: HttpClient,
       private loginService: GoogleLoginService,
       private storage: StorageService,
+      private pwaStorage: LocalStorage
   ) {
+
 
     // the school list is loaded when a user authenticates and we need to choose a current school of the school array.
     // First, if there is a current school loaded, try to use that one.
@@ -235,7 +238,7 @@ export class HttpService {
       });
 
     // this.accessTokenSubject.pipe(withLatestFrom(this.kioskTokenSubject$),
-    //     map(([{auth, server}, newToken]) => {
+    //     map(([{auth, server}, newToken]) => {ы
     //       return {auth: newToken, server};
     //     }))
     //     .subscribe((updatedContext: AuthContext) => {
@@ -246,9 +249,6 @@ export class HttpService {
   }
 
   get accessToken(): Observable<AuthContext> {
-
-    // console.log('get accessToken', this.hasRequestedToken, this.accessTokenSubject.value);
-// debugger
     if (!this.hasRequestedToken) {
       this.fetchServerAuth()
         .subscribe((auth: AuthContext) => {
@@ -268,11 +268,21 @@ export class HttpService {
       return of(preferredEnvironment as LoginServer);
     }
 
+    if (!navigator.onLine) {
+      return  this.pwaStorage.getItem('servers').pipe(
+        map((servers: LoginServer[]) => {
+          if (servers) {
+            return servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
+          } else {
+            return null;
+          }
+        }));
+    }
+
     return this.http.post('https://smartpass.app/api/discovery/find', data).pipe(
       map((servers: LoginServer[]) => {
-        // console.log(servers);
         if (servers.length > 0) {
-
+          this.pwaStorage.setItem('servers', servers).subscribe(() => {});
           return servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
         } else {
           return null;
@@ -309,14 +319,32 @@ export class HttpService {
         config.append('password', password);
       }
 
+      if (!navigator.onLine) {
+        console.log('AUTHDATA OFFLINE');
+        return this.pwaStorage.getItem('authData').pipe(
+          map((data: any) => {
+            if (data) {
+              data['expires'] = new Date(new Date() + data['expires_in']);
 
-      // console.log('loginManual()');
+              ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
+
+              const auth = data as ServerAuth;
+
+              return {auth: auth, server: server} as AuthContext;
+            }
+          }),
+
+          catchError((err) => {
+            this.loginService.isAuthenticated$.next(false);
+            return of(null);
+          })
+        );
+      }
+
       return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
         map((data: any) => {
-
+          this.pwaStorage.setItem('authData', data).subscribe( () => {});
           this.storage.setItem('refresh_token', data.refresh_token);
-
-          // console.log('Auth data : ', data);
           // don't use TimeService for auth because auth is required for time service
           // to be useful
           data['expires'] = new Date(new Date() + data['expires_in']);

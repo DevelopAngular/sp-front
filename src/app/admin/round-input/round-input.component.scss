@@ -38,6 +38,7 @@
     color: $navy;
     caret-color: auto;
     display: block;
+    cursor: default;
     &::placeholder {
       color: #999999;
   }
