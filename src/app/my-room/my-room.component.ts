@@ -1,6 +1,6 @@
-import { Component, ElementRef, NgZone, OnDestroy, OnInit } from '@angular/core';
+import {Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatDialog} from '@angular/material';
-import { combineLatest, merge, of, BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
+import {combineLatest, merge, of, BehaviorSubject, Observable, ReplaySubject, Subject, interval} from 'rxjs';
 import { Util } from '../../Util';
 import { DataService } from '../services/data-service';
 import { mergeObject } from '../live-data/helpers';
@@ -31,6 +31,7 @@ import { StorageService } from '../services/storage.service';
 import { HttpService } from '../services/http-service';
 
 import * as moment from 'moment';
+import {ScrollPositionService} from '../scroll-position.service';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -96,6 +97,35 @@ class DestinationPassProvider extends RoomPassProvider {
 })
 export class MyRoomComponent implements OnInit, OnDestroy {
 
+  private scrollableAreaName = 'MyRoom';
+  private scrollableArea: HTMLElement;
+
+  @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
+    const scrollObserver = new Subject();
+    let initialHeight;
+
+    if (scrollable) {
+      this.scrollableArea = scrollable.nativeElement;
+      // initialHeight = (scrollable.nativeElement as HTMLElement).scrollHeight;
+      // interval(100)
+      //   .pipe(
+      //     // filter(() => {
+      //     //   return initialHeight < ((scrollable.nativeElement as HTMLElement).scrollHeight);
+      //     // }),
+      //     takeUntil(scrollObserver)
+      //   )
+      //   .subscribe((v) => {
+      //     console.log(this.scrollPosition.getComponentScroll(this.scrollableAreaName), this.scrollableArea.scrollHeight, v);
+      //     if (v) {
+            this.scrollableArea.scrollTo({top: this.scrollPosition.getComponentScroll(this.scrollableAreaName)});
+            // this.scrollPosition.saveComponentScroll(this.scrollableAreaName, 0);
+            scrollObserver.next();
+            scrollObserver.complete();
+          // }
+        // });
+    }
+  }
+
   testPasses: PassLikeProvider;
 
   activePassesKiosk: WrappedProvider;
@@ -157,7 +187,9 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       private storage: StorageService,
       private http: HttpService,
       private screenService: ScreenService,
-      public router: Router
+      public router: Router,
+      private scrollPosition: ScrollPositionService
+
   ) {
     this.setSearchDate(this.timeService.nowDate());
     console.log(this.kioskMode);
@@ -294,6 +326,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
     this.locationService.myRoomSelectedLocation$.next(this.selectedLocation);
     this.destroy$.next();
     this.destroy$.complete();
