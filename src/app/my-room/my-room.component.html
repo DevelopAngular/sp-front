@@ -30,7 +30,7 @@
       </div>
     </div>
   </div>
-  <div *ngIf="UI" class="my-room-wrapper">
+  <div *ngIf="UI" class="my-room-wrapper" #scrollableArea>
     <div class="my-room-left" *ngIf="!(kioskMode.currentRoom$ | async)">
       <div class="my-room-header" [@headerTrigger]="headerState">
         <div class="selected-teacher"

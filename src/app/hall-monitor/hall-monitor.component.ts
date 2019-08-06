@@ -1,6 +1,6 @@
-import {Component, HostListener, NgZone, OnInit} from '@angular/core';
+import {Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatDialog } from '@angular/material';
-import {merge, of, combineLatest, BehaviorSubject, Observable, Subject} from 'rxjs';
+import {merge, of, combineLatest, BehaviorSubject, Observable, Subject, interval} from 'rxjs';
 import { DataService } from '../services/data-service';
 import { mergeObject } from '../live-data/helpers';
 import { LiveDataService } from '../live-data/live-data.service';
@@ -9,7 +9,7 @@ import { PassLikeProvider, WrappedProvider } from '../models/providers';
 import { User } from '../models/User';
 import { ReportFormComponent } from '../report-form/report-form.component';
 import {Report} from '../models/Report';
-import {delay, filter, map, tap} from 'rxjs/operators';
+import {delay, filter, map, takeUntil, tap} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {UserService} from '../services/user.service';
 import {ScreenService} from '../services/screen.service';
@@ -23,6 +23,7 @@ import {InputResctrictionXl} from '../models/input-restrictions/InputResctrictio
 import {InputRestriciontSm} from '../models/input-restrictions/InputRestriciontSm';
 import {CollectionRestriction} from '../models/collection-restrictions/CollectionRestriction';
 import {HallMonitorCollectionRestriction} from '../models/collection-restrictions/HallMonitorCollectionRestriction';
+import {ScrollPositionService} from '../scroll-position.service';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('_profile_teacher');
@@ -49,7 +50,50 @@ export class ActivePassProvider implements PassLikeProvider {
   templateUrl: './hall-monitor.component.html',
   styleUrls: ['./hall-monitor.component.scss']
 })
-export class HallMonitorComponent implements OnInit {
+export class HallMonitorComponent implements OnInit, OnDestroy {
+
+  private scrollableAreaName = 'HallMonitorTeacher';
+  private scrollableArea: HTMLElement;
+
+  @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
+    if (scrollable) {
+      this.scrollableArea = scrollable.nativeElement;
+
+      const updatePosition = function () {
+
+        const scrollObserver = new Subject();
+        const initialHeight = this.scrollableArea.scrollHeight;
+        const scrollOffset = this.scrollPosition.getComponentScroll(this.scrollableAreaName);
+
+        /**
+         * If the scrollable area has static height, call `scrollTo` immediately,
+         * otherwise additional subscription will perform once if the height changes
+         */
+
+        if (scrollOffset) {
+          this.scrollableArea.scrollTo({top: scrollOffset});
+        }
+
+        interval(50)
+          .pipe(
+            filter(() => {
+              return initialHeight < ((scrollable.nativeElement as HTMLElement).scrollHeight) && scrollOffset;
+            }),
+            takeUntil(scrollObserver)
+          )
+          .subscribe((v) => {
+            console.log(scrollOffset);
+            if (v) {
+              this.scrollableArea.scrollTo({top: scrollOffset});
+              scrollObserver.next();
+              scrollObserver.complete();
+              updatePosition();
+            }
+          });
+      }.bind(this);
+      updatePosition();
+    }
+  }
 
   activePassProvider: WrappedProvider;
 
@@ -102,6 +146,7 @@ export class HallMonitorComponent implements OnInit {
     private liveDataService: LiveDataService,
     public darkTheme: DarkThemeSwitch,
     private screenService: ScreenService,
+    private scrollPosition: ScrollPositionService
   ) {
     this.activePassProvider = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.searchQuery$));
     // this.activePassProvider = new BasicPassLikeProvider(testPasses);
@@ -161,6 +206,10 @@ export class HallMonitorComponent implements OnInit {
       this.dialog.afterAllClosed.subscribe( () => {
         this.isReportFormOpened = false;
       });
+  }
+
+  ngOnDestroy() {
+    this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
   }
 
   openReportForm() {

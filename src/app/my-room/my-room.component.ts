@@ -1,6 +1,6 @@
-import { Component, ElementRef, NgZone, OnDestroy, OnInit } from '@angular/core';
+import {Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatDialog} from '@angular/material';
-import { combineLatest, merge, of, BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
+import {combineLatest, merge, of, BehaviorSubject, Observable, ReplaySubject, Subject, interval} from 'rxjs';
 import { Util } from '../../Util';
 import { DataService } from '../services/data-service';
 import { mergeObject } from '../live-data/helpers';
@@ -31,6 +31,7 @@ import { StorageService } from '../services/storage.service';
 import { HttpService } from '../services/http-service';
 
 import * as moment from 'moment';
+import {ScrollPositionService} from '../scroll-position.service';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -96,6 +97,49 @@ class DestinationPassProvider extends RoomPassProvider {
 })
 export class MyRoomComponent implements OnInit, OnDestroy {
 
+  private scrollableAreaName = 'MyRoom';
+  private scrollableArea: HTMLElement;
+
+  @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
+    if (scrollable) {
+      this.scrollableArea = scrollable.nativeElement;
+
+      const updatePosition = function () {
+
+        const scrollObserver = new Subject();
+        const initialHeight = this.scrollableArea.scrollHeight;
+        const scrollOffset = this.scrollPosition.getComponentScroll(this.scrollableAreaName);
+
+        /**
+         * If the scrollable area has static height, call `scrollTo` immediately,
+         * otherwise additional subscription will perform once if the height changes
+         */
+
+        if (scrollOffset) {
+          this.scrollableArea.scrollTo({top: scrollOffset});
+        }
+
+        interval(50)
+          .pipe(
+            filter(() => {
+              return initialHeight < ((scrollable.nativeElement as HTMLElement).scrollHeight) && scrollOffset;
+            }),
+            takeUntil(scrollObserver)
+          )
+          .subscribe((v) => {
+            console.log(scrollOffset);
+            if (v) {
+              this.scrollableArea.scrollTo({top: scrollOffset});
+              scrollObserver.next();
+              scrollObserver.complete();
+              updatePosition();
+            }
+          });
+      }.bind(this);
+      updatePosition();
+    }
+  }
+
   testPasses: PassLikeProvider;
 
   activePassesKiosk: WrappedProvider;
@@ -157,7 +201,9 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       private storage: StorageService,
       private http: HttpService,
       private screenService: ScreenService,
-      public router: Router
+      public router: Router,
+      private scrollPosition: ScrollPositionService
+
   ) {
     this.setSearchDate(this.timeService.nowDate());
     console.log(this.kioskMode);
@@ -199,11 +245,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   get choices() {
-    // if (this.selectedLocation !== null) {
-    //   return this.roomOptions.filter((room) => room.id !== this.selectedLocation.id);
-    // } else {
-      return this.roomOptions;
-    // }
+    return this.roomOptions;
   }
 
   get showArrow() {
@@ -227,8 +269,8 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   get shadow() {
-      return this.sanitizer.bypassSecurityTrustStyle((this.hovered ?
-          '0 2px 4px 1px rgba(0, 0, 0, 0.3)' : '0 1px 4px 0px rgba(0, 0, 0, 0.25)'));
+    return this.sanitizer.bypassSecurityTrustStyle((this.hovered ?
+      '0 2px 4px 1px rgba(0, 0, 0, 0.3)' : '0 1px 4px 0px rgba(0, 0, 0, 0.25)'));
   }
 
   ngOnInit() {
@@ -294,6 +336,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
     this.locationService.myRoomSelectedLocation$.next(this.selectedLocation);
     this.destroy$.next();
     this.destroy$.complete();
@@ -320,21 +363,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   chooseDate(event) {
-    // this.calendarToggled = this.!calendarToggled
-
-    // this.activeCalendar = true;
     const target = new ElementRef(event.currentTarget);
-    // const DR = this.dialog.open(CalendarComponent, {
-    //   panelClass: 'calendar-dialog-container',
-    //   backdropClass: 'invis-backdrop',
-    //   data: {
-    //     'trigger': target,
-    //     // 'previousSelectedDate': this.chartsDate ? new Date(this.chartsDate) : null,
-    //   }
-    // });
-
-
-
     const DR = this.dialog.open(CalendarComponent, {
       panelClass: 'calendar-dialog-container',
       backdropClass: 'invis-backdrop',

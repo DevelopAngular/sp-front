@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
-  Input, NgZone,
+  Input, NgZone, OnChanges, OnDestroy,
   OnInit,
   Output,
   ViewChild
@@ -15,6 +15,7 @@ import {SP_ARROW_BLUE_GRAY, SP_ARROW_DOUBLE_BLUE_GRAY} from '../pdf-generator.se
 import {CdkVirtualScrollViewport, FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';
 import * as moment from 'moment';
 import {DomSanitizer} from '@angular/platform-browser';
+import {ScrollPositionService} from '../../scroll-position.service';
 
 const PAGESIZE = 50;
 const ROW_HEIGHT = 38;
@@ -140,8 +141,6 @@ export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy 
   }
 }
 
-
-
 @Component({
   selector: 'app-data-table',
   templateUrl: './data-table.component.html',
@@ -150,7 +149,7 @@ export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy 
   providers: [{provide: VIRTUAL_SCROLL_STRATEGY, useClass: CustomVirtualScrollStrategy}],
 
 })
-export class DataTableComponent implements OnInit {
+export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() width: string = '100%';
   @Input() height: string = 'none';
@@ -164,6 +163,7 @@ export class DataTableComponent implements OnInit {
   @Input() textHeaderColor: string = '#7F879D';
   @Input() marginTopStickyHeader: string = '-40px';
   @Input() displayedColumns: string[];
+  @Input() scrollableAreaName: string;
 
   @Output() selectedUsers: EventEmitter<any[]> = new EventEmitter();
   @Output() selectedRow: EventEmitter<any> = new EventEmitter<any>();
@@ -201,6 +201,12 @@ export class DataTableComponent implements OnInit {
 
       });
     });
+    // if (this.scrollableAreaName && this.scrollPosition.getComponentScroll(this.scrollableAreaName)) {
+    //   setTimeout(() => {
+    //     console.log(this.scrollPosition.getComponentScroll(this.scrollableAreaName));
+    //     this.viewport.setRenderedContentOffset(this.scrollPosition.getComponentScroll(this.scrollableAreaName), 'to-start');
+    //   }, 250);
+    // }
   }
 
   itemSize = ROW_HEIGHT;
@@ -215,7 +221,8 @@ export class DataTableComponent implements OnInit {
   constructor(
     private _ngZone: NgZone,
     private darkTheme: DarkThemeSwitch,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    private scrollPosition: ScrollPositionService
   ) {
     this.darkMode$ = this.darkTheme.isEnabled$.asObservable();
   }
@@ -224,10 +231,10 @@ export class DataTableComponent implements OnInit {
     // console.log(this._data);
 
     this.marginTopStickyHeader = '0px';
-      if (!this.displayedColumns) {
-        this.displayedColumns = Object.keys(this._data[0]);
-      }
-      this.columnsToDisplay = this.displayedColumns.slice();
+    if (!this.displayedColumns) {
+      this.displayedColumns = Object.keys(this._data[0]);
+    }
+    this.columnsToDisplay = this.displayedColumns.slice();
     this.isCheckbox.subscribe((v) => {
       if (v) {
         this.columnsToDisplay.unshift('select');
@@ -235,6 +242,22 @@ export class DataTableComponent implements OnInit {
         this.columnsToDisplay.shift();
       }
     });
+
+  }
+
+  ngOnChanges() {
+    if (this.scrollableAreaName && this.scrollPosition.getComponentScroll(this.scrollableAreaName)) {
+      setTimeout(() => {
+        // console.log(this.scrollPosition.getComponentScroll(this.scrollableAreaName));
+        this.viewport.scrollToOffset(this.scrollPosition.getComponentScroll(this.scrollableAreaName));
+      }, 0);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.scrollableAreaName) {
+      this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.placeholderHeight);
+    }
   }
 
   placeholderWhen(index: number, _: any) {

@@ -137,6 +137,10 @@
 :host {
   flex: 1 1 auto;
 }
+.host {
+  position: relative;
+  height: calc(100% - 78px);
+}
 
 .hall-monitor {
   height: 100%;
@@ -146,6 +150,7 @@
 .hall-monitor-wrapper{
     position: relative;
     height: 100%;
+    overflow: auto;
 }
 
 .hall-monitor-top{

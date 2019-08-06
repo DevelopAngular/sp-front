@@ -87,7 +87,7 @@
 
 
 <div class="passes-wrapper" [ngClass]="{'scroll': isStaff}" *ngIf="(user && !this.screenService.isDeviceSmall && !this.screenService.isDeviceMid)
-|| (user && this.screenService.isIpadWidth)">
+|| (user && this.screenService.isIpadWidth)" #scrollableArea>
   <h1 class="passes-heading">Passes</h1>
   <div class="main-page-left">
     <div class="current-pass">

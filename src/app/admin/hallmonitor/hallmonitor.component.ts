@@ -1,6 +1,6 @@
-import {Component, OnInit, ElementRef, ViewChild, HostListener} from '@angular/core';
+import {Component, OnInit, ElementRef, ViewChild, HostListener, OnDestroy} from '@angular/core';
 import { MatDialog } from '@angular/material';
-import {BehaviorSubject, fromEvent, combineLatest, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, fromEvent, combineLatest, Observable, of, Subject, interval} from 'rxjs';
 import { User } from '../../models/User';
 import { Report } from '../../models/Report';
 import { Pinnable } from '../../models/Pinnable';
@@ -11,10 +11,11 @@ import { TimeService } from '../../services/time.service';
 import {CalendarComponent} from '../calendar/calendar.component';
 import {HttpService} from '../../services/http-service';
 import {Util} from '../../../Util';
-import {delay, filter, map, switchMap, tap, toArray} from 'rxjs/operators';
+import {delay, filter, map, switchMap, takeUntil, tap, toArray} from 'rxjs/operators';
 import {AdminService} from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import * as _ from 'lodash';
+import {ScrollPositionService} from '../../scroll-position.service';
 
 
 
@@ -23,7 +24,50 @@ import * as _ from 'lodash';
   templateUrl: './hallmonitor.component.html',
   styleUrls: ['./hallmonitor.component.scss']
 })
-export class HallmonitorComponent implements OnInit {
+export class HallmonitorComponent implements OnInit, OnDestroy {
+
+    private scrollableAreaName = 'HallMonitorAdmin';
+    private scrollableArea: HTMLElement;
+
+    @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
+      if (scrollable) {
+        this.scrollableArea = scrollable.nativeElement;
+
+        const updatePosition = function () {
+
+          const scrollObserver = new Subject();
+          const initialHeight = this.scrollableArea.scrollHeight;
+          const scrollOffset = this.scrollPosition.getComponentScroll(this.scrollableAreaName);
+
+          /**
+           * If the scrollable area has static height, call `scrollTo` immediately,
+           * otherwise additional subscription will perform once if the height changes
+           */
+
+          if (scrollOffset) {
+            this.scrollableArea.scrollTo({top: scrollOffset});
+          }
+
+          interval(50)
+            .pipe(
+              filter(() => {
+                return initialHeight < ((scrollable.nativeElement as HTMLElement).scrollHeight) && scrollOffset;
+              }),
+              takeUntil(scrollObserver)
+            )
+            .subscribe((v) => {
+              console.log(scrollOffset);
+              if (v) {
+                this.scrollableArea.scrollTo({top: scrollOffset});
+                scrollObserver.next();
+                scrollObserver.complete();
+                updatePosition();
+              }
+            });
+        }.bind(this);
+        updatePosition();
+      }
+    }
 
     @ViewChild('bottomShadow') bottomShadow;
     @ViewChild('reportBox') reportBox: ElementRef;
@@ -71,7 +115,8 @@ export class HallmonitorComponent implements OnInit {
         private adminService: AdminService,
         private elRef: ElementRef,
         private timeService: TimeService,
-        public darkTheme: DarkThemeSwitch
+        public darkTheme: DarkThemeSwitch,
+        private scrollPosition: ScrollPositionService
 
     ) {
       this.activePassProvider = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.searchQuery$));
@@ -204,5 +249,8 @@ export class HallmonitorComponent implements OnInit {
             this.studentreport.push(..._.takeRight(list, 10));
         }
       });
+  }
+  ngOnDestroy() {
+    this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
   }
 }

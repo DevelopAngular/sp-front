@@ -2,8 +2,8 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { MatDialog } from '@angular/material';
 import { FormGroup } from '@angular/forms';
 
-import {BehaviorSubject, combineLatest, forkJoin, Observable, of, ReplaySubject, Subject, Subscription, zip} from 'rxjs';
-import {delay, filter, finalize, mapTo, switchMap, tap} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, forkJoin, interval, Observable, of, ReplaySubject, Subject, Subscription, zip} from 'rxjs';
+import {delay, filter, finalize, mapTo, switchMap, takeUntil, tap} from 'rxjs/operators';
 
 import { HttpService } from '../../services/http-service';
 import { Pinnable } from '../../models/Pinnable';
@@ -19,6 +19,7 @@ import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {AdminService} from '../../services/admin.service';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
+import {ScrollPositionService} from '../../scroll-position.service';
 
 @Component({
   selector: 'app-pass-congif',
@@ -26,6 +27,50 @@ import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
   styleUrls: ['./pass-config.component.scss']
 })
 export class PassConfigComponent implements OnInit, OnDestroy {
+
+
+  private scrollableAreaName = 'PassConfig';
+  private scrollableArea: HTMLElement;
+
+  @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
+    if (scrollable) {
+      this.scrollableArea = scrollable.nativeElement;
+
+      const updatePosition = function () {
+
+        const scrollObserver = new Subject();
+        const initialHeight = this.scrollableArea.scrollHeight;
+        const scrollOffset = this.scrollPosition.getComponentScroll(this.scrollableAreaName);
+
+        /**
+         * If the scrollable area has static height, call `scrollTo` immediately,
+         * otherwise additional subscription will perform once if the height changes
+         */
+
+        if (scrollOffset) {
+          this.scrollableArea.scrollTo({top: scrollOffset});
+        }
+
+        interval(50)
+          .pipe(
+            filter(() => {
+              return initialHeight < ((scrollable.nativeElement as HTMLElement).scrollHeight) && scrollOffset;
+            }),
+            takeUntil(scrollObserver)
+          )
+          .subscribe((v) => {
+            console.log(scrollOffset);
+            if (v) {
+              this.scrollableArea.scrollTo({top: scrollOffset});
+              scrollObserver.next();
+              scrollObserver.complete();
+              updatePosition();
+            }
+          });
+      }.bind(this);
+      updatePosition();
+    }
+  }
 
     @ViewChild(PinnableCollectionComponent) pinColComponent;
 
@@ -66,6 +111,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       private router: Router,
       public darkTheme: DarkThemeSwitch,
       private adminService: AdminService,
+      private scrollPosition: ScrollPositionService
 
 
   ) { }
@@ -147,7 +193,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-
+    this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
     of(null)
       .pipe(
         switchMap(() => {
