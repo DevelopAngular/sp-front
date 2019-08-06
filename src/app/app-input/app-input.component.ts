@@ -62,8 +62,11 @@ export class AppInputComponent implements OnInit {
           return  this.formGroup.valueChanges;
         }),
       ).subscribe();
+
       if (this.isFocus) {
+        setTimeout(() => {
           this.input.nativeElement.focus();
+        }, 50);
       }
 
       setTimeout(() => {
