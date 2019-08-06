@@ -2,16 +2,15 @@
   "index": "/index.html",
 
   "dataGroups": [{
-    "name": "api-performance",
+    "name": "api-freshness",
     "urls": [
-      "https://smartpass.app/api/**",
-      "https://smartpass.app/api/prod-us-central/v1/**",
-      "https://smartpass.app/api/staging/v1/**"
+      "https://smartpass.app/api/**"
     ],
     "cacheConfig": {
-      "strategy": "performance",
+      "strategy": "freshness",
       "maxSize": 100,
-      "maxAge": "3d"
+      "maxAge": "3d",
+      "timeout": "1m"
     }
   }
   ],
