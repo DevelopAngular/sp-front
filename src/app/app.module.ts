@@ -124,7 +124,7 @@ const appRoutes: Routes = [
     IntroRouteComponent,
     IntroDialogComponent,
     SchoolSignUpComponent,
-    AccountsSetupComponent,
+    AccountsSetupComponent
   ],
   entryComponents: [
     ConsentMenuComponent,

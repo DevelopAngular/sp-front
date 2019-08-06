@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import {Observable, ReplaySubject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -7,10 +6,6 @@ import {Observable, ReplaySubject} from 'rxjs';
 export class ScrollPositionService {
 
   private scrollPositionHash: any = {};
-
-  private scrollPositionHashSubject: ReplaySubject<any> = new ReplaySubject(1);
-
-  public scrollPosition$: Observable<any> = this.scrollPositionHashSubject.asObservable();
 
   constructor() { }
 

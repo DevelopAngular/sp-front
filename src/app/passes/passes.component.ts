@@ -171,28 +171,42 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   private scrollableArea: HTMLElement;
 
   @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
-    const scrollObserver = new Subject();
-    let initialHeight;
-
     if (scrollable) {
       this.scrollableArea = scrollable.nativeElement;
-      initialHeight = (scrollable.nativeElement as HTMLElement).scrollHeight;
-      interval(100)
-        .pipe(
-          filter(() => {
-            return initialHeight < ((scrollable.nativeElement as HTMLElement).scrollHeight);
-          }),
-          takeUntil(scrollObserver)
-        )
-        .subscribe((v) => {
-            console.log(this.scrollPosition.getComponentScroll(this.scrollableAreaName), this.scrollableArea.scrollHeight, v);
-          if (v) {
-            this.scrollableArea.scrollTo({top: this.scrollPosition.getComponentScroll(this.scrollableAreaName)});
-            // this.scrollPosition.saveComponentScroll(this.scrollableAreaName, 0);
-            scrollObserver.next();
-            scrollObserver.complete();
-          }
-        });
+
+      const updatePosition = function () {
+
+        const scrollObserver = new Subject();
+        const initialHeight = this.scrollableArea.scrollHeight;
+        const scrollOffset = this.scrollPosition.getComponentScroll(this.scrollableAreaName);
+
+        /**
+         * If the scrollable area has static height, call `scrollTo` immediately,
+         * otherwise additional subscription will perform once if the height changes
+         */
+
+        if (scrollOffset) {
+          this.scrollableArea.scrollTo({top: scrollOffset});
+        }
+
+        interval(50)
+          .pipe(
+            filter(() => {
+              return initialHeight < ((scrollable.nativeElement as HTMLElement).scrollHeight) && scrollOffset;
+            }),
+            takeUntil(scrollObserver)
+          )
+          .subscribe((v) => {
+            console.log(scrollOffset);
+            if (v) {
+              this.scrollableArea.scrollTo({top: scrollOffset});
+              scrollObserver.next();
+              scrollObserver.complete();
+              updatePosition();
+            }
+          });
+      }.bind(this);
+      updatePosition();
     }
   }
 
@@ -375,9 +389,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // if (this.scrollableArea && this.scrollableArea.scrollTop) {
-      this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
-    // }
+    this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
   }
 
   showMainForm(forLater: boolean): void {

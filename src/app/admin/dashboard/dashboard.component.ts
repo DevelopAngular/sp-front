@@ -1,6 +1,6 @@
 import {Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {fromEvent, interval, Subject, zip} from 'rxjs';
-import {map, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import { DataService } from '../../services/data-service';
 import { HttpService } from '../../services/http-service';
 import { HallPassFilter, LiveDataService } from '../../live-data/live-data.service';
@@ -14,6 +14,7 @@ import {AdminService} from '../../services/admin.service';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {ThemeService} from 'ng2-charts';
+import {ScrollPositionService} from '../../scroll-position.service';
 
 declare const window;
 
@@ -25,6 +26,51 @@ declare const window;
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   // @ViewChild('draggableContainer') draggableContainer: ElementRef;
+
+
+  private scrollableAreaName = 'Dashboard';
+  private scrollableArea: HTMLElement;
+
+  @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
+    if (scrollable) {
+      this.scrollableArea = scrollable.nativeElement;
+
+      const updatePosition = function () {
+
+        const scrollObserver = new Subject();
+        const initialHeight = this.scrollableArea.scrollHeight;
+        const scrollOffset = this.scrollPosition.getComponentScroll(this.scrollableAreaName);
+
+        /**
+         * If the scrollable area has static height, call `scrollTo` immediately,
+         * otherwise additional subscription will perform once if the height changes
+         */
+
+        if (scrollOffset) {
+          this.scrollableArea.scrollTo({top: scrollOffset});
+        }
+
+        interval(50)
+          .pipe(
+            filter(() => {
+              return initialHeight < ((scrollable.nativeElement as HTMLElement).scrollHeight) && scrollOffset;
+            }),
+            takeUntil(scrollObserver)
+          )
+          .subscribe((v) => {
+            console.log(scrollOffset);
+            if (v) {
+              this.scrollableArea.scrollTo({top: scrollOffset});
+              scrollObserver.next();
+              scrollObserver.complete();
+              updatePosition();
+            }
+          });
+      }.bind(this);
+      updatePosition();
+    }
+  }
+
 
   @ViewChild('ctx') ctx: any;
 
@@ -69,7 +115,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private timeService: TimeService,
     private host: ElementRef,
     public darkTheme: DarkThemeSwitch,
-    private chartTheming: ThemeService
+    private chartTheming: ThemeService,
+    private scrollPosition: ScrollPositionService
+
   ) {
     // this.darkTheme.preloader.next(true);
   }
@@ -410,6 +458,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
     this.shareChartData$.next();
     this.shareChartData$.complete();
   }

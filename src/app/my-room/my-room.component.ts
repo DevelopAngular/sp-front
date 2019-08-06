@@ -101,28 +101,42 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   private scrollableArea: HTMLElement;
 
   @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
-    const scrollObserver = new Subject();
-    let initialHeight;
-
     if (scrollable) {
       this.scrollableArea = scrollable.nativeElement;
-      // initialHeight = (scrollable.nativeElement as HTMLElement).scrollHeight;
-      // interval(100)
-      //   .pipe(
-      //     // filter(() => {
-      //     //   return initialHeight < ((scrollable.nativeElement as HTMLElement).scrollHeight);
-      //     // }),
-      //     takeUntil(scrollObserver)
-      //   )
-      //   .subscribe((v) => {
-      //     console.log(this.scrollPosition.getComponentScroll(this.scrollableAreaName), this.scrollableArea.scrollHeight, v);
-      //     if (v) {
-            this.scrollableArea.scrollTo({top: this.scrollPosition.getComponentScroll(this.scrollableAreaName)});
-            // this.scrollPosition.saveComponentScroll(this.scrollableAreaName, 0);
-            scrollObserver.next();
-            scrollObserver.complete();
-          // }
-        // });
+
+      const updatePosition = function () {
+
+        const scrollObserver = new Subject();
+        const initialHeight = this.scrollableArea.scrollHeight;
+        const scrollOffset = this.scrollPosition.getComponentScroll(this.scrollableAreaName);
+
+        /**
+         * If the scrollable area has static height, call `scrollTo` immediately,
+         * otherwise additional subscription will perform once if the height changes
+         */
+
+        if (scrollOffset) {
+          this.scrollableArea.scrollTo({top: scrollOffset});
+        }
+
+        interval(50)
+          .pipe(
+            filter(() => {
+              return initialHeight < ((scrollable.nativeElement as HTMLElement).scrollHeight) && scrollOffset;
+            }),
+            takeUntil(scrollObserver)
+          )
+          .subscribe((v) => {
+            console.log(scrollOffset);
+            if (v) {
+              this.scrollableArea.scrollTo({top: scrollOffset});
+              scrollObserver.next();
+              scrollObserver.complete();
+              updatePosition();
+            }
+          });
+      }.bind(this);
+      updatePosition();
     }
   }
 
@@ -231,11 +245,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   get choices() {
-    // if (this.selectedLocation !== null) {
-    //   return this.roomOptions.filter((room) => room.id !== this.selectedLocation.id);
-    // } else {
-      return this.roomOptions;
-    // }
+    return this.roomOptions;
   }
 
   get showArrow() {
@@ -259,8 +269,8 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   get shadow() {
-      return this.sanitizer.bypassSecurityTrustStyle((this.hovered ?
-          '0 2px 4px 1px rgba(0, 0, 0, 0.3)' : '0 1px 4px 0px rgba(0, 0, 0, 0.25)'));
+    return this.sanitizer.bypassSecurityTrustStyle((this.hovered ?
+      '0 2px 4px 1px rgba(0, 0, 0, 0.3)' : '0 1px 4px 0px rgba(0, 0, 0, 0.25)'));
   }
 
   ngOnInit() {
@@ -353,21 +363,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   chooseDate(event) {
-    // this.calendarToggled = this.!calendarToggled
-
-    // this.activeCalendar = true;
     const target = new ElementRef(event.currentTarget);
-    // const DR = this.dialog.open(CalendarComponent, {
-    //   panelClass: 'calendar-dialog-container',
-    //   backdropClass: 'invis-backdrop',
-    //   data: {
-    //     'trigger': target,
-    //     // 'previousSelectedDate': this.chartsDate ? new Date(this.chartsDate) : null,
-    //   }
-    // });
-
-
-
     const DR = this.dialog.open(CalendarComponent, {
       panelClass: 'calendar-dialog-container',
       backdropClass: 'invis-backdrop',

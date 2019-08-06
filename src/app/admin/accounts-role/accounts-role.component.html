@@ -297,6 +297,7 @@
         </div>
         <app-data-table
           class="ds-my-10"
+          [scrollableAreaName]="'Table' + role"
           [data]="userList"
           [isCheckbox]="dataTableEditState"
           [marginTopStickyHeader]="'147px'"
