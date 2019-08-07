@@ -1,3 +1,4 @@
+
 <div  [@RequestCardSlideInOut] *ngIf="isInboxClicked && this.screenService.isDeviceMid">
   <app-display-card [hasDivider]="false" [fontSize]="'29px'" [inbox]="true" >
     <div class="inbox-content">
@@ -22,9 +23,9 @@
   </app-display-card>
 </div>
 
-<div class="passes-wrapper" [ngClass]="isStaff ? 'passes-wrapper-margin-top' : '' " [@PassesSlideTopBottom] *ngIf="!isInboxClicked && user && this.screenService.isDeviceMid">
-  <h1 class="passes-heading" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">Passes</h1>
+<div class="passes-wrapper" [ngClass]="isStaff ? 'passes-wrapper-margin-top scroll' : '' " [@PassesSlideTopBottom] *ngIf="!isInboxClicked && user && this.screenService.isDeviceMid" #scrollableArea>
   <div class="main-page-left">
+    <h1 class="passes-heading" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">Passes</h1>
     <div class="current-pass">
       <div *ngIf="(isActivePass$ | async) || (isActiveRequest$ | async); else newPass;" class="center">
         <app-inline-request-card *ngIf="(isActiveRequest$ | async) && !(isActivePass$ | async)" [request]="currentRequest$ | async"></app-inline-request-card>
@@ -84,7 +85,6 @@
     </app-display-card>
   </div>
 </div>
-
 
 <div class="passes-wrapper" [ngClass]="{'scroll': isStaff}" *ngIf="(user && !this.screenService.isDeviceSmall && !this.screenService.isDeviceMid)
 || (user && this.screenService.isIpadWidth)" #scrollableArea>
