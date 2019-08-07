@@ -183,7 +183,9 @@ export class NavComponent implements OnInit {
         } else if (action === 'about') {
             window.open('https://smartpass.app/about');
         } else if (action === 'feedback') {
-            window.open('https://www.smartpass.app/feedback');
+            // window.open('https://www.smartpass.app/feedback');
+            // window.open('mailto:address@dmail.com');
+          window.location.href = 'mailto:address@dmail.com';
         } else if (action === 'support') {
             window.open('https://www.smartpass.app/support');
         } else if (action === 'privacy') {

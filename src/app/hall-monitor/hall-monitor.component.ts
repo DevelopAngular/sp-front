@@ -209,7 +209,9 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
+    if (this.scrollableArea && this.scrollableAreaName) {
+      this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
+    }
   }
 
   openReportForm() {

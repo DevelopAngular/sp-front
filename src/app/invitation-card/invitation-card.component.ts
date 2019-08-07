@@ -284,7 +284,7 @@ export class InvitationCardComponent implements OnInit {
 
         consentDialog.afterClosed()
           .pipe(
-            tap(() => UNANIMATED_CONTAINER.next(true))
+            tap(() => UNANIMATED_CONTAINER.next(false))
           )
           .subscribe(action => {
           this.chooseAction(action);

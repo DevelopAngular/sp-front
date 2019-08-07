@@ -336,7 +336,9 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
+    if (this.scrollableArea && this.scrollableAreaName) {
+      this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
+    }
     this.locationService.myRoomSelectedLocation$.next(this.selectedLocation);
     this.destroy$.next();
     this.destroy$.complete();

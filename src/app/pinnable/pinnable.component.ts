@@ -66,7 +66,7 @@ export class PinnableComponent implements OnInit {
 
     let i = 0;
     const hexColors = [];
-    const rawHex = this.pinnable.color_profile.solid_color.slice(1);
+    const rawHex = this.mock ? this.mock.solid.slice(1) : this.pinnable.color_profile.solid_color.slice(1);
     do {
       hexColors.push(rawHex.slice(i, i + 2));
       i += 2;

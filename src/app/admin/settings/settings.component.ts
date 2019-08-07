@@ -27,12 +27,6 @@ export class SettingsComponent implements OnInit {
 
 
     public settings = [
-        // {
-        //     'gradient': '#022F68, #2F66AB',
-        //     'icon': 'Moon',
-        //     'action': () => { this.darkTheme.switchTheme(); this.data.darkBackground = !this.data.darkBackground; },
-        //     'title': 'Dark Theme'
-        // },
         {
             'gradient': '#1893E9, #05B5DE',
             'icon': 'Team',
