@@ -72,11 +72,11 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
       console.log(path);
 
       const loadView = currentUser.isAdmin() ? 'admin' : 'main';
-      if (path.length) {
-        this.router.navigate(path);
-      } else {
+      // if (path.length) {
+      //   this.router.navigate(path);
+      // } else {
         this.router.navigate([loadView]);
-      }
+      // }
     });
 
     this.trustedBackgroundUrl = this.sanitizer.bypassSecurityTrustStyle('url(\'./assets/Login Background.svg\')');
@@ -93,9 +93,9 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    if (this.isIOSMobile || this.isAndroid) {
+    // if (this.isIOSMobile || this.isAndroid) {
       window.appLoaded();
-    }
+    // }
   }
 
   ngOnDestroy() {
