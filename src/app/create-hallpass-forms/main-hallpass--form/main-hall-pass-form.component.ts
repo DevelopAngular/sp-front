@@ -2,18 +2,15 @@ import {Component, ElementRef, HostListener, Inject, OnInit} from '@angular/core
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { Location } from '../../models/Location';
 import { Pinnable } from '../../models/Pinnable';
-import { Request } from '../../models/Request';
 import { User } from '../../models/User';
 import { StudentList } from '../../models/StudentList';
 import {NextStep} from '../../animations';
-import {BehaviorSubject, combineLatest, Observable} from "rxjs";
+import {BehaviorSubject, combineLatest} from 'rxjs';
 import {CreateFormService} from '../create-form.service';
-import {Invitation} from '../../models/Invitation';
-import {PassLike} from '../../models';
-import {filter, map} from "rxjs/operators";
-import * as _ from "lodash";
-import {DataService} from "../../services/data-service";
-import {LocationsService} from "../../services/locations.service";
+import {filter, map} from 'rxjs/operators';
+import * as _ from 'lodash';
+import {DataService} from '../../services/data-service';
+import {LocationsService} from '../../services/locations.service';
 import {ScreenService} from '../../services/screen.service';
 
 

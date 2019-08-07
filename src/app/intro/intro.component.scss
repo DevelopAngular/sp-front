@@ -181,6 +181,7 @@
       flex-direction: column;
       .tiles {
         display: flex;
+        transform: scale(.9);
         .tile {
           padding: 4px;
         }

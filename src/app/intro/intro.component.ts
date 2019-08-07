@@ -10,7 +10,6 @@ import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {NotificationService} from '../services/notification-service';
 import {DeviceDetection} from '../device-detection.helper';
 import {UserService} from '../services/user.service';
-import {switchMap} from 'rxjs/operators';
 
 declare const window;
 
@@ -258,6 +257,7 @@ export class IntroComponent implements OnInit {
               },        {
                 header: 'Counselor',
                 gradient: '#E38314,#EAB219',
+                solid: '#EAB219',
                 content: 'https://storage.googleapis.com/courier-static/release-icons/Counselor%20(White).png',
                 restricted: true
               },        {
@@ -396,7 +396,6 @@ export class IntroComponent implements OnInit {
           if ((this.isSafari || this.alreadySeen) && this.slideIndex === 3) {
             this.slideIndex += 2;
           } else {
-
             this.slideIndex++;
           }
         }, 100);

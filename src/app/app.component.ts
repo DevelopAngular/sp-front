@@ -40,7 +40,10 @@ export const INITIAL_LOCATION_PATHNAME =  new ReplaySubject<string>(1);
 
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  @ViewChild( 'dialogContainer' ) dialogContainer: ElementRef;
+  private dialogContainer: HTMLElement;
+  @ViewChild( 'dialogContainer' ) set content(content: ElementRef) {
+    this.dialogContainer = content.nativeElement;
+  }
 
   public isAuthenticated = null;
   public hideScroll: boolean = false;
@@ -236,7 +239,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       _hsq.push(a);
     };
 
-
     myPush(['identify', {
       email: user.primary_email,
       firstname: user.first_name,
@@ -257,12 +259,16 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     APPLY_ANIMATED_CONTAINER
       .subscribe((v: boolean) => {
         if (v) {
-          (this.overlayContainer as ConsentMenuOverlay).setContainer(this.dialogContainer.nativeElement);
+          const zIndexForContainer = (this.dialog.openDialogs.length + 1) * 1000;
+          this.dialogContainer.classList.add('unanimated-dialog-container');
+          this.dialogContainer.style.zIndex = `${zIndexForContainer}`;
+          (this.overlayContainer as ConsentMenuOverlay).setContainer(this.dialogContainer);
         } else {
+          this.dialogContainer.style.zIndex = '-1';
+          this.dialogContainer.classList.remove('unanimated-dialog-container');
           (this.overlayContainer as ConsentMenuOverlay).restoreContainer();
         }
-      })
-
+      });
   }
 
 
