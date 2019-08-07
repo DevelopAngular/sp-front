@@ -183,10 +183,14 @@ export class RoomComponent implements OnInit {
           incomplete: false,
           cancel: false
       };
+
       if (!this.advOptionsValidButtons) {
           buttonsResult = this.roomValidButtons;
       } else {
-          if (this.roomValidButtons.publish && this.advOptionsValidButtons.publish) {
+          if (
+            (this.validForm && this.isValidRestrictions && this.data.travelType.length) &&
+            this.advOptionsValidButtons.publish || (this.roomValidButtons.publish && !this.advOptionsValidButtons.incomplete)
+          ) {
               buttonsResult.publish = true;
           }
           if (this.roomValidButtons.cancel || this.advOptionsValidButtons.cancel) {

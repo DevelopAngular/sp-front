@@ -2,8 +2,6 @@ import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/c
 import { FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material';
 
-import { BehaviorSubject } from 'rxjs';
-
 import { Pinnable } from '../../../models/Pinnable';
 import { Location } from '../../../models/Location';
 import { LocationsService } from '../../../services/locations.service';

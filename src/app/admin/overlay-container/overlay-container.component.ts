@@ -597,6 +597,7 @@ export class OverlayContainerComponent implements OnInit {
     }
 
     if (this.currentPage === Pages.BulkEditRooms) {
+      debugger;
       const patchRequests$ = (this.bulkEditData.rooms as Location[]).map(room => {
         return this.locationService.updateLocation(room.id, room);
       });
@@ -696,7 +697,7 @@ export class OverlayContainerComponent implements OnInit {
       if (!_.isNull(roomData.scheduling_restricted)) {
         room.scheduling_restricted = roomData.scheduling_restricted;
       }
-      if (!_.isNull(roomData.travelType.length)) {
+      if (roomData.travelType.length) {
         room.travel_types = roomData.travelType;
       }
       if (roomData.timeLimit) {
