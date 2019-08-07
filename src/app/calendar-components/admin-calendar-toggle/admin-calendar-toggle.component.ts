@@ -151,7 +151,7 @@ export class AdminCalendarToggleComponent implements OnInit {
           this.cdr.detectChanges();
           this.dayButton.nativeElement.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'});
       } else {
-            this.settingsRes.emit({toggleResult: this.toggleResult});
+          this.settingsRes.emit({toggleResult: this.toggleResult});
           this.adminCalendarRes.emit({start: moment(this.selectedDay).startOf('day'), end: moment(this.selectedDay)});
             // this.adminCalendarRes.emit(moment(this.selectedDay));
       }
@@ -163,6 +163,10 @@ export class AdminCalendarToggleComponent implements OnInit {
 
   resetDate() {
       this.selectedDate = { start: null, end: null };
+  }
+
+  changeRangeTime(date) {
+
   }
 
   save() {
