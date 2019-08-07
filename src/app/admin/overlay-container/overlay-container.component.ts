@@ -662,8 +662,8 @@ export class OverlayContainerComponent implements OnInit {
   bulkEditInFolder({roomData, rooms}) {
     this.oldFolderData = _.cloneDeep(this.folderData);
     this.folderData.roomsInFolder = _.differenceBy(this.folderData.roomsInFolder, rooms, 'id');
-    this.editRooms(roomData, rooms);
-    this.folderData.roomsInFolder = [...rooms, ...this.folderData.roomsInFolder];
+    const editingRooms = this.editRooms(roomData, rooms);
+    this.folderData.roomsInFolder = [...editingRooms, ...this.folderData.roomsInFolder];
     if (this.overlayService.pageState.getValue().previousPage === Pages.ImportRooms) {
       if (!!this.pinnable) {
         this.overlayService.changePage(Pages.EditFolder, this.currentPage, {...this.folderData, oldFolderData: this.oldFolderData});
@@ -676,8 +676,8 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   bulkEditResult({roomData, rooms, buttonState}) {
-    this.editRooms(roomData, rooms);
-    this.bulkEditData = {roomData, rooms};
+    const editingRooms = this.editRooms(roomData, rooms);
+    this.bulkEditData = {roomData, rooms: editingRooms};
     this.roomValidButtons.next(buttonState);
   }
 
@@ -689,19 +689,20 @@ export class OverlayContainerComponent implements OnInit {
   }
 
   editRooms(roomData, rooms) {
-    rooms.forEach(room => {
+    return rooms.map(room => {
       if (!_.isNull(roomData.restricted)) {
         room.restricted = roomData.restricted;
       }
       if (!_.isNull(roomData.scheduling_restricted)) {
         room.scheduling_restricted = roomData.scheduling_restricted;
       }
-      if (!_.isNull(roomData.travelType.length)) {
+      if (roomData.travelType.length) {
         room.travel_types = roomData.travelType;
       }
       if (roomData.timeLimit) {
         room.max_allowed_time = roomData.timeLimit;
       }
+      return {...room, ...this.normalizeAdvOptData(roomData)};
     });
   }
 

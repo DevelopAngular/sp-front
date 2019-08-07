@@ -73,7 +73,7 @@ export class RestrictedMessageComponent implements OnInit {
     const to = this.formState.data.direction.to;
     if (!this.formState.forLater && to.request_mode === 'specific_teachers') {
       return to.request_teachers;
-    } else if (!this.formState.forLater && to.request_mode === 'all_teachers_in_room') {
+    } else if (!this.formState.forLater && to.request_mode === 'all_teachers_in_room' || !this.formState.forLater && to.request_mode === 'teacher_in_room') {
         if (to.request_send_origin_teachers && to.request_send_destination_teachers) {
           return [...this.formState.data.direction.from.teachers, ...this.formState.data.direction.to.teachers];
         } else if (to.request_send_origin_teachers) {
@@ -84,7 +84,7 @@ export class RestrictedMessageComponent implements OnInit {
     }
     if (this.formState.forLater && to.scheduling_request_mode === 'specific_teachers') {
       return to.scheduling_request_teachers;
-    } else if (this.formState.forLater && to.scheduling_request_mode === 'all_teachers_in_room') {
+    } else if (this.formState.forLater && to.scheduling_request_mode === 'all_teachers_in_room' || this.formState.forLater && to.scheduling_request_mode === 'teacher_in_room') {
         if (to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
           return [...this.formState.data.direction.from.teachers, ...this.formState.data.direction.to.teachers];
         } else if (to.scheduling_request_send_origin_teachers) {

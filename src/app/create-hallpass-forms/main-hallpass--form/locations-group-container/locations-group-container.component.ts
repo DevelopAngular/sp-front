@@ -86,10 +86,12 @@ export class LocationsGroupContainerComponent implements OnInit {
   get redirectTo() {
       const to = this.FORM_STATE.data.direction.to;
       if (
-          to.request_mode === 'specific_teachers' ||
-          to.request_mode === 'all_teachers_in_room' ||
+        (!this.FORM_STATE.forLater && to.request_mode === 'specific_teachers') ||
+        (!this.FORM_STATE.forLater && to.request_mode === 'all_teachers_in_room') ||
+        (!this.FORM_STATE.forLater && to.request_mode === 'teacher_in_room' && to.teachers.length === 1) ||
           (this.FORM_STATE.forLater && to.scheduling_request_mode === 'specific_teachers') ||
-          (this.FORM_STATE.forLater && to.scheduling_request_mode === 'all_teachers_in_room')
+          (this.FORM_STATE.forLater && to.scheduling_request_mode === 'all_teachers_in_room') ||
+          (this.FORM_STATE.forLater && to.scheduling_request_mode === 'teacher_in_room' && to.teachers.length === 1)
       ) {
           return States.message;
       } else {
