@@ -52,6 +52,10 @@ export class AdminCalendarToggleComponent implements OnInit {
 
   constructor(private cdr: ChangeDetectorRef) { }
 
+  get rangeDate() {
+    return this.rangeOptions.find(opt => opt.id === 'range_4');
+  }
+
   ngOnInit() {
     console.log(this.selectedOptions);
     if (this.selectedOptions) {
@@ -101,15 +105,18 @@ export class AdminCalendarToggleComponent implements OnInit {
 
   selectedRangeOption(id) {
     this.openCalendar = false;
-    this.selectedDate.end = this.currentDate;
     if (id === 'range_0') {
+      this.selectedDate.end = this.currentDate;
       this.selectedDate.start = moment(this.currentDate).startOf('day');
     } else if (id === 'range_1') {
+      this.selectedDate.end = this.currentDate;
       this.selectedDate.start = moment().subtract(7, 'days').startOf('day');
     } else if (id === 'range_2') {
-        this.selectedDate.start = moment().subtract(30, 'days').startOf('day');
+      this.selectedDate.end = this.currentDate;
+      this.selectedDate.start = moment().subtract(30, 'days').startOf('day');
     } else if (id === 'range_3') {
-        this.selectedDate.start = moment().subtract(90, 'days').startOf('day');
+      this.selectedDate.end = this.currentDate;
+      this.selectedDate.start = moment().subtract(90, 'days').startOf('day');
     } else if (id === 'range_4') {
       this.openCalendar = true;
       this.settingsRes.emit({ toggleResult: this.toggleResult, rangeId: id });
@@ -121,11 +128,15 @@ export class AdminCalendarToggleComponent implements OnInit {
   }
 
   selectedDaysOption(id) {
+    // debugger;
       this.openTimeRange = id === 'days_2';
       if (this.openTimeRange) {
           this.settingsRes.emit({toggleResult: this.toggleResult, dayOptId: id});
           this.cdr.detectChanges();
-          this.day.nativeElement.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'});
+          setTimeout(() => {
+
+            this.dayButton.nativeElement.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'});
+          }, 100);
       }
   }
 
@@ -165,8 +176,12 @@ export class AdminCalendarToggleComponent implements OnInit {
       this.selectedDate = { start: null, end: null };
   }
 
-  changeRangeTime(date) {
-
+  changeRangeTime(start, date) {
+    if (start) {
+      this.selectedDate.start = date;
+    } else {
+      this.selectedDate.end = date;
+    }
   }
 
   save() {

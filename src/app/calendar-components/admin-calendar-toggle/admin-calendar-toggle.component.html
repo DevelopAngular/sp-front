@@ -37,11 +37,11 @@
         <app-toggle-options [selectedId]="selectedDayId || 'days_1'" [options]="daysOptions" (result)="selectedDaysOption($event)"></app-toggle-options>
       </div>
       <div class="time-range" #day *ngIf="openTimeRange">
-        <app-time-picker [currentDate]="selectedDate.start || currentDate" (timeResult)="selectedDate.start = $event"></app-time-picker>
+        <app-time-picker [currentDate]="selectedDate.start || currentDate" (timeResult)="changeRangeTime(true, $event)"></app-time-picker>
         <mat-divider [vertical]="true"></mat-divider>
-        <app-time-picker [currentDate]="selectedDate.end || currentDate" (timeResult)="selectedDate.end = $event"></app-time-picker>
+        <app-time-picker [currentDate]="selectedDate.end || currentDate" (timeResult)="changeRangeTime(false, $event)"></app-time-picker>
       </div>
-      <div class="button" #dayButton *ngIf="selectedDay && selectedDate.start && selectedDate.end && openTimeRange">
+      <div class="button" #dayButton *ngIf="selectedDate.start && selectedDate.end && openTimeRange">
         <app-gradient-button
                 [width]="'101px'"
                 [cursor]="'pointer'"
