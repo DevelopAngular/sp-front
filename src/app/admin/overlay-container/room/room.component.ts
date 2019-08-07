@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialogRef } from '@angular/material';
 
@@ -54,6 +54,8 @@ export class RoomComponent implements OnInit {
   roomValidButtons: ValidButtons;
 
   change$: Subject<any> = new Subject();
+
+  resetadvOpt$ = new Subject();
 
   constructor(
       private dialogRef: MatDialogRef<OverlayContainerComponent>,
@@ -205,6 +207,13 @@ export class RoomComponent implements OnInit {
 
   selectTeacherEvent(teachers) {
     this.data.selectedTeachers = teachers;
+    if (!this.data.selectedTeachers.length) {
+      this.data.advOptState = {
+        now: { state: 'Any teacher (default)', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
+        future: { state: 'Any teacher (default)', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }
+      };
+      this.resetadvOpt$.next(this.data.advOptState);
+    }
     this.change$.next();
   }
 

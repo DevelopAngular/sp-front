@@ -156,6 +156,7 @@
             [data]="data.advOptState"
             [disabledOptions]="advDisabledOptions"
             (openedOptions)="advancedOptionsOpened($event, advancedOptionsRef)"
+            [resetOptions$]="resetadvOpt$"
             (resultOptions)="advancedOptions($event)"
     ></app-advanced-options>
   </div>

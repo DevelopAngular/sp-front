@@ -5,6 +5,7 @@ import { DarkThemeSwitch } from '../../../dark-theme-switch';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import * as _ from 'lodash';
+import {Subject} from 'rxjs';
 
 export interface OptionState {
     now: {
@@ -44,6 +45,7 @@ export class AdvancedOptionsComponent implements OnInit {
     @Input() futureRestricted: boolean;
     @Input() disabledOptions: string[];
     @Input() data: OptionState;
+    @Input() resetOptions$: Subject<OptionState>;
 
     @Output() openedOptions: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() resultOptions: EventEmitter<{options: OptionState, validButtons: ValidButtons}> = new EventEmitter<{options: OptionState, validButtons: ValidButtons}>();
@@ -95,7 +97,9 @@ export class AdvancedOptionsComponent implements OnInit {
     ngOnInit() {
         this.optionState = _.cloneDeep(this.data);
         this.initialState = _.cloneDeep(this.optionState);
-        // console.log(this.optionState);
+        this.resetOptions$.subscribe(data => {
+          this.optionState = _.cloneDeep(data);
+        });
         this.buildData();
     }
 
