@@ -10,6 +10,7 @@ import {MessageBoxViewRestriction} from '../../../../models/message-box-view-res
 import {MessageBoxViewRestrictionLg} from '../../../../models/message-box-view-restrictions/MessageBoxViewRestrictionLg';
 import {MessageBoxViewRestrictionMd} from '../../../../models/message-box-view-restrictions/MessageBoxViewRestrictionMd';
 import {ScreenService} from '../../../../services/screen.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-restricted-message',
@@ -60,18 +61,9 @@ export class RestrictedMessageComponent implements OnInit {
     return 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
 
-  get showTeachersHeader() {
-    const to = this.formState.data.direction.to;
-    return this.toLocation &&
-        (this.formState.forLater &&
-            (to.scheduling_request_mode === 'specific_teachers' || to.scheduling_request_mode === 'all_teachers_in_room')) ||
-        (!this.formState.forLater &&
-            (to.request_mode === 'specific_teachers' || to.request_mode === 'all_teachers_in_room'));
-  }
-
   get teachersNames() {
     const to = this.formState.data.direction.to;
-    if (!this.formState.forLater && to.request_mode === 'specific_teachers') {
+    if (!this.formState.forLater && to.request_mode === 'specific_teachers' && to.request_teachers.length === 1) {
       return to.request_teachers;
     } else if (!this.formState.forLater && to.request_mode === 'all_teachers_in_room' || !this.formState.forLater && to.request_mode === 'teacher_in_room') {
         if (to.request_send_origin_teachers && to.request_send_destination_teachers) {
@@ -82,7 +74,7 @@ export class RestrictedMessageComponent implements OnInit {
            return this.formState.data.direction.to.teachers;
         }
     }
-    if (this.formState.forLater && to.scheduling_request_mode === 'specific_teachers') {
+    if (this.formState.forLater && to.scheduling_request_mode === 'specific_teachers' && to.scheduling_request_teachers.length === 1) {
       return to.scheduling_request_teachers;
     } else if (this.formState.forLater && to.scheduling_request_mode === 'all_teachers_in_room' || this.formState.forLater && to.scheduling_request_mode === 'teacher_in_room') {
         if (to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
@@ -94,6 +86,10 @@ export class RestrictedMessageComponent implements OnInit {
         }
     }
     return [this.teacher];
+  }
+
+  get filteredTeachers() {
+    return _.uniqBy(this.teachersNames, 'id');
   }
 
   ngOnInit() {
