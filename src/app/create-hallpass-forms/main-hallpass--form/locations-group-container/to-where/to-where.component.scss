@@ -28,6 +28,10 @@
   div.to-content {
     -ms-overflow-style: none;
   }
+
+  div.rooms-title.ds-dialog-subtitle {
+    padding-bottom: 15px !important;
+  }
 }
 
 .to-wrapper, .to-wrapper-to-date {
@@ -41,7 +45,7 @@
   border-radius: 14px;
   .to-header, .to-header-back {
     width: 100%;
-    height: 70px;
+    height: 90px;
     min-height: 70px;
     display: flex;
     z-index: 10;

@@ -3,4 +3,5 @@ export class ToWhereGridRestrictionLg {
   gridWidth = '395px';
   gutterSize = '10px';
   pileWidth  = '120px';
+  pileHeight = '70px';
 }
