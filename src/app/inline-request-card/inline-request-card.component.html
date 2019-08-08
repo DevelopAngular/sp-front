@@ -82,8 +82,8 @@
                 <img class="request-description-icon" [src]="'./assets/Lock (White).svg' | resolveAsset">
                 <div class="request-description-text">
                     Pass Request Sent to: <br>
-                    <span style="font-size: 17px; font-weight: normal" *ngFor="let teacher of teacherNames; let i = index">
-                        {{ teacher.display_name + (i === teacherNames.length - 1 ? '' : ', ') }}
+                    <span style="font-size: 17px; font-weight: normal" *ngFor="let teacher of filteredTeachers; let i = index">
+                        {{ teacher.display_name + (i === filteredTeachers.length - 1 ? '' : ', ') }}
                     </span>
                 </div>
             </div>

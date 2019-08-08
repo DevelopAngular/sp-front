@@ -13,7 +13,7 @@
     [schools]="schools">
   </app-school-toggle-bar>
 
-  <div class="router-outlet" style="height: 100%;" [style.overflow-y]=" hideScroll ? 'hidden' : 'auto'" *ngIf="isAuthenticated || true">
+  <div class="router-outlet" style="height: 100%;" [style.overflow]=" hideScroll ? 'hidden' : 'auto'" *ngIf="isAuthenticated || true">
     <router-outlet></router-outlet>
   </div>
 </div>

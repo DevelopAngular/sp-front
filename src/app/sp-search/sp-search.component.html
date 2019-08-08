@@ -93,6 +93,35 @@
       </ng-template>
     </div>
 
+    <div *ngIf="showOptions && searchTarget === 'local'" [ngClass]="{'options-wrapper': ( teacherCollection$ | async)}" [style.height]="( teacherCollection$ | async) ? '235px' : '0px'">
+      <div *ngIf="( teacherCollection$ | async)" class="appearing" style="border-top: 1px solid #D8D8D8; width: 92%; margin: 0 auto;"></div>
+      <div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px;">
+        <div class="option-list_scrollable" [style.max-height]="listMaxHeight">
+          <div #cell *ngFor="let teacher of ( teacherCollection$ | async)" class="option-list_item"
+               (mouseenter)="cell.hovered = true;"
+               (mouseleave)="cell.hovered = false;"
+               (click)="inputValue$.next(''); addUnit(unit)"
+               [style.background-color]="getBackground(cell)"
+               [style.color]="textColor(cell)"
+          >
+            <span>
+               {{teacher.display_name}} ({{teacher.primary_email ? teacher.primary_email.slice(0, teacher.primary_email.indexOf('@')) : teacher.email ? teacher.email.slice(0, teacher.email.indexOf('@')) : ''}})
+            </span>
+          </div>
+        </div>
+
+      </div>
+      <ng-template #noStudentsDummy>
+        <div class="no-students-dummy">
+          <div>
+            <div class="dummy-image"><img width="150" [src]="'./assets/emptyStates/undraw_graduation_9x4i.svg'" alt="undraw_graduation_9x4i.svg"></div>
+
+            <div class="dummy-text"><span>No {{dummyRoleText}} found</span></div>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+
 
     <!--<pre>{{schools | async | json}}</pre>-->
     <div *ngIf="showOptions && searchTarget === 'schools'" [ngClass]="{'options-wrapper': (schools | async) !== null}" [style.height]="(schools | async) !== null ? '235px' : '0px'">

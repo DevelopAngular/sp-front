@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import {map, mapTo, publish, share, switchMap} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {AdminService} from '../services/admin.service';
 import {HttpService} from '../services/http-service';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 
 export interface OnboardItem {
   done: string;
-  extracts: {};
+  extras: {};
   id: number;
   name: string;
 }
@@ -86,7 +86,10 @@ export class GettingStartedProgressService {
             if (!this.onboardProgress[ticket[0]]) {
               this.onboardProgress[ticket[0]] = {};
             }
-            this.onboardProgress[ticket[0]][ticket[1]] = item.done;
+            this.onboardProgress[ticket[0]][ticket[1]] = {
+              value: !!item.done,
+              data: item.extras
+            };
             if (item.done) {
               this.onboardProgress.progress += Progress[item.name];
               this.onboardProgress.offset -= Progress[item.name];
@@ -95,7 +98,7 @@ export class GettingStartedProgressService {
           if (this.onboardProgress.progress === 100) {
             this.onboardProgress.offset = 0;
           }
-          // console.log(this.onboardProgress);
+          console.log(this.onboardProgress);
           return this.onboardProgress;
         })
       )

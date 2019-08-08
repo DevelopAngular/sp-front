@@ -7,6 +7,7 @@ import {DataService} from '../services/data-service';
 import {RequestsService} from '../services/requests.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {tap} from 'rxjs/operators';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-inline-request-card',
@@ -42,9 +43,7 @@ export class InlineRequestCardComponent implements OnInit {
   get teacherNames() {
       const destination = this.request.destination;
       const origin = this.request.origin;
-      if (destination.request_mode === 'specific_teachers') {
-          return destination.request_teachers;
-      } else if (destination.request_mode === 'all_teachers_in_room') {
+      if (destination.request_mode === 'all_teachers_in_room') {
           if (destination.request_send_origin_teachers && destination.request_send_destination_teachers) {
               return [...destination.teachers, ...origin.teachers];
           } else if (destination.request_send_origin_teachers) {
@@ -54,6 +53,10 @@ export class InlineRequestCardComponent implements OnInit {
           }
       }
       return [this.request.teacher];
+  }
+
+  get filteredTeachers() {
+    return _.uniqBy(this.teacherNames, 'id');
   }
 
   ngOnInit() {

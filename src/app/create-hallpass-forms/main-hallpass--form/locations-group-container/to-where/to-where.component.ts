@@ -113,8 +113,13 @@ export class ToWhereComponent implements OnInit {
   }
 
   private getViewRestriction(): ToWhereGridRestriction {
-    if (this.screenService.isDeviceMid || this.screenService.isDeviceLargeExtra) {
-      return new ToWhereGridRestrictionSm();
+    if (this.screenService.isDeviceMid && !this.screenService.isDeviceSmallExtra
+      || this.screenService.isDeviceLargeExtra && !this.screenService.isDeviceSmallExtra ) {
+      return new ToWhereGridRestrictionMd();
+    }
+
+    if (this.screenService.isDeviceSmallExtra) {
+      return  new ToWhereGridRestrictionSm();
     }
 
     return new ToWhereGridRestrictionLg();
