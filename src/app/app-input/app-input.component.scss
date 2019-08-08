@@ -11,12 +11,12 @@
 
 .input-container {
   position: relative;
-  input {
-    cursor: default;
-    &:focus {
-      cursor: text;
-    }
-  }
+  //input {
+  //  cursor: default;
+  //  &:focus {
+  //    cursor: text;
+  //  }
+  //}
   .success-icon {
     width: 26px;
     height: 26px;

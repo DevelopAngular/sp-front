@@ -42,6 +42,7 @@ import {SideNavService} from '../services/side-nav.service';
 import {NavButtonComponent} from '../nav-button/nav-button.component';
 import {Schedule} from 'primeng/primeng';
 import {School} from '../models/School';
+import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 
 declare const window;
 
@@ -367,6 +368,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     const target = new ElementRef(event.currentTarget);
     if (!this.screenService.isDeviceLargeExtra) {
       this.isOpenSettings = true;
+      UNANIMATED_CONTAINER.next(true);
       const settingRef = this.dialog.open(SettingsComponent, {
         panelClass: ['calendar-dialog-container', 'animation'],
         backdropClass: 'invis-backdrop',
@@ -378,6 +380,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       });
 
       settingRef.afterClosed().subscribe(action => {
+        UNANIMATED_CONTAINER.next(false);
         this.settingsAction(action);
       });
     }

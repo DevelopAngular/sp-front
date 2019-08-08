@@ -61,8 +61,8 @@ import {InitOverlay} from './consent-menu-overlay';
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroRouteComponent, data: { hideSchoolToggleBar: true}},
-  {path: 'school_signup', component: SchoolSignUpComponent, data: {hubspot: true, authFree: true}, pathMatch: 'full'},
-  {path: 'accounts_setup', component: AccountsSetupComponent, pathMatch: 'full'},
+  {path: 'school_signup', component: SchoolSignUpComponent, data: {hideScroll: true, hubspot: true, authFree: true}, pathMatch: 'full'},
+  {path: 'accounts_setup', component: AccountsSetupComponent, data: {hideScroll: true, hubspot: true, authFree: true}, pathMatch: 'full'},
   {
     path: '',
     component: LoginComponent,

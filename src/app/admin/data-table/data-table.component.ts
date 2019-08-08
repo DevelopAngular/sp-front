@@ -14,8 +14,9 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {SP_ARROW_BLUE_GRAY, SP_ARROW_DOUBLE_BLUE_GRAY} from '../pdf-generator.service';
 import {CdkVirtualScrollViewport, FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';
 import * as moment from 'moment';
-import {DomSanitizer} from '@angular/platform-browser';
+import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {ScrollPositionService} from '../../scroll-position.service';
+import {wrapToHtml} from '../helpers';
 
 const PAGESIZE = 50;
 const ROW_HEIGHT = 38;
@@ -74,13 +75,21 @@ export class GridTableDataSource extends DataSource<any> {
     });
 
     for (const key in this._fixedColumnsPlaceholder) {
-      if (key !== 'TT') {
+      if (key === 'TT') {
+        this._fixedColumnsPlaceholder[key] = this.domSanitizer.bypassSecurityTrustHtml(this._fixedColumnsPlaceholder[key]);
+
+      } else if (key === 'Group(s)') {
+        console.log(this._fixedColumnsPlaceholder[key]);
+        this._fixedColumnsPlaceholder[key] = '.' + this._fixedColumnsPlaceholder[key].map(g => g.title).join(this._fixedColumnsPlaceholder[key].length > 1 ? ', ' : '') + '.';
+      } else {
         this._fixedColumnsPlaceholder[key] = '.' + this._fixedColumnsPlaceholder[key] + '.';
       }
-      else {
-        this._fixedColumnsPlaceholder[key] = this.domSanitizer.bypassSecurityTrustHtml(this._fixedColumnsPlaceholder[key]);
-      }
+
+
     }
+
+    this._fixedColumnsPlaceholder = wrapToHtml.call(this, this._fixedColumnsPlaceholder, 'span') as {[key: string]: SafeHtml; _data: any};
+
 
     console.log(this._fixedColumnsPlaceholder);
 
@@ -201,12 +210,6 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
 
       });
     });
-    // if (this.scrollableAreaName && this.scrollPosition.getComponentScroll(this.scrollableAreaName)) {
-    //   setTimeout(() => {
-    //     console.log(this.scrollPosition.getComponentScroll(this.scrollableAreaName));
-    //     this.viewport.setRenderedContentOffset(this.scrollPosition.getComponentScroll(this.scrollableAreaName), 'to-start');
-    //   }, 250);
-    // }
   }
 
   itemSize = ROW_HEIGHT;
@@ -240,6 +243,8 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
         this.columnsToDisplay.unshift('select');
       } else if (!v && (this.columnsToDisplay[0] === 'select')) {
         this.columnsToDisplay.shift();
+        this.selection.clear();
+        this.selectedUsers.emit([]);
       }
     });
 
@@ -278,7 +283,7 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
       });
     } else {
       this._data.forEach(row => {
-        this.selection.select(row);
+        this.selection.select(row._data);
         row.pressed = true;
       });
     }
@@ -327,13 +332,14 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  selectedRowEmit(evt, {_data: row}) {
-    console.log(evt)
+  selectedRowEmit(evt, row) {
+    console.log(row)
     // debugger
+    const rowData = row._data;
     const target = evt.target as HTMLElement;
     if (this.isCheckbox.value && !this.isAllowedSelectRow) {
-      this.selection.toggle(row);
-      row.pressed = this.selection.isSelected(row);
+      this.selection.toggle(rowData);
+      row.pressed = this.selection.isSelected(rowData);
       this.pushOutSelected();
     } else if (target.dataset && target.dataset.profile) {
 
@@ -342,12 +348,12 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
         role: target.dataset.profile
       });
     } else {
-      this.selectedRow.emit(row);
+      this.selectedRow.emit(rowData);
     }
   }
 
   pushOutSelected() {
-    this.selectedUsers.emit(this.selection.selected.map(i => i._data));
+    this.selectedUsers.emit(this.selection.selected);
   }
 
   clearSelection() {
