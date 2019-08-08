@@ -7,6 +7,7 @@ import { States } from '../locations-group-container.component';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import * as _ from 'lodash';
+import {User} from '../../../../models/User';
 
 @Component({
   selector: 'app-restricted-target',
@@ -43,6 +44,9 @@ export class RestrictedTargetComponent implements OnInit {
 
   fromLocation;
 
+  teachers;
+
+  showDummy = false;
   shadow: boolean = true;
 
   frameMotion$: BehaviorSubject<any>;
@@ -82,14 +86,16 @@ export class RestrictedTargetComponent implements OnInit {
     return 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
 
-  get hideSearchTeacher() {
+  get localSearch() {
     return (this.formState.forLater && this.formState.data.direction.to.scheduling_request_mode === 'teacher_in_room') ||
         (!this.formState.forLater && this.formState.data.direction.to.request_mode === 'teacher_in_room');
   }
 
   get quickSelectedTeachers() {
     const to = this.formState.data.direction.to;
-    if (!this.formState.forLater && to.request_mode === 'teacher_in_room') {
+    if (!this.formState.forLater && to.request_mode === 'specific_teachers') {
+      return to.request_teachers;
+    } else if (!this.formState.forLater && to.request_mode === 'teacher_in_room') {
       if (to.request_send_destination_teachers && to.request_send_origin_teachers) {
         return [...to.teachers, ...this.formState.data.direction.from.teachers];
       } else if (to.request_send_destination_teachers) {
@@ -97,6 +103,8 @@ export class RestrictedTargetComponent implements OnInit {
       } else if (to.request_send_origin_teachers) {
         return this.formState.data.direction.from.teachers;
       }
+    } else if (this.formState.forLater && to.scheduling_request_mode === 'specific_teachers') {
+      return to.scheduling_request_teachers;
     } else if (this.formState.forLater && to.scheduling_request_mode === 'teacher_in_room') {
         if (to.scheduling_request_send_destination_teachers && to.scheduling_request_send_origin_teachers) {
           return [...to.teachers, ...this.formState.data.direction.from.teachers];

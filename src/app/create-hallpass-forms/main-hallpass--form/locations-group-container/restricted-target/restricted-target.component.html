@@ -10,19 +10,20 @@
   </div>
 
   <div class="rest-tar-content" (scroll)="tableScroll($event)" #rc>
-    <div class="search-wrapper" *ngIf="!hideSearchTeacher">
+    <div class="search-wrapper">
         <app-sp-search
           [focused]="true"
           [width]="'100%'"
           [role]="'_profile_teacher'"
+          [searchTarget]="localSearch ? 'local': 'users'"
           [placeholder]="'Search teachers'"
           [list]="false"
+          [searchingTeachers]="filteredTeachers"
           [emitSingleProfile]="true"
           (onUpdate)="updateTarget($event)"
         ></app-sp-search>
-      <!--</div>-->
     </div>
-    <div class="quick-select" [style.margin-top]="hideSearchTeacher ? '10px' : '70px'" *ngIf="filteredTeachers.length">
+    <div class="quick-select" [style.margin-top]="'70px'" *ngIf="filteredTeachers.length">
       <div class="quick-select_header">
         <span>Quick Select</span>
       </div>
@@ -35,16 +36,10 @@
              (mouseup)="cell.pressed = false"
              (click)="updateTarget(teacher)"
              [style.background-color]="getBackground(cell)"
-             [style.color]="textColor(cell)"
-        >
+             [style.color]="textColor(cell)">
               <span>
                 {{teacher.display_name}}
               </span>
-          <!--<img-->
-            <!--(mouseover)="fieldIcon.setAttribute('src', './assets/Cancel (Navy).svg')"-->
-            <!--(mouseleave)="fieldIcon.setAttribute('src', './assets/Mark (Navy).svg')"-->
-            <!--(click)="selectedStudents.splice(i, 1)"-->
-            <!--[src]="'./assets/Mark (Navy).svg'" width="15" #fieldIcon alt="Check.svg">-->
         </div>
       </div>
     </div>
