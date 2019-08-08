@@ -12,6 +12,7 @@ import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {AdminService} from '../../services/admin.service';
 import {HttpService} from '../../services/http-service';
 import {GettingStartedProgressService} from '../getting-started-progress.service';
+import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 
 declare const window;
 
@@ -156,6 +157,7 @@ export class NavComponent implements OnInit {
     // return;
 
     const target = new ElementRef(event.currentTarget);
+    UNANIMATED_CONTAINER.next(true);
     const settingsRef: MatDialogRef<SettingsComponent> = this.dialog.open(SettingsComponent, {
       panelClass: 'calendar-dialog-container',
       backdropClass: 'invis-backdrop',
@@ -175,7 +177,8 @@ export class NavComponent implements OnInit {
     });
 
     settingsRef.afterClosed().subscribe(action => {
-        if (action === 'signout') {
+      UNANIMATED_CONTAINER.next(false);
+      if (action === 'signout') {
           // window.waitForAppLoaded();
           this.router.navigate(['sign-out']);
         } else if (action === 'switch') {
