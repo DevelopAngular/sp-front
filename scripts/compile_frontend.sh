@@ -27,7 +27,7 @@ scripts/make_build_info.sh
 
 config=production
 
-if [[ "$CI_ENVIRONMENT_SLUG" = "staging" ]]; then
+if [[ "$CI_ENVIRONMENT_SLUG" = "testing" ]]; then
   config=staging
 fi
 

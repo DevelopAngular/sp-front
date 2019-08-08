@@ -4,7 +4,7 @@
 export const environment = {
   production: true,
   buildType: 'staging',
-  preferEnvironment: 'Staging',
+  preferEnvironment: null,
   schoolOnboardApiRoot: 'https://smartpass.app/api/staging',
   funData: false,
   firebase: {
