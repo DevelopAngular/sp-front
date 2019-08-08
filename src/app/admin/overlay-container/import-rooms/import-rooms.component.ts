@@ -44,6 +44,7 @@ export class ImportRoomsComponent implements OnInit {
             let rows = data.slice(1);
             rows = rows.map((row, index) => {
               const _room: any = {};
+              _room.id = `Fake ${Math.floor(Math.random() * (1 - 1000)) + 1000}`;
               _room.title = row[0];
               _room.room = row[1];
               _room.teachers = <string>row[2] ? row[2].split(', ') : [];
@@ -83,12 +84,12 @@ export class ImportRoomsComponent implements OnInit {
               .pipe(
                 map((teachers: any[]) => {
                   return _rooms.map((_room) => {
-                    const teachersIdArray = [];
+                    const teachersArray = [];
 
                     _room.teachers.forEach((_teacherEmail) => {
                       const existAndAttached = teachers.find(_teacher =>  _teacher.primary_email === _teacherEmail );
                       if (existAndAttached) {
-                        teachersIdArray.push(existAndAttached.id);
+                        teachersArray.push(existAndAttached);
                       } else {
                         this.unknownEmails.push({
                           room: _room,
@@ -96,7 +97,7 @@ export class ImportRoomsComponent implements OnInit {
                         });
                       }
                     });
-                    _room.teachers = teachersIdArray;
+                    _room.teachers = teachersArray;
                     return _room;
                   });
                 }));
@@ -156,6 +157,7 @@ export class ImportRoomsComponent implements OnInit {
           let rows = data.slice(1);
           rows = rows.map((row, index) => {
             const _room: any = {};
+            _room.id = `Fake ${Math.floor(Math.random() * (1 - 1000000)) + 1000000}`;
             _room.title = row[0];
             _room.room = row[1];
             _room.teachers = <string>row[2] ? row[2].split(', ') : [];
@@ -199,12 +201,12 @@ export class ImportRoomsComponent implements OnInit {
               map((teachers: any[]) => {
 
                 return _rooms.map((_room) => {
-                  const teachersIdArray = [];
+                  const teachersArray = [];
 
                   _room.teachers.forEach((_teacherEmail) => {
                     const existAndAttached = teachers.find(_teacher =>  _teacher.primary_email === _teacherEmail );
                     if (existAndAttached) {
-                      teachersIdArray.push(existAndAttached.id);
+                      teachersArray.push(existAndAttached);
                     } else {
                       this.unknownEmails.push({
                         room: _room,
@@ -213,7 +215,7 @@ export class ImportRoomsComponent implements OnInit {
                     }
                   });
 
-                  _room.teachers = teachersIdArray;
+                  _room.teachers = teachersArray;
                   return _room;
                 });
               }));

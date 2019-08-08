@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { OverlayDataService, RoomData } from '../overlay-data.service';
+import {OverlayDataService, Pages, RoomData} from '../overlay-data.service';
 import { Location } from '../../../models/Location';
 import { ValidButtons } from '../advanced-options/advanced-options.component';
 import { BehaviorSubject } from 'rxjs';
@@ -64,23 +64,47 @@ export class BulkEditRoomsInFolderComponent implements OnInit {
   }
 
   checkValidForm() {
-    if (
-      (this.roomData.travelType.length ||
-        !_.isNull(this.roomData.restricted) ||
-        !_.isNull(this.roomData.scheduling_restricted) ||
+    if (this.overlayService.pageState.getValue().previousPage === Pages.ImportRooms) {
+      if (
+        (this.roomData.travelType.length &&
+        !_.isNull(this.roomData.restricted) &&
+        !_.isNull(this.roomData.scheduling_restricted) &&
         this.roomData.timeLimit) && !this.advOptionsButtons
-    ) {
-      this.roomsValidButtons.next({publish: true, incomplete: false, cancel: true});
-    } else if (
-      (this.roomData.travelType.length ||
-        !_.isNull(this.roomData.restricted) ||
-        !_.isNull(this.roomData.scheduling_restricted) ||
-        this.roomData.timeLimit) && this.advOptionsButtons
-    ) {
-      if (this.advOptionsButtons.incomplete) {
-        this.roomsValidButtons.next({publish: false, incomplete: true, cancel: true});
+      ) {
+        this.roomsValidButtons.next({publish: true, cancel: true, incomplete: false});
+      } else if ((this.roomData.travelType.length &&
+        !_.isNull(this.roomData.restricted) &&
+        !_.isNull(this.roomData.scheduling_restricted) &&
+        this.roomData.timeLimit) && this.advOptionsButtons) {
+
+        if (this.advOptionsButtons.incomplete) {
+          this.roomsValidButtons.next({publish: false, incomplete: true, cancel: true});
+        } else {
+          this.roomsValidButtons.next({publish: true, incomplete: false, cancel: true});
+        }
+
       } else {
+        this.roomsValidButtons.next({publish: false, cancel: true, incomplete: true });
+      }
+    } else {
+      if (
+        (this.roomData.travelType.length ||
+          !_.isNull(this.roomData.restricted) ||
+          !_.isNull(this.roomData.scheduling_restricted) ||
+          this.roomData.timeLimit) && !this.advOptionsButtons
+      ) {
         this.roomsValidButtons.next({publish: true, incomplete: false, cancel: true});
+      } else if (
+        (this.roomData.travelType.length ||
+          !_.isNull(this.roomData.restricted) ||
+          !_.isNull(this.roomData.scheduling_restricted) ||
+          this.roomData.timeLimit) && this.advOptionsButtons
+      ) {
+        if (this.advOptionsButtons.incomplete) {
+          this.roomsValidButtons.next({publish: false, incomplete: true, cancel: true});
+        } else {
+          this.roomsValidButtons.next({publish: true, incomplete: false, cancel: true});
+        }
       }
     }
   }
