@@ -100,7 +100,7 @@
           <div #cell *ngFor="let teacher of ( teacherCollection$ | async)" class="option-list_item"
                (mouseenter)="cell.hovered = true;"
                (mouseleave)="cell.hovered = false;"
-               (click)="inputValue$.next(''); addUnit(unit)"
+               (click)="inputValue$.next(''); addLocalTeacher(teacher)"
                [style.background-color]="getBackground(cell)"
                [style.color]="textColor(cell)"
           >

@@ -72,7 +72,7 @@
         <div class="accounts-setup_buttons" *ngIf="!gSuiteConnected">
           <app-gradient-button
             [size]="'medium'"
-            [gradient]="'#FFFFFF,#00B476'"
+            [gradient]="'#FFFFFF, #00B476'"
             [fontWeight]="'normal'"
             [rightIcon]="'./assets/Chevron Right (White).svg'"
             (buttonClick)="connectGSuite()"
@@ -85,7 +85,7 @@
         <div class="accounts-setup_buttons" *ngIf="gSuiteConnected && usersForSyncSelected">
           <app-gradient-button
             [size]="'medium'"
-            [gradient]="'#FFFFFF,#00B476'"
+            [gradient]="'#FFFFFF, #00B476'"
             [fontWeight]="'normal'"
             (buttonClick)="connectGSuite()"
           >

@@ -13,13 +13,6 @@
         [pending$]="searchPending$"
         (ontextupdate)="onSearch($event)"
       ></app-round-input>
-      <!--<input-->
-        <!--class="input"-->
-        <!--[placeholder]="'Search'"-->
-        <!--#searchInput-->
-        <!--[value]="inputValue"-->
-        <!--(input)="onSearch(searchInput.value)"-->
-      <!--&gt;-->
       <app-gradient-button
         [gradient]="reportBtn.gradient"
         [cursor]="reportBtn.cursor"
@@ -36,7 +29,6 @@
       <ng-template #hallMontiorTopMobile>
         <ng-container>
           <div class="options-wrapper" (click)="toggleSearchBar()">
-<!--            <img src="./assets/Search Eye (Navy).svg" alt="" class="search-img">-->
             <app-icon-button [srcString]="'Search Eye'" (clickEvent)="toggleSearchBar()" [size]="20"> </app-icon-button>
           </div>
           <div class="student-search-wrapper" *ngIf="isIpadSearchBar">
@@ -65,27 +57,6 @@
         </ng-container>
       </ng-template>
     </div>
-
-    <!--<h1 class="hall-monitor-heading" *ngIf="!isIpadSearchBar" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">Hall Monitor</h1>-->
-    <!--<ng-container *ngIf="isSearchClicked && !isIpadWidth && !isDeviceLargeExtra">-->
-      <!--<div class="sp-search-wrapper ">-->
-        <!--<div class="sp-search ">-->
-          <!--<app-round-input-->
-            <!--[type]="inputRestrictionSm.type"-->
-            <!--[minWidth]="inputRestrictionSm.minWidth"-->
-            <!--[width]="inputRestrictionSm.width"-->
-            <!--[placeholder]="inputRestrictionSm.placeholder"-->
-            <!--[fieldIconPosition]="inputRestrictionSm.fieldIconPosition"-->
-            <!--[closeIcon]="inputRestrictionSm.closeIcon"-->
-            <!--[style.margin-right]="'40px'"-->
-            <!--(ontextupdate)="onSearch($event)"-->
-            <!--[selectReset$] = "resetvalue"-->
-          <!--&gt;</app-round-input>-->
-        <!--</div>-->
-        <!--<span class="cancel" (click)="cleanSearchValue()">Cancel</span>-->
-      <!--</div>-->
-    <!--</ng-container>-->
-
     <div class="hall-monitor-bottom">
       <app-pass-collection
         [hasSort]="hallMonitorCollection.hasSort"
@@ -120,8 +91,6 @@
     </div>
   </div>
   <div class="no-content-info" *ngIf="!canView">
-    <!--<h3 *ngIf="isStaff && !selectedLocation && userLoaded">No rooms</h3>-->
-    <!--<h3 *ngIf="!isStaff && userLoaded">You don't have access to this page</h3>-->
     <app-restriction-dummy></app-restriction-dummy>
   </div>
 </div>

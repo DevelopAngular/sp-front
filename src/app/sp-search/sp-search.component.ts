@@ -339,6 +339,11 @@ export class SPSearchComponent implements OnInit {
     this.onUpdate.emit(this.selectedOptions);
   }
 
+  addLocalTeacher(teacher) {
+    this.teacherCollection$.next(null);
+    this.onUpdate.emit(teacher);
+  }
+
   onBlur(event) {
     // console.log(event);
     // this.students = null;
