@@ -10,10 +10,22 @@
     <div *ngIf="selected" class="selected-icon-wrapper">
       <img class="selected-icon" [src]="'./assets/Check (Navy).svg' | resolveAsset" alt="ICON">
     </div>
-    <div class="title-bar">
-      <div class="title" [style.font-size]="pinnable.title.length > 13 && pinnable.type === 'category' ? '12px' : '14px'">
-        {{pinnable.title}}
+    <div class="ds-flex-center-center ds-w-100 ds-border-box ds-px-10 ds-mt-5">
+      <div *ngIf="pinnable.title.length > 14 && pinnable.type === 'location' || pinnable.title.length > 10 && pinnable.type === 'category'; else old" class="title-bar" #title>
+        <div class="title"
+             (mouseover)="onHover($event, title)"
+             (mouseleave)="onLeave($event)"
+        >
+          {{pinnable.title}}
+        </div>
       </div>
+      <ng-template #old>
+        <div class="title-bar" style="flex: none" #title>
+          <div class="title" style="text-align: center; position: static;">
+            {{pinnable.title}}
+          </div>
+        </div>
+      </ng-template>
       <img *ngIf="pinnable.type === 'category'" class="category-icon" [src]="'./assets/Chevron Right (White).svg' | resolveAsset" alt="ARROW">
     </div>
     <div *ngIf="restricted && !forStaff" class="overlay-container">
