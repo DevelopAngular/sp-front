@@ -143,10 +143,12 @@ export class RequestCardComponent implements OnInit {
 
   get isFutureOrNowTeachers() {
       const to = this.formState.data.direction.to;
-      return to && (!this.formState.forLater && to.request_mode === 'all_teachers_in_room' || to.request_mode === 'specific_teachers' ||
-        (to.request_mode === 'teacher_in_room' && to.teachers.length === 1)) ||
+      if ((!this.formState.forLater && to.request_mode !== 'any_teacher') || (this.formState.forLater && to.scheduling_request_mode !== 'any_teacher') ) {
+        return to && (!this.formState.forLater && to.request_mode === 'all_teachers_in_room' || to.request_mode === 'specific_teachers' ||
+          (to.request_mode === 'teacher_in_room' && to.teachers.length === 1)) ||
           (this.formState.forLater && to.scheduling_request_mode === 'all_teachers_in_room' || to.scheduling_request_mode === 'specific_teachers' ||
-          to.scheduling_request_mode === 'teacher_in_room' && to.teachers.length === 1);
+            to.scheduling_request_mode === 'teacher_in_room' && to.teachers.length === 1);
+      }
   }
 
   generateTeachersToRequest() {
@@ -165,7 +167,7 @@ export class RequestCardComponent implements OnInit {
           } else if (to.request_mode === 'specific_teachers') {
               this.nowTeachers = [this.request.teacher];
           } else if (to.request_mode === 'teacher_in_room' && to.teachers.length === 1) {
-            this.nowTeachers = to.teachers;
+            this.nowTeachers = [this.request.teacher];
           }
       } else {
           if (to.scheduling_request_mode === 'all_teachers_in_room') {
@@ -181,7 +183,7 @@ export class RequestCardComponent implements OnInit {
           } else if (to.scheduling_request_mode === 'specific_teachers' && this.request.destination.scheduling_request_teachers.length > 1) {
             this.futureTeachers = [this.request.teacher];
           } else if (to.scheduling_request_mode === 'teacher_in_room' && to.teachers.length === 1) {
-            this.futureTeachers = to.teachers;
+            this.futureTeachers = [this.request.teacher];
           }
       }
   }

@@ -88,6 +88,8 @@ export class RestrictedTargetComponent implements OnInit {
 
   get localSearch() {
     return (this.formState.forLater && this.formState.data.direction.to.scheduling_request_mode === 'teacher_in_room') ||
+      (this.formState.forLater && this.formState.data.direction.to.scheduling_request_mode === 'specific_teachers') ||
+      (!this.formState.forLater && this.formState.data.direction.to.request_mode === 'specific_teachers') ||
         (!this.formState.forLater && this.formState.data.direction.to.request_mode === 'teacher_in_room');
   }
 
