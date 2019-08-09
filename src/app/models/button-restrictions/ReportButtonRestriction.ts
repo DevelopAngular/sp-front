@@ -1,5 +1,5 @@
 export class ReportButtonRestriction {
-  gradient = '#DA2370,#FB434A';
+  gradient = '#DA2370, #FB434A';
   cursor = 'pointer';
   hoverColor = '#DA2370';
   minWidth = '185px';

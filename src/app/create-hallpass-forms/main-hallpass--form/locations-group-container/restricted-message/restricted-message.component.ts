@@ -65,7 +65,7 @@ export class RestrictedMessageComponent implements OnInit {
     const to = this.formState.data.direction.to;
     if (!this.formState.forLater && to.request_mode === 'specific_teachers' && to.request_teachers.length === 1) {
       return to.request_teachers;
-    } else if (!this.formState.forLater && to.request_mode === 'all_teachers_in_room' || !this.formState.forLater && to.request_mode === 'teacher_in_room') {
+    } else if (!this.formState.forLater && to.request_mode === 'all_teachers_in_room' || (!this.formState.forLater && this.teachersLength === 1)) {
         if (to.request_send_origin_teachers && to.request_send_destination_teachers) {
           return [...this.formState.data.direction.from.teachers, ...this.formState.data.direction.to.teachers];
         } else if (to.request_send_origin_teachers) {
@@ -76,7 +76,7 @@ export class RestrictedMessageComponent implements OnInit {
     }
     if (this.formState.forLater && to.scheduling_request_mode === 'specific_teachers' && to.scheduling_request_teachers.length === 1) {
       return to.scheduling_request_teachers;
-    } else if (this.formState.forLater && to.scheduling_request_mode === 'all_teachers_in_room' || this.formState.forLater && to.scheduling_request_mode === 'teacher_in_room') {
+    } else if (this.formState.forLater && to.scheduling_request_mode === 'all_teachers_in_room' || (this.formState.forLater && this.teachersLength === 1)) {
         if (to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
           return [...this.formState.data.direction.from.teachers, ...this.formState.data.direction.to.teachers];
         } else if (to.scheduling_request_send_origin_teachers) {
@@ -86,6 +86,29 @@ export class RestrictedMessageComponent implements OnInit {
         }
     }
     return [this.teacher];
+  }
+
+  get teachersLength() {
+    const to = this.formState.data.direction.to;
+    const from = this.formState.data.direction.from;
+    if (to.request_mode === 'teacher_in_room') {
+      if (to.request_send_origin_teachers && !to.request_send_destination_teachers) {
+        return from.teachers.length;
+      } else if (!to.request_send_origin_teachers && to.request_send_destination_teachers) {
+        return to.teachers.length;
+      } else if (to.request_send_origin_teachers && to.request_send_destination_teachers) {
+        return to.teachers.length + from.teachers.length;
+      }
+    }
+    if (to.scheduling_request_mode === 'teacher_in_room') {
+      if (to.scheduling_request_send_origin_teachers && !to.scheduling_request_send_destination_teachers) {
+        return from.teachers.length;
+      } else if (!to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
+        return to.teachers.length;
+      } else if (to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
+        return to.teachers.length + from.teachers.length;
+      }
+    }
   }
 
   get filteredTeachers() {
@@ -99,9 +122,6 @@ export class RestrictedMessageComponent implements OnInit {
     }
 
     this.frameMotion$ = this.formService.getFrameMotionDirection();
-    // setTimeout(() => {
-    //     this.messageBox.nativeElement.focus();
-    // }, 50);
     this.message = new FormControl(this.formState.data.message);
     this.fromLocation = this.formState.data.direction.from;
     this.toLocation = this.formState.data.direction.to;
@@ -138,11 +158,8 @@ export class RestrictedMessageComponent implements OnInit {
 
   sendRequest() {
     this.formService.setFrameMotionDirection('forward');
-    // this.headerTransition['rest-mes-header'] = false;
-    // this.headerTransition['rest-mes-header_animation-back'] = true;
     setTimeout(() => {
       this.resultMessage.emit(this.message.value);
-      // this.formService.setFrameMotionDirection('back');
     }, 100);
   }
 
