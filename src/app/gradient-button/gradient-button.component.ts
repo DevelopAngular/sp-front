@@ -204,14 +204,6 @@ export class GradientButtonComponent implements OnInit {
         const rgbString = hexColors.map(c => parseInt(c, 16)).join(', ');
         return this.sanitizer.bypassSecurityTrustStyle(this.hovered ?
             `0px 1px 10px rgba(${rgbString}, 0.2)` : `0px 1px 10px rgba(${rgbString}, 0.1)`);
-
-      // if (this.hovered && !this.disabled) {
-      //   return this.sanitizer.bypassSecurityTrustStyle(' 0px 1px 10px rgba(0, 180, 118, 0.2)');
-      // } else if (this.buttonDown && !this.disabled) {
-      //   return this.sanitizer.bypassSecurityTrustStyle('0px 1px 10px rgba(0, 180, 118, 0.19758)');
-      // } else {
-      //   return this.sanitizer.bypassSecurityTrustStyle('0px 1px 10px rgba(0, 180, 118, 0.1)');
-      // }
     } else {
       return 'none';
     }

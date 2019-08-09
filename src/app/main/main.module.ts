@@ -15,7 +15,6 @@ import {
   MatSidenavModule
 } from '@angular/material';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
-import { ContainerCardComponent } from '../container-card/container-card.component';
 import { FavoriteFormComponent } from '../favorite-form/favorite-form.component';
 import { HallMonitorComponent } from '../hall-monitor/hall-monitor.component';
 import { MainHallPassFormComponent } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
@@ -94,7 +93,6 @@ import {KioskModeComponent} from '../kiosk-mode/kiosk-mode.component';
     InvitationCardComponent,
     LocationCellComponent,
     LocationPickerComponent,
-    ContainerCardComponent,
     MainPageComponent,
     FromWhereComponent,
     ToWhereComponent,

@@ -140,7 +140,7 @@ export class FolderComponent implements OnInit {
                 selectedRoomsInFolder: this.selectedRooms,
                 roomsInFolderLoaded: true,
                 selectedRoomToEdit: this.selectedRoomToEdit,
-                roomsToDelete: this.roomsToDelete
+                roomsToDelete: this.roomsToDeletet
               },
               buttonState: this.folderValidButtons
             });
