@@ -28,7 +28,7 @@ export type RoundInputType = 'text' | 'multilocation' | 'multiuser' |  'dates';
   styleUrls: ['./round-input.component.scss'],
   exportAs: 'roundInputRef'
 })
-export class RoundInputComponent implements OnInit, OnChanges {
+export class RoundInputComponent implements OnInit {
 
   @ViewChild('input') input: ElementRef;
 
@@ -128,28 +128,10 @@ export class RoundInputComponent implements OnInit, OnChanges {
     }
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (this.input && this.focused) {
-      this.focusAction(true);
-      this.focus();
-    }
-  }
-
   handleError() {
     if (this.selfSearch && !this.endpoint) {
       throw Error('\n \n SP Error => \n ---------------------- \n Please provide an api endpoint for search! \n');
     }
-  }
-
-  focus() {
-    this.locationsService.isFocused.subscribe( focused => {
-      if (focused) {
-        this.input.nativeElement.focus();
-      } else {
-        this.input.nativeElement.blur();
-      }
-    });
-
   }
 
   focusAction(selected: boolean) {

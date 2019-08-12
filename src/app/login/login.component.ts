@@ -102,4 +102,10 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     this.destroyer$.next(null);
     this.destroyer$.complete();
   }
+
+  /*Scroll hack for ios safari*/
+
+  preventTouch($event) {
+    $event.preventDefault();
+  }
 }
