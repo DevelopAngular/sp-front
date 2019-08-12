@@ -6,6 +6,7 @@ import {UserService} from '../../../../services/user.service';
 import {Observable, of, timer} from 'rxjs';
 import {finalize, publish, publishReplay, refCount, switchMap} from 'rxjs/operators';
 import {DomSanitizer} from '@angular/platform-browser';
+import {LocationsService} from '../../../../services/locations.service';
 
 @Component({
   selector: 'app-groups-step1',
@@ -31,6 +32,7 @@ export class GroupsStep1Component implements OnInit {
 
   constructor(
     private userService: UserService,
+    private locationService: LocationsService,
     public sanitizer: DomSanitizer
 
   ) { }
@@ -142,8 +144,6 @@ export class GroupsStep1Component implements OnInit {
     } else {
       this.stateChangeEvent.emit('exit');
     }
-
-
   }
 }
 

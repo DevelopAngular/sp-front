@@ -354,7 +354,6 @@ export class SPSearchComponent implements OnInit {
     if (this.chipsMode) {
       this.inputField = false;
     }
-    this.input.focus();
     this.students = of([]).toPromise();
     this.inputValue$.next('');
     this.onSearch('');

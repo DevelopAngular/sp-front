@@ -33,13 +33,19 @@ window.waitForAppLoaded = function() {
 
   var preloaderRef = document.getElementById('preloaderRef');
   var preloaderSvg = document.getElementById('preloaderSvg');
+
+  if (window.safari) {
+  var filterShadowRef = document.getElementById('filterShadowRef');
+      filterShadowRef.setAttribute('filter', `url(${window.location.href}#dropshadow)`)
+  }
+
   var arrowRef = document.querySelector('#arrow');
   var preloaderVisibility = false;
   var percentDisplay = document.querySelector('.percent-display');
 
   var timerId;
 
-  timerId = setInterval(() => {
+  timerId = setInterval(function() {
     if (preloaderSvg && window.preloader.visibility) {
       window.preloader.opacity = 1;
       preloaderVisibility = true;
@@ -58,20 +64,19 @@ window.waitForAppLoaded = function() {
         preloaderSvg.style.strokeDashoffset = window.preloader.n;
       }
     } else {
+
       window.preloader.n = 0;
       window.preloader.percent = 100;
       preloaderSvg.style.strokeDashoffset = window.preloader.n;
-      if (+preloaderSvg.style.strokeDashoffset === 0) {
-          percentDisplay.textContent = `Loading ${window.preloader.percent} %`;
-          arrowRef.style.fill = '#04CD33';
-      }
+      percentDisplay.textContent = `Loading ${window.preloader.percent} %`;
+      arrowRef.style.fill = '#04CD33';
 
       clearInterval(timerId);
 
-      setTimeout(() => {
+      setTimeout(function() {
         preloaderRef.style.opacity = '0';
       }, 1000);
-      setTimeout(() => {
+      setTimeout(function() {
         window.preloader.n = 200;
         window.preloader.percent = 0;
         window.preloader.opacity = 0;
@@ -86,7 +91,7 @@ window.waitForAppLoaded = function() {
 }
 
 window.appLoaded = function(timeout = 100) {
-  const timerId = setInterval(() => {
+  const timerId = setInterval(function() {
 
     if (window.preloader) {
       window.preloader.visibility = false;
