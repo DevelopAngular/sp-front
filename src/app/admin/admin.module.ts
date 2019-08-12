@@ -33,7 +33,6 @@ import { MySchoolComponent } from './my-school/my-school.component';
 import { RoomsSetUpComponent } from './pass-config/rooms-set-up/rooms-set-up.component';
 import { SchoolButtonComponent } from './my-school/school-button/school-button.component';
 import { AdminCardButtonComponent } from './accounts/admin-card-button/admin-card-button.component';
-import { VirtualScrollComponent } from './virtual-scroll/virtual-scroll.component';
 
 
 @NgModule({
@@ -72,7 +71,6 @@ import { VirtualScrollComponent } from './virtual-scroll/virtual-scroll.componen
     RoomsSetUpComponent,
     SchoolButtonComponent,
     AdminCardButtonComponent,
-    VirtualScrollComponent
   ],
   entryComponents: [
     LinkGeneratedDialogComponent,

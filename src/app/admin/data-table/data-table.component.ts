@@ -80,9 +80,12 @@ export class GridTableDataSource extends DataSource<any> {
 
       } else if (key === 'Group(s)') {
         console.log(this._fixedColumnsPlaceholder[key]);
-        this._fixedColumnsPlaceholder[key] = '.' + this._fixedColumnsPlaceholder[key].map(g => g.title).join(this._fixedColumnsPlaceholder[key].length > 1 ? ', ' : '') + '.';
+        this._fixedColumnsPlaceholder[key] = '. ' + this._fixedColumnsPlaceholder[key].map(g => g.title).join(this._fixedColumnsPlaceholder[key].length > 1 ? ', ' : '') + ' .';
+      }  else if (key === 'Rooms') {
+        console.log(this._fixedColumnsPlaceholder[key]);
+        this._fixedColumnsPlaceholder[key] = '. ' + this._fixedColumnsPlaceholder[key].join(this._fixedColumnsPlaceholder[key].length > 1 ? ', ' : '') + ' .';
       } else {
-        this._fixedColumnsPlaceholder[key] = '.' + this._fixedColumnsPlaceholder[key] + '.';
+        this._fixedColumnsPlaceholder[key] = '. ' + this._fixedColumnsPlaceholder[key] + ' .';
       }
 
 

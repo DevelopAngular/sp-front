@@ -130,6 +130,7 @@ export class AccountsComponent implements OnInit {
         };
       }
       if (this.dataTableHeaders['Profile(s)'] || !this.dataTableHeaders['Group(s)']) {
+        delete this.dataTableHeaders['Profile(s)'];
         this.dataTableHeaders['Group(s)'] = {
           value: true,
           label: 'Group(s)',
@@ -302,7 +303,7 @@ export class AccountsComponent implements OnInit {
                 'Name': raw.display_name,
                 'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
                 'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : 'Standard',
-                'Group(s)': partOf,
+                'Group(s)': partOf.length ? partOf : [`<span style="cursor: not-allowed; color: #999999;">No profile</span>`]
             };
             for (const key in rawObj) {
               if (!this.dataTableHeaders[key]) {
@@ -315,11 +316,22 @@ export class AccountsComponent implements OnInit {
               }
             }
 
-            const dataSet = {
-              dataIndex: index,
-            }
             const record = this.wrapToHtml(rawObj, 'span') as {[key: string]: SafeHtml; _data: any};
-
+            if (+raw.id === +this.user.id) {
+              record['Name'] = this.wrapToHtml(`
+                ${raw.display_name} <span style="
+                position: absolute;
+                margin-left: 10px;
+                display: inline-block;
+                width: 50px;
+                height: 20px;
+                background-color: rgba(0, 180, 118, .6);
+                color: #ffffff;
+                text-align: center;
+                vertical-align: middle;
+                line-height: 20px;
+                border-radius: 4px;">Me</span>`, 'span');
+            }
             Object.defineProperty(rawObj, 'id', { enumerable: false, value: raw.id });
             Object.defineProperty(rawObj, 'me', { enumerable: false, value: +raw.id === +this.user.id });
             Object.defineProperty(rawObj, '_originalUserProfile', {
