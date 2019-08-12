@@ -4,7 +4,7 @@
   height: 100%;
 }
 
-// queries for safari
+ //queries for safari
 @media not all and (min-resolution:.001dpcm) {
   @supports (-webkit-appearance:none) {
     @media all and (max-width: 425px) {
@@ -15,6 +15,15 @@
   }
 }
 
+@media screen and (max-width: 425px){
+  .container {
+    overflow: hidden;
+  }
+
+  .login {
+    height: 90%;
+  }
+}
 
 .container {
   height: 100%;
