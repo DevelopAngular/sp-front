@@ -75,10 +75,6 @@
   div.my-room-body-collections {
     width: 100%;
   }
-
-  div.my-room-wrapper{
-    height: initial;
-  }
 }
 
 @media all and (max-width: 375px) {
@@ -148,6 +144,7 @@
   //flex-direction: column;
   width: 533px;
   margin: 0 auto;
+  //height: 10000px;
 }
 
 .no-content-info {

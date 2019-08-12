@@ -10,9 +10,11 @@ import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
 import {map, switchMap} from 'rxjs/operators';
 
+import * as _ from 'lodash';
+
 declare const window;
 
-export type SearchEntity = 'schools' | 'users' | 'orgunits';
+export type SearchEntity = 'schools' | 'users' | 'orgunits' | 'local';
 
 export type selectorIndicator = '+' | '-';
 
@@ -123,6 +125,8 @@ export class SPSearchComponent implements OnInit {
   @Input() placeholder: string = 'Search students';
   @Input() type: string = 'alternative'; // Can be alternative or gsuite, endpoint will depend on that.
 
+  @Input() searchingTeachers: User[];
+
 
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
 
@@ -136,6 +140,7 @@ export class SPSearchComponent implements OnInit {
   selectedSchool;
   orgunitsCollection: GSuiteSelector[];
   orgunits: BehaviorSubject<any[]> = new BehaviorSubject(null);
+  teacherCollection$: BehaviorSubject<User[]> = new BehaviorSubject<User[]>(null);
 
   pending$: Subject<boolean> = new Subject();
   students: Promise<any[]>;
@@ -145,7 +150,6 @@ export class SPSearchComponent implements OnInit {
   pressed: boolean;
 
   constructor(
-    // private adminService: AdminService,
     private userService: UserService,
     private sanitizer: DomSanitizer,
     private httpService: HttpService,
@@ -307,6 +311,20 @@ export class SPSearchComponent implements OnInit {
           this.orgunits.next(null);
         }
         break;
+
+      case 'local':
+        if (search !== '') {
+          const filterItems = _.filter(this.searchingTeachers, (item => {
+            return (item.display_name).toLowerCase().includes(search);
+            }));
+          this.teacherCollection$.next(filterItems);
+        } else {
+          this.showDummy = false;
+          this.inputValue$.next('');
+          this.pending$.next(false);
+          this.teacherCollection$.next(null);
+        }
+
     }
   }
   selectSchool(school) {
@@ -321,6 +339,11 @@ export class SPSearchComponent implements OnInit {
     this.onUpdate.emit(this.selectedOptions);
   }
 
+  addLocalTeacher(teacher) {
+    this.teacherCollection$.next(null);
+    this.onUpdate.emit(teacher);
+  }
+
   onBlur(event) {
     // console.log(event);
     // this.students = null;
@@ -331,7 +354,6 @@ export class SPSearchComponent implements OnInit {
     if (this.chipsMode) {
       this.inputField = false;
     }
-    this.input.focus();
     this.students = of([]).toPromise();
     this.inputValue$.next('');
     this.onSearch('');

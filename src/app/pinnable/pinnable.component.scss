@@ -17,23 +17,33 @@
 }
 
 .title-bar{
-  margin-top: 5px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
+  //display: flex;
+  //flex-direction: row;
+  //justify-content: flex-end;
   position: relative;
+  overflow: hidden;
   z-index: 2;
+  //width: 85%;
+  flex: 1 1 auto;
+  height: 16px;
+  //border: 1px solid white;
 }
 
 .title {
-  font-weight: bold;
+  width: 100%;
+  overflow: hidden;
   white-space: nowrap;
+  text-decoration: none;
+  text-overflow: ellipsis;
   font-style: normal;
   font-stretch: normal;
   line-height: 1.08;
   letter-spacing: 0.3px;
-  font-size: 12px;
+  font-size: 14px;
+  position: absolute;
+  font-weight: bold;
 }
+
 
 .category-icon{
   margin-left: 5px;

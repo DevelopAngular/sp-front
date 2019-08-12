@@ -7,8 +7,6 @@ import {fromEvent} from 'rxjs';
 })
 export class SafariScrollDirective {
 
-
-
   constructor(
     public host: ElementRef,
     private renderer: Renderer2

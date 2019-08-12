@@ -1,6 +1,6 @@
 <div class="host" appSafariScroll>
   <div class="accounts-role-wrapper"  *ngIf="role !== 'g_suite'">
-    <div class="header-wrapper" [style.background-color]="darkTheme.getBackground('default')">
+    <div class="header-wrapper">
       <div class="card card__top-bar ds-flex-start-between ds-w-100">
         <div class="ds-flex-start-start ds-h-100">
 
@@ -209,7 +209,7 @@
               <app-gradient-button
                       [size]="'medium'"
                       [cursor]="'pointer'"
-                      [gradient]="'#F4F4F4,#F4F4F4'"
+                      [gradient]="'#F4F4F4, #F4F4F4'"
                       [hoverColor]="'#F4F4F4'"
                       [textColor]="'#1F194E'"
                       (buttonClick)="dataTableEditState.next(!dataTableEditState.value)">
@@ -259,7 +259,7 @@
               <app-gradient-button
                       [size]="'medium'"
                       [cursor]="'pointer'"
-                      [gradient]="'#F4F4F4,#F4F4F4'"
+                      [gradient]="'#F4F4F4, #F4F4F4'"
                       [hoverColor]="'#F4F4F4'"
                       [textColor]="'#1F194E'"
                       (buttonClick)="dataTableEditState.next(!dataTableEditState.value)">
@@ -297,6 +297,7 @@
         </div>
         <app-data-table
           class="ds-my-10"
+          [scrollableAreaName]="'Table' + role"
           [data]="userList"
           [isCheckbox]="dataTableEditState"
           [marginTopStickyHeader]="'147px'"
@@ -365,7 +366,7 @@
             </div>
             <app-gradient-button
                     [size]="'small'"
-                    [gradient]="'#022F68,#2F66AB'"
+                    [gradient]="'#022F68, #2F66AB'"
                     [hoverColor]="'#022F68'"
                     [fontSize]="'13px'"
                     [cursor]="'pointer'"

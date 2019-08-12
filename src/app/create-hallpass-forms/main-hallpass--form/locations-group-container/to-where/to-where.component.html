@@ -15,6 +15,7 @@
           <mat-grid-tile *ngFor="let room of teacherRooms">
             <app-pinnable
                     [width]="gridRestrictions.pileWidth"
+                    [height]="gridRestrictions.pileHeight"
                     [valid]="(room.location && location ? room.location.id != location.id : true)"
                     [forStaff]="isStaff"
                     [forLater]="!!date"
@@ -32,6 +33,7 @@
           <mat-grid-tile *ngFor="let pinnable of pinnables | async">
             <app-pinnable
                     [width]="gridRestrictions.pileWidth"
+                    [height]="gridRestrictions.pileHeight"
                     [valid]="(pinnable.location && location ? pinnable.location.id != location.id : true)"
                     [forStaff]="isStaff && !dialogData.kioskModeRoom"
                     [forLater]="!!date"

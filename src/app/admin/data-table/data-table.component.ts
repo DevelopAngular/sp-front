@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
-  Input, NgZone,
+  Input, NgZone, OnChanges, OnDestroy,
   OnInit,
   Output,
   ViewChild
@@ -14,7 +14,9 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {SP_ARROW_BLUE_GRAY, SP_ARROW_DOUBLE_BLUE_GRAY} from '../pdf-generator.service';
 import {CdkVirtualScrollViewport, FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';
 import * as moment from 'moment';
-import {DomSanitizer} from '@angular/platform-browser';
+import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
+import {ScrollPositionService} from '../../scroll-position.service';
+import {wrapToHtml} from '../helpers';
 
 const PAGESIZE = 50;
 const ROW_HEIGHT = 38;
@@ -73,13 +75,24 @@ export class GridTableDataSource extends DataSource<any> {
     });
 
     for (const key in this._fixedColumnsPlaceholder) {
-      if (key !== 'TT') {
-        this._fixedColumnsPlaceholder[key] = '.' + this._fixedColumnsPlaceholder[key] + '.';
-      }
-      else {
+      if (key === 'TT') {
         this._fixedColumnsPlaceholder[key] = this.domSanitizer.bypassSecurityTrustHtml(this._fixedColumnsPlaceholder[key]);
+
+      } else if (key === 'Group(s)') {
+        console.log(this._fixedColumnsPlaceholder[key]);
+        this._fixedColumnsPlaceholder[key] = '. ' + this._fixedColumnsPlaceholder[key].map(g => g.title).join(this._fixedColumnsPlaceholder[key].length > 1 ? ', ' : '') + ' .';
+      }  else if (key === 'Rooms') {
+        console.log(this._fixedColumnsPlaceholder[key]);
+        this._fixedColumnsPlaceholder[key] = '. ' + this._fixedColumnsPlaceholder[key].join(this._fixedColumnsPlaceholder[key].length > 1 ? ', ' : '') + ' .';
+      } else {
+        this._fixedColumnsPlaceholder[key] = '. ' + this._fixedColumnsPlaceholder[key] + ' .';
       }
+
+
     }
+
+    this._fixedColumnsPlaceholder = wrapToHtml.call(this, this._fixedColumnsPlaceholder, 'span') as {[key: string]: SafeHtml; _data: any};
+
 
     console.log(this._fixedColumnsPlaceholder);
 
@@ -140,8 +153,6 @@ export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy 
   }
 }
 
-
-
 @Component({
   selector: 'app-data-table',
   templateUrl: './data-table.component.html',
@@ -150,7 +161,7 @@ export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy 
   providers: [{provide: VIRTUAL_SCROLL_STRATEGY, useClass: CustomVirtualScrollStrategy}],
 
 })
-export class DataTableComponent implements OnInit {
+export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() width: string = '100%';
   @Input() height: string = 'none';
@@ -164,6 +175,7 @@ export class DataTableComponent implements OnInit {
   @Input() textHeaderColor: string = '#7F879D';
   @Input() marginTopStickyHeader: string = '-40px';
   @Input() displayedColumns: string[];
+  @Input() scrollableAreaName: string;
 
   @Output() selectedUsers: EventEmitter<any[]> = new EventEmitter();
   @Output() selectedRow: EventEmitter<any> = new EventEmitter<any>();
@@ -215,7 +227,8 @@ export class DataTableComponent implements OnInit {
   constructor(
     private _ngZone: NgZone,
     private darkTheme: DarkThemeSwitch,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    private scrollPosition: ScrollPositionService
   ) {
     this.darkMode$ = this.darkTheme.isEnabled$.asObservable();
   }
@@ -224,17 +237,35 @@ export class DataTableComponent implements OnInit {
     // console.log(this._data);
 
     this.marginTopStickyHeader = '0px';
-      if (!this.displayedColumns) {
-        this.displayedColumns = Object.keys(this._data[0]);
-      }
-      this.columnsToDisplay = this.displayedColumns.slice();
+    if (!this.displayedColumns) {
+      this.displayedColumns = Object.keys(this._data[0]);
+    }
+    this.columnsToDisplay = this.displayedColumns.slice();
     this.isCheckbox.subscribe((v) => {
       if (v) {
         this.columnsToDisplay.unshift('select');
       } else if (!v && (this.columnsToDisplay[0] === 'select')) {
         this.columnsToDisplay.shift();
+        this.selection.clear();
+        this.selectedUsers.emit([]);
       }
     });
+
+  }
+
+  ngOnChanges() {
+    if (this.scrollableAreaName && this.scrollPosition.getComponentScroll(this.scrollableAreaName)) {
+      setTimeout(() => {
+        // console.log(this.scrollPosition.getComponentScroll(this.scrollableAreaName));
+        this.viewport.scrollToOffset(this.scrollPosition.getComponentScroll(this.scrollableAreaName));
+      }, 0);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.scrollableAreaName) {
+      this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.placeholderHeight);
+    }
   }
 
   placeholderWhen(index: number, _: any) {
@@ -255,7 +286,7 @@ export class DataTableComponent implements OnInit {
       });
     } else {
       this._data.forEach(row => {
-        this.selection.select(row);
+        this.selection.select(row._data);
         row.pressed = true;
       });
     }
@@ -304,13 +335,14 @@ export class DataTableComponent implements OnInit {
     }
   }
 
-  selectedRowEmit(evt, {_data: row}) {
-    console.log(evt)
+  selectedRowEmit(evt, row) {
+    console.log(row)
     // debugger
+    const rowData = row._data;
     const target = evt.target as HTMLElement;
     if (this.isCheckbox.value && !this.isAllowedSelectRow) {
-      this.selection.toggle(row);
-      row.pressed = this.selection.isSelected(row);
+      this.selection.toggle(rowData);
+      row.pressed = this.selection.isSelected(rowData);
       this.pushOutSelected();
     } else if (target.dataset && target.dataset.profile) {
 
@@ -319,12 +351,12 @@ export class DataTableComponent implements OnInit {
         role: target.dataset.profile
       });
     } else {
-      this.selectedRow.emit(row);
+      this.selectedRow.emit(rowData);
     }
   }
 
   pushOutSelected() {
-    this.selectedUsers.emit(this.selection.selected.map(i => i._data));
+    this.selectedUsers.emit(this.selection.selected);
   }
 
   clearSelection() {

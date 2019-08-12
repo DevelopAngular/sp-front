@@ -752,7 +752,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         }
       });
   }
-z
   syncNow() {
     this.adminService.syncNow().subscribe();
       this.adminService.getGSuiteOrgs().subscribe(res => this.GSuiteOrgs = res);
@@ -787,16 +786,7 @@ z
         const rawObj = {
           'Name': raw.display_name,
           'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
-          'Rooms': (function() {
-            if (raw.assignedTo && raw.assignedTo.length) {
-              return raw.assignedTo.map((room) => {
-                 return `${room.title}`;
-              });
-            } else {
-              return `<span>No rooms assigned</span>`;
-            }
-
-          }()),
+          'Rooms': raw.assignedTo && raw.assignedTo.length ? raw.assignedTo.map(room => room.title) : [`<span style="cursor: not-allowed; color: #999999; text-decoration: none;">No rooms assigned</span>`],
           'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : 'Standard',
           'Acting on Behalf Of': raw.canActingOnBehalfOf ? raw.canActingOnBehalfOf.map((u: RepresentedUser) => {
             return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
@@ -832,7 +822,23 @@ z
           }
         }
 
-        const record = this.wrapToHtml(rawObj, 'span',) as {[key: string]: SafeHtml; _data: any};
+        const record = this.wrapToHtml(rawObj, 'span') as {[key: string]: SafeHtml; _data: any};
+
+        if (+raw.id === +this.user.id) {
+          record['Name'] = this.wrapToHtml(`
+          ${raw.display_name} <span style="
+          position: absolute;
+          margin-left: 10px;
+          display: inline-block;
+          width: 50px;
+          height: 20px;
+          background-color: rgba(0, 180, 118, .6);
+          color: #ffffff;
+          text-align: center;
+          vertical-align: middle;
+          line-height: 20px;
+          border-radius: 4px;">Me</span>`, 'span');
+        }
 
         Object.defineProperty(rawObj, 'id', { enumerable: false, value: raw.id });
         Object.defineProperty(rawObj, 'me', { enumerable: false, value: +raw.id === +this.user.id });

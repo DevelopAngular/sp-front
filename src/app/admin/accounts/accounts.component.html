@@ -48,7 +48,7 @@
         <div class="accounts-setup_buttons">
           <app-gradient-button
             [size]="'medium'"
-            [gradient]="'#FFFFFF,#139BE6'"
+            [gradient]="'#FFFFFF, #139BE6'"
             [fontWeight]="'normal'"
             (buttonClick)="goToAccountsSetup()"
           >
@@ -63,7 +63,7 @@
 
           <app-gradient-button
             [size]="'medium'"
-            [gradient]="'#FFFFFF,#00B476'"
+            [gradient]="'#FFFFFF, #00B476'"
             [fontWeight]="'normal'"
             [rightIcon]="'./assets/Chevron Right (White).svg'"
             (buttonClick)="showAccountsSetupLink()"
@@ -89,13 +89,13 @@
   </div>
 
   <div class="accounts-wrapper" *ngIf="splash !== undefined && !splash">
-      <div class="header-wrapper" [style.background-color]="darkTheme.getBackground('default')">
+      <div class="header-wrapper">
         <div class="accounts-header" [style.background-color]="darkTheme.getBackground('high', true)">
           <div class="header-content">
             <div class="header-title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">
               Accounts
               <div class="count">
-                <img width="15" height="15" [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset" alt="">
+                <!--<img width="15" height="15" [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset" alt="">-->
                 <div class="text" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">{{(accounts$ | async)?.total_count}} accounts</div>
               </div>
             </div>
@@ -137,7 +137,7 @@
                                    [style.margin-left]="'15px'"
                                    [size]="'medium'"
                                    [cursor]="'pointer'"
-                                   [gradient]="'#F4F4F4,#F4F4F4'"
+                                   [gradient]="'#F4F4F4, #F4F4F4'"
                                    [hoverColor]="'#F4F4F4'"
                                    [textColor]="'#1F194E'"
                                    (buttonClick)="dataTableEditState.next(!dataTableEditState.value)">

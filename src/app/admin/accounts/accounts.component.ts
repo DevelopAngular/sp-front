@@ -103,7 +103,7 @@ export class AccountsComponent implements OnInit {
     )
     .subscribe((op: any) => {
       console.log(op);
-      this.splash = op.setup_accounts && (!op.setup_accounts.start || !op.setup_accounts.end);
+      this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
 
     });
 
@@ -117,6 +117,11 @@ export class AccountsComponent implements OnInit {
     const headers = this.storage.getItem(`_all_columns`);
     if ( headers ) {
       this.dataTableHeaders = JSON.parse(headers);
+
+      /**
+       * Fallbacks for case if the user has old cached headers
+       * */
+
       if (!this.dataTableHeaders['Account Type']) {
         this.dataTableHeaders['Account Type'] = {
           value: true,
@@ -124,6 +129,20 @@ export class AccountsComponent implements OnInit {
             disabled: false
         };
       }
+      if (this.dataTableHeaders['Profile(s)'] || !this.dataTableHeaders['Group(s)']) {
+        delete this.dataTableHeaders['Profile(s)'];
+        this.dataTableHeaders['Group(s)'] = {
+          value: true,
+          label: 'Group(s)',
+          disabled: false
+        };
+      }
+
+      /**
+       * End
+       * */
+
+
     } else {
       this.dataTableHeaders = {
         'Name': {
@@ -280,19 +299,11 @@ export class AccountsComponent implements OnInit {
             if (raw.roles.includes('_profile_assistant')) partOf.push({title: 'Assistant', role: '_profile_assistant'});
             if (raw.roles.includes('_profile_admin')) partOf.push({title: 'Administrator', role: '_profile_admin'});
 
-            // const profiles = partOf;
-            // `<span></span>`
-            // const rawObj = {
-            //     'Name': `<span>${raw.display_name}</span>`,
-            //     'Email/Username': `<span>${(/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email}</span>`,
-            //     'Account Type': `<span>${raw.sync_types[0] === 'google' ? 'G Suite' : 'Standard'}</span>`,
-            //     'Profile(s)': `<span>${this.domSanitizer.bypassSecurityTrustHtml(profiles)}</span>`,
-            // };
             const rawObj = {
                 'Name': raw.display_name,
                 'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
                 'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : 'Standard',
-                'Group(s)': partOf,
+                'Group(s)': partOf.length ? partOf : [`<span style="cursor: not-allowed; color: #999999;">No profile</span>`]
             };
             for (const key in rawObj) {
               if (!this.dataTableHeaders[key]) {
@@ -305,11 +316,22 @@ export class AccountsComponent implements OnInit {
               }
             }
 
-            const dataSet = {
-              dataIndex: index,
-            }
             const record = this.wrapToHtml(rawObj, 'span') as {[key: string]: SafeHtml; _data: any};
-
+            if (+raw.id === +this.user.id) {
+              record['Name'] = this.wrapToHtml(`
+                ${raw.display_name} <span style="
+                position: absolute;
+                margin-left: 10px;
+                display: inline-block;
+                width: 50px;
+                height: 20px;
+                background-color: rgba(0, 180, 118, .6);
+                color: #ffffff;
+                text-align: center;
+                vertical-align: middle;
+                line-height: 20px;
+                border-radius: 4px;">Me</span>`, 'span');
+            }
             Object.defineProperty(rawObj, 'id', { enumerable: false, value: raw.id });
             Object.defineProperty(rawObj, 'me', { enumerable: false, value: +raw.id === +this.user.id });
             Object.defineProperty(rawObj, '_originalUserProfile', {

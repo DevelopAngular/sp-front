@@ -86,15 +86,40 @@ export class LocationsGroupContainerComponent implements OnInit {
   get redirectTo() {
       const to = this.FORM_STATE.data.direction.to;
       if (
-          to.request_mode === 'specific_teachers' ||
-          to.request_mode === 'all_teachers_in_room' ||
-          (this.FORM_STATE.forLater && to.scheduling_request_mode === 'specific_teachers') ||
-          (this.FORM_STATE.forLater && to.scheduling_request_mode === 'all_teachers_in_room')
+        (!this.FORM_STATE.forLater && to.request_mode === 'specific_teachers' && to.request_teachers.length === 1) ||
+        (!this.FORM_STATE.forLater && to.request_mode === 'all_teachers_in_room') ||
+        (!this.FORM_STATE.forLater && this.teachersLength === 1) ||
+          (this.FORM_STATE.forLater && to.scheduling_request_mode === 'specific_teachers' && to.scheduling_request_teachers.length === 1) ||
+          (this.FORM_STATE.forLater && to.scheduling_request_mode === 'all_teachers_in_room') ||
+          (this.FORM_STATE.forLater && this.teachersLength === 1)
       ) {
           return States.message;
       } else {
           return States.restrictedTarget;
       }
+  }
+
+  get teachersLength() {
+    const to = this.FORM_STATE.data.direction.to;
+    const from = this.FORM_STATE.data.direction.from;
+    if (to.request_mode === 'teacher_in_room') {
+      if (to.request_send_origin_teachers && !to.request_send_destination_teachers) {
+        return from.teachers.length;
+      } else if (!to.request_send_origin_teachers && to.request_send_destination_teachers) {
+        return to.teachers.length;
+      } else if (to.request_send_origin_teachers && to.request_send_destination_teachers) {
+        return to.teachers.length + from.teachers.length;
+      }
+    }
+    if (to.scheduling_request_mode === 'teacher_in_room') {
+      if (to.scheduling_request_send_origin_teachers && !to.scheduling_request_send_destination_teachers) {
+        return from.teachers.length;
+      } else if (!to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
+        return to.teachers.length;
+      } else if (to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
+        return to.teachers.length + from.teachers.length;
+      }
+    }
   }
 
   ngOnInit() {
@@ -170,8 +195,8 @@ export class LocationsGroupContainerComponent implements OnInit {
         const restricted = ((this.pinnable.location.restricted && !this.showDate) || (this.pinnable.location.scheduling_restricted && !!this.showDate));
         if (!this.isStaff && restricted && pinnable.location) {
             this.FORM_STATE.previousState = this.FORM_STATE.state;
-            return this.FORM_STATE.state = States.restrictedTarget;
-            // return this.FORM_STATE.state = this.redirectTo;
+            // return this.FORM_STATE.state = States.restrictedTarget;
+            return this.FORM_STATE.state = this.redirectTo;
         } else {
            return this.postComposetData();
         }

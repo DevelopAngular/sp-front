@@ -22,9 +22,9 @@
   </app-display-card>
 </div>
 
-<div class="passes-wrapper" [ngClass]="isStaff ? 'passes-wrapper-margin-top' : '' " [@PassesSlideTopBottom] *ngIf="!isInboxClicked && user && this.screenService.isDeviceMid">
-  <h1 class="passes-heading" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">Passes</h1>
+<div class="passes-wrapper" [ngClass]="isStaff ? 'passes-wrapper-margin-top scroll' : '' " [@PassesSlideTopBottom] *ngIf="!isInboxClicked && user && this.screenService.isDeviceMid" #scrollableArea>
   <div class="main-page-left">
+    <h1 class="passes-heading" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">Passes</h1>
     <div class="current-pass">
       <div *ngIf="(isActivePass$ | async) || (isActiveRequest$ | async); else newPass;" class="center">
         <app-inline-request-card *ngIf="(isActiveRequest$ | async) && !(isActivePass$ | async)" [request]="currentRequest$ | async"></app-inline-request-card>
@@ -85,9 +85,8 @@
   </div>
 </div>
 
-
 <div class="passes-wrapper" [ngClass]="{'scroll': isStaff}" *ngIf="(user && !this.screenService.isDeviceSmall && !this.screenService.isDeviceMid)
-|| (user && this.screenService.isIpadWidth)">
+|| (user && this.screenService.isIpadWidth)" #scrollableArea>
   <h1 class="passes-heading">Passes</h1>
   <div class="main-page-left">
     <div class="current-pass">
@@ -136,44 +135,44 @@
       <app-pass-collection [maxHeight]="'100%'" [fromPast]="true" [forStaff]="isStaff" [style.width]="'460px'" [passProvider]="pastPasses" [title]="'Expired Passes'" [icon]="'./assets/Expired (Navy).svg'" [columns]="3"></app-pass-collection>
     </div>
   </div>
-    <div class="main-page-right" [@OpenOrCloseRequests]="(showInboxAnimated() | async) ? 'Opened' : 'Closed'">
-      <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'29px'" [icon]="(isStaff?'./assets/Inbox (Navy).svg':'')" [inbox]="true">
-        <div class="inbox-content">
-          <div class="requests-or-invitations">
-            <app-pass-collection
-                    [forStaff]="isStaff"
-                    [forFuture]="true"
-                    [isActive]="false"
-                    [style.width]="'301px'"
-                    [passProvider]="isStaff?receivedRequests:sentRequests"
-                    [title]="isStaff?'Received':'Sent'"
-                    [icon]="'./assets/' +(isStaff?'Received':'Lock') +' (Navy).svg'"
-                    [columns]="2"
-            ></app-pass-collection>
-            <!--<div *ngIf="isStaff ? (receivedRequests.length$ | async) : (sentRequests.length$ | async)" class="text">No requests sent or received</div>-->
-          </div>
-          <div class="requests-or-invitations">
-            <app-pass-collection
-                    [forStaff]="isStaff"
-                    [forFuture]="true"
-                    [isActive]="false"
-                    [style.width]="'301px'"
-                    [passProvider]="isStaff?sentRequests:receivedRequests"
-                    [title]="isStaff?'Sent':'Received'"
-                    [icon]="'./assets/' +(isStaff?'Lock':'Received') +' (Navy).svg'"
-                    [columns]="2"
-            ></app-pass-collection>
-            <!--<div *ngIf="isStaff ? (sentRequests.length$ | async) : (receivedRequests.length$ | async)" class="text">No requests sent or received</div>-->
-          </div>
-          <!--<div *ngIf="">PPC</div>-->
-          <!-- No pass requests -->
-          <div *ngIf="(inboxHasItems | async) === false" class="empty-container" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
-            <img class="empty-inbox-svg" [src]="'./assets/emptyStates/emptyInbox.svg' | resolveAsset" alt="empty-svg">
-            <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">All Caught Up</div>
-            <div class="text ds-empty-text-info">No pass requests sent or received</div>
-          </div>
-          <!--<pre>{{!(inboxHasItems | async) | json}}</pre>-->
+  <div class="main-page-right" [@OpenOrCloseRequests]="(showInboxAnimated() | async) ? 'Opened' : 'Closed'">
+    <app-display-card [title]="'Requests'" [hasDivider]="false" [fontSize]="'29px'" [icon]="(isStaff?'./assets/Inbox (Navy).svg':'')" [inbox]="true">
+      <div class="inbox-content">
+        <div class="requests-or-invitations">
+          <app-pass-collection
+                  [forStaff]="isStaff"
+                  [forFuture]="true"
+                  [isActive]="false"
+                  [style.width]="'301px'"
+                  [passProvider]="isStaff?receivedRequests:sentRequests"
+                  [title]="isStaff?'Received':'Sent'"
+                  [icon]="'./assets/' +(isStaff?'Received':'Lock') +' (Navy).svg'"
+                  [columns]="2"
+          ></app-pass-collection>
+          <!--<div *ngIf="isStaff ? (receivedRequests.length$ | async) : (sentRequests.length$ | async)" class="text">No requests sent or received</div>-->
         </div>
-      </app-display-card>
-    </div>
+        <div class="requests-or-invitations">
+          <app-pass-collection
+                  [forStaff]="isStaff"
+                  [forFuture]="true"
+                  [isActive]="false"
+                  [style.width]="'301px'"
+                  [passProvider]="isStaff?sentRequests:receivedRequests"
+                  [title]="isStaff?'Sent':'Received'"
+                  [icon]="'./assets/' +(isStaff?'Lock':'Received') +' (Navy).svg'"
+                  [columns]="2"
+          ></app-pass-collection>
+          <!--<div *ngIf="isStaff ? (sentRequests.length$ | async) : (receivedRequests.length$ | async)" class="text">No requests sent or received</div>-->
+        </div>
+        <!--<div *ngIf="">PPC</div>-->
+        <!-- No pass requests -->
+        <div *ngIf="(inboxHasItems | async) === false" class="empty-container" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
+          <img class="empty-inbox-svg" [src]="'./assets/emptyStates/emptyInbox.svg' | resolveAsset" alt="empty-svg">
+          <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">All Caught Up</div>
+          <div class="text ds-empty-text-info">No pass requests sent or received</div>
+        </div>
+        <!--<pre>{{!(inboxHasItems | async) | json}}</pre>-->
+      </div>
+    </app-display-card>
+  </div>
 </div>

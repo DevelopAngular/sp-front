@@ -33,15 +33,17 @@
     height: 40px;
     box-sizing: border-box;
     border-radius: 20px;
-    //box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
     font-size: 16px;
     color: $navy;
     caret-color: auto;
     display: block;
-    cursor: default;
+    //cursor: default;
     &::placeholder {
       color: #999999;
-  }
+    }
+    //&:focus {
+    //  cursor: text;
+    //}
 }
 .input-focus-wrapper {
   border: 1px solid transparent;

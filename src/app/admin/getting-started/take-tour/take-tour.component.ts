@@ -1,9 +1,7 @@
-import {Component, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {AdminService} from '../../../services/admin.service';
 import {DarkThemeSwitch} from '../../../dark-theme-switch';
-import {switchMap} from 'rxjs/operators';
-import {forkJoin, of} from 'rxjs';
 import {GettingStartedProgressService} from '../../getting-started-progress.service';
 
 declare const window;
@@ -28,15 +26,25 @@ export class TakeTourComponent implements OnInit {
   ngOnInit() {
     this.gsProgress.onboardProgress$.subscribe((op: any) => {
       if (op.take_a_tour) {
-        if (!op.take_a_tour.create_accounts) {
+        if (!op.take_a_tour.create_accounts.value) {
           this.adminService.updateOnboardProgress('take_a_tour:create_accounts').subscribe();
+        } else {
+          this.student = {
+            name: op.take_a_tour.create_accounts.data.student.display_name,
+            username: op.take_a_tour.create_accounts.data.student.username,
+            password:  op.take_a_tour.create_accounts.data.student_password
+          };
+          this.teacher = {
+            name: op.take_a_tour.create_accounts.data.teacher.display_name,
+            username: op.take_a_tour.create_accounts.data.teacher.username,
+            password:  op.take_a_tour.create_accounts.data.teacher_password
+          };
         }
-        if (!op.take_a_tour.end) {
+        if (!op.take_a_tour.end.value) {
           this.adminService.updateOnboardProgress('take_a_tour:end').subscribe();
         }
       }
     });
-
   }
 
   openUrl(url) {

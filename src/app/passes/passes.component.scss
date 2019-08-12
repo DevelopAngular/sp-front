@@ -4,9 +4,17 @@
   div.current-pass-card {
     max-width: 300px;
   }
+
+  div.pass-buttons{
+    grid-template-columns: 143px 143px !important;
+  }
 }
 
 @media all and (max-width: 425px) {
+  div.inbox-content {
+    width: 93%;
+  }
+
   div.current-pass,
   div.future-passes,
   div.past-passes,
@@ -14,14 +22,17 @@
     width: 100%;
   }
 
-  .pass-buttons{
+  div.pass-buttons{
     align-self: center;
+    display: grid;
+    grid-template-columns: 157px 157px;
+    gap: 15px 15px;
+    width: initial;
   }
 
   .requests-title,
   h1.passes-heading {
-    display: flex;
-    justify-content: center;
+    display: block;
     color: #1F195E;
     margin-top: -15px;
   }
@@ -34,13 +45,6 @@
     width: 100%;
   }
 
-  div.passes-wrapper {
-    height: unset;
-  }
-
-  div.passes-wrapper {
-    flex-direction: column;
-  }
 }
 
 @media all and (max-width: 768px){

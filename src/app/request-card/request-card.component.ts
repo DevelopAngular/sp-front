@@ -14,12 +14,12 @@ import {InvitationCardComponent} from '../invitation-card/invitation-card.compon
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
-import * as _ from 'lodash';
 import {RequestsService} from '../services/requests.service';
 import {NextStep} from '../animations';
 import {BehaviorSubject, of} from 'rxjs';
 
 import * as moment from 'moment';
+import * as _ from 'lodash';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 
@@ -83,9 +83,7 @@ export class RequestCardComponent implements OnInit {
   get teacherNames() {
       const destination = this.request.destination;
       const origin = this.request.origin;
-      if (destination.scheduling_request_mode === 'specific_teachers') {
-          return destination.scheduling_request_teachers;
-      } else if (destination.scheduling_request_mode === 'all_teachers_in_room') {
+      if (destination.scheduling_request_mode === 'all_teachers_in_room') {
           if (destination.scheduling_request_send_origin_teachers && destination.scheduling_request_send_destination_teachers) {
               return [...destination.teachers, ...origin.teachers];
           } else if (destination.scheduling_request_send_origin_teachers) {
@@ -95,6 +93,10 @@ export class RequestCardComponent implements OnInit {
           }
       }
       return [this.request.teacher];
+  }
+
+  get filteredTeachers() {
+    return _.uniqBy(this.teacherNames, 'id');
   }
 
   ngOnInit() {
@@ -141,8 +143,12 @@ export class RequestCardComponent implements OnInit {
 
   get isFutureOrNowTeachers() {
       const to = this.formState.data.direction.to;
-      return to && (!this.formState.forLater && to.request_mode === 'all_teachers_in_room' || to.request_mode === 'specific_teachers') ||
-          (this.formState.forLater && to.scheduling_request_mode === 'all_teachers_in_room' || to.scheduling_request_mode === 'specific_teachers');
+      if ((!this.formState.forLater && to.request_mode !== 'any_teacher') || (this.formState.forLater && to.scheduling_request_mode !== 'any_teacher') ) {
+        return to && (!this.formState.forLater && to.request_mode === 'all_teachers_in_room' || to.request_mode === 'specific_teachers' ||
+          (to.request_mode === 'teacher_in_room' && to.teachers.length === 1)) ||
+          (this.formState.forLater && to.scheduling_request_mode === 'all_teachers_in_room' || to.scheduling_request_mode === 'specific_teachers' ||
+            to.scheduling_request_mode === 'teacher_in_room' && to.teachers.length === 1);
+      }
   }
 
   generateTeachersToRequest() {
@@ -156,8 +162,12 @@ export class RequestCardComponent implements OnInit {
               } else if (to.request_send_origin_teachers) {
                   this.nowTeachers = this.formState.data.direction.from.teachers;
               }
+          } else if (to.request_mode === 'specific_teachers' && this.request.destination.request_teachers.length === 1) {
+            this.nowTeachers = to.request_teachers;
           } else if (to.request_mode === 'specific_teachers') {
-              this.nowTeachers = this.formState.data.direction.to.request_teachers;
+              this.nowTeachers = [this.request.teacher];
+          } else if (to.request_mode === 'teacher_in_room' && to.teachers.length === 1) {
+            this.nowTeachers = [this.request.teacher];
           }
       } else {
           if (to.scheduling_request_mode === 'all_teachers_in_room') {
@@ -168,8 +178,12 @@ export class RequestCardComponent implements OnInit {
               } else if (to.scheduling_request_send_destination_teachers) {
                   this.futureTeachers = this.formState.data.direction.to.teachers;
               }
-          } else if (to.scheduling_request_mode === 'specific_teachers') {
-              this.futureTeachers = this.formState.data.direction.to.scheduling_request_teachers;
+          } else if (to.scheduling_request_mode === 'specific_teachers' && this.request.destination.scheduling_request_teachers.length === 1) {
+              this.futureTeachers = this.request.destination.scheduling_request_teachers;
+          } else if (to.scheduling_request_mode === 'specific_teachers' && this.request.destination.scheduling_request_teachers.length > 1) {
+            this.futureTeachers = [this.request.teacher];
+          } else if (to.scheduling_request_mode === 'teacher_in_room' && to.teachers.length === 1) {
+            this.futureTeachers = [this.request.teacher];
           }
       }
   }
@@ -197,11 +211,12 @@ export class RequestCardComponent implements OnInit {
           'travel_type' : this.selectedTravelType,
           'duration' : this.selectedDuration*60,
         };
+
       if (this.isFutureOrNowTeachers) {
           if (this.forFuture) {
-              body.teachers = this.futureTeachers.map(t => t.id);
+              body.teachers = _.uniq(this.futureTeachers.map(t => t.id));
           } else {
-              body.teachers = this.nowTeachers.map(t => t.id);
+              body.teachers = _.uniq(this.nowTeachers.map(t => t.id));
           }
       } else {
           body.teacher = this.request.teacher.id;
