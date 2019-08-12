@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/apple-touch-icon.png">
 
-  <meta name="viewport" content="initial-scale=1.0, maximum-scales=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Smartpass">
   <meta name="mobile-web-app-capable" content="yes" />
@@ -45,29 +45,32 @@
 
 </head>
 <body>
+
 <div id="preloaderRef"
      class="preloader-container"
-     style="display: none;">
+     >
   <div>
     <svg
       id="preloaderSvg"
       viewBox="0 0 100 100"
       stroke-dasharray="200"
       class="preloader scale">
-      <filter id="dropshadow" height="130%">
-        <feGaussianBlur in="SourceAlpha" stdDeviation="1"/> <!-- stdDeviation is how much to blur -->
-        <feOffset dx="0" dy="0" result="offsetblur"/> <!-- how much to offset -->
-        <feComponentTransfer>
-          <feFuncA type="linear" slope="0.2"/> <!-- slope is the opacity of the shadow -->
-        </feComponentTransfer>
-        <feMerge>
-          <feMergeNode/> <!-- this contains the offset blurred image -->
-          <feMergeNode in="SourceGraphic"/> <!-- this contains the element that the filter is applied to -->
-        </feMerge>
-      </filter>
-      <circle r="30" cx="50" cy="50" style="filter:url(#dropshadow)">
-
-      </circle>
+      <defs>
+        <filter id="dropshadow" height="130%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="1"></feGaussianBlur> <!-- stdDeviation is how much to blur -->
+          <feOffset dx="0" dy="0" result="offsetblur"></feOffset> <!-- how much to offset -->
+          <feComponentTransfer>
+            <feFuncA type="linear" slope="0.2"></feFuncA> <!-- slope is the opacity of the shadow -->
+          </feComponentTransfer>
+          <feMerge>
+            <feMergeNode></feMergeNode> <!-- this contains the offset blurred image -->
+            <feMergeNode in="SourceGraphic"></feMergeNode> <!-- this contains the element that the filter is applied to -->
+          </feMerge>
+        </filter>
+      </defs>
+      <g id="filterShadowRef" filter="url(#dropshadow)">
+        <circle r="30" cx="50" cy="50"></circle>
+      </g>
       <g>
         <svg width="64" height="33" x="20" y="35" viewBox="0 0 150 160">
           <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
