@@ -26,7 +26,8 @@
     <div class="input-container" [style.width]="containerWidth">
       <input
              [attr.disabled]="disabled ? '' : null"
-             [style.background-color]="isFocus ? 'white' : (hovered ? '#EDEDED' : '#F7F7F7')"
+             [style.background-color]="isFocus && inp.focused ? 'white' : (hovered ? '#EDEDED' : '#F7F7F7')"
+             tabindex="1"
              [style.width]="width"
              [style.height]="height"
              [style.text-align]="textAlign"
@@ -35,7 +36,7 @@
              [formControl]="controlName"
              [type]="input_type"
              [class]="input_class"
-             (focus)="updateFocus(inp); controlName.markAsUntouched()"
+             (focus)="updateFocus(inp); controlName.markAsUntouched(); inp.focused = true"
              (blur)=" onBlur(inp.value)"
              (mouseover)="hovered = true"
              (mouseleave)="hovered = false"
