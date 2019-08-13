@@ -594,7 +594,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   showColumnSettings(evt: Event) {
-    this.matDialog.open(ColumnsConfigDialogComponent, {
+    UNANIMATED_CONTAINER.next(true);
+    const dialogRef = this.matDialog.open(ColumnsConfigDialogComponent, {
       panelClass: 'consent-dialog-container',
       backdropClass: 'invis-backdrop',
       data: {
@@ -602,6 +603,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         'form': this.dataTableHeaders,
         'role': this.role
        }
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      UNANIMATED_CONTAINER.next(false);
     });
   }
 
