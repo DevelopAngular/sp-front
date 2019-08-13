@@ -34,11 +34,6 @@ window.waitForAppLoaded = function() {
   var preloaderRef = document.getElementById('preloaderRef');
   var preloaderSvg = document.getElementById('preloaderSvg');
 
-  if (window.safari) {
-  var filterShadowRef = document.getElementById('filterShadowRef');
-      filterShadowRef.setAttribute('filter', `url(${window.location.href}#dropshadow)`)
-  }
-
   var arrowRef = document.querySelector('#arrow');
   var preloaderVisibility = false;
   var percentDisplay = document.querySelector('.percent-display');
@@ -46,6 +41,10 @@ window.waitForAppLoaded = function() {
   var timerId;
 
   timerId = setInterval(function() {
+    if (window.safari) {
+      var filterShadowRef = document.getElementById('filterShadowRef');
+          filterShadowRef.setAttribute('filter', `url(${window.location.href}#dropshadow)`);
+    }
     if (preloaderSvg && window.preloader.visibility) {
       window.preloader.opacity = 1;
       preloaderVisibility = true;
@@ -64,14 +63,11 @@ window.waitForAppLoaded = function() {
         preloaderSvg.style.strokeDashoffset = window.preloader.n;
       }
     } else {
-
       window.preloader.n = 0;
       window.preloader.percent = 100;
       preloaderSvg.style.strokeDashoffset = window.preloader.n;
       percentDisplay.textContent = `Loading ${window.preloader.percent} %`;
       arrowRef.style.fill = '#04CD33';
-
-      clearInterval(timerId);
 
       setTimeout(function() {
         preloaderRef.style.opacity = '0';
@@ -84,15 +80,15 @@ window.waitForAppLoaded = function() {
         arrowRef.style.fill = '#7F879D';
         preloaderRef.style.display = 'none';
       }, 1500);
+      setInterval(function () {
+        clearInterval(timerId);
+      }, 1750);
     }
-
-
   }, 25);
 }
 
 window.appLoaded = function(timeout = 100) {
   const timerId = setInterval(function() {
-
     if (window.preloader) {
       window.preloader.visibility = false;
       clearInterval(timerId);

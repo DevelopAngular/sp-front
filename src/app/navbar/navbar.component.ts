@@ -415,7 +415,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   settingsAction(action: string) {
       if (action === 'signout') {
-        window.waitForAppLoaded();
+        // window.waitForAppLoaded();
         this.router.navigate(['sign-out']);
       } else if (action === 'favorite') {
           const favRef = this.dialog.open(FavoriteFormComponent, {
