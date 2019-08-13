@@ -26,6 +26,10 @@ body {
   -webkit-touch-callout: none;
 }
 
+.filter-shadow {
+  filter: url("#dropshadow");
+}
+
 button {
   user-select: none;
 }

@@ -98,6 +98,13 @@
       }
     }
   }
+  .selected-row {
+    background-color: #0991C3;
+    color: #FFFFFF;
+    .mat-cell {
+      color: #FFFFFF;
+    }
+  }
 }
 
 .light-mode {
@@ -106,11 +113,16 @@
   }
   ::ng-deep .mat-row {
     .mat-cell {
-      cursor:pointer;
       color: #767676;
     }
     &:hover {
       background-color: #ECF1FF;
+    }
+  }
+  .selected-row {
+    background-color: #ECF1FF;
+    .mat-cell {
+      color: #767676;
     }
   }
 }
