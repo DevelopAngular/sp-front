@@ -15,6 +15,8 @@ body {
   margin: 0 0;
   font-family: $primaryFont;
   width: 100%;
+  height: 100vh;
+  overflow: hidden;
   box-sizing: content-box !important;
 
   // IOS PWA styles
