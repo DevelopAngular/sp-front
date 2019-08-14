@@ -171,21 +171,20 @@ export class AccountsComponent implements OnInit {
     this.getUserList();
 
     TABLE_RELOADING_TRIGGER.subscribe((updatedHeaders) => {
-        this.dataTableHeaders = updatedHeaders;
-        this.getUserList();
+      this.dataTableHeaders = updatedHeaders;
+      this.getUserList();
     });
   }
 
   addUser() {
-      const DR = this.matDialog.open(AddUserDialogComponent,
-          {
-              width: '425px', height: '500px',
-              panelClass: 'accounts-profiles-dialog',
-              backdropClass: 'custom-bd',
-              data: {
-                  role: '_all',
-              }
-      });
+    const DR = this.matDialog.open(AddUserDialogComponent,{
+      width: '425px', height: '500px',
+      panelClass: 'accounts-profiles-dialog',
+      backdropClass: 'custom-bd',
+      data: {
+        role: '_all',
+      }
+    });
   }
 
   getCountRole(role: string) {
@@ -218,73 +217,69 @@ export class AccountsComponent implements OnInit {
 
     promptConfirmation(eventTarget: HTMLElement, option: string = '') {
 
-        if (!eventTarget.classList.contains('button')) {
-            (eventTarget as any) = eventTarget.closest('.button');
+      if (!eventTarget.classList.contains('button')) {
+        (eventTarget as any) = eventTarget.closest('.button');
+      }
+
+      eventTarget.style.opacity = '0.75';
+      let header: string;
+      let options: any[];
+
+      const consentMenuObserver = (res) => {
+        console.log(res);
+        if (res) {
+          this.http.setSchool(this.http.getSchool());
+          this.selectedUsers = [];
+          this.getUserList();
         }
+      }
 
-        eventTarget.style.opacity = '0.75';
-        let header: string;
-        let options: any[];
-
-        const consentMenuObserver = (res) => {
-            console.log(res);
-            if (res) {
-                this.http.setSchool(this.http.getSchool());
-                this.selectedUsers = [];
-                this.getUserList();
-            }
-        }
-
-
-        switch (option) {
-            case 'delete_from_profile':
-                header = `Are you sure you want to permanently delete ${this.selectedUsers.length > 1 ? 'these accounts' : 'this account'} and all associated data? This cannot be undone.`;
-                options = [{display: `Confirm Delete`, color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
-                break;
-        }
+      switch (option) {
+        case 'delete_from_profile':
+          header = `Are you sure you want to permanently delete ${this.selectedUsers.length > 1 ? 'these accounts' : 'this account'} and all associated data? This cannot be undone.`;
+          options = [{display: `Confirm Delete`, color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
+          break;
+      }
       UNANIMATED_CONTAINER.next(true);
 
-      const DR = this.matDialog.open(ConsentMenuComponent,
-            {
-                data: {
-                    role: '_all',
-                    selectedUsers: this.selectedUsers,
-                    restrictions: false,
-                    header: header,
-                    options: options,
-                    trigger: new ElementRef(eventTarget)
-                },
-                panelClass: 'consent-dialog-container',
-                backdropClass: 'invis-backdrop',
-            });
-        DR.afterClosed()
-            .pipe(
-                switchMap((action): Observable<any> => {
-                    console.log(action);
-                    eventTarget.style.opacity = '1';
-
-                    switch (action) {
-                        case 'delete_from_profile':
-                           return zip(...this.selectedUsers.map((user) => this.userService.deleteUser(user['id']))).pipe(mapTo(true));
-                            break;
-                        default:
-                            return of(false);
-                            break;
-                    }
-                }),
-                tap(() => UNANIMATED_CONTAINER.next(false))
-            )
-            .subscribe(consentMenuObserver);
+      const DR = this.matDialog.open(ConsentMenuComponent,{
+        data: {
+          role: '_all',
+          selectedUsers: this.selectedUsers,
+          restrictions: false,
+          header: header,
+          options: options,
+          trigger: new ElementRef(eventTarget)
+        },
+        panelClass: 'consent-dialog-container',
+        backdropClass: 'invis-backdrop',
+      });
+      DR.afterClosed()
+        .pipe(
+          switchMap((action): Observable<any> => {
+            console.log(action);
+            eventTarget.style.opacity = '1';
+            switch (action) {
+              case 'delete_from_profile':
+                return zip(...this.selectedUsers.map((user) => this.userService.deleteUser(user['id']))).pipe(mapTo(true));
+              default:
+                return of(false);
+            }
+          }),
+          tap(() => UNANIMATED_CONTAINER.next(false))
+        )
+        .subscribe(consentMenuObserver);
     }
 
     private getUserList(search = '') {
       this.userList = [];
       this.pending$.next(true);
-      this.userService.getUsersList('', search).subscribe(users => {
+      this.userService
+        .getUsersList('', search)
+        .subscribe(users => {
         this.dataTableHeadersToDisplay = [];
           this.userList = this.buildUserListData(users);
         this.pending$.next(false);
-
       });
     }
     private wrapToHtml(data, htmlTag, dataSet?) {
@@ -318,8 +313,7 @@ export class AccountsComponent implements OnInit {
 
             const record = this.wrapToHtml(rawObj, 'span') as {[key: string]: SafeHtml; _data: any};
             if (+raw.id === +this.user.id) {
-              record['Name'] = this.wrapToHtml(`
-                ${raw.display_name} <span style="
+              record['Name'] = this.wrapToHtml(`${raw.display_name} <span style="
                 position: absolute;
                 margin-left: 10px;
                 display: inline-block;
@@ -348,7 +342,8 @@ export class AccountsComponent implements OnInit {
     }
 
   showColumnSettings(evt: Event) {
-      this.matDialog.open(ColumnsConfigDialogComponent, {
+    UNANIMATED_CONTAINER.next(true);
+    const dialogRef = this.matDialog.open(ColumnsConfigDialogComponent, {
           panelClass: 'consent-dialog-container',
           backdropClass: 'invis-backdrop',
           data: {
@@ -357,6 +352,9 @@ export class AccountsComponent implements OnInit {
               'role': '_all'
           }
       });
+    dialogRef.afterClosed().subscribe(() => {
+      UNANIMATED_CONTAINER.next(false);
+    });
   }
 
   goToAccountsSetup() {
