@@ -9,7 +9,7 @@ import {
   Output,
   ViewChild,
   AfterContentInit,
-  AfterViewInit, ViewChildren, QueryList, ChangeDetectorRef, OnDestroy
+  AfterViewInit, ViewChildren, QueryList, ChangeDetectorRef, OnDestroy, Renderer2
 } from '@angular/core';
 import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material';
@@ -43,6 +43,7 @@ import {NavButtonComponent} from '../nav-button/nav-button.component';
 import {Schedule} from 'primeng/primeng';
 import {School} from '../models/School';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
+import {DeviceDetection} from '../device-detection.helper';
 
 declare const window;
 
@@ -116,6 +117,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   isAdminRoute: boolean;
 
+  isShrinked: boolean;
+
   @HostListener('window:resize')
     checkDeviceWidth() {
         this.underlinePosition();
@@ -155,6 +158,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       public screenService: ScreenService,
       private sideNavService: SideNavService,
       private cdr: ChangeDetectorRef,
+      private rendered: Renderer2
   ) {
 
     const navbarEnabled$ = combineLatest(
@@ -505,5 +509,21 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroyer$.next();
     this.destroyer$.complete();
+  }
+
+  shrinkTab(tab) {
+      this.rendered.setStyle(tab, 'webkitTransform', 'scale(.86)');;
+  }
+
+  expandTab(tab) {
+    const isSafari = !!navigator.userAgent.match(/Version\/[\d\.]+.*Safari/);
+    const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isSafari && iOS) {
+      setTimeout( () => {
+        this.rendered.setStyle(tab, 'webkitTransform', 'unset');
+      }, 200);
+    } else {
+      this.rendered.setStyle(tab, 'webkitTransform', 'unset');
+    }
   }
 }
