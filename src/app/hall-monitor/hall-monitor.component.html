@@ -1,5 +1,5 @@
-<div *ngIf="user" style="position: relative; height: calc(100% - 78px); overflow: auto">
-  <div *ngIf="canView" class="hall-monitor-wrapper" #scrollableArea>
+<div *ngIf="user" style="position: relative; height: calc(100% - 78px); overflow: auto" #scrollableArea>
+  <div *ngIf="canView" class="hall-monitor-wrapper">
     <div class="hall-monitor-top">
       <ng-container *ngIf="!isDeviceLargeExtra; else hallMontiorTopMobile">
       <app-round-input
