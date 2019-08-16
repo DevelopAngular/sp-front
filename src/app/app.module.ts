@@ -58,6 +58,12 @@ import { AccountsSetupComponent } from './accounts-setup/accounts-setup.componen
 import { SpDialogBoxComponent } from './sp-dialog-box/sp-dialog-box.component';
 import {OverlayContainer} from '@angular/cdk/overlay';
 import {InitOverlay} from './consent-menu-overlay';
+import {SWIPER_CONFIG, SwiperConfigInterface, SwiperModule} from 'ngx-swiper-wrapper';
+
+const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
+  direction: 'horizontal',
+  slidesPerView: 'auto'
+};
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroRouteComponent, data: { hideSchoolToggleBar: true}},
@@ -124,7 +130,7 @@ const appRoutes: Routes = [
     IntroRouteComponent,
     IntroDialogComponent,
     SchoolSignUpComponent,
-    AccountsSetupComponent
+    AccountsSetupComponent,
   ],
   entryComponents: [
     ConsentMenuComponent,
@@ -154,6 +160,7 @@ const appRoutes: Routes = [
     MatCardModule,
     MatDialogModule,
     MatSlideToggleModule,
+    SwiperModule,
 
     RouterModule.forRoot(
       appRoutes,
@@ -184,6 +191,7 @@ const appRoutes: Routes = [
     {provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true},
     {provide: SP_GAPI_CONFIG, useValue: GAPI_CONFIG},
     {provide: APP_BASE_HREF, useValue: environment.production ? '/app' : '/'},
+    {provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG},
     provideErrorHandler()
   ],
   exports: [

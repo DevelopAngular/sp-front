@@ -69,6 +69,10 @@
       div.hall-monitor-bottom {
         padding-bottom: 78px;
       }
+
+      div.hall-monitor-bottom {
+        min-height: 100vh;
+      }
     }
   }
 }

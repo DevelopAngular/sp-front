@@ -1,4 +1,4 @@
-<div *ngIf="user" class="intro-wrapper">
+<div *ngIf="user" class="intro-wrapper" (swipeleft)="slide('forward')" (swiperight)="slide('back')">
 
   <div *ngIf="!usedAsEntryComponent" class="navbar" [ngClass]="{shadow: isStaff}">
     <div class="logo ds-flex-center-center">
@@ -35,8 +35,7 @@
       <app-icon-button [switchColor]="false" [srcString]="'Chevron Left'" (clickEvent)="slide('back')"></app-icon-button>
       <!--<img class="button-icon" [src]="'./assets/Chevron Left (Blue-Gray).svg' | resolveAsset">-->
     </div>
-    <div class="box" >
-
+    <div class="box">
       <div class="next-step-animation-trigger" *ngIf="slideIndex === 5" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
 
         <div class="slide slide_5">
@@ -102,7 +101,7 @@
                   [minHeight]="'40px'"
                   [width]="'120px'"
                   [gradient]="'#DA2370,#FB434A'"
-                  (buttonClick)="slide('forward')"
+                  (buttonClick)="allowNotificationsLater()"
                 >Maybe Later</app-gradient-button>
               </div>
             </div>
@@ -124,8 +123,7 @@
               <div class="title">
                 <span>Create hall passes for now or for the future</span>
               </div>
-              <div style="margin-top: 45px;margin-bottom: 65px;">
-
+              <div class="display-card">
                 <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Plus (Navy).svg'">
                   <div class="pass-buttons">
                     <app-create-pass-button [title]="'Now'"></app-create-pass-button>
@@ -297,9 +295,7 @@
             </div>
           </div>
         </div>
-
       </div>
-
 
       <div class="slide-paginator">
         <div class="slide-paginator_item" [style.background-color]="slideIndex === 1 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"></div>
