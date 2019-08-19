@@ -4,6 +4,7 @@ import { ColorProfile } from '../../models/ColorProfile';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {BUILD_DATE, RELEASE_NAME} from '../../../build-info';
+import {LocalStorage} from '@ngx-pwa/local-storage';
 
 @Component({
   selector: 'app-settings',
@@ -55,7 +56,8 @@ export class SettingsComponent implements OnInit {
         public dialogRef: MatDialogRef<SettingsComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public darkTheme: DarkThemeSwitch,
-        private elemRef: ElementRef
+        private elemRef: ElementRef,
+        private pwaStorage: LocalStorage,
     ) {
     }
 
@@ -120,5 +122,11 @@ export class SettingsComponent implements OnInit {
     onHover(color) {
         this.hovered = true;
         this.hoveredColor = color;
+    }
+
+    signOut() {
+      this.dialogRef.close('signout');
+      this.pwaStorage.removeItem('servers').subscribe(() => {});
+      this.pwaStorage.removeItem('authData').subscribe(() => {});
     }
 }
