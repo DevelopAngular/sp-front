@@ -5,6 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/materia
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {BUILD_DATE, RELEASE_NAME} from '../../../build-info';
 import {LocalStorage} from '@ngx-pwa/local-storage';
+import {combineLatest} from 'rxjs';
 
 @Component({
   selector: 'app-settings',
@@ -126,7 +127,8 @@ export class SettingsComponent implements OnInit {
 
     signOut() {
       this.dialogRef.close('signout');
-      this.pwaStorage.removeItem('servers').subscribe(() => {});
-      this.pwaStorage.removeItem('authData').subscribe(() => {});
+      combineLatest(this.pwaStorage.removeItem('servers'),
+        this.pwaStorage.removeItem('authData') )
+        .subscribe();
     }
 }
