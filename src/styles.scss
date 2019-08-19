@@ -317,6 +317,24 @@ body {
   }
 }
 
+@media all and (max-height: 375px) {
+  .cdk-overlay-pane.teacher-pass-card-dialog-container,
+  .cdk-overlay-pane.student-pass-card-dialog-container {
+    height: 98%;
+  }
+
+  .teacher-pass-card-dialog-container .mat-dialog-container,
+  .student-pass-card-dialog-container .mat-dialog-container {
+    overflow-y: auto;
+    overflow-x: hidden;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+
 @media all and (max-width: 320px) {
   .teacher-pass-card-dialog-container .mat-dialog-container,
   .student-pass-card-dialog-container .mat-dialog-container {
