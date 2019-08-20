@@ -1,5 +1,5 @@
 :host {
-  @media all  and (max-width: 1024px) {
+  @media all  and (max-width: 940px) {
     img.back-btn-top {
       display: none;
     }
@@ -21,7 +21,7 @@
     }
   }
 
-  @media all and (max-width: 1024px) {
+  @media all and (max-width: 940px) {
     img.back-btn-bottom {
       bottom: -45px;
     }
