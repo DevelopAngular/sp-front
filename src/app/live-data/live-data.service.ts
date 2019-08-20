@@ -119,7 +119,7 @@ interface WatchData<ModelType extends BaseModel, ExternalEventType> {
  * @param date
  */
 function getDateLimits(date: Date) {
-  return { start: moment(date).startOf('day'), end: moment(date).endOf('day') };
+  return { start: moment(date).startOf('day').toDate(), end: moment(date).endOf('day').toDate() };
 }
 
 /**
