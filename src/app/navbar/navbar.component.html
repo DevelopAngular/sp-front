@@ -100,9 +100,9 @@
         <ng-container *ngIf="isStaff && buttonVisibility(button)">
           <div
             #tabRefMobile
-            [style.transition]="'transform .1s ease'"
-            (touchstart)="tabRefMobile.style.transform = 'scale(.96)'"
-            (touchend)="tabRefMobile.style.transform = 'unset'">
+            [style.transition]="'transform .4s ease'"
+            (touchstart)="shrinkTab(tabRefMobile)"
+            (touchend)="expandTab(tabRefMobile)">
             <div>
             </div>
             <app-nav-button

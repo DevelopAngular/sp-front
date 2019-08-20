@@ -65,7 +65,9 @@
               </app-icon-button>
             </div>
             <div class="passed">
-              <img width="35" *ngIf="OnboardProgres?.take_a_tour?.start && OnboardProgres?.take_a_tour?.end" [src]="'./assets/Check (Jade).svg'" alt="Check (Jade).svg">
+              <img width="35"
+                   *ngIf="OnboardProgres?.take_a_tour?.start && OnboardProgres?.take_a_tour?.end && OnboardProgres?.take_a_tour?.create_accounts.value"
+                   [src]="'./assets/Check (Jade).svg'" alt="Check (Jade).svg">
             </div>
           </div>
         </div>
