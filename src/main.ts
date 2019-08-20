@@ -16,7 +16,7 @@ if (environment.production) {
 console.log(`Frontend build type: ${environment.buildType}`);
 
 function registerSW() {
-  if (environment.production) {
+  if ('serviceWorker' in navigator && environment.production) {
     console.log('PRODUCTION BUILD');
     navigator.serviceWorker.register('./main-sw.js');
   }
