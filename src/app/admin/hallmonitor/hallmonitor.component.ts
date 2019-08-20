@@ -196,7 +196,7 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
 
   private getReports(date?: Date, afterConsentMenu = false) {
     this.pending = true;
-    const range = this.liveDataService.getDateRange(date);
+    const range = {start: moment(date).startOf('day'), end: moment(date).endOf('day')};
 
     const response$ = date ?
         this.adminService.searchReports(range.end.toISOString(), range.start.toISOString()) :

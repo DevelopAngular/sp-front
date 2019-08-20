@@ -24,7 +24,6 @@ export class CalendarComponent implements OnInit {
   constructor(
   @Inject(MAT_DIALOG_DATA) public data: any[],
       private _matDialogRef: MatDialogRef<CalendarComponent>,
-      private timeService: TimeService,
   ) {}
 
   ngOnInit() {
@@ -60,7 +59,6 @@ export class CalendarComponent implements OnInit {
      } else {
        _date = '';
      }
-     console.log(_date);
      this._matDialogRef.close({date: _date});
   }
 
