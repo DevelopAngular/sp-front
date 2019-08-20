@@ -5,14 +5,15 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build && fcm",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "build-stats": "ng build --prod --stats-json",
     "bundle-report": "webpack-bundle-analyzer dist/stats.json",
     "ng-high-memory": "node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng",
-    "ng-ci-memory": "node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng"
+    "ng-ci-memory": "node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng --prod --base-href='/app/' && npm run ng-fcm",
+    "ng-fcm": "concat ./dist/ngsw-worker.js fcm.js -o ./dist/combined-worker.js"
   },
   "private": true,
   "dependencies": {
@@ -84,6 +85,7 @@
     "@types/node": "^10.14.6",
     "@types/oboe": "^2.0.28",
     "codelyzer": "^4.3.0",
+    "concat": "^1.0.3",
     "jasmine-core": "~3.1.0",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~2.0.2",
