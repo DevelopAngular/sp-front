@@ -1,4 +1,4 @@
-@media all and (max-width: 1024px ) {
+@media all and (max-width: 940px ) {
    .search-img,
    .report-img {
      width: 30px;
@@ -61,7 +61,7 @@
 
 @media not all and (min-resolution:.001dpcm) {
   @supports (-webkit-appearance:none) {
-    @media all and (max-width: 1024px ) {
+    @media all and (max-width: 940px ) {
       div.sort-btn {
         position: fixed;
       }
@@ -108,7 +108,7 @@
 
 }
 
-@media all and (max-width: 1024px) and (min-width: 768px ) {
+@media all and (max-width: 940px) and (min-width: 768px ) {
   div.student-search {
     width: 379px;
     margin-right: 10px;

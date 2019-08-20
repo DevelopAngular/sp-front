@@ -9,7 +9,7 @@
   }
 }
 
-@media screen and (max-width: 1024px) and (min-width: 335px)  {
+@media screen and (max-width: 940px) and (min-width: 335px)  {
   div.fixed-card {
     width: 335px !important;
   }
@@ -20,7 +20,7 @@
   }
 }
 
-@media screen and (max-width: 1024px)  {
+@media screen and (max-width: 940px)  {
   div.fixed-card {
     left: 50%;
     transform: translateX(-50%);

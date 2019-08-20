@@ -11,7 +11,7 @@ export class ScreenService {
   private smallDevicesBreakPoint = 375;
   private midDevicesBreakPoint = 475;
   private largeDevicesBreakPoint = 768;
-  private  extraLargeDeviceBreakPoint = 1024;
+  private  extraLargeDeviceBreakPoint = 940;
 
   get smallDeviceExtra() {
     return this.extraSmallDeviceBreakPoint;
