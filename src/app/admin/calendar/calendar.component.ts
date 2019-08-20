@@ -13,7 +13,7 @@ export class CalendarComponent implements OnInit {
 
   triggerElementRef: ElementRef;
   previousSelectedDate: moment.Moment;
-  default: Date = undefined;
+  default: Date;
   elementPosition;
 
   @HostListener('window:resize', ['$event.target'])
@@ -29,7 +29,9 @@ export class CalendarComponent implements OnInit {
 
   ngOnInit() {
     this.triggerElementRef = this.data['trigger'];
-    this.previousSelectedDate = moment(this.data['previousSelectedDate']);
+    if (this.data['previousSelectedDate']) {
+      this.previousSelectedDate = moment(this.data['previousSelectedDate']);
+    }
     this.updateCalendarPosition();
     this._matDialogRef
       .backdropClick()

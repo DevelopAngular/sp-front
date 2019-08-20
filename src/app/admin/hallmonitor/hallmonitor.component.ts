@@ -14,8 +14,10 @@ import {Util} from '../../../Util';
 import {delay, filter, map, switchMap, takeUntil, tap, toArray} from 'rxjs/operators';
 import {AdminService} from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
-import * as _ from 'lodash';
 import {ScrollPositionService} from '../../scroll-position.service';
+
+import * as _ from 'lodash';
+import * as moment from 'moment';
 
 
 
@@ -158,7 +160,6 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
   }
 
   onSearch(searchValue) {
-      console.log('It emits here!', searchValue);
     this.searchPending$.next(true);
      this.searchQuery$.next(searchValue);
   }
@@ -179,8 +180,6 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
     DR.afterClosed()
       .subscribe((data) => {
         this.activeCalendar = false;
-
-      // console.log('82 Date ===> :', data.date);
         if (data.date) {
           this.inactiveIcon = data.date.getDay() === new Date().getDay();
           if ( !this.reportsDate || (this.reportsDate && this.reportsDate.getTime() !== data.date.getTime()) ) {
@@ -197,8 +196,8 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
 
   private getReports(date?: Date, afterCalendar = false) {
     this.pending = true;
-    // this.studentreport = [];
     const range = this.liveDataService.getDateRange(date);
+
     const response$ = date ?
         this.adminService.searchReports(range.end.toISOString(), range.start.toISOString()) :
         this.adminService.getReports(this.reportsLimit);
