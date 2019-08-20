@@ -140,7 +140,7 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.http.globalReload$.subscribe(() => {
-      this.getReports();
+      this.getReports(null, true);
     });
     // this.activePassProvider.loaded$
     //   .pipe(
@@ -194,7 +194,7 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
     );
   }
 
-  private getReports(date?: Date, afterCalendar = false) {
+  private getReports(date?: Date, afterConsentMenu = false) {
     this.pending = true;
     const range = {start: moment(date).startOf('day'), end: moment(date).endOf('day')};
 
@@ -204,7 +204,9 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
     response$.pipe(
         map((list: any) => {
           const data  = date ? list : list.results;
-            this.counter = data.length;
+          console.log(data);
+          // debugger;
+          this.counter = data.length;
           return data.map((report, index) => {
             return {
               student_name: report.student.display_name + ` (${report.student.primary_email.split('@', 1)[0]})`,
@@ -222,6 +224,8 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
             date: null,
             reports: []
           };
+          // debugger;
+
           list.forEach((report, index) => {
 
             if (index < list.length) {
@@ -242,7 +246,9 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
       )
       .subscribe((list: any[]) => {
         this.pending = false;
-        if (date || afterCalendar) {
+        // debugger;
+
+        if (date || afterConsentMenu) {
             this.studentreport = list;
         } else {
             this.studentreport.push(..._.takeRight(list, 10));
