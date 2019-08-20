@@ -1,14 +1,28 @@
-import { Component, OnInit } from '@angular/core';
-import { AccountsDialogComponent } from '../accounts-dialog/accounts-dialog.component';
+import {Component, ElementRef, OnInit} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { HttpService } from '../../services/http-service';
 import { UserService } from '../../services/user.service';
-import { BehaviorSubject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import {BehaviorSubject, Observable, of, Subject, zip} from 'rxjs';
+import {map, mapTo, switchMap, tap} from 'rxjs/operators';
 import { AdminService } from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {bumpIn} from '../../animations';
 import {ProfileCardDialogComponent} from '../profile-card-dialog/profile-card-dialog.component';
+import {Router} from '@angular/router';
+import {Util} from '../../../Util';
+import {User} from '../../models/User';
+import {StorageService} from '../../services/storage.service';
+import {ColumnsConfigDialogComponent} from '../columns-config-dialog/columns-config-dialog.component';
+import {TABLE_RELOADING_TRIGGER} from '../accounts-role/accounts-role.component';
+import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
+import {GettingStartedProgressService} from '../getting-started-progress.service';
+import {AddUserDialogComponent} from '../add-user-dialog/add-user-dialog.component';
+import {GSuiteOrgs} from '../../models/GSuiteOrgs';
+import {encode} from 'punycode';
+import {environment} from '../../../environments/environment';
+import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
+import {wrapToHtml} from '../helpers';
+import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 
 declare const history: History;
 
@@ -19,6 +33,8 @@ declare const history: History;
   animations: [bumpIn]
 })
 export class AccountsComponent implements OnInit {
+
+  splash: boolean;
 
   public accounts$ =
     new BehaviorSubject<any>({
@@ -31,31 +47,358 @@ export class AccountsComponent implements OnInit {
       assistant_count: '-'
     });
 
+  user: User;
+
+  openTable: boolean;
+
+  userList;
+  selectedUsers = [];
+
+  gSuiteOrgs: GSuiteOrgs = <GSuiteOrgs>{};
+
+  dataTableHeaders;
+  dataTableHeadersToDisplay: any[] = [];
+  public dataTableEditState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public pending$: Subject<boolean> = new Subject<boolean>();
+
+
+  public accountsButtons = [
+      { title: 'Admins', param: '_profile_admin',  leftIcon: './assets/Admin (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'admin' },
+      { title: 'Teachers', param: '_profile_teacher', leftIcon: './assets/Teacher (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'teacher' },
+      { title: 'Assistants', param: '_profile_assistant', leftIcon: './assets/Assistant (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'assistant' },
+      { title: 'Students', param: '_profile_student', leftIcon: './assets/Student (Navy).svg', subIcon: './assets/Info (Blue-Gray).svg', role: 'student' }
+  ];
+
   constructor(
-    public matDialog: MatDialog,
     private userService: UserService,
     private http: HttpService,
     private adminService: AdminService,
+    public router: Router,
     public darkTheme: DarkThemeSwitch,
-    // private history: History
-  ) { }
+    private storage: StorageService,
+    public matDialog: MatDialog,
+    private gsProgress: GettingStartedProgressService,
+    private domSanitizer: DomSanitizer
+  ) {}
+
+  formatDate(date) {
+    return Util.formatDateTime(new Date(date));
+  }
 
   ngOnInit() {
 
+   this.adminService.getGSuiteOrgs().subscribe(res => this.gSuiteOrgs = res);
     this.http.globalReload$.pipe(
-      switchMap(() => this.adminService.getAdminAccounts())
+      switchMap(() => this.adminService.getAdminAccounts()),
+      switchMap((u_list: any) => {
+        if (u_list.total_count !== undefined) {
+          u_list.total = u_list.total_count;
+        } else {
+          u_list.total = Object.values(u_list).reduce((a: number, b: number) => a + b);
+        }
+        console.log(u_list);
+        this.accounts$.next(u_list);
+        return this.gsProgress.onboardProgress$;
+      })
     )
-    .subscribe((u_list: any) => {
-      if (u_list.total_count !== undefined) {
-        u_list.total = u_list.total_count;
-      } else {
-        u_list.total = Object.values(u_list).reduce((a: number, b: number) => a + b);
+    .subscribe((op: any) => {
+      console.log(op);
+      this.splash = op.setup_accounts && (!op.setup_accounts.start.value || !op.setup_accounts.end.value);
+
+    });
+
+    // this.splash = op.setup_accounts && (!op.setup_accounts.start || !op.setup_accounts.end);
+
+
+    this.userService.userData.subscribe((user) => {
+      this.user = user;
+    });
+
+    const headers = this.storage.getItem(`_all_columns`);
+    if ( headers ) {
+      this.dataTableHeaders = JSON.parse(headers);
+
+      /**
+       * Fallbacks for case if the user has old cached headers
+       * */
+
+      if (!this.dataTableHeaders['Account Type']) {
+        this.dataTableHeaders['Account Type'] = {
+          value: true,
+            label: 'Account Type',
+            disabled: false
+        };
       }
-      console.log(u_list);
-      this.accounts$.next(u_list);
+      if (this.dataTableHeaders['Profile(s)'] || !this.dataTableHeaders['Group(s)']) {
+        delete this.dataTableHeaders['Profile(s)'];
+        this.dataTableHeaders['Group(s)'] = {
+          value: true,
+          label: 'Group(s)',
+          disabled: false
+        };
+      }
+
+      /**
+       * End
+       * */
+
+
+    } else {
+      this.dataTableHeaders = {
+        'Name': {
+          value: true,
+          label: 'Name',
+          disabled: true
+        },
+        'Email/Username': {
+          value: true,
+          label: 'Email/Username',
+          disabled: true
+        },
+        'Account Type': {
+          value: true,
+          label: 'Account Type',
+          disabled: false
+        },
+        'Group(s)': {
+          value: true,
+          label: 'Group(s)',
+          disabled: false
+        }
+      };
+    }
+
+    this.getUserList();
+
+    TABLE_RELOADING_TRIGGER.subscribe((updatedHeaders) => {
+      this.dataTableHeaders = updatedHeaders;
+      this.getUserList();
     });
   }
 
+  addUser() {
+    const DR = this.matDialog.open(AddUserDialogComponent,{
+      width: '425px', height: '500px',
+      panelClass: 'accounts-profiles-dialog',
+      backdropClass: 'custom-bd',
+      data: {
+        role: '_all',
+      }
+    });
+  }
+
+  getCountRole(role: string) {
+    if (role === 'admin') {
+      return this.accounts$.value.admin_count;
+    } else if (role === 'teacher') {
+      return this.accounts$.value.teacher_count;
+    } else if (role === 'assistant') {
+      return this.accounts$.value.assistant_count;
+    } else if (role === 'student') {
+      return this.accounts$.value.student_count;
+    }
+  }
+
+    findProfileByRole(evt) {
+      if (evt.name && evt.role) {
+        setTimeout(() => {
+           this.router.navigate(['admin/accounts', evt.role], {queryParams: {profileName: evt.name}});
+        }, 250);
+      }
+    }
+
+    setSelected(e) {
+      this.selectedUsers = e;
+    }
+
+    findRelevantAccounts(search) {
+      this.getUserList(search);
+    }
+
+    promptConfirmation(eventTarget: HTMLElement, option: string = '') {
+
+      if (!eventTarget.classList.contains('button')) {
+        (eventTarget as any) = eventTarget.closest('.button');
+      }
+
+      eventTarget.style.opacity = '0.75';
+      let header: string;
+      let options: any[];
+
+      const consentMenuObserver = (res) => {
+        console.log(res);
+        if (res) {
+          this.http.setSchool(this.http.getSchool());
+          this.selectedUsers = [];
+          this.getUserList();
+        }
+      }
+
+      switch (option) {
+        case 'delete_from_profile':
+          header = `Are you sure you want to permanently delete ${this.selectedUsers.length > 1 ? 'these accounts' : 'this account'} and all associated data? This cannot be undone.`;
+          options = [{display: `Confirm Delete`, color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete_from_profile'}];
+          break;
+      }
+      UNANIMATED_CONTAINER.next(true);
+
+      const DR = this.matDialog.open(ConsentMenuComponent,{
+        data: {
+          role: '_all',
+          selectedUsers: this.selectedUsers,
+          restrictions: false,
+          header: header,
+          options: options,
+          trigger: new ElementRef(eventTarget)
+        },
+        panelClass: 'consent-dialog-container',
+        backdropClass: 'invis-backdrop',
+      });
+      DR.afterClosed()
+        .pipe(
+          switchMap((action): Observable<any> => {
+            console.log(action);
+            eventTarget.style.opacity = '1';
+            switch (action) {
+              case 'delete_from_profile':
+                return zip(...this.selectedUsers.map((user) => this.userService.deleteUser(user['id']))).pipe(mapTo(true));
+              default:
+                return of(false);
+            }
+          }),
+          tap(() => UNANIMATED_CONTAINER.next(false))
+        )
+        .subscribe(consentMenuObserver);
+    }
+
+    private getUserList(search = '') {
+      this.userList = [];
+      this.pending$.next(true);
+      this.userService
+        .getUsersList('', search)
+        .subscribe(users => {
+        this.dataTableHeadersToDisplay = [];
+          this.userList = this.buildUserListData(users);
+        this.pending$.next(false);
+      });
+    }
+    private wrapToHtml(data, htmlTag, dataSet?) {
+      const wrapper =  wrapToHtml.bind(this);
+      return wrapper(data, htmlTag, dataSet || null);
+    }
+    private buildUserListData(userList) {
+        return userList.map((raw, index) => {
+            const partOf = [];
+            if (raw.roles.includes('_profile_student')) partOf.push({title: 'Student', role: '_profile_student'});
+            if (raw.roles.includes('_profile_teacher')) partOf.push({title: 'Teacher', role: '_profile_teacher'});
+            if (raw.roles.includes('_profile_assistant')) partOf.push({title: 'Assistant', role: '_profile_assistant'});
+            if (raw.roles.includes('_profile_admin')) partOf.push({title: 'Administrator', role: '_profile_admin'});
+
+            const rawObj = {
+                'Name': raw.display_name,
+                'Email/Username': (/@spnx.local/).test(raw.primary_email) ? raw.primary_email.slice(0, raw.primary_email.indexOf('@spnx.local')) : raw.primary_email,
+                'Account Type': raw.sync_types[0] === 'google' ? 'G Suite' : 'Standard',
+                'Group(s)': partOf.length ? partOf : [`<span style="cursor: not-allowed; color: #999999;">No profile</span>`]
+            };
+            for (const key in rawObj) {
+              if (!this.dataTableHeaders[key]) {
+                delete rawObj[key];
+              }
+              if (index === 0) {
+                if (this.dataTableHeaders[key] && this.dataTableHeaders[key].value) {
+                  this.dataTableHeadersToDisplay.push(key);
+                }
+              }
+            }
+
+            const record = this.wrapToHtml(rawObj, 'span') as {[key: string]: SafeHtml; _data: any};
+            if (+raw.id === +this.user.id) {
+              record['Name'] = this.wrapToHtml(`${raw.display_name} <span style="
+                position: absolute;
+                margin-left: 10px;
+                display: inline-block;
+                width: 50px;
+                height: 20px;
+                background-color: rgba(0, 180, 118, .6);
+                color: #ffffff;
+                text-align: center;
+                vertical-align: middle;
+                line-height: 20px;
+                border-radius: 4px;">Me</span>`, 'span');
+            }
+            Object.defineProperty(rawObj, 'id', { enumerable: false, value: raw.id });
+            Object.defineProperty(rawObj, 'me', { enumerable: false, value: +raw.id === +this.user.id });
+            Object.defineProperty(rawObj, '_originalUserProfile', {
+                enumerable: false,
+                configurable: false,
+                writable: false,
+                value: raw
+            });
+
+            Object.defineProperty(record, '_data', { enumerable: false, value: rawObj });
+
+          return record;
+        });
+    }
+
+  showColumnSettings(evt: Event) {
+    UNANIMATED_CONTAINER.next(true);
+    const dialogRef = this.matDialog.open(ColumnsConfigDialogComponent, {
+          panelClass: 'consent-dialog-container',
+          backdropClass: 'invis-backdrop',
+          data: {
+              'trigger': evt.currentTarget,
+              'form': this.dataTableHeaders,
+              'role': '_all'
+          }
+      });
+    dialogRef.afterClosed().subscribe(() => {
+      UNANIMATED_CONTAINER.next(false);
+    });
+  }
+
+  goToAccountsSetup() {
+    this.updateAcoountsOnboardProgress('start');
+    this.adminService
+      .getAccountSyncLink(+this.http.getSchool().id)
+      .subscribe((link: {authorization_url: string}) => {
+
+        this.router.navigate(['accounts_setup'], { queryParams: { googleAuth: link.authorization_url } });
+      });
+
+  }
+
+  showAccountsSetupLink() {
+    this.updateAcoountsOnboardProgress('start');
+    this.pending$.next(true);
+    this.adminService
+      .getAccountSyncLink(+this.http.getSchool().id)
+      .pipe(
+        switchMap((link: {authorization_url: string}) => {
+          const dialogRef = this.matDialog.open(ProfileCardDialogComponent, {
+            panelClass: 'overlay-dialog',
+            backdropClass: 'custom-bd',
+            width: '425px',
+            height: '500px',
+            data: {
+              setupLink: `${window.location.origin}/${environment.production ? 'app/' : ''}accounts_setup?googleAuth=${encodeURIComponent(link.authorization_url)}`,
+            }
+          });
+          return dialogRef.afterClosed();
+        })
+      )
+      .subscribe(() => {
+        this.pending$.next(false);
+      });
+
+  }
+  private updateAcoountsOnboardProgress(ticket: 'start' | 'end') {
+    if (ticket === 'start') {
+      this.gsProgress.updateProgress('setup_accounts:start');
+    } else if (ticket === 'end') {
+      this.gsProgress.updateProgress('setup_accounts:end');
+    }
+  }
   showSettings() {
 
     const data = {

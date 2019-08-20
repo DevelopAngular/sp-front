@@ -128,6 +128,21 @@
           white-space: nowrap;
         }
       }
+      .setup-link {
+        word-break: break-all;
+        width: 376px;
+        min-height: 77px;
+        border-radius: 6px;
+        background-color: #F7F7F7;
+        padding: 8px 14px;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        -webkit-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+        user-select: text;
+      }
     }
     .card-footer {
       //display: flex;
@@ -137,7 +152,7 @@
       padding: 20px 24px;
       flex: 1 1 100px;
       .button {
-        margin-bottom: 15px;
+        margin-bottom: 25px;
         min-height: 50px;
         //text-align: center;
         display: flex;

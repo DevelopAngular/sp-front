@@ -1,15 +1,18 @@
-import {Component, OnInit, NgZone, Output, EventEmitter, ViewChild, ElementRef} from '@angular/core';
+import {Component, OnInit, NgZone, Output, EventEmitter, ViewChild, ElementRef, AfterViewInit, ChangeDetectorRef} from '@angular/core';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { BehaviorSubject ,  Observable } from 'rxjs';
 import { LoadingService } from '../../services/loading.service';
 import { DataService } from '../../services/data-service';
 import { User } from '../../models/User';
 import { UserService } from '../../services/user.service';
-import { disableBodyScroll } from 'body-scroll-lock';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {SettingsComponent} from '../settings/settings.component';
-import {map} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
+import {AdminService} from '../../services/admin.service';
+import {HttpService} from '../../services/http-service';
+import {GettingStartedProgressService} from '../getting-started-progress.service';
+import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 
 declare const window;
 
@@ -20,21 +23,27 @@ declare const window;
 })
 export class NavComponent implements OnInit {
 
-  @ViewChild('navMain') navMain: ElementRef;
+  // @ViewChild('navMain') navMain: ElementRef;
+  @ViewChild('navButtonsContainter') navButtonsContainterRef: ElementRef;
+  @ViewChild('tabRef') tabRef: ElementRef;
   @Output('restrictAccess') restrictAccess: EventEmitter<boolean> = new EventEmitter();
-
+  gettingStarted = {title: '', route : 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']};
   buttons = [
-    {title: 'Dashboard', route : 'dashboard', type: 'routerLink', imgUrl : './assets/Dashboard', requiredRoles: ['_profile_admin', 'access_admin_dashboard']},
-    {title: 'Hall Monitor', route : 'hallmonitor', type: 'routerLink', imgUrl : './assets/Walking', requiredRoles: ['_profile_admin', 'access_hall_monitor']},
-    {title: 'Search', route : 'search', type: 'routerLink', imgUrl : './assets/Search Eye', requiredRoles: ['_profile_admin', 'access_admin_search']},
-    {title: 'Pass Configuration', route : 'passconfig', type: 'routerLink', imgUrl : './assets/SP Arrow', requiredRoles: ['_profile_admin', 'access_pass_config']},
-    {title: 'Accounts & Profiles', route : 'accounts', type: 'routerLink', imgUrl : './assets/Users', requiredRoles: ['_profile_admin', 'access_user_config']},
+    {title: 'Dashboard', route : 'dashboard', type: 'routerLink', imgUrl : 'Dashboard', requiredRoles: ['_profile_admin', 'access_admin_dashboard']},
+    {title: 'Hall Monitor', route : 'hallmonitor', type: 'routerLink', imgUrl : 'Walking', requiredRoles: ['_profile_admin', 'access_hall_monitor']},
+    {title: 'Search', route : 'search', type: 'routerLink', imgUrl : 'SearchEye', requiredRoles: ['_profile_admin', 'access_admin_search']},
+    {title: 'Rooms', route : 'passconfig', type: 'routerLink', imgUrl : 'Rooms', requiredRoles: ['_profile_admin', 'access_pass_config']},
+    {title: 'Accounts', route : 'accounts', type: 'routerLink', imgUrl : 'Users', requiredRoles: ['_profile_admin', 'access_user_config']},
+    {title: 'My School', route : 'myschool', type: 'routerLink', imgUrl : 'School', requiredRoles: ['_profile_admin', 'manage_school']},
     // {title: 'Feedback', link : 'https://www.smartpass.app/feedback', type: 'staticButton', externalApp: 'mailto:feedback@smartpass.app', imgUrl : './assets/Feedback', requiredRoles: ['_profile_admin']},
     // {title: 'Support', link : 'https://www.smartpass.app/support', type: 'staticButton', imgUrl : './assets/Support', requiredRoles: ['_profile_admin']},
   ];
+
+  // progress = 0;
+
   fakeMenu = new BehaviorSubject<boolean>(false);
   tab: string[] = ['dashboard'];
-
+  public pts: string;
     constructor(
         public router: Router,
         private activeRoute: ActivatedRoute,
@@ -43,32 +52,56 @@ export class NavComponent implements OnInit {
         public loadingService: LoadingService,
         private dialog: MatDialog,
         private _zone: NgZone,
-        public darkTheme: DarkThemeSwitch
+        public darkTheme: DarkThemeSwitch,
+        private adminService: AdminService,
+        private httpService: HttpService,
+        public gsProgress: GettingStartedProgressService
+
     ) { }
 
   console = console;
     user: User;
-
   showButton: boolean;
   selectedSettings: boolean;
 
   get settingsIcon () {
-    return `./assets/Settings (${this.darkTheme.isEnabled$.value ? 'White' : 'Navy'}).svg`;
+    return `./assets/Settings (${this.darkTheme.isEnabled$.value ? 'White' : 'Blue-Gray'}).svg`;
+  }
+  get pointerTopSpace() {
+    return this.pts;
   }
 
   ngOnInit() {
 
-    disableBodyScroll(this.navMain.nativeElement);
-
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit.slice(1);
-
+    this.tab = ( (this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab );
+    console.log(this.tab);
+    // if (this.isSelected('takeTour')) {
+    //   this.pts = '-63px';
+    // }
+    // this.httpService.globalReload$.pipe(
+    //   switchMap(() => {
+    //     return this.adminService.getOnboardProgress()
+    //   })
+    // )
+    // .subscribe((data: OnboardItem[]) => {
+    //   console.log(data);
+    //   this.progress = 10;
+    //   data.forEach((item: OnboardItem ): void => {
+    //     if (item.done) {
+    //       console.log(this.progress, Progress[item.name]);
+    //       this.progress +=  Progress[item.name];
+    //     }
+    //   });
+    // });
     this.router.events.subscribe(value => {
       if ( value instanceof NavigationEnd ) {
         let urlSplit: string[] = value.url.split('/');
         this.tab = urlSplit.slice(1);
-        console.log(this.tab, value.url);
+        // console.log(this.tab, value.url);
         this.tab = ( (this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab );
+        // this.selectTab(this.tabRef.nativeElement, this.navButtonsContainterRef.nativeElement);
       }
     });
 
@@ -78,7 +111,9 @@ export class NavComponent implements OnInit {
 
         this._zone.run(() => {
           this.user = user;
-          this.showButton = user.roles.includes('_profile_admin') && ( user.roles.includes('_profile_teacher') || user.roles.includes('_profile_student') );
+          this.showButton = user.roles.includes('_profile_admin') &&
+                          ( user.roles.includes('_profile_teacher') ||
+                            user.roles.includes('_profile_student') );
           this.dataService.updateInbox(!this.tab.includes('settings'));
         });
       });
@@ -93,7 +128,6 @@ export class NavComponent implements OnInit {
       ) {
           console.log(button);
           console.log(button.requiredRoles.every((_role) => user.roles.includes(_role)));
-          // debugger;
           this.restrictAccess.emit(true);
           this.fakeMenu.next(true);
         }
@@ -123,6 +157,7 @@ export class NavComponent implements OnInit {
     // return;
 
     const target = new ElementRef(event.currentTarget);
+    UNANIMATED_CONTAINER.next(true);
     const settingsRef: MatDialogRef<SettingsComponent> = this.dialog.open(SettingsComponent, {
       panelClass: 'calendar-dialog-container',
       backdropClass: 'invis-backdrop',
@@ -142,15 +177,18 @@ export class NavComponent implements OnInit {
     });
 
     settingsRef.afterClosed().subscribe(action => {
-        if (action === 'signout') {
-          window.waitForAppLoaded();
+      UNANIMATED_CONTAINER.next(false);
+      if (action === 'signout') {
+          // window.waitForAppLoaded();
           this.router.navigate(['sign-out']);
         } else if (action === 'switch') {
           this.router.navigate(['main']);
         } else if (action === 'about') {
             window.open('https://smartpass.app/about');
         } else if (action === 'feedback') {
-            window.open('https://www.smartpass.app/feedback');
+            // window.open('https://www.smartpass.app/feedback');
+            // window.open('mailto:address@dmail.com');
+          window.location.href = 'mailto:address@dmail.com';
         } else if (action === 'support') {
             window.open('https://www.smartpass.app/support');
         } else if (action === 'privacy') {
@@ -159,27 +197,17 @@ export class NavComponent implements OnInit {
     });
   }
 
+  selectTab(evt: HTMLElement, container: HTMLElement) {
+    const containerRect = container.getBoundingClientRect();
+    const selectedTabRect = (evt as HTMLElement ).getBoundingClientRect();
+    this.pts = Math.round(selectedTabRect.top - containerRect.top) + 'px';
+  }
+
   isSelected(route: string) {
     return this.tab.includes(route);
   }
   hasRoles(roles: string[]): Observable<boolean> {
-    // const mockRoles = [
-    //  '_profile_admin',
-    //  'admin_accounts',
-    //  'admin_dashboard',
-    //  'admin_hall_monitor',
-    //  'admin_pass_config',
-    //  'admin_search',
-    //  'create_report',
-    //  'edit_all_hallpass',
-    //  'flag_hallpass',
-    //  'manage_alerts',
-    //  'manage_locations',
-    //  'manage_pinnables',
-    //  'manage_school',
-    //  'view_reports',
-    //  'view_traveling_users',
-    // ]
+
     return this.userService.userData
       .pipe(
         map(u => roles.every((_role) => u.roles.includes(_role)))

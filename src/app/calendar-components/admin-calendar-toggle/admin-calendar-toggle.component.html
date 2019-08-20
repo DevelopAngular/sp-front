@@ -4,7 +4,7 @@
          [style.height]="'70px'"
     >
       <div class="toggle-picker">
-        <app-restriction-picker (result)="toggleResult = $event; resetDate()" [selectedChoose]="toggleResult || 'Range'" [width]="265" [height]="25" [choices]="['Range', 'Days', 'Weeks']"></app-restriction-picker>
+        <app-restriction-picker (result)="toggleResult = $event" [selectedChoose]="toggleResult || 'Range'" [width]="265" [height]="25" [choices]="['Range', 'Days', 'Weeks']"></app-restriction-picker>
       </div>
       <!--<div class="selected-date" *ngIf="toggleResult === 'Range'">-->
         <!--{{ selectedDateText }}-->
@@ -30,18 +30,18 @@
 
     <div class="days-options" *ngSwitchCase="'Days'">
       <div class="calendar-picker">
-        <app-calendar-picker [selectedDates]="exportDate" (onSelectDate)="calendarResult($event)" [showYear]="false" [showTime]="false"></app-calendar-picker>
+        <app-calendar-picker [selectedDates]="[selectedDay]" (onSelectDate)="calendarResult($event)" [showYear]="false" [showTime]="false"></app-calendar-picker>
       </div>
       <mat-divider></mat-divider>
       <div class="day-options">
         <app-toggle-options [selectedId]="selectedDayId || 'days_1'" [options]="daysOptions" (result)="selectedDaysOption($event)"></app-toggle-options>
       </div>
       <div class="time-range" #day *ngIf="openTimeRange">
-        <app-time-picker [currentDate]="selectedDate.start || currentDate" (timeResult)="selectedDate.start = $event"></app-time-picker>
+        <app-time-picker [currentDate]="selectedDate.start || currentDate" (timeResult)="changeRangeTime(true, $event)"></app-time-picker>
         <mat-divider [vertical]="true"></mat-divider>
-        <app-time-picker [currentDate]="selectedDate.end || currentDate" (timeResult)="selectedDate.end = $event"></app-time-picker>
+        <app-time-picker [currentDate]="selectedDate.end || currentDate" (timeResult)="changeRangeTime(false, $event)"></app-time-picker>
       </div>
-      <div class="button" #dayButton *ngIf="selectedDay && selectedDate.start && selectedDate.end && openTimeRange">
+      <div class="button" #dayButton *ngIf="selectedDate.start && selectedDate.end && openTimeRange">
         <app-gradient-button
                 [width]="'101px'"
                 [cursor]="'pointer'"

@@ -2,13 +2,9 @@
   <div class="existing-room-header">
     <div
       class="back-button"
-      [@pressState]="buttonState"
-      (click)="goBack()"
-      (mousedown)="onPress(true)"
-      (mouseup)="onPress(false)"
       *ngIf="!roomsInFolder.length"
     >
-      <app-back-button></app-back-button>
+      <app-icon-button [size]="20" [srcString]="'Chevron Left'" (clickEvent)="goBack()"></app-icon-button>
     </div>
     <div class="cancel-button" (click)="goBack()" *ngIf="roomsInFolder.length">Cancel</div>
     <div class="header-title" [style.font-weight]="'bold'" [style.color]="roomsInFolder.length ? '#1F195E' : '#7F879D'">
@@ -30,7 +26,7 @@
   <div class="pinnable-collection">
     <app-pinnable-collection
             [isEmptyState]="false"
-            [width]="'420px'"
+            [width]="'474px'"
             [header]="false"
             [pinnables]="pinnables"
             (roomEvent)="roomsInFolder=$event"

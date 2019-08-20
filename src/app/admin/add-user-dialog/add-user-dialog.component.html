@@ -1,16 +1,27 @@
 <div class="add-user-dialog-container">
-  <div class="heading">
-    <div class="back-button" (click)="back()">
-      <img [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg" >
+  <!-- Disables card when some async stuffs occur-->
+  <div class="disabled-state loading-theme_light-gray spinner" *ngIf="(pending$ | async)">
+    <mat-spinner [diameter]="'100'" [color]="'accent'"></mat-spinner>
+  </div>
+  <!-- end -->
+  <div class="heading" #header>
+    <div class="back-button" (click)="back()" *ngIf="!state">
+      <img *ngIf="!selectedUsers.length && (!showIncomplete() && !showSaveButton()); else cancel" [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">
+      <ng-template #cancel>
+        <div class="cancel">Cancel</div>
+      </ng-template>
+    </div>
+    <div class="back-button" *ngIf="state === 'assistant' || state === 'selectRole'" (click)="state = null">
+      <img [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">
     </div>
     <div class="ds-dialog-title-white ds-flex-center-center">
       <img [src]="'./assets/Plus (White).svg'" width="20" height="20" alt="(White).svg" class="ds-mr-10">
       <span>Add User</span>
     </div>
-    <div class="save-button" *ngIf="showSaveButton()">
-      <app-gradient-button
+    <div class="save-button">
+      <app-gradient-button *ngIf="showSaveButton()"
         [size]="'small'"
-        [gradient]="'#FFFFFF,#FFFFFF'"
+        [gradient]="'#FFFFFF, #FFFFFF'"
         [hoverColor]="'#FCFDFF'"
         [textColor]="'#04CD33'"
         [cursor]="'pointer'"
@@ -20,123 +31,62 @@
           <span>Add</span>
         </div>
       </app-gradient-button>
+      <div class="incomplete" *ngIf="showIncomplete()">Incomplete</div>
+    </div>
+    <div class="save-button" *ngIf="showNextButton">
+      <app-gradient-button
+         [size]="'small'"
+         [gradient]="'#FFFFFF, #FFFFFF'"
+         [hoverColor]="'#FCFDFF'"
+         [textColor]="'#04CD33'"
+         [cursor]="'pointer'"
+         (buttonClick)="next()"
+      >
+        <div class="ds-flex-center-start">
+          <span>Next</span>
+        </div>
+      </app-gradient-button>
     </div>
   </div>
-  <div class="content">
-    <!--<div class="content_top">-->
-      <!--<div class="content_top-header">-->
-        <!--<span class="ds-dialog-heading">Account Type</span>-->
-        <!--<span class="ds-mt-5 ds-blue-gray">-->
-          <!--Learn more <span class="ds-link-text"> here</span>.-->
-        <!--</span>-->
-      <!--</div>-->
-      <!--<div class="content_top-body">-->
+  <div class="content" *ngIf="!state" #rc>
+    <div class="content_top">
+      <div class="content_top-header">
+        <span class="ds-dialog-heading">Account Type</span>
+        <span class="ds-mt-5 ds-blue-gray">
+          Learn more <span class="ds-link-text"> here</span>.
+        </span>
+      </div>
+      <div class="content_top-body">
 
-        <!--<div class="account-type-picker">-->
-          <!--<app-restriction-picker-->
-            <!--[choices]="accountTypes"-->
-            <!--[selectedChoose]="typeChoosen"-->
-            <!--[height]="25"-->
-            <!--[width]="167"-->
-            <!--[fontSize]="13"-->
-            <!--(result)="typeChoosen = $event"-->
-          <!--&gt;</app-restriction-picker>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</div>-->
-
-    <div *ngIf="data.role === '_profile_assistant'">
-      <div class="content_rest" *ngIf="typeChoosen === accountTypes[0]">
-
-        <div class="secretary-user ds-w-100">
-          <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.user, 'ds-dialog-heading-gray': !assistantLike.user}">Assistant</div>
-          <div class="profile-search" *ngIf="!assistantLike.user; else secretaryUser" >
-            <app-student-search
-              [placeholder]="'Search G Suite accounts'"
-              [type]="'gsuite'"
-              [role]="data.role"
-              (onUpdate)="setSecretary($event, null)"
-            ></app-student-search>
-          </div>
-          <ng-template #secretaryUser>
-            <div class="ds-flex-center-between">
-              <div #chip class="user"
-                   (mouseenter)="chip.hovered = true;"
-                   (mouseleave)="chip.hovered = false;">
-
-                <span>{{assistantLike.user.display_name}}</span>
-                <div style="width: 15px; height: 15px; cursor: pointer; margin-left: 10px;">
-
-                  <img *ngIf="chip.hovered"
-                       (click)="assistantLike.user = null"
-                       [src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
-                </div>
-              </div>
-            </div>
-          </ng-template>
-        </div>
-        <div class="active-on-user ds-w-100">
-          <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.behalfOf, 'ds-dialog-heading-gray': !assistantLike.behalfOf}">Act on Behalf Of</div>
-          <div class="profile-search"  >
-            <app-student-search
-              [chipsMode]="true"
-              [placeholder]="'Search existing teachers'"
-              [dummyRoleText]="'teachers'"
-              [type]="'alternative'"
-              [role]="'_profile_teacher'"
-              (onUpdate)="setSecretary(null, $event)"
-            ></app-student-search>
-          </div>
-          <!--<ng-template #secretaryBehalfOf>-->
-            <!--<div class="ds-flex-center-between">-->
-
-              <!--<div #chip class="user"-->
-                   <!--(mouseenter)="chip.hovered = true;"-->
-                   <!--(mouseleave)="chip.hovered = false;">-->
-                <!--<span>{{assistantLike.behalfOf.display_name}}</span>-->
-                <!--<div style="width: 15px; height: 15px; cursor: pointer; margin-left: 10px;">-->
-
-                  <!--<img *ngIf="chip.hovered"-->
-                       <!--(click)="assistantLike.behalfOf = null"-->
-                       <!--[src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">-->
-                <!--</div>-->
-              <!--</div>-->
-            <!--</div>-->
-          <!--</ng-template>-->
+        <div class="account-type-picker">
+          <app-restriction-picker
+            [choices]="accountTypes"
+            [selectedChoose]="typeChoosen"
+            [height]="25"
+            [width]="167"
+            [fontSize]="13"
+            (result)="typeChoosen = $event"
+          ></app-restriction-picker>
         </div>
       </div>
     </div>
 
-    <div *ngIf="data.role !== '_profile_assistant'">
-
+    <div>
       <div class="content_rest" *ngIf="typeChoosen === accountTypes[0]">
-            <div class="ds-w-100 ds-flex-start-center" style="position: relative;">
+        <div class="ds-w-100 ds-flex-start-center" style="position: relative;">
 
-              <div class="profile-search">
+          <div class="profile-search">
 
-                <app-student-search
-                  [selectedStudents]="selectedUsers"
-                  [placeholder]="'Search G Suite accounts'"
-                  [type]="'gsuite'"
-                  [role]="data.role"
-                  (onUpdate)="setSelectedUsers($event)"
-                ></app-student-search>
-              </div>
-            </div>
-
-        <!--<div class="profile-permissions" [style.width]="'100%'" *ngIf="data.role !== '_profile_user'">-->
-          <!--<div class="profile-permissions_heading ds-dialog-heading">Permissions</div>-->
-          <!--<div *ngFor="let control of controlsIteratable">-->
-            <!--<app-toggle-input-->
-              <!--[form]="permissionsForm"-->
-              <!--[delimiter]="false"-->
-              <!--[controlName]="control.controlName"-->
-              <!--[controlLabel]="control.controlLabel"-->
-              <!--[controlSize]="'small'"-->
-            <!--&gt;</app-toggle-input>-->
-          <!--</div>-->
-        <!--</div>-->
-
+            <app-sp-search
+              [selectedOptions]="selectedUsers"
+              [placeholder]="'Search G Suite accounts'"
+              [dummyRoleText]="'users'"
+              [type]="'gsuite'"
+              [role]="data.role"
+              (onUpdate)="setSelectedUsers($event)"
+            ></app-sp-search>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -145,54 +95,30 @@
 
         <div [style.padding-bottom]="'10px'">
           <app-input
-            [input_label]="'Name'"
+            [input_label]="'Full Name'"
             [controlName]="newAlternativeAccount.get('name')"
             [formGroup]="newAlternativeAccount"
-            [input_value]="''"
+            [input_value]="newAlternativeAccount.get('name').value"
+            [errorIconTop]="3"
             [padding]="'1px'"
             [width]="'222px'"
             [height]="'30px'"
 
           ></app-input>
         </div>
-        <div class="active-on-user ds-w-100" *ngIf="data.role === '_profile_assistant'">
-          <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.behalfOf, 'ds-dialog-heading-gray': !assistantLike.behalfOf}">Active on Behalf Of</div>
-          <div class="profile-search" *ngIf="!assistantLike.behalfOf; else secretaryBehalfOf" >
-            <app-student-search
-              [type]="'alternative'"
-              [role]="''"
-              (onUpdate)="setSecretary(null, $event)"
-            ></app-student-search>
-          </div>
-          <ng-template #secretaryBehalfOf>
-            <div class="ds-flex-center-between">
-
-              <div #chip class="user"
-                   (mouseenter)="chip.hovered = true;"
-                   (mouseleave)="chip.hovered = false;">
-                <span>{{assistantLike.behalfOf.display_name}}</span>
-                <div style="width: 15px; height: 15px; cursor: pointer; margin-left: 10px;">
-
-                  <img *ngIf="chip.hovered"
-                       (click)="assistantLike.behalfOf = null"
-                       [src]="'./assets/Cancel (Blue-Gray).svg'" width="15" #fieldIcon alt="Check.svg">
-                </div>
-              </div>
-            </div>
-          </ng-template>
-        </div>
-        <div class="ds-flex-start-start ds-w-100 ds-mt-15" style="height: 170px">
+        <div class="ds-flex-start-start ds-w-100 ds-mt-10" style="height: 170px">
 
           <div class="ds-flex-center-between ds-flex-column ds-pb-5 ds-h-100">
             <div style="padding-bottom: 0px;">
 
               <app-input
-                [disabled]="true"
-                [input_label]="'Username'"
+                [input_label]="'Username or Email'"
                 [controlName]="newAlternativeAccount.get('username')"
                 [formGroup]="newAlternativeAccount"
-                [input_value]="''"
+                [input_value]="newAlternativeAccount.get('username').value"
+                [isFocus]="newAlternativeAccount.touched"
                 [padding]="'1px'"
+                [errorIconTop]="3"
                 [width]="'159px'"
                 [height]="'30px'"
 
@@ -201,11 +127,12 @@
             <div style="padding-bottom: 20px;">
 
               <app-input
-                [disabled]="true"
                 [input_label]="'Password'"
                 [controlName]="newAlternativeAccount.get('password')"
                 [formGroup]="newAlternativeAccount"
-                [input_value]="''"
+                [input_value]="newAlternativeAccount.get('password').value"
+                [errorIconTop]="3"
+                [isFocus]="newAlternativeAccount.touched"
                 [padding]="'1px'"
                 [width]="'159px'"
                 [height]="'30px'"
@@ -214,46 +141,65 @@
             </div>
 
           </div>
-          <div class="ds-flex-start-between ds-flex-column ds-ml-25 ds-pl-15 ds-h-100">
-            <div class="ds-flex-start-between ds-flex-column ds-mb-25">
-              <div style="font-weight: bold; padding-bottom: 5px; font-size: 15px;"><span>Expiration </span> <span>(Optional)</span></div>
-
-              <div class="expiration-button">
-                <img [src]="'./assets/Plus (Blue-Gray).svg'"
-                     [attr.height]="'12'"
-                     [attr.width]="'12'" class="ds-p-10" alt="Plus (Blue-Gray).svg">
-                <span>Add Expiration</span>
-              </div>
-
-            </div>
-            <div class="ds-flex-start-center ds-flex-column ds-mt-5 ds-mb-20">
-              <app-gradient-button
-                [size]="'editable'"
-                [width]="'141px'"
-                [minHeight]="'40px'"
-                [gradient]="'#FFFFFF,#FFFFFF'"
-                [hoverColor]="'#FFFFFF'"
-                [textColor]="'#7F879D'"
-                [fontSize]="'14px'"
-                [fontWeight]="'bold'"
-                [leftIcon]="'./assets/Print (Blue-Gray).svg'"
-                [leftImageHeight]="'21px'"
-                [leftImageWidth]="'21px'"
-                [cursor]="'pointer'"
-                (buttonClick)="showInstructions(data.role)"
-              >
-                <div class="ds-flex-center-start">
-                  <span>Instructions</span>
-                </div>
-              </app-gradient-button>
-
-            </div>
-          </div>
         </div>
 
       </form>
+      <div class="info-text" *ngIf="typeChoosen === accountTypes[1] && showSaveButton()">
+        Password must be at least 6 characters long and contain either a number or symbol. <br/>
+        <div style="margin-top: 7px">New users aren’t emailed this, you will need to share their password with them.</div>
+      </div>
 
     </div>
 
+  </div>
+
+  <div class="assistant-content" *ngIf="state === 'assistant'" #rc>
+    <div class="info">As an assistant, choose from existing teacher(s) so this user can act on behalf of the specified accounts.</div>
+    <div class="active-on-user ds-w-100" *ngIf="data.role === '_profile_assistant'">
+      <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.behalfOf.length, 'ds-dialog-heading-gray': !assistantLike.behalfOf.length}">Active on Behalf Of</div>
+      <div class="profile-search">
+        <app-sp-search
+                [placeholder]="'Search existing teachers'"
+                [dummyRoleText]="'teachers'"
+                [selectedOptions]="assistantLike.behalfOf"
+                [type]="'alternative'"
+                [role]="'_profile_teacher'"
+                (onUpdate)="setSecretary(null, $event)"
+        ></app-sp-search>
+      </div>
+    </div>
+  </div>
+
+  <div class="select-role" *ngIf="state === 'selectRole'" #rc>
+    <div class="info">Choose which SmartPass Group(s) this user should be added to.</div>
+    <div class="groups">
+      <div class="group" *ngFor="let account of accounts">
+        <app-profile
+                [title]="account.title"
+                [width]="178"
+                [plusIcon]="false"
+                [icon]="account.icon"
+                [isSelected]="account.selected"
+                [disabled]="isDisabled(account.role)"
+                (select)="account.selected = !!$event"
+        ></app-profile>
+      </div>
+    </div>
+
+    <div class="inp" *ngIf="accounts[2].selected">
+      <div class="active-on-user ds-w-100">
+        <div class="ds-mb-5" [ngClass]="{'ds-dialog-heading': assistantLike.behalfOf.length, 'ds-dialog-heading-gray': !assistantLike.behalfOf.length}">Active on Behalf Of</div>
+        <div class="profile-search">
+          <app-sp-search
+                  [placeholder]="'Search existing teachers'"
+                  [dummyRoleText]="'teachers'"
+                  [selectedOptions]="assistantLike.behalfOf"
+                  [type]="'alternative'"
+                  [role]="'_profile_teacher'"
+                  (onUpdate)="setSecretary(null, $event)"
+          ></app-sp-search>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

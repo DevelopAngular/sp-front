@@ -37,11 +37,15 @@ export class TeacherFooterComponent implements OnInit {
   }
 
   get fromCursor() {
-     return this.state !== 'from' && !this.date;
+     return this.state !== 'from' && !this.date && !this.formState.kioskMode;
   }
 
   get toCursor() {
     return this.state !== 'to' && this.state !== 'from';
+  }
+
+  get studentsCursor() {
+    return !this.formState.kioskMode;
   }
 
   ngOnInit() {
@@ -49,7 +53,7 @@ export class TeacherFooterComponent implements OnInit {
 
   goToFromWhere(evt: Event) {
     evt.stopPropagation();
-     if (this.state === 'from' || this.date) {
+     if (this.state === 'from' || this.date || this.formState.kioskMode) {
         return false;
      }
       this.formState.previousState = this.formState.state;
@@ -60,7 +64,7 @@ export class TeacherFooterComponent implements OnInit {
 
   goToToWhere(evt: Event) {
     evt.stopPropagation();
-     if (this.state === 'to' || this.state === 'from') {
+     if (this.state === 'to' || this.state === 'from' || this.formState.kioskMode) {
        return false;
      }
      this.formState.previousState = this.formState.state;
@@ -70,6 +74,9 @@ export class TeacherFooterComponent implements OnInit {
 
   goToStudents(evt: Event) {
     evt.stopPropagation();
+    if (this.formState.kioskMode) {
+      return false;
+    }
     this.formState.previousState = this.formState.state;
     this.formState.step = 2;
     this.formState.previousStep = 3;

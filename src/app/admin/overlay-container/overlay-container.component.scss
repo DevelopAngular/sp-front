@@ -1,5 +1,71 @@
 @import '../../../sp-colors';
 
+.wrapper {
+
+  .header {
+    width: 100%;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    font-weight: 900;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1001;
+
+    .left-button {
+      position: absolute;
+      left: 20px;
+    }
+
+    .right-button {
+      position: absolute;
+      right: 20px;
+    }
+  }
+
+  .content {
+    height: 430px;
+    display: flex;
+
+    .left-block {
+      width: 525px;
+      //overflow: auto;
+
+      .block {
+        height: 100%;
+        overflow: auto;
+      }
+    }
+
+    .right-block {
+      width: 274px;
+      .right-content {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        align-items: center;
+        overflow: auto;
+        position: relative;
+
+        .right-content-title{
+          text-align: center;
+          font-size: 16px;
+          font-weight: bold;
+        }
+        .color-picker {
+          margin: 15px 0 30px 0;
+        }
+        .icon-picker {
+          margin: 0 0 30px 0;
+        }
+      }
+    }
+  }
+}
+
 .overlay-container {
   width: inherit;
   height: inherit;
@@ -75,6 +141,7 @@
   display: flex;
   justify-content: space-between;
   height: 430px;
+  overflow: hidden;
 }
 
 .room-edit {
@@ -113,6 +180,7 @@
 .cancel-button {
   font-size: 15px;
   cursor: pointer;
+  font-weight: 500;
 }
 
 .left-buttons {
@@ -147,6 +215,8 @@
   position: relative;
   height: 100%;
   width: 614px;
+  margin: 0;
+  -webkit-overflow-scrolling: touch;
   .room-inputs {
     display: flex;
     margin: 20px 25px;
@@ -200,7 +270,10 @@
     }
   }
   .travel-settings {
-    display: flex; margin-top: 16px; margin-bottom: 13px; min-height: 103px;
+    display: flex;
+    margin-top: 16px;
+    margin-bottom: 13px;
+    min-height: 103px;
     .travel-picker {
       margin: 0px 0 0 25px;
 
@@ -240,27 +313,26 @@
 }
 
 
-.right-content {
-  display: flex;
-  flex-direction: column;
-  width: 315px;
-  height: 100%;
-  align-items: center;
-  overflow: auto;
-  position: relative;
-
-  .right-content-title{
-    text-align: center;
-    font-size: 16px;
-    font-weight: bold;
-  }
-  .color-picker {
-    margin: 15px 0 30px 0;
-  }
-  .icon-picker {
-    margin: 0 0 30px 0;
-  }
-}
+//.right-content {
+//  display: flex;
+//  flex-direction: column;
+//  height: 100%;
+//  align-items: center;
+//  overflow: auto;
+//  position: relative;
+//
+//  .right-content-title{
+//    text-align: center;
+//    font-size: 16px;
+//    font-weight: bold;
+//  }
+//  .color-picker {
+//    margin: 15px 0 30px 0;
+//  }
+//  .icon-picker {
+//    margin: 0 0 30px 0;
+//  }
+//}
 
 .isEdit {
   margin-left: 3%;
@@ -380,11 +452,12 @@
   align-items: center;
   flex-direction: column;
   background-color: #FCFDFF;
-  //position: relative;
+  top: 0;
+  position: absolute;
+  width: 528px;
   min-height: 78px;
-  //height: 78px;
-  //width: 100%;
-
+  overflow: hidden;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
 
   .new-room-in-folder-header {
     display: flex;
@@ -425,10 +498,6 @@
       cursor: pointer;
       position: absolute;
       left: 0;
-
-      &:hover {
-        background-color: #ECF1FF;
-      }
     }
 
     .cancel-button-in-folder-header {
@@ -559,9 +628,10 @@
 }
 
 .edit-rooms-info {
+  text-align: center;
   font-size: 14px;
   color: #7F879D;
-  margin: 20px 30px 0 30px;
+  margin: 20px 25px 0 25px;
 }
 
 .edit-right-content {
@@ -655,8 +725,8 @@
 }
 
 .support-icon {
-  width: 20px;
-  height: 20px;
+  width: 17px;
+  height: 17px;
   margin-left: 7px;
   cursor: help;
 }

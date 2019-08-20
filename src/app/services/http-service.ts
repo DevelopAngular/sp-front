@@ -1,12 +1,27 @@
 
-import {catchError, tap, first, delay, distinctUntilChanged, filter, flatMap, map, skip, switchMap, merge, take} from 'rxjs/operators';
+import {
+    catchError,
+    tap,
+    first,
+    delay,
+    distinctUntilChanged,
+    filter,
+    flatMap,
+    map,
+    skip,
+    switchMap,
+    merge,
+    take,
+    withLatestFrom
+} from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import {of, throwError, BehaviorSubject, Observable, timer, interval, ReplaySubject} from 'rxjs';
+import {of, throwError, BehaviorSubject, Observable, timer, interval, ReplaySubject, Subject} from 'rxjs';
 import { environment } from '../../environments/environment';
 import { GoogleLoginService, isDemoLogin } from './google-login.service';
 import { School } from '../models/School';
 import {StorageService} from './storage.service';
+import { LocalStorage } from '@ngx-pwa/local-storage';
 
 import * as moment from 'moment';
 
@@ -97,6 +112,11 @@ export interface AuthContext {
   auth: ServerAuth;
 }
 
+export interface SPError {
+  header: string;
+  message: string;
+}
+
 class LoginServerError extends Error {
   constructor(msg: string) {
     super(msg);
@@ -108,7 +128,7 @@ class LoginServerError extends Error {
 @Injectable()
 export class HttpService {
 
-  public errorToast$: ReplaySubject<boolean> = new ReplaySubject(1);
+  public errorToast$: ReplaySubject<SPError> = new ReplaySubject(1);
 
   private accessTokenSubject: BehaviorSubject<AuthContext> = new BehaviorSubject<AuthContext>(null);
   public effectiveUserId: BehaviorSubject<number> = new BehaviorSubject(null);
@@ -120,11 +140,12 @@ export class HttpService {
   );
   public currentSchoolSubject = new BehaviorSubject<School>(null);
   public currentSchool$: Observable<School> = this.currentSchoolSubject.asObservable();
+  public kioskTokenSubject$ = new BehaviorSubject<any>(null);
 
   public globalReload$ = this.currentSchool$.pipe(
     filter(school => !!school),
     map(school => school ? school.id : null),
-    distinctUntilChanged(),
+    // distinctUntilChanged(),
     delay(5)
   );
 
@@ -134,7 +155,9 @@ export class HttpService {
       private http: HttpClient,
       private loginService: GoogleLoginService,
       private storage: StorageService,
+      private pwaStorage: LocalStorage
   ) {
+
 
     // the school list is loaded when a user authenticates and we need to choose a current school of the school array.
     // First, if there is a current school loaded, try to use that one.
@@ -177,8 +200,8 @@ export class HttpService {
                   config.append('client_id', server.client_id);
                   config.append('grant_type', 'refresh_token');
                   config.append('token', auth.refresh_token);
-                  config.append('username', user.username);
-                  config.append('password', user.password);
+                  // config.append('username', user.username);
+                  // config.append('password', user.password);
                   console.log(new Date(auth.expires));
 
                 return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
@@ -203,12 +226,29 @@ export class HttpService {
             }),
      ).subscribe(() => { });
 
+      this.kioskTokenSubject$.pipe(
+        filter(v => !!v),
+        map(newToken => {
+        newToken['expires'] = new Date(new Date() + newToken['expires_in']);
+        return { auth: newToken, server: this.accessTokenSubject.value.server};
+
+      })).subscribe(res => {
+        console.log(res);
+        this.accessTokenSubject.next(res as AuthContext);
+      });
+
+    // this.accessTokenSubject.pipe(withLatestFrom(this.kioskTokenSubject$),
+    //     map(([{auth, server}, newToken]) => {ы
+    //       return {auth: newToken, server};
+    //     }))
+    //     .subscribe((updatedContext: AuthContext) => {
+    //       debugger;
+    //       this.accessTokenSubject.next(updatedContext);
+    //     });
+
   }
 
   get accessToken(): Observable<AuthContext> {
-
-    // console.log('get accessToken');
-
     if (!this.hasRequestedToken) {
       this.fetchServerAuth()
         .subscribe((auth: AuthContext) => {
@@ -228,11 +268,21 @@ export class HttpService {
       return of(preferredEnvironment as LoginServer);
     }
 
+    if (!navigator.onLine) {
+      return  this.pwaStorage.getItem('servers').pipe(
+        map((servers: LoginServer[]) => {
+          if (servers) {
+            return servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
+          } else {
+            return null;
+          }
+        }));
+    }
+
     return this.http.post('https://smartpass.app/api/discovery/find', data).pipe(
       map((servers: LoginServer[]) => {
-        // console.log(servers);
         if (servers.length > 0) {
-
+          this.pwaStorage.setItem('servers', servers).subscribe(() => {});
           return servers.find(s => s.name === (preferredEnvironment as any)) || servers[0];
         } else {
           return null;
@@ -243,7 +293,7 @@ export class HttpService {
   private loginManual(username: string, password: string): Observable<AuthContext> {
 
     // console.log('loginManual()');
-
+// debugger
     const c = new FormData();
     c.append('email', username);
     c.append('platform_type', 'web');
@@ -256,16 +306,45 @@ export class HttpService {
       // console.log(`Chosen server: ${server.name}`, server);
 
       const config = new FormData();
+      const refreshToken = this.storage.getItem('refresh_token');
 
       config.append('client_id', server.client_id);
-      config.append('grant_type', 'password');
-      config.append('username', username);
-      config.append('password', password);
 
-      // console.log('loginManual()');
+      if (refreshToken) {
+        config.append('grant_type', 'refresh_token');
+        config.append('token', refreshToken);
+      } else {
+        config.append('grant_type', 'password');
+        config.append('username', username);
+        config.append('password', password);
+      }
+
+      if (!navigator.onLine) {
+        console.log('AUTHDATA OFFLINE');
+        return this.pwaStorage.getItem('authData').pipe(
+          map((data: any) => {
+            if (data) {
+              data['expires'] = new Date(new Date() + data['expires_in']);
+
+              ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
+
+              const auth = data as ServerAuth;
+
+              return {auth: auth, server: server} as AuthContext;
+            }
+          }),
+
+          catchError((err) => {
+            this.loginService.isAuthenticated$.next(false);
+            return of(null);
+          })
+        );
+      }
+
       return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
         map((data: any) => {
-          console.log('Auth data : ', data);
+          this.pwaStorage.setItem('authData', data).subscribe( () => {});
+          this.storage.setItem('refresh_token', data.refresh_token);
           // don't use TimeService for auth because auth is required for time service
           // to be useful
           data['expires'] = new Date(new Date() + data['expires_in']);
@@ -323,14 +402,16 @@ export class HttpService {
   private fetchServerAuth(retryNum: number = 0): Observable<AuthContext> {
     // console.log('fetchServerAuth');
     return this.loginService.getIdToken().pipe(
-      switchMap(googleToken => {
+      switchMap((googleToken: any) => {
         let authContext$: Observable<AuthContext>;
 
         // console.log('getIdToken');
 
         if (isDemoLogin(googleToken)) {
+          // debugger
           authContext$ = this.loginManual(googleToken.username, googleToken.password);
         } else {
+          // console.log(googleToken);
           authContext$ = this.loginGoogleAuth(googleToken);
         }
 
@@ -359,6 +440,7 @@ export class HttpService {
   }
 
   private performRequest<T>(predicate: (ctx: AuthContext) => Observable<T>): Observable<T> {
+    // debugger
     return this.accessToken.pipe(
       switchMap(ctx => {
         // console.log('performRequest');

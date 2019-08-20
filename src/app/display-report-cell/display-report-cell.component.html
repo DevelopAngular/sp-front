@@ -15,8 +15,8 @@
       <div style="width: 90%">{{ message }}</div>
     </div>
     <div class="print-icon">
-      <div [style.cursor]="'pointer'">
-        <div (click)="printReport($event)"><img draggable="false" *ngIf="!!righticon" [src]="icon | resolveAsset"></div>
+      <div>
+        <app-icon-button [size]="25" [srcString]="'Print'" (clickEvent)="printReport($event)"></app-icon-button>
       </div>
     </div>
   </div>

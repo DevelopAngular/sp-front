@@ -1,4 +1,4 @@
-import {Component, ElementRef, Inject, OnInit} from '@angular/core';
+import {Component, ElementRef, HostListener, Inject, OnInit} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { Location } from '../../models/Location';
 import { Pinnable } from '../../models/Pinnable';
@@ -11,6 +11,8 @@ import {filter, map} from 'rxjs/operators';
 import * as _ from 'lodash';
 import {DataService} from '../../services/data-service';
 import {LocationsService} from '../../services/locations.service';
+import {ScreenService} from '../../services/screen.service';
+
 
 export enum Role { Teacher = 1, Student = 2 }
 
@@ -50,6 +52,7 @@ export interface Navigation {
   forLater?: boolean;
   missedRequest?: boolean;
   resendRequest?: boolean;
+  kioskMode?: boolean;
 }
 
 
@@ -72,6 +75,8 @@ export class MainHallPassFormComponent implements OnInit {
 
   user;
   isStaff;
+  isDeviceMid: boolean;
+  isDeviceLarge: boolean;
 
   constructor(
     public dialog: MatDialog,
@@ -80,10 +85,13 @@ export class MainHallPassFormComponent implements OnInit {
     private formService: CreateFormService,
     private elementRef: ElementRef,
     private dataService: DataService,
-    private locationsService: LocationsService
+    private locationsService: LocationsService,
+    private screenService: ScreenService,
   ) {}
 
   ngOnInit() {
+    this.isDeviceMid = this.screenService.isDeviceMid;
+    this.isDeviceLarge = this.screenService.isDeviceLarge;
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.FORM_STATE = {
       step: null,
@@ -97,10 +105,13 @@ export class MainHallPassFormComponent implements OnInit {
       data: {
         selectedGroup: null,
         selectedStudents: [],
-        direction: {},
+        direction: {
+          from: this.dialogData['kioskModeRoom'] || null
+        },
       },
       forInput: this.dialogData['forInput'] || false,
-      forLater: this.dialogData['forLater']
+      forLater: this.dialogData['forLater'],
+      kioskMode: this.dialogData['kioskMode'] || false
     };
     switch (this.dialogData['forInput']) {
       case true:
@@ -108,18 +119,23 @@ export class MainHallPassFormComponent implements OnInit {
         if (this.dialogData['forLater']) {
           if (this.dialogData['forStaff']) {
             this.FORM_STATE.step = 2;
-          } else {
-            this.FORM_STATE.step = 1;
-          }
-          if ( this.dialogData['forStaff'] ) {
+            this.FORM_STATE.state = this.dialogData['kioskMode'] ? 4 : 1;
             this.FORM_STATE.formMode.formFactor = FormFactor.Invitation;
           } else {
+            this.FORM_STATE.step = 1;
             this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
           }
         } else {
           this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
           if ( this.dialogData['forStaff'] ) {
-            this.FORM_STATE.step = 2;
+            if (this.dialogData['kioskMode'] && this.dialogData['kioskModeSelectedUser']) {
+              this.FORM_STATE.data.selectedStudents = this.dialogData['kioskModeSelectedUser'];
+                this.FORM_STATE.step = 3;
+                this.FORM_STATE.state = 2;
+            } else {
+                this.FORM_STATE.step = 2;
+                this.FORM_STATE.state = this.dialogData['kioskMode'] ? 4 : 1;
+            }
           } else {
             this.FORM_STATE.step = 3;
           }
@@ -152,7 +168,7 @@ export class MainHallPassFormComponent implements OnInit {
         break;
     }
     this.setFormSize();
-
+    this.checkDeviceScreen();
       this.dataService.currentUser.subscribe((user: User) => {
           this.isStaff = user.isTeacher() || user.isAdmin();
           this.user = user;
@@ -181,6 +197,7 @@ export class MainHallPassFormComponent implements OnInit {
               })).subscribe(rooms => {
           this.FORM_STATE.data.teacherRooms = rooms;
       });
+
   }
 
   onNextStep(evt) {
@@ -199,7 +216,7 @@ export class MainHallPassFormComponent implements OnInit {
   setFormSize() {
     const form = this.elementRef.nativeElement.closest('.mat-dialog-container');
           if (form && this.FORM_STATE.step !== 4) {
-            form.style.boxShadow = '0 2px 4px 0px rgba(0, 0, 0, 0.5)';
+            form.style.boxShadow = '0 2px 26px 0px rgba(0, 0, 0, 0.15)';
           }
 
     switch (this.FORM_STATE.step) {
@@ -208,8 +225,13 @@ export class MainHallPassFormComponent implements OnInit {
           this.formSize.height =  `500px`;
           break;
         case 2:
-          this.formSize.width =  `700px`;
-          this.formSize.height =  `400px`;
+          if (this.dialogData['kioskModeRoom']) {
+            this.formSize.width =  `425px`;
+            this.formSize.height =  `500px`;
+          } else {
+            this.formSize.width =  this.isDeviceLarge ?  `335px` : `700px`;
+            this.formSize.height = this.isDeviceLarge ?  `500px` : `400px`;
+          }
           break;
         case 3:
           this.formSize.width =  `425px`;
@@ -223,5 +245,12 @@ export class MainHallPassFormComponent implements OnInit {
           this.formSize.height =  this.FORM_STATE.formMode.role === 1 ? `451px` : '412px';
           break;
       }
+  }
+
+  @HostListener('window:resize')
+  checkDeviceScreen() {
+    this.isDeviceMid = this.screenService.isDeviceMid;
+    this.isDeviceLarge = this.screenService.isDeviceLargeExtra;
+    this.setFormSize();
   }
 }

@@ -22,17 +22,11 @@ export class SettingsComponent implements OnInit {
     hoveredSignout: boolean;
     hovered: boolean;
     hoveredColor: string;
-    version = 'Version 1.3';
+    version = 'Version 1.5';
     currentRelease = RELEASE_NAME;
 
 
     public settings = [
-        // {
-        //     'gradient': '#022F68, #2F66AB',
-        //     'icon': 'Moon',
-        //     'action': () => { this.darkTheme.switchTheme(); this.data.darkBackground = !this.data.darkBackground; },
-        //     'title': 'Dark Theme'
-        // },
         {
             'gradient': '#1893E9, #05B5DE',
             'icon': 'Team',
@@ -110,16 +104,17 @@ export class SettingsComponent implements OnInit {
     }
 
     updateCalendarPosition() {
-      const matDialogConfig: MatDialogConfig = new MatDialogConfig();
-      const dialogRect = this.elemRef.nativeElement.getBoundingClientRect();
-      console.log(dialogRect);
-      console.log(dialogRect.width);
-      matDialogConfig.position = {
-          left: `${this.data['possition'].x - 183}px`,
+      if (this.dialogRef) {
+        const matDialogConfig: MatDialogConfig = new MatDialogConfig();
+        const dialogRect = this.elemRef.nativeElement.getBoundingClientRect();
+        console.log(dialogRect);
+        console.log(dialogRect.width);
+        matDialogConfig.position = {
+          left: `${this.data['possition'].x - 148}px`,
           bottom: `${(window.document.body as HTMLElement).clientHeight - this.data['possition'].y + 20}px`
         };
-
         this.dialogRef.updatePosition(matDialogConfig.position);
+      }
     }
 
     onHover(color) {

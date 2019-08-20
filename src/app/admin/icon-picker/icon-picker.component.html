@@ -5,7 +5,7 @@
     </div>
     <div class="selected-icon-background">
       <!--{{selectedIconPicker | json}}-->
-      <img *ngIf="selectedIconLocalUrl" class="search-icon" (click)="unselectIcon()" [src]="selectedIconLocalUrl | resolveAsset" alt="">
+      <img draggable="false" *ngIf="selectedIconLocalUrl" class="search-icon" (click)="unselectIcon()" [src]="selectedIconLocalUrl | resolveAsset" alt="">
     </div>
   </div>
   <div class="search">
@@ -18,12 +18,12 @@
             (ontextupdate)="search($event)"
     ></app-round-input>
   </div>
-  <div class="ds-mt-15 icon-collection-title">{{iconCollectionTitle}}</div>
+  <div class="ds-mt-15 icon-collection-title" *ngIf="iconCollectionTitle">{{iconCollectionTitle}}</div>
   <div class="icon-collection ds-mt-5" *ngIf="icons.length; else empty">
     <div class="icon-container" *ngFor="let icon of icons" (click)="changeIcon(icon)">
       <div class="icon-wrapper" matTooltipClass="tooltip" [matTooltip]="iconTooltipText(icon)">
-        <img class="icon"  [ngStyle]="{'opacity': selectedIconId === icon.id && icon.active ? 1 : 0}" [src]="icon.active_icon">
-        <img class="icon greyIcon" [ngStyle]="{'opacity': selectedIconId === icon.id && icon.active ? 0 : 1}" [src]="icon.inactive_icon">
+        <img draggable="false" class="icon"  [ngStyle]="{'opacity': selectedIconId === icon.id && icon.active ? 1 : 0}" [src]="icon.active_icon">
+        <img draggable="false" class="icon greyIcon" [ngStyle]="{'opacity': selectedIconId === icon.id && icon.active ? 0 : 1}" [src]="icon.inactive_icon">
       </div>
     </div>
   </div>

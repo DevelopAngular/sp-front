@@ -1,8 +1,9 @@
 @import 'sp-colors';
+@import url('https://rsms.me/inter/inter.css');
 
 /* === SmartPass Primary Font === */
 
-$primaryFont: "Helvetica Neue", "Arial", "Arimo", sans-serif;
+$primaryFont: "Inter", "Arimo", "Arial", sans-serif;
 
 /* === end ===*/
 
@@ -160,6 +161,14 @@ $primaryFont: "Helvetica Neue", "Arial", "Arimo", sans-serif;
   @include textSize(15px, bold);
 }
 
+.ds-empty-text-title {
+  @include textSize(17px, 800, $blue-gray)
+}
+
+.ds-empty-text-info {
+  @include textSize(15px, normal, $blue-gray)
+}
+
 /* === end === */
 
 /* === Common Flex Layout === */
@@ -190,7 +199,7 @@ $primaryFont: "Helvetica Neue", "Arial", "Arimo", sans-serif;
 .ds-flex-center-between{
   @include flexLayout(center, space-between);
 }
-.ds-flex-ceter-around{
+.ds-flex-center-around{
   @include flexLayout(center, space-around);
 }
 .ds-flex-center-start{
@@ -229,6 +238,9 @@ $primaryFont: "Helvetica Neue", "Arial", "Arimo", sans-serif;
 }
 .ds-flex-column{
   flex-direction: column;
+}
+.ds-flex-row{
+  flex-direction: row;
 }
 
 /* === Common Parent > Child Sizing === */
@@ -424,9 +436,11 @@ $primaryFont: "Helvetica Neue", "Arial", "Arimo", sans-serif;
 .report-group-header,
 .bottom-shadow,
 .school-toggle-bar-wrapper,
-.settings-wrapper {
+.settings-wrapper,
+.input-header,
+.input-header-wrapper{
 
-  transition: all .2s ease-in;
+  transition: background-color .2s ease-in, color .2s ease-in, opacity .2s ease-in;
 }
 
 .ds-dark-theme {
@@ -483,18 +497,7 @@ $primaryFont: "Helvetica Neue", "Arial", "Arimo", sans-serif;
   .school-toggle-bar-wrapper {
     background-color: #C5D5FF !important;
   }
-  //.nav-wrapper {
-  //  .nav-footer {
-  //    .footer-text {
-  //      color: #FFFFFF;
-  //    }
-  //  }
-  //}
-  //.dashboard-wrapper {
-  //  .card-header {
-  //    color: #FFFFFF !important;
-  //  }
-  //}
+
 }
 
 /* === end === */

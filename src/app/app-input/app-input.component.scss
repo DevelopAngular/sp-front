@@ -11,19 +11,25 @@
 
 .input-container {
   position: relative;
+  //input {
+  //  cursor: default;
+  //  &:focus {
+  //    cursor: text;
+  //  }
+  //}
   .success-icon {
     width: 26px;
     height: 26px;
     position: absolute;
-    top: 8px;
+    //top: 8px;
     bottom: 0;
     right: 10px;
   }
 }
 
 .support-icon {
-  width: 20px;
-  height: 20px;
+  width: 17px;
+  height: 17px;
   margin-left: 7px;
   cursor: help;
 }
@@ -89,8 +95,8 @@
   border: 1px solid $navy;
 }
 .clserrorLabel {
-  color: red !important;
+  color: #E32C66 !important;
 }
 .clserrorInput {
-  border: 1px solid red !important
+  border: 1px solid #E32C66 !important
 }

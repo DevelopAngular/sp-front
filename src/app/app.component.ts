@@ -1,25 +1,33 @@
-import { AfterViewInit, Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import {AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { MatDialog } from '@angular/material';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
-import {delay, filter, map, mergeMap, takeUntil, tap, withLatestFrom} from 'rxjs/operators';
-import { BehaviorSubject, ReplaySubject, Subject } from 'rxjs';
+import * as _ from 'lodash';
+import {BehaviorSubject, interval, Observable, ReplaySubject, Subject} from 'rxjs';
 
-import { DeviceDetection } from './device-detection.helper';
-import { GoogleLoginService } from './services/google-login.service';
-import { HttpService } from './services/http-service';
-import { School } from './models/School';
-import { MatDialog } from '@angular/material';
-import { UserService } from './services/user.service';
-import { AdminService } from './services/admin.service';
-import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
-import { WebConnectionService } from './services/web-connection.service';
-import { ResizeInfoDialogComponent } from './resize-info-dialog/resize-info-dialog.component';
-import { StorageService } from './services/storage.service';
+import { filter, map, mergeMap, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { BUILD_INFO_REAL } from '../build-info';
 import { DarkThemeSwitch } from './dark-theme-switch';
 
-import * as _ from 'lodash';
+import { DeviceDetection } from './device-detection.helper';
+import { School } from './models/School';
+import { AdminService } from './services/admin.service';
+import { GoogleLoginService } from './services/google-login.service';
+import { HttpService, SPError } from './services/http-service';
+import { KioskModeService } from './services/kiosk-mode.service';
+import { StorageService } from './services/storage.service';
+import { UserService } from './services/user.service';
+import { WebConnectionService } from './services/web-connection.service';
+import { ToastConnectionComponent } from './toast-connection/toast-connection.component';
+import {OverlayContainer} from '@angular/cdk/overlay';
+import {APPLY_ANIMATED_CONTAINER, ConsentMenuOverlay} from './consent-menu-overlay';
+import {Meta} from '@angular/platform-browser';
 
 declare const window;
+
+export const INITIAL_LOCATION_PATHNAME =  new ReplaySubject<string>(1);
+
 
 /**
  * @title Autocomplete overview
@@ -32,12 +40,18 @@ declare const window;
 
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
+  private dialogContainer: HTMLElement;
+  @ViewChild( 'dialogContainer' ) set content(content: ElementRef) {
+    this.dialogContainer = content.nativeElement;
+  }
+
   public isAuthenticated = null;
   public hideScroll: boolean = false;
   public hideSchoolToggleBar: boolean = false;
-  public showUI: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public showUISubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public showUI: Observable<boolean> = this.showUISubject.asObservable();
   public showError: BehaviorSubject<any> = new BehaviorSubject<boolean>(false);
-  public errorToastTrigger: ReplaySubject<boolean>;
+  public errorToastTrigger: ReplaySubject<SPError>;
   public schools: School[] = [];
   public darkThemeEnabled: boolean;
   private openedResizeDialog: boolean;
@@ -63,12 +77,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   //     }
   // }
 
-  public preloader$;
-
   constructor(
     public darkTheme: DarkThemeSwitch,
     public loginService: GoogleLoginService,
     private http: HttpService,
+    private httpNative: HttpClient,
     private adminService: AdminService,
     private userService: UserService,
     private _zone: NgZone,
@@ -76,113 +89,137 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private webConnection: WebConnectionService,
     private dialog: MatDialog,
+    private overlayContainer: OverlayContainer,
     private storageService: StorageService,
+    private kms: KioskModeService,
+    private meta: Meta
   ) {
-    this.preloader$ = this.darkTheme.preloader;
-    this.preloader$.next(true);
     this.errorToastTrigger = this.http.errorToast$;
   }
 
   ngOnInit() {
+    // console.log('Initial location path ===>', );
+
+    INITIAL_LOCATION_PATHNAME.next(window.location.pathname);
+
     this.storageService.detectChanges();
     this.darkTheme.isEnabled$.subscribe((val) => {
       this.darkThemeEnabled = val;
+      this.meta.removeTag('name="apple-mobile-web-app-status-bar-style"');
+      this.meta.addTag({name: 'apple-mobile-web-app-status-bar-style', content: val ? 'black' : 'default' } );
     });
 
-    if ( !DeviceDetection.isIOSTablet() && !DeviceDetection.isMacOS() ) {
+    if (!DeviceDetection.isIOSTablet() && !DeviceDetection.isMacOS()) {
       const link = document.createElement('link');
-            link.setAttribute('rel', 'stylesheet');
-            link.setAttribute('href', './assets/css/custom_scrollbar.css');
-            document.head.appendChild(link);
+      link.setAttribute('rel', 'stylesheet');
+      link.setAttribute('href', './assets/css/custom_scrollbar.css');
+      document.head.appendChild(link);
     }
 
     this.webConnection.checkConnection().pipe(takeUntil(this.subscriber$),
-        filter(res => !res && !this.openConnectionDialog))
-        .subscribe(() => {
-            const toastDialog = this.dialog.open(ToastConnectionComponent, {
-              panelClass: 'toasr',
-              backdropClass: 'white-backdrop',
-              disableClose: true
-            });
+      filter(res => !res && !this.openConnectionDialog))
+      .subscribe(() => {
+        const toastDialog = this.dialog.open(ToastConnectionComponent, {
+          panelClass: 'toasr',
+          hasBackdrop: false,
+          disableClose: true
+        });
 
-            toastDialog.afterOpened().subscribe(() => {
-                this.openConnectionDialog = true;
-            });
+        toastDialog.afterOpened().subscribe(() => {
+          this.openConnectionDialog = true;
+        });
 
-            toastDialog.afterClosed().subscribe(() => {
-                this.openConnectionDialog = false;
-            });
-    });
+        toastDialog.afterClosed().subscribe(() => {
+          this.openConnectionDialog = false;
+        });
+      });
 
     this.loginService.isAuthenticated$.pipe(
       takeUntil(this.subscriber$),
     )
     .subscribe(t => {
-
-      console.log('Auth response ===>', t);
+      console.log('Auth response ===>', t, window.location.pathname);
+      // debugger
       this._zone.run(() => {
-        this.showUI.next(true);
-        this.preloader$.next(false);
+        this.showUISubject.next(true);
         this.isAuthenticated = t;
+        const path = window.location.pathname;
+        if (!t && (path.includes('admin') ||  path.includes('main'))) {
+          this.router.navigate(['/']);
+        }
       });
     });
-    this.showError.pipe(
-      delay(1000)
-    ).subscribe((signInError: any) => {
-      console.log(signInError)
-      if (signInError && signInError.error) {
-        this.showUI.next(false);
-      }
-    });
-    window.appLoaded(2000);
 
     this.http.schools$.pipe(
-        map(schools => _.filter(schools, (school => school.my_roles.length > 0))),
-        withLatestFrom(this.http.currentSchool$),
-        takeUntil(this.subscriber$))
-        .subscribe(([schools, currentSchool]) => {
-            this.schools = schools;
-          if (currentSchool && !_.find(schools, {id: currentSchool.id})) {
-            this.http.setSchool(schools[0]);
-          }
-    });
-
-    // ============== SPA-407 ====================> Needs to be uncommented when the backend logic will completed
-    // this.userService
-    //   .getUserWithTimeout()
-    //   .subscribe((user) => {
-    //     this.matDialog.open(NextReleaseComponent, {
-    //       panelClass: 'form-dialog-container',
-    //       data: {
-    //         'isTeacher': user.isTeacher(),
-    //         'isStudent': user.isStudent()
-    //       }
-    //     });
-    //   });
-    // ============== SPA-407 ===================> End
+      map(schools => _.filter(schools, (school => school.my_roles.length > 0))),
+      withLatestFrom(this.http.currentSchool$),
+      takeUntil(this.subscriber$))
+      .subscribe(([schools, currentSchool]) => {
+        this.schools = schools;
+        if (currentSchool && !_.find(schools, {id: currentSchool.id})) {
+          this.http.setSchool(schools[0]);
+        }
+      });
 
     this.http.currentSchool$.pipe(takeUntil(this.subscriber$))
-        .subscribe((value => {
-      if (!value) {
-        this.schools = [];
-      }
-    }));
+      .subscribe((value => {
+        if (!value) {
+          this.schools = [];
+        }
+      }));
     this.router.events
       .pipe(
         takeUntil(this.subscriber$),
         filter(event => event instanceof NavigationEnd),
         map(() => this.activatedRoute),
         map((route) => {
-          if (route.firstChild) { route = route.firstChild; }
+          if (route.firstChild) {
+            route = route.firstChild;
+          }
           return route;
         }),
         mergeMap((route) => route.data)
       )
       .subscribe((data) => {
+
         // console.log(data);
-        if (data.signOut) {
-          this.schools = [];
+        const existingHub: any = document.querySelector('#hubspot-messages-iframe-container');
+        let newHub: any;
+
+        if (!existingHub) {
+          newHub = document.createElement('script');
+          newHub.type = 'text/javascript';
+          newHub.id = 'hs-script-loader';
+          newHub.setAttribute('id', 'hs-script-loader');
+          newHub.src = '//js.hs-scripts.com/5943240.js';
         }
+
+        if (data.currentUser) {
+          this.hubSpotSettings(data.currentUser);
+        }
+
+        if (data.hubspot && (data.authFree || (!data.currentUser.isStudent() && !this.http.kioskTokenSubject$.value && !this.kms.currentRoom$.value))) {
+          if (!existingHub) {
+            document.body.appendChild(newHub);
+            const dst = new Subject<any>();
+            interval(100)
+              .pipe(
+                takeUntil(dst)
+              ).subscribe(() => {
+              if (window._hsq) {
+                dst.next();
+                dst.complete();
+              }
+            });
+          } else {
+            (existingHub as HTMLElement).setAttribute('style', 'display: block !important;width: 100px;height: 100px');
+          }
+        } else {
+          if (existingHub) {
+            (existingHub as HTMLElement).setAttribute('style', 'display: none !important');
+          }
+        }
+
         if (data.hideSchoolToggleBar) {
           this.hideSchoolToggleBar = true;
         } else {
@@ -192,17 +229,46 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
+  hubSpotSettings(user) {
+    const _hsq = window._hsq = window._hsq || [];
+
+    const myPush = function (a) {
+      if (!BUILD_INFO_REAL) {
+        console.log('Pushed:', a);
+      }
+      _hsq.push(a);
+    };
+
+    myPush(['identify', {
+      email: user.primary_email,
+      firstname: user.first_name,
+      lastname: user.last_name,
+    }]);
+
+    myPush(['setPath', '/admin/dashboard']);
+    myPush(['trackPageView']);
+
+  }
+
   ngOnDestroy() {
     this.subscriber$.next(null);
     this.subscriber$.complete();
   }
 
   ngAfterViewInit() {
-    // setTimeout(() => {
-    //   this.matDialog.open(NextReleaseComponent, {
-    //     panelClass: 'form-dialog-container'
-    //   });
-    // }, 1000);
+    APPLY_ANIMATED_CONTAINER
+      .subscribe((v: boolean) => {
+        if (v) {
+          const zIndexForContainer = (this.dialog.openDialogs.length + 1) * 1000;
+          this.dialogContainer.classList.add('unanimated-dialog-container');
+          this.dialogContainer.style.zIndex = `${zIndexForContainer}`;
+          (this.overlayContainer as ConsentMenuOverlay).setContainer(this.dialogContainer);
+        } else {
+          this.dialogContainer.style.zIndex = '-1';
+          this.dialogContainer.classList.remove('unanimated-dialog-container');
+          (this.overlayContainer as ConsentMenuOverlay).restoreContainer();
+        }
+      });
   }
 
 

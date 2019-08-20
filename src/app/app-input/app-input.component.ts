@@ -26,6 +26,7 @@ export class AppInputComponent implements OnInit {
     @Input() textAlign: string;
     @Input() isErrorIcon: boolean = true;
     @Input() isFocus: boolean;
+    @Input() errorIconTop: number = 8;
     @Input() disabled: boolean = false;
 
     @Input() formGroup;
@@ -40,32 +41,32 @@ export class AppInputComponent implements OnInit {
 
     private initialValue: string | number;
 
-    public rightIconUntouched: string;
-
     public hovered: boolean;
     public pressed: boolean;
+
+
     constructor(
       public dialog: MatDialog,
       private sanitizer: DomSanitizer,
-    ) {
-      // this.rightIconUntouched = this.rightIcon.replace('Blue', 'Grey');
+    ) {}
+
+    get containerWidth() {
+        return this.width ? parseFloat(this.width) + 16 + 'px' : 0;
     }
 
     ngOnInit() {
-      // console.log('right_icon ===> ', this.rightIcon);
-      // this.rightIconUntouched = this.rightIcon.replace('Blue', 'Grey');
+      // console.log('right_icon ===> ', this.isFocus);
       of(null).pipe(
         delay(1000),
         switchMap(() => {
           return  this.formGroup.valueChanges;
         }),
-      ).subscribe()
-      if (this.isFocus) {
-        this.updateFocus(this.input.nativeElement);
-      }
+      ).subscribe();
 
-      if (this.rightIcon) {
-        this.rightIconUntouched = this.rightIcon.replace('Navy', 'Blue-Gray');
+      if (this.isFocus) {
+        setTimeout(() => {
+          this.input.nativeElement.focus();
+        }, 50);
       }
 
       setTimeout(() => {
@@ -76,16 +77,6 @@ export class AppInputComponent implements OnInit {
         });
     }
 
-    // getBackground() {
-    //       if (this.hovered || this.isFocus) {
-    //         return '#EDEDED';          return this.sanitizer.bypassSecurityTrustStyle('#E2E7F4');
-    //
-    //       } else {
-    //         return '#F7F7F7';          return this.sanitizer.bypassSecurityTrustStyle('#E2E7F4');
-    //
-    //       }
-    // }
-
     updateFocus(el) {
 
       this.initialValue = this.input_value;
@@ -95,7 +86,6 @@ export class AppInputComponent implements OnInit {
       } else {
         el.blur();
       }
-      // this.hovered = this.hovered ? false : true;
     }
     onBlur(value) {
       this.hovered = false;

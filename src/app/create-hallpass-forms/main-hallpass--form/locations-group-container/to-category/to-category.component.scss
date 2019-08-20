@@ -1,5 +1,15 @@
+@media all and (max-width: 1024px) {
+  div.category-wrapper {
+    overflow: initial;
+  }
+
+  img.back-btn-top {
+    display: none;
+  }
+
+}
+
 .category-wrapper {
-  width: 425px;
   height: 500px;
   display: flex;
   flex-direction: column;
@@ -113,4 +123,12 @@
   height: 3px;
   background: white;
   box-shadow: white 0 0 0 13px;
+}
+
+.back-btn-top {
+  display: block;
+}
+
+.back-btn-bottom {
+  display: none;
 }

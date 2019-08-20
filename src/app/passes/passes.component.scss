@@ -1,74 +1,125 @@
 @import '../../sp-colors';
 
-/* Small devices (landscape phones, 576px and up) */
-@media (min-width: 576px) {
-    .container {
-        max-width: 540px;
-    }
+@media all and (max-width: 320px){
+  div.current-pass-card {
+    max-width: 300px;
+  }
+
+  div.pass-buttons{
+    grid-template-columns: 143px 143px !important;
+  }
 }
 
-/* Medium devices (tablets, 768px and up) */
-@media (min-width: 768px) {
-    .container {
-        max-width: 720px;
-    }
+@media all and (max-width: 425px) {
+  div.inbox-content {
+    width: 93%;
+  }
+
+  div.current-pass,
+  div.future-passes,
+  div.past-passes,
+  div.active-passes {
+    width: 100%;
+  }
+
+  div.pass-buttons{
+    align-self: center;
+    display: grid;
+    grid-template-columns: 157px 157px;
+    gap: 15px 15px;
+    width: initial;
+  }
+
+  .requests-title,
+  h1.passes-heading {
+    display: block;
+    color: #1F195E;
+    margin-top: -15px;
+  }
+
+  .passes {
+    margin-top: 10px;
+  }
+
+  img.empty-passes-svg {
+    width: 100%;
+  }
+
 }
 
-/* Large devices (desktops, 992px and up) */
-@media (min-width: 992px) {
-    .container {
-        max-width: 960px;
-    }
+@media all and (max-width: 768px){
+  div.main-page-left{
+    margin-right: 0;
+  }
+
+  div.main-page-right {
+    display: none !important;
+  }
 }
 
-/* Extra large devices (large desktops, 1200px and up) */
-@media (min-width: 1200px) {
-    .container {
-        max-width: 1140px;
+@media all and (max-width: 1024px){
+  .pass-collection  {
+    &:last-child {
+      padding-bottom: 60px;
     }
+  }
+
+  div.current-pass-card {
+    max-width: 335px;
+    margin: 0 auto;
+  }
 }
 
 .passes-wrapper {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 
-    margin-left: auto;
-    margin-right: auto;
+  margin-left: auto;
+  margin-right: auto;
 
-    padding-top: 25px;
+  padding-top: 25px;
+
+  &.scroll {
+    overflow: auto;
+    height: calc(100% - 78px);
+  }
+
 }
 
 .main-page-left{
   margin-right: 80px;
   display: flex;
-    flex-direction: column;
-    align-items: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 .current-pass{
-    margin-bottom: 40px;
+  margin-bottom: 40px;
+}
+
+.inbox-content {
+  width: 301px;
 }
 
 .pass-buttons{
-    display: flex;
-    flex-direction: row;
-    //margin-left: 25px;
-    justify-content: space-between;
-    width: 258px;
+  display: flex;
+  flex-direction: row;
+  //margin-left: 25px;
+  justify-content: space-between;
+  width: 301px;
 }
 
 .future-passes, .past-passes, .active-passes {
-    width: 400px;
-    //margin-bottom: 40px;
+  width: 460px;
+  //margin-bottom: 40px;
 }
 .requests-or-invitations {
-    //margin-bottom: 40px;
+  //margin-bottom: 40px;
 }
 
 .main-page-right{
-    //margin-left: 80px;
-    //animation: requestsInMotion .8s ease forwards;
+  //margin-left: 80px;
+  //animation: requestsInMotion .8s ease forwards;
 }
 
 .requests-in-motion {
@@ -82,29 +133,52 @@
     transform: translateX(50px);
   }
   100% {
-    width: 312px;
+    width: 351px;
     opacity: 1;
     transform: translateX(0px);
   }
 }
 
 .big-text {
-    font-size: 16pt;
+  font-size: 16pt;
 }
 
 .empty-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: $blue-gray;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: $blue-gray;
 }
 
 .empty-inbox-svg {
-    margin: 20px 0;
-    width: 200px;
+  margin: 20px 0;
+  width: 200px;
 }
 
 .empty-passes-svg {
-    margin: 20px 0;
-    width: 330px;
+  margin: 20px 0;
+  width: 330px;
+}
+
+.passes-heading {
+  display: none;
+}
+
+.side-menu {
+  &-content {
+    max-height: 267px;
+    max-width: 340px;
+    margin: 0 auto;
+  }
+
+  &-title {
+    color: #1F195E;
+    font-weight: bold;
+    font-size: 25px;
+    padding-top: 100px;
+  }
+
+  &-requests {
+    padding-top: 30px;
+  }
 }

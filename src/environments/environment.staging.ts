@@ -1,7 +1,11 @@
+
+// this corresponds to https://smartpass-testing.lavanote.com/app/
+
 export const environment = {
   production: true,
   buildType: 'staging',
-  preferEnvironment: 'Staging',
+  preferEnvironment: null,
+  schoolOnboardApiRoot: 'https://smartpass.app/api/staging',
   funData: false,
   firebase: {
     apiKey: "AIzaSyDKAexSUkOIj63hP9MkLi22CHpykkh_4Bs",

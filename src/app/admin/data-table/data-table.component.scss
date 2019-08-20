@@ -1,15 +1,30 @@
 @import "../../../design-system";
+@import "../../../sp-colors";
+
+:host {
+  @extend .ds-flex-center-center, .ds-flex-column, .ds-w-100;
+  flex: 1 1 auto;
+}
 
 .data-table-wrapper {
-  .sticky-header {
-    position: sticky;
-    top: -40px;
-    border-bottom: 2px solid #878787;
-    z-index: 100;
-    background-color: #F8FAFF;
-    font-family: $primaryFont;
-    //transition: all .2s ease;
+  @extend .ds-flex-center-center, .ds-flex-column;
+  position: relative;
+  height: 100%;
+  flex: 1 1 auto;
+  .scrollable-area {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    flex: 1 1 auto;
   }
+}
+.sticky-header {
+  border-bottom: 2px solid $blue-gray;
+  transition: all .2s ease;
+}
+
+::ng-deep .mat-sort-header-container {
+  padding-left: 8px;
 }
 
 .multi-cell {
@@ -24,13 +39,6 @@
   cursor: not-allowed;
 }
 
-table {
-  width: 100%;
-}
-//.cdk-column-Rooms {
-//  text-decoration: underline;
-//}
-
 ::ng-deep .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background, .mat-checkbox-checked.mat-accent .mat-checkbox-background {
   background-color: #7E879D;
 }
@@ -43,25 +51,78 @@ table {
   box-sizing: border-box;
 }
 ::ng-deep .mat-sort-header-button {
-  font-size: 15px !important;
-  //text-transform: capitalize;
-  font-weight: bolder !important;
+  font-size: 14px !important;
+  text-transform: uppercase;
 }
 
-.dark-theme-of-checkbox {
-  ::ng-deep .mat-checkbox-frame {
-    border-color: #767676;
+::ng-deep .cdk-virtual-scroll-content-wrapper {
+  transform: translateY(0px) !important;
+}
+
+.row-placeholder {
+  visibility: collapse;
+  height: 0px !important;
+  td {
+    visibility: collapse;
+    height: 0px !important;
+    position: sticky;
+    top: -16px;
   }
-  &__primary {
+}
+
+.dark-mode, .light-mode {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0px 25px;
+}
+
+.dark-mode {
+  .master-checkbox {
     ::ng-deep .mat-checkbox-frame {
       border-color: #FFFFFF;
     }
   }
+  ::ng-deep .mat-checkbox-frame {
+    border-color: #767676;
+  }
+  ::ng-deep .mat-row {
+    .mat-cell {
+      cursor:pointer;
+      color: #767676;
+    }
+    &:hover {
+      background-color: #0991C3;
+      color: #FFFFFF;
+      .mat-cell {
+        color: #FFFFFF;
+      }
+    }
+  }
+  .selected-row {
+    background-color: #0991C3;
+    color: #FFFFFF;
+    .mat-cell {
+      color: #FFFFFF;
+    }
+  }
 }
 
-
-//.mat-row:hover {
-  //cursor: pointer;
-  //transition: opacity .3s ease;
-  //opacity: 1;
-//}
+.light-mode {
+  ::ng-deep .mat-checkbox-frame {
+    border-color: #767676;
+  }
+  ::ng-deep .mat-row {
+    .mat-cell {
+      color: #767676;
+    }
+    &:hover {
+      background-color: #ECF1FF;
+    }
+  }
+  .selected-row {
+    background-color: #ECF1FF;
+    .mat-cell {
+      color: #767676;
+    }
+  }
+}

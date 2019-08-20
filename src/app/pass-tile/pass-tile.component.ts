@@ -7,9 +7,8 @@ import {getFormattedPassDate, getInnerPassContent, getInnerPassName, isBadgeVisi
 import { DomSanitizer } from '@angular/platform-browser';
 import { Request } from '../models/Request';
 import { Invitation } from '../models/Invitation';
-import { Util } from '../../Util';
 import {filter} from 'rxjs/operators';
-import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
+import {ScreenService} from '../services/screen.service';
 
 @Component({
   selector: 'app-pass-tile',
@@ -81,22 +80,34 @@ export class PassTileComponent implements OnInit, OnDestroy {
         (this.pass instanceof Invitation && this.pass.status === 'declined') || (this.forStaff && this.pass instanceof Request);
   }
 
-  get boxShadow(){
-    return this.sanitizer.bypassSecurityTrustStyle(this.hovered?'0 2px 4px 1px rgba(0, 0, 0, 0.3)':'0 2px 4px 0px rgba(0, 0, 0, 0.1)');
+  get boxShadow() {
+    if (!this.mock) {
+        let i = 0;
+        const hexColors = [];
+        const rawHex = this.pass.color_profile.solid_color.slice(1);
+        do {
+            hexColors.push(rawHex.slice(i, i + 2));
+            i += 2;
+        } while (i < rawHex.length);
+        const rgbString = hexColors.map(color => parseInt(color, 16)).join(', ');
+        return this.sanitizer.bypassSecurityTrustStyle(this.hovered ?
+            `0px 3px 10px rgba(${rgbString}, 0.3)` :
+            this.buttonDown ? `0px 3px 5px rgba(${rgbString}, 0.15)` : '0px 3px 5px rgba(0, 0, 0, 0.1)');
+    }
   }
 
-  constructor(private sanitizer: DomSanitizer, private timeService: TimeService) {
+  constructor(private sanitizer: DomSanitizer, private timeService: TimeService, private screenService: ScreenService) {
   }
 
   ngOnInit() {
-    if (this.mock) {
+      // if (this.mock) {
       // this.pass = null;
       // this.fromPast = false;
       // this.forFuture = true;
       // this.isActive = false;
       // this.forStaff = false;
       // this.timerEvent = new Subject<any>();
-    }
+    // }
 
     this.valid = this.isActive;
     if (this.timerEvent) {
@@ -129,9 +140,14 @@ export class PassTileComponent implements OnInit, OnDestroy {
     }
   }
 
-  onPress(press: boolean) {
+  onPress(press: boolean, event) {
+    if (this.screenService.isDeviceLargeExtra) event.preventDefault();
     this.buttonDown = press;
     // console.log("[Button State]: ", "The button is " +this.buttonState);
+  }
+
+  onTap(state: boolean) {
+    this.buttonDown = state;
   }
 
   onClick(event) {

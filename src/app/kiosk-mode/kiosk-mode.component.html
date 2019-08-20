@@ -1,0 +1,44 @@
+<div class="kiosk-mode-container">
+  <div class="current-pass ds-mb-25">
+      <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'20px'" [icon]="'./assets/Plus (Navy).svg'">
+        <div class="pass-buttons">
+          <app-create-pass-button
+                  [title]="'Now'"
+                  (onClick)="showMainForm(false)"
+          ></app-create-pass-button>
+
+          <app-create-pass-button
+                  [title]="'Future'"
+                  [disabled]="true"
+                  (onClick)="showMainForm(true)"
+          ></app-create-pass-button>
+
+        </div>
+      </app-display-card>
+  </div>
+  <div class="active-passes">
+    <div class="active-passes">
+      <app-pass-collection
+              [isActive]="true"
+              [forStaff]="true"
+              [style.width]="'400px'"
+              [passProvider]="activePassesKiosk"
+              [title]="'Active Passes'"
+              [icon]="'./assets/Walking (Navy).svg'"
+              [columns]="3"
+      >
+      </app-pass-collection>
+    </div>
+  </div>
+</div>
+<input
+    [hidden]="hideInput"
+    tabindex="1"
+    type="text"
+    autofocus
+    #input
+    [(ngModel)]="cardReaderValue"
+    (keyup)="cardReader($event)"
+    (blur)="onCardReaderBlur()"
+    [style.opacity]="0"
+>

@@ -7,8 +7,6 @@ import {fromEvent} from 'rxjs';
 })
 export class SafariScrollDirective {
 
-
-
   constructor(
     public host: ElementRef,
     private renderer: Renderer2
@@ -37,9 +35,10 @@ export class SafariScrollDirective {
           event.target.scrollLeft = 0;
 
           DeviceDetection.disableScroll();
+
           setTimeout(() => {
             DeviceDetection.enableScroll();
-          }, 200);
+          }, 360);
         }
         if (event.target.scrollLeft + event.target.clientWidth > event.target.scrollWidth) {
           event.target.scrollLeft = event.target.scrollLeft + event.target.clientWidth;
@@ -47,7 +46,22 @@ export class SafariScrollDirective {
           DeviceDetection.disableScroll();
           setTimeout(() => {
             DeviceDetection.enableScroll();
-          }, 200);
+          }, 360);
+        }
+        if (event.target.scrollTop < 0) {
+          event.target.scrollTop = 0;
+          DeviceDetection.disableScroll();
+          setTimeout(() => {
+            DeviceDetection.enableScroll();
+          }, 360);
+        }
+        if (event.target.scrollTop + event.target.clientHeight > event.target.scrollHeight) {
+          event.target.scrollTop = event.target.scrollTop + event.target.clientHeight;
+
+          DeviceDetection.disableScroll();
+          setTimeout(() => {
+            DeviceDetection.enableScroll();
+          }, 360);
         }
         unregister();
       });

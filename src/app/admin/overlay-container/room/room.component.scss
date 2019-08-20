@@ -1,0 +1,86 @@
+.wrapper {
+  .content {
+    width: 415px;
+    padding: 30px;
+    .room-inputs {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .teacher-search {
+      margin: 20px 0;
+      width: 82%;
+      position: relative;
+      .teacher-title {
+        color: #1D1A5E;
+        font-weight: bold;
+        font-size: 15px;
+        display: flex;
+      }
+      .search-field {
+        width: 100%;
+        top: 25px;
+        min-height: 40px;
+      }
+      .assigned-teachers {
+        display: flex;
+        flex-wrap: wrap;
+        width: 430px;
+        .teacher {
+          background-color: #F7F7F7;
+          border-radius: 8px;
+          height: 30px;
+          padding: 5px 10px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-right: 10px;
+          margin-top: 10px;
+          color: #1F194E;
+          white-space: nowrap;
+        }
+      }
+    }
+
+    .travel-settings {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .restriction-settings {
+      display: flex;
+      margin-top: 30px;
+      justify-content: space-between;
+    }
+
+    .support-icon {
+      width: 17px;
+      height: 17px;
+      margin-left: 7px;
+      cursor: help;
+    }
+
+    .toggle-label {
+      margin-bottom: 10px;
+      color: #1d1a5e;
+      font-weight: bold;
+      font-size: 15px;
+      display: flex;
+    }
+  }
+
+  .delete-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+
+    .delete-info-text {
+      text-align: center;
+      margin-top: 10px;
+      padding-bottom: 36px;
+      color: #7F879D;
+      font-size: 14px;
+    }
+  }
+}

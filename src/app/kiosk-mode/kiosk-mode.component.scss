@@ -1,0 +1,20 @@
+.kiosk-mode-container {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .current-pass {
+    //margin-top: 20px;
+  }
+  .pass-buttons{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 301px;
+  }
+
+  .future-passes, .past-passes, .active-passes {
+    width: 400px;
+    //margin-bottom: 40px;
+  }
+}

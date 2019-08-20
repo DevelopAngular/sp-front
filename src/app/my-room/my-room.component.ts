@@ -1,6 +1,6 @@
-import {Component, ElementRef, NgZone, OnDestroy, OnInit} from '@angular/core';
-import {MatDialog} from '@angular/material';
-import {combineLatest, merge, of, BehaviorSubject, Observable, ReplaySubject, Subject} from 'rxjs';
+import {Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { MatDialog} from '@angular/material';
+import {combineLatest, merge, of, BehaviorSubject, Observable, ReplaySubject, Subject, interval} from 'rxjs';
 import { Util } from '../../Util';
 import { DataService } from '../services/data-service';
 import { mergeObject } from '../live-data/helpers';
@@ -11,15 +11,27 @@ import { Location } from '../models/Location';
 import { testPasses } from '../models/mock_data';
 import { BasicPassLikeProvider, PassLikeProvider, WrappedProvider } from '../models/providers';
 import { User } from '../models/User';
-import {DropdownComponent} from '../dropdown/dropdown.component';
+import { DropdownComponent } from '../dropdown/dropdown.component';
 import { TimeService } from '../services/time.service';
-import {CalendarComponent} from '../admin/calendar/calendar.component';
-import {filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
-import {DarkThemeSwitch} from '../dark-theme-switch';
-import {LocationsService} from '../services/locations.service';
-import * as _ from 'lodash';
-import {RepresentedUser} from '../navbar/navbar.component';
-import {UserService} from '../services/user.service';
+import { CalendarComponent } from '../admin/calendar/calendar.component';
+import {delay, filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
+import { DarkThemeSwitch } from '../dark-theme-switch';
+import { LocationsService } from '../services/locations.service';
+import { RepresentedUser } from '../navbar/navbar.component';
+import { UserService } from '../services/user.service';
+import { ScreenService } from '../services/screen.service';
+import { SortMenuComponent } from '../sort-menu/sort-menu.component';
+import { MyRoomAnimations } from './my-room.animations';
+import { KioskModeService } from '../services/kiosk-mode.service';
+import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
+import { bumpIn } from '../animations';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
+import { StorageService } from '../services/storage.service';
+import { HttpService } from '../services/http-service';
+
+import * as moment from 'moment';
+import {ScrollPositionService} from '../scroll-position.service';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -59,12 +71,14 @@ class ActivePassProvider extends RoomPassProvider {
 class OriginPassProvider extends RoomPassProvider {
   protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
     return this.liveDataService.watchHallPassesFromLocation(sortingEvents, locations, date);
+        // .pipe(map(passes => passes.filter(pass => moment().isSameOrAfter(moment(pass.end_time)))));
   }
 }
 
 class DestinationPassProvider extends RoomPassProvider {
   protected fetchPasses(sortingEvents: Observable<HallPassFilter>, locations: Location[], date: Date) {
     return this.liveDataService.watchHallPassesToLocation(sortingEvents, locations, date);
+        // .pipe(map(passes => passes.filter(pass => moment().isSameOrAfter(moment(pass.end_time)))));
   }
 }
 
@@ -72,12 +86,63 @@ class DestinationPassProvider extends RoomPassProvider {
 @Component({
   selector: 'app-my-room',
   templateUrl: './my-room.component.html',
-  styleUrls: ['./my-room.component.scss']
+  styleUrls: ['./my-room.component.scss'],
+  animations: [
+    MyRoomAnimations.calendarTrigger,
+    MyRoomAnimations.collectionsBlockTrigger,
+    MyRoomAnimations.headerTrigger,
+    MyRoomAnimations.calendarIconTrigger,
+    bumpIn
+  ],
 })
 export class MyRoomComponent implements OnInit, OnDestroy {
 
+  private scrollableAreaName = 'MyRoom';
+  private scrollableArea: HTMLElement;
+
+  @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
+    if (scrollable) {
+      this.scrollableArea = scrollable.nativeElement;
+
+      const updatePosition = function () {
+
+        const scrollObserver = new Subject();
+        const initialHeight = this.scrollableArea.scrollHeight;
+        const scrollOffset = this.scrollPosition.getComponentScroll(this.scrollableAreaName);
+
+        /**
+         * If the scrollable area has static height, call `scrollTo` immediately,
+         * otherwise additional subscription will perform once if the height changes
+         */
+
+        if (scrollOffset) {
+          this.scrollableArea.scrollTo({top: scrollOffset});
+        }
+
+        interval(50)
+          .pipe(
+            filter(() => {
+              return initialHeight < ((scrollable.nativeElement as HTMLElement).scrollHeight) && scrollOffset;
+            }),
+            takeUntil(scrollObserver)
+          )
+          .subscribe((v) => {
+            console.log(scrollOffset);
+            if (v) {
+              this.scrollableArea.scrollTo({top: scrollOffset});
+              scrollObserver.next();
+              scrollObserver.complete();
+              updatePosition();
+            }
+          });
+      }.bind(this);
+      updatePosition();
+    }
+  }
+
   testPasses: PassLikeProvider;
 
+  activePassesKiosk: WrappedProvider;
   activePasses: WrappedProvider;
   originPasses: WrappedProvider;
   destinationPasses: WrappedProvider;
@@ -94,17 +159,31 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   canView = false;
   userLoaded = false;
 
-  mergedOriginPassesPasses = [];
-  mergedDestinationPasses = [];
+  buttonDown: boolean;
+  hovered: boolean;
 
   searchQuery$ = new BehaviorSubject('');
   searchDate$ = new BehaviorSubject<Date>(null);
   selectedLocation$ = new ReplaySubject<Location[]>(1);
 
+  searchPending$: Subject<boolean> = new Subject<boolean>();
+
   hasPasses: Observable<boolean> = of(false);
   passesLoaded: Observable<boolean> = of(false);
 
   destroy$ = new Subject();
+
+  optionsClick: boolean;
+
+  isCalendarShowed: boolean;
+
+  isCalendarClick: boolean;
+
+  isCalendarSlide: boolean;
+
+  isSearchBarClicked: boolean;
+
+  resetValue = new Subject();
 
   constructor(
       private _zone: NgZone,
@@ -117,9 +196,17 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       public dataService: DataService,
       public dialog: MatDialog,
       public userService: UserService,
+      public kioskMode: KioskModeService,
+      private sanitizer: DomSanitizer,
+      private storage: StorageService,
+      private http: HttpService,
+      private screenService: ScreenService,
+      public router: Router,
+      private scrollPosition: ScrollPositionService
+
   ) {
     this.setSearchDate(this.timeService.nowDate());
-
+    console.log(this.kioskMode);
     this.testPasses = new BasicPassLikeProvider(testPasses);
 
     const selectedLocationArray$ = this.selectedLocation$.pipe(map(location => location));
@@ -141,8 +228,16 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     this.searchDate$.next(date);
   }
 
+  get buttonState() {
+      return this.buttonDown ? 'down' : 'up';
+  }
+
   get searchDate() {
     return this.searchDate$.value;
+  }
+
+  get showKioskModeButton() {
+    return this.selectedLocation || this.roomOptions.length === 1;
   }
 
   get dateDisplay() {
@@ -150,11 +245,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   get choices() {
-    // if (this.selectedLocation !== null) {
-    //   return this.roomOptions.filter((room) => room.id !== this.selectedLocation.id);
-    // } else {
-      return this.roomOptions;
-    // }
+    return this.roomOptions;
   }
 
   get showArrow() {
@@ -175,6 +266,11 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
   get error() {
     return !this.isStaff || (this.isStaff && !this.roomOptions.length) || !this.canView;
+  }
+
+  get shadow() {
+    return this.sanitizer.bypassSecurityTrustStyle((this.hovered ?
+      '0 2px 4px 1px rgba(0, 0, 0, 0.3)' : '0 1px 4px 0px rgba(0, 0, 0, 0.25)'));
   }
 
   ngOnInit() {
@@ -231,13 +327,32 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       this.originPasses.loaded$,
       this.destinationPasses.loaded$,
       (l1, l2, l3) => l1 && l2 && l3
+    ).pipe(
+      filter(v => v),
+      delay(250),
+      tap(console.log),
+      tap((res) => this.searchPending$.next(!res))
     );
   }
 
   ngOnDestroy() {
+    if (this.scrollableArea && this.scrollableAreaName) {
+      this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
+    }
     this.locationService.myRoomSelectedLocation$.next(this.selectedLocation);
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  onPress(press: boolean) {
+      this.buttonDown = press;
+  }
+
+  onHover(hover: boolean){
+      this.hovered = hover;
+      if (!hover) {
+          this.buttonDown = false;
+      }
   }
 
   getIcon(icon) {
@@ -250,21 +365,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   chooseDate(event) {
-    // this.calendarToggled = this.!calendarToggled
-
-    // this.activeCalendar = true;
     const target = new ElementRef(event.currentTarget);
-    // const DR = this.dialog.open(CalendarComponent, {
-    //   panelClass: 'calendar-dialog-container',
-    //   backdropClass: 'invis-backdrop',
-    //   data: {
-    //     'trigger': target,
-    //     // 'previousSelectedDate': this.chartsDate ? new Date(this.chartsDate) : null,
-    //   }
-    // });
-
-
-
     const DR = this.dialog.open(CalendarComponent, {
       panelClass: 'calendar-dialog-container',
       backdropClass: 'invis-backdrop',
@@ -278,16 +379,33 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     });
   }
 
+  setRoomToKioskMode() {
+    let kioskRoom;
+    if (this.roomOptions.length === 1) {
+        kioskRoom = this.roomOptions[0];
+    } else {
+      kioskRoom = Object.assign({}, this.selectedLocation);
+    }
+    this.kioskMode.currentRoom$.next(kioskRoom);
+    this.userService.saveKioskModeLocation(kioskRoom.id).subscribe((res: any) => {
+        this.storage.setItem('kioskToken', res.access_token);
+        this.http.kioskTokenSubject$.next(res);
+        this.router.navigate(['main/kioskMode']);
+    });
+
+  }
 
   onSearch(search: string) {
     this.inputValue = search;
+    this.searchPending$.next(true)
     this.searchQuery$.next(search);
   }
 
-  showOptions(target: HTMLElement) {
+
+  displayOptionsPopover(target: HTMLElement) {
     if (!this.optionsOpen && this.roomOptions && this.roomOptions.length > 1) {
       // const target = new ElementRef(evt.currentTarget);
-        const optionDialog = this.dialog.open(DropdownComponent, {
+      const optionDialog = this.dialog.open(DropdownComponent, {
         panelClass: 'consent-dialog-container',
         backdropClass: 'invis-backdrop',
         data: {
@@ -311,5 +429,112 @@ export class MyRoomComponent implements OnInit, OnDestroy {
         this.selectedLocation$.next(data !== 'all_rooms' ? [data] : this.roomOptions);
       });
     }
+  }
+
+  showMainForm(forLater: boolean): void {
+    const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
+      panelClass: 'main-form-dialog-container',
+      backdropClass: 'custom-backdrop',
+      data: {
+        'forLater': forLater,
+        'forStaff': this.isStaff,
+        'forInput': true,
+        'kioskMode': true,
+        'kioskModeRoom': this.kioskMode.currentRoom$.value
+      }
+    });
+  }
+
+  showOptions(target: HTMLElement) {
+    this.optionsClick = !this.optionsClick;
+    if (this.screenService.isDeviceMid || this.screenService.isIpadWidth) {
+      this.openOptionsMenu();
+    } else {
+      this.displayOptionsPopover(target);
+    }
+  }
+
+  calendarClick() {
+    this.isCalendarShowed = !this.isCalendarShowed;
+    this.isCalendarClick = !this.isCalendarClick;
+  }
+
+  toggleSearchBar() {
+    this.isSearchBarClicked = !this.isSearchBarClicked;
+  }
+
+  cleanSearchValue() {
+    this.resetValue.next('');
+  }
+
+  onDate(event) {
+    this.setSearchDate(event[0]._d);
+  }
+
+  openOptionsMenu() {
+    setTimeout(() => {
+      const dialogData = {
+        title: 'change room',
+        list: [{name: 'all rooms', isSelected: true, selectedItem: null}],
+      };
+
+      if (this.selectedLocation) {
+        dialogData.list[0].isSelected = false;
+      }
+
+      this.choices.forEach((choice) => {
+        let isItemSelected: boolean;
+
+        if (this.selectedLocation && (this.selectedLocation.title === choice.title)) {
+          isItemSelected = true;
+        }
+
+        dialogData.list.push({
+          name: choice.title,
+          isSelected: isItemSelected,
+          selectedItem: choice,
+        });
+      });
+
+      const dialogRef = this.dialog.open(SortMenuComponent, {
+        position: {bottom: '0'},
+        panelClass: 'options-dialog',
+        data: dialogData
+      });
+
+      dialogRef.componentInstance.onListItemClick.subscribe((index) => {
+        this.selectedLocation = dialogData.list.find((option, i) => {
+          return i === index;
+        }).selectedItem;
+        this.selectedLocation$.next(this.selectedLocation !== null ? [this.selectedLocation] : this.roomOptions);
+      });
+    }, 100);
+  }
+
+  calendarSlideState(stateName: string): string {
+    switch (stateName) {
+      case  'leftRight':
+        return this.isCalendarClick ? 'slideLeft' : 'slideRight';
+      case 'topBottom':
+        return this.isCalendarClick ? 'slideTop' : 'slideBottom';
+    }
+  }
+
+  get collectionsSlideState() {
+    if (!this.screenService.isIpadWidth && this.isCalendarClick && !this.isSearchBarClicked) {
+      return 'collectionsTop';
+    }
+
+    if (!this.screenService.isIpadWidth && !this.isCalendarClick && !this.isSearchBarClicked) {
+      return 'collectionsBottom';
+    }
+  }
+
+  get headerState() {
+    return this.isSearchBarClicked ? 'headerTop' : 'headerBottom';
+  }
+
+  get calendarIconState() {
+    return this.isSearchBarClicked ? 'calendarIconLeft' : 'calendarIconRight';
   }
 }

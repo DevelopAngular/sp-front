@@ -1,10 +1,16 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Navigation } from '../../main-hall-pass-form.component';
 import { Location } from '../../../../models/Location';
 import { User } from '../../../../models/User';
 import {CreateFormService} from '../../../create-form.service';
 import {BehaviorSubject} from 'rxjs';
+import {MessageBoxViewRestrictionSm} from '../../../../models/message-box-view-restrictions/MessageBoxViewRestrictionSm';
+import {MessageBoxViewRestriction} from '../../../../models/message-box-view-restrictions/MessageBoxViewRestriction';
+import {MessageBoxViewRestrictionLg} from '../../../../models/message-box-view-restrictions/MessageBoxViewRestrictionLg';
+import {MessageBoxViewRestrictionMd} from '../../../../models/message-box-view-restrictions/MessageBoxViewRestrictionMd';
+import {ScreenService} from '../../../../services/screen.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-restricted-message',
@@ -43,8 +49,11 @@ export class RestrictedMessageComponent implements OnInit {
     'rest-mes-header_animation-back': false
   };
 
+  messageBoxViewRestriction: MessageBoxViewRestriction = new MessageBoxViewRestrictionLg();
+
   constructor(
-    private formService: CreateFormService
+    private formService: CreateFormService,
+    private screenService: ScreenService
   ) { }
 
   get headerGradient() {
@@ -52,20 +61,11 @@ export class RestrictedMessageComponent implements OnInit {
     return 'radial-gradient(circle at 98% 97%,' + colors + ')';
   }
 
-  get showTeachersHeader() {
-    const to = this.formState.data.direction.to;
-    return this.toLocation &&
-        (this.formState.forLater &&
-            (to.scheduling_request_mode === 'specific_teachers' || to.scheduling_request_mode === 'all_teachers_in_room')) ||
-        (!this.formState.forLater &&
-            (to.request_mode === 'specific_teachers' || to.request_mode === 'all_teachers_in_room'));
-  }
-
   get teachersNames() {
     const to = this.formState.data.direction.to;
-    if (!this.formState.forLater && to.request_mode === 'specific_teachers') {
+    if (!this.formState.forLater && to.request_mode === 'specific_teachers' && to.request_teachers.length === 1) {
       return to.request_teachers;
-    } else if (!this.formState.forLater && to.request_mode === 'all_teachers_in_room') {
+    } else if (!this.formState.forLater && to.request_mode === 'all_teachers_in_room' || (!this.formState.forLater && this.teachersLength === 1)) {
         if (to.request_send_origin_teachers && to.request_send_destination_teachers) {
           return [...this.formState.data.direction.from.teachers, ...this.formState.data.direction.to.teachers];
         } else if (to.request_send_origin_teachers) {
@@ -74,9 +74,9 @@ export class RestrictedMessageComponent implements OnInit {
            return this.formState.data.direction.to.teachers;
         }
     }
-    if (this.formState.forLater && to.scheduling_request_mode === 'specific_teachers') {
+    if (this.formState.forLater && to.scheduling_request_mode === 'specific_teachers' && to.scheduling_request_teachers.length === 1) {
       return to.scheduling_request_teachers;
-    } else if (this.formState.forLater && to.scheduling_request_mode === 'all_teachers_in_room') {
+    } else if (this.formState.forLater && to.scheduling_request_mode === 'all_teachers_in_room' || (this.formState.forLater && this.teachersLength === 1)) {
         if (to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
           return [...this.formState.data.direction.from.teachers, ...this.formState.data.direction.to.teachers];
         } else if (to.scheduling_request_send_origin_teachers) {
@@ -88,6 +88,33 @@ export class RestrictedMessageComponent implements OnInit {
     return [this.teacher];
   }
 
+  get teachersLength() {
+    const to = this.formState.data.direction.to;
+    const from = this.formState.data.direction.from;
+    if (to.request_mode === 'teacher_in_room') {
+      if (to.request_send_origin_teachers && !to.request_send_destination_teachers) {
+        return from.teachers.length;
+      } else if (!to.request_send_origin_teachers && to.request_send_destination_teachers) {
+        return to.teachers.length;
+      } else if (to.request_send_origin_teachers && to.request_send_destination_teachers) {
+        return to.teachers.length + from.teachers.length;
+      }
+    }
+    if (to.scheduling_request_mode === 'teacher_in_room') {
+      if (to.scheduling_request_send_origin_teachers && !to.scheduling_request_send_destination_teachers) {
+        return from.teachers.length;
+      } else if (!to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
+        return to.teachers.length;
+      } else if (to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
+        return to.teachers.length + from.teachers.length;
+      }
+    }
+  }
+
+  get filteredTeachers() {
+    return _.uniqBy(this.teachersNames, 'id');
+  }
+
   ngOnInit() {
       if (this.formState.previousState > this.formState.state || this.formState.previousStep > this.formState.step) {
       this.headerTransition['rest-mes-header'] = false;
@@ -95,15 +122,11 @@ export class RestrictedMessageComponent implements OnInit {
     }
 
     this.frameMotion$ = this.formService.getFrameMotionDirection();
-    // setTimeout(() => {
-    //     this.messageBox.nativeElement.focus();
-    // }, 50);
     this.message = new FormControl(this.formState.data.message);
     this.fromLocation = this.formState.data.direction.from;
     this.toLocation = this.formState.data.direction.to;
     this.teacher = this.formState.data.requestTarget;
-
-      console.log(this.toLocation);
+    this.messageBoxViewRestriction = this.getViewRestriction();
   }
 
   back() {
@@ -131,18 +154,12 @@ export class RestrictedMessageComponent implements OnInit {
       }
       this.backButton.emit(this.formState);
     }, 100);
-
-
-
   }
 
   sendRequest() {
     this.formService.setFrameMotionDirection('forward');
-    // this.headerTransition['rest-mes-header'] = false;
-    // this.headerTransition['rest-mes-header_animation-back'] = true;
     setTimeout(() => {
       this.resultMessage.emit(this.message.value);
-      // this.formService.setFrameMotionDirection('back');
     }, 100);
   }
 
@@ -152,4 +169,16 @@ export class RestrictedMessageComponent implements OnInit {
     this.headerTransition['rest-mes-header_animation-back'] = true;
   }
 
+  @HostListener('window: resize')
+  changeMessageBoxView() {
+    this.messageBoxViewRestriction = this.getViewRestriction();
+  }
+
+  private getViewRestriction(): MessageBoxViewRestriction {
+    if (this.screenService.isDeviceLargeExtra) {
+      return new MessageBoxViewRestrictionSm();
+    }
+
+    return new MessageBoxViewRestrictionLg();
+  }
 }

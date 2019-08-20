@@ -1,11 +1,11 @@
 ﻿import {Component, Inject, ElementRef, OnInit, HostListener} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef  } from '@angular/material';
-import { DomSanitizer } from '../../../node_modules/@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import {DataService} from '../services/data-service';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 
 
-type optionsView = 'inline' | 'button';
+export type optionsView = 'inline' | 'button';
 
 @Component({
   selector: 'app-consent-menu',

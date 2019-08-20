@@ -15,10 +15,40 @@ body {
   margin: 0 0;
   font-family: $primaryFont;
   width: 100%;
-  height: 100%;
+  height: 100vh;
   overflow: hidden;
   box-sizing: content-box !important;
+
+  // IOS PWA styles
   -webkit-overflow-scrolling: touch;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+.filter-shadow {
+  filter: url("#dropshadow");
+}
+
+button {
+  user-select: none;
+}
+
+img {
+  user-drag: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+}
+
+div {
+    //cursor: default;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none;   /* Chrome/Safari/Opera */
+    -khtml-user-select: none;    /* Konqueror */
+    -moz-user-select: none;      /* Firefox */
+    -ms-user-select: none;       /* Internet Explorer/Edge */
+    user-select: none;           /* Non-prefixed version, currently
+                                  not supported by any browser */
 }
 
 
@@ -40,7 +70,7 @@ body {
 .form-dialog-container .mat-dialog-container {
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
   margin: 0;
   padding: 0;
   scrollbar-face-color: #D6D6D6;
@@ -51,7 +81,7 @@ body {
 .form-dialog-container-white .mat-dialog-container {
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
   margin: 0;
   padding: 0;
   scrollbar-face-color: #D6D6D6;
@@ -63,7 +93,7 @@ body {
   border-radius: 14px;
   background-color: transparent;
   overflow: visible;
-  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
   //box-shadow: none;
   margin: 0;
   padding: 0;
@@ -74,7 +104,7 @@ body {
 .pass-card-dialog-container .mat-dialog-container {
   border-radius: 10px;
   overflow: visible;
-  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
   margin: 0;
   padding: 0;
   width: 262px;
@@ -84,43 +114,57 @@ body {
 .teacher-pass-card-dialog-container .mat-dialog-container {
   border-radius: 14px;
   overflow: visible;
-  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
   margin: 0;
   padding: 0;
-  width: 334px;
   height: 451px;
 }
 
 .student-pass-card-dialog-container .mat-dialog-container {
   border-radius: 14px;
   overflow: visible;
-  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
   margin: 0;
   padding: 0;
   width: 334px;
   height: 412px;
 }
 
+.search-pass-card-dialog-container .mat-dialog-container {
+  border-radius: 14px;
+  overflow: visible;
+  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
+  margin: 0;
+  padding: 0;
+  width: 334px;
+  height: 451px;
+  margin-left: 219px !important;
+
+}
+
 .accounts-profiles-dialog{
-  margin-left: 302px !important;
+  margin-left: 219px !important;
 }
 .accounts-profiles-dialog .mat-dialog-container{
   border-radius: 10px;
-  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
   //margin: 10px;
   padding: 0;
 }
 
 .overlay-dialog {
-  margin-left: 302px !important;
-
+  margin-left: 219px !important;
 }
 
-
+@media all and (max-width: 1110px) {
+  .overlay-dialog {
+    margin-left: 0 !important;
+  }
+}
 
 .overlay-dialog .mat-dialog-container{
   border-radius: 16px;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
   overflow: hidden;
   //margin: 10px;
   padding: 0;
@@ -129,7 +173,7 @@ body {
 .editor-dialog{
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 3px 20px 0px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
   margin: 0;
   padding: 10px;
   background-color: rgba(1, 25, 52, 0.7);
@@ -142,12 +186,6 @@ body {
   background: transparent;
 }
 
-//.next-release-dialog-container .mat-dialog-container {
-//  width: auto;
-//  height: auto;
-//  padding: 0;
-//  background: transparent;
-//}
 .message-dialog-container .mat-dialog-container {
   @extend .editor-dialog;
   width: 300px;
@@ -184,8 +222,6 @@ body {
   overflow: visible;
   box-shadow: 0 3px 20px 0px rgba(0, 0, 0, 0.15);
   border-radius: 15px;
-  //background-color: red;
-
 }
 
 input:focus{
@@ -203,22 +239,6 @@ textarea:focus {
   transition: border .2s ease;
 }
 
-// .mat-chip-list-wrapper{
-//   height: 40px;
-//   border-radius: 20px;
-//   box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
-//   background-color: white;
-
-// }
-
-// .mat-chip-list-wrapper .mat-standard-chip, .mat-chip-list-wrapper input.mat-input-element{
-//   margin-top: 0px !important;
-// }
-
-/* :host /deep/ .mat-button-focus-overlay {
-    background-color: rgba(0, 0, 0, 0);
-} */
-
 .custom-backdrop {
   /* z-index: 0; */
   background-color: rgba(0, 0, 0, 0.39);
@@ -233,7 +253,7 @@ textarea:focus {
 }
 
 .custom-bd {
-  background-image: linear-gradient(to right, transparent 302px,rgba(0, 0, 0, 0.3) 0);
+  background-image: linear-gradient(to right, transparent 219px,rgba(0, 0, 0, 0.3) 0);
 }
 html, body {
   max-width: 100%;
@@ -288,5 +308,67 @@ body {
   .mat-list-item {
     font-family: "Helvetica Neue", sans-serif;
   }
+
+  .mat-drawer-backdrop {
+    z-index: 99;
+  }
+  .mat-table {
+    font-family: $primaryFont
+  }
+}
+
+@media all and (max-width: 320px) {
+  .teacher-pass-card-dialog-container .mat-dialog-container,
+  .student-pass-card-dialog-container .mat-dialog-container {
+    width: 100% !important;
+  }
+
+  .form-dialog-container {
+    max-width: 300px !important;
+  }
+}
+
+@media all and (max-width: 475px) {
+  .student-pass-card-dialog-container,
+  .teacher-pass-card-dialog-container {
+    max-width: unset !important;
+  }
+
+  .main-form-dialog-container,
+  .form-dialog-container {
+    max-width: 335px !important;
+  }
+}
+
+// Side nav scroll hiding
+.mat-drawer-inner-container::-webkit-scrollbar {
+  width: 0 !important
+}
+
+.mat-drawer-inner-container {
+  overflow: -moz-scrollbars-none;
+  -ms-overflow-style: none;
+}
+
+mat-sidenav-container {
+  height: 100vh;
 }
 /* === end === */
+
+/* === Swiper Overrides === */
+.swiper-slide {
+  margin: 10px 0;
+}
+
+
+// queries for safari
+@media not all and (min-resolution:.001dpcm) {
+  @supports (-webkit-appearance:none) {
+    @media all and (max-width: 425px) {
+      body,
+      mat-sidenav-container {
+        height: inherit;
+      }
+    }
+  }
+}

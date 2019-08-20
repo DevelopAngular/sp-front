@@ -1,6 +1,5 @@
 <div class="report-form-wrapper">
-
-  <div class="divider" [style.background-image]="'radial-gradient(circle at 73% 71%, #DA2370, #FB434A)'">
+  <div class="divider">
 
     <img class="back-button" [src]="'./assets/Back Button (White).svg' | resolveAsset" (click)="back()">
 
@@ -17,17 +16,17 @@
       <div class="student-select">
         <div class="report-content">
 
-          <app-student-search
-            [selectedStudents]="selectedStudents"
+          <app-sp-search
+            [selectedOptions]="selectedStudents"
             [showOptions]="showOptions"
             (onUpdate)="selectedStudents=$event"
             (click)="showOptions=true">
-          </app-student-search>
+          </app-sp-search>
 
         </div>
         <div class="student-select_button-next" *ngIf="showOptions && selectedStudents && selectedStudents.length > 0">
           <app-gradient-button
-            [gradient]="'#DA2370,#FB434A'"
+            [gradient]="'#DA2370, #FB434A'"
             [cursor]="'pointer'"
             [hoverColor]="'#DA2370'"
             [minWidth]="'104px'"
@@ -43,21 +42,20 @@
     <div style="display: flex; flex-direction: column; flex: 1 1 auto;" *ngIf="!showOptions"  [@NextStep]="{ value: '', params: frameMotion$ | async}">
 
       <div class="message-entry">
-        <div data-grammarly-issue-container [style.width]="'100%'">
+        <div data-grammarly-issue-container class="message-wrapper">
           <textarea class="message-box" #messageBox placeholder="Attach a message" [(ngModel)]="reportMessage">{{ reportMessage }}</textarea>
         </div>
         <app-gradient-button
-          [gradient]="'#DA2370,#FB434A'"
-          [hoverColor]="'#DA2370'"
-          [minWidth]="'185px'"
-          [minHeight]="'50px'"
+          [gradient]="'#DA2370, #FB434A'"
           [cursor]="'pointer'"
-          [fontSize]="'14px'"
+          [hoverColor]="'#DA2370'"
+          [minWidth]="'104px'"
+          [minHeight]="'35px'"
+          [fontSize]="'16px'"
           [leftIcon]="'./assets/Report (White).svg'"
           (buttonClick)="sendReport()"
         >Report Student<span *ngIf="selectedStudents.length > 1">s</span></app-gradient-button>
       </div>
     </div>
   </div>
-
 </div>

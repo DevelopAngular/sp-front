@@ -1,142 +1,276 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import { SelectionModel } from '@angular/cdk/collections';
-import { MatSort, MatTableDataSource} from '@angular/material';
-import { DarkThemeSwitch } from '../../dark-theme-switch';
-import { DomSanitizer } from '@angular/platform-browser';
-import { BehaviorSubject } from 'rxjs';
-
-import * as moment from 'moment';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input, NgZone, OnChanges, OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
+import {DataSource, SelectionModel} from '@angular/cdk/collections';
+import {MatSort, Sort} from '@angular/material';
+import {DarkThemeSwitch} from '../../dark-theme-switch';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {SP_ARROW_BLUE_GRAY, SP_ARROW_DOUBLE_BLUE_GRAY} from '../pdf-generator.service';
+import {CdkVirtualScrollViewport, FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';
+import * as moment from 'moment';
+import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
+import {ScrollPositionService} from '../../scroll-position.service';
+import {wrapToHtml} from '../helpers';
+
+const PAGESIZE = 50;
+const ROW_HEIGHT = 38;
+
+// export class tableSanitizer extends DomSanitizer {
+//   constructor() {
+//     super()
+//   }
+// }
+
+export class GridTableDataSource extends DataSource<any> {
+
+  public  stickySpace: boolean;
+  public _fixedColumnsPlaceholder: any = {
+    placeholder: true
+  };
+
+  private _data: any[];
+
+  get allData(): any[] {
+    return this._data.slice();
+  }
+
+  set allData(data: any[]) {
+    this._data = data;
+    this.viewport.scrollToOffset(0);
+    this.viewport.setTotalContentSize(this.itemSize * data.length);
+    this.visibleData.next(this._data.slice(0, PAGESIZE).concat(this._fixedColumnsPlaceholder));
+  }
+
+  sort: MatSort | null;
+
+  offset = 0;
+  offsetChange = new BehaviorSubject(0);
+
+  constructor(
+    initialData: any[],
+    private viewport: CdkVirtualScrollViewport,
+    private itemSize: number, sorting: MatSort,
+    stickySpace: boolean, private domSanitizer: DomSanitizer
+  ) {
+    super();
+
+    this.domSanitizer = domSanitizer;
+
+    this._data = initialData;
+    this.sort = sorting;
+    this.stickySpace = stickySpace;
+
+    this._data.forEach((item, index) => {
+      for (const key in item._data) {
+        if (!this._fixedColumnsPlaceholder[key] || item._data[key].length > this._fixedColumnsPlaceholder[key].length) {
+          this._fixedColumnsPlaceholder[key] = item._data[key];
+        }
+      }
+    });
+
+    for (const key in this._fixedColumnsPlaceholder) {
+      if (key === 'TT') {
+        this._fixedColumnsPlaceholder[key] = this.domSanitizer.bypassSecurityTrustHtml(this._fixedColumnsPlaceholder[key]);
+
+      } else if (key === 'Group(s)') {
+        console.log(this._fixedColumnsPlaceholder[key]);
+        this._fixedColumnsPlaceholder[key] = '. ' + this._fixedColumnsPlaceholder[key].map(g => g.title).join(this._fixedColumnsPlaceholder[key].length > 1 ? ', ' : '') + ' .';
+      }  else if (key === 'Rooms') {
+        console.log(this._fixedColumnsPlaceholder[key]);
+        this._fixedColumnsPlaceholder[key] = '. ' + this._fixedColumnsPlaceholder[key].join(this._fixedColumnsPlaceholder[key].length > 1 ? ', ' : '') + ' .';
+      } else {
+        this._fixedColumnsPlaceholder[key] = '. ' + this._fixedColumnsPlaceholder[key] + ' .';
+      }
+
+
+    }
+
+    this._fixedColumnsPlaceholder = wrapToHtml.call(this, this._fixedColumnsPlaceholder, 'span') as {[key: string]: SafeHtml; _data: any};
+
+
+    console.log(this._fixedColumnsPlaceholder);
+
+    this.viewport.elementScrolled().subscribe((ev: any) => {
+
+      const start = Math.floor((ev.currentTarget.scrollTop >= 0 ? ev.currentTarget.scrollTop : 0) / ROW_HEIGHT);
+      const prevExtraData = start > 0 && start <= 12 && this.stickySpace ? 1 : start > 12 ? 12 : 0;
+      const slicedData = this._data.slice(start - prevExtraData, start + (PAGESIZE - prevExtraData)).concat(this._fixedColumnsPlaceholder);
+
+      this.offset = ROW_HEIGHT * (start - prevExtraData);
+      this.viewport.setRenderedContentOffset(this.offset);
+      this.offsetChange.next(this.offset);
+      this.visibleData.next(slicedData);
+      // console.log(this.offset);
+    });
+  }
+
+  private readonly visibleData: BehaviorSubject<any[]> = new BehaviorSubject([]);
+
+
+  compare(a: number | string, b: number | string, isAsc: boolean) {
+    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+  }
+
+  sortingDataAccessor(item, property) {
+    switch (property) {
+      case 'Name':
+        return item[property].split(' ')[1];
+      case 'Date & Time':
+        return Math.min(moment().diff(item['date'], 'days'));
+      case 'Duration':
+        return item['sortDuration'].as('milliseconds');
+      case 'Profile(s)':
+        return item[property].map(i => i.title).join('');
+      default:
+        return item[property];
+    }
+  }
+
+  connect(collectionViewer: import('@angular/cdk/collections').CollectionViewer): Observable<any[] | ReadonlyArray<any>> {
+    return this.visibleData;
+  }
+
+  disconnect(collectionViewer: import('@angular/cdk/collections').CollectionViewer): void {
+  }
+}
+
+/**
+ * Virtual Scroll Strategy
+ */
+export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy {
+  constructor() {
+    super(ROW_HEIGHT, 1000, 2000);
+  }
+
+  attach(viewport: CdkVirtualScrollViewport): void {
+    this.onDataLengthChanged();
+  }
+}
 
 @Component({
   selector: 'app-data-table',
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [{provide: VIRTUAL_SCROLL_STRATEGY, useClass: CustomVirtualScrollStrategy}],
+
 })
-export class DataTableComponent implements OnInit {
+export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() width: string = '100%';
   @Input() height: string = 'none';
   @Input() isCheckbox: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   @Input() isAllowedSelectRow: boolean = false;
-  @Input() set data(value: any[]) {
-      this._data = [...value];
-      this.dataSource = new MatTableDataSource(this._data);
-      this.dataSource.sort = this.sort;
-      this.dataSource.sortingDataAccessor = (item, property) => {
-          switch (property) {
-              case 'Name':
-                  return item[property].split(' ')[1];
-              case 'Date & Time':
-                  return Math.min(moment().diff(item['date'], 'days'));
-              case 'Duration':
-                  return item['sortDuration'].as('milliseconds');
-              case 'Profile(s)':
-                  return item[property].map(i => i.title).join('');
-              default:
-                  return item[property];
-          }
-      };
-  }
+
+  @Input() stickySpace: boolean = false;
   @Input() disallowHover: boolean = false;
   @Input() backgroundColor: string = 'transparent';
   @Input() textColor: string = 'black';
-  @Input() textHeaderColor: string = '#1F195E';
+  @Input() textHeaderColor: string = '#7F879D';
+  @Input() marginTopStickyHeader: string = '-40px';
+  @Input() displayedColumns: string[];
+  @Input() scrollableAreaName: string;
 
   @Output() selectedUsers: EventEmitter<any[]> = new EventEmitter();
   @Output() selectedRow: EventEmitter<any> = new EventEmitter<any>();
   @Output() selectedCell: EventEmitter<any> = new EventEmitter<any>();
 
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport;
 
-  @Input() displayedColumns: string[];
+
+  @Input() set data(value: any[]) {
+    this._data = [...value];
+    this.dataSource = new GridTableDataSource(this._data, this.viewport, ROW_HEIGHT, this.sort, this.stickySpace, this.domSanitizer);
+    this.dataSource.offsetChange
+      .subscribe(offset => {
+        this.placeholderHeight = offset;
+    })
+    this.dataSource.allData = this._data;
+    this.dataSource.sort.sortChange.subscribe((sort: Sort) => {
+      const data = this.dataSource.allData;
+      if (!sort.active || sort.direction === '') {
+        this.dataSource.allData = data;
+        return;
+      }
+
+      this.dataSource.allData = data.sort((a, b) => {
+        const isAsc = sort.direction === 'asc';
+        const {_data: _a} = a;
+        const {_data: _b} = b;
+
+        return this.dataSource.compare(
+          this.dataSource.sortingDataAccessor(_a, sort.active),
+          this.dataSource.sortingDataAccessor(_b, sort.active),
+          isAsc
+        );
+
+      });
+    });
+  }
+
+  itemSize = ROW_HEIGHT;
   columnsToDisplay: string[];
-  dataSource: MatTableDataSource<any[]>;
+  dataSource: GridTableDataSource;
   selection = new SelectionModel<any>(true, []);
-
-  hovered: boolean;
-  hoveredRowIndex: number;
-  pressed: boolean;
-
+  darkMode$: Observable<boolean>;
+  placeholderHeight = 0;
 
   private _data: any[] = [];
 
   constructor(
-    public darkTheme: DarkThemeSwitch,
-    private sanitizer: DomSanitizer,
-    private cdr: ChangeDetectorRef
-
-  ) {}
+    private _ngZone: NgZone,
+    private darkTheme: DarkThemeSwitch,
+    private domSanitizer: DomSanitizer,
+    private scrollPosition: ScrollPositionService
+  ) {
+    this.darkMode$ = this.darkTheme.isEnabled$.asObservable();
+  }
 
   ngOnInit() {
-    console.log(this._data);
-      if (!this.displayedColumns) {
-        this.displayedColumns = Object.keys(this._data[0]);
-      }
-      this.columnsToDisplay = this.displayedColumns.slice();
+    // console.log(this._data);
+
+    this.marginTopStickyHeader = '0px';
+    if (!this.displayedColumns) {
+      this.displayedColumns = Object.keys(this._data[0]);
+    }
+    this.columnsToDisplay = this.displayedColumns.slice();
     this.isCheckbox.subscribe((v) => {
       if (v) {
         this.columnsToDisplay.unshift('select');
       } else if (!v && (this.columnsToDisplay[0] === 'select')) {
         this.columnsToDisplay.shift();
+        this.selection.clear();
+        this.selectedUsers.emit([]);
       }
     });
+
   }
 
-  onHover(target: HTMLElement) {
-
-    this.hovered = true;
-    target.style.backgroundColor = this.getBgColor();
-    target.style.color = this.getCellColor();
-  }
-  onLeave(target: HTMLElement) {
-
-    this.hovered = false;
-    target.style.color = this.getCellColor();
-    target.style.backgroundColor = 'transparent';
-  }
-  onDown(target: HTMLElement) {
-
-    this.pressed = true;
-    target.style.backgroundColor = this.getBgColor();
-  }
-
-  onUp(target: HTMLElement) {
-
-    this.pressed = false;
-    target.style.backgroundColor = this.getBgColor();
-  }
-
-
-  getBgColor(elem?) { //can being as a cell as also an entire row
-    if (!this.disallowHover) {
-      if (elem.hovered) {
-        if (elem.pressed) {
-          return this.darkTheme.isEnabled$.value ? '#09A4F7' : '#E2E7F4';
-        } else {
-          return this.darkTheme.isEnabled$.value ? '#0991c3' : '#ECF1FF';
-        }
-      } else if (this.isCheckbox.value && elem.pressed) {
-          return this.darkTheme.isEnabled$.value ? '#09A4F7' : '#E2E7F4';
-      } else {
-        return 'transparent';
-      }
+  ngOnChanges() {
+    if (this.scrollableAreaName && this.scrollPosition.getComponentScroll(this.scrollableAreaName)) {
+      setTimeout(() => {
+        // console.log(this.scrollPosition.getComponentScroll(this.scrollableAreaName));
+        this.viewport.scrollToOffset(this.scrollPosition.getComponentScroll(this.scrollableAreaName));
+      }, 0);
     }
   }
 
-  getCellColor(n?) {
-    if (n === this.hoveredRowIndex && !this.disallowHover) {
-      if (this.hovered) {
-        return this.darkTheme.isEnabled$.value ? '#FFFFFF' : this.textColor;
-      } else {
-        return this.darkTheme.getColor({white: this.textColor, dark: '#767676'});
-      }
-
-    } else {
-      return this.darkTheme.getColor({white: this.textColor, dark: '#767676'});
+  ngOnDestroy(): void {
+    if (this.scrollableAreaName) {
+      this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.placeholderHeight);
     }
   }
 
+  placeholderWhen(index: number, _: any) {
+    return index === 0;
+  }
 
   isAllSelected() {
     const numSelected = this.selection.selected.length;
@@ -152,7 +286,7 @@ export class DataTableComponent implements OnInit {
       });
     } else {
       this._data.forEach(row => {
-        this.selection.select(row);
+        this.selection.select(row._data);
         row.pressed = true;
       });
     }
@@ -168,30 +302,30 @@ export class DataTableComponent implements OnInit {
       return  new Array(cellData);
     }
   }
+
   displayCell(cellElement, cell?, column?) {
     let value = '';
     if (typeof cellElement === 'string') {
-        if (column === 'TT') {
-          if (cellElement === 'one_way') {
-            value = SP_ARROW_BLUE_GRAY;
-          }
-          if (cellElement === 'round_trip' || cellElement === 'both') {
-            value = SP_ARROW_DOUBLE_BLUE_GRAY;
-          }
-          cell.innerHTML = value;
-            return;
-        } else {
-            value = cellElement;
+      if (column === 'TT') {
+        if (cellElement === 'one_way') {
+          value = SP_ARROW_BLUE_GRAY;
         }
+        if (cellElement === 'round_trip' || cellElement === 'both') {
+          value = SP_ARROW_DOUBLE_BLUE_GRAY;
+        }
+        cell.innerHTML = value;
+          return;
+      } else {
+          value = cellElement;
+      }
     } else {
       value = cellElement.title ? cellElement.title : 'Error!';
     }
-
     return value;
   }
 
   selectedCellEmit(event, cellElement, element) {
-
+    // debugger
     if (typeof cellElement !== 'string' && cellElement.title !== 'No profile' && !(cellElement instanceof Location) && !this.isCheckbox.value) {
       event.stopPropagation();
       cellElement.row = element;
@@ -201,15 +335,24 @@ export class DataTableComponent implements OnInit {
     }
   }
 
-  selectedRowEmit(row) {
+  selectedRowEmit(evt, row) {
+    console.log(row)
+    // debugger
+    const rowData = row._data;
+    const target = evt.target as HTMLElement;
     if (this.isCheckbox.value && !this.isAllowedSelectRow) {
-      this.selection.toggle(row);
-      row.pressed = this.selection.isSelected(row) ? true : false;
+      this.selection.toggle(rowData);
+      row.pressed = this.selection.isSelected(rowData);
       this.pushOutSelected();
-    } else {
-      this.selectedRow.emit(row);
-    }
+    } else if (target.dataset && target.dataset.profile) {
 
+      this.selectedCell.emit({
+        name: target.dataset.name,
+        role: target.dataset.profile
+      });
+    } else {
+      this.selectedRow.emit(rowData);
+    }
   }
 
   pushOutSelected() {

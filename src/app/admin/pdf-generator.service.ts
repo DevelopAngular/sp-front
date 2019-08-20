@@ -5,10 +5,10 @@ import { MatDialog } from '@angular/material';
 import {fromEvent, of, zip} from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { TimeService } from '../services/time.service';
-import { DatePrettyHelper } from './date-pretty.helper';
 import { LinkGeneratedDialogComponent } from './link-generated-dialog/link-generated-dialog.component';
 import { OPEN_SANS_BOLD, OPEN_SANS_REGULAR } from './pdf-fonts';
 import {StorageService} from '../services/storage.service';
+import {prettyDate} from './helpers';
 
 declare const jsPDF;
 declare const window;
@@ -287,7 +287,7 @@ export class PdfGeneratorService {
 
   generateReport(data: any[], orientation: string = 'p', page: string = '', title?: string): void {
 
-    const prettyNow = DatePrettyHelper.transform(this.timeService.nowDate());
+    const prettyNow = prettyDate(this.timeService.nowDate());
 
     let heading = {
       header: 'Active Hall Pass Report',
@@ -408,22 +408,12 @@ export class PdfGeneratorService {
                       if (i === 1) {
                         if (header === 'TT') {
                           table.drawCellWithImg(cell, i, n);
-                                      // if (cell['TT'] === 'one_way') {
-                                      //   doc.addImage(ctx.ARROW_IMG, 'PNG', table.left + (table.sp * i) + 25, table.top + table.lh * (n + 1), 15, 15);
-                                      // } else {
-                                      //   doc.addImage(ctx.ARROW_DOUBLE_IMG, 'PNG', table.left + (table.sp * i) + 25, table.top + table.lh * (n + 1), 15, 15);
-                                      // }
                         } else {
                           doc.text(table.left + (table.sp * i) + 25, table.top + table.lh * (n + 1), cell[_headers[i]]);
                         }
                       } else {
                         if (header === 'TT') {
                           table.drawCellWithImg(cell, i, n);
-                                      // if (cell['TT'] === 'one_way') {
-                                      //   doc.addImage(ctx.ARROW_IMG, 'PNG', table.left + (table.sp * i) + 25, table.top + table.lh * (n + 1), 15, 15);
-                                      // } else {
-                                      //   doc.addImage(ctx.ARROW_DOUBLE_IMG, 'PNG', table.left + (table.sp * i) + 25, table.top + table.lh * (n + 1), 15, 15);
-                                      // }
                         } else {
                           try {
                             doc.text(table.left + (table.sp * i), table.top + table.lh * (n + 1), cell[_headers[i]]);

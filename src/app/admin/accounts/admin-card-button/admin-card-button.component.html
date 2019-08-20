@@ -1,0 +1,29 @@
+<div
+     class="wrapper"
+     #wrap
+     (mouseenter)="wrap.hovered = true"
+     (mouseleave)="wrap.hovered = false"
+     [style.background-color]="darkTheme.getBackground('high', true)"
+>
+    <div class="left-content">
+        <img *ngIf="leftIcon" width="50" height="50" [src]="getCardIcon(leftIcon) | resolveAsset" alt="Icon">
+        <div class="text">
+            <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ title }}</div>
+            <div class="subtitle" [style.color]="darkTheme.getColor({white: '#7f879d', dark: '#FFFFFF'})">
+                <!--<img *ngIf="subtitleIcon" width="15" height="15" [style.margin-right]="'6px'" [src]="subtitleIcon">-->
+                {{ subtitle }}
+            </div>
+        </div>
+    </div>
+  <div class="go">
+    <app-icon-button
+      *ngIf="wrap.hovered && !integrations"
+      [size]="20"
+      [srcString]="'Chevron Right'"
+      [eventBubbling]="true"
+      (clickEvent)="onClick.emit()"
+    ></app-icon-button>
+  </div>
+<!--    <img *ngIf="wrap.hovered && !integrations" width="24" height="24" [src]="'./assets/Chevron Right (Blue-Gray).svg' | resolveAsset">-->
+    <img *ngIf="integrations" width="170" [src]="'./assets/admin-images/integrations.png' | resolveAsset" alt="ALT">
+</div>

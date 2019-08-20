@@ -1,0 +1,69 @@
+<div class="consest-menu"  *ngIf="display" [@menuAppearance] >
+<div class="consent-wrapper" [style.background-color]="darkTheme.getBackground('low')">
+  <div class="pointer-wrapper" ><div class="pointer" [style.background-color]="darkTheme.getBackground('low')"></div></div>
+  <div class="rounded-corners-box">
+
+    <div class="ds-mt-15" *ngIf="!header"></div>
+    <div *ngIf="header">
+      <div class="consent-header" [style.color]="'#7F879D'">{{ header }}</div>
+      <div class="option-divider"></div>
+    </div>
+
+    <div *ngIf="!!ConsentText">
+      <span>
+        {{ConsentText}}
+      </span>
+      <div mat-dialog-actions class="center">
+        <div [style.color]="getConcentButtonColor(ConsentButtonColor)" class="option-wrapper marRight">{{ConsentYesText}}</div>
+        <div [style.color]="getConcentButtonColor(ConsentButtonColor)" class="option-wrapper">{{ConsentNoText}}</div>
+      </div>
+    </div>
+
+    <div  class="ds-w-100 options-container">
+      <div *ngFor="let option of options; let i = index">
+        <div *ngIf="optionsView === 'button'; else stringOptionsView" class="ds-w-100">
+          <app-gradient-button
+            [cursor]="'pointer'"
+            [minHeight]="'32px'"
+            [width]="'200px'"
+            [fontSize]="'14px'"
+            [fontWeight]="400"
+            [hoverColor]="option.color"
+            [gradient]="option.buttonColor"
+            [textColor]="getColor(option)">
+            <span>{{option.display}}</span>
+          </app-gradient-button>
+        </div>
+        <ng-template #stringOptionsView>
+          <div [style.color]="option.color" #_option class="option-wrapper ds-w-100"
+               [ngClass]="{
+                'option-wrapper': !darkTheme.isEnabled$.value,
+                'option-wrapper__dark': darkTheme.isEnabled$.value
+               }"
+               (mousedown)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : '#E2E7F4'; sortMode = option.action"
+               (mouseup)="_option.style.background = 'transparent'"
+               (mouseover)="_option.style.background = this.darkTheme.isEnabled$.value ? isSort ? '#47447E' : '#ECF1FF' : '#ECF1FF'"
+               (mouseleave)="_option.style.background = 'transparent'"
+               (click) = "sendOptionAction(option.action)">
+            <div class="ds-w-100 ds-flex-center-between" *ngIf="isSort; else simpleOptions">
+              <span>{{ option.display }}</span>
+              <img width="16" height="16" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'})" *ngIf="sortMode === option.action" alt="Check.svg">
+            </div>
+            <ng-template #simpleOptions>{{ option.display }}</ng-template>
+          </div>
+        </ng-template>
+        <div class="option-divider" *ngIf="i !== options.length - 1"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div (click)="cancel()" class="option-wrapper option-wrapper__cancel ds-w-100" [style.background-color]="darkTheme.getBackground('low')"  [ngClass]="{
+                'option-wrapper': !darkTheme.isEnabled$.value,
+                'option-wrapper__dark': darkTheme.isEnabled$.value}">
+  <p>Cancel</p>
+</div>
+</div>
+
+
+<div (click)="onBackdropClick()" *ngIf="display" class="cdk-overlay-backdrop custom-backdrop cdk-overlay-backdrop-showing z-index-15"></div>

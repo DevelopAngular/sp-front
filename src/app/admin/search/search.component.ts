@@ -1,9 +1,8 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 import {filter, switchMap, tap} from 'rxjs/operators';
 import { HttpService } from '../../services/http-service';
 import { HallPass } from '../../models/HallPass';
-import { DatePrettyHelper } from '../date-pretty.helper';
-import { PdfGeneratorService } from '../pdf-generator.service';
+import {PdfGeneratorService, SP_ARROW_BLUE_GRAY, SP_ARROW_DOUBLE_BLUE_GRAY} from '../pdf-generator.service';
 import { disableBodyScroll } from 'body-scroll-lock';
 import * as _ from 'lodash';
 import {PassCardComponent} from '../../pass-card/pass-card.component';
@@ -19,18 +18,24 @@ import {DataService} from '../../services/data-service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {SearchFilterDialogComponent} from './search-filter-dialog/search-filter-dialog.component';
 import {DateTimeFilterComponent} from './date-time-filter/date-time-filter.component';
-import {DomSanitizer} from '@angular/platform-browser';
+import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 
 import * as moment from 'moment';
+import {bumpIn} from '../../animations';
+import {prettyDate, wrapToHtml} from '../helpers';
 
 
 
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
-  styleUrls: ['./search.component.scss']
+  styleUrls: ['./search.component.scss'],
+  animations: [bumpIn]
 })
 export class SearchComponent implements OnInit {
+
+
+
 
   @ViewChild('printPdf') printPdf: ElementRef;
 
@@ -54,6 +59,31 @@ export class SearchComponent implements OnInit {
   initialSearchLocationString: string = '';
   inputPanelVisibility: boolean = true;
 
+  buttonDown: boolean;
+
+  // private dataPagination: any = {
+  //   first: 0,
+  //   last: 50,
+  //   range: 50,
+  //   nextPage() {
+  //     this.first += this.range;
+  //     this.last += this.range;
+  //
+  //   }
+  // }
+  //
+  // @HostListener('scroll', ['$event'])
+  // onScroll(event) {
+  //   const tracker = event.target;
+  //   const limit = tracker.scrollHeight - tracker.clientHeight;
+  //   // if (event.target.scrollTop === limit && !this.pending && (this.reportsLimit === this.counter)) {
+  //   if (event.target.scrollTop === limit) {
+  //     this.dataPagination.nextPage();
+  //     // this.reportsLimit += 10;
+  //     // this.getReports();
+  //   }
+  // }
+
   constructor(
       private httpService: HttpService,
       private hallPassService: HallPassesService,
@@ -64,11 +94,16 @@ export class SearchComponent implements OnInit {
       private activatedRoute: ActivatedRoute,
       private router: Router,
       private userService: UserService,
-      private dataService: DataService,
+      public dataService: DataService,
       public darkTheme: DarkThemeSwitch,
-      private domSanitazer: DomSanitizer
+      private domSanitizer: DomSanitizer
+
 
   ) {
+  }
+
+  get buttonState() {
+     return this.buttonDown ? 'down' : 'up';
   }
 
   get isDisabled() {
@@ -135,12 +170,25 @@ export class SearchComponent implements OnInit {
 
   }
 
-  search(query: string = '') {
-    // if (this.selectedStudents.length || this.selectedDate || this.selectedRooms.length || query) {
-    //   this.sortParamsHeader = `All Passes, Searching by ${(this.selectedStudents && this.selectedStudents.length > 0 ? 'Student Name' : '') + (this.selectedDate && this.selectedDate !== '' ? ', Date & Time' : '') + (this.selectedRooms && this.selectedRooms.length > 0 ? ', Room Name' : '')}`;
+  onPress(press: boolean) {
+    this.buttonDown = press;
+  }
+
+  normalizeDataForTable() {
+
+  }
+
+  private wrapToHtml(data, htmlTag, dataSet?) {
+    const wrapper =  wrapToHtml.bind(this);
+    return wrapper(data, htmlTag, dataSet);
+  }
+
+  search() {
+
       this.spinner = true;
       this.selectedReport = [];
-      let url = 'v1/hall_passes?' + query;
+
+      let url = 'v1/hall_passes?';
       if (this.selectedRooms) {
         console.log(this.selectedRooms);
         this.selectedRooms.forEach(room => {
@@ -154,35 +202,10 @@ export class SearchComponent implements OnInit {
               url += 'location=' + room.id + '&';
           }
         });
-        // console.log('URL ===>>>>', url);
-      //   console.log('Has rooms\t', this.roomSearchType);
-      //   if (this.roomSearchType == 'Origin') {
-      //     let origins: any[] = this.selectedRooms.map(r => r['id']);
-      //
-      //     Array.from(Array(origins.length).keys()).map(i => {
-      //       url += 'origin=' + origins[i] + '&';
-      //     });
-      //   }
-      //
-      //   if (this.roomSearchType == 'Destination') {
-      //     let destinations: any[] = this.selectedRooms.map(r => r['id']);
-      //
-      //     Array.from(Array(destinations.length).keys()).map(i => {
-      //       url += 'destination=' + destinations[i] + '&';
-      //     });
-      //   }
-      //
-      //   if (this.roomSearchType == 'Either') {
-      //     let locations: any[] = this.selectedRooms.map(r => r['id']);
-      //
-      //     Array.from(Array(locations.length).keys()).map(i => {
-      //       url += 'location=' + locations[i] + '&';
-      //     });
-      //   }
+
       }
       if (this.selectedStudents) {
-        let students: any[] = this.selectedStudents.map(s => s['id']);
-
+        const students: any[] = this.selectedStudents.map(s => s['id']);
         Array.from(Array(students.length).keys()).map(i => {
           url += 'student=' + students[i] + '&';
         });
@@ -191,79 +214,59 @@ export class SearchComponent implements OnInit {
       if (this.selectedDate) {
         let start;
         let end;
-        if(this.selectedDate['start']){
+        if (this.selectedDate['start']) {
           start = this.selectedDate['start'].toISOString();
           url += (start ? ('created_after=' + start + '&') : '');
         }
-        if(this.selectedDate['end']){
+        if (this.selectedDate['end']) {
           end = this.selectedDate['end'].toISOString();
           url += (end ? ('end_time_before=' + end) : '');
         }
-
         console.log('Start: ', start, '\nEnd: ', end);
-
       }
 
-      this.hallPassService.searchPasses(url).pipe(filter(res => !!res))
-        .subscribe((data: HallPass[]) => {
+      this.hallPassService
+        .searchPasses(url)
+        .pipe(filter(res => !!res))
+        .subscribe((passes: HallPass[]) => {
 
-          console.log('DATA', data);
-          this.passes = data;
-          this.tableData = data.map(hallPass => {
-            // let travelType;
-            //             // if (hallPass.travel_type === 'one_way') {
-            //             //   travelType = `<svg width="15px" height="15px" viewBox="0 0 160 140">
-            //             //                   <title>SP Arrow (Blue-Gray)</title>
-            //             //                   <desc>Created with Sketch.</desc>
-            //             //                   <g id="SP-Arrow-(Blue-Gray)" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-            //             //                     <g id="Logo" transform="translate(3.000000, 0.000000)" fill="#7F879D" fill-rule="nonzero">
-            //             //                       <path d="M127.685045,98.1464997 L80.6403711,145.191173 C74.2538542,151.57769 63.9281157,151.606542 57.5771895,145.255616 C51.226263,138.904689 51.2551148,128.578951 57.6416316,122.192434 L104.686305,75.1477605 L57.3461108,27.8075658 C50.9595937,21.4210488 50.9307419,11.0953107 57.2816684,4.74438419 C63.6325949,-1.60654219 73.9583331,-1.57769053 80.34485,4.80882648 L139.415225,63.8792012 C145.703488,70.1674642 145.731895,80.3343446 139.478676,86.5875648 L127.802392,98.2638476 L127.685045,98.1464997 Z M51.229003,99.7185895 L27.7048949,123.242698 C21.3326816,129.614911 11.0584973,129.672126 4.7568622,123.370491 C-1.54477286,117.068856 -1.48755764,106.794672 4.88465572,100.422458 L28.4087639,76.8983503 L4.81684319,53.3064295 C-1.55537032,46.934216 -1.61258544,36.6600316 4.68904964,30.3583967 C10.9906847,24.0567616 21.2648689,24.1139768 27.6370822,30.4861904 L62.7366843,65.5857925 C69.0108639,71.859972 69.0671988,81.9760916 62.862512,88.1807786 L51.2768521,99.7664383 L51.229003,99.7185895 Z" id="Arrow"></path>
-            //             //                     </g>
-            //             //                   </g>
-            //             //                 </svg>`;
-            //             // }
-            //             // if (hallPass.travel_type === 'round_trip' || hallPass.travel_type === 'both') {
-            //             //   travelType = `<svg width="23px" height="11px" viewBox="0 50 150 50">
-            //             //                   <title>SP Arrow Double (Blue-Gray)</title>
-            //             //                   <desc>Created with Sketch.</desc>
-            //             //                   <g id="SP-Arrow-Double-(Blue-Gray)" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-            //             //                     <g id="Logo" transform="translate(88.000000, 43.000000)" fill="#7F879D" fill-rule="nonzero">
-            //             //                       <path d="M54.9182725,41.8758399 L34.6840139,61.948234 C31.9371262,64.6731479 27.4959505,64.685458 24.7643707,61.9757295 C22.0327907,59.2660009 22.0452001,54.8603525 24.7920877,52.1354387 L45.0263463,32.0630445 L24.6649821,11.8645614 C21.9180943,9.1396475 21.9056849,4.73399923 24.6372649,2.02427059 C27.3688449,-0.685458001 31.8100205,-0.673147961 34.5569081,2.05176596 L59.9635087,27.2551259 C62.6681366,29.9381181 62.680355,34.275987 59.9907994,36.9440276 L54.9687445,41.9259083 L54.9182725,41.8758399 Z M22.0339692,42.5465982 L11.9160781,52.583551 C9.1753425,55.302362 4.75634063,55.3267739 2.04596125,52.6380763 C-0.664418119,49.9493786 -0.639809431,45.5657266 2.10092618,42.8469156 L12.2188173,32.8099628 L2.07175952,22.7440766 C-0.668976163,20.0252655 -0.693584805,15.6416135 2.01679457,12.9529159 C4.72717394,10.2642183 9.14617576,10.2886301 11.8869114,13.0074412 L26.9835072,27.9832715 C29.6820777,30.6602547 29.7063078,34.9764657 27.0376266,37.6237989 L22.0545494,42.5670137 L22.0339692,42.5465982 Z" id="Arrow"></path>
-            //             //                     </g>
-            //             //                     <g id="Logo" transform="translate(31.000000, 75.000000) scale(-1, 1) translate(-31.000000, -75.000000) translate(0.000000, 43.000000)" fill="#7F879D" fill-rule="nonzero">
-            //             //                       <path d="M54.9182725,41.8758399 L34.6840139,61.948234 C31.9371262,64.6731479 27.4959505,64.685458 24.7643707,61.9757295 C22.0327907,59.2660009 22.0452001,54.8603525 24.7920877,52.1354387 L45.0263463,32.0630445 L24.6649821,11.8645614 C21.9180943,9.1396475 21.9056849,4.73399923 24.6372649,2.02427059 C27.3688449,-0.685458001 31.8100205,-0.673147961 34.5569081,2.05176596 L59.9635087,27.2551259 C62.6681366,29.9381181 62.680355,34.275987 59.9907994,36.9440276 L54.9687445,41.9259083 L54.9182725,41.8758399 Z M22.0339692,42.5465982 L11.9160781,52.583551 C9.1753425,55.302362 4.75634063,55.3267739 2.04596125,52.6380763 C-0.664418119,49.9493786 -0.639809431,45.5657266 2.10092618,42.8469156 L12.2188173,32.8099628 L2.07175952,22.7440766 C-0.668976163,20.0252655 -0.693584805,15.6416135 2.01679457,12.9529159 C4.72717394,10.2642183 9.14617576,10.2886301 11.8869114,13.0074412 L26.9835072,27.9832715 C29.6820777,30.6602547 29.7063078,34.9764657 27.0376266,37.6237989 L22.0545494,42.5670137 L22.0339692,42.5465982 Z" id="Arrow"></path>
-            //             //                     </g>
-            //             //                   </g>
-            //             //                 </svg>`;
-            //             // }
-            // if (hallPass.travel_type === 'both') {
-            //   travelType = `<img src="./assets/SP Arrow Double (Blue-Gray).svg" width="25">`;
-            // }
-            const reportDate = new Date(hallPass.created);
-            const time = reportDate.getHours() <= 12
-              ?
-              `${reportDate.getHours()}:${reportDate.getMinutes() < 10 ? '0' : ''}${reportDate.getMinutes()} ${reportDate.getHours() === 12 ? 'PM' : 'AM'}`
-              :
-              `${reportDate.getHours() - 12}:${reportDate.getMinutes() < 10 ? '0' : ''}${reportDate.getMinutes()} PM`;
-            const prettyReportDate = `${reportDate.getMonth() + 1}/${reportDate.getDate()}  ${time}`;
-            const diff: number = (new Date(hallPass.end_time).getTime() - new Date(hallPass.start_time).getTime()) / 1000;
-            const mins: number = Math.floor(Math.floor(diff) / 60);
-            const secs: number = Math.abs(Math.floor(diff) % 60);
-            const duration = mins + (secs === 0 ? '' : ':') + (secs === 0 ? '' : secs < 10 ? '0' + secs : secs) + ' min';
+          // console.log('DATA', passes);
+          this.passes = passes;
+          this.tableData = passes.map((hallPass, i) => {
+
+            const duration = moment.duration(moment(hallPass.end_time).diff(moment(hallPass.start_time)));
+
             const name = hallPass.student.first_name + ' ' + hallPass.student.last_name +
                 ` (${hallPass.student.primary_email.split('@', 1)[0]})`;
-            const passes = {
+
+
+            // const passTemplate = {
+            //   'Student Name': `<span>${name}</span>`,
+            //   'Origin': `<span>${hallPass.origin.title}</span>`,
+            //   'TT': this.domSanitizer.bypassSecurityTrustHtml(hallPass.travel_type === 'one_way' ? SP_ARROW_BLUE_GRAY : SP_ARROW_DOUBLE_BLUE_GRAY),
+            //   'Destination': `<span>${hallPass.destination.title}</span>`,
+            //   'Date & Time': `<span>${moment(hallPass.created).format('M/DD h:mm A')}</span>`,
+            //   'Duration': `<span>${(Number.isInteger(duration.asMinutes()) ? duration.asMinutes() : duration.asMinutes().toFixed(2)) + ' min'}</span>`
+            // };
+
+            const rawObj = {
                 'Student Name': name,
                 'Origin': hallPass.origin.title,
-                'TT': hallPass.travel_type,
+                'TT': hallPass.travel_type === 'one_way' ? SP_ARROW_BLUE_GRAY : SP_ARROW_DOUBLE_BLUE_GRAY,
                 'Destination': hallPass.destination.title,
-                'Date & Time': prettyReportDate,
-                'Duration': duration
+                'Date & Time': moment(hallPass.created).format('M/DD h:mm A'),
+                'Duration': (Number.isInteger(duration.asMinutes()) ? duration.asMinutes() : duration.asMinutes().toFixed(2)) + ' min'
             };
-            Object.defineProperty(passes, 'id', { enumerable: false, value: hallPass.id});
-            Object.defineProperty(passes, 'date', {enumerable: false, value: moment(hallPass.created) });
-            Object.defineProperty(passes, 'sortDuration', {enumerable: false, value: moment.duration(moment(hallPass.end_time).diff(moment(hallPass.start_time))) });
-            return passes;
+
+            const record = this.wrapToHtml(rawObj, 'span') as {[key: string]: SafeHtml; _data: any};
+
+
+            Object.defineProperty(rawObj, 'id', { enumerable: false, value: hallPass.id});
+            Object.defineProperty(rawObj, 'date', {enumerable: false, value: moment(hallPass.created) });
+            Object.defineProperty(rawObj, 'sortDuration', {enumerable: false, value: duration });
+
+            Object.defineProperty(record, '_data', {enumerable: false, value: rawObj });
+            return record;
           });
           this.spinner = false;
           this.hasSearched = true;
@@ -291,6 +294,7 @@ export class SearchComponent implements OnInit {
         this.selectedRooms = data.locations;
         this.selRoomsWithCategories = data.allSelected;
       }
+      this.hasSearched = false;
     });
   }
 
@@ -310,6 +314,7 @@ export class SearchComponent implements OnInit {
             } else {
                 this.selectedDate = {start: date.start, end: date.end};
             }
+            this.hasSearched = false;
         });
   }
 
@@ -326,8 +331,8 @@ export class SearchComponent implements OnInit {
           forStaff: true,
       };
       const dialogRef = this.dialog.open(PassCardComponent, {
-          panelClass: 'teacher-pass-card-dialog-container',
-          backdropClass: 'custom-backdrop',
+          panelClass: 'search-pass-card-dialog-container',
+          backdropClass: 'custom-bd',
           data: data,
       });
   }
@@ -339,7 +344,7 @@ export class SearchComponent implements OnInit {
   }
 
   previewPDF(event) {
-    const data = this.selectedReport.length ? this.selectedReport : this.tableData;
+    const data = this.selectedReport.length ? this.selectedReport : this.tableData.map(pass => pass._data);
     if (data.length > 0) {
       const _selectedReport = data.map((row) => {
         const _copy = {};
@@ -354,8 +359,8 @@ export class SearchComponent implements OnInit {
       let prettyFrom = '';
       let prettyTo = '';
       if (this.selectedDate) {
-        prettyFrom = DatePrettyHelper.transform(this.selectedDate.start.toDate());
-        prettyTo = DatePrettyHelper.transform(this.selectedDate.end.toDate());
+        prettyFrom = prettyDate(this.selectedDate.start.toDate());
+        prettyTo = prettyDate(this.selectedDate.end.toDate());
       }
       let rooms = '';
       if (this.selectedRooms) {

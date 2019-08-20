@@ -36,13 +36,14 @@
   height: 100%;
   box-sizing: border-box;
   //padding: 25px;
-  background-color: #f8faff;
-  //overflow-y: scroll;
+  background-color: #FBFEFF;
+  overflow-y: scroll;
 }
 
 .hallmonitor-wrapper {
   height: 100%;
   width: 100%;
+  min-width: 1030px;
   display: flex;
   justify-content: space-between;
   flex-wrap: nowrap;
@@ -51,14 +52,18 @@
   padding: 25px;
   box-sizing: border-box;
 }
-
+.collection-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
 .hallpass-box {
   display: flex;
   flex-direction: column;
-  width: 45%;
+  width: 500px;
   //min-width: 470px;
   align-items: center;
-  margin: 30px 40px 0 0px;
+  margin-top: 30px;
 
   .hall-monitor-bottom {
     width: 100%;
@@ -100,8 +105,8 @@
   margin: 5px;
   width: 450px;
   height: calc(100% - 10px);
-  border-radius: 10px;
-  box-shadow: 0 0 2px darkgrey;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
   background-color: white;
   position: relative;
   overflow: hidden;
@@ -255,4 +260,14 @@
   margin-right: auto;
   margin-top: 25px;
   width:150%
+}
+
+.back-button-bottom {
+  display: block;
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -40px;
 }

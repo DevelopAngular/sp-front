@@ -1,40 +1,85 @@
-import {Component, EventEmitter, NgZone, OnInit, Output} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, NgZone, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import { Router } from '@angular/router';
 import { DeviceDetection } from '../device-detection.helper';
 import { GoogleLoginService } from '../services/google-login.service';
 import { UserService } from '../services/user.service';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
+import {HttpClient} from '@angular/common/http';
+import {filter, map, switchMap, takeUntil} from 'rxjs/operators';
+import {HttpService} from '../services/http-service';
+import {JwtHelperService} from '@auth0/angular-jwt';
+import {GoogleAuthService} from '../services/google-auth.service';
+import {StorageService} from '../services/storage.service';
+import {User} from '../models/User';
+import {forkJoin, Observable, ReplaySubject, Subject, zip} from 'rxjs';
+import {INITIAL_LOCATION_PATHNAME} from '../app.component';
+
+declare const window;
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  @ViewChild('place') place: ElementRef;
 
   @Output() errorEvent: EventEmitter<any> = new EventEmitter();
 
-  private isIOSMobile: boolean;
-  private isAndroid: boolean;
   public appLink: string;
   public titleText: string;
   public isMobileDevice: boolean = false;
   public trustedBackgroundUrl: SafeUrl;
-  public showError = { loggedWith: null, error: null };
+  public pending$: Observable<boolean>;
+
+  private pendingSubject = new ReplaySubject<boolean>(1);
+  private isIOSMobile: boolean = DeviceDetection.isIOSMobile();
+  private isAndroid: boolean = DeviceDetection.isAndroid();
+  private jwt: JwtHelperService;
+  private destroyer$ = new Subject<any>();
 
   constructor(
+    private googleAuth: GoogleAuthService,
+    private http: HttpClient,
+    private httpService: HttpService,
+    private googleLogin: GoogleLoginService,
     private userService: UserService,
     private loginService: GoogleLoginService,
+    private storage: StorageService,
     private router: Router,
     private sanitizer: DomSanitizer,
-    private _zone: NgZone
-  ) {}
+  ) {
+    this.jwt = new JwtHelperService();
+    this.pending$ = this.pendingSubject.asObservable();
+  }
 
   ngOnInit() {
-    this.trustedBackgroundUrl = this.sanitizer.bypassSecurityTrustStyle('url(\'./assets/Login Background.svg\')');
+    if (this.isIOSMobile || this.isAndroid) {
+      window.waitForAppLoaded();
+    }
 
-    this.isIOSMobile = DeviceDetection.isIOSMobile();
-    this.isAndroid = DeviceDetection.isAndroid();
+    this.loginService.isAuthenticated$.pipe(
+      filter(v => v),
+      switchMap((): Observable<[User, Array<string>]> => {
+        return zip(
+          this.userService.userData.asObservable(),
+          INITIAL_LOCATION_PATHNAME.asObservable().pipe(map(p => p.split('/').filter(v => v && v !== 'app')))
+        );
+      }),
+      takeUntil(this.destroyer$)
+    ).subscribe(([currentUser, path]) => {
+      console.log(path);
+
+      const loadView = currentUser.isAdmin() ? 'admin' : 'main';
+      // if (path.length) {
+      //   this.router.navigate(path);
+      // } else {
+        this.router.navigate([loadView]);
+      // }
+    });
+
+    this.trustedBackgroundUrl = this.sanitizer.bypassSecurityTrustStyle('url(\'./assets/Login Background.svg\')');
 
     if (this.isIOSMobile) {
       this.isMobileDevice = true;
@@ -46,12 +91,21 @@ export class LoginComponent implements OnInit {
       this.titleText = 'Download SmartPass on the Google Play Store to start making passes.';
     }
   }
-  onClose(evt) {
-    setTimeout(() => {
-      this.showError.error = evt;
-    }, 400);
+
+  ngAfterViewInit() {
+    // if (this.isIOSMobile || this.isAndroid) {
+      window.appLoaded();
+    // }
   }
-  onError() {
-    this.router.navigate(['error']);
+
+  ngOnDestroy() {
+    this.destroyer$.next(null);
+    this.destroyer$.complete();
+  }
+
+  /*Scroll hack for ios safari*/
+
+  preventTouch($event) {
+    $event.preventDefault();
   }
 }

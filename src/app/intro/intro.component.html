@@ -1,11 +1,12 @@
 <div *ngIf="user" class="intro-wrapper">
 
-  <div *ngIf="!usedAsEntryComponent" class="navbar" [style.border-bottom]="isStaff ? '1px solid  #7F879D' : 'unset'">
+  <div *ngIf="!usedAsEntryComponent" class="navbar" [ngClass]="{shadow: isStaff}">
     <div class="logo ds-flex-center-center">
+      <!--<img width="225" [src]="'./assets/intro/Logo Green.png' | resolveAsset">-->
       <app-smartpass-logo></app-smartpass-logo>
     </div>
     <div *ngIf="isStaff" class="navbar-tabs">
-      <div class="tab"><img width="25" height="25" style="margin-right: 5px;" [src]="'./assets/SP Arrow (Navy).svg'" alt="SP Arrow (Navy).svg"><span>Passes</span></div>
+      <div class="tab"><img width="25" height="25" style="margin-right: 5px;" [src]="'./assets/Passes (Blue-Gray).svg'" alt="SP Arrow (Navy).svg"><span>Passes</span></div>
       <div class="tab"><img width="25" height="25" style="margin-right: 5px;" [src]="'./assets/Walking (Navy).svg'" alt="Walking (Navy).svg"><span>Hall Monitor</span></div>
       <div class="tab"><img width="25" height="25" style="margin-right: 5px;" [src]="'./assets/Room (Navy).svg'" alt="Room (Navy).svg"><span>My Room</span></div>
     </div>
@@ -13,27 +14,26 @@
       <div class="user-name">
         <span>{{user.display_name}}</span>
       </div>
-      <div *ngIf="!isStaff" style="position: relative; width: 50px;height: 50px;">
-        <div class="inbox-modifiers"
-        >
-          <img class="inbox-icon" [src]="'./assets/Inbox (Navy).svg' | resolveAsset">
-          <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">
-          <div class="inbox-number">2</div>
-          <img class="inbox-front" [src]="'./assets/Inbox Bottom (Navy).svg' | resolveAsset">
-        </div>
-      </div>
-      <div
-        class="options-wrapper ds-ml-15"
-      >
-        <img class="options" [src]="'./assets/Settings (Navy).svg' | resolveAsset">
+      <!--<div *ngIf="!isStaff" style="position: relative; width: 50px;height: 50px;">-->
+        <!--<div class="inbox-modifiers"-->
+        <!--&gt;-->
+          <!--<img class="inbox-icon" [src]="'./assets/Inbox (Navy).svg' | resolveAsset">-->
+          <!--<img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">-->
+          <!--<div class="inbox-number">2</div>-->
+          <!--<img class="inbox-front" [src]="'./assets/Inbox Bottom (Navy).svg' | resolveAsset">-->
+        <!--</div>-->
+      <!--</div>-->
+      <div class="options-wrapper">
+        <app-icon-button  [srcString]="'Settings'" [size]="20"></app-icon-button>
       </div>
     </div>
   </div>
 
   <div style="position: absolute; top: 0; bottom: 0; display: flex; align-items: center;">
-    <div *ngIf="slideIndex!==1" class="button-left" (click)="slide('back')"
+    <div *ngIf="slideIndex!==1" class="button-left"
          [@pressState]="getButtonState('left')" (mousedown)="onPress(true, 'left')" (mouseup)="onPress(false, 'left')">
-      <img class="button-icon" [src]="'./assets/Chevron Left (Blue-Gray).svg' | resolveAsset">
+      <app-icon-button [switchColor]="false" [srcString]="'Chevron Left'" (clickEvent)="slide('back')"></app-icon-button>
+      <!--<img class="button-icon" [src]="'./assets/Chevron Left (Blue-Gray).svg' | resolveAsset">-->
     </div>
     <div class="box" >
 
@@ -42,7 +42,8 @@
         <div class="slide slide_5">
 
           <div class="logo ds-flex-center-center">
-            <app-smartpass-logo [scale]="1.25"></app-smartpass-logo>
+            <img width="225" [src]="'./assets/intro/Logo Green.png' | resolveAsset">
+            <!--<app-smartpass-logo [introLogo]="true" [scale]="1.25"></app-smartpass-logo>-->
           </div>
           <div class="end">
             <span>You're all set!</span>
@@ -51,7 +52,7 @@
             <app-gradient-button
               class="end-button"
               [size]="'medium'"
-              [gradient]="'#03CF31,#00B476'"
+              [gradient]="'#03CF31, #00B476'"
               [hoverColor]="'#00B476'"
               [minWidth]="'150px'"
               [minHeight]="'50px'"
@@ -126,25 +127,9 @@
               <div style="margin-top: 45px;margin-bottom: 65px;">
 
                 <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Plus (Navy).svg'">
-                  <div class="ds-flex-ceter-around">
-                    <app-gradient-button
-                      [size]="'editable'"
-                      [minWidth]="'121px'"
-                      [minHeight]="'74px'"
-                      [hoverColor]="'#00b476'"
-                      [fontSize]="'15px'"
-                      [cursor]="'auto'"
-                    >Now
-                    </app-gradient-button>
-                    <app-gradient-button
-                      [size]="'editable'"
-                      [minWidth]="'121px'"
-                      [minHeight]="'74px'"
-                      [hoverColor]="'#00b476'"
-                      [fontSize]="'15px'"
-                      [cursor]="'auto'"
-                    >Future
-                    </app-gradient-button>
+                  <div class="pass-buttons">
+                    <app-create-pass-button [title]="'Now'"></app-create-pass-button>
+                    <app-create-pass-button [title]="'Future'"></app-create-pass-button>
                   </div>
                 </app-display-card>
               </div>
@@ -267,24 +252,8 @@
               </div>
               <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Plus (Navy).svg'">
                 <div class="pass-buttons">
-                  <app-gradient-button
-                    [size]="'editable'"
-                    [minWidth]="'121px'"
-                    [minHeight]="'74px'"
-                    [hoverColor]="'#00b476'"
-                    [fontSize]="'15px'"
-                    [cursor]="'auto'"
-                  >Now
-                  </app-gradient-button>
-                  <app-gradient-button
-                    [size]="'editable'"
-                    [minWidth]="'121px'"
-                    [minHeight]="'74px'"
-                    [hoverColor]="'#00b476'"
-                    [fontSize]="'15px'"
-                    [cursor]="'auto'"
-                  >Future
-                  </app-gradient-button>
+                  <app-create-pass-button [title]="'Now'"></app-create-pass-button>
+                  <app-create-pass-button [title]="'Future'"></app-create-pass-button>
                 </div>
               </app-display-card>
               <div class="ds-flex-center-between ds-mt-25 ds-pt-15">
@@ -307,7 +276,8 @@
         <div class="slide slide_1">
 
           <div class="logo">
-            <app-smartpass-logo [scale]="1.25"></app-smartpass-logo>
+            <img width="225" [src]="'./assets/intro/Logo Green.png' | resolveAsset">
+            <!--<app-smartpass-logo [introLogo]="true" [scale]="1.25"></app-smartpass-logo>-->
           </div>
           <div class="greeting">
             <div>
@@ -340,9 +310,10 @@
       </div>
 
     </div>
-    <div *ngIf="slideIndex!==5" class="button-right" (click)="slide('forward')"
+    <div *ngIf="slideIndex !==4 && slideIndex!==5" class="button-right"
          [@pressState]="getButtonState('right')" (mousedown)="onPress(true, 'right')" (mouseup)="onPress(false, 'right')">
-      <img class="button-icon" [src]="'./assets/Chevron Right (Blue-Gray).svg' | resolveAsset">
+      <!--<img class="button-icon" [src]="'./assets/Chevron Right (Blue-Gray).svg' | resolveAsset">-->
+      <app-icon-button [switchColor]="false" [srcString]="'Chevron Right'" (clickEvent)="slide('forward')"></app-icon-button>
     </div>
   </div>
   <!-- It needs in order to all the components will be disabled-->

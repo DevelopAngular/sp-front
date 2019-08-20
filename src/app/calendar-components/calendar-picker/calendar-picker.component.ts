@@ -252,11 +252,11 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     }
 
     timePickerResult(date: moment.Moment): void {
-        if (this.isValidTime) {
+        // if (this.isValidTime) {
             this.currentDate = date;
-        } else {
-            this.currentDate = moment().add(5, 'minutes');
-        }
+        // } else {
+        //     this.currentDate = moment().add(5, 'minutes');
+        // }
         this.generateCalendar();
         this.onSelectDate.emit([this.currentDate]);
     }

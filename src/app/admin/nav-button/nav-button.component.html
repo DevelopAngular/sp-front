@@ -1,4 +1,11 @@
-<div class="nav-button-wrapper" (click)="doClick()" [style.background]="backgroundColor" [style.color]="textColor">
-  <img draggable="false" class="nav-button-icon" [src]="_icon | resolveAsset">
+<div class="nav-button-wrapper"
+     [style.background]="backgroundColor"
+     [style.color]="textColor"
+     (click)="doClick()"
+>
+  <!--<img draggable="false" class="nav-button-icon" [src]="_icon | resolveAsset">-->
+  <svg width="25px" height="25px" viewBox="0 0 150 150">
+    <use [attr.xlink:href]="iconId"></use>
+  </svg>
   <div class="nav-button-text">{{ content }}</div>
 </div>

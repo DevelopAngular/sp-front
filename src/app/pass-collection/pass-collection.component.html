@@ -5,17 +5,29 @@
       <div class="collection-title" [style.color]="_color">
         {{title}}
       </div>
-      <div class="sort-label global-opacity-icons" *ngIf="hasSort" (click)="openSortDialog($event)">Sort</div>
+
+      <div class="sort-label global-opacity-icons" *ngIf="hasSort" (click)="openSortDialog($event)">
+        <!--<img width="20" height="20" [src]="'./assets/Sort (Navy).svg' | resolveAsset">-->
+        <app-icon-button [srcString]="'Sort'" [size]="20" (clickEvent)="openSortDialog($event)"></app-icon-button>
+
+      </div>
       <!--<app-dropdown *ngIf="hasSort" class="sort-selector" (onSelect)="onSortSelected($event)" [options]="sortOptions"></app-dropdown>-->
     <!--(click)="displayState=(displayState==='list'?'grid':'list')"-->
       <!--<img draggable="false" class="collection-display-toggle global-opacity-icons" [src]="'./assets/' +(displayState==='grid'?'List':'Grid') +' (Navy).svg'| resolveAsset" [style.margin-left]="hasSort?'10px':'auto'">-->
   </div>
-  <div class="collection-divider"></div>
+  <!--<div class="collection-divider"></div>-->
   <div *ngIf="(currentPasses$ | async)">
-    <div *ngIf="currentPasses.length>0; else emptyMessage">
-      <div class="collection-grid-wrapper" *ngIf="displayState==='grid'; else list">
+    <div *ngIf="currentPasses.length > 0; else emptyMessage">
+      <div class="collection-grid-wrapper" [style.justify-content]="currentPasses.length > 1 ? 'center' : 'initial'" [style.grid-template-columns]="gridTemplate" [style.grid-gap]="gridGap" *ngIf="displayState==='grid'; else list">
         <div class="tile" *ngFor="let pass of currentPasses">
-          <app-pass-tile (click)="showPass(pass)" [timerEvent]="timerEvent" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-tile>
+          <app-pass-tile (click)="showPass(pass)"
+                         [timerEvent]="timerEvent"
+                         [fromPast]="fromPast"
+                         [forFuture]="forFuture"
+                         [isActive]="isActive"
+                         [forStaff]="forStaff"
+                         [pass]="pass"
+          ></app-pass-tile>
         </div>
       </div>
       <ng-template #list>
@@ -23,13 +35,11 @@
           <app-pass-cell *ngFor="let pass of currentPasses" (click)="showPass(pass)" [timerEvent]="timerEvent" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-cell>
         </div>
       </ng-template>
-    </div>
     <ng-template #emptyMessage>
       <div class="empty-message" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
         {{ getEmptyMessage() }}
       </div>
     </ng-template>
-  </div>
 </div>
 
 <!-- Needs for Intro page -->
@@ -55,5 +65,7 @@
       </div>
     </ng-template>
 </div>
-
+  </div>
+</div>
 <!-- End -->
+

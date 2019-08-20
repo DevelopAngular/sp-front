@@ -1,4 +1,12 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectorRef,
+  OnChanges
+} from '@angular/core';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 
 @Component({
@@ -6,42 +14,42 @@ import {DarkThemeSwitch} from '../../dark-theme-switch';
   templateUrl: './nav-button.component.html',
   styleUrls: ['./nav-button.component.scss']
 })
-export class NavButtonComponent implements OnInit {
+export class NavButtonComponent implements OnInit, OnChanges {
 
   @Input() icon: string;
   @Input() content: string;
   @Input() selected: boolean = false;
 
+  @Output() selectedButton: EventEmitter<any> = new EventEmitter();
   @Output() onClick: EventEmitter<any> = new EventEmitter();
 
-  
+  public iconId: string;
 
-  get textColor(){
-    // return this.selected?'#3D396B':'#7E879D';
-    return this.selected?'#3D396B': this.darkTheme.isEnabled$.value ? '#FFFFFF' : ' #7E879D';
-
+  get textColor() {
+    return this.selected ? '#00B476' : this.darkTheme.isEnabled$.value ? '#FFFFFF' : ' #7E879D';
   }
 
   get backgroundColor() {
-
-    return this.selected?'#E4EBFF':'none';
-  }
-
-  get _icon() {
-
-    // return this.darkTheme.getIcon({iconName: 'Navy', setting: null, hover: this.selected});
-    return this.icon +(this.selected?' (Navy)': this.darkTheme.isEnabled$.value ? ' (White)' : ' (Blue-Gray)') + '.svg';
+    return 'none';
   }
 
   constructor(
-    private darkTheme: DarkThemeSwitch
+    private darkTheme: DarkThemeSwitch,
+    private cd: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
-    
+    this.iconId = `#${this.icon}`;
   }
 
-  doClick(){
+  ngOnChanges() {
+    if (this.selected) {
+      this.selectedButton.emit(this.selected);
+      // console.log(true);
+    }
+  }
+
+  doClick() {
     this.onClick.emit(this.selected);
   }
 

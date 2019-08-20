@@ -35,6 +35,9 @@ export class User extends BaseModel {
     return new User(id, created, last_updated, first_name, last_name, display_name, primary_email, roles);
   }
 
+  isHead() {
+    return this.roles.includes('_profile_admin') &&  this.roles.includes('manage_school');
+  }
   isAdmin() {
     return this.roles.includes('_profile_admin');
   }

@@ -8,8 +8,9 @@ set -e
 #
 #  yarn install --cache-folder /persistent_volume/yarn_cache
 #else
-  echo "Using fresh yarn install"
-  yarn install
+  # echo "Using fresh yarn install"
+  # yarn install
+  npm install
 #fi
 
 export PATH="$PATH:$(pwd)/node_modules/.bin"
@@ -26,7 +27,7 @@ scripts/make_build_info.sh
 
 config=production
 
-if [[ "$CI_ENVIRONMENT_SLUG" = "staging" ]]; then
+if [[ "$CI_ENVIRONMENT_SLUG" = "testing" ]]; then
   config=staging
 fi
 
@@ -36,7 +37,7 @@ fi
 
 echo "Using config: $config"
 
-yarn ng-high-memory build -c "$config" --base-href '/app/' # --deploy-url "$deploy_url"
+yarn ng-ci-memory build -c "$config" --base-href '/app/' # --deploy-url "$deploy_url"
 
 echo 'Uploading sourcemaps to Sentry'
 

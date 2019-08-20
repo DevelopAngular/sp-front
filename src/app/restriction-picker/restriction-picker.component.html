@@ -1,9 +1,11 @@
 <div class="picker-wrapper">
   <div class="disabled" *ngIf="disabled"></div>
-  <div class="choices">
+  <div class="choices" [style.border]="'none'">
+<!--  <div class="choices" [style.border]="'1px solid ' + selectedColor">-->
     <div class="choice" [style.height]="height + 'px'"
          *ngFor="let choice of choices; let i=index;"
          [style.border]="'1px solid ' + selectedColor"
+         [style.border-left]="i > 0 ? 'none' : '1px solid ' + selectedColor"
          [style.opacity]="isDisabled(choice) ? 0.5 : 1"
          [style.cursor]="isDisabled(choice) ? 'default' : 'pointer'"
          [ngClass]="{

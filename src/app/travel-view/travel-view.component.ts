@@ -9,6 +9,7 @@ import {BehaviorSubject} from 'rxjs';
 import {filter} from 'rxjs/operators';
 import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
+import {ScreenService} from '../services/screen.service';
 
 @Component({
   selector: 'app-travel-view',
@@ -21,7 +22,7 @@ export class TravelViewComponent implements OnInit {
   @Input() pass: HallPass | Invitation | Request;
   @Input() shrink: boolean = false;
   @Input() forStaff: boolean = false;
-  @Input() height: string = '217px';
+  @Input() height: string = this.screenService.isDeviceLargeExtra ? '185px' : '217px';
 
   @Output() locationSelected: EventEmitter<any> = new EventEmitter();
   isSeen$: BehaviorSubject<boolean>;
@@ -32,20 +33,41 @@ export class TravelViewComponent implements OnInit {
   constructor(
       public dialog: MatDialog,
       private createFormService: CreateFormService,
-      private http: HttpService
+      private http: HttpService,
+      public screenService: ScreenService
   ) { }
 
+  get originRoomName() {
+    if (this.showRoomNumber) {
+      if (this.pass instanceof Invitation) {
+          return this.pass.default_origin ? this.pass.default_origin.title + `${this.pass.default_origin.room}` : 'Origin';
+      } else {
+        return this.pass.origin.title + ` (${this.pass.origin.room})`;
+      }
+    } else {
+      if (this.pass instanceof Invitation) {
+        return this.pass.default_origin ? this.pass.default_origin.title : 'Origin';
+      } else {
+        return this.pass.origin.title;
+      }
+    }
+  }
+
+  get destinationRoomName() {
+     return this.showRoomNumber ? this.pass.destination.title + ` (${this.pass.destination.room})` : this.pass.destination.title;
+  }
+
   ngOnInit() {
+    console.log(this.destinationRoomName);
     this.type = (this.pass instanceof HallPass) ? 'hallpass' :
     (this.pass instanceof Invitation) ? 'invitation' :
       'request';
-    if (this.type === 'invitation') {
-      console.log('PASSSSS', this.pass);
-    }
+
     this.isSeen$ = this.createFormService.isSeen$;
     this.http.currentSchool$.subscribe(res => {
       this.showRoomNumber = res.display_card_room;
     });
+      console.log(this.pass);
   }
 
   changeLocation(){

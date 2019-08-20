@@ -1,7 +1,21 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostBinding,
+  Input,
+  OnChanges,
+  OnInit,
+  Output, SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import { bumpIn } from '../animations';
 import { Pinnable } from '../models/Pinnable';
-import { DomSanitizer } from '../../../node_modules/@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
+import {interval, Subject} from 'rxjs';
+import {ChangeDetection} from '@angular/cli/lib/config/schema';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-pinnable',
@@ -11,7 +25,7 @@ import { DomSanitizer } from '../../../node_modules/@angular/platform-browser';
     bumpIn
   ]
 })
-export class PinnableComponent implements OnInit {
+export class PinnableComponent implements OnInit, OnChanges {
 
   @Input() mock = null;
 
@@ -50,19 +64,38 @@ export class PinnableComponent implements OnInit {
   @Output()
   onSelectEvent: EventEmitter<Pinnable> = new EventEmitter();
 
+  @Output() clampedEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
+
   restricted: boolean = false;
   buttonDown = false;
   hovered: boolean;
+  intervalId;
 
-  constructor(private sanitizer: DomSanitizer) {
+  hoverDestroyer$: Subject<any>;
+
+  constructor(
+    private sanitizer: DomSanitizer,
+    private changeDetector: ChangeDetectorRef
+  ) {
 
   }
 
-  get shadow(){
-    if(this.hovered && this.valid && !this.disabled)
-      return this.sanitizer.bypassSecurityTrustStyle('0 2px 4px 1px rgba(0, 0, 0, 0.3)');
-    else
-      return this.sanitizer.bypassSecurityTrustStyle('0 2px 4px 0px rgba(0, 0, 0, 0.1)');
+  get shadow() {
+
+    let i = 0;
+    const hexColors = [];
+    const rawHex = this.mock ? this.mock.solid.slice(1) : this.pinnable.color_profile.solid_color.slice(1);
+    do {
+      hexColors.push(rawHex.slice(i, i + 2));
+      i += 2;
+    } while (i < rawHex.length);
+    const rgbString = hexColors.map(color => parseInt(color, 16)).join(', ');
+
+    if (this.hovered && this.valid && !this.disabled) {
+      return this.sanitizer.bypassSecurityTrustStyle(`0px 3px 10px rgba(${rgbString}, 0.2)`);
+    } else {
+      return this.sanitizer.bypassSecurityTrustStyle(' 0px 3px 5px rgba(0, 0, 0, 0.1)');
+    }
   }
 
   ngOnInit() {
@@ -76,9 +109,55 @@ export class PinnableComponent implements OnInit {
 
     }
   }
+  ngOnChanges(changes: SimpleChanges): void {
+    this.changeDetector.detectChanges();
+  }
+
+  // get valueAsStyle(): any {
+  //     // this.changeDetector.detectChanges();
+  //   if (this.titleEl) {
+  //     // this.changeDetector.detectChanges();
+  //
+  //     // return this.sanitizer.bypassSecurityTrustStyle(`--space: ${15}px`);
+  //     // this.changeDetector.detectChanges();
+  //
+  //     return this.sanitizer.bypassSecurityTrustStyle(`--space: ${this.titleEl.getBoundingClientRect().width}px`);
+  //   }
+  // }
 
   get buttonState() {
     return this.valid && !this.disabled ? this.buttonDown ? 'down' : 'up' : 'up';
+  }
+
+  onHover(evt: Event, container: HTMLElement) {
+    this.hoverDestroyer$ = new Subject<any>();
+    const target = (evt.target as HTMLElement);
+    target.style.width = `auto`;
+    target.style.transition = `none`;
+
+    const targetWidth = target.getBoundingClientRect().width;
+    const containerWidth = container.getBoundingClientRect().width;
+
+    let margin = 0;
+    interval(35)
+      .pipe(
+        takeUntil(this.hoverDestroyer$)
+      )
+      .subscribe(() => {
+        if ((targetWidth - margin) > containerWidth) {
+          target.style.marginLeft = `-${margin}px`;
+          margin++;
+        }
+      });
+  }
+
+  onLeave({target: target}) {
+    target.style.marginLeft = '0px';
+    target.style.transition = `margin-left .4s ease`;
+    target.style.width = `100%`;
+
+    this.hoverDestroyer$.next();
+    this.hoverDestroyer$.complete();
   }
 
   onSelect() {
@@ -102,6 +181,19 @@ export class PinnableComponent implements OnInit {
   onPress(press: boolean) {
     if (!this.disabled) {
       this.buttonDown = press;
+      let count = 100;
+      if (press) {
+        this.intervalId = setInterval(() => {
+          if (count <= 1000) {
+              count += 100;
+          } else {
+            this.clampedEvent.emit(true);
+            clearInterval(this.intervalId);
+          }
+        }, 100);
+      } else {
+        clearInterval(this.intervalId);
+      }
     }
   }
 

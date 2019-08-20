@@ -19,7 +19,7 @@
     </div>
 
     <div  class="ds-w-100 options-container">
-      <div *ngFor="let option of options">
+      <div *ngFor="let option of options; let i = index">
         <div *ngIf="optionsView === 'button'; else stringOptionsView" class="ds-w-100">
           <app-gradient-button
             [cursor]="'pointer'"
@@ -40,9 +40,9 @@
                 'option-wrapper': !darkTheme.isEnabled$.value,
                 'option-wrapper__dark': darkTheme.isEnabled$.value
                }"
-               (mousedown)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : 'rgba(226, 231, 244, 1)'; sortMode = option.action"
+               (mousedown)="_option.style.background = this.darkTheme.isEnabled$.value ? 'rgba(226, 231, 244, .2)' : '#E2E7F4'; sortMode = option.action"
                (mouseup)="_option.style.background = 'transparent'"
-               (mouseover)="_option.style.background = this.darkTheme.isEnabled$.value ? isSort ? '#47447E' : 'rgba(236, 241, 255, .2)' : 'rgba(236, 241, 255, 1)'"
+               (mouseover)="_option.style.background = this.darkTheme.isEnabled$.value ? isSort ? '#47447E' : '#ECF1FF' : '#ECF1FF'"
                (mouseleave)="_option.style.background = 'transparent'"
                (click)="_matDialogRef.close(option.action)">
             <div class="ds-w-100 ds-flex-center-between" *ngIf="isSort; else simpleOptions">
@@ -52,7 +52,7 @@
             <ng-template #simpleOptions>{{ option.display }}</ng-template>
           </div>
         </ng-template>
-        <div class="option-divider"></div>
+        <div class="option-divider" *ngIf="i !== options.length - 1"></div>
       </div>
     </div>
   </div>

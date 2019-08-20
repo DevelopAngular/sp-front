@@ -1,0 +1,110 @@
+:host {
+  @media all and (min-width: 320px) {
+    div.wya-container {
+      width: 100%;
+      max-width: 300px;
+    }
+
+    img.back-button-bottom {
+      bottom: -35px !important;
+    }
+
+  }
+
+  @media all and (max-width: 1024px) and (min-width: 335px) {
+    div.wya-container {
+      width: 100%;
+      max-width: 335px;
+    }
+  }
+
+  @media all and (max-width: 1024px) {
+    div.wya-container {
+      width: 100%;
+    }
+
+    img.back-button-top {
+      display: none;
+    }
+
+    img.back-button-bottom {
+      display: block;
+      position: absolute;
+      height: 28px;
+      width: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: -45px;
+    }
+  }
+  .wya-container {
+    width: 425px;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    //justify-content: space-between;
+    position: relative;
+    background-color: #ffffff;
+    border-radius: 14px;
+    overflow: hidden;
+    .wya-header, .wya-header_animation-back {
+
+      width: 100%;
+      height: 70px;
+      min-height: 70px;
+      display: flex;
+      z-index: 10;
+      align-items: center;
+      position: relative;
+      box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+      border-top-left-radius: 14px;
+      border-top-right-radius: 14px;
+      overflow: hidden;
+
+      .back-button {
+        width: 28px;
+        height: 28px;
+        margin-left: 20px;
+        position: absolute;
+        z-index: 11;
+        user-select: none;
+        cursor: pointer;
+      }
+
+      .wya-header-text {
+        display: flex;
+        align-items: center;
+        margin: 0 auto;
+
+        .search-icon{
+          width: 21px;
+          height: 21px;
+          margin-right: 12px;
+        }
+
+        .text {
+          color: white;
+          font-size: 16px;
+          font-weight: bold;
+          font-style: normal;
+          font-stretch: normal;
+          line-height: 1.08;
+          letter-spacing: 0.3px;
+        }
+      }
+    }
+    .wya-content {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      .student-search {
+
+      }
+    }
+  }
+}
+
+.back-button-bottom {
+  display: none;
+}

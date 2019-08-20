@@ -10,7 +10,7 @@ import {DarkThemeSwitch} from '../dark-theme-switch';
 export class DisplayCardComponent implements OnInit {
   @Input() mock: number = null;
   @Input() backgroundColor: string;
-  @Input() headerBottomSpace: string = '8px';
+  @Input() headerBottomSpace: string = '15px';
   @Input() hasDivider: boolean = true;
   @Input() inbox: boolean = false;
   @Input() title: string;
@@ -40,6 +40,7 @@ export class DisplayCardComponent implements OnInit {
       setting: null
     });
   }
+
   get titleColor () {
     return this.darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'});
   }

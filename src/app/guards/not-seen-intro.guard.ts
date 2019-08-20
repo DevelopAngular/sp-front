@@ -2,9 +2,10 @@ import { ErrorHandler, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { UserService } from '../services/user.service';
-import { map, tap } from 'rxjs/operators';
+import {combineLatest, map, tap} from 'rxjs/operators';
 import { User } from '../models/User';
 import {StorageService} from '../services/storage.service';
+import { DeviceDetection } from '../device-detection.helper';
 
 @Injectable({
   providedIn: 'root'
@@ -24,20 +25,28 @@ export class NotSeenIntroGuard implements CanActivate {
     state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
 
     // console.log('canActivate intro:', localStorage.getItem('smartpass_intro') !== 'seen');
-
     return this.userService.getUser()
       .pipe(
         map(raw => User.fromJSON(raw)),
-        map((user) => {
+        combineLatest(this.userService.getIntros()),
+        map(([user, intros]: [any, any]) => {
           if (!user) {
             return false;
           }
+          let isSaveOnServer;
+          if (DeviceDetection.isAndroid() && intros.main_intro.android.seen_version) {
+              isSaveOnServer = true;
+          } else if (DeviceDetection.isIOSMobile() && intros.main_intro.ios.seen_version) {
+              isSaveOnServer = true;
+          } else if (intros.main_intro.web.seen_version) {
+              isSaveOnServer = true;
+            }
           if (user.isStudent()) {
-            if (this.storage.getItem('smartpass_intro_student') !== 'seen') {
+            if (this.storage.getItem('smartpass_intro_student') !== 'seen' && !isSaveOnServer) {
               this.router.navigateByUrl('/main/intro').catch(e => this.errorHandler.handleError(e));
             }
           } else if (user.isTeacher()) {
-            if (this.storage.getItem('smartpass_intro_teacher') !== 'seen') {
+            if (this.storage.getItem('smartpass_intro_teacher') !== 'seen' && !isSaveOnServer) {
               this.router.navigateByUrl('/main/intro').catch(e => this.errorHandler.handleError(e));
             }
           }

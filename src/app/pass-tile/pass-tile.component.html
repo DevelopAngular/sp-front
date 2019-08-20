@@ -4,15 +4,20 @@
       [@pressState]="buttonState" (click)="onClick($event)"
       (mouseenter)="hovered = true"
       (mouseleave)="buttonDown = false; hovered = false"
-      (mousedown)="onPress(true)" (mouseup)="onPress(false)">
-    <div class="tile-title" [style.margin-top]="forStaff?'13px':'0px'" >{{ pass.destination.title }}</div>
+      (mousedown)="onPress(true, $event)"
+      (mouseup)="onPress(false, $event)"
+      (touchstart)="onTap(true)"
+      (touchend)="onTap(false)"
+      >
+    <div class="tile-title" [style.margin-top]="forStaff?'12px':'0px'" >{{ pass.destination.title }}</div>
     <div class="tile-content">{{ tileContent }}</div>
-  <img [style.width]="'15px'" [style.height]="'15px'" *ngIf="pass.travel_type == 'one_way' && !forStaff" [src]="'./assets/SP Arrow (White).svg' | resolveAsset" class="tile-round-trip">
-  <img [style.width]="'35px'" [style.height]="'15px'" *ngIf="pass.travel_type == 'round_trip' && !forStaff" [src]="'./assets/SP Arrow Double (White).svg' | resolveAsset" class="tile-one-way">
+  <img [style.width]="'13px'" [style.height]="'15px'" *ngIf="pass.travel_type == 'one_way' && !forStaff" [src]="'./assets/SP Arrow (White).svg' | resolveAsset" class="tile-type">
+  <img [style.width]="'35px'" [style.height]="'15px'" *ngIf="pass.travel_type == 'round_trip' && !forStaff" [src]="'./assets/SP Arrow Double (White).svg' | resolveAsset" class="tile-type">
   <div *ngIf="isBadgeVisible" class="badge">1</div>
 <div *ngIf="forStaff" class="names-overlay"></div>
 <div *ngIf="forStaff" class="names">{{ tileName }}</div>
 </div>
+  <!--{{boxShadow}}-->
 
 
 <!-- Needs for Intro flow -->

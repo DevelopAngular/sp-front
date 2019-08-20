@@ -2,7 +2,8 @@
   <div class="settings-header">
     <img class="back-button" *ngIf="!changeForm" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="close()">
     <div class="back-button" *ngIf="changeForm" (click)="close()">Cancel</div>
-    <div class="ds-dialog-title ">School Settings</div>
+    <img width="21" height="21" [src]="'./assets/Options (Navy).svg' | resolveAsset" alt="Options">
+    <div class="ds-dialog-title" [style.margin-left]="'12px'">Pass Options</div>
     <div class="save-button" *ngIf="changeForm && schoolForm.valid">
       <app-gradient-button
               [width]="'85px'"
@@ -27,7 +28,7 @@
       </div>
       <div class="buffer-time-control">
         <div class="control-text" style="width: 210px">
-          <span class="ds-cell-text-2">Pass Buffer Time</span> <br>
+          <span class="ds-cell-text-2">Pass Buffer Time (min)</span> <br>
           <span class="ds-cell-description-text">How long an expiring pass will count up until it automatically ends and moves to the Expired Pass section.</span>
         </div>
         <div class="control-input">
@@ -35,9 +36,9 @@
         </div>
       </div>
     </div>
-    <div class="bottom-block">
-      <div class="ds-dialog-bold-text">Have a feature suggestion?</div>
-      <div class="ds-small-link-text">Email us at support@smartpass.app</div>
-    </div>
+<!--    <div class="bottom-block">-->
+<!--      <div class="ds-dialog-bold-text">Have a feature suggestion?</div>-->
+<!--      <div class="ds-small-link-text">Email us at support@smartpass.app</div>-->
+<!--    </div>-->
   </div>
 </div>

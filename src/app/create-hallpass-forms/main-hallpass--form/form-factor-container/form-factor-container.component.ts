@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import { TimeService } from '../../../services/time.service';
 
 import { FormFactor, Navigation } from '../main-hall-pass-form.component';
@@ -7,6 +7,7 @@ import { Request } from '../../../models/Request';
 import { Invitation } from '../../../models/Invitation';
 import { DataService } from '../../../services/data-service';
 import { Pinnable } from '../../../models/Pinnable';
+import {MAT_DIALOG_DATA} from '@angular/material';
 
 
 
@@ -29,6 +30,7 @@ export class FormFactorContainerComponent implements OnInit {
   constructor(
     private dataService: DataService,
     private timeService: TimeService,
+    @Inject(MAT_DIALOG_DATA) public dialogData: any,
   ) { }
 
   get requestTeachers() {
@@ -42,11 +44,20 @@ export class FormFactorContainerComponent implements OnInit {
 
       this.dataService.currentUser
       .subscribe((_user) => {
+
+        let user = null;
+
+        if ( this.FORM_STATE.formMode.role === 2) {
+          user = _user;
+        } else if (this.FORM_STATE.formMode.role === 1 && this.dialogData['kioskModeRoom']) {
+          user = this.FORM_STATE.data.selectedStudents[0];
+        }
+
         switch (this.FORM_STATE.formMode.formFactor) {
           case this.states.HallPass:
             this.template = new HallPass(
               'template',
-              _user,
+              user,
               null,
               null,
               null,

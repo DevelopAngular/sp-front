@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 
 import { merge, Subject, timer } from 'rxjs';
@@ -20,6 +20,8 @@ export class TimePickerComponent implements OnInit, OnDestroy {
 
   @Input() forseDate$: Subject<moment.Moment>;
 
+  @ViewChild('hourInp') hourInput: ElementRef;
+
   @Output() timeResult: EventEmitter<moment.Moment> = new EventEmitter<moment.Moment>();
 
   public hourHovered: boolean;
@@ -35,18 +37,26 @@ export class TimePickerComponent implements OnInit, OnDestroy {
 
   destroy$ = new Subject();
 
-  constructor(private cdr: ChangeDetectorRef) { }
+  constructor() { }
+
+  get invalidTime() {
+      return this._currentDate.isBefore(moment().add(5, 'minutes'));
+  }
 
   get isDisabledSwitchHourButton() {
     return this.min && moment(this._currentDate).isSameOrBefore(this.min, 'hour');
   }
 
   get isDisabledSwitchMinButton() {
-    return this.min && moment(this._currentDate).isSameOrBefore(moment(this.min).add(5, 'minutes'), 'minute');
+    return this.min && moment(this._currentDate).isSameOrBefore(moment(this.min).add(5, 'minutes'));
+  }
+
+  get isDisabledSwitchFormat() {
+      const removeTime = moment(this._currentDate).subtract(12, 'hour');
+      return removeTime.isBefore(moment().add(5, 'minutes'));
   }
 
   ngOnInit() {
-      // console.log('Timeee ===>>>', this._currentDate.format('DD hh:mm A'));
     if (this.forseDate$) {
         this.forseDate$.pipe(takeUntil(this.destroy$)).subscribe(date => {
             this._currentDate = date;
@@ -59,13 +69,18 @@ export class TimePickerComponent implements OnInit, OnDestroy {
     });
     merge(this.timeForm.valueChanges, this.changeEmit$).pipe(takeUntil(this.destroy$))
         .subscribe(value => {
-            if (this._currentDate.format('A') === 'PM') {
-              this._currentDate = this._currentDate.set('hour', +value.hour + 12);
+            if (this._currentDate.format('A') === 'PM' && this._currentDate.hour() !== 12) {
+                this._currentDate = this._currentDate.set('hour', +value.hour + 12);
             } else {
               this._currentDate = this._currentDate.set('hour', value.hour);
+              if (this.invalidTime && this._currentDate.hour() !== 12) {
+                this._currentDate = this._currentDate.set('hour', +value.hour + 12);
+                console.log('Current Time ==>>', this._currentDate.format('DD hh:mm A'));
+              }
             }
             this._currentDate = this._currentDate.set('minute', value.minute);
-            if (this._currentDate.isBefore(moment().add(5, 'minutes'))) {
+            if (this.invalidTime) {
+                console.log('Invalid Time ==>>', this._currentDate.format('DD hh:mm A'));
                 this._currentDate = moment().add(5, 'minutes');
             }
         });
@@ -98,6 +113,9 @@ export class TimePickerComponent implements OnInit, OnDestroy {
           this._currentDate.add(1, action);
       } else if (state === 'down') {
           this._currentDate.subtract(1, action);
+          if (this.invalidTime) {
+              this._currentDate = moment().add(5, 'minutes');
+          }
       }
       this.buildFrom();
       this.timeResult.emit(this._currentDate);
@@ -132,7 +150,7 @@ export class TimePickerComponent implements OnInit, OnDestroy {
   }
 
   changeFormat() {
-      if (!this.isDisabledSwitchHourButton) {
+      if (!this.isDisabledSwitchHourButton && !this.isDisabledSwitchFormat) {
           const addTime = moment(this._currentDate).add(12, 'hour');
           const removeTime = moment(this._currentDate).subtract(12, 'hour');
           if (this._currentDate.isSame(addTime, 'day')) {
@@ -142,6 +160,8 @@ export class TimePickerComponent implements OnInit, OnDestroy {
           }
           this.buildFrom();
           this.timeResult.emit(this._currentDate);
+      } else {
+          console.log('this invalid Time ====>>>', this._currentDate.format('DD hh:mm A'));
       }
   }
 }

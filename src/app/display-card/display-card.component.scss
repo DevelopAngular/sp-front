@@ -1,12 +1,62 @@
-﻿.display-card-wrapper{
-    width: 312px;
-    padding: 25px 25px;
+﻿:host {
+
+}
+
+.overlay {
+  position: relative;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+}
+
+@media all and (max-width: 425px) {
+  div.display-card-wrapper{
+    width: 100%;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background-color: transparent !important;
+  }
+
+  div.display-card-divider{
+    width: inherit;
+  }
+
+  div.overlay {
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  div.display-card-header {
+    width: 93%;
+    margin: 0 auto;
+  }
+}
+
+.display-card-wrapper{
+    width: 351px;
+    padding: 25px 22px;
     box-sizing: border-box;
-    border-radius: 10px;
+    border-radius: 12px;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+    align-items: center;
+    //box-shadow: 0px 3px 20px rgba(0, 0, 0, 0.1);
     background-color: #fff;
+
+    &.inbox {
+        height: calc(100vh - 190px);;
+        overflow: auto;
+    }
+
+}
+.bottom-shadow {
+    position: absolute;
+    bottom: 0px;
+    //height: 16px;
+    width: 100%;
+    border-radius: 12px;
+    background-color: #ffffFF;
+    box-shadow: 0px -3px 30px 16px rgba(255, 255, 255, 1);
 }
 
 .display-card-header{
@@ -15,6 +65,7 @@
     align-items: center;
     margin-bottom: 8px;
     left: 25px;
+    width: 100%;
     position: relative;
 }
 
@@ -34,7 +85,7 @@
 }
 
 .display-card-divider{
-    width: 258px;
+    width: 301px;
     height: 1px;
     margin-bottom: 12px;
 }
@@ -58,6 +109,9 @@
     align-items: center;
 }
 
+.inbox-content {
+    width: 301px;
+}
 .inbox-badge{
     width: 20px;
     height: 20px;

@@ -4,17 +4,22 @@
     <div class="label-text" [style.color]="labelColor">{{ labelText }}</div>
   </div>
 
-  <!--<div *ngIf="selected" class="inputSelector" [style.width]="width"></div>-->
   <div class="field-wrapper" [style.min-width]="minWidth">
     <div class="input-focus-wrapper"
          [ngClass]="{'inputSelector': selected === true}"
          [style.width]="width" [style.min-width]="minWidth"
     >
-      <img *ngIf="fieldIcon && (fieldIconPosition === 'left')" class="field-icon"
-           [src]="fieldIcon | resolveAsset"
-           alt="icon"
-           draggable="false">
-      <input *ngIf="!chipInput" #input class="input"
+      <div *ngIf="fieldIcon && (fieldIconPosition === 'left')" class="field-icon">
+
+        <img  *ngIf="!(pending$ | async)"
+              [src]="fieldIcon | resolveAsset"
+              alt="icon"
+              draggable="false">
+        <div *ngIf="pending$ | async" class="loading-theme_blue-gray">
+          <mat-spinner [color]="'primary'" [diameter]="18"></mat-spinner>
+        </div>
+      </div>
+      <input #input class="input"
              spellcheck="false"
              [type]="html5type"
              [style.margin]="'0px'"
@@ -25,32 +30,15 @@
              (input)="changeAction(input)" (click)="focusAction(true)" (focusout)="focusAction(false)"
              [(ngModel)]="value">
 
-      <!-- Needs for the cases when this component is used as Chips input-->
-
-      <input *ngIf="chipInput" #input class="input"
-             [type]="html5type"
-             [disabled]="disabled"
-             [matChipInputFor]="chipInput"
-             [matChipInputAddOnBlur]="true"
-             [style.margin]="'0px'"
-             [style.width]="width" [style.min-width]="minWidth"
-             [style.box-shadow]="_boxShadow"
-             [style.padding]="fieldIconPosition === 'left' ? '0 0 0 45px' : '0 45px 0 15px'"
-             [placeholder]="placeholder" [readonly]="type == 'dates'"
-             (input)="changeAction(input)" (click)="focusAction(true)" (focusout)="focusAction(false)"
-             [(ngModel)]="value" >
       <img *ngIf="fieldIcon && (fieldIconPosition === 'right') && !(showCloseIcon | async)" class="field-icon field-icon__right"
            [src]="fieldIcon | resolveAsset"
            alt="icon"
            draggable="false">
       <img *ngIf="closeIcon && (showCloseIcon | async)" class="field-icon field-icon__close"
-           [style.opacity]="input.nativeElement.value.length ? '.7' : '0'"
+           [style.opacity]="input.value.length ? '.7' : '0'"
            [src]="closeIconAsset | resolveAsset" alt="icon"
            draggable="false"
-           (click)="changeAction(input.nativeElement, true)">
-
-      <!--{{input | json }}-->
-      <!--<div *ngFor="let option of test"></div>-->
+           (click)="changeAction(input, true)">
     </div>
   </div>
 </div>

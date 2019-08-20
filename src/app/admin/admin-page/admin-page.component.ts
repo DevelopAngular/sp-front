@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 
 import {combineLatest, BehaviorSubject, Observable, of} from 'rxjs';
 import { UserService } from '../../services/user.service';
@@ -11,7 +11,7 @@ declare const window;
   templateUrl: './admin-page.component.html',
   styleUrls: ['./admin-page.component.scss']
 })
-export class AdminPageComponent implements OnInit {
+export class AdminPageComponent implements OnInit, AfterViewInit {
 
   private outletDummySwitcher$ = new BehaviorSubject<boolean>(false);
   private adminPageReload$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
@@ -27,7 +27,9 @@ export class AdminPageComponent implements OnInit {
     this.showDummySwitcher$ = combineLatest(
       this.userService.userData,
       this.outletDummySwitcher$,
-      (u, d) => d || !u.isAdmin()
+      (u, d) =>  {
+        return d || (u && !u.isAdmin());
+      }
     );
   }
 
@@ -78,10 +80,12 @@ export class AdminPageComponent implements OnInit {
           tab = 'accounts';
         }
         this.router.navigate(['/admin', tab]);
-        window.appLoaded();
     });
 
 
+  }
+  ngAfterViewInit() {
+    window.appLoaded();
   }
   onReloadPage(event) {
     this.adminPageReload$.next(true);

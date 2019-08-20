@@ -24,7 +24,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgProgressModule } from '@ngx-progressbar/core';
 import { PinnableComponent } from '../pinnable/pinnable.component';
 import { TraveltypePickerComponent } from '../traveltype-picker/traveltype-picker.component';
-import { StudentSearchComponent } from '../student-search/student-search.component';
+import { SPSearchComponent } from '../sp-search/sp-search.component';
 import { DisplayReportCellComponent } from '../display-report-cell/display-report-cell.component';
 import {PassCollectionComponent} from '../pass-collection/pass-collection.component';
 import {PassTileComponent} from '../pass-tile/pass-tile.component';
@@ -32,7 +32,6 @@ import {PassCellComponent} from '../pass-cell/pass-cell.component';
 import { RestrictionDummyComponent } from '../admin/restriction-dummy/restriction-dummy.component';
 import {BackButtonComponent} from '../admin/back-button/back-button.component';
 import {PassCardComponent} from '../pass-card/pass-card.component';
-import {PassCardTemplateComponent} from '../pass-card-template/pass-card-template.component';
 import {TravelViewComponent} from '../travel-view/travel-view.component';
 import {DurationPickerComponent} from '../duration-picker/duration-picker.component';
 import {CardButtonComponent} from '../card-button/card-button.component';
@@ -53,36 +52,54 @@ import {TimePickerComponent} from '../calendar-components/time-picker/time-picke
 import {AdminCalendarToggleComponent} from '../calendar-components/admin-calendar-toggle/admin-calendar-toggle.component';
 import {ToggleOptionsComponent} from '../calendar-components/admin-calendar-toggle/toggle-options/toggle-options.component';
 import {SpChipsComponent} from '../sp-chips/sp-chips.component';
-import {RoomsSearchComponent} from "../rooms-search/rooms-search.component";
+import {SWIPER_CONFIG, SwiperConfigInterface, SwiperModule} from 'ngx-swiper-wrapper';
+import { IconButtonComponent } from '../icon-button/icon-button.component';
+import {RoomsSearchComponent} from '../rooms-search/rooms-search.component';
+import {XsButtonComponent} from '../xs-button/xs-button.component';
+import {AccountGroupsComponent} from '../admin/accounts/account-groups/account-groups.component';
+import {PrivacyCardComponent} from '../admin/accounts/privacy-card/privacy-card.component';
+import {ProfileComponent} from '../admin/accounts/account-groups/profile/profile.component';
+import {ConsentMenuMobileComponent} from '../consent-menu-mobile/consent-menu-mobile.component';
+import {GettingStartedProgressService} from '../admin/getting-started-progress.service';
+import {CreatePassButtonComponent} from '../passes/create-pass-button/create-pass-button.component';
+import {ProfileCardDialogComponent} from '../admin/profile-card-dialog/profile-card-dialog.component';
+import {SpDialogBoxComponent} from '../sp-dialog-box/sp-dialog-box.component';
+import {ScrollingModule} from '@angular/cdk/scrolling';
+import {ScrollHolderDirective} from '../scroll-holder.directive';
 
 
+const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
+  direction: 'horizontal',
+  slidesPerView: 'auto'
+};
 
 @NgModule({
   imports: [
     CommonModule,
+    ScrollingModule,
     MatProgressBarModule,
     OwlDateTimeModule,
     OwlNativeDateTimeModule,
     FormsModule,
     ReactiveFormsModule,
-      MatTooltipModule,
-      MatListModule,
-      MatCheckboxModule,
-      MatTableModule,
-      MatProgressSpinnerModule,
-      MatGridListModule,
-      MatDialogModule,
-      MatIconModule,
-      MatSelectModule,
-      MatSliderModule,
-      MatSlideToggleModule,
-      MatChipsModule,
-      MatCardModule,
-      MatDividerModule,
-      InputTextareaModule,
-    // NgProgressModule.forRoot(),
+    MatTooltipModule,
+    MatListModule,
+    MatCheckboxModule,
+    MatTableModule,
+    MatProgressSpinnerModule,
+    MatGridListModule,
+    MatDialogModule,
+    MatIconModule,
+    MatSelectModule,
+    MatSliderModule,
+    MatSlideToggleModule,
+    MatChipsModule,
+    MatCardModule,
+    MatDividerModule,
+    InputTextareaModule,
     NgProgressModule.withConfig({}),
-    DragulaModule.forRoot()
+    DragulaModule.forRoot(),
+    SwiperModule,
   ],
   declarations: [
     DropdownComponent,
@@ -95,33 +112,42 @@ import {RoomsSearchComponent} from "../rooms-search/rooms-search.component";
     DateTimePickerComponent,
     DateTimeComponent,
     PinnableComponent,
-      TraveltypePickerComponent,
-      StudentSearchComponent,
-      DisplayReportCellComponent,
-      PassCollectionComponent,
-      PassTileComponent,
-      PassCellComponent,
-      RestrictionDummyComponent,
-      BackButtonComponent,
-      PassCardComponent,
-      PassCardTemplateComponent,
-      TravelViewComponent,
-      DurationPickerComponent,
-      CardButtonComponent,
-      PagerComponent,
-      RoundInputComponent,
-      AppInputComponent,
-      CalendarComponent,
-      RestrictionPickerComponent,
-      SafariScrollDirective,
-      ReportSuccessToastComponent,
-      ToggleInputComponent,
-      CalendarPickerComponent,
-      TimePickerComponent,
-      AdminCalendarToggleComponent,
-      ToggleOptionsComponent,
-      SpChipsComponent,
-      RoomsSearchComponent
+    TraveltypePickerComponent,
+    SPSearchComponent,
+    DisplayReportCellComponent,
+    PassCollectionComponent,
+    PassTileComponent,
+    PassCellComponent,
+    RestrictionDummyComponent,
+    BackButtonComponent,
+    PassCardComponent,
+    TravelViewComponent,
+    DurationPickerComponent,
+    CardButtonComponent,
+    PagerComponent,
+    RoundInputComponent,
+    AppInputComponent,
+    CalendarComponent,
+    RestrictionPickerComponent,
+    SafariScrollDirective,
+    ReportSuccessToastComponent,
+    ToggleInputComponent,
+    CalendarPickerComponent,
+    TimePickerComponent,
+    AdminCalendarToggleComponent,
+    ToggleOptionsComponent,
+    SpChipsComponent,
+    RoomsSearchComponent,
+    IconButtonComponent,
+    XsButtonComponent,
+    AccountGroupsComponent,
+    PrivacyCardComponent,
+    ProfileComponent,
+    ConsentMenuMobileComponent,
+    CreatePassButtonComponent,
+    ProfileCardDialogComponent,
+    SpDialogBoxComponent,
+    ScrollHolderDirective
 
   ],
     entryComponents: [
@@ -129,14 +155,17 @@ import {RoomsSearchComponent} from "../rooms-search/rooms-search.component";
       DropdownComponent,
       CalendarComponent,
       CalendarComponent,
-      ReportSuccessToastComponent
+      ReportSuccessToastComponent,
+      ProfileCardDialogComponent,
     ],
   exports: [
     ReactiveFormsModule,
+    ScrollingModule,
     MatTableModule,
     MatProgressSpinnerModule,
     MatCardModule,
     MatCheckboxModule,
+    MatDividerModule,
     DragulaModule,
     GradientButtonComponent,
     ResolveAssetPipe,
@@ -147,14 +176,13 @@ import {RoomsSearchComponent} from "../rooms-search/rooms-search.component";
     PinnableComponent,
     DropdownComponent,
     TraveltypePickerComponent,
-    StudentSearchComponent,
+    SPSearchComponent,
     DisplayReportCellComponent,
     PassCollectionComponent,
     PassTileComponent,
     PassCellComponent,
     RestrictionDummyComponent,
     BackButtonComponent,
-    PassCardTemplateComponent,
     TravelViewComponent,
     DurationPickerComponent,
     CardButtonComponent,
@@ -174,9 +202,25 @@ import {RoomsSearchComponent} from "../rooms-search/rooms-search.component";
     AdminCalendarToggleComponent,
     ToggleOptionsComponent,
     SpChipsComponent,
-    RoomsSearchComponent
-
+    RoomsSearchComponent,
+    IconButtonComponent,
+    XsButtonComponent,
+    AccountGroupsComponent,
+    PrivacyCardComponent,
+    ProfileComponent,
+    ConsentMenuMobileComponent,
+    CreatePassButtonComponent,
+    ProfileCardDialogComponent,
+    SpDialogBoxComponent,
+    ScrollHolderDirective
   ],
+  providers: [
+    {
+      provide: SWIPER_CONFIG,
+      useValue: DEFAULT_SWIPER_CONFIG
+    },
+    GettingStartedProgressService
+  ]
 })
 export class SharedModule {
 }

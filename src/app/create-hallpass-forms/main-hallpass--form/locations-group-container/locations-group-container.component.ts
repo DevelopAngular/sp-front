@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, forwardRef, Inject, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import { User } from '../../../models/User';
 import { DataService } from '../../../services/data-service';
@@ -11,6 +11,13 @@ import { LocationsService } from '../../../services/locations.service';
 import {filter, map} from 'rxjs/operators';
 
 import *as _ from 'lodash';
+import {MAT_DIALOG_DATA} from '@angular/material';
+import {FromWhereComponent} from './from-where/from-where.component';
+import {ToCategoryComponent} from './to-category/to-category.component';
+import {RestrictedTargetComponent} from './restricted-target/restricted-target.component';
+import {RestrictedMessageComponent} from './restricted-message/restricted-message.component';
+import {ToWhereComponent} from './to-where/to-where.component';
+import {ScreenService} from '../../../services/screen.service';
 
 export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, message = 5 }
 
@@ -26,6 +33,12 @@ export class LocationsGroupContainerComponent implements OnInit {
 
   @Output() nextStepEvent: EventEmitter<any> = new EventEmitter<any>();
 
+  @ViewChild(FromWhereComponent) fromWhereComp;
+  @ViewChild(forwardRef( () => ToWhereComponent) ) toWhereComp;
+  @ViewChild(ToCategoryComponent) toCategoryComp;
+  @ViewChild(RestrictedTargetComponent) restTargetComp;
+  @ViewChild(RestrictedMessageComponent) restMessageComp;
+
   user$: Observable<User>;
   user: User;
   isStaff: boolean;
@@ -37,9 +50,12 @@ export class LocationsGroupContainerComponent implements OnInit {
   teacherRooms$: Observable<Pinnable[]>;
 
   constructor(
-      private dataService: DataService,
-      private formService: CreateFormService,
-      private locationsService: LocationsService,
+    @Inject(MAT_DIALOG_DATA) public dialogData: any,
+    private dataService: DataService,
+    private formService: CreateFormService,
+    private locationsService: LocationsService,
+    private screenService: ScreenService,
+
   ) { }
 
   get showDate() {
@@ -70,15 +86,40 @@ export class LocationsGroupContainerComponent implements OnInit {
   get redirectTo() {
       const to = this.FORM_STATE.data.direction.to;
       if (
-          to.request_mode === 'specific_teachers' ||
-          to.request_mode === 'all_teachers_in_room' ||
-          (this.FORM_STATE.forLater && to.scheduling_request_mode === 'specific_teachers') ||
-          (this.FORM_STATE.forLater && to.scheduling_request_mode === 'all_teachers_in_room')
+        (!this.FORM_STATE.forLater && to.request_mode === 'specific_teachers' && to.request_teachers.length === 1) ||
+        (!this.FORM_STATE.forLater && to.request_mode === 'all_teachers_in_room') ||
+        (!this.FORM_STATE.forLater && this.teachersLength === 1) ||
+          (this.FORM_STATE.forLater && to.scheduling_request_mode === 'specific_teachers' && to.scheduling_request_teachers.length === 1) ||
+          (this.FORM_STATE.forLater && to.scheduling_request_mode === 'all_teachers_in_room') ||
+          (this.FORM_STATE.forLater && this.teachersLength === 1)
       ) {
           return States.message;
       } else {
           return States.restrictedTarget;
       }
+  }
+
+  get teachersLength() {
+    const to = this.FORM_STATE.data.direction.to;
+    const from = this.FORM_STATE.data.direction.from;
+    if (to.request_mode === 'teacher_in_room') {
+      if (to.request_send_origin_teachers && !to.request_send_destination_teachers) {
+        return from.teachers.length;
+      } else if (!to.request_send_origin_teachers && to.request_send_destination_teachers) {
+        return to.teachers.length;
+      } else if (to.request_send_origin_teachers && to.request_send_destination_teachers) {
+        return to.teachers.length + from.teachers.length;
+      }
+    }
+    if (to.scheduling_request_mode === 'teacher_in_room') {
+      if (to.scheduling_request_send_origin_teachers && !to.scheduling_request_send_destination_teachers) {
+        return from.teachers.length;
+      } else if (!to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
+        return to.teachers.length;
+      } else if (to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
+        return to.teachers.length + from.teachers.length;
+      }
+    }
   }
 
   ngOnInit() {
@@ -91,7 +132,7 @@ export class LocationsGroupContainerComponent implements OnInit {
     // this.FORM_STATE.previousState = 0;
     this.data.fromLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.from ? this.FORM_STATE.data.direction.from : null;
     this.data.toLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.to ? this.FORM_STATE.data.direction.to : null;
-    this.pinnables = this.formService.getPinnable();
+    this.pinnables = this.formService.getPinnable(!!this.dialogData['kioskModeRoom']);
     this.user$ = this.dataService.currentUser;
     this.pinnable = this.FORM_STATE.data.direction ? this.FORM_STATE.data.direction.pinnable : null;
     this.user$.subscribe((user: User) => {
@@ -168,7 +209,7 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.data.toLocation = location;
     this.FORM_STATE.data.direction.to = location;
     // const restricted = ((location.restricted && !this.FORM_STATE.forLater) || (location.scheduling_restricted && !!this.FORM_STATE.forLater));
-    if ((location.restricted || (location.scheduling_restricted && this.FORM_STATE.forLater)) && !this.isStaff) {
+    if (((location.restricted && !this.FORM_STATE.forLater) || (location.scheduling_restricted && this.FORM_STATE.forLater)) && !this.isStaff) {
         this.FORM_STATE.previousState = States.from;
         this.FORM_STATE.state = States.restrictedTarget;
     } else {
@@ -226,5 +267,32 @@ export class LocationsGroupContainerComponent implements OnInit {
 
       this.nextStepEvent.emit(this.FORM_STATE);
     // }, 100);
+  }
+
+  stepBack() {
+    switch (this.FORM_STATE.state) {
+      case 1:
+        this.fromWhereComp.back();
+        this.nextStepEvent.emit(this.FORM_STATE);
+        break;
+      case 2:
+        if (this.toWhereComp) {
+          this.toWhereComp.back();
+        }
+        break;
+      case 3:
+        if (this.toCategoryComp) {
+          this.toCategoryComp.back();
+        }
+        break;
+      case 4:
+        if (this.restTargetComp) {
+          this.restTargetComp.back();
+        }
+        break;
+      case 5:
+        this.restMessageComp.back();
+        break;
+    }
   }
 }

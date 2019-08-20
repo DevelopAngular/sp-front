@@ -22,6 +22,7 @@ export interface Paged<T> {
 export class LocationTableComponent implements OnInit {
 
   @Input() category: string;
+  @Input() forKioskMode: boolean = false;
   @Input() placeholder: string;
   @Input() type: string;
   @Input() showStars: string;
@@ -61,6 +62,8 @@ export class LocationTableComponent implements OnInit {
   hideFavorites: boolean;
 
   selectedLocId: any[] = [];
+
+  isFocused: boolean;
 
   @HostListener('scroll', ['$event'])
   onScroll(event) {
@@ -102,6 +105,10 @@ export class LocationTableComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (!this.locationService.focused.value) {
+      this.locationService.focused.next(true);
+    }
+
     if (this.staticChoices && this.staticChoices.length) {
       this.choices = this.staticChoices;
         if (!this.choices.length) {
@@ -129,6 +136,11 @@ export class LocationTableComponent implements OnInit {
                   this.mainContentVisibility = true;
 
                 });
+        } else if (this.forKioskMode) {
+            this.locationService.searchLocationsWithConfig(url)
+                .toPromise().then(res => {
+                    this.choices = res.results.filter(loc => !loc.restricted);
+            });
         } else {
             this.locationService.searchLocationsWithConfig(url)
                 .toPromise().then(p => {
@@ -143,12 +155,17 @@ export class LocationTableComponent implements OnInit {
               this.mainContentVisibility = true;
             });
         }
+
+        this.isFocused = this.locationService.focused.value;
     }
     if (this.type==='location'){
       this.locationService.getFavoriteLocations().toPromise().then((stars: any[]) => {
         this.starredChoices = stars.map(val => Location.fromJSON(val));
         if (this.isFavoriteForm) {
             this.choices = [...this.starredChoices, ...this.choices].sort((a, b) => a.id - b.id);
+        }
+        if (this.forKioskMode) {
+          this.choices = this.choices.filter(loc => !loc.restricted);
         }
           this.favoritesLoaded = true;
           this.mainContentVisibility = true;
@@ -158,6 +175,7 @@ export class LocationTableComponent implements OnInit {
   }
 
   updateOrderLocation(locations) {
+    return;
     const body = {'locations': locations.map(loc => loc.id)};
     this.locationService.updateFavoriteLocations(body).subscribe((res: number[]) => {
       this.onUpdate.emit(res);
@@ -181,17 +199,26 @@ export class LocationTableComponent implements OnInit {
             +((this.type==='location' && this.showFavorites)?'&starred=false':'');
 
         this.locationService.searchLocationsWithConfig(url)
-        .toPromise()
-        .then(p => {
-          this.hideFavorites = true;
-            const filtFevLoc = _.filter(this.starredChoices, (item => {
-                return item.title.toLowerCase().includes(this.search);
-            }));
-          // this.staticChoices = null;
-          this.choices = this.searchExceptFavourites
-                          ? [...this.filterResults(p.results)]
-                          : [...filtFevLoc, ...this.filterResults(p.results)];
-        })
+          .pipe(
+            map((locs: any) => {
+              if (this.forKioskMode) {
+                return {results: locs.results.filter(loc => !loc.restricted)};
+              } else {
+                return locs;
+              }
+            })
+          )
+          .toPromise()
+          .then(p => {
+            this.hideFavorites = true;
+              const filtFevLoc = _.filter(this.starredChoices, (item => {
+                  return item.title.toLowerCase().includes(this.search);
+              }));
+            // this.staticChoices = null;
+            this.choices = this.searchExceptFavourites && !this.forKioskMode
+                            ? [...this.filterResults(p.results)]
+                            : [...filtFevLoc, ...this.filterResults(p.results)];
+          })
           .then(() => {
             if (!this.choices.length) {
               this.noChoices = true;
@@ -211,6 +238,15 @@ export class LocationTableComponent implements OnInit {
               +(this.type==='location'?'&starred=false':'');
           if (this.mergedAllRooms) {
             this.mergeLocations(url, this.withMergedStars)
+                .pipe(
+                  map((locs: any) => {
+                    if (this.forKioskMode) {
+                      return {results: locs.results.filter(loc => !loc.restricted)};
+                    } else {
+                      return locs;
+                    }
+                  })
+                )
                 .subscribe(res => {
                   this.choices = res;
                   this.hideFavorites = false;
@@ -222,6 +258,15 @@ export class LocationTableComponent implements OnInit {
                 });
           } else {
               this.locationService.searchLocationsWithConfig(url)
+                .pipe(
+                  map((locs: any) => {
+                    if (this.forKioskMode) {
+                      return {results: locs.results.filter(loc => !loc.restricted)};
+                    } else {
+                      return locs;
+                    }
+                  })
+                )
                 .toPromise()
                 .then(p => {
                     if (this.staticChoices) {
@@ -264,7 +309,7 @@ export class LocationTableComponent implements OnInit {
             }));
   }
 
-  filterResults(results: any[]){
+  filterResults(results: any[]) {
     return results.filter(felement => {
       return this.starredChoices.findIndex((ielement) => {
         return ielement.id === felement.id;
@@ -273,6 +318,7 @@ export class LocationTableComponent implements OnInit {
   }
 
   choiceSelected(choice: any) {
+    this.locationService.focused.next(false);
     this.onSelect.emit(choice);
   }
 

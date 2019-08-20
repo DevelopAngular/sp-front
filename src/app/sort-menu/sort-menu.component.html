@@ -1,0 +1,14 @@
+<section class="sort-menu" [style.background-color]="darkTheme.getBackground('low')">
+  <header class="sort-menu-header">
+    <p class="sort-menu-header-text" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#3d396b'})">{{data.title}}</p>
+  </header>
+  <ul class="sort-menu-options">
+    <li *ngFor="let sortByItem of data.list; let i = index "
+        (click)=selectSortOption(i)
+        [style.border-bottom-color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})"
+        [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#3d396b'})">
+      {{ sortByItem.name }}
+      <img *ngIf="sortByItem.isSelected" class="selected-option" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'})" alt="Check (Navy).svg" >
+    </li>
+  </ul>
+</section>

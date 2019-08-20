@@ -1,6 +1,6 @@
-import { Component, NgZone, OnInit } from '@angular/core';
+import {Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { merge, of, combineLatest ,  BehaviorSubject ,  Observable } from 'rxjs';
+import {merge, of, combineLatest, BehaviorSubject, Observable, Subject, interval} from 'rxjs';
 import { DataService } from '../services/data-service';
 import { mergeObject } from '../live-data/helpers';
 import { LiveDataService } from '../live-data/live-data.service';
@@ -9,10 +9,21 @@ import { PassLikeProvider, WrappedProvider } from '../models/providers';
 import { User } from '../models/User';
 import { ReportFormComponent } from '../report-form/report-form.component';
 import {Report} from '../models/Report';
-import { delay, filter, map } from 'rxjs/operators';
+import {delay, filter, map, takeUntil, tap} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {UserService} from '../services/user.service';
+import {ScreenService} from '../services/screen.service';
 import {RepresentedUser} from '../navbar/navbar.component';
+import {SortMenuComponent} from '../sort-menu/sort-menu.component';
+import {ButtonRestriction} from '../models/button-restrictions/ButtonRestriction';
+import {ReportButtonRestriction} from '../models/button-restrictions/ReportButtonRestriction';
+import {SortBtnRestriction} from '../models/button-restrictions/SortBtnRestriction';
+import {InputRestriction} from '../models/input-restrictions/InputRestriction';
+import {InputResctrictionXl} from '../models/input-restrictions/InputResctrictionXl';
+import {InputRestriciontSm} from '../models/input-restrictions/InputRestriciontSm';
+import {CollectionRestriction} from '../models/collection-restrictions/CollectionRestriction';
+import {HallMonitorCollectionRestriction} from '../models/collection-restrictions/HallMonitorCollectionRestriction';
+import {ScrollPositionService} from '../scroll-position.service';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('_profile_teacher');
@@ -39,7 +50,50 @@ export class ActivePassProvider implements PassLikeProvider {
   templateUrl: './hall-monitor.component.html',
   styleUrls: ['./hall-monitor.component.scss']
 })
-export class HallMonitorComponent implements OnInit {
+export class HallMonitorComponent implements OnInit, OnDestroy {
+
+  private scrollableAreaName = 'HallMonitorTeacher';
+  private scrollableArea: HTMLElement;
+
+  @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
+    if (scrollable) {
+      this.scrollableArea = scrollable.nativeElement;
+
+      const updatePosition = function () {
+
+        const scrollObserver = new Subject();
+        const initialHeight = this.scrollableArea.scrollHeight;
+        const scrollOffset = this.scrollPosition.getComponentScroll(this.scrollableAreaName);
+
+        /**
+         * If the scrollable area has static height, call `scrollTo` immediately,
+         * otherwise additional subscription will perform once if the height changes
+         */
+
+        if (scrollOffset) {
+          this.scrollableArea.scrollTo({top: scrollOffset});
+        }
+
+        interval(50)
+          .pipe(
+            filter(() => {
+              return initialHeight < ((scrollable.nativeElement as HTMLElement).scrollHeight) && scrollOffset;
+            }),
+            takeUntil(scrollObserver)
+          )
+          .subscribe((v) => {
+            console.log(scrollOffset);
+            if (v) {
+              this.scrollableArea.scrollTo({top: scrollOffset});
+              scrollObserver.next();
+              scrollObserver.complete();
+              updatePosition();
+            }
+          });
+      }.bind(this);
+      updatePosition();
+    }
+  }
 
   activePassProvider: WrappedProvider;
 
@@ -57,14 +111,42 @@ export class HallMonitorComponent implements OnInit {
 
   hasPasses: Observable<boolean> = of(false);
 
+  searchPending$: Subject<boolean> = new Subject<boolean>();
+
+  isReportFormOpened: boolean;
+
+  reportFormInstance: ReportFormComponent;
+
+  isDeviceLargeExtra: boolean;
+
+  isSearchClicked: boolean;
+
+  resetvalue = new Subject();
+
+  isIpadWidth: boolean;
+
+  isIpadSearchBar: boolean;
+
+  reportBtn: ButtonRestriction = new ReportButtonRestriction();
+
+  sortBtn: ButtonRestriction = new SortBtnRestriction();
+
+  inputRestrictionXl: InputRestriction = new InputResctrictionXl();
+
+  inputRestrictionSm: InputRestriction = new InputRestriciontSm();
+
+  hallMonitorCollection: CollectionRestriction = new HallMonitorCollectionRestriction();
+
   constructor(
+    private userService: UserService,
     public dataService: DataService,
-    public userService: UserService,
     private _zone: NgZone,
     private loadingService: LoadingService,
     public dialog: MatDialog,
     private liveDataService: LiveDataService,
-    public darkTheme: DarkThemeSwitch
+    public darkTheme: DarkThemeSwitch,
+    private screenService: ScreenService,
+    private scrollPosition: ScrollPositionService
   ) {
     this.activePassProvider = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.searchQuery$));
     // this.activePassProvider = new BasicPassLikeProvider(testPasses);
@@ -75,7 +157,8 @@ export class HallMonitorComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    this.isIpadWidth = this.screenService.isIpadWidth;
+    this.isDeviceLargeExtra = this.screenService.isDeviceLargeExtra;
     combineLatest(
       this.dataService.currentUser,
       this.userService.effectiveUser,
@@ -108,24 +191,77 @@ export class HallMonitorComponent implements OnInit {
       this.passesLoaded = combineLatest(
         this.activePassProvider.loaded$,
         (l1) => l1
+      ).pipe(
+        filter(v => v),
+        delay(250),
+        tap((res) => this.searchPending$.next(!res))
       );
+
+      this.dialog.afterOpened.subscribe( (dialog) => {
+        if (dialog.componentInstance instanceof ReportFormComponent) {
+          this.isReportFormOpened = true;
+        }
+      });
+
+      this.dialog.afterAllClosed.subscribe( () => {
+        this.isReportFormOpened = false;
+      });
+  }
+
+  ngOnDestroy() {
+    if (this.scrollableArea && this.scrollableAreaName) {
+      this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
+    }
   }
 
   openReportForm() {
+
     const dialogRef = this.dialog.open(ReportFormComponent, {
-      width: '425px',
-      height: '500px',
-      panelClass: 'form-dialog-container',
+      panelClass: ['form-dialog-container', 'report-dialog'],
       backdropClass: 'custom-backdrop',
+    });
+
+    dialogRef.afterOpened().subscribe( () => {
+
     });
 
     dialogRef.afterClosed().pipe(filter(res => !!res), map(res => {
         this.sendReports = res;
         this.isActiveMessage = true;
         return res;
-    }), delay(3000)).subscribe(() => {
+    }), delay(3000)).subscribe((dialog) => {
       this.isActiveMessage = false;
+      this.isReportFormOpened = false;
     });
+
+    this.reportFormInstance = dialogRef.componentInstance;
+  }
+
+  openSortMenu() {
+    setTimeout( () => {
+
+      const dialogData = {
+        title: 'sort by',
+        list: [
+          {name: 'pass expiration time', isSelected: false, action: 'expiration_time'},
+          {name: 'student name', isSelected: false, action: 'student_name'},
+          {name: 'destination', isSelected: false, action: 'destination_name'},
+        ],
+      };
+
+      const dialogRef = this.dialog.open(SortMenuComponent, {
+        position: { bottom: '1px' },
+        panelClass: 'sort-dialog',
+        data: dialogData
+      });
+
+      dialogRef.componentInstance.onListItemClick.subscribe((index) =>  {
+          const selectedItem = dialogData.list.find((item, i ) => {
+            return i === index;
+          });
+          this.dataService.sort$.next(selectedItem.action);
+      });
+    } , 100);
   }
 
   onReportFromPassCard(studends) {
@@ -142,7 +278,34 @@ export class HallMonitorComponent implements OnInit {
 
   onSearch(search: string) {
     this.inputValue = search;
+    this.searchPending$.next(true);
     this.searchQuery$.next(search);
+  }
+
+  back() {
+    this.reportFormInstance.back();
+  }
+
+  @HostListener('window:resize')
+  checkDeviceWidth() {
+    this.isIpadWidth = this.screenService.isIpadWidth;
+    this.isDeviceLargeExtra = this.screenService.isDeviceLargeExtra;
+    if (this.screenService.isDeviceMid) {
+      this.isIpadSearchBar = false;
+    }
+  }
+
+  toggleSearchBar() {
+    this.isSearchClicked = !this.isSearchClicked;
+    if (this.screenService.isIpadWidth) {
+      this.isIpadSearchBar = !this.isIpadSearchBar;
+    }
+  }
+
+  cleanSearchValue() {
+    this.resetvalue.next('');
+    this.inputValue = '';
+    this.isIpadSearchBar = false;
   }
 
 }

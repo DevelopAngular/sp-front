@@ -1,5 +1,17 @@
 window.waitForAppLoaded = function() {
 
+  var urlBLackList = [
+    'school_signup',
+  ];
+
+  var allowPreloader = urlBLackList.every(function(item) {
+    return window.location.pathname.search(new RegExp(item, 'i')) === -1;
+  })
+
+  if (!allowPreloader) {
+    return false;
+  }
+
   if (!window.preloader) {
     Object.defineProperty(window, 'preloader', { value: {
         visibility: true,
@@ -21,13 +33,18 @@ window.waitForAppLoaded = function() {
 
   var preloaderRef = document.getElementById('preloaderRef');
   var preloaderSvg = document.getElementById('preloaderSvg');
+
   var arrowRef = document.querySelector('#arrow');
   var preloaderVisibility = false;
   var percentDisplay = document.querySelector('.percent-display');
 
   var timerId;
 
-  timerId = setInterval(() => {
+  timerId = setInterval(function() {
+    if (window.safari) {
+      var filterShadowRef = document.getElementById('filterShadowRef');
+          filterShadowRef.setAttribute('filter', `url(${window.location.href}#dropshadow)`);
+    }
     if (preloaderSvg && window.preloader.visibility) {
       window.preloader.opacity = 1;
       preloaderVisibility = true;
@@ -49,17 +66,13 @@ window.waitForAppLoaded = function() {
       window.preloader.n = 0;
       window.preloader.percent = 100;
       preloaderSvg.style.strokeDashoffset = window.preloader.n;
-      if (+preloaderSvg.style.strokeDashoffset === 0) {
-          percentDisplay.textContent = `Loading ${window.preloader.percent} %`;
-          arrowRef.style.fill = '#04CD33';
-      }
+      percentDisplay.textContent = `Loading ${window.preloader.percent} %`;
+      arrowRef.style.fill = '#04CD33';
 
-      clearInterval(timerId);
-
-      setTimeout(() => {
+      setTimeout(function() {
         preloaderRef.style.opacity = '0';
       }, 1000);
-      setTimeout(() => {
+      setTimeout(function() {
         window.preloader.n = 200;
         window.preloader.percent = 0;
         window.preloader.opacity = 0;
@@ -67,15 +80,15 @@ window.waitForAppLoaded = function() {
         arrowRef.style.fill = '#7F879D';
         preloaderRef.style.display = 'none';
       }, 1500);
+      setInterval(function () {
+        clearInterval(timerId);
+      }, 1750);
     }
-
-
   }, 25);
 }
 
 window.appLoaded = function(timeout = 100) {
-  const timerId = setInterval(() => {
-
+  const timerId = setInterval(function() {
     if (window.preloader) {
       window.preloader.visibility = false;
       clearInterval(timerId);
@@ -83,4 +96,4 @@ window.appLoaded = function(timeout = 100) {
   }, timeout);
 };
 
-// window.waitForAppLoaded();
+window.waitForAppLoaded();

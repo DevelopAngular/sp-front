@@ -20,13 +20,12 @@ export class SpChipsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.selectedProfiles);
   }
   textColor(item) {
     if (item.hovered) {
       return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
     } else {
-      return this.sanitizer.bypassSecurityTrustStyle('#555558');
+      return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
     }
   }
 

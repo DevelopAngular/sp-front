@@ -59,7 +59,9 @@ export class UserService {
             }
           })
         )
-        .subscribe(user => this.userData.next(user));
+        .subscribe(user => {
+          this.userData.next(user);
+        });
 
     if (errorHandler instanceof SentryErrorHandler) {
       this.userData.subscribe(user => {
@@ -79,6 +81,19 @@ export class UserService {
   getUser() {
      return this.http.get<User>('v1/users/@me');
   }
+
+  getIntros() {
+    return this.http.get('v1/intros');
+  }
+
+  updateIntros(device, version) {
+    return this.http.patch('v1/intros/main_intro', {device, version});
+  }
+
+  saveKioskModeLocation(locId) {
+    return this.http.post('auth/kiosk', {location: locId});
+  }
+
   getUserRepresented() {
      return this.http.get<RepresentedUser[]>('v1/users/@me/represented_users');
   }
@@ -96,11 +111,16 @@ export class UserService {
   }
 
   searchProfile(role?, limit = 5, search?) {
+    search = encodeURIComponent(search);
       return this.http.get<Paged<any>>(`v1/users?${role ? `role=${role}&` : ``}limit=${limit}&search=${search}`);
   }
 
   searchProfileById(id) {
       return this.http.get<User>(`v1/users/${id}`);
+  }
+
+  searchUserByCardId(id): Observable<User[]> {
+    return this.http.get(constructUrl('v1/users', {search: id}));
   }
 
   searchProfileAll(search, type: string = 'alternative', excludeProfile?: string) {
@@ -112,10 +132,16 @@ export class UserService {
           return this.http.currentSchool$.pipe(
             take(1),
             switchMap((currentSchool: School) => {
-              return this.http.get(constructUrl(`v1/schools/${currentSchool.id}/gsuite_users`, {
-                search: search,
-                profile: excludeProfile
-              }));
+              if (excludeProfile) {
+                  return this.http.get(constructUrl(`v1/schools/${currentSchool.id}/gsuite_users`, {
+                      search: search,
+                      profile: excludeProfile
+                  }));
+              } else {
+                  return this.http.get(constructUrl(`v1/schools/${currentSchool.id}/gsuite_users`, {
+                      search: search
+                  }));
+              }
             })
           );
       }
@@ -132,13 +158,23 @@ export class UserService {
         email: user.email,
         profiles: roles
       });
-    } else {
-
+    } else if (userType === 'email') {
       return this.http.post(`v1/schools/${id}/add_user`, {
         type:  'email',
         email: user.email,
+        password: user.password,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        display_name: user.display_name,
         profiles: roles
       });
+    } else if (userType === 'username') {
+        return this.http.post(`v1/schools/${id}/add_user`, {
+            type:  'username',
+            username: user.username,
+            password: user.password,
+            profiles: roles
+        });
     }
   }
   addUserToProfile(id, role) {
