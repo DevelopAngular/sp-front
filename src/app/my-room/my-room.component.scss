@@ -1,4 +1,4 @@
-@media all and (max-width: 1024px) {
+@media all and (max-width: 940px) {
   ::ng-deep div.options-dialog {
     height: 341px;
   }
@@ -83,7 +83,7 @@
   }
 }
 
-@media all and (max-width: 1024px) and (min-width: 768px ) {
+@media all and (max-width: 940px) and (min-width: 768px ) {
   ::ng-deep div.options-dialog {
     width: 100%;
     max-width: 375px !important;
