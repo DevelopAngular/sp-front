@@ -177,7 +177,7 @@ export class AccountsComponent implements OnInit {
   }
 
   addUser() {
-    const DR = this.matDialog.open(AddUserDialogComponent,{
+    const DR = this.matDialog.open(AddUserDialogComponent, {
       width: '425px', height: '500px',
       panelClass: 'accounts-profiles-dialog',
       backdropClass: 'custom-bd',
