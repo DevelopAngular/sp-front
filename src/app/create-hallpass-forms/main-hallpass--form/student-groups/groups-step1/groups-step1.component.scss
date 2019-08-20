@@ -2,7 +2,7 @@
 
 :host {
 
-  @media all and (max-width: 1024px) {
+  @media all and (max-width: 940px) {
     div.step-1-container {
       min-height: 500px;
     }
@@ -81,7 +81,7 @@
     }
   }
 
-  @media all and (min-width: 360px) and (max-width: 1024px) {
+  @media all and (min-width: 360px) and (max-width: 940px) {
     img.back-btn-bottom {
       bottom: -45px;
     }
