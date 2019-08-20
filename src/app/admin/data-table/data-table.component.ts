@@ -122,7 +122,8 @@ export class GridTableDataSource extends DataSource<any> {
       case 'Name':
         return item[property].split(' ')[1];
       case 'Date & Time':
-        return Math.min(moment().diff(item['date'], 'days'));
+        // return Math.min(moment().diff(item['date'], 'days'));
+        return moment(item['date']).milliseconds;
       case 'Duration':
         return item['sortDuration'].as('milliseconds');
       case 'Profile(s)':
@@ -191,7 +192,7 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
     this.dataSource.offsetChange
       .subscribe(offset => {
         this.placeholderHeight = offset;
-    })
+    });
     this.dataSource.allData = this._data;
     this.dataSource.sort.sortChange.subscribe((sort: Sort) => {
       const data = this.dataSource.allData;

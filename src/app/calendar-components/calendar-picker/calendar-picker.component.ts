@@ -67,6 +67,9 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
         if (this.min) {
             this.currentDate = this.min;
         }
+        if (this.selectedDates.length && this.selectedDates[0] && !this.range) {
+          this.currentDate = this.selectedDates[0];
+        }
         this.generateCalendar();
     }
 
