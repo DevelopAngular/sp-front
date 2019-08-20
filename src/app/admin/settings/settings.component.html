@@ -60,7 +60,7 @@
            [style.color]="getColor(null, hoveredSignout)"
            (mouseenter)="hoveredSignout = true"
            (mouseleave)="hoveredSignout = false"
-           (click)="dialogRef.close('signout')">
+           (click)="signOut()">
         <span>Sign out</span>
       </div>
       <div class="versions" [style.color]="getColor(null, null)">

@@ -59,11 +59,30 @@
   }
 }
 
+@media not all and (min-resolution:.001dpcm) {
+  @supports (-webkit-appearance:none) {
+    @media all and (max-width: 1024px ) {
+      div.sort-btn {
+        position: fixed;
+      }
+
+      div.hall-monitor-bottom {
+        padding-bottom: 78px;
+      }
+
+      div.hall-monitor-bottom {
+        min-height: 100vh;
+      }
+    }
+  }
+}
+
 @media all and (max-width: 768px ) {
   div.hall-monitor-bottom {
     padding-top: 25px;
     width: 100%;
     margin: auto;
+    justify-content: unset;
   }
 }
 
@@ -138,13 +157,13 @@
 }
 
 .hall-monitor {
-  height: 100%;
+  //height: 100%;
   position: relative
 }
 
 .hall-monitor-wrapper{
     position: relative;
-    height: 100%;
+    //height: 100%;
 }
 
 .hall-monitor-top{

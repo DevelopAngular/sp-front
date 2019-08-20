@@ -56,7 +56,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() columnViewIcon: boolean = true;
   @Input() smoothlyUpdating: boolean = false;
   @Input() grid_template_columns: string = '143px';
-  @Input() grid_gap: string = '15px';
+  @Input() grid_gap: string = '10px';
   @Input() isAdminPage: boolean;
 
   @Input() passProvider: PassLikeProvider;

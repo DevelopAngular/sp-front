@@ -317,6 +317,24 @@ body {
   }
 }
 
+@media all and (max-height: 375px) {
+  .cdk-overlay-pane.teacher-pass-card-dialog-container,
+  .cdk-overlay-pane.student-pass-card-dialog-container {
+    height: 98%;
+  }
+
+  .teacher-pass-card-dialog-container .mat-dialog-container,
+  .student-pass-card-dialog-container .mat-dialog-container {
+    overflow-y: auto;
+    overflow-x: hidden;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+
 @media all and (max-width: 320px) {
   .teacher-pass-card-dialog-container .mat-dialog-container,
   .student-pass-card-dialog-container .mat-dialog-container {
@@ -350,9 +368,6 @@ body {
   -ms-overflow-style: none;
 }
 
-mat-sidenav-container {
-  height: 100vh;
-}
 /* === end === */
 
 /* === Swiper Overrides === */
@@ -360,15 +375,29 @@ mat-sidenav-container {
   margin: 10px 0;
 }
 
+/* === Hubspot Overrides === */
+@media screen and (max-width: 420px) {
+  div#hubspot-messages-iframe-container  {
+    display: none !important;
+  }
 
-// queries for safari
+}
+
+//// queries for safari
 @media not all and (min-resolution:.001dpcm) {
   @supports (-webkit-appearance:none) {
-    @media all and (max-width: 425px) {
-      body,
-      mat-sidenav-container {
-        height: inherit;
+    @media all and (max-width: 1024px) {
+      body {
+        height: 100%;
+      }
+
+      mat-sidenav-container,
+      mat-sidenav-content {
+        min-height: 100vh;
+        overflow: auto;
       }
     }
   }
 }
+
+

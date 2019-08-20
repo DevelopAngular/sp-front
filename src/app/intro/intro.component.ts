@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, NgZone, OnInit, Output} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, NgZone, OnInit, Output} from '@angular/core';
 import { Router } from '@angular/router';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
@@ -10,6 +10,7 @@ import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {NotificationService} from '../services/notification-service';
 import {DeviceDetection} from '../device-detection.helper';
 import {UserService} from '../services/user.service';
+
 
 declare const window;
 
@@ -23,7 +24,7 @@ declare const window;
     NextStep
   ]
 })
-export class IntroComponent implements OnInit {
+export class IntroComponent implements OnInit, AfterViewInit {
 
   @Input() usedAsEntryComponent: boolean = false;
   @Output() endIntroEvent: EventEmitter<boolean> = new EventEmitter();
@@ -40,6 +41,7 @@ export class IntroComponent implements OnInit {
 
   enterTick: Subject<KeyboardEvent> = new Subject<KeyboardEvent>();
 
+  allowLaterClicked: boolean;
 
   constructor(
       public dataService: DataService,
@@ -50,7 +52,8 @@ export class IntroComponent implements OnInit {
       private formService: CreateFormService,
       private userService: UserService,
       private deviceDetection: DeviceDetection,
-      public  notifService: NotificationService
+      public  notifService: NotificationService,
+      private cdr: ChangeDetectorRef,
   ) {
     console.log('intro.constructor');
   }
@@ -68,7 +71,6 @@ export class IntroComponent implements OnInit {
 
   ngOnInit() {
     console.log('intro.onInit()');
-
 
     fromEvent(document, 'keydown').subscribe((evt: KeyboardEvent) => {
 
@@ -346,13 +348,22 @@ export class IntroComponent implements OnInit {
       // )
   }
 
-  allowNotifications() {
+  ngAfterViewInit(): void {
 
+  }
+
+  allowNotifications() {
     this.notifService.initNotifications(true)
       .then((hasPerm) => {
         console.log(`Has permission to show notifications: ${hasPerm}`);
+          this.allowLaterClicked = true;
           this.slide('forward');
       });
+  }
+
+  allowNotificationsLater() {
+    this.allowLaterClicked = true;
+    this.slide('forward');
   }
 
   endIntro() {
@@ -389,24 +400,29 @@ export class IntroComponent implements OnInit {
   }
 
   slide(direction: string = 'forward') {
+    const MIN_SLIDE = 1;
+    const MAX_SLIDE = 4;
+
     switch (direction) {
       case 'forward':
-        this.formService.setFrameMotionDirection('forward');
-        setTimeout(() => {
-          if ((this.isSafari || this.alreadySeen) && this.slideIndex === 3) {
-            this.slideIndex += 2;
-          } else {
-            this.slideIndex++;
-          }
-        }, 100);
+          this.formService.setFrameMotionDirection('forward');
+          setTimeout(() => {
+            if ((this.isSafari || this.alreadySeen) && this.slideIndex === 3) {
+              this.slideIndex += 2;
+            } else if (this.slideIndex < MAX_SLIDE || this.allowLaterClicked)  {
+              this.slideIndex++;
+              this.allowLaterClicked = false;
+            }
+          }, 100);
         break;
       case'back':
         this.formService.setFrameMotionDirection('back');
         setTimeout(() => {
-          if ((this.isSafari || this.alreadySeen) &&  this.slideIndex === 5) {
+          if ((this.isSafari || this.alreadySeen) &&  this.slideIndex === 5 ) {
             this.slideIndex -= 2;
-          } else {
+          } else if (this.slideIndex > MIN_SLIDE) {
             this.slideIndex--;
+            this.allowLaterClicked = false;
           }
         }, 100);
         break;

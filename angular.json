@@ -20,7 +20,9 @@
             "assets": [
               "src/assets",
               "src/preloader.js",
-              "src/assets/manifest.json"
+              "src/firebase-messaging-sw.js",
+              "src/assets/manifest.json",
+              "src/main-sw.js"
             ],
             "styles": [
               "src/styles.scss",

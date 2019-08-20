@@ -1,4 +1,4 @@
-<div *ngIf="userLoaded" style="height: 100%">
+<ng-container *ngIf="userLoaded">
   <div class="my-room-options-mobile-wrapper"  [style.background-color]="darkTheme.getBackground('default', false)">
     <div class="my-room-options-mobile">
       <div class="option-wrapper">
@@ -150,4 +150,4 @@
       <app-restriction-dummy></app-restriction-dummy>
     </div>
   </div>
-</div>
+</ng-container>

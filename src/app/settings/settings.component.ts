@@ -10,6 +10,7 @@ import {trigger} from '@angular/animations';
 import {SideNavService} from '../services/side-nav.service';
 import {Router} from '@angular/router';
 import {LocalStorage} from '@ngx-pwa/local-storage';
+import {combineLatest} from 'rxjs';
 
 export interface Setting {
   hidden: boolean;
@@ -216,7 +217,9 @@ export class SettingsComponent implements OnInit {
   }
 
   removeOfflineAuthData() {
-    this.pwaStorage.removeItem('servers').subscribe(() => {});
-    this.pwaStorage.removeItem('authData').subscribe(() => {});
+    this.dialogRef.close('signout');
+    combineLatest(this.pwaStorage.removeItem('servers'),
+      this.pwaStorage.removeItem('authData') )
+      .subscribe();
   }
 }
