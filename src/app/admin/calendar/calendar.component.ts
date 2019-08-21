@@ -13,7 +13,7 @@ export class CalendarComponent implements OnInit {
 
   triggerElementRef: ElementRef;
   previousSelectedDate: moment.Moment;
-  default: Date = undefined;
+  default: Date;
   elementPosition;
 
   @HostListener('window:resize', ['$event.target'])
@@ -24,12 +24,13 @@ export class CalendarComponent implements OnInit {
   constructor(
   @Inject(MAT_DIALOG_DATA) public data: any[],
       private _matDialogRef: MatDialogRef<CalendarComponent>,
-      private timeService: TimeService,
   ) {}
 
   ngOnInit() {
     this.triggerElementRef = this.data['trigger'];
-    this.previousSelectedDate = moment(this.data['previousSelectedDate']);
+    if (this.data['previousSelectedDate']) {
+      this.previousSelectedDate = moment(this.data['previousSelectedDate']);
+    }
     this.updateCalendarPosition();
     this._matDialogRef
       .backdropClick()
@@ -58,7 +59,6 @@ export class CalendarComponent implements OnInit {
      } else {
        _date = '';
      }
-     console.log(_date);
      this._matDialogRef.close({date: _date});
   }
 

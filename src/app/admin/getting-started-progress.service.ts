@@ -53,7 +53,7 @@ export class GettingStartedProgressService {
   } = {
     progress: 0,
     offset: 130
-  }
+  };
 
   private onboardProgressSubject: BehaviorSubject<{
     progress: number,
