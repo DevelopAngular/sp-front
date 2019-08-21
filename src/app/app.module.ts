@@ -74,7 +74,7 @@ const appRoutes: Routes = [
     loadChildren: 'app/main/main.module#MainModule',
     resolve: {currentUser: CurrentUserResolver},
     data: {
-      hubspot: true,
+      hubspot: false,
       authFree: false
     }
   },
