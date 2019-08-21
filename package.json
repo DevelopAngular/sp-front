@@ -5,15 +5,15 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build && fcm",
+    "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "build-stats": "ng build --prod --stats-json",
     "bundle-report": "webpack-bundle-analyzer dist/stats.json",
     "ng-high-memory": "node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng",
-    "ng-ci-memory": "node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng --prod --base-href='/app/' && npm run ng-fcm",
-    "ng-fcm": "concat ./dist/ngsw-worker.js fcm.js -o ./dist/combined-worker.js"
+    "ng-ci-memory": "node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng",
+    "fcm": "concat ./dist/ngsw-worker.js fcm.js -o ./dist/combined-worker.js"
   },
   "private": true,
   "dependencies": {
