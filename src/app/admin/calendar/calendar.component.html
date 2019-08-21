@@ -4,7 +4,7 @@
   </div>
   <div class="date-container">
     <app-calendar-picker
-        [selectedDates]="[previousSelectedDate]"
+        [selectedDates]="previousSelectedDate ? [previousSelectedDate] : []"
         [showYear]="false"
         [showTime]="false"
         (onSelectDate)="setSearchDate($event)"
