@@ -37,7 +37,9 @@ fi
 
 echo "Using config: $config"
 
-yarn ng-ci-memory build -c "$config" --base-href '/app/' # --deploy-url "$deploy_url" && yarn run fcm
+yarn ng-ci-memory build -c "$config" --base-href '/app/' # --deploy-url "$deploy_url"
+
+yarn fcm
 
 echo 'Uploading sourcemaps to Sentry'
 
@@ -52,3 +54,5 @@ echo 'Finalizing project in Sentry'
 sentry-cli releases finalize "$release_name"
 
 echo 'Done compiling.'
+
+
