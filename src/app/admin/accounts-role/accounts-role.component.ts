@@ -1,9 +1,9 @@
-import {Component, ElementRef, HostListener, Input, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material';
 import {BehaviorSubject, interval, Observable, of, Subject, zip} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {debounceTime, distinctUntilChanged, filter, map, share, startWith, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {Util} from '../../../Util';
 import {HttpService} from '../../services/http-service';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
@@ -21,7 +21,6 @@ import {RepresentedUser} from '../../navbar/navbar.component';
 import {LocationsService} from '../../services/locations.service';
 import {GSuiteOrgs} from '../../models/GSuiteOrgs';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
-import {bind} from '@angular/core/src/render3';
 import {wrapToHtml} from '../helpers';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 
@@ -762,7 +761,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   private addUserLocations(users) {
-    return this.locService.getLocatopnsWithManyTeachers(users)
+    return this.locService.getLocationsWithManyTeachers(users)
       .pipe(map((locs: Location[]) => {
         users.forEach(user => {
           (user as any).assignedTo = locs.filter(loc => loc.teachers.find(teacher => teacher.id === user.id));
