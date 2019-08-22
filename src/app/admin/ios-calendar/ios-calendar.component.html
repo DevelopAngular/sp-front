@@ -1,19 +1,23 @@
 <div class="host">
-  <div class="container">
+  <div>
+
     <div class="selected">
-      {{selected}}
+      {{selected.format('dddd MM hh:mm')}}
     </div>
-    <div class="wheel">
+    <div class="container">
 
-      <app-ios-calendar-wheel [wheelData]="'date'"></app-ios-calendar-wheel>
-    </div>
-    <div class="wheel">
+      <div class="wheel">
 
-      <app-ios-calendar-wheel [wheelData]="'hour'"></app-ios-calendar-wheel>
-    </div>
-    <div class="wheel">
+        <app-ios-calendar-wheel [wheelData]="'date'" [current]="date"></app-ios-calendar-wheel>
+      </div>
+      <div class="wheel">
 
-      <app-ios-calendar-wheel [wheelData]="'minute'"></app-ios-calendar-wheel>
+        <app-ios-calendar-wheel [wheelData]="'hour'" [current]="date"></app-ios-calendar-wheel>
+      </div>
+      <div class="wheel">
+
+        <app-ios-calendar-wheel [wheelData]="'minute'" [current]="date"></app-ios-calendar-wheel>
+      </div>
     </div>
   </div>
 </div>
