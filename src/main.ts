@@ -17,7 +17,9 @@ console.log(`Frontend build type: ${environment.buildType}`);
 
 function registerSW() {
   if ('serviceWorker' in navigator && environment.production) {
-    navigator.serviceWorker.register('./ngsw-worker.js');
+    navigator.serviceWorker.register('./ngsw-worker.js', {
+      scope: '/app/'
+    });
   }
 }
 
