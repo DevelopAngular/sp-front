@@ -22,10 +22,6 @@ if (navigator && navigator.serviceWorker) {
     if (url === FIREBASE_MESSAGING_DEFAULT_SW_PATH) {
       url = PATCHED_SW_PATH;
     }
-    console.log(url);
-    options = {
-      scope: '/app/'
-    };
     return oldRegister.call(navigator.serviceWorker, url, options);
   };
 }
