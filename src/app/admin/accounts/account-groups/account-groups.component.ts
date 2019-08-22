@@ -3,7 +3,8 @@ import {DarkThemeSwitch} from '../../../dark-theme-switch';
 import {GSuiteSelector, OrgUnit, UnitId} from '../../../sp-search/sp-search.component';
 import {AdminService} from '../../../services/admin.service';
 import * as _ from 'lodash';
-import {ReplaySubject} from 'rxjs';
+import {BehaviorSubject, ReplaySubject} from 'rxjs';
+import {switchMap} from 'rxjs/operators';
 
 
 @Component({
@@ -14,8 +15,11 @@ import {ReplaySubject} from 'rxjs';
 export class AccountGroupsComponent implements OnInit {
 
   // @Input() orgUnits: any;
+  @Input() syncInside: boolean = false;
 
   @Output() accountsToSync = new EventEmitter();
+
+  private pending: boolean = false;
 
   // orgUnits = []
       // { title: 'Admin', icon: 'Admin', path: '/Staff/Admins',  selected: false },
@@ -35,14 +39,21 @@ export class AccountGroupsComponent implements OnInit {
   public  orgUnitsEditState: boolean;
   private orgUnitsOldCopy: OrgUnit[];
 
+  private updater = new BehaviorSubject<any>(null);
+
   constructor(
     public darkTheme: DarkThemeSwitch,
     private adminService: AdminService
   ) { }
 
   ngOnInit() {
-   this.adminService
-     .getGSuiteOrgs()
+
+    this.updater.asObservable()
+      .pipe(
+        switchMap(() => {
+          return this.adminService.getGSuiteOrgs();
+        })
+      )
      .subscribe((gSuiteStatus) => {
 
        console.log(gSuiteStatus);
@@ -83,6 +94,34 @@ export class AccountGroupsComponent implements OnInit {
   }
 
   provideSelected() {
-    this.accountsToSync.emit(this.orgUnits);
+    if (this.syncInside) {
+      this.accountsToSync.emit(this.orgUnits);
+    } else {
+      const syncBody = {};
+      syncBody['is_enabled'] = true;
+
+      this.orgUnits.forEach((item: OrgUnit) => {
+        syncBody[`selector_${item.unitId}s`] = item.selector.map((s: GSuiteSelector) => s.as);
+      });
+      console.log(syncBody);
+
+      this.pending = true;
+      // this.orgUnits = [];
+      // this.orgUnits$.next(null);
+      this.adminService.updateGSuiteOrgs(syncBody)
+        .pipe(
+          switchMap(() => {
+            return this.adminService.updateOnboardProgress('setup_accounts:end');
+          })
+        )
+        .subscribe((res) => {
+          console.log(res);
+          this.pending = false;
+          this.orgUnitsEditState = false;
+          this.updater.next(true);
+        });
+
+
+    }
   }
 }
