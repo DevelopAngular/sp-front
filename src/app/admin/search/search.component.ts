@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, HostListener, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {filter, switchMap, tap} from 'rxjs/operators';
 import { HttpService } from '../../services/http-service';
 import { HallPass } from '../../models/HallPass';
@@ -23,6 +23,7 @@ import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import * as moment from 'moment';
 import {bumpIn} from '../../animations';
 import {prettyDate, wrapToHtml} from '../helpers';
+import {XsButtonComponent} from '../../xs-button/xs-button.component';
 
 
 
@@ -38,6 +39,13 @@ export class SearchComponent implements OnInit {
 
 
   @ViewChild('printPdf') printPdf: ElementRef;
+  b;
+  @ViewChildren(XsButtonComponent) set xsb(xsb: QueryList<XsButtonComponent>) {
+    if (xsb) {
+      this.b = xsb;
+      console.log(this.b);
+    }
+  }
 
   tableData = [];
   selectedStudents = [];
@@ -120,6 +128,12 @@ export class SearchComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    this.httpService.globalReload$.subscribe(() => {
+      this.resetSearchState();
+      this.b.map((b: XsButtonComponent) => b.resetEmit());
+      this.selectedDate = null;
+    })
 
     disableBodyScroll(this.elRef.nativeElement);
 
@@ -341,10 +355,12 @@ export class SearchComponent implements OnInit {
     this.tableData = [];
     this.selectedReport = [];
     this.hasSearched = false;
+    // this.b.map((b: XsButtonComponent) => b.resetEmit());
+    // this.selectedDate = null;
   }
 
   previewPDF(event) {
-    const data = this.selectedReport.length ? this.selectedReport : this.tableData;
+    const data = this.selectedReport.length ? this.selectedReport : this.tableData.map(pass => pass._data);
     if (data.length > 0) {
       const _selectedReport = data.map((row) => {
         const _copy = {};

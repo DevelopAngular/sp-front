@@ -14,8 +14,10 @@ import {Util} from '../../../Util';
 import {delay, filter, map, switchMap, takeUntil, tap, toArray} from 'rxjs/operators';
 import {AdminService} from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
-import * as _ from 'lodash';
 import {ScrollPositionService} from '../../scroll-position.service';
+
+import * as _ from 'lodash';
+import * as moment from 'moment';
 
 
 
@@ -138,7 +140,7 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.http.globalReload$.subscribe(() => {
-      this.getReports();
+      this.getReports(null, true);
     });
     // this.activePassProvider.loaded$
     //   .pipe(
@@ -158,7 +160,6 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
   }
 
   onSearch(searchValue) {
-      console.log('It emits here!', searchValue);
     this.searchPending$.next(true);
      this.searchQuery$.next(searchValue);
   }
@@ -179,8 +180,6 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
     DR.afterClosed()
       .subscribe((data) => {
         this.activeCalendar = false;
-
-      // console.log('82 Date ===> :', data.date);
         if (data.date) {
           this.inactiveIcon = data.date.getDay() === new Date().getDay();
           if ( !this.reportsDate || (this.reportsDate && this.reportsDate.getTime() !== data.date.getTime()) ) {
@@ -195,17 +194,19 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
     );
   }
 
-  private getReports(date?: Date, afterCalendar = false) {
+  private getReports(date?: Date, afterConsentMenu = false) {
     this.pending = true;
-    // this.studentreport = [];
-    const range = this.liveDataService.getDateRange(date);
+    const range = {start: moment(date).startOf('day'), end: moment(date).endOf('day')};
+
     const response$ = date ?
         this.adminService.searchReports(range.end.toISOString(), range.start.toISOString()) :
         this.adminService.getReports(this.reportsLimit);
     response$.pipe(
         map((list: any) => {
           const data  = date ? list : list.results;
-            this.counter = data.length;
+          console.log(data);
+          // debugger;
+          this.counter = data.length;
           return data.map((report, index) => {
             return {
               student_name: report.student.display_name + ` (${report.student.primary_email.split('@', 1)[0]})`,
@@ -223,6 +224,8 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
             date: null,
             reports: []
           };
+          // debugger;
+
           list.forEach((report, index) => {
 
             if (index < list.length) {
@@ -243,7 +246,9 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
       )
       .subscribe((list: any[]) => {
         this.pending = false;
-        if (date || afterCalendar) {
+        // debugger;
+
+        if (date || afterConsentMenu) {
             this.studentreport = list;
         } else {
             this.studentreport.push(..._.takeRight(list, 10));

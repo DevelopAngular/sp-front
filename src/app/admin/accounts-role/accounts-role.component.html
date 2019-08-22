@@ -393,7 +393,9 @@
         </div>
 
         <div class="right-side">
-          <app-account-groups></app-account-groups>
+          <app-account-groups
+            (accountsToSync)="syncOrgUnits($event)"
+          ></app-account-groups>
         </div>
       </div>
 

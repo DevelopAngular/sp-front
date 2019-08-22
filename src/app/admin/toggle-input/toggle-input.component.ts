@@ -23,7 +23,10 @@ export class ToggleInputComponent implements OnInit {
     this.inp = inputField;
     if (this.inp) {
       this.e = fromEvent(this.inp.nativeElement, 'change');
-      this.e.subscribe((e: any) => this.pushOut(e.target.checked));
+      this.e.subscribe((e: any) => {
+        debugger;
+        this.pushOut(e.target.checked);
+      });
     }
   }
 
