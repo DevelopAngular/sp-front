@@ -1,6 +1,6 @@
 <div class="group-wrapper" [style.background-color]="darkTheme.getBackground('high', true)">
   <div class="content">
-    <div *ngIf="!(orgUnits$ | async)" class="loading-theme_blue-gray spinner ds-h-100 ds-flex-center-center">
+    <div *ngIf="!(orgUnits$ | async) || pending" class="loading-theme_blue-gray spinner ds-h-100 ds-flex-center-center">
       <mat-spinner [diameter]="50" [color]="'primary'"></mat-spinner>
     </div>
     <div *ngIf="(orgUnits$ | async)">
@@ -24,7 +24,7 @@
     >Save Group Sync
     </app-gradient-button>
     <app-gradient-button
-      *ngIf="!showButton"
+      *ngIf="!this.orgUnits.length"
         [gradient]="'#7F879D, #7F879D'"
         [size]="'small'"
         [cursor]="'pointer'"
