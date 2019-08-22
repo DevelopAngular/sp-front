@@ -1,8 +1,9 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
 import {BehaviorSubject, interval, Observable, of, ReplaySubject, Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged, map, takeUntil} from 'rxjs/operators';
 import * as moment from 'moment';
+import * as _ from 'lodash';
 import {Moment} from 'moment';
 
 @Component({
@@ -13,6 +14,9 @@ import {Moment} from 'moment';
 export class IosCalendarWheelComponent implements OnInit {
 
   @Input() wheelData: 'date' | 'hour' | 'minute';
+  @Input() current: Moment | number;
+
+  @Output() selectedUnit: EventEmitter<any> = new EventEmitter();
 
 
   daysRotateSubject = new ReplaySubject(1);
@@ -24,7 +28,7 @@ export class IosCalendarWheelComponent implements OnInit {
   entireData = []
 
 
-  wheelSectorAmount = 21;
+  wheelSectorAmount = 24;
   dataSize = 365;
   dataItemHeight = 35;
   dataItemAngle = 360 / this.wheelSectorAmount;
@@ -57,7 +61,7 @@ export class IosCalendarWheelComponent implements OnInit {
   ngOnInit() {
 
     this.buildDates(365, this.wheelData);
-    this.dataSetSubject.next(this.connect(0, 21));
+    this.dataSetSubject.next(this.connect(0, this.wheelSectorAmount));
 
     this.offset = this.initialOffset;
 
@@ -109,57 +113,58 @@ export class IosCalendarWheelComponent implements OnInit {
         break;
       case 'hour':
         this.positiveData.push({
-          data:  moment(support),
-          value: '01',
-          rotate: this.sanitizer.bypassSecurityTrustStyle(`rotateY(0deg) rotateX(-${ this.positiveData.length % this.wheelSectorAmount * this.dataItemAngle}deg) translate3d(${0}px, ${0}px, ${this.dataRadius}px)`)
-        });
-        for (let i = 2; i <= 24; i++) {
-          const n = i % 12;
-          const multiplicityOfWheelSize = this.positiveData.length % this.wheelSectorAmount;
-          // console.log(multiplicityOfWheelSize, n, this.positiveData.length , this.wheelSectorAmount);
+                  data:  0,
+                  value: '1',
+                  rotate: this.sanitizer.bypassSecurityTrustStyle(`rotateY(0deg) rotateX(-${ 0 * this.dataItemAngle}deg) translate3d(${0}px, ${0}px, ${this.dataRadius}px)`)
+                });
+        for (let n = 1; n <= 11; n++) {
+          const multiplicityOfWheelSize = n % this.wheelSectorAmount;
           this.positiveData.push({
-            data:  moment(support).add(`${n}`, 'days'),
-            value: n <= 9 ? '0' + n : n,
+            data:  (n % 12) + 1,
+            value: `${(n % 12) + 1}`,
             rotate: this.sanitizer.bypassSecurityTrustStyle(`rotateY(0deg) rotateX(-${ multiplicityOfWheelSize * this.dataItemAngle}deg) translate3d(${0}px, ${0}px, ${this.dataRadius}px)`)
           });
-
-          // this.negativeData.push({
-          //   data:  moment(support).subtract(`${n}`, 'days'),
-          //   value: (12 - n ) <= 9 ? '0' + (12 - n ) : (12 - n ),
-          //   rotate: this.sanitizer.bypassSecurityTrustStyle(`rotateY(0deg) rotateX(${ multiplicityOfWheelSize * this.dataItemAngle}deg) translate3d(${0}px, ${0}px, ${this.dataRadius}px)`)
-          // });
+          this.negativeData.push({
+            data:  12 - (n % 12) + 1,
+            value: `${(12 - (n % 12) + 1)}` ,
+            rotate: this.sanitizer.bypassSecurityTrustStyle(`rotateY(0deg) rotateX(${ multiplicityOfWheelSize * this.dataItemAngle}deg) translate3d(${0}px, ${0}px, ${this.dataRadius}px)`)
+          });
         }
-        this.entireData = this.positiveData.concat(this.negativeData);
+        this.negativeData.push({
+          data:  moment(support),
+          value: `${12 - (this.negativeData.length % 12) + 1 - 1}`,
+          rotate: this.sanitizer.bypassSecurityTrustStyle(`rotateY(0deg) rotateX(${ (this.negativeData.length + 1) % this.wheelSectorAmount * this.dataItemAngle}deg) translate3d(${0}px, ${0}px, ${this.dataRadius}px)`)
+        });
+
         break;
       case 'minute':
         this.positiveData.push({
-          data:  moment(support),
+          data:  0,
           value: '00',
-          rotate: this.sanitizer.bypassSecurityTrustStyle(`rotateY(0deg) rotateX(-${ this.positiveData.length % this.wheelSectorAmount * this.dataItemAngle}deg) translate3d(${0}px, ${0}px, ${this.dataRadius}px)`)
+          rotate: this.sanitizer.bypassSecurityTrustStyle(`rotateY(0deg) rotateX(-${ 0 * this.dataItemAngle}deg) translate3d(${0}px, ${0}px, ${this.dataRadius}px)`)
         });
         for (let n = 1; n <= 59; n++) {
-          const multiplicityOfWheelSize = this.positiveData.length % this.wheelSectorAmount;
-          // console.log(multiplicityOfWheelSize, n, this.positiveData.length , this.wheelSectorAmount);
+          const multiplicityOfWheelSize = n % this.wheelSectorAmount;
           this.positiveData.push({
-            data:  moment(support).add(`${n}`, 'days'),
-            value: n <= 9 ? '0' + n : n,
+            data:  n % 60,
+            value: `${(n % 60) <= 9 ? '0' : ''}${(n % 60)}`,
             rotate: this.sanitizer.bypassSecurityTrustStyle(`rotateY(0deg) rotateX(-${ multiplicityOfWheelSize * this.dataItemAngle}deg) translate3d(${0}px, ${0}px, ${this.dataRadius}px)`)
           });
-
-          // this.negativeData.push({
-          //   data:  moment(support).subtract(`${n}`, 'days'),
-          //   value: n <= 9 ? '0' + n : n,
-          //   rotate: this.sanitizer.bypassSecurityTrustStyle(`rotateY(0deg) rotateX(${ multiplicityOfWheelSize * this.dataItemAngle}deg) translate3d(${0}px, ${0}px, ${this.dataRadius}px)`)
-          // });
+          this.negativeData.push({
+            data:  60 - n % 60,
+            value: `${(60 - n % 60) <= 9 ? '0' : ''}${(60 - n % 60)}`,
+            rotate: this.sanitizer.bypassSecurityTrustStyle(`rotateY(0deg) rotateX(${ multiplicityOfWheelSize * this.dataItemAngle}deg) translate3d(${0}px, ${0}px, ${this.dataRadius}px)`)
+          });
         }
-        this.entireData = this.positiveData.concat(this.negativeData);
+
+        this.negativeData.push({
+          data:  60 - (this.negativeData.length % 60) - 1,
+          value: `${(60 - (this.negativeData.length % 60) - 1) >= 9 ? '0' : ''}${(60 - (this.negativeData.length % 60) - 1)}`,
+          rotate: this.sanitizer.bypassSecurityTrustStyle(`rotateY(0deg) rotateX(${ (this.negativeData.length + 1) % this.wheelSectorAmount * this.dataItemAngle}deg) translate3d(${0}px, ${0}px, ${this.dataRadius}px)`)
+        });
         break;
 
     }
-
-
-
-
 
     console.log(this.positiveData, this.negativeData);
   }
@@ -249,7 +254,7 @@ export class IosCalendarWheelComponent implements OnInit {
     if (this.scrolling) {
       this.runScroll();
       this.daysRotateSubject.next(this.sanitizer.bypassSecurityTrustStyle(`rotateX(${this.rotateAngle}deg)`));
-      this.dataSetSubject.next(this.connect(sliceOffset, sliceOffset + 21));
+      this.dataSetSubject.next(this.connect(sliceOffset, sliceOffset + this.wheelSectorAmount));
     }
     this.scrollFactor = scrollTop;
     this.scrolling = true;
@@ -282,7 +287,7 @@ export class IosCalendarWheelComponent implements OnInit {
 
           this.daysRotateSubject.next(this.sanitizer.bypassSecurityTrustStyle(`rotateX(${this.rotateAngle}deg)`));
 
-          this.dataSetSubject.next(this.connect(sliceOffset, sliceOffset + 21));
+          this.dataSetSubject.next(this.connect(sliceOffset, sliceOffset + this.wheelSectorAmount));
 
 
           this.scrolling = false;
@@ -293,7 +298,7 @@ export class IosCalendarWheelComponent implements OnInit {
         }
       });
   }
-  connect(_from: number = 0, _to: number = 21) {
+  connect(_from: number = 0, _to: number = this.wheelSectorAmount) {
     const from = _from - 10;
     const to = _to - 10;
 
@@ -301,8 +306,41 @@ export class IosCalendarWheelComponent implements OnInit {
 
     if (this.negativeData.length && this.positiveData.length) {
 
+
+
+      if ((this.positiveData.length - to) <= 10) {
+        const additional = this.positiveData.map((item, i) => {
+          const n = this.positiveData.length + i;
+          const copy = {...item};
+          copy.rotate = this.sanitizer.bypassSecurityTrustStyle(`rotateY(0deg) rotateX(-${n % this.wheelSectorAmount * this.dataItemAngle}deg) translate3d(${0}px, ${0}px, ${this.dataRadius}px)`)
+          return copy;
+        });
+
+        this.positiveData = this.positiveData.concat(additional);
+        console.log(this.positiveData, additional);
+      }
+
+
+
+
       if (from < 0) {
         const localTo = Math.abs(from);
+
+        if ((this.negativeData.length - localTo) <= 10)  {
+
+          const additional = this.negativeData.map((item, i) => {
+            const n = this.negativeData.length + i + 1;
+            const copy = {...item};
+                  copy.rotate = this.sanitizer.bypassSecurityTrustStyle(`rotateY(0deg) rotateX(${n % this.wheelSectorAmount * this.dataItemAngle}deg) translate3d(${0}px, ${0}px, ${this.dataRadius}px)`)
+            return copy;
+          });
+
+          this.negativeData = this.negativeData.concat(additional);
+          console.log(this.negativeData, additional);
+        }
+
+
+
         if (to < -1) {
           const localFrom = Math.abs(to);
           dataSlice = this.negativeData.slice(localFrom, localTo).reverse();
@@ -311,30 +349,14 @@ export class IosCalendarWheelComponent implements OnInit {
         }
       }
       if (from >= 0) {
+
         dataSlice = this.positiveData.slice(Math.abs(from), Math.abs(to));
-      }
-
-    } else if (!this.negativeData.length && this.positiveData.length) {
-
-      if (from >= 0 && to > this.positiveData.length) {
-        dataSlice = this.positiveData.splice(from).concat(this.positiveData.slice(0, to - this.positiveData.length));
-      }
-      //
-      if (from >= 0 && to <= this.positiveData.length) {
-        // dataSlice = this.positiveData.slice(from, to);
-        dataSlice = this.positiveData.slice(from, to);
-
-      }
-      //
-      if (from < 0 && to <= this.positiveData.length) {
-        dataSlice = this.positiveData.slice(from).concat(this.positiveData.slice(0, to));
       }
 
     }
 
-
-
     console.log(dataSlice);
+
     return dataSlice;
   }
 
