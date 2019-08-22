@@ -14,7 +14,7 @@ import {Moment} from 'moment';
 export class IosCalendarWheelComponent implements OnInit {
 
   @Input() wheelData: 'date' | 'hour' | 'minute';
-  @Input() current: Moment | number;
+  @Input() current: Moment;
 
   @Output() selectedUnit: EventEmitter<any> = new EventEmitter();
 
@@ -59,11 +59,21 @@ export class IosCalendarWheelComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-
+    console.log(this.current.hour());
     this.buildDates(365, this.wheelData);
     this.dataSetSubject.next(this.connect(0, this.wheelSectorAmount));
-
     this.offset = this.initialOffset;
+
+    switch (this.wheelData) {
+      case 'hour':
+        this.rotateAngle += (this.current.hour() - 1) * this.dataItemAngle;
+        break;
+      case 'minute':
+        this.rotateAngle += this.current.minute() * this.dataItemAngle;
+        break;
+    }
+
+    this.runScroll();
 
     this.days
       .pipe(
@@ -72,6 +82,7 @@ export class IosCalendarWheelComponent implements OnInit {
       )
       .subscribe((days) => {
       this.selected = days[10];
+      this.selectedUnit.emit(this.selected);
       console.log(days[10]);
     });
   }
