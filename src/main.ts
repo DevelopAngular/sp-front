@@ -7,7 +7,7 @@ import { environment } from './environments/environment';
 import 'hammerjs';
 
 // Do all the hacky stuff in this file.
-// import './monkey-patches';
+import './monkey-patches';
 
 if (environment.production) {
   enableProdMode();
@@ -17,7 +17,7 @@ console.log(`Frontend build type: ${environment.buildType}`);
 
 function registerSW() {
   if ('serviceWorker' in navigator && environment.production) {
-    navigator.serviceWorker.register('./main-sw.js');
+    navigator.serviceWorker.register('./ngsw-worker.js');
   }
 }
 

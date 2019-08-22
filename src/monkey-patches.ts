@@ -19,12 +19,11 @@ if (navigator && navigator.serviceWorker) {
   const oldRegister = navigator.serviceWorker.register;
 
   navigator.serviceWorker.register = function (url: string, options?: any) {
-
     if (url === FIREBASE_MESSAGING_DEFAULT_SW_PATH) {
       url = PATCHED_SW_PATH;
     }
-
-    return oldRegister.bind(navigator.serviceWorker, url, options);
+    console.log(url);
+    return oldRegister.call(navigator.serviceWorker, url, options);
   };
 }
 
