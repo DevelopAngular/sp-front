@@ -22,7 +22,7 @@ if (navigator && navigator.serviceWorker) {
     if (url === FIREBASE_MESSAGING_DEFAULT_SW_PATH) {
       url = PATCHED_SW_PATH;
     }
-    return oldRegister.call(navigator.serviceWorker, url, options);
+    return oldRegister.bind(navigator.serviceWorker, url, options);
   };
 }
 
