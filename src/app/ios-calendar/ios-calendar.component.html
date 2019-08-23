@@ -1,0 +1,19 @@
+<div class="host">
+<!--    <div class="selected">-->
+<!--      {{selected.format('dddd DD hh:mm a')}}-->
+<!--    </div>-->
+  <div class="container">
+    <div class="wheel" style="width: 45%;">
+      <app-ios-calendar-wheel [wheelData]="'date'" (selectedUnit)="date = $event.data; selectedEvent.emit([selected])"></app-ios-calendar-wheel>
+    </div>
+    <div class="wheel" style="width: 15%;">
+      <app-ios-calendar-wheel [wheelData]="'hour'" (selectedUnit)="hour = $event.data; selectedEvent.emit([selected])"></app-ios-calendar-wheel>
+    </div>
+    <div class="wheel" style="width: 15%;">
+      <app-ios-calendar-wheel [wheelData]="'minute'" (selectedUnit)="minute = $event.data; selectedEvent.emit([selected])"></app-ios-calendar-wheel>
+    </div>
+    <div class="wheel" style="width: 20%;">
+      <app-ios-calendar-wheel [wheelData]="'half'" (selectedUnit)="half = $event.data; selectedEvent.emit([selected])"></app-ios-calendar-wheel>
+    </div>
+  </div>
+</div>

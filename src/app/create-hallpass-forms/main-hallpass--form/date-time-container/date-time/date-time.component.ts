@@ -66,6 +66,7 @@ export class DateTimeComponent implements OnInit {
 
   calendarResult(date: moment.Moment[]) {
     this.requestTime = moment(date[0]);
+    console.log(this.requestTime);
   }
 
   next() {
