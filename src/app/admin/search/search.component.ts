@@ -360,7 +360,7 @@ export class SearchComponent implements OnInit {
   }
 
   previewPDF(event) {
-    const data = this.selectedReport.length ? this.selectedReport : this.tableData;
+    const data = this.selectedReport.length ? this.selectedReport : this.tableData.map(pass => pass._data);
     if (data.length > 0) {
       const _selectedReport = data.map((row) => {
         const _copy = {};
