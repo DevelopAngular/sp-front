@@ -1,6 +1,5 @@
 <div class="host">
   <div class="container">
-    <div class="shadow-gradient"></div>
     <div class="unit-box">
       <div class="scroll" (mousedown)="onDown($event)" (mouseup)="onUp($event)" (mousemove)="onMove($event)"  (mouseenter)="onOver($event)" (mouseout)="onOut($event)" (scroll)="onScroll($event)">
         <div class="scrollable"></div>
@@ -9,18 +8,24 @@
         <div class="unit-clip">
           <div class="unit" [style.transform]="daysRotate$ | async" [style.transition]="endTransition">
             <div class="item" *ngFor="let day of days | async" [style.transform]="day.rotate">
-              {{day.value}}
+              <span>
+                {{day.value}}
+              </span>
             </div>
           </div>
         </div>
       </div>
+      <div class="shadow-gradient-top"></div>
       <div class="unit-clip">
         <div class="unit" [style.transform]="daysRotate$ | async" [style.transition]="endTransition">
           <div class="item" *ngFor="let day of days | async" [style.transform]="day.rotate">
-            {{day.value}}
+            <span>
+              {{day.value}}
+            </span>
           </div>
         </div>
       </div>
+      <div class="shadow-gradient-bottom"></div>
     </div>
   </div>
 </div>

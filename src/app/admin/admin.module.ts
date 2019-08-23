@@ -34,8 +34,6 @@ import { RoomsSetUpComponent } from './pass-config/rooms-set-up/rooms-set-up.com
 import { SchoolButtonComponent } from './my-school/school-button/school-button.component';
 import { AdminCardButtonComponent } from './accounts/admin-card-button/admin-card-button.component';
 import { IosComponentComponent } from './ios-component/ios-component.component';
-import { IosCalendarWheelComponent } from './ios-calendar-wheel/ios-calendar-wheel.component';
-import { IosCalendarComponent } from './ios-calendar/ios-calendar.component';
 
 @NgModule({
   imports: [
@@ -74,8 +72,7 @@ import { IosCalendarComponent } from './ios-calendar/ios-calendar.component';
     SchoolButtonComponent,
     AdminCardButtonComponent,
     IosComponentComponent,
-    IosCalendarWheelComponent,
-    IosCalendarComponent
+
   ],
   entryComponents: [
     LinkGeneratedDialogComponent,

@@ -39,6 +39,9 @@
               <!--</app-date-time-picker>-->
             </div>
           </div>
+          <div class="ios-like-calendar">
+            <app-ios-calendar (selectedEvent)="calendarResult($event)"></app-ios-calendar>
+          </div>
           <div class="next-btn">
               <app-gradient-button
                       [gradient]="'#03CF31, #00B476'"

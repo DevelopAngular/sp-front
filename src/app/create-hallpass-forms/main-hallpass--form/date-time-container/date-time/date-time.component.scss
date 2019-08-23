@@ -1,15 +1,23 @@
 @media all and (max-width: 1024px) {
   div.date-wrapper {
     width: 100%;
+    .date-content {
+      width: 100%;
+    }
   }
 
   div.decline-content {
     padding: 0 !important;
     align-items: center;
+    justify-content: center;
   }
 
   div.time-picker {
     margin: 0;
+    display: none;
+  }
+  div.ios-like-calendar {
+    display: block;
   }
 
   div.next-btn {
@@ -28,7 +36,10 @@
     display: none;
   }
 }
-
+.ios-like-calendar {
+  display: none;
+  width: 100%;
+}
 .time-picker{
   margin: 0 34px 0px 20px;
 }
