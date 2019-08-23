@@ -19,7 +19,7 @@ export class AccountGroupsComponent implements OnInit {
 
   @Output() accountsToSync = new EventEmitter();
 
-  private pending: boolean = false;
+  public pending: boolean = false;
 
   // orgUnits = []
       // { title: 'Admin', icon: 'Admin', path: '/Staff/Admins',  selected: false },
