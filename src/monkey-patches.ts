@@ -2,7 +2,7 @@
  * This file is meant to store all the hackier things done especially
  * those that involve modifying globals, hence "monkey patches".
  */
-
+console.log('Monkey patches registration');
 import { BASE_HREF } from './build-info';
 
 /*
@@ -17,8 +17,10 @@ const PATCHED_SW_PATH = BASE_HREF + 'firebase-messaging-sw.js';
 
 if (navigator && navigator.serviceWorker) {
   const oldRegister = navigator.serviceWorker.register;
-  console.log('Monkey patches registration');
   navigator.serviceWorker.register = function (url: string, options: any = {}) {
+    console.log('url' , url );
+      console.log('FIREBASE_MESSAGING_DEFAULT_SW_PATH', FIREBASE_MESSAGING_DEFAULT_SW_PATH);
+    console.log('url === FIREBASE_MESSAGING_DEFAULT_SW_PATH', url === FIREBASE_MESSAGING_DEFAULT_SW_PATH);
 
     if (url === FIREBASE_MESSAGING_DEFAULT_SW_PATH) {
       url = PATCHED_SW_PATH;
