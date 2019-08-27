@@ -17,12 +17,15 @@ const PATCHED_SW_PATH = BASE_HREF + 'firebase-messaging-sw.js';
 
 if (navigator && navigator.serviceWorker) {
   const oldRegister = navigator.serviceWorker.register;
-
-  navigator.serviceWorker.register = function (url: string, options?: any) {
+  console.log('Monkey patches registration');
+  navigator.serviceWorker.register = function (url: string, options: any = {}) {
     if (url === FIREBASE_MESSAGING_DEFAULT_SW_PATH) {
       url = PATCHED_SW_PATH;
+      options.scope = BASE_HREF + 'firebase-cloud-messaging-push-scope';
+      console.log(options.scope);
+      return oldRegister.bind(navigator.serviceWorker, url, options);
     }
-    return oldRegister.bind(navigator.serviceWorker, url, options);
+    return oldRegister.call(navigator.serviceWorker, url, options);
   };
 }
 
