@@ -23,7 +23,7 @@ if (navigator && navigator.serviceWorker) {
       url = PATCHED_SW_PATH;
       options.scope = BASE_HREF + 'firebase-cloud-messaging-push-scope';
       console.log(options.scope);
-      return oldRegister.bind(navigator.serviceWorker, url, options);
+      return oldRegister.call(navigator.serviceWorker, url, options);
     }
     return oldRegister.call(navigator.serviceWorker, url, options);
   };
