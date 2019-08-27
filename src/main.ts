@@ -6,9 +6,6 @@ import { environment } from './environments/environment';
 
 import 'hammerjs';
 
-// Do all the hacky stuff in this file.
-
-
 if (environment.production) {
   enableProdMode();
 }

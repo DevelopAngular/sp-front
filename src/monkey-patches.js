@@ -18,7 +18,7 @@ const PATCHED_SW_PATH = BASE_HREF + 'firebase-messaging-sw.js';
 if (navigator && navigator.serviceWorker) {
   console.log('Monkey patches registration');
   const oldRegister = navigator.serviceWorker.register;
-  navigator.serviceWorker.register = function (url: string, options: any = {}) {
+  navigator.serviceWorker.register = function (url, options = {}) {
     console.log('url' , url );
     console.log('FIREBASE_MESSAGING_DEFAULT_SW_PATH', FIREBASE_MESSAGING_DEFAULT_SW_PATH);
     console.log('url === FIREBASE_MESSAGING_DEFAULT_SW_PATH', url === FIREBASE_MESSAGING_DEFAULT_SW_PATH);
