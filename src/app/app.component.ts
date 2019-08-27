@@ -23,6 +23,7 @@ import { ToastConnectionComponent } from './toast-connection/toast-connection.co
 import {OverlayContainer} from '@angular/cdk/overlay';
 import {APPLY_ANIMATED_CONTAINER, ConsentMenuOverlay} from './consent-menu-overlay';
 import {Meta} from '@angular/platform-browser';
+import {NotificationService} from './services/notification-service';
 
 declare const window;
 
@@ -92,7 +93,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private overlayContainer: OverlayContainer,
     private storageService: StorageService,
     private kms: KioskModeService,
-    private meta: Meta
+    private meta: Meta,
+    private notifService: NotificationService,
   ) {
     this.errorToastTrigger = this.http.errorToast$;
   }
@@ -100,6 +102,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     // console.log('Initial location path ===>', );
 
+    const fcm_sw = localStorage.getItem('fcm_sw_registered');
+    if (fcm_sw === 'true') {
+      console.log('app component notif allow');
+      this.notifService.initNotifications(true);
+    }
     INITIAL_LOCATION_PATHNAME.next(window.location.pathname);
 
     this.storageService.detectChanges();

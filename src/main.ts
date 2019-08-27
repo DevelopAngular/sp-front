@@ -37,6 +37,6 @@ platformBrowserDynamic().bootstrapModule(AppModule)
       registerSW();
       console.log('REGISTERED');
     }
-
+      registerSW();
   })
   .catch(err => console.log(err));
