@@ -7,7 +7,7 @@ import { environment } from './environments/environment';
 import 'hammerjs';
 
 // Do all the hacky stuff in this file.
-import './monkey-patches';
+
 
 if (environment.production) {
   enableProdMode();
