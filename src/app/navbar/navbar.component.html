@@ -2,7 +2,7 @@
   <!--<div *ngIf="!(isProcess$ | async).active" class="static-loading" #staticLoading><div class="static-loading"></div></div>-->
   <!--<ng-progress [color]="'#04CD33'" [spinner]="false" [fixed]="true" [speed]="200" [thick]="true"></ng-progress>-->
   <div [ngClass]="{shadow: isStaff}" *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth" class="bar">
-    <div class="heading grow">
+    <div [ngClass]="isIOSTablet ? 'ios-heading': 'heading'" class="grow">
       <app-smartpass-logo></app-smartpass-logo>
     </div>
     <div #navButtonsContainer class="nav-buttons" *ngIf="!hideButtons">
@@ -43,10 +43,10 @@
         </div>
       </div>
     </div>
-    <div class="user-info">
+    <div [ngClass]="  isIOSTablet ? 'ios-user-info' : 'user-info'">
       <div class="ds-mx-10" style="cursor: pointer;" *ngIf="user.isAssistant(); else notAssistant" #target (click)="showTeaches(target)">
         <div class="acting-behalf" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})">Acting on Behalf Of:</div>
-        <div class="name" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})">
+        <div [ngClass]="isIOSTablet ? 'ios-name' : 'name'" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})">
           <span>
             {{ effectiveUser?.user.display_name }}
           </span>
@@ -54,7 +54,7 @@
         </div>
       </div>
       <ng-template #notAssistant>
-        <div class="name" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})">
+        <div [ngClass]="isIOSTablet ? 'ios-name' : 'name'" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#7F879D'})">
           <span>
             {{ user?user.display_name:'' }}
           </span>
@@ -94,8 +94,8 @@
   </div>
 </div>
 
-  <div *ngIf="isStaff && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra" class="teacherNav-mobile" [style.background-color]="darkTheme.getBackground('low', false)">
-    <div class="teacherNav-mobile-wrapper" #navButtonsContainerMobile>
+  <div *ngIf="isStaff && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra" class="ios-teacherNav-mobile" [style.background-color]="darkTheme.getBackground('low', false)">
+    <div class="ios-teacherNav-mobile-wrapper" #navButtonsContainerMobile>
       <div *ngFor="let button of buttons" class="teacherNav_tab">
         <ng-container *ngIf="isStaff && buttonVisibility(button)">
           <div
@@ -114,7 +114,7 @@
           </div>
         </ng-container>
       </div>
-      <div class="selected-tab-pointer" #tabPointer [style.left]="pointerTopSpace" [style.width]="'58px'"></div>
+      <div class="ios-selected-tab-pointer" #tabPointer [style.left]="pointerTopSpace" [style.width]="'58px'"></div>
     </div>
   </div>
 
