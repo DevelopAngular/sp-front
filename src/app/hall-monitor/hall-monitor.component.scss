@@ -1,10 +1,44 @@
-@media all and (max-width: 940px ) {
-   .search-img,
-   .report-img {
-     width: 30px;
-     height: 30px;
-   }
+.ios {
+  &-options-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 51px;
+    width: 51px;
+  }
 
+  &-hall-monitor-wrapper {
+    max-width: 100% ;
+    overflow: auto;
+  }
+
+  &-hall-monitor-top{
+    @extend .hall-monitor-top;
+    justify-content: space-between !important;
+    margin-bottom: 15px !important;
+    height: 90px;
+    padding: 0 !important;
+  }
+
+  &-hall-monitor-bottom {
+    padding-top: 25px;
+    width: 68%;
+    margin: auto;
+  }
+
+  &-hall-monitor-heading {
+    display: flex;
+    justify-content: center;
+    color: #1F195E;
+    margin-top: -15px;
+  }
+
+  &-back-button-bottom {
+    display: block;
+  }
+}
+
+@media all and (max-width: 940px ) {
   .options-wrapper {
     display: flex;
     justify-content: center;
@@ -13,14 +47,11 @@
     width: 51px;
   }
 
-  div.hall-monitor-wrapper {
-    max-width: 100%;
-  }
-
   div.hall-monitor-top{
     justify-content: space-between;
     margin-bottom: 15px;
     height: 90px;
+    padding: 0;
   }
 
   div.hall-monitor-wrapper{
@@ -34,19 +65,8 @@
     margin: auto;
   }
 
-  h1.hall-monitor-heading {
-    display: flex;
-    justify-content: center;
-    color: #1F195E;
-    margin-top: -15px;
-  }
-
   img.back-button-bottom {
     display: block;
-  }
-
-  div.hall-monitor-top{
-      padding: 0;
   }
 
   ::ng-deep .report-dialog {
@@ -309,6 +329,7 @@ input {
     animation: menu-close 1s ease;
 }
 
+.ios-back-button-bottom,
 .back-button-bottom {
   display: none;
   position: absolute;

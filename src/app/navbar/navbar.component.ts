@@ -304,6 +304,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     if (this.screenService.isDeviceLargeExtra) {
+      console.log('UNDERLINE POSITION');
       this.setCurrentUnderlinePos(this.tabRefsMobile, this.navButtonsContainerMobile);
     }
   }
@@ -345,8 +346,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
     if (this.screenService.isDeviceLargeExtra) {
       this.pts = (( event.offsetLeft + event.offsetWidth / 2) - tabPointerHalfWidth) + 'px';
+      console.log(1);
     } else {
       this.pts = Math.round((selectedTabRect.left - containerRect.left) + tabPointerHalfWidth) + 'px';
+      console.log(2);
     }
 
   }
@@ -512,7 +515,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   shrinkTab(tab) {
-      this.rendered.setStyle(tab, 'webkitTransform', 'scale(.86)');;
+      this.rendered.setStyle(tab, 'webkitTransform', 'scale(.86)');
   }
 
   expandTab(tab) {
@@ -525,5 +528,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     } else {
       this.rendered.setStyle(tab, 'webkitTransform', 'unset');
     }
+  }
+
+  get isIOSTablet() {
+    console.log(DeviceDetection.isIOSTablet());;
+    return DeviceDetection.isIOSTablet();
   }
 }
