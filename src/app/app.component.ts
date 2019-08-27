@@ -104,9 +104,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const fcm_sw = localStorage.getItem('fcm_sw_registered');
     if (fcm_sw === 'true') {
-      console.log('app component notif allow');
       this.notifService.initNotifications(true);
     }
+
     INITIAL_LOCATION_PATHNAME.next(window.location.pathname);
 
     this.storageService.detectChanges();
