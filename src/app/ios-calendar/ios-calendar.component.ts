@@ -1,17 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '@angular/core';
 import * as moment from 'moment';
 import {Moment} from 'moment';
 
 @Component({
   selector: 'app-ios-calendar',
   templateUrl: './ios-calendar.component.html',
-  styleUrls: ['./ios-calendar.component.scss']
+  styleUrls: ['./ios-calendar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
+
 })
 export class IosCalendarComponent implements OnInit {
+
+  @Output() selectedEvent: EventEmitter<Moment[]> = new EventEmitter<Moment[]>();
+
+  private _minDate: Moment = moment().add(5, 'minutes');
 
   private _date: Moment;
   private _hour: number;
   private _minute: number;
+  private _half: 'AM' | 'PM';
   private _selected: Moment;
 
   constructor() { }
@@ -26,11 +33,21 @@ export class IosCalendarComponent implements OnInit {
   }
 
   get selected(): moment.Moment {
-    this._date.hour(this._hour);
+    if (this._half === 'AM') {
+      this._date.hour(this._hour);
+
+    } else if (this._half === 'PM') {
+      this._date.hour(this._hour + 12);
+    }
+    // this._date.hour(this._hour);
     this._date.minute(this._minute);
     this._selected = this._date;
 
     return this._selected;
+  }
+
+  set half(value: 'AM' | 'PM') {
+    this._half = value;
   }
 
   set minute(value: number) {
@@ -38,7 +55,7 @@ export class IosCalendarComponent implements OnInit {
   }
 
   set hour(value: number) {
-    this._hour = value;
+      this._hour = value;
   }
 
   set date(value: moment.Moment) {
