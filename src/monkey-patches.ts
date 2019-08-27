@@ -19,6 +19,10 @@ if (navigator && navigator.serviceWorker) {
   const oldRegister = navigator.serviceWorker.register;
   console.log('Monkey patches registration');
   navigator.serviceWorker.register = function (url: string, options: any = {}) {
+    console.log('url' , url );
+    console.log('FIREBASE_MESSAGING_DEFAULT_SW_PATH', FIREBASE_MESSAGING_DEFAULT_SW_PATH);
+    console.log('url === FIREBASE_MESSAGING_DEFAULT_SW_PATH', url === FIREBASE_MESSAGING_DEFAULT_SW_PATH);
+
     if (url === FIREBASE_MESSAGING_DEFAULT_SW_PATH) {
       url = PATCHED_SW_PATH;
       options.scope = BASE_HREF + 'firebase-cloud-messaging-push-scope';
