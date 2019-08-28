@@ -10,6 +10,8 @@ if (environment.production) {
   enableProdMode();
 }
 
+import './monkey-patches';
+
 console.log(`Frontend build type: ${environment.buildType}`);
 
 function registerSW() {
