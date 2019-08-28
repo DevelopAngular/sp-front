@@ -383,21 +383,3 @@ body {
 
 }
 
-//// queries for safari
-@media not all and (min-resolution:.001dpcm) {
-  @supports (-webkit-appearance:none) {
-    @media all and (max-width: 1024px) {
-      body {
-        height: 100%;
-      }
-
-      mat-sidenav-container,
-      mat-sidenav-content {
-        min-height: 100vh;
-        overflow: auto;
-      }
-    }
-  }
-}
-
-
