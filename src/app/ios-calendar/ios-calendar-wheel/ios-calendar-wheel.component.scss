@@ -21,10 +21,9 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      perspective: 1500px;
       background-color: #fff;
       color: #A3A3A3;
-      overflow: hidden;
+      //overflow: hidden;
       .shadow-gradient-top {
         position: absolute;
         top: 0;
@@ -32,8 +31,9 @@
         right: 0;
         color: #999999;
         height: 50%;
-        z-index: 1;
-        background-image: linear-gradient(180deg, rgba(255,255,255, 1) 10%, rgba(255,255,255, .75) 15%, transparent 100%);
+        z-index: 2;
+        background-image: linear-gradient(180deg, rgba(255,255,255, 1) 15%, rgba(255,255,255, .75) 50%, rgba(255,255,255, .5) 70%, rgba(255,255,255, 0) 100%);
+        transform: translateZ(135px);
       }
       .shadow-gradient-bottom {
         position: absolute;
@@ -41,8 +41,9 @@
         right: 0;
         bottom: 0;
         height: 50%;
-        z-index: 1;
-        background-image: linear-gradient(0deg, rgba(255,255,255, 1) 10%, rgba(255,255,255, .75) 15%, transparent 100%);
+        z-index: 2;
+        background-image: linear-gradient(0deg, rgba(255,255,255, 1) 10%, rgba(255,255,255, .75) 15%, rgba(255,255,255, 0) 100%);
+        transform: translateZ(135px);
       }
       .completed-date {
         position: absolute;
@@ -52,63 +53,50 @@
         width: 100%;
         margin: auto 0;
         height: 35px;
-        background-color: #fff;
+        background-color: #ffffff;
         border-top: 1px solid gray;
         border-bottom: 1px solid gray;
         display: flex;
         align-items: center;
         justify-content: center;
+        -webkit-transform-style: preserve-3d;
+        transform-style: preserve-3d;
+        transform: translateZ(135px);
         overflow: hidden;
         //display: none;
         .unit-clip {
-          transform: translateZ(125px);
+          //transform: translateZ(125px);
           color: #333;
           font-size: 17px;
           font-weight: 500;
-        }
-        .hightlighted {
-          height: 100%;
-          flex: 1 1 auto;
-          display: none;
-
           //overflow: hidden;
-          .item-highlighted {
-            //max-width: 35px;
-            //width: 35px;
-            max-height: 35px ;
-            height: 35px ;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            backface-visibility: hidden;
-            white-space: nowrap;
-            //font-size: 19px;
-            //font-weight: bold;
-            color: #000;
-          }
+          z-index: 3;
         }
       }
       .unit-box {
         height: 100%;
         width: 100%;
-        overflow: hidden;
+        //overflow: hidden;
         flex: 1 1 auto;
-        position: relative;
-        z-index: 3;
+        //position: relative;
+        //z-index: 0;
         .scroll {
           height: 100%;
-          width: calc(100% + 30px);
+          width: 100%;
           position: absolute;
           top: 0;
           left: 0;
           right: 0;
           z-index: 10;
           margin: 0 auto;
-          overflow: auto;
-          //scroll-behavior: smooth;
-          .scrollable {
-            height: 1140px;
-            //overflow: hidden;
+          overflow: hidden;
+          .scrollable-container {
+            width: calc(100% + 30px);
+            height: 100%;
+            overflow: auto;
+            .scrollable {
+              height: 1140px;
+            }
           }
         }
         .unit-clip {
@@ -118,8 +106,16 @@
           display: flex;
           align-items: center;
           justify-content: center;
+          //z-index: 1;
+          //-webkit-transform-style: preserve-3d;
+          //-moz-transform-style: preserve-3d;
+          //-ms-transform-style: preserve-3d;
+          //transform-style: preserve-3d;
+
           .unit {
+            //transform: translateZ(-125px);
             position: relative;
+            z-index: 1;
             height: 100%;
             width: 100%;
             -webkit-transform-style: preserve-3d;
@@ -140,6 +136,7 @@
               justify-content: center;
               backface-visibility: hidden;
               white-space: nowrap;
+              -webkit-font-smoothing: antialiased;
             }
           }
         }

@@ -13,4 +13,8 @@ export class IosComponentComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  test(evt) {
+    console.log(evt[0]._d);
+  }
+
 }
