@@ -1,3 +1,7 @@
+.ios-back-btn-top {
+  display: none;
+}
+
 @media all and (max-width: 940px) {
   div.category-wrapper {
     overflow: initial;
@@ -6,7 +10,6 @@
   img.back-btn-top {
     display: none;
   }
-
 }
 
 .category-wrapper {
@@ -19,6 +22,7 @@
   background-color: #ffffff;
   border-radius: 14px;
   overflow: hidden;
+
   .category-header, .category-header_animation-back {
     //opacity: .5;
     width: 100%;
@@ -58,7 +62,8 @@
       display: flex;
       align-items: center;
       margin: 0 auto;
-      .search-icon{
+
+      .search-icon {
         width: 21px;
         height: 21px;
         margin-right: 12px;
@@ -75,6 +80,7 @@
       }
     }
   }
+
   .category-content {
     overflow: auto;
     position: relative;
@@ -82,6 +88,7 @@
     flex: 1 1 auto;
     padding-bottom: 25px;
   }
+
   .category-footer {
     width: 100%;
     display: flex;
@@ -109,12 +116,14 @@
       margin: 0 15px 0 15px;
     }
   }
+
   .center-text {
     display: flex;
     align-items: center;
     padding: 7px;
   }
 }
+
 .shadow {
   position: absolute;
   opacity: 0.7;

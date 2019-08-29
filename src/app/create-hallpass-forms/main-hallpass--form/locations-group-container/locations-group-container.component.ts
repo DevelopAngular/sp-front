@@ -18,6 +18,7 @@ import {RestrictedTargetComponent} from './restricted-target/restricted-target.c
 import {RestrictedMessageComponent} from './restricted-message/restricted-message.component';
 import {ToWhereComponent} from './to-where/to-where.component';
 import {ScreenService} from '../../../services/screen.service';
+import {DeviceDetection} from '../../../device-detection.helper';
 
 export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, message = 5 }
 
@@ -294,5 +295,9 @@ export class LocationsGroupContainerComponent implements OnInit {
         this.restMessageComp.back();
         break;
     }
+  }
+
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
   }
 }

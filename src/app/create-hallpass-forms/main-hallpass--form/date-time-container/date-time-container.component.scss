@@ -6,4 +6,27 @@
     position: relative;
     z-index: 5;
   }
+
+  .ios-back-button {
+    @extend .back-button;
+    display: block !important;
+  }
+
+  .back-button {
+    display: none;
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    user-select: none;
+    cursor: pointer;
+    bottom: -45px;
+  }
+
+  @media all and (max-width: 940px) {
+    .back-button {
+      display: block;
+    }
+  }
 }

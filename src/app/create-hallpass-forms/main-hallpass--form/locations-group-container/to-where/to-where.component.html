@@ -9,7 +9,7 @@
 
   <div class="to-content" #rc>
     <div class="teacher-rooms" *ngIf="isStaff && teacherRooms.length">
-      <div class="rooms-title ds-dialog-subtitle">My Rooms</div>
+      <div [ngClass]="isIOSTablet ? 'ios-rooms-title' : 'rooms-title'" class="ds-dialog-subtitle">My Rooms</div>
       <div class="rooms">
         <mat-grid-list class="grid center" [cols]="gridRestrictions.colsAmount" rowHeight="75px" [gutterSize]="gridRestrictions.gutterSize" [style.width]="gridRestrictions.gridWidth">
           <mat-grid-tile *ngFor="let room of teacherRooms">
@@ -27,7 +27,7 @@
       </div>
     </div>
     <div class="all-rooms">
-      <div class="rooms-title ds-dialog-subtitle" *ngIf="isStaff && teacherRooms.length && !dialogData.kioskModeRoom">All Rooms</div>
+      <div  [ngClass]="isIOSTablet ? 'ios-rooms-title' : 'rooms-title'" class="ds-dialog-subtitle" *ngIf="isStaff && teacherRooms.length && !dialogData.kioskModeRoom">All Rooms</div>
       <div class="pin-collection">
         <mat-grid-list class="grid center" [cols]="gridRestrictions.colsAmount" rowHeight="75px" [gutterSize]="gridRestrictions.gutterSize" [style.width]="gridRestrictions.gridWidth">
           <mat-grid-tile *ngFor="let pinnable of pinnables | async">

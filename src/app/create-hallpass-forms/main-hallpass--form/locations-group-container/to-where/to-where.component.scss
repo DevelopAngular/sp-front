@@ -1,3 +1,7 @@
+.ios-rooms-title {
+  padding: 5px 5px 15px 5px;
+}
+
 @media all and (max-width: 940px) {
   img.back-btn-top {
     display: none;
@@ -43,6 +47,7 @@
   position: relative;
   background-color: #ffffff;
   border-radius: 14px;
+
   .to-header, .to-header-back {
     width: 100%;
     height: 70px;
@@ -97,6 +102,7 @@
     flex-direction: column;
     width: 100%;
     align-items: center;
+
     .teacher-rooms, .all-rooms {
       margin: 10px;
     }
@@ -133,13 +139,15 @@
       margin: 0 15px 0 15px;
     }
   }
+
   .center-text {
     display: flex;
     align-items: center;
     padding: 7px;
   }
+
   mat-grid-tile {
-   overflow: inherit !important;
+    overflow: inherit !important;
   }
 }
 
