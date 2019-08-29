@@ -6,7 +6,7 @@ import { constructUrl } from '../live-data/helpers';
 import { Paged } from '../models';
 import { HttpService } from './http-service';
 import { User } from '../models/User';
-import { BehaviorSubject } from 'rxjs';
+import {BehaviorSubject, from} from 'rxjs';
 import { Location } from '../models/Location';
 
 @Injectable({
@@ -30,7 +30,7 @@ export class LocationsService {
     getLocationsWithManyTeachers(teachers: User[]): Observable<Location[]> {
         const teacherIds = teachers.map(t => t.id);
 
-        return fromArray(teacherIds).pipe(
+        return from(teacherIds).pipe(
           bufferCount(20),
           flatMap(ids => {
             const url = constructUrl('v1/locations', {
