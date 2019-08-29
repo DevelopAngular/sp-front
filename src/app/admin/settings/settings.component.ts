@@ -127,6 +127,7 @@ export class SettingsComponent implements OnInit {
 
     signOut() {
       this.dialogRef.close('signout');
+      localStorage.removeItem('fcm_sw_registered');
       combineLatest(this.pwaStorage.removeItem('servers'),
         this.pwaStorage.removeItem('authData') )
         .subscribe();

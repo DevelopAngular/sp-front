@@ -1,4 +1,8 @@
 import { Injectable } from '@angular/core';
+import { fromArray } from 'rxjs/internal/observable/fromArray';
+import { Observable } from 'rxjs/Observable';
+import { bufferCount, flatMap, reduce } from 'rxjs/operators';
+import { constructUrl } from '../live-data/helpers';
 import { Paged } from '../models';
 import { HttpService } from './http-service';
 import { User } from '../models/User';
@@ -23,13 +27,20 @@ export class LocationsService {
         return this.http.get<any[]>(`v1/locations?teacher_id=${teacher.id}`);
     }
 
-    getLocatopnsWithManyTeachers(teachers: User[]) {
-        let url: string = '';
-        teachers.forEach(teacher => {
-            url += `teacher_id=${teacher.id}&`;
-        });
-        console.log('URL ==>>', url);
-        return this.http.get(`v1/locations?${url}`);
+    getLocationsWithManyTeachers(teachers: User[]): Observable<Location[]> {
+        const teacherIds = teachers.map(t => t.id);
+
+        return fromArray(teacherIds).pipe(
+          bufferCount(20),
+          flatMap(ids => {
+            const url = constructUrl('v1/locations', {
+              teacher_id: ids,
+            });
+
+            return this.http.get<Location[]>(url);
+          }),
+          reduce((acc, arr) => acc.concat(arr), [])
+        );
     }
 
     getLocation(id) {

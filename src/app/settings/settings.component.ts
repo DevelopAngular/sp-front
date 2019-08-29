@@ -203,6 +203,7 @@ export class SettingsComponent implements OnInit {
         this.sideNavService.sideNavAction$.next('signout');
     }
     this.removeOfflineAuthData();
+    localStorage.removeItem('fcm_sw_registered');
   }
 
   switchAction() {

@@ -21,7 +21,7 @@
               "src/assets",
               "src/preloader.js",
               "src/firebase-messaging-sw.js",
-              "src/assets/manifest.json",
+              "src/assets/manifest.json"
             ],
             "styles": [
               "src/styles.scss",
