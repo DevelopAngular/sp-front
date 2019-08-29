@@ -66,7 +66,7 @@ import {ProfileCardDialogComponent} from '../admin/profile-card-dialog/profile-c
 import {SpDialogBoxComponent} from '../sp-dialog-box/sp-dialog-box.component';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import {ScrollHolderDirective} from '../scroll-holder.directive';
-import {IosCalendarWheelComponent} from '../ios-calendar-wheel/ios-calendar-wheel.component';
+import {IosCalendarWheelComponent} from '../ios-calendar/ios-calendar-wheel/ios-calendar-wheel.component';
 import {IosCalendarComponent} from '../ios-calendar/ios-calendar.component';
 
 

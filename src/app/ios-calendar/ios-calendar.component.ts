@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '@angular/core';
 import * as moment from 'moment';
 import {Moment} from 'moment';
+import {IosDateSingleton} from './ios-date.singleton';
 
 @Component({
   selector: 'app-ios-calendar',
@@ -21,44 +22,60 @@ export class IosCalendarComponent implements OnInit {
   private _half: 'AM' | 'PM';
   private _selected: Moment;
 
-  constructor() { }
+  constructor(
+    private iosDate: IosDateSingleton
+  ) { }
 
 
   ngOnInit() {
-    this.date = moment();
+    // this.date = moment();
+    this.iosDate
+      .getDate()
+      .subscribe((d: Moment) => {
+        this._date = d;
+        this._selected = d;
+      });
   }
 
-  get date(): moment.Moment {
+  getDate(): moment.Moment {
     return this._date;
   }
 
-  get selected(): moment.Moment {
-    if (this._half === 'AM') {
-      this._date.hour(this._hour);
+  getSelected(): moment.Moment {
 
-    } else if (this._half === 'PM') {
-      this._date.hour(this._hour + 12);
-    }
-    // this._date.hour(this._hour);
+    this._date.hour(this._hour);
     this._date.minute(this._minute);
-    this._selected = this._date;
+    this._selected = this._date;;
 
     return this._selected;
   }
 
-  set half(value: 'AM' | 'PM') {
+  setHalf(value: 'AM' | 'PM') {
     this._half = value;
+    if (this._half === 'PM' && this._hour < 12) {
+      this._hour += 12;
+    } else if (this._half === 'AM' && this._hour >= 12) {
+      this._hour -= 12;
+    }
+    this.iosDate.setDate(this.getSelected());
+    this.selectedEvent.emit([this.getSelected()]);
   }
 
-  set minute(value: number) {
+  setMinute(value: number) {
     this._minute = value;
+    this.iosDate.setDate(this.getSelected());
+    this.selectedEvent.emit([this.getSelected()]);
   }
 
-  set hour(value: number) {
-      this._hour = value;
+  setHour(value: number) {
+    this._hour = value;
+    this.iosDate.setDate(this.getSelected());
+    this.selectedEvent.emit([this.getSelected()]);
   }
 
-  set date(value: moment.Moment) {
+  setDate(value: moment.Moment) {
     this._date = value;
+    this.iosDate.setDate(this.getSelected());
+    this.selectedEvent.emit([this.getSelected()]);
   }
 }

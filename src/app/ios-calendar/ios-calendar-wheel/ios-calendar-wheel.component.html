@@ -1,0 +1,53 @@
+<div class="host">
+  <div class="container">
+    <div class="unit-box">
+      <div class="scroll">
+<!--        <div style="position: absolute; top: 0;">{{this.scrollFactor}}-{{this.rotate.rotateAngle}}</div>-->
+        <div class="scrollable-container"
+                     (mouseenter)="onOver($event)"
+                     (mouseout)="onOut($event)"
+             (scroll)="onScroll($event)"
+             (touchstart)="onDown($event)"
+             (touchend)="onOut($event)"
+             (touchmove)="onMove($event)">
+          <div class="scrollable">
+          </div>
+        </div>
+<!--        <div class="scrollable-container"-->
+<!--             (touchstart)="onDown($event)"-->
+<!--             (touchend)="runScroll(); onOut($event)"-->
+<!--             (mousedown)="onOver($event);"-->
+<!--             (mouseup)="onUp($event)"-->
+<!--             (mousemove)="onMove($event)"-->
+<!--             (mouseenter)="onOver($event)"-->
+<!--             (mouseout)="onOut($event)"-->
+<!--             (scroll)="onScroll($event)">-->
+<!--          <div class="scrollable">-->
+<!--          </div>-->
+<!--        </div>-->
+      </div>
+      <div class="completed-date" [style.left.px]="leftShift" [style.right.px]="rightShift">
+        <div class="unit-clip">
+          <div class="unit" [style.transform]="daysRotate$ | async" [style.transition]="endTransition">
+            <div class="item" *ngFor="let day of days | async" [style.transform]="day.rotate">
+              <span>
+                {{day.value}}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="shadow-gradient-top"></div>
+      <div class="unit-clip" [style.left.px]="leftShift" [style.right.px]="rightShift">
+        <div class="unit" [style.transform]="daysRotate$ | async" [style.transition]="endTransition">
+          <div class="item" *ngFor="let day of days | async" [style.transform]="day.rotate">
+            <span>
+              {{day.value}}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="shadow-gradient-bottom"></div>
+    </div>
+  </div>
+</div>
