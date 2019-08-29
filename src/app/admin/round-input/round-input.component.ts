@@ -11,12 +11,13 @@ import {
 } from '@angular/core';
 import {MatDialog} from '@angular/material';
 import {TimeService} from '../../services/time.service';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, fromEvent, Observable, Subject} from 'rxjs';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
 import {constructUrl} from '../../live-data/helpers';
 import {LocationsService} from '../../services/locations.service';
+import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 
 //Can be 'text', 'multilocation', 'multiuser', or 'dates'  There may be some places where multiuser may need to be split into student and teacher. I tried finding a better way to do this, but this is just short term.
 
@@ -52,6 +53,7 @@ export class RoundInputComponent implements OnInit {
   @Input() pending$: Subject<boolean>;
   @Input() selectReset$: Subject<string>;
   @Input() selections: any[] = [];
+  @Input() isSearch: boolean;
 
   @Output() ontextupdate: EventEmitter<any> = new EventEmitter();
   @Output() ontoggleupdate: EventEmitter<any> = new EventEmitter();
@@ -114,6 +116,17 @@ export class RoundInputComponent implements OnInit {
       this.pending$ = new Subject<boolean>();
     }
 
+    if (this.isSearch) {
+      fromEvent(this.input.nativeElement, 'input')
+        .pipe(
+          distinctUntilChanged(),
+          debounceTime(300)
+        )
+        .subscribe((event: any) => {
+            this.ontextupdate.emit(event.target.value);
+        });
+    }
+
     if (!this.type.includes('multi') && this.type !== 'text') {
       this.initialValue = '';
     }
@@ -155,7 +168,9 @@ export class RoundInputComponent implements OnInit {
           this.selfSearchCompletedEvent.emit(res);
         });
       } else {
-        this.ontextupdate.emit(inp.value);
+        if (!this.isSearch) {
+          this.ontextupdate.emit(inp.value);
+        }
       }
     }
     if ( inp.value.length > 0) {
