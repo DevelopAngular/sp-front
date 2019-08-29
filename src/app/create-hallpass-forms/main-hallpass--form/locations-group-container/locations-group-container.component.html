@@ -64,4 +64,4 @@
 
 </div>
 
-<img class="back-button back-button-grey back-btn-bottom" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="stepBack()">
+<img class="back-button back-button-grey" [ngClass] = " isIOSTablet ? 'ios-back-btn-bottom' : 'back-btn-bottom'" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="stepBack()">

@@ -1,6 +1,6 @@
 <div *ngIf="user" style="position: relative; height: calc(100% - 78px); overflow: auto" #scrollableArea>
   <div *ngIf="canView" class="hall-monitor-wrapper">
-    <div class="hall-monitor-top">
+    <div [ngClass]="isIOSTablet ? 'ios-hall-monitor-top' : 'hall-monitor-top'">
       <ng-container *ngIf="!isDeviceLargeExtra; else hallMontiorTopMobile">
       <app-round-input
         [type]="inputRestrictionXl.type"
@@ -28,7 +28,7 @@
 
       <ng-template #hallMontiorTopMobile>
         <ng-container>
-          <div class="options-wrapper" (click)="toggleSearchBar()">
+          <div [ngClass]="isIOSTablet ?  'ios-options-wrapper' : 'options-wrapper'" (click)="toggleSearchBar()">
             <app-icon-button [srcString]="'Search Eye'" (clickEvent)="toggleSearchBar()" [size]="20"> </app-icon-button>
           </div>
           <div class="student-search-wrapper" *ngIf="isIpadSearchBar">
@@ -51,7 +51,7 @@
             <span class="cancel" (click)="cleanSearchValue();">Cancel</span>
           </div>
 
-          <div class="options-wrapper" *ngIf="!isIpadSearchBar">
+          <div [ngClass]="isIOSTablet ?  'ios-options-wrapper' : 'options-wrapper'" *ngIf="!isIpadSearchBar">
             <app-icon-button [srcString]="'Report'" (clickEvent)="openReportForm()" [size]="20"> </app-icon-button>
           </div>
         </ng-container>
@@ -107,4 +107,4 @@
   </div>
 
 
-<img (click)="back()" *ngIf="this.isReportFormOpened" class="back-button-bottom"  [src]="'./assets/Back Button (White).svg' | resolveAsset" >
+<img (click)="back()" *ngIf="this.isReportFormOpened" [ngClass]="isIOSTablet ? 'ios-back-button-bottom' : 'back-button-bottom'"  [src]="'./assets/Back Button (White).svg' | resolveAsset" >

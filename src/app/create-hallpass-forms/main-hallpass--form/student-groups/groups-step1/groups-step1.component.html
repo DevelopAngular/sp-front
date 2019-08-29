@@ -1,7 +1,7 @@
-<div class="step-1-container">
+<div [ngClass]=" isIOSTablet ? 'ios-step-1-container' : 'step-1-container'">
   <div class="header">
     <div class="header_back-button " (click)="back()">
-      <img class="header_back-button-icon back-btn-top" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
+      <img [ngClass]=" isIOSTablet ? 'ios-back-btn-top' : 'back-btn-top'"  class="header_back-button-icon" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
     </div>
     <div class="header_title">
       <img class="header_icon" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset">
@@ -122,7 +122,7 @@
       </div>
     </div>
   </div>
-  <img  class="back-btn-bottom" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
+  <img [ngClass]=" isIOSTablet ? 'ios-back-btn-bottom' : 'back-btn-bottom'" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
 
 
   <div class="button-shadow next-btn-mobile" *ngIf="selectedStudents.length">

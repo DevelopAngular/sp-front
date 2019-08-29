@@ -1,6 +1,49 @@
+.ios {
+  &-like-calendar-tablet {
+    display: block;
+    width: 100%;
+  }
+
+  &-time-picker {
+    display: none;
+    margin: 0;
+  }
+
+  &-tablet-decline-content {
+    padding: 0 !important;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+  }
+
+  &-tablet-info-text-1 {
+    display: none;
+  }
+
+  &-date-wrapper {
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    height: 500px;
+  }
+
+  &-next-btn {
+    position: absolute;
+    margin: 0;
+    left: 50%;
+    bottom: 5px;
+    transform: translate(-50%);
+  }
+
+  &-back-button {
+    display: none;
+  }
+}
+
 @media all and (max-width: 940px) {
   div.date-wrapper {
     width: 100%;
+
     .date-content {
       width: 100%;
     }
@@ -32,15 +75,17 @@
     display: none;
   }
 
-  img.back-button{
+  img.back-button {
     display: none;
   }
 }
+
 .ios-like-calendar {
   display: none;
   width: 100%;
 }
-.time-picker{
+
+.time-picker {
   margin: 0 34px 0px 20px;
 }
 
@@ -51,10 +96,12 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
 }
 
 .date-content, .date-content-mock {
   height: 87%;
+  width: 100%;
 }
 
 .teacher {
@@ -72,9 +119,11 @@
   display: flex;
   padding: 15px 15px 10px 25px;
 }
+
 .toggle-text {
   width: 85%;
 }
+
 .toggle {
   width: 12%;
 }
@@ -85,7 +134,7 @@
 }
 
 
-.next-button{
+.next-button {
   display: flex;
 }
 
@@ -112,7 +161,7 @@
   margin: 0 auto;
 }
 
-.back-button{
+.back-button {
   position: absolute;
   width: 28px;
   height: 28px;

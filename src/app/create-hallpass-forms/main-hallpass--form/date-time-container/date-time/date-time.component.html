@@ -1,16 +1,16 @@
-<div class="date-wrapper">
+<div [ngClass]="isIOSTablet ? 'ios-date-wrapper' : 'date-wrapper'" class="date-wrapper">
     <div class="divider" [style.background]="gradient">
-        <img class="back-button" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
+        <img [ngClass]="isIOSTablet ? 'ios-back-button' : 'back-button'" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
         <div class="divider-header"  [ngClass]="{'divider-header':!mock, 'divider-header-mock': mock}">
             <img class="divider-icon" [src]="'./assets/Future (White).svg' | resolveAsset">
             <div class="divider-text ds-dialog-title-white">{{ (formState?.forInput ? 'Select': 'Change') }} Date & Time</div>
         </div>
     </div>
     <div class="date-contentt" [ngClass]="{'date-content':!mock, 'date-content-mock': mock}">
-        <div class="decline-content" *ngIf="isStaff">
+        <div [ngClass]="isIOSTablet ? 'ios-tablet-decline-content' : 'decline-content'" *ngIf="isStaff">
             <div class="toggle-text">
               <div class="toggle-title">Declinable</div>
-              <div class="info-text-1">
+              <div [ngClass]="isIOSTablet ? 'ios-tablet-info-text-1' : 'info-text-1'">
                 <span>{{'The student ' + (form.get('declinable').value ? 'has the option to ' : ' cannot ') + 'decline the pass.'}}</span><br/>
                 <span *ngIf="!form.get('declinable').value">You must also select from where the student will be traveling.</span>
                 <span *ngIf="form.get('declinable').value">You do not need to know the location from where the student will be traveling.</span>
@@ -22,7 +22,7 @@
         </div>
         <mat-divider *ngIf="isStaff"></mat-divider>
       <div class="teacher" *ngIf="isStaff">
-          <div class="time-picker">
+          <div [ngClass]="isIOSTablet ? 'ios-time-picker' : 'time-picker'">
             <div class="time-picker-scaled">
               <app-calendar-picker
                       [width]="240"
@@ -39,10 +39,10 @@
               <!--</app-date-time-picker>-->
             </div>
           </div>
-          <div class="ios-like-calendar">
+          <div [ngClass]="isIOSTablet ? 'ios-like-calendar-tablet' : 'ios-like-calendar'">
             <app-ios-calendar (selectedEvent)="calendarResult($event)"></app-ios-calendar>
           </div>
-          <div class="next-btn">
+          <div [ngClass]="isIOSTablet ? 'ios-next-btn' : 'next-btn'">
               <app-gradient-button
                       [gradient]="'#03CF31, #00B476'"
                       [cursor]="'pointer'"
