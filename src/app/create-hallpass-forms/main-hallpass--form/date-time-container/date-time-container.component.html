@@ -2,5 +2,5 @@
   <app-date-time [isStaff]="FORM_STATE.formMode.role === 1"  [formState]="FORM_STATE" (backButton)="back($event)" (result)="nextStep($event)"></app-date-time>
 </div>
 
-<img [ngClass]=" isIOSTablet ? 'ios-back-button' : 'back-button'" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back($event)">
+<img *ngIf="isStaff" [ngClass]=" isIOSTablet ? 'ios-back-button' : 'back-button'" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back($event)">
 

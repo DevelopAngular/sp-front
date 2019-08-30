@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '../models/Location';
 import { MatDialogRef } from '@angular/material';
 import { LocationsService } from '../services/locations.service';
+import {DeviceDetection} from '../device-detection.helper';
 
 @Component({
   selector: 'app-favorite-form',
@@ -65,4 +66,7 @@ export class FavoriteFormComponent implements OnInit, OnDestroy {
     this.ngOnDestroy();
   }
 
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
+  }
 }

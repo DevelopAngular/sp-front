@@ -1,6 +1,6 @@
-<div class="notif-wrapper">
+<div  [ngClass]="isIOSTablet ? 'ios-notif-wrapper' : 'notif-wrapper'">
   <div class="notif-header" [style.background-image]="'radial-gradient(circle at 73% 71%, #DA2370,#FB434A)'">
-    <img draggable="false" class="back-button" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" alt="Notification" (click)="dialogRef.close()">
+    <img draggable="false" [ngClass]="isIOSTablet ? 'ios-back-button': 'back-button'" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" alt="Notification" (click)="dialogRef.close()">
     <div class="header-title">
         <img draggable="false" class="header-icon" [src]="'./assets/Notifications (White).svg' | resolveAsset">
       <div class="ds-dialog-title-white">
@@ -45,6 +45,6 @@
     </div>
 </div>
 
-<div class="back-button-wrapper" (click)="dialogRef.close()">
-  <img class="back-button-bottom" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset">
+<div [ngClass]="isIOSTablet ? 'ios-back-button-wrapper' : 'back-button-wrapper'" (click)="dialogRef.close()">
+  <img [ngClass]="isIOSTablet ? 'ios-back-button-bottom': 'back-button-bottom'" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset">
 </div>
