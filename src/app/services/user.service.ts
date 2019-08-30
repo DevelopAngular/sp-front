@@ -31,7 +31,8 @@ export class UserService {
   constructor(private http: HttpService,
               private pollingService: PollingService,
               private _logging: Logger,
-              private errorHandler: ErrorHandler) {
+              private errorHandler: ErrorHandler
+  ) {
 
     // this.userData.subscribe(
     //   u => console.log('next user:', u),

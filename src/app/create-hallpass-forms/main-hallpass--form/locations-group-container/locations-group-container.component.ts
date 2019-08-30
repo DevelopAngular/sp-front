@@ -136,7 +136,7 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.user$ = this.dataService.currentUser;
     this.pinnable = this.FORM_STATE.data.direction ? this.FORM_STATE.data.direction.pinnable : null;
     this.user$.subscribe((user: User) => {
-        this.isStaff = user.isTeacher() || user.isAdmin();
+        this.isStaff = user.isTeacher() || user.isAdmin() || user.isAssistant();
         this.user = user;
     });
   }
