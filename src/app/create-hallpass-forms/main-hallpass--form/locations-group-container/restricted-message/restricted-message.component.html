@@ -2,7 +2,7 @@
   <div class="rest-mes-wrapper">
     <div [ngClass]="headerTransition" [style.background-image]="headerGradient">
       <div class="back-button-wrapper" (click)="back()">
-        <img class="back-button back-button-white back-btn-top" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset">
+        <img [ngClass]=" isIOSTablet ? 'ios-back-btn-top' : 'back-btn-top'" class="back-button back-button-white" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset">
       </div>
       <div class="rest-mes-header-text">
         <img class="search-icon" [src]="'./assets/Message (White).svg' | resolveAsset">
