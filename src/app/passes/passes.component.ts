@@ -13,11 +13,11 @@ import {
 import {
   delay,
   filter,
-  map, publishBehavior,
+  map, publish, publishBehavior,
   publishReplay,
-  refCount,
+  refCount, shareReplay,
   startWith,
-  switchMap, takeUntil,
+  switchMap, take, takeUntil,
   withLatestFrom
 } from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
@@ -41,6 +41,7 @@ import {PassesAnimations} from './passes.animations';
 import {ScreenService} from '../services/screen.service';
 import {ScrollPositionService} from '../scroll-position.service';
 import {init} from '@sentry/browser';
+import {UserService} from '../services/user.service';
 
 export class FuturePassProvider implements PassLikeProvider {
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>) {
@@ -59,7 +60,8 @@ export class FuturePassProvider implements PassLikeProvider {
 
 export class ActivePassProvider implements PassLikeProvider {
   constructor(private liveDataService: LiveDataService, private user$: Observable<User>,
-              private excluded$: Observable<PassLike[]> = empty(), private timeService: TimeService) {
+              private excluded$: Observable<PassLike[]> = empty(), private timeService: TimeService,
+              ) {
   }
 
   watch(sort: Observable<string>) {
@@ -71,11 +73,16 @@ export class ActivePassProvider implements PassLikeProvider {
     merged$.subscribe(mergedReplay);
 
     const passes$ = this.user$.pipe(
-      switchMap(user => this.liveDataService.watchActiveHallPasses(mergedReplay,
-        user.roles.includes('hallpass_student')
-          ? {type: 'student', value: user}
-          : {type: 'issuer', value: user})),
+      switchMap(user => {
+        return this.liveDataService.watchActiveHallPasses(mergedReplay,
+            user.roles.includes('hallpass_student')
+              ? {type: 'student', value: user}
+              : {type: 'issuer', value: user}
+              );
+        }
+      ),
       withLatestFrom(this.timeService.now$), map(([passes, now]) => {
+        console.log('PASSES ===>>>> ', passes);
         return passes.filter(pass => new Date(pass.start_time).getTime() <= now.getTime());
       })
     );
@@ -269,8 +276,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private navbarService: NavbarDataService,
     public screenService: ScreenService,
     public darkTheme: DarkThemeSwitch,
-    private scrollPosition: ScrollPositionService
-
+    private scrollPosition: ScrollPositionService,
+    private userService: UserService
   ) {
 
     this.testPasses = new BasicPassLikeProvider(testPasses);
@@ -278,6 +285,18 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.testInvitations = new BasicPassLikeProvider(testInvitations);
 
     const excludedPasses = this.currentPass$.pipe(map(p => p !== null ? [p] : []));
+
+    const dbUser$ = combineLatest(
+      this.userService.effectiveUser,
+      this.dataService.currentUser
+    ).pipe(
+      map(([effectUser, currentUser]) => {
+        if (effectUser) {
+          return effectUser.user;
+        } else {
+          return currentUser;
+        }
+      }));
 
     this.futurePasses = new WrappedProvider(new FuturePassProvider(this.liveDataService, this.dataService.currentUser));
     this.activePasses = new WrappedProvider(new ActivePassProvider(this.liveDataService, this.dataService.currentUser, excludedPasses, this.timeService));
@@ -325,6 +344,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    // this.userService.effectiveUser.subscribe(res => {
+    //   debugger;
+    // });
     this.navbarService.inboxClick.subscribe(inboxClick => {
       this.isInboxClicked = inboxClick;
     });
@@ -333,7 +355,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(user => {
         this._zone.run(() => {
           this.user = user;
-          this.isStaff = user.roles.includes('_profile_teacher') || user.roles.includes('_profile_admin');
+          this.isStaff =
+            user.roles.includes('_profile_teacher') ||
+            user.roles.includes('_profile_admin') ||
+            user.roles.includes('_profile_assistant');
           if (this.isStaff) {
             this.dataService.updateInbox(true);
           }
