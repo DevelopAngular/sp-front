@@ -230,7 +230,8 @@
                       [type]="'text'"
                       [pending$]="pending$"
                       [placeholder]="'Search'"
-                      (ontextupdate)="findRelevantAccounts($event)">
+                      (ontextupdate)="findRelevantAccounts($event)"
+                      [isSearch]="true">
               </app-round-input>
             </div>
 
