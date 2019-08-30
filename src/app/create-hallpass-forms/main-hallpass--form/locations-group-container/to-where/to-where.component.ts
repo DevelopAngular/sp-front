@@ -10,6 +10,7 @@ import {ToWhereGridRestrictionSm} from '../../../../models/to-where-grid-restric
 import {ToWhereGridRestrictionMd} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionMd';
 import {MAT_DIALOG_DATA} from '@angular/material';
 import {fromEvent} from 'rxjs';
+import {DeviceDetection} from '../../../../device-detection.helper';
 
 @Component({
   selector: 'app-to-where',
@@ -127,5 +128,9 @@ export class ToWhereComponent implements OnInit {
 
   get displayFooters() {
     return this.screenService.isDeviceLargeExtra;
+  }
+
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
   }
 }

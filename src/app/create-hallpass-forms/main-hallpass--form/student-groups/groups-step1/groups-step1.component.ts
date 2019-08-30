@@ -7,6 +7,7 @@ import {Observable, of, timer} from 'rxjs';
 import {finalize, publish, publishReplay, refCount, switchMap} from 'rxjs/operators';
 import {DomSanitizer} from '@angular/platform-browser';
 import {LocationsService} from '../../../../services/locations.service';
+import {DeviceDetection} from '../../../../device-detection.helper';
 
 @Component({
   selector: 'app-groups-step1',
@@ -144,6 +145,10 @@ export class GroupsStep1Component implements OnInit {
     } else {
       this.stateChangeEvent.emit('exit');
     }
+  }
+
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
   }
 }
 

@@ -5,6 +5,7 @@ import { Pinnable } from '../../../../models/Pinnable';
 import {CreateFormService} from '../../../create-form.service';
 import {BehaviorSubject, fromEvent} from 'rxjs';
 import {MAT_DIALOG_DATA} from '@angular/material';
+import {DeviceDetection} from '../../../../device-detection.helper';
 
 @Component({
   selector: 'app-to-category',
@@ -109,6 +110,10 @@ export class ToCategoryComponent implements OnInit {
       this.formState.state -= 1;
       this.backButton.emit(this.formState);
     }, 100);
+  }
+
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
   }
 
 }

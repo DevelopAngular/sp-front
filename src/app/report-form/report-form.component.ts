@@ -8,6 +8,7 @@ import {NextStep} from '../animations';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {ScreenService} from '../services/screen.service';
+import {DeviceDetection} from '../device-detection.helper';
 
 @Component({
   selector: 'app-report-form',
@@ -101,4 +102,7 @@ export class ReportFormComponent implements OnInit {
 
   }
 
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
+  }
 }

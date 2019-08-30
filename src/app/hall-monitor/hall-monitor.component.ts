@@ -24,6 +24,7 @@ import {InputRestriciontSm} from '../models/input-restrictions/InputRestriciontS
 import {CollectionRestriction} from '../models/collection-restrictions/CollectionRestriction';
 import {HallMonitorCollectionRestriction} from '../models/collection-restrictions/HallMonitorCollectionRestriction';
 import {ScrollPositionService} from '../scroll-position.service';
+import {DeviceDetection} from '../device-detection.helper';
 
 function isUserStaff(user: User): boolean {
   return user.roles.includes('_profile_teacher');
@@ -217,7 +218,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
   openReportForm() {
 
     const dialogRef = this.dialog.open(ReportFormComponent, {
-      panelClass: ['form-dialog-container', 'report-dialog'],
+      panelClass: ['form-dialog-container', this.isIOSTablet ? 'ios-report-dialog' : 'report-dialog'],
       backdropClass: 'custom-backdrop',
     });
 
@@ -308,4 +309,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     this.isIpadSearchBar = false;
   }
 
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
+  }
 }

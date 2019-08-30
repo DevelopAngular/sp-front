@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import {DeviceDetection} from '../device-detection.helper';
 
 @Injectable({
   providedIn: 'root'
@@ -46,6 +47,10 @@ export class ScreenService {
   }
 
   get isDeviceLargeExtra() {
+    this.extraLargeDeviceBreakPoint = 940;
+    if (this.isIOSTablet) {
+      this.extraLargeDeviceBreakPoint = 1024;
+    }
     return this.windowWidth <= this.extraLargeDeviceBreakPoint;
   }
 
@@ -60,4 +65,9 @@ export class ScreenService {
   private get windowWidth() {
     return window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
   }
+
+  private get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
+  }
+
 }

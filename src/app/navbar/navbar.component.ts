@@ -512,7 +512,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   shrinkTab(tab) {
-      this.rendered.setStyle(tab, 'webkitTransform', 'scale(.86)');;
+      this.rendered.setStyle(tab, 'webkitTransform', 'scale(.86)');
   }
 
   expandTab(tab) {
@@ -525,5 +525,9 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     } else {
       this.rendered.setStyle(tab, 'webkitTransform', 'unset');
     }
+  }
+
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
   }
 }

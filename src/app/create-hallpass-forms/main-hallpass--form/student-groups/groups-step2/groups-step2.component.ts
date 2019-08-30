@@ -7,6 +7,7 @@ import {fromEvent, Observable, of, throwError} from 'rxjs';
 import {catchError, map, switchMap} from 'rxjs/operators';
 import * as XLSX from 'xlsx';
 import * as _ from 'lodash';
+import {DeviceDetection} from '../../../../device-detection.helper';
 
 
 @Component({
@@ -123,5 +124,9 @@ export class GroupsStep2Component implements OnInit {
         selectedStudents: this.selectedStudents
       }
     });
+  }
+
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
   }
 }

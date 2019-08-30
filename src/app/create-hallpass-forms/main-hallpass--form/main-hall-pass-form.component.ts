@@ -12,6 +12,7 @@ import * as _ from 'lodash';
 import {DataService} from '../../services/data-service';
 import {LocationsService} from '../../services/locations.service';
 import {ScreenService} from '../../services/screen.service';
+import {DeviceDetection} from '../../device-detection.helper';
 
 
 export enum Role { Teacher = 1, Student = 2 }
@@ -229,8 +230,8 @@ export class MainHallPassFormComponent implements OnInit {
             this.formSize.width =  `425px`;
             this.formSize.height =  `500px`;
           } else {
-            this.formSize.width =  this.isDeviceLarge ?  `335px` : `700px`;
-            this.formSize.height = this.isDeviceLarge ?  `500px` : `400px`;
+            this.formSize.width =  this.extraLargeDevice ?  `335px` : `700px`;
+            this.formSize.height = this.extraLargeDevice ?  `500px` : `400px`;
           }
           break;
         case 3:
@@ -250,7 +251,16 @@ export class MainHallPassFormComponent implements OnInit {
   @HostListener('window:resize')
   checkDeviceScreen() {
     this.isDeviceMid = this.screenService.isDeviceMid;
-    this.isDeviceLarge = this.screenService.isDeviceLargeExtra;
+    this.isDeviceLarge = this.extraLargeDevice;
     this.setFormSize();
   }
+
+  get extraLargeDevice() {
+    return this.screenService.isDeviceLargeExtra;
+  }
+
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
+  }
+
 }

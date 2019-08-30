@@ -1,7 +1,10 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {Navigation} from '../main-hall-pass-form.component';
 
 import {CreateFormService} from '../../create-form.service';
+import {FromWhereComponent} from '../locations-group-container/from-where/from-where.component';
+import {DateTimeComponent} from './date-time/date-time.component';
+import {DeviceDetection} from '../../../device-detection.helper';
 
 @Component({
   selector: 'app-date-time-container',
@@ -13,6 +16,7 @@ export class DateTimeContainerComponent implements OnInit {
   @Input() FORM_STATE: Navigation;
   @Output('nextStepEvent')
   nextStepEvent: EventEmitter<Navigation | {action: string, data: any}> = new EventEmitter<Navigation | {action: string, data: any}>();
+  @ViewChild(DateTimeComponent) dateTimeComponent;
 
   constructor(
     private formService: CreateFormService
@@ -63,8 +67,12 @@ export class DateTimeContainerComponent implements OnInit {
   }
 
   back(event) {
-      this.FORM_STATE = event;
-      this.nextStepEvent.emit(event);
+      this.dateTimeComponent.back();
+      // this.FORM_STATE = event;
+      // this.nextStepEvent.emit(event);
   }
 
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
+  }
 }

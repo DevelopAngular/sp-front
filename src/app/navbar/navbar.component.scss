@@ -1,6 +1,48 @@
 @import "../../sp-colors";
+/*Styles for IOS tabled*/
+.ios {
+    &-name,
+    &-heading.grow {
+      display: none;
+    }
 
-/* Ipad breakpoint */
+  &-teacherNav-mobile {
+    @extend .teacherNav-mobile;
+    display: flex;
+    &-wrapper {
+      @extend  .teacherNav-mobile-wrapper;
+      width: 450px !important;
+      position: relative;
+    }
+  }
+
+  &-user-info {
+    padding: 0;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+    width: 100%;
+  }
+
+  &-divider {
+    display: none;
+  }
+
+  &-nav-buttons-width {
+    width: inherit;
+  }
+
+  &-selected-tab-pointer {
+    top: -13px;
+    border-radius: 0 0 4px 4px;
+    width: 58px;
+    height: 6px;
+    transition: all 0.4s ease;
+    position: absolute;
+    background-color: $jade;
+  }
+}
+
 @media all and (max-width: 940px) {
   .name,
   .heading.grow {
