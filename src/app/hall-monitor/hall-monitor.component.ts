@@ -298,7 +298,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
 
   toggleSearchBar() {
     this.isSearchClicked = !this.isSearchClicked;
-    if (this.screenService.isIpadWidth) {
+    if (this.screenService.isDeviceLargeExtra) {
       this.isIpadSearchBar = !this.isIpadSearchBar;
     }
   }
