@@ -109,6 +109,13 @@
   }
 }
 
+@media all and ( max-width: 320px) {
+  ::ng-deep .consent-dialog-container {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
 .host {
   //background-color: #FBFEFF;
   //position: fixed;
@@ -225,7 +232,8 @@
   }
 }
 
-.user-info .name {
+.user-info .name,
+.assistant-name {
   margin: auto 0 auto auto;
   padding-right: 15px;
   white-space: nowrap;

@@ -117,7 +117,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   isAdminRoute: boolean;
 
-  isShrinked: boolean;
+  isAssistant: boolean;
 
   @HostListener('window:resize')
     checkDeviceWidth() {
@@ -126,7 +126,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
         if (this.islargeDeviceWidth) {
             this.inboxVisibility = false;
-
         }
 
         if (this.screenService.isDesktopWidth) {
@@ -186,6 +185,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.underlinePosition();
     this.hideButtons = this.router.url.includes('kioskMode');
     let urlSplit: string[] = location.pathname.split('/');
     this.tab = urlSplit[urlSplit.length - 1];
@@ -216,6 +216,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         this._zone.run(() => {
           this.user = user;
           this.isStaff = user.isTeacher();
+          this.isAssistant = user.isAssistant();
           this.showSwitchButton = [user.isAdmin(), user.isTeacher(), user.isStudent()].filter(val => !!val).length > 1;
         });
       });
@@ -297,10 +298,11 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   underlinePosition() {
+    this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainer);
     if (this.screenService.isDesktopWidth) {
       setTimeout( () => {
         this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainer);
-      });
+      }, 0);
     }
 
     if (this.screenService.isDeviceLargeExtra) {
@@ -309,7 +311,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   setCurrentUnderlinePos(refsArray: QueryList<ElementRef>, buttonsContainer: ElementRef) {
-    if (this.isStaff && buttonsContainer && this.tabRefs) {
+    if (this.isStaff && buttonsContainer && this.tabRefs ||
+      this.isAssistant && buttonsContainer && this.tabRefs) {
       setTimeout(() => {
         const tabRefsArray = refsArray.toArray();
         const selectedTabRef = this.buttons.findIndex((button) => button.route === this.tab);
@@ -491,7 +494,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     this.inboxVisibility = !this.inboxVisibility;
     this.storage.setItem('showInbox', this.inboxVisibility);
     this.dataService.updateInbox(this.inboxVisibility);
-    if(this.tab!=='passes'){
+    if(this.tab !== 'passes'){
       this.updateTab('passes');
     }
 
