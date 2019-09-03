@@ -332,6 +332,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {
         this._zone.run(() => {
+          console.log(user);
           this.user = user;
           this.isStaff = user.roles.includes('_profile_teacher') || user.roles.includes('_profile_admin');
           if (this.isStaff) {

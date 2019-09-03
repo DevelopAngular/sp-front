@@ -1,7 +1,8 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '@angular/core';
+import * as _ from  'lodash';
 import * as moment from 'moment';
 import {Moment} from 'moment';
-import {IosDateSingleton} from './ios-date.singleton';
+import {IosDateSingleton, SWIPE_BLOCKER} from './ios-date.singleton';
 
 @Component({
   selector: 'app-ios-calendar',
@@ -42,21 +43,33 @@ export class IosCalendarComponent implements OnInit {
   }
 
   getSelected(): moment.Moment {
+    // console.log(this._hour, this._half);
 
-    this._date.hour(this._hour);
-    this._date.minute(this._minute);
-    this._selected = this._date;;
-
-    return this._selected;
-  }
-
-  setHalf(value: 'AM' | 'PM') {
-    this._half = value;
     if (this._half === 'PM' && this._hour < 12) {
       this._hour += 12;
     } else if (this._half === 'AM' && this._hour >= 12) {
       this._hour -= 12;
     }
+
+    this._date.hour(this._hour);
+    this._date.minute(this._minute);
+    // console.log(this._date.valueOf());
+    if (this._date.valueOf() < this._minDate.valueOf()) {
+      // console.log(true);
+      SWIPE_BLOCKER
+        .next(true);
+    } else {
+      // console.log(false);
+      SWIPE_BLOCKER
+        .next(false);
+      // this._selected = this._date;
+    }
+    this._selected = _.cloneDeep( this._date);
+    return this._selected;
+  }
+
+  setHalf(value: 'AM' | 'PM') {
+    this._half = value;
     this.iosDate.setDate(this.getSelected());
     this.selectedEvent.emit([this.getSelected()]);
   }
