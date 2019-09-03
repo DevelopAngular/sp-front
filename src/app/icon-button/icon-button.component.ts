@@ -34,7 +34,6 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   get src() {
-    debugger;
     let lightFill;
 
     if (this.onDarkShade) {
