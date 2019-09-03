@@ -6,7 +6,7 @@
     width: 100% !important;
   }
 
-  img.ios-back-btn-bottom {
+  div.ios-back-btn-bottom {
     display: block;
     position: absolute;
     width: 28px;
@@ -17,11 +17,11 @@
   }
 
   @media all and (max-width: 940px) {
-    img.back-btn-top {
+    div.back-btn-top {
       display: none;
     }
 
-    img.back-btn-bottom {
+    div.back-btn-bottom {
       display: block;
       position: absolute;
       width: 28px;
@@ -33,7 +33,7 @@
   }
 
   @media all and (max-width: 335px) {
-    img.back-btn-bottom {
+    div.back-btn-bottom {
       bottom: -35px;
     }
   }

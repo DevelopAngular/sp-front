@@ -1,6 +1,6 @@
 <div class="icon-button-container"
-     [style.width]="size * 2 + 'px'"
-     [style.height]="size * 2 + 'px'"
+     [style.width]="hasShadow ? size * 2 + 'px' : 'unset'"
+     [style.height]="hasShadow ? size * 2 + 'px' : 'unset'"
      [style.background-color]="bgc"
      (mouseover)="hovered = true;"
      (mouseleave)="hovered = false;"

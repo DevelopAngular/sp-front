@@ -19,6 +19,8 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() pressed: boolean = false;
   @Input() switchColor: boolean = true;
   @Input() eventBubbling = false;
+  @Input() blueWhite: boolean;
+  @Input() hasShadow: boolean = true;
   @Output() clickEvent: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
 
   hovered: boolean = false;
@@ -32,10 +34,13 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   get src() {
+    debugger;
     let lightFill;
 
     if (this.onDarkShade) {
       lightFill = 'White';
+    } else if (this.blueWhite) {
+      lightFill = 'Blue-White';
     } else {
       if (this.pressed && this.switchColor) {
         lightFill = 'Jade';
@@ -92,7 +97,7 @@ export class IconButtonComponent implements OnInit, AfterViewInit, OnDestroy {
       rgb = '244, 244, 244, ';
 
     }
-    return this.sanitizer.bypassSecurityTrustStyle(`rgba(${rgb}${alphaChannel}`);
+    return this.sanitizer.bypassSecurityTrustStyle(`rgba(${rgb}${ this.hasShadow ? alphaChannel : 0 }`);
   }
 
   ngOnInit() {
