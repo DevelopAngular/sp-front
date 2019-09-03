@@ -63,6 +63,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
   @Output() sortMode = new EventEmitter<string>();
   @Output() reportFromPassCard = new EventEmitter();
+  @Output() currentPassesEmit = new EventEmitter();
 
   currentPasses$: Observable<PassLike[]>;
   currentPasses: PassLike[] = [];
@@ -135,6 +136,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
           )
           .subscribe((passes: any) => {
             this.currentPasses = passes;
+            this.currentPassesEmit.emit(passes);
           });
       }
         if (this.isActive) {

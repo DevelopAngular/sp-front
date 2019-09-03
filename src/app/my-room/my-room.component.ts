@@ -14,7 +14,7 @@ import { User } from '../models/User';
 import { DropdownComponent } from '../dropdown/dropdown.component';
 import { TimeService } from '../services/time.service';
 import { CalendarComponent } from '../admin/calendar/calendar.component';
-import {delay, filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {bufferCount, delay, filter, map, share, shareReplay, switchMap, takeUntil, tap} from 'rxjs/operators';
 import { DarkThemeSwitch } from '../dark-theme-switch';
 import { LocationsService } from '../services/locations.service';
 import { RepresentedUser } from '../navbar/navbar.component';
@@ -33,6 +33,7 @@ import { HttpService } from '../services/http-service';
 import * as moment from 'moment';
 import {ScrollPositionService} from '../scroll-position.service';
 import {DeviceDetection} from '../device-detection.helper';
+import {HallPass} from '../models/HallPass';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -186,6 +187,10 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   resetValue = new Subject();
 
+  currentPasses$ = new Subject();
+
+  currentPassesDates: Observable<moment.Moment[]>;
+
   constructor(
       private _zone: NgZone,
       private loadingService: LoadingService,
@@ -317,6 +322,17 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       });
     });
 
+    this.currentPassesDates = this.currentPasses$.pipe(
+      bufferCount(3),
+      map(([active, from, to]: [HallPass[], HallPass[], HallPass[]]) => {
+        return [
+          ...active.map(pass => moment(pass.start_time)),
+          ...from.map(pass => moment(pass.start_time)),
+          ...to.map(pass => moment(pass.start_time))
+        ];
+      })
+    );
+
     this.hasPasses = combineLatest(
       this.activePasses.length$,
       this.originPasses.length$,
@@ -331,7 +347,6 @@ export class MyRoomComponent implements OnInit, OnDestroy {
     ).pipe(
       filter(v => v),
       delay(250),
-      tap(console.log),
       tap((res) => this.searchPending$.next(!res))
     );
   }
@@ -349,7 +364,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       this.buttonDown = press;
   }
 
-  onHover(hover: boolean){
+  onHover(hover: boolean) {
       this.hovered = hover;
       if (!hover) {
           this.buttonDown = false;
@@ -372,7 +387,8 @@ export class MyRoomComponent implements OnInit, OnDestroy {
       backdropClass: 'invis-backdrop',
       data: {
         'trigger': target,
-        'previousSelectedDate': this.searchDate
+        'previousSelectedDate': this.searchDate,
+        'dotsDates': this.currentPassesDates
       }
     });
     DR.afterClosed().subscribe((_date) => {
@@ -398,7 +414,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   onSearch(search: string) {
     this.inputValue = search;
-    this.searchPending$.next(true)
+    this.searchPending$.next(true);
     this.searchQuery$.next(search);
   }
 

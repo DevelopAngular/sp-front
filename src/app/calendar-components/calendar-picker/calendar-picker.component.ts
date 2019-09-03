@@ -28,6 +28,7 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     @Input() showYear: boolean = true;
     @Input() range: boolean;
     @Input() rangeWeeks: boolean;
+    @Input() dotsDates: moment.Moment[];
 
     @Input() hoveredDates: moment.Moment[] = [];
 
@@ -80,6 +81,14 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
             this.sortedDates = _.sortBy(changes.selectedDates.currentValue, (m: CalendarDate) => m);
             this.generateCalendar();
         }
+    }
+
+    isDots(date: moment.Moment) {
+      if (this.dotsDates) {
+        return _.findIndex(this.dotsDates, (selectedDate) => {
+          return moment(date).isSame(selectedDate, 'day');
+        }) > -1;
+      }
     }
 
     onPress(press: boolean): void {
