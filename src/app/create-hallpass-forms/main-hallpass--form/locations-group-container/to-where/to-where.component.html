@@ -1,6 +1,10 @@
 <div style="opacity: 1" [ngClass]="{ 'to-wrapper-to-date': formState.forLater && formState.formMode.role === 1, 'to-wrapper': !formState.forLater || formState.formMode.role !== 1}">
   <div class="" [ngClass]="{'to-header': formState.previousState === states.from || formState.previousStep <= formState.step, 'to-header-back': formState.previousState === states.category || formState.previousStep === 4 }" [style.background-image]="'radial-gradient(circle at 98% 97%, #FFFFFF, #FFFFFF)'" #header>
-    <img *ngIf="!screenService.isDeviceLargeExtra" class="back-button back-button-grey" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
+
+    <div *ngIf="!screenService.isDeviceLargeExtra"  class="back-button back-button-grey">
+      <app-icon-button (clickEvent)="back()" [srcString]="'Back Button (Blue-White).svg '" [size]="28" [onDarkShade]="false" [blueWhite]="true" [hasShadow]="false"></app-icon-button>
+    </div>
+
     <div class="to-header-text">
       <img class="search-icon" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset">
       <div class="text ds-dialog-title">To where?</div>

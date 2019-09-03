@@ -173,20 +173,20 @@ export class ProfileCardDialogComponent implements OnInit {
   }
 
   goToSearch() {
-    this.dialogRef.close();
-    this.router.navigate(['admin/search'], {
-      queryParams: {
-        profileId: this.profile.id,
-        profileName: this.profile['Name'],
-        role: this.data.role
-      }
-    });
+    window.open(`admin/search?profileId=${this.profile.id}&profileName=${this.profile['Name']}&role=${this.data.role}`, '_blank');
+    // this.router.navigate(['admin/search'], {
+    //   queryParams: {
+    //     profileId: this.profile.id,
+    //     profileName: this.profile['Name'],
+    //     role: this.data.role
+    //   }
+    // });
   }
   goToPassConfig(location?: Location) {
     if (location) {
       window.open(`admin/passconfig?locationId=${location.id}`);
     } else {
-      this.router.navigate(['admin/passconfig']);
+      window.open('admin/passconfig');
     }
 
   }

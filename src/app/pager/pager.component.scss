@@ -81,10 +81,11 @@
 }
 
 .paginator-button {
-    width: 25px;
-    position: absolute;
-    align-items: center;
-    justify-content: center;
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  align-items: center;
+  justify-content: center;
   border-radius: 50%;
 
   display: flex;
@@ -103,6 +104,7 @@
       }
     }
 }
+
 .paginator-button:hover {
     background-color: rgba(255, 255, 255, .1);
     box-shadow: 0 0 0 8px rgba(255, 255, 255, .1);
