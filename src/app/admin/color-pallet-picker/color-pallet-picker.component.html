@@ -1,8 +1,11 @@
 <div class="color-wrapper">
   <div class="color-title" [ngStyle]="{'color': selectedId ? '#1F195E' : '#8e8e93'}">Color</div>
   <div class="colors">
+    <div class="loading-theme_blue-gray" *ngIf="showSpinner">
+      <mat-spinner [color]="'accent'" [diameter]="35"></mat-spinner>
+    </div>
     <div class="pick-color" *ngFor="let color of colors$ | async">
-      <app-color [color]="color" [selected]="selectedId === color.id" (selectedColor)="changeColor($event)"></app-color>
+        <app-color [color]="color" [selected]="selectedId === color.id" (selectedColor)="changeColor($event)"></app-color>
     </div>
   </div>
 </div>

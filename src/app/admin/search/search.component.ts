@@ -152,7 +152,7 @@ export class SearchComponent implements OnInit {
               tap((profile: User) => {
                 this.initialSearchStudentString = profile.display_name;
                 this.selectedStudents.push(profile);
-              this.search();
+                this.search();
             }));
           case '_profile_teacher':
 

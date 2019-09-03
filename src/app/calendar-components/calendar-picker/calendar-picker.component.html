@@ -67,15 +67,15 @@
             [style.width]="(width / 7) + 'px'"
             [style.height]="(width / 7 - 9) + 'px'"
             [ngClass]="{
-            selected: day.selected,
-            first_last_element_radius: rangeWeeks && day.selected,
+            'selected': day.selected,
+            'first_last_element_radius': rangeWeeks && day.selected,
             'is-next-month': isNextMonth(day.mDate),
-            rangeHovered: isRangeHovered(day.mDate) && !isSelected(day.mDate)
+            'rangeHovered': isRangeHovered(day.mDate) && !isSelected(day.mDate)
             }"
             (click)="switchMonth(day.mDate)"
           >
-            <span class="date-text"
-            >{{ day.mDate.date() }}</span>
+            <div class="date-text">{{ day.mDate.date() }}</div>
+            <div class="pass-dot" *ngIf="isDots(day.mDate)">.</div>
           </div>
 
           <div class="week-date"
@@ -95,7 +95,8 @@
                     hovered: hovered && !isSelected(day.mDate) && !isRangeHovered(day.mDate),
                     rangeHovered: isRangeHovered(day.mDate) && !isSelected(day.mDate)
                }">
-                <span class="date-text">{{ day.mDate.date() }}</span>
+                <div class="date-text">{{ day.mDate.date() }}</div>
+                <div class="pass-dot" *ngIf="isDots(day.mDate)">.</div>
           </div>
 
         </ng-container>
