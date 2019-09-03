@@ -36,6 +36,7 @@ export class AppInputComponent implements OnInit {
     @Output() over = new EventEmitter();
     @Output() leave = new EventEmitter();
     @Output() blurEvent = new EventEmitter();
+    @Output() focusEvent = new EventEmitter();
 
     @ViewChild('inp') input;
 
@@ -83,6 +84,7 @@ export class AppInputComponent implements OnInit {
 
       if (this.isFocus) {
         el.focus();
+        this.focusEvent.emit();
       } else {
         el.blur();
       }

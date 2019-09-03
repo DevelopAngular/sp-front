@@ -52,13 +52,43 @@
       <div class="text ds-empty-text-info">The hallway will never be the same</div>
     </div>
     <div class="active-passes pass-collection">
-      <app-pass-collection *ngIf="isStaff" [isActive]="true" [forStaff]="isStaff" [style.width]="'400px'" [passProvider]="activePasses" [title]="'Active Passes'" [icon]="'./assets/Walking (Navy).svg'" [columns]="3" (reportFromPassCard)="onReportFromPassCard($event)"></app-pass-collection>
+      <app-pass-collection
+        *ngIf="isStaff"
+        [isActive]="true"
+        [forStaff]="isStaff"
+        [style.width]="'400px'"
+        [passProvider]="activePasses"
+        [title]="'Active Passes'"
+        [icon]="'./assets/Walking (Navy).svg'"
+        [columns]="3"
+        (reportFromPassCard)="onReportFromPassCard($event)"
+        (currentPassesEmit)="dataService.currentPassesForCalendar$.next($event)"
+      ></app-pass-collection>
     </div>
     <div class="future-passes pass-collection">
-      <app-pass-collection [forFuture]="true" [forStaff]="isStaff" [style.width]="'400px'" [passProvider]="futurePasses" [title]="'Scheduled Passes'" [icon]="'./assets/Future (Navy).svg'" [columns]="3"></app-pass-collection>
+      <app-pass-collection
+        [forFuture]="true"
+        [forStaff]="isStaff"
+        [style.width]="'400px'"
+        [passProvider]="futurePasses"
+        [title]="'Scheduled Passes'"
+        [icon]="'./assets/Future (Navy).svg'"
+        [columns]="3"
+        (currentPassesEmit)="dataService.currentPassesForCalendar$.next($event)"
+      ></app-pass-collection>
     </div>
     <div class="past-passes pass-collection">
-      <app-pass-collection [maxHeight]="'100%'" [fromPast]="true" [forStaff]="isStaff" [style.width]="'400px'" [passProvider]="pastPasses" [title]="'Expired Passes'" [icon]="'./assets/Expired (Navy).svg'" [columns]="3"></app-pass-collection>
+      <app-pass-collection
+        [maxHeight]="'100%'"
+        [fromPast]="true"
+        [forStaff]="isStaff"
+        [style.width]="'400px'"
+        [passProvider]="pastPasses"
+        [title]="'Expired Passes'"
+        [icon]="'./assets/Expired (Navy).svg'"
+        [columns]="3"
+        (currentPassesEmit)="dataService.currentPassesForCalendar$.next($event)"
+      ></app-pass-collection>
     </div>
   </div>
   <div class="main-page-right" [@OpenOrCloseRequests]="(showInboxAnimated() | async) ? 'Opened' : 'Closed'">

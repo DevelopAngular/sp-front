@@ -102,7 +102,9 @@
             [passProvider]="activePasses"
             [title]="'Active Passes'"
             [icon]="'./assets/Walking (Navy).svg'"
-            [columns]="4">
+            [columns]="4"
+            (currentPassesEmit)="currentPasses$.next($event)"
+          >
           </app-pass-collection>
           <app-pass-collection
             [smoothlyUpdating]="true"
@@ -110,7 +112,9 @@
             [passProvider]="originPasses"
             [title]="'Passes from ' + (selectedLocation ? selectedLocation.title : 'All Rooms')"
             [icon]="'./assets/SP Arrow Reverse (Navy).svg'"
-            [columns]="4">
+            [columns]="4"
+            (currentPassesEmit)="currentPasses$.next($event)"
+          >
           </app-pass-collection>
           <app-pass-collection
             [smoothlyUpdating]="true"
@@ -118,7 +122,9 @@
             [passProvider]="destinationPasses"
             [title]="'Passes to ' + (selectedLocation ? selectedLocation.title : 'All Rooms')"
             [icon]="'./assets/SP Arrow (Navy).svg'"
-            [columns]="4">
+            [columns]="4"
+            (currentPassesEmit)="currentPasses$.next($event)"
+          >
           </app-pass-collection>
 
           <div *ngIf="!(hasPasses | async) && (passesLoaded | async)">

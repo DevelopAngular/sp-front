@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { HttpService } from '../../services/http-service';
-import { map, shareReplay } from 'rxjs/operators';
+import {finalize, map, shareReplay} from 'rxjs/operators';
 import {AdminService} from '../../services/admin.service';
 
 @Component({
@@ -10,8 +10,6 @@ import {AdminService} from '../../services/admin.service';
 })
 export class ColorPalletPickerComponent implements OnInit {
 
-  colors$;
-
   @Input() selectedColorProfile;
 
   @Output() selectedEvent: EventEmitter<any> = new EventEmitter();
@@ -19,16 +17,22 @@ export class ColorPalletPickerComponent implements OnInit {
   @ViewChild('col') pickColor;
 
   selectedId: number;
+  colors$;
+  showSpinner: boolean;
 
   constructor(private apiService: AdminService) { }
 
   ngOnInit() {
+      this.showSpinner = true;
       this.colors$ = this.apiService.getColors().pipe(
-          shareReplay(1),
           map((colors: any[]) => {
             // console.log(colors);
             return colors.filter(color => color.id !== 1 && color.id !== 6);
-      }));
+          }),
+      finalize(() => {
+        this.showSpinner = false;
+      })
+      );
       if (this.selectedColorProfile) {
           this.selectedId = this.selectedColorProfile.id;
       }

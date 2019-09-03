@@ -52,6 +52,11 @@ export class DataService {
   public sort$ = new BehaviorSubject<string>(null);
   inboxState;
 
+  currentUser = this.userService.userData.asObservable();
+
+  currentPassesForCalendar$ = new Subject();
+  private updateInvitations = new BehaviorSubject<void>(null);
+
   updateInbox(state: boolean) {
     this.inboxSource.next(state);
   }
@@ -70,9 +75,6 @@ export class DataService {
 
   updateMRDate(mrDate: Date) {
   }
-
-  currentUser = this.userService.userData.asObservable();
-  private updateInvitations = new BehaviorSubject<void>(null);
 
   constructor(
       private userService: UserService,

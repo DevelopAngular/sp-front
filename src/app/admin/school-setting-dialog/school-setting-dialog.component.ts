@@ -19,6 +19,7 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
   initialState: { display_card_room: boolean, pass_buffer_time: string | number };
   changeForm: boolean;
   showSpinner: boolean;
+  hideMin: boolean;
 
   changeSettings$ = new Subject();
   destroy$ = new Subject();
