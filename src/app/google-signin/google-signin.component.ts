@@ -4,6 +4,7 @@ import { GoogleLoginService } from '../services/google-login.service';
 import {of} from 'rxjs';
 import {finalize, tap} from 'rxjs/operators';
 import {HttpService} from '../services/http-service';
+import {Meta, Title} from '@angular/platform-browser';
 
 declare const window;
 
@@ -30,6 +31,8 @@ export class GoogleSigninComponent implements OnInit {
     private httpService: HttpService,
     private _ngZone: NgZone,
     private loginService: GoogleLoginService,
+    private titleService: Title,
+    private metaService: Meta,
   ) {
     this.loginService.isAuthLoaded().subscribe(isLoaded => {
       this._ngZone.run(() => {
@@ -63,6 +66,8 @@ export class GoogleSigninComponent implements OnInit {
   demoLogin() {
     this.showSpinner = true;
     if (this.demoUsername && this.demoPassword) {
+      this.titleService.setTitle('SmartPass');
+      this.metaService.removeTag('name = "description"');
       this.loggedWith = LoginMethod.LocalStrategy;
       this.loginService.showLoginError$.next(false);
       window.waitForAppLoaded();
