@@ -82,7 +82,7 @@ export class ActivePassProvider implements PassLikeProvider {
         }
       ),
       withLatestFrom(this.timeService.now$), map(([passes, now]) => {
-        console.log('PASSES ===>>>> ', passes);
+        // console.log('PASSES ===>>>> ', passes);
         return passes.filter(pass => new Date(pass.start_time).getTime() <= now.getTime());
       })
     );
@@ -354,6 +354,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(this.loadingService.watchFirst)
       .subscribe(user => {
         this._zone.run(() => {
+          console.log(user);
           this.user = user;
           this.isStaff =
             user.roles.includes('_profile_teacher') ||

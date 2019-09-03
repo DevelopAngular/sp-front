@@ -46,13 +46,17 @@
 
     .date-content {
       width: 100%;
+      background-color: #f4f4ff;
     }
   }
 
   div.decline-content {
-    padding: 0 !important;
+    background: white;
+    height: 50px;
+    padding: 0px 15px !important;
     align-items: center;
     justify-content: center;
+    font-weight: normal;
   }
 
   div.time-picker {
@@ -74,9 +78,18 @@
   div.info-text-1 {
     display: none;
   }
+  div.info-text-1_small-screen {
+    display: block;
+    box-sizing: border-box;
+    padding: 5px 10px;
+    font-size: 13px;
+  }
 
   img.back-button {
     display: none;
+  }
+  div.toggle-title {
+    font-weight: normal;
   }
 }
 
@@ -101,6 +114,7 @@
 
 .date-content, .date-content-mock {
   height: 87%;
+  background-color: #FBFEFF;
   width: 100%;
 }
 
@@ -131,6 +145,9 @@
 .info-text-1 {
   color: darkgray;
   font-size: 14px;
+}
+.info-text-1_small-screen {
+  display: none;
 }
 
 
