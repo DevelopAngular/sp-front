@@ -11,9 +11,7 @@ import {NotificationService} from '../services/notification-service';
 import {DeviceDetection} from '../device-detection.helper';
 import {UserService} from '../services/user.service';
 
-
 declare const window;
-
 
 @Component({
   selector: 'app-intro',
@@ -355,6 +353,7 @@ export class IntroComponent implements OnInit, AfterViewInit {
   allowNotifications() {
     this.notifService.initNotifications(true)
       .then((hasPerm) => {
+        localStorage.setItem('fcm_sw_registered', hasPerm.toString());
         console.log(`Has permission to show notifications: ${hasPerm}`);
           this.allowLaterClicked = true;
           this.slide('forward');

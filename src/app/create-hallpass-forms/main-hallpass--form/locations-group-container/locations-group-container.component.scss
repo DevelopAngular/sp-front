@@ -1,5 +1,22 @@
 :host {
-  @media all  and (max-width: 1024px) {
+  div.ng-trigger-NextStep {
+    right: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100% !important;
+  }
+
+  img.ios-back-btn-bottom {
+    display: block;
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -45px;
+  }
+
+  @media all and (max-width: 940px) {
     img.back-btn-top {
       display: none;
     }
@@ -11,18 +28,6 @@
       height: 28px;
       left: 50%;
       transform: translateX(-50%);
-    }
-
-    div.ng-trigger-NextStep {
-      right: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100% !important;
-    }
-  }
-
-  @media all and (max-width: 1024px) {
-    img.back-btn-bottom {
       bottom: -45px;
     }
   }
@@ -32,7 +37,6 @@
       bottom: -35px;
     }
   }
-
 
   .locations-group-wrapper {
     //background-color: #fff;

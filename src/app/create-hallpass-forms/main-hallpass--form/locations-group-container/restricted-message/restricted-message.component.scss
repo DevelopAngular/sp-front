@@ -1,4 +1,8 @@
-@media screen and (max-width: 1024px) {
+.ios-back-btn-top {
+  display: none;
+}
+
+@media screen and (max-width: 940px) {
   div.rest-mes-wrapper {
     overflow: initial;
   }

@@ -8,6 +8,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 
 import * as _ from 'lodash';
 import {User} from '../../../../models/User';
+import {DeviceDetection} from '../../../../device-detection.helper';
 
 @Component({
   selector: 'app-restricted-target',
@@ -184,4 +185,7 @@ export class RestrictedTargetComponent implements OnInit {
     this.headerTransition['rest-tar-header_animation-back'] = true;
   }
 
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
+  }
 }

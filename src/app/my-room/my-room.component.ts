@@ -32,6 +32,7 @@ import { HttpService } from '../services/http-service';
 
 import * as moment from 'moment';
 import {ScrollPositionService} from '../scroll-position.service';
+import {DeviceDetection} from '../device-detection.helper';
 
 /**
  * RoomPassProvider abstracts much of the common code for the PassLikeProviders used by the MyRoomComponent.
@@ -536,5 +537,9 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   get calendarIconState() {
     return this.isSearchBarClicked ? 'calendarIconLeft' : 'calendarIconRight';
+  }
+
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
   }
 }

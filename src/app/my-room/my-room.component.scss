@@ -1,4 +1,77 @@
-@media all and (max-width: 1024px) {
+.ios {
+  &-search {
+    display: none;
+    margin-left: auto;
+    margin-right: 10px;
+  }
+
+  &-calendar-wrapper {
+    display: none;
+  }
+
+  &-date-display {
+    display: none;
+  }
+
+  &-date-display-mobile {
+    display: block;
+  }
+
+  &-my-room-header {
+    @extend .my-room-header;
+    flex-direction: column !important;
+    padding: 0 !important;
+  }
+
+  &-my-room-options-mobile {
+    &-wrapper {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 90px;
+    position: relative;
+  }
+
+  &-search-wrapper {
+    width: 46%;
+  }
+
+  &-calendar-card {
+    display: block;
+  }
+
+  &-my-room-wrapper {
+    @extend .my-room-wrapper;
+    justify-content: unset;
+  }
+
+  &-my-room-left {
+    width: initial;
+    margin: 0;
+    height: calc(100vh - 78px);
+  }
+
+  @media all and (max-width: 1024px) and (min-width: 768px) {
+    &-my-room-wrapper {
+      width: 100% !important;
+      margin: auto;
+      flex-direction: column;
+    }
+
+    &-my-room-body-collections {
+      display: flex;
+      flex-direction: column;
+      width: 52%;
+    }
+  }
+}
+
+@media all and (max-width: 940px) {
   ::ng-deep div.options-dialog {
     height: 341px;
   }
@@ -32,6 +105,7 @@
       top: 0;
       z-index: 1;
     }
+
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -83,10 +157,9 @@
   }
 }
 
-@media all and (max-width: 1024px) and (min-width: 768px ) {
+@media all and (max-width: 940px) and (min-width: 768px) {
   ::ng-deep div.options-dialog {
     width: 100%;
-    max-width: 375px !important;
     margin-bottom: 69px !important;
   }
 
@@ -107,7 +180,7 @@
   flex: 1 1 auto;
 }
 
-.my-room-wrapper{
+.my-room-wrapper {
   display: flex;
   justify-content: center;
   //height: 100vh;
@@ -115,7 +188,7 @@
   overflow: auto;
 }
 
-.my-room-header{
+.my-room-header {
   display: flex;
   flex-direction: row;
   margin-bottom: 60px;
@@ -123,7 +196,7 @@
   padding-top: 40px;
 }
 
-.my-room-body{
+.my-room-body {
   display: flex;
   justify-content: center;
   margin-bottom: 50px;
@@ -135,7 +208,7 @@
   width: 100%;
 }
 
-.my-room-right{
+.my-room-right {
   margin-left: 50px;
 }
 
@@ -175,7 +248,7 @@ input {
   height: 40px;
 }
 
-.calendar-wrapper{
+.calendar-wrapper {
   width: 45px;
   height: 45px;
   border-radius: 23px;
@@ -184,13 +257,14 @@ input {
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  &-right{
+
+  &-right {
     margin-left: 40px;
   }
 }
 
 .search-icon,
-.calendar-icon{
+.calendar-icon {
   width: 30px;
   height: 30px;
 }
@@ -199,14 +273,14 @@ input {
   position: absolute;
 }
 
-.date-display{
+.date-display {
   color: #1F195E;
   font-size: 14pt;
   font-weight: bold;
   text-align: center;
 }
 
-.selected-teacher{
+.selected-teacher {
   color: #1F195E;
   font-size: 29px;
   font-weight: bold;
@@ -222,7 +296,7 @@ input {
   margin-left: 13px
 }
 
-.drop-arrow{
+.drop-arrow {
   margin-left: 3px;
   margin-top: 4px;
   width: 10px;
@@ -272,6 +346,7 @@ input {
   display: flex;
   justify-content: center;
   align-items: center;
+
   &-calendar {
     position: absolute;
     right: 0;
@@ -285,11 +360,13 @@ input {
 .calendar-card {
   &-wrapper {
     margin-bottom: 40px;
+
     &-right {
       margin-left: 40px;
       margin-bottom: 0;
     }
   }
+
   max-width: 335px;
   margin: auto;
   border-radius: 14px;
@@ -340,6 +417,7 @@ input {
     position: relative;
     z-index: 99;
   }
+
   color: #007cff;
   border-bottom: 1px solid transparent;
 }
@@ -355,8 +433,10 @@ input {
 
 ::ng-deep .options-dialog {
   width: 100%;
+  max-width: 375px !important;
   animation: menu-appearance .2s ease;
   transition: none;
+
   .mat-dialog-container {
     max-height: 341px;
     background-color: transparent;
@@ -365,6 +445,7 @@ input {
     overflow-y: scroll;
     scrollbar-width: none;
     -ms-overflow-style: none;
+
     &::-webkit-scrollbar {
       width: 0;
       height: 0;
@@ -388,6 +469,7 @@ input {
   font-size: 15px;
   font-weight: bold;
   cursor: pointer;
+
   .kiosk-chevron {
     position: absolute;
     right: 20px;
@@ -398,10 +480,12 @@ input {
   display: flex;
   flex-direction: column;
   align-items: center;
+
   .current-pass {
     //margin-top: 20px;
   }
-  .pass-buttons{
+
+  .pass-buttons {
     display: flex;
     flex-direction: row;
     justify-content: space-between;

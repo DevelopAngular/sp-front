@@ -1,5 +1,29 @@
 @import '../../sp-colors';
 
+.ios {
+  &-notif-wrapper {
+    @extend .notif-wrapper;
+    width: 335px !important;
+  }
+
+  &-back-button {
+    display: none;
+  }
+
+  &-back-button-wrapper {
+    display: block;
+    margin-top: 20px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &-back-button-bottom {
+    width: 28px;
+    height: 28px;
+  }
+}
+
 @media all and (max-width: 320px) {
   div.notif-wrapper {
     width: 256px !important;
@@ -10,7 +34,7 @@
   }
 }
 
-@media all and (max-width: 1024px) {
+@media all and (max-width: 940px) {
   div.notif-wrapper {
     width: 335px;
   }

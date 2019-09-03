@@ -5,6 +5,7 @@ import { Navigation } from '../../main-hall-pass-form.component';
 import { CreateFormService } from '../../../create-form.service';
 import { ColorProfile } from '../../../../models/ColorProfile';
 import * as moment from 'moment';
+import {DeviceDetection} from '../../../../device-detection.helper';
 
 @Component({
   selector: 'app-date-time',
@@ -83,7 +84,6 @@ export class DateTimeComponent implements OnInit {
 
     this.formService.setFrameMotionDirection('back');
 
-
     setTimeout(() => {
       if (this.isStaff) {
         this.formState.state = 1;
@@ -94,10 +94,9 @@ export class DateTimeComponent implements OnInit {
       console.log('AaA ===>>>', event);
       this.backButton.emit(this.formState);
     }, 100);
-
-
-
-
   }
 
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
+  }
 }

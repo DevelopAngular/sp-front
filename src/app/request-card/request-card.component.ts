@@ -22,6 +22,7 @@ import * as moment from 'moment';
 import * as _ from 'lodash';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
+import {DeviceDetection} from '../device-detection.helper';
 
 @Component({
   selector: 'app-request-card',
@@ -525,5 +526,9 @@ export class RequestCardComponent implements OnInit {
   receiveOption(action) {
     this.chooseAction(action);
     this.dialogRef.close();
+  }
+
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
   }
 }

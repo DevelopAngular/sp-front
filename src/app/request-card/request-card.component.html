@@ -59,7 +59,7 @@
             </div>
             <div class="page-2">
               <div class="page-2-wrapper">
-                <div class="message" [style.height]="(forInput?'70px':'155px')">
+                <div [ngClass]="isIOSTablet ? 'ios-margin-left' : ''" class="message" [style.height]="(forInput?'70px':'155px')">
                   <span [style.font-weight]="'bold'">{{ (forStaff?'Message from ' +studentName +':':'Your message:') }}</span><br>
                   {{ (request.attachment_message===''?'No message':request.attachment_message) }}
                   <div *ngIf="request.status==='declined'">
@@ -83,7 +83,7 @@
 
             <div class="page-6">
               <div class="page-2-wrapper">
-                <div class="message" [style.height]="(forInput?'70px':'155px')">
+                <div [ngClass]="isIOSTablet ? 'ios-margin-left' : ''" class="message" [style.height]="(forInput?'70px':'155px')">
                   <span [style.font-weight]="'bold'">{{(forStaff?'Message from ' +studentName +':':'Your message:')}}</span><br>
                   {{ (request.attachment_message===''?'No message':request.attachment_message) }}
                   <div *ngIf="request.status==='declined'">
@@ -147,7 +147,7 @@
             </div>
             <div class="page-2">
               <div class="page-2-wrapper">
-                <div class="message" [style.height]="(forInput?'70px':'164px')">
+                <div [ngClass]="isIOSTablet ? 'ios-margin-left' : ''"  class="message" [style.height]="(forInput?'70px':'164px')">
                   <span [style.font-weight]="'bold'">{{ (forStaff?'Message from ' +studentName +':':'Your message:') }}</span><br>
                   {{ (request.attachment_message===''?'No message':request.attachment_message) }}
                   <div *ngIf="request.status==='declined'">
@@ -171,7 +171,7 @@
 
             <div class="page-6">
               <div class="page-2-wrapper">
-                <div class="message" [style.height]="(forInput?'70px':'164px')">
+                <div [ngClass]="isIOSTablet ? 'ios-margin-left' : ''"  class="message" [style.height]="(forInput?'70px':'164px')">
                   <span [style.font-weight]="'bold'">{{(forStaff?'Message from ' +studentName +':':'Your message:')}}</span><br>
                   {{ (request.attachment_message===''?'No message':request.attachment_message) }}
                   <div *ngIf="request.status==='declined'">

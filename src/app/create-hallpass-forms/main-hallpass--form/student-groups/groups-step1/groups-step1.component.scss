@@ -1,8 +1,88 @@
 @import "../../../../../sp-colors";
 
 :host {
+  .ios {
+    &-step-1-container {
+      @extend .step-1-container;
+      min-height: 500px !important;
+    }
 
-  @media all and (max-width: 1024px) {
+    &-back-btn-top {
+      display: none;
+    }
+
+    &-back-btn-bottom {
+      display: block;
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: -45px;
+    }
+
+    &-step-1-container div.content-left {
+      border: none;
+      order: 1;
+    }
+
+    &-step-1-container div.content {
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    &-step-1-container div.content-left_wrapper {
+      padding: 0;
+      overflow: visible;
+      width: 100%;
+      margin: auto;
+    }
+
+    &-step-1-container div.content-right {
+      overflow: visible;
+      padding: 0;
+      flex: 0;
+    }
+
+    &-step-1-container div.content-left_groups {
+      margin: 0;
+    }
+
+    &-step-1-container div.content-right_next {
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 5px;
+      right: inherit;
+    }
+
+    &-step-1-container div.button-shadow.next-btn-desktop {
+      display: none;
+    }
+
+    &-step-1-container div.button-shadow.next-btn-mobile {
+      display: block;
+      position: absolute;
+      bottom: 21px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+
+    &-step-1-container div.incomplete {
+      display: none;
+    }
+
+    &-step-1-container div.new-student-group-btn {
+      display: none;
+    }
+
+    &-step-1-container div.edit-group-btn {
+      display: none;
+    }
+  }
+
+  @media all and (max-width: 940px) {
     div.step-1-container {
       min-height: 500px;
     }
@@ -81,7 +161,7 @@
     }
   }
 
-  @media all and (min-width: 360px) and (max-width: 1024px) {
+  @media all and (min-width: 360px) and (max-width: 940px) {
     img.back-btn-bottom {
       bottom: -45px;
     }
@@ -107,6 +187,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+
     .header {
       box-sizing: border-box;
       padding: 0 20px;
@@ -121,10 +202,12 @@
       z-index: 10;
       border-top-left-radius: 15px;
       border-top-right-radius: 15px;
+
       &_title {
         display: flex;
         align-items: center;
       }
+
       &_back-button {
         width: 28px;
         height: 28px;
@@ -136,26 +219,31 @@
         font-weight: bold;
         color: $secondary-color;
         cursor: pointer;
+
         &-icon {
           width: 28px;
           height: 28px;
         }
       }
+
       &_icon {
         width: 21px;
         height: 21px;
       }
+
       &_text {
         padding-left: 12px;
         padding-bottom: 3px;
       }
     }
+
     .content {
       width: 100%;
       height: 330px;
       flex: 1 1 auto;
       display: flex;
       position: relative;
+
       &-left {
         &_wrapper {
           height: 100%;
@@ -171,7 +259,9 @@
           width: 220px;
           overflow: hidden;
         }
+
         border-right: 2px solid rgba(0, 0, 0, .1);
+
         &_groups {
           width: 100%;
           box-sizing: border-box;
@@ -181,14 +271,17 @@
           position: relative;
           display: flex;
           flex-direction: column;
+
           .group {
             height: 36px;
             color: #767676;
             transition: background-color .2s ease;
+
             &:hover {
               background-color: #F1F1F1;
               color: $primary-color;
             }
+
             &_selected {
               background-color: #dce2e7;
               color: $primary-color;
@@ -202,11 +295,13 @@
             justify-content: space-between;
             cursor: pointer;
           }
+
           .group-icon {
             user-select: none;
             width: 15px;
             height: 15px;
           }
+
           .shadow-hint-container {
             width: 96%;
             height: 30px;
@@ -215,6 +310,7 @@
             bottom: 0;
             overflow-x: hidden;
             overflow-y: visible;
+
             .shadow-hint {
               position: absolute;
               bottom: 0;
@@ -222,14 +318,17 @@
               width: 100%;
             }
           }
+
           .goups-container {
             padding: 0px 0px 25px 0px;
             overflow: auto;
             flex: 1 1 auto;
+
             .list-of-groups, .content-left_placeholder {
-                opacity: 0;
-                animation: appearing .5s ease .1s forwards;
+              opacity: 0;
+              animation: appearing .5s ease .1s forwards;
             }
+
             @keyframes appearing {
               0% {
                 opacity: 0;
@@ -240,6 +339,7 @@
             }
           }
         }
+
         &_create-group {
           .create-button {
             display: flex;
@@ -247,6 +347,7 @@
 
             &_title {
             }
+
             &_back-button {
               width: 30px;
               height: 30px;
@@ -259,22 +360,26 @@
               color: $secondary-color;
               cursor: pointer;
             }
+
             &_subtitle {
               color: $secondary-color;
               font-size: 11px;
             }
           }
         }
+
         &_placeholder {
           color: $secondary-color;
           font-size: 1.1em;
           text-align: center;
+
           .no-groups-dummy-image {
             img {
               width: 130px;
               margin: 10px auto;
             }
           }
+
           .no-groups-dummy-text {
             margin-top: 5px;
             font-size: 18px;
@@ -282,33 +387,40 @@
           }
         }
       }
+
       &-right {
         height: 100%;
         overflow-y: auto;
         flex: 1 1 auto;
         box-sizing: border-box;
         padding: 20px 0px;
+
         &_sudent-search {
           display: flex;
           flex-direction: column;
           align-items: center;
+
           .search-wrapper {
             width: 100%;
             display: flex;
             justify-content: center;
             margin: 5px 0px;
           }
+
           .student-list {
             width: 250px;
+
             &_header {
               margin: 15px 0 5px 0;
               text-align: center;
               font-weight: bold;
             }
+
             &_scrollable {
               max-height: 190px;
               overflow: auto;
             }
+
             &_item {
               border-top: 1px solid #D8D8D8;
               display: flex;
@@ -318,12 +430,14 @@
               color: #555558;
               font-size: 14px;
               cursor: pointer;
+
               img {
                 cursor: pointer;
               }
             }
           }
         }
+
         &_next {
           position: absolute;
           z-index: 1;
@@ -331,6 +445,7 @@
           right: 20px;
           display: flex;
           justify-content: flex-end;
+
           .button-shadow {
             box-shadow: 0 0 15px 8px rgba(255, 255, 255, 1);
             border-radius: 12px;
@@ -359,7 +474,7 @@
 .student-group-name {
   text-align: center;
   padding: 8px 0;
-  border-bottom: 1.5px solid rgba(0,0,0,.1);
+  border-bottom: 1.5px solid rgba(0, 0, 0, .1);
 }
 
 .incomplete {

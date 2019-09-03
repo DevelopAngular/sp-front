@@ -58,16 +58,18 @@
   }
 }
 
+@media all and (max-width: 940px) {
+  div.current-pass-card {
+    max-width: 335px;
+    margin: 0 auto;
+  }
+}
+
 @media all and (max-width: 1024px) {
   .pass-collection  {
     &:last-child {
       padding-bottom: 78px;
     }
-  }
-
-  div.current-pass-card {
-    max-width: 335px;
-    margin: 0 auto;
   }
 
   div.passes-wrapper {

@@ -11,6 +11,7 @@ import {MessageBoxViewRestrictionLg} from '../../../../models/message-box-view-r
 import {MessageBoxViewRestrictionMd} from '../../../../models/message-box-view-restrictions/MessageBoxViewRestrictionMd';
 import {ScreenService} from '../../../../services/screen.service';
 import * as _ from 'lodash';
+import {DeviceDetection} from '../../../../device-detection.helper';
 
 @Component({
   selector: 'app-restricted-message',
@@ -180,5 +181,9 @@ export class RestrictedMessageComponent implements OnInit {
     }
 
     return new MessageBoxViewRestrictionLg();
+  }
+
+  get isIOSTablet() {
+    return DeviceDetection.isIOSTablet();
   }
 }

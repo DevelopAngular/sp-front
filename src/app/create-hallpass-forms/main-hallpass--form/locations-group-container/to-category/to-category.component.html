@@ -1,6 +1,6 @@
 <div class="category-wrapper">
   <div [ngClass]="headerTransition" [style.background-image]="headerGradient" #header>
-    <img class="back-button back-button-whitee back-btn-top" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" (click)="back()">
+    <img [ngClass]=" isIOSTablet ? 'ios-back-btn-top' : 'back-btn-top'" class="back-button back-button-whitee" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" (click)="back()">
     <div class="category-header-text">
       <img class="search-icon" [src]="pinnable.icon | resolveAsset">
       <div class="text ds-dialog-title-white">{{pinnable.category}}</div>
@@ -22,7 +22,6 @@
         [placeholder]="'Search ' + pinnable.category"
         [dummyString]="'No rooms found'"
         >
-
       </app-location-table>
     </div>
     <!--<div class="shadow" [style.bottom]="date ? '65px' : '43px'" *ngIf="shadow"></div>-->

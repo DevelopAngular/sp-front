@@ -1,10 +1,44 @@
-@media all and (max-width: 1024px ) {
-   .search-img,
-   .report-img {
-     width: 30px;
-     height: 30px;
-   }
+.ios {
+  &-options-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 51px;
+    width: 51px;
+  }
 
+  &-hall-monitor-wrapper {
+    max-width: 100%;
+    overflow: auto;
+  }
+
+  &-hall-monitor-top {
+    @extend .hall-monitor-top;
+    justify-content: space-between !important;
+    margin-bottom: 15px !important;
+    height: 90px;
+    padding: 0 !important;
+  }
+
+  &-hall-monitor-bottom {
+    padding-top: 25px;
+    width: 68%;
+    margin: auto;
+  }
+
+  &-hall-monitor-heading {
+    display: flex;
+    justify-content: center;
+    color: #1F195E;
+    margin-top: -15px;
+  }
+
+  &-back-button-bottom {
+    display: block !important;
+  }
+}
+
+@media all and (max-width: 940px) {
   .options-wrapper {
     display: flex;
     justify-content: center;
@@ -13,17 +47,14 @@
     width: 51px;
   }
 
-  div.hall-monitor-wrapper {
-    max-width: 100%;
-  }
-
-  div.hall-monitor-top{
+  div.hall-monitor-top {
     justify-content: space-between;
     margin-bottom: 15px;
     height: 90px;
+    padding: 0;
   }
 
-  div.hall-monitor-wrapper{
+  div.hall-monitor-wrapper {
     max-width: 100%;
     overflow: auto;
   }
@@ -34,19 +65,8 @@
     margin: auto;
   }
 
-  h1.hall-monitor-heading {
-    display: flex;
-    justify-content: center;
-    color: #1F195E;
-    margin-top: -15px;
-  }
-
   img.back-button-bottom {
     display: block;
-  }
-
-  div.hall-monitor-top{
-      padding: 0;
   }
 
   ::ng-deep .report-dialog {
@@ -59,9 +79,9 @@
   }
 }
 
-@media not all and (min-resolution:.001dpcm) {
+@media not all and (min-resolution: .001dpcm) {
   @supports (-webkit-appearance:none) {
-    @media all and (max-width: 1024px ) {
+    @media all and (max-width: 940px) {
       div.sort-btn {
         position: fixed;
       }
@@ -77,7 +97,7 @@
   }
 }
 
-@media all and (max-width: 768px ) {
+@media all and (max-width: 768px) {
   div.hall-monitor-bottom {
     padding-top: 25px;
     width: 100%;
@@ -102,13 +122,13 @@
     align-items: center;
   }
 
-  .hall-monitor-wrapper{
+  .hall-monitor-wrapper {
     height: unset;
   }
 
 }
 
-@media all and (max-width: 1024px) and (min-width: 768px ) {
+@media all and (max-width: 940px) and (min-width: 768px) {
   div.student-search {
     width: 379px;
     margin-right: 10px;
@@ -161,79 +181,79 @@
   position: relative
 }
 
-.hall-monitor-wrapper{
-    position: relative;
-    //height: 100%;
+.hall-monitor-wrapper {
+  position: relative;
+  //height: 100%;
 }
 
-.hall-monitor-top{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 60px;
-    padding-top: 40px;
+.hall-monitor-top {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 60px;
+  padding-top: 40px;
 }
 
-.hall-monitor-bottom{
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    justify-content: center;
-    position: relative;
-    max-width: 655px;
-    margin: auto;
+.hall-monitor-bottom {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: center;
+  position: relative;
+  max-width: 532px;
+  margin: auto;
 }
 
 .footer-message {
-    position: absolute;
-    bottom: 60px;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 320px;
-    height: 62px;
-    background-color: white;
-    border-radius: 15px;
-    box-shadow: 0 1px 16px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  bottom: 60px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 320px;
+  height: 62px;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 1px 16px rgba(0, 0, 0, 0.2);
 
-    .successfully-message {
+  .successfully-message {
 
-    }
+  }
 }
 
 .input {
-    margin-right: 40px;
-    width: 300px;
-    min-height: 40px;
-    border-radius: 20px;
-    box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
-    font-size: 16px;
-    padding-left: 15px;
+  margin-right: 40px;
+  width: 300px;
+  min-height: 40px;
+  border-radius: 20px;
+  box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+  padding-left: 15px;
 }
 
 input {
-    border: 0px;
-    padding: 0 0 0 10px;
-    height: 40px;
+  border: 0px;
+  padding: 0 0 0 10px;
+  height: 40px;
 }
 
 .big-text {
-    font-size: 16pt;
+  font-size: 16pt;
 }
 
 .empty-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .empty-svg {
-    margin: 20px 0;
-    width: 250px;
+  margin: 20px 0;
+  width: 250px;
 }
 
 .no-content-info {
@@ -262,15 +282,16 @@ input {
 }
 
 .sort-btn {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 90px;
-    z-index: 1;
-    transition: .1s ease-in-out;
-    &:active {
-      bottom: 80px;
-    }
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 90px;
+  z-index: 1;
+  transition: .1s ease-in-out;
+
+  &:active {
+    bottom: 80px;
+  }
 
   &-label {
     position: absolute;
@@ -296,6 +317,7 @@ input {
   width: 100%;
   animation: menu-appearance .2s ease;
   transition: none;
+
   .mat-dialog-container {
     height: 341px;
     overflow: hidden;
@@ -306,9 +328,10 @@ input {
 }
 
 ::ng-deep .sort-dialog-close {
-    animation: menu-close 1s ease;
+  animation: menu-close 1s ease;
 }
 
+.ios-back-button-bottom,
 .back-button-bottom {
   display: none;
   position: absolute;
@@ -323,4 +346,9 @@ input {
 ::ng-deep .report-dialog {
   height: 500px;
   width: 425px;
+}
+
+::ng-deep .ios-report-dialog {
+  height: 500px;
+  width: 335px !important;
 }

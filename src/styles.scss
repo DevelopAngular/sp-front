@@ -383,7 +383,6 @@ body {
   div#hubspot-messages-iframe-container  {
     display: none !important;
   }
-
 }
 
 //// queries for safari
@@ -395,6 +394,7 @@ body {
         max-height: 100vh;
         overflow: hidden;
       }
+
       body {
         //height: 100%;
       }
