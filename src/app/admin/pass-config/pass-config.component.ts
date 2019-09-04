@@ -214,7 +214,9 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   // }
 
   setNewArrangedOrder(newOrder) {
-    this.arrangedOrderForUpdating = newOrder.map(pin => pin.id);
+    if (newOrder) {
+      this.arrangedOrderForUpdating = newOrder.map(pin => pin.id);
+    }
     // console.log(this.arrangedOrderForUpdating);
   }
 
