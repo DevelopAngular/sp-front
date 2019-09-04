@@ -15,6 +15,10 @@ export class HallPassesService {
         return this.http.get('v1/hall_passes?active=true');
     }
 
+    getAggregatedPasses() {
+      return this.http.get('v1/hall_passes/aggregated');
+    }
+
     getActivePassesKioskMode(locId) {
       return this.http.get(`v1/hall_passes?active=true&location=${locId}`);
     }
