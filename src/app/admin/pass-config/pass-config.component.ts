@@ -157,7 +157,9 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     this.httpService.globalReload$.pipe(filter(() => navigator.onLine)).subscribe(() => {
       this.hallPassService.getPinnablesRequest();
       this.pinnables$ = this.hallPassService.pinnables$;
-      this.pinnables$.subscribe(res => this.pinnables = res);
+      this.pinnables$.pipe(filter((res: any[]) => !!res.length)).subscribe(res => {
+        this.pinnables = res;
+      });
 
       const forceSelectPinnable: Subscription = this.activatedRoute.queryParams.pipe(
         filter((qp) => Object.keys(qp).length > 0 && Object.keys(qp).length === Object.values(qp).length),
