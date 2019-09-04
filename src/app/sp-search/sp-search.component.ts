@@ -110,6 +110,7 @@ export class SPSearchComponent implements OnInit {
   @Input() showOptions: boolean = true;
   @Input() selectedOptions: Array<User | School | GSuiteSelector> = [];
   @Input() selectedOrgUnits: any[] = [];
+  @Input() height: string = '40px';
   @Input() width: string = '280px';
   @Input() list: boolean = true;
   @Input() listMaxHeight: string = '210px';

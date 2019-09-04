@@ -96,7 +96,7 @@ export class DateTimeComponent implements OnInit {
     }, 100);
   }
 
-  get isIOSTablet() {
-    return DeviceDetection.isIOSTablet();
+  get isPortableDevice() {
+    return DeviceDetection.isIOSTablet() || DeviceDetection.isIOSMobile() || DeviceDetection.isAndroid();
   }
 }

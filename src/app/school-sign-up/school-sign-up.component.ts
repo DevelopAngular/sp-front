@@ -14,6 +14,7 @@ import {StorageService} from '../services/storage.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DomSanitizer} from '@angular/platform-browser';
 import {GettingStartedProgressService} from '../admin/getting-started-progress.service';
+import {FormBuilder, FormGroup} from '@angular/forms';
 
 declare const window;
 
@@ -25,6 +26,7 @@ declare const window;
 export class SchoolSignUpComponent implements OnInit, AfterViewInit {
 
   @Output() schoolCreatedEvent: EventEmitter<boolean> = new EventEmitter();
+
   private pending: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public pending$: Observable<boolean> = this.pending.asObservable();
   private AuthToken: string;
@@ -32,6 +34,8 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
   public showError = { loggedWith: null, error: null };
   public school: any;
   public errorToast;
+  public schoolForm: FormGroup;
+
   constructor(
     private googleAuth: GoogleAuthService,
     private http: HttpClient,
@@ -43,7 +47,8 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private _zone: NgZone,
-    private gsProgress: GettingStartedProgressService
+    private gsProgress: GettingStartedProgressService,
+    private fb: FormBuilder
   ) {
     this.jwt = new JwtHelperService();
     this.errorToast = this.httpService.errorToast$;
@@ -59,6 +64,13 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
         this.AuthToken = qp.key as string;
       }
       console.log(this.AuthToken);
+    });
+
+    this.schoolForm = this.fb.group({
+      firstName: [''],
+      lastName: [''],
+      schoolEmail: [''],
+      password: ['']
     });
   }
   ngAfterViewInit() {
@@ -77,12 +89,12 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
   }
   createSchool() {
     this.pending.next(true);
-        return from(this.initLogin())
-          .pipe(
-            tap(p => console.log(p)),
-            switchMap((auth: any) => {
+      return from(this.initLogin())
+        .pipe(
+          tap(p => console.log(p)),
+          switchMap((auth: any) => {
 
-              const hd = this.jwt.decodeToken(auth.id_token)['hd'];
+            const hd = this.jwt.decodeToken(auth.id_token)['hd'];
 
               if (!hd || hd === 'gmail.com') {
                 this.loginService.showLoginError$.next(false);
