@@ -4,7 +4,9 @@
 <!--{{ ' rooms = ' + showRooms}}  {{'onboard = ' + onboardLoaded}}-->
 <app-rooms-set-up *ngIf="!showRooms && onboardLoaded" (setUpResult)="onboard($event)"></app-rooms-set-up>
 
-<div class="host" appSafariScroll *ngIf="showRooms && onboardLoaded">
+<!--*ngIf="showRooms && onboardLoaded"-->
+
+<div class="host" appSafariScroll>
     <div class="pass-config-wrapper" #scrollableArea>
         <div class="pass-config-container" [style.background-color]="darkTheme.getBackground('default')">
             <!--<div class="header-wrapper">-->
@@ -59,13 +61,13 @@
 
         </div>
         <div class="pass-config-content">
-          <div *ngIf="!pinnables" class="loading-theme_blue-gray spinner ds-w-100 ds-h-100 ds-flex-center-center">
+          <div *ngIf="loading$ | async" class="loading-theme_blue-gray spinner ds-w-100 ds-h-100 ds-flex-center-center">
             <mat-spinner [diameter]="35" [color]="'accent'"></mat-spinner>
           </div>
           <div class="prevent-dragula-action" *ngIf="pending$ | async">
             <!-- Needs so that user can't drag pinnables until an order updating request is going -->
           </div>
-            <div class="pinnables ds-flex-column" *ngIf="pinnables && pinnables.length">
+            <div class="pinnables ds-flex-column" *ngIf="pinnables && pinnables.length && loaded$ | async">
                 <!--<div *ngIf="!pinnables?.length" class="spinner loading-theme_blue-gray">-->
                     <!--<mat-spinner [diameter]="35" [color]="'accent'"></mat-spinner>-->
                 <!--</div>-->
@@ -80,7 +82,7 @@
                     >
                     </app-pinnable-collection>
             </div>
-            <div class="empty-state" *ngIf="pinnables && !pinnables.length">
+            <div class="empty-state" *ngIf="pinnables && !pinnables.length && loaded$ | async">
                 <img [src]="'./assets/emptyStates/Rooms empty.svg' |resolveAsset" alt="empty">
                 <div class="empty-text">
                     <div class="title ds-empty-text-title">No Rooms</div>

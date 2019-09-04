@@ -257,7 +257,8 @@ export class RoomComponent implements OnInit {
   deleteRoom() {
     const pinnable = this.overlayService.pageState.getValue().data.pinnable;
     if (this.currentPage === Pages.EditRoom) {
-      this.hallPassService.deletePinnable(pinnable.id).subscribe(res => {
+      this.hallPassService.deletePinnableRequest(pinnable).subscribe(res => {
+        // this.hallPassService.deletePinnable(pinnable.id).subscribe(res => {
         this.dialogRef.close();
       });
     } else if (this.currentPage === Pages.EditRoomInFolder) {

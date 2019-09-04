@@ -1,5 +1,5 @@
 import {Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {fromEvent, interval, Subject, zip} from 'rxjs';
+import {combineLatest, forkJoin, fromEvent, interval, of, Subject, zip} from 'rxjs';
 import {filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import { DataService } from '../../services/data-service';
 import { HttpService } from '../../services/http-service';
@@ -227,6 +227,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
 
     this.liveDataService.watchActiveHallPasses(new Subject<HallPassFilter>().asObservable())
+      .pipe(takeUntil(this.shareChartData$))
       .subscribe((activeHallpasses: HallPass[]) => {
         // console.log('Watch activity ======>', activeHallpasses);
         this.numActivePasses = activeHallpasses.length;
@@ -236,14 +237,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.http.globalReload$.pipe(
       switchMap(() => {
-        return zip(
-          this.hallPassService.getPassStats(),
-          this.adminService.searchReports(todayReports.end.toISOString(), todayReports.start.toISOString()),
-          this.adminService.getDashboardData(),
+        return combineLatest(
+          this.hallPassService.getPassStatsRequest().pipe(filter(res => !!res)),
+          this.adminService.searchReportsRequest(todayReports.end.toISOString(), todayReports.start.toISOString()),
+          this.adminService.getDashboardDataRequest().pipe(filter(res => !!res))
         );
-      }))
-      .subscribe(([stats, eventReports, dashboard]: any[]) => {
-
+      }),
+      takeUntil(this.shareChartData$)
+      )
+      .subscribe(([stats, eventReports, dashboard]: any) => {
         for (const entry of stats) {
           switch (entry.name) {
             case 'Most Visited Locations':
@@ -272,7 +274,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     interval(60000)
       .pipe(
-        switchMap(() => this.adminService.getDashboardData()),
+        switchMap(() => this.adminService.getDashboardDataRequest()),
         takeUntil(this.shareChartData$)
       )
       .subscribe((result: any) => {
@@ -398,6 +400,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     data
       .pipe(
+        takeUntil(this.shareChartData$),
         tap((hp_list: HallPass[]) => {
           this._zone.run(() => {
             this.numActivePasses = hp_list.length;
@@ -439,20 +442,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
 
     DR.afterClosed()
-      .subscribe((data) => {
-        this.activeCalendar = false;
-        console.log('82 Date ===> :', data.date);
-        if (data.date) {
-          if ( !this.chartsDate || (this.chartsDate && this.chartsDate.getTime() !== data.date.getTime()) ) {
-            this.chartsDate = new Date(data.date);
-            console.log(this.chartsDate);
-            // this.getReports(this.chartsDate);
-            this.adminService.getFilteredDashboardData(this.chartsDate)
-              .subscribe((dashboard: any) => {
-                this.lineChartData = [{data: dashboard.hall_pass_usage.slice(7, 16)}];
-              });
+      .pipe(
+        switchMap((data) => {
+          if (data.date) {
+            if ( !this.chartsDate || (this.chartsDate && this.chartsDate.getTime() !== data.date.getTime()) ) {
+              this.chartsDate = new Date(data.date);
+              return this.adminService.getFilteredDashboardData(this.chartsDate);
+            }
+          } else {
+            return of(null);
           }
+    }))
+      .subscribe((dashboard: any) => {
+        if (dashboard) {
+          this.lineChartData = [{data: dashboard.hall_pass_usage.slice(7, 16)}];
         }
+        this.activeCalendar = false;
       }
     );
   }

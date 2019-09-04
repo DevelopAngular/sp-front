@@ -1,6 +1,6 @@
 import {Component, OnInit, ElementRef, ViewChild, HostListener, OnDestroy} from '@angular/core';
 import { MatDialog } from '@angular/material';
-import {BehaviorSubject, fromEvent, combineLatest, Observable, of, Subject, interval} from 'rxjs';
+import {BehaviorSubject, fromEvent, combineLatest, Observable, of, Subject, interval, merge} from 'rxjs';
 import { User } from '../../models/User';
 import { Report } from '../../models/Report';
 import { Pinnable } from '../../models/Pinnable';
@@ -11,7 +11,7 @@ import { TimeService } from '../../services/time.service';
 import {CalendarComponent} from '../calendar/calendar.component';
 import {HttpService} from '../../services/http-service';
 import {Util} from '../../../Util';
-import {delay, filter, map, switchMap, takeUntil, tap, toArray} from 'rxjs/operators';
+import {delay, filter, map, switchMap, take, takeUntil, tap, toArray} from 'rxjs/operators';
 import {AdminService} from '../../services/admin.service';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {ScrollPositionService} from '../../scroll-position.service';
@@ -94,11 +94,14 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
     hasPasses: Observable<boolean> = of(false);
 
     inactiveIcon: boolean = true;
+    isSupplementReports: boolean;
 
     reportsLimit: number = 10;
     counter: number = 0;
 
     public reportsDate: Date;
+
+    changeReports$ = new Subject();
 
     @HostListener('scroll', ['$event'])
     onScroll(event) {
@@ -106,7 +109,8 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
         const limit = tracker.scrollHeight - tracker.clientHeight;
         if (event.target.scrollTop === limit && !this.pending && (this.reportsLimit === this.counter)) {
             this.reportsLimit += 10;
-                this.getReports();
+            this.isSupplementReports = true;
+                this.changeReports$.next();
         }
     }
 
@@ -114,7 +118,7 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
         public dialog: MatDialog,
         private liveDataService: LiveDataService,
         private http: HttpService,
-        private adminService: AdminService,
+        public adminService: AdminService,
         private elRef: ElementRef,
         private timeService: TimeService,
         public darkTheme: DarkThemeSwitch,
@@ -139,17 +143,21 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.http.globalReload$.subscribe(() => {
-      this.getReports(null, true);
-    });
-    // this.activePassProvider.loaded$
-    //   .pipe(
-    //     filter(v => v),
-    //   )
-    //   .subscribe((res) => {
-    //     this.searchPending$.next(!res);
-    //     console.log(res);
-    //   });
+      merge(this.http.globalReload$, this.changeReports$)
+        .pipe(
+          switchMap(() => {
+           return this.getReports(this.reportsDate)
+        }))
+        .subscribe((list: any[]) => {
+          this.pending = false;
+          if (!this.isSupplementReports) {
+            this.studentreport = list;
+          } else {
+            this.studentreport.push(..._.takeRight(list, 10));
+            this.isSupplementReports = false;
+          }
+        });
+
     this.hasPasses = this.activePassProvider.length$.asObservable().pipe(map(l => l > 0));
 
     this.passesLoaded = this.activePassProvider.loaded$.pipe(
@@ -184,30 +192,29 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
           this.inactiveIcon = data.date.getDay() === new Date().getDay();
           if ( !this.reportsDate || (this.reportsDate && this.reportsDate.getTime() !== data.date.getTime()) ) {
             this.reportsDate = new Date(data.date);
-            this.getReports(this.reportsDate);
+            this.changeReports$.next();
+            // this.getReports(this.reportsDate);
           }
         } else {
           this.reportsDate = null;
-          this.getReports(null, true);
+          this.changeReports$.next();
+          // this.getReports(null, true);
         }
       }
     );
   }
 
-  private getReports(date?: Date, afterConsentMenu = false) {
+  private getReports(date: Date = null) {
     this.pending = true;
     const range = {start: moment(date).startOf('day'), end: moment(date).endOf('day')};
 
     const response$ = date ?
-        this.adminService.searchReports(range.end.toISOString(), range.start.toISOString()) :
-        this.adminService.getReports(this.reportsLimit);
-    response$.pipe(
+        this.adminService.searchReportsRequest(range.end.toISOString(), range.start.toISOString()) :
+        this.adminService.getReportsData(this.reportsLimit);
+    return response$.pipe(
         map((list: any) => {
-          const data  = date ? list : list.results;
-          console.log(data);
-          // debugger;
-          this.counter = data.length;
-          return data.map((report, index) => {
+            this.counter = list.length;
+          return list.map((report, index) => {
             return {
               student_name: report.student.display_name + ` (${report.student.primary_email.split('@', 1)[0]})`,
               issuer: report.issuer.display_name,
@@ -218,14 +225,12 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
           });
 
         }),
-        switchMap((list: any[]) => {
+        map((list: any[]) => {
           const groupedStudentreport: any[] = [];
           const temp = {
             date: null,
             reports: []
           };
-          // debugger;
-
           list.forEach((report, index) => {
 
             if (index < list.length) {
@@ -241,19 +246,8 @@ export class HallmonitorComponent implements OnInit, OnDestroy {
             }
           });
           return groupedStudentreport;
-        }),
-        toArray()
-      )
-      .subscribe((list: any[]) => {
-        this.pending = false;
-        // debugger;
-
-        if (date || afterConsentMenu) {
-            this.studentreport = list;
-        } else {
-            this.studentreport.push(..._.takeRight(list, 10));
-        }
-      });
+        })
+      );
   }
   ngOnDestroy() {
     this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);

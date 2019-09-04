@@ -16,6 +16,7 @@ import { OptionState, ValidButtons } from '../advanced-options/advanced-options.
 
 import * as _ from 'lodash';
 import {NextStep} from '../../../animations';
+import {mapTo} from 'rxjs/operators';
 
 @Component({
   selector: 'app-folder',
@@ -242,7 +243,7 @@ export class FolderComponent implements OnInit {
   deleteRoom() {
     const pinnable = this.overlayService.pageState.getValue().data.pinnable;
     const deletions = [
-        this.hallPassService.deletePinnable(pinnable.id)
+        this.hallPassService.deletePinnableRequest(pinnable).pipe(mapTo(null))
     ];
 
     if (pinnable.location) {

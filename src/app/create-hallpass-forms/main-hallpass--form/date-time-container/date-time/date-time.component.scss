@@ -20,12 +20,12 @@
     display: none;
   }
 
-  &-date-wrapper {
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    height: 500px;
-  }
+  //&-date-wrapper {
+  //  flex-direction: column;
+  //  justify-content: space-between;
+  //  align-items: center;
+  //  height: 500px;
+  //}
 
   &-next-btn {
     position: absolute;
@@ -46,7 +46,7 @@
 
     .date-content {
       width: 100%;
-      background-color: #f4f4ff;
+      //background-color: #f4f4ff;
     }
   }
 
@@ -60,8 +60,8 @@
   }
 
   div.time-picker {
-    margin: 0;
-    display: none;
+    //margin: 0;
+    //display: none;
   }
   div.ios-like-calendar {
     display: block;

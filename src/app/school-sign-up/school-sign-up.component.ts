@@ -54,7 +54,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
 
     this.route.queryParams.subscribe((qp: QueryParams) => {
       if (!qp.key) {
-          this.router.navigate(['']);
+        this.router.navigate(['']);
       } else {
         this.AuthToken = qp.key as string;
       }
@@ -77,58 +77,58 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
   }
   createSchool() {
     this.pending.next(true);
-        return from(this.initLogin())
-          .pipe(
-            tap(p => console.log(p)),
-            switchMap((auth: any) => {
+    return from(this.initLogin())
+      .pipe(
+        tap(p => console.log(p)),
+        switchMap((auth: any) => {
 
-              const hd = this.jwt.decodeToken(auth.id_token)['hd'];
+          const hd = this.jwt.decodeToken(auth.id_token)['hd'];
 
-              if (!hd || hd === 'gmail.com') {
-                this.loginService.showLoginError$.next(false);
-                this.showError.loggedWith = LoginMethod.OAuth;
-                this.showError.error = true;
-                return of(false);
-              } else {
-                this.gsProgress.updateProgress('create_school:start');
-                return this.http.post(environment.schoolOnboardApiRoot + '/onboard/schools', {
-                  user_token: auth.id_token,
-                  google_place_id: this.school.place_id
-                }, {
-                  headers: {
-                    'Authorization': 'Bearer ' + this.AuthToken // it's temporary
-                  }
-                }).pipe(
-                  // tap(() => this.gsProgress.updateProgress('create_school:end')),
-                  map((res: any) => {
-                    this._zone.run(() => {
-                      this.loginService.updateAuth(auth);
-                      this.storage.setItem('last_school_id', res.school.id);
-                    });
-                    return true;
-                  }),
-                );
+          if (!hd || hd === 'gmail.com') {
+            this.loginService.showLoginError$.next(false);
+            this.showError.loggedWith = LoginMethod.OAuth;
+            this.showError.error = true;
+            return of(false);
+          } else {
+            this.gsProgress.updateProgress('create_school:start');
+            return this.http.post(environment.schoolOnboardApiRoot + '/onboard/schools', {
+              user_token: auth.id_token,
+              google_place_id: this.school.place_id
+            }, {
+              headers: {
+                'Authorization': 'Bearer ' + this.AuthToken // it's temporary
               }
-            }),
-            delay(1000),
-            switchMap(() => {
-              return this.loginService.isAuthenticated$;
-            }),
-            catchError((err) => {
-              if (err && err.error !== 'popup_closed_by_user') {
-                this.loginService.showLoginError$.next(true);
-              }
-              this.pending.next(false);
-              return throwError(err);
-            })
-          ).subscribe((res) => {
-            this.pending.next(false);
-            if (res) {
-              this._zone.run(() => {
-                this.router.navigate(['admin', 'gettingstarted']);
-              });
-            }
+            }).pipe(
+              // tap(() => this.gsProgress.updateProgress('create_school:end')),
+              map((res: any) => {
+                this._zone.run(() => {
+                  this.loginService.updateAuth(auth);
+                  this.storage.setItem('last_school_id', res.school.id);
+                });
+                return true;
+              }),
+            );
+          }
+        }),
+        delay(1000),
+        switchMap(() => {
+          return this.loginService.isAuthenticated$;
+        }),
+        catchError((err) => {
+          if (err && err.error !== 'popup_closed_by_user') {
+            this.loginService.showLoginError$.next(true);
+          }
+          this.pending.next(false);
+          return throwError(err);
+        })
+      ).subscribe((res) => {
+        this.pending.next(false);
+        if (res) {
+          this._zone.run(() => {
+            this.router.navigate(['admin', 'gettingstarted']);
           });
+        }
+      });
   }
 
   checkSchool(school: any) {

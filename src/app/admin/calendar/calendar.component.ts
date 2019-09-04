@@ -34,13 +34,7 @@ export class CalendarComponent implements OnInit {
       this.previousSelectedDate = moment(this.data['previousSelectedDate']);
     }
     if (this.data['dotsDates']) {
-      // this.data['dotsDates']
-      //  .pipe(
-      //   filter((res: any[]) => !!res.length)
-      // )
-      //   .subscribe(res => {
-      //   this.passDates = res;
-      // });
+      this.passDates = this.data['dotsDates'];
     }
     this.updateCalendarPosition();
     this._matDialogRef
