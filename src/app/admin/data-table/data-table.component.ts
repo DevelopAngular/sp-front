@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   EventEmitter,
   Input, NgZone, OnChanges, OnDestroy,
@@ -17,6 +17,9 @@ import * as moment from 'moment';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {ScrollPositionService} from '../../scroll-position.service';
 import {wrapToHtml} from '../helpers';
+import {TABLE_RELOADING_TRIGGER} from '../accounts-role/accounts-role.component';
+
+import * as _ from 'lodash';
 
 const PAGESIZE = 50;
 const ROW_HEIGHT = 38;
@@ -208,6 +211,9 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
 
       });
     });
+    if (!this.selection.isEmpty()) {
+      this.selection.clear();
+    }
   }
 
   itemSize = ROW_HEIGHT;
@@ -223,13 +229,26 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
     private _ngZone: NgZone,
     private darkTheme: DarkThemeSwitch,
     private domSanitizer: DomSanitizer,
-    private scrollPosition: ScrollPositionService
+    private scrollPosition: ScrollPositionService,
+    private cdr: ChangeDetectorRef,
   ) {
     this.darkMode$ = this.darkTheme.isEnabled$.asObservable();
   }
 
   ngOnInit() {
-    // console.log(this._data);
+
+    TABLE_RELOADING_TRIGGER.subscribe(({header, tableHeaders}) => {
+      const itemIndex = _.findIndex(this.displayedColumns, (item) => {
+        return item === header.label;
+      });
+      const headerIndex = this.columnsToDisplay[0] === 'select' ? header.index + 1 : header.index;
+      const iIndex = this.columnsToDisplay[0] === 'select' ? itemIndex + 1 : itemIndex;
+      if (itemIndex < 0) {
+        this.columnsToDisplay.splice(headerIndex, 0, header.label);
+      } else {
+        this.columnsToDisplay.splice(iIndex, 1);
+      }
+    });
 
 
     this.marginTopStickyHeader = '0px';
@@ -337,7 +356,7 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   selectedRowEmit(evt, row) {
-    console.log(row)
+    // console.log(row)
     // debugger
     const rowData = row._data;
     const target = evt.target as HTMLElement;

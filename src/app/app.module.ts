@@ -64,6 +64,21 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
   slidesPerView: 'auto'
 };
+import { StoreModule } from '@ngrx/store';
+import { reducers } from './ngrx/app-state/app-state';
+import {EffectsModule} from '@ngrx/effects';
+import {AccountsEffects} from './ngrx/accounts/effects/accounts.effects';
+import {AllAccountsEffects} from './ngrx/accounts/nested-states/all-accounts/effects';
+import {AdminsEffects} from './ngrx/accounts/nested-states/admins/effects';
+import {ReportsEffects} from './ngrx/reports/effects';
+import {PinnablesEffects} from './ngrx/pinnables/effects';
+import {TeachersEffects} from './ngrx/accounts/nested-states/teachers/effects';
+import {AssistantsEffects} from './ngrx/accounts/nested-states/assistants/effects';
+import {StudentsEffects} from './ngrx/accounts/nested-states/students/effects';
+import {CountAccountsEffects} from './ngrx/accounts/nested-states/count-accounts/effects';
+import {LocationsEffects} from './ngrx/locations/effects';
+import {DashboardEffects} from './ngrx/dashboard/effects/dashboard.effects';
+import {PassStatsEffects} from './ngrx/pass-stats/effects';
 
 const appRoutes: Routes = [
   {path: 'main/intro', canActivate: [AuthenticatedGuard], component: IntroRouteComponent, data: { hideSchoolToggleBar: true}},
@@ -174,7 +189,22 @@ const appRoutes: Routes = [
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyB-PvmYU5y4GQXh1aummcUI__LNhCtI68o',
       libraries: ['places']
-    })
+    }),
+    StoreModule.forRoot(reducers),
+    EffectsModule.forRoot([
+      ReportsEffects,
+      PinnablesEffects,
+      AccountsEffects,
+      AllAccountsEffects,
+      AdminsEffects,
+      TeachersEffects,
+      AssistantsEffects,
+      StudentsEffects,
+      CountAccountsEffects,
+      LocationsEffects,
+      DashboardEffects,
+      PassStatsEffects
+    ])
   ],
   providers: [
     DataService,

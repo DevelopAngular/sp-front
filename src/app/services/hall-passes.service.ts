@@ -2,14 +2,26 @@ import { Injectable } from '@angular/core';
 import {Observable, Subject} from 'rxjs';
 import { Pinnable } from '../models/Pinnable';
 import { HttpService } from './http-service';
-import {constructUrl} from '../live-data/helpers';
+import {Store} from '@ngrx/store';
+import {AppState} from '../ngrx/app-state/app-state';
+import {getCurrentPinnable, getIsLoadedPinnables, getIsLoadingPinnables, getPinnableCollection} from '../ngrx/pinnables/states';
+import {getPinnables, postPinnables, removePinnable, updatePinnable} from '../ngrx/pinnables/actions';
+import {getPassStats} from '../ngrx/pass-stats/actions';
+import {getPassStatsResult} from '../ngrx/pass-stats/state/pass-stats-getters.state';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HallPassesService {
 
-  constructor(private http: HttpService) { }
+  pinnables$: Observable<Pinnable[]> = this.store.select(getPinnableCollection);
+  loadedPinnables$: Observable<boolean> = this.store.select(getIsLoadedPinnables);
+  isLoadingPinnables$: Observable<boolean> = this.store.select(getIsLoadingPinnables);
+
+  currentPinnable$: Observable<Pinnable> = this.store.select(getCurrentPinnable);
+  passStats$ = this.store.select(getPassStatsResult);
+
+  constructor(private http: HttpService, private store: Store<AppState>) {}
 
     getActivePasses() {
         return this.http.get('v1/hall_passes?active=true');
@@ -39,6 +51,11 @@ export class HallPassesService {
         return this.http.post(`v1/hall_passes/${id}/ended`);
     }
 
+    getPassStatsRequest() {
+      this.store.dispatch(getPassStats());
+      return this.passStats$;
+    }
+
     getPassStats() {
         return this.http.get('v1/hall_passes/stats');
     }
@@ -47,12 +64,32 @@ export class HallPassesService {
         return this.http.get('v1/pinnables/arranged');
     }
 
+    getPinnablesRequest() {
+      this.store.dispatch(getPinnables());
+      return this.pinnables$;
+    }
+
+    postPinnableRequest(data) {
+      this.store.dispatch(postPinnables({data}));
+      return this.currentPinnable$;
+    }
+
     createPinnable(data) {
         return this.http.post('v1/pinnables', data);
     }
 
+    updatePinnableRequest(id, pinnable) {
+      this.store.dispatch(updatePinnable({id, pinnable}));
+      return this.currentPinnable$;
+    }
+
     updatePinnable(id, data) {
         return this.http.patch(`v1/pinnables/${id}`, data);
+    }
+
+    deletePinnableRequest(pinnable) {
+      this.store.dispatch(removePinnable({pinnable}));
+      return this.currentPinnable$;
     }
 
     deletePinnable(id) {
@@ -75,3 +112,4 @@ export class HallPassesService {
       return this.http.get(url);
     }
 }
+
