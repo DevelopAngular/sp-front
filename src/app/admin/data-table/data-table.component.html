@@ -6,7 +6,7 @@
     <div *ngIf="dataSource.stickySpace" style="position: static; top: 0;background: #7E879D; opacity: 0;" [style.height.px]="itemSize">
 <!--      Sticky Placeholder {{dataSource.stickySpace}}-->
     </div>
-    <table mat-table matSort
+    <table mat-table matSort matSortStart="desc"
            [ngClass]="{
              'light-mode': !(darkMode$ | async),
              'dark-mode': (darkMode$ | async)

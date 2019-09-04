@@ -21,12 +21,6 @@ import {wrapToHtml} from '../helpers';
 const PAGESIZE = 50;
 const ROW_HEIGHT = 38;
 
-// export class tableSanitizer extends DomSanitizer {
-//   constructor() {
-//     super()
-//   }
-// }
-
 export class GridTableDataSource extends DataSource<any> {
 
   public  stickySpace: boolean;
@@ -237,6 +231,7 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit() {
     // console.log(this._data);
 
+
     this.marginTopStickyHeader = '0px';
     if (!this.displayedColumns) {
       this.displayedColumns = Object.keys(this._data[0]);
@@ -250,6 +245,11 @@ export class DataTableComponent implements OnInit, OnChanges, OnDestroy {
         this.selection.clear();
         this.selectedUsers.emit([]);
       }
+    });
+    this.dataSource.sort.sort({
+      id: this.columnsToDisplay[0],
+      start: 'asc',
+      disableClear: false
     });
 
   }
