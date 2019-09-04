@@ -65,7 +65,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
     window.appLoaded();
   }
   test(event) {
-    console.log(event);
+    // console.log(event[0]._d);
   }
   initLogin() {
     return this.loginService.GoogleOauth.signIn()

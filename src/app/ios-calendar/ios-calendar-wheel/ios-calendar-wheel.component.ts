@@ -1,11 +1,11 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
-import {BehaviorSubject, interval, Observable, ReplaySubject, Subject, Subscription} from 'rxjs';
-import {debounceTime, distinctUntilChanged, filter, take, takeUntil} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, fromEvent, interval, Observable, ReplaySubject, Subject, Subscription} from 'rxjs';
+import {debounceTime, distinctUntilChanged, filter, flatMap, mergeMap, share, switchMap, take, takeUntil} from 'rxjs/operators';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import {Moment} from 'moment';
-import {IosDateSingleton} from '../ios-date.singleton';
+import {IosDateSingleton, MINUTE, SWIPE_BLOCKER} from '../ios-date.singleton';
 import {DeviceDetection} from '../../device-detection.helper';
 
 @Component({
@@ -15,13 +15,85 @@ import {DeviceDetection} from '../../device-detection.helper';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class IosCalendarWheelComponent implements OnInit, OnDestroy {
+  @Input() align: 'center' | 'flex-start' | 'flex-end' = 'center';
   @Input() leftShift: number = 0;
   @Input() rightShift: number = 0;
   @Input() wheelData: 'date' | 'hour' | 'minute' | 'half';
-  @Input() current: Moment = moment();
+  @Input() current: Moment = moment().add(5, 'minutes');
 
   @Output() selectedUnit: EventEmitter<any> = new EventEmitter();
 
+  // @ViewChild('swipeArea') set swipeAreaRef(swipeAreaRef: ElementRef) {
+  //   if (swipeAreaRef) {
+  //     this.swipeArea = swipeAreaRef.nativeElement;
+  //     fromEvent(this.swipeArea, 'touchmove')
+  //       .pipe(
+  //         mergeMap((event: MouseEvent) => {
+  //           return {
+  //             event: event,
+  //             currentDate: this.iosDate.dateSubject
+  //           } as any;
+  //         }),
+  //         filter(({event, currentDate} ) => {
+  //
+  //           console.log(event);
+  //           event.preventDefault();
+  //           event.stopPropagation();
+  //
+  //           if (this.focused) {
+  //
+  //             this.counter = 0;
+  //             this.counterX++;
+  //
+  //             this.endTransition = 'none';
+  //
+  //             const scrollTop = this.focusPosition - event.pageY;
+  //
+  //             switch (this.wheelData) {
+  //               case 'date':
+  //                 currentDate.date(Math.round(this.rotate.rotateAngle + (scrollTop / 2)));
+  //                 break;
+  //               case 'hour':
+  //                 currentDate.hour(Math.round(this.rotate.rotateAngle + (scrollTop / 2)));
+  //
+  //                 break;
+  //               case 'minute':
+  //                 currentDate.minute(Math.round(this.rotate.rotateAngle + (scrollTop / 2)));
+  //                 break;
+  //               case 'half':
+  //             }
+  //
+  //             this.counterX =  Math.abs(scrollTop);
+  //
+  //             if (event.pageY >= this.focusPosition) {
+  //               this.dir = true;
+  //             } else {
+  //               this.dir = false;
+  //             }
+  //
+  //             return moment(this.iosDate.dateSubject.value).isBefore(moment(this.iosDate.minDate.value));
+  //
+  //           }
+  //
+  //
+  //         })
+  //       )
+  //       .subscribe(({event, currentDate}) => {
+  //
+  //         const scrollTop = this.focusPosition - event.pageY;;
+  //
+  //         this.daysRotateSubject.next(this.sanitizer.bypassSecurityTrustStyle(`rotateX(${this.rotate.rotateAngle + (scrollTop / 2)}deg)`));
+  //
+  //         const intRotateAngle = this.rotate.rotateAngle / this.dataItemAngle;
+  //         const sliceOffset = this.dir ? Math.floor(intRotateAngle) : Math.ceil(intRotateAngle);
+  //         this.dataSetSubject.next(this.connect(sliceOffset, sliceOffset + this.wheelSectorAmount));
+  //
+  //         this.scrollFactor = scrollTop;
+  //
+  //       });
+  //   }
+  // }
+  swipeArea: HTMLElement;
   daysRotateSubject = new ReplaySubject(1);
   daysRotate$ = this.daysRotateSubject.asObservable();
 
@@ -31,7 +103,7 @@ export class IosCalendarWheelComponent implements OnInit, OnDestroy {
 
   wheelSectorAmount = 24;
   dataSize = 365;
-  dataItemHeight = 35;
+  dataItemHeight = 30;
   dataItemAngle = 360 / this.wheelSectorAmount;
   l = this.dataItemHeight * this.wheelSectorAmount;
   dataRadius = (this.l / Math.PI) / 2;
@@ -44,7 +116,7 @@ export class IosCalendarWheelComponent implements OnInit, OnDestroy {
     maxPositive: null,
   };
 
-  dir: boolean = true;
+  dir: boolean = false;
   scrollFactor = 1;
   scrolling: boolean = false;
   counter = 0;
@@ -57,8 +129,6 @@ export class IosCalendarWheelComponent implements OnInit, OnDestroy {
 
   days: Observable<any[]> = this.dataSetSubject.asObservable();
 
-  today: Moment = moment();
-
   destroyer$ = new Subject<any>();
 
   counterX = 0;
@@ -66,7 +136,9 @@ export class IosCalendarWheelComponent implements OnInit, OnDestroy {
   postOutDestroyer: Subject<any>;
   swipeInProgress: boolean = false;
   swipeOffset = 0;
-
+  overScroll: boolean = false;
+  preventOverScroll: boolean = false;
+  test = 0;
   constructor(
     private sanitizer: DomSanitizer,
     private iosDate: IosDateSingleton
@@ -79,33 +151,26 @@ export class IosCalendarWheelComponent implements OnInit, OnDestroy {
 
       switch (this.wheelData) {
         case 'date':
-          if (this.selected) {
-            const diff = this.selected.data.diff(this.current) > 0 ? Math.floor(this.selected.data.diff(this.current) / 86400000) : Math.ceil(this.selected.data.diff(this.current) / 86400000);
-
-            console.log(diff, this.selected, this.selected.data.diff(this.current) / 86400000);
-            this.rotate.rotateAngle += -(diff) * this.dataItemAngle;
-            this.selected.data = _.cloneDeep(this.current);
-            this.daysRotateSubject.next(this.sanitizer.bypassSecurityTrustStyle(`rotateX(${this.rotate.rotateAngle}deg)`));
-          }
+          this.rotate.rotateAngle = 0;
           break;
         case 'hour':
-            this.rotate.rotateAngle += (this.current.hour() - 1) * this.dataItemAngle;
+            this.rotate.rotateAngle = (this.current.hour() - 1) * this.dataItemAngle;
           break;
         case 'minute':
-            this.rotate.rotateAngle += this.current.minute() * this.dataItemAngle;
+            this.rotate.rotateAngle = this.current.minute() * this.dataItemAngle;
           break;
         case 'half':
             this.rotate.maxPositive = this.dataItemAngle * 0;
             this.rotate.maxNegative = this.dataItemAngle * 1;
-            this.rotate.rotateAngle += this.current.hour() >= 12 ? this.dataItemAngle : 0;
+            this.rotate.rotateAngle = this.current.hour() >= 12 ? this.dataItemAngle : 0;
       }
       this.runScroll();
     // });
 
     this.days
       .pipe(
-        debounceTime(250),
-        distinctUntilChanged(),
+        // debounceTime(250),
+        // distinctUntilChanged(),
         takeUntil(this.destroyer$),
       )
       .subscribe((days) => {
@@ -117,6 +182,45 @@ export class IosCalendarWheelComponent implements OnInit, OnDestroy {
           this.selectedUnit.emit(days[10]);
         }
         // console.log(this.wheelData, this.selected);
+      });
+
+    SWIPE_BLOCKER
+      .pipe(
+        takeUntil(this.destroyer$),
+      )
+      .subscribe((v) => {
+          if (v) {
+            this.test++;
+          }
+        // this.preventOverScroll = v;
+        // this.swipeInProgress = v;
+
+        if (v && this.swipeInProgress) {
+            this.scrollFactor = 0;
+            this.counterXdestroyer.next();
+            this.counterXdestroyer.complete();
+            this.postOutDestroyer.next();
+            this.postOutDestroyer.complete();
+            this.swipeInProgress = false;
+
+          this.dataSetSubject.next(this.connect(0, this.wheelSectorAmount));
+
+          switch (this.wheelData) {
+            case 'date':
+              this.rotate.rotateAngle = 0;
+              break;
+            case 'hour':
+              this.rotate.rotateAngle = (this.current.hour() - 1) * this.dataItemAngle;
+              break;
+            case 'minute':
+              this.rotate.rotateAngle = this.current.minute() * this.dataItemAngle;
+              break;
+            case 'half':
+              this.rotate.rotateAngle = this.current.hour() >= 12 ? this.dataItemAngle : 0;
+          }
+
+          this.runScroll();
+        }
       });
   }
 
@@ -231,22 +335,21 @@ export class IosCalendarWheelComponent implements OnInit, OnDestroy {
   }
 
   onOver(event: MouseEvent) {
-    // if (!DeviceDetection.isIOSMobile() && !DeviceDetection.isIOSTablet() && !DeviceDetection.isAndroid()) {
+    if (!DeviceDetection.isIOSMobile() && !DeviceDetection.isIOSTablet() && !DeviceDetection.isAndroid()) {
       const target = event.target as HTMLElement;
       target.scrollTop = 180;
       this.scrollFactor = 180;
       setTimeout(() => {
         this.scrolling = true;
       }, 50);
-    // } else {
-    //   return;
-    // }
-
+    } else {
+      return;
+    }
   }
-  onOut(event: MouseEvent) {
-    // this.runScroll();
-    // return;
-    if (!DeviceDetection.isIOSMobile() && !DeviceDetection.isIOSTablet() && !DeviceDetection.isAndroid()) {
+
+  onOut(event?: MouseEvent) {
+
+    if (!DeviceDetection.isIOSMobile() && !DeviceDetection.isIOSTablet() && !DeviceDetection.isAndroid() && event) {
       const target = event.target as HTMLElement;
       target.scrollTop = 0;
       this.scrollFactor = 0;
@@ -254,21 +357,20 @@ export class IosCalendarWheelComponent implements OnInit, OnDestroy {
     } else {
       this.counterXdestroyer.next();
       this.counterXdestroyer.complete();
+      this.counter = 0;
 
       this.rotate.rotateAngle += this.scrollFactor / 2;
+      this.swipeInProgress = true;
 
+      if (this.wheelData !== 'half') {
 
-      if (this.wheelData !== 'half' && Math.abs(this.scrollFactor) > 30 && Math.abs(this.counterX) > 0) {
-        // alert(this.counterX);
-        this.swipeInProgress = true;
-        const intervalCounter = Math.floor(this.counterX / 50);
-
-        interval(10 )
+        const intervalCounter = Math.abs(this.scrollFactor) > 30 && this.counterX > 0 ? Math.floor(this.counterX / 70) : 1;
+        // alert(intervalCounter);
+        interval(10)
           .pipe(
             takeUntil(this.postOutDestroyer)
           )
           .subscribe((v) => {
-
             this.dir ? this.rotate.rotateAngle -= intervalCounter : this.rotate.rotateAngle += intervalCounter;
 
             if ((typeof this.rotate.maxPositive === 'number') && this.rotate.rotateAngle < this.rotate.maxPositive) {
@@ -283,8 +385,11 @@ export class IosCalendarWheelComponent implements OnInit, OnDestroy {
             this.daysRotateSubject.next(this.sanitizer.bypassSecurityTrustStyle(`rotateX(${this.rotate.rotateAngle}deg)`));
             this.dataSetSubject.next(this.connect(sliceOffset, sliceOffset + this.wheelSectorAmount));
 
-            if (v > 50) {
-              // alert(v);
+            const restrictor = Math.abs(this.scrollFactor) > 30 ? 50 : 3;
+
+              // alert(restrictor);
+            if (v > restrictor) {
+
               this.runScroll();
               this.postOutDestroyer.next();
               this.postOutDestroyer.complete();
@@ -292,14 +397,13 @@ export class IosCalendarWheelComponent implements OnInit, OnDestroy {
               this.focused = false;
               this.focusPosition = null;
               this.scrollFactor = 0;
-
             }
           });
+
       } else if (this.wheelData === 'half') {
         if ((typeof this.rotate.maxPositive === 'number') && this.rotate.rotateAngle < this.rotate.maxPositive) {
-          this.swipeInProgress = true;
 
-          interval(10 )
+          interval(1 )
             .pipe(
               takeUntil(this.postOutDestroyer)
             )
@@ -319,14 +423,16 @@ export class IosCalendarWheelComponent implements OnInit, OnDestroy {
                 this.swipeInProgress = false;
                 this.focused = false;
                 this.focusPosition = null;
+                this.scrollFactor = 0;
+
               }
             });
 
               // this.rotate.rotateAngle = this.rotate.maxPositive;
         } else if ((typeof this.rotate.maxNegative === 'number') && this.rotate.rotateAngle > this.rotate.maxNegative) {
-          this.swipeInProgress = true;
+          // this.swipeInProgress = true;
 
-          interval(10 )
+          interval(1 )
             .pipe(
               takeUntil(this.postOutDestroyer)
             )
@@ -347,9 +453,11 @@ export class IosCalendarWheelComponent implements OnInit, OnDestroy {
                 this.swipeInProgress = false;
                 this.focused = false;
                 this.focusPosition = null;
+                this.scrollFactor = 0;
+
               }
             });
-          // this.rotate.rotateAngle = this.rotate.maxNegative;
+
         } else {
           this.runScroll();
           this.postOutDestroyer.next();
@@ -357,34 +465,21 @@ export class IosCalendarWheelComponent implements OnInit, OnDestroy {
           this.swipeInProgress = false;
           this.focused = false;
           this.focusPosition = null;
+          this.scrollFactor = 0;
         }
-        // this.daysRotateSubject.next(this.sanitizer.bypassSecurityTrustStyle(`rotateX(${this.rotate.rotateAngle}deg)`));
 
       } else {
-
-        // if (this.wheelData === 'half') {
-        //   if ((typeof this.rotate.maxPositive === 'number') && this.rotate.rotateAngle < this.rotate.maxPositive) {
-        //     this.rotate.rotateAngle = this.rotate.maxPositive;
-        //   } else if ((typeof this.rotate.maxNegative === 'number') && this.rotate.rotateAngle > this.rotate.maxNegative) {
-        //     this.rotate.rotateAngle = this.rotate.maxNegative;
-        //   }
-        // }
-        // this.daysRotateSubject.next(this.sanitizer.bypassSecurityTrustStyle(`rotateX(${this.rotate.rotateAngle}deg)`));
-
         this.runScroll();
         this.swipeInProgress = false;
         this.focused = false;
         this.focusPosition = null;
         this.scrollFactor = 0;
-
       }
-
     }
   }
 
   onDown(event: MouseEvent) {
-    // this.onClick(); this.onOver(event);
-    // return;
+
     this.endTransition = 'none';
 
     if (this.swipeInProgress) {
@@ -400,8 +495,8 @@ export class IosCalendarWheelComponent implements OnInit, OnDestroy {
     this.focusPosition = event.pageY;
     this.counterXdestroyer = new Subject<any>();
     this.postOutDestroyer = new Subject<any>();
-
-    interval(50)
+    // alert(this.counterX);
+    interval(150)
       .pipe(
         takeUntil(this.counterXdestroyer)
       )
@@ -417,7 +512,7 @@ export class IosCalendarWheelComponent implements OnInit, OnDestroy {
     this.daysRotateSubject.next(this.sanitizer.bypassSecurityTrustStyle(`rotateX(${this.rotate.rotateAngle}deg)`));
   }
 
-  onMove(event: MouseEvent, dir?: boolean) {
+  onMove(event: MouseEvent) {
 
     event.preventDefault();
     event.stopPropagation();
@@ -425,38 +520,25 @@ export class IosCalendarWheelComponent implements OnInit, OnDestroy {
     if (this.focused) {
 
       this.counter = 0;
-      // this.counterX = 0;
-      this.counterX++;
+      // this.counterX++;
 
       this.endTransition = 'none';
 
       const scrollTop = this.focusPosition - event.pageY;
       this.counterX =  Math.abs(scrollTop);
+
       if (event.pageY >= this.focusPosition) {
         this.dir = true;
       } else {
         this.dir = false;
       }
-
-      // this.dir ? this.rotate.rotateAngle -= 1 : this.rotate.rotateAngle += 1;
-
-      // if (this.wheelData === 'half') {
-      //   if ((typeof this.rotate.maxPositive === 'number') && this.rotate.rotateAngle + (scrollTop / 2) < this.rotate.maxPositive) {
-      //     scrollTop = this.rotate.maxPositive * 2;
-      //   } else if ((typeof this.rotate.maxNegative === 'number') && this.rotate.rotateAngle + (scrollTop / 2) > this.rotate.maxNegative) {
-      //     scrollTop = this.rotate.maxNegative * 2;
-      //   }
-      // }
-
       this.daysRotateSubject.next(this.sanitizer.bypassSecurityTrustStyle(`rotateX(${this.rotate.rotateAngle + (scrollTop / 2)}deg)`));
 
       const intRotateAngle = this.rotate.rotateAngle / this.dataItemAngle;
       const sliceOffset = this.dir ? Math.floor(intRotateAngle) : Math.ceil(intRotateAngle);
       this.dataSetSubject.next(this.connect(sliceOffset, sliceOffset + this.wheelSectorAmount));
 
-
       this.scrollFactor = scrollTop;
-
     }
   }
 
@@ -504,18 +586,21 @@ export class IosCalendarWheelComponent implements OnInit, OnDestroy {
 
   runScroll() {
     if (this.inPorgress) {
-      return;
+       return;
     }
     this.inPorgress = true;
+    this.endTransition = 'transform .3s ease';
     const destroyer$ = new Subject();
+
     interval(50)
       .pipe(
         takeUntil(destroyer$)
       )
       .subscribe((v) => {
         this.counter++;
-        if (this.counter === 2) {
-          this.endTransition = 'transform .5s ease';
+        // alert(this.counter);
+
+        if (this.counter >= 2) {
 
           const intRotateAngle = this.rotate.rotateAngle / this.dataItemAngle;
 
@@ -529,6 +614,7 @@ export class IosCalendarWheelComponent implements OnInit, OnDestroy {
 
           this.inPorgress = false;
 
+          this.counter = 0;
           destroyer$.next();
           destroyer$.complete();
         }
