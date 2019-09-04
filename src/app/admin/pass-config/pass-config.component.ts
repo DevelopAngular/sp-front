@@ -128,8 +128,11 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.loading$ = this.hallPassService.isLoadingPinnables$;
     this.loaded$ = this.hallPassService.loadedPinnables$;
-    this.pinnables$ = this.hallPassService.pinnables$;
-    this.pinnables$.subscribe(res => this.pinnables = res);
+    // this.pinnables$ = this.hallPassService.pinnables$;
+    // this.pinnables$.subscribe(res => {
+    //   this.pinnables = res;
+    //   debugger;
+    // });
     combineLatest(this.adminService.getOnboardProgress(), this.pinnables$).pipe(filter(() => navigator.onLine))
     .subscribe(([onboard, pinnables]) => {
         // console.log('Onboard ==>>>>', pinnables);
