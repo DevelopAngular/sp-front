@@ -98,6 +98,8 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     public loading$: Observable<boolean>;
     public loaded$: Observable<boolean>;
 
+    destroy$ = new Subject();
+
 
     showRooms: boolean;
     onboardLoaded: boolean;
@@ -128,12 +130,17 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.loading$ = this.hallPassService.isLoadingPinnables$;
     this.loaded$ = this.hallPassService.loadedPinnables$;
-    // this.pinnables$ = this.hallPassService.pinnables$;
-    // this.pinnables$.subscribe(res => {
-    //   this.pinnables = res;
-    //   debugger;
-    // });
-    combineLatest(this.adminService.getOnboardProgress(), this.pinnables$).pipe(filter(() => navigator.onLine))
+    this.httpService.globalReload$.subscribe(() => {
+      this.hallPassService.getPinnablesRequest();
+      this.pinnables$ = this.hallPassService.pinnables$;
+      this.pinnables$.pipe(filter((res: any[]) => !!res.length)).subscribe(res => {
+        this.pinnables = res;
+      });
+    combineLatest(this.adminService.getOnboardProgress(), this.pinnables$)
+      .pipe(
+        filter(() => navigator.onLine),
+        takeUntil(this.destroy$)
+      )
     .subscribe(([onboard, pinnables]) => {
         // console.log('Onboard ==>>>>', pinnables);
       if (onboard && (onboard as any[]).length && !pinnables.length) {
@@ -153,19 +160,16 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       this.onboardLoaded = true;
     });
 
-    this.onboardUpdate$.pipe(filter(() => navigator.onLine), switchMap((action) => {
+    this.onboardUpdate$.pipe(
+      filter(() => navigator.onLine),
+      takeUntil(this.destroy$),
+      switchMap((action) => {
         return this.adminService.updateOnboardProgress(action);
     })).subscribe();
 
-    this.httpService.globalReload$.pipe(filter(() => navigator.onLine)).subscribe(() => {
-      this.hallPassService.getPinnablesRequest();
-      this.pinnables$ = this.hallPassService.pinnables$;
-      this.pinnables$.pipe(filter((res: any[]) => !!res.length)).subscribe(res => {
-        this.pinnables = res;
-      });
-
       const forceSelectPinnable: Subscription = this.activatedRoute.queryParams.pipe(
         filter((qp) => Object.keys(qp).length > 0 && Object.keys(qp).length === Object.values(qp).length),
+        takeUntil(this.destroy$),
         switchMap((qp: any): any => {
           const {locationId} = qp;
           this.router.navigate( ['admin/passconfig']);
@@ -196,6 +200,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
     of(null)
       .pipe(
+        takeUntil(this.destroy$),
         switchMap(() => {
           if (this.arrangedOrderForUpdating && this.arrangedOrderForUpdating.length) {
             return this.updatePinnablesOrder();
@@ -206,6 +211,8 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       .subscribe(res => {
         this.dialog.closeAll();
       });
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   // onPinnnableBlur(evt) {
@@ -219,16 +226,14 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   // }
 
   setNewArrangedOrder(newOrder) {
-    if (newOrder) {
-      this.arrangedOrderForUpdating = newOrder.map(pin => pin.id);
-    }
-    // console.log(this.arrangedOrderForUpdating);
+    this.arrangedOrderForUpdating = newOrder.map(pin => pin.id);
   }
 
   private updatePinnablesOrder() {
     return this.hallPassService
       .createArrangedPinnable({order: this.arrangedOrderForUpdating.join(',')})
       .pipe(
+        takeUntil(this.destroy$),
         tap(() => this.arrangedOrderForUpdating = null),
         switchMap((): Observable<Pinnable[]> => {
           return this.hallPassService.getPinnablesRequest();
@@ -418,7 +423,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
   }
 
   onboard({createPack, pinnables}) {
-    console.log(createPack, pinnables);
+    // console.log(createPack, pinnables);
     if (createPack) {
       const requests$ = pinnables.map(pin => {
         const location =  {
@@ -444,6 +449,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       forkJoin(requests$)
         .pipe(
           filter(() => navigator.onLine),
+          takeUntil(this.destroy$),
           switchMap((res) => {
             return this.adminService.updateOnboardProgress('setup_rooms:end').pipe(mapTo(res));
           })
