@@ -181,8 +181,6 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   isCalendarClick: boolean;
 
-  isCalendarSlide: boolean;
-
   isSearchBarClicked: boolean;
 
   resetValue = new Subject();
@@ -280,7 +278,6 @@ export class MyRoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
     combineLatest(
       this.dataService.currentUser,
       this.userService.effectiveUser,
@@ -557,5 +554,25 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 
   get isIOSTablet() {
     return DeviceDetection.isIOSTablet();
+  }
+
+  get collectionWidth() {
+    let maxWidth = 533;
+
+    if (this.screenService.createCustomBreakPoint(maxWidth)) {
+        maxWidth = 336;
+    }
+
+    if (this.screenService.isDeviceLarge && this.isCalendarClick && !this.isIOSTablet && !this.is670pxBreakPoint
+      || this.screenService.isDeviceLarge && this.isCalendarClick && !this.is670pxBreakPoint ) {
+      maxWidth = 336;
+    }
+
+    return maxWidth + 'px';
+  }
+
+  get is670pxBreakPoint() {
+    const customBreakPoint = 670;
+    return this.screenService.createCustomBreakPoint(customBreakPoint);
   }
 }
