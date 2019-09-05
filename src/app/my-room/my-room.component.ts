@@ -560,11 +560,10 @@ export class MyRoomComponent implements OnInit, OnDestroy {
         maxWidth = 336;
     }
 
-    if (this.screenService.isDeviceLarge && this.isCalendarClick && !this.isIOSTablet && !this.is670pxBreakPoint
-      || this.screenService.isDeviceLarge && this.isCalendarClick && !this.is670pxBreakPoint ) {
+    if (this.screenService.createCustomBreakPoint(850) && this.isCalendarClick && !this.isIOSTablet && !this.is670pxBreakPoint
+      || this.screenService.createCustomBreakPoint(850) && this.isCalendarClick && !this.is670pxBreakPoint ) {
       maxWidth = 336;
     }
-
     return maxWidth + 'px';
   }
 
