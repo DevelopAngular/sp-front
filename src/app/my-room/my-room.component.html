@@ -64,7 +64,7 @@
         <div [ngClass]=" isIOSTablet ? 'ios-date-display-mobile' : 'date-display-mobile'" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ dateDisplay }}</div>
       </div>
 
-      <div [@calendarSlide] = "calendarSlideState('topBottom')" *ngIf="!this.screenService.isIpadWidth && !this.screenService.isDesktopWidth" class="calendar-card-wrapper">
+      <div [@calendarSlide] = "calendarSlideState('topBottom')" *ngIf="is670pxBreakPoint" class="calendar-card-wrapper">
         <mat-card [ngClass]=" isIOSTablet ? 'ios-calendar-card' : 'calendar-card'">
           <app-calendar-picker
             [style.z-index]="0"
@@ -94,7 +94,7 @@
       </div>
 
       <div class="my-room-body" [@collectionsTrigger] = 'collectionsSlideState'>
-        <div [ngClass]="isIOSTablet ? 'ios-my-room-body-collections' : 'my-room-body-collections'">
+        <div [style.maxWidth]="collectionWidth" [ngClass]="isIOSTablet ? 'ios-my-room-body-collections' : 'my-room-body-collections'">
           <app-pass-collection
             [smoothlyUpdating]="true"
             [isActive]="true"
@@ -140,7 +140,7 @@
             </div>
           </div>
         </div>
-        <div [@calendarSlide] = "calendarSlideState('leftRight')" *ngIf="this.screenService.isIpadWidth" class="calendar-card-wrapper-right">
+        <div [@calendarSlide] = "calendarSlideState('leftRight')" *ngIf="this.screenService.isIpadWidth && !is670pxBreakPoint" class="calendar-card-wrapper-right">
           <mat-card class="calendar-card">
             <app-calendar-picker
               [showTime]="false"
