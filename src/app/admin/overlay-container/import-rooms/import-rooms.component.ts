@@ -49,7 +49,6 @@ export class ImportRoomsComponent implements OnInit {
             const stringCollection = raw.Sheets[sn];
             const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
             const rows = data.slice(1);
-
             return rows.map((row, index) => {
               return {
                 id: `Fake ${Math.floor(Math.random() * (1 - 1000)) + 1000}`,
@@ -163,12 +162,12 @@ export class ImportRoomsComponent implements OnInit {
           const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
           let rows = data.slice(1);
           rows = rows.map((row, index) => {
-            const _room: any = {};
-            _room.id = `Fake ${Math.floor(Math.random() * (1 - 1000000)) + 1000000}`;
-            _room.title = row[0];
-            _room.room = row[1];
-            _room.teachers = <string>row[2] ? row[2].split(', ') : [];
-            return _room;
+            return {
+              id: `Fake ${Math.floor(Math.random() * (1 - 1000)) + 1000}`,
+              title: ('' + row[0]).trim(),
+              room: ('' + row[1]).trim(),
+              teachers: <string>row[2] ? row[2].split(',').map(t => t.trim()) : [],
+            };
           });
           return rows;
         }),
@@ -177,8 +176,8 @@ export class ImportRoomsComponent implements OnInit {
             if (r.title && r.title.length > 16) {
               r.title = r.title.slice(0, 15);
             }
-            if (r.room && (r.room + '').length > 8) {
-              r.title = r.title.slice(0, 7);
+            if (r.room && r.room.length > 8) {
+              r.room = r.room.slice(0, 7);
             }
             return r;
           });
