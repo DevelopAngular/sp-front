@@ -10,6 +10,13 @@ import {OverlayDataService, Pages} from '../overlay-data.service';
 import * as _ from 'lodash';
 import * as XLSX from 'xlsx';
 
+export interface RoomInfo {
+  id: string;
+  title: string;
+  room: string;
+  teachers: string[];
+}
+
 @Component({
   selector: 'app-import-rooms',
   templateUrl: './import-rooms.component.html',
@@ -41,29 +48,29 @@ export class ImportRoomsComponent implements OnInit {
             const sn = raw.SheetNames[0];
             const stringCollection = raw.Sheets[sn];
             const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
-            let rows = data.slice(1);
-            rows = rows.map((row, index) => {
-              const _room: any = {};
-              _room.id = `Fake ${Math.floor(Math.random() * (1 - 1000)) + 1000}`;
-              _room.title = row[0];
-              _room.room = row[1];
-              _room.teachers = <string>row[2] ? row[2].split(', ') : [];
-              return _room;
+            const rows = data.slice(1);
+
+            return rows.map((row, index) => {
+              return {
+                id: `Fake ${Math.floor(Math.random() * (1 - 1000)) + 1000}`,
+                title: ('' + row[0]).trim(),
+                room: ('' + row[1]).trim(),
+                teachers: <string>row[2] ? row[2].split(',').map(t => t.trim()) : [],
+              };
             });
-            return rows;
           }),
-          map((rows) => {
-            rows = rows.map((r: any) => {
-              if (r.title && r.title.length > 16) {
+          map((rows: RoomInfo[]) => {
+            rows = rows.map((r: RoomInfo) => {
+              if (r.title.length > 16) {
                 r.title = r.title.slice(0, 15);
               }
-              if (r.room && (r.room + '').length > 8) {
-                r.title = r.title.slice(0, 7);
+              if (r.room.length > 8) {
+                r.room = r.room.slice(0, 7);
               }
               return r;
             });
-            const groupedRooms = _.groupBy(rows, (r: any) => r.title);
-            let normalizedRooms = [];
+            const groupedRooms = _.groupBy(rows, (r: RoomInfo) => r.title.toLowerCase());
+            let normalizedRooms: RoomInfo[] = [];
 
             for (const key in groupedRooms) {
               if (groupedRooms[key].length > 1) {
