@@ -6,9 +6,3 @@ export interface TeachersStates extends EntityState<User> {
   loaded: boolean;
 }
 
-export const teachersInitialState: TeachersStates = {
-  entities: {},
-  ids: [],
-  loading: false,
-  loaded: false
-};

@@ -8,12 +8,3 @@ export interface IPinnablesState extends EntityState<Pinnable> {
   currentPinnableId: number | string;
 }
 
-
-// {
-//   ids: [],
-//   entities: {},
-//   loading: false,
-//   loaded: false,
-//   currentPinnableId: null
-// };
-

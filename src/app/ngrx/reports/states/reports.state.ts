@@ -7,10 +7,3 @@ export interface IGetReportsRequest extends EntityState<Report> {
   reportsFound: Report[];
 }
 
-export const reportsInitialState: IGetReportsRequest = {
-  ids: [],
-  entities: {},
-  loading: false,
-  loaded: false,
-  reportsFound: []
-};

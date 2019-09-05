@@ -5,10 +5,3 @@ export interface StudentsStates extends EntityState<User> {
   loading: boolean;
   loaded: boolean;
 }
-
-export const studentsAccountsInitialState: StudentsStates = {
-  entities: {},
-  ids: [],
-  loading: false,
-  loaded: false
-};

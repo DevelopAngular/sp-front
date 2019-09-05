@@ -6,9 +6,3 @@ export interface AdminsState extends EntityState<User> {
   loaded: boolean;
 }
 
-export const adminsInitialState: AdminsState = {
-  entities: {},
-  ids: [],
-  loading: false,
-  loaded: false
-};
