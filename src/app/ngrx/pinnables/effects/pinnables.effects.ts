@@ -1,5 +1,5 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import {catchError, concatMap, map, switchMap} from 'rxjs/operators';
+import {catchError, concatMap, map} from 'rxjs/operators';
 import {Injectable} from '@angular/core';
 import * as pinnablesActions from '../actions';
 import { HallPassesService } from '../../../services/hall-passes.service';
